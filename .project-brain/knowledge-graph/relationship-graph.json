@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-24T21:53:46.058Z",
+  "updated_at": "2026-11-24T23:25:39.376Z",
   "statistics": {
-    "total_nodes": 518,
+    "total_nodes": 519,
     "total_edges": 215,
     "domain_distribution": {
-      "D": 312,
+      "D": 313,
       "M": 1,
       "H": 95,
       "J": 22,
@@ -11565,6 +11565,28 @@
       ],
       "created_at": "2026-11-24T21:53:46.058Z",
       "updated_at": "2026-11-24T21:53:46.058Z"
+    },
+    "DOM-D-C22BA2DB": {
+      "id": "DOM-D-C22BA2DB",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): prism-ml/Ternary-Bonsai-2.5-27B-GGUF",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2.5-27b-gguf-learnings.md`  \n> **Source**: huggingface ([ -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2.5-27b-gguf-learnings.md`  \n> **Source**: huggingface ([",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-prism-ml-ternary-bonsai-2.5-27b-gguf/hf-prism-ml-ternary-bonsai-2.5-27b-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-24T23:24:59.250Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-prism-ml-ternary-bonsai-2.5-27b-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-24T23:25:39.376Z",
+      "updated_at": "2026-11-24T23:25:39.376Z"
     }
   },
   "edges": [

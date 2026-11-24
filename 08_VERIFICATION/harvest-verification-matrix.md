@@ -12838,3 +12838,8 @@
 | `CYCLE-20261124-9SY3` | `2026-11-24T23:13:49.515Z` | `vitejs/vite` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`cdc03b2d...`) |
 | `CYCLE-20261124-9VPP` | `2026-11-24T23:13:53.101Z` | `dosco/deeporg` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10360` | Yes (`8ff78b5c...`) |
 | `CYCLE-20261124-A2KA` | `2026-11-24T23:14:01.978Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10380` | Yes (`9f634c72...`) |
+| `CYCLE-20261124-NQQM` | `2026-11-24T23:24:39.838Z` | `prism-ml/Ternary-Bonsai-2.5-27B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2.5-27b-gguf-learnings.md` | Yes (`e4bb34d8...`) |
+| `CYCLE-20261124-NXYM` | `2026-11-24T23:24:49.198Z` | `webpack/webpack` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10381` | Yes (`f4a66f65...`) |
+| `CYCLE-20261124-NYLC` | `2026-11-24T23:24:50.016Z` | `mikepenz/AboutLibraries` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10382` | Yes (`c15d2054...`) |
+| `CYCLE-20261124-O2Q6` | `2026-11-24T23:24:55.374Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10383` | Yes (`e3ce2c1b...`) |
+| `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T23:25:39.380Z` | `hf-prism-ml-ternary-bonsai-2.5-27b-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-C22BA2DB` [Domain D] | Yes (`fedddbfc...`) |

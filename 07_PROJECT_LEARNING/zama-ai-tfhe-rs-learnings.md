@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source**: github ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
-> **Source Version**: `51c20e76`  
+> **Source Version**: `6f718abc`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T18:34:29.919Z  
+> **Timestamp**: 2026-11-24T23:24:53.823Z  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T18:34:29.913Z  
+> **Harvest Timestamp**: 2026-11-24T23:24:53.815Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1938,1307 +1938,204 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `51c20e76` (2026-11-24)
-**Commit Message**: fix(integer)!: make encrypted rotations behavior consistent (#4191)
+### Incident Patch 1: `6f718abc` (2026-11-24)
+**Commit Message**: doc(hpu): update SVG with latest bench results using HPU backend 0.8.0
 
-Rotations by an encrypted amount (value rot amount)
-did a modulo: `amount % next_power_of_two(num_bits(value))`
+* chore(hpu): small fixes to be able to run hlapi benches
+* doc(hpu): updates SVG for HPU bench results and add a few numbers on x8 HPU latencies
+* chore(hpu): bump tfhe-hpu-backend version from 0.7.0 to 0.8.0
 
-This was so that the modulo was always a truncation of bits/blocks
-thus, really cheap. However it created an inconsistent behavior
-when `num_bits(value)` was not a power of two because:
-
-* if is_power_of_two(num_bits(value)) then
-        num_bits(value) == next_power_of_two(num_bits(value))
-        e.g  FheUint8 << x
-        num_bits(value) = 8, 8 is a power of two, so we would
-        do modulo x % 8
-* else
-        num_bits(value) != next_power_of_two(num_bits(value))
-        e.g  FheUint6 << x
-        num_bits(value) = 6, 6 is a not power of two, its next
-        power of two is 8,
-        do modulo x % 8 and not x % 6 which means a different result
-        depending on x
-
-Now we call scalar_rem to do the modulo on non powers of two to make
-the operation consitent
-
-This induces a performance cost for these types/sizes,
-there are techniques which should work to do modulo by small
-amount (since the reduction amount is a number of bits and so relatively
-small) that we should explore later to improve the 
-
-**File**: `tfhe/src/integer/gpu/server_key/radix/tests_signed/legacy_default_tests.rs` (modified, +131/-3)
+**File**: `Cargo.lock` (modified, +1/-1)
 ```diff
-@@ -7,8 +7,15 @@
- //! full propagation cannot take blocks at the maximum degree yet. The overflowing scalar tests also
- //! cover scalars that fit the radix blocks but not the signed range, for which the GPU
- //! implementations return the opposite overflow flag: the CPU fix is `ScalarOverflowFlagSource` in
--//! `radix_parallel::scalar_add`, which the GPU can reuse. Once both are addressed point the
--//! GPU wrappers at the harness tests and delete this file.
-+//! `radix_parallel::scalar_add`, which the GPU can reuse.
-+//!
-+//! The rotations by an encrypted amount also differ: the CPU reduces the amount modulo the
-+//! number of bits (see `unchecked_rotate_bits_assign` in `radix_parallel::rotate`), the GPU
-+//! only reads its low ⌈log₂(num_bits)⌉ bits, i.e. reduces it modulo the next power of two,
-+//! which the rotate tests of this file (unchecked ones included) still model.
-+//!
-+//! Once all are addressed point the GPU wrappers at the harness tests and the CPU unchecked
-+//! tests, and delete this file.
- use crate::core_crypto::prelude::SignedNumeric;
- use crate::integer::block_decomposition::{DecomposableInto, RecomposableSignedInteger};
- use crate::integer::keycache::KEY_CACHE;
-@@ -20,7 +27,8 @@ use crate::integer::server_key::radix_parallel::tests_signed::{
-     signed_right_shift_under_modulus,
- };
- use crate::integer::server_key::radix_parallel::tests_unsigned::{
--    nb_tests_smaller_for_params, panic_if_any_block_is_not_clean_or_trivial, MAX_NB_CTXT, NB_CTXT,
-+    nb_tests_for_params, nb_tests_smaller_for_params, panic_if_any_block_is_not_clean_or_trivial,
-+    MAX_NB_CTXT, NB_CTXT,
- };
- use crate::integer::{
-     BooleanBlock, IntegerKeyKind, RadixCiphertext, RadixClientKey, SignedRadixCiphertext,
-@@ -1349,3 +1357,123 @@ where
-         }
-     }
- }
-+
-+pub(crate) fn legacy_signed_unchecked_rotate_left_test<P, T>(param: P, mut executor: T)
-+where
-+    P: Into<TestParameters>,
-+    T: for<'a> FunctionExecutor<
-+        (&'a SignedRadixCiphertext, &'a RadixCiphertext),
-+        SignedRadixCiphertext,
-+    >,
-+{
-+    let param = param.into();
-+    let nb_tests = nb_tests_for_params(param);
-+    let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
-+    let cks = RadixClientKey::from((cks, NB_CTXT));
-+    let sks = Arc::new(sks);
-+
-+    let mut rng = rand::thread_rng();
-+
-+    executor.setup(&cks, sks);
-+
-+    let modulus = (cks.parameters().message_modulus().0.pow(NB_CTXT as u32) / 2) as i64;
-+
-+    assert!(modulus > 0);
-+    assert!((modulus as u64).is_power_of_two());
-+    let nb_bits = modulus.ilog2() + 1; // We are using signed numbers
-+
-+    for _ in 0..nb_tests {
-+        let clear = rng.gen::<i64>() % modulus;
-+        let clear_shift = rng.gen::<u32>();
-+
-+        let ct = cks.encrypt_signed(clear);
-+
-+        // case when 0 <= rotate < nb_bits
-+        {
-+            let clear_shift = clear_shift % nb_bits;
-+            let shift = cks.encrypt(clear_shift as u64);
-+            let ct_res = executor.execute((&ct, &shift));
-+            let dec_res: i64 = cks.decrypt_signed(&ct_res);
-+            let expected = rotate_left_helper(clear, clear_shift, nb_bits);
-+            assert_eq!(expected, dec_res);
-+        }
-+
-+        // case when shift >= nb_bits
-+        {
-+            let clear_shift = clear_shift.saturating_add(nb_bits);
-+            let shift = cks.encrypt(clear_shift as u64);
-+            let ct_res = executor.execute((&ct, &shift));
-+            panic_if_any_block_is_not_clean_or_trivial(&ct_res, &cks);
-+            let dec_res: i64 = cks.decrypt_signed(&ct_res);
-+            // When nb_bits is not a power of two
-+            // then the behaviour is not the same
-+            let true_nb_bits = nb_bits;
-+            let mut nb_bits = nb_bits;
-+            if !nb_bits.is_power_of_two() {
-+                nb_bits = nb_bits.next_power_of_two();
-+            }
-+            let expected = rotate_left_helper(clear, clear_shift % nb_bits, true_nb_bits);
-+            assert_eq!(expected, dec_res);
-+        }
-+    }
-+}
-+
-+pub(crate) fn legacy_signed_unchecked_rotate_right_test<P, T>(param: P, mut executor: T)
-+where
-+    P: Into<TestParameters>,
-+    T: for<'a> FunctionExecutor<
-+        (&'a SignedRadixCiphertext, &'a RadixCiphertext),
-+        SignedRadixCiphertext,
-+    >,
-+{
-+    let param = param.into();
-+    let nb_tests = nb_tests_for_params(param);
-+    let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
-+    let cks = RadixClientKey::from((cks, NB_CTXT));
-+    let sks = Arc::new(sks);
-+
-+    let mut rng = rand::thread_rng();
-+
-+    executor.setup(&cks, sks);
-+
-+    let modulus = (cks.parameters().message_modulus().0.pow(NB_CTXT as u32) / 2) as i64;
-+
-+    assert!(modulus > 0);
-+    assert!((modulus as u64).is_power_of_two());
-+    let nb_bits = modulus.ilog2() + 1; // We are using signed numbers
-+
-+    for _ in 0..nb_tests {
-+        let clear = rng.gen::<i64>() % modulus;
-+        let clear_shift = rng.gen::<u32>();
-+
-+        let ct = cks.
+@@ -3789,7 +3789,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "tfhe-hpu-backend"
+-version = "0.7.0"
++version = "0.8.0"
+ dependencies = [
+  "anyhow",
+  "bincode",
 ```
 
-**File**: `tfhe/src/integer/gpu/server_key/radix/tests_signed/test_rotate.rs` (modified, +3/-5)
+**File**: `Makefile` (modified, +1/-1)
 ```diff
-@@ -1,13 +1,11 @@
- use super::legacy_default_tests::{
-     legacy_signed_default_rotate_left_test, legacy_signed_default_rotate_right_test,
-+    legacy_signed_unchecked_rotate_left_test, legacy_signed_unchecked_rotate_right_test,
- };
- use crate::integer::gpu::server_key::radix::tests_unsigned::{
-     create_gpu_parameterized_test, GpuFunctionExecutor,
- };
- use crate::integer::gpu::CudaServerKey;
--use crate::integer::server_key::radix_parallel::tests_signed::test_rotate::{
--    signed_unchecked_rotate_left_test, signed_unchecked_rotate_right_test,
--};
- use crate::shortint::parameters::test_params::*;
- use crate::shortint::parameters::*;
+@@ -2414,7 +2414,7 @@ bench_hlapi_erc7984_hpu: install_rs_check_toolchain
+ 	RUSTFLAGS="$(RUSTFLAGS)" __TFHE_RS_BENCH_TYPE=$(BENCH_TYPE) \
+ 	cargo $(CARGO_RS_CHECK_TOOLCHAIN) bench \
+ 	--bench hlapi-erc7984 \
+-	--features=integer,internal-keycache,hpu,hpu-v80,pbs-stats -p tfhe-benchmark --
++	--features=integer,internal-keycache,hpu,hpu-v80,pbs-stats -p tfhe-benchmark -- --quick
  
-@@ -39,7 +37,7 @@ where
-     P: Into<TestParameters> + Copy,
- {
-     let executor = GpuFunctionExecutor::new(&CudaServerKey::unchecked_rotate_right);
--    signed_unchecked_rotate_right_test(param, executor);
-+    legacy_signed_unchecked_rotate_right_test(param, executor);
- }
- 
- fn integer_default_rotate_right<P>(param: P)
-@@ -55,7 +53,7 @@ where
-     P: Into<TestParameters> + Copy,
- {
-     let executor = GpuFunctionExecutor::new(&CudaServerKey::unchecked_rotate_left);
--    signed_unchecked_rotate_left_test(param, executor);
-+    legacy_signed_unchecked_rotate_left_test(param, executor);
- }
- 
- fn integer_default_rotate_left<P>(param: P)
+ .PHONY: bench_tfhe_zk_pok # Run benchmarks for the tfhe_zk_pok crate
+ bench_tfhe_zk_pok: install_rs_check_toolchain
 ```
 
-**File**: `tfhe/src/integer/gpu/server_key/radix/tests_unsigned/legacy_default_tests.rs` (modified, +118/-2)
+**File**: `backends/tfhe-hpu-backend/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -6,8 +6,14 @@
- //! `test_sum`, `test_neg` and `test_comparison`), which also exercises inputs at the maximum
- //! degree and noise level.
- //! The GPU full propagation cannot take blocks at the maximum degree yet.
--//! Once it is aligned with the CPU one point the GPU wrappers at the harness
--//! tests and delete this file.
-+//!
-+//! The rotations by an encrypted amount also differ: the CPU reduces the amount modulo the
-+//! number of bits (see `unchecked_rotate_bits_assign` in `radix_parallel::rotate`), the GPU
-+//! only reads its low ⌈log₂(num_bits)⌉ bits, i.e. reduces it modulo the next power of two,
-+//! which the rotate tests of this file (unchecked ones included) still model.
-+//!
-+//! Once both are aligned with the CPU point the GPU wrappers at the harness tests and the CPU
-+//! unchecked tests, and delete this file.
- use crate::core_crypto::prelude::UnsignedNumeric;
- use crate::integer::block_decomposition::{DecomposableInto, RecomposableFrom};
- use crate::integer::ciphertext::{IntegerCiphertext, IntegerRadixCiphertext};
-@@ -1153,3 +1159,113 @@ where
-         }
-     }
- }
-+
-+pub(crate) fn legacy_unchecked_rotate_left_test<P, T>(param: P, mut executor: T)
-+where
-+    P: Into<TestParameters>,
-+    T: for<'a> FunctionExecutor<(&'a RadixCiphertext, &'a RadixCiphertext), RadixCiphertext>,
-+{
-+    let param = param.into();
-+    let nb_tests = nb_tests_for_params(param);
-+    let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
-+    let sks = Arc::new(sks);
-+    let cks = RadixClientKey::from((cks, NB_CTXT));
-+
-+    let mut rng = rand::thread_rng();
-+
-+    // message_modulus^vec_length
-+    let modulus = cks.parameters().message_modulus().0.pow(NB_CTXT as u32);
-+    assert!(modulus.is_power_of_two());
-+    let nb_bits = modulus.ilog2();
-+
-+    executor.setup(&cks, sks);
-+
-+    for _ in 0..nb_tests {
-+        let clear = rng.gen::<u64>() % modulus;
-+        let clear_shift = rng.gen::<u32>();
-+
-+        let ct = cks.encrypt(clear);
-+
-+        // case when 0 <= rotate < nb_bits
-+        {
-+            let clear_rotate = clear_shift % nb_bits;
-+            let shift = cks.encrypt(clear_rotate as u64);
-+            let encrypted_result = executor.execute((&ct, &shift));
-+            let decrypted_result: u64 = cks.decrypt(&encrypted_result);
-+            let expected = rotate_left_helper(clear, clear_rotate, nb_bits);
-+            assert_eq!(expected, decrypted_result);
-+        }
-+
-+        // case when shift >= nb_bits
-+        {
-+            let clear_rotate = clear_shift.saturating_add(nb_bits);
-+            let shift = cks.encrypt(clear_rotate as u64);
-+            let encrypted_result = executor.execute((&ct, &shift));
-+            let decrypted_result: u64 = cks.decrypt(&encrypted_result);
-+            // When nb_bits is not a power of two
-+            // then the behaviour is not the same
-+            let true_nb_bits = nb_bits;
-+            let mut nb_bits = nb_bits;
-+            if !nb_bits.is_power_of_two() {
-+                nb_bits = nb_bits.next_power_of_two();
-+            }
-+            let expected = rotate_left_helper(clear, clear_rotate % nb_bits, true_nb_bits);
-+            assert_eq!(expected, decrypted_result);
-+        }
-+    }
-+}
-+
-+pub(crate) fn legacy_unchecked_rotate_right_test<P, T>(param: P, mut executor: T)
-+where
-+    P: Into<TestParameters>,
-+    T: for<'a> FunctionExecutor<(&'a RadixCiphertext, &'a RadixCiphertext), RadixCiphertext>,
-+{
-+    let param = param.into();
-+    let nb_tests = nb_tests_for_params(param);
-+    let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
-+    let sks = Arc::new(sks);
-+    let cks = RadixClientKey::from((cks, NB_CTXT));
-+
-+    let mut rng = rand::thread_rng();
-+
-+    // message_modulus^vec_length
-+    let modulus = cks.parameters().message_modulus().0.pow(NB_CTXT as u32);
-+    assert!(modulus.is_power_of_two());
-+    let nb_bits = modulus.ilog2();
-+
-+    executor.setup(&cks, sks);
-+
-+    for _ in 0..nb_tests {
-+        let clear = rng.gen::<u64>() % modulus;
-+        let clear_shift = rng.gen::<u32>();
-+
-+        let ct = cks.encrypt(clear);
-+
-+        // case when 0 <= rotate < nb_bits
-+        {
-+            let clear_rotate = clear_shift % nb_bits;
-+            let shift = cks.encrypt(clear_rotate as u64);
-+            let encrypted_result = executor.execute((&ct, &shift));
-+            let decrypted_result: u64 = cks.decrypt(&encrypted_result);
-+            let expected = rotate_right_helper(clear, clear_rotate, nb_bits);
-+            assert_eq!(expected, decrypted_result);
-+        }
-+
-+        // case when shift >= nb_bits
-+        {
-+            let clear_rotate = clear_shift.saturating_add(nb_bits);
-+            let shift = cks.encrypt(clear_rotate as u64);
-+            let encrypted_result = executor.execute((&ct, &shift));
-+            let decrypted_result: u64 = cks.decrypt(&encrypted_result);
-+            // When nb_bits is not a power of two
-+            // then the behaviour is not the sa
+@@ -1,6 +1,6 @@
+ [package]
+ name = "tfhe-hpu-backend"
+-version = "0.7.0"
++version = "0.8.0"
+ edition = "2021"
+ license = "BSD-3-Clause-Clear"
+ description = "HPU implementation on FPGA of TFHE-rs primitives."
 ```
 
-**File**: `tfhe/src/integer/gpu/server_key/radix/tests_unsigned/test_rotate.rs` (modified, +3/-5)
+**File**: `tfhe-benchmark/benches/high_level_api/bench_unsigned.rs` (modified, +7/-2)
 ```diff
-@@ -1,13 +1,11 @@
- use super::legacy_default_tests::{
-     legacy_default_rotate_left_test, legacy_default_rotate_right_test,
-+    legacy_unchecked_rotate_left_test, legacy_unchecked_rotate_right_test,
- };
- use crate::integer::gpu::server_key::radix::tests_unsigned::{
-     create_gpu_parameterized_test, GpuFunctionExecutor,
- };
- use crate::integer::gpu::CudaServerKey;
--use crate::integer::server_key::radix_parallel::tests_unsigned::test_rotate::{
--    unchecked_rotate_left_test, unchecked_rotate_right_test,
--};
- use crate::shortint::parameters::test_params::*;
- use crate::shortint::parameters::*;
+@@ -58,8 +58,13 @@ fn main() {
+         let config_path = ShellString::new(
+             "${HPU_BACKEND_DIR}/config_store/${HPU_CONFIG}/hpu_config.toml".to_string(),
+         );
+-        let hpu_device =
+-            HpuDevice::from_config(&config_path.expand(), false).expect("Hpu device init failed");
++        let hpu_config = HpuConfig::from_toml(config_path.expand().as_str());
++        let hpu_device = HpuDevice::new(
++            hpu_config.clone(),
++            false,
++            &tfhe::core_crypto::hpu::create_hpu_lookuptable,
++        )
++        .expect("Hpu device init failed");
  
-@@ -41,7 +39,7 @@ where
-     P: Into<TestParameters> + Copy,
- {
-     let executor = GpuFunctionExecutor::new(&CudaServerKey::unchecked_rotate_right);
--    unchecked_rotate_right_test(param, executor);
-+    legacy_unchecked_rotate_right_test(param, executor);
- }
- 
- fn integer_default_rotate_right<P>(param: P)
-@@ -57,7 +55,7 @@ where
-     P: Into<TestParameters> + Copy,
- {
-     let executor = GpuFunctionExecutor::new(&CudaServerKey::unchecked_rotate_left);
--    unchecked_rotate_left_test(param, executor);
-+    legacy_unchecked_rotate_left_test(param, executor);
- }
- 
- fn integer_default_rotate_left<P>(param: P)
+         let config = Config::from_hpu_device(&hpu_device);
+         let cks = ClientKey::generate(config);
 ```
 
-**File**: `tfhe/src/integer/server_key/radix_parallel/rotate.rs` (modified, +82/-3)
+**File**: `tfhe/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -1,6 +1,7 @@
- use super::shift::BarrelShifterOperation;
-+use crate::integer::bigint::{U1024, U2048};
- use crate::integer::ciphertext::{IntegerRadixCiphertext, RadixCiphertext};
--use crate::integer::ServerKey;
-+use crate::integer::{ServerKey, U256, U512};
+@@ -107,7 +107,7 @@ serde-wasm-bindgen = { workspace = true, optional = true }
+ getrandom = { workspace = true, optional = true }
+ bytemuck = { workspace = true }
  
- impl ServerKey {
-     //======================================================================
-@@ -20,7 +21,7 @@ impl ServerKey {
-     where
-         T: IntegerRadixCiphertext,
-     {
--        self.unchecked_shift_rotate_bits_assign(ct, n, BarrelShifterOperation::RightRotate);
-+        self.unchecked_rotate_bits_assign(ct, n, BarrelShifterOperation::RightRotate);
-     }
+-tfhe-hpu-backend = { version = "0.7.0", path = "../backends/tfhe-hpu-backend", optional = true }
++tfhe-hpu-backend = { version = "0.8.0", path = "../backends/tfhe-hpu-backend", optional = true }
  
-     /// Computes homomorphically a rotation of bits.
-@@ -86,7 +87,85 @@ impl ServerKey {
-     where
-         T: IntegerRadixCiphertext,
-     {
--        self.unchecked_shift_rotate_bits_assign(ct, n, BarrelShifterOperation::LeftRotate);
-+        self.unchecked_rotate_bits_assign(ct, n, BarrelShifterOperation::LeftRotate);
-+    }
-+
-+    /// Rotates the bits of `ct` by `amount` reduced modulo the number of bits of `ct`.
-+    ///
-+    ///
-+    /// Inputs must not have carries.
-+    fn unchecked_rotate_bits_assign<T>(
-+        &self,
-+        ct: &mut T,
-+        amount: &RadixCiphertext,
-+        operation: BarrelShifterOperation,
-+    ) where
-+        T: IntegerRadixCiphertext,
-+    {
-+        assert!(matches!(
-+            operation,
-+            BarrelShifterOperation::LeftRotate | BarrelShifterOperation::RightRotate
-+        ));
-+
-+        let bits_per_block = self.message_modulus().0.ilog2();
-+        let num_bits_encrypted_by_ct = ct.blocks().len() as u64 * u64::from(bits_per_block);
-+        let num_bits_encrypted_by_amount = amount.blocks.len() as u32 * bits_per_block;
-+
-+        // For all block sizes, unchecked_shift_rotate_assign uses a barrel shifter,
-+        // which truncates the `amount` to only take the ⌈log₂(num_bits)⌉.
-+        // This is a modular reduction  only when `num_bits` is a power of two.
-+        // For non powers of two, Rotating a radix that encrypts 6 bits, by `8`
-+        // would rotate by 0 instead of 2 (8 % 6 = 2, 8 % 2^⌈log₂(6)⌉ = 8 % 8 = 0)
-+        //
-+        // So to have the consistent modular reduction `amount % nb_bits(ct)`, we will
-+        // use a scalar_rem, but for powers of two we can skip it.
-+        //
-+        // And there's a reason we skip the call to the remainder op:
-+        // the remainder op would introduce a PBS, to cut the bits of the last block
-+        // when the number of bits to keep is not a multiple of the number of bits in a block.
-+        // The truncation of the barrel shifter used in the rotate does it naturally, without
-+        // extra cost.
-+        // e.g: rot(FheUint32, x), 2_2 params -> num_bits_encrypted_by_ct = 32 -> it is power of 2,
-+        // the number of bits to keep is log2(32) = 5, 5 is not a multiple of 2, thus the remainder
-+        // op would do a PBS to clear the high bit of the 3rd block, whereas the barrel shifter
-+        // already handles this trimming nicely
-+        if num_bits_encrypted_by_ct.is_power_of_two() {
-+            self.unchecked_shift_rotate_bits_assign(ct, amount, operation);
-+            return;
-+        }
-+
-+        // The scalar division requires the scalar type used to have a number of bits >= to the
-+        // number of bits the ciphertext encrypts
-+        //
-+        // The ciphertext we use in the division is the `amount`, so we need to pick a scalar type
-+        // that has at least as many bits as what `amount` encrypts. This type is used to
-+        // store the number of bits encrypted by the `ct` to be rotated
-+        //
-+        // So that we can do `amount` % num_bits_encrypted_by_ct
-+        //
-+        // Currently there's a limit that amount cannot encrypt more than 2048 bits,
-+        // but don't be lost, it does not mean amount can encrypt a value in [0, 2048], but
-+        // that it can encrypt a value in [0, 2**2048[
-+        let amount = if num_bits_encrypted_by_amount <= u64::BITS {
-+            self.unchecked_scalar_rem_parallelized(amount, num_bits_encrypted_by_ct)
-+        } else if num_bits_encrypted_by_amount <= u128::BITS {
-+            self.unchecked_scalar_rem_parallelized(amount, u128::from(num_bits_encrypted_by_ct))
-+        } else if num_bits_encrypted_by_amount <= 256 {
-+            self.unchecked_scalar_rem_parallelized(amount, U256::from(num_bits_encrypted_by_ct))
-+        } else if num_bits_encrypted_by_amount <= 512 {
-+            self.unchecked_scalar_rem_parallelized(amount, U512::from(num_bits_encrypted_by_ct))
-+        } else if num_bits_encrypted_by_amount <= 1024 {
-+            self.unchecked_scalar_rem_parallelized(amount, U1024::from(num_bits_encrypted_by_ct))
-+        } else if num_bits_encrypted_by_amount <= 2048 {
-+            self.unchecked_scalar_rem_parallelized(amount, U2048::from(num_bits_encrypted_by_ct))
-+        } else {
-+            panic!(
-+                "rotations by an `amount` that encrypts more than
+ [features]
+ default = ["avx512"]
 ```
 
-**File**: `tfhe/src/integer/server_key/radix_parallel/scalar_bitwise_op.rs` (modified, +15/-2)
+**File**: `tfhe/docs/.gitbook/assets/hpu-hlapi-erc7984-benchmark-hpux8-latency-throughput-ciphertext.svg` (added, +26/-0)
 ```diff
-@@ -1,6 +1,7 @@
- use crate::integer::block_decomposition::{BlockDecomposer, DecomposableInto};
- use crate::integer::ciphertext::IntegerRadixCiphertext;
- use crate::integer::ServerKey;
-+use crate::shortint::ciphertext::NoiseLevel;
- use rayon::prelude::*;
- 
- impl ServerKey {
-@@ -26,12 +27,24 @@ impl ServerKey {
-             .iter_as::<u8>()
-             .collect::<Vec<_>>();
- 
-+        let all_ones = (message_modulus - 1) as u8;
-         lhs.blocks_mut()
-             .par_iter_mut()
-             .zip(clear_blocks.par_iter().copied())
-             .for_each(|(lhs_block, clear_block)| {
--                self.key
--                    .unchecked_scalar_bitand_assign(lhs_block, clear_block);
-+                if clear_block == 0 {
-+                    self.key.create_trivial_assign(lhs_block, 0);
-+                } else if clear_block == all_ones
-+                    && lhs_block.carry_is_empty()
-+                    && lhs_block.noise_level() <= NoiseLevel::NOMINAL
-+                {
-+                    // The block is clean (no carry, nominal noise)
-+                    // and the corresponding scalar block is a mask on all message bits
-+                    // so we can safely skip a PBS here
-+                } else {
-+                    self.key
-+                        .unchecked_scalar_bitand_assign(lhs_block, clear_block);
-+                }
-             });
- 
-         let num_clear_blocks = clear_blocks.len();
+@@ -0,0 +1,26 @@
++<?xml version="1.0" ?>
++<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 160" preserveAspectRatio="meet" width="100%" height="160">
++	<rect x="0" y="0" width="720" height="40" fill="black"/>
++	<text dominant-baseline="middle" text-anchor="start" font-family="Arial" font-size="14" font-weight="bold" fill="white" x="6" y="20.0">Transfer implementation</text>
++	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold" fill="white" x="405.0" y="20.0">Latency</text>
++	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold" fill="white" x="615.0" y="20.0">Throughput</text>
++	<rect x="0" y="40" width="300" height="120" fill="#fbbc04"/>
++	<rect x="300" y="40" width="420" height="120" fill="#f3f3f3"/>
++	<text dominant-baseline="middle" text-anchor="start" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="6" y="60.0">whitepaper</text>
++	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="405.0" y="60.0">22.5 ms</text>
++	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="615.0" y="60.0">360 ops/s</text>
++	<text dominant-baseline="middle" text-anchor="start" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="6" y="100.0">hpu_optim</text>
++	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="405.0" y="100.0">20.3 ms</text>
++	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="615.0" y="100.0">400 ops/s</text>
++	<text dominant-baseline="middle" text-anchor="start" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="6" y="140.0">hpu_simd</text>
++	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="405.0" y="140.0">118 ms</text>
++	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="615.0" y="140.0">821 ops/s</text>
++	<line stroke="white" stroke-width="2" x1="0" y1="0" x2="720" y2="0"/>
++	<line stroke="white" stroke-width="2" x1="0" y1="40" x2="720" y2="40"/>
++	<line stroke="white" stroke-width="2" x1="0" y1="80" x2="720" y2="80"/>
++	<line stroke="white" stroke-width="2" x1="0" y1="120" x2="720" y2="120"/>
++	<line stroke="white" stroke-width="2" x1="0" y1="0" x2="0" y2="160"/>
++	<line stroke="white" stroke-width="2" x1="300.0" y1="0" x2="300.0" y2="160"/>
++	<line stroke="white" stroke-width="2" x1="510.0" y1="0" x2="510.0" y2="160"/>
++	<line stroke="white" stroke-width="2" x1="720.0" y1="0" x2="720.0" y2="160"/>
++</svg>
 ```
 
-**File**: `tfhe/src/integer/server_key/radix_parallel/scalar_div_mod.rs` (modified, +27/-13)
+**File**: `tfhe/docs/.gitbook/assets/hpu-integer-benchmark-hpux1-tuniform-2m128-latency-ciphertext.svg` (modified, +62/-62)
 ```diff
-@@ -373,8 +373,7 @@ impl ServerKey {
-                 .unchecked_scalar_right_shift_parallelized(numerator, divisor.ilog2() as u64);
-         }
- 
--        let log2_divisor = divisor.ceil_ilog2();
--        if log2_divisor > numerator_bits {
-+        if self.divisor_exceeds_numerator(numerator, divisor) {
-             return self.create_trivial_zero_radix(numerator.blocks.len());
-         }
- 
-@@ -862,6 +861,11 @@ impl ServerKey {
-     where
-         T: Reciprocable + ScalarMultiplier + DecomposableInto<u8>,
-     {
-+        if self.divisor_exceeds_numerator(numerator, divisor) {
-+            let quotient = self.create_trivial_zero_radix(numerator.blocks.len());
-+            return (quotient, numerator.clone());
-+        }
-+
-         let quotient = self.unchecked_scalar_div_parallelized(numerator, divisor);
-         let remainder = if MiniUnsignedInteger::is_power_of_two(divisor) {
-             // unchecked_scalar_div would have panicked if divisor was zero
-@@ -883,6 +887,10 @@ impl ServerKey {
-     where
-         T: Reciprocable + ScalarMultiplier + DecomposableInto<u8>,
-     {
-+        if self.divisor_exceeds_numerator(numerator, divisor) {
-+            return numerator.clone();
-+        }
-+
-         if MiniUnsignedInteger::is_power_of_two(divisor) {
-             // The remainder is simply the bits that would get 'shifted out'
-             return self.scalar_bitand_parallelized(numerator, divisor - T::ONE);
-@@ -892,6 +900,20 @@ impl ServerKey {
-         remainder
-     }
- 
-+    /// Whether `divisor` is greater than any value `numerator` can hold, in which case the
-+    /// division has nothing to reduce: the quotient is 0 and the remainder the numerator.
-+    ///
-+    /// Works whatever the width of `T` compared to the numerator's.
-+    fn divisor_exceeds_numerator<T>(&self, numerator: &RadixCiphertext, divisor: T) -> bool
-+    where
-+        T: Reciprocable,
-+    {
-+        let numerator_bits = self.key.message_modulus.0.ilog2() as usize * numerator.blocks.len();
-+        // If the divisor type has more bits than the numerator, and that it's bigger than
-+        // the max value the numerator can encrypt
-+        T::BITS > numerator_bits && divisor > (T::ONE << numerator_bits) - T::ONE
-+    }
-+
-     pub fn scalar_div_assign_parallelized<T>(&self, numerator: &mut RadixCiphertext, divisor: T)
-     where
-         T: Reciprocable + DecomposableInto<u8>,
-@@ -907,10 +929,7 @@ impl ServerKey {
-     where
-         T: Reciprocable + ScalarMultiplier + DecomposableInto<u8>,
-     {
--        if !numerator.block_carries_are_empty() {
--            self.full_propagate_parallelized(numerator);
--        }
--
-+        self.clean_inplace_for_default_op(numerator);
-         *numerator = self.unchecked_scalar_rem_parallelized(numerator, divisor);
-     }
- 
-@@ -1041,13 +1060,8 @@ impl ServerKey {
-     where
-         T: Reciprocable + ScalarMultiplier + DecomposableInto<u8>,
-     {
--        if numerator.block_carries_are_empty() {
--            self.unchecked_scalar_div_rem_parallelized(numerator, divisor)
--        } else {
--            let mut cloned_numerator = numerator.clone();
--            self.full_propagate_parallelized(&mut cloned_numerator);
--            self.unchecked_scalar_div_rem_parallelized(&cloned_numerator, divisor)
--        }
-+        let numerator = self.clean_for_default_op(numerator);
-+        self.unchecked_scalar_div_rem_parallelized(&numerator, divisor)
-     }
- }
- 
+@@ -1,5 +1,5 @@
+ <?xml version="1.0" ?>
+-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 520" preserveAspectRatio="meet" width="100%" height="520">
++<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 520" preserveAspectRatio="meet" width="100%" height="520" xmlns:c2pa="http://c2pa.org/manifest">
+ 	<rect x="0" y="0" width="720" height="40" fill="black"/>
+ 	<text dominant-baseline="middle" text-anchor="start" font-family="Arial" font-size="14" font-weight="bold" fill="white" x="6" y="20.0">Operation \ Size</text>
+ 	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold" fill="white" x="342.0" y="13.333333333333334">FheUint</text>
+@@ -15,77 +15,77 @@
+ 	<rect x="0" y="40" width="300" height="480" fill="#fbbc04"/>
+ 	<rect x="300" y="40" width="420" height="480" fill="#f3f3f3"/>
+ 	<text dominant-baseline="middle" text-anchor="start" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="6" y="60.0">Negation (-)</text>
+-	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="342.0" y="60.0">2.74 ms</text>
+-	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="426.0" y="60.0">3.47 ms</text>
+-	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="510.0" y="60.0">5.01 ms</text>
+-	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="594.0" y="60.0">8.53 ms</text>
+-	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="678.0" y="60.0">15.7 ms</text>
++	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="342.0" y="60.0">2.19 ms</text>
++	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="426.0" y="60.0">2.95 ms</text>
++	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="510.0" y="60.0">4.65 ms</text>
++	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="594.0" y="60.0">8.38 ms</text>
++	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="678.0" y="60.0">17.7 ms</text>
+ 	<text dominant-baseline="middle" text-anchor="start" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="6" y="100.0">Add / Sub (+,-)</text>
+-	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="342.0" y="100.0">2.76 ms</text>
+-	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="426.0" y="100.0">3.45 ms</text>
+-	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="510.0" y="100.0">4.93 ms</text>
+-	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="594.0" y="100.0">8.48 ms</text>
+-	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="678.0" y="100.0">15.6 ms</text>
++	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="342.0" y="100.0">2.24 ms</text>
++	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="426.0" y="100.0">2.97 ms</text>
++	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="510.0" y="100.0">4.56 ms</text>
++	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="594.0" y="100.0">8.12 ms</text>
++	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="678.0" y="100.0">17.1 ms</text>
+ 	<text dominant-baseline="middle" text-anchor="start" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="6" y="140.0">Mul (x)</text>
+-	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="342.0" y="140.0">3.45 ms</text>
+-	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="426.0" y="140.0">8.9 ms</text>
+-	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="510.0" y="140.0">31.1 ms</text>
+-	<
 ```
 
-**File**: `tfhe/src/integer/server_key/radix_parallel/shift.rs` (modified, +8/-22)
+**File**: `tfhe/docs/.gitbook/assets/hpu-integer-benchmark-hpux1-tuniform-2m128-latency-plaintext.svg` (modified, +27/-27)
 ```diff
-@@ -1,3 +1,4 @@
-+use crate::core_crypto::prelude::UnsignedInteger;
- use crate::integer::ciphertext::{IntegerRadixCiphertext, RadixCiphertext};
- use crate::integer::server_key::radix_parallel::bit_extractor::BitExtractor;
- use crate::integer::{BooleanBlock, ServerKey};
-@@ -223,15 +224,9 @@ impl ServerKey {
-         assert!(carry_bits_per_block >= message_bits_per_block);
- 
-         let num_bits = ct.blocks().len() * message_bits_per_block as usize;
--        let mut max_num_bits_that_tell_shift = num_bits.ilog2() as u64;
--        // This effectively means, that if the block parameters
--        // give a total_nb_bits that is not a power of two,
--        // then the behaviour of shifting won't be the same
--        // if shift >= total_nb_bits compared to when total_nb_bits
--        // is a power of two, as will 'capture' more bits in `shift_bits`
--        if !num_bits.is_power_of_two() {
--            max_num_bits_that_tell_shift += 1;
--        }
-+        // Number of low bits of the amount the shifter reads. Shifts decide overshifts on the
-+        // whole amount, rotations reduce the amount modulo `num_bits` beforehand
-+        let max_num_bits_that_tell_shift = u64::from(num_bits.ceil_ilog2());
- 
-         if message_bits_per_block == 1 {
-             *ct = self.barrel_shift_bits_1_bit(
-@@ -1004,15 +999,9 @@ impl ServerKey {
-                 bit_extractor.extract_all_bits()
-             },
-             || {
--                let mut max_num_bits_that_tell_shift = total_nb_bits.ilog2() as u64;
--                // This effectively means, that if the block parameters
--                // give a total_nb_bits that is not a power of two,
--                // then the behaviour of shifting won't be the same
--                // if shift >= total_nb_bits compared to when total_nb_bits
--                // is a power of two, as will 'capture' more bits in `shift_bits`
--                if !total_nb_bits.is_power_of_two() {
--                    max_num_bits_that_tell_shift += 1;
--                }
-+                // Number of low bits of the amount the shifter reads, see
-+                // `unchecked_shift_rotate_bits_assign`
-+                let max_num_bits_that_tell_shift = u64::from(total_nb_bits.ceil_ilog2());
- 
-                 // Extracts bits and put them in the bit index 2 (=> bit number 3)
-                 // so that it is already aligned to the correct position of the cmux input
-@@ -1157,10 +1146,7 @@ impl ServerKey {
-         let message_bits_per_block = self.key.message_modulus.0.ilog2() as u64;
-         let num_bits = num_blocks as u64 * message_bits_per_block;
- 
--        let mut max_num_bits_that_tell_shift = num_bits.ilog2();
--        if !num_bits.is_power_of_two() {
--            max_num_bits_that_tell_shift += 1;
--        }
-+        let max_num_bits_that_tell_shift = num_bits.ceil_ilog2();
-         let split = (max_num_bits_that_tell_shift as usize)
-             .div_ceil(message_bits_per_block as usize)
-             .min(amount.blocks.len());
-```
-
----
-
-### Incident Patch 2: `cbd6b4f2` (2026-11-24)
-**Commit Message**: chore(ci): remove ci file not used anymore and fix gpu build
-
-* chore(ci): remove ci file not used anymore
-
-* fix: change gpu setup to handle everything in https over http
-
-**File**: `.github/actions/gpu_setup/action.yml` (modified, +4/-0)
-```diff
-@@ -30,6 +30,10 @@ runs:
- 
-         bash ci/wait_for_apt_lock.sh
- 
-+        # Outbound port 80 is blocked by the instance security group, fetch apt sources over HTTPS.
-+        sudo find /etc/apt -maxdepth 2 -type f \( -name '*.list' -o -name '*.sources' \) \
-+          -exec sed -i 's|http://|https://|g' {} +
-+
-         sudo apt-get update
-         sudo apt-get install -y cmake-format libclang-dev
-       env:
-```
-
-**File**: `.github/workflows/benchmark_gpu_coprocessor.yml` (modified, +4/-0)
-```diff
-@@ -127,6 +127,10 @@ jobs:
-         run: |
-           bash ci/wait_for_apt_lock.sh
- 
-+          # Outbound port 80 is blocked by the instance security group, fetch apt sources over HTTPS.
-+          sudo find /etc/apt -maxdepth 2 -type f \( -name '*.list' -o -name '*.sources' \) \
-+            -exec sed -i 's|http://|https://|g' {} +
-+
-           sudo apt-get update
-           sudo apt-get install -y git-lfs protobuf-compiler
-           git lfs install
-```
-
-**File**: `ci/slab.toml` (removed, +0/-338)
-```diff
-@@ -1,338 +0,0 @@
--[backend.aws.cpu-big]
--region = "eu-west-3"
--image_id = "ami-01c204b15b504da60"
--instance_type = "m6i.32xlarge"
--user = "ubuntu"
--
--[backend.aws.cpu-big_fallback]
--region = "us-east-1"
--image_id = "ami-0c6e54f3be8d03234"
--instance_type = "m6i.32xlarge"
--user = "ubuntu"
--
--[backend.aws.cpu-small]
--region = "eu-west-3"
--image_id = "ami-01c204b15b504da60"
--instance_type = "m6i.4xlarge"
--user = "ubuntu"
--
--[backend.aws.bench]
--region = "eu-west-1"
--image_id = "ami-067f3893108afe8cd"
--instance_type = "hpc7a.96xlarge"
--user = "ubuntu"
--
--[backend.aws.bench-hpc8]
--region = "eu-north-1"
--image_id = "ami-0d7f32ee367bc2a69"
--instance_type = "hpc8a.96xlarge"
--user = "ubuntu"
--
--# Profile used to build CUDA code without the need to get p-like instance.
--[backend.aws.gpu-build]
--region = "us-east-1"
--image_id = "ami-0250f541bc1358116"
--instance_type = "m6i.4xlarge"
--user = "ubuntu"
--
--[backend.aws.single-h100]
--region = "us-east-1"
--image_id = "ami-0250f541bc1358116"
--instance_type = "p5.4xlarge"
--user = "ubuntu"
--
--[backend.aws.single-h100_1stfallback]
--region = "us-east-2"
--image_id = "ami-0c924a8e0a210a709"
--instance_type = "p5.4xlarge"
--user = "ubuntu"
--
--[backend.aws.single-h100_2ndfallback]
--region = "us-west-1"
--image_id = "ami-0fe3273232bc2fb8a"
--instance_type = "p5.4xlarge"
--user = "ubuntu"
--
--[backend.aws.single-h100_3rdfallback]
--region = "us-west-2"
--image_id = "ami-057682b0cfedeaf20"
--instance_type = "p5.4xlarge"
--user = "ubuntu"
--
--[backend.aws.4-l40]
--region = "us-east-1"
--image_id = "ami-0250f541bc1358116"
--instance_type = "g6e.24xlarge"
--user = "ubuntu"
--fallbacks = [ "hyperstack.4-l40", "terraform.scaleway-4-l40" ]
--
--[backend.aws.small-gpu]
--region = "us-east-1"
--image_id = "ami-0250f541bc1358116"
--instance_type = "g6.2xlarge"
--user = "ubuntu"
--
--[backend.hyperstack.gpu-test]
--environment_name = "canada"
--image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
--flavor_name = "n3-L40x1"
--user = "ubuntu"
--fallbacks = [ "terraform.scaleway-small-gpu", "hyperstack.rtx-a6000" ]
--
--[backend.hyperstack.gpu-test-sanitizer]
--environment_name = "canada"
--image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
--flavor_name = "n3-L40x1"
--user = "ubuntu"
--fallbacks = [ "terraform.scaleway-small-gpu-sanitizer" ]
--
--[backend.hyperstack.single-h100]
--environment_name = "canada"
--image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
--flavor_name = "n3-H100x1"
--user = "ubuntu"
--
--# Primary target of gpu_protocol_stress_h100_tests: one H100 PCIe, falling back to a single
--# Scaleway H100 and then to a 2 GPU Scaleway instance. The fallbacks deliberately name the
--# profiles that carry no fallbacks of their own, so the chain stays exactly these three.
--[backend.hyperstack.single-h100-protocol-stress]
--environment_name = "canada"
--image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
--flavor_name = "n3-H100x1"
--user = "ubuntu"
--fallbacks = [
--    "terraform.scaleway-single-h100",
--    "terraform.scaleway-2-h100-sxm5",
--]
--
--[backend.hyperstack.2-h100]
--environment_name = "canada"
--image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
--flavor_name = "n3-H100x2"
--user = "ubuntu"
--
--[backend.hyperstack.4-h100]
--environment_name = "canada"
--image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
--flavor_name = "n3-H100x4"
--user = "ubuntu"
--
--[backend.hyperstack.multi-h100]
--environment_name = "canada"
--image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
--flavor_name = "n3-H100x8"
--user = "ubuntu"
--
--[backend.hyperstack.multi-h100-nvlink]
--environment_name = "canada"
--image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
--flavor_name = "n3-H100x8-NVLink"
--user = "ubuntu"
--
--[backend.hyperstack.multi-h100-sxm5]
--environment_name = "canada"
--image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
--flavor_name = "n3-H100-SXM5x8"
--user = "ubuntu"
--
--[backend.hyperstack.multi-h100-sxm5_fallback]
--environment_name = "us-1"
--image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
--flavor_name = "n3-H100-SXM5x8"
--user = "ubuntu"
--
--[backend.hyperstack.multi-a100-nvlink]
--environment_name = "canada"
--image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
--flavor_name = "n3-A100x8-NVLink"
--user = "ubuntu"
--
--[backend.hyperstack.l40]
--environment_name = "canada"
--image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
--flavor_name = "n3-L40x1"
--user = "ubuntu"
--
--[backend.hyperstack.l40_fallback]
--environment_name = "canada"
--image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
--flavor_name = "n3-RTX-A6000x1"
--user = "ubuntu"
--
--# Fallback target only.
--[backend.hyperstack.rtx-a6000]
--environment_name = "canada"
--image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
--flavor_name = "n3-RTX-A6000x1"
--user = "ubuntu"
--
--[backend.hyperstack.4-l40]
--environment_name = "canada"
--image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
--flavor_name = "n3-L40x4"
--user = "ubuntu"
--
--[backend.hyperstack.4-l40_fallback]
--environment_name = "norway"
--image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
--flavor_name = "n3-RTX-A4000x4"
--user = "
-```
-
-**File**: `ci/terraform_scripts/nebius/terraform_h100.tf` (removed, +0/-130)
-```diff
-@@ -1,130 +0,0 @@
--terraform {
--  required_providers {
--    nebius = {
--      source  = "terraform-provider.storage.eu-north1.nebius.cloud/nebius/nebius"
--      version = "~> 0.5"
--    }
--  }
--  required_version = "~> 1.14"
--}
--
--provider "nebius" {
--  domain = "api.nebius.cloud:443"
--
--  service_account = {
--    account_id       = var.nebius_sa_account_id
--    public_key_id    = var.nebius_sa_public_key_id
--    private_key_file = "/app/nebius/slab_ci_service_account_private.pem"
--  }
--}
--
--variable "nebius_sa_account_id" {
--  type        = string
--  description = "Nebius service account used by Slab"
--  default     = "serviceaccount-e00ja4a60pzcaabtm0"
--}
--
--variable "nebius_sa_public_key_id" {
--  type        = string
--  description = "ID of the service account authorized key"
--  default     = "publickey-e00vtny4sn819pm0pg"
--}
--
--variable "nebius_project_id" {
--  type        = string
--  description = "Nebius project ID to attach to"
--  default     = "project-e00g2md3pr003aqkq1v4q0"
--}
--
--variable "nebius_subnet_id" {
--  type        = string
--  description = "Nebius VPC subnet ID to attach the instance to"
--  default     = "vpcsubnet-e00zwv8bkn6dxmk91s"
--}
--
--variable "nebius_security_group_id" {
--  type        = string
--  description = "Nebius VPC security group ID to attach to the instance network interface"
--  default     = "vpcsecuritygroup-e00kvyx503efvsc4br"
--}
--
--# Provided via ci/slab.toml
--variable "instance_type" {
--  type        = string
--  description = "Nebius instance preset to be used (e.g. 1gpu-16vcpu-200gb)"
--}
--
--# Presets are platform specific, a different GPU type needs its own script
--variable "platform" {
--  type        = string
--  description = "Nebius compute platform (GPU type)"
--  default     = "gpu-h100-sxm"
--}
--
--# Provided by Slab server
--variable "instance_label" {
--  type        = string
--  description = "Instance name to display in console"
--}
--
--# Provided by Slab server
--variable "user_data" {
--  type        = string
--  description = "Script that will be run at instance startup"
--  sensitive   = true
--}
--
--resource "nebius_compute_v1_disk" "boot_disk" {
--  parent_id        = var.nebius_project_id
--  name             = "${var.instance_label}-boot-disk"
--  type             = "NETWORK_SSD"
--  size_gibibytes   = 200
--  block_size_bytes = 4096
--
--  # Pinned ubuntu24.04-cuda12 image (CUDA 12.8, driver 570), the family alone would drift between runs
--  source_image_id = "computeimage-e00q003g5k851wjgpn"
--}
--
--resource "nebius_compute_v1_instance" "runner" {
--  parent_id = var.nebius_project_id
--  name      = var.instance_label
--
--  resources = {
--    platform = var.platform
--    preset   = var.instance_type
--  }
--
--  boot_disk = {
--    attach_mode = "READ_WRITE"
--    existing_disk = {
--      id = nebius_compute_v1_disk.boot_disk.id
--    }
--  }
--
--  network_interfaces = [
--    {
--      name              = "eth0"
--      subnet_id         = var.nebius_subnet_id
--      security_groups   = [{ id = var.nebius_security_group_id }]
--      ip_address        = {}
--      public_ip_address = {}
--    }
--  ]
--
--  # Nebius expects a #cloud-config document, so the Slab script is shipped as a file and run from it
--  cloud_init_user_data = <<-EOT
--    #cloud-config
--    write_files:
--      - path: /opt/slab/runner_start.sh
--        permissions: "0755"
--        encoding: b64
--        content: ${base64encode(var.user_data)}
--    runcmd:
--      - /opt/slab/runner_start.sh
--  EOT
--}
--
--output "instance_id" {
--  value       = nebius_compute_v1_instance.runner.id
--  description = "Unique ID of the Nebius instance"
--}
-```
-
-**File**: `ci/terraform_scripts/nebius/terraform_l40.tf` (removed, +0/-130)
-```diff
-@@ -1,130 +0,0 @@
--terraform {
--  required_providers {
--    nebius = {
--      source  = "terraform-provider.storage.eu-north1.nebius.cloud/nebius/nebius"
--      version = "~> 0.5"
--    }
--  }
--  required_version = "~> 1.14"
--}
--
--provider "nebius" {
--  domain = "api.nebius.cloud:443"
--
--  service_account = {
--    account_id       = var.nebius_sa_account_id
--    public_key_id    = var.nebius_sa_public_key_id
--    private_key_file = "/app/nebius/slab_ci_service_account_private.pem"
--  }
--}
--
--variable "nebius_sa_account_id" {
--  type        = string
--  description = "Nebius service account used by Slab"
--  default     = "serviceaccount-e00ja4a60pzcaabtm0"
--}
--
--variable "nebius_sa_public_key_id" {
--  type        = string
--  description = "ID of the service account authorized key"
--  default     = "publickey-e00vtny4sn819pm0pg"
--}
--
--variable "nebius_project_id" {
--  type        = string
--  description = "Nebius project ID to attach to"
--  default     = "project-e00g2md3pr003aqkq1v4q0"
--}
--
--variable "nebius_subnet_id" {
--  type        = string
--  description = "Nebius VPC subnet ID to attach the instance to"
--  default     = "vpcsubnet-e00zwv8bkn6dxmk91s"
--}
--
--variable "nebius_security_group_id" {
--  type        = string
--  description = "Nebius VPC security group ID to attach to the instance network interface"
--  default     = "vpcsecuritygroup-e00kvyx503efvsc4br"
--}
--
--# Provided via ci/slab.toml
--variable "instance_type" {
--  type        = string
--  description = "Nebius instance preset to be used (e.g. 1gpu-16vcpu-200gb)"
--}
--
--# Presets are platform specific, a different GPU type needs its own script
--variable "platform" {
--  type        = string
--  description = "Nebius compute platform (GPU type)"
--  default     = "gpu-l40s-d"
--}
--
--# Provided by Slab server
--variable "instance_label" {
--  type        = string
--  description = "Instance name to display in console"
--}
--
--# Provided by Slab server
--variable "user_data" {
--  type        = string
--  description = "Script that will be run at instance startup"
--  sensitive   = true
--}
--
--resource "nebius_compute_v1_disk" "boot_disk" {
--  parent_id        = var.nebius_project_id
--  name             = "${var.instance_label}-boot-disk"
--  type             = "NETWORK_SSD"
--  size_gibibytes   = 200
--  block_size_bytes = 4096
--
--  # Pinned ubuntu24.04-cuda12 image (CUDA 12.8, driver 570), the family alone would drift between runs
--  source_image_id = "computeimage-e00q003g5k851wjgpn"
--}
--
--resource "nebius_compute_v1_instance" "runner" {
--  parent_id = var.nebius_project_id
--  name      = var.instance_label
--
--  resources = {
--    platform = var.platform
--    preset   = var.instance_type
--  }
--
--  boot_disk = {
--    attach_mode = "READ_WRITE"
--    existing_disk = {
--      id = nebius_compute_v1_disk.boot_disk.id
--    }
--  }
--
--  network_interfaces = [
--    {
--      name              = "eth0"
--      subnet_id         = var.nebius_subnet_id
--      security_groups   = [{ id = var.nebius_security_group_id }]
--      ip_address        = {}
--      public_ip_address = {}
--    }
--  ]
--
--  # Nebius expects a #cloud-config document, so the Slab script is shipped as a file and run from it
--  cloud_init_user_data = <<-EOT
--    #cloud-config
--    write_files:
--      - path: /opt/slab/runner_start.sh
--        permissions: "0755"
--        encoding: b64
--        content: ${base64encode(var.user_data)}
--    runcmd:
--      - /opt/slab/runner_start.sh
--  EOT
--}
--
--output "instance_id" {
--  value       = nebius_compute_v1_instance.runner.id
--  description = "Unique ID of the Nebius instance"
--}
-```
-
-**File**: `ci/terraform_scripts/scaleway/terraform.tf` (removed, +0/-75)
-```diff
-@@ -1,75 +0,0 @@
--terraform {
--  required_providers {
--    scaleway = {
--      source  = "scaleway/scaleway"
--      version = "~> 2.73"
--    }
--  }
--  required_version = "~> 1.14"
--}
--
--provider "scaleway" {
--  zone = "fr-par-2"
--}
--
--# Provided via Slab server env
--variable "project_id" {
--  type        = string
--  description = "Scaleway project ID to attached to"
--}
--
--# Provided via ci/slab.toml
--variable "instance_type" {
--  type        = string
--  description = "Scaleway instance type to be used"
--}
--
--# Provided by Slab server
--variable "instance_label" {
--  type        = string
--  description = "Instance name to display in console"
--}
--
--# Provided by Slab server
--variable "user_data" {
--  type        = string
--  description = "Script that will be run at instance startup"
--  sensitive   = true
--}
--
--resource "scaleway_instance_ip" "github_runner" {
--  project_id = var.project_id
--}
--
--data "scaleway_instance_security_group" "github_runner" {
--  project_id = var.project_id
--  name       = "github-actions-runner"
--}
--
--data "scaleway_instance_image" "gpu_benchmark_image" {
--    name = "tfhe-rs-ubuntu-24-cuda"
--}
--
--resource "scaleway_instance_server" "scaleway_gpu_instance" {
--  project_id = var.project_id
--  image      = data.scaleway_instance_image.gpu_benchmark_image.id
--  type       = var.instance_type
--  name       = var.instance_label
--
--  root_volume {
--    size_in_gb = 200
--  }
--
--  ip_id = scaleway_instance_ip.github_runner.id
--
--  user_data = {
--    "cloud-init" = var.user_data
--  }
--
--  security_group_id = data.scaleway_instance_security_group.github_runner.id
--}
--
--output "instance_id" {
--  value       = scaleway_instance_server.scaleway_gpu_instance.id
--  description = "Unique ID of the Scaleway instance"
--}
-```
-
-**File**: `ci/terraform_scripts/scaleway/terraform_sxm_x8.tf` (removed, +0/-75)
-```diff
-@@ -1,75 +0,0 @@
--# This script is an SXM-8 specific variant for Scaleway instance
--# there is a bug with our current OS image we can't figure out, this uses a base Scaleway image
--terraform {
--  required_providers {
--    scaleway = {
--      source  = "scaleway/scaleway"
--      version = "~> 2.73"
--    }
--  }
--  required_version = "~> 1.14"
--}
--
--provider "scaleway" {
--  zone = "fr-par-2"
--}
--
--# Provided via Slab server env
--variable "project_id" {
--  type        = string
--  description = "Scaleway project ID to attached to"
--}
--
--# Provided via ci/slab.toml
--variable "instance_type" {
--  type        = string
--  description = "Scaleway instance type to be used"
--}
--
--# Provided by Slab server
--variable "instance_label" {
--  type        = string
--  description = "Instance name to display in console"
--}
--
--# Provided by Slab server
--variable "user_data" {
--  type        = string
--  description = "Script that will be run at instance startup"
--  sensitive   = true
--}
--
--resource "scaleway_instance_ip" "github_runner" {
--  project_id = var.project_id
--}
--
--data "scaleway_instance_security_group" "github_runner" {
--  project_id = var.project_id
--  name       = "github-actions-runner"
--}
--
--# trivy:ignore:ZAMA-TF-003 uses the base image label for now
--resource "scaleway_instance_server" "scaleway_gpu_instance" {
--  project_id = var.project_id
--  # Current latest ubuntu GPU OS image from Scaleway (2026/07/28)
--  image      = "ubuntu_noble_gpu_os_13_nvidia"
--  type       = var.instance_type
--  name       = var.instance_label
--
--  root_volume {
--    size_in_gb = 200
--  }
--
--  ip_id = scaleway_instance_ip.github_runner.id
--
--  user_data = {
--    "cloud-init" = var.user_data
--  }
--
--  security_group_id = data.scaleway_instance_security_group.github_runner.id
--}
--
--output "instance_id" {
--  value       = scaleway_instance_server.scaleway_gpu_instance.id
--  description = "Unique ID of the Scaleway instance"
--}
+@@ -1,5 +1,5 @@
+ <?xml version="1.0" ?>
+-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 240" preserveAspectRatio="meet" width="100%" height="240">
++<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 240" preserveAspectRatio="meet" width="100%" height="240" xmlns:c2pa="http://c2pa.org/manifest">
+ 	<rect x="0" y="0" width="720" height="40" fill="black"/>
+ 	<text dominant-baseline="middle" text-anchor="start" font-family="Arial" font-size="14" font-weight="bold" fill="white" x="6" y="20.0">Operation \ Size</text>
+ 	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold" fill="white" x="342.0" y="13.333333333333334">FheUint</text>
+@@ -15,35 +15,35 @@
+ 	<rect x="0" y="40" width="300" height="200" fill="#fbbc04"/>
+ 	<rect x="300" y="40" width="420" height="200" fill="#f3f3f3"/>
+ 	<text dominant-baseline="middle" text-anchor="start" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="6" y="60.0">Add / Sub (+,-)</text>
+-	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="342.0" y="60.0">2.73 ms</text>
+-	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="426.0" y="60.0">3.52 ms</text>
+-	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="510.0" y="60.0">5.01 ms</text>
+-	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="594.0" y="60.0">8.67 ms</text>
+-	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="678.0" y="60.0">15.5 ms</text>
++	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="342.0" y="60.0">2.1 ms</text>
++	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="426.0" y="60.0">2.82 ms</text>
++	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="510.0" y="60.0">4.68 ms</text>
++	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="594.0" y="60.0">8.6 ms</text>
++	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="678.0" y="60.0">17.4 ms</text>
+ 	<text dominant-baseline="middle" text-anchor="start" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="6" y="100.0">Mul (x)</text>
+-	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="342.0" y="100.0">5.06 ms</text>
+-	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="426.0" y="100.0">10.5 ms</text>
+-	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="510.0" y="100.0">37.5 ms</text>
+-	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="594.0" y="100.0">122 ms</text>
+-	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="678.0" y="100.0">483 ms</text>
++	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="342.0" y="100.0">3.41 ms</text>
++	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="426.0" y="100.0">7.21 ms</text>
++	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="510.0" y="100.0">24.7 ms</text>
++	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="594.0" y="100.0">79.0 ms</text>
++	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="678.0" y="100.0">296 ms</text>
+ 	<text dominant-baseline="middle" text-anchor="start" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="6" y="140.0">Div / Rem  (/, %)</text>
+-	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="342.0" y="140.0">45.5 ms</text>
+-	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="426.0" y="140.0">104 ms</text>
+-	<text dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" font-weight="normal" fill="black" x="510.0" y="140.0">279 ms</text>
+-	<t
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #4217** (2026-11-24): chore(ci): remove ci file not used anymore (@SouchonTheo)
+- **PR #4215** (2026-11-24): HPU bench numbers for v1.9 doc (@pgardratzama)
 - **PR #4214** (2026-11-23): chore: move gpu scripts to dedicated dir with gpu team as codewoners (@IceTDrinker)
 - **PR #4212** (2026-11-23): chore(data-extractor): bump url to 2.5.9 (@nsarlin-zama)
 - **PR #4201** (2026-11-24): fix(zk): handle the identity point in bls12_446 Gt::pairing on the GPU (@pdroalves)
 - **PR #4198** (2026-11-23): Ns/chore/transciphering 2 bits (@nsarlin-zama)
-- **PR #4197** (2026-11-19): fix(ci): use merge commit parent as backward compat base (@SouchonTheo)
 
 ---
 
@@ -3258,56 +2155,28 @@ small) that we should explore later to improve the
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. integer)!: make encrypted rotations behavior consistent
+## X. doc(hpu): update SVG with latest bench results using HPU backend 0.8.0
 
 **RULE**:
-When implementing operations in `tfhe/src/integer/gpu/server_key/radix/tests_signed/legacy_default_tests.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `51c20e76`: integer)!: make encrypted rotations behavior consistent. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6f718abc`: doc(hpu): update SVG with latest bench results using HPU backend 0.8.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tfhe/src/integer/gpu/server_key/radix/tests_signed/legacy_default_tests.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-//! `radix_parallel::scalar_add`, which the GPU can reuse.
-//!
-//! The rotations by an encrypted amount also differ: the CPU reduces the amount modulo the
-//! number of bits (see `unchecked_rotate_bits_assign` in `radix_parallel::rotate`), the GPU
-//! only reads its low ⌈log₂(num_bits)⌉ bits, i.e. reduces it modulo the next power of two,
-//! which the rotate tests of this file (unchecked ones included) still model.
-//!
-//! Once all are addressed point the GPU wrappers at the harness tests and the CPU unchecked
-//! tests, and delete this file.
-    nb_tests_for_params, nb_tests_smaller_for_params, panic_if_any_block_is_not_clean_or_trivial,
-    MAX_NB_CTXT, NB_CTXT,
-
-pub(crate) fn legacy_signed_unchecked_rotate_left_test<P, T>(param: P, mut executor: T)
-where
-    P: Into<TestParameters>,
-    T: for<'a> FunctionExecutor<
-        (&'a SignedRadixCiphertext, &'a RadixCiphertext),
-        SignedRadixCiphertext,
-    >,
-{
-    let param = param.into();
-    let nb_tests = nb_tests_for_params(param);
-    let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
-    let cks = RadixClientKey::from((cks, NB_CTXT));
-    let sks = Arc::new(sks);
-
-    let mut rng = rand::thread_rng(
+version = "0.8.0"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-//! `radix_parallel::scalar_add`, which the GPU can reuse. Once both are addressed point the
-//! GPU wrappers at the harness tests and delete this file.
-    nb_tests_smaller_for_params, panic_if_any_block_is_not_clean_or_trivial, MAX_NB_CTXT, NB_CTXT,
+version = "0.7.0"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `51c20e76` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6f718abc` are properly handled with clean fallback behavior.

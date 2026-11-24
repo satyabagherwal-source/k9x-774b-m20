@@ -12871,3 +12871,8 @@ Every entry in this ledger must capture:
 | `learn-github-vitejs-vite` | `https://github.com/vitejs/vite` | `e16ca5a1` | Multi-dimensional audit evidence | 2026-11-24T23:13:49.519Z |
 | `learn-github-dosco-deeporg` | `https://github.com/dosco/deeporg` | `9d591e72` | Multi-dimensional audit evidence | 2026-11-24T23:13:53.105Z |
 | `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `fc6dfca1` | Multi-dimensional audit evidence | 2026-11-24T23:14:01.982Z |
+| `learn-huggingface-prism-ml-ternary-bonsai-2-5-27b-gguf` | `https://huggingface.co/prism-ml/Ternary-Bonsai-2.5-27B-GGUF` | `hf-prism-m` | Multi-dimensional audit evidence | 2026-11-24T23:24:39.844Z |
+| `learn-github-webpack-webpack` | `https://github.com/webpack/webpack` | `4e6cd866` | Multi-dimensional audit evidence | 2026-11-24T23:24:49.204Z |
+| `learn-github-mikepenz-aboutlibraries` | `https://github.com/mikepenz/AboutLibraries` | `301c6c1d` | Multi-dimensional audit evidence | 2026-11-24T23:24:50.022Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `6f718abc` | Multi-dimensional audit evidence | 2026-11-24T23:24:55.379Z |
+| `learn-dom-d-c22ba2db` | `project://hf-prism-ml-ternary-bonsai-2.5-27b-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2.5-27b-gguf-learnings.md` | 2026-11-24T23:25:39.380Z |

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T23:14:08.382Z",
-  "total_records": 2593,
+  "last_updated": "2026-11-24T23:25:42.494Z",
+  "total_records": 2596,
   "domains": {
     "A": {
       "total": 22,
@@ -71,7 +71,7 @@
       ]
     },
     "D": {
-      "total": 974,
+      "total": 977,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1046,7 +1046,10 @@
         "domain_intelligence-research-knowledge-intelligence-orcarouter-inkling-2-mini-abliterated-gguf-core-",
         "DOM-D-3B305647",
         "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-inkling-2-mini-abliterated-gguf-le",
-        "DOM-D-BA194D6E"
+        "DOM-D-BA194D6E",
+        "domain_intelligence-research-knowledge-intelligence-prism-ml-ternary-bonsai-2-5-27b-gguf-core-invari",
+        "DOM-D-C22BA2DB",
+        "domain_intelligence-research-knowledge-intelligence-hf-prism-ml-ternary-bonsai-2-5-27b-gguf-learning"
       ]
     },
     "E": {
@@ -10442,8 +10445,8 @@
       "title": "Technical Construction Intelligence: zama-ai/tfhe-rs Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-technical-construction-intelligence-zama-ai-tfhe-rs-core-invaria.md",
       "repository": "zama-ai/tfhe-rs",
-      "content_hash": "46c94f9a44e0da90c1448a61900ba527afb5c95f33a38ac7520b3d24ecedfa97",
-      "created_at": "2026-11-24T18:34:31.500Z"
+      "content_hash": "a95b46b2e806e2a1c656013b00bff3183639e5d2e559060cf907d10e6780e2dd",
+      "created_at": "2026-11-24T23:24:55.996Z"
     },
     "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants",
@@ -18862,8 +18865,8 @@
       "title": "Architecture Intelligence: mikepenz/AboutLibraries Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mikepenz-aboutlibraries-architecture-intelligence-mikepenz-aboutlibraries-core-i.md",
       "repository": "mikepenz/AboutLibraries",
-      "content_hash": "d457fe0af8297a9b0e3e8c75ca25513645662dc6624bea5d693881d2c5cbc3d6",
-      "created_at": "2026-11-18T05:25:52.866Z"
+      "content_hash": "e1b953bb735f39ecc079eaeabb825c8a91ed1f833b62a556c4d5cdee5cf367f2",
+      "created_at": "2026-11-24T23:24:50.682Z"
     },
     "domain_intelligence-architecture-intelligence-bitterbot-ai-bitterbot-desktop-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-bitterbot-ai-bitterbot-desktop-core-invariants",
@@ -18898,8 +18901,8 @@
       "title": "Architecture Intelligence: mikepenz-aboutlibraries-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mikepenz-aboutlibraries-learnings-architecture-intelligence-mikepenz-aboutlibrar.md",
       "repository": "mikepenz-aboutlibraries-learnings",
-      "content_hash": "cf68f23b47b3d6706a3c1a4a9ad6885726be69071a7584d6a24f3b65d98ee749",
-      "created_at": "2026-11-18T05:36:04.725Z"
+      "content_hash": "deacf7e1215ce8441d054ff7a1dec68760d24562c3dbb11fa078b724e2c65d13",
+      "created_at": "2026-11-24T23:25:42.494Z"
     },
     "domain_intelligence-research-knowledge-intelligence-speridlabs-iris-3b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-speridlabs-iris-3b-core-invariants",
@@ -37286,8 +37289,8 @@
       "title": "Quality & Verification Intelligence: webpack/webpack Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-webpack-webpack-quality-verification-intelligence-webpack-webpack-core-invariant.md",
       "repository": "webpack/webpack",
-      "content_hash": "de98036733434dfabf5f1276022d475affafafecd8ee949bf059d7ec160d94fd",
-      "created_at": "2026-11-20T23:39:48.379Z"
+      "content_hash": "bd80d63df86ab116c71bac7997ccc27702020f088b1c8269a5477b32fe46cb88",
+      "created_at": "2026-11-24T23:24:49.823Z"
     },
     "domain_intelligence-quality-verification-intelligence-webpack-webpack-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-webpack-webpack-learnings-core-invariants",
@@ -37295,8 +37298,8 @@
       "title": "Quality & Verification Intelligence: webpack-webpack-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-webpack-webpack-learnings-quality-verification-intelligence-webpack-webpack-lear.md",
       "repository": "webpack-webpack-learnings",
-      "content_hash": "ee8dda73012c3595d70827735c773fba11a9e0c753e0663108b45f57006ce749",
-      "created_at": "2026-11-20T23:40:00.773Z"
+      "content_hash": "360e16d1e9f26d180feef40b212966dd11fde65a41a12efb68c234f08aa913fd",
+      "created_at": "2026-11-24T23:25:41.036Z"
     },
     "domain_intelligence-technical-construction-intelligence-xerj-org-xerj-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-xerj-org-xerj-learnings-core-invariants",
@@ -43482,6 +43485,66 @@
       "repository": "vitejs-vite-learnings",
       "content_hash": "d2986f182cd4feaa0a5b06427437d42e91fdfcdd4f5abd314950e9a2989a8590",
       "created_at": "2026-11-24T23:14:06.199Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-prism-ml-ternary-bonsai-2-5-27b-gguf-core-invari": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-prism-ml-ternary-bonsai-2-5-27b-gguf-core-invari",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: prism-ml/Ternary-Bonsai-2.5-27B-GGUF Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-prism-ml-ternary-bonsai-2-5-27b-gguf-research-knowledge-intelligence-prism-ml.md",
+      "repository": "prism-ml/Ternary-Bonsai-2.5-27B-GGUF",
+      "content_hash": "34401e164c3559331a2e58f495cb45f9a14f901b3dbb52c258d3f9b19643bb22",
+      "created_at": "2026-11-24T23:24:40.153Z"
+    },
+    "DOM-D-C22BA2DB": {
+      "record_id": "DOM-D-C22BA2DB",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): prism-ml/Ternary-Bonsai-2.5-27B-GGUF",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2.5-27b-gguf-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/prism-ml/Ternary-Bonsai-2.5-27B-GGUF](https://huggingface.co/prism-ml/Ternary-Bonsai-2.5-27B-GGUF))  \n> **Source Version**: `hf-prism-ml-",
+      "content_hash": "fedddbfc75dbebc708f7586443bce1f5c756e94af54269faa3b02e6b39caf08c",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2.5-27b-gguf-learnings.md`  \n> **Source**: huggingface ([ -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2.5-27b-gguf-learnings.md`  \n> **Source**: huggingface ([",
+      "provenance": {
+        "source_uri": "project://hf-prism-ml-ternary-bonsai-2.5-27b-gguf/hf-prism-ml-ternary-bonsai-2.5-27b-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-24T23:24:59.250Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-prism-ml-ternary-bonsai-2.5-27b-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-prism-ml-ternary-bonsai-2.5-27b-gguf"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-24T23:25:39.334Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-prism-ml-ternary-bonsai-2-5-27b-gguf-learning": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-prism-ml-ternary-bonsai-2-5-27b-gguf-learning",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-prism-ml-ternary-bonsai-2.5-27b-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-prism-ml-ternary-bonsai-2-5-27b-gguf-learnings-research-knowledge-intelligenc.md",
+      "repository": "hf-prism-ml-ternary-bonsai-2.5-27b-gguf-learnings",
+      "content_hash": "d0c15881dc98f19e4a00388d41271577fa62012f39b7d512cf734a4aaf82e9e3",
+      "created_at": "2026-11-24T23:25:39.812Z"
     }
   }
 }

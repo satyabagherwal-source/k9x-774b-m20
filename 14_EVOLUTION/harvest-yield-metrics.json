@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T23:14:01.988Z",
-  "total_cycles_completed": 12197,
-  "total_learnings_persisted": 12197,
-  "total_rules_promoted": 11251,
+  "last_updated": "2026-11-24T23:24:55.387Z",
+  "total_cycles_completed": 12201,
+  "total_learnings_persisted": 12201,
+  "total_rules_promoted": 11254,
   "history": [
-    {
-      "timestamp": "2026-11-24T06:55:13.396Z",
-      "repository": "meshery/meshery",
-      "learningId": "learn-github-meshery-meshery",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T06:55:18.857Z",
-      "repository": "matrixorigin/matrixone",
-      "learningId": "learn-github-matrixorigin-matrixone",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T07:07:36.646Z",
-      "repository": "flox/flox",
-      "learningId": "learn-github-flox-flox",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T07:07:37.661Z",
-      "repository": "mattermost/mattermost",
-      "learningId": "learn-github-mattermost-mattermost",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T07:07:38.701Z",
       "repository": "bridgecrewio/checkov",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-24T23:14:01.988Z",
       "repository": "lancedb/lancedb",
       "learningId": "learn-github-lancedb-lancedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T23:24:39.852Z",
+      "repository": "prism-ml/Ternary-Bonsai-2.5-27B-GGUF",
+      "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-5-27b-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T23:24:49.212Z",
+      "repository": "webpack/webpack",
+      "learningId": "learn-github-webpack-webpack",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T23:24:50.030Z",
+      "repository": "mikepenz/AboutLibraries",
+      "learningId": "learn-github-mikepenz-aboutlibraries",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T23:24:55.387Z",
+      "repository": "zama-ai/tfhe-rs",
+      "learningId": "learn-github-zama-ai-tfhe-rs",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

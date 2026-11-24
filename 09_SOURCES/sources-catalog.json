@@ -1893,10 +1893,10 @@
     "repository": "webpack/webpack",
     "platform": "github",
     "sourceUrl": "https://github.com/webpack/webpack",
-    "sourceVersion": "a393e82c",
+    "sourceVersion": "4e6cd866",
     "license": "MIT",
-    "contentHash": "4cc593557d869b0e3da656f986b32a7c12ada47b2603e4f0e665f7439b954f6a",
-    "lastHarvestedAt": "2026-11-20T23:39:47.903Z",
+    "contentHash": "f4a66f6570770ad124e9b1f0b0259f158eb0bd627756113d206c7af7ca53b4ca",
+    "lastHarvestedAt": "2026-11-24T23:24:49.204Z",
     "learningId": "learn-github-webpack-webpack"
   },
   "rollup-rollup": {
@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "51c20e76",
+    "sourceVersion": "6f718abc",
     "license": "NOASSERTION",
-    "contentHash": "fa402ee3c1473a0f86098e47f7f0f18c2821089a377bbe321562f1d38dcc0abf",
-    "lastHarvestedAt": "2026-11-24T18:34:31.071Z",
+    "contentHash": "e3ce2c1b786c8edb29147fae84d6aefce7f26aca1fe756cc48ee51bba0e8c7a4",
+    "lastHarvestedAt": "2026-11-24T23:24:55.379Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
@@ -7023,10 +7023,10 @@
     "repository": "mikepenz/AboutLibraries",
     "platform": "github",
     "sourceUrl": "https://github.com/mikepenz/AboutLibraries",
-    "sourceVersion": "07abb3e7",
+    "sourceVersion": "301c6c1d",
     "license": "Apache-2.0",
-    "contentHash": "25fac9c16fd678849c78fb399d424688f18138eaf052bc8d79bc1aa09948840f",
-    "lastHarvestedAt": "2026-11-18T05:25:52.473Z",
+    "contentHash": "c15d2054a7e0fda0ef464108eb87498f016dc055e4ed051597177449df319b27",
+    "lastHarvestedAt": "2026-11-24T23:24:50.022Z",
     "learningId": "learn-github-mikepenz-aboutlibraries"
   },
   "tursodatabase-turso": {
@@ -13408,5 +13408,15 @@
     "contentHash": "e73305320ef97be2e164825d5b69a92e68aabab43f07dce07be76258644c7614",
     "lastHarvestedAt": "2026-11-24T20:04:13.636Z",
     "learningId": "learn-github-dembrandt-dembrandt"
+  },
+  "hf-prism-ml-ternary-bonsai-2.5-27b-gguf": {
+    "repository": "prism-ml/Ternary-Bonsai-2.5-27B-GGUF",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/prism-ml/Ternary-Bonsai-2.5-27B-GGUF",
+    "sourceVersion": "hf-prism-ml-ternary-bonsai-2.5-27b-gguf",
+    "license": "Open-Source",
+    "contentHash": "e4bb34d8ace894efe8c23fd0d499dfc4120d8f1e5ec348459b18507ac03b08bd",
+    "lastHarvestedAt": "2026-11-24T23:24:39.844Z",
+    "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-5-27b-gguf"
   }
 }

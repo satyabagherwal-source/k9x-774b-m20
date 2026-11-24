@@ -5392,3 +5392,7 @@ https://huggingface.co/orcarouter/Inkling-2-Mini-abliterated-GGUF
 # --- Automatically Discovered by AI Scout Engine [2026-11-24T20:04:04.852Z] ---
 # [FULLSTACK-UI] dembrandt/dembrandt (2400 score) - Extract any website’s design system into tokens in seconds: logo, colors, typogr
 https://github.com/dembrandt/dembrandt
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-24T23:24:32.862Z] ---
+# [HUGGINGFACE-AI-MODELS] prism-ml/Ternary-Bonsai-2.5-27B-GGUF (900 score) - Verified Hugging Face Model: prism-ml/Ternary-Bonsai-2.5-27B-GGUF (90 likes, 0 d
+https://huggingface.co/prism-ml/Ternary-Bonsai-2.5-27B-GGUF

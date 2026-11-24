@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T23:40:00.443Z",
+  "timestamp": "2026-11-24T23:25:40.548Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-webpack-webpack-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [webpack-webpack-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T23:40:00.443Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T23:25:40.548Z`  
 > **Learning ID**: `LEARN-EVO-webpack-webpack-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain K (Quality & Verification Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 62%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 58%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from webpack-webpack-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/webpack-webpack-learnings.md`  
 > **Source**: github ([https://github.com/webpack/webpack](https://github.com/webpack/webpack))  
-> **Source Version**: `a393e82c`  
+> **Source Version**: `4e6cd866`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T23:39:46.687Z  
+> **Timestamp**: 2026-11-24T23:24:47.604Z  
 > **Learning ID**: `learn-github-webpack-webpack`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/webpack-webpack-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/webpack/webpack](https://github.com/webpack/webpack))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T23:39:46.369Z  
+> **Harvest Timestamp**: 2026-11-24T23:24:47.597Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A bundler for javascript and friends. Packs many modules into a few bundled assets. Code Splitting allows for loading parts of the application on demand. Through "loaders", modules can be CommonJs, AMD, ES6 modules, CSS, Images, JSON, Coffeescript, LESS, ... and your custom stuff.
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 66017 stars
+- **Stars / Engagement**: 66016 stars
 
 ---
 
@@ -311,573 +311,848 @@ export const add = (content, from) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `88b41743` (2026-11-20)
-**Commit Message**: fix(minify): close more one-pass gzip gaps to terser (#23495)
+### Incident Patch 1: `76e24ad9` (2026-11-23)
+**Commit Message**: fix(minify): close more one-pass minifier gaps to terser and fix wrong output (#23529)
 
-* fix(minify): print a switch on a function, class, object or array literal as an if
+* fix(minify): make a literal passed to a function moved to its call where its parameter is read
 
-* fix(minify): negate a statement calling a function moved to its one read
+* fix(minify): fold a var read once into that read where its next statement only sets it again
 
-* fix(minify): join the declarations and expressions a switch case lists
+* fix(minify): compare calls of functions returning only objects with == as terser does
 
-* fix(minify): unwrap a program's one call past its directives and unread parameters
+* fix(minify): fold a declarator past a later one setting an unread name to a literal
 
-* fix(minify): let a static value's class extend the class it belongs to by name
+* fix(minify): print an unread call of a one-statement function as that statement, its argument at its parameter's read
 
-* fix(minify): compare `this` to `this` loosely
+* fix(minify): keep the member new reads a constructor off a literal moved to its name
 
-* fix(minify): print a division folding to `NaN` as `NaN` where as long
+* fix(minify): parenthesize a function moved to a returned name where it opens a statement
 
-* fix(minify): inline a let or const function returning a literal at its calls
+* test(minify): take the shorter print of a call in place passed this as its one statement
 
-* fix(minify): trim unread arguments of calls to a let or const function
+* fix(minify): keep a call's body in place when a name it passes prints a folded value
 
-* fix(minify): parenthesize a nested reduced call's value where the outer call is
+* fix(minify): fold straight values through a return or throw, and at a private top level
 
-* fix(minify): print new of a call reduced to a function without parentheses
+* fix(minify): unwrap a do-while(0) whose loop exits all print nothing
 
-* fix(minify): drop unread parameters of an unnamed function called in place
+* fix(minify): fold straight values set in a read sequence and a declarator not followed
 
-* fix(minify): join property assignments into the object literal declared before them
+* fix(mi
 
-terser's `join_vars` of `var o={};o.a=1,f()` as `var o={a:1};f()`, for the leading assignments of an expression statement, a `for` 
-
-**File**: `.changeset/282-javascript-minify-one-pass-gaps.md` (added, +5/-0)
+**File**: `.changeset/282-javascript-minify-one-pass-gaps.md` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,5 @@
-+---
-+"webpack": patch
-+---
-+
-+Fold known values, object assignments and unread parameters when minifying.
+@@ -2,4 +2,4 @@
+ "webpack": patch
+ ---
+ 
+-Fold more known values, calls, object assignments and dead code when minifying.
++Fold more values, calls and dead code when minifying, and fix wrong output.
 ```
 
-**File**: `lib/javascript/side-effects.js` (modified, +22/-3)
+**File**: `lib/javascript/ScopeAnalyzer.js` (modified, +154/-14)
 ```diff
-@@ -536,13 +536,22 @@ const spreadHasSideEffects = (tree, spread, container, context) =>
-  * @param {number} node a class
-  * @param {SideEffectsContext} context what names and annotations do
-  * @param {boolean} constructs whether a `this` it extends is known to be a constructor, as a static value's is
-+ * @param {string=} made the name of the class whose static value it is, made by then, which its heritage may read where it names no class of its own
-  * @returns {boolean} whether making it may have effects
-  */
--const classHasSideEffects = (tree, node, context, constructs) => {
-+const classHasSideEffects = (tree, node, context, constructs, made) => {
- 	const superClass = unwrap(tree, tree.field(0, Field.superClass, node));
-+	const id = tree.field(0, Field.id, node);
- 	if (
- 		superClass !== 0 &&
--		!(constructs && tree.type(superClass) === NodeType.ThisExpression) &&
-+		!(
-+			constructs &&
-+			(tree.type(superClass) === NodeType.ThisExpression ||
-+				(made !== undefined &&
-+					tree.type(superClass) === NodeType.Identifier &&
-+					tree.name(superClass) === made &&
-+					(id === 0 || tree.name(id) !== made)))
-+		) &&
- 		(extendsNoConstructor(tree, superClass) ||
- 			(context.heritageConstructs !== undefined &&
- 				!context.heritageConstructs(superClass)) ||
-@@ -570,7 +579,17 @@ const classHasSideEffects = (tree, node, context, constructs) => {
- 				: 0;
- 		// A static value's `this` is the class, a constructor to extend.
- 		if (value !== 0 && tree.type(value) === NodeType.ClassExpression) {
--			if (classHasSideEffects(tree, value, context, true)) return true;
+@@ -1926,6 +1926,23 @@ class MinifierTreeScopeAnalyzer {
+ 		this.unreached = outerUnreached;
+ 	}
+ 
++	/**
++	 * @param {number} body a loop's body
++	 * @returns {boolean} whether it is a `break` naming no label, alone or in a block
++	 */
++	_breaksAtOnce(body) {
++		if (
++			this.types[body] === NodeType.BlockStatement &&
++			A.fieldCount(Field.body, body) === 1
++		) {
++			body = this._child(Field.body, body);
++		}
++		return (
++			this.types[body] === NodeType.BreakStatement &&
++			A.field(0, Field.label, body) === 0
++		);
++	}
++
+ 	/**
+ 	 * @param {number} field the `Field`
+ 	 * @param {number} node a node
+@@ -2765,11 +2782,21 @@ class MinifierTreeScopeAnalyzer {
+ 	 */
+ 	_visitLoop(node) {
+ 		switch (this.types[node]) {
+-			case NodeType.ForStatement:
++			case NodeType.ForStatement: {
+ 				this._visitChild(Field.init, node);
++				const test = this._child(Field.test, node);
+ 				this._visitChild(Field.test, node);
+-				this._visitChild(Field.update, node);
+-				break;
++				// A test known false runs neither body nor update, a body
++				// leaving at once no update, terser's `dead_code`.
++				const never = test !== 0 && this._literalTruth(test) === 0;
++				this._visitUnreached(
++					Field.update,
++					node,
++					never || this._breaksAtOnce(this._child(Field.body, node))
++				);
++				this._visitUnreached(Field.body, node, never);
++				return;
++			}
+ 			case NodeType.WhileStatement:
+ 				this._visitChild(Field.test, node);
+ 				break;
+@@ -3508,6 +3535,42 @@ class MinifierTreeScopeAnalyzer {
+ 		return this._nestedMadeAfter(scope, definition, A.end(declarator));
+ 	}
+ 
++	/**
++	 * @param {MinifierScope} scope the scope of a read in a nested function
++	 * @param {MinifierVariable} definition the `let` or `const` it reads
++	 * @param {number} end where the declarator setting it ends
++	 * @returns {boolean} whether the outermost function between runs only after that: an expression made after it, or a declaration only called after it in the scope declaring both
++	 */
++	_calledAfter(scope, definition, end) {
++		if (this._nestedMadeAfter(scope, definition, end)) return true;
++		const home = /** @type {MinifierScope} */ (definition.scope).variableScope;
++		let outer = /** @type {MinifierScope} */ (scope.variableScope);
++		while (outer.upper !== null && outer.upper.variableScope !== home) {
++			outer = /** @type {MinifierScope} */ (outer.upper.variableScope);
++		}
++		// A `switch` may enter at a later case, past the declarator setting it.
++		if (
++			outer.upper === null ||
++			this.types[outer.node] !== NodeType.FunctionDeclaration ||
++			/** @type {MinifierScope} */ (definition.scope).type === "switch"
++		) {
++			return false;
++		}
++		const fn = this.definitions[A.field(0, Field.id, outer.node)];
++		if (!isMinifierVariable(fn) || fn.written || fn.export !== 0) return false;
++		const { referenceNodes, referenceScopes, definitions } = this;
++		for (let i = 0; i < referenceNodes.length; i++) {
 +			if (
-+				classHasSideEffects(
-+					tree,
-+					value,
-+					context,
-+					true,
-+					id === 0 ? undefined : tree.name(id)
-+				)
++				definitions[referenceNodes[i]] === fn &&
++				(A.start(referenceNodes[i]) < end ||
++					referenceScopes[i].variableScope !== home)
 +			) {
++				return false;
++			}
++		}
++		return true;
++	}
++
+ 	/**
+ 	 * Whether a `let` or `const` an alias reads is set before the alias's
+ 	 * declarator runs, which would otherwise throw where the read moved need not.
+@@ -3831,6 +3894,65 @@ class MinifierTreeScopeAnalyzer {
+ 		}
+ 	}
+ 
++	/**
++	 * @param {number} init the function a declarator sets
++	 * @param {MinifierScope} scope the scope of its read, in a nested function
++	 * @param {MinifierVariable} definition the name it sets
++	 * @returns {boolean} whether it is an arrow reading `this` or its kin, a function between that read and it binding them anew, or naming `await` or `yield`
++	 */
++	_takesOtherThis(init, scope, definition) {
++		const reads = this._readsOuterThis(init);
++		if (reads !== 1) return reads === 2;
++		const outer = /** @type {MinifierScope} */ (definition.scope).variableScope;
++		for (
++			let inner = /** @type {MinifierScope} */ (scope.variableScope);
++			inner !== outer;
++			inner = /** @type {MinifierScope} */ (
++				/** @type {MinifierScope} */ (inner.upper).variableScope
++			)
++		) {
++			if (this.types[inner.node] !== NodeType.ArrowFunctionExpression) {
 +				return true;
 +			}
- 			continue;
- 		}
- 		if (
++		}
++		return false;
++	}
++
++	/**
++	 * An arrow takes `this`, `arguments`, `super` and `new.target` from where
++	 * it is made; a name `await` or `yield` stays a name only out of an async
++	 * function or generator.
++	 * @param {number} node a function or a node in an arrow
++	 * @returns {number} for an arrow, 2 where it names `await` or `yield`, else 1 where it may read `this` or its kin, nested arrows too; 0 otherwise
++	 */
++	_readsOuterThis(node) {
++		switch (this.types[node]) {
++			case NodeType.FunctionExpression:
++			case NodeType.FunctionDeclaration:
++				return 0;
++			case NodeType.ThisExpression:
++			case NodeType.Super:
++			case NodeType.MetaProperty:
++				return 1;
++			case NodeType.Identifier: {
++				const name = A.name(node);
++			
 ```
 
-**File**: `schemas/plugins/BannerPlugin.check.js` (modified, +1/-1)
+**File**: `lib/javascript/side-effects.js` (modified, +86/-9)
+```diff
+@@ -24,7 +24,8 @@ const { Field, Flag, NodeType, Part } = require("./syntax").parser;
+  * @property {(boolean | "strict")=} pureGetters terser's `pure_getters`: false where any property read may throw or run a getter, true where only a read of what may be `null` or `undefined` does; unset, "strict"
+  * @property {boolean=} comparesConvert whether a comparison or an object's computed key converting what may be an object runs code, as the compressor's `pureConversions: false` has it
+  * @property {((node: number) => boolean | undefined)=} decides what the caller answers for a node before the rules read it, undefined to leave it to them
+- * @property {((node: number) => number)=} readValue the value a name prints as where it is read, 0 for none
++ * @property {((node: number) => number)=} readValue the value a name prints as or always holds where a member reads it, 0 for none
++ * @property {((node: number) => boolean)=} inheritsGetter whether a prototype the program may write answers a read of the function, class or literal given
+  * @property {((node: number) => boolean)=} joinsNatively whether an array or object literal converts to a string by built-ins alone, which nothing replaces; unset, none does
+  * @property {((node: number) => boolean)=} readsPrototypeMember whether a member read reads a built-in prototype's member, which no getter answers; unset, none does
+  * @property {((spread: number, container: number) => boolean)=} spreadRuns whether a spread may run code or throw as it spreads, its argument's own effects aside; unset, every spread may
+@@ -156,6 +157,50 @@ const isNullish = (tree, node) => {
+ 	}
+ };
+ 
++/**
++ * @param {SyntaxReader} tree the tree
++ * @param {number} key a non-computed property key
++ * @returns {boolean} whether it names `__proto__`, as a name or a string
++ */
++const protoKey = (tree, key) =>
++	tree.type(key) === NodeType.Identifier
++		? tree.name(key) === "__proto__"
++		: tree.type(key) === NodeType.Literal && tree.value(key) === "__proto__";
++
++/**
++ * @param {SyntaxReader} tree the tree
++ * @param {number} node an expression
++ * @returns {boolean} whether it is the literal `null`
++ */
++const isNullLiteral = (tree, node) =>
++	tree.type(node) === NodeType.Literal && tree.value(node) === null;
++
++/**
++ * @param {SyntaxReader} tree the tree
++ * @param {number} node a member expression
++ * @param {number} target the function or class it reads
++ * @returns {boolean} whether it reads `prototype`, an own data property of a class, plain or generator function
++ */
++const readsOwnPrototype = (tree, node, target) => {
++	if (tree.flag(Flag.computed, node)) return false;
++	const property = tree.field(0, Field.property, node);
++	if (
++		tree.type(property) !== NodeType.Identifier ||
++		tree.name(property) !== "prototype"
++	) {
++		return false;
++	}
++	const type = tree.type(target);
++	if (type === NodeType.ClassExpression || type === NodeType.ClassDeclaration) {
++		return true;
++	}
++	return (
++		(type === NodeType.FunctionExpression ||
++			type === NodeType.FunctionDeclaration) &&
++		(!tree.flag(Flag.async, target) || tree.flag(Flag.generator, target))
++	);
++};
++
+ /**
+  * terser's `_dot_throw`: where `pure_getters` is "strict", the default, only
+  * a value known to be no `null`, `undefined` or object with a getter is safe.
+@@ -175,8 +220,26 @@ const mayThrowOnAccess = (tree, node, strict) => {
+ 		case NodeType.FunctionExpression:
+ 		case NodeType.FunctionDeclaration:
+ 		case NodeType.ArrowFunctionExpression:
++			return false;
+ 		case NodeType.ClassExpression:
++		case NodeType.ClassDeclaration: {
++			// A superclass's static getter is read through the class too.
++			if (!strict) return false;
++			if (tree.field(0, Field.superClass, node) !== 0) return true;
++			const body = tree.field(0, Field.body, node);
++			const count = tree.fieldCount(Field.body, body);
++			for (let i = 0; i < count; i++) {
++				const member = tree.field(i, Field.body, body);
++				if (
++					tree.type(member) === NodeType.MethodDefinition &&
++					tree.flag(Flag.static, member) &&
++					tree.textOf(Part.kind, member) === "get"
++				) {
++					return true;
++				}
++			}
+ 			return false;
++		}
+ 		case NodeType.ObjectExpression: {
+ 			if (!strict) return false;
+ 			const count = tree.fieldCount(Field.properties, node);
+@@ -194,7 +257,11 @@ const mayThrowOnAccess = (tree, node, strict) => {
+ 					}
+ 				} else if (
+ 					tree.textOf(Part.kind, property) !== "init" ||
+-					tree.flag(Flag.method, property)
++					tree.flag(Flag.method, property) ||
++					// `__proto__: p` sets a prototype whose getter a read may run.
++					(!tree.flag(Flag.computed, property) &&
++						protoKey(tree, tree.field(0, Field.key, property)) &&
++						!isNullLiteral(tree, tree.field(0, Field.value, property)))
+ 				) {
+ 					return true;
+ 				}
+@@ -1065,8 +1132,9 @@ const ruledSideEffects = (tree, node, context) => {
+ 		case NodeType.ClassDeclaration:
+ 			return classHasSideEffects(tree, node, context, false);
+ 		case NodeType.MemberExpression: {
++			//
+```
+
+**File**: `schemas/plugins/ManifestPlugin.check.js` (modified, +1/-1)
 ```diff
 @@ -4,4 +4,4 @@
   * This file was automatically generated by "schema-utils".
   * DO NOT MODIFY BY HAND.
   */
--"use strict";module.exports=s,module.exports.default=s;let r=function(r){let e=r.length,s=0,a=0,o;while(a<e){s++;if((o=r.charCodeAt(a++))>=55296&&o<=56319&&a<e&&((o=r.charCodeAt(a))&64512)==56320)a++}return s};function e(s,{instancePath="",parentData,parentDataProperty,rootData=s}={}){let a=null,o=0,l=o,i=!1,t=o;if(o===t)if(Array.isArray(s)){var n=!0;let e=s.length;for(let l=0;l<e;l++){let e=s[l],i=o,t=o,u=!1,p=null,E=o,c=o,_=!1,y=o;if(!(e instanceof RegExp)){let r={params:{}};a===null?a=[r]:a.push(r),o++}var v=y===o;if(!(_=_||v)){let s=o;if(o===s)if("string"==typeof e){if(r(e)<1){let r={params:{limit:1}};a===null?a=[r]:a.push(r),o++}}else{let r={params:{type:"string"}};a===null?a=[r]:a.push(r),o++}var v=s===o;if(!(_=_||v)){let s=o;if(o===s)if(e&&"object"==typeof e&&!Array.isArray(e)){let s;if(e.glob===void 0&&(s="glob")){let r={params:{missingProperty:s}};a===null?a=[r]:a.push(r),o++}else{let s=o;for(let r in e)if(r!=="glob"){let e={params:{additionalProperty:r}};a===null?a=[e]:a.push(e),o++;break}if(s===o&&e.glob!==void 0){let s=e.glob,l=o,i=!1,t=o;if(o===t)if(Array.isArray(s))if(s.length<1){let r={params:{limit:1}};a===null?a=[r]:a.push(r),o++}else{var d=!0;let e=s.length;for(let l=0;l<e;l++){let e=s[l],i=o;if(o===i)if("string"==typeof e){if(r(e)<1){let r={params:{limit:1}};a===null?a=[r]:a.push(r),o++}}else{let r={params:{type:"string"}};a===null?a=[r]:a.push(r),o++}var d=i===o;if(!d)break}}else{let r={params:{type:"array"}};a===null?a=[r]:a.push(r),o++}var f=t===o;if(!(i=i||f)){let e=o;if(o===e)if("string"==typeof s){if(r(s)<1){let r={params:{limit:1}};a===null?a=[r]:a.push(r),o++}}else{let r={params:{type:"string"}};a===null?a=[r]:a.push(r),o++}var f=e===o;i=i||f}if(!i){let r={params:{}};a===null?a=[r]:a.push(r),o++}else{o=l;if(a!==null)l?a.length=l:a=null}}}}else{let r={params:{type:"object"}};a===null?a=[r]:a.push(r),o++}var v=s===o;if(!(_=_||v)){let r=o;if(!(e instanceof Function)){let r={params:{}};a===null?a=[r]:a.push(r),o++}var v=r===o;_=_||v}}}if(!_){let r={params:{}};a===null?a=[r]:a.push(r),o++}else{o=c;if(a!==null)c?a.length=c:a=null}if(E===o)u=!0,p=0;if(!u){let r={params:{passingSchemas:p}};a===null?a=[r]:a.push(r),o++}else{o=t;if(a!==null)t?a.length=t:a=null}var n=i===o;if(!n)break}}else{let r={params:{type:"array"}};a===null?a=[r]:a.push(r),o++}var u=t===o;if(!(i=i||u)){let e=o,l=o,t=!1,n=o;if(!(s instanceof RegExp)){let r={params:{}};a===null?a=[r]:a.push(r),o++}var p=n===o;if(!(t=t||p)){let e=o;if(o===e)if("string"==typeof s){if(r(s)<1){let r={params:{limit:1}};a===null?a=[r]:a.push(r),o++}}else{let r={params:{type:"string"}};a===null?a=[r]:a.push(r),o++}var p=e===o;if(!(t=t||p)){let e=o;if(o===e)if(s&&"object"==typeof s&&!Array.isArray(s)){let e;if(s.glob===void 0&&(e="glob")){let r={params:{missingProperty:e}};a===null?a=[r]:a.push(r),o++}else{let e=o;for(let r in s)if(r!=="glob"){let e={params:{additionalProperty:r}};a===null?a=[e]:a.push(e),o++;break}if(e===o&&s.glob!==void 0){let e=s.glob,l=o,i=!1,t=o;if(o===t)if(Array.isArray(e))if(e.length<1){let r={params:{limit:1}};a===null?a=[r]:a.push(r),o++}else{var E=!0;let s=e.length;for(let l=0;l<s;l++){let s=e[l],i=o;if(o===i)if("string"==typeof s){if(r(s)<1){let r={params:{limit:1}};a===null?a=[r]:a.push(r),o++}}else{let r={params:{type:"string"}};a===null?a=[r]:a.push(r),o++}var E=i===o;if(!E)break}}else{let r={params:{type:"array"}};a===null?a=[r]:a.push(r),o++}var c=t===o;if(!(i=i||c)){let s=o;if(o===s)if("string"==typeof e){if(r(e)<1){let r={params:{limit:1}};a===null?a=[r]:a.push(r),o++}}else{let r={params:{type:"string"}};a===null?a=[r]:a.push(r),o++}var c=s===o;i=i||c}if(!i){let r={params:{}};a===null?a=[r]:a.push(r),o++}else{o=l;if(a!==null)l?a.length=l:a=null}}}}else{let r={params:{type:"object"}};a===null?a=[r]:a.push(r),o++}var p=e===o;if(!(t=t||p)){let r=o;if(!(s instanceof Function)){let r={params:{}};a===null?a=[r]:a.push(r),o++}var p=r===o;t=t||p}}}if(!t){let r={params:{}};a===null?a=[r]:a.push(r),o++}else{o=l;if(a!==null)l?a.length=l:a=null}var u=e===o;i=i||u}if(!i){let r={params:{}};a===null?a=[r]:a.push(r),o++,e.errors=a;return!1}o=l;if(a!==null)l?a.length=l:a=null;return e.errors=a,o===0}function s(a,{instancePath:o="",parentData,parentDataProperty,rootData=a}={}){let l=null,i=0,t=i,n=!1,v=i;if(i===v)if("string"==typeof a){if(r(a)<1){let r={params:{limit:1}};l===null?l=[r]:l.push(r),i++}}else{let r={params:{type:"string"}};l===null?l=[r]:l.push(r),i++}var d=v===i;if(!(n=n||d)){let r=i;if(i===r)if(a&&"object"==typeof a&&!Array.isArray(a)){let r;if(a.banner===void 0&&(r="banner")){let e={params:{missingProperty:r}};l===null?l=[e]:l.push(e),i++}else{let r=i;for(let r in a)if(!(r==="banner"||r==="entryOnly"||r==="exclude"||r==="footer"||r==="include"||r==="raw"||r==="stage"||r==="test")){let e={params:{additionalProperty:r}};l===null?l=[e]:l.push(e),i++;break}if(r===i){if(a.banner!==void 0){let r=a.banner,e=i,s=i
-```
-
-**File**: `schemas/plugins/HtmlParserOptions.check.js` (modified, +1/-1)
-```diff
-@@ -4,4 +4,4 @@
-  * This file was automatically generated by "schema-utils".
-  * DO NOT MODIFY BY HAND.
-  */
--"use strict";module.exports=E,module.exports.default=E;let r={type:"object",additionalProperties:!1,properties:{as:{$ref:"#/definitions/HtmlParserAs"},chunkName:{anyOf:[{type:"string",minLength:1},{instanceof:"Function"}]},cssModules:{oneOf:[{$ref:"#/definitions/HtmlParserCssModules"}]},parseErrors:{type:"boolean"},sources:{anyOf:[{type:"array",items:{anyOf:[{enum:["..."]},{type:"object",additionalProperties:!1,properties:{attribute:{type:"string",minLength:1},filter:{instanceof:"Function"},tag:{type:"string",minLength:1},type:{anyOf:[{enum:["src","srcset","css-url","script","script-module","stylesheet","html","stylesheet-style","stylesheet-style-attribute","srcdoc"]},{enum:[!1]}]}},required:["attribute","type"]}]},minItems:1},{type:"boolean"}]},template:{instanceof:"Function"},urlHints:{$ref:"#/definitions/UrlHints"}}},e={anyOf:[{enum:["document"]},{type:"string"}]},a=function(r){let e=r.length,a=0,s=0,t;while(s<e){a++;if((t=r.charCodeAt(s++))>=55296&&t<=56319&&s<e&&((t=r.charCodeAt(s))&64512)==56320)s++}return a},s={enum:["class","id","ids","fragment","url"]};function t(r,{instancePath="",parentData,parentDataProperty,rootData=r}={}){if(r&&"object"==typeof r&&!Array.isArray(r)){for(let e in r)if(e!=="attributes")return t.errors=[{params:{additionalProperty:e}}],!1;if(r.attributes!==void 0){let e=r.attributes;if(e&&"object"==typeof e&&!Array.isArray(e))for(let r in e){let a=e[r];if(!(a==="class"||a==="id"||a==="ids"||a==="fragment"||a==="url"))return t.errors=[{params:{allowedValues:s.enum}}],!1;if(!(!0))break}else return t.errors=[{params:{type:"object"}}],!1}}else return t.errors=[{params:{type:"object"}}],!1;t.errors=null;return!0}let o={type:"object",additionalProperties:!1,properties:{as:{type:"string"},exclude:{$ref:"#/definitions/RuleSetCondition"},fetchPriority:{enum:["low","high","auto",!1]},include:{$ref:"#/definitions/RuleSetCondition"},media:{type:"string"},prefetch:{type:"boolean"},preload:{type:"boolean"},test:{$ref:"#/definitions/RuleSetCondition"},type:{type:"string"}}},i=Object.prototype.hasOwnProperty,l={validate:f};function n(r,{instancePath:e="",parentData,parentDataProperty,rootData=r}={}){let a=null,s=0;if(s===0)if(Array.isArray(r)){var t=!0;let o=r.length;for(let i=0;i<o;i++){let o=s,d=s,v=!1,f=null,u=s;if(!l.validate(r[i],{instancePath:e+"/"+i,parentData:r,parentDataProperty:i,rootData}))s=(a=a===null?l.validate.errors:a.concat(l.validate.errors)).length;if(u===s)v=!0,f=0;if(!v){let r={params:{passingSchemas:f}};a===null?a=[r]:a.push(r),s++,n.errors=a;return!1}s=d;if(a!==null)d?a.length=d:a=null;var t=o===s;if(!t)break}}else return n.errors=[{params:{type:"array"}}],!1;return n.errors=a,s===0}function d(r,{instancePath="",parentData,parentDataProperty,rootData=r}={}){if(Array.isArray(r)){var e=!0;let s=r.length;for(let t=0;t<s;t++){let s=r[t];if("string"==typeof s){if(a(s)<1)return d.errors=[{params:{limit:1}}],!1}else return d.errors=[{params:{type:"string"}}],!1;var e=!0;if(!e)break}}else return d.errors=[{params:{type:"array"}}],!1;d.errors=null;return!0}function v(r,{instancePath:e="",parentData,parentDataProperty,rootData=r}={}){let s=null,t=0;if(t===0)if(r&&"object"==typeof r&&!Array.isArray(r)){let f=t;for(let e in r)if(!(e==="and"||e==="glob"||e==="not"||e==="or"))return v.errors=[{params:{additionalProperty:e}}],!1;if(f===t){if(r.and!==void 0){let a=t,i=t,l=!1,d=null,f=t;if(!n(r.and,{instancePath:e+"/and",parentData:r,parentDataProperty:"and",rootData}))t=(s=s===null?n.errors:s.concat(n.errors)).length;if(f===t)l=!0,d=0;if(!l){let r={params:{passingSchemas:d}};s===null?s=[r]:s.push(r),t++,v.errors=s;return!1}t=i;if(s!==null)i?s.length=i:s=null;var o=a===t}else var o=!0;if(o){if(r.glob!==void 0){let l=r.glob,n=t,f=t,u=!1,p=t,c=t;if(t===c)if("string"==typeof l){if(a(l)<1){let r={params:{limit:1}};s===null?s=[r]:s.push(r),t++}}else{let r={params:{type:"string"}};s===null?s=[r]:s.push(r),t++}var i=p===t;if(!(u=u||i)){let a=t;if(!d(l,{instancePath:e+"/glob",parentData:r,parentDataProperty:"glob",rootData}))t=(s=s===null?d.errors:s.concat(d.errors)).length;var i=a===t;u=u||i}if(!u){let r={params:{}};s===null?s=[r]:s.push(r),t++,v.errors=s;return!1}t=f;if(s!==null)f?s.length=f:s=null;var o=n===t}else var o=!0;if(o){if(r.not!==void 0){let a=t,i=t,n=!1,d=null,f=t;if(!l.validate(r.not,{instancePath:e+"/not",parentData:r,parentDataProperty:"not",rootData}))t=(s=s===null?l.validate.errors:s.concat(l.validate.errors)).length;if(f===t)n=!0,d=0;if(!n){let r={params:{passingSchemas:d}};s===null?s=[r]:s.push(r),t++,v.errors=s;return!1}t=i;if(s!==null)i?s.length=i:s=null;var o=a===t}else var o=!0;if(o)if(r.or!==void 0){let a=t,i=t,l=!1,d=null,f=t;if(!n(r.or,{instancePath:e+"/or",parentData:r,parentDataProperty:"or",rootData}))t=(s=s===null?n.errors:s.concat(n.errors)).length;if(f===t)l=!0,d=0;if(!l){let r={params:{passingSchemas:d}};s===null?s=[r]:s.push(r),t++,v.errors=s;return!1}t=
-```
-
-**File**: `schemas/plugins/SourceMapDevToolPlugin.check.js` (modified, +1/-1)
-```diff
-@@ -4,4 +4,4 @@
-  * This file was automatically generated by "schema-utils".
-  * DO NOT MODIFY BY HAND.
-  */
--"use strict";module.exports=l,module.exports.default=l;let r={definitions:{Rule:{anyOf:[{instanceof:"RegExp"},{type:"string",minLength:1},{type:"object",additionalProperties:!1,properties:{glob:{anyOf:[{type:"array",items:{type:"string",minLength:1},minItems:1},{type:"string",minLength:1}]}},required:["glob"]},{instanceof:"Function"}]},Rules:{anyOf:[{type:"array",items:{oneOf:[{$ref:"#/definitions/Rule"}]}},{$ref:"#/definitions/Rule"}]}},type:"object",additionalProperties:!1,properties:{append:{anyOf:[{enum:[!1,null]},{type:"string",minLength:1},{instanceof:"Function"}]},columns:{type:"boolean"},debugIds:{type:"boolean"},exclude:{oneOf:[{$ref:"#/definitions/Rules"}]},fallbackModuleFilenameTemplate:{anyOf:[{type:"string",minLength:1},{instanceof:"Function"}]},fileContext:{type:"string"},filename:{anyOf:[{enum:[!1,null]},{type:"string",absolutePath:!1,minLength:1}]},ignoreList:{oneOf:[{$ref:"#/definitions/Rules"}]},include:{oneOf:[{$ref:"#/definitions/Rules"}]},module:{type:"boolean"},moduleFilenameTemplate:{anyOf:[{type:"string",minLength:1},{instanceof:"Function"}]},namespace:{type:"string"},noSources:{type:"boolean"},publicPath:{type:"string"},scopes:{type:"boolean"},sourceRoot:{type:"string"},test:{oneOf:[{$ref:"#/definitions/Rules"}]}},$id:"SourceMapDevToolPlugin.json"},e=Object.prototype.hasOwnProperty,s=function(r){let e=r.length,s=0,a=0,o;while(a<e){s++;if((o=r.charCodeAt(a++))>=55296&&o<=56319&&a<e&&((o=r.charCodeAt(a))&64512)==56320)a++}return s};function a(r,{instancePath="",parentData,parentDataProperty,rootData=r}={}){let e=null,o=0,l=o,i=!1,t=o;if(o===t)if(Array.isArray(r)){var n=!0;let a=r.length;for(let l=0;l<a;l++){let a=r[l],i=o,t=o,u=!1,p=null,c=o,E=o,_=!1,m=o;if(!(a instanceof RegExp)){let r={params:{}};e===null?e=[r]:e.push(r),o++}var v=m===o;if(!(_=_||v)){let r=o;if(o===r)if("string"==typeof a){if(s(a)<1){let r={params:{limit:1}};e===null?e=[r]:e.push(r),o++}}else{let r={params:{type:"string"}};e===null?e=[r]:e.push(r),o++}var v=r===o;if(!(_=_||v)){let r=o;if(o===r)if(a&&"object"==typeof a&&!Array.isArray(a)){let r;if(a.glob===void 0&&(r="glob")){let s={params:{missingProperty:r}};e===null?e=[s]:e.push(s),o++}else{let r=o;for(let r in a)if(r!=="glob"){let s={params:{additionalProperty:r}};e===null?e=[s]:e.push(s),o++;break}if(r===o&&a.glob!==void 0){let r=a.glob,l=o,i=!1,t=o;if(o===t)if(Array.isArray(r))if(r.length<1){let r={params:{limit:1}};e===null?e=[r]:e.push(r),o++}else{var d=!0;let a=r.length;for(let l=0;l<a;l++){let a=r[l],i=o;if(o===i)if("string"==typeof a){if(s(a)<1){let r={params:{limit:1}};e===null?e=[r]:e.push(r),o++}}else{let r={params:{type:"string"}};e===null?e=[r]:e.push(r),o++}var d=i===o;if(!d)break}}else{let r={params:{type:"array"}};e===null?e=[r]:e.push(r),o++}var f=t===o;if(!(i=i||f)){let a=o;if(o===a)if("string"==typeof r){if(s(r)<1){let r={params:{limit:1}};e===null?e=[r]:e.push(r),o++}}else{let r={params:{type:"string"}};e===null?e=[r]:e.push(r),o++}var f=a===o;i=i||f}if(!i){let r={params:{}};e===null?e=[r]:e.push(r),o++}else{o=l;if(e!==null)l?e.length=l:e=null}}}}else{let r={params:{type:"object"}};e===null?e=[r]:e.push(r),o++}var v=r===o;if(!(_=_||v)){let r=o;if(!(a instanceof Function)){let r={params:{}};e===null?e=[r]:e.push(r),o++}var v=r===o;_=_||v}}}if(!_){let r={params:{}};e===null?e=[r]:e.push(r),o++}else{o=E;if(e!==null)E?e.length=E:e=null}if(c===o)u=!0,p=0;if(!u){let r={params:{passingSchemas:p}};e===null?e=[r]:e.push(r),o++}else{o=t;if(e!==null)t?e.length=t:e=null}var n=i===o;if(!n)break}}else{let r={params:{type:"array"}};e===null?e=[r]:e.push(r),o++}var u=t===o;if(!(i=i||u)){let a=o,l=o,t=!1,n=o;if(!(r instanceof RegExp)){let r={params:{}};e===null?e=[r]:e.push(r),o++}var p=n===o;if(!(t=t||p)){let a=o;if(o===a)if("string"==typeof r){if(s(r)<1){let r={params:{limit:1}};e===null?e=[r]:e.push(r),o++}}else{let r={params:{type:"string"}};e===null?e=[r]:e.push(r),o++}var p=a===o;if(!(t=t||p)){let a=o;if(o===a)if(r&&"object"==typeof r&&!Array.isArray(r)){let a;if(r.glob===void 0&&(a="glob")){let r={params:{missingProperty:a}};e===null?e=[r]:e.push(r),o++}else{let a=o;for(let s in r)if(s!=="glob"){let r={params:{additionalProperty:s}};e===null?e=[r]:e.push(r),o++;break}if(a===o&&r.glob!==void 0){let a=r.glob,l=o,i=!1,t=o;if(o===t)if(Array.isArray(a))if(a.length<1){let r={params:{limit:1}};e===null?e=[r]:e.push(r),o++}else{var c=!0;let r=a.length;for(let l=0;l<r;l++){let r=a[l],i=o;if(o===i)if("string"==typeof r){if(s(r)<1){let r={params:{limit:1}};e===null?e=[r]:e.push(r),o++}}else{let r={params:{type:"string"}};e===null?e=[r]:e.push(r),o++}var c=i===o;if(!c)break}}else{let r={params:{type:"array"}};e===null?e=[r]:e.push(r),o++}var E=t===o;if(!(i=i||E)){let r=o;if(o===r)if("string"==typeof a){if(s(a)<1){let r={params:{limit:1}};e===null?e=[r]:e.push(r),o++}}else{let r={params:{type:"string"}};e===null?e=[r]:e.push(r),o++}var E=r===o;i=i||E}if(!i){l
-```
-
-**File**: `schemas/plugins/WatchIgnorePlugin.check.js` (modified, +1/-1)
-```diff
-@@ -4,4 +4,4 @@
-  * This file was automatically generated by "schema-utils".
-  * DO NOT MODIFY BY HAND.
-  */
--"use strict";module.exports=s,module.exports.default=s;let r=/^(?:file:(?=\/))?(?:[A-Za-z]:(\\|\/)|\\\\|\/)/i,e=function(r){let e=r.length,s=0,a=0,t;while(a<e){s++;if((t=r.charCodeAt(a++))>=55296&&t<=56319&&a<e&&((t=r.charCodeAt(a))&64512)==56320)a++}return s};function s(a,{instancePath="",parentData,parentDataProperty,rootData=a}={}){let t=null,l=0;if(l===0)if(a&&"object"==typeof a&&!Array.isArray(a)){let n;if(a.paths===void 0&&(n="paths"))return s.errors=[{params:{missingProperty:n}}],!1;else{let n=l;for(let r in a)if(r!=="paths")return s.errors=[{params:{additionalProperty:r}}],!1;if(n===l&&a.paths!==void 0){let n=a.paths,d=l;if(l===d)if(Array.isArray(n))if(n.length<1)return s.errors=[{params:{limit:1}}],!1;else{var o=!0;let a=n.length;for(let d=0;d<a;d++){let a=n[d],v=l,f=l,p=!1,u=l;if(!(a instanceof RegExp)){let r={params:{}};t===null?t=[r]:t.push(r),l++}var i=u===l;if(!(p=p||i)){let s=l;if(l===s)if("string"==typeof a){if(a.includes("!")||r.test(a)!==!0){let r={params:{}};t===null?t=[r]:t.push(r),l++}}else{let r={params:{type:"string"}};t===null?t=[r]:t.push(r),l++}var i=s===l;if(!(p=p||i)){let s=l;if(l===s)if("string"==typeof a){if(e(a)<1){let r={params:{limit:1}};t===null?t=[r]:t.push(r),l++}else if(a.includes("!")||r.test(a)!==!1){let r={params:{}};t===null?t=[r]:t.push(r),l++}}else{let r={params:{type:"string"}};t===null?t=[r]:t.push(r),l++}var i=s===l;p=p||i}}if(!p){let r={params:{}};t===null?t=[r]:t.push(r),l++,s.errors=t;return!1}l=f;if(t!==null)f?t.length=f:t=null;var o=v===l;if(!o)break}}else return s.errors=[{params:{type:"array"}}],!1}}}else return s.errors=[{params:{type:"object"}}],!1;return s.errors=t,l===0}
+-"use strict";module.exports=r,module.exports.default=r;let e=/^(?:file:(?=\/))?(?:[A-Za-z]:(\\|\/)|\\\\|\/)/i;function r(t,{instancePath="",parentData,parentDataProperty,rootData=t}={}){if(t&&"object"==typeof t&&!Array.isArray(t)){for(let e in t)if(!(e==="entrypoints"||e==="filename"||e==="filter"||e==="generate"||e==="prefix"||e==="serialize"))return r.errors=[{params:{additionalProperty:e}}],!1;if(t.entrypoints!==void 0){if("boolean"!=typeof t.entrypoints)return r.errors=[{params:{type:"boolean"}}],!1;var a=!0}else var a=!0;if(a){if(t.filename!==void 0){let s=t.filename;if("string"==typeof s){if(function(e){let r=e.length,t=0,a=0,s;while(a<r){t++;if((s=e.charCodeAt(a++))>=55296&&s<=56319&&a<r&&((s=e.charCodeAt(a))&64512)==56320)a++}return t}(s)<1)return r.errors=[{params:{limit:1}}],!1;if(s.includes("!")||e.test(s)!==!1)return r.errors=[{params:{}}],!1}else return r.errors=[{params:{type:"string"}}],!1;var a=!0}else var a=!0;if(a){if(t.filter!==void 0){if(!(t.filter instanceof Function))return r.errors=[{params:{}}],!1;var a=!0}else var a=!0;if(a){if(t.generate!==void 0){if(!(t.generate instanceof Function))return r.errors=[{params:{}}],!1;var a=!0}else var a=!0;if(a){if(t.prefix!==void 0){if("string"!=typeof t.prefix)return r.errors=[{params:{type:"string"}}],!1;var a=!0}else var a=!0;if(a)if(t.serialize!==void 0){if(!(t.serialize instanceof Function))return r.errors=[{params:{}}],!1;var a=!0}else var a=!0}}}}}else return r.errors=[{params:{type:"object"}}],!1;r.errors=null;return!0}
 \ No newline at end of file
-+"use strict";module.exports=s,module.exports.default=s;let r=/^(?:file:(?=\/))?(?:[A-Za-z]:(\\|\/)|\\\\|\/)/i,e=function(r){let e=r.length,s=0,a=0,t;while(a<e){s++;if((t=r.charCodeAt(a++))>=55296&&t<=56319&&a<e&&((t=r.charCodeAt(a))&64512)==56320)a++}return s};function s(a,{instancePath="",parentData,parentDataProperty,rootData=a}={}){let t=null,l=0;if(l===0)if(a&&"object"==typeof a&&!Array.isArray(a)){let n;if(a.paths===void 0&&(n="paths"))return s.errors=[{params:{missingProperty:n}}],!1;else{let n=l;for(let r in a)if(r!=="paths")return s.errors=[{params:{additionalProperty:r}}],!1;if(n===l&&a.paths!==void 0){let n=a.paths,d=l;if(l===d)if(Array.isArray(n))if(n.length<1)return s.errors=[{params:{limit:1}}],!1;else{let a=n.length;for(let d=0;d<a;d++){let a=n[d],v=l,f=l,p=!1,u=l;if(!(a instanceof RegExp)){let r={params:{}};t===null?t=[r]:t.push(r),l++}var i=u===l;if(!(p=p||i)){let s=l;if(l===s)if("string"==typeof a){if(a.includes("!")||r.test(a)!==!0){let r={params:{}};t===null?t=[r]:t.push(r),l++}}else{let r={params:{type:"string"}};t===null?t=[r]:t.push(r),l++}var i=s===l;if(!(p=p||i)){let s=l;if(l===s)if("string"==typeof a){if(e(a)<1){let r={params:{limit:1}};t===null?t=[r]:t.push(r),l++}else if(a.includes("!")||r.test(a)!==!1){let r={params:{}};t===null?t=[r]:t.push(r),l++}}else{let r={params:{type:"string"}};t===null?t=[r]:t.push(r),l++}var i=s===l;p=p||i}}if(!p){let r={params:{}};t===null?t=[r]:t.push(r),l++,s.errors=t;return!1}l=f;if(t!==null)f?t.length=f:t=null;if(!(v===l))break}}else return s.errors=[{params:{type:"array"}}],!1}}}else return s.errors=[{params:{type:"object"}}],!1;return s.errors=t,l===0}
++"use strict";module.exports=t,module.exports.default=t;let e=function(e){let r=e.length,t=0,a=0,s;while(a<r){t++;if((s=e.charCodeAt(a++))>=55296&&s<=56319&&a<r&&((s=e.charCodeAt(a))&64512)==56320)a++}return t},r=/^(?:file:(?=\/))?(?:[A-Za-z]:(\\|\/)|\\\\|\/)/i;function t(a,{instancePath="",parentData,parentDataProperty,rootData=a}={}){if(a&&"object"==typeof a&&!Array.isArray(a)){for(let e in a)if(!(e==="entrypoints"||e==="filename"||e==="filter"||e==="generate"||e==="prefix"||e==="serialize"))return t.errors=[{params:{additionalProperty:e}}],!1;if(a.entrypoints!==void 0){if("boolean"!=typeof a.entrypoints)return t.errors=[{params:{type:"boolean"}}],!1;var s=!0}else var s=!0;if(s){if(a.filename!==void 0){let i=a.filename;if("string"==typeof i){if(e(i)<1)return t.errors=[{params:{limit:1}}],!1;if(i.includes("!")||r.test(i)!==!1)return t.errors=[{params:{}}],!1}else return t.errors=[{params:{type:"string"}}],!1;var s=!0}else var s=!0;if(s){if(a.filter!==void 0){if(!(a.filter instanceof Function))return t.errors=[{params:{}}],!1;var s=!0}else var s=!0;if(s){if(a.generate!==void 0){if(!(a.generate instanceof Function))return t.errors=[{params:{}}],!1;var s=!0}else var s=!0;if(s){if(a.prefix!==void 0){if("string"!=typeof a.prefix)return t.errors=[{params:{type:"string"}}],!1;var s=!0}else var s=!0;if(s)if(a.serialize!==void 0){if(!(a.serialize instanceof Function))return t.errors=[{params:{}}],!1;var s=!0}else var s=!0}}}}}else return t.errors=[{params:{type:"object"}}],!1;t.errors=null;return!0}
 \ No newline at end of file
 ```
 
-**File**: `schemas/plugins/container/ContainerPlugin.check.js` (modified, +1/-1)
+**File**: `schemas/plugins/SSRManifestPlugin.check.js` (modified, +1/-1)
 ```diff
 @@ -4,4 +4,4 @@
   * This file was automatically generated by "schema-utils".
   * DO NOT MODIFY BY HAND.
   */
--"use strict";module.exports=m,module.exports.default=m;let r={anyOf:[{enum:[!1]},{type:"string",minLength:1}]},e=function(r){let e=r.length,s=0,a=0,t;while(a<e){s++;if((t=r.charCodeAt(a++))>=55296&&t<=56319&&a<e&&((t=r.charCodeAt(a))&64512)==56320)a++}return s};function s(r,{instancePath="",parentData,parentDataProperty,rootData=r}={}){if(Array.isArray(r)){var a=!0;let t=r.length;for(let o=0;o<t;o++){let t=r[o];if("string"==typeof t){if(e(t)<1)return s.errors=[{params:{limit:1}}],!1}else return s.errors=[{params:{type:"string"}}],!1;var a=!0;if(!a)break}}else return s.errors=[{params:{type:"array"}}],!1;s.errors=null;return!0}function a(r,{instancePath:t="",parentData,parentDataProperty,rootData=r}={}){let o=null,i=0;if(i===0)if(r&&"object"==typeof r&&!Array.isArray(r)){let d;if(r.import===void 0&&(d="import"))return a.errors=[{params:{missingProperty:d}}],!1;else{let d=i;for(let e in r)if(!(e==="import"||e==="name"))return a.errors=[{params:{additionalProperty:e}}],!1;if(d===i){if(r.import!==void 0){let d=r.import,v=i,f=i,p=!1,m=i,u=i;if(i===u)if("string"==typeof d){if(e(d)<1){let r={params:{limit:1}};o===null?o=[r]:o.push(r),i++}}else{let r={params:{type:"string"}};o===null?o=[r]:o.push(r),i++}var n=m===i;if(!(p=p||n)){let e=i;if(!s(d,{instancePath:t+"/import",parentData:r,parentDataProperty:"import",rootData}))i=(o=o===null?s.errors:o.concat(s.errors)).length;var n=e===i;p=p||n}if(!p){let r={params:{}};o===null?o=[r]:o.push(r),i++,a.errors=o;return!1}i=f;if(o!==null)f?o.length=f:o=null;var l=v===i}else var l=!0;if(l)if(r.name!==void 0){let e=i;if("string"!=typeof r.name)return a.errors=[{params:{type:"string"}}],!1;var l=e===i}else var l=!0}}}else return a.errors=[{params:{type:"object"}}],!1;return a.errors=o,i===0}function t(r,{instancePath:o="",parentData,parentDataProperty,rootData=r}={}){let i=null,n=0;if(n===0)if(r&&"object"==typeof r&&!Array.isArray(r))for(let d in r){let v=r[d],f=n,p=n,m=!1,u=n;if(!a(v,{instancePath:o+"/"+d.replace(/~/g,"~0").replace(/\//g,"~1"),parentData:r,parentDataProperty:d,rootData}))n=(i=i===null?a.errors:i.concat(a.errors)).length;var l=u===n;if(!(m=m||l)){let a=n,t=n;if(n===t)if("string"==typeof v){if(e(v)<1){let r={params:{limit:1}};i===null?i=[r]:i.push(r),n++}}else{let r={params:{type:"string"}};i===null?i=[r]:i.push(r),n++}var l=a===n;if(!(m=m||l)){let e=n;if(!s(v,{instancePath:o+"/"+d.replace(/~/g,"~0").replace(/\//g,"~1"),parentData:r,parentDataProperty:d,rootData}))n=(i=i===null?s.errors:i.concat(s.errors)).length;var l=e===n;m=m||l}}if(!m){let r={params:{}};i===null?i=[r]:i.push(r),n++,t.errors=i;return!1}n=p;if(i!==null)p?i.length=p:i=null;if(!(f===n))break}else return t.errors=[{params:{type:"object"}}],!1;return t.errors=i,n===0}function o(r,{instancePath:s="",parentData,parentDataProperty,rootData=r}={}){let a=null,i=0,n=i,l=!1,d=i;if(i===d)if(Array.isArray(r)){var v=!0;let o=r.length;for(let n=0;n<o;n++){let o=r[n],l=i,d=i,p=!1,m=i,u=i;if(i===u)if("string"==typeof o){if(e(o)<1){let r={params:{limit:1}};a===null?a=[r]:a.push(r),i++}}else{let r={params:{type:"string"}};a===null?a=[r]:a.push(r),i++}var f=m===i;if(!(p=p||f)){let e=i;if(!t(o,{instancePath:s+"/"+n,parentData:r,parentDataProperty:n,rootData}))i=(a=a===null?t.errors:a.concat(t.errors)).length;var f=e===i;p=p||f}if(!p){let r={params:{}};a===null?a=[r]:a.push(r),i++}else{i=d;if(a!==null)d?a.length=d:a=null}var v=l===i;if(!v)break}}else{let r={params:{type:"array"}};a===null?a=[r]:a.push(r),i++}var p=d===i;if(!(l=l||p)){let e=i;if(!t(r,{instancePath:s,parentData,parentDataProperty,rootData}))i=(a=a===null?t.errors:a.concat(t.errors)).length;var p=e===i;l=l||p}if(!l){let r={params:{}};a===null?a=[r]:a.push(r),i++,o.errors=a;return!1}i=n;if(a!==null)n?a.length=n:a=null;return o.errors=a,i===0}let i={enum:["last","all"]},n={anyOf:[{enum:["var","module","assign","assign-properties","this","window","self","global","commonjs","commonjs2","commonjs-module","commonjs-static","amd","amd-require","umd","umd2","jsonp","system"]},{type:"string"}]};function l(r,{instancePath="",parentData,parentDataProperty,rootData=r}={}){let e=null,s=0,a=s,t=!1,o=s;if("string"!=typeof r){let r={params:{type:"string"}};e===null?e=[r]:e.push(r),s++}var i=o===s;if(!(t=t||i)){let a=s,o=s;if(s===o)if(r&&"object"==typeof r&&!Array.isArray(r)){let a=s;for(let a in r)if(!(a==="amd"||a==="commonjs"||a==="commonjs2"||a==="root")){let r={params:{additionalProperty:a}};e===null?e=[r]:e.push(r),s++;break}if(a===s){if(r.amd!==void 0){let a=s;if("string"!=typeof r.amd){let r={params:{type:"string"}};e===null?e=[r]:e.push(r),s++}var n=a===s}else var n=!0;if(n){if(r.commonjs!==void 0){let a=s;if("string"!=typeof r.commonjs){let r={params:{type:"string"}};e===null?e=[r]:e.push(r),s++}var n=a===s}else var n=!0;if(n){if(r.commonjs2!==void 0){let a=s;if("string"!=typeof r.commonjs2){let r={params:{type:"string"}};e===null?e=[r]:e.push(r),s++}
+-"use strict";module.exports=r,module.exports.default=r;let e=/^(?:file:(?=\/))?(?:[A-Za-z]:(\\|\/)|\\\\|\/)/i;function r(a,{instancePath="",parentData,parentDataProperty,rootData=a}={}){if(a&&"object"==typeof a&&!Array.isArray(a)){for(let e in a)if(!(e==="context"||e==="filename"))return r.errors=[{params:{additionalProperty:e}}],!1;if(a.context!==void 0){let s=a.context;if("string"==typeof s){if(s.includes("!")||e.test(s)!==!0)return r.errors=[{params:{}}],!1}else return r.errors=[{params:{type:"string"}}],!1;var t=!0}else var t=!0;if(t)if(a.filename!==void 0){let s=a.filename;if("string"==typeof s){if(function(e){let r=e.length,a=0,t=0,s;while(t<r){a++;if((s=e.charCodeAt(t++))>=55296&&s<=56319&&t<r&&((s=e.charCodeAt(t))&64512)==56320)t++}return a}(s)<1)return r.errors=[{params:{limit:1}}],!1;if(s.includes("!")||e.test(s)!==!1)return r.errors=[{params:{}}],!1}else return r.errors=[{params:{type:"string"}}],!1;var t=!0}else var t=!0}else return r.errors=[{params:{type:"object"}}],!1;r.errors=null;return!0}
+\ No newline at end of file
++"use strict";module.exports=a,module.exports.default=a;let e=/^(?:file:(?=\/))?(?:[A-Za-z]:(\\|\/)|\\\\|\/)/i,r=function(e){let r=e.length,a=0,t=0,s;while(t<r){a++;if((s=e.charCodeAt(t++))>=55296&&s<=56319&&t<r&&((s=e.charCodeAt(t))&64512)==56320)t++}return a};function a(t,{instancePath="",parentData,parentDataProperty,rootData=t}={}){if(t&&"object"==typeof t&&!Array.isArray(t)){for(let e in t)if(!(e==="context"||e==="filename"))return a.errors=[{params:{additionalProperty:e}}],!1;if(t.context!==void 0){let r=t.context;if("string"==typeof r){if(r.includes("!")||e.test(r)!==!0)return a.errors=[{params:{}}],!1}else return a.errors=[{params:{type:"string"}}],!1;var s=!0}else var s=!0;if(s)if(t.filename!==void 0){let l=t.filename;if("string"==typeof l){if(r(l)<1)return a.errors=[{params:{limit:1}}],!1;if(l.includes("!")||e.test(l)!==!1)return a.errors=[{params:{}}],!1}else return a.errors=[{params:{type:"string"}}],!1;var s=!0}else var s=!0}else return a.errors=[{params:{type:"object"}}],!1;a.errors=null;return!0}
+\ No newline at end of file
 ```
 
-**File**: `schemas/plugins/container/ContainerReferencePlugin.check.js` (modified, +1/-1)
+**File**: `schemas/plugins/asset/AssetGeneratorOptions.check.js` (modified, +1/-1)
 ```diff
 @@ -4,4 +4,4 @@
   * This file was automatically generated by "schema-utils".
   * DO NOT MODIFY BY HAND.
   */
--"use strict";module.exports=i,module.exports.default=i;let r={enum:["var","module","assign","this","window","self","global","commonjs","commonjs2","commonjs-module","commonjs-static","amd","amd-require","amd-async","umd","umd2","jsonp","system","promise","import","module-import","script","node-commonjs","asset","asset-url","css-import","css-url"]},e=function(r){let e=r.length,a=0,s=0,t;while(s<e){a++;if((t=r.charCodeAt(s++))>=55296&&t<=56319&&s<e&&((t=r.charCodeAt(s))&64512)==56320)s++}return a};function a(r,{instancePath="",parentData,parentDataProperty,rootData=r}={}){if(Array.isArray(r)){var s=!0;let t=r.length;for(let o=0;o<t;o++){let t=r[o];if("string"==typeof t){if(e(t)<1)return a.errors=[{params:{limit:1}}],!1}else return a.errors=[{params:{type:"string"}}],!1;var s=!0;if(!s)break}}else return a.errors=[{params:{type:"array"}}],!1;a.errors=null;return!0}function s(r,{instancePath:t="",parentData,parentDataProperty,rootData=r}={}){let o=null,i=0;if(i===0)if(r&&"object"==typeof r&&!Array.isArray(r)){let d;if(r.external===void 0&&(d="external"))return s.errors=[{params:{missingProperty:d}}],!1;else{let d=i;for(let e in r)if(!(e==="external"||e==="shareScope"))return s.errors=[{params:{additionalProperty:e}}],!1;if(d===i){if(r.external!==void 0){let d=r.external,v=i,f=i,m=!1,p=i,c=i;if(i===c)if("string"==typeof d){if(e(d)<1){let r={params:{limit:1}};o===null?o=[r]:o.push(r),i++}}else{let r={params:{type:"string"}};o===null?o=[r]:o.push(r),i++}var n=p===i;if(!(m=m||n)){let e=i;if(!a(d,{instancePath:t+"/external",parentData:r,parentDataProperty:"external",rootData}))i=(o=o===null?a.errors:o.concat(a.errors)).length;var n=e===i;m=m||n}if(!m){let r={params:{}};o===null?o=[r]:o.push(r),i++,s.errors=o;return!1}i=f;if(o!==null)f?o.length=f:o=null;var l=v===i}else var l=!0;if(l)if(r.shareScope!==void 0){let a=r.shareScope,t=i;if(i===t)if("string"==typeof a){if(e(a)<1)return s.errors=[{params:{limit:1}}],!1}else return s.errors=[{params:{type:"string"}}],!1;var l=t===i}else var l=!0}}}else return s.errors=[{params:{type:"object"}}],!1;return s.errors=o,i===0}function t(r,{instancePath:o="",parentData,parentDataProperty,rootData=r}={}){let i=null,n=0;if(n===0)if(r&&"object"==typeof r&&!Array.isArray(r))for(let d in r){let v=r[d],f=n,m=n,p=!1,c=n;if(!s(v,{instancePath:o+"/"+d.replace(/~/g,"~0").replace(/\//g,"~1"),parentData:r,parentDataProperty:d,rootData}))n=(i=i===null?s.errors:i.concat(s.errors)).length;var l=c===n;if(!(p=p||l)){let s=n,t=n;if(n===t)if("string"==typeof v){if(e(v)<1){let r={params:{limit:1}};i===null?i=[r]:i.push(r),n++}}else{let r={params:{type:"string"}};i===null?i=[r]:i.push(r),n++}var l=s===n;if(!(p=p||l)){let e=n;if(!a(v,{instancePath:o+"/"+d.replace(/~/g,"~0").replace(/\//g,"~1"),parentData:r,parentDataProperty:d,rootData}))n=(i=i===null?a.errors:i.concat(a.errors)).length;var l=e===n;p=p||l}}if(!p){let r={params:{}};i===null?i=[r]:i.push(r),n++,t.errors=i;return!1}n=m;if(i!==null)m?i.length=m:i=null;if(!(f===n))break}else return t.errors=[{params:{type:"object"}}],!1;return t.errors=i,n===0}function o(r,{instancePath:a="",parentData,parentDataProperty,rootData=r}={}){let s=null,i=0,n=i,l=!1,d=i;if(i===d)if(Array.isArray(r)){var v=!0;let o=r.length;for(let n=0;n<o;n++){let o=r[n],l=i,d=i,m=!1,p=i,c=i;if(i===c)if("string"==typeof o){if(e(o)<1){let r={params:{limit:1}};s===null?s=[r]:s.push(r),i++}}else{let r={params:{type:"string"}};s===null?s=[r]:s.push(r),i++}var f=p===i;if(!(m=m||f)){let e=i;if(!t(o,{instancePath:a+"/"+n,parentData:r,parentDataProperty:n,rootData}))i=(s=s===null?t.errors:s.concat(t.errors)).length;var f=e===i;m=m||f}if(!m){let r={params:{}};s===null?s=[r]:s.push(r),i++}else{i=d;if(s!==null)d?s.length=d:s=null}var v=l===i;if(!v)break}}else{let r={params:{type:"array"}};s===null?s=[r]:s.push(r),i++}var m=d===i;if(!(l=l||m)){let e=i;if(!t(r,{instancePath:a,parentData,parentDataProperty,rootData}))i=(s=s===null?t.errors:s.concat(t.errors)).length;var m=e===i;l=l||m}if(!l){let r={params:{}};s===null?s=[r]:s.push(r),i++,o.errors=s;return!1}i=n;if(s!==null)n?s.length=n:s=null;return o.errors=s,i===0}function i(a,{instancePath:s="",parentData,parentDataProperty,rootData=a}={}){let t=null,n=0;if(n===0)if(a&&"object"==typeof a&&!Array.isArray(a)){let d;if(a.remoteType===void 0&&(d="remoteType")||a.remotes===void 0&&(d="remotes"))return i.errors=[{params:{missingProperty:d}}],!1;else{let d=n;for(let r in a)if(!(r==="remoteType"||r==="remotes"||r==="shareScope"))return i.errors=[{params:{additionalProperty:r}}],!1;if(d===n){if(a.remoteType!==void 0){let e=a.remoteType,s=n,o=n,d=!1,v=null,f=n;if(!(e==="var"||e==="module"||e==="assign"||e==="this"||e==="window"||e==="self"||e==="global"||e==="commonjs"||e==="commonjs2"||e==="commonjs-module"||e==="commonjs-static"||e==="amd"||e==="amd-require"||e==="amd-async"||e==="umd"||e==="umd2"||e==="jsonp"||e==="system"||e==="promise"||e
+-"use strict";module.exports=t,module.exports.default=t;let r={type:"object",additionalProperties:!1,properties:{encoding:{enum:[!1,"base64"]},mimetype:{type:"string"}}};function e(s,{instancePath="",parentData,parentDataProperty,rootData=s}={}){let a=null,t=0,o=t,i=!1,l=t,n=t;if(t===n)if(s&&"object"==typeof s&&!Array.isArray(s)){let e=t;for(let r in s)if(!(r==="encoding"||r==="mimetype")){let e={params:{additionalProperty:r}};a===null?a=[e]:a.push(e),t++;break}if(e===t){if(s.encoding!==void 0){let e=s.encoding,o=t;if(!(e===!1||e==="base64")){let e={params:{allowedValues:r.properties.encoding.enum}};a===null?a=[e]:a.push(e),t++}var v=o===t}else var v=!0;if(v)if(s.mimetype!==void 0){let r=t;if("string"!=typeof s.mimetype){let r={params:{type:"string"}};a===null?a=[r]:a.push(r),t++}var v=r===t}else var v=!0}}else{let r={params:{type:"object"}};a===null?a=[r]:a.push(r),t++}var d=l===t;if(!(i=i||d)){let r=t;if(!(s instanceof Function)){let r={params:{}};a===null?a=[r]:a.push(r),t++}d=r===t,i=i||d}if(!i){let r={params:{}};a===null?a=[r]:a.push(r),t++,e.errors=a;return!1}t=o;if(a!==null)o?a.length=o:a=null;return e.errors=a,t===0}let s=/^(?:file:(?=\/))?(?:[A-Za-z]:(\\|\/)|\\\\|\/)/i;function a(r,{instancePath:t="",parentData,parentDataProperty,rootData=r}={}){let o=null,i=0;if(i===0)if(r&&"object"==typeof r&&!Array.isArray(r)){let f=i;for(let e in r)if(!(e==="binary"||e==="dataUrl"||e==="emit"||e==="filename"||e==="outputPath"||e==="publicPath"))return a.errors=[{params:{additionalProperty:e}}],!1;if(f===i){if(r.binary!==void 0){let e=i;if("boolean"!=typeof r.binary)return a.errors=[{params:{type:"boolean"}}],!1;var l=e===i}else var l=!0;if(l){if(r.dataUrl!==void 0){let s=i;if(!e(r.dataUrl,{instancePath:t+"/dataUrl",parentData:r,parentDataProperty:"dataUrl",rootData}))i=(o=o===null?e.errors:o.concat(e.errors)).length;var l=s===i}else var l=!0;if(l){if(r.emit!==void 0){let e=i;if("boolean"!=typeof r.emit)return a.errors=[{params:{type:"boolean"}}],!1;var l=e===i}else var l=!0;if(l){if(r.filename!==void 0){let e=r.filename,t=i,v=i,d=!1,f=i;if(i===f)if("string"==typeof e){if(function(r){let e=r.length,s=0,a=0,t;while(a<e){s++;if((t=r.charCodeAt(a++))>=55296&&t<=56319&&a<e&&((t=r.charCodeAt(a))&64512)==56320)a++}return s}(e)<1){let r={params:{limit:1}};o===null?o=[r]:o.push(r),i++}else if(e.includes("!")||s.test(e)!==!1){let r={params:{}};o===null?o=[r]:o.push(r),i++}}else{let r={params:{type:"string"}};o===null?o=[r]:o.push(r),i++}var n=f===i;if(!(d=d||n)){let r=i;if(!(e instanceof Function)){let r={params:{}};o===null?o=[r]:o.push(r),i++}var n=r===i;d=d||n}if(!d){let r={params:{}};o===null?o=[r]:o.push(r),i++,a.errors=o;return!1}i=v;if(o!==null)v?o.length=v:o=null;var l=t===i}else var l=!0;if(l){if(r.outputPath!==void 0){let e=r.outputPath,t=i,n=i,d=!1,f=i;if(i===f)if("string"==typeof e){if(e.includes("!")||s.test(e)!==!1){let r={params:{}};o===null?o=[r]:o.push(r),i++}}else{let r={params:{type:"string"}};o===null?o=[r]:o.push(r),i++}var v=f===i;if(!(d=d||v)){let r=i;if(!(e instanceof Function)){let r={params:{}};o===null?o=[r]:o.push(r),i++}var v=r===i;d=d||v}if(!d){let r={params:{}};o===null?o=[r]:o.push(r),i++,a.errors=o;return!1}i=n;if(o!==null)n?o.length=n:o=null;var l=t===i}else var l=!0;if(l)if(r.publicPath!==void 0){let e=r.publicPath,s=i,t=i,n=!1,v=i;if("string"!=typeof e){let r={params:{type:"string"}};o===null?o=[r]:o.push(r),i++}var d=v===i;if(!(n=n||d)){let r=i;if(!(e instanceof Function)){let r={params:{}};o===null?o=[r]:o.push(r),i++}var d=r===i;n=n||d}if(!n){let r={params:{}};o===null?o=[r]:o.push(r),i++,a.errors=o;return!1}i=t;if(o!==null)t?o.length=t:o=null;var l=s===i}else var l=!0}}}}}}else return a.errors=[{params:{type:"object"}}],!1;return a.errors=o,i===0}function t(r,{instancePath="",parentData,parentDataProperty,rootData=r}={}){let e=null,s=0;if(!a(r,{instancePath,parentData,parentDataProperty,rootData}))s=(e=e===null?a.errors:e.concat(a.errors)).length;return t.errors=e,s===0}
+\ No newline at end of file
++"use strict";module.exports=o,module.exports.default=o;let r={type:"object",additionalProperties:!1,properties:{encoding:{enum:[!1,"base64"]},mimetype:{type:"string"}}};function e(s,{instancePath="",parentData,parentDataProperty,rootData=s}={}){let a=null,t=0,o=t,i=!1,l=t,n=t;if(t===n)if(s&&"object"==typeof s&&!Array.isArray(s)){let e=t;for(let r in s)if(!(r==="encoding"||r==="mimetype")){let e={params:{additionalProperty:r}};a===null?a=[e]:a.push(e),t++;break}if(e===t){if(s.encoding!==void 0){let e=s.encoding,o=t;if(!(e===!1||e==="base64")){let e={params:{allowedValues:r.properties.encoding.enum}};a===null?a=[e]:a.push(e),t++}var v=o===t}else var v=!0;if(v)if(s.mimetype!==void 0){let r=t;if("string"!=typeof s.mimetype){let r={params:{type:"string"}};a===null?a=[r]:a.push(r),t++}var v=r===t}else var v=!0}}else{let r={params:{type:"object"}};a===null?a=[r]:a.push(r),t++}var d=l===
+```
+
+**File**: `schemas/plugins/asset/AssetResourceGeneratorOptions.check.js` (modified, +1/-1)
+```diff
+@@ -4,4 +4,4 @@
+  * This file was automatically generated by "schema-utils".
+  * DO NOT MODIFY BY HAND.
+  */
+-"use strict";module.exports=s,module.exports.default=s;let r=/^(?:file:(?=\/))?(?:[A-Za-z]:(\\|\/)|\\\\|\/)/i;function e(s,{instancePath="",parentData,parentDataProperty,rootData=s}={}){let a=null,t=0;if(t===0)if(s&&"object"==typeof s&&!Array.isArray(s)){let v=t;for(let r in s)if(!(r==="binary"||r==="emit"||r==="filename"||r==="outputPath"||r==="publicPath"))return e.errors=[{params:{additionalProperty:r}}],!1;if(v===t){if(s.binary!==void 0){let r=t;if("boolean"!=typeof s.binary)return e.errors=[{params:{type:"boolean"}}],!1;var o=r===t}else var o=!0;if(o){if(s.emit!==void 0){let r=t;if("boolean"!=typeof s.emit)return e.errors=[{params:{type:"boolean"}}],!1;var o=r===t}else var o=!0;if(o){if(s.filename!==void 0){let i=s.filename,n=t,v=t,d=!1,f=t;if(t===f)if("string"==typeof i){if(function(r){let e=r.length,s=0,a=0,t;while(a<e){s++;if((t=r.charCodeAt(a++))>=55296&&t<=56319&&a<e&&((t=r.charCodeAt(a))&64512)==56320)a++}return s}(i)<1){let r={params:{limit:1}};a===null?a=[r]:a.push(r),t++}else if(i.includes("!")||r.test(i)!==!1){let r={params:{}};a===null?a=[r]:a.push(r),t++}}else{let r={params:{type:"string"}};a===null?a=[r]:a.push(r),t++}var l=f===t;if(!(d=d||l)){let r=t;if(!(i instanceof Function)){let r={params:{}};a===null?a=[r]:a.push(r),t++}var l=r===t;d=d||l}if(!d){let r={params:{}};a===null?a=[r]:a.push(r),t++,e.errors=a;return!1}t=v;if(a!==null)v?a.length=v:a=null;var o=n===t}else var o=!0;if(o){if(s.outputPath!==void 0){let l=s.outputPath,n=t,v=t,d=!1,f=t;if(t===f)if("string"==typeof l){if(l.includes("!")||r.test(l)!==!1){let r={params:{}};a===null?a=[r]:a.push(r),t++}}else{let r={params:{type:"string"}};a===null?a=[r]:a.push(r),t++}var i=f===t;if(!(d=d||i)){let r=t;if(!(l instanceof Function)){let r={params:{}};a===null?a=[r]:a.push(r),t++}var i=r===t;d=d||i}if(!d){let r={params:{}};a===null?a=[r]:a.push(r),t++,e.errors=a;return!1}t=v;if(a!==null)v?a.length=v:a=null;var o=n===t}else var o=!0;if(o)if(s.publicPath!==void 0){let r=s.publicPath,l=t,i=t,v=!1,d=t;if("string"!=typeof r){let r={params:{type:"string"}};a===null?a=[r]:a.push(r),t++}var n=d===t;if(!(v=v||n)){let e=t;if(!(r instanceof Function)){let r={params:{}};a===null?a=[r]:a.push(r),t++}var n=e===t;v=v||n}if(!v){let r={params:{}};a===null?a=[r]:a.push(r),t++,e.errors=a;return!1}t=i;if(a!==null)i?a.length=i:a=null;var o=l===t}else var o=!0}}}}}else return e.errors=[{params:{type:"object"}}],!1;return e.errors=a,t===0}function s(r,{instancePath="",parentData,parentDataProperty,rootData=r}={}){let a=null,t=0;if(!e(r,{instancePath,parentData,parentDataProperty,rootData}))t=(a=a===null?e.errors:a.concat(e.errors)).length;return s.errors=a,t===0}
+\ No newline at end of file
++"use strict";module.exports=a,module.exports.default=a;let r=function(r){let e=r.length,s=0,a=0,t;while(a<e){s++;if((t=r.charCodeAt(a++))>=55296&&t<=56319&&a<e&&((t=r.charCodeAt(a))&64512)==56320)a++}return s},e=/^(?:file:(?=\/))?(?:[A-Za-z]:(\\|\/)|\\\\|\/)/i;function s(a,{instancePath="",parentData,parentDataProperty,rootData=a}={}){let t=null,o=0;if(o===0)if(a&&"object"==typeof a&&!Array.isArray(a)){let d=o;for(let r in a)if(!(r==="binary"||r==="emit"||r==="filename"||r==="outputPath"||r==="publicPath"))return s.errors=[{params:{additionalProperty:r}}],!1;if(d===o){if(a.binary!==void 0){let r=o;if("boolean"!=typeof a.binary)return s.errors=[{params:{type:"boolean"}}],!1;var l=r===o}else var l=!0;if(l){if(a.emit!==void 0){let r=o;if("boolean"!=typeof a.emit)return s.errors=[{params:{type:"boolean"}}],!1;var l=r===o}else var l=!0;if(l){if(a.filename!==void 0){let n=a.filename,v=o,d=o,f=!1,u=o;if(o===u)if("string"==typeof n){if(r(n)<1){let r={params:{limit:1}};t===null?t=[r]:t.push(r),o++}else if(n.includes("!")||e.test(n)!==!1){let r={params:{}};t===null?t=[r]:t.push(r),o++}}else{let r={params:{type:"string"}};t===null?t=[r]:t.push(r),o++}var i=u===o;if(!(f=f||i)){let r=o;if(!(n instanceof Function)){let r={params:{}};t===null?t=[r]:t.push(r),o++}var i=r===o;f=f||i}if(!f){let r={params:{}};t===null?t=[r]:t.push(r),o++,s.errors=t;return!1}o=d;if(t!==null)d?t.length=d:t=null;var l=v===o}else var l=!0;if(l){if(a.outputPath!==void 0){let r=a.outputPath,i=o,v=o,d=!1,f=o;if(o===f)if("string"==typeof r){if(r.includes("!")||e.test(r)!==!1){let r={params:{}};t===null?t=[r]:t.push(r),o++}}else{let r={params:{type:"string"}};t===null?t=[r]:t.push(r),o++}var n=f===o;if(!(d=d||n)){let e=o;if(!(r instanceof Function)){let r={params:{}};t===null?t=[r]:t.push(r),o++}var n=e===o;d=d||n}if(!d){let r={params:{}};t===null?t=[r]:t.push(r),o++,s.errors=t;return!1}o=v;if(t!==null)v?t.length=v:t=null;var l=i===o}else var l=!0;if(l)if(a.publicPath!==void 0){let r=a.publicPath,e=o,i=o,n=!1,d=o;if("string"!=typeof r){let r={params:{type:"string"}};t===null?t=[r]:t.push(r),o++}var v=d===o;if(!(n=n||v)){let e=o;if(!(r instanceof Function)){let r={params:{}};t===null?t=[r]:t.push(r),o++}var v=e=
+```
+
+**File**: `schemas/plugins/ids/HashedModuleIdsPlugin.check.js` (modified, +1/-1)
+```diff
+@@ -4,4 +4,4 @@
+  * This file was automatically generated by "schema-utils".
+  * DO NOT MODIFY BY HAND.
+  */
+-"use strict";module.exports=a,module.exports.default=a;let r={definitions:{HashFunction:{anyOf:[{type:"string",minLength:1},{instanceof:"Function"}]}},type:"object",additionalProperties:!1,properties:{context:{type:"string",absolutePath:!0},hashDigest:{enum:["base64","base64url","hex","binary","utf8","utf-8","utf16le","utf-16le","latin1","ascii","ucs2","ucs-2"]},hashDigestLength:{type:"number",minimum:1},hashFunction:{oneOf:[{$ref:"#/definitions/HashFunction"}]}},$id:"HashedModuleIdsPlugin.json"},e=/^(?:file:(?=\/))?(?:[A-Za-z]:(\\|\/)|\\\\|\/)/i;function a(s,{instancePath="",parentData,parentDataProperty,rootData=s}={}){let t=null,i=0;if(i===0)if(s&&"object"==typeof s&&!Array.isArray(s)){let o=i;for(let r in s)if(!(r==="context"||r==="hashDigest"||r==="hashDigestLength"||r==="hashFunction"))return a.errors=[{params:{additionalProperty:r}}],!1;if(o===i){if(s.context!==void 0){let r=s.context,t=i;if(i===t)if("string"==typeof r){if(r.includes("!")||e.test(r)!==!0)return a.errors=[{params:{}}],!1}else return a.errors=[{params:{type:"string"}}],!1;var n=t===i}else var n=!0;if(n){if(s.hashDigest!==void 0){let e=s.hashDigest,t=i;if(!(e==="base64"||e==="base64url"||e==="hex"||e==="binary"||e==="utf8"||e==="utf-8"||e==="utf16le"||e==="utf-16le"||e==="latin1"||e==="ascii"||e==="ucs2"||e==="ucs-2"))return a.errors=[{params:{allowedValues:r.properties.hashDigest.enum}}],!1;var n=t===i}else var n=!0;if(n){if(s.hashDigestLength!==void 0){let r=s.hashDigestLength,e=i;if(i===e)if("number"==typeof r){if(r<1||isNaN(r))return a.errors=[{params:{comparison:">=",limit:1}}],!1}else return a.errors=[{params:{type:"number"}}],!1;var n=e===i}else var n=!0;if(n)if(s.hashFunction!==void 0){let r=s.hashFunction,e=i,o=i,d=!1,u=null,f=i,v=i,c=!1,h=i;if(i===h)if("string"==typeof r){if(function(r){let e=r.length,a=0,s=0,t;while(s<e){a++;if((t=r.charCodeAt(s++))>=55296&&t<=56319&&s<e&&((t=r.charCodeAt(s))&64512)==56320)s++}return a}(r)<1){let r={params:{limit:1}};t===null?t=[r]:t.push(r),i++}}else{let r={params:{type:"string"}};t===null?t=[r]:t.push(r),i++}var l=h===i;if(!(c=c||l)){let e=i;if(!(r instanceof Function)){let r={params:{}};t===null?t=[r]:t.push(r),i++}var l=e===i;c=c||l}if(!c){let r={params:{}};t===null?t=[r]:t.push(r),i++}else{i=v;if(t!==null)v?t.length=v:t=null}if(f===i)d=!0,u=0;if(!d){let r={params:{passingSchemas:u}};t===null?t=[r]:t.push(r),i++,a.errors=t;return!1}i=o;if(t!==null)o?t.length=o:t=null;var n=e===i}else var n=!0}}}}else return a.errors=[{params:{type:"object"}}],!1;return a.errors=t,i===0}
+\ No newline at end of file
++"use strict";module.exports=s,module.exports.default=s;let r={definitions:{HashFunction:{anyOf:[{type:"string",minLength:1},{instanceof:"Function"}]}},type:"object",additionalProperties:!1,properties:{context:{type:"string",absolutePath:!0},hashDigest:{enum:["base64","base64url","hex","binary","utf8","utf-8","utf16le","utf-16le","latin1","ascii","ucs2","ucs-2"]},hashDigestLength:{type:"number",minimum:1},hashFunction:{oneOf:[{$ref:"#/definitions/HashFunction"}]}},$id:"HashedModuleIdsPlugin.json"},e=/^(?:file:(?=\/))?(?:[A-Za-z]:(\\|\/)|\\\\|\/)/i,a=function(r){let e=r.length,a=0,s=0,t;while(s<e){a++;if((t=r.charCodeAt(s++))>=55296&&t<=56319&&s<e&&((t=r.charCodeAt(s))&64512)==56320)s++}return a};function s(t,{instancePath="",parentData,parentDataProperty,rootData=t}={}){let i=null,n=0;if(n===0)if(t&&"object"==typeof t&&!Array.isArray(t)){let d=n;for(let r in t)if(!(r==="context"||r==="hashDigest"||r==="hashDigestLength"||r==="hashFunction"))return s.errors=[{params:{additionalProperty:r}}],!1;if(d===n){if(t.context!==void 0){let r=t.context,a=n;if(n===a)if("string"==typeof r){if(r.includes("!")||e.test(r)!==!0)return s.errors=[{params:{}}],!1}else return s.errors=[{params:{type:"string"}}],!1;var l=a===n}else var l=!0;if(l){if(t.hashDigest!==void 0){let e=t.hashDigest,a=n;if(!(e==="base64"||e==="base64url"||e==="hex"||e==="binary"||e==="utf8"||e==="utf-8"||e==="utf16le"||e==="utf-16le"||e==="latin1"||e==="ascii"||e==="ucs2"||e==="ucs-2"))return s.errors=[{params:{allowedValues:r.properties.hashDigest.enum}}],!1;var l=a===n}else var l=!0;if(l){if(t.hashDigestLength!==void 0){let r=t.hashDigestLength,e=n;if(n===e)if("number"==typeof r){if(r<1||isNaN(r))return s.errors=[{params:{comparison:">=",limit:1}}],!1}else return s.errors=[{params:{type:"number"}}],!1;var l=e===n}else var l=!0;if(l)if(t.hashFunction!==void 0){let r=t.hashFunction,e=n,d=n,u=!1,f=null,v=n,c=n,h=!1,p=n;if(n===p)if("string"==typeof r){if(a(r)<1){let r={params:{limit:1}};i===null?i=[r]:i.push(r),n++}}else{let r={params:{type:"string"}};i===null?i=[r]:i.push(r),n++}var o=p===n;if(!(h=h||o)){let e=n;if(!(r instanceof Function)){let r={params:{}};i===null?i=[r]:i.push(r),n++}var o=e===n;h=h||o}if(!h){let r={params:{}};i===null?i=[r]:i.push(r),n++}else{n=c;if(i!==null)c?i.length=c:i=null}if(v===n)u=!0,f=0;if(!u){let r={params
 ```
 
 ---
 
-### Incident Patch 2: `c443ac35` (2026-11-20)
-**Commit Message**: test: fuzz the CSS and HTML parsers and printers against Chrome (#23452)
+### Incident Patch 2: `e9cc8909` (2026-11-22)
+**Commit Message**: fix(css): fix the attribute and namespace scans review found after #23523 (#23528)
 
-* test: fuzz the CSS and HTML parsers and printers against Chrome
+* fix(css): fix the attribute and namespace scans review found after #23523
 
-Seeded generators build stylesheets from mdn-data's grammars and documents
-from webref's elements. Each input is held to the syntax invariants and, in
-Chrome, to its DOM, computed styles and CSSOM. A last test fails where a
-function's count of lines no input reached moves from the recorded one. Open
-findings are syntax-fuzz-* fixtures. Not run in CI.
+The attribute selector check no longer backtracks exponentially, reads a hex
+escape whole and takes a case modifier right after a quoted value. The
+namespace scan skips a url token and escapes inside blocks. The equivalence
+harness samples prefers-color-scheme rules again under the color-scheme
+relaxation.
 
-* test: hold printed pages' styles and inline styles to the source's
+* fix(css): read a hex escape whole in the namespace scan's url check
 
-The HTML check now compares each print's style elements with compareStyles
-and, for an unrelaxed set, renders a page holding a style attribute. A
-browser relation's fixture entry matches the first line of its report, which
-names the difference. Two findings this adds are fixtures.
+The scan now reads u\72 l( as url(. Under the color-scheme relaxation, the
+dark samples leave out only the properties a light-dark() rule sets on the
+elements it reaches or that inherit from them.
 
-* test: render pages holding a style element and compare relaxed inline styles
+* test(css): leave out only what the used color scheme alone moves
 
-A page holding a style element is rendered too, and a relaxed set compares
-each document's inline declarations as the browser serializes them. A CSSOM
-report is one line naming both rules. The render tier reads no text from a
-root that renders nothing, where innerText fal
+Under the color-scheme relaxation, a dark-sample difference is dropped only when
+both frames agree once the root's color-scheme is light, while the frames still
+match dark queries. A winning dark-query value is compared again.
 
-**File**: `TESTING_DOCS.md` (modified, +1/-0)
+* test(css): set the light root scheme outright and keep box changes
+
+The light reading sets the root's color-scheme to light instead of removing it,
+so a sheet's ow
+
+**File**: `lib/css/syntax-parser.js` (modified, +50/-3)
 ```diff
-@@ -157,6 +157,7 @@ Directories come first, in alphabetical order, then the individual files worth t
-   - `xmlconf.spectest.js` — `yarn test:xmlconf`
-   - `minify-corpora.spectest.js` — `yarn test:minify-corpora`; CI runs it in three [parts](#splitting-one-file-across-workers), each claiming the next 100 sources of a group no other part took, and the last part to finish checks no table entry went unmet
-   - `js-fuzz.spectest.js` — `yarn test:js-fuzz`: programs from `test/helpers/jsFuzzProgram.js`, in the sloppy ES5 terser's ufuzz writes, in modern syntax, as modules importing a fixed `dep` and as webpack-shaped bundles, minified under ufuzz's option sets, webpack's and random ones; the parser is held to acorn's tree on each program and output, the printer to the tree it read and to its own output, each output to what its program prints and exports, the default set's source map to its output and source, and the output to what it prints minified again. Needs no submodule; `JS_FUZZ_SEED=<n>` replays one seed, `JS_FUZZ_SEED=random` runs a new one named in the test's title, and `JS_FUZZ_PROGRAMS` sets the programs per seed.
-+  - `syntax-fuzz.spectest.js` — `yarn test:syntax-fuzz`, which CI does not run: stylesheets from `test/helpers/cssFuzzStylesheet.js`, built from mdn-data's property, at-rule, descriptor and selector grammars, and documents from `test/helpers/htmlFuzzDocument.js`, built from webref's element lists and the attribute tables in `lib/html/data.js`, with those stylesheets in `<style>` and `style=""`. Each input is held to the syntax invariants and, in the Chrome `launchBrowser` starts, the HTML parser's tree to the browser's, each print's DOM facets and computed styles to its source's under the equivalence suite's option sets, and a beautified stylesheet's CSSOM to its source's. A finding is cut down, its letters spelled `a` and digits `0` where it still breaks, and reported. Each open defect is a `syntax-fuzz-*` fixture whose `expected.json` files every relation its input breaks; the browser's (`styles`, `facets`, `cssom`, `dom`) are read only here, where each such fixture is replayed in Chrome, and a seed's finding is known while one of those fixtures files its relation under its preset. `SYNTAX_FUZZ_WRITE=1` writes each new finding as one, to be renamed and explained. The last test counts, per function named by what holds it, the lines of the CSS and HTML `syntax-parser.js` and `syntax-printer.js` no generated input reached, and fails where a count moved from `syntax-fuzz.unreached.json`: up, extend a generator to reach the new code; down, re-record with `SYNTAX_FUZZ_UPDATE=1`. It counts only over a run whose seeds all finished and cut nothing down, since a shrink fills caches a later input would have filled. `SYNTAX_FUZZ_SEED=<n>` replays one seed, `SYNTAX_FUZZ_SEED=random` runs a new one named in the test's title, and `SYNTAX_FUZZ_INPUTS` sets the inputs per seed; any of them skips the coverage test.
+@@ -22111,6 +22111,20 @@ const NAMESPACE_AT_RULE = new Set(["namespace"]);
+ const namesNamespaceAtRule = (input) =>
+ 	namesAtRule(input, NAMESPACE_AT_RULE) && opensNamespaceStatement(input);
  
- ### `statsCases/`
- 
++/**
++ * Whether the text from `from` opens on a string once whitespace is skipped,
++ * which makes a `url(` a function token rather than a url token (§4.3.4).
++ * @param {string} input source
++ * @param {number} from the offset right after the `(`
++ * @returns {boolean} true when a quote comes first
++ */
++const opensWithString = (input, from) => {
++	let i = from;
++	while (isAsciiWhitespace(input.charCodeAt(i))) i++;
++	const code = input.charCodeAt(i);
++	return code === CC_QUOTATION_MARK || code === CC_APOSTROPHE;
++};
++
+ /**
+  * Whether a top-level statement opens on `@namespace`: one at the start, after
+  * a `;` or after a block's `}`, outside every block, comment and string. A
+@@ -22123,9 +22137,44 @@ const opensNamespaceStatement = (input) => {
+ 	/** @type {number[]} */
+ 	const closers = [];
+ 	let start = true;
++	// Where the run of name code points and escapes before `i` opens, or -1.
++	let nameStart = -1;
+ 	for (let i = 0; i < input.length; i++) {
+ 		const code = input.charCodeAt(i);
+-		if (code === CC_SOLIDUS && input.charCodeAt(i + 1) === CC_ASTERISK) {
++		// A `\` before a newline is a delim (§4.3.8), no escape.
++		const escape =
++			code === CC_REVERSE_SOLIDUS && !isNewline(input.charCodeAt(i + 1));
++		if (
++			escape ||
++			isIdentCodePoint(code) ||
++			// A hash or at-keyword spelling `url` opens no url token.
++			code === CC_NUMBER_SIGN ||
++			(code === CC_AT_SIGN && !(start && closers.length === 0))
++		) {
++			if (nameStart === -1) nameStart = i;
++			if (escape) {
++				const gobbled = gobbleHex(input, i + 1);
++				i += gobbled === undefined ? 1 : gobbled[1];
++			}
++			if (closers.length === 0) start = false;
++			continue;
++		}
++		const name = nameStart;
++		nameStart = -1;
++		if (
++			code === CC_LEFT_PARENTHESIS &&
++			name !== -1 &&
++			atKeyword(input.slice(name, i)) === "url" &&
++			!opensWithString(input, i + 1)
++		) {
++			// A url token (§4.3.6): what it holds up to its `)` is no structure.
++			for (i++; i < input.length; i++) {
++				const inner = input.charCodeAt(i);
++				if (inner === CC_REVERSE_SOLIDUS) i++;
++				else if (inner === CC_RIGHT_PARENTHESIS) break;
++			}
++			if (closers.length === 0) start = false;
++		} else if (code === CC_SOLIDUS && input.charCodeAt(i + 1) === CC_ASTERISK) {
+ 			const end = input.indexOf("*/", i + 2);
+ 			if (end === -1) return false;
+ 			i = end + 1;
+@@ -22163,8 +22212,6 @@ const opensNamespaceStatement = (input) => {
+ 					return true;
+ 				}
+ 				i = end - 1;
+-			} else if (code === CC_REVERSE_SOLIDUS) {
+-				i++;
+ 			}
+ 			start = false;
+ 		}
 ```
 
-**File**: `cspell.json` (modified, +1/-0)
+**File**: `lib/css/syntax-printer.js` (modified, +8/-2)
 ```diff
-@@ -669,6 +669,7 @@
-     "yarn.lock",
-     "**/package-lock.json",
-     "tooling/deep-webpack-imports.json",
-+    "test/specCases/syntax-fuzz.unreached.json",
-     "tooling/comparison/css-tool-comparison/stylesheets.json",
-     "types.d.ts",
-     "**/**/*.snap",
+@@ -2794,10 +2794,16 @@ const matchingBracket = (text, at) => {
+ 	return -1;
+ };
+ 
++// WHY: one name code point or one whole escape, a hex one with its terminating
++// whitespace; the hex escape takes every digit it can and the other excludes
++// hex, so no run splits two ways - nested repeats took seconds on 40 letters.
++const ATTRIBUTE_NAME_UNIT = String.raw`(?:[-\w\u0080-\uFFFF]|\\(?:[\da-fA-F]{6}|[\da-fA-F]{1,5}(?![\da-fA-F]))[ \t\n\r\f]?|\\[^\n\da-fA-F])`;
++
+ // An attribute selector's body, Selectors 4 §11: an optional namespace, its
+ // name, and an optional matcher, value and case modifier.
+-const ATTRIBUTE_SELECTOR_RE =
+-	/^(?:(?:(?:[-\w\u0080-\uFFFF]+|\\[\s\S])*|\*)\|)?(?:[-\w\u0080-\uFFFF]+|\\[\s\S])+(?:[~|^$*]?=\s*(?:"(?:[^"\\]|\\[\s\S])*"|'(?:[^'\\]|\\[\s\S])*'|(?:[-\w\u0080-\uFFFF]+|\\[\s\S])+)(?:\s+[iIsS])?)?$/;
++const ATTRIBUTE_SELECTOR_RE = new RegExp(
++	String.raw`^(?:(?:${ATTRIBUTE_NAME_UNIT}*|\*)\|)?${ATTRIBUTE_NAME_UNIT}+(?:[~|^$*]?=\s*(?:"(?:[^"\\]|\\[\s\S])*"|'(?:[^'\\]|\\[\s\S])*'|${ATTRIBUTE_NAME_UNIT}+)(?:\s*[iIsS])?)?$`
++);
+ 
+ /**
+  * Whether a `[...]`'s contents are a wq-name, with or without a matcher, value
 ```
+
+**File**: `test/fixtures/css/css-syntax-minify-keeps-an-empty-rule-before-a-namespace-after-a-url-holding-a-brace/index.css` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++.a{}@unknown url({);@namespace "urn:x";div{color:red}
+```
+
+**File**: `test/fixtures/css/css-syntax-minify-keeps-an-empty-rule-before-a-namespace-after-an-escaped-brace/index.css` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++.a{}@unknown (\{);@namespace "urn:x";div{color:red}
+```
+
+**File**: `test/fixtures/css/css-syntax-minify-keeps-an-empty-rule-before-a-namespace-after-an-escaped-url-holding-a-brace/expected.json` (added, +12/-0)
+```diff
+@@ -0,0 +1,12 @@
++[
++	{
++		"relation": "agreement",
++		"contains": "/@import[1]: css-tree @import",
++		"why": "an ident-like token decodes its name before asking whether it is `url`, so `u\\72 l(` opens a url token whose `{` is no block (§4.3.4); css-tree reads the escaped name as a function and the `{` as a block"
++	},
++	{
++		"relation": "agreement",
++		"contains": "/@namespace[1]: css-tree nothing",
++		"why": "css-tree's `@import` runs on past the url token's `;`, so it reads no `@namespace` after it"
++	}
++]
+```
+
+**File**: `test/fixtures/css/css-syntax-minify-keeps-an-empty-rule-before-a-namespace-after-an-escaped-url-holding-a-brace/index.css` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++.a{}@import u\72 l(a{b);@namespace "urn:x";div{color:red}
+```
+
+**File**: `test/fixtures/css/css-syntax-minify-lowering-nesting-keeps-a-child-of-a-case-modifier-after-a-quoted-value/index.css` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++[a="x y"i]{& .child{color:red}}
+```
+
+**File**: `test/fixtures/css/css-syntax-minify-lowering-nesting-keeps-a-child-of-an-attribute-named-with-a-hex-escape/index.css` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++[data\3a foo]{& .child{color:red}}
+```
+
+---
+
+### Incident Patch 3: `36a84089` (2026-11-23)
+**Commit Message**: test: fuzz watch, persistent-cache and HMR rebuilds against random edit sequences (#23546)
+
+* test(watch): fuzz watch and persistent-cache rebuilds against random edit sequences
+
+A project of linked modules is edited by seeded random steps; after each, the watch rebuild and a cache-restored build are held to a fresh one. `yarn test:rebuild-fuzz` runs 100 seeds in ~2 minutes. Found 9 bugs already fixed on main.
+
+* test(watch): cover concatenateModules and splitChunks combined with cacheUnaffected
+
+Two feature combinations webpack recently allowed had never been fuzzed together: concatenateModules + cacheUnaffected (#22746) and splitChunks + cacheUnaffected. Both pass 1000+ fresh seeds clean on current main; kept as permanent variants.
+
+* test(hmr): apply each rebuild as a hot update and compare the running bundle
+
+Hot variants run the bundle in a VM from the in-memory output, apply every
+rebuild with module.hot.check(true), and hold what the bundle then exports,
+dynamic imports included, to a fresh build's bundle. Errored builds reload.
+
+* test(watch): apply every timestamp-only edit of a step
+
+* test(watch): fail a seed on a fatal watch error instead of hanging
+
+* test(hmr): read t
 
 **File**: `package.json` (modified, +1/-0)
 ```diff
-@@ -95,6 +95,7 @@
-     "test:test262-parser": "yarn test:base --testMatch \"<rootDir>/test/specCases/test262-parser.spectest.js\"",
-     "test:minify-corpora": "yarn test:base --testMatch \"<rootDir>/test/specCases/minify-corpora.spectest.js\"",
+@@ -97,6 +97,7 @@
      "test:js-fuzz": "yarn test:base --testMatch \"<rootDir>/test/specCases/js-fuzz.spectest.js\"",
-+    "test:syntax-fuzz": "yarn test:base --testMatch \"<rootDir>/test/specCases/syntax-fuzz.spectest.js\"",
+     "test:xml-fuzz": "yarn test:base --testMatch \"<rootDir>/test/specCases/xml-fuzz.spectest.js\"",
+     "test:syntax-fuzz": "yarn test:base --testMatch \"<rootDir>/test/specCases/syntax-fuzz.spectest.js\"",
++    "test:rebuild-fuzz": "yarn test:base --testMatch \"<rootDir>/test/specCases/rebuild-fuzz.spectest.js\"",
      "test:html5lib": "yarn test:base --testMatch \"<rootDir>/test/specCases/html5lib.spectest.js\"",
      "test:syntax-equivalence": "yarn test:base --testMatch \"<rootDir>/test/specCases/syntaxEquivalence.spectest.js\"",
      "test:css-parsing": "yarn test:base --testMatch \"<rootDir>/test/specCases/cssParsing-webpack.spectest.js\"",
 ```
 
-**File**: `test/fixtures/css/syntax-fuzz-an-unclosed-legal-comment-prints-twice/expected.json` (added, +19/-0)
+**File**: `test/helpers/rebuildFuzzProject.js` (added, +648/-0)
 ```diff
-@@ -0,0 +1,19 @@
-+[
-+	{
-+		"relation": "idempotence",
-+		"contains": "      -> *//*!",
-+		"presets": [
-+			"default",
-+			"target",
-+			"target+vars",
-+			"legacy",
-+			"beautify"
-+		],
-+		"why": "known bug: a legal comment left open at the end of the input prints twice, closed inside the rule and again open after it"
-+	},
-+	{
-+		"relation": "agreement",
-+		"contains": "/[1]: css-tree unparsed &, tool nothing",
-+		"why": "a statement opening no `{}` block is a parse error the spec drops, whether the input ends in it or a block's `;` or `}` ends it (§5.4.3); css-tree keeps it as raw text"
-+	}
-+]
-```
-
-**File**: `test/fixtures/css/syntax-fuzz-an-unclosed-legal-comment-prints-twice/index.css` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+{&/*!
-\ No newline at end of file
-```
-
-**File**: `test/fixtures/css/syntax-fuzz-an-unclosed-style-query-loses-its-parenthesis/expected.json` (added, +13/-0)
-```diff
-@@ -0,0 +1,13 @@
-+[
-+	{
-+		"relation": "idempotence",
-+		"contains": "      -> );",
-+		"presets": [
-+			"default",
-+			"target",
-+			"target+vars",
-+			"legacy"
-+		],
-+		"why": "known bug: `@container style(()` prints as `@container style(();`, without the `)` that closes the function, so each print adds another `);`"
-+	}
-+]
-```
-
-**File**: `test/fixtures/css/syntax-fuzz-an-unclosed-style-query-loses-its-parenthesis/index.css` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+@container style(()
-\ No newline at end of file
-```
-
-**File**: `test/fixtures/css/syntax-fuzz-beautify-drops-the-space-in-an-empty-media-condition/expected.json` (added, +10/-0)
-```diff
-@@ -0,0 +1,10 @@
-+[
-+	{
-+		"relation": "cssom",
-+		"contains": "rule 0: \"@media (( )) {\\n}\" vs \"@media (()) {\\n}\"",
-+		"presets": [
-+			"beautify"
-+		],
-+		"why": "known bug: `beautify` prints `@media (( ))` as `@media (())`, while the CSSOM keeps the space in the condition's text"
-+	}
-+]
-```
-
----
-
-### Incident Patch 3: `1a9a335a` (2026-11-20)
-**Commit Message**: fix(cache): unmemoize the lazy after PackContent unpack (#23485)
-
-* fix(cache): unmemoize the lazy after PackContent unpack
-
-Claude-Session: https://claude.ai/code/session_013FhutSn5pQVY3u6kcTUVzL
-
-* chore: number the changeset
-
-Claude-Session: https://claude.ai/code/session_013FhutSn5pQVY3u6kcTUVzL
-
-* test: re-watch a suspended watching whose watch went dead
-
-A watchError case keeps its watchings suspended until they receive the
-step, so a watch the OS dropped never resumed and failed the step.
-
-Claude-Session: https://claude.ai/code/session_013FhutSn5pQVY3u6kcTUVzL
-
-* test: replace a stalled browser in the render equivalence tests
-
-A browser stalled on fresh pages ran the per-pair fallback past the
-180s test timeout; a new browser now renders the batch again first.
-
-Claude-Session: https://claude.ai/code/session_013FhutSn5pQVY3u6kcTUVzL
-
-* test: report pages a stall leaves no time to render
-
-Recovery from repeated stalls could still outlast the test timeout, which
-hid the stalled pages; past a budget the rest is reported by name.
-
-Claude-Session: https://claude.ai/code/session_013FhutSn5pQVY3u6kcTUVzL
-
-* test: fit every render deadline into the test's time left
-
-A first stall lat
-
-**File**: `.changeset/020-release-unpacked-cache-content.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+"webpack": patch
-+---
+@@ -0,0 +1,648 @@
++"use strict";
 +
-+Free restored cache buffers after the persistent cache unpacks pack content.
-```
-
-**File**: `lib/cache/PackFileCacheStrategy.js` (modified, +2/-0)
-```diff
-@@ -1045,12 +1045,14 @@ class PackContent {
- 						logger.timeEnd(timeMessage);
- 					}
- 					this.content = data.map;
-+					this.lazy = SerializerMiddleware.unMemoizeLazy(this.lazy);
- 				});
- 			}
- 			if (timeMessage) {
- 				logger.timeEnd(timeMessage);
- 			}
- 			this.content = value.map;
-+			this.lazy = SerializerMiddleware.unMemoizeLazy(this.lazy);
- 		}
- 	}
- 
-```
-
-**File**: `test/specCases/syntaxEquivalence.spectest.js` (modified, +50/-9)
-```diff
-@@ -3024,11 +3024,24 @@ describe("a minified page renders as the page it came from", () => {
- 	let unrecovered;
- 	let skipAdoptedIframes = false;
- 
--	// WHY: a WebKit run never returned from one wpt/css batch, and every later
--	// test then waited behind it on the same page. Past a deadline the batch is
--	// rendered again a pair at a time, on a fresh page, to name what never ends.
-+	// WHY: a WebKit run never returned from one wpt/css batch, and a Firefox one
-+	// stalled on fresh pages too. Past a deadline a new browser renders the batch
-+	// again, then a pair at a time, to name what never ends.
- 	const BATCH_DEADLINE = 40000;
- 	const PAIR_DEADLINE = 20000;
-+	// closing a stalled browser and launching a new one, which a render's
-+	// deadline leaves room for so the test reports before Jest's timeout
-+	const RELAUNCH_ALLOWANCE = 30000;
-+	// what a failed relaunch leaves the test to report it in
-+	const REPORT_ALLOWANCE = 5000;
-+	let testStart = 0;
++// A small project and the seeded edits made to it, for the rebuild fuzzer: an
++// edit names modules, links and files by numbers taken modulo what exists, so
++// any subsequence of edits still applies, which lets a failure be shrunk.
 +
-+	/** @returns {number} milliseconds the running test has before Jest's timeout */
-+	const timeLeft = () => testStart + FILE_TIMEOUT - Date.now();
++const path = require("path");
++const { createRandom } = require("./jsFuzzProgram");
 +
-+	beforeEach(() => {
-+		testStart = Date.now();
-+	});
- 
- 	/** @returns {Promise<import("playwright-core").Page>} a page ready to render in */
- 	const openPage = async () => {
-@@ -3081,10 +3094,21 @@ describe("a minified page renders as the page it came from", () => {
- 		const reports = await within(pending, deadline);
- 		if (reports === undefined) {
- 			pending.catch(() => {});
--			const stuck = page;
--			await within(stuck.close(), PAIR_DEADLINE).catch(() => {});
-+			const stuck = browser;
-+			await within(
-+				stuck.close(),
-+				Math.min(PAIR_DEADLINE, timeLeft() - REPORT_ALLOWANCE)
-+			).catch(() => {});
- 			try {
--				page = await openPage();
-+				const relaunched = await within(
-+					(async () => {
-+						browser = await launchBrowser({ browser: ENGINE });
-+						page = await openPage();
-+						return true;
-+					})(),
-+					timeLeft() - REPORT_ALLOWANCE
-+				);
-+				if (!relaunched) throw new Error("no time left to relaunch the browser");
- 			} catch (error) {
- 				unrecovered = new Error(
- 					`no page to render in once ${batch.map(({ name }) => name).join(", ")} ran past ${deadline}ms`,
-@@ -3103,17 +3127,34 @@ describe("a minified page renders as the page it came from", () => {
- 	const differing = async (pairs) => {
- 		/** @type {string[]} */
- 		const out = [];
-+		/**
-+		 * @param {number} deadline how long a render may take, in milliseconds
-+		 * @returns {number} that deadline, cut to what the test has left after a relaunch
-+		 */
-+		const fitting = (deadline) =>
-+			Math.min(deadline, timeLeft() - RELAUNCH_ALLOWANCE);
- 		for (const width of RENDER_WIDTHS) {
- 			for (let at = 0; at < pairs.length; at += 20) {
- 				const batch = pairs.slice(at, at + 20);
--				let reports = await renderWithin(batch, width, BATCH_DEADLINE);
-+				/** @type {import("../helpers/syntaxEquivalence").RenderReport[] | undefined} */
-+				let reports;
-+				for (let attempt = 0; attempt < 2 && reports === undefined; attempt++) {
-+					const deadline = fitting(BATCH_DEADLINE);
-+					if (deadline <= 0) break;
-+					reports = await renderWithin(batch, width, deadline);
-+				}
- 				if (reports === undefined) {
- 					reports = [];
- 					for (const pair of batch) {
--						const one = await renderWithin([pair], width, PAIR_DEADLINE);
-+						const deadline = fitting(PAIR_DEADLINE);
-+						if (deadline <= 0) {
-+							out.push(`${width}px ${pair.name}: no time left to render it`);
-+							continue;
-+						}
-+						const one = await renderWithin([pair], width, deadline);
- 						if (one === undefined) {
- 							out.push(
--								`${width}px ${pair.name}: no render within ${PAIR_DEADLINE}ms`
-+								`${width}px ${pair.name}: no render within ${deadline}ms`
- 							);
- 						} else {
- 							reports.push(...one);
-```
-
-**File**: `test/templates/WatchTestCases.js` (modified, +12/-0)
-```diff
-@@ -545,6 +545,18 @@ const describeCases = (config) => {
- 											)
- 										);
- 									}
-+									for (const child of compilers) {
-+										const { watching } = child;
-+										const compilation = lastChildCompilations.get(child);
-+										if (!watching || !watching.suspended || !compilation) continue;
-+										// a watch the OS dropped under load reports no re-touch either: a new
-+										// watcher from the last start time reports every change since then
-+										watching.watch(
-+											compilation.fileDependencies,
-+											compilation.contextDependencies,
-+											compilation.missingDependencies
-+										);
-+									}
- 									// macOS can drop a change event entirely
- 									const now = new Date();
- 									for (const file of unseenChanges) {
-```
-
-**File**: `test/unitCases/PackFileCacheStrategy.unittest.js` (modified, +59/-16)
-```diff
-@@ -97,24 +97,24 @@ describe("PackFileCacheStrategy", () => {
- 		});
- 	});
- 
--	describe("PackContent writeLazy", () => {
--		/**
--		 * @param {() => EXPECTED_ANY} lazy the content's lazy value
--		 * @param {string[]} messages collects every logged message
--		 * @returns {EXPECTED_ANY} the pack's content holding items a and b
--		 */
--		const createContent = (lazy, messages) => {
--			const pack = /** @type {EXPECTED_ANY} */ (
--				getSerializer("Pack").deserialize(
--					createContext(
--						["a", "b", null, "etag-a", "etag-b", 1, 2, new Set(["a", "b"]), lazy, null],
--						{ logger: createLogger(messages) }
--					)
-+	/**
-+	 * @param {() => EXPECTED_ANY} lazy the content's lazy value
-+	 * @param {string[]} messages collects every logged message
-+	 * @returns {EXPECTED_ANY} the pack's content holding items a and b
-+	 */
-+	const createContent = (lazy, messages) => {
-+		const pack = /** @type {EXPECTED_ANY} */ (
-+			getSerializer("Pack").deserialize(
-+				createContext(
-+					["a", "b", null, "etag-a", "etag-b", 1, 2, new Set(["a", "b"]), lazy, null],
-+					{ logger: createLogger(messages) }
- 				)
--			);
--			return pack.content[0];
--		};
-+			)
-+		);
-+		return pack.content[0];
++/** @typedef {"static" | "dynamic" | "star" | "named" | "require"} LinkKind */
++/** @typedef {{ to: string, kind: LinkKind, name: string }} Link */
++/** @typedef {{ kind: "json", to: string, key: string } | { kind: "loader" } | { kind: "context" }} Read */
++/** @typedef {{ format: "esm" | "cjs", exports: string[], links: Link[], reads: Read[], revision: number, exists: boolean, broken: boolean, effect: boolean, dir: string }} ModuleRecord */
++/** @typedef {{ revision: number, exists: boolean }} DataRecord */
++/** @typedef {{ keys: string[], revision: number, exists: boolean }} JsonRecord */
++/** @typedef {{ nextModule: number, modules: Map<string, ModuleRecord>, nextData: number, data: Map<string, DataRecord>, nextJson: number, json: Map<string, JsonRecord>, sideEffectsFalse: boolean, touched: string[] }} Project */
++/** @typedef {[string, number, number, number, number]} Edit */
++
++/** @type {LinkKind[]} */
++const LINK_KINDS = ["static", "static", "dynamic", "star", "named", "require"];
++const NAMES = ["a", "b", "c", "d"];
++// purging a changed file clears every cached listing under its folder, so
++// nothing the edits change sits at the root, which holds every other folder
++const DIRS = ["app/", "app/sub/", "lib/"];
++/** @type {Read["kind"][]} */
++const READ_KINDS = ["json", "loader", "context"];
++
++/**
++ * @template T
++ * @param {T[]} list list
++ * @param {number} index any integer
++ * @returns {T} the item the index names, modulo the length
++ */
++const pick = (list, index) =>
++	list[((index % list.length) + list.length) % list.length];
++
++/**
++ * @param {string[]} exports exported names
++ * @param {string} dir folder, "" for the root
++ * @returns {ModuleRecord} a module with no links
++ */
++const createModule = (exports, dir) => ({
++	format: "esm",
++	exports,
++	links: [],
++	reads: [],
++	revision: 0,
++	exists: true,
++	broken: false,
++	effect: false,
++	dir
++});
++
++/**
++ * @returns {Project} `index.js → m0 → m1`, with one data file
++ */
++const createProject = () => {
++	const m0 = createModule(["a", "b"], "app/");
++	m0.links.push({ to: "m1", kind: "static", name: "a" });
++	return {
++		nextModule: 2,
++		modules: new Map([
++			["m0", m0],
++			["m1", createModule(["a"], "app/sub/")]
++		]),
++		nextData: 1,
++		data: new Map([["d0", { revision: 0, exists: true }]]),
++		nextJson: 0,
++		json: new Map(),
++		sideEffectsFalse: false,
++		touched: []
 +	};
- 
-+	describe("PackContent writeLazy", () => {
- 		it("drops items it cannot restore so the rest of the pack stores", async () => {
- 			/** @type {string[]} */
- 			const messages = [];
-@@ -173,6 +173,49 @@ describe("PackFileCacheStrategy", () => {
- 		});
- 	});
- 
-+	describe("PackContent unpack", () => {
-+		/**
-+		 * @param {boolean} async whether the lazy value resolves later
-+		 * @returns {EXPECTED_ANY} the content, restored from a memoized lazy
-+		 */
-+		const createRestoredContent = (async) => {
-+			const SerializerMiddleware = require("../../lib/serialization/SerializerMiddleware");
-+			const contentItems = getSerializer("PackContentItems").deserialize(
-+				createContext([
-+					true,
-+					new Map([
-+						["a", "value-a"],
-+						["b", "value-b"]
-+					])
-+				])
-+			);
-+			const lazy = SerializerMiddleware.createLazy(
-+				() => (async ? Promise.resolve(contentItems) : contentItems),
-+				/** @type {EXPECTED_ANY} */ ({}),
-+				{ size: 42 }
-+			);
-+			return createContent(lazy, []);
-+		};
++};
 +
-+		it.each([false, true])(
-+			"releases the restored lazy value (async: %s)",
-+			async (async) => {
-+				const content = createRestoredContent(async);
-+
-+				await content.unpack("a test needs it");
-+
-+				expect([...content.content]).toEqual([
-+					["a", "value-a"],
-+					["b", "value-b"]
-+				]);
-+				expect(() => content.lazy()).toThrow(
-+					"A lazy value that has been unmemorized can't be called again"
-+				);
-+				expect(content.getSize()).toBe(42);
++/**
++ * @param {Project} project project
++ * @returns {Project} a copy the next step's edits change
++ */
++const cloneProject = (project) => ({
++	...project,
++	touched: [],
++	modules: new Map(
++		[...project.modules].map(([id, record]) => [
++			id,
++			{
++				...record,
++				exports: [...record.exports],
++				links: record.links.map((link) => ({ ...link })),
++				reads: record.reads.map((read) => ({ ...read }))
 +			}
-+		);
-+	});
++		])
++	),
++	data: new Map([...project.data].map(([id, file]) => [id, { ...file }])),
++	json: new Map(
++		[...project.json].map(([id, file]) => [
++			id,
++			{ ...file, keys: [...file.keys] }
++		])
++	)
++});
 +
- 	describe("PackContentItems deserialize", () => {
- 		it("reads the map at once", () => {
- 			const map = new Map([["a", 1]]);
++/**
++ * @param {Project} project project
++ * @param {number} index any integer
++ * @returns {ModuleRecord} the module the index names
++ */
++const pickModule = (project, index) =>
++	/** @type {ModuleRecord} */ (
++		project.modules.get(pick([...project.modules.keys()], index))
++	);
++
++/**
++ * @template T
++ * @param {Map<string, T>} map files
++ * @param {(item: T, id: string) => boolean} filter which files qualify
++ * @returns {string[]} the ids of the files that qualify
++ */
++const idsWhere = (map, filter) =>
++	[...map].filter(([id, item]) => filter(item, id)).map(([id]) => id);
++
++/**
++ * @template T
++ * @param {T[]} list list, changed
++ * @param {number} index any integer
++ */
++const removeAt = (list, index) => {
++	list.splice(((index % list.length) + list.length) % list.length, 1);
++};
++
++// Each edit changes the project and returns false when it cannot apply.
++/** @type {Record<string, (project: Project, ...args: number[]) => boolean | void>} */
++const EDITS = {
++	edit(project, m) {
++		pickModule(project, m).revision++;
++	},
++	touch(project, m) {
++		const id = pick(
++			idsWhere(project.modules, (record) => record.exists),
++			m
++		);
++		const record = /** @type {ModuleRecord} */ (project.modules.get(id));
++		project.touched.push(`${record.dir}${id}.js`);
++	},
++	add(project, from, format, kind, name) {
++		const id = `m${project.nextModule++}`;
++		const record = createModule([pick(NAMES, name)], pick(DIRS, kind + name));
++		if (format % 3 === 0) record.format = "cjs";
++		const source = pickModule(project, from);
++		project.modules.set(id, record);
++		source.links.push({
++			to: id,
++			kind
+```
+
+**File**: `test/specCases/rebuild-fuzz.spectest.js` (added, +809/-0)
+```diff
+@@ -0,0 +1,809 @@
++"use strict";
++
++// Applies seeded edit sequences to a small project and, after every step,
++// holds the watch rebuild and a build restored from the persistent cache to a
++// fresh build, and a second cached build with no edit to writing nothing.
++// Hot variants also run the bundle and apply each update, and hold what the
++// running bundle then exports to what a fresh build's bundle exports.
++
++const fs = require("fs");
++const os = require("os");
++const path = require("path");
++const vm = require("vm");
++const { Volume, createFsFromVolume } = require("memfs");
++const webpack = require("../../");
++const NodeWatchFileSystem = require("../../lib/node/NodeWatchFileSystem");
++const {
++	applyEdit,
++	cloneProject,
++	createProject,
++	generateSteps,
++	renderFiles
++} = require("../helpers/rebuildFuzzProject");
++const { isInPart } = require("../helpers/testParts");
++
++/** @typedef {import("../helpers/rebuildFuzzProject").Edit} Edit */
++/** @typedef {import("../helpers/rebuildFuzzProject").Project} Project */
++/** @typedef {import("../../").Configuration} Configuration */
++/** @typedef {import("../../").Compiler} Compiler */
++/** @typedef {import("../../").Compilation} Compilation */
++/** @typedef {import("../../").Stats} Stats */
++/** @typedef {import("../../").InputFileSystem} InputFileSystem */
++/** @typedef {import("memfs").IFs} IFs */
++/** @typedef {{ mode: "production" | "development", splitChunks?: boolean, watchCache?: "filesystem", cacheUnaffected?: boolean, concatenateModules?: boolean, hot?: boolean }} Variant */
++/** @typedef {{ assets: Record<string, string>, hash: string, entry: string | undefined, errors: string[], warnings: string[] }} Result */
++/** @typedef {{ context: vm.Context, error: string | undefined }} Runtime */
++/** @typedef {{ step: number, check: string, detail: string }} Failure */
++/** @typedef {{ files: Set<string>, directories: Set<string>, missing: Set<string>, callback: (...args: EXPECTED_ANY[]) => void, undelayed?: (...args: EXPECTED_ANY[]) => void }} PendingWatch */
++
++const SEED_COUNT = Number(process.env.REBUILD_FUZZ_SEEDS) || 100;
++const STEPS = Number(process.env.REBUILD_FUZZ_STEPS) || 25;
++const SEED_TIMEOUT = 300000;
++// Shrinking a long sequence can rebuild hundreds of times; past this the
++// failure is reported with what has been shrunk so far.
++const SHRINK_BUDGET = 120000;
++
++/** @type {Variant[]} */
++const VARIANTS = [
++	{ mode: "production" },
++	{ mode: "development" },
++	{ mode: "production", splitChunks: true },
++	{ mode: "production", watchCache: "filesystem" },
++	{ mode: "development", watchCache: "filesystem" },
++	{ mode: "production", cacheUnaffected: true },
++	{ mode: "development", cacheUnaffected: true },
++	// production already defaults concatenateModules on; these force it with
++	// cacheUnaffected, a combination webpack only recently started allowing
++	{ mode: "production", concatenateModules: true, cacheUnaffected: true },
++	{ mode: "development", concatenateModules: true, cacheUnaffected: true },
++	// splitChunks and cacheUnaffected have never been fuzzed together either
++	{ mode: "production", splitChunks: true, cacheUnaffected: true },
++	{ mode: "development", hot: true },
++	{ mode: "development", hot: true, watchCache: "filesystem" },
++	{ mode: "development", hot: true, cacheUnaffected: true },
++	{ mode: "development", hot: true, splitChunks: true },
++	{ mode: "production", hot: true }
++];
++
++/** @type {number[]} */
++const SEEDS = (() => {
++	const seed = process.env.REBUILD_FUZZ_SEED;
++	if (seed === "random") return [Math.floor(Math.random() * 1e9)];
++	if (seed) return [Number(seed)];
++	return Array.from({ length: SEED_COUNT }, (_, i) => i + 1);
++})();
++
++// Every write is dated to its step, in the past, so the watcher's accuracy
++// window never hides an edit and two steps never share a time.
++const T0 = Math.floor(Date.now() / 1000 - 10 * 24 * 3600) * 1000;
++
++/**
++ * Stands in for NodeWatchFileSystem: reports exactly the edits a step made, in
++ * watchpack's time-info format and only for what webpack asked to watch, and
++ * runs the real purge of what a new watch call no longer watches.
++ */
++class FakeWatchFileSystem {
++	/**
++	 * @param {InputFileSystem} inputFileSystem the compiler's input file system
++	 */
++	constructor(inputFileSystem) {
++		this.inputFileSystem = inputFileSystem;
++		/** @type {PendingWatch | undefined} */
++		this.pending = undefined;
++		/** @type {EXPECTED_ANY} */
++		this._watched = undefined;
++	}
++
++	/**
++	 * @param {Iterable<string>} files files
++	 * @param {Iterable<string>} directories directories
++	 * @param {Iterable<string>} missing missing paths
++	 * @param {number} startTime start time
++	 * @param {EXPECTED_OBJECT} options watch options
++	 * @param {(...args: EXPECTED_ANY[]) => void} callback called with the changes
++	 * @param {(...args: EXPECTED_ANY[]) => void=} undelayed called at the first change
++	 * @returns {EXPECTED_ANY} the watcher
++	 */
++	watch(files, directories, missing, startTime, optio
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #23502** (2026-11-20): docs: show each change by example in summaries (@alexander-akait)
-- **PR #23501** (2026-11-20): fix(html): read and write text in the encoding of a page not in UTF-8 (@alexander-akait)
-- **PR #23500** (2026-11-20): fix(asset): minify the SVG an asset/source module embeds (@alexander-akait)
-- **PR #23498** (2026-11-20): fix(javascript): map every statement the minifier joins into a sequence (@alexander-akait)
-- **PR #23496** (2026-11-20): perf(javascript): hold the parser's word cache in a third of the memory (@alexander-akait)
-- **PR #23495** (2026-11-20): fix(minify): close more one-pass gzip gaps to terser (@alexander-akait)
+- **PR #23554** (2026-11-24): fix(minify): keep a negated equality right when an if swaps its branches (@Divyansh089)
+- **PR #23552** (closed): fix: match global and sticky regexps in warning and stats filters on every test (@waw666waw666)
+- **PR #23551** (2026-11-24): fix(hmr): fix the hot updates the rebuild fuzzer found lost (@aryanraj45)
+- **PR #23550** (2026-11-23): fix(side-effects): keep `ns.sub.member` read from `export * as sub` (@alexander-akait)
+- **PR #23549** (closed): fix(side-effects): keep namespace re-export bindings distinct from sibling export * (@YuvrajVerma09arch)
+- **PR #23547** (closed): docs: add example with swc-next parser (@CPunisher)
 
 ---
 
@@ -897,13 +1172,13 @@ A first stall lat
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. minify): close more one-pass gzip gaps to terser
+## X. minify): close more one-pass minifier gaps to terser and fix wrong output
 
 **RULE**:
 When implementing operations in `.changeset/282-javascript-minify-one-pass-gaps.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webpack/webpack. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `88b41743`: minify): close more one-pass gzip gaps to terser. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `76e24ad9`: minify): close more one-pass minifier gaps to terser and fix wrong output. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/282-javascript-minify-one-pass-gaps.md`.
@@ -911,21 +1186,17 @@ Subsystems managing JavaScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
----
-"webpack": patch
----
-
-Fold known values, object assignments and unread parameters when minifying.
+Fold more values, calls and dead code when minifying, and fix wrong output.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+Fold more known values, calls, object assignments and dead code when minifying.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `88b41743` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `76e24ad9` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

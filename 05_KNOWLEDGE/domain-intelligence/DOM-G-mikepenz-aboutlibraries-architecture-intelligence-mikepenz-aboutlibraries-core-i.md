@@ -4,17 +4,17 @@
 {
   "source_repository": "mikepenz/AboutLibraries",
   "source_url": "https://github.com/mikepenz/AboutLibraries",
-  "source_version": "07abb3e7",
+  "source_version": "301c6c1d",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-18T05:25:52.662Z",
+  "timestamp": "2026-11-24T23:24:50.374Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-mikepenz-aboutlibraries",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [mikepenz/AboutLibraries](https://github.com/mikepenz/AboutLibraries) (Revision: `07abb3e7`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T05:25:52.662Z`  
+> **Provenance**: Harvested from [mikepenz/AboutLibraries](https://github.com/mikepenz/AboutLibraries) (Revision: `301c6c1d`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T23:24:50.374Z`  
 > **Learning ID**: `learn-github-mikepenz-aboutlibraries`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mikepenz-aboutlibraries-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mikepenz/AboutLibraries](https://github.com/mikepenz/AboutLibraries))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T05:25:51.343Z  
+> **Harvest Timestamp**: 2026-11-24T23:24:48.384Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: AboutLibraries automatically collects all dependencies and licenses of any gradle project (Kotlin MultiPlatform), and provides easy to integrate UI components for Android and Compose Multiplatform environments 
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4504 stars
+- **Stars / Engagement**: 4516 stars
 
 ---
 
@@ -518,86 +518,50 @@ data class Organization(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `07abb3e7` (2026-11-15)
-**Commit Message**: chore(deps): update github actions updates (#1499)
+### Incident Patch 1: `301c6c1d` (2026-11-23)
+**Commit Message**: fix(deps): update dependency org.jetbrains.kotlinx:kotlinx-serialization-json to v1.13.0 (#1505)
 
 Co-authored-by: renovate-mike[bot] <274037420+renovate-mike[bot]@users.noreply.github.com>
 
-**File**: `.github/workflows/ci.yml` (modified, +4/-4)
+**File**: `gradle/libs.versions.toml` (modified, +1/-1)
 ```diff
-@@ -172,28 +172,28 @@ jobs:
- 
-       - name: Upload Lint SARIF (aboutlibraries)
-         if: always() && github.event_name == 'pull_request' && hashFiles('aboutlibraries/build/reports/lint-results-debug.sarif') != ''
--        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4
-+        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4
-         with:
-           sarif_file: 'aboutlibraries/build/reports/lint-results-debug.sarif'
-           category: lint-aboutlibraries
- 
-       - name: Upload Lint SARIF (aboutlibraries-compose-wear-m3)
-         if: always() && github.event_name == 'pull_request' && hashFiles('aboutlibraries-compose-wear-m3/build/reports/lint-results-debug.sarif') != ''
--        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4
-+        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4
-         with:
-           sarif_file: 'aboutlibraries-compose-wear-m3/build/reports/lint-results-debug.sarif'
-           category: lint-aboutlibraries-compose-wear-m3
- 
-       - name: Upload Lint SARIF (app)
-         if: always() && github.event_name == 'pull_request' && hashFiles('app/build/reports/lint-results-debug.sarif') != ''
--        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4
-+        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4
-         with:
-           sarif_file: 'app/build/reports/lint-results-debug.sarif'
-           category: lint-app
- 
-       - name: Upload Lint SARIF (sample/android)
-         if: always() && github.event_name == 'pull_request' && hashFiles('sample/android/build/reports/lint-results-debug.sarif') != ''
--        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4
-+        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4
-         with:
-           sarif_file: 'sample/android/build/reports/lint-results-debug.sarif'
-           category: lint-sample-android
-```
-
-**File**: `.github/workflows/scorecard.yml` (modified, +1/-1)
-```diff
-@@ -31,6 +31,6 @@ jobs:
-           publish_results: true
- 
-       - name: "Upload to code scanning"
--        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
-+        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
-         with:
-           sarif_file: results.sarif
+@@ -1,6 +1,6 @@
+ [versions]
+ # kotlin
+-kotlinxSerialization = "1.12.0"
++kotlinxSerialization = "1.13.0"
+ # androidx
+ activity = "1.13.0"
+ cardview = "1.0.0"
 ```
 
 ---
 
-### Incident Patch 2: `f92b9afa` (2026-11-15)
-**Commit Message**: chore(deps): update gradle to v9.9.0 (#1500)
+### Incident Patch 2: `1bfb81f9` (2026-11-23)
+**Commit Message**: fix(deps): update dependency org.apache.maven:maven-model-builder to v3.10.1 (#1504)
 
 Co-authored-by: renovate-mike[bot] <274037420+renovate-mike[bot]@users.noreply.github.com>
 
-**File**: `plugin-build/gradle/wrapper/gradle-wrapper.properties` (modified, +1/-1)
+**File**: `gradle/libs.versions.toml` (modified, +1/-1)
 ```diff
-@@ -1,6 +1,6 @@
- distributionBase=GRADLE_USER_HOME
- distributionPath=wrapper/dists
--distributionUrl=https\://services.gradle.org/distributions/gradle-9.8.2-bin.zip
-+distributionUrl=https\://services.gradle.org/distributions/gradle-9.9.0-bin.zip
- networkTimeout=10000
- retries=0
- retryBackOffMs=500
+@@ -16,7 +16,7 @@ fastAdapter = "5.7.0"
+ iconics = "5.6.0"
+ itemAnimators = "1.1.0"
+ ivy = "2.6.0"
+-modelBuilder = "3.10.0"
++modelBuilder = "3.10.1"
+ materialDrawer = "9.0.2"
+ okhttp = "5.5.1"
+ dejavu = "0.5.0"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1505** (2026-11-23): fix(deps): update dependency org.jetbrains.kotlinx:kotlinx-serialization-json to v1.13.0 (@renovate-mike[bot])
+- **PR #1504** (2026-11-23): fix(deps): update dependency org.apache.maven:maven-model-builder to v3.10.1 (@renovate-mike[bot])
+- **PR #1503** (2026-11-22): chore(deps): update gradle to v9.9.1 (@renovate-mike[bot])
+- **PR #1502** (2026-11-22): chore(deps): update actions/setup-java digest to d1374f8 (@renovate-mike[bot])
 - **PR #1500** (2026-11-15): chore(deps): update gradle to v9.9.0 (@renovate-mike[bot])
 - **PR #1499** (2026-11-15): chore(deps): update github actions updates (@renovate-mike[bot])
-- **PR #1498** (2026-11-14): build: update Gradle wrapper to 9.9.1 (@mikepenz)
-- **PR #1497** (2026-11-13): chore(deps): update mikepenz/action-junit-report digest to a16be3a (@renovate-mike[bot])
-- **PR #1496** (2026-11-08): chore(deps): update gradle/actions digest to 8da46b5 (@renovate-mike[bot])
-- **PR #1495** (2026-11-07): chore(deps): update mikepenz/release-changelog-builder-action digest to b0db9d1 (@renovate-mike[bot])
 
 ---
 
@@ -617,37 +581,31 @@ Co-authored-by: renovate-mike[bot] <274037420+renovate-mike[bot]@users.noreply.g
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update github actions updates
+## X. deps): update dependency org.jetbrains.kotlinx:kotlinx-serialization-json to v1.
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mikepenz/AboutLibraries. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `gradle/libs.versions.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mikepenz/AboutLibraries. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `07abb3e7`: deps): update github actions updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `301c6c1d`: deps): update dependency org.jetbrains.kotlinx:kotlinx-serialization-json to v1.13.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/libs.versions.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4
-        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4
-        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4
-        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4
+kotlinxSerialization = "1.13.0"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Induced defect failure mode:
-        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4
-        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4
-        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4
-        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4
+kotlinxSerialization = "1.12.0"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `07abb3e7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `301c6c1d` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

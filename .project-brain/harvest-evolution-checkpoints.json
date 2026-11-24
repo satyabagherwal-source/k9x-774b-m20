@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T23:14:08.730Z",
+  "last_updated": "2026-11-24T23:25:43.054Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-24T21:53:47.661Z",
@@ -258,7 +258,7 @@
       "staged_for_review": 1
     },
     "mikepenz-aboutlibraries-learnings.md": {
-      "processed_at": "2026-11-18T05:36:04.231Z",
+      "processed_at": "2026-11-24T23:25:41.618Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1113,7 +1113,7 @@
       "staged_for_review": 1
     },
     "webpack-webpack-learnings.md": {
-      "processed_at": "2026-11-20T23:40:00.086Z",
+      "processed_at": "2026-11-24T23:25:40.156Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3871,9 +3871,14 @@
       "processed_at": "2026-11-24T23:04:41.564Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-prism-ml-ternary-bonsai-2.5-27b-gguf-learnings.md": {
+      "processed_at": "2026-11-24T23:25:39.381Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 3960,
-  "total_canonical_promoted": 519,
-  "total_staged_for_review": 3021
+  "total_dossiers_evaluated": 3963,
+  "total_canonical_promoted": 520,
+  "total_staged_for_review": 3023
 }

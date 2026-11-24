@@ -22228,5 +22228,17 @@
     "qualityScore": 2400,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-24T20:00:58.556Z"
+  },
+  {
+    "name": "prism-ml/Ternary-Bonsai-2.5-27B-GGUF",
+    "fullName": "prism-ml/Ternary-Bonsai-2.5-27B-GGUF",
+    "url": "https://huggingface.co/prism-ml/Ternary-Bonsai-2.5-27B-GGUF",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: prism-ml/Ternary-Bonsai-2.5-27B-GGUF (90 likes, 0 downloads)",
+    "likes": 90,
+    "downloads": 0,
+    "qualityScore": 900,
+    "discoveredAt": "2026-11-24T23:22:24.367Z"
   }
 ]

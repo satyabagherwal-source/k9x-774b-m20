@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T23:14:02.000Z",
+  "last_updated": "2026-11-24T23:24:55.401Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2976,14 +2976,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-webpack-webpack",
-      "content_hash": "4cc593557d869b0e3da656f986b32a7c12ada47b2603e4f0e665f7439b954f6a",
-      "verified_at": "2026-11-20T23:39:47.914Z",
+      "content_hash": "f4a66f6570770ad124e9b1f0b0259f158eb0bd627756113d206c7af7ca53b4ca",
+      "verified_at": "2026-11-24T23:24:49.229Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T23:39:47.914Z"
+      "last_updated": "2026-11-24T23:24:49.229Z"
     },
     "rollup/rollup": {
       "repository": "rollup/rollup",
@@ -5046,14 +5046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zama-ai-tfhe-rs",
-      "content_hash": "fa402ee3c1473a0f86098e47f7f0f18c2821089a377bbe321562f1d38dcc0abf",
-      "verified_at": "2026-11-24T18:34:31.088Z",
+      "content_hash": "e3ce2c1b786c8edb29147fae84d6aefce7f26aca1fe756cc48ee51bba0e8c7a4",
+      "verified_at": "2026-11-24T23:24:55.400Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T18:34:31.088Z"
+      "last_updated": "2026-11-24T23:24:55.400Z"
     },
     "doobidoo/mcp-memory-service": {
       "repository": "doobidoo/mcp-memory-service",
@@ -10596,14 +10596,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mikepenz-aboutlibraries",
-      "content_hash": "25fac9c16fd678849c78fb399d424688f18138eaf052bc8d79bc1aa09948840f",
-      "verified_at": "2026-11-18T05:25:52.482Z",
+      "content_hash": "c15d2054a7e0fda0ef464108eb87498f016dc055e4ed051597177449df319b27",
+      "verified_at": "2026-11-24T23:24:50.071Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T05:25:52.482Z"
+      "last_updated": "2026-11-24T23:24:50.071Z"
     },
     "flux-iac/tofu-controller": {
       "repository": "flux-iac/tofu-controller",
@@ -20234,6 +20234,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-24T20:04:13.653Z"
+    },
+    "prism-ml/Ternary-Bonsai-2.5-27B-GGUF": {
+      "repository": "prism-ml/Ternary-Bonsai-2.5-27B-GGUF",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-prism-ml-ternary-bonsai-2-5-27b-gguf",
+      "content_hash": "e4bb34d8ace894efe8c23fd0d499dfc4120d8f1e5ec348459b18507ac03b08bd",
+      "verified_at": "2026-11-24T23:24:39.865Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-24T23:24:39.865Z"
     }
   },
   "repos": {
