@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-24T17:43:21.554Z",
+  "updated_at": "2026-11-24T18:35:06.335Z",
   "statistics": {
-    "total_nodes": 513,
+    "total_nodes": 514,
     "total_edges": 214,
     "domain_distribution": {
-      "D": 309,
+      "D": 310,
       "M": 1,
       "H": 95,
       "J": 22,
@@ -11453,6 +11453,28 @@
       ],
       "created_at": "2026-11-24T17:43:21.554Z",
       "updated_at": "2026-11-24T17:43:21.554Z"
+    },
+    "DOM-D-EBA58F46": {
+      "id": "DOM-D-EBA58F46",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): AtomicChat/Inkling-2-Mini-GGUF",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-atomicchat-inkling-2-mini-gguf-learnings.md`  \n> **Source**: huggingface ([https: -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-atomicchat-inkling-2-mini-gguf-learnings.md`  \n> **Source**: huggingface ([https:",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-atomicchat-inkling-2-mini-gguf/hf-atomicchat-inkling-2-mini-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-24T18:34:37.037Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-atomicchat-inkling-2-mini-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-24T18:35:06.335Z",
+      "updated_at": "2026-11-24T18:35:06.335Z"
     }
   },
   "edges": [

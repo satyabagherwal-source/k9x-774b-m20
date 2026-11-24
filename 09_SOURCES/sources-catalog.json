@@ -1603,10 +1603,10 @@
     "repository": "volcengine/OpenViking",
     "platform": "github",
     "sourceUrl": "https://github.com/volcengine/OpenViking",
-    "sourceVersion": "300ab8eb",
+    "sourceVersion": "e13f0441",
     "license": "AGPL-3.0",
-    "contentHash": "31ee597a4bb5f4cd5fb452d44c305b9a2846920a7e4586d47b67b9631b00aa81",
-    "lastHarvestedAt": "2026-11-23T22:05:23.586Z",
+    "contentHash": "66670a95a808cb1cbb67f681f14cfa58eeab9fb79bf5c6b52e36defdd63007cb",
+    "lastHarvestedAt": "2026-11-24T18:34:33.602Z",
     "learningId": "learn-github-volcengine-openviking"
   },
   "saffsanity-sill": {
@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "1ade9d06",
+    "sourceVersion": "51c20e76",
     "license": "NOASSERTION",
-    "contentHash": "bd787176753c31c278b2f2e09e28956f60b57dea0924c6808a9869a48bacd9fa",
-    "lastHarvestedAt": "2026-11-24T14:33:27.360Z",
+    "contentHash": "fa402ee3c1473a0f86098e47f7f0f18c2821089a377bbe321562f1d38dcc0abf",
+    "lastHarvestedAt": "2026-11-24T18:34:31.071Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
@@ -13378,5 +13378,15 @@
     "contentHash": "85bbffa6f952e43c40e60a5bfbede2e1db8290db51b7b1a3122c5d65c5a51f99",
     "lastHarvestedAt": "2026-11-24T17:42:31.323Z",
     "learningId": "learn-huggingface-baidu-ernie-5-5-flash-preview"
+  },
+  "hf-atomicchat-inkling-2-mini-gguf": {
+    "repository": "AtomicChat/Inkling-2-Mini-GGUF",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/AtomicChat/Inkling-2-Mini-GGUF",
+    "sourceVersion": "hf-atomicchat-inkling-2-mini-gguf",
+    "license": "Open-Source",
+    "contentHash": "c5354480a39d73734be92fe7c3fec31ee178920986bd6bee7fabbf3ff776208e",
+    "lastHarvestedAt": "2026-11-24T18:34:15.015Z",
+    "learningId": "learn-huggingface-atomicchat-inkling-2-mini-gguf"
   }
 }

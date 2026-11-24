@@ -5380,3 +5380,7 @@ https://huggingface.co/Aleph-Alpha/Kolibri-1.1
 # --- Automatically Discovered by AI Scout Engine [2026-11-24T17:42:24.673Z] ---
 # [HUGGINGFACE-AI-MODELS] baidu/ERNIE-5.5-Flash-Preview (2205 score) - Verified Hugging Face Model: baidu/ERNIE-5.5-Flash-Preview (213 likes, 75 downlo
 https://huggingface.co/baidu/ERNIE-5.5-Flash-Preview
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-24T18:34:08.491Z] ---
+# [HUGGINGFACE-AI-MODELS] AtomicChat/Inkling-2-Mini-GGUF (3200 score) - Verified Hugging Face Model: AtomicChat/Inkling-2-Mini-GGUF (120 likes, 130629 d
+https://huggingface.co/AtomicChat/Inkling-2-Mini-GGUF

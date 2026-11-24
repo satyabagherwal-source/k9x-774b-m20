@@ -12803,3 +12803,7 @@ Every entry in this ledger must capture:
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `bae03862` | Multi-dimensional audit evidence | 2026-11-24T18:00:38.127Z |
 | `learn-github-goodrain-rainbond` | `https://github.com/goodrain/rainbond` | `99c65654` | Multi-dimensional audit evidence | 2026-11-24T18:09:11.332Z |
 | `learn-github-tickernelz-opencode-mem` | `https://github.com/tickernelz/opencode-mem` | `e38c8744` | Multi-dimensional audit evidence | 2026-11-24T18:17:37.834Z |
+| `learn-huggingface-atomicchat-inkling-2-mini-gguf` | `https://huggingface.co/AtomicChat/Inkling-2-Mini-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-11-24T18:34:15.015Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `51c20e76` | Multi-dimensional audit evidence | 2026-11-24T18:34:31.071Z |
+| `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `e13f0441` | Multi-dimensional audit evidence | 2026-11-24T18:34:33.602Z |
+| `learn-dom-d-eba58f46` | `project://hf-atomicchat-inkling-2-mini-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-atomicchat-inkling-2-mini-gguf-learnings.md` | 2026-11-24T18:35:06.338Z |

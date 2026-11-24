@@ -4,22 +4,22 @@
 {
   "source_repository": "zama-ai/tfhe-rs",
   "source_url": "https://github.com/zama-ai/tfhe-rs",
-  "source_version": "1ade9d06",
+  "source_version": "51c20e76",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-24T14:33:27.707Z",
+  "timestamp": "2026-11-24T18:34:31.322Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-zama-ai-tfhe-rs",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs) (Revision: `1ade9d06`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-24T14:33:27.707Z`  
+> **Provenance**: Harvested from [zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs) (Revision: `51c20e76`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-24T18:34:31.322Z`  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `zama-ai/tfhe-rs` (Commit: `1ade9d06`)
+- **Target Repository**: `zama-ai/tfhe-rs` (Commit: `51c20e76`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T14:33:25.948Z  
+> **Harvest Timestamp**: 2026-11-24T18:34:29.913Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1949,861 +1949,1307 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b3ef09b4` (2026-11-24)
-**Commit Message**: fix(gpu): extend match_value results to the output block count in the high-level api (#4188)
+### Incident Patch 1: `51c20e76` (2026-11-24)
+**Commit Message**: fix(integer)!: make encrypted rotations behavior consistent (#4191)
 
-* fix(gpu): extend match_value results to the output block count in the high-level api
+Rotations by an encrypted amount (value rot amount)
+did a modulo: `amount % next_power_of_two(num_bits(value))`
 
-* test(gpu): check match_value results have the output block count in the high-level api
+This was so that the modulo was always a truncation of bits/blocks
+thus, really cheap. However it created an inconsistent behavior
+when `num_bits(value)` was not a power of two because:
 
-**File**: `tfhe/src/high_level_api/integers/unsigned/base.rs` (modified, +22/-2)
+* if is_power_of_two(num_bits(value)) then
+        num_bits(value) == next_power_of_two(num_bits(value))
+        e.g  FheUint8 << x
+        num_bits(value) = 8, 8 is a power of two, so we would
+        do modulo x % 8
+* else
+        num_bits(value) != next_power_of_two(num_bits(value))
+        e.g  FheUint6 << x
+        num_bits(value) = 6, 6 is a not power of two, its next
+        power of two is 8,
+        do modulo x % 8 and not x % 6 which means a different result
+        depending on x
+
+Now we call scalar_rem to do the modulo on non powers of two to make
+the operation consitent
+
+This induces a performance cost for these types/sizes,
+there are techniques which should work to do modulo by small
+amount (since the reduction amount is a number of bits and so relatively
+small) that we should explore later to improve the 
+
+**File**: `tfhe/src/integer/gpu/server_key/radix/tests_signed/legacy_default_tests.rs` (modified, +131/-3)
 ```diff
-@@ -1267,7 +1267,17 @@ where
-                     streams,
-                 );
-                 let target_num_blocks = OutId::num_blocks(cuda_key.key.key.message_modulus);
--                if target_num_blocks >= result.ciphertext.d_blocks.lwe_ciphertext_count().0 {
-+                let current_num_blocks = result.ciphertext.d_blocks.lwe_ciphertext_count().0;
-+                if target_num_blocks >= current_num_blocks {
-+                    let result = if target_num_blocks > current_num_blocks {
-+                        cuda_key.key.key.extend_radix_with_trivial_zero_blocks_msb(
-+                            &result,
-+                            target_num_blocks - current_num_blocks,
-+                            streams,
-+                        )
-+                    } else {
-+                        result
-+                    };
-                     Ok((
-                         FheUint::new(
-                             result,
-@@ -1418,7 +1428,17 @@ where
-                     streams,
-                 );
-                 let target_num_blocks = OutId::num_blocks(cuda_key.key.key.message_modulus);
--                if target_num_blocks >= result.ciphertext.d_blocks.lwe_ciphertext_count().0 {
-+                let current_num_blocks = result.ciphertext.d_blocks.lwe_ciphertext_count().0;
-+                if target_num_blocks >= current_num_blocks {
-+                    let result = if target_num_blocks > current_num_blocks {
-+                        cuda_key.key.key.extend_radix_with_trivial_zero_blocks_msb(
-+                            &result,
-+                            target_num_blocks - current_num_blocks,
-+                            streams,
-+                        )
-+                    } else {
-+                        result
-+                    };
-                     Ok(FheUint::new(
-                         result,
-                         cuda_key.tag.clone(),
-```
-
-**File**: `tfhe/src/high_level_api/integers/unsigned/tests/gpu.rs` (modified, +17/-0)
-```diff
-@@ -511,6 +511,23 @@ fn test_match_value_gpu_multibit() {
-     super::test_case_match_value(&client_key);
+@@ -7,8 +7,15 @@
+ //! full propagation cannot take blocks at the maximum degree yet. The overflowing scalar tests also
+ //! cover scalars that fit the radix blocks but not the signed range, for which the GPU
+ //! implementations return the opposite overflow flag: the CPU fix is `ScalarOverflowFlagSource` in
+-//! `radix_parallel::scalar_add`, which the GPU can reuse. Once both are addressed point the
+-//! GPU wrappers at the harness tests and delete this file.
++//! `radix_parallel::scalar_add`, which the GPU can reuse.
++//!
++//! The rotations by an encrypted amount also differ: the CPU reduces the amount modulo the
++//! number of bits (see `unchecked_rotate_bits_assign` in `radix_parallel::rotate`), the GPU
++//! only reads its low ⌈log₂(num_bits)⌉ bits, i.e. reduces it modulo the next power of two,
++//! which the rotate tests of this file (unchecked ones included) still model.
++//!
++//! Once all are addressed point the GPU wrappers at the harness tests and the CPU unchecked
++//! tests, and delete this file.
+ use crate::core_crypto::prelude::SignedNumeric;
+ use crate::integer::block_decomposition::{DecomposableInto, RecomposableSignedInteger};
+ use crate::integer::keycache::KEY_CACHE;
+@@ -20,7 +27,8 @@ use crate::integer::server_key::radix_parallel::tests_signed::{
+     signed_right_shift_under_modulus,
+ };
+ use crate::integer::server_key::radix_parallel::tests_unsigned::{
+-    nb_tests_smaller_for_params, panic_if_any_block_is_not_clean_or_trivial, MAX_NB_CTXT, NB_CTXT,
++    nb_tests_for_params, nb_tests_smaller_for_params, panic_if_any_block_is_not_clean_or_trivial,
++    MAX_NB_CTXT, NB_CTXT,
+ };
+ use crate::integer::{
+     BooleanBlock, IntegerKeyKind, RadixCiphertext, RadixClientKey, SignedRadixCiphertext,
+@@ -1349,3 +1357,123 @@ where
+         }
+     }
  }
- 
-+#[test]
-+fn test_match_value_small_outputs_have_output_block_count_gpu() {
-+    let client_key = setup_classical_gpu();
-+    let ct = FheUint8::encrypt(17u8, &client_key);
-+    let matches = MatchValues::new(vec![(17u8, 3u8), (0u8, 1u8)]).unwrap();
 +
-+    let (result, matched): (FheUint8, FheBool) = ct.match_value(&matches).unwrap();
-+    let matched: bool = matched.decrypt(&client_key);
-+    assert!(matched);
-+    let doubled: u8 = (&result * 2u8).decrypt(&client_key);
-+    assert_eq!(doubled, 6);
++pub(crate) fn legacy_signed_unchecked_rotate_left_test<P, T>(param: P, mut executor: T)
++where
++    P: Into<TestParameters>,
++    T: for<'a> FunctionExecutor<
++        (&'a SignedRadixCiphertext, &'a RadixCiphertext),
++        SignedRadixCiphertext,
++    >,
++{
++    let param = param.into();
++    let nb_tests = nb_tests_for_params(param);
++    let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
++    let cks = RadixClientKey::from((cks, NB_CTXT));
++    let sks = Arc::new(sks);
 +
-+    let result: FheUint8 = ct.match_value_or(&matches, 2u8).unwrap();
-+    let doubled: u8 = (&result * 2u8).decrypt(&client_key);
-+    assert_eq!(doubled, 6);
++    let mut rng = rand::thread_rng();
++
++    executor.setup(&cks, sks);
++
++    let modulus = (cks.parameters().message_modulus().0.pow(NB_CTXT as u32) / 2) as i64;
++
++    assert!(modulus > 0);
++    assert!((modulus as u64).is_power_of_two());
++    let nb_bits = modulus.ilog2() + 1; // We are using signed numbers
++
++    for _ in 0..nb_tests {
++        let clear = rng.gen::<i64>() % modulus;
++        let clear_shift = rng.gen::<u32>();
++
++        let ct = cks.encrypt_signed(clear);
++
++        // case when 0 <= rotate < nb_bits
++        {
++            let clear_shift = clear_shift % nb_bits;
++            let shift = cks.encrypt(clear_shift as u64);
++            let ct_res = executor.execute((&ct, &shift));
++            let dec_res: i64 = cks.decrypt_signed(&ct_res);
++            let expected = rotate_left_helper(clear, clear_shift, nb_bits);
++            assert_eq!(expected, dec_res);
++        }
++
++        // case when shift >= nb_bits
++        {
++            let clear_shift = clear_shift.saturating_add(nb_bits);
++            let shift = cks.encrypt(clear_shift as u64);
++            let ct_res = executor.execute((&ct, &shift));
++            panic_if_any_block_is_not_clean_or_trivial(&ct_res, &cks);
++            let dec_res: i64 = cks.decrypt_signed(&ct_res);
++            // When nb_bits is not a power of two
++            // then the behaviour is not the same
++            let true_nb_bits = nb_bits;
++            let mut nb_bits = nb_bits;
++            if !nb_bits.is_power_of_two() {
++                nb_bits = nb_bits.next_power_of_two();
++            }
++            let expected = rotate_left_helper(clear, clear_shift % nb_bits, true_nb_bits);
++            assert_eq!(expected, dec_res);
++        }
++    }
 +}
 +
- #[test]
- fn test_min_max_multibit() {
-     let client_key = setup_multibit_gpu();
-```
-
----
-
-### Incident Patch 2: `1ade9d06` (2026-11-24)
-**Commit Message**: fix(gpu): expand compact lists with the computing key when there is no casting key (#4190)
-
-* fix(gpu): expand compact lists with the computing key when there is no casting key
-
-* test(gpu): check compact list expansion without a casting key
-
-**File**: `backends/tfhe-cuda-backend/cuda/include/zk/zk_utilities.h` (modified, +10/-8)
-```diff
-@@ -101,7 +101,7 @@ template <typename Torus> struct expand_job {
- template <typename Torus> struct zk_expand_mem {
-   int_radix_params computing_params;
-   int_radix_params casting_params;
--  bool casting_key_type;
-+  KS_TYPE casting_key_type;
-   uint32_t num_lwes;
-   uint32_t num_compact_lists;
- 
-@@ -312,13 +312,15 @@ template <typename Torus> struct zk_expand_mem {
-         free(h_lut_indexes);
- 
-         // SANITY_CHECK panics on SMALL_TO_BIG, so this buffer is only needed
--        // on the full casting path.
--        tmp_ksed_small_to_big_expanded_lwes =
--            (Torus *)cuda_malloc_with_size_tracking_async(
--                safe_mul_sizeof<Torus>(num_lwes,
--                                       casting_params.big_lwe_dimension + 1),
--                streams.stream(0), streams.gpu_index(0), size_tracker,
--                allocate_gpu_memory);
-+        // on the full casting path with a SMALL_TO_BIG casting key.
-+        if (casting_key_type == SMALL_TO_BIG) {
-+          tmp_ksed_small_to_big_expanded_lwes =
-+              (Torus *)cuda_malloc_with_size_tracking_async(
-+                  safe_mul_sizeof<Torus>(num_lwes,
-+                                         casting_params.big_lwe_dimension + 1),
-+                  streams.stream(0), streams.gpu_index(0), size_tracker,
-+                  allocate_gpu_memory);
-+        }
-       }
- 
-       // The expanded LWEs will always be on the casting key format
-```
-
-**File**: `tfhe/src/high_level_api/compact_list.rs` (modified, +133/-35)
-```diff
-@@ -374,9 +374,9 @@ impl CompactCiphertextList {
-                         cpu_inner, streams,
-                     )?;
- 
--                let ksk = cuda_key.cpk_key_switching_key();
--                let expander =
--                    gpu_inner.expand(&ksk, crate::integer::gpu::ZKType::Casting, streams)?;
-+                let expander = cuda_key.with_compact_list_expansion_key(|key| {
-+                    gpu_inner.expand_with_key(key, streams)
-+                })?;
- 
-                 Ok(CompactCiphertextListExpander {
-                     inner: InnerCompactCiphertextListExpander::Cuda(expander),
-@@ -408,21 +408,16 @@ impl CompactCiphertextList {
-                 }
- 
-                 // CUDA data, CUDA key case
--                assert!(
--                    cuda_key.key.cpk_key_switching_key_material.is_some(),
--                    "cpk_key_switching_key_material must not be None"
--                );
--
--                let ksk = cuda_key.cpk_key_switching_key();
-                 let streams = &cuda_key.streams;
-                 // The list may be on another GPU than the key, e.g. if the key changed
-                 let gpu_inner = if streams.is_on_first_gpu(gpu_inner.gpu_indexes()) {
-                     MaybeCloned::Borrowed(gpu_inner)
-                 } else {
-                     MaybeCloned::Cloned(gpu_inner.duplicate(streams))
-                 };
--                let expander =
--                    gpu_inner.expand(&ksk, crate::integer::gpu::ZKType::Casting, streams)?;
-+                let expander = cuda_key.with_compact_list_expansion_key(|key| {
-+                    gpu_inner.expand_with_key(key, streams)
-+                })?;
- 
-                 Ok(CompactCiphertextListExpander {
-                     inner: InnerCompactCiphertextListExpander::Cuda(expander),
-@@ -843,30 +838,25 @@ pub(crate) mod zk {
-                         }
-                     };
- 
--                    let ksk = gpu_key.cpk_key_switching_key();
--                    let expander = match (verification_materials, re_randomization_materials) {
--                        (Some((crs, pk, metadata)), Some((_, seed))) => proven_ct
--                            .verify_re_randomize_and_expand(
--                                crs,
--                                &pk.key.key,
--                                metadata,
--                                &ksk,
--                                seed,
--                                streams,
--                            ),
--                        (Some((crs, pk, metadata)), None) => {
--                            proven_ct.verify_and_expand(crs, &pk.key.key, metadata, &ksk, streams)
--                        }
--
--                        (None, Some((pk, seed))) => proven_ct
--                            .re_randomize_and_expand_without_verification(
--                                &ksk,
--                                &pk.key.key,
--                                seed,
--                                streams,
--                            ),
--                        (None, None) => proven_ct.expand_without_verification(&ksk, streams),
--                    }?;
-+                    let verification = verification_materials
-+                        .map(|(crs, pk, metadata)| (crs, &pk.key.key, metadata));
-+                    // As on the CPU, the verification public key is also used for the
-+                    // re-randomization when both are given
-+                    let re_randomization =
-+                        match (verification_materials, re_randomization_materials) {
-+                            (Some((_, pk, _)), Some((_, seed))) | (None, Some((pk, seed))) => {
-+                                Some((&pk.key.key, seed))
-+                            }
-+                            (_, None) => None,
-+                        };
-+                    let expander = gpu_key.with_compact_list_expansion_key(|key| {
-+                        proven_ct.maybe_verify_maybe_re_randomize_and_expand(
-+                            verification,
-+                            re_randomization,
-+                            key,
-+                            streams,
-+                        )
-+                    })?;
- 
-                     Ok(CompactCiphertextListExpander {
-                         inner: InnerCompactCiphertextListExpander::Cuda(expander),
-@@ -1539,6 +1529,114 @@ mod tests {
-         }
-     }
- 
-+    #[cfg(feature = "gpu")]
-+    fn check_expander_without_casting_key(
-+        expander: &CompactCiphertextListExpander,
-+        ck: &crate::ClientKey,
-+    ) {
-+        let a: FheUint32 = expander.get(0).unwrap().unwrap();
-+        let b: FheInt64 = expander.get(1).unwrap().unwrap();
-+        let c: FheBool = expander.get(2).unwrap().unwrap();
-+        let d: FheBool = expander.get(3).unwrap().unwrap();
++pub(crate) fn legacy_signed_unchecked_rotate_right_test<P, T>(param: P, mut executor: T)
++where
++    P: Into<TestParameters>,
++    T: for<'a> FunctionExecutor<
++        (&'a SignedRadixCiphertext, &'a RadixCiphertext),
++        SignedRadixCiphertext,
++    >,
++{
++    let param = param.into();
++    let nb_tests = nb_tests_for_params(param);
++    let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
++    let cks = RadixClientKey::from((cks, NB_CTXT));
++    let sks = Arc::new(sks);
 +
-+        let a: u32 = a.decrypt(ck);
-+        assert_eq!(a, 17);
-+        let b: i64 = b.decrypt(ck);
-+        assert_eq!(b, -1);
-+        assert!(c.decrypt(ck));
-+        assert!(!d.decrypt(ck)
++    let mut rng = rand::thread_rng();
++
++    executor.setup(&cks, sks);
++
++    let modulus = (cks.parameters().message_modulus().0.pow(NB_CTXT as u32) / 2) as i64;
++
++    assert!(modulus > 0);
++    assert!((modulus as u64).is_power_of_two());
++    let nb_bits = modulus.ilog2() + 1; // We are using signed numbers
++
++    for _ in 0..nb_tests {
++        let clear = rng.gen::<i64>() % modulus;
++        let clear_shift = rng.gen::<u32>();
++
++        let ct = cks.
 ```
 
-**File**: `tfhe/src/high_level_api/keys/server.rs` (modified, +22/-5)
+**File**: `tfhe/src/integer/gpu/server_key/radix/tests_signed/test_rotate.rs` (modified, +3/-5)
 ```diff
-@@ -619,11 +619,26 @@ impl CudaServerKey {
-         &self.key.key
-     }
+@@ -1,13 +1,11 @@
+ use super::legacy_default_tests::{
+     legacy_signed_default_rotate_left_test, legacy_signed_default_rotate_right_test,
++    legacy_signed_unchecked_rotate_left_test, legacy_signed_unchecked_rotate_right_test,
+ };
+ use crate::integer::gpu::server_key::radix::tests_unsigned::{
+     create_gpu_parameterized_test, GpuFunctionExecutor,
+ };
+ use crate::integer::gpu::CudaServerKey;
+-use crate::integer::server_key::radix_parallel::tests_signed::test_rotate::{
+-    signed_unchecked_rotate_left_test, signed_unchecked_rotate_right_test,
+-};
+ use crate::shortint::parameters::test_params::*;
+ use crate::shortint::parameters::*;
  
--    /// Returns the ksk needed to keyswitch from cpk to compute params
--    pub(crate) fn cpk_key_switching_key(&self) -> CudaKeySwitchingKey<'_> {
--        CudaKeySwitchingKey {
--            key_switching_key_material: self.key.cpk_key_switching_key_material.as_ref().unwrap(),
--            dest_server_key: &self.key.key,
-+    /// Calls `f` with the key that expands compact lists: the casting key if the key has one,
-+    /// otherwise the computing key, as the CPU does in
-+    /// [ServerKey::integer_compact_ciphertext_list_expansion_mode]
-+    pub(in crate::high_level_api) fn with_compact_list_expansion_key<R>(
-+        &self,
-+        f: impl FnOnce(&CudaCompactCiphertextListExpansionKey<'_>) -> R,
-+    ) -> R {
-+        match self.key.cpk_key_switching_key_material.as_ref() {
-+            Some(key_switching_key_material) => {
-+                let casting_key = CudaKeySwitchingKey {
-+                    key_switching_key_material,
-+                    dest_server_key: &self.key.key,
-+                };
-+                f(&CudaCompactCiphertextListExpansionKey::CastAndUnpack(
-+                    &casting_key,
-+                ))
-+            }
-+            None => f(&CudaCompactCiphertextListExpansionKey::UnpackAndSanitize(
-+                &self.key.key,
-+            )),
+@@ -39,7 +37,7 @@ where
+     P: Into<TestParameters> + Copy,
+ {
+     let executor = GpuFunctionExecutor::new(&CudaServerKey::unchecked_rotate_right);
+-    signed_unchecked_rotate_right_test(param, executor);
++    legacy_signed_unchecked_rotate_right_test(param, executor);
+ }
+ 
+ fn integer_default_rotate_right<P>(param: P)
+@@ -55,7 +53,7 @@ where
+     P: Into<TestParameters> + Copy,
+ {
+     let executor = GpuFunctionExecutor::new(&CudaServerKey::unchecked_rotate_left);
+-    signed_unchecked_rotate_left_test(param, executor);
++    legacy_signed_unchecked_rotate_left_test(param, executor);
+ }
+ 
+ fn integer_default_rotate_left<P>(param: P)
+```
+
+**File**: `tfhe/src/integer/gpu/server_key/radix/tests_unsigned/legacy_default_tests.rs` (modified, +118/-2)
+```diff
+@@ -6,8 +6,14 @@
+ //! `test_sum`, `test_neg` and `test_comparison`), which also exercises inputs at the maximum
+ //! degree and noise level.
+ //! The GPU full propagation cannot take blocks at the maximum degree yet.
+-//! Once it is aligned with the CPU one point the GPU wrappers at the harness
+-//! tests and delete this file.
++//!
++//! The rotations by an encrypted amount also differ: the CPU reduces the amount modulo the
++//! number of bits (see `unchecked_rotate_bits_assign` in `radix_parallel::rotate`), the GPU
++//! only reads its low ⌈log₂(num_bits)⌉ bits, i.e. reduces it modulo the next power of two,
++//! which the rotate tests of this file (unchecked ones included) still model.
++//!
++//! Once both are aligned with the CPU point the GPU wrappers at the harness tests and the CPU
++//! unchecked tests, and delete this file.
+ use crate::core_crypto::prelude::UnsignedNumeric;
+ use crate::integer::block_decomposition::{DecomposableInto, RecomposableFrom};
+ use crate::integer::ciphertext::{IntegerCiphertext, IntegerRadixCiphertext};
+@@ -1153,3 +1159,113 @@ where
          }
      }
- 
-@@ -833,6 +848,8 @@ mod hpu {
- 
- use crate::high_level_api::keys::inner::IntegerServerKeyConformanceParams;
- 
-+#[cfg(feature = "gpu")]
-+use crate::integer::gpu::ciphertext::compact_list::CudaCompactCiphertextListExpansionKey;
- #[cfg(feature = "gpu")]
- use crate::integer::gpu::key_switching_key::{CudaKeySwitchingKey, CudaKeySwitchingKeyMaterial};
- #[cfg(feature = "gpu")]
+ }
++
++pub(crate) fn legacy_unchecked_rotate_left_test<P, T>(param: P, mut executor: T)
++where
++    P: Into<TestParameters>,
++    T: for<'a> FunctionExecutor<(&'a RadixCiphertext, &'a RadixCiphertext), RadixCiphertext>,
++{
++    let param = param.into();
++    let nb_tests = nb_tests_for_params(param);
++    let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
++    let sks = Arc::new(sks);
++    let cks = RadixClientKey::from((cks, NB_CTXT));
++
++    let mut rng = rand::thread_rng();
++
++    // message_modulus^vec_length
++    let modulus = cks.parameters().message_modulus().0.pow(NB_CTXT as u32);
++    assert!(modulus.is_power_of_two());
++    let nb_bits = modulus.ilog2();
++
++    executor.setup(&cks, sks);
++
++    for _ in 0..nb_tests {
++        let clear = rng.gen::<u64>() % modulus;
++        let clear_shift = rng.gen::<u32>();
++
++        let ct = cks.encrypt(clear);
++
++        // case when 0 <= rotate < nb_bits
++        {
++            let clear_rotate = clear_shift % nb_bits;
++            let shift = cks.encrypt(clear_rotate as u64);
++            let encrypted_result = executor.execute((&ct, &shift));
++            let decrypted_result: u64 = cks.decrypt(&encrypted_result);
++            let expected = rotate_left_helper(clear, clear_rotate, nb_bits);
++            assert_eq!(expected, decrypted_result);
++        }
++
++        // case when shift >= nb_bits
++        {
++            let clear_rotate = clear_shift.saturating_add(nb_bits);
++            let shift = cks.encrypt(clear_rotate as u64);
++            let encrypted_result = executor.execute((&ct, &shift));
++            let decrypted_result: u64 = cks.decrypt(&encrypted_result);
++            // When nb_bits is not a power of two
++            // then the behaviour is not the same
++            let true_nb_bits = nb_bits;
++            let mut nb_bits = nb_bits;
++            if !nb_bits.is_power_of_two() {
++                nb_bits = nb_bits.next_power_of_two();
++            }
++            let expected = rotate_left_helper(clear, clear_rotate % nb_bits, true_nb_bits);
++            assert_eq!(expected, decrypted_result);
++        }
++    }
++}
++
++pub(crate) fn legacy_unchecked_rotate_right_test<P, T>(param: P, mut executor: T)
++where
++    P: Into<TestParameters>,
++    T: for<'a> FunctionExecutor<(&'a RadixCiphertext, &'a RadixCiphertext), RadixCiphertext>,
++{
++    let param = param.into();
++    let nb_tests = nb_tests_for_params(param);
++    let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
++    let sks = Arc::new(sks);
++    let cks = RadixClientKey::from((cks, NB_CTXT));
++
++    let mut rng = rand::thread_rng();
++
++    // message_modulus^vec_length
++    let modulus = cks.parameters().message_modulus().0.pow(NB_CTXT as u32);
++    assert!(modulus.is_power_of_two());
++    let nb_bits = modulus.ilog2();
++
++    executor.setup(&cks, sks);
++
++    for _ in 0..nb_tests {
++        let clear = rng.gen::<u64>() % modulus;
++        let clear_shift = rng.gen::<u32>();
++
++        let ct = cks.encrypt(clear);
++
++        // case when 0 <= rotate < nb_bits
++        {
++            let clear_rotate = clear_shift % nb_bits;
++            let shift = cks.encrypt(clear_rotate as u64);
++            let encrypted_result = executor.execute((&ct, &shift));
++            let decrypted_result: u64 = cks.decrypt(&encrypted_result);
++            let expected = rotate_right_helper(clear, clear_rotate, nb_bits);
++            assert_eq!(expected, decrypted_result);
++        }
++
++        // case when shift >= nb_bits
++        {
++            let clear_rotate = clear_shift.saturating_add(nb_bits);
++            let shift = cks.encrypt(clear_rotate as u64);
++            let encrypted_result = executor.execute((&ct, &shift));
++            let decrypted_result: u64 = cks.decrypt(&encrypted_result);
++            // When nb_bits is not a power of two
++            // then the behaviour is not the sa
 ```
 
-**File**: `tfhe/src/integer/gpu/ciphertext/compact_list.rs` (modified, +171/-15)
+**File**: `tfhe/src/integer/gpu/server_key/radix/tests_unsigned/test_rotate.rs` (modified, +3/-5)
+```diff
+@@ -1,13 +1,11 @@
+ use super::legacy_default_tests::{
+     legacy_default_rotate_left_test, legacy_default_rotate_right_test,
++    legacy_unchecked_rotate_left_test, legacy_unchecked_rotate_right_test,
+ };
+ use crate::integer::gpu::server_key::radix::tests_unsigned::{
+     create_gpu_parameterized_test, GpuFunctionExecutor,
+ };
+ use crate::integer::gpu::CudaServerKey;
+-use crate::integer::server_key::radix_parallel::tests_unsigned::test_rotate::{
+-    unchecked_rotate_left_test, unchecked_rotate_right_test,
+-};
+ use crate::shortint::parameters::test_params::*;
+ use crate::shortint::parameters::*;
+ 
+@@ -41,7 +39,7 @@ where
+     P: Into<TestParameters> + Copy,
+ {
+     let executor = GpuFunctionExecutor::new(&CudaServerKey::unchecked_rotate_right);
+-    unchecked_rotate_right_test(param, executor);
++    legacy_unchecked_rotate_right_test(param, executor);
+ }
+ 
+ fn integer_default_rotate_right<P>(param: P)
+@@ -57,7 +55,7 @@ where
+     P: Into<TestParameters> + Copy,
+ {
+     let executor = GpuFunctionExecutor::new(&CudaServerKey::unchecked_rotate_left);
+-    unchecked_rotate_left_test(param, executor);
++    legacy_unchecked_rotate_left_test(param, executor);
+ }
+ 
+ fn integer_default_rotate_left<P>(param: P)
+```
+
+**File**: `tfhe/src/integer/server_key/radix_parallel/rotate.rs` (modified, +82/-3)
 ```diff
 @@ -1,6 +1,7 @@
- use crate::core_crypto::commons::traits::contiguous_entity_container::ContiguousEntityContainer;
- use crate::core_crypto::entities::LweCompactCiphertextList;
- use crate::core_crypto::gpu::lwe_ciphertext_list::CudaLweCiphertextList;
-+use crate::core_crypto::gpu::lwe_keyswitch_key::CudaLweKeyswitchKey;
- use crate::core_crypto::gpu::CudaStreams;
- use crate::core_crypto::prelude::{
-     lwe_compact_ciphertext_list_size, CiphertextModulus, LweCiphertext, LweCiphertextCount,
-@@ -11,10 +12,10 @@ use crate::integer::gpu::ciphertext::info::{CudaBlockInfo, CudaRadixCiphertextIn
- use crate::integer::gpu::ciphertext::{CudaRadixCiphertext, CudaVec, KsType, LweDimension};
- use crate::integer::gpu::cuda_backend_expand;
- use crate::integer::gpu::key_switching_key::CudaKeySwitchingKey;
--use crate::integer::gpu::server_key::CudaDynamicKeyswitchingKey;
-+use crate::integer::gpu::server_key::{CudaDynamicKeyswitchingKey, CudaServerKey};
- use crate::shortint::ciphertext::CompactCiphertextList;
- use crate::shortint::parameters::{CompactCiphertextListExpansionKind, Degree, NoiseLevel};
--use crate::shortint::{AtomicPatternKind, CarryModulus, Ciphertext, MessageModulus};
-+use crate::shortint::{AtomicPatternKind, CarryModulus, Ciphertext, MessageModulus, PBSOrder};
- use crate::GpuIndex;
- use itertools::Itertools;
- use std::ops::Range;
-@@ -36,6 +37,15 @@ impl CudaCompactCiphertextListInfo {
+ use super::shift::BarrelShifterOperation;
++use crate::integer::bigint::{U1024, U2048};
+ use crate::integer::ciphertext::{IntegerRadixCiphertext, RadixCiphertext};
+-use crate::integer::ServerKey;
++use crate::integer::{ServerKey, U256, U512};
+ 
+ impl ServerKey {
+     //======================================================================
+@@ -20,7 +21,7 @@ impl ServerKey {
+     where
+         T: IntegerRadixCiphertext,
+     {
+-        self.unchecked_shift_rotate_bits_assign(ct, n, BarrelShifterOperation::RightRotate);
++        self.unchecked_rotate_bits_assign(ct, n, BarrelShifterOperation::RightRotate);
      }
- }
  
-+/// The key used to expand a compact ciphertext list, as `IntegerCompactCiphertextListExpansionMode`
-+/// on the CPU
-+pub(crate) enum CudaCompactCiphertextListExpansionKey<'key> {
-+    /// The list is cast with a dedicated casting key, then unpacked
-+    CastAndUnpack(&'key CudaKeySwitchingKey<'key>),
-+    /// The list is encrypted under the computing parameters and is unpacked with the server key
-+    UnpackAndSanitize(&'key CudaServerKey),
-+}
-+
- pub struct CudaCompactCiphertextListExpander {
-     pub(crate) expanded_blocks: CudaLweCiphertextList<u64>,
-     pub(crate) blocks_info: Vec<CudaCompactCiphertextListInfo>,
-@@ -254,6 +264,18 @@ fn check_data_info_is_supported_on_gpu(data_info: &[DataKind]) -> crate::Result<
-         })
- }
- 
-+/// Returns the computing keyswitch key of `sks`, the GPU expansion only supports the standard
-+/// atomic pattern
-+fn standard_computing_ks_key(sks: &CudaServerKey) -> crate::Result<&CudaLweKeyswitchKey<u64>> {
-+    match &sks.key_switching_key {
-+        CudaDynamicKeyswitchingKey::Standard(computing_ks_key) => Ok(computing_ks_key),
-+        CudaDynamicKeyswitchingKey::KeySwitch32(_) => Err(crate::error!(
-+            "Only the standard atomic pattern is supported to expand compact ciphertext lists on \
-+             GPU"
-+        )),
-+    }
-+}
-+
- impl CudaFlattenedVecCompactCiphertextList {
-     /// Moves compact lists sharing the `data_info` metadata to the GPU.
-     ///
-@@ -490,6 +512,102 @@ impl CudaFlattenedVecCompactCiphertextList {
-         key: &CudaKeySwitchingKey,
-         zk_type: crate::integer::gpu::ZKType,
-         streams: &CudaStreams,
-+    ) -> crate::Result<CudaCompactCiphertextListExpander> {
-+        if matches!(zk_type, crate::integer::gpu::ZKType::Casting)
-+            && !matches!(
-+                self.expansion_kind,
-+                CompactCiphertextListExpansionKind::RequiresCasting
-+            )
-+        {
-+            return Err(crate::error!(
-+                "Cannot cast a CompactCiphertextList that does not require casting"
-+            ));
-+        }
-+
-+        let casting_key = key.key_switching_key_material;
-+        let computing_ks_key = standard_computing_ks_key(key.dest_server_key)?;
-+        self.expand_with_casting_ksk(
-+            &casting_key.lwe_keyswitch_key,
-+            casting_key.destination_key.into(),
-+            computing_ks_key,
-+            key.dest_server_key,
-+            zk_type,
-+            streams,
-+        )
+     /// Computes homomorphically a rotation of bits.
+@@ -86,7 +87,85 @@ impl ServerKey {
+     where
+         T: IntegerRadixCiphertext,
+     {
+-        self.unchecked_shift_rotate_bits_assign(ct, n, BarrelShifterOperation::LeftRotate);
++        self.unchecked_rotate_bits_assign(ct, n, BarrelShifterOperation::LeftRotate);
 +    }
 +
-+    /// Expands the list with the casting key or the computing key in `key`. See
-+    /// `expand_without_casting` for the errors of the computing-key path.
-+    pub(crate) fn expand_with_key(
++    /// Rotates the bits of `ct` by `amount` reduced modulo the number of bits of `ct`.
++    ///
++    ///
++    /// Inputs must not have carries.
++    fn unchecked_rotate_bits_assign<T>(
 +        &self,
-+        key: &CudaCompactCiphertextListExpansionKey<'_>,
-+        streams: &CudaStreams,
-+    ) -> crate::Result<CudaCompactCiphertextListExpander> {
-+        match key {
-+            CudaCompactCiphertextListExpansionKey::CastAndUnpack(ksk) => {
-+                self.expand(ksk, crate::integer::gpu::ZKType::Casting, streams)
-+            }
-+            CudaCompactCiphertextListExpansionKey::UnpackAndSanitize(sks) => {
-+                self.expand_without_casting(sks, streams)
-+            }
-+        }
-+    }
++        ct: &mut T,
++        amount: &RadixCiphertext,
++        operation: BarrelShifterOperation,
++    ) where
++        T: IntegerRadixCiphertext,
++    {
++        assert!(matches!(
++            operation,
++            BarrelShifterOperation::LeftRotate | BarrelShifterOperation::RightRotate
++        ));
 +
-+    /// Expands a list encrypted under the big key of a KS-PBS server key: the computing keyswitch
-+    /// key is given to the backend as a big to small casting key, so the expansion is the
-+    /// keyswitch and PBS of the CPU `UnpackAndSanitizeIfNecessary` mode.
-+    ///
-+    /// # Errors
-+    ///
-+    /// - the list expansion kind is not `NoCasting` for the standard KS-PBS atomic pattern
-+    
++        let bits_per_block = self.message_modulus().0.ilog2();
++        let num_bits_encrypted_by_ct = ct.blocks().len() as u64 * u64::from(bits_per_block);
++        let num_bits_encrypted_by_amount = amount.blocks.len() as u32 * bits_per_block;
++
++        // For all block sizes, unchecked_shift_rotate_assign uses a barrel shifter,
++        // which truncates the `amount` to only take the ⌈log₂(num_bits)⌉.
++        // This is a modular reduction  only when `num_bits` is a power of two.
++        // For non powers of two, Rotating a radix that encrypts 6 bits, by `8`
++        // would rotate by 0 instead of 2 (8 % 6 = 2, 8 % 2^⌈log₂(6)⌉ = 8 % 8 = 0)
++        //
++        // So to have the consistent modular reduction `amount % nb_bits(ct)`, we will
++        // use a scalar_rem, but for powers of two we can skip it.
++        //
++        // And there's a reason we skip the call to the remainder op:
++        // the remainder op would introduce a PBS, to cut the bits of the last block
++        // when the number of bits to keep is not a multiple of the number of bits in a block.
++        // The truncation of the barrel shifter used in the rotate does it naturally, without
++        // extra cost.
++        // e.g: rot(FheUint32, x), 2_2 params -> num_bits_encrypted_by_ct = 32 -> it is power of 2,
++        // the number of bits to keep is log2(32) = 5, 5 is not a multiple of 2, thus the remainder
++        // op would do a PBS to clear the high bit of the 3rd block, whereas the barrel shifter
++        // already handles this trimming nicely
++        if num_bits_encrypted_by_ct.is_power_of_two() {
++            self.unchecked_shift_rotate_bits_assign(ct, amount, operation);
++            return;
++        }
++
++        // The scalar division requires the scalar type used to have a number of bits >= to the
++        // number of bits the ciphertext encrypts
++        //
++        // The ciphertext we use in the division is the `amount`, so we need to pick a scalar type
++        // that has at least as many bits as what `amount` encrypts. This type is used to
++        // store the number of bits encrypted by the `ct` to be rotated
++        //
++        // So that we can do `amount` % num_bits_encrypted_by_ct
++        //
++        // Currently there's a limit that amount cannot encrypt more than 2048 bits,
++        // but don't be lost, it does not mean amount can encrypt a value in [0, 2048], but
++        // that it can encrypt a value in [0, 2**2048[
++        let amount = if num_bits_encrypted_by_amount <= u64::BITS {
++            self.unchecked_scalar_rem_parallelized(amount, num_bits_encrypted_by_ct)
++        } else if num_bits_encrypted_by_amount <= u128::BITS {
++            self.unchecked_scalar_rem_parallelized(amount, u128::from(num_bits_encrypted_by_ct))
++        } else if num_bits_encrypted_by_amount <= 256 {
++            self.unchecked_scalar_rem_parallelized(amount, U256::from(num_bits_encrypted_by_ct))
++        } else if num_bits_encrypted_by_amount <= 512 {
++            self.unchecked_scalar_rem_parallelized(amount, U512::from(num_bits_encrypted_by_ct))
++        } else if num_bits_encrypted_by_amount <= 1024 {
++            self.unchecked_scalar_rem_parallelized(amount, U1024::from(num_bits_encrypted_by_ct))
++        } else if num_bits_encrypted_by_amount <= 2048 {
++            self.unchecked_scalar_rem_parallelized(amount, U2048::from(num_bits_encrypted_by_ct))
++        } else {
++            panic!(
++                "rotations by an `amount` that encrypts more than
 ```
 
-**File**: `tfhe/src/integer/gpu/zk/mod.rs` (modified, +79/-56)
+**File**: `tfhe/src/integer/server_key/radix_parallel/scalar_bitwise_op.rs` (modified, +15/-2)
 ```diff
-@@ -3,7 +3,8 @@ use crate::core_crypto::gpu::CudaStreams;
- use crate::core_crypto::prelude::{CiphertextModulus, LweCiphertextCount};
- use crate::integer::ciphertext::ReRandomizationSeed;
- use crate::integer::gpu::ciphertext::compact_list::{
--    CudaCompactCiphertextListExpander, CudaFlattenedVecCompactCiphertextList,
-+    CudaCompactCiphertextListExpander, CudaCompactCiphertextListExpansionKey,
-+    CudaFlattenedVecCompactCiphertextList,
- };
- use crate::integer::gpu::key_switching_key::CudaKeySwitchingKey;
- use crate::integer::parameters::LweDimension;
-@@ -38,31 +39,12 @@ impl CudaProvenCompactCiphertextList {
-         key: &CudaKeySwitchingKey,
-         streams: &CudaStreams,
-     ) -> crate::Result<CudaCompactCiphertextListExpander> {
--        let (all_valid, r) = rayon::join(
--            || {
--                self.h_proved_lists
--                    .ct_list
--                    .proved_lists
--                    .par_iter()
--                    .all(|(ct_list, proof)| {
--                        verify_lwe_compact_ciphertext_list(
--                            &ct_list.ct_list,
--                            &public_key.key.key,
--                            proof,
--                            crs,
--                            metadata,
--                        )
--                        .is_valid()
--                    })
--            },
--            || self.expand_without_verification(key, streams),
--        );
--
--        if all_valid {
--            return r;
--        }
--
--        Err(crate::ErrorKind::InvalidZkProof.into())
-+        self.maybe_verify_maybe_re_randomize_and_expand(
-+            Some((crs, public_key, metadata)),
-+            None,
-+            &CudaCompactCiphertextListExpansionKey::CastAndUnpack(key),
-+            streams,
-+        )
+@@ -1,6 +1,7 @@
+ use crate::integer::block_decomposition::{BlockDecomposer, DecomposableInto};
+ use crate::integer::ciphertext::IntegerRadixCiphertext;
+ use crate::integer::ServerKey;
++use crate::shortint::ciphertext::NoiseLevel;
+ use rayon::prelude::*;
+ 
+ impl ServerKey {
+@@ -26,12 +27,24 @@ impl ServerKey {
+             .iter_as::<u8>()
+             .collect::<Vec<_>>();
+ 
++        let all_ones = (message_modulus - 1) as u8;
+         lhs.blocks_mut()
+             .par_iter_mut()
+             .zip(clear_blocks.par_iter().copied())
+             .for_each(|(lhs_block, clear_block)| {
+-                self.key
+-                    .unchecked_scalar_bitand_assign(lhs_block, clear_block);
++                if clear_block == 0 {
++                    self.key.create_trivial_assign(lhs_block, 0);
++                } else if clear_block == all_ones
++                    && lhs_block.carry_is_empty()
++                    && lhs_block.noise_level() <= NoiseLevel::NOMINAL
++                {
++                    // The block is clean (no carry, nominal noise)
++                    // and the corresponding scalar block is a mask on all message bits
++                    // so we can safely skip a PBS here
++                } else {
++                    self.key
++                        .unchecked_scalar_bitand_assign(lhs_block, clear_block);
++                }
+             });
+ 
+         let num_clear_blocks = clear_blocks.len();
+```
+
+**File**: `tfhe/src/integer/server_key/radix_parallel/scalar_div_mod.rs` (modified, +27/-13)
+```diff
+@@ -373,8 +373,7 @@ impl ServerKey {
+                 .unchecked_scalar_right_shift_parallelized(numerator, divisor.ilog2() as u64);
+         }
+ 
+-        let log2_divisor = divisor.ceil_ilog2();
+-        if log2_divisor > numerator_bits {
++        if self.divisor_exceeds_numerator(numerator, divisor) {
+             return self.create_trivial_zero_radix(numerator.blocks.len());
+         }
+ 
+@@ -862,6 +861,11 @@ impl ServerKey {
+     where
+         T: Reciprocable + ScalarMultiplier + DecomposableInto<u8>,
+     {
++        if self.divisor_exceeds_numerator(numerator, divisor) {
++            let quotient = self.create_trivial_zero_radix(numerator.blocks.len());
++            return (quotient, numerator.clone());
++        }
++
+         let quotient = self.unchecked_scalar_div_parallelized(numerator, divisor);
+         let remainder = if MiniUnsignedInteger::is_power_of_two(divisor) {
+             // unchecked_scalar_div would have panicked if divisor was zero
+@@ -883,6 +887,10 @@ impl ServerKey {
+     where
+         T: Reciprocable + ScalarMultiplier + DecomposableInto<u8>,
+     {
++        if self.divisor_exceeds_numerator(numerator, divisor) {
++            return numerator.clone();
++        }
++
+         if MiniUnsignedInteger::is_power_of_two(divisor) {
+             // The remainder is simply the bits that would get 'shifted out'
+             return self.scalar_bitand_parallelized(numerator, divisor - T::ONE);
+@@ -892,6 +900,20 @@ impl ServerKey {
+         remainder
      }
  
-     pub fn verify_re_randomize_and_expand(
-@@ -74,31 +56,12 @@ impl CudaProvenCompactCiphertextList {
-         seed: ReRandomizationSeed,
-         streams: &CudaStreams,
-     ) -> crate::Result<CudaCompactCiphertextListExpander> {
--        let (all_valid, r) = rayon::join(
--            || {
--                self.h_proved_lists
--                    .ct_list
--                    .proved_lists
--                    .par_iter()
--                    .all(|(ct_list, proof)| {
--                        verify_lwe_compact_ciphertext_list(
--                            &ct_list.ct_list,
--                            &public_key.key.key,
--                            proof,
--                            crs,
--                            metadata,
--                        )
--                        .is_valid()
--                    })
--            },
--            || self.re_randomize_and_expand_without_verification(key, public_key, seed, streams),
--        );
--
--        if all_valid {
--            return r;
--        }
--
--        Err(crate::ErrorKind::InvalidZkProof.into())
-+        self.maybe_verify_maybe_re_randomize_and_expand(
-+            Some((crs, public_key, metadata)),
-+            Some((public_key, seed)),
-+            &CudaCompactCiphertextListExpansionKey::CastAndUnpack(key),
-+            streams,
-+        )
-     }
- 
-     /// # Safety
-@@ -110,8 +73,12 @@ impl CudaProvenCompactCiphertextList {
-         key: &CudaKeySwitchingKey,
-         streams: &CudaStreams,
-     ) -> crate::Result<CudaCompactCiphertextListExpander> {
--        self.d_flattened_compact_lists
--            .expand(key, super::ZKType::Casting, streams)
-+        self.maybe_verify_maybe_re_randomize_and_expand(
-+            None,
-+            None,
-+            &CudaCompactCiphertextListExpansionKey::CastAndUnpack(key),
-+            streams,
-+        )
-     }
- 
-     /// # Safety
-@@ -125,10 +92,66 @@ impl CudaProvenCompactCiphertextList {
-         seed: ReRandomizationSeed,
-         streams: &CudaStreams,
-     ) -> crate::Result<CudaCompactCiphertextListExpander> {
--        let mut rerandomized = self.duplicate(streams);
--        rerandomized.re_randomize(public_key, seed, streams)?;
-+        self.maybe_verify_maybe_re_randomize_and_expand(
-+            None,
-+            Some((public_key, seed)),
-+            &CudaCompactCiphertextListExpansionKey::CastAndUnpack(key),
-+            streams,
-+        )
-+    }
- 
--        rerandomized.expand_without_verification(key, streams)
-+    /// Verifies the proofs if `verification` is given, re-randomizes the lists if
-+    /// `re_randomization` is given, and expands them with `key`.
++    /// Whether `divisor` is greater than any value `numerator` can hold, in which case the
++    /// division has nothing to reduce: the quotient is 0 and the remainder the numerator.
 +    ///
-+    /// The verification runs in parallel with the expansion. The expansion result is only
-+    /// returned if all the proofs are valid.
-+    pub(crate) fn maybe_verify_maybe_re_randomize_and_expand(
-+        &self,
-+        verification: Option<(&CompactPkeCrs, &CompactPublicKey, &[u8])>,
-+        re_randomization: Option<(&CompactPublicKey, ReRandomizationSeed)>,
-+        key: &CudaCompactCiphertextListExpansionKey<'_>,
-+        streams: &CudaStreams,
-+    ) -> crate::Result<CudaCompactCiphertextListExpander> {
-+        let expand = move || match re_randomization 
++    /// Works whatever the width of `T` compared to the numerator's.
++    fn divisor_exceeds_numerator<T>(&self, numerator: &RadixCiphertext, divisor: T) -> bool
++    where
++        T: Reciprocable,
++    {
++        let numerator_bits = self.key.message_modulus.0.ilog2() as usize * numerator.blocks.len();
++        // If the divisor type has more bits than the numerator, and that it's bigger than
++        // the max value the numerator can encrypt
++        T::BITS > numerator_bits && divisor > (T::ONE << numerator_bits) - T::ONE
++    }
++
+     pub fn scalar_div_assign_parallelized<T>(&self, numerator: &mut RadixCiphertext, divisor: T)
+     where
+         T: Reciprocable + DecomposableInto<u8>,
+@@ -907,10 +929,7 @@ impl ServerKey {
+     where
+         T: Reciprocable + ScalarMultiplier + DecomposableInto<u8>,
+     {
+-        if !numerator.block_carries_are_empty() {
+-            self.full_propagate_parallelized(numerator);
+-        }
+-
++        self.clean_inplace_for_default_op(numerator);
+         *numerator = self.unchecked_scalar_rem_parallelized(numerator, divisor);
+     }
+ 
+@@ -1041,13 +1060,8 @@ impl ServerKey {
+     where
+         T: Reciprocable + ScalarMultiplier + DecomposableInto<u8>,
+     {
+-        if numerator.block_carries_are_empty() {
+-            self.unchecked_scalar_div_rem_parallelized(numerator, divisor)
+-        } else {
+-            let mut cloned_numerator = numerator.clone();
+-            self.full_propagate_parallelized(&mut cloned_numerator);
+-            self.unchecked_scalar_div_rem_parallelized(&cloned_numerator, divisor)
+-        }
++        let numerator = self.clean_for_default_op(numerator);
++        self.unchecked_scalar_div_rem_parallelized(&numerator, divisor)
+     }
+ }
+ 
+```
+
+**File**: `tfhe/src/integer/server_key/radix_parallel/shift.rs` (modified, +8/-22)
+```diff
+@@ -1,3 +1,4 @@
++use crate::core_crypto::prelude::UnsignedInteger;
+ use crate::integer::ciphertext::{IntegerRadixCiphertext, RadixCiphertext};
+ use crate::integer::server_key::radix_parallel::bit_extractor::BitExtractor;
+ use crate::integer::{BooleanBlock, ServerKey};
+@@ -223,15 +224,9 @@ impl ServerKey {
+         assert!(carry_bits_per_block >= message_bits_per_block);
+ 
+         let num_bits = ct.blocks().len() * message_bits_per_block as usize;
+-        let mut max_num_bits_that_tell_shift = num_bits.ilog2() as u64;
+-        // This effectively means, that if the block parameters
+-        // give a total_nb_bits that is not a power of two,
+-        // then the behaviour of shifting won't be the same
+-        // if shift >= total_nb_bits compared to when total_nb_bits
+-        // is a power of two, as will 'capture' more bits in `shift_bits`
+-        if !num_bits.is_power_of_two() {
+-            max_num_bits_that_tell_shift += 1;
+-        }
++        // Number of low bits of the amount the shifter reads. Shifts decide overshifts on the
++        // whole amount, rotations reduce the amount modulo `num_bits` beforehand
++        let max_num_bits_that_tell_shift = u64::from(num_bits.ceil_ilog2());
+ 
+         if message_bits_per_block == 1 {
+             *ct = self.barrel_shift_bits_1_bit(
+@@ -1004,15 +999,9 @@ impl ServerKey {
+                 bit_extractor.extract_all_bits()
+             },
+             || {
+-                let mut max_num_bits_that_tell_shift = total_nb_bits.ilog2() as u64;
+-                // This effectively means, that if the block parameters
+-                // give a total_nb_bits that is not a power of two,
+-                // then the behaviour of shifting won't be the same
+-                // if shift >= total_nb_bits compared to when total_nb_bits
+-                // is a power of two, as will 'capture' more bits in `shift_bits`
+-                if !total_nb_bits.is_power_of_two() {
+-                    max_num_bits_that_tell_shift += 1;
+-                }
++                // Number of low bits of the amount the shifter reads, see
++                // `unchecked_shift_rotate_bits_assign`
++                let max_num_bits_that_tell_shift = u64::from(total_nb_bits.ceil_ilog2());
+ 
+                 // Extracts bits and put them in the bit index 2 (=> bit number 3)
+                 // so that it is already aligned to the correct position of the cmux input
+@@ -1157,10 +1146,7 @@ impl ServerKey {
+         let message_bits_per_block = self.key.message_modulus.0.ilog2() as u64;
+         let num_bits = num_blocks as u64 * message_bits_per_block;
+ 
+-        let mut max_num_bits_that_tell_shift = num_bits.ilog2();
+-        if !num_bits.is_power_of_two() {
+-            max_num_bits_that_tell_shift += 1;
+-        }
++        let max_num_bits_that_tell_shift = num_bits.ceil_ilog2();
+         let split = (max_num_bits_that_tell_shift as usize)
+             .div_ceil(message_bits_per_block as usize)
+             .min(amount.blocks.len());
 ```
 
 ---
 
-### Incident Patch 3: `bdf7d13c` (2026-11-24)
-**Commit Message**: fix(zk): handle the identity point in bls12_446 Gt::pairing on the GPU (#4201)
+### Incident Patch 2: `cbd6b4f2` (2026-11-24)
+**Commit Message**: chore(ci): remove ci file not used anymore and fix gpu build
 
-**File**: `tfhe-zk-pok/src/curve_api.rs` (modified, +0/-3)
+* chore(ci): remove ci file not used anymore
+
+* fix: change gpu setup to handle everything in https over http
+
+**File**: `.github/actions/gpu_setup/action.yml` (modified, +4/-0)
 ```diff
-@@ -449,9 +449,6 @@ impl PairingGroupOps<bls12_446::Zp, bls12_446::G1, bls12_446::G2> for bls12_446:
-     }
+@@ -30,6 +30,10 @@ runs:
  
-     fn pairing(x: bls12_446::G1, y: bls12_446::G2) -> Self {
--        if x == bls12_446::G1::ZERO || y == bls12_446::G2::ZERO {
--            return Self::pairing(bls12_446::G1::ZERO, bls12_446::G2::GENERATOR);
--        }
-         Self::pairing(x, y)
-     }
- }
+         bash ci/wait_for_apt_lock.sh
+ 
++        # Outbound port 80 is blocked by the instance security group, fetch apt sources over HTTPS.
++        sudo find /etc/apt -maxdepth 2 -type f \( -name '*.list' -o -name '*.sources' \) \
++          -exec sed -i 's|http://|https://|g' {} +
++
+         sudo apt-get update
+         sudo apt-get install -y cmake-format libclang-dev
+       env:
 ```
 
-**File**: `tfhe-zk-pok/src/curve_api/bls12_446.rs` (modified, +24/-0)
+**File**: `.github/workflows/benchmark_gpu_coprocessor.yml` (modified, +4/-0)
 ```diff
-@@ -903,6 +903,12 @@ mod gt {
+@@ -127,6 +127,10 @@ jobs:
+         run: |
+           bash ci/wait_for_apt_lock.sh
  
-     impl Gt {
-         pub fn pairing(g1: G1, g2: G2) -> Self {
-+            // e(O, Q) = e(P, O) = 1, and `ate_pairing` does not accept the point at infinity.
-+            if g1 == G1::ZERO || g2 == G2::ZERO {
-+                return Self {
-+                    inner: PairingOutput::zero(),
-+                };
-+            }
-             ate_pairing(g1, -g2)
-         }
- 
-@@ -1402,6 +1408,24 @@ mod tests {
-         );
-     }
- 
-+    #[test]
-+    fn test_pairing_with_identity_point() {
-+        let identity = Gt {
-+            inner: PairingOutput::zero(),
-+        };
-+        for (g1, g2) in [
-+            (G1::GENERATOR, G2::ZERO),
-+            (G1::ZERO, G2::GENERATOR),
-+            (G1::ZERO, G2::ZERO),
-+        ] {
-+            assert_eq!(Gt::pairing(g1, g2), identity);
-+            assert_eq!(
-+                <Gt as PairingGroupOps<Zp, G1, G2>>::pairing(g1, g2),
-+                identity
-+            );
-+        }
-+    }
++          # Outbound port 80 is blocked by the instance security group, fetch apt sources over HTTPS.
++          sudo find /etc/apt -maxdepth 2 -type f \( -name '*.list' -o -name '*.sources' \) \
++            -exec sed -i 's|http://|https://|g' {} +
 +
-     #[test]
-     fn test_distributivity() {
-         let a = Zp {
+           sudo apt-get update
+           sudo apt-get install -y git-lfs protobuf-compiler
+           git lfs install
 ```
 
-**File**: `tfhe-zk-pok/src/gpu/tests/prove_verify_stress.rs` (modified, +100/-0)
+**File**: `ci/slab.toml` (removed, +0/-338)
 ```diff
-@@ -13,6 +13,7 @@
- 
- #![allow(non_snake_case)]
- 
-+use crate::curve_api::bls12_446::{G1, G2};
- use crate::curve_api::Bls12_446;
- use crate::gpu::pke_v2 as gpu_pke_v2;
- use crate::proofs::pke_v2::VerificationPairingMode;
-@@ -304,3 +305,102 @@ fn test_pke_v2_long_run() {
-         run_pke_v2_gpu_cpu_equivalence_round(round_seed);
-     }
- }
-+
-+#[test]
-+fn test_pke_v2_gpu_verify_rejects_identity_commitment() {
-+    let params = crate::proofs::pke_v2::tests::PKEV2_TEST_PARAMS;
-+    let PkeTestParameters {
-+        d,
-+        k,
-+        B,
-+        q,
-+        t,
-+        msbs_zero_padding_bit_count,
-+    } = params;
-+
-+    let seed: u64 = thread_rng().gen();
-+    println!("test_pke_v2_gpu_verify_rejects_identity_commitment seed: {seed:#x}");
-+    let rng = &mut StdRng::seed_from_u64(seed);
-+
-+    let testcase = PkeTestcase::gen(rng, params);
-+    let ct = testcase.encrypt(params);
-+    let public_param = pke_v2::crs_gen::<Curve>(d, k, B, q, t, msbs_zero_padding_bit_count, rng);
-+    let (public_commit, private_commit) = pke_v2::commit(
-+        testcase.a.clone(),
-+        testcase.b.clone(),
-+        ct.c1.clone(),
-+        ct.c2.clone(),
-+        testcase.r.clone(),
-+        testcase.e1.clone(),
-+        testcase.m.clone(),
-+        testcase.e2.clone(),
-+        &public_param,
-+    );
-+
-+    let set_identity: [fn(&mut pke_v2::Proof<Curve>); 11] = [
-+        |proof| proof.C_hat_bin = G2::ZERO,
-+        |proof| proof.C_hat_e = G2::ZERO,
-+        |proof| proof.C_hat_t = G2::ZERO,
-+        |proof| proof.C_R = G1::ZERO,
-+        |proof| proof.C_r_tilde = G1::ZERO,
-+        |proof| proof.C_e = G1::ZERO,
-+        |proof| proof.C_y = G1::ZERO,
-+        |proof| proof.C_h1 = G1::ZERO,
-+        |proof| proof.C_h2 = G1::ZERO,
-+        |proof| proof.pi = G1::ZERO,
-+        |proof| proof.pi_kzg = G1::ZERO,
-+    ];
-+    let set_compute_load_identity: [fn(&mut pke_v2::ComputeLoadProofFields<Curve>); 2] = [
-+        |fields| fields.C_hat_h3 = G2::ZERO,
-+        |fields| fields.C_hat_w = G2::ZERO,
-+    ];
-+
-+    for load in [ComputeLoad::Proof, ComputeLoad::Verify] {
-+        let valid_proof = gpu_pke_v2::prove(
-+            (&public_param, &public_commit),
-+            &private_commit,
-+            &testcase.metadata,
-+            load,
-+            &seed.to_le_bytes(),
-+        );
-+
-+        let assert_verify = |proof: &pke_v2::Proof<Curve>, should_fail: bool| {
-+            for pairing_mode in [
-+                VerificationPairingMode::TwoSteps,
-+                VerificationPairingMode::Batched,
-+            ] {
-+                let public = (&public_param, &public_commit);
-+                let cpu_result = pke_v2::verify(proof, public, &testcase.metadata, pairing_mode);
-+                let gpu_result =
-+                    gpu_pke_v2::verify(proof, public, &testcase.metadata, pairing_mode);
-+                assert_eq!(
-+                    cpu_result.is_err(),
-+                    should_fail,
-+                    "CPU verify: load={load}, mode={pairing_mode:?}"
-+                );
-+                assert_eq!(
-+                    gpu_result.is_err(),
-+                    should_fail,
-+                    "GPU verify: load={load}, mode={pairing_mode:?}"
-+                );
-+            }
-+        };
-+
-+        assert_verify(&valid_proof, false);
-+
-+        for set in set_identity {
-+            let mut proof = valid_proof.clone();
-+            set(&mut proof);
-+            assert_verify(&proof, true);
-+        }
-+
-+        for set in set_compute_load_identity {
-+            let mut proof = valid_proof.clone();
-+            // Only ComputeLoad::Proof proofs contain these fields.
-+            if let Some(fields) = proof.compute_load_proof_fields.as_mut() {
-+                set(fields);
-+                assert_verify(&proof, true);
-+            }
-+        }
-+    }
-+}
+@@ -1,338 +0,0 @@
+-[backend.aws.cpu-big]
+-region = "eu-west-3"
+-image_id = "ami-01c204b15b504da60"
+-instance_type = "m6i.32xlarge"
+-user = "ubuntu"
+-
+-[backend.aws.cpu-big_fallback]
+-region = "us-east-1"
+-image_id = "ami-0c6e54f3be8d03234"
+-instance_type = "m6i.32xlarge"
+-user = "ubuntu"
+-
+-[backend.aws.cpu-small]
+-region = "eu-west-3"
+-image_id = "ami-01c204b15b504da60"
+-instance_type = "m6i.4xlarge"
+-user = "ubuntu"
+-
+-[backend.aws.bench]
+-region = "eu-west-1"
+-image_id = "ami-067f3893108afe8cd"
+-instance_type = "hpc7a.96xlarge"
+-user = "ubuntu"
+-
+-[backend.aws.bench-hpc8]
+-region = "eu-north-1"
+-image_id = "ami-0d7f32ee367bc2a69"
+-instance_type = "hpc8a.96xlarge"
+-user = "ubuntu"
+-
+-# Profile used to build CUDA code without the need to get p-like instance.
+-[backend.aws.gpu-build]
+-region = "us-east-1"
+-image_id = "ami-0250f541bc1358116"
+-instance_type = "m6i.4xlarge"
+-user = "ubuntu"
+-
+-[backend.aws.single-h100]
+-region = "us-east-1"
+-image_id = "ami-0250f541bc1358116"
+-instance_type = "p5.4xlarge"
+-user = "ubuntu"
+-
+-[backend.aws.single-h100_1stfallback]
+-region = "us-east-2"
+-image_id = "ami-0c924a8e0a210a709"
+-instance_type = "p5.4xlarge"
+-user = "ubuntu"
+-
+-[backend.aws.single-h100_2ndfallback]
+-region = "us-west-1"
+-image_id = "ami-0fe3273232bc2fb8a"
+-instance_type = "p5.4xlarge"
+-user = "ubuntu"
+-
+-[backend.aws.single-h100_3rdfallback]
+-region = "us-west-2"
+-image_id = "ami-057682b0cfedeaf20"
+-instance_type = "p5.4xlarge"
+-user = "ubuntu"
+-
+-[backend.aws.4-l40]
+-region = "us-east-1"
+-image_id = "ami-0250f541bc1358116"
+-instance_type = "g6e.24xlarge"
+-user = "ubuntu"
+-fallbacks = [ "hyperstack.4-l40", "terraform.scaleway-4-l40" ]
+-
+-[backend.aws.small-gpu]
+-region = "us-east-1"
+-image_id = "ami-0250f541bc1358116"
+-instance_type = "g6.2xlarge"
+-user = "ubuntu"
+-
+-[backend.hyperstack.gpu-test]
+-environment_name = "canada"
+-image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
+-flavor_name = "n3-L40x1"
+-user = "ubuntu"
+-fallbacks = [ "terraform.scaleway-small-gpu", "hyperstack.rtx-a6000" ]
+-
+-[backend.hyperstack.gpu-test-sanitizer]
+-environment_name = "canada"
+-image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
+-flavor_name = "n3-L40x1"
+-user = "ubuntu"
+-fallbacks = [ "terraform.scaleway-small-gpu-sanitizer" ]
+-
+-[backend.hyperstack.single-h100]
+-environment_name = "canada"
+-image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
+-flavor_name = "n3-H100x1"
+-user = "ubuntu"
+-
+-# Primary target of gpu_protocol_stress_h100_tests: one H100 PCIe, falling back to a single
+-# Scaleway H100 and then to a 2 GPU Scaleway instance. The fallbacks deliberately name the
+-# profiles that carry no fallbacks of their own, so the chain stays exactly these three.
+-[backend.hyperstack.single-h100-protocol-stress]
+-environment_name = "canada"
+-image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
+-flavor_name = "n3-H100x1"
+-user = "ubuntu"
+-fallbacks = [
+-    "terraform.scaleway-single-h100",
+-    "terraform.scaleway-2-h100-sxm5",
+-]
+-
+-[backend.hyperstack.2-h100]
+-environment_name = "canada"
+-image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
+-flavor_name = "n3-H100x2"
+-user = "ubuntu"
+-
+-[backend.hyperstack.4-h100]
+-environment_name = "canada"
+-image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
+-flavor_name = "n3-H100x4"
+-user = "ubuntu"
+-
+-[backend.hyperstack.multi-h100]
+-environment_name = "canada"
+-image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
+-flavor_name = "n3-H100x8"
+-user = "ubuntu"
+-
+-[backend.hyperstack.multi-h100-nvlink]
+-environment_name = "canada"
+-image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
+-flavor_name = "n3-H100x8-NVLink"
+-user = "ubuntu"
+-
+-[backend.hyperstack.multi-h100-sxm5]
+-environment_name = "canada"
+-image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
+-flavor_name = "n3-H100-SXM5x8"
+-user = "ubuntu"
+-
+-[backend.hyperstack.multi-h100-sxm5_fallback]
+-environment_name = "us-1"
+-image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
+-flavor_name = "n3-H100-SXM5x8"
+-user = "ubuntu"
+-
+-[backend.hyperstack.multi-a100-nvlink]
+-environment_name = "canada"
+-image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
+-flavor_name = "n3-A100x8-NVLink"
+-user = "ubuntu"
+-
+-[backend.hyperstack.l40]
+-environment_name = "canada"
+-image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
+-flavor_name = "n3-L40x1"
+-user = "ubuntu"
+-
+-[backend.hyperstack.l40_fallback]
+-environment_name = "canada"
+-image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
+-flavor_name = "n3-RTX-A6000x1"
+-user = "ubuntu"
+-
+-# Fallback target only.
+-[backend.hyperstack.rtx-a6000]
+-environment_name = "canada"
+-image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
+-flavor_name = "n3-RTX-A6000x1"
+-user = "ubuntu"
+-
+-[backend.hyperstack.4-l40]
+-environment_name = "canada"
+-image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
+-flavor_name = "n3-L40x4"
+-user = "ubuntu"
+-
+-[backend.hyperstack.4-l40_fallback]
+-environment_name = "norway"
+-image_name = "Ubuntu Server 22.04 LTS R570 CUDA 12.8"
+-flavor_name = "n3-RTX-A4000x4"
+-user = "
 ```
 
-**File**: `tfhe-zk-pok/src/proofs/pke_v2/mod.rs` (modified, +53/-0)
+**File**: `ci/terraform_scripts/nebius/terraform_h100.tf` (removed, +0/-130)
 ```diff
-@@ -4314,12 +4314,33 @@ pub(crate) mod tests {
-                 inner: point_on_curve_wrong_subgroup(rng),
-             });
- 
-+            let verify_fails = |proof: &Proof<Curve>| {
-+                [
-+                    VerificationPairingMode::TwoSteps,
-+                    VerificationPairingMode::Batched,
-+                ]
-+                .into_iter()
-+                .all(|pairing_mode| {
-+                    verify(
-+                        proof,
-+                        (&public_param, &public_commit),
-+                        &testcase.metadata,
-+                        pairing_mode,
-+                    )
-+                    .is_err()
-+                })
-+            };
-+
-+            assert!(!verify_fails(&valid_proof));
-+
-             {
-                 let mut proof = valid_proof.clone();
-                 proof.C_hat_e = not_on_curve_g2;
-                 assert!(!proof.is_usable());
-                 proof.C_hat_e = not_in_group_g2;
-                 assert!(!proof.is_usable());
-+                proof.C_hat_e = bls12_446::G2::ZERO;
-+                assert!(verify_fails(&proof));
-             }
- 
-             {
-@@ -4328,6 +4349,8 @@ pub(crate) mod tests {
-                 assert!(!proof.is_usable());
-                 proof.C_e = not_in_group_g1;
-                 assert!(!proof.is_usable());
-+                proof.C_e = bls12_446::G1::ZERO;
-+                assert!(verify_fails(&proof));
-             }
- 
-             {
-@@ -4336,6 +4359,8 @@ pub(crate) mod tests {
-                 assert!(!proof.is_usable());
-                 proof.C_r_tilde = not_in_group_g1;
-                 assert!(!proof.is_usable());
-+                proof.C_r_tilde = bls12_446::G1::ZERO;
-+                assert!(verify_fails(&proof));
-             }
- 
-             {
-@@ -4344,6 +4369,8 @@ pub(crate) mod tests {
-                 assert!(!proof.is_usable());
-                 proof.C_R = not_in_group_g1;
-                 assert!(!proof.is_usable());
-+                proof.C_R = bls12_446::G1::ZERO;
-+                assert!(verify_fails(&proof));
-             }
- 
-             {
-@@ -4352,6 +4379,8 @@ pub(crate) mod tests {
-                 assert!(!proof.is_usable());
-                 proof.C_hat_bin = not_in_group_g2;
-                 assert!(!proof.is_usable());
-+                proof.C_hat_bin = bls12_446::G2::ZERO;
-+                assert!(verify_fails(&proof));
-             }
- 
-             {
-@@ -4360,6 +4389,8 @@ pub(crate) mod tests {
-                 assert!(!proof.is_usable());
-                 proof.C_y = not_in_group_g1;
-                 assert!(!proof.is_usable());
-+                proof.C_y = bls12_446::G1::ZERO;
-+                assert!(verify_fails(&proof));
-             }
- 
-             {
-@@ -4368,6 +4399,8 @@ pub(crate) mod tests {
-                 assert!(!proof.is_usable());
-                 proof.C_h1 = not_in_group_g1;
-                 assert!(!proof.is_usable());
-+                proof.C_h1 = bls12_446::G1::ZERO;
-+                assert!(verify_fails(&proof));
-             }
- 
-             {
-@@ -4376,6 +4409,8 @@ pub(crate) mod tests {
-                 assert!(!proof.is_usable());
-                 proof.C_h2 = not_in_group_g1;
-                 assert!(!proof.is_usable());
-+                proof.C_h2 = bls12_446::G1::ZERO;
-+                assert!(verify_fails(&proof));
-             }
- 
-             {
-@@ -4384,6 +4419,8 @@ pub(crate) mod tests {
-                 assert!(!proof.is_usable());
-                 proof.C_hat_t = not_in_group_g2;
-                 assert!(!proof.is_usable());
-+                proof.C_hat_t = bls12_446::G2::ZERO;
-+                assert!(verify_fails(&proof));
-             }
- 
-             {
-@@ -4392,6 +4429,8 @@ pub(crate) mod tests {
-                 assert!(!proof.is_usable());
-                 proof.pi = not_in_group_g1;
-                 assert!(!proof.is_usable());
-+                proof.pi = bls12_446::G1::ZERO;
-+                assert!(verify_fails(&proof));
-             }
- 
-             {
-@@ -4400,6 +4439,8 @@ pub(crate) mod tests {
-                 assert!(!proof.is_usable());
-                 proof.pi_kzg = not_in_group_g1;
-                 assert!(!proof.is_usable());
-+                proof.pi_kzg = bls12_446::G1::ZERO;
-+                assert!(verify_fails(&proof));
-             }
- 
-             if let Some(ref valid_compute_proof_fields) = valid_proof.compute_load_proof_fields {
-@@ -4417,6 +4458,12 @@ pub(crate) mod tests {
-                     });
- 
-                     assert!(!proof.is_usable());
-+
-+                    proof.compute_load_proof_fields = Some(ComputeLoadProofFields {
-+                        C_hat_h3: bls12_446::G2::ZERO,
-+                        C_hat_w: valid_compute_proof_fields.C_hat_w,
-+                    });
-+                    assert!(verify_fails(&proof));
-                 }
- 
-                 {
-@@ -4434,6 +4481,12 @@ pub(crate) mod tests {
-                     });
- 
-                     assert!(!proof.is_usable());
-+
-+                    pro
+@@ -1,130 +0,0 @@
+-terraform {
+-  required_providers {
+-    nebius = {
+-      source  = "terraform-provider.storage.eu-north1.nebius.cloud/nebius/nebius"
+-      version = "~> 0.5"
+-    }
+-  }
+-  required_version = "~> 1.14"
+-}
+-
+-provider "nebius" {
+-  domain = "api.nebius.cloud:443"
+-
+-  service_account = {
+-    account_id       = var.nebius_sa_account_id
+-    public_key_id    = var.nebius_sa_public_key_id
+-    private_key_file = "/app/nebius/slab_ci_service_account_private.pem"
+-  }
+-}
+-
+-variable "nebius_sa_account_id" {
+-  type        = string
+-  description = "Nebius service account used by Slab"
+-  default     = "serviceaccount-e00ja4a60pzcaabtm0"
+-}
+-
+-variable "nebius_sa_public_key_id" {
+-  type        = string
+-  description = "ID of the service account authorized key"
+-  default     = "publickey-e00vtny4sn819pm0pg"
+-}
+-
+-variable "nebius_project_id" {
+-  type        = string
+-  description = "Nebius project ID to attach to"
+-  default     = "project-e00g2md3pr003aqkq1v4q0"
+-}
+-
+-variable "nebius_subnet_id" {
+-  type        = string
+-  description = "Nebius VPC subnet ID to attach the instance to"
+-  default     = "vpcsubnet-e00zwv8bkn6dxmk91s"
+-}
+-
+-variable "nebius_security_group_id" {
+-  type        = string
+-  description = "Nebius VPC security group ID to attach to the instance network interface"
+-  default     = "vpcsecuritygroup-e00kvyx503efvsc4br"
+-}
+-
+-# Provided via ci/slab.toml
+-variable "instance_type" {
+-  type        = string
+-  description = "Nebius instance preset to be used (e.g. 1gpu-16vcpu-200gb)"
+-}
+-
+-# Presets are platform specific, a different GPU type needs its own script
+-variable "platform" {
+-  type        = string
+-  description = "Nebius compute platform (GPU type)"
+-  default     = "gpu-h100-sxm"
+-}
+-
+-# Provided by Slab server
+-variable "instance_label" {
+-  type        = string
+-  description = "Instance name to display in console"
+-}
+-
+-# Provided by Slab server
+-variable "user_data" {
+-  type        = string
+-  description = "Script that will be run at instance startup"
+-  sensitive   = true
+-}
+-
+-resource "nebius_compute_v1_disk" "boot_disk" {
+-  parent_id        = var.nebius_project_id
+-  name             = "${var.instance_label}-boot-disk"
+-  type             = "NETWORK_SSD"
+-  size_gibibytes   = 200
+-  block_size_bytes = 4096
+-
+-  # Pinned ubuntu24.04-cuda12 image (CUDA 12.8, driver 570), the family alone would drift between runs
+-  source_image_id = "computeimage-e00q003g5k851wjgpn"
+-}
+-
+-resource "nebius_compute_v1_instance" "runner" {
+-  parent_id = var.nebius_project_id
+-  name      = var.instance_label
+-
+-  resources = {
+-    platform = var.platform
+-    preset   = var.instance_type
+-  }
+-
+-  boot_disk = {
+-    attach_mode = "READ_WRITE"
+-    existing_disk = {
+-      id = nebius_compute_v1_disk.boot_disk.id
+-    }
+-  }
+-
+-  network_interfaces = [
+-    {
+-      name              = "eth0"
+-      subnet_id         = var.nebius_subnet_id
+-      security_groups   = [{ id = var.nebius_security_group_id }]
+-      ip_address        = {}
+-      public_ip_address = {}
+-    }
+-  ]
+-
+-  # Nebius expects a #cloud-config document, so the Slab script is shipped as a file and run from it
+-  cloud_init_user_data = <<-EOT
+-    #cloud-config
+-    write_files:
+-      - path: /opt/slab/runner_start.sh
+-        permissions: "0755"
+-        encoding: b64
+-        content: ${base64encode(var.user_data)}
+-    runcmd:
+-      - /opt/slab/runner_start.sh
+-  EOT
+-}
+-
+-output "instance_id" {
+-  value       = nebius_compute_v1_instance.runner.id
+-  description = "Unique ID of the Nebius instance"
+-}
+```
+
+**File**: `ci/terraform_scripts/nebius/terraform_l40.tf` (removed, +0/-130)
+```diff
+@@ -1,130 +0,0 @@
+-terraform {
+-  required_providers {
+-    nebius = {
+-      source  = "terraform-provider.storage.eu-north1.nebius.cloud/nebius/nebius"
+-      version = "~> 0.5"
+-    }
+-  }
+-  required_version = "~> 1.14"
+-}
+-
+-provider "nebius" {
+-  domain = "api.nebius.cloud:443"
+-
+-  service_account = {
+-    account_id       = var.nebius_sa_account_id
+-    public_key_id    = var.nebius_sa_public_key_id
+-    private_key_file = "/app/nebius/slab_ci_service_account_private.pem"
+-  }
+-}
+-
+-variable "nebius_sa_account_id" {
+-  type        = string
+-  description = "Nebius service account used by Slab"
+-  default     = "serviceaccount-e00ja4a60pzcaabtm0"
+-}
+-
+-variable "nebius_sa_public_key_id" {
+-  type        = string
+-  description = "ID of the service account authorized key"
+-  default     = "publickey-e00vtny4sn819pm0pg"
+-}
+-
+-variable "nebius_project_id" {
+-  type        = string
+-  description = "Nebius project ID to attach to"
+-  default     = "project-e00g2md3pr003aqkq1v4q0"
+-}
+-
+-variable "nebius_subnet_id" {
+-  type        = string
+-  description = "Nebius VPC subnet ID to attach the instance to"
+-  default     = "vpcsubnet-e00zwv8bkn6dxmk91s"
+-}
+-
+-variable "nebius_security_group_id" {
+-  type        = string
+-  description = "Nebius VPC security group ID to attach to the instance network interface"
+-  default     = "vpcsecuritygroup-e00kvyx503efvsc4br"
+-}
+-
+-# Provided via ci/slab.toml
+-variable "instance_type" {
+-  type        = string
+-  description = "Nebius instance preset to be used (e.g. 1gpu-16vcpu-200gb)"
+-}
+-
+-# Presets are platform specific, a different GPU type needs its own script
+-variable "platform" {
+-  type        = string
+-  description = "Nebius compute platform (GPU type)"
+-  default     = "gpu-l40s-d"
+-}
+-
+-# Provided by Slab server
+-variable "instance_label" {
+-  type        = string
+-  description = "Instance name to display in console"
+-}
+-
+-# Provided by Slab server
+-variable "user_data" {
+-  type        = string
+-  description = "Script that will be run at instance startup"
+-  sensitive   = true
+-}
+-
+-resource "nebius_compute_v1_disk" "boot_disk" {
+-  parent_id        = var.nebius_project_id
+-  name             = "${var.instance_label}-boot-disk"
+-  type             = "NETWORK_SSD"
+-  size_gibibytes   = 200
+-  block_size_bytes = 4096
+-
+-  # Pinned ubuntu24.04-cuda12 image (CUDA 12.8, driver 570), the family alone would drift between runs
+-  source_image_id = "computeimage-e00q003g5k851wjgpn"
+-}
+-
+-resource "nebius_compute_v1_instance" "runner" {
+-  parent_id = var.nebius_project_id
+-  name      = var.instance_label
+-
+-  resources = {
+-    platform = var.platform
+-    preset   = var.instance_type
+-  }
+-
+-  boot_disk = {
+-    attach_mode = "READ_WRITE"
+-    existing_disk = {
+-      id = nebius_compute_v1_disk.boot_disk.id
+-    }
+-  }
+-
+-  network_interfaces = [
+-    {
+-      name              = "eth0"
+-      subnet_id         = var.nebius_subnet_id
+-      security_groups   = [{ id = var.nebius_security_group_id }]
+-      ip_address        = {}
+-      public_ip_address = {}
+-    }
+-  ]
+-
+-  # Nebius expects a #cloud-config document, so the Slab script is shipped as a file and run from it
+-  cloud_init_user_data = <<-EOT
+-    #cloud-config
+-    write_files:
+-      - path: /opt/slab/runner_start.sh
+-        permissions: "0755"
+-        encoding: b64
+-        content: ${base64encode(var.user_data)}
+-    runcmd:
+-      - /opt/slab/runner_start.sh
+-  EOT
+-}
+-
+-output "instance_id" {
+-  value       = nebius_compute_v1_instance.runner.id
+-  description = "Unique ID of the Nebius instance"
+-}
+```
+
+**File**: `ci/terraform_scripts/scaleway/terraform.tf` (removed, +0/-75)
+```diff
+@@ -1,75 +0,0 @@
+-terraform {
+-  required_providers {
+-    scaleway = {
+-      source  = "scaleway/scaleway"
+-      version = "~> 2.73"
+-    }
+-  }
+-  required_version = "~> 1.14"
+-}
+-
+-provider "scaleway" {
+-  zone = "fr-par-2"
+-}
+-
+-# Provided via Slab server env
+-variable "project_id" {
+-  type        = string
+-  description = "Scaleway project ID to attached to"
+-}
+-
+-# Provided via ci/slab.toml
+-variable "instance_type" {
+-  type        = string
+-  description = "Scaleway instance type to be used"
+-}
+-
+-# Provided by Slab server
+-variable "instance_label" {
+-  type        = string
+-  description = "Instance name to display in console"
+-}
+-
+-# Provided by Slab server
+-variable "user_data" {
+-  type        = string
+-  description = "Script that will be run at instance startup"
+-  sensitive   = true
+-}
+-
+-resource "scaleway_instance_ip" "github_runner" {
+-  project_id = var.project_id
+-}
+-
+-data "scaleway_instance_security_group" "github_runner" {
+-  project_id = var.project_id
+-  name       = "github-actions-runner"
+-}
+-
+-data "scaleway_instance_image" "gpu_benchmark_image" {
+-    name = "tfhe-rs-ubuntu-24-cuda"
+-}
+-
+-resource "scaleway_instance_server" "scaleway_gpu_instance" {
+-  project_id = var.project_id
+-  image      = data.scaleway_instance_image.gpu_benchmark_image.id
+-  type       = var.instance_type
+-  name       = var.instance_label
+-
+-  root_volume {
+-    size_in_gb = 200
+-  }
+-
+-  ip_id = scaleway_instance_ip.github_runner.id
+-
+-  user_data = {
+-    "cloud-init" = var.user_data
+-  }
+-
+-  security_group_id = data.scaleway_instance_security_group.github_runner.id
+-}
+-
+-output "instance_id" {
+-  value       = scaleway_instance_server.scaleway_gpu_instance.id
+-  description = "Unique ID of the Scaleway instance"
+-}
+```
+
+**File**: `ci/terraform_scripts/scaleway/terraform_sxm_x8.tf` (removed, +0/-75)
+```diff
+@@ -1,75 +0,0 @@
+-# This script is an SXM-8 specific variant for Scaleway instance
+-# there is a bug with our current OS image we can't figure out, this uses a base Scaleway image
+-terraform {
+-  required_providers {
+-    scaleway = {
+-      source  = "scaleway/scaleway"
+-      version = "~> 2.73"
+-    }
+-  }
+-  required_version = "~> 1.14"
+-}
+-
+-provider "scaleway" {
+-  zone = "fr-par-2"
+-}
+-
+-# Provided via Slab server env
+-variable "project_id" {
+-  type        = string
+-  description = "Scaleway project ID to attached to"
+-}
+-
+-# Provided via ci/slab.toml
+-variable "instance_type" {
+-  type        = string
+-  description = "Scaleway instance type to be used"
+-}
+-
+-# Provided by Slab server
+-variable "instance_label" {
+-  type        = string
+-  description = "Instance name to display in console"
+-}
+-
+-# Provided by Slab server
+-variable "user_data" {
+-  type        = string
+-  description = "Script that will be run at instance startup"
+-  sensitive   = true
+-}
+-
+-resource "scaleway_instance_ip" "github_runner" {
+-  project_id = var.project_id
+-}
+-
+-data "scaleway_instance_security_group" "github_runner" {
+-  project_id = var.project_id
+-  name       = "github-actions-runner"
+-}
+-
+-# trivy:ignore:ZAMA-TF-003 uses the base image label for now
+-resource "scaleway_instance_server" "scaleway_gpu_instance" {
+-  project_id = var.project_id
+-  # Current latest ubuntu GPU OS image from Scaleway (2026/07/28)
+-  image      = "ubuntu_noble_gpu_os_13_nvidia"
+-  type       = var.instance_type
+-  name       = var.instance_label
+-
+-  root_volume {
+-    size_in_gb = 200
+-  }
+-
+-  ip_id = scaleway_instance_ip.github_runner.id
+-
+-  user_data = {
+-    "cloud-init" = var.user_data
+-  }
+-
+-  security_group_id = data.scaleway_instance_security_group.github_runner.id
+-}
+-
+-output "instance_id" {
+-  value       = scaleway_instance_server.scaleway_gpu_instance.id
+-  description = "Unique ID of the Scaleway instance"
+-}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4217** (2026-11-24): chore(ci): remove ci file not used anymore (@SouchonTheo)
 - **PR #4214** (2026-11-23): chore: move gpu scripts to dedicated dir with gpu team as codewoners (@IceTDrinker)
 - **PR #4212** (2026-11-23): chore(data-extractor): bump url to 2.5.9 (@nsarlin-zama)
 - **PR #4201** (2026-11-24): fix(zk): handle the identity point in bls12_446 Gt::pairing on the GPU (@pdroalves)
 - **PR #4198** (2026-11-23): Ns/chore/transciphering 2 bits (@nsarlin-zama)
 - **PR #4197** (2026-11-19): fix(ci): use merge commit parent as backward compat base (@SouchonTheo)
-- **PR #4195** (2026-11-19): fix(gpu): do not return a 0 decompression size for single-block items (@agnesLeroy)
 
 ---
 
@@ -2823,53 +3269,59 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gpu): extend match_value results to the output block count in the high-level api
+## X. integer)!: make encrypted rotations behavior consistent
 
 **RULE**:
-When implementing operations in `tfhe/src/high_level_api/integers/unsigned/base.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tfhe/src/integer/gpu/server_key/radix/tests_signed/legacy_default_tests.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b3ef09b4`: gpu): extend match_value results to the output block count in the high-level api. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `51c20e76`: integer)!: make encrypted rotations behavior consistent. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tfhe/src/high_level_api/integers/unsigned/base.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tfhe/src/integer/gpu/server_key/radix/tests_signed/legacy_default_tests.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                let current_num_blocks = result.ciphertext.d_blocks.lwe_ciphertext_count().0;
-                if target_num_blocks >= current_num_blocks {
-                    let result = if target_num_blocks > current_num_blocks {
-                        cuda_key.key.key.extend_radix_with_trivial_zero_blocks_msb(
-                            &result,
-                            target_num_blocks - current_num_blocks,
-                            streams,
-                        )
-                    } else {
-                        result
-                    };
-                let current_num_blocks = result.ciphertext.d_blocks.lwe_ciphertext_count().0;
-                if target_num_blocks >= current_num_blocks {
-                    let result = if target_num_blocks > current_num_blocks {
-                        cuda_key.key.key.extend_radix_with_trivial_zero_blocks_msb(
-                            &result,
-                            target_num_blocks - current_num_blocks,
-                            streams,
-                        )
-                    } else {
-                        result
-                    };
+//! `radix_parallel::scalar_add`, which the GPU can reuse.
+//!
+//! The rotations by an encrypted amount also differ: the CPU reduces the amount modulo the
+//! number of bits (see `unchecked_rotate_bits_assign` in `radix_parallel::rotate`), the GPU
+//! only reads its low ⌈log₂(num_bits)⌉ bits, i.e. reduces it modulo the next power of two,
+//! which the rotate tests of this file (unchecked ones included) still model.
+//!
+//! Once all are addressed point the GPU wrappers at the harness tests and the CPU unchecked
+//! tests, and delete this file.
+    nb_tests_for_params, nb_tests_smaller_for_params, panic_if_any_block_is_not_clean_or_trivial,
+    MAX_NB_CTXT, NB_CTXT,
+
+pub(crate) fn legacy_signed_unchecked_rotate_left_test<P, T>(param: P, mut executor: T)
+where
+    P: Into<TestParameters>,
+    T: for<'a> FunctionExecutor<
+        (&'a SignedRadixCiphertext, &'a RadixCiphertext),
+        SignedRadixCiphertext,
+    >,
+{
+    let param = param.into();
+    let nb_tests = nb_tests_for_params(param);
+    let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
+    let cks = RadixClientKey::from((cks, NB_CTXT));
+    let sks = Arc::new(sks);
+
+    let mut rng = rand::thread_rng(
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-                if target_num_blocks >= result.ciphertext.d_blocks.lwe_ciphertext_count().0 {
-                if target_num_blocks >= result.ciphertext.d_blocks.lwe_ciphertext_count().0 {
+//! `radix_parallel::scalar_add`, which the GPU can reuse. Once both are addressed point the
+//! GPU wrappers at the harness tests and delete this file.
+    nb_tests_smaller_for_params, panic_if_any_block_is_not_clean_or_trivial, MAX_NB_CTXT, NB_CTXT,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b3ef09b4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `51c20e76` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T18:26:05.483Z",
-  "total_records": 2560,
+  "last_updated": "2026-11-24T18:35:08.517Z",
+  "total_records": 2563,
   "domains": {
     "A": {
       "total": 22,
@@ -70,7 +70,7 @@
       ]
     },
     "D": {
-      "total": 967,
+      "total": 970,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1038,7 +1038,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-aleph-alpha-kolibri-1-1-learnings-core-invari",
         "domain_intelligence-research-knowledge-intelligence-baidu-ernie-5-5-flash-preview-core-invariants",
         "DOM-D-9FC91E58",
-        "domain_intelligence-research-knowledge-intelligence-hf-baidu-ernie-5-5-flash-preview-learnings-core-"
+        "domain_intelligence-research-knowledge-intelligence-hf-baidu-ernie-5-5-flash-preview-learnings-core-",
+        "domain_intelligence-research-knowledge-intelligence-atomicchat-inkling-2-mini-gguf-core-invariants",
+        "DOM-D-EBA58F46",
+        "domain_intelligence-research-knowledge-intelligence-hf-atomicchat-inkling-2-mini-gguf-learnings-core"
       ]
     },
     "E": {
@@ -9137,8 +9140,8 @@
       "title": "Technical Construction Intelligence: volcengine/OpenViking Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-volcengine-openviking-technical-construction-intelligence-volcengine-openviking-.md",
       "repository": "volcengine/OpenViking",
-      "content_hash": "79a964d05c0ceb5e72c14779d7fdf26652b8e79ec1af09d1a10f937da0cd4835",
-      "created_at": "2026-11-23T22:05:23.959Z"
+      "content_hash": "daad9aad58800ca130c42cc935aeea47466e43c64047abebcafb0d03178bbd28",
+      "created_at": "2026-11-24T18:34:34.037Z"
     },
     "DOM-D-E243BB51": {
       "record_id": "DOM-D-E243BB51",
@@ -9206,8 +9209,8 @@
       "title": "Technical Construction Intelligence: volcengine-openviking-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-volcengine-openviking-learnings-technical-construction-intelligence-volcengine-o.md",
       "repository": "volcengine-openviking-learnings",
-      "content_hash": "8fe2e4d01cf83e4f3df552b8683fee2bb1c4fb5fee75864d5d29144cbf54abe1",
-      "created_at": "2026-11-23T22:05:27.900Z"
+      "content_hash": "ff0ca5017f1d68cc357ed35cac38be2b3051c77575bb526a85954e3d7422b4ae",
+      "created_at": "2026-11-24T18:35:08.517Z"
     },
     "domain_intelligence-research-knowledge-intelligence-akhilaaa3-jev-omni-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-akhilaaa3-jev-omni-core-invariants",
@@ -10409,8 +10412,8 @@
       "title": "Technical Construction Intelligence: zama-ai/tfhe-rs Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-technical-construction-intelligence-zama-ai-tfhe-rs-core-invaria.md",
       "repository": "zama-ai/tfhe-rs",
-      "content_hash": "8c7aa9f948d701b046ffed589a2a8fef09f292021ae9312f7112b4283227fd31",
-      "created_at": "2026-11-24T14:33:27.934Z"
+      "content_hash": "46c94f9a44e0da90c1448a61900ba527afb5c95f33a38ac7520b3d24ecedfa97",
+      "created_at": "2026-11-24T18:34:31.500Z"
     },
     "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants",
@@ -27556,8 +27559,8 @@
       "title": "Technical Construction Intelligence: zama-ai-tfhe-rs-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-learnings-technical-construction-intelligence-zama-ai-tfhe-rs-le.md",
       "repository": "zama-ai-tfhe-rs-learnings",
-      "content_hash": "399daf1683614d13f40883277e7a7bf24866d08b9407ddec2242aa079a3585e8",
-      "created_at": "2026-11-24T14:33:34.055Z"
+      "content_hash": "50f00c063ce4b1690ca4a84219cd4e187ac077dc9e44a7c287e670dbab2be737",
+      "created_at": "2026-11-24T18:35:07.507Z"
     },
     "domain_intelligence-research-knowledge-intelligence-meituan-longcat-longcat-video-avatar-1-6-core-in": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-meituan-longcat-longcat-video-avatar-1-6-core-in",
@@ -42995,6 +42998,66 @@
       "repository": "goodrain/rainbond",
       "content_hash": "fd69248d4a853f35917d5e8f1a6ced756c494d558072105a71395f872e033fb2",
       "created_at": "2026-11-24T18:09:11.777Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-atomicchat-inkling-2-mini-gguf-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-atomicchat-inkling-2-mini-gguf-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: AtomicChat/Inkling-2-Mini-GGUF Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-atomicchat-inkling-2-mini-gguf-research-knowledge-intelligence-atomicchat-ink.md",
+      "repository": "AtomicChat/Inkling-2-Mini-GGUF",
+      "content_hash": "d3bc1340e0efa9b65ae2bf7b68fc566b677e7395ff4369da72bd79f435133503",
+      "created_at": "2026-11-24T18:34:15.240Z"
+    },
+    "DOM-D-EBA58F46": {
+      "record_id": "DOM-D-EBA58F46",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): AtomicChat/Inkling-2-Mini-GGUF",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-atomicchat-inkling-2-mini-gguf-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/AtomicChat/Inkling-2-Mini-GGUF](https://huggingface.co/AtomicChat/Inkling-2-Mini-GGUF))  \n> **Source Version**: `hf-atomiccha`  \n> **License**:",
+      "content_hash": "37048ae2b19a11e2e34d0391808a485628aa367697aa11810c01d387e4e55dcb",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-atomicchat-inkling-2-mini-gguf-learnings.md`  \n> **Source**: huggingface ([https: -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-atomicchat-inkling-2-mini-gguf-learnings.md`  \n> **Source**: huggingface ([https:",
+      "provenance": {
+        "source_uri": "project://hf-atomicchat-inkling-2-mini-gguf/hf-atomicchat-inkling-2-mini-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-24T18:34:37.037Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-atomicchat-inkling-2-mini-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-atomicchat-inkling-2-mini-gguf"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-24T18:35:06.307Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-atomicchat-inkling-2-mini-gguf-learnings-core": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-atomicchat-inkling-2-mini-gguf-learnings-core",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-atomicchat-inkling-2-mini-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-atomicchat-inkling-2-mini-gguf-learnings-research-knowledge-intelligence-hf-a.md",
+      "repository": "hf-atomicchat-inkling-2-mini-gguf-learnings",
+      "content_hash": "75081701b7dc87dc2e46d177fcd614fcde3b869a04da2eeb5b7d671281ff528d",
+      "created_at": "2026-11-24T18:35:06.649Z"
     }
   }
 }

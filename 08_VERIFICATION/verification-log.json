@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-Y44K",
-    "timestamp": "2026-11-22T23:57:22.916Z",
-    "repository": "buresdv/Cork",
-    "learningId": "learn-github-buresdv-cork",
-    "contentHash": "102b491610b5b90827dd06e1dd53cf64ea26836f1d5676ade88a2a1efcc36211",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-Y64U",
-    "timestamp": "2026-11-22T23:57:25.518Z",
-    "repository": "skyhook-io/radar",
-    "learningId": "learn-github-skyhook-io-radar",
-    "contentHash": "1dc7db1d00e57f448a1520a67c2dc5dbc9885667140aaa825973555a074faa13",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-HV4M",
-    "timestamp": "2026-11-23T00:12:44.374Z",
-    "repository": "Cloudflare/clef-flash",
-    "learningId": "learn-huggingface-cloudflare-clef-flash",
-    "contentHash": "86ffacf0652dee778e9723bd6e490e4434e04f5fed89da943a2a0d8c9617058b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-5O8K",
     "timestamp": "2026-11-23T00:31:15.188Z",
     "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
@@ -7490,6 +7445,51 @@
     "repository": "tickernelz/opencode-mem",
     "learningId": "learn-github-tickernelz-opencode-mem",
     "contentHash": "5bea62554e4a7cb684f41783a57f650220b58938b0a1c4f64a48ee036af82325",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-A9NM",
+    "timestamp": "2026-11-24T18:34:15.010Z",
+    "repository": "AtomicChat/Inkling-2-Mini-GGUF",
+    "learningId": "learn-huggingface-atomicchat-inkling-2-mini-gguf",
+    "contentHash": "c5354480a39d73734be92fe7c3fec31ee178920986bd6bee7fabbf3ff776208e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-AM1N",
+    "timestamp": "2026-11-24T18:34:31.067Z",
+    "repository": "zama-ai/tfhe-rs",
+    "learningId": "learn-github-zama-ai-tfhe-rs",
+    "contentHash": "fa402ee3c1473a0f86098e47f7f0f18c2821089a377bbe321562f1d38dcc0abf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-ANZY",
+    "timestamp": "2026-11-24T18:34:33.598Z",
+    "repository": "volcengine/OpenViking",
+    "learningId": "learn-github-volcengine-openviking",
+    "contentHash": "66670a95a808cb1cbb67f681f14cfa58eeab9fb79bf5c6b52e36defdd63007cb",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

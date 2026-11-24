@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T18:26:05.483Z",
-  "total_verified_learnings": 9099,
+  "last_updated": "2026-11-24T18:35:08.726Z",
+  "total_verified_learnings": 9100,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24826,
+  "total_items": 24835,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113541,10 +113541,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-volcengine-openviking-technical-construction-intelligence-volcengine-openviking-.md",
       "title": "Technical Construction Intelligence: volcengine/OpenViking Core Invariants",
       "repository": "volcengine/OpenViking",
-      "source_version": "300ab8eb",
-      "content_hash": "79a964d05c0ceb5e72c14779d7fdf26652b8e79ec1af09d1a10f937da0cd4835",
+      "source_version": "e13f0441",
+      "content_hash": "daad9aad58800ca130c42cc935aeea47466e43c64047abebcafb0d03178bbd28",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T22:05:23.959Z"
+      "persisted_at": "2026-11-24T18:34:34.037Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-volcengine-openviking": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-volcengine-openviking",
@@ -113553,10 +113553,10 @@
       "relative_path": "08_VERIFICATION/volcengine-openviking-verification-protocol-empirical-defect-shield-for-volcengi.md",
       "title": "Verification Protocol: Empirical Defect Shield for volcengine/OpenViking",
       "repository": "volcengine/OpenViking",
-      "source_version": "300ab8eb",
-      "content_hash": "fdc5ddc91c47b049fc87153cd508b262c214bbf000467bde163528839b28b959",
+      "source_version": "e13f0441",
+      "content_hash": "fcd7f4dc764f00f66472be7abf635f433e378a7f77eed53725f1234877b67588",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T22:05:24.129Z"
+      "persisted_at": "2026-11-24T18:34:34.237Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-qwen-image-2-1-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-qwen-image-2-1-learnings-core-invar",
@@ -113602,9 +113602,9 @@
       "title": "Technical Construction Intelligence: volcengine-openviking-learnings Core Invariants",
       "repository": "volcengine-openviking-learnings",
       "source_version": "HEAD",
-      "content_hash": "8fe2e4d01cf83e4f3df552b8683fee2bb1c4fb5fee75864d5d29144cbf54abe1",
+      "content_hash": "ff0ca5017f1d68cc357ed35cac38be2b3051c77575bb526a85954e3d7422b4ae",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T22:05:27.900Z"
+      "persisted_at": "2026-11-24T18:35:08.517Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-volcengine-openviking-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-volcengine-openviking-learning",
@@ -113614,9 +113614,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for volcengine-openviking-learnings",
       "repository": "volcengine-openviking-learnings",
       "source_version": "HEAD",
-      "content_hash": "0e88192224e9c7d4b633c44156ea9ff0431210e7d762e3ea21d11ff2b84442ae",
+      "content_hash": "9147210caa8f3f0fcefd6d5fe618e24b321c1cced3d59fd3df5177b902f322a9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T22:05:28.065Z"
+      "persisted_at": "2026-11-24T18:35:08.726Z"
     },
     "domain_intelligence-research-knowledge-intelligence-akhilaaa3-jev-omni-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-akhilaaa3-jev-omni-core-invariants",
@@ -213521,8 +213521,8 @@
       "slug": "zama-ai-tfhe-rs",
       "platform": "github",
       "source_url": "https://github.com/zama-ai/tfhe-rs",
-      "source_version": "1ade9d06",
-      "content_hash": "bd787176753c31c278b2f2e09e28956f60b57dea0924c6808a9869a48bacd9fa",
+      "source_version": "51c20e76",
+      "content_hash": "fa402ee3c1473a0f86098e47f7f0f18c2821089a377bbe321562f1d38dcc0abf",
       "dossier_path": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "promoted_rules": [
@@ -213590,6 +213590,11 @@
           "number": 10281,
           "title": "extend match_value results to the output block count in the high-level api",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10329,
+          "title": "!: make encrypted rotations behavior consistent",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213597,7 +213602,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T14:33:27.094Z",
+      "verified_at": "2026-11-24T18:34:30.851Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -213639,10 +213644,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-technical-construction-intelligence-zama-ai-tfhe-rs-core-invaria.md",
       "title": "Technical Construction Intelligence: zama-ai/tfhe-rs Core Invariants",
       "repository": "zama-ai/tfhe-rs",
-      "source_version": "1ade9d06",
-      "content_hash": "8c7aa9f948d701b046ffed589a2a8fef09f292021ae9312f7112b4283227fd31",
+      "source_version": "51c20e76",
+      "content_hash": "46c94f9a44e0da90c1448a61900ba527afb5c95f33a38ac7520b3d24ecedfa97",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T14:33:27.934Z"
+      "persisted_at": "2026-11-24T18:34:31.500Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs",
@@ -213651,10 +213656,10 @@
       "relative_path": "08_VERIFICATION/zama-ai-tfhe-rs-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-r.md",
       "title": "Verification Protocol: Empirical Defect Shield for zama-ai/tfhe-rs",
       "repository": "zama-ai/tfhe-rs",
-      "source_version": "1ade9d06",
-      "content_hash": "1a44029344fb2a4f53fc33afbe3959ca0df30b5f698d60b79b8758070a0da9d9",
+      "source_version": "51c20e76",
+      "content_hash": "092b7c34f2aaa79ef505dbac2a87cc453aa42d70447f316272212960b1dfc417",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T14:33:28.164Z"
+      "persisted_at": "2026-11-24T18:34:31.682Z"
     },
     "learn-github-tursodatabase-turso": {
       "learning_id": "learn-github-tursodatabase-turso",
@@ -242070,8 +242075,8 @@
       "slug": "volcengine-openviking",
       "platform": "github",
       "source_url": "https://github.com/volcengine/OpenViking",
-      "source_version": "300ab8eb",
-      "content_hash": "31ee597a4bb5f4cd5fb452d44c305b9a2846920a7e4586d47b67b9631b00aa81",
+      "source_version": "e13f0441",
+      "content_hash": "66670a95a808cb1cbb67f681f14cfa58eeab9fb79bf5c6b52e36defdd63007cb",
       "dossier_path": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "promoted_rules": [
@@ -242104,6 +242109,11 @@
           "number": 10132,
           "title": "keep a tool result's text when it comes as content blocks",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10330,
+          "title": "restore empty-string grant decoding",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -242111,7 +242121,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T22:05:23.388Z",
+      "verified_at": "2026-11-24T18:34:33.375Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -275289,9 +275299,9 @@
       "title": "Technical Construction Intelligence: zama-ai-tfhe-rs-learnings Core Invariants",
       "repository": "zama-ai-tfhe-rs-learnings",
       "source_version": "HEAD",
-      "content_hash": "399daf1683614d13f40883277e7a7bf24866d08b9407ddec2242aa079a3585e8",
+      "content_hash": "50f00c063ce4b1690ca4a84219cd4e187ac077dc9e44a7c287e670dbab2be737",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T14:33:34.055Z"
+      "persisted_at": "2026-11-24T18:35:07.507Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs-learnings",
@@ -275301,9 +275311,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zama-ai-tfhe-rs-learnings",
       "repository": "zama-ai-tfhe-rs-learnings",
       "source_version": "HEAD",
-      "content_hash": "5666547cc08bb77a42ac6f4ff25042fcf6b112dd48b506449a8824efff01c29a",
+      "content_hash": "722e83478fb54390a0a6666174ba0b0e289d83fb52d4e8814e6cb154c7550c33",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T14:33:34.282Z"
+      "persisted_at": "2026-11-24T18:35:07.718Z"
     },
     "learn-huggingface-meituan-longcat-longcat-video-avatar-1-6": {
       "learning_id": "learn-huggingface-meituan-longcat-longcat-video-avatar-1-6",
@@ -339067,6 +339077,133 @@
       "content_hash": "0ce52f22293776b94610ca320d1fee4033da606968e1ce4f21f64528c58b6487",
       "domain_letter": "H",
       "persisted_at": "2026-11-24T18:17:41.696Z"
+    },
+    "learn-huggingface-atomicchat-inkling-2-mini-gguf": {
+      "learning_id": "learn-huggingface-atomicchat-inkling-2-mini-gguf",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "AtomicChat/Inkling-2-Mini-GGUF",
+      "repository": "AtomicChat/Inkling-2-Mini-GGUF",
+      "slug": "hf-atomicchat-inkling-2-mini-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/AtomicChat/Inkling-2-Mini-GGUF",
+      "source_version": "hf-atomicchat-inkling-2-mini-gguf",
+      "content_hash": "c5354480a39d73734be92fe7c3fec31ee178920986bd6bee7fabbf3ff776208e",
+      "dossier_path": "07_PROJECT_LEARNING/hf-atomicchat-inkling-2-mini-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-atomicchat-inkling-2-mini-gguf-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-24T18:34:14.770Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-atomicchat-inkling-2-mini-gguf-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-atomicchat-inkling-2-mini-gguf-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-atomicchat-inkling-2-mini-gguf-research-knowledge-intelligence-atomicchat-ink.md",
+      "title": "Research & Knowledge Intelligence: AtomicChat/Inkling-2-Mini-GGUF Core Invariants",
+      "repository": "AtomicChat/Inkling-2-Mini-GGUF",
+      "source_version": "hf-atomicchat-inkling-2-mini-gguf",
+      "content_hash": "d3bc1340e0efa9b65ae2bf7b68fc566b677e7395ff4369da72bd79f435133503",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-24T18:34:15.240Z"
+    },
+    "rule-10329": {
+      "learning_id": "rule-10329",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10329,
+      "title": "!: make encrypted rotations behavior consistent",
+      "source_url": "https://github.com/zama-ai/tfhe-rs",
+      "source_version": "51c20e76",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T18:34:30.851Z"
+    },
+    "candidate_directive-make-encrypted-rotations-behavior-consistent": {
+      "item_id": "candidate_directive-make-encrypted-rotations-behavior-consistent",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-AM8N-make-encrypted-rotations-behavior-consistent.md",
+      "title": "!: make encrypted rotations behavior consistent",
+      "repository": "zama-ai/tfhe-rs",
+      "source_version": "51c20e76",
+      "content_hash": "c10ae01d8680bc8d10150906d64ee495892a7728cbffe3d3f2f8b108d4a392cf",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T18:34:31.323Z"
+    },
+    "rule-10330": {
+      "learning_id": "rule-10330",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10330,
+      "title": "restore empty-string grant decoding",
+      "source_url": "https://github.com/volcengine/OpenViking",
+      "source_version": "e13f0441",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T18:34:33.375Z"
+    },
+    "candidate_directive-restore-empty-string-grant-decoding": {
+      "item_id": "candidate_directive-restore-empty-string-grant-decoding",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-AO73-restore-empty-string-grant-decoding.md",
+      "title": "restore empty-string grant decoding",
+      "repository": "volcengine/OpenViking",
+      "source_version": "e13f0441",
+      "content_hash": "b9ba034004127ad3c0e3ccc8ab59fa59464716a8ecd071529a3dec8cd7dc583b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T18:34:33.858Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-atomicchat-inkling-2-mini-gguf-learnings-core": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-atomicchat-inkling-2-mini-gguf-learnings-core",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-atomicchat-inkling-2-mini-gguf-learnings-research-knowledge-intelligence-hf-a.md",
+      "title": "Research & Knowledge Intelligence: hf-atomicchat-inkling-2-mini-gguf-learnings Core Invariants",
+      "repository": "hf-atomicchat-inkling-2-mini-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "75081701b7dc87dc2e46d177fcd614fcde3b869a04da2eeb5b7d671281ff528d",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-24T18:35:06.649Z"
+    },
+    "candidate_directive-integer-make-encrypted-rotations-behavior-consistent": {
+      "item_id": "candidate_directive-integer-make-encrypted-rotations-behavior-consistent",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BDZQ-integer-make-encrypted-rotations-behavior-consistent.md",
+      "title": "integer)!: make encrypted rotations behavior consistent",
+      "repository": "zama-ai-tfhe-rs-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7bb956ddb73f763dcd91dd7b0025362a3b093ba16a2500ace15c250d6b0f9cfe",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T18:35:07.297Z"
+    },
+    "candidate_directive-acl-restore-empty-string-grant-decoding": {
+      "item_id": "candidate_directive-acl-restore-empty-string-grant-decoding",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BERT-acl-restore-empty-string-grant-decoding.md",
+      "title": "acl): restore empty-string grant decoding",
+      "repository": "volcengine-openviking-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cae16d589b7112a0f43cc2364f846e5b4859b4b39e22b4efa1c47f8bd4a0ad23",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T18:35:08.308Z"
     }
   },
   "ai-builder-brain": {

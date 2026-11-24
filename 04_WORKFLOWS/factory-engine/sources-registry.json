@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T18:26:02.388Z",
-    "lastVerified": "2026-11-24T18:26:02.388Z",
+    "lastChecked": "2026-11-24T18:34:36.905Z",
+    "lastVerified": "2026-11-24T18:34:36.905Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -379,8 +379,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T18:00:30.489Z",
-    "lastVerified": "2026-11-24T18:00:30.489Z",
+    "lastChecked": "2026-11-24T18:34:29.230Z",
+    "lastVerified": "2026-11-24T18:34:29.230Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1739,14 +1739,14 @@
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T14:33:25.948Z",
-    "lastVerified": "2026-11-24T14:33:25.948Z",
+    "lastChecked": "2026-11-24T18:34:29.913Z",
+    "lastVerified": "2026-11-24T18:34:29.913Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
-    "contentHash": "bd787176753c31c278b2f2e09e28956f60b57dea0924c6808a9869a48bacd9fa",
+    "contentHash": "fa402ee3c1473a0f86098e47f7f0f18c2821089a377bbe321562f1d38dcc0abf",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2836,12 +2836,12 @@
     "lastVerified": "2026-11-24T12:27:20.134Z"
   },
   "karmada-io-karmada": {
-    "name": "karmada-io/karmada",
+    "name": "karmada",
     "officialUrl": "https://github.com/karmada-io/karmada",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-23T23:09:57.606Z",
-    "lastVerified": "2026-11-23T23:09:57.606Z",
+    "lastChecked": "2026-11-24T18:34:21.853Z",
+    "lastVerified": "2026-11-24T18:34:21.853Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-karmada-io-karmada",
@@ -2850,7 +2850,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "39fe0cb3"
   },
   "zilliztech-attu": {
     "name": "attu",
@@ -5426,9 +5427,9 @@
   "apsl-react-native-keyboard-aware-scroll-view": {
     "name": "react-native-keyboard-aware-scroll-view",
     "officialUrl": "https://github.com/APSL/react-native-keyboard-aware-scroll-view",
-    "lastChecked": "2026-11-22T03:46:15.772Z",
+    "lastChecked": "2026-11-24T18:34:19.137Z",
     "revisionIdentifier": "9eee405f",
-    "lastVerified": "2026-11-22T03:46:15.772Z"
+    "lastVerified": "2026-11-24T18:34:19.137Z"
   },
   "meshery-meshery": {
     "name": "meshery/meshery",
@@ -7638,14 +7639,14 @@
     "officialUrl": "https://github.com/volcengine/OpenViking",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-23T22:05:22.595Z",
-    "lastVerified": "2026-11-23T22:05:22.595Z",
+    "lastChecked": "2026-11-24T18:34:32.437Z",
+    "lastVerified": "2026-11-24T18:34:32.437Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-volcengine-openviking",
-    "contentHash": "31ee597a4bb5f4cd5fb452d44c305b9a2846920a7e4586d47b67b9631b00aa81",
+    "contentHash": "66670a95a808cb1cbb67f681f14cfa58eeab9fb79bf5c6b52e36defdd63007cb",
     "promotedRulesCount": 1,
-    "recentFixesCount": 22,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11060,9 +11061,9 @@
   "remarkjs-remark": {
     "name": "remark",
     "officialUrl": "https://github.com/remarkjs/remark",
-    "lastChecked": "2026-11-20T18:41:27.683Z",
+    "lastChecked": "2026-11-24T18:34:16.737Z",
     "revisionIdentifier": "1146b3a2",
-    "lastVerified": "2026-11-20T18:41:27.683Z"
+    "lastVerified": "2026-11-24T18:34:16.737Z"
   },
   "nalexn-viewinspector": {
     "name": "ViewInspector",
@@ -15016,6 +15017,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-baidu-ernie-5-5-flash-preview",
     "contentHash": "85bbffa6f952e43c40e60a5bfbede2e1db8290db51b7b1a3122c5d65c5a51f99",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-atomicchat-inkling-2-mini-gguf": {
+    "name": "AtomicChat/Inkling-2-Mini-GGUF",
+    "officialUrl": "https://huggingface.co/AtomicChat/Inkling-2-Mini-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-24T18:34:14.352Z",
+    "lastVerified": "2026-11-24T18:34:14.352Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-atomicchat-inkling-2-mini-gguf",
+    "contentHash": "c5354480a39d73734be92fe7c3fec31ee178920986bd6bee7fabbf3ff776208e",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

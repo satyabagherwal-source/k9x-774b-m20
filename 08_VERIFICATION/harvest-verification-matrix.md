@@ -12770,3 +12770,7 @@
 | `CYCLE-20261124-31EY` | `2026-11-24T18:00:38.123Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10326` | Yes (`7f9bd676...`) |
 | `CYCLE-20261124-E1EO` | `2026-11-24T18:09:11.328Z` | `goodrain/rainbond` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10327` | Yes (`5bf09ff3...`) |
 | `CYCLE-20261124-OW86` | `2026-11-24T18:17:37.830Z` | `tickernelz/opencode-mem` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10328` | Yes (`5bea6255...`) |
+| `CYCLE-20261124-A9NM` | `2026-11-24T18:34:15.010Z` | `AtomicChat/Inkling-2-Mini-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-atomicchat-inkling-2-mini-gguf-learnings.md` | Yes (`c5354480...`) |
+| `CYCLE-20261124-AM1N` | `2026-11-24T18:34:31.067Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10329` | Yes (`fa402ee3...`) |
+| `CYCLE-20261124-ANZY` | `2026-11-24T18:34:33.598Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10330` | Yes (`66670a95...`) |
+| `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T18:35:06.338Z` | `hf-atomicchat-inkling-2-mini-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-EBA58F46` [Domain D] | Yes (`37048ae2...`) |

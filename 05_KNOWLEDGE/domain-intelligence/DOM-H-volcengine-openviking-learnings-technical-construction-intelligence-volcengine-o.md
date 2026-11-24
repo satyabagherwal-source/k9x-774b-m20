@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T22:05:27.629Z",
+  "timestamp": "2026-11-24T18:35:08.158Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-volcengine-openviking-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [volcengine-openviking-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T22:05:27.629Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T18:35:08.158Z`  
 > **Learning ID**: `LEARN-EVO-volcengine-openviking-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), D (Research & Knowledge Intelligence), G (Architecture Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 68%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 77%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from volcengine-openviking-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source**: github ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
-> **Source Version**: `300ab8eb`  
+> **Source Version**: `e13f0441`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T22:05:22.600Z  
+> **Timestamp**: 2026-11-24T18:34:32.444Z  
 > **Learning ID**: `learn-github-volcengine-openviking`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T22:05:22.595Z  
+> **Harvest Timestamp**: 2026-11-24T18:34:32.437Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Self-evolving Context Database for AI Agents. Unify Agent Memory, Knowledge RAG and Skills.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 42661 stars
+- **Stars / Engagement**: 42693 stars
 
 ---
 
@@ -1523,453 +1523,687 @@ class AsyncProgressTracker:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c58b41d1` (2026-11-23)
-**Commit Message**: fix(plugins): keep a tool result's text when it comes as content blocks (#8263)
+### Incident Patch 1: `e13f0441` (2026-11-24)
+**Commit Message**: fix(acl): restore empty-string grant decoding (#8371)
 
-* fix(plugins): keep a tool result's text when it comes as content blocks
+Restore the exact-empty-string filtering introduced by #6067 and removed by #6956. Normalize offline-index empty ACL elements only at DirectAcl.from_context_fields; preserve valid direct/inherited grants, singleton none serialization, and rejection of every other malformed token.
 
-pi and dsh tool results, and Codex dynamic tool calls, carry their output
-as a list of content blocks. The shared capture code passed that list to
-JSON.stringify, so the stored tool_output was one line of JSON with every
-line break as a literal "\n": a search for text spanning lines missed it,
-and a read by offset could not align to a line start.
+Extend the existing ACL roundtrip and mixed-grant tests for list/tuple inputs and both grant prefixes. Document the read contract in English and Chinese.
 
-Join the text blocks with a newline instead, and stand an image in with
-"[image]". A list holding any other block type is still stored as JSON.
+Validation: seven regression cases fail on main before the decoder change; all 22 focused ACL cases pass afterward. Ruff lint/format and git diff --check pass. Focused mypy matches the baseline assignment diagnostic; unrestricted mypy has existing transitive errors. OpenViking has no check-domain Make target. No runtime, deployment, or index changes.
 
-* chore(plugins): bump every plugin for the shared capture fix
-
-**File**: `examples/agent-hook-plugin/hosts/codebuddy/plugin.json` (modified, +1/-1)
+**File**: `docs/en/concepts/15-acl.md` (modified, +1/-1)
 ```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "openviking-memory",
--  "version": "0.5.35",
-+  "version": "0.5.36",
-   "description": "Long-term semantic memory for the CodeBuddy Code CLI, powered by OpenViking. Injects relevant context at session start and on each prompt, and captures the conversation back into OpenViking.",
-   "author": {
-     "name": "OpenViking",
-```
-
-**File**: `examples/agent-hook-plugin/hosts/cursor/openviking.integration.json` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- {
-   "schemaVersion": 1,
-   "id": "openviking-memory",
--  "version": "0.5.35",
-+  "version": "0.5.36",
-   "clients": [
-     "cursor"
-   ],
-```
-
-**File**: `examples/agent-hook-plugin/hosts/kimicode/kimi.plugin.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "openviking-memory",
--  "version": "0.5.35",
-+  "version": "0.5.36",
-   "description": "Long-term semantic memory for Kimi Code CLI, powered by OpenViking.",
-   "author": {
-     "name": "OpenViking",
-```
-
-**File**: `examples/agent-hook-plugin/hosts/kimicode/openviking.integration.json` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- {
-   "schemaVersion": 1,
-   "id": "openviking-memory",
--  "version": "0.5.35",
-+  "version": "0.5.36",
-   "clients": [
-     "kimicode"
-   ],
-```
-
-**File**: `examples/agent-hook-plugin/hosts/qoder/plugin.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "openviking-memory",
--  "version": "0.5.35",
-+  "version": "0.5.36",
-   "description": "Long-term semantic memory for the Qoder CLI, powered by OpenViking. Injects relevant context at session start and on each prompt, and captures the conversation back into OpenViking.",
-   "author": {
-     "name": "OpenViking",
-```
-
-**File**: `examples/agent-hook-plugin/hosts/trae/openviking.integration.json` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- {
-   "schemaVersion": 1,
-   "id": "openviking-memory",
--  "version": "0.5.35",
-+  "version": "0.5.36",
-   "clients": [
-     "trae",
-     "trae-cn"
-```
-
-**File**: `examples/agent-hook-plugin/hosts/zcode/openviking.integration.json` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- {
-   "schemaVersion": 1,
-   "id": "openviking-memory",
--  "version": "0.5.35",
-+  "version": "0.5.36",
-   "clients": [
-     "zcode"
-   ],
-```
-
-**File**: `examples/agent-hook-plugin/plugin.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "agent-hook-plugin",
--  "version": "0.5.35",
-+  "version": "0.5.36",
-   "description": "Long-term semantic memory for Cursor, TRAE, TRAE CN, ZCode, Kimi Code, CodeBuddy Code, Qoder CLI and Antigravity — powered by OpenViking. Auto-recall relevant memories and capture the conversation as it happens.",
-   "author": {
-     "name": "OpenViking",
-```
-
----
-
-### Incident Patch 2: `4a5aed8b` (2026-11-23)
-**Commit Message**: fix(parse): preserve trailing blank lines in AnyDoc code blocks (#8211)
-
-**File**: `openviking/parse/parsers/anydoc_renderer.py` (modified, +1/-1)
-```diff
-@@ -134,7 +134,7 @@ def _render_block(self, block: Any) -> str:
-                 return f"### Speaker Notes\n\n{inner}"
-             return "\n".join(">" if not line else f"> {line}" for line in inner.splitlines())
-         if kind == "code_block":
--            body = (block.text or "").rstrip("\n")
-+            body = (block.text or "").removesuffix("\n")
-             fence = self._backtick_fence(body, 3)
-             return f"{fence}{block.lang or ''}\n{body}\n{fence}"
-         if kind == "rule":
-```
-
----
-
-### Incident Patch 3: `905ffc14` (2026-11-23)
-**Commit Message**: perf(fs): skip memory reference scanning during rm (#8274)
-
-* perf(fs): skip memory reference scanning during rm
-
-Co-authored-by: TRAE CLI <[REDACTED_EMAIL]>
-
-* docs(fs): remove memory reference deletion note
-
-Co-authored-by: TRAE CLI <[REDACTED_EMAIL]>
-
-* fix(fs): 移除删除响应的记忆清理字段 (#8278)
-
-* docs(fs): 纠正资源删除后的记忆保留说明
-
-同步中英文资源与文件系统 API，明确资源删除后已有记忆和引用会保留，并说明 memory_cleanup 响应字段已移除。
-
-Co-authored-by: qin-ctx <[REDACTED_EMAIL]>
-
-* fix(fs): 移除删除响应的记忆清理字段
-
-去掉删除路由中 memory_cleanup 的转发和 FSService 已不用的依赖。更新原有用例检查字段省略，并保留删除计数和父目录刷新覆盖。
-
-Co-authored-by: qin-ctx <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: qin-ptr <[REDACTED_EMAIL]>
-Co-authored-by: qin-ctx <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: TRAE CLI <[REDACTED_EMAIL]>
-Co-authored-by: bot-of-qin-ctx <[REDACTED_EMAIL]>
-Co-authored-by: qin-ptr <[REDACTED_EMAIL]>
-Co-authored-by: qin-ctx <[REDACTED_EMAIL]>
-
-**File**: `docs/en/api/02-resources.md` (modified, +5/-2)
-```diff
-@@ -225,7 +225,7 @@ This endpoint is the core entry point for resource management. It supports vario
- - Native HTTPS Git credentials in `args.auth_config` remain request-local when `watch_interval <= 0`. When `watch_interval > 0`, OpenViking stores the repository-bound username/token in private watch state and restores it only for later Git fetches. The credentials are excluded from ordinary queue payloads and watch API/MCP/CLI responses. Git PATs have no generic refresh flow; rotate an expired or revoked token by recreating the watch. Legacy URL-embedded credentials such as `https://user:token@host/repo.git` remain accepted and are passed through unchanged; because that URL is also the source identifier, it may be recorded in process arguments, logs, queues, resource metadata, and watch state. Prefer `args.auth_config` for new integrations. Plaintext HTTP authentication and authenticated redirects for `args.auth_config` remain rejected.
- - The token travels in the HTTPS request body. Keep diagnostic request-body dumping disabled in production because explicitly enabling it can record secrets.
- - Memory generated from `reason` is extracted through the same pipeline as `session.commit`. It uses `reason`, the resource URI, available source name, and available directory abstract; it does not inspect or expand the full resource content. OpenViking writes to existing memory types such as `entities`, `events`, or `preferences`, not a dedicated resource memory directory.
--- When deleting a resource, OpenViking scans the self or peer memories targeted by the current context before deletion, removes the matching resource URI and content introduced by that `reason`, and refreshes the semantic index for the affected memories.
-+- Deleting a resource leaves existing memory content and its resource references in place.
- - Other sources with `wait=false` finish source parsing, target resolution, and AGFS writes before returning. Only semantic and embedding queues continue asynchronously.
- - `processing_mode=vectors_only` does not call the VLM semantic-understanding stage and does not generate or refresh `.abstract.md` / `.overview.md`. For existing targets, it preserves existing semantic artifacts and existing semantic vectors. It still updates the resource tree, vectorizes current non-hidden files when `build_index=true`, and removes detail vectors for files deleted during refresh.
- - `processing_mode` belongs to `add_resource`. The admin `reindex` API/CLI continues to use `mode` (`vectors_only`, `semantic_and_vectors`) for maintenance operations on already-ingested data.
-@@ -871,6 +871,9 @@ Delete a child of `viking://resources/`. This operation requires MANAGE access,
- removes associated vector records, refreshes parent semantic metadata, and
- synchronizes affected watches.
+@@ -127,7 +127,7 @@ acl_inherited_grants
  
-+Existing memories retain their content and `resource_refs`, including memories
-+generated from `reason` during import.
-+
- **HTTP**
+ `acl_direct_grants` is the ACL assigned to the current node. `acl_inherited_grants` stores the parent's current effective ACL. `acl_mode` controls whether inherited grants contribute to the current node's effective permissions. Each principal stores only its highest level as `{mask}:{principal}`: `1` means `read`, `3` means `write`, and `7` means `manage`. There is no separate ACL collection.
  
- ```http
-@@ -881,7 +884,7 @@ DELETE /api/v1/resources?uri={uri}
- |-----------------|------|----------|---------|-------------|
- | `uri` | string | Yes | - | Shared resource URI to delete; the shared root is not allowed |
- | `recursive` | boolean | No | `false` | Delete a directory recursively |
--| `wait` | boolean | No | `true` | Wait for semantic cleanup and refresh |
-+| `wait` | boolean | No | `true` | Wait for parent semantic refresh |
+-An empty grants list is stored as `["none"]` and decoded as no grants. The `"none"` token must appear alone and never grants access. This storage marker is independent of `acl_mode`: clearing direct grants preserves the mode and any inherited permissions.
++An empty grants list is stored as `["none"]` and decoded as no grants. The `"none"` token must appear alone and never grants access. Exact empty-string elements introduced by offline indexes are ignored on reads; other invalid grant tokens are rejected. This storage marker is independent of `acl_mode`: clearing direct grants preserves the mode and any inherited permissions.
  
- ```bash
- curl -X DELETE "http://localhost:1933/api/v1/resources" \
-```
-
-**File**: `docs/en/api/03-filesystem.md` (modified, +1/-1)
-```diff
-@@ -757,7 +757,7 @@ ov rm viking://resources/old.md [--recursive]
- 
- The `estimated_deleted_count` field reports the number of vector records submitted for deletion. A file or directory may have multiple records, and unindexed content contributes zero. The count does not guarantee immediate vector-index visibility. The CLI displays this count in its output.
- 
--When deleting `viking://resources/...`, the response may include `memory_cleanup`, indicating that user memories referencing that resource URI were cleaned up before deletion.
-+Deleting a resource leaves existing memory content and `resource_refs` in place. The HTTP response no longer includes `memory_cleanup`.
- 
- On case-insensitive `localfs`, case-only aliases may affect the delete target. For example, if the real file is `viking://resources/bob-private/private.md`, `ov rm viking://resources/BOB-PRIVATE/private.md` may delete the same file; on case-sensitive systems, deleting the missing alias path still succeeds because `rm` is idempotent, but it does not delete the real file.
+ ACLs update with the index, so records for the same URI may temporarily hold different versions. Reads use one ACL snapshot returned by the index, without merging grants across versions or blocking on temporary disagreement. Permission changes take effect as index updates complete; strong consistency is not guaranteed.
  
 ```
 
-**File**: `docs/zh/api/02-resources.md` (modified, +4/-2)
+**File**: `docs/zh/concepts/15-acl.md` (modified, +1/-1)
 ```diff
-@@ -225,7 +225,7 @@ Connector 要求精确的 `to` 目标，不支持 `wait=true`。`tos://` 来源
- - 原生 HTTPS Git 的 `args.auth_config` 在 `watch_interval <= 0` 时只用于本次请求；当 `watch_interval > 0` 时，OpenViking 会把与仓库 URL 绑定的 username/token 保存到 Watch 私有鉴权状态，并只在后续 Git 拉取时恢复使用。凭据不会进入普通持久队列，也不会出现在 Watch API/MCP/CLI 返回中。Git PAT 没有通用刷新流程，过期或撤销后需要重建 Watch 来更换 token。为兼容已有用法，系统仍接受 `https://user:token@host/repo.git` 形式的 URL 内嵌凭据并原样传递；由于该 URL 同时也是资源来源标识，它可能被记录到进程参数、日志、队列、资源元数据和 Watch 状态中。新接入建议使用 `args.auth_config`。`args.auth_config` 的明文 HTTP 鉴权和带鉴权重定向仍会被拒绝。
- - token 会放在 HTTPS 请求体中传输。生产环境应保持诊断请求体 dump 关闭；显式启用该功能可能记录秘密。
- - `reason` 触发的记忆生成复用 `session.commit` 的抽取链路，只使用 `reason`、资源 URI、可用的资源名称和目录摘要，不会读取或展开完整资源正文；系统会写入 `entities`、`events`、`preferences` 等已有记忆类型，不创建独立的资源记忆目录。
--- 删除资源时，系统会在删除前扫描本次上下文对应的 self 或 peer 记忆中的 `resource_refs`，清理对应资源 URI 和由该 `reason` 引入的内容，并重新刷新相关记忆的语义索引。
-+- 删除资源后，已生成的记忆内容及其资源引用会保留。
- - 其他来源在 `wait=false` 时会在响应前完成来源解析、目标解析和 AGFS 写入，仅 semantic 与 embedding 队列继续异步处理。
- - `processing_mode=vectors_only` 不调用 VLM 语义理解阶段，也不会生成或刷新 `.abstract.md` / `.overview.md`。对已存在目标，它会保留旧的语义产物和旧的语义向量；仍会更新资源树，在 `build_index=true` 时向量化当前非隐藏文件，并清理由本次刷新删除的文件 detail 向量。
- - `processing_mode` 只属于 `add_resource`。管理员维护已有数据时，`reindex` API/CLI 仍使用 `mode`（`vectors_only`、`semantic_and_vectors`）。
-@@ -859,6 +859,8 @@ curl -X POST http://localhost:1933/api/v1/resources/mv \
- 删除 `viking://resources/` 下的资源。此操作要求 MANAGE 权限，
- 会删除关联向量记录、刷新父目录语义元数据，并同步受影响的 Watch。
+@@ -122,7 +122,7 @@ acl_inherited_grants
  
-+已有记忆会保留原有内容和 `resource_refs`，包括导入时由 `reason` 生成的记忆。
-+
- **HTTP**
+ `acl_direct_grants` 是当前节点直接 ACL，`acl_inherited_grants` 是父节点当前有效 ACL，`acl_mode` 决定 inherited 是否参与当前节点的有效权限。每个 principal 只保存最高 level，编码为 `{mask}:{principal}`：`1` 表示 `read`、`3` 表示 `write`、`7` 表示 `manage`。不维护独立 ACL collection。
  
- ```http
-@@ -869,7 +871,7 @@ DELETE /api/v1/resources?uri={uri}
- |----------|------|------|--------|------|
- | `uri` | string | 是 | - | 要删除的共享资源 URI；不允许删除共享资源根 |
- | `recursive` | boolean | 否 | `false` | 递归删除目录 |
--| `wait` | boolean | 否 | `true` | 等待语义清理和刷新完成 |
-+| `wait` | boolean | 否 | `true` | 等待父目录语义刷新完成 |
+-空 grants 列表存储为 `["none"]`，读取时解析为空权限。`"none"` 必须单独出现，不授予任何权限。该存储标记与 `acl_mode` 独立：清空直接授权时，模式和已有继承权限保持原有语义。
++空 grants 列表存储为 `["none"]`，读取时解析为空权限。`"none"` 必须单独出现，不授予任何权限。读取时忽略离线索引产生的精确空字符串元素，其他非法 grant token 仍报错。该存储标记与 `acl_mode` 独立：清空直接授权时，模式和已有继承权限保持原有语义。
  
- ```bash
- curl -X DELETE "http://localhost:1933/api/v1/resources" \
-```
-
-**File**: `docs/zh/api/03-filesystem.md` (modified, +1/-1)
-```diff
-@@ -783,7 +783,7 @@ ov rm viking://resources/old.md [--recursive]
- 
- `estimated_deleted_count` 表示已提交删除的向量记录数量。一个文件或目录可以对应多条记录，未索引内容不计入数量；该数量不保证向量索引立即可见。CLI 会在输出中显示此数量。
- 
--删除 `viking://resources/...` 时，响应可能包含 `memory_cleanup`，表示删除前已清理引用该资源 URI 的用户记忆。
-+删除资源后，已有记忆会保留原有内容和 `resource_refs`，HTTP 响应不再包含 `memory_cleanup`。
- 
- 在大小写不敏感的 `localfs` 上，大小写别名可能影响删除目标。例如真实文件是 `viking://resources/bob-private/private.md`，执行 `ov rm viking://resources/BOB-PRIVATE/private.md` 可能删除同一个文件；大小写敏感系统上，别名目标不存在时该幂等删除仍会成功，但不会删除真实文件。
+ ACL 随索引更新，允许同一 URI 的不同索引记录短暂保留不同版本。读取采用索引返回的一份 ACL 快照，不合并不同版本的授权，也不因副本暂时不一致阻断处理。权限变更按索引更新进度生效，不保证强一致。
  
 ```
 
-**File**: `openviking/server/routers/filesystem.py` (modified, +0/-2)
+**File**: `openviking/storage/acl.py` (modified, +2/-0)
 ```diff
-@@ -301,8 +301,6 @@ async def rm(
-     response_result = {"uri": uri}
-     if isinstance(result, dict) and "estimated_deleted_count" in result:
-         response_result["estimated_deleted_count"] = result["estimated_deleted_count"]
--    if isinstance(result, dict) and "memory_cleanup" in result:
--        response_result["memory_cleanup"] = result["memory_cleanup"]
-     if isinstance(result, dict) and "semantic_root_uri" in result:
-         response_result["semantic_root_uri"] = result["semantic_root_uri"]
-     if isinstance(result, dict) and "semantic_status" in result:
+@@ -126,6 +126,8 @@ def from_context_fields(cls, record: Mapping[str, Any], prefix: str) -> "DirectA
+             raise RuntimeError(f"Invalid ACL grants for {prefix}: expected a list")
+         if len(raw_grants) == 1 and raw_grants[0] == EMPTY_ACL_GRANT:
+             return cls()
++        # 离线索引可能将空列表还原为空字符串元素；仅忽略精确空串。
++        raw_grants = [grant for grant in raw_grants if grant != ""]
+         return cls.from_entries(_decode_grant(grant) for grant in raw_grants)
+ 
+ 
 ```
 
-**File**: `openviking/service/core.py` (modified, +0/-1)
+**File**: `tests/storage/test_acl.py` (modified, +29/-6)
 ```diff
-@@ -677,7 +677,6 @@ async def initialize(
-             vikingdb=self._vikingdb_manager,
-             privacy_config_service=self._privacy_config_service,
-             privacy_sanitizer=self._privacy_sanitizer,
--            resource_memory_link_service=self._resource_memory_link_service,
-             watch_manager=self._watch_manager,
-         )
-         self._pack_service.set_dependencies(
-```
-
-**File**: `openviking/service/fs_service.py` (modified, +0/-46)
-```diff
-@@ -135,7 +135,6 @@ def _visible_grep_content(content: str, uri: str) -> str:
- 
- if TYPE_CHECKING:
-     from openviking.resource.watch_manager import WatchManager
--    from openviking.service.resource_memory_link_service import ResourceMemoryLinkService
-     from openviking.storage import VikingDBManager
+@@ -10,6 +10,9 @@
+         {"acl_direct_grants": None},
+         {"acl_direct_grants": []},
+         {"acl_direct_grants": ["none"]},
++        {"acl_direct_grants": [""]},
++        {"acl_direct_grants": ["", ""]},
++        {"acl_direct_grants": ("", "")},
+     ],
+ )
+ def test_context_fields_roundtrip_empty_grants(record):
+@@ -19,23 +22,43 @@ def test_context_fields_roundtrip_empty_grants(record):
+     assert acl.context_fields("acl_direct") == {"acl_direct_grants": ["none"]}
  
  
-@@ -147,7 +146,6 @@ def __init__(
-         viking_fs: Optional[VikingFS] = None,
-         vikingdb: Optional["VikingDBManager"] = None,
-         privacy_config_service: Optional[UserPrivacyConfigService] = None,
--        resource_memory_link_service: Optional["ResourceMemoryLinkService"] = None,
-         privacy_sanitizer: Optional[PrivacySanitizer] = None,
-         watch_manager: Optional["WatchManager"] = None,
-     ):
-@@ -157,15 +155,13 @@ def __init__(
-         self._privacy_sanitizer = privacy_sanitizer or (
-             PrivacySanitizer(privacy_config_service) if privacy_config_service is not None else None
-         )
--        self._resource_memory_link_service = resource_memory_link_service
-         self._watch_manager = watch_manager
- 
-     def set_dependencies(
-         self,
-         viking_fs: VikingFS,
-         vikingdb: Optional["VikingDBManager"] = None,
-         privacy_config_service: Optional[UserPrivacyConfigService] = None,
--        resource_memory_link_service: Optional["ResourceMemoryLinkService"] = None,
-         privacy_sanitizer: Optional[PrivacySanitizer] = None,
-         watch_manager: Optional["WatchManager"] = None,
-     ) -> None:
-@@ -176,7 +172,6 @@ def set_dependencies(
-         self._privacy_sanitizer = privacy_sanitizer or (
-             PrivacySanitizer(privacy_config_service) if privacy_config_service is not None else None
-         )
--        self._resource_memory_link_service = resource_memory_link_service
-         self._watch_manager = watch_manager
- 
-     def _ensure_initialized(self) -> VikingFS:
-@@ -731,7 +726,6 @@ async def _rm(
-                 result["vector_status"] = "skipped"
-             return result
- 
--        cleanup_result: Optional[Dict[str, Any]] = None
-         context_type = context_type_for_uri(uri)
-         refresh_parent_uri = self._semantic_refresh_parent_uri(uri, context_type)
-         memory_overview_uri = self._memory_overview_parent_uri(uri, context_type)
-@@ -767,26 +761,12 @@ async def _rm(
-                     ctx=ctx,
-                     force_refresh=wait,
-                 )
--            if self._resource_memory_link_service and context_type == "resource":
--                cleanup_result = await self._resource_memory_link_service.before_resource_delete(
--                    ctx=ctx,
--                    resource_uri=uri,
--                    recursive=recursive,
--                )
-             if memory_overview_uri:
-                 await MemoryUpdater.refresh_schema_overview(
-                     viking_fs=viking_fs,
-                     directory_uri=memory_overview_uri,
-                     ctx=ctx,
-                 )
--            for cleanup_overview_uri in self._memory_overview_parent_uris_from_cleanup(
--                cleanup_result
--            ):
--                await MemoryUpdater.refresh_schema_overview(
--                    viking_fs=viking_fs,
--                    directory_uri=cleanup_overview_uri,
--                    ctx=ctx,
--                )
-             if (
-                 refresh_parent_uri
-                 and wait
-@@ -795,8 +775,6 @@ async def _rm(
-                 queue_status = await self._wait_for_refresh()
-         finally:
-             pass
--        if cleanup_result is not None and isinstance(result, dict):
--            result["memory_cleanup"] = cleanup_result
-         if refresh_parent_uri and isinstance(result, dict):
-             result["semantic_root_uri"] = refresh_parent_uri
-             if refresh_action is FreshnessAction.NOOP:
-@@ -867,30 +845,6 @@ def _memory_overview_parent_uri(uri: str, context_type: str) -> Optional[str]:
-             return None
-         return parent.uri
- 
--    @classmethod
--    def _memory_overview_parent_uris_from_cleanup(
--        cls,
--        cleanup_result: Optional[Dict[str, Any]],
--    ) -> List[str]:
--        if not isinstance(cleanup_result, dict):
--            return []
--
--        overview_uris: List[str] = []
--        for field in ("memory_uris", "deleted_memory_uris"):
--            values = cleanup_result.get(field)
--            if not isinstance(values, list):
--                continue
--            for memory_uri in values:
--                if not isinstance(memory_uri, str):
--                    continue
--                overview_uri = cls._memory_overview_parent_uri(
--                    memory_uri,
--                    context_type_for_uri(memory_uri),
--                )
--                if overview_uri:
--                    overview_uris.append(overview_uri)
--        return list(dict.fromkeys(overview_uris))
--
-     async def _enqueue_delete_refresh(
-         self,
-         *,
-```
-
-**File**: `tests/server/test_filesystem_router.py` (modified, +6/-7)
-```diff
-@@ -25,13 +25,11 @@
- 
- 
- @pytest.mark.asyncio
--async def test_rm_preserves_memory_cleanup(monkeypatch):
--    cleanup = {"status": "success", "memory_uris": ["viking://user/alice/memories/entities/a.md"]}
--
-+async def test_rm_omits_legacy_memory_cleanup(monkeypatch):
-     async def fake_rm(uri, ctx=None, recursive=False, wait=False):
-         return {
-             "estimated_deleted_count": 1,
--            "memory_cleanup": cleanup,
-+            "memory_cleanup": {"status": "success"},
-         }
- 
-     monkeypatch.setattr(
-@@ -46,9 +44,10 @@ async def fake_rm(uri, ctx=None, recursive=False, wait=False):
-         _ctx=RequestContext(user=UserIdentifier("acct", "alice"), role=Role.USER),
+-def test_context_fields_preserve_valid_grants():
+-    raw_grants = ["3:user:alice", "1:group:readers"]
++@pytest.mark.parametrize("prefix", ["acl_direct", "acl_inherited"])
++@pytest.mark.parametrize(
++    "raw_grants",
++    [
++        ["3:user:alice", "1:group:readers"],
++        ["", "3:user:alice", "", "1:group:readers", ""],
++        ("", "3:user:alice", "1:group:readers", ""),
++    ],
++)
++def test_context_fields_preserve_valid_grants(prefix, raw_grants):
+     acl = DirectAcl.from_context_fields(
+-        {"acl_inherited_grants": raw_grants},
+-        "acl_inherited",
++        {f"{prefix}_grants": raw_grants},
++        prefix,
      )
  
--    assert response.result["uri"] == "viking://resources/id_card.pdf"
--    assert response.result["estimated_deleted_count"] == 1
--    assert response.result["memory_cleanup"] == cleanup
-+    assert response.result == {
-+        "uri": "viking://resources/id_card.pdf",
-+        "estimated_deleted_count": 1,
+     assert {(entry.principal, entry.level) for entry in acl.entries} == {
+         ("user:alice", AclLevel.WRITE),
+         ("group:readers", AclLevel.READ),
+     }
+-    assert set(acl.context_fields("acl_inherited")["acl_inherited_grants"]) == set(raw_grants)
++    assert set(acl.context_fields(prefix)[f"{prefix}_grants"]) == {
++        "3:user:alice",
++        "1:group:readers",
 +    }
  
  
- @pytest.mark.asyncio
+ @pytest.mark.parametrize(
+     "raw_grants",
+-    [[""], ["none", "3:user:alice"], ["none", "none"], [1]],
++    [
++        [" "],
++        ["invalid"],
++        ["", "invalid"],
++        ["", 1],
++        ["", "none"],
++        ["none", "3:user:alice"],
++        ["none", "none"],
++        [1],
++    ],
+ )
+ def test_context_fields_reject_invalid_grants(raw_grants):
+     with pytest.raises(RuntimeError, match="Invalid ACL grant token"):
+```
+
+---
+
+### Incident Patch 2: `dfad651f` (2026-11-24)
+**Commit Message**: fix(compile): 修复增量编译漏处理和重复执行 (#7813)
+
+* fix(compile): retain partial delivery across incremental runs
+
+Signed-off-by: lusendong.6789 <[REDACTED_EMAIL]>
+Co-authored-by: TRAE CLI <[REDACTED_EMAIL]>
+
+* test(compile): keep focused delivery regressions
+
+Signed-off-by: lusendong.6789 <[REDACTED_EMAIL]>
+Co-authored-by: TRAE CLI <[REDACTED_EMAIL]>
+
+* fix(compile): preserve failures for individual diff pages
+
+* fix(compile): advance baseline after verified no-change recovery
+
+* fix(compile): retain rejected pages in partial delivery
+
+Apply the rejected-page coverage fix from #8207 (0a6e2fba7). Exercise the Complex service path where a valid page and a rejected page share one source.
+
+Co-authored-by: wrfgup <[REDACTED_EMAIL]>
+
+* test(compile): streamline partial recovery coverage
+
+* refactor(compile): align snapshot and coverage naming with existing terms
+
+- Rename download_snapshot_bytes to git_show_bytes: the wrapper only
+  calls the SDK git_show snapshot endpoint, so "download" misrepresented
+  the operation and diverged from download_bytes, which really hits
+  /content/download.
+- Drop the AI-introduced "delivered" wording in the compile chain:
+  coverage state and output flag become "pu
+
+**File**: `bot/tests/test_compile_markdown.py` (modified, +247/-29)
+```diff
+@@ -14,7 +14,12 @@
+ from vikingbot.bus.queue import MessageBus
+ from vikingbot.compile import simple
+ from vikingbot.compile.file_ops import DocumentReader
+-from vikingbot.compile.models import CompileFailure, CompileLimits, SanitizedCompileRequest
++from vikingbot.compile.models import (
++    CompileFailure,
++    CompileLimits,
++    CompileTask,
++    SanitizedCompileRequest,
++)
+ from vikingbot.compile.ops import finalize
+ from vikingbot.compile.ops import reduce as reduce_op
+ from vikingbot.compile.ops.shuffle import Shuffle
+@@ -29,9 +34,11 @@
+ from vikingbot.sandbox.backends.direct import DirectBackend
+ from vikingbot.session.manager import SessionManager
+ 
++from openviking.utils.compile_recovery import source_set_digest
+ from openviking_cli.exceptions import NotFoundError
+ 
+ MAP_ONLY = "drafts = p.map(sources, task=contract.extract)\np.finalize(drafts, into=target)"
++INVALID_FRONTMATTER = "---\ntype: concept\ntitle: Rules\n description: invalid\n---\n"
+ MERGE = (
+     "drafts = p.map(sources, task=contract.extract)\n"
+     "groups = p.shuffle(drafts, by=contract.routing)\n"
+@@ -150,7 +157,7 @@ def test_plan_rejects_unsafe_or_invalid_flows(program):
+         parse_plan(program, contract(True))
+ 
+ 
+-async def configure_pipeline(pipeline, merge=False, fail_second=False):
++async def configure_pipeline(pipeline, merge=False, fail_second=False, invalid_sibling=False):
+     """Use actual file collection with controlled agent jobs and JSON control responses."""
+     proposal = PlanProposal(contract=contract(merge), plan=MERGE if merge else MAP_ONLY)
+ 
+@@ -173,6 +180,8 @@ async def worker(system, data, model, *, stage, runtime):
+             assert len(data["documents"]) == 2
+             content += "Combined details from both drafts.\n"
+         await model.files.sandbox.write_file(f"{root}/{name}", content)
++        if invalid_sibling:
++            await model.files.sandbox.write_file(f"{root}/bad.md", INVALID_FRONTMATTER)
+         await model.files.sandbox.write_file(
+             root.rsplit("/", 1)[0] + "/scratch.md", "private scratch"
+         )
+@@ -432,7 +441,7 @@ async def chat(**kwargs):
+         f"# Fact {i}" in "\n".join(op["content"] for op in bundle.operations) for i in range(3)
+     )
+     await pipeline.write_coverage([op["uri"] for op in bundle.operations])
+-    assert (await pipeline.files.get("coverage"))["counts"] == {"delivered": 3}
++    assert (await pipeline.files.get("coverage"))["counts"] == {"prepared": 3}
+ 
+ 
+ async def test_finalization_requires_unique_paths_and_prior_target_read(pipeline):
+@@ -452,26 +461,7 @@ async def test_finalization_requires_unique_paths_and_prior_target_read(pipeline
+         await finalize.run(pipeline, [doc])
+ 
+ 
+-@pytest.mark.parametrize("cancelled,conflict", [(False, False), (False, True), (True, False)])
+-async def test_service_publishes_final_markdown_with_batch_write_and_honors_cancel(
+-    pipeline, monkeypatch, cancelled, conflict
+-):
+-    if conflict:
+-        pipeline.client.batch_write.return_value = {
+-            "created": [],
+-            "updated": [],
+-            "unchanged": [],
+-            "conflicts": [
+-                {
+-                    "uri": pipeline.target + "/topic.md",
+-                    "code": "ALREADY_EXISTS",
+-                    "message": "Exists",
+-                }
+-            ],
+-        }
+-    await configure_pipeline(pipeline)
+-    task = SimpleNamespace(status="cancelling" if cancelled else "running", meta={}, result=None)
+-
++def compile_service_for_test(pipeline, task, monkeypatch):
+     async def update(task_id, mutate):
+         mutate(task)
+ 
+@@ -489,17 +479,51 @@ async def update(task_id, mutate):
+     )
+     service._set_state = AsyncMock()
+     monkeypatch.setattr("vikingbot.compile.service.Pipeline", lambda **kwargs: pipeline)
++    return service
++
++
++@pytest.mark.parametrize("case", ["normal", "cancelled", "conflict", "source", "worker", "sibling"])
++async def test_service_publishes_final_markdown_with_batch_write_and_honors_cancel(
++    pipeline, monkeypatch, case
++):
++    source_files = [pipeline.request.from_[0] + "/one.md"]
++    output_files = [pipeline.target + "/topic.md"]
++    if case in {"source", "worker"}:
++        source_files.append(pipeline.request.from_[0] + "/two.md")
++    if case == "conflict":
++        pipeline.client.batch_write.return_value = {
++            "created": [],
++            "conflicts": [
++                {
++                    "uri": output_files[0],
++                    "code": "ALREADY_EXISTS",
++                    "message": "Exists",
++                }
++            ],
++        }
++    await configure_pipeline(
++        pipeline, fail_second=case == "worker", invalid_sibling=case == "sibling"
++    )
++    if case == "source":
++        pipeline.client.read_raw.side_effect = [
++            "source fact",
++            ConnectionError("Source unavailable"),
++        ]
++    task = SimpleNamespace(
++        status="cancelling" if case == "cancelled" else "running", meta={}, result=
+```
+
+**File**: `bot/tests/test_openapi_auth.py` (modified, +2/-2)
+```diff
+@@ -77,7 +77,7 @@ async def create_task(self, request, *, principal_scope, task_id=None):
+                     to=request.to,
+                 )
+ 
+-            async def get_task(self, task_id, *, principal_scope):
++            async def get_task(self, task_id, *, principal_scope, include_recovery_proof=False):
+                 if task_id != "cmp_test" or principal_scope != self.scope:
+                     return None
+                 return self.task
+@@ -173,7 +173,7 @@ async def create_task(self, request, *, principal_scope, task_id=None):
+                     to=request.to,
+                 )
+ 
+-            async def get_task(self, task_id, *, principal_scope):
++            async def get_task(self, task_id, *, principal_scope, include_recovery_proof=False):
+                 if task_id != "cmp_dev" or principal_scope != self.scope:
+                     return None
+                 return {
+```
+
+**File**: `bot/vikingbot/compile/models.py` (modified, +9/-3)
+```diff
+@@ -207,11 +207,13 @@ class CompileResult(BaseModel):
+     created: list[str] = Field(default_factory=list)
+     updated: list[str] = Field(default_factory=list)
+     unchanged: list[str] = Field(default_factory=list)
+-    # Skipped target-state conflicts, each containing uri, code and message; never delivered.
++    # Skipped target-state conflicts, each containing uri, code and message; never published.
+     conflicts: list[dict[str, str]] = Field(default_factory=list)
+     page_count: int = 0
+     link_count: int = 0
+     warnings: list[str] = Field(default_factory=list)
++    completion_status: Literal["partial"] | None = None
++    recovery_proof: str | None = None
+ 
+ 
+ class CompileTask(BaseModel):
+@@ -236,10 +238,14 @@ class CompileTask(BaseModel):
+     result: CompileResult | None = None
+     error: CompileErrorInfo | None = None
+ 
+-    def public_dict(self) -> dict[str, Any]:
++    def public_dict(self, *, include_recovery_proof: bool = False) -> dict[str, Any]:
+         data = self.model_dump(exclude={"principal_scope", "sanitized_request"}, exclude_none=True)
+         if self.result is not None:
+-            data["result"] = self.result.model_dump(by_alias=True)
++            data["result"] = self.result.model_dump(
++                by_alias=True,
++                exclude_none=True,
++                exclude=None if include_recovery_proof else {"recovery_proof"},
++            )
+         return data
+ 
+ 
+```
+
+**File**: `bot/vikingbot/compile/ops/finalize.py` (modified, +3/-2)
+```diff
+@@ -19,7 +19,7 @@ async def run(runtime, documents):
+     prior read by a worker. This preflight does not provide atomic compare-and-swap writes.
+     """
+     bundle = RenderedBundle()
+-    contents, outputs = {}, {}
++    contents, outputs, rejected = {}, {}, {}
+     seen_paths: set[str] = set()
+     for document in documents:
+         path = validate_relative_file_path(document.path)
+@@ -38,6 +38,7 @@ async def run(runtime, documents):
+                 validate_declared_okf_markdown(uri, content.encode("utf-8"))
+             except ValueError as exc:
+                 runtime.warnings.append(str(exc))
++                rejected[path] = document.source_refs
+                 continue
+         contents[path] = content
+         outputs[path] = {"source_refs": document.source_refs, "sha256": content_hash(content)}
+@@ -63,5 +64,5 @@ async def run(runtime, documents):
+         outputs[path] = {"source_refs": document.source_refs, "sha256": content_hash(content)}
+     if runtime.skill_target and contents:
+         file_ops.validate_skill_output(contents)
+-    await runtime.files.put("finalize", {"outputs": outputs})
++    await runtime.files.put("finalize", {"outputs": outputs, "rejected": rejected})
+     return bundle
+```
+
+**File**: `bot/vikingbot/compile/pipeline.py` (modified, +18/-12)
+```diff
+@@ -58,6 +58,7 @@ def __init__(
+         self.tools, self.tool_context = {}, None
+         self.sources: dict[str, Source] = {}
+         self.evidence, self.status, self.old = {}, {}, {}
++        self.recovery_evidence: set[str] = set()
+         self.failures, self.warnings = [], []
+         self.artifacts: list[Document] = []
+         self.noop = False
+@@ -243,30 +244,35 @@ def validate(proposal):
+                     raise
+                 logger.exception("Compile diagnostic write failed; preserving the execution error")
+ 
+-    async def write_coverage(self, published=()):
+-        """Track assignment provenance and acknowledged output URIs without claiming semantic coverage."""
++    async def write_coverage(self, published=None):
++        """Record source states; only supplied write results can mark outputs incomplete."""
+         manifest = await self.files.get("inputs") or {}
+         final = await self.files.get("finalize") or {}
+-        delivered = set(published)
++        published = set(published) if published is not None else None
+         inputs = {}
+         for source_id, metadata in self.evidence.items():
+             item = inputs.setdefault(metadata["uri"], {"ranges": {}, "outputs": []})
+             item["ranges"][source_id] = self.status[source_id]
+-        for path, output in final.get("outputs", {}).items():
++        rejected = final.get("rejected", {})
++        if published is not None:
++            published.difference_update(safe_join_viking_uri(self.target, path) for path in rejected)
++        references = {
++            path: output["source_refs"] for path, output in final.get("outputs", {}).items()
++        }
++        for path, refs in (references | rejected).items():
+             uri = safe_join_viking_uri(self.target, path)
+-            for source_uri in {self.evidence[ref]["uri"] for ref in output["source_refs"]}:
+-                inputs[source_uri]["outputs"].append({"uri": uri, "delivered": uri in delivered})
++            for source_uri in {self.evidence[ref]["uri"] for ref in refs}:
++                inputs[source_uri]["outputs"].append(uri)
+         for uri, item in inputs.items():
+             states = item["ranges"].values()
+             state = next(
+                 (s for s in ("failed", "pending", "unreferenced") if s in states), "prepared"
+             )
+-            if (
+-                state == "prepared"
+-                and item["outputs"]
+-                and all(o["delivered"] for o in item["outputs"])
+-            ):
+-                state = "delivered"
++            if state == "prepared" and published is not None:
++                if not item["outputs"]:
++                    state = "unreferenced"
++                elif any(output not in published for output in item["outputs"]):
++                    state = "failed"
+             manifest[uri] = item["status"] = state
+         await self.files.put("inputs", manifest)
+         await self.files.put(
+```
+
+**File**: `bot/vikingbot/compile/pipeline_agent.py` (modified, +9/-3)
+```diff
+@@ -113,9 +113,15 @@ async def run(system, data, model, *, stage, runtime):
+             registry.register(
+                 CompileChildTool(tool, output_root, merge_only=True, readonly_paths=readonly_paths)
+             )
+-        evidence = EvidenceReader(model.files, data)
+-        if evidence.allowed:
+-            registry.register(evidence)
++        reader = EvidenceReader(
++            model.files,
++            data,
++            recovery_evidence=(
++                runtime.recovery_evidence if (runtime.changes or {}).get("recovery_sources") else None
++            ),
++        )
++        if reader.allowed:
++            registry.register(reader)
+         registry.register(runtime.resources)
+         registry.register(TargetReader(runtime))
+         search = runtime.tools.get("openviking_search")
+```
+
+**File**: `bot/vikingbot/compile/router.py` (modified, +3/-1)
+```diff
+@@ -124,7 +124,9 @@ async def load_session(
+         if cancel:
+             task = await service.cancel_task(body.session_id, principal_scope=principal_scope)
+         else:
+-            task = await service.get_task(body.session_id, principal_scope=principal_scope)
++            task = await service.get_task(
++                body.session_id, principal_scope=principal_scope, include_recovery_proof=True
++            )
+         if task is None:
+             raise HTTPException(
+                 status_code=status.HTTP_404_NOT_FOUND,
+```
+
+**File**: `bot/vikingbot/compile/service.py` (modified, +35/-5)
+```diff
+@@ -43,6 +43,7 @@
+ from vikingbot.agent.tools.registry import ToolRegistry
+ from vikingbot.agent.tools.spawn import WaitSubagentsTool
+ from vikingbot.compile import file_ops, simple
++from vikingbot.compile.hashing import content_hash
+ from vikingbot.compile.models import (
+     COMPILE_DRAFT_ROOT,
+     COMPILE_STAGING_ROOT,
+@@ -68,7 +69,12 @@
+     validate_declared_okf_markdown,
+ )
+ from vikingbot.compile.sandbox import CompileSandboxManager
+-from vikingbot.compile.sources import CompileSourceRange, pack_source_batches, read_source
++from vikingbot.compile.sources import (
++    CompileSourceRange,
++    pack_source_batches,
++    read_source,
++    verify_recovery_sources,
++)
+ from vikingbot.compile.store import CompileTaskStore
+ from vikingbot.config.schema import SandboxBackend, SandboxMode, SessionKey
+ from vikingbot.openviking_mount.ov_server import VikingClient
+@@ -361,15 +367,17 @@ async def create_task(
+             if not runner_started:
+                 await self._release_admission(principal_scope)
+ 
+-    async def get_task(self, task_id: str, *, principal_scope: str) -> dict[str, Any] | None:
++    async def get_task(
++        self, task_id: str, *, principal_scope: str, include_recovery_proof: bool = False
++    ) -> dict[str, Any] | None:
+         await self.start()
+         try:
+             task = await self.store.get(task_id)
+         except ValueError:
+             return None
+         if task is None or task.principal_scope != principal_scope:
+             return None
+-        return task.public_dict()
++        return task.public_dict(include_recovery_proof=include_recovery_proof)
+ 
+     async def cancel_task(self, task_id: str, *, principal_scope: str) -> dict[str, Any] | None:
+         """Request cooperative cancellation of one principal-owned Compile task."""
+@@ -1024,8 +1032,8 @@ async def resolve_wiki_uri(uri: str) -> bool:
+             preserve_workspace = preserve_workspace or bool(warnings)
+             if output_file_count == 0:
+                 warnings.append("No reliable output was produced from the supplied materials.")
+-            result = CompileResult(
+-                **{
++            result = CompileResult.model_validate(
++                {
+                     "from": request.from_,
+                     "to": request.to,
+                     "skill": request.skill,
+@@ -1141,6 +1149,8 @@ def record_metrics(task):
+         source_limits = self.limits.model_copy(
+             update={"source_batch_chars": min(self.limits.source_batch_chars, 10_000)}
+         )
++        recovery = (request.changes or {}).get("recovery_sources")
++        source_hashes: dict[str, str] = {}
+ 
+         async def source_batches():
+             """Retain at most one read batch of source bodies while seeding task shards."""
+@@ -1160,6 +1170,8 @@ async def source_batches():
+                     elif isinstance(content, BaseException):
+                         raise content
+                     else:
++                        if recovery and isinstance(content, str):
++                            source_hashes[uri] = content_hash(content)
+                         readable.append((uri, content))
+                 for batch in pack_source_batches(readable, source_limits):
+                     yield batch
+@@ -1200,6 +1212,22 @@ async def source_batches():
+                 ]
+             )
+             await pipeline.write_coverage(published)
++            counts = (await pipeline.files.get("coverage") or {}).get("counts", {})
++            partial = bool(pipeline.failures or conflicts) or any(
++                counts.get(state, 0) for state in ("failed", "pending", "unreferenced")
++            )
++            recovery_proof = None
++            if (
++                recovery
++                and not partial
++                and not pipeline.warnings
++                and not rendered.operations
++                and counts.get("prepared") == len(ordered)
++                and pipeline.evidence.keys() <= pipeline.recovery_evidence
++            ):
++                recovery_proof = await verify_recovery_sources(
++                    client, request.changes, source_hashes
++                )
+             summary = await pipeline.files.get("summary")
+             summary["committed"] = True
+             summary["warnings"] = pipeline.warnings
+@@ -1223,6 +1251,8 @@ async def source_batches():
+                 page_count=len(set(published)),
+                 link_count=rendered.link_count,
+                 warnings=pipeline.warnings,
++                completion_status="partial" if partial else None,
++                recovery_proof=recovery_proof,
+             )
+ 
+             def complete(task):
+```
+
+---
+
+### Incident Patch 3: `6b42f562` (2026-11-24)
+**Commit Message**: fix(react): 保持未知预览类型并修复前端测试 (#8369)
+
+* fix(react): 保持未知预览类型并修复前端测试
+
+Only resolve the loading preview type from actual stat metadata. Align existing tests with automatic empty-directory expansion, Skill candidate collapse and independent Wiki badge reads.
+
+Signed-off-by: lusendong.6789 <[REDACTED_EMAIL]>
+Co-authored-by: TRAE CLI <[REDACTED_EMAIL]>
+
+* chore(react): remove release note from CI repair
+
+Signed-off-by: lusendong.6789 <[REDACTED_EMAIL]>
+Co-authored-by: TRAE CLI <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: lusendong.6789 <[REDACTED_EMAIL]>
+Co-authored-by: TRAE CLI <[REDACTED_EMAIL]>
+
+**File**: `frontend/packages/react/src/modules/file-browser/use-fs-preview.ts` (modified, +1/-1)
+```diff
+@@ -145,7 +145,7 @@ export function useFsPreview({
+       const stat = resourceType === 'unknown' ? await metadata : undefined;
+       const isDir = stat?.isDirectory ?? resourceType === 'directory';
+       if (signal.aborted) throw abortError();
+-      if (resourceType === 'unknown' && isDir !== undefined) {
++      if (resourceType === 'unknown' && stat?.isDirectory !== undefined) {
+         const type = isDir ? 'directory' : 'file';
+         setStatType({ lookup, type });
+         setTabs([loadingTab(uri, type)]);
+```
+
+**File**: `frontend/packages/react/test/console-inactive-overlays.test.mjs` (modified, +4/-0)
+```diff
+@@ -76,6 +76,10 @@ test('inactive Skill upload releases its focus and body lock while its inline an
+               value: 'viking://agent/skills/wiki/SKILL.md',
+               label: 'Wiki Skill',
+             },
++            {
++              value: 'viking://agent/skills/report/SKILL.md',
++              label: 'Report Skill',
++            },
+           ],
+           initialValue: 'viking://agent/skills/wiki/SKILL.md',
+         },
+```
+
+**File**: `frontend/packages/react/test/file-browser-metadata-ownership.test.mjs` (modified, +1/-0)
+```diff
+@@ -106,6 +106,7 @@ test('a known Wiki keeps the truncation hint when its full read fails', async ()
+     content,
+     taggedTarget: uri,
+     fullRead: full.promise,
++    kinds: [],
+   });
+   try {
+     assert.equal(f.tab.source.truncated, true);
+```
+
+**File**: `frontend/packages/react/test/file-browser-preview-priority.test.mjs` (modified, +6/-1)
+```diff
+@@ -185,7 +185,12 @@ test('a listed Markdown file reads its body while Wiki attrs are pending', async
+       ),
+     );
+     await settle();
+-    assert.equal(fetch.countOf('/api/v1/content/read'), 1);
++    assert.deepEqual(
++      fetch.calls
++        .filter(({ path }) => path === '/api/v1/content/read')
++        .map(({ query }) => query.limit),
++      ['2000', '-1'],
++    );
+     assert.equal(body(), 'Chapter text');
+   } finally {
+     await view.unmount();
+```
+
+**File**: `frontend/packages/react/test/file-browser-wiki-conflict-editing.test.mjs` (modified, +2/-1)
+```diff
+@@ -171,13 +171,14 @@ test('navigating away discards a pending Wiki conflict edit before preview loadi
+       view.container.textContent,
+       new RegExp(`${otherBody.length} characters`),
+     );
++    const otherReads = editReads(otherFile);
+ 
+     await act(async () => preview.resolve());
+     await settle();
+     assert.equal(activeTab(), otherFile);
+     assert.equal(view.container.querySelector('.cm-content'), null);
+     assert.equal(editReads(file), dashboardReads);
+-    assert.equal(editReads(otherFile), 0);
++    assert.equal(editReads(otherFile), otherReads);
+   } finally {
+     await view.unmount();
+   }
+```
+
+**File**: `frontend/packages/react/test/file-tree-root-order.test.mjs` (modified, +1/-2)
+```diff
+@@ -128,8 +128,7 @@ test('FileBrowser marks only shared resources and labels an expanded empty folde
+   try {
+     await expand(user);
+     await expand(agent);
+-    assert.equal(row(`${endpoints}::empty`), null);
+-    await expand(endpoints);
++    assert.ok(row(`${endpoints}::empty`));
+     assert.match(row(`${endpoints}::empty`).textContent, /该文件夹为空/);
+     assert.doesNotMatch(row(`${endpoints}::empty`).textContent, /暂无文件/);
+     assert.equal(
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8306** (2026-11-23): fix(grep): backport Rust matching to v0.5.5 hotfix (#8289) (@ZaynJarvis)
-- **PR #8297** (2026-11-23): fix(react): align file browser history scope and root breadcrumb (@LaamGinghong)
-- **PR #8291** (2026-11-23): fix(react): align VikingBot activation copy (@LaamGinghong)
-- **PR #8289** (2026-11-23): fix(grep): 将 Python 正则匹配迁移到 Rust (@qin-ctx)
-- **PR #8288** (2026-11-23): fix(react): support prelaunch endpoints in AgentConnect (@leowld)
-- **PR #8284** (2026-11-23): fix(react): keep draft references removable during replies (@LaamGinghong)
+- **PR #8379** (closed): feat(retrieve): add RL query planner intent-analysis prompt (@Guoxuter)
+- **PR #8372** (2026-11-24): fix(acl): restore empty-string grant decoding on v0.5.2 (@chuanbao666)
+- **PR #8371** (2026-11-24): fix(acl): restore empty-string grant decoding (@chuanbao666)
+- **PR #8369** (2026-11-24): fix(react): 保持未知预览类型并修复前端测试 (@cocolord)
+- **PR #8367** (2026-11-24): test(react): 修复当前用户目录展开测试卡死 (@cocolord)
+- **PR #8363** (2026-11-24): feat(superagent): refresh the /tasks cards in place (@krsish)
 
 ---
 
@@ -1989,31 +2223,31 @@ Co-authored-by: qin-ctx <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. plugins): keep a tool result's text when it comes as content blocks
+## X. acl): restore empty-string grant decoding
 
 **RULE**:
-When implementing operations in `examples/agent-hook-plugin/hosts/codebuddy/plugin.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/en/concepts/15-acl.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c58b41d1`: plugins): keep a tool result's text when it comes as content blocks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e13f0441`: acl): restore empty-string grant decoding. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/agent-hook-plugin/hosts/codebuddy/plugin.json`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/en/concepts/15-acl.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-  "version": "0.5.36",
+An empty grants list is stored as `["none"]` and decoded as no grants. The `"none"` token must appear alone and never grants access. Exact empty-string elements introduced by offline indexes are ignored on reads; other invalid grant tokens are rejected. This storage marker is independent of `acl_mode`: clearing direct grants preserves the mode and any inherited permissions.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-  "version": "0.5.35",
+An empty grants list is stored as `["none"]` and decoded as no grants. The `"none"` token must appear alone and never grants access. This storage marker is independent of `acl_mode`: clearing direct grants preserves the mode and any inherited permissions.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c58b41d1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e13f0441` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

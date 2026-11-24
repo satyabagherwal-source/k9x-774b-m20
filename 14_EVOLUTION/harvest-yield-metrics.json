@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T18:17:37.840Z",
-  "total_cycles_completed": 12134,
-  "total_learnings_persisted": 12134,
-  "total_rules_promoted": 11194,
+  "last_updated": "2026-11-24T18:34:33.608Z",
+  "total_cycles_completed": 12137,
+  "total_learnings_persisted": 12137,
+  "total_rules_promoted": 11196,
   "history": [
-    {
-      "timestamp": "2026-11-24T01:37:59.160Z",
-      "repository": "vercel-labs/agent-desktop",
-      "learningId": "learn-github-vercel-labs-agent-desktop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T01:46:51.676Z",
-      "repository": "Saffsanity/sill",
-      "learningId": "learn-github-saffsanity-sill",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T01:46:55.602Z",
-      "repository": "dosco/deeporg",
-      "learningId": "learn-github-dosco-deeporg",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T01:55:59.554Z",
       "repository": "yyjeqhc/webcodex",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-24T18:17:37.840Z",
       "repository": "tickernelz/opencode-mem",
       "learningId": "learn-github-tickernelz-opencode-mem",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T18:34:15.021Z",
+      "repository": "AtomicChat/Inkling-2-Mini-GGUF",
+      "learningId": "learn-huggingface-atomicchat-inkling-2-mini-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T18:34:31.077Z",
+      "repository": "zama-ai/tfhe-rs",
+      "learningId": "learn-github-zama-ai-tfhe-rs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T18:34:33.608Z",
+      "repository": "volcengine/OpenViking",
+      "learningId": "learn-github-volcengine-openviking",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
