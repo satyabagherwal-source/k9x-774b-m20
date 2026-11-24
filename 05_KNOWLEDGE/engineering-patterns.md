@@ -778065,3 +778065,309 @@ fn wait_proactive_summary(view: &RunView, attempt: ModelAttemptId, now: UnixMill
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `3a1bf52b` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10364. Tri-Modal Statement Timeout and Write Non-Cancellation Invariant (Harvested from t8y2/dbx)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Tri-Modal Statement Timeout and Write Non-Cancellation Invariant",
+  "source": "t8y2/dbx",
+  "source_url": "https://github.com/t8y2/dbx",
+  "source_version": "cf1293f6",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-24T21:53:04.400Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-t8y2-dbx",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [t8y2/dbx](https://github.com/t8y2/dbx) (Revision: `cf1293f6`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+A database client or proxy MUST NOT issue statement cancellation directives (`KILL QUERY`, connection drop, or wire cancel packets) when an explicit timeout expires on write statements (DML) or schema alterations (DDL). Timeouts MUST be modeled as a tri-modal discriminated union:
+1. `Cancel`: Applied strictly to read operations (`SELECT`, `EXPLAIN`, `SHOW`); triggers active server cancellation upon deadline.
+2. `Detach`: Applied to mutating writes (`INSERT`, `UPDATE`, `DELETE`); drops client-side wait loops and returns an ambiguous-execution result to the caller without dispatching server cancellation signals.
+3. `Unlimited`: Applied to schema mutations (`CREATE`, `ALTER`, `DROP`) and procedural packages; runs without an automated deadline.
+
+**WHY**:
+In distributed and replicated database clusters, `KILL QUERY` only sets an interrupt flag; the statement may still partially commit on the primary while rolling back on replicas, causing non-healing binlog and replication drift. Furthermore, cancelling in-flight DDL triggers metadata lock deadlocks and prolonged cascading rollbacks that starve the entire database instance.
+
+**WHEN TO APPLY**:
+Applies to all database clients, ORM query executors, proxy layers, migration engines, and agentic database tool executors across any language (Rust, Go, TypeScript, Java, Python).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use std::time::Duration;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum StatementScope {
+    Read,
+    Write,
+    SchemaChange,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum StatementDeadline {
+    Cancel(Duration),
+    Detach(Duration),
+    Unlimited,
+}
+
+impl StatementDeadline {
+    pub fn for_statement(scope: StatementScope, read_timeout: Option<Duration>, write_timeout: Option<Duration>) -> Self {
+        match scope {
+            StatementScope::SchemaChange => StatementDeadline::Unlimited,
+            StatementScope::Write => match write_timeout {
+                Some(dur) if !dur.is_zero() => StatementDeadline::Detach(dur),
+                _ => StatementDeadline::Unlimited,
+            },
+            StatementScope::Read => match read_timeout {
+                Some(dur) if !dur.is_zero() => StatementDeadline::Cancel(dur),
+                _ => StatementDeadline::Unlimited,
+            },
+        }
+    }
+
+    pub fn server_cancellation_budget(&self) -> Option<Duration> {
+        match self {
+            StatementDeadline::Cancel(d) => Some(*d),
+            StatementDeadline::Detach(_) | StatementDeadline::Unlimited => None,
+        }
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER apply a single uniform cancel-capable timeout to all SQL executions
+async fn execute_query_bad(client: &Client, sql: &str, timeout_secs: u64) -> Result<ExecutionResult> {
+    tokio::select! {
+        res = client.execute(sql) => res,
+        _ = tokio::time::sleep(Duration::from_secs(timeout_secs)) => {
+            // CATASTROPHIC: Sending cancel on ALTER or bulk UPDATE leaves server
+            // in undefined lock state and induces replication drift!
+            client.send_kill_query().await?;
+            Err(anyhow::anyhow!("Query timed out"))
+        }
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Implement a property-based test asserting that for any classified `StatementScope::Write` or `StatementScope::SchemaChange`, `server_cancellation_budget()` strictly yields `None`. Verify through an integration test against a slow `UPDATE` that client timeout returns status `DetachedUnknownResult` while the database connection pool confirms no cancellation packet was sent.
+
+---
+
+
+---
+
+## 10365. Error-Code-Scoped Tolerant Catalog Extraction Invariant (Harvested from t8y2/dbx)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Error-Code-Scoped Tolerant Catalog Extraction Invariant",
+  "source": "t8y2/dbx",
+  "source_url": "https://github.com/t8y2/dbx",
+  "source_version": "cf1293f6",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-24T21:53:05.112Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-t8y2-dbx",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [t8y2/dbx](https://github.com/t8y2/dbx) (Revision: `cf1293f6`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When reading catalog metadata (table comments, column defaults, constraint remarks) through legacy or strict database drivers, unmappable or malformed decorative attributes MUST be caught and defaulted to `None`/`null` ONLY when matched against the exact vendor character-conversion error code. Catch-all `SQLException` or generic error suppression MUST NOT be used, and connection-level character decoding parameters MUST NOT be downgraded or softened.
+
+**WHY**:
+Legacy databases often contain corrupt comments encoded in deprecated code pages (e.g., GBK, CP937 bytes in an EUC-JP database). Softening connection-level decoders (such as setting character substitution flags) silences encoding errors on subsequent data writes, leading to silent, irreversible user data corruption. Conversely, letting decorative catalog read failures fail the query prevents entire schemas from opening in UI/metadata explorers.
+
+**WHEN TO APPLY**:
+Applies to all JDBC, ODBC, and native wire driver bridges when extracting optional catalog metadata fields (remarks, comments, column defaults) from systems with heterogeneous client histories (DB2, Oracle, Sybase, Informix).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```java
+public final class CatalogDefensiveReader {
+    // Exact IBM DB2 JCC code for character conversion exception
+    private static final int DB2_UNDECODABLE_CATALOG_VALUE_ERROR = -4220;
+
+    public static String safeMetadataString(ResultSet rs, String column) throws SQLException {
+        try {
+            return rs.getString(column);
+        } catch (SQLException e) {
+            // Strictly scope tolerance to known conversion error
+            if (e.getErrorCode() != DB2_UNDECODABLE_CATALOG_VALUE_ERROR) {
+                throw e; // Bubble up permission, connection, or syntax faults
+            }
+            return null; // Gracefully degrade decorative attribute
+        }
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```java
+// NEVER loosen global connection properties to bypass metadata bugs
+Properties props = new Properties();
+// CATASTROPHIC: Bypasses metadata decoding errors but causes writes
+// with unencodable characters to be silently replaced by '?' or corrupted!
+props.setProperty("db2.jcc.charsetDecoderEncoder", "3");
+```
+
+**VERIFICATION METHOD**:
+Mock a JDBC `ResultSet` throwing a `SQLException` with error code `-4220` when column `REMARKS` is read: assert that `safeMetadataString` returns `null` and the table row is returned intact. Then mock error code `-4476` (e.g., authorization failure) and assert that `safeMetadataString` rethrows the exception, failing the operation.
+
+---
+
+
+---
+
+## 10366. Floating-Point Shortest Round-Trippable Decimal Invariant (Harvested from t8y2/dbx)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Floating-Point Shortest Round-Trippable Decimal Invariant",
+  "source": "t8y2/dbx",
+  "source_url": "https://github.com/t8y2/dbx",
+  "source_version": "cf1293f6",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-24T21:53:05.865Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-t8y2-dbx",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [t8y2/dbx](https://github.com/t8y2/dbx) (Revision: `cf1293f6`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When serializing IEEE 754 single-precision floating point numbers (`f32`) into JSON or textual wire formats for data viewing, the serializer MUST NOT cast `f32` directly to an `f64` primitive before printing. Finite `f32` numbers MUST be converted to their minimal round-trippable decimal string representation at single precision before promotion to high-precision numeric JSON tokens.
+
+**WHY**:
+Widening an IEEE 754 `f32` (24 bits of mantissa) directly to `f64` (53 bits of mantissa) exposes low-order binary approximation noise that never existed in the source column. For example, `8.6_f32` cast directly to `f64` serializes as `8.600000381469727`. This causes visual clutter, broken equality checks, and false dirty diffs in database record editors.
+
+**WHEN TO APPLY**:
+Applies to any data serialization engine, database proxy, RPC gateway, or JSON encoder that bridges low-precision native binary float types (`f32`, `float4`, `REAL`) to dynamic or JSON representations.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use serde_json::{Number, Value};
+
+pub fn finite_float32_to_json(value: f32) -> Value {
+    if value.is_nan() {
+        Value::String("NaN".to_string())
+    } else if value.is_infinite() {
+        if value.is_sign_positive() {
+            Value::String("inf".to_string())
+        } else {
+            Value::String("-inf".to_string())
+        }
+    } else {
+        // Step 1: Format f32 to its minimal round-trippable representation
+        let shortest = value.to_string();
+        // Step 2: Parse string as f64 to create a clean serde_json::Number
+        let rounded = shortest
+            .parse::<f64>()
+            .expect("standard f32 to_string is always a valid f64");
+        Value::Number(Number::from_f64(rounded).expect("finite f32 must yield finite f64"))
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER widen f32 directly to f64 primitive in JSON serializers
+pub fn bad_float32_to_json(value: f32) -> Value {
+    // CATASTROPHIC: 8.6_f32 becomes 8.600000381469727
+    serde_json::Number::from_f64(value as f64)
+        .map(Value::Number)
+        .unwrap_or(Value::Null)
+}
+```
+
+**VERIFICATION METHOD**:
+Execute an automated test with test vectors `[8.6_f32, 0.72_f32, 59.6_f32, -13.25_f32]`. Assert that serialized string outputs equal `"8.6"`, `"0.72"`, `"59.6"`, and `"-13.25"` exactly, and verify bit-level round-tripping: `(json_num.as_f64().unwrap() as f32).to_bits() == value.to_bits()`.
+
+---

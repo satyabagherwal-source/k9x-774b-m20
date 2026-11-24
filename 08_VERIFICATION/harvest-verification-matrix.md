@@ -12818,3 +12818,5 @@
 | `CYCLE-20261124-23PG` | `2026-11-24T21:15:51.748Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10362` | Yes (`45c95862...`) |
 | `CYCLE-20261124-D1T8` | `2026-11-24T21:24:22.508Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10326` | Yes (`22a97ca1...`) |
 | `CYCLE-20261124-VCLX` | `2026-11-24T21:38:36.309Z` | `apache/maka` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10363` | Yes (`56055763...`) |
+| `CYCLE-20261124-E025` | `2026-11-24T21:53:06.509Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10364, Rule 10365, Rule 10366` | Yes (`53d5ea30...`) |
+| `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T21:53:46.061Z` | `t8y2-dbx` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-I-2DDA15B6` [Domain I] | Yes (`d536e507...`) |

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T21:38:48.866Z",
+  "last_updated": "2026-11-24T21:53:50.381Z",
   "total_verified_learnings": 9102,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24928,
+  "total_items": 24936,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "ea1487121996d00a9a6508f89c30853b34fa64149c0f6b0e3bbfe03341f4ff62",
+      "content_hash": "2d12d7d3fe1c86afaf9cc52d01bbb2be647c5d0f32490c7a85f8bfdc730dfce9",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T21:38:48.651Z"
+      "persisted_at": "2026-11-24T21:53:50.177Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "cd36b02cb43a1cd8280430e459ab9ec0792562c471bb3c1aa28ef6ae3499630a",
+      "content_hash": "5ef2383fa8c8a4bc02f330ed94b44bc5a2431b602df2f791fd3949a663cf323b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T21:38:48.866Z"
+      "persisted_at": "2026-11-24T21:53:50.381Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "4e486c576b234f75264c4417fc30bf1a92be2f64df263feedef8900a2668fa4d",
+      "content_hash": "50efcd4df10cbd0d8092bda4d88ef3ad42154a061a769fe611e06669ae011942",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T21:38:46.972Z"
+      "persisted_at": "2026-11-24T21:53:48.510Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "b74ed163330d7796b14960224c72d8f8bd237b1100ba472a35407d0a300058fb",
+      "content_hash": "f4350bd4effd3f4a265b18b9b49120c36bf833b1c398f7d63132ff0dc3537f9b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T21:38:47.237Z"
+      "persisted_at": "2026-11-24T21:53:48.756Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -214516,8 +214516,8 @@
       "slug": "t8y2-dbx",
       "platform": "github",
       "source_url": "https://github.com/t8y2/dbx",
-      "source_version": "c9d50f21",
-      "content_hash": "ebe64be7e2ba5b1e53e6c4d5156749a20f69e5006ea48401b52cbdd61d510688",
+      "source_version": "cf1293f6",
+      "content_hash": "53d5ea30116fbcd133c5716f8c001ce837cbf633cf3b3a1bd5a7648cacbc9175",
       "dossier_path": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "promoted_rules": [
@@ -214570,6 +214570,21 @@
           "number": 10169,
           "title": "refuse MySQL change previews whose SET reads an earlier assignment",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10364,
+          "title": "Tri-Modal Statement Timeout and Write Non-Cancellation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10365,
+          "title": "Error-Code-Scoped Tolerant Catalog Extraction Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10366,
+          "title": "Floating-Point Shortest Round-Trippable Decimal Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -214577,7 +214592,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T01:29:03.283Z",
+      "verified_at": "2026-11-24T21:53:06.249Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -214631,10 +214646,10 @@
       "relative_path": "08_VERIFICATION/t8y2-dbx-verification-protocol-empirical-defect-shield-for-t8y2-dbx.md",
       "title": "Verification Protocol: Empirical Defect Shield for t8y2/dbx",
       "repository": "t8y2/dbx",
-      "source_version": "c9d50f21",
-      "content_hash": "39379f40ef95b5a5fa3be0ab2a8ca827fc35730b5f8a840c2d175957b72e8381",
+      "source_version": "cf1293f6",
+      "content_hash": "f20eaf90bec25852d2658c001e17bde94e57d3ba248fed2907b17300eb849685",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T01:29:04.071Z"
+      "persisted_at": "2026-11-24T21:53:07.734Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen3-8-27b-gguf-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen3-8-27b-gguf-learnings-core-invar",
@@ -246187,9 +246202,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for t8y2-dbx-learnings",
       "repository": "t8y2-dbx-learnings",
       "source_version": "HEAD",
-      "content_hash": "520c6073ec3d620e2df1f1562a315828374e7d53ffdc4023308dd8ec90b8eefb",
+      "content_hash": "f655e2eaf0446bc7701ce9f8c6585eafd6cf7461fa398bb8d39d173f15cbc719",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T01:29:08.284Z"
+      "persisted_at": "2026-11-24T21:53:47.424Z"
     },
     "learn-huggingface-tencent-hy-memory-30b-a3b": {
       "learning_id": "learn-huggingface-tencent-hy-memory-30b-a3b",
@@ -256465,9 +256480,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "ec9884fb8b65e519c256c3c164c70c991335fed294b34b0f1f724de3450395ab",
+      "content_hash": "b083f50845598c41e49963b4744b86786f648ce5dfad4303c67195168d877098",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T21:38:48.389Z"
+      "persisted_at": "2026-11-24T21:53:49.933Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
@@ -330523,13 +330538,13 @@
       "item_id": "candidate_directive-rust-resolve-python-calls-through-annotated-parameters-and-self-members",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-VLQA-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-EXD8-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
       "title": "rust): resolve python calls through annotated parameters and self members",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "8080481f5bb986e582e0149ee8cca993f507f58e1e6274441b70ea89cec00fd9",
+      "content_hash": "9a29ed1c36b52054338b815e17de1aa6ec058187301f4fea55cc189274b09f45",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T21:38:48.134Z"
+      "persisted_at": "2026-11-24T21:53:49.689Z"
     },
     "learn-github-iziz-libphonenumber-ios": {
       "learning_id": "learn-github-iziz-libphonenumber-ios",
@@ -335483,13 +335498,13 @@
       "item_id": "candidate_directive-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-VKMZ-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-EW9Q-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
       "title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "851d3b76dd7c9bfe3689d7175a1e2b328b93bde8ed5286c7bf584d962eab13ff",
+      "content_hash": "f967619b7d476203e5e2a171c81a549b9bd43d9485fb8ca637f1c354cafd5223",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T21:38:46.719Z"
+      "persisted_at": "2026-11-24T21:53:48.266Z"
     },
     "learn-github-xinatian-mroffice": {
       "learning_id": "learn-github-xinatian-mroffice",
@@ -340576,6 +340591,108 @@
       "content_hash": "36bddebaf00cef66e1f6be8557baf3e0ca0e0be1271e8c0e2f12cb74b3346ccf",
       "domain_letter": "H",
       "persisted_at": "2026-11-24T21:38:45.319Z"
+    },
+    "rule-10364": {
+      "learning_id": "rule-10364",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10364,
+      "title": "Tri-Modal Statement Timeout and Write Non-Cancellation Invariant",
+      "source_url": "https://github.com/t8y2/dbx",
+      "source_version": "cf1293f6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T21:53:06.249Z"
+    },
+    "rule-10365": {
+      "learning_id": "rule-10365",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10365,
+      "title": "Error-Code-Scoped Tolerant Catalog Extraction Invariant",
+      "source_url": "https://github.com/t8y2/dbx",
+      "source_version": "cf1293f6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T21:53:06.249Z"
+    },
+    "rule-10366": {
+      "learning_id": "rule-10366",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10366,
+      "title": "Floating-Point Shortest Round-Trippable Decimal Invariant",
+      "source_url": "https://github.com/t8y2/dbx",
+      "source_version": "cf1293f6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T21:53:06.249Z"
+    },
+    "candidate_directive-tri-modal-statement-timeout-and-write-non-cancellation-invariant": {
+      "item_id": "candidate_directive-tri-modal-statement-timeout-and-write-non-cancellation-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EUUZ-tri-modal-statement-timeout-and-write-non-cancellation-invariant.md",
+      "title": "Tri-Modal Statement Timeout and Write Non-Cancellation Invariant",
+      "repository": "t8y2-dbx-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e5ed7927d5589213d2a6e9016292fd9d462500ce55f9900df20233c78016b870",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-24T21:53:46.430Z"
+    },
+    "candidate_directive-error-code-scoped-tolerant-catalog-extraction-invariant": {
+      "item_id": "candidate_directive-error-code-scoped-tolerant-catalog-extraction-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EUV0-error-code-scoped-tolerant-catalog-extraction-invariant.md",
+      "title": "Error-Code-Scoped Tolerant Catalog Extraction Invariant",
+      "repository": "t8y2-dbx-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4ec3cf4569efd473a63b7e48adc1ba4af9ced62c882ba72c6a9da44cb1f3d1f7",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-24T21:53:46.689Z"
+    },
+    "candidate_directive-floating-point-shortest-round-trippable-decimal-invariant": {
+      "item_id": "candidate_directive-floating-point-shortest-round-trippable-decimal-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EUV1-floating-point-shortest-round-trippable-decimal-invariant.md",
+      "title": "Floating-Point Shortest Round-Trippable Decimal Invariant",
+      "repository": "t8y2-dbx-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f3db889601cf1972370b7840237b5c88e55d2b02ce572260a0b8f2603e27173c",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-24T21:53:46.933Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-t8y2-dbx-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-t8y2-dbx-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-t8y2-dbx-quality-verification-intelligence-t8y2-dbx-core-invariants.md",
+      "title": "Quality & Verification Intelligence: t8y2/dbx Core Invariants",
+      "repository": "t8y2/dbx",
+      "source_version": "cf1293f6",
+      "content_hash": "ca1058092e7eb2064421eb57676e4fb45ddc1ca7d222e975d78fda041fa75d0e",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-24T21:53:07.502Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-t8y2-dbx-learnings-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-t8y2-dbx-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-t8y2-dbx-learnings-quality-verification-intelligence-t8y2-dbx-learnings-core-inv.md",
+      "title": "Quality & Verification Intelligence: t8y2-dbx-learnings Core Invariants",
+      "repository": "t8y2-dbx-learnings",
+      "source_version": "HEAD",
+      "content_hash": "aeec57b1b797fb4093df15ccdb7d0c19b5088f0b3f524bb58a092df7c178abcc",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-24T21:53:47.179Z"
     }
   },
   "ai-builder-brain": {

@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T21:38:44.738Z",
-    "lastVerified": "2026-11-24T21:38:44.738Z",
+    "lastChecked": "2026-11-24T21:53:10.513Z",
+    "lastVerified": "2026-11-24T21:53:10.513Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -276,9 +276,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-24T21:01:30.512Z",
+    "lastChecked": "2026-11-24T21:48:03.107Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-24T21:01:30.512Z"
+    "lastVerified": "2026-11-24T21:48:03.107Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1065,9 +1065,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-11-24T17:23:01.629Z",
+    "lastChecked": "2026-11-24T21:47:58.060Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-11-24T17:23:01.629Z"
+    "lastVerified": "2026-11-24T21:47:58.060Z"
   },
   "chroma-core-chroma": {
     "name": "chroma",
@@ -1436,14 +1436,14 @@
     "officialUrl": "https://github.com/t8y2/dbx",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T01:29:02.398Z",
-    "lastVerified": "2026-11-24T01:29:02.398Z",
+    "lastChecked": "2026-11-24T21:48:06.454Z",
+    "lastVerified": "2026-11-24T21:48:06.454Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-t8y2-dbx",
-    "contentHash": "ebe64be7e2ba5b1e53e6c4d5156749a20f69e5006ea48401b52cbdd61d510688",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "contentHash": "53d5ea30116fbcd133c5716f8c001ce837cbf633cf3b3a1bd5a7648cacbc9175",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 10,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4041,9 +4041,9 @@
   "go-chassis-go-chassis": {
     "name": "go-chassis",
     "officialUrl": "https://github.com/go-chassis/go-chassis",
-    "lastChecked": "2026-11-24T02:21:05.183Z",
+    "lastChecked": "2026-11-24T21:47:55.293Z",
     "revisionIdentifier": "6bcf5150",
-    "lastVerified": "2026-11-24T02:21:05.183Z"
+    "lastVerified": "2026-11-24T21:47:55.293Z"
   },
   "neural-maze-ava-whatsapp-agent-course": {
     "name": "ava-whatsapp-agent-course",
@@ -6629,9 +6629,9 @@
   "lysine-dev-okio": {
     "name": "okio",
     "officialUrl": "https://github.com/lysine-dev/okio",
-    "lastChecked": "2026-11-22T07:05:59.555Z",
+    "lastChecked": "2026-11-24T21:47:52.880Z",
     "revisionIdentifier": "f0e3f479",
-    "lastVerified": "2026-11-22T07:05:59.555Z"
+    "lastVerified": "2026-11-24T21:47:52.880Z"
   },
   "rook-rook": {
     "name": "rook/rook",
@@ -7214,9 +7214,9 @@
   "sachaos-viddy": {
     "name": "viddy",
     "officialUrl": "https://github.com/sachaos/viddy",
-    "lastChecked": "2026-11-23T19:17:43.413Z",
+    "lastChecked": "2026-11-24T21:47:47.911Z",
     "revisionIdentifier": "b56efe08",
-    "lastVerified": "2026-11-23T19:17:43.413Z"
+    "lastVerified": "2026-11-24T21:47:47.911Z"
   },
   "hf-autotrust-jev-27b-vl": {
     "name": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
@@ -11442,9 +11442,9 @@
   "goose3-goose3": {
     "name": "goose3",
     "officialUrl": "https://github.com/goose3/goose3",
-    "lastChecked": "2026-11-20T22:30:47.814Z",
+    "lastChecked": "2026-11-24T21:47:50.278Z",
     "revisionIdentifier": "87b6003d",
-    "lastVerified": "2026-11-20T22:30:47.814Z"
+    "lastVerified": "2026-11-24T21:47:50.278Z"
   },
   "alexdrone-render": {
     "name": "Render",

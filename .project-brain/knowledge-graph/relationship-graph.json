@@ -2,9 +2,9 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-24T21:02:06.292Z",
+  "updated_at": "2026-11-24T21:53:46.058Z",
   "statistics": {
-    "total_nodes": 517,
+    "total_nodes": 518,
     "total_edges": 215,
     "domain_distribution": {
       "D": 312,
@@ -17,7 +17,7 @@
       "F": 27,
       "B": 4,
       "E": 2,
-      "I": 12,
+      "I": 13,
       "C": 1
     },
     "relation_distribution": {
@@ -11543,6 +11543,28 @@
       ],
       "created_at": "2026-11-24T21:02:06.292Z",
       "updated_at": "2026-11-24T21:02:06.292Z"
+    },
+    "DOM-I-2DDA15B6": {
+      "id": "DOM-I-2DDA15B6",
+      "domain": "I",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Statement Timeout Cancelling In-Flight Schema Changes and Writes (BUG-QUERY-02)",
+      "summary": "Conflating read deadlines with write/DDL deadlines. A read timeout only incurs a client-side retry; a write timeout creates indeterminate st -> Timeout semantics are determined by statement side-effects. Classify query ASTs and keywords before attaching deadline cancellation handlers",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://t8y2-dbx/t8y2-dbx-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-24T21:53:10.685Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (t8y2-dbx)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "I",
+        "Content & Information Intelligence"
+      ],
+      "created_at": "2026-11-24T21:53:46.058Z",
+      "updated_at": "2026-11-24T21:53:46.058Z"
     }
   },
   "edges": [

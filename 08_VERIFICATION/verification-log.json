@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-EXWH",
-    "timestamp": "2026-11-23T06:14:23.009Z",
-    "repository": "zarf-dev/zarf",
-    "learningId": "learn-github-zarf-dev-zarf",
-    "contentHash": "83769852434007897f1a0cab98ad112b0a4c9271343a292661bcd4306df107de",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-EZ56",
     "timestamp": "2026-11-23T06:14:24.618Z",
     "repository": "tailscale/tailscale",
@@ -7492,6 +7477,21 @@
     "contentHash": "5605576365e848167dba90eefb9aaee7ff426dc067d484c848720a6c3478b92c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-E025",
+    "timestamp": "2026-11-24T21:53:06.509Z",
+    "repository": "t8y2/dbx",
+    "learningId": "learn-github-t8y2-dbx",
+    "contentHash": "53d5ea30116fbcd133c5716f8c001ce837cbf633cf3b3a1bd5a7648cacbc9175",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
