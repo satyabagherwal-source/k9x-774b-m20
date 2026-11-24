@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T03:58:44.582Z",
-    "lastVerified": "2026-11-24T03:58:44.582Z",
+    "lastChecked": "2026-11-24T04:20:34.887Z",
+    "lastVerified": "2026-11-24T04:20:34.887Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -275,9 +275,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-24T03:33:34.499Z",
+    "lastChecked": "2026-11-24T04:20:28.521Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-24T03:33:34.499Z"
+    "lastVerified": "2026-11-24T04:20:28.521Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1082,14 +1082,14 @@
     "officialUrl": "https://github.com/BurntSushi/ripgrep",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T20:35:35.834Z",
-    "lastVerified": "2026-11-22T20:35:35.834Z",
+    "lastChecked": "2026-11-24T04:20:16.392Z",
+    "lastVerified": "2026-11-24T04:20:16.392Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-burntsushi-ripgrep",
-    "contentHash": "735c81297c08f59793bd95c6ce358496f06e3b7163a06187f2065b891baf89c0",
+    "contentHash": "72bb04ce35cf1b2b70c5ad05b0b292c2640b102f536602b855676c8ca771365a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 9,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2102,12 +2102,12 @@
     "revisionIdentifier": "392b64e8"
   },
   "trufflesecurity-trufflehog": {
-    "name": "trufflesecurity/trufflehog",
+    "name": "trufflehog",
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-23T23:31:34.877Z",
-    "lastVerified": "2026-11-23T23:31:34.877Z",
+    "lastChecked": "2026-11-24T04:20:23.645Z",
+    "lastVerified": "2026-11-24T04:20:23.645Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
@@ -2116,7 +2116,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "22e51338"
   },
   "oramasearch-orama": {
     "name": "orama",
@@ -2701,14 +2702,14 @@
     "officialUrl": "https://github.com/Ontos-AI/knowhere",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-23T05:06:46.892Z",
-    "lastVerified": "2026-11-23T05:06:46.892Z",
+    "lastChecked": "2026-11-24T04:20:30.317Z",
+    "lastVerified": "2026-11-24T04:20:30.317Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ontos-ai-knowhere",
-    "contentHash": "4df84ffe41086e269cc2f9d45f9eba018a18f6b08e0a883763f91e4dbb5b3488",
+    "contentHash": "3bc5f61ce194049093b7117fefb0b44a78aca6799d6d781927ddcd14a1a836df",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4554,9 +4555,9 @@
   "gocrane-crane": {
     "name": "crane",
     "officialUrl": "https://github.com/gocrane/crane",
-    "lastChecked": "2026-11-23T06:22:20.139Z",
+    "lastChecked": "2026-11-24T04:20:21.036Z",
     "revisionIdentifier": "2b0ddae8",
-    "lastVerified": "2026-11-23T06:22:20.140Z"
+    "lastVerified": "2026-11-24T04:20:21.036Z"
   },
   "typedb-typedb": {
     "name": "typedb",
@@ -9454,9 +9455,9 @@
   "yuripinto-xseo": {
     "name": "xseo",
     "officialUrl": "https://github.com/yuripinto/xseo",
-    "lastChecked": "2026-11-20T00:24:10.887Z",
+    "lastChecked": "2026-11-24T04:20:16.054Z",
     "revisionIdentifier": "d335452f68",
-    "lastVerified": "2026-11-20T00:24:10.887Z"
+    "lastVerified": "2026-11-24T04:20:16.054Z"
   },
   "modelcontextprotocol-kotlin-sdk": {
     "name": "modelcontextprotocol/kotlin-sdk",
@@ -12369,14 +12370,14 @@
     "officialUrl": "https://github.com/jithin-sabu/purge-app",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-21T07:05:11.987Z",
-    "lastVerified": "2026-11-21T07:05:11.987Z",
+    "lastChecked": "2026-11-24T04:20:22.007Z",
+    "lastVerified": "2026-11-24T04:20:22.007Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-jithin-sabu-purge-app",
-    "contentHash": "1bf8fa2b9f46695f02e55e7b0924f9f5e442297682f177fe95e85f387d03d2ef",
+    "contentHash": "abd9e17ece6586f6b5420f76a45fa9ca68538180a42291eb9d61ea47210ff369",
     "promotedRulesCount": 1,
-    "recentFixesCount": 9,
+    "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

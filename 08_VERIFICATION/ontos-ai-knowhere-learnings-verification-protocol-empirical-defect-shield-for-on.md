@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T03:03:32.295Z",
+  "timestamp": "2026-11-24T04:20:39.043Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-ontos-ai-knowhere-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [ontos-ai-knowhere-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T03:03:32.295Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T04:20:39.043Z`  
 > **Learning ID**: `LEARN-EVO-ontos-ai-knowhere-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md`  
 > **Source**: github ([https://github.com/Ontos-AI/knowhere](https://github.com/Ontos-AI/knowhere))  
-> **Source Version**: `cf789c7b`  
+> **Source Version**: `da75fa74`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T03:03:26.425Z  
+> **Timestamp**: 2026-11-24T04:20:30.323Z  
 > **Learning ID**: `learn-github-ontos-ai-knowhere`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Ontos-AI/knowhere](https://github.com/Ontos-AI/knowhere))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T03:03:26.420Z  
+> **Harvest Timestamp**: 2026-11-24T04:20:30.317Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Knowhere extracts, parses, and outputs structured chunks ready for AI Agents and RAG.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 4084 stars
+- **Stars / Engagement**: 4108 stars
 
 ---
 
@@ -664,9 +664,15 @@ from shared.core.exceptions import (
     UnknownException,
     ValidationException,
 )
-from shared.core.exceptions.domain_exceptions import RateLimitException, Violation
+from shared.core.exceptions.domain_exceptions import (
+    LLMServiceException,
+    RateLimitException,
+    UnavailableException,
+    Violation,
+)
 from shared.core.logging import LogEvent
 from shared.core.response import ErrorCodeMapper
+from shared.services.retrieval.required_query_embedding import RequiredQueryEmbeddingException
 
 
 def _get_request_id(request: Request) -> str:
@@ -852,13 +858,7 @@ async def validation_exception_handler(
     validation_exc = ValidationException(
         user_message="Request validation failed",
         violations=violations,
-    )
-
-    # Delegate to central handler
-    return await knowhere_exception_handler(request, validation_exc)
-
-
-async def general_exception_handler(request: Reque
+   
 ```
 
 ### Core Architecture Module: `apps/api/app/core/middleware/__init__.py`
@@ -1027,609 +1027,1139 @@ class ApiTelemetryMiddleware:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cf789c7b` (2026-11-21)
-**Commit Message**: Merge pull request #577 from Ontos-AI/fix/wangbinqi/terminal-initial-ingestion-failure
+### Incident Patch 1: `da75fa74` (2026-11-23)
+**Commit Message**: Merge pull request #582 from Ontos-AI/fix/wangbinqi/reject-nul-section-path
 
-Prepare initial publication and retry retirement for release
+Reject NUL characters in corpus scope section paths
 
-**File**: `.github/workflows/build-images.yml` (modified, +1/-0)
+**File**: `apps/api/tests/contract/test_retrieval_tools_invoke_contract.py` (modified, +47/-0)
 ```diff
-@@ -572,6 +572,7 @@ jobs:
-           API_WEBHOOK_ENDPOINT: https://api-staging.knowhereto.ai/v1/internal/s3-events
-           SNS_TOPIC_ARN: arn:aws:sns:us-east-1:107424103509:knowhere-staging-s3-events
-           QSTASH_CALLBACK_BASE_URL: https://api-staging.knowhereto.ai/api/v1
-+          QSTASH_BASE_URL: https://qstash-us-east-1.upstash.io
-           API_CPU: "256"
-           API_MEMORY: "1024"
-           WORKER_CPU: "2048"
-```
-
-**File**: `GLOSSARY.md` (modified, +88/-80)
-```diff
-@@ -7,23 +7,23 @@ retrieval service.
- ## Language
+@@ -255,6 +255,53 @@ async def test_invoke_read_records_the_read_document_and_chunk(
+     assert counts == {("document", None): 1, ("chunk", chunk_id): 1}
  
- **Document**:
--A document with a stable identity within its owner's namespace. Replacing
--its source file or parsing it again can produce a new revision without
--changing that identity.
--_Avoid_: Parsing job, source filename
-+A document with a stable identity within its owner's namespace. Parsing
-+publishes a new document. It does not replace the content of an existing
-+document. Different content is a new document; deleting the previous
-+document is the caller's own action.
-+_Avoid_: Parsing job, source filename, in-place update
  
- **Archived Document**:
--A document excluded from retrieval by archival. Ongoing work cannot return
--it to the searchable corpus, and it is ineligible for indexing retry.
--Retained parsing results and processing history follow existing retention
--rules.
-+A document excluded from new retrievals by archival. A retrieval already
-+in progress may use bodies it read before archival committed. Ongoing work
-+cannot return the document to the searchable corpus. Retained parsing results
-+and processing history follow existing retention rules.
- _Avoid_: Failed parsing job, permanently deleted data
- 
- **Document Revision**:
--One immutable parsing result belonging to a document. Replacing the source
--file or parsing it again produces another revision of the same document
--when the operation explicitly targets that document.
--_Avoid_: Separate document, indexing retry
-+The one immutable parsing result of a document. The baseline and later
-+enrichment are representations of this same result.
-+_Avoid_: Separate document, in-place replacement, indexing retry
- 
- **Retrieval Unit**:
- A piece of a document revision considered as one candidate during lexical
-@@ -32,32 +32,18 @@ is distinct from the number of source pages or words in that revision.
- _Avoid_: Word, page, whole document
- 
- **Published Revision**:
--The document revision currently selected for default retrieval. It remains
--selected while a replacement is prepared and changes only when the
--replacement is ready for retrieval and activated.
--_Avoid_: Latest parsed revision
-+The document revision whose baseline index is available for retrieval.
-+Enrichment does not publish another revision in its place.
-+_Avoid_: Latest parsed revision, activated replacement
- 
- **Latest Parsed Revision**:
--The newest successfully parsed revision of a document, selected for default
--document-content reads even if its indexing is pending or failed. It may
--differ from the published revision used for retrieval.
--_Avoid_: Latest submitted revision, published revision
--
--**Candidate Revision**:
--A document revision targeted by the current update, awaiting search readiness
--and activation. Its parsing result can already be available while an earlier
--published revision remains selected for retrieval.
--_Avoid_: Published revision, separate document
--
--**Superseded Candidate**:
--A candidate revision whose update has been replaced by a later accepted
--update to the same document. It is no longer eligible for indexing retry or
--activation, while its retained parsing result remains accessible.
--_Avoid_: Published revision, retryable candidate
-+The document's stored parsing result. Workers can retain it before initial
-+indexing finishes. A retained result from a failed ingestion remains internal.
-+_Avoid_: Latest submitted revision, a second revision of the same document
- 
- **Primary Lexical Backend**:
--The selected service that supplies lexical retrieval. A candidate revision
--becomes search-ready only after publication to this backend succeeds.
-+The selected service that supplies lexical retrieval. Publishing the
-+initial index to this backend is required for Parsing Completion.
- _Avoid_: Rollback copy, whichever backend responds first
- 
- **Migration Rollback Copy**:
-@@ -80,46 +66,27 @@ readiness requirements. Retiring that path follows a separate decision
- after stability is confirmed.
- _Avoid_: Automatic failover period, stability guaranteed by elapsed time
- 
--**Search Readiness**:
--The state indicating whether a particular document revision is available for
--retrieval. Completing document parsing alone does not establish search
--readiness.
--_Avoid_: Parsing completion, generic namespace health
--
- **Parsing Completion**:
--The milestone at which a document revision's parsing result is complete and
--available to the caller for display or download. It does not require the
--revision to be ready for retrieval.
--_Avoid_: Job completion, search readiness
-+The sole successful outcome visible to a caller for a document-processing
-+job. The initial parsing result and its searchable index are available.
-+Full ingestion publishes the complete result. Progressive ingestion
-+publishes the baseline. A new progressive PDF or PPTX baseline includes
-+coarse chapters and an initial directory.
-+_Avoid_: Search completion, indexing completion, enrichment completion
- 
- **Indexing**:
- The phase of a document-processing job that makes 
-```
-
-**File**: `apps/api/alembic/versions/b1243d5e6f70_add_enrichment_publications.py` (added, +61/-0)
-```diff
-@@ -0,0 +1,61 @@
-+"""Keep enrichment bodies and outcomes alongside the published baseline."""
++async def test_invoke_rejects_nul_in_grep_scope_section_path(
++    developer_api_client_factory: Callable[[], AbstractAsyncContextManager[AsyncClient]],
++) -> None:
++    from tests.contract.test_retrieval_classic_map_unit_contract import _publish_document
 +
-+from collections.abc import Sequence
-+
-+import sqlalchemy as sa
-+from alembic import op
-+
-+revision: str = "b1243d5e6f70"
-+down_revision: str | None = "b0132c4d5e6f"
-+branch_labels: Sequence[str] | None = None
-+depends_on: Sequence[str] | None = None
-+
-+
-+def upgrade() -> None:
-+    op.create_table(
-+        "document_enrichment_publications",
-+        sa.Column("id", sa.String(36), primary_key=True),
-+        sa.Column("document_id", sa.String(36), sa.ForeignKey("documents.document_id", ondelete="CASCADE"), nullable=False),
-+        sa.Column("job_result_id", sa.String(36), sa.ForeignKey("job_results.id", ondelete="CASCADE"), nullable=False),
-+        sa.Column("user_id", sa.Text(), nullable=False),
-+        sa.Column("namespace", sa.String(255), nullable=False),
-+        sa.Column("scope_id", sa.String(64), nullable=False),
-+        sa.Column("state", sa.String(16), nullable=False),
-+        sa.Column("expected_index_count", sa.Integer(), nullable=True),
-+        sa.Column("raw_prefix", sa.Text(), nullable=True),
-+        sa.Column("index_uuid", sa.String(128), nullable=True),
-+        sa.Column("cleanup_after", sa.DateTime(timezone=True), nullable=True),
-+        sa.CheckConstraint("state IN ('writing', 'published', 'failed')", name="ck_enrichment_publication_state"),
-+    )
-+    op.create_index("ix_enrichment_publication_revision", "document_enrichment_publications", ["job_result_id", "state"])
-+    op.create_index("ix_enrichment_publication_cleanup", "document_enrichment_publications", ["cleanup_after"])
-+    op.add_column("document_chunks", sa.Column(
-+        "enrichment_attempt_id", sa.String(36),
-+        sa.ForeignKey("document_enrichment_publications.id", name="fk_document_chunks_enrichment_attempt", ondelete="CASCADE"),
-+    ))
-+    op.create_index("ix_document_chunks_enrichment_attempt_id", "document_chunks", ["enrichment_attempt_id"])
-+    op.create_index(
-+        "uq_document_chunks_baseline_path", "document_chunks",
-+        ["document_id", "job_result_id", "source_chunk_path"], unique=True,
-+        postgresql_where=sa.text("enrichment_attempt_id IS NULL"),
-+    )
-+    op.create_unique_constraint(
-+        "uq_document_chunks_attempt_path", "document_chunks", ["enrichment_attempt_id", "source_chunk_path"],
-+    )
-+    op.drop_constraint("uq_document_chunks_revision_path", "document_chunks", type_="unique")
-+
-+
-+def downgrade() -> None:
-+    # Preserve references to retained enrichment bodies across an application rollback.
-+    if op.get_bind().scalar(sa.text("SELECT EXISTS (SELECT 1 FROM document_enrichment_publications)")):
-+        raise RuntimeError("Cannot remove retained document enrichment publications")
-+    op.create_unique_constraint(
-+        "uq_document_chunks_revision_path", "document_chunks",
-+        ["document_id", "job_result_id", "source_chunk_path"],
-+    )
-+    op.drop_constraint("uq_document_chunks_attempt_path", "document_chunks", type_="unique")
-+    op.drop_index("uq_document_chunks_baseline_path", table_name="document_chunks")
-+    op.drop_index("ix_document_chunks_enrichment_attempt_id", table_name="document_chunks")
-+    op.drop_constraint("fk_document_chunks_enrichment_attempt", "document_chunks", type_="foreignkey")
-+    op.drop_column("document_chunks", "enrichment_attempt_id")
-+    op.drop_table("document_enrichment_publications")
-```
-
-**File**: `apps/api/alembic/versions/b2354e6f7081_schedule_archived_document_cleanup.py` (added, +22/-0)
-```diff
-@@ -0,0 +1,22 @@
-+"""Schedule exact native cleanup after the archived state commits."""
-+
-+from collections.abc import Sequence
-+
-+import sqlalchemy as sa
-+from alembic import op
-+
-+revision: str = "b2354e6f7081"
-+down_revision: str | None = "b1243d5e6f70"
-+branch_labels: Sequence[str] | None = None
-+depends_on: Sequence[str] | None = None
-+
-+
-+def upgrade() -> None:
-+    op.add_column("documents", sa.Column("index_cleanup_after", sa.DateTime(timezone=True), nullable=True))
-+    op.create_index("ix_documents_due_index_cleanup", "documents", ["index_cleanup_after"],
-+        postgresql_where=sa.text("index_cleanup_after IS NOT NULL"))
-+
-+
-+def downgrade() -> None:
-+    op.drop_index("ix_documents_due_index_cleanup", table_name="documents")
-+    op.drop_column("documents", "index_cleanup_after")
-```
-
-**File**: `apps/api/app/api/v1/routes/jobs.py` (modified, +1/-13)
-```diff
-@@ -16,7 +16,7 @@
-     list_jobs_for_user,
- )
- from app.services.rate_limit.data_structures import CurrentUser
--from fastapi import APIRouter, Depends, Query, Response
-+from fastapi import APIRouter, Depends, Query
- from sqlalchemy.ext.asyncio import AsyncSession
- 
- from shared.core.database import get_db
-@@ -32,18 +32,6 @@
- _document_ingestion_service = DocumentIngestionService()
- 
- 
--@router.post("/{job_id}/indexing/retry", response_model=JobResultResponse, summary="Retry indexing without parsing or charging again")
--async def retry_indexing(
--    job_id: str,
--    response: Response,
--    current_user: CurrentUser = Depends(with_current_user),
--    _write_permission: None = Depends(require_write_permission),
--    db: AsyncSession = Depends(get_db),
--) -> JobResultResponse:
--    from app.services.jobs.indexing_retry_service import retryIndexing
--    return await retryIndexing(db, jobId=job_id, userId=current_user.user_id, response=response)
--
--
- # ==================== Shared Helpers ====================
- 
- 
-```
-
-**File**: `apps/api/app/api/v2/routes/jobs.py` (modified, +2/-28)
-```diff
-@@ -14,7 +14,7 @@
-     list_jobs_for_user,
- )
- from app.services.rate_limit.data_structures import CurrentUser
--from fastapi import APIRouter, Depends, Query, Response
-+from fastapi import APIRouter, Depends, Query
- from sqlalchemy.ext.asyncio import AsyncSession
- 
- from shared.core.database import get_db
-@@ -25,10 +25,7 @@
-     JobResponse,
-     JobResultResponse,
- )
--from shared.models.schemas.progressive_ingestion import (
--    EnhancementRetryResponse,
--    SnapshotObjectAccessRequest,
--)
-+from shared.models.schemas.progressive_ingestion import SnapshotObjectAccessRequest
- 
- router = APIRouter(tags=["Jobs"])
- _document_ingestion_service = DocumentIngestionService()
-@@ -76,29 +73,6 @@ async def get_snapshot_object_access(
-     )
- 
- 
--@router.post("/{job_id}/enrichment/retry", response_model=EnhancementRetryResponse, status_code=202, summary="Retry failed search enhancement")
--async def retry_enrichment(
--    job_id: str,
--    current_user: CurrentUser = Depends(with_current_user),
--    _write_permission: None = Depends(require_write_permission),
--    db: AsyncSession = Depends(get_db),
--) -> EnhancementRetryResponse:
--    from app.services.jobs.enrichment_retry_service import retry_job_enrichment
--    return await retry_job_enrichment(db, user_id=current_user.user_id, job_id=job_id)
--
--
--@router.post("/{job_id}/indexing/retry", response_model=JobResultResponse, summary="Retry indexing without parsing or charging again")
--async def retry_indexing(
--    job_id: str,
--    response: Response,
--    current_user: CurrentUser = Depends(with_current_user),
--    _write_permission: None = Depends(require_write_permission),
--    db: AsyncSession = Depends(get_db),
--) -> JobResultResponse:
--    from app.services.jobs.indexing_retry_service import retryIndexing
--    return await retryIndexing(db, jobId=job_id, userId=current_user.user_id, response=response)
--
--
- @router.post("", response_model=JobResponse, summary="Create a v2 parsing job")
- @router.post("/", include_in_schema=False)
- async def create_job(  # pyright: ignore[reportGeneralTypeIssues]
-```
-
-**File**: `apps/api/app/repositories/document_repository.py` (modified, +39/-4)
-```diff
-@@ -4,13 +4,14 @@
- 
- from __future__ import annotations
- 
-+from shared.services.retrieval.lexical.additivevisibility import AdditiveVisibility
- from shared.services.retrieval.corpus_storage import CorpusStorage
- from app.services.demo.revision_reader import resolve_demo_revision
- 
- from datetime import datetime, timezone
- from typing import Sequence, cast
- 
--from sqlalchemy import func, select, true
-+from sqlalchemy import ColumnElement, SQLColumnExpression, func, or_, select, true
- from sqlalchemy.ext.asyncio import AsyncSession
- from sqlalchemy.orm import noload
- 
-@@ -22,6 +23,13 @@
- DocumentJobRevisionRow = tuple[Document, JobResult, Job]
- 
- 
-+def _allows_job_result_delivery(corpus_storage: CorpusStorage) -> ColumnElement[bool]:
-+    """Apply the job result delivery policy in the same query as the artifact."""
-+    if corpus_storage.usesAdditivePublication():
-+        return Job.status == "done"
-+    return or_(Job.status != "failed", Job.failure_stage != "indexing", Job.failure_stage.is_(None))
-+
-+
- class DocumentRepository:
-     async def list_by_user_namespace(
-         self,
-@@ -95,16 +103,23 @@ async def get_current_document_job_revision(
-             document, result = await resolve_demo_revision(db, document_id=document_id, job_result_id=job_result_id)
-             job = (await db.execute(select(Job).where(Job.job_id == result.job_id))).scalar_one()
-             return document, result, job
-+        default_revision: SQLColumnExpression[str | None] = corpusStorage.Document.current_job_result_id
-+        if not corpusStorage.usesAdditivePublication():
-+            default_revision = func.coalesce(
-+                corpusStorage.Document.latest_parsed_job_result_id, default_revision
-+            )
-         stmt = (
-             select(corpusStorage.Document, JobResult, Job)
--            .join(JobResult, JobResult.id == (job_result_id or func.coalesce(
--                corpusStorage.Document.latest_parsed_job_result_id, corpusStorage.Document.current_job_result_id)))
-+            .select_from(corpusStorage.Document)
-+            .join(JobResult, JobResult.id == (job_result_id or default_revision))
-             .join(Job, Job.job_id == JobResult.job_id)
-             .where(corpusStorage.Document.document_id == document_id)
-             .where(corpusStorage.Document.user_id == corpusStorage.resolve_owner(user_id))
-             .where(JobResult.document_id == corpusStorage.Document.document_id)
-             .where(Job.user_id == user_id)
--            .where(corpusStorage.Document.status != "archived")
-+            .where(_allows_job_result_delivery(corpusStorage))
-+            .where((corpusStorage.Document.status != "archived")
-+                if job_result_id is None or not corpusStorage.usesAdditivePublication() else true())
-             .limit(1)
-         )
- 
-@@ -136,6 +151,16 @@ async def count_current_document_chunks(
-             .where(corpusStorage.DocumentChunk.document_id == document_id)
-             .where(corpusStorage.DocumentChunk.job_result_id == job_result_id)
-         )
-+        if corpusStorage.usesAdditivePublication():
-+            stmt = stmt.where(select(corpusStorage.Document.document_id).where(
-+                corpusStorage.Document.document_id == corpusStorage.DocumentChunk.document_id,
-+                corpusStorage.Document.current_job_result_id == corpusStorage.DocumentChunk.job_result_id,
-+                corpusStorage.Document.status == "active",
-+            ).correlate(corpusStorage.DocumentChunk).exists(), AdditiveVisibility.allowsChunk())
-+        elif not corpusStorage.is_demo:
-+            stmt = stmt.join(JobResult, JobResult.id == corpusStorage.DocumentChunk.job_result_id).join(
-+                Job, Job.job_id == JobResult.job_id
-+            ).where(_allows_job_result_delivery(corpusStorage))
-         if chunk_type is not None:
-             stmt = stmt.where(func.lower(corpusStorage.DocumentChunk.chunk_type) == chunk_type)
- 
-@@ -170,6 +195,14 @@ async def list_current_document_chunks(
-             .limit(limit)
-             .offset(offset)
-         )
-+        if corpusStorage.usesAdditivePublication():
-+            stmt = stmt.where(select(corpusStorage.Document.document_id).where(
-+                corpusStorage.Document.document_id == corpusStorage.DocumentChunk.document_id,
-+                corpusStorage.Document.current_job_result_id == corpusStorage.DocumentChunk.job_result_id,
-+                corpusStorage.Document.status == "active",
-+            ).correlate(corpusStorage.DocumentChunk).exists(), AdditiveVisibility.allowsChunk())
-+        elif not corpusStorage.is_demo:
-+            stmt = stmt.join(Job, Job.job_id == JobResult.job_id).where(_allows_job_result_delivery(corpusStorage))
-         if chunk_type is not None:
-             stmt = stmt.where(func.lower(corpusStorage.DocumentChunk.chunk_type) == chunk_type)
- 
-@@ -197,6 +230,8 @@ async def get_current_document_chunk(
-             .where(corpusStorage.DocumentChunk.id == document_chunk_id)
-        
-```
-
-**File**: `apps/api/app/services/document_ingestion/service.py` (modified, +43/-27)
-```diff
-@@ -334,7 +334,13 @@ async def _resolve_scope(
-                 ingestion_mode=command.ingestion_mode,
-             ),
-         )
--        if CorpusStorage.resolve_namespace(payload.namespace).is_demo:
-+        corpus_storage: CorpusStorage = CorpusStorage.resolve_namespace(payload.namespace)
-+        if corpus_storage.is_demo:
-+            if payload.replaces_document_id is not None:
-+                raise ValidationException(
-+                    user_message="Private document replacement requires a private namespace.",
-+                    violations=[{"field": "replaces_document_id", "description": "Private documents only"}],
-+                )
-             documentId: str = await resolve_demo_scope(db, user_id=current_user.user_id, payload=payload)
-             JobMetadataHelper.set_document_scope(job_metadata, document_id=documentId, namespace=DEMO_NAMESPACE)
-             job_metadata["corpus_target"] = "DEMO"
-@@ -345,40 +351,50 @@ async def _resolve_scope(
-         if payload.demo_category_id is not None:
-             raise ValidationException(user_message="demo_category_id applies only to the reserved demo namespace.", violations=[{"field": "demo_category_id", "description": "Use namespace __knowhere_demo__"}])
-         job_metadata["corpus_target"] = "PRIVATE"
--        requested_document_id = JobMetadataHelper.get_document_id(job_metadata)
--        if requested_document_id:
--            active_job = await find_active_job_for_document(
-+        requested_namespace: str | None = payload.namespace
-+        native_publication: bool = corpus_storage.usesAdditivePublication()
-+        if payload.document_id is not None:
-+            user_message: str = "Private ingestion creates a new document."
-+            if native_publication:
-+                user_message = "Create a replacement job with replaces_document_id."
-+            raise ValidationException(
-+                user_message=user_message,
-+                violations=[{"field": "document_id", "description": "Private ingestion creates a new document"}],
-+            )
-+        if payload.replaces_document_id is not None:
-+            if not native_publication:
-+                raise ValidationException(
-+                    user_message="Private document replacement requires the OpenSearch backend.",
-+                    violations=[{"field": "replaces_document_id", "description": "Replacement requires OpenSearch"}],
-+                )
-+            if CorpusStorage.resolve_document(payload.replaces_document_id).is_demo:
-+                raise ValidationException(
-+                    user_message="The replacement target must be a private document.",
-+                    violations=[{"field": "replaces_document_id", "description": "Private documents only"}],
-+                )
-+            replaces_document_id, requested_namespace = await resolve_effective_document_scope(
-                 db,
-                 user_id=current_user.user_id,
--                document_id=requested_document_id,
-+                document_id=payload.replaces_document_id,
-+                requested_namespace=requested_namespace,
-             )
--            if active_job is not None:
--                raise_document_ingestion_conflict(
--                    document_id=requested_document_id,
--                    active_job_id=active_job.job_id,
--                )
--
--        (
--            effective_document_id,
--            effective_namespace,
--        ) = await resolve_effective_document_scope(
-+            job_metadata["replaces_document_id"] = replaces_document_id
-+        effective_document_id, effective_namespace = await resolve_effective_document_scope(
-             db,
-             user_id=current_user.user_id,
--            document_id=requested_document_id,
--            requested_namespace=cast(str | None, payload.namespace),
-+            document_id=None,
-+            requested_namespace=requested_namespace,
-         )
--
--        if not requested_document_id:
--            active_job = await find_active_job_for_document(
--                db,
--                user_id=current_user.user_id,
-+        active_job = await find_active_job_for_document(
-+            db,
-+            user_id=current_user.user_id,
-+            document_id=effective_document_id,
++    namespace: str = f"grep-scope-{uuid4().hex[:8]}"
++    async with developer_api_client_factory() as api_client:
++        published: dict[str, str] = await _publish_document(
++            namespace=namespace,
++            source_file_name="contract.pdf",
++            chunks=[
++                {
++                    "chunk_id": "scope-contract-body",
++                    "type": "text",
++                    "content": "Quarterly revenue",
++                    "path": "contract.pdf/Root/Summary",
++                    "order": 1,
++                    "metadata": {},
++                }
++            ],
 +        )
-+        if active_job is not None:
-+            raise_document_ingestion_conflict(
-                 document_id=effective_document_id,
-+                active_job_id=active_job.job_id,
-             )
--            if active_job is not None:
--                raise_document_ingestion_conflict(
--                    document_id=effective_document_id,
--                    active_job_id=active_job.job_id,
--                )
++        response: Response = await api_client.post(
++            "/api/v2/retrieval/tools/invoke",
++            headers={"X-Knowhere-Namespace": namespace},
++            json={
++                "tool": "corpus.grep",
++                "arguments": {
++                    "pattern": "revenue",
++                    "scope": [
++                        {
++                            "document_id": published["document_id"],
++                            "section_path": "Quarterly\x00Summary",
++                        }
++                    ],
++                },
++            },
++        )
++
++    assert response.status_code == 200
++    assert response.json() == {
++        "text": "",
++        "payload": {},
++        "refs": [],
++        "error": "grep: scope item section_path must not contain NUL characters",
++    }
++
++
+ async def test_invoke_recall_returns_table_connected_to_additive_body(
+     developer_api_client_factory: Callable[[], AbstractAsyncContextManager[AsyncClient]],
+     monkeypatch: pytest.MonkeyPatch,
+```
+
+**File**: `packages/shared-python/shared/services/retrieval/agent_tools/scope.py` (modified, +8/-6)
+```diff
+@@ -97,15 +97,19 @@ async def resolve_scope(
+     if not items:
+         return [], "scope requires at least one {document_id, section_path?} item"
  
-         JobMetadataHelper.set_document_scope(
-             job_metadata,
+-    document_ids: list[str] = []
++    scope_items: list[tuple[str, str]] = []
+     for item in items:
+         if not isinstance(item, dict):
+             return [], f"scope item must be an object with document_id, got {item!r}"
+-        document_id = str(item.get("document_id") or "").strip()
++        document_id: str = str(item.get("document_id") or "").strip()
+         if not document_id:
+             return [], "scope item requires document_id"
+-        document_ids.append(document_id)
++        raw_path: str = str(item.get("section_path") or "").strip()
++        if "\x00" in raw_path:
++            return [], "scope item section_path must not contain NUL characters"
++        scope_items.append((document_id, raw_path))
+ 
++    document_ids: list[str] = [document_id for document_id, _ in scope_items]
+     documents = (
+         (
+             await db.execute(
+@@ -125,12 +129,10 @@ async def resolve_scope(
+     }
+ 
+     targets: list[ScopeTarget] = []
+-    for item in items:
+-        document_id = str(item.get("document_id") or "").strip()
++    for document_id, raw_path in scope_items:
+         job_result_id = revision_by_doc.get(document_id)
+         if not job_result_id:
+             return [], f"unknown document_id: {document_id}"
+-        raw_path = str(item.get("section_path") or "").strip()
+         if not raw_path:
+             targets.append(ScopeTarget(document_id, job_result_id, None))
+             continue
 ```
 
 ---
 
-### Incident Patch 2: `6e745027` (2026-11-21)
-**Commit Message**: Fix pinned page citation source lookup
+### Incident Patch 2: `32df7a7f` (2026-11-23)
+**Commit Message**: Merge pull request #580 from Ontos-AI/fix/wangbinqi/production-logfire-errors
 
-**File**: `apps/api/app/repositories/document_repository.py` (modified, +1/-0)
+Fix production errors in billing, API keys, and retrieval
+
+**File**: `apps/api/app/api/v1/routes/api_key.py` (modified, +6/-7)
 ```diff
-@@ -98,6 +98,7 @@ async def get_current_document_job_revision(
-             return document, result, job
-         stmt = (
-             select(corpusStorage.Document, JobResult, Job)
-+            .select_from(corpusStorage.Document)
-             .join(JobResult, JobResult.id == (job_result_id or func.coalesce(
-                 corpusStorage.Document.latest_parsed_job_result_id, corpusStorage.Document.current_job_result_id)))
-             .join(Job, Job.job_id == JobResult.job_id)
+@@ -168,20 +168,19 @@ async def toggle_api_key(
+ ):
+     """Enable or disable an API key."""
+     try:
+-        success = await _api_key_management_service.toggle_api_key(
++        success: bool = await _api_key_management_service.toggle_api_key(
+             db,
+             user_id=current_user.user_id,
+             api_key_id=api_key_id,
+         )
+-        if success:
+-            return {"message": "API key status updated"}
+-        else:
+-            raise APIKeyOperationException(
+-                internal_message="Failed to toggle API Key status"
+-            )
+     except APIKeyOperationException:
+         raise
+     except Exception as e:
+         raise APIKeyOperationException(
+             internal_message=f"Failed to toggle API Key: {str(e)}"
+         )
++
++    if not success:
++        raise NotFoundException(resource="APIKey", resource_id=api_key_id)
++
++    return {"message": "API key status updated"}
 ```
 
-**File**: `apps/api/tests/contract/test_documents_contract.py` (modified, +47/-2)
+**File**: `apps/api/app/core/exception_handlers.py` (modified, +21/-2)
 ```diff
-@@ -7,7 +7,7 @@
+@@ -62,9 +62,15 @@
+     UnknownException,
+     ValidationException,
+ )
+-from shared.core.exceptions.domain_exceptions import RateLimitException, Violation
++from shared.core.exceptions.domain_exceptions import (
++    LLMServiceException,
++    RateLimitException,
++    UnavailableException,
++    Violation,
++)
+ from shared.core.logging import LogEvent
+ from shared.core.response import ErrorCodeMapper
++from shared.services.retrieval.required_query_embedding import RequiredQueryEmbeddingException
+ 
+ 
+ def _get_request_id(request: Request) -> str:
+@@ -280,7 +286,20 @@ async def _knowhere_exception_handler_adapter(
+     request: Request, exc: Exception
+ ) -> JSONResponse:
+     """Adapt the typed Knowhere handler to FastAPI's generic signature."""
+-    return await knowhere_exception_handler(request, cast(KnowhereException, exc))
++    error: KnowhereException = cast(KnowhereException, exc)
++    cause: Exception | None = error.original_exception
++    if (
++        isinstance(error, RequiredQueryEmbeddingException)
++        and isinstance(cause, LLMServiceException)
++        and cause.details.get("status_code") == 503
++    ):
++        error = UnavailableException(
++            internal_message=error.internal_message,
++            retry_after=1,
++            user_message="Search is temporarily unavailable. Please retry.",
++            original_exception=error,
++        )
++    return await knowhere_exception_handler(request, error)
+ 
+ 
+ async def _http_exception_handler_adapter(
+```
+
+**File**: `apps/api/app/services/billing/billing_command_workflow.py` (modified, +19/-7)
+```diff
+@@ -1,7 +1,10 @@
+ from __future__ import annotations
+ 
+ from app.services.billing.stripe_purchase_service import StripePurchaseService
+-from app.services.billing.stripe_webhook_service import StripeWebhookService
++from app.services.billing.stripe_webhook_service import (
++    StripeWebhookService,
++    StripeWebhookValidationException,
++)
+ from sqlalchemy import select
+ from sqlalchemy.ext.asyncio import AsyncSession
+ 
+@@ -86,18 +89,27 @@ async def handle_stripe_webhook(
+         payload: bytes,
+         stripe_signature: str | None,
+     ) -> dict[str, object]:
+-        stripe_webhook_service = StripeWebhookService()
++        if not stripe_signature:
++            raise StripeWebhookValidationException(
++                user_message="Invalid webhook signature",
++                violations=[
++                    {
++                        "field": "Stripe-Signature",
++                        "description": "Stripe-Signature header is required",
++                    }
++                ],
++            )
++
++        stripe_webhook_service: StripeWebhookService = StripeWebhookService()
+         try:
+-            if not stripe_signature:
+-                raise StripeServiceException(
+-                    internal_message="Missing stripe-signature header"
+-                )
+             return await stripe_webhook_service.handle_webhook(
+                 db,
+                 payload=payload,
+                 sig_header=stripe_signature,
+             )
++        except StripeWebhookValidationException:
++            raise
+         except Exception as exc:
+             raise StripeServiceException(
+                 internal_message=f"Failed to handle webhook: {str(exc)}"
+-            )
++            ) from exc
+```
+
+**File**: `apps/api/app/services/billing/stripe_webhook_service.py` (modified, +23/-10)
+```diff
+@@ -16,7 +16,6 @@
+ 
+ from shared.core.config import settings
+ from shared.core.exceptions.domain_exceptions import (
+-    AuthException,
+     KnowhereException,
+     StripeServiceException,
+     SystemSettingMissingException,
+@@ -31,6 +30,10 @@
+ ]
+ 
+ 
++class StripeWebhookValidationException(ValidationException):
++    """Stripe rejected the webhook request before dispatch."""
++
++
+ class StripeWebhookService:
+     def __init__(
+         self,
+@@ -71,27 +74,37 @@ async def handle_webhook(
+         payload: bytes,
+         sig_header: str,
+     ) -> dict[str, object]:
++        webhook_secret: str | None = settings.STRIPE_WEBHOOK_SECRET
++        if not webhook_secret:
++            raise SystemSettingMissingException(
++                internal_message="Stripe webhook secret not configured (STRIPE_WEBHOOK_SECRET)"
++            )
++
+         try:
+             event = stripe.Webhook.construct_event(
+                 payload,
+                 sig_header,
+-                settings.STRIPE_WEBHOOK_SECRET,
++                webhook_secret,
+             )
+-            return await self._dispatch_event(db, event)
+         except ValueError as exc:
+-            logger.error(f"Invalid payload: {exc}")
+-            raise ValidationException(
++            raise StripeWebhookValidationException(
+                 user_message="Invalid webhook payload",
+                 violations=[
+                     {"field": "payload", "description": "Webhook payload is malformed"}
+                 ],
+-            )
++            ) from exc
+         except stripe.SignatureVerificationError as exc:
+-            logger.error(f"Invalid signature: {exc}")
+-            raise AuthException(
++            raise StripeWebhookValidationException(
+                 user_message="Invalid webhook signature",
+-                internal_message=f"Webhook signature verification failed: {exc}",
+-            )
++                violations=[
++                    {
++                        "field": "Stripe-Signature",
++                        "description": "Stripe-Signature could not be verified",
++                    }
++                ],
++            ) from exc
++
++        return await self._dispatch_event(db, event)
+ 
+     async def _dispatch_event(
+         self,
+```
+
+**File**: `apps/api/tests/contract/test_api_key_contract.py` (modified, +55/-1)
+```diff
+@@ -4,7 +4,10 @@
  from uuid import uuid4
  
  import pytest
 -from httpx import AsyncClient
 +from httpx import AsyncClient, Response
- from sqlalchemy import text
- from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
++
++from shared.utils.api_keys import generate_api_key
++from tests.support.contract_database import ContractDatabase
  
-@@ -762,6 +762,48 @@ async def test_should_return_page_citation_source_for_page_memory_document(
-     assert response_json["expires_at"]
+ 
+ @pytest.mark.asyncio
+@@ -144,6 +147,57 @@ async def test_should_return_not_found_for_a_missing_api_key_metadata_request(
+     }
  
  
 +@pytest.mark.asyncio
-+@pytest.mark.parametrize("document_status", ["active", "archived"])
-+async def test_should_return_pinned_page_citation_source_for_private_opensearch_document(
++@pytest.mark.parametrize(
++    "belongs_to_another_user", [False, True], ids=["missing", "another-user"]
++)
++async def test_should_return_not_found_when_toggling_an_unowned_api_key(
 +    developer_api_client_factory: Callable[
 +        [], AbstractAsyncContextManager[AsyncClient]
 +    ],
-+    monkeypatch: pytest.MonkeyPatch,
-+    document_status: str,
++    belongs_to_another_user: bool,
 +) -> None:
-+    document_id: str = f"doc_{uuid4().hex[:12]}"
-+    route: str = f"/api/v2/documents/{document_id}/files/page-citation-source"
++    api_key_id: str = str(uuid4())
++    owner_headers: dict[str, str] = {}
 +
 +    async with developer_api_client_factory() as api_client:
++        if belongs_to_another_user:
++            owner_key: str = generate_api_key()
++            owner_headers = {"Authorization": f"Bearer {owner_key}"}
++            await ContractDatabase.insert_authenticated_user(
++                user_id=f"contract-toggle-owner-{uuid4().hex[:12]}",
++                api_key=owner_key,
++            )
++            list_response: Response = await api_client.get(
++                "/api/v1/auth/list", headers=owner_headers
++            )
++            assert list_response.status_code == 200
++            api_keys: list[dict[str, object]] = list_response.json()["api_keys"]
++            assert len(api_keys) == 1
++            api_key_id = cast(str, api_keys[0]["id"])
++
++        response: Response = await api_client.put(f"/api/v1/auth/{api_key_id}/toggle")
++
++        if belongs_to_another_user:
++            owner_response: Response = await api_client.get(
++                f"/api/v1/auth/{api_key_id}", headers=owner_headers
++            )
++            assert owner_response.status_code == 200
++            assert owner_response.json()["is_active"] is True
++
++    assert response.status_code == 404
++    assert response.headers["x-request-id"]
++    assert response.json() == {
++        "success": False,
++        "error": {
++            "code": "NOT_FOUND",
++            "message": "APIKey not found",
++            "request_id": response.headers["x-request-id"],
++            "details": {"resource": "APIKey", "id": api_key_id},
++        },
++    }
++
++
+ @pytest.mark.asyncio
+ async def test_should_disable_and_then_reenable_an_api_key_via_the_toggle_route(
+     developer_api_client_factory: Callable[
+```
+
+**File**: `apps/api/tests/contract/test_billing_contract.py` (modified, +90/-6)
+```diff
+@@ -1,9 +1,11 @@
+ import asyncio
++import hmac
+ import importlib
+ import json
+ from collections.abc import Callable
+ from contextlib import AbstractAsyncContextManager
+ from datetime import datetime, timedelta, timezone
++from time import time
+ from typing import cast
+ from uuid import uuid4
+ 
+@@ -431,22 +433,104 @@ async def test_should_split_subscriptions_and_credit_packages_in_price_configs(
+ 
+ 
+ @pytest.mark.asyncio
+-async def test_should_reject_a_missing_stripe_signature_header_for_the_webhook_endpoint(
++@pytest.mark.parametrize(
++    ("signature", "description"),
++    [
++        (None, "Stripe-Signature header is required"),
++        ("invalid-signature", "Stripe-Signature could not be verified"),
++    ],
++    ids=["missing-signature", "invalid-signature"],
++)
++async def test_should_return_bad_request_for_an_invalid_stripe_webhook_signature(
+     api_client_factory: Callable[[], AbstractAsyncContextManager[AsyncClient]],
++    signature: str | None,
++    description: str,
+ ) -> None:
++    headers: dict[str, str] = (
++        {"Stripe-Signature": signature} if signature is not None else {}
++    )
+     async with api_client_factory() as api_client:
+-        response = await api_client.post("/api/v1/billing/webhook", content=b"{}")
++        response = await api_client.post(
++            "/api/v1/billing/webhook", content=b"{}", headers=headers
++        )
+ 
+-    assert response.status_code == 500
++    assert response.status_code == 400
+     assert response.headers["x-request-id"]
+ 
+     response_json = cast(dict[str, object], response.json())
+     error = cast(dict[str, object], response_json["error"])
+ 
+     assert response_json["success"] is False
+-    assert error["code"] == "INTERNAL_ERROR"
+-    assert error["message"] == "An internal system error occurred. Please contact support."
+-    assert error["details"] == {"service": "stripe"}
++    assert error["code"] == "INVALID_ARGUMENT"
++    assert error["message"] == "Invalid webhook signature"
++    assert error["details"] == {
++        "violations": [{"field": "Stripe-Signature", "description": description}],
++    }
++
++
++def _sign_stripe_webhook_payload(payload: bytes, secret: str) -> str:
++    timestamp: int = int(time())
++    message: bytes = f"{timestamp}.".encode() + payload
++    signature: str = hmac.digest(secret.encode(), message, "sha256").hex()
++    return f"t={timestamp},v1={signature}"
++
++
++@pytest.mark.asyncio
++@pytest.mark.parametrize("is_malformed", [False, True], ids=["valid", "malformed"])
++async def test_should_verify_stripe_webhook_before_handling_the_event(
++    api_client_factory: Callable[[], AbstractAsyncContextManager[AsyncClient]],
++    is_malformed: bool,
++) -> None:
++    payload: bytes = (
++        b"{"
++        if is_malformed
++        else b'{"id":"evt_contract","object":"event","type":"customer.created"}'
++    )
++    async with api_client_factory() as api_client:
 +        from shared.core.config import settings
 +
-+        monkeypatch.setattr(settings, "KNOWHERE_LEXICAL_BACKEND", "opensearch")
-+        revision: dict[str, str] = await _insert_document_revision_with_chunks(
-+            document_id=document_id,
-+            parse_track="page_memory",
-+            status=document_status,
-+            chunks=[],
++        secret: str | None = settings.STRIPE_WEBHOOK_SECRET
++        assert secret
++        response = await api_client.post(
++            "/api/v1/billing/webhook",
++            content=payload,
++            headers={"Stripe-Signature": _sign_stripe_webhook_payload(payload, secret)},
 +        )
-+        _upload_page_citation_source(job_id=revision["job_id"])
 +
-+        unpinned: Response = await api_client.get(route)
-+        assert unpinned.status_code == (200 if document_status == "active" else 404)
++    if is_malformed:
++        assert response.status_code == 400
++        assert response.json()["error"]["code"] == "INVALID_ARGUMENT"
++        assert response.json()["error"]["message"] == "Invalid webhook payload"
++    else:
++        assert response.status_code == 200
++        assert response.json() == {"status": "ignored", "event_type": "customer.created"}
 +
-+        pinned: Response = await api_client.get(
-+            route, params={"job_result_id": revision["job_result_id"]}
++
++@pytest.mark.asyncio
++async def test_should_return_server_error_when_processing_a_verified_stripe_event_fails(
++    api_client_factory: Callable[[], AbstractAsyncContextManager[AsyncClient]],
++    monkeypatch: MonkeyPatch,
++) -> None:
++    payload: bytes = b'{"id":"evt_contract","object":"event","type":"checkout.session.completed"}'
++
++    async def fail_after_verification(*_args: object) -> None:
++        raise ValueError("Simulated payment processing failure")
++
++    async with api_client_factory() as api_client:
++        from app.services.billing.stripe_webhook_service import StripeWebhookService
++        from shared.core.config import settings
++
++        secret: str | None = settings.STRIPE_WEBHOOK_SECRET
++        assert secret
++        monkeypatch.setattr(StripeWebhookService, "_dispatch_event", fail_after_verification)
++        response = await api_client.post(
++            "/api/v1/billing/webhook",
++            content=payload,
++            headers={"Stripe-Signature": _sign_stripe_webhook_payload(payload, secret)},
 +        )
-+        assert pinned.status_code == 200
-+        payload: dict[str, object] = cast(dict[str, object], pinned.json())
-+        assert payload["job_result_id"] == revision["job_result_id"]
-+        assert payload["file_name"] == "source.pdf"
-+        assert payload["content_type"] == "application/pdf"
 +
-+        missing: Response = await api_client.get(
-+            route, params={"job_result_id": str(uuid4())}
-+        )
-+        assert missing.status_code == 404
-+
-+
- @pytest.mark.asyncio
- async def test_should_return_not_found_for_chunk_document_page_citation_source(
-     developer_api_client_factory: Callable[
-@@ -855,10 +897,12 @@ async def test_should_return_not_found_for_archived_page_citation_source(
++    assert response.status_code == 500
++    assert response.json()["error"]["code"] == "INTERNAL_ERROR"
  
  
  @pytest.mark.asyncio
-+@pytest.mark.parametrize("pin_revision", [False, True])
- async def test_should_return_not_found_for_other_users_page_citation_source(
+```
+
+**File**: `apps/api/tests/contract/test_retrieval_classic_map_unit_contract.py` (modified, +83/-1)
+```diff
+@@ -7,7 +7,7 @@
+ from uuid import UUID, uuid4
+ 
+ import pytest
+-from httpx import AsyncClient
++from httpx import AsyncClient, Client, MockTransport, Request, Response
+ from sqlalchemy import Engine, event, select
+ from sqlalchemy.engine import Result
+ from sqlalchemy.ext.asyncio import AsyncSession
+@@ -142,6 +142,88 @@ async def execute_then_refine(
+     ] == [(new_chunk["chunk_id"], new_chunk["content"], [7])]
+ 
+ 
++@pytest.mark.parametrize(
++    ("upstream_status", "expected_status", "expected_code", "retry_after"),
++    [
++        (503, 503, "UNAVAILABLE", "1"),
++        (500, 500, "INTERNAL_ERROR", None),
++    ],
++)
++async def test_required_visual_embedding_error_response_after_gateway_retries(
++    developer_api_client_factory: Callable[[], AbstractAsyncContextManager[AsyncClient]],
++    monkeypatch: pytest.MonkeyPatch,
++    upstream_status: int,
++    expected_status: int,
++    expected_code: str,
++    retry_after: str | None,
++) -> None:
++    namespace: str = f"embedding-retry-{uuid4().hex[:8]}"
++    requests: list[Request] = []
++
++    def respond_to_embedding(request: Request) -> Response:
++        requests.append(request)
++        return Response(upstream_status, json={"error": {"message": "private gateway detail"}})
++
++    with Client(transport=MockTransport(respond_to_embedding)) as gateway_client:
++        async with developer_api_client_factory() as api_client:
++            from shared.core.config import settings
++            from shared.models.database.document import DocumentPageEmbedding
++            from shared.services.ai.embedding import multimodal_client
++
++            published: dict[str, str] = await _publish_document(
++                namespace=namespace,
++                source_file_name="report.pdf",
++                chunks=[
++                    {
++                        "chunk_id": f"report-page-{page_number}",
++                        "type": "page",
++                        "content": f"Revenue statistics for quarter {page_number}",
++                        "path": f"report.pdf/Root/Quarter {page_number}/body",
++                        "order": page_number,
++                        "metadata": {"page_nums": [page_number]},
++                    }
++                    for page_number in (1, 2)
++                ],
++            )
++            async with contract_db_session() as db:
++                db.add(
++                    DocumentPageEmbedding(
++                        user_id=_USER_ID,
++                        namespace=namespace,
++                        document_id=published["document_id"],
++                        job_result_id=published["job_result_id"],
++                        chunk_id="report-page-1",
++                        page_num=1,
++                        embedding=[0.1] * multimodal_client.DEFAULT_EMBEDDING_DIM,
++                    )
++                )
++                await db.commit()
++
++            monkeypatch.setattr(settings, "VISUAL_RETRIEVAL_ENABLED", True)
++            monkeypatch.setattr(multimodal_client, "_should_mock_embeddings", lambda: False)
++            monkeypatch.setattr(multimodal_client, "_resolve_vercel_api_key", lambda: "test-key")
++            monkeypatch.setattr(multimodal_client, "get_sync_client", lambda: gateway_client)
++            monkeypatch.setattr(multimodal_client, "_sleep_before_retry", lambda _attempt: None)
++
++            response: Response = await api_client.post(
++                "/api/v2/retrieval/query",
++                json={
++                    "namespace": namespace,
++                    "query": "revenue statistics",
++                    "top_k": 1,
++                    "use_agentic": False,
++                },
++            )
++
++    assert [request.url.path for request in requests] == ["/v1/embeddings"] * 3
++    assert response.status_code == expected_status
++    assert response.headers.get("retry-after") == retry_after
++    result: dict[str, object] = response.json()
++    assert result["success"] is False
++    assert cast(dict[str, object], result["error"])["code"] == expected_code
++    assert "private gateway detail" not in response.text
++
++
+ async def test_classic_route_maps_winning_unit_to_one_chunk(
      developer_api_client_factory: Callable[
          [], AbstractAsyncContextManager[AsyncClient]
-     ],
-+    pin_revision: bool,
- ) -> None:
-     document_id = f"doc_{uuid4().hex[:12]}"
-     other_user_id = f"contract-user-{uuid4().hex[:12]}"
-@@ -882,7 +926,8 @@ async def test_should_return_not_found_for_other_users_page_citation_source(
-         )
-         _upload_page_citation_source(job_id=revision["job_id"])
-         response = await api_client.get(
--            f"/api/v2/documents/{document_id}/files/page-citation-source"
-+            f"/api/v2/documents/{document_id}/files/page-citation-source",
-+            params={"job_result_id": revision["job_result_id"]} if pin_revision else None,
-         )
+```
+
+**File**: `apps/api/tests/contract/test_retrieval_document_scope.py` (modified, +32/-1)
+```diff
+@@ -2,19 +2,22 @@
  
-     assert response.status_code == 404
+ import asyncio
+ import json
+-from contextlib import asynccontextmanager
++from collections.abc import Callable
++from contextlib import AbstractAsyncContextManager, asynccontextmanager
+ from types import SimpleNamespace
+ from typing import Any
+ from uuid import uuid4
+ 
+ import pytest
++from httpx import AsyncClient
+ from sqlalchemy import select
+ 
+ from shared.models.database.document import DocumentChunk, GraphEdge, GraphNode
+ from shared.services.retrieval.agent_explore.dispatch import dispatch_tool_call
+ from shared.services.retrieval.agent_explore.budget import EpisodeBudget
+ from shared.services.retrieval.agent_explore.evidence_pool import Candidate
+ from shared.services.retrieval.agent_explore.types import EpisodeResult
++from shared.services.retrieval.agent_tools import ToolResult
+ from shared.services.retrieval.cache_service import _cache_shape_digest
+ from shared.services.retrieval.document_scope import DocumentScope
+ from shared.services.retrieval.hydration.connected import hydrate_connected_target_rows
+@@ -108,6 +111,34 @@ def _matrix(ids):
+     ]
+ 
+ 
++@pytest.mark.parametrize(
++    ("tool_name", "arguments", "result_key"),
++    [
++        ("corpus.list_documents", {}, "documents"),
++        ("corpus.grep", {"pattern": "scopeprobe"}, "rows"),
++    ],
++)
++async def test_corpus_tools_return_empty_results_for_empty_namespace(
++    developer_api_client_factory: Callable[[], AbstractAsyncContextManager[AsyncClient]],
++    tool_name: str,
++    arguments: dict[str, str],
++    result_key: str,
++) -> None:
++    namespace: str = f"empty-corpus-{uuid4().hex[:8]}"
++    async with developer_api_client_factory():
++        result: ToolResult = await dispatch_tool_call(
++            tool_name,
++            arguments,
++            db_factory=contract_db_session,
++            user_id="local-dev-user",
++            namespace=namespace,
++        )
++
++    assert result.error is None
++    assert result.payload[result_key] == []
++    assert result.refs == []
++
++
+ async def test_scope_matrix_all_corpus_tools_and_refs(developer_api_client_factory):
+     namespace = f"scope-tools-{uuid4().hex[:8]}"
+     async with developer_api_client_factory():
+```
+
+---
+
+### Incident Patch 3: `f8baf09f` (2026-11-23)
+**Commit Message**: Trace retrieval router decisions and fallback outcomes
+
+**File**: `apps/api/tests/contract/test_retrieval_query_router_contract.py` (modified, +116/-2)
+```diff
+@@ -2,11 +2,12 @@
+ 
+ from collections.abc import Callable
+ from contextlib import AbstractAsyncContextManager
+-from typing import Any, cast
++from typing import Any, NoReturn, cast
+ from uuid import uuid4
+ 
+ import pytest
+-from httpx import AsyncClient
++from httpx import AsyncClient, ConnectError
++from loguru import logger
+ from pytest import MonkeyPatch
+ 
+ from shared.services.retrieval.routing.types import QueryMode, RouterDecision
+@@ -162,6 +163,119 @@ async def test_unset_use_agentic_agent_decision_uses_agent_explore(
+     assert body["router_decision"]["source"] == "llm"
+ 
+ 
++@pytest.mark.asyncio
++@pytest.mark.parametrize(
++    ("uses_override", "fallback_succeeds"),
++    [(True, True), (False, False)],
++    ids=["request-model-fallback-succeeds", "default-model-fallback-fails"],
++)
++async def test_automatic_router_logs_model_failure_and_fallback_outcome(
++    developer_api_client_factory: Callable[
++        [], AbstractAsyncContextManager[AsyncClient]
++    ],
++    monkeypatch: MonkeyPatch,
++    uses_override: bool,
++    fallback_succeeds: bool,
++) -> None:
++    namespace: str = f"router-fallback-{uuid4().hex[:8]}"
++    request_key: str = "test-router-provider-secret"
++    query: str = "private test query text"
++    events: list[dict[str, object]] = []
++    payload: dict[str, object] = {"namespace": namespace, "query": query, "top_k": 1}
++    if uses_override:
++        payload["llm_config"] = {
++            "model": "request-router-model",
++            "api_key": request_key,
++            "base_url": "https://router.example.test/v1",
++        }
++
++    async with developer_api_client_factory() as api_client:
++        from shared.core.exceptions.domain_exceptions import (
++            LLMServiceException,
++            UnavailableException,
++        )
++        from shared.services.ai import openai_compatible_client_sync
++        from shared.services.retrieval.agent_explore import harness
++        from shared.services.retrieval.routing import config
++
++        class FailingRouterClient:
++            def chat_completion_with_usage(
++                self, *_args: object, **_kwargs: object
++            ) -> NoReturn:
++                connection_error: ConnectError = ConnectError("Provider connection failed")
++                connection_error.__cause__ = OSError(111, "Connection refused")
++                raise LLMServiceException(
++                    internal_message="Provider request failed",
++                    original_exception=connection_error,
++                ) from connection_error
++
++        class FailingAgent:
++            async def run_episode(self, **_kwargs: object) -> NoReturn:
++                raise UnavailableException(
++                    internal_message="Agent unavailable", retry_after=1
++                )
++
++        target: dict[str, str] = await _publish_above_top_k(namespace=namespace)
++        monkeypatch.setattr(config, "QUERY_ROUTER_MODEL", "default-router-model")
++        monkeypatch.setattr(
++            openai_compatible_client_sync,
++            "get_openai_client",
++            lambda **_kwargs: FailingRouterClient(),
++        )
++        if fallback_succeeds:
++            _patch_harness(monkeypatch, _episode_keeping_refs(documents=[target]))
++        else:
++            monkeypatch.setattr(
++                harness, "resolve_harness", lambda **_kwargs: FailingAgent()
++            )
++
++        sink_id: int = logger.add(
++            lambda message: events.append(message.record["extra"].copy()),
++            level="INFO",
++            filter=lambda record: str(record["extra"].get("event", "")).startswith(
++                "retrieval.query_router."
++            ),
++        )
++        try:
++            response = await api_client.post("/api/v2/retrieval/query", json=payload)
++        finally:
++            logger.remove(sink_id)
++
++    assert response.status_code == (200 if fallback_succeeds else 503)
++    assert [entry["event"] for entry in events] == [
++        "retrieval.query_router.decision",
++        "retrieval.query_router.fallback",
++    ]
++    decision, fallback = events
++    request_id: str = response.headers["x-request-id"]
++    assert decision["request_id"] == fallback["request_id"] == request_id
++    assert decision["routing_trigger"] == "use_agentic_unset"
++    assert decision["model_config_source"] == ("request" if uses_override else "default")
++    assert decision["model_name"] == (
++        "request-router-model" if uses_override else "default-router-model"
++    )
++    assert decision["failure_stage"] == "model_connect"
++    assert decision["failure_error_type"] == "ConnectError"
++    assert decision["failure_errno"] == 111
++    assert fallback["fallback_outcome"] == (
++        "succeeded" if fallback_succeeds else "failed"
++    )
++    if fallback_succeeds:
++        assert fallback["agent_stop_reason"] == "finished"
++        assert response.json()["router_decision"] == {
++            "mode": "agent",
++            "reason": "",
++            "source": "fallback",
++    
+```
+
+**File**: `packages/shared-python/shared/core/logging.py` (modified, +3/-0)
+```diff
+@@ -55,6 +55,9 @@ class LogEvent(Enum):
+ 
+     PUBLICATION_TRACE_TERMINAL = "publication.trace.terminal"
+ 
++    RETRIEVAL_QUERY_ROUTER_DECISION = "retrieval.query_router.decision"
++    RETRIEVAL_QUERY_ROUTER_FALLBACK = "retrieval.query_router.fallback"
++
+     S3_WEBHOOK_EVENT = "s3.webhook"
+ 
+     # iLoveAPI document conversion events
+```
+
+**File**: `packages/shared-python/shared/services/retrieval/execution/routes.py` (modified, +40/-4)
+```diff
+@@ -1,5 +1,6 @@
+ from __future__ import annotations
+ 
++import asyncio
+ import time
+ from collections.abc import AsyncIterator, Sequence
+ from contextlib import AbstractAsyncContextManager, asynccontextmanager
+@@ -10,6 +11,7 @@
+ from sqlalchemy.ext.asyncio import AsyncSession
+ 
+ from shared.core.config import settings
++from shared.core.logging import LogEvent
+ from shared.services.retrieval.execution.postgresql_snapshot import (
+     open_postgresql_snapshot,
+     validate_postgresql_snapshot,
+@@ -126,6 +128,8 @@ async def run_retrieval_route(
+             if native_read is not None:
+                 native_read.isClassic = True
+             outcome = await _run_classic_topk_route(context)
++        elif decision is not None and decision.source == "fallback":
++            outcome = await _run_agent_fallback(context)
+         else:
+             outcome = await _run_agent_explore_route(context)
+ 
+@@ -149,13 +153,45 @@ async def _resolve_auto_route(
+         )
+     else:
+         decision = await classify_query_mode(context.query)
+-    logger.info(
+-        f"retrieval query router mode={decision.mode.value} "
+-        f"source={decision.source} reason={decision.reason}"
+-    )
++    logger.bind(
++        event=LogEvent.RETRIEVAL_QUERY_ROUTER_DECISION.value,
++        routing_trigger="use_agentic_unset",
++        selected_mode=decision.mode.value,
++        decision_source=decision.source,
++        model_config_source=decision.model_config_source,
++        model_name=decision.attempted_model_name or decision.model_name or None,
++        failure_stage=decision.failure_stage,
++        failure_error_type=decision.failure_error_type,
++        failure_errno=decision.failure_errno,
++    ).info("Retrieval query router decision")
+     return decision.mode == QueryMode.AGENT, decision
+ 
+ 
++async def _run_agent_fallback(context: RetrievalRouteContext) -> RetrievalRouteOutcome:
++    fallback_log = logger.bind(
++        event=LogEvent.RETRIEVAL_QUERY_ROUTER_FALLBACK.value,
++        fallback_route="agent_explore",
++    )
++    try:
++        outcome: RetrievalRouteOutcome = await _run_agent_explore_route(context)
++    except asyncio.CancelledError:
++        fallback_log.bind(fallback_outcome="cancelled").info(
++            "Retrieval query fallback cancelled"
++        )
++        raise
++    except Exception as error:
++        fallback_log.bind(
++            fallback_outcome="failed", fallback_error_type=type(error).__name__
++        ).warning("Retrieval query fallback failed")
++        raise
++    fallback_log.bind(
++        fallback_outcome="succeeded",
++        agent_stop_reason=outcome.response.get("stop_reason"),
++        result_count=outcome.completion_count,
++    ).info("Retrieval query fallback completed")
++    return outcome
++
++
+ async def _try_run_small_corpus_route(
+     context: RetrievalRouteContext,
+ ) -> RetrievalRouteOutcome | None:
+```
+
+**File**: `packages/shared-python/shared/services/retrieval/routing/classifier.py` (modified, +56/-18)
+```diff
+@@ -2,33 +2,27 @@
+ 
+ import asyncio
+ import json
+-from typing import Any
++from dataclasses import replace
++from typing import Literal
+ 
++import httpx
+ from loguru import logger
+ 
+ from shared.services.retrieval.routing import config as routing_config
+ from shared.services.retrieval.routing.prompt import QUERY_ROUTER_SYSTEM_PROMPT
+ from shared.services.retrieval.routing.types import QueryMode, RouterDecision
+ 
+ 
+-def _resolve_client_and_model() -> tuple[Any, str]:
+-    from shared.services.ai.llm_overrides import resolve_text
+-    from shared.services.ai.openai_compatible_client_sync import get_openai_client
+-
+-    requested = routing_config.QUERY_ROUTER_MODEL
+-    effective_model, api_key, api_url = resolve_text(requested)
+-    model = effective_model or requested
+-    client = get_openai_client(model=model, api_key=api_key, api_url=api_url)
+-    return client, model
+-
+-
+-def _fallback_decision(*, model_name: str, tokens_used: int = 0) -> RouterDecision:
++def _fallback_decision(
++    *, model_name: str, tokens_used: int = 0, failure_stage: str = "model_response"
++) -> RouterDecision:
+     return RouterDecision(
+         mode=QueryMode.AGENT,
+         reason="",
+         source="fallback",
+         model_name=model_name,
+         tokens_used=tokens_used,
++        failure_stage=failure_stage,
+     )
+ 
+ 
+@@ -53,10 +47,46 @@ def _parse_decision(
+     )
+ 
+ 
++def _describe_failure(error: Exception, stage: str) -> tuple[str, str, int | None]:
++    error_type: str = type(error).__name__
++    error_number: int | None = None
++    current: BaseException | None = error
++    for _ in range(8):
++        if current is None:
++            break
++        if isinstance(current, httpx.HTTPError):
++            error_type = type(current).__name__
++            if isinstance(current, (httpx.ConnectError, httpx.ConnectTimeout)):
++                stage = "model_connect"
++            elif isinstance(current, httpx.UnsupportedProtocol):
++                stage = "model_protocol"
++            elif isinstance(
++                current, (httpx.HTTPStatusError, httpx.ReadError, httpx.ReadTimeout)
++            ):
++                stage = "model_response"
++        if isinstance(current, OSError) and current.errno is not None:
++            error_number = current.errno
++        current = current.__cause__ or current.__context__
++    return stage, error_type, error_number
++
++
+ async def classify_query_mode(query: str) -> RouterDecision:
+-    model_name = ""
++    model_name: str = ""
++    attempted_model_name: str = routing_config.QUERY_ROUTER_MODEL
++    model_config_source: Literal["default", "request"] | None = None
++    failure_stage: str = "model_config"
+     try:
+-        client, model_name = _resolve_client_and_model()
++        from shared.services.ai.llm_overrides import resolve_text
++        from shared.services.ai.openai_compatible_client_sync import get_openai_client
++
++        effective_model, api_key, api_url = resolve_text(attempted_model_name)
++        attempted_model_name = effective_model or attempted_model_name
++        model_config_source = "request" if api_url is not None else "default"
++        client = get_openai_client(
++            model=attempted_model_name, api_key=api_key, api_url=api_url
++        )
++        model_name = attempted_model_name
++        failure_stage = "model_request"
+         content, usage = await asyncio.to_thread(
+             client.chat_completion_with_usage,
+             [
+@@ -70,12 +100,20 @@ async def classify_query_mode(query: str) -> RouterDecision:
+             response_format={"type": "json_object"},
+             usage_task="retrieval.query_router",
+         )
++        failure_stage = "model_response"
+         tokens_used = int((usage or {}).get("total_tokens", 0) or 0)
+-        return _parse_decision(
++        decision: RouterDecision = _parse_decision(
+             str(content or ""),
+             model_name=model_name,
+             tokens_used=tokens_used,
+         )
+     except Exception as exc:
+-        logger.warning("retrieval query router fallback to agent: {}", exc)
+-        return _fallback_decision(model_name=model_name)
++        failure_stage, error_type, error_number = _describe_failure(exc, failure_stage)
++        logger.warning("retrieval query router fallback to agent: {}", error_type)
++        decision = replace(
++            _fallback_decision(model_name=model_name, failure_stage=failure_stage),
++            attempted_model_name=attempted_model_name,
++            failure_error_type=error_type,
++            failure_errno=error_number,
++        )
++    return replace(decision, model_config_source=model_config_source)
+```
+
+**File**: `packages/shared-python/shared/services/retrieval/routing/types.py` (modified, +6/-1)
+```diff
+@@ -2,7 +2,7 @@
+ 
+ from dataclasses import dataclass
+ from enum import Enum
+-from typing import Any
++from typing import Any, Literal
+ 
+ 
+ class QueryMode(str, Enum):
+@@ -17,6 +17,11 @@ class RouterDecision:
+     source: str
+     model_name: str
+     tokens_used: int
++    model_config_source: Literal["default", "request"] | None = None
++    attempted_model_name: str | None = None
++    failure_stage: str | None = None
++    failure_error_type: str | None = None
++    failure_errno: int | None = None
+ 
+     def to_dict(self) -> dict[str, Any]:
+         return {
+```
+
+**File**: `packages/shared-python/shared/tests/test_query_router_classifier.py` (modified, +24/-9)
+```diff
+@@ -13,6 +13,7 @@
+ os.environ.setdefault("S3_TEMP_PATH", "/tmp")
+ 
+ import pytest
++from httpx import ConnectTimeout, UnsupportedProtocol
+ 
+ from shared.core.config import settings
+ from shared.services.retrieval.execution.response_projection import (
+@@ -33,10 +34,13 @@ def chat_completion_with_usage(self, messages: object, **kwargs: object) -> tupl
+         return self.content, self.usage
+ 
+ 
+-def _patch_client(monkeypatch: pytest.MonkeyPatch, client: _FakeClient) -> None:
++def _patch_client(monkeypatch: pytest.MonkeyPatch, client: object) -> None:
+     monkeypatch.setattr(
+-        "shared.services.retrieval.routing.classifier._resolve_client_and_model",
+-        lambda: (client, "test-router-model"),
++        "shared.services.retrieval.routing.config.QUERY_ROUTER_MODEL", "test-router-model"
++    )
++    monkeypatch.setattr(
++        "shared.services.ai.openai_compatible_client_sync.get_openai_client",
++        lambda **_kwargs: client,
+     )
+ 
+ 
+@@ -51,6 +55,8 @@ async def test_classifier_parses_classic_json(monkeypatch: pytest.MonkeyPatch) -
+     assert decision.source == "llm"
+     assert decision.reason == "single fact"
+     assert decision.model_name == "test-router-model"
++    assert decision.model_config_source == "default"
++    assert decision.failure_stage is None
+     assert decision.tokens_used == 4
+     assert client.calls[0]["temperature"] == 0.0
+     assert client.calls[0]["response_format"] == {"type": "json_object"}
+@@ -88,6 +94,7 @@ async def test_classifier_invalid_mode_falls_back_to_agent(
+     assert decision.source == "fallback"
+     assert decision.reason == ""
+     assert decision.tokens_used == 4
++    assert decision.failure_stage == "model_response"
+ 
+ 
+ @pytest.mark.asyncio
+@@ -102,27 +109,35 @@ async def test_classifier_invalid_json_falls_back_to_agent(
+     assert decision.mode is QueryMode.AGENT
+     assert decision.source == "fallback"
+     assert decision.tokens_used == 4
++    assert decision.failure_stage == "model_response"
+ 
+ 
+ @pytest.mark.asyncio
++@pytest.mark.parametrize(
++    ("error", "failure_stage"),
++    [
++        (TimeoutError("router timed out"), "model_request"),
++        (ConnectTimeout("router connection timed out"), "model_connect"),
++        (UnsupportedProtocol("unsupported scheme"), "model_protocol"),
++    ],
++)
+ async def test_classifier_exception_falls_back_to_agent(
+-    monkeypatch: pytest.MonkeyPatch,
++    monkeypatch: pytest.MonkeyPatch, error: Exception, failure_stage: str
+ ) -> None:
+     class _BoomClient:
+         def chat_completion_with_usage(self, *_args: object, **_kwargs: object) -> tuple[str, dict[str, int]]:
+-            raise TimeoutError("router timed out")
++            raise error
+ 
+-    monkeypatch.setattr(
+-        "shared.services.retrieval.routing.classifier._resolve_client_and_model",
+-        lambda: (_BoomClient(), "test-router-model"),
+-    )
++    _patch_client(monkeypatch, _BoomClient())
+ 
+     decision = await classify_query_mode("anything")
+ 
+     assert decision.mode is QueryMode.AGENT
+     assert decision.source == "fallback"
+     assert decision.model_name == "test-router-model"
+     assert decision.tokens_used == 0
++    assert decision.failure_stage == failure_stage
++    assert decision.failure_error_type == type(error).__name__
+ 
+ 
+ @pytest.mark.asyncio
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #582** (2026-11-23): Reject NUL characters in corpus scope section paths (@suguanYang)
+- **PR #581** (2026-11-23): Rank documents by usage and freshness that decay over time (@EricNGOntos)
+- **PR #580** (2026-11-23): Fix production errors in billing, API keys, and retrieval (@suguanYang)
+- **PR #579** (2026-11-22): chore: promote main to staging (Word tracked changes, equations, embedded objects, additive publication) (@EricNGOntos)
+- **PR #578** (2026-11-22): Accept Word tracked changes, read equations and embedded objects, keep table values as written (@EricNGOntos)
 - **PR #577** (2026-11-21): Prepare initial publication and retry retirement for release (@suguanYang)
-- **PR #576** (2026-11-21): chore: promote main to staging (evidence downloads off the event loop, temp file cleanup, parser leftovers) (@EricNGOntos)
-- **PR #575** (2026-11-21): Download retrieval evidence off the event loop and remove its temp files (@EricNGOntos)
-- **PR #574** (2026-11-19): Remove text-track PDF leftovers and stale parser TODOs (@EricNGOntos)
-- **PR #573** (2026-11-19): chore: promote main to staging (PDF TOC nesting tree, unnumbered TOC pages, demo catalog categories) (@EricNGOntos)
-- **PR #572** (2026-11-19): PDF TOC: page screen, TOC nesting tree, and unnumbered TOC pages (@EricNGOntos)
 
 ---
 
@@ -1649,21 +2179,51 @@ Prepare initial publication and retry retirement for release
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in build-images.yml
+## X. Empirical Invariant Guard in test_retrieval_tools_invoke_contract.py
 
 **RULE**:
-When implementing operations in `.github/workflows/build-images.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ontos-AI/knowhere. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/api/tests/contract/test_retrieval_tools_invoke_contract.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ontos-AI/knowhere. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cf789c7b`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `da75fa74`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build-images.yml`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/api/tests/contract/test_retrieval_tools_invoke_contract.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-          QSTASH_BASE_URL: https://qstash-us-east-1.upstash.io
+async def test_invoke_rejects_nul_in_grep_scope_section_path(
+    developer_api_client_factory: Callable[[], AbstractAsyncContextManager[AsyncClient]],
+) -> None:
+    from tests.contract.test_retrieval_classic_map_unit_contract import _publish_document
+
+    namespace: str = f"grep-scope-{uuid4().hex[:8]}"
+    async with developer_api_client_factory() as api_client:
+        published: dict[str, str] = await _publish_document(
+            namespace=namespace,
+            source_file_name="contract.pdf",
+            chunks=[
+                {
+                    "chunk_id": "scope-contract-body",
+                    "type": "text",
+                    "content": "Quarterly revenue",
+                    "path": "contract.pdf/Root/Summary",
+                    "order": 1,
+                    "metadata": {},
+                }
+            ],
+        )
+        response: Response = await api_client.post(
+            "/api/v2/retrieval/tools/invoke",
+            headers={"X-Knowhere-Namespace": namespace},
+            json={
+                "tool": "corpus.grep",
+                "arguments": {
+                    "pattern": "revenue",
+                    "scope": [
+                        {
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1673,7 +2233,7 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cf789c7b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `da75fa74` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

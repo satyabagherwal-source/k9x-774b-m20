@@ -4,22 +4,22 @@
 {
   "source_repository": "jithin-sabu/purge-app",
   "source_url": "https://github.com/jithin-sabu/purge-app",
-  "source_version": "384b5b6c",
+  "source_version": "7f2412e2",
   "license": "MIT",
-  "timestamp": "2026-11-21T07:05:13.372Z",
+  "timestamp": "2026-11-24T04:20:23.396Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-jithin-sabu-purge-app",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [jithin-sabu/purge-app](https://github.com/jithin-sabu/purge-app) (Revision: `384b5b6c`).  
-> **License**: MIT | **Timestamp**: `2026-11-21T07:05:13.372Z`  
+> **Provenance**: Harvested from [jithin-sabu/purge-app](https://github.com/jithin-sabu/purge-app) (Revision: `7f2412e2`).  
+> **License**: MIT | **Timestamp**: `2026-11-24T04:20:23.396Z`  
 > **Learning ID**: `learn-github-jithin-sabu-purge-app`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `jithin-sabu/purge-app` (Commit: `384b5b6c`)
+- **Target Repository**: `jithin-sabu/purge-app` (Commit: `7f2412e2`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/jithin-sabu-purge-app-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/jithin-sabu/purge-app](https://github.com/jithin-sabu/purge-app))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T07:05:11.987Z  
+> **Harvest Timestamp**: 2026-11-24T04:20:22.007Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Free up your Mac. Safely. A free, open-source native Mac app that clears the cache and junk your Mac piles up on its own. Files go to the Trash by default, so you can put them back.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 1991 stars
+- **Stars / Engagement**: 2014 stars
 
 ---
 
@@ -1326,11 +1326,11 @@ nonisolated enum ContainerAccessGate {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #428** (2026-11-21): **Purge 1.17.0 — Homebrew upgrade leaves application running**
-  *Symptoms*: ### What happened?  Hi,  I recently upgraded Purge from 1.16.2 to 1.17.0 through Homebrew on my Apple Silicon Mac.  The upgrade completed successfully, including unloading the 2 background services and replacing the application bundle. However, Purge remained running and was never automatically restarted. I had to quit and relaunch it manually.  Both Homebrew and the installed application report version 1.17.0, and Terminal already has App Management permission.  Could you confirm whether Purge should automatically quit and relaunch during updates? It looks like the Homebrew cask might be missing the appropriate quit: lifecycle directive.  Ideally, upgrades should gracefully stop the application, replace it, and restore its running state afterward.  Would you be able to coordinate the necessary change with the Homebrew maintainers?  Thanks!  ### What did you expect to happen?  I expected Purge to be quit and relaunched after brew updated it.  ### Steps to reproduce  _No response_  ### Purge version  1.17.0 (47)  ### macOS version  macOS 27.2.1, Apple silicon  ### Logs, screenshots, or screen recording  _No response_
+- **Issue #443** (2026-11-23): **Count a Chromium HTTP cache only when its marker is real, not a link or a folder**
+  *Symptoms*: `CacheDiscoveryPaths.hasChromiumHTTPCacheLayout` decides whether a folder named `Cache` is Chromium's HTTP cache. It looks for `Cache_Data`, or for `index` and `data_0`, with `FileManager.fileExists`. That follows links and accepts a folder named `index` or `data_0`.  So a `Cache` folder in a Chromium data folder passes when `Cache_Data` is a link to a folder anywhere, or when `index` and `data_0` are folders or links. The name is then the only evidence left. The Application Support and `User Data` cache rules use this check, in discovery (`applicationSupportCacheURLs`, `chromiumUserDataCacheURLs`) and in `DeletionSafetyPolicy`'s shape rules.  No move goes through the link. #424 already refuses a row when the named folder or a folder above it is a link, and a link inside the folder moves to the Trash as a link. This is about what counts as evidence.  PR #441 added a strict copy, `hasRealChromiumHTTPCacheLayout`, for its own `~/Library/Caches` rule only, and left the shared check alone. CodeRabbit raised it there and agreed to defer it.  Fix: count `Cache_Data` only as a real folder, and `index` and `data_0` only as regular files. Once #441 is in, the two checks become one. Check that no real Application Support cache row on a Mac disappears; real Chromium caches never link these. 
 
-- **Issue #422** (2026-11-20): **Allowlisted rows outside ~/.cache follow a link to another folder**
-  *Symptoms*: ## The gap  The allowlist in `purge/Services/DeletionSafetyPolicy.swift` (`whitelistedAbsolutePrefixes(home:)`) compares path text. #420 closed this for the entries under `~/.cache`. Every other entry still has it.  If `~/.gradle` is a link to `~/Developer`, the row names `~/.gradle/caches`, the text matches, and the move takes `~/Developer/caches`. Found while fixing #420. No report from a user.  ## What each case really moves  Checked in the scanners, the sizing code and `FileDeleter`:  | Where the link is | Example | What a clean does today | | --- | --- | --- | | A folder above the row | `~/.gradle` for `~/.gradle/caches`, `~/.npm` for `~/.npm/_cacache` | Moves the real folder behind the link. The scan sizes it through the link, so the row looks normal. | | The entry itself, and the row is the entry | `~/.npm`, `DerivedData` | Moves only the link. The scan reads the link with `lstat`, so the row is sized at zero. Nothing is freed and the tool makes a new folder on the startup disk. | | A link inside the row's folder | `~/.npm/_cacache/some-link` | Goes to the Trash with the folder, as a link. Its target stays. | | A child of `~/Library/Caches` that is a link | `~/Library/Caches/com.foo` | App Caches never lists it (`isDirectoryKey` is false for a link). A Dev Tools row there is sized at zero and moves as a link. | | `~/Library/Caches` or `~/Library/Logs` itself | | The scan and the entry by entry clean list nothing (`contentsOfDirectory` fails on a linked folder). Dev Too
+- **Issue #438** (2026-11-23): **Hide Dock icon stops working after a deleted-app review**
+  *Symptoms*: ## What happens  With Keep Purge in the menu bar and Hide Dock icon both on, Purge shows up in the Dock after a deleted-app review and stays there. Quitting and reopening Purge is the only way to hide it again. Reported in discussion #160 on 1.18.0.  ## Steps  1. Turn on Keep Purge in the menu bar and Hide Dock icon. Close the window. 2. Move an app with leftover files to the Trash. 3. The leftovers review opens. Purge now has a Dock icon. 4. Keep or remove the files. The window closes, and the Dock icon stays.  ## Why  Purge has no `LSUIElement` in its Info.plist. It hides the Dock icon by setting `.accessory` at runtime (`DockIconPolicy`). When LaunchServices opens a copy that is already running, it switches the app to a regular app. The watcher opens Purge that way (`NSWorkspace.open(_:withApplicationAt:configuration:)`), and so do `open -a`, Spotlight and Finder.  Measured on macOS 27.0 with `lsappinfo`:  - Installed 1.18.0 went from `UIElement` to `Foreground` the moment the review opened, before any file was touched. - A small test app set to `.accessory` went to `Foreground` from the watcher's call with or without its arguments, with `activates = false`, from `openApplication(at:)`, and from `open -a`. - By the time `application(_:open:)` or `applicationShouldHandleReopen` runs, the policy already reads `.regular`. Setting `.accessory` again there holds. KVO on `NSRunningApplication.current.activationPolicy` never fires.  ## Fix  Apply the Dock setting again in `applic
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1347,1078 +1347,1365 @@ nonisolated enum ContainerAccessGate {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `09c6920d` (2026-11-20)
-**Commit Message**: fix: send Apple Intelligence requests through siriknowledged when macOS 27.3 refuses them (#343) (#418)
+### Incident Patch 1: `84a40b77` (2026-11-23)
+**Commit Message**: fix: keep the Dock icon hidden when macOS opens a running Purge (#438) (#439)
 
-* fix: send Apple Intelligence model requests through siriknowledged on macOS 27.3
+* fix: keep the Dock icon hidden when macOS opens a running Purge (#438)
 
-macOS 27.3 (from beta 1, 26C5035r) puts an anchor apple code-signing
-requirement on assetsubscriptiond's com.apple.siri.uaf.subscription.service,
-so the asset worker's requests are dropped with NSCocoaErrorDomain 4097 and
-removing or downloading the models again does nothing.
+When LaunchServices opens a copy that is already running, it makes the
+app a regular one, and Purge sets .accessory only at launch. The
+deleted-apps watcher opens Purge this way, so a review left Purge in
+the Dock until it quit. open -a, Spotlight and Finder do the same.
 
-siriknowledged serves com.apple.siri.uaf.service with the same interface and
-passes operationWithConfig: on unchanged. When the first connection is
-refused or dropped (4097 or 4099), the worker now sends the same request once
-more through it. Both tries share the original timeout. Error replies from the
-service and timeouts are never resent. The first try is unchanged, so older
-macOS behaves as before.
+The open and reopen callbacks now apply the Dock setting again. The
+policy already reads .regular by the time they run, and setting it
+there holds. The store's live value is used, not the saved one.
 
-Found by pdfux and shipped first by RemoveMacAI (MIT):
-https://github.com/omlahore/RemoveMacAI/issues/123
-https://github.com/omlahore/RemoveMacAI/commit/84d3da06c69cbfbcc9ccd9b315c10e8142760d59
+* fix: leave a closed window closed when the watcher opens Purge (#438)
 
-Written and reviewed on Linux, not built or run on a Mac.
+Applying the Dock setting again went through the full DockIconPolicy,
+which reveals the window after switching to accessory. A closed window
+still counts as revealable, since SwiftUI keeps it in NSApp.windows. So
+the watcher's link opened the window before any review was built, and
+left it open when there was nothing to review.
 
-* test: cover the second-service retry rule (#343)
+DockIconPolicy.apply takes revealsWindow. The open route passes false,
+and the review shows the window when it needs it. Reopen keeps the
+reveal, since showing the window
 
-The retry rule lived
-
-**File**: `PurgeAssetWorker/UnifiedAssetCalls.swift` (modified, +22/-3)
+**File**: `PurgeTests/DockIconPolicyTests.swift` (modified, +73/-0)
 ```diff
-@@ -14,7 +14,6 @@ enum UnifiedAssetCalls {
+@@ -35,6 +35,18 @@ struct DockIconPolicyTests {
+         /// Synchronous so the test does not have to spin a runloop. The real hop
+         /// is covered by manual verification, not here.
+         func afterCurrentRunloopTurn(_ work: @escaping () -> Void) { work() }
++
++        /// Held until the test ends the modal, as the real run loop holds it.
++        private var waitingForModal: [() -> Void] = []
++
++        func afterModalEnds(_ work: @escaping () -> Void) { waitingForModal.append(work) }
++
++        func endModal() {
++            isShowingModal = false
++            let work = waitingForModal
++            waitingForModal = []
++            work.forEach { $0() }
++        }
+     }
  
-     static let frameworkPath =
-         "/System/Library/PrivateFrameworks/UnifiedAssetFramework.framework/UnifiedAssetFramework"
--    static let serviceName = "com.apple.siri.uaf.subscription.service"
+     @Test("Hiding the Dock icon switches to accessory, then re-fronts the open window")
+@@ -90,6 +102,67 @@ struct DockIconPolicyTests {
+         #expect(host.calls == [.setPolicy(.accessory)])
+     }
  
-     static func load() throws {
-         guard dlopen(frameworkPath, RTLD_NOW) != nil else {
-@@ -78,6 +77,10 @@ enum UnifiedAssetCalls {
-     /// Sends one operation to the subscription service and waits for its reply.
-     /// `config` carries "Operation" and its arguments. Throws on a missing
-     /// interface, a transport error, a timeout, or an error reply.
++    /// The watcher's link opens Purge, which macOS answers by making it a regular
++    /// app (#438). Hiding the Dock icon again there must not bring back a window
++    /// the user closed: SwiftUI keeps a closed window, so it counts as revealable.
++    @Test("Hiding again after an open leaves a closed window closed")
++    func hidingWithoutRevealLeavesTheWindowAlone() {
++        let host = FakeHost()
++
++        DockIconPolicy.apply(hidesDockIcon: true, revealsWindow: false, host: host)
++
++        #expect(host.calls == [.setPolicy(.accessory)])
++    }
++
++    /// A reopen is the user asking for the window, so it keeps the reveal.
++    @Test("Hiding again after a reopen still re-fronts the window")
++    func hidingWithRevealAfterReopen() {
++        let host = FakeHost()
++
++        DockIconPolicy.apply(hidesDockIcon: true, revealsWindow: true, host: host)
++
++        #expect(host.calls == [.setPolicy(.accessory), .reveal])
++    }
++
++    /// An open can arrive while the cleaning alert is up (#438). The policy must
++    /// not change under the alert, and must change once it closes, or the Dock
++    /// icon stays after Keep Cleaning.
++    @Test("An open during a modal alert hides the Dock icon once the alert closes")
++    func restoreWaitsForTheModalToEnd() {
++        let host = FakeHost()
++        host.isShowingModal = true
++
++        DockIconPolicy.restoreAfterOpen(revealsWindow: false, host: host) { true }
++        #expect(host.calls.isEmpty)
++
++        host.endModal()
++        #expect(host.calls == [.setPolicy(.accessory)])
++    }
++
++    /// The setting may change while the alert is up; the value applied is the
++    /// one in effect when it closes.
++    @Test("The value applied after a modal is read when the modal ends")
++    func restoreReadsTheValueAfterTheModal() {
++        let host = FakeHost()
++        host.isShowingModal = true
++        var hides = true
++
++        DockIconPolicy.restoreAfterOpen(revealsWindow: false, host: host) { hides }
++        hides = false
++        host.endModal()
++
++        #expect(host.calls.isEmpty)
++    }
++
++    @Test("With no modal up, an open hides the Dock icon at once")
++    func restoreWithoutAModalAppliesAtOnce() {
++        let host = FakeHost()
++
++        DockIconPolicy.restoreAfterOpen(revealsWindow: false, host: host) { true }
++
++        #expect(host.calls == [.setPolicy(.accessory)])
++    }
++
+     /// The cleaning confirmation runs a modal loop; changing policy underneath it
+     /// can take the alert with it.
+     @Test("Nothing happens while a modal is up")
+```
+
+**File**: `purge/Services/DockIconPolicy.swift` (modified, +49/-3)
+```diff
+@@ -29,6 +29,7 @@ protocol ActivationPolicyHost: AnyObject {
+     func setPolicy(_ policy: NSApplication.ActivationPolicy) -> Bool
+     func revealWindow()
+     func afterCurrentRunloopTurn(_ work: @escaping () -> Void)
++    func afterModalEnds(_ work: @escaping () -> Void)
+ }
+ 
+ extension NSApplication: ActivationPolicyHost {
+@@ -48,6 +49,14 @@ extension NSApplication: ActivationPolicyHost {
+     func afterCurrentRunloopTurn(_ work: @escaping () -> Void) {
+         onNextRunloopTurn(work)
+     }
++
++    /// A modal alert runs the run loop in its own mode, so a block queued for the
++    /// default mode waits until the alert has closed, then runs at once.
++    func afterModalEnds(_ work: @escaping () -> Void) {
++        RunLoop.main.perform(inModes: [.default]) {
++            MainActor.assumeIsolated(work)
++        }
++    }
+ }
+ 
+ /// Shows or hides the Dock icon by flipping the app's activation policy.
+@@ -56,7 +65,11 @@ extension NSApplication: ActivationPolicyHost {
+ /// entry, and no app menu bar along the top of the screen.
+ @MainActor
+ enum DockIconPolicy {
+-    static func apply(hidesDockIcon: Bool, host: ActivationPolicyHost) {
++    /// `revealsWindow: false` changes the policy and stops there. The open route
++    /// uses it (#438): the watcher's link must not bring back a window the user
++    /// closed, because the deleted-apps review decides whether the window shows.
++    /// `hasRevealableWindow` matches a closed window too, since SwiftUI keeps it.
++    static func apply(hidesDockIcon: Bool, revealsWindow: Bool = true, host: ActivationPolicyHost) {
+         let target: NSApplication.ActivationPolicy = hidesDockIcon ? .accessory : .regular
+ 
+         // Re-applying the current policy makes the menu bar flicker for nothing.
+@@ -66,6 +79,7 @@ enum DockIconPolicy {
+         // so skipping is enough — the pref is persisted and applies on next launch.
+         guard !host.isShowingModal else { return }
+         guard host.setPolicy(target) else { return }
++        guard revealsWindow else { return }
+ 
+         // Hiding with no window open: nothing to bring forward, and activating would
+         // steal focus to show the user nothing. Showing always reveals, because that
+@@ -78,7 +92,39 @@ enum DockIconPolicy {
+         }
+     }
+ 
+-    static func apply(hidesDockIcon: Bool) {
+-        apply(hidesDockIcon: hidesDockIcon, host: NSApplication.shared)
++    static func apply(hidesDockIcon: Bool, revealsWindow: Bool = true) {
++        apply(hidesDockIcon: hidesDockIcon, revealsWindow: revealsWindow, host: NSApplication.shared)
++    }
++
++    /// Hides the Dock icon again after macOS brought it back (#438).
 +    ///
-+    /// `AppleIntelligenceModelRoute` picks the service. When the subscription
-+    /// service refuses or drops the connection, as it does from macOS 27.3,
-+    /// the same request goes out once more through siriknowledged's service.
-     static func send(_ config: [String: Any], timeout: TimeInterval) throws {
-         try load()
-         guard let interfaceClass = NSClassFromString("UAFXPCProxyServiceInterface"),
-@@ -89,7 +92,23 @@ enum UnifiedAssetCalls {
-             || protocol_getMethodDescription(interface.protocol, selector, false, true).name != nil
-         guard described else { throw CallError("the service interface no longer has operationWithConfig:completion:") }
++    /// When LaunchServices opens a copy that is already running, it makes the app
++    /// a regular one: the watcher's `purge://` link, `open -a`, Spotlight and
++    /// Finder all do it, and the Dock icon then stays until Purge quits. By the
++    /// time the open or reopen callback runs, the switch has already happened,
++    /// and setting the policy again there holds. Reads the store's live value, not
++    /// the saved one, so a state that keeps the Dock icon on purpose keeps it.
++    ///
++    /// An open can arrive while the cleaning alert's modal loop runs. `apply`
++    /// will not change the policy under the alert, so this waits until the alert
++    /// closes, then reads the value again and applies it.
++    static func restoreAfterOpen(
++        revealsWindow: Bool,
++        host: ActivationPolicyHost,
++        hidesDockIcon: @escaping @MainActor () -> Bool
++    ) {
++        guard !host.isShowingModal else {
++            host.afterModalEnds {
++                restoreAfterOpen(revealsWindow: revealsWindow, host: host, hidesDockIcon: hidesDockIcon)
++            }
++            return
++        }
++        apply(hidesDockIcon: hidesDockIcon(), revealsWindow: revealsWindow, host: host)
++    }
++
++    static func restoreAfterOpen(revealsWindow: Bool) {
++        restoreAfterOpen(revealsWindow: revealsWindow, host: NSApplication.shared) {
++            StartupPreferenceStore.shared.hidesDockIcon
++        }
+     }
+ }
+```
+
+**File**: `purge/purgeApp.swift` (modified, +6/-0)
+```diff
+@@ -84,6 +84,9 @@ final class PurgeAppDelegate: NSObject, NSApplicationDelegate {
+     /// is already running — the only "click the app" route left once the Dock
+     /// icon is hidden.
+     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows: Bool) -> Bool {
++        // The reopen itself put Purge back in the Dock (#438). Showing the window
++        // is the point of a reopen, so the policy switch may reveal it.
++        DockIconPolicy.restoreAfterOpen(revealsWindow: true)
+         RemovedAppMonitor.shared.userOpenedWindow()
+         guard !hasVisibleWindows else { return true }
+         // No window object to raise: let SwiftUI make one rather than guessing.
+@@ -95,6 +98,9 @@ final class PurgeAppDelegate: NSObject, NSApplicationDelegate {
+     /// `purge://` links from the deleted-apps watcher, and app bundles dropped
+     /// on the Dock icon (`CFBundleDocumentTypes` in Info.plist).
+     func application(_ application: NSApplication, open urls: [URL]) {
++        // Opening a running Purge put it back in the Dock (#438). No reveal: the
++        // deleted-apps review shows the window only when it has something to show.
++        DockIconPolicy.restoreAfterOpen(revealsWindow: false)
+         let dropped = urls.filter(\.isFileURL)
+         if !dropped.isEmpty {
+             ExternalUninstallHandler.handle(urls: dropped)
+```
+
+---
+
+### Incident Patch 2: `a901b056` (2026-11-23)
+**Commit Message**: fix: fit row explanations in two lines and show the right row icons (#445) (#446)
+
+* fix: fit every scan row explanation in two lines
+
+A scan row cuts its explanation off after two lines, and there is no way
+to read the rest. Measured at the real column width for each badge and
+language, 3 English, 1 Chinese, 215 Russian and 116 Turkish explanations
+needed three lines or more. All of them are rewritten to fit.
+
+Simulator runtime and Xcode component rows showed only one line, so the
+Metal Toolchain text lost its download command. They now get two lines,
+like other rows. Simulator device rows keep one line, and their Russian
+and Turkish text is shortened to fit it.
+
+ExplanationFitTests measures every explanations.json entry in all four
+languages, and the Dev Tools texts built in code, with 6 pt to spare.
+
+* fix: show the right icon on more scan rows
+
+Rows whose tool has a bundled glyph now use it: Bun, Deno, Vite, Jest,
+Vitest, ESLint, Nx, Storybook, Turborepo, Next.js, Python, uv, Ruff,
+Kotlin, Gradle, Swift, Rust, pnpm, Yarn, Composer, Claude and Codex
+caches showed a generic symbol or another tool's logo before.
+
+A definition with no glyph now shows the installed app named by its
+
+
+**File**: `PurgeTests/CacheKindTests.swift` (modified, +42/-1)
+```diff
+@@ -37,10 +37,51 @@ struct CacheKindTests {
  
--        let connection = NSXPCConnection(machServiceName: serviceName, options: [])
-+        do {
-+            try AppleIntelligenceModelRoute.send(timeout: timeout) { service, timeout in
-+                try send(config, to: service, interface: interface, selector: selector, timeout: timeout)
-+            }
-+        } catch let failure as AppleIntelligenceModelRoute.SecondTryFailure {
-+            // A worker refusal has no domain or code, so the first try joins its text.
-+            if let second = failure.error as? CallError {
-+                throw CallError("\(second.description); \(failure.firstTry)")
-+            }
-+            throw failure.withFirstTry
+     @Test
+     func aDefinitionWithoutABrandShowsItsKindSymbol() {
+-        let icon = BrandIconService.shared.rowIcon(forCacheItem: item(definitionKey: "claude-updater", folder: "claude-updater"))
++        let icon = BrandIconService.shared.rowIcon(forCacheItem: item(definitionKey: "shipit-updater-cache", folder: "shipit-updater-cache"))
+         #expect(icon == .symbol(CacheKind.updater.symbolName))
+     }
+ 
++    /// Every slug a definition maps to must be a bundled glyph, or the row
++    /// quietly falls back to a symbol.
++    @Test
++    func everyMappedGlyphIsBundled() throws {
++        for key in try allDefinitionKeys() {
++            guard let slug = BrandIconMapping.slug(forDefinitionKey: key) else { continue }
++            #expect(BrandIconService.shared.brandGlyph(slug: slug) != nil, "\(key) maps to \(slug), which is not bundled")
 +        }
 +    }
 +
-+    /// One try at one Mach service.
-+    private static func send(_ config: [String: Any], to service: String, interface: NSXPCInterface,
-+                             selector: Selector, timeout: TimeInterval) throws {
-+        let connection = NSXPCConnection(machServiceName: service, options: [])
-         connection.remoteObjectInterface = interface
-         connection.resume()
- 
-@@ -115,7 +134,7 @@ enum UnifiedAssetCalls {
-         let waited = done.wait(timeout: .now() + timeout)
-         connection.invalidate()
-         guard waited == .success else {
--            throw CallError("no reply from \(serviceName) in \(Int(timeout)) seconds; the request may still have run")
-+            throw CallError("no reply from \(service) in \(Int(timeout)) seconds; the request may still have run")
-         }
-         if let replyError { throw replyError }
-     }
++    /// Mail ships with every Mac, so its row borrows Mail's icon on any machine.
++    @Test
++    func aDefinitionNamingAnInstalledAppShowsTheAppsIcon() {
++        let icon = BrandIconService.shared.rowIcon(forCacheItem: item(definitionKey: "apple-mail", folder: "com.apple.mail"))
++        guard case .appIcon = icon else {
++            Issue.record("Expected Mail's icon, got \(icon)")
++            return
++        }
++    }
++
++    @Test
++    func aServiceRowBorrowsItsAppsIcon() {
++        let icon = BrandIconService.shared.rowIcon(forCacheItem: item(definitionKey: "messages-previews", folder: "messages-previews"))
++        guard case .appIcon = icon else {
++            Issue.record("Expected Messages' icon, got \(icon)")
++            return
++        }
++    }
++
++    /// A cache Purge has no entry for, in a folder named after an installed app,
++    /// shows that app's icon rather than the unknown folder. TextEdit ships with
++    /// every Mac.
++    @Test(arguments: ["com.apple.TextEdit", "TextEdit"])
++    func anUnlistedCacheNamedAfterAnInstalledAppShowsItsIcon(folder: String) {
++        let icon = BrandIconService.shared.rowIcon(forCacheItem: item(definitionKey: nil, folder: folder))
++        guard case .appIcon = icon else {
++            Issue.record("Expected TextEdit's icon, got \(icon)")
++            return
++        }
++    }
++
+     @Test
+     func aKnownBrandShowsItsGlyph() {
+         let icon = BrandIconService.shared.rowIcon(forCacheItem: item(definitionKey: "raycast", folder: "com.raycast.macos"))
 ```
 
-**File**: `PurgeTests/AppleIntelligenceModelRouteTests.swift` (added, +173/-0)
+**File**: `PurgeTests/ExplanationFitTests.swift` (added, +198/-0)
 ```diff
-@@ -0,0 +1,173 @@
+@@ -0,0 +1,198 @@
++import AppKit
++import SwiftUI
++import Testing
++@testable import Purge
++
++/// A scan row shows its explanation in two lines and cuts the rest off with no way
++/// to read it. Every explanation in `explanations.json`, and its translation in each
++/// language the app ships, must fit in two lines of the real column.
++///
++/// The window is a fixed 980 pt wide. The explanation column and the trailing
++/// column (size above the safety badge) share 550 pt: a probe of the App Caches
++/// list measured 464 pt next to an 86 pt "Safe to Clean" column. The badge's width
++/// depends on the level and the language, so the column is worked out for each.
++/// The test keeps 6 pt in hand so a small change in text layout between macOS
++/// versions does not push a line over.
++@MainActor
++@Suite("Explanations fit in two lines")
++struct ExplanationFitTests {
++    static let sharedWidth: CGFloat = 550
++    static let margin: CGFloat = 6
++    static let languages = ["en", "zh-Hans", "ru", "tr"]
++
++    private struct Entry: Decodable {
++        let key: String
++        let tag: String
++        let explanation: String
++    }
++
++    static func bundle(for language: String) throws -> Bundle {
++        if language == "en" { return .main }
++        let path = try #require(Bundle.main.path(forResource: language, ofType: "lproj"))
++        return try #require(Bundle(path: path))
++    }
++
++    static func level(_ tag: String) -> SafetyLevel {
++        switch tag {
++        case "safe": .safe
++        case "medium": .medium
++        default: .unknown
++        }
++    }
++
++    static func badgeLabel(_ level: SafetyLevel, in bundle: Bundle) -> String {
++        let english: String
++        switch level {
++        case .safe: english = "Safe to Clean"
++        case .medium: english = "Check First"
++        case .unknown: english = "Not Sure"
++        }
++        return bundle.localizedString(forKey: english, value: english, table: nil)
++    }
++
++    static func fittingSize<V: View>(_ view: V) -> CGSize {
++        NSHostingView(rootView: view).fittingSize
++    }
++
++    /// The trailing column is as wide as its widest line: the size or the badge.
++    static func trailingWidth(_ level: SafetyLevel, in bundle: Bundle) -> CGFloat {
++        let badge = fittingSize(AppBadge(text: badgeLabel(level, in: bundle))).width
++        let size = fittingSize(
++            Text(verbatim: "999.9 MB")
++                .font(AppStyle.Typography.metadata.weight(.medium).numbers)
++                .monospacedDigit()
++        ).width
++        return max(badge, size)
++    }
++
++    static func columnWidth(_ level: SafetyLevel, in bundle: Bundle) -> CGFloat {
++        sharedWidth - trailingWidth(level, in: bundle) - margin
++    }
++
++    static func lineCount(_ text: String, width: CGFloat) -> Int {
++        func height(_ string: String) -> CGFloat {
++            fittingSize(
++                Text(verbatim: string)
++                    .font(AppStyle.Typography.metadata)
++                    .fixedSize(horizontal: false, vertical: true)
++                    .frame(width: width, alignment: .leading)
++            ).height
++        }
++        return Int((height(text) / height("Ag")).rounded())
++    }
++
++    @Test(arguments: languages)
++    func everyBundledExplanationFitsInTwoLines(language: String) throws {
++        let url = try #require(Bundle.main.url(forResource: "explanations", withExtension: "json"))
++        let entries = try JSONDecoder().decode([Entry].self, from: Data(contentsOf: url))
++        let bundle = try Self.bundle(for: language)
++        var widths: [SafetyLevel: CGFloat] = [:]
++        var tooLong: [String] = []
++        for entry in entries {
++            let level = Self.level(entry.tag)
++            let width = widths[level] ?? Self.columnWidth(level, in: bundle)
++            widths[level] = width
++            let text = bundle.localizedString(forKey: entry.explanation, value: entry.explanation, table: "Explanations")
++            let lines = Self.lineCount(text, width: width)
++            if lines > 2 {
++                tooLong.append("\(entry.key) (\(lines) lines at \(Int(width)) pt): \(text)")
++            }
++        }
++        #expect(tooLong.isEmpty, "\(tooLong.count) explanations need more than two lines:\n\(tooLong.joined(separator: "\n"))")
++    }
++
++    /// Dev Tools builds these in code. Runtime and Xcode component rows have two
++    /// lines; simulator device rows have one. Checked at their longest: a large
++    /// size, the longest reach prefix and a usage sentence with a count.
++    @Test func devToolsExplanationsFitTheirRows() throws {
++        let width = Self.columnWidth(.medium, in: .main)
++        let now = Date()
++        let elevenMonthsAgo = try #require(Calendar.current.date(byAdding: .month, value: -11, to: now))
++        let twoLines: [String] = [
++            XcodeComponent.safetyInfo(kind: .metalToolchain, sizeBytes: 1_023_900_000).explanation,
++            SimulatorRuntime.safetyInfo(
++              
+```
+
+**File**: `PurgeTests/SimulatorRuntimeTests.swift` (modified, +1/-1)
+```diff
+@@ -258,7 +258,7 @@ struct SimulatorRuntimeTests {
+         #expect(!list.isEmpty)
+         #expect(list.allSatisfy { $0.safetyInfo.level == .medium })
+         #expect(list.allSatisfy {
+-            $0.safetyInfo.explanation.hasPrefix("Could not check whether Xcode uses it for new simulators.")
++            $0.safetyInfo.explanation.hasPrefix("Could not check if Xcode uses it for new simulators.")
+         })
+     }
+ 
+```
+
+**File**: `purge/Models/SimulatorRuntime.swift` (modified, +1/-1)
+```diff
+@@ -370,7 +370,7 @@ nonisolated struct SimulatorRuntime: Identifiable, Hashable {
+             return info(String(localized: "Xcode lists it as \(state.lowercased()). \(cost)"))
+         }
+         guard let isXcodeDefault else {
+-            return info(String(localized: "Could not check whether Xcode uses it for new simulators. \(cost)"))
++            return info(String(localized: "Could not check if Xcode uses it for new simulators. \(cost)"))
+         }
+         if isXcodeDefault {
+             return info(String(localized: "Xcode creates new simulators on this runtime. \(cost)"))
+```
+
+**File**: `purge/Models/XcodeComponent.swift` (modified, +1/-1)
+```diff
+@@ -174,7 +174,7 @@ nonisolated struct XcodeComponent: Identifiable, Hashable {
+             return SafetyInfo(
+                 level: .medium,
+                 headline: kind.displayName,
+-                explanation: String(localized: "Xcode's compiler for Metal shaders, an optional download that every account on this Mac shares. Xcode downloads it again (\(formatBytes(sizeBytes))) when a project needs it, or run \(kind.downloadCommand)."),
++                explanation: String(localized: "Xcode's shader compiler for every account on this Mac. Xcode downloads it again (\(formatBytes(sizeBytes))) if needed, or run \(kind.downloadCommand)."),
+                 recoverySteps: "",
+                 reinstallCommand: nil
+             )
+```
+
+**File**: `purge/Resources/explanations.json` (modified, +5/-5)
+```diff
+@@ -390,7 +390,7 @@
+     "aliases": [
+       "com.apple.e5rt.e5bundlecache"
+     ],
+-    "kind": "system"
++    "kind": "ai"
+   },
+   {
+     "key": "feature-access-agent",
+@@ -3630,7 +3630,7 @@
+     "key": "uv-python-version",
+     "display_name": "uv Python Version",
+     "tag": "medium",
+-    "explanation": "An older Python patch version uv kept after an upgrade. uv's link for this minor version points at a newer one, and no environment, .python-version file or interpreter setting Purge found uses it. Anything else that runs it stops working until you put the folder back from the Trash, or the tool that made it sets it up again. uv python install brings the version back.",
++    "explanation": "An older uv Python patch. No environment, .python-version or setting Purge found uses it. Tools that call it by path break until uv python install restores it.",
+     "bundle_ids": [],
+     "aliases": [],
+     "kind": "packages"
+@@ -3666,7 +3666,7 @@
+     "key": "clang-module-cache",
+     "display_name": "Clang Module Cache",
+     "tag": "safe",
+-    "explanation": "Compiled module files clang and the Swift compiler keep for command-line builds and scripts. Xcode's own builds use another folder. Safe to delete; the next compile builds them again.",
++    "explanation": "Compiled modules clang and swiftc keep for command-line builds. Xcode's own builds use another folder. Safe to delete; the next compile rebuilds them.",
+     "bundle_ids": [],
+     "aliases": [],
+     "kind": "build"
+@@ -3699,12 +3699,12 @@
+     "key": "intelligenceflowd-cache",
+     "display_name": "Apple Intelligence Service Cache",
+     "tag": "safe",
+-    "explanation": "Web downloads and compiled model files a background Apple Intelligence service keeps. The Apple Intelligence models are not touched. Safe to delete; macOS builds these again when the service next needs them.",
++    "explanation": "Web downloads and compiled models an Apple Intelligence service keeps. The Apple Intelligence models stay. Safe to delete; macOS rebuilds them when needed.",
+     "bundle_ids": [],
+     "aliases": [
+       "com.apple.intelligenceflow.intelligenceflowd"
+     ],
+-    "kind": "system"
++    "kind": "ai"
+   },
+   {
+     "key": "swift-frontend-cache",
+```
+
+**File**: `purge/Services/BrandIconMapping.swift` (modified, +110/-27)
+```diff
+@@ -69,23 +69,25 @@ enum BrandIconMapping {
+         "xcode-archives": "xcode",
+         "xcode-device-support": "xcode",
+         "xcode-itunes-service": "xcode",
++        "claude-updater": "anthropic",
++        "openai-codex": "openai",
+     ]
+ 
+     // MARK: - Dev Tools global rows
+ 
+     private static let devToolDefinitionKeyToSlug: [String: String] = [
+         "npm-cache": "nodedotjs",
+         "npm": "nodedotjs",
+-        "pnpm-store": "nodedotjs",
+-        "pnpm": "nodedotjs",
+-        "yarn-cache": "nodedotjs",
+-        "yarn": "nodedotjs",
++        "pnpm-store": "pnpm",
++        "pnpm": "pnpm",
++        "yarn-cache": "yarn",
++        "yarn": "yarn",
+         "homebrew-cache": "homebrew",
+         "homebrew": "homebrew",
+         "docker": "docker",
+-        "gradle-cache": "android",
+-        "gradle-global-cache": "android",
+-        "gradle": "android",
++        "gradle-cache": "gradle",
++        "gradle-global-cache": "gradle",
++        "gradle": "gradle",
+         "cocoapods-cache": "swift",
+         "cocoapods-spec-repos": "swift",
+         "cocoapods": "swift",
+@@ -96,7 +98,7 @@ enum BrandIconMapping {
+         "sbt": "scala",
+         "rubygems": "ruby",
+         "bundler": "ruby",
+-        "composer": "php",
++        "composer": "composer",
+         "terraform": "terraform",
+         "githubactions": "github",
+         "vagrant": "vagrant",
+@@ -130,14 +132,56 @@ enum BrandIconMapping {
+         "android-system-images": "androidstudio",
+         "old-figma-profiles": "figma",
+         "orphaned-git-worktree": "git",
+-        "zsh": "iterm2",
++        // Tools with a glyph in the bundle that their rows did not use.
++        "bun-cache": "bun",
++        "deno-cache": "deno",
++        "turbo-cache": "turbo",
++        "nextjs-cache": "nextdotjs",
++        "next-build": "nextdotjs",
++        "vite-cache": "vite",
++        "eslint-cache": "eslint",
++        "jest-cache": "jest",
++        "vitest-cache": "vitest",
++        "storybook-cache": "storybook",
++        "nx-cache": "nx",
++        "python-cache": "python",
++        "pytest-cache": "python",
++        "mypy-cache": "python",
++        "tox-environments": "python",
++        "venv": "python",
++        "apple-python-cache": "python",
++        "uv-cache": "uv",
++        "ruff-cache": "ruff",
++        "kotlin-build": "kotlin",
++        "android-build": "android",
++        "gradle-build": "gradle",
++        "gradle-leftovers": "gradle",
++        "maven-target": "openjdk",
++        "swift-build": "swift",
++        "swiftpm-build": "swift",
++        "swiftpm-cache": "swift",
++        "swift-frontend-cache": "swift",
++        "rust-target": "rust",
++        "nvm-cache": "nodedotjs",
++        "nvm-download-cache": "nodedotjs",
++        "node-modules": "nodedotjs",
++        "checkpoint-nodejs": "nodedotjs",
++        "node-gyp-headers": "nodedotjs",
++        "dart-tool": "flutter",
++        "pub-cache": "flutter",
++        "bundler-vendor": "ruby",
++        "composer-vendor": "php",
++        "terraform-plugins": "terraform",
++        "claude-cli-cache": "anthropic",
++        "cursor-compile-cache": "cursor",
+     ]
+ 
+     // MARK: - Brands with no glyph
+ 
+     /// Brands Simple Icons doesn't carry: Microsoft had its logos removed, and the
+     /// smaller apps were never added. Their rows show the installed app's icon in
+     /// greyscale, found by the definition's bundle IDs first and then by this name.
++    /// A definition whose bundle IDs name an installed app needs no entry here.
+     private static let definitionKeyToApplicationName: [String: String] = [
+         "vscode": "Visual Studio Code",
+         "microsoft-teams": "Microsoft Teams",
+@@ -154,14 +198,48 @@ enum BrandIconMapping {
+         "bartender": "Bartender 5",
+         "lungo": "Lungo",
+         "granola": "Granola",
++        "yab": "Yab",
++    ]
++
++    /// Apps whose icon a definition borrows, by bundle ID, when its own
++    /// `bundle_ids` name a background service rather than the app. Only the icon
++    /// comes from here: `explanations.json` bundle IDs also match folders, these never do.
++    private static let definitionKeyToIconBundleIDs: [String: [String]] = [
++        "maps-tile-cache": ["com.apple.Maps"],
++        "messages-previews": ["com.apple.MobileSMS"],
++        "mail-downloads": ["com.apple.mail"],
++        "findmy": ["com.apple.findmy"],
++        "homed": ["com.apple.Home"],
++        "remindd": ["com.apple.reminders"],
++        "tipsd": ["com.apple.helpviewer"],
++        "helpd": ["com.apple.helpviewer"],
++        "videoconference": ["com.apple.FaceTime"],
++        "itunes": ["com.apple.Music"],
++        "amp-library-agent": ["com.apple.Music"],
++        "dictionary-services": ["com.apple.Dictionary"],
++        "assistantd": ["com.apple.siri.launcher"],
++        "siri-tts": ["com.apple.siri.launcher"],
++        "parsecd": ["com.apple.siri.launcher"],
++        "duetexpertd": ["com.apple.siri.launcher"],
++        "proactive-eventtracker": ["com.apple.siri.launcher"],
+```
+
+**File**: `purge/Services/BrandIconService.swift` (modified, +46/-17)
+```diff
+@@ -25,10 +25,12 @@ enum BrandRowIcon: Equatable {
+ }
+ 
+ /// Resolves row icons for App Caches, Dev Tools and project groups. A known brand
+-/// gets its monochrome glyph, or its installed app's icon in greyscale when Simple
+-/// Icons doesn't carry it. Otherwise the definition's `kind` picks an SF Symbol
+-/// that says what the cache is. Caches Purge doesn't recognise get
+-/// `questionmark.folder`, so they look different from known ones.
++/// gets its monochrome glyph. A definition with no glyph gets the icon of an app it
++/// names, in greyscale, when that app is installed. Otherwise the definition's
++/// `kind` picks an SF Symbol that says what the cache is. A cache with no
++/// definition is often still named after its app, by bundle ID in
++/// `~/Library/Caches` or by name in Application Support, and gets that app's icon.
++/// Anything else gets `questionmark.folder`, so it looks different from known ones.
+ ///
+ /// Main actor by name, not only by the project default: the caches below are
+ /// plain dictionaries, and a caller off the main actor could write them from
+@@ -70,14 +72,19 @@ final class BrandIconService {
+             let definitionKey = item.definitionKey
+                 ?? ExplanationDatabase.definitionKey(forFolderName: item.bundleID)
+                 ?? ExplanationDatabase.definitionKey(forFolderName: item.appName)
+-            guard let definitionKey else { return .symbol(Self.unknownSymbolName) }
+-            return icon(forDefinitionKey: definitionKey)
++            if let definitionKey, let icon = icon(forDefinitionKey: definitionKey) {
++                return icon
++            }
++            if let image = installedAppIcon(forFolderName: item.bundleID) {
++                return .appIcon(image)
++            }
++            return .symbol(Self.unknownSymbolName)
+         }
+     }
+ 
+     func rowIcon(forDevTool tool: DevTool) -> BrandRowIcon {
+         cachedRowIcon(key: "t|\(tool.definitionKey)") {
+-            icon(forDefinitionKey: tool.definitionKey)
++            icon(forDefinitionKey: tool.definitionKey) ?? .symbol(Self.unknownSymbolName)
+         }
+     }
+ 
+@@ -114,18 +121,19 @@ final class BrandIconService {
+         return .symbol(Self.projectFolderSymbolName)
+     }
+ 
+-    private func icon(forDefinitionKey key: String) -> BrandRowIcon {
++    /// Nil when the definition names no brand, no installed app and no kind.
++    private func icon(forDefinitionKey key: String) -> BrandRowIcon? {
+         if let slug = BrandIconMapping.slug(forDefinitionKey: key),
+            let image = brandGlyph(slug: slug) {
+             return .glyph(image)
+         }
+-        if let image = installedBrandAppIcon(forDefinitionKey: key) {
++        if let image = installedDefinitionAppIcon(forDefinitionKey: key) {
+             return .appIcon(image)
+         }
+         if let kind = ExplanationDatabase.kind(forKey: key) {
+             return .symbol(kind.symbolName)
+         }
+-        return .symbol(Self.unknownSymbolName)
++        return nil
+     }
+ 
+     private func cachedRowIcon(key: String, resolve: () -> BrandRowIcon) -> BrandRowIcon {
+@@ -168,21 +176,38 @@ final class BrandIconService {
+         return image
+     }
+ 
+-    /// The installed app's icon in greyscale for a brand with no glyph, or nil when
+-    /// the key isn't one of those brands or the app isn't installed.
+-    private func installedBrandAppIcon(forDefinitionKey key: String) -> NSImage? {
+-        guard let appName = BrandIconMapping.applicationName(forDefinitionKey: key) else { return nil }
++    /// The icon, in greyscale, of an installed app the definition names: by its
++    /// bundle IDs, the icon-only bundle IDs in `BrandIconMapping`, then by app name.
++    /// Nil when it names none or none is installed.
++    private func installedDefinitionAppIcon(forDefinitionKey key: String) -> NSImage? {
+         let cacheKey = "g|\(key)"
+         if let cached = installedAppIconCache[cacheKey] {
+             return cached
+         }
+-        let icon = ExplanationDatabase.allBundleIDs(forKey: key).lazy.compactMap(installedAppIcon(bundleID:)).first
+-            ?? installedAppIcon(appName: appName)
++        let bundleIDs = ExplanationDatabase.allBundleIDs(forKey: key) + BrandIconMapping.iconBundleIDs(forDefinitionKey: key)
++        let icon = bundleIDs.lazy.compactMap(installedAppIcon(bundleID:)).first
++            ?? BrandIconMapping.applicationName(forDefinitionKey: key).flatMap(installedAppIcon(appName:))
+         let image = icon.map(Self.greyscale)
+         installedAppIconCache[cacheKey] = image
+         return image
+     }
+ 
++    /// The icon, in greyscale, of the installed app a cache folder is named after:
++    /// a bundle ID such as `com.anysphere.sand`, or an app name such as `Grok Bot`.
++    private func installedAppIcon(forFolderName name: String) -> NSImage? {
++        guard !name.isEmpty else { return nil }
++        let cacheKey = "f|\(name)"
++        if let cached = installedAppIconCache[cacheKey] {
++            return
+```
+
+---
+
+### Incident Patch 3: `bbf5ace1` (2026-11-23)
+**Commit Message**: feat: show paused deleted-app reviews as a sidebar row with a Login Items guide (#447) (#448)
+
+* feat: show paused deleted-app reviews as a sidebar row with a Login Items guide (#447)
+
+The sidebar card for a blocked or stopped watcher is now a one-line row,
+like Limited scan, and both use one view, SidebarNoticeRow. The row opens a
+sheet with the full explanation, the fix and Turn Off.
+
+Opening Login Items for the watcher now shows the floating guide the Apple
+Intelligence profile flow uses, with the section name for this macOS
+version. Purge checks once a second and closes the guide when macOS allows
+the watcher. The guide only hides itself, never the profile flow's.
+
+"Restarting…" is now translated; the old card passed it as a plain String.
+
+* fix: keep the sheet through a restart and stop the guide waiting forever (#447)
+
+The sheet now stays open while a restart runs, showing the last problem.
+If the watcher still needs attention when the restart ends, it says the
+restart didn't work.
+
+The Login Items guide gives up after 10 minutes, like the profile guide.
+Each tick reads only the Login Items status; the agent is probed once,
+after macOS allows it.
+
+The profile flow now hides o
+
+**File**: `PurgeTests/SettingsGuidePanelTests.swift` (added, +55/-0)
+```diff
+@@ -0,0 +1,55 @@
 +import Foundation
 +import Testing
 +@testable import Purge
 +
-+/// The asset worker sends each request through `AppleIntelligenceModelRoute`
-+/// (#343). A reset names the model sets to release, so what matters here is
-+/// that a request is repeated only after a refused or dropped connection,
-+/// only once, and only through the second service.
-+@Suite("A refused Apple Intelligence request goes once through the second service, and nothing else is sent again")
-+struct AppleIntelligenceModelRouteTests {
-+    private typealias Route = AppleIntelligenceModelRoute
++/// The Apple Intelligence profile flow and the deleted-apps watcher share one
++/// System Settings guide panel (#447). One flow must never leave the other
++/// waiting with no guide, and a guide that is replaced must stop its flow, not
++/// move it on.
++@Suite("Two flows share the System Settings guide without breaking each other")
++@MainActor
++struct SettingsGuidePanelTests {
++    private let defaults = ThrowawayDefaults()
 +
-+    /// Stands in for the worker's own refusals and its timeout, which are
-+    /// Swift errors.
-+    private struct WorkerRefusal: Error {}
++    /// The watcher's guide replaces the profile guide, so the profile flow is
++    /// told it was cancelled. Its wait then ends at once, and a cancelled wait
++    /// returns before any request to the asset service.
++    @Test func aReplacedProfileGuideStopsTheProfileWait() async {
++        let panel = SettingsGuidePanel()
++        let store = AppleIntelligenceModelStore(defaults: defaults.defaults)
++        panel.show(.removeProfile) { store.cancelWaiting() }
++        panel.show(.allowInBackground) {}
++        defer { panel.hide() }
 +
-+    /// Plays one outcome per try, on a clock that only the tries move.
-+    private final class Tries {
-+        struct Outcome {
-+            var error: Error?
-+            var seconds: TimeInterval = 0
-+        }
-+
-+        private(set) var services: [String] = []
-+        private(set) var timeouts: [TimeInterval] = []
-+        private var clock = Date(timeIntervalSinceReferenceDate: 0)
-+        private var outcomes: [Outcome]
-+
-+        init(_ outcomes: [Outcome]) { self.outcomes = outcomes }
-+
-+        /// The error the route threw, or nil when the request went through.
-+        func send(timeout: TimeInterval) -> Error? {
-+            do {
-+                try Route.send(timeout: timeout, now: { self.clock }) { service, timeout in
-+                    self.services.append(service)
-+                    self.timeouts.append(timeout)
-+                    let outcome = self.outcomes.isEmpty ? Outcome() : self.outcomes.removeFirst()
-+                    self.clock = self.clock.addingTimeInterval(outcome.seconds)
-+                    if let error = outcome.error { throw error }
-+                }
-+                return nil
-+            } catch {
-+                return error
-+            }
-+        }
++        #expect(panel.shown == .allowInBackground)
++        let start = Date()
++        let removed = await store.waitUntil({ false }, limit: 3)
++        #expect(!removed)
++        #expect(Date().timeIntervalSince(start) < 1)
 +    }
 +
-+    private func connectionError(_ code: Int) -> NSError {
-+        NSError(domain: NSCocoaErrorDomain, code: code)
++    /// Showing the same guide again is not a replacement: its owner keeps waiting.
++    @Test func showingTheSameGuideAgainCancelsNothing() {
++        let panel = SettingsGuidePanel()
++        var cancels = 0
++        panel.show(.allowInBackground) { cancels += 1 }
++        panel.show(.allowInBackground) { cancels += 1 }
++        defer { panel.hide() }
++        #expect(cancels == 0)
++        #expect(panel.shown == .allowInBackground)
 +    }
 +
-+    private var lockReply: NSError {
-+        NSError(domain: "com.apple.UnifiedAssetFramework", code: -1,
-+                userInfo: [NSLocalizedDescriptionKey: "Could not eliminate as there are current locks"])
-+    }
++    /// Each flow hides only its own guide.
++    @Test func eachFlowHidesOnlyItsOwnGuide() {
++        let panel = SettingsGuidePanel()
++        panel.show(.allowInBackground) {}
++        defer { panel.hide() }
 +
-+    /// The names are Apple's. A change here is a change to where a release goes.
-+    @Test func theTwoServicesAreApplesAssetServices() {
-+        #expect(Route.subscriptionService == "com.apple.siri.uaf.subscription.service")
-+        #expect(Route.forwardingService == "com.apple.siri.uaf.service")
-+    }
++        panel.hide(.installProfile)
++        panel.hide(.removeProfile)
++        #expect(panel.shown == .allowInBackground)
 +
-+    /// macOS 26 and 27.0 to 27.2: the first service takes the request, and
-+    /// the second is never asked.
-+    @Test func aRequestTheFirstServiceTakesGoesOutOnce() {
-+        let tries = Tries([.init()])
-+        #expect(tries.send(timeout: 120) == nil)
-+        #expect(tries.services == [Route.subscriptionService])
-+        #expect(tries.timeouts == [120])
-+    }
-+
-+    /// 4097 is what macOS 27.3 answers Purge with, and 4099 is a service that
-+    /// could not be reached.
-+    @Test(arguments: [NSXPCConnectionInterrupted, NSXPCConnectionInvalid])
-+    func aRefusedOrDroppedConnectionGoesOnceThroughTheSecondService(code: Int) {
-+        let tries = Tries([.init(error: connectionError(code)), .init()])
-+        #expect(tries.send(timeout: 120) == nil)
-+        #expect(tries.services == [Route.subscriptionService, Route.forwardingService])
-+    }
-+
-+    /// The second service is the last one. Its failure keeps its own domain
-+    /// and code and carries the first refusal for the details.
-+    @Test func nothingIsSentAThirdTime() throws {
-+        let tries = Tries([
-+            .init(error: connectionError(NSXPCConnectionInterrupted)),
-+            .init(error: connectionError(NSXPCConnectionInvalid)),
-+            .init(),
-+        ])
-+        let failure = try #require(tries.send(timeout: 120) as? Route.SecondTryFailure)
-+        #expect(tries.services == [Route.subscriptionService, Route.forwardingService])
-+        #expect(failure.firstTry
-+            == "com.apple.siri.uaf.subscription.service refused the connection first (NSCocoaErrorDomain 4097)")
-+        let reported = failure.withFirstTry
-+        #expect(reported.domain == NSCocoaErrorDomain)
-+        #expect(reported.code == NSXPCConnectionInvalid)
-+        #expect(reported.userInfo[Route.firstTryKey] as? String == failure.firstTry)
-+    }
-+
-+    /// An error reply is the service's answer to this request. The lock reply
-+    /// is the one Purge reads, and a second service would only repeat it.
-+    @Test func theServicesOwnAnswerIsNeverSentAgain() throws {
-+        let tries = Tries([.init(error: lockReply), .init()])
-+        let error = try #require(tries.send(timeout: 120)) as NSError
-+        #expect(tries.services == [Route.subscriptionService])
-+        #expect(error.domain == "com.apple.UnifiedAssetFramework")
-+        #expect(error.code == -1)
-+    }
-+
-+ 
-```
-
-**File**: `PurgeTests/AppleIntelligenceModelStoreTests.swift` (modified, +29/-0)
-```diff
-@@ -535,6 +535,35 @@ struct AppleIntelligenceModelStoreTests {
-         #expect(fine.result["assetType"] as? String == "x")
-     }
- 
-+    /// From macOS 27.3 the worker sends a refused request once more through
-+    /// siriknowledged. When that fails too, the reply carries the second
-+    /// error's domain and code and names the first try somewhere in its text,
-+    /// so the row and the lock check read the service's own answer and the
-+    /// details include the first try.
-+    @Test func aReplyAfterTheSecondServiceReadsAsThatServicesAnswer() {
-+        let firstTry = "PurgeFirstTry: com.apple.siri.uaf.subscription.service refused the connection first (NSCocoaErrorDomain 4097)"
-+        let locked = AppleIntelligenceWorker.outcome(fromReply: [
-+            "ok": false,
-+            "error": "com.apple.UnifiedAssetFramework -1: Could not eliminate as there are current locks; \(firstTry)",
-+            "errorDomain": "com.apple.UnifiedAssetFramework",
-+            "errorCode": -1,
-+            "errorSummary": "com.apple.UnifiedAssetFramework -1: Could not eliminate as there are current locks",
-+        ])
-+        #expect(!locked.isConnectionDrop)
-+        #expect(locked.problem == "com.apple.UnifiedAssetFramework -1: Could not eliminate as there are current locks")
-+        #expect(locked.detailLine(op: "reset", subject: "a").contains(firstTry))
-+
-+        let refusedTwice = AppleIntelligenceWorker.outcome(fromReply: [
-+            "ok": false,
-+            "error": "NSCocoaErrorDomain 4099: x; \(firstTry)",
-+            "errorDomain": NSCocoaErrorDomain,
-+            "errorCode": 4099,
-+            "errorSummary": "NSCocoaErrorDomain 4099: x",
-+        ])
-+        #expect(refusedTwice.isConnectionDrop)
-+        #expect(refusedTwice.problem == String(localized: "macOS's asset service couldn't be reached"))
-+    }
-+
-     /// The row has room for one short reason. The three ways the connection to
-     /// the service fails get plain words; any other error keeps its own first
-     /// part and drops the userInfo, which is in the details.
-```
-
-**File**: `SECURITY.md` (modified, +4/-0)
-```diff
-@@ -143,6 +143,10 @@ and the one change it makes that outlasts the app:
-   it to release the model sets, the other asks for them back. They run in a
-   separate helper, `io.getpurge.assetworker`, started once per call and gone
-   after it, so a change in a future macOS crashes that helper and not Purge.
-+  When that service refuses or drops the connection, the helper sends the
-+  same request once more through Apple's `com.apple.siri.uaf.service`, which
-+  passes it on. From macOS 27.3 the first service refuses every app Apple
-+  didn't sign, so there each request takes the second route.
-   Purge checks that macOS still names each set as expected before sending
-   anything, and never sends a release with an empty list, which macOS would
-   read as every asset on the Mac.
-```
-
-**File**: `purge.xcodeproj/project.pbxproj` (modified, +4/-0)
-```diff
-@@ -26,6 +26,7 @@
- 		957945A658563B63C6ADC1D7 /* HelperSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A21D7856EC3D4A4B450ABCB /* HelperSupport.swift */; };
- 		AA10C0DE0001000000000005 /* PurgeAssetWorkerMain.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10C0DE0001000000000002 /* PurgeAssetWorkerMain.swift */; };
- 		AA10C0DE0001000000000006 /* UnifiedAssetCalls.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10C0DE0001000000000003 /* UnifiedAssetCalls.swift */; };
-+		AA10C0DE0001000000000020 /* AppleIntelligenceModelRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10C0DE0001000000000021 /* AppleIntelligenceModelRoute.swift */; };
- 		AA10C0DE0001000000000007 /* io.getpurge.assetworker in Embed Asset Worker */ = {isa = PBXBuildFile; fileRef = AA10C0DE0001000000000001 /* io.getpurge.assetworker */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
- 		AB099A00000000000000B001 /* AppFolders.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB099A00000000000000F001 /* AppFolders.swift */; };
- 		AB127A00000000000000B001 /* MacOSInstallLeftovers.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB127A00000000000000F001 /* MacOSInstallLeftovers.swift */; };
-@@ -142,6 +143,7 @@
- 		AA10C0DE0001000000000002 /* PurgeAssetWorkerMain.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PurgeAssetWorkerMain.swift; sourceTree = "<group>"; };
- 		AA10C0DE0001000000000003 /* UnifiedAssetCalls.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = UnifiedAssetCalls.swift; sourceTree = "<group>"; };
- 		AA10C0DE0001000000000004 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-+		AA10C0DE0001000000000021 /* AppleIntelligenceModelRoute.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AppleIntelligenceModelRoute.swift; path = purge/Services/AppleIntelligenceModelRoute.swift; sourceTree = SOURCE_ROOT; };
- 		AB099A00000000000000F001 /* AppFolders.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AppFolders.swift; path = purge/Services/AppFolders.swift; sourceTree = SOURCE_ROOT; };
- 		AB127A00000000000000F001 /* MacOSInstallLeftovers.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MacOSInstallLeftovers.swift; path = purge/PrivilegedHelper/MacOSInstallLeftovers.swift; sourceTree = "<group>"; };
- 		AB143A00000000000000F001 /* AppBundleReach.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AppBundleReach.swift; path = purge/Services/AppBundleReach.swift; sourceTree = SOURCE_ROOT; };
-@@ -294,6 +296,7 @@
- 			children = (
- 				AA10C0DE0001000000000002 /* PurgeAssetWorkerMain.swift */,
- 				AA10C0DE0001000000000003 /* UnifiedAssetCalls.swift */,
-+				AA10C0DE0001000000000021 /* AppleIntelligenceModelRoute.swift */,
- 				AA10C0DE0001000000000004 /* Info.plist */,
- 			);
- 			path = PurgeAssetWorker;
-@@ -533,6 +536,7 @@
- 			files = (
- 				AA10C0DE0001000000000005 /* PurgeAssetWorkerMain.swift in Sources */,
- 				AA10C0DE0001000000000006 /* UnifiedAssetCalls.swift in Sources */,
-+				AA10C0DE0001000000000020 /* AppleIntelligenceModelRoute.swift in Sources */,
- 			);
- 			runOnlyForDeploymentPostprocessing = 0;
- 		};
-```
-
-**File**: `purge/Services/AppleIntelligenceModelRoute.swift` (added, +90/-0)
-```diff
-@@ -0,0 +1,90 @@
-+import Foundation
-+
-+/// Which of Apple's two asset services a request for the Apple Intelligence
-+/// models goes to, and when it is sent a second time (#343).
-+///
-+/// From macOS 27.3 the subscription service takes connections only from
-+/// clients Apple signed and drops Purge's. siriknowledged's service has the
-+/// same interface and passes `operationWithConfig:` on unchanged, so a
-+/// refused request goes out once more through it. Found by pdfux and shipped
-+/// first by RemoveMacAI (github.com/omlahore/RemoveMacAI, MIT, its issue 123).
-+/// On macOS 27.0 siriknowledged logs each request as "proxying to
-+/// subscription service", and the subscription service then logs the same
-+/// subscriber and names it was sent.
-+///
-+/// The second try is not limited to 27.3. On any macOS it follows a refused
-+/// or dropped first connection, and it sends the same request, so it can
-+/// never name more than the first try did.
-+///
-+/// The rule is kept here, apart from the private calls in `PurgeAssetWorker/`,
-+/// so the unit tests can run it. The asset worker compiles this file too, so
-+/// it uses Foundation only.
-+nonisolated enum AppleIntelligenceModelRoute {
-+    /// assetsubscriptiond's service, which does the work.
-+    static let subscriptionService = "com.apple.siri.uaf.subscription.service"
-+    /// siriknowledged's service, which passes each operation on to `subscriptionService`.
-+    static let forwardingService = "com.apple.siri.uaf.service"
-+
-+    /// A second try is not started with less time left than this.
-+    static let leastSecondsForSecondTry: TimeInterval = 1
-+
-+    /// The userInfo key that carries the first refusal on a second failure.
-+    static let firstTryKey = "PurgeFirstTry"
-+
-+    /// Both services failed. `error` is the second service's and `firstTry`
-+    /// says how the first refused.
-+    nonisolated struct SecondTryFailure: Error {
-+        let error: Error
-+        let firstTry: String
-+
-+        /// The second error with its own domain and code, which Purge reads,
-+        /// and the first try in its userInfo for the details.
-+        var withFirstTry: NSError {
-+            let second = error as NSError
-+            var userInfo = second.userInfo
-+            userInfo[AppleIntelligenceModelRoute.firstTryKey] = firstTry
-+            return NSError(domain: second.domain, code: second.code, userInfo: userInfo)
-+        }
-+    }
-+
-+    /// Whether `error` says the connection was dropped or never made, rather
-+    /// than the service answering or the wait running out. The worker's own
-+    /// refusals and its timeout are Swift errors, which are never in
-+    /// `NSCocoaErrorDomain`.
-+    static func isRefusedConnection(_ error: Error) -> Bool {
-+        let nsError = error as NSError
-+        return nsError.domain == NSCocoaErrorDomain
-+            && (nsError.code == NSXPCConnectionInterrupted || nsError.code == NSXPCConnectionInvalid)
-+    }
-+
-+    /// Runs `attempt` on the subscription service. When that connection is
-+    /// refused or dropped, runs it once more on the forwarding service with
-+    /// the time that is left, and never a third time.
-+    ///
-+    /// Both tries share `timeout`, so the wait is no longer than one try's.
-+    /// An error reply is the service's own answer and is not sent again. A
-+    /// timeout is not sent again either, because the request may still be
-+    /// running. A dropped connection can also mean the request ran. It is
-+    /// sent again all the same, because a reset, an unsubscribe and a
-+    /// subscribe are each safe to repeat.
-+    ///
-+    /// Throws the first error when there is no second try, and a
-+    /// `SecondTryFailure` when the second try fails too.
-+    static func send(timeout: TimeInterval, now: () -> Date = { Date() },
-+                     attempt: (_ service: String, _ timeout: TimeInterval) throws -> Void) throws {
-+        let deadline = now().addingTimeInterval(timeout)
-+        do {
-+            try attempt(subscriptionService, timeout)
-+        } catch {
-+            let remaining = deadline.timeIntervalSince(now())
-+            guard isRefusedConnection(error), remaining >= leastSecondsForSecondTry else { throw error }
-+            let refused = error as NSError
-+            let firstTry = "\(subscriptionService) refused the connection first (\(refused.domain) \(refused.code))"
-+            do {
-+                try attempt(forwardingService, remaining)
-+            } catch {
-+                throw SecondTryFailure(error: error, firstTry: firstTry)
-+            }
-+        }
++        panel.hide(.allowInBackground)
++        #expect(panel.shown == nil)
 +    }
 +}
 ```
 
----
-
-### Incident Patch 2: `61e8c011` (2026-11-20)
-**Commit Message**: fix: refuse shape-matched cache rows reached through a link (#424) (#425)
-
-* fix: refuse shape-matched cache rows reached through a link (#424)
-
-Nine rules in DeletionSafetyPolicy.evaluate allow a path by its shape and
-have no allowlist entry, so the link check from #422 did not cover them:
-Application Support caches, Chromium caches in ~/.gemini, container
-caches, Telegram media, gem downloads, unfinished downloads, editor
-workspace storage, old CLI versions and Gradle leftovers. With an app's
-Crashpad folder a link to ~/Documents, the row named Crashpad/completed
-and the move took ~/Documents/completed.
-
-shapeLinkRefusesDeletion refuses such a path when the folder its rule
-names, or any folder above the path up to home, is a link. It is the #422
-rule with the named folder in place of the entry. isOfferedForCleanup
-asks it before its saved answers, so the scan drops the row and
-FileDeleter refuses the move.
-
-The links macOS makes in an app container are not on the way to
-Data/Library/Caches, so a Mac with no link of the user's own is offered
-what it was. Telegram's media folder is emptied entry by entry, so it is
-read itself.
-
-Cost per row in a Release build: 0.24 to 0.40 µs on th
-
-**File**: `CLAUDE.md` (modified, +2/-1)
+**File**: `purge/Services/AppleIntelligenceModelStore.swift` (modified, +4/-3)
 ```diff
-@@ -48,7 +48,8 @@ Cloud sessions run on Linux, so they can build no Swift code. Run the three Linu
-   - `.unknown` is "Not Sure". It never appears in scan results, but the delete confirmation sheets can still list it.
- - Mark a path `.safe` only when it holds nothing but data its app rebuilds by itself. If it can hold settings, installed tools, keys, history, databases, projects, or offline downloads, it is `.medium` or not offered at all.
- - Every cache and Dev Tools removal goes through `DeletionSafetyPolicy.evaluate(_:)`. Never add a delete path that skips it.
--  - The allowlist compares path text, so `isOfferedForCleanup` also asks `DeletionSafetyPolicy.allowlistLinkRefusesDeletion` (#420, #422). A path in an allowlist entry is refused when the entry, or any folder above the path up to home, is a link, even a link to another drive. A link below that moves to the Trash as a link, except a folder emptied entry by entry (`~/Library/Logs/DiagnosticReports`), which is refused when it is a link itself. A simulator device is left alone, because `simctl` removes it by its UDID. A new entry is covered when it is added. The rules in `evaluate` that match by shape, like container caches, have no such check. `AllowlistLinkTests` in `PurgeTests/AllowlistAuditTests.swift` checks each case.
-+  - The allowlist compares path text, so `isOfferedForCleanup` also asks `DeletionSafetyPolicy.allowlistLinkRefusesDeletion` (#420, #422). A path in an allowlist entry is refused when the entry, or any folder above the path up to home, is a link, even a link to another drive. A link below that moves to the Trash as a link, except a folder emptied entry by entry (`~/Library/Logs/DiagnosticReports`), which is refused when it is a link itself. A simulator device is left alone, because `simctl` removes it by its UDID. A new entry is covered when it is added. `AllowlistLinkTests` in `PurgeTests/AllowlistAuditTests.swift` checks each case.
-+  - Nine rules in `evaluate` allow a path by its shape and have no entry: Application Support caches, Chromium caches outside it, container caches, Telegram media, gem downloads, unfinished downloads, editor workspace storage, old CLI versions and Gradle leftovers. `isOfferedForCleanup` asks `DeletionSafetyPolicy.shapeLinkRefusesDeletion` for them (#424). The rule is the same, with the folder the shape names in place of the entry (`shapeMatchedFolder`): the cache folder, a container's `Data/Library/Caches`, Telegram's `media`, a gem `cache` folder, or the entry itself. The links macOS makes in an app container are not on the way to `Caches`, so they refuse nothing. A new shape rule, or a new shape in an old one, needs a row in `shapeMatchedFolder` and in `ShapeLinkTests`. The shape rules outside home (old browser frameworks, macOS installers, the clang module cache) and the project rules, which follow #190, have no such check.
-   - Items the user picks one by one have their own gate instead, because they are the user's own files and `evaluate` refuses those by design. Large Files, AI models, the uninstaller, and command-line tools go through `FileDeleter.deleteUserSelectedFiles`, which checks `LargeFileScanPolicy`, `AIModelScanPolicy`, `AppUninstallScanPolicy`, and `CommandLineToolScanPolicy`. Those gates are deletion-safety code too. They never feed Clean Safe Items or scheduled cleans.
-   - Folders the user adds in Settings for Large Files and Dev Projects (#318, `ScanFolders`) follow `AppFolders.refusal(forPicked:)`, except that a whole drive may be added when it holds no `System`, `Users`, `Backups.backupdb` or APFS Time Machine backup. Only local disks count (`AppFolders.isOnLocalDisk`), so never a network share or a macFUSE mount. They widen two gates and nothing else: `LargeFileScanPolicy.isEligibleForDeletion`, which reads the list from disk at delete time and also needs the file on a local disk, and the catalog rule in `isWhitelistedProjectArtifactPath`, which reads `ScanFolders.snapshot`, refreshed at each project scan and at the start of `FileDeleter.deleteItems`. The name-only rule and agent worktrees stay home only. Below an added folder, both walks and both gates skip a copy of a Mac, a home folder (`Library` beside `Desktop`, `Documents` or `Downloads`) or a Time Machine backup, and a folder another sync service keeps (`ScanFolders.isOffLimits`); the project rule also refuses a `Library` folder or a bundle between the added folder and the project, and the project walk never enters a bundle. A pick in or above another sync service's folder is refused like iCloud Drive. Projects in a folder added outside the home folder are Check First (`ProjectCheckFirstReason.addedFolder`), judged by real path too, so a home folder linked onto an added drive counts, `countsAsSafeCleanup` refuses them even when overridden to Safe, and `manualSafeCleanupCandidates` drops any path inside such a saved folder, plugged in or not, so Clean Safe Items and scheduled cleans never reach them. A folder added insid
-```
-
-**File**: `PurgeTests/AllowlistAuditTests.swift` (modified, +495/-0)
-```diff
-@@ -1741,6 +1741,501 @@ struct AllowlistLinkTests {
-     }
- }
+@@ -437,7 +437,8 @@ final class AppleIntelligenceModelStore: ObservableObject {
  
-+// MARK: - Shape-matched rows reached through a link (#424)
-+
-+/// The rules in `evaluate` that allow a path by its shape compare text, like
-+/// the allowlist. With an app's `Crashpad` folder a link to `~/Documents`, a
-+/// move would take `~/Documents/completed`, so only
-+/// `shapeLinkRefusesDeletion` catches it. Every test builds its own home.
-+@Suite("Shape-matched rows reached through a link (#424)")
-+struct ShapeLinkTests {
-+    private static let appSupport = "Library/Application Support"
-+    private static let container = "Library/Containers/com.example.app/Data/Library/Caches"
-+    private static let telegram = CacheDiscoveryPaths.telegramGroupContainerRelative
-+    private static let profile = DeletionSafetyPolicy.chromiumUserDataStores[0].relative
-+    private static let workerVersions = "\(DeletionSafetyPolicy.cursorAgentWorkerCLI)/.local/share/cursor-agent/versions"
-+
-+    /// One path per shape a rule allows, relative to home, with the folder the
-+    /// rule names for it. `readsDisk` marks the two rules that also look at
-+    /// what is in the folder, so their text can't be asked without one.
-+    private static let rows: [(row: String, folder: String, readsDisk: Bool)] = [
-+        ("\(appSupport)/Foo/Cache", "\(appSupport)/Foo/Cache", true),
-+        ("\(appSupport)/Foo/Code Cache", "\(appSupport)/Foo/Code Cache", true),
-+        ("\(appSupport)/Foo/Crashpad/completed", "\(appSupport)/Foo/Crashpad/completed", true),
-+        ("\(appSupport)/Foo/web/Crashpad/pending", "\(appSupport)/Foo/web/Crashpad/pending", true),
-+        ("\(appSupport)/Foo/User Data/GPUCache", "\(appSupport)/Foo/User Data/GPUCache", true),
-+        ("\(appSupport)/Foo/User Data/Default/Code Cache", "\(appSupport)/Foo/User Data/Default/Code Cache", true),
-+        ("\(appSupport)/Google/Chrome Beta/Default/Cache", "\(appSupport)/Google/Chrome Beta/Default/Cache", true),
-+        ("\(profile)/GPUCache", "\(profile)/GPUCache", true),
-+        ("\(profile)/GPUCache/data_0", "\(profile)/GPUCache", true),
-+        ("\(profile)/Default/Cache", "\(profile)/Default/Cache", true),
-+        ("\(profile)/Default/Cache/Cache_Data/f_0001", "\(profile)/Default/Cache", true),
-+        (container, container, false),
-+        ("\(container)/com.example.app", container, false),
-+        ("\(container)/com.example.app/fsCachedData/a", container, false),
-+        ("\(telegram)/stable/account-1/postbox/media", "\(telegram)/stable/account-1/postbox/media", false),
-+        ("\(telegram)/stable/account-1/postbox/media/photo.jpg", "\(telegram)/stable/account-1/postbox/media", false),
-+        ("\(telegram)/account-2/postbox/media/a/b", "\(telegram)/account-2/postbox/media", false),
-+        (".gem/ruby/3.3.0/cache", ".gem/ruby/3.3.0/cache", false),
-+        (".gem/ruby/3.3.0/cache/rake-13.0.6.gem", ".gem/ruby/3.3.0/cache", false),
-+        ("Downloads/movie.mkv.crdownload", "Downloads/movie.mkv.crdownload", false),
-+        ("Downloads/archive.zip.part", "Downloads/archive.zip.part", false),
-+        ("Downloads/Big.dmg.download", "Downloads/Big.dmg.download", false),
-+        ("Downloads/Big.dmg.download/Info.plist", "Downloads/Big.dmg.download", false),
-+        ("\(appSupport)/Code/User/workspaceStorage/0a1b2c3d", "\(appSupport)/Code/User/workspaceStorage/0a1b2c3d", false),
-+        ("\(appSupport)/Cursor/User/workspaceStorage/4e5f6a7b", "\(appSupport)/Cursor/User/workspaceStorage/4e5f6a7b", false),
-+        (".local/share/claude/versions/2.0.1", ".local/share/claude/versions/2.0.1", false),
-+        (".local/share/cursor-agent/versions/2026.01.02-abc/node_modules", ".local/share/cursor-agent/versions/2026.01.02-abc", false),
-+        ("\(workerVersions)/2026.01.02-abc", "\(workerVersions)/2026.01.02-abc", false),
-+        (".grok/downloads/grok-1.0.13", ".grok/downloads/grok-1.0.13", false),
-+        (".gradle/daemon/8.10.2", ".gradle/daemon/8.10.2", false),
-+        (".gradle/.tmp", ".gradle/.tmp", false),
-+    ]
-+
-+    /// A temporary home, with a `Developer` folder beside it for links to point at.
-+    private static func makeHome() throws -> (base: URL, home: URL, elsewhere: URL) {
-+        let fm = FileManager.default
-+        let base = fm.temporaryDirectory.appendingPathComponent("shape-link-\(UUID().uuidString)", isDirectory: true)
-+        let home = base.appendingPathComponent("home", isDirectory: true)
-+        let elsewhere = base.appendingPathComponent("Developer", isDirectory: true)
-+        try fm.createDirectory(at: home, withIntermediateDirectories: true)
-+        try fm.createDirectory(at: elsewhere, withIntermediateDirectories: true)
-+        return (base, home, elsewhere)
-+    }
-+
-+    private static func refuses(_ relative: String, home: URL, reuseRecentRead: Bool = false) -> Bool {
-+        DeletionSafetyPolicy.shapeLinkRefusesDeletion(
-+            standardizedPath: home.appendingPathComponent(relative).standardizedFileURL.path,
-+            home: ho
-```
-
-**File**: `docs/safety-notes.md` (modified, +72/-0)
-```diff
-@@ -11,6 +11,78 @@ that belongs here, [SECURITY.md](../SECURITY.md) says how to report it.
- 
- Newest first.
- 
-+## 2026-11-20: Shape-matched cache rows followed a link to another folder
-+
-+**Found internally** while fixing [#422](https://github.com/jithin-sabu/purge-app/issues/422) ([#424](https://github.com/jithin-sabu/purge-app/issues/424)), no report. **Fixed:** [#425](https://github.com/jithin-sabu/purge-app/pull/425), not shipped yet. **Affected:** v1.1.2 to v1.16.2.
-+
-+### What happened
-+
-+The fix for #422 covered the entries in the allowlist. Nine rules allow a path
-+by its shape and have no entry, so they kept the same gap: Application Support
-+caches, Chromium caches in `~/.gemini`, container caches, Telegram media, gem
-+downloads, unfinished downloads, editor workspace storage, old CLI versions and
-+Gradle's daemon logs. Each compares path text and never checked whether a
-+folder on the way was a link.
-+
-+If an app's `Crashpad` folder in Application Support was a link to
-+`~/Documents`, the row named `Crashpad/completed`, the name matched, and the
-+move took `~/Documents/completed`. A container whose `Data` folder was a link,
-+a linked `~/.gem`, or VS Code's `User` folder kept in a dotfiles folder did the
-+same: the scan listed rows through the link and the move took what was behind
-+it.
-+
-+Where the scan lists a folder itself, as it does `~/Downloads` and
-+`Application Support`, a link there gave no rows. The gate still allowed the
-+path by its text, so a link made after the scan was followed.
-+
-+Gradle's daemon logs and temp folder were the one group already safe:
-+`gradleLeftoverRefusesDeletion` asks for real folders at every step.
-+
-+### Who was affected
-+
-+Nobody reported a loss. It took a link on the way to a row, and macOS makes
-+none there. The links it puts in every app container (`Data/Desktop`,
-+`Data/Library/Fonts` and the rest) are not on the way to `Data/Library/Caches`:
-+on the Mac this was checked on, all 788 containers had a real `Data`,
-+`Data/Library` and `Data/Library/Caches`. A link of the user's own usually led
-+to the real cache on another drive. Anything moved went to the Trash and could
-+be put back.
-+
-+### What changed
-+
-+`DeletionSafetyPolicy.shapeLinkRefusesDeletion` refuses a path one of the nine
-+rules can allow when the folder the rule names, or any folder above the path up
-+to home, is a link. `shapeMatchedFolder` finds that folder by text: the cache
-+folder, a container's `Caches`, Telegram's `media`, a gem `cache` folder, or
-+the entry itself for a download, a workspace or a CLI version.
-+`isOfferedForCleanup` asks it outside its saved answers, next to the allowlist
-+guard, so the scan drops the row and `FileDeleter` refuses the move even when
-+the link appeared after the scan.
-+
-+A link lower down refuses nothing, because it moves to the Trash as a link.
-+Telegram's `media` folder is emptied entry by entry and never moved, so it is
-+refused when it is a link itself. Folders above a row are found as bytes, as
-+in #423, so a name that starts with a combining mark hides none of them.
-+
-+A Mac with a link on the way to one of these rows no longer gets that row. The
-+issue lists them. Nothing changes for unfinished downloads or Gradle, which
-+were not offered through a link before.
-+
-+### What would have caught it earlier
-+
-+The #422 fixture, run for the rules that have no allowlist entry.
-+`ShapeLinkTests` in
-+[`PurgeTests/AllowlistAuditTests.swift`](../PurgeTests/AllowlistAuditTests.swift)
-+builds a temporary home and checks each rule with a folder above the row
-+linked, the named folder linked, a link inside it and nothing linked.
-+`everyDiscoveredApplicationSupportCacheIsGuarded` and
-+`everyDiscoveredChromiumUserDataCacheIsGuarded` fail if the scan lists a cache
-+the guard does not read, and `everyPathATextRuleAllowsIsGuarded` fails if a
-+text rule allows a path the guard has no folder for.
-+`theLinksMacOSMakesInAContainerRefuseNothing` keeps the guard off a normal Mac.
-+`aNameThatStartsWithACombiningMarkHidesNoFolder` checks the byte walk for each
-+rule.
-+
- ## 2026-11-19: Allowlisted rows followed a link to another folder
- 
- **Found internally** while fixing [#420](https://github.com/jithin-sabu/purge-app/issues/420) ([#422](https://github.com/jithin-sabu/purge-app/issues/422)), no report. **Fixed:** [#423](https://github.com/jithin-sabu/purge-app/pull/423), not shipped yet. **Affected:** v1.1.0 to v1.16.2.
-```
-
-**File**: `purge/Services/DeletionSafetyPolicy.swift` (modified, +219/-1)
-```diff
-@@ -519,6 +519,8 @@ enum DeletionSafetyPolicy {
-         // the scan (#420, #422). Same split as Playwright: the on-screen filter may
-         // reuse a read from the last few seconds, and a move reads the disk again.
-         if allowlistLinkRefusesDeletion(standardizedPath: key, reuseRecentRead: Thread.isMainThread) { return false }
-+        // The rules that allow a path by its shape compare text too (#424).
-+        if shapeLinkRefusesDeletion(standardizedPath: key, reuseRecentRead: Thread.isMainThread) { return false }
-         if prekToolsRefuseDeletion(url) { return false }
-         if mailRunningRefusesDeletion(url) { return false }
-         // A daemon's log stays while it runs, and a temp file until it is old.
-@@ -698,7 +700,25 @@ enum DeletionSafetyPolicy {
-         // The lowest folder that has to be real: the row itself when it is the
-         // entry or is emptied entry by entry, else the folder the row sits in.
-         let contentsOnly = home == cachedHomePath ? cachedContentsOnlyPrefixes : contentsOnlyPrefixes(home: home)
--        let folder = path == entry || contentsOnly.contains(path) ? path : PathContainment.parentFolder(of: path)
-+        return rowReachesThroughLink(
-+            path,
-+            readsRowItself: path == entry || contentsOnly.contains(path),
-+            home: home,
-+            reuseRecentRead: reuseRecentRead
-+        )
-+    }
-+
-+    /// The walk both link guards share. `readsRowItself` is true for a row that
-+    /// is the folder its rule names, an allowlist entry or the folder a shape
-+    /// rule matched, and for a folder emptied entry by entry. Any other row
-+    /// may be a link itself, so the walk stops at the folder it sits in.
-+    private nonisolated static func rowReachesThroughLink(
-+        _ path: String,
-+        readsRowItself: Bool,
-+        home: String,
-+        reuseRecentRead: Bool
-+    ) -> Bool {
-+        let folder = readsRowItself ? path : PathContainment.parentFolder(of: path)
-         guard reuseRecentRead else { return PathContainment.reachesThroughLink(folder, home: home) }
- 
-         let now = ProcessInfo.processInfo.systemUptime
-@@ -715,6 +735,204 @@ enum DeletionSafetyPolicy {
-         return refuses
+     func cancelWaiting() {
+         waitCancelled = true
+-        SettingsGuidePanel.shared.hide()
++        SettingsGuidePanel.shared.hide(.installProfile)
++        SettingsGuidePanel.shared.hide(.removeProfile)
      }
  
-+    // MARK: - Shape-matched rows reached through a link (#424)
-+
-+    /// The folders the shape rules below look in, relative to home and ending
-+    /// in `/`. A path under none of them matches none of the rules. The stores
-+    /// come from their own lists, so a new one is covered when it is added.
-+    nonisolated static let shapeRuleRoots: [String] = [
-+        "Library/Application Support/",
-+        "Library/Containers/",
-+        "\(CacheDiscoveryPaths.telegramGroupContainerRelative)/",
-+        "Downloads/",
-+        ".gem/ruby/",
-+        ".gradle/"
-+    ]
-+        + chromiumUserDataStores.map { "\($0.relative)/" }
-+        + cliVersionStores.map { "\($0.versions)/" }
-+        + EditorWorkspaceStoragePolicy.relativeRoots.map { "\($0.relative)/" }
-+
-+    /// `shapeRuleRoots` by their first folder, so a row in `~/Library/Caches` or
-+    /// in a project costs one lookup and three comparisons. A root inside
-+    /// another is left out.
-+    private nonisolated static let shapeRuleRootsByFirstFolder: [Substring: [String]] = {
-+        var index: [Substring: [String]] = [:]
-+        for root in shapeRuleRoots where !shapeRuleRoots.contains(where: { $0 != root && root.hasPrefix($0) }) {
-+            index[Substring(String(firstFolder(of: root[...]))), default: []].append(root)
-+        }
-+        return index
-+    }()
-+
-+    /// Every name an Application Support cache row can end in: the cache names
-+    /// `CacheDiscoveryPaths.isApplicationSupportCachePath` accepts. Crash report
-+    /// folders are matched by their last two names, and the fixed paths in
-+    /// `applicationSupportRelativeCachePaths` whole.
-+    private nonisolated static let applicationSupportCacheFolderNames: Set<String> =
-+        CacheDiscoveryPaths.applicationSupportDirectCacheNames.union(CacheDiscoveryPaths.chromiumProfileCacheNames)
-+
-+    /// `path` when it could be a row of `isWhitelistedApplicationSupportCachePath`,
-+    /// by its names alone. That rule reads the disk and allows only the cache or
-+    /// crash report folder itself, never a path inside one, so the row is the
-+    /// folder the rule names. Wider than the rule on purpose: it never reads.
-+    private nonisolated static func applicationSupportCacheFolder(_ path: String, home: String) -> String? {
-+        let prefix = "\(home)/Library/Application Support/"
-+        guard path.hasPrefix(prefix) else { return nil }
-+        // Split as the rule splits it: the app's folder, then the names it judges.
-+        let parts = path.dropFirst(prefix.count).split(separator: "/")
-+        guard parts.count >= 2, let name = parts.last else { return nil }
-+        if applicationSupportCacheFolderNames.contains(String(name)) { return path }
-+        if CacheDiscoveryPaths.applicationSupp
+     /// Stops a removal before its next request to the service.
+@@ -531,7 +532,7 @@ final class AppleIntelligenceModelStore: ObservableObject {
+                 let now = readBlocks()
+                 return blockTypes.allSatisfy { now.contains($0) }
+             }
+-            SettingsGuidePanel.shared.hide()
++            SettingsGuidePanel.shared.hide(.installProfile)
+             // System Settings keeps its own copy once opened; the file would only
+             // linger. Only Purge's own regular file goes, nothing that replaced it.
+             AppleIntelligenceDownloadBlock.removeProfile(at: profileURL)
+@@ -757,7 +758,7 @@ final class AppleIntelligenceModelStore: ObservableObject {
+             SettingsGuidePanel.shared.show(.removeProfile) { [weak self] in self?.cancelWaiting() }
+             let readBlocks = services.installedBlocks
+             let removed = await waitUntil { readBlocks().isEmpty }
+-            SettingsGuidePanel.shared.hide()
++            SettingsGuidePanel.shared.hide(.removeProfile)
+             installedBlocks = services.installedBlocks()
+             guard removed else {
+                 phase = .idle
 ```
 
----
-
-### Incident Patch 3: `f4d9fcc0` (2026-11-20)
-**Commit Message**: fix: refuse allowlisted rows reached through a link (#422) (#423)
-
-* fix: refuse allowlisted rows reached through a link (#422)
-
-The allowlist compares path text. #420 closed the gap for the entries
-under ~/.cache. Every other entry still had it: with ~/.gradle a link to
-~/Developer, the row named ~/.gradle/caches and the move took
-~/Developer/caches.
-
-allowlistLinkRefusesDeletion refuses a path in an allowlist entry when
-the entry, or any folder above the path up to home, is a link.
-isOfferedForCleanup asks it outside its saved answers, so the scan drops
-the row and FileDeleter refuses the move. It replaces the ~/.cache and
-prek checks, which now ask it for their own folders.
-
-A link lower down refuses nothing: it moves to the Trash as a link. A
-simulator device is left alone, because simctl removes it by its UDID.
-A folder that can't be read is refused.
-
-A path in no entry costs a dictionary lookup. Any other is read with
-lstat: 1.2 µs for a row in ~/Library/Caches, against 12.5 µs through
-URL. On the main thread a read from the last 10 s is reused. A move
-always reads again.
-
-A Mac with no link on the way to a row is offered what it was before.
-A cache linked to another drive is
-
-**File**: `CLAUDE.md` (modified, +1/-0)
+**File**: `purge/Services/RemovedAppMonitor.swift` (modified, +47/-5)
 ```diff
-@@ -48,6 +48,7 @@ Cloud sessions run on Linux, so they can build no Swift code. Run the three Linu
-   - `.unknown` is "Not Sure". It never appears in scan results, but the delete confirmation sheets can still list it.
- - Mark a path `.safe` only when it holds nothing but data its app rebuilds by itself. If it can hold settings, installed tools, keys, history, databases, projects, or offline downloads, it is `.medium` or not offered at all.
- - Every cache and Dev Tools removal goes through `DeletionSafetyPolicy.evaluate(_:)`. Never add a delete path that skips it.
-+  - The allowlist compares path text, so `isOfferedForCleanup` also asks `DeletionSafetyPolicy.allowlistLinkRefusesDeletion` (#420, #422). A path in an allowlist entry is refused when the entry, or any folder above the path up to home, is a link, even a link to another drive. A link below that moves to the Trash as a link, except a folder emptied entry by entry (`~/Library/Logs/DiagnosticReports`), which is refused when it is a link itself. A simulator device is left alone, because `simctl` removes it by its UDID. A new entry is covered when it is added. The rules in `evaluate` that match by shape, like container caches, have no such check. `AllowlistLinkTests` in `PurgeTests/AllowlistAuditTests.swift` checks each case.
-   - Items the user picks one by one have their own gate instead, because they are the user's own files and `evaluate` refuses those by design. Large Files, AI models, the uninstaller, and command-line tools go through `FileDeleter.deleteUserSelectedFiles`, which checks `LargeFileScanPolicy`, `AIModelScanPolicy`, `AppUninstallScanPolicy`, and `CommandLineToolScanPolicy`. Those gates are deletion-safety code too. They never feed Clean Safe Items or scheduled cleans.
-   - Folders the user adds in Settings for Large Files and Dev Projects (#318, `ScanFolders`) follow `AppFolders.refusal(forPicked:)`, except that a whole drive may be added when it holds no `System`, `Users`, `Backups.backupdb` or APFS Time Machine backup. Only local disks count (`AppFolders.isOnLocalDisk`), so never a network share or a macFUSE mount. They widen two gates and nothing else: `LargeFileScanPolicy.isEligibleForDeletion`, which reads the list from disk at delete time and also needs the file on a local disk, and the catalog rule in `isWhitelistedProjectArtifactPath`, which reads `ScanFolders.snapshot`, refreshed at each project scan and at the start of `FileDeleter.deleteItems`. The name-only rule and agent worktrees stay home only. Below an added folder, both walks and both gates skip a copy of a Mac, a home folder (`Library` beside `Desktop`, `Documents` or `Downloads`) or a Time Machine backup, and a folder another sync service keeps (`ScanFolders.isOffLimits`); the project rule also refuses a `Library` folder or a bundle between the added folder and the project, and the project walk never enters a bundle. A pick in or above another sync service's folder is refused like iCloud Drive. Projects in a folder added outside the home folder are Check First (`ProjectCheckFirstReason.addedFolder`), judged by real path too, so a home folder linked onto an added drive counts, `countsAsSafeCleanup` refuses them even when overridden to Safe, and `manualSafeCleanupCandidates` drops any path inside such a saved folder, plugged in or not, so Clean Safe Items and scheduled cleans never reach them. A folder added inside home keeps the home rules. The project walk goes 12 levels below an added folder, and 4 below the built-in roots, 1 below the home folder itself (#392). Right before each project artifact moves, and again on Retry, `FileDeleter` asks `ScanFolders.permitsProjectArtifactMove`, which refuses an artifact under a saved folder that left the snapshot or now has a link in its path, and `ProjectActivityPolicy.artifactBelongsToActiveProject`, which refuses it while a process works in the project or git holds a lock there. `PurgeTests/ProjectScanDepthTests.swift` checks both. `OLLAMA_MODELS` naming `/`, home or above is ignored, and under the Ollama root the gate takes only `manifests/` files and `blobs/sha256-*`. `PurgeTests/ScanFoldersTests.swift` and `ProjectAddedFolderTests.swift` check each rule.
-   - The Go Module Cache row (#397) offers Go's whole module cache, found the way Go finds it: `GOMODCACHE`, else the first `GOPATH` entry plus `pkg/mod`, else `~/go/pkg/mod`, each read from Purge's environment, then launchd, then Go's env file. Purge can't see a value set only in a shell profile, so it may offer the default folder while Go uses another; that folder still has to pass every check below. Nothing about it is in the static allowlist: `GoModuleCacheScanPolicy` is the gate, and `evaluate` allows only the folder it found. The folder must be a real local folder reached through no link. It must not be home or above, `/System` or `/private` (other spellings of real folders), under a never-delete prefix or one of the exact folders, in iCloud (Drive, CloudStorage, o
-```
-
-**File**: `PurgeTests/AllowlistAuditTests.swift` (modified, +399/-0)
-```diff
-@@ -1342,6 +1342,405 @@ struct OpencodeCacheTests {
-     }
- }
+@@ -41,6 +41,8 @@ final class RemovedAppMonitor: ObservableObject {
+     /// Whether the agent has answered the check that is running now.
+     private var answeredDuringProbe = false
+     private var probeTask: Task<Void, Never>?
++    /// Runs while the Login Items guide is up (`openLoginItemsSettings`).
++    private var approvalTimer: Timer?
  
-+// MARK: - Allowlisted rows reached through a link (#422)
+     private enum Phase {
+         case idle
+@@ -304,8 +306,44 @@ final class RemovedAppMonitor: ObservableObject {
+         }
+     }
+ 
++    /// How long the Login Items guide waits for the user, as long as the profile
++    /// guide waits (`AppleIntelligenceModelStore.settingsWait`). After that the
++    /// guide closes; the sidebar row is still there to start again.
++    static let approvalWait: TimeInterval = 10 * 60
 +
-+/// The allowlist accepts `.gradle/caches` by its text. With `~/.gradle` a link
-+/// to `~/Developer`, a move would take `~/Developer/caches`, so only
-+/// `allowlistLinkRefusesDeletion` catches it. Every test builds its own home.
-+@Suite("Allowlisted rows reached through a link (#422)")
-+struct AllowlistLinkTests {
-+    /// A temporary home, with a `Developer` folder beside it for links to point at.
-+    private static func makeHome() throws -> (base: URL, home: URL, elsewhere: URL) {
-+        let fm = FileManager.default
-+        let base = fm.temporaryDirectory.appendingPathComponent("allowlist-link-\(UUID().uuidString)", isDirectory: true)
-+        let home = base.appendingPathComponent("home", isDirectory: true)
-+        let elsewhere = base.appendingPathComponent("Developer", isDirectory: true)
-+        try fm.createDirectory(at: home, withIntermediateDirectories: true)
-+        try fm.createDirectory(at: elsewhere, withIntermediateDirectories: true)
-+        return (base, home, elsewhere)
-+    }
-+
-+    /// Every allowlist entry, relative to home.
-+    private static func entries(_ home: URL) -> [String] {
-+        DeletionSafetyPolicy.whitelistedAbsolutePrefixes(home: home.path).map { String($0.dropFirst(home.path.count + 1)) }
-+    }
-+
-+    private static func refuses(_ relative: String, home: URL) -> Bool {
-+        DeletionSafetyPolicy.allowlistLinkRefusesDeletion(home.appendingPathComponent(relative), home: home.path)
-+    }
-+
-+    private static func makeFolder(_ url: URL) throws {
-+        try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
-+    }
-+
-+    /// Where `relative` lands when `link`, a folder at or above it, points at `target`.
-+    private static func behind(_ relative: String, link: String, target: URL) -> URL {
-+        let rest = relative.dropFirst(link.count).drop { $0 == "/" }
-+        return rest.isEmpty ? target : target.appendingPathComponent(String(rest), isDirectory: true)
-+    }
-+
-+    /// The guard starts from the list itself, so a new entry is covered the day
-+    /// it is added.
-+    @Test
-+    func everyEntryIsFoundByItsText() {
-+        let home = "/Users/someone"
-+        let entries = DeletionSafetyPolicy.whitelistedAbsolutePrefixes(home: home)
-+        #expect(entries.count > 80)
-+        for entry in entries {
-+            #expect(DeletionSafetyPolicy.allowlistEntry(containing: entry, home: home) == entry, "\(entry)")
-+            #expect(DeletionSafetyPolicy.allowlistEntry(containing: "\(entry)/a/b", home: home) == entry, "\(entry)")
-+            #expect(DeletionSafetyPolicy.allowlistEntry(containing: "\(entry)-old", home: home) == nil, "\(entry)")
++    /// Opens Login Items with a guide beside it that says which switch to turn on,
++    /// then checks once a second until macOS allows the watcher. The guide closes
++    /// itself then, when the problem changes, when the user cancels it, or after
++    /// `approvalWait`. Each check reads only the Login Items status; the agent is
++    /// probed once, after macOS allows it.
+     func openLoginItemsSettings() {
+         SMAppService.openSystemSettingsLoginItems()
++        guard watcherHealth == .needsApproval else { return }
++        SettingsGuidePanel.shared.show(.allowInBackground) { [weak self] in
++            self?.stopWaitingForApproval(hideGuide: false)
 +        }
-+        for other in [
-+            home, "\(home)/", "\(home)/.gradle", "\(home)/.gradle/jdks", "\(home)/Library", "\(home)/Library/CachesX/a",
-+            "\(home)/.cache/unknown", "\(home)2/.npm", "/Users/other/.npm", "/Library/Caches/a", "",
-+        ] {
-+            #expect(DeletionSafetyPolicy.allowlistEntry(containing: other, home: home) == nil, "\(other)")
-+        }
-+    }
-+
-+    /// `~/.gradle`, `~/Library` or `~/Movies` as a link: the move would take the
-+    /// folder behind it.
-+    @Test
-+    func everyEntryIsRefusedWhenItsFirstFolderIsALink() throws {
-+        let fm = FileManager.default
-+        let byFirstFolder = Dictionary(grouping: Self.entries(URL(fileURLWithPath: "/Users/someone"))) {
-+            String($0.split(separator: "/")[0])
-+        }
-+        #expect(byFirstFolder.count > 30)
-+        for (first, entries) in byFirstFolder {
-+            let (base, home, elsewhere) = try Self.makeHome()
-+            defer { try? fm.removeItem(at: base) }
-+            try fm.createSymbolicLink(at: home.appendingPathComponent(first), withDestinationURL: elsewhere)
-+            for relative in entries {
-+                // The folder a move would really take.
-+                let behind = Self.behind(relative, link: first, target: elsewhere)
-+                try Self.makeFolder(behind.appendingPathComponent("inner", isDirectory: true))
-+                for path in [relative, "\(relative)/inner", "\(relative)/inner/deeper"] {
-+                    #expect(Self.refuses(path, home: home), "\(path)")
++        approvalTimer?.invalidate()
++        let deadline = Date().addingTimeInterval(Self.approvalWait)
++        approvalTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
++            MainActor.assumeIsolated {
++                guard let self else { return }
++                guard self.isEnabled, self.managesLiveAgent, self.watcherHealth == .needsApproval,
++                      Date() < deadline
++                else {
++                    self.stopWaitingForApproval(hideGuide: true)
++                    return
 +                }
-+                #expect(fm.fileExists(atPath: home.appendingPathComponent("\(relative)/inner").path))
++                guard self.agentService.status != .requiresApproval else { return }
++                self.stopWaitingForApproval(hideGuide: true)
++                self.refreshAgentStatus()
 +            }
 +        }
 +    }
 +
-+    /// `~/.npm` or `DerivedData` as a link: its own row would only move the
-+    /// link, and a row inside it would take what is behind.
-+    @Test
-+    func everyEntryIsRefusedWhenItsOwnFolderIsALink() throws {
-+        let fm = FileManager.default
-+        let (base, home, elsewhere) = try Self.makeHome()
-+        defer { try? fm.removeItem(at: base) }
-+        for (index, relative) in Self.entries(home).enumerated() {
-+            let entry = home.appendingPathComponent(relative)
-+     
++    private func stopWaitingForApproval(hideGuide: Bool) {
++        approvalTimer?.invalidate()
++        approvalTimer = nil
++        if hideGuide { SettingsGuidePanel.shared.hide(.allowInBackground) }
+     }
+ 
+     /// Called by Purge's uninstaller before it moves bundles, so the agent does not
+@@ -891,12 +929,16 @@ nonisolated enum WatcherHealth: Equatable, Sendable {
+         }
+     }
+ 
+-    /// The same problem in a line, for the sidebar notice.
+-    var shortMessage: String? {
++    /// The sidebar row's title. The sheet it opens uses `problemTitle`, which is too
++    /// long for the row at sidebar width.
++    static let shortTitle = String(localized: "Reviews paused")
++
++    /// The problem in a few words, under the sidebar row's title.
++    var shortHint: String? {
+         switch self {
+-        case .needsApproval: return String(localized: "macOS is blocking Purge's background watcher, so deleted apps go unnoticed.")
+-        case .notRunning: return String(localized: "The background watcher isn't running, so deleted apps go unnoticed.")
+-        case .failedToStart: return String(localized: "The background watcher couldn't start, so deleted apps go unnoticed.")
++        case .needsApproval: return String(localized: "Blocked in Login Items")
++        case .notRunning: return String(localized: "The watcher stopped")
++        case .failedToStart: return String(localized: "The watcher didn't start")
+         case .off, .checking, .running: return nil
+         }
+     }
 ```
 
-**File**: `docs/safety-notes.md` (modified, +61/-0)
+**File**: `purge/Services/SettingsGuidePanel.swift` (modified, +33/-4)
 ```diff
-@@ -11,6 +11,67 @@ that belongs here, [SECURITY.md](../SECURITY.md) says how to report it.
+@@ -2,31 +2,43 @@ import AppKit
+ import SwiftUI
  
- Newest first.
+ /// A small floating panel that sits beside the System Settings window and says
+-/// what to click, for the two moments Purge has to hand over to macOS: installing
+-/// the Apple Intelligence download-block profile and removing it (#133). The
++/// what to click, for the moments Purge has to hand over to macOS: installing
++/// the Apple Intelligence download-block profile and removing it (#133), and
++/// allowing the deleted-apps watcher in Login Items. The
+ /// window list gives System Settings' position without any permission, so the
+ /// panel follows the window as it moves and comes back when it is behind
+-/// something. It never takes focus, and it goes away on its own once the store
+-/// sees the profile change.
++/// something. It never takes focus, and it goes away on its own once its owner
++/// sees the change it asked for.
+ @MainActor
+ final class SettingsGuidePanel {
+     static let shared = SettingsGuidePanel()
  
-+## 2026-11-19: Allowlisted rows followed a link to another folder
-+
-+**Found internally** while fixing [#420](https://github.com/jithin-sabu/purge-app/issues/420) ([#422](https://github.com/jithin-sabu/purge-app/issues/422)), no report. **Fixed:** [#423](https://github.com/jithin-sabu/purge-app/pull/423), not shipped yet. **Affected:** v1.1.0 to v1.16.2.
-+
-+### What happened
-+
-+The fix for #420 covered the allowlist entries under `~/.cache`. Every other
-+entry had the same gap. The allowlist compares path text, and never checked
-+whether a folder on the way was a link.
-+
-+If `~/.gradle` was a link to `~/Developer`, the row named `~/.gradle/caches`,
-+the text matched, and the move took `~/Developer/caches`. The same held for a
-+row inside an entry, such as `~/.npm/_cacache` with `~/.npm` linked, or a
-+JetBrains cache with `~/Library/Caches/JetBrains` linked.
-+
-+Many of these rows are Safe to Clean, so Clean Safe Items or a scheduled clean
-+could have moved the folder behind the link without asking.
-+
-+An entry that was itself a link, and its own row, did less harm: the move took
-+only the link. The row was still wrong. Nothing was freed, and the tool made a
-+new folder on the startup disk.
-+
-+### Who was affected
-+
-+Nobody reported a loss. It took a tool folder linked to a place that held a
-+folder named like a cache: `caches`, `repository`, `registry`, `pkgs`. The
-+common setup, a tool folder linked to another drive, moved the cache the tool
-+really used. Anything moved went to the Trash and could be put back.
-+
-+### What changed
-+
-+`DeletionSafetyPolicy.allowlistLinkRefusesDeletion` refuses a path in an
-+allowlist entry when the entry, or any folder above the path up to home, is a
-+link. It finds the entry in the allowlist itself, so a new row is covered when
-+it is added. `isOfferedForCleanup` asks it outside its saved answers, so the
-+scan drops the row and `FileDeleter` refuses the move even when the link
-+appeared after the scan. The checks for `~/.cache` and prek are now this one
-+check.
-+
-+A link lower down refuses nothing, because it moves to the Trash as a link. A
-+folder emptied entry by entry is the exception: it is never moved itself, so
-+`~/Library/Logs/DiagnosticReports` as a link is refused too. A simulator
-+device is left alone, because `simctl` removes it by its UDID and its path is
-+never moved.
-+
-+A Mac with a link on the way to a row no longer gets that row. That includes a
-+cache linked to another drive. Offering those again would need rows that say
-+where they really are, and that never go into Clean Safe Items or a scheduled
-+clean.
-+
-+### What would have caught it earlier
-+
-+The #420 fixture, run for every entry and not only the ones under `~/.cache`.
-+`AllowlistLinkTests` in
-+[`PurgeTests/AllowlistAuditTests.swift`](../PurgeTests/AllowlistAuditTests.swift)
-+builds a temporary home and checks every allowlist entry with its first folder
-+linked, its own folder linked and nothing linked, and checks a folder on the
-+way, a folder between an entry and a row, a link inside a folder, and a
-+linked folder that is emptied entry by entry.
-+`everyEntryIsFoundByItsText` fails if the guard misses an entry.
-+
- ## 2026-11-19: Rows under `~/.cache` followed a link to another folder
+     enum Guide: Equatable {
+         case installProfile
+         case removeProfile
++        case allowInBackground
+     }
  
- **Found internally** in review of [#417](https://github.com/jithin-sabu/purge-app/pull/417) ([#420](https://github.com/jithin-sabu/purge-app/issues/420)), no report. **Fixed:** [#421](https://github.com/jithin-sabu/purge-app/pull/421), not shipped yet. **Affected:** v1.1.0 to v1.16.2.
+     private var panel: NSPanel?
++    private(set) var shown: Guide?
+     private var timer: Timer?
+     private var onCancel: (() -> Void)?
+ 
+     private static let width: CGFloat = 300
+     private static let gap: CGFloat = AppStyle.Spacing.medium
+     private static let systemSettingsBundleID = "com.apple.systempreferences"
+ 
++    /// Shows `guide`. One System Settings pane is on screen at a time, so a guide
++    /// for another flow is replaced, and that flow is told its guide was
++    /// cancelled, so it stops waiting instead of waiting with no guide.
+     func show(_ guide: Guide, onCancel: @escaping () -> Void) {
++        if let previous = shown, previous != guide, let replaced = self.onCancel {
++            self.onCancel = nil
++            shown = nil
++            replaced()
++        }
+         self.onCancel = onCancel
++        shown = guide
+         let content = SettingsGuideView(guide: guide) { [weak self] in self?.cancel() }
+         let hosting = NSHostingView(rootView: content)
+         hosting.setFrameSize(hosting.fittingSize)
+@@ -48,9 +60,16 @@ final class SettingsGuidePanel {
+         timer?.invalidate()
+         timer = nil
+         onCancel = nil
++        shown = nil
+         panel?.orderOut(nil)
+     }
+ 
++    /// Hides the panel only while it shows `guide`, so one flow never closes
++    /// another's guide.
++    func hide(_ guide: Guide) {
++        if shown == guide { hide() }
++    }
++
+     private func cancel() {
+         let handler = onCancel
+         hide()
+@@ -178,6 +197,7 @@ struct SettingsGuideView: View {
+         switch guide {
+         case .installProfile: return String(localized: "Install the Purge profile")
+         case .removeProfile: return String(localized: "Remove the Purge profile")
++        case .allowInBackground: return String(localized: "Allow Purge in the background")
+         }
+     }
+ 
+@@ -195,6 +215,15 @@ struct SettingsGuideView: View {
+                 String(localized: "Click the minus button below the list, then Remove."),
+                 String(localized: "Enter your password if it asks for one."),
+             ]
++        case .allowInBackground:
++            // macOS 27 renamed the section; 13 through 26 call it Allow in the Background.
++            let renamed = ProcessInfo.processInfo.operatingSystemVersion.majorVersion >= 27
++            return [
++                renamed
++                    ? String(localized: "Scroll down to Background App Activity.")
++                    : String(localized: "Scroll down to Allow in the Background."),
++                String(localized: "Switch Purge on."),
++            ]
+         }
+     }
+ }
 ```
 
-**File**: `purge/Services/DeletionSafetyPolicy.swift` (modified, +143/-32)
+**File**: `purge/Views/DeletedAppsWatcherNotice.swift` (modified, +121/-55)
 ```diff
-@@ -459,7 +459,7 @@ enum DeletionSafetyPolicy {
-             // session loads its packages from here, and `bin` holds downloaded tools.
-             // `~/.local/share/opencode` holds sessions, snapshots and `auth.json`, and
-             // `~/.config/opencode` the settings. Neither is listed. Refused when
--            // reached through a link; see `dotCacheLinkRefusesDeletion`.
-+            // reached through a link; see `allowlistLinkRefusesDeletion`.
-             "\(home)/.cache/opencode",
-             // The videos only. The thumbnails next to them are the covers System
-             // Settings shows; deleting those blanks the wallpaper picker.
-@@ -515,10 +515,10 @@ enum DeletionSafetyPolicy {
-         // The Go module cache is moved whole only while it still holds nothing
-         // but modules. Same split as Playwright: a move reads the folder again.
-         if GoModuleCacheScanPolicy.refusesDeletion(url, reuseRecentRead: Thread.isMainThread) { return false }
--        // `~/.cache` or a cache folder in it can become a link after the scan (#420).
--        if dotCacheLinkRefusesDeletion(standardizedPath: key) { return false }
--        // Recheck before a move in case the prek store was redirected since the scan.
--        if prekStoreLinkRefusesDeletion(url) { return false }
-+        // An allowlisted folder, or a folder above the row, can become a link after
-+        // the scan (#420, #422). Same split as Playwright: the on-screen filter may
-+        // reuse a read from the last few seconds, and a move reads the disk again.
-+        if allowlistLinkRefusesDeletion(standardizedPath: key, reuseRecentRead: Thread.isMainThread) { return false }
-         if prekToolsRefuseDeletion(url) { return false }
-         if mailRunningRefusesDeletion(url) { return false }
-         // A daemon's log stays while it runs, and a temp file until it is old.
-@@ -550,12 +550,12 @@ enum DeletionSafetyPolicy {
-         return verdict
-     }
+@@ -1,86 +1,152 @@
+ import SwiftUI
  
--    /// The allowlist compares path text, so if `~/.cache/prek` or `~/.cache` were a
--    /// link to `~/Developer`, its `repos`, `tools` and `cache` would be the user's own
--    /// folders. Any link on the way down from home refuses the path.
-+    /// `allowlistLinkRefusesDeletion` asked for prek's store alone: `repos`,
-+    /// `hooks`, `tools` and `cache` under `~/.cache/prek`.
-     nonisolated static func prekStoreLinkRefusesDeletion(_ url: URL, home: String = cachedHomePath) -> Bool {
--        guard PathContainment.isInside(url.standardizedFileURL.path, "\(home)/.cache/prek") else { return false }
--        return PathContainment.containsSymlinkComponent(url, home: home)
-+        let path = url.standardizedFileURL.path
-+        guard PathContainment.isInside(path, "\(home)/.cache/prek") else { return false }
-+        return allowlistLinkRefusesDeletion(standardizedPath: path, home: home)
-     }
+-/// Sidebar card shown while deleted-app reviews are on but the background watcher
++/// Sidebar row shown while deleted-app reviews are on but the background watcher
+ /// is blocked or not running. Without it the feature fails in silence: an app goes
+ /// to the Trash, nothing happens, and the user has no way to learn why. It sits in
+ /// the sidebar so it is on every tab, and stays until the problem is fixed or the
+-/// feature is turned off.
++/// feature is turned off. The row only names the problem; the sheet it opens
++/// explains it and holds the fix, so the sidebar carries no main action of its own.
+ struct DeletedAppsWatcherNotice: View {
+     @ObservedObject private var monitor = RemovedAppMonitor.shared
  
-     /// Installed prek hooks can retain absolute paths to managed Rust tools.
-@@ -572,39 +572,147 @@ enum DeletionSafetyPolicy {
-         return isExcluded(root.appendingPathComponent("hooks", isDirectory: true))
-     }
- 
--    /// The allowlist entries under `~/.cache`, taken from the list itself, so a
--    /// new one is covered by `dotCacheLinkRefusesDeletion` the day it is added.
-+    /// The allowlist entries under `~/.cache`, taken from the list itself.
-     nonisolated static func dotCacheEntries(home: String) -> [String] {
-         whitelistedPrefixes(home: home).filter { PathContainment.isInside($0, "\(home)/.cache") }
-     }
- 
-+    /// `allowlistLinkRefusesDeletion` asked for the entries under `~/.cache`
-+    /// alone (#420). With `~/.cache` a link to `~/Developer`, the move would take
-+    /// `~/Developer/uv`, or `~/Developer/opencode`, which could be a clone of
-+    /// that repository.
-+    nonisolated static func dotCacheLinkRefusesDeletion(_ url: URL, home: String = cachedHomePath) -> Bool {
-+        let path = url.standardizedFileURL.path
-+        guard path.hasPrefix("\(home)/.cache/") else { return false }
-+        return allowlistLinkRefusesDeletion(standardizedPath: path, home: home)
-+    }
-+
-+    // MARK: - Rows reached through a link (#420, #422)
-+
-+    /// One allowlist entry, with its path below home.
-+    private nonisolated struct AllowlistEntry: Sendable {
-+        let path: String
-+        let relative: String
-+    }
-+
-+    /// The allowlist's entries by their first folder below home, so a path is
-+    /// compared only with the few entries that start the same way.
-+    private nonisolated static func allowlistEntriesByFirstFolder(home: String) -> [Substring: [AllowlistEntry]] {
-+        var index: [Substring: [AllowlistEntry]] = [:]
-+        for path in whitelistedPrefixes(home: home) {
-+            guard let below = pathBelowHome(path, home: home) else { continue }
-+            index[Substring(String(firstFolder(of: below))), default: []]
-+                .append(AllowlistEntry(path: path, relative: String(below)))
+     var body: some View {
+-        DeletedAppsWatcherNoticeCard(
+-            health: monitor.watcherHealth,
+-            isRestarting: monitor.isRestartingWatcher,
+-            onFix: { monitor.fixWatcher() },
+-            onTurnOff: { monitor.setEnabled(false) }
++        // The presenter is created and destroyed with the problem, so its sheet
++        // state never outlives it: a fixed watcher closes an open sheet, and the
++        // next problem starts with the sheet closed. A restart passes through
++        // `.checking`, which needs no attention, so the presenter also stays while
++        // one runs: the sheet shows its progress and whether it worked.
++        if monitor.watcherHealth.needsAttention || monitor.isRestartingWatcher {
++            DeletedAppsWatcherNoticePresenter(monitor: monitor)
 +        }
-+        return index
 +    }
-
++}
++
++private struct DeletedAppsWatcherNoticePresenter: View {
++    @ObservedObject var monitor: RemovedAppMonitor
++    @State private var isSheetPresented = false
++    /// The last problem seen. It stays on the row and in the sheet while a
++    /// restart runs, when the health itself reads `.checking`.
++    @State private var problem: WatcherHealth
++    /// A restart ended and the watcher still needs attention.
++    @State private var restartFailed = false
++
++    init(monitor: RemovedAppMonitor) {
++        self.monitor = monitor
++        _problem = State(initialValue: monitor.watcherHealth)
++    }
++
++    var body: some View {
++        DeletedAppsWatcherNoticeRow(
++            health: problem,
++            onOpen: { isSheetPresented = true }
+         )
++        .onChange(of: monitor.watcherHealth) { health in
++            if health.needsAttention { problem = health }
++        }
++        .onChange(of: monitor.isRestartingWatcher) { isRestarting in
++            restartFailed = !isRestarting && monitor.watcherHealth.needsAttention
++        }
++        .sheet(isPresented: $isSheetPresented) {
++            DeletedAppsWatcherSheet(
++                health: problem,
++                isRestarting: monitor.isRestartingWatcher,
++                restartFailed: restartFailed,
++                onFix: {
++                    monitor.fixWatcher()
++                    // System Settings takes over from here. A restart keeps the
++                    // sheet open to show its progress; success closes it with the row.
++                    if monitor.watcherHealth == .needsApproval { isSheetPresented = false }
++                },
++                onTurnOff: {
++                    isSheetPresented = false
++                    monitor.setEnabled(false)
++                },
++                onClose: { isSheetPresented = false }
++            )
++        }
+     }
+ }
+ 
+-struct DeletedAppsWatcherNoticeCard: View {
++struct DeletedAppsWatcherNoticeRow: View {
++    let health: WatcherHealth
++    let onOpen: () -> Void
++
++    var body: some View {
++        if let hint = health.shortHint {
++            SidebarNoticeRow(
++                systemImage: "exclamationmark.triangle.fill",
++                iconColor: AppColors.statusCheckText,
++                title: WatcherHealth.shortTitle,
++                subtitle: hint,
++                accessibilityLabel: "\(WatcherHealth.problemTitle). \(hint)",
++                action: onOpen
++            )
++        }
++    }
++}
++
++/// The explanation and the one fix for the current problem, opened from the row.
++struct DeletedAppsWatcherSheet: View {
+     let health: WatcherHealth
+     let isRestarting: Bool
++    var restartFailed = false
+     let onFix: () -> Void
+     let onTurnOff: () -> Void
++    let onClose: () -> Void
+ 
+-    private enum NoticeFont {
+-        static let title = AppStyle.Typography.callout.weight(.semibold)
+-        static let body = AppStyle.Typography.metadataEmphasis
+-    }
++    static let width: CGFloat = 480
+ 
+     var body: some View {
+-        if health.needsAttention, let message = health.shortMessage, let fixTitle = health.fixTitle {
+-            VStack(alignment: .leading, spacing: 0) {
+-                HStack(alignment: .firstTextBaseline, spacing: AppStyle.Spacing.xxSmallPlus) {
+-                    Image(systemName: "exclamationmark.triangle.fill")
+-                        .font(.system(size: 11, weight: .se
 ```
 
-**File**: `purge/Services/FileDeleter.swift` (modified, +2/-6)
+**File**: `purge/Views/LimitedAccessViews.swift` (modified, +8/-44)
 ```diff
-@@ -1110,13 +1110,9 @@ nonisolated final class FileDeleter: Sendable {
-     }
+@@ -99,49 +99,13 @@ struct LimitedScanNotice: View {
+     @EnvironmentObject private var store: PurgeStore
  
-     /// Returns the simulator UDID when `url` is exactly `…/CoreSimulator/Devices/{UUID}`.
-+    /// The link guard asks the same rule, so it lives in the policy (#422).
-     private static func coreSimulatorDeviceUDID(from url: URL) -> String? {
--        let std = url.standardizedFileURL
--        let name = std.lastPathComponent
--        guard UUID(uuidString: name) != nil else { return nil }
--        guard std.deletingLastPathComponent().lastPathComponent == "Devices" else { return nil }
--        guard std.path.contains("CoreSimulator/Devices") else { return nil }
--        return name
-+        DeletionSafetyPolicy.simulatorDeviceUDID(from: url)
+     var body: some View {
+-        Button {
+-            store.isLookDeeperPresented = true
+-        } label: {
+-            HStack(spacing: AppStyle.Spacing.xSmall) {
+-                Image(systemName: "lock")
+-                    .font(.system(size: 14, weight: .semibold))
+-                    .foregroundStyle(AppColors.textSecondary)
+-                    .frame(width: 20)
+-                    .accessibilityHidden(true)
+-
+-                VStack(alignment: .leading, spacing: AppStyle.Spacing.xxxSmall) {
+-                    Text("Limited scan")
+-                        .font(AppStyle.Typography.callout.weight(.semibold))
+-                        .foregroundStyle(AppColors.textPrimary)
+-                    Text("Let Purge look deeper")
+-                        .font(AppStyle.Typography.metadataEmphasis)
+-                        .foregroundStyle(AppColors.textSecondary)
+-                }
+-
+-                Spacer(minLength: 0)
+-
+-                Image(systemName: "chevron.right")
+-                    .font(.system(size: 10, weight: .semibold))
+-                    .foregroundStyle(AppColors.textTertiary)
+-                    .accessibilityHidden(true)
+-            }
+-            .padding(.horizontal, AppStyle.Spacing.small)
+-            .padding(.vertical, AppStyle.Spacing.small)
+-            .background(
+-                RoundedRectangle(cornerRadius: AppStyle.Radius.lg, style: .continuous)
+-                    .fill(AppColors.fillSecondary)
+-            )
+-            .contentShape(RoundedRectangle(cornerRadius: AppStyle.Radius.lg, style: .continuous))
+-        }
+-        .buttonStyle(LimitedScanNoticeButtonStyle())
+-        .accessibilityLabel("Limited scan. Let Purge look deeper.")
+-        .transition(.opacity)
+-    }
+-}
+-
+-private struct LimitedScanNoticeButtonStyle: ButtonStyle {
+-    func makeBody(configuration: Configuration) -> some View {
+-        configuration.label
+-            .opacity(configuration.isPressed ? 0.7 : 1)
++        SidebarNoticeRow(
++            systemImage: "lock",
++            iconColor: AppColors.textSecondary,
++            title: String(localized: "Limited scan"),
++            subtitle: String(localized: "Let Purge look deeper"),
++            accessibilityLabel: String(localized: "Limited scan. Let Purge look deeper."),
++            action: { store.isLookDeeperPresented = true }
++        )
      }
- 
-     /// Deleting a large device is real disk work, so this is generous — but still bounded, so a
+ }
 ```
 
-**File**: `purge/Utilities/PathContainment.swift` (modified, +60/-0)
+**File**: `purge/Views/SidebarNoticeRow.swift` (added, +61/-0)
 ```diff
-@@ -31,6 +31,66 @@ nonisolated enum PathContainment {
-         return false
-     }
- 
-+    private static let slash = UInt8(ascii: "/")
+@@ -0,0 +1,61 @@
++import SwiftUI
 +
-+    /// Where the `/` that follows `root` sits in `path`, or nil when `path` is
-+    /// `root` itself or not under it.
-+    ///
-+    /// Separators are found as bytes, never as characters. Swift joins a `/` and
-+    /// a combining mark after it into one character, so a search by character
-+    /// walks past the `/` in front of a name that starts with such a mark, and
-+    /// a folder on the way is never looked at (#422 review).
-+    static func separatorIndex(after root: String, in path: String) -> String.Index? {
-+        var rootBytes = root.utf8[...]
-+        if rootBytes.last == slash { rootBytes = rootBytes.dropLast() }
-+        let bytes = path.utf8
-+        if bytes.starts(with: rootBytes) {
-+            guard bytes.count > rootBytes.count else { return nil }
-+            let index = bytes.index(bytes.startIndex, offsetBy: rootBytes.count)
-+            return bytes[index] == slash ? index : nil
++/// A one-line notice at the foot of the sidebar: an icon, a title, a short hint and
++/// a chevron, on the same card as the Trash total. Clicking it opens the place that
++/// explains the problem and fixes it, so the sidebar never carries a big button that
++/// competes with the page's own main action. Limited scan and the paused deleted-app
++/// reviews both use it, so stacked notices read as one family.
++struct SidebarNoticeRow: View {
++    let systemImage: String
++    let iconColor: Color
++    let title: String
++    let subtitle: String
++    let accessibilityLabel: String
++    let action: () -> Void
++
++    var body: some View {
++        Button(action: action) {
++            HStack(spacing: AppStyle.Spacing.xSmall) {
++                Image(systemName: systemImage)
++                    .font(.system(size: 14, weight: .semibold))
++                    .foregroundStyle(iconColor)
++                    .frame(width: 20)
++                    .accessibilityHidden(true)
++
++                VStack(alignment: .leading, spacing: AppStyle.Spacing.xxxSmall) {
++                    Text(title)
++                        .font(AppStyle.Typography.callout.weight(.semibold))
++                        .foregroundStyle(AppColors.textPrimary)
++                    Text(subtitle)
++                        .font(AppStyle.Typography.metadataEmphasis)
++                        .foregroundStyle(AppColors.textSecondary)
++                        .fixedSize(horizontal: false, vertical: true)
++                }
++
++                Spacer(minLength: 0)
++
++                Image(systemName: "chevron.right")
++                    .font(.system(size: 10, weight: .semibold))
++                    .foregroundStyle(AppColors.textTertiary)
++                    .accessibilityHidden(true)
++            }
++            .padding(.horizontal, AppStyle.Spacing.small)
++            .padding(.vertical, AppStyle.Spacing.small)
++            .background(
++                RoundedRectangle(cornerRadius: AppStyle.Radius.lg, style: .continuous)
++                    .fill(AppColors.fillSecondary)
++            )
++            .contentShape(RoundedRectangle(cornerRadius: AppStyle.Radius.lg, style: .continuous))
 +        }
-+        // The same root spelled with another form of an accented letter is the
-+        // same text with other bytes. Plain ASCII has only one spelling.
-+        guard !rootBytes.allSatisfy({ $0 < 0x80 }) else { return nil }
-+        let rootText = String(Substring(rootBytes))
-+        var search = bytes.startIndex
-+        while let index = bytes[search...].firstIndex(of: slash) {
-+            if String(path[..<index]) == rootText { return index }
-+            search = bytes.index(after: index)
-+        }
-+        return nil
++        .buttonStyle(SidebarNoticeButtonStyle())
++        .accessibilityLabel(accessibilityLabel)
++        .transition(.opacity)
 +    }
++}
 +
-+    /// The folder `path` sits in: everything before its last `/` byte.
-+    static func parentFolder(of path: String) -> String {
-+        String(path[..<(path.utf8.lastIndex(of: slash) ?? path.endIndex)])
++private struct SidebarNoticeButtonStyle: ButtonStyle {
++    func makeBody(configuration: Configuration) -> some View {
++        configuration.label
++            .opacity(configuration.isPressed ? 0.7 : 1)
 +    }
-+
-+    /// True when `folder`, or a folder above it up to `home`, is a link or can't
-+    /// be read, and when `folder` is not under `home` at all. `home` itself is
-+    /// never read. A step that isn't there ends the walk: nothing below it
-+    /// exists, so nothing below it is a link.
-+    ///
-+    /// The same walk as `containsSymlinkComponent`, on plain paths with
-+    /// `lstat`, for callers that ask for every row of a scan (#422): 1 µs for
-+    /// two steps, against 12 µs through `URL`. Each step ends at a `/` byte.
-+    static func reachesThroughLink(_ folder: String, home: String) -> Bool {
-+        guard folder != home else { return false }
-+        guard var separator = separatorIndex(after: home, in: folder) else { return true }
-+        let bytes = folder.utf8
-+        while true {
-+            let stepEnd = bytes[bytes.index(after: separator)...].firstIndex(of: slash) ?? bytes.endIndex
-+            var info = stat()
-+            // `errno` is read inside the call, before the path's C string is
-+            // freed, so nothing can change it first.
-+            let failure: Int32? = String(folder[..<stepEnd]).withCString { lstat($0, &info) == 0 ? nil : errno }
-+            if let failure { return !(failure == ENOENT || failure == ENOTDIR) }
-+            if (info.st_mode & S_IFMT) == S_IFLNK { return true }
-+            guard stepEnd < bytes.endIndex else { return false }
-+            separator = stepEnd
-+        }
-+    }
-+
-     /// `url` resolves to somewhere under `root`, and `root` itself is reached
-     /// through no link, so a link inside the root cannot point the delete
-     /// elsewhere. `includingRoot` also accepts `url` resolving to `root` itself.
++}
+```
+
+**File**: `purge/ru.lproj/Localizable.strings` (modified, +10/-3)
+```diff
+@@ -183,6 +183,7 @@
+ "All %lld files sync with iCloud, so they also leave your other devices." = "Все %lld файлов синхронизируются с iCloud, поэтому они исчезнут и с других ваших устройств.";
+ "All detected projects appear in Developer Projects regardless of when they were last used, except ones in use right now. Projects worked on in the last 6 months are marked Check First, so Clean Safe Items and scheduled cleans skip them." = "Все обнаруженные проекты отображаются в «Проектах разработчика» независимо от того, когда их последний раз использовали, кроме тех, что используются сейчас. Проекты, с которыми работали последние 6 месяцев, помечаются «Сначала проверить», поэтому «Очистить безопасное» и плановые очистки их пропускают.";
+ "All removed" = "Всё удалено";
++"Allow Purge in the background" = "Разрешите Purge работать в фоне";
+ "Also in this cleanup" = "Также в этой очистке";
+ "Also move settings and history to the Trash" = "Также переместить настройки и историю в Корзину";
+ "Also select" = "Также выбрать";
+@@ -194,8 +195,11 @@
+ "An app manages this library and expects every file in it. Removing parts of it from outside the app can corrupt the library, so Purge only ever shows it." = "Этой библиотекой управляет приложение, и ему нужны все файлы в ней. Удаление части файлов извне может повредить библиотеку, поэтому Purge только показывает её.";
+ "An unused leftover Chromium framework in %@. Relaunch the browser to clean versions still loaded; relaunching also removes old ones." = "Неиспользуемый остаток Chromium в %@. Перезапустите браузер: это очистит ещё загруженные версии и удалит старые.";
+ "Android NDK %@" = "Android NDK %@";
++"Blocked in Login Items" = "Заблокировано в объектах входа";
+ "Node.js %@ (nvm)" = "Node.js %@ (nvm)";
+ "Node.js %@ (Vite+)" = "Node.js %@ (Vite+)";
++"Not Now" = "Не сейчас";
++"Reviews paused" = "Проверки приостановлены";
+ "Rust %@ (rustup)" = "Rust %@ (rustup)";
+ "Python %@ (uv)" = "Python %@ (uv)";
+ "Python %@ (pyenv)" = "Python %@ (pyenv)";
+@@ -251,6 +255,12 @@
+ "Available after the scan finishes" = "Доступно после завершения сканирования";
+ "Available for new files" = "Доступно для новых файлов";
+ "Purgeable" = "Очищаемое место";
++"Scroll down to Allow in the Background." = "Прокрутите вниз до раздела «Разрешить в фоновом режиме».";
++"Scroll down to Background App Activity." = "Прокрутите вниз до раздела «Фоновая активность приложений».";
++"Switch Purge on." = "Включите Purge.";
++"The restart didn't work." = "Перезапуск не помог.";
++"The watcher didn't start" = "Монитор не запустился";
++"The watcher stopped" = "Монитор остановлен";
+ "macOS frees this by itself when it needs room" = "macOS освобождает его сама, когда нужно место";
+ "What is purgeable space?" = "Что такое очищаемое место?";
+ "About purgeable space" = "Об очищаемом месте";
+@@ -1162,8 +1172,6 @@
+ "The application bundle. Moving it to the Trash removes the app itself." = "Пакет приложения. Перемещение в Корзину удаляет само приложение.";
+ "The application itself" = "Само приложение";
+ "The asset service call stopped without an answer (status %lld)" = "Вызов службы ресурсов прервался без ответа (статус %lld)";
+-"The background watcher couldn't start, so deleted apps go unnoticed." = "Фоновый монитор не запустился, поэтому удалённые приложения остаются незамеченными.";
+-"The background watcher isn't running, so deleted apps go unnoticed." = "Фоновый наблюдатель не работает, поэтому удалённые приложения остаются незамеченными.";
+ "The clean couldn't finish, so nothing was moved. Try again in a moment." = "Очистка не завершилась, поэтому ничего не перемещено. Повторите через минуту.";
+ "The libraries Photos, Music, TV, iMovie and GarageBand keep." = "Библиотеки, которые хранят «Фото», «Музыка», TV, iMovie и GarageBand.";
+ "The map is on its way." = "Карта скоро появится.";
+@@ -1422,7 +1430,6 @@
+ "macOS didn't accept the download request: %@" = "macOS не приняла запрос на загрузку: %@";
+ "macOS didn’t let Purge move itself." = "macOS не дала Purge переместиться самостоятельно.";
+ "macOS hasn't finished removing them" = "macOS ещё не завершила удаление";
+-"macOS is blocking Purge's background watcher, so deleted apps go unnoticed." = "macOS блокирует фоновый монитор Purge, поэтому удалённые приложения остаются незамеченными.";
+ "macOS is keeping this file on this Mac, for example because it's set to Keep Downloaded." = "macOS оставляет этот файл на этом Mac — например, потому что для него выбрано «Оставить в загрузках».";
+ "macOS is stopping Purge from running in the background. In System Settings, open Login Items and switch Purge on." = "macOS не даёт Purge работать в фоне. Откройте в Системных настройках раздел «Объекты входа» и включите Purge.";
+ "macOS kept the %@ download (%@), so that space is still in use." = "macOS сохранил загрузку %@ (%@), поэтому это место всё ещё занято.";
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #430** (2026-11-21): feat: offer old rustup toolchains as Check First (#406) (@jithin-sabu)
-- **PR #429** (2026-11-21): fix: bring Purge forward at launch when the Dock icon is hidden (#428) (@jithin-sabu)
-- **PR #427** (2026-11-20): docs: mark the shape-matched link guard safety note as shipped in 1.17.0 (#424) (@jithin-sabu)
-- **PR #426** (2026-11-20): docs: mark four safety notes as shipped in 1.17.0 (@jithin-sabu)
-- **PR #425** (2026-11-20): fix: refuse shape-matched cache rows reached through a link (#424) (@jithin-sabu)
-- **PR #423** (2026-11-20): fix: refuse allowlisted rows reached through a link (#422) (@jithin-sabu)
+- **PR #453** (2026-11-24): feat: list each Time Machine snapshot before removing it (#331) (@jithin-sabu)
+- **PR #451** (2026-11-24): feat: show the first scheduled clean's list before it moves anything (#331) (@jithin-sabu)
+- **PR #448** (2026-11-23): feat: show paused deleted-app reviews as a sidebar row with a Login Items guide (#447) (@jithin-sabu)
+- **PR #446** (2026-11-23): fix: fit row explanations in two lines and show the right row icons (#445) (@jithin-sabu)
+- **PR #444** (2026-11-23): fix: count a Chromium HTTP cache only when its marker is real (#443) (@jithin-sabu)
+- **PR #442** (2026-11-23): feat: open a folder on the Everything else map to see what is inside (#437) (@jithin-sabu)
 
 ---
 
@@ -2438,54 +2725,60 @@ A cache linked to another drive is
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. send Apple Intelligence requests through siriknowledged when macOS 27.3 refuses 
+## X. keep the Dock icon hidden when macOS opens a running Purge
 
 **RULE**:
-When implementing operations in `PurgeAssetWorker/UnifiedAssetCalls.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jithin-sabu/purge-app. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `PurgeTests/DockIconPolicyTests.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jithin-sabu/purge-app. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `09c6920d`: send Apple Intelligence requests through siriknowledged when macOS 27.3 refuses them. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `84a40b77`: keep the Dock icon hidden when macOS opens a running Purge. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `PurgeAssetWorker/UnifiedAssetCalls.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `PurgeTests/DockIconPolicyTests.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-    ///
-    /// `AppleIntelligenceModelRoute` picks the service. When the subscription
-    /// service refuses or drops the connection, as it does from macOS 27.3,
-    /// the same request goes out once more through siriknowledged's service.
-        do {
-            try AppleIntelligenceModelRoute.send(timeout: timeout) { service, timeout in
-                try send(config, to: service, interface: interface, selector: selector, timeout: timeout)
-            }
-        } catch let failure as AppleIntelligenceModelRoute.SecondTryFailure {
-            // A worker refusal has no domain or code, so the first try joins its text.
-            if let second = failure.error as? CallError {
-                throw CallError("\(second.description); \(failure.firstTry)")
-            }
-            throw failure.withFirstTry
+
+        /// Held until the test ends the modal, as the real run loop holds it.
+        private var waitingForModal: [() -> Void] = []
+
+        func afterModalEnds(_ work: @escaping () -> Void) { waitingForModal.append(work) }
+
+        func endModal() {
+            isShowingModal = false
+            let work = waitingForModal
+            waitingForModal = []
+            work.forEach { $0() }
         }
+    /// The watcher's link opens Purge, which macOS answers by making it a regular
+    /// app (#438). Hiding the Dock icon again there must not bring back a window
+    /// the user closed: SwiftUI keeps a closed window, so it counts as revealable.
+    @Test("Hiding again after an open leaves a closed window closed")
+    func hidingWithoutRevealLeavesTheWindowAlone() {
+        let host = FakeHost()
+
+        DockIconPolicy.apply(hidesDockIcon: true, revealsWindow: false, host: host)
+
+        #expect(host.calls == [.setPolicy(.accessory)])
     }
 
-    /// One try at one Mach service.
-    private static func send(_ config: [String: Any], to service: String, interface: NSXPCInterface,
-                             selector: Selector, timeout: TimeInterval) throws {
-        let connection = NSXPCConnection(machServiceName: service, options: [])
-            throw CallError("no reply from \(service) in \(Int(ti
+    /// A reopen is the user asking for the window, so it keeps the reveal.
+    @Test("Hiding again after a reopen still re-fronts the window")
+    func hidingWithRevealAfterReopen() {
+        let host = FakeHost()
+
+        DockIconPolicy.apply
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-    static let serviceName = "com.apple.siri.uaf.subscription.service"
-        let connection = NSXPCConnection(machServiceName: serviceName, options: [])
-            throw CallError("no reply from \(serviceName) in \(Int(timeout)) seconds; the request may still have run")
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `09c6920d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `84a40b77` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

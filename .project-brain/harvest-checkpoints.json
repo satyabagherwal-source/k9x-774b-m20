@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T03:58:41.269Z",
+  "last_updated": "2026-11-24T04:20:31.470Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3576,14 +3576,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ontos-ai-knowhere",
-      "content_hash": "4df84ffe41086e269cc2f9d45f9eba018a18f6b08e0a883763f91e4dbb5b3488",
-      "verified_at": "2026-11-23T05:06:47.917Z",
+      "content_hash": "3bc5f61ce194049093b7117fefb0b44a78aca6799d6d781927ddcd14a1a836df",
+      "verified_at": "2026-11-24T04:20:31.469Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T05:06:47.917Z"
+      "last_updated": "2026-11-24T04:20:31.470Z"
     },
     "Bitterbot-AI/bitterbot-desktop": {
       "repository": "Bitterbot-AI/bitterbot-desktop",
@@ -3831,14 +3831,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-burntsushi-ripgrep",
-      "content_hash": "735c81297c08f59793bd95c6ce358496f06e3b7163a06187f2065b891baf89c0",
-      "verified_at": "2026-11-22T20:35:36.585Z",
+      "content_hash": "72bb04ce35cf1b2b70c5ad05b0b292c2640b102f536602b855676c8ca771365a",
+      "verified_at": "2026-11-24T04:20:17.706Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T20:35:36.585Z"
+      "last_updated": "2026-11-24T04:20:17.706Z"
     },
     "cosscom/coss": {
       "repository": "cosscom/coss",
@@ -18936,14 +18936,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-jithin-sabu-purge-app",
-      "content_hash": "1bf8fa2b9f46695f02e55e7b0924f9f5e442297682f177fe95e85f387d03d2ef",
-      "verified_at": "2026-11-21T07:05:13.157Z",
+      "content_hash": "abd9e17ece6586f6b5420f76a45fa9ca68538180a42291eb9d61ea47210ff369",
+      "verified_at": "2026-11-24T04:20:23.153Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T07:05:13.157Z"
+      "last_updated": "2026-11-24T04:20:23.153Z"
     },
     "autotrust/AutoTrust-Decider-Pro-Vision-27B": {
       "repository": "autotrust/AutoTrust-Decider-Pro-Vision-27B",

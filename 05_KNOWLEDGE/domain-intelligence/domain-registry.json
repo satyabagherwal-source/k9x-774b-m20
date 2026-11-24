@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T03:58:47.396Z",
-  "total_records": 2488,
+  "last_updated": "2026-11-24T04:20:39.345Z",
+  "total_records": 2490,
   "domains": {
     "A": {
       "total": 20,
@@ -2171,7 +2171,7 @@
       ]
     },
     "I": {
-      "total": 144,
+      "total": 146,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -2316,7 +2316,9 @@
         "DOM-I-4B3595B4",
         "domain_intelligence-content-information-intelligence-microfeed-microfeed-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-folkbench-folkbench-core-invariants",
-        "domain_intelligence-content-information-intelligence-folkbench-folkbench-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-folkbench-folkbench-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-jithin-sabu-purge-app-core-invariants",
+        "domain_intelligence-content-information-intelligence-jithin-sabu-purge-app-learnings-core-invariants"
       ]
     },
     "J": {
@@ -34620,8 +34622,8 @@
       "title": "Architecture Intelligence: BurntSushi/ripgrep Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-burntsushi-ripgrep-architecture-intelligence-burntsushi-ripgrep-core-invariants.md",
       "repository": "BurntSushi/ripgrep",
-      "content_hash": "7d08cdbb8541c720f03f992c6ac9b0c2864dd33e6d0718140edbddd9bf9e42a7",
-      "created_at": "2026-11-22T20:35:36.990Z"
+      "content_hash": "bddd7bbcb7359f3d6c42dd76aeef05efbe0949af2f02a32abfcd122f507c2e30",
+      "created_at": "2026-11-24T04:20:18.106Z"
     },
     "domain_intelligence-architecture-intelligence-burntsushi-ripgrep-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-burntsushi-ripgrep-learnings-core-invariants",
@@ -34629,8 +34631,8 @@
       "title": "Architecture Intelligence: burntsushi-ripgrep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-burntsushi-ripgrep-learnings-architecture-intelligence-burntsushi-ripgrep-learni.md",
       "repository": "burntsushi-ripgrep-learnings",
-      "content_hash": "4ffb58838739e669e51d05a5b21c7ecddf700bf60cfc59bb257596d32f66ec1b",
-      "created_at": "2026-11-22T20:35:51.808Z"
+      "content_hash": "2f07975d9aa3e9747e0acce3b538d78f444a992cdfee99cb8810dd8b5515bc39",
+      "created_at": "2026-11-24T04:20:37.784Z"
     },
     "DOM-D-34CA9B71": {
       "record_id": "DOM-D-34CA9B71",
@@ -39253,8 +39255,8 @@
       "title": "Technical Construction Intelligence: Ontos-AI/knowhere Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ontos-ai-knowhere-technical-construction-intelligence-ontos-ai-knowhere-core-inv.md",
       "repository": "Ontos-AI/knowhere",
-      "content_hash": "c11f4119a9963232304e8d26818c3677a97d5a086835e01dc700e219d324d83e",
-      "created_at": "2026-11-22T03:03:27.790Z"
+      "content_hash": "a9c1b57c453f2afbe36bbe68667e02fc935c1ce7cb09dbce656cc7cec88e4da7",
+      "created_at": "2026-11-24T04:20:31.886Z"
     },
     "domain_intelligence-technical-construction-intelligence-ontos-ai-knowhere-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-ontos-ai-knowhere-learnings-core-invariants",
@@ -39262,8 +39264,8 @@
       "title": "Technical Construction Intelligence: ontos-ai-knowhere-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ontos-ai-knowhere-learnings-technical-construction-intelligence-ontos-ai-knowher.md",
       "repository": "ontos-ai-knowhere-learnings",
-      "content_hash": "38c5fa77c3ee19413208dc6068d125522802a4e3a1e52d3788deab3b3e0d8af7",
-      "created_at": "2026-11-22T03:03:32.562Z"
+      "content_hash": "51e221f03800cbf05cacd2b648ae6f4a0039ce25fe709b58c19412e9d3ec1510",
+      "created_at": "2026-11-24T04:20:39.345Z"
     },
     "domain_intelligence-technical-construction-intelligence-giancarloerra-socraticode-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-giancarloerra-socraticode-core-invariants",
@@ -41737,6 +41739,24 @@
       "repository": "automattic-harper-learnings",
       "content_hash": "ea327cc11d1f4f291b129d7785c167daed998ab253bd36d7880a7afed3041bfd",
       "created_at": "2026-11-24T03:41:54.722Z"
+    },
+    "domain_intelligence-content-information-intelligence-jithin-sabu-purge-app-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-jithin-sabu-purge-app-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: jithin-sabu/purge-app Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-jithin-sabu-purge-app-content-information-intelligence-jithin-sabu-purge-app-cor.md",
+      "repository": "jithin-sabu/purge-app",
+      "content_hash": "3a60b60a96e83abd36c44194729c522e14dfef1078b290d9dab80dd267ebe1f7",
+      "created_at": "2026-11-24T04:20:23.573Z"
+    },
+    "domain_intelligence-content-information-intelligence-jithin-sabu-purge-app-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-jithin-sabu-purge-app-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: jithin-sabu-purge-app-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-jithin-sabu-purge-app-learnings-content-information-intelligence-jithin-sabu-pur.md",
+      "repository": "jithin-sabu-purge-app-learnings",
+      "content_hash": "f21d75647729c3e622908627433e54598133fcdc6b46f492c3160916cde1e546",
+      "created_at": "2026-11-24T04:20:38.534Z"
     }
   }
 }

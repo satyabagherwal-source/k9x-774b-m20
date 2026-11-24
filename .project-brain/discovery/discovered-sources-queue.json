@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T03:50:09.904Z",
+  "updated_at": "2026-11-24T04:20:38.938Z",
   "stats": {
-    "total_discovered": 8295,
-    "approved_pending_harvest": 7858,
+    "total_discovered": 8332,
+    "approved_pending_harvest": 7895,
     "harvested_count": 0,
     "rejected_count": 437,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7843,
+      "COMMUNITY_AND_EXPERT": 7880,
       "OFFICIAL_DOCUMENTATION": 266,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -179454,6 +179454,820 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
         "fileName": "cilium-cilium-learnings.md"
+      }
+    },
+    "SRC-A63D6A7CBDEA": {
+      "id": "SRC-A63D6A7CBDEA",
+      "url": "https://github.com/BurntSushi/ripgrep/releases/download",
+      "title": "https://github.com/BurntSushi/ripgrep/releases/download",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T04:20:35.202Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
+        "fileName": "burntsushi-ripgrep-learnings.md"
+      }
+    },
+    "SRC-019EE5357123": {
+      "id": "SRC-019EE5357123",
+      "url": "https://github.com/BurntSushi/ripgrep/issues/3522",
+      "title": "https://github.com/BurntSushi/ripgrep/issues/3522",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T04:20:35.268Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
+        "fileName": "burntsushi-ripgrep-learnings.md"
+      }
+    },
+    "SRC-96C4145D527D": {
+      "id": "SRC-96C4145D527D",
+      "url": "https://github.com/BurntSushi/ripgrep/issues/3425",
+      "title": "https://github.com/BurntSushi/ripgrep/issues/3425",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T04:20:35.328Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
+        "fileName": "burntsushi-ripgrep-learnings.md"
+      }
+    },
+    "SRC-42FB5A910626": {
+      "id": "SRC-42FB5A910626",
+      "url": "https://github.com/BurntSushi/ripgrep/issues/3622",
+      "title": "https://github.com/BurntSushi/ripgrep/issues/3622",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T04:20:35.384Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
+        "fileName": "burntsushi-ripgrep-learnings.md"
+      }
+    },
+    "SRC-FFC97836BCFE": {
+      "id": "SRC-FFC97836BCFE",
+      "url": "https://github.com/BurntSushi/ripgrep/issues/3511",
+      "title": "https://github.com/BurntSushi/ripgrep/issues/3511",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T04:20:35.442Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
+        "fileName": "burntsushi-ripgrep-learnings.md"
+      }
+    },
+    "SRC-4BBD3FBF2B8E": {
+      "id": "SRC-4BBD3FBF2B8E",
+      "url": "https://github.com/BurntSushi/ripgrep/issues/3255",
+      "title": "https://github.com/BurntSushi/ripgrep/issues/3255",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T04:20:35.504Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
+        "fileName": "burntsushi-ripgrep-learnings.md"
+      }
+    },
+    "SRC-A5CCC4EF7133": {
+      "id": "SRC-A5CCC4EF7133",
+      "url": "https://github.com/BurntSushi/ripgrep/issues/2962",
+      "title": "https://github.com/BurntSushi/ripgrep/issues/2962",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T04:20:35.564Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
+        "fileName": "burntsushi-ripgrep-learnings.md"
+      }
+    },
+    "SRC-435E48CD8928": {
+      "id": "SRC-435E48CD8928",
+      "url": "https://github.com/BurntSushi/ripgrep/issues/3035",
+      "title": "https://github.com/BurntSushi/ripgrep/issues/3035",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T04:20:35.622Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
+        "fileName": "burntsushi-ripgrep-learnings.md"
+      }
+    },
+    "SRC-CB974BB2CC35": {
+      "id": "SRC-CB974BB2CC35",
+      "url": "https://github.com/BurntSushi/ripgrep/issues/273",
+      "title": "https://github.com/BurntSushi/ripgrep/issues/273",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T04:20:35.680Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
+        "fileName": "burntsushi-ripgrep-learnings.md"
+      }
+    },
+    "SRC-EBDD8A6A815C": {
+      "id": "SRC-EBDD8A6A815C",
+      "url": "https://github.com/BurntSushi/ripgrep/issues/3459",
+      "title": "https://github.com/BurntSushi/ripgrep/issues/3459",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T04:20:35.739Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
+        "fileName": "burntsushi-ripgrep-learnings.md"
+      }
+    },
+    "SRC-257F2C34C6E0": {
+      "id": "SRC-257F2C34C6E0",
+      "url": "https://github.com/BurntSushi/ripgrep/issues/3317",
+      "title": "https://github.com/BurntSushi/ripgrep/issues/3317",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T04:20:35.795Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
+        "fileName": "burntsushi-ripgrep-learnings.md"
+      }
+    },
+    "SRC-3373B45FB670": {
+      "id": "SRC-3373B45FB670",
+      "url": "https://github.com/BurntSushi/ripgrep/issues/3415",
+      "title": "https://github.com/BurntSushi/ripgrep/issues/3415",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T04:20:35.853Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
+        "fileName": "burntsushi-ripgrep-learnings.md"
+      }
+    },
+    "SRC-C31C38EEB345": {
+      "id": "SRC-C31C38EEB345",
+      "url": "https://github.com/BurntSushi/ripgrep/issues/3620",
+      "title": "https://github.com/BurntSushi/ripgrep/issues/3620",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T04:20:35.912Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
+        "fileName": "burntsushi-ripgrep-learnings.md"
+      }
+    },
+    "SRC-060E20F039E1": {
+      "id": "SRC-060E20F039E1",
+      "url": "https://github.com/BurntSushi/ripgrep/issues/3617",
+      "title": "https://github.com/BurntSushi/ripgrep/issues/3617",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T04:20:35.977Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
+        "fileName": "burntsushi-ripgrep-learnings.md"
+      }
+    },
+    "SRC-5F0B2D02CFD9": {
+      "id": "SRC-5F0B2D02CFD9",
+      "url": "https://github.com/BurntSushi/ripgrep/issues/3609",
+      "title": "https://github.com/BurntSushi/ripgrep/issues/3609",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T04:20:36.039Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
+        "fileName": "burntsushi-ripgrep-learnings.md"
+      }
+    },
+    "SRC-41C14FF523C2": {
+      "id": "SRC-41C14FF523C2",
+      "url": "https://github.com/BurntSushi/ripgrep/issues/3603",
+      "title": "https://github.com/BurntSushi/ripgrep/issues/3603",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T04:20:36.098Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
+        "fileName": "burntsushi-ripgrep-learnings.md"
+      }
+    },
+    "SRC-219318D5C638": {
+      "id": "SRC-219318D5C638",
+      "url": "https://github.com/BurntSushi/ripgrep/issues/3605",
+      "title": "https://github.com/BurntSushi/ripgrep/issues/3605",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T04:20:36.158Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
+        "fileName": "burntsushi-ripgrep-learnings.md"
+      }
+    },
+    "SRC-A4C5427143D2": {
+      "id": "SRC-A4C5427143D2",
+      "url": "https://github.com/BurntSushi/ripgrep/issues/3604",
+      "title": "https://github.com/BurntSushi/ripgrep/issues/3604",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T04:20:36.216Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
+        "fileName": "burntsushi-ripgrep-learnings.md"
+      }
+    },
+    "SRC-9E4F2DE1C134": {
+      "id": "SRC-9E4F2DE1C134",
+      "url": "https://github.com/BurntSushi/ripgrep/issues/3607",
+      "title": "https://github.com/BurntSushi/ripgrep/issues/3607",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T04:20:36.274Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
+        "fileName": "burntsushi-ripgrep-learnings.md"
+      }
+    },
+    "SRC-7DE20DAC6F08": {
+      "id": "SRC-7DE20DAC6F08",
+      "url": "https://github.com/BurntSushi/ripgrep/issues/3614",
+      "title": "https://github.com/BurntSushi/ripgrep/issues/3614",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T04:20:36.331Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
+        "fileName": "burntsushi-ripgrep-learnings.md"
+      }
+    },
+    "SRC-4FCAB9BBE2FC": {
+      "id": "SRC-4FCAB9BBE2FC",
+      "url": "https://github.com/BurntSushi/ripgrep/issues/3581",
+      "title": "https://github.com/BurntSushi/ripgrep/issues/3581",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T04:20:36.414Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
+        "fileName": "burntsushi-ripgrep-learnings.md"
+      }
+    },
+    "SRC-B25F207E9237": {
+      "id": "SRC-B25F207E9237",
+      "url": "https://github.com/BurntSushi/ripgrep/issues/1764",
+      "title": "https://github.com/BurntSushi/ripgrep/issues/1764",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T04:20:36.472Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
+        "fileName": "burntsushi-ripgrep-learnings.md"
+      }
+    },
+    "SRC-75F938235D90": {
+      "id": "SRC-75F938235D90",
+      "url": "https://github.com/BurntSushi/ripgrep/issues/3577",
+      "title": "https://github.com/BurntSushi/ripgrep/issues/3577",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T04:20:36.555Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
+        "fileName": "burntsushi-ripgrep-learnings.md"
+      }
+    },
+    "SRC-3CD484D02383": {
+      "id": "SRC-3CD484D02383",
+      "url": "https://github.com/BurntSushi/ripgrep/issues/3382",
+      "title": "https://github.com/BurntSushi/ripgrep/issues/3382",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T04:20:36.610Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
+        "fileName": "burntsushi-ripgrep-learnings.md"
+      }
+    },
+    "SRC-593B6ACFBE53": {
+      "id": "SRC-593B6ACFBE53",
+      "url": "https://github.com/BurntSushi/ripgrep/issues/3526",
+      "title": "https://github.com/BurntSushi/ripgrep/issues/3526",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T04:20:36.667Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
+        "fileName": "burntsushi-ripgrep-learnings.md"
+      }
+    },
+    "SRC-F87F2880481D": {
+      "id": "SRC-F87F2880481D",
+      "url": "https://github.com/BurntSushi/ripgrep/issues/2745",
+      "title": "https://github.com/BurntSushi/ripgrep/issues/2745",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T04:20:36.725Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
+        "fileName": "burntsushi-ripgrep-learnings.md"
+      }
+    },
+    "SRC-84612C0E5F37": {
+      "id": "SRC-84612C0E5F37",
+      "url": "https://github.com/BurntSushi/ripgrep/issues/3534",
+      "title": "https://github.com/BurntSushi/ripgrep/issues/3534",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T04:20:36.785Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
+        "fileName": "burntsushi-ripgrep-learnings.md"
+      }
+    },
+    "SRC-17B168D820D6": {
+      "id": "SRC-17B168D820D6",
+      "url": "https://github.com/BurntSushi/ripgrep/issues/2958",
+      "title": "https://github.com/BurntSushi/ripgrep/issues/2958",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T04:20:36.845Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
+        "fileName": "burntsushi-ripgrep-learnings.md"
+      }
+    },
+    "SRC-A7623AECDAFB": {
+      "id": "SRC-A7623AECDAFB",
+      "url": "https://github.com/BurntSushi/ripgrep/issues/3527",
+      "title": "https://github.com/BurntSushi/ripgrep/issues/3527",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T04:20:36.906Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
+        "fileName": "burntsushi-ripgrep-learnings.md"
+      }
+    },
+    "SRC-3244699D7408": {
+      "id": "SRC-3244699D7408",
+      "url": "https://github.com/BurntSushi/ripgrep/issues/3484",
+      "title": "https://github.com/BurntSushi/ripgrep/issues/3484",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T04:20:36.982Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
+        "fileName": "burntsushi-ripgrep-learnings.md"
+      }
+    },
+    "SRC-89B2D378150D": {
+      "id": "SRC-89B2D378150D",
+      "url": "https://github.com/BurntSushi/ripgrep/issues/3342",
+      "title": "https://github.com/BurntSushi/ripgrep/issues/3342",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T04:20:37.036Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
+        "fileName": "burntsushi-ripgrep-learnings.md"
+      }
+    },
+    "SRC-ECB6AFDBEB44": {
+      "id": "SRC-ECB6AFDBEB44",
+      "url": "https://github.com/BurntSushi/ripgrep/issues/3477",
+      "title": "https://github.com/BurntSushi/ripgrep/issues/3477",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T04:20:37.095Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
+        "fileName": "burntsushi-ripgrep-learnings.md"
+      }
+    },
+    "SRC-C44F579FD1E5": {
+      "id": "SRC-C44F579FD1E5",
+      "url": "https://github.com/BurntSushi/ripgrep/issues/1983",
+      "title": "https://github.com/BurntSushi/ripgrep/issues/1983",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T04:20:37.154Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
+        "fileName": "burntsushi-ripgrep-learnings.md"
+      }
+    },
+    "SRC-1C8DA27291D1": {
+      "id": "SRC-1C8DA27291D1",
+      "url": "https://github.com/BurntSushi/ripgrep/issues/3364",
+      "title": "https://github.com/BurntSushi/ripgrep/issues/3364",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T04:20:37.210Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
+        "fileName": "burntsushi-ripgrep-learnings.md"
+      }
+    },
+    "SRC-5C2A691C14DF": {
+      "id": "SRC-5C2A691C14DF",
+      "url": "https://github.com/BurntSushi/ripgrep/issues/3222",
+      "title": "https://github.com/BurntSushi/ripgrep/issues/3222",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T04:20:37.267Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
+        "fileName": "burntsushi-ripgrep-learnings.md"
+      }
+    },
+    "SRC-4AD9236EC1EF": {
+      "id": "SRC-4AD9236EC1EF",
+      "url": "https://github.com/B",
+      "title": "https://github.com/B",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T04:20:37.352Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
+        "fileName": "burntsushi-ripgrep-learnings.md"
+      }
+    },
+    "SRC-447406B99E3A": {
+      "id": "SRC-447406B99E3A",
+      "url": "https://router.example.test/v1",
+      "title": "https://router.example.test/v1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T04:20:38.938Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
+        "fileName": "ontos-ai-knowhere-learnings.md"
       }
     }
   }

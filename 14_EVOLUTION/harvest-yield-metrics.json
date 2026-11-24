@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T03:58:41.257Z",
-  "total_cycles_completed": 11964,
-  "total_learnings_persisted": 11964,
-  "total_rules_promoted": 11044,
+  "last_updated": "2026-11-24T04:20:31.457Z",
+  "total_cycles_completed": 11967,
+  "total_learnings_persisted": 11967,
+  "total_rules_promoted": 11047,
   "history": [
-    {
-      "timestamp": "2026-11-23T16:37:10.180Z",
-      "repository": "nolabs-ai/nono",
-      "learningId": "learn-github-nolabs-ai-nono",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T16:44:40.290Z",
-      "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
-      "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T16:44:55.123Z",
-      "repository": "sfu-db/connector-x",
-      "learningId": "learn-github-sfu-db-connector-x",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T16:53:28.470Z",
       "repository": "Bingsu/adetailer",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-24T03:58:41.257Z",
       "repository": "crate/crate",
       "learningId": "learn-github-crate-crate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T04:20:17.695Z",
+      "repository": "BurntSushi/ripgrep",
+      "learningId": "learn-github-burntsushi-ripgrep",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T04:20:23.142Z",
+      "repository": "jithin-sabu/purge-app",
+      "learningId": "learn-github-jithin-sabu-purge-app",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T04:20:31.457Z",
+      "repository": "Ontos-AI/knowhere",
+      "learningId": "learn-github-ontos-ai-knowhere",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

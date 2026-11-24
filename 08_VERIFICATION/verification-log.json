@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-ABPO",
-    "timestamp": "2026-11-22T09:11:04.908Z",
-    "repository": "adventists-ai/Sophon-Realtime-v1",
-    "learningId": "learn-huggingface-adventists-ai-sophon-realtime-v1",
-    "contentHash": "cd80a5ed28b446d6e04b91429b618cb485ef23cc1184df0dbdee4f64820bccd7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-TA26",
-    "timestamp": "2026-11-22T09:25:49.230Z",
-    "repository": "deepseek-ai/DeepSeek-V3.2",
-    "learningId": "learn-huggingface-deepseek-ai-deepseek-v3-2",
-    "contentHash": "6551c12b1a5d7da59472ffb897e5c1bd52b40d432f08ab8fee74ec86442e3527",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-TMQ8",
-    "timestamp": "2026-11-22T09:26:05.648Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "1b9f227e5a206cb3e17d04a1310e6a35a88f69cb237d582730c92084f685cfd5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-5AS9",
     "timestamp": "2026-11-22T09:35:10.041Z",
     "repository": "higurashi-ai/Haru-4B",
@@ -7490,6 +7445,51 @@
     "repository": "crate/crate",
     "learningId": "learn-github-crate-crate",
     "contentHash": "e36d2780b37a503b038180b83e36bb0d8d0ea8ee9060dc516901a60f07bdbf29",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-S2OL",
+    "timestamp": "2026-11-24T04:20:17.685Z",
+    "repository": "BurntSushi/ripgrep",
+    "learningId": "learn-github-burntsushi-ripgrep",
+    "contentHash": "72bb04ce35cf1b2b70c5ad05b0b292c2640b102f536602b855676c8ca771365a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-S6VW",
+    "timestamp": "2026-11-24T04:20:23.132Z",
+    "repository": "jithin-sabu/purge-app",
+    "learningId": "learn-github-jithin-sabu-purge-app",
+    "contentHash": "abd9e17ece6586f6b5420f76a45fa9ca68538180a42291eb9d61ea47210ff369",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-SDAV",
+    "timestamp": "2026-11-24T04:20:31.447Z",
+    "repository": "Ontos-AI/knowhere",
+    "learningId": "learn-github-ontos-ai-knowhere",
+    "contentHash": "3bc5f61ce194049093b7117fefb0b44a78aca6799d6d781927ddcd14a1a836df",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

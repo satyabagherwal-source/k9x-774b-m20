@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md`  
 > **Source**: github ([https://github.com/Ontos-AI/knowhere](https://github.com/Ontos-AI/knowhere))  
-> **Source Version**: `90197327`  
+> **Source Version**: `da75fa74`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T05:06:46.898Z  
+> **Timestamp**: 2026-11-24T04:20:30.323Z  
 > **Learning ID**: `learn-github-ontos-ai-knowhere`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Ontos-AI/knowhere](https://github.com/Ontos-AI/knowhere))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T05:06:46.892Z  
+> **Harvest Timestamp**: 2026-11-24T04:20:30.317Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Knowhere extracts, parses, and outputs structured chunks ready for AI Agents and RAG.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 4098 stars
+- **Stars / Engagement**: 4108 stars
 
 ---
 
@@ -639,9 +639,15 @@ from shared.core.exceptions import (
     UnknownException,
     ValidationException,
 )
-from shared.core.exceptions.domain_exceptions import RateLimitException, Violation
+from shared.core.exceptions.domain_exceptions import (
+    LLMServiceException,
+    RateLimitException,
+    UnavailableException,
+    Violation,
+)
 from shared.core.logging import LogEvent
 from shared.core.response import ErrorCodeMapper
+from shared.services.retrieval.required_query_embedding import RequiredQueryEmbeddingException
 
 
 def _get_request_id(request: Request) -> str:
@@ -827,13 +833,7 @@ async def validation_exception_handler(
     validation_exc = ValidationException(
         user_message="Request validation failed",
         violations=violations,
-    )
-
-    # Delegate to central handler
-    return await knowhere_exception_handler(request, validation_exc)
-
-
-async def general_exception_handler(request: Reque
+   
 ```
 
 ### Core Architecture Module: `apps/api/app/core/middleware/__init__.py`
@@ -1002,1363 +1002,1139 @@ class ApiTelemetryMiddleware:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b8d3b813` (2026-11-22)
-**Commit Message**: Read legacy VML pictures and render VML groups as one image
+### Incident Patch 1: `da75fa74` (2026-11-23)
+**Commit Message**: Merge pull request #582 from Ontos-AI/fix/wangbinqi/reject-nul-section-path
 
-A single VML picture now yields its media file in place. A VML group,
-whose pictures, shapes and text boxes only make sense together, is
-rendered as one image: all groups of a document go through one
-LibreOffice pass, one per page without headers, footers or background,
-and each page is cropped to what it draws. If rendering fails or pages
-do not line up with groups, the existing placeholder stays.
+Reject NUL characters in corpus scope section paths
 
-Text-box paragraphs inside a content control no longer repeat images
-their enclosing paragraph already yields. The page render resolution is
-now a shared constant used by page images and rendered graphics.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `apps/worker/app/services/document_parser/formats/docx/block_stream.py` (modified, +87/-29)
+**File**: `apps/api/tests/contract/test_retrieval_tools_invoke_contract.py` (modified, +47/-0)
 ```diff
-@@ -6,6 +6,12 @@
- 
- from app.services.document_parser.formats.docx.toc import detect_doc_tocs, detect_sdt_toc
- from app.services.document_parser.assets.image_size_filter import is_below_img_min_size
-+from app.services.document_parser.formats.docx.vml_graphics import (
-+    is_composite,
-+    render_composites,
-+    single_picture_rid,
-+    vml_pictures,
-+)
- from app.services.document_parser.formats.docx.word_package import (
-     normalize_word_package_bytes,
- )
-@@ -43,11 +49,24 @@ def iter_block_items(doc_data):
-             "w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main",
-             "v": "urn:schemas-microsoft-com:vml",
-             "o": "urn:schemas-microsoft-com:office:office",
-+            "mc": "http://schemas.openxmlformats.org/markup-compatibility/2006",
-         }
-         r_ns = "{http://schemas.openxmlformats.org/officeDocument/2006/relationships}"
- 
-         root = etree.fromstring(xml)
-         body = root.find(".//w:body", namespaces=ns)
-+        # Composite VML graphics in the paragraphs read below render together.
-+        composites = list(
-+            dict.fromkeys(
-+                pict
-+                for paragraph in body.xpath(
-+                    "w:p | w:sdt/w:sdtContent//w:p", namespaces=ns
-+                )
-+                for pict in vml_pictures(paragraph, ns)
-+                if is_composite(pict, ns)
-+            )
-+        )
-+        composite_images = render_composites(doc_data, root, composites, ns)
- 
-         ele_num = 1
-         map_index = 0  # point to p_tbl_map
-@@ -93,8 +112,17 @@ def iter_block_items(doc_data):
-                                 }
-                             yield ele_num, text, label, meta
-                             ele_num += 1
-+                        if p_elem.xpath("ancestor::w:p", namespaces=ns):
-+                            # A text-box paragraph: its images belong to the
-+                            # enclosing paragraph, which is read as well.
-+                            continue
-                         for content, image_label, image_meta in _paragraph_images(
--                            p_elem, text=text, docx=docx, rel_map=rel_map, ns=ns
-+                            p_elem,
-+                            text=text,
-+                            docx=docx,
-+                            rel_map=rel_map,
-+                            ns=ns,
-+                            composite_images=composite_images,
-                         ):
-                             yield ele_num, content, image_label, image_meta
-                             ele_num += 1
-@@ -133,7 +161,12 @@ def iter_block_items(doc_data):
-                     ele_num += 1
- 
-                 for content, image_label, image_meta in _paragraph_images(
--                    elem, text=text, docx=docx, rel_map=rel_map, ns=ns
-+                    elem,
-+                    text=text,
-+                    docx=docx,
-+                    rel_map=rel_map,
-+                    ns=ns,
-+                    composite_images=composite_images,
-                 ):
-                     yield ele_num, content, image_label, image_meta
-                     ele_num += 1
-@@ -207,39 +240,45 @@ def iter_block_items(doc_data):
-             map_index += 1
+@@ -255,6 +255,53 @@ async def test_invoke_read_records_the_read_document_and_chunk(
+     assert counts == {("document", None): 1, ("chunk", chunk_id): 1}
  
  
--def _paragraph_images(paragraph, *, text, docx, rel_map, ns):
--    """Images a paragraph holds, or a placeholder for a VML-only graphic."""
-+def _paragraph_images(paragraph, *, text, docx, rel_map, ns, composite_images):
-+    """Images a paragraph holds, or a placeholder for a VML graphic it cannot show."""
-     r_ns = f"{{{ns['r']}}}"
-     seen_rids = set()
-+    rendered_composite = False
-     # images (DrawingML: <a:blip>)
-     for blip in paragraph.xpath(".//a:blip", namespaces=ns):
--        rid = blip.get(f"{r_ns}embed")
--        if not rid or rid in seen_rids:
--            continue
--        target = rel_map.get(rid)
--        if not target or not target.startswith("media/"):
--            continue
--        seen_rids.add(rid)
--        data = docx.read("word/" + target)
--        if is_below_img_min_size(len(data)):
-+        image = _media_image(blip.get(f"{r_ns}embed"), docx, rel_map, seen_rids)
-+        if image is not None:
-+            yield None, "IMAGE", image
++async def test_invoke_rejects_nul_in_grep_scope_section_path(
++    developer_api_client_factory: Callable[[], AbstractAsyncContextManager[AsyncClient]],
++) -> None:
++    from tests.contract.test_retrieval_classic_map_unit_contract import _publish_document
 +
-+    # Legacy VML: a single picture reads its media file; a composite (<v:group>)
-+    # comes back as one rendered image, keeping its overlaid text and layout.
-+    tree = paragraph.getroottree()
-+    for pict in vml_pictures(paragraph, ns):
-+        if is_composite(pict, ns):
-+            rendered = composite_images.get(tree.getpath(pict))
-+            if rendered is None:
-+                continue
-+            image_name, data = rendered
-+            rendered_composite = True
-+            yield (
-+                None,
-+                "IMAGE",
++    namespace: str = f"grep-scope-{uuid4().hex[:8]}"
++    async with developer_api_client_factory() as api_client:
++        published: dict[str, str] = await _publish_document(
++            namespace=namespace,
++            source_file_name="contract.pdf",
++            chunks=[
 +                {
-+                    "image_name": image_name,
-+                    "from": "paragraph",
-+                    "size": len(data),
-+                    "data": data,
-+                },
-+            )
-  
-```
-
-**File**: `apps/worker/app/services/document_parser/formats/docx/vml_graphics.py` (added, +173/-0)
-```diff
-@@ -0,0 +1,173 @@
-+"""Legacy VML graphics in a DOCX body.
-+
-+Older Word files draw pictures with VML (``<w:pict>``) instead of DrawingML.
-+A single VML picture points at one media file, which is read as is. A VML
-+group stacks pictures, shapes and text boxes into one graphic; taking any one
-+part loses the overlay, so the whole group is rendered as one image.
-+"""
-+
-+from __future__ import annotations
-+
-+import gc
-+import io
-+import os
-+import tempfile
-+import zipfile
-+
-+from loguru import logger
-+from lxml import etree  # pyright: ignore[reportAttributeAccessIssue]
-+
-+from app.services.document_parser.conversion.legacy_converter import (
-+    _convert_with_libreoffice,
-+)
-+from app.services.document_parser.formats.pdf.pymupdf_subprocess import (
-+    run_in_child_process,
-+    worker,
-+)
-+from shared.core.constants.processing import ProcessingConstants
-+
-+_DOCUMENT_PART = "word/document.xml"
-+_COMPOSITE_PDF_NAME = "vml-composites"
-+
-+
-+def vml_pictures(element, ns: dict[str, str]) -> list:
-+    """Outermost ``<w:pict>`` graphics under ``element``.
-+
-+    ``mc:Fallback`` repeats a DrawingML picture as VML for old readers, and
-+    the DrawingML copy is already read. A picture inside another one (in a
-+    text box of a group) is drawn with that group.
-+    """
-+    return element.xpath(
-+        ".//w:pict[not(ancestor::mc:Fallback)][not(ancestor::w:pict)]", namespaces=ns
-+    )
-+
-+
-+def is_composite(pict, ns: dict[str, str]) -> bool:
-+    return bool(pict.xpath(".//v:group", namespaces=ns))
-+
-+
-+def single_picture_rid(pict, ns: dict[str, str]) -> str | None:
-+    """Relationship id of a VML picture that holds exactly one image."""
-+    if is_composite(pict, ns):
-+        return None
-+    rids = pict.xpath(".//v:imagedata/@r:id", namespaces=ns)
-+    return str(rids[0]) if len(rids) == 1 else None
-+
-+
-+def composite_image_name(index: int) -> str:
-+    return f"vml-composite-{index}.png"
-+
-+
-+def render_composites(
-+    package_bytes: bytes, root, composites: list, ns: dict[str, str]
-+) -> dict[str, tuple[str, bytes]]:
-+    """Image name and PNG bytes of each composite, keyed by its path in ``root``.
-+
-+    The composites are copied, one per page, into a work copy of the package
-+    without headers, footers or page background, rendered once by
-+    LibreOffice, and each page is cropped to what it draws.
-+    """
-+    if not composites:
-+        return {}
-+    tree = root.getroottree()
-+    paths = [tree.getpath(pict) for pict in composites]
-+    with tempfile.TemporaryDirectory(prefix="docx-vml-") as work_dir:
-+        source_path = os.path.join(work_dir, f"{_COMPOSITE_PDF_NAME}.docx")
-+        _write_composite_package(package_bytes, root, composites, ns, source_path)
-+        try:
-+            pdf_path, _pdf_name = _convert_with_libreoffice(
-+                source_path=source_path,
-+                outdir=work_dir,
-+                convert_to_arg="pdf:writer_pdf_Export",
-+                expected_output_ext="pdf",
-+                operation="render_docx_vml_composites",
-+            )
-+            result = run_in_child_process(
-+                _render_cropped_pages_worker,
-+                pdf_path,
-+                ProcessingConstants.PAGE_RENDER_DPI,
-+            )
-+        except Exception as exc:
-+            logger.warning(f"VML composite rendering failed; keeping placeholders: {exc}")
-+            return {}
-+    images: list[bytes | None] = list(result.get("images") or [])
-+    if len(images) != len(composites):
-+        # A composite taller than a page spills onto the next one, so pages no
-+        # longer line up with composites.
-+        logger.warning(
-+            f"VML composite rendering gave {len(images)} pages for "
-+            f"{len(composites)} composites; keeping placeholders"
++                    "chunk_id": "scope-contract-body",
++                    "type": "text",
++                    "content": "Quarterly revenue",
++                    "path": "contract.pdf/Root/Summary",
++                    "order": 1,
++                    "metadata": {},
++                }
++            ],
 +        )
-+        return {}
-+    return {
-+        path: (composite_image_name(index), image)
-+        for index, (path, image) in enumerate(zip(paths, images), start=1)
-+        if image
++        response: Response = await api_client.post(
++            "/api/v2/retrieval/tools/invoke",
++            headers={"X-Knowhere-Namespace": namespace},
++            json={
++                "tool": "corpus.grep",
++                "arguments": {
++                    "pattern": "revenue",
++                    "scope": [
++                        {
++                            "document_id": published["document_id"],
++                            "section_path": "Quarterly\x00Summary",
++                        }
++                    ],
++                },
++            },
++        )
++
++    assert response.status_code == 200
++    assert response.json() == {
++        "text": "",
++        "payload": {},
++        "refs": [],
++        "error": "grep: scope item section_path must not contain NUL characters",
 +    }
 +
 +
-+def _write_composite_package(
-+    package_bytes: bytes, root, composites: list, ns: dict[str, str], destination: str
-+) -> None:
-+    w = ns["w"]
-+    document = etree.fromstring(etree.tostring(root))
-+    body = document.find("w:body", ns)
-+    section = body.find("w:sectPr", ns)
-+    for child in list(body):
-+        body.remove(child)
-+    for index, pict in enumerate(composites):
-+        if index:
-+            page_break = etree.SubElement(
-+                etree.SubElement(etree.SubElement(body, f"{{{w}}}p"), f"{{{w}}}r"),
-+                f"{{{w}}}br",
-+            )
-+            page_break.set(f"{{{w}}}type", "page")
-+        run = etree.SubElement(etree.SubElement(body, f"{{{w}}}p"), f"{{{w}}}r")
-+        run.append(etree.fromstring(etree.tostring(pict)))
-+    if section is not None:
-+        for reference in section.xpath(
-+            "w:headerReference | w:footerReference", namespaces=ns
-+        ):
-+            section.remove(reference)
-+        body.append(section)
-+    for background in document.fi
+ async def test_invoke_recall_returns_table_connected_to_additive_body(
+     developer_api_client_factory: Callable[[], AbstractAsyncContextManager[AsyncClient]],
+     monkeypatch: pytest.MonkeyPatch,
 ```
 
-**File**: `apps/worker/app/services/page_memory/page_renderer.py` (modified, +2/-1)
+**File**: `packages/shared-python/shared/services/retrieval/agent_tools/scope.py` (modified, +8/-6)
 ```diff
-@@ -13,6 +13,7 @@
+@@ -97,15 +97,19 @@ async def resolve_scope(
+     if not items:
+         return [], "scope requires at least one {document_id, section_path?} item"
  
- from app.services.document_agent.manifest import PageFeature, ToolContext
- from app.services.document_agent.visual import render_pages
-+from shared.core.constants.processing import ProcessingConstants
+-    document_ids: list[str] = []
++    scope_items: list[tuple[str, str]] = []
+     for item in items:
+         if not isinstance(item, dict):
+             return [], f"scope item must be an object with document_id, got {item!r}"
+-        document_id = str(item.get("document_id") or "").strip()
++        document_id: str = str(item.get("document_id") or "").strip()
+         if not document_id:
+             return [], "scope item requires document_id"
+-        document_ids.append(document_id)
++        raw_path: str = str(item.get("section_path") or "").strip()
++        if "\x00" in raw_path:
++            return [], "scope item section_path must not contain NUL characters"
++        scope_items.append((document_id, raw_path))
  
++    document_ids: list[str] = [document_id for document_id, _ in scope_items]
+     documents = (
+         (
+             await db.execute(
+@@ -125,12 +129,10 @@ async def resolve_scope(
+     }
  
- @dataclass(frozen=True)
-@@ -48,7 +49,7 @@ def render_document_pages(
-     page_features: list[PageFeature] | None = None,
-     page_texts: dict[int, str] | None = None,
-     ctx: ToolContext | None = None,
--    dpi: int = 144,
-+    dpi: int = ProcessingConstants.PAGE_RENDER_DPI,
-     timeout: int = 300,
- ) -> list[PageRenderResult]:
-     """Render every page in *pdf_path* as PNG + raw text.
-```
-
-**File**: `apps/worker/tests/unit/test_docx_block_stream.py` (modified, +113/-5)
-```diff
-@@ -12,12 +12,22 @@
- os.environ.setdefault("S3_TEMP_PATH", "/tmp")
- 
- from docx import Document  # noqa: E402
--from docx.oxml import OxmlElement  # noqa: E402
-+from docx.oxml import OxmlElement, parse_xml  # noqa: E402
-+import pytest  # noqa: E402
- from PIL import Image  # noqa: E402
- 
- from shared.core.constants.processing import ProcessingConstants  # noqa: E402
--from app.services.document_parser.formats.docx.block_stream import (  # noqa: E402
--    iter_block_items,
-+from shared.core.exceptions.domain_exceptions import (  # noqa: E402
-+    LibreOfficeServiceException,
-+)
-+from app.services.document_parser.conversion.legacy_converter import (  # noqa: E402
-+    resolve_libreoffice_binary,
-+)
-+
-+_VML_NAMESPACES = (
-+    'xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" '
-+    'xmlns:v="urn:schemas-microsoft-com:vml" '
-+    'xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"'
- )
- 
- 
-@@ -46,9 +56,107 @@ def _docx_with_picture_in_content_control() -> bytes:
-     return buffer.getvalue()
- 
- 
-+def _block_items(package: bytes) -> list:
-+    """Blocks from the live parser module.
-+
-+    Contract fixtures clear ``app.*`` from ``sys.modules``; a worker function
-+    from a stale module cannot be pickled for the rendering child process.
-+    """
-+    from app.services.document_parser.formats.docx.block_stream import (
-+        iter_block_items,
-+    )
-+
-+    return list(iter_block_items(package))
-+
-+
-+def _images(blocks) -> list[dict]:
-+    return [meta for _num, _content, label, meta in blocks if label == "IMAGE"]
-+
-+
- def test_picture_inside_content_control_is_extracted() -> None:
--    blocks = list(iter_block_items(_docx_with_picture_in_content_control()))
-+    blocks = _block_items(_docx_with_picture_in_content_control())
-+
-+    images = _images(blocks)
-+    assert len(images) == 1
-+    assert images[0]["data"].startswith(b"\x89PNG")
-+
-+
-+def _docx_with_vml(picture_xml: str) -> bytes:
-+    """A DOCX whose only paragraph holds ``picture_xml``; ``{rid}`` is the image."""
-+    document = Document()
-+    rid, _image = document.part.get_or_add_image(io.BytesIO(_noise_png()))
-+    run = document.add_paragraph().add_run()
-+    run._r.append(parse_xml(picture_xml.format(ns=_VML_NAMESPACES, rid=rid)))
-+    buffer = io.BytesIO()
-+    document.save(buffer)
-+    return buffer.getvalue()
-+
- 
--    images = [meta for _num, _content, label, meta in blocks if label == "IMAGE"]
-+_SINGLE_PICTURE = (
-+    '<w:pict {ns}><v:shape style="width:96pt;height:96pt">'
-+    '<v:imagedata r:id="{rid}"/></v:shape></w:pict>'
-+)
-+_COMPOSITE = (
-+    '<w:pict {ns}><v:group style="width:240pt;height:120pt" '
-+    'coordsize="240,120">'
-+    '<v:shape style="position:absolute;left:0;top:0;width:120;height:120">'
-+    '<v:imagedata r:id="{rid}"/></v:shape>'
-+    '<v:shape style="position:absolute;left:130;top:40;width:110;height:40">'
-+    "<v:textbox><w:txbxContent><w:p><w:r><w:t>Caption</w:t></w:r></w:p>"
-+    "</w:txbxContent></v:textbox></v:shape>"
-+    "</v:group></w:pict>"
-+)
-+_TEXTLESS_COMPOSITE = (
-+    '<w:pict {ns}><v:group style="width:240pt;height:120pt" coordsize="240,120">'
-+    '<v:shape style="position:absolute;left:0;top:0;width:120;height:120">'
-+    '<v:imagedata r:id="{rid}"/></v:shape>'
-+    '<v:shape style="position:absolute;left:120;top:0;width:120;height:120">'
-+    '<v:imagedata r:id="{rid}"/></v:shape>'
-+    "</v:group></w:pict>"
-+)
-+
-+
-+def test_single_vml_picture_reads_its_media_file() -> None:
-+    blocks = _block_items(_docx_with_vml(_SINGLE_PICTURE))
-+
-+    images = _images(blocks)
-     assert len(images) == 1
-+    assert images[0]["data"] == _noise_png()
-+    assert not any("VML graphic" in str(content) for _num, content, _l, _m in blocks)
-+
-+
-+def _libreoffice_available() -> bool:
-+    try:
-+        resolve_libreoffice_binary()
-+    except LibreOfficeServiceException:
-+        return False
-+    return True
-+
-+
-+@pytest.mark.skipif(not _libreoffice_available(), reason="LibreOffice is not installed")
-+def test_vml_group_becomes_one_rendered_image() -> None:
-+    from app.services.document_parser.formats.docx import vml_graphics
-+
-+    blocks = _block_items(_docx_with_vml(_COMPOSITE))
-+
-+    images = _images(blocks)
-+    assert len(images) == 1
-+    assert images[0]["image_name"] == vml_graphics.composite_image_name(1)
-     assert images[0]["data"].startswith(b"\x89PNG")
-+    assert images[0]["data"] != _noise_png()
-+
-+
-+def test_vml_group_keeps_placeholder_when_rendering_fails(monkeypatch) -> None:
-+    from app.services.document_parser.formats.docx import vml_graphics
-+
-+    def failing_convert(**_kwargs):
-+        raise LibreOfficeServiceException(
-+            internal_message="conversion failed", operation="test"
-+        )
-+
-+    monkeypatch.setattr(vml_graphics, "_convert_with_libreoffice", failing_convert)
-+
-+    blocks = _block_items(_docx_with_vml(_TEXTLESS_COMPOSITE))
-+
-+    assert _images(blocks) == []
-+    assert any("VML graphic" in str(content) for _num, c
-```
-
-**File**: `packages/shared-python/shared/core/constants/processing.py` (modified, +2/-0)
-```diff
-@@ -28,6 +28,8 @@ class ProcessingConstants:
-     IMG_MIN_SIZE = 10 * 1024  # 10KB
-     IMG_MAX_SIZE = 5 * 1024 * 1024  # 5MB
-     IMG_QUALITY = 100
-+    # Resolution page images and rendered graphics are drawn at.
-+    PAGE_RENDER_DPI = 144
-     IMG_CHUNK_SIZE = 1024 * 1024  # 1MB
- 
-     # PostgreSQL connection-pool configuration.
+     targets: list[ScopeTarget] = []
+-    for item in items:
+-        document_id = str(item.get("document_id") or "").strip()
++    for document_id, raw_path in scope_items:
+         job_result_id = revision_by_doc.get(document_id)
+         if not job_result_id:
+             return [], f"unknown document_id: {document_id}"
+-        raw_path = str(item.get("section_path") or "").strip()
+         if not raw_path:
+             targets.append(ScopeTarget(document_id, job_result_id, None))
+             continue
 ```
 
 ---
 
-### Incident Patch 2: `5334ea79` (2026-11-22)
-**Commit Message**: Read Word equations as LaTeX and render embedded objects
+### Incident Patch 2: `32df7a7f` (2026-11-23)
+**Commit Message**: Merge pull request #580 from Ontos-AI/fix/wangbinqi/production-logfire-errors
 
-Word equations (OMML) become LaTeX in place: inline as $...$, display
-as $$...$$ on its own line. Embedded equation objects are marked where
-they stand. Non-equation embedded objects (Visio, Photoshop, ...) join
-VML groups in one LibreOffice render, matched to pages by marker pages,
-and table cells take the same pictures. A graphic that cannot be
-rendered leaves a placeholder naming its program.
+Fix production errors in billing, API keys, and retrieval
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `apps/worker/app/services/document_parser/formats/docx/block_stream.py` (modified, +81/-91)
+**File**: `apps/api/app/api/v1/routes/api_key.py` (modified, +6/-7)
 ```diff
-@@ -6,21 +6,24 @@
- 
- from app.services.document_parser.formats.docx.toc import detect_doc_tocs, detect_sdt_toc
- from app.services.document_parser.assets.image_size_filter import is_below_img_min_size
--from app.services.document_parser.formats.docx.vml_graphics import (
--    is_composite,
--    render_composites,
-+from app.services.document_parser.formats.docx.legacy_graphics import (
-+    is_vml_group,
-+    render_graphics,
-+    rendered_graphics,
-     single_picture_rid,
-+    unrendered_placeholder,
-     vml_pictures,
- )
-+from app.services.document_parser.formats.docx.paragraph_text import paragraph_text
- from app.services.document_parser.formats.docx.word_package import (
-     normalize_word_package_bytes,
- )
- from docx import Document
-+from docx.oxml.ns import qn
- from docx.oxml.table import CT_Tbl
- from docx.oxml.text.paragraph import CT_P
- from docx.table import Table
- from docx.text.paragraph import Paragraph
--from loguru import logger
- from lxml import etree
- 
- 
-@@ -31,11 +34,14 @@ def iter_block_items(doc_data):
- 
-     # python-docx mapping
-     p_tbl_map = []
-+    sdt_nodes = []
-     for child in doc.element.body:
-         if isinstance(child, CT_P):
-             p_tbl_map.append(("p", child))
-         elif isinstance(child, CT_Tbl):
-             p_tbl_map.append(("tbl", child))
-+        elif child.tag == qn("w:sdt"):
-+            sdt_nodes.append(child)
- 
-     with zipfile.ZipFile(io.BytesIO(doc_data), "r") as docx:
-         xml = docx.read("word/document.xml")
-@@ -51,25 +57,24 @@ def iter_block_items(doc_data):
-             "o": "urn:schemas-microsoft-com:office:office",
-             "mc": "http://schemas.openxmlformats.org/markup-compatibility/2006",
-         }
--        r_ns = "{http://schemas.openxmlformats.org/officeDocument/2006/relationships}"
--
-         root = etree.fromstring(xml)
-         body = root.find(".//w:body", namespaces=ns)
--        # Composite VML graphics in the paragraphs read below render together.
--        composites = list(
-+        # Graphics in the paragraphs, content controls and tables read below
-+        # render together.
-+        graphics = list(
-             dict.fromkeys(
--                pict
--                for paragraph in body.xpath(
--                    "w:p | w:sdt/w:sdtContent//w:p", namespaces=ns
-+                graphic
-+                for container in body.xpath(
-+                    "w:p | w:sdt/w:sdtContent | w:tbl", namespaces=ns
-                 )
--                for pict in vml_pictures(paragraph, ns)
--                if is_composite(pict, ns)
-+                for graphic in rendered_graphics(container, ns)
-             )
+@@ -168,20 +168,19 @@ async def toggle_api_key(
+ ):
+     """Enable or disable an API key."""
+     try:
+-        success = await _api_key_management_service.toggle_api_key(
++        success: bool = await _api_key_management_service.toggle_api_key(
+             db,
+             user_id=current_user.user_id,
+             api_key_id=api_key_id,
          )
--        composite_images = render_composites(doc_data, root, composites, ns)
-+        rendered = render_graphics(doc_data, root, graphics, ns)
- 
-         ele_num = 1
-         map_index = 0  # point to p_tbl_map
-+        sdt_index = 0  # point to sdt_nodes
-         toc_field_active = False
- 
-         for elem in body.iterchildren():
-@@ -84,11 +89,18 @@ def iter_block_items(doc_data):
-                 sdt_toc_info = detect_sdt_toc(elem, ns)
-                 is_toc_sdt = sdt_toc_info["is_toc_sdt"]
- 
-+                sdt_node = sdt_nodes[sdt_index]
-+                sdt_index += 1
-                 sdt_content = elem.find(".//w:sdtContent", namespaces=ns)
-                 if sdt_content is not None:
--                    for p_elem in sdt_content.findall(".//w:p", namespaces=ns):
--                        texts = p_elem.xpath(".//w:t/text()", namespaces=ns)
--                        text = "".join(texts).strip()
-+                    # The python-docx copy of the same paragraphs, in the same order.
-+                    p_nodes = list(
-+                        sdt_node.find(".//" + qn("w:sdtContent")).iter(qn("w:p"))
-+                    )
-+                    p_elems = sdt_content.findall(".//w:p", namespaces=ns)
-+                    for p_elem, p_node in zip(p_elems, p_nodes, strict=True):
-+                        p_obj = Paragraph(p_node, doc)
-+                        text = paragraph_text(p_obj).strip()
- 
-                         if is_toc_sdt:
-                             label = "TOC-AREA"
-@@ -110,29 +122,25 @@ def iter_block_items(doc_data):
-                                     "toc_style_name": toc_info.get("style_name"),
-                                     "toc_source": "sdt",
-                                 }
--                            yield ele_num, text, label, meta
-+                            yield ele_num, p_obj, label, meta
-                             ele_num += 1
-                         if p_elem.xpath("ancestor::w:p", namespaces=ns):
-                             # A text-box paragraph: its images belong to the
-                             # enclosing paragraph, which is read as well.
-                             continue
-                         for content, image_label, image_meta in _paragraph_images(
-                             p_elem,
--                            text=text,
-                           
+-        if success:
+-            return {"message": "API key status updated"}
+-        else:
+-            raise APIKeyOperationException(
+-                internal_message="Failed to toggle API Key status"
+-            )
+     except APIKeyOperationException:
+         raise
+     except Exception as e:
+         raise APIKeyOperationException(
+             internal_message=f"Failed to toggle API Key: {str(e)}"
+         )
++
++    if not success:
++        raise NotFoundException(resource="APIKey", resource_id=api_key_id)
++
++    return {"message": "API key status updated"}
 ```
 
-**File**: `apps/worker/app/services/document_parser/formats/docx/legacy_graphics.py` (added, +283/-0)
+**File**: `apps/api/app/core/exception_handlers.py` (modified, +21/-2)
 ```diff
-@@ -0,0 +1,283 @@
-+"""Legacy graphics in a DOCX body: VML pictures and embedded objects.
-+
-+Older Word files draw pictures with VML (``<w:pict>``) instead of DrawingML.
-+A single VML picture points at one media file, which is read as is. Two kinds
-+of graphic have no file to read and are rendered as images instead:
-+
-+- a VML group stacks pictures, shapes and text boxes into one graphic; taking
-+  any one part loses the overlay, so the whole group is rendered;
-+- an embedded object (``<w:object>``: Visio, Photoshop, Paint, AutoCAD, ...)
-+  only keeps a WMF/EMF preview, which is rendered.
-+
-+An embedded equation (Equation Editor 3.0 or MathType) is not rendered; the
-+paragraph text marks where it stands.
-+"""
-+
-+from __future__ import annotations
-+
-+import gc
-+import io
-+import os
-+import re
-+import tempfile
-+import zipfile
-+
-+from loguru import logger
-+from lxml import etree  # pyright: ignore[reportAttributeAccessIssue]
-+
-+from app.services.document_parser.conversion.legacy_converter import (
-+    _convert_with_libreoffice,
+@@ -62,9 +62,15 @@
+     UnknownException,
+     ValidationException,
+ )
+-from shared.core.exceptions.domain_exceptions import RateLimitException, Violation
++from shared.core.exceptions.domain_exceptions import (
++    LLMServiceException,
++    RateLimitException,
++    UnavailableException,
++    Violation,
 +)
-+from app.services.document_parser.formats.pdf.pymupdf_subprocess import (
-+    run_in_child_process,
-+    worker,
-+)
-+from shared.core.constants.processing import ProcessingConstants
-+
-+_DOCUMENT_PART = "word/document.xml"
-+_RENDER_PACKAGE_NAME = "rendered-graphics"
-+_OFFICE_NS = "urn:schemas-microsoft-com:office:office"
-+_EQUATION_PROG_ID_PREFIX = "Equation."
-+# Text of the page put before each graphic, followed by its number, so the
-+# rendered pages can be matched to graphics however many pages each takes.
-+_RENDER_MARK_PREFIX = "knowhere-render-mark-"
-+_UNRENDERED_LABEL = "graphic not extracted"
-+
-+
-+def vml_pictures(element, ns: dict[str, str]) -> list:
-+    """Outermost ``<w:pict>`` graphics under ``element``.
-+
-+    ``mc:Fallback`` repeats a DrawingML picture as VML for old readers, and
-+    the DrawingML copy is already read. A picture inside another one (in a
-+    text box of a group) is drawn with that group.
-+    """
-+    return element.xpath(
-+        ".//w:pict[not(ancestor::mc:Fallback)][not(ancestor::w:pict)]", namespaces=ns
-+    )
-+
-+
-+def is_vml_group(pict, ns: dict[str, str]) -> bool:
-+    return bool(pict.xpath(".//v:group", namespaces=ns))
-+
-+
-+def single_picture_rid(pict, ns: dict[str, str]) -> str | None:
-+    """Relationship id of a VML picture that holds exactly one image."""
-+    if is_vml_group(pict, ns):
-+        return None
-+    rids = pict.xpath(".//v:imagedata/@r:id", namespaces=ns)
-+    return str(rids[0]) if len(rids) == 1 else None
-+
-+
-+def object_prog_id(obj) -> str | None:
-+    """The program an embedded object was made with, as Word records it."""
-+    for ole in obj.iter(f"{{{_OFFICE_NS}}}OLEObject"):
-+        return ole.get("ProgID")
-+    return None
-+
-+
-+def is_equation_object(obj) -> bool:
-+    prog_id = object_prog_id(obj)
-+    return prog_id is not None and prog_id.startswith(_EQUATION_PROG_ID_PREFIX)
-+
-+
-+def rendered_graphics(element, ns: dict[str, str]) -> list:
-+    """VML groups and non-equation embedded objects under ``element``, in order."""
-+    candidates = element.xpath(
-+        ".//w:pict[not(ancestor::mc:Fallback)][not(ancestor::w:pict)]"
-+        " | .//w:object[not(ancestor::mc:Fallback)][not(ancestor::w:pict)]",
-+        namespaces=ns,
-+    )
-+    return [
-+        graphic
-+        for graphic in candidates
-+        if (
-+            is_vml_group(graphic, ns)
-+            if etree.QName(graphic).localname == "pict"
-+            else not is_equation_object(graphic)
+ from shared.core.logging import LogEvent
+ from shared.core.response import ErrorCodeMapper
++from shared.services.retrieval.required_query_embedding import RequiredQueryEmbeddingException
+ 
+ 
+ def _get_request_id(request: Request) -> str:
+@@ -280,7 +286,20 @@ async def _knowhere_exception_handler_adapter(
+     request: Request, exc: Exception
+ ) -> JSONResponse:
+     """Adapt the typed Knowhere handler to FastAPI's generic signature."""
+-    return await knowhere_exception_handler(request, cast(KnowhereException, exc))
++    error: KnowhereException = cast(KnowhereException, exc)
++    cause: Exception | None = error.original_exception
++    if (
++        isinstance(error, RequiredQueryEmbeddingException)
++        and isinstance(cause, LLMServiceException)
++        and cause.details.get("status_code") == 503
++    ):
++        error = UnavailableException(
++            internal_message=error.internal_message,
++            retry_after=1,
++            user_message="Search is temporarily unavailable. Please retry.",
++            original_exception=error,
 +        )
-+    ]
-+
-+
-+def unrendered_placeholder(graphic) -> str:
-+    """Text left where a graphic could not be rendered, naming an object's program."""
-+    if etree.QName(graphic).localname == "object":
-+        prog_id = object_prog_id(graphic)
-+        if prog_id:
-+            return f"[{_UNRENDERED_LABEL}: {prog_id}]"
-+    return f"[{_UNRENDERED_LABEL}]"
-+
-+
-+def rendered_image_name(graphic_number: int, part_number: int | None = None) -> str:
-+    if part_number is None:
-+        return f"rendered-graphic-{graphic_number}.png"
-+    return f"rendered-graphic-{graphic_number}-{part_number}.png"
-+
-+
-+def render_graphics(
-+    package_bytes: bytes, root, graphics: list, ns: dict[str, str]
-+) -> dict[str, list[tuple[str, bytes]]]:
-+    """Image names and PNG bytes of each graphic, keyed by its path in ``root``.
-+
-+    The graphics are copied into a work copy of the package without headers,
-+    footers or page background, each after a page holding only its mark, and
-+    rendered once by LibreOffice. The pages between one mark and the next
-+    belong to that graphic and are each cropped to what they draw. A graphic
-+    whose pages draw nothing is left out.
-+    """
-+    if not graphics:
-+        return {}
-+    tree = root.getroottree()
-+    with tempfile.TemporaryDirectory(prefix="docx-graphics-") as work_dir:
-+        source_path = os.path.join(work_dir, f"{_RENDER_PACKAGE_NAME}.docx")
-+        _write_render_package(package_bytes, root, graphics, ns, source_pat
++    return await knowhere_exception_handler(request, error)
+ 
+ 
+ async def _http_exception_handler_adapter(
 ```
 
-**File**: `apps/worker/app/services/document_parser/formats/docx/omml_latex.py` (added, +312/-0)
+**File**: `apps/api/app/services/billing/billing_command_workflow.py` (modified, +19/-7)
 ```diff
-@@ -0,0 +1,312 @@
-+"""Word equations (Office Math Markup, ``<m:oMath>``) as LaTeX.
-+
-+Each structure in ECMA-376 Part 1, section 22.1 maps to its LaTeX form. A
-+character the tables below do not list is written as it is, and an element
-+this module does not know keeps the text of what it holds.
-+"""
-+
-+from __future__ import annotations
-+
-+from lxml import etree  # pyright: ignore[reportAttributeAccessIssue]
-+
-+_MATH_NS = "http://schemas.openxmlformats.org/officeDocument/2006/math"
-+_WORD_NS = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
-+_VAL = f"{{{_MATH_NS}}}val"
-+# Tracked deletions and moves away are not part of the equation as it reads.
-+REMOVED_TAGS = (f"{{{_WORD_NS}}}del", f"{{{_WORD_NS}}}moveFrom")
-+
-+# Characters LaTeX reads as markup, written so they print as themselves.
-+_ESCAPES = {
-+    "\\": r"\backslash{}",
-+    "{": r"\{",
-+    "}": r"\}",
-+    "_": r"\_",
-+    "^": r"\^{}",
-+    "%": r"\%",
-+    "#": r"\#",
-+    "&": r"\&",
-+    "$": r"\$",
-+}
-+
-+# n-ary operators; ECMA-376 makes the integral the default.
-+_NARY_DEFAULT = "∫"
-+_NARY_OPERATORS = {
-+    "∑": r"\sum",
-+    "∏": r"\prod",
-+    "∐": r"\coprod",
-+    "∫": r"\int",
-+    "∬": r"\iint",
-+    "∭": r"\iiint",
-+    "∮": r"\oint",
-+    "⋃": r"\bigcup",
-+    "⋂": r"\bigcap",
-+    "⋁": r"\bigvee",
-+    "⋀": r"\bigwedge",
-+    "⨁": r"\bigoplus",
-+    "⨂": r"\bigotimes",
-+    "⨀": r"\bigodot",
-+}
-+
-+# Accents; ECMA-376 makes the circumflex the default.
-+_ACCENT_DEFAULT = "̂"
-+_ACCENTS = {
-+    "̂": r"\hat",
-+    "̃": r"\tilde",
-+    "̄": r"\bar",
-+    "̅": r"\overline",
-+    "‾": r"\overline",
-+    "̇": r"\dot",
-+    "̈": r"\ddot",
-+    "⃛": r"\dddot",
-+    "⃗": r"\vec",
-+    "́": r"\acute",
-+    "̀": r"\grave",
-+    "̆": r"\breve",
-+    "̌": r"\check",
-+}
-+
-+# Delimiters that ``\left`` and ``\right`` accept; ECMA-376 defaults are
-+# parentheses around and a vertical bar between.
-+_BEGIN_DEFAULT = "("
-+_END_DEFAULT = ")"
-+_SEPARATOR_DEFAULT = "|"
-+_DELIMITERS = {
-+    "(": "(",
-+    ")": ")",
-+    "[": "[",
-+    "]": "]",
-+    "{": r"\{",
-+    "}": r"\}",
-+    "|": "|",
-+    "‖": r"\|",
-+    "⟨": r"\langle",
-+    "⟩": r"\rangle",
-+    "〈": r"\langle",
-+    "〉": r"\rangle",
-+    "⌊": r"\lfloor",
-+    "⌋": r"\rfloor",
-+    "⌈": r"\lceil",
-+    "⌉": r"\rceil",
-+}
-+
-+# Group characters; ECMA-376 makes the bottom curly bracket the default.
-+_GROUP_DEFAULT = "⏟"
-+_GROUP_BRACES = {"⏟": r"\underbrace", "⏞": r"\overbrace"}
-+
-+
-+def omml_to_latex(o_math) -> str:
-+    """LaTeX for one ``<m:oMath>`` element, without math delimiters."""
-+    return _children(o_math)
-+
-+
-+def _local(element) -> str:
-+    return etree.QName(element).localname
-+
-+
-+def _is_math(element) -> bool:
-+    return element.tag.startswith(f"{{{_MATH_NS}}}")
-+
-+
-+def _child(element, name: str):
-+    return element.find(f"{{{_MATH_NS}}}{name}")
-+
-+
-+def _property(element, prop: str, name: str) -> str | None:
-+    """The ``m:val`` of ``<m:{prop}><m:{name}>``, or None when it is absent."""
-+    props = _child(element, prop)
-+    if props is None:
-+        return None
-+    value = _child(props, name)
-+    return None if value is None else value.get(_VAL)
-+
-+
-+def _is_on(element, prop: str, name: str) -> bool:
-+    """An ECMA-376 on/off property: present means on unless its value says off."""
-+    props = _child(element, prop)
-+    if props is None:
-+        return False
-+    value = _child(props, name)
-+    if value is None:
-+        return False
-+    return value.get(_VAL) not in ("0", "off", "false")
-+
-+
-+def _children(element) -> str:
-+    parts: list[str] = []
-+    for child in element:
-+        if not isinstance(child.tag, str):
-+            continue
-+        if _is_math(child):
-+            if not _local(child).endswith("Pr"):
-+                parts.append(_convert(child))
-+        elif child.tag not in REMOVED_TAGS:
-+            # A Word wrapper inside an equation, such as a tracked insertion,
-+            # holds equation parts of its own.
-+            parts.append(_children(child))
-+    return "".join(parts)
-+
-+
-+def _arg(element, name: str) -> str:
-+    part = _child(element, name)
-+    return "" if part is None else _children(part)
-+
-+
-+def _literal(text: str) -> str:
-+    return "".join(_ESCAPES.get(char, char) for char in text)
-+
-+
-+def _text(run) -> str:
-+    return "".join(_literal(text.text or "") for text in run.iter(f"{{{_MATH_NS}}}t"))
-+
-+
-+def _convert(element) -> str:
-+    name = _local(element)
-+    converter = _CONVERTERS.get(name)
-+    if converter is not None:
-+        return converter(element)
-+    if name == "r":
-+        return _text(element)
-+    return _children(element)
-+
-+
-+def _sub(element) -> str:
-+    return f"{{{_arg(element, 'e')}}}_{{{_arg(element, 'sub')}}}"
-+
-+
-+def _sup(element) -> str:
-+    return f"{{{_arg(element, 'e')}}}^{{{_arg(element, 'sup')}}}"
-+
-+
-+def _sub_sup(element) -> str:
-+    return (
-+        f"{{{_arg(element, 'e')}}}_{{{_arg(element, 'sub')}}}"
-+        f"^{{{_arg(element, 'sup')}}}"
-+    )
-+
-+
-+def _pre_scri
-```
-
-**File**: `apps/worker/app/services/document_parser/formats/docx/paragraph_text.py` (added, +71/-0)
-```diff
-@@ -0,0 +1,71 @@
-+"""Text of a DOCX paragraph, with its equations in place.
-+
-+python-docx reads a paragraph's runs and hyperlinks only, so Word equations
-+drop out. This reads the same runs and hyperlinks the same way and writes an
-+equation where it stands: inline as ``$...$``, on a line of its own as
-+``$$...$$``. An embedded equation object (Equation Editor 3.0, MathType) has
-+no readable content, so its place is marked.
-+"""
-+
-+from __future__ import annotations
-+
-+from docx.oxml.ns import qn
-+from docx.table import _Cell
-+from docx.text.paragraph import Paragraph
-+
-+from app.services.document_parser.formats.docx.legacy_graphics import (
-+    is_equation_object,
+@@ -1,7 +1,10 @@
+ from __future__ import annotations
+ 
+ from app.services.billing.stripe_purchase_service import StripePurchaseService
+-from app.services.billing.stripe_webhook_service import StripeWebhookService
++from app.services.billing.stripe_webhook_service import (
++    StripeWebhookService,
++    StripeWebhookValidationException,
 +)
-+from app.services.document_parser.formats.docx.omml_latex import (
-+    REMOVED_TAGS,
-+    omml_to_latex,
-+)
-+
-+EQUATION_OBJECT_MARK = "[equation not extracted]"
-+
-+_RUN_TAGS = (qn("w:r"), qn("w:hyperlink"))
-+_OBJECT_TAG = qn("w:object")
-+_MATH_TAG = qn("m:oMath")
-+_MATH_PARAGRAPH_TAG = qn("m:oMathPara")
-+
-+
-+def paragraph_text(paragraph: Paragraph) -> str:
-+    parts: list[str] = []
-+    for child in paragraph._p.iterchildren():
-+        if child.tag in _RUN_TAGS:
-+            parts.append(child.text)
-+            parts.extend(
-+                EQUATION_OBJECT_MARK
-+                for obj in child.iter(_OBJECT_TAG)
-+                if is_equation_object(obj)
+ from sqlalchemy import select
+ from sqlalchemy.ext.asyncio import AsyncSession
+ 
+@@ -86,18 +89,27 @@ async def handle_stripe_webhook(
+         payload: bytes,
+         stripe_signature: str | None,
+     ) -> dict[str, object]:
+-        stripe_webhook_service = StripeWebhookService()
++        if not stripe_signature:
++            raise StripeWebhookValidationException(
++                user_message="Invalid webhook signature",
++                violations=[
++                    {
++                        "field": "Stripe-Signature",
++                        "description": "Stripe-Signature header is required",
++                    }
++                ],
 +            )
-+        elif child.tag == _MATH_TAG:
-+            parts.append(_equation_text(child, "$"))
-+        elif child.tag == _MATH_PARAGRAPH_TAG:
-+            for o_math in child.iterchildren(_MATH_TAG):
-+                text = _equation_text(o_math, "$$")
-+                if text:
-+                    parts.append(f"\n{text}\n")
-+    return "".join(parts)
 +
-+
-+def cell_text(cell: _Cell) -> str:
-+    """A table cell's text, joined by paragraph as python-docx joins it."""
-+    return "\n".join(paragraph_text(paragraph) for paragraph in cell.paragraphs)
-+
-+
-+def _equation_text(o_math, delimiter: str) -> str:
-+    """An equation between delimiters, then a mark for each equation object in it.
-+
-+    An equation whose content is all tracked deletions reads as nothing and
-+    leaves nothing.
-+    """
-+    latex = omml_to_latex(o_math)
-+    marks = [
-+        EQUATION_OBJECT_MARK
-+        for obj in o_math.iter(_OBJECT_TAG)
-+        if is_equation_object(obj)
-+        and not any(ancestor.tag in REMOVED_TAGS for ancestor in obj.iterancestors())
-+    ]
-+    text = f"{delimiter}{latex}{delimiter}" if latex.strip() else ""
-+    return text + "".join(marks)
++        stripe_webhook_service: StripeWebhookService = StripeWebhookService()
+         try:
+-            if not stripe_signature:
+-                raise StripeServiceException(
+-                    internal_message="Missing stripe-signature header"
+-                )
+             return await stripe_webhook_service.handle_webhook(
+                 db,
+                 payload=payload,
+                 sig_header=stripe_signature,
+             )
++        except StripeWebhookValidationException:
++            raise
+         except Exception as exc:
+             raise StripeServiceException(
+                 internal_message=f"Failed to handle webhook: {str(exc)}"
+-            )
++            ) from exc
 ```
 
-**File**: `apps/worker/app/services/document_parser/formats/docx/parser.py` (modified, +16/-10)
+**File**: `apps/api/app/services/billing/stripe_webhook_service.py` (modified, +23/-10)
 ```diff
-@@ -11,6 +11,10 @@
-     DocxImageSummaryScheduler,
-     build_fallback_image_ref,
- )
-+from app.services.document_parser.formats.docx.paragraph_text import (
-+    cell_text,
-+    paragraph_text,
+@@ -16,7 +16,6 @@
+ 
+ from shared.core.config import settings
+ from shared.core.exceptions.domain_exceptions import (
+-    AuthException,
+     KnowhereException,
+     StripeServiceException,
+     SystemSettingMissingException,
+@@ -31,6 +30,10 @@
+ ]
+ 
+ 
++class StripeWebhookValidationException(ValidationException):
++    """Stripe rejected the webhook request before dispatch."""
++
++
+ class StripeWebhookService:
+     def __init__(
+         self,
+@@ -71,27 +74,37 @@ async def handle_webhook(
+         payload: bytes,
+         sig_header: str,
+     ) -> dict[str, object]:
++        webhook_secret: str | None = settings.STRIPE_WEBHOOK_SECRET
++        if not webhook_secret:
++            raise SystemSettingMissingException(
++                internal_message="Stripe webhook secret not configured (STRIPE_WEBHOOK_SECRET)"
++            )
++
+         try:
+             event = stripe.Webhook.construct_event(
+                 payload,
+                 sig_header,
+-                settings.STRIPE_WEBHOOK_SECRET,
++                webhook_secret,
+             )
+-            return await self._dispatch_event(db, event)
+         except ValueError as exc:
+-            logger.error(f"Invalid payload: {exc}")
+-            raise ValidationException(
++            raise StripeWebhookValidationException(
+                 user_message="Invalid webhook payload",
+                 violations=[
+                     {"field": "payload", "description": "Webhook payload is malformed"}
+                 ],
+-            )
++            ) from exc
+         except stripe.SignatureVerificationError as exc:
+-            logger.error(f"Invalid signature: {exc}")
+-            raise AuthException(
++            raise StripeWebhookValidationException(
+                 user_message="Invalid webhook signature",
+-                internal_message=f"Webhook signature verification failed: {exc}",
+-            )
++                violations=[
++                    {
++                        "field": "Stripe-Signature",
++                        "description": "Stripe-Signature could not be verified",
++                    }
++                ],
++            ) from exc
++
++        return await self._dispatch_event(db, event)
+ 
+     async def _dispatch_event(
+         self,
+```
+
+**File**: `apps/api/tests/contract/test_api_key_contract.py` (modified, +55/-1)
+```diff
+@@ -4,7 +4,10 @@
+ from uuid import uuid4
+ 
+ import pytest
+-from httpx import AsyncClient
++from httpx import AsyncClient, Response
++
++from shared.utils.api_keys import generate_api_key
++from tests.support.contract_database import ContractDatabase
+ 
+ 
+ @pytest.mark.asyncio
+@@ -144,6 +147,57 @@ async def test_should_return_not_found_for_a_missing_api_key_metadata_request(
+     }
+ 
+ 
++@pytest.mark.asyncio
++@pytest.mark.parametrize(
++    "belongs_to_another_user", [False, True], ids=["missing", "another-user"]
 +)
- from app.services.document_parser.formats.docx.table_html import table2html
- from app.services.document_parser.support.identifiers import gen_str_codes, get_str_time
- from app.services.document_parser.assets.inline_asset import (
-@@ -238,10 +242,10 @@ def _first_cols_rows(table_block, max_items=10, max_chars=20):
-     for cell in table_block.rows[0].cells:
-         if len(unique_row_cells) >= max_items:
-             break
--        cell_text = cell.text.strip()
--        if cell_text and cell_text not in seen_row:
--            seen_row.add(cell_text)
--            unique_row_cells.append(truncate_text(cell_text, max_chars, 0))
-+        text = cell_text(cell).strip()
-+        if text and text not in seen_row:
-+            seen_row.add(text)
-+            unique_row_cells.append(truncate_text(text, max_chars, 0))
-     first_row_text = " | ".join(unique_row_cells) if unique_row_cells else ""
- 
-     # First column extraction (deduplicated, order preserved, max items, truncated)
-@@ -251,10 +255,10 @@ def _first_cols_rows(table_block, max_items=10, max_chars=20):
-         if len(unique_col_cells) >= max_items:
-             break
-         if row.cells:
--            cell_text = row.cells[0].text.strip()
--            if cell_text and cell_text not in seen_col:
--                seen_col.add(cell_text)
--                unique_col_cells.append(truncate_text(cell_text, max_chars, 0))
-+            text = cell_text(row.cells[0]).strip()
-+            if text and text not in seen_col:
-+                seen_col.add(text)
-+                unique_col_cells.append(truncate_text(text, max_chars, 0))
-     first_col_text = " | ".join(unique_col_cells) if unique_col_cells else ""
- 
-     return first_row_text, first_col_text
-@@ -518,7 +522,7 @@ def parse_docx(
-     for block_tuple in block_tuples:
-         block = block_tuple[1]
-         if isinstance(block, Paragraph):
--            title_text = block.text.strip()
-+            title_text = paragraph_text(block).strip()
-             if len(title_text) > 0:
-                 heading_infos.append((block_tuple[0], block, title_text))
- 
-@@ -573,7 +577,9 @@ def parse_docx(
-         last_heading_before_block = current_heading
- 
-         if label == "PTXT":  # block could be doc para or plain string
--            text = getattr(block, "text", str(block)).strip()
-+            text = (
-+                paragraph_text(block) if isinstance(block, Paragraph) else str(block)
-+            ).strip()
-             if not text:
-                 continue
- 
++async def test_should_return_not_found_when_toggling_an_unowned_api_key(
++    developer_api_client_factory: Callable[
++        [], AbstractAsyncContextManager[AsyncClient]
++    ],
++    belongs_to_another_user: bool,
++) -> None:
++    api_key_id: str = str(uuid4())
++    owner_headers: dict[str, str] = {}
++
++    async with developer_api_client_factory() as api_client:
++        if belongs_to_another_user:
++            owner_key: str = generate_api_key()
++            owner_headers = {"Authorization": f"Bearer {owner_key}"}
++            await ContractDatabase.insert_authenticated_user(
++                user_id=f"contract-toggle-owner-{uuid4().hex[:12]}",
++                api_key=owner_key,
++            )
++            list_response: Response = await api_client.get(
++                "/api/v1/auth/list", headers=owner_headers
++            )
++            assert list_response.status_code == 200
++            api_keys: list[dict[str, object]] = list_response.json()["api_keys"]
++            assert len(api_keys) == 1
++            api_key_id = cast(str, api_keys[0]["id"])
++
++        response: Response = await api_client.put(f"/api/v1/auth/{api_key_id}/toggle")
++
++        if belongs_to_another_user:
++            owner_response: Response = await api_client.get(
++                f"/api/v1/auth/{api_key_id}", headers=owner_headers
++            )
++            assert owner_response.status_code == 200
++            assert owner_response.json()["is_active"] is True
++
++    assert response.status_code == 404
++    assert response.headers["x-request-id"]
++    assert response.json() == {
++        "success": False,
++        "error": {
++            "code": "NOT_FOUND",
++            "message": "APIKey not found",
++            "request_id": response.headers["x-request-id"],
++            "details": {"resource": "APIKey", "id": api_key_id},
++        },
++    }
++
++
+ @pytest.mark.asyncio
+ async def test_should_disable_and_then_reenable_an_api_key_via_the_toggle_route(
+     developer_api_client_factory: Callable[
 ```
 
-**File**: `apps/worker/app/services/document_parser/formats/docx/table_html.py` (modified, +3/-1)
+**File**: `apps/api/tests/contract/test_billing_contract.py` (modified, +90/-6)
 ```diff
-@@ -4,6 +4,8 @@
+@@ -1,9 +1,11 @@
+ import asyncio
++import hmac
+ import importlib
+ import json
+ from collections.abc import Callable
+ from contextlib import AbstractAsyncContextManager
+ from datetime import datetime, timedelta, timezone
++from time import time
+ from typing import cast
+ from uuid import uuid4
  
- from docx.table import Table as DocxTable
- 
-+from app.services.document_parser.formats.docx.paragraph_text import cell_text
-+
- 
- def table2html(table: DocxTable, cell_image_map: dict | None = None) -> str:
-     """Convert a DOCX table to HTML with colspan, rowspan, and nested tables."""
-@@ -113,7 +115,7 @@ def get_cell_vmerge(cell: Any) -> str | None:
-             if cell.tables:
-                 content = "".join(table2html(nested_table) for nested_table in cell.tables)
-             else:
--                content = cell.text.strip().replace("\n", "<br/>")
-+                content = cell_text(cell).strip().replace("\n", "<br/>")
- 
-             if cell_image_map:
-                 image_description = cell_image_map.get((row_idx, unique_col_idx))
-```
-
-**File**: `apps/worker/app/services/document_parser/formats/docx/vml_graphics.py` (removed, +0/-173)
-```diff
-@@ -1,173 +0,0 @@
--"""Legacy VML graphics in a DOCX body.
--
--Older Word files draw pictures with VML (``<w:pict>``) instead of DrawingML.
--A single VML picture points at one media file, which is read as is. A VML
--group stacks pictures, shapes and text boxes into one graphic; taking any one
--part loses the overlay, so the whole group is rendered as one image.
--"""
--
--from __future__ import annotations
--
--import gc
--import io
--import os
--import tempfile
--import zipfile
--
--from loguru import logger
--from lxml import etree  # pyright: ignore[reportAttributeAccessIssue]
--
--from app.services.document_parser.conversion.legacy_converter import (
--    _convert_with_libreoffice,
--)
--from app.services.document_parser.formats.pdf.pymupdf_subprocess import (
--    run_in_child_process,
--    worker,
--)
--from shared.core.constants.processing import ProcessingConstants
--
--_DOCUMENT_PART = "word/document.xml"
--_COMPOSITE_PDF_NAME = "vml-composites"
--
--
--def vml_pictures(element, ns: dict[str, str]) -> list:
--    """Outermost ``<w:pict>`` graphics under ``element``.
--
--    ``mc:Fallback`` repeats a DrawingML picture as VML for old readers, and
--    the DrawingML copy is already read. A picture inside another one (in a
--    text box of a group) is drawn with that group.
--    """
--    return element.xpath(
--        ".//w:pict[not(ancestor::mc:Fallback)][not(ancestor::w:pict)]", namespaces=ns
--    )
--
--
--def is_composite(pict, ns: dict[str, str]) -> bool:
--    return bool(pict.xpath(".//v:group", namespaces=ns))
--
--
--def single_picture_rid(pict, ns: dict[str, str]) -> str | None:
--    """Relationship id of a VML picture that holds exactly one image."""
--    if is_composite(pict, ns):
--        return None
--    rids = pict.xpath(".//v:imagedata/@r:id", namespaces=ns)
--    return str(rids[0]) if len(rids) == 1 else None
--
--
--def composite_image_name(index: int) -> str:
--    return f"vml-composite-{index}.png"
--
--
--def render_composites(
--    package_bytes: bytes, root, composites: list, ns: dict[str, str]
--) -> dict[str, tuple[str, bytes]]:
--    """Image name and PNG bytes of each composite, keyed by its path in ``root``.
--
--    The composites are copied, one per page, into a work copy of the package
--    without headers, footers or page background, rendered once by
--    LibreOffice, and each page is cropped to what it draws.
--    """
--    if not composites:
--        return {}
--    tree = root.getroottree()
--    paths = [tree.getpath(pict) for pict in composites]
--    with tempfile.TemporaryDirectory(prefix="docx-vml-") as work_dir:
--        source_path = os.path.join(work_dir, f"{_COMPOSITE_PDF_NAME}.docx")
--        _write_composite_package(package_bytes, root, composites, ns, source_path)
--        try:
--            pdf_path, _pdf_name = _convert_with_libreoffice(
--                source_path=source_path,
--                outdir=work_dir,
--                convert_to_arg="pdf:writer_pdf_Export",
--                expected_output_ext="pdf",
--                operation="render_docx_vml_composites",
--            )
--            result = run_in_child_process(
--                _render_cropped_pages_worker,
--                pdf_path,
--                ProcessingConstants.PAGE_RENDER_DPI,
--            )
--        except Exception as exc:
--            logger.warning(f"VML composite rendering failed; keeping placeholders: {exc}")
--            return {}
--    images: list[bytes | None] = list(result.get("images") or [])
--    if len(images) != len(composites):
--        # A composite taller than a page spills onto the next one, so pages no
--        # longer line up with composites.
--        logger.warning(
--            f"VML composite rendering gave {len(images)} pages for "
--            f"{len(composites)} composites; keeping placeholders"
--        )
--        return {}
--    return {
--        path: (composite_image_name(index), image)
--        for index, (path, image) in enumerate(zip(paths, images), start=1)
--        if image
--    }
--
--
--def _write_composite_package(
--    package_bytes: bytes, root, composites: list, ns: dict[str, str], destination: str
--) -> None:
--    w = ns["w"]
--    document = etree.fromstring(etree.tostring(root))
--    body = document.find("w:body", ns)
--    section = body.find("w:sectPr", ns)
--    for child in list(body):
--        body.remove(child)
--    for index, pict in enumerate(composites):
--        if index:
--            page_break = etree.SubElement(
--                etree.SubElement(etree.SubElement(body, f"{{{w}}}p"), f"{{{w}}}r"),
--                f"{{{w}}}br",
--            )
--            page_break.set(f"{{{w}}}type", "page")
--        run = etree.SubElement(etree.SubElement(body, f"{{{w}}}p"), f"{{{w}}}r")
--        run.append(etree.fromstring(etree.tostring(pict)))
--    if section is not None:
--        for reference in section.xpath(
--            "w:headerReference | w:footerReference", namespaces=ns
--        ):
--            section.remove(reference)
--        body.append(section)
--    for background in document.fi
-```
-
-**File**: `apps/worker/tests/unit/test_docx_block_stream.py` (modified, +290/-21)
-```diff
-@@ -27,6 +27,8 @@
- _VML_NAMESPACES = (
-     'xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" '
-     'xmlns:v="urn:schemas-microsoft-com:vml" '
-+    'xmlns:o="urn:schemas-microsoft-com:office:office" '
-+    'xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" '
-     'xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"'
- )
- 
-@@ -81,12 +83,41 @@ def test_picture_inside_content_control_is_extracted() -> None:
-     assert images[0]["data"].startswith(b"\x89PNG")
+@@ -431,22 +433,104 @@ async def test_should_split_subscriptions_and_credit_packages_in_price_configs(
  
  
--def _docx_with_vml(picture_xml: str) -> bytes:
--    """A DOCX whose only paragraph holds ``picture_xml``; ``{rid}`` is the image."""
-+def _small_png() -> bytes:
-+    """A PNG below the image size floor."""
-+    buffer = io.BytesIO()
-+    Image.new("RGB", (4, 4)).save(buffer, format="PNG")
-+    data = buffer.getvalue()
-+    assert len(data) < ProcessingConstants.IMG_MIN_SIZE
-+    return data
+ @pytest.mark.asyncio
+-async def test_should_reject_a_missing_stripe_signature_header_for_the_webhook_endpoint(
++@pytest.mark.parametrize(
++    ("signature", "description"),
++    [
++        (None, "Stripe-Signature header is required"),
++        ("invalid-signature", "Stripe-Signature could not be verified"),
++    ],
++    ids=["missing-signature", "invalid-signature"],
++)
++async def test_should_return_bad_request_for_an_invalid_stripe_webhook_signature(
+     api_client_factory: Callable[[], AbstractAsyncContextManager[AsyncClient]],
++    signature: str | None,
++    description: str,
+ ) -> None:
++    headers: dict[str, str] = (
++        {"Stripe-Signature": signature} if signature is not None else {}
++    )
+     async with api_client_factory() as api_client:
+-        response = await api_client.post("/api/v1/billing/webhook", content=b"{}")
++        response = await api_client.post(
++            "/api/v1/billing/webhook", content=b"{}", headers=headers
++        )
+ 
+-    assert response.status_code == 500
++    assert response.status_code == 400
+     assert response.headers["x-request-id"]
+ 
+     response_json = cast(dict[str, object], response.json())
+     error = cast(dict[str, object], response_json["error"])
+ 
+     assert response_json["success"] is False
+-    assert error["code"] == "INTERNAL_ERROR"
+-    assert error["message"] == "An internal system error occurred. Please contact support."
+-    assert error["details"] == {"service": "stripe"}
++    assert error["code"] == "INVALID_ARGUMENT"
++    assert error["message"] == "Invalid webhook signature"
++    assert error["details"] == {
++        "violations": [{"field": "Stripe-Signature", "description": description}],
++    }
 +
 +
-+def _docx_with(*run_xml: str, in_table: bool = False) -> bytes:
-+    """A DOCX with one paragraph per ``run_xml``, in the body or in table cells.
++def _sign_stripe_webhook_payload(payload: bytes, secret: str) -> str:
++    timestamp: int = int(time())
++    message: bytes = f"{timestamp}.".encode() + payload
++    signature: str = hmac.digest(secret.encode(), message, "sha256").hex()
++    return f"t={timestamp},v1={signature}"
 +
-+    ``{ns}`` is replaced by the namespaces and ``{rid}`` by the id of an image.
-+    """
-     document = Document()
-     rid, _image = document.part.get_or_add_image(io.BytesIO(_noise_png()))
--    run = document.add_paragraph().add_run()
--    run._r.append(parse_xml(picture_xml.format(ns=_VML_NAMESPACES, rid=rid)))
-+    if in_table:
-+        cells = document.add_table(rows=1, cols=len(run_xml)).rows[0].cells
-+        paragraphs = [cell.paragraphs[0] for cell in cells]
++
++@pytest.mark.asyncio
++@pytest.mark.parametrize("is_malformed", [False, True], ids=["valid", "malformed"])
++async def test_should_verify_stripe_webhook_before_handling_the_event(
++    api_client_factory: Callable[[], AbstractAsyncContextManager[AsyncClient]],
++    is_malformed: bool,
++) -> None:
++    payload: bytes = (
++        b"{"
++        if is_malformed
++        else b'{"id":"evt_contract","object":"event","type":"customer.created"}'
++    )
++    async with api_client_factory() as api_client:
++        from shared.core.config import settings
++
++        secret: str | None = settings.STRIPE_WEBHOOK_SECRET
++        assert secret
++        response = await api_client.post(
++            "/api/v1/billing/webhook",
++            content=payload,
++            headers={"Stripe-Signature": _sign_stripe_webhook_payload(payload, secret)},
++        )
++
++    if is_malformed:
++        assert response.status_code == 400
++        assert response.json()["error"]["code"] == "INVALID_ARGUMENT"
++        assert response.json()["error"]["message"] == "Invalid webhook payload"
 +    else:
-+        paragraphs = [document.add_paragraph() for _ in run_xml]
-+    for paragraph, xml in zip(paragraphs, run_xml):
-+        run = paragraph.add_run()
-+        run._r.append(parse_xml(xml.format(ns=_VML_NAMESPACES, rid=rid)))
-+    buffer = io.BytesIO()
-+    document.save(buffer)
-+    return buffer.getvalue()
++        assert response.status_code == 200
++        assert response.json() == {"status": "ignored", "event_type": "customer.created"}
 +
 +
-+def _docx_with_paragraph_xml(paragraph_xml: str) -> bytes:
-+    """A DOCX whose only paragraph is ``paragraph_xml``."""
-+    document = Document()
-+    paragraph = document.add_paragraph()._p
-+    paragraph.addnext(parse_xml(paragraph_xml.format(ns=_VML_NAMESPACES)))
-+    paragraph.getparent().remove(paragraph)
-     buffer = io.BytesIO()
-     document.save(buffer)
-     return buffer.getvalue()
-@@ -96,7 +127,7 @@ def _docx_with_vml(picture_xml: str) -> bytes:
-     '<w:pict {ns}><v:shape style="width:96pt;height:96pt">'
-     '<v:imagedata r:id="{rid}"/></v:shape></w:pict>'
- )
--_COMPOSITE = (
-+_VML_GROUP = (
-     '<w:pict {ns}><v:group style="width:240pt;height:120pt" '
-     'coordsize="240,120">'
-     '<v:shape style="position:absolute;left:0;top:0;width:120;height:120">'
-@@ -106,7 +137,7 @@ def _docx_with_vml(picture_xml: str) -> bytes:
-     "</w:txbxContent></v:textbox></v:shape>"
-     "</v:group></w:pict>"
- )
--_TEXTLESS_COMPOSITE = (
-+_TEXTLESS_VML_GROUP = (
-     '<w:pict {ns}><v:group style="width:240pt;height:120pt" coordsize="240,120">'
-     '<v:shape style="position:absolute;left:0;top:0;width:120;height:120">'
-     '<v:imagedata r:id="{rid}"/></v:shape>'
-@@ -116,13 +147,30 @@ def _docx_with_vml(picture_xml: str) -> bytes:
- )
- 
- 
--def test_single_vml_picture_reads_its_media_file() -> None:
--    blocks = _block_items(_docx_with_vml(_SINGLE_PICTURE))
-+def _embedded_object(prog_id: str) -> str:
-+    return (
-+        '<w:object {ns}><v:shape style="width:120pt;height:120pt">'
-+        '<v:imagedata r:id="{rid}"/></v:shape>'
-+        f'<o:OLEObject Type="Embed" ProgID="{prog_id}" DrawAspect="Content"/>'
-+        "</w:object>"
-+    )
- 
--    images = _images(blocks)
--    assert len(images) == 1
--    assert images[0]["data"] == _noise_png()
--    assert not any("VML graphic" in str(content) for _num, content, _l, _m in blocks)
++@pytest.mark.asyncio
++async def test_should_return_server_error_when_processing_a_verified_stripe_event_fails(
++    api_client_factory: Callable[[], AbstractAsyncContextManager[AsyncClient]],
++    monkeypatch: MonkeyPatch,
++) -> None:
++    payload: bytes = b'{"id":"evt_contract","object":"event","type":"checkout.session.completed"}'
 +
-+_VISIO_OBJECT = _embedded_object("Visio.Drawing.11")
-+_EQUATION_OBJECT = _embedded_object("Equation.3")
++    async def fail_after_verification(*_args: object) -> None:
++        raise ValueError("Simulated payment processing failure")
 +
++    async with api_client_factory() as api_client:
++        from app.services.billing.stripe_webhook_service import StripeWebhookService
++        from shared.core.config import settings
 +
-+def _texts(blocks) -> list[str]:
-+    from app.services.document_parser.formats.docx.paragraph_text import (
-+        paragraph_text,
-+    )
-+    from docx.text.paragraph import Paragraph
++        secret: str | None = settings.STRIPE_WEBHOOK_SECRET
++        assert secret
++        monkeypatch.setattr(StripeWebhookService, "_dispatch_event", fail_after_verification)
++        response = await api_client.post(
++            "/api/v1/billing/webhook",
++            content=payload,
++            headers={"Stripe-Signature": _sign_stripe_webhook_payload(payload, secret)},
++        )
 +
-+    return [
-+        paragraph_text(content) if isinstance(content, Paragraph) else content
-+        for _num, content, label, _meta in blocks
-+        if label == "PTXT"
-+    ]
++    assert response.status_code == 500
++    assert response.json()["error"]["code"] == "INTERNAL_ERROR"
  
  
- def _libreoffice_available() -> bool:
-@@ -133,30 +181,251 @@ def _libreoffice_available() -> bool:
-     return True
+ @pytest.mark.asyncio
+```
+
+**File**: `apps/api/tests/contract/test_retrieval_classic_map_unit_contract.py` (modified, +83/-1)
+```diff
+@@ -7,7 +7,7 @@
+ from uuid import UUID, uuid4
+ 
+ import pytest
+-from httpx import AsyncClient
++from httpx import AsyncClient, Client, MockTransport, Request, Response
+ from sqlalchemy import Engine, event, select
+ from sqlalchemy.engine import Result
+ from sqlalchemy.ext.asyncio import AsyncSession
+@@ -142,6 +142,88 @@ async def execute_then_refine(
+     ] == [(new_chunk["chunk_id"], new_chunk["content"], [7])]
  
  
--@pytest.mark.skipif(not _libreoffice_available(), reason="LibreOffice is not installed")
-+requires_libreoffice = pytest.mark.skipif(
-+    not _libreoffice_available(), reason="LibreOffice is not installed"
++@pytest.mark.parametrize(
++    ("upstream_status", "expected_status", "expected_code", "retry_after"),
++    [
++        (503, 503, "UNAVAILABLE", "1"),
++        (500, 500, "INTERNAL_ERROR", None),
++    ],
 +)
++async def test_required_visual_embedding_error_response_after_gateway_retries(
++    developer_api_client_factory: Callable[[], AbstractAsyncContextManager[AsyncClient]],
++    monkeypatch: pytest.MonkeyPatch,
++    upstream_status: int,
++    expected_status: int,
++    expected_code: str,
++    retry_after: str | None,
++) -> None:
++    namespace: str = f"embedding-retry-{uuid4().hex[:8]}"
++    requests: list[Request] = []
++
++    def respond_to_embedding(request: Request) -> Response:
++        requests.append(request)
++        return Response(upstream_status, json={"error": {"message": "private gateway detail"}})
++
++    with Client(transport=MockTransport(respond_to_embedding)) as gateway_client:
++        async with developer_api_client_factory() as api_client:
++            from shared.core.config import settings
++            from shared.models.database.document import DocumentPageEmbedding
++            from shared.services.ai.embedding import multimodal_client
++
++            published: dict[str, str] = await _publish_document(
++                namespace=namespace,
++                source_file_name="report.pdf",
++                chunks=[
++                    {
++                        "chunk_id": f"report-page-{page_number}",
++                        "type": "page",
++                        "content": f"Revenue statistics for quarter {page_number}",
++                        "path": f"report.pdf/Root/Quarter {page_number}/body",
++                        "order": page_number,
++                        "metadata": {"page_nums": [page_number]},
++                    }
++                    for page_number in (1, 2)
++                ],
++            )
++            async with contract_db_session() as db:
++                db.add(
++                    DocumentPageEmbedding(
++                        user_id=_USER_ID,
++                        namespace=namespace,
++                        document_id=published["document_id"],
++                        job_result_id=published["job_result_id"],
++                        chunk_id="report-page-1",
++                        page_num=1,
++                        embedding=[0.1] * multimodal_client.DEFAULT_EMBEDDING_DIM,
++                    )
++                )
++                await db.commit()
++
++            monkeypatch.setattr(settings, "VISUAL_RETRIEVAL_ENABLED", True)
++            monkeypatch.setattr(multimodal_client, "_should_mock_embeddings", lambda: False)
++            monkeypatch.setattr(multimodal_client, "_resolve_vercel_api_key", lambda: "test-key")
++            monkeypatch.setattr(multimodal_client, "get_sync_client", lambda: gateway_client)
++            monkeypatch.setattr(multimodal_client, "_sleep_before_retry", lambda _attempt: None)
++
++            response: Response = await api_client.post(
++                "/api/v2/retrieval/query",
++                json={
++                    "namespace": namespace,
++                    "query": "revenue statistics",
++                    "top_k": 1,
++                    "use_agentic": False,
++                },
++            )
++
++    assert [request.url.path for request in requests] == ["/v1/embeddings"] * 3
++    assert response.status_code == expected_status
++    assert response.headers.get("retry-after") == retry_after
++    result: dict[str, object] = response.json()
++    assert result["success"] is False
++    assert cast(dict[str, object], result["error"])["code"] == expected_code
++    assert "private gateway detail" not in response.text
 +
 +
-+def _fake_rendering(monkeypatch, pages) -> None:
-+    """Rendering that yields ``pages`` as the worker would, without LibreOffice."""
-+    from app.services.document_parser.formats.docx import legacy_graphics
+ async def test_classic_route_maps_winning_unit_to_one_chunk(
+     developer_api_client_factory: Callable[
+         [], AbstractAsyncContextManager[AsyncClient]
+```
+
+**File**: `apps/api/tests/contract/test_retrieval_document_scope.py` (modified, +32/-1)
+```diff
+@@ -2,19 +2,22 @@
+ 
+ import asyncio
+ import json
+-from contextlib import asynccontextmanager
++from collections.abc import Callable
++from contextlib import AbstractAsyncContextManager, asynccontextmanager
+ from types import SimpleNamespace
+ from typing import Any
+ from uuid import uuid4
+ 
+ import pytest
++from httpx import AsyncClient
+ from sqlalchemy import select
+ 
+ from shared.models.database.document import DocumentChunk, GraphEdge, GraphNode
+ from shared.services.retrieval.agent_explore.dispatch import dispatch_tool_call
+ from shared.services.retrieval.agent_explore.budget import EpisodeBudget
+ from shared.services.retrieval.agent_explore.evidence_pool import Candidate
+ from shared.services.retrieval.agent_explore.types import EpisodeResult
++from shared.services.retrieval.agent_tools import ToolResult
+ from shared.services.retrieval.cache_service import _cache_shape_digest
+ from shared.services.retrieval.document_scope import DocumentScope
+ from shared.services.retrieval.hydration.connected import hydrate_connected_target_rows
+@@ -108,6 +111,34 @@ def _matrix(ids):
+     ]
+ 
+ 
++@pytest.mark.parametrize(
++    ("tool_name", "arguments", "result_key"),
++    [
++        ("corpus.list_documents", {}, "documents"),
++        ("corpus.grep", {"pattern": "scopeprobe"}, "rows"),
++    ],
++)
++async def test_corpus_tools_return_empty_results_for_empty_namespace(
++    developer_api_client_factory: Callable[[], AbstractAsyncContextManager[AsyncClient]],
++    tool_name: str,
++    arguments: dict[str, str],
++    result_key: str,
++) -> None:
++    namespace: str = f"empty-corpus-{uuid4().hex[:8]}"
++    async with developer_api_client_factory():
++        result: ToolResult = await dispatch_tool_call(
++            tool_name,
++            arguments,
++            db_factory=contract_db_session,
++            user_id="local-dev-user",
++            namespace=namespace,
++        )
 +
-+    monkeypatch.setattr(
-+        legacy_graphics,
-+        "_convert_with_libreoffice",
-+        lambda **_kwargs: ("unused.pdf", "unused.pdf"),
++    assert result.error is None
++    assert result.payload[result_key] == []
++    assert result.refs == []
++
++
+ async def test_scope_matrix_all_corpus_tools_and_refs(developer_api_client_factory):
+     namespace = f"scope-tools-{uuid4().hex[:8]}"
+     async with developer_api_client_factory():
+```
+
+---
+
+### Incident Patch 3: `f8baf09f` (2026-11-23)
+**Commit Message**: Trace retrieval router decisions and fallback outcomes
+
+**File**: `apps/api/tests/contract/test_retrieval_query_router_contract.py` (modified, +116/-2)
+```diff
+@@ -2,11 +2,12 @@
+ 
+ from collections.abc import Callable
+ from contextlib import AbstractAsyncContextManager
+-from typing import Any, cast
++from typing import Any, NoReturn, cast
+ from uuid import uuid4
+ 
+ import pytest
+-from httpx import AsyncClient
++from httpx import AsyncClient, ConnectError
++from loguru import logger
+ from pytest import MonkeyPatch
+ 
+ from shared.services.retrieval.routing.types import QueryMode, RouterDecision
+@@ -162,6 +163,119 @@ async def test_unset_use_agentic_agent_decision_uses_agent_explore(
+     assert body["router_decision"]["source"] == "llm"
+ 
+ 
++@pytest.mark.asyncio
++@pytest.mark.parametrize(
++    ("uses_override", "fallback_succeeds"),
++    [(True, True), (False, False)],
++    ids=["request-model-fallback-succeeds", "default-model-fallback-fails"],
++)
++async def test_automatic_router_logs_model_failure_and_fallback_outcome(
++    developer_api_client_factory: Callable[
++        [], AbstractAsyncContextManager[AsyncClient]
++    ],
++    monkeypatch: MonkeyPatch,
++    uses_override: bool,
++    fallback_succeeds: bool,
++) -> None:
++    namespace: str = f"router-fallback-{uuid4().hex[:8]}"
++    request_key: str = "test-router-provider-secret"
++    query: str = "private test query text"
++    events: list[dict[str, object]] = []
++    payload: dict[str, object] = {"namespace": namespace, "query": query, "top_k": 1}
++    if uses_override:
++        payload["llm_config"] = {
++            "model": "request-router-model",
++            "api_key": request_key,
++            "base_url": "https://router.example.test/v1",
++        }
++
++    async with developer_api_client_factory() as api_client:
++        from shared.core.exceptions.domain_exceptions import (
++            LLMServiceException,
++            UnavailableException,
++        )
++        from shared.services.ai import openai_compatible_client_sync
++        from shared.services.retrieval.agent_explore import harness
++        from shared.services.retrieval.routing import config
++
++        class FailingRouterClient:
++            def chat_completion_with_usage(
++                self, *_args: object, **_kwargs: object
++            ) -> NoReturn:
++                connection_error: ConnectError = ConnectError("Provider connection failed")
++                connection_error.__cause__ = OSError(111, "Connection refused")
++                raise LLMServiceException(
++                    internal_message="Provider request failed",
++                    original_exception=connection_error,
++                ) from connection_error
++
++        class FailingAgent:
++            async def run_episode(self, **_kwargs: object) -> NoReturn:
++                raise UnavailableException(
++                    internal_message="Agent unavailable", retry_after=1
++                )
++
++        target: dict[str, str] = await _publish_above_top_k(namespace=namespace)
++        monkeypatch.setattr(config, "QUERY_ROUTER_MODEL", "default-router-model")
++        monkeypatch.setattr(
++            openai_compatible_client_sync,
++            "get_openai_client",
++            lambda **_kwargs: FailingRouterClient(),
++        )
++        if fallback_succeeds:
++            _patch_harness(monkeypatch, _episode_keeping_refs(documents=[target]))
++        else:
++            monkeypatch.setattr(
++                harness, "resolve_harness", lambda **_kwargs: FailingAgent()
++            )
++
++        sink_id: int = logger.add(
++            lambda message: events.append(message.record["extra"].copy()),
++            level="INFO",
++            filter=lambda record: str(record["extra"].get("event", "")).startswith(
++                "retrieval.query_router."
++            ),
++        )
++        try:
++            response = await api_client.post("/api/v2/retrieval/query", json=payload)
++        finally:
++            logger.remove(sink_id)
++
++    assert response.status_code == (200 if fallback_succeeds else 503)
++    assert [entry["event"] for entry in events] == [
++        "retrieval.query_router.decision",
++        "retrieval.query_router.fallback",
++    ]
++    decision, fallback = events
++    request_id: str = response.headers["x-request-id"]
++    assert decision["request_id"] == fallback["request_id"] == request_id
++    assert decision["routing_trigger"] == "use_agentic_unset"
++    assert decision["model_config_source"] == ("request" if uses_override else "default")
++    assert decision["model_name"] == (
++        "request-router-model" if uses_override else "default-router-model"
++    )
++    assert decision["failure_stage"] == "model_connect"
++    assert decision["failure_error_type"] == "ConnectError"
++    assert decision["failure_errno"] == 111
++    assert fallback["fallback_outcome"] == (
++        "succeeded" if fallback_succeeds else "failed"
++    )
++    if fallback_succeeds:
++        assert fallback["agent_stop_reason"] == "finished"
++        assert response.json()["router_decision"] == {
++            "mode": "agent",
++            "reason": "",
++            "source": "fallback",
++    
+```
+
+**File**: `packages/shared-python/shared/core/logging.py` (modified, +3/-0)
+```diff
+@@ -55,6 +55,9 @@ class LogEvent(Enum):
+ 
+     PUBLICATION_TRACE_TERMINAL = "publication.trace.terminal"
+ 
++    RETRIEVAL_QUERY_ROUTER_DECISION = "retrieval.query_router.decision"
++    RETRIEVAL_QUERY_ROUTER_FALLBACK = "retrieval.query_router.fallback"
++
+     S3_WEBHOOK_EVENT = "s3.webhook"
+ 
+     # iLoveAPI document conversion events
+```
+
+**File**: `packages/shared-python/shared/services/retrieval/execution/routes.py` (modified, +40/-4)
+```diff
+@@ -1,5 +1,6 @@
+ from __future__ import annotations
+ 
++import asyncio
+ import time
+ from collections.abc import AsyncIterator, Sequence
+ from contextlib import AbstractAsyncContextManager, asynccontextmanager
+@@ -10,6 +11,7 @@
+ from sqlalchemy.ext.asyncio import AsyncSession
+ 
+ from shared.core.config import settings
++from shared.core.logging import LogEvent
+ from shared.services.retrieval.execution.postgresql_snapshot import (
+     open_postgresql_snapshot,
+     validate_postgresql_snapshot,
+@@ -126,6 +128,8 @@ async def run_retrieval_route(
+             if native_read is not None:
+                 native_read.isClassic = True
+             outcome = await _run_classic_topk_route(context)
++        elif decision is not None and decision.source == "fallback":
++            outcome = await _run_agent_fallback(context)
+         else:
+             outcome = await _run_agent_explore_route(context)
+ 
+@@ -149,13 +153,45 @@ async def _resolve_auto_route(
+         )
+     else:
+         decision = await classify_query_mode(context.query)
+-    logger.info(
+-        f"retrieval query router mode={decision.mode.value} "
+-        f"source={decision.source} reason={decision.reason}"
+-    )
++    logger.bind(
++        event=LogEvent.RETRIEVAL_QUERY_ROUTER_DECISION.value,
++        routing_trigger="use_agentic_unset",
++        selected_mode=decision.mode.value,
++        decision_source=decision.source,
++        model_config_source=decision.model_config_source,
++        model_name=decision.attempted_model_name or decision.model_name or None,
++        failure_stage=decision.failure_stage,
++        failure_error_type=decision.failure_error_type,
++        failure_errno=decision.failure_errno,
++    ).info("Retrieval query router decision")
+     return decision.mode == QueryMode.AGENT, decision
+ 
+ 
++async def _run_agent_fallback(context: RetrievalRouteContext) -> RetrievalRouteOutcome:
++    fallback_log = logger.bind(
++        event=LogEvent.RETRIEVAL_QUERY_ROUTER_FALLBACK.value,
++        fallback_route="agent_explore",
++    )
++    try:
++        outcome: RetrievalRouteOutcome = await _run_agent_explore_route(context)
++    except asyncio.CancelledError:
++        fallback_log.bind(fallback_outcome="cancelled").info(
++            "Retrieval query fallback cancelled"
++        )
++        raise
++    except Exception as error:
++        fallback_log.bind(
++            fallback_outcome="failed", fallback_error_type=type(error).__name__
++        ).warning("Retrieval query fallback failed")
++        raise
++    fallback_log.bind(
++        fallback_outcome="succeeded",
++        agent_stop_reason=outcome.response.get("stop_reason"),
++        result_count=outcome.completion_count,
++    ).info("Retrieval query fallback completed")
++    return outcome
++
++
+ async def _try_run_small_corpus_route(
+     context: RetrievalRouteContext,
+ ) -> RetrievalRouteOutcome | None:
+```
+
+**File**: `packages/shared-python/shared/services/retrieval/routing/classifier.py` (modified, +56/-18)
+```diff
+@@ -2,33 +2,27 @@
+ 
+ import asyncio
+ import json
+-from typing import Any
++from dataclasses import replace
++from typing import Literal
+ 
++import httpx
+ from loguru import logger
+ 
+ from shared.services.retrieval.routing import config as routing_config
+ from shared.services.retrieval.routing.prompt import QUERY_ROUTER_SYSTEM_PROMPT
+ from shared.services.retrieval.routing.types import QueryMode, RouterDecision
+ 
+ 
+-def _resolve_client_and_model() -> tuple[Any, str]:
+-    from shared.services.ai.llm_overrides import resolve_text
+-    from shared.services.ai.openai_compatible_client_sync import get_openai_client
+-
+-    requested = routing_config.QUERY_ROUTER_MODEL
+-    effective_model, api_key, api_url = resolve_text(requested)
+-    model = effective_model or requested
+-    client = get_openai_client(model=model, api_key=api_key, api_url=api_url)
+-    return client, model
+-
+-
+-def _fallback_decision(*, model_name: str, tokens_used: int = 0) -> RouterDecision:
++def _fallback_decision(
++    *, model_name: str, tokens_used: int = 0, failure_stage: str = "model_response"
++) -> RouterDecision:
+     return RouterDecision(
+         mode=QueryMode.AGENT,
+         reason="",
+         source="fallback",
+         model_name=model_name,
+         tokens_used=tokens_used,
++        failure_stage=failure_stage,
+     )
+ 
+ 
+@@ -53,10 +47,46 @@ def _parse_decision(
+     )
+ 
+ 
++def _describe_failure(error: Exception, stage: str) -> tuple[str, str, int | None]:
++    error_type: str = type(error).__name__
++    error_number: int | None = None
++    current: BaseException | None = error
++    for _ in range(8):
++        if current is None:
++            break
++        if isinstance(current, httpx.HTTPError):
++            error_type = type(current).__name__
++            if isinstance(current, (httpx.ConnectError, httpx.ConnectTimeout)):
++                stage = "model_connect"
++            elif isinstance(current, httpx.UnsupportedProtocol):
++                stage = "model_protocol"
++            elif isinstance(
++                current, (httpx.HTTPStatusError, httpx.ReadError, httpx.ReadTimeout)
++            ):
++                stage = "model_response"
++        if isinstance(current, OSError) and current.errno is not None:
++            error_number = current.errno
++        current = current.__cause__ or current.__context__
++    return stage, error_type, error_number
++
++
+ async def classify_query_mode(query: str) -> RouterDecision:
+-    model_name = ""
++    model_name: str = ""
++    attempted_model_name: str = routing_config.QUERY_ROUTER_MODEL
++    model_config_source: Literal["default", "request"] | None = None
++    failure_stage: str = "model_config"
+     try:
+-        client, model_name = _resolve_client_and_model()
++        from shared.services.ai.llm_overrides import resolve_text
++        from shared.services.ai.openai_compatible_client_sync import get_openai_client
++
++        effective_model, api_key, api_url = resolve_text(attempted_model_name)
++        attempted_model_name = effective_model or attempted_model_name
++        model_config_source = "request" if api_url is not None else "default"
++        client = get_openai_client(
++            model=attempted_model_name, api_key=api_key, api_url=api_url
++        )
++        model_name = attempted_model_name
++        failure_stage = "model_request"
+         content, usage = await asyncio.to_thread(
+             client.chat_completion_with_usage,
+             [
+@@ -70,12 +100,20 @@ async def classify_query_mode(query: str) -> RouterDecision:
+             response_format={"type": "json_object"},
+             usage_task="retrieval.query_router",
+         )
++        failure_stage = "model_response"
+         tokens_used = int((usage or {}).get("total_tokens", 0) or 0)
+-        return _parse_decision(
++        decision: RouterDecision = _parse_decision(
+             str(content or ""),
+             model_name=model_name,
+             tokens_used=tokens_used,
+         )
+     except Exception as exc:
+-        logger.warning("retrieval query router fallback to agent: {}", exc)
+-        return _fallback_decision(model_name=model_name)
++        failure_stage, error_type, error_number = _describe_failure(exc, failure_stage)
++        logger.warning("retrieval query router fallback to agent: {}", error_type)
++        decision = replace(
++            _fallback_decision(model_name=model_name, failure_stage=failure_stage),
++            attempted_model_name=attempted_model_name,
++            failure_error_type=error_type,
++            failure_errno=error_number,
++        )
++    return replace(decision, model_config_source=model_config_source)
+```
+
+**File**: `packages/shared-python/shared/services/retrieval/routing/types.py` (modified, +6/-1)
+```diff
+@@ -2,7 +2,7 @@
+ 
+ from dataclasses import dataclass
+ from enum import Enum
+-from typing import Any
++from typing import Any, Literal
+ 
+ 
+ class QueryMode(str, Enum):
+@@ -17,6 +17,11 @@ class RouterDecision:
+     source: str
+     model_name: str
+     tokens_used: int
++    model_config_source: Literal["default", "request"] | None = None
++    attempted_model_name: str | None = None
++    failure_stage: str | None = None
++    failure_error_type: str | None = None
++    failure_errno: int | None = None
+ 
+     def to_dict(self) -> dict[str, Any]:
+         return {
+```
+
+**File**: `packages/shared-python/shared/tests/test_query_router_classifier.py` (modified, +24/-9)
+```diff
+@@ -13,6 +13,7 @@
+ os.environ.setdefault("S3_TEMP_PATH", "/tmp")
+ 
+ import pytest
++from httpx import ConnectTimeout, UnsupportedProtocol
+ 
+ from shared.core.config import settings
+ from shared.services.retrieval.execution.response_projection import (
+@@ -33,10 +34,13 @@ def chat_completion_with_usage(self, messages: object, **kwargs: object) -> tupl
+         return self.content, self.usage
+ 
+ 
+-def _patch_client(monkeypatch: pytest.MonkeyPatch, client: _FakeClient) -> None:
++def _patch_client(monkeypatch: pytest.MonkeyPatch, client: object) -> None:
+     monkeypatch.setattr(
+-        "shared.services.retrieval.routing.classifier._resolve_client_and_model",
+-        lambda: (client, "test-router-model"),
++        "shared.services.retrieval.routing.config.QUERY_ROUTER_MODEL", "test-router-model"
 +    )
 +    monkeypatch.setattr(
-+        legacy_graphics,
-+        "run_in_child
++        "shared.services.ai.openai_compatible_client_sync.get_openai_client",
++        lambda **_kwargs: client,
+     )
+ 
+ 
+@@ -51,6 +55,8 @@ async def test_classifier_parses_classic_json(monkeypatch: pytest.MonkeyPatch) -
+     assert decision.source == "llm"
+     assert decision.reason == "single fact"
+     assert decision.model_name == "test-router-model"
++    assert decision.model_config_source == "default"
++    assert decision.failure_stage is None
+     assert decision.tokens_used == 4
+     assert client.calls[0]["temperature"] == 0.0
+     assert client.calls[0]["response_format"] == {"type": "json_object"}
+@@ -88,6 +94,7 @@ async def test_classifier_invalid_mode_falls_back_to_agent(
+     assert decision.source == "fallback"
+     assert decision.reason == ""
+     assert decision.tokens_used == 4
++    assert decision.failure_stage == "model_response"
+ 
+ 
+ @pytest.mark.asyncio
+@@ -102,27 +109,35 @@ async def test_classifier_invalid_json_falls_back_to_agent(
+     assert decision.mode is QueryMode.AGENT
+     assert decision.source == "fallback"
+     assert decision.tokens_used == 4
++    assert decision.failure_stage == "model_response"
+ 
+ 
+ @pytest.mark.asyncio
++@pytest.mark.parametrize(
++    ("error", "failure_stage"),
++    [
++        (TimeoutError("router timed out"), "model_request"),
++        (ConnectTimeout("router connection timed out"), "model_connect"),
++        (UnsupportedProtocol("unsupported scheme"), "model_protocol"),
++    ],
++)
+ async def test_classifier_exception_falls_back_to_agent(
+-    monkeypatch: pytest.MonkeyPatch,
++    monkeypatch: pytest.MonkeyPatch, error: Exception, failure_stage: str
+ ) -> None:
+     class _BoomClient:
+         def chat_completion_with_usage(self, *_args: object, **_kwargs: object) -> tuple[str, dict[str, int]]:
+-            raise TimeoutError("router timed out")
++            raise error
+ 
+-    monkeypatch.setattr(
+-        "shared.services.retrieval.routing.classifier._resolve_client_and_model",
+-        lambda: (_BoomClient(), "test-router-model"),
+-    )
++    _patch_client(monkeypatch, _BoomClient())
+ 
+     decision = await classify_query_mode("anything")
+ 
+     assert decision.mode is QueryMode.AGENT
+     assert decision.source == "fallback"
+     assert decision.model_name == "test-router-model"
+     assert decision.tokens_used == 0
++    assert decision.failure_stage == failure_stage
++    assert decision.failure_error_type == type(error).__name__
+ 
+ 
+ @pytest.mark.asyncio
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #582** (2026-11-23): Reject NUL characters in corpus scope section paths (@suguanYang)
+- **PR #581** (2026-11-23): Rank documents by usage and freshness that decay over time (@EricNGOntos)
+- **PR #580** (2026-11-23): Fix production errors in billing, API keys, and retrieval (@suguanYang)
 - **PR #579** (2026-11-22): chore: promote main to staging (Word tracked changes, equations, embedded objects, additive publication) (@EricNGOntos)
 - **PR #578** (2026-11-22): Accept Word tracked changes, read equations and embedded objects, keep table values as written (@EricNGOntos)
 - **PR #577** (2026-11-21): Prepare initial publication and retry retirement for release (@suguanYang)
-- **PR #576** (2026-11-21): chore: promote main to staging (evidence downloads off the event loop, temp file cleanup, parser leftovers) (@EricNGOntos)
-- **PR #575** (2026-11-21): Download retrieval evidence off the event loop and remove its temp files (@EricNGOntos)
-- **PR #574** (2026-11-19): Remove text-track PDF leftovers and stale parser TODOs (@EricNGOntos)
 
 ---
 
@@ -2378,68 +2154,58 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Read legacy VML pictures and render VML groups as one image
+## X. Empirical Invariant Guard in test_retrieval_tools_invoke_contract.py
 
 **RULE**:
-When implementing operations in `apps/worker/app/services/document_parser/formats/docx/block_stream.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ontos-AI/knowhere. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/api/tests/contract/test_retrieval_tools_invoke_contract.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ontos-AI/knowhere. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b8d3b813`: Read legacy VML pictures and render VML groups as one image. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `da75fa74`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/worker/app/services/document_parser/formats/docx/block_stream.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/api/tests/contract/test_retrieval_tools_invoke_contract.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-from app.services.document_parser.formats.docx.vml_graphics import (
-    is_composite,
-    render_composites,
-    single_picture_rid,
-    vml_pictures,
-)
-            "mc": "http://schemas.openxmlformats.org/markup-compatibility/2006",
-        # Composite VML graphics in the paragraphs read below render together.
-        composites = list(
-            dict.fromkeys(
-                pict
-                for paragraph in body.xpath(
-                    "w:p | w:sdt/w:sdtContent//w:p", namespaces=ns
-                )
-                for pict in vml_pictures(paragraph, ns)
-                if is_composite(pict, ns)
-            )
+async def test_invoke_rejects_nul_in_grep_scope_section_path(
+    developer_api_client_factory: Callable[[], AbstractAsyncContextManager[AsyncClient]],
+) -> None:
+    from tests.contract.test_retrieval_classic_map_unit_contract import _publish_document
+
+    namespace: str = f"grep-scope-{uuid4().hex[:8]}"
+    async with developer_api_client_factory() as api_client:
+        published: dict[str, str] = await _publish_document(
+            namespace=namespace,
+            source_file_name="contract.pdf",
+            chunks=[
+                {
+                    "chunk_id": "scope-contract-body",
+                    "type": "text",
+                    "content": "Quarterly revenue",
+                    "path": "contract.pdf/Root/Summary",
+                    "order": 1,
+                    "metadata": {},
+                }
+            ],
         )
-        composite_images = render_composites(doc_data, root, composites, ns)
-                        if p_elem.xpath("ancestor::w:p", namespaces=ns):
-                            # A text-box paragraph: its images belong to the
-                            # enclosing paragraph, which is read as well.
-                            continue
-                            p_elem,
-                            text=text,
-                            docx=docx,
-                            rel_map=rel_map,
-                            ns=ns,
-                           
+        response: Response = await api_client.post(
+            "/api/v2/retrieval/tools/invoke",
+            headers={"X-Knowhere-Namespace": namespace},
+            json={
+                "tool": "corpus.grep",
+                "arguments": {
+                    "pattern": "revenue",
+                    "scope": [
+                        {
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-                            p_elem, text=text, docx=docx, rel_map=rel_map, ns=ns
-                    elem, text=text, docx=docx, rel_map=rel_map, ns=ns
-def _paragraph_images(paragraph, *, text, docx, rel_map, ns):
-    """Images a paragraph holds, or a placeholder for a VML-only graphic."""
-        rid = blip.get(f"{r_ns}embed")
-        if not rid or rid in seen_rids:
-            continue
-        target = rel_map.get(rid)
-        if not target or not target.startswith("media/"):
-            continue
-        seen_rids.add(rid)
-        data = docx.read("word/" + target)
-        if is_below_img_min_size(len(data)):
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b8d3b813` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `da75fa74` are properly handled with clean fallback behavior.

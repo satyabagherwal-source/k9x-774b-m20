@@ -2293,10 +2293,10 @@
     "repository": "Ontos-AI/knowhere",
     "platform": "github",
     "sourceUrl": "https://github.com/Ontos-AI/knowhere",
-    "sourceVersion": "90197327",
+    "sourceVersion": "da75fa74",
     "license": "Apache-2.0",
-    "contentHash": "4df84ffe41086e269cc2f9d45f9eba018a18f6b08e0a883763f91e4dbb5b3488",
-    "lastHarvestedAt": "2026-11-23T05:06:47.909Z",
+    "contentHash": "3bc5f61ce194049093b7117fefb0b44a78aca6799d6d781927ddcd14a1a836df",
+    "lastHarvestedAt": "2026-11-24T04:20:31.452Z",
     "learningId": "learn-github-ontos-ai-knowhere"
   },
   "bitterbot-ai-bitterbot-desktop": {
@@ -2463,10 +2463,10 @@
     "repository": "BurntSushi/ripgrep",
     "platform": "github",
     "sourceUrl": "https://github.com/BurntSushi/ripgrep",
-    "sourceVersion": "b6744106",
+    "sourceVersion": "4a51093f",
     "license": "Unlicense",
-    "contentHash": "735c81297c08f59793bd95c6ce358496f06e3b7163a06187f2065b891baf89c0",
-    "lastHarvestedAt": "2026-11-22T20:35:36.576Z",
+    "contentHash": "72bb04ce35cf1b2b70c5ad05b0b292c2640b102f536602b855676c8ca771365a",
+    "lastHarvestedAt": "2026-11-24T04:20:17.690Z",
     "learningId": "learn-github-burntsushi-ripgrep"
   },
   "cosscom-coss": {
@@ -12583,10 +12583,10 @@
     "repository": "jithin-sabu/purge-app",
     "platform": "github",
     "sourceUrl": "https://github.com/jithin-sabu/purge-app",
-    "sourceVersion": "384b5b6c",
+    "sourceVersion": "7f2412e2",
     "license": "MIT",
-    "contentHash": "1bf8fa2b9f46695f02e55e7b0924f9f5e442297682f177fe95e85f387d03d2ef",
-    "lastHarvestedAt": "2026-11-21T07:05:13.148Z",
+    "contentHash": "abd9e17ece6586f6b5420f76a45fa9ca68538180a42291eb9d61ea47210ff369",
+    "lastHarvestedAt": "2026-11-24T04:20:23.136Z",
     "learningId": "learn-github-jithin-sabu-purge-app"
   },
   "hf-conceptcountry-qwen-concept-27b": {

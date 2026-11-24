@@ -12584,3 +12584,6 @@
 | `CYCLE-20261124-056F` | `2026-11-24T03:58:34.551Z` | `lingyired/status-trio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10193` | Yes (`9d123b91...`) |
 | `CYCLE-20261124-0779` | `2026-11-24T03:58:37.173Z` | `zarf-dev/zarf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10194` | Yes (`3ef16bbe...`) |
 | `CYCLE-20261124-0ACF` | `2026-11-24T03:58:41.247Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10195` | Yes (`e36d2780...`) |
+| `CYCLE-20261124-S2OL` | `2026-11-24T04:20:17.685Z` | `BurntSushi/ripgrep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10196` | Yes (`72bb04ce...`) |
+| `CYCLE-20261124-S6VW` | `2026-11-24T04:20:23.132Z` | `jithin-sabu/purge-app` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10197` | Yes (`abd9e17e...`) |
+| `CYCLE-20261124-SDAV` | `2026-11-24T04:20:31.447Z` | `Ontos-AI/knowhere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10198` | Yes (`3bc5f61c...`) |

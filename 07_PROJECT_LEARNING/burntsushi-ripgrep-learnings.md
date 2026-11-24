@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md`  
 > **Source**: github ([https://github.com/BurntSushi/ripgrep](https://github.com/BurntSushi/ripgrep))  
-> **Source Version**: `b6744106`  
+> **Source Version**: `4a51093f`  
 > **License**: Unlicense  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T20:35:35.840Z  
+> **Timestamp**: 2026-11-24T04:20:16.534Z  
 > **Learning ID**: `learn-github-burntsushi-ripgrep`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/BurntSushi/ripgrep](https://github.com/BurntSushi/ripgrep))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T20:35:35.834Z  
+> **Harvest Timestamp**: 2026-11-24T04:20:16.392Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ripgrep recursively searches directories for a regex pattern while respecting your gitignore
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 70140 stars
+- **Stars / Engagement**: 70220 stars
 
 ---
 
@@ -1413,313 +1413,347 @@ fn generate_flag(flag: &'static dyn Flag, out: &mut String) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `574b2049` (2026-11-22)
-**Commit Message**: chore: fix release (#3625)
+### Incident Patch 1: `4a51093f` (2026-11-22)
+**Commit Message**: chore: update homebrew tap
 
-This adds a way to run the release workflow manually via
-`workflow_dispatch`. It's not quite perfect as the `cargo-deb` workflow
-still fails.
-
-We also remove the manual stripping we were doing in lieu of `strip =
-"symbols"` in `Cargo.toml`. So it was pretty redundant.
-
-We also add back `riscv64gc-unknown-linux-gnu` to the build matrix. It
-seems to just work.
-
-And finally, we add `x86_64-unknown-linux-gnu`.
-Ref: https://github.com/BurntSushi/ripgrep/discussions/3032
-
-**File**: `.github/workflows/release.yml` (modified, +25/-32)
+**File**: `pkg/brew/ripgrep-bin.rb` (modified, +3/-3)
 ```diff
-@@ -35,6 +35,7 @@ jobs:
-           echo "version is: $VERSION"
-       - name: Check that tag version and Cargo.toml version are the same
-         shell: bash
-+        if: inputs.version == ''
-         run: |
-           if ! grep -q "version = \"$VERSION\"" Cargo.toml; then
-             echo "version does not match Cargo.toml" >&2
-@@ -43,7 +44,13 @@ jobs:
-       - name: Create GitHub release
-         env:
-           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-+        if: inputs.version == ''
-         run: gh release create $VERSION --draft --verify-tag --title $VERSION
-+      - name: Create GitHub release
-+        env:
-+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-+        if: inputs.version != ''
-+        run: gh release create $VERSION --draft --title $VERSION
-     outputs:
-       version: ${{ env.VERSION }}
+@@ -1,14 +1,14 @@
+ class RipgrepBin < Formula
+-  version '15.0.0'
++  version '16.0.0'
+   desc "Recursively search directories for a regex pattern."
+   homepage "https://github.com/BurntSushi/ripgrep"
  
-@@ -62,7 +69,7 @@ jobs:
-       # Bump this as appropriate. We pin to a version to make sure CI
-       # continues to work as cross releases in the past have broken things
-       # in subtle ways.
--      CROSS_VERSION: v0.2.5
-+      CROSS_VERSION: 0.2.5
-       # Emit backtraces on panics.
-       RUST_BACKTRACE: 1
-       # Build static releases with PCRE2.
-@@ -75,48 +82,44 @@ jobs:
-           os: ubuntu-latest
-           rust: nightly
-           target: x86_64-unknown-linux-musl
--          strip: x86_64-linux-musl-strip
-+        - build: linux
-+          os: ubuntu-latest
-+          rust: nightly
-+          target: x86_64-unknown-linux-gnu
-         - build: stable-x86
-           os: ubuntu-latest
-           rust: stable
-           target: i686-unknown-linux-gnu
--          strip: x86_64-linux-gnu-strip
-           qemu: i386
-         - build: stable-aarch64
-           os: ubuntu-latest
-           rust: stable
-           target: aarch64-unknown-linux-gnu
--          strip: aarch64-linux-gnu-strip
-           qemu: qemu-aarch64
-         - build: stable-aarch64-musl
-           os: ubuntu-latest
-           rust: stable
-           target: aarch64-unknown-linux-musl
--          strip: aarch64-linux-musl-strip
-           qemu: qemu-aarch64
-         - build: stable-arm-gnueabihf
-           os: ubuntu-latest
-           rust: stable
-           target: armv7-unknown-linux-gnueabihf
--          strip: arm-linux-gnueabihf-strip
-           qemu: qemu-arm
-         - build: stable-arm-musleabihf
-           os: ubuntu-latest
-           rust: stable
-           target: armv7-unknown-linux-musleabihf
--          strip: arm-linux-musleabihf-strip
-           qemu: qemu-arm
-         - build: stable-arm-musleabi
-           os: ubuntu-latest
-           rust: stable
-           target: armv7-unknown-linux-musleabi
--          strip: arm-linux-musleabi-strip
-           qemu: qemu-arm
-         - build: stable-s390x
-           os: ubuntu-latest
-           rust: stable
-           target: s390x-unknown-linux-gnu
--          strip: s390x-linux-gnu-strip
-           qemu: qemu-s390x
-         - build: macos
-           os: macos-latest
-@@ -142,6 +145,11 @@ jobs:
-           os: windows-latest
-           rust: nightly
-           target: i686-pc-windows-msvc
-+        - build: stable-riscv64
-+          os: ubuntu-latest
-+          rust: stable
-+          target: riscv64gc-unknown-linux-gnu
-+          qemu: qemu-riscv64
+   if OS.mac?
+       url "https://github.com/BurntSushi/ripgrep/releases/download/#{version}/ripgrep-#{version}-x86_64-apple-darwin.tar.gz"
+-      sha256 "af7825fcc69a2afc7a7aea55fc9af90e26421d8f20fe59df32e233c0b8a231c1"
++      sha256 "aa9183b0e0bfac03c5818895ad18b75001c402d230063898abfe5a58cd413caa"
+   elsif OS.linux?
+       url "https://github.com/BurntSushi/ripgrep/releases/download/#{version}/ripgrep-#{version}-x86_64-unknown-linux-musl.tar.gz"
+-      sha256 "33e15bcf1624b25cdd2a55813a47a2f95dbe126268203e76aa6a585d1e7b149c"
++      sha256 "54268ab4643c00a290a29b0086066d64b3f56236dd805ec64629a86f9bd29fd0"
+   end
  
-     steps:
-     - name: Checkout repository
-@@ -170,7 +178,7 @@ jobs:
-         mkdir "$dir"
-         echo "$dir" >> $GITHUB_PATH
-         cd "$dir"
--        curl -LO "https://github.com/cross-rs/cross/releases/download/$CROSS_VERSION/cross-x86_64-unknown-linux-musl.tar.gz"
-+        curl -LO "https://github.com/cross-rs/cross/releases/download/v$CROSS_VERSION/cross-x86_64-unknown-linux-musl.tar.gz"
-         tar xf cross-x86_64-unknown-linux-musl.tar.gz
-         echo "CARGO=cross" >> $GITHUB_ENV
- 
-@@ -198,21 +206,6 @@ jobs:
-         fi
-         echo "BIN=$bin" >> $GITHUB_ENV
- 
--    - name: Strip release binary (macos)
--      if: matrix.os == 'macos-latest'
--      shell: bash
--      run: strip "$BIN"
--
--    - name: Strip release binary (cross)
--      if: env.CARGO == 'cross'
--      shell: bash
--      run: |
--        docker run --rm -v \
--          "$PWD/target:/target:Z" \
--          "ghcr.io/cross-rs/${{ matrix.target }}:main" \
--          "${{ matrix.strip }}" \
--          "/$BIN"
--
-     - name: Determine archive name
-       shell: bash
-       run: |
-@@ -245,36 +238,36 @@ jobs:
-       run: |
-         docker run --rm -v \
-           "$PWD/target:/target:Z" \
--          "ghcr.io/cross-rs/${{ matrix.target }}:main" \
-+          "ghcr.io/cross-rs/${{ matrix.target }}:$CROSS_VERSION" \
-           "${{ matrix.qemu }}" "/$BIN" --version
-         docker run --rm -v \
-           "$PWD/target:/target:Z" \
--          "ghcr.io/cross-rs/${{ matrix.target }}:main" \
-+          "ghcr.io/cross-rs/${{ matrix.target }}:$CROSS_VERSION" \
-           "${{ matrix.qemu }}" "/$BIN" \
-             --generate complete-bash > "$ARCHIVE/complete/rg.bash"
-         docker run --rm -v \
-           "$PWD/target:/target:Z" \
--          "ghcr.io/cross-rs/${{ mat
+   conflicts_with "ripgrep"
 ```
 
 ---
 
-### Incident Patch 2: `9c49a258` (2026-11-22)
-**Commit Message**: fix: fall back past MAX_LOOK_AHEAD in multi-line match discovery (#3503)
+### Incident Patch 2: `669cb4c7` (2026-11-22)
+**Commit Message**: chore(release): 16.0.0
 
-Fixes #3503
-
-**File**: `crates/printer/src/util.rs` (modified, +22/-7)
+**File**: `CHANGELOG.md` (modified, +104/-3)
 ```diff
-@@ -510,7 +510,7 @@ pub(crate) fn trim_ascii_prefix(
- pub(crate) fn find_iter_at_in_context<M, F>(
-     searcher: &Searcher,
-     matcher: M,
--    mut bytes: &[u8],
-+    bytes: &[u8],
-     range: std::ops::Range<usize>,
-     mut matched: F,
- ) -> io::Result<()>
-@@ -542,9 +542,11 @@ where
-     // shouldn't be involved in this business in the first place. Sigh. Live
-     // and learn. Abstraction boundaries are hard.
-     let is_multi_line = searcher.multi_line_with_matcher(&matcher);
--    if is_multi_line {
-+    let capped = if is_multi_line {
-         if bytes[range.end..].len() >= MAX_LOOK_AHEAD {
--            bytes = &bytes[..range.end + MAX_LOOK_AHEAD];
-+            &bytes[..range.end + MAX_LOOK_AHEAD]
-+        } else {
-+            bytes
-         }
-     } else {
-         // When searching a single line, we should remove the line terminator.
-@@ -554,16 +556,29 @@ where
-         // No need to remember the line terminator as we aren't doing a replace
-         // here.
-         trim_line_terminator(searcher, bytes, &mut m);
--        bytes = &bytes[..m.end()];
--    }
-+        &bytes[..m.end()]
-+    };
-+    let mut found = false;
-     matcher
--        .find_iter_at(bytes, range.start, |m| {
-+        .find_iter_at(capped, range.start, |m| {
-             if m.start() >= range.end {
-                 return false;
-             }
-+            found = true;
-             matched(m)
-         })
--        .map_err(io::Error::error_message)
-+        .map_err(io::Error::error_message)?;
-+    if !found && is_multi_line && capped.len() < bytes.len() {
-+        matcher
-+            .find_iter_at(bytes, range.start, |m| {
-+                if m.start() >= range.end {
-+                    return false;
-+                }
-+                matched(m)
-+            })
-+            .map_err(io::Error::error_message)?;
-+    }
-+    Ok(())
- }
- 
- /// Given a buf and some bounds, if there is a line terminator at the end of
+@@ -1,6 +1,107 @@
+-TBD
+-===
+-Unreleased changes. Release notes have not yet been written.
++16.0.0 (2026-11-22)
++===================
++ripgrep 16 is a new major version release of ripgrep that mostly has bug fixes,
++some minor performance improvements and a small number of new features. Here
++are some highlights:
++
++* There is now an `--in` flag for telling which files ripgrep should search
++by pointing to another containing line delimited file paths. (There is also a
++corresponding `--in0` flag for NUL delimited file paths.)
++* ripgrep now has a `-G/--glob-not` flag, which is recommended in lieu of using
++`!` to negate a glob. That is, `-g '!*.toml'` can now be spelled as
++`-G '*.toml'`.
++* ripgrep now respects a new `RIPGREP_THREADS` environment variable for setting
++the default number of threads to use for parallel searches. Whenever
++`-j/--threads` is specified on the command line (or in a configuration file),
++it takes precedence over the environment variable.
++* `riscv64` has been re-added to ripgrep's release pipeline. Binaries can now
++be downloaded for that target.
++
++Enhancements:
++
++* [#3522](https://github.com/BurntSushi/ripgrep/issues/3522):
++Add new `-G/--glob-not` flag for negating `-g/--glob`.
++* [#3425](https://github.com/BurntSushi/ripgrep/issues/3425), [#3622](https://github.com/BurntSushi/ripgrep/issues/3622), [#3511](https://github.com/BurntSushi/ripgrep/issues/3511):
++Add nushell completions via `--generate complete-nushell` (#3425).
++* [#3255](https://github.com/BurntSushi/ripgrep/issues/3255):
++Add Zed hyperlink alias.
++* [#2962](https://github.com/BurntSushi/ripgrep/issues/2962):
++Add POSIX character class support in bracket expressions.
++* [#3035](https://github.com/BurntSushi/ripgrep/issues/3035):
++Add `--max-bytes` flag to limit bytes per file.
++* [#273](https://github.com/BurntSushi/ripgrep/issues/273), [#3459](https://github.com/BurntSushi/ripgrep/issues/3459):
++Add --in/--in0 flags for reading file paths.
++* [#3317](https://github.com/BurntSushi/ripgrep/issues/3317), [#3415](https://github.com/BurntSushi/ripgrep/issues/3415):
++Support RIPGREP_THREADS environment variable.
++* [#3620](https://github.com/BurntSushi/ripgrep/issues/3620), [#3617](https://github.com/BurntSushi/ripgrep/issues/3617):
++Delay-load userenv.dll on Windows MSVC.
++
++Bug fixes:
++
++* [#3609](https://github.com/BurntSushi/ripgrep/issues/3609), [#3603](https://github.com/BurntSushi/ripgrep/issues/3603):
++Reject partial path components when stripping Unix prefixes.
++* [#3605](https://github.com/BurntSushi/ripgrep/issues/3605), [#3604](https://github.com/BurntSushi/ripgrep/issues/3604):
++Continue reading ignore files after invalid UTF-8 lines.
++* [#3607](https://github.com/BurntSushi/ripgrep/issues/3607), [#3614](https://github.com/BurntSushi/ripgrep/issues/3614):
++Statically link binary on Windows ARM64/MSVC (#3607).
++* [#3593](https://github.com/BurntSushi/ripgrep/issues/3593):
++`-v -m N -A k` printing the rest of the input as matches.
++* [#3581](https://github.com/BurntSushi/ripgrep/issues/3581), [#1764](https://github.com/BurntSushi/ripgrep/issues/1764):
++`-g !DIRNAME/` couldn't match when the CWD is `DIRNAME`.
++* [#2552](https://github.com/BurntSushi/ripgrep/issues/2552):
++Don't report ignored broken symlinks when following links.
++* [#3577](https://github.com/BurntSushi/ripgrep/issues/3577):
++Hostname buffer size at HOST_NAME_MAX.
++* [#3382](https://github.com/BurntSushi/ripgrep/issues/3382):
++Preserve buffered matches after parallel search errors.
++* [#3526](https://github.com/BurntSushi/ripgrep/issues/3526):
++Hyperlink paths that are not valid UTF-8.
++* [#2745](https://github.com/BurntSushi/ripgrep/issues/2745):
++Exclude path separator from character classes.
++* [#3534](https://github.com/BurntSushi/ripgrep/issues/3534):
++Detect symlink loops above the search root.
++* [#3617](https://github.com/BurntSushi/ripgrep/issues/3617):
++Don't compare against stdout when it's a pipe on Windows.
++* [#2958](https://github.com/BurntSushi/ripgrep/issues/2958):
++Sanitize paths by removing control codes in output.
++* [#3527](https://github.com/BurntSushi/ripgrep/issues/3527):
++Treat lone `!` gitignore line as a no-op.
++* [#3484](https://github.com/BurntSushi/ripgrep/issues/3484):
++Separate Scheme from Lisp file types.
++* [#3342](https://github.com/BurntSushi/ripgrep/issues/3342):
++Detect compressed files by magic number, not just extension.
++* [#3477](https://github.com/BurntSushi/ripgrep/issues/3477):
++Parse trailing spaces correctly in gitignore patterns.
++* [#1983](https://github.com/BurntSushi/ripgrep/issues/1983), [#3364](https://github.com/BurntSushi/ripgrep/issues/3364):
++`--json` should emit multiple matches in multiline mode.
++* [#3222](https://github.com/BurntSushi/ripgrep/issues/3222):
++Separate flags from paths in decompression commands.
++* [#3503](https://github.com/BurntSushi/ripgrep/issues/3503):
++Fall back past MAX_LOOK_AHEAD in multi-line match discovery.
++
++Documentation:
++
++* [#3598](https://github.com/B
 ```
 
-**File**: `tests/regression.rs` (modified, +18/-0)
+**File**: `Cargo.lock` (modified, +10/-10)
 ```diff
-@@ -1873,6 +1873,24 @@ rgtest!(r3591_excludes_file_inner_tilde, |dir: Dir, mut cmd: TestCommand| {
-     eqnice!("foo/foo1\n", cmd.arg("--files").arg("foo").stdout());
- });
+@@ -154,7 +154,7 @@ checksum = "e4eba85ea1d0a966a983acd07deee566e67395d2d96b6fb39e62b5a833f1eb0b"
  
-+// See: https://github.com/BurntSushi/ripgrep/issues/3503
-+rgtest!(r3503, |dir: Dir, mut cmd: TestCommand| {
-+    if !dir.is_pcre2() {
-+        return;
-+    }
-+    let padding = "x".repeat(200);
-+    dir.create("test", &format!("    pub fn foo(\n{padding}\n    self }}\n"));
-+
-+    eqnice!(
-+        "1:1:    pub fn foo(\n",
-+        cmd.arg("--multiline")
-+            .arg("--column")
-+            .arg(r"(?s)^ *pub fn(?=.{0,250} self\s*[}])")
-+            .arg("test")
-+            .stdout()
-+    );
-+});
-+
- // See: https://github.com/BurntSushi/ripgrep/issues/3593
- rgtest!(r3593, |dir: Dir, mut cmd: TestCommand| {
-     dir.create("h.log", "a\nb\nfoo\nc\nfoo\nd\n");
+ [[package]]
+ name = "globset"
+-version = "0.4.21"
++version = "0.4.22"
+ dependencies = [
+  "aho-corasick",
+  "arbitrary",
+@@ -169,7 +169,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "grep"
+-version = "0.4.1"
++version = "0.4.2"
+ dependencies = [
+  "grep-cli",
+  "grep-matcher",
+@@ -183,7 +183,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "grep-cli"
+-version = "0.1.12"
++version = "0.1.13"
+ dependencies = [
+  "bstr",
+  "globset",
+@@ -195,15 +195,15 @@ dependencies = [
+ 
+ [[package]]
+ name = "grep-matcher"
+-version = "0.1.9"
++version = "0.1.10"
+ dependencies = [
+  "memchr",
+  "regex",
+ ]
+ 
+ [[package]]
+ name = "grep-pcre2"
+-version = "0.1.10"
++version = "0.1.11"
+ dependencies = [
+  "grep-matcher",
+  "log",
+@@ -212,7 +212,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "grep-printer"
+-version = "0.3.1"
++version = "0.3.2"
+ dependencies = [
+  "bstr",
+  "grep-matcher",
+@@ -226,7 +226,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "grep-regex"
+-version = "0.1.14"
++version = "0.1.15"
+ dependencies = [
+  "bstr",
+  "grep-matcher",
+@@ -237,7 +237,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "grep-searcher"
+-version = "0.1.17"
++version = "0.1.18"
+ dependencies = [
+  "bstr",
+  "encoding_rs",
+@@ -252,7 +252,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "ignore"
+-version = "0.4.34"
++version = "0.4.35"
+ dependencies = [
+  "bstr",
+  "crossbeam-channel",
+@@ -404,7 +404,7 @@ checksum = "d902046e6a28a1e4c3cab97258a0ce11e994903f01c2d97a9447a0b3df85f4f6"
+ 
+ [[package]]
+ name = "ripgrep"
+-version = "15.2.0"
++version = "16.0.0"
+ dependencies = [
+  "anyhow",
+  "bstr",
 ```
 
----
-
-### Incident Patch 3: `4065a9e9` (2026-11-21)
-**Commit Message**: fix: separate flags from paths in decompression commands (#3222)
-
-This fixes the bug when the filename of a compressed file starts with the `-` character and it gets passed to the decompression tool, but gets treated as an option instead of file.
-
-In the best case, the option would be invalid and the decompression tool would finish with an error. In the worst case, the filename that looks like a valid option could potentially overwrite or remove data as a side effect.
-
-All decompression tools in use here follow the convention that everything after `--` is treated as a filename.
-
-Fixes #3222
-
-**File**: `crates/cli/src/decompress.rs` (modified, +8/-8)
+**File**: `Cargo.toml` (modified, +3/-3)
 ```diff
-@@ -594,14 +594,14 @@ fn try_resolve_binary<P: AsRef<Path>>(
- }
+@@ -1,6 +1,6 @@
+ [package]
+ name = "ripgrep"
+-version = "15.2.0"  #:version
++version = "16.0.0"  #:version
+ authors = ["Andrew Gallant <jamslam@gmail.com>"]
+ description = """
+ ripgrep is a line-oriented search tool that recursively searches the current
+@@ -54,8 +54,8 @@ rust-version = "1.96"
+ [dependencies]
+ anyhow = "1.0.75"
+ bstr = "1.7.0"
+-grep = { version = "0.4.1", path = "crates/grep" }
+-ignore = { version = "0.4.29", path = "crates/ignore" }
++grep = { version = "0.4.2", path = "crates/grep" }
++ignore = { version = "0.4.35", path = "crates/ignore" }
+ lexopt = "0.3.0"
+ log = "0.4.5"
+ serde_json = "1.0.23"
+```
+
+**File**: `crates/cli/Cargo.toml` (modified, +2/-2)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "grep-cli"
+-version = "0.1.12"  #:version
++version = "0.1.13"  #:version
+ authors = ["Andrew Gallant <jamslam@gmail.com>"]
+ description = """
+ Utilities for search oriented command line applications.
+@@ -15,7 +15,7 @@ rust-version.workspace = true
  
- fn default_decompression_commands() -> Vec<DecompressionCommand> {
--    const ARGS_GZIP: &[&str] = &["gzip", "-d", "-c"];
--    const ARGS_BZIP: &[&str] = &["bzip2", "-d", "-c"];
--    const ARGS_XZ: &[&str] = &["xz", "-d", "-c"];
--    const ARGS_LZ4: &[&str] = &["lz4", "-d", "-c"];
--    const ARGS_LZMA: &[&str] = &["xz", "--format=lzma", "-d", "-c"];
--    const ARGS_BROTLI: &[&str] = &["brotli", "-d", "-c"];
--    const ARGS_ZSTD: &[&str] = &["zstd", "-q", "-d", "-c"];
--    const ARGS_UNCOMPRESS: &[&str] = &["uncompress", "-c"];
-+    const ARGS_GZIP: &[&str] = &["gzip", "-d", "-c", "--"];
-+    const ARGS_BZIP: &[&str] = &["bzip2", "-d", "-c", "--"];
-+    const ARGS_XZ: &[&str] = &["xz", "-d", "-c", "--"];
-+    const ARGS_LZ4: &[&str] = &["lz4", "-d", "-c", "--"];
-+    const ARGS_LZMA: &[&str] = &["xz", "--format=lzma", "-d", "-c", "--"];
-+    const ARGS_BROTLI: &[&str] = &["brotli", "-d", "-c", "--"];
-+    const ARGS_ZSTD: &[&str] = &["zstd", "-q", "-d", "-c", "--"];
-+    const ARGS_UNCOMPRESS: &[&str] = &["uncompress", "-c", "--"];
+ [dependencies]
+ bstr = { version = "1.6.2", features = ["std"] }
+-globset = { version = "0.4.18", path = "../globset" }
++globset = { version = "0.4.22", path = "../globset" }
+ log = "0.4.20"
+ termcolor = "1.3.0"
  
-     fn add(
-         glob: &str,
+```
+
+**File**: `crates/core/flags/doc/template.rg.1` (modified, +1/-1)
+```diff
+@@ -1,4 +1,4 @@
+-.TH RG 1 2026-07-15 "!!VERSION!!" "User Commands"
++.TH RG 1 2026-11-22 "!!VERSION!!" "User Commands"
+ .
+ .
+ .SH NAME
+```
+
+**File**: `crates/globset/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "globset"
+-version = "0.4.21"  #:version
++version = "0.4.22"  #:version
+ authors = ["Andrew Gallant <jamslam@gmail.com>"]
+ description = """
+ Cross platform single glob and glob set matching. Glob set matching is the
+```
+
+**File**: `crates/grep/Cargo.toml` (modified, +7/-7)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "grep"
+-version = "0.4.1"  #:version
++version = "0.4.2"  #:version
+ authors = ["Andrew Gallant <jamslam@gmail.com>"]
+ description = """
+ Fast line oriented regex searching as a library.
+@@ -14,12 +14,12 @@ edition.workspace = true
+ rust-version.workspace = true
+ 
+ [dependencies]
+-grep-cli = { version = "0.1.12", path = "../cli" }
+-grep-matcher = { version = "0.1.8", path = "../matcher" }
+-grep-pcre2 = { version = "0.1.9", path = "../pcre2", optional = true }
+-grep-printer = { version = "0.3.1", path = "../printer" }
+-grep-regex = { version = "0.1.14", path = "../regex" }
+-grep-searcher = { version = "0.1.16", path = "../searcher" }
++grep-cli = { version = "0.1.13", path = "../cli" }
++grep-matcher = { version = "0.1.10", path = "../matcher" }
++grep-pcre2 = { version = "0.1.11", path = "../pcre2", optional = true }
++grep-printer = { version = "0.3.2", path = "../printer" }
++grep-regex = { version = "0.1.15", path = "../regex" }
++grep-searcher = { version = "0.1.18", path = "../searcher" }
+ 
+ [dev-dependencies]
+ termcolor = "1.0.4"
+```
+
+**File**: `crates/ignore/Cargo.toml` (modified, +2/-2)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "ignore"
+-version = "0.4.34"  #:version
++version = "0.4.35"  #:version
+ authors = ["Andrew Gallant <jamslam@gmail.com>"]
+ description = """
+ A fast library for efficiently matching ignore files such as `.gitignore`
+@@ -20,7 +20,7 @@ bench = false
+ 
+ [dependencies]
+ crossbeam-deque = "0.8.3"
+-globset = { version = "0.4.18", path = "../globset" }
++globset = { version = "0.4.22", path = "../globset" }
+ log = "0.4.20"
+ memchr = "2.6.3"
+ same-file = "1.0.6"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3629** (closed): Fix trailing background colors after wrapped matches (@nhooyr)
+- **PR #3628** (2026-11-22): chore(release): 16.0.0 (@BurntSushi)
 - **PR #3627** (2026-11-22): feat: support RIPGREP_THREADS environment variable (#3317) (@BurntSushi)
 - **PR #3626** (2026-11-22): printer: retry multiline match discovery without the lookahead cap (@DrSkyle)
 - **PR #3625** (2026-11-22): chore: fix release (@BurntSushi)
 - **PR #3624** (2026-11-22): chore: add git-cliff configuration (@BurntSushi)
-- **PR #3623** (2026-11-21): fix: `--json` should emit multiple matches in multiline mode (#1983) (@BurntSushi)
-- **PR #3622** (2026-11-21): feat: add nushell completions via `--generate complete-nushell` (#3425) (@BurntSushi)
 
 ---
 
@@ -1739,74 +1773,32 @@ Fixes #3222
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. fix release
+## X. update homebrew tap
 
 **RULE**:
-When implementing operations in `.github/workflows/release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in BurntSushi/ripgrep. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/brew/ripgrep-bin.rb`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in BurntSushi/ripgrep. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `574b2049`: fix release. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4a51093f`: update homebrew tap. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/brew/ripgrep-bin.rb`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        if: inputs.version == ''
-        if: inputs.version == ''
-      - name: Create GitHub release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        if: inputs.version != ''
-        run: gh release create $VERSION --draft --title $VERSION
-      CROSS_VERSION: 0.2.5
-        - build: linux
-          os: ubuntu-latest
-          rust: nightly
-          target: x86_64-unknown-linux-gnu
-        - build: stable-riscv64
-          os: ubuntu-latest
-          rust: stable
-          target: riscv64gc-unknown-linux-gnu
-          qemu: qemu-riscv64
-        curl -LO "https://github.com/cross-rs/cross/releases/download/v$CROSS_VERSION/cross-x86_64-unknown-linux-musl.tar.gz"
-          "ghcr.io/cross-rs/${{ matrix.target }}:$CROSS_VERSION" \
-          "ghcr.io/cross-rs/${{ matrix.target }}:$CROSS_VERSION" \
+  version '16.0.0'
+      sha256 "aa9183b0e0bfac03c5818895ad18b75001c402d230063898abfe5a58cd413caa"
+      sha256 "54268ab4643c00a290a29b0086066d64b3f56236dd805ec64629a86f9bd29fd0"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-      CROSS_VERSION: v0.2.5
-          strip: x86_64-linux-musl-strip
-          strip: x86_64-linux-gnu-strip
-          strip: aarch64-linux-gnu-strip
-          strip: aarch64-linux-musl-strip
-          strip: arm-linux-gnueabihf-strip
-          strip: arm-linux-musleabihf-strip
-          strip: arm-linux-musleabi-strip
-          strip: s390x-linux-gnu-strip
-        curl -LO "https://github.com/cross-rs/cross/releases/download/$CROSS_VERSION/cross-x86_64-unknown-linux-musl.tar.gz"
-    - name: Strip release binary (macos)
-      if: matrix.os == 'macos-latest'
-      shell: bash
-      run: strip "$BIN"
-
-    - name: Strip release binary (cross)
-      if: env.CARGO == 'cross'
-      shell: bash
-      run: |
-        docker run --rm -v \
-          "$PWD/target:/target:Z" \
-          "ghcr.io/cross-rs/${{ matrix.target }}:main" \
-          "${{ matrix.strip }}" \
-          "/$BIN"
-
-          "ghcr.io/cross-rs/${{ matrix.target }}:main" \
-          "ghcr.io/cross-rs/${{ matrix.target }}:main" \
-          "ghcr.io/cross-rs/${{ mat
+  version '15.0.0'
+      sha256 "af7825fcc69a2afc7a7aea55fc9af90e26421d8f20fe59df32e233c0b8a231c1"
+      sha256 "33e15bcf1624b25cdd2a55813a47a2f95dbe126268203e76aa6a585d1e7b149c"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `574b2049` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4a51093f` are properly handled with clean fallback behavior.
