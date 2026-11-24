@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T15:28:04.836Z",
+  "last_updated": "2026-11-24T15:36:16.099Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-24T15:09:06.715Z",
@@ -148,7 +148,7 @@
       "staged_for_review": 0
     },
     "aleo-labs-protocol-snarkos-learnings.md": {
-      "processed_at": "2026-11-24T04:45:23.916Z",
+      "processed_at": "2026-11-24T15:36:15.258Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -393,7 +393,7 @@
       "staged_for_review": 1
     },
     "emberstack-kubernetes-reflector-learnings.md": {
-      "processed_at": "2026-11-21T19:32:24.521Z",
+      "processed_at": "2026-11-24T15:36:14.462Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -898,7 +898,7 @@
       "staged_for_review": 1
     },
     "grpc-grpc-rust-learnings.md": {
-      "processed_at": "2026-11-22T01:24:02.506Z",
+      "processed_at": "2026-11-24T15:36:13.693Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3833,7 +3833,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3819,
+  "total_dossiers_evaluated": 3822,
   "total_canonical_promoted": 511,
-  "total_staged_for_review": 2893
+  "total_staged_for_review": 2896
 }

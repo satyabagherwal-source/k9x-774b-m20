@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T15:27:23.333Z",
-    "lastVerified": "2026-11-24T15:27:23.333Z",
+    "lastChecked": "2026-11-24T15:36:13.572Z",
+    "lastVerified": "2026-11-24T15:36:13.572Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -378,8 +378,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T14:59:42.766Z",
-    "lastVerified": "2026-11-24T14:59:42.766Z",
+    "lastChecked": "2026-11-24T15:36:09.550Z",
+    "lastVerified": "2026-11-24T15:36:09.550Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1221,22 +1221,21 @@
     "lastVerified": "2026-11-24T07:47:03.914Z"
   },
   "emberstack-kubernetes-reflector": {
-    "name": "kubernetes-reflector",
+    "name": "emberstack/kubernetes-reflector",
     "officialUrl": "https://github.com/emberstack/kubernetes-reflector",
     "sourceType": "github",
     "technology": "C#",
-    "lastChecked": "2026-11-23T19:59:32.748Z",
-    "lastVerified": "2026-11-23T19:59:32.748Z",
+    "lastChecked": "2026-11-24T15:36:05.973Z",
+    "lastVerified": "2026-11-24T15:36:05.973Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-emberstack-kubernetes-reflector",
-    "contentHash": "975622c4a9942c6a5410de28483109a4b90113275b47819f786227b012fe960e",
+    "contentHash": "2055607cfba62ef135de0bc3705ad04f7b83a935f22e370ef2751065866bb970",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "dbbd9cc6"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "freenet-freenet-core": {
     "name": "freenet/freenet-core",
@@ -2368,22 +2367,21 @@
     "revisionIdentifier": "8429622d"
   },
   "aleo-labs-protocol-snarkos": {
-    "name": "snarkOS",
+    "name": "aleo-labs-protocol/snarkOS",
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T11:04:54.236Z",
-    "lastVerified": "2026-11-24T11:04:54.236Z",
+    "lastChecked": "2026-11-24T15:36:09.727Z",
+    "lastVerified": "2026-11-24T15:36:09.727Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "e33d75b68a368ccc3c2f9ca8e2c4c76d441ee52c2a5ce6d4b0ceee18b810e3bb",
+    "contentHash": "9e8a2fe30a49aa9ba5a59684a1ad61f9aea37beb3a3a755db085eb2f6cfa26cd",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "2325502f"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "paradedb-paradedb": {
     "name": "paradedb/paradedb",
@@ -4140,9 +4138,9 @@
   "margelo-react-native-mmkv": {
     "name": "react-native-mmkv",
     "officialUrl": "https://github.com/margelo/react-native-mmkv",
-    "lastChecked": "2026-11-21T23:47:34.248Z",
+    "lastChecked": "2026-11-24T15:35:59.504Z",
     "revisionIdentifier": "0ec4c963",
-    "lastVerified": "2026-11-21T23:47:34.248Z"
+    "lastVerified": "2026-11-24T15:35:59.504Z"
   },
   "erkamyaman-rust-anything": {
     "name": "erkamyaman/rust-anything",
@@ -4988,22 +4986,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "grpc-grpc-rust": {
-    "name": "grpc-rust",
+    "name": "grpc/grpc-rust",
     "officialUrl": "https://github.com/grpc/grpc-rust",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T14:12:35.184Z",
-    "lastVerified": "2026-11-23T14:12:35.184Z",
+    "lastChecked": "2026-11-24T15:36:00.016Z",
+    "lastVerified": "2026-11-24T15:36:00.016Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-grpc-grpc-rust",
-    "contentHash": "62fc8613480b17e9c1039485701bd3b1361dc4a8a0f3f64f4003865a0b14c9a3",
+    "contentHash": "24a4a8d584ef84a668283e088090328d013b9491344a0b3ead85efecbdb9ebc8",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "831ba3d9"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-stabilityai-stable-diffusion-3-medium": {
     "name": "stabilityai/stable-diffusion-3-medium",
@@ -6347,9 +6344,9 @@
   "netflix-dynomite": {
     "name": "dynomite",
     "officialUrl": "https://github.com/Netflix/dynomite",
-    "lastChecked": "2026-11-23T19:09:20.813Z",
+    "lastChecked": "2026-11-24T15:36:07.110Z",
     "revisionIdentifier": "2046b05e",
-    "lastVerified": "2026-11-23T19:09:20.814Z"
+    "lastVerified": "2026-11-24T15:36:07.110Z"
   },
   "golutra-golutra": {
     "name": "golutra",
@@ -10606,9 +10603,9 @@
   "scrapy-plugins-scrapy-deltafetch": {
     "name": "scrapy-deltafetch",
     "officialUrl": "https://github.com/scrapy-plugins/scrapy-deltafetch",
-    "lastChecked": "2026-11-20T14:03:46.204Z",
+    "lastChecked": "2026-11-24T15:35:56.977Z",
     "revisionIdentifier": "a8caf39d",
-    "lastVerified": "2026-11-20T14:03:46.204Z"
+    "lastVerified": "2026-11-24T15:35:56.977Z"
   },
   "krzysztofzablocki-inject": {
     "name": "Inject",

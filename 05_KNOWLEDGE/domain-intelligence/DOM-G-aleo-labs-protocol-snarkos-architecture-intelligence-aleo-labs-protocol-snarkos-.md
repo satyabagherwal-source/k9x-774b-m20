@@ -4,24 +4,24 @@
 {
   "source_repository": "aleo-labs-protocol/snarkOS",
   "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-  "source_version": "2325502f",
+  "source_version": "04985e7d",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-24T04:45:19.117Z",
+  "timestamp": "2026-11-24T15:36:10.602Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-aleo-labs-protocol-snarkos",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS) (Revision: `2325502f`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T04:45:19.117Z`  
+> **Provenance**: Harvested from [aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS) (Revision: `04985e7d`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T15:36:10.602Z`  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 69%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 68%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from aleo-labs-protocol/snarkOS:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T04:45:17.845Z  
+> **Harvest Timestamp**: 2026-11-24T15:36:09.727Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1866,11 +1866,11 @@ if __name__ == "__main__":
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #4775** (2026-11-24): **Drop failed block requests above every advertised peer height**
+  *Symptoms*: ## Motivation  This PR fixes the pre-existing issue from the [review of #4755](https://github.com/aleo-labs-protocol/snarkOS/pull/4755#discussion_r4672382702).  A failed block request left the queue only when it was re-issued or when the ledger passed its height. When the only peer ahead disconnected, its requests stayed queued. A synced client then ran the request pass on every wake-up, because the "Nothing to sync" early return needs an empty queue.  Commit 1: "Drop failed block requests above every advertised peer height".  - [`prepare_block_requests`](https://github.com/aleo-labs-protocol/snarkOS/blob/160f24c21/node/sync/src/block_sync.rs#L1260-L1269) now drops the failed requests above the greatest height any peer advertises. Without peers, it drops all of them. - New locators bring those heights back as new requests: the new-request path starts at the first height above the ledger that is not requested. - A failed request stays queued when a peer advertises its height but does not serve it (a `NotYet` cap or a pruning floor). - The requests of a removed peer are not dropped as such. Other peers that advertise those heights still get them.  Commit 2: "Request a gap below buffered block responses past the total request cap". It fixes the [stall that Veria found](https://github.com/aleo-labs-protocol/snarkOS/pull/4775#discussion_r4675343288) in commit 1.  - New requests stop when the buffer holds 1000 entries. Only the failed-request path passed that cap. Commit 1 can drop
+
 - **Issue #4745** (2026-11-23): **Re-issue block requests that were never sent**
   *Symptoms*: ## Motivation  A syncing client stalled permanently after a peer disconnected while block requests to it were outstanding.  `prepare_block_requests` re-issues heights from `failed_requests`. It removes them from that map when `construct_requests` returns them, before they are sent. When `send_block_requests` returns `false`, these heights are then in neither `failed_requests` nor `requests`. This happens when:  - a send fails, for example to a peer that the router dropped but whose locators are still present; - a selected peer has disconnected, so the chunk is skipped; - `insert_block_request` fails partway through a chunk.  In each case, `try_issuing_block_requests` also stops the chunk loop, so the later chunks of the batch are not sent.  Usually `construct_requests` picks the lowest missing height again. But `prepare_block_requests` returns early when `num_total_block_requests()` is at its cap. If completed responses above the gap fill the requests map, they cannot be applied until the gap arrives, and they do not time out. Sync stalls.  Commits:  - When a send fails, put each height of the batch that is not in `requests` back into `failed_requests`, with its hash and previous hash.  This covers all of the failure paths above in one place. Heights from chunks that were sent stay in `requests`. New batches, not only re-issued ones, also go back to `failed_requests` when their send fails.  ## Test Plan  - New `test_reissue_unsent_block_requests`: the first chunk of a re-issu
-
-- **Issue #4715** (2026-11-20): **Release a connecting peer however its handshake ends**
-  *Symptoms*: ## Motivation  Under 50% or 70% packet loss, the chain halts. It does not recover after the loss stops: the validators' gateway connections never re-form.  The cause is a handshake that times out. The TCP layer runs each handshake under a 10 s timeout (`Handshake::TIMEOUT_MS`), and enforces it by dropping the handshake future. The handshake marks the peer as connecting in the peer pool, and returns it to the candidates only after the handshake returns. A dropped future never gets there, and nothing else clears the entry. From then on:  - `connect()` to the peer fails with `AlreadyConnecting`. The heartbeats skip that error without a log, so the node never dials the peer again. - Every inbound handshake from the peer fails the same way.  One stuck entry on either side breaks the pair for good. Under heavy loss, many handshakes take longer than 10 s, so many pairs get stuck. The router and the bootstrap client have the same pattern.  This PR makes `add_connecting_peer` return a `ConnectingPeerGuard`. Dropping the guard returns the peer to the candidates, unless the handshake has upgraded it to connected. This covers the timeout, every early error return, and task abort. The gateway, the router and the bootstrap client hold the guard until they upgrade the peer. The rollback after the handshake goes away, and so does the out-parameter that carried the listening address to it.  The router and the bootstrap client recorded the listening address before `add_connecting_peer`. A hand
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1887,265 +1887,115 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `da73ee50` (2026-11-24)
-**Commit Message**: Explain the capped tip state at the node height, and cover the quiet paths
+### Incident Patch 1: `04985e7d` (2026-11-24)
+**Commit Message**: Merge pull request #4775 from aleo-labs-protocol/fix/drop-unservable-failed-requests
 
-Address review of #4755.
+Drop failed block requests above every advertised peer height
 
-- The advertised-tip trace now also prints when a `NotYet` cap equals the
-  node height. Before, that state logged only the generic "Not block synced
-  yet" debug.
-- That debug no longer prints while failed requests wait for a peer:
-  `prepare_block_requests` reports them.
-- The re-issue trace prints per batch, after the skip, so it prints only
-  when a batch is attempted.
-- New tests cover the `current_height < served_tip` clause, the request
-  pass through `try_issuing_block_requests`, and exact line counts in the
-  capped state.
-
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-**File**: `node/sync/src/block_sync.rs` (modified, +72/-22)
+**File**: `node/sync/src/block_sync.rs` (modified, +160/-4)
 ```diff
-@@ -750,7 +750,8 @@ impl<N: Network> BlockSync<N> {
-         let mut next_request_slot = None;
+@@ -311,6 +311,12 @@ pub struct BlockSync<N: Network> {
+ }
  
-         if batches.is_empty() {
--            if self.num_total_block_requests() == 0 {
-+            // Failed requests that wait for a peer are reported by `prepare_block_requests`.
-+            if self.num_total_block_requests() == 0 && self.failed_requests.lock().is_empty() {
-                 debug!(
-                     "Not block synced yet, and there are no outstanding block requests or \
-                  new block requests to send"
-@@ -1259,8 +1260,6 @@ impl<N: Network> BlockSync<N> {
+ impl<N: Network> BlockSync<N> {
++    /// The maximum number of block requests that await a response.
++    const MAX_OUTSTANDING_BLOCK_REQUESTS: u32 =
++        (MAX_BLOCK_REQUESTS as u32) * (DataBlocks::<N>::MAXIMUM_NUMBER_OF_BLOCKS as u32);
++    /// The maximum number of block requests, including the answered ones that are not processed yet.
++    const MAX_TOTAL_BLOCK_REQUESTS: u32 = 4 * Self::MAX_OUTSTANDING_BLOCK_REQUESTS;
++
+     /// Initializes a new block sync module.
+     pub fn new(ledger: Arc<dyn LedgerService<N>>, connection_mode: ConnectionMode) -> Self {
+         // Make sync state aware of the blocks that already exist on disk at startup.
+@@ -1257,6 +1263,10 @@ impl<N: Network> BlockSync<N> {
+         {
+             failed_requests.pop_first();
+         }
++        // Drop the failed requests above every height a peer advertises. A peer that advertises
++        // those heights brings them back as new requests.
++        let advertised_tip = tips.map_or(0, |(_, advertised_tip)| advertised_tip);
++        failed_requests.split_off(&advertised_tip.saturating_add(1));
  
          // Re-issue the remaining failed requests.
          if !failed_requests.is_empty() {
--            trace!("There are {} failed requests that need to be re-issued.", failed_requests.len());
--
-             // Convert the set of failed requests into one or multiple continuous ranges.
-             let iter = failed_requests.iter();
-             let mut batches: VecDeque<Vec<(u32, _, _)>> = VecDeque::new();
-@@ -1302,6 +1301,7 @@ impl<N: Network> BlockSync<N> {
-                 if tips.is_some_and(|(served_tip, _)| served_tip < start) {
-                     continue;
-                 }
-+                trace!("Trying to re-issue failed block requests {start}..{end_height}");
+@@ -1346,21 +1356,23 @@ impl<N: Network> BlockSync<N> {
+         }
  
-                 let Some((sync_peers, min_common_ancestor)) = self.find_sync_peers_inner(current_height, Some(start))
-                 else {
-@@ -1374,15 +1374,16 @@ impl<N: Network> BlockSync<N> {
+         // Ensure to not exceed the maximum number of outstanding block requests.
+-        let max_outstanding_block_requests =
+-            (MAX_BLOCK_REQUESTS as u32) * (DataBlocks::<N>::MAXIMUM_NUMBER_OF_BLOCKS as u32);
++        let max_outstanding_block_requests = Self::MAX_OUTSTANDING_BLOCK_REQUESTS;
  
-             print_requests();
-             vec![]
--        } else if let Some((served_tip, advertised_tip)) =
--            tips.filter(|&(served_tip, _)| current_height < served_tip && served_tip < start_height)
--        {
--            // Every block a peer serves is in the ledger or requested, e.g. at the tip while the tip
--            // block is in flight. This check must precede `find_sync_peers_inner`: no peer serves
--            // `start_height`, so it finds no sync peers, and the final branch logs on every call.
-+        } else if let Some((served_tip, advertised_tip)) = tips.filter(|&(served_tip, advertised_tip)| {
-+            served_tip < start_height && (current_height < served_tip || served_tip < advertised_tip)
-+        }) {
-+            // Every block a peer serves is in the ledger or requested, and a peer is ahead of this
-+            // node, e.g. at the tip while the tip block is in flight. This check must precede
-+            // `find_sync_peers_inner`: no peer serves `start_height`, so it finds no sync peers, and
-+            // the final branch logs on every call.
-             if served_tip < advertised_tip {
-                 trace!(
--                    "Requested every block up to {served_tip}, the latest any peer serves, but peers advertise blocks up to {advertised_tip}"
-+                    "Every block up to {served_tip}, the latest any peer serves, is in the ledger or requested, but peers advertise blocks up to {advertised_tip}"
-                 );
-             }
-             vec![]
-@@ -2954,32 +2955,62 @@ mod tests {
-         assert!(sync_peers.contains_key(&sample_peer_ip(2)));
+         // Ensure there is a finite bound on the number of block respnoses we receive, that have not been processed yet.
+-        let max_total_requests = 4 * max_outstanding_block_requests;
++        let max_total_requests = Self::MAX_TOTAL_BLOCK_REQUESTS;
+ 
+         let max_new_blocks_to_request =
+             max_outstanding_block_requests.saturating_sub(self.num_outstanding_block_requests() as u32);
+ 
+         // The first height to request: the next one this node needs, or the first above it not
+         // already requested.
+         let start_height = self.first_unrequested_height(current_height.saturating_add(1));
++        // The total request cap does not apply to a gap below a requested height: the answered
++        // requests above the gap leave the map only once the gap is filled.
++        let fills_gap = self.requests.read().last_key_value().is_some_and(|(height, _)| start_height < *height);
+ 
+         // Prepare the block requests and sync peers, or returns an empty result if there is nothing to request.
+-        if self.num_total_block_requests() >= max_total_requests as usize {
++        if !fills_gap && self.num_total_block_requests() >= max_total_requests as usize {
+             trace!(
+                 "We are already requested at least {max_total_requests} blocks that have not been fully processed yet. Will not issue more."
+             );
+@@ -3053,6 +3065,150 @@ mod tests {
+         assert!(service.sent.lock().unwrap().is_empty());
      }
  
--    /// Tests that block sync prepares no requests and logs nothing once it has requested every
--    /// block its peers serve.
--    #[test]
--    #[tracing_test::traced_test]
--    fn test_quiet_while_tip_block_in_flight() {
--        let num_lines = || {
-+    /// Returns the number of log lines the enclosing `traced_test` has captured.
-+    macro_rules! num_log_lines {
-+        () => {{
-             let count = std::cell::Cell::new(0);
-             logs_assert(|lines| {
-                 count.set(lines.len());
-                 Ok(())
-             });
-             count.get()
--        };
-+        }};
++    /// Tests that failed requests above every height a peer advertises are dropped, and that the
++    /// request pass then finds nothing to sync.
++    #[tokio::test]
++    #[tracing_test::traced_test]
++    async fn test_failed_requests_above_advertised_tip_are_dropped() {
++        let sync = sample_sync_at_height(1_000);
++        let peer_ahead = sample_peer_ip(1);
++        add_peers(&sync, 1, 1, 1_100, 0);
++        add_peers(&sync, 2, 1, 1_020, 0);
++        insert_requests_to(&sync, peer_ahead, 1_001..1_051);
++        sync.remove_peer(&peer_ahead);
++        assert_eq!(sync.failed_requests.lock().len(), 50);
++
++        // The remaining peer serves the failed requests up to its tip.
++        let (requests, _) = sync.prepare_block_requests().pop().unwrap();
++        assert_eq!(heights_of(&requests), (1_001..=1_020).collect::<Vec<_>>());
++        assert!(sync.failed_requests.lock().is_empty());
++
++        // Without a peer ahead, none of the failed requests remain.
++        let sync = sample_sync_at_height(1_000);
++        add_peers(&sync, 1, 1, 1_100, 0);
++        add_peers(&sync, 2, 1, 1_000, 0);
++        insert_requests_to(&sync, peer_ahead, 1_001..1_051);
++        sync.remove_peer(&peer_ahead);
++        assert_eq!(sync.failed_requests.lock().len(), 50);
++        let service = RecordingService::default();
++        assert!(sync.try_issuing_block_requests(&service).await.is_none());
++        assert!(sync.failed_requests.lock().is_empty());
++        assert!(!logs_contain("Nothing to sync"));
++        assert!(sync.try_issuing_block_requests(&service).await.is_none());
++        assert!(logs_contain("Nothing to sync"));
++        assert!(service.sent.lock().unwrap().is_empty());
 +    }
 +
-+    /// Tests that block sync prepares no requests and logs nothing once it has requested every
-+    /// block its peers serve.
-+    #[test]
-+    #[tracing_test::traced_test]
-+    fn test_quiet_while_tip_block_in_flight() {
-         let sync = sample_sync_at_height(1_000);
-         add_peers(&sync, 1, 1, 1_001, 0);
-         insert_requests_to(&sync, sample_peer_ip(1), 1_001..1_002);
--        let before = num_lines();
-+        let before = num_log_lines!();
-         assert!(sync.prepare_block_requests().is_empty());
--        assert_eq!(num_lines(), before);
-+        assert_eq!(num_log_lines!(), before);
- 
-         // A peer ahead whose floor is above the next height to request.
-         add_peers(&sync, 2, 1, 1_100, 1_050);
-         assert!(sync.prepare_block_requests().is_empty());
-         assert!(logs_contain("No new blocks can be requested"));
-     }
- 
-+    /// Tests that block sync logs when requests are outstanding, but no peer is ahead.
-+    #[test]
-+    #[tracing_test::traced_test]
-+    fn test_not_quiet_without_peer_ahead() {
-+        let sync = sample_sync_at_height(1_000);
-+        add_peers(&sync, 1, 1, 1_000, 0);
-+        insert_requests_to(&sync, sample_peer_ip(1), 1_001..1_002);
-+        assert!(sync.prepare_block_reque
-```
-
----
-
-### Incident Patch 2: `2325502f` (2026-11-24)
-**Commit Message**: Merge pull request #4755 from aleo-labs-protocol/fix/block-sync-quiet-tip-followup
-
-Keep block sync quiet only at the true served tip
-
-**File**: `Cargo.lock` (modified, +1/-0)
-```diff
-@@ -5806,6 +5806,7 @@ dependencies = [
-  "tokio",
-  "tracing",
-  "tracing-subscriber",
-+ "tracing-test",
- ]
- 
- [[package]]
-```
-
-**File**: `node/sync/Cargo.toml` (modified, +3/-0)
-```diff
-@@ -101,3 +101,6 @@ features = [ "macros", "rt", "time" ]
- [dev-dependencies.tracing-subscriber]
- workspace = true
- features = [ "env-filter", "fmt" ]
++    /// Fills the response buffer to the total request cap with answered requests from `start`.
++    fn fill_response_buffer(sync: &BlockSync<CurrentNetwork>, start: u32) {
 +
-+[dev-dependencies.tracing-test]
-+workspace = true
-```
-
-**File**: `node/sync/src/block_sync.rs` (modified, +115/-25)
-```diff
-@@ -750,17 +750,12 @@ impl<N: Network> BlockSync<N> {
-         let mut next_request_slot = None;
- 
-         if batches.is_empty() {
--            let total_requests = self.num_total_block_requests();
--            let num_outstanding = self.num_outstanding_block_requests();
--            if total_requests == 0 {
-+            // Failed requests that wait for a peer are reported by `prepare_block_requests`.
-+            if self.num_total_block_requests() == 0 && self.failed_requests.lock().is_empty() {
-                 debug!(
-                     "Not block synced yet, and there are no outstanding block requests or \
-                  new block requests to send"
-                 );
--            } else if !self.requested_all_served() {
--                trace!(
--                    "Not block synced yet, but there are still {total_requests} in-flight requests. {num_outstanding} are still awaiting responses."
--                );
-             }
-         } else {
-             let chunk_size = DataBlocks::<N>::MAXIMUM_NUMBER_OF_BLOCKS as usize;
-@@ -1249,6 +1244,7 @@ impl<N: Network> BlockSync<N> {
- 
-         // Do not hold lock here as, currently, `find_sync_peers_inner` can take a while.
-         let current_height = self.retention_height();
-+        let tips = self.peer_tips();
- 
-         // Determine if there are any failed requests that need to be re-issued.
-         //
-@@ -1264,8 +1260,6 @@ impl<N: Network> BlockSync<N> {
- 
-         // Re-issue the remaining failed requests.
-         if !failed_requests.is_empty() {
--            trace!("There are {} failed requests that need to be re-issued.", failed_requests.len());
--
-             // Convert the set of failed requests into one or multiple continuous ranges.
-             let iter = failed_requests.iter();
-             let mut batches: VecDeque<Vec<(u32, _, _)>> = VecDeque::new();
-@@ -1303,6 +1297,11 @@ impl<N: Network> BlockSync<N> {
-                 if max_new_blocks_to_request == 0 {
-                     continue;
-                 }
-+                // No peer serves `start`, so `find_sync_peers_inner` would find no sync peers.
-+                if tips.is_some_and(|(served_tip, _)| served_tip < start) {
-+                    continue;
-+                }
-+                trace!("Trying to re-issue failed block requests {start}..{end_height}");
- 
-                 let Some((sync_peers, min_common_ancestor)) = self.find_sync_peers_inner(current_height, Some(start))
-                 else {
-@@ -1375,9 +1374,18 @@ impl<N: Network> BlockSync<N> {
- 
-             print_requests();
-             vec![]
--        } else if self.requested_all_served() {
--            // Nothing to request until a peer serves more blocks, e.g. at the tip while the tip
--            // block is in flight.
-+        } else if let Some((served_tip, advertised_tip)) = tips.filter(|&(served_tip, advertised_tip)| {
-+            served_tip < start_height && (current_height < served_tip || served_tip < advertised_tip)
-+        }) {
-+            // Every block a peer serves is in the ledger or requested, and a peer is ahead of this
-+            // node, e.g. at the tip while the tip block is in flight. This check must precede
-+            // `find_sync_peers_inner`: no peer serves `start_height`, so it finds no sync peers, and
-+            // the final branch logs on every call.
-+            if served_tip < advertised_tip {
-+                trace!(
-+                    "Every block up to {served_tip}, the latest any peer serves, is in the ledger or requested, but peers advertise blocks up to {advertised_tip}"
-+                );
-+            }
-             vec![]
-         } else if let Some((sync_peers, min_common_ancestor)) =
-             self.find_sync_peers_inner(current_height, Some(start_height))
-@@ -1411,7 +1419,8 @@ impl<N: Network> BlockSync<N> {
- 
-             vec![]
-         } else {
--            // No sync peers serve the next height to request.
-+            // No sync peers were found for the next height to request: no peer ahead serves it, or
-+            // too few of them share a common ancestor above the ledger height.
-             trace!("No new blocks can be requested, but there are still outstanding requests.");
- 
-             print_requests();
-@@ -1943,13 +1952,15 @@ impl<N: Network> BlockSync<N> {
-         height
-     }
- 
--    /// Returns `true` if a peer is ahead of this node, and every block any peer serves is in the
--    /// ledger or requested.
--    fn requested_all_served(&self) -> bool {
--        let current_height = self.retention_height();
--        let start_height = self.first_unrequested_height(current_height.saturating_add(1));
--        let max_tip = self.locators.read().values().map(|peer| peer.serving_tip()).max();
--        max_tip.is_some_and(|tip| current_height < tip && tip < start_height)
-+    /// Returns the greatest height any peer serves and the greatest height any peer advertises, or
-+    /// `None` without peers. A `NotYet` reply caps the height a peer serves bel
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4777** (2026-11-24): Check advisories only on scheduled and release CI runs (@cbeck88)
+- **PR #4775** (2026-11-24): Drop failed block requests above every advertised peer height (@cbeck88)
 - **PR #4772** (2026-11-23): Bump snarkVM to aleo-labs-protocol/snarkVM@1a1c603dc (@cbeck88)
 - **PR #4771** (2026-11-23): Bump crates with security advisories (@aleo-labs-merge-bot[bot])
 - **PR #4770** (2026-11-23): Bump jsonwebtoken from 11.1.0 to 12.0.0 (@dependabot[bot])
 - **PR #4769** (2026-11-23): Bump nix from 0.31.3 to 0.32.0 (@dependabot[bot])
-- **PR #4768** (2026-11-23): Bump serde_with from 3.24.0 to 3.25.0 in the cargo-minor group (@dependabot[bot])
-- **PR #4767** (2026-11-23): Bump the github-actions group with 2 updates (@dependabot[bot])
 
 ---
 
@@ -2165,13 +2015,13 @@ Keep block sync quiet only at the true served tip
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Explain the capped tip state at the node height, and cover the quiet paths
+## X. Empirical Invariant Guard in block_sync.rs
 
 **RULE**:
 When implementing operations in `node/sync/src/block_sync.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `da73ee50`: Explain the capped tip state at the node height, and cover the quiet paths. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `04985e7d`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `node/sync/src/block_sync.rs`.
@@ -2179,52 +2029,35 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            // Failed requests that wait for a peer are reported by `prepare_block_requests`.
-            if self.num_total_block_requests() == 0 && self.failed_requests.lock().is_empty() {
-                trace!("Trying to re-issue failed block requests {start}..{end_height}");
-        } else if let Some((served_tip, advertised_tip)) = tips.filter(|&(served_tip, advertised_tip)| {
-            served_tip < start_height && (current_height < served_tip || served_tip < advertised_tip)
-        }) {
-            // Every block a peer serves is in the ledger or requested, and a peer is ahead of this
-            // node, e.g. at the tip while the tip block is in flight. This check must precede
-            // `find_sync_peers_inner`: no peer serves `start_height`, so it finds no sync peers, and
-            // the final branch logs on every call.
-                    "Every block up to {served_tip}, the latest any peer serves, is in the ledger or requested, but peers advertise blocks up to {advertised_tip}"
-    /// Returns the number of log lines the enclosing `traced_test` has captured.
-    macro_rules! num_log_lines {
-        () => {{
-        }};
-    }
+    /// The maximum number of block requests that await a response.
+    const MAX_OUTSTANDING_BLOCK_REQUESTS: u32 =
+        (MAX_BLOCK_REQUESTS as u32) * (DataBlocks::<N>::MAXIMUM_NUMBER_OF_BLOCKS as u32);
+    /// The maximum number of block requests, including the answered ones that are not processed yet.
+    const MAX_TOTAL_BLOCK_REQUESTS: u32 = 4 * Self::MAX_OUTSTANDING_BLOCK_REQUESTS;
 
-    /// Tests that block sync prepare
+        // Drop the failed requests above every height a peer advertises. A peer that advertises
+        // those heights brings them back as new requests.
+        let advertised_tip = tips.map_or(0, |(_, advertised_tip)| advertised_tip);
+        failed_requests.split_off(&advertised_tip.saturating_add(1));
+        let max_outstanding_block_requests = Self::MAX_OUTSTANDING_BLOCK_REQUESTS;
+        let max_total_requests = Self::MAX_TOTAL_BLOCK_REQUESTS;
+        // The total request cap does not apply to a gap below a requested height: the answered
+        // requests above the gap leave the map only once the gap is filled.
+        let fills_gap = self.requests.read().last_key_value().is_some_and(|(height, _)| start_height < *height);
+        if !fills_gap && self.num_total_block_requests() >= max_
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-            if self.num_total_block_requests() == 0 {
-            trace!("There are {} failed requests that need to be re-issued.", failed_requests.len());
-
-        } else if let Some((served_tip, advertised_tip)) =
-            tips.filter(|&(served_tip, _)| current_height < served_tip && served_tip < start_height)
-        {
-            // Every block a peer serves is in the ledger or requested, e.g. at the tip while the tip
-            // block is in flight. This check must precede `find_sync_peers_inner`: no peer serves
-            // `start_height`, so it finds no sync peers, and the final branch logs on every call.
-                    "Requested every block up to {served_tip}, the latest any peer serves, but peers advertise blocks up to {advertised_tip}"
-    /// Tests that block sync prepares no requests and logs nothing once it has requested every
-    /// block its peers serve.
-    #[test]
-    #[tracing_test::traced_test]
-    fn test_quiet_while_tip_block_in_flight() {
-        let num_lines = || {
-        };
-        let before = num_lines();
-        assert_eq!(num_lines(), before);
+        let max_outstanding_block_requests =
+            (MAX_BLOCK_REQUESTS as u32) * (DataBlocks::<N>::MAXIMUM_NUMBER_OF_BLOCKS as u32);
+        let max_total_requests = 4 * max_outstanding_block_requests;
+        if self.num_total_block_requests() >= max_total_requests as usize {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `da73ee50` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `04985e7d` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

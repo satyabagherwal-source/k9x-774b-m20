@@ -12755,3 +12755,6 @@ Every entry in this ledger must capture:
 | `learn-github-wcandillon-react-native-skia` | `https://github.com/Shopify/react-native-skia` | `d36553ce` | Multi-dimensional audit evidence | 2026-11-24T15:27:12.019Z |
 | `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `442f5b3f` | Multi-dimensional audit evidence | 2026-11-24T15:27:19.757Z |
 | `learn-dom-d-a5c5fed6` | `project://hf-sentinel7-h3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-sentinel7-h3-learnings.md` | 2026-11-24T15:28:00.704Z |
+| `learn-github-grpc-grpc-rust` | `https://github.com/grpc/grpc-rust` | `c16dbace` | Multi-dimensional audit evidence | 2026-11-24T15:36:01.212Z |
+| `learn-github-emberstack-kubernetes-reflector` | `https://github.com/emberstack/kubernetes-reflector` | `549d8f57` | Multi-dimensional audit evidence | 2026-11-24T15:36:06.619Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `04985e7d` | Multi-dimensional audit evidence | 2026-11-24T15:36:10.372Z |

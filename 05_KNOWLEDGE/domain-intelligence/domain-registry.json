@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T15:28:04.364Z",
+  "last_updated": "2026-11-24T15:36:15.811Z",
   "total_records": 2544,
   "domains": {
     "A": {
@@ -8648,10 +8648,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "dcb0392cb4fc2e99686517d6b5f2557d79dbadc6b1bf4334f45381baee6b3e1d",
-      "created_at": "2026-11-24T13:30:20.257Z"
+      "content_hash": "967c4f3057eb0fc2b4e49121030a301f57a89c80c163191ed1379280624b9847",
+      "created_at": "2026-11-24T15:36:10.752Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -10294,8 +10294,8 @@
       "title": "Architecture Intelligence: grpc/grpc-rust Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-grpc-grpc-rust-architecture-intelligence-grpc-grpc-rust-core-invariants.md",
       "repository": "grpc/grpc-rust",
-      "content_hash": "3504a3e08c5ffb38301e66337516621bcc127fe720cca22a773b568ac1bafe2b",
-      "created_at": "2026-11-22T01:23:47.697Z"
+      "content_hash": "a0b4e124847bec5594ddb3bc9b1be41bca88a7eca5604a3bbc336ec3c8b9a32d",
+      "created_at": "2026-11-24T15:36:01.607Z"
     },
     "domain_intelligence-content-information-intelligence-mattermost-mattermost-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-mattermost-mattermost-core-invariants",
@@ -10330,8 +10330,8 @@
       "title": "Architecture Intelligence: grpc-grpc-rust-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-grpc-grpc-rust-learnings-architecture-intelligence-grpc-grpc-rust-learnings-core.md",
       "repository": "grpc-grpc-rust-learnings",
-      "content_hash": "9b72653a2a359a0026ee5a19d7c39283bf6df41dee0d92f77242a66234da4e55",
-      "created_at": "2026-11-22T01:24:02.993Z"
+      "content_hash": "c43459f13ed9ce4ce0190d353c648fbe1146fe7a36a15ee56eb3b5e407b6aba5",
+      "created_at": "2026-11-24T15:36:14.171Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-",
@@ -24066,8 +24066,8 @@
       "title": "Architecture Intelligence: aleo-labs-protocol-snarkos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-learnings-architecture-intelligence-aleo-labs-protoco.md",
       "repository": "aleo-labs-protocol-snarkos-learnings",
-      "content_hash": "ce8fdc96cfba90459b6c3cb78b946bc08961448e7d9a147e550f5867d5c1c211",
-      "created_at": "2026-11-24T04:45:24.354Z"
+      "content_hash": "6085b5ab41714209e67810c00e8bd12a9addb726529e9e30e16dc4ce5bf3bcb8",
+      "created_at": "2026-11-24T15:36:15.811Z"
     },
     "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants",
@@ -28944,8 +28944,8 @@
       "title": "Architecture Intelligence: emberstack/kubernetes-reflector Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-emberstack-kubernetes-reflector-architecture-intelligence-emberstack-kubernetes-.md",
       "repository": "emberstack/kubernetes-reflector",
-      "content_hash": "4d4dc3a2c5e3a9e3598e8ab005490c9f19fb421b54174c210dabfe3b46c3b13e",
-      "created_at": "2026-11-21T19:27:27.435Z"
+      "content_hash": "f22df78e8ae2572c80d260858578fb9b2bf9caf599c596690540978e0e3e340d",
+      "created_at": "2026-11-24T15:36:06.993Z"
     },
     "domain_intelligence-design-intelligence-nanbeige-nanbeige4-3-33b-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-nanbeige-nanbeige4-3-33b-core-invariants",
@@ -29005,8 +29005,8 @@
       "title": "Architecture Intelligence: emberstack-kubernetes-reflector-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-emberstack-kubernetes-reflector-learnings-architecture-intelligence-emberstack-k.md",
       "repository": "emberstack-kubernetes-reflector-learnings",
-      "content_hash": "437c105c113f6119bd1597342bd21778c2eeb427c571bb7674a8e644b350e5ac",
-      "created_at": "2026-11-21T19:32:25.196Z"
+      "content_hash": "7937087f3a638735a0b0a02a4a17f829e0b6c671b8d14463704c6d5519f6c0d2",
+      "created_at": "2026-11-24T15:36:14.943Z"
     },
     "domain_intelligence-research-knowledge-intelligence-briaai-fibo-2-0-dev-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-briaai-fibo-2-0-dev-core-invariants",

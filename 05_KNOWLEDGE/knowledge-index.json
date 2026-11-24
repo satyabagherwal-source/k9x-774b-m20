@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T15:28:04.622Z",
+  "last_updated": "2026-11-24T15:36:15.960Z",
   "total_verified_learnings": 9096,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24727,
+  "total_items": 24730,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112818,25 +112818,25 @@
       "item_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "045bb278",
-      "content_hash": "dcb0392cb4fc2e99686517d6b5f2557d79dbadc6b1bf4334f45381baee6b3e1d",
+      "source_version": "04985e7d",
+      "content_hash": "967c4f3057eb0fc2b4e49121030a301f57a89c80c163191ed1379280624b9847",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T13:30:20.257Z"
+      "persisted_at": "2026-11-24T15:36:10.752Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/provablehq-snarkos-verification-protocol-empirical-defect-shield-for-aleo-labs-p.md",
+      "relative_path": "08_VERIFICATION/aleo-labs-protocol-snarkos-verification-protocol-empirical-defect-shield-for-ale.md",
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "045bb278",
-      "content_hash": "11e56fc9024dc4669a9be2b3e4a486f7219e5247de7a5f8a40d19ea64f5c9ae9",
+      "source_version": "04985e7d",
+      "content_hash": "30f2199c2e0dc0a15249dc478b53a5552e294182abb68c875dbeaf2290628a34",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T13:30:20.500Z"
+      "persisted_at": "2026-11-24T15:36:10.897Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
@@ -212594,8 +212594,8 @@
       "slug": "grpc-grpc-rust",
       "platform": "github",
       "source_url": "https://github.com/grpc/grpc-rust",
-      "source_version": "831ba3d9",
-      "content_hash": "62fc8613480b17e9c1039485701bd3b1361dc4a8a0f3f64f4003865a0b14c9a3",
+      "source_version": "c16dbace",
+      "content_hash": "24a4a8d584ef84a668283e088090328d013b9491344a0b3ead85efecbdb9ebc8",
       "dossier_path": "07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md",
       "promoted_rules": [
@@ -212618,6 +212618,11 @@
           "number": 9875,
           "title": "early channel dispatch fixes",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10295,
+          "title": "add RLS adaptive throttler",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -212625,7 +212630,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T01:23:46.743Z",
+      "verified_at": "2026-11-24T15:36:00.985Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -212667,10 +212672,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-grpc-grpc-rust-architecture-intelligence-grpc-grpc-rust-core-invariants.md",
       "title": "Architecture Intelligence: grpc/grpc-rust Core Invariants",
       "repository": "grpc/grpc-rust",
-      "source_version": "831ba3d9",
-      "content_hash": "3504a3e08c5ffb38301e66337516621bcc127fe720cca22a773b568ac1bafe2b",
+      "source_version": "c16dbace",
+      "content_hash": "a0b4e124847bec5594ddb3bc9b1be41bca88a7eca5604a3bbc336ec3c8b9a32d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T01:23:47.697Z"
+      "persisted_at": "2026-11-24T15:36:01.607Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-grpc-grpc-rust": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-grpc-grpc-rust",
@@ -212679,10 +212684,10 @@
       "relative_path": "08_VERIFICATION/grpc-grpc-rust-verification-protocol-empirical-defect-shield-for-grpc-grpc-rust.md",
       "title": "Verification Protocol: Empirical Defect Shield for grpc/grpc-rust",
       "repository": "grpc/grpc-rust",
-      "source_version": "831ba3d9",
-      "content_hash": "60ba73b4b48d8414d3f5cfc191f212ed46fabf1e5eb2a34253b4d488c6a80622",
+      "source_version": "c16dbace",
+      "content_hash": "334766a4218ae95472a462eda854855c4855cbe827db5a365cfd881d4f9e044d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T01:23:47.915Z"
+      "persisted_at": "2026-11-24T15:36:01.766Z"
     },
     "learn-github-mattermost-mattermost": {
       "learning_id": "learn-github-mattermost-mattermost",
@@ -213038,9 +213043,9 @@
       "title": "Architecture Intelligence: grpc-grpc-rust-learnings Core Invariants",
       "repository": "grpc-grpc-rust-learnings",
       "source_version": "HEAD",
-      "content_hash": "9b72653a2a359a0026ee5a19d7c39283bf6df41dee0d92f77242a66234da4e55",
+      "content_hash": "c43459f13ed9ce4ce0190d353c648fbe1146fe7a36a15ee56eb3b5e407b6aba5",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T01:24:02.993Z"
+      "persisted_at": "2026-11-24T15:36:14.171Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-grpc-grpc-rust-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-grpc-grpc-rust-learnings",
@@ -213050,9 +213055,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for grpc-grpc-rust-learnings",
       "repository": "grpc-grpc-rust-learnings",
       "source_version": "HEAD",
-      "content_hash": "099121cf5ea8b10c09c439a8ad8bf46c3a5afd57cc26f40e74d1e22db393524b",
+      "content_hash": "db6b678cef310b698cea7a3300eee983db24aeebf481999b25aefd0cb1b00cf8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T01:24:03.211Z"
+      "persisted_at": "2026-11-24T15:36:14.316Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-",
@@ -216043,13 +216048,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "provablehq-snarkos",
+      "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "045bb278",
-      "content_hash": "fe8b2450bcc188c892e162a418395618108a626d9223464b0a1b442ac589a2f4",
-      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "04985e7d",
+      "content_hash": "9e8a2fe30a49aa9ba5a59684a1ad61f9aea37beb3a3a755db085eb2f6cfa26cd",
+      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 3992,
@@ -216172,7 +216177,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T13:30:19.405Z",
+      "verified_at": "2026-11-24T15:36:10.196Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -257735,9 +257740,9 @@
       "title": "Architecture Intelligence: aleo-labs-protocol-snarkos-learnings Core Invariants",
       "repository": "aleo-labs-protocol-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "ce8fdc96cfba90459b6c3cb78b946bc08961448e7d9a147e550f5867d5c1c211",
+      "content_hash": "6085b5ab41714209e67810c00e8bd12a9addb726529e9e30e16dc4ce5bf3bcb8",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T04:45:24.354Z"
+      "persisted_at": "2026-11-24T15:36:15.811Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos-lea": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos-lea",
@@ -257747,9 +257752,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol-snarkos-learnings",
       "repository": "aleo-labs-protocol-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "fa50aef83b679396de441bc7e54e6f3f8dcb5d32ff68ca3c6a4e78dd371da2d9",
+      "content_hash": "ada531b6996c387ca6ad4ca6c657189e3531dfdd73ae277af4f82cf76f40bc0b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T04:45:24.508Z"
+      "persisted_at": "2026-11-24T15:36:15.960Z"
     },
     "candidate_directive-keep-what-a-step-installs-for-the-next-one-and-give-jobs-the-runner-s-rust-and": {
       "item_id": "candidate_directive-keep-what-a-step-installs-for-the-next-one-and-give-jobs-the-runner-s-rust-and",
@@ -280611,8 +280616,8 @@
       "slug": "emberstack-kubernetes-reflector",
       "platform": "github",
       "source_url": "https://github.com/emberstack/kubernetes-reflector",
-      "source_version": "dbbd9cc6",
-      "content_hash": "975622c4a9942c6a5410de28483109a4b90113275b47819f786227b012fe960e",
+      "source_version": "549d8f57",
+      "content_hash": "2055607cfba62ef135de0bc3705ad04f7b83a935f22e370ef2751065866bb970",
       "dossier_path": "07_PROJECT_LEARNING/emberstack-kubernetes-reflector-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/emberstack-kubernetes-reflector-learnings.md",
       "promoted_rules": [
@@ -280629,7 +280634,7 @@
         {
           "number": 9826,
           "title": "build(deps): bump gittools/actions",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -280637,7 +280642,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T19:27:26.704Z",
+      "verified_at": "2026-11-24T15:36:06.433Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -280679,10 +280684,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-emberstack-kubernetes-reflector-architecture-intelligence-emberstack-kubernetes-.md",
       "title": "Architecture Intelligence: emberstack/kubernetes-reflector Core Invariants",
       "repository": "emberstack/kubernetes-reflector",
-      "source_version": "dbbd9cc6",
-      "content_hash": "4d4dc3a2c5e3a9e3598e8ab005490c9f19fb421b54174c210dabfe3b46c3b13e",
+      "source_version": "549d8f57",
+      "content_hash": "f22df78e8ae2572c80d260858578fb9b2bf9caf599c596690540978e0e3e340d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T19:27:27.435Z"
+      "persisted_at": "2026-11-24T15:36:06.993Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-emberstack-kubernetes-reflecto": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-emberstack-kubernetes-reflecto",
@@ -280692,9 +280697,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for emberstack-kubernetes-reflector-learnings",
       "repository": "emberstack-kubernetes-reflector-learnings",
       "source_version": "HEAD",
-      "content_hash": "c997ba536bfcfe05784244f88c54cd98507a0acf20be4df13e552d51e1d24169",
+      "content_hash": "5b434eca168af3bc85fa8e0d3370eae626c654b7223ade47ab6efb1315df54b4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T19:32:25.452Z"
+      "persisted_at": "2026-11-24T15:36:15.092Z"
     },
     "rule-9031": {
       "learning_id": "rule-9031",
@@ -280897,9 +280902,9 @@
       "title": "Architecture Intelligence: emberstack-kubernetes-reflector-learnings Core Invariants",
       "repository": "emberstack-kubernetes-reflector-learnings",
       "source_version": "HEAD",
-      "content_hash": "437c105c113f6119bd1597342bd21778c2eeb427c571bb7674a8e644b350e5ac",
+      "content_hash": "7937087f3a638735a0b0a02a4a17f829e0b6c671b8d14463704c6d5519f6c0d2",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T19:32:25.196Z"
+      "persisted_at": "2026-11-24T15:36:14.943Z"
     },
     "learn-huggingface-briaai-fibo-2-0-dev": {
       "learning_id": "learn-huggingface-briaai-fibo-2-0-dev",
@@ -317924,25 +317929,25 @@
       "rule_number": 9826,
       "title": "build(deps): bump gittools/actions",
       "source_url": "https://github.com/emberstack/kubernetes-reflector",
-      "source_version": "dbbd9cc6",
+      "source_version": "549d8f57",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-21T19:27:26.704Z"
+      "verified_at": "2026-11-24T15:36:06.433Z"
     },
     "candidate_directive-build-deps-bump-gittools-actions": {
       "item_id": "candidate_directive-build-deps-bump-gittools-actions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-1IJ4-build-deps-bump-gittools-actions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-XCQZ-build-deps-bump-gittools-actions.md",
       "title": "build(deps): bump gittools/actions",
       "repository": "emberstack-kubernetes-reflector-learnings",
       "source_version": "HEAD",
-      "content_hash": "381585b47f8602751f4ddc279f8966069de13afbe0ea05c5fe24914815de143e",
+      "content_hash": "d5cc5efa3b104f812a55b7d6724e3c033c210abc27a046eafd1a42168383128e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T19:32:24.976Z"
+      "persisted_at": "2026-11-24T15:36:14.796Z"
     },
     "candidate_directive-feature-add-basic-gpu-usage-graph": {
       "item_id": "candidate_directive-feature-add-basic-gpu-usage-graph",
@@ -318584,25 +318589,25 @@
       "rule_number": 9843,
       "title": "Empirical Invariant Guard in block_sync.rs",
       "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "ff15a1de",
+      "source_version": "04985e7d",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-21T23:47:43.815Z"
+      "verified_at": "2026-11-24T15:36:10.196Z"
     },
     "candidate_directive-empirical-invariant-guard-in-block_sync-rs": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-block_sync-rs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-60NG-empirical-invariant-guard-in-block_sync-rs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-XDF4-empirical-invariant-guard-in-block_sync-rs.md",
       "title": "Empirical Invariant Guard in block_sync.rs",
       "repository": "aleo-labs-protocol-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "36da47b90cbee92581ea90eb57e64159497182643647a6de0ca10c3ebf2b1ee7",
+      "content_hash": "fcc6a26520e404a69d27e2ae989d9a6f7adaa99f2521c7daedb46ecc6e4e137d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T23:47:51.631Z"
+      "persisted_at": "2026-11-24T15:36:15.670Z"
     },
     "rule-9844": {
       "learning_id": "rule-9844",
@@ -337585,6 +337590,44 @@
       "content_hash": "5a4e7a5832061a27a30ecaa2f117ca7a08ba0fa76c99850de938050e210673c0",
       "domain_letter": "K",
       "persisted_at": "2026-11-24T15:28:04.108Z"
+    },
+    "rule-10295": {
+      "learning_id": "rule-10295",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10295,
+      "title": "add RLS adaptive throttler",
+      "source_url": "https://github.com/grpc/grpc-rust",
+      "source_version": "c16dbace",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T15:36:00.985Z"
+    },
+    "candidate_directive-add-rls-adaptive-throttler": {
+      "item_id": "candidate_directive-add-rls-adaptive-throttler",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-X2FT-add-rls-adaptive-throttler.md",
+      "title": "add RLS adaptive throttler",
+      "repository": "grpc/grpc-rust",
+      "source_version": "c16dbace",
+      "content_hash": "741df45911b9b2758d130ee0f3b2af2dbd10dc6d6565dff47d925d22b14104fc",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T15:36:01.438Z"
+    },
+    "candidate_directive-grpc-rls-add-rls-adaptive-throttler": {
+      "item_id": "candidate_directive-grpc-rls-add-rls-adaptive-throttler",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XC5C-grpc-rls-add-rls-adaptive-throttler.md",
+      "title": "grpc-rls: add RLS adaptive throttler",
+      "repository": "grpc-grpc-rust-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5f6762191dc6f0824c28edb3b229b8734ceb904af21b7793e90cd8e761b4360d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T15:36:14.022Z"
     }
   },
   "ai-builder-brain": {

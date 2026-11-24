@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T15:28:03.740Z",
+  "updated_at": "2026-11-24T15:36:15.455Z",
   "stats": {
-    "total_discovered": 8721,
-    "approved_pending_harvest": 8258,
+    "total_discovered": 8727,
+    "approved_pending_harvest": 8264,
     "harvested_count": 0,
     "rejected_count": 463,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8242,
+      "COMMUNITY_AND_EXPERT": 8248,
       "OFFICIAL_DOCUMENTATION": 269,
       "STANDARDS_AND_SPECIFICATIONS": 146,
       "ENGINEERING_BLOGS": 7,
@@ -188644,6 +188644,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
         "fileName": "ydb-platform-ydb-learnings.md"
+      }
+    },
+    "SRC-F638FBECF18D": {
+      "id": "SRC-F638FBECF18D",
+      "url": "https://github.com/grpc/grpc-go/tree/master/balancer/rls/internal/adaptive",
+      "title": "https://github.com/grpc/grpc-go/tree/master/balancer/rls/internal/adaptive",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T15:36:13.739Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md",
+        "fileName": "grpc-grpc-rust-learnings.md"
+      }
+    },
+    "SRC-7105BAED6173": {
+      "id": "SRC-7105BAED6173",
+      "url": "https://grpc.io/",
+      "title": "https://grpc.io/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T15:36:13.800Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md",
+        "fileName": "grpc-grpc-rust-learnings.md"
+      }
+    },
+    "SRC-857DE259DE54": {
+      "id": "SRC-857DE259DE54",
+      "url": "https://github.com/gittools/actions/compare/v4.7.2...v5.0.0",
+      "title": "https://github.com/gittools/actions/compare/v4.7.2...v5.0.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T15:36:14.586Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/emberstack-kubernetes-reflector-learnings.md",
+        "fileName": "emberstack-kubernetes-reflector-learnings.md"
+      }
+    },
+    "SRC-3F75BDF0533B": {
+      "id": "SRC-3F75BDF0533B",
+      "url": "https://github.com/aleo-labs-protocol/snarkOS/pull/4755",
+      "title": "https://github.com/aleo-labs-protocol/snarkOS/pull/4755",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T15:36:15.368Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+        "fileName": "aleo-labs-protocol-snarkos-learnings.md"
+      }
+    },
+    "SRC-EA8EF67D3B3A": {
+      "id": "SRC-EA8EF67D3B3A",
+      "url": "https://github.com/aleo-labs-protocol/snarkOS/blob/160f24c21/node/sync/src/block_sync.rs",
+      "title": "https://github.com/aleo-labs-protocol/snarkOS/blob/160f24c21/node/sync/src/block_sync.rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T15:36:15.415Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+        "fileName": "aleo-labs-protocol-snarkos-learnings.md"
+      }
+    },
+    "SRC-3E8EFA4883A5": {
+      "id": "SRC-3E8EFA4883A5",
+      "url": "https://github.com/aleo-labs-protocol/snarkOS/pull/4775",
+      "title": "https://github.com/aleo-labs-protocol/snarkOS/pull/4775",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T15:36:15.455Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+        "fileName": "aleo-labs-protocol-snarkos-learnings.md"
       }
     }
   }

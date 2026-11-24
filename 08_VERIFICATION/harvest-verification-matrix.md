@@ -12722,3 +12722,6 @@
 | `CYCLE-20261124-LPXP` | `2026-11-24T15:27:12.013Z` | `wcandillon/react-native-skia` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md` | Yes (`7222ba91...`) |
 | `CYCLE-20261124-LVWO` | `2026-11-24T15:27:19.752Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10294` | Yes (`83ec4b66...`) |
 | `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T15:28:00.704Z` | `hf-sentinel7-h3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-A5C5FED6` [Domain D] | Yes (`502c35cb...`) |
+| `CYCLE-20261124-X29L` | `2026-11-24T15:36:01.209Z` | `grpc/grpc-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10295` | Yes (`24a4a8d5...`) |
+| `CYCLE-20261124-X6FS` | `2026-11-24T15:36:06.616Z` | `emberstack/kubernetes-reflector` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9826` | Yes (`2055607c...`) |
+| `CYCLE-20261124-X9C0` | `2026-11-24T15:36:10.368Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9843` | Yes (`9e8a2fe3...`) |

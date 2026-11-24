@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "2325502f",
+    "sourceVersion": "04985e7d",
     "license": "Apache-2.0",
-    "contentHash": "e33d75b68a368ccc3c2f9ca8e2c4c76d441ee52c2a5ce6d4b0ceee18b810e3bb",
-    "lastHarvestedAt": "2026-11-24T04:45:18.886Z",
+    "contentHash": "9e8a2fe30a49aa9ba5a59684a1ad61f9aea37beb3a3a755db085eb2f6cfa26cd",
+    "lastHarvestedAt": "2026-11-24T15:36:10.372Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {
@@ -5393,10 +5393,10 @@
     "repository": "grpc/grpc-rust",
     "platform": "github",
     "sourceUrl": "https://github.com/grpc/grpc-rust",
-    "sourceVersion": "831ba3d9",
+    "sourceVersion": "c16dbace",
     "license": "MIT",
-    "contentHash": "62fc8613480b17e9c1039485701bd3b1361dc4a8a0f3f64f4003865a0b14c9a3",
-    "lastHarvestedAt": "2026-11-22T01:23:47.037Z",
+    "contentHash": "24a4a8d584ef84a668283e088090328d013b9491344a0b3ead85efecbdb9ebc8",
+    "lastHarvestedAt": "2026-11-24T15:36:01.212Z",
     "learningId": "learn-github-grpc-grpc-rust"
   },
   "crazycodeboy-react-native-splash-screen": {
@@ -7083,10 +7083,10 @@
     "repository": "emberstack/kubernetes-reflector",
     "platform": "github",
     "sourceUrl": "https://github.com/emberstack/kubernetes-reflector",
-    "sourceVersion": "dbbd9cc6",
+    "sourceVersion": "549d8f57",
     "license": "MIT",
-    "contentHash": "975622c4a9942c6a5410de28483109a4b90113275b47819f786227b012fe960e",
-    "lastHarvestedAt": "2026-11-21T19:27:26.954Z",
+    "contentHash": "2055607cfba62ef135de0bc3705ad04f7b83a935f22e370ef2751065866bb970",
+    "lastHarvestedAt": "2026-11-24T15:36:06.619Z",
     "learningId": "learn-github-emberstack-kubernetes-reflector"
   },
   "arxanas-git-branchless": {

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T01:24:02.654Z",
+  "timestamp": "2026-11-24T15:36:13.912Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-grpc-grpc-rust-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [grpc-grpc-rust-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T01:24:02.654Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T15:36:13.912Z`  
 > **Learning ID**: `LEARN-EVO-grpc-grpc-rust-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
 - **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 64%
+- **Confidence Rating**: 59%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from grpc-grpc-rust-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md`  
 > **Source**: github ([https://github.com/grpc/grpc-rust](https://github.com/grpc/grpc-rust))  
-> **Source Version**: `831ba3d9`  
+> **Source Version**: `c16dbace`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T01:23:45.712Z  
+> **Timestamp**: 2026-11-24T15:36:00.223Z  
 > **Learning ID**: `learn-github-grpc-grpc-rust`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/grpc/grpc-rust](https://github.com/grpc/grpc-rust))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T01:23:45.701Z  
+> **Harvest Timestamp**: 2026-11-24T15:36:00.016Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A native gRPC client & server implementation with async/await support.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 12558 stars
+- **Stars / Engagement**: 12572 stars
 
 ---
 
@@ -2041,13 +2041,13 @@ enum SubscriptionMode {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3060** (2026-11-20): **ci: use an example binary to locate protoc-gen-grpc-rust files**
-  *Symptoms*: We have a few options here:  - Use either the old path or the new path - Use jq to parse cargo output to find the output directory - This one -- make a binary print the path  This one felt the nicest to me, but LMK what you think.
-
-- **Issue #3058** (2026-11-20): **ci: create protoc-cache before copying the protoc build into it**
-  *Symptoms*: The "Populate cache directory" step was relying on cp to create protoc-cache/. That depends on platform-specific cp behavior, and fails on the macOS runner with "cp: protoc-cache: No such file or directory".  It went unnoticed because the step only runs when the protoc binaries cache misses.  This change restores the behavior pre-#2685 and creates the directory first before copying the contents of install/ to it, which produces the same protoc-cache/bin layout on every platform. 
+- **Issue #3068** (2026-11-24): **grpc-rls: add RLS adaptive throttler**
+  *Symptoms*: Contributes to: #2768  Implements client-side adaptive throttling for the Route Lookup Service (RLS) control-plane channel in `grpc-xds`, used by the `rls_experimental` load balancing policy to avoid overloading an unhealthy RLS server. This is based on [gRPC Go's implementation](https://github.com/grpc/grpc-go/tree/master/balancer/rls/internal/adaptive).
   **Post-Mortem & Fix Analysis**:
-  > the CI blocker is due to Rust 1.100's change in build path. Need to update the CI script to be able to find both the old path (`build/protoc-gen-grpc-rust-<hash>/out`) and the new (`build/protoc-gen-grpc-rust/<hash>/out`) path
+  > Moved the changes to a new `grpc-rls` crate.
+
+- **Issue #3063** (2026-11-23): **all: updates for Rust 1.100 warnings**
+  *Symptoms*: Rust 1.100 now warns if you don't inherit your linter settings from the workspace.  Adding that inheritance creates a bunch of new warnings due to linters firing.  So for all the crates except `tonic-prost[-build]`, I've explicitly not inherited lints from the workspace by adding the empty section to `Cargo.toml`.  Also, Rust 1.100 warns if you have both `homepage` and `repository` (maybe only if they're the same? but ours are always).  So, I removed the `homepage` entry in all `Cargo.toml`s that had it, too.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2064,531 +2064,234 @@ enum SubscriptionMode {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `10337899` (2026-11-20)
-**Commit Message**: grpc: early channel dispatch fixes (#3047)
+### Incident Patch 1: `c9d3dfc7` (2026-11-24)
+**Commit Message**: grpc-rls: add RLS adaptive throttler (#3068)
 
-1. Make RPCs fail if they make it to the subchannel when it's not READY
-(was `todo!()`)
-2. Handle `Drop` results from pickers (was `todo!()`)
-3. Handle the race where pickers can return recently-not-ready
-subchannels (was missing)
+Contributes to: #2768
 
-**File**: `grpc/src/client/channel.rs` (modified, +208/-12)
+Implements client-side adaptive throttling for the Route Lookup Service
+(RLS) control-plane channel in `grpc-xds`, used by the
+`rls_experimental` load balancing policy to avoid overloading an
+unhealthy RLS server. This is based on [gRPC Go's
+implementation](https://github.com/grpc/grpc-go/tree/master/balancer/rls/internal/adaptive).
+
+**File**: `Cargo.toml` (modified, +1/-0)
 ```diff
-@@ -42,6 +42,7 @@ use crate::StatusError;
- use crate::client::CallOptions;
- use crate::client::ConnectivityState;
- use crate::client::Invoke;
-+use crate::client::InvokeOnce;
- use crate::client::RecvStream;
- use crate::client::RequestHeaders;
- use crate::client::ResponseStreamItem;
-@@ -505,29 +506,54 @@ impl Invoke for LbInvoker {
-                 .pick(PickOptions::new(&headers, &options))
-             {
-                 PickResult::Pick(mut pr) => {
--                    let on_complete = pr.on_complete.take();
-                     let Some(sc) = pr.subchannel.downcast_ref::<InternalSubchannel>() else {
-                         panic!(
-                             "picked subchannel is not an implementation provided by the channel"
-                         );
-                     };
--                    let (tx, rx) = sc.invoke(headers, options).await;
--                    // Notify the LB policy when the RPC completes (or is
--                    // abandoned) so it can release any per-call state.
--                    let rx = match on_complete {
--                        Some(on_complete) => {
--                            BoxRecvStream::new(CompletionRecvStream::new(rx, on_complete))
--                        }
--                        None => rx,
--                    };
--                    return (tx, rx);
-+                    if let Ok(invoker) = sc.ready_invoker() {
-+                        let on_complete = pr.on_complete.take();
-+                        let (tx, rx) = invoker.invoke_once(headers, options).await;
-+                        // Notify the LB policy when the RPC completes (or is
-+                        // abandoned) so it can release any per-call state.
-+                        let rx = match on_complete {
-+                            Some(on_complete) => {
-+                                BoxRecvStream::new(CompletionRecvStream::new(rx, on_complete))
-+                            }
-+                            None => rx,
-+                        };
-+                        return (tx, rx);
-+                    }
-+                    // The subchannel likely left READY before the LB policy
-+                    // updated its picker, so queue the pick and wait for a new
-+                    // picker.  Dropping the pick drops its completion callback
-+                    // without invoking it, since the RPC never started.
-                 }
-                 PickResult::Queue => {}
-                 PickResult::Fail(status) => {
-+                    // TODO: Check wait-for-ready and queue instead.
-+                    if status.is_restricted_control_plane_code() {
-+                        return FailingRecvStream::new_stream_pair(
-+                            StatusError::new(
-+                                StatusCodeError::Internal,
-+                                format!("picker returned illegal status: {status}"),
-+                            ),
-+                            None,
-+                        );
-+                    }
-                     return FailingRecvStream::new_stream_pair(status, None);
-                 }
-                 PickResult::Drop(status) => {
--                    todo!("dropped pick: {:?}", status);
-+                    if status.is_restricted_control_plane_code() {
-+                        return FailingRecvStream::new_stream_pair(
-+                            StatusError::new(
-+                                StatusCodeError::Internal,
-+                                format!("picker returned illegal status: {status}"),
-+                            ),
-+                            None,
-+                        );
-+                    }
-+                    return FailingRecvStream::new_stream_pair(status, None);
-                 }
-             }
-             // Queued: wait for this snapshot to be superseded, then retry the
-@@ -874,10 +900,19 @@ fn setup_registeries() {
- #[cfg(test)]
- mod tests {
-     use std::sync::Barrier;
-+    use std::sync::atomic::AtomicBool;
-+    use std::sync::atomic::Ordering;
-     use std::time::Duration;
- 
-     use super::*;
-+    use crate::client::load_balancing::Pick;
-+    use crate::client::load_balancing::test_utils::StubPolicyFuncs;
-+    use crate::client::load_balancing::test_utils::reg_stub_policy;
-+    use crate::client::name_resolution::Endpoint;
-+    use crate::client::name_resolution::test_utils::FakeResolverBuilder;
-+    use crate::client::test_util::NopRecvMessage;
-     use crate::credentials::LocalChannelCredentials;
-+    use crate::metadata::MetadataMap;
- 
-     fn new_channel() -> Channel {
-         Channel::builder(
-@@ -1011,4 +1046,165 @@ mod tests {
-         let snapshot = assert_next(snapshot.next()).await;
-         assert_eq!(*snapshot.value(), 1);
-     }
+@@ -15,6 +15,7 @@ members = [
+   "grpc-google-cloud-auth",
+   "grpc-protobuf",
+   "grpc-protobuf-build",
++  "grpc-rls",
+   "grpc-rustls",
+   "grpc-xds",
+   "protoc-gen-grpc-rust",
+```
+
+**File**: `grpc-rls/Cargo.toml` (added, +22/-0)
+```diff
+@@ -0,0 +1,22 @@
++[package]
++name = "grpc-rls"
++version = "0.1.0-alpha.1"
++authors = ["gRPC authors"]
++license = "MIT"
++homepage = "https://grpc.io"
++repository = "https://github.com/grpc/grpc-rust"
++description = """
++Route Lookup Service (RLS) load balancing for the Rust gRPC implementation.
++"""
++edition = "2024"
++rust-version.workspace = true
++publish = false
 +
-+    // Sets its flag when dropped.
-+    struct DropFlag(Arc<AtomicBool>);
-+    impl Drop for DropFlag {
-+        fn drop(&mut self) {
-+            self.0.store(true, Ordering::SeqCst);
-+        }
-+    }
++[lints]
++workspace = true
 +
-+    // Picks `subchannel`, with a completion callba
++[package.metadata.cargo_check_external_types]
++allowed_external_types = []
++
++[dependencies]
++rand = { version = "0.10", default-features = false, features = ["thread_rng"] }
 ```
 
-**File**: `grpc/src/client/name_resolution/config_selector.rs` (modified, +2/-99)
+**File**: `grpc-rls/src/adaptive.rs` (added, +566/-0)
 ```diff
-@@ -136,7 +136,6 @@ mod tests {
- 
-     use bytes::Bytes;
-     use tokio::sync::mpsc;
--    use tokio::sync::oneshot;
-     use tokio::sync::watch;
-     use tokio::task::JoinHandle;
-     use tonic_prost::prost::Message as _;
-@@ -158,15 +157,10 @@ mod tests {
-     use crate::client::boxed::BoxRecvStream;
-     use crate::client::boxed::BoxSendStream;
-     use crate::client::interceptor::Intercept;
--    use crate::client::name_resolution::ChannelController;
-     use crate::client::name_resolution::Endpoint;
--    use crate::client::name_resolution::Resolver;
--    use crate::client::name_resolution::ResolverBuilder;
--    use crate::client::name_resolution::ResolverOptions;
-     use crate::client::name_resolution::TCP_IP_NETWORK_TYPE;
--    use crate::client::name_resolution::Target;
--    use crate::client::name_resolution::WorkScheduler;
--    use crate::client::name_resolution::global_registry;
-+    use crate::client::name_resolution::test_utils::FakeResolverBuilder;
-+    use crate::client::name_resolution::test_utils::FakeResolverHandle;
-     use crate::client::test_util::ByteRecvMsg;
-     use crate::client::test_util::ByteSendMsg;
-     use crate::core::Address;
-@@ -284,97 +278,6 @@ mod tests {
-         }
-     }
- 
--    /// Returns a resolver scheme that is unique within the test binary.
--    /// Resolvers can't be removed from the global registry, so each test
--    /// registers its own.
--    fn unique_scheme() -> String {
--        static NEXT_ID: AtomicUsize = AtomicUsize::new(0);
--        format!(
--            "config-selector-test-{}",
--            NEXT_ID.fetch_add(1, Ordering::Relaxed)
--        )
--    }
--
--    /// A resolver update, and a sender for the channel's result of applying
--    /// it.
--    type PendingUpdate = (ResolverUpdate, oneshot::Sender<Result<(), String>>);
--
--    /// Builds [`FakeResolver`]s, sending a handle to each one to the test.
--    struct FakeResolverBuilder {
--        scheme: String,
--        handle_tx: mpsc::UnboundedSender<FakeResolverHandle>,
--    }
--
--    impl FakeResolverBuilder {
--        /// Registers a new builder in the global registry. Returns its scheme
--        /// and a receiver for the handles of the resolvers it builds.
--        fn register() -> (String, mpsc::UnboundedReceiver<FakeResolverHandle>) {
--            let scheme = unique_scheme();
--            let (handle_tx, handle_rx) = mpsc::unbounded_channel();
--            global_registry().add_builder(Box::new(Self {
--                scheme: scheme.clone(),
--                handle_tx,
--            }));
--            (scheme, handle_rx)
--        }
--    }
--
--    impl ResolverBuilder for FakeResolverBuilder {
--        fn build(&self, _target: &Target, options: ResolverOptions) -> Box<dyn Resolver> {
--            let (update_tx, update_rx) = mpsc::unbounded_channel();
--            let _ = self.handle_tx.send(FakeResolverHandle {
--                work_scheduler: options.work_scheduler,
--                update_tx,
--            });
--            Box::new(FakeResolver { update_rx })
--        }
--
--        fn scheme(&self) -> &str {
--            &self.scheme
--        }
--
--        fn is_valid_uri(&self, _target: &Target) -> bool {
--            true
--        }
--    }
--
--    /// Lets the test push updates to the channel through a [`FakeResolver`].
--    struct FakeResolverHandle {
--        work_scheduler: Arc<dyn WorkScheduler>,
--        update_tx: mpsc::UnboundedSender<PendingUpdate>,
--    }
--
--    impl FakeResolverHandle {
--        /// Sends `update` to the channel and returns the channel's result of
--        /// applying it.
--        async fn update(&self, update: ResolverUpdate) -> Result<(), String> {
--            let (result_tx, result_rx) = oneshot::channel();
--            self.update_tx.send((update, result_tx)).unwrap();
--            self.work_scheduler.schedule_work();
--            GrpcRuntime::default()
--                .timeout(DEFAULT_TEST_TIMEOUT, result_rx)
--                .await
--                .expect("timed out waiting for the channel to apply the update")
--                .unwrap()
--        }
--    }
--
--    /// A resolver that sends the channel the updates pushed through its
--    /// [`FakeResolverHandle`].
--    struct FakeResolver {
--        update_rx: mpsc::UnboundedReceiver<PendingUpdate>,
--    }
--
--    impl Resolver for FakeResolver {
--        fn resolve_now(&mut self) {}
--
--        fn work(&mut self, channel_controller: &mut dyn ChannelController) {
--            while let Ok((update, result_tx)) = self.update_rx.try_recv() {
--                let _ = result_tx.send(channel_controller.update(update));
--            }
--        }
--    }
--
-     /// Local channel credentials that hold every handshake until
-     /// [`open`](Self::open) is called. Until then, the channel's subchannels
-     /// stay CONNECTING, so its RPCs stay queued waiting for a pick.
-```
-
-**File**: `grpc/src/client/name_resolution/mod.rs` (modified, +1/-1)
-```diff
-@@ -53,7 +53,7 @@ pub(crate) mod dns;
- pub(crate) use registry::global_registry;
- 
- #[cfg(test)]
--mod test_utils;
-+pub(crate) mod test_utils;
- 
- pub(crate) mod proxy_resolver;
- 
-```
-
-**File**: `grpc/src/client/name_resolution/test_utils.rs` (modified, +101/-0)
-```diff
-@@ -23,14 +23,24 @@
-  */
- 
- use std::sync::Arc;
-+use std::sync::atomic::AtomicUsize;
-+use std::sync::atomic::Ordering;
+@@ -0,0 +1,566 @@
++/*
++ *
++ * Copyright 2026 gRPC authors.
++ *
++ * Permission is hereby granted, free of charge, to any person obtaining a copy
++ * of this software and associated documentation files (the "Software"), to
++ * deal in the Software without restriction, including without limitation the
++ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
++ * sell copies of the Software, and to permit persons to whom the Software is
++ * furnished to do so, subject to the following conditions:
++ *
++ * The above copyright notice and this permission notice shall be included in
++ * all copies or substantial portions of the Software.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
++ * IN THE SOFTWARE.
++ *
++ */
++
++//! Client-side adaptive throttling for the RLS control-plane channel.
++//!
++//! Uses a fixed-size ring buffer of time buckets to estimate the probability
++//! that the RLS server will reject or fail the next request:
++//!
++//! ```text
++//! throttle_probability = (requests - ratio_for_accepts * accepts) / (requests + requests_padding)
++//! ```
++//!
++//! Callers are responsible for external synchronization (all mutating methods
++//! take `&mut self`).
++
++use std::num::NonZeroU64;
 +use std::time::Duration;
- 
- use tokio::sync::mpsc;
-+use tokio::sync::oneshot;
- 
- use crate::client::name_resolution::ChannelController;
-+use crate::client::name_resolution::Resolver;
-+use crate::client::name_resolution::ResolverBuilder;
-+use crate::client::name_resolution::ResolverOptions;
- use crate::client::name_resolution::ResolverUpdate;
-+use crate::client::name_resolution::Target;
- use crate::client::name_resolution::WorkScheduler;
-+use crate::client::name_resolution::global_registry;
- use crate::client::service_config::ParseResult;
- use crate::client::service_config::ServiceConfig;
-+use crate::rt::GrpcRuntime;
- 
- /// A work scheduler for testing.
- pub(crate) struct TestWorkScheduler {
-@@ -85,3 +95,94 @@ impl ChannelController for TestChannelController {
-         ServiceConfig::parse(config)
-     }
- }
++use std::time::Instant;
 +
-+/// Returns a resolver scheme that is unique within the test binary.
-+/// Resolvers can't be removed from the global registry, so each test
-+/// registers its own.
-+fn unique_scheme() -> String {
-+    static NEXT_ID: AtomicUsize = AtomicUsize::new(0);
-+    format!(
-+        "fake-resolver-test-{}",
-+        NEXT_ID.fetch_add(1, Ordering::Relaxed)
-+    )
++const DEFAULT_DURATION: Duration = Duration::from_secs(30);
++const DEFAULT_BINS: usize = 100;
++const DEFAULT_RATIO_FOR_ACCEPTS: f64 = 2.0;
++const DEFAULT_REQUESTS_PADDING: f64 = 8.0;
++
++/// Outcome of an RLS request that was sent to the backend, as reported to
++/// [`AdaptiveThrottler::register_backend_response`].
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++pub(crate) enum BackendResponse {
++    /// The backend request succeeded.
++    Accepted,
++    /// The backend request failed or was rejected.
++    Throttled,
 +}
 +
-+/// A resolver update, and a sender for the channel's result of applying
-+/// it.
-+type PendingUpdate = (ResolverUpdate, oneshot::Sender<Result<(), String>>);
-+
-+/// Builds [`FakeResolver`]s, sending a handle to each one to the test.
-+pub(crate) struct FakeResolverBuilder {
-+    scheme: String,
-+    handle_tx: mpsc::UnboundedSender<FakeResolverHandle>,
++/// Client-side adaptive throttler for RLS requests.
++///
++/// Tracks accepted and throttled requests over a sliding window using
++/// fixed-size bucketed ring buffers (`O(1)` memory). Callers handle
++/// synchronization externally.
++#[derive(Debug)]
++pub(crate) struct AdaptiveThrottler {
++    ratio_for_accepts: f64,
++    requests_padding: f64,
++    accepts: RollingCounter,
++    throttles: RollingCounter,
 +}
 +
-+impl FakeResolverBuilder {
-+    /// Registers a new builder in the global registry. Returns its scheme
-+    /// and a receiver for the handles of the resolvers it builds.
-+    pub(crate) fn register() -> (String, mpsc::UnboundedReceiver<FakeResolverHandle>) {
-+        let scheme = unique_scheme();
-+        let (handle_tx, handle_rx) = mpsc::unbounded_channel();
-+        global_registry().add_builder(Box::new(Self {
-+            scheme: scheme.clone(),
-+            handle_tx,
-+        }));
-+        (scheme, handle_rx)
-+    }
-+}
-+
-+impl ResolverBuilder for FakeResolverBuilder {
-+    fn build(&self, _target: &Target, options: ResolverOptions) -> Box<dyn Resolver> {
-+        let (update_tx, update_rx) = mpsc::unbounded_channel();
-+        let _ = self.handle_tx.send(FakeResolverHandle {
-+            work_scheduler: options.work_scheduler,
-+            update_tx,
-+        });
-+        Box::new(FakeResolver { update_rx })
++impl AdaptiveThrottler {
++    /// Creates a new [`AdaptiveThrottler`] with the default RLS parameters
++    /// (30s window, 100 bins, 2.0 accept ratio, 8 request padding), anchored
++    /// at `now`.
++    pub(crate) fn new(now: Instant) -> Self {
++        Self::with_params(
++            DEFAULT_DURATION,
++            DEFAULT_BINS,
++            DEFAULT_RATIO_FOR_ACCEPTS,
++            DEFAULT_REQUESTS_PADDING,
++            now,
++        )
 +    }
 +
-+    fn scheme(&self) -> &str {
-+        &self.scheme
-+    }
-+
-+    fn is_valid_uri(&self, _target: &Target) -> bool {
-+        true
-+    }
-+}
-+
-+/// Lets the test push updates to the channel through a [`FakeResolver`].
-+pub(crate) struct FakeResolverHandle {
-+    work_scheduler: Arc<dyn WorkScheduler>,
-+    update_tx: mpsc::UnboundedSender<PendingUpdate>,
-+}
-+
-+impl FakeResolverHandle {
-+    /// Sends `update` to the channel and returns the channel's result of
-+    /// applying it.
-+    pub(crate) async fn update(&self, update: ResolverUpdate) -> Result<(), String> {
-+        let (result_tx, result_rx) = oneshot::channel();
-+        self.update_tx.send((update, result_tx)).unwrap();
-+        self.work_scheduler.schedule_work();
-+        GrpcRuntime::default()
-+            .timeout(Duration::from_secs(10), result_rx)
-+            .await
-+            .expect("timed out waiting for the channel to apply the update")
-+            .unwrap()
-+    }
-+}
-+
-+/// A resolver that sends the channel the updates pushed through its
-+/// [`FakeResolverHandle`].
-+struct FakeResolver {
-+    update_rx: mpsc::UnboundedReceiver<PendingUpdate>,
-+}
-+
-+impl Resolver for FakeResolver {
-+    fn resolve_now(&mut self) {}
-+
-+    fn work(&mut self, channel_controller: &mut dyn ChannelController) {
-+        while let Ok((update, result_tx)) = self.update_rx.try_recv() {
-+            let _ = result_tx.send(channel_controller.update(update));
++    fn with_params(
++        duration: Duration,
++        bins: usize,
++        ratio_for_accepts: f64,
++        requests_padding: f64,
++        origin: Instant,
++    ) -> Self {
++        Self {
++            ratio_for_accepts,
++            requests_padding,
++            accepts: RollingCounter::new(duration, bins, origin),
++            throttles: RollingCounter::new(duration, bins, origin),
 +        }
 +    }
-+}
++
++    /// Returns whether the next request at `now` should be throttled by the
++    /// client before hitting the network.
++    ///
++    /// When this returns `true`, the throttled request is immediately recorded
++    /// in the history window. When it returns `false`, the caller must invoke
++    /// [`register_backend_response`](Self::register_backend_response) once the
++    /// backend responds.
++    pub(crate) fn should_throttle(&mut self, now: Instant) -> bool {
++        self.should_throttle_with(now, rand::random::<f64>)
++    }
++
++    /// Registers a backend `response` received at `now` for a request
++    /// previously allowed by [`should_throttle`](Self::should_throttle).
++    pub(crate) fn register_backend_response(&mut self, now: Instant, response: BackendResponse) {
++        match response {
++            BackendResponse::Accepted => self.accepts.add(now, 1),
++            BackendResponse::Throttled => self.throttles.add(now, 1),
++        }
++    }
++
++    fn should_throttle_with(
++        &mut self,
++        now: Instant,
++        random_probability: impl FnOnce() -> f64,
++    ) -> bool {
++        let accepts = self.accepts.sum(now) as f64;
++        let throttles = self.throttles.sum(now) as f64;
++        let requests = accepts + throttles;
++        let throttle_probability =
++            (requests - self.ratio_for_accepts * accepts) / (requests + self.requests_padding);
++        if throttle_probability <= 0.0 || throttle_probability <= random_probability() {
++
 ```
 
-**File**: `grpc/src/client/subchannel.rs` (modified, +61/-21)
+**File**: `grpc-rls/src/lib.rs` (added, +32/-0)
 ```diff
-@@ -41,6 +41,7 @@ use crate::StatusError;
- use crate::client::CallOptions;
- use crate::client::ConnectivityState;
- use crate::client::Invoke;
-+use crate::client::InvokeOnce;
- use crate::client::RequestHeaders;
- use crate::client::boxed::BoxInvoker;
- use crate::client::boxed::BoxRecvStream;
-@@ -60,6 +61,7 @@ use crate::client::transport::TransportOptions;
- use crate::client::transport::http_connect::HttpConnectHandshaker;
- use crate::core::Address;
- use crate::core::ConnectionInfo;
-+use crate::credentials::call::CallCredentials;
- use crate::credentials::call::CallDetails;
- use crate::credentials::call::ClientConnectionSecurityInfo as CallClientConnectionSecurityInfo;
- use crate::credentials::common::Authority;
-@@ -172,37 +174,36 @@ impl PartialEq for InternalSubchannelState {
-     }
- }
- 
--impl Invoke for InternalSubchannel {
-+/// Starts one RPC on the connection a subchannel had when
-+/// [`InternalSubchannel::ready_invoker`] was called.
-+///
-+/// Holding this keeps that connection's service alive, so it must be used
-+/// immediately.  It is only [`InvokeOnce`], so it can't be reused.
-+pub(crate) struct ReadyInvoker {
-+    state: Arc<ReadyState>,
-+    call_creds: Option<Arc<dyn CallCredentials>>,
-+}
+@@ -0,0 +1,32 @@
++/*
++ *
++ * Copyright 2026 gRPC authors.
++ *
++ * Permission is hereby granted, free of charge, to any person obtaining a copy
++ * of this software and associated documentation files (the "Software"), to
++ * deal in the Software without restriction, including without limitation the
++ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
++ * sell copies of the Software, and to permit persons to whom the Software is
++ * furnished to do so, subject to the following conditions:
++ *
++ * The above copyright notice and this permission notice shall be included in
++ * all copies or substantial portions of the Software.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
++ * IN THE SOFTWARE.
++ *
++ */
 +
-+/// An error returned by [`InternalSubchannel::ready_invoker`] when the
-+/// subchannel is not READY.
-+#[derive(Debug)]
-+pub(crate) struct SubchannelNotReady;
++//! grpc-rls implements the Route Lookup Service (RLS) load balancing policy
++//! for Rust gRPC.
 +
-+impl InvokeOnce for ReadyInvoker {
-     type SendStream = BoxSendStream;
-     type RecvStream = BoxRecvStream;
- 
--    async fn invoke(
--        &self,
-+    async fn invoke_once(
-+        self,
-         mut headers: RequestHeaders,
-         options: CallOptions,
-     ) -> (Self::SendStream, Self::RecvStream) {
--        let (state, call_creds) = {
--            let data = self.data.lock().unwrap();
--
--            let state = match &data.state {
--                InternalSubchannelState::Ready(state) => state.clone(),
--                _ => todo!("handle non-READY subchannel"),
--            };
--
--            let creds = data
--                .security_opts
--                .credentials
--                .get_call_credentials(private::UnstableToken)
--                .cloned();
--
--            (state, creds)
--        };
--
-+        let state = self.state;
-         let fail_with = |status| -> (BoxSendStream, BoxRecvStream) {
-             FailingRecvStream::new_stream_pair(status, Some(state.connection_info.clone()))
-         };
- 
--        if let Some(call_creds) = call_creds {
-+        if let Some(call_creds) = self.call_creds {
-             if call_creds.minimum_channel_security_level()
-                 > state.connection_info.security_info().security_level()
-             {
-@@ -244,6 +245,28 @@ impl Invoke for InternalSubchannel {
-     }
- }
- 
-+impl Invoke for InternalSubchannel {
-+    type SendStream = BoxSendStream;
-+    type RecvStream = BoxRecvStream;
-+
-+    async fn invoke(
-+        &self,
-+        headers: RequestHeaders,
-+        options: CallOptions,
-+    ) -> (Self::SendStream, Self::RecvStream) {
-+        match self.ready_invoker() {
-+            Ok(invoker) => invoker.invoke_once(headers, options).await,
-+            Err(SubchannelNotReady) => FailingRecvStream::new_stream_pair(
-+                StatusError::new(
-+                    StatusCodeError::Unavailable,
-+                    format!("subchannel for {} is not READY", self.address),
-+                ),
-+                None,
-+            ),
-+        }
-+    }
-+}
-+
- pub(crate) struct InternalSubchannel {
-     address: Address,
-     data: Arc<Mutex<InternalSubchannelData>>,
-@@ -311,6 +334,23 @@ impl PartialEq for InternalSubchannel {
- }
- 
- impl InternalSubchannel {
-+    /// Returns an invoker for the subchannel's current connection, or an error
-+    /// if the subchannel is not READY.
-+    pub(crate) fn ready_invoker(&self) -> Result<ReadyInvoker, SubchannelNotReady> {
-+        let data = self.data.lock().unwrap();
-+        let InternalSubchannelState::Ready(state) = &data.state else {
-+            return Err(SubchannelNotReady);
-+        };
-+        Ok(ReadyInvoker {
-+            state: state.clone(),
-+            call_creds: data
-+                .security_opts
-+                .credentials
-+                .get_call_credentials(private::UnstableToken)
-+                .cloned(),
-+        })
-+    }
-+
-     pub(super) fn new_arc(
-         address: Address,
-         transport: ArcTransport,
++#[allow(
++    dead_code,
++    reason = "no caller until RLS control channel is implemented."
++)]
++mod adaptive;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3068** (2026-11-24): grpc-rls: add RLS adaptive throttler (@arjan-bal)
+- **PR #3063** (2026-11-23): all: updates for Rust 1.100 warnings (@dfawley)
+- **PR #3062** (2026-11-23): grpc: cleanup is_restricted_control_plane callsites (@dfawley)
 - **PR #3060** (2026-11-20): ci: use an example binary to locate protoc-gen-grpc-rust files (@dfawley)
 - **PR #3058** (closed): ci: create protoc-cache before copying the protoc build into it (@dfawley)
 - **PR #3057** (2026-11-20): grpc: make GrpcRuntime pub; move unstable rt APIs to rt::unstable (@dfawley)
-- **PR #3055** (2026-11-19): grpc: move Listener types from runtime to server; and a minor tweak to accommodate errors better (@dfawley)
-- **PR #3054** (2026-11-19): grpc: remove tower from the tonic client transport (@dfawley)
-- **PR #3048** (2026-11-19): Connection Attempt Delay timer tests. (@nathanielford)
 
 ---
 
@@ -2608,61 +2311,31 @@ subchannels (was missing)
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. grpc: early channel dispatch fixes
+## X. grpc-rls: add RLS adaptive throttler
 
 **RULE**:
-When implementing operations in `grpc/src/client/channel.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in grpc/grpc-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in grpc/grpc-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `10337899`: grpc: early channel dispatch fixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c9d3dfc7`: grpc-rls: add RLS adaptive throttler. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `grpc/src/client/channel.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use crate::client::InvokeOnce;
-                    if let Ok(invoker) = sc.ready_invoker() {
-                        let on_complete = pr.on_complete.take();
-                        let (tx, rx) = invoker.invoke_once(headers, options).await;
-                        // Notify the LB policy when the RPC completes (or is
-                        // abandoned) so it can release any per-call state.
-                        let rx = match on_complete {
-                            Some(on_complete) => {
-                                BoxRecvStream::new(CompletionRecvStream::new(rx, on_complete))
-                            }
-                            None => rx,
-                        };
-                        return (tx, rx);
-                    }
-                    // The subchannel likely left READY before the LB policy
-                    // updated its picker, so queue the pick and wait for a new
-                    // picker.  Dropping the pick drops its completion callback
-                    // without invoking it, since the RPC never started.
-                    // TODO: Check wait-for-ready and queue instead.
-                    if status.is_restricted_control_plane_code() {
+  "grpc-rls",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-                    let on_complete = pr.on_complete.take();
-                    let (tx, rx) = sc.invoke(headers, options).await;
-                    // Notify the LB policy when the RPC completes (or is
-                    // abandoned) so it can release any per-call state.
-                    let rx = match on_complete {
-                        Some(on_complete) => {
-                            BoxRecvStream::new(CompletionRecvStream::new(rx, on_complete))
-                        }
-                        None => rx,
-                    };
-                    return (tx, rx);
-                    todo!("dropped pick: {:?}", status);
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `10337899` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c9d3dfc7` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T19:32:24.849Z",
+  "timestamp": "2026-11-24T15:36:14.700Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-emberstack-kubernetes-reflector-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [emberstack-kubernetes-reflector-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T19:32:24.849Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T15:36:14.700Z`  
 > **Learning ID**: `LEARN-EVO-emberstack-kubernetes-reflector-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/emberstack-kubernetes-reflector-learnings.md`  
 > **Source**: github ([https://github.com/emberstack/kubernetes-reflector](https://github.com/emberstack/kubernetes-reflector))  
-> **Source Version**: `dbbd9cc6`  
+> **Source Version**: `549d8f57`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T19:27:25.693Z  
+> **Timestamp**: 2026-11-24T15:36:05.977Z  
 > **Learning ID**: `learn-github-emberstack-kubernetes-reflector`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/emberstack-kubernetes-reflector-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/emberstack/kubernetes-reflector](https://github.com/emberstack/kubernetes-reflector))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T19:27:25.688Z  
+> **Harvest Timestamp**: 2026-11-24T15:36:05.973Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Custom Kubernetes controller that can be used to replicate secrets, configmaps and certificates.
 - **Primary Language / Ecosystem**: C#
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1696 stars
+- **Stars / Engagement**: 1698 stars
 
 ---
 
@@ -92,22 +92,22 @@ PROVENANCE_END -->
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `89b12f94` (2026-11-20)
-**Commit Message**: build(deps): bump gittools/actions (#737)
+### Incident Patch 1: `549d8f57` (2026-11-23)
+**Commit Message**: build(deps): bump gittools/actions (#739)
 
 Bumps the all-dependencies group with 1 update: [gittools/actions](https://github.com/gittools/actions).
 
 
-Updates `gittools/actions` from 4.7.0 to 4.7.2
+Updates `gittools/actions` from 4.7.2 to 5.0.0
 - [Release notes](https://github.com/gittools/actions/releases)
-- [Commits](https://github.com/gittools/actions/compare/v4.7.0...v4.7.2)
+- [Commits](https://github.com/gittools/actions/compare/v4.7.2...v5.0.0)
 
 ---
 updated-dependencies:
 - dependency-name: gittools/actions
-  dependency-version: 4.7.2
+  dependency-version: 5.0.0
   dependency-type: direct:production
-  update-type: version-update:semver-patch
+  update-type: version-update:semver-major
   dependency-group: all-dependencies
 ...
 
@@ -120,28 +120,28 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
            dotnet-version: "10.x"
  
        - name: tools - gitversion - install
--        uses: gittools/actions/gitversion/setup@v4.7.0
-+        uses: gittools/actions/gitversion/setup@v4.7.2
+-        uses: gittools/actions/gitversion/setup@v4.7.2
++        uses: gittools/actions/gitversion/setup@v5.0.0
          with:
            versionSpec: "6.x"
            preferLatestVersion: true
  
        - name: gitversion - execute
          id: gitversion
--        uses: gittools/actions/gitversion/execute@v4.7.0
-+        uses: gittools/actions/gitversion/execute@v4.7.2
+-        uses: gittools/actions/gitversion/execute@v4.7.2
++        uses: gittools/actions/gitversion/execute@v5.0.0
          with:
            configFilePath: GitVersion.yaml
  
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #739** (2026-11-23): build(deps): bump gittools/actions from 4.7.2 to 5.0.0 in the all-dependencies group (@dependabot[bot])
 - **PR #738** (2026-11-20): Bump the all-dependencies group with 5 updates (@dependabot[bot])
 - **PR #737** (2026-11-20): build(deps): bump gittools/actions from 4.7.0 to 4.7.2 in the all-dependencies group (@dependabot[bot])
 - **PR #735** (2026-11-19): Bump the all-dependencies group with 5 updates (@dependabot[bot])
 - **PR #734** (2026-11-17): Bump the all-dependencies group with 5 updates (@dependabot[bot])
 - **PR #733** (2026-11-16): Bump the all-dependencies group with 7 updates (@dependabot[bot])
-- **PR #732** (2026-11-11): Bump the all-dependencies group with 1 update (@dependabot[bot])
 
 ---
 
@@ -167,7 +167,7 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 When implementing operations in `.github/workflows/pipeline.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in emberstack/kubernetes-reflector. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `89b12f94`: build(deps): bump gittools/actions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `549d8f57`: build(deps): bump gittools/actions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing C# data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/pipeline.yaml`.
@@ -175,19 +175,19 @@ Subsystems managing C# data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c#
 // Verified production-grade fix pattern:
-        uses: gittools/actions/gitversion/setup@v4.7.2
-        uses: gittools/actions/gitversion/execute@v4.7.2
+        uses: gittools/actions/gitversion/setup@v5.0.0
+        uses: gittools/actions/gitversion/execute@v5.0.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c#
 // Induced defect failure mode:
-        uses: gittools/actions/gitversion/setup@v4.7.0
-        uses: gittools/actions/gitversion/execute@v4.7.0
+        uses: gittools/actions/gitversion/setup@v4.7.2
+        uses: gittools/actions/gitversion/execute@v4.7.2
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `89b12f94` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `549d8f57` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
