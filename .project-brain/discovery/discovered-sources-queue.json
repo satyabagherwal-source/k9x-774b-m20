@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T14:06:33.833Z",
+  "updated_at": "2026-11-24T14:15:47.242Z",
   "stats": {
-    "total_discovered": 8650,
-    "approved_pending_harvest": 8196,
+    "total_discovered": 8656,
+    "approved_pending_harvest": 8202,
     "harvested_count": 0,
     "rejected_count": 454,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8192,
+      "COMMUNITY_AND_EXPERT": 8198,
       "OFFICIAL_DOCUMENTATION": 269,
       "STANDARDS_AND_SPECIFICATIONS": 125,
       "ENGINEERING_BLOGS": 7,
@@ -187145,6 +187145,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actions-actions-runner-controller-learnings.md",
         "fileName": "actions-actions-runner-controller-learnings.md"
+      }
+    },
+    "SRC-53ECBD69512B": {
+      "id": "SRC-53ECBD69512B",
+      "url": "https://github.com/nutanix-cloud-native/nkp-partner-catalog/pull/97",
+      "title": "https://github.com/nutanix-cloud-native/nkp-partner-catalog/pull/97",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T14:15:45.842Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-1C1949212170": {
+      "id": "SRC-1C1949212170",
+      "url": "https://github.com/nginx/kubernetes-ingress/actions/runs/45210658648",
+      "title": "https://github.com/nginx/kubernetes-ingress/actions/runs/45210658648",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T14:15:45.904Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-8BE3340585C1": {
+      "id": "SRC-8BE3340585C1",
+      "url": "https://github.com/nginx/kubernetes-ingress/blob/main/CONTRIBUTING.md",
+      "title": "https://github.com/nginx/kubernetes-ingress/blob/main/CONTRIBUTING.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T14:15:45.969Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-E6E1333E3C65": {
+      "id": "SRC-E6E1333E3C65",
+      "url": "https://github.com/arangodb/arangodb/pull/23719",
+      "title": "https://github.com/arangodb/arangodb/pull/23719",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T14:15:47.120Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
+        "fileName": "arangodb-arangodb-learnings.md"
+      }
+    },
+    "SRC-6FCB6AFF2B98": {
+      "id": "SRC-6FCB6AFF2B98",
+      "url": "https://arangodb.atlassian.net/browse/BTS-2480",
+      "title": "https://arangodb.atlassian.net/browse/BTS-2480",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T14:15:47.186Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
+        "fileName": "arangodb-arangodb-learnings.md"
+      }
+    },
+    "SRC-E37D566C3906": {
+      "id": "SRC-E37D566C3906",
+      "url": "https://github.com/arangodb/arangodb/pull/23746",
+      "title": "https://github.com/arangodb/arangodb/pull/23746",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T14:15:47.242Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
+        "fileName": "arangodb-arangodb-learnings.md"
       }
     }
   }

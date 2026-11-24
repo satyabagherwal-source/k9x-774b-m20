@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-O7HR",
-    "timestamp": "2026-11-22T19:09:44.559Z",
-    "repository": "sxyazi/yazi",
-    "learningId": "learn-github-sxyazi-yazi",
-    "contentHash": "a0607ecbbe04356a940683ebd36818e0485257fe1d28df995344eb06fc6bca9e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-ODK0",
-    "timestamp": "2026-11-22T19:09:52.416Z",
-    "repository": "pingcap/tidb",
-    "learningId": "learn-github-pingcap-tidb",
-    "contentHash": "c47b4a2bae09b05efb93ad44d0421844c5223fa2a60b92b72e34ca6da2154a58",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-OJED",
     "timestamp": "2026-11-22T19:09:59.989Z",
     "repository": "Bitterbot-AI/bitterbot-desktop",
@@ -7490,6 +7460,36 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "c2f6e946da405787adac53d1b651ac8fb254c8776597205355a37794340cd922",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-12Q5",
+    "timestamp": "2026-11-24T14:15:09.581Z",
+    "repository": "nginx/kubernetes-ingress",
+    "learningId": "learn-github-nginx-kubernetes-ingress",
+    "contentHash": "3771887a148df05cb5d824d7d62925d07bd68821efa0115a6b9ff803be138b64",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-161T",
+    "timestamp": "2026-11-24T14:15:13.889Z",
+    "repository": "arangodb/arangodb",
+    "learningId": "learn-github-arangodb-arangodb",
+    "contentHash": "37d0e49506f289e1d8ffdebe9e7b0424ec813d8f041d98034ff7459e0f32b0cf",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

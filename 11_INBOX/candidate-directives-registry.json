@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T14:06:35.093Z",
+  "last_updated": "2026-11-24T14:15:48.427Z",
   "directives": [
     {
       "id": "CD-001",
@@ -5336,11 +5336,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-QH04",
+      "id": "CD-1WP6",
       "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "source_repo": "zoontek-react-native-permissions-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-QH04-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-1WP6-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-24",
@@ -55042,6 +55042,57 @@
       "source_repo": "apple-foundationdb",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-967357-count-distinct-unhealthy-addresses-for-r.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-1V3A",
+      "directive_title": "Add restore_configmap fixture to multiple test classes",
+      "source_repo": "nginx-kubernetes-ingress-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-1V3A-add-restore_configmap-fixture-to-multiple-test-classes.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-168G",
+      "directive_title": "fix leaks in zip file handling",
+      "source_repo": "arangodb/arangodb",
+      "source_commit": "3f2986a0",
+      "staged_file": "11_INBOX/candidate-directives/CD-168G-fix-leaks-in-zip-file-handling.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-055A73",
+      "directive_title": "Add restore_configmap fixture to multiple test classes",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nginx-kubernetes-ingress",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-055A73-add-restore-configmap-fixture-to-multipl.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-1VZQ",
+      "directive_title": "BTS-2543: fix leaks in zip file handling",
+      "source_repo": "arangodb-arangodb-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-1VZQ-bts-2543-fix-leaks-in-zip-file-handling.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-E60B88",
+      "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-permissions",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E60B88-android-skip-explicit-kotlin-plugin-when.md",
       "staged_date": "2026-11-24"
     }
   ]

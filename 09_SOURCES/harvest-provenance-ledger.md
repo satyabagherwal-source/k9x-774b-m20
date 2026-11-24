@@ -12726,3 +12726,6 @@ Every entry in this ledger must capture:
 | `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `58f80b14` | Multi-dimensional audit evidence | 2026-11-24T14:05:49.364Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `2bf1c0b8` | Multi-dimensional audit evidence | 2026-11-24T14:05:52.333Z |
 | `learn-dom-d-5e40c2c7` | `project://actions-actions-runner-controller` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actions-actions-runner-controller-learnings.md` | 2026-11-24T14:06:33.298Z |
+| `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `68c058a2` | Multi-dimensional audit evidence | 2026-11-24T14:15:09.586Z |
+| `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `3f2986a0` | Multi-dimensional audit evidence | 2026-11-24T14:15:13.893Z |
+| `learn-dom-k-3aee5d3a` | `project://nginx-kubernetes-ingress` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md` | 2026-11-24T14:15:45.715Z |

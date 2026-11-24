@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T14:05:52.353Z",
+  "last_updated": "2026-11-24T14:15:13.910Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7641,14 +7641,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-arangodb-arangodb",
-      "content_hash": "a713a1645a4bcf8fc64355fa2827cc95c0cb1fdc944d492ea0b889b37fc4c3ee",
-      "verified_at": "2026-11-23T17:46:27.449Z",
+      "content_hash": "37d0e49506f289e1d8ffdebe9e7b0424ec813d8f041d98034ff7459e0f32b0cf",
+      "verified_at": "2026-11-24T14:15:13.909Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T17:46:27.449Z"
+      "last_updated": "2026-11-24T14:15:13.909Z"
     },
     "chakra-ui/ark": {
       "repository": "chakra-ui/ark",
@@ -10056,14 +10056,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nginx-kubernetes-ingress",
-      "content_hash": "74ba0eff437774a91dba7e57772d2447c5fc6c277097903bab6a1692cf2f6886",
-      "verified_at": "2026-11-23T18:40:53.976Z",
+      "content_hash": "3771887a148df05cb5d824d7d62925d07bd68821efa0115a6b9ff803be138b64",
+      "verified_at": "2026-11-24T14:15:09.602Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T18:40:53.976Z"
+      "last_updated": "2026-11-24T14:15:09.602Z"
     },
     "milvus-io/milvus": {
       "repository": "milvus-io/milvus",

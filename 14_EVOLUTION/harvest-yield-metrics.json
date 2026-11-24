@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T14:05:52.340Z",
-  "total_cycles_completed": 12063,
-  "total_learnings_persisted": 12063,
-  "total_rules_promoted": 11131,
+  "last_updated": "2026-11-24T14:15:13.899Z",
+  "total_cycles_completed": 12065,
+  "total_learnings_persisted": 12065,
+  "total_rules_promoted": 11133,
   "history": [
-    {
-      "timestamp": "2026-11-23T21:23:13.140Z",
-      "repository": "moby/buildkit",
-      "learningId": "learn-github-moby-buildkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T21:31:18.543Z",
-      "repository": "autotrust/AutoTrust-Decider-Pro-35B",
-      "learningId": "learn-huggingface-autotrust-jev-35b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T21:31:35.852Z",
       "repository": "tursodatabase/turso",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-24T14:05:52.340Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T14:15:09.592Z",
+      "repository": "nginx/kubernetes-ingress",
+      "learningId": "learn-github-nginx-kubernetes-ingress",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T14:15:13.899Z",
+      "repository": "arangodb/arangodb",
+      "learningId": "learn-github-arangodb-arangodb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

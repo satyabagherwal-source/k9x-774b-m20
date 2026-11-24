@@ -5013,10 +5013,10 @@
     "repository": "arangodb/arangodb",
     "platform": "github",
     "sourceUrl": "https://github.com/arangodb/arangodb",
-    "sourceVersion": "0da7627b",
+    "sourceVersion": "3f2986a0",
     "license": "NOASSERTION",
-    "contentHash": "a713a1645a4bcf8fc64355fa2827cc95c0cb1fdc944d492ea0b889b37fc4c3ee",
-    "lastHarvestedAt": "2026-11-23T17:46:27.441Z",
+    "contentHash": "37d0e49506f289e1d8ffdebe9e7b0424ec813d8f041d98034ff7459e0f32b0cf",
+    "lastHarvestedAt": "2026-11-24T14:15:13.893Z",
     "learningId": "learn-github-arangodb-arangodb"
   },
   "chakra-ui-ark": {
@@ -6663,10 +6663,10 @@
     "repository": "nginx/kubernetes-ingress",
     "platform": "github",
     "sourceUrl": "https://github.com/nginx/kubernetes-ingress",
-    "sourceVersion": "fad2fe84",
+    "sourceVersion": "68c058a2",
     "license": "Apache-2.0",
-    "contentHash": "74ba0eff437774a91dba7e57772d2447c5fc6c277097903bab6a1692cf2f6886",
-    "lastHarvestedAt": "2026-11-23T18:40:53.968Z",
+    "contentHash": "3771887a148df05cb5d824d7d62925d07bd68821efa0115a6b9ff803be138b64",
+    "lastHarvestedAt": "2026-11-24T14:15:09.586Z",
     "learningId": "learn-github-nginx-kubernetes-ingress"
   },
   "milvus-io-milvus": {

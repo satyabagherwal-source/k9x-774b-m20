@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source**: github ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
-> **Source Version**: `0da7627b`  
+> **Source Version**: `3f2986a0`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T17:46:26.384Z  
+> **Timestamp**: 2026-11-24T14:15:12.801Z  
 > **Learning ID**: `learn-github-arangodb-arangodb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T17:46:26.379Z  
+> **Harvest Timestamp**: 2026-11-24T14:15:12.796Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🥑 ArangoDB is a native multi-model database with flexible data models for documents, graphs, and key-values. Build high performance applications using a convenient SQL-like query language or JavaScript extensions.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 14303 stars
+- **Stars / Engagement**: 14302 stars
 
 ---
 
@@ -1641,11 +1641,11 @@ U_INTERNAL double  U_EXPORT2 uprv_ceil(double d);
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #23730** (2026-11-23): **[3.12][COR-1295] Fix use-after-move issues**
-  *Symptoms*: ### Scope & Purpose  - [x] :hankey: Bugfix 
+- **Issue #23751** (2026-11-24): **Bugfix/backport 3.12 bts 2480 unload index on collection open failures**
+  *Symptoms*: ### Scope & Purpose  This is a backport PR for the fix in https://github.com/arangodb/arangodb/pull/23719  - [X] :hankey: Bugfix - [ ] :pizza: New feature - [ ] :fire: Performance improvement - [ ] :hammer: Refactoring/simplification  ### Checklist  - [ ] Tests   - [ ] **Regression tests**   - [ ] C++ **Unit tests**   - [ ] **integration tests**   - [ ] **resilience tests** - [X] :book: CHANGELOG entry made - [ ] :books: documentation written (release notes, API changes, ...) - [ ] Backports   - [ ] Backport for 3.12.0: *(Please link PR)*   - [ ] Backport for 3.11: *(Please link PR)*   - [ ] Backport for 3.10: *(Please link PR)*  #### Related Information  *(Please reference tickets / specification / other PRs etc)*  - [ ] Docs PR:  - [ ] Enterprise PR: - [X] GitHub issue / Jira ticket: https://arangodb.atlassian.net/browse/BTS-2480 - [ ] Design document:  
 
-- **Issue #23721** (2026-11-23): **QA-826: add support for bucketizing testsuite**
-  *Symptoms*: backport of:  https://github.com/arangodb/arangodb/pull/23683
+- **Issue #23747** (2026-11-24): **Sync stale node_modules/.package-lock.json and exclude it from packages**
+  *Symptoms*: ### Scope & Purpose  `js/node/node_modules/.package-lock.json` (npm's hidden lockfile) was not updated by the earlier node module bumps and still described the old tree:  - `brace-expansion-5.0.9`, `fast-uri-3.1.7`, `js-yaml-4.3.1`, `minimatch-10.2.5` and `qs-6.16.0`, while the installed modules are 5.0.12, 3.1.9, 4.3.2, 11.0.5 and 6.16.1; - `joi-14.3.1`, `joi-to-json-schema` and joi's nested `hoek`, `isemail`, `punycode` and `topo`, which have been removed; - no entry for `@isaacs/nonrecursive-glob-match-1.1.0`, which `minimatch-11` depends on.  The file was installed into packages, so scanners reported CVEs that are already fixed, and the `joi` ones for a module that is no longer shipped.  - The hidden lockfile is regenerated from `package-lock.json`, so it matches the installed tree. - `cmake/InstallArangoDBJSClient.cmake`: `.package-lock.json` is excluded from installation. It is npm metadata only, and the shipped modules carry their own `package.json`.  No modules change, so there is no CHANGELOG entry.  - [x] :hankey: Bugfix  ### Checklist  - [x] Tests   - [x] **integration tests** - [x] Backports   - [x] Backport for 3.12 (partial): https://github.com/arangodb/arangodb/pull/23746
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1662,215 +1662,241 @@ U_INTERNAL double  U_EXPORT2 uprv_ceil(double d);
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0da7627b` (2026-11-23)
-**Commit Message**: Rebuild included rclone v1.75.1 with go1.26.11 and non-vulnerable dependencies
+### Incident Patch 1: `3f2986a0` (2026-11-24)
+**Commit Message**: BTS-2543: fix leaks in zip file handling (#23731)
 
-**File**: `CHANGELOG` (modified, +3/-3)
+TRI_UnzipFile leaked its 16 KB buffer (and potentially the unzFile handle
+and the output FILE*) when an exception propagated through it, e.g. from
+the isAllowedAccess callback, which in JS_UnzipFile calls
+V8SecurityFeature::isAllowedToAccessPath. TRI_ZipFile also leaked its
+buffer when isAllowedAccess(filename) returned false.
+
+Release the buffer, zip handles and output file via scopeGuard so they
+are freed on every exit path.
+
+Co-authored-by: Vadim Kondratev <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG` (modified, +3/-0)
 ```diff
 @@ -1,6 +1,9 @@
  4.0.0 (XXXX-XX-XX)
  ------------------
  
-+* Rebuilt included rclone v1.75.1 with go1.26.11 and non-vulnerable
-+  dependencies.
-+
- * Updated ArangoDB Starter to v0.20.0-preview-22.
++* BTS-2543: Fix memory and file handle leaks in the zip file functions when a
++  path access check failed or threw an exception.
++  
+ * BTS-2480: Fixed LogicalCollection cleanup on errors in openExistingDatabase().
  
- * BTS-2098: Fix arangorestore failing with "duplicate value for `id` or
-@@ -79,9 +82,6 @@
-  - qs to 6.16.1 to resolve CVE-2026-82417, CVE-2026-82562 and
-    CVE-2026-110816
- 
--* Rebuilt included rclone v1.75.1 with go1.26.10 and non-vulnerable
--  dependencies.
--
- * Fixed an issue where AQL COLLECT WITH COUNT reported fullCount one too high 
-   when used with LIMIT and {fullCount: true}. The single result row was counted
-   twice: once when produced and again during the fullCount skip phase.
+ * Rebuilt included rclone v1.75.1 with go1.26.11 and non-vulnerable
 ```
 
-**File**: `VERSIONS` (modified, +3/-3)
+**File**: `lib/Basics/tri-zip.cpp` (modified, +8/-19)
 ```diff
-@@ -6,8 +6,8 @@ GCC_LINUX "14.3.0"
- CLANG_LINUX "22.1.8"
- OPENSSL_LINUX "3.5.9"
- USE_RCLONE "true"
--RCLONE_GO "1.26.10-3e15daf_20261109131457"
-+RCLONE_GO "1.26.11-eca128a_20261123161518"
- RCLONE_VERSION "1.75.1"
--RCLONE_SHA256_AMD64 "1f107ab7dfd836ccc7748d42d80796537e308101ace8fd17ae85dbe78993965d"
--RCLONE_SHA256_ARM64 "d195faf74a5fac20bba18eb1688bf0d0de35b3064f9b7416ca1c7538beba8ccc"
-+RCLONE_SHA256_AMD64 "97a7bad0788729096697da4cfae4fb8e3a36c1ae7d066abf19b0f2a5438a1549"
-+RCLONE_SHA256_ARM64 "58263ef8e9c68dd7e773acc525dc74e1d4b22eddc4dc1ed44d167c29b4a44d71"
- MINIMAL_DEBUG_INFO "On"
+@@ -231,30 +231,28 @@ static ErrorCode ExtractCurrentFile(
+                      "' for writing: " + strerror(errno);
+       return TRI_ERROR_CANNOT_WRITE_FILE;
+     }
++    auto foutGuard = scopeGuard([&fout]() noexcept { fclose(fout); });
+ 
+     while (true) {
+       int result = unzReadCurrentFile(uf, buffer, (unsigned int)bufferSize);
+ 
+       if (result < 0) {
+         errorMessage =
+             std::string("failed to read from zip file: ") + strerror(errno);
+-        fclose(fout);
+         return TRI_ERROR_CANNOT_WRITE_FILE;
+       }
+ 
+       if (result > 0) {
+         if (fwrite(buffer, result, 1, fout) != 1) {
+           errorMessage = std::string("failed to write file ") + fullPath +
+                          " - " + strerror(errno);
+-          fclose(fout);
+           return TRI_set_errno(TRI_ERROR_SYS_ERROR);
+         }
+       } else {
+         TRI_ASSERT(result == 0);
+         break;
+       }
+     }
+-    fclose(fout);
+   }
+ 
+   int ret = unzCloseCurrentFile(uf);
+@@ -338,6 +336,7 @@ ErrorCode TRI_ZipFile(
+   if (buffer == nullptr) {
+     return TRI_ERROR_OUT_OF_MEMORY;
+   }
++  auto bufferGuard = scopeGuard([buffer]() noexcept { TRI_Free(buffer); });
+ 
+   if (!isAllowedAccess(filename)) {
+     return TRI_ERROR_FORBIDDEN;
+@@ -351,10 +350,9 @@ ErrorCode TRI_ZipFile(
+ #endif
+ 
+   if (zf == nullptr) {
+-    TRI_Free(buffer);
+-
+     return TRI_ERROR_CANNOT_WRITE_FILE;
+   }
++  auto zfGuard = scopeGuard([zf]() noexcept { zipClose(zf, NULL); });
+ 
+   auto res = TRI_ERROR_NO_ERROR;
+ 
+@@ -431,10 +429,6 @@ ErrorCode TRI_ZipFile(
+     }
+   }
+ 
+-  zipClose(zf, NULL);
+-
+-  TRI_Free(buffer);
+-
+   return res;
+ }
+ 
+@@ -508,9 +502,10 @@ ErrorCode TRI_UnzipFile(
+   if (buffer == nullptr) {
+     return TRI_ERROR_OUT_OF_MEMORY;
+   }
++  // isAllowedAccess and the extraction may throw, so release via guards
++  auto bufferGuard = scopeGuard([buffer]() noexcept { TRI_Free(buffer); });
+ 
+   if (!isAllowedAccess(filename)) {
+-    TRI_Free(buffer);
+     return TRI_ERROR_FORBIDDEN;
+   }
+ 
+@@ -521,17 +516,11 @@ ErrorCode TRI_UnzipFile(
+   unzFile uf = unzOpen64(filename);
+ #endif
+   if (uf == nullptr) {
+-    TRI_Free(buffer);
+     errorMessage = std::string("unable to open zip file '") + filename + "'";
+     return TRI_ERROR_INTERNAL;
+   }
++  auto ufGuard = scopeGuard([uf]() noexcept { unzClose(uf); });
+ 
+-  auto res = UnzipFile(uf, buffer, bufferSize, outPath, skipPaths, overwrite,
+-                       password, errorMessage, isAllowedAccess);
+-
+-  unzClose(uf);
+-
+-  TRI_Free(buffer);
+-
+-  return res;
++  return UnzipFile(uf, buffer, bufferSize, outPath, skipPaths, overwrite,
++                   password, errorMessage, isAllowedAccess);
+ }
 ```
 
 ---
 
-### Incident Patch 2: `4126b8d6` (2026-11-23)
-**Commit Message**: QA-826: add support for bucketizing testsuite (#23683)
+### Incident Patch 2: `239a234f` (2026-11-24)
+**Commit Message**: Merge pull request #23656 from arangodb/bug-fix/cor-1107-window-function-skip-row
 
-* waitdata and vector index made this testsuite take significantly longer - split it in two
+[COR-1107] `WINDOW` with `COUNT` or `LIMIT` aborts
 
-* add a way to split buckets in multi-testsuites
-
-* shuffle
-
-* revert bucketizing of the testsuite
-
-* more thorough value check
-
-* more thorough value check
-
----------
-
-Co-authored-by: Vadim Kondratev <[REDACTED_EMAIL]>
-
-**File**: `.circleci/src/config_lib.py` (modified, +6/-5)
+**File**: `arangod/Aql/Executor/WindowExecutor.cpp` (modified, +2/-5)
 ```diff
-@@ -647,12 +647,13 @@ def _validate_buckets_constraints(self):
-         """Validate buckets usage rules."""
-         job_buckets = self.options.buckets
+@@ -197,10 +197,10 @@ std::tuple<ExecutorState, NoStats, AqlCall> AccuWindowExecutor::produceRows(
+  * @param call Call from client
+  * @return std::tuple<ExecutorState, NoStats, size_t, AqlCall>
+  */
++// TODO(COR-1279): rows are not consumed, counted or aggregated when skipped.
+ auto AccuWindowExecutor::skipRowsRange(AqlItemBlockInputRange& inputRange,
+                                        AqlCall& call)
+     -> std::tuple<ExecutorState, NoStats, size_t, AqlCall> {
+-  // we do not keep any state
+   AqlCall upstreamCall{};
+   return {inputRange.upstreamState(), NoStats{}, call.getSkipCount(),
+           upstreamCall};
+@@ -419,13 +419,10 @@ std::tuple<ExecutorState, NoStats, AqlCall> WindowExecutor::produceRows(
+ std::tuple<ExecutorState, NoStats, size_t, AqlCall>
+ WindowExecutor::skipRowsRange(AqlItemBlockInputRange& inputRange,
+                               AqlCall& call) {
+-  TRI_ASSERT(_currentIdx < _rows.size());
+-
+   std::ignore = consumeInputRange(inputRange);
  
--        # Multi-suite jobs with explicit buckets must use "auto"
--        if len(self.suites) > 1 and job_buckets is not None:
--            if job_buckets != "auto":
-+        # Multi-suite jobs distribute their suites over the buckets, so there
-+        # can't be more buckets than suites ("auto" means one suite per bucket)
-+        if len(self.suites) > 1 and isinstance(job_buckets, int):
-+            if job_buckets > len(self.suites):
-                 raise ValueError(
--                    f"TestJob '{self.name}': Multi-suite jobs with buckets must use buckets='auto', "
--                    f"got: {job_buckets}"
-+                    f"TestJob '{self.name}': Multi-suite jobs can't have more buckets "
-+                    f"({job_buckets}) than suites ({len(self.suites)})"
-                 )
- 
-         # Single-suite jobs cannot use "auto"
-```
-
-**File**: `.circleci/src/output_generators/circleci.py` (modified, +3/-0)
-```diff
-@@ -655,6 +655,9 @@ def _apply_job_overrides(
- 
-         if job.options.buckets == "auto" and len(filtered_suites) != len(job.suites):
-             bucket_count = len(filtered_suites)
-+        elif bucket_count and job.is_multi_suite():
-+            # suites are distributed over the buckets, never leave one empty
-+            bucket_count = min(bucket_count, len(filtered_suites))
- 
-         if bucket_count and bucket_count != 1:
-             job_dict["buckets"] = bucket_count
-```
-
-**File**: `.circleci/tests_unit/test_circleci_generator.py` (modified, +22/-0)
-```diff
-@@ -882,6 +882,28 @@ def test_create_test_job_auto_buckets_with_filtering(self):
-         # Should have 2 buckets (2 PR suites remaining after filter)
-         assert job_data["buckets"] == 2
- 
-+    def test_create_test_job_fixed_buckets_with_filtering(self):
-+        """Test that fixed multi-suite buckets never exceed the remaining suites."""
-+        gen = self.create_generator(full=False)  # Only PR tests
-+        job = TestJob(
-+            name="test_job",
-+            suites=[
-+                SuiteConfig(name="pr_suite1", requires=TestRequirements(full=False)),
-+                SuiteConfig(name="pr_suite2", requires=TestRequirements(full=False)),
-+                SuiteConfig(name="full_suite", requires=TestRequirements(full=True)),
-+            ],
-+            options=TestOptions(buckets=3),
-+        )
-+        build_config = BuildConfig(architecture=Architecture.X64)
-+
-+        result = gen._create_test_job(
-+            job, DeploymentType.SINGLE, build_config, ["build-job"]
-+        )
-+
-+        job_data = result["run-linux-tests"]
-+        assert job_data["suites"] == "pr_suite1,pr_suite2"
-+        assert job_data["buckets"] == 2
-+
-     def test_create_test_job_time_limit(self):
-         """Test that time limit is included."""
-         gen = self.create_generator()
-```
-
-**File**: `.circleci/tests_unit/test_config_lib.py` (modified, +13/-1)
-```diff
-@@ -420,7 +420,7 @@ def test_multi_suite_job(self):
-             (
-                 [SuiteConfig(name="boost"), SuiteConfig(name="resilience")],
-                 TestOptions(buckets=5),
--                "must use buckets='auto'",
-+                "can't have more buckets",
-             ),
-             (
-                 [SuiteConfig(name="boost")],
-@@ -434,6 +434,18 @@ def test_job_validation_errors(self, suites, options, error_match):
-         with pytest.raises(ValueError, match=error_match):
-             TestJob(name="test", suites=suites, options=options or TestOptions())
- 
-+    def test_multi_suite_job_with_fixed_buckets(self):
-+        job = TestJob(
-+            name="test-multi",
-+            suites=[
-+                SuiteConfig(name="boost"),
-+                SuiteConfig(name="resilience"),
-+                SuiteConfig(name="replication2"),
-+            ],
-+            options=TestOptions(buckets=2),
-+        )
-+        assert job.get_bucket_count() == 2
-+
-     def test_mixed_allows_suite_without_explicit_deployment_type(self):
-         """Test mixed jobs allow suites without explicit deployment type."""
-         job = TestJob(
-```
-
-**File**: `js/client/modules/@arangodb/testutils/testing.js` (modified, +6/-7)
-```diff
-@@ -414,25 +414,24 @@ function iterateTests(cases, options) {
+   if (!_rows.empty()) {
+-    // TODO a bit loopy
+-    while (call.needSkipMore() && _currentIdx < _windowRows.size()) {
++    while (call.needSkipMore() && _currentIdx < _rows.size()) {
+       _currentIdx++;
+       call.didSkip(1);
      }
-   }
+```
+
+**File**: `tests/js/client/aql/aql-window-cumulative-sum.js` (modified, +43/-1)
+```diff
+@@ -80,6 +80,14 @@ FOR i IN @from .. @to
+     sizes.forEach((size) => sizedCumulativeSumTest(size, 42, preceding, following));
+   };
  
--  let testSuiteStart = 0;
--  let testSuiteEnd = caselist.length;
-+  let suiteIndexes = _.range(caselist.length);
-   let nTests = optionsList.length;
-   if (nTests > 1) {
-     if (options.testBuckets !== undefined && options.testBuckets !== "1/0") {
-       let n = options.testBuckets.split('/');
-       let r = parseInt(n[0]);
-       let s = parseInt(n[1]);
--      if (r !== nTests) {
--        throw new Error(`Number of buckets (${r}) must be equal the number of suites to run (${nTests})`);
-+      if (isNaN(r) || isNaN(s) || r < 1 || s < 0 || s >= r || r > nTests) {
-+        throw new Error(`Number of buckets (${r}) must not exceed the number of suites to run (${nTests})`);
-       }
--      testSuiteStart = s;
--      testSuiteEnd = s + 1;
-+      // distribute the suites round robin over the buckets, like splitBuckets() does with testcases
-+      suiteIndexes = suiteIndexes.filter(i => i % r === s);
-       options.testBuckets = undefined;
-     }
-   }
- 
-   // running all tests
--  for (let n = testSuiteStart; n < testSuiteEnd; ++n) {
-+  for (const n of suiteIndexes) {
-     // required, because each different test suite may operate with a different set of servers!
-     flushInstanceInfo();
- 
++  // Window kinds that use different executors / code paths.
++  const windowKinds = [
++    "{preceding: 1, following: 1}",              // row-based
++    "{preceding: 10, following: 10}",            // row-based, wider
++    "value WITH {preceding: 1, following: 1}",   // range-based
++    "{preceding: 'unbounded', following: 1}",    // WindowExecutor, keeps all rows
++  ];
++
+   return {
+     testResultsPreceding0Following0 : function () {
+       cumulativeSumTests(0, 0);
+@@ -443,7 +451,41 @@ FOR i IN 1..10
+             assertEqual(Math.min(index + from + 10, size + from), value.max, value);
+           });
+         });
+-      });   
++      });
++    },
++
++    testCollectCountAfterWindow : function () {
++      // 2500 rows span several input blocks
++      [10, 2500].forEach((size) => {
++        windowKinds.forEach((kind) => {
++          const query = `
++            FOR i IN 1..@size
++              LET value = NOOPT(i)
++              WINDOW ${kind} AGGREGATE sum = SUM(value)
++              COLLECT WITH COUNT INTO n
++              RETURN n`;
++          assertEqual([size], db._query(query, { size }).toArray(), { kind, size });
++        });
++      });
++    },
++
++    testLimitOffsetAfterWindow : function () {
++      const size = 2500;
++      windowKinds.forEach((kind) => {
++        const base = `
++          FOR i IN 1..@size
++            LET value = NOOPT(i)
++            WINDOW ${kind} AGGREGATE sum = SUM(value)`;
++        const all = db._query(`${base} RETURN sum`, { size }).toArray();
++
++        [[2, 3], [999, 5], [1500, 10]].forEach(([offset, limit]) => {
++          const cursor = db._query(`${base} LIMIT @offset, @limit RETURN sum`,
++                                   { size, offset, limit }, { fullCount: true });
++          assertEqual(all.slice(offset, offset + limit), cursor.toArray(),
++                      { kind, offset, limit });
++          assertEqual(size, cursor.getExtra().stats.fullCount, { kind, offset, limit });
++        });
++      });
+     },
+   };
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #23751** (2026-11-24): Bugfix/backport 3.12 bts 2480 unload index on collection open failures (@k0ushal)
+- **PR #23747** (2026-11-24): Sync stale node_modules/.package-lock.json and exclude it from packages (@KVS85)
+- **PR #23746** (2026-11-24): [3.12] Update node modules @xmldom/xmldom to 0.8.15 and patch minimatch 10.25 with adjusted waiver (@KVS85)
+- **PR #23740** (2026-11-24): [3.11.14] Update node modules: @xmldom/xmldom to 0.8.15, ajv, cross-spawn, flatted and tmp (eslint); Alpine 3.24 Docker base (@KVS85)
+- **PR #23731** (2026-11-24): BTS-2543: fix leaks in zip file handling (@dothebart)
 - **PR #23730** (2026-11-23): [3.12][COR-1295] Fix use-after-move issues (@mpoeter)
-- **PR #23721** (2026-11-23): QA-826: add support for bucketizing testsuite (@dothebart)
-- **PR #23716** (2026-11-20): [COR-1300] Replaced pseudo-random code with a more secure source. (@johann-listunov)
-- **PR #23714** (2026-11-20): Remove some obvious uses of date and includes (@markuspf)
-- **PR #23713** (2026-11-20): Use std::chrono in Inspector library (@markuspf)
-- **PR #23712** (2026-11-19): [COR-1295] Fix use-after-move issues (@mpoeter)
 
 ---
 
@@ -1890,13 +1916,13 @@ Co-authored-by: Vadim Kondratev <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Rebuild included rclone v1.75.1 with go1.26.11 and non-vulnerable dependencies
+## X. BTS-2543: fix leaks in zip file handling
 
 **RULE**:
 When implementing operations in `CHANGELOG`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0da7627b`: Rebuild included rclone v1.75.1 with go1.26.11 and non-vulnerable dependencies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3f2986a0`: BTS-2543: fix leaks in zip file handling. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG`.
@@ -1904,18 +1930,16 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-* Rebuilt included rclone v1.75.1 with go1.26.11 and non-vulnerable
-  dependencies.
-
+* BTS-2543: Fix memory and file handle leaks in the zip file functions when a
+  path access check failed or threw an exception.
+  
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-* Rebuilt included rclone v1.75.1 with go1.26.10 and non-vulnerable
-  dependencies.
-
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0da7627b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3f2986a0` are properly handled with clean fallback behavior.

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T14:06:35.802Z",
+  "last_updated": "2026-11-24T14:15:49.008Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-24T13:21:19.659Z",
@@ -43,7 +43,7 @@
       "staged_for_review": 0
     },
     "zoontek-react-native-permissions-learnings.md": {
-      "processed_at": "2026-11-24T13:38:54.945Z",
+      "processed_at": "2026-11-24T14:15:48.110Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -743,7 +743,7 @@
       "staged_for_review": 1
     },
     "arangodb-arangodb-learnings.md": {
-      "processed_at": "2026-11-20T05:37:05.963Z",
+      "processed_at": "2026-11-24T14:15:46.960Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1363,7 +1363,7 @@
       "staged_for_review": 1
     },
     "nginx-kubernetes-ingress-learnings.md": {
-      "processed_at": "2026-11-23T18:41:37.262Z",
+      "processed_at": "2026-11-24T14:15:45.715Z",
       "promoted_canonical": 1,
       "staged_for_review": 1
     },
@@ -3823,7 +3823,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 3792,
-  "total_canonical_promoted": 508,
-  "total_staged_for_review": 2870
+  "total_dossiers_evaluated": 3795,
+  "total_canonical_promoted": 509,
+  "total_staged_for_review": 2873
 }

@@ -2,17 +2,17 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-24T14:06:33.295Z",
+  "updated_at": "2026-11-24T14:15:45.712Z",
   "statistics": {
-    "total_nodes": 506,
-    "total_edges": 209,
+    "total_nodes": 508,
+    "total_edges": 211,
     "domain_distribution": {
       "D": 306,
       "M": 1,
       "H": 93,
       "J": 22,
-      "K": 30,
-      "L": 8,
+      "K": 31,
+      "L": 9,
       "G": 1,
       "F": 27,
       "B": 4,
@@ -20,7 +20,7 @@
       "I": 12
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 205,
+      "CONSTRAINED_BY_ARCHITECTURE": 207,
       "VERIFIED_BY_TEST": 2,
       "STYLED_BY_DESIGN": 2
     }
@@ -11303,6 +11303,43 @@
       ],
       "created_at": "2026-11-24T14:06:33.294Z",
       "updated_at": "2026-11-24T14:06:33.294Z"
+    },
+    "DOM-K-3AEE5D3A": {
+      "id": "DOM-K-3AEE5D3A",
+      "domain": "K",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Manual dispatch: Stage 1 build artifacts stage images and Helm chart in test registry docker-",
+      "summary": "Stage 1: build artifacts, stage images and Helm chart in test registry (`docker-mgmt-test.nginx.com`), sign binaries, upload tarballs to Azu -> Stage 1: build artifacts, stage images and Helm chart in test registry (`docker-mgmt-test.nginx.com`), sign binaries, upload tarballs to Azu",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://nginx-kubernetes-ingress/nginx-kubernetes-ingress-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "`release-prep.yml`",
+        "author_or_entity": "AI-Builder-Brain Project Learning (nginx-kubernetes-ingress)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "K",
+        "Quality & Verification Intelligence",
+        "L",
+        "I"
+      ],
+      "created_at": "2026-11-24T14:15:45.712Z",
+      "updated_at": "2026-11-24T14:15:45.712Z"
+    },
+    "NODE-L-domain-bridge-l": {
+      "id": "NODE-L-domain-bridge-l",
+      "domain": "L",
+      "type": "DOMAIN_CONCEPT_BRIDGE",
+      "title": "Domain L Concept Space",
+      "summary": "",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {},
+      "tags": [],
+      "created_at": "2026-11-24T14:15:45.712Z",
+      "updated_at": "2026-11-24T14:15:45.712Z"
     }
   },
   "edges": [
@@ -13395,6 +13432,26 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-H-23B9B1A9 [H] with Domain I",
       "created_at": "2026-11-24T13:48:09.881Z"
+    },
+    {
+      "id": "EDGE-0D6E937AA83E",
+      "sourceId": "DOM-K-3AEE5D3A",
+      "targetId": "NODE-L-domain-bridge-l",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-K-3AEE5D3A [K] with Domain L",
+      "created_at": "2026-11-24T14:15:45.712Z"
+    },
+    {
+      "id": "EDGE-EA2716A3E11F",
+      "sourceId": "DOM-K-3AEE5D3A",
+      "targetId": "NODE-I-domain-bridge-i",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-K-3AEE5D3A [K] with Domain I",
+      "created_at": "2026-11-24T14:15:45.712Z"
     }
   ]
 }

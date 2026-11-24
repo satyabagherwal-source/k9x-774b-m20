@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T14:05:55.883Z",
-    "lastVerified": "2026-11-24T14:05:55.883Z",
+    "lastChecked": "2026-11-24T14:15:17.144Z",
+    "lastVerified": "2026-11-24T14:15:17.144Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -274,9 +274,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-24T13:38:47.971Z",
+    "lastChecked": "2026-11-24T14:15:09.155Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-24T13:38:47.971Z"
+    "lastVerified": "2026-11-24T14:15:09.155Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -437,14 +437,14 @@
     "officialUrl": "https://github.com/nginx/kubernetes-ingress",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-23T18:40:52.864Z",
-    "lastVerified": "2026-11-23T18:40:52.864Z",
+    "lastChecked": "2026-11-24T14:15:08.299Z",
+    "lastVerified": "2026-11-24T14:15:08.299Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nginx-kubernetes-ingress",
-    "contentHash": "74ba0eff437774a91dba7e57772d2447c5fc6c277097903bab6a1692cf2f6886",
+    "contentHash": "3771887a148df05cb5d824d7d62925d07bd68821efa0115a6b9ff803be138b64",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1574,9 +1574,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-24T08:48:20.123Z",
+    "lastChecked": "2026-11-24T14:15:04.062Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-24T08:48:20.123Z"
+    "lastVerified": "2026-11-24T14:15:04.062Z"
   },
   "seaql-sea-orm": {
     "name": "sea-orm",
@@ -3576,9 +3576,9 @@
   "aws-amplify-amplify-js": {
     "name": "amplify-js",
     "officialUrl": "https://github.com/aws-amplify/amplify-js",
-    "lastChecked": "2026-11-21T22:06:22.971Z",
+    "lastChecked": "2026-11-24T14:14:59.233Z",
     "revisionIdentifier": "9e01896b",
-    "lastVerified": "2026-11-21T22:06:22.971Z"
+    "lastVerified": "2026-11-24T14:14:59.233Z"
   },
   "dragonflyoss-dragonfly": {
     "name": "dragonfly",
@@ -4554,8 +4554,8 @@
     "officialUrl": "https://github.com/aome510/spotify-player",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T07:36:40.511Z",
-    "lastVerified": "2026-11-23T07:36:40.511Z",
+    "lastChecked": "2026-11-24T14:14:54.095Z",
+    "lastVerified": "2026-11-24T14:14:54.095Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aome510-spotify-player",
@@ -5750,12 +5750,12 @@
     "officialUrl": "https://github.com/arangodb/arangodb",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-23T17:46:26.379Z",
-    "lastVerified": "2026-11-23T17:46:26.379Z",
+    "lastChecked": "2026-11-24T14:15:12.796Z",
+    "lastVerified": "2026-11-24T14:15:12.796Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-arangodb-arangodb",
-    "contentHash": "a713a1645a4bcf8fc64355fa2827cc95c0cb1fdc944d492ea0b889b37fc4c3ee",
+    "contentHash": "37d0e49506f289e1d8ffdebe9e7b0424ec813d8f041d98034ff7459e0f32b0cf",
     "promotedRulesCount": 1,
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
@@ -10458,9 +10458,9 @@
   "lucky-media-astro-seo": {
     "name": "astro-seo",
     "officialUrl": "https://github.com/lucky-media/astro-seo",
-    "lastChecked": "2026-11-20T11:40:43.240Z",
+    "lastChecked": "2026-11-24T14:14:56.556Z",
     "revisionIdentifier": "3d6ff7b4",
-    "lastVerified": "2026-11-20T11:40:43.240Z"
+    "lastVerified": "2026-11-24T14:14:56.556Z"
   },
   "kevinnzou-compose-webview-multiplatform": {
     "name": "compose-webview-multiplatform",

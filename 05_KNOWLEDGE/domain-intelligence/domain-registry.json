@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T14:06:35.343Z",
-  "total_records": 2529,
+  "last_updated": "2026-11-24T14:15:48.640Z",
+  "total_records": 2530,
   "domains": {
     "A": {
       "total": 22,
@@ -2409,7 +2409,7 @@
       ]
     },
     "K": {
-      "total": 150,
+      "total": 151,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -2560,7 +2560,8 @@
         "domain_intelligence-quality-verification-intelligence-sweetpad-dev-sweetpad-core-invariants",
         "domain_intelligence-quality-verification-intelligence-sweetpad-dev-sweetpad-learnings-core-invariant",
         "DOM-K-AA8CD5C4",
-        "domain_intelligence-quality-verification-intelligence-fabio-rovai-open-ontologies-learnings-core-inv"
+        "domain_intelligence-quality-verification-intelligence-fabio-rovai-open-ontologies-learnings-core-inv",
+        "DOM-K-3AEE5D3A"
       ]
     },
     "L": {
@@ -11920,8 +11921,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "8ca0d3c51fd276d1488ee051d00a450a8f4f8652a2d7ff18364d053c304cb6fc",
-      "created_at": "2026-11-24T13:38:55.443Z"
+      "content_hash": "d83ba089fbcdad74e1af61a5134067831fcc98936359f11aa81a2d10f6ba994a",
+      "created_at": "2026-11-24T14:15:48.640Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -16682,8 +16683,8 @@
       "title": "Technical Construction Intelligence: arangodb/arangodb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-arangodb-arangodb-technical-construction-intelligence-arangodb-arangodb-core-inv.md",
       "repository": "arangodb/arangodb",
-      "content_hash": "487c9f4ccdb6477420fee92419d72fe6fc23c085d0a0d1cda0d055d1b2a71feb",
-      "created_at": "2026-11-23T17:46:27.844Z"
+      "content_hash": "835a059110e79185b426f103a708b75e9238022462587122f5ad475197309eb3",
+      "created_at": "2026-11-24T14:15:14.308Z"
     },
     "domain_intelligence-architecture-intelligence-jithin-sabu-purge-app-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-jithin-sabu-purge-app-learnings-core-invariants",
@@ -16751,8 +16752,8 @@
       "title": "Technical Construction Intelligence: arangodb-arangodb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-arangodb-arangodb-learnings-technical-construction-intelligence-arangodb-arangod.md",
       "repository": "arangodb-arangodb-learnings",
-      "content_hash": "7dedff34da07137496e12651c001353c13c0649593152d580d0984a768f66a1d",
-      "created_at": "2026-11-20T05:37:06.411Z"
+      "content_hash": "da8f1e025d5c8f0cebc4c3ccc31bb8f0aad600bf92623372ef704b50da0803d5",
+      "created_at": "2026-11-24T14:15:47.713Z"
     },
     "domain_intelligence-research-knowledge-intelligence-zai-org-glm-5-3-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-zai-org-glm-5-3-core-invariants",
@@ -24778,8 +24779,8 @@
       "title": "Architecture Intelligence: nginx/kubernetes-ingress Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nginx-kubernetes-ingress-architecture-intelligence-nginx-kubernetes-ingress-core.md",
       "repository": "nginx/kubernetes-ingress",
-      "content_hash": "ea6133d28939544b4f2ba857f50e2efd12c2f00ab9c6d6f073a29e71675f840f",
-      "created_at": "2026-11-23T18:40:54.370Z"
+      "content_hash": "3f0465e1e42e9b56e57aee3adc1ea838116e77c45cb54381b67cd4d246fe7ef6",
+      "created_at": "2026-11-24T14:15:09.996Z"
     },
     "domain_intelligence-technical-construction-intelligence-rustls-rustls-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-rustls-rustls-core-invariants",
@@ -24796,8 +24797,8 @@
       "title": "Architecture Intelligence: nginx-kubernetes-ingress-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nginx-kubernetes-ingress-learnings-architecture-intelligence-nginx-kubernetes-in.md",
       "repository": "nginx-kubernetes-ingress-learnings",
-      "content_hash": "ca0cf164f0a2ff0ee309922ac97f78a3e71dd74b9572e9886fbf6e777bc731fb",
-      "created_at": "2026-11-23T18:41:38.212Z"
+      "content_hash": "836012003d8b56908b7715bfbb3b374f80f42c594216bfcce2595ebf564aecc3",
+      "created_at": "2026-11-24T14:15:46.559Z"
     },
     "domain_intelligence-technical-construction-intelligence-rustls-rustls-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-rustls-rustls-learnings-core-invariants",
@@ -42481,6 +42482,54 @@
       "repository": "actions-actions-runner-controller-learnings",
       "content_hash": "41854869cf3e19f9bc1b031464a241847ac1021f9c6760ba68122a59e601b195",
       "created_at": "2026-11-24T14:06:34.216Z"
+    },
+    "DOM-K-3AEE5D3A": {
+      "record_id": "DOM-K-3AEE5D3A",
+      "domain_letter": "K",
+      "domain_id": "quality_verification",
+      "domain_name": "Quality & Verification Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "L",
+          "id": "deployment_operations",
+          "name": "Deployment & Operations Intelligence"
+        },
+        {
+          "letter": "I",
+          "id": "content_information",
+          "name": "Content & Information Intelligence"
+        }
+      ],
+      "title": "Manual dispatch: Stage 1 build artifacts stage images and Helm chart in test registry docker-",
+      "content": "Stage 1: build artifacts, stage images and Helm chart in test registry (`docker-mgmt-test.nginx.com`), sign binaries, upload tarballs to Azure blob storage",
+      "content_hash": "f1a5e7ebd54e3064ebc298d94b5edec6c5273758f0aa2c38042a0fdf8f4d9a62",
+      "summary": "Stage 1: build artifacts, stage images and Helm chart in test registry (`docker-mgmt-test.nginx.com`), sign binaries, upload tarballs to Azu -> Stage 1: build artifacts, stage images and Helm chart in test registry (`docker-mgmt-test.nginx.com`), sign binaries, upload tarballs to Azu",
+      "provenance": {
+        "source_uri": "project://nginx-kubernetes-ingress/nginx-kubernetes-ingress-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "`release-prep.yml`",
+        "author_or_entity": "AI-Builder-Brain Project Learning (nginx-kubernetes-ingress)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of nginx-kubernetes-ingress"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "L",
+          "I"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-24T14:15:45.679Z"
     }
   }
 }

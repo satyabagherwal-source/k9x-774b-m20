@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T18:41:37.874Z",
+  "timestamp": "2026-11-24T14:15:46.204Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nginx-kubernetes-ingress-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nginx-kubernetes-ingress-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T18:41:37.874Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T14:15:46.204Z`  
 > **Learning ID**: `LEARN-EVO-nginx-kubernetes-ingress-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md`  
 > **Source**: github ([https://github.com/nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress))  
-> **Source Version**: `fad2fe84`  
+> **Source Version**: `68c058a2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T18:40:52.870Z  
+> **Timestamp**: 2026-11-24T14:15:08.477Z  
 > **Learning ID**: `learn-github-nginx-kubernetes-ingress`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T18:40:52.864Z  
+> **Harvest Timestamp**: 2026-11-24T14:15:08.299Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: NGINX and  NGINX Plus Ingress Controllers for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: pyproject.toml, go.mod, README.md
-- **Stars / Engagement**: 5108 stars
+- **Stars / Engagement**: 5109 stars
 
 ---
 
@@ -1429,16 +1429,13 @@ func main() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #11518** (2026-11-23): **Fix NKP catalogue publishing**
+  *Symptoms*: ### Proposed changes  - Skip teardown environment in nutanix upgrade test suite - wire publishing in release process  ### Linked issue NA  Closes #  NA  ### How I tested  - Actions run from this branch successfully creates catalogue PR: https://github.com/nutanix-cloud-native/nkp-partner-catalog/pull/97, see https://github.com/nginx/kubernetes-ingress/actions/runs/45210658648 for more details  ### AI assistance  <!-- Write "None", or the tool you used and what it did. See "Using AI tools" in CONTRIBUTING.md. -->  ### Checklist  Before creating a PR, run through this checklist and mark each as complete.  - [x] I have read the [CONTRIBUTING](https://github.com/nginx/kubernetes-ingress/blob/main/CONTRIBUTING.md) doc - [x] This PR contains one logical change; unrelated fixes are in separate issues or PRs - [ ] I have added tests that prove my fix is effective or that my feature works - [ ] I have checked that all unit tests pass after adding my changes - [ ] I have updated necessary documentation - [x] I have rebased my branch onto main - [ ] I will ensure my PR is targeting the main branch and pulling from my branch from my own fork 
+
 - **Issue #11514** (2026-11-23): **sync: security hardening and minor bug fixes for release-5.8**
   *Symptoms*: This commit applies general security hardening updates and minor stability improvements to the codebase.
   **Post-Mortem & Fix Analysis**:
   > ## [Codecov](https://app.codecov.io/gh/nginx/kubernetes-ingress/pull/11514?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=nginx) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 72.14%. Comparing base ([`c1078e1`](https://app.codecov.io/gh/nginx/kubernetes-ingress/commit/c1078e1ea1444f1231a8708f7929d24028618d3e?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=nginx)) to head ([`b938f27`](https://app.codecov.io/gh/nginx/kubernetes-ingress/commit/b938f270b4500be2c3784f28621828bb5b4c7afa?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=nginx)). :warning: Report is 1 commits behind head on release-5.8.  <details><summary>Additional details and impacted files</summary>    ```diff @@             Coverage Diff   
-
-- **Issue #11513** (2026-11-23): **Update WAF and nginx for main**
-  *Symptoms*: This commit applies general security hardening updates and minor stability improvements to the codebase.
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/nginx/kubernetes-ingress/pull/11513?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=nginx) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 72.14%. Comparing base ([`7da45dc`](https://app.codecov.io/gh/nginx/kubernetes-ingress/commit/7da45dc3235dfcfafa7b08865aafccf92d152b01?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=nginx)) to head ([`d7d1181`](https://app.codecov.io/gh/nginx/kubernetes-ingress/commit/d7d118107f7907d9cc3b1613571040e55d63d2c7?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=nginx)). :warning: Report is 2 commits behind head on main.  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @
-  > ### Package Report  Registry `gcr.io/f5-gcs-7899-ptg-ingrss-ctlr/dev` &middot; Tag `t-e172a4f6113b5c329b2695a29289e76a` &middot; 25 images &middot; 234 checks &middot; **all matched** &#9989;  <sub>Full reference is <code>gcr.io/f5-gcs-7899-ptg-ingrss-ctlr/dev/&lt;image&gt;:t-e172a4f6113b5c329b2695a29289e76a&lt;variant&gt;</code>.</sub>  | Image | Variant | Base | Arch | NGINX | Agent | WAF | DoS |  | | --- | --- | --- | --- | --- | --- | --- | --- | :-: | | `nginx-ic/nginx-ingress` | &ndash; | debian | amd64, arm64 | 1.31.10-1~trixie | 3.12.5~trixie | &ndash; | &ndash; | &#9989; | | `nginx-ic/nginx-plus-ingress` | &ndash; | debian | amd64, arm64 | 37.3.1-1~trixie | 3.12.5~trixie | &ndash; | &ndash; | &#9989; | | `nginx-ic-nap/nginx-plus-ingress` | &ndash; | debian | amd64 | 37.3.1-1~trixie | 2.47.3~trixie | 37.3+5.777.6-1~trixie | &ndash; | &#9989; | | `nginx-ic-nap-v5/nginx-plus-ingress` | &ndash; | debian | amd64 | 37.3.1-1~trixie | 2.47.3~trixie | 37.3+5.777.6-1~trixie | &ndash; | 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1455,694 +1452,250 @@ func main() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fad2fe84` (2026-11-23)
-**Commit Message**: Update WAF and nginx for main (#11513)
+### Incident Patch 1: `af39bb88` (2026-11-24)
+**Commit Message**: Add restore_configmap fixture to multiple test classes (#11470)
 
-sync: security hardening and minor bug fixes for main
+* Add restore_configmap fixture to multiple test classes and update configmap handling
 
-This commit applies general security hardening updates and minor stability improvements to the codebase.
+* Fix cleanup order in gRPC setup fixtures to ensure proper resource deletion
 
-Co-authored-by: AlexFenlon <[REDACTED_EMAIL]>
-
-**File**: `.github/scripts/tech-specs.json` (modified, +3/-3)
+**File**: `tests/suite/test_annotations.py` (modified, +8/-2)
 ```diff
-@@ -2,7 +2,7 @@
-   "nic_k8s": {
-     "shortcode_row": {
-       "k8s_versions": "1.30 - 1.37",
--      "nginx_version": "1.31.9 / R37.3.0.1"
-+      "nginx_version": "1.31.10 / R37.3.1.1"
-     },
-     "rows": [
-       {
-@@ -80,8 +80,8 @@
-   "nic_nap": {
-     "shortcode_row": {
-       "nap_waf_prefix": "37.3",
--      "compiler_version": "5.777.3",
--      "waf_release_version": "5.16.2"
-+      "compiler_version": "5.777",
-+      "waf_release_version": "5.16.3"
-     },
-     "rows": [
-       {
+@@ -207,6 +207,12 @@ def annotations_grpc_setup(
+     def fin():
+         if request.config.getoption("--skip-fixture-teardown") == "no":
+             print("Clean up gRPC Annotations Example:")
++            replace_configmap_from_yaml(
++                kube_apis.v1,
++                ingress_controller_prerequisites.config_map["metadata"]["name"],
++                ingress_controller_prerequisites.namespace,
++                f"{DEPLOYMENTS}/common/nginx-config.yaml",
++            )
+             delete_items_from_yaml(kube_apis, f"{TEST_DATA}/annotations/grpc/annotations-ingress.yaml", test_namespace)
+ 
+     request.addfinalizer(fin)
+@@ -238,14 +244,14 @@ def grpc_h2c_setup(
+     def fin():
+         if request.config.getoption("--skip-fixture-teardown") == "no":
+             print("Clean up gRPC Ingress without TLS:")
+-            delete_items_from_yaml(kube_apis, src, test_namespace)
+-            delete_common_app(kube_apis, "grpc", test_namespace)
+             replace_configmap_from_yaml(
+                 kube_apis.v1,
+                 ingress_controller_prerequisites.config_map["metadata"]["name"],
+                 ingress_controller_prerequisites.namespace,
+                 f"{DEPLOYMENTS}/common/nginx-config.yaml",
+             )
++            delete_items_from_yaml(kube_apis, src, test_namespace)
++            delete_common_app(kube_apis, "grpc", test_namespace)
+ 
+     request.addfinalizer(fin)
+     replace_configmap_from_yaml(
 ```
 
-**File**: `.github/workflows/regression.yml` (modified, +1/-1)
+**File**: `tests/suite/test_jwt_policies_jwksuri.py` (modified, +2/-0)
 ```diff
-@@ -348,7 +348,7 @@ jobs:
- 
-       - name: Generate WAF v5 tgz from JSON
-         run: |
--          docker run --rm --user root -v /var/run/docker.sock:/var/run/docker.sock -v ${{ github.workspace }}/tests/data/ap-waf-v5:/data gcr.io/f5-gcs-7899-ptg-ingrss-ctlr/nap/waf-compiler:5.16.2 -p /data/wafv5.json -o /data/wafv5.tgz
-+          docker run --rm --user root -v /var/run/docker.sock:/var/run/docker.sock -v ${{ github.workspace }}/tests/data/ap-waf-v5:/data gcr.io/f5-gcs-7899-ptg-ingrss-ctlr/nap/waf-compiler:5.16.3 -p /data/wafv5.json -o /data/wafv5.tgz
-         if: ${{ contains(matrix.images.image, 'nap-v5')}}
- 
-       - name: Generate secrets for tests
+@@ -198,6 +198,7 @@ def fin():
+     ],
+     indirect=True,
+ )
++@pytest.mark.usefixtures("restore_configmap")
+ class TestJWTPoliciesVsJwksuri:
+     @pytest.mark.parametrize("jwt_virtual_server", [jwt_vs_spec_src, jwt_vs_route_src, jwt_spec_and_route_src])
+     def test_jwt_policy_jwksuri(
+@@ -527,6 +528,7 @@ def test_jwt_policy_subroute_jwksuri_multiple_vs(
+     ],
+     indirect=True,
+ )
++@pytest.mark.usefixtures("restore_configmap")
+ class TestJWTAuthorizationJwksUnavailable:
+     def test_keys_unavailable_rejects_requests(
+         self,
 ```
 
-**File**: `.github/workflows/setup-smoke.yml` (modified, +1/-1)
+**File**: `tests/suite/test_oidc.py` (modified, +2/-6)
 ```diff
-@@ -204,7 +204,7 @@ jobs:
+@@ -178,6 +178,7 @@ def fin():
+     indirect=True,
+     ids=["http_without_config_safety", "http_with_config_safety"],
+ )
++@pytest.mark.usefixtures("restore_configmap")
+ class TestOIDCHttp:
+     @pytest.mark.parametrize("configmap", [cm_src, cm_zs_src])
+     @pytest.mark.parametrize("oidcYaml", ["standard", "pkce"])
+@@ -265,6 +266,7 @@ def test_oidc_with_opaque_secret(
+     indirect=True,
+     ids=["https_without_config_safety", "https_with_config_safety"],
+ )
++@pytest.mark.usefixtures("restore_configmap")
+ class TestOIDCHttps:
+     @pytest.mark.parametrize("configmap", [cm_src, cm_zs_src])
+     @pytest.mark.parametrize("oidcYaml", ["standard", "pkce"])
+@@ -342,12 +344,6 @@ def run_test(
+     with sync_playwright() as playwright:
+         run_oidc(playwright.chromium, ingress_controller_endpoint.public_ip, ingress_controller_endpoint.port_ssl)
  
-       - name: Generate WAF v5 tgz from JSON
-         run: |
--          docker run --rm --user root -v /var/run/docker.sock:/var/run/docker.sock -v ${{ github.workspace }}/tests/data/ap-waf-v5:/data gcr.io/f5-gcs-7899-ptg-ingrss-ctlr/nap/waf-compiler:5.16.2 -p /data/wafv5.json -o /data/wafv5.tgz
-+          docker run --rm --user root -v /var/run/docker.sock:/var/run/docker.sock -v ${{ github.workspace }}/tests/data/ap-waf-v5:/data gcr.io/f5-gcs-7899-ptg-ingrss-ctlr/nap/waf-compiler:5.16.3 -p /data/wafv5.json -o /data/wafv5.tgz
-         if: ${{ contains(inputs.image, 'nap-v5')}}
- 
-       - name: Run Smoke Tests
+-    replace_configmap_from_yaml(
+-        kube_apis.v1,
+-        ingress_controller_prerequisites.config_map["metadata"]["name"],
+-        ingress_controller_prerequisites.namespace,
+-        cm_src,
+-    )
+     delete_secret(kube_apis.v1, secret_name, test_namespace)
+     delete_policy(kube_apis.custom_objects, pol, test_namespace)
+     patch_virtual_server_from_yaml(kube_apis.custom_objects, virtual_server_setup.vs_name, orig_vs_src, test_namespace)
 ```
 
-**File**: `Makefile` (modified, +1/-1)
+**File**: `tests/suite/test_oidc_fclo.py` (modified, +1/-0)
 ```diff
-@@ -11,7 +11,7 @@ WAF_REPO					  ?= "pkgs.nginx.com" ## The package repo to install nginx app prot
- DOS_REPO					  ?= "pkgs.nginx.com" ## The package repo to install nginx app protect dos from
- 
- # renovate: datasource=docker depName=nginx/nginx
--NGINX_OSS_VERSION             ?= 1.31.9
-+NGINX_OSS_VERSION             ?= 1.31.10
- NGINX_PLUS_VERSION            ?= R37.3
- 
- NAP_WAF_VERSION               ?= 37.3+5.777
-```
-
-**File**: `build/Dockerfile` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@
- ARG BUILD_OS=debian
- 
- # renovate: datasource=docker depName=nginx/nginx
--ARG NGINX_OSS_VERSION=1.31.9
-+ARG NGINX_OSS_VERSION=1.31.10
- ARG NGINX_PLUS_VERSION=R37.3
- ARG NAP_WAF_VERSION=37.3+5.777
- ARG NAP_WAF_COMMON_VERSION=11.869
-```
-
-**File**: `charts/nginx-ingress/values.schema.json` (modified, +15/-15)
-```diff
-@@ -397,10 +397,10 @@
-                     },
-                     "tag": {
-                       "type": "string",
--                      "default": "5.16.2",
-+                      "default": "5.16.3",
-                       "title": "The tag of the  App Protect WAF v5 Enforcer image",
-                       "examples": [
--                        "5.16.2"
-+                        "5.16.3"
-                       ]
-                     },
-                     "digest": {
-@@ -436,7 +436,7 @@
-                   "examples": [
-                     {
-                       "repository": "private-registry.nginx.com/nap/waf-enforcer",
--                      "tag": "5.16.2",
-+                      "tag": "5.16.3",
-                       "pullPolicy": "IfNotPresent"
-                     }
-                   ]
-@@ -474,10 +474,10 @@
-                     },
-                     "tag": {
-                       "type": "string",
--                      "default": "5.16.2",
-+                      "default": "5.16.3",
-                       "title": "The tag of the  App Protect WAF v5 Config Manager image",
-                       "examples": [
--                        "5.16.2"
-+                        "5.16.3"
-                       ]
-                     },
-                     "digest": {
-@@ -513,7 +513,7 @@
-                   "examples": [
-                     {
-                       "repository": "private-registry.nginx.com/nap/waf-config-mgr",
--                      "tag": "5.16.2",
-+                      "tag": "5.16.3",
-                       "pullPolicy": "IfNotPresent"
-                     }
-                   ]
-@@ -570,10 +570,10 @@
-                     },
-                     "tag": {
-                       "type": "string",
--                      "default": "5.16.2",
-+                      "default": "5.16.3",
-                       "title": "The tag of the App Protect WAF v5 IP Intelligence image",
-                       "examples": [
--                        "5.16.2"
-+                        "5.16.3"
-                       ]
-                     },
-                     "digest": {
-@@ -609,7 +609,7 @@
-                   "examples": [
-                     {
-                       "repository": "private-registry.nginx.com/nap/waf-ip-intelligence",
--                      "tag": "5.16.2",
-+                      "tag": "5.16.3",
-                       "pullPolicy": "IfNotPresent"
-                     }
-                   ]
-@@ -2370,15 +2370,15 @@
-               "port": 50000,
-               "image": {
-                 "repository": "private-registry.nginx.com/nap/waf-enforcer",
--                "tag": "5.16.2",
-+                "tag": "5.16.3",
-                 "pullPolicy": "IfNotPresent"
-               },
-               "securityContext": {}
-             },
-             "configManager": {
-               "image": {
-                 "repository": "private-registry.nginx.com/nap/waf-config-mgr",
--                "tag": "5.16.2",
-+                "tag": "5.16.3",
-                 "pullPolicy": "IfNotPresent"
-               },
-               "securityContext": {
-@@ -2396,7 +2396,7 @@
-               "enable": false,
-               "image": {
-                 "repository": "private-registry.nginx.com/nap/waf-ip-intelligence",
--                "tag": "5.16.2",
-+                "tag": "5.16.3",
-                 "pullPolicy": "IfNotPresent"
-               },
-               "securityContext": {
-@@ -3017,15 +3017,15 @@
-             "port": 50000,
-             "image": {
-               "repository": "private-registry.nginx.com/nap/waf-enforcer",
--              "tag": "5.16.2",
-+              "tag": "5.16.3",
-               "pullPolicy": "IfNotPresent"
-             },
-             "securityContext": {}
-           },
-           "configManager": {
-             "image": {
-               "repository": "private-registry.nginx.com/nap/waf-config-mgr",
--              "tag": "5.16.2",
-+              "tag": "5.16.3",
-               "pullPolicy": "IfNotPresent"
-             },
-             "securityContext": {
-@@ -3043,7 +3043,7 @@
-             "enable": false,
-             "image": {
-               "repository": "private-registry.nginx.com/nap/waf-ip-intelligence",
--              "tag": "5.16.2",
-+              "tag": "5.16.3",
-               "pullPolicy": "IfNotPresent"
-             },
-             "securityContext": {
-```
-
-**File**: `charts/nginx-ingress/values.yaml` (modified, +3/-3)
-```diff
-@@ -95,7 +95,7 @@ controller:
-         repository: private-registry.nginx.com/nap/waf-enforcer
- 
-         ## The tag of the App Protect WAF v5 Enforcer image.
--        tag: "5.16.2"
-+        tag: "5.16.3"
-         ## The digest of the App Protect WAF v5 Enforcer image.
-         ## If digest is specified it has precedence over tag and will be used instead
-         # digest: "sha256:CHANGEME"
-@@ -119,7 +119,7 @@ controller:
-         repository: private-registry.nginx.com/nap/waf-config-mgr
- 
-         ## The tag of the App Protect WAF v5 Configuration Manager image.
--        tag: "5.16.2"
-+        tag: "5.16.3"
-         ## The digest of the App Protect WAF v5 Configuration Manager image.
-         ## If digest is specified it has precedence over tag and will be used instead
-         # digest: "sha256:CHANGEME"
-@@ -165,7 +165,7 @@ controller:
-         repository: private-registry.nginx.com/nap/waf-ip-intelligence
- 
-         ## The tag of the App Protect WAF v5 IP Intelligence image.
--        tag: "5.16.2"
-+        tag: "5.16.3"
-         ## The digest of the App Protect WAF v5 IP Intelligence image.
-         ## If digest is specified it has precedence over tag and will be used instead
-         # digest: "sha256:CHANGEME"
-```
-
-**File**: `charts/tests/__snapshots__/helmunit_test.snap` (modified, +12/-12)
-```diff
-@@ -2360,7 +2360,7 @@ spec:
-           - -enable-telemetry-reporting=true
-           - -weight-changes-dynamic-reload=false
-       - name: waf-enforcer
--        image: private-registry.nginx.com/nap/waf-enforcer:5.16.2
-+        image: private-registry.nginx.com/nap/waf-enforcer:5.16.3
-         imagePullPolicy: "IfNotPresent"
-         env:
-           - name: ENFORCER_PORT
-@@ -2371,7 +2371,7 @@ spec:
-           - name: app-protect-bd-config
-             mountPath: /opt/app_protect/bd_config
-       - name: waf-config-mgr
--        image: private-registry.nginx.com/nap/waf-config-mgr:5.16.2
-+        image: private-registry.nginx.com/nap/waf-config-mgr:5.16.3
-         imagePullPolicy: "IfNotPresent"
-         securityContext:
-             allowPrivilegeEscalation: false
-@@ -3950,7 +3950,7 @@ spec:
-           - -enable-telemetry-reporting=true
-           - -weight-changes-dynamic-reload=false
-       - name: waf-enforcer
--        image: my.private.reg/nap/waf-enforcer:5.16.2
-+        image: my.private.reg/nap/waf-enforcer:5.16.3
-         imagePullPolicy: "IfNotPresent"
-         env:
-           - name: ENFORCER_PORT
-@@ -3963,7 +3963,7 @@ spec:
-           - name: app-protect-ipi-db
-             mountPath: /var/IpRep
-       - name: waf-config-mgr
--        image: my.private.reg/nap/waf-config-mgr:5.16.2
-+        image: my.private.reg/nap/waf-config-mgr:5.16.3
-         imagePullPolicy: "IfNotPresent"
-         securityContext:
-             allowPrivilegeEscalation: false
-@@ -3980,7 +3980,7 @@ spec:
-           - name: app-protect-bundles
-             mountPath: /etc/app_protect/bundles
-       - name: waf-ip-intelligence
--        image: my.private.reg/nap/waf-ip-intelligence:5.16.2
-+        image: my.private.reg/nap/waf-ip-intelligence:5.16.3
-         imagePullPolicy: "IfNotPresent"
-         securityContext:
-             allowPrivilegeEscalation: false
-@@ -4550,7 +4550,7 @@ spec:
-           - -agent=true
-           - -agent-instance-group=app-protect-wafv5-agentv2-nginx-ingress-controller
-       - name: waf-enforcer
--        image: my.private.reg/nap/waf-enforcer:5.16.2
-+        image: my.private.reg/nap/waf-enforcer:5.16.3
-         imagePullPolicy: "IfNotPresent"
-         env:
-           - name: ENFORCER_PORT
-@@ -4561,7 +4561,7 @@ spec:
-           - name: app-protect-bd-config
-             mountPath: /opt/app_protect/bd_config
-       - name: waf-config-mgr
--        image: my.private.reg/nap/waf-config-mgr:5.16.2
-+        image: my.private.reg/nap/waf-config-mgr:5.16.3
-         imagePullPolicy: "IfNotPresent"
-         securityContext:
-             allowPrivilegeEscalation: false
-@@ -5127,7 +5127,7 @@ spec:
-           - -weight-changes-dynamic-reload=false
-           - -agent=true
-       - name: waf-enforcer
--        image: my.private.reg/nap/waf-enforcer:5.16.2
-+        image: my.private.reg/nap/waf-enforcer:5.16.3
-         imagePullPolicy: "IfNotPresent"
-         env:
-           - name: ENFORCER_PORT
-@@ -5138,7 +5138,7 @@ spec:
-           - name: app-protect-bd-config
-             mountPath: /opt/app_protect/bd_config
-       - name: waf-config-mgr
--        image: my.private.reg/nap/waf-config-mgr:5.16.2
-+        image: my.private.reg/nap/waf-config-mgr:5.16.3
-         imagePullPolicy: "IfNotPresent"
-         securityContext:
-             allowPrivilegeEscalation: false
-@@ -5641,7 +5641,7 @@ spec:
-           - -enable-telemetry-reporting=true
-           - -weight-changes-dynamic-reload=false
-       - name: waf-enforcer
--        image: my.private.reg/nap/waf-enforcer:5.16.2
-+        image: my.private.reg/nap/waf-enforcer:5.16.3
-         imagePullPolicy: "IfNotPresent"
-         resources:
-             limits:
-@@ -5661,7 +5661,7 @@ spec:
-           - name: app-protect-ipi-db
-             mountPath: /var/IpRep
-       - name: waf-config-mgr
--        image: my.private.reg/nap/waf-config-mgr:5.16.2
-+        image: my.private.reg/nap/waf-config-mgr:5.16.3
-         imagePullPolicy: "IfNotPresent"
-         securityContext:
-             allowPrivilegeEscalation: false
-@@ -5685,7 +5685,7 @@ spec:
-           - name: app-protect-bundles
-             mountPath: /etc/app_protect/bundles
-       - name: waf-ip-intelligence
--        image: my.private.reg/nap/waf-ip-intelligence:5.16.2
-+        image: my.private.reg/nap/waf-ip-intelligence:5.16.3
-         imagePullPolicy: "IfNotPresent"
-         securityContext:
-             allowPrivilegeEscalation: false
+@@ -142,6 +142,7 @@ def fin():
+     ],
+     indirect=True,
+ )
++@pytest.mark.usefixtures("restore_configmap")
+ class TestOIDCFCLO:
+     def test_oidc(
+         self,
 ```
 
 ---
 
-### Incident Patch 2: `be674e9c` (2026-11-23)
-**Commit Message**: add nkp catalogue workflow (#11479)
+### Incident Patch 2: `2f55f28e` (2026-11-24)
+**Commit Message**: Add step to generate secrets for tests in regression workflow (#11454)
 
-**File**: `.github/scripts/exclude_ci_files.txt` (modified, +3/-0)
+**File**: `.github/workflows/regression.yml` (modified, +3/-0)
 ```diff
-@@ -12,6 +12,8 @@
- .github/scripts/create-release-tarballs.sh
- .github/scripts/docker-updater.sh
- .github/scripts/docs-shortcode-update.sh
-+.github/scripts/nkp-catalog-new-version.sh
-+.github/scripts/nkp-catalog-new-version_test.sh
- .github/scripts/pull-release-notes.py
- .github/scripts/release-docs.sh
- .github/scripts/release-notes.j2
-@@ -37,6 +39,7 @@
- .github/workflows/issues.yaml
- .github/workflows/labeler.yml
- .github/workflows/lint-format.yml
-+.github/workflows/nkp-catalog-pr.yml
- .github/workflows/notifications.yml
- .github/workflows/oss-release.yml
- .github/workflows/patch-image.yml
+@@ -110,6 +110,9 @@ jobs:
+         with:
+           go-version-file: go.mod
+ 
++      - name: Generate secrets for tests
++        run: make secrets
++
+       - name: Run Tests
+         run: make cover
+ 
 ```
 
-**File**: `.github/scripts/nkp-catalog-new-version.sh` (added, +54/-0)
-```diff
-@@ -0,0 +1,54 @@
-+#!/usr/bin/env bash
-+# Adds a new NGINX Ingress Controller version to an nkp-partner-catalog clone, using the
-+# latest version already in the catalog as the template. Used by the nkp-catalog-pr.yml
-+# workflow.
-+#
-+# Usage: .github/scripts/nkp-catalog-new-version.sh <nic-version> <chart-version>
-+
-+set -euo pipefail
-+
-+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-+REPO_ROOT=$(cd "${SCRIPT_DIR}/../.." && pwd)
-+CATALOG_DIR=${CATALOG_DIR:-$(dirname "${REPO_ROOT}")/nkp-partner-catalog}
-+APP_DIR=${CATALOG_DIR}/applications/nginx-ingress-controller
-+
-+die() {
-+    printf 'error: %s\n' "$*" >&2
-+    exit 1
-+}
-+
-+[ $# -eq 2 ] || die "usage: $(basename "$0") <nic-version> <chart-version>"
-+version=$1
-+chart_version=$2
-+semver='^[0-9]+\.[0-9]+\.[0-9]+$'
-+[[ ${version} =~ ${semver} ]] || die "invalid NIC version '${version}', expected X.Y.Z"
-+[[ ${chart_version} =~ ${semver} ]] || die "invalid chart version '${chart_version}', expected X.Y.Z"
-+[ -d "${APP_DIR}" ] || die "${APP_DIR} not found. Set CATALOG_DIR to your nkp-partner-catalog clone."
-+
-+target=${APP_DIR}/${version}
-+[ ! -e "${target}" ] || die "${version} already exists in ${APP_DIR}"
-+
-+template=$(find "${APP_DIR}" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | sort -V | tail -1)
-+[ -n "${template}" ] || die "no existing version in ${APP_DIR} to use as a template"
-+
-+helmrelease=helmrelease/helmrelease.yaml
-+template_chart=$(perl -0ne 'print $1 if /\n\s*ref:\n\s*tag:\s*"?([^"\s]+)/' "${APP_DIR}/${template}/${helmrelease}")
-+[ -n "${template_chart}" ] || die "no OCIRepository ref.tag found in ${template}/${helmrelease}"
-+
-+echo "Creating ${version} (chart ${chart_version}) from ${template} (chart ${template_chart})"
-+cp -R "${APP_DIR}/${template}" "${target}"
-+
-+# Replace whole version tokens only, so that 5.7.1 is not matched inside 5.7.10 or 15.7.1.
-+# shellcheck disable=SC2016 # $ENV{...} is expanded by perl, not the shell
-+find "${target}" -type f -exec env FROM="${template}" TO="${version}" \
-+    perl -pi -e 's/(?<![\d.])\Q$ENV{FROM}\E(?!\.?\d)/$ENV{TO}/g' {} +
-+FROM="${template_chart}" TO="${chart_version}" perl -0pi -e 's/(\n\s*ref:\n\s*tag:\s*"?)\Q$ENV{FROM}\E/$1$ENV{TO}/' "${target}/${helmrelease}"
-+
-+# The chart tag is not tied to the NIC version, so a missed replacement would still deploy
-+# the new image, with the previous chart, and pass the e2e tests.
-+CHART="${chart_version}" perl -0ne 'exit(/\n\s*ref:\n\s*tag:\s*"?\Q$ENV{CHART}\E"?\n/ ? 0 : 1)' "${target}/${helmrelease}" ||
-+    die "chart tag in ${target}/${helmrelease} is not ${chart_version}"
-+grep -qF "tag: \"${version}\"" "${target}/helmrelease/cm.yaml" || die "image tag in ${target}/helmrelease/cm.yaml is not ${version}"
-+
-+echo "Changes compared to ${template}:"
-+(cd "${APP_DIR}" && diff -r "${template}" "${version}" | grep -v '^[<>] .\{200,\}') || true
-```
+---
 
-**File**: `.github/scripts/nkp-catalog-new-version_test.sh` (added, +85/-0)
-```diff
-@@ -0,0 +1,85 @@
-+#!/usr/bin/env bash
-+#
-+# Unit tests for nkp-catalog-new-version.sh.
-+#
-+# Run directly: .github/scripts/nkp-catalog-new-version_test.sh
-+
-+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-+SCRIPT="${SCRIPT_DIR}/nkp-catalog-new-version.sh"
-+
-+pass=0
-+fail=0
-+
-+TMP_DIR=$(mktemp -d)
-+trap 'rm -rf "${TMP_DIR}"' EXIT
-+
-+# write_bundle <dir> <nic-version> <chart-version> writes a minimal catalog bundle with the
-+# same version references as the real one.
-+write_bundle() {
-+    local dir=$1 version=$2 chart=$3
-+    mkdir -p "${dir}/helmrelease"
-+    cat >"${dir}/helmrelease/helmrelease.yaml" <<EOF
-+apiVersion: source.toolkit.fluxcd.io/v1
-+kind: OCIRepository
-+metadata:
-+  name: \${releaseName}-${version}-chart
-+spec:
-+  ref:
-+    tag: ${chart}
-+  url: oci://ghcr.io/nginx/charts/nginx-ingress
-+---
-+apiVersion: helm.toolkit.fluxcd.io/v2
-+kind: HelmRelease
-+spec:
-+  chartRef:
-+    name: \${releaseName}-${version}-chart
-+  valuesFrom:
-+  - kind: ConfigMap
-+    name: \${releaseName}-${version}-config-defaults
-+EOF
-+    cat >"${dir}/helmrelease/cm.yaml" <<EOF
-+data:
-+  values.yaml: |
-+    controller:
-+      image:
-+        tag: "${version}"
-+metadata:
-+  name: \${releaseName}-${version}-config-defaults
-+EOF
-+    printf '#private-registry.nginx.com/nginx-ic/nginx-plus-ingress:%s\n' "${version}" >"${dir}/helmrelease/extra-images.txt"
-+    printf 'nkp create catalog-bundle --apps=nginx-ingress-controller=%s --airgapped\n' "${version}" >"${dir}/metadata.yaml"
-+}
-+
-+# assert_new_version <want: pass|fail> <description> <nic-version> <chart-version>
-+# Runs the script on a catalog holding only 5.7.1 (chart 2.8.1). A passing run must produce
-+# exactly the bundle written for the new versions.
-+assert_new_version() {
-+    local want=$1 desc=$2 version=$3 chart=$4 catalog got
-+    catalog=$(mktemp -d "${TMP_DIR}/catalog.XXXXXX")
-+    write_bundle "${catalog}/applications/nginx-ingress-controller/5.7.1" 5.7.1 2.8.1
-+
-+    if CATALOG_DIR="${catalog}" "${SCRIPT}" "${version}" "${chart}" >"${catalog}/out" 2>&1; then
-+        got=pass
-+        write_bundle "${catalog}/expected" "${version}" "${chart}"
-+        diff -r "${catalog}/expected" "${catalog}/applications/nginx-ingress-controller/${version}" >"${catalog}/out" ||
-+            got="pass with a wrong bundle"
-+    else
-+        got=fail
-+    fi
-+
-+    if [[ "${got}" == "${want}" ]]; then
-+        pass=$((pass + 1))
-+    else
-+        fail=$((fail + 1))
-+        echo "FAIL: ${desc} (want=${want}, got=${got})"
-+        sed 's/^/    /' "${catalog}/out"
-+    fi
-+}
-+
-+assert_new_version pass "minor release" 5.8.0 2.9.0
-+assert_new_version pass "new version contains the template version" 5.7.10 2.8.10
-+assert_new_version fail "version already in the catalog" 5.7.1 2.8.1
-+assert_new_version fail "version is not X.Y.Z" 5.8 2.9.0
-+
-+echo "Results: ${pass} passed, ${fail} failed."
-+[ "${fail}" -eq 0 ]
-```
+### Incident Patch 3: `069224f0` (2026-11-23)
+**Commit Message**: Fix NKP catalogue publishing (#11518)
 
-**File**: `.github/skills/nic-ci-pipelines/SKILL.md` (modified, +1/-0)
+**File**: `.github/skills/nic-ci-pipelines/SKILL.md` (modified, +6/-3)
 ```diff
-@@ -126,6 +126,7 @@ Because the stages are decoupled and live in separate repos, a transient failure
+@@ -31,6 +31,7 @@ Consequences:
+      binaries (SBOM, Cosign)                            certify-openshift-images (Pyxis)
+      azure-upload      --> Azure blob                   operator (dispatch nginx-ingress-helm-operator/sync-chart.yml)
+                                                         release-gate -> tag -> release-assets -> github-release
++                                                        nkp-catalog (dispatch nkp-catalog-pr.yml)
+ ```
+ 
+ ## Workflow Architecture
+@@ -73,6 +74,7 @@ release-publish.yml (dispatchable Stage 2: Publish)    [PUBLIC repo only -- no b
+   -> tag -> creates and pushes the vX.Y.Z git tag
+   -> release-assets -> downloads tarballs from Azure and uploads to GitHub release draft
+   -> github-release -> closes milestone and publishes the GitHub release draft
++  -> nkp-catalog -> dispatches nkp-catalog-pr.yml to raise the NKP Partner Catalog PR
+ ```
+ 
+ ### Two-Stage Release Architecture
+@@ -92,7 +94,7 @@ Release pipelines are split into two independently dispatchable stages that run
+    - Creates and pushes the release git tag (`vX.Y.Z` or `<lts_version>`)
+    - Downloads signed binaries from Azure blob storage and attaches them to the GitHub release draft
+    - Closes the release milestone and publishes the GitHub release
+-
++   - `release-publish.yml` only: dispatches `nkp-catalog-pr.yml` to raise the NKP Partner Catalog PR (skipped on `dry_run` or `skip_step: nkp-catalog`)
+ Because the stages are decoupled and live in separate repos, a transient failure in publishing or external registry sync can be retried directly via `release-publish.yml` without rebuilding any images or binaries.
+ 
+ ---
+@@ -116,7 +118,7 @@ Because the stages are decoupled and live in separate repos, a transient failure
+ | Workflow | Repo | Trigger | Purpose |
+ | --- | --- | --- | --- |
+ | `release-prep.yml` | internal | Manual dispatch | Stage 1: build artifacts, stage images and Helm chart in test registry (`docker-mgmt-test.nginx.com`), sign binaries, upload tarballs to Azure blob storage |
+-| `release-publish.yml` | public | Manual dispatch | Stage 2: copy staged images to public registries, publish Helm chart, certify UBI images, dispatch operator sync PR, create git tag, upload release assets, close milestone, publish GitHub release |
++| `release-publish.yml` | public | Manual dispatch | Stage 2: copy staged images to public registries, publish Helm chart, certify UBI images, dispatch operator sync PR, create git tag, upload release assets, close milestone, publish GitHub release, dispatch NKP catalog PR |
+ | `release-prep-lts.yml` | internal | Manual dispatch | LTS Stage 1: build LTS Plus images & binaries, stage in test registry, sign binaries, upload tarballs to Azure blob storage |
+ | `release-publish-lts.yml` | public | Manual dispatch | LTS Stage 2: copy staged LTS Plus images to public registries, publish LTS Helm chart (`nginx-ingress-lts`), create git tag, attach release assets, close milestone, publish GitHub release |
+ | `oss-release.yml` | public | Manual dispatch, workflow_call | Copies OSS images from staging registry to public registries via skopeo (called by `release-publish.yml`) |
+@@ -126,7 +128,7 @@ Because the stages are decoupled and live in separate repos, a transient failure
  | `create-release-branch.yml` | public | Manual dispatch | Creates a new `release-X.Y` branch and bumps versions |
  | `release-pr.yml` | public | Manual dispatch | Automates creation of release PRs for version updates and changelogs |
  | `version-bump.yml` | public | Manual dispatch | Bumps `IC_VERSION` and `HELM_CHART_VERSION` across the repository |
-+| `nkp-catalog-pr.yml` | public | Manual dispatch | After a release is published: generates the NKP Partner Catalog bundle, validates it and runs the catalog e2e tests, then opens a PR in `nutanix-cloud-native/nkp-partner-catalog` from the `nginx-bot` fork with a GitHub-signed commit (uses the `nginx-bot-pat` vault secret) |
+-| `nkp-catalog-pr.yml` | public | Manual dispatch | After a release is published: generates the NKP Partner Catalog bundle, validates it and runs the catalog e2e tests, then opens a PR in `nutanix-cloud-native/nkp-partner-catalog` from the `nginx-bot` fork with a GitHub-signed commit (uses the `nginx-bot-pat` vault secret) |
++| `nkp-catalog-pr.yml` | public | Dispatched by `release-publish.yml`, manual dispatch | After a release is published: generates the NKP Partner Catalog bundle, validates it and runs the catalog e2e tests, then opens a PR in `nutanix-cloud-native/nkp-partner-catalog` from the `nginx-bot` fork with a GitHub-signed commit (uses the `nginx-bot-pat` vault secret) |
  
  ### Reusable Build Workflows (called via `workflow_call`)
  
+@@ -245,6 +247,7 @@ Gaps to be aware of: `make update-crds` also rewrites `deploy/crds*.yaml` and `d
+ - Every job in a non-`mirror-*` workflow must be gated as `github.repository == 'nginx/kubernetes-ingress'` (or `nginx/kubernetes-ingress-internal` for internal-only jobs like prep) optionally followed by `&& ( ... )` with **all** extra conditions inside one balanced group. `&&` binds tighter than `||`, so an ungrouped chain like `gate && (a) || (b)` parses as `(gate && (a)) || (b)` and would run on a fork. Enforced by `.github/scripts/validate-workflow-gating.sh` (pre-commit + `lint-format.yml`); run it locall
 ```
 
-**File**: `.github/workflows/nkp-catalog-pr.yml` (added, +305/-0)
+**File**: `.github/workflows/nkp-catalog-pr.yml` (modified, +4/-1)
 ```diff
-@@ -0,0 +1,305 @@
-+name: NKP Catalog PR
-+run-name: ${{ inputs.dry_run && '[DRY RUN] ' || '' }}NKP catalog PR for NIC ${{ inputs.nic_version }} by @${{ github.actor }}
+@@ -4,7 +4,8 @@ run-name: ${{ inputs.dry_run && '[DRY RUN] ' || '' }}NKP catalog PR for NIC ${{
+ # Adds a released NIC version to the Nutanix Kubernetes Platform (NKP) Partner Catalog:
+ # generates the bundle from the latest version in the catalog, validates it, runs the
+ # catalog's e2e tests, then opens a pull request from the nginx-bot fork with a signed
+-# commit.
++# commit. release-publish.yml dispatches it after publishing the GitHub release; run it
++# manually to retry.
+ 
+ on:
+   workflow_dispatch:
+@@ -147,6 +148,8 @@ jobs:
+ 
+       - name: Run catalog e2e tests
+         working-directory: nkp-partner-catalog/apptests
++        env:
++          SKIP_CLUSTER_TEARDOWN: "true"
+         run: |
+           # The catalog harness upgrades from and to the last two versions in byte order,
+           # whatever version it is given.
+```
+
+**File**: `.github/workflows/release-publish.yml` (modified, +27/-0)
+```diff
+@@ -462,3 +462,30 @@ jobs:
+         env:
+           RELEASE_ID: ${{ steps.release-id.outputs.release_id }}
+         if: ${{ ! inputs.dry_run }}
 +
-+# Adds a released NIC version to the Nutanix Kubernetes Platform (NKP) Partner Catalog:
-+# generates the bundle from the latest version in the catalog, validates it, runs the
-+# catalog's e2e tests, then opens a pull request from the nginx-bot fork with a signed
-+# commit.
-+
-+on:
-+  workflow_dispatch:
-+    inputs:
-+      nic_version:
-+        description: "Released NIC version to add (e.g. 5.8.0)"
-+        required: true
-+        type: string
-+      chart_version:
-+        description: "Helm chart version (defaults to the version in charts/nginx-ingress/Chart.yaml at tag v<nic_version>)"
-+        required: false
-+        type: string
-+      dry_run:
-+        description: "Dry run: generate and validate the bundle, but don't open the pull request"
-+        type: boolean
-+        default: false
-+
-+defaults:
-+  run:
-+    shell: bash
-+
-+concurrency:
-+  group: nkp-catalog-${{ inputs.nic_version }}
-+  cancel-in-progress: false
-+
-+permissions:
-+  contents: read
-+
-+env:
-+  CATALOG_REPO: nutanix-cloud-native/nkp-partner-catalog
-+  FORK_REPO: nginx-bot/nkp-partner-catalog
-+  APP_PATH: applications/nginx-ingress-controller
-+  NIC_VERSION: ${{ inputs.nic_version }}
-+
-+jobs:
-+  validate:
-+    name: Generate and validate bundle
-+    if: github.repository == 'nginx/kubernetes-ingress'
++  # github-release publishes with GITHUB_TOKEN, and GitHub does not start workflows from
++  # events made with that token, so a `release: published` trigger would never fire.
++  # workflow_dispatch is the exception. The NKP run is separate, so a failure there does not
++  # fail the release, and it can be re-run on its own.
++  nkp-catalog:
++    # Without !cancelled(), every job in `needs` must have succeeded, so this only runs once
++    # github-release has published the release.
++    if: github.repository == 'nginx/kubernetes-ingress' && (! inputs.dry_run && ! contains(inputs.skip_step, 'nkp-catalog'))
++    name: Trigger NKP Catalog PR
 +    runs-on: ubuntu-26.04
-+    timeout-minutes: 45
++    needs: [variables, github-release]
 +    permissions:
 +      contents: read
-+    outputs:
-+      chart_version: ${{ steps.versions.outputs.chart_version }}
-+      catalog_sha: ${{ steps.catalog.outputs.sha }}
-+      template_version: ${{ steps.catalog.outputs.template_version }}
++      actions: write # to dispatch nkp-catalog-pr.yml
 +    steps:
-+      - name: Checkout Repository
-+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-+        with:
-+          persist-credentials: false
-+
-+      - name: Resolve versions
-+        id: versions
-+        env:
-+          CHART_VERSION: ${{ inputs.chart_version }}
-+        run: |
-+          semver='^[0-9]+\.[0-9]+\.[0-9]+$'
-+          [[ "${NIC_VERSION}" =~ ${semver} ]] || { echo "::error::Invalid nic_version '${NIC_VERSION}', expected X.Y.Z"; exit 1; }
-+          if [[ -z "${CHART_VERSION}" ]]; then
-+            git fetch --no-tags --depth=1 origin "refs/tags/v${NIC_VERSION}:refs/tags/v${NIC_VERSION}" ||
-+              { echo "::error::Tag v${NIC_VERSION} not found. Publish the release first, or set chart_version."; exit 1; }
-+            CHART_VERSION=$(git show "v${NIC_VERSION}:charts/nginx-ingress/Chart.yaml" | yq '.version')
-+          fi
-+          [[ "${CHART_VERSION}" =~ ${semver} ]] || { echo "::error::Invalid chart version '${CHART_VERSION}', expected X.Y.Z"; exit 1; }
-+          echo "NIC ${NIC_VERSION}, Helm chart ${CHART_VERSION}"
-+          echo "chart_version=${CHART_VERSION}" >> "$GITHUB_OUTPUT"
-+
-+      - name: Checkout NKP Partner Catalog
-+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-+        with:
-+          repository: ${{ env.CATALOG_REPO }}
-+          path: nkp-partner-catalog
-+          persist-credentials: false
-+
-+      - name: Check the version is not already proposed
++      - name: Dispatch NKP Catalog PR workflow
 +        env:
 +          GH_TOKEN: ${{ github.token }}
-+          DRY_RUN: ${{ inputs.dry_run }}
++          NIC_VERSION: ${{ inputs.nic_version }}
++          CHART_VERSION: ${{ needs.variables.outputs.chart_version }}
 +        run: |
-+          prs=$(gh pr list --repo "${CATALOG_REPO}" --state open --limit 100 --json url,headRepositoryOwner,files \
-+            --jq "[.[] | select(any(.files[]; .path | startswith(\"${APP_PATH}/${NIC_VERSION}/\")))]")
-+          others=$(jq -r '.[] | select(.headRepositoryOwner.login != "nginx-bot") | .url' <<<"${prs}")
-+          bot=$(jq -r '.[] | select(.headRepositoryOwner.login == "nginx-bot") | .url' <<<"${prs}")
-+          [[ -z "${bot}" ]] || echo "nginx-bot already has a pull request for ${NIC_VERSION}, it will be updated: ${bot}"
-+          if [[ -n "${others}" ]]; then
-+            message="NIC ${NIC_VERSION} is already proposed in ${others//$'\n'/, }. Close that pull request first."
-+            if [[ "${DRY_RUN}" == "true" ]]; then
-+              echo "::warning::${message}"
-+            else
-+              echo "::error::${message}"
-+              exit 1
-+            fi
-+          fi
-+
-+      - name: Generate bundle
-+        id: catalog
-+        env:
-+          CATALOG_DIR: nkp-partner-catalog
-+          CHART_VERSION: ${{ steps.versions.outputs.chart_version }}
-+        run: |
-+          echo "sha=$(git -C "${CATALOG_DIR}" rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-+          template=$(find "${CATALOG_DIR}/${APP_PATH}" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | sort -V | tail -1)
-+          echo "template_version=${template}" >> "$GITHUB_OUTPUT"
-+          .github/scripts/nkp-catalog-new-version.sh "${NIC_VERSION}" "${CHART_VERSION}"
-+
-+      - name: Set up Helm
-+        uses: azure/setup-helm@2f5e7bc67f1f9972ab16657bb795f36d8f04de0e # v5.1.0
-+
-+      - name: Check the chart and image
-```
-
-**File**: `.pre-commit-config.yaml` (modified, +9/-0)
-```diff
-@@ -83,6 +83,15 @@ repos:
-         pass_filenames: false
-         require_serial: true
- 
-+      - id: test-nkp-catalog-new-version
-+        name: test NKP catalog new-version script
-+        description: Runs unit tests for the script that generates NKP Partner Catalog bundles.
-+        entry: .github/scripts/nkp-catalog-new-version_test.sh
-+        language: script
-+        files: ^\.github/scripts/nkp-catalog-new-version(_test)?\.sh$
-+        pass_filenames: false
-+        require_serial: true
-+
-   - repo: https://github.com/asottile/pyupgrade
-     rev: v3.22.0
-     hooks:
++          gh workflow run nkp-catalog-pr.yml --repo "${GITHUB_REPOSITORY}" --ref "${GITHUB_REF_NAME}" \
++            -f nic_version="${NIC_VERSION}" -f chart_version="${CHART_VERSION}"
++          runs="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/workflows/nkp-catalog-pr.yml"
++          echo "Dispatched NKP Catalog PR for NIC ${NIC_VERSION}, chart ${CHART_VERSION}: ${runs}"
++          echo "### NKP Catalog PR dispatched for NIC ${NIC_VERSION}: ${runs}" >> "$GITHUB_STEP_SUMMARY"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #11518** (2026-11-23): Fix NKP catalogue publishing (@vepatel)
+- **PR #11516** (2026-11-24): Add types to issue template (@danielnginx)
 - **PR #11515** (closed): Update issue types on templates (@danielnginx)
 - **PR #11514** (2026-11-23): sync: security hardening and minor bug fixes for release-5.8 (@nic-create-pr[bot])
 - **PR #11513** (2026-11-23): Update WAF and nginx for main (@nic-create-pr[bot])
-- **PR #11481** (2026-11-23): [ci] Phase 3 Unify build workflows (#11453) (@sean-breen)
-- **PR #11480** (2026-11-23): [ci] Phase 3 Unify build workflows (#11453) into release-5.8 (@sean-breen)
-- **PR #11479** (2026-11-23): add nkp catalogue workflow (@vepatel)
+- **PR #11511** (2026-11-24): [ci]: 4.x-release-5.8: unify workflow gates and simplify ci.yml- #11452 (@javorszky)
 
 ---
 
@@ -2162,35 +1715,39 @@ Co-authored-by: AlexFenlon <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update WAF and nginx for main
+## X. Add restore_configmap fixture to multiple test classes
 
 **RULE**:
-When implementing operations in `.github/scripts/tech-specs.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nginx/kubernetes-ingress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tests/suite/test_annotations.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nginx/kubernetes-ingress. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fad2fe84`: Update WAF and nginx for main. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `af39bb88`: Add restore_configmap fixture to multiple test classes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/tech-specs.json`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/suite/test_annotations.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-      "nginx_version": "1.31.10 / R37.3.1.1"
-      "compiler_version": "5.777",
-      "waf_release_version": "5.16.3"
+            replace_configmap_from_yaml(
+                kube_apis.v1,
+                ingress_controller_prerequisites.config_map["metadata"]["name"],
+                ingress_controller_prerequisites.namespace,
+                f"{DEPLOYMENTS}/common/nginx-config.yaml",
+            )
+            delete_items_from_yaml(kube_apis, src, test_namespace)
+            delete_common_app(kube_apis, "grpc", test_namespace)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-      "nginx_version": "1.31.9 / R37.3.0.1"
-      "compiler_version": "5.777.3",
-      "waf_release_version": "5.16.2"
+            delete_items_from_yaml(kube_apis, src, test_namespace)
+            delete_common_app(kube_apis, "grpc", test_namespace)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fad2fe84` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `af39bb88` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

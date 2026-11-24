@@ -12693,3 +12693,6 @@
 | `CYCLE-20261124-P2GF` | `2026-11-24T14:05:49.359Z` | `apple/foundationdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10273` | Yes (`2345a5f2...`) |
 | `CYCLE-20261124-P4QW` | `2026-11-24T14:05:52.328Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10274` | Yes (`c2f6e946...`) |
 | `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T14:06:33.298Z` | `actions-actions-runner-controller` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-5E40C2C7` [Domain D] | Yes (`d73c4520...`) |
+| `CYCLE-20261124-12Q5` | `2026-11-24T14:15:09.581Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10275` | Yes (`3771887a...`) |
+| `CYCLE-20261124-161T` | `2026-11-24T14:15:13.889Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10276` | Yes (`37d0e495...`) |
+| `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T14:15:45.715Z` | `nginx-kubernetes-ingress` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-3AEE5D3A` [Domain K] | Yes (`f1a5e7eb...`) |

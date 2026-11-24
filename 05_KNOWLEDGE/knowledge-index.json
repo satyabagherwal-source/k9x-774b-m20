@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T14:06:35.593Z",
+  "last_updated": "2026-11-24T14:15:48.844Z",
   "total_verified_learnings": 9095,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24661,
+  "total_items": 24666,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -218543,8 +218543,8 @@
       "slug": "nginx-kubernetes-ingress",
       "platform": "github",
       "source_url": "https://github.com/nginx/kubernetes-ingress",
-      "source_version": "fad2fe84",
-      "content_hash": "74ba0eff437774a91dba7e57772d2447c5fc6c277097903bab6a1692cf2f6886",
+      "source_version": "68c058a2",
+      "content_hash": "3771887a148df05cb5d824d7d62925d07bd68821efa0115a6b9ff803be138b64",
       "dossier_path": "07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
       "promoted_rules": [
@@ -218587,6 +218587,11 @@
           "number": 10093,
           "title": "Update WAF and nginx for main",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10275,
+          "title": "Add restore_configmap fixture to multiple test classes",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -218594,7 +218599,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T18:40:53.753Z",
+      "verified_at": "2026-11-24T14:15:09.367Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -218648,10 +218653,10 @@
       "relative_path": "08_VERIFICATION/nginx-kubernetes-ingress-verification-protocol-empirical-defect-shield-for-nginx.md",
       "title": "Verification Protocol: Empirical Defect Shield for nginx/kubernetes-ingress",
       "repository": "nginx/kubernetes-ingress",
-      "source_version": "fad2fe84",
-      "content_hash": "2d88e6f3ad01d1d4e33f06fc910662575dcbb7164eb65629fa1a32c08e334820",
+      "source_version": "68c058a2",
+      "content_hash": "03aacfcddf35a686d19f34f932039601253352f73e5cd16f25b3bfa72384a018",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T18:40:54.540Z"
+      "persisted_at": "2026-11-24T14:15:10.172Z"
     },
     "domain_intelligence-research-knowledge-intelligence-vercel-labs-agent-desktop-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-vercel-labs-agent-desktop-learnings-core-invaria",
@@ -218709,9 +218714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nginx-kubernetes-ingress-learnings",
       "repository": "nginx-kubernetes-ingress-learnings",
       "source_version": "HEAD",
-      "content_hash": "63144b07ee41a7738d89afc67df5da80c4f51d984f6eda0d0f03fa3519719dee",
+      "content_hash": "abef2e8d7cd48e191bbb42c08744bed4e73fed79b69e2035e2847192e0302dae",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T18:41:38.412Z"
+      "persisted_at": "2026-11-24T14:15:46.762Z"
     },
     "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k": {
       "learning_id": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
@@ -219231,13 +219236,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-QH04-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-1WP6-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "ef80e003edbf73d2f1190f4dc0e96fc8db6a1eea23cf6a513715ae67a1a9bf87",
+      "content_hash": "96b1ea200206a3a6f662fb930742cd195e7c17929d959abf1eab7b467c03504a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T13:38:55.252Z"
+      "persisted_at": "2026-11-24T14:15:48.427Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -219247,9 +219252,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "8ca0d3c51fd276d1488ee051d00a450a8f4f8652a2d7ff18364d053c304cb6fc",
+      "content_hash": "d83ba089fbcdad74e1af61a5134067831fcc98936359f11aa81a2d10f6ba994a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T13:38:55.443Z"
+      "persisted_at": "2026-11-24T14:15:48.640Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -219259,9 +219264,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "9334b08f489df5a199af22faac3ec0a012d0cfddbb6f984ed10356176303e668",
+      "content_hash": "ede6e351355e4bed29bdf66ff3c87bed54177eeac0ffc4b58dbd4dd38ef945a7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T13:38:55.624Z"
+      "persisted_at": "2026-11-24T14:15:48.844Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -233448,8 +233453,8 @@
       "slug": "arangodb-arangodb",
       "platform": "github",
       "source_url": "https://github.com/arangodb/arangodb",
-      "source_version": "0da7627b",
-      "content_hash": "a713a1645a4bcf8fc64355fa2827cc95c0cb1fdc944d492ea0b889b37fc4c3ee",
+      "source_version": "3f2986a0",
+      "content_hash": "37d0e49506f289e1d8ffdebe9e7b0424ec813d8f041d98034ff7459e0f32b0cf",
       "dossier_path": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "promoted_rules": [
@@ -233497,6 +233502,11 @@
           "number": 10087,
           "title": "Rebuild included rclone v1.75.1 with go1.26.11 and non-vulnerable dependencies",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10276,
+          "title": "fix leaks in zip file handling",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -233504,7 +233514,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T17:46:27.228Z",
+      "verified_at": "2026-11-24T14:15:13.683Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233546,10 +233556,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-arangodb-arangodb-technical-construction-intelligence-arangodb-arangodb-core-inv.md",
       "title": "Technical Construction Intelligence: arangodb/arangodb Core Invariants",
       "repository": "arangodb/arangodb",
-      "source_version": "0da7627b",
-      "content_hash": "487c9f4ccdb6477420fee92419d72fe6fc23c085d0a0d1cda0d055d1b2a71feb",
+      "source_version": "3f2986a0",
+      "content_hash": "835a059110e79185b426f103a708b75e9238022462587122f5ad475197309eb3",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T17:46:27.844Z"
+      "persisted_at": "2026-11-24T14:15:14.308Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-arangodb-arangodb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-arangodb-arangodb",
@@ -233558,10 +233568,10 @@
       "relative_path": "08_VERIFICATION/arangodb-arangodb-verification-protocol-empirical-defect-shield-for-arangodb-ara.md",
       "title": "Verification Protocol: Empirical Defect Shield for arangodb/arangodb",
       "repository": "arangodb/arangodb",
-      "source_version": "0da7627b",
-      "content_hash": "9c2a40716373092221d3f5cbe7fa6ee0fe4ecf5e2f74cccc25d5f8e9dee177f1",
+      "source_version": "3f2986a0",
+      "content_hash": "c68a7dbda43029e2c3db5fc637f3779c4bf5cfbb8d159b2ac7c0f91bf6db89aa",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T17:46:28.032Z"
+      "persisted_at": "2026-11-24T14:15:14.477Z"
     },
     "domain_intelligence-architecture-intelligence-jithin-sabu-purge-app-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-jithin-sabu-purge-app-learnings-core-invariants",
@@ -233607,9 +233617,9 @@
       "title": "Technical Construction Intelligence: arangodb-arangodb-learnings Core Invariants",
       "repository": "arangodb-arangodb-learnings",
       "source_version": "HEAD",
-      "content_hash": "7dedff34da07137496e12651c001353c13c0649593152d580d0984a768f66a1d",
+      "content_hash": "da8f1e025d5c8f0cebc4c3ccc31bb8f0aad600bf92623372ef704b50da0803d5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T05:37:06.411Z"
+      "persisted_at": "2026-11-24T14:15:47.713Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-arangodb-arangodb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-arangodb-arangodb-learnings",
@@ -233619,9 +233629,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for arangodb-arangodb-learnings",
       "repository": "arangodb-arangodb-learnings",
       "source_version": "HEAD",
-      "content_hash": "d44d46731a1d55c511ea2fa0940bc51b90d135fc555a53a83930acd690ed70cc",
+      "content_hash": "d9bfca5ee009d730cbc22d2fdfa826081d31df58b4e117a847c09ddfef821868",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T05:37:06.578Z"
+      "persisted_at": "2026-11-24T14:15:47.915Z"
     },
     "learn-huggingface-zai-org-glm-5-3": {
       "learning_id": "learn-huggingface-zai-org-glm-5-3",
@@ -261641,10 +261651,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nginx-kubernetes-ingress-architecture-intelligence-nginx-kubernetes-ingress-core.md",
       "title": "Architecture Intelligence: nginx/kubernetes-ingress Core Invariants",
       "repository": "nginx/kubernetes-ingress",
-      "source_version": "fad2fe84",
-      "content_hash": "ea6133d28939544b4f2ba857f50e2efd12c2f00ab9c6d6f073a29e71675f840f",
+      "source_version": "68c058a2",
+      "content_hash": "3f0465e1e42e9b56e57aee3adc1ea838116e77c45cb54381b67cd4d246fe7ef6",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T18:40:54.370Z"
+      "persisted_at": "2026-11-24T14:15:09.996Z"
     },
     "learn-github-rustls-rustls": {
       "learning_id": "learn-github-rustls-rustls",
@@ -261810,9 +261820,9 @@
       "title": "Architecture Intelligence: nginx-kubernetes-ingress-learnings Core Invariants",
       "repository": "nginx-kubernetes-ingress-learnings",
       "source_version": "HEAD",
-      "content_hash": "ca0cf164f0a2ff0ee309922ac97f78a3e71dd74b9572e9886fbf6e777bc731fb",
+      "content_hash": "836012003d8b56908b7715bfbb3b374f80f42c594216bfcce2595ebf564aecc3",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T18:41:38.212Z"
+      "persisted_at": "2026-11-24T14:15:46.559Z"
     },
     "domain_intelligence-technical-construction-intelligence-rustls-rustls-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-rustls-rustls-learnings-core-invariants",
@@ -336632,6 +336642,70 @@
       "content_hash": "41854869cf3e19f9bc1b031464a241847ac1021f9c6760ba68122a59e601b195",
       "domain_letter": "I",
       "persisted_at": "2026-11-24T14:06:34.216Z"
+    },
+    "rule-10275": {
+      "learning_id": "rule-10275",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10275,
+      "title": "Add restore_configmap fixture to multiple test classes",
+      "source_url": "https://github.com/nginx/kubernetes-ingress",
+      "source_version": "68c058a2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T14:15:09.367Z"
+    },
+    "candidate_directive-add-restore_configmap-fixture-to-multiple-test-classes": {
+      "item_id": "candidate_directive-add-restore_configmap-fixture-to-multiple-test-classes",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-1V3A-add-restore_configmap-fixture-to-multiple-test-classes.md",
+      "title": "Add restore_configmap fixture to multiple test classes",
+      "repository": "nginx-kubernetes-ingress-learnings",
+      "source_version": "HEAD",
+      "content_hash": "83d02999a0b8d4865b0da5c6d7f99d75c2460c9f319a99caa1cee2fe8e06f641",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-24T14:15:46.354Z"
+    },
+    "rule-10276": {
+      "learning_id": "rule-10276",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10276,
+      "title": "fix leaks in zip file handling",
+      "source_url": "https://github.com/arangodb/arangodb",
+      "source_version": "3f2986a0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T14:15:13.683Z"
+    },
+    "candidate_directive-fix-leaks-in-zip-file-handling": {
+      "item_id": "candidate_directive-fix-leaks-in-zip-file-handling",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-168G-fix-leaks-in-zip-file-handling.md",
+      "title": "fix leaks in zip file handling",
+      "repository": "arangodb/arangodb",
+      "source_version": "3f2986a0",
+      "content_hash": "57c7e3d9487fbddad88146372f95b07ee267e02f6694d284c914404067c47b33",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T14:15:14.129Z"
+    },
+    "candidate_directive-bts-2543-fix-leaks-in-zip-file-handling": {
+      "item_id": "candidate_directive-bts-2543-fix-leaks-in-zip-file-handling",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-1VZQ-bts-2543-fix-leaks-in-zip-file-handling.md",
+      "title": "BTS-2543: fix leaks in zip file handling",
+      "repository": "arangodb-arangodb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "95ba11f7b5c3b9cb46815a6100cfb1482c096b927964a4121cda5cffd69c525e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T14:15:47.511Z"
     }
   },
   "ai-builder-brain": {

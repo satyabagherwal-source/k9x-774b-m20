@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T05:37:06.148Z",
+  "timestamp": "2026-11-24T14:15:47.380Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-arangodb-arangodb-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [arangodb-arangodb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T05:37:06.148Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T14:15:47.380Z`  
 > **Learning ID**: `LEARN-EVO-arangodb-arangodb-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), C (Market & Business Intelligence)
-- **Confidence Rating**: 66%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), A (Human & Need Intelligence), C (Market & Business Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 75%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from arangodb-arangodb-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source**: github ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
-> **Source Version**: `828a810e`  
+> **Source Version**: `3f2986a0`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T05:37:01.640Z  
+> **Timestamp**: 2026-11-24T14:15:12.801Z  
 > **Learning ID**: `learn-github-arangodb-arangodb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T05:37:01.452Z  
+> **Harvest Timestamp**: 2026-11-24T14:15:12.796Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: 🥑 ArangoDB is a native multi-model database with flexible data models for documents, graphs, and key-values. Build high performance applications using a convenient SQL-like query language or JavaScript extensions.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 14300 stars
+- **Stars / Engagement**: 14302 stars
 
 ---
 
@@ -1669,11 +1669,11 @@ U_INTERNAL double  U_EXPORT2 uprv_ceil(double d);
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #23712** (2026-11-19): **[COR-1295] Fix use-after-move issues**
-  *Symptoms*: ### Scope & Purpose  - [x] :hankey: Bugfix 
+- **Issue #23751** (2026-11-24): **Bugfix/backport 3.12 bts 2480 unload index on collection open failures**
+  *Symptoms*: ### Scope & Purpose  This is a backport PR for the fix in https://github.com/arangodb/arangodb/pull/23719  - [X] :hankey: Bugfix - [ ] :pizza: New feature - [ ] :fire: Performance improvement - [ ] :hammer: Refactoring/simplification  ### Checklist  - [ ] Tests   - [ ] **Regression tests**   - [ ] C++ **Unit tests**   - [ ] **integration tests**   - [ ] **resilience tests** - [X] :book: CHANGELOG entry made - [ ] :books: documentation written (release notes, API changes, ...) - [ ] Backports   - [ ] Backport for 3.12.0: *(Please link PR)*   - [ ] Backport for 3.11: *(Please link PR)*   - [ ] Backport for 3.10: *(Please link PR)*  #### Related Information  *(Please reference tickets / specification / other PRs etc)*  - [ ] Docs PR:  - [ ] Enterprise PR: - [X] GitHub issue / Jira ticket: https://arangodb.atlassian.net/browse/BTS-2480 - [ ] Design document:  
 
-- **Issue #23710** (2026-11-19): **[COR-1294] JWT secret generation fallback should still use a secure random.**
-  *Symptoms*: ### Scope & Purpose  The current JWT secret fallback uses our own RandomGenerator, but should use RAND_bytes from OpenSSL.  - [ ] :hankey: Bugfix - [ ] :pizza: New feature - [ ] :fire: Performance improvement - [x] :hammer: Refactoring/simplification  #### Related Information  - [ ] Docs PR:  - [ ] Enterprise PR: - [x] Jira ticket: https://arangodb.atlassian.net/browse/COR-1294 - [ ] Design document:  
+- **Issue #23747** (2026-11-24): **Sync stale node_modules/.package-lock.json and exclude it from packages**
+  *Symptoms*: ### Scope & Purpose  `js/node/node_modules/.package-lock.json` (npm's hidden lockfile) was not updated by the earlier node module bumps and still described the old tree:  - `brace-expansion-5.0.9`, `fast-uri-3.1.7`, `js-yaml-4.3.1`, `minimatch-10.2.5` and `qs-6.16.0`, while the installed modules are 5.0.12, 3.1.9, 4.3.2, 11.0.5 and 6.16.1; - `joi-14.3.1`, `joi-to-json-schema` and joi's nested `hoek`, `isemail`, `punycode` and `topo`, which have been removed; - no entry for `@isaacs/nonrecursive-glob-match-1.1.0`, which `minimatch-11` depends on.  The file was installed into packages, so scanners reported CVEs that are already fixed, and the `joi` ones for a module that is no longer shipped.  - The hidden lockfile is regenerated from `package-lock.json`, so it matches the installed tree. - `cmake/InstallArangoDBJSClient.cmake`: `.package-lock.json` is excluded from installation. It is npm metadata only, and the shipped modules carry their own `package.json`.  No modules change, so there is no CHANGELOG entry.  - [x] :hankey: Bugfix  ### Checklist  - [x] Tests   - [x] **integration tests** - [x] Backports   - [x] Backport for 3.12 (partial): https://github.com/arangodb/arangodb/pull/23746
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1690,208 +1690,241 @@ U_INTERNAL double  U_EXPORT2 uprv_ceil(double d);
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `828a810e` (2026-11-19)
-**Commit Message**: Merge pull request #23712 from arangodb/bug-fix/COR-1295-fix-use-after-move
+### Incident Patch 1: `3f2986a0` (2026-11-24)
+**Commit Message**: BTS-2543: fix leaks in zip file handling (#23731)
 
-[COR-1295] Fix use-after-move issues
+TRI_UnzipFile leaked its 16 KB buffer (and potentially the unzFile handle
+and the output FILE*) when an exception propagated through it, e.g. from
+the isAllowedAccess callback, which in JS_UnzipFile calls
+V8SecurityFeature::isAllowedToAccessPath. TRI_ZipFile also leaked its
+buffer when isAllowedAccess(filename) returned false.
 
-**File**: `arangod/Graph/Cache/RefactoredTraverserCache.cpp` (modified, +8/-0)
+Release the buffer, zip handles and output file via scopeGuard so they
+are freed on every exit path.
+
+Co-authored-by: Vadim Kondratev <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG` (modified, +3/-0)
 ```diff
-@@ -39,6 +39,14 @@ RefactoredTraverserCache::RefactoredTraverserCache(
-   TRI_ASSERT(!ServerState::instance()->isCoordinator());
+@@ -1,6 +1,9 @@
+ 4.0.0 (XXXX-XX-XX)
+ ------------------
+ 
++* BTS-2543: Fix memory and file handle leaks in the zip file functions when a
++  path access check failed or threw an exception.
++  
+ * BTS-2480: Fixed LogicalCollection cleanup on errors in openExistingDatabase().
+ 
+ * Rebuilt included rclone v1.75.1 with go1.26.11 and non-vulnerable
+```
+
+**File**: `lib/Basics/tri-zip.cpp` (modified, +8/-19)
+```diff
+@@ -231,30 +231,28 @@ static ErrorCode ExtractCurrentFile(
+                      "' for writing: " + strerror(errno);
+       return TRI_ERROR_CANNOT_WRITE_FILE;
+     }
++    auto foutGuard = scopeGuard([&fout]() noexcept { fclose(fout); });
+ 
+     while (true) {
+       int result = unzReadCurrentFile(uf, buffer, (unsigned int)bufferSize);
+ 
+       if (result < 0) {
+         errorMessage =
+             std::string("failed to read from zip file: ") + strerror(errno);
+-        fclose(fout);
+         return TRI_ERROR_CANNOT_WRITE_FILE;
+       }
+ 
+       if (result > 0) {
+         if (fwrite(buffer, result, 1, fout) != 1) {
+           errorMessage = std::string("failed to write file ") + fullPath +
+                          " - " + strerror(errno);
+-          fclose(fout);
+           return TRI_set_errno(TRI_ERROR_SYS_ERROR);
+         }
+       } else {
+         TRI_ASSERT(result == 0);
+         break;
+       }
+     }
+-    fclose(fout);
+   }
+ 
+   int ret = unzCloseCurrentFile(uf);
+@@ -338,6 +336,7 @@ ErrorCode TRI_ZipFile(
+   if (buffer == nullptr) {
+     return TRI_ERROR_OUT_OF_MEMORY;
+   }
++  auto bufferGuard = scopeGuard([buffer]() noexcept { TRI_Free(buffer); });
+ 
+   if (!isAllowedAccess(filename)) {
+     return TRI_ERROR_FORBIDDEN;
+@@ -351,10 +350,9 @@ ErrorCode TRI_ZipFile(
+ #endif
+ 
+   if (zf == nullptr) {
+-    TRI_Free(buffer);
+-
+     return TRI_ERROR_CANNOT_WRITE_FILE;
+   }
++  auto zfGuard = scopeGuard([zf]() noexcept { zipClose(zf, NULL); });
+ 
+   auto res = TRI_ERROR_NO_ERROR;
+ 
+@@ -431,10 +429,6 @@ ErrorCode TRI_ZipFile(
+     }
+   }
+ 
+-  zipClose(zf, NULL);
+-
+-  TRI_Free(buffer);
+-
+   return res;
  }
  
-+RefactoredTraverserCache::RefactoredTraverserCache(
-+    RefactoredTraverserCache&& other)
-+    : _stringHeap(std::move(other._stringHeap)),
-+      _persistedStrings(std::move(other._persistedStrings)),
-+      _resourceMonitor(other._resourceMonitor) {
-+  other._persistedStrings.clear();
-+}
-+
- RefactoredTraverserCache::~RefactoredTraverserCache() { clear(); }
+@@ -508,9 +502,10 @@ ErrorCode TRI_UnzipFile(
+   if (buffer == nullptr) {
+     return TRI_ERROR_OUT_OF_MEMORY;
+   }
++  // isAllowedAccess and the extraction may throw, so release via guards
++  auto bufferGuard = scopeGuard([buffer]() noexcept { TRI_Free(buffer); });
  
- void RefactoredTraverserCache::clear() {
-```
-
-**File**: `arangod/Graph/Cache/RefactoredTraverserCache.h` (modified, +1/-1)
-```diff
-@@ -38,11 +38,11 @@ namespace arangodb::graph {
- class RefactoredTraverserCache {
-  public:
-   RefactoredTraverserCache(arangodb::ResourceMonitor& resourceMonitor);
-+  RefactoredTraverserCache(RefactoredTraverserCache&&);
+   if (!isAllowedAccess(filename)) {
+-    TRI_Free(buffer);
+     return TRI_ERROR_FORBIDDEN;
+   }
  
-   ~RefactoredTraverserCache();
+@@ -521,17 +516,11 @@ ErrorCode TRI_UnzipFile(
+   unzFile uf = unzOpen64(filename);
+ #endif
+   if (uf == nullptr) {
+-    TRI_Free(buffer);
+     errorMessage = std::string("unable to open zip file '") + filename + "'";
+     return TRI_ERROR_INTERNAL;
+   }
++  auto ufGuard = scopeGuard([uf]() noexcept { unzClose(uf); });
  
-   RefactoredTraverserCache(RefactoredTraverserCache const&) = delete;
--  RefactoredTraverserCache(RefactoredTraverserCache&&) = default;
- 
-   RefactoredTraverserCache& operator=(RefactoredTraverserCache const&) = delete;
- 
-```
-
-**File**: `arangod/Graph/Providers/ClusterProvider.cpp` (modified, +11/-0)
-```diff
-@@ -103,6 +103,17 @@ ClusterProvider<StepImpl>::ClusterProvider(
-       _opts(std::move(opts)),
-       _stats{} {}
- 
-+template<class StepImpl>
-+ClusterProvider<StepImpl>::ClusterProvider(ClusterProvider<StepImpl>&& other)
-+    : _trx(std::move(other._trx)),
-+      _query(other._query),
-+      _resourceMonitor(other._resourceMonitor),
-+      _opts(std::move(other._opts)),
-+      _stats(std::move(other._stats)),
-+      _vertexConnectedEdges(std::move(other._vertexConnectedEdges)) {
-+  other._vertexConnectedEdges.clear();
-+}
-+
- template<class StepImpl>
- ClusterProvider<StepImpl>::~ClusterProvider() {
-   clearWithForce();  // Make sure we actually free all memory in the edge cache!
-```
-
-**File**: `arangod/Graph/Providers/ClusterProvider.h` (modified, +2/-1)
-```diff
-@@ -75,10 +75,11 @@ class ClusterProvider {
-                   ClusterBaseProviderOptions opts,
-                   arangodb::ResourceMonitor& resourceMonitor);
-   ClusterProvider(ClusterProvider const&) = delete;
--  ClusterProvider(ClusterProvider&&) = default;
-+  ClusterProvider(ClusterProvider&&);
-   ~ClusterProvider();
- 
-   ClusterProvider& operator=(ClusterProvider const&) = delete;
-+  ClusterProvider& operator=(ClusterProvider&&) = delete;
- 
-   void clear();
-   void clearWithForce();
-```
-
-**File**: `arangod/IResearch/Search.cpp` (modified, +3/-1)
-```diff
-@@ -532,7 +532,9 @@ Result Search::properties(velocypack::Slice definition, bool isUserRequest,
-     if (partialUpdate) {
-       return _indexes;
-     }
--    return std::move(_indexes);
-+    auto res = std::move(_indexes);
-+    _indexes.clear();
-+    return res;
-   }();
-   auto oldMeta = std::move(_meta);
-   ScopeGuard revert{[&]() noexcept {
+-  auto res = UnzipFile(uf, buffer, bufferSize, outPath, skipPaths, overwrite,
+-                       password, errorMessage, isAllowedAccess);
+-
+-  unzClose(uf);
+-
+-  TRI_Free(buffer);
+-
+-  return res;
++  return UnzipFile(uf, buffer, bufferSize, outPath, skipPaths, overwrite,
++                   password, errorMessage, isAllowedAccess);
+ }
 ```
 
 ---
 
-### Incident Patch 2: `2652475c` (2026-11-19)
-**Commit Message**: Fix another use-after-move
+### Incident Patch 2: `239a234f` (2026-11-24)
+**Commit Message**: Merge pull request #23656 from arangodb/bug-fix/cor-1107-window-function-skip-row
 
-**File**: `arangod/IResearch/Search.cpp` (modified, +3/-1)
+[COR-1107] `WINDOW` with `COUNT` or `LIMIT` aborts
+
+**File**: `arangod/Aql/Executor/WindowExecutor.cpp` (modified, +2/-5)
 ```diff
-@@ -532,7 +532,9 @@ Result Search::properties(velocypack::Slice definition, bool isUserRequest,
-     if (partialUpdate) {
-       return _indexes;
+@@ -197,10 +197,10 @@ std::tuple<ExecutorState, NoStats, AqlCall> AccuWindowExecutor::produceRows(
+  * @param call Call from client
+  * @return std::tuple<ExecutorState, NoStats, size_t, AqlCall>
+  */
++// TODO(COR-1279): rows are not consumed, counted or aggregated when skipped.
+ auto AccuWindowExecutor::skipRowsRange(AqlItemBlockInputRange& inputRange,
+                                        AqlCall& call)
+     -> std::tuple<ExecutorState, NoStats, size_t, AqlCall> {
+-  // we do not keep any state
+   AqlCall upstreamCall{};
+   return {inputRange.upstreamState(), NoStats{}, call.getSkipCount(),
+           upstreamCall};
+@@ -419,13 +419,10 @@ std::tuple<ExecutorState, NoStats, AqlCall> WindowExecutor::produceRows(
+ std::tuple<ExecutorState, NoStats, size_t, AqlCall>
+ WindowExecutor::skipRowsRange(AqlItemBlockInputRange& inputRange,
+                               AqlCall& call) {
+-  TRI_ASSERT(_currentIdx < _rows.size());
+-
+   std::ignore = consumeInputRange(inputRange);
+ 
+   if (!_rows.empty()) {
+-    // TODO a bit loopy
+-    while (call.needSkipMore() && _currentIdx < _windowRows.size()) {
++    while (call.needSkipMore() && _currentIdx < _rows.size()) {
+       _currentIdx++;
+       call.didSkip(1);
      }
--    return std::move(_indexes);
-+    auto res = std::move(_indexes);
-+    _indexes.clear();
-+    return res;
-   }();
-   auto oldMeta = std::move(_meta);
-   ScopeGuard revert{[&]() noexcept {
 ```
 
----
-
-### Incident Patch 3: `fb2f0ddd` (2026-11-19)
-**Commit Message**: Fix use-after-move issues
-
-**File**: `arangod/Graph/Cache/RefactoredTraverserCache.cpp` (modified, +8/-0)
+**File**: `tests/js/client/aql/aql-window-cumulative-sum.js` (modified, +43/-1)
 ```diff
-@@ -39,6 +39,14 @@ RefactoredTraverserCache::RefactoredTraverserCache(
-   TRI_ASSERT(!ServerState::instance()->isCoordinator());
+@@ -80,6 +80,14 @@ FOR i IN @from .. @to
+     sizes.forEach((size) => sizedCumulativeSumTest(size, 42, preceding, following));
+   };
+ 
++  // Window kinds that use different executors / code paths.
++  const windowKinds = [
++    "{preceding: 1, following: 1}",              // row-based
++    "{preceding: 10, following: 10}",            // row-based, wider
++    "value WITH {preceding: 1, following: 1}",   // range-based
++    "{preceding: 'unbounded', following: 1}",    // WindowExecutor, keeps all rows
++  ];
++
+   return {
+     testResultsPreceding0Following0 : function () {
+       cumulativeSumTests(0, 0);
+@@ -443,7 +451,41 @@ FOR i IN 1..10
+             assertEqual(Math.min(index + from + 10, size + from), value.max, value);
+           });
+         });
+-      });   
++      });
++    },
++
++    testCollectCountAfterWindow : function () {
++      // 2500 rows span several input blocks
++      [10, 2500].forEach((size) => {
++        windowKinds.forEach((kind) => {
++          const query = `
++            FOR i IN 1..@size
++              LET value = NOOPT(i)
++              WINDOW ${kind} AGGREGATE sum = SUM(value)
++              COLLECT WITH COUNT INTO n
++              RETURN n`;
++          assertEqual([size], db._query(query, { size }).toArray(), { kind, size });
++        });
++      });
++    },
++
++    testLimitOffsetAfterWindow : function () {
++      const size = 2500;
++      windowKinds.forEach((kind) => {
++        const base = `
++          FOR i IN 1..@size
++            LET value = NOOPT(i)
++            WINDOW ${kind} AGGREGATE sum = SUM(value)`;
++        const all = db._query(`${base} RETURN sum`, { size }).toArray();
++
++        [[2, 3], [999, 5], [1500, 10]].forEach(([offset, limit]) => {
++          const cursor = db._query(`${base} LIMIT @offset, @limit RETURN sum`,
++                                   { size, offset, limit }, { fullCount: true });
++          assertEqual(all.slice(offset, offset + limit), cursor.toArray(),
++                      { kind, offset, limit });
++          assertEqual(size, cursor.getExtra().stats.fullCount, { kind, offset, limit });
++        });
++      });
+     },
+   };
  }
- 
-+RefactoredTraverserCache::RefactoredTraverserCache(
-+    RefactoredTraverserCache&& other)
-+    : _stringHeap(std::move(other._stringHeap)),
-+      _persistedStrings(std::move(other._persistedStrings)),
-+      _resourceMonitor(other._resourceMonitor) {
-+  other._persistedStrings.clear();
-+}
-+
- RefactoredTraverserCache::~RefactoredTraverserCache() { clear(); }
- 
- void RefactoredTraverserCache::clear() {
-```
-
-**File**: `arangod/Graph/Cache/RefactoredTraverserCache.h` (modified, +1/-1)
-```diff
-@@ -38,11 +38,11 @@ namespace arangodb::graph {
- class RefactoredTraverserCache {
-  public:
-   RefactoredTraverserCache(arangodb::ResourceMonitor& resourceMonitor);
-+  RefactoredTraverserCache(RefactoredTraverserCache&&);
- 
-   ~RefactoredTraverserCache();
- 
-   RefactoredTraverserCache(RefactoredTraverserCache const&) = delete;
--  RefactoredTraverserCache(RefactoredTraverserCache&&) = default;
- 
-   RefactoredTraverserCache& operator=(RefactoredTraverserCache const&) = delete;
- 
-```
-
-**File**: `arangod/Graph/Providers/ClusterProvider.cpp` (modified, +11/-0)
-```diff
-@@ -103,6 +103,17 @@ ClusterProvider<StepImpl>::ClusterProvider(
-       _opts(std::move(opts)),
-       _stats{} {}
- 
-+template<class StepImpl>
-+ClusterProvider<StepImpl>::ClusterProvider(ClusterProvider<StepImpl>&& other)
-+    : _trx(std::move(other._trx)),
-+      _query(other._query),
-+      _resourceMonitor(other._resourceMonitor),
-+      _opts(std::move(other._opts)),
-+      _stats(std::move(other._stats)),
-+      _vertexConnectedEdges(std::move(other._vertexConnectedEdges)) {
-+  other._vertexConnectedEdges.clear();
-+}
-+
- template<class StepImpl>
- ClusterProvider<StepImpl>::~ClusterProvider() {
-   clearWithForce();  // Make sure we actually free all memory in the edge cache!
-```
-
-**File**: `arangod/Graph/Providers/ClusterProvider.h` (modified, +2/-1)
-```diff
-@@ -75,10 +75,11 @@ class ClusterProvider {
-                   ClusterBaseProviderOptions opts,
-                   arangodb::ResourceMonitor& resourceMonitor);
-   ClusterProvider(ClusterProvider const&) = delete;
--  ClusterProvider(ClusterProvider&&) = default;
-+  ClusterProvider(ClusterProvider&&);
-   ~ClusterProvider();
- 
-   ClusterProvider& operator=(ClusterProvider const&) = delete;
-+  ClusterProvider& operator=(ClusterProvider&&) = delete;
- 
-   void clear();
-   void clearWithForce();
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #23712** (2026-11-19): [COR-1295] Fix use-after-move issues (@mpoeter)
-- **PR #23710** (2026-11-19): [COR-1294] JWT secret generation fallback should still use a secure random. (@johann-listunov)
-- **PR #23709** (2026-11-18): [COR-1288] Update abseil and switch from submodule to FetchContent (@mpoeter)
-- **PR #23707** (2026-11-19): [3.12] Add branch tag for `ann-benchmark` (@jbajic)
-- **PR #23706** (2026-11-19): Add branch tag for `ann-benchmark` (@jbajic)
-- **PR #23695** (2026-11-18): [3.12] Fix data race on ICU string search initialization in bundled ICU 64 (@KVS85)
+- **PR #23751** (2026-11-24): Bugfix/backport 3.12 bts 2480 unload index on collection open failures (@k0ushal)
+- **PR #23747** (2026-11-24): Sync stale node_modules/.package-lock.json and exclude it from packages (@KVS85)
+- **PR #23746** (2026-11-24): [3.12] Update node modules @xmldom/xmldom to 0.8.15 and patch minimatch 10.25 with adjusted waiver (@KVS85)
+- **PR #23740** (2026-11-24): [3.11.14] Update node modules: @xmldom/xmldom to 0.8.15, ajv, cross-spawn, flatted and tmp (eslint); Alpine 3.24 Docker base (@KVS85)
+- **PR #23731** (2026-11-24): BTS-2543: fix leaks in zip file handling (@dothebart)
+- **PR #23730** (2026-11-23): [3.12][COR-1295] Fix use-after-move issues (@mpoeter)
 
 ---
 
@@ -1911,28 +1944,23 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in RefactoredTraverserCache.cpp
+## X. BTS-2543: fix leaks in zip file handling
 
 **RULE**:
-When implementing operations in `arangod/Graph/Cache/RefactoredTraverserCache.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `828a810e`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3f2986a0`: BTS-2543: fix leaks in zip file handling. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `arangod/Graph/Cache/RefactoredTraverserCache.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-RefactoredTraverserCache::RefactoredTraverserCache(
-    RefactoredTraverserCache&& other)
-    : _stringHeap(std::move(other._stringHeap)),
-      _persistedStrings(std::move(other._persistedStrings)),
-      _resourceMonitor(other._resourceMonitor) {
-  other._persistedStrings.clear();
-}
-
+* BTS-2543: Fix memory and file handle leaks in the zip file functions when a
+  path access check failed or threw an exception.
+  
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1942,7 +1970,7 @@ RefactoredTraverserCache::RefactoredTraverserCache(
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `828a810e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3f2986a0` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
