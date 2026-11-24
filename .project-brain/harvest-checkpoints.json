@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T16:54:47.975Z",
+  "last_updated": "2026-11-24T17:03:17.047Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3441,14 +3441,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-higress-group-higress",
-      "content_hash": "5dfb608a55a8d83b389a93e389e63019179462d2409f4a92ce3604453eef4934",
-      "verified_at": "2026-11-18T13:25:43.088Z",
+      "content_hash": "aee1178c5e6e8a42519096a9873b1a96f7b693f9479c3d7828c30d29362d424a",
+      "verified_at": "2026-11-24T17:03:12.703Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T13:25:43.088Z"
+      "last_updated": "2026-11-24T17:03:12.703Z"
     },
     "openziti/zrok": {
       "repository": "openziti/zrok",
@@ -9081,14 +9081,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-genkit-ai-genkit",
-      "content_hash": "670d00d8b6a4acf5165ded570fc74ae917e432ae753e41f365135b08cffc988b",
-      "verified_at": "2026-11-23T20:39:00.577Z",
+      "content_hash": "d3c6bc422d31a1e0d54e4d916e2ced52db6cf78658bb3126536c6582ae783376",
+      "verified_at": "2026-11-24T17:03:17.047Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T20:39:00.578Z"
+      "last_updated": "2026-11-24T17:03:17.047Z"
     },
     "guokaigdg/animal-island-ui": {
       "repository": "guokaigdg/animal-island-ui",
@@ -19716,14 +19716,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-apple-depthpro2",
-      "content_hash": "edefcf3c29a003281773a44060df529c9fa874dbd81ce872ba6d558b21106e5f",
-      "verified_at": "2026-11-20T16:56:24.937Z",
+      "content_hash": "e00ac44ab599a4c34e02c04f01445376538ec04ee81353e193c3af547d4b6b6e",
+      "verified_at": "2026-11-24T17:03:03.027Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T16:56:24.937Z"
+      "last_updated": "2026-11-24T17:03:03.027Z"
     },
     "OVHaiLLM/Olala-v1.0-mini-7A1B": {
       "repository": "OVHaiLLM/Olala-v1.0-mini-7A1B",

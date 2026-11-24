@@ -12741,3 +12741,6 @@
 | `CYCLE-20261124-FA92` | `2026-11-24T16:46:10.598Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10307` | Yes (`300f7505...`) |
 | `CYCLE-20261124-Q2KT` | `2026-11-24T16:54:33.869Z` | `indexable-inc/blaze` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10308` | Yes (`0469ed4d...`) |
 | `CYCLE-20261124-QDG2` | `2026-11-24T16:54:47.954Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10309` | Yes (`d16ec113...`) |
+| `CYCLE-20261124-0ZFL` | `2026-11-24T17:03:03.009Z` | `apple/DepthPro2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-apple-depthpro2-learnings.md` | Yes (`e00ac44a...`) |
+| `CYCLE-20261124-16WB` | `2026-11-24T17:03:12.683Z` | `higress-group/higress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10310` | Yes (`aee1178c...`) |
+| `CYCLE-20261124-1A90` | `2026-11-24T17:03:17.028Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10311` | Yes (`d3c6bc42...`) |

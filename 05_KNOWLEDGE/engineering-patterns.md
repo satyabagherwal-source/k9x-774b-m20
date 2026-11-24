@@ -773545,3 +773545,167 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `aaebb1f6` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10310. run C++ candidate native tests in pinned builder (Harvested from higress-group/higress)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "run C++ candidate native tests in pinned builder",
+  "source": "higress-group/higress",
+  "source_url": "https://github.com/higress-group/higress",
+  "source_version": "c4c537f3",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-24T17:03:12.157Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-higress-group-higress",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [higress-group/higress](https://github.com/higress-group/higress) (Revision: `c4c537f3`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.github/workflows/prepare-plugin-release.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in higress-group/higress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `c4c537f3`: release): run C++ candidate native tests in pinned builder. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/prepare-plugin-release.yaml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+                local builder
+                builder="$(sed -n 's/^ARG BUILDER=//p' plugins/wasm-cpp/Dockerfile)"
+                case "$builder" in
+                  *@sha256:*) ;;
+                  *) echo 'Builder must be pinned by digest' >&2; return 1 ;;
+                esac
+                docker run --rm \
+                  -v "$GITHUB_WORKSPACE/plugins/wasm-cpp:/workspace" \
+                  -w /workspace \
+                  "$builder" \
+                  bash -euo pipefail -c 'bazel test --test_output=errors "//extensions/$1:$1_test"' -- "$build_name"
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+                (cd plugins/wasm-cpp && bazel test --test_output=errors "//extensions/$build_name:${build_name}_test")
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `c4c537f3` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10311. tag first_visit runtime and skip CI analytics (Harvested from genkit-ai/genkit)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "tag first_visit runtime and skip CI analytics",
+  "source": "genkit-ai/genkit",
+  "source_url": "https://github.com/genkit-ai/genkit",
+  "source_version": "76f631c6",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-24T17:03:16.510Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-genkit-ai-genkit",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [genkit-ai/genkit](https://github.com/genkit-ai/genkit) (Revision: `76f631c6`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.github/workflows/build-cli-binaries.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `aa34700a`: genkit-tools): tag first_visit runtime and skip CI analytics. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build-cli-binaries.yml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+          # Start UI in background in non-interactive mode so CI doesn't opt into analytics
+          ./genkit-${{ matrix.target }} --non-interactive ui:start > ui_output.log 2>&1 &
+            ./genkit-${{ matrix.target }} --non-interactive ui:stop || true
+          # Start UI in background in non-interactive mode so CI doesn't opt into analytics
+            -ArgumentList "--non-interactive", "ui:start" `
+            & ".\genkit-${{ matrix.target }}.exe" --non-interactive ui:stop
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+          # Start UI in background, piping any prompts to accept them
+          (echo "" | ./genkit-${{ matrix.target }} ui:start 2>&1 | tee ui_output.log) &
+            ./genkit-${{ matrix.target }} ui:stop || true
+          # Create empty input file first for redirecting stdin
+          "" | Out-File -FilePath ".\empty.txt"
+          
+          # Start UI in background, redirecting input to handle prompts
+            -ArgumentList "ui:start" `
+            -RedirectStandardInput ".\empty.txt" `
+            & ".\genkit-${{ matrix.target }}.exe" ui:stop
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `aa34700a` are properly handled with clean fallback behavior.

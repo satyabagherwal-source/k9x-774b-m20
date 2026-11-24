@@ -12774,3 +12774,6 @@ Every entry in this ledger must capture:
 | `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `0a698de7` | Multi-dimensional audit evidence | 2026-11-24T16:46:10.603Z |
 | `learn-github-indexable-inc-blaze` | `https://github.com/indexable-inc/blaze` | `06036d58` | Multi-dimensional audit evidence | 2026-11-24T16:54:33.873Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `a0d01b11` | Multi-dimensional audit evidence | 2026-11-24T16:54:47.959Z |
+| `learn-huggingface-apple-depthpro2` | `https://huggingface.co/apple/DepthPro2` | `hf-apple-d` | Multi-dimensional audit evidence | 2026-11-24T17:03:03.013Z |
+| `learn-github-higress-group-higress` | `https://github.com/higress-group/higress` | `c4c537f3` | Multi-dimensional audit evidence | 2026-11-24T17:03:12.687Z |
+| `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `76f631c6` | Multi-dimensional audit evidence | 2026-11-24T17:03:17.032Z |

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T16:54:47.964Z",
-  "total_cycles_completed": 12108,
-  "total_learnings_persisted": 12108,
-  "total_rules_promoted": 11172,
+  "last_updated": "2026-11-24T17:03:17.037Z",
+  "total_cycles_completed": 12111,
+  "total_learnings_persisted": 12111,
+  "total_rules_promoted": 11174,
   "history": [
-    {
-      "timestamp": "2026-11-24T00:07:25.163Z",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "learningId": "learn-github-aleo-labs-protocol-snarkos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T00:22:33.010Z",
-      "repository": "microfeed/microfeed",
-      "learningId": "learn-github-microfeed-microfeed",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T00:22:33.434Z",
-      "repository": "OpenMOSS-Team/MOSS-Image-SFT",
-      "learningId": "learn-huggingface-openmoss-team-moss-image-sft",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T00:31:36.744Z",
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-24T16:54:47.964Z",
       "repository": "Bitterbot-AI/bitterbot-desktop",
       "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T17:03:03.019Z",
+      "repository": "apple/DepthPro2",
+      "learningId": "learn-huggingface-apple-depthpro2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T17:03:12.692Z",
+      "repository": "higress-group/higress",
+      "learningId": "learn-github-higress-group-higress",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T17:03:17.037Z",
+      "repository": "genkit-ai/genkit",
+      "learningId": "learn-github-genkit-ai-genkit",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

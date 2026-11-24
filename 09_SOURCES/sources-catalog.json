@@ -2203,10 +2203,10 @@
     "repository": "higress-group/higress",
     "platform": "github",
     "sourceUrl": "https://github.com/higress-group/higress",
-    "sourceVersion": "392b64e8",
+    "sourceVersion": "c4c537f3",
     "license": "Apache-2.0",
-    "contentHash": "5dfb608a55a8d83b389a93e389e63019179462d2409f4a92ce3604453eef4934",
-    "lastHarvestedAt": "2026-11-18T13:25:43.080Z",
+    "contentHash": "aee1178c5e6e8a42519096a9873b1a96f7b693f9479c3d7828c30d29362d424a",
+    "lastHarvestedAt": "2026-11-24T17:03:12.687Z",
     "learningId": "learn-github-higress-group-higress"
   },
   "openziti-zrok": {
@@ -5973,10 +5973,10 @@
     "repository": "genkit-ai/genkit",
     "platform": "github",
     "sourceUrl": "https://github.com/genkit-ai/genkit",
-    "sourceVersion": "605fb5eb",
+    "sourceVersion": "76f631c6",
     "license": "Apache-2.0",
-    "contentHash": "670d00d8b6a4acf5165ded570fc74ae917e432ae753e41f365135b08cffc988b",
-    "lastHarvestedAt": "2026-11-23T20:39:00.569Z",
+    "contentHash": "d3c6bc422d31a1e0d54e4d916e2ced52db6cf78658bb3126536c6582ae783376",
+    "lastHarvestedAt": "2026-11-24T17:03:17.032Z",
     "learningId": "learn-github-genkit-ai-genkit"
   },
   "guokaigdg-animal-island-ui": {
@@ -13085,8 +13085,8 @@
     "sourceUrl": "https://huggingface.co/apple/DepthPro2",
     "sourceVersion": "hf-apple-depthpro2",
     "license": "Open-Source",
-    "contentHash": "edefcf3c29a003281773a44060df529c9fa874dbd81ce872ba6d558b21106e5f",
-    "lastHarvestedAt": "2026-11-20T16:56:24.925Z",
+    "contentHash": "e00ac44ab599a4c34e02c04f01445376538ec04ee81353e193c3af547d4b6b6e",
+    "lastHarvestedAt": "2026-11-24T17:03:03.013Z",
     "learningId": "learn-huggingface-apple-depthpro2"
   },
   "hf-ovhaillm-olala-v1.0-mini-7a1b": {

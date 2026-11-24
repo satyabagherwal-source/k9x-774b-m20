@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T16:57:25.002Z",
+  "timestamp": "2026-11-24T17:03:20.540Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-apple-depthpro2-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-apple-depthpro2-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T16:57:25.002Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T17:03:20.540Z`  
 > **Learning ID**: `LEARN-EVO-hf-apple-depthpro2-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-apple-dep`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T16:56:24.302Z  
+> **Timestamp**: 2026-11-24T17:03:02.534Z  
 > **Learning ID**: `learn-huggingface-apple-depthpro2`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-apple-depthpro2-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/apple/DepthPro2](https://huggingface.co/apple/DepthPro2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T16:56:24.117Z  
+> **Harvest Timestamp**: 2026-11-24T17:03:01.851Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: depth-estimation
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 0 downloads | 76 likes
+- **Stars / Engagement**: 0 downloads | 1169 likes
 
 ---
 

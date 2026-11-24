@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T16:54:51.204Z",
-    "lastVerified": "2026-11-24T16:54:51.204Z",
+    "lastChecked": "2026-11-24T17:03:20.273Z",
+    "lastVerified": "2026-11-24T17:03:20.273Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -185,8 +185,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T16:28:25.352Z",
-    "lastVerified": "2026-11-24T16:28:25.352Z",
+    "lastChecked": "2026-11-24T17:03:14.569Z",
+    "lastVerified": "2026-11-24T17:03:14.569Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -909,9 +909,9 @@
   "bee-san-ciphey": {
     "name": "Ciphey",
     "officialUrl": "https://github.com/bee-san/Ciphey",
-    "lastChecked": "2026-11-24T13:04:04.406Z",
+    "lastChecked": "2026-11-24T17:03:09.355Z",
     "revisionIdentifier": "c500baff",
-    "lastVerified": "2026-11-24T13:04:04.406Z"
+    "lastVerified": "2026-11-24T17:03:09.355Z"
   },
   "weaviate-weaviate": {
     "name": "weaviate/weaviate",
@@ -2090,22 +2090,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "higress-group-higress": {
-    "name": "higress",
+    "name": "higress-group/higress",
     "officialUrl": "https://github.com/higress-group/higress",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-23T21:31:22.412Z",
-    "lastVerified": "2026-11-23T21:31:22.412Z",
+    "lastChecked": "2026-11-24T17:03:11.580Z",
+    "lastVerified": "2026-11-24T17:03:11.580Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-higress-group-higress",
-    "contentHash": "5dfb608a55a8d83b389a93e389e63019179462d2409f4a92ce3604453eef4934",
+    "contentHash": "aee1178c5e6e8a42519096a9873b1a96f7b693f9479c3d7828c30d29362d424a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "392b64e8"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "trufflesecurity-trufflehog": {
     "name": "trufflehog",
@@ -4763,9 +4762,9 @@
   "ivpusic-react-native-image-crop-picker": {
     "name": "react-native-image-crop-picker",
     "officialUrl": "https://github.com/ivpusic/react-native-image-crop-picker",
-    "lastChecked": "2026-11-22T01:58:43.489Z",
+    "lastChecked": "2026-11-24T17:03:04.475Z",
     "revisionIdentifier": "a18a50d4",
-    "lastVerified": "2026-11-22T01:58:43.489Z"
+    "lastVerified": "2026-11-24T17:03:04.475Z"
   },
   "vinceanalytics-vince": {
     "name": "vince",
@@ -5568,9 +5567,9 @@
   "datadog-glommio": {
     "name": "glommio",
     "officialUrl": "https://github.com/DataDog/glommio",
-    "lastChecked": "2026-11-23T15:45:39.882Z",
+    "lastChecked": "2026-11-24T17:02:59.376Z",
     "revisionIdentifier": "84348159",
-    "lastVerified": "2026-11-23T15:45:39.882Z"
+    "lastVerified": "2026-11-24T17:02:59.376Z"
   },
   "hf-pablodawson-minimax-h3-360-orbit-lora": {
     "name": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
@@ -6973,14 +6972,14 @@
     "officialUrl": "https://github.com/genkit-ai/genkit",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-23T20:38:59.496Z",
-    "lastVerified": "2026-11-23T20:38:59.496Z",
+    "lastChecked": "2026-11-24T17:03:15.932Z",
+    "lastVerified": "2026-11-24T17:03:15.932Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-genkit-ai-genkit",
-    "contentHash": "670d00d8b6a4acf5165ded570fc74ae917e432ae753e41f365135b08cffc988b",
+    "contentHash": "d3c6bc422d31a1e0d54e4d916e2ced52db6cf78658bb3126536c6582ae783376",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10828,12 +10827,12 @@
     "officialUrl": "https://huggingface.co/apple/DepthPro2",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-20T16:56:24.117Z",
-    "lastVerified": "2026-11-20T16:56:24.117Z",
+    "lastChecked": "2026-11-24T17:03:01.851Z",
+    "lastVerified": "2026-11-24T17:03:01.851Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-apple-depthpro2",
-    "contentHash": "edefcf3c29a003281773a44060df529c9fa874dbd81ce872ba6d558b21106e5f",
+    "contentHash": "e00ac44ab599a4c34e02c04f01445376538ec04ee81353e193c3af547d4b6b6e",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

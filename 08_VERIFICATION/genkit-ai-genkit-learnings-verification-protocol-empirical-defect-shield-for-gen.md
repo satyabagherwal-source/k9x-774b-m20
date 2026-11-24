@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T17:16:19.640Z",
+  "timestamp": "2026-11-24T17:03:22.404Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-genkit-ai-genkit-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [genkit-ai-genkit-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T17:16:19.640Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T17:03:22.404Z`  
 > **Learning ID**: `LEARN-EVO-genkit-ai-genkit-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md`  
 > **Source**: github ([https://github.com/genkit-ai/genkit](https://github.com/genkit-ai/genkit))  
-> **Source Version**: `e80aaa6b`  
+> **Source Version**: `76f631c6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T17:15:35.610Z  
+> **Timestamp**: 2026-11-24T17:03:15.938Z  
 > **Learning ID**: `learn-github-genkit-ai-genkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/genkit-ai/genkit](https://github.com/genkit-ai/genkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T17:15:35.603Z  
+> **Harvest Timestamp**: 2026-11-24T17:03:15.932Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Open-source framework for building agentic apps in JavaScript, Go, Dart, and Python, built and used in production by Google
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 6611 stars
+- **Stars / Engagement**: 6620 stars
 
 ---
 
@@ -80,10 +80,8 @@ PROVENANCE_END -->
  * limitations under the License.
  */
 
-import {
-  BaseRuntimeManager,
-  GenkitToolsError,
-} from '@genkit-ai/tools-common/manager';
+import type { BaseRuntimeManager } from '@genkit-ai/tools-common/manager';
+import { GenkitToolsError } from '@genkit-ai/tools-common/manager';
 import path from 'path';
 import { z } from 'zod';
 import {
@@ -326,8 +324,11 @@ import {
   startTelemetryServer,
 } from '@genkit-ai/telemetry-server';
 import type { Status } from '@genkit-ai/tools-common';
-import {
+import type {
   BaseRuntimeManager,
+  GenkitToolsError,
+} from '@genkit-ai/tools-common/manager';
+import {
   DEFAULT_REFLECTION_V2_HOST,
   ProcessManager,
   REFLECTION_SECRET_ENV,
@@ -335,7 +336,6 @@ import {
   RuntimeManager,
   generateReflectionSecret,
   reflectionV2Url,
-  type GenkitToolsError,
 } from '@genkit-ai/tools-common/manager';
 import { logger } from '@genkit-ai/tools-common/utils';
 import getPort, { portNumbers } from 'get-port';
@@ -510,11 +510,13 @@ export async function getDevEnvVars(
 
   if (useOtel) {
     // Drive the app's own OTel SDK to the dev telemetry server's OTLP endpoints.
-    // The server only parses JSON bodies (express.json), so http/json is
-    // required; per-signal endpoints are used verbatim (no /v1/* appended), so
-    // the full path is spelled out. Metrics are deliberately not redirected:
-    // the server doesn't ingest them, so they go wherever the app's own OTel
-    // config sends them.
+    // The protocol is set explicitly to http/protobuf (the OTLP spec default,
+    // supported by Go autoexport, Python, Java, and JS NodeSDK) so a shell
+    // OTEL_EXPORTER_OTLP_*_PROTOCOL=grpc or Python opentelemetry-distro's grpc
+    // default cannot leak in; per-signal endpoints are used verbatim (no /v1/*
+    // appended), so the full path is spelled out. Metrics are deliberately not
+    // redirected: the server doesn't ingest them, so they go wherever the app's
+    // own OTel config sends them.
     //
     // GENKIT_TELEMETRY_SERVER is blanked rather than omitted: the child
     // inherits process.env, so a value exported in the shell (the
@@ -527,9 +529,9 @@ export async function getDevEnvVars(
     // with one, and naive concatenation would yield a double slash.
     const baseUrl = telemetryServerUrl.replace(/\/+$/, '');
     envVars.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT = `${baseUrl}/api/otlp/v1/traces`;
-    envVars.OTEL_EXPORTER_OTLP_TRACES_PROTOCOL = 'http/json';
+    envVars.OTEL_EXPORTER_OTLP_TRACES_PROTOCOL = 'http/protobuf';
     envVars.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT = `${baseUrl}/api/otlp/v1/logs`;
-    envVars.OTEL_EXPORTER_OTLP_LOGS_PROTOCOL = 'http/json';
+    envVars.OTEL_EXPORTER_OTLP_LOGS_PROTOCOL = 'http/protobuf';
   } else {
     envVars.GENKIT_TELEMETRY_SERVER = telemetryServerUrl;
     if (!disableRealtimeTelemetry) {
@@ -569,10 +571,7 @@ export async function startDevProcessManager(
       : await getDevEnvVars(projectRoot, options);
 
   const disableRealtimeTelemetry = options?.disableRealtimeTelemetry ?? false;
-  const experimentalReflectionV2 = options?.experimentalReflectionV2 ?? false;
-  // Derived from the env the child actually receives, so the manager and the
-  // runtime can never disagree, whichever path produced envVars.
-  const reflectionSecret: string | unde
+  const experimentalReflecti
 ```
 
 ### Core Architecture Module: `genkit-tools/cli/src/utils/option-parsers.ts`
@@ -692,7 +691,7 @@ export function parseJson(value: string): any {
  */
 
 import { existsSync } from 'fs';
-import { basename, extname } from 'path';
+import { basename } from 'path';
 
 const RUNTIME_NODE = 'node';
 const RUNTIME_BUN = 'bun';
@@ -700,8 +699,6 @@ const RUNTIME_COMPILED = 'compiled-binary';
 
 const NODE_PATTERNS = ['node', 'nodejs'];
 const BUN_PATTERNS = ['bun'];
-
-const SCRIPT_EXTENSIONS = ['.js', '.mjs', '.cjs', '.ts', '.tsx', '.jsx'];
 
 /**
  * CLI runtime types supported by the detector
@@ -736,18 +733,6 @@ function safeExistsSync(path: string | undefined): boolean {
   } catch {
     return false;
   }
-}
-
-/**
- * Checks if the given path has a recognized script file extension
- * @param path - File path to check
- * @returns true if the path ends with a known script extension
- * @internal Kept for potential future use, though not currently used in detection logic
- */
-function isLikelyScriptFile(path: string | undefined): boolean {
-  if (!path) return false;
-  const ext = extname(path).toLowerCase();
-  return SCRIPT_EXTENSIONS.includes(ext);
 }
 
 /**
@@ -862,10 +847,10 @@ export function detectCLIRuntime(): CLIRuntimeInfo {
  * limitations under the License.
  */
 
-import { type SpawnOptions } from 'child_process';
+import type { SpawnOptions } from 'child_process';
 import { access, constants } from 'fs/promises';
 import { SERVER_HARNESS_COMMAND } from '../commands/server-harness.js';
-import { type CLIRuntimeInfo } from './runtime-detector.js';
+import type { CLIRuntimeInfo } from './runtime-detector.js';
 
 /**
  * Configuration for spawning a child process
@@ -1011,7 +996,7 @@ import {
   stackTraceSpans,
 } from '@genkit-ai/tools-common/utils';
 import YAML from 'yaml';
-import { z } from 'zod';
+import type { z } from 'zod';
 
 type FormattedPart = {
   type: 'toolCall' | 'toolResponse' | 'text' | 'media' | 'other';
@@ -1321,7 +1306,7 @@ export function formatTraceTree(trace: TraceData): string {
     }
   }
 
-  const rootSpan = sta
+  const rootSpan 
 ```
 
 ### Core Architecture Module: `genkit-tools/cli/src/utils/updates.ts`
@@ -1344,7 +1329,8 @@ export function formatTraceTree(trace: TraceData): string {
 
 import { GenkitToolsError } from '@genkit-ai/tools-common/manager';
 import { getUserSettings, logger } from '@genkit-ai/tools-common/utils';
-import axios, { AxiosInstance } from 'axios';
+import type { AxiosInstance } from 'axios';
+import axios from 'axios';
 import * as clc from 'colorette';
 import { arch, platform } from 'os';
 import semver from 'semver';
@@ -1658,8 +1644,11 @@ export class FirstUsageEvent extends GAEvent {
   name = 'first_visit';
   duration = 1;
 
-  constructor() {
+  constructor(project_runtime?: string) {
     super();
+    this.parameters = {
+      project_runtime: project_runtime || 'unknown',
+    };
   }
 }
 
@@ -1762,7 +1751,9 @@ export function extractActionType(key?: unknown): string {
 }
 
 /** Displays a notification that analytics are in use. */
-export async function notifyAnalyticsIfFirstRun(): Promise<void> {
+export async function notifyAnalyticsIfFirstRun(
+  projectRuntime?: string
+): Promise<void> {
   if (isAnalyticsOptedOut()) return;
 
   if (configstore.get(NOTIFICATION_ACKED)) {
@@ -1780,7 +1771,7 @@ export async function notifyAnalyticsIfFirstRun(): Promise<void> {
 
   configstore.set(NOTIFICATION_ACKED, true);
 
-  await record(new FirstUsageEvent());
+  await record(new FirstUsageEvent(projectRuntime));
 }
 
 /** Gets session information for the UI. */
@@ -1912,10 +1903,7 @@ async function recordInternal(
           engagement_time_msec: event.duration
             .toFixed(3)
             .replace('.', '')
-            .replace(/^0+/, ''), // trim leading zeros
-
-          // https://support.google.com/analytics/answer/7201382?hl=en
-          // To turn debug mode off,
+            .r
 ```
 
 ### Core Architecture Module: `genkit-tools/common/src/utils/configstore.ts`
@@ -1959,11 +1947,11 @@ export function setUserSettings(s: Record<string, string | boolean | number>) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7277** (2026-11-23): **[PY] genkit-ollama drops tool requests from chat messages, so tool calls loop until max_turns**
+  *Symptoms*: **Describe the bug**  `genkit-ollama` drops the model's tool requests when it converts a Genkit request into Ollama chat messages. `OllamaModel.build_chat_messages` (`py/packages/genkit-ollama/src/genkit_ollama/_models.py`) copies only text, tool-response output and images into each `ollama.Message`:  ```python for text_part in message.content:     if text_part.text is not None:         item.content = (item.content or '') + text_part.text     elif text_part.tool_response is not None:         item.content = (item.content or '') + str(text_part.tool_response.output)     elif text_part.media is not None:         ... ```  A `tool_request` part is ignored, so the assistant message that asked for the tool reaches Ollama with empty content and no `tool_calls`, and the tool message that follows has no `tool_name`. The model receives a tool result for a call it never made, calls the tool again, and the generate loop ends with `ABORTED` / `Exceeded maximum tool call iterations`.  Any tool use through the Ollama plugin is affected: `ai.generate(tools=...)`, prompts with tools, and agents (`genkit.exp`), where every tool turn aborts.  **To Reproduce**  Ollama running locally with `gemma4:e4b` pulled.  ```python import asyncio  from genkit import Genkit, Message, Part, Role from genkit.model import ModelRequest from genkit_ollama import Ollama from genkit_ollama._models import OllamaModel from pydantic import BaseModel  ai = Genkit(plugins=[Ollama()]) calls = 0   class NoInput(BaseModel):
+
 - **Issue #6994** (2026-11-01): **[Go] Filesystem middleware: queued read_file injection breaks interrupt resume — "cannot resume generation unless the last message is by a model"**
   *Symptoms*: **Describe the bug**  The `Filesystem` middleware queues `read_file`'s file contents and appends them to `params.Request.Messages` as a user message at the **entry of the next Generate**. When a Generate ends with an interrupt (e.g. a `ToolApproval` hold) while an injection is still queued, the resume Generate injects that user message at its entry — **after** the model message carrying the tool requests. The turn-0 resume validation in `handleResumeOption` then fails, because it validates against the hook-revised message list (`turnOpts.Messages = req.Messages`):  ``` FAILED_PRECONDITION: handleResumeOption: cannot resume generation unless the last message is by a model with at least one tool request ```  The injected message already carries the `filesystemMiddlewareTool` metadata, but the resume validation does not skip it (unlike the `ToolApproval` judge, which deliberately does).  **To Reproduce**  Self-contained program below — no API key, no network: a stub OpenAI-compatible server scripts the model to answer one response with two parallel tool calls (`read_file go.mod`, pre-approved, runs and queues its contents; `edit_file go.mod`, held by `ToolApproval`). The caller then approves and resumes the edit.  ``` go mod tidy && go run . ```  Observed on genkit v1.14.0:  ``` handleResumeOption: cannot resume generation unless the last message is by a model with at least one tool request exit status 1 ```  Setting `applyWorkaround = true` in the same program (strip the messag
-
-- **Issue #6891** (2026-11-09): **[Python] genkit-vertexai: Model Garden OpenAI-compatible models fail with PydanticUserError TypeAdapter[ModelRequest] is not fully defined**
-  *Symptoms*: **Describe the bug**  In `genkit-vertexai` 0.12.0, every OpenAI-compatible Model Garden model (for example Llama) fails before any request is sent:  ``` pydantic.errors.PydanticUserError: `TypeAdapter[ModelRequest]` is not fully defined; you should define `ModelRequest` and all referenced types, then call `.rebuild()` on the instance. ```  **To Reproduce**  ```python import asyncio from genkit import Genkit from genkit_vertexai.model_garden import ModelGarden, model_garden_name  async def main():     ai = Genkit(plugins=[ModelGarden(project_id='my-project', location='us-east5')])     await ai.generate(         model=model_garden_name('meta/llama-4-maverick-17b-128e-instruct-maas'),         prompt='hi',     )  asyncio.run(main()) ```  Traceback (abridged):  ``` genkit/_core/_registry.py, line 739, in resolve_action genkit_vertexai/model_garden/modelgarden_plugin.py, line 100, in resolve genkit_vertexai/model_garden/modelgarden_plugin.py, line 156, in _create_model_action genkit/_ai/_model.py, line 396, in model genkit/_core/_action.py, line 478, in __init__ genkit/_core/_action.py, line 658, in _initialize_io_schemas pydantic/type_adapter.py, line 703, in json_schema pydantic/_internal/_mock_val_ser.py, line 72, in rebuild pydantic.errors.PydanticUserError: `TypeAdapter[ModelRequest]` is not fully defined ... ```  It fails while defining the model action, so no credentials or network call are involved.  **Expected behavior**  The Model Garden action is defined and the request 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1980,919 +1968,1082 @@ export function setUserSettings(s: Record<string, string | boolean | number>) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e80aaa6b` (2026-11-20)
-**Commit Message**: feat(genkit-tools): add trajectory span-parser helpers and test span builders (#7226)
+### Incident Patch 1: `aa34700a` (2026-11-24)
+**Commit Message**: fix(genkit-tools): tag first_visit runtime and skip CI analytics (#7174)
 
-**File**: `genkit-tools/common/src/utils/trajectory/span-parser.ts` (added, +288/-0)
+**File**: `.github/workflows/build-cli-binaries.yml` (modified, +6/-10)
 ```diff
-@@ -0,0 +1,288 @@
-+/**
-+ * Copyright 2026 Google LLC
-+ *
-+ * Licensed under the Apache License, Version 2.0 (the "License");
-+ * you may not use this file except in compliance with the License.
-+ * You may obtain a copy of the License at
-+ *
-+ *     http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
-+
-+import type { RuntimeError } from '../../types/error.js';
-+import type {
-+  AgentInput,
-+  GenerationUsage,
-+  MessageData,
-+  NestedSpanData,
-+  Part,
-+  SpanData,
-+  ToolDefinition,
-+} from '../../types/index.js';
-+import {
-+  cleanActionName,
-+  getSpanName,
-+  getSpanStatus,
-+  isTruthyAttr,
-+  parseSpanJson,
-+  shortToolName,
-+} from '../trace.js';
-+
-+const PROMPT_SPAN_TYPES: ReadonlySet<unknown> = new Set([
-+  'prompt',
-+  'promptTemplate',
-+]);
-+
-+/**
-+ * Spans belonging to a single `Trajectory` (either the root trace/agent or an
-+ * individual nested `/agent/...` subagent), grouped by role during tree
-+ * traversal. Traversal stops at nested `/agent/...` boundaries so child
-+ * subagents are extracted into their own `Trajectory` entries.
-+ */
-+export interface TrajectorySpans {
-+  /** Maps each `spanId` in this trajectory to its parent span for ancestor/turn lookups. */
-+  parentMap: Map<string, NestedSpanData>;
-+  /** Model execution spans (`model` / `background-model`) in this trajectory. */
-+  modelSpans: NestedSpanData[];
-+  /** Tool execution spans (`tool` / `tool.v2`) in this trajectory. */
-+  toolSpans: NestedSpanData[];
-+  /** All spans belonging to this trajectory in traversal order. */
-+  scopeSpans: NestedSpanData[];
-+}
-+
-+/** Parsed structure of a model span's `genkit:input` JSON attribute. */
-+export interface ParsedModelInput {
-+  tools?: Partial<ToolDefinition>[];
-+  messages?: MessageData[];
-+}
-+
-+/** Parsed structure of a span's `genkit:input` JSON attribute. */
-+export type ParsedSpanInput = ParsedModelInput | AgentInput;
-+
-+/** Parsed structure of a span's `genkit:output` JSON attribute. */
-+export interface ParsedSpanOutput {
-+  message?: MessageData;
-+  finishReason?: string;
-+  finishMessage?: string;
-+  usage?: GenerationUsage;
-+  candidates?: Array<{
-+    message?: MessageData;
-+    finishReason?: string;
-+    usage?: GenerationUsage;
-+  }>;
-+  error?: RuntimeError;
-+}
-+
-+/** Normalized output extracted from a model execution span. */
-+export interface ModelOutputData {
-+  message?: MessageData;
-+  finishReason?: string;
-+  usage?: GenerationUsage;
-+  error?: RuntimeError;
-+}
-+
-+/** Parses a span JSON attribute and narrows it to a non-null, non-array object. */
-+export function parseSpanObject<T extends object>(val: unknown): T | undefined {
-+  const parsed = parseSpanJson<T>(val);
-+  return parsed && typeof parsed === 'object' && !Array.isArray(parsed)
-+    ? (parsed as T)
-+    : undefined;
-+}
-+
-+/**
-+ * Returns true if neither side specifies a conflicting tool call reference ID,
-+ * preventing name-based fallbacks from pairing mismatched parallel calls.
-+ */
-+export function hasCompatibleRef(
-+  reqRef?: string,
-+  candidateRef?: string
-+): boolean {
-+  return !reqRef || !candidateRef || reqRef === candidateRef;
-+}
-+
-+/**
-+ * Removes and returns the first item matching `reqRef` by exact ref, or falling back
-+ * to a compatible ref with matching short tool name.
-+ */
-+export function takeMatchingByRefOrName<T>(
-+  items: T[],
-+  reqRef: string | undefined,
-+  reqShortName: string,
-+  getRef: (item: T) => string | undefined,
-+  getName: (item: T) => string
-+): T | undefined {
-+  let idx = reqRef ? items.findIndex((item) => getRef(item) === reqRef) : -1;
-+  if (idx < 0) {
-+    idx = items.findIndex(
-+      (item) =>
-+        hasCompatibleRef(reqRef, getRef(item)) &&
-+        shortToolName(getName(item)) === reqShortName
-+    );
-+  }
-+  return idx >= 0 ? items.splice(idx, 1)[0] : undefined;
-+}
-+
-+/** Resolves the 0-based `turnIndex` and enclosing `runTurn-<N>` span for a span. */
-+export function getTurnContext(
-+  span: NestedSpanData,
-+  parentMap: ReadonlyMap<string, NestedSpanData>
-+): { turnIndex: number; turnSpan?: NestedSpanData } {
-+  let curr: NestedSpanData | undefined = span;
-+  const visited = new Set<string>();
-+  while (curr) {
-+    if (visited.has(curr.spanId)) {
-+      break;
-+    }
-+    visited.add(curr.spanId);
-+    const match = /^runTurn-(\d+)$/.exec(cleanActionName(getSpanName(curr)));
-+    if (match) {
-+      return {
-+        turnIndex: Math.max(0, Number.parseInt(match[1], 10) - 1),
-+        turnSpan: curr,
-+      };
-+    }
-+    curr = parentMap.get(curr.spanId);
-+  }
-+  return { turnIndex: 0, turnSpan: undefined };
-+}
-+
-+function toRuntimeError(err: {
-+  status?: unknown;
-+  message: string;
-+  details?: unknown;
-+}): RuntimeError {
-+
+@@ -176,8 +176,8 @@ jobs:
+         run: |
+           echo "Testing genkit ui:start"
+           
+-          # Start UI in background, piping any prompts to accept them
+-          (echo "" | ./genkit-${{ matrix.target }} ui:start 2>&1 | tee ui_output.log) &
++          # Start UI in background in non-interactive mode so CI doesn't opt into analytics
++          ./genkit-${{ matrix.target }} --non-interactive ui:start > ui_output.log 2>&1 &
+           UI_PID=$!
+           
+           # Give it time to start
+@@ -190,7 +190,7 @@ jobs:
+             
+             # Try to stop it gracefully
+             echo "Testing genkit ui:stop"
+-            ./genkit-${{ matrix.target }} ui:stop || true
++            ./genkit-${{ matrix.target }} --non-interactive ui:stop || true
+             
+             # Give it time to stop
+             sleep 2
+@@ -216,13 +216,9 @@ jobs:
+         run: |
+           Write-Host "Testing genkit ui:start"
+           
+-          # Create empty input file first for redirecting stdin
+-          "" | Out-File -FilePath ".\empty.txt"
+-          
+-          # Start UI in background, redirecting input to handle prompts
++          # Start UI in background in non-interactive mode so CI doesn't opt into analytics
+           $process = Start-Process -FilePath ".\genkit-${{ matrix.target }}.exe" `
+-            -ArgumentList "ui:start" `
+-            -RedirectStandardInput ".\empty.txt" `
++            -ArgumentList "--non-interactive", "ui:start" `
+             -RedirectStandardOutput ".\ui_output.log" `
+             -RedirectStandardError ".\ui_error.log" `
+             -PassThru `
+@@ -242,7 +238,7 @@ jobs:
+             
+             # Try to stop it gracefully
+             Write-Host "Testing genkit ui:stop"
+-            & ".\genkit-${{ matrix.target }}.exe" ui:stop
++            & ".\genkit-${{ matrix.target }}.exe" --non-interactive ui:stop
+             
+             Start-Sleep -Seconds 2
+           } else {
 ```
 
-**File**: `genkit-tools/common/tests/utils/trajectory/mock_data.ts` (added, +264/-0)
+**File**: `genkit-tools/cli/src/cli.ts` (modified, +7/-5)
 ```diff
-@@ -0,0 +1,264 @@
-+/**
-+ * Copyright 2026 Google LLC
-+ *
-+ * Licensed under the Apache License, Version 2.0 (the "License");
-+ * you may not use this file except in compliance with the License.
-+ * You may obtain a copy of the License at
-+ *
-+ *     http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
+@@ -108,17 +108,19 @@ export async function startCLI(): Promise<void> {
+         commandName = 'unknown';
+       }
+ 
++      const { isCompiledBinary } = detectCLIRuntime();
++      const projectRoot = await findProjectRoot();
++      const projectRuntime = await detectRuntime(projectRoot);
 +
-+import type {
-+  GenerationUsage,
-+  MessageData,
-+  SpanData,
-+  ToolDefinition,
-+} from '../../../src/types/index.js';
-+import { makeSpan, makeTrace } from '../trace.js';
-+
-+export { makeSpan, makeTrace };
-+
-+type SpanOverrides = Partial<Omit<SpanData, 'attributes'>> & {
-+  attributes?: Record<string, unknown>;
-+};
-+
-+function stringifyIfDefined(val: unknown): Record<string, string> {
-+  return val !== undefined ? { value: JSON.stringify(val) } : {};
-+}
-+
-+/** Options for {@link makeAgentSpan}. */
-+export interface MakeAgentSpanOptions extends SpanOverrides {
-+  name?: string;
-+  sessionId?: string;
-+  input?: unknown;
-+  output?: unknown;
-+}
-+
-+/** Builds an `/agent/<name>` SpanData with serialized `genkit:input` / `genkit:output` attributes. */
-+export function makeAgentSpan(options: MakeAgentSpanOptions = {}): SpanData {
-+  const {
-+    name = 'weatherAgent',
-+    sessionId,
-+    input,
-+    output,
-+    attributes,
-+    ...rest
-+  } = options;
-+  const cleanName = name.replace(/^\/agent\//, '');
-+  const inAttr = stringifyIfDefined(input);
-+  const outAttr = stringifyIfDefined(output);
-+
-+  return makeSpan({
-+    spanId: 'root-agent',
-+    startTime: 100,
-+    endTime: 500,
-+    ...rest,
-+    displayName:
-+      rest.displayName ??
-+      (name.startsWith('/agent/') ? name : `/agent/${cleanName}`),
-+    attributes: {
-+      'genkit:type': 'action',
-+      'genkit:metadata:subtype': 'agent',
-+      'genkit:name': cleanName,
-+      ...(sessionId ? { 'genkit:metadata:agent:sessionId': sessionId } : {}),
-+      ...(inAttr.value !== undefined ? { 'genkit:input': inAttr.value } : {}),
-+      ...(outAttr.value !== undefined
-+        ? { 'genkit:output': outAttr.value }
-+        : {}),
-+      ...attributes,
-+    },
-+  });
-+}
-+
-+/** Options for {@link makeTurnSpan}. */
-+export interface MakeTurnSpanOptions extends SpanOverrides {
-+  turn?: number;
-+  input?: unknown;
-+  output?: unknown;
-+}
-+
-+/** Builds a `runTurn-<N>` flowStep SpanData with serialized `genkit:input` / `genkit:output` attributes. */
-+export function makeTurnSpan(options: MakeTurnSpanOptions = {}): SpanData {
-+  const { turn = 1, input, output, attributes, ...rest } = options;
-+  const inAttr = stringifyIfDefined(input);
-+  const outAttr = stringifyIfDefined(output);
-+
-+  return makeSpan({
-+    spanId: `turn-${turn}`,
-+    parentSpanId: 'root-agent',
-+    startTime: 105,
-+    endTime: 495,
-+    ...rest,
-+    displayName: rest.displayName ?? `runTurn-${turn}`,
-+    attributes: {
-+      'genkit:type': 'flowStep',
-+      ...(inAttr.value !== undefined ? { 'genkit:input': inAttr.value } : {}),
-+      ...(outAttr.value !== undefined
-+        ? { 'genkit:output': outAttr.value }
-+        : {}),
-+      ...attributes,
-+    },
-+  });
-+}
-+
-+/** Options for {@link makeModelSpan}. */
-+export interface MakeModelSpanOptions extends SpanOverrides {
-+  model?: string;
-+  messages?: Array<
-+    | MessageData
-+    | { role: string; content: unknown; metadata?: Record<string, unknown> }
-+  >;
-+  tools?: Partial<ToolDefinition>[];
-+  input?: unknown;
-+  outputMessage?: MessageData;
-+  finishReason?: string;
-+  usage?: GenerationUsage;
-+  outputError?: { message: string; details?: { stack?: string } };
-+  candidates?: unknown[];
-+  output?: unknown;
-+}
-+
-+/** Builds a `/model/<model>` SpanData hiding `genkit:input` / `genkit:output` JSON serialization. */
-+export function makeModelSpan(options: MakeModelSpanOptions = {}): SpanData {
-+  const {
-+    model = 'googleai/gemini-2.5-pro',
-+    messages,
-+    tools,
-+    input,
-+    outputMessage,
-+    finishReason,
-+    usage,
-+    outputError,
-+    candidates,
-+    output,
-+    attributes,
-+    ...rest
-+  } = options;
-+  const cleanModel = model.replace(/^\/model\//, '');
-+
-+  const resolvedInput =
-+    input !== undefined
-+      ? input
-+      : messages !== undefined || tools !== undefined
-+        ? {
-+            ...(messages !== undefined ? { messages } : {}),
-+            ...(tools !== undefined ? { tools } : {}),
-+          }
-+        : undefined;
-+
-+  const hasStructuredOutput =
-+    outputMessage !== undefined ||
-+    finishReason !== undefined ||
-+    usage !== undefined ||
-+    outputError !== undefined ||
-+    candidates !== undefined;
-+  const resolvedOutput =
-+    output !== undefined
-+      ? output
-+      : hasStructuredOutput
-+        ? {
-+            ...(outputMessage !== undefined 
+       if (
+         !process.argv.includes('--non-interactive') &&
+         commandName !== 'config' &&
+-        commandName !== 'mcp'
++        commandName !== 'mcp' &&
++        actionCommand.name() !== SERVER_HARNESS_COMMAND
+       ) {
+-        await notifyAnalyticsIfFirstRun();
++        await notifyAnalyticsIfFirstRun(projectRuntime);
+       }
+ 
+-      const { isCompiledBinary } = detectCLIRuntime();
+-      const projectRoot = await findProjectRoot();
+-      const projectRuntime = await detectRuntime(projectRoot);
+       if (
+         process.stdout.isTTY &&
+         !process.argv.includes('--non-interactive') &&
 ```
 
-**File**: `genkit-tools/common/tests/utils/trajectory/span-parser_test.ts` (added, +307/-0)
+**File**: `genkit-tools/cli/tests/cli.test.ts` (modified, +51/-0)
 ```diff
-@@ -0,0 +1,307 @@
-+/**
-+ * Copyright 2026 Google LLC
-+ *
-+ * Licensed under the Apache License, Version 2.0 (the "License");
-+ * you may not use this file except in compliance with the License.
-+ * You may obtain a copy of the License at
-+ *
-+ *     http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
+@@ -26,6 +26,7 @@ const {
+   mockStartMcpServer,
+   mockWarnIfLegacyGenkitContext,
+   mockLoadDocs,
++  mockServerHarnessAction,
+ } = vi.hoisted(() => ({
+   mockNotifyAnalyticsIfFirstRun: vi.fn(() => Promise.resolve()),
+   mockRecord: vi.fn(() => Promise.resolve()),
+@@ -36,6 +37,7 @@ const {
+   mockStartMcpServer: vi.fn(() => Promise.resolve()),
+   mockWarnIfLegacyGenkitContext: vi.fn(() => Promise.resolve()),
+   mockLoadDocs: vi.fn(() => Promise.resolve({})),
++  mockServerHarnessAction: vi.fn(),
+ }));
+ 
+ vi.mock('@genkit-ai/tools-common/utils', async (importOriginal) => {
+@@ -82,6 +84,19 @@ vi.mock('../src/commands/plugins.js', () => ({
+   getPluginSubCommand: vi.fn(() => Promise.resolve(undefined)),
+ }));
+ 
++vi.mock('../src/commands/server-harness.js', async () => {
++  const { Command } = await import('commander');
++  return {
++    SERVER_HARNESS_COMMAND: '__server-harness',
++    serverHarness: new Command('__server-harness')
++      .argument('<port>')
++      .argument('<logFile>')
++      .action((port: string, logFile: string) => {
++        mockServerHarnessAction(port, logFile);
++      }),
++  };
++});
 +
-+import { describe, expect, it } from 'vitest';
-+import type { NestedSpanData } from '../../../src/types/index.js';
-+import {
-+  aggregateUsage,
-+  extractTextFromParts,
-+  getModelOutputData,
-+  getTurnContext,
-+  hasCompatibleRef,
-+  isExcludedFromTrajectory,
-+  isExplicitHistoryMessage,
-+  messageSignature,
-+  normalizeParts,
-+  takeMatchingByRefOrName,
-+} from '../../../src/utils/trajectory/span-parser.js';
-+import { makeModelSpan, makeSpan, makeTurnSpan } from './mock_data.js';
+ describe('startCLI', () => {
+   const originalArgv = process.argv;
+   let startCLI: typeof import('../src/cli.js').startCLI;
+@@ -132,4 +147,40 @@ describe('startCLI', () => {
+     expect(mockShowUpdateNotification).toHaveBeenCalledOnce();
+     expect(mockLoadDocs).toHaveBeenCalledOnce();
+   });
 +
-+describe('trajectory span-parser helpers', () => {
-+  describe('hasCompatibleRef', () => {
-+    it.each([
-+      {
-+        name: 'matching refs',
-+        reqRef: 'ref-1',
-+        candidateRef: 'ref-1',
-+        expected: true,
-+      },
-+      {
-+        name: 'missing candidate ref',
-+        reqRef: 'ref-1',
-+        candidateRef: undefined,
-+        expected: true,
-+      },
-+      {
-+        name: 'conflicting refs',
-+        reqRef: 'ref-1',
-+        candidateRef: 'ref-2',
-+        expected: false,
-+      },
-+    ])('returns $expected for $name', ({ reqRef, candidateRef, expected }) => {
-+      expect(hasCompatibleRef(reqRef, candidateRef)).toBe(expected);
-+    });
++  it('passes the detected projectRuntime to notifyAnalyticsIfFirstRun', async () => {
++    mockDetectRuntime.mockResolvedValueOnce('go');
++    process.argv = ['node', 'genkit', 'docs:list', 'js'];
++
++    await startCLI();
++
++    expect(mockNotifyAnalyticsIfFirstRun).toHaveBeenCalledExactlyOnceWith('go');
 +  });
 +
-+  describe('takeMatchingByRefOrName', () => {
-+    const makeItems = () => [
-+      { ref: 'ref-a', name: '/tool/search' },
-+      { ref: 'ref-b', name: '/tool/search' },
-+      { ref: undefined, name: '/tool.v2/mcp/lookup' },
++  it('skips first-run analytics prompt when --non-interactive is set', async () => {
++    process.argv = ['node', 'genkit', '--non-interactive', 'docs:list', 'js'];
++
++    await startCLI();
++
++    expect(mockNotifyAnalyticsIfFirstRun).not.toHaveBeenCalled();
++    expect(mockLoadDocs).toHaveBeenCalledOnce();
++  });
++
++  it('skips first-run analytics prompt for __server-harness daemon process', async () => {
++    process.argv = [
++      'node',
++      'genkit',
++      '__server-harness',
++      '4000',
++      '/tmp/devui.log',
 +    ];
 +
-+    it('matches by exact ref', () => {
-+      expect(
-+        takeMatchingByRefOrName(
-+          makeItems(),
-+          'ref-b',
-+          'search',
-+          (i) => i.ref,
-+          (i) => i.name
-+        )?.ref
-+      ).toBe('ref-b');
++    await startCLI();
++
++    expect(mockNotifyAnalyticsIfFirstRun).not.toHaveBeenCalled();
++    expect(mockServerHarnessAction).toHaveBeenCalledExactlyOnceWith(
++      '4000',
++      '/tmp/devui.log'
++    );
++  });
+ });
+```
+
+**File**: `genkit-tools/common/src/utils/analytics.ts` (modified, +8/-3)
+```diff
+@@ -76,8 +76,11 @@ export class FirstUsageEvent extends GAEvent {
+   name = 'first_visit';
+   duration = 1;
+ 
+-  constructor() {
++  constructor(project_runtime?: string) {
+     super();
++    this.parameters = {
++      project_runtime: project_runtime || 'unknown',
++    };
+   }
+ }
+ 
+@@ -180,7 +183,9 @@ export function extractActionType(key?: unknown): string {
+ }
+ 
+ /** Displays a notification that analytics are in use. */
+-export async function notifyAnalyticsIfFirstRun(): Promise<void> {
++export async function notifyAnalyticsIfFirstRun(
++  projectRuntime?: string
++): Promise<void> {
+   if (isAnalyticsOptedOut()) return;
+ 
+   if (configstore.get(NOTIFICATION_ACKED)) {
+@@ -198,7 +203,7 @@ export async function notifyAnalyticsIfFirstRun(): Promise<void> {
+ 
+   configstore.set(NOTIFICATION_ACKED, true);
+ 
+-  await record(new FirstUsageEvent());
++  await record(new FirstUsageEvent(projectRuntime));
+ }
+ 
+ /** Gets session information for the UI. */
+```
+
+**File**: `genkit-tools/common/tests/utils/analytics.test.ts` (modified, +89/-19)
+```diff
+@@ -14,31 +14,38 @@
+  * limitations under the License.
+  */
+ 
++import * as readlinePromises from 'readline/promises';
+ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+ 
++vi.mock('readline/promises', () => ({
++  createInterface: vi.fn(),
++}));
++
+ const UUID_V4_REGEX =
+   /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+ 
+ describe('analytics', () => {
+-  const store = new Map<string, any>();
++  const store = new Map<string, unknown>();
++  let analyticsModule: typeof import('../../src/utils/analytics.js');
+   let getAnalyticsSettings: typeof import('../../src/utils/analytics.js').getAnalyticsSettings;
+   let configstoreModule: typeof import('../../src/utils/configstore.js');
+ 
+   beforeEach(async () => {
+     vi.resetModules();
+     configstoreModule = await import('../../src/utils/configstore.js');
+-    ({ getAnalyticsSettings } = await import('../../src/utils/analytics.js'));
++    analyticsModule = await import('../../src/utils/analytics.js');
++    ({ getAnalyticsSettings } = analyticsModule);
+ 
+     store.clear();
+     vi.spyOn(configstoreModule.configstore, 'get').mockImplementation(
+       (key: string) => store.get(key)
+     );
+     vi.spyOn(configstoreModule.configstore, 'set').mockImplementation(((
+       key: string,
+-      value?: any
++      value?: unknown
+     ) => {
+       store.set(key, value);
+-    }) as any);
++    }) as typeof configstoreModule.configstore.set);
+     vi.spyOn(configstoreModule, 'getUserSettings').mockReturnValue({});
+   });
+ 
+@@ -56,16 +63,11 @@ describe('analytics', () => {
+ 
+       const settings = getAnalyticsSettings();
+ 
+-      expect(settings.enabled).toBe(true);
+-      if (!settings.enabled) {
+-        throw new Error('Expected analytics settings to be enabled');
+-      }
+-      expect(settings.clientId).toMatch(UUID_V4_REGEX);
+-      expect(configstoreModule.configstore.set).toHaveBeenCalledWith(
+-        'genkit-tools-ga-id',
+-        settings.clientId
+-      );
+-      expect(store.get('genkit-tools-ga-id')).toBe(settings.clientId);
++      expect(settings).toMatchObject({
++        enabled: true,
++        clientId: expect.stringMatching(UUID_V4_REGEX),
++      });
++      expect(store.get('genkit-tools-ga-id')).toMatch(UUID_V4_REGEX);
+     });
+ 
+     it('reuses existing clientId from configstore when present', () => {
+@@ -74,12 +76,80 @@ describe('analytics', () => {
+ 
+       const settings = getAnalyticsSettings();
+ 
+-      expect(settings.enabled).toBe(true);
+-      if (!settings.enabled) {
+-        throw new Error('Expected analytics settings to be enabled');
+-      }
+-      expect(settings.clientId).toBe('existing-client-id');
++      expect(settings).toMatchObject({
++        enabled: true,
++        clientId: 'existing-client-id',
++      });
+       expect(configstoreModule.configstore.set).not.toHaveBeenCalled();
+     });
+   });
++
++  describe('FirstUsageEvent', () => {
++    it('sets project_runtime when provided', () => {
++      const event = new analyticsModule.FirstUsageEvent('go');
++
++      expect(event.parameters).toEqual({ project_runtime: 'go' });
 +    });
 +
-+    it('returns undefined on conflicting refs instead of falling back to name', () => {
-+      expect(
-+        takeMatchingByRefOrName(
-+          makeItems(),
-+          'ref-missing',
-+          'search',
-+          (i) => i.ref,
-+          (i) => i.name
-+        )
-+      ).toBeUndefined();
-+    });
++    it('falls back to unknown when project_runtime is omitted', () => {
++      const event = new analyticsModule.FirstUsageEvent();
 +
-+    it('falls back to short tool name when candidate ref is undefined', () => {
-+      expect(
-+        takeMatchingByRefOrName(
-+          makeItems(),
-+          'ref-c',
-+          'lookup',
-+          (i) => i.ref,
-+          (i) => i.name
-+        )?.name
-+      ).toBe('/tool.v2/mcp/lookup');
++      expect(event.parameters).toEqual({ project_runtime: 'unknown' });
 +    });
 +  });
 +
-+  describe('getTurnContext', () => {
-+    it('resolves 0-based turnIndex and turnSpan from enclosing runTurn-<N>', () => {
-+      const turn2 = makeTurnSpan({ turn: 2 }) as NestedSpanData;
-+      const model = makeModelSpan({
-+        parentSpanId: turn2.spanId,
-+      }) as NestedSpanData;
-+      const parentMap = new Map<string, NestedSpanData>([
-+        [model.spanId, turn2],
-+      ]);
++  describe('notifyAnalyticsIfFirstRun', () => {
++    it.each([
++      ['go', 'go'],
++      [undefined, 'unknown'],
++    ])(
++      'acknowledges notification and sends first_visit with project_runtime=%s as %s',
++      async (runtime, expected) => {
++        vi.mocked(readlinePromises.createInterface).mockReturnValue({
++          question: vi.fn().mockResolvedValue(''),
++          close: vi.fn(),
++        } as unknown as readlinePromises.Interface);
++        const fetchSpy = vi
++          .spyOn(globalThis, 'fetch')
++          .mockResolvedValue(new Response(null, { status: 204 }));
++        vi.spyOn(console, 'log').mockImplementation(() => {});
 +
-+      expect(getTurnContext(model, parentMap)).toEqual({
-+        turnIndex: 1,
-+        turnSpan: turn2,
-+      });
++        await analyticsModule.notifyAnalyticsIfFirstRun(runtime);
++
++        expect(store.get('analytics_notification')).toBe(true);
++        expect(fetchSpy).toHaveBeenCalledOnce();
++        const [, init] = fetchSpy.mock.calls[0];
++        expect(JSON.parse(String(init?.body))).toMatchObject({
++          events: [
++            {
++              name: 'first_visit',
++              params: { project_runtime: expected },
++            },
++          ],
++        });
++      }
++    );
++
++    it('skips prompt and event when notification is already acknowledged', async () => {
++      store.set('analytics_notification', true);
++      const fetchSpy = vi.spyOn(globalThis, 'fetch');
++
++      await analyticsModule.notifyAnalyticsIfFirstRun('go');
++
++      expect(readlinePromises.createInterface).not.toHaveBeenCalled();
++      expect(fetchSpy).not.toHaveBeenCalled();
 +    });
 +
-+    it('defaults to turnIndex 0 when no runTurn-<N> ancestor exists', () => {
-+      const model = makeModelSpan() as NestedSpanData;
-+
-+      expect(getTurnContext(model, new Map())).toEqual({
-+        turnIndex: 0,
-+        turnSpan: undefined,
-+      });
-+    });
-+
-+    it('terminates safely on cyclic parentMap links', () => {
-+      const cycleA = makeSpan({ spanId: 'cyc-a' }) as NestedSpanData;
-+      const cycleB = makeSpan({ spanId: 'cyc-b' }) as NestedSpanData;
-+      const cyclicParents = new Map<string, NestedSpanData>([
-+        ['cyc-a', cycleB],
-+        ['cyc-b', cycleA],
-+      ]);
-+
-+      expect(getTurnContext(cycleA, cyclicParents)).toEqual({
-+        turnIndex: 0,
-+        turnSpan: undefined,
-+      });
-+    });
-+  });
-+
-+  describe('getModelOutputData', () => {
-+    it('falls back to candidates[0] for message, finishReason, and usage', () => {
-+      const legacySpan = makeModelSpan({
-+        candidates: [
-+          {
-+            message: { role: 'model', content: [{ text: 'Truncated' }] },
-+            finishReason: 'length',
-+            usage: { inputTokens: 10, outputTokens: 5 },
-+          },
-+        ],
-+      });
-+
-+      expect(getModelOutputData(legacySpan)).toEqual({
-+        message: { role: 'model', content: [{ text: 'Truncated' }] },
-+        finishReason: 'length',
-+        usage: { inputTokens: 10, outputTokens: 5 },
-+        error: undefined,
-+      });
-+    });
-+
-+    it('extracts structured RuntimeError from genkit:output.error', () => {
-+      const structuredErrSpan = makeMo
++    it('skips prompt and event when analyticsOptOut is enabled', async () => {
++      vi.spyOn(configstoreModule, 'getUserSettin
+```
+
+**File**: `tests/src/utils.ts` (modified, +7/-3)
+```diff
+@@ -113,19 +113,23 @@ export async function genkitStart(
+         'exec',
+         '--prefix',
+         cliInstallRoot,
++        '--',
+         'genkit',
++        '--non-interactive',
++        '--no-update-notification',
+         'start',
+         '--',
+         ...appCmd.split(' '),
+       ],
+       {
+         cwd: testRoot,
++        env: {
++          ...process.env,
++          XDG_CONFIG_HOME: path.join(cliInstallRoot, '.config'),
++        },
+       }
+     );
+ 
+-    // Press enter in case of cookie ack prompt.
+-    appProcess.stdin.write('\n');
+-
+     var done = false;
+     setTimeout(() => {
+       if (!done) {
 ```
 
 ---
 
-### Incident Patch 2: `426cc62b` (2026-11-20)
-**Commit Message**: feat(genkit-tools): add trace span tree pruning and inspection helpers (#7225)
+### Incident Patch 2: `9d45c6c0` (2026-11-23)
+**Commit Message**: fix(genkit-tools/telemetry-server): accept OTLP protobuf on /api/otlp/v1/* (#7319)
 
-**File**: `genkit-tools/common/src/utils/trace.ts` (modified, +181/-6)
+Co-authored-by: Pavel Jbanov <[REDACTED_EMAIL]>
+
+**File**: `genkit-tools/cli/src/utils/manager-utils.ts` (modified, +9/-7)
 ```diff
-@@ -14,10 +14,51 @@
-  * limitations under the License.
-  */
+@@ -206,11 +206,13 @@ export async function getDevEnvVars(
  
--import type { NestedSpanData, TraceData } from '../types/index.js';
-+import type { NestedSpanData, SpanData, TraceData } from '../types/index.js';
-+
-+/** Options for {@link stackTraceSpans}. */
-+export interface StackTraceSpansOptions {
-+  /**
-+   * Optional predicate to exclude spans (along with their entire descendant
-+   * subtrees) when building the span tree.
-+   */
-+  exclude?: (span: NestedSpanData) => boolean;
-+}
-+
-+/**
-+ * Sorts spans chronologically by `startTime`, breaking ties deterministically by `spanId`.
-+ */
-+export function sortSpansChronologically(spans: SpanData[]): void {
-+  spans.sort(
-+    (a, b) => a.startTime - b.startTime || a.spanId.localeCompare(b.spanId)
-+  );
-+}
-+
-+/** Checks whether a span attribute value represents boolean `true` or `'true'`. */
-+export function isTruthyAttr(val: unknown): boolean {
-+  return (
-+    val === true || (typeof val === 'string' && val.toLowerCase() === 'true')
-+  );
-+}
-+
-+function pruneSpanSubtree(
-+  node: NestedSpanData,
-+  exclude: (span: NestedSpanData) => boolean
-+): NestedSpanData | undefined {
-+  if (exclude(node)) return undefined;
-+  if (node.spans?.length) {
-+    node.spans = node.spans.filter((child) =>
-+      Boolean(pruneSpanSubtree(child, exclude))
-+    );
-+  }
-+  return node;
-+}
+   if (useOtel) {
+     // Drive the app's own OTel SDK to the dev telemetry server's OTLP endpoints.
+-    // The server only parses JSON bodies (express.json), so http/json is
+-    // required; per-signal endpoints are used verbatim (no /v1/* appended), so
+-    // the full path is spelled out. Metrics are deliberately not redirected:
+-    // the server doesn't ingest them, so they go wherever the app's own OTel
+-    // config sends them.
++    // The protocol is set explicitly to http/protobuf (the OTLP spec default,
++    // supported by Go autoexport, Python, Java, and JS NodeSDK) so a shell
++    // OTEL_EXPORTER_OTLP_*_PROTOCOL=grpc or Python opentelemetry-distro's grpc
++    // default cannot leak in; per-signal endpoints are used verbatim (no /v1/*
++    // appended), so the full path is spelled out. Metrics are deliberately not
++    // redirected: the server doesn't ingest them, so they go wherever the app's
++    // own OTel config sends them.
+     //
+     // GENKIT_TELEMETRY_SERVER is blanked rather than omitted: the child
+     // inherits process.env, so a value exported in the shell (the
+@@ -223,9 +225,9 @@ export async function getDevEnvVars(
+     // with one, and naive concatenation would yield a double slash.
+     const baseUrl = telemetryServerUrl.replace(/\/+$/, '');
+     envVars.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT = `${baseUrl}/api/otlp/v1/traces`;
+-    envVars.OTEL_EXPORTER_OTLP_TRACES_PROTOCOL = 'http/json';
++    envVars.OTEL_EXPORTER_OTLP_TRACES_PROTOCOL = 'http/protobuf';
+     envVars.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT = `${baseUrl}/api/otlp/v1/logs`;
+-    envVars.OTEL_EXPORTER_OTLP_LOGS_PROTOCOL = 'http/json';
++    envVars.OTEL_EXPORTER_OTLP_LOGS_PROTOCOL = 'http/protobuf';
+   } else {
+     envVars.GENKIT_TELEMETRY_SERVER = telemetryServerUrl;
+     if (!disableRealtimeTelemetry) {
+```
+
+**File**: `genkit-tools/cli/tests/commands/start.test.ts` (modified, +7/-2)
+```diff
+@@ -231,7 +231,10 @@ describe('start command', () => {
+       GENKIT_TELEMETRY_SERVER: '',
+       OTEL_EXPORTER_OTLP_TRACES_ENDPOINT:
+         'http://localhost:4033/api/otlp/v1/traces',
+-      OTEL_EXPORTER_OTLP_TRACES_PROTOCOL: 'http/json',
++      OTEL_EXPORTER_OTLP_TRACES_PROTOCOL: 'http/protobuf',
++      OTEL_EXPORTER_OTLP_LOGS_ENDPOINT:
++        'http://localhost:4033/api/otlp/v1/logs',
++      OTEL_EXPORTER_OTLP_LOGS_PROTOCOL: 'http/protobuf',
+     };
  
- /** Transforms flat spans from the trace data into a tree of spans. */
--export function stackTraceSpans(trace: TraceData): NestedSpanData | undefined {
-+export function stackTraceSpans(
-+  trace: TraceData,
-+  options?: StackTraceSpansOptions
-+): NestedSpanData | undefined {
-   if (!trace.spans || Object.keys(trace.spans).length === 0) return undefined;
-   let rootSpan: NestedSpanData | undefined = undefined;
- 
-@@ -46,14 +87,16 @@ export function stackTraceSpans(trace: TraceData): NestedSpanData | undefined {
- 
-   // Sort children by start times for each span.
-   treeSpans.forEach((span) => {
--    span.spans?.sort((a, b) => a.startTime - b.startTime);
-+    if (span.spans) sortSpansChronologically(span.spans);
+     beforeEach(() => {
+@@ -283,7 +286,9 @@ describe('start command', () => {
+       expect(logger.warn).toHaveBeenCalledWith(
+         expect.stringContaining(
+           '  export OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://localhost:4033/api/otlp/v1/traces\n' +
+-            '  export OTEL_EXPORTER_OTLP_TRACES_PROTOCOL=http/json'
++            '  export OTEL_EXPORTER_OTLP_TRACES_PROTOCOL=http/protobuf\n' +
++            '  export OTEL_EXPORTER_OTLP_LOGS_ENDPOINT=http://localhost:4033/api/otlp/v1/logs\n' +
++            '  export OTEL_EXPORTER_OTLP_LOGS_PROTOCOL=http/protobuf'
+         )
+       );
+       expect(logger.warn).toHaveBeenCalledWith(
+```
+
+**File**: `genkit-tools/cli/tests/utils/manager-utils.test.ts` (modified, +2/-2)
+```diff
+@@ -180,11 +180,11 @@ describe('getDevEnvVars', () => {
+     expect(envVars.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT).toBe(
+       `${TELEMETRY_URL}/api/otlp/v1/traces`
+     );
+-    expect(envVars.OTEL_EXPORTER_OTLP_TRACES_PROTOCOL).toBe('http/json');
++    expect(envVars.OTEL_EXPORTER_OTLP_TRACES_PROTOCOL).toBe('http/protobuf');
+     expect(envVars.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT).toBe(
+       `${TELEMETRY_URL}/api/otlp/v1/logs`
+     );
+-    expect(envVars.OTEL_EXPORTER_OTLP_LOGS_PROTOCOL).toBe('http/json');
++    expect(envVars.OTEL_EXPORTER_OTLP_LOGS_PROTOCOL).toBe('http/protobuf');
    });
  
--  return rootSpan;
-+  return rootSpan && options?.exclude
-+    ? pruneSpanSubtree(rootSpan, options.exclude)
-+    : rootSpan;
- }
+   it('normalizes a trailing slash on the telemetry server URL for OTLP endpoints', async () => {
+```
+
+**File**: `genkit-tools/pnpm-lock.yaml` (modified, +121/-7)
+```diff
+@@ -69,7 +69,7 @@ importers:
+         version: 10.0.1(eslint@10.14.0)
+       '@vitest/eslint-plugin':
+         specifier: ^1.6.28
+-        version: 1.6.28(@typescript-eslint/eslint-plugin@8.72.1(@typescript-eslint/parser@8.72.1(eslint@10.14.0)(typescript@5.9.3))(eslint@10.14.0)(typescript@5.9.3))(eslint@10.14.0)(typescript@5.9.3)(vitest@4.1.12(@types/node@20.19.43)(vite@8.3.4(@types/node@20.19.43)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)))
++        version: 1.6.28(@typescript-eslint/eslint-plugin@8.72.1(@typescript-eslint/parser@8.72.1(eslint@10.14.0)(typescript@5.9.3))(eslint@10.14.0)(typescript@5.9.3))(eslint@10.14.0)(typescript@5.9.3)(vitest@4.1.12(@opentelemetry/api@1.9.1)(@types/node@20.19.43)(vite@8.3.4(@types/node@20.19.43)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)))
+       eslint:
+         specifier: ^10.14.0
+         version: 10.14.0
+@@ -148,7 +148,7 @@ importers:
+         version: 5.9.3
+       vitest:
+         specifier: 'catalog:'
+-        version: 4.1.12(@types/node@20.19.43)(vite@8.3.4(@types/node@20.19.43)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
++        version: 4.1.12(@opentelemetry/api@1.9.1)(@types/node@20.19.43)(vite@8.3.4(@types/node@20.19.43)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
  
- /** Extracts the display type/subtype of a span. */
--export function getSpanType(span: NestedSpanData): string {
-+export function getSpanType(span: SpanData): string {
-   const attrs = span.attributes || {};
-   const kind = span.spanKind;
-   let kindStr = 'span';
-@@ -71,7 +114,7 @@ export function getSpanType(span: NestedSpanData): string {
- }
+   common:
+     dependencies:
+@@ -242,7 +242,7 @@ importers:
+         version: 5.9.3
+       vitest:
+         specifier: 'catalog:'
+-        version: 4.1.12(@types/node@20.19.43)(vite@8.3.4(@types/node@20.19.43)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
++        version: 4.1.12(@opentelemetry/api@1.9.1)(@types/node@20.19.43)(vite@8.3.4(@types/node@20.19.43)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
  
- /** Extracts the status icon ('✔', '✖', or '') of a span. */
--export function getSpanStatus(span: NestedSpanData): string {
-+export function getSpanStatus(span: SpanData): string {
-   const attrs = span.attributes || {};
-   const state = attrs['genkit:state'] as string;
-   if (state) {
-@@ -83,3 +126,135 @@ export function getSpanStatus(span: NestedSpanData): string {
-   if (span.status?.code === 2) return '✖';
-   return '';
- }
+   telemetry-server:
+     dependencies:
+@@ -265,6 +265,21 @@ importers:
+         specifier: 'catalog:'
+         version: 3.25.76
+     devDependencies:
++      '@opentelemetry/api':
++        specifier: 1.9.1
++        version: 1.9.1
++      '@opentelemetry/api-logs':
++        specifier: 0.222.0
++        version: 0.222.0
++      '@opentelemetry/otlp-transformer':
++        specifier: 0.222.0
++        version: 0.222.0(@opentelemetry/api@1.9.1)
++      '@opentelemetry/sdk-logs':
++        specifier: 0.222.0
++        version: 0.222.0(@opentelemetry/api@1.9.1)
++      '@opentelemetry/sdk-trace':
++        specifier: 2.11.0
++        version: 2.11.0(@opentelemetry/api@1.9.1)
+       '@types/cors':
+         specifier: 'catalog:'
+         version: 2.8.19
+@@ -291,7 +306,7 @@ importers:
+         version: 5.9.3
+       vitest:
+         specifier: 'catalog:'
+-        version: 4.1.12(@types/node@20.19.43)(vite@8.3.4(@types/node@20.19.43)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
++        version: 4.1.12(@opentelemetry/api@1.9.1)(@types/node@20.19.43)(vite@8.3.4(@types/node@20.19.43)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
+ 
+ packages:
+ 
+@@ -690,6 +705,54 @@ packages:
+       '@cfworker/json-schema':
+         optional: true
+ 
++  '@opentelemetry/api-logs@0.222.0':
++    resolution: {integrity: sha512-9mb1If+IF6u0ZVXkHQ6ogEae5HwA6ajIVUgpSDQyRASxft6BSXHvBvPooRle3yFN/fKnCdSOnuu0OC3PLcF6+g==}
++    engines: {node: '>=8.0.0'}
 +
-+/**
-+ * Safely parses a JSON string attribute from a span, returning the value as-is
-+ * if already parsed, or the raw `string` when `JSON.parse` fails (e.g. plain-text
-+ * tool inputs/outputs). Callers expecting an object should narrow `typeof parsed === 'object'`.
-+ */
-+export function parseSpanJson<T = unknown>(
-+  val: unknown
-+): T | string | undefined {
-+  if (val === undefined || val === null) return undefined;
-+  if (typeof val === 'string') {
-+    const trimmed = val.trim();
-+    if (!trimmed) return undefined;
-+    try {
-+      return JSON.parse(trimmed) as T;
-+    } catch {
++  '@opentelemetry/api@1.9.1':
++    resolution: {integrity: sha512-gLyJlPHPZYdAk1JENA9LeHejZe1Ti77/pTeFm/nMXmQH/HFZlcS/O2XJB+L8fkbrNSqhdtlvjBVjxwUYanNH5Q==}
++    engines: {node: '>=8.0.0'}
++
++  '@opentelemetry/core@2.11.0':
++    resolution: {integrity: sha512-7YP44XH0tV6+Mb54x2YGf84i7yi+31MBZlE8JwvozkxyTvXbSp10X7cI7YE49ChJ3shMJoBmCJF3+1QFBJctGA==}
++    engines: {node: ^18.19.0 || >=20.6.0}
++    peerDependencies:
++      '@opentelemetry/api': '>=1.0.0 <1.10.0'
++
++  '@opentelemetry/otlp-transformer@0.222.0':
++    resolution: {integrity: sha512-/F3BZ89+CJQnZkMh2tCrtcdB+XT2Dxhj4FFE+WPQ//413hmFL0/RfEX6vgOIWGhiSzrkHWTK3+6SiT7K5/g/jQ==}
++    engines: {node: ^18.19.0 || >=20.6.0}
++    peerDependencies:
++      '@opentelemetry/api': ^1.3.0
++
++  '@opentelemetry/resources@2.11.0':
++    resolution: {integrity: sha512-Ie7+8q8MDF4FAEQCKVMTx3ReUvxiIAgIiiW3c9JdmP8+HMcDy20puT+AHjexnExgnbvBxjQ9fjkFDWrikJ2jQA==}
++    engines: {node: ^18.19.0 || >=20.6.0}
++    peerDependencies:
++      '@opentelemetry/api': '>=1.3.0 <1.10.0'
++
++  '@opentelemetry/sdk-logs@0.222.0':
++    resolution: {integrity: sha512-+19YHODIjaUCArxleaJtuufFZVpz/xvvK+VllQqE+W8hHolxdoRwHfK/s667zezwh1hkx6FFF+oYzetYgqK+Bg==}
++    engines: {node: ^18.19.0 || >=20.6.0}
++    peerDependencies:
++      '@opentelemetry/api': '>=1.4.0 <1.10.0'
++
++  '@opentelemetry/sdk-metrics@2.11.0':
++    resolution: {integrity: sha512-7GXXcObyHyDUUSG+L+kJoquty01bzm7ivE7+SSgXXJcHuPzGviptxwARmI2c+bnnxjexGQbJnyNlN8HxBP/Y7A==}
++    engines: {node: ^18.19.0 || >=20.6.0}
++    peerDependencies:
++      '@opentelemetry/api': '>=1.9.0 <1.10.0'
++
++  '@opentelemetry/sdk-trace@2.11.0':
++    resolution: {integrity: sha512-fFnTqGm8/G73GQVnxYi7LXa1ZVYEUvgL6XI1LpvV0bPC7WQ/ZGgKxCSl8FnlZBKto9JHHEFTO6s6CUpvvtwFrA==}
++    engines: {node: ^18.19.0 || >=20.6.0}
++    peerDependencies:
++      '@opentelemetry/api': '>=1.3.0 <1.10.0'
++
++  '@opentelemetry/semantic-conventions@1.44.0':
++    resolution: {integrity: sha512-E3JkOlMB
+```
+
+**File**: `genkit-tools/telemetry-server/package.json` (modified, +5/-0)
+```diff
+@@ -40,6 +40,11 @@
+     "zod": "catalog:"
+   },
+   "devDependencies": {
++    "@opentelemetry/api": "1.9.1",
++    "@opentelemetry/api-logs": "0.222.0",
++    "@opentelemetry/otlp-transformer": "0.222.0",
++    "@opentelemetry/sdk-logs": "0.222.0",
++    "@opentelemetry/sdk-trace": "2.11.0",
+     "@types/cors": "catalog:",
+     "@types/express": "catalog:",
+     "@types/lockfile": "^1.0.4",
+```
+
+**File**: `genkit-tools/telemetry-server/src/index.ts` (modified, +79/-11)
+```diff
+@@ -26,7 +26,11 @@ import express from 'express';
+ import type * as http from 'http';
+ import { BroadcastManager } from './broadcast-manager.js';
+ import type { TraceStore } from './types.js';
+-import { logDataFromOtlp, traceDataFromOtlp } from './utils/otlp.js';
++import {
++  decodeOtlpProtobuf,
++  logDataFromOtlp,
++  traceDataFromOtlp,
++} from './utils/otlp.js';
+ 
+ export { LocalFileLogStore } from './file-log-store.js';
+ export { LocalFileTraceStore } from './file-trace-store.js';
+@@ -159,7 +163,15 @@ export async function startTelemetryServer(params: {
+     })
+   );
+ 
+-  api.use(express.json({ limit: params.maxRequestBodySize ?? '100mb' }));
++  const bodyLimit = params.maxRequestBodySize ?? '100mb';
++  api.use(express.json({ limit: bodyLimit }));
++  api.use(
++    '/api/otlp',
++    express.raw({
++      type: 'application/x-protobuf',
++      limit: bodyLimit,
++    })
++  );
+ 
+   api.get('/api/__health', async (_, response) => {
+     response.status(200).send('OK');
+@@ -287,6 +299,7 @@ export async function startTelemetryServer(params: {
+     }
+   );
+ 
++  let warnedUnsupportedContentType = false;
+   api.post<{ parentTraceId?: string; parentSpanId?: string }>(
+     [
+       '/api/otlp',
+@@ -297,17 +310,72 @@ export async function startTelemetryServer(params: {
+     ],
+     async (request, response) => {
+       try {
++        const contentTypeHeader = request.headers['content-type'];
++        const mediaType =
++          typeof contentTypeHeader === 'string'
++            ? contentTypeHeader.split(';')[0].trim().toLowerCase()
++            : '';
++        const isProtobuf = mediaType === 'application/x-protobuf';
++        const isJson = mediaType === 'application/json';
++        if (!isJson && !isProtobuf) {
++          if (!warnedUnsupportedContentType) {
++            warnedUnsupportedContentType = true;
++            logger.warn(
++              `Unsupported OTLP Content-Type "${contentTypeHeader ?? 'none'}" on ${request.path}; expected application/json or application/x-protobuf.`
++            );
++          }
++          response.status(415).json({
++            code: 3, // INVALID_ARGUMENT
++            message:
++              'Unsupported Content-Type. Expected application/json or application/x-protobuf.',
++          });
++          return;
++        }
++
++        const sendOtlpOk = () => {
++          if (isProtobuf) {
++            response
++              .status(200)
++              .type('application/x-protobuf')
++              .send(Buffer.alloc(0));
++          } else {
++            response.status(200).json({});
++          }
++        };
++
++        const normalizedPath = request.path.replace(/\/+$/, '');
++        if (normalizedPath === '/api/otlp/v1/metrics') {
++          sendOtlpOk();
++          return;
++        }
++
+         const { parentTraceId, parentSpanId } = request.params;
++        const signal: 'traces' | 'logs' | undefined =
++          normalizedPath === '/api/otlp/v1/logs'
++            ? 'logs'
++            : normalizedPath === '/api/otlp/v1/traces' || parentTraceId
++              ? 'traces'
++              : undefined;
++        if (isProtobuf && !signal) {
++          response.status(400).json({
++            code: 3, // INVALID_ARGUMENT
++            message:
++              'Protobuf payloads require a signal-specific endpoint (/api/otlp/v1/traces or /api/otlp/v1/logs).',
++          });
++          return;
++        }
++
++        const payload =
++          Buffer.isBuffer(request.body) && signal
++            ? decodeOtlpProtobuf(request.body, signal)
++            : request.body;
+ 
+-        if (
+-          !request.body?.resourceSpans?.length &&
+-          !request.body?.resourceLogs?.length
+-        ) {
++        if (!payload?.resourceSpans?.length && !payload?.resourceLogs?.length) {
+           // Acknowledge and ignore empty payloads.
+-          response.status(200).json({});
++          sendOtlpOk();
+           return;
+         }
+-        const traces = traceDataFromOtlp(request.body);
++        const traces = traceDataFromOtlp(payload);
+         for (const trace of traces) {
+           if (parentTraceId) {
+             trace.traceId = parentTraceId;
+@@ -338,14 +406,14 @@ export async function startTelemetryServer(params: {
+         }
+ 
+         // TODO: Add real time support and broadcast log events
+-        if (request.body.resourceLogs?.length) {
+-          const logs = logDataFromOtlp(request.body);
++        if (payload.resourceLogs?.length) {
++          const logs = logDataFromOtlp(payload);
+           if (logs.length > 0) {
+             await params.logStore.save(logs);
+           }
+         }
+ 
+-        response.status(200).json({});
++        sendOtlpOk();
+       } catch (err) {
+         logger.error(`Error processing OTLP payload: ${err}`);
+         response.status(500).json({
+```
+
+**File**: `genkit-tools/telemetry-server/src/utils/otlp.ts` (modified, +636/-17)
+```diff
+@@ -32,6 +32,10 @@ interface OtlpValue {
+   arrayValue?: {
+     values: OtlpValue[];
+   };
++  kvlistValue?: {
++    values: OtlpAttribute[];
++  };
++  bytesValue?: string;
+ }
+ 
+ interface OtlpAttribute {
+@@ -62,7 +66,7 @@ interface OtlpSpan {
+ interface OtlpScopeSpan {
+   scope: {
+     name: string;
+-    version: string;
++    version?: string;
+   };
+   spans: OtlpSpan[];
+ }
+@@ -77,6 +81,7 @@ interface OtlpResourceSpan {
+ 
+ interface OtlpLogRecord {
+   timeUnixNano: string;
++  observedTimeUnixNano?: string;
+   severityNumber?: number;
+   severityText?: string;
+   body?: OtlpValue;
+@@ -88,7 +93,7 @@ interface OtlpLogRecord {
+ interface OtlpScopeLog {
+   scope: {
+     name: string;
+-    version: string;
++    version?: string;
+   };
+   logRecords: OtlpLogRecord[];
+ }
+@@ -106,23 +111,633 @@ export interface OtlpPayload {
+   resourceLogs?: OtlpResourceLog[];
+ }
+ 
++const textDecoder = new TextDecoder('utf-8');
++
++class ProtoReader {
++  private readonly view: DataView;
++  private pos = 0;
++  private readonly len: number;
++
++  constructor(private readonly buf: Uint8Array) {
++    this.view = new DataView(buf.buffer, buf.byteOffset, buf.byteLength);
++    this.len = buf.byteLength;
++  }
++
++  eof(): boolean {
++    return this.pos >= this.len;
++  }
++
++  readVarint(): bigint {
++    let result = 0n;
++    let shift = 0n;
++    while (this.pos < this.len) {
++      const byte = this.buf[this.pos++];
++      result |= BigInt(byte & 0x7f) << shift;
++      if ((byte & 0x80) === 0) {
++        return result;
++      }
++      shift += 7n;
++      if (shift >= 70n) {
++        throw new Error('Invalid protobuf payload: varint too long');
++      }
++    }
++    throw new Error('Invalid protobuf payload: unexpected EOF in varint');
++  }
++
++  readTag(): { fieldNumber: number; wireType: number } {
++    const tag = this.readVarint();
++    const fieldNumber = Number(tag >> 3n);
++    const wireType = Number(tag & 0x07n);
++    if (fieldNumber <= 0) {
++      throw new Error(
++        `Invalid protobuf payload: invalid field number ${fieldNumber}`
++      );
++    }
++    return { fieldNumber, wireType };
++  }
++
++  readUint32(wireType: number): number {
++    if (wireType === 0) {
++      return Number(BigInt.asUintN(32, this.readVarint()));
++    }
++    if (wireType === 5) {
++      if (this.pos + 4 > this.len) {
++        throw new Error('Invalid protobuf payload: unexpected EOF in fixed32');
++      }
++      const val = this.view.getUint32(this.pos, true);
++      this.pos += 4;
 +      return val;
 +    }
-+  }
-+  return val as T;
-+}
-+
-+/** Returns a span's `displayName` or `genkit:name` attribute. */
-+export function getSpanName(span: SpanData): string {
-+  return (
-+    span.displayName ||
-+    (span.attributes?.['genkit:name'] as string | undefined) ||
-+    ''
-+  );
-+}
-+
-+function hasSpanTypeOrSubtype(span: SpanData, target: string): boolean {
-+  const attrs = span.attributes;
-+  return (
-+    attrs?.['genkit:metadata:subtype'] === target ||
-+    attrs?.['genkit:type'] === target
-+  );
-+}
-+
-+/** Checks whether a span represents an agent boundary. */
-+export function isAgentSpan(span: SpanData): boolean {
-+  return (
-+    hasSpanTypeOrSubtype(span, 'agent') ||
-+    getSpanName(span).startsWith('/agent/')
-+  );
-+}
-+
-+/** Checks whether a span represents a model execution. */
-+export function isModelSpan(span: SpanData): boolean {
-+  const name = getSpanName(span);
-+  return (
-+    hasSpanTypeOrSubtype(span, 'model') ||
-+    hasSpanTypeOrSubtype(span, 'background-model') ||
-+    name.startsWith('/model/') ||
-+    name.startsWith('/background-model/')
-+  );
-+}
-+
-+/** Checks whether a span represents a tool execution. */
-+export function isToolSpan(span: SpanData): boolean {
-+  const name = getSpanName(span);
-+  return (
-+    hasSpanTypeOrSubtype(span, 'tool') ||
-+    hasSpanTypeOrSubtype(span, 'tool.v2') ||
-+    name.startsWith('/tool/') ||
-+    name.startsWith('/tool.v2/')
-+  );
-```
-
-**File**: `genkit-tools/common/tests/utils/trace.ts` (modified, +51/-0)
-```diff
-@@ -191,3 +191,54 @@ export class MockTrace {
-     return this;
-   }
- }
-+
-+/** Builds a minimal valid SpanData for unit tests with optional field overrides. */
-+export function makeSpan(overrides: Partial<SpanData> = {}): SpanData {
-+  const spanId = overrides.spanId ?? 'span-1';
-+  return {
-+    traceId: 'trace-1',
-+    spanId,
-+    startTime: 100,
-+    endTime: 200,
-+    attributes: {},
-+    instrumentationLibrary: { name: 'genkit-tracer', version: 'v1' },
-+    spanKind: 'INTERNAL',
-+    status: { code: 0 },
-+    ...overrides,
-+    displayName: overrides.displayName ?? spanId,
-+  };
-+}
-+
-+/**
-+ * Builds a TraceData record auto-keyed by each span's `spanId`.
-+ * Infers `startTime` and `endTime` bounds from `spans` when not explicitly overridden.
-+ */
-+export function makeTrace(
-+  spans: SpanData[],
-+  overrides: Partial<TraceData> = {}
-+): TraceData {
-+  const traceId = overrides.traceId ?? spans[0]?.traceId ?? 'trace-1';
-+  const keyedSpans: Record<string, SpanData> = {};
-+  let minStart = Number.POSITIVE_INFINITY;
-+  let maxEnd = 0;
-+
-+  for (const span of spans) {
-+    keyedSpans[span.spanId] = overrides.traceId
-+      ? { ...span, traceId }
-+      : { ...span };
-+    if (span.startTime < minStart) minStart = span.startTime;
-+    if (span.endTime > maxEnd) maxEnd = span.endTime;
++    throw new Error(
++      `Invalid protobuf payload: expected uint32 wire type, got ${wireType}`
++    );
 +  }
 +
-+  return {
-+    traceId,
-+    ...(spans.length > 0
-+      ? {
-+          startTime: Number.isFinite(minStart) ? minStart : 0,
-+          endTime: maxEnd,
++  readInt64Number(wireType: number): number {
++    if (wireType !== 0) {
++      throw new Error(
++        `Invalid protobuf payload: expected varint wire type, got ${wireType}`
++      );
++    }
++    return Number(BigInt.asIntN(64, this.readVarint()));
++  }
++
++  readFixed64String(wireType: number): string {
++    if (wireType === 1) {
++      if (this.pos + 8 > this.len) {
++        throw new Error('Invalid protobuf payload: unexpected EOF in fixed64');
++      }
++      const val = this.view.getBigUint64(this.pos, true);
++      this.pos += 8;
++      return val.toString();
++    }
++    if (wireType === 0) {
++      return BigInt.asUintN(64, this.readVarint()).toString();
++    }
++    throw new Error(
++      `Invalid protobuf payload: expected fixed64 wire type, got ${wireType}`
++    );
++  }
++
++  readDouble(wireType: number): number {
++    if (wireType !== 1) {
++      throw new Error(
++        `Invalid protobuf payload: expected 64-bit wire type for double, got ${wireType}`
++      );
++    }
++    if (this.pos + 8 > this.len) {
++      throw new Error('Invalid protobuf payload: unexpected EOF in double');
++    }
++    const val = this.view.getFloat64(this.pos, true);
++    this.pos += 8;
++    return val;
++  }
++
++  readBytes(wireType: number): Uint8Array {
++    if (wireType !== 2) {
++      throw new Error(
++        `Invalid protobuf payload: expected length-delimited wire type, got ${wireType}`
++      );
++    }
++    const length = Number(this.readVarint());
++    if (length < 0 || this.pos + length > this.len) {
++      throw new Error('Invalid protobuf payload: length out of bounds');
++    }
++    const slice = this.buf.subarray(this.pos, this.pos + length);
++    this.pos += length;
++    return slice;
++  }
++
++  readString(wireType: number): string {
++    return textDecoder.decode(this.readBytes(wireType));
++  }
++
++  skipField(wireType: number, fieldNumber?: number): void {
++    switch (wireType) {
++      case 0:
++        this.readVarint();
++        break;
++      case 1:
++        if (this.pos + 8 > this.len) {
++          throw new Error(
++            'Invalid protobuf payload: unexpected EOF in 64-bit field'
++          );
 +        }
-+      : {}),
-+    ...overrides,
-+    spans: overrides.spans ? { ...keyedSpans, ...overrides.spans } : keyedSpans,
-+  };
-+}
++        this.pos += 8;
++        break;
++      case 2:
++        this.readBytes(2);
++        break;
++      case 3:
++        while (!this.eof()) {
++          const { fieldNumber: innerField, wireType: innerWire } =
++            this.rea
 ```
 
-**File**: `genkit-tools/common/tests/utils/trace_test.ts` (modified, +350/-49)
+**File**: `genkit-tools/telemetry-server/tests/file-store.test.ts` (modified, +423/-1)
 ```diff
-@@ -15,67 +15,368 @@
+@@ -15,11 +15,29 @@
   */
  
- import { describe, expect, it } from 'vitest';
--import type { TraceData } from '../../src/types/index.js';
--import { getSpanStatus, stackTraceSpans } from '../../src/utils/index.js';
--import { BASE_FLOW_SPAN_ID, MockTrace } from './trace.js';
--
--const TEST_TRACE: TraceData = {
--  traceId: '7c273c22b219d077c6731a10d46b7d40',
--  startTime: 1714059149480,
--  endTime: 1714059149485.578,
--  displayName: 'multiSteps',
--  spans: {},
--};
+ import type { TraceData, TraceQueryFilter } from '@genkit-ai/tools-common';
++import { logger } from '@genkit-ai/tools-common/utils';
++import { SpanKind, SpanStatusCode, context, trace } from '@opentelemetry/api';
++import { SeverityNumber } from '@opentelemetry/api-logs';
 +import {
-+  cleanActionName,
-+  extractSessionIdFromTrace,
-+  getSpanName,
-+  getSpanStatus,
-+  getSpanType,
-+  isAgentSpan,
-+  isModelSpan,
-+  isToolSpan,
-+  isTruthyAttr,
-+  parseSpanJson,
-+  shortToolName,
-+  stackTraceSpans,
-+} from '../../src/utils/index.js';
-+import { BASE_FLOW_SPAN_ID, MockTrace, makeSpan, makeTrace } from './trace.js';
++  ProtobufLogsSerializer,
++  ProtobufTraceSerializer,
++} from '@opentelemetry/otlp-transformer';
++import {
++  InMemoryLogRecordExporter,
++  LoggerProvider,
++  SimpleLogRecordProcessor,
++} from '@opentelemetry/sdk-logs';
++import {
++  InMemorySpanExporter,
++  SimpleSpanProcessor,
++  TracerProvider,
++} from '@opentelemetry/sdk-trace';
+ import fs from 'fs';
+ import getPort from 'get-port';
++import net from 'net';
+ import os from 'os';
+ import path from 'path';
+-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
++import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+ import { Index } from '../src/file-trace-store.js';
+ import {
+   LocalFileLogStore,
+@@ -1314,6 +1332,410 @@ describe('otlp-endpoint', () => {
+     });
+     expect(res.status).toBe(500);
+   });
 +
-+const PRUNE_BASELINE_TRACE = makeTrace([
-+  makeSpan({
-+    spanId: 'agent',
-+    displayName: '/agent/main',
-+    startTime: 105,
-+  }),
-+  makeSpan({ spanId: 'kept', parentSpanId: 'agent', startTime: 110 }),
-+  makeSpan({
-+    spanId: 'excluded-branch',
-+    parentSpanId: 'agent',
-+    startTime: 115,
-+    attributes: { skipMe: true },
-+  }),
-+  makeSpan({
-+    spanId: 'excluded-leaf',
-+    parentSpanId: 'excluded-branch',
-+    startTime: 116,
-+  }),
-+]);
- 
- describe('trace utils', () => {
--  it('returns root span', async () => {
--    const trace = new MockTrace('My input', 'My output')
--      .addSpan({
--        stepName: 'retrieverStep',
--        spanType: 'action',
--      })
--      .addSpan({
--        stepName: 'llmStep',
--        spanType: 'action',
--      })
--      .getTrace();
--
--    const span = stackTraceSpans(trace);
--
--    expect(span).toBeDefined();
--    expect(span!.spanId).toEqual(BASE_FLOW_SPAN_ID);
--    expect(span?.spans?.length).toBe(2);
--  });
-+  describe('stackTraceSpans', () => {
-+    it('returns root span and nests children from flat trace spans', () => {
-+      const trace = new MockTrace('My input', 'My output')
-+        .addSpan({ stepName: 'retrieverStep', spanType: 'action' })
-+        .addSpan({ stepName: 'llmStep', spanType: 'action' })
-+        .getTrace();
++  it('saves protobuf traces on /api/otlp/v1/traces', async () => {
++    const traceIdHex = '0102030405060708090a0b0c0d0e0f10';
++    const spanIdHex = '1112131415161718';
++    const startTimeBuf = Buffer.alloc(8);
++    startTimeBuf.writeBigUInt64LE(1760827335359000000n, 0);
++    const endTimeBuf = Buffer.alloc(8);
++    endTimeBuf.writeBigUInt64LE(1760827336695000000n, 0);
 +
-+      const span = stackTraceSpans(trace);
++    const spanBuf = Buffer.concat([
++      Buffer.from([0x0a, 0x10]),
++      Buffer.from(traceIdHex, 'hex'),
++      Buffer.from([0x12, 0x08]),
++      Buffer.from(spanIdHex, 'hex'),
++      Buffer.from([0x2a, 0x05]),
++      Buffer.from('span1'),
++      Buffer.from([0x30, 0x01]),
++      Buffer.from([0x39]),
++      startTimeBuf,
++      Buffer.from([0x41]),
++      endTimeBuf,
++    ]);
++    const scopeBuf = Buffer.concat([
++      Buffer.from([0x0a, 0x0a]),
++      Buffer.from('test-scope'),
++    ]);
++    const scopeSpansBuf = Buffer.concat([
++      Buffer.from([0x0a, scopeBuf.length]),
++      scopeBuf,
++      Buffer.from([0x12, spanBuf.length]),
++      spanBuf,
++    ]);
++    const resourceSpansBuf = Buffer.concat([
++      Buffer.from([0x12, scopeSpansBuf.length]),
++      scopeSpansBuf,
++    ]);
++    const reqBuf = Buffer.concat([
++      Buffer.from([0x0a, resourceSpansBuf.length]),
++      resourceSpansBuf,
++    ]);
 +
-+      expect(span?.spanId).toEqual(BASE_FLOW_SPAN_ID);
-+      expect(span?.spans).toHaveLength(2);
++    const res = await fetch(`${url}/api/otlp/v1/traces`, {
++      method: 'POST',
++      headers: { 'Content-Type': 'application/x-protobuf' },
++      body: reqBuf,
 +    });
++    expect(res.status).toBe(200);
++    expect(res.headers.get('content-type') ?? '').toMatch(
++      /^application\/x-protobuf\b/
++    );
++    expect((await res.arrayBuffer()).byteLength).toBe(0);
 +
-+    it('returns undefined if no spans', () => {
-+      expect(stackTraceSpans(makeTrace([]))).toBeUndefined();
-+    });
-+
-+    it('falls back to orphan span as root when parentSpanId is missing from trace', () => {
-+      const trace = makeTrace(
-+        [
-+          makeSpan({
-+            spanId: 'orphan',
-+            parentSpanId: 'missing-parent',
-+            startTime: 100,
-+          }),
-+          makeSpan({
-+            spanId: 'child',
-+            parentSpanId: 'orphan',
-+            startTime: 110,
-+          }),
-+        ],
-+        { traceId: 'trace-orphan' }
-+      );
-+
-+      const root = stackTraceSpans(trace);
-+
-+      expect(root?.spanId).toBe('orphan');
-+      expect(root?.spans?.map((s) => s.spanId)).toEqual(['child']);
-+    });
-+
-+    it('sorts sibling spans chronologically by startTime', () => {
-+      const trace = makeTrace([
-+        makeSpan({ spanId: 'agent', startTime: 100 }),
-+        makeSpan({
-+          spanId: 'child-late',
-+          parentSpanId: 'agent',
-+          startTime: 130,
-+        }),
-+        makeSpan({
-+          spanId: 'child-early',
-+          parentSpanId: 'agent',
-+          startTime: 110,
-+        }),
-+        makeSpan({
-+          spanId: 'child-mid',
-+          parentSpanId: 'agent',
-+          startTime: 120,
-+        }),
-+      ]);
-+
-+      expect(stackTraceSpans(trace)?.spans?.map((s) => s.spanId)).toEqual([
-+        'child-early',
-+        'child-mid',
-+        'child-late',
-+      ]);
-+    });
- 
--  it('returns undefined if no spans', async () => {
--    const span = stackTraceSpans(TEST_TRACE);
-+    it('breaks timestamp ties by spanId when sorting sibling spans', () => {
-+      const trace = makeTrace([
-+        makeSpan({ spanId: 'agent', startTime: 100 }),
-+        makeSpan({ spanId: 'child-b', parentSpanId: 'agent', startTime: 110 }),
-+        makeSpan({ spanId: 'child-a', parentSpanId: 'agent', startTime: 110 }),
-+      ]);
- 
--    expect(span).toBeUndefined();
-+      expect(stackTraceSpans(trace)?.spans?.map((s) => s.spanId)).toEqual([
-+        'child-a',
-+        'child-b',
-+      ]);
-+    });
-+
-+    it('prunes excluded spans and their descendant subtrees', () => {
-+      const root = stackTraceSpans(PRUNE_BASELINE_TRACE, {
-+        exclude: (s) => Boolean(s.attributes?.['skipMe']),
-+      });
-+
-+      expect(root?.spanId).toBe('agent');
-+      expect(root?.spans?.map((s) => s.spanId)).toEqual(['kept']);
-+    });
-+
-+    it('returns undefined when the root span itself is excluded', () => {
-+      expect(
-+        stackTraceSpans(PRUNE_BASELINE_TRACE, {
-+          exclude: (s) => s.spanId === 'agent',
-+        })
-+      ).toBeUndefined();
-+    });
++    const getResp = await fetch(`${url}/api/traces/${traceIdHex}`);
++    expect(getResp.status).toBe(200);
++    const trace = await getResp.json();
++    expect(trace.traceId).toBe(traceIdHex);
++    expect(trace.spans[spanIdHex].spanId).toBe(spanIdHex);
++    expect(trace.spans[spanIdHex].displayName).toBe('span1');
++    expect(trace.spans[spanIdHex].startTime).toBe(1760827335359);
++    expect(trace.spans[spanIdHex].endTime).toBe(1760827336695);
 +  });
 +
-+  describe('getSpanType', () => {
-+    it.each([
++  it('saves protobuf logs on /api/otlp/v1/logs', async () => {
++    const traceIdHex = '0102030405060708090a0b0c0d0e0f10';
++    const spanIdHex = '1112131415161718';
++    const timeBuf = Buffer.alloc(8);
++    timeBuf.writeBigUInt64LE(1760827335359000000n, 0);
++    const bodyValueBuf = Buffer.concat([
++      Buffer.from([0x0a, 0x09]),
++      Buffer.from('hello log'),
++    ]);
++
++    const logRecordBuf = Buffer.concat([
++      Buffer.from([0x09]),
++      timeBuf,
++      Buffer.from([0x10, 0x09]), // severity_number = 9
++      Buffer.from([0x1a, 0x04]),
++      Buffer.from('INFO'),
++      Buffer.from([0x2a, bodyValueBuf.length]),
++      bodyValueBuf,
++      Buffer.from([0x4a, 0x10]),
++      Buffer.from(traceIdHex, 'hex'),
++      Buffer.from([0x52, 0x08]),
++      Buffer.from(spanIdHex, 'hex'),
++    ]);
++    const scopeBuf = Buffer.concat([
++      Buffer.from([0x0a, 0x0a]),
++      Buffer.from('test-scope'),
++    ]);
++    const scopeLogsBuf = Buffer.concat([
++      Buffer.from([0x0a, scopeBuf.length]),
++      scopeBuf,
++      Buffer.from([0x12, logRecordBuf.length]),
++      logRecordBuf,
++    ]);
++    const resourceLogsBuf = Buffer.concat([
++      Buffer.from([0x12, scopeLogsBuf.length]),
++      scopeLogsBuf,
++    ]);
++    const reqBuf = Buffer.concat([
++      Buffer.from([0x0a, resourceLogsBuf.length]),
++      resourceLogsBuf,
++    ]);
++
++    const res = await fetch(`${url}/api/otlp/v1/logs`, {
++      method: 'POST',
++      headers: { 'Content-Type': 'application/x-protobuf' },
++      body: reqBuf,
++    });
++    expect(res.status).toBe(200);
++    expect(res.headers.get('content-type') ?? '').toMatch(
++      /^application\/x-protobuf\b/
++    );
++    expect((await res.arrayBuffer()).byteLength).toBe(0);
++
++    const getResp = aw
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7269** (2026-11-19): fix(js/plugins/google-genai): send tool_choice none/auto as string in Interactions (@ifielker)
-- **PR #7264** (closed): chore(py): dependency bounds policy, floor/newest CI, Dependabot major grouping (@huangjeff5)
-- **PR #7263** (2026-11-18): build(deps-dev): bump the root-dependencies group across 1 directory with 6 updates (@dependabot[bot])
-- **PR #7262** (2026-11-18): fix(go): bump dotprompt to pick up the latest version (@pavelgj)
-- **PR #7259** (2026-11-18): build(deps-dev): bump prettier to ^3.9.10 and format (@MichaelDoyle)
-- **PR #7258** (2026-11-18): ci(workflows): pin GitHub Actions to commit SHAs in remaining workflows (@MichaelDoyle)
+- **PR #7324** (2026-11-24): docs(genkit-tools): clarify when to use it.each vs separate tests (@MichaelDoyle)
+- **PR #7319** (2026-11-23): fix(genkit-tools/telemetry-server): accept OTLP protobuf on /api/otlp/v1/* (@genkit-bot)
+- **PR #7317** (2026-11-24): docs(js/genkit): add end-to-end JSDoc usage examples to genkit entrypoint (@genkit-bot)
+- **PR #7304** (2026-11-23): chore(genkit-tools): enforce consistent type imports (@MichaelDoyle)
+- **PR #7303** (2026-11-23): chore(genkit-tools): enable switch, throw, equality, and return-await ESLint rules (@MichaelDoyle)
+- **PR #7302** (2026-11-23): chore(genkit-tools): use pnpm catalog for shared dependencies (@MichaelDoyle)
 
 ---
 
@@ -2912,74 +3063,45 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. genkit-tools): add trajectory span-parser helpers and test span builders
+## X. genkit-tools): tag first_visit runtime and skip CI analytics
 
 **RULE**:
-When implementing operations in `genkit-tools/common/src/utils/trajectory/span-parser.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/build-cli-binaries.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e80aaa6b`: genkit-tools): add trajectory span-parser helpers and test span builders. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `aa34700a`: genkit-tools): tag first_visit runtime and skip CI analytics. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `genkit-tools/common/src/utils/trajectory/span-parser.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build-cli-binaries.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-/**
- * Copyright 2026 Google LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-import type { RuntimeError } from '../../types/error.js';
-import type {
-  AgentInput,
-  GenerationUsage,
-  MessageData,
-  NestedSpanData,
-  Part,
-  SpanData,
-  ToolDefinition,
-} from '../../types/index.js';
-import {
-  cleanActionName,
-  getSpanName,
-  getSpanStatus,
-  isTruthyAttr,
-  parseSpanJson,
-  shortToolName,
-} from '../trace.js';
-
-const PROMPT_SPAN_TYPES: ReadonlySet<unknown> = new Set([
-  'prompt',
-  'promptTemplate',
-]);
-
-/**
- * Spans belonging to a single `Trajectory` (either the root trace/agent or an
- * individual nested `/agent/...` subagent), grouped by role during tree
- * traversal.
+          # Start UI in background in non-interactive mode so CI doesn't opt into analytics
+          ./genkit-${{ matrix.target }} --non-interactive ui:start > ui_output.log 2>&1 &
+            ./genkit-${{ matrix.target }} --non-interactive ui:stop || true
+          # Start UI in background in non-interactive mode so CI doesn't opt into analytics
+            -ArgumentList "--non-interactive", "ui:start" `
+            & ".\genkit-${{ matrix.target }}.exe" --non-interactive ui:stop
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+          # Start UI in background, piping any prompts to accept them
+          (echo "" | ./genkit-${{ matrix.target }} ui:start 2>&1 | tee ui_output.log) &
+            ./genkit-${{ matrix.target }} ui:stop || true
+          # Create empty input file first for redirecting stdin
+          "" | Out-File -FilePath ".\empty.txt"
+          
+          # Start UI in background, redirecting input to handle prompts
+            -ArgumentList "ui:start" `
+            -RedirectStandardInput ".\empty.txt" `
+            & ".\genkit-${{ matrix.target }}.exe" ui:stop
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e80aaa6b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `aa34700a` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
