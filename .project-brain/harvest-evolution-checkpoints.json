@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T23:25:43.054Z",
+  "last_updated": "2026-11-24T23:33:32.704Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-24T21:53:47.661Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-24T23:04:42.582Z",
+      "processed_at": "2026-11-24T23:33:29.456Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1123,7 +1123,7 @@
       "staged_for_review": 1
     },
     "rollup-rollup-learnings.md": {
-      "processed_at": "2026-11-20T23:47:53.216Z",
+      "processed_at": "2026-11-24T23:33:30.518Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2793,7 +2793,7 @@
       "staged_for_review": 0
     },
     "apollographql-apollo-kotlin-learnings.md": {
-      "processed_at": "2026-11-14T22:58:30.489Z",
+      "processed_at": "2026-11-24T23:33:31.928Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3878,7 +3878,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 3963,
+  "total_dossiers_evaluated": 3966,
   "total_canonical_promoted": 520,
-  "total_staged_for_review": 3023
+  "total_staged_for_review": 3026
 }

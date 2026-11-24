@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T23:24:55.387Z",
-  "total_cycles_completed": 12201,
-  "total_learnings_persisted": 12201,
-  "total_rules_promoted": 11254,
+  "last_updated": "2026-11-24T23:33:26.041Z",
+  "total_cycles_completed": 12204,
+  "total_learnings_persisted": 12204,
+  "total_rules_promoted": 11257,
   "history": [
-    {
-      "timestamp": "2026-11-24T07:07:38.701Z",
-      "repository": "bridgecrewio/checkov",
-      "learningId": "learn-github-bridgecrewio-checkov",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T07:33:13.451Z",
-      "repository": "NervJS/taro",
-      "learningId": "learn-github-nervjs-taro",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T07:47:13.952Z",
-      "repository": "gocd/gocd",
-      "learningId": "learn-github-gocd-gocd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T07:47:17.790Z",
       "repository": "aleo-labs-protocol/snarkOS",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-24T23:24:55.387Z",
       "repository": "zama-ai/tfhe-rs",
       "learningId": "learn-github-zama-ai-tfhe-rs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T23:33:20.267Z",
+      "repository": "zvec-ai/zvec-grep",
+      "learningId": "learn-github-zvec-ai-zvec-grep",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T23:33:22.394Z",
+      "repository": "rollup/rollup",
+      "learningId": "learn-github-rollup-rollup",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T23:33:26.041Z",
+      "repository": "apollographql/apollo-kotlin",
+      "learningId": "learn-github-apollographql-apollo-kotlin",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

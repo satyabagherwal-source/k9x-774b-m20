@@ -12843,3 +12843,6 @@
 | `CYCLE-20261124-NYLC` | `2026-11-24T23:24:50.016Z` | `mikepenz/AboutLibraries` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10382` | Yes (`c15d2054...`) |
 | `CYCLE-20261124-O2Q6` | `2026-11-24T23:24:55.374Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10383` | Yes (`e3ce2c1b...`) |
 | `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T23:25:39.380Z` | `hf-prism-ml-ternary-bonsai-2.5-27b-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-C22BA2DB` [Domain D] | Yes (`fedddbfc...`) |
+| `CYCLE-20261124-YWAR` | `2026-11-24T23:33:20.259Z` | `zvec-ai/zvec-grep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10384` | Yes (`1a7be02d...`) |
+| `CYCLE-20261124-YXXV` | `2026-11-24T23:33:22.387Z` | `rollup/rollup` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10385` | Yes (`f57ea715...`) |
+| `CYCLE-20261124-Z0R6` | `2026-11-24T23:33:26.034Z` | `apollographql/apollo-kotlin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10386` | Yes (`a7a9b316...`) |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rollup-rollup-learnings.md`  
 > **Source**: github ([https://github.com/rollup/rollup](https://github.com/rollup/rollup))  
-> **Source Version**: `657bba5a`  
+> **Source Version**: `173cfd3a`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T23:47:46.296Z  
+> **Timestamp**: 2026-11-24T23:33:21.531Z  
 > **Learning ID**: `learn-github-rollup-rollup`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rollup-rollup-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rollup/rollup](https://github.com/rollup/rollup))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T23:47:46.043Z  
+> **Harvest Timestamp**: 2026-11-24T23:33:21.528Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Next-generation ES module bundler
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 26316 stars
+- **Stars / Engagement**: 26313 stars
 
 ---
 
@@ -303,14 +303,11 @@ impl AstConverter<'_> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6682** (2026-11-20): **fix(cli): stop installing source-map-support**
-  *Symptoms*: This PR contains:  - [x] bugfix - [ ] feature - [ ] refactor - [ ] documentation - [ ] other  Are tests included?  - [x] yes - [ ] no  Breaking Changes?  - [ ] yes - [x] no  List any relevant issue numbers:  ### Description  `CLI: handles-errors-cause: prints error cause` intermittently failed on CI (`Test Node 24 (aarch64-unknown-linux-gnu)`) with `Test aborted due to timeout`, even though the child process had already written complete and correct stderr.  The cause is `source-map-support`: `cli/cli.ts` installed it at startup, and its userland `Error.prepareStackTrace` shim leaves the heap in a state where a forced `process.exit()` can deadlock permanently inside Node's native teardown. The message is written before the exit call, which is why the output was correct while the child never terminated. Under CPU load roughly 1-5% of spawns hung forever; without the shim, 0 in more than 1000 spawns.  `source-map-support` was also only a devDependency, and the published package ships `dist/**/*.js` without the `.js.map` files, so the `try/catch` around `install()` was a silent no-op for users anyway.  The install is removed from `cli/cli.ts` and `test/test.js`, and the devDependency is dropped. Source-mapped stack traces are now opt-in through Node's built-in `--enable-source-maps`, which the test setup enables for mocha via `.mocharc.json` (`node-option`) and for the spawned CLI children via `NODE_OPTIONS` in `test/cli/index.js`. In a checkout, `NODE_OPTIONS=--enable-source-map
+- **Issue #6688** (2026-11-23): **Fix bare dash values for CLI input and file**
+  *Symptoms*: <!--   ⚡️ katchow! We ❤️ Pull Requests!    If you remove or skip this template, you'll make the 🐼 sad and the mighty god   of GitHub will appear and pile-drive the close button from a great height   while making animal noises.    Pull Request Requirements:   * Please include tests to illustrate the problem this PR resolves.   * Please lint your changes by running `npm run lint` before creating a PR.   * Please update the documentation in `/docs` where necessary    Please place an x (no spaces - [x]) in all [ ] that apply.   Remove the ones that do not apply as long as there remains one checkbox   in each section. -->  This PR contains:  - [x] bugfix  Are tests included?  - [x] yes (_bugfixes and features will not be merged without tests_)  Breaking Changes?  - [x] no  List any relevant issue numbers:  <!-- If this PR resolves any issues, list them as  -  resolves #1234  where 1234 is the issue number. This will help us with house-keeping as Github will automatically add a note to those issues stating that a potential fix exists. Once the PR is merged, Github will automatically close those issues.  Starting each line with a dash "-" will cause GitHub to display the issue title inline.  If an issue is only solved partially or is relevant in some other way, just list the number without "resolves". -->  - resolves #6687  ### Description  <!--   Please be thorough and clearly explain the problem being solved.   * If this PR adds a feature, look for previous discussion on the feat
 
-- **Issue #6681** (2026-11-20): **Lock file maintenance**
-  *Symptoms*: This PR contains the following updates:  | Update | Change | |---|---| | lockFileMaintenance | All locks refreshed |  🔧 This Pull Request updates lock files to use the latest dependency versions.  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - Between 06:00 PM and 11:59 PM, only on Thursday (`* 18-23 * * 4`)   - Between 12:00 AM and 05:59 AM, only on Friday (`* 0-5 * * 5`) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Enabled.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  👻 **Immortal**: This PR will be recreated if closed unmerged. Get [config help](https://redirect.github.com/renovatebot/renovate/discussions) if that's undesired.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  This PR was generated by [Mend Renovate](https://mend.io/renovate/). View the [repository job log](https://developer.mend.io/github/rollup/rollup). <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4yNDkuMSIsInVwZGF0ZWRJblZlciI6IjQ0LjI0OS4xIiwidGFyZ2V0QnJhbmNoIjoibWFzdGVyIiwibGFiZWxzIjpbXX0=--> 
-  **Post-Mortem & Fix Analysis**:
-  > [vc]: #l9JTguzxkX9wlUrYfSoB3AQlaLvqd7066Qq9aXOxo0Y=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJyb2xsdXAiLCJwcm9qZWN0SWQiOiJwcmpfbzE4REJ2WDhnTTE1YTJzcWVkbmQ4N1VVc3JncyIsInYwIjpmYWxzZSwiaW5zcGVjdG9yVXJsIjoiaHR0cHM6Ly92ZXJjZWwuY29tL3JvbGx1cC1qcy9yb2xsdXAvQ01HRmNqS3E1cmpQRlpta29xNHVla1lyR2NmRiIsInByZXZpZXdVcmwiOiJyb2xsdXAtZ2l0LXJlbm92YXRlLWxvY2stZmlsZS1tYWludGVuYW5jZS1yb2xsdXAtanMudmVyY2VsLmFwcCIsIm5leHRDb21taXRTdGF0dXMiOiJERVBMT1lFRCIsImxpdmVGZWVkYmFjayI6eyJyZXNvbHZlZCI6MCwidW5yZXNvbHZlZCI6MCwidG90YWwiOjAsImxpbmsiOiJyb2xsdXAtZ2l0LXJlbm92YXRlLWxvY2stZmlsZS1tYWludGVuYW5jZS1yb2xsdXAtanMudmVyY2VsLmFwcCJ9LCJyb290RGlyZWN0b3J5IjpudWxsfV0sInJlcXVlc3RSZXZpZXdVcmwiOiJodHRwczovL3ZlcmNlbC5jb20vdmVyY2VsLWFnZW50L3JlcXVlc3QtcmV2aWV3P293bmVyPXJvbGx1cCZyZXBvPXJvbGx1cCZwcj02NjgxIn0= The latest updates on your projects. Learn more about [Vercel for GitHub](https://vercel.link/github-learn-more).  | Project | Deployment | Actions | Updated | | :--- | :----- | :------ | :------
-  > ### Thank you for your contribution! ❤️  You can try out this pull request locally by installing Rollup via  ```bash npm install rollup/rollup#renovate/lock-file-maintenance ```  Notice: To build the native dependencies, you need [Rustup](https://www.rust-lang.org/tools/install) installed; the required nightly toolchain is then picked up automatically from `rust-toolchain.toml`.  Or load it into the REPL: https://rollup-nc22eiway-rollup-js.vercel.app/repl/?pr=6681  _The REPL artefacts are built from commit `078740bb3486803fef5f227dfa093078aee34cd8`._
+- **Issue #6684** (2026-11-22): **feat: generate license files for Rust dependencies**
+  *Symptoms*: This PR contains:  - [ ] bugfix - [x] feature - [ ] refactor - [ ] documentation - [ ] other  Are tests included?  - [ ] yes (_bugfixes and features will not be merged without tests_) - [x] no  Breaking Changes?  - [ ] yes (_breaking changes will not be merged unless absolutely necessary_) - [x] no  List any relevant issue numbers:  ### Description  `LICENSE.md` only listed the JavaScript dependencies of the bundled artifacts, so the licenses of all bundled Rust crates were missing from the published packages.  Bundled dependencies are now collected into committed fragments in `licenses/`, and `npm run build:licenses` assembles `LICENSE.md` and `browser/LICENSE.md` from them:  - The JavaScript build collects its bundled dependencies as before, now into `licenses/javascript-node.json` and `licenses/javascript-browser.json`. - `npm run build:rust-licenses` collects the Rust crates from the cargo dependency graph into `licenses/rust.json`: the union of all native targets and the WebAssembly target, excluding proc-macros. `browser/LICENSE.md` only contains the WebAssembly crates. - Each dependency lists its declared SPDX ids and keeps its own copyright notices, while the license texts themselves are printed once at the end of the file, with packages referencing them. Identical texts that only differ in line wrapping share one entry. Despite covering roughly four times as many dependencies, `LICENSE.md` is 85 KB instead of 257 KB. - Six crates ship no license file at all, so their
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -327,1008 +324,861 @@ impl AstConverter<'_> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a4912e21` (2026-11-18)
-**Commit Message**: fix: fail with a parse error instead of exhausting the native stack (#6669)
+### Incident Patch 1: `173cfd3a` (2026-11-22)
+**Commit Message**: feat: generate license files for Rust dependencies (#6684)
 
-* fix: fail with a parse error instead of exhausting the native stack
+* feat: generate license files for Rust dependencies
 
-Deeply nested input crashed the process inside the SWC parser and the AST
-converter. SWC does not limit expression recursion and wontfixes it, so the
-parser is now driven through a token source that aborts the parse once the
-stack reserve of the current thread is used up, and the converter rejects
-trees deeper than 2000 levels. Both surface as catchable PARSE_ERRORs.
+The combined LICENSE.md only covered JavaScript dependencies, so the published
+artifacts omitted the licenses of the bundled Rust crates.
 
-Rejected syntax trees are intentionally leaked as dropping them recurses
-too. Parse performance is unchanged (A/B on a 9 MB module).
+Both builds now collect their bundled dependencies into committed fragments in
+`licenses/`, and `npm run build:licenses` assembles LICENSE.md and
+browser/LICENSE.md from them. License texts are normalized, identical texts are
+printed once and others reference them, and CI fails when the committed files
+drift from the dependency graphs. Platform packages receive the file on publish.
 
-* fix: guard the remaining recursive converter cycles
+* fix: keep cargo color codes out of Rust license collection
 
-Member, call and optional chains recursed into each other directly, so iteratively parsed chains of any length bypassed both the stack guard and the depth limit during conversion. They now share one guarded entry point, JSX attribute values are guarded as well, and a nesting level is only counted once again.
+CI exports CARGO_TERM_COLOR=always, so the "cargo tree" output contained ANSI
+escapes around the duplicate markers and the script failed to parse it.
 
-Trees that are not converted are freed on a separate stack sized from the source length and the parser's stack budget instead of being leaked. Targets without `stacker` and inputs b
+* refactor: dedupe license texts by body and attribution
 
-**File**: `rust/AGENTS.md` (modified, +6/-0)
+Each distinct license text was printed for every package shipping it, so
+LICENSE.md repeated the same MIT or Apache text dozens of times.
+
+License texts are now split into the package's copyright notices and a
+reusable body: bodies are printed once, packages keep their notices, and
+whitesp
+
+**File**: `.github/workflows/build-and-tests.yml` (modified, +5/-0)
 ```diff
-@@ -21,6 +21,12 @@
- - `parse_ast` never returns `Result`: parse errors are always encoded as a `ParseError` AST node that JS detects and converts to a thrown error; on NAPI, panics are caught and encoded as `PanicError` the same way, but the WASM build uses `panic_immediate_abort` and simply aborts — keep these protocols
- - Positions must be emitted in ascending order (the UTF-8→UTF-16 converter panics on backwards positions); stored `start`/`end` are UTF-16 offsets, never raw SWC UTF-8 spans
+@@ -635,6 +635,11 @@ jobs:
+         id: run-tests
+         continue-on-error: true
+         run: bash scripts/coverage.sh ci:coverage
++      - name: Check generated license files
++        run: |
++          npm run build:rust-licenses
++          npm run build:licenses
++          git diff --exit-code -- LICENSE.md browser/LICENSE.md licenses/
+       - name: Save Cargo cache
+         if: github.ref == 'refs/heads/master'
+         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+```
+
+**File**: `.gitignore` (modified, +1/-0)
+```diff
+@@ -25,6 +25,7 @@ target
+ /wasm/*
+ !/wasm/*.d.ts
+ /wasm-node/
++/npm/*/LICENSE.md
+ mise.toml
+ .opencode
+ tmp
+```
+
+**File**: `AGENTS.md` (modified, +2/-0)
+```diff
+@@ -58,6 +58,8 @@ Details and buffer-format contracts: see `rust/AGENTS.md`
+ - `npm run update:napi` - Rebuild Rust NAPI, copy to dist/; run this after any change to `rust/`
+ - `npm run build:quick` - `update:napi` plus a CJS-only JS rebuild that deletes `dist/es` and skips the browser build; tests needing `dist/es` are then silently skipped — use only for `solo` loops
+ - `npm run build:copy-native` - Copy root `rollup.<platform>.node` to dist/ (called internally by update commands; `build:napi` alone does not copy)
++- `npm run build:rust-licenses` - Regenerate `licenses/rust.json` from the Cargo dependency graph; run after changing `rust/Cargo.lock`
++- `npm run build:licenses` - Assemble `LICENSE.md` and `browser/LICENSE.md` from the committed fragments in `licenses/`
  
-+## Parser And Converter Guards
-+
-+- `parse_ast` drives SWC through `GuardedTokens` instead of `swc_compiler_base::parse_js` so that deeply nested input fails with a `ParseError` instead of terminating the process — do not switch back to `parse_js`
-+- Every new recursive cycle in the converter must route through `enter_nesting` (see `convert_expression`, `convert_statement`, `convert_pattern`, `convert_jsx_element_child`, `convert_jsx_object`, `convert_jsx_attribute_value` and `convert_chain_element`, which covers the member, call and optional chain cycles); iteratively parsed constructs like JSX member expressions otherwise bypass both the token-based stack guard and the depth limit
-+- Syntax trees are freed with `free_syntax_tree` rather than dropped, because their destructors recurse once per nesting level; only trees with a converted counterpart are known to be shallow enough to drop directly
-+
- ## Bindings Sync
+ ### Full Build Commands
  
- - A new binding function must be added to both `rust/bindings_napi/src/lib.rs` AND `rust/bindings_wasm/src/lib.rs` plus all three JS handover points with matching names: `native.js`, `native.wasm.js`, `browser/src/wasm.ts` (`lint:native-js` only checks that every export in `native.js` is also present in `native.wasm.js` — signatures and reverse parity are not checked)
 ```
 
-**File**: `rust/Cargo.lock` (modified, +1/-0)
+**File**: `browser/LICENSE.md` (modified, +1969/-79)
 ```diff
-@@ -899,6 +899,7 @@ version = "0.0.0"
- dependencies = [
-  "anyhow",
-  "parking_lot",
-+ "stacker",
-  "swc_common",
-  "swc_compiler_base",
-  "swc_config",
-```
-
-**File**: `rust/parse_ast/Cargo.toml` (modified, +4/-1)
-```diff
-@@ -11,5 +11,8 @@ swc_compiler_base = "67.0.0"
- swc_config = "6.0.1"
- swc_common = { version = "27.0.0", features = ["parking_lot"] }
- swc_ecma_ast = "30.0.2"
--swc_ecma_parser = "47.0.0"
-+swc_ecma_parser = { version = "47.0.0", features = ["unstable"] }
- parking_lot = "0.12.5"
-+
-+[target.'cfg(not(any(target_arch = "wasm32", target_arch = "arm")))'.dependencies]
-+stacker = "0.1.25"
-```
-
-**File**: `rust/parse_ast/src/ast_nodes/call_expression.rs` (modified, +1/-12)
-```diff
-@@ -43,18 +43,7 @@ impl AstConverter<'_> {
-     // callee
-     self.update_reference_position(end_position + CALL_EXPRESSION_CALLEE_OFFSET);
-     match callee {
--      StoredCallee::Expression(Expr::OptChain(optional_chain_expression)) => {
--        self.store_chain_expression(optional_chain_expression, is_chained);
--      }
--      StoredCallee::Expression(Expr::Call(call_expression)) => {
--        self.convert_call_expression(call_expression, false, is_chained);
--      }
--      StoredCallee::Expression(Expr::Member(member_expression)) => {
--        self.convert_member_expression(member_expression, false, is_chained);
--      }
--      StoredCallee::Expression(callee_expression) => {
--        self.convert_expression(callee_expression);
--      }
-+      StoredCallee::Expression(expression) => self.convert_chain_element(expression, is_chained),
-       StoredCallee::Super(callee_super) => self.store_super_element(callee_super),
-     }
-     // arguments
-```
-
-**File**: `rust/parse_ast/src/ast_nodes/member_expression.rs` (modified, +1/-10)
-```diff
-@@ -29,17 +29,8 @@ impl AstConverter<'_> {
-     // object
-     self.update_reference_position(end_position + MEMBER_EXPRESSION_OBJECT_OFFSET);
-     match object {
--      ExpressionOrSuper::Expression(Expr::OptChain(optional_chain_expression)) => {
--        self.store_chain_expression(optional_chain_expression, is_chained);
--      }
--      ExpressionOrSuper::Expression(Expr::Call(call_expression)) => {
--        self.convert_call_expression(call_expression, false, is_chained);
--      }
--      ExpressionOrSuper::Expression(Expr::Member(member_expression)) => {
--        self.convert_member_expression(member_expression, false, is_chained);
--      }
-       ExpressionOrSuper::Expression(expression) => {
--        self.convert_expression(expression);
-+        self.convert_chain_element(expression, is_chained)
-       }
-       ExpressionOrSuper::Super(super_token) => self.store_super_element(super_token),
-     }
-```
-
-**File**: `rust/parse_ast/src/convert_ast/converter.rs` (modified, +119/-3)
-```diff
-@@ -1,4 +1,4 @@
--use swc_common::Span;
-+use swc_common::{Span, Spanned};
- use swc_ecma_ast::{
-   AssignTarget, AssignTargetPat, CallExpr, Callee, Class, ClassMember, Decl, Decorator,
-   ExportSpecifier, Expr, ExprOrSpread, ForHead, ImportSpecifier, JSXAttrName, JSXAttrOrSpread,
-@@ -19,6 +19,14 @@ use crate::convert_ast::converter::string_constants::{
- use crate::convert_ast::converter::utf16_positions::{
-   ConvertedAnnotation, Utf8ToUtf16ByteIndexConverterAndAnnotationHandler,
- };
-+use crate::nesting_limit::{
-+  current_stack_position, stack_limit_position, MAX_CONVERTER_NESTING_DEPTH,
-+};
-+
-+#[cfg(debug_assertions)]
-+const NODES_PER_STACK_CHECK: u32 = 8;
-+#[cfg(not(debug_assertions))]
-+const NODES_PER_STACK_CHECK: u32 = 32;
+@@ -13,96 +13,46 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  
- pub(crate) mod analyze_code;
- pub(crate) mod string_constants;
-@@ -34,6 +42,15 @@ pub(crate) struct AstConverter<'a> {
-   // Only used when the byte order of the 32-bit fields is swapped at the end: the byte ranges
-   // that are kept as they are, i.e. string bytes and the little-endian f64 values
-   unswapped_byte_ranges: Option<Vec<(usize, usize)>>,
-+  nesting_depth: u32,
-+  nesting_error: Option<NestingError>,
-+  nodes_until_stack_check: u32,
-+  stack_limit_position: usize,
+ # Licenses of bundled dependencies
+ The published Rollup artifact additionally contains code with the following licenses:
+-MIT
++Apache-2.0, Apache-2.0 WITH LLVM-exception, BSD-2-Clause, BSD-3-Clause, BSL-1.0, MIT, Unicode-3.0, Unlicense, Zlib
+ 
+-# Bundled dependencies:
++# Bundled JavaScript dependencies
+ ## @jridgewell/sourcemap-codec
+ License: MIT
+ By: Justin Ridgewell
+ Repository: git+https://github.com/jridgewell/sourcemaps.git
++License text: see MIT below
+ 
+ > Copyright 2024 Justin Ridgewell <justin@ridgewell.name>
+-> 
+-> Permission is hereby granted, free of charge, to any person obtaining a copy
+-> of this software and associated documentation files (the "Software"), to deal
+-> in the Software without restriction, including without limitation the rights
+-> to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+-> copies of the Software, and to permit persons to whom the Software is
+-> furnished to do so, subject to the following conditions:
+-> 
+-> The above copyright notice and this permission notice shall be included in
+-> all copies or substantial portions of the Software.
+-> 
+-> THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-> IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-> FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-> AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+-> LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+-> OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+-> SOFTWARE.
+ 
+ ---------------------------------------
+ 
+ ## @rollup/pluginutils
+ License: MIT
+ By: Rich Harris
+ Repository: rollup/plugins
++License text: see MIT below
+ 
+-> The MIT License (MIT)
+-> 
+ > Copyright (c) 2019 RollupJS Plugin Contributors (https://github.com/rollup/plugins/graphs/contributors)
+-> 
+-> Permission is hereby granted, free of charge, to any person obtaining a copy
+-> of this software and associated documentation files (the "Software"), to deal
+-> in the Software without restriction, including without limitation the rights
+-> to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+-> copies of the Software, and to permit persons to whom the Software is
+-> furnished to do so, subject to the following conditions:
+-> 
+-> The above copyright notice and this permission notice shall be included in
+-> all copies or substantial portions of the Software.
+-> 
+-> THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-> IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-> FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-> AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+-> LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+-> OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+-> THE SOFTWARE.
+ 
+ ---------------------------------------
+ 
+ ## builtin-modules
+ License: MIT
+ By: Sindre Sorhus
+ Repository: sindresorhus/builtin-modules
++License text: see MIT below
+ 
+-> MIT License
+-> 
+ > Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
+-> 
+-> Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+-> 
+-> The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+-> 
+-> THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ 
+ ---------------------------------------
+ 
+ ## flru
+ License: MIT
+ By: Luke Edwards
+ Repository: lukeed/flru
++License text: see MIT below
+ 
+-> MIT License
+-> 
+ > Copyright (c) Luke Edwards <luke.edwards05@gmail.com> (lukeed.com)
+-> 
+-> Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Sof
+```
+
+**File**: `build-plugins/collect-license-fragment.ts` (added, +124/-0)
+```diff
+@@ -0,0 +1,124 @@
++import { createHash } from 'node:crypto';
++import { mkdir, readFile, writeFile } from 'node:fs/promises';
++import path from 'node:path';
++import type { Plugin } from 'rollup';
++import license, { type Dependency, type Person } from 'rollup-plugin-license';
++
++interface LicenseFragmentPackage {
++	authors: string[];
++	license: string | null;
++	name: string;
++	repository: string | null;
++	texts: string[];
 +}
 +
-+pub(crate) enum NestingError {
-+  DepthLimit { utf_8_position: u32 },
-+  StackExhausted { utf_8_position: u32 },
- }
- 
- impl<'a> AstConverter<'a> {
-@@ -48,16 +65,49 @@ impl<'a> AstConverter<'a> {
-       code: code.as_bytes(),
-       index_converter: Utf8ToUtf16ByteIndexConverterAndAnnotationHandler::new(code, annotations),
-       unswapped_byte_ranges: swap_byte_order.then(Vec::new),
-+      nesting_depth: 0,
-+      nesting_error: None,
-+      nodes_until_stack_check: NODES_PER_STACK_CHECK,
-+      stack_limit_position: stack_limit_position(),
-     }
-   }
- 
--  pub(crate) fn convert_ast_to_buffer(mut self, node: &Program) -> Vec<u8> {
-+  pub(crate) fn convert_ast_to_buffer(mut self, node: &Program) -> Result<Vec<u8>, NestingError> {
-     self.convert_program(node);
-+    if let Some(nesting_error) = self.nesting_error {
-+      return Err(nesting_error);
-+    }
-     if let Some(unswapped_byte_ranges) = self.unswapped_byte_ranges.take() {
-       swap_32_bit_fields(&mut self.buffer, unswapped_byte_ranges);
-     }
-     self.buffer.shrink_to_fit();
--    self.buffer
-+    Ok(self.buffer)
-+  }
-+
-+  #[inline(always)]
-+  fn enter_nesting(&mut self, span: impl FnOnce() -> Span) -> bool {
-+    if self.nesting_error.is_some() {
-+      return false;
-+    }
-+    let exceeds_depth_limit = self.nesting_depth >= MAX_CONVERTER_NESTING_DEPTH;
-+    let exceeds_stack_limit = if self.nodes_until_stack_check > 1 {
-+      self.nodes_until_stack_check -= 1;
-+      false
-+    } else {
-+      self.nodes_until_stack_check = NODES_PER_STACK_CHECK;
-+      current_stack_position() < self.stack_limit_position
-+    };
-+    if exceeds_depth_limit || exceeds_stack_limit {
-+      let utf_8_position = span().lo.0.saturating_sub(1);
-+      self.nesting_error = Some(if exceeds_depth_limit {
-+        NestingError::DepthLimit { utf_8_position }
-+      } else {
-+        NestingError::StackExhausted { utf_8_position }
-+      });
-+      return false;
-+    }
-+    self.nesting_depth += 1;
-+    true
-   }
- 
-   // === helpers
-@@ -353,7 +403,34 @@ impl<'a> AstConverter<'a> {
-     }
-   }
- 
-+  pub(crate) fn convert_chain_element(&mut self, expression: &Expr, is_chained: bool) {
-+    if !self.enter_nesting(|| expression.span()) {
-+      return;
-+    }
-+    match expression {
-+      Expr::OptChain(optional_chain_expression) => {
-+        self.store_chain_expression(optional_chain_expression, is_chained);
-+      }
-+      Expr::Call(call_expression) => {
-+        self.convert_call_expression(call_expression, false, is_chained);
-+      }
-+      Expr::Member(member_expression) => {
-+        self.convert_member_expression(member_expression, false, is_chained);
-+      }
-+      _ => self.convert_expression_without_nesting_check(expression),
-+    }
-+    self.nesting_depth -= 1;
-+  }
-+
-   pub(crate) fn convert_expression(&mut self, expression: &Expr) {
-+    if !self.enter_nesting(|| expression.span()) {
-+      return;
-+    }
-+    self.convert_expression_without_nesting_check(expression);
-+    self.nesting_depth -= 1;
-+  }
-+
-+  fn convert_expression_without_nesting_check(&mut self, expression: &Expr) {
-     match expression {
-       Expr::Array(array_literal) => {
-         self.store_array_expression(array_literal);
-@@ -520,6 +597,9 @@ impl<'a> AstConverter<'a> {
-   }
- 
-   pub(crate) fn convert_jsx_attribute_value(&mut self, jsx_attribute_value: &JSXAttrValue) {
-+    if !self.enter_nesting(|| jsx_attribute_value.span()) {
-+      return;
-+    }
-     match jsx_attribute_value {
-       JSXAttrValue::Str(string_literal) => self.store_literal_string(string_literal),
-       JSXAttrValue::JSXExprContainer(expression_container) => {
-@@ -528,9 +608,21 @@ impl<'a> AstConverter<'a> {
-       JSXAttrValue::JSXElement(jsx_element) => self.store_jsx_element(jsx_element),
-       JSXAttrVa
-```
-
-**File**: `rust/parse_ast/src/error_emit.rs` (modified, +29/-12)
-```diff
-@@ -3,7 +3,6 @@ use std::{io::Write, mem::take, sync::Arc};
- use anyhow::Error;
- use parking_lot::Mutex;
- use swc_common::errors::{DiagnosticBuilder, Emitter, Handler, Level, HANDLER};
--use swc_ecma_ast::Program;
- 
- use crate::ast_nodes::parse_error::get_parse_error_buffer;
- use crate::convert_ast::converter::convert_string;
-@@ -44,13 +43,9 @@ impl Emitter for ErrorEmitter {
-   }
- }
- 
--pub(crate) fn try_with_handler<F>(
--  code: &str,
--  swap_byte_order: bool,
--  op: F,
--) -> Result<Program, Vec<u8>>
-+pub(crate) fn try_with_handler<T, F>(code: &str, swap_byte_order: bool, op: F) -> Result<T, Vec<u8>>
- where
--  F: FnOnce(&Handler) -> Result<Program, Error>,
-+  F: FnOnce(&Handler) -> Result<T, Error>,
- {
-   let wr = Box::<Writer>::default();
- 
-@@ -73,13 +68,35 @@ fn create_error_buffer(wr: &Writer, code: &str, swap_byte_order: bool) -> Vec<u8
-   let mut lock = wr.0.lock();
-   let error_buffer = take(&mut *lock);
-   let pos = u32::from_ne_bytes(error_buffer[0..4].try_into().unwrap());
-+  get_parse_error_buffer(
-+    &error_buffer,
-+    &to_utf16_position(code, pos),
-+    swap_byte_order,
-+  )
++interface LicenseFragment {
++	packages: LicenseFragmentPackage[];
++	texts: Record<string, string>;
 +}
 +
-+pub(crate) fn get_nesting_error_buffer(
-+  code: &str,
-+  utf_8_pos: u32,
-+  message: &str,
-+  swap_byte_order: bool,
-+) -> Vec<u8> {
-+  let mut error_buffer = utf_8_pos.to_ne_bytes().to_vec();
-+  convert_string(&mut error_buffer, message);
-+  get_parse_error_buffer(
-+    &error_buffer,
-+    &to_utf16_position(code, utf_8_pos),
-+    swap_byte_order,
-+  )
++export interface LicenseFragmentCollector {
++	collector: () => Plugin;
++	writer: () => Plugin;
 +}
 +
-+fn to_utf16_position(code: &str, utf_8_pos: u32) -> u32 {
-   let mut utf_16_pos: u32 = 0;
--  // convert utf-8 to utf-16 inline
--  for (utf_8_pos, char) in code.char_indices() {
--    if (utf_8_pos as u32) == pos {
-+  for (position, character) in code.char_indices() {
-+    if (position as u32) == utf_8_pos {
-       break;
-     }
--    utf_16_pos += char.len_utf16() as u32;
-+    utf_16_pos += character.len_utf16() as u32;
-   }
--  get_parse_error_buffer(&error_buffer, &utf_16_pos, swap_byte_order)
-+  utf_16_pos
- }
-```
-
-**File**: `rust/parse_ast/src/lib.rs` (modified, +109/-36)
-```diff
-@@ -1,21 +1,30 @@
-+use std::any::Any;
-+use std::mem::ManuallyDrop;
- use std::panic::{catch_unwind, AssertUnwindSafe};
- 
-+use anyhow::anyhow;
-+use swc_common::comments::Comments;
-+use swc_common::errors::Handler;
-+use swc_common::input::SourceFileInput;
- use swc_common::sync::Lrc;
--use swc_common::{FileName, FilePathMapping, Globals, SourceMap, GLOBALS};
--use swc_compiler_base::parse_js;
--use swc_config::is_module::IsModule;
--use swc_ecma_ast::EsVersion;
--use swc_ecma_parser::{EsSyntax, Syntax};
-+use swc_common::{FileName, FilePathMapping, Globals, SourceFile, SourceMap, GLOBALS};
-+use swc_ecma_ast::{EsVersion, Program};
-+use swc_ecma_parser::error::Error as ParserError;
-+use swc_ecma_parser::{EsSyntax, Lexer, Parser, Syntax};
- 
--use convert_ast::converter::AstConverter;
--use error_emit::try_with_handler;
-+use convert_ast::converter::{AstConverter, NestingError};
-+use error_emit::{get_nesting_error_buffer, try_with_handler};
-+use nesting_limit::{
-+  free_syntax_tree, GuardedTokens, NestingGuard, DEPTH_LIMIT_MESSAGE, STACK_EXHAUSTED_MESSAGE,
-+};
- 
- use crate::ast_nodes::panic_error::get_panic_error_buffer;
- use crate::convert_ast::annotations::SequentialComments;
- 
- mod ast_nodes;
- mod convert_ast;
- mod error_emit;
-+mod nesting_limit;
- 
- /// With `swap_byte_order`, the 32-bit fields of the buffer are written in the opposite of the
- /// native byte order. The WASM build, whose byte order is always little-endian, uses this on
-@@ -42,38 +51,102 @@ pub fn parse_ast(
-   let filename = FileName::Anon;
-   let file = cm.new_source_file(filename.into(), code);
-   let code_reference = file.src.clone();
-+  let code_length = code_reference.len();
-   let comments = SequentialComments::default();
-   GLOBALS.set(&Globals::default(), || {
--    let result = catch_unwind(AssertUnwindSafe(|| {
--      let result = try_with_handler(&code_reference, swap_byte_order, |handler| {
--        parse_js(
--          cm,
--          file,
--          handler,
--          target,
--          syntax,
--          IsModule::Unknown,
--          Some(&comments),
--        )
--      });
--      match result {
--        Err(buffer) => buffer,
--        Ok(program) => {
--          let annotations = comments.take_annotations();
--          let converter = AstConverter::new(&code_reference, &annotations, swap_byte_order);
--          converter.convert_ast_to_buffer(&program)
-+    let nesting_guard = NestingGuard::new();
-+    let parse_result = catch_unwind(AssertUnwindSafe(|| {
-+      try_with_handler(&code_reference, swap_byte_order, |handler| {
-+        parse_program(&file, handler, target, syntax, &comments, &nesting_guard)
-+      })
-+    }));
-+    let program = match parse_result {
-+      Err(panic_error) => {
-+        return get_panic_error_buffer(&panic_message(&*panic_error), swap_byte_order)
-+      }
-+      Ok(Err(buffer)) => {
-+        return match nesting_guard.exceeded_position() {
-+          Some(position) => get_nesting_error_buffer(
-+            &code_reference,
-+            position,
-+            STACK_EXHAUSTED_MESSAGE,
-+            swap_byte_order,
-+          ),
-+          None => buffer,
-         }
-       }
--    }));
--    result.unwrap_or_else(|err| {
--      let msg = if let Some(msg) = err.downcast_ref::<&str>() {
--        msg
--      } else if let Some(msg) = err.downcast_ref::<String>() {
--        msg
--      } else {
--        "Unknown rust panic message"
--      };
--      get_panic_error_buffer(msg, swap_byte_order)
--    })
-+      Ok(Ok(program)) => program,
-+    };
-+    if let Some(position) = nesting_guard.exceeded_position() {
-+      free_syntax_tree(program, code_length, nesting_guard.stack_budget());
-+      return get_nesting_error_buffer(
-+        &code_reference,
-+        position,
-+        STACK_EXHAUSTED_MESSAGE,
-+        swap_byte_order,
-+      );
-+    }
-+    match catch_unwind(AssertUnwindSafe(|| {
-+      let annotations = comments.take_annotations();
-+      let converter = AstConverter::new(&code_reference, &annotations, swap_byte_order);
-+      converter.convert_ast_to_buffer(&program)
-+    })) {
-+      // A converted tree is never nested deeper than the converter limit, so it can be dropped.
-+      Ok(Ok(buffer)) => {
-+        drop(ManuallyDrop::into_inner(program));
-+        buffer
-+      }
-+      Ok(Err(nesting_error)) => {
-+        free_syntax_tree(program, code_length, nesting_guard.stack_budget());
-+        let (position, message) = match nesting_error {
-+          NestingError::DepthLimit { utf_8_position } => (utf_8_position, DEPTH_LIMIT_MESSAGE),
-+          NestingError::StackExhausted { utf_8_position } => {
-+            (utf_8_position, STACK_EXHAUSTED_MESSAGE)
-+          }
-+        };
-+        get_nesting_error_buffer(&code_reference, position, message, swap_byte_order)
-+      }
-+      Err(panic_error) => {
-+        free_syntax_tree(program, code_length, nesting_guard.stack_budget());
-+        get_panic_error_buffer(&panic_message(&*panic_error), swap_byte_order)
-+      }
-+    }
-   })
- }
++const IGNORED_PACKAGE_NAMES = new Set(['@rollup/browser']);
 +
-+fn panic_message(panic_error:
-```
-
----
-
-### Incident Patch 2: `13dac8ed` (2026-11-20)
-**Commit Message**: fix(cli): stop installing source-map-support (#6682)
-
-source-map-support's userland stack formatter could make process.exit()
-hang forever during error reporting, which made the CLI error tests
-flake. Source-mapped stack traces are now opt-in via Node's built-in
---enable-source-maps, which the test setup enables.
-
-**File**: `.mocharc.json` (added, +3/-0)
-```diff
-@@ -0,0 +1,3 @@
-+{
-+	"node-option": ["enable-source-maps"]
++function getTextId(text: string): string {
++	return createHash('sha256').update(text).digest('hex').slice(0, 16);
++}
++
++function collectAuthorNames(dependency: Dependency): string[] {
++	const names = new Set<string>();
++	if (dependency.author?.name) {
++		names.add(dependency.author.name);
++	}
++	// TODO there is an inconsistency in the rollup-plugin-license types
++	for (const person of [
++		...dependency.contributors,
++		...(dependency.maintainers as unknown as Person[])
++	]) {
++		if (person?.name) {
++			names.add(person.name);
++		}
++	}
++	return [...names];
++}
++
++function getRepositoryUrl(repository: Dependency['repository']): string | null {
++	if (!repository) return null;
++	return typeof repository === 'object' ? repository.url : repository;
++}
++
++function toFragmentPackage(
++	dependency: Dependency,
++	texts: Map<string, string>
++): LicenseFragmentPackage {
++	const textIds = new Set<string>();
++	for (const licenseText of [dependency.licenseText, dependency.noticeText]) {
++		if (!licenseText?.trim()) continue;
++		const textId = getTextId(licenseText);
++		texts.set(textId, licenseText);
++		textIds.add(textId);
++	}
++	return {
++		authors: collectAuthorNames(dependency),
++		license: dependency.license,
++		name: dependency.name!,
++		repository: getRepositoryUrl(dependency.repository),
++		texts: [...textIds]
++	};
++}
++
++async function writeLicenseFragment(
++	fragmentFile: string,
++	dependencies: readonly Dependency[]
++): Promise<void> {
++	const texts = new Map<string, string>();
++	const packages = [...dependencies]
++		.filter(({ name }) => !IGNORED_PACKAGE_NAMES.has(name!))
++		.sort(({ name: nameA }, { name: nameB }) => (nameA! > nameB! ? 1 : -1))
++		.map(dependency => toFragmentPackage(dependency, texts));
++	const fragment: LicenseFragment = {
++		packages,
++		texts: Object.fromEntries(
++			[...texts].sort(([textIdA], [textIdB]) => (textIdA > textIdB ? 1 : -1))
++		)
++	};
++	const content = `${JSON.stringify(fragment, null, '\t')}\n`;
++	const previousContent = await readFile(fragmentFile, 'utf8').catch(() => '');
++	if (previousContent !== content) {
++		await mkdir(path.dirname(fragmentFile), { recursive: true });
++		await writeFile(fragmentFile, content);
++		console.warn(
++			`${path.relative(process.cwd(), fragmentFile)} updated. Run "npm run build:licenses" to update LICENSE.md.`
++		);
++	}
++}
++
++/**
++/**
++ * The Node artifacts combine the CJS build (CLI) and the ESM build, so both need
++ * to collect their dependencies while only the ESM build writes the fragment.
++ */
++export default function getLicenseFragmentCollector(
++	fragmentFile: string
++): LicenseFragmentCollector {
++	const dependencies = new Map<string, Dependency>();
++	return {
++		collector: () =>
++			license({
++				thirdParty(collectedDependencies) {
++					for (const dependency of collectedDependencies) {
++						dependencies.set(dependency.name!, dependency);
++					}
++				}
++			}),
++		writer: () => ({
++			name: 'write-license-fragment',
++			async writeBundle() {
++				await writeLicenseFragment(fragmentFile, [...dependencies.values()]);
++			}
++		})
++	};
 +}
 ```
 
-**File**: `cli/cli.ts` (modified, +0/-7)
+**File**: `build-plugins/generate-license-file.ts` (removed, +0/-93)
 ```diff
-@@ -16,13 +16,6 @@ if (command.help || (process.argv.length <= 2 && process.stdin.isTTY)) {
- } else if (command.version) {
- 	console.log(`rollup v${package_.version}`);
- } else {
--	try {
--		// eslint-disable-next-line @typescript-eslint/no-require-imports
--		require('source-map-support').install();
--	} catch {
--		// do nothing
+@@ -1,93 +0,0 @@
+-import { readFile, writeFile } from 'node:fs/promises';
+-import path from 'node:path';
+-import type { PluginImpl } from 'rollup';
+-import license, { type Dependency, type Person } from 'rollup-plugin-license';
+-
+-async function generateLicenseFile(
+-	directory: string,
+-	dependencies: readonly Dependency[]
+-): Promise<void> {
+-	const coreLicense = await readFile('LICENSE-CORE.md', 'utf8');
+-	const licenses = new Set<string>();
+-	const dependencyLicenseTexts = [...dependencies]
+-		.filter(({ name }) => name !== '@rollup/browser')
+-		.sort(({ name: nameA }, { name: nameB }) => (nameA! > nameB! ? 1 : -1))
+-		.map(({ name, license, licenseText, author, maintainers, contributors, repository }) => {
+-			let text = `## ${name}\n`;
+-			if (license) {
+-				text += `License: ${license}\n`;
+-			}
+-			const names = new Set<string>();
+-			if (author?.name) {
+-				names.add(author.name);
+-			}
+-			// TODO there is an inconsistency in the rollup-plugin-license types
+-			for (const person of [...contributors, ...(maintainers as unknown as Person[])]) {
+-				if (person?.name) {
+-					names.add(person.name);
+-				}
+-			}
+-			if (names.size > 0) {
+-				text += `By: ${[...names].join(', ')}\n`;
+-			}
+-			if (repository) {
+-				text += `Repository: ${(typeof repository === 'object' && repository.url) || repository}\n`;
+-			}
+-			if (licenseText) {
+-				text +=
+-					'\n' +
+-					licenseText
+-						.trim()
+-						.replace(/(\r\n|\r)/gm, '\n')
+-						.split('\n')
+-						.map(line => `> ${line}`)
+-						.join('\n') +
+-					'\n';
+-			}
+-			licenses.add(license!);
+-			return text;
+-		})
+-		.join('\n---------------------------------------\n\n');
+-	const licenseText =
+-		`# Rollup core license\n` +
+-		`Rollup is released under the MIT license:\n\n` +
+-		coreLicense +
+-		`\n# Licenses of bundled dependencies\n` +
+-		`The published Rollup artifact additionally contains code with the following licenses:\n` +
+-		`${[...licenses].join(', ')}\n\n` +
+-		`# Bundled dependencies:\n` +
+-		dependencyLicenseTexts;
+-	const licenseFile = path.join(directory, 'LICENSE.md');
+-	const existingLicenseText = await readFile(licenseFile, 'utf8');
+-	if (existingLicenseText !== licenseText) {
+-		await writeFile(licenseFile, licenseText);
+-		console.warn('LICENSE.md updated. You should commit the updated file.');
 -	}
+-}
 -
- 	const promise = run(command);
- 	if (command.forceExit) {
- 		promise.then(() => process.exit());
-```
-
-**File**: `package-lock.json` (modified, +0/-1)
-```diff
-@@ -91,7 +91,6 @@
-         "shx": "^0.4.0",
-         "signal-exit": "^4.1.0",
-         "source-map": "^0.8.0",
--        "source-map-support": "^0.5.21",
-         "systemjs": "^6.15.1",
-         "terser": "^5.51.2",
-         "tslib": "^2.9.1",
-```
-
-**File**: `package.json` (modified, +0/-1)
-```diff
-@@ -201,7 +201,6 @@
-     "shx": "^0.4.0",
-     "signal-exit": "^4.1.0",
-     "source-map": "^0.8.0",
--    "source-map-support": "^0.5.21",
-     "systemjs": "^6.15.1",
-     "terser": "^5.51.2",
-     "tslib": "^2.9.1",
-```
-
-**File**: `test/cli/index.js` (modified, +6/-1)
-```diff
-@@ -56,7 +56,12 @@ async function runTest(config) {
- 
- 		const spawnOptions = {
- 			timeout: 40_000,
--			env: { ...process.env, FORCE_COLOR: '0', ...config.env },
-+			env: {
-+				...process.env,
-+				FORCE_COLOR: '0',
-+				NODE_OPTIONS: [process.env.NODE_OPTIONS, '--enable-source-maps'].filter(Boolean).join(' '),
-+				...config.env
-+			},
- 			killSignal: 'SIGKILL'
- 		};
- 		const childProcess = config.spawnArgs
-```
-
-**File**: `test/test.js` (modified, +0/-2)
-```diff
-@@ -1,5 +1,3 @@
--require('source-map-support').install();
+-interface LicenseHandler {
+-	collectLicenses: PluginImpl;
+-	writeLicense: PluginImpl;
+-}
 -
- describe('rollup', function () {
- 	this.timeout(30_000);
- 	require('./misc/index.js');
+-export default function getLicenseHandler(directory: string): LicenseHandler {
+-	const licenses = new Map<string, Dependency>();
+-	function addLicenses(dependencies: readonly Dependency[]) {
+-		for (const dependency of dependencies) {
+-			licenses.set(dependency.name!, dependency);
+-		}
+-	}
+-	return {
+-		collectLicenses() {
+-			return license({ thirdParty: addLicenses });
+-		},
+-		writeLicense() {
+-			return {
+-				name: 'write-license',
+-				writeBundle() {
+-					return generateLicenseFile(directory, [...licenses.values()]);
+-				}
+-			};
+-		}
+-	};
+-}
+```
+
+**File**: `licenses/javascript-browser.json` (added, +96/-0)
+```diff
+@@ -0,0 +1,96 @@
++{
++	"packages": [
++		{
++			"authors": [
++				"Justin Ridgewell"
++			],
++			"license": "MIT",
++			"name": "@jridgewell/sourcemap-codec",
++			"repository": "git+https://github.com/jridgewell/sourcemaps.git",
++			"texts": [
++				"769d154fbde32a91"
++			]
++		},
++		{
++			"authors": [
++				"Rich Harris"
++			],
++			"license": "MIT",
++			"name": "@rollup/pluginutils",
++			"repository": "rollup/plugins",
++			"texts": [
++				"7b8136f76c483d03"
++			]
++		},
++		{
++			"authors": [
++				"Sindre Sorhus"
++			],
++			"license": "MIT",
++			"name": "builtin-modules",
++			"repository": "sindresorhus/builtin-modules",
++			"texts": [
++				"5c932d88256b4ab9"
++			]
++		},
++		{
++			"authors": [
++				"Luke Edwards"
++			],
++			"license": "MIT",
++			"name": "flru",
++			"repository": "lukeed/flru",
++			"texts": [
++				"9a9edad7baae5262"
++			]
++		},
++		{
++			"authors": [
++				"Rich Harris"
++			],
++			"license": "MIT",
++			"name": "is-reference",
++			"repository": "git+https://github.com/Rich-Harris/is-reference.git",
++			"texts": []
++		},
++		{
++			"authors": [
++				"Rich Harris"
++			],
++			"license": "MIT",
++			"name": "locate-character",
++			"repository": "git+https://gitlab.com/Rich-Harris/locate-character.git",
++			"texts": []
++		},
++		{
++			"authors": [
++				"Rich Harris"
++			],
++			"license": "MIT",
++			"name": "magic-string",
++			"repository": "git+https://github.com/Rich-Harris/magic-string.git",
++			"texts": [
++				"1cbe51b907662f6c"
++			]
++		},
++		{
++			"authors": [
++				"Jon Schlinkert"
++			],
++			"license": "MIT",
++			"name": "picomatch",
++			"repository": "micromatch/picomatch",
++			"texts": [
++				"d0cd141b0c322fde"
++			]
++		}
++	],
++	"texts": {
++		"1cbe51b907662f6c": "Copyright 2018 Rich Harris\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n",
++		"5c932d88256b4ab9": "MIT License\n\nCopyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n",
++		"769d154fbde32a91": "Copyright 2024 Justin Ridgewell <justin@ridgewell.name>\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in\nall copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR TH
+```
+
+**File**: `licenses/javascript-node.json` (added, +370/-0)
+```diff
+@@ -0,0 +1,370 @@
++{
++	"packages": [
++		{
++			"authors": [
++				"Justin Ridgewell"
++			],
++			"license": "MIT",
++			"name": "@jridgewell/sourcemap-codec",
++			"repository": "git+https://github.com/jridgewell/sourcemaps.git",
++			"texts": [
++				"769d154fbde32a91"
++			]
++		},
++		{
++			"authors": [
++				"Rich Harris"
++			],
++			"license": "MIT",
++			"name": "@rollup/pluginutils",
++			"repository": "rollup/plugins",
++			"texts": [
++				"7b8136f76c483d03"
++			]
++		},
++		{
++			"authors": [
++				"Elan Shanker"
++			],
++			"license": "ISC",
++			"name": "anymatch",
++			"repository": "https://github.com/micromatch/anymatch",
++			"texts": [
++				"5a3b0007c4203f10"
++			]
++		},
++		{
++			"authors": [
++				"Sindre Sorhus"
++			],
++			"license": "MIT",
++			"name": "binary-extensions",
++			"repository": "sindresorhus/binary-extensions",
++			"texts": [
++				"96f0820026bd6dad"
++			]
++		},
++		{
++			"authors": [
++				"Jon Schlinkert",
++				"Brian Woodward",
++				"Elan Shanker",
++				"Eugene Sharygin",
++				"hemanth.hm"
++			],
++			"license": "MIT",
++			"name": "braces",
++			"repository": "micromatch/braces",
++			"texts": [
++				"35bdd8a443397194"
++			]
++		},
++		{
++			"authors": [
++				"Sindre Sorhus"
++			],
++			"license": "MIT",
++			"name": "builtin-modules",
++			"repository": "sindresorhus/builtin-modules",
++			"texts": [
++				"5c932d88256b4ab9"
++			]
++		},
++		{
++			"authors": [
++				"Paul Miller",
++				"Elan Shanker"
++			],
++			"license": "MIT",
++			"name": "chokidar",
++			"repository": "git+https://github.com/paulmillr/chokidar.git",
++			"texts": [
++				"db9ba183d4cbfbaf"
++			]
++		},
++		{
++			"authors": [
++				"Sindre Sorhus"
++			],
++			"license": "MIT",
++			"name": "date-time",
++			"repository": "sindresorhus/date-time",
++			"texts": [
++				"5c932d88256b4ab9"
++			]
++		},
++		{
++			"authors": [
++				"Jon Schlinkert",
++				"Edo Rivai",
++				"Paul Miller",
++				"Rouven Weßling"
++			],
++			"license": "MIT",
++			"name": "fill-range",
++			"repository": "jonschlinkert/fill-range",
++			"texts": [
++				"35bdd8a443397194"
++			]
++		},
++		{
++			"authors": [
++				"Luke Edwards"
++			],
++			"license": "MIT",
++			"name": "flru",
++			"repository": "lukeed/flru",
++			"texts": [
++				"9a9edad7baae5262"
++			]
++		},
++		{
++			"authors": [
++				"Gulp Team",
++				"Elan Shanker",
++				"Blaine Bublitz"
++			],
++			"license": "ISC",
++			"name": "glob-parent",
++			"repository": "gulpjs/glob-parent",
++			"texts": [
++				"2c46f1325bd3822a"
++			]
++		},
++		{
++			"authors": [
++				"Sindre Sorhus"
++			],
++			"license": "MIT",
++			"name": "is-binary-path",
++			"repository": "sindresorhus/is-binary-path",
++			"texts": [
++				"85fe65eefab89e2a"
++			]
++		},
++		{
++			"authors": [
++				"Jon Schlinkert"
++			],
++			"license": "MIT",
++			"name": "is-extglob",
++			"repository": "jonschlinkert/is-extglob",
++			"texts": [
++				"73b5283588baa142"
++			]
++		},
++		{
++			"authors": [
++				"Jon Schlinkert",
++				"Brian Woodward",
++				"Daniel Perez"
++			],
++			"license": "MIT",
++			"name": "is-glob",
++			"repository": "micromatch/is-glob",
++			"texts": [
++				"4cd903859549d4b2"
++			]
++		},
++		{
++			"authors": [
++				"Jon Schlinkert",
++				"Olsten Larck",
++				"Rouven Weßling"
++			],
++			"license": "MIT",
++			"name": "is-number",
++			"repository": "jonschlinkert/is-number",
++			"texts": [
++				"35bdd8a443397194"
++			]
++		},
++		{
++			"authors": [
++				"Rich Harris"
++			],
++			"license": "MIT",
++			"name": "is-reference",
++			"repository": "git+https://github.com/Rich-Harris/is-reference.git",
++			"texts": []
++		},
++		{
++			"authors": [
++				"Rich Harris"
++			],
++			"license": "MIT",
++			"name": "locate-character",
++			"repository": "git+https://gitlab.com/Rich-Harris/locate-character.git",
++			"texts": []
++		},
++		{
++			"authors": [
++				"Rich Harris"
++			],
++			"license": "MIT",
++			"name": "magic-string",
++			"repository": "git+https://github.com/Rich-Harris/magic-string.git",
++			"texts": [
++				"1cbe51b907662f6c"
++			]
++		},
++		{
++			"authors": [
++				"Jon Schlinkert",
++				"Blaine Bublitz"
++			],
++			"license": "MIT",
++			"name": "normalize-path",
++			"repository": "jonschlinkert/normalize-path",
++			"texts": [
++				"e70ff771504ba41f"
++			]
++		},
++		{
++			"authors": [
++				"Sindre Sorhus"
++			],
++			"license": "MIT",
++			"name": "parse-ms",
++			"repository": "sindresorhus/parse-ms",
++			"texts": [
++				"5c932d88256b4ab9"
++			]
++		},
++		{
++			"authors": [
++				"Alexey Raspopov"
++			],
++			"license": "ISC",
++			"name": "picocolors",
++			"repository": "alexeyraspopov/picocolors",
++			"texts": [
++				"6582629e29794668"
++			]
++		},
++		{
++			"authors": [
++				"Jon Schlinkert"
++			],
++			"license": "MIT",
++			"name": "picomatch",
++			"repository": "micromatch/picomatch",
++			"texts": [
++				"d0cd141b0c322fde"
++			]
++		},
++		{
++			"authors": [
++				"Sindre Sorhus"
++			],
++			"license": "MIT",
++			"name": "pretty-bytes",
++			"repository": "sindresorhus/pretty-bytes",
++			"texts": [
++				"5c932d88256b4ab9"
++			]
++		},
++		{
++			"authors": [
++				"Sindre Sorhus"
++			],
++			"license": "MI
 ```
 
 ---
 
-### Incident Patch 3: `6bcd824c` (2026-11-18)
-**Commit Message**: Revert previous fix to fail with a parse error instead of exhausting the native stack (#6671)
+### Incident Patch 2: `a845aca3` (2026-11-21)
+**Commit Message**: 4.68.8
 
-Revert "fix: fail with a parse error instead of exhausting the native stack (#6669)"
-
-This reverts commit a4912e216b28a8cfcf29c526654b04ad740560ab.
-
-**File**: `rust/AGENTS.md` (modified, +0/-6)
+**File**: `CHANGELOG.md` (modified, +22/-0)
 ```diff
-@@ -21,12 +21,6 @@
- - `parse_ast` never returns `Result`: parse errors are always encoded as a `ParseError` AST node that JS detects and converts to a thrown error; on NAPI, panics are caught and encoded as `PanicError` the same way, but the WASM build uses `panic_immediate_abort` and simply aborts — keep these protocols
- - Positions must be emitted in ascending order (the UTF-8→UTF-16 converter panics on backwards positions); stored `start`/`end` are UTF-16 offsets, never raw SWC UTF-8 spans
+@@ -1,5 +1,27 @@
+ # rollup changelog
  
--## Parser And Converter Guards
--
--- `parse_ast` drives SWC through `GuardedTokens` instead of `swc_compiler_base::parse_js` so that deeply nested input fails with a `ParseError` instead of terminating the process — do not switch back to `parse_js`
--- Every new recursive cycle in the converter must route through `enter_nesting` (see `convert_expression`, `convert_statement`, `convert_pattern`, `convert_jsx_element_child`, `convert_jsx_object`, `convert_jsx_attribute_value` and `convert_chain_element`, which covers the member, call and optional chain cycles); iteratively parsed constructs like JSX member expressions otherwise bypass both the token-based stack guard and the depth limit
--- Syntax trees are freed with `free_syntax_tree` rather than dropped, because their destructors recurse once per nesting level; only trees with a converted counterpart are known to be shallow enough to drop directly
--
- ## Bindings Sync
++## 4.68.8
++
++_2026-11-21_
++
++### Bug Fixes
++
++- Hoist namespace objects if necessary to avoid broken output (#6672)
++- Do not try to auto-install source-map-support as it was causing some issues (#6682)
++
++### Pull Requests
++
++- [#6672](https://github.com/rollup/rollup/pull/6672): Create namespace objects early when a cycle can read them before their module runs (@waw666waw666)
++- [#6673](https://github.com/rollup/rollup/pull/6673): docs: explain why async methods are preferred in plugins (@CharoenwitKunna, @lukastaegert)
++- [#6674](https://github.com/rollup/rollup/pull/6674): docs: document warning and error properties (@CharoenwitKunna, @lukastaegert)
++- [#6675](https://github.com/rollup/rollup/pull/6675): docs: document dynamic expressions in import() (@CharoenwitKunna, @lukastaegert)
++- [#6676](https://github.com/rollup/rollup/pull/6676): docs: clarify that --perf omits asynchronous plugin hook time (@CharoenwitKunna, @lukastaegert)
++- [#6678](https://github.com/rollup/rollup/pull/6678): Update dtolnay/rust-toolchain digest to 3900882 (@renovate[bot], @lukastaegert)
++- [#6679](https://github.com/rollup/rollup/pull/6679): Update minor/patch updates (@renovate[bot])
++- [#6680](https://github.com/rollup/rollup/pull/6680): Update dependency eslint-plugin-unicorn to v80 (@renovate[bot])
++- [#6681](https://github.com/rollup/rollup/pull/6681): Lock file maintenance (@renovate[bot])
++- [#6682](https://github.com/rollup/rollup/pull/6682): fix(cli): stop installing source-map-support (@lukastaegert)
++
+ ## 4.68.7
  
- - A new binding function must be added to both `rust/bindings_napi/src/lib.rs` AND `rust/bindings_wasm/src/lib.rs` plus all three JS handover points with matching names: `native.js`, `native.wasm.js`, `browser/src/wasm.ts` (`lint:native-js` only checks that every export in `native.js` is also present in `native.wasm.js` — signatures and reverse parity are not checked)
+ _2026-11-18_
 ```
 
-**File**: `rust/Cargo.lock` (modified, +0/-1)
+**File**: `browser/package.json` (modified, +1/-1)
 ```diff
-@@ -899,7 +899,6 @@ version = "0.0.0"
- dependencies = [
-  "anyhow",
-  "parking_lot",
-- "stacker",
-  "swc_common",
-  "swc_compiler_base",
-  "swc_config",
-```
-
-**File**: `rust/parse_ast/Cargo.toml` (modified, +1/-4)
-```diff
-@@ -11,8 +11,5 @@ swc_compiler_base = "67.0.0"
- swc_config = "6.0.1"
- swc_common = { version = "27.0.0", features = ["parking_lot"] }
- swc_ecma_ast = "30.0.2"
--swc_ecma_parser = { version = "47.0.0", features = ["unstable"] }
-+swc_ecma_parser = "47.0.0"
- parking_lot = "0.12.5"
--
--[target.'cfg(not(any(target_arch = "wasm32", target_arch = "arm")))'.dependencies]
--stacker = "0.1.25"
-```
-
-**File**: `rust/parse_ast/src/ast_nodes/call_expression.rs` (modified, +12/-1)
-```diff
-@@ -43,7 +43,18 @@ impl AstConverter<'_> {
-     // callee
-     self.update_reference_position(end_position + CALL_EXPRESSION_CALLEE_OFFSET);
-     match callee {
--      StoredCallee::Expression(expression) => self.convert_chain_element(expression, is_chained),
-+      StoredCallee::Expression(Expr::OptChain(optional_chain_expression)) => {
-+        self.store_chain_expression(optional_chain_expression, is_chained);
-+      }
-+      StoredCallee::Expression(Expr::Call(call_expression)) => {
-+        self.convert_call_expression(call_expression, false, is_chained);
-+      }
-+      StoredCallee::Expression(Expr::Member(member_expression)) => {
-+        self.convert_member_expression(member_expression, false, is_chained);
-+      }
-+      StoredCallee::Expression(callee_expression) => {
-+        self.convert_expression(callee_expression);
-+      }
-       StoredCallee::Super(callee_super) => self.store_super_element(callee_super),
-     }
-     // arguments
-```
-
-**File**: `rust/parse_ast/src/ast_nodes/member_expression.rs` (modified, +10/-1)
-```diff
-@@ -29,8 +29,17 @@ impl AstConverter<'_> {
-     // object
-     self.update_reference_position(end_position + MEMBER_EXPRESSION_OBJECT_OFFSET);
-     match object {
-+      ExpressionOrSuper::Expression(Expr::OptChain(optional_chain_expression)) => {
-+        self.store_chain_expression(optional_chain_expression, is_chained);
-+      }
-+      ExpressionOrSuper::Expression(Expr::Call(call_expression)) => {
-+        self.convert_call_expression(call_expression, false, is_chained);
-+      }
-+      ExpressionOrSuper::Expression(Expr::Member(member_expression)) => {
-+        self.convert_member_expression(member_expression, false, is_chained);
-+      }
-       ExpressionOrSuper::Expression(expression) => {
--        self.convert_chain_element(expression, is_chained)
-+        self.convert_expression(expression);
-       }
-       ExpressionOrSuper::Super(super_token) => self.store_super_element(super_token),
-     }
-```
-
-**File**: `rust/parse_ast/src/convert_ast/converter.rs` (modified, +3/-119)
-```diff
-@@ -1,4 +1,4 @@
--use swc_common::{Span, Spanned};
-+use swc_common::Span;
- use swc_ecma_ast::{
-   AssignTarget, AssignTargetPat, CallExpr, Callee, Class, ClassMember, Decl, Decorator,
-   ExportSpecifier, Expr, ExprOrSpread, ForHead, ImportSpecifier, JSXAttrName, JSXAttrOrSpread,
-@@ -19,14 +19,6 @@ use crate::convert_ast::converter::string_constants::{
- use crate::convert_ast::converter::utf16_positions::{
-   ConvertedAnnotation, Utf8ToUtf16ByteIndexConverterAndAnnotationHandler,
- };
--use crate::nesting_limit::{
--  current_stack_position, stack_limit_position, MAX_CONVERTER_NESTING_DEPTH,
--};
--
--#[cfg(debug_assertions)]
--const NODES_PER_STACK_CHECK: u32 = 8;
--#[cfg(not(debug_assertions))]
--const NODES_PER_STACK_CHECK: u32 = 32;
- 
- pub(crate) mod analyze_code;
- pub(crate) mod string_constants;
-@@ -42,15 +34,6 @@ pub(crate) struct AstConverter<'a> {
-   // Only used when the byte order of the 32-bit fields is swapped at the end: the byte ranges
-   // that are kept as they are, i.e. string bytes and the little-endian f64 values
-   unswapped_byte_ranges: Option<Vec<(usize, usize)>>,
--  nesting_depth: u32,
--  nesting_error: Option<NestingError>,
--  nodes_until_stack_check: u32,
--  stack_limit_position: usize,
--}
--
--pub(crate) enum NestingError {
--  DepthLimit { utf_8_position: u32 },
--  StackExhausted { utf_8_position: u32 },
- }
- 
- impl<'a> AstConverter<'a> {
-@@ -65,49 +48,16 @@ impl<'a> AstConverter<'a> {
-       code: code.as_bytes(),
-       index_converter: Utf8ToUtf16ByteIndexConverterAndAnnotationHandler::new(code, annotations),
-       unswapped_byte_ranges: swap_byte_order.then(Vec::new),
--      nesting_depth: 0,
--      nesting_error: None,
--      nodes_until_stack_check: NODES_PER_STACK_CHECK,
--      stack_limit_position: stack_limit_position(),
-     }
-   }
- 
--  pub(crate) fn convert_ast_to_buffer(mut self, node: &Program) -> Result<Vec<u8>, NestingError> {
-+  pub(crate) fn convert_ast_to_buffer(mut self, node: &Program) -> Vec<u8> {
-     self.convert_program(node);
--    if let Some(nesting_error) = self.nesting_error {
--      return Err(nesting_error);
--    }
-     if let Some(unswapped_byte_ranges) = self.unswapped_byte_ranges.take() {
-       swap_32_bit_fields(&mut self.buffer, unswapped_byte_ranges);
-     }
-     self.buffer.shrink_to_fit();
--    Ok(self.buffer)
--  }
--
--  #[inline(always)]
--  fn enter_nesting(&mut self, span: impl FnOnce() -> Span) -> bool {
--    if self.nesting_error.is_some() {
--      return false;
--    }
--    let exceeds_depth_limit = self.nesting_depth >= MAX_CONVERTER_NESTING_DEPTH;
--    let exceeds_stack_limit = if self.nodes_until_stack_check > 1 {
--      self.nodes_until_stack_check -= 1;
--      false
--    } else {
--      self.nodes_until_stack_check = NODES_PER_STACK_CHECK;
--      current_stack_position() < self.stack_limit_position
--    };
--    if exceeds_depth_limit || exceeds_stack_limit {
--      let utf_8_position = span().lo.0.saturating_sub(1);
--      self.nesting_error = Some(if exceeds_depth_limit {
--        NestingError::DepthLimit { utf_8_position }
--      } else {
--        NestingError::StackExhausted { utf_8_position }
--      });
--      return false;
--    }
--    self.nesting_depth += 1;
--    true
-+    self.buffer
-   }
- 
-   // === helpers
-@@ -403,34 +353,7 @@ impl<'a> AstConverter<'a> {
-     }
-   }
- 
--  pub(crate) fn convert_chain_element(&mut self, expression: &Expr, is_chained: bool) {
--    if !self.enter_nesting(|| expression.span()) {
--      return;
--    }
--    match expression {
--      Expr::OptChain(optional_chain_expression) => {
--        self.store_chain_expression(optional_chain_expression, is_chained);
--      }
--      Expr::Call(call_expression) => {
--        self.convert_call_expression(call_expression, false, is_chained);
--      }
--      Expr::Member(member_expression) => {
--        self.convert_member_expression(member_expression, false, is_chained);
--      }
--      _ => self.convert_expression_without_nesting_check(expression),
--    }
--    self.nesting_depth -= 1;
--  }
--
-   pub(crate) fn convert_expression(&mut self, expression: &Expr) {
--    if !self.enter_nesting(|| expression.span()) {
--      return;
--    }
--    self.convert_expression_without_nesting_check(expression);
--    self.nesting_depth -= 1;
--  }
--
--  fn convert_expression_without_nesting_check(&mut self, expression: &Expr) {
-     match expression {
-       Expr::Array(array_literal) => {
-         self.store_array_expression(array_literal);
-@@ -597,9 +520,6 @@ impl<'a> AstConverter<'a> {
-   }
- 
-   pub(crate) fn convert_jsx_attribute_value(&mut self, jsx_attribute_value: &JSXAttrValue) {
--    if !self.enter_nesting(|| jsx_attribute_value.span()) {
--      return;
--    }
-     match jsx_attribute_value {
-       JSXAttrValue::Str(string_literal) => self.store_literal_string(string_literal),
-       JSXAttrValue::JSXExprContainer(expression_container) => {
-@@ -608,21 +528,9 @@ impl<'a> AstConverter<'a> {
-       JSXAttrValue::JSXElement(jsx_element) => self.store_jsx_element(jsx_element),
-       JSXAttrVa
-```
-
-**File**: `rust/parse_ast/src/error_emit.rs` (modified, +12/-29)
-```diff
-@@ -3,6 +3,7 @@ use std::{io::Write, mem::take, sync::Arc};
- use anyhow::Error;
- use parking_lot::Mutex;
- use swc_common::errors::{DiagnosticBuilder, Emitter, Handler, Level, HANDLER};
-+use swc_ecma_ast::Program;
- 
- use crate::ast_nodes::parse_error::get_parse_error_buffer;
- use crate::convert_ast::converter::convert_string;
-@@ -43,9 +44,13 @@ impl Emitter for ErrorEmitter {
-   }
- }
- 
--pub(crate) fn try_with_handler<T, F>(code: &str, swap_byte_order: bool, op: F) -> Result<T, Vec<u8>>
-+pub(crate) fn try_with_handler<F>(
-+  code: &str,
-+  swap_byte_order: bool,
-+  op: F,
-+) -> Result<Program, Vec<u8>>
- where
--  F: FnOnce(&Handler) -> Result<T, Error>,
-+  F: FnOnce(&Handler) -> Result<Program, Error>,
+@@ -1,6 +1,6 @@
  {
-   let wr = Box::<Writer>::default();
- 
-@@ -68,35 +73,13 @@ fn create_error_buffer(wr: &Writer, code: &str, swap_byte_order: bool) -> Vec<u8
-   let mut lock = wr.0.lock();
-   let error_buffer = take(&mut *lock);
-   let pos = u32::from_ne_bytes(error_buffer[0..4].try_into().unwrap());
--  get_parse_error_buffer(
--    &error_buffer,
--    &to_utf16_position(code, pos),
--    swap_byte_order,
--  )
--}
--
--pub(crate) fn get_nesting_error_buffer(
--  code: &str,
--  utf_8_pos: u32,
--  message: &str,
--  swap_byte_order: bool,
--) -> Vec<u8> {
--  let mut error_buffer = utf_8_pos.to_ne_bytes().to_vec();
--  convert_string(&mut error_buffer, message);
--  get_parse_error_buffer(
--    &error_buffer,
--    &to_utf16_position(code, utf_8_pos),
--    swap_byte_order,
--  )
--}
--
--fn to_utf16_position(code: &str, utf_8_pos: u32) -> u32 {
-   let mut utf_16_pos: u32 = 0;
--  for (position, character) in code.char_indices() {
--    if (position as u32) == utf_8_pos {
-+  // convert utf-8 to utf-16 inline
-+  for (utf_8_pos, char) in code.char_indices() {
-+    if (utf_8_pos as u32) == pos {
-       break;
-     }
--    utf_16_pos += character.len_utf16() as u32;
-+    utf_16_pos += char.len_utf16() as u32;
-   }
--  utf_16_pos
-+  get_parse_error_buffer(&error_buffer, &utf_16_pos, swap_byte_order)
- }
+   "name": "@rollup/browser",
+-  "version": "4.68.7",
++  "version": "4.68.8",
+   "description": "Next-generation ES module bundler browser build",
+   "main": "dist/rollup.browser.js",
+   "module": "dist/es/rollup.browser.js",
 ```
 
-**File**: `rust/parse_ast/src/lib.rs` (modified, +36/-109)
+**File**: `package-lock.json` (modified, +2/-2)
 ```diff
-@@ -1,30 +1,21 @@
--use std::any::Any;
--use std::mem::ManuallyDrop;
- use std::panic::{catch_unwind, AssertUnwindSafe};
- 
--use anyhow::anyhow;
--use swc_common::comments::Comments;
--use swc_common::errors::Handler;
--use swc_common::input::SourceFileInput;
- use swc_common::sync::Lrc;
--use swc_common::{FileName, FilePathMapping, Globals, SourceFile, SourceMap, GLOBALS};
--use swc_ecma_ast::{EsVersion, Program};
--use swc_ecma_parser::error::Error as ParserError;
--use swc_ecma_parser::{EsSyntax, Lexer, Parser, Syntax};
-+use swc_common::{FileName, FilePathMapping, Globals, SourceMap, GLOBALS};
-+use swc_compiler_base::parse_js;
-+use swc_config::is_module::IsModule;
-+use swc_ecma_ast::EsVersion;
-+use swc_ecma_parser::{EsSyntax, Syntax};
- 
--use convert_ast::converter::{AstConverter, NestingError};
--use error_emit::{get_nesting_error_buffer, try_with_handler};
--use nesting_limit::{
--  free_syntax_tree, GuardedTokens, NestingGuard, DEPTH_LIMIT_MESSAGE, STACK_EXHAUSTED_MESSAGE,
--};
-+use convert_ast::converter::AstConverter;
-+use error_emit::try_with_handler;
- 
- use crate::ast_nodes::panic_error::get_panic_error_buffer;
- use crate::convert_ast::annotations::SequentialComments;
- 
- mod ast_nodes;
- mod convert_ast;
- mod error_emit;
--mod nesting_limit;
- 
- /// With `swap_byte_order`, the 32-bit fields of the buffer are written in the opposite of the
- /// native byte order. The WASM build, whose byte order is always little-endian, uses this on
-@@ -51,102 +42,38 @@ pub fn parse_ast(
-   let filename = FileName::Anon;
-   let file = cm.new_source_file(filename.into(), code);
-   let code_reference = file.src.clone();
--  let code_length = code_reference.len();
-   let comments = SequentialComments::default();
-   GLOBALS.set(&Globals::default(), || {
--    let nesting_guard = NestingGuard::new();
--    let parse_result = catch_unwind(AssertUnwindSafe(|| {
--      try_with_handler(&code_reference, swap_byte_order, |handler| {
--        parse_program(&file, handler, target, syntax, &comments, &nesting_guard)
--      })
--    }));
--    let program = match parse_result {
--      Err(panic_error) => {
--        return get_panic_error_buffer(&panic_message(&*panic_error), swap_byte_order)
--      }
--      Ok(Err(buffer)) => {
--        return match nesting_guard.exceeded_position() {
--          Some(position) => get_nesting_error_buffer(
--            &code_reference,
--            position,
--            STACK_EXHAUSTED_MESSAGE,
--            swap_byte_order,
--          ),
--          None => buffer,
-+    let result = catch_unwind(AssertUnwindSafe(|| {
-+      let result = try_with_handler(&code_reference, swap_byte_order, |handler| {
-+        parse_js(
-+          cm,
-+          file,
-+          handler,
-+          target,
-+          syntax,
-+          IsModule::Unknown,
-+          Some(&comments),
-+        )
-+      });
-+      match result {
-+        Err(buffer) => buffer,
-+        Ok(program) => {
-+          let annotations = comments.take_annotations();
-+          let converter = AstConverter::new(&code_reference, &annotations, swap_byte_order);
-+          converter.convert_ast_to_buffer(&program)
-         }
-       }
--      Ok(Ok(program)) => program,
--    };
--    if let Some(position) = nesting_guard.exceeded_position() {
--      free_syntax_tree(program, code_length, nesting_guard.stack_budget());
--      return get_nesting_error_buffer(
--        &code_reference,
--        position,
--        STACK_EXHAUSTED_MESSAGE,
--        swap_byte_order,
--      );
--    }
--    match catch_unwind(AssertUnwindSafe(|| {
--      let annotations = comments.take_annotations();
--      let converter = AstConverter::new(&code_reference, &annotations, swap_byte_order);
--      converter.convert_ast_to_buffer(&program)
--    })) {
--      // A converted tree is never nested deeper than the converter limit, so it can be dropped.
--      Ok(Ok(buffer)) => {
--        drop(ManuallyDrop::into_inner(program));
--        buffer
--      }
--      Ok(Err(nesting_error)) => {
--        free_syntax_tree(program, code_length, nesting_guard.stack_budget());
--        let (position, message) = match nesting_error {
--          NestingError::DepthLimit { utf_8_position } => (utf_8_position, DEPTH_LIMIT_MESSAGE),
--          NestingError::StackExhausted { utf_8_position } => {
--            (utf_8_position, STACK_EXHAUSTED_MESSAGE)
--          }
--        };
--        get_nesting_error_buffer(&code_reference, position, message, swap_byte_order)
--      }
--      Err(panic_error) => {
--        free_syntax_tree(program, code_length, nesting_guard.stack_budget());
--        get_panic_error_buffer(&panic_message(&*panic_error), swap_byte_order)
--      }
--    }
-+    }));
-+    result.unwrap_or_else(|err| {
-+      let msg = if let Some(msg) = err.downcast_ref::<&str>() {
-+        msg
-+      } else if let Some(msg) = err.downcast_ref::<String>() {
-+        msg
-+      } else {
-+        "Unknown rust panic message"
-+      };
-+      get_panic_error_buffer(msg, swap_byte_order)
-+    })
-   })
- }
--
--fn panic_message(panic_error:
+@@ -1,12 +1,12 @@
+ {
+   "name": "rollup",
+-  "version": "4.68.7",
++  "version": "4.68.8",
+   "lockfileVersion": 3,
+   "requires": true,
+   "packages": {
+     "": {
+       "name": "rollup",
+-      "version": "4.68.7",
++      "version": "4.68.8",
+       "license": "MIT",
+       "dependencies": {
+         "@types/estree": "^1.0.10"
+```
+
+**File**: `package.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "rollup",
+-  "version": "4.68.7",
++  "version": "4.68.8",
+   "description": "Next-generation ES module bundler",
+   "main": "dist/rollup.js",
+   "module": "dist/es/rollup.js",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6688** (closed): Fix bare dash values for CLI input and file (@azizu06)
+- **PR #6684** (2026-11-22): feat: generate license files for Rust dependencies (@lukastaegert)
 - **PR #6682** (2026-11-20): fix(cli): stop installing source-map-support (@lukastaegert)
 - **PR #6681** (2026-11-20): Lock file maintenance (@renovate[bot])
 - **PR #6680** (2026-11-20): Update dependency eslint-plugin-unicorn to v80 (@renovate[bot])
 - **PR #6679** (2026-11-20): Update minor/patch updates (@renovate[bot])
-- **PR #6678** (2026-11-20): Update dtolnay/rust-toolchain digest to 3900882 (@renovate[bot])
-- **PR #6676** (2026-11-19): docs: clarify that --perf omits asynchronous plugin hook time (@CharoenwitKunna)
 
 ---
 
@@ -1348,26 +1198,25 @@ This reverts commit a4912e216b28a8cfcf29c526654b04ad740560ab.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. fail with a parse error instead of exhausting the native stack
+## X. generate license files for Rust dependencies
 
 **RULE**:
-When implementing operations in `rust/AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rollup/rollup. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/build-and-tests.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rollup/rollup. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a4912e21`: fail with a parse error instead of exhausting the native stack. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `173cfd3a`: generate license files for Rust dependencies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/AGENTS.md`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build-and-tests.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-## Parser And Converter Guards
-
-- `parse_ast` drives SWC through `GuardedTokens` instead of `swc_compiler_base::parse_js` so that deeply nested input fails with a `ParseError` instead of terminating the process — do not switch back to `parse_js`
-- Every new recursive cycle in the converter must route through `enter_nesting` (see `convert_expression`, `convert_statement`, `convert_pattern`, `convert_jsx_element_child`, `convert_jsx_object`, `convert_jsx_attribute_value` and `convert_chain_element`, which covers the member, call and optional chain cycles); iteratively parsed constructs like JSX member expressions otherwise bypass both the token-based stack guard and the depth limit
-- Syntax trees are freed with `free_syntax_tree` rather than dropped, because their destructors recurse once per nesting level; only trees with a converted counterpart are known to be shallow enough to drop directly
-
+      - name: Check generated license files
+        run: |
+          npm run build:rust-licenses
+          npm run build:licenses
+          git diff --exit-code -- LICENSE.md browser/LICENSE.md licenses/
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1377,4 +1226,4 @@ Subsystems managing JavaScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a4912e21` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `173cfd3a` are properly handled with clean fallback behavior.

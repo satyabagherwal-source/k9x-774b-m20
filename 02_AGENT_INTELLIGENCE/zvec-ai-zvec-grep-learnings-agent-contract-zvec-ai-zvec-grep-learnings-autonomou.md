@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T23:04:42.929Z",
+  "timestamp": "2026-11-24T23:33:29.749Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-zvec-ai-zvec-grep-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [zvec-ai-zvec-grep-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T23:04:42.929Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T23:33:29.749Z`  
 > **Learning ID**: `LEARN-EVO-zvec-ai-zvec-grep-learnings`
 
 
@@ -26,10 +26,10 @@ PROVENANCE_END -->
 ## 2. Operational Capabilities
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md`  
 > **Source**: github ([https://github.com/zvec-ai/zvec-grep](https://github.com/zvec-ai/zvec-grep))  
-> **Source Version**: `2f18f2d9`  
+> **Source Version**: `3d57ea50`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T20:30:32.117Z  
+> **Timestamp**: 2026-11-24T23:33:19.334Z  
 > **Learning ID**: `learn-github-zvec-ai-zvec-grep`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -43,7 +43,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zvec-ai/zvec-grep](https://github.com/zvec-ai/zvec-grep))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T20:30:32.111Z  
+> **Harvest Timestamp**: 2026-11-24T23:33:19.130Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -53,7 +53,7 @@ PROVENANCE_END -->
 - **Description**: Local-first search across your workspace, built for humans and AI agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4374 stars
+- **Stars / Engagement**: 4380 stars
 
 ---
 
@@ -1144,672 +1144,1122 @@ def render_report(report: dict[str, Any]) -> str:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2f18f2d9` (2026-11-23)
-**Commit Message**: fix(rust): resolve python calls through annotated parameters and self members (#435)
+### Incident Patch 1: `ae1a4732` (2026-11-24)
+**Commit Message**: fix(rust): bind bare calls to the enclosing module's items (#440)
 
-* fix(rust): bind python annotated parameters and self members
+* fix(rust): bind bare calls to the enclosing module's items
 
-A Python parameter states its type on the annotation rather than on an
-assignment, and a class states its attributes by assigning them on `self`
-from inside a method. Neither reached the graph, so a call through the
-parameter's declared contract (`index.create_variables()`) stayed pending,
-and a member one method writes was unknown to the methods beside it.
+A `mod storage { fn save(..) .. fn flush(..) { save(..) } }` beside a
+top-level `save` bound `flush`'s bare `save()` to the file-level namesake:
+`--callers save` listed `storage::flush`, and `--callees storage::flush`
+reached the wrong `save`.
 
-- Read a typed parameter's annotation as the type the name holds for the
-  whole body: through the `type` wrapper, string annotations, `A | None`,
-  `Optional[…]`/`Union[…]`/`Annotated[…]` and their module-qualified
-  spellings. A container annotation stays unbound, since the members a
-  call reads there are the container's own.
-- Record `self.<member> = <value>` on the class entity, so every method
-  and every subclass reads the same member. The value is read where it is
-  written: `self.x = param` takes the parameter's annotation and
-  `self.x = state.x` a `member_of:(<type>,<member>)` step. A nested class
-  states `self` for its own members, not for the class around it.
+Partition now reads the nearest Rust module's own table before the file's
+one. Only the nearest module answers — an outer module's items need
+`super::`, so they are never in bare scope. Classes, traits and `impl`
+bodies are not modules (their members need a receiver), and other
+languages keep reaching namespaces through the resolver's scope rules,
+which search a type's members before the namespace.
 
-* fix(
+Fixes #434.
 
-**File**: `rust/crates/zg-engine/src/extraction/graph.rs` (modified, +43/-0)
+* fix(rust): address review on bare-call item scope resolution
+
+Three review threads on #440 read a bare call against a scope table that
+could not answer them:
+
+- A call written inside a nested `fn inner` skipped the `fn outer` that
+  declares it and fell through to the module's namesake. Function-item
+  scopes are walked now, so `outer`'s `fn save` answers `inner`'s call,
+  still skipping `impl` and trait 
+
+**File**: `rust/crates/zg-engine/src/extraction/code.rs` (modified, +228/-1)
 ```diff
-@@ -53,6 +53,27 @@ use crate::domain::{GraphEdgeKind, PreprocessorDirective};
- /// allocated by [`WalkContext::next_entity_index`].
- pub(crate) const FILE_SCOPE_INDEX: usize = usize::MAX;
+@@ -317,6 +317,24 @@ struct CodeEntity<'tree> {
+     exported_as: Vec<String>,
+ }
  
-+/// The bound type extraction records for a Python name a body rebinds to a
-+/// value the index cannot place (`client = clients[0]`, `self.client = client`).
++/// Whether a Rust item spells a name the value namespace does not hold, so a
++/// bare call never reaches it.
 +///
-+/// The write shadows what an earlier declaration stated — a parameter's
-+/// annotation, a member's previous assignment — so the name holds no type from
-+/// that line on. The resolver reads the sentinel as "stated, but undecided":
-+/// the answer is not the type the name no longer holds, and a base class's
-+/// member is not the answer either.
-+pub(crate) const PYTHON_UNBOUND_TYPE: &str = "[[python_unbound]]";
-+
-+/// The bound type extraction records for a Python member a class writes as
-+/// `None` (`self.client = None`).
-+///
-+/// The write is a declaration of the member — the class chooses what the name
-+/// holds, so a base class's member of the same name is not the answer — but it
-+/// states no type. It differs from [`PYTHON_UNBOUND_TYPE`], which leaves the
-+/// member undecided even beside a write that does state a type: an optional
-+/// member (`__init__` writes `None`, another method stores the real value) is
-+/// still typed by the write that states one.
-+pub(crate) const PYTHON_NONE_TYPE: &str = "[[python_none]]";
-+
- /// An edge whose both endpoints are known at walk time. Only `contains`
- /// qualifies: the target entity is created during the same walk, so its index
- /// is available from the scope stack. Positions use one-based lines and
-@@ -527,6 +548,28 @@ impl WalkContext {
-         });
-     }
- 
-+    /// The type `owner_index` has stated for `name` at one point of its body:
-+    /// the last declaration written before the position, which is what a copy
-+    /// (`client = other`) takes with it.
-+    pub(crate) fn declared_type_at(
-+        &self,
-+        owner_index: usize,
-+        name: &str,
-+        line: usize,
-+        column: usize,
-+    ) -> Option<&str> {
-+        self.name_edges
-+            .iter()
-+            .rev()
-+            .find(|edge| {
-+                edge.ref_kind == GraphEdgeKind::Declares
-+                    && edge.owner_index == owner_index
-+                    && edge.ref_name == name
-+                    && (edge.line, edge.column) < (line, column)
-+            })
-+            .and_then(|edge| edge.bound_type.as_deref())
-+    }
-+
-     pub(crate) fn add_scoped_binding(
-         &mut self,
-         owner: usize,
-```
-
-**File**: `rust/crates/zg-engine/src/extraction/graph/collector.rs` (modified, +885/-1)
-```diff
-@@ -5,6 +5,8 @@
- //! owning entity without a second full parse. Mirrors the TypeScript
- //! `src/engine/extraction/graph/edge-collector.ts` implementation.
- 
-+use std::collections::HashMap;
-+
- use tree_sitter::Node;
- 
- use crate::domain::{FileFormat, GraphEdgeKind};
-@@ -14,7 +16,7 @@ use super::vocabulary::{
-     CALLEE_FIELDS, COMMON_CALL_TYPES, HeritageVocabulary, heritage_vocabulary_for,
-     import_vocabulary_for,
- };
--use super::{Constructs, FILE_SCOPE_INDEX, WalkContext};
-+use super::{Constructs, FILE_SCOPE_INDEX, PYTHON_NONE_TYPE, PYTHON_UNBOUND_TYPE, WalkContext};
- 
- const MAX_CALLEE_TEXT_CHARS: usize = 180;
- 
-@@ -578,6 +580,27 @@ pub(crate) fn scan_binding_declarations(
-         );
-     }
-     visit_for_bindings(entity_node, owner_index, source, format, context, boundary);
-+    // A decorated class reaches this scan as its wrapper, whose body is the
-+    // class's: a decorator that returns the class unchanged must not hide the
-+    // instance members its methods state.
-+    if format == FileFormat::Python
-+        && let Some(class) =
-+            python_inner_definition(entity_node).filter(|inner| inner.kind() == "class_definition")
-+    {
-+        collect_python_self_members(class, owner_index, source, context);
++/// `impl save` names the type it implements, which is a scope rather than a
++/// value, and a trait, type alias, enum, union and a named-field struct each
++/// declare a type without a constructible value. A tuple struct and a unit
++/// struct do declare a constructor, so they stay candidates: `struct save(i32)`
++/// beside `fn save` is a conflict rustc rejects.
++fn rust_type_namespace_only(node: Node<'_>) -> bool {
++    match node.kind() {
++        "impl_item" | "trait_item" | "type_item" | "enum_item" | "union_item" => true,
++        "struct_item" => node
++            .child_by_field_name("body")
++            .is_some_and(|body| body.kind() == "field_declaration_list"),
++        _ => false,
 +    }
 +}
 +
-+/// The definition a Python declaration states. A decorator wraps the class or
-+/// function it decorates, and the wrapper's own body is that definition's.
-+fn python_inner_definition(node: Node<'_>) -> Option<Node<'_>> {
-+    match node.kind() {
-+        "class_definition" | "function_definition" => Some(node),
-+        "decorated_definition" => named_children(node)
-+            .into_iter()
-+            .find(|child| matches!(child.kind(), "class_definition" | "function_definition")),
-+        _ => None,
-+    }
+ // A node's entities and their scans share one index sequence and one
+ // boundary; splitting the entity branch from the scope descent keeps both in
+ // one place for the walk and for the types a body declares.
+@@ -348,13 +366,47 @@ fn walk_entity_node<'tree>(
+         scope_entity_index = Some(entity_index);
+         let name = adapter.extract_name(entity, source);
+         let entity_breadcrumb = adapter.scope_breadcrumb(entity, source, breadcrumb);
++        let symbol_type = adapter.classify(entity);
+         // Declarations stay out of the in-file symbol table: an in-file call
+         // must not bind to a bodyless prototype when a definition exists
+         // anywhere in the workspace, and the resolver's name index applies that
+         // preference globally.
+         if !adapter.is_declaration(entity) {
+             graph_context.register_symbol(name.as_deref(), entity_index);
+             graph_context.register_scoped_symbol(name.as_deref(), entity_index);
++            // A module puts the items it declares in bare scope for every body
++            // inside it, and a function does the same for the bodies nested in
++            // it (`fn outer() { fn save() {} }` answers `inner`'s `save()`),
++            // unlike a class, whose members need a receiver. Other languages
++            // reach a namespace through the resolver's scope rules, where a
++            // type's members are searched before the namespace.
++            if format == FileFormat::Rust {
++                match symbol_type {
++                    Some(SymbolType::Module) => graph_context.register_module_scope(entity_index),
++                    Some(SymbolType::Function) => {
++                        graph_context.register_function_scope(entity_index);
++                    }
++                    // Only a value answers a bare call. Every other item that
++                    // spells a name in this position keeps it in the type
++                    // namespace; the helper lists them by AST shape.
++                    _ if rust_type_namespace_only(entity) => {
++                        graph_context.register_type_namespace_item(entity_index);
++                    }
++                    _ => {}
++                }
++                // The item's bare scope ends with the block that declares it:
++                // `{ fn save() {} } save()` written after that block reaches
++                // the enclosing spelling, not the one the closed block declared.
++                if let Some(block) = entity.parent() {
++                    let start = block.start_position();
++                    let end = block.end_position();
++                    graph_context.register_item_extent(
++                        entity_index,
++                        (start.row + 1, start.column),
++                        (end.row + 1, end.column),
++                    );
++                }
++            }
+         }
+         graph_context.add_contains_edge(
+             entity_index,
+@@ -386,7 +438,7 @@ fn walk_entity_node<'tree>(
+             node: entity,
+             language: adapter.language(),
+             name,
+-            symbol_type: adapter.classify(entity),
++            symbol_type,
+             breadcrumb: entity_breadcrumb,
+             signature: adapter.extract_signature(entity, source),
+             documentation: adapter.extract_doc(entity, source),
+@@ -3751,6 +3803,181 @@ public class Service {
+         );
+     }
+ 
++    #[test]
++    fn module_local_definition_shadows_the_file_scope_for_bare_calls() {
++        use crate::domain::GraphEdgeKind;
++
++        // A `mod storage` declaring its own `save` beside a top-level `save`:
++        // `storage::flush`'s bare `save()` reaches the module's definition, and
++        // the top-level one keeps only the callers that name it from file scope.
++        let source = test_source(
++            FileFormat::Rust,
++            "lib.rs",
++            concat!(
++                "/// Normalize a value before storing it.\n",
++                "pub fn normalize(value: i32) -> i32 { value.max(0) }\n",
++                "\n"
+```
+
+**File**: `rust/crates/zg-engine/src/extraction/graph.rs` (modified, +172/-9)
+```diff
+@@ -158,6 +158,95 @@ struct BindingScope {
+     end: Option<(usize, usize)>,
  }
  
- fn visit_for_bindings(
-@@ -662,6 +685,45 @@ fn visit_for_bindings(
++/// The block that directly contains one item, as a source span.
++///
++/// Rust scopes a block-level `fn` to the block that declares it: every body
++/// inside that block sees it, whatever its order, while a sibling item written
++/// after the block reaches the enclosing scope's spelling instead. Positions
++/// follow the collector's convention: one-based lines, zero-based columns.
++#[derive(Clone, Copy, Debug)]
++pub(crate) struct ItemExtent {
++    start: (usize, usize),
++    end: (usize, usize),
++}
++
++impl ItemExtent {
++    /// True when the call site `(line, column)` falls inside the block.
++    ///
++    /// The end is tree-sitter's `end_position`, the first position past the
++    /// block, so a call written directly after the closing brace is outside
++    /// it: `{ fn save() {} } save()` reaches the enclosing spelling.
++    pub(crate) fn contains(self, line: usize, column: usize) -> bool {
++        (line, column) >= self.start && (line, column) < self.end
++    }
++
++    /// Whether this block is the inner of two blocks that both hold a site.
++    ///
++    /// Source blocks nest rather than overlap, so of two blocks holding the
++    /// same position the one that opens later lies inside the other and is
++    /// the nearer scope; text order between two items says nothing about
++    /// which of their blocks is nearer.
++    pub(crate) fn is_nearer_than(self, other: Option<Self>) -> bool {
++        let Some(other) = other else {
++            return true;
++        };
++        self.start > other.start || (self.start == other.start && self.end < other.end)
++    }
++}
++
++/// The tables a Rust bare call reads while it climbs out of its own body.
++///
++/// Rust scopes names by item and by block rather than by the file alone, so
++/// partition needs several views at once: which entities are modules and which
++/// are function bodies, which items hold a spelling only in the type namespace,
++/// the block that directly contains each item, the names a `use` binds, and the
++/// globs that put names in view without spelling them. They are kept together
++/// because every one of them answers the same question — what a bare call at
++/// one position reaches — and a change to that answer touches several at once.
++///
++/// Other languages leave this empty: their bare calls are read from the file's
++/// own tables and the resolver's scope rules.
++#[derive(Debug, Default)]
++pub(crate) struct RustScopeTables {
++    /// Symbols each containing entity declares directly in its body, the
++    /// innermost-scope shadow table: a call inside `outer` that names
++    /// `work` binds the nested `outer::work` before any file-level name.
++    /// A spelling lists every entity registered under it in walk order, because
++    /// Rust keeps the type and value namespaces apart: `fn save` beside
++    /// `mod save` is legal, and only the function answers a bare call.
++    scoped_symbols: HashMap<usize, HashMap<String, Vec<usize>>>,
++    /// Rust modules. A module's items are in bare scope for every body written
++    /// inside it, so its table answers a bare call before the file's own
++    /// namesake does; an outer module's items need `super::` and never answer.
++    module_scopes: HashSet<usize>,
++    /// Rust functions. A function's items are in bare scope for the bodies
++    /// nested inside it (`fn outer() { fn save() {} fn inner() { save() } }`),
++    /// so partition reads its table while climbing towards the module.
++    function_scopes: HashSet<usize>,
++    /// Items that hold a spelling in the type namespace only (`trait save`,
++    /// `type save = ..`, `enum save`, an `impl` block, a named-field `struct`).
++    /// A bare call names a value, so such a spelling never answers it: beside
++    /// `fn save` the function keeps the call, and a spelling only the type
++    /// namespace holds stays pending.
++    type_namespace_items: HashSet<usize>,
++    /// The block that directly contains each item. A function's item table is
++    /// nearer than the module's, but only while the block that declares the
++    /// item is still open at the call site.
++    item_extents: HashMap<usize, ItemExtent>,
++    /// Names a `use` declaration binds in the body that writes it. Rust scopes
++    /// an import to that body, so a name a function imports is nearer than the
++    /// module's item of the same name: `use crate::other::save;` inside `flush`
++    /// makes its `save()` the imported one, which only the resolver can place.
++    /// The record carries no position, so a `use` in a nested block also leaves
++    /// calls outside that block pending: a lost edge rather than a wrong one.
++    import_bindings: HashMap<usize, HashSet<String>>,
++    /// Bodies that write a glob `use` (`use super::*;`). A glob states no
++    /// spelling this walk can place, but it does put the surrounding names in
++    /// view, which is why partition may still read the file's own table 
+```
+
+**File**: `rust/crates/zg-engine/src/extraction/graph/collector.rs` (modified, +193/-37)
+```diff
+@@ -621,6 +621,21 @@ fn visit_for_bindings(
+         // function the body calls by that name.
+         context.register_shadowed_name(owner_index, &name);
+     }
++    if format == FileFormat::Rust && node.kind() == "use_declaration" {
++        // `use crate::other::save;` binds `save` in this body alone, so the
++        // body's `save()` reaches that import rather than the module's own
++        // function of the name. Where the import points is the resolver's
++        // question, so the call stays pending here.
++        for name in rust_use_bindings(node, source) {
++            context.register_import_binding(owner_index, &name);
++        }
++        // A glob binds no spelling the walk can list, but it does put the
++        // source module's names in view, which partition needs in order not to
++        // rule the file's own namesakes out.
++        if rust_use_is_glob(node) {
++            context.register_import_glob(owner_index);
++        }
++    }
+     let line = node.start_position().row + 1;
+     let column = node.start_position().column;
+     if let Some((name, target)) = alias {
+@@ -685,43 +700,7 @@ fn visit_for_bindings(
          }
          return;
      }
-+    if format == FileFormat::Python
-+        && node.kind() == "assignment"
-+        && let Some(left) = node
-+            .child_by_field_name("left")
-+            .filter(|left| left.kind() == "identifier")
-+    {
-+        let name = node_text(left, source);
-+        // `client: Left = …` states the type beside the name, whatever value
-+        // the body stores in it.
-+        if let Some(bound) = node
-+            .child_by_field_name("type")
-+            .and_then(|ty| python_annotation_name(ty, source))
-+        {
-+            context.add_declare_binding(owner_index, name, &bound, line, column, None);
-+            return;
-+        }
-+        // `client = clients[0]` states that the name no longer holds what the
-+        // parameter declared. The index cannot place the value, so the name
-+        // holds no type from this line on rather than keeping the annotation
-+        // the parameter stated for the whole body.
-+        //
-+        // `client = other` is a copy of a name the body already types, and the
-+        // copy holds that type: a receiver reads `other`'s type from this line
-+        // on. A copy of a name the body states no type for leaves the name as
-+        // undecided as any other value the index cannot place — the annotation
-+        // described what the name held before the assignment, not after it.
-+        let copied = node
-+            .child_by_field_name("right")
-+            .filter(|right| right.kind() == "identifier")
-+            .and_then(|right| {
-+                context
-+                    .declared_type_at(owner_index, node_text(right, source), line, column)
-+                    .map(str::to_owned)
-+            })
-+            .filter(|bound| !matches!(bound.as_str(), PYTHON_UNBOUND_TYPE | PYTHON_NONE_TYPE));
-+        let bound = copied.as_deref().unwrap_or(PYTHON_UNBOUND_TYPE);
-+        context.add_declare_binding(owner_index, name, bound, line, column, None);
-+        return;
-+    }
+-    if format == FileFormat::Python
+-        && node.kind() == "assignment"
+-        && let Some(left) = node
+-            .child_by_field_name("left")
+-            .filter(|left| left.kind() == "identifier")
+-    {
+-        let name = node_text(left, source);
+-        // `client: Left = …` states the type beside the name, whatever value
+-        // the body stores in it.
+-        if let Some(bound) = node
+-            .child_by_field_name("type")
+-            .and_then(|ty| python_annotation_name(ty, source))
+-        {
+-            context.add_declare_binding(owner_index, name, &bound, line, column, None);
+-            return;
+-        }
+-        // `client = clients[0]` states that the name no longer holds what the
+-        // parameter declared. The index cannot place the value, so the name
+-        // holds no type from this line on rather than keeping the annotation
+-        // the parameter stated for the whole body.
+-        //
+-        // `client = other` is a copy of a name the body already types, and the
+-        // copy holds that type: a receiver reads `other`'s type from this line
+-        // on. A copy of a name the body states no type for leaves the name as
+-        // undecided as any other value the index cannot place — the annotation
+-        // described what the name held before the assignment, not after it.
+-        let copied = node
+-            .child_by_field_name("right")
+-            .filter(|right| right.kind() == "identifier")
+-            .and_then(|right| {
+-                context
+-                    .declared_type_at(owner_index, node_text(right, source), line, column)
+-                    .map(str::to_owned)
+-            })
+-            .filter(|bound| !matches!(bound.as_str(), PYTHON_UNBOUND_TYPE | PYTHON_NONE_TYPE));
+-        let bound = copied.as_deref().unwrap_or(PYTHON_UNBOUND_TYPE);
+-        context.add_declare_binding(owner_index, name, bound, line, column, None);
++    if collect_python_assignment(node, owner_index, source, format, context, line, column) {
+         return;
+     }
      for child in named_children(node) {
-         if boundary.is_some_and(|owns| owns(child)) {
-             continue;
-@@ -670,6 +732,361 @@ fn visit_for_bindings(
+@@ -732,6 +711,60 @@ fn visit_for_bindings(
      }
  }
  
-+/// Records what a Python class's `self.<member> = <value>` assignments state
-+/// about the member.
-+///
-+/// A Python class body states its attributes by assigning them on `self` from
-+/// inside a method, so the member a call reads through `self` — the
-+/// `self.fontset.render_glyph(…)` of a sibling method — is only known by
-+/// walking the methods. The binding belongs to the class: every method of the
-+/// class and of a subclass that inherits it reads the same member. The value
-+/// is read where it is written, so `self.fontset = fontset` takes the
-+/// parameter's annotation and `self.fontset = state.fontset` steps through the
-+/// member the parameter's own type states.
-+fn collect_python_self_members(
-+    class_node: Node<'_>,
++/// Records what a Python assignment states about the name it writes, if the
++/// node is one.
++fn collect_python_assignment(
++    node: Node<'_>,
 +    owner_index: usize,
 +    source: &[u8],
++    format: FileFormat,
 +    context: &mut WalkContext,
-+) {
-+    let class_name = class_node
-+        .child_by_field_name("name")
-+        .map(|name| node_text(name, source).to_owned());
-+    // The met
++    line: usize,
++    column: usize,
++) -> bool {
++    if format != FileFormat::Python || node.kind() != "assignment" {
++        return false;
++    }
++    let Some(left) = node
++        .child_by_field_name("left")
++        .filter(|left| left.kind() == "identifier")
++    else {
++        return false;
++    };
++    let name = node_text(left, source);
++    // `client: Left = …` states the type beside the name, whatever value
++    // the body stores in it.
++    if let Some(bound) = node
++        .child_by_field_name("type")
++        .and_then(|ty| python_annotation_name(ty, source))
++    {
++        context.add_declare_binding(owner_index, name, &bound, line, column, None);
++        return true;
++    }
++    // `client = clients[0]` states that the name no longer holds what the
++    // parameter declared. The index cannot place the value, so the name
++    // holds no type from this line on rather than keeping the annotation
++    // the parameter stated for the whole body.
++    //
++    // `client = other` is a copy of a name the body already types, and the
++    // copy holds that type: a receiver reads `other`'s type from this line
++    // on. A copy of a name the body states no type for leaves the name as
++    // undecided as any other value the index cannot place — the annotation
++    // described what the name held before the assignment, not after it.
++    let copied = node
++        .child_
 ```
 
-**File**: `rust/crates/zg-engine/src/extraction/graph/partition.rs` (modified, +30/-14)
+**File**: `rust/crates/zg-engine/src/extraction/graph/partition.rs` (modified, +399/-72)
 ```diff
-@@ -17,7 +17,7 @@ use std::collections::{HashMap, HashSet};
+@@ -17,7 +17,10 @@ use std::collections::{HashMap, HashSet};
  
  use crate::domain::{EdgeProvenance, GraphEdgeKind, PreprocessorDirective};
  
--use super::{Constructs, NameEdge, WalkContext, WalkEdge};
-+use super::{Constructs, NameEdge, PYTHON_NONE_TYPE, PYTHON_UNBOUND_TYPE, WalkContext, WalkEdge};
+-use super::{Constructs, NameEdge, PYTHON_NONE_TYPE, PYTHON_UNBOUND_TYPE, WalkContext, WalkEdge};
++use super::{
++    Constructs, ItemExtent, NameEdge, PYTHON_NONE_TYPE, PYTHON_UNBOUND_TYPE, RustScopeTables,
++    WalkContext, WalkEdge,
++};
  
  /// A name reference resolved against this file's own symbol table.
  #[derive(Clone, Debug, Eq, PartialEq)]
-@@ -142,6 +142,12 @@ fn states_a_placeable_value(bound: &str) -> bool {
-     !(bound == "?" || bound.starts_with("typeof "))
- }
- 
-+/// Whether a binding is the sentinel a Python body writes when it rebinds a
-+/// name to a value it cannot place or states only the name's absence.
-+fn is_python_rebound(bound: &str) -> bool {
-+    matches!(bound, PYTHON_UNBOUND_TYPE | PYTHON_NONE_TYPE)
-+}
-+
- /// The entity the file declares exactly once under `name`; two same-named
- /// declarations are not evidence for either.
- fn unique_symbol(symbols: &HashMap<String, Vec<usize>>, name: &str) -> Option<usize> {
-@@ -346,20 +352,30 @@ fn in_file_target(edge: &NameEdge, shadowed: bool, tables: InFileTables<'_>) ->
-         // naming `run` does not see `A::run` just because the file declares it
-         // once. Without better evidence the reference stays pending for the
-         // cross-file resolver, which also weighs imports.
--        GraphEdgeKind::Calls => match alias_at(aliases, edge) {
--            // The binding states no value this file can place, so the spelled
--            // name is not the answer: the resolver reads the declared binding
--            // at the call's position and can still tell a parameter, a nested
--            // definition or a later reassignment apart from the file's name.
--            Some(bound) if !states_a_placeable_value(bound) => None,
--            Some(bound) => unique_symbol(symbols, bound),
--            None => {
--                let value_alias = value_aliases
-+        GraphEdgeKind::Calls => {
-+            let value_alias = || {
-+                value_aliases
-                     .get(&(edge.owner_index, edge.ref_name.clone()))
-                     .or_else(|| {
-                         value_aliases.get(&(super::FILE_SCOPE_INDEX, edge.ref_name.clone()))
--                    });
--                match value_alias {
-+                    })
-+            };
-+            match alias_at(aliases, edge) {
-+                // A Python body that rebinds a name states it holds no type
-+                // the index can place (`client = clients[0]`), but a copy of
-+                // another name is evidence of its own: `alias = target` still
-+                // reaches `target` through the alias table.
-+                Some(bound) if is_python_rebound(bound) => {
-+                    value_alias().and_then(|bound| unique_symbol(symbols, bound))
-+                }
-+                // The binding states no value this file can place, so the
-+                // spelled name is not the answer: the resolver reads the
-+                // declared binding at the call's position and can still tell a
-+                // parameter, a nested definition or a later reassignment apart
-+                // from the file's name.
-+                Some(bound) if !states_a_placeable_value(bound) => None,
-+                Some(bound) => unique_symbol(symbols, bound),
-+                None => match value_alias() {
-                     // A pair the walk recorded without a position of its own
-                     // (`x = y` where the declaration states no type) is the
-                     // only evidence there is.
-@@ -373,9 +389,9 @@ fn in_file_target(edge: &NameEdge, shadowed: bool, tables: InFileTables<'_>) ->
-                                 .then(|| unique_symbol(file_symbols, &edge.ref_name))
-                                 .flatten()
-                         }),
--                }
-+                },
+@@ -177,7 +180,7 @@ pub(crate) fn partition_walk(
+         name_edges,
+         symbols,
+         file_symbols,
+-        scoped_symbols,
++        rust_scopes,
+         shadowed_names,
+         borrowed_names,
+         value_aliases,
+@@ -218,38 +221,20 @@ pub(crate) fn partition_walk(
+                 continue;
              }
--        },
-+        }
-         GraphEdgeKind::Extends | GraphEdgeKind::Implements => {
-             unique_symbol(symbols, &edge.ref_name)
          }
-```
-
-**File**: `rust/crates/zg-engine/src/extraction/mod.rs` (modified, +1/-1)
-```diff
-@@ -26,7 +26,7 @@ pub(crate) use spi::{ExtractedEntity, ExtractedEntityFragment, ExtractionOutput}
- #[cfg(test)]
- pub(crate) use graph::Constructs;
- #[allow(unused_imports)]
--pub(crate) use graph::{FILE_SCOPE_INDEX, PartitionedGraph};
-+pub(crate) use graph::{FILE_SCOPE_INDEX, PYTHON_NONE_TYPE, PYTHON_UNBOUND_TYPE, PartitionedGraph};
- #[cfg(test)]
- pub(crate) use graph::{PendingNameRef, ResolvedNameEdge};
+-        // A bare name the owner's body already took for itself is not the
+-        // file's name: `invoke(dispatch: () => void)` reaching `dispatch()`
+-        // calls the parameter, never an imported function some alias table
+-        // happens to spell. Only the owner's own tables may answer it, and a
+-        // name no table can place stays pending instead of falling back.
+-        let shadowed = edge.receiver_name.is_none()
+-            && shadowed_names
+-                .get(&edge.owner_index)
+-                .is_some_and(|names| names.contains(&edge.ref_name));
+-        // A name one of the classes around the owner imports
+-        // (`using First<T>::Run;`) is that class's member, not the file's
+-        // namesake: the cross-file resolver decides which member it reaches.
+-        let borrowed = edge.receiver_name.is_none()
+-            && borrowed_by_enclosing_class(
+-                edge.owner_index,
+-                &edge.ref_name,
+-                &enclosing,
+-                &borrowed_names,
+-            );
+         let resolved_target = in_file_target(
+             &edge,
+-            shadowed || borrowed,
++            shadowed_at_site(&edge, &enclosing, &shadowed_names, &borrowed_names),
+             InFileTables {
+                 symbols: &symbols,
+-                scoped_symbols: &scoped_symbols,
++                rust: &rust_scopes,
+                 file_symbols: &file_symbols,
+                 aliases: &aliases,
+                 value_aliases: &value_aliases,
++                enclosing: &enclosing,
+             },
+         );
+         match resolved_target {
+-            Some(target_index) => partitioned.resolved.push(ResolvedNameEdge {
++            InFileTarget::Bound(target_index) => partitioned.resolved.push(ResolvedNameEdge {
+                 ref_kind: edge.ref_kind,
+                 source_index: edge.owner_index,
+                 target_index,
+@@ -261,7 +246,7 @@ pub(crate) fn partition_walk(
+                 column: edge.column,
+                 provenance: EdgeProvenance::FileLocal,
+             }),
+-            None => partitioned.pending.push(PendingNameRef {
++            InFileTarget::Pending => partitioned.pending.push(PendingNameRef {
+                 ref_kind: edge.ref_kind,
+                 owner_index: edge.owner_index,
+                 ref_name: edge.ref_name,
+@@ -275,11 +260,38 @@ pub(crate) fn partition_walk(
+                 line: edge.line,
+                 column: edge.column,
+             }),
++            // The scopes around the call rule out every spelling this file
++            // holds, so there is nothing for the resolver to weigh either.
++            InFileTarget::OutOfReach => {}
+         }
+     }
+     partitioned
+ }
  
-```
-
-**File**: `rust/crates/zg-engine/src/pipelines/indexing/graph_resolver.rs` (modified, +355/-35)
-```diff
-@@ -36,6 +36,7 @@ use crate::domain::{
-     EdgeProvenance, FileFormat, GraphEdgeKind, SymbolType, formats_for_path,
-     reference_compatible_with,
- };
-+use crate::extraction::{PYTHON_NONE_TYPE, PYTHON_UNBOUND_TYPE};
- use crate::storage::graph::{
-     DeclaredBinding, ImportReference, NameIndexEntry, Resolution, StoredPendingRef,
- };
-@@ -2854,21 +2855,41 @@ fn receiver_path_type(
-         };
-         return Ok(step_type(marker, &inner_type));
-     }
--    if let Some(bound) = declared_receiver_type(store, snapshot, stored, receiver, caches)? {
--        // A loop or a placeholder declaration binds what the range or path it
--        // was taken from holds, which is only known once that is read.
--        if let Some((marker, inner)) = step_marker(&bound) {
--            let Some(inner_type) =
--                receiver_path_type(store, snapshot, stored, inner, caches, depth + 1)?
--            else {
--                return Ok(None);
--            };
--            return Ok(step_type(marker, &inner_type));
-+    match declared_receiver_type(store, snapshot, stored, receiver, caches)? {
-+        // The body rebound the name to a value it cannot type. The name holds
-+        // no type, and the scopes below must not claim it back: `self =
-+        // objects[0]` no longer names this class's instance.
-+        ReceiverBinding::Undecided => return Ok(None),
-+        ReceiverBinding::Known(bound) => {
-+            // A member read the extraction could not type states the type stating
-+            // it: `member_of:(ParserState,fontset)` is what `ParserState` says
-+            // `fontset` holds.
-+            if member_step(&bound).is_some() {
-+                return resolve_member_steps(store, snapshot, stored, bound, caches, depth);
-+            }
-+            // A loop or a placeholder declaration binds what the range or path it
-+            // was taken from holds, which is only known once that is read.
-+            if let Some((marker, inner)) = step_marker(&bound) {
-+                let Some(inner_type) =
-+                    receiver_path_type(store, snapshot, stored, inner, caches, depth + 1)?
-+                else {
-+                    return Ok(None);
-+                };
-+                return Ok(step_type(marker, &inner_type));
-+            }
-+            // The spelling keeps the declarator's decorations: a pointer answers a
-+            // subscript with what it points at, and the step that reads the value
-+            // decides what the name itself denotes.
-+            return Ok(Some(bound));
-         }
--        // The spelling keeps the declarator's decorations: a pointer answers a
--        // subscript with what it points at, and the step that reads the value
--        // decides what the name itself denotes.
--        return Ok(Some(bound));
-+        ReceiverBinding::Absent => {}
++/// Whether the name a call spells is already taken nearer than the file's own
++/// table, so no enclosing item scope may answer it.
++///
++/// A bare name the owner's body took for itself is not the file's name:
++/// `invoke(dispatch: () => void)` reaching `dispatch()` calls the parameter,
++/// never an imported function some alias table happens to spell. A name one of
++/// the classes around the owner imports (`using First<T>::Run;`) is that
++/// class's member rather than the file's namesake, and the cross-file resolver
++/// decides which member it reaches.
++fn shadowed_at_site(
++    edge: &NameEdge,
++    enclosing: &HashMap<usize, usize>,
++    shadowed_names: &HashMap<usize, HashSet<String>>,
++    borrowed_names: &HashMap<usize, HashSet<String>>,
++) -> bool {
++    if edge.receiver_name.is_some() {
++        return false;
 +    }
-+    // `self` and `cls` hold the enclosing class: a member read through them is
-+    // a member that class or one of its bases states.
-+    if is_self_receiver(&stored.language, receiver) {
-+        return Ok(snapshot
-+            .entity_record(&stored.reference.owner_id)
-+            .and_then(|owner| enclosing_class_scope(snapshot, &owner.qualified_name)));
-     }
-     let Some((base, member)) = receiver.rsplit_once('.') else {
-         return Ok(None);
-@@ -2877,7 +2898,100 @@ fn receiver_path_type(
-     else {
-         return Ok(None);
-     };
--    member_of_type(store, snapshot, stored, &base_type, member, caches, depth)
-+    let Some(bound) = member_of_type(store, snapshot, stored, &base_type, member, caches, depth)?
-+    else {
-+        return Ok(None);
-+    };
-+    resolve_member_steps(store, snapshot, stored, bound, caches, depth)
++    shadowed_names
++        .get(&edge.owner_index)
++        .is_some_and(|names| names.contains(&edge.ref_name))
++        || borrowed_by_enclosing_class(edge.owner_index, &edge.ref_name, enclosing, borrowed_names)
 +}
 +
-+/// The type a member read denotes, one step at a time.
-+///
-+/// The extraction states a member read it cannot look up as
-+/// `member_of:(<type>,<member>)`; the member's own type may step again
-+/// (`self.fontset = self.state.fontset`), so the steps are read until the
-+/// type is one the member rule can search.
-+///
-+/// # Errors
-+/// Propagates graph storage failures of the member reads.
-+fn resolve_member_steps(
-+    store: &IndexStore,
-+    snapshot: &ResolutionSnapshot,
-+    stored: &StoredPendingRef,
-+    bound: String,
-+    caches: &mut RuleCaches,
-+    depth: usize,
-+) -> crate::EngineResult<Option<String>> {
-+    let mut bound = bound;
-+    let mut depth = depth;
-+    loop {
-+        let Some((base, member)) = member_step(&bound) else {
-+            return Ok(Some(bound));
-+        };
-+        if depth > MAX_TYPE_STEPS {
-+            return Ok(None);
-+        }
-+        // What the member is read from may state a step of its own
-+        // (`member_of:(member_of:(ParserState,state),fontset)`): the type the
-+        // outer member belongs to is only known once that step is read.
-+        let base = match member_step(base) {
-+            Some(_) => {
-+                let Some(resolved) = resolve_member_steps(
-+                    store,
-+                    snapsho
+ /// Whether one of the entities around `owner` imports `name` from another
+ /// scope: a class body's `using First<T>::Run;` answers `Run()` in the
+ /// methods written in that class, so the file's own namesake is not the call.
+@@ -306,98 +318,288 @@ fn borrowed_by_enclosing_class(
+     false
+ }
+ 
++/// What one scope's name table says about the spelling of a bare call.
++enum Loca
 ```
 
-**File**: `rust/crates/zg-engine/tests/call_resolution_regressions.rs` (modified, +288/-0)
+**File**: `rust/crates/zg-engine/tests/call_resolution_regressions.rs` (modified, +271/-0)
 ```diff
-@@ -1228,3 +1228,291 @@ async fn rust_glob_imports_respect_local_types_and_explicit_imports() {
-         }).await;
-     }
+@@ -1282,6 +1282,26 @@ async fn python_bare_parameter_does_not_read_the_class_member() {
+     .await;
+ }
+ 
++#[tokio::test]
++async fn review_type_namespace_item_must_not_steal_function_call() {
++    // `pub trait save` shares `save`'s spelling but not its namespace: a bare
++    // call names a value, so only the function may answer it.
++    check_case(Case {
++        name: "review_type_namespace_item_must_not_steal_function_call",
++        files: vec![SourceFile {
++            path: "lib.rs",
++            source: "pub mod m {\n    pub fn save() {}\n    pub trait save {}\n    pub fn flush() { save(); }\n}\n",
++        }],
++        queries: vec![Query {
++            operation: "callees",
++            symbol: "m::flush",
++            expected: json!([{"name":"m::flush","edges":[{"symbol":{"name":"m::save","startLine":2}}]}]),
++            ..Query::default()
++        }],
++    })
++    .await;
++}
++
+ // A member a body writes with a value the index cannot place no longer holds
+ // what an earlier write stated, so the call through it stays undecided instead
+ // of answering with the type the constructor's first line named.
+@@ -1516,3 +1536,254 @@ async fn review435_rebound_self_stays_undecided() {
+     })
+     .await;
  }
 +
-+// A decorated class reaches the binding scan as its decorator's wrapper, and a
-+// member one method writes is read by the methods beside it: the step is
-+// stated as `member_of:(<type>,<member>)` and the resolver walks it.
 +#[tokio::test]
-+async fn python_self_member_chain_reaches_the_decorated_class_member() {
++async fn review_nested_block_item_must_not_leak_into_sibling_item() {
++    // The `save` inside the block ends with that block; the sibling `inner`
++    // written after it reaches the module's own `save`, not that one.
 +    check_case(Case {
-+        name: "python_self_member_chain_reaches_the_decorated_class_member",
++        name: "review_nested_block_item_must_not_leak_into_sibling_item",
 +        files: vec![SourceFile {
-+            path: "shapes.py",
-+            source: "class Fonts:\n    def render_glyph(self):\n        return 1\n\n@dataclass\nclass ParserState:\n    def __init__(self, fontset: Fonts):\n        self.fontset = fontset\n\n@dataclass\nclass Char:\n    def __init__(self, state: ParserState):\n        self.inner = state.fontset\n\n    def render(self):\n        return self.inner.render_glyph()\n",
-+        }],
-+        queries: vec![
-+            Query {
-+                operation: "callees",
-+                symbol: "render",
-+                expected: json!([{"name": "Char::render", "edges": [
-+                    {"symbol": {"name": "Fonts::render_glyph"}, "line": 16}
-+                ]}]),
-+                ..Query::default()
-+            },
-+            Query {
-+                operation: "callers",
-+                symbol: "render_glyph",
-+                expected: json!([{"name": "Fonts::render_glyph", "edges": [
-+                    {"symbol": {"name": "Char::render"}}
-+                ]}]),
-+                ..Query::default()
-+            },
-+        ],
-+    })
-+    .await;
-+}
-+
-+// A bare name of a Python body is the parameter the body declares, not the
-+// class member another method stated under the same name.
-+#[tokio::test]
-+async fn python_bare_parameter_does_not_read_the_class_member() {
-+    check_case(Case {
-+        name: "python_bare_parameter_does_not_read_the_class_member",
-+        files: vec![SourceFile {
-+            path: "parser.py",
-+            source: "class Index:\n    def create_variables(self):\n        return 1\n\nclass Parser:\n    def __init__(self):\n        self.index = Index()\n\n    def run(self, index):\n        return index.create_variables()\n",
++            path: "lib.rs",
++            source: "pub mod m {\n    pub fn save() -> i32 { 1 }\n    pub fn outer() -> i32 {\n        { fn save() -> i32 { 2 } }\n        fn inner() -> i32 { save() }\n        inner()\n    }\n}\n",
 +        }],
 +        queries: vec![Query {
 +            operation: "callees",
-+            symbol: "run",
-+            expected: json!([{"name": "Parser::run", "edges": []}]),
++            symbol: "inner",
++            expected: json!([{"name":"m::outer::inner","edges":[{"symbol":{"name":"m::save","startLine":2}}]}]),
 +            ..Query::default()
 +        }],
 +    })
 +    .await;
 +}
 +
-+// A member a body writes with a value the index cannot place no longer holds
-+// what an earlier write stated, so the call through it stays undecided instead
-+// of answering with the type the constructor's first line named.
 +#[tokio::test]
-+async fn python_unknown_member_write_invalidates_the_earlier_type() {
++async fn followup_named_field_struct_must_not_steal_value_call() {
++    // A struct with named fields declares no constructor value, so `struct
++    // save` beside `fn save` leaves the call to the function. A tuple struct
++    // or a unit struct does declare one, and those stay value candidates.
 +    check_case(Case {
-+        name: "python_unknown_member_write_invalidates_the_earlier_type",
++        name: "followup_named_field_struct_must_not_steal_value_call",
 +        files: vec![SourceFile {
-+            path: "use.py",
-+            source: "class Left:\n    def work(self):\n        return 'left'\n\nclass Right:\n    def work(self):\n        return 'right'\n\nclass Runner:\n    def __init__(self, client):\n        self.client = Left()\n        self.client = client\n\n    def run(self):\n        return self.client.work()\n",
++            path: "lib.rs",
++            source: "pub mod m {\n    pub fn save() -> i32 { 1 }\n    pub struct save { pub value: i32 }\n    pub fn flush() -> i32 { save() }\n}\n",
 +        }],
 +        queries: vec![Query {
 +            operation: "callees",
-+            symbol: "Runner::run",
-+            expected: json!([{"name": "Runner::run", "edges": []}]),
++            symbol: "m::flush",
++            expected: json!([{"name":"m::flush","edges":[{"symbol":{"name":"m::save","startLine":2}}]}]),
 +            ..Query::default()
 +        }],
 +    })
 +    .await;
 +}
 +
-+// `client: Left` states the parameter, and `client = clients[0]` takes it back:
-+// the element a container holds is not the annotated type.
 +#[tokio::test]
-+async fn python_parameter_reassignment_invalidates_its_annotation() {
++async fn followup_innermost_block_must_win_over_later_outer_item() {
++    // Both the inner block and `outer`'s body hold a `save` in view at the
++    // call site. The block that lies inside the other is the nearer one, so
++    // the call leaves `outer` to the inner definition even though `outer`'s
++    // own `save` is written later in the text.
 +    check_case(Case {
-+        name: "python_parameter_reassignment_invalidates_its_annotation",
++        name: "followup_innermost_block_must_win_over_later_outer_item",
 +        files: vec![SourceFile {
-+            path: "use.py",
-+            source: "class Left:\n    def work(self):\n        return 'left'\n\nclass Right:\n    def work(self):\n        return 'right'\n\ndef run(client: Left, clients):\n    client = clients[0]\n    return client.work()\n",
++            path: "lib.rs",
++            source: "pub mod m {\n    pub fn save() -> i32 { 0 }\n    pub fn outer() -> i32 {\n        let result = {\n            fn save() -> i32 { 1 }\n            fn inner() -> i32 { save() }\n            inner()\n        };\n        fn save() -> i32 { 2 }\n        result\n    }\n}\n",
 +        }],
 +        queries: vec![Query {
 +            operation: "callees",
-+            symbol: "run",
-+            expected: json!([{"name": "run", "edges": []}]),
++            symbol: "inner",
++            expected: json!([{"name":"m::outer::inner","edges":[{"symbol":{"name":"m::outer::save","startLine":5}}]}]),
 +            ..Query::default()
 +        }],
 +    })
 +    .await;
 +}
 +
-+// A union arm the reader cannot name (`right.Right` is a module) is no evidence
-+// that the arm it can name is the only shape the value takes.
 +#[tokio::test]
-+async fn python_union_with_an_unreadable_arm_stays_undecided() {
++async fn followup_block_end_position_is_exclusive() {
++    // Tree-sitter's `end_position` points one past the block's last byte, so
++    // a call written directly after the closing brace is outside that block
++    // and reaches the module's own `save`.
 +    check_case(Case {
-+        name: "python_union_with_an_unreadable_arm_stays_undecided",
-+        files: vec![
-+            SourceFile {
-+                path: "right.py",
-+                source: "class Right:\n    def send(self):\n        return 'right'\n",
-+            },
-+            SourceFile {
-+                path: 
++        name: "followup_block_end_position_is_exclusive",
++        files: vec![SourceFile {
++            path: "lib.rs",
++            source: "pub mod m {\n    pub fn save() -> i32 { 1 }\n    pub fn outer() -> i32 {\n        {fn save() -> i32 {2}}save()\n    }\n}\n",
++        }],
++        queries: vec![Query {
++            operation: "callees",
++            symbol: "m::outer",
++            expected: json!([{"name":"m::outer","edges":[{"symbol":{"name":"m::save","startLine":2}}]}]),
++            ..Query::default()
++        }],
++    })
++
 ```
 
 ---
 
-### Incident Patch 2: `8415f1be` (2026-11-23)
-**Commit Message**: fix(ci): support Cargo 1.100 CUDA fallback metadata (#449)
+### Incident Patch 2: `5ece6dc4` (2026-11-24)
+**Commit Message**: fix(search): restrict rule ranking to code candidates (#447)
 
-**File**: `rust/scripts/cuda/build-fallback.py` (modified, +9/-3)
+* fix(search): restrict rule ranking to code candidates
+
+* fix(ci): use the workspace Cargo toolchain for the CUDA fallback fixture
+
+Building from the temporary fixture directory selected the runner default Cargo 1.100. Its build-script output layout differs from the pinned Cargo used by release builds. Run from the Rust workspace and point Cargo at the fixture manifest so the packaging test exercises the release toolchain.
+
+* fix(search): prefer exact symbol recall on RRF ties
+
+**File**: `rust/README.md` (modified, +6/-0)
 ```diff
-@@ -25,9 +25,15 @@ def source_build(messages):
-     if len(builds) != 1:
-         raise RuntimeError("Expected one active llama sys build script in the primary Cargo messages")
-     # Cargo retains build-script stdout beside this invocation's OUT_DIR, also
--    # on cache hits. The pinned sys crate records its verified source here;
--    # custom metadata is not included in Cargo's JSON build-script record.
--    output = Path(builds[0]["out_dir"]).parent / "output"
-+    # on cache hits: output before 1.100, run/stdout in the new build-dir layout.
-+    # The pinned sys crate records its verified source here; custom metadata is
-+    # not included in Cargo's JSON build-script record.
-+    directory = Path(builds[0]["out_dir"]).parent
-+    candidates = [directory / "output", directory / "run" / "stdout"]
-+    outputs = [path for path in candidates if path.is_file()]
-+    if len(outputs) != 1:
-+        raise RuntimeError(f"Missing or ambiguous build-script stdout for primary OUT_DIR: {candidates}")
-+    output = outputs[0]
-     lines = output.read_text(encoding="utf-8").splitlines()
-     metadata = {}
-     for key in ("source_dir", "source_revision"):
+@@ -532,6 +532,12 @@ Explicit `--hybrid`, `--fts`, `--vector`, `--fuse`, symbol options, `--trace`, a
+ `--refresh` retain their indexed behavior. Text questions, URLs, and glob patterns
+ do not trigger automatic path lookup.
+ 
++In indexed search, `--trace` shows each hit's rank (`#1`, `#2`, …) and `score=`.
++Code hits show the rule-ranking score. Other hits show the raw reciprocal rank
++fusion (RRF) score. These scores use different scales, so use the displayed
++rank for the final order. The trace's `fusion.score` gives the raw RRF score
++for either kind of hit.
++
+ Managed `zg --rg` preserves literal pattern whitespace and supports empty
+ patterns with `-e ''`. Matching options include fixed strings (`-F`), case
+ selection (`-i`, `-s`, `-S`, with the last option winning), word/whole-line
 ```
 
-**File**: `rust/scripts/npm-local.test.mjs` (modified, +47/-18)
+**File**: `rust/crates/zg-engine/src/api/context.rs` (modified, +3/-0)
 ```diff
-@@ -1,7 +1,7 @@
- import assert from "node:assert/strict";
- import { spawnSync } from "node:child_process";
- import test from "node:test";
--import { chmod, lstat, mkdtemp, mkdir, readFile, rm, symlink, truncate, writeFile } from "node:fs/promises";
-+import { chmod, copyFile, lstat, mkdtemp, mkdir, readFile, rm, symlink, truncate, writeFile } from "node:fs/promises";
- import { tmpdir } from "node:os";
- import { join } from "node:path";
- import { fileURLToPath } from "node:url";
-@@ -492,6 +492,8 @@ test("CUDA fallback uses the primary Cargo source record, including cached build
-     await writeFile(join(directory, "CMakeLists.txt"), "# source path fixture\n");
-   }
-   await mkdir(join(project, "src"));
-+  // This temporary project is outside the repository's toolchain scope.
-+  await copyFile(new URL("../rust-toolchain.toml", import.meta.url), join(project, "rust-toolchain.toml"));
-   await writeFile(join(project, "Cargo.toml"),
-     '[package]\nname = "llama-cpp-sys-2"\nversion = "0.0.0"\nedition = "2021"\nlinks = "llama"\n');
-   await writeFile(join(project, "Cargo.lock"),
-@@ -530,35 +532,62 @@ messages = pathlib.Path(sys.argv[2])
-     const records = result.stdout.trim().split(/\r?\n/).map((line) => JSON.parse(line));
-     if (index === 1) assert.ok(records.some((r) => r.reason === "compiler-artifact" && r.fresh));
-     inspect(String.raw`
--source, revision = fallback.source_build(messages)
--assert source == pathlib.Path(sys.argv[3]), (source, sys.argv[3])
--assert revision == sys.argv[4]
--command = fallback.configure(source, source / "build", source / "cuda", fallback.DEFAULT_ARCHITECTURES)
--assert command[command.index("-S") + 1] == str(source)
-+build = next(r for r in fallback.cargo_records(messages) if r.get("reason") == "build-script-executed")
-+directory = pathlib.Path(build["out_dir"]).parent
-+outputs = [directory / "output", directory / "run" / "stdout"]
-+actual = next(output for output in outputs if output.is_file())
-+# Replay the real metadata in both Cargo layouts, restoring it before the next
-+# build so Cargo's cache behavior is still exercised by Cargo itself.
-+for output in outputs:
-+    output.parent.mkdir(parents=True, exist_ok=True)
-+    if output != actual:
-+        actual.rename(output)
-+    try:
-+        source, revision = fallback.source_build(messages)
-+        assert source == pathlib.Path(sys.argv[3]), (source, sys.argv[3])
-+        assert revision == sys.argv[4]
-+        command = fallback.configure(source, source / "build", source / "cuda", fallback.DEFAULT_ARCHITECTURES)
-+        assert command[command.index("-S") + 1] == str(source)
-+    finally:
-+        if output != actual:
-+            output.rename(actual)
- `, source, revision);
-   }
-   inspect(String.raw`
- records = fallback.cargo_records(messages)
- build = next(r for r in records if r.get("reason") == "build-script-executed")
--output = pathlib.Path(build["out_dir"]).parent / "output"
--original = output.read_text(encoding="utf-8")
-+directory = pathlib.Path(build["out_dir"]).parent
-+outputs = [directory / "output", directory / "run" / "stdout"]
-+actual = next(output for output in outputs if output.is_file())
-+original = actual.read_text(encoding="utf-8")
- def reject(expected):
-     try:
-         fallback.source_build(messages)
-     except RuntimeError as error:
-         assert expected in str(error), str(error)
-     else:
-         raise AssertionError("invalid primary source accepted")
--for text, error in [
--    ("cargo:source_revision=" + "a" * 40, "source_dir"),
--    (original + "\ncargo:source_dir=/stale\n", "source_dir"),
--    (original.replace(sys.argv[3], "relative/source"), "source is unavailable"),
--    (original.replace(sys.argv[3], str(output.parent / "missing")), "source is unavailable"),
--    (original.replace(sys.argv[4], "not-a-revision"), "source_revision"),
--]:
--    output.write_text(text, encoding="utf-8")
--    reject(error)
--output.write_text(original, encoding="utf-8")
-+actual.unlink()
-+reject("Missing or ambiguous build-script stdout")
-+for output in outputs:
-+    output.parent.mkdir(parents=True, exist_ok=True)
-+    for text, error in [
-+        ("cargo:source_revision=" + "a" * 40, "source_dir"),
-+        (original + "\ncargo:source_dir=/stale\n", "source_dir"),
-+        (original + "\ncargo:source_revision=" + "a" * 40, "source_revision"),
-+        (original.replace(sys.argv[3], "relative/source"), "source is unavailable"),
-+        (original.replace(sys.argv[3], str(directory / "missing")), "source is unavailable"),
-+        (original.replace(sys.argv[4], "not-a-revision"), "source_revision"),
-+    ]:
-+        output.write_text(text, encoding="utf-8")
-+        reject(error)
-+    output.unlink()
-+for output in outputs:
-+    output.write_text(original, encoding="utf-8")
-+reject("Missing or ambiguous build-script stdout")
-+for output in outputs:
-+    output.unlink()
-+actual.write_text(original, encoding="utf-8")
- for changed, error in [
-     (records[:-1], "finish successfully"),
-     ([*records[:-1], {"r
+@@ -490,6 +490,7 @@ pub mod result {
+     #[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
+     pub struct ContextItem {
+         pub kind: ContextItemKind,
++        /// One-based position in the final result order.
+         pub rank: usize,
+         pub absolute_path: PathBuf,
+         pub relative_path: PathBuf,
+@@ -508,6 +509,8 @@ pub mod result {
+         pub outline: Option<String>,
+         pub content_role: Option<ContextContentRole>,
+         pub status: ContextItemStatus,
++        /// Indexed code hits carry their rule-ranking score. Other indexed hits carry their
++        /// raw reciprocal rank fusion (RRF) score. Use `rank` to order mixed results.
+         pub score: Option<f64>,
+         pub matched_by: MatchedBy,
+         pub metadata: Option<EntityMetadata>,
+```
+
+**File**: `rust/crates/zg-engine/src/pipelines/indexed_search/pipeline.rs` (modified, +252/-86)
+```diff
+@@ -147,12 +147,14 @@ struct RecallRoute {
+     route: ResolvedSearchRoute,
+     filter: Option<StorageSearchFilter>,
+     vector_route_id: Option<String>,
++    is_symbol_recall: bool,
+ }
+ 
+ struct Candidate {
+     id: EntityId,
+     file_id: FileId,
+     sources: HashSet<SearchRouteMode>,
++    matched_symbol_recall: bool,
+     recall: Vec<SearchRecallTrace>,
+     evidence: Vec<InternalEvidence>,
+     score: f64,
+@@ -256,7 +258,7 @@ async fn search_with_stage_trace(
+     }
+ 
+     let load_started = Instant::now();
+-    // Every recalled entity must be eligible for structural boosts before cutoff.
++    // Load past the cutoff so any recalled code definition can fill a visible code position.
+     let hits = load_candidates(fused, limit, plan.trace, storage)?;
+     let load_duration = load_started.elapsed();
+     if let Some(observation) = observation.as_mut() {
+@@ -426,7 +428,7 @@ fn collect_adaptive_recall(
+             if let Some(observation) = observation.as_deref_mut() {
+                 observation.recall(&route.route.id, depth, &hits);
+             }
+-            add_recall_hits(candidates, &hits, &route.route)?;
++            add_recall_hits(candidates, &hits, route)?;
+         }
+         if candidates.len() >= target || !saturated || depth >= RECALL_MAX_DEPTH {
+             return Ok(());
+@@ -447,6 +449,7 @@ fn build_recall_routes(
+             vector_route_id: (route.mode == SearchRouteMode::Vector).then(|| route.id.clone()),
+             route,
+             filter: filter.cloned(),
++            is_symbol_recall: false,
+         })
+         .collect::<Vec<_>>();
+     if prefer_symbol {
+@@ -475,6 +478,7 @@ fn build_recall_routes(
+                 },
+                 filter: Some(symbol_filter),
+                 vector_route_id: None,
++                is_symbol_recall: true,
+             });
+         }
+     }
+@@ -484,8 +488,9 @@ fn build_recall_routes(
+ fn add_recall_hits(
+     candidates: &mut HashMap<EntityId, Candidate>,
+     hits: &[StorageSearchHit],
+-    route: &ResolvedSearchRoute,
++    recall_route: &RecallRoute,
+ ) -> Result<(), EngineError> {
++    let route = &recall_route.route;
+     // Increasing top-k can change its prefix, including which fragments appear there.
+     for (index, hit) in hits.iter().enumerate() {
+         let rank = index + 1;
+@@ -495,6 +500,7 @@ fn add_recall_hits(
+                 id: hit.entity_id.clone(),
+                 file_id: hit.file_id,
+                 sources: HashSet::new(),
++                matched_symbol_recall: false,
+                 recall: Vec::new(),
+                 evidence: Vec::new(),
+                 score: 0.0,
+@@ -506,6 +512,7 @@ fn add_recall_hits(
+             ));
+         }
+         candidate.sources.insert(route.mode);
++        candidate.matched_symbol_recall |= recall_route.is_symbol_recall;
+         if let Some(existing) = candidate.evidence.iter_mut().find(|evidence| {
+             evidence.path == route.mode
+                 && evidence.route_id == route.id
+@@ -573,6 +580,7 @@ fn fuse_candidates(candidates: HashMap<EntityId, Candidate>) -> Vec<Candidate> {
+         right
+             .score
+             .total_cmp(&left.score)
++            .then_with(|| right.matched_symbol_recall.cmp(&left.matched_symbol_recall))
+             .then_with(|| left.id.as_str().cmp(right.id.as_str()))
+     });
+     for (index, candidate) in fused.iter_mut().enumerate() {
+@@ -901,8 +909,9 @@ mod tests {
+     use crate::{
+         EngineResult,
+         domain::{
+-            ByteRange, Content, Entity, EntityFragment, EntityId, FileCategory, FileFormat, FileId,
+-            FileIndexStatus, FileRecord, FileSnapshot, FragmentId, GlobRule, Range, TextRange,
++            ByteRange, CodeMetadata, Content, Entity, EntityFragment, EntityId, EntityMetadata,
++            FileCategory, FileFormat, FileId, FileIndexStatus, FileRecord, FileSnapshot,
++            FragmentId, GlobRule, Range, SymbolType, TextRange,
+             model::{EmbeddingMetric, EmbeddingModelInfo},
+         },
+         file_selection::GlobMatcher,
+@@ -1154,43 +1163,19 @@ mod tests {
+     async fn promotes_symbol_definition_before_result_cutoff() {
+         let reference_file = file(1, "src/plugin.ts", 100);
+         let definition_file = file(2, "src/core.ts", 100);
+-        let mut reference = entity(&reference_file, "vitest: Vitest");
+-        let mut definition = entity(&definition_file, "class Vitest {}");
++        let reference = symbol_entity(
++            &reference_file,
++            "vitest: Vitest",
++            SymbolType::Value,
++            "vitest",
++        );
++        let definition = symbol_entity(
++            &definition_file,
++            "class Vitest {}",
++            SymbolType::Class,
++            "Vitest",
++        );
+         let definition_id = definition.entity.id().clone();
+-        for (stored, kind, name) in [
+-            (&mut reference, crate::domain::SymbolType::Value, "vitest"),
+-            (&mut definition, crate::domain::SymbolType::Class, "Vitest"),
+-       
+```
+
+**File**: `rust/crates/zg-engine/src/pipelines/indexed_search/ranking/README.md` (modified, +19/-12)
+```diff
+@@ -1,8 +1,13 @@
+ # Rule ranking
+ 
+-Rule ranking scores the entire recalled entity pool before applying the result
+-limit. It runs in the shared indexed-search engine, so direct, server, and MCP
+-queries use the same policy.
++The shared indexed-search engine uses RRF fusion to assign result positions for
++direct, server, and MCP queries. With `--prefer-symbol`, hits from an exact-symbol
++recall route win RRF ties, then entity ID breaks any remaining ties.
++Non-code entities keep their fusion positions
++among loaded hits and their raw RRF scores. Positions occupied by code within
++the result limit are filled by ranking all recalled, loaded `ContentKind::Code`
++entities, including those below the cutoff and those without symbol metadata.
++The engine skips rule ranking when the visible results contain no code.
+ 
+ The policy normalizes RRF by the maximum possible score for the enabled routes,
+ adds bounded symbol/definition bonuses, and applies the minimum applicable path
+@@ -28,13 +33,13 @@ bonuses are capped at 1.25 in the normalized RRF scale.
+ 
+ Path roles use workspace-relative components and explicit filename patterns.
+ Test/example/dependency intent and narrowly targeted include globs can waive a
+-role penalty. A common dependency penalty is neutralized when all candidates
++role penalty. A common dependency penalty is neutralized when all code candidates
+ are dependency code. Neither `dist/` nor `.d.ts` alone implies generated code.
+ 
+ Final selection is greedy: after each selected entity, remaining entities from
+ the same file receive a soft factor of `1 / (1 + 0.5 * selected_count)`. There is
+-no hard per-file cap. A single-file pool skips this selection penalty. Context
+-group coverage is handled outside this module.
++no hard per-file cap. A code pool from a single file skips this selection
++penalty. Context group coverage is handled outside this module.
+ 
+ Before selection, a file's representative definition can gain up to 0.15 from
+ at most two additional definitions. Support must have name or path evidence,
+@@ -43,11 +48,13 @@ ranges cannot supply support. The support term uses bounded base scores and
+ the same path prior; it does not sum every fragment in a large file. It is an
+ extra term after the static bonus cap.
+ 
+-`score` is the rule selection score, not a probability. Trace preserves original
+-`fusion` rank/score and includes optional `ranking` evidence: policy identifier,
+-query features, name match/bonus, definition bonus, path roles/exemptions, static
+-score, positive `path_bonus`, `file_support_bonus`, `file_support_count`, selected
+-file count, diversity factor, and group-local final rank.
++For code hits, `score` is the rule selection score. In mixed results, use
++`rank` for order because code and non-code scores use different scales.
++Trace preserves the original `fusion` rank and score for all hits. For code hits,
++`ranking` records the policy identifier, query features, name match/bonus,
++definition bonus, path roles/exemptions, static score, positive `path_bonus`,
++`file_support_bonus`, `file_support_count`, selected file count, diversity factor,
++and group-local final rank.
+ `path_overrides` lists roles exempted by query/scope, including those not present
+ on a particular hit. Without trace, detailed explanation strings are not built.
+ Serialized traces may omit `ranking`. Within a ranking trace, omitted
+@@ -63,7 +70,7 @@ path exceptions, deterministic ties, and dynamic file diversity. Validate
+ weight changes by language and query intent; file-only labels can overstate
+ the benefit of spreading results across files.
+ 
+-An opt-in ignored test replays local CLI candidate snapshots through this same
++An opt-in ignored test replays local code candidate snapshots through this same
+ scorer. Set `ZG_RANK_REPLAY` to the snapshot directory and explicitly run
+ `replay_rule_ablation` with `--ignored`. The variable is read only by the test;
+ production direct/server behavior cannot be changed through it. Internal policy
+```
+
+**File**: `rust/crates/zg-engine/src/pipelines/indexed_search/ranking/mod.rs` (modified, +62/-19)
+```diff
+@@ -1,4 +1,4 @@
+-//! Deterministic rule ranking over the complete recalled entity pool.
++//! Rerank recalled code within the positions assigned to code by fusion.
+ mod paths;
+ mod query;
+ mod support;
+@@ -11,7 +11,7 @@ use super::{
+ };
+ use crate::{
+     api::context::{options::QueryFilter, result::SearchRankingTrace},
+-    domain::{EntityMetadata, FileId},
++    domain::{ContentKind, EntityMetadata, FileId},
+ };
+ use paths::Roles;
+ use query::QueryFeatures;
+@@ -85,17 +85,69 @@ pub(super) fn rank(
+ }
+ 
+ fn rank_with_policy(
+-    hits: Vec<SearchHit>,
++    mut hits: Vec<SearchHit>,
+     routes: &[ResolvedSearchRoute],
+     filter: &QueryFilter,
+     maximum_rrf: f64,
+     limit: usize,
+     policy: Policy,
+     observation: Option<&mut StageTraceCollector>,
+ ) -> Vec<SearchHit> {
+-    if hits.is_empty() || limit == 0 {
+-        return Vec::new();
++    let result_count = limit.min(hits.len());
++    let is_code = |hit: &SearchHit| hit.entity.content().kind() == ContentKind::Code;
++    // Stage diagnostics also report static ranks below the result cutoff.
++    let slot_count = if observation.is_some() {
++        hits.len()
++    } else {
++        result_count
++    };
++    let code_ranks: Vec<_> = hits
++        .iter()
++        .take(slot_count)
++        .enumerate()
++        .filter_map(|(index, hit)| is_code(hit).then_some(index + 1))
++        .collect();
++
++    // Only the visible positions are fixed. Any recalled code hit can fill them.
++    let mut ranked_code = Vec::new();
++    let visible = code_ranks.partition_point(|rank| *rank <= result_count);
++    if visible > 0 {
++        let code = hits.extract_if(.., |hit| is_code(hit)).collect();
++        let (query, scored) = score_code(code, routes, filter, maximum_rrf, policy);
++        if let Some(observation) = observation {
++            let mut order = scored.iter().collect::<Vec<_>>();
++            order.sort_by(|a, b| compare(a, b, a.static_score, b.static_score));
++            for (item, &rank) in order.into_iter().zip(&code_ranks) {
++                observation.static_rank(&item.hit, rank);
++            }
++        }
++        ranked_code = select(scored, &query, &code_ranks[..visible], policy);
+     }
++    let mut ranked_code = ranked_code.into_iter().peekable();
++    let mut documents = hits.into_iter();
++    (1..=result_count)
++        .map(|rank| {
++            let mut hit = ranked_code
++                .next_if(|hit| hit.rank == rank)
++                .or_else(|| documents.next())
++                .expect("each result position has a loaded hit");
++            hit.rank = rank;
++            if let Some(trace) = &mut hit.trace {
++                trace.final_selection.returned_by_limit = true;
++                trace.final_selection.cutoff_rank = limit;
++            }
++            hit
++        })
++        .collect()
++}
++
++fn score_code(
++    hits: Vec<SearchHit>,
++    routes: &[ResolvedSearchRoute],
++    filter: &QueryFilter,
++    maximum_rrf: f64,
++    policy: Policy,
++) -> (QueryFeatures, Vec<Scored>) {
+     let mut queries = routes.iter().map(|r| r.query.as_str()).collect::<Vec<_>>();
+     queries.sort_unstable();
+     queries.dedup();
+@@ -143,14 +195,7 @@ fn rank_with_policy(
+     if policy.support_weight > 0.0 {
+         support::apply(&mut scored, policy.support_weight);
+     }
+-    if let Some(observation) = observation {
+-        let mut order = scored.iter().collect::<Vec<_>>();
+-        order.sort_by(|a, b| compare(a, b, a.static_score, b.static_score));
+-        for (index, item) in order.into_iter().enumerate() {
+-            observation.static_rank(&item.hit, index + 1);
+-        }
+-    }
+-    select(scored, &query, limit, policy)
++    (query, scored)
+ }
+ 
+ fn compare(a: &Scored, b: &Scored, a_score: f64, b_score: f64) -> Ordering {
+@@ -163,15 +208,15 @@ fn compare(a: &Scored, b: &Scored, a_score: f64, b_score: f64) -> Ordering {
+ fn select(
+     mut scored: Vec<Scored>,
+     query: &QueryFeatures,
+-    limit: usize,
++    code_ranks: &[usize],
+     policy: Policy,
+ ) -> Vec<SearchHit> {
+     let single_file = scored
+         .iter()
+         .all(|s| s.hit.file.id() == scored[0].hit.file.id());
+     let mut selected_per_file = HashMap::<FileId, u32>::new();
+-    let mut output = Vec::with_capacity(limit.min(scored.len()));
+-    while output.len() < limit && !scored.is_empty() {
++    let mut output = Vec::with_capacity(code_ranks.len());
++    for &rank in code_ranks {
+         let effective = |item: &Scored| {
+             let count = if single_file {
+                 0
+@@ -196,7 +241,7 @@ fn select(
+             1.0 / (1.0 + FILE_DECAY * f64::from(*count))
+         };
+         item.hit.score = item.static_score * factor;
+-        item.hit.rank = output.len() + 1;
++        item.hit.rank = rank;
+         if let Some(trace) = item.hit.trace.as_mut() {
+             trace.ranking = Some(SearchRankingTrace {
+                 policy: policy.name.to_owned(),
+@@ -217,8 +262,6 @@ fn select(
+                 score: item.hit.score,
+                 rank: i
+```
+
+**File**: `rust/crates/zg-engine/src/pipelines/indexed_search/ranking/tests.rs` (modified, +108/-1)
+```diff
+@@ -42,6 +42,38 @@ pub(super) fn hit(
+     score: f64,
+     rank: usize,
+     metadata: Option<CodeMetadata>,
++) -> SearchHit {
++    fixture_hit(
++        id,
++        file_id,
++        path,
++        score,
++        rank,
++        Content::Code("source".into()),
++        metadata,
++    )
++}
++
++fn document(id: &str, file_id: u32, path: &str, score: f64, rank: usize) -> SearchHit {
++    fixture_hit(
++        id,
++        file_id,
++        path,
++        score,
++        rank,
++        Content::Text("source".into()),
++        None,
++    )
++}
++
++fn fixture_hit(
++    id: &str,
++    file_id: u32,
++    path: &str,
++    score: f64,
++    rank: usize,
++    content: Content,
++    metadata: Option<CodeMetadata>,
+ ) -> SearchHit {
+     let id = EntityId::from_string(id.to_owned());
+     let fragment = EntityFragment {
+@@ -53,7 +85,7 @@ pub(super) fn hit(
+             id,
+             FileId::new(file_id),
+             Range::Full,
+-            Content::Text("source".into()),
++            content,
+             metadata.map(EntityMetadata::Code),
+             vec![fragment],
+         )
+@@ -107,6 +139,81 @@ fn run(query: &str, hits: Vec<SearchHit>, filter: &QueryFilter, limit: usize) ->
+     )
+ }
+ 
++#[test]
++fn documents_keep_fusion_order_and_scores_across_paths_and_repeated_files() {
++    let candidates = vec![
++        document("intro", 1, "tests/guide.md", 0.016, 1),
++        document("details", 1, "tests/guide.md", 0.015, 2),
++        document("notes", 2, "widget.txt", 0.014, 3),
++    ];
++    let out = run("widget", candidates, &QueryFilter::default(), 2);
++    assert_eq!(out.len(), 2);
++    for (hit, (id, rank, score)) in out.iter().zip([("intro", 1, 0.016), ("details", 2, 0.015)]) {
++        assert_eq!(hit.entity.id().as_str(), id);
++        assert_eq!((hit.rank, hit.score), (rank, score));
++        let trace = hit.trace.as_ref().expect("trace");
++        assert_eq!((trace.fusion.rank, trace.fusion.score), (rank, score));
++        assert!(trace.ranking.is_none());
++        assert!(trace.final_selection.returned_by_limit);
++        assert_eq!(trace.final_selection.cutoff_rank, 2);
++    }
++}
++
++#[test]
++fn mixed_results_promote_a_definition_from_below_cutoff_into_a_code_position() {
++    let candidates = vec![
++        document("guide", 1, "tests/guide.md", 1.0, 1),
++        hit("usage", 2, "src/client.rs", 0.95, 2, None),
++        document("notes", 3, "notes.txt", 0.9, 3),
++        hit(
++            "definition",
++            4,
++            "src/lib.rs",
++            0.8,
++            4,
++            Some(code(SymbolType::Function, "loadWidget", None)),
++        ),
++    ];
++    let out = run("loadWidget", candidates.clone(), &QueryFilter::default(), 3);
++    assert_eq!(
++        out.iter()
++            .map(|hit| (hit.entity.id().as_str(), hit.rank))
++            .collect::<Vec<_>>(),
++        [("guide", 1), ("definition", 2), ("notes", 3)]
++    );
++    for index in [0, 2] {
++        assert_eq!(out[index].score, candidates[index].score);
++        assert!(out[index].trace.as_ref().expect("trace").ranking.is_none());
++    }
++    let trace = out[1].trace.as_ref().expect("trace");
++    assert_eq!((trace.fusion.rank, trace.fusion.score), (4, 0.8));
++    assert_eq!(trace.ranking.as_ref().expect("code ranking").rank, 2);
++    assert!(trace.final_selection.returned_by_limit);
++    assert_eq!(trace.final_selection.cutoff_rank, 3);
++
++    let out = run("loadWidget", candidates, &QueryFilter::default(), 1);
++    assert_eq!(out.len(), 1);
++    assert_eq!(out[0].entity.id().as_str(), "guide");
++}
++
++#[test]
++fn documents_do_not_affect_code_dependency_or_diversity_factors() {
++    let candidates = vec![
++        hit("first", 1, "vendor/lib.rs", 1.0, 1, None),
++        document("guide", 2, "docs/guide.md", 0.95, 2),
++        hit("second", 1, "vendor/lib.rs", 0.9, 3, None),
++    ];
++    let out = run("behavior", candidates, &QueryFilter::default(), 5);
++    assert_eq!(out.len(), 3);
++    let trace = out[2].trace.as_ref().expect("trace");
++    let ranking = trace.ranking.as_ref().expect("code ranking");
++    assert_eq!(out[2].entity.id().as_str(), "second");
++    assert_eq!(ranking.path_factor, 1.0);
++    assert_eq!(ranking.diversity_factor, 1.0);
++    assert_eq!(ranking.rank, 3);
++    assert_eq!(trace.final_selection.cutoff_rank, 5);
++}
++
+ #[test]
+ fn exact_names_and_qualified_scopes_outweigh_references() {
+     let out = run(
+```
+
+**File**: `rust/crates/zg-engine/src/pipelines/indexed_search/stage_trace.rs` (modified, +2/-0)
+```diff
+@@ -157,6 +157,8 @@ impl StageTraceCollector {
+         for (position, hit) in hits.iter().enumerate() {
+             if let Some(stages) = self.stages(hit.file.id(), hit.entity.id()) {
+                 stages.loaded_rrf_rank = Some(position + 1);
++                // Static ranking preserves these positions except where code hits are reordered.
++                stages.static_rank = Some(position + 1);
+                 stages.loaded_range = Some(hit.entity.source_range().into());
+             }
+         }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #457** (2026-11-24): feat(models): add qwen3.7-text-embedding-flash to the catalog (@qrmd0)
 - **PR #449** (2026-11-23): fix(ci): support Cargo 1.100 CUDA fallback metadata (@feihongxu0824)
+- **PR #447** (2026-11-24): fix(search): restrict rule ranking to code candidates (@egolearner)
 - **PR #441** (2026-11-23): feat(rust): expose opt-in retrieval stage diagnostics (@Cuiyus)
+- **PR #440** (2026-11-24): fix(rust): bind bare calls to the enclosing module's items (@lnfjpt)
 - **PR #437** (2026-11-18): fix(build): restore ONNX Runtime downloads via npmmirror (@feihongxu0824)
-- **PR #435** (2026-11-23): fix(rust): resolve python calls through annotated parameters and self members (@lnfjpt)
-- **PR #427** (2026-11-17): fix(rust): address the remaining issues in #418 (@lnfjpt)
-- **PR #424** (2026-11-17): fix(ort): release environment before CUDA provider destructors (@feihongxu0824)
 
 ---
 
@@ -1829,52 +2279,54 @@ and a member one method writes was unknown to the methods beside it.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. rust): resolve python calls through annotated parameters and self members
+## X. rust): bind bare calls to the enclosing module's items
 
 **RULE**:
-When implementing operations in `rust/crates/zg-engine/src/extraction/graph.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zvec-ai/zvec-grep. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rust/crates/zg-engine/src/extraction/code.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zvec-ai/zvec-grep. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2f18f2d9`: rust): resolve python calls through annotated parameters and self members. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ae1a4732`: rust): bind bare calls to the enclosing module's items. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/crates/zg-engine/src/extraction/graph.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/crates/zg-engine/src/extraction/code.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// The bound type extraction records for a Python name a body rebinds to a
-/// value the index cannot place (`client = clients[0]`, `self.client = client`).
+/// Whether a Rust item spells a name the value namespace does not hold, so a
+/// bare call never reaches it.
 ///
-/// The write shadows what an earlier declaration stated — a parameter's
-/// annotation, a member's previous assignment — so the name holds no type from
-/// that line on. The resolver reads the sentinel as "stated, but undecided":
-/// the answer is not the type the name no longer holds, and a base class's
-/// member is not the answer either.
-pub(crate) const PYTHON_UNBOUND_TYPE: &str = "[[python_unbound]]";
+/// `impl save` names the type it implements, which is a scope rather than a
+/// value, and a trait, type alias, enum, union and a named-field struct each
+/// declare a type without a constructible value. A tuple struct and a unit
+/// struct do declare a constructor, so they stay candidates: `struct save(i32)`
+/// beside `fn save` is a conflict rustc rejects.
+fn rust_type_namespace_only(node: Node<'_>) -> bool {
+    match node.kind() {
+        "impl_item" | "trait_item" | "type_item" | "enum_item" | "union_item" => true,
+        "struct_item" => node
+            .child_by_field_name("body")
+            .is_some_and(|body| body.kind() == "field_declaration_list"),
+        _ => false,
+    }
+}
 
-/// The bound type extraction records for a Python member a class writes as
-/// `None` (`self.client = None`).
-///
-/// The write is a declaration of the member — the class chooses what the name
-/// holds, so a base class's member of the same name is not the answer — but it
-/// states no type. It differs from [`PYTHON_UNBOUND_TYPE`], which leaves the
-/// member undecided even beside a write that does state a type: an optional
-/// member (`__init__` writes `None`, another method stores the real value) is
-/// still typed by the write that states one.
-pub(crate) const PYTHON_NONE_TYPE: &str = "[[python_none]]";
-
-    /// Th
+        let symbol_type = adapter.classify(entity);
+            // A module puts the items it declares in bare scope for every body
+            // inside it, and a function does the same for the bodies nested in
+            // it (`fn outer() { fn save() {} }` answers `inner`'s `save()`),
+            // unlike a class, whose members need a receiver. Other languages
+            // re
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+            symbol_type: adapter.classify(entity),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2f18f2d9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ae1a4732` are properly handled with clean fallback behavior.
 
 
 ## 3. Decision Protocol & Boundary Restrictions

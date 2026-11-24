@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T23:25:42.494Z",
-  "total_records": 2596,
+  "last_updated": "2026-11-24T23:33:32.443Z",
+  "total_records": 2598,
   "domains": {
     "A": {
       "total": 22,
@@ -2263,7 +2263,7 @@
       ]
     },
     "I": {
-      "total": 149,
+      "total": 151,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -2413,7 +2413,9 @@
         "domain_intelligence-content-information-intelligence-jithin-sabu-purge-app-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-actions-actions-runner-controller-core-invarian",
         "domain_intelligence-content-information-intelligence-actions-actions-runner-controller-learnings-cor",
-        "DOM-I-2DDA15B6"
+        "DOM-I-2DDA15B6",
+        "domain_intelligence-content-information-intelligence-rollup-rollup-core-invariants",
+        "domain_intelligence-content-information-intelligence-rollup-rollup-learnings-core-invariants"
       ]
     },
     "J": {
@@ -8366,8 +8368,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "6f447dcb82959bea6096aa0e43c20c89ecbde114485e4bdc2238fde05b9df480",
-      "created_at": "2026-11-23T20:08:39.325Z"
+      "content_hash": "6b533416763da878b4290395c4c0b5d6e21323315e6ea95ab3894dfa7a18afa4",
+      "created_at": "2026-11-24T23:33:30.044Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -14469,8 +14471,8 @@
       "title": "Technical Construction Intelligence: zvec-ai/zvec-grep Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-technical-construction-intelligence-zvec-ai-zvec-grep-core-inv.md",
       "repository": "zvec-ai/zvec-grep",
-      "content_hash": "573bb96380bf6c2fcdba975f719cae514bab2e049bace263181ff2f7cd52cd4a",
-      "created_at": "2026-11-20T23:21:19.702Z"
+      "content_hash": "2c7e5d52e156edbe961742323cebb78c87d9b1c86b1a9b1bc4a4cf8c1023174e",
+      "created_at": "2026-11-24T23:33:20.679Z"
     },
     "domain_intelligence-architecture-intelligence-openbmb-minicpm-ocr-1-0-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-openbmb-minicpm-ocr-1-0-core-invariants",
@@ -18919,8 +18921,8 @@
       "title": "Technical Construction Intelligence: apollographql/apollo-kotlin Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apollographql-apollo-kotlin-technical-construction-intelligence-apollographql-ap.md",
       "repository": "apollographql/apollo-kotlin",
-      "content_hash": "3986d96149f073fa0881bc24d26ad2ad2f4ae414664a7150423a31a5c615a895",
-      "created_at": "2026-11-14T22:57:41.142Z"
+      "content_hash": "74340d4f40d30f128eaece44c4ba331bd5e26fb16ac849a9a1102034b95d3f6e",
+      "created_at": "2026-11-24T23:33:26.514Z"
     },
     "domain_intelligence-architecture-intelligence-hmbown-codewhale-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-hmbown-codewhale-learnings-core-invariants",
@@ -18988,8 +18990,8 @@
       "title": "Technical Construction Intelligence: apollographql-apollo-kotlin-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apollographql-apollo-kotlin-learnings-technical-construction-intelligence-apollo.md",
       "repository": "apollographql-apollo-kotlin-learnings",
-      "content_hash": "34d43cc0dc5a1b4547a3467e5d5da63b69ab12ceff96d2664f6fe08f63dc7a90",
-      "created_at": "2026-11-14T22:58:31.014Z"
+      "content_hash": "3b20ae32547996afb919ca1b994f8d61507769520a60f8fbbe2e16b754cbd728",
+      "created_at": "2026-11-24T23:33:32.443Z"
     },
     "domain_intelligence-research-knowledge-intelligence-abenzerps-qwen-image-2-1-turbo-quantized-core-in": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-abenzerps-qwen-image-2-1-turbo-quantized-core-in",
@@ -43545,6 +43547,24 @@
       "repository": "hf-prism-ml-ternary-bonsai-2.5-27b-gguf-learnings",
       "content_hash": "d0c15881dc98f19e4a00388d41271577fa62012f39b7d512cf734a4aaf82e9e3",
       "created_at": "2026-11-24T23:25:39.812Z"
+    },
+    "domain_intelligence-content-information-intelligence-rollup-rollup-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-rollup-rollup-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: rollup/rollup Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-rollup-rollup-content-information-intelligence-rollup-rollup-core-invariants.md",
+      "repository": "rollup/rollup",
+      "content_hash": "73349bf65c1c995bcc267b1ed418edb40d8c2a3d5c7b78e43d596400add03cba",
+      "created_at": "2026-11-24T23:33:22.749Z"
+    },
+    "domain_intelligence-content-information-intelligence-rollup-rollup-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-rollup-rollup-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: rollup-rollup-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-rollup-rollup-learnings-content-information-intelligence-rollup-rollup-learnings.md",
+      "repository": "rollup-rollup-learnings",
+      "content_hash": "55d1b684cf81bafc0c8280a62876ceb6299886adbfadb9ebb43a22c5dbec54c1",
+      "created_at": "2026-11-24T23:33:31.640Z"
     }
   }
 }

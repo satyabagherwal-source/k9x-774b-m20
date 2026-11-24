@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T23:25:42.814Z",
+  "last_updated": "2026-11-24T23:33:32.595Z",
   "total_verified_learnings": 9105,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25004,
+  "total_items": 25013,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "6f447dcb82959bea6096aa0e43c20c89ecbde114485e4bdc2238fde05b9df480",
+      "content_hash": "6b533416763da878b4290395c4c0b5d6e21323315e6ea95ab3894dfa7a18afa4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T20:08:39.325Z"
+      "persisted_at": "2026-11-24T23:33:30.044Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "edba3467d6afdd6c55e1a5794c999549f031e2880ff3a31581e8916117307812",
-      "domain_letter": "D",
-      "persisted_at": "2026-11-24T23:04:43.440Z"
+      "content_hash": "19540e6570f94f07bab3c8e2b499d332a9847a03b46fb77f8cfdc58dfe1e9c3e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T23:33:30.234Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "4bac704baec5c96ed6417febbe0052705266cb46da979ddbaad65bb8d9a6ef27",
+      "content_hash": "e62a9157421cc6991b9a004b5f1aee36690582ed5ff05cbfde6a58e13848e9b2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T23:04:43.589Z"
+      "persisted_at": "2026-11-24T23:33:30.369Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -226992,8 +226992,8 @@
       "slug": "zvec-ai-zvec-grep",
       "platform": "github",
       "source_url": "https://github.com/zvec-ai/zvec-grep",
-      "source_version": "2f18f2d9",
-      "content_hash": "8b2607ac00accefcb13f086f33da8824f782418b9154fa099859bdc64830051e",
+      "source_version": "3d57ea50",
+      "content_hash": "1a7be02dffa7f8d5c2e812cf72af8bc9c8234f2d0f8caf6c8d1e43158f677f6d",
       "dossier_path": "07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
       "promoted_rules": [
@@ -227026,6 +227026,11 @@
           "number": 10113,
           "title": "resolve python calls through annotated parameters and self members",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10384,
+          "title": "bind bare calls to the enclosing module's items",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -227033,7 +227038,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T20:30:32.974Z",
+      "verified_at": "2026-11-24T23:33:20.092Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -227075,10 +227080,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-technical-construction-intelligence-zvec-ai-zvec-grep-core-inv.md",
       "title": "Technical Construction Intelligence: zvec-ai/zvec-grep Core Invariants",
       "repository": "zvec-ai/zvec-grep",
-      "source_version": "ad737d20",
-      "content_hash": "573bb96380bf6c2fcdba975f719cae514bab2e049bace263181ff2f7cd52cd4a",
+      "source_version": "3d57ea50",
+      "content_hash": "2c7e5d52e156edbe961742323cebb78c87d9b1c86b1a9b1bc4a4cf8c1023174e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T23:21:19.702Z"
+      "persisted_at": "2026-11-24T23:33:20.679Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-autonomous-specialist-persona",
@@ -227087,10 +227092,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/zvec-ai-zvec-grep-agent-contract-zvec-ai-zvec-grep-autonomous-specialist-persona.md",
       "title": "Agent Contract: zvec-ai/zvec-grep Autonomous Specialist Persona",
       "repository": "zvec-ai/zvec-grep",
-      "source_version": "2f18f2d9",
-      "content_hash": "05d85e77e0b9df458f2f07ee1210ea32efd51241c0c4ee70fd2a4ccb28cb9c62",
-      "domain_letter": "D",
-      "persisted_at": "2026-11-23T20:30:33.843Z"
+      "source_version": "3d57ea50",
+      "content_hash": "f8e24311f9b77465972a613a7fb0e788c48d58fa3a744b52537830ec282ea9aa",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T23:33:20.824Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep",
@@ -227099,10 +227104,10 @@
       "relative_path": "08_VERIFICATION/zvec-ai-zvec-grep-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec.md",
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai/zvec-grep",
       "repository": "zvec-ai/zvec-grep",
-      "source_version": "2f18f2d9",
-      "content_hash": "b398fa6cf1775f5ef3fef3314971ff4b40611ccac7c1ad68253dd53ac973e8ea",
+      "source_version": "3d57ea50",
+      "content_hash": "8c131fbb8df3ae2874a28b362d7a6c0549075ac934962aa6215b3ebfd98d386a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T20:30:34.012Z"
+      "persisted_at": "2026-11-24T23:33:20.961Z"
     },
     "learn-huggingface-openbmb-minicpm-ocr-1-0": {
       "learning_id": "learn-huggingface-openbmb-minicpm-ocr-1-0",
@@ -241170,14 +241175,19 @@
       "slug": "apollographql-apollo-kotlin",
       "platform": "github",
       "source_url": "https://github.com/apollographql/apollo-kotlin",
-      "source_version": "257ec5f0",
-      "content_hash": "5ac98586e71360a14e396e840ec05b56428a368b37f3162b79d91bfec9042aa8",
+      "source_version": "ce7030fd",
+      "content_hash": "a7a9b316e94705cc74dd154863d15d62872750a5282a47ff3cf115b5e5e67d78",
       "dossier_path": "07_PROJECT_LEARNING/apollographql-apollo-kotlin-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apollographql-apollo-kotlin-learnings.md",
       "promoted_rules": [
         {
           "number": 8548,
           "title": "Use invariant path separators in publishMarkers on Windows",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10386,
+          "title": "Allow empty enums",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -241186,7 +241196,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T22:57:40.598Z",
+      "verified_at": "2026-11-24T23:33:25.857Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -241228,10 +241238,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apollographql-apollo-kotlin-technical-construction-intelligence-apollographql-ap.md",
       "title": "Technical Construction Intelligence: apollographql/apollo-kotlin Core Invariants",
       "repository": "apollographql/apollo-kotlin",
-      "source_version": "257ec5f0",
-      "content_hash": "3986d96149f073fa0881bc24d26ad2ad2f4ae414664a7150423a31a5c615a895",
+      "source_version": "ce7030fd",
+      "content_hash": "74340d4f40d30f128eaece44c4ba331bd5e26fb16ac849a9a1102034b95d3f6e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T22:57:41.142Z"
+      "persisted_at": "2026-11-24T23:33:26.514Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apollographql-apollo-kotlin": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apollographql-apollo-kotlin",
@@ -241240,10 +241250,10 @@
       "relative_path": "08_VERIFICATION/apollographql-apollo-kotlin-verification-protocol-empirical-defect-shield-for-ap.md",
       "title": "Verification Protocol: Empirical Defect Shield for apollographql/apollo-kotlin",
       "repository": "apollographql/apollo-kotlin",
-      "source_version": "257ec5f0",
-      "content_hash": "24ef92815b10fad8d2eb8724d7fc2c91d3dd44a5e80c3b4af6eb372db1fdebe6",
+      "source_version": "ce7030fd",
+      "content_hash": "c02bdd97de24f09ed780413d1efc347a2c3b81a57db34cfa94f850d3ec394655",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T22:57:41.278Z"
+      "persisted_at": "2026-11-24T23:33:26.668Z"
     },
     "rule-8549": {
       "learning_id": "rule-8549",
@@ -241365,9 +241375,9 @@
       "title": "Technical Construction Intelligence: apollographql-apollo-kotlin-learnings Core Invariants",
       "repository": "apollographql-apollo-kotlin-learnings",
       "source_version": "HEAD",
-      "content_hash": "34d43cc0dc5a1b4547a3467e5d5da63b69ab12ceff96d2664f6fe08f63dc7a90",
+      "content_hash": "3b20ae32547996afb919ca1b994f8d61507769520a60f8fbbe2e16b754cbd728",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T22:58:31.014Z"
+      "persisted_at": "2026-11-24T23:33:32.443Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apollographql-apollo-kotlin-le": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apollographql-apollo-kotlin-le",
@@ -241377,9 +241387,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for apollographql-apollo-kotlin-learnings",
       "repository": "apollographql-apollo-kotlin-learnings",
       "source_version": "HEAD",
-      "content_hash": "f4a4b0ad972d22fd96508259202bf7cd299e97ba27eec86a2c66157c3cfe0e6c",
+      "content_hash": "1b8ab61878e82425b3fbb4c5eb1e6e3f51bdff1e1f95b4bd33cbab2557729918",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T22:58:31.156Z"
+      "persisted_at": "2026-11-24T23:33:32.595Z"
     },
     "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized": {
       "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
@@ -270071,14 +270081,19 @@
       "slug": "rollup-rollup",
       "platform": "github",
       "source_url": "https://github.com/rollup/rollup",
-      "source_version": "657bba5a",
-      "content_hash": "952d94f075aa551b966d03bf10ac9321b06ddf5707bd924af357c07770aa6050",
+      "source_version": "173cfd3a",
+      "content_hash": "f57ea7152a5989c5e1e8fdce1f78ddd368b322d723acefc9df44877d342d5f87",
       "dossier_path": "07_PROJECT_LEARNING/rollup-rollup-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rollup-rollup-learnings.md",
       "promoted_rules": [
         {
           "number": 8869,
           "title": "system format updates for destructuring and for-loop assignments",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10385,
+          "title": "generate license files for Rust dependencies",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -270087,7 +270102,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T23:47:46.559Z",
+      "verified_at": "2026-11-24T23:33:22.222Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -270141,10 +270156,10 @@
       "relative_path": "08_VERIFICATION/rollup-rollup-verification-protocol-empirical-defect-shield-for-rollup-rollup.md",
       "title": "Verification Protocol: Empirical Defect Shield for rollup/rollup",
       "repository": "rollup/rollup",
-      "source_version": "657bba5a",
-      "content_hash": "2d4495a6c7b4162f7d3bbab46233e9890243563ec86a91bf5bf5a2a27de3e389",
+      "source_version": "173cfd3a",
+      "content_hash": "d49c87174ce1d94211e9e5cc219ffd685a2e258d8f26bc6b4c08f482f1327183",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T23:47:47.290Z"
+      "persisted_at": "2026-11-24T23:33:22.919Z"
     },
     "rule-8032": {
       "learning_id": "rule-8032",
@@ -270192,9 +270207,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for rollup-rollup-learnings",
       "repository": "rollup-rollup-learnings",
       "source_version": "HEAD",
-      "content_hash": "80b5f431ad09f1daf2b5382ef965ad317916c69f6d1485351b15ea65855e05b0",
+      "content_hash": "fef5cefefafa8b8c4f5a28843a2b05bfe93c5825405c9c7afc87d3d5a9e3ced6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T23:47:53.868Z"
+      "persisted_at": "2026-11-24T23:33:31.797Z"
     },
     "learn-huggingface-liquidai-lfm3-1-7b-gguf": {
       "learning_id": "learn-huggingface-liquidai-lfm3-1-7b-gguf",
@@ -341672,6 +341687,120 @@
       "content_hash": "16ed52e53e6154e5e4b40e77f734a691cd125119dce9ed2742615ea985f60d17",
       "domain_letter": "G",
       "persisted_at": "2026-11-24T23:25:42.198Z"
+    },
+    "rule-10384": {
+      "learning_id": "rule-10384",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10384,
+      "title": "bind bare calls to the enclosing module's items",
+      "source_url": "https://github.com/zvec-ai/zvec-grep",
+      "source_version": "3d57ea50",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T23:33:20.092Z"
+    },
+    "candidate_directive-bind-bare-calls-to-the-enclosing-module-s-items": {
+      "item_id": "candidate_directive-bind-bare-calls-to-the-enclosing-module-s-items",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YWGT-bind-bare-calls-to-the-enclosing-module-s-items.md",
+      "title": "bind bare calls to the enclosing module's items",
+      "repository": "zvec-ai/zvec-grep",
+      "source_version": "3d57ea50",
+      "content_hash": "f238c85b58e66b90281898c02c40750d961df84a6885c888fa03781e52a96915",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T23:33:20.482Z"
+    },
+    "rule-10385": {
+      "learning_id": "rule-10385",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10385,
+      "title": "generate license files for Rust dependencies",
+      "source_url": "https://github.com/rollup/rollup",
+      "source_version": "173cfd3a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T23:33:22.222Z"
+    },
+    "candidate_directive-generate-license-files-for-rust-dependencies": {
+      "item_id": "candidate_directive-generate-license-files-for-rust-dependencies",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Z4YZ-generate-license-files-for-rust-dependencies.md",
+      "title": "generate license files for Rust dependencies",
+      "repository": "rollup-rollup-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bedfe19340aa7717ca26f9d75cf015be99d09742b3d2976ff3f46d6d0cf4cc53",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-24T23:33:31.499Z"
+    },
+    "domain_intelligence-content-information-intelligence-rollup-rollup-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-rollup-rollup-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-rollup-rollup-content-information-intelligence-rollup-rollup-core-invariants.md",
+      "title": "Content & Information Intelligence: rollup/rollup Core Invariants",
+      "repository": "rollup/rollup",
+      "source_version": "173cfd3a",
+      "content_hash": "73349bf65c1c995bcc267b1ed418edb40d8c2a3d5c7b78e43d596400add03cba",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-24T23:33:22.749Z"
+    },
+    "rule-10386": {
+      "learning_id": "rule-10386",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10386,
+      "title": "Allow empty enums",
+      "source_url": "https://github.com/apollographql/apollo-kotlin",
+      "source_version": "ce7030fd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T23:33:25.857Z"
+    },
+    "candidate_directive-allow-empty-enums": {
+      "item_id": "candidate_directive-allow-empty-enums",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Z5LC-allow-empty-enums.md",
+      "title": "Allow empty enums",
+      "repository": "apollographql-apollo-kotlin-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2f008b150735ae89877779a9ccb30ac8be6f86be500043f73fd2b8e3feea0390",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T23:33:32.304Z"
+    },
+    "candidate_directive-rust-bind-bare-calls-to-the-enclosing-module-s-items": {
+      "item_id": "candidate_directive-rust-bind-bare-calls-to-the-enclosing-module-s-items",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Z3P7-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
+      "title": "rust): bind bare calls to the enclosing module's items",
+      "repository": "zvec-ai-zvec-grep-learnings",
+      "source_version": "HEAD",
+      "content_hash": "94ea5b81c35f655e3782b0f90f110fc298278c04e084b6b83048457c11a8f59f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T23:33:29.857Z"
+    },
+    "domain_intelligence-content-information-intelligence-rollup-rollup-learnings-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-rollup-rollup-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-rollup-rollup-learnings-content-information-intelligence-rollup-rollup-learnings.md",
+      "title": "Content & Information Intelligence: rollup-rollup-learnings Core Invariants",
+      "repository": "rollup-rollup-learnings",
+      "source_version": "HEAD",
+      "content_hash": "55d1b684cf81bafc0c8280a62876ceb6299886adbfadb9ebb43a22c5dbec54c1",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-24T23:33:31.640Z"
     }
   },
   "ai-builder-brain": {

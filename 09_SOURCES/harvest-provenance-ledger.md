@@ -12876,3 +12876,6 @@ Every entry in this ledger must capture:
 | `learn-github-mikepenz-aboutlibraries` | `https://github.com/mikepenz/AboutLibraries` | `301c6c1d` | Multi-dimensional audit evidence | 2026-11-24T23:24:50.022Z |
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `6f718abc` | Multi-dimensional audit evidence | 2026-11-24T23:24:55.379Z |
 | `learn-dom-d-c22ba2db` | `project://hf-prism-ml-ternary-bonsai-2.5-27b-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2.5-27b-gguf-learnings.md` | 2026-11-24T23:25:39.380Z |
+| `learn-github-zvec-ai-zvec-grep` | `https://github.com/zvec-ai/zvec-grep` | `3d57ea50` | Multi-dimensional audit evidence | 2026-11-24T23:33:20.262Z |
+| `learn-github-rollup-rollup` | `https://github.com/rollup/rollup` | `173cfd3a` | Multi-dimensional audit evidence | 2026-11-24T23:33:22.390Z |
+| `learn-github-apollographql-apollo-kotlin` | `https://github.com/apollographql/apollo-kotlin` | `ce7030fd` | Multi-dimensional audit evidence | 2026-11-24T23:33:26.037Z |

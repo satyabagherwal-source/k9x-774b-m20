@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T23:25:39.425Z",
+  "updated_at": "2026-11-24T23:33:32.115Z",
   "stats": {
-    "total_discovered": 8983,
-    "approved_pending_harvest": 8505,
+    "total_discovered": 9004,
+    "approved_pending_harvest": 8526,
     "harvested_count": 0,
     "rejected_count": 478,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8497,
-      "OFFICIAL_DOCUMENTATION": 271,
+      "COMMUNITY_AND_EXPERT": 8517,
+      "OFFICIAL_DOCUMENTATION": 272,
       "STANDARDS_AND_SPECIFICATIONS": 147,
       "ENGINEERING_BLOGS": 7,
       "SECURITY_ADVISORIES": 50,
@@ -194307,6 +194307,468 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2.5-27b-gguf-learnings.md",
         "fileName": "hf-prism-ml-ternary-bonsai-2.5-27b-gguf-learnings.md"
+      }
+    },
+    "SRC-C763F8C8A9E6": {
+      "id": "SRC-C763F8C8A9E6",
+      "url": "https://github.com/jridgewell/sourcemaps.git",
+      "title": "https://github.com/jridgewell/sourcemaps.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:33:30.565Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rollup-rollup-learnings.md",
+        "fileName": "rollup-rollup-learnings.md"
+      }
+    },
+    "SRC-2A7E4F295BCE": {
+      "id": "SRC-2A7E4F295BCE",
+      "url": "https://github.com/rollup/plugins/graphs/contributors",
+      "title": "https://github.com/rollup/plugins/graphs/contributors",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:33:30.607Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rollup-rollup-learnings.md",
+        "fileName": "rollup-rollup-learnings.md"
+      }
+    },
+    "SRC-DF655E3D2139": {
+      "id": "SRC-DF655E3D2139",
+      "url": "https://github.com/Rich-Harris/is-reference.git",
+      "title": "https://github.com/Rich-Harris/is-reference.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:33:30.677Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rollup-rollup-learnings.md",
+        "fileName": "rollup-rollup-learnings.md"
+      }
+    },
+    "SRC-7879340FFFAE": {
+      "id": "SRC-7879340FFFAE",
+      "url": "https://gitlab.com/Rich-Harris/locate-character.git",
+      "title": "https://gitlab.com/Rich-Harris/locate-character.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:33:30.717Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rollup-rollup-learnings.md",
+        "fileName": "rollup-rollup-learnings.md"
+      }
+    },
+    "SRC-095C9161989F": {
+      "id": "SRC-095C9161989F",
+      "url": "https://github.com/Rich-Harris/magic-string.git",
+      "title": "https://github.com/Rich-Harris/magic-string.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:33:30.762Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rollup-rollup-learnings.md",
+        "fileName": "rollup-rollup-learnings.md"
+      }
+    },
+    "SRC-46899DDE2568": {
+      "id": "SRC-46899DDE2568",
+      "url": "https://github.com/micromatch/anymatch",
+      "title": "https://github.com/micromatch/anymatch",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:33:30.807Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rollup-rollup-learnings.md",
+        "fileName": "rollup-rollup-learnings.md"
+      }
+    },
+    "SRC-7A572E5787AF": {
+      "id": "SRC-7A572E5787AF",
+      "url": "https://github.com/paulmillr/chokidar.git",
+      "title": "https://github.com/paulmillr/chokidar.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:33:30.846Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rollup-rollup-learnings.md",
+        "fileName": "rollup-rollup-learnings.md"
+      }
+    },
+    "SRC-1A84A4E9FDE7": {
+      "id": "SRC-1A84A4E9FDE7",
+      "url": "https://github.com/rollup/rollup/pull/6672",
+      "title": "https://github.com/rollup/rollup/pull/6672",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:33:30.891Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rollup-rollup-learnings.md",
+        "fileName": "rollup-rollup-learnings.md"
+      }
+    },
+    "SRC-0A6437090AF5": {
+      "id": "SRC-0A6437090AF5",
+      "url": "https://github.com/rollup/rollup/pull/6673",
+      "title": "https://github.com/rollup/rollup/pull/6673",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:33:30.937Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rollup-rollup-learnings.md",
+        "fileName": "rollup-rollup-learnings.md"
+      }
+    },
+    "SRC-29BACD0D80F4": {
+      "id": "SRC-29BACD0D80F4",
+      "url": "https://github.com/rollup/rollup/pull/6674",
+      "title": "https://github.com/rollup/rollup/pull/6674",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:33:30.979Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rollup-rollup-learnings.md",
+        "fileName": "rollup-rollup-learnings.md"
+      }
+    },
+    "SRC-7FDFD7C57BB6": {
+      "id": "SRC-7FDFD7C57BB6",
+      "url": "https://github.com/rollup/rollup/pull/6675",
+      "title": "https://github.com/rollup/rollup/pull/6675",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:33:31.024Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rollup-rollup-learnings.md",
+        "fileName": "rollup-rollup-learnings.md"
+      }
+    },
+    "SRC-203B1B043ABE": {
+      "id": "SRC-203B1B043ABE",
+      "url": "https://github.com/rollup/rollup/pull/6676",
+      "title": "https://github.com/rollup/rollup/pull/6676",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:33:31.084Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rollup-rollup-learnings.md",
+        "fileName": "rollup-rollup-learnings.md"
+      }
+    },
+    "SRC-9D4EB9547AA1": {
+      "id": "SRC-9D4EB9547AA1",
+      "url": "https://github.com/rollup/rollup/pull/6678",
+      "title": "https://github.com/rollup/rollup/pull/6678",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:33:31.123Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rollup-rollup-learnings.md",
+        "fileName": "rollup-rollup-learnings.md"
+      }
+    },
+    "SRC-D7BEE456D192": {
+      "id": "SRC-D7BEE456D192",
+      "url": "https://github.com/rollup/rollup/pull/6679",
+      "title": "https://github.com/rollup/rollup/pull/6679",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:33:31.168Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rollup-rollup-learnings.md",
+        "fileName": "rollup-rollup-learnings.md"
+      }
+    },
+    "SRC-F76BA28EAAD3": {
+      "id": "SRC-F76BA28EAAD3",
+      "url": "https://github.com/rollup/rollup/pull/6680",
+      "title": "https://github.com/rollup/rollup/pull/6680",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:33:31.208Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rollup-rollup-learnings.md",
+        "fileName": "rollup-rollup-learnings.md"
+      }
+    },
+    "SRC-50FF75243C73": {
+      "id": "SRC-50FF75243C73",
+      "url": "https://github.com/rollup/rollup/pull/6681",
+      "title": "https://github.com/rollup/rollup/pull/6681",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:33:31.252Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rollup-rollup-learnings.md",
+        "fileName": "rollup-rollup-learnings.md"
+      }
+    },
+    "SRC-2F3947278011": {
+      "id": "SRC-2F3947278011",
+      "url": "https://github.com/rollup/rollup/pull/6682",
+      "title": "https://github.com/rollup/rollup/pull/6682",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:33:31.297Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rollup-rollup-learnings.md",
+        "fileName": "rollup-rollup-learnings.md"
+      }
+    },
+    "SRC-6F50508C5118": {
+      "id": "SRC-6F50508C5118",
+      "url": "https://github.com/graphql/graphql-spec/pull/1260",
+      "title": "https://github.com/graphql/graphql-spec/pull/1260",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:33:31.991Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apollographql-apollo-kotlin-learnings.md",
+        "fileName": "apollographql-apollo-kotlin-learnings.md"
+      }
+    },
+    "SRC-EF5C9D7DA4FA": {
+      "id": "SRC-EF5C9D7DA4FA",
+      "url": "https://www.apollographql.com/docs/deploy-preview/56f6aefd0d60b2c5665fd6f2/logs",
+      "title": "https://www.apollographql.com/docs/deploy-preview/56f6aefd0d60b2c5665fd6f2/logs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:33:32.033Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apollographql-apollo-kotlin-learnings.md",
+        "fileName": "apollographql-apollo-kotlin-learnings.md"
+      }
+    },
+    "SRC-F56B0F3FB24E": {
+      "id": "SRC-F56B0F3FB24E",
+      "url": "https://docs.access.apollographql.com/docs/internal/ai-reviews/20261124-8fa2c544-7050-48508d65e8cb0ad6",
+      "title": "https://docs.access.apollographql.com/docs/internal/ai-reviews/20261124-8fa2c544-7050-48508d65e8cb0ad6",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:33:32.072Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apollographql-apollo-kotlin-learnings.md",
+        "fileName": "apollographql-apollo-kotlin-learnings.md"
+      }
+    },
+    "SRC-763FD9BB0CE3": {
+      "id": "SRC-763FD9BB0CE3",
+      "url": "https://github.com/apollographql/apollo-kotlin/issues/7048",
+      "title": "https://github.com/apollographql/apollo-kotlin/issues/7048",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:33:32.115Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apollographql-apollo-kotlin-learnings.md",
+        "fileName": "apollographql-apollo-kotlin-learnings.md"
       }
     }
   }

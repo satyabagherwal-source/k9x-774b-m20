@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T23:24:59.078Z",
-    "lastVerified": "2026-11-24T23:24:59.078Z",
+    "lastChecked": "2026-11-24T23:33:29.352Z",
+    "lastVerified": "2026-11-24T23:33:29.352Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -375,12 +375,12 @@
     "lastVerified": "2026-11-24T19:27:45.062Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T22:51:09.006Z",
-    "lastVerified": "2026-11-24T22:51:09.006Z",
+    "lastChecked": "2026-11-24T23:33:29.275Z",
+    "lastVerified": "2026-11-24T23:33:29.275Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -389,7 +389,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "f45b916b"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1828,12 +1829,12 @@
     "revisionIdentifier": "1671d54b"
   },
   "sigstore-cosign": {
-    "name": "sigstore/cosign",
+    "name": "cosign",
     "officialUrl": "https://github.com/sigstore/cosign",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-24T18:43:34.962Z",
-    "lastVerified": "2026-11-24T18:43:34.962Z",
+    "lastChecked": "2026-11-24T23:33:24.282Z",
+    "lastVerified": "2026-11-24T23:33:24.282Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sigstore-cosign",
@@ -1842,7 +1843,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ab26c80d"
   },
   "langchain4j-langchain4j": {
     "name": "langchain4j/langchain4j",
@@ -2218,9 +2220,9 @@
   "oceanbase-oceanbase": {
     "name": "oceanbase",
     "officialUrl": "https://github.com/oceanbase/oceanbase",
-    "lastChecked": "2026-11-24T03:05:25.059Z",
+    "lastChecked": "2026-11-24T23:33:27.130Z",
     "revisionIdentifier": "d375c6d7",
-    "lastVerified": "2026-11-24T03:05:25.059Z"
+    "lastVerified": "2026-11-24T23:33:27.130Z"
   },
   "unhappychoice-gitlogue": {
     "name": "unhappychoice/gitlogue",
@@ -4534,12 +4536,12 @@
     "lastVerified": "2026-11-24T16:28:15.431Z"
   },
   "zarf-dev-zarf": {
-    "name": "zarf-dev/zarf",
+    "name": "zarf",
     "officialUrl": "https://github.com/zarf-dev/zarf",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-24T03:58:36.029Z",
-    "lastVerified": "2026-11-24T03:58:36.029Z",
+    "lastChecked": "2026-11-24T23:33:21.867Z",
+    "lastVerified": "2026-11-24T23:33:21.867Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zarf-dev-zarf",
@@ -4548,7 +4550,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "458cd2b5"
   },
   "malisper-pgrust": {
     "name": "pgrust",
@@ -7258,11 +7261,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "apollographql-apollo-kotlin": {
-    "name": "apollo-kotlin",
+    "name": "apollographql/apollo-kotlin",
     "officialUrl": "https://github.com/apollographql/apollo-kotlin",
-    "lastChecked": "2026-11-22T09:04:28.606Z",
-    "revisionIdentifier": "257ec5f0",
-    "lastVerified": "2026-11-22T09:04:28.606Z"
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-11-24T23:33:25.136Z",
+    "lastVerified": "2026-11-24T23:33:25.136Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-apollographql-apollo-kotlin",
+    "contentHash": "a7a9b316e94705cc74dd154863d15d62872750a5282a47ff3cf115b5e5e67d78",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "prometheus-prometheus": {
     "name": "prometheus/prometheus",
@@ -7859,12 +7872,12 @@
     "officialUrl": "https://github.com/zvec-ai/zvec-grep",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T20:30:32.111Z",
-    "lastVerified": "2026-11-23T20:30:32.111Z",
+    "lastChecked": "2026-11-24T23:33:19.130Z",
+    "lastVerified": "2026-11-24T23:33:19.130Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zvec-ai-zvec-grep",
-    "contentHash": "8b2607ac00accefcb13f086f33da8824f782418b9154fa099859bdc64830051e",
+    "contentHash": "1a7be02dffa7f8d5c2e812cf72af8bc9c8234f2d0f8caf6c8d1e43158f677f6d",
     "promotedRulesCount": 1,
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
@@ -11674,14 +11687,14 @@
     "officialUrl": "https://github.com/rollup/rollup",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-20T23:47:46.043Z",
-    "lastVerified": "2026-11-20T23:47:46.043Z",
+    "lastChecked": "2026-11-24T23:33:21.528Z",
+    "lastVerified": "2026-11-24T23:33:21.528Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rollup-rollup",
-    "contentHash": "952d94f075aa551b966d03bf10ac9321b06ddf5707bd924af357c07770aa6050",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 3,
+    "contentHash": "f57ea7152a5989c5e1e8fdce1f78ddd368b322d723acefc9df44877d342d5f87",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
