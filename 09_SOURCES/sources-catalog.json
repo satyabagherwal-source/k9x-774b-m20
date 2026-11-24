@@ -4293,10 +4293,10 @@
     "repository": "Nasiko-Labs/nasiko",
     "platform": "github",
     "sourceUrl": "https://github.com/Nasiko-Labs/nasiko",
-    "sourceVersion": "0ed4b3d9",
+    "sourceVersion": "6bf0ff78",
     "license": "NOASSERTION",
-    "contentHash": "b237999d893a00f25cb84836d4464383ea5704a24c2d0da1e64ddcee1570a329",
-    "lastHarvestedAt": "2026-11-18T09:14:39.092Z",
+    "contentHash": "1f48d9fe654a4eb312529ccab70afa176ec5e9b4862a3224e42a470192605bcb",
+    "lastHarvestedAt": "2026-11-24T12:27:21.958Z",
     "learningId": "learn-github-nasiko-labs-nasiko"
   },
   "berty-berty": {
@@ -4573,10 +4573,10 @@
     "repository": "slatedb/slatedb",
     "platform": "github",
     "sourceUrl": "https://github.com/slatedb/slatedb",
-    "sourceVersion": "864e081b",
+    "sourceVersion": "d6933aea",
     "license": "Apache-2.0",
-    "contentHash": "2ede2fd8407f597ffdb893e599dc335d4bf698a62fcb30fb0eba7f7b8b86fa46",
-    "lastHarvestedAt": "2026-11-22T10:03:56.574Z",
+    "contentHash": "543ef0868d61caffad97224c04b6e6505d89fc17a3919cc5399aaf242ad0f784",
+    "lastHarvestedAt": "2026-11-24T12:27:33.988Z",
     "learningId": "learn-github-slatedb-slatedb"
   },
   "react-component-slider": {
@@ -6213,10 +6213,10 @@
     "repository": "linkerd/linkerd2",
     "platform": "github",
     "sourceUrl": "https://github.com/linkerd/linkerd2",
-    "sourceVersion": "c8c17e5c",
+    "sourceVersion": "8d6fcc5b",
     "license": "Apache-2.0",
-    "contentHash": "d22b11734688df2cfbd931a1d91a647e540b5c6e47f643f3d20eac29ab3a4465",
-    "lastHarvestedAt": "2026-11-23T16:53:39.571Z",
+    "contentHash": "27a33864491c84db9f2a9c3443cb7ac36dc64cf09f442a4b6fd3d5deda62ef69",
+    "lastHarvestedAt": "2026-11-24T12:27:28.724Z",
     "learningId": "learn-github-linkerd-linkerd2"
   },
   "libsql-libsql": {

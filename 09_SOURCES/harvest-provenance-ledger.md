@@ -12695,3 +12695,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-nari-labs-qwen3-8-27b-nariq-gguf` | `https://huggingface.co/nari-labs/Qwen3.8-27B-NariQ-GGUF` | `hf-nari-la` | Multi-dimensional audit evidence | 2026-11-24T12:18:19.562Z |
 | `learn-github-invertase-react-native-firebase` | `https://github.com/invertase/react-native-firebase` | `ce0f96f1` | Multi-dimensional audit evidence | 2026-11-24T12:18:29.982Z |
 | `learn-dom-d-07a2bc67` | `project://hf-nari-labs-qwen3.8-27b-nariq-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-nari-labs-qwen3.8-27b-nariq-gguf-learnings.md` | 2026-11-24T12:19:01.483Z |
+| `learn-github-nasiko-labs-nasiko` | `https://github.com/Nasiko-Labs/nasiko` | `6bf0ff78` | Multi-dimensional audit evidence | 2026-11-24T12:27:21.958Z |
+| `learn-github-linkerd-linkerd2` | `https://github.com/linkerd/linkerd2` | `8d6fcc5b` | Multi-dimensional audit evidence | 2026-11-24T12:27:28.724Z |
+| `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `d6933aea` | Multi-dimensional audit evidence | 2026-11-24T12:27:33.988Z |

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T09:19:42.751Z",
+  "timestamp": "2026-11-24T12:27:38.368Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nasiko-labs-nasiko-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nasiko-labs-nasiko-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T09:19:42.751Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T12:27:38.368Z`  
 > **Learning ID**: `LEARN-EVO-nasiko-labs-nasiko-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 82%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), E (Creative Intelligence)
+- **Confidence Rating**: 71%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from nasiko-labs-nasiko-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md`  
 > **Source**: github ([https://github.com/Nasiko-Labs/nasiko](https://github.com/Nasiko-Labs/nasiko))  
-> **Source Version**: `0ed4b3d9`  
+> **Source Version**: `6bf0ff78`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T09:14:38.152Z  
+> **Timestamp**: 2026-11-24T12:27:20.759Z  
 > **Learning ID**: `learn-github-nasiko-labs-nasiko`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Nasiko-Labs/nasiko](https://github.com/Nasiko-Labs/nasiko))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T09:14:37.771Z  
+> **Harvest Timestamp**: 2026-11-24T12:27:20.582Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The Open Runtime for AI Agents
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 11955 stars
+- **Stars / Engagement**: 11935 stars
 
 ---
 
@@ -2261,11 +2261,8 @@ class _Operation:
 - **Issue #367** (2026-11-16): **Remove files the private tree deleted before the sync manifest existed**
   *Symptoms*: ## Problem  `docker compose up -d` fails on a fresh clone of this repo:  ``` ERR_PNPM_PACKAGE_MANAGER_NO_IMPORTER Cannot install with "frozen-lockfile" because pnpm-lock.yaml has no `importers["shared/config"]` entry. ```  `ui/shared/config` and `ui/shared/contracts` were deleted upstream, along with 400+ other UI files, but they are still here. The published `ui/pnpm-lock.yaml` is generated from the upstream tree, so it has no entry for these packages, and pnpm refuses to install.  ## Why they were never removed  The sync's reconcile pass deletes only paths recorded in `.sync-manifest`. These files were published before the manifest existed, so their upstream deletions never reached this repo. Files deleted from now on are in the manifest and are removed automatically, so this is a one-time cleanup.  ## What this deletes (426 files)  - `ui/` (416): leftovers from the React UI refactor, including the two orphaned packages. `ui/shared/ui/src/styles/SHADCN-LICENSE.md` is kept: shadcn code is still vendored and its MIT notice must stay with it - `gateway/src/` (2): the removed gateway; not a workspace member - `server/tests/fixtures/spa/` (8): moved to `spa/tests/fixtures/spa/`, which is what `spa/src/lib.rs` embeds  `LICENSE`, `.sync-marker` and `.sync-manifest` exist only in this repo on purpose and are kept.  Every deleted file was first added by a replayed upstream commit. None came from a public PR.  ## Verification  With these files removed, the `ui` stage of `server/Docke
 
-- **Issue #365** (2026-11-14): **Remove duplicate GitHub badges**
-  *Symptoms*: Removed duplicate GitHub badges from README.
-  **Post-Mortem & Fix Analysis**:
-  > <!-- greptile_summary -->  <h2><a href="https://app.greptile.com/api/retrigger?id=106898781&amp;sig=ab084d94ab947b034e56ec2c080dadfa4cbaa347b7dba8ebf5056aa632063bca"><picture><source media="(prefers-color-scheme: dark)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/RetriggerDark.svg?v=2"><source media="(prefers-color-scheme: light)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/Retrigger.svg?v=2"><img alt="Retrigger" src="https://greptile-static-assets.s3.amazonaws.com/badges/Retrigger.svg?v=2" align="right"></picture></a><a href="https://app.greptile.com/-/switch-tenant?tenant=nasiko&amp;next=%2FNasiko-Labs%2Fnasiko%2Fpull%2F365&amp;utm_source=greptile_review&amp;utm_medium=github&amp;utm_campaign=view_in_greptile"><picture><source media="(prefers-color-scheme: dark)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/ViewInGreptileDark.svg?v=2"><source media="(prefers-color-scheme: light)" srcset="https://greptile-static-assets.s3.amazona
-  > <!-- nasiko-oss-pr-status --> @shrawansaproo01, this PR is now in the maintainers' review queue, and its checks passed against our full build. Thanks for cleaning up the README.  The change is clear and small. It removes the second, identical block of stars, commits and pull-request badges near the end of `README.md` and leaves the first set in place.  You'll get a comment here when the PR is merged or closed, and it will always include the reason. If you push new commits, the checks will re-run and this comment will update.
+- **Issue #366** (2026-11-23): **chore(deps): bump the npm_and_yarn group across 1 directory with 2 updates**
+  *Symptoms*: Bumps the npm_and_yarn group with 2 updates in the /ui directory: [storybook](https://github.com/storybookjs/storybook/tree/HEAD/code/core) and [vite](https://github.com/vitejs/vite/tree/HEAD/packages/vite).  Updates `storybook` from 10.6.0 to 10.6.2 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/storybookjs/storybook/releases">storybook's releases</a>.</em></p> <blockquote> <h2>v10.6.2</h2> <h2>10.6.2</h2> <ul> <li>Angular-Vite: Require <code>@​analogjs/vite-plugin-angular</code> 2.7.3 or later - <a href="https://redirect.github.com/storybookjs/storybook/pull/36525">#36525</a>, thanks <a href="https://github.com/valentinpalkovic"><code>@​valentinpalkovic</code></a>!</li> <li>CLI: Fix hidden output of CLI commands on Yarn 1 - <a href="https://redirect.github.com/storybookjs/storybook/pull/36419">#36419</a>, thanks <a href="https://github.com/kasperpeulen"><code>@​kasperpeulen</code></a>!</li> <li>Preact: Support Preact 11 - <a href="https://redirect.github.com/storybookjs/storybook/pull/36526">#36526</a>, thanks <a href="https://github.com/ghengeveld"><code>@​ghengeveld</code></a>!</li> <li>Security: Patch GHSA-f2ph-cmg5-wxc8 and GHSA-px85-f4q5-jh77 - <a href="https://redirect.github.com/storybookjs/storybook/pull/36726">#36726</a>, thanks <a href="https://github.com/Sidnioulz"><code>@​Sidnioulz</code></a>!</li> <li>Typescript: Explicitly type enhanceArgTypes - <a href="https://redirect.github.com/storybookjs/storybook/pull/35664">#
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2282,221 +2279,986 @@ class _Operation:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9a20772f` (2026-11-17)
-**Commit Message**: test(e2e): wait for Base UI's focus guard in the bulk turn-on dialog
+### Incident Patch 1: `6bf0ff78` (2026-11-23)
+**Commit Message**: Merge pull request #1100 from Nasiko-Labs/dependabot/npm_and_yarn/ui/npm_and_yarn-9cba24dc92
 
-Tab past the dialog's last button focuses Base UI's focus guard, a span
-next to the popup, and the guard moves focus back to the first button on
-the next animation frame. The test checked straight after the key press, so
-on a busy runner it saw the guard (outside the dialog element) and failed.
-It now polls until focus is back inside. A probe showed the guard state
-right after each wrapping Tab, and focus inside the dialog 200 ms later.
+chore(deps): bump the npm_and_yarn group across 1 directory with 2 updates
 [synced-from-private]
 
-**File**: `ui/e2e/optimization.spec.ts` (modified, +7/-4)
+**File**: `.sync-marker` (modified, +1/-1)
 ```diff
-@@ -78,10 +78,13 @@ test('the bulk turn-on confirm keeps focus, passes axe and announces the end', a
-   await expectAccessible(page)
-   for (let i = 0; i < 6; i++) {
-     await page.keyboard.press('Tab')
--    expect(
--      await dialog.evaluate((d) => d.contains(document.activeElement)),
--      'focus stays in the dialog',
--    ).toBe(true)
-+    // Tab past the last control lands on Base UI's focus guard, which moves focus back to the first
-+    // one on the next animation frame; a busy runner can look in between, so wait for it.
-+    await expect
-+      .poll(() => dialog.evaluate((d) => d.contains(document.activeElement)), {
-+        message: 'focus stays in the dialog',
-+      })
-+      .toBe(true)
-   }
-   await dialog.getByRole('button', { name: /^Turn on for \d+$/ }).click()
-   await expect(page.getByText(/^Turned on Token optimization for \d+ agents\.$/)).toBeAttached()
+@@ -1 +1 @@
+-a3e2a0a6ca48417a8c9f85c14881221bdec29632
++6a3fb0fda44fea83debfc235d9859367a0bb312d
 ```
 
 ---
 
-### Incident Patch 2: `21163605` (2026-11-16)
-**Commit Message**: style(ui): prettier on two files from development
-
-registry copy.ts and ChatPage.attachments.test.tsx came in over the print
-width, which fails `prettier --check` in UI lint.
+### Incident Patch 2: `8365bc89` (2026-11-19)
+**Commit Message**: Merge branch 'main' into dependabot/npm_and_yarn/ui/npm_and_yarn-9cba24dc92
 [synced-from-private]
 
-**File**: `ui/shared/features/src/chat/ChatPage.attachments.test.tsx` (modified, +3/-1)
+**File**: `mcp-gateway/src/protocol.rs` (modified, +149/-29)
 ```diff
-@@ -121,7 +121,9 @@ describe('attaching media to a chat', () => {
-     // bytes come from the one cookie-authenticated file route (no third-party fetch).
-     const block = await screen.findByTestId('message-attachments', undefined, { timeout: 10_000 })
-     const img = await within(block).findByRole('img')
--    expect(img.getAttribute('src')).toMatch(/^(https?:\/\/[^/]+)?\/api\/chat\/files\/[^/]+\/download$/)
-+    expect(img.getAttribute('src')).toMatch(
-+      /^(https?:\/\/[^/]+)?\/api\/chat\/files\/[^/]+\/download$/,
-+    )
-     // And it is reachable as a download too, for a format the browser won't show.
-     expect(within(block).getByRole('link')).toHaveAttribute('href', img.getAttribute('src'))
-   })
-```
-
----
-
-### Incident Patch 3: `18250cda` (2026-11-16)
-**Commit Message**: fix(mcp-gateway): pass Composio's preview of a large result instead of dropping it
-
-A single toolkit call goes out wrapped in COMPOSIO_MULTI_EXECUTE_TOOL and
-its answer is unwrapped from data.results[0].response.data. When an
-output is too large to send inline (e.g. GMAIL_FETCH_EMAILS over a busy
-inbox, about 40k tokens), Composio keeps the full copy in its sandbox and
-sends response.data_preview instead, with data.remote_file_info. The
-unwrap found no `data` and answered {"success": true}, so the agent got
-nothing and reported an empty inbox.
-
-Now, on a successful call:
-- `data` present: returned as before, one content part.
-- no `data`, a `data_preview`: the preview in the tool's own shape, then
-  a second text part saying it is partial and how to ask for less.
-- neither, but remote_file_info: only that note.
-- neither: {"success": true}, as before (a tool with no output).
-
-Composio's pointer to its sandbox file is not passed on: the agent cannot
-open it. Failures are unwrapped as before.
-[synced-from-private]
-
-**File**: `mcp-gateway/src/protocol.rs` (modified, +152/-164)
-```diff
-@@ -49,11 +49,6 @@ pub fn rpc_error(req_id: &Value, code: i64, message: impl Into<String>) -> Value
- const SEARCH_TOOLS_META: &str = "nasiko_search_tools";
- const CALL_TOOL_META: &str = "nasiko_call_tool";
- const RECOVER_COMPRESSED_META: &str = "recover_compressed";
--/// Asks the user to connect a Composio toolkit (e.g. `gmail`) the agent needs
--/// but has no active connection for. Unconnected toolkits contribute no tools
--/// to search or listing, so without this an agent never reaches a tool call
--/// that could return `AUTH_REQUIRED` and the user never sees a Connect card.
--const CONNECT_TOOLKIT_META: &str = "nasiko_connect_toolkit";
+@@ -2157,31 +2157,32 @@ fn connector_disabled(
+         .unwrap_or(false)
+ }
  
- /// Full JSON-RPC dispatch for the agent-facing gateway. Returns `None` for a
- /// notification (a request with no `id`).
-@@ -325,10 +320,7 @@ pub async fn handle_tools_list(
+-/// Unwrap a `COMPOSIO_MULTI_EXECUTE_TOOL` response back to a normal tool
+-/// response the agent expects.
+-///
+-/// MULTI_EXECUTE returns:
+-/// ```json
+-/// { "jsonrpc": "2.0", "id": 1, "result": {
+-///     "content": [{ "type": "text", "text": "[{\"data\": {...}, ...}]" }]
+-/// }}
+-/// ```
+-///
+-/// We extract the inner JSON from the first `content[].text` entry and return
+-/// it as a standard `result.content[].text` with the unwrapped payload.
++/// Follows a preview of a result Composio found too large to send inline. The full copy it keeps
++/// is a file in its own sandbox, which the agent cannot open, so asking for less is the only way
++/// to all of it.
++const PARTIAL_RESULT_NOTE: &str = "Partial result: the full output was too large to return, so \
++    this is only a preview of it. Ask for less (fewer items, a narrower time range, or without \
++    full message bodies) to get everything.";
++
++/// Stands in for a result Composio found too large to send inline and sent no preview of.
++const TOO_LARGE_RESULT_NOTE: &str = "The output was too large to return. Ask for less (fewer \
++    items, a narrower time range, or without full message bodies).";
++
+ /// Unwrap a `COMPOSIO_MULTI_EXECUTE_TOOL` response back to the clean tool
+ /// result the agent expects.
+ ///
+ /// MULTI_EXECUTE returns:
+ /// ```text
+ /// result.content[0].text = JSON string of {
+-///   "data": { "results": [{ "response": { "successful": bool, "data": {…} }, … }] },
++///   "data": { "results": [{ "response": { "successful": bool, "data": {…} }, … }],
++///             "remote_file_info": {…} only when the output was too large to send inline },
+ ///   "successful": bool
+ /// }
+ /// ```
+ ///
+ /// We extract `data.results[0].response.data` (the actual tool output) and
+-/// return it as a clean `result.content[0].text`.
++/// return it as a clean `result.content[0].text`. An output too large to send
++/// inline comes as `response.data_preview` instead: see [`successful_output`].
+ fn unwrap_multi_execute_response(response: Value) -> Value {
+     let text = response
+         .get("result")
+@@ -2207,7 +2208,7 @@ fn unwrap_multi_execute_response(response: Value) -> Value {
+         .and_then(|r| r.as_array())
+         .and_then(|arr| arr.first());
+ 
+-    let inner_text = match first_result {
++    let parts: Vec<String> = match first_result {
+         Some(result) => {
+             let tool_response = result.get("response");
+             let successful = tool_response
+@@ -2216,12 +2217,7 @@ fn unwrap_multi_execute_response(response: Value) -> Value {
+                 .unwrap_or(false);
+ 
+             if successful {
+-                // Success: return response.data (the actual tool output).
+-                let data = tool_response
+-                    .and_then(|r| r.get("data"))
+-                    .cloned()
+-                    .unwrap_or(json!({"success": true}));
+-                serde_json::to_string(&data).unwrap_or_else(|_| text.to_string())
++                successful_output(result, &parsed)
+             } else {
+                 // Failure: return a clean error message.
+                 let error = result
+@@ -2234,23 +2230,59 @@ fn unwrap_multi_execute_response(response: Value) -> Value {
+                             .and_then(|m| m.as_str())
+                     })
+                     .unwrap_or("tool execution failed");
+-                serde_json::to_string(&json!({"error": error})).unwrap_or_else(|_| text.to_string())
++                vec![
++                    serde_json::to_string(&json!({"error": error}))
++                        .unwrap_or_else(|_| text.to_string()),
++                ]
+             }
+         }
+-        None => text.to_string(),
++        None => vec![text.to_string()],
+     };
+ 
+     // Rebuild as a standard MCP tool response.
++    let content: Vec<Value> = parts
++        .into_iter()
++        .map(|text| json!({ "type": "text", "text": text }))
++        .collect();
+     let mut out = response.clone();
+-    out["result"] = json!({
+-        "content": [{
+-            "type": "text",
+-            "text": inner_text
+-        }]
+-    });
++    out["result"] = json!({ "content": content });
+     out
+ }
+ 
++/// A successful tool's output, as content parts: `response.data`; or, when Composio found the
++/// output too large to send inline, its `response.data_preview` followed by a note that it is
++/// partial; or only that note when it sent no preview either. Composio's pointer to the full copy
++/// (`remote_file_info`, a file in its sandbox) is not passed on: the agent cannot open it.
++fn successful_output(result: &Value, envelope: &Value) -> Vec<String> {
++    let tool_response = result.get("response");
++    if let Some(data) = tool_response.and_then(|r| r.get("data")) {
++        return vec![data.to_string()];
++    }
++    let tool = result
++        .get("tool_slug")
++        .and_then(Value::as_str)
++        .unwrap_or_default();
++    if l
+```
+
+**File**: `orchestrator/src/maf/executor.rs` (modified, +75/-0)
+```diff
+@@ -1,5 +1,6 @@
+ use crate::outbound::OutboundPrefix;
+ use crate::target::{AgentTargetResolver, ForwardTarget, ResolveCaller, ResolveFailure};
++use nasiko_types::agent_clock::AgentClock;
+ use std::sync::Arc;
+ use std::time::Instant;
+ 
+@@ -485,6 +486,7 @@ pub async fn run_maf(
+     llm: &LlmClient,
+     content: Option<&str>,
+     outbound: &dyn OutboundPrefix,
++    clock: AgentClock,
+ ) -> Result<StepOutcome, RunError> {
+     // A MAF run is driven by a background worker, not a request, so there is
+     // no inbound traceparent to continue — this span is legitimately a root.
+@@ -518,6 +520,7 @@ pub async fn run_maf(
+         llm,
+         content,
+         outbound,
++        clock,
+     )
+     .instrument(span)
+     .await
+@@ -536,6 +539,7 @@ async fn run_maf_inner(
+     llm: &LlmClient,
+     content: Option<&str>,
+     outbound: &dyn OutboundPrefix,
++    clock: AgentClock,
+ ) -> Result<StepOutcome, RunError> {
+     // Resolved ONCE for the whole execution, not per step: a run is one unit of work, and a
+     // change landing between step 2 and step 3 would otherwise leave a single execution governed
+@@ -645,6 +649,7 @@ async fn run_maf_inner(
+             &mut total_cost,
+             llm,
+             outbound_prefix.as_deref(),
++            clock,
          )
          .await
          {
--            Ok(mut tools) => {
--                tools.push(nasiko_connect_toolkit_definition());
--                ok(req_id, json!({ "tools": tools }))
--            }
-+            Ok(tools) => ok(req_id, json!({ "tools": tools })),
-             Err(e) => err(req_id, e.json_rpc_code(), e.to_json_rpc().message),
-         };
-     }
-@@ -391,7 +383,6 @@ pub async fn handle_tools_list(
-     tools.push(nasiko_search_tools_definition());
-     tools.push(nasiko_call_tool_definition());
-     tools.push(recover_compressed_definition());
--    tools.push(nasiko_connect_toolkit_definition());
+@@ -742,6 +747,7 @@ pub async fn run_maf_from(
+     resume_context_id: String,
+     injected_answer: String,
+     outbound: &dyn OutboundPrefix,
++    clock: AgentClock,
+ ) -> Result<StepOutcome, RunError> {
+     // Re-resolved on resume rather than carried across the pause. A paused execution can sit for
+     // days, and the steps that run after a human answers should run under the policy in force
+@@ -841,6 +847,7 @@ pub async fn run_maf_from(
+             &mut total_cost,
+             llm,
+             outbound_prefix.as_deref(),
++            clock,
+         )
+         .await
+         {
+@@ -928,6 +935,8 @@ pub async fn execute_step(
+     total_cost: &mut f64,
+     llm: &LlmClient,
+     outbound_prefix: Option<&str>,
++    // The current date and time, sent with the step's message after `outbound_prefix`.
++    clock: AgentClock,
+ ) -> StepLoopOutcome {
+     step_results[i].status = "running".to_string();
+     persist_progress(db, execution_id, step_results, *total_tokens, *total_cost).await;
+@@ -1162,6 +1171,7 @@ pub async fn execute_step(
+                 &user_id.to_string(),
+                 &actual_prompt,
+                 outbound_prefix,
++                clock,
+                 &traceparent,
+             ),
+         ),
+@@ -2488,6 +2498,9 @@ async fn call_agent(
+     // caller). Same representation `a2a_dispatch.rs`/`agent_proxy.rs`/`tool.rs` use for the exact
+     // same reason: a second, independently-addressable part rather than a merged string.
+     outbound_prefix: Option<&str>,
++    // The current date and time, its own part after the policy. A new step's message only: the
++    // human's answer on a resume (`call_agent_continuation`) goes out alone, like the policy.
++    clock: AgentClock,
+     traceparent: &str,
+ ) -> Result<AgentCallOutcome, AgentCallError> {
+     let target = AgentCallTarget {
+@@ -2496,8 +2509,10 @@ async fn call_agent(
+         user_id,
+         traceparent,
+     };
++    let now = clock.note();
+     let mut texts = vec![prompt];
+     texts.extend(outbound_prefix);
++    texts.extend(now.as_deref());
+     let started = Instant::now();
  
-     ok(req_id, json!({ "tools": tools }))
- }
-@@ -535,24 +526,6 @@ fn rendered_bytes<'a>(
-         .sum()
+     for dialect in [Dialect::Proto, Dialect::JsonRpc] {
+@@ -3178,6 +3193,7 @@ mod resume_tests {
+             "ctx-1".into(),
+             "the human's answer".into(),
+             &crate::outbound::NoOutboundPrefix,
++            AgentClock::OFF,
+         )
+         .await;
+ 
+@@ -3380,6 +3396,38 @@ mod resume_tests {
+             "user-1",
+             "do the thing",
+             Some("POLICY"),
++            AgentClock::OFF,
++            "00-trace-span-01",
++        )
++        .await;
++
++        mock.assert_async().await;
++        assert!(matches!(result, Ok(AgentCallOutcome::Completed(_))));
++    }
++
++    /// The current date and time follows the policy as its own part. The step's prompt stays the
++    /// first part, unchanged: it is what `step_results[i].prompt` records.
++    #[tokio::test]
++    async fn call_agent_tells_the_time_after_the_policy() {
++        let mut server = mockito::Server::new_async().await;
++        let mock = server
++            .mock("POST", "/jsonrpc")
++            .match_request(|request| tells_the_time_after(request, "do the thing"))
++            .with_status(200)
++            .with_body(completed_agent_response())
++            .create_async()
++            .await;
++
++        let client = reqwest::Client::new();
++        let result = call_agent(
++            &client,
++            &ForwardTarget::from(server.url()),
++            None,
++            "ctx-1",
++            "user-1",
++            "do the thing",
++            Some("POLICY"),
++            AgentClock::ON,
+             "00-trace-span-01",
+         )
+         .await;
+@@ -34
+```
+
+**File**: `orchestrator/src/maf/worker.rs` (modified, +1/-0)
+```diff
+@@ -601,6 +601,7 @@ async fn process_job(
+         agent_calls: &agent_calls.meter,
+         targets: agent_calls.targets.as_ref(),
+         outbound: agent_calls.outbound.as_ref(),
++        clock: agent_calls.clock,
+         db,
+         flow_guard,
+         llm: &owner_llm,
+```
+
+**File**: `server/.env.example` (modified, +9/-1)
+```diff
+@@ -89,7 +89,7 @@ SEED_AGENTS=
+ # Starter workflows installed after the seed agents, as public workflows every
+ # user can run (server/src/seed_workflows.rs). Space-separated template
+ # ids; each one's agents must be in SEED_AGENTS or it is skipped.
+-# SEED_WORKFLOWS="chief-of-staff-follow-up inbox-morning-brief voice-of-customer-roadmap"
++# SEED_WORKFLOWS="inbox-morning-brief monthly-work-recap"
+ # SEED_IMAGE_PLATFORM=linux/amd64        # os/arch copied from multi-platform seed images
+ # SEED_FORCE_PULL=                       # (unset) set to any value to re-pull seed images
+ 
+@@ -322,6 +322,14 @@ S3_REGION=us-east-1
+ # NASIKO_FLOW_TIMEOUT_SECS. Accepts the former name ROUTER_AGENT_TIMEOUT_SECS.
+ # AGENT_CALL_TIMEOUT_SECS=600
+ 
++# Tell agents the current date and time: every new message the platform hands
++# an agent (chat, the orchestrator's calls, workflow steps, agent-to-agent
++# calls) carries "Current date and time: ... UTC" as its own text part, after
++# the message's own text, so "today" or "the last 24 hours" resolve to real
++# dates. A human's answer to a paused task gets nothing. Off sends agent
++# messages exactly as before.
++# AGENT_CONTEXT_CURRENT_TIME=true
++
+ # ═══════════════════════════════════════════════════════════════════════════
+ # 10) HUMAN-IN-THE-LOOP
+ # ═══════════════════════════════════════════════════════════════════════════
+```
+
+**File**: `server/src/router/a2a_dispatch.rs` (modified, +16/-0)
+```diff
+@@ -789,6 +789,7 @@ pub(crate) async fn orchestrator_stream(
+         preamble,
+         outbound_prefix: org_context,
+         attachment_note: None,
++        clock: state.agent_clock(),
+         // IP-3. Read here rather than defaulted, because `ContextConfig::default()` is
+         // deliberately inert — without this the compressor is compiled in but unreachable.
+         context: nasiko_react_agent::ContextConfig {
+@@ -1501,6 +1502,19 @@ fn append_org_policy_part(req: &mut JsonRpcRequest, org_context: Option<&str>) {
+     let _ = nasiko_agent_proxy::context_part::append_context_part(message, org, tagging);
  }
  
--/// The `nasiko_connect_toolkit` meta-tool definition.
--fn nasiko_connect_toolkit_definition() -> Value {
--    json!({
--        "name": CONNECT_TOOLKIT_META,
--        "description": "Ask the user to connect an app account (e.g. gmail, googlecalendar, slack, github) when the tools you need are missing because the account is not connected. Returns 'connected' if it already is; otherwise the user is shown a Connect button.",
--        "inputSchema": {
--            "type": "object",
--            "properties": {
--                "toolkit": {
--                    "type": "string",
--                    "description": "Toolkit slug, lowercase, e.g. 'gmail'"
--                }
++/// Appends the current date and time as its own part, after organization policy, on the same
++/// terms the agent proxy does (`crate::current_time`). Every request this path builds opens a
++/// task, so none is a continuation.
++fn append_current_time_part(
++    req: &mut JsonRpcRequest,
++    clock: nasiko_types::agent_clock::AgentClock,
++) {
++    let tagging = nasiko_agent_proxy::context_part::tagging_for_method(&req.method);
++    if let Some(message) = req.params.as_mut().and_then(|p| p.get_mut("message")) {
++        crate::current_time::append_current_time(message, clock, tagging);
++    }
++}
++
+ /// Orchestrator tool names of the agents whose Token optimization switch is off.
+ async fn opted_out_agent_tools(
+     db: &sqlx::PgPool,
+@@ -1743,6 +1757,7 @@ async fn agent_stream(
+     };
+     append_attachment_note(&mut req_body, attachment_note.as_deref());
+     append_org_policy_part(&mut req_body, org_context);
++    append_current_time_part(&mut req_body, state.agent_clock());
+ 
+     // No per-request MCP credential: the agent authenticates to /api/mcp with
+     // its own deploy-time MCP_GATEWAY_TOKEN; the forwarded traceparent + the
+@@ -2070,6 +2085,7 @@ async fn agent_stream(
+             );
+             append_attachment_note(&mut retry_body, attachment_note.as_deref());
+             append_org_policy_part(&mut retry_body, org_context);
++            append_current_time_part(&mut retry_body, state.agent_clock());
+             let retry = build_agent_req()
+                 .json(&retry_body)
+                 .send()
+```
+
+**File**: `server/src/seed_workflows.rs` (modified, +58/-98)
+```diff
+@@ -53,121 +53,81 @@ pub struct TemplateStep {
+ /// Every template this server knows. Ids must be unique.
+ pub const TEMPLATES: &[WorkflowTemplate] = &[
+     // Showcase workflows: a run needs no input (the dashboard's Run sends none). Each first step
+-    // either reads the running user's own app (a connect card the first time, see the agents'
+-    // connected-apps support) or carries its own sample data, and its description says which.
++    // reads the running user's own apps, with a connect card the first time for each app not yet
++    // connected; the description names the apps.
+     WorkflowTemplate {
+-        id: "chief-of-staff-follow-up",
++        id: "inbox-morning-brief",
+         version: 2,
+-        name: "Chief of Staff: Meeting Follow-up",
+-        description: "Reads your latest meeting notes from Google Drive and turns them into \
+-                      decisions, owners and a ready-to-send follow-up email. Asks you to \
+-                      connect Google Drive the first time.",
++        name: "Inbox Morning Brief",
++        description: "Reads the last 30 days of your Gmail, Google Calendar and Linear, \
++                      and turns them into what to do now: meetings to prepare for or follow \
++                      up, emails that still need a reply, and your top priorities. Asks you \
++                      to connect each app the first time.",
+         steps: &[
+             TemplateStep {
+-                agent: "meeting-notes-processor",
+-                agent_version: "1.1.1",
+-                task: "Process my latest meeting notes from Google Drive: pull out the \
+-                       decisions, the action items with owner and due date, and the open \
+-                       questions.",
 -            },
--            "required": ["toolkit"]
--        }
--    })
+-            TemplateStep {
+-                agent: "task-breakdown",
+-                agent_version: "1.1.1",
+-                task: "Turn the action items into an ordered task list, keeping each \
+-                       owner and due date, and flag anything due this week as urgent.",
+-            },
+-            TemplateStep {
+-                agent: "reply-drafter",
+-                agent_version: "1.1.1",
+-                task: "Draft the follow-up email the meeting organiser sends to the \
+-                       attendees: thank them, confirm the decisions, and list each task \
+-                       with its owner and due date. It goes out by email.",
++                agent: "scout",
++                agent_version: "1.0.0",
++                // The time ranges are spelled out so the search does not depend on the model
++                // working out "today" on its own; Scout also gets the current date with the step.
++                task: "Gather my material from the last 30 days: the emails I received \
++                       in Gmail (Gmail search: newer_than:30d), my meetings in Google \
++                       Calendar from the last 30 days and today, and my Linear issues \
++                       assigned to me that changed in the last 30 days, with their status, \
++                       priority and due date.",
+             },
+             TemplateStep {
+-                agent: "humanizer",
+-                agent_version: "1.1.1",
+-                task: "Rewrite the email so it reads warm and natural, without changing \
+-                       any decision, owner or date.",
++                agent: "distiller",
++                agent_version: "1.0.0",
++                task: "From that material, tell me what to do now, with these sections: \
++                       Meetings (today's first, with what to prepare; then follow-ups from \
++                       recent meetings), Needs a reply (who, about what, since when), Top \
++                       priorities (open Linear issues by priority and due date), Everything \
++                       else (one line each). Order each section by urgency, and say plainly \
++                       when a source had nothing.",
+             },
+         ],
+     },
+     WorkflowTemplate {
+-        id: "voice-of-customer-roadmap",
++        id: "monthly-work-recap",
+         version: 1,
+-        name: "Voice of Customer \u{2192} Roadmap",
+-        description: "Turns raw customer feedback into ranked themes, roadmap tasks and \
+-                      a reply to the customer in their own language. Runs on built-in \
+-                      sample feedback.",
++        name: "Monthly Work Recap",
++        description: "Gathers your last 30 days from GitHub, Linear, Gmail and Google \
++                      Drive, turns it into a monthly update (done, impact, in progress, \
++                      backlog, risks), saves it as a Gmail draft for your manager and sends \
++                      you a short version on Slack. Asks you to connect each app the first \
++                      time.",
+         steps: &[
+             TemplateStep {
+-                agent: "summarizer",
+-                agent_version: "1.1.1",
+-                
+```
+
+**File**: `server/tests/attachments_dispatch.rs` (modified, +8/-1)
+```diff
+@@ -837,7 +837,14 @@ async fn a_turn_without_files_gets_no_attachment_line() {
+ 
+     let (status, body) = send_turn(&server, &user, Some(agent_id), &sid, &[], vec![]).await;
+     assert_eq!(status, 200, "{body}");
+-    assert_eq!(text_parts_seen(&agent).len(), 1);
++    // Only the user's text, besides the current time the platform tells every agent.
++    let texts = text_parts_seen(&agent);
++    let own: Vec<&String> = texts
++        .iter()
++        .filter(|t| !t.starts_with(nasiko_types::agent_clock::NOTE_LEAD))
++        .collect();
++    assert_eq!(own.len(), 1, "{texts:?}");
++    assert!(!own[0].contains("nasiko-file://"), "{texts:?}");
+ 
+     server.cleanup().await;
+ }
+```
+
+**File**: `server/tests/maf_step_flow_retry.rs` (modified, +1/-0)
+```diff
+@@ -233,6 +233,7 @@ impl MafRun {
+             agent_calls: &self.meter,
+             targets: &targets,
+             outbound: &nasiko_orchestrator::outbound::NoOutboundPrefix,
++            clock: nasiko_types::agent_clock::AgentClock::OFF,
+             db,
+             flow_guard: &self.flow_guard,
+             llm: &self.llm,
+```
+
+---
+
+### Incident Patch 3: `679ddc15` (2026-11-17)
+**Commit Message**: Merge branch 'main' into dependabot/npm_and_yarn/ui/npm_and_yarn-9cba24dc92
+[synced-from-private]
+
+**File**: `mcp-gateway/src/protocol.rs` (modified, +29/-149)
+```diff
+@@ -2157,32 +2157,31 @@ fn connector_disabled(
+         .unwrap_or(false)
+ }
+ 
+-/// Follows a preview of a result Composio found too large to send inline. The full copy it keeps
+-/// is a file in its own sandbox, which the agent cannot open, so asking for less is the only way
+-/// to all of it.
+-const PARTIAL_RESULT_NOTE: &str = "Partial result: the full output was too large to return, so \
+-    this is only a preview of it. Ask for less (fewer items, a narrower time range, or without \
+-    full message bodies) to get everything.";
+-
+-/// Stands in for a result Composio found too large to send inline and sent no preview of.
+-const TOO_LARGE_RESULT_NOTE: &str = "The output was too large to return. Ask for less (fewer \
+-    items, a narrower time range, or without full message bodies).";
+-
++/// Unwrap a `COMPOSIO_MULTI_EXECUTE_TOOL` response back to a normal tool
++/// response the agent expects.
++///
++/// MULTI_EXECUTE returns:
++/// ```json
++/// { "jsonrpc": "2.0", "id": 1, "result": {
++///     "content": [{ "type": "text", "text": "[{\"data\": {...}, ...}]" }]
++/// }}
++/// ```
++///
++/// We extract the inner JSON from the first `content[].text` entry and return
++/// it as a standard `result.content[].text` with the unwrapped payload.
+ /// Unwrap a `COMPOSIO_MULTI_EXECUTE_TOOL` response back to the clean tool
+ /// result the agent expects.
+ ///
+ /// MULTI_EXECUTE returns:
+ /// ```text
+ /// result.content[0].text = JSON string of {
+-///   "data": { "results": [{ "response": { "successful": bool, "data": {…} }, … }],
+-///             "remote_file_info": {…} only when the output was too large to send inline },
++///   "data": { "results": [{ "response": { "successful": bool, "data": {…} }, … }] },
+ ///   "successful": bool
+ /// }
+ /// ```
+ ///
+ /// We extract `data.results[0].response.data` (the actual tool output) and
+-/// return it as a clean `result.content[0].text`. An output too large to send
+-/// inline comes as `response.data_preview` instead: see [`successful_output`].
++/// return it as a clean `result.content[0].text`.
+ fn unwrap_multi_execute_response(response: Value) -> Value {
+     let text = response
+         .get("result")
+@@ -2208,7 +2207,7 @@ fn unwrap_multi_execute_response(response: Value) -> Value {
+         .and_then(|r| r.as_array())
+         .and_then(|arr| arr.first());
+ 
+-    let parts: Vec<String> = match first_result {
++    let inner_text = match first_result {
+         Some(result) => {
+             let tool_response = result.get("response");
+             let successful = tool_response
+@@ -2217,7 +2216,12 @@ fn unwrap_multi_execute_response(response: Value) -> Value {
+                 .unwrap_or(false);
+ 
+             if successful {
+-                successful_output(result, &parsed)
++                // Success: return response.data (the actual tool output).
++                let data = tool_response
++                    .and_then(|r| r.get("data"))
++                    .cloned()
++                    .unwrap_or(json!({"success": true}));
++                serde_json::to_string(&data).unwrap_or_else(|_| text.to_string())
+             } else {
+                 // Failure: return a clean error message.
+                 let error = result
+@@ -2230,59 +2234,23 @@ fn unwrap_multi_execute_response(response: Value) -> Value {
+                             .and_then(|m| m.as_str())
+                     })
+                     .unwrap_or("tool execution failed");
+-                vec![
+-                    serde_json::to_string(&json!({"error": error}))
+-                        .unwrap_or_else(|_| text.to_string()),
+-                ]
++                serde_json::to_string(&json!({"error": error})).unwrap_or_else(|_| text.to_string())
+             }
+         }
+-        None => vec![text.to_string()],
++        None => text.to_string(),
+     };
+ 
+     // Rebuild as a standard MCP tool response.
+-    let content: Vec<Value> = parts
+-        .into_iter()
+-        .map(|text| json!({ "type": "text", "text": text }))
+-        .collect();
+     let mut out = response.clone();
+-    out["result"] = json!({ "content": content });
++    out["result"] = json!({
++        "content": [{
++            "type": "text",
++            "text": inner_text
++        }]
++    });
+     out
+ }
+ 
+-/// A successful tool's output, as content parts: `response.data`; or, when Composio found the
+-/// output too large to send inline, its `response.data_preview` followed by a note that it is
+-/// partial; or only that note when it sent no preview either. Composio's pointer to the full copy
+-/// (`remote_file_info`, a file in its sandbox) is not passed on: the agent cannot open it.
+-fn successful_output(result: &Value, envelope: &Value) -> Vec<String> {
+-    let tool_response = result.get("response");
+-    if let Some(data) = tool_response.and_then(|r| r.get("data")) {
+-        return vec![data.to_string()];
+-    }
+-    let tool = result
+-        .get("tool_slug")
+-        .and_then(Value::as_str)
+-        .unwrap_or_default();
+-    if l
+```
+
+**File**: `orchestrator/src/maf/executor.rs` (modified, +0/-75)
+```diff
+@@ -1,6 +1,5 @@
+ use crate::outbound::OutboundPrefix;
+ use crate::target::{AgentTargetResolver, ForwardTarget, ResolveCaller, ResolveFailure};
+-use nasiko_types::agent_clock::AgentClock;
+ use std::sync::Arc;
+ use std::time::Instant;
+ 
+@@ -486,7 +485,6 @@ pub async fn run_maf(
+     llm: &LlmClient,
+     content: Option<&str>,
+     outbound: &dyn OutboundPrefix,
+-    clock: AgentClock,
+ ) -> Result<StepOutcome, RunError> {
+     // A MAF run is driven by a background worker, not a request, so there is
+     // no inbound traceparent to continue — this span is legitimately a root.
+@@ -520,7 +518,6 @@ pub async fn run_maf(
+         llm,
+         content,
+         outbound,
+-        clock,
+     )
+     .instrument(span)
+     .await
+@@ -539,7 +536,6 @@ async fn run_maf_inner(
+     llm: &LlmClient,
+     content: Option<&str>,
+     outbound: &dyn OutboundPrefix,
+-    clock: AgentClock,
+ ) -> Result<StepOutcome, RunError> {
+     // Resolved ONCE for the whole execution, not per step: a run is one unit of work, and a
+     // change landing between step 2 and step 3 would otherwise leave a single execution governed
+@@ -649,7 +645,6 @@ async fn run_maf_inner(
+             &mut total_cost,
+             llm,
+             outbound_prefix.as_deref(),
+-            clock,
+         )
+         .await
+         {
+@@ -747,7 +742,6 @@ pub async fn run_maf_from(
+     resume_context_id: String,
+     injected_answer: String,
+     outbound: &dyn OutboundPrefix,
+-    clock: AgentClock,
+ ) -> Result<StepOutcome, RunError> {
+     // Re-resolved on resume rather than carried across the pause. A paused execution can sit for
+     // days, and the steps that run after a human answers should run under the policy in force
+@@ -847,7 +841,6 @@ pub async fn run_maf_from(
+             &mut total_cost,
+             llm,
+             outbound_prefix.as_deref(),
+-            clock,
+         )
+         .await
+         {
+@@ -935,8 +928,6 @@ pub async fn execute_step(
+     total_cost: &mut f64,
+     llm: &LlmClient,
+     outbound_prefix: Option<&str>,
+-    // The current date and time, sent with the step's message after `outbound_prefix`.
+-    clock: AgentClock,
+ ) -> StepLoopOutcome {
+     step_results[i].status = "running".to_string();
+     persist_progress(db, execution_id, step_results, *total_tokens, *total_cost).await;
+@@ -1171,7 +1162,6 @@ pub async fn execute_step(
+                 &user_id.to_string(),
+                 &actual_prompt,
+                 outbound_prefix,
+-                clock,
+                 &traceparent,
+             ),
+         ),
+@@ -2498,9 +2488,6 @@ async fn call_agent(
+     // caller). Same representation `a2a_dispatch.rs`/`agent_proxy.rs`/`tool.rs` use for the exact
+     // same reason: a second, independently-addressable part rather than a merged string.
+     outbound_prefix: Option<&str>,
+-    // The current date and time, its own part after the policy. A new step's message only: the
+-    // human's answer on a resume (`call_agent_continuation`) goes out alone, like the policy.
+-    clock: AgentClock,
+     traceparent: &str,
+ ) -> Result<AgentCallOutcome, AgentCallError> {
+     let target = AgentCallTarget {
+@@ -2509,10 +2496,8 @@ async fn call_agent(
+         user_id,
+         traceparent,
+     };
+-    let now = clock.note();
+     let mut texts = vec![prompt];
+     texts.extend(outbound_prefix);
+-    texts.extend(now.as_deref());
+     let started = Instant::now();
+ 
+     for dialect in [Dialect::Proto, Dialect::JsonRpc] {
+@@ -3193,7 +3178,6 @@ mod resume_tests {
+             "ctx-1".into(),
+             "the human's answer".into(),
+             &crate::outbound::NoOutboundPrefix,
+-            AgentClock::OFF,
+         )
+         .await;
+ 
+@@ -3396,38 +3380,6 @@ mod resume_tests {
+             "user-1",
+             "do the thing",
+             Some("POLICY"),
+-            AgentClock::OFF,
+-            "00-trace-span-01",
+-        )
+-        .await;
+-
+-        mock.assert_async().await;
+-        assert!(matches!(result, Ok(AgentCallOutcome::Completed(_))));
+-    }
+-
+-    /// The current date and time follows the policy as its own part. The step's prompt stays the
+-    /// first part, unchanged: it is what `step_results[i].prompt` records.
+-    #[tokio::test]
+-    async fn call_agent_tells_the_time_after_the_policy() {
+-        let mut server = mockito::Server::new_async().await;
+-        let mock = server
+-            .mock("POST", "/jsonrpc")
+-            .match_request(|request| tells_the_time_after(request, "do the thing"))
+-            .with_status(200)
+-            .with_body(completed_agent_response())
+-            .create_async()
+-            .await;
+-
+-        let client = reqwest::Client::new();
+-        let result = call_agent(
+-            &client,
+-            &ForwardTarget::from(server.url()),
+-            None,
+-            "ctx-1",
+-            "user-1",
+-            "do the thing",
+-            Some("POLICY"),
+-            AgentClock::ON,
+             "00-trace-span-01",
+         )
+         .await;
+@@ -34
+```
+
+**File**: `orchestrator/src/maf/worker.rs` (modified, +0/-1)
+```diff
+@@ -601,7 +601,6 @@ async fn process_job(
+         agent_calls: &agent_calls.meter,
+         targets: agent_calls.targets.as_ref(),
+         outbound: agent_calls.outbound.as_ref(),
+-        clock: agent_calls.clock,
+         db,
+         flow_guard,
+         llm: &owner_llm,
+```
+
+**File**: `server/.env.example` (modified, +1/-9)
+```diff
+@@ -89,7 +89,7 @@ SEED_AGENTS=
+ # Starter workflows installed after the seed agents, as public workflows every
+ # user can run (server/src/seed_workflows.rs). Space-separated template
+ # ids; each one's agents must be in SEED_AGENTS or it is skipped.
+-# SEED_WORKFLOWS="inbox-morning-brief monthly-work-recap"
++# SEED_WORKFLOWS="chief-of-staff-follow-up inbox-morning-brief voice-of-customer-roadmap"
+ # SEED_IMAGE_PLATFORM=linux/amd64        # os/arch copied from multi-platform seed images
+ # SEED_FORCE_PULL=                       # (unset) set to any value to re-pull seed images
+ 
+@@ -322,14 +322,6 @@ S3_REGION=us-east-1
+ # NASIKO_FLOW_TIMEOUT_SECS. Accepts the former name ROUTER_AGENT_TIMEOUT_SECS.
+ # AGENT_CALL_TIMEOUT_SECS=600
+ 
+-# Tell agents the current date and time: every new message the platform hands
+-# an agent (chat, the orchestrator's calls, workflow steps, agent-to-agent
+-# calls) carries "Current date and time: ... UTC" as its own text part, after
+-# the message's own text, so "today" or "the last 24 hours" resolve to real
+-# dates. A human's answer to a paused task gets nothing. Off sends agent
+-# messages exactly as before.
+-# AGENT_CONTEXT_CURRENT_TIME=true
+-
+ # ═══════════════════════════════════════════════════════════════════════════
+ # 10) HUMAN-IN-THE-LOOP
+ # ═══════════════════════════════════════════════════════════════════════════
+```
+
+**File**: `server/src/router/a2a_dispatch.rs` (modified, +0/-16)
+```diff
+@@ -789,7 +789,6 @@ pub(crate) async fn orchestrator_stream(
+         preamble,
+         outbound_prefix: org_context,
+         attachment_note: None,
+-        clock: state.agent_clock(),
+         // IP-3. Read here rather than defaulted, because `ContextConfig::default()` is
+         // deliberately inert — without this the compressor is compiled in but unreachable.
+         context: nasiko_react_agent::ContextConfig {
+@@ -1502,19 +1501,6 @@ fn append_org_policy_part(req: &mut JsonRpcRequest, org_context: Option<&str>) {
+     let _ = nasiko_agent_proxy::context_part::append_context_part(message, org, tagging);
+ }
+ 
+-/// Appends the current date and time as its own part, after organization policy, on the same
+-/// terms the agent proxy does (`crate::current_time`). Every request this path builds opens a
+-/// task, so none is a continuation.
+-fn append_current_time_part(
+-    req: &mut JsonRpcRequest,
+-    clock: nasiko_types::agent_clock::AgentClock,
+-) {
+-    let tagging = nasiko_agent_proxy::context_part::tagging_for_method(&req.method);
+-    if let Some(message) = req.params.as_mut().and_then(|p| p.get_mut("message")) {
+-        crate::current_time::append_current_time(message, clock, tagging);
+-    }
 -}
 -
- /// The `nasiko_search_tools` meta-tool definition — always included in
- /// `tools/list` so agents can search for tools not in the initial set.
- fn nasiko_search_tools_definition() -> Value {
-@@ -776,10 +749,7 @@ pub async fn handle_tools_call(
-         req_id,
-         perms.agent_id,
-         verified_flow_id.and(traceparent),
--        matches!(
--            tool,
--            SEARCH_TOOLS_META | RECOVER_COMPRESSED_META | CONNECT_TOOLKIT_META
--        ),
-+        matches!(tool, SEARCH_TOOLS_META | RECOVER_COMPRESSED_META),
-     );
-     if state.config.capture_content {
-         let arguments = match params.get("name").and_then(Value::as_str) {
-@@ -899,100 +869,6 @@ async fn handle_tools_call_inner(
-         return ok(req_id, result);
-     }
+ /// Orchestrator tool names of the agents whose Token optimization switch is off.
+ async fn opted_out_agent_tools(
+     db: &sqlx::PgPool,
+@@ -1757,7 +1743,6 @@ async fn agent_stream(
+     };
+     append_attachment_note(&mut req_body, attachment_note.as_deref());
+     append_org_policy_part(&mut req_body, org_context);
+-    append_current_time_part(&mut req_body, state.agent_clock());
  
--    // ── nasiko_connect_toolkit meta-tool ─────────────────────────────────
--    if tool_name == CONNECT_TOOLKIT_META {
--        let toolkit: String = arguments
--            .get("toolkit")
--            .and_then(|v| v.as_str())
--            .unwrap_or("")
--            .trim()
--            .to_ascii_lowercase();
--        if toolkit.is_empty() {
--            return err(
--                req_id,
--                codes::INVALID_PARAMS,
--                "nasiko_connect_toolkit requires `toolkit`",
--            );
--        }
--        let connector = match crate::repo::get_composio_connector_by_name(&state.db, &toolkit).await
--        {
--            Ok(Some(c)) => c,
--            Ok(None) => {
--                return ok(
--                    req_id,
--                    json!({
--                        "content": [{"type": "text", "text": format!("No app named '{toolkit}' is available on this platform.")}],
--                        "isError": true
--                    }),
--                );
--            }
--            Err(e) => {
--                return err(
--                    req_id,
--                    codes::INTERNAL_ERROR,
--                    format!("connector lookup failed: {e}"),
--                );
--            }
--        };
--        if !connector.active() {
--            return err(
--                req_id,
--                codes::TOOL_BLOCKED,
--                format!("'{toolkit}' has been switched off by an admin."),
--            );
--        }
--        // Asking to connect a toolkit is the agent declaring it needs it: turn the connector on
--        // for this agent so its tools show up after consent. An explicit "off" set by whoever
--        // manages the agent is respected; only a never-configured connector is enabled.
--        if let Err(e) = crate::repo::insert_agent_connector_access_if_absent(
--            &state.db,
--            perms.agent_id,
--            connector.id,
--    
+     // No per-request MCP credential: the agent authenticates to /api/mcp with
+     // its own deploy-time MCP_GATEWAY_TOKEN; the forwarded traceparent + the
+@@ -2085,7 +2070,6 @@ async fn agent_stream(
+             );
+             append_attachment_note(&mut retry_body, attachment_note.as_deref());
+             append_org_policy_part(&mut retry_body, org_context);
+-            append_current_time_part(&mut retry_body, state.agent_clock());
+             let retry = build_agent_req()
+                 .json(&retry_body)
+                 .send()
+```
+
+**File**: `server/src/seed_workflows.rs` (modified, +98/-58)
+```diff
+@@ -53,81 +53,121 @@ pub struct TemplateStep {
+ /// Every template this server knows. Ids must be unique.
+ pub const TEMPLATES: &[WorkflowTemplate] = &[
+     // Showcase workflows: a run needs no input (the dashboard's Run sends none). Each first step
+-    // reads the running user's own apps, with a connect card the first time for each app not yet
+-    // connected; the description names the apps.
++    // either reads the running user's own app (a connect card the first time, see the agents'
++    // connected-apps support) or carries its own sample data, and its description says which.
+     WorkflowTemplate {
+-        id: "inbox-morning-brief",
++        id: "chief-of-staff-follow-up",
+         version: 2,
+-        name: "Inbox Morning Brief",
+-        description: "Reads the last 30 days of your Gmail, Google Calendar and Linear, \
+-                      and turns them into what to do now: meetings to prepare for or follow \
+-                      up, emails that still need a reply, and your top priorities. Asks you \
+-                      to connect each app the first time.",
++        name: "Chief of Staff: Meeting Follow-up",
++        description: "Reads your latest meeting notes from Google Drive and turns them into \
++                      decisions, owners and a ready-to-send follow-up email. Asks you to \
++                      connect Google Drive the first time.",
+         steps: &[
+             TemplateStep {
+-                agent: "scout",
+-                agent_version: "1.0.0",
+-                // The time ranges are spelled out so the search does not depend on the model
+-                // working out "today" on its own; Scout also gets the current date with the step.
+-                task: "Gather my material from the last 30 days: the emails I received \
+-                       in Gmail (Gmail search: newer_than:30d), my meetings in Google \
+-                       Calendar from the last 30 days and today, and my Linear issues \
+-                       assigned to me that changed in the last 30 days, with their status, \
+-                       priority and due date.",
++                agent: "meeting-notes-processor",
++                agent_version: "1.1.1",
++                task: "Process my latest meeting notes from Google Drive: pull out the \
++                       decisions, the action items with owner and due date, and the open \
++                       questions.",
++            },
++            TemplateStep {
++                agent: "task-breakdown",
++                agent_version: "1.1.1",
++                task: "Turn the action items into an ordered task list, keeping each \
++                       owner and due date, and flag anything due this week as urgent.",
++            },
++            TemplateStep {
++                agent: "reply-drafter",
++                agent_version: "1.1.1",
++                task: "Draft the follow-up email the meeting organiser sends to the \
++                       attendees: thank them, confirm the decisions, and list each task \
++                       with its owner and due date. It goes out by email.",
+             },
+             TemplateStep {
+-                agent: "distiller",
+-                agent_version: "1.0.0",
+-                task: "From that material, tell me what to do now, with these sections: \
+-                       Meetings (today's first, with what to prepare; then follow-ups from \
+-                       recent meetings), Needs a reply (who, about what, since when), Top \
+-                       priorities (open Linear issues by priority and due date), Everything \
+-                       else (one line each). Order each section by urgency, and say plainly \
+-                       when a source had nothing.",
++                agent: "humanizer",
++                agent_version: "1.1.1",
++                task: "Rewrite the email so it reads warm and natural, without changing \
++                       any decision, owner or date.",
+             },
+         ],
+     },
+     WorkflowTemplate {
+-        id: "monthly-work-recap",
++        id: "voice-of-customer-roadmap",
+         version: 1,
+-        name: "Monthly Work Recap",
+-        description: "Gathers your last 30 days from GitHub, Linear, Gmail and Google \
+-                      Drive, turns it into a monthly update (done, impact, in progress, \
+-                      backlog, risks), saves it as a Gmail draft for your manager and sends \
+-                      you a short version on Slack. Asks you to connect each app the first \
+-                      time.",
++        name: "Voice of Customer \u{2192} Roadmap",
++        description: "Turns raw customer feedback into ranked themes, roadmap tasks and \
++                      a reply to the customer in their own language. Runs on built-in \
++                      sample feedback.",
+         steps: &[
+             TemplateStep {
+-                agent: "scout",
+-                agent_version: "1.0.0",
+-                // On
+```
+
+**File**: `server/tests/attachments_dispatch.rs` (modified, +1/-8)
+```diff
+@@ -837,14 +837,7 @@ async fn a_turn_without_files_gets_no_attachment_line() {
+ 
+     let (status, body) = send_turn(&server, &user, Some(agent_id), &sid, &[], vec![]).await;
+     assert_eq!(status, 200, "{body}");
+-    // Only the user's text, besides the current time the platform tells every agent.
+-    let texts = text_parts_seen(&agent);
+-    let own: Vec<&String> = texts
+-        .iter()
+-        .filter(|t| !t.starts_with(nasiko_types::agent_clock::NOTE_LEAD))
+-        .collect();
+-    assert_eq!(own.len(), 1, "{texts:?}");
+-    assert!(!own[0].contains("nasiko-file://"), "{texts:?}");
++    assert_eq!(text_parts_seen(&agent).len(), 1);
+ 
+     server.cleanup().await;
+ }
+```
+
+**File**: `server/tests/maf_step_flow_retry.rs` (modified, +0/-1)
+```diff
+@@ -233,7 +233,6 @@ impl MafRun {
+             agent_calls: &self.meter,
+             targets: &targets,
+             outbound: &nasiko_orchestrator::outbound::NoOutboundPrefix,
+-            clock: nasiko_types::agent_clock::AgentClock::OFF,
+             db,
+             flow_guard: &self.flow_guard,
+             llm: &self.llm,
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #367** (2026-11-16): Remove files the private tree deleted before the sync manifest existed (@nasiko-neeraj)
+- **PR #366** (closed): chore(deps): bump the npm_and_yarn group across 1 directory with 2 updates (@dependabot[bot])
 - **PR #365** (closed): Remove duplicate GitHub badges (@shrawansaproo01)
 - **PR #356** (closed): fix(llm-router): stop dropping tool_choice "none" and related tool controls (@Prudhvi-Raj1806)
 - **PR #355** (closed): Bump the npm_and_yarn group across 1 directory with 3 updates (@dependabot[bot])
 - **PR #344** (closed): feat: add reproducible compaction and routing benchmarks (@AbhiramMandala)
-- **PR #338** (closed): [P2: request classifier] add request classifier and context integrity… (@SVaishnaviVasa)
 
 ---
 
@@ -2516,40 +3278,31 @@ open it. Failures are unwrapped as before.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test(e2e): wait for Base UI's focus guard in the bulk turn-on dialog
+## X. Empirical Invariant Guard in .sync-marker
 
 **RULE**:
-When implementing operations in `ui/e2e/optimization.spec.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Nasiko-Labs/nasiko. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.sync-marker`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Nasiko-Labs/nasiko. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9a20772f`: test(e2e): wait for Base UI's focus guard in the bulk turn-on dialog. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6bf0ff78`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ui/e2e/optimization.spec.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.sync-marker`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    // Tab past the last control lands on Base UI's focus guard, which moves focus back to the first
-    // one on the next animation frame; a busy runner can look in between, so wait for it.
-    await expect
-      .poll(() => dialog.evaluate((d) => d.contains(document.activeElement)), {
-        message: 'focus stays in the dialog',
-      })
-      .toBe(true)
+6a3fb0fda44fea83debfc235d9859367a0bb312d
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    expect(
-      await dialog.evaluate((d) => d.contains(document.activeElement)),
-      'focus stays in the dialog',
-    ).toBe(true)
+a3e2a0a6ca48417a8c9f85c14881221bdec29632
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9a20772f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6bf0ff78` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

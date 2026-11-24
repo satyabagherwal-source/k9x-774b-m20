@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T12:18:29.987Z",
-  "total_cycles_completed": 12035,
-  "total_learnings_persisted": 12035,
-  "total_rules_promoted": 11107,
+  "last_updated": "2026-11-24T12:27:33.993Z",
+  "total_cycles_completed": 12038,
+  "total_learnings_persisted": 12038,
+  "total_rules_promoted": 11110,
   "history": [
-    {
-      "timestamp": "2026-11-23T20:08:34.319Z",
-      "repository": "pingcap/tidb",
-      "learningId": "learn-github-pingcap-tidb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T20:21:53.608Z",
-      "repository": "Phocinae/Phocinae-Largha-150M-v1",
-      "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T20:22:01.487Z",
-      "repository": "iPlug2/iPlug2",
-      "learningId": "learn-github-iplug2-iplug2",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T20:22:09.313Z",
       "repository": "vespa-engine/vespa",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-24T12:18:29.987Z",
       "repository": "invertase/react-native-firebase",
       "learningId": "learn-github-invertase-react-native-firebase",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T12:27:21.963Z",
+      "repository": "Nasiko-Labs/nasiko",
+      "learningId": "learn-github-nasiko-labs-nasiko",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T12:27:28.729Z",
+      "repository": "linkerd/linkerd2",
+      "learningId": "learn-github-linkerd-linkerd2",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T12:27:33.993Z",
+      "repository": "slatedb/slatedb",
+      "learningId": "learn-github-slatedb-slatedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

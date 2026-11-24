@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T12:19:02.463Z",
+  "updated_at": "2026-11-24T12:27:40.347Z",
   "stats": {
-    "total_discovered": 8570,
-    "approved_pending_harvest": 8124,
+    "total_discovered": 8584,
+    "approved_pending_harvest": 8138,
     "harvested_count": 0,
     "rejected_count": 446,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8115,
+      "COMMUNITY_AND_EXPERT": 8129,
       "OFFICIAL_DOCUMENTATION": 268,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -185441,6 +185441,314 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
         "fileName": "invertase-react-native-firebase-learnings.md"
+      }
+    },
+    "SRC-CD1748987810": {
+      "id": "SRC-CD1748987810",
+      "url": "https://github.com/storybookjs/storybook/tree/HEAD/code/core",
+      "title": "https://github.com/storybookjs/storybook/tree/HEAD/code/core",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T12:27:37.513Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md",
+        "fileName": "nasiko-labs-nasiko-learnings.md"
+      }
+    },
+    "SRC-EAF669F5A5A8": {
+      "id": "SRC-EAF669F5A5A8",
+      "url": "https://github.com/storybookjs/storybook/releases",
+      "title": "https://github.com/storybookjs/storybook/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T12:27:37.607Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md",
+        "fileName": "nasiko-labs-nasiko-learnings.md"
+      }
+    },
+    "SRC-5C8383C6C0C2": {
+      "id": "SRC-5C8383C6C0C2",
+      "url": "https://redirect.github.com/storybookjs/storybook/pull/36525",
+      "title": "https://redirect.github.com/storybookjs/storybook/pull/36525",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T12:27:37.673Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md",
+        "fileName": "nasiko-labs-nasiko-learnings.md"
+      }
+    },
+    "SRC-920229A91098": {
+      "id": "SRC-920229A91098",
+      "url": "https://github.com/valentinpalkovic",
+      "title": "https://github.com/valentinpalkovic",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T12:27:37.742Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md",
+        "fileName": "nasiko-labs-nasiko-learnings.md"
+      }
+    },
+    "SRC-2DA95D504BEF": {
+      "id": "SRC-2DA95D504BEF",
+      "url": "https://redirect.github.com/storybookjs/storybook/pull/36419",
+      "title": "https://redirect.github.com/storybookjs/storybook/pull/36419",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T12:27:37.829Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md",
+        "fileName": "nasiko-labs-nasiko-learnings.md"
+      }
+    },
+    "SRC-8DF94AB59116": {
+      "id": "SRC-8DF94AB59116",
+      "url": "https://github.com/kasperpeulen",
+      "title": "https://github.com/kasperpeulen",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T12:27:37.891Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md",
+        "fileName": "nasiko-labs-nasiko-learnings.md"
+      }
+    },
+    "SRC-3A15C2F59125": {
+      "id": "SRC-3A15C2F59125",
+      "url": "https://redirect.github.com/storybookjs/storybook/pull/36526",
+      "title": "https://redirect.github.com/storybookjs/storybook/pull/36526",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T12:27:37.957Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md",
+        "fileName": "nasiko-labs-nasiko-learnings.md"
+      }
+    },
+    "SRC-47C559BCB208": {
+      "id": "SRC-47C559BCB208",
+      "url": "https://github.com/ghengeveld",
+      "title": "https://github.com/ghengeveld",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T12:27:38.025Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md",
+        "fileName": "nasiko-labs-nasiko-learnings.md"
+      }
+    },
+    "SRC-410217A85157": {
+      "id": "SRC-410217A85157",
+      "url": "https://redirect.github.com/storybookjs/storybook/pull/36726",
+      "title": "https://redirect.github.com/storybookjs/storybook/pull/36726",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T12:27:38.092Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md",
+        "fileName": "nasiko-labs-nasiko-learnings.md"
+      }
+    },
+    "SRC-B954C5F7A45D": {
+      "id": "SRC-B954C5F7A45D",
+      "url": "https://github.com/Sidnioulz",
+      "title": "https://github.com/Sidnioulz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T12:27:38.159Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md",
+        "fileName": "nasiko-labs-nasiko-learnings.md"
+      }
+    },
+    "SRC-FC369778A8EC": {
+      "id": "SRC-FC369778A8EC",
+      "url": "https://redirect.github.com/storybookjs/storybook/pull/35664",
+      "title": "https://redirect.github.com/storybookjs/storybook/pull/35664",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T12:27:38.241Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md",
+        "fileName": "nasiko-labs-nasiko-learnings.md"
+      }
+    },
+    "SRC-6A778F0FD8A9": {
+      "id": "SRC-6A778F0FD8A9",
+      "url": "https://pkg.go.dev/vuln/GO-2026-6859",
+      "title": "https://pkg.go.dev/vuln/GO-2026-6859",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T12:27:39.354Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
+        "fileName": "linkerd-linkerd2-learnings.md"
+      }
+    },
+    "SRC-600847D8D896": {
+      "id": "SRC-600847D8D896",
+      "url": "https://slatedb.io/docs/operations/compatibility",
+      "title": "https://slatedb.io/docs/operations/compatibility",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T12:27:40.286Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
+        "fileName": "slatedb-slatedb-learnings.md"
+      }
+    },
+    "SRC-388D04DCB210": {
+      "id": "SRC-388D04DCB210",
+      "url": "https://slatedb.io/",
+      "title": "https://slatedb.io/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T12:27:40.347Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
+        "fileName": "slatedb-slatedb-learnings.md"
       }
     }
   }

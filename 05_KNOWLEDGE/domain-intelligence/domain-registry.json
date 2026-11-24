@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T12:19:03.870Z",
+  "last_updated": "2026-11-24T12:27:40.785Z",
   "total_records": 2519,
   "domains": {
     "A": {
@@ -10683,8 +10683,8 @@
       "title": "Architecture Intelligence: linkerd/linkerd2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-linkerd-linkerd2-architecture-intelligence-linkerd-linkerd2-core-invariants.md",
       "repository": "linkerd/linkerd2",
-      "content_hash": "223db7fa3f0af194a00ae13fb33f092d5dfc3619ed732f130097ba307469228a",
-      "created_at": "2026-11-23T16:53:39.991Z"
+      "content_hash": "f364e500b65653316ab70a7ae876d9bdd7c814e883c650ce9ed69d29c389a077",
+      "created_at": "2026-11-24T12:27:29.156Z"
     },
     "DOM-D-43004423": {
       "record_id": "DOM-D-43004423",
@@ -10743,8 +10743,8 @@
       "title": "Architecture Intelligence: linkerd-linkerd2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-linkerd-linkerd2-learnings-architecture-intelligence-linkerd-linkerd2-learnings-.md",
       "repository": "linkerd-linkerd2-learnings",
-      "content_hash": "b2db304dee9b8834d00c62beaca22b2486d3242eaa68f7b376a406aedb5bdce0",
-      "created_at": "2026-11-20T08:38:47.525Z"
+      "content_hash": "a2e3a30a0ba9c8a4968228597d83105933140ff46f1256e939064dff8530742c",
+      "created_at": "2026-11-24T12:27:39.785Z"
     },
     "DOM-D-4CA3BD2A": {
       "record_id": "DOM-D-4CA3BD2A",
@@ -15589,8 +15589,8 @@
       "title": "Architecture Intelligence: slatedb/slatedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-slatedb-slatedb-architecture-intelligence-slatedb-slatedb-core-invariants.md",
       "repository": "slatedb/slatedb",
-      "content_hash": "c9360fc841f38afdf9c4db0c066700cd7fa5aa86acac929b3bd884b0cbc83c57",
-      "created_at": "2026-11-22T10:03:57.013Z"
+      "content_hash": "ff8ab189820d1a5cdd682fdfca99f5f61a4e84ae361f518d1868d71af04f767d",
+      "created_at": "2026-11-24T12:27:34.427Z"
     },
     "domain_intelligence-architecture-intelligence-nucleoidai-nucleoid-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nucleoidai-nucleoid-core-invariants",
@@ -21497,8 +21497,8 @@
       "title": "Architecture Intelligence: Nasiko-Labs/nasiko Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nasiko-labs-nasiko-architecture-intelligence-nasiko-labs-nasiko-core-invariants.md",
       "repository": "Nasiko-Labs/nasiko",
-      "content_hash": "945b659b956b3220a2852e99c3fc61e32bcaaedaa5c813760f1fd874ab26d20e",
-      "created_at": "2026-11-18T09:14:39.440Z"
+      "content_hash": "c92562225e714cddb8aeff3ea5786c75377089b8b3455d9bc239d458fdaa33ed",
+      "created_at": "2026-11-24T12:27:22.427Z"
     },
     "domain_intelligence-architecture-intelligence-nasiko-labs-nasiko-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nasiko-labs-nasiko-learnings-core-invariants",
@@ -21506,8 +21506,8 @@
       "title": "Architecture Intelligence: nasiko-labs-nasiko-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nasiko-labs-nasiko-learnings-architecture-intelligence-nasiko-labs-nasiko-learni.md",
       "repository": "nasiko-labs-nasiko-learnings",
-      "content_hash": "3d12857bd3464eba40dd68bb1dc9d169bdd5e0479c00c64ee2b69b15605c2a79",
-      "created_at": "2026-11-18T09:19:43.013Z"
+      "content_hash": "c37f237e09cc148e37f8895558e916bac51e3a015325bd7b64451083e85f125d",
+      "created_at": "2026-11-24T12:27:38.696Z"
     },
     "domain_intelligence-architecture-intelligence-vi-websocat-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-vi-websocat-core-invariants",
@@ -22959,8 +22959,8 @@
       "title": "Architecture Intelligence: slatedb-slatedb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-slatedb-slatedb-learnings-architecture-intelligence-slatedb-slatedb-learnings-co.md",
       "repository": "slatedb-slatedb-learnings",
-      "content_hash": "23b1202cfc8847a2a200771f0d9bc113ae9e2759f6fb1cfd594a526130bc31b5",
-      "created_at": "2026-11-22T10:04:02.488Z"
+      "content_hash": "37e18a2b9b46789ae1a127549fc8a2c3aae2cf39ef4b7b51e6c685e091a19c78",
+      "created_at": "2026-11-24T12:27:40.785Z"
     },
     "domain_intelligence-architecture-intelligence-dicklesworthstone-destructive_command_guard-learnings-": {
       "record_id": "domain_intelligence-architecture-intelligence-dicklesworthstone-destructive_command_guard-learnings-",

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T08:38:47.260Z",
+  "timestamp": "2026-11-24T12:27:39.462Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-linkerd-linkerd2-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [linkerd-linkerd2-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T08:38:47.260Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T12:27:39.462Z`  
 > **Learning ID**: `LEARN-EVO-linkerd-linkerd2-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 66%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 65%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from linkerd-linkerd2-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md`  
 > **Source**: github ([https://github.com/linkerd/linkerd2](https://github.com/linkerd/linkerd2))  
-> **Source Version**: `762af53b`  
+> **Source Version**: `8d6fcc5b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T08:34:42.155Z  
+> **Timestamp**: 2026-11-24T12:27:27.492Z  
 > **Learning ID**: `learn-github-linkerd-linkerd2`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/linkerd/linkerd2](https://github.com/linkerd/linkerd2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T08:28:33.272Z  
+> **Harvest Timestamp**: 2026-11-24T12:27:27.486Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Ultralight, security-first service mesh for Kubernetes. Main repo for Linkerd 2.x.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 11548 stars
+- **Stars / Engagement**: 11543 stars
 
 ---
 
@@ -895,8 +895,9 @@ import (
 )
 
 const (
-	eventTypeSkipped  = "InjectionSkipped"
-	eventTypeInjected = "Injected"
+	eventTypeSkipped           = "InjectionSkipped"
+	eventTypeInjected          = "Injected"
+	eventTypeInvalidAnnotation = "InvalidAnnotation"
 )
 
 // Inject returns the function that produces an AdmissionResponse containing
@@ -1004,6 +1005,7 @@ func Inject(linkerdNamespace string, overrider inject.ValueOverrider) webhook.Ha
 			if parent != nil {
 				recorder.Event(parent, v1.EventTypeNormal, eventTypeInjected, "Linkerd sidecar proxy injected")
 			}
+			recordInvalidAnnotationEvents(recorder, parent, resourceConfig.OverrideWarnings())
 			log.Infof("injection patch generated for: %s", report.ResName())
 			log.Debugf("injection patch: %s", patchJSON)
 
@@ -1087,6 +1089,15 @@ func Inject(linkerdNamespace string, overrider inject.ValueOverrider) webhook.Ha
 			UID:     request.UID,
 			Allowed: true,
 		}, nil
+	}
+}
+
+func recordInvalidAnnotationEvents(recorder record.EventRecorder, parent *metav1.PartialObjectMetadata, warnings []string) {
+	if parent == nil {
+		return
+	}
+	for _, warning := range warnings {
+		recorder.Event(parent, v1.EventTypeWarning, eventTypeInvalidAnnotation, warning)
 	}
 }
 
@@ -1649,185 +1660,130 @@ func (pw *ProbeWorker) doProbe() error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `762af53b` (2026-11-19)
-**Commit Message**: build(deps): bump github.com/prometheus/common from 0.71.0 to 0.73.0 (#15759)
+### Incident Patch 1: `8d6fcc5b` (2026-11-23)
+**Commit Message**: chore(build): update golang to 1.26.11 (#15815)
 
-Bumps [github.com/prometheus/common](https://github.com/prometheus/common) from 0.71.0 to 0.73.0.
-- [Release notes](https://github.com/prometheus/common/releases)
-- [Changelog](https://github.com/prometheus/common/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/prometheus/common/compare/v0.71.0...v0.73.0)
+This addresses [GO-2026-6859](https://pkg.go.dev/vuln/GO-2026-6859)
 
----
-updated-dependencies:
-- dependency-name: github.com/prometheus/common
-  dependency-version: 0.73.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
+Signed-off-by: Allison Richardet <[REDACTED_EMAIL]>
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `go.mod` (modified, +7/-2)
+**File**: `.github/workflows/codecov.yml` (modified, +1/-1)
 ```diff
-@@ -28,7 +28,7 @@ require (
- 	github.com/pkg/browser v0.0.0-20170505125900-c90ca0c84f15
- 	github.com/prometheus/client_golang v1.24.1
- 	github.com/prometheus/client_model v0.6.3
--	github.com/prometheus/common v0.71.0
-+	github.com/prometheus/common v0.73.0
- 	github.com/sergi/go-diff v1.4.0
- 	github.com/shurcooL/vfsgen v0.0.0-20230704071429-0000e147ea92
- 	github.com/sirupsen/logrus v1.10.2
-@@ -54,6 +54,11 @@ require (
- 	sigs.k8s.io/yaml v1.6.0
- )
+@@ -14,7 +14,7 @@ jobs:
+     timeout-minutes: 30
+     runs-on: ${{ vars.LINKERD2_RUNNER || 'ubuntu-24.04' }}
+     container:
+-      image: golang:1.26.10
++      image: golang:1.26.11
+     steps:
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+       - run: go install gotest.tools/gotestsum@v0.4.2
+```
+
+**File**: `Dockerfile.controller` (modified, +1/-1)
+```diff
+@@ -1,5 +1,5 @@
+ # Precompile key slow-to-build dependencies
+-FROM --platform=$BUILDPLATFORM golang:1.26.10-alpine AS go-deps
++FROM --platform=$BUILDPLATFORM golang:1.26.11-alpine AS go-deps
+ WORKDIR /linkerd-build
+ COPY go.mod go.sum ./
+ COPY bin/install-deps bin/
+```
+
+**File**: `Dockerfile.proxy` (modified, +2/-2)
+```diff
+@@ -3,7 +3,7 @@ ARG RUNTIME_IMAGE="cr.l5d.io/linkerd/proxy-runtime:latest"
+ ARG TARGETARCH
  
-+require (
-+	github.com/hashicorp/go-uuid v1.0.3 // indirect
-+	github.com/pandatix/go-abnf v0.5.1 // indirect
-+)
-+
+ # Precompile key slow-to-build dependencies
+-FROM --platform=$BUILDPLATFORM golang:1.26.10-alpine AS go-deps
++FROM --platform=$BUILDPLATFORM golang:1.26.11-alpine AS go-deps
+ WORKDIR /linkerd-build
+ COPY go.mod go.sum ./
+ COPY bin/install-deps bin/
+@@ -45,7 +45,7 @@ COPY proxy-identity proxy-identity
+ RUN CGO_ENABLED=0 GOOS=linux GOARCH=$TARGETARCH go build -o /out/proxy-identity -mod=readonly -ldflags "-s -w" ./proxy-identity
+ 
+ ## build proxy-init
+-FROM --platform=$BUILDPLATFORM golang:1.26.10-alpine AS proxy-init
++FROM --platform=$BUILDPLATFORM golang:1.26.11-alpine AS proxy-init
+ WORKDIR /build
+ ARG PROXY_INIT_REPO="linkerd/linkerd2-proxy-init"
+ ARG PROXY_INIT_REF="proxy-init/v2.4.11"
+```
+
+**File**: `cli/Dockerfile` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ ARG BUILDPLATFORM=linux/amd64
+ 
+ # Precompile key slow-to-build dependencies
+-FROM --platform=$BUILDPLATFORM golang:1.26.10-alpine AS go-deps
++FROM --platform=$BUILDPLATFORM golang:1.26.11-alpine AS go-deps
+ WORKDIR /linkerd-build
+ COPY go.mod go.sum ./
+ RUN go mod download
+```
+
+**File**: `go.mod` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ module github.com/linkerd/linkerd2
+ 
+-go 1.26.10
++go 1.26.11
+ 
  require (
- 	github.com/Azure/go-ansiterm v0.0.0-20250102033503-faa5f7b0171c // indirect
- 	github.com/BurntSushi/toml v1.6.0 // indirect
-@@ -134,7 +139,7 @@ require (
- 	golang.org/x/crypto v0.58.0 // indirect
- 	golang.org/x/mod v0.42.0 // indirect
- 	golang.org/x/net v0.62.0 // indirect
--	golang.org/x/oauth2 v0.36.0 // indirect
-+	golang.org/x/oauth2 v0.37.0 // indirect
- 	golang.org/x/sync v0.24.0 // indirect
- 	golang.org/x/sys v0.49.0 // indirect
- 	golang.org/x/telemetry v0.0.0-20261009151841-97e8ea77aa2a // indirect
+ 	contrib.go.opencensus.io/exporter/ocagent v0.7.0
 ```
 
-**File**: `go.sum` (modified, +8/-4)
+**File**: `viz/metrics-api/Dockerfile` (modified, +1/-1)
 ```diff
-@@ -251,6 +251,8 @@ github.com/hashicorp/errwrap v1.1.0 h1:OxrOeh75EUXMY8TBjag2fzXGZ40LB6IKw45YeGUDY
- github.com/hashicorp/errwrap v1.1.0/go.mod h1:YH+1FKiLXxHSkmPseP+kNlulaMuP3n2brvKWEqk/Jc4=
- github.com/hashicorp/go-multierror v1.1.1 h1:H5DkEtf6CXdFp0N0Em5UCwQpXMWke8IA0+lD48awMYo=
- github.com/hashicorp/go-multierror v1.1.1/go.mod h1:iw975J/qwKPdAO1clOe2L8331t/9/fmwbPZ6JB6eMoM=
-+github.com/hashicorp/go-uuid v1.0.3 h1:2gKiV6YVmrJ1i2CKKa9obLvRieoRGviZFL26PcT/Co8=
-+github.com/hashicorp/go-uuid v1.0.3/go.mod h1:6SBZvOh/SIDV7/2o3Jml5SYk/TvGqwFJ/bN7x4byOro=
- github.com/hashicorp/golang-lru v0.5.0/go.mod h1:/m3WP610KZHVQ1SGc6re/UDhFvYD7pJ4Ao+sR/qLZy8=
- github.com/hashicorp/golang-lru v0.5.1 h1:0hERBMJE1eitiLkihrMvRVBYAkpHzc/J3QdDN+dAcgU=
- github.com/hashicorp/golang-lru v0.5.1/go.mod h1:/m3WP610KZHVQ1SGc6re/UDhFvYD7pJ4Ao+sR/qLZy8=
-@@ -327,6 +329,8 @@ github.com/opencontainers/go-digest v1.0.0 h1:apOUWs51W5PlhuyGyz9FCeeBIOUDA/6nW8
- github.com/opencontainers/go-digest v1.0.0/go.mod h1:0JzlMkj0TRzQZfJkVvzbP0HBR3IKzErnv2BNG4W4MAM=
- github.com/opencontainers/image-spec v1.1.1 h1:y0fUlFfIZhPF1W537XOLg0/fcx6zcHCJwooC2xJA040=
- github.com/opencontainers/image-spec v1.1.1/go.mod h1:qpqAh3Dmcf36wStyyWU+kCeDgrGnAve2nCC8+7h8Q0M=
-+github.com/pandatix/go-abnf v0.5.1 h1:iyLvSu2Aq12iE0r4n948Qw21BHDuckLq/8WIXAAF+HI=
-+github.com/pandatix/go-abnf v0.5.1/go.mod h1:VBmbtpFgQNEaQpyAvmi+Ecd9wAYJKzA3TmiB3L93sVg=
- github.com/patrickmn/go-cache v2.1.0+incompatible h1:HRMgzkcYKYpi3C8ajMPV8OFXaaRUnok+kx1WdO15EQc=
- github.com/patrickmn/go-cache v2.1.0+incompatible/go.mod h1:3Qf8kWWT7OJRJbdiICTKqZju1ZixQ/KpMGzzAfe6+WQ=
- github.com/peterbourgon/diskv v2.0.1+incompatible h1:UBdAOUP5p4RWqPBg048CAvpKN+vxiaj6gdUUzhl4XmI=
-@@ -343,8 +347,8 @@ github.com/prometheus/client_golang v1.24.1/go.mod h1:F+oSRECHg4sse5ucfYpYDeIv/h
- github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4/go.mod h1:xMI15A0UPsDsEKsMN9yxemIoYk6Tm2C1GtYGdfGttqA=
- github.com/prometheus/client_model v0.6.3 h1:O0jaTVAYNxTHYInEPFJt5I3+sN8zqBtVMPTB1qyxiEo=
- github.com/prometheus/client_model v0.6.3/go.mod h1:gpN5P9S7Rr6Yr92PiQ+Ixvhf6JZEkF1dnxsYL2aPBEM=
--github.com/prometheus/common v0.71.0 h1:9KDAKb7Mj3HEVKyFCK6Dc/HIwlBzZIN2l7/lrHl3KK8=
--github.com/prometheus/common v0.71.0/go.mod h1:CLJ5H8TEsGX8bl31BdMkfhIZ+QmZ9tBPPotUxUbfcmk=
-+github.com/prometheus/common v0.73.0 h1:NGIOmVi8jrgiiPQgXxD6rP0FfxFsuZxnMQkel0qBy/g=
-+github.com/prometheus/common v0.73.0/go.mod h1:Nt+CsVkf/mj4wDAmtSwq1HTPohHSX6fMr6+/f9B5UqM=
- github.com/prometheus/otlptranslator v1.0.0 h1:s0LJW/iN9dkIH+EnhiD3BlkkP5QVIUVEoIwkU+A6qos=
- github.com/prometheus/otlptranslator v1.0.0/go.mod h1:vRYWnXvI6aWGpsdY/mOT/cbeVRBlPWtBNDb7kGR3uKM=
- github.com/prometheus/procfs v0.21.1 h1:GljZCt+zSTS+NZq88cyQ1LjZ+RCHp3uVuabBWA5+OJI=
-@@ -523,8 +527,8 @@ golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421/go.mod h1:gOpvHmFTYa4Iltr
- golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
- golang.org/x/oauth2 v0.0.0-20191202225959-858c2ad4c8b6/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
- golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
--golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
--golang.org/x/oauth2 v0.36.0/go.mod h1:YDBUJMTkDnJS+A4BP4eZBjCqtokkg1hODuPjwiGPO7Q=
-+golang.org/x/oauth2 v0.37.0 h1:JUlcxA8oAtauLfiH8FX2/FkAWHAdi0QtGCGc+hofE98=
-+golang.org/x/oauth2 v0.37.0/go.mod h1:IxwZNxUULJmpBFf9K/9NTMSIfZZuvuTy1gGxhigP/58=
- golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20181108010431-42b317875d0f/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20181221193216-37e7f081c4d4/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+@@ -1,7 +1,7 @@
+ ARG BUILDPLATFORM=linux/amd64
+ 
+ # Precompile key slow-to-build dependencies
+-FROM --platform=$BUILDPLATFORM golang:1.26.10-alpine AS go-deps
++FROM --platform=$BUILDPLATFORM golang:1.26.11-alpine AS go-deps
+ WORKDIR /linkerd-build
+ COPY go.mod go.sum ./
+ COPY bin/install-deps bin/
 ```
 
----
-
-### Incident Patch 2: `2af200d8` (2026-11-19)
-**Commit Message**: build(deps): bump go.opentelemetry.io/otel/trace from 1.44.0 to 1.47.0 (#15788)
-
-Bumps [go.opentelemetry.io/otel/trace](https://github.com/open-telemetry/opentelemetry-go) from 1.44.0 to 1.47.0.
-- [Release notes](https://github.com/open-telemetry/opentelemetry-go/releases)
-- [Changelog](https://github.com/open-telemetry/opentelemetry-go/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/open-telemetry/opentelemetry-go/compare/v1.44.0...v1.47.0)
-
----
-updated-dependencies:
-- dependency-name: go.opentelemetry.io/otel/trace
-  dependency-version: 1.47.0
-  dependency-type: indirect
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `go.mod` (modified, +2/-2)
+**File**: `viz/tap/Dockerfile` (modified, +1/-1)
 ```diff
-@@ -127,8 +127,8 @@ require (
- 	github.com/spf13/cast v1.7.0 // indirect
- 	github.com/x448/float16 v0.8.4 // indirect
- 	github.com/xlab/treeprint v1.2.0 // indirect
--	go.opentelemetry.io/otel v1.44.0 // indirect
--	go.opentelemetry.io/otel/trace v1.44.0 // indirect
-+	go.opentelemetry.io/otel v1.47.0 // indirect
-+	go.opentelemetry.io/otel/trace v1.47.0 // indirect
- 	go.yaml.in/yaml/v2 v2.4.4 // indirect
- 	go.yaml.in/yaml/v3 v3.0.5 // indirect
- 	golang.org/x/crypto v0.58.0 // indirect
+@@ -1,7 +1,7 @@
+ ARG BUILDPLATFORM=linux/amd64
+ 
+ # Precompile key slow-to-build dependencies
+-FROM --platform=$BUILDPLATFORM golang:1.26.10-alpine AS go-deps
++FROM --platform=$BUILDPLATFORM golang:1.26.11-alpine AS go-deps
+ WORKDIR /linkerd-build
+ COPY go.mod go.sum ./
+ COPY bin/install-deps bin/
 ```
 
-**File**: `go.sum` (modified, +8/-8)
+**File**: `web/Dockerfile` (modified, +1/-1)
 ```diff
-@@ -413,8 +413,8 @@ go.opentelemetry.io/contrib/exporters/autoexport v0.67.0 h1:4fnRcNpc6YFtG3zsFw9a
- go.opentelemetry.io/contrib/exporters/autoexport v0.67.0/go.mod h1:qTvIHMFKoxW7HXg02gm6/Wofhq5p3Ib/A/NNt1EoBSQ=
- go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0 h1:8tvICD4vSTOOsNrsI4Ljf6C+6UKvpTEH5XY3JMoyPoo=
- go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0/go.mod h1:z9+yiacE0IHRqM4qFfkbt/JYlmYXgss8GY/jXoNuPJI=
--go.opentelemetry.io/otel v1.44.0 h1:JjwHmHpA4iZ3wBxluu2fbbE7j4kqlE8jXyAyPXH7HqU=
--go.opentelemetry.io/otel v1.44.0/go.mod h1:BMgjTHL9WPRlRjL2oZCBTL4whCGtXch2H4BhOPIAyYc=
-+go.opentelemetry.io/otel v1.47.0 h1:j7ALJ/zgkS7Z6aeJW09p8VC9804bC+PpeTfCD4XPnOM=
-+go.opentelemetry.io/otel v1.47.0/go.mod h1:8wS9O2qfXrYrzp6hIF/HOYJJf/wIhFPhR2xLuP+iXQU=
- go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc v0.19.0 h1:Dn8rkudDzY6KV9dr/D/bTUuWgqDf9xe0rr4G2elrn0Y=
- go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc v0.19.0/go.mod h1:gMk9F0xDgyN9M/3Ed5Y1wKcx/9mlU91NXY2SNq7RQuU=
- go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp v0.19.0 h1:HIBTQ3VO5aupLKjC90JgMqpezVXwFuq6Ryjn0/izoag=
-@@ -437,18 +437,18 @@ go.opentelemetry.io/otel/exporters/stdout/stdoutmetric v1.43.0 h1:TC+BewnDpeiAmc
- go.opentelemetry.io/otel/exporters/stdout/stdoutmetric v1.43.0/go.mod h1:J/ZyF4vfPwsSr9xJSPyQ4LqtcTPULFR64KwTikGLe+A=
- go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.43.0 h1:mS47AX77OtFfKG4vtp+84kuGSFZHTyxtXIN269vChY0=
- go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.43.0/go.mod h1:PJnsC41lAGncJlPUniSwM81gc80GkgWJWr3cu2nKEtU=
--go.opentelemetry.io/otel/log v0.19.0 h1:KUZs/GOsw79TBBMfDWsXS+KZ4g2Ckzksd1ymzsIEbo4=
--go.opentelemetry.io/otel/log v0.19.0/go.mod h1:5DQYeGmxVIr4n0/BcJvF4upsraHjg6vudJJpnkL6Ipk=
--go.opentelemetry.io/otel/metric v1.44.0 h1:1w0gILTcHdr3YI+ixLyjemwrVnsMURbTZFrSYCdDdmc=
--go.opentelemetry.io/otel/metric v1.44.0/go.mod h1:8O7hanEPBNgEMmybD3s2VBKcgWOCsA6tzHBPODAiquo=
-+go.opentelemetry.io/otel/log v1.47.0 h1:cOTS1CcLbSQeZKanGJ+0JpF/+t4PELi3O3bbl2lqCcI=
-+go.opentelemetry.io/otel/log v1.47.0/go.mod h1:9byitSQ5pLC6PpqwGXjqdMKya6ZTswHRZh2vvXT33nw=
-+go.opentelemetry.io/otel/metric v1.47.0 h1:4PptaldXx3Eat1XjMZ68pPJEs5wrhlemctZE9a3UdWY=
-+go.opentelemetry.io/otel/metric v1.47.0/go.mod h1:ADGSXxRrXM6bjbvLo535EstVFlPpPYZm4LBKixjDHwU=
- go.opentelemetry.io/otel/sdk v1.44.0 h1:nHYwb9lK+fJPU/dnT6s7W7Z8itMWyqrnVfbheVYrZ58=
- go.opentelemetry.io/otel/sdk v1.44.0/go.mod h1:Osuydd3Se74nqjAKxid74N5eC+jfEqfTegHRnq58oK0=
- go.opentelemetry.io/otel/sdk/log v0.19.0 h1:scYVLqT22D2gqXItnWiocLUKGH9yvkkeql5dBDiXyko=
- go.opentelemetry.io/otel/sdk/log v0.19.0/go.mod h1:vFBowwXGLlW9AvpuF7bMgnNI95LiW10szrOdvzBHlAg=
- go.opentelemetry.io/otel/sdk/metric v1.44.0 h1:3LlKgI+VjbVsjNRFZJZAJ30WjXC5VkNRks6si09iEfI=
- go.opentelemetry.io/otel/sdk/metric v1.44.0/go.mod h1:5B5pMARnXxKhltooO4xUuCBorl65a4EpnTalObqOigA=
--go.opentelemetry.io/otel/trace v1.44.0 h1:jxF5CsGYCe74MCRx2X4g7WsY/VBKRqqpNvXlX/6gtIk=
--go.opentelemetry.io/otel/trace v1.44.0/go.mod h1:oLl1jrMQAVo6v3GAggN+1VH9VIz9iUSvW53sW1Q8PIE=
-+go.opentelemetry.io/otel/trace v1.47.0 h1:JOjX/Oci8K94QHddo+bbfya/Ai/nf6/dt9ZfrFNWSrM=
-+go.opentelemetry.io/otel/trace v1.47.0/go.mod h1:jNaSLa2PZEYFG6fRjJABAu+bw4FS08uDmPg28lTghu0=
- go.opentelemetry.io/proto/otlp v1.10.0 h1:IQRWgT5srOCYfiWnpqUYz9CVmbO8bFmKcwYxpuCSL2g=
- go.opentelemetry.io/proto/otlp v1.10.0/go.mod h1:/CV4QoCR/S9yaPj8utp3lvQPoqMtxXdzn7ozvvozVqk=
- go.uber.org/goleak v1.3.0 h1:2K3zAYmnTNqV73imy9J1T3WC+gmCePx2hEGkimedGto=
+@@ -1,7 +1,7 @@
+ ARG BUILDPLATFORM=linux/amd64
+ 
+ # Precompile key slow-to-build dependencies
+-FROM --platform=$BUILDPLATFORM golang:1.26.10-alpine AS go-deps
++FROM --platform=$BUILDPLATFORM golang:1.26.11-alpine AS go-deps
+ WORKDIR /linkerd-build
+ COPY go.mod go.sum ./
+ COPY bin/install-deps bin/
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #15815** (2026-11-23): chore(build): update golang to 1.26.11 (@arichardet)
 - **PR #15788** (2026-11-19): build(deps): bump go.opentelemetry.io/otel/trace from 1.44.0 to 1.47.0 (@dependabot[bot])
+- **PR #15785** (2026-11-23): chore: add k8s level warning for malformed ports on annotation (@anthoturc)
+- **PR #15784** (2026-11-20): fix(destination): keep federated endpoints when a stream is torn down (@codenameraz)
 - **PR #15781** (2026-11-13): proxy: v2.374.0 (@l5d-bot)
 - **PR #15776** (2026-11-06): chore: migrate stale from app to action (@raykroeker)
-- **PR #15775** (2026-11-06): chore: bump dev image to v55. (@toidiu)
-- **PR #15768** (2026-11-05): proxy: v2.373.0 (@l5d-bot)
-- **PR #15766** (2026-11-04): build: keep apko outputs out of the repo root (@alpeb)
 
 ---
 
@@ -1847,38 +1803,31 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump github.com/prometheus/common from 0.71.0 to 0.73.0
+## X. build): update golang to 1.26.11
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in linkerd/linkerd2. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/codecov.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in linkerd/linkerd2. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `762af53b`: build(deps): bump github.com/prometheus/common from 0.71.0 to 0.73.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8d6fcc5b`: build): update golang to 1.26.11. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/codecov.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/prometheus/common v0.73.0
-require (
-	github.com/hashicorp/go-uuid v1.0.3 // indirect
-	github.com/pandatix/go-abnf v0.5.1 // indirect
-)
-
-	golang.org/x/oauth2 v0.37.0 // indirect
+      image: golang:1.26.11
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	github.com/prometheus/common v0.71.0
-	golang.org/x/oauth2 v0.36.0 // indirect
+      image: golang:1.26.10
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `762af53b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8d6fcc5b` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

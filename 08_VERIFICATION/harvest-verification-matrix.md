@@ -12662,3 +12662,6 @@
 | `CYCLE-20261124-UTR9` | `2026-11-24T12:18:19.557Z` | `nari-labs/Qwen3.8-27B-NariQ-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nari-labs-qwen3.8-27b-nariq-gguf-learnings.md` | Yes (`07de09f4...`) |
 | `CYCLE-20261124-V1SP` | `2026-11-24T12:18:29.977Z` | `invertase/react-native-firebase` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10252` | Yes (`efb427fc...`) |
 | `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T12:19:01.483Z` | `hf-nari-labs-qwen3.8-27b-nariq-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-07A2BC67` [Domain D] | Yes (`8ac98cdb...`) |
+| `CYCLE-20261124-6G9S` | `2026-11-24T12:27:21.952Z` | `Nasiko-Labs/nasiko` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10253` | Yes (`1f48d9fe...`) |
+| `CYCLE-20261124-6LHR` | `2026-11-24T12:27:28.719Z` | `linkerd/linkerd2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10254` | Yes (`27a33864...`) |
+| `CYCLE-20261124-6PJZ` | `2026-11-24T12:27:33.983Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10255` | Yes (`543ef086...`) |

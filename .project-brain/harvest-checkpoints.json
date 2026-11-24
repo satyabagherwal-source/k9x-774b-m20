@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T12:18:29.997Z",
+  "last_updated": "2026-11-24T12:27:34.006Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6561,14 +6561,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nasiko-labs-nasiko",
-      "content_hash": "b237999d893a00f25cb84836d4464383ea5704a24c2d0da1e64ddcee1570a329",
-      "verified_at": "2026-11-18T09:14:39.102Z",
+      "content_hash": "1f48d9fe654a4eb312529ccab70afa176ec5e9b4862a3224e42a470192605bcb",
+      "verified_at": "2026-11-24T12:27:21.975Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T09:14:39.102Z"
+      "last_updated": "2026-11-24T12:27:21.975Z"
     },
     "berty/berty": {
       "repository": "berty/berty",
@@ -6981,14 +6981,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-slatedb-slatedb",
-      "content_hash": "2ede2fd8407f597ffdb893e599dc335d4bf698a62fcb30fb0eba7f7b8b86fa46",
-      "verified_at": "2026-11-22T10:03:56.584Z",
+      "content_hash": "543ef0868d61caffad97224c04b6e6505d89fc17a3919cc5399aaf242ad0f784",
+      "verified_at": "2026-11-24T12:27:34.005Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T10:03:56.584Z"
+      "last_updated": "2026-11-24T12:27:34.005Z"
     },
     "react-component/slider": {
       "repository": "react-component/slider",
@@ -9441,14 +9441,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-linkerd-linkerd2",
-      "content_hash": "d22b11734688df2cfbd931a1d91a647e540b5c6e47f643f3d20eac29ab3a4465",
-      "verified_at": "2026-11-23T16:53:39.579Z",
+      "content_hash": "27a33864491c84db9f2a9c3443cb7ac36dc64cf09f442a4b6fd3d5deda62ef69",
+      "verified_at": "2026-11-24T12:27:28.741Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T16:53:39.579Z"
+      "last_updated": "2026-11-24T12:27:28.741Z"
     },
     "tursodatabase/libsql": {
       "repository": "tursodatabase/libsql",
