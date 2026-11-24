@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/appwrite-appwrite-learnings.md`  
 > **Source**: github ([https://github.com/appwrite/appwrite](https://github.com/appwrite/appwrite))  
-> **Source Version**: `a6d643a9`  
+> **Source Version**: `1426a10d`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T11:11:35.341Z  
+> **Timestamp**: 2026-11-24T06:11:16.747Z  
 > **Learning ID**: `learn-github-appwrite-appwrite`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/appwrite-appwrite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/appwrite/appwrite](https://github.com/appwrite/appwrite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T11:11:35.243Z  
+> **Harvest Timestamp**: 2026-11-24T06:11:16.740Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The open-source cloud for agents & devs. Including Auth, Databases, Storage, Functions, Messaging, Hosting, Realtime, WAF and more
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 58466 stars
+- **Stars / Engagement**: 58551 stars
 
 ---
 
@@ -2086,306 +2086,1299 @@ export function isSubscriptionFailedInvoiceWithError(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7a091eb4` (2026-11-20)
-**Commit Message**: fix(jobs): append a deployment's pending log callbacks in one write
+### Incident Patch 1: `32af507c` (2026-11-24)
+**Commit Message**: fix(console): resize dedicated TablesDB databases through the product API
 
-Every log callback took the per-deployment lock on its own and rewrote the
-whole buildLogs attribute, so a build streaming output queued callbacks on
-the lock faster than it drained. Those left waiting past LOCK_TIMEOUT threw
-Contention and went back to the queue, landing their lines out of order.
+Changing the specification of a TablesDB database that already runs on
+dedicated compute always failed with 400 database_not_serverless.
 
-Log callbacks now leave their lines in a per-process buffer and queue on a
-per-deployment gate, so one coroutine per process contends for the lock and
-appends every pending callback's lines in a single write. The others pass
-the gate and return without touching the lock once their lines are in.
-Dedupe markers for every event in the batch are saved in the same
-transaction, so a redelivery of an applied callback is still skipped.
+The console decided "already dedicated" by reading GET /v1/mysql/{id}.
+Cloud keeps product databases off the raw engine API, so that route is a
+404 for every TablesDB database (and the id-filtered mysql list is
+empty). The lookup therefore always answered "serverless" and the console
+posted a serverless-to-dedicated migration, which cloud rightly rejects
+for a database that is already dedicated.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01F3M7ttqmi3HYfSr5f9kLt8
-Co-authored-by: Torsten Dittmann <[REDACTED_EMAIL]>
+Read the specification from tablesDB.get instead: cloud sources it from
+the dedicated backing, so a non-serverless value means the database is
+dedicated and the change is a tablesDB.update resize. A failed lookup now
+surfaces instead of being read as "serverless".
 
-**File**: `src/Appwrite/Platform/Modules/Functions/Workers/Jobs.php` (modified, +153/-18)
+createTablesDatabaseMigration also fell back to mysql.createMigration on
+a 404. That engine route hides product databases the same way, so the
+fallback could only replace the real error with a second 404; it is gone.
+
+The unused currentSpecification parameter is dropped, which removes its
+entry from the type baseline.
+
+
+
+**File**: `apps/console/src/components/pages/projects/$projectId/databases/settings/DatabaseSpecificationCard.tsx` (modified, +0/-1)
 ```diff
-@@ -25,12 +25,14 @@
- use OpenRuntimes\Orchestrator\Callback\JobLog;
- use OpenRuntimes\Orchestrator\Enum\CallbackEvent;
- use OpenRuntimes\Orchestrator\Enum\ErrorCode;
-+use Swoole\Coroutine\Channel;
- use Utopia\Bus\Bus;
- use Utopia\Cache\Cache;
- use Utopia\Database\Database;
- use Utopia\Database\DateTime;
- use Utopia\Database\Document;
- use Utopia\Database\Query;
-+use Utopia\Lock\Exception\Contention;
- use Utopia\Platform\Action;
- use Utopia\Psr7\Stream;
- use Utopia\Queue\Message;
-@@ -48,7 +50,10 @@
-  * Callbacks arrive concurrently and out of order (one log line each), so
-  * processing for a deployment is serialized under a per-deployment lock — that
-  * keeps its buildLogs a clean, monotonic append while letting different
-- * deployments build in parallel. Callbacks are at-least-once, so events are
-+ * deployments build in parallel. Log callbacks waiting in one process for the
-+ * same deployment are appended together by whichever of them takes the lock,
-+ * so a burst of build output costs one write per process rather than one per
-+ * line batch. Callbacks are at-least-once, so events are
-  * de-duplicated inside the lock. Logs and their dedupe marker are written before
-  * the log transaction commits; state callbacks are marked after application.
-  *
-@@ -88,6 +93,25 @@ class Jobs extends Action
-         'Download failed with status 404' => 'The repository, branch or commit could not be found. Check that it still exists.',
-     ];
+@@ -122,7 +122,6 @@ export function DatabaseSpecificationCard({
+         databaseId,
+         dbKind,
+         specification,
+-        database.specification,
+         database.name,
+       ),
+     onSuccess: async (result) => {
+```
+
+**File**: `apps/console/src/lib/react-query/hooks/databases.ts` (modified, +31/-74)
+```diff
+@@ -72,12 +72,8 @@ import {
+   hasTablesDatabaseMigrationCutover,
+   parseTablesDatabaseMigrationIdFromError,
+ } from '@/lib/databases/tables-database-migration'
+-import {
+-  isAppwriteHttpStatus,
+-  isHttpNotFoundError,
+-} from '@/lib/utils/error-formatting'
++import { isHttpNotFoundError } from '@/lib/utils/error-formatting'
+ import { translate } from '@/lib/i18n/translate'
+-import { readDatabaseSpecification } from '@/lib/databases/database-compute'
+ import { waitForDatabaseRealtimeEvent } from '@/lib/realtime/wait-for-database-realtime'
+ import { normalizeDedicatedRealtimeEngine } from '@/lib/realtime/dedicated-database-cache'
+ import { buildPostgresListSchemasSql } from '@/lib/postgres-sql'
+@@ -1593,12 +1589,6 @@ export async function updateProjectDatabase(
+   return await projectSdk.tablesDB.update(payload)
+ }
  
-+    /**
-+     * Log callbacks of this process not yet appended, keyed by deployment lock,
-+     * in arrival order. The action instance is shared by every coroutine of the
-+     * worker, so the one holding the lock appends the others' lines with its own.
-+     *
-+     * @var array<string, array<int, array{id: string, chunk: string}>>
-+     */
-+    private array $logs = [];
+-/**
+- * Migrate a serverless TablesDB database onto a dedicated specification.
+- * Only valid while the database is still serverless (`database_not_serverless`
+- * if already dedicated). Dedicated tier changes use
+- * `updateTablesDatabaseSpecification` instead.
+- */
+ export async function deleteTablesDatabaseMigration(
+   projectId: string,
+   databaseId: string,
+@@ -1646,6 +1636,12 @@ async function startTablesDatabaseProductMigration(
+   })
+ }
+ 
++/**
++ * Migrate a serverless TablesDB database onto a dedicated specification.
++ * Only valid while the database is still serverless (`database_not_serverless`
++ * if already dedicated). Dedicated tier changes use
++ * `updateProductDatabaseSpecification` instead.
++ */
+ export async function createTablesDatabaseMigration(
+   projectId: string,
+   databaseId: string,
+@@ -1662,77 +1658,39 @@ export async function createTablesDatabaseMigration(
+ 
+   await clearAbortableTablesDatabaseMigrations(projectId, databaseId)
+ 
+-  const runProductMigration = async () => {
+-    try {
+-      return await startTablesDatabaseProductMigration(
+-        projectSdk,
+-        databaseId,
+-        trimmed,
+-      )
+-    } catch (tablesMigrationError) {
+-      const message =
+-        tablesMigrationError instanceof Error
+-          ? tablesMigrationError.message
+-          : String(tablesMigrationError ?? '')
+-      const alreadyExists =
+-        message.toLowerCase().includes('migration record already exists') ||
+-        message.toLowerCase().includes('already exists for this database')
+-      if (alreadyExists) {
+-        const migrationId =
+-          parseTablesDatabaseMigrationIdFromError(tablesMigrationError)
+-        if (migrationId) {
+-          await deleteTablesDatabaseMigration(
+-            projectId,
+-            databaseId,
+-            migrationId,
+-          )
+-        } else {
+-          await clearAbortableTablesDatabaseMigrations(projectId, databaseId)
+-        }
+-        return startTablesDatabaseProductMigration(
+-          projectSdk,
+-          databaseId,
+-          trimmed,
+-        )
+-      }
+-      throw tablesMigrationError
+-    }
+-  }
+-
+   try {
+-    return await runProductMigration()
+-  } catch (tablesMigrationError) {
+-    const routeMissing =
+-      isAppwriteHttpStatus(tablesMigrationError, 404) ||
+-      isHttpNotFoundError(tablesMigrationError)
+-    if (!routeMissing) {
+-      throw tablesMigrationError
++    return await startTablesDatabaseProductMigration(
++      projectSdk,
++      databaseId,
++      trimmed,
++    )
++  } catch (error) {
++    const message = (
++      error instanceof Error ? error.message : String(error ?? '')
++    ).toLowerCase()
++    const alreadyExists =
++      message.includes('migration record already exists') ||
++      message.includes('already exists for this database')
++    if (!alreadyExists) throw error
 +
-+    private int $entries = 0;
++    const migrationId = parseTablesDatabaseMigrationIdFromError(error)
++    if (migrationId) {
++      await deleteTablesDatabaseMigration(projectId, databaseId, migrationId)
++    } else {
++      await clearAbortableTablesDatabaseMigrations(projectId, databaseId)
+     }
++    return startTablesDatabaseProductMigration(projectSdk, databaseId, trimmed)
+   }
+-
+-  // Cloud may expose shared→dedicated for TablesDB-backed compute on the MySQL
+-  // engine migration route before (or instead of) tablesDB /migrations.
+-  return projectSdk.mysql.createMigration({
+-    databaseId,
+-    targetType: 'dedicated',
+-    specification: trimmed,
+-  })
+ }
+ 
+-/** True when TablesDB already runs on dedicated MySQL compute (not shared/serverless). */
++/** True when TablesDB itself reports a dedicated specification (not shared/serverless). */
+ async function isTablesDatabaseOnDedicatedCompute(
+   projectId: string,
+   databaseId: string,
+ ): Promise<boolean> {
+-  const engineDb = await fetchDedicatedDatabaseById(projectId, databaseId, {
+-    type: 'engine',
+-    engine: 'mysql',
+-  })
+-  if (!engineDb?.$id) return false
+-  const spec = readDatabaseSpecification(engineDb.specification)
+-  if (!spec || isServerlessDatabaseSpecId(spec)) return false
+-  const status = coerceTrimmedString(engineDb.status).toLowerCase()
+-  return status 
+```
+
+**File**: `apps/console/tests/unit/tablesdb-specification-change.test.ts` (added, +158/-0)
+```diff
+@@ -0,0 +1,158 @@
++import { afterAll, describe, expect, mock, test } from 'bun:test'
++import { AppwriteException } from '@appwrite.io/console'
++import * as actualSdk from '@/lib/appwrite/sdk'
++import { updateProductDatabaseSpecification } from '@/lib/react-query/hooks/databases'
 +
-+    /**
-+     * One coroutine per deployment per process contends for the lock; the rest
-+     * wait here, usually to find their lines already appended.
-+     *
-+     * @var array<string, Channel>
-+     */
-+    private array $gates = [];
++const PROJECT_ID = 'proj0000000000000000001'
++const DATABASE_ID = 'db000000000000000000001'
++const TARGET_SPECIFICATION = 's-2vcpu-4gb'
 +
-     private static function userMessage(Document $deployment, JobArtifact $artifact): ?string
-     {
-         $code = $artifact->error?->code;
-@@ -161,6 +185,11 @@ public function action(
-         }
- 
-         $callback = CallbackEvent::tryFrom($event->event);
-+        if ($callback === CallbackEvent::Log) {
-+            $this->log($event, $project, $dbForProject, $dbForPlatform, $queueForRealtime, $vcsFactory, $cache, $locks, $platform, $deploymentId);
-+            return;
-+        }
++type Call = { service: string; method: string; params: unknown }
 +
-         $outputAvailable = null;
-         if ($callback === CallbackEvent::Complete && $deviceForBuilds->getType() !== DeviceType::Local) {
-             $deployment = $dbForProject->getDocument('deployments', $deploymentId);
-@@ -197,7 +226,6 @@ public function action(
-             }
- 
-             $deployment = match ($callback) {
--                CallbackEvent::Log => $this->onLog($dbForProject, $dbForPlatform, $project, $deployment, JobLog::fromArray($event->data), $vcsFactory, $platform, $cache, $event->id),
-                 CallbackEvent::Artifact => $this->onArtifact($dbForProject, $dbForPlatform, $project, $deployment, $artifact, $usage, $publisherForUsage, $publisherForScreenshots, $deviceForBuilds, $deviceForFunctions, $deviceForSites, $vcsFactory, $cache, $platform, $plan, $bus),
-                 CallbackEvent::Exit => $this->onExit($dbForProject, $dbForPlatform, $project, $deployment, JobExit::fromArray($event->data), $usage, $publisherForUsage, $publisherForScreenshots, $deviceForBuilds, $vcsFactory, $cache, $platform, $plan, $bus),
-                 CallbackEvent::Complete => $this->onComplete($dbForProject, $dbForPlatform, $project, $deployment, $usage, $publisherForUsage, $publisherForScreenshots, $deviceForBuilds, $deviceForFunctions, $deviceForSites, $vcsFactory, $cache, $platform, $plan, $bus),
-@@ -222,14 +250,7 @@ public function action(
-             }
- 
-             // Console realtime on every callback (log stream + status).
--            $queueForRealtime
--                ->setSubscribers(['console'])
--                ->setProject($project)
--                ->setEvent(self::event($deployment))
--                ->setParam(self::resourceParam($deployment), $deployment->getAttribute('resourceId'))
--                ->setParam('deploymentId', $deploymentId)
--                ->setPayload($deployment->getArrayCopy())
--                ->trigger();
-+            $this->broadcast($queueForRealtime, $project, $deployment, $deploymentId);
- 
-             // On a real terminal outcome (not a concurrently-canceled build),
-             // notify webhooks + event-triggered functions of the deployment
-@@ -252,7 +273,7 @@ public function action(
-                 $failure = new PermanentFailure("Build artifact '{$artifact->artifactId}' failed: " . ($artifact->error->message ?? 'no error reported'), 500);
-             }
- 
--            if ($event->id !==
++/**
++ * Cloud keeps product databases off the raw engine API: `GET /v1/mysql/{id}`
++ * is a 404 for every TablesDB database, dedicated or not. Whether a TablesDB
++ * database already runs on dedicated compute can only be read from TablesDB.
++ */
++describe('updateProductDatabaseSpecification', () => {
++  // Copy the real module now: the namespace import is live and points at the mock once it is set.
++  const realSdk = { ...actualSdk }
++
++  afterAll(() => {
++    mock.module('@/lib/appwrite/sdk', () => realSdk)
++  })
++
++  function mockSdk(options: {
++    specification?: string
++    createMigration?: () => Promise<unknown>
++  }) {
++    const calls: Call[] = []
++    const record =
++      <T>(service: string, method: string, result: () => T | Promise<T>) =>
++      async (params: unknown) => {
++        calls.push({ service, method, params })
++        return result()
++      }
++    const engineNotFound = () => {
++      throw new AppwriteException(
++        'Database not found',
++        404,
++        'dedicated_database_not_found',
++      )
++    }
++
++    mock.module('@/lib/appwrite/sdk', () => ({
++      ...actualSdk,
++      sdk: {
++        forProject: () => ({
++          tablesDB: {
++            get: record('tablesDB', 'get', () => ({
++              $id: DATABASE_ID,
++              name: 'Orders',
++              ...(options.specification === undefined
++                ? {}
++                : { specification: options.specification }),
++            })),
++            update: record('tablesDB', 'update', () => ({
++              $id: DATABASE_ID,
++              specification: TARGET_SPECIFICATION,
++            })),
++            listMigrations: record('tablesDB', 'listMigrations', () => ({
++              migrations: [],
++              total: 0,
++            })),
++            createMigration: record(
++              'tablesDB',
++              'createMigration',
++              options.createMigration ??
++                (() => ({ $id: 'migration1', phase: 'pending' })),
++            ),
++          },
++          mysql: {
++            get: record('mysql', 'get', engineNotFound),
++            list: record('mysql', 'list', () => ({ databases: [], total: 0 })),
++            createMigration: record('mysql', 'createMigration', engineNotFound),
++          },
++        }),
++      },
++    }))
++
++    return calls
++  }
++
++  function methodsOn(calls: Call[], service: string): string[] {
++    return calls
++      .filter((call) => call.service === service)
++      .map((call) => call.method)
++  }
++
++  test('resizes a dedicated TablesDB database through tablesDB.update', async () => {
++    const calls = mockSdk({ specification: 's-1vcpu-1gb' })
++
++    await updateProductDatabaseSpecification(
++      PROJECT_ID,
++      DATABASE_ID,
++      'tablesdb',
++      TARGET_SPECIFICATION,
++    )
++
++    expect(methodsOn(calls, 'tablesDB')).toEqual(['get', 'update'])
++    expect(calls.at(-1)?.params).toEqual({
++      databaseId: DATABASE_ID,
++      specification: TARGET_SPECIFICATION,
++    })
++    expect(methodsOn(calls, 'mysql')).toEqual([])
++  })
++
++  test.each([['shared'], ['serverless'], [undefined]])(
++    'migrates a serverless TablesDB database (specification %p)',
++    async (specification) => {
++      const calls = mockSdk({ specification })
++
++      await updateProductDatabaseSpecification(
++        PROJECT_ID,
++        DATABASE_ID,
++        'tablesdb',
++        TARGET_SPECIFICATION,
++      )
++
++      expect(methodsOn(calls, 'tablesDB')).toEqual([
++        'get',
++        'listMigrations',
++        'createMigration',
++      ])
++      expect(calls.at(-1)?.params).toEqual({
++        databaseId: DATABASE_ID,
++        specification: TARGET_SPECIFICATION,
++        autoCutover: true,
++      })
++      expect(methodsOn(calls, 'mysql')).toEqual([])
++    },
++  )
++
++  test('surfaces a migration 404 instead of retrying on the mysql engine', async () => {
++    const calls = mockSdk({
++      specification: 'shared',
++      createMigration: () => {
++        throw new AppwriteException(
++          'Database not found',
++          404,
++          'database_not_found',
++        )
++      },
++    })
++
++    const attempt = updateProductDatabaseSpecification(
++      PROJECT_ID,
++      DATABASE_ID,
++      'tablesdb',
++      TARGET_SPECIFICATION,
++    )
++
++    await expect(attempt).rejects.toMatchObject({
++      code: 404,
++      type: 'database_not_found',
++    })
++    expect(methodsOn(calls, 'mysql')).toEqual([])
++  })
++})
+```
+
+**File**: `apps/console/types-baseline.json` (modified, +0/-1)
+```diff
+@@ -1145,7 +1145,6 @@
+     "TS2339: Property 'pricing' does not exist on type 'DedicatedDatabaseSpecificationList'.": 1,
+     "TS2339: Property 'status' does not exist on type 'Database & { enabled: boolean; createdAt: string; updatedAt: string; hasBackupPolicy: boolean; backupPolicy: Record<string, unknown> | null; backupPolicyCount: number; databaseType: DatabaseType; }'.": 2,
+     "TS2724: '\"node_modules/@appwrite.io/console/types/models\".Models' has no exported member named 'DedicatedDatabaseSpecificationPricing'. Did you mean 'DedicatedDatabaseSpecification'?": 1,
+-    "TS6133: 'currentSpecification' is declared but its value is never read.": 1,
+     "TS6133: 'useEffect' is declared but its value is never read.": 1
+   },
+   "src/lib/react-query/hooks/functions.ts": {
 ```
 
 ---
 
-### Incident Patch 2: `4782543e` (2026-11-20)
-**Commit Message**: fix(query): parse nested query children sent as strings
+### Incident Patch 2: `458b4a59` (2026-11-23)
+**Commit Message**: revert(extension): the Rust side of #15328
 
-A nested (and/or/...) query's children reached the recursive parseQuery()
-as-is, so a child sent as a query string raised a TypeError rather than
-a query exception. utopia-php/database's Query decodes such children
-before calling the parent, so its validators accept them; subclasses
-that use the base parser directly (Utopia\Audit\Query, UsageQuery) then
-crash on the same input. Cloud's Activities events list is one: its
-param validator accepts the query, and the action's audit parse throws
-a TypeError, which returns a 500.
+The commit before this takes #15328 (per-dialect string literals and a
+declared LIKE escape) back out of the PHP package, so this pull request
+changes no PHP behaviour. With utopia-php/database 10.2.3 the package's
+SQLite builder and the library's own each appended ESCAPE, and SQLite
+refused the statement; that happened with the extension off.
 
-The base now parses a string child through parse(), like database, and
-refuses any other non-array child with a query exception.
+The Rust port had been written to match #15328, so it follows:
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+- Reverts 589edcebd8: the tokenizers, parser, serializers and schemas
+  read and write string literals as main's PHP does. StringLiteral is
+  gone, and the shared filter module stays as it was.
+- The builders escape LIKE with a backslash and declare no escape,
+  setJsonRemove is main's JSON_REMOVE, toRawSql quotes through each
+  dialect's quoteString, and toAst/fromAst carry no escape clause.
+- compileLikePredicate(), likeEscape() and createTokenizer() are not
+  methods of main's builders, so they and their steps go: 74 remain.
+- MySQL, MariaDB and ClickHouse use the base AST serializer, as main's
+  createAstSerializer() does.
 
-**File**: `packages/query/src/Query.php` (modified, +13/-0)
+Both corpora match main's package: 15,797 builder cases and 55,481
+query lines. utopia-php/database's suite f
+
+**File**: `crates/extension/README.md` (modified, +7/-28)
 ```diff
-@@ -281,6 +281,19 @@ public static function parseQuery(array $query, bool $allowRaw = false): static
+@@ -550,28 +550,6 @@ written as `a = b = c`, which reads back as `(a = b) = c`. `packages/query/src/A
+ is now the fixed version, with two tests in `tests/AST/SerializerTest.php` that fail on the old
+ one.
  
-         if ($methodEnum->isNested()) {
-             foreach ($values as $index => $value) {
-+                // A hand-built client may send a child as a query string instead of an
-+                // object; utopia-php/database's Query already accepts that, so parse it
-+                // the same way. Anything else is a client error, not a TypeError.
-+                if (\is_string($value)) {
-+                    $values[$index] = static::parse($value, $allowRaw);
-+
-+                    continue;
-+                }
-+
-+                if (! \is_array($value)) {
-+                    throw new QueryException('Invalid nested query. Must be an array or string, got '.\gettype($value));
-+                }
-+
-                 /** @var array<string, mixed> $value */
-                 $values[$index] = static::parseQuery($value, $allowRaw);
-             }
+-### String literals
+-
+-`Utopia\Query\StringLiteral` is a PHP enum and stays one. The tokenizers, the parser, the
+-serializers and the schemas each take a case of it (or their dialect's default), and the crate has
+-the same four rules as `utopia_query::StringLiteral`: `quote()` for what the serializers and the
+-DDL write, `unquote()` for what the parser reads. A backslash escapes or not, PostgreSQL's
+-`E'...'` is its own token, a NUL or a backslash after a byte of 0x80 or above is refused where
+-the dialect refuses it, and `LIKE` keeps its `ESCAPE` clause through `Binary::$escape`.
+-
+-The parser reads escapes in bytes, as PHP does. The extension hands it text with a character
+-for each byte, so it asks the crate's parser for `widened()` text: `E'\u00e9'` is then the two
+-bytes of `é`, each its own character, and comes back out as those two bytes.
+-
+-The corpus runs 1,903 cases of this on both: 29 literals through six tokenizers and the parser
+-under each of the four rules, 18 strings through six serializers under each rule and through the
+-DDL of five dialects, `LIKE ... ESCAPE` read and written, and statements with input after them.
+-One known difference: the rules given to a tokenizer, a serializer or a schema are a protected
+-property `$literal` in PHP, which a subclass can read. The extension keeps them in Rust.
+-
+-The crate's builders do not have these rules yet. They are not in the extension, so nothing
+-here reaches them, and they are to be brought level when the builders move.
+-
+ ### The schemas
+ 
+ `Schema` and `Schema\SQL` (both abstract), the dialects `Schema\MySQL`, `PostgreSQL`, `SQLite`,
+@@ -656,13 +634,13 @@ compares each public one, and the interfaces each builder implements.
+ What a subclass can rely on:
+ 
+ - A protected method it overrides is the one the build calls, in the order PHP calls them: `build()`,
+-  the `compile*()` methods, the clause hooks, the validators and every other helper, 77 in all,
++  the `compile*()` methods, the clause hooks, the validators and every other helper, 74 in all,
+   `quote()` and `getBindingValues()` among them.
+   `parent::compileFilter()` runs the native one. An override is handed the package's own objects: a
+   `Query`, a `Case\Expression`, a `Statement`, a `ParsedQuery`, and `$parts` by reference. Nothing
+   is converted for a method no subclass overrides.
+-- `createTokenizer()` and `createAstSerializer()` are among them: `toAst()` reads a CTE with the
+-  tokenizer a subclass returns, and `fromAst()` writes what stays raw SQL with its serializer.
++- `createAstSerializer()` is among them: `fromAst()` writes what stays raw SQL with the serializer
++  a subclass returns.
+ - `bindings`, `pendingQueries` and `resolvedAttributeCache` are protected properties it reads,
+   assigns and changes in place (`$this->pendingQueries[] = $query`), as the package's own traits do.
+   PHP is handed a copy the builder holds, and the next native call reads it back.
+@@ -695,11 +673,12 @@ Known differences:
+ - `resolvedAttributeCache` has no order.
+ - The classes declare a constructor and no `__clone()`. PHP's declare the reverse.
+ 
+-Four things check them. `tests/query-builders.php` is a corpus like the others: 15,827 cases, the
+-same on PHP and on the extension. The package's own 5,828 tests pass on the native builders, but for
++Four things check them. `tests/query-builders.php` is a corpus like the others: 15,797 cases, the
++same on PHP and on the extension. The package's own 5,628 tests pass on the native builders, but for
+ two that read the PHP class's source and private state and are skipped there. utopia-php/database
+ 10.2.3 subclasses four of the builders, overrides 23 of their methods and serializes queries for its
+-cache keys. Its 13,217 unit tests give the same result on the native builders as on PHP.
++cache keys. Its 13,217 unit tests fail the same nine on main's PHP package, on this one and on the
++native builders: the nine need a database server.
+ `tests/query-coroutines.php` builds 720 statements in Swoole coroutines whose overrides and
+ callbacks sleep in the middle of a build, so builds interleave on one thread. Each builder carries
+ the PHP object that owns it for that reason: kept per thread, 476 of the 720 lost their overrides.
 ```
 
-**File**: `packages/query/tests/API/ParseTest.php` (modified, +54/-0)
+**File**: `crates/extension/src/query/ast.rs` (modified, +25/-42)
 ```diff
-@@ -91,6 +91,60 @@ public function testParseNestedLogicalQuery(): void
-         $this->assertSame('John', $query->getValues()[0]->getValue());
+@@ -28,10 +28,10 @@ use ext_php_rs::types::{ZendHashTable, ZendObject, ZendStr, Zval};
+ use ext_php_rs::zend::{ClassEntry, ExecutorGlobals, ce};
+ use utopia_query::ast;
+ use utopia_query::tokenizer::{Token, TokenType};
+-use utopia_query::{NullsPosition, OrderDirection, StringLiteral, Value};
++use utopia_query::{NullsPosition, OrderDirection, Value};
+ 
++use super::exception;
+ use super::tokenizer::{case, class};
+-use super::{Rules, exception};
+ use crate::emails::{construct, string};
+ use crate::string::PhpString;
+ 
+@@ -168,7 +168,7 @@ const NODES: [(Node, &str, &[&str]); 25] = [
+     (Node::WindowDefinition, "Definition\\Window", &["name", "specification"]),
+     (Node::Aliased, "Expression\\Aliased", &["expression", "alias"]),
+     (Node::Between, "Expression\\Between", &["expression", "low", "high", "negated"]),
+-    (Node::Binary, "Expression\\Binary", &["left", "operator", "right", "escape"]),
++    (Node::Binary, "Expression\\Binary", &["left", "operator", "right"]),
+     (Node::CaseWhen, "Expression\\CaseWhen", &["condition", "result"]),
+     (Node::Cast, "Expression\\Cast", &["expression", "type"]),
+     (Node::Conditional, "Expression\\Conditional", &["operand", "whens", "else"]),
+@@ -466,7 +466,6 @@ impl Reader<'_> {
+                 left: self.boxed(slot(node, 0, "left")?)?,
+                 operator: text(slot(node, 1, "operator")?, "operator")?,
+                 right: self.boxed(slot(node, 2, "right")?)?,
+-                escape: self.maybe(slot(node, 3, "escape")?)?.map(Box::new),
+             }
+             .into(),
+             Some(Node::CaseWhen) => self.when(value)?.into(),
+@@ -739,12 +738,7 @@ impl Builder<'_> {
+             ),
+             ast::Expression::Binary(binary) => self.make(
+                 Node::Binary,
+-                [
+-                    self.expression(&binary.left),
+-                    words(&binary.operator),
+-                    self.expression(&binary.right),
+-                    self.maybe(binary.escape.as_deref()),
+-                ],
++                [self.expression(&binary.left), words(&binary.operator), self.expression(&binary.right)],
+             ),
+             ast::Expression::CaseWhen(when) => self.when(when),
+             ast::Expression::Cast(cast) => {
+@@ -924,13 +918,12 @@ fn tokens<'a>(classes: &Classes, table: &'a ZendHashTable) -> PhpResult<(Vec<Tok
+ #[php_class]
+ #[php(name = "Utopia\\Query\\AST\\Parser")]
+ #[derive(Clone)]
+-pub struct Parser(StringLiteral);
++pub struct Parser;
+ 
+ #[php_impl]
+ impl Parser {
+-    #[php(defaults(literal = "Rules(StringLiteral::Backslash)"))]
+-    pub fn __construct(literal: Rules) -> Self {
+-        Self(literal.0)
++    pub fn __construct() -> Self {
++        Self
      }
  
-+    public function testParseNestedLogicalQueryWithStringChildren(): void
-+    {
-+        $json = (string) json_encode([
-+            'method' => 'and',
-+            'values' => [
-+                (string) json_encode(['method' => 'equal', 'attribute' => 'name', 'values' => ['John']]),
-+                ['method' => 'greaterThan', 'attribute' => 'age', 'values' => [18]],
-+                (string) json_encode(['method' => 'or', 'values' => [
-+                    (string) json_encode(['method' => 'equal', 'attribute' => 'city', 'values' => ['Paris']]),
-+                ]]),
-+            ],
-+        ]);
-+
-+        $query = Query::parse($json);
-+        $children = $query->getValues();
-+
-+        $this->assertSame(Method::And, $query->getMethod());
-+        $this->assertCount(3, $children);
-+        $this->assertInstanceOf(Query::class, $children[0]);
-+        $this->assertSame('John', $children[0]->getValue());
-+        $this->assertInstanceOf(Query::class, $children[1]);
-+        $this->assertSame(Method::GreaterThan, $children[1]->getMethod());
-+        $this->assertInstanceOf(Query::class, $children[2]);
-+        $this->assertSame(Method::Or, $children[2]->getMethod());
-+        $grandchild = $children[2]->getValues()[0];
-+        $this->assertInstanceOf(Query::class, $grandchild);
-+        $this->assertSame('Paris', $grandchild->getValue());
-+    }
-+
-+    public function testParseNestedStringChildThatIsNotJson(): void
-+    {
-+        $this->expectException(Exception::class);
-+        $this->expectExceptionMessageMatches('/^Invalid query: /');
-+
-+        Query::parse((string) json_encode(['method' => 'or', 'values' => ['not json']]));
-+    }
-+
-+    public function testParseNestedChildOfWrongType(): void
-+    {
-+        $this->expectException(Exception::class);
-+        $this->expectExceptionMessage('Invalid nested query. Must be an array or string, got integer');
-+
-+        Query::parse((string) json_encode(['method' => 'or', 'values' => [42]]));
-+    }
-+
-+    public function testParseNestedStringChildStillRefusesRaw(): void
-+    {
-+        $this->expectException(ValidationException::class);
-+
-+        Query::parse((string) json_encode(['method' => 'or', 'values' => [
-+            (string) json_encode(['method' => 'raw', 'attribute' => '1 = 1', 'values' => []]),
-+        ]]));
-+    }
-+
-     public function testParseQueries(): void
-     {
-         $queries = Query::parseQueries([
+     pub fn parse(&self, tokens: &ZendHashTable) -> PhpResult<Zval> {
+@@ -941,11 +934,7 @@ impl Parser {
+         }
+         // The statement is dropped where it was made: on the stack with room for it.
+         roomy(levels, INLINE_PARSE_LEVELS, || {
+-            ast::Parser::new()
+-                .with_literal(self.0)
+-                .widened()
+-                .parse(&read)
+-                .map(|select| Builder(&classes).select(&select))
++            ast::Parser::new().parse(&read).map(|select| Builder(&classes).select(&select))
+         })
+         .map_err(|error| failed(&error))
+     }
+@@ -1004,11 +993,6 @@ pub(super) fn expression_node(expression: &ast::Expression) -> PhpResult<Zval> {
+     Ok(Builder(&classes).expression(expression))
+ }
+ 
+-/// A `Statement\Select` PHP's own parser returned, as the crate's.
+-pub(super) fn read_select(select: &Zval) -> PhpResult<ast::Select> {
+-    read(&Statement(select))
+-}
+-
+ /// The package's `Statement\Select` as the crate's, for a builder's `fromAst()`.
+ pub(super) fn read(statement: &Statement<'_>) -> PhpResult<ast::Select> {
+     let classes = classes()?;
+@@ -1020,21 +1004,20 @@ pub(super) fn read(statement: &Statement<'_>) -> PhpResult<ast::Select> {
+ /// The methods every serializer class declares: a parent's method reads its own Rust type,
+ /// so each class has its own.
+ macro_rules! serializer_methods {
+-    ($class:ident, $serializer:expr, $rules:literal) => {
++    ($class:ident, $serializer:expr) => {
+         #[php_impl]
+         impl $class {
+-            #[php(defaults(literal = $rules))]
+-            pub fn __construct(literal: Rules) -> Self {
+-                Self(literal.0)
++            pub fn __construct() -> Self {
++                Self
+             }
+ 
+             pub fn serialize(&self, stmt: Statement<'_>) -> PhpResult<Zval> {
+-                written($serializer.with_literal(self.0), stmt.0, true)
++                written($serializer, stmt.0, true)
+             }
+ 
+             #[php(name = "serializeExpression")]
+             pub fn serialize_expression(&self, expression: Expression<'_>) -> PhpResult<Zval> {
+-                written($serializer.with_literal(self.0), expression.0, false)
++                written($serializer, expression.0, false)
+             }
+ 
+             
+```
+
+**File**: `crates/extension/src/query/builder.rs` (modified, +2/-65)
+```diff
+@@ -140,33 +140,19 @@ pub trait Text: Dialect {
+         Ok(None)
+     }
+ 
+-    /// The class `createTokenizer()` makes: the dialect's own, or the standard one.
+-    const TOKENIZER: &'static str = "Utopia\\Query\\Tokenizer\\Tokenizer";
+-
+     /// The class `createAstSerializer()` makes.
+     const SERIALIZER: &'static str = "Utopia\\Query\\AST\\Serializer";
+ }
+ 
+-impl Text for MySqlDialect {
+-    const TOKENIZER: &'static str = "Utopia\\Query\\Tokenizer\\MySQL";
+-    const SERIALIZER: &'static str = "Utopia\\Query\\AST\\Serializer\\MySQL";
+-}
+-impl Text for MariaDbDialect {
+-    const TOKENIZER: &'static str = "Utopia\\Query\\Tokenizer\\MariaDB";
+-    const SERIALIZER: &'static str = "Utopia\\Query\\AST\\Serializer\\MariaDB";
+-}
++impl Text for MySqlDialect {}
++impl Text for MariaDbDialect {}
+ impl Text for PostgreSqlDialect {
+-    const TOKENIZER: &'static str = "Utopia\\Query\\Tokenizer\\PostgreSQL";
+     const SERIALIZER: &'static str = "Utopia\\Query\\AST\\Serializer\\PostgreSQL";
+ }
+ impl Text for SqliteDialect {
+-    const TOKENIZER: &'static str = "Utopia\\Query\\Tokenizer\\SQLite";
+     const SERIALIZER: &'static str = "Utopia\\Query\\AST\\Serializer\\SQLite";
+ }
+ impl Text for ClickHouseDialect {
+-    const TOKENIZER: &'static str = "Utopia\\Query\\Tokenizer\\ClickHouse";
+-    const SERIALIZER: &'static str = "Utopia\\Query\\AST\\Serializer\\ClickHouse";
+-
+     fn formatted(builder: &mut Builder<Self>) -> Result<Option<FormattedInsertStatement>, Error> {
+         builder.formatted_insert()
+     }
+@@ -779,12 +765,6 @@ impl<D: Dialect + Text> State<D> {
+                 }
+             });
+         }
+-        // `createTokenizer()` takes nothing: the SQL is for the tokenizer it returns.
+-        if step == Step::CreateTokenizer {
+-            let [Arg::Str(sql)] = arguments else { return None };
+-            let tokenizer = invoke(object, function, &mut [])?;
+-            return self.tokenized(&tokenizer, sql).ok().map(|read| Ret::Select(Box::new(read)));
+-        }
+         let returned = invoke(object, function, &mut zvals)?;
+         let strings = |list: &Zval| -> Vec<String> {
+             let items = list.dereference().array().into_iter().flat_map(ZendHashTable::values);
+@@ -849,22 +829,6 @@ impl<D: Dialect + Text> State<D> {
+         Ok(())
+     }
+ 
+-    /// `$sql` read as PHP reads a CTE: the tokenizer's tokens, filtered, through the package's parser
+-    /// with the dialect's string rules.
+-    fn tokenized(&self, tokenizer: &Zval, sql: &str) -> PhpResult<utopia_query::ast::Select> {
+-        let tokenizer = tokenizer.object().ok_or_else(pending)?;
+-        let tokens =
+-            tokenizer.try_call_method("tokenize", vec![&string(&bytes(D::JSON, sql))]).map_err(|_| pending())?;
+-        let filter =
+-            ZendCallable::try_from_name("Utopia\\Query\\Tokenizer\\Tokenizer::filter").map_err(PhpException::from)?;
+-        let tokens = filter.try_call(vec![&tokens]).map_err(|_| pending())?;
+-        let rules = utopia_query::StringLiteral::CASES.iter().find(|(rules, _)| *rules == D::LITERAL);
+-        let rules = enum_case("Utopia\\Query\\StringLiteral", rules.map_or("Backslash", |found| found.1))?;
+-        let parser = construct(class("Utopia\\Query\\AST\\Parser")?, &mut [rules])?;
+-        let select = parser.try_call_method("parse", vec![&tokens]).map_err(|_| pending())?;
+-        super::ast::read_select(&select)
+-    }
+-
+     /// The crate's `CASE` as the package's `Case\Expression`, built through its own methods.
+     fn case_object(&self, case: &CaseExpression) -> PhpResult<Zval> {
+         let made = construct(class(CASE)?, &mut [])?;
+@@ -4511,28 +4475,6 @@ macro_rules! builder_class {
+                 self_.0.step(Step::CompileGroupByTimeBucket, &[Arg::Str(&attribute), Arg::Str(&interval)])
+             }
+ 
+-            #[php(name = "compileLikePredicate", vis = "protected", defaults(not = "Bool(false)"))]
+-            pub fn compile_like_predicate(
+-                self_: &mut ZendClassObject<$class>,
+-                attribute: PhpString<'_>,
+-                not: Bool,
+-            ) -> PhpResult<Bytes> {
+-                let object = std::ptr::from_mut(&mut self_.std);
+-                self_.0.running(object);
+-                let attribute = self_.0.text(attribute.bytes());
+-                let not = not.0;
+-                self_.0.step(Step::CompileLikePredicate, &[Arg::Str(&attribute), Arg::Bool(not)])
+-            }
+-
+-            #[php(name = "likeEscape", vis = "protected")]
+-            pub fn like_escape(
+-                self_: &mut ZendClassObject<$class>,
+-            ) -> PhpResult<Bytes> {
+-                let object = std::ptr::from_mut(&mut self_.std);
+-                self_.0.running(object);
+-                self_.0.step(Step::LikeEscape, &[])
+-            }
+-
+             #[php(name = "compileComparison", vis = "protected", optional = column)]
+             pub fn compile_comparison(
+                 self_: &mut ZendClassObject<$class>,
+@@ -4942,11 +4884,6 @@
+```
+
+**File**: `crates/extension/src/query/features.rs` (modified, +0/-1)
+```diff
+@@ -383,7 +383,6 @@ const TYPES: &[(&str, usize, Declared)] = &[
+     ("multiply", 2, INT_OR_FLOAT),
+     ("unsetFields", 1, Declared::Types(engine::MAY_BE_STRING)),
+     ("createAstSerializer", 0, Declared::Class("Utopia\\Query\\AST\\Serializer", 0)),
+-    ("createTokenizer", 0, Declared::Class("Utopia\\Query\\Tokenizer\\Tokenizer", 0)),
+     ("compileInsertBody", 0, Declared::Types(engine::MAY_BE_ARRAY)),
+     ("compileAssignments", 0, Declared::Types(engine::MAY_BE_ARRAY)),
+     ("validateAndGetColumns", 0, Declared::Types(engine::MAY_BE_ARRAY)),
+```
+
+**File**: `crates/extension/src/query/mod.rs` (modified, +1/-27)
+```diff
+@@ -10,12 +10,9 @@ pub mod schema;
+ pub mod tokenizer;
+ pub mod value;
+ 
+-use ext_php_rs::convert::{FromZval, IntoZval, StubLiteral};
++use ext_php_rs::convert::IntoZval;
+ use ext_php_rs::exception::PhpException;
+-use ext_php_rs::flags::DataType;
+-use ext_php_rs::types::Zval;
+ use ext_php_rs::zend::{ClassEntry, ce};
+-use utopia_query::StringLiteral;
+ 
+ use crate::emails::{construct, string};
+ 
+@@ -30,26 +27,3 @@ pub fn exception(error: &utopia_query::Error) -> PhpException {
+         Err(failed) => failed,
+     }
+ }
+-
+-/// A `Utopia\Query\StringLiteral` argument: the enum is the package's own PHP, and a case
+-/// object keeps its name in its first slot.
+-pub struct Rules(pub StringLiteral);
+-
+-impl<'a> FromZval<'a> for Rules {
+-    const TYPE: DataType = DataType::object("Utopia\\Query\\StringLiteral");
+-
+-    fn from_zval(zval: &'a Zval) -> Option<Self> {
+-        let object = zval.object().filter(|object| {
+-            ClassEntry::try_find("Utopia\\Query\\StringLiteral").is_some_and(|class| object.instance_of(class))
+-        })?;
+-        let name = ast::slots(object).first()?.str()?;
+-        StringLiteral::CASES.iter().find(|(_, case)| *case == name).map(|(rules, _)| Rules(*rules))
+-    }
+-}
+-
+-impl StubLiteral for Rules {
+-    fn stub_literal(&self) -> String {
+-        let name = StringLiteral::CASES.iter().find(|(rules, _)| *rules == self.0).map_or("Backslash", |found| found.1);
+-        format!("\\Utopia\\Query\\StringLiteral::{name}")
+-    }
+-}
+```
+
+**File**: `crates/extension/src/query/schema.rs` (modified, +10/-16)
+```diff
+@@ -1399,25 +1399,19 @@ schema_methods!(
+ 
+         #[php(name = "createCollation", defaults(deterministic = "Bool(true)"))]
+         pub fn create_collation(&self, name: PhpString<'_>, options: Arr<'_>, deterministic: Bool) -> PhpResult<Zval> {
+-            let name = inward(false, name.bytes())?;
+-            let compile = |pairs: &[(String, String)]| {
+-                let pairs: Vec<_> = pairs.iter().map(|(name, option)| (name.as_str(), option.as_str())).collect();
+-                PostgreSql::new().create_collation(&name, &pairs, deterministic.0)
+-            };
+             let mut pairs = Vec::new();
+             for (name, option) in options.table().into_iter().flat_map(ZendHashTable::iter) {
+-                let name = key(false, &name)?;
+-                match scalar(false, option, "options") {
+-                    Ok(option) => pairs.push((name, option)),
+-                    // PHP refuses a key before it reads the value under it, and an earlier
+-                    // option before a later one.
+-                    Err(wrong) => {
+-                        pairs.push((name, String::new()));
+-                        return Err(compile(&pairs).err().map_or(wrong, |error| thrown(false, &error)));
+-                    }
+-                }
++                // PHP writes these into a string: nothing for `null`, `Array` for an array.
++                let option = match option {
++                    option if option.is_null() => String::new(),
++                    option if option.is_array() => "Array".to_owned(),
++                    option => scalar(false, option, "options")?,
++                };
++                pairs.push((key(false, &name)?, option));
+             }
+-            statement::<PostgreSql>(&self.0, compile(&pairs), None)
++            let pairs: Vec<_> = pairs.iter().map(|(name, option)| (name.as_str(), option.as_str())).collect();
++            let name = inward(false, name.bytes())?;
++            statement::<PostgreSql>(&self.0, PostgreSql::new().create_collation(&name, &pairs, deterministic.0), None)
+         }
+ 
+         #[php(name = "alterColumnType", defaults(using = "\"\""))]
+```
+
+**File**: `crates/extension/src/query/tokenizer.rs` (modified, +21/-19)
+```diff
+@@ -7,10 +7,9 @@ use ext_php_rs::exception::PhpException;
+ use ext_php_rs::prelude::*;
+ use ext_php_rs::types::{ZendHashTable, ZendObject, ZendStr, Zval};
+ use ext_php_rs::zend::{ClassEntry, ce};
+-use utopia_query::StringLiteral;
+ use utopia_query::tokenizer::{TokenType, Tokenizer as Dialect};
+ 
+-use super::{Rules, exception};
++use super::exception;
+ use crate::emails::{construct, string};
+ use crate::string::PhpString;
+ 
+@@ -76,16 +75,15 @@ fn filter(tokens: &ZendHashTable) -> PhpResult<Vec<Zval>> {
+ /// The methods every tokenizer class declares: a parent's method reads its own Rust type,
+ /// so each class has its own.
+ macro_rules! tokenizer_methods {
+-    ($class:ident, $dialect:expr, $rules:literal, $quote:literal) => {
++    ($class:ident, $dialect:expr, $quote:literal) => {
+         #[php_impl]
+         impl $class {
+-            #[php(defaults(literal = $rules))]
+-            pub fn __construct(literal: Rules) -> Self {
+-                Self(literal.0)
++            pub fn __construct() -> Self {
++                Self
+             }
+ 
+             pub fn tokenize(&self, sql: PhpString<'_>) -> PhpResult<Vec<Zval>> {
+-                tokenize($dialect.with_literal(self.0), sql.bytes())
++                tokenize($dialect, sql.bytes())
+             }
+ 
+             pub fn filter(tokens: &ZendHashTable) -> PhpResult<Vec<Zval>> {
+@@ -100,48 +98,52 @@ macro_rules! tokenizer_methods {
+     };
+ }
+ 
++/// `Utopia\Query\Tokenizer\Tokenizer`: the standard tokenizer.
++///
++/// No class here derives `Default`: with it, ext-php-rs 0.16.5 makes `new` of a PHP subclass
++/// an object of the Rust class.
+ #[php_class]
+ #[php(name = "Utopia\\Query\\Tokenizer\\Tokenizer")]
+ #[derive(Clone)]
+-pub struct Tokenizer(StringLiteral);
+-tokenizer_methods!(Tokenizer, Dialect::new(), "Rules(StringLiteral::Backslash)", "`");
++pub struct Tokenizer;
++tokenizer_methods!(Tokenizer, Dialect::new(), "`");
+ 
+ /// `Utopia\Query\Tokenizer\MySQL`: also reads `#` line comments.
+ #[php_class]
+ #[php(name = "Utopia\\Query\\Tokenizer\\MySQL")]
+ #[php(extends(Tokenizer))]
+ #[derive(Clone)]
+-pub struct MySql(StringLiteral);
+-tokenizer_methods!(MySql, Dialect::mysql(), "Rules(StringLiteral::Backslash)", "`");
++pub struct MySql;
++tokenizer_methods!(MySql, Dialect::mysql(), "`");
+ 
+ /// `Utopia\Query\Tokenizer\MariaDB`: as MySQL.
+ #[php_class]
+ #[php(name = "Utopia\\Query\\Tokenizer\\MariaDB")]
+ #[php(extends(MySql))]
+ #[derive(Clone)]
+-pub struct MariaDb(StringLiteral);
+-tokenizer_methods!(MariaDb, Dialect::mariadb(), "Rules(StringLiteral::Backslash)", "`");
++pub struct MariaDb;
++tokenizer_methods!(MariaDb, Dialect::mariadb(), "`");
+ 
+ /// `Utopia\Query\Tokenizer\PostgreSQL`: double-quoted identifiers and multi-character operators.
+ #[php_class]
+ #[php(name = "Utopia\\Query\\Tokenizer\\PostgreSQL")]
+ #[php(extends(Tokenizer))]
+ #[derive(Clone)]
+-pub struct PostgreSql(StringLiteral);
+-tokenizer_methods!(PostgreSql, Dialect::postgresql(), "Rules(StringLiteral::Extended)", "\"");
++pub struct PostgreSql;
++tokenizer_methods!(PostgreSql, Dialect::postgresql(), "\"");
+ 
+ /// `Utopia\Query\Tokenizer\SQLite`: double-quoted identifiers.
+ #[php_class]
+ #[php(name = "Utopia\\Query\\Tokenizer\\SQLite")]
+ #[php(extends(Tokenizer))]
+ #[derive(Clone)]
+-pub struct Sqlite(StringLiteral);
+-tokenizer_methods!(Sqlite, Dialect::sqlite(), "Rules(StringLiteral::Standard)", "`");
++pub struct Sqlite;
++tokenizer_methods!(Sqlite, Dialect::sqlite(), "\"");
+ 
+ /// `Utopia\Query\Tokenizer\ClickHouse`: as the standard tokenizer.
+ #[php_class]
+ #[php(name = "Utopia\\Query\\Tokenizer\\ClickHouse")]
+ #[php(extends(Tokenizer))]
+ #[derive(Clone)]
+-pub struct ClickHouse(StringLiteral);
+-tokenizer_methods!(ClickHouse, Dialect::clickhouse(), "Rules(StringLiteral::BackslashUtf8)", "`");
++pub struct ClickHouse;
++tokenizer_methods!(ClickHouse, Dialect::clickhouse(), "`");
+```
+
+**File**: `crates/extension/tests/query.php` (modified, +0/-100)
+```diff
+@@ -2174,98 +2174,6 @@ public function build(): Utopia\Query\Builder\Statement
+ }
+ emit('view of a hollow statement', outcome(fn () => (new Utopia\Query\Schema\MySQL())->createView('v', new HollowBuilder())));
+ 
+-// --- String literals -----------------------------------------------------------------------
+-
+-// Each dialect writes and reads a string literal by its own rules, and takes another's when given one.
+-$rules = Utopia\Query\StringLiteral::cases();
+-$texts = [
+-    '', 'plain', "it's", 'back\\slash', '\\', 'a\\', "nul\0byte", "é\\", "\xff\\", "\xe9\\x", "a\\\xff", "\x80", 'tab\\tnl\\n',
+-    "\\'", "''", '%_\\%\\_', '日本\\語', "line\nbreak",
+-];
+-$literals = [
+-    "''", "'a'", "'it''s'", "'a\\'b'", "'a\\\\b'", "'\\n\\t\\r\\b\\0\\Z\\a\\f\\v\\%\\_\\q'", "'\\x41\\x4\\xg\\xff'", "'\\101\\7\\400\\8'",
+-    "'\\u00e9\\u12\\U0001F600\\U0000d800\\uD800'", "'\\U00110000'", "E'a\\nb'", "e'\\x41'", "E'\\u00e9'", "E'\\0'", "E'\\101'", "E''", "E'it''s'",
+-    "'\xff'", "'\xff\\n'", "E'\xe9\\xe9\\u00e9'", "'a\\", "'a'b'", "'", "E'", "E'\\'", "'nul\0'", "'\\0'", 'E', "'a' 'b'",
+-];
+-foreach ($rules as $rule) {
+-    $classes = [Tokenizer\Tokenizer::class, Tokenizer\MySQL::class, Tokenizer\MariaDB::class, Tokenizer\PostgreSQL::class, Tokenizer\SQLite::class, Tokenizer\ClickHouse::class];
+-    foreach ($classes as $class) {
+-        $read = [];
+-        foreach ($literals as $literal) {
+-            $read[] = outcome(fn () => (new $class($rule))->tokenize('SELECT ' . $literal . ' # c' . "\n" . ', `a`, "b" -- d'));
+-        }
+-        emit('literal tokens ' . $rule->name . ' ' . $class, $read);
+-    }
+-    $parsed = [];
+-    foreach ($literals as $literal) {
+-        foreach ([Tokenizer\Tokenizer::class, Tokenizer\PostgreSQL::class] as $class) {
+-            $parsed[] = outcome(fn () => (new AST\Parser($rule))->parse(Tokenizer\Tokenizer::filter((new $class($rule))->tokenize('SELECT ' . $literal))));
+-        }
+-    }
+-    emit('literal parsed ' . $rule->name, $parsed);
+-    $written = [];
+-    foreach ([AST\Serializer::class, AST\Serializer\MySQL::class, AST\Serializer\MariaDB::class, AST\Serializer\PostgreSQL::class, AST\Serializer\SQLite::class, AST\Serializer\ClickHouse::class] as $class) {
+-        foreach ($texts as $text) {
+-            $written[] = outcome(fn () => (new $class($rule))->serializeExpression(new AST\Literal($text)));
+-        }
+-    }
+-    emit('literal written ' . $rule->name, $written);
+-}
+-// The defaults of each class, and a literal read back from what was written.
+-$defaults = [];
+-foreach ([[Tokenizer\Tokenizer::class, AST\Serializer::class], [Tokenizer\MySQL::class, AST\Serializer\MySQL::class], [Tokenizer\PostgreSQL::class, AST\Serializer\PostgreSQL::class], [Tokenizer\SQLite::class, AST\Serializer\SQLite::class], [Tokenizer\ClickHouse::class, AST\Serializer\ClickHouse::class]] as [$tokenizer, $serializer]) {
+-    foreach ($texts as $text) {
+-        $defaults[] = outcome(fn () => (new $serializer())->serializeExpression(new AST\Literal($text)));
+-        $defaults[] = outcome(fn () => (new $tokenizer())->tokenize("SELECT 'a\\'b', E'c\\'d', e'f'"));
+-    }
+-}
+-emit('literal defaults', $defaults);
+-
+-// LIKE keeps its ESCAPE clause, and nothing may follow a statement but one semicolon.
+-$likes = [];
+-foreach ([
+-    "SELECT a LIKE 'x!%' ESCAPE '!'", "SELECT a NOT LIKE b ESCAPE c", "SELECT a ILIKE 'x' escape '\\\\' AND b", "SELECT a NOT ILIKE 'x' ESCAPE '!' OR b LIKE 'y'",
+-    "SELECT a LIKE 'x' ESCAPE", "SELECT a LIKE 'x' ESCAPE '!' ESCAPE '?'", 'SELECT escape FROM t', 'SELECT a = b ESCAPE c', 'SELECT 1;', 'SELECT 1;;', 'SELECT 1; SELECT 2',
+-    'SELECT 1 2', 'SELECT 1 FROM t )', 'SELECT a FROM t WHERE x LIKE y ESCAPE z ORDER BY a;',
+-] as $sql) {
+-    foreach ([[new Tokenizer\Tokenizer(), new AST\Parser(), new AST\Serializer()], [new Tokenizer\PostgreSQL(), new AST\Parser(Utopia\Query\StringLiteral::Extended), new AST\Serializer\PostgreSQL()]] as [$tokenizer, $reader, $writer]) {
+-        $likes[] = outcome(fn () => $reader->parse(Tokenizer\Tokenizer::filter($tokenizer->tokenize($sql))));
+-        $likes[] = outcome(fn () => $writer->serialize($reader->parse(Tokenizer\Tokenizer::filter($tokenizer->tokenize($sql)))));
+-    }
+-}
+-$likes[] = outcome(fn () => (new AST\Serializer())->serializeExpression(new AST\Expression\Binary(new AST\Reference\Column('a'), 'LIKE', new AST\Literal('x'), new AST\Expression\Binary(new AST\Literal('!'), 'OR', new AST\Literal('?')))));
+-emit('like escape and trailing input', $likes);
+-
+-// DDL inlines its strings through the same rules.
+-$inlined = [];
+-foreach ($schemas as $dialect => $schema) {
+-    foreach ($texts as $text) {
+-        $inlined[] = outcome(function () use ($schema, $text) {
+-            $table = $schema->table('t');
+-            $table->string('a')->default($text)->comment($text);
+-            $table->enum('e', [$text, 'b']);
+-
+-            return $table->create();
+-        });
+-        if ($schema instanceof Schema\Feature\TableComments) {
+-
 ```
 
 ---
 
-### Incident Patch 3: `0c935843` (2026-11-20)
-**Commit Message**: fix(jobs): take back a log batch's dedupe markers when its write fails
+### Incident Patch 3: `1d2e2b65` (2026-11-24)
+**Commit Message**: Merge pull request #15981 from appwrite/fix-tablesdb-dedicated-spec-change-fbb4bc
 
-The markers live in Redis, outside the database transaction. When a later
-marker save or the commit failed, the append rolled back but the markers
-already written stayed, so those callbacks were skipped on redelivery and
-their lines lost. Purge the markers the batch wrote before rethrowing.
+fix(console): resize dedicated TablesDB databases through the product API
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01F3M7ttqmi3HYfSr5f9kLt8
-Co-authored-by: Torsten Dittmann <[REDACTED_EMAIL]>
-
-**File**: `src/Appwrite/Platform/Modules/Functions/Workers/Jobs.php` (modified, +27/-14)
+**File**: `apps/console/src/components/pages/projects/$projectId/databases/settings/DatabaseSpecificationCard.tsx` (modified, +0/-1)
 ```diff
-@@ -417,22 +417,35 @@ protected function onLog(Database $dbForProject, Database $dbForPlatform, Docume
-             }
-         }
+@@ -122,7 +122,6 @@ export function DatabaseSpecificationCard({
+         databaseId,
+         dbKind,
+         specification,
+-        database.specification,
+         database.name,
+       ),
+     onSuccess: async (result) => {
+```
+
+**File**: `apps/console/src/lib/react-query/hooks/databases.ts` (modified, +31/-74)
+```diff
+@@ -72,12 +72,8 @@ import {
+   hasTablesDatabaseMigrationCutover,
+   parseTablesDatabaseMigrationIdFromError,
+ } from '@/lib/databases/tables-database-migration'
+-import {
+-  isAppwriteHttpStatus,
+-  isHttpNotFoundError,
+-} from '@/lib/utils/error-formatting'
++import { isHttpNotFoundError } from '@/lib/utils/error-formatting'
+ import { translate } from '@/lib/i18n/translate'
+-import { readDatabaseSpecification } from '@/lib/databases/database-compute'
+ import { waitForDatabaseRealtimeEvent } from '@/lib/realtime/wait-for-database-realtime'
+ import { normalizeDedicatedRealtimeEngine } from '@/lib/realtime/dedicated-database-cache'
+ import { buildPostgresListSchemasSql } from '@/lib/postgres-sql'
+@@ -1593,12 +1589,6 @@ export async function updateProjectDatabase(
+   return await projectSdk.tablesDB.update(payload)
+ }
  
--        $deployment = $dbForProject->withTransaction(function () use ($dbForProject, $project, $deployment, $update, $cache, $events): Document {
--            if ($update !== []) {
--                $dbForProject->updateDocuments('deployments', new Document($update), [
--                    Query::equal('$id', [$deployment->getId()]),
--                    Query::notEqual('status', 'canceled'),
--                ]);
--                $deployment = $dbForProject->getDocument('deployments', $deployment->getId());
--            }
--            // A refused marker rolls back the append. Realtime runs after commit.
--            foreach ($events as $id) {
--                if ($cache->save('jobs-event-' . $project->getSequence() . '-' . $id, true) === false) {
--                    throw new \RuntimeException('Failed to record build log callback.');
-+        $marked = [];
-+        try {
-+            $deployment = $dbForProject->withTransaction(function () use ($dbForProject, $project, $deployment, $update, $cache, $events, &$marked): Document {
-+                $marked = [];
-+                if ($update !== []) {
-+                    $dbForProject->updateDocuments('deployments', new Document($update), [
-+                        Query::equal('$id', [$deployment->getId()]),
-+                        Query::notEqual('status', 'canceled'),
-+                    ]);
-+                    $deployment = $dbForProject->getDocument('deployments', $deployment->getId());
-                 }
-+                // A refused marker rolls back the append. Realtime runs after commit.
-+                foreach ($events as $id) {
-+                    $marker = 'jobs-event-' . $project->getSequence() . '-' . $id;
-+                    if ($cache->save($marker, true) === false) {
-+                        throw new \RuntimeException('Failed to record build log callback.');
-+                    }
-+                    $marked[] = $marker;
-+                }
-+                return $deployment;
-+            });
-+        } catch (\Throwable $error) {
-+            // The markers are outside the transaction. Take back the ones this
-+            // batch wrote, or the rolled-back lines would be skipped on redelivery.
-+            foreach ($marked as $marker) {
-+                $cache->purge($marker);
-             }
--            return $deployment;
--        });
-+            throw $error;
-+        }
+-/**
+- * Migrate a serverless TablesDB database onto a dedicated specification.
+- * Only valid while the database is still serverless (`database_not_serverless`
+- * if already dedicated). Dedicated tier changes use
+- * `updateTablesDatabaseSpecification` instead.
+- */
+ export async function deleteTablesDatabaseMigration(
+   projectId: string,
+   databaseId: string,
+@@ -1646,6 +1636,12 @@ async function startTablesDatabaseProductMigration(
+   })
+ }
  
-         if (($update['status'] ?? '') === 'building' && $deployment->getAttribute('status') === 'building') {
-             GitAction::report('processing', $deployment, $project, $dbForProject, $dbForPlatform, $vcsFactory, $platform);
++/**
++ * Migrate a serverless TablesDB database onto a dedicated specification.
++ * Only valid while the database is still serverless (`database_not_serverless`
++ * if already dedicated). Dedicated tier changes use
++ * `updateProductDatabaseSpecification` instead.
++ */
+ export async function createTablesDatabaseMigration(
+   projectId: string,
+   databaseId: string,
+@@ -1662,77 +1658,39 @@ export async function createTablesDatabaseMigration(
+ 
+   await clearAbortableTablesDatabaseMigrations(projectId, databaseId)
+ 
+-  const runProductMigration = async () => {
+-    try {
+-      return await startTablesDatabaseProductMigration(
+-        projectSdk,
+-        databaseId,
+-        trimmed,
+-      )
+-    } catch (tablesMigrationError) {
+-      const message =
+-        tablesMigrationError instanceof Error
+-          ? tablesMigrationError.message
+-          : String(tablesMigrationError ?? '')
+-      const alreadyExists =
+-        message.toLowerCase().includes('migration record already exists') ||
+-        message.toLowerCase().includes('already exists for this database')
+-      if (alreadyExists) {
+-        const migrationId =
+-          parseTablesDatabaseMigrationIdFromError(tablesMigrationError)
+-        if (migrationId) {
+-          await deleteTablesDatabaseMigration(
+-            projectId,
+-            databaseId,
+-            migrationId,
+-          )
+-        } else {
+-          await clearAbortableTablesDatabaseMigrations(projectId, databaseId)
+-        }
+-        return startTablesDatabaseProductMigration(
+-          projectSdk,
+-          databaseId,
+-          trimmed,
+-        )
+-      }
+-      throw tablesMigrationError
+-    }
+-  }
+-
+   try {
+-    return await runProductMigration()
+-  } catch (tablesMigrationError) {
+-    const routeMissing =
+-      isAppwriteHttpStatus(tablesMigrationError, 404) ||
+-      isHttpNotFoundError(tablesMigrationError)
+-    if (!routeMissing) {
+-      throw tablesMigrationError
++    return await startTablesDatabaseProductMigration(
++      projectSdk,
++      databaseId,
++      trimmed,
++    )
++  } catch (error) {
++    const message = (
++      error instanceof Error ? error.message : String(error ?? '')
++    ).toLowerCase()
++    const alreadyExists =
++      message.includes('migration record already exists') ||
++      message.includes('already exists for this database')
++    if (!alreadyExists) throw error
++
++    const migrationId = parseTablesDatabaseMigrationIdFromError(error)
++    if (migrationId) {
++      await deleteTablesDatabaseMigration(projectId, databaseId, migrationId)
++    } else {
++      await clearAbortableTablesDatabaseMigrations(projectId, databaseId)
+     }
++    return startTablesDatabaseProductMigration(projectSdk, databaseId, trimmed)
+   }
+-
+-  // Cloud may expose shared→dedicated for TablesDB-backed compute on the MySQL
+-  // engine migration route before (or instead of) tablesDB /migrations.
+-  return projectSdk.mysql.createMigration({
+-    databaseId,
+-    targetType: 'dedicated',
+-    specification: trimmed,
+-  })
+ }
+ 
+-/** True when TablesDB already runs on dedicated MySQL compute (not shared/serverless). */
++/** True when TablesDB itself reports a dedicated specification (not shared/serverless). */
+ async function isTablesDatabaseOnDedicatedCompute(
+   projectId: string,
+   databaseId: string,
+ ): Promise<boolean> {
+-  const engineDb = await fetchDedicatedDatabaseById(projectId, databaseId, {
+-    type: 'engine',
+-    engine: 'mysql',
+-  })
+-  if (!engineDb?.$id) return false
+-  const spec = readDatabaseSpecification(engineDb.specification)
+-  if (!spec || isServerlessDatabaseSpecId(spec)) return false
+-  const status = coerceTrimmedString(engineDb.status).toLowerCase()
+-  return status 
+```
+
+**File**: `apps/console/tests/unit/tablesdb-specification-change.test.ts` (added, +158/-0)
+```diff
+@@ -0,0 +1,158 @@
++import { afterAll, describe, expect, mock, test } from 'bun:test'
++import { AppwriteException } from '@appwrite.io/console'
++import * as actualSdk from '@/lib/appwrite/sdk'
++import { updateProductDatabaseSpecification } from '@/lib/react-query/hooks/databases'
++
++const PROJECT_ID = 'proj0000000000000000001'
++const DATABASE_ID = 'db000000000000000000001'
++const TARGET_SPECIFICATION = 's-2vcpu-4gb'
++
++type Call = { service: string; method: string; params: unknown }
++
++/**
++ * Cloud keeps product databases off the raw engine API: `GET /v1/mysql/{id}`
++ * is a 404 for every TablesDB database, dedicated or not. Whether a TablesDB
++ * database already runs on dedicated compute can only be read from TablesDB.
++ */
++describe('updateProductDatabaseSpecification', () => {
++  // Copy the real module now: the namespace import is live and points at the mock once it is set.
++  const realSdk = { ...actualSdk }
++
++  afterAll(() => {
++    mock.module('@/lib/appwrite/sdk', () => realSdk)
++  })
++
++  function mockSdk(options: {
++    specification?: string
++    createMigration?: () => Promise<unknown>
++  }) {
++    const calls: Call[] = []
++    const record =
++      <T>(service: string, method: string, result: () => T | Promise<T>) =>
++      async (params: unknown) => {
++        calls.push({ service, method, params })
++        return result()
++      }
++    const engineNotFound = () => {
++      throw new AppwriteException(
++        'Database not found',
++        404,
++        'dedicated_database_not_found',
++      )
++    }
++
++    mock.module('@/lib/appwrite/sdk', () => ({
++      ...actualSdk,
++      sdk: {
++        forProject: () => ({
++          tablesDB: {
++            get: record('tablesDB', 'get', () => ({
++              $id: DATABASE_ID,
++              name: 'Orders',
++              ...(options.specification === undefined
++                ? {}
++                : { specification: options.specification }),
++            })),
++            update: record('tablesDB', 'update', () => ({
++              $id: DATABASE_ID,
++              specification: TARGET_SPECIFICATION,
++            })),
++            listMigrations: record('tablesDB', 'listMigrations', () => ({
++              migrations: [],
++              total: 0,
++            })),
++            createMigration: record(
++              'tablesDB',
++              'createMigration',
++              options.createMigration ??
++                (() => ({ $id: 'migration1', phase: 'pending' })),
++            ),
++          },
++          mysql: {
++            get: record('mysql', 'get', engineNotFound),
++            list: record('mysql', 'list', () => ({ databases: [], total: 0 })),
++            createMigration: record('mysql', 'createMigration', engineNotFound),
++          },
++        }),
++      },
++    }))
++
++    return calls
++  }
++
++  function methodsOn(calls: Call[], service: string): string[] {
++    return calls
++      .filter((call) => call.service === service)
++      .map((call) => call.method)
++  }
++
++  test('resizes a dedicated TablesDB database through tablesDB.update', async () => {
++    const calls = mockSdk({ specification: 's-1vcpu-1gb' })
++
++    await updateProductDatabaseSpecification(
++      PROJECT_ID,
++      DATABASE_ID,
++      'tablesdb',
++      TARGET_SPECIFICATION,
++    )
++
++    expect(methodsOn(calls, 'tablesDB')).toEqual(['get', 'update'])
++    expect(calls.at(-1)?.params).toEqual({
++      databaseId: DATABASE_ID,
++      specification: TARGET_SPECIFICATION,
++    })
++    expect(methodsOn(calls, 'mysql')).toEqual([])
++  })
++
++  test.each([['shared'], ['serverless'], [undefined]])(
++    'migrates a serverless TablesDB database (specification %p)',
++    async (specification) => {
++      const calls = mockSdk({ specification })
++
++      await updateProductDatabaseSpecification(
++        PROJECT_ID,
++        DATABASE_ID,
++        'tablesdb',
++        TARGET_SPECIFICATION,
++      )
++
++      expect(methodsOn(calls, 'tablesDB')).toEqual([
++        'get',
++        'listMigrations',
++        'createMigration',
++      ])
++      expect(calls.at(-1)?.params).toEqual({
++        databaseId: DATABASE_ID,
++        specification: TARGET_SPECIFICATION,
++        autoCutover: true,
++      })
++      expect(methodsOn(calls, 'mysql')).toEqual([])
++    },
++  )
++
++  test('surfaces a migration 404 instead of retrying on the mysql engine', async () => {
++    const calls = mockSdk({
++      specification: 'shared',
++      createMigration: () => {
++        throw new AppwriteException(
++          'Database not found',
++          404,
++          'database_not_found',
++        )
++      },
++    })
++
++    const attempt = updateProductDatabaseSpecification(
++      PROJECT_ID,
++      DATABASE_ID,
++      'tablesdb',
++      TARGET_SPECIFICATION,
++    )
++
++    await expect(attempt).rejects.toMatchObject({
++      code: 404,
++      type: 'database_not_found',
++    })
++    expect(methodsOn(calls, 'mysql')).toEqual([])
++  })
++})
+```
+
+**File**: `apps/console/types-baseline.json` (modified, +0/-1)
+```diff
+@@ -1145,7 +1145,6 @@
+     "TS2339: Property 'pricing' does not exist on type 'DedicatedDatabaseSpecificationList'.": 1,
+     "TS2339: Property 'status' does not exist on type 'Database & { enabled: boolean; createdAt: string; updatedAt: string; hasBackupPolicy: boolean; backupPolicy: Record<string, unknown> | null; backupPolicyCount: number; databaseType: DatabaseType; }'.": 2,
+     "TS2724: '\"node_modules/@appwrite.io/console/types/models\".Models' has no exported member named 'DedicatedDatabaseSpecificationPricing'. Did you mean 'DedicatedDatabaseSpecification'?": 1,
+-    "TS6133: 'currentSpecification' is declared but its value is never read.": 1,
+     "TS6133: 'useEffect' is declared but its value is never read.": 1
+   },
+   "src/lib/react-query/hooks/functions.ts": {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #15891** (2026-11-21): fix(certificates): hide CDN provider errors from domain logs (@HarshMN2345)
-- **PR #15890** (2026-11-21): fix(console): redirect to the console temporarily, so browsers do not cache it (@HarshMN2345)
-- **PR #15886** (2026-11-20): fix(query): parse nested query children sent as strings (@ChiragAgg5k)
-- **PR #15884** (closed): fix(compression): accept whitespace around an Accept-Encoding weight (@dajiaohuang)
-- **PR #15881** (2026-11-20): fix(jobs): append a deployment's pending log callbacks in one write (@TorstenDittmann)
-- **PR #15880** (2026-11-20): feat(console): make the Origin Git provider generally available (@Meldiron)
+- **PR #15982** (2026-11-24): test(console): load react dom before any test registers a window (@abnegate)
+- **PR #15981** (2026-11-24): fix(console): resize dedicated TablesDB databases through the product API (@abnegate)
+- **PR #15979** (2026-11-24): chore(docker): update appwrite/base to 2.5.2, pin composer and drop its CA install (@loks0n)
+- **PR #15976** (2026-11-23): ci(benchmark): pull the base commit's image instead of rebuilding it (@ChiragAgg5k)
+- **PR #15975** (2026-11-23): test(storage): request preview sizes until two land on the filesystem (@ChiragAgg5k)
+- **PR #15973** (closed): ci: select E2E suites from a change under crates/ (@loks0n)
 
 ---
 
@@ -2399,71 +3392,3 @@ Co-authored-by: Torsten Dittmann <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. jobs): append a deployment's pending log callbacks in one write
-
-**RULE**:
-When implementing operations in `src/Appwrite/Platform/Modules/Functions/Workers/Jobs.php`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in appwrite/appwrite. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `7a091eb4`: jobs): append a deployment's pending log callbacks in one write. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Appwrite/Platform/Modules/Functions/Workers/Jobs.php`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```typescript
-// Verified production-grade fix pattern:
-use Swoole\Coroutine\Channel;
-use Utopia\Lock\Exception\Contention;
- * deployments build in parallel. Log callbacks waiting in one process for the
- * same deployment are appended together by whichever of them takes the lock,
- * so a burst of build output costs one write per process rather than one per
- * line batch. Callbacks are at-least-once, so events are
-    /**
-     * Log callbacks of this process not yet appended, keyed by deployment lock,
-     * in arrival order. The action instance is shared by every coroutine of the
-     * worker, so the one holding the lock appends the others' lines with its own.
-     *
-     * @var array<string, array<int, array{id: string, chunk: string}>>
-     */
-    private array $logs = [];
-
-    private int $entries = 0;
-
-    /**
-     * One coroutine per deployment per process contends for the lock; the rest
-     * wait here, usually to find their lines already appended.
-     *
-     * @var array<string, Channel>
-     */
-    private array $gates = [];
-
-        if ($callback === CallbackEvent::Log) {
-            $this->log($event, $project, $dbForProject, $dbForPlatform, $queueForRealtime, $vcsFactory, $cache, $locks, $platform, $deploymentId);
-        
-```
-
-**NEGATIVE CONSTRAINT**:
-```typescript
-// Induced defect failure mode:
- * deployments build in parallel. Callbacks are at-least-once, so events are
-                CallbackEvent::Log => $this->onLog($dbForProject, $dbForPlatform, $project, $deployment, JobLog::fromArray($event->data), $vcsFactory, $platform, $cache, $event->id),
-            $queueForRealtime
-                ->setSubscribers(['console'])
-                ->setProject($project)
-                ->setEvent(self::event($deployment))
-                ->setParam(self::resourceParam($deployment), $deployment->getAttribute('resourceId'))
-                ->setParam('deploymentId', $deploymentId)
-                ->setPayload($deployment->getArrayCopy())
-                ->trigger();
-            if ($event->id !==
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7a091eb4` are properly handled with clean fallback behavior.

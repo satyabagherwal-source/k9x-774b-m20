@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T05:42:51.598Z",
-  "total_records": 2496,
+  "last_updated": "2026-11-24T06:12:13.558Z",
+  "total_records": 2497,
   "domains": {
     "A": {
       "total": 20,
@@ -67,7 +67,7 @@
       ]
     },
     "D": {
-      "total": 947,
+      "total": 948,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1015,7 +1015,8 @@
         "DOM-D-06E3F5C1",
         "domain_intelligence-research-knowledge-intelligence-strata-engine-inkling-2-mini-strata-core-invaria",
         "DOM-D-7EDCAC07",
-        "domain_intelligence-research-knowledge-intelligence-hf-strata-engine-inkling-2-mini-strata-learnings"
+        "domain_intelligence-research-knowledge-intelligence-hf-strata-engine-inkling-2-mini-strata-learnings",
+        "DOM-D-3B23634E"
       ]
     },
     "E": {
@@ -12754,8 +12755,8 @@
       "title": "Technical Construction Intelligence: lioensky/VCPToolBox Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lioensky-vcptoolbox-technical-construction-intelligence-lioensky-vcptoolbox-core.md",
       "repository": "lioensky/VCPToolBox",
-      "content_hash": "6a7ee795611ff68653da562d55750c5eb22de6fd442ad7779d0c3aaa61d18f69",
-      "created_at": "2026-11-23T06:45:54.625Z"
+      "content_hash": "ed6ed4bb4556fc7820c7be9ab322dcc0cf4fadb3d6c0d93760eec89e5c56f9da",
+      "created_at": "2026-11-24T06:11:24.794Z"
     },
     "domain_intelligence-deployment-operations-intelligence-graphprotocol-graph-node-learnings-core-invar": {
       "record_id": "domain_intelligence-deployment-operations-intelligence-graphprotocol-graph-node-learnings-core-invar",
@@ -19320,8 +19321,8 @@
       "title": "Technical Construction Intelligence: FalkorDB/FalkorDB Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-falkordb-falkordb-technical-construction-intelligence-falkordb-falkordb-core-inv.md",
       "repository": "FalkorDB/FalkorDB",
-      "content_hash": "3cfa7104394cdb4162aecedd97efd9df70e0eaaca23ba0c8a1a022e803ebd076",
-      "created_at": "2026-11-22T22:06:21.267Z"
+      "content_hash": "395c342b2af225ab9db198eacf0b4d47c7f1813993c8537325790c00362b45f8",
+      "created_at": "2026-11-24T06:11:12.589Z"
     },
     "domain_intelligence-quality-verification-intelligence-tencent-tds-kuiklyui-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-tencent-tds-kuiklyui-core-invariants",
@@ -19338,8 +19339,8 @@
       "title": "Technical Construction Intelligence: falkordb-falkordb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-falkordb-falkordb-learnings-technical-construction-intelligence-falkordb-falkord.md",
       "repository": "falkordb-falkordb-learnings",
-      "content_hash": "fe1cd52921f06222c71456f387eab2e5ad683908250dd1117965dfb1d2faad68",
-      "created_at": "2026-11-22T22:06:35.795Z"
+      "content_hash": "111722f6fb988bc7cdf849d05329f9628a7d41018db63dfc2a7c034b98e8fc58",
+      "created_at": "2026-11-24T06:11:28.762Z"
     },
     "DOM-D-04368044": {
       "record_id": "DOM-D-04368044",
@@ -23571,8 +23572,8 @@
       "title": "Architecture Intelligence: saltstack/salt Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-saltstack-salt-architecture-intelligence-saltstack-salt-core-invariants.md",
       "repository": "saltstack/salt",
-      "content_hash": "d805b911921b8664e59fa9458172088805b334763d5216c69c11c5a16496a1ab",
-      "created_at": "2026-11-23T07:45:09.206Z"
+      "content_hash": "cef1873d4dea2f21b3b71d44867b7487876a51a517c9820db85d2a35d8a53824",
+      "created_at": "2026-11-24T06:11:19.975Z"
     },
     "domain_intelligence-product-intelligence-crate-ci-typos-learnings-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-crate-ci-typos-learnings-core-invariants",
@@ -23640,8 +23641,8 @@
       "title": "Architecture Intelligence: saltstack-salt-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-saltstack-salt-learnings-architecture-intelligence-saltstack-salt-learnings-core.md",
       "repository": "saltstack-salt-learnings",
-      "content_hash": "846c94afbfb9bdb1eed2c8e6487d0c2a8ef498089d342eb07b56af37235bac16",
-      "created_at": "2026-11-23T07:45:14.099Z"
+      "content_hash": "9569865df6145b9ae523c2cd5faea8245a68a3947164d5bc590cdf116bda0904",
+      "created_at": "2026-11-24T06:12:13.558Z"
     },
     "domain_intelligence-technical-construction-intelligence-ydb-platform-ydb-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-ydb-platform-ydb-learnings-core-invariants",
@@ -31221,8 +31222,8 @@
       "title": "Technical Construction Intelligence: appwrite/appwrite Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-appwrite-appwrite-technical-construction-intelligence-appwrite-appwrite-core-inv.md",
       "repository": "appwrite/appwrite",
-      "content_hash": "1d03bd63cb5235b299488c6b649442ddc4594f891c9188dfa5fb8e5fae867814",
-      "created_at": "2026-11-18T10:18:49.465Z"
+      "content_hash": "ad59811f3f5054b8f38d839b4a96d026fabd5b2e4d3cc41140e4d83b6de9a769",
+      "created_at": "2026-11-24T06:11:17.946Z"
     },
     "domain_intelligence-architecture-intelligence-kubernetes-sigs-aws-load-balancer-controller-core-inva": {
       "record_id": "domain_intelligence-architecture-intelligence-kubernetes-sigs-aws-load-balancer-controller-core-inva",
@@ -31325,8 +31326,8 @@
       "title": "Technical Construction Intelligence: appwrite-appwrite-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-appwrite-appwrite-learnings-technical-construction-intelligence-appwrite-appwrit.md",
       "repository": "appwrite-appwrite-learnings",
-      "content_hash": "49addc376f36775cff25c084cb992d44b1632932ecc04ea89ca91402dd2637e8",
-      "created_at": "2026-11-18T10:22:56.853Z"
+      "content_hash": "f7ab9b5cce872c9edc63a6c54429580b085324c3f43694682dd7efbc7f769ed8",
+      "created_at": "2026-11-24T06:12:11.995Z"
     },
     "domain_intelligence-architecture-intelligence-kubernetes-sigs-aws-load-balancer-controller-learnings": {
       "record_id": "domain_intelligence-architecture-intelligence-kubernetes-sigs-aws-load-balancer-controller-learnings",
@@ -41850,6 +41851,48 @@
       "repository": "xerj-org/xerj",
       "content_hash": "a933866319165820d17e58a5c1cdeb44c1f8b9bce7dea87bf8ef9c5220493013",
       "created_at": "2026-11-24T05:28:27.361Z"
+    },
+    "DOM-D-3B23634E": {
+      "record_id": "DOM-D-3B23634E",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): appwrite/appwrite",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/appwrite-appwrite-learnings.md`  \n> **Source**: github ([https://github.com/appwrite/appwrite](https://github.com/appwrite/appwrite))  \n> **Source Version**: `1426a10d`  \n> **License**: BSD-3-Clause  \n> **Synthesized By**: zero-clone-structural",
+      "content_hash": "7f92b263fbda8ba93b8d565cc68f34355bff4aa1306691d623b5a4b5a8198dc9",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/appwrite-appwrite-learnings.md`  \n> **Source**: github ([https://github.com/appwrite -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/appwrite-appwrite-learnings.md`  \n> **Source**: github ([https://github.com/appwrite",
+      "provenance": {
+        "source_uri": "project://appwrite-appwrite/appwrite-appwrite-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-24T06:11:29.252Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (appwrite-appwrite)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of appwrite-appwrite"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-24T06:12:11.356Z"
     }
   }
 }

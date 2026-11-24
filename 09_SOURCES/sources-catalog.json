@@ -2893,10 +2893,10 @@
     "repository": "FalkorDB/FalkorDB",
     "platform": "github",
     "sourceUrl": "https://github.com/FalkorDB/FalkorDB",
-    "sourceVersion": "41d2f20c",
+    "sourceVersion": "4c108894",
     "license": "NOASSERTION",
-    "contentHash": "568d2296b4b8ef48c2551dfc96adc5f0225f68bc730d51285c1c301dda6dff82",
-    "lastHarvestedAt": "2026-11-22T22:06:20.696Z",
+    "contentHash": "fb1edb8d5341292e5bf9c540b0fc725ba2d148ce46f043b1c82c4f7c0cde80b2",
+    "lastHarvestedAt": "2026-11-24T06:11:11.843Z",
     "learningId": "learn-github-falkordb-falkordb"
   },
   "feathersjs-feathers": {
@@ -2993,10 +2993,10 @@
     "repository": "lioensky/VCPToolBox",
     "platform": "github",
     "sourceUrl": "https://github.com/lioensky/VCPToolBox",
-    "sourceVersion": "d824df3c",
+    "sourceVersion": "5ca56f3b",
     "license": "NOASSERTION",
-    "contentHash": "e8e731131cfccb4a7fbe6b480b5211e48aa7f2c8496c1059515bd2af924ac772",
-    "lastHarvestedAt": "2026-11-23T06:45:54.220Z",
+    "contentHash": "b7f414ee9b4ff894cbf084a3b2de8ad6f1770396dbda7fd8541e551ec239529d",
+    "lastHarvestedAt": "2026-11-24T06:11:24.105Z",
     "learningId": "learn-github-lioensky-vcptoolbox"
   },
   "megabit-blazorise": {
@@ -4763,10 +4763,10 @@
     "repository": "saltstack/salt",
     "platform": "github",
     "sourceUrl": "https://github.com/saltstack/salt",
-    "sourceVersion": "d025cc57",
+    "sourceVersion": "55df51a7",
     "license": "Apache-2.0",
-    "contentHash": "d5194cd7c3eec226b2596295338394e1cacbafc313edf283980ec56630a49ae2",
-    "lastHarvestedAt": "2026-11-23T07:45:08.807Z",
+    "contentHash": "5ec8cbd6ed5d19ff30b5f7d9466a8895d8c4a7f4caad6611bca9dedbf1eb3df8",
+    "lastHarvestedAt": "2026-11-24T06:11:19.282Z",
     "learningId": "learn-github-saltstack-salt"
   },
   "etcd-io-etcd": {
@@ -10323,10 +10323,10 @@
     "repository": "appwrite/appwrite",
     "platform": "github",
     "sourceUrl": "https://github.com/appwrite/appwrite",
-    "sourceVersion": "a6d643a9",
+    "sourceVersion": "1426a10d",
     "license": "BSD-3-Clause",
-    "contentHash": "7bb30a1b451adaa34bce05a62edaca6c7a70818a9fdb1db55fd6ee28c0f544da",
-    "lastHarvestedAt": "2026-11-21T11:11:36.362Z",
+    "contentHash": "a989f35227924bc647695028d97b480c3b7fc23716c9033974351989feb2b8c1",
+    "lastHarvestedAt": "2026-11-24T06:11:17.515Z",
     "learningId": "learn-github-appwrite-appwrite"
   },
   "expo-expo": {

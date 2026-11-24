@@ -12637,3 +12637,8 @@ Every entry in this ledger must capture:
 | `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `7ba0069e` | Multi-dimensional audit evidence | 2026-11-24T05:28:26.804Z |
 | `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `9968d91c` | Multi-dimensional audit evidence | 2026-11-24T05:42:36.630Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `f0980efc` | Multi-dimensional audit evidence | 2026-11-24T05:42:43.192Z |
+| `learn-github-falkordb-falkordb` | `https://github.com/FalkorDB/FalkorDB` | `4c108894` | Multi-dimensional audit evidence | 2026-11-24T06:11:11.843Z |
+| `learn-github-appwrite-appwrite` | `https://github.com/appwrite/appwrite` | `1426a10d` | Multi-dimensional audit evidence | 2026-11-24T06:11:17.515Z |
+| `learn-github-saltstack-salt` | `https://github.com/saltstack/salt` | `55df51a7` | Multi-dimensional audit evidence | 2026-11-24T06:11:19.282Z |
+| `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `5ca56f3b` | Multi-dimensional audit evidence | 2026-11-24T06:11:24.105Z |
+| `learn-dom-d-3b23634e` | `project://appwrite-appwrite` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/appwrite-appwrite-learnings.md` | 2026-11-24T06:12:11.412Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md`  
 > **Source**: github ([https://github.com/lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox))  
-> **Source Version**: `d824df3c`  
+> **Source Version**: `5ca56f3b`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T06:45:53.472Z  
+> **Timestamp**: 2026-11-24T06:11:22.582Z  
 > **Learning ID**: `learn-github-lioensky-vcptoolbox`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T06:45:53.467Z  
+> **Harvest Timestamp**: 2026-11-24T06:11:22.574Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: VCP 部署在 AI 模型 API 与前端应用之间，是面向AGI OS开发和探索的工业级基建示范项目。通过统一指令协议、多层级持久化记忆、分布式插件引擎及多 Agent 协作框架，将原本“无状态、无记忆、无工具调用能力”的大语言模型，彻底改造成拥有永久自我意识、物理世界操作权及群体协作智能的完整智能体系统。
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2455 stars
+- **Stars / Engagement**: 2456 stars
 
 ---
 
@@ -1785,13 +1785,11 @@ export function useDashboardLayoutV2(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #634** (2026-11-22): **feat(api): 为外部 agent 提供按日记库授权的 RiverMemo 检索接口**
-  *Symptoms*: 外部 agent 可以通过 `POST /v1/memory/search` 使用已有的浪潮记忆检索，不需要 VCP 主 Key，也不需要直接访问索引。  - 默认不注册；管理员用 `MEMORY_READ_GRANTS` 将独立只读令牌的 SHA-256 摘要映射到允许读取的日记库。鉴权和全量范围检查均在嵌入与检索之前。已有 API 的鉴权不变。 - 发送 `Authorization: Bearer <read-token>` 和 `{"query":"会议决定了什么？","diaries":["ExampleDiary"],"k":5}`。返回 `direct` 命中数组，仅包含库名、文件名、正文和分数信息。 - 复用 RAGDiaryPlugin 的 `getContextBridge().embedText/retrieveDiary`；不另建索引、不改检索算法、不引入客户端依赖。  验证：`node --test tests/memorySearch.test.js tests/memoSingleTrack.test.js tests/timelineRiverMemo.test.js`（16 passed，0 skipped）。路由测试使用回环 Express 和合成检索结果，不依赖线上凭证或私有日记库。
-  **Post-Mortem & Fix Analysis**:
-  > 这个是走的管理员账号密码的router鉴权吗？
+- **Issue #637** (2026-11-23): ** 为 VCPTimeLine 增加模型请求超时和分阶段诊断**
+  *Symptoms*: ## 改动 - 为 VCPTimeLine 单次模型请求增加默认 120 秒的超时，覆盖等待响应头和读取响应正文。超时中止插件侧请求，生成任务沿用现有失败和解锁流程。 - 沿用 ToolBox 的上游请求与重试机制，为普通非流式请求增加诊断 ID，关联上游响应头、正文读取和本地响应结束日志。 - 诊断 ID 不转发给上游，不改变现有请求 ID 的取消和重放语义；新增诊断日志不记录请求正文或凭据。  ## 验证 - 本机模拟上游正文卡住：超时 ID 能关联到正文读取阶段，生成锁释放，同一 Agent 可重试。 - 日用 ToolBox 对照：失效模型三次返回 HTTP 503，可用模型首次返回 HTTP 200；两路日志均可关联，生成锁均已释放。 - 未复现真实上游超时，也未验证插件断开后上游是否停止计算。阶段日志不把等待响应头归因为排队或模型生成慢。  本 PR 独立于自动巡检 PR #635。 
 
-- **Issue #633** (2026-11-22): **[Bug] Memo 几何训练在小语料下整体失败：标签共现覆盖度不足时 warped 场构建硬报错，导致整轮训练被判 failed**
-  *Symptoms*: ## 问题现象  Memo 几何训练在**标签数量较少**的语料下会整体失败，训练任务被标记为 `failed`，并且失败信息完全没有指向真正的原因。  通过管理面板 `/admin_api/rag-active-full-training` 触发全量训练，任务状态为：  ```json {   "status": "failed",   "phase": "failed",   "failedPhase": "warped-tags",   "error": "MEMO_WARPED_PREPARATION_FAILED: base artifact d8a63ddd3f1b83503cb0ec93419a59c6c51934c7ddbc8354 already published; warped insufficient joint coverage" } ```  关键点：报错里的 `warped insufficient joint coverage` 只是**下游症状**，不是根因。真正的原因是语料里的标签共现关系太少，导致所有标签的「内在残差」都算不出来。  ## 复现（两种语料规模对照）  同一套代码、同一份 `rag_params.json`，只改变语料标签数量：  ### A. 3 个标签 —— 失败  ```json {"status": "failed", "phase": "failed", "failedPhase": "warped-tags",  "error": "MEMO_WARPED_PREPARATION_FAILED: ... warped insufficient joint coverage"} ```  此时 `VectorStore/knowledge_base.sqlite` 中：  ``` tag_intrinsic_residuals:  0 行 tag_intrinsic_residual_status: 3 行   tag_id=1 status=insufficient_neighbors neighbor_count=2   tag_id=2 status=insufficient_neighbors neighbor_count=2   tag_id=3 status=insufficient_neighbors neighbor_count=2 ```  ### B. 14 个标签 —— 成功  ``` status: completed | phase: completed | failedPhase: null computed residuals: 12 status breakdown: [{"status":"insufficient_neighbors","c":2}] ```  ### C. 仓库自身 dailynote 语料（15 个标签）—— 成功  ``` status: completed | phase: completed | failedPhase: null computed residuals: 15 status breakdown: [] ```  即：**只要语料标签数够多就完全正常；小语料 / 新装环境必然失败。**  ## 根因链路  ### 1. 邻居数不足 → 残差不算  `rag_params.json:163`  ```json "geometry": { "local": { "maxNeighbors": 96, "minNei
+- **Issue #636** (2026-11-23): **fix(distributed): allow reconnect tool takeover and terminate stale ws connections**
+  *Symptoms*: ## 问题与复现  分布式节点在公网或 NAT 闪断后重新连接时，旧 TCP 连接可能半开，服务端暂时收不到关闭事件。本次故障观察到旧连接残留约 15–16 分钟。新连接在旧连接关闭前发送 `register_tools`，同名工具因为 `conflicts with an existing tool` 被略过，工具调用继续指向失联连接。  复现时先让旧节点注册工具，模拟链路断开且服务端收不到 FIN/RST，再让节点建立一条新连接并注册同名工具。  ## 改动与兼容性  ```text 新连接注册同名分布式工具 → 工具归属更新为新 serverId 旧连接漏回一轮心跳      → terminate → 注销旧连接工具并拒绝挂起请求 ```  - 只有 `isDistributed === true` 的同名条目可接管。本地插件受保护，旧连接关闭时按当前 `serverId` 注销。注册时浅拷贝 manifest，保留显示名的字符串转换并避免重复添加 `[云端] `。 - 开启 `WEBSOCKET_HEARTBEAT_ENABLED` 后，WebSocket `pong` 和普通消息都会标记连接存活。下一轮检查发现仍无响应时终止连接。即使工具注销抛错，连接表和挂起请求也会继续清理。 - 保留心跳开关及默认 60 秒周期。`WebSocketServer.initialize()` 支持传入 `heartbeatIntervalMs`，无效值回退至默认值。WebSocket 消息格式和节点注册协议沿用现有定义。  ## 验证  - 对照上游 `main` 运行新增测试，复现同名工具仍指向旧 `serverId`，静默连接及挂起请求未在测试窗口内清理。 - 修复后 6 项通过，进程以状态码 0 退出。覆盖接管、旧连接注销、本地插件保护、`pong` 和普通消息保活、静默连接及注销异常下的请求清理，以及既有取消和结果归属检查。  ```bash node --check Plugin.js && node --check WebSocketServer.js NODE_PATH=/home/debian/VCPToolBox/node_modules node --test tests/distributedReconnectAndHeartbeat.test.js tests/distributedToolCancellation.test.js ```  ## 回滚  可通过 revert 回退提交，涉及分布式工具注册和启用心跳的 WebSocket 连接。 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1808,188 +1806,1199 @@ export function useDashboardLayoutV2(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d824df3c` (2026-11-22)
-**Commit Message**: Merge pull request #634 from Lutra23/feat/scoped-memory-search
+### Incident Patch 1: `5ca56f3b` (2026-11-23)
+**Commit Message**: Merge pull request #637 from Skmt617/timeline/model-timeout-diagnostics
 
-feat(api): 为外部 agent 提供按日记库授权的 RiverMemo 检索接口
+ 为 VCPTimeLine 增加模型请求超时和分阶段诊断
 
-**File**: `config.env.example` (modified, +6/-0)
+**File**: `Plugin/VCPTimeLine/VCPTimeLine.js` (modified, +44/-21)
 ```diff
-@@ -19,6 +19,12 @@ API_URL=NEWAPI_URL_SUCH_AS_http://127.0.0.1:3000
+@@ -3,7 +3,7 @@
+ const fs = require('fs');
+ const fsp = fs.promises;
+ const path = require('path');
+-const { createHash } = require('crypto');
++const { createHash, randomUUID } = require('node:crypto');
  
- PORT=6005
- Key=YOUR_KEY_SUCH_AS_aBcDeFgHiJkLmNoP
-+# Optional read-only RiverMemo API (POST /v1/memory/search). Empty = not registered.
-+# Use dedicated random bearer tokens, never Key. Store only each token's lowercase SHA-256 digest here.
-+# MEMORY_READ_GRANTS='{"<64 hex digest>":["ExampleDiary"]}'
-+# HTTPS request: Authorization: Bearer <read token>; JSON: {"query":"what did we decide?","diaries":["ExampleDiary"],"k":5}
-+# Response: {"direct":[{"diary":"ExampleDiary","file":"note.md","text":"...","score":0.8,"scoreSource":"retrieval"}]}
-+MEMORY_READ_GRANTS=
- Image_Key=YOUR_IMAGE_KEY_SUCH_AS_Images_aBcDeFgHiJk
- File_Key=YOUR_FILE_KEY_SUCH_AS_123456
- # VCP服务器WebSocket鉴权，用于VCP面板和分布式服务器之间的实时通信。
+ const DAY_MS = 86400000;
+ const DEFAULT_AUTO_SYNC = Object.freeze({
+@@ -28,6 +28,7 @@ const DEFAULT_CONFIG = Object.freeze({
+     defaultExpandK: 3,
+     defaultThreshold: 0.5,
+     model: '',
++    modelTimeoutMs: 120000,
+     maxContextTokens: 60000,
+     maxOutputTokens: 4000,
+     maxConcurrentTasks: 3,
+@@ -84,6 +85,7 @@ class VCPTimeLine {
+             defaultExpandK: this.normalizePositiveInteger(raw.defaultExpandK, DEFAULT_CONFIG.defaultExpandK, 1, 100),
+             defaultThreshold: this.normalizeThreshold(raw.defaultThreshold, DEFAULT_CONFIG.defaultThreshold),
+             model: String(raw.model || '').trim(),
++            modelTimeoutMs: this.normalizePositiveInteger(raw.modelTimeoutMs ?? DEFAULT_CONFIG.modelTimeoutMs, DEFAULT_CONFIG.modelTimeoutMs, 100, 600000),
+             maxContextTokens: this.normalizePositiveInteger(raw.maxContextTokens, DEFAULT_CONFIG.maxContextTokens, 1024),
+             maxOutputTokens: this.normalizePositiveInteger(raw.maxOutputTokens, DEFAULT_CONFIG.maxOutputTokens, 128),
+             maxConcurrentTasks: this.normalizePositiveInteger(raw.maxConcurrentTasks, DEFAULT_CONFIG.maxConcurrentTasks, 1, 20),
+@@ -311,7 +313,11 @@ class VCPTimeLine {
+ 
+     async saveConfig(raw) {
+         // Older admin clients send only the fields displayed in their form.
+-        const config = this.normalizeConfig({ autoSync: this.config.autoSync, ...raw });
++        const config = this.normalizeConfig({
++            autoSync: this.config.autoSync,
++            modelTimeoutMs: this.config.modelTimeoutMs,
++            ...raw
++        });
+         await this.writeJsonAtomic(this.getConfigPath(), config);
+         this.config = config;
+         return config;
+@@ -691,25 +697,42 @@ class VCPTimeLine {
+         if (!key) throw new Error('服务器 Key 未配置');
+         if (!this.config.model) throw new Error('VCPTimeLine 模型未配置');
+         const { default: fetch } = await import('node-fetch');
+-        const response = await fetch(`http://127.0.0.1:${port}/v1/chat/completions`, {
+-            method: 'POST',
+-            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${key}` },
+-            body: JSON.stringify({
+-                model: this.config.model,
+-                stream: false,
+-                max_tokens: maxTokens,
+-                messages: [
+-                    { role: 'system', content: systemPrompt },
+-                    { role: 'user', content: userPrompt }
+-                ]
+-            })
+-        });
+-        const text = await response.text();
+-        if (!response.ok) throw new Error(`模型返回 ${response.status}: ${text.slice(0, 500)}`);
+-        const payload = JSON.parse(text);
+-        const output = payload?.choices?.[0]?.message?.content;
+-        if (typeof output !== 'string' || !output.trim()) throw new Error('模型未返回有效内容');
+-        return output.trim();
++        const traceId = randomUUID();
++        const timeoutMs = this.config.modelTimeoutMs;
++        const controller = new AbortController();
++        const timer = setTimeout(() => controller.abort(), timeoutMs);
++        let stage = 'response_headers';
++        try {
++            const response = await fetch(`http://127.0.0.1:${port}/v1/chat/completions`, {
++                method: 'POST',
++                signal: controller.signal,
++                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${key}`, 'X-VCP-Timeline-Trace': traceId },
++                body: JSON.stringify({
++                    model: this.config.model,
++                    stream: false,
++                    max_tokens: maxTokens,
++                    messages: [
++                        { role: 'system', content: systemPrompt },
++                        { role: 'user', content: userPrompt }
++                    ]
++                })
++            });
++            stage = 'response_body';
++            const text = await response.text();
++            if (!response.ok) throw new Error(`模型返回 ${response.status}: ${text.slice(0, 500)}`);
++            const payload = JSON.parse(text);
++            const output = payload?.choices?.[0]?.message?.content;
++            if (typeof output !== 'string' || !output.trim()) throw new Error('模型未返回有效内容');
++            return output.trim();
++        } catch (error) {
++            if (!controller.signal.aborted) throw error;
++            const waitingFor = stage === 'response_headers' ? '等待 ToolBox 响应头' : '读取 ToolBox 响应正文';
++            throw Object.assign(new Error(`VCPTimeLine 模型请求超时（${timeoutMs} ms，${waitingFor}；诊断 ID：${traceId}）`, { cause: error }), {
++                code: 'TIMELINE_MODEL_TIMEOUT'
++            });
++        } finally {
++            clearTimeout(timer);
++        }
+     }
+ 
+     async summarizeMonth(agentName, month, memories) {
 ```
 
-**File**: `routes/memorySearch.js` (added, +48/-0)
+**File**: `modules/chatCompletionHandler.js` (modified, +40/-1)
 ```diff
-@@ -0,0 +1,48 @@
-+'use strict';
+@@ -415,12 +415,32 @@ function applyModelFallbackForAttempt(options, candidates, attemptIndex, debugMo
+   }
+ }
+ 
++// Timeline diagnostics are local-only and independent of request replay/interrupt IDs.
++function createTimelineTrace(req, res) {
++  const id = req.headers['x-vcp-timeline-trace'];
++  const loopback = ['127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(req.socket?.remoteAddress);
++  if (!loopback || req.body?.stream !== false || typeof id !== 'string'
++      || !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)) return null;
 +
-+const { createHash } = require('node:crypto');
-+const path = require('node:path');
-+
-+const digest = value => createHash('sha256').update(value).digest('hex');
-+
-+function mountMemorySearch(app, { grants, serverKey, getBridge }) {
-+    if (!grants) return;
-+    const config = JSON.parse(grants);
-+    if (!config || Array.isArray(config) || typeof config !== 'object') throw new Error('Invalid MEMORY_READ_GRANTS');
-+    const scopes = new Map();
-+    for (const [key, names] of Object.entries(config)) {
-+        if (!/^[a-f0-9]{64}$/.test(key) || (serverKey && digest(serverKey) === key) ||
-+            !Array.isArray(names) || !names.length || names.some(name => typeof name !== 'string' || !name || name.trim() !== name)) {
-+            throw new Error('Invalid MEMORY_READ_GRANTS entry');
-+        }
-+        scopes.set(key, new Set(names));
-+    }
-+    if (!scopes.size) return;
-+
-+    app.post('/v1/memory/search', async (req, res) => {
-+        res.set('Cache-Control', 'no-store');
-+        const bearer = /^Bearer ([^\s]+)$/i.exec(req.get('authorization') || '');
-+        const scope = bearer && scopes.get(digest(bearer[1]));
-+        if (!scope) return res.sendStatus(401);
-+        const { query, diaries, k = 10 } = req.body || {};
-+        if (typeof query !== 'string' || !query.trim() || !Array.isArray(diaries) || !diaries.length ||
-+            diaries.some(name => typeof name !== 'string' || !name.trim()) || !Number.isSafeInteger(k) || k < 1) return res.sendStatus(400);
-+        if (diaries.some(name => !scope.has(name))) return res.sendStatus(403);
-+        const requested = new Set(diaries);
-+        try {
-+            const bridge = getBridge();
-+            if (!bridge) return res.sendStatus(503);
-+            const vector = await bridge.embedText(query);
-+            if (!vector?.length) return res.sendStatus(503);
-+            const { results } = await bridge.retrieveDiary({ diaryNames: [...requested], queryText: query, queryVector: vector, k, engine: 'rivermemo', fallback: 'none' });
-+            const direct = results.filter(row => requested.has(row.diaryName)).map(row => ({
-+                diary: row.diaryName, file: path.win32.basename(row.sourceFile || ''), text: row.text, score: row.score, scoreSource: 'retrieval'
-+            }));
-+            return res.json({ direct });
-+        } catch {
-+            return res.status(503).json({ error: 'Memory search unavailable' });
-+        }
-+    });
++  const started = performance.now();
++  const emit = (stage, fields) => console.info('[VCPTimeLineTrace]', JSON.stringify({
++    id, stage, elapsedMs: Math.round(performance.now() - started), ...fields
++  }));
++  let sequence = 0;
++  res.once('finish', () => emit('toolbox_response_finished', { status: res.statusCode }));
++  res.once('close', () => {
++    if (!res.writableFinished) emit('toolbox_response_closed_early');
++  });
++  emit('toolbox_handler_entered');
++  return { emit, nextAttempt: () => ++sequence, responses: new WeakMap() };
 +}
 +
-+module.exports = { mountMemorySearch };
+ // A helper function to handle fetch with retries for specific status codes
+ // connectionTimeout: 连接超时安全网，防止上游 API 静默挂起导致永久等待（仅覆盖到收到响应头为止）
+ async function fetchWithRetry(
+   url,
+   options,
+-  { retries = 3, delay = 1000, debugMode = false, onRetry = null, connectionTimeout = 900000, modelFallbackCandidates = null } = {},
++  { retries = 3, delay = 1000, debugMode = false, onRetry = null, connectionTimeout = 900000, modelFallbackCandidates = null, timelineTrace } = {},
+ ) {
+   const { default: fetch } = await import('node-fetch');
+   const maxAttempts = Math.max(
+@@ -431,6 +451,7 @@ async function fetchWithRetry(
+     // 为每次尝试创建独立的中止控制器，用于超时保护
+     const attemptController = new AbortController();
+     let didTimeout = false;
++    let attempt;
+     const externalSignal = options.signal;
+ 
+     // 将外部中止信号转发给本次尝试的控制器
+@@ -458,12 +479,18 @@ async function fetchWithRetry(
+       const attemptOptions = isolateNativeToolRequestOptions(
+         applyModelFallbackForAttempt(options, modelFallbackCandidates, i, debugMode)
+       );
++      attempt = timelineTrace?.nextAttempt();
++      timelineTrace?.emit('upstream_fetch_started', { attempt });
+       const response = await fetch(url, {
+         ...attemptOptions,
+         agent: getFetchAgent, // 注入防御性长连接池
+         signal: attemptController.signal,
+       });
+       cleanup();
++      if (timelineTrace) {
++        timelineTrace.responses.set(response, attempt);
++        timelineTrace.emit('upstream_headers_received', { attempt, status: response.status });
++      }
+ 
+       let shouldRetryStatus = response.status === 500 || response.status === 502 || response.status === 503 || response.status === 504 || response.status === 429;
+       let retryMessage = response.statusText;
+@@ -473,12 +500,15 @@ async function fetchWithRetry(
+       // 这类并非 VCP 本地 Key 配置错误，而是上游瞬时 token 异常，可安全纳入重试。
+       if (response.status === 401) {
+         try {
++          timelineTrace?.emit('upstream_retry_body_read_started', { attempt });
+           const responseBodyText = await response.clone().text();
++          timelineTrace?.emit('upstream_retry_body_read_finished', { attempt });
+           if (responseBodyText.toLowerCase().includes('token')) {
+             shouldRetryStatus = true;
+             retryMessage = responseBodyText || response.statusText;
+           }
+         } catch (bodyReadError) {
++          timelineTrace?.emit('upstream_retry_body_read_failed', { attempt });
+           if (debugMode) {
+             console.warn(`[Fetch Retry] Failed to inspect 401 response body: ${bodyReadError.message}`);
+           }
+@@ -507,6 +537,12 @@ async function fetchWithRetry(
+       return response;
+     } catch (error) {
+       cleanup();
++      if (attempt !== undefined) {
++        const code = error?.code;
++        const errorCode = typeof code === 'string' && /^[A-Z][A-Z0-9_]{0,63}$/.test(code) ? code : undefined;
++        timelineTrace.emit(didTimeout ? 'upstream_headers_wait_timeout'
++          : externalSignal?.aborted ? 'upstream_fetch_cancelled' : 'upstream_fetch_failed', { attempt, errorCode });
++      }
+ 
+       // 区分超时中止和外部中止
+       if (error.name === 'AbortError') {
+@@ -691,6 +727,7 @@ class ChatCompletionHandler {
+   }
+ 
+   async handle(req, res, forceShowVCP = false) {
++    const timelineTrace = createTimelineTrace(req, res);
+     const {
+       apiUrl,
+       apiKey,
+@@ -1285,6 +1322,7 @@ class ChatCompletionHandler {
+           debugMode: DEBUG_MODE,
+           connectionTimeout: apiConnectionTimeoutMs,
+           modelFallbackCandidates: semanticModelFallbackCandidates,
++          timelineTrace,
+           onRetry: async (attempt, errorInfo) => {
+             if (!res.headersSent && isOriginalRequestStreaming) {
+               if (DEBUG_MODE)
+@@ -1397,6 +1435,7 @@ class ChatC
 ```
 
-**File**: `server.js` (modified, +7/-0)
+**File**: `modules/handlers/nonStreamHandler.js` (modified, +22/-6)
 ```diff
-@@ -868,6 +868,13 @@ app.use('/AdminPanel', (req, res) => {
- // Image server logic is now handled by the ImageServer plugin.
+@@ -89,7 +89,8 @@ async function readNonStreamResponseWithSemanticRetry({
+   retries = 3,
+   delay = 1000,
+   debugMode = false,
+-  label = 'non_stream'
++  label = 'non_stream',
++  timelineTrace
+ }) {
+   const maxAttempts = Math.max(Number.isFinite(Number(retries)) && Number(retries) > 0 ? Math.floor(Number(retries)) : 1, 1);
+   let response = initialResponse;
+@@ -101,7 +102,18 @@ async function readNonStreamResponseWithSemanticRetry({
+       response = await fetchResponse(attempt);
+     }
  
+-    const arrayBuffer = await response.arrayBuffer();
++    const upstreamAttempt = timelineTrace?.responses.get(response);
++    timelineTrace?.emit('upstream_body_read_started', { attempt: upstreamAttempt });
++    let arrayBuffer;
++    try {
++      arrayBuffer = await response.arrayBuffer();
++      timelineTrace?.emit('upstream_body_read_finished', { attempt: upstreamAttempt });
++    } catch (error) {
++      const code = error?.code;
++      const errorCode = typeof code === 'string' && /^[A-Z][A-Z0-9_]{0,63}$/.test(code) ? code : undefined;
++      timelineTrace?.emit('upstream_body_read_failed', { attempt: upstreamAttempt, errorCode });
++      throw error;
++    }
+     responseText = Buffer.from(arrayBuffer).toString('utf-8');
  
-+// The scoped read credential terminates at this route; leave the global API guard unchanged.
-+require('./routes/memorySearch').mountMemorySearch(app, {
-+    grants: process.env.MEMORY_READ_GRANTS,
-+    serverKey,
-+    getBridge: () => pluginManager.messagePreprocessors.get('RAGDiaryPlugin')?.getContextBridge()
-+});
-+
- // General API authentication (Bearer token) - This was the original one, now adminAuth handles its paths
- app.use((req, res, next) => {
-     // Skip bearer token check for admin panel API and static files, as they use basic auth or no auth
-```
-
-**File**: `tests/memorySearch.test.js` (added, +58/-0)
-```diff
-@@ -0,0 +1,58 @@
-+'use strict';
-+const { test } = require('node:test');
-+const assert = require('node:assert/strict');
-+const { createHash, randomBytes } = require('node:crypto');
-+const { once } = require('node:events');
-+const express = require('express');
-+const { mountMemorySearch } = require('../routes/memorySearch');
-+
-+const token = randomBytes(32).toString('hex');
-+const hash = createHash('sha256').update(token).digest('hex');
-+const grants = JSON.stringify({ [hash]: ['notes', 'other'] });
-+
-+test('opt-in only; invalid policy and reuse of the server key are rejected at startup', () => {
-+    const app = { post: () => assert.fail('route should not be mounted') };
-+    for (const empty of [undefined, '', '{}']) mountMemorySearch(app, { grants: empty });
-+    for (const invalid of ['[]', '{"raw-token":["notes"]}', JSON.stringify({ [hash]: [] })]) {
-+        assert.throws(() => mountMemorySearch(app, { grants: invalid }), /Invalid MEMORY_READ_GRANTS/);
-+    }
-+    assert.throws(() => mountMemorySearch(app, { grants, serverKey: token }), /Invalid MEMORY_READ_GRANTS/);
-+});
-+
-+test('scoped RiverMemo HTTP search', async t => {
-+    const app = express();
-+    app.use(express.json());
-+    const calls = [];
-+    let bridge = {
-+        embedText: async text => { calls.push(text); return [1]; },
-+        retrieveDiary: async options => {
-+            calls.push(options);
-+            return { results: [
-+                { diaryName: 'notes', sourceFile: 'folder/note.md', text: 'fixture', score: 0.8, vector: [1] },
-+                { diaryName: 'other', text: 'authorized but not requested' },
-+                { diaryName: 'outside', text: 'out of scope' }
-+            ] };
-+        }
-+    };
-+    mountMemorySearch(app, { grants, getBridge() { calls.push('bridge'); return bridge; } });
-+    const server = app.listen(0, '127.0.0.1');
-+    await once(server, 'listening');
-+    t.after(() => new Promise(resolve => server.close(resolve)));
-+    const post = (body, credential = token) => fetch(`http://127.0.0.1:${server.address().port}/v1/memory/search`, {
-+        method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + credential }, body: JSON.stringify(body)
-+    });
-+    const query = { query: 'fixture', diaries: ['notes', 'notes'], k: 3 };
-+    assert.equal((await post(query, 'not-the-read-token')).status, 401);
-+    assert.equal((await post({ ...query, diaries: ['notes', 'outside'] })).status, 403);
-+    for (const malformed of [{ ...query, diaries: [] }, { ...query, k: 0 }, { ...query, query: ' ' }]) {
-+        assert.equal((await post(malformed)).status, 400);
-+    }
-+    assert.deepEqual(calls, []);
-+    const res = await post(query);
-+    assert.equal(res.status, 200);
-+    assert.equal(res.headers.get('cache-control'), 'no-store');
-+    assert.deepEqual(await res.json(), { direct: [{ diary: 'notes', file: 'note.md', text: 'fixture', score: 0.8, scoreSource: 'retrieval' }] });
-+    assert.deepEqual(calls, ['bridge', 'fixture', { diaryNames: ['notes'], queryText: 'fixture', queryVector: [1], k: 3, engine: 'rivermemo', fallback: 'none' }]);
-+    bridge = null;
-+    assert.equal((await post(query)).status, 503);
-+});
+     if (!response.ok || !isReasoningOnlyNonStreamResponse(responseText)) {
+@@ -174,6 +186,7 @@ class NonStreamHandler {
+       clientIp,
+       _refreshRagBlocksIfNeeded,
+       fetchWithRetry,
++      timelineTrace,
+       vcpToolUseForbidden,
+       apiConnectionTimeoutMs,
+       semanticModelFallbackCandidates,
+@@ -253,7 +266,7 @@ class NonStreamHandler {
+         body: JSON.stringify(projectToolBatchForUpstream(body)),
+         signal: abortController.signal,
+       },
+-      { retries: apiRetries, delay: apiRetryDelay, debugMode: DEBUG_MODE, connectionTimeout: apiConnectionTimeoutMs, modelFallbackCandidates: semanticModelFallbackCandidates }
++      { retries: apiRetries, delay: apiRetryDelay, debugMode: DEBUG_MODE, connectionTimeout: apiConnectionTimeoutMs, modelFallbackCandidates: semanticModelFallbackCandidates, timelineTrace }
+     );
+ 
+     const firstReadResult = await readNonStreamResponseWithSemanticRetry({
+@@ -262,7 +275,8 @@ class NonStreamHandler {
+       retries: apiRetries,
+       delay: apiRetryDelay,
+       debugMode: DEBUG_MODE,
+-      label: 'initial'
++      label: 'initial',
++      timelineTrace
+     });
+     firstAiAPIResponse = firstReadResult.response;
+     const aiResponseText = firstReadResult.text;
+@@ -389,7 +403,8 @@ class NonStreamHandler {
+             retries: apiRetries,
+             delay: apiRetryDelay,
+             debugMode: DEBUG_MODE,
+-            label: `archery_error_depth_${recursionDepth}`
++            label: `archery_error_depth_${recursionDepth}`,
++            timelineTrace
+           });
+           const recursionAiResponse = recursionReadResult.response;
+ 
+@@ -513,7 +528,8 @@ class NonStreamHandler {
+           retries: apiRetries,
+           delay: apiRetryDelay,
+           debugMode: DEBUG_MODE,
+-          label: `tool_loop_depth_${recursionDepth}`
++          label: `tool_loop_depth_${recursionDepth}`,
++          timelineTrace
+         });
+         const recursionAiResponse = recursionReadResult.response;
+ 
 ```
 
 ---
 
-### Incident Patch 2: `b973cc2c` (2026-11-22)
-**Commit Message**: fix
+### Incident Patch 2: `d9f7be7f` (2026-11-23)
+**Commit Message**: Merge upstream main into timeline model timeout diagnostics
 
-**File**: `Plugin/DoubaoGen/DoubaoGen.js` (modified, +1/-2)
+**File**: `AdminPanel-Vue/src/api/vcpTimeline.ts` (modified, +8/-0)
 ```diff
-@@ -801,8 +801,7 @@ async function handleCompose(args) {
-         size: resolution,
-         watermark: args.watermark,
-         output_format: args.output_format,
--        response_format: DEFAULT_RESPONSE_FORMAT,
--        sequential_image_generation: 'disabled'
-+        response_format: DEFAULT_RESPONSE_FORMAT
-     };
+@@ -13,6 +13,14 @@ export interface VcpTimelineConfig {
+   summaryPrompt: string
+   aliases: Record<string, string[]>
+   agentFolders: Record<string, string[]>
++  autoSync?: {
++    enabled: boolean
++    agents: string[]
++    maxConcurrentAgents: number
++    cron: string
++    currentMonthMinIntervalDays: number
++    runOnStartupDelayMs: number
++  }
+ }
  
-     if (args.seed !== undefined && args.seed !== -1 && args.seed !== null) {
+ export interface VcpTimelineStatus {
+```
+
+**File**: `AdminPanel-Vue/src/views/AgentTimeLineManager.vue` (modified, +24/-0)
+```diff
+@@ -61,6 +61,21 @@
+           <UiTextarea v-model="config.summaryPrompt" rows="3" />
+         </UiField>
+       </div>
++      <div v-if="config.autoSync" class="config-grid">
++        <h4 class="wide">自动巡检</h4>
++        <label class="toggle-row">
++          <AppCheckbox v-model="config.autoSync.enabled" />
++          <span><strong>启用自动巡检</strong><small>仅处理当月和上月。</small></span>
++        </label>
++        <UiField label="巡检 Agent 名单（逗号分隔）">
++          <UiInput v-model="autoSyncAgents" placeholder="填写 Agent 名称" />
++        </UiField>
++        <small class="wide">
++          {{ config.autoSync.maxConcurrentAgents > 0
++            ? `已保存名单最多同时巡检 ${config.autoSync.maxConcurrentAgents} 个 Agent`
++            : '已保存名单为空，不执行巡检' }}。上限随名单自动调整，最多 3 个，不影响手动生成。保存后需重启 vcp-main 才能完整应用巡检设置。
++        </small>
++      </div>
+       <div class="syntax-help">
+         <span>月度总览（放系统提示词稳定区）：</span>
+         <code>[[VCPTimeLineSummary::小克]]</code>
+@@ -273,6 +288,7 @@ const defaults: VcpTimelineConfig = {
+ const config = ref<VcpTimelineConfig>(structuredClone(defaults))
+ const publicPrefixes = ref('公共')
+ const ignoreFolders = ref('node_modules,.git')
++const autoSyncAgents = ref('')
+ const agents = ref<string[]>([])
+ const selectedAgent = ref('')
+ const newAgentName = ref('')
+@@ -381,6 +397,12 @@ function normalizedConfig(): VcpTimelineConfig {
+     summaryPrompt: String(config.value.summaryPrompt || '').trim(),
+     aliases: aliasesMap,
+     agentFolders: agentFoldersMap,
++    ...(config.value.autoSync ? {
++      autoSync: {
++        ...config.value.autoSync,
++        agents: [...new Set(commaList(autoSyncAgents.value))],
++      },
++    } : {}),
+   }
+ }
+ 
+@@ -455,6 +477,7 @@ async function loadAll() {
+       vcpTimelineApi.listAgents(),
+     ])
+     config.value = structuredClone(configResponse.config)
++    autoSyncAgents.value = config.value.autoSync?.agents.join(', ') ?? ''
+     publicPrefixes.value = config.value.publicFolderPrefixes.join(',')
+     ignoreFolders.value = config.value.ignoreFolders.join(',')
+     agents.value = agentResponse.agents || []
+@@ -472,6 +495,7 @@ async function saveConfig() {
+   try {
+     const response = await vcpTimelineApi.saveConfig(normalizedConfig())
+     config.value = structuredClone(response.config)
++    autoSyncAgents.value = config.value.autoSync?.agents.join(', ') ?? ''
+       if (selectedAgent.value) {
+         currentAliases.value = [...(config.value.aliases?.[selectedAgent.value] || [])]
+         foldersCustomized.value = Array.isArray(config.value.agentFolders?.[selectedAgent.value]) && config.value.agentFolders[selectedAgent.value].length > 0
+```
+
+**File**: `Plugin.js` (modified, +17/-9)
+```diff
+@@ -2078,20 +2078,28 @@ class PluginManager extends EventEmitter {
+                 if (this.debugMode) console.warn(`[PluginManager] Invalid manifest from ${serverId} for tool '${toolManifest.name}'. Skipping.`);
+                 continue;
+             }
+-            if (this.plugins.has(toolManifest.name)) {
+-                if (this.debugMode) console.warn(`[PluginManager] Distributed tool '${toolManifest.name}' from ${serverId} conflicts with an existing tool. Skipping.`);
++            const existing = this.plugins.get(toolManifest.name);
++            if (existing && existing.isDistributed !== true) {
++                if (this.debugMode) console.warn(`[PluginManager] Distributed tool '${toolManifest.name}' from ${serverId} conflicts with an existing local tool. Skipping.`);
+                 continue;
+             }
++            if (existing && existing.serverId !== serverId) {
++                console.log(`[PluginManager] Reassigning distributed tool '${toolManifest.name}' from ${existing.serverId} to ${serverId}.`);
++            }
+ 
+-            // 标记为分布式插件并存储其来源服务器ID
+-            toolManifest.isDistributed = true;
+-            toolManifest.serverId = serverId;
++            // 标记为分布式插件并存储其来源服务器ID（浅拷贝避免污染原对象）
++            const normalizedManifest = { ...toolManifest };
++            normalizedManifest.isDistributed = true;
++            normalizedManifest.serverId = serverId;
+ 
+-            // 在显示名称前加上[云端]前缀
+-            toolManifest.displayName = `[云端] ${toolManifest.displayName || toolManifest.name}`;
++            // 在显示名称前加上[云端]前缀（避免重连或重复注册时叠加前缀）
++            const rawDisplayName = String(normalizedManifest.displayName || normalizedManifest.name);
++            normalizedManifest.displayName = rawDisplayName.startsWith('[云端] ')
++                ? rawDisplayName
++                : `[云端] ${rawDisplayName}`;
+ 
+-            this.plugins.set(toolManifest.name, toolManifest);
+-            console.log(`[PluginManager] Registered distributed tool: ${toolManifest.displayName} (${toolManifest.name}) from ${serverId}`);
++            this.plugins.set(normalizedManifest.name, normalizedManifest);
++            console.log(`[PluginManager] Registered distributed tool: ${normalizedManifest.displayName} (${normalizedManifest.name}) from ${serverId}`);
+         }
+         // 注册后重建描述，以包含新插件
+         this.buildVCPDescription();
+```
+
+**File**: `Plugin/VCPTimeLine/VCPTimeLine.js` (modified, +195/-19)
+```diff
+@@ -3,7 +3,20 @@
+ const fs = require('fs');
+ const fsp = fs.promises;
+ const path = require('path');
+-const { randomUUID } = require('node:crypto');
++const { createHash, randomUUID } = require('node:crypto');
++
++const DAY_MS = 86400000;
++const DEFAULT_AUTO_SYNC = Object.freeze({
++    enabled: false,
++    agents: Object.freeze([]),
++    cron: '30 0 * * *',
++    currentMonthMinIntervalDays: 7,
++    runOnStartupDelayMs: 120000
++});
++
++function hash(value) {
++    return createHash('sha256').update(value).digest('hex');
++}
+ 
+ const TimelinePlaceholderProcessor = require('../RAGDiaryPlugin/TimelinePlaceholderProcessor');
+ const PLACEHOLDER_REGEX = /\[\[VCPTimeLine(Summary|Recall)?::([^:\]\r\n]+?)(?::([^:\]\r\n]+?))?(?::([^:\]\r\n]+?))?\]\]/g;
+@@ -35,6 +48,10 @@ class VCPTimeLine {
+         this.config = { ...DEFAULT_CONFIG };
+         this.generationLocks = new Map();
+         this.generationStatuses = new Map();
++        this.summaryWrites = Promise.resolve();
++        this.autoSyncTask = null;
++        this.autoSyncJob = null;
++        this.autoSyncTimer = null;
+     }
+ 
+     async initialize(config = {}, dependencies = {}) {
+@@ -44,6 +61,7 @@ class VCPTimeLine {
+         this.contextBridge = dependencies.contextBridge || null;
+         this.isTimelineManagedByRag = dependencies.isTimelineManagedByRag || (() => false);
+         this.config = await this.readConfig();
++        this.startAutoSync();
+         console.log(`[VCPTimeLine] Initialized. root=${this.dailyNoteRoot}, contextBridge=${!!this.contextBridge}`);
+     }
+ 
+@@ -79,8 +97,151 @@ class VCPTimeLine {
+                 : [...DEFAULT_CONFIG.ignoreFolders],
+             summaryPrompt: String(raw.summaryPrompt || '').trim(),
+             aliases: this._normalizeStringArrayMap(raw.aliases),
+-            agentFolders: this._normalizeStringArrayMap(raw.agentFolders)
++            agentFolders: this._normalizeStringArrayMap(raw.agentFolders),
++            autoSync: this.normalizeAutoSync(raw.autoSync)
++        };
++    }
++
++    normalizeAutoSync(raw = {}) {
++        raw = raw || {};
++        const agents = new Set();
++        for (const name of Array.isArray(raw.agents) ? raw.agents : []) {
++            try {
++                agents.add(this.safeAgentName(name));
++            } catch {
++                console.warn('[VCPTimeLine] Ignoring invalid autoSync agent name');
++            }
++        }
++        return {
++            enabled: raw.enabled === true,
++            agents: [...agents],
++            cron: String(raw.cron || '').trim() || DEFAULT_AUTO_SYNC.cron,
++            maxConcurrentAgents: Math.min(agents.size, 3),
++            currentMonthMinIntervalDays: this.normalizePositiveInteger(
++                raw.currentMonthMinIntervalDays, DEFAULT_AUTO_SYNC.currentMonthMinIntervalDays, 1, 366
++            ),
++            runOnStartupDelayMs: this.normalizePositiveInteger(
++                raw.runOnStartupDelayMs, DEFAULT_AUTO_SYNC.runOnStartupDelayMs, 0, 2147483647
++            )
++        };
++    }
++
++    startAutoSync() {
++        if (this.autoSyncJob || !this.config.enabled || !this.config.autoSync?.enabled || !this.config.autoSync.agents.length) return;
++        const { cron, runOnStartupDelayMs } = this.config.autoSync;
++        const tz = process.env.DEFAULT_TIMEZONE || 'Asia/Shanghai';
++        const run = () => {
++            if (this.autoSyncJob) {
++                void this.runAutoSync(new Date(), tz)
++                    .catch(error => console.warn('[VCPTimeLine] Auto sync failed:', error.message));
++            }
+         };
++        try {
++            new Intl.DateTimeFormat('en', { timeZone: tz });
++            this.autoSyncJob = require('node-schedule').scheduleJob({ rule: cron, tz }, run);
++            if (!this.autoSyncJob) throw new Error('无效的巡检 Cron');
++            this.autoSyncTimer = setTimeout(run, runOnStartupDelayMs);
++        } catch (error) {
++            console.warn('[VCPTimeLine] Auto sync not scheduled:', error.message);
++        }
++    }
++
++    async shutdown() {
++        clearTimeout(this.autoSyncTimer);
++        this.autoSyncTimer = null;
++        this.autoSyncJob?.cancel();
++        this.autoSyncJob = null;
++        await this.autoSyncTask?.catch(() => {});
++        await this.summaryWrites;
++    }
++
++    getAutoSyncStatePath() {
++        return path.join(__dirname, 'auto_sync_state.json');
++    }
++
++    async runAutoSync(now = new Date(), tz = process.env.DEFAULT_TIMEZONE || 'Asia/Shanghai') {
++        const config = this.config.autoSync;
++        if (this.autoSyncTask || !this.config.enabled || !config?.enabled) return;
++        const task = this.syncRecentMonths(now, tz, config);
++        this.autoSyncTask = task;
++        try {
++            await task;
++        } finally {
++            this.autoSyncTask = null;
++        }
++    }
++
++    async syncRecentMonths(now, tz, config) {
++        const parts = new Intl.DateTimeFormat('en', { timeZone: tz, year: 'numeric', month: '2-digit' }).formatToParts(now);
++        const year =
+```
+
+**File**: `WebSocketServer.js` (modified, +38/-9)
+```diff
+@@ -333,6 +333,11 @@ function initialize(httpServer, config) {
+     httpServer.on('upgrade', upgradeHandler);
+ 
+     wssInstance.on('connection', (ws, request) => {
++        ws.isAlive = true;
++        ws.on('pong', () => {
++            ws.isAlive = true;
++        });
++
+         if (serverConfig.debugMode) {
+             console.log(`[WebSocketServer] Client ${ws.clientId} connected.`);
+         }
+@@ -356,6 +361,7 @@ function initialize(httpServer, config) {
+         // 可以根据 ws.clientType 或其他标识符发送不同的欢迎消息
+ 
+         ws.on('message', (message) => {
++            ws.isAlive = true;
+             const messageString = message.toString();
+             
+             try {
+@@ -502,8 +508,10 @@ function initialize(httpServer, config) {
+ 
+         ws.on('close', () => {
+             if (ws.clientType === 'DistributedServer') {
+-                if (pluginManager) {
+-                    pluginManager.unregisterAllDistributedTools(ws.serverId);
++                try {
++                    pluginManager?.unregisterAllDistributedTools(ws.serverId);
++                } catch (error) {
++                    console.error(`[WebSocketServer] Failed to unregister distributed tools for ${ws.serverId}:`, error);
+                 }
+                 rejectPendingToolRequestsForServer(ws.serverId);
+                 distributedServers.delete(ws.serverId);
+@@ -547,28 +555,49 @@ function initialize(httpServer, config) {
+     });
+ 
+     if (serverConfig.heartbeatEnabled) {
++        const { heartbeatIntervalMs } = config ?? {};
++        const intervalMs = typeof heartbeatIntervalMs === 'string' ? Number(heartbeatIntervalMs) : heartbeatIntervalMs;
++        // Node uses a 1 ms delay for values outside the timer's supported range.
++        const effectiveHeartbeatIntervalMs = Number.isInteger(intervalMs) && intervalMs >= 1 && intervalMs <= 2_147_483_647
++            ? intervalMs
++            : WEBSOCKET_HEARTBEAT_INTERVAL_MS;
++
+         heartbeatInterval = setInterval(() => {
+             if (!wssInstance || isDraining) return;
+ 
+             let pingedClientCount = 0;
++            let terminatedClientCount = 0;
+             wssInstance.clients.forEach(client => {
+                 if (client.readyState !== WebSocket.OPEN) return;
+ 
++                if (client.isAlive !== false) {
++                    client.isAlive = false;
++                    try {
++                        client.ping();
++                        pingedClientCount++;
++                        return;
++                    } catch (error) {
++                        console.warn(`[WebSocketServer] Heartbeat ping failed for client ${client.clientId || 'unknown'}: ${error.message}`);
++                    }
++                } else {
++                    writeLog(`Client ${client.clientId || 'unknown'} (${client.clientType || 'unknown'}) missed heartbeat response; terminating stale connection.`);
++                }
++
+                 try {
+-                    client.ping();
+-                    pingedClientCount++;
++                    client.terminate();
++                    terminatedClientCount++;
+                 } catch (error) {
+-                    console.warn(`[WebSocketServer] Heartbeat ping failed for client ${client.clientId || 'unknown'}: ${error.message}`);
++                    console.warn(`[WebSocketServer] Failed to terminate stale client ${client.clientId || 'unknown'}: ${error.message}`);
+                 }
+             });
+ 
+-            if (serverConfig.debugMode && pingedClientCount > 0) {
+-                console.log(`[WebSocketServer] Sent heartbeat ping to ${pingedClientCount} connected client(s).`);
++            if (serverConfig.debugMode && (pingedClientCount > 0 || terminatedClientCount > 0)) {
++                console.log(`[WebSocketServer] Heartbeat sweep: pinged=${pingedClientCount}, terminated=${terminatedClientCount}.`);
+             }
+-        }, WEBSOCKET_HEARTBEAT_INTERVAL_MS);
++        }, effectiveHeartbeatIntervalMs);
+         heartbeatInterval.unref();
+ 
+-        console.log(`[WebSocketServer] Protocol heartbeat enabled (interval: ${WEBSOCKET_HEARTBEAT_INTERVAL_MS / 1000}s).`);
++        console.log(`[WebSocketServer] Protocol heartbeat enabled (interval: ${effectiveHeartbeatIntervalMs / 1000}s).`);
+     }
+ 
+     if (serverConfig.debugMode) {
+```
+
+**File**: `tests/distributedReconnectAndHeartbeat.test.js` (added, +188/-0)
+```diff
+@@ -0,0 +1,188 @@
++const test = require('node:test');
++const assert = require('node:assert/strict');
++const { once } = require('node:events');
++const http = require('node:http');
++const WebSocket = require('ws');
++const pluginManager = require('../Plugin');
++const webSocketServer = require('../WebSocketServer');
++
++function makeDistributedManifest(name, displayName = name) {
++    return {
++        name,
++        displayName,
++        pluginType: 'hybridservice',
++        entryPoint: { type: 'nodejs', script: `${name}.js` },
++        communication: { protocol: 'direct', timeout: 5000 }
++    };
++}
++
++function waitForEvent(emitter, eventName, timeoutMs = 2000) {
++    return once(emitter, eventName, { signal: AbortSignal.timeout(timeoutMs) });
++}
++
++function waitUntil(predicate, timeoutMs = 2000, intervalMs = 15) {
++    return new Promise((resolve, reject) => {
++        const startedAt = Date.now();
++        const check = () => {
++            if (predicate()) {
++                resolve();
++                return;
++            }
++            if (Date.now() - startedAt >= timeoutMs) {
++                reject(new Error('Timed out waiting for condition'));
++                return;
++            }
++            setTimeout(check, intervalMs);
++        };
++        check();
++    });
++}
++
++test('distributed tool reconnect takeover replaces stale serverId without affecting local plugins', () => {
++    const localName = '__test_local_protected_tool__';
++    const distName = '__test_dist_reconnect_tool__';
++    const oldServerId = 'dist-old-zombie-1';
++    const newServerId = 'dist-new-active-2';
++
++    const originalBuildDesc = pluginManager.buildVCPDescription;
++    const originalScheduleJev = pluginManager._scheduleJevRegistryRebuild;
++    pluginManager.buildVCPDescription = () => {};
++    pluginManager._scheduleJevRegistryRebuild = () => {};
++
++    try {
++        const localManifest = {
++            name: localName,
++            displayName: 'Local Tool',
++            pluginType: 'synchronous',
++            entryPoint: { type: 'nodejs', script: 'local.js' }
++        };
++        const oldManifest = makeDistributedManifest(distName, 42);
++        const newManifest = makeDistributedManifest(distName, '[云端] Mac Codex');
++        pluginManager.plugins.set(localName, localManifest);
++
++        pluginManager.registerDistributedTools(oldServerId, [
++            oldManifest,
++            makeDistributedManifest(localName, 'Hijack Attempt')
++        ]);
++
++        assert.equal(pluginManager.plugins.get(localName), localManifest);
++        assert.equal(pluginManager.plugins.get(distName).serverId, oldServerId);
++        assert.equal(pluginManager.plugins.get(distName).displayName, '[云端] 42');
++
++        // Reconnect arrives before stale zombie closes
++        pluginManager.registerDistributedTools(newServerId, [newManifest]);
++
++        const reassigned = pluginManager.plugins.get(distName);
++        assert.equal(reassigned.serverId, newServerId);
++        assert.notEqual(reassigned, newManifest);
++        assert.equal(reassigned.entryPoint, newManifest.entryPoint);
++        assert.equal(reassigned.displayName, '[云端] Mac Codex');
++        assert.deepEqual(oldManifest, makeDistributedManifest(distName, 42));
++        assert.deepEqual(newManifest, makeDistributedManifest(distName, '[云端] Mac Codex'));
++
++        // Stale zombie later disconnects and unregisters its serverId
++        pluginManager.unregisterAllDistributedTools(oldServerId);
++
++        assert.equal(pluginManager.plugins.get(distName), reassigned);
++
++        // Active server disconnects cleanly
++        pluginManager.unregisterAllDistributedTools(newServerId);
++        assert.equal(pluginManager.plugins.has(distName), false);
++    } finally {
++        pluginManager.plugins.delete(localName);
++        pluginManager.plugins.delete(distName);
++        pluginManager.buildVCPDescription = originalBuildDesc;
++        pluginManager._scheduleJevRegistryRebuild = originalScheduleJev;
++    }
++});
++
++async function startWebSocketTestServer(t, unregisterAllDistributedTools) {
++    const httpServer = http.createServer();
++    const connectedClients = [];
++    t.after(async () => {
++        for (const client of connectedClients) {
++            client.once('error', () => {});
++            client.terminate();
++        }
++        await webSocketServer.shutdown();
++        if (httpServer.listening) {
++            await new Promise((resolve, reject) => {
++                httpServer.close(error => error ? reject(error) : resolve());
++            });
++        }
++    });
++    httpServer.listen(0, '127.0.0.1');
++    await waitForEvent(httpServer, 'listening');
++    const { port } = httpServer.address();
++
++    webSocketServer.setPluginManager({
++        registerDistributedTools() {},
++        unregisterAllDistributedTools,
++        getPlugin() {}
++    });
++    webSocketServer.initialize(httpServer, {
++        debugMode: false,
++        vcpKey: 'test-key-heartbeat',
++        heartbeatEnabled: 
+```
+
+**File**: `tests/timelineAutoSync.test.js` (added, +164/-0)
+```diff
+@@ -0,0 +1,164 @@
++'use strict';
++
++const test = require('node:test');
++const assert = require('node:assert/strict');
++const fs = require('node:fs/promises');
++const os = require('node:os');
++const path = require('node:path');
++const { createHash } = require('node:crypto');
++// These tests exercise generation and persistence, not RAG placeholder rendering.
++const ragPath = require.resolve('../Plugin/RAGDiaryPlugin/TimelinePlaceholderProcessor');
++const cachedRag = require.cache[ragPath];
++require.cache[ragPath] = { loaded: true, exports: class {
++    constructor() {
++        throw new Error('RAG placeholder rendering is outside the auto-sync test scope');
++    }
++} };
++let timeline;
++try {
++    timeline = require('../Plugin/VCPTimeLine/VCPTimeLine');
++} finally {
++    if (cachedRag) require.cache[ragPath] = cachedRag;
++    else delete require.cache[ragPath];
++}
++
++async function fixture(t) {
++    const root = await fs.mkdtemp(path.join(os.tmpdir(), 'vcp-timeline-'));
++    t.after(() => fs.rm(root, { recursive: true, force: true }));
++    function make(config) {
++        const plugin = new timeline.constructor();
++        plugin.dailyNoteRoot = path.join(root, 'dailynote');
++        plugin.getSummaryPath = () => path.join(root, 'summaries.json');
++        plugin.getAutoSyncStatePath = () => path.join(root, 'state.json');
++        plugin.config = plugin.normalizeConfig(config);
++        return plugin;
++    }
++    return { make };
++}
++
++test('restart retries only the failed summary; a clean third run calls no model', async t => {
++    const { make } = await fixture(t);
++    const config = { autoSync: { enabled: true, agents: ['Nova'] } };
++    const first = make(config);
++    const dir = path.join(first.dailyNoteRoot, 'Nova');
++    await fs.mkdir(dir, { recursive: true });
++    await fs.writeFile(path.join(dir, 'entry.txt'), '[2026-11-15] - Nova\nA note.');
++    const scan = plugin => plugin.runAutoSync(new Date('2026-11-30T16:01:00Z'), 'Asia/Shanghai');
++    const calls = { timeline: 0, summary: 0 };
++    first.summarizeMonth = async () => { calls.timeline++; return 'Monthly timeline'; };
++    first.generateOneLineSummary = async () => { calls.summary++; throw new Error('injected summary failure'); };
++
++    await scan(first);
++    assert.deepEqual(calls, { timeline: 1, summary: 1 });
++    assert.deepEqual(await first.readSummaryStore(), {});
++    const state = async plugin => JSON.parse(await fs.readFile(plugin.getAutoSyncStatePath(), 'utf8')).Nova['2026-11'];
++    const before = await state(first);
++    assert.match(before.inputDigest, /^[0-9a-f]{64}$/);
++    assert.equal(before.summarySourceHash, undefined);
++    const [file] = await first.listTimelineFiles('Nova', ['2026-11']);
++    assert.match(file.content, /Monthly timeline/);
++
++    const restarted = make(config);
++    restarted.summarizeMonth = first.summarizeMonth;
++    restarted.generateOneLineSummary = async () => { calls.summary++; return 'One sentence'; };
++    await scan(restarted);
++    assert.deepEqual(calls, { timeline: 1, summary: 2 });
++    assert.equal((await restarted.readSummaryStore()).Nova['2026-11'], 'One sentence');
++    assert.equal((await state(restarted)).summarySourceHash, createHash('sha256').update(file.content).digest('hex'));
++    await scan(restarted);
++    assert.deepEqual(calls, { timeline: 1, summary: 2 });
++});
++
++test('current-month changes wait seven days and older months are not generated', async t => {
++    const { make } = await fixture(t);
++    const plugin = make({ autoSync: { enabled: true, agents: ['Nova'] } });
++    const dir = path.join(plugin.dailyNoteRoot, 'Nova');
++    await fs.mkdir(dir, { recursive: true });
++    const note = path.join(dir, 'current.txt');
++    await fs.writeFile(note, '[2027-01-01] - Nova\nFirst.');
++    await fs.writeFile(path.join(dir, 'old.txt'), '[2026-11-01] - Nova\nOld.');
++    const generated = [];
++    plugin.summarizeMonth = async (_agent, month, notes) => {
++        generated.push(month);
++        return notes.join('\n');
++    };
++    plugin.generateOneLineSummary = async () => 'Summary';
++    const scan = day => plugin.runAutoSync(new Date(`2027-01-${day}T12:00:00Z`), 'Asia/Shanghai');
++    await scan('01');
++    await fs.writeFile(note, '[2027-01-01] - Nova\nUpdated.');
++    await scan('07');
++    assert.deepEqual(generated, ['2027-01']);
++    await scan('08');
++    assert.deepEqual(generated, ['2027-01', '2027-01']);
++    assert.deepEqual((await plugin.listTimelineFiles('Nova')).map(file => file.month), ['2027-01']);
++});
++
++test('concurrent Agent generation and manual saves preserve all summary entries', { timeout: 5000 }, async t => {
++    const { make } = await fixture(t);
++    const plugin = make();
++    assert.equal(plugin.config.autoSync.enabled, false);
++    await plugin.saveTimelineFile('Nova', '2026-11', 'Nova timeline');
++    await plugin.saveTimelineFile('Nova', '2026-10', 'Out of scope');
++    await plugin.saveTimelineFile('Forge', '2026-11', 'Forge timeline');
+
+```
+
+---
+
+### Incident Patch 3: `15b65e18` (2026-11-23)
+**Commit Message**: fix(timeline): bound model requests and correlate timeout diagnostics
+
+**File**: `Plugin/VCPTimeLine/VCPTimeLine.js` (modified, +40/-20)
+```diff
+@@ -3,6 +3,7 @@
+ const fs = require('fs');
+ const fsp = fs.promises;
+ const path = require('path');
++const { randomUUID } = require('node:crypto');
+ 
+ const TimelinePlaceholderProcessor = require('../RAGDiaryPlugin/TimelinePlaceholderProcessor');
+ const PLACEHOLDER_REGEX = /\[\[VCPTimeLine(Summary|Recall)?::([^:\]\r\n]+?)(?::([^:\]\r\n]+?))?(?::([^:\]\r\n]+?))?\]\]/g;
+@@ -14,6 +15,7 @@ const DEFAULT_CONFIG = Object.freeze({
+     defaultExpandK: 3,
+     defaultThreshold: 0.5,
+     model: '',
++    modelTimeoutMs: 120000,
+     maxContextTokens: 60000,
+     maxOutputTokens: 4000,
+     maxConcurrentTasks: 3,
+@@ -65,6 +67,7 @@ class VCPTimeLine {
+             defaultExpandK: this.normalizePositiveInteger(raw.defaultExpandK, DEFAULT_CONFIG.defaultExpandK, 1, 100),
+             defaultThreshold: this.normalizeThreshold(raw.defaultThreshold, DEFAULT_CONFIG.defaultThreshold),
+             model: String(raw.model || '').trim(),
++            modelTimeoutMs: this.normalizePositiveInteger(raw.modelTimeoutMs ?? DEFAULT_CONFIG.modelTimeoutMs, DEFAULT_CONFIG.modelTimeoutMs, 100, 600000),
+             maxContextTokens: this.normalizePositiveInteger(raw.maxContextTokens, DEFAULT_CONFIG.maxContextTokens, 1024),
+             maxOutputTokens: this.normalizePositiveInteger(raw.maxOutputTokens, DEFAULT_CONFIG.maxOutputTokens, 128),
+             maxConcurrentTasks: this.normalizePositiveInteger(raw.maxConcurrentTasks, DEFAULT_CONFIG.maxConcurrentTasks, 1, 20),
+@@ -148,7 +151,7 @@ class VCPTimeLine {
+     }
+ 
+     async saveConfig(raw) {
+-        const config = this.normalizeConfig(raw);
++        const config = this.normalizeConfig({ modelTimeoutMs: this.config.modelTimeoutMs, ...raw });
+         await this.writeJsonAtomic(this.getConfigPath(), config);
+         this.config = config;
+         return config;
+@@ -527,25 +530,42 @@ class VCPTimeLine {
+         if (!key) throw new Error('服务器 Key 未配置');
+         if (!this.config.model) throw new Error('VCPTimeLine 模型未配置');
+         const { default: fetch } = await import('node-fetch');
+-        const response = await fetch(`http://127.0.0.1:${port}/v1/chat/completions`, {
+-            method: 'POST',
+-            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${key}` },
+-            body: JSON.stringify({
+-                model: this.config.model,
+-                stream: false,
+-                max_tokens: maxTokens,
+-                messages: [
+-                    { role: 'system', content: systemPrompt },
+-                    { role: 'user', content: userPrompt }
+-                ]
+-            })
+-        });
+-        const text = await response.text();
+-        if (!response.ok) throw new Error(`模型返回 ${response.status}: ${text.slice(0, 500)}`);
+-        const payload = JSON.parse(text);
+-        const output = payload?.choices?.[0]?.message?.content;
+-        if (typeof output !== 'string' || !output.trim()) throw new Error('模型未返回有效内容');
+-        return output.trim();
++        const traceId = randomUUID();
++        const timeoutMs = this.config.modelTimeoutMs;
++        const controller = new AbortController();
++        const timer = setTimeout(() => controller.abort(), timeoutMs);
++        let stage = 'response_headers';
++        try {
++            const response = await fetch(`http://127.0.0.1:${port}/v1/chat/completions`, {
++                method: 'POST',
++                signal: controller.signal,
++                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${key}`, 'X-VCP-Timeline-Trace': traceId },
++                body: JSON.stringify({
++                    model: this.config.model,
++                    stream: false,
++                    max_tokens: maxTokens,
++                    messages: [
++                        { role: 'system', content: systemPrompt },
++                        { role: 'user', content: userPrompt }
++                    ]
++                })
++            });
++            stage = 'response_body';
++            const text = await response.text();
++            if (!response.ok) throw new Error(`模型返回 ${response.status}: ${text.slice(0, 500)}`);
++            const payload = JSON.parse(text);
++            const output = payload?.choices?.[0]?.message?.content;
++            if (typeof output !== 'string' || !output.trim()) throw new Error('模型未返回有效内容');
++            return output.trim();
++        } catch (error) {
++            if (!controller.signal.aborted) throw error;
++            const waitingFor = stage === 'response_headers' ? '等待 ToolBox 响应头' : '读取 ToolBox 响应正文';
++            throw Object.assign(new Error(`VCPTimeLine 模型请求超时（${timeoutMs} ms，${waitingFor}；诊断 ID：${traceId}）`, { cause: error }), {
++                code: 'TIMELINE_MODEL_TIMEOUT'
++            });
++        } finally {
++            clearTimeout(timer);
++        }
+     }
+ 
+     async summarizeMonth(agentName, month, memories) {
+```
+
+**File**: `modules/chatCompletionHandler.js` (modified, +40/-1)
+```diff
+@@ -415,12 +415,32 @@ function applyModelFallbackForAttempt(options, candidates, attemptIndex, debugMo
+   }
+ }
+ 
++// Timeline diagnostics are local-only and independent of request replay/interrupt IDs.
++function createTimelineTrace(req, res) {
++  const id = req.headers['x-vcp-timeline-trace'];
++  const loopback = ['127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(req.socket?.remoteAddress);
++  if (!loopback || req.body?.stream !== false || typeof id !== 'string'
++      || !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)) return null;
++
++  const started = performance.now();
++  const emit = (stage, fields) => console.info('[VCPTimeLineTrace]', JSON.stringify({
++    id, stage, elapsedMs: Math.round(performance.now() - started), ...fields
++  }));
++  let sequence = 0;
++  res.once('finish', () => emit('toolbox_response_finished', { status: res.statusCode }));
++  res.once('close', () => {
++    if (!res.writableFinished) emit('toolbox_response_closed_early');
++  });
++  emit('toolbox_handler_entered');
++  return { emit, nextAttempt: () => ++sequence, responses: new WeakMap() };
++}
++
+ // A helper function to handle fetch with retries for specific status codes
+ // connectionTimeout: 连接超时安全网，防止上游 API 静默挂起导致永久等待（仅覆盖到收到响应头为止）
+ async function fetchWithRetry(
+   url,
+   options,
+-  { retries = 3, delay = 1000, debugMode = false, onRetry = null, connectionTimeout = 900000, modelFallbackCandidates = null } = {},
++  { retries = 3, delay = 1000, debugMode = false, onRetry = null, connectionTimeout = 900000, modelFallbackCandidates = null, timelineTrace } = {},
+ ) {
+   const { default: fetch } = await import('node-fetch');
+   const maxAttempts = Math.max(
+@@ -431,6 +451,7 @@ async function fetchWithRetry(
+     // 为每次尝试创建独立的中止控制器，用于超时保护
+     const attemptController = new AbortController();
+     let didTimeout = false;
++    let attempt;
+     const externalSignal = options.signal;
+ 
+     // 将外部中止信号转发给本次尝试的控制器
+@@ -458,12 +479,18 @@ async function fetchWithRetry(
+       const attemptOptions = isolateNativeToolRequestOptions(
+         applyModelFallbackForAttempt(options, modelFallbackCandidates, i, debugMode)
+       );
++      attempt = timelineTrace?.nextAttempt();
++      timelineTrace?.emit('upstream_fetch_started', { attempt });
+       const response = await fetch(url, {
+         ...attemptOptions,
+         agent: getFetchAgent, // 注入防御性长连接池
+         signal: attemptController.signal,
+       });
+       cleanup();
++      if (timelineTrace) {
++        timelineTrace.responses.set(response, attempt);
++        timelineTrace.emit('upstream_headers_received', { attempt, status: response.status });
++      }
+ 
+       let shouldRetryStatus = response.status === 500 || response.status === 502 || response.status === 503 || response.status === 504 || response.status === 429;
+       let retryMessage = response.statusText;
+@@ -473,12 +500,15 @@ async function fetchWithRetry(
+       // 这类并非 VCP 本地 Key 配置错误，而是上游瞬时 token 异常，可安全纳入重试。
+       if (response.status === 401) {
+         try {
++          timelineTrace?.emit('upstream_retry_body_read_started', { attempt });
+           const responseBodyText = await response.clone().text();
++          timelineTrace?.emit('upstream_retry_body_read_finished', { attempt });
+           if (responseBodyText.toLowerCase().includes('token')) {
+             shouldRetryStatus = true;
+             retryMessage = responseBodyText || response.statusText;
+           }
+         } catch (bodyReadError) {
++          timelineTrace?.emit('upstream_retry_body_read_failed', { attempt });
+           if (debugMode) {
+             console.warn(`[Fetch Retry] Failed to inspect 401 response body: ${bodyReadError.message}`);
+           }
+@@ -507,6 +537,12 @@ async function fetchWithRetry(
+       return response;
+     } catch (error) {
+       cleanup();
++      if (attempt !== undefined) {
++        const code = error?.code;
++        const errorCode = typeof code === 'string' && /^[A-Z][A-Z0-9_]{0,63}$/.test(code) ? code : undefined;
++        timelineTrace.emit(didTimeout ? 'upstream_headers_wait_timeout'
++          : externalSignal?.aborted ? 'upstream_fetch_cancelled' : 'upstream_fetch_failed', { attempt, errorCode });
++      }
+ 
+       // 区分超时中止和外部中止
+       if (error.name === 'AbortError') {
+@@ -691,6 +727,7 @@ class ChatCompletionHandler {
+   }
+ 
+   async handle(req, res, forceShowVCP = false) {
++    const timelineTrace = createTimelineTrace(req, res);
+     const {
+       apiUrl,
+       apiKey,
+@@ -1285,6 +1322,7 @@ class ChatCompletionHandler {
+           debugMode: DEBUG_MODE,
+           connectionTimeout: apiConnectionTimeoutMs,
+           modelFallbackCandidates: semanticModelFallbackCandidates,
++          timelineTrace,
+           onRetry: async (attempt, errorInfo) => {
+             if (!res.headersSent && isOriginalRequestStreaming) {
+               if (DEBUG_MODE)
+@@ -1397,6 +1435,7 @@ class ChatC
+```
+
+**File**: `modules/handlers/nonStreamHandler.js` (modified, +22/-6)
+```diff
+@@ -89,7 +89,8 @@ async function readNonStreamResponseWithSemanticRetry({
+   retries = 3,
+   delay = 1000,
+   debugMode = false,
+-  label = 'non_stream'
++  label = 'non_stream',
++  timelineTrace
+ }) {
+   const maxAttempts = Math.max(Number.isFinite(Number(retries)) && Number(retries) > 0 ? Math.floor(Number(retries)) : 1, 1);
+   let response = initialResponse;
+@@ -101,7 +102,18 @@ async function readNonStreamResponseWithSemanticRetry({
+       response = await fetchResponse(attempt);
+     }
+ 
+-    const arrayBuffer = await response.arrayBuffer();
++    const upstreamAttempt = timelineTrace?.responses.get(response);
++    timelineTrace?.emit('upstream_body_read_started', { attempt: upstreamAttempt });
++    let arrayBuffer;
++    try {
++      arrayBuffer = await response.arrayBuffer();
++      timelineTrace?.emit('upstream_body_read_finished', { attempt: upstreamAttempt });
++    } catch (error) {
++      const code = error?.code;
++      const errorCode = typeof code === 'string' && /^[A-Z][A-Z0-9_]{0,63}$/.test(code) ? code : undefined;
++      timelineTrace?.emit('upstream_body_read_failed', { attempt: upstreamAttempt, errorCode });
++      throw error;
++    }
+     responseText = Buffer.from(arrayBuffer).toString('utf-8');
+ 
+     if (!response.ok || !isReasoningOnlyNonStreamResponse(responseText)) {
+@@ -174,6 +186,7 @@ class NonStreamHandler {
+       clientIp,
+       _refreshRagBlocksIfNeeded,
+       fetchWithRetry,
++      timelineTrace,
+       vcpToolUseForbidden,
+       apiConnectionTimeoutMs,
+       semanticModelFallbackCandidates,
+@@ -253,7 +266,7 @@ class NonStreamHandler {
+         body: JSON.stringify(projectToolBatchForUpstream(body)),
+         signal: abortController.signal,
+       },
+-      { retries: apiRetries, delay: apiRetryDelay, debugMode: DEBUG_MODE, connectionTimeout: apiConnectionTimeoutMs, modelFallbackCandidates: semanticModelFallbackCandidates }
++      { retries: apiRetries, delay: apiRetryDelay, debugMode: DEBUG_MODE, connectionTimeout: apiConnectionTimeoutMs, modelFallbackCandidates: semanticModelFallbackCandidates, timelineTrace }
+     );
+ 
+     const firstReadResult = await readNonStreamResponseWithSemanticRetry({
+@@ -262,7 +275,8 @@ class NonStreamHandler {
+       retries: apiRetries,
+       delay: apiRetryDelay,
+       debugMode: DEBUG_MODE,
+-      label: 'initial'
++      label: 'initial',
++      timelineTrace
+     });
+     firstAiAPIResponse = firstReadResult.response;
+     const aiResponseText = firstReadResult.text;
+@@ -389,7 +403,8 @@ class NonStreamHandler {
+             retries: apiRetries,
+             delay: apiRetryDelay,
+             debugMode: DEBUG_MODE,
+-            label: `archery_error_depth_${recursionDepth}`
++            label: `archery_error_depth_${recursionDepth}`,
++            timelineTrace
+           });
+           const recursionAiResponse = recursionReadResult.response;
+ 
+@@ -513,7 +528,8 @@ class NonStreamHandler {
+           retries: apiRetries,
+           delay: apiRetryDelay,
+           debugMode: DEBUG_MODE,
+-          label: `tool_loop_depth_${recursionDepth}`
++          label: `tool_loop_depth_${recursionDepth}`,
++          timelineTrace
+         });
+         const recursionAiResponse = recursionReadResult.response;
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #637** (2026-11-23):  为 VCPTimeLine 增加模型请求超时和分阶段诊断 (@Skmt617)
+- **PR #636** (2026-11-23): fix(distributed): allow reconnect tool takeover and terminate stale ws connections (@silk2onion)
+- **PR #635** (2026-11-23): 为 VCPTimeLine 增加可选的月度自动巡检 (@Skmt617)
 - **PR #634** (2026-11-22): feat(api): 为外部 agent 提供按日记库授权的 RiverMemo 检索接口 (@Lutra23)
 - **PR #630** (closed): fix(stream): 截停模型续写的工具回执 (@CI-IISATO)
 - **PR #623** (2026-11-21): feat(ComfyUIGen,RAGDiaryPlugin): 支持 ComfyUI 进程跟随式活性超时检测与 ::Base64Memo 超栈路径溯源及自适应图像压缩 (@infinite-vector)
-- **PR #621** (2026-11-20): fix(prompt): 修复提示词与插件manifest中多处笔误、转义及格式残缺问题 (@InSciTech)
-- **PR #620** (2026-11-20): fix(plugins): 修正多处插件 Manifest 示例工具名、参数大小写及格式错误 (@InSciTech)
-- **PR #619** (2026-11-19): fix(vexus-lite,server): 统一GlobalChunks与ReadPool单向锁序DAG根治并发死锁，并修复关机Phase2/Phase8阻塞 (@infinite-vector)
 
 ---
 
@@ -2009,33 +3018,71 @@ feat(api): 为外部 agent 提供按日记库授权的 RiverMemo 检索接口
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in config.env.example
+## X. Empirical Invariant Guard in VCPTimeLine.js
 
 **RULE**:
-When implementing operations in `config.env.example`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Plugin/VCPTimeLine/VCPTimeLine.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d824df3c`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5ca56f3b`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `config.env.example`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `Plugin/VCPTimeLine/VCPTimeLine.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-# Optional read-only RiverMemo API (POST /v1/memory/search). Empty = not registered.
-# Use dedicated random bearer tokens, never Key. Store only each token's lowercase SHA-256 digest here.
-# MEMORY_READ_GRANTS='{"<64 hex digest>":["ExampleDiary"]}'
-# HTTPS request: Authorization: Bearer <read token>; JSON: {"query":"what did we decide?","diaries":["ExampleDiary"],"k":5}
-# Response: {"direct":[{"diary":"ExampleDiary","file":"note.md","text":"...","score":0.8,"scoreSource":"retrieval"}]}
-MEMORY_READ_GRANTS=
+const { createHash, randomUUID } = require('node:crypto');
+    modelTimeoutMs: 120000,
+            modelTimeoutMs: this.normalizePositiveInteger(raw.modelTimeoutMs ?? DEFAULT_CONFIG.modelTimeoutMs, DEFAULT_CONFIG.modelTimeoutMs, 100, 600000),
+        const config = this.normalizeConfig({
+            autoSync: this.config.autoSync,
+            modelTimeoutMs: this.config.modelTimeoutMs,
+            ...raw
+        });
+        const traceId = randomUUID();
+        const timeoutMs = this.config.modelTimeoutMs;
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), timeoutMs);
+        let stage = 'response_headers';
+        try {
+            const response = await fetch(`http://127.0.0.1:${port}/v1/chat/completions`, {
+                method: 'POST',
+                signal: controller.signal,
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${key}`, 'X-VCP-Timeline-Trace': traceId },
+                body: JSON.stringify({
+                    model: this.config.model,
+                    stream: false,
+                    max_tokens: maxTokens,
+                    messages: [
+                      
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+const { createHash } = require('crypto');
+        const config = this.normalizeConfig({ autoSync: this.config.autoSync, ...raw });
+        const response = await fetch(`http://127.0.0.1:${port}/v1/chat/completions`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${key}` },
+            body: JSON.stringify({
+                model: this.config.model,
+                stream: false,
+                max_tokens: maxTokens,
+                messages: [
+                    { role: 'system', content: systemPrompt },
+                    { role: 'user', content: userPrompt }
+                ]
+            })
+        });
+        const text = await response.text();
+        if (!response.ok) throw new Error(`模型返回 ${response.status}: ${text.slice(0, 500)}`);
+        const payload = JSON.parse(text);
+        const output = payload?.choices?.[0]?.message?.content;
+        if (typeof output !== 'string' || !output.trim()) throw new Error('模型未返回有效内容');
+        return output.trim();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d824df3c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5ca56f3b` are properly handled with clean fallback behavior.

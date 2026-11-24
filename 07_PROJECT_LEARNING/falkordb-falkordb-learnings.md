@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/falkordb-falkordb-learnings.md`  
 > **Source**: github ([https://github.com/FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB))  
-> **Source Version**: `41d2f20c`  
+> **Source Version**: `4c108894`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T22:06:19.335Z  
+> **Timestamp**: 2026-11-24T06:11:10.177Z  
 > **Learning ID**: `learn-github-falkordb-falkordb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/falkordb-falkordb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T22:06:19.326Z  
+> **Harvest Timestamp**: 2026-11-24T06:11:09.969Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A super fast Graph Database uses GraphBLAS under the hood for its sparse adjacency matrix graph representation. Our goal is to provide the best Knowledge Graph for LLM (GraphRAG).
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 10501 stars
+- **Stars / Engagement**: 10502 stars
 
 ---
 
@@ -402,7 +402,7 @@ use crate::parser::ast::{ExprIR, QueryExpr, Variable};
 use super::super::IR;
 use super::references::subtree_references_variable;
 
-fn get_id_filter(
+pub(super) fn get_id_filter(
     filter: &DynNode<ExprIR<Variable>>,
     node_alias: &Variable,
 ) -> Option<(QueryExpr<Variable>, ExprIR<Variable>)> {
@@ -1218,1019 +1218,1236 @@ print("bgsave status", r.info('persistence')['rdb_last_bgsave_status'])
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d070f1f9` (2026-11-22)
-**Commit Message**: fix: GRAPH.DELETE of indexed graphs corrupts RediSearch's shared N/A key (#3483) (#3511)
+### Incident Patch 1: `0ecba8bc` (2026-11-23)
+**Commit Message**: fix(optimizer): per-row index seek instead of a hash join over a full label scan for UNWIND + consecutive MATCH (#3887) (#3889)
 
-* fix: GRAPH.DELETE of indexed graphs corrupts RediSearch's shared N/A key (#3483)
+* fix(optimizer): seek an index per outer row instead of a hash join over a full label scan (#3887)
 
-graph_free drops a graph on a new thread with no GIL, and SpecHandle::drop
-calls RediSearch_DropIndex without it (#726). At ea1a6f4 that path frees
-RediSearch's process-global NA_rstr (IndexError_Clear), while the main thread
-holds it for every index it creates. The refcount is not atomic, so updates
-are lost, the key is freed while indexes still point at it, and a later free
-crashes the server in RM_FreeString.
+`UNWIND .. MATCH (s ..) MATCH (p:L {k: e.x})` plans the second MATCH as a
+Cartesian Product branch of the first (#2981) with `p.k = e.x` filtered above,
+and `replace_cartesian_with_hash_join` turns that into a Value Hash Join whose
+build side scans the whole label. `utilize_index` runs later and never sees
+the scan, so the cost grows with the label however few rows the UNWIND has
+(300-row batch on 1M nodes: 7.6 -> 55 ms).
 
-Move deps/RediSearch to FalkorDB/RediSearch#29, where index errors borrow
-NA_rstr instead of refcounting it and the GC stop of a dropped index runs on
-the main thread. Correct the comments that said the drop thread takes the GIL.
+New pass `replace_cartesian_with_index_seek`, before the hash join: when a
+Cartesian Product branch is a label scan whose label has a range index for an
+equality/range conjunct that reads the other branches, the other branches
+become the scan's input (as for any clause stitched below an earlier one) and
+the conjunct moves onto the scan, where `utilize_index` turns it into a
+per-row index seek. The hash join stays when there is no such index, and when
+the other branches are estimated (UNWIND list length incl. parameters and
+`range`, label
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* docs: correct comments that misstate which locks are held
-
-Index teardown takes no GIL (SpecHandle/OwnedIndex drop); there is no GIL
-lock-order assertion; ForkGC holds only the GIL across fork(); no Drop impl
-consults is_main_thread; the replica CREATE INDEX path is the async one.
-Found by the RediSearch LLAPI thread audit
-
-**File**: `deps/RediSearch` (modified, +1/-1)
+**File**: `graph/src/planner/optimizer/eliminate_true_filters.rs` (modified, +1/-1)
 ```diff
-@@ -1 +1 @@
--Subproject commit 1317b41b3f1a2f68fea81e250b0b32a57dc7d6d1
-+Subproject commit 994282d3075adae126076b0aa141b1c6ac66c0bf
+@@ -79,7 +79,7 @@ fn expr_has_parameter(expr: &DynTree<ExprIR<Variable>>) -> bool {
+ 
+ /// Clone the expression tree, replacing `ExprIR::Parameter(name)` nodes
+ /// with their evaluated constant values from `params`.
+-fn substitute_params(
++pub(super) fn substitute_params(
+     expr: &DynTree<ExprIR<Variable>>,
+     params: &HashMap<String, Value>,
+ ) -> DynTree<ExprIR<Variable>> {
 ```
 
-**File**: `deps/native-deps.lock` (modified, +1/-1)
+**File**: `graph/src/planner/optimizer/mod.rs` (modified, +8/-1)
 ```diff
-@@ -24,5 +24,5 @@ pin = v1.3.x
- [redisearch]
- path = deps/RediSearch
- url = https://github.com/FalkorDB/RediSearch.git
--rev = 1317b41b3f1a2f68fea81e250b0b32a57dc7d6d1
-+rev = 994282d3075adae126076b0aa141b1c6ac66c0bf
- pin = falkordb/llapi-extensions-8.6
+@@ -21,7 +21,11 @@
+ //! 3. push_filters_down        -- Move Filter conjuncts closer to the
+ //!       |                        operators that produce their variables
+ //!       v
+-//! 4. replace_cartesian_       -- Convert CartesianProduct + equality
++//! 4. replace_cartesian_       -- Feed an index-served scan branch of a
++//!    with_index_seek              CartesianProduct with the other branches
++//!       |
++//!       v
++//!    replace_cartesian_       -- Convert CartesianProduct + equality
+ //!    with_hash_join               Filter into ValueHashJoin
+ //!       |
+ //!       v
+@@ -57,6 +61,7 @@ mod reduce_var_len_path;
+ pub(in crate::planner) mod references;
+ mod reorder_labels;
+ mod replace_cartesian_with_hash_join;
++mod replace_cartesian_with_index_seek;
+ mod select_scan_node;
+ mod utilize_index;
+ mod utilize_node_by_id;
+@@ -84,6 +89,7 @@ use reduce_expand_into::reduce_expand_into;
+ use reduce_var_len_path::reduce_var_len_path;
+ use reorder_labels::reorder_labels;
+ use replace_cartesian_with_hash_join::replace_cartesian_with_hash_join;
++use replace_cartesian_with_index_seek::replace_cartesian_with_index_seek;
+ use select_scan_node::select_scan_node;
+ use utilize_index::utilize_index;
+ use utilize_node_by_id::utilize_node_by_id;
+@@ -221,6 +227,7 @@ pub fn optimize(
+     select_scan_node(&mut optimized_plan, graph);
+     push_filters_down(&mut optimized_plan);
+     fuse_anonymous_traverse(&mut optimized_plan);
++    replace_cartesian_with_index_seek(&mut optimized_plan, graph, params);
+     replace_cartesian_with_hash_join(&mut optimized_plan);
+     absorb_edge_filters_into_vlt(&mut optimized_plan);
+     // Re-run path reduction: folding an edge-only filter into a
 ```
 
-**File**: `graph/src/graph/graph.rs` (modified, +2/-3)
+**File**: `graph/src/planner/optimizer/replace_cartesian_with_index_seek.rs` (added, +386/-0)
 ```diff
-@@ -3752,9 +3752,8 @@ impl Graph {
-                     .create_index(index_type, label, attrs, len, options)?;
-                 // Same bookkeeping as `create_index`: surface the
-                 // indexed attr names in `db.propertyKeys()` even if no
--                // entity has yet written to them. Critical for
--                // RDB-load and EFFECT_CREATE_INDEX (replica) paths,
--                // which go through this sync variant.
-+                // entity has yet written to them. Critical for the
-+                // RDB-load path, which goes through this sync variant.
-                 for attr in attrs {
-                     self.add_node_attribute_name(attr);
-                 }
+@@ -0,0 +1,386 @@
++//! Index-seek replacement for a Cartesian Product joined on an indexed lookup.
++//!
++//! A later `MATCH (p:L {k: e.x})` whose inline property reads a variable bound
++//! by an earlier clause shares no variable with it, so the planner makes it a
++//! `CartesianProduct` branch of the earlier clause, with the predicate in a
++//! `Filter` above (see `Planner::plan_query`). Left to
++//! `replace_cartesian_with_hash_join`, that becomes a `ValueHashJoin` whose
++//! build side is a scan of the whole label: its cost grows with the label,
++//! however few rows the earlier clause produces.
++//!
++//! When the label has an index on the joined property, the other branches can
++//! instead feed the scan, like any later clause stitched below an earlier one:
++//! each of their rows seeks the index for its own key.
++//!
++//! ```text
++//! Before:                          After:
++//!
++//! Filter(p.k = e.x)                Filter(p.k = e.x)       (rewritten to an index scan
++//!   |                                |                      by `utilize_index`)
++//!   v                                v
++//! CartesianProduct                 NodeByLabelScan(p:L)
++//!   |           |                    |
++//!   v           v                    v
++//! ChildA      NodeByLabelScan(p)   ChildA
++//! ```
++//!
++//! Without such an index the hash join stays: it reads the label once instead
++//! of once per row. It also stays when the other branches are estimated to
++//! produce so many rows that one index lookup each costs more than reading the
++//! label once (a bulk `UNWIND` of a large batch): see [`SEEK_COST_IN_SCANNED_NODES`].
++
++use std::collections::{HashMap, HashSet};
++use std::sync::Arc;
++
++use orx_tree::{DynNode, DynTree, NodeRef};
++
++use crate::{
++    graph::graph::Graph,
++    parser::ast::{ExprIR, QueryExpr, QueryNode, Variable},
++    runtime::{functions::FnType, value::Value},
++    tree,
++};
++
++use super::super::IR;
++use super::eliminate_true_filters::substitute_params;
++use super::utilize_index::{can_seek_index, seek_index_label};
++use super::{collect_expr_variables, collect_subtree_variables};
++
++/// What one index lookup costs, in nodes of a label scan. Measured on a 1M-node
++/// label: reading it once (the hash join's build side) takes about 52 ms, a
++/// lookup about 17 us, a ratio of 330. Rounded down: a lookup also keeps the
++/// result clustered per outer row.
++const SEEK_COST_IN_SCANNED_NODES: f64 = 256.0;
++
++/// Rewrites `Filter -> CartesianProduct(.., [Filter ->] NodeByLabelScan)` so
++/// the scan reads the other branches' rows and the filter can become an index
++/// seek, wherever the label has an index for a predicate that reads them.
++pub(super) fn replace_cartesian_with_index_seek(
++    optimized_plan: &mut DynTree<IR>,
++    graph: &Graph,
++    params: &HashMap<String, Value>,
++) {
++    let new_plan = rebuild(&optimized_plan.root(), graph, params);
++    *optimized_plan = new_plan;
++}
++
++fn rebuild(
++    node: &DynNode<IR>,
++    graph: &Graph,
++    params: &HashMap<String, Value>,
++) -> DynTree<IR> {
++    if let IR::Filter(filter) = node.data()
++        && let Some(child) = node.get_child(0)
++        && matches!(child.data(), IR::CartesianProduct)
++        && !child
++            .walk::<orx_tree::Bfs>()
++            .any(|data| matches!(data, IR::Argument(_)))
++        && let Some(result) = try_seek_rewrite(filter, &child, graph, params)
++    {
++        return rebuild(&result.root(), graph, params);
++    }
++    let mut new_tree = DynTree::new(node.data().clone());
++    for child in node.children() {
++        new_tree
++            .root_mut()
++            .push_child_tree(rebuild(&child, graph, params));
++    }
++    new_tree
++}
++
++/// The `Filter*` chain above a childless `NodeByLabelScan` that makes up
++/// `branch`, as the filters (top first) and the scanned node.
++fn scan_chain(
++    branch: &DynNode<IR>
++) -> Option<(
++    Vec<QueryExpr<Variable>>,
++    Arc<QueryNode<Arc<String>, Variable>>,
++)> {
++    let mut filters = Vec::new();
++    let mut cur: DynTree<IR> = branch.clone_as_tree();
++    loop {
++        let root = cur.root();
++        match root.data() {
++            IR::Filter(f) if root.num_children() == 1 => {
++                filters.push(f.clone());
++                let next = root.child(0).clone_as_tree();
++                cur = next;
++            }
++            IR::NodeByLabelScan { node } if root.num_children() == 0 => {
++                return Some((filters, node.clone()));
++            }
++            _ => return None,
++        }
++    }
++}
++
++fn try_seek_rewrite(
++    filter: &QueryExpr<Variable>,
++    cp_node: &DynNode<IR>,
++    graph: &Graph,
++    params: &HashMap<String, Value>,
++) -> Option<DynTree<IR>> {
++    let conjuncts: Vec<DynTree<ExprIR<Variable>>> = if matches!(filter.root().data(), ExprIR::And) {
++        filter
++            .root()
++            .children()
++            .map(|c| c.clone_as_tree())
++            .collect()
++    } else {
++        vec![(**filter).clone()]
++  
 ```
 
-**File**: `graph/src/index/mod.rs` (modified, +8/-5)
+**File**: `graph/src/planner/optimizer/utilize_index.rs` (modified, +29/-0)
 ```diff
-@@ -956,7 +956,9 @@ impl Drop for OwnedIndex {
-     fn drop(&mut self) {
-         // No global lock, even for the last release: `IndexSpec_Free` touches no
-         // Redis timer (it asserts the temporary-index timer is already stopped, and
--        // the ForkGC timer self-terminates by not rescheduling — RediSearch `gc.c`).
-+        // the ForkGC timer self-terminates by not rescheduling — RediSearch `gc.c`)
-+        // and no Redis object another thread can reach (its index errors borrow the
-+        // shared "N/A" key rather than refcount it: a refcount is not atomic, #3483).
-         // Only index *creation* needs it, via `RM_CreateTimer`.
-         //
-         // That is load-bearing for #726: an index-scan iterator drops its cloned
-@@ -1000,10 +1002,11 @@ impl SpecHandle {
- impl Drop for SpecHandle {
-     fn drop(&mut self) {
-         // No global lock, for the same reason as `OwnedIndex::drop`: nothing here
--        // stops a timer. Load-bearing too — a reader holding the per-graph read lock
--        // can be the last holder of the spec (a concurrent `drop_index_bg` swaps the
--        // index map under it), and taking the global lock there is the #726
--        // inversion.
-+        // stops a timer on this thread (`RediSearch_DropIndex` hands the GC stop to
-+        // the main thread) or touches a shared Redis object. Load-bearing too — a
-+        // reader holding the per-graph read lock can be the last holder of the spec
-+        // (a concurrent `drop_index_bg` swaps the index map under it), and taking
-+        // the global lock there is the #726 inversion.
-         //
-         // `DropIndex` invalidates the spec *and* releases the creation ref, so pass
-         // the raw pointer via `into_raw` to avoid a second release from `OwnedIndex`.
+@@ -810,6 +810,35 @@ fn try_filter_pushdown<T: IndexSubject>(
+     }
+ }
+ 
++/// Whether `utilize_index` can serve `filter`, a predicate on `node`, from a
++/// range index of the graph.
++pub(super) fn can_seek_index(
++    node: &Arc<QueryNode<Arc<String>, Variable>>,
++    filter: &DynTree<ExprIR<Variable>>,
++    graph: &Graph,
++) -> bool {
++    try_filter_pushdown(node, filter, graph).is_some()
++}
++
++/// The label whose range index `utilize_index` would serve `filter` from, a
++/// predicate on `node`; `None` when no index serves it.
++pub(super) fn seek_index_label(
++    node: &Arc<QueryNode<Arc<String>, Variable>>,
++    filter: &DynTree<ExprIR<Variable>>,
++    graph: &Graph,
++) -> Option<Arc<String>> {
++    if matches!(filter.root().data(), ExprIR::Or) {
++        // One lookup answers every disjunct, so they must share a label.
++        let mut labels = filter
++            .root()
++            .children()
++            .map(|c| seek_index_label(node, &c.clone_as_tree(), graph));
++        let first = labels.next()??;
++        return labels.all(|l| l.as_ref() == Some(&first)).then_some(first);
++    }
++    try_filter_pushdown(node, filter, graph).map(|(label, _, _)| label)
++}
++
+ /// Whether `filter` is `value IN subject.prop` (array-contains): a predicate the index answers
+ /// with possible false positives — a numeric key is shared by `1` and `true`, and an element it
+ /// cannot index is not in its array tree at all — so its filter is always kept.
 ```
 
-**File**: `graph/src/locks.rs` (modified, +3/-2)
+**File**: `proofs/optimizer_rewrites/COVERAGE.tsv` (modified, +13/-3)
 ```diff
-@@ -11,8 +11,9 @@
- //! lock deadlocked the server for six hours (issue #726). That inversion is now
- //! unrepresentable here: this crate cannot take the global lock at all, so code that
- //! holds the indexer lock has nothing to invert against. Host FFI that *does* need
--//! the global lock (the RediSearch index spec lifecycle) documents it as a
--//! precondition and relies on the caller having escalated.
-+//! the global lock (RediSearch index *creation*, which registers a timer) documents
-+//! it as a precondition and relies on the caller having escalated. Index teardown
-+//! needs no global lock (`SpecHandle::drop`).
- //!
- //! ## Two-phase locking (mirrors C's `QueryCtx_AcquireWriteLock`)
- //!
+@@ -1,8 +1,8 @@
+ file	function	line	bucket	lean_name_or_reason
+ # graphblas *_bench.rs: benchmark harnesses, no production callers; listed here so the aggregator can exclude them
+-graph/src/planner/optimizer/mod.rs	collect_expr_variables	92	PROVEN	Passes.routesIdOnly / id_only_routing_unsound (id-only unsound), routesScoped_sound
+-graph/src/planner/optimizer/mod.rs	collect_subtree_variables	179	PROVEN	Helpers.mem_subtreeIds (ids of get_variables); ids only — Passes.id_only_routing_unsound; PushPlan.gv walks through Aggregate into the pre-WITH plan
+-graph/src/planner/optimizer/mod.rs	optimize	201	PROVEN	Sequence.passes_order (exact order, reduce_var_len_path twice), applyAll_sound (each pass preserves R => optimize does), optimize_nested/optimize_plain
++graph/src/planner/optimizer/mod.rs	collect_expr_variables	98	PROVEN	Passes.routesIdOnly / id_only_routing_unsound (id-only unsound), routesScoped_sound
++graph/src/planner/optimizer/mod.rs	collect_subtree_variables	185	PROVEN	Helpers.mem_subtreeIds (ids of get_variables); ids only — Passes.id_only_routing_unsound; PushPlan.gv walks through Aggregate into the pre-WITH plan
++graph/src/planner/optimizer/mod.rs	optimize	207	PROVEN	Sequence.passes_order (exact order, reduce_var_len_path twice; #3889 adds replace_cartesian_with_index_seek: passes_index_seek_before_hash_join), applyAll_sound (each pass preserves R => optimize does), optimize_nested/optimize_plain
+ graph/src/planner/optimizer/absorb_edge_filters_into_vlt.rs	find_descendant_vlt	55	PROVEN	Sequence.findVlt_spec (Filter -> (PathBuilder|Filter)* -> VLT single-child chain)
+ graph/src/planner/optimizer/absorb_edge_filters_into_vlt.rs	absorb_edge_filters_into_vlt	87	PROVEN	Sequence.absorb_correct (per-edge reading, C-parity, through PathBuilder/Filter), keepAll_split, absorbSplit_none; #3335 rebuilds the filter with ExprIR::and_of: AndOf.flat_passes (same Filter verdict, errors included), flat_eval
+ graph/src/planner/optimizer/eliminate_true_filters.rs	is_constant_true	48	PROVEN	ConstEval.constTrue: constEval_sound (constant verdict = runtime verdict on every row: since #2904 every modelled arm, Pow included, propagates child errors), constTrue_eval, constTrue_filter (eliminate_whole_filter with hconst discharged), pow_var_not_constTrue; slow path (substitute_params then the same constant eval) = ConstEval.constTrue_slow (substP; parameters modelled as marked variable leaves) and Helpers.evX_subst (#2902 fixed)
+@@ -80,3 +80,13 @@ graph/src/graph/graphblas/me_delta_bench.rs	per_op	43	NOT COVERED	TEST-ONLY: ben
+ graph/src/graph/graphblas/me_delta_bench.rs	committed_multi	58	NOT COVERED	TEST-ONLY: benchmark harness (me_delta_bench.rs), not production code
+ graph/src/graph/graphblas/me_delta_bench.rs	me_delta_step	84	NOT COVERED	TEST-ONLY: benchmark harness (me_delta_bench.rs), not production code
+ graph/src/graph/graphblas/me_delta_bench.rs	me_delta_attach_vs_seek	140	NOT COVERED	TEST-ONLY: benchmark harness (me_delta_bench.rs), not production code
++graph/src/planner/optimizer/replace_cartesian_with_index_seek.rs	replace_cartesian_with_index_seek	58	NOT COVERED	(#3889) entry point of the new plan rewrite (rebuild); the rewrite (try_seek_rewrite) is not modelled
++graph/src/planner/optimizer/replace_cartesian_with_index_seek.rs	rebuild	67	NOT COVERED	(#3889) tree rebuild applying try_seek_rewrite to Filter->CartesianProduct with no Argument below; the rewrite is not modelled
++graph/src/planner/optimizer/replace_cartesian_with_index_seek.rs	scan_chain	93	NOT COVERED	(#3889) collects the Filter* chain above a childless NodeByLabelScan; part of the unmodelled try_seek_rewrite
++graph/src/planner/optimizer/replace_cartesian_with_index_seek.rs	try_seek_rewrite	117	NOT COVERED	(#3889) moves index-served cross-branch conjuncts onto a scan fed by the other CP branches: needs a plan model with Argument-fed scans, index lookups and per-row error order; not modelled
++graph/src/planner/optimizer/replace_cartesian_with_index_seek.rs	estimate_rows	262	NOT COVERED	(#3889) cost heuristic only: a recursive row estimate over the plan tree and graph label counts; it decides whether to rewrite, never what the rewritten plan returns. Its UNWIND range arm is proven (unwound_len)
++graph/src/planner/optimizer/replace_cartesian_with_index_seek.rs	unwound_len	312	PROVEN	IndexSeek.rangeEst (range arm; list value/literal arms are the list length): rangeEst_exact (exact when the step points towards `to`), rangeEst_upper (always an upper bound), rangeEst_overcount (range(0,-1,2): 1 vs 0), rangeEst_zero
++graph/src/planner/optimizer/replace_cartesian_with_index_seek.rs	has_seekable_equality	335	NOT COVERED	(#3889) cost heuristic for estimate_rows (Eq root, or an AND with an index-served Eq conjunct); no effect on results
++graph/src/planner/optimizer/replace_cartesian_with_index_seek.rs	has_non_deterministic	367	NOT COVERED	(#3889) syntactic walk over the ExprIR tree for non-deterministic or UDF calls; function metadata (FnType, non_deterministic)
 ```
 
-**File**: `graph/src/thread_id.rs` (modified, +1/-3)
+**File**: `proofs/optimizer_rewrites/FalkorOptimizer.lean` (modified, +1/-0)
 ```diff
-@@ -19,9 +19,7 @@ pub fn set_main_thread() {
- /// Returns true if the calling thread is the recorded main thread.
- ///
- /// If `set_main_thread` has not been called yet (e.g. unit tests that build
--/// `graph` without the module shell), this returns `false` so `Drop` impls
--/// take the GIL-acquiring branch — which itself no-ops when the FFI symbols
--/// are unresolved.
-+/// `graph` without the module shell), this returns `false`.
- pub fn is_main_thread() -> bool {
-     MAIN_THREAD_ID
-         .get()
+@@ -15,3 +15,4 @@ import FalkorOptimizer.Sequence
+ import FalkorOptimizer.CallBoundary
+ import FalkorOptimizer.AndOf
+ import FalkorOptimizer.PushPlan
++import FalkorOptimizer.IndexSeek
 ```
 
-**File**: `src/commands/config_cmd.rs` (modified, +2/-2)
+**File**: `proofs/optimizer_rewrites/FalkorOptimizer/IndexSeek.lean` (added, +86/-0)
 ```diff
-@@ -24,8 +24,8 @@
- //!
- //! ASYNC_DELETE and DELAY_INDEXING are settable, as they are in C, but nothing in
- //! this engine reads either one yet: graph teardown is always off-thread (see
--//! `graph_core::graph_free`, which cannot free inline — `Index::drop` takes the GIL,
--//! which the main thread already holds while the free callback runs), and the
-+//! `graph_core::graph_free`, which hands the free to a spawned thread so a large
-+//! graph does not stall the main thread), and the
- //! decoders always build indexes eagerly. So `SET` on them records a value and
- //! changes no behaviour; C reads both.
- //!
+@@ -0,0 +1,86 @@
++/-
++# `replace_cartesian_with_index_seek` (#3889): the `UNWIND range(..)` row estimate
++
++`unwound_len` (`replace_cartesian_with_index_seek.rs`) estimates how many rows
++`UNWIND range(from, to[, step])` yields, from integer constants, as
++`(to - from) / step + 1` (i128, truncating division) clamped at `0`; a zero step
++gives no estimate. `rangeLen` is the length of the list the `range` function
++(`runtime/functions/math.rs`) returns: empty when the step points away from
++`to`, else `|to - from| / |step| + 1`.
++
++* `rangeEst_exact`: when the step points towards `to` (or `from = to`) the
++  estimate is the exact length.
++* `rangeEst_upper`: every estimate is an upper bound on the length (the pass
++  only uses it to bound the rows fed to an index seek).
++* `rangeEst_overcount`: it is not always exact: `range(0, -1, 2)` is empty but
++  is estimated at one row (harmless: an upper bound).
++
++Abstraction: `usize::try_from` cannot fail on a 64-bit target for these values
++(`|to - from| < 2^65`), so the clamp is `Int.toNat`.
++-/
++
++namespace Falkor.Opt.IndexSeek
++
++/-- The step points away from `to`: `range` returns `[]` (math.rs). -/
++def wrongDir (start stop step : Int) : Bool :=
++  (decide (start > stop) && decide (step > 0)) || (decide (start < stop) && decide (step < 0))
++
++/-- Length of `range(start, stop, step)`, `step ≠ 0` (math.rs `range`). -/
++def rangeLen (start stop step : Int) : Nat :=
++  if wrongDir start stop step then 0 else (stop - start).natAbs / step.natAbs + 1
++
++/-- `unwound_len`, `range` arm: `None` on a zero step, else
++`max((to - from) / step + 1, 0)` with truncating division. -/
++def rangeEst (start stop step : Int) : Option Nat :=
++  if step = 0 then none else some ((stop - start).tdiv step + 1).toNat
++
++private theorem tdiv_eq_of_nonneg {d s : Int} (h : 0 ≤ d.tdiv s) :
++    d.tdiv s = ((d.natAbs / s.natAbs : Nat) : Int) := by
++  have h1 : ((d.tdiv s).natAbs : Int) = d.tdiv s := Int.natAbs_of_nonneg h
++  rw [Int.natAbs_tdiv] at h1
++  exact h1.symm
++
++private theorem toNat_succ (n : Nat) : (((n : Int)) + 1).toNat = n + 1 := by
++  have : ((n : Int) + 1) = ((n + 1 : Nat) : Int) := by simp
++  rw [this, Int.toNat_natCast]
++
++/-- **PROVEN**: when the step points towards `to`, the estimate is the exact length. -/
++theorem rangeEst_exact (start stop step : Int) (h0 : step ≠ 0)
++    (hd : wrongDir start stop step = false) :
++    rangeEst start stop step = some (rangeLen start stop step) := by
++  simp only [rangeEst, rangeLen, h0, hd, ite_false]
++  simp only [Bool.false_eq_true, ite_false]
++  have hnn : 0 ≤ (stop - start).tdiv step := by
++    simp [wrongDir] at hd
++    rcases Int.lt_or_gt_of_ne h0 with hs | hs
++    · have : start ≥ stop := by
++        by_cases hc : start < stop
++        · exact absurd hs (Int.not_lt.mpr (hd.2 hc))
++        · exact Int.not_lt.mp hc
++      exact Int.tdiv_nonneg_of_nonpos_of_nonpos (by omega) (by omega)
++    · have : start ≤ stop := by
++        by_cases hc : start > stop
++        · exact absurd hs (Int.not_lt.mpr (hd.1 hc))
++        · exact Int.not_lt.mp hc
++      exact Int.tdiv_nonneg (by omega) (by omega)
++  rw [tdiv_eq_of_nonneg hnn, toNat_succ]
++
++/-- **PROVEN**: every estimate bounds the length of the unwound list from above. -/
++theorem rangeEst_upper (start stop step : Int) (k : Nat)
++    (h : rangeEst start stop step = some k) : rangeLen start stop step ≤ k := by
++  have h0 : step ≠ 0 := by
++    intro hz; simp [rangeEst, hz] at h
++  cases hd : wrongDir start stop step
++  · rw [rangeEst_exact start stop step h0 hd] at h
++    cases h; exact Nat.le_refl _
++  · simp [rangeLen, hd]
++
++/-- The estimate is not always exact: `range(0, -1, 2)` is `[]`, estimated at 1. -/
++theorem rangeEst_overcount : rangeEst 0 (-1) 2 = some 1 ∧ rangeLen 0 (-1) 2 = 0 := by
++  decide
++
++/-- A zero step (a `range` that raises) gives no estimate. -/
++theorem rangeEst_zero (start stop : Int) : rangeEst start stop 0 = none := by
++  simp [rangeEst]
++
++end Falkor.Opt.IndexSeek
 ```
 
-**File**: `src/commands/explain.rs` (modified, +1/-2)
+**File**: `proofs/optimizer_rewrites/FalkorOptimizer/Sequence.lean` (modified, +16/-6)
 ```diff
-@@ -39,8 +39,7 @@ fn explain(
-     query: &str,
- ) -> ValkeyResult {
-     // L1-read for exactly the plan build, through a session: the optimizer consults
--    // the index to pick scans, and a session is what publishes the lock mode that the
--    // GIL lock-order assertion reads (#726).
-+    // the index to pick scans.
-     let Plan { plan, .. } = {
-         let session = QuerySession::begin(graph);
-         session.with_graph(|tg| tg.graph.read().get_plan(query))
+@@ -3,7 +3,8 @@
+ 
+ * `optimize_sound`: if every pass preserves a relation `R` (reflexive,
+   transitive), so does `optimize`; `optimize_nested` — each nested plan is
+-  optimized independently; `passes_order` — the exact order (reduce_var_len_path twice).
++  optimized independently; `passes_order` — the exact order (reduce_var_len_path twice);
++  `passes_index_seek_before_hash_join` (#3889).
+ * `rebuildHJ_id` (no rewrite: a plain copy) and `rebuildHJ_sound` (a
+   congruence `R` + sound local rewrites ⇒ the rebuilt tree is `R`-equal);
+   `rebuildHJ_fires`: the rewrite is applied wherever it fires, also over a
+@@ -22,22 +23,31 @@ namespace Falkor.Opt.Seq
+ 
+ inductive Pass
+   | reduceCount | reduceExpandInto | reduceVarLenPath | eliminateTrueFilters | selectScanNode
+-  | pushFiltersDown | fuseAnonymousTraverse | replaceCartesianWithHashJoin | absorbEdgeFiltersIntoVlt
++  | pushFiltersDown | fuseAnonymousTraverse | replaceCartesianWithIndexSeek | replaceCartesianWithHashJoin
++  | absorbEdgeFiltersIntoVlt
+   | utilizeIndex | utilizeNodeById | reorderLabels | fuseOptionalTraverse | reduceBoundEdge
+   deriving DecidableEq, Repr
+ 
+ /-- mod.rs, in order. -/
+ def passes : List Pass :=
+   [.reduceCount, .reduceExpandInto, .reduceVarLenPath, .eliminateTrueFilters, .selectScanNode,
+-   .pushFiltersDown, .fuseAnonymousTraverse, .replaceCartesianWithHashJoin, .absorbEdgeFiltersIntoVlt,
++   .pushFiltersDown, .fuseAnonymousTraverse, .replaceCartesianWithIndexSeek,
++   .replaceCartesianWithHashJoin, .absorbEdgeFiltersIntoVlt,
+    .reduceVarLenPath, .utilizeIndex, .utilizeNodeById, .reorderLabels, .fuseOptionalTraverse,
+    .reduceBoundEdge]
+ 
+ theorem passes_order :
+-    passes.length = 15 ∧ passes.count .reduceVarLenPath = 2 ∧
++    passes.length = 16 ∧ passes.count .reduceVarLenPath = 2 ∧
+     passes.head? = some .reduceCount ∧ passes.getLast? = some .reduceBoundEdge ∧
+-    passes.idxOf .absorbEdgeFiltersIntoVlt < 9 ∧ passes[9]? = some .reduceVarLenPath ∧
+-    passes.idxOf .fuseOptionalTraverse = 13 := by decide
++    passes.idxOf .absorbEdgeFiltersIntoVlt < 10 ∧ passes[10]? = some .reduceVarLenPath ∧
++    passes.idxOf .fuseOptionalTraverse = 14 := by decide
++
++/-- #3889: `replace_cartesian_with_index_seek` runs once, right before
++`replace_cartesian_with_hash_join`. -/
++theorem passes_index_seek_before_hash_join :
++    passes.count .replaceCartesianWithIndexSeek = 1 ∧
++    passes.idxOf .replaceCartesianWithIndexSeek + 1 = passes.idxOf .replaceCartesianWithHashJoin := by
++  decide
+ 
+ /-- A plan tree whose root may be `NestedPlans`. -/
+ inductive OPlan (P : Type)
 ```
 
 ---
 
-### Incident Patch 2: `f4485cd1` (2026-11-22)
-**Commit Message**: fix: reject an ORDER BY aggregate whose constants differ from the projection's (max(x % 4.0) vs max(x % 3)) (#3254)
+### Incident Patch 2: `4ac2af31` (2026-11-23)
+**Commit Message**: fix: make id() seeks keep exactly the rows their filter keeps (#3017)
 
-* fix: match an ORDER BY aggregate to a projection only when its constants are equal (#3236)
+* fix: make id() seeks keep exactly the rows their filter keeps
 
-expr_ir_eq fell back to comparing only the ExprIR variant, so any two
-constants of different types (Int vs Float, Int vs String, Null vs Int)
-compared equal, and so did the payloads of Quantifier, ListComprehension,
-Reduce, Case, ShortestPath and CompiledRegex. ORDER BY max(n.v % 4.0) was
-bound to a projected max(n.v % 3) and the query sorted by the wrong
-expression instead of failing.
+evaluate_id_filter cast every bound with `id as u64` and errored on any
+non-Int. A negative bound wrapped (`id(n) > -1` -> 0 rows, `id(n) <= -1`
+-> every node), and `id(n) = null / 1.0 / > 1.5` raised "Node ID must be
+an integer" although the replaced Filter returns rows. Bounds are now
+narrowed as integers in saturating i128: floats via ceil/floor, and
+null, NaN and non-numeric bounds match nothing.
 
-Compare constants by value equality, as C's AR_EXP_Equals does with
-SIValue_Compare (3 still matches 3.0, as in C), and compare every payload.
+Closes #3008
+Closes #2266
+Closes #2648
+
+Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+
+* fix(runtime): id seek float bounds follow the f64 cast of the id
+
+The filter a seek replaces casts an integer id to f64 before comparing it with a
+float, which rounds beyond 2^53. Derive the bounds from that cast (searched, as
+it is monotonic) instead of the mathematical ceil/floor, with a unit test.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* style: satisfy strict clippy in id bound tests
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* test: quantifiers that differ only in kind are different ORDER BY aggregates
+* chore: restore the RediSearch submodule pointer to main's
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-Authored-By: Claude Opus 5.5 
 
-* fix: compare mixed Int/Float constants exactly; test: clean up the nodes it creates
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* proofs: drop the raw_exprs_structurally_equal rows (constant comparison changed) to NOT COVERED
-
-Co-Authored-By: Claude Opus 5.5 <
-
-**File**: `graph/src/parser/ast.rs` (modified, +1/-1)
+**File**: `graph/src/runtime/runtime.rs` (modified, +97/-46)
 ```diff
-@@ -569,7 +569,7 @@ pub struct NestedPlanRef<TVar> {
+@@ -444,6 +444,41 @@ impl ReturnNames for DynNode<'_, IR> {
+     }
  }
  
- /// Quantifier types for list predicates (all, any, none, single).
--#[derive(Clone, Debug)]
-+#[derive(Clone, Debug, PartialEq, Eq)]
- pub enum QuantifierType {
-     All,
-     Any,
-```
-
-**File**: `graph/src/planner/binder.rs` (modified, +78/-6)
-```diff
-@@ -36,6 +36,7 @@ use crate::runtime::value::{Value, ValueTypeOf};
- use crate::tree;
- use orx_tree::{Dfs, Dyn, DynNode, DynTree, NodeRef};
- use std::collections::{HashMap, HashSet};
-+use std::mem::discriminant;
- use std::sync::Arc;
- 
- /// The variables of one scope.
-@@ -2869,6 +2870,25 @@ fn replace_agg_subtrees(
-     new_tree
- }
- 
-+/// 2^63: the first float above the `i64` range, and the negation of its first
-+/// float below it (`i64::MIN` is exactly `-2^63`).
-+const I64_RANGE_BOUND: f64 = 9_223_372_036_854_775_808.0;
-+
-+/// Whether two constants are the same value. An `Int` and a `Float` match
-+/// only when the float is that exact integer: `Value`'s own equality rounds the
-+/// integer to `f64`, which would conflate neighbours past 2^53.
-+fn constants_equal(
-+    a: &Value,
-+    b: &Value,
-+) -> bool {
-+    match (a, b) {
-+        (Value::Int(i), Value::Float(f)) | (Value::Float(f), Value::Int(i)) => {
-+            f.fract() == 0.0 && *f >= -I64_RANGE_BOUND && *f < I64_RANGE_BOUND && *f as i64 == *i
++/// The smallest integer `i` in `i64::MIN..=i64::MAX + 1` whose `f64` image is
++/// not below `f`, or `i64::MAX + 1` when none is.
++///
++/// The `Filter` a seek replaces compares an integer id with a float by first
++/// casting the id to `f64`, which is exact up to 2^53 and rounds beyond it, so
++/// the cast is searched (it is monotonic) rather than `f.ceil()` assumed.
++fn first_id_where(reached: impl Fn(f64) -> bool) -> i128 {
++    let (mut lo, mut hi) = (i128::from(i64::MIN), i128::from(i64::MAX) + 1);
++    while lo < hi {
++        let mid = lo + (hi - lo) / 2;
++        if reached(mid as f64) {
++            hi = mid;
++        } else {
++            lo = mid + 1;
 +        }
-+        _ => a == b,
 +    }
++    lo
 +}
 +
- /// Compare two raw (pre-bind) expression trees structurally, ignoring
- /// internal `__agg_order_by_placeholder__` variables that the parser
- /// appends to aggregate functions.
-@@ -2915,15 +2935,44 @@ fn raw_exprs_structurally_equal(
-         b: &ExprIR<Arc<String>>,
-     ) -> bool {
-         match (a, b) {
--            (ExprIR::Variable(va), ExprIR::Variable(vb)) => va == vb,
-+            // Constants match when they are equal values, as in C
-+            // (`SIValue_Compare`): `3` matches `3.0`, `null` matches only
-+            // `null`, and values of unrelated types never match.
-+            (ExprIR::Constant(va), ExprIR::Constant(vb)) => constants_equal(va, vb),
-+            (ExprIR::Variable(va), ExprIR::Variable(vb))
-+            | (ExprIR::ListComprehension(va), ExprIR::ListComprehension(vb)) => va == vb,
-             (ExprIR::FuncInvocation(fa), ExprIR::FuncInvocation(fb)) => fa.name == fb.name,
--            (ExprIR::Constant(Value::String(sa)), ExprIR::Constant(Value::String(sb))) => sa == sb,
--            (ExprIR::Constant(Value::Int(ia)), ExprIR::Constant(Value::Int(ib))) => ia == ib,
--            (ExprIR::Constant(Value::Float(fa)), ExprIR::Constant(Value::Float(fb))) => fa == fb,
--            (ExprIR::Constant(Value::Bool(ba)), ExprIR::Constant(Value::Bool(bb))) => ba == bb,
-             (ExprIR::Property(pa), ExprIR::Property(pb)) => pa == pb,
-             (ExprIR::Parameter(pa), ExprIR::Parameter(pb)) => pa == pb,
--            _ => std::mem::discriminant(a) == std::mem::discriminant(b),
-+            (ExprIR::Case { has_subject: sa }, ExprIR::Case { has_subject: sb }) => sa == sb,
-+            (
-+                ExprIR::Quantifier {
-+                    quantifier_type: qa,
-+                    var: va,
-+                },
-+                ExprIR::Quantifier {
-+                    quantifier_type: qb,
-+                    var: vb,
-+                },
-+            ) => qa == qb && va == vb,
-+            (ExprIR::Reduce(ra), ExprIR::Reduce(rb)) => {
-+                ra.accumulator == rb.accumulator && ra.iterator == rb.iterator
-+            }
-+            (ExprIR::ShortestPath(sa), ExprIR::ShortestPath(sb)) => {
-+                sa.rel_types == sb.rel_types
-+                    && sa.min_hops == sb.min_hops
-+                    && sa.max_hops == sb.max_hops
-+                    && sa.directed == sb.directed
-+            }
-+            (ExprIR::CompiledRegex(ra), ExprIR::CompiledRegex(rb)) => {
-+                ra.kind == rb.kind && ra.regex.as_str() == rb.regex.as_str()
-+            }
-+            // The remaining variants carry no payload, except the graph
-+            // patterns (`Pattern`, `PatternComprehension`, `NestedPlan`),
-+            // which are not compared: their anonymous elements get a fresh
-+            // name per occurrence, so two copies of the same pattern would
-+            // never compare equal.
-+            _ => discriminant(a) == discriminant(b),
-         }
-     }
- 
-@@ -3048,6 +3097,29 @@ mod tests {
-         }
-     }
- 
-+    /// Mixed `Int`/`Float` constants are equal only when the float is exactly
-+    /// that integer, so ids past 2^53 are not conflated.
-+    #[test]
-+    fn constants_equal_compares_mixed_numbers_exactly() {
-+        use super::constants_equal;
-+        use crate::runtime::value::Value;
++/// The smallest id `i` with `(i as f64) >= f`.
++fn first_id_ge(f: f64) -> i128 {
++    if f.abs() < 9_007_199_254_740_992.0 {
++        return f.ceil() as i128;
++    }
++    first_id_where(|x| x >= f)
++}
 +
-+        assert!(constants_equal(&Value::Int(3), &Value::Float(3.0)));
-+        assert!(constants_equal(&Value::Float(3.0), &Value::Int(3)));
-+        assert!(!constants_equal(&Value::Int(4), &Value::Float(3.0)));
-+        assert!(!constants_equal(&Value::Int(3), &Value::Float(3.5)));
-+        assert!(!constants_equal(
-+            &Value::Int(9_007_199_254_740_993),
-+            &Value::Float(9_007_199_254_740_992.0)
-+        ));
-+        assert!(constants_equal(
-+            &Value::Int(9_007_199_254_740_992),
-+            &Value::Float(9_007_199_254_740_992.0)
-+        ));
-+        assert!(!constants_equal(&Value::I
++/// The largest id `i` with `(i as f64) <= f`.
++fn last_id_le(f: f64) -> i128 {
++    if f.abs() < 9_007_199_254_740_992.0 {
++        return f.floor() as i128;
++    }
++    first_id_where(|x| x > f) - 1
++}
++
+ impl<'a> Runtime<'a> {
+     #[inline]
+     pub fn inspect_batch(
+@@ -1441,74 +1476,68 @@ impl<'a> Runtime<'a> {
+         }
+     }
+ 
++    /// Narrow the id range `[0, max_node_id]` by every `id(n) <op> expr`
++    /// conjunct the optimizer folded into a seek, or `None` when no id can
++    /// satisfy them all.
++    ///
++    /// The seek must return exactly the rows the `Filter` it replaced would
++    /// keep, so each bound follows Cypher's comparison of an integer id:
++    /// a negative bound is simply below every id (`id(n) > -1` keeps them
++    /// all, `id(n) <= -1` none), a float compares numerically (`id(n) = 1.0`
++    /// is node 1, `id(n) > 1.5` starts at 2), and a null, NaN or
++    /// non-numeric bound never compares true, so no row survives.
+     pub fn evaluate_id_filter<R: super::row::RowView + ?Sized>(
+         &self,
+         filter: &Vec<(QueryExpr<Variable>, ExprIR<Variable>)>,
+         vars: &R,
+     ) -> Result<Option<RoaringTreemap>, String> {
+-        // Bound the seek by where the id space ends, not by `max_node_id`.
+-        // `max_node_id` is 0 both when id 0 is the only id and when no id was
+-        // ever handed out, so it would make an empty graph seek a node 0 that
+-        // does not exist. With an empty id space `max` is 0 here, and the
+-        // `node_count() == 0` check below returns no ids once every predicate
+-        // has been type-checked.
+-        let mut max = self.graph().node_id_bound().saturating_sub(1);
+-        let mut min = 0u64;
++        // Inclusive bounds, widened to i128 so that any `i64` and any finite
++        // float fit; `±inf` saturates, and the `± 1` below saturates with it.
++        // Bound the seek by where the id space ends, not by `max_node_id`,
++        // which is 0 both when id 0 is the only id and when no id was ever
++        // handed out. With an empty id space `max` is 0 here, and the
++        // `node_count() == 0` check below returns no ids.
++        let mut min = 0i128;
++        let mut max = i128::from(self.graph().node_id_bound().saturating_sub(1));
+         for (expr, op) in filter {
+-            let id = match {
+-                let this = &self;
++            let value = {
+                 let idx = expr.root().idx();
+-                super::eval::ExprEval::from_runtime(this).eval(expr, idx, Some(vars), None)
+-            }? {
+-                Value::Int(id) => id as u64,
+-                _ => {
+-                    return Err(String::from("Node ID must be an integer"));
+-                }
++                super::eval::ExprEval::from_runtime(self).eval(expr, idx, Some(vars), None)
++            }?;
++            // The smallest id `>=` and the largest id `<=` the bound, so that a
++            // non-integer bound turns every operator into an integer one:
++            // `id > 1.5` is `id >= 2`, `id <= 1.5` is `id <= 1`, and
++            // `id = 1.5` has no solution because `ceil > floor`.
++            let (ceil, floor) = match value {
++                Value::Int(id) => (i128::from(id), i128::from(id)),
++                Value::Float(f) if !f.is_nan() => (first_id_ge(f), last_id_le(f)),
++                _ => return Ok(None),
+             };
+             match op {
+                 ExprIR::Eq => {
+-                    if id < min || id > max {
+-                        return Ok(None);
+-                    }
+-                    min = id;
+-                    max = id;
+-                }
+-                ExprIR::Gt => {
+-                    if id >= max {
+-                        return Ok(None);
+-                    }
+-                    min = std::cmp::max(min, id + 1);
+-                }
+-                ExprIR::Ge => {
+-                    if id > max {
+-                        return Ok(None);
+-                    }
+-                    min = std::cmp::max(min
 ```
 
 **File**: `proofs/FINDINGS.md` (modified, +0/-1)
 ```diff
-@@ -147,7 +147,6 @@ IDs are `W2-<area>-<n>`. "C ✓" means C gives the correct answer, so the bug is
- - Minor: `point({latitude:null, longitude:1})` gives a different error message from the same map passed as a value.
- - **W4-plan-1** — `expr_to_plan` keeps null rows under `NOT` (`planner/mod.rs:1421-1427`): `NOT(complex)` is planned as AntiSemiApply, so rows where the inner predicate is null pass. `MATCH (a:N) WHERE NOT (a.v > 1 OR (a)-->()) RETURN count(a)` → Rust 2, C 1. Tests in `lean_planner_build.rs`.
- - **W4-plan-2** — a subscript is never accepted as a boolean (`binder.rs:2304-2314`): `WHERE n.flags[0]` → "Expected boolean predicate", C 1. Same for `true AND l[0]` and `true AND -null`.
--- **W4-plan-3** — ORDER BY aggregate matched to the wrong projection: `expr_ir_eq` (`binder.rs:2653`) falls back to discriminant equality, so all Int/Float/Null/Bool/String constants compare equal. `RETURN … max(n.v % 3) AS m ORDER BY max(n.v % 4.0)` sorts by `m`; C rejects the query. **PR #3011 widens this to non-aggregate ORDER BY, so fix `expr_ir_eq` before or with #3011.**
- - Minor divergences: `false AND (1+2)` → false (C type error); `date({year:2020, month:null})` treats null as absent (C errors); `WITH r WHERE r.w = 1` on a var-length `r` is rejected (C 1).
- - **W4-parse-5 (crash)** — 2000 chained `UNWIND [1] AS xN` clauses crash the server in planning or execution (parse, validate and bind succeed up to 8000); C runs 5000.
- - Lean-only, not confirmed live (the malformed-RDB path): `set_span` stores `n as u16` (`attribute_store.rs:597`, `:608`), so 65,536+ entries per entity wrap in a malformed RDB (the GRAPH.BULK side was fixed by #3063).
+@@ -130,7 +130,6 @@ A bug is **confirmed** only if a repro against the real Rust shows it, and it is
+ 
+ ## Planner & optimizer
+ 
+-- **W2-rewrites-2 / W2-scan-***: id seek with a negative bound, `id(n) > -1`, gives 0 rows where C gives 5 (`evaluate_id_filter`, `runtime.rs:1463`: `id as u64` wraps the negative); a non-integer bound (`id(n)=null`, `=1.0`, `>1.5`) raises an error where C gives 0 rows (`runtime.rs:1464-1466`).
+ - **W2-scan-3**: a computed constant ≥ 2^52 in an index equality returns every node (`utilize_index.rs:895-910`, `is_non_indexable_subexpr`).
+ - **W2-scan-6** (confirmed live on main 43936bab9, 65654bc23 and 256ab4d3f (graph `CREATE (:B {v:1})-[:H]->(:C)`: `WITH` query Rust 0, C 1; `UNWIND` query Rust 1, C 2); this is #2972 (its `UNWIND` row), fix pending in #3099 (open) (2b1e86053), checked on #3099's build: #2972's three repro queries give 1 / 2 / 2 there, as on C, where main gives 0 / 0 / 1): `select_scan_node` prunes a planner scan whole but salvages only its `Filter`s and `Argument` leaf (`is_planner_scan_subtree` `:377` accepts a scan with any child; `argument_leaf_of` `:338`). A `WITH`/`UNWIND` the planner stitched below the scan is lost, and a salvaged filter reading its variable runs unbound. `WITH 1 AS k MATCH (b:B) WHERE b.v = k MATCH (b)-[:H]->(c:C) RETURN count(*)` → Rust 0, C 1; `UNWIND [1,1] AS k MATCH (b:B) WHERE b.v = 1 MATCH (b)-[:H]->(c:C) RETURN count(*)` → Rust 1, C 2 (no `Unwind` in EXPLAIN). Lean `optimizer_scan` `Salvage.premise_fails`, `salvage_loses_row`, `rebuilt_drops_unwind`; it refutes the premise `ScanOrder.salvage_wellScoped` takes, so that premise is now modelled instead of assumed (`Salvage.premise_of_spine` gives a sufficient condition under which it holds; the refutation is the one concrete `Filter → NodeByLabelScan → Unwind` tree, `exChild`).
+ - **W9-scan-1** — `try_filter_pushdown`'s OR branch drops the array-contains filter (`utilize_index.rs:782-801`; same family as #3736, which covers AND and the single atom): with `CREATE INDEX FOR (n:L) ON (n.arr, n.k)` and nodes `{arr:[true],k:0}`, `{arr:[1],k:0}`, `{arr:[2],k:9}`, `MATCH (n:L) WHERE 1 IN n.arr OR n.k = 9 RETURN n.arr, n.k` returns `[true],0` too (no Filter in EXPLAIN); without the index Rust returns only `[1],0` and `[2],9`. C with the index returns the same extra row. Lean `optimizer_scan` `tryPushdown_or_ac_drops_filter`. Fix: keep the original filter when any OR branch is array-contains.
 ```
 
-**File**: `proofs/binder/COVERAGE.tsv` (modified, +61/-60)
+**File**: `proofs/optimizer_rewrites/COVERAGE.tsv` (modified, +1/-1)
 ```diff
-@@ -1,62 +1,63 @@
- file	function	line	bucket	lean_name_or_reason
--graph/src/planner/binder.rs	Scope::get	53	PROVEN	Table.Env.find? (named entries only); Env.pushUnnamed_find, Env.has_iff_find
--graph/src/planner/binder.rs	Scope::contains_key	60	PROVEN	Table.Env.has; Env.has_iff_find
--graph/src/planner/binder.rs	Scope::insert	67	PROVEN	Table.Env.insert; Env.insert_new_eq, Env.insert_new_length, Env.insert_old_length
--graph/src/planner/binder.rs	Scope::remove	75	PROVEN	Table.Env.erase; Env.erase_find, erase_length_le
--graph/src/planner/binder.rs	Scope::lookup_anon	84	NOT COVERED	(#3302): not modelled yet
--graph/src/planner/binder.rs	Scope::push_unnamed	94	PROVEN	Table.Env.pushUnnamed; Env.pushUnnamed_length, Env.pushUnnamed_find, Env.pushUnnamed_views, pushUnnamed_covers
--graph/src/planner/binder.rs	Scope::iter	102	PROVEN	Table.Env.named; Env.keys_named, Env.pushUnnamed_views
--graph/src/planner/binder.rs	Scope::keys	107	PROVEN	Table.Env.keys; Env.keys_named, Env.pushUnnamed_views
--graph/src/planner/binder.rs	Scope::values	112	PROVEN	Table.Env.values; Env.values_length, Env.pushUnnamed_views
--graph/src/planner/binder.rs	Scope::into_values	117	PROVEN	Table.Env.values; Env.values_length; Scopes.foreachRestore_covers
--graph/src/planner/binder.rs	Scope::len	121	PROVEN	Table.Env (List.length counts named + unnamed); Env.values_length, Env.pushUnnamed_length
--graph/src/planner/binder.rs	Scope::retain	126	PROVEN	Table.Env.retain; Env.retain_keeps_unnamed; Scopes.comprehension_cleanup_breaks
--graph/src/planner/binder.rs	Binder::default	171	PROVEN	Stack.default_spec (one empty scope, no parent lookup); #2981 no MATCH relationship aliases yet (BSt.default.matchRels = [])
--graph/src/planner/binder.rs	Binder::bind	197	PROVEN	mergeSV_ge, mergeSV_covers (bind merges live + retired scope_vars)
--graph/src/planner/binder.rs	Binder::scope_vars	212	PROVEN	Stack.scopeVars_lengths (one sorted table per live scope, lengths preserved); sortedScopeVars_spec
--graph/src/planner/binder.rs	Binder::update_all_node_labels	220	PROVEN	accumulate/specScanLabels: labels_agree_match_only, accumulate_bound_match_only, labels_leak_fixed, create_new_keeps_labels (#3049; pre3049_labels_leak historical); REMOVE ignored, RemoveLabels.bug3450_remove_label_kept_across_with (open #3450, property StampedLabelsHeld)
--graph/src/planner/binder.rs	Binder::update_graph_labels	258	PROVEN	Stack.updNode_replace (MATCH: accumulated set), updNode_union (OPTIONAL: own labels kept + accumulated added), updNode_none, updNode_idem
--graph/src/planner/binder.rs	Binder::current_env	337	PROVEN	Stack.BSt.current, current_setCurrent
--graph/src/planner/binder.rs	Binder::current_env_mut	343	PROVEN	Stack.current_setCurrent, setCurrent_outer (only the innermost table changes)
--graph/src/planner/binder.rs	Binder::push_scope	349	PROVEN	Stack.push_current, push_toSt (empty child table, parent = old current, p2c/cfp kept)
--graph/src/planner/binder.rs	Binder::commit_scope	354	PROVEN	Stack.commit_spec
--graph/src/planner/binder.rs	Binder::bind_ir	360	PROVEN	BindIR.bindIR (every arm) : shortestOk_iff, match_shortest_unbound, match_nonbool, match_rel_reused / match_records_rels / relReused_fresh / relReused_unnamed (#2981: a named relationship variable of an earlier MATCH is rejected; aliases are Table.Alias, unnamed ones skipped), optional_labels_restored, mergeOk_*, unwind_order, delete_nonentity, return_star_empty, yieldLoop_ok/yield_duplicate/yield_requires_entity, bindYield_alias/hidden, query_seq, union_columns/union_state; foreachRestore_covers; unionCheck_ok_iff
--graph/src/planner/binder.rs	Binder::bind_call_subquery	844	PROVEN	BindIR.bindCallSubquery: callSubquery_nonreturning, callSubquery_collision, subqueryReturns_noInternal, callSubquery_covers; Scopes.callBody_query_disjoint; #2981 pruneMatchRels_spec (the body's MATCH relationship aliases do not leak out); #3891 pruneVarlen_spec, pruneVarlen_prop_on_path (the body's [r*] marks do not leak out: a later path with the same key still rejects p.prop)
--graph/src/planner/binder.rs	Binder::bind_call_body	971	NOT COVERED	(#3302): not modelled yet
--graph/src/planner/binder.rs	Binder::build_import_projections	1132	NOT COVERED	(#3302): not modelled yet
--graph/src/planner/binder.rs	Binder::validate_import_with	1152	PROVEN	validateImport_ok, validateImport_rejects_expr
--graph/src/planner/binder.rs	Binder::bind_projection	1208	NOT COVERED	(#3302): not modelled yet
--graph/src/planner/binder.rs	Binder::bind_graph	1480	PROVEN	rustBind vs specBind: agree_on_outer_refs, node_attr_on_rel_rust_accepts, node_attr_on_own_rel_accepts, node_attr_later_rel, node_attr_later_node_rejected, foldGrow_mono, q2923_fixed, defRels_named_only (#2981 defRels: named relationship aliases defined first; Elem aliases are Table.Alias), rel_attr_forward_node, self_reference_ok; defineName_ignores_parent; merged_occurrences (endpoint shares the node's merged attrs) abstracted: Elem.node carries every occurrence's attrs
--graph/src/planner/binder.rs	Binder::bind_graph
+@@ -53,7 +53,7 @@ graph/src/planner/optimizer/reduce_var_len_path.rs	path_consumed_through_value_h
+ graph/src/planner/optimizer/replace_cartesian_with_hash_join.rs	replace_cartesian_with_hash_join	80	PROVEN	Passes.vhj_correct, hash_join_drops_row
+ graph/src/planner/optimizer/replace_cartesian_with_hash_join.rs	rebuild_with_hash_joins	87	PROVEN	Sequence.rebuildHJ_id (copy when nothing fires), rebuildHJ_sound (congruence + sound local rewrite vhj_correct), rebuildHJ_fires (no Argument guard since #3930; correlated sub-plans rely on the per-origin join, ops_apply VhjSep.vhjPO_sepT)
+ graph/src/planner/optimizer/replace_cartesian_with_hash_join.rs	try_hash_join_rewrite	108	PROVEN	Passes.vhj_correct (side selection is the coverage test of push_cp_left); #3335 rebuilds the filter with ExprIR::and_of: AndOf.flat_passes (same Filter verdict, errors included), flat_eval
+-graph/src/planner/optimizer/utilize_node_by_id.rs	utilize_node_by_id	93	PROVEN	Passes.idFilter_correct, step_correct, step_no_wrap, id_gt_neg_empty, id_le_neg_all, id_eq_null_errors (with runtime.rs:1309 evaluate_id_filter); Helpers.root_scan_has_no_parent (hazard: parent().unwrap() on a root scan; the W4-plan-4 repro is rejected by validation since #3297)
++graph/src/planner/optimizer/utilize_node_by_id.rs	utilize_node_by_id	93	PROVEN	Passes.idFilter_correct (every integer bound since #3017), step_correct, step_no_wrap, idFilter_nonint, id_gt_neg_all, id_le_neg_none, id_eq_null_empty (with runtime.rs evaluate_id_filter; floats in optimizer_scan IdSeek); Helpers.root_scan_has_no_parent (hazard: parent().unwrap() on a root scan; the W4-plan-4 repro is rejected by validation since #3297)
+ graph/src/graph/graphblas/block_scaling_bench.rs	per_op	32	NOT COVERED	TEST-ONLY: benchmark harness (block_scaling_bench.rs), not production code
+ graph/src/graph/graphblas/block_scaling_bench.rs	spread	47	NOT COVERED	TEST-ONLY: benchmark harness (block_scaling_bench.rs), not production code
+ graph/src/graph/graphblas/block_scaling_bench.rs	block_scaling_zero_cost	72	NOT COVERED	TEST-ONLY: benchmark harness (block_scaling_bench.rs), not production code
 ```
 
-**File**: `proofs/binder/FalkorBinder.lean` (modified, +7/-5)
+**File**: `proofs/optimizer_rewrites/FalkorOptimizer/Passes.lean` (modified, +79/-79)
 ```diff
-@@ -67,7 +67,7 @@ proofs/planner_build `RemoveVerified`; the issue's CREATE/MERGE half does not re
- | `RC`, `bindIR`, `shortestOk`, `mergeOk`, `yieldLoop`, `bindYield`, `bindCallSubquery`, `importProjections`, `createCheck` (BindIR.lean) | `bind_ir` :262, `bind_call_subquery` :716, `build_import_projections` :984, `bind_graph_create` :1562 |
- | `mayBool`, `mayEntity`, `validate` (Types.lean) | `expr_may_return_boolean` :2323, `expr_may_return_entity` :2392, `validate_boolean_operands(_impl)` :2297/2301 |
- | `nodeToValue`, `collectConstArgs`, `foldCall`, `rewriteStruct`, `rewriteRegex` (Fold.lean) | `expr_tree_to_value` :2465, `collect_constant_args` :2497, folding :2124, `rewrite_struct_constructor` :2515, `rewrite_compiled_regex` :2580 |
--| `exprIrEq`, `strip`/`eqS`, `structEq`, `replaceAgg` (AggEq.lean) | `expr_ir_eq` :2682, `nodes_eq` :2652, `raw_exprs_structurally_equal` :2644, `replace_agg_subtrees` :2614 |
-+| `constEq`, `exprIrEq`, `strip`/`eqS`, `structEq`, `replaceAgg` (AggEq.lean) | `constants_equal` :2843, `expr_ir_eq` :2896, `nodes_eq` :2866, `raw_exprs_structurally_equal` :2858, `replace_agg_subtrees` :2809 (#3254) |
+@@ -107,108 +107,108 @@ theorem flip_holds (op : IdOp) (n c : Int) : op.flip.holds n c = op.holdsRev c n
+   cases op <;> simp only [IdOp.flip, IdOp.holds, IdOp.holdsRev] <;>
+     apply Bool.eq_iff_iff.2 <;> simp <;> omega
  
- ## Proven (one line each)
- * `fresh_not_used`, `mint_new_covers`, `reinsert_covers`: minting under a new key is fresh and keeps the table covering.
-@@ -93,7 +93,8 @@ proofs/planner_build `RemoveVerified`; the issue's CREATE/MERGE half does not re
-   `bind_iterable_outer`; per-arm `bindIR` theorems (`shortestOk_iff`, `mergeOk_*`, `yieldLoop_ok`,
-   `callSubquery_covers`, `importProjections_covers`, `createCheck_*`); `mayBool_sound_except`, `mayEntity_eq`;
-   `nodeToValue_sound`/`_complete`, `foldCall_sound`, `rewriteStruct_shape`, `rewriteRegex_spec`;
--  `nodesEq_refl`/`_symm`, `exprIrEq_exact`, `replaceAgg_id`/`_root`.
-+  `nodesEq_refl`/`_symm`, `exprIrEq_exact`, `replaceAgg_id`/`_root`; #3254 `exprIrEq_exact_any_kind`,
-+  `const_kinds_distinguished`, `order_by_float_rejected`/`_equal` (bug 9 fixed).
- * #2845 CALL entry projection (`CallBoundary`, folded in from the retired pr2845_review):
-   `Pr2845.bodyNew_entry`, `importProj_spec`, `entry_ids_below`, `body_own_unbound`,
-   `body_import_value`, `union_branch_label_fixed` (#3027), `pushed_read_unbound` (W6-opt-1).
-@@ -139,13 +140,14 @@ proofs/planner_build `RemoveVerified`; the issue's CREATE/MERGE half does not re
-    `RETURN true AND -null` → Rust error, C `null`. Lean `getElement_rejected`, `negate_rejected`
-    (`mayBool_sound_except`: sound for every other variant). Fix: move `GetElement` (and the null-capable
-    unary/list forms) to the "runtime-typed → true" arm.
--9. **ORDER BY aggregate matched to the wrong projection** (NEW, `expr_ir_eq` binder.rs:2682 falls back to
-+9. **ORDER BY aggregate matched to the wrong projection** (FIXED by #3254: constants compared by value,
-+   quantifier kinds compared; Lean `const_kinds_distinguished`, `order_by_float_rejected`; history below; `expr_ir_eq` binder.rs:2682 falls back to
-    `discriminant` equality, so every two `Constant`s of different kinds — Int vs Float, Null vs Int,
-    Bool vs Int, String vs Int — and any two quantifiers compare equal): `CREATE (:N {g:1, v:3}), (:N {g:2, v:4})`,
-    `MATCH (n:N) RETURN n.g AS g, max(n.v % 3) AS m ORDER BY max(n.v % 4.0)` → Rust rows `[1,0],[2,1]`
-    (sorted by `m`), C `failed to map aggregation expression within ORDER BY clause, please use alias`
-    (openCypher order by `max(v % 4.0)` would be `[2,1],[1,0]`); with `% 4` (Int) Rust also rejects.
--   Lean `order_by_wrong_aggregate`, `const_kinds_conflated`. Fix: compare `Constant` values with
-+   Lean `pre3254_order_by_wrong_aggregate`, `pre3254_const_kinds_conflated`. Fix: compare `Constant` values with
-    type-aware equality (`Value` equality, not discriminant) and compare quantifier kinds.
- 
- ## Spec vs C disagreements (not Rust-vs-C bugs)
-@@ -175,7 +177,7 @@ proofs/planner_build `RemoveVerified`; the issue's CREATE/MERGE half does not re
- * #3011: generalises `replace_agg_subtrees` to `replace_projected_subtrees` (non-aggregate ORDER BY
-   expressions repeating a projection read its alias), guarded by `is_alias_rewritable`, which admits
-   `Constant(Bool|Int|Float|String)` — exactly the kinds `expr_ir_eq` conflates with each other
--  (`const_kinds_conflated`). With it, bug 9 would extend to plain expressions, e.g.
-+  (`pre3254_const_kinds_conflated`; fixed by #3254). Before #3254, bug 9 would extend to plain expressions, e.g.
-   `RETURN n.v % 3 AS k ORDER BY n.v % 4.0` (sorted by `k`). Fix bug 9 first (or compare constants by value).
- 
- ## Gaps
-```
-
-**File**: `proofs/binder/FalkorBinder/AggEq.lean` (modified, +170/-72)
-```diff
-@@ -5,29 +5,34 @@
- | --- | --- |
- | `RV`, `RD`, `RE` | raw (pre-bind) `ExprIR<Arc<String>>` payloads and trees |
- | `disc` | `std::mem::discriminant` of the `ExprIR` variant |
--| `isAggPlaceholder` | binder.rs:2631-2633 |
--| `exprIrEq` | `expr_ir_eq` binder.rs:2665-2683 |
--| `nodesEq` | `nodes_eq` binder.rs:2635-2663 |
--| `structEq` | `raw_exprs_structurally_equal` binder.rs:2627-2684 |
--| `replaceAgg` | `replace_agg_subtrees` binder.rs:2597-2622 |
+-/-- Rust `id as u64`. -/
+-def wrap (i : Int) : Nat := (i % 2 ^ 64).toNat
 -
--Floats are opaque codes compared by a parameter `feq` (f64 `==`, so NaN ≠ NaN).
+-/-- One iteration of the `for (expr, op) in filter` loop (runtime.rs). -/
+-def step (lo hi c : Nat) : IdOp → Option (Nat × Nat)
+-  | .eq => if c < lo ∨ c > hi then none else some (c, c)
+-  | .gt => if c ≥ hi then none else some (max lo (c + 1), hi)
+-  | .ge => if c > hi then none else some (max lo c, hi)
+-  | .lt => if c ≤ lo then none else some (lo, min hi (c - 1))
+-  | .le => if c < lo then none else some (lo, min hi c)
 -
--* `nodesEq_refl` / `nodesEq_symm`: an equivalence when `feq` is.
--* `nodesEq_sound`: equal trees are equal up to placeholders — **only** when no
--  constant pair of different kinds (Int vs Float, Null vs …) and no quantifier
--  /comprehension payloads differ; `const_kinds_conflated` is the counterexample.
--* CONFIRMED bug: `max(n.v % 3)` and `max(n.v % 4.0)` compare equal (the
--  `Constant` fallback compares only the discriminant), so
--  `RETURN n.g AS g, max(n.v % 3) AS m ORDER BY max(n.v % 4.0)` sorts by `m`.
-+| `constEq` | `constants_equal` binder.rs:2843-2853 (`Value` `==` = `compare_value` value.rs:1256) |
-+| `isAggPlaceholder` | binder.rs:2862-2864 |
-+| `exprIrEq` | `expr_ir_eq` binder.rs:2896-2939 |
-+| `nodesEq` | `nodes_eq` binder.rs:2866-2894 |
-+| `structEq` | `raw_exprs_structurally_equal` binder.rs:2858-2942 |
-+| `replaceAgg` | `replace_agg_subtrees` binder.rs:2809-2834 |
+-/-- The whole function. `Ok(None)` = empty; a non-integer value is an error. -/
++/-- One iteration of the `for (expr, op) in filter` loop of `evaluate_id_filter` (runtime.rs,
++PR #3017) for an integer bound `c` (its own ceiling and floor), on the `i128` range. -/
++def step (lo hi c : Int) : IdOp → Int × Int
++  | .eq => (max lo c, min hi c)
++  | .gt => (max lo (c + 1), hi)
++  | .ge => (max lo c, hi)
++  | .lt => (lo, min hi (c - 1))
++  | .le => (lo, min hi c)
 +
-+Floats are opaque codes compared by a parameter `feq` (f64 `==`, so NaN ≠ NaN);
-+`fint f = some i` says the float `f` is exactly the `i64` `i` (`fract() == 0`,
-+in `[-2^63, 2^63)`, `f as i64 == i`). Other constants (lists, maps, temporals, …)
-+are `other ty x`, equal per `oeq ty` within one type and never across types
-+(`Value::order` is injective on types).
++/-- The whole function. `Ok(None)` = empty: a non-integer bound (floats are modelled in
++`proofs/optimizer_scan` `IdSeek`), or a step that leaves `min > max`. At the end the range is
++cast `min as u64 ..= max as u64`. No value is an error since PR #3017. -/
+ def idFilter (maxId : Nat) (fs : List (Val × IdOp)) : Except Err (Option (Nat × Nat)) :=
+   go 0 maxId fs
+ where
+-  go (lo hi : Nat) : List (Val × IdOp) → Except Err (Option (Nat × Nat))
+-    | [] => .ok (some (lo, hi))
++  go (lo hi : Int) : List (Val × IdOp) → Except Err (Option (Nat × Nat))
++    | [] => .ok (some (lo.toNat, hi.toNat))
+     | (v, op) :: rest =>
+       match v with
+       | .int i =>
+-        match step lo hi (wrap i) op with
+-        | none => .ok none
+-        | some (lo', hi') => go lo' hi' rest
+-      | _ => .error .typeMismatch     -- "Node ID must be an integer"
++        let r := step lo hi i op
++        if r.1 > r.2 then .ok none else go r.1 r.2 rest
++      | _ => .ok none
+ 
+ def inRange (r : Option (Nat × Nat)) (n : Nat) : Bool :=
+   match r with
+   | none => false
+   | some (lo, hi) => decide (lo ≤ n ∧ n ≤ hi)
+ 
+-/-- `+ 1` / `- 1` never overflow/underflow: the guards run first. -/
+-theorem step_no_wrap (lo hi c : Nat) (hhi : hi < 2 ^ 64) (op : IdOp) (lo' hi' : Nat)
+-    (h : step lo hi c op = some (lo', hi')) :
+-    (op = .gt → c + 1 < 2 ^ 64) ∧ (op = .lt → 1 ≤ c) := by
+-  cases op <;> simp [step] at h ⊢ <;> omega
+-
+-theorem step_correct (lo hi c n : Nat) (op : IdOp) :
+-    inRange (step lo hi c op) n = (decide (lo ≤ n ∧ n ≤ hi) && op.holds n c) := by
+-  cases op <;> simp only [step] <;> split <;> simp only [inRange, IdOp.holds] <;>
+-    apply Bool.eq_iff_iff.2 <;> simp <;> omega
+-
+-theorem wrap_of_nonneg (i : Int) (h0 : 0 ≤ i) (h1 : i < 2 ^ 64) : (wrap i : Int) = i := by
+-  unfold wrap
+-  rw [Int.emod_eq_of_lt h0 h1]
+-  omega
+-
+-/-- **evaluate_id_filter is correct for integer arguments in `[0, 2^63)`**:
+-a node id `n` is in the seek range iff `n ≤ max_node_id` and every comparison
+-holds. -/
+-theorem idFilter_correct (maxId : Nat) (fs : List (Int × IdOp))
+-    (hfs : ∀ p ∈ fs, 0 ≤ p.1 ∧ p.1 < 2 ^ 63) (n : Nat) :
++/-- The `saturating_add(1)` / `saturating_sub(1)` never saturate on an `i64` bound, and the
++range only narrows, so from `[0, max]` both ends stay in `[0, max]` for the `as u64` casts. -/
++theorem step_no_wrap (lo hi c : Int) (hc : -2 ^ 63 ≤ c ∧ c < 2 ^ 63) (op : IdOp) (lo' hi' : Int)
++    (h : step lo hi c op = (lo', hi')) :
++    (op = .gt → c + 1 < 2 ^ 127) ∧ (op = .lt → -2 ^ 127 ≤ c - 1) ∧ lo ≤ lo' ∧ hi' ≤ hi := by
++  cases op <;> simp only [step, Prod.mk.injEq] at h <;> obtain ⟨rfl, rfl⟩ := h <;>
++    simp <;> omega
 +
-+* `nodesEq_refl` / `nodesEq_symm`: an equivalence when `feq`/`oeq` are.
-+* `exprIrEq_exact`, `exprIrEq_exact_any_kind`: exact on every value-compared payload.
-+* `const_kinds_distinguished`, `order_by_float_rejected`, `order_by_float_equal`:
-+  #3254 fixed W4-plan-3 — `max(n.v % 3)` no longer matches `max(n.v % 4.0)`,
-+  still matches `max(n.v % 3.0)`. The pre-#3254 counterexamples are kept as
-+  `pre3254_const_kinds_conflated` / `pre3254_order_by_wrong_aggregate`.
-+* `patterns_by_variant`: graph patterns are still compared by variant only.
- * `replaceAgg_id`: with no matching aggregate the ORDER BY tree is unchanged;
--  `replaceAgg_sound`: every replacement is justified by `structEq`.
-+  `matchItem_spec`: every replacement is justified by `structEq`.
++theorem step_correct (lo hi c n : Int) (op : IdOp) :
++    decide ((step lo hi c op).1 ≤ n ∧ n ≤ (step lo hi c op).2) =
++      (decide (lo ≤ n ∧ n ≤ hi) && op.holds n c) := by
++  cases op <;> simp only [step, IdOp.holds] <;>
++    apply Bool.eq_iff_iff.2 <;> simp only [decide_eq_true_eq, Bool.and_eq_true, Int.max_le, Int.le_min, beq_iff_eq] <;> omega
++
++/-- **evaluate_id_filter is correct for every integer bound** (PR #3017; it was only for bounds
++in `[0, 2^63)` while the bound was cast `as u64`): a node id `n` is in the seek range iff
++`n ≤ max` and every comparison holds. -/
++theorem idFilter_correct (maxId : Nat) (fs : List (Int × IdOp)) (n : Nat) :
+     (match idFilter maxId (fs.map fun p => (Val.int p.1, p.2)) with
+      | .ok r => inRange r n
+      | .error _ => false) =
+     (decide (n ≤ maxId) && fs.all (fun p => p.2.holds n p.1)) := by
+   unfold idFilter
+-  suffices H : ∀ lo hi, (match idFilter.go lo hi (fs.map fun p => (Val.int p.1, p.2)) with
++  suffices H : ∀ lo hi : Int, 0 ≤ lo → lo ≤ hi →
++     (match idFilter.go lo hi (fs.map fun p => (Val.int p.1, p.2)) with
+      | .ok r => inRange r n | .error _ => false) =
+   
+```
+
+**File**: `proofs/optimizer_rewrites/README.md` (modified, +2/-5)
+```diff
+@@ -51,8 +51,7 @@ That criterion ignores writes. Since 2026-10-20, `PushPlan.lean` also gives the
+ 
+ **4. Is the id seek exact?**
+ 
+-- **For integer bounds in `[0, 2⁶³)`, yes.** `idFilter_correct` proves a node is in the seek range iff it satisfies every comparison, and `step_no_wrap` that the `+1`/`-1` adjustments never overflow.
+-- **Outside that range, no.** `id(n) > -1` returns 0 rows (C: all of them) because the bound is cast `as u64` (`id_gt_neg_empty`). `id(n) = null` raises "Node ID must be an integer" where C returns 0 rows (`id_eq_null_errors`).
++- **Yes, for every bound** (since #3017). `idFilter_correct` proves a node is in the seek range iff it satisfies every comparison, for any integer bound (negative ones included: `id(n) > -1` keeps every node, `id_gt_neg_all`; `id(n) <= -1` none, `id_le_neg_none`, where C returns every node, #2266), and `step_no_wrap` that the `+1`/`-1` adjustments never saturate and the range only narrows. A non-integer bound matches nothing (`idFilter_nonint`, `id_eq_null_empty`). Float bounds are proved in [`../optimizer_scan`](../optimizer_scan) (`IdSeek.seek_sound`).
+ 
+ **5. Does the hash join return the same rows as the filter it replaces?**
+ 
+@@ -87,7 +86,7 @@ Several passes collapse an edge, a bound edge or a variable-length path when nob
+ | `flat_passes` | Rebuilding a filter with `and_of` gives the same verdict, errors included | `AndOf.lean` |
+ | `refsNew_complete`, `refsNew_sound` | The "is this variable read?" oracle is exact per operator | `References.lean` |
+ | `fuse_unread_sound` | Fusion's whole-plan check sees every reader | `References2.lean` |
+-| `idFilter_correct`, `step_no_wrap` | The id seek is exact for integer bounds in `[0, 2⁶³)` | `Passes.lean` |
++| `idFilter_correct`, `step_no_wrap`, `idFilter_nonint` | The id seek is exact for every integer bound; a non-integer one matches nothing | `Passes.lean` |
+ | `vhj_correct` | The hash join equals Filter(=) over CP when key equality is `=` | `Passes.lean` |
+ | `fuse_same_support`, `fuse_optional_correct` | Traversal fusion keeps the rows | `Passes.lean` |
+ | `reorder_preserves`, `reduce_count_correct` | `reorder_labels` and `reduce_count` are exact | `Passes.lean` |
+@@ -111,8 +110,6 @@ Each bug has a Rust repro (`cargo test -p graph --test lean_optimizer_rewrites`,
+ | # | Theorem (counterexample) | What it means | Status |
+ |---|---|---|---|
+ | 1 | `limit_skip_not_excluded`, `limit_not_transparent`, `skip_not_transparent` | A filter is pushed below LIMIT/SKIP: `… ORDER BY n.v LIMIT 2 MATCH (m:N) WHERE n.v > 1 RETURN count(*)` → 10 (openCypher 5) | **Open**, shared with C |
+-| 3 (W2-rewrites-2) | `id_gt_neg_empty`, `id_le_neg_all` | `id(n) > -1` → 0 rows (C: 5); `id(n) <= -1` returns every node on both (#2266) | **Open** |
+-| 4 (W2-rewrites-2) | `id_eq_null_errors` | `id(n) = null`, `= 1.0`, `> 1.5` → "Node ID must be an integer" (C: 0 rows) | **Open** |
+ | 5 (W2-rewrites-3) | `hash_join_drops_row` | The hash join drops Int/Float pairs near 2⁵³: 2 rows where C gives 4 | **Open** |
+ | 7 | `main_misses_call_sibling`, `refsNew_misses_sibling_edges` | An edge read outside the traverse's ancestors is collapsed (#2896, W2-traverse-1) | **Open** (PR #2918 not merged) |
+ | #2556 | `bug2556_filter_below_binding`, `bug2556_t_seeded`, `bug2556_plan` (property `KeepsFiltersBound`) | `… WITH collect(x) AS fs UNWIND fs AS f MATCH (f)<-[:HAS_CREATOR]-(post:Post), (post)-[:HAS_TAG]->(t:Tag {id:100}), (post)-[:HAS_TAG]->(tag:Tag) RETURN count(post)`: `select_scan_node` picks `t` as the best endpoint, seeds it into `initial_bound` although the outer `Unwind` child is kept and no scan for `t` is built, and places `t.id = 100` after the first hop, before `t` is bound. Rust 0, C 3 (the issue's query: a type error). Not `push_filters_down` (`bug2556_push_not_cause`); `bug2556_fixed` gives the C plan | **Open** |
+```
+
+**File**: `proofs/optimizer_scan/COVERAGE.tsv` (modified, +4/-1)
+```diff
+@@ -69,7 +69,10 @@ graph/src/planner/optimizer/utilize_index.rs	is_array_contains	826	PROVEN	Index.
+ graph/src/planner/optimizer/utilize_index.rs	try_filter_pushdown/array-contains	725	PROVEN	IndexArray.utilize_sound_ac (an array-contains conjunct, alone or in an AND, keeps its filter: pushAnd_spec_ac, contains_no_fn, cu_contains); the OR branch keeps none: IndexArray.tryPushdown_or_ac_drops_filter, Cex C12 (confirmed live, shared with C)
+ graph/src/planner/optimizer/utilize_node_by_id.rs	get_id_filter	52	PROVEN	IdSeek.getIdFilter: getIdFilter_spec, getIdFilter_other_scope ((id, scope) since #2390), flip_correct, flip_flip
+ graph/src/planner/optimizer/reorder_labels.rs	reorder_labels	16	PROVEN	ScanOrder.reorderLabels_sound, sortBy_perm
+-graph/src/runtime/runtime.rs	evaluate_id_filter	1444	PROVEN	(support, not a target file) IdSeek.evalIdFilter/evalIdFilterMain; step_none, step_some, step_nonempty, fold_none, fold_some, go_eq_fold, seek_sound, empty_graph_seek_none, idMax_eq_maxNodeId, seek_sound_nonempty (#3394 fixes #3353 / W2-scan-2; #2979 starts at idMax = node_id_bound - 1)
++graph/src/runtime/runtime.rs	evaluate_id_filter	1489	PROVEN	(support, not a target file) IdSeek.evalIdFilter/evalIdFilterMain/bounds/step/fold; cypherHolds_bounds, step_none, step_some, step_nonempty, fold_none, fold_some, fold_bounds, go_eq_fold, seek_sound (every operand: #3017 fixes W2-rewrites-2 / W2-scan-*), id_gt_neg_all, id_le_neg_none, id_nonint_bounds, empty_graph_seek_none, idMax_eq_maxNodeId, seek_sound_nonempty (#3394 fixes #3353 / W2-scan-2; #2979 starts at idMax = node_id_bound - 1)
++graph/src/runtime/runtime.rs	first_id_where	453	PROVEN	IdSeek.firstIdWhere/firstIdWhereRust: firstIdWhere_spec, firstIdWhereRust_iff (least i in i64::MIN..=i64::MAX+1 with a monotone reached(i as f64))
++graph/src/runtime/runtime.rs	first_id_ge	467	NOT COVERED	(#3017) f64 semantics: the fast path relies on f.ceil() being exact below 2^53, the slow path is first_id_where (PROVEN) over the monotone i as f64; no IEEE f64 model in core Lean. Its result is the c of IdSeek.V.float c f
++graph/src/runtime/runtime.rs	last_id_le	475	NOT COVERED	(#3017) f64 semantics: the fast path relies on f.floor() being exact below 2^53, the slow path is first_id_where (PROVEN) minus 1; no IEEE f64 model in core Lean. Its result is the f of IdSeek.V.float c f
+ graph/src/index/mod.rs	build_query_node	1491	PROVEN	(support, not a target file) Index.build (the RediSearch node semantics are the FFI contract, taken as definitions); sel_eq, sel_range, sel_and2, sel_inList, contains_no_fn (ArrayContains arm); also proofs/index_layer buildQ/equal_exact
+ graph/src/planner/optimizer/utilize_index.rs	bare_property_of	360	PROVEN	Index.trySingle inn arm (`match l with .prop k` / `match r with .term (.prop k)`; Paren unwrapping abstracted: the model has no Paren); trySingle_inn_bare; IndexCex C7/C7'/C8 agree
+ graph/src/planner/optimizer/utilize_index.rs	can_seek_index	815	PROVEN	Index.canSeek; canSeek_iff (true exactly when tryPushdown is some: the rewrite utilize applies)
+```
+
+**File**: `proofs/optimizer_scan/OptimizerScan/IdSeek.lean` (modified, +305/-170)
+```diff
+@@ -6,15 +6,16 @@
+ | `Op`, `Op.flip`            | `ExprIR::{Eq,Gt,Ge,Lt,Le}` and the flip table, `planner/optimizer/utilize_node_by_id.rs` |
+ | `getIdFilter`              | `get_id_filter`, `utilize_node_by_id.rs` |
+ | `collectFilters`           | the AND walk of `utilize_node_by_id`, `utilize_node_by_id.rs` |
+-| `asU64`                    | `Value::Int(id) => id as u64`, `runtime/runtime.rs` |
+-| `step`                     | one arm of the `match op`, `runtime/runtime.rs` |
+-| `evalIdFilter`             | the filter loop of `Runtime::evaluate_id_filter`, `runtime/runtime.rs` |
+-| `evalIdFilterMain`         | `Runtime::evaluate_id_filter` on main: the loop, then `node_count() == 0 → Ok(None)`, `runtime.rs` |
++| `V.float c f`              | a `Value::Float` bound, by its `(first_id_ge(f), last_id_le(f))`, `runtime/runtime.rs` |
++| `firstIdWhere`             | `first_id_where`, the binary search over `i64::MIN..=i64::MAX + 1`, `runtime/runtime.rs` |
++| `bounds`                   | the `(ceil, floor)` match of `evaluate_id_filter`: `Int`, non-NaN `Float`, else `return Ok(None)` |
++| `step`                     | one arm of the `match op` on the `i128` range `[min, max]`, `runtime/runtime.rs` |
++| `evalIdFilter`             | the filter loop of `Runtime::evaluate_id_filter` (`if min > max { return Ok(None) }` after each arm), then `insert_range(min as u64..=max as u64)`, `runtime/runtime.rs` |
++| `evalIdFilterMain`         | `Runtime::evaluate_id_filter`: the loop, then `node_count() == 0 → Ok(None)`, `runtime.rs` |
+ | `maxNodeId`                | `Graph::max_node_id`, `graph/graph.rs` (`node_ids.max_id()`, id_space.rs) |
+ | `idMax`                    | the loop's initial `max = node_id_bound().saturating_sub(1)`, `runtime/runtime.rs` (`Graph::node_id_bound` → `IdSpace::bound`, id_space.rs) |
+ | `seek`                     | `NodeByIdSeekOp::next`: range minus `deleted_nodes`, `runtime/ops/node_by_id_seek.rs` |
+ | `G.wf`                     | `Graph::node_count` is the number of live ids below the id bound (`id_space.rs`) |
+-| `labelIdScan`              | `NodeByLabelAndIdScanOp::next`: `get_nodes(labels, min)` ∩ range, `runtime/ops/node_by_label_and_id_scan.rs` |
+ | `reference`                | `Filter(id(n) op v)` over `AllNodeScan` — Cypher semantics, what the rewrite must preserve |
  -/
- namespace FalkorBinder.Agg
+ namespace OptimizerScan.IdSeek
+@@ -41,15 +42,28 @@ theorem flip_correct (op : Op) (x y : Int) : op.holds y x = op.flip.holds x y :=
  
- /-- `Value`s that occur as constants in raw expressions. -/
- inductive RV
--  | null | bool (b : Bool) | int (i : Int) | float (f : Nat) | str (s : String) | other (tag : Nat)
-+  | null | bool (b : Bool) | int (i : Int) | float (f : Nat) | str (s : String) | other (ty : Nat) (x : Nat)
+ theorem flip_flip (op : Op) : op.flip.flip = op := by cases op <;> rfl
+ 
+-/-- The operand of an id comparison, after evaluation. Only `int` is accepted by the runtime. -/
+-inductive V | int (i : Int) | float (f : Int) | null | str (s : String)
++/-- The operand of an id comparison, after evaluation (since PR #3017 every value is accepted).
++A float is represented by where it falls among the `f64` images of the ids: `float c f` is the
++float `v` with `c = first_id_ge(v)`, the least `i` with `(i as f64) >= v`, and
++`f = last_id_le(v)`, the greatest `i` with `(i as f64) <= v` (`runtime.rs`; their search is
++`firstIdWhere`). `nan` is `Value::Float(NaN)`; `null` and `str` stand for every other value. -/
++inductive V | int (i : Int) | float (c f : Int) | nan | null | str (s : String)
    deriving DecidableEq, Repr
  
- inductive RD
-@@ -38,6 +43,10 @@ inductive RD
-   | param (p : String)
-   | quant (kind : Nat) (v : String)
-   | listComp (v : String)
-+  | case (hasSubject : Bool)
-+  | reduce (acc it : String)
-+  | shortest (rels : List String) (minHops : Nat) (maxHops : Option Nat) (directed : Bool)
-+  | regex (kind : Nat) (src : String)
-   | other (tag : Nat)
-   deriving DecidableEq, Repr
+ /-- Cypher's `id(n) op v` for an integer id `x`, as a WHERE predicate (null/false both drop).
+-Int/Float compare numerically; `float f` stands for the float whose value is the integer `f`. -/
+-def cypherHolds (op : Op) (x : Nat) : V → Bool
++Int/Int compare exactly; Int/Float compare `(x as f64)` with the float (`compare_value`,
++`value.rs`). As `i ↦ i as f64` is monotone, `(x as f64) >= v ↔ c ≤ x` and
++`(x as f64) <= v ↔ x ≤ f`, so `>` is `x > f` and `<` is `x < c`. NaN, null and every other
++type never compare true. -/
++def cypherHolds (op : Op) (x : Int) : V → Bool
+   | .int i => op.holds x i
+-  | .float f => op.holds x f
++  | .float c f => match op with
++    | .eq => decide (c ≤ x ∧ x ≤ f)
++    | .gt => decide (x > f)
++    | .ge => decide (x ≥ c)
++    | .lt => decide (x < c)
++    | .le => decide (x ≤ f)
++  | .nan => false
+   | .null => false
+   | .str _ => false
  
-@@ -50,7 +59,8 @@ def RE.d : RE → RD | .node d _ => d
- /-- Variant discriminant: payloads are ignored. -/
- def disc : RD → Nat
-   | .var _ => 0 | .func _ _ => 1 | .const _ => 2 | .prop _ => 3 | .param _ => 4
--  | .quant _ _ => 5 | .listComp _ => 6 | .other t => 7 + t
-+  | .quant _ _ => 5 | .listComp _ => 6 | .case _ => 7 | .reduce _ _ => 8
-+  | .shortest _ _ _ _ => 9 | .regex _ _ => 10 | .other t => 11 + t
+@@ -117,36 +131,127 @@ def collectFilters (alias : Var) : List Cmp → List (E × Op)
+     | some fs => fs
+     | none => []
  
- def placeholder : String := "__agg_order_by_placeholder__"
- 
-@@ -61,9 +71,37 @@ def isAggPlaceholder : RD → Bool
- theorem isAggPlaceholder_iff (d : RD) : isAggPlaceholder d = true ↔ d = .var placeholder := by
-   cases d <;> simp [isAggPlaceholder]
- 
--variable (feq : Nat → Nat → Bool)
-+variable (feq : Nat → Nat → Bool) (fint : Nat → Option Int) (oeq : Nat → Nat → Nat → Bool)
-+
-+/-- `constants_equal`: Int/Float exact, otherwise `Value` equality. -/
-+def constEq : RV → RV → Bool
-+  | .int i, .float f => fint f == some i
-+  | .float f, .int i => fint f == some i
-+  | .null, .null => true
-+  | .bool a, .bool b => a == b
-+  | .int a, .int b => a == b
-+  | .float a, .float b => feq a b
-+  | .str a, .str b => a == b
-+  | .other t a, .other u b => t == u && oeq t a b
-+  | _, _ => false
- 
- def exprIrEq : RD → RD → Bool
-+  | .const a, .const b => constEq feq fint oeq a b
-+  | .var a, .var b => a == b
-+  | .listComp a, .listComp b => a == b
-+  | .func a _, .func b _ => a == b
-+  | .prop a, .prop b => a == b
-+  | .param a, .param b => a == b
-+  | .case a, .case b => a == b
-+  | .quant k a, .quant l b => k == l && a == b
-+  | .reduce a i, .reduce b j => a == b && i == j
-+  | .shortest r mn mx d, .shortest r' mn' mx' d' => r == r' && mn == mn' && mx == mx' && d == d'
-+  | .regex k s, .
+-/-! ### The runtime side -/
+-
+-/-- `id as u64`: two's-complement reinterpretation (`runtime.rs`). -/
+-def asU64 (i : Int) : Nat := (i % (2 ^ 64 : Int)).toNat
+-
+-/-- One arm of `evaluate_id_filter`'s `match op` on the running `[min, max]`
+-(`runtime.rs`). `none` is the early `return Ok(None)`. -/
+-def step : Nat × Nat → Op × Nat → Option (Nat × Nat)
+-  | (mn, mx), (.eq, id) => if id < mn ∨ id > mx then none else some (id, id)
+-  | (mn, mx), (.gt, id) => if id ≥ mx then none else some (max mn (id + 1), mx)
+-  | (mn, mx), (.ge, id) => if id > mx then none else some (max mn id, mx)
+-  | (mn, mx), (.lt, id) => if id ≤ mn then none else some (mn, min mx (id - 1))
+-  | (mn, mx), (.le, id) => if id < mn then no
 ```
 
-**File**: `proofs/binder/README.md` (modified, +3/-2)
+**File**: `proofs/optimizer_scan/README.md` (modified, +8/-7)
 ```diff
-@@ -67,7 +67,8 @@ openCypher binds a pattern left to right, clause by clause.
- | `bind_paren`, `bind_andOr_paren` | `(x)` binds exactly like `x`, and nested AND/OR bind flat (since #3335) | `BindExpr.lean` |
- | `mayBool_sound_except`, `mayEntity_eq` | The boolean and entity type checks, and their exact exceptions | `Types.lean` |
- | `nodeToValue_sound`, `foldCall_sound` | Constant folding gives the same value as evaluation | `Fold.lean` |
--| `exprIrEq_exact` | `expr_ir_eq` is exact on expressions it can compare by value | `AggEq.lean` |
-+| `exprIrEq_exact`, `exprIrEq_exact_any_kind` | `expr_ir_eq` is exact on expressions it can compare by value; since #3254 constants of different kinds never match | `AggEq.lean` |
-+| `order_by_float_rejected`, `order_by_float_equal` | `ORDER BY max(n.v % 4.0)` no longer matches `max(n.v % 3)`; `% 3.0` still does (#3254) | `AggEq.lean` |
- | `importProj_spec`, `entry_ids_below`, `body_import_value` | A `CALL {}` body's entry projection (#2845) imports exactly the listed variables, below the body's own ids | `CallBoundary.lean` |
+@@ -23,8 +23,9 @@ A plan is a membership test on nodes: each scan yields a node at most once, and
  
- ### How `mint_fresh_iff` and the covering lemmas fit together
-@@ -92,7 +93,7 @@ Each bug has a Rust repro (`cargo test -p graph --test lean_binder`, not committ
- | W2-binder-6 | `pre3049_labels_leak`, `labels_leak_fixed` | Labels from CREATE and from pattern comprehensions tighten an earlier MATCH scan: 0 or 1 rows where C returns 3 | **Fixed by PR #3049** (`with_node_labels_rolled_back`) |
- | W2-binder-7 | `defineName_ignores_parent` | A pattern predicate in `WITH … WHERE` rebinds a parent variable as a fresh one: 3 rows where C returns 1 | **Open** (PR #3062 not merged) |
- | W4-plan-2 | `getElement_rejected`, `negate_rejected` | `WHERE n.flags[0]` → "Expected boolean predicate" (C: 1); same for `true AND l[0]` and `true AND -null` | **Open** |
--| W4-plan-3 | `order_by_wrong_aggregate`, `const_kinds_conflated` | `expr_ir_eq` treats all Int/Float/Null/Bool/String constants as equal, so `ORDER BY max(n.v % 4.0)` sorts by the alias of `max(n.v % 3)`; C rejects the query | **Open**; PR #3011 would widen it to non-aggregate ORDER BY, so fix this first |
-+| W4-plan-3 | `pre3254_order_by_wrong_aggregate`, `pre3254_const_kinds_conflated` | `expr_ir_eq` treated all Int/Float/Null/Bool/String constants as equal, so `ORDER BY max(n.v % 4.0)` sorted by the alias of `max(n.v % 3)`; C rejects the query | **Fixed** by #3254 (`order_by_float_rejected`) |
- | W6-opt-1 | `pushed_read_unbound` | Filter push-down gives an OPTIONAL MATCH inside `CALL {}` the outer query's ids: "Variable n not found" where C returns rows | **Open** |
- | #1334 | `bug1334_pattern_predicate_declares_var` (property `PatternPredDeclaresNothing`) | A WHERE pattern predicate may mint a new named variable: `MATCH (n0) WITH * WHERE () -- (n1) RETURN *` binds and returns every `n0`; C rejects it (issue #1334; the C error message is not recorded here) | **Open** |
- | #3450 | `bug3450_remove_label_kept_across_with` (property `StampedLabelsHeld`, `RemoveLabels.lean`) | `REMOVE a:A` leaves `A` in the accumulated label set, which `WITH a` copies and `update_all_node_labels` stamps on the next MATCH: `MATCH (a:A) REMOVE a:A WITH a MATCH (a)-[:R]->(b)` gives 0 rows, C 1. The fixed stamp `specStamp` satisfies the property (`specStamp_held`). The issue's CREATE/MERGE back-propagation half does not reproduce | **Open** |
-```
-
-**File**: `tests/test_e2e.py` (modified, +40/-0)
-```diff
-@@ -2057,6 +2057,46 @@ def test_optional_match_null_merge():
+ **2. Does the id seek return the same nodes as `WHERE id(n) …`?**
  
+-- **With non-negative integer bounds below 2⁶³, yes, on any well-formed graph.** `seek_sound` (hypotheses: `g.wf` and every bound `< 2^63`) proves `NodeByIdSeek` equals `Filter(id(n) op v …)` over `AllNodeScan` on every well-formed graph (`node_count` counts the live ids), including one that never held a node.
+-- `step_some`, `step_none` and `step_nonempty` prove each arm of `evaluate_id_filter` keeps exactly the ids that satisfy it, and the running range never inverts.
++- **Yes, for every bound, on any well-formed graph** (since #3017). `seek_sound` (hypothesis: `g.wf`) proves `NodeByIdSeek` equals `Filter(id(n) op v …)` over `AllNodeScan` on every well-formed graph (`node_count` counts the live ids), including one that never held a node, for any operand: negative or huge integers, floats, NaN, null and other types (`id_gt_neg_all`, `id_le_neg_none`, `id_nonint_bounds`).
++- A float bound is modelled by its `(first_id_ge, last_id_le)` pair; `cypherHolds_bounds` proves that pair decides every comparison. `firstIdWhere_spec` / `firstIdWhereRust_iff` prove the binary search `first_id_where` returns the least id where a monotone predicate holds. The `f64` fast paths of `first_id_ge`/`last_id_le` (`ceil`/`floor` below 2⁵³) are not modelled (no IEEE `f64` in core Lean).
++- `step_some`, `step_none` and `step_nonempty` prove each arm of `evaluate_id_filter` keeps exactly the ids that satisfy it, that the `min > max` check is exact, and that the range only narrows; `fold_bounds` that the final `min as u64 ..= max as u64` casts are exact.
+ - On a graph that never held a node, no range is returned when `node_count() == 0` (`empty_graph_seek_none`).
  
+ **3. Does reordering the hops keep the rows?**
+@@ -54,7 +55,8 @@ A plan is a membership test on nodes: each scan yields a node at most once, and
+ | `utilizeIndex_sound`, `tryIndexRewrite_sound` | The whole `utilize_index` driver, including its fixed-point loop, preserves results | `Cleanup.lean` |
+ | `overPending_sound` | Over `IncludePending` the kept Filter makes the index scan exact for any set of pending writes | `Cleanup.lean` |
+ | `prune_sound` | Dropping the AllNodeScan child of an edge index scan keeps the edges | `Cleanup.lean` |
+-| `seek_sound` | NodeByIdSeek equals the id filter on every well-formed graph (empty included) with bounds in `[0, 2⁶³)` | `IdSeek.lean` |
++| `seek_sound` | NodeByIdSeek equals the id filter on every well-formed graph (empty included), for every bound | `IdSeek.lean` |
++| `firstIdWhere_spec` | `first_id_where` finds the least id where a monotone predicate holds | `IdSeek.lean` |
+ | `empty_graph_seek_none` | A graph that never held a node seeks nothing | `IdSeek.lean` |
+ | `order_sound`, `run_perm`, `swap_holds` | Hop ordering and orientation keep the rows | `ScanOrder.lean` |
+ | `place_wellScoped`, `salvage_wellScoped` | Filters are placed after their variables are bound, given an honest seed | `ScanOrder.lean` |
+@@ -79,11 +81,10 @@ Each bug has a Rust repro (`cargo test -p graph --test lean_optimizer_scan`, not
+ | W2-scan-3 | `IndexCex` C4 | A computed constant ≥ 2⁵² (`n.v = 4503599627370495 + 4503599627370495 + 3`): the Filter is dropped and the op falls back to a label scan, returning every node (C: 0) | **Open** |
+ | W2-scan-6 (#2972) | `Salvage.premise_fails`, `salvage_loses_row`, `rebuilt_drops_unwind` | The pass prunes a planner scan whole but salvages only its `Filter`s and `Argument` leaf, so an `Unwind`/`WITH` child is lost: `WITH 1 AS k MATCH (b:B) WHERE b.v = k MATCH (b)-[:H]->(c:C) RETURN count(*)` returns 0 (C 1); `UNWIND [1,1] AS k MATCH (b:B) WHERE b.v = 1 MATCH (b)-[:H]->(c:C) RETURN count(*)` returns 1 (C 2) | **Open**, fix in PR #3099 |
+ | W2-scan-7 | `IndexArray.tryPushdown_or_ac_drops_filter`, `Cex C12` | The OR branch of `try_filter_pushdown` keeps no filter for an array-contains disjunct (the same family as #3736, which fixed AND and the single atom): `MATCH (n:L) WHERE 1 IN n.arr OR n.k = 9` on an index over `(arr, k)` also returns `{arr:[true], k:0}`, because Bool and Int share the numeric key. Rust with index and C with index return it; openCypher and Rust without an index do not. Fix: keep the filter whenever an OR branch `is_array_contains` | **Open** |
+-| — | `IdSeek.lean` examples on `g5` | `id(n) > -1` returns 0 rows, and non-integer bounds error. Reported as bugs 3–4 of [`../optimizer_rewrites`](../optimizer_rewrites) | **Open** |
  
-+def test_order_by_aggregate_matches_projection_only_on_equal_constants():
-+    """An ORDER BY aggregate binds to a projected aggregate only when their
-+    constants are equal values, as in C (#3236): `3` matches `3.0`, but `4.0`
-+    does not match `3`, and `null` does not match `7`."""
-+    query("UNWIND range(1, 6) AS i CREATE (:N {g: i % 2, v: i})", write=True)
-+    try:
-+        for order_by in [
-+            "max(n.v % 4.0)",
-+            "max(coalesce(n.x, null))",
-+            "max(n.v % '3')",
-+        ]:
-+            try:
-+                common.g.query(
-+                    f"MATCH (n:N) RETURN n.g AS g, max(n.v % 3) AS m, max(coalesce(n.x, 7)) AS c ORDER BY {order_by}"
-+                )
-+            except ResponseError as e:
-+                assert "failed to map aggregation expression" in str(e), order_by
-+            else:
-+                assert False, f"ORDER BY {order_by} should be rejected"
-+
-+        for order_by in ["max(n.v % 3)", "max(n.v % 3.0)"]:
-+            res = query(
-+                f"MATCH (n:N) RETURN n.g AS g, max(n.v % 3) AS m ORDER BY {order_by} DESC, g"
-+            )
-+            assert res.result_set == [[0, 2], [1, 2]], order_by
-+
-+        # quantifiers that differ only in kind are different aggregates
-+        projected = "max(all(x IN [1, 2] WHERE x > 1))"
-+        query_exception(
-+            f"MATCH (n:N) RETURN n.g AS g, {projected} AS m ORDER BY max(any(x IN [1, 2] WHERE x > 1))",
-+            "failed to map aggregation expression",
-+        )
-+        res = query(
-+            f"MATCH (n:N) RETURN n.g AS g, {projected} AS m ORDER BY {projected}, g"
-+        )
-+        assert res.result_set == [[0, False], [1, False]]
-+    finally:
-+        query("MATCH (n:N) DETACH DELETE n", write=True)
-+
-+
- def test_call_optional_match_filter_not_pushed_with_outer_variable_ids():
-     """A filter in an OPTIONAL MATCH inside a CALL {} body must stay on the
-     body's own rows: variable ids are per scope, so the body's `n` must not
+ The `IndexCex.lean` examples also reproduce bugs owned by [`../index_layer`](../index_layer): a folded `date()` constant returns every node (C3); `IN [.., date()]` drops the item (C9); multi-label AND/OR (C5, C6); Bool/Int conflation (C1, shared with C).
+ 
+-- `evaluate_id_filter` stops at the first empty conjunct, so a type error in a later one is masked: `id(n) = 100 AND id(n) = 'x'` returns 0 rows, swapped
 ```
 
 ---
 
-### Incident Patch 3: `256ab4d3` (2026-11-22)
-**Commit Message**: fix: a write that keeps losing its version runs as a writer after a bounded retry (#3559) (#3578)
+### Incident Patch 3: `4c108894` (2026-11-23)
+**Commit Message**: fix(optimizer): per-row id seek for UNWIND + consecutive MATCH on id() (#3963)
 
-* fix: a write that keeps losing its version runs as a writer after 3 retries (#3559)
+* optimizer: seek by id per row for UNWIND + consecutive MATCH on id() (#3889)
 
-A queued write matches as a reader and is retried when another writer
-commits underneath it. The loop had no bound, and each retry restarted
-TIMEOUT and the latency clock, so under a steady stream of inline writes
-it never finished (C holds the write lock for the whole query).
+`UNWIND $rows AS e MATCH (a) WHERE id(a) = e.s MATCH (b) WHERE id(b) = e.d`
+is the id() form of #3887: the second MATCH is a Cartesian Product branch,
+and `replace_cartesian_with_hash_join` turned it into a Value Hash Join over
+an All Node Scan (or a label scan), so every batch read the whole graph.
 
-After MAX_STALE_RETRIES stale runs the write runs as a writer (GIL and
-write lock first, re-authorized like an escalation), which cannot be made
-stale. All attempts share one clock, so TIMEOUT and the slow log count
-from the first attempt.
+`replace_cartesian_with_index_seek` now also takes a `[Filter ->]
+AllNodeScan` branch, and a branch whose cross-branch conjuncts include
+`id(b) = key` with a key that reads only the other branches. The id()
+comparisons move onto the scan, fed by the other branches, and
+`utilize_node_by_id` makes it a NodeByIdSeek or a Node By Label and ID
+Scan. The same key rules apply as for the index seek. A scan with more
+than one label keeps the hash join, since its per-row lookup intersects
+the label matrices.
 
-Closes #3559
+An id lookup gets its own cost constant: the hash join is kept when
+rows * 4 > nodes scanned, measured on graphs of 1k to 200k nodes.
+`estimate_rows` counts a scan under an `id(n) = key` filter as one row
+per input row. The pass rewr
 
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-* fix: escalate sooner after a slow stale run and bound GRAPH.BULK's retry (#3559)
-
-Measured with 30 samples: each stale run of the starved write wastes about
-39 ms, so three of them cost more than C's single pass. A stale run that
-took 10 ms or more is now not retried as a reader. GRAPH.BULK's build loop
-had the same unbounded retry and now falls back to a writer the same way.
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED
-
-**File**: `proofs/redis_layer/COVERAGE.tsv` (modified, +73/-72)
+**File**: `bench/src/falkorbench/queries.py` (modified, +21/-0)
 ```diff
-@@ -120,57 +120,57 @@ src/graph_core.rs	ThreadedGraph::new	603	PROVEN	GraphCore.TG.new: TG.new_idle (u
- src/graph_core.rs	ThreadedGraph::from_mvcc	620	PROVEN	GraphCore.TG.fromMvcc: TG.new_idle (unbounded write channel, #3014)
- src/graph_core.rs	execute_query	639	PROVEN	RoQuery.ro_never_writes, GraphCore.executeQuery/admissionKept: ro_write_rejected, read_releases_admission (#3014)
- src/graph_core.rs	execute_profile	721	PROVEN	GraphCore.profileDetect/admissionKept: profileDetect_write, read_releases_admission (#3014)
--src/graph_core.rs	execute_query_write	783	PROVEN	GraphCore.executeWrite (#3290 retry loop): executeWrite_first, stale_run_silent
--src/graph_core.rs	try_query_write	833	PROVEN	GraphCore.writeSteps/abandonSteps (#3657 infallible write_version, Stale on abandon; #3850/#3851 refused finish_write abandons and fails): reply_after_commit, reply_only_after_commit, failed_no_commit, unkeyed_refused, stale_run_silent, unregistered_not_stale
--src/graph_core.rs	WriteAttempt::from	822	PROVEN	GraphCore.Attempt.ofString: ofString_not_stale
--src/graph_core.rs	reply_profile	933	PROVEN	GraphCore.profileDepth/profileOps (#2390: all ops, plain depth): profileDepth_eq, profileDepth_commit_counts, profileOps_all
--src/graph_core.rs	BlockedClient::new	970	AXIOMATISED	RM_BlockClient/UnblockClient + BlockedClientMeasureTime* (Redis API)
--src/graph_core.rs	BlockedClient::drop	978	AXIOMATISED	RM_BlockClient/UnblockClient + BlockedClientMeasureTime* (Redis API)
--src/graph_core.rs	compute_effective_timeout	996	PROVEN	Args.rustTimeout: rustTimeout_write_pq, rustTimeout_rw_uniform (#2998 fixed by #3000 2e8172d76), rustTimeout_le_max, rustTimeout_pos, rustTimeout_exceeds, rustTimeout_write_ignores_pq
--src/graph_core.rs	reply_invalid_graph_version	1035	PROVEN	GraphCore.invalidVersionBytes: invalidVersion_shape
--src/graph_core.rs	admit	1049	PROVEN	GraphCore.admitQ: admit_bounded, capped (QueueSlot::try_acquire; never waits)
--src/graph_core.rs	query_mut	1060	PROVEN	GraphCore.dispatch/admitQ (#3014): stale_version, inline_uncapped, capped, admit_bounded
--src/graph_core.rs	query_sync	1264	PROVEN	GraphCore.syncOutcome/logsTelemetry (#3844 log_query): sync_err, sync_write_logs, sync_read_logs, sync_unserved_silent, sync_log_only
--src/graph_core.rs	profile_mut	1400	PROVEN	GraphCore.profileOutcome/dispatch (admitQ, #3014): profile_write_runs_as_write, profile_read_replied, capped
--src/graph_core.rs	profile_sync	1501	PROVEN	GraphCore.profileOutcome: profile_write_runs_as_write, profile_read_replied
--src/graph_core.rs	finish_write	1572	PROVEN	GraphCore.writeSteps (commit if escalated, else nothing: the version drops with the runtime, #3657; escalated: published under GraphCore.keyOfWrite's key, or refused, #3850/#3851): reply_after_commit, reply_only_after_commit, unkeyed_refused, unescalated_silent
--src/graph_core.rs	abandon_write	1607	PROVEN	GraphCore.abandonSteps (resync only if version_is_current, nothing to release, #3657): failed_no_commit, stale_run_silent
--src/graph_core.rs	commit_and_replicate	1623	PROVEN	GraphCore.commitSteps: modified_replicates_or_warns, unmodified_silent; replicated key bytes = utf8(lossy(key)): KeyName.bug2653_nonutf8_key_mangled (#2653)
--src/graph_core.rs	process_write_queued_query	1701	PROVEN	GraphCore.loopExit: loopExit_safe (no stranded message on exit); slot dropped on dequeue: SearchConcurrency Pool.paths_release_once
--src/graph_core.rs	CtxSink::replicate	1849	PROVEN	GraphCore.replicateArgv: replicateArgv_shape
--src/graph_core.rs	graph_free	1862	PROVEN	GraphCore.free: free_unregisters, free_keeps_others; Telemetry.graphFree (#3844 queues the freed keys' streams): graphFree_registry, graphFree_queues, freed_stream_stripped
-+src/graph_core.rs	execute_query_write	793	PROVEN	GraphCore.executeWrite (#3290 retry loop): executeWrite_first, stale_run_silent; GraphCore.loopW/escalateNext (#3559 bounded retry): escalate_after_max, reader_before_max, loopW_readers, loopW_length, loopW_bounded, loopW_has_result, loopW_decided, loopW_not_stale, loopW_first (writer runs never stale: QuerySession.writer_never_stale)
-+src/graph_core.rs	try_query_write	886	PROVEN	GraphCore.writeSteps/abandonSteps (#3657 infallible write_version, Stale on abandon; #3850/#3851 refused finish_write abandons and fails; #3559 one timeout for all runs: a run past it fails before forking, no write step): reply_after_commit, reply_only_after_commit, failed_no_commit, unkeyed_refused, stale_run_silent, unregistered_not_stale; GraphCore.resolveT/runBudget (#3559): resolveT_kept, runBudget_le, runBudget_unlimited
-+src/graph_core.rs	WriteAttempt::from	864	PROVEN	GraphCore.Attempt.ofString: ofString_not_stale
-+src/graph_core.rs	reply_profile	1001	PROVEN	GraphCore.profileDepth/profileOps (#2390: all ops, plain depth): profileDepth_eq, profileDepth_commit_counts, profileOps_all
-+src/graph_core.rs	BlockedClient::new	1038	AXIOMATISED	RM_BlockClient/UnblockClient + BlockedClientMeasureTime* (Redis API)
-+src/graph_core.rs	BlockedClient::drop	1046	AXIOMA
+@@ -15,6 +15,15 @@
+ 
+ from falkorbench.model import Query as Q
+ 
++
++def _unwind_edges(rows: int, match: str) -> str:
++    """A batch of `rows` edges, each between the nodes `match` finds for one
++    row `e` of `$rows`, created and deleted again so the graph stays as it was.
++    """
++    batch = ", ".join(f"{{s: {i}, d: {(i + 1) % 1000}}}" for i in range(rows))
++    return f"CYPHER rows=[{batch}] UNWIND $rows AS e {match} CREATE (a)-[r:UWE]->(b) WITH r DELETE r"
++
++
+ SETUP = [
+     "CREATE INDEX FOR (p:Person) ON (p.id)",
+     "UNWIND range(0, 9999) AS i CREATE (:Person {id: i, name: 'p' + toString(i)})",
+@@ -652,6 +661,18 @@
+     # Upper-bound-only index ranges (Le on node index, Lt on edge index).
+     Q("index le range",       False, "MATCH (p:Person) WHERE p.id <= 50 RETURN count(p)"),
+     Q("edge index lt range",  False, "MATCH ()-[r:SIMILAR]->() WHERE r.weight < 5 RETURN count(r)"),
++    # Batched edge loading: `UNWIND $rows` and two consecutive MATCH clauses
++    # that each find one endpoint, by an indexed property (#3887) or by id().
++    # The later MATCH shares no variable with the earlier one, so it is a
++    # Cartesian Product branch, and a Value Hash Join over a scan of the whole
++    # label (or of every node) once cost every such query a full scan, however
++    # small the batch. `id seek` has no UNWIND and `create edge` finds both
++    # endpoints in one MATCH, so neither showed it. Endpoint ids stay under
++    # 1,000: the first 1,000 nodes are :Person here and under CG_SETUP.
++    Q("UNWIND index MATCH edge 1 row",    True, _unwind_edges(1, "MATCH (a:Person {id: e.s}) MATCH (b:Person {id: e.d})"), cg=True),
++    Q("UNWIND index MATCH edge 100 rows", True, _unwind_edges(100, "MATCH (a:Person {id: e.s}) MATCH (b:Person {id: e.d})"), cg=True),
++    Q("UNWIND id MATCH edge 1 row",       True, _unwind_edges(1, "MATCH (a) WHERE id(a) = e.s MATCH (b) WHERE id(b) = e.d"), cg=True),
++    Q("UNWIND id MATCH edge 100 rows",    True, _unwind_edges(100, "MATCH (a) WHERE id(a) = e.s MATCH (b) WHERE id(b) = e.d"), cg=True),
+ 
+     # ---- inline edge predicate, swept by selectivity -----------------------
+     # `absorb_edge_filters_into_traverse` moves these into the CondTraverse so
 ```
 
-**File**: `proofs/redis_layer/RedisLayer/Commands2.lean` (modified, +1/-1)
+**File**: `graph/src/planner/optimizer/mod.rs` (modified, +22/-1)
 ```diff
-@@ -15,7 +15,7 @@ import RedisLayer.GraphCore
- | `applyCons`, `consWorker` | `apply_constraint` `:599`; `graph_constraint` pool path `:547-585` (#3819) |
- | `recordShape`             | `record.rs` `record_mut` `:44`, `graph_record` `:180` |
- | `copyOut`                 | `copy.rs` `graph_copy` `:27` (`pipe`/`fork`/`_exit`/`waitpid` are libc, AXIOMATISED) |
--| `bulkFlow`, `heldReplicate`, `heldRekey`, `bulkArgv`, `discardCreated`, `maybeYield`, `publishOps`, `edgeRecords` | `bulk_insert.rs` `:247-1125` (#3863: `discard_created_graph` `:296`, `HeldArgs::rekey` `:396`, the worker's `key_of_write` `:1026`) |
-+| `bulkFlow`, `heldReplicate`, `heldRekey`, `bulkArgv`, `discardCreated`, `maybeYield`, `publishOps`, `edgeRecords` | `bulk_insert.rs` `:249-1148` (#3863: `discard_created_graph` `:298`, `HeldArgs::rekey` `:398`, the worker's `key_of_write` `:1048`; #3559 bounded stale retry escalates to `begin_writer_checked`, a refusal is the same failure path) |
- | `getNames`, `getOne`, `asI64`, `asU64` | `config_cmd.rs` `config_get_one` `:57`, `ConfigValue::as_i64/as_u64` `:294-306` |
- -/
- namespace RedisLayer.Commands
-```
-
-**File**: `proofs/redis_layer/RedisLayer/GraphCore.lean` (modified, +191/-4)
-```diff
-@@ -12,8 +12,10 @@ import RedisLayer.Resp
- | `invalidVersionBytes`       | `reply_invalid_graph_version` `:1038` |
- | `profileDepth`, `profileOps`| `reply_profile` `:936` (all ops, plain depth, since #2390) |
- | `isWrite`, `profileDetect`, `admissionKept` | `execute_query` `:636` / `execute_profile` `:722` write detection and `admission.take()` |
--| `writeSteps`                | `try_query_write` `:834`, `finish_write` `:1568`, `abandon_write` `:1603`, `commit_and_replicate` `:1619` |
--| `executeWrite`, `Attempt`   | `execute_query_write` `:784` (retry loop, #3290), `WriteAttempt::from` `:823` |
-+| `writeSteps`                | `try_query_write` `:886`, `finish_write` `:1633`, `abandon_write` `:1668`, `commit_and_replicate` `:1684` |
-+| `executeWrite`, `Attempt`   | `execute_query_write` `:793` (retry loop, #3290), `WriteAttempt::from` `:863` |
-+| `WTimeout`, `resolveT`, `runBudget` | `try_query_write` `:886` one timeout for all runs (`WriteTimeout` `:870`, #3559) |
-+| `loopW`, `escalateNext`, `Run` | `execute_query_write` `:793` bounded retry (#3559), `MAX_STALE_RETRIES` `:847`, `SLOW_STALE_RUN` `:854` |
- | `admitQ`, `dispatch`        | `admit` `:1052`, `query_mut` `:1063` (#3014) |
- | `syncOutcome`, `logsTelemetry` | `query_sync` `:1264` (`log_query`, #3844), `dispatch::logs_telemetry` `dispatch.rs:63`, `profile_sync` `:1501`, `profile_mut` `:1400` |
- | `loopExit`                  | `process_write_queued_query` `:1697` |
-@@ -296,12 +298,13 @@ theorem unescalated_silent (k h m b : Bool) :
+@@ -67,12 +67,13 @@ mod utilize_index;
+ mod utilize_node_by_id;
  
- `try_query_write` returns `WriteAttempt::Stale` only from the error arm after
- `abandon_write` when `session.is_stale()` — nothing mutated, published or replied — and the
--loop re-runs on a fresh session (`QuerySession::begin_with`). -/
-+loop re-runs on a fresh session (`QuerySession::begin_with`, or `begin_writer_checked` once the
-+bounded retry below escalates, #3559). -/
+ use std::collections::{HashMap, HashSet};
++use std::sync::Arc;
  
- inductive Attempt | stale | failed (e : String) | ok
-   deriving DecidableEq, Repr
+ use orx_tree::{Bfs, DynNode, DynTree, NodeRef};
  
--/-- `impl From<String> for WriteAttempt` (`:823`): every other error is `Failed`. -/
-+/-- `impl From<String> for WriteAttempt` (`:863`): every other error is `Failed`. -/
- def Attempt.ofString (e : String) : Attempt := .failed e
- theorem ofString_not_stale (e : String) : Attempt.ofString e ≠ .stale := by simp [Attempt.ofString]
- 
-@@ -323,6 +326,190 @@ nothing, and it committed and replied nothing. -/
- theorem stale_run_silent (w k m b : Bool) :
-     writeSteps false w k false m b = [] := by simp [writeSteps, abandonSteps]
- 
-+/-! ### The bounded retry (#3559)
-+
-+`execute_query_write` (`:793`) counts stale runs; after `MAX_STALE_RETRIES` (`:847`) of them, or
-+at once after a stale run that took `SLOW_STALE_RUN` (`:854`, 10 ms) or longer, the next run
-+begins as a writer (`QuerySession::begin_writer_checked`) instead of a reader
-+(`begin_with`). A run is a function of the mode it begins in; a refused
-+`begin_writer_checked` is that run's `failed` outcome (`map_err(…)?`). Times are nanoseconds. -/
-+
-+def maxStaleRetries : Nat := 3
-+def slowStaleRun : Nat := 10000000
-+
-+/-- `stale_runs >= MAX_STALE_RETRIES || wasted >= SLOW_STALE_RUN`, after the increment. -/
-+def escalateNext (staleRuns wasted : Nat) : Bool :=
-+  decide (maxStaleRetries ≤ staleRuns) || decide (slowStaleRun ≤ wasted)
-+
-+/-- One run's report: its outcome and how long it took. -/
-+structure Run where
-+  a : Attempt
-+  wasted : Nat
-+
-+/-- The loop: `s` stale runs so far, `w` whether this run begins as a writer; `runs` the
-+successive runs, each given the mode it begins in. Returns the result (`none`: still
-+running) and the mode of every run taken. -/
-+def loopW (s : Nat) (w : Bool) : List (Bool → Run) → Option Attempt × List Bool
-+  | [] => (none, [])
-+  | f :: rest =>
-+    match (f w).a with
-+    | .stale =>
-+      let p := loopW (s + 1) (escalateNext (s + 1) (f w).wasted) rest
-+      (p.1, w :: p.2)
-+    | a => (some a, [w])
-+
-+theorem escalate_after_max (n t : Nat) (h : maxStaleRetries ≤ n) : escalateNext n t = true := by
-+  simp [escalateNext, h]
-+
-+theorem reader_before_max (n t : Nat) (h : n < maxStaleRetries) (ht : t < slowStaleRun) :
-+    escalateNext n t = false := by
-+  simp [escalateNext]; omega
-+
-+/-- **Still the first run that was not stale** (as `executeWrite_first`), each run taken in the
-+mode the loop chose for it. -/
-+theorem loopW_first (s : Nat) (w : Bool) (runs : List (Bool → Run)) :
-+    (loopW s w runs).1 =
-+      executeWrite (List.zipWith (fun f m => (f m).a) runs (loopW s w runs).2) := by
-+  induction runs generalizing s w with
-+  | nil => simp [loopW, executeWrite]
-+  | cons f rest ih =>
-+    cases ha : (f w).a <;> simp [loopW, ha, executeWrite, ih]
-+
-+/-- A stale run is never the result. -/
-+theorem loopW_not_stale (s : Nat) (w : Bool) (runs : List (Bool → Run)) :
-+    (loopW s w runs).1 ≠ some .stale := by
-+  induction runs generalizing s w with
-+  | nil => simp [loopW]
-+  | cons f rest ih =>
-+    cases ha : (f w).a <;> simp [loopW, ha, ih]
-+
-+/-- **Bounded**: at most `MAX_
-```
-
-**File**: `proofs/redis_layer/RedisLayer/QuerySession.lean` (modified, +84/-9)
-```diff
-@@ -8,16 +8,17 @@ Redis — AXIOMATISED rows for `lock_gil`/`release_gil`, which only call
- 
- | here | there |
- | --- | --- |
--| `Th`, `holdsGil`, `gilAcquire`, `gilDrop` | `holds_gil` `:681`, `Gil::acquire` `:701`, `Gil::drop` `:724`, `hold_gil` `:674`, `GIL_CTX` |
-+| `Th`, `holdsGil`, `gilAcquire`, `gilDrop` | `holds_gil` `:702`, `Gil::acquire` `:722`, `Gil::drop` `:745`, `hold_gil` `:695`, `GIL_CTX` |
- | `S`, `begin`, `beginWriter`   | `QuerySession::begin` `:178`, `begin_writer` `:205` (main thread only since #3816: `debug_assert!(holds_gil())`) |
--| `beginWith`, `readPastGate`, `mayWaitAtGate` | `begin_with` `:185`, `read_past_gate` `:524`, `may_wait_at_gate` `:548`; `WriterGate::is_closed`/`close`/`wait_until_open` `:569-577` are the `gateWait`/`gateClose`/`gateOpen` events |
--| `release`                     | `release_locks` `:317`, `Drop` `:652` |
--| `withGraph`, `withGraphMut`   | `with_graph` `:334`, `with_graph_mut` `:350` |
--| `Att`, `pollLoop`, `acquireWrite` | `acquire_write` `:460` (#3816): per attempt GIL, check, `try_write_arc_for(slice)`; the gate closes after `GATE_AFTER_SLICES` = 2 misses; one blocking try when the interval is ≤ 0 or the thread already holds the GIL |
--| `authorize`, `World`          | `authorize_write` `:496`: registry, then `reauthorize_write` |
--| `escalate`, `upgrade`         | `escalate` `:399`, `upgrade_to_write` `:377` (and the trait shim `:639`) |
--| `reauthorize`                 | `reauthorize_write` `:598` |
--| `Version`, `SS`, `writeVersion`, `isStale`, `versionIsCurrent`, `checkFork`, `upgradeS`, `upgradeSt` | #3657: `enum Version` `:128`, `write_version` `:239`, `is_stale` `:255`, `version_is_current` `:263`, `is_writer` `:267`, `check_fork` `:279`, `facts` `:225` |
-+| `beginWriterChecked`          | `begin_writer_checked` `:235` (#3559): `begin_with`, then `escalate`; a refusal drops the reader `escalate` re-took |
-+| `beginWith`, `readPastGate`, `mayWaitAtGate` | `begin_with` `:185`, `read_past_gate` `:545`, `may_wait_at_gate` `:569`; `WriterGate::is_closed`/`close`/`wait_until_open` `:590-577` are the `gateWait`/`gateClose`/`gateOpen` events |
-+| `release`                     | `release_locks` `:338`, `Drop` `:673` |
-+| `withGraph`, `withGraphMut`   | `with_graph` `:355`, `with_graph_mut` `:371` |
-+| `Att`, `pollLoop`, `acquireWrite` | `acquire_write` `:481` (#3816): per attempt GIL, check, `try_write_arc_for(slice)`; the gate closes after `GATE_AFTER_SLICES` = 2 misses; one blocking try when the interval is ≤ 0 or the thread already holds the GIL |
-+| `authorize`, `World`          | `authorize_write` `:517`: registry, then `reauthorize_write` |
-+| `escalate`, `upgrade`         | `escalate` `:420`, `upgrade_to_write` `:398` (and the trait shim `:660`) |
-+| `reauthorize`                 | `reauthorize_write` `:619` |
-+| `Version`, `SS`, `writeVersion`, `isStale`, `versionIsCurrent`, `checkFork`, `upgradeS`, `upgradeSt` | #3657: `enum Version` `:128`, `write_version` `:260`, `is_stale` `:276`, `version_is_current` `:284`, `is_writer` `:288`, `check_fork` `:300`, `facts` `:225` |
- | `CommitError`, `WriteAbort.ofCommit` | `From<CommitError> for WriteAbort` `:95` |
- 
- **#3816 (af228a34f).** Off the main thread `escalate` waits for the write lock in
-@@ -363,6 +364,72 @@ theorem release_order (t : Th) (hm : t.main = false) (hc : t.ctx = false) :
-     (release (beginWriter t)).th.log = t.log ++ [.gilLock, .writeLock, .writeUnlock, .gilUnlock] := by
-   simp [release, beginWriter, dropMode, gilAcquire, holdsGil, gilDrop, hm, hc]
- 
-+/-- `begin_writer_checked` (`:235`, #3559): `begin_with` (read lock), then `escalate` — the same
-+wait (`acquire_write`, so off the main thread the GIL is given back between slices) and the same
-+`authorize_write` check under the GIL hold the lock is taken under that `upgrade_to_write` makes.
-+On a refusal the session is returned out of scope inside the `Err`, so it is dropped: the read
-+lock `escalate` re-took goes. `none`: still waiting after the given attempts. -/
-+def beginWriterChecked (t : Th) (i : Int) (ws : List World) (f : Facts) :
-+    Option (Option WriteAbort × S) :=
-+  (upgrade (begin t) i ws f).map fun (a, s) => (a, if a.isNone then s else release s)
-+
-+/-- **The same refusal escalation gives**: `begin_writer_checked` refuses exactly when, and with
-+exactly the abort that, `upgrade_to_write` on a reader session refuses (the version check apart:
-+this is the part of `upgrade_to_write` before `check_fork`, and a fresh writer has no fork to
-+check — `writer_never_stale`). -/
-+theorem beginWriterChecked_refusal (t : Th) (i : Int) (ws : List World) (f : Facts) :
-+    (beginWriterChecked t i ws f).map (·.1) = (upgrade (begin t) i ws f).map (·.1) := by
-+  unfold beginWriterChecked
-+  cases hu : upgrade (begin t) i ws f with
-+  | none => rfl
-+  | some p => obtain ⟨a, s⟩ := p; rfl
-+
-+/-- Accepted, it is a writer holding both locks: it may mutate. -/
-+theorem beginWriterChecked_ok (t : Th) (i : Int) (ws : List World) (f : Facts) (s' : 
-```
-
-**File**: `proofs/search_concurrency/COVERAGE.tsv` (modified, +37/-36)
-```diff
-@@ -57,45 +57,45 @@ src/graph_core.rs	new	603	PROVEN	unbounded write channel (#3014); Locks.never_st
- src/graph_core.rs	from_mvcc	620	MODELLED	as new
- src/graph_core.rs	execute_query	639	MODELLED	Mvcc Ev.read on snapshot; write detection not modelled
- src/graph_core.rs	execute_profile	721	MODELLED	as execute_query
--src/graph_core.rs	execute_query_write	783	PROVEN	Mvcc fork/checkFork (#3290/#3657): inline_write_ok, stale_then_rerun, checkFork_on_committed (retry sees the inline write) (BUG 5; counterexample removed in bbee75955; the last revision that has them is 17ccc5412)
--src/graph_core.rs	reply_profile	933	NOT COVERED	reply formatting here; PROVEN in redis_layer (GraphCore.profileOps_all, profileDepth_eq; #2390 lists every op)
--src/graph_core.rs	new	970	AXIOMATISED	RM_BlockClient FFI
--src/graph_core.rs	drop	978	AXIOMATISED	RM_UnblockClient FFI
--src/graph_core.rs	compute_effective_timeout	996	NOT COVERED	config arithmetic, not concurrency
--src/graph_core.rs	reply_invalid_graph_version	1035	NOT COVERED	reply formatting
--src/graph_core.rs	admit	1049	PROVEN	Pool.acquireLoop/acquire_bounded; Locks.succ3014 dispatch (reject, never wait): main_never_blocks, inv3014_step
--src/graph_core.rs	query_mut	1060	PROVEN	Locks.main_never_blocks/never_stuck_3014/inv3014_step (admit + unbounded spawn, #3014); drain producer (send then CAS)
--src/graph_core.rs	query_sync	1264	PROVEN	Mvcc.inline_write_ok (inline writer = escalate 0 then forkCur; never refused by a matching queued write, #3290)
--src/graph_core.rs	profile_mut	1400	PROVEN	same admission/producer protocol as query_mut: Locks.main_never_blocks, never_stuck_3014
--src/graph_core.rs	profile_sync	1501	MODELLED	as query_sync
--src/graph_core.rs	finish_write	1572	PROVEN	Mvcc Ev.commit (session in writer mode, key_of_write found its key) / Ev.abandon (never escalated: the version just drops with the runtime; or refused by key_of_write, #3850/#3851, and abandoned by the caller)
--src/graph_core.rs	abandon_write	1607	PROVEN	Mvcc Ev.abandon (the fork is dropped, nothing to roll back); index resync not modelled
--src/graph_core.rs	commit_and_replicate	1623	PROVEN	Mvcc Ev.commit requires GIL (fork_excludes_commit)
--src/graph_core.rs	process_write_queued_query	1701	PROVEN	Locks.drain_no_lost_message/explore_saturated/recheck_needed (write_loop protocol, 2 producers exhaustive)
--src/graph_core.rs	replicate	1849	AXIOMATISED	RM_Replicate FFI
--src/graph_core.rs	graph_free	1862	PROVEN	Mvcc Ev.delete (registered := false) + delete_blocks_writes
-+src/graph_core.rs	execute_query_write	793	PROVEN	Mvcc fork/checkFork (#3290/#3657): inline_write_ok, stale_then_rerun, checkFork_on_committed (retry sees the inline write), stale_then_writer_rerun (#3559 escalated rerun) (BUG 5; counterexample removed in bbee75955; the last revision that has them is 17ccc5412)
-+src/graph_core.rs	reply_profile	1001	NOT COVERED	reply formatting here; PROVEN in redis_layer (GraphCore.profileOps_all, profileDepth_eq; #2390 lists every op)
-+src/graph_core.rs	new	1038	AXIOMATISED	RM_BlockClient FFI
-+src/graph_core.rs	drop	1046	AXIOMATISED	RM_UnblockClient FFI
-+src/graph_core.rs	compute_effective_timeout	1064	NOT COVERED	config arithmetic, not concurrency
-+src/graph_core.rs	reply_invalid_graph_version	1103	NOT COVERED	reply formatting
-+src/graph_core.rs	admit	1117	PROVEN	Pool.acquireLoop/acquire_bounded; Locks.succ3014 dispatch (reject, never wait): main_never_blocks, inv3014_step
-+src/graph_core.rs	query_mut	1128	PROVEN	Locks.main_never_blocks/never_stuck_3014/inv3014_step (admit + unbounded spawn, #3014); drain producer (send then CAS)
-+src/graph_core.rs	query_sync	1332	PROVEN	Mvcc.inline_write_ok (inline writer = escalate 0 then forkCur; never refused by a matching queued write, #3290)
-+src/graph_core.rs	profile_mut	1468	PROVEN	same admission/producer protocol as query_mut: Locks.main_never_blocks, never_stuck_3014
-+src/graph_core.rs	profile_sync	1569	MODELLED	as query_sync
-+src/graph_core.rs	finish_write	1640	PROVEN	Mvcc Ev.commit (session in writer mode, key_of_write found its key) / Ev.abandon (never escalated: the version just drops with the runtime; or refused by key_of_write, #3850/#3851, and abandoned by the caller)
-+src/graph_core.rs	abandon_write	1675	PROVEN	Mvcc Ev.abandon (the fork is dropped, nothing to roll back); index resync not modelled
-+src/graph_core.rs	commit_and_replicate	1691	PROVEN	Mvcc Ev.commit requires GIL (fork_excludes_commit)
-+src/graph_core.rs	process_write_queued_query	1769	PROVEN	Locks.drain_no_lost_message/explore_saturated/recheck_needed (write_loop protocol, 2 producers exhaustive)
-+src/graph_core.rs	replicate	1917	AXIOMATISED	RM_Replicate FFI
-+src/graph_core.rs	graph_free	1930	PROVEN	Mvcc Ev.delete (registered := false) + delete_blocks_writes
- src/query_session.rs	begin	178	MODELLED	reader mode (graphR acquire)
- src/query_session.rs	begin_with	185	MODELLED	Locks.gateReaderProg ordered (gate_programs_ordered, #3816 read_past_gate); reader mode
- src/query_session.rs	begin_writer	205	
-```
-
-**File**: `proofs/search_concurrency/SearchConcurrency/Locks.lean` (modified, +15/-2)
-```diff
-@@ -4,9 +4,10 @@
- | here | there |
- | --- | --- |
- | `Lock.gil < .graph < .indexer` | `graph/src/locks.rs:9` ordering rule; `query_session.rs:30` `Mode` |
--| `writerProg`, `pollWriterProg` | `QuerySession::escalate` (`query_session.rs:399`): release R, then `acquire_write` (`:460`): per slice GIL, timed W; since #3816 the `WriterGate` closes after two misses |
--| `gate`, `rank3816`, `gateReaderProg` | #3816: `WriterGate` (`:569-577`), `read_past_gate` (`:524`) |
-+| `writerProg`, `pollWriterProg` | `QuerySession::escalate` (`query_session.rs:420`): release R, then `acquire_write` (`:481`): per slice GIL, timed W; since #3816 the `WriterGate` closes after two misses |
-+| `gate`, `rank3816`, `gateReaderProg` | #3816: `WriterGate` (`:590-598`), `read_past_gate` (`:545`) |
- | `inlineWriterProg`             | `QuerySession::begin_writer` (`:205`): GIL, W |
-+| `retryWriterProg`              | `QuerySession::begin_writer_checked` (`:235`, #3559) from `execute_query_write`'s / `graph_bulk_insert`'s retry: `begin_with`, then `escalate`; `authorize_write`'s registry check runs under each slice's GIL |
- | `populateProg`                 | `populate_index_batch` (`graph.rs:562`): indexer lock only |
- | `commitIndexProg`              | `Graph::commit_index` under writer mode (`graph.rs:3799`): GIL, W, indexer |
- | `forkProg`                     | `pre_fork_prepare` (`redis_type.rs:350`): GIL (main), registry mutex |
-@@ -107,6 +108,15 @@ theorem all_programs_ordered :
-     okProg [] writerProg ∧ okProg [] inlineWriterProg ∧ okProg [] populateProg ∧
-     okProg [] dropIndexBgProg ∧ okProg [] forkProg ∧ okProg [] telemetryProg := by decide
- 
-+/-- #3559: a queued write that keeps going stale reruns from `begin_writer_checked` on its worker:
-+`begin_with` (read lock), then `escalate` — drop the read lock, GIL, `authorize_write`'s registry
-+check under that GIL hold, the write lock — then the commit's indexer lock. -/
-+def retryWriterProg : List Op :=
-+  [.acq graphR, .rel graphR, .acq gil, .acq registry, .rel registry, .acq graphR,
-+   .acq indexer, .rel indexer, .rel graphR, .rel gil]
-+
-+theorem retry_writer_ordered : okProg [] retryWriterProg = true := by decide
-+
- theorem bad_escalate_rejected : okProg [] badEscalateProg = false := by decide
- 
- /-! ## Gap closed 2026-10-20 (#3226): the RediSearch locks an open index scan holds
-@@ -221,6 +231,9 @@ theorem gate_programs_ordered :
-     okProgBy rank3816 [] telemetryProg ∧ okProgBy rank3816 [] forkProg ∧
-     okProgBy rank3816 [] writerClosedScanProg ∧ okProgBy rank3816 [] restoreProg := by decide
- 
-+/-- …and under the #3816 rank (gate first), as `escalate` with its first slice taking the lock. -/
-+theorem retry_writer_ordered_3816 : okProgBy rank3816 [] retryWriterProg = true := by decide
-+
- /-- A reader waiting at the closed gate holds no lock, so the gate's writer, which needs
- the GIL and the write lock, never waits on it (a gate reader cannot close a cycle). -/
- theorem gate_waiter_holds_nothing :
-```
-
-**File**: `proofs/search_concurrency/SearchConcurrency/Mvcc.lean` (modified, +15/-0)
-```diff
-@@ -607,6 +607,21 @@ theorem stale_then_rerun :
-     ((run init rerunTrace).map (fun s => (s.pub, s.acked, s.ver))) = some ([7, 8], [7, 8], 2) := by
-   decide
- 
-+/-- **The escalated rerun** (#3559): after its stale runs the queued write begins as a writer
-+(`QuerySession::begin_writer_checked`: `begin_with`, then `escalate` — GIL, write lock — and then a
-+`Current` version) instead of a reader. Nothing can commit under it, so it needs no check: `7` then
-+`8`, both acknowledged, and the reader run is the only one ever found stale. This is one scenario
-+for the *effect* of the escalation; *when* it happens (the stale-run count and the 10 ms rule) is
-+`GraphCore.loopW` in `redis_layer`, with `loopW_bounded` and `escalate_after_max`. -/
-+def escalatedRerunTrace : List Ev :=
-+  inlineTrace ++ [.escalate 1, .checkFork 1, .abandon 1, .release 1,
-+                  .escalate 1, .forkCur 1, .mutate 1 8, .commit 1, .swap 1, .release 1]
-+
-+theorem stale_then_writer_rerun :
-+    ((run init escalatedRerunTrace).map (fun s => (s.pub, s.acked, s.ver, s.stale))) =
-+      some ([7, 8], [7, 8], 2, [1]) := by
-+  decide
-+
- /-- An indexer batch between the queued write's fork and its check does not make it stale:
- the check still succeeds, and the commit goes through. -/
- theorem batch_does_not_stale :
-```
-
-**File**: `src/commands/bulk_insert.rs` (modified, +32/-9)
-```diff
-@@ -1,4 +1,5 @@
- use crate::dispatch::must_run_inline;
-+use crate::graph_core::{MAX_STALE_RETRIES, SLOW_STALE_RUN};
- use crate::query_session::{QuerySession, WriteFacts, hold_gil};
  use crate::{
-     config::CONFIGURATION_CACHE_SIZE,
-@@ -21,6 +22,7 @@ use std::collections::HashMap;
- use std::ffi::CString;
- use std::ptr::null_mut;
- use std::sync::Arc;
-+use std::time::Instant;
- use valkey_module::{
-     Context, ContextFlags, NextArg, ValkeyError, ValkeyResult, ValkeyString, ValkeyValue, raw,
+     graph::graph::Graph,
+-    parser::ast::{ExprIR, VarKey, Variable},
++    parser::ast::{ExprIR, QueryNode, VarKey, Variable},
+     runtime::value::Value,
  };
-@@ -985,13 +987,30 @@ pub fn graph_bulk_insert(
-             // when this block ends — before the client is unblocked below.
-             // A loop only to run the insert again if an inline writer commits while
-             // phase 1 builds (see the escalation below); every other path breaks.
-+            //
-+            // The retry is bounded, like `execute_query_write`'s: after a few stale
-+            // builds, or one that took long, the insert runs as a writer from the
-+            // start — the GIL and write lock held for the whole build, as in C — so
-+            // a steady stream of inline writes cannot starve it.
-+            let mut stale_runs = 0;
-+            let mut as_writer = false;
-             let result: Result<(), String> = 'phase: loop {
--                let session = QuerySession::begin_with(&graph, facts);
--                // Phase 1: build the new version as a reader, GIL-free, into a private
--                // fork. Forking takes nothing, so an inline writer is never refused
--                // because this insert is building; phase 2's escalation checks whether
--                // one committed meanwhile. Every early exit below drops the fork with
--                // the session — there is nothing else to release.
-+                let attempt_start = Instant::now();
-+                let session = if as_writer {
-+                    match QuerySession::begin_writer_checked(&graph, facts) {
-+                        Ok(session) => session,
-+                        Err(e) => break 'phase Err(e.to_string()),
-+                    }
-+                } else {
-+                    QuerySession::begin_with(&graph, facts)
-+                };
-+                // Phase 1: build the new version into a private fork. As a reader (every
-+                // run but an escalated one) that is GIL-free, and forking takes nothing,
-+                // so an inline writer is never refused because this insert is building;
-+                // phase 2's escalation checks whether one committed meanwhile. An
-+                // escalated run is already a writer and builds under the GIL and the
-+                // write lock, so there is nothing to check. Every early exit below drops
-+                // the fork with the session — there is nothing else to release.
-                 let mut fork = session.write_version();
-                 let mut docs = IndexDocs::default();
-                 let tokens: Vec<&[u8]> = token_data.iter().map(std::vec::Vec::as_slice).collect();
-@@ -1014,6 +1033,9 @@ pub fn graph_bulk_insert(
-                     // An inline writer committed while phase 1 built: nothing was
-                     // published, so build again on top of its version.
-                     if session.is_stale() {
-+                        stale_runs += 1;
-+                        as_writer = stale_runs >= MAX_STALE_RETRIES
-+                            || attempt_start.elapsed() >= SLOW_STALE_RUN;
-                         continue 'phase;
-                     }
-                     break 'phase Err(e.to_string());
-@@ -1035,9 +1057,10 @@ pub fn graph_bulk_insert(
-                 // cannot resolve against its own snapshot.
-                 //
-                 // Every token has succeeded by now, so nothing reaches the index for an
--                // insert that later rolls back. The cost is a GIL hold proportional to
--                // the number of indexed rows — paid only when the graph actually has an
--                // index, since `docs` is otherwise empty.
-+                // insert that later rolls back. For a run that built as a reader the cost
-+                // is a GIL hold proportional to the number of indexed rows — paid only
-+                // when the graph actually has an index, since `docs` is otherwise empty;
-+                // an escalated run holds the GIL for the whole build anyway.
-                 //
-                 // Validated before publishing, as on the inline path above and
-                 // for the same reason: RediSearch is not MVCC, so a document
+ 
+@@ -250,3 +251,23 @@ pub fn optimize(
+ 
+     optimized_plan
+ }
++
++/// The top-level conjuncts of `expr`: the children of an `AND`, or `expr`
++/// itself.
++pub(super) fn conjuncts(expr: &DynTree<ExprIR<Variable>>) -> Vec<DynNode<'_, ExprIR<Variable>>> {
++    let root = expr.root();
++    if matches!(root.data(), ExprIR::And) {
++        root.children().collect()
++    } else {
++        vec![root]
++    }
++}
++
++/// The node count of the smallest of `node`'s labels, or `None` when it has
++/// no label.
++pub(super) fn min_label_count(
++    node: &QueryNode<Arc<String>, Variable>,
++    graph: &Graph,
++) -> Option<u64> {
++    node.labels.iter().map(|l| graph.label_node_count(l)).min()
++}
+```
+
+**File**: `graph/src/planner/optimizer/replace_cartesian_with_index_seek.rs` (modified, +148/-102)
+```diff
+@@ -28,11 +28,17 @@
+ //! of once per row. It also stays when the other branches are estimated to
+ //! produce so many rows that one index lookup each costs more than reading the
+ //! label once (a bulk `UNWIND` of a large batch): see [`SEEK_COST_IN_SCANNED_NODES`].
++//!
++//! A later `MATCH (p) WHERE id(p) = e.x` is the same join on the node's id. Its
++//! scan (an `AllNodeScan`, or a `NodeByLabelScan` when `p` has a label) is fed
++//! the same way, and `utilize_node_by_id` turns the moved `id()` comparisons
++//! into a `NodeByIdSeek` (or a `NodeByLabelAndIdScan`): a direct lookup that
++//! needs no index.
+ 
+ use std::collections::{HashMap, HashSet};
+ use std::sync::Arc;
+ 
+-use orx_tree::{DynNode, DynTree, NodeRef};
++use orx_tree::{Bfs, Dfs, DynNode, DynTree, NodeRef, PostOrder};
+ 
+ use crate::{
+     graph::graph::Graph,
+@@ -44,56 +50,79 @@ use crate::{
+ use super::super::IR;
+ use super::eliminate_true_filters::substitute_params;
+ use super::utilize_index::{can_seek_index, seek_index_label};
+-use super::{collect_expr_variables, collect_subtree_variables};
++use super::utilize_node_by_id::get_id_filter;
++use super::{collect_expr_variables, collect_subtree_variables, conjuncts, min_label_count};
+ 
+ /// What one index lookup costs, in nodes of a label scan. Measured on a 1M-node
+ /// label: reading it once (the hash join's build side) takes about 52 ms, a
+ /// lookup about 17 us, a ratio of 330. Rounded down: a lookup also keeps the
+ /// result clustered per outer row.
+ const SEEK_COST_IN_SCANNED_NODES: f64 = 256.0;
+ 
++/// What one id lookup costs, in nodes of a scan. Measured against the hash
++/// join it replaces, on graphs of 1k to 200k nodes: the hash join is faster
++/// once a batch has more rows than about half the nodes it would scan (no
++/// label) or about a quarter of them (one label). Where 4 picks the hash join
++/// over a faster seek, it was at most about 5% slower.
++const ID_SEEK_COST_IN_SCANNED_NODES: f64 = 4.0;
++
+ /// Rewrites `Filter -> CartesianProduct(.., [Filter ->] NodeByLabelScan)` so
+ /// the scan reads the other branches' rows and the filter can become an index
+-/// seek, wherever the label has an index for a predicate that reads them.
++/// seek, wherever the label has an index for a predicate that reads them, or
++/// an id seek, wherever the predicate is `id(p) = ..` (on any node scan).
+ pub(super) fn replace_cartesian_with_index_seek(
+     optimized_plan: &mut DynTree<IR>,
+     graph: &Graph,
+     params: &HashMap<String, Value>,
+ ) {
+-    let new_plan = rebuild(&optimized_plan.root(), graph, params);
+-    *optimized_plan = new_plan;
++    // In post-order: a later clause's product holds the earlier one, and the
++    // rows it is estimated to feed depend on whether the earlier clause's
++    // scan already became a lookup. A rewrite moves nodes, so the walk starts
++    // over after each one; a product left as it was is left again.
++    loop {
++        let rewrite = optimized_plan
++            .root()
++            .indices::<PostOrder>()
++            .find_map(|idx| {
++                try_rewrite_at(&optimized_plan.node(idx), graph, params).map(|tree| (idx, tree))
++            });
++        let Some((idx, tree)) = rewrite else {
++            break;
++        };
++        // Dropping the walk over the replaced nodes removes them.
++        let _ = optimized_plan.node_mut(idx).replace_with::<Dfs, _>(tree);
++    }
+ }
+ 
+-fn rebuild(
++/// The rewrite of `node`, when it is a `Filter` over a `CartesianProduct`
++/// that reads no `Argument` rows.
++fn try_rewrite_at(
+     node: &DynNode<IR>,
+     graph: &Graph,
+     params: &HashMap<String, Value>,
+-) -> DynTree<IR> {
+-    if let IR::Filter(filter) = node.data()
+-        && let Some(child) = node.get_child(0)
+-        && matches!(child.data(), IR::CartesianProduct)
+-        && !child
+-            .walk::<orx_tree::Bfs>()
++) -> Option<DynTree<IR>> {
++    let IR::Filter(filter) = node.data() else {
++        return None;
++    };
++    let child = node.get_child(0)?;
++    if !matches!(child.data(), IR::CartesianProduct)
++        || child
++            .walk::<Bfs>()
+             .any(|data| matches!(data, IR::Argument(_)))
+-        && let Some(result) = try_seek_rewrite(filter, &child, graph, params)
+     {
+-        return rebuild(&result.root(), graph, params);
+-    }
+-    let mut new_tree = DynTree::new(node.data().clone());
+-    for child in node.children() {
+-        new_tree
+-            .root_mut()
+-            .push_child_tree(rebuild(&child, graph, params));
++        return None;
+     }
+-    new_tree
++    try_seek_rewrite(filter, &child, graph, params)
+ }
+ 
+-/// The `Filter*` chain above a childless `NodeByLabelScan` that makes up
+-/// `branch`, as the filters (top first) and the scanned node.
++/// The `Filter*` chain above a childless `NodeByLabelScan` or `AllNodeScan`
++/// that makes up `branch`, as the filters (top first), the scan and the
++/// scanned node.
+ fn scan_chain(
+     branch: &DynNode<IR>
+ ) -> Option<(
+     Vec<QueryExpr<Variable>>,
+```
+
+**File**: `graph/src/planner/optimizer/select_scan_node.rs` (modified, +2/-10)
+```diff
+@@ -77,7 +77,7 @@ use crate::{
+ use super::super::IR;
+ use super::{
+     collect_expr_scoped_variables, collect_expr_variables, collect_subtree_variables,
+-    endpoint_scan_score, walk_scans_to_endpoint,
++    endpoint_scan_score, min_label_count, walk_scans_to_endpoint,
+ };
+ use crate::runtime::runtime::GetVariables;
+ 
+@@ -127,15 +127,7 @@ fn score_endpoint(
+     let filter_runs_late = filtered_vars.above.contains(&key);
+     // Cardinality: minimum label node count (lower is better).
+     // For nodes with no labels, use u64::MAX so labeled nodes win ties.
+-    let cardinality = if node.labels.is_empty() {
+-        u64::MAX
+-    } else {
+-        node.labels
+-            .iter()
+-            .map(|l| graph.label_node_count(l))
+-            .min()
+-            .unwrap_or(u64::MAX)
+-    };
++    let cardinality = min_label_count(node, graph).unwrap_or(u64::MAX);
+     (score, has_equality, filter_runs_late, cardinality)
+ }
+ 
+```
+
+**File**: `graph/src/planner/optimizer/utilize_node_by_id.rs` (modified, +1/-1)
+```diff
+@@ -49,7 +49,7 @@ use crate::parser::ast::{ExprIR, QueryExpr, Variable};
+ use super::super::IR;
+ use super::references::subtree_references_variable;
+ 
+-fn get_id_filter(
++pub(super) fn get_id_filter(
+     filter: &DynNode<ExprIR<Variable>>,
+     node_alias: &Variable,
+ ) -> Option<(QueryExpr<Variable>, ExprIR<Variable>)> {
+```
+
+**File**: `proofs/optimizer_rewrites/COVERAGE.tsv` (modified, +15/-13)
+```diff
+@@ -1,8 +1,8 @@
+ file	function	line	bucket	lean_name_or_reason
+ # graphblas *_bench.rs: benchmark harnesses, no production callers; listed here so the aggregator can exclude them
+-graph/src/planner/optimizer/mod.rs	collect_expr_variables	98	PROVEN	Passes.routesIdOnly / id_only_routing_unsound (id-only unsound), routesScoped_sound
+-graph/src/planner/optimizer/mod.rs	collect_subtree_variables	185	PROVEN	Helpers.mem_subtreeIds (ids of get_variables); ids only — Passes.id_only_routing_unsound; PushPlan.gv walks through Aggregate into the pre-WITH plan
+-graph/src/planner/optimizer/mod.rs	optimize	207	PROVEN	Sequence.passes_order (exact order, reduce_var_len_path twice; #3889 adds replace_cartesian_with_index_seek: passes_index_seek_before_hash_join), applyAll_sound (each pass preserves R => optimize does), optimize_nested/optimize_plain
++graph/src/planner/optimizer/mod.rs	collect_expr_variables	99	PROVEN	Passes.routesIdOnly / id_only_routing_unsound (id-only unsound), routesScoped_sound
++graph/src/planner/optimizer/mod.rs	collect_subtree_variables	186	PROVEN	Helpers.mem_subtreeIds (ids of get_variables); ids only — Passes.id_only_routing_unsound; PushPlan.gv walks through Aggregate into the pre-WITH plan
++graph/src/planner/optimizer/mod.rs	optimize	208	PROVEN	Sequence.passes_order (exact order, reduce_var_len_path twice; #3889 adds replace_cartesian_with_index_seek: passes_index_seek_before_hash_join), applyAll_sound (each pass preserves R => optimize does), optimize_nested/optimize_plain
+ graph/src/planner/optimizer/absorb_edge_filters_into_vlt.rs	find_descendant_vlt	55	PROVEN	Sequence.findVlt_spec (Filter -> (PathBuilder|Filter)* -> VLT single-child chain)
+ graph/src/planner/optimizer/absorb_edge_filters_into_vlt.rs	absorb_edge_filters_into_vlt	87	PROVEN	Sequence.absorb_correct (per-edge reading, C-parity, through PathBuilder/Filter), keepAll_split, absorbSplit_none; #3335 rebuilds the filter with ExprIR::and_of: AndOf.flat_passes (same Filter verdict, errors included), flat_eval
+ graph/src/planner/optimizer/eliminate_true_filters.rs	is_constant_true	48	PROVEN	ConstEval.constTrue: constEval_sound (constant verdict = runtime verdict on every row: since #2904 every modelled arm, Pow included, propagates child errors), constTrue_eval, constTrue_filter (eliminate_whole_filter with hconst discharged), pow_var_not_constTrue; slow path (substitute_params then the same constant eval) = ConstEval.constTrue_slow (substP; parameters modelled as marked variable leaves) and Helpers.evX_subst (#2902 fixed)
+@@ -80,13 +80,15 @@ graph/src/graph/graphblas/me_delta_bench.rs	per_op	43	NOT COVERED	TEST-ONLY: ben
+ graph/src/graph/graphblas/me_delta_bench.rs	committed_multi	58	NOT COVERED	TEST-ONLY: benchmark harness (me_delta_bench.rs), not production code
+ graph/src/graph/graphblas/me_delta_bench.rs	me_delta_step	84	NOT COVERED	TEST-ONLY: benchmark harness (me_delta_bench.rs), not production code
+ graph/src/graph/graphblas/me_delta_bench.rs	me_delta_attach_vs_seek	140	NOT COVERED	TEST-ONLY: benchmark harness (me_delta_bench.rs), not production code
+-graph/src/planner/optimizer/replace_cartesian_with_index_seek.rs	replace_cartesian_with_index_seek	58	NOT COVERED	(#3889) entry point of the new plan rewrite (rebuild); the rewrite (try_seek_rewrite) is not modelled
+-graph/src/planner/optimizer/replace_cartesian_with_index_seek.rs	rebuild	67	NOT COVERED	(#3889) tree rebuild applying try_seek_rewrite to Filter->CartesianProduct with no Argument below; the rewrite is not modelled
+-graph/src/planner/optimizer/replace_cartesian_with_index_seek.rs	scan_chain	93	NOT COVERED	(#3889) collects the Filter* chain above a childless NodeByLabelScan; part of the unmodelled try_seek_rewrite
+-graph/src/planner/optimizer/replace_cartesian_with_index_seek.rs	try_seek_rewrite	117	NOT COVERED	(#3889) moves index-served cross-branch conjuncts onto a scan fed by the other CP branches: needs a plan model with Argument-fed scans, index lookups and per-row error order; not modelled
+-graph/src/planner/optimizer/replace_cartesian_with_index_seek.rs	estimate_rows	262	NOT COVERED	(#3889) cost heuristic only: a recursive row estimate over the plan tree and graph label counts; it decides whether to rewrite, never what the rewritten plan returns. Its UNWIND range arm is proven (unwound_len)
+-graph/src/planner/optimizer/replace_cartesian_with_index_seek.rs	unwound_len	312	PROVEN	IndexSeek.rangeEst (range arm; list value/literal arms are the list length): rangeEst_exact (exact when the step points towards `to`), rangeEst_upper (always an upper bound), rangeEst_overcount (range(0,-1,2): 1 vs 0), rangeEst_zero
+-graph/src/planner/optimizer/replace_cartesian_with_index_seek.rs	has_seekable_equality	335	NOT COVERED	(#3889) cost heuristic for estimate_rows (Eq root, or an AND with an index-served Eq conjunct); no effect on results
+-graph/src/planner/optimizer/replace_cartesian_with_index_seek.rs	has_non_deterministic	367	NOT COVERED	(#3889) syntactic walk over the ExprIR tre
+```
+
+**File**: `proofs/optimizer_scan/COVERAGE.tsv` (modified, +20/-20)
+```diff
+@@ -1,25 +1,25 @@
+ file	function	line	bucket	lean_name_or_reason
+ graph/src/planner/optimizer/select_scan_node.rs	score_endpoint	110	PROVEN	ScanTree.scoreEndpoint_spec (bound +3, filtered +2, labelled +1, has_equality and filter_runs_late flags), score_bound_dominant, score_equality_filtered
+-graph/src/planner/optimizer/select_scan_node.rs	collect_equalities	170	PROVEN	ScanTree.collectEqualities (Ex: And/Eq/Property/Variable/other): collectEqualities_sub (records only variables of the filter), collectEqualities_other (nothing under OR/NOT), collectEqualities_examples, propertyVar_mem
+-graph/src/planner/optimizer/select_scan_node.rs	collect_filtered_vars	210	PROVEN	ScanTree.filteredVars: collectLoop_eq (above), spineVars_eq (downward spine), filteredVars_above_sub; equality (#3821): eqLoop_sub, spineEqs_sub, filteredVars_equality_sub_all
+-graph/src/planner/optimizer/select_scan_node.rs	collect	214	PROVEN	ScanTree.filterVars (a Filter is modelled as its Variable list; the BFS collect is that list): collectLoop_eq, spineVars_eq; its collect_equalities call: filterEqOf, filterEqOf_honest, eqLoop_sub
+-graph/src/planner/optimizer/select_scan_node.rs	make_scan_subtree	276	PROVEN	ScanTree.makeScanSubtree_planner, filtersOf_makeScanSubtree, filtersOf_makeScanSubtree_tree (#3594: the argument is a whole subtree, push_child_tree); ScanOrder.run_append
+-graph/src/planner/optimizer/select_scan_node.rs	filters_of	312	PROVEN	ScanTree.filtersOf: filtersOf_wrap, filtersOf_makeScanSubtree; ScanOrder.salvage_wellScoped, boundAfter_hop; Salvage.salvaged_wellScoped, premise_of_spine (filters' variable sets from the model); premise REFUTED for an Unwind child: Salvage.premise_fails
+-graph/src/planner/optimizer/select_scan_node.rs	argument_leaf_of	338	PROVEN	ScanTree.argumentLeafOf_spec
+-graph/src/planner/optimizer/select_scan_node.rs	in_merge_match_branch	357	PROVEN	ScanTree.inMergeLoop_spec
+-graph/src/planner/optimizer/select_scan_node.rs	is_planner_scan_subtree	377	PROVEN	ScanTree.plannerScan_agree, scanDepth_spec
+-graph/src/planner/optimizer/select_scan_node.rs	planner_scan_alias	396	PROVEN	ScanTree.plannerScan_agree, scanDepth_spec (returns (id, scope_id) since #2981, as ScanTree.plannerScanAlias : Option Var already did)
+-graph/src/planner/optimizer/select_scan_node.rs	planner_scan_idx	417	PROVEN	ScanTree.plannerScan_agree, scanDepth_spec
+-graph/src/planner/optimizer/select_scan_node.rs	swap_relationship	434	PROVEN	ScanOrder.swap_holds, swap_swap
+-graph/src/planner/optimizer/select_scan_node.rs	projected_outputs	459	PROVEN	ScanTree.projectedOutputs: collectOutputAliases_projected, collectOutputAliases_aggregate, collectOutputPairs_spec
+-graph/src/planner/optimizer/select_scan_node.rs	collect_output_pairs	484	PROVEN	ScanTree.collectOutputPairs (projectedOutputs plus the copies' sources): collectOutputPairs_spec
+-graph/src/planner/optimizer/select_scan_node.rs	collect_output_aliases	502	PROVEN	ScanTree.collectOutputAliases_spec, collectOutputAliases_aggregate, collectOutputAliases_projected (#3594: a Project/Aggregate/known Argument gives the ids of projected_outputs)
+-graph/src/planner/optimizer/select_scan_node.rs	node_path	542	PROVEN	ScanTree.nodePath_eq
+-graph/src/planner/optimizer/select_scan_node.rs	resolve_path	559	PROVEN	ScanTree.resolve_nodePath, pruneAt_parent
+-graph/src/planner/optimizer/select_scan_node.rs	child_subtree_binds	575	PROVEN	ScanTree.childSubtreeBinds_spec
+-graph/src/planner/optimizer/select_scan_node.rs	subtree_may_bind	602	PROVEN	ScanTree.subtreeMayBind_spec, childSubtreeBinds_mayBind, vl_leaf_never_rebinds_to (the leaf rewrite refuses when a kept child may bind `to`)
+-graph/src/planner/optimizer/select_scan_node.rs	select_var_len_scan_node	625	PROVEN	ScanTree.vl_reverse_sound, reach_reverse_iff, vlNonLeaf_keeps_wrappers, vlLeaf_guards, vlLeaf_keeps_filter, vlNonLeaf_attrs, vl_reverse_sound_symm, vlLeaf_bidir, vlLeaf_over_input, vl_leaf_never_rebinds_to, leafScan_keeps_below (#3593: undirected walks allowed, all children kept under the new scan, refuses when edge attrs read an endpoint or a kept child may bind `to`), vl_never_drops_filter, vl_leaf_bug_case_fixed (#3264: the leaf rewrite never prunes a Filter wrapper)
+-graph/src/planner/optimizer/select_scan_node.rs	select_scan_node	836	PROVEN	ScanOrder.order_sound, ScanTree.startKeyLt/equality_beats_late (start-point key, #3821 equality tie-break), order_length, pick_perm, run_perm, place_wellScoped, initialBound_wellScoped, initialBound_keeps_row, runScoped_wellScoped, salvage_wellScoped, Salvage.salvaged_wellScoped/premise_of_spine (sound only with an honest initial_bound, and only when the salvaged filters read bound variables); FIXED by #3523 (lines 1070-1075: best_node seeded only when no outer child is kept; initialBound_wellScoped, initialBound_keeps_row); CONFIRMED BUG #2972, open fix PR #3099 (Salvage.premise_fails, salvage_loses_row): a planner scan with an Unwind child is pruned whole (is_planner_scan_subtree:377, argument_leaf_of:338 keep
+```
+
+**File**: `proofs/planner_build/COVERAGE.tsv` (modified, +5/-5)
+```diff
+@@ -76,9 +76,9 @@ graph/src/parser/ast.rs	QueryIR::validate	1310	PROVEN	Ast.validate: call_then_ma
+ graph/src/parser/ast.rs	validate_set_items	1494	PROVEN	Ast.setItemsOk_spec
+ graph/src/parser/ast.rs	QueryIR::return_column_names	1535	PROVEN	Ast.returnColumns: returnColumns_last_return, returnColumns_skips_updates, returnColumns_nonquery
+ graph/src/planner/hop_order.rs	self_loops_after_binders	25	PROVEN	HopOrder.selfLoopsAfterBinders: selfLoops_perm (permutation; run_inv: deferred list empty at the end), kept_sublist (non-deferred hops keep their order), deferred_after_binder (a deferred self-loop follows its first later binder), single_pass (one fold, one step per hop), early_return_sound, pr_cases; eq_reference = pre-#3102 loop (pre3102_reference, tests::reference) under WF (self_loop ⇒ from = to; planner: orderRels_eq_reference when alias ids are unique per pattern), wf_needed (#3102 61284ea4f, fixes #2999)
+-graph/src/planner/optimizer/mod.rs	collect_expr_scoped_variables	111	PROVEN	E.scopedVars (Anchor.lean): mem_scopedVars (exactly the (scope,id) of the variables the expression reads), scopedVars_keeps_scope
+-graph/src/planner/optimizer/mod.rs	collect_single_variable_conjuncts	126	PROVEN	E.singleVarConj (Anchor.lean): singleVarConj_spec/singleVarConj_sound (every collected var is the only var of a top-level AND conjunct), nodes_conj; singleVarConj_and/_two_vars/_or/_pattern
+-graph/src/planner/optimizer/mod.rs	walk	129	PROVEN	E.singleVarConjL (Anchor.lean, the inner walk of collect_single_variable_conjuncts): singleVarConjL_sound
+-graph/src/planner/optimizer/mod.rs	endpoint_scan_score	166	PROVEN	E.endpointScanScore (Anchor.lean): endpointScanScore_spec
+-graph/src/planner/optimizer/mod.rs	walk_scans_to_endpoint	177	PROVEN	E.walkScansTo (Anchor.lean): walkScansTo_spec, walkScansTo_tie
++graph/src/planner/optimizer/mod.rs	collect_expr_scoped_variables	112	PROVEN	E.scopedVars (Anchor.lean): mem_scopedVars (exactly the (scope,id) of the variables the expression reads), scopedVars_keeps_scope
++graph/src/planner/optimizer/mod.rs	collect_single_variable_conjuncts	127	PROVEN	E.singleVarConj (Anchor.lean): singleVarConj_spec/singleVarConj_sound (every collected var is the only var of a top-level AND conjunct), nodes_conj; singleVarConj_and/_two_vars/_or/_pattern
++graph/src/planner/optimizer/mod.rs	walk	130	PROVEN	E.singleVarConjL (Anchor.lean, the inner walk of collect_single_variable_conjuncts): singleVarConjL_sound
++graph/src/planner/optimizer/mod.rs	endpoint_scan_score	167	PROVEN	E.endpointScanScore (Anchor.lean): endpointScanScore_spec
++graph/src/planner/optimizer/mod.rs	walk_scans_to_endpoint	178	PROVEN	E.walkScansTo (Anchor.lean): walkScansTo_spec, walkScansTo_tie
+ graph/src/planner/mod.rs	Planner::argument_vars	1221	PROVEN	E.argumentVars_spec (payload = visited), buildPatternSubPlanV_payload (taps carry the outer bound vars, read after visited is restored / before plan_match; runtime ignores the payload, so addArgs row semantics unchanged)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3963** (2026-11-23): fix(optimizer): per-row id seek for UNWIND + consecutive MATCH on id() (@DvirDukhan)
 - **PR #3954** (2026-11-22): version 6.2.0 (@DvirDukhan)
 - **PR #3953** (closed): release 6.2.0 through the merge queue (@DvirDukhan)
 - **PR #3952** (2026-11-22): release 6.2.0 through the merge queue (@DvirDukhan)
 - **PR #3951** (2026-11-22): proofs: re-target to main and raise coverage to 99.7% PROVEN; prune FINDINGS.md (@AviAvni)
 - **PR #3950** (2026-11-22): version 6.2.0 (@DvirDukhan)
-- **PR #3946** (2026-11-22): Dual-license FalkorDB under SSPLv1 and AGPLv3 (@gkorland)
 
 ---
 
@@ -2250,28 +2467,28 @@ Co-Authored-By: Claude Sonnet 5.5 <[REDACTED
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. GRAPH.DELETE of indexed graphs corrupts RediSearch's shared N/A key
+## X. optimizer): per-row index seek instead of a hash join over a full label scan for
 
 **RULE**:
-When implementing operations in `deps/RediSearch`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `graph/src/planner/optimizer/eliminate_true_filters.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d070f1f9`: GRAPH.DELETE of indexed graphs corrupts RediSearch's shared N/A key. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0ecba8bc`: optimizer): per-row index seek instead of a hash join over a full label scan for UNWIND + consecutive MATCH. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `deps/RediSearch`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `graph/src/planner/optimizer/eliminate_true_filters.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-Subproject commit 994282d3075adae126076b0aa141b1c6ac66c0bf
+pub(super) fn substitute_params(
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-Subproject commit 1317b41b3f1a2f68fea81e250b0b32a57dc7d6d1
+fn substitute_params(
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d070f1f9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0ecba8bc` are properly handled with clean fallback behavior.

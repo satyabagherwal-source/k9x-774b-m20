@@ -12604,3 +12604,8 @@
 | `CYCLE-20261124-7PV3` | `2026-11-24T05:28:26.799Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10211` | Yes (`8fffd0eb...`) |
 | `CYCLE-20261124-PXLA` | `2026-11-24T05:42:36.622Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1863` | Yes (`ab1059c4...`) |
 | `CYCLE-20261124-Q2NN` | `2026-11-24T05:42:43.187Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10212` | Yes (`7ef20640...`) |
+| `CYCLE-20261124-QP24` | `2026-11-24T06:11:11.836Z` | `FalkorDB/FalkorDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10213` | Yes (`fb1edb8d...`) |
+| `CYCLE-20261124-QTFQ` | `2026-11-24T06:11:17.510Z` | `appwrite/appwrite` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/appwrite-appwrite-learnings.md` | Yes (`a989f352...`) |
+| `CYCLE-20261124-QUSS` | `2026-11-24T06:11:19.276Z` | `saltstack/salt` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10214` | Yes (`5ec8cbd6...`) |
+| `CYCLE-20261124-QYIQ` | `2026-11-24T06:11:24.098Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10215` | Yes (`b7f414ee...`) |
+| `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T06:12:11.412Z` | `appwrite-appwrite` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-3B23634E` [Domain D] | Yes (`7f92b263...`) |

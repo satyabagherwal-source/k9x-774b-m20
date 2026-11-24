@@ -4,24 +4,24 @@
 {
   "source_repository": "appwrite/appwrite",
   "source_url": "https://github.com/appwrite/appwrite",
-  "source_version": "23fd2350",
+  "source_version": "1426a10d",
   "license": "BSD-3-Clause",
-  "timestamp": "2026-11-18T10:18:49.334Z",
+  "timestamp": "2026-11-24T06:11:17.938Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-appwrite-appwrite",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [appwrite/appwrite](https://github.com/appwrite/appwrite) (Revision: `23fd2350`).  
-> **License**: BSD-3-Clause | **Timestamp**: `2026-11-18T10:18:49.334Z`  
+> **Provenance**: Harvested from [appwrite/appwrite](https://github.com/appwrite/appwrite) (Revision: `1426a10d`).  
+> **License**: BSD-3-Clause | **Timestamp**: `2026-11-24T06:11:17.938Z`  
 > **Learning ID**: `learn-github-appwrite-appwrite`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), E (Creative Intelligence)
-- **Confidence Rating**: 60%
+- **Secondary Corroborating Domains**: B (Product Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), G (Architecture Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), E (Creative Intelligence), C (Market & Business Intelligence)
+- **Confidence Rating**: 56%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from appwrite/appwrite:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/appwrite-appwrite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/appwrite/appwrite](https://github.com/appwrite/appwrite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T10:18:47.890Z  
+> **Harvest Timestamp**: 2026-11-24T06:11:16.740Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The open-source cloud for agents & devs. Including Auth, Databases, Storage, Functions, Messaging, Hosting, Realtime, WAF and more
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 58107 stars
+- **Stars / Engagement**: 58551 stars
 
 ---
 
@@ -1378,21 +1378,27 @@ export function DomainsDefaultState({
 ```
 import {
   Box3,
+  type Color,
   DirectionalLight,
   Fog,
   HemisphereLight,
+  type InstancedMesh,
   LinearMipmapLinearFilter,
+  type Material,
   MathUtils,
   Mesh,
+  MeshDepthMaterial,
   MeshStandardMaterial,
   type Object3D,
   NeutralToneMapping,
   PCFShadowMap,
   PerspectiveCamera,
   PlaneGeometry,
+  type Points,
   Raycaster,
   SRGBColorSpace,
   Scene,
+  type ShaderMaterial,
   ShadowMaterial,
   Vector2,
   Vector3,
@@ -1400,21 +1406,30 @@ import {
   WebGLRenderer,
   type Texture,
 } from 'three'
+import { ASSEMBLED, POWER_ON, SETTLED } from './assembly'
 import { GlowLayer, ShadowLayer } from './effects'
 import { createFrameworkAtlas, loadFrameworkIcons } from './frameworks'
-import type { DisplayFit, FrameState } from './frame'
-import { applyKitPalette, createKit, disposeKit, type FactoryKit } from './kit'
+import { releaseShapes } from './geometry'
+import type { FrameState } from './frame'
+import {
+  applyKitPalette,
+  createKit,
+  createArrivingDepthMaterial,
+  disposeKit,
+  type FactoryKit,
+} from './kit'
 import {
   BED_BACK,
   BED_FRONT,
   CYCLE,
-  EXTENSION,
+  HOLOGRAM,
   MOVE,
   STATION_COUNT,
   TOWER_TOP,
   easeInOutCubic,
   easeOutCubic,
   getLineState,
+  hologramBottom,
   range,
   stationX,
 } from './layout'
@@ -1424,6 +1439,8 @@ import {
   type FactoryPalette,
 } from './palette'
 import { ProductLine } from './products'
+import { DroneFleet } from './drones'
+import { ExtensionLine } from './extensions'
 import { StationLine } from './stations'
 import { createStudioEnvironment } from './studio'
 import {
@@ -1434,7 +1451,7 @@ import {
   createShadowTexture,
   createTrackTexture,
 } from './textures'
-import { FactoryWorld, getStaticShadowShapes } from './world'
+import { FactoryWorld, HOLOGRAM_LAYER, getStaticShadowShapes } from './world'
 
 export type FactoryEngineOptions = {
   canvas: HTMLCanvasElement
@@ -1442,16 +1459,17 @@ export type FactoryEngineOptions = {
   icons: string[]
   /** Translated product names, printed on each column, then the gate's sign. */
   names: string[]
-  /** Translated product taglines, shown when a station unfolds. */
+  /** Translated product taglines, shown in a station's hologram. */
   descriptions: string[]
   /** Translated label of the shipped counter. */
   counterLabel: string
+  /** Translated label on the cards the drones carry. */
+  promptLabel: string
   /** Right-to-left page: nameplates put the icon on the right. */
   rtl: boolean
   dark: boolean
   reducedMotion: boolean
   onReady?: () => void
-  onHover?: (station: number) => void
   /** WebGL failed or the context was lost for good. */
   onError?: () => void
 }
@@ -1519,14 +1537,43 @@ const FRAMINGS: Record<'overlay' | 'band' | 'narrow', Framing> = {
   },
 }
 
-/** Factory clock when the scene boots: a line already full of products. */
+/** Factory clock when the line starts: full of products. */
 const START_TIME = 30 * CYCLE + MOVE + 0.02
 /** Still frame for reduced motion: several machines mid-action. */
 const STILL_TIME = 30 * CYCLE + MOVE + 0.5
-/** Seconds the line takes to power up before it starts moving. */
+/** The line's power-up once it has assembled, in its own seconds: lights come on, then it starts moving. */
 const INTRO_END = 2.4
+/** The power-up plays this many times faster than it is written, so the line is up and moving within a second. */
+const INTRO_SPEED = 3
 const FOV = 30
 const FRAME_INTERVAL = 1000 / 60
+/** The lowest resolution scale the adaptive quality drops to. */
+const MIN_QUALITY = 0.5
+
+/** A material's stand-in for the reflection pass (see `setupTwins`). */
+type Twin = { material: Material; version: number }
+
+/** Makes `twin` match `source`, sharing what changes in place (colors, textures, uniforms). */
+function share(twin: Material, source: Material) {
+  twin.copy(source)
+  const fields = twin as unknown as Record<string, unknown>
+  for (const [key, value] of Object.entries(source)) {
+    if (
+      (value as Color | null)?.isColor ||
+      (value as Texture | null)?.isTexture
+    )
+      fields[key] = value
+  }
+  if ((source as ShaderMaterial).isShaderMaterial)
+    (twin as ShaderMaterial).uniforms = (source as ShaderMaterial).uniforms
+  twin.onBeforeCompile = source.onBeforeCompile
+  twin.customProgramCacheKey = source.customProgramCacheKey
+  twin.userData = source.userData
+  twin.needsUpdate = true
+}
+
+/** Work (ms) building may do before it yields a frame to the page (see `step`). */
+const STEP_BUDGET = 24
 
 const nextFrame = () =>
   new Promise<void>((resolve) => {
@@ -1554,7 +1601,9 @@ export class FactoryEngine {
   private kit: FactoryKit | null = null
   private world: FactoryWorld | null = null
   private stations: StationLine | null = null
+  private extensions: ExtensionLine | null = null
   private products: ProductLine | null = null
+  private drones: DroneFleet | null = null
   private glows: GlowLayer | null = null
   private shadows: ShadowLayer | null = null
   private textures: Texture[] = []
@@ -1564,14 +1613,35 @@ export class FactoryEngine {
   private frameworkAtlas: Texture | null = null
   /** Objects the floor should not mirror (things lying on it). */
   private readonly unreflected: Object3D[] = []
+  /** Shadow casters' depth materials, one per kind of caster (see `setupShadows`). */
+  private readonly depthMaterials: MeshDepthMaterial[] = []
+  /** Per material drawn in the reflection, its twin there. */
+  private readonly twins = new Map<Material, Twin>()
+  /** Everything the reflection draws with a twin. */
+  private readonly mirrored: {
+    object: Mesh | Points
+    source: Material
+    twin: Twin
+  }[] = []
   private readonly environments = new Map<boolean, Texture>()
   private frameState: FrameState | null = null
-  private copyArea: CopyArea | null = null
-  private readonly fits: DisplayFit[] = Array.from(
-    { length: STATION_COUNT },
-    () => ({ lift: 1, covers: false }),
-  )
+  /** Lines of page copy laid over the stage (see `setCopyLines`). */
+  private copyLines: CopyArea[] = []
+  /** How high every hologram's screen floats, 0 → 1 (see `fitDisplays`). */
+  private lift = 1
   private reflection: WebGLRenderTarget | null = null
+  /** Whether the floor still mirrors the machine; off for good once frames run slow. */
+  private reflectionOn = true
+  /**
+   * 1 while the floor mirrors the machine. It starts at 0 and fades in once
+   * the reflection has been warmed up after the first frame, and eases back
+   * to 0 when the reflection is dropped.
+   */
+  private reflectionFade = 0
+  /** The reflection pass has run once, off the first frame's path. */
+  private reflectionWarm = false
+  /** When building last yielded a frame (see `step`). */
+  private lastYield = 0
   private floor: Mesh | null = null
   private shadowCatcher: Mesh | null = null
 
@@ -1588,109 +1658,32 @@ export class FactoryEngine {
   private lastNow = 0
   private lastRender = 0
   private time = START_TIME
+  /** Real seconds of the factory assembling itself (see `assembly.ts`). */
+  private assembly = 0
   private introTime = 0
   private slowWindows = 0
   private fastWindows = 0
   private sampleCount = 0
-  private readonly samples = new Float32Array(60)
+  private readonly samples = new Float32Array(30)
+  private readonly sorted = new Float32Array(30)
   private pointer = new Vector2(0, 0)
   private pointerTarget = new Vector2(0, 0)
   private readonly hoverPointer = new Vector2()
   private pointerInside = false
+  /** Whether the pointer may turn a hologram on, or (over the page copy) only keep one on. */
+  private pointerOpens = true
   private hovered = -1
+  /** The layer over the page copy that holograms are drawn on (see `setFront`). */
+  private front: CanvasRenderingContext2D | null = null
+  /** The front layer shows a hologram, so it needs clearing once none is on. */
+  private frontShown = false
   private needsHoverTest = false
   private mobile = false
   private composition: FactoryComposition = 'band'
   private framing: Framing = FRAMINGS.band
   /** Shadow maps and the mirrored floor: only where there is GPU to spare. */
   private readonly studio: boolean
-  private readonly anisotropy: number
-  private readonly pixelBudget: number
-
-  constructor(private readonly options: FactoryEngineOptions) {
-    this.renderer = new WebGLRenderer({
-      canvas: options.canvas,
-      antialias: true,
-      alpha: true,
-      stencil: false,
-      powerPreference: 'default',
-    })
-    this.renderer.setClearColor(0x000000, 0)
-    this.renderer.outputColorSpace = SRGBColorSpace
-    this.renderer.toneMapping = NeutralToneMapping
-    this.renderer.toneMappingExposure = 1
-    // Desktop-class GPUs (fine pointer, 4+ cores) get cast shadows and a polished floor.
-    this.studio =
-      typeof window !== 'undefined' &&
-      window.matchMedia('(pointer: fine)').matches &&
-      (navigator.hardwareConcurrency ?? 4) >= 4
-    this.renderer.shadowMap.enabled = this.studio
-    this.renderer.shadowMap.type = PCFShadowMap
-    // Native 2x on desktop-class GPUs; phones and low-core devices get a tighter budget.
-    this.pixelBudget = this.studio ? 7.4e6 : 2.2e6
-    // Screens and print sit at a steep angle; anisotropic filtering keeps them crisp.
-    this.anisotropy = Math.min(8, this.renderer.capabilities.getMaxAnisotropy())
-    this.palette = createFactoryPalette(
-      options.dark,
-      readPageBackground(options.dark),
-    )
-    options.canvas.addEventListener('webglcontextlost', this.handleContextLost)
-    if (options.reducedMotion) {
-      this.introTime = INTRO_END + 2
-      this.time = STILL_TIME
-    }
-  }
-
-  private handleContextLost = (event: Event) => {
-    event.preventDefault()
-    this.stop()
-    this.options.onError?.()
-  }
-
-  /** Builds the scene in small steps so no single task blocks input. */
-  async init() {
-    const palette = this.palette
-    const shadow = createShadowTexture(getStaticShadowShapes())
-    const blob = createBlobTexture()
-    const track = this.crisp(createTrackTexture(palette))
-    this.textures.push(shadow, blob)
-    await nextFrame()
-    if (this.disposed) return
-
-    const kit = createKit(palette, { shadow, blob, track })
-    this.kit = kit
-    const plates = this.createNameplates()
-    this.nameplateAtlas = this.crisp(plates.texture)
-    const descriptions = this.createDescriptions()
-    this.descriptionAtlas = this.crisp(descriptions.texture)
-    this.world = new FactoryWorld(
-      kit,
-      plates.texture,
-      descriptions.texture,
-      this.options.counterLabel,
-    )
-    this.floor = this.world.group.getObjectByName('floor') as Mesh
-    this.scene.add(this.world.group)
-    await nextFrame()
-    if (this.disposed) return
-
-    this.stations = new StationLine(kit)
-    this.scene.add(this.stations.group)
-    await nextFrame()
-    if (this.disposed) return
-
-    this.products = new ProductLine(kit)
-    const atlas = createScreenAtlas(this.atlasScale)
-    this.screenAtlas = this.crisp(atlas.texture)
-    this.products.setScreenAtlas(atlas.texture, atlas.cells)
-    this.scene.add(this.products.group)
-    this.glows = new GlowLayer(kit.glow)
-    this.shadows = new ShadowLayer(kit.blob)
-    this.scene.add(this.glows.points, this.shadows.mesh)
-    void loadFrameworkIcons().then((icons) => {
-      if (this.disposed || !this.world || !this.products) return
-      this.world.setFrameworkIcons(icons)
-      this.frameworkAtlas 
+  private readonly anisotropy: 
 ```
 
 ### Core Architecture Module: `apps/console/src/components/pages/organizations/$orgId/apps/_components/AppsEmptyState.tsx`
@@ -2107,409 +2100,205 @@ export function isSubscriptionFailedInvoiceWithError(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `40012595` (2026-11-18)
-**Commit Message**: test(security): add the Railway endpoint to the baseline
+### Incident Patch 1: `32af507c` (2026-11-24)
+**Commit Message**: fix(console): resize dedicated TablesDB databases through the product API
 
-**File**: `tests/e2e/Security/baseline.json` (modified, +1/-0)
+Changing the specification of a TablesDB database that already runs on
+dedicated compute always failed with 400 database_not_serverless.
+
+The console decided "already dedicated" by reading GET /v1/mysql/{id}.
+Cloud keeps product databases off the raw engine API, so that route is a
+404 for every TablesDB database (and the id-filtered mysql list is
+empty). The lookup therefore always answered "serverless" and the console
+posted a serverless-to-dedicated migration, which cloud rightly rejects
+for a database that is already dedicated.
+
+Read the specification from tablesDB.get instead: cloud sources it from
+the dedicated backing, so a non-serverless value means the database is
+dedicated and the change is a tablesDB.update resize. A failed lookup now
+surfaces instead of being read as "serverless".
+
+createTablesDatabaseMigration also fell back to mysql.createMigration on
+a 404. That engine route hides product databases the same way, so the
+fallback could only replace the real error with a second 404; it is gone.
+
+The unused currentSpecification parameter is dropped, which removes its
+entry from the type baseline.
+
+
+
+**File**: `apps/console/src/components/pages/projects/$projectId/databases/settings/DatabaseSpecificationCard.tsx` (modified, +0/-1)
 ```diff
-@@ -457,6 +457,7 @@
-         "PATCH /v1/project/oauth2/paypal",
-         "PATCH /v1/project/oauth2/paypalSandbox",
-         "PATCH /v1/project/oauth2/podio",
-+        "PATCH /v1/project/oauth2/railway",
-         "PATCH /v1/project/oauth2/reddit",
-         "PATCH /v1/project/oauth2/resend",
-         "PATCH /v1/project/oauth2/roblox",
+@@ -122,7 +122,6 @@ export function DatabaseSpecificationCard({
+         databaseId,
+         dbKind,
+         specification,
+-        database.specification,
+         database.name,
+       ),
+     onSuccess: async (result) => {
 ```
 
----
-
-### Incident Patch 2: `e59f7ca0` (2026-11-18)
-**Commit Message**: Merge pull request #15274 from appwrite/fix/nats-objectstore-chunk-leak
-
-fix(nats): purge object-store chunks when a put fails mid-write (CLOUD-3RDX)
-
-**File**: `packages/nats/src/ObjectStore/ObjectStore.php` (modified, +32/-8)
+**File**: `apps/console/src/lib/react-query/hooks/databases.ts` (modified, +31/-74)
 ```diff
-@@ -9,6 +9,7 @@
- use Utopia\NATS\Exception\ObjectStoreException;
- use Utopia\NATS\Headers;
- use Utopia\NATS\JetStream\AckPolicy;
-+use Utopia\NATS\JetStream\ApiError;
- use Utopia\NATS\JetStream\ConsumerConfig;
- use Utopia\NATS\JetStream\DeliverPolicy;
- use Utopia\NATS\JetStream\JetStream;
-@@ -59,9 +60,23 @@ private function writeVersion(string $name, string $data, ?ObjectMeta $previous,
- 
-         $chunks = 0;
-         $length = \strlen($data);
--        for ($offset = 0; $offset < $length; $offset += self::CHUNK_SIZE) {
--            $this->js->publish($chunkSubject, substr($data, $offset, self::CHUNK_SIZE));
--            $chunks++;
-+        try {
-+            for ($offset = 0; $offset < $length; $offset += self::CHUNK_SIZE) {
-+                $this->js->publish($chunkSubject, substr($data, $offset, self::CHUNK_SIZE));
-+                $chunks++;
-+            }
-+        } catch (\Throwable $e) {
-+            // A chunk write that fails part way through leaves the chunks before it
-+            // in the stream under a NUID no meta record will ever name, so neither
-+            // delete() nor a later put() of this object can reclaim them. On a
-+            // bucket limited by max_bytes (discard=New) those orphans hold the byte
-+            // budget forever and every later put is rejected the same way, so the
-+            // failure has to be compensated here. No meta record names this NUID yet,
-+            // so purging is safe even when the failure is an ambiguous one -- unlike
-+            // at the meta publish below, where an ambiguous failure may have committed
-+            // a record that now names these chunks.
-+            $this->purgeChunks($nuid);
-+            throw $e;
-         }
- 
-         $meta = new ObjectMeta(
-@@ -90,15 +105,24 @@ private function writeVersion(string $name, string $data, ?ObjectMeta $previous,
-                 expectedLastSubjectSeq: $expectedSeq,
-             );
-         } catch (JetStreamException $e) {
--            // Purge only when the server actually rejected the CAS publish. On a
--            // transport failure the meta publish is ambiguous -- it may well have
--            // landed -- and purging here would delete the chunks this put just
--            // wrote successfully.
--            if ($e->apiError?->errCode !== JetStream::ERR_WRONG_LAST_SEQUENCE) {
-+            // An exception carrying an ApiError is the server's decoded answer: it
-+            // evaluated the publish and refused to store it, so the meta record
-+            // definitely does not exist and this put's chunks are already orphaned.
-+            // Reclaim them whatever the reason for the refusal -- a CAS conflict, or
-+            // a bucket at max_bytes, which would otherwise keep the bytes of every
-+            // failed put forever and reject every later one for the same reason.
-+            // Without an ApiError the publish is ambiguous (it may well have landed),
-+            // and purging would delete the chunks of a meta record that now names them.
-+            if (!$e->apiError instanceof ApiError) {
-                 throw $e;
-             }
- 
-             $this->purgeChunks($nuid);
-+
-+            if ($e->apiError->errCode !== JetStream::ERR_WRONG_LAST_SEQUENCE) {
-+                throw $e;
-+            }
-+
-             throw new ObjectStoreException("conflicting concurrent write for object: {$name}", $e->getCode(), previous: $e);
-         }
- 
-```
-
-**File**: `packages/nats/tests/E2E/ObjectStoreExtraTest.php` (modified, +38/-0)
-```diff
-@@ -6,6 +6,7 @@
- 
- use PHPUnit\Framework\TestCase;
- use Utopia\NATS\Connection;
-+use Utopia\NATS\Exception\JetStreamException;
- use Utopia\NATS\Exception\ObjectStoreException;
- use Utopia\NATS\JetStream\JetStream;
- use Utopia\NATS\ObjectStore\ObjectMeta;
-@@ -40,6 +41,43 @@ protected function tearDown(): void
-         $this->conn->close();
-     }
- 
-+    public function testPutRejectedByTheBucketLimitStrandsNoChunks(): void
-+    {
-+        $bucket = 'objlimit_' . uniqid();
-+        $store = ObjectStore::createOrUpdate($this->conn, $this->js, new ObjectStoreConfig(
-+            bucket: $bucket,
-+            maxBytes: 200 * 1024,
-+        ));
-+
-+        try {
-+            // Objects are written in 128 KiB chunks: the first fits, the second
-+            // would push the bucket past max_bytes and an object-store stream
-+            // discards New, so the server rejects that publish instead of
-+            // evicting anything.
-+            try {
-+                $store->put('big.bin', str_repeat('a', 384 * 1024));
-+                $this->fail('Expected the bucket limit to reject the put');
-+            } catch (JetStreamException $e) {
-+                $this->assertStringContainsString('maximum bytes exceeded', $e->getMessage());
-+            }
-+
-+            // The chunk that did land carries a NUID no meta record names, so if
-+            // the failed put leaves it behind nothing can ever reclaim it: the
-+            // bucket stays full and every later put fails the same way.
-+            $this->assertSame(0, $this->js->getStreamInfo("OBJ_{$bucket}")->state->messages);
-+
-+            $data = str_repeat('b', 128 * 1024);
-+            $store->put('small.bin', $data);
-+            $this->assertSame($data, $store->get('small.bin'));
-+        } finally {
-+            try {
-+                $this->js->deleteStream("OBJ_{$bucket}");
-+            } catch (\Throwable) {
-+                // ignore
-+            }
-+        }
-+    }
-+
-     public function testWatchFiresOnPutAndDelete(): void
-     {
-         /** @var list<ObjectMeta> $events */
-```
-
-**File**: `packages/nats/tests/WriteFailureSemanticsTest.php` (modified, +209/-6)
-```diff
-@@ -7,6 +7,7 @@
- use PHPUnit\Framework\TestCase;
- use Utopia\NATS\Connection;
- use Utopia\NATS\ConnectionOptions;
-+use Utopia\NATS\Exception\JetStreamException;
- use Utopia\NATS\Exception\KeyValueException;
- use Utopia\NATS\Exception\ObjectStoreException;
- use Utopia\NATS\Exception\TimeoutException;
-@@ -23,20 +24,31 @@
-  */
- final class WriteFailureSemanticsTest extends TestCase
- {
--    /**
--     * A connection whose requests are never answered: js->publish() waits for a
--     * PubAck that never arrives and raises TimeoutException.
--     */
--    private function unresponsiveConnection(FakeTransport $fake): Connection
-+    /** A stored message, as the server acknowledges one. */
-+    private const PUB_ACK = '{"stream":"OBJ_BUCKET","seq":1}';
-+
-+    /** The server refusing to store a message because the stream is at max_bytes. */
-+    private const MAX_BYTES = '{"error":{"code":400,"err_code":10077,"description":"maximum bytes exceeded"}}';
-+
-+    private function connection(FakeTransport $fake, float $requestTimeout = 1.0): Connection
-     {
-         return Connection::connect(new ConnectionOptions(
-             servers: 'nats://127.0.0.1:4222',
-             allowReconnect: false,
--            requestTimeout: 0.02,
-+            requestTimeout: $requestTimeout,
-             transportFactory: fn (string $scheme): FakeTransport => $fake,
-         ));
-     }
- 
-+    /**
-+     * A connection whose requests are never answered: js->publish() waits for a
-+     * PubAck that never arrives and raises TimeoutException.
-+     */
-+    private function unresponsiveConnection(FakeTransport $fake): Connection
-+    {
-+        return $this->connection($fake, 0.02);
-+    }
-+
-     public function testKeyValueCreatePropagatesATransportFailure(): void
-     {
-         $conn = $this->unresponsiveConnection(new FakeTransport());
-@@ -89,4 +101,195 @@ public function testObjectStorePutPropagatesATransportFailure(): void
-             $this->assertStringContainsString('Request timed out', $e->getMessage());
-         }
-     }
-+
-+    /**
-+     * A bucket that has hit max_bytes rejects a publish with "maximum bytes
-+     * exceeded" instead of evicting, because the object-store stream is created
-+     * with discard=New. When that rejection lands on chunk N of a multi-chunk
-+     * put, chunks 1..N-1 are already durably stored under a NUID no meta record
-+     * will ever reference: nothing in the library can reclaim them, so their
-+     * bytes occupy the bucket's limit forever and every later put fails the same
-+     * way. The partially written version has to be purged before the failure is
-+     * handed back to the caller.
-+     */
-+    public function testObjectStorePutPurgesItsChunksWhenTheBucketIsFull(): void
-+    {
-+        $chunks = [];
-+        $metas = [];
-+        $purges = [];
-+        // The bucket's byte budget runs out on the second chunk.
-+        $fake = $this->scriptedBucket(
-+            static fn (int $chunk): string => $chunk === 1 ? self::PUB_ACK : self::MAX_BYTES,
-+            static fn (): string => self::PUB_ACK,
-+            $chunks,
-+            $metas,
-+            $purges,
-+        );
-+        $conn = $this->connection($fake);
-+        $store = new ObjectStore($conn, $conn->jetStream(), 'BUCKET');
-+
-+        try {
-+            // Two chunks: 128 KiB is the chunk size, so this spills over.
-+            $store->put('object', str_repeat('a', 128 * 1024 + 1));
-+            $this->fail('Expected the full bucket to reject the chunk publish');
-+        } catch (JetStreamException $e) {
-+            $this->assertSame('maximum bytes exceeded', $e->getMessage());
-+        } finally {
-+            $conn->close();
-+        }
-+
-+        $this->assertCount(2, $chunks, 'Both chunks have to be attempted');
-+        $this->assertSame([], $metas, 'A failed chunk write must not be committed');
-+        $this->assertCount(1, $purges, 'The chunks this put wrote have to be reclaimed');
-+        $this->assertSame(['filter' => $chunks[0]], json_decode($purges[0], true));
-+    }
-+
-+    /**
-+     * The same rejection can land on the meta publish instead: the chunks fit, the
-+     * record naming them does not. The server decoded and refused that publish, so
-+     * no meta record exists and the chunks are orphaned exactly as above -- only a
-+     * CAS conflict used to be compensated, which left a full bucket leaking the
-+     * whole of every failed put.
-+     */
-+    public function testObjectStorePutPurgesItsChunksWhenTheBucketRefusesTheMetaRecord(): void
-+    {
-+        $chunks = [];
-+        $metas = [];
-+        $purges = [];
-+        $fake = $this->scriptedBucket(
-+            static fn (int $chunk): string => self::PUB_ACK,
-+            static fn (): string => self::MAX_BYTES,
-+            $chunks,
-+            $metas,
-+            $purges,
-+        );
-+        $conn = $this->connection($fake);
-+        $store = new ObjectStore($conn, $conn->jetStream(), 'BUCKET');
-+
-+        try {
-+            $store->put('object', 'payload')
-```
-
----
-
-### Incident Patch 3: `4c608520` (2026-11-18)
-**Commit Message**: Merge pull request #15509 from appwrite/fix/console-project-default-platform
-
-fix(console): seed new projects with a localhost web app, not a wildcard (appwrite:appwrite:alert#4782)
-
-**File**: `apps/console/e2e/console.mocked.wildcard-platform.spec.ts` (modified, +13/-11)
-```diff
-@@ -3,9 +3,11 @@ import type { Models } from '@appwrite.io/console'
- import { expect, test } from './fixtures'
- 
- /**
-- * New projects start with a web app for any hostname (`*`), and the app lists
-- * flag it with the recommended next step. The Appwrite API is mocked at the
-- * network layer and the real console pages are asserted.
-+ * New projects start with a web app for `localhost` only -- never for any
-+ * hostname (`*`), which would make the project's client API reachable with
-+ * credentials from every website. A `*` app added by hand is still flagged in
-+ * the app lists with the recommended next step. The Appwrite API is mocked at
-+ * the network layer and the real console pages are asserted.
-  */
- 
- const NOW = '2026-11-11T09:30:00.000+00:00'
-@@ -227,7 +229,7 @@ async function useSelfHosted(page: Page) {
+@@ -72,12 +72,8 @@ import {
+   hasTablesDatabaseMigrationCutover,
+   parseTablesDatabaseMigrationIdFromError,
+ } from '@/lib/databases/tables-database-migration'
+-import {
+-  isAppwriteHttpStatus,
+-  isHttpNotFoundError,
+-} from '@/lib/utils/error-formatting'
++import { isHttpNotFoundError } from '@/lib/utils/error-formatting'
+ import { translate } from '@/lib/i18n/translate'
+-import { readDatabaseSpecification } from '@/lib/databases/database-compute'
+ import { waitForDatabaseRealtimeEvent } from '@/lib/realtime/wait-for-database-realtime'
+ import { normalizeDedicatedRealtimeEngine } from '@/lib/realtime/dedicated-database-cache'
+ import { buildPostgresListSchemasSql } from '@/lib/postgres-sql'
+@@ -1593,12 +1589,6 @@ export async function updateProjectDatabase(
+   return await projectSdk.tablesDB.update(payload)
  }
  
- test.describe('wildcard web platform (mocked API)', () => {
--  test('a new project starts with a web app for any hostname', async ({
-+  test('a new project starts with a web app for localhost only', async ({
-     page,
-   }) => {
-     await useSelfHosted(page)
-@@ -246,18 +248,18 @@ test.describe('wildcard web platform (mocked API)', () => {
-     const platform = calls.platformCreates[0]
-     expect(platform.headers()['x-appwrite-project']).toBe(created.projectId)
-     expect(platform.postDataJSON()).toMatchObject({
--      name: 'Web app',
--      hostname: '*',
-+      name: 'Local development',
-+      hostname: 'localhost',
-     })
- 
--    // The new project's overview lists it with the warning.
-+    // The new project's overview lists it, with nothing to warn about.
-     await expect(page).toHaveURL(new RegExp(`/projects/${created.projectId}`), {
-       timeout: 60_000,
-     })
--    const warning = page.getByTestId('wildcard-platform-warning')
--    await expect(warning).toHaveCount(1, { timeout: 60_000 })
--    await warning.hover()
--    await expect(page.getByRole('tooltip')).toContainText(WARNING)
-+    await expect(page.getByText('Local development').first()).toBeVisible({
-+      timeout: 60_000,
-+    })
-+    await expect(page.getByTestId('wildcard-platform-warning')).toHaveCount(0)
+-/**
+- * Migrate a serverless TablesDB database onto a dedicated specification.
+- * Only valid while the database is still serverless (`database_not_serverless`
+- * if already dedicated). Dedicated tier changes use
+- * `updateTablesDatabaseSpecification` instead.
+- */
+ export async function deleteTablesDatabaseMigration(
+   projectId: string,
+   databaseId: string,
+@@ -1646,6 +1636,12 @@ async function startTablesDatabaseProductMigration(
    })
- 
-   test('the apps list flags only the wildcard app', async ({ page }) => {
-```
-
-**File**: `apps/console/src/lib/appwrite/console-projects.ts` (modified, +6/-5)
-```diff
-@@ -2,7 +2,7 @@ import { ID } from '@appwrite.io/console'
- import type { Models } from '@appwrite.io/console'
- import type { Region } from '@appwrite.io/console'
- import { sdk } from '@/lib/appwrite/sdk'
--import { WILDCARD_HOSTNAME } from '@/lib/utils/platform'
-+import { LOOPBACK_HOSTNAME } from '@/lib/utils/platform'
- 
- type ListConsoleProjectsParams = {
-   /** Organization / team id. Required for `/organization/projects`. */
-@@ -78,8 +78,9 @@ export function listConsoleProjects(
-  * Create a project via the org-scoped console Organization SDK
-  * (`POST /organization/projects` with `X-Appwrite-Organization`).
-  * The org header assigns the project to `teamId`; no separate team update.
-- * The project starts with a web platform for any hostname, so a first web app
-- * connects without a CORS error; the apps list flags it until it is narrowed.
-+ * The project starts with a web platform for LOOPBACK_HOSTNAME, so a first web
-+ * app connects from local development without a CORS error; every other origin
-+ * stays rejected until the developer adds its hostname on the apps page.
-  */
- export async function createConsoleProject(params: {
-   projectId: string
-@@ -100,8 +101,8 @@ export async function createConsoleProject(params: {
-       .forProject(project.$id, project.region)
-       .project.createWebPlatform({
-         platformId: ID.unique(),
--        name: 'Web app',
--        hostname: WILDCARD_HOSTNAME,
-+        name: 'Local development',
-+        hostname: LOOPBACK_HOSTNAME,
-       })
-   } catch (error) {
-     // The project exists either way; its apps page still offers to add one.
-```
-
-**File**: `apps/console/src/lib/utils/platform.ts` (modified, +12/-0)
-```diff
-@@ -22,6 +22,18 @@ export function getPlatformIdentifier(
- /** Web platform hostname that accepts requests from every website. */
- export const WILDCARD_HOSTNAME = '*'
- 
-+/**
-+ * Hostname seeded on a new project's first web app.
-+ *
-+ * Platform hostnames are the API's origin boundary: it folds them into the
-+ * allowed-hostname list behind CORS with credentials and the origin check, and
-+ * a `*` entry matches every host. Session cookies are SameSite=None, so a
-+ * seeded WILDCARD_HOSTNAME would let any website a signed-in user visits call
-+ * the project's client API with their session. Loopback keeps local
-+ * development working without handing that out.
-+ */
-+export const LOOPBACK_HOSTNAME = 'localhost'
-+
- export function isWildcardHostname(hostname: string): boolean {
-   return hostname.trim() === WILDCARD_HOSTNAME
  }
+ 
++/**
++ * Migrate a serverless TablesDB database onto a dedicated specification.
++ * Only valid while the database is still serverless (`database_not_serverless`
++ * if already dedicated). Dedicated tier changes use
++ * `updateProductDatabaseSpecification` instead.
++ */
+ export async function createTablesDatabaseMigration(
+   projectId: string,
+   databaseId: string,
+@@ -1662,77 +1658,39 @@ export async function createTablesDatabaseMigration(
+ 
+   await clearAbortableTablesDatabaseMigrations(projectId, databaseId)
+ 
+-  const runProductMigration = async () => {
+-    try {
+-      return await startTablesDatabaseProductMigration(
+-        projectSdk,
+-        databaseId,
+-        trimmed,
+-      )
+-    } catch (tablesMigrationError) {
+-      const message =
+-        tablesMigrationError instanceof Error
+-          ? tablesMigrationError.message
+-          : String(tablesMigrationError ?? '')
+-      const alreadyExists =
+-        message.toLowerCase().includes('migration record already exists') ||
+-        message.toLowerCase().includes('already exists for this database')
+-      if (alreadyExists) {
+-        const migrationId =
+-          parseTablesDatabaseMigrationIdFromError(tablesMigrationError)
+-        if (migrationId) {
+-          await deleteTablesDatabaseMigration(
+-            projectId,
+-            databaseId,
+-            migrationId,
+-          )
+-        } else {
+-          await clearAbortableTablesDatabaseMigrations(projectId, databaseId)
+-        }
+-        return startTablesDatabaseProductMigration(
+-          projectSdk,
+-          databaseId,
+-          trimmed,
+-        )
+-      }
+-      throw tablesMigrationError
+-    }
+-  }
+-
+   try {
+-    return await runProductMigration()
+-  } catch (tablesMigrationError) {
+-    const routeMissing =
+-      isAppwriteHttpStatus(tablesMigrationError, 404) ||
+-      isHttpNotFoundError(tablesMigrationError)
+-    if (!routeMissing) {
+-      throw tablesMigrationError
++    return await startTablesDatabaseProductMigration(
++      projectSdk,
++      databaseId,
++      trimmed,
++    )
++  } catch (error) {
++    const message = (
++      error instanceof Error ? error.message : String(error ?? '')
++    ).toLowerCase()
++    const alreadyExists =
++      message.includes('migration record already exists') ||
++      message.includes('already exists for this database')
++    if (!alreadyExists) throw error
++
++    const migrationId = parseTablesDatabaseMigrationIdFromError(error)
++    if (migrationId) {
++      await deleteTablesDatabaseMigration(projectId, databaseId, migrationId)
++    } else {
++      await clearAbortableTablesDatabaseMigrations(projectId, databaseId)
+     }
++    return startTablesDatabaseProductMigration(projectSdk, databaseId, trimmed)
+   }
+-
+-  // Cloud may expose shared→dedicated for TablesDB-backed compute on the MySQL
+-  // engine migration route before (or instead of) tablesDB /migrations.
+-  return projectSdk.mysql.createMigration({
+-    databaseId,
+-    targetType: 'dedicated',
+-    specification: trimmed,
+-  })
+ }
+ 
+-/** True when TablesDB already runs on dedicated MySQL compute (not shared/serverless). */
++/** True when TablesDB itself reports a dedicated specification (not shared/serverless). */
+ async function isTablesDatabaseOnDedicatedCompute(
+   projectId: string,
+   databaseId: string,
+ ): Promise<boolean> {
+-  const engineDb = await fetchDedicatedDatabaseById(projectId, databaseId, {
+-    type: 'engine',
+-    engine: 'mysql',
+-  })
+-  if (!engineDb?.$id) return false
+-  const spec = readDatabaseSpecification(engineDb.specification)
+-  if (!spec || isServerlessDatabaseSpecId(spec)) return false
+-  const status = coerceTrimmedString(engineDb.status).toLowerCase()
+-  return status 
 ```
 
-**File**: `apps/console/tests/unit/console-project-default-platform.test.ts` (added, +67/-0)
+**File**: `apps/console/tests/unit/tablesdb-specification-change.test.ts` (added, +158/-0)
 ```diff
-@@ -0,0 +1,67 @@
+@@ -0,0 +1,158 @@
 +import { afterAll, describe, expect, mock, test } from 'bun:test'
++import { AppwriteException } from '@appwrite.io/console'
 +import * as actualSdk from '@/lib/appwrite/sdk'
-+import { createConsoleProject } from '@/lib/appwrite/console-projects'
-+import { isWildcardHostname } from '@/lib/utils/platform'
++import { updateProductDatabaseSpecification } from '@/lib/react-query/hooks/databases'
++
++const PROJECT_ID = 'proj0000000000000000001'
++const DATABASE_ID = 'db000000000000000000001'
++const TARGET_SPECIFICATION = 's-2vcpu-4gb'
++
++type Call = { service: string; method: string; params: unknown }
 +
 +/**
-+ * The seeded web app is the project's origin boundary: the API folds platform
-+ * hostnames into the allowed-hostname list it uses for CORS with credentials
-+ * and for the origin check. A seeded `*` would let any website call the new
-+ * project's client API with a signed-in user's session cookie.
++ * Cloud keeps product databases off the raw engine API: `GET /v1/mysql/{id}`
++ * is a 404 for every TablesDB database, dedicated or not. Whether a TablesDB
++ * database already runs on dedicated compute can only be read from TablesDB.
 + */
-+describe('createConsoleProject', () => {
++describe('updateProductDatabaseSpecification', () => {
 +  // Copy the real module now: the namespace import is live and points at the mock once it is set.
 +  const realSdk = { ...actualSdk }
 +
@@ -2517,63 +2306,1093 @@ fix(console): seed new projects with a localhost web app, not a wildcard (appwri
 +    mock.module('@/lib/appwrite/sdk', () => realSdk)
 +  })
 +
-+  function mockSdk() {
-+    const webPlatforms: Array<{ name: string; hostname: string }> = []
++  function mockSdk(options: {
++    specification?: string
++    createMigration?: () => Promise<unknown>
++  }) {
++    const calls: Call[] = []
++    const record =
++      <T>(service: string, method: string, result: () => T | Promise<T>) =>
++      async (params: unknown) => {
++        calls.push({ service, method, params })
++        return result()
++      }
++    const engineNotFound = () => {
++      throw new AppwriteException(
++        'Database not found',
++        404,
++        'dedicated_database_not_found',
++      )
++    }
 +
 +    mock.module('@/lib/appwrite/sdk', () => ({
 +      ...actualSdk,
 +      sdk: {
-+        forConsole: {
-+          organization: () => ({
-+            createProject: async ({
-+              projectId,
-+              name,
-+            }: {
-+              projectId: string
-+              name: string
-+            }) => ({ $id: projectId, name, region: 'default' }),
-+          }),
-+        },
 +        forProject: () => ({
-+          project: {
-+            createWebPlatform: async (platform: {
-+              name: string
-+              hostname: string
-+            }) => {
-+              webPlatforms.push(platform)
-+              return platform
-+            },
++          tablesDB: {
++            get: record('tablesDB', 'get', () => ({
++              $id: DATABASE_ID,
++              name: 'Orders',
++              ...(options.specification === undefined
++                ? {}
++                : { specification: options.specification }),
++            })),
++            update: record('tablesDB', 'update', () => ({
++              $id: DATABASE_ID,
++              specification: TARGET_SPECIFICATION,
++            })),
++            listMigrations: record('tablesDB', 'listMigrations', () => ({
++              migrations: [],
++              total: 0,
++            })),
++            createMigration: record(
++              'tablesDB',
++              'createMigration',
++              options.createMigration ??
++                (() => ({ $id: 'migration1', phase: 'pending' })),
++            ),
++          },
++          mysql: {
++            get: record('mysql', 'get', engineNotFound),
++            list: record('mysql', 'list', () => ({ databases: [], total: 0 })),
++            createMigration: record('mysql', 'createMigration', engineNotFound),
 +          },
 +        }),
 +      },
 +    }))
 +
-+    return webPlatforms
++    return calls
 +  }
 +
-+  test('seeds a web app for local development, never for any hostname', async () => {
-+    const webPlatforms = mockSdk()
++  function methodsOn(calls: Call[], service: string): string[] {
++    return calls
++      .filter((call) => call.service === service)
++      .map((call) => call.method)
++  }
 +
-+    await createConsoleProject({
-+      projectId: 'proj0000000000000000001',
-+      name: 'Launch',
-+      teamId: 'org00000000000000000001',
++  test('resizes a dedicated TablesDB database through tablesDB.update', async () => {
++    const calls = mockSdk({ specification: 's-1vcpu-1gb' })
++
++    await updateProductDatabaseSpecification(
++      PROJECT_ID,
++      DATABASE_ID,
++      'tablesdb',
++      TARGET_SPECIFICATION,
++    )
++
++    expect(methodsOn(calls, 'tablesDB')).toEqual(['get', 'update'])
++    expect(calls.at(-1)?.params).toEqual({
++      databaseId: DATABASE_ID,
++      specification: TARGET_SPECIFICATION,
++    })
++    expect(methodsOn(calls, 'mysql')).toEqual([])
++  })
++
++  test.each([['shared'], ['serverless'], [undefined]])(
++    'migrates a serverless TablesDB database (specification %p)',
++    async (specification) => {
++      const calls = mockSdk({ specification })
++
++      await updateProductDatabaseSpecification(
++        PROJECT_ID,
++        DATABASE_ID,
++        'tablesdb',
++        TARGET_SPECIFICATION,
++      )
++
++      expect(methodsOn(calls, 'tablesDB')).toEqual([
++        'get',
++        'listMigrations',
++        'createMigration',
++      ])
++      expect(calls.at(-1)?.params).toEqual({
++        databaseId: DATABASE_ID,
++        specification: TARGET_SPECIFICATION,
++        autoCutover: true,
++      })
++      expect(methodsOn(calls, 'mysql')).toEqual([])
++    },
++  )
++
++  test('surfaces a migration 404 instead of retrying on the mysql engine', async () => {
++    const calls = mockSdk({
++      specification: 'shared',
++      createMigration: () => {
++        throw new AppwriteException(
++          'Database not found',
++          404,
++          'database_not_found',
++        )
++      },
 +    })
 +
-+    expect(webPlatforms).toHaveLength(1)
-+    expect(isWildcardHostname(webPlatforms[0].hostname)).toBe(false)
-+    expect(webPlatforms[0].hostname).toBe('localhost')
++    const attempt = updateProductDatabaseSpecification(
++      PROJECT_ID,
++      DATABASE_ID,
++      'tablesdb',
++      TARGET_SPECIFICATION,
++    )
++
++    await expect(attempt).rejects.toMatchObject({
++      code: 404,
++      type: 'database_not_found',
++    })
++    expect(methodsOn(calls, 'mysql')).toEqual([])
 +  })
 +})
 ```
 
+**File**: `apps/console/types-baseline.json` (modified, +0/-1)
+```diff
+@@ -1145,7 +1145,6 @@
+     "TS2339: Property 'pricing' does not exist on type 'DedicatedDatabaseSpecificationList'.": 1,
+     "TS2339: Property 'status' does not exist on type 'Database & { enabled: boolean; createdAt: string; updatedAt: string; hasBackupPolicy: boolean; backupPolicy: Record<string, unknown> | null; backupPolicyCount: number; databaseType: DatabaseType; }'.": 2,
+     "TS2724: '\"node_modules/@appwrite.io/console/types/models\".Models' has no exported member named 'DedicatedDatabaseSpecificationPricing'. Did you mean 'DedicatedDatabaseSpecification'?": 1,
+-    "TS6133: 'currentSpecification' is declared but its value is never read.": 1,
+     "TS6133: 'useEffect' is declared but its value is never read.": 1
+   },
+   "src/lib/react-query/hooks/functions.ts": {
+```
+
+---
+
+### Incident Patch 2: `458b4a59` (2026-11-23)
+**Commit Message**: revert(extension): the Rust side of #15328
+
+The commit before this takes #15328 (per-dialect string literals and a
+declared LIKE escape) back out of the PHP package, so this pull request
+changes no PHP behaviour. With utopia-php/database 10.2.3 the package's
+SQLite builder and the library's own each appended ESCAPE, and SQLite
+refused the statement; that happened with the extension off.
+
+The Rust port had been written to match #15328, so it follows:
+
+- Reverts 589edcebd8: the tokenizers, parser, serializers and schemas
+  read and write string literals as main's PHP does. StringLiteral is
+  gone, and the shared filter module stays as it was.
+- The builders escape LIKE with a backslash and declare no escape,
+  setJsonRemove is main's JSON_REMOVE, toRawSql quotes through each
+  dialect's quoteString, and toAst/fromAst carry no escape clause.
+- compileLikePredicate(), likeEscape() and createTokenizer() are not
+  methods of main's builders, so they and their steps go: 74 remain.
+- MySQL, MariaDB and ClickHouse use the base AST serializer, as main's
+  createAstSerializer() does.
+
+Both corpora match main's package: 15,797 builder cases and 55,481
+query lines. utopia-php/database's suite f
+
+**File**: `crates/extension/README.md` (modified, +7/-28)
+```diff
+@@ -550,28 +550,6 @@ written as `a = b = c`, which reads back as `(a = b) = c`. `packages/query/src/A
+ is now the fixed version, with two tests in `tests/AST/SerializerTest.php` that fail on the old
+ one.
+ 
+-### String literals
+-
+-`Utopia\Query\StringLiteral` is a PHP enum and stays one. The tokenizers, the parser, the
+-serializers and the schemas each take a case of it (or their dialect's default), and the crate has
+-the same four rules as `utopia_query::StringLiteral`: `quote()` for what the serializers and the
+-DDL write, `unquote()` for what the parser reads. A backslash escapes or not, PostgreSQL's
+-`E'...'` is its own token, a NUL or a backslash after a byte of 0x80 or above is refused where
+-the dialect refuses it, and `LIKE` keeps its `ESCAPE` clause through `Binary::$escape`.
+-
+-The parser reads escapes in bytes, as PHP does. The extension hands it text with a character
+-for each byte, so it asks the crate's parser for `widened()` text: `E'\u00e9'` is then the two
+-bytes of `é`, each its own character, and comes back out as those two bytes.
+-
+-The corpus runs 1,903 cases of this on both: 29 literals through six tokenizers and the parser
+-under each of the four rules, 18 strings through six serializers under each rule and through the
+-DDL of five dialects, `LIKE ... ESCAPE` read and written, and statements with input after them.
+-One known difference: the rules given to a tokenizer, a serializer or a schema are a protected
+-property `$literal` in PHP, which a subclass can read. The extension keeps them in Rust.
+-
+-The crate's builders do not have these rules yet. They are not in the extension, so nothing
+-here reaches them, and they are to be brought level when the builders move.
+-
+ ### The schemas
+ 
+ `Schema` and `Schema\SQL` (both abstract), the dialects `Schema\MySQL`, `PostgreSQL`, `SQLite`,
+@@ -656,13 +634,13 @@ compares each public one, and the interfaces each builder implements.
+ What a subclass can rely on:
+ 
+ - A protected method it overrides is the one the build calls, in the order PHP calls them: `build()`,
+-  the `compile*()` methods, the clause hooks, the validators and every other helper, 77 in all,
++  the `compile*()` methods, the clause hooks, the validators and every other helper, 74 in all,
+   `quote()` and `getBindingValues()` among them.
+   `parent::compileFilter()` runs the native one. An override is handed the package's own objects: a
+   `Query`, a `Case\Expression`, a `Statement`, a `ParsedQuery`, and `$parts` by reference. Nothing
+   is converted for a method no subclass overrides.
+-- `createTokenizer()` and `createAstSerializer()` are among them: `toAst()` reads a CTE with the
+-  tokenizer a subclass returns, and `fromAst()` writes what stays raw SQL with its serializer.
++- `createAstSerializer()` is among them: `fromAst()` writes what stays raw SQL with the serializer
++  a subclass returns.
+ - `bindings`, `pendingQueries` and `resolvedAttributeCache` are protected properties it reads,
+   assigns and changes in place (`$this->pendingQueries[] = $query`), as the package's own traits do.
+   PHP is handed a copy the builder holds, and the next native call reads it back.
+@@ -695,11 +673,12 @@ Known differences:
+ - `resolvedAttributeCache` has no order.
+ - The classes declare a constructor and no `__clone()`. PHP's declare the reverse.
+ 
+-Four things check them. `tests/query-builders.php` is a corpus like the others: 15,827 cases, the
+-same on PHP and on the extension. The package's own 5,828 tests pass on the native builders, but for
++Four things check them. `tests/query-builders.php` is a corpus like the others: 15,797 cases, the
++same on PHP and on the extension. The package's own 5,628 tests pass on the native builders, but for
+ two that read the PHP class's source and private state and are skipped there. utopia-php/database
+ 10.2.3 subclasses four of the builders, overrides 23 of their methods and serializes queries for its
+-cache keys. Its 13,217 unit tests give the same result on the native builders as on PHP.
++cache keys. Its 13,217 unit tests fail the same nine on main's PHP package, on this one and on the
++native builders: the nine need a database server.
+ `tests/query-coroutines.php` builds 720 statements in Swoole coroutines whose overrides and
+ callbacks sleep in the middle of a build, so builds interleave on one thread. Each builder carries
+ the PHP object that owns it for that reason: kept per thread, 476 of the 720 lost their overrides.
+```
+
+**File**: `crates/extension/src/query/ast.rs` (modified, +25/-42)
+```diff
+@@ -28,10 +28,10 @@ use ext_php_rs::types::{ZendHashTable, ZendObject, ZendStr, Zval};
+ use ext_php_rs::zend::{ClassEntry, ExecutorGlobals, ce};
+ use utopia_query::ast;
+ use utopia_query::tokenizer::{Token, TokenType};
+-use utopia_query::{NullsPosition, OrderDirection, StringLiteral, Value};
++use utopia_query::{NullsPosition, OrderDirection, Value};
+ 
++use super::exception;
+ use super::tokenizer::{case, class};
+-use super::{Rules, exception};
+ use crate::emails::{construct, string};
+ use crate::string::PhpString;
+ 
+@@ -168,7 +168,7 @@ const NODES: [(Node, &str, &[&str]); 25] = [
+     (Node::WindowDefinition, "Definition\\Window", &["name", "specification"]),
+     (Node::Aliased, "Expression\\Aliased", &["expression", "alias"]),
+     (Node::Between, "Expression\\Between", &["expression", "low", "high", "negated"]),
+-    (Node::Binary, "Expression\\Binary", &["left", "operator", "right", "escape"]),
++    (Node::Binary, "Expression\\Binary", &["left", "operator", "right"]),
+     (Node::CaseWhen, "Expression\\CaseWhen", &["condition", "result"]),
+     (Node::Cast, "Expression\\Cast", &["expression", "type"]),
+     (Node::Conditional, "Expression\\Conditional", &["operand", "whens", "else"]),
+@@ -466,7 +466,6 @@ impl Reader<'_> {
+                 left: self.boxed(slot(node, 0, "left")?)?,
+                 operator: text(slot(node, 1, "operator")?, "operator")?,
+                 right: self.boxed(slot(node, 2, "right")?)?,
+-                escape: self.maybe(slot(node, 3, "escape")?)?.map(Box::new),
+             }
+             .into(),
+             Some(Node::CaseWhen) => self.when(value)?.into(),
+@@ -739,12 +738,7 @@ impl Builder<'_> {
+             ),
+             ast::Expression::Binary(binary) => self.make(
+                 Node::Binary,
+-                [
+-                    self.expression(&binary.left),
+-                    words(&binary.operator),
+-                    self.expression(&binary.right),
+-                    self.maybe(binary.escape.as_deref()),
+-                ],
++                [self.expression(&binary.left), words(&binary.operator), self.expression(&binary.right)],
+             ),
+             ast::Expression::CaseWhen(when) => self.when(when),
+             ast::Expression::Cast(cast) => {
+@@ -924,13 +918,12 @@ fn tokens<'a>(classes: &Classes, table: &'a ZendHashTable) -> PhpResult<(Vec<Tok
+ #[php_class]
+ #[php(name = "Utopia\\Query\\AST\\Parser")]
+ #[derive(Clone)]
+-pub struct Parser(StringLiteral);
++pub struct Parser;
+ 
+ #[php_impl]
+ impl Parser {
+-    #[php(defaults(literal = "Rules(StringLiteral::Backslash)"))]
+-    pub fn __construct(literal: Rules) -> Self {
+-        Self(literal.0)
++    pub fn __construct() -> Self {
++        Self
+     }
+ 
+     pub fn parse(&self, tokens: &ZendHashTable) -> PhpResult<Zval> {
+@@ -941,11 +934,7 @@ impl Parser {
+         }
+         // The statement is dropped where it was made: on the stack with room for it.
+         roomy(levels, INLINE_PARSE_LEVELS, || {
+-            ast::Parser::new()
+-                .with_literal(self.0)
+-                .widened()
+-                .parse(&read)
+-                .map(|select| Builder(&classes).select(&select))
++            ast::Parser::new().parse(&read).map(|select| Builder(&classes).select(&select))
+         })
+         .map_err(|error| failed(&error))
+     }
+@@ -1004,11 +993,6 @@ pub(super) fn expression_node(expression: &ast::Expression) -> PhpResult<Zval> {
+     Ok(Builder(&classes).expression(expression))
+ }
+ 
+-/// A `Statement\Select` PHP's own parser returned, as the crate's.
+-pub(super) fn read_select(select: &Zval) -> PhpResult<ast::Select> {
+-    read(&Statement(select))
+-}
+-
+ /// The package's `Statement\Select` as the crate's, for a builder's `fromAst()`.
+ pub(super) fn read(statement: &Statement<'_>) -> PhpResult<ast::Select> {
+     let classes = classes()?;
+@@ -1020,21 +1004,20 @@ pub(super) fn read(statement: &Statement<'_>) -> PhpResult<ast::Select> {
+ /// The methods every serializer class declares: a parent's method reads its own Rust type,
+ /// so each class has its own.
+ macro_rules! serializer_methods {
+-    ($class:ident, $serializer:expr, $rules:literal) => {
++    ($class:ident, $serializer:expr) => {
+         #[php_impl]
+         impl $class {
+-            #[php(defaults(literal = $rules))]
+-            pub fn __construct(literal: Rules) -> Self {
+-                Self(literal.0)
++            pub fn __construct() -> Self {
++                Self
+             }
+ 
+             pub fn serialize(&self, stmt: Statement<'_>) -> PhpResult<Zval> {
+-                written($serializer.with_literal(self.0), stmt.0, true)
++                written($serializer, stmt.0, true)
+             }
+ 
+             #[php(name = "serializeExpression")]
+             pub fn serialize_expression(&self, expression: Expression<'_>) -> PhpResult<Zval> {
+-                written($serializer.with_literal(self.0), expression.0, false)
++                written($serializer, expression.0, false)
+             }
+ 
+             
+```
+
+**File**: `crates/extension/src/query/builder.rs` (modified, +2/-65)
+```diff
+@@ -140,33 +140,19 @@ pub trait Text: Dialect {
+         Ok(None)
+     }
+ 
+-    /// The class `createTokenizer()` makes: the dialect's own, or the standard one.
+-    const TOKENIZER: &'static str = "Utopia\\Query\\Tokenizer\\Tokenizer";
+-
+     /// The class `createAstSerializer()` makes.
+     const SERIALIZER: &'static str = "Utopia\\Query\\AST\\Serializer";
+ }
+ 
+-impl Text for MySqlDialect {
+-    const TOKENIZER: &'static str = "Utopia\\Query\\Tokenizer\\MySQL";
+-    const SERIALIZER: &'static str = "Utopia\\Query\\AST\\Serializer\\MySQL";
+-}
+-impl Text for MariaDbDialect {
+-    const TOKENIZER: &'static str = "Utopia\\Query\\Tokenizer\\MariaDB";
+-    const SERIALIZER: &'static str = "Utopia\\Query\\AST\\Serializer\\MariaDB";
+-}
++impl Text for MySqlDialect {}
++impl Text for MariaDbDialect {}
+ impl Text for PostgreSqlDialect {
+-    const TOKENIZER: &'static str = "Utopia\\Query\\Tokenizer\\PostgreSQL";
+     const SERIALIZER: &'static str = "Utopia\\Query\\AST\\Serializer\\PostgreSQL";
+ }
+ impl Text for SqliteDialect {
+-    const TOKENIZER: &'static str = "Utopia\\Query\\Tokenizer\\SQLite";
+     const SERIALIZER: &'static str = "Utopia\\Query\\AST\\Serializer\\SQLite";
+ }
+ impl Text for ClickHouseDialect {
+-    const TOKENIZER: &'static str = "Utopia\\Query\\Tokenizer\\ClickHouse";
+-    const SERIALIZER: &'static str = "Utopia\\Query\\AST\\Serializer\\ClickHouse";
+-
+     fn formatted(builder: &mut Builder<Self>) -> Result<Option<FormattedInsertStatement>, Error> {
+         builder.formatted_insert()
+     }
+@@ -779,12 +765,6 @@ impl<D: Dialect + Text> State<D> {
+                 }
+             });
+         }
+-        // `createTokenizer()` takes nothing: the SQL is for the tokenizer it returns.
+-        if step == Step::CreateTokenizer {
+-            let [Arg::Str(sql)] = arguments else { return None };
+-            let tokenizer = invoke(object, function, &mut [])?;
+-            return self.tokenized(&tokenizer, sql).ok().map(|read| Ret::Select(Box::new(read)));
+-        }
+         let returned = invoke(object, function, &mut zvals)?;
+         let strings = |list: &Zval| -> Vec<String> {
+             let items = list.dereference().array().into_iter().flat_map(ZendHashTable::values);
+@@ -849,22 +829,6 @@ impl<D: Dialect + Text> State<D> {
+         Ok(())
+     }
+ 
+-    /// `$sql` read as PHP reads a CTE: the tokenizer's tokens, filtered, through the package's parser
+-    /// with the dialect's string rules.
+-    fn tokenized(&self, tokenizer: &Zval, sql: &str) -> PhpResult<utopia_query::ast::Select> {
+-        let tokenizer = tokenizer.object().ok_or_else(pending)?;
+-        let tokens =
+-            tokenizer.try_call_method("tokenize", vec![&string(&bytes(D::JSON, sql))]).map_err(|_| pending())?;
+-        let filter =
+-            ZendCallable::try_from_name("Utopia\\Query\\Tokenizer\\Tokenizer::filter").map_err(PhpException::from)?;
+-        let tokens = filter.try_call(vec![&tokens]).map_err(|_| pending())?;
+-        let rules = utopia_query::StringLiteral::CASES.iter().find(|(rules, _)| *rules == D::LITERAL);
+-        let rules = enum_case("Utopia\\Query\\StringLiteral", rules.map_or("Backslash", |found| found.1))?;
+-        let parser = construct(class("Utopia\\Query\\AST\\Parser")?, &mut [rules])?;
+-        let select = parser.try_call_method("parse", vec![&tokens]).map_err(|_| pending())?;
+-        super::ast::read_select(&select)
+-    }
+-
+     /// The crate's `CASE` as the package's `Case\Expression`, built through its own methods.
+     fn case_object(&self, case: &CaseExpression) -> PhpResult<Zval> {
+         let made = construct(class(CASE)?, &mut [])?;
+@@ -4511,28 +4475,6 @@ macro_rules! builder_class {
+                 self_.0.step(Step::CompileGroupByTimeBucket, &[Arg::Str(&attribute), Arg::Str(&interval)])
+             }
+ 
+-            #[php(name = "compileLikePredicate", vis = "protected", defaults(not = "Bool(false)"))]
+-            pub fn compile_like_predicate(
+-                self_: &mut ZendClassObject<$class>,
+-                attribute: PhpString<'_>,
+-                not: Bool,
+-            ) -> PhpResult<Bytes> {
+-                let object = std::ptr::from_mut(&mut self_.std);
+-                self_.0.running(object);
+-                let attribute = self_.0.text(attribute.bytes());
+-                let not = not.0;
+-                self_.0.step(Step::CompileLikePredicate, &[Arg::Str(&attribute), Arg::Bool(not)])
+-            }
+-
+-            #[php(name = "likeEscape", vis = "protected")]
+-            pub fn like_escape(
+-                self_: &mut ZendClassObject<$class>,
+-            ) -> PhpResult<Bytes> {
+-                let object = std::ptr::from_mut(&mut self_.std);
+-                self_.0.running(object);
+-                self_.0.step(Step::LikeEscape, &[])
+-            }
+-
+             #[php(name = "compileComparison", vis = "protected", optional = column)]
+             pub fn compile_comparison(
+                 self_: &mut ZendClassObject<$class>,
+@@ -4942,11 +4884,6 @@
+```
+
+**File**: `crates/extension/src/query/features.rs` (modified, +0/-1)
+```diff
+@@ -383,7 +383,6 @@ const TYPES: &[(&str, usize, Declared)] = &[
+     ("multiply", 2, INT_OR_FLOAT),
+     ("unsetFields", 1, Declared::Types(engine::MAY_BE_STRING)),
+     ("createAstSerializer", 0, Declared::Class("Utopia\\Query\\AST\\Serializer", 0)),
+-    ("createTokenizer", 0, Declared::Class("Utopia\\Query\\Tokenizer\\Tokenizer", 0)),
+     ("compileInsertBody", 0, Declared::Types(engine::MAY_BE_ARRAY)),
+     ("compileAssignments", 0, Declared::Types(engine::MAY_BE_ARRAY)),
+     ("validateAndGetColumns", 0, Declared::Types(engine::MAY_BE_ARRAY)),
+```
+
+**File**: `crates/extension/src/query/mod.rs` (modified, +1/-27)
+```diff
+@@ -10,12 +10,9 @@ pub mod schema;
+ pub mod tokenizer;
+ pub mod value;
+ 
+-use ext_php_rs::convert::{FromZval, IntoZval, StubLiteral};
++use ext_php_rs::convert::IntoZval;
+ use ext_php_rs::exception::PhpException;
+-use ext_php_rs::flags::DataType;
+-use ext_php_rs::types::Zval;
+ use ext_php_rs::zend::{ClassEntry, ce};
+-use utopia_query::StringLiteral;
+ 
+ use crate::emails::{construct, string};
+ 
+@@ -30,26 +27,3 @@ pub fn exception(error: &utopia_query::Error) -> PhpException {
+         Err(failed) => failed,
+     }
+ }
+-
+-/// A `Utopia\Query\StringLiteral` argument: the enum is the package's own PHP, and a case
+-/// object keeps its name in its first slot.
+-pub struct Rules(pub StringLiteral);
+-
+-impl<'a> FromZval<'a> for Rules {
+-    const TYPE: DataType = DataType::object("Utopia\\Query\\StringLiteral");
+-
+-    fn from_zval(zval: &'a Zval) -> Option<Self> {
+-        let object = zval.object().filter(|object| {
+-            ClassEntry::try_find("Utopia\\Query\\StringLiteral").is_some_and(|class| object.instance_of(class))
+-        })?;
+-        let name = ast::slots(object).first()?.str()?;
+-        StringLiteral::CASES.iter().find(|(_, case)| *case == name).map(|(rules, _)| Rules(*rules))
+-    }
+-}
+-
+-impl StubLiteral for Rules {
+-    fn stub_literal(&self) -> String {
+-        let name = StringLiteral::CASES.iter().find(|(rules, _)| *rules == self.0).map_or("Backslash", |found| found.1);
+-        format!("\\Utopia\\Query\\StringLiteral::{name}")
+-    }
+-}
+```
+
+**File**: `crates/extension/src/query/schema.rs` (modified, +10/-16)
+```diff
+@@ -1399,25 +1399,19 @@ schema_methods!(
+ 
+         #[php(name = "createCollation", defaults(deterministic = "Bool(true)"))]
+         pub fn create_collation(&self, name: PhpString<'_>, options: Arr<'_>, deterministic: Bool) -> PhpResult<Zval> {
+-            let name = inward(false, name.bytes())?;
+-            let compile = |pairs: &[(String, String)]| {
+-                let pairs: Vec<_> = pairs.iter().map(|(name, option)| (name.as_str(), option.as_str())).collect();
+-                PostgreSql::new().create_collation(&name, &pairs, deterministic.0)
+-            };
+             let mut pairs = Vec::new();
+             for (name, option) in options.table().into_iter().flat_map(ZendHashTable::iter) {
+-                let name = key(false, &name)?;
+-                match scalar(false, option, "options") {
+-                    Ok(option) => pairs.push((name, option)),
+-                    // PHP refuses a key before it reads the value under it, and an earlier
+-                    // option before a later one.
+-                    Err(wrong) => {
+-                        pairs.push((name, String::new()));
+-                        return Err(compile(&pairs).err().map_or(wrong, |error| thrown(false, &error)));
+-                    }
+-                }
++                // PHP writes these into a string: nothing for `null`, `Array` for an array.
++                let option = match option {
++                    option if option.is_null() => String::new(),
++                    option if option.is_array() => "Array".to_owned(),
++                    option => scalar(false, option, "options")?,
++                };
++                pairs.push((key(false, &name)?, option));
+             }
+-            statement::<PostgreSql>(&self.0, compile(&pairs), None)
++            let pairs: Vec<_> = pairs.iter().map(|(name, option)| (name.as_str(), option.as_str())).collect();
++            let name = inward(false, name.bytes())?;
++            statement::<PostgreSql>(&self.0, PostgreSql::new().create_collation(&name, &pairs, deterministic.0), None)
+         }
+ 
+         #[php(name = "alterColumnType", defaults(using = "\"\""))]
+```
+
+**File**: `crates/extension/src/query/tokenizer.rs` (modified, +21/-19)
+```diff
+@@ -7,10 +7,9 @@ use ext_php_rs::exception::PhpException;
+ use ext_php_rs::prelude::*;
+ use ext_php_rs::types::{ZendHashTable, ZendObject, ZendStr, Zval};
+ use ext_php_rs::zend::{ClassEntry, ce};
+-use utopia_query::StringLiteral;
+ use utopia_query::tokenizer::{TokenType, Tokenizer as Dialect};
+ 
+-use super::{Rules, exception};
++use super::exception;
+ use crate::emails::{construct, string};
+ use crate::string::PhpString;
+ 
+@@ -76,16 +75,15 @@ fn filter(tokens: &ZendHashTable) -> PhpResult<Vec<Zval>> {
+ /// The methods every tokenizer class declares: a parent's method reads its own Rust type,
+ /// so each class has its own.
+ macro_rules! tokenizer_methods {
+-    ($class:ident, $dialect:expr, $rules:literal, $quote:literal) => {
++    ($class:ident, $dialect:expr, $quote:literal) => {
+         #[php_impl]
+         impl $class {
+-            #[php(defaults(literal = $rules))]
+-            pub fn __construct(literal: Rules) -> Self {
+-                Self(literal.0)
++            pub fn __construct() -> Self {
++                Self
+             }
+ 
+             pub fn tokenize(&self, sql: PhpString<'_>) -> PhpResult<Vec<Zval>> {
+-                tokenize($dialect.with_literal(self.0), sql.bytes())
++                tokenize($dialect, sql.bytes())
+             }
+ 
+             pub fn filter(tokens: &ZendHashTable) -> PhpResult<Vec<Zval>> {
+@@ -100,48 +98,52 @@ macro_rules! tokenizer_methods {
+     };
+ }
+ 
++/// `Utopia\Query\Tokenizer\Tokenizer`: the standard tokenizer.
++///
++/// No class here derives `Default`: with it, ext-php-rs 0.16.5 makes `new` of a PHP subclass
++/// an object of the Rust class.
+ #[php_class]
+ #[php(name = "Utopia\\Query\\Tokenizer\\Tokenizer")]
+ #[derive(Clone)]
+-pub struct Tokenizer(StringLiteral);
+-tokenizer_methods!(Tokenizer, Dialect::new(), "Rules(StringLiteral::Backslash)", "`");
++pub struct Tokenizer;
++tokenizer_methods!(Tokenizer, Dialect::new(), "`");
+ 
+ /// `Utopia\Query\Tokenizer\MySQL`: also reads `#` line comments.
+ #[php_class]
+ #[php(name = "Utopia\\Query\\Tokenizer\\MySQL")]
+ #[php(extends(Tokenizer))]
+ #[derive(Clone)]
+-pub struct MySql(StringLiteral);
+-tokenizer_methods!(MySql, Dialect::mysql(), "Rules(StringLiteral::Backslash)", "`");
++pub struct MySql;
++tokenizer_methods!(MySql, Dialect::mysql(), "`");
+ 
+ /// `Utopia\Query\Tokenizer\MariaDB`: as MySQL.
+ #[php_class]
+ #[php(name = "Utopia\\Query\\Tokenizer\\MariaDB")]
+ #[php(extends(MySql))]
+ #[derive(Clone)]
+-pub struct MariaDb(StringLiteral);
+-tokenizer_methods!(MariaDb, Dialect::mariadb(), "Rules(StringLiteral::Backslash)", "`");
++pub struct MariaDb;
++tokenizer_methods!(MariaDb, Dialect::mariadb(), "`");
+ 
+ /// `Utopia\Query\Tokenizer\PostgreSQL`: double-quoted identifiers and multi-character operators.
+ #[php_class]
+ #[php(name = "Utopia\\Query\\Tokenizer\\PostgreSQL")]
+ #[php(extends(Tokenizer))]
+ #[derive(Clone)]
+-pub struct PostgreSql(StringLiteral);
+-tokenizer_methods!(PostgreSql, Dialect::postgresql(), "Rules(StringLiteral::Extended)", "\"");
++pub struct PostgreSql;
++tokenizer_methods!(PostgreSql, Dialect::postgresql(), "\"");
+ 
+ /// `Utopia\Query\Tokenizer\SQLite`: double-quoted identifiers.
+ #[php_class]
+ #[php(name = "Utopia\\Query\\Tokenizer\\SQLite")]
+ #[php(extends(Tokenizer))]
+ #[derive(Clone)]
+-pub struct Sqlite(StringLiteral);
+-tokenizer_methods!(Sqlite, Dialect::sqlite(), "Rules(StringLiteral::Standard)", "`");
++pub struct Sqlite;
++tokenizer_methods!(Sqlite, Dialect::sqlite(), "\"");
+ 
+ /// `Utopia\Query\Tokenizer\ClickHouse`: as the standard tokenizer.
+ #[php_class]
+ #[php(name = "Utopia\\Query\\Tokenizer\\ClickHouse")]
+ #[php(extends(Tokenizer))]
+ #[derive(Clone)]
+-pub struct ClickHouse(StringLiteral);
+-tokenizer_methods!(ClickHouse, Dialect::clickhouse(), "Rules(StringLiteral::BackslashUtf8)", "`");
++pub struct ClickHouse;
++tokenizer_methods!(ClickHouse, Dialect::clickhouse(), "`");
+```
+
+**File**: `crates/extension/tests/query.php` (modified, +0/-100)
+```diff
+@@ -2174,98 +2174,6 @@ public function build(): Utopia\Query\Builder\Statement
+ }
+ emit('view of a hollow statement', outcome(fn () => (new Utopia\Query\Schema\MySQL())->createView('v', new HollowBuilder())));
+ 
+-// --- String literals -----------------------------------------------------------------------
+-
+-// Each dialect writes and reads a string literal by its own rules, and takes another's when given one.
+-$rules = Utopia\Query\StringLiteral::cases();
+-$texts = [
+-    '', 'plain', "it's", 'back\\slash', '\\', 'a\\', "nul\0byte", "é\\", "\xff\\", "\xe9\\x", "a\\\xff", "\x80", 'tab\\tnl\\n',
+-    "\\'", "''", '%_\\%\\_', '日本\\語', "line\nbreak",
+-];
+-$literals = [
+-    "''", "'a'", "'it''s'", "'a\\'b'", "'a\\\\b'", "'\\n\\t\\r\\b\\0\\Z\\a\\f\\v\\%\\_\\q'", "'\\x41\\x4\\xg\\xff'", "'\\101\\7\\400\\8'",
+-    "'\\u00e9\\u12\\U0001F600\\U0000d800\\uD800'", "'\\U00110000'", "E'a\\nb'", "e'\\x41'", "E'\\u00e9'", "E'\\0'", "E'\\101'", "E''", "E'it''s'",
+-    "'\xff'", "'\xff\\n'", "E'\xe9\\xe9\\u00e9'", "'a\\", "'a'b'", "'", "E'", "E'\\'", "'nul\0'", "'\\0'", 'E', "'a' 'b'",
+-];
+-foreach ($rules as $rule) {
+-    $classes = [Tokenizer\Tokenizer::class, Tokenizer\MySQL::class, Tokenizer\MariaDB::class, Tokenizer\PostgreSQL::class, Tokenizer\SQLite::class, Tokenizer\ClickHouse::class];
+-    foreach ($classes as $class) {
+-        $read = [];
+-        foreach ($literals as $literal) {
+-            $read[] = outcome(fn () => (new $class($rule))->tokenize('SELECT ' . $literal . ' # c' . "\n" . ', `a`, "b" -- d'));
+-        }
+-        emit('literal tokens ' . $rule->name . ' ' . $class, $read);
+-    }
+-    $parsed = [];
+-    foreach ($literals as $literal) {
+-        foreach ([Tokenizer\Tokenizer::class, Tokenizer\PostgreSQL::class] as $class) {
+-            $parsed[] = outcome(fn () => (new AST\Parser($rule))->parse(Tokenizer\Tokenizer::filter((new $class($rule))->tokenize('SELECT ' . $literal))));
+-        }
+-    }
+-    emit('literal parsed ' . $rule->name, $parsed);
+-    $written = [];
+-    foreach ([AST\Serializer::class, AST\Serializer\MySQL::class, AST\Serializer\MariaDB::class, AST\Serializer\PostgreSQL::class, AST\Serializer\SQLite::class, AST\Serializer\ClickHouse::class] as $class) {
+-        foreach ($texts as $text) {
+-            $written[] = outcome(fn () => (new $class($rule))->serializeExpression(new AST\Literal($text)));
+-        }
+-    }
+-    emit('literal written ' . $rule->name, $written);
+-}
+-// The defaults of each class, and a literal read back from what was written.
+-$defaults = [];
+-foreach ([[Tokenizer\Tokenizer::class, AST\Serializer::class], [Tokenizer\MySQL::class, AST\Serializer\MySQL::class], [Tokenizer\PostgreSQL::class, AST\Serializer\PostgreSQL::class], [Tokenizer\SQLite::class, AST\Serializer\SQLite::class], [Tokenizer\ClickHouse::class, AST\Serializer\ClickHouse::class]] as [$tokenizer, $serializer]) {
+-    foreach ($texts as $text) {
+-        $defaults[] = outcome(fn () => (new $serializer())->serializeExpression(new AST\Literal($text)));
+-        $defaults[] = outcome(fn () => (new $tokenizer())->tokenize("SELECT 'a\\'b', E'c\\'d', e'f'"));
+-    }
+-}
+-emit('literal defaults', $defaults);
+-
+-// LIKE keeps its ESCAPE clause, and nothing may follow a statement but one semicolon.
+-$likes = [];
+-foreach ([
+-    "SELECT a LIKE 'x!%' ESCAPE '!'", "SELECT a NOT LIKE b ESCAPE c", "SELECT a ILIKE 'x' escape '\\\\' AND b", "SELECT a NOT ILIKE 'x' ESCAPE '!' OR b LIKE 'y'",
+-    "SELECT a LIKE 'x' ESCAPE", "SELECT a LIKE 'x' ESCAPE '!' ESCAPE '?'", 'SELECT escape FROM t', 'SELECT a = b ESCAPE c', 'SELECT 1;', 'SELECT 1;;', 'SELECT 1; SELECT 2',
+-    'SELECT 1 2', 'SELECT 1 FROM t )', 'SELECT a FROM t WHERE x LIKE y ESCAPE z ORDER BY a;',
+-] as $sql) {
+-    foreach ([[new Tokenizer\Tokenizer(), new AST\Parser(), new AST\Serializer()], [new Tokenizer\PostgreSQL(), new AST\Parser(Utopia\Query\StringLiteral::Extended), new AST\Serializer\PostgreSQL()]] as [$tokenizer, $reader, $writer]) {
+-        $likes[] = outcome(fn () => $reader->parse(Tokenizer\Tokenizer::filter($tokenizer->tokenize($sql))));
+-        $likes[] = outcome(fn () => $writer->serialize($reader->parse(Tokenizer\Tokenizer::filter($tokenizer->tokenize($sql)))));
+-    }
+-}
+-$likes[] = outcome(fn () => (new AST\Serializer())->serializeExpression(new AST\Expression\Binary(new AST\Reference\Column('a'), 'LIKE', new AST\Literal('x'), new AST\Expression\Binary(new AST\Literal('!'), 'OR', new AST\Literal('?')))));
+-emit('like escape and trailing input', $likes);
+-
+-// DDL inlines its strings through the same rules.
+-$inlined = [];
+-foreach ($schemas as $dialect => $schema) {
+-    foreach ($texts as $text) {
+-        $inlined[] = outcome(function () use ($schema, $text) {
+-            $table = $schema->table('t');
+-            $table->string('a')->default($text)->comment($text);
+-            $table->enum('e', [$text, 'b']);
+-
+-            return $table->create();
+-        });
+-        if ($schema instanceof Schema\Feature\TableComments) {
+-
+```
+
+---
+
+### Incident Patch 3: `1d2e2b65` (2026-11-24)
+**Commit Message**: Merge pull request #15981 from appwrite/fix-tablesdb-dedicated-spec-change-fbb4bc
+
+fix(console): resize dedicated TablesDB databases through the product API
+
+**File**: `apps/console/src/components/pages/projects/$projectId/databases/settings/DatabaseSpecificationCard.tsx` (modified, +0/-1)
+```diff
+@@ -122,7 +122,6 @@ export function DatabaseSpecificationCard({
+         databaseId,
+         dbKind,
+         specification,
+-        database.specification,
+         database.name,
+       ),
+     onSuccess: async (result) => {
+```
+
+**File**: `apps/console/src/lib/react-query/hooks/databases.ts` (modified, +31/-74)
+```diff
+@@ -72,12 +72,8 @@ import {
+   hasTablesDatabaseMigrationCutover,
+   parseTablesDatabaseMigrationIdFromError,
+ } from '@/lib/databases/tables-database-migration'
+-import {
+-  isAppwriteHttpStatus,
+-  isHttpNotFoundError,
+-} from '@/lib/utils/error-formatting'
++import { isHttpNotFoundError } from '@/lib/utils/error-formatting'
+ import { translate } from '@/lib/i18n/translate'
+-import { readDatabaseSpecification } from '@/lib/databases/database-compute'
+ import { waitForDatabaseRealtimeEvent } from '@/lib/realtime/wait-for-database-realtime'
+ import { normalizeDedicatedRealtimeEngine } from '@/lib/realtime/dedicated-database-cache'
+ import { buildPostgresListSchemasSql } from '@/lib/postgres-sql'
+@@ -1593,12 +1589,6 @@ export async function updateProjectDatabase(
+   return await projectSdk.tablesDB.update(payload)
+ }
+ 
+-/**
+- * Migrate a serverless TablesDB database onto a dedicated specification.
+- * Only valid while the database is still serverless (`database_not_serverless`
+- * if already dedicated). Dedicated tier changes use
+- * `updateTablesDatabaseSpecification` instead.
+- */
+ export async function deleteTablesDatabaseMigration(
+   projectId: string,
+   databaseId: string,
+@@ -1646,6 +1636,12 @@ async function startTablesDatabaseProductMigration(
+   })
+ }
+ 
++/**
++ * Migrate a serverless TablesDB database onto a dedicated specification.
++ * Only valid while the database is still serverless (`database_not_serverless`
++ * if already dedicated). Dedicated tier changes use
++ * `updateProductDatabaseSpecification` instead.
++ */
+ export async function createTablesDatabaseMigration(
+   projectId: string,
+   databaseId: string,
+@@ -1662,77 +1658,39 @@ export async function createTablesDatabaseMigration(
+ 
+   await clearAbortableTablesDatabaseMigrations(projectId, databaseId)
+ 
+-  const runProductMigration = async () => {
+-    try {
+-      return await startTablesDatabaseProductMigration(
+-        projectSdk,
+-        databaseId,
+-        trimmed,
+-      )
+-    } catch (tablesMigrationError) {
+-      const message =
+-        tablesMigrationError instanceof Error
+-          ? tablesMigrationError.message
+-          : String(tablesMigrationError ?? '')
+-      const alreadyExists =
+-        message.toLowerCase().includes('migration record already exists') ||
+-        message.toLowerCase().includes('already exists for this database')
+-      if (alreadyExists) {
+-        const migrationId =
+-          parseTablesDatabaseMigrationIdFromError(tablesMigrationError)
+-        if (migrationId) {
+-          await deleteTablesDatabaseMigration(
+-            projectId,
+-            databaseId,
+-            migrationId,
+-          )
+-        } else {
+-          await clearAbortableTablesDatabaseMigrations(projectId, databaseId)
+-        }
+-        return startTablesDatabaseProductMigration(
+-          projectSdk,
+-          databaseId,
+-          trimmed,
+-        )
+-      }
+-      throw tablesMigrationError
+-    }
+-  }
+-
+   try {
+-    return await runProductMigration()
+-  } catch (tablesMigrationError) {
+-    const routeMissing =
+-      isAppwriteHttpStatus(tablesMigrationError, 404) ||
+-      isHttpNotFoundError(tablesMigrationError)
+-    if (!routeMissing) {
+-      throw tablesMigrationError
++    return await startTablesDatabaseProductMigration(
++      projectSdk,
++      databaseId,
++      trimmed,
++    )
++  } catch (error) {
++    const message = (
++      error instanceof Error ? error.message : String(error ?? '')
++    ).toLowerCase()
++    const alreadyExists =
++      message.includes('migration record already exists') ||
++      message.includes('already exists for this database')
++    if (!alreadyExists) throw error
++
++    const migrationId = parseTablesDatabaseMigrationIdFromError(error)
++    if (migrationId) {
++      await deleteTablesDatabaseMigration(projectId, databaseId, migrationId)
++    } else {
++      await clearAbortableTablesDatabaseMigrations(projectId, databaseId)
+     }
++    return startTablesDatabaseProductMigration(projectSdk, databaseId, trimmed)
+   }
+-
+-  // Cloud may expose shared→dedicated for TablesDB-backed compute on the MySQL
+-  // engine migration route before (or instead of) tablesDB /migrations.
+-  return projectSdk.mysql.createMigration({
+-    databaseId,
+-    targetType: 'dedicated',
+-    specification: trimmed,
+-  })
+ }
+ 
+-/** True when TablesDB already runs on dedicated MySQL compute (not shared/serverless). */
++/** True when TablesDB itself reports a dedicated specification (not shared/serverless). */
+ async function isTablesDatabaseOnDedicatedCompute(
+   projectId: string,
+   databaseId: string,
+ ): Promise<boolean> {
+-  const engineDb = await fetchDedicatedDatabaseById(projectId, databaseId, {
+-    type: 'engine',
+-    engine: 'mysql',
+-  })
+-  if (!engineDb?.$id) return false
+-  const spec = readDatabaseSpecification(engineDb.specification)
+-  if (!spec || isServerlessDatabaseSpecId(spec)) return false
+-  const status = coerceTrimmedString(engineDb.status).toLowerCase()
+-  return status 
+```
+
+**File**: `apps/console/tests/unit/tablesdb-specification-change.test.ts` (added, +158/-0)
+```diff
+@@ -0,0 +1,158 @@
++import { afterAll, describe, expect, mock, test } from 'bun:test'
++import { AppwriteException } from '@appwrite.io/console'
++import * as actualSdk from '@/lib/appwrite/sdk'
++import { updateProductDatabaseSpecification } from '@/lib/react-query/hooks/databases'
++
++const PROJECT_ID = 'proj0000000000000000001'
++const DATABASE_ID = 'db000000000000000000001'
++const TARGET_SPECIFICATION = 's-2vcpu-4gb'
++
++type Call = { service: string; method: string; params: unknown }
++
++/**
++ * Cloud keeps product databases off the raw engine API: `GET /v1/mysql/{id}`
++ * is a 404 for every TablesDB database, dedicated or not. Whether a TablesDB
++ * database already runs on dedicated compute can only be read from TablesDB.
++ */
++describe('updateProductDatabaseSpecification', () => {
++  // Copy the real module now: the namespace import is live and points at the mock once it is set.
++  const realSdk = { ...actualSdk }
++
++  afterAll(() => {
++    mock.module('@/lib/appwrite/sdk', () => realSdk)
++  })
++
++  function mockSdk(options: {
++    specification?: string
++    createMigration?: () => Promise<unknown>
++  }) {
++    const calls: Call[] = []
++    const record =
++      <T>(service: string, method: string, result: () => T | Promise<T>) =>
++      async (params: unknown) => {
++        calls.push({ service, method, params })
++        return result()
++      }
++    const engineNotFound = () => {
++      throw new AppwriteException(
++        'Database not found',
++        404,
++        'dedicated_database_not_found',
++      )
++    }
++
++    mock.module('@/lib/appwrite/sdk', () => ({
++      ...actualSdk,
++      sdk: {
++        forProject: () => ({
++          tablesDB: {
++            get: record('tablesDB', 'get', () => ({
++              $id: DATABASE_ID,
++              name: 'Orders',
++              ...(options.specification === undefined
++                ? {}
++                : { specification: options.specification }),
++            })),
++            update: record('tablesDB', 'update', () => ({
++              $id: DATABASE_ID,
++              specification: TARGET_SPECIFICATION,
++            })),
++            listMigrations: record('tablesDB', 'listMigrations', () => ({
++              migrations: [],
++              total: 0,
++            })),
++            createMigration: record(
++              'tablesDB',
++              'createMigration',
++              options.createMigration ??
++                (() => ({ $id: 'migration1', phase: 'pending' })),
++            ),
++          },
++          mysql: {
++            get: record('mysql', 'get', engineNotFound),
++            list: record('mysql', 'list', () => ({ databases: [], total: 0 })),
++            createMigration: record('mysql', 'createMigration', engineNotFound),
++          },
++        }),
++      },
++    }))
++
++    return calls
++  }
++
++  function methodsOn(calls: Call[], service: string): string[] {
++    return calls
++      .filter((call) => call.service === service)
++      .map((call) => call.method)
++  }
++
++  test('resizes a dedicated TablesDB database through tablesDB.update', async () => {
++    const calls = mockSdk({ specification: 's-1vcpu-1gb' })
++
++    await updateProductDatabaseSpecification(
++      PROJECT_ID,
++      DATABASE_ID,
++      'tablesdb',
++      TARGET_SPECIFICATION,
++    )
++
++    expect(methodsOn(calls, 'tablesDB')).toEqual(['get', 'update'])
++    expect(calls.at(-1)?.params).toEqual({
++      databaseId: DATABASE_ID,
++      specification: TARGET_SPECIFICATION,
++    })
++    expect(methodsOn(calls, 'mysql')).toEqual([])
++  })
++
++  test.each([['shared'], ['serverless'], [undefined]])(
++    'migrates a serverless TablesDB database (specification %p)',
++    async (specification) => {
++      const calls = mockSdk({ specification })
++
++      await updateProductDatabaseSpecification(
++        PROJECT_ID,
++        DATABASE_ID,
++        'tablesdb',
++        TARGET_SPECIFICATION,
++      )
++
++      expect(methodsOn(calls, 'tablesDB')).toEqual([
++        'get',
++        'listMigrations',
++        'createMigration',
++      ])
++      expect(calls.at(-1)?.params).toEqual({
++        databaseId: DATABASE_ID,
++        specification: TARGET_SPECIFICATION,
++        autoCutover: true,
++      })
++      expect(methodsOn(calls, 'mysql')).toEqual([])
++    },
++  )
++
++  test('surfaces a migration 404 instead of retrying on the mysql engine', async () => {
++    const calls = mockSdk({
++      specification: 'shared',
++      createMigration: () => {
++        throw new AppwriteException(
++          'Database not found',
++          404,
++          'database_not_found',
++        )
++      },
++    })
++
++    const attempt = updateProductDatabaseSpecification(
++      PROJECT_ID,
++      DATABASE_ID,
++      'tablesdb',
++      TARGET_SPECIFICATION,
++    )
++
++    await expect(attempt).rejects.toMatchObject({
++      code: 404,
++      type: 'database_not_found',
++    })
++    expect(methodsOn(calls, 'mysql')).toEqual([])
++  })
++})
+```
+
+**File**: `apps/console/types-baseline.json` (modified, +0/-1)
+```diff
+@@ -1145,7 +1145,6 @@
+     "TS2339: Property 'pricing' does not exist on type 'DedicatedDatabaseSpecificationList'.": 1,
+     "TS2339: Property 'status' does not exist on type 'Database & { enabled: boolean; createdAt: string; updatedAt: string; hasBackupPolicy: boolean; backupPolicy: Record<string, unknown> | null; backupPolicyCount: number; databaseType: DatabaseType; }'.": 2,
+     "TS2724: '\"node_modules/@appwrite.io/console/types/models\".Models' has no exported member named 'DedicatedDatabaseSpecificationPricing'. Did you mean 'DedicatedDatabaseSpecification'?": 1,
+-    "TS6133: 'currentSpecification' is declared but its value is never read.": 1,
+     "TS6133: 'useEffect' is declared but its value is never read.": 1
+   },
+   "src/lib/react-query/hooks/functions.ts": {
+```
+
 #### Recent Merged Pull Requests:
-- **PR #15771** (2026-11-18): feat(reviews): name the host of the status images in review jobs (@TorstenDittmann)
-- **PR #15767** (2026-11-18): feat(console): add the Railway OAuth2 provider (@HarshMN2345)
-- **PR #15766** (2026-11-18): chore(console): update Harsh Mahajan's author role (@HarshMN2345)
-- **PR #15765** (2026-11-18): feat(auth): add Railway OAuth2 provider (@HarshMN2345)
-- **PR #15763** (2026-11-18): fix(videos): persist rendition path before chunk upload (@shimonewman)
-- **PR #15761** (2026-11-18): fix(realtime): return a query error for a select other than select("*") (@ArnabChatterjee20k)
+- **PR #15982** (2026-11-24): test(console): load react dom before any test registers a window (@abnegate)
+- **PR #15981** (2026-11-24): fix(console): resize dedicated TablesDB databases through the product API (@abnegate)
+- **PR #15979** (2026-11-24): chore(docker): update appwrite/base to 2.5.2, pin composer and drop its CA install (@loks0n)
+- **PR #15976** (2026-11-23): ci(benchmark): pull the base commit's image instead of rebuilding it (@ChiragAgg5k)
+- **PR #15975** (2026-11-23): test(storage): request preview sizes until two land on the filesystem (@ChiragAgg5k)
+- **PR #15973** (closed): ci: select E2E suites from a change under crates/ (@loks0n)
 
 ---
 
@@ -2587,37 +3406,6 @@ fix(console): seed new projects with a localhost web app, not a wildcard (appwri
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. test(security): add the Railway endpoint to the baseline
-
-**RULE**:
-When implementing operations in `tests/e2e/Security/baseline.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in appwrite/appwrite. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `40012595`: test(security): add the Railway endpoint to the baseline. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/e2e/Security/baseline.json`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```typescript
-// Verified production-grade fix pattern:
-        "PATCH /v1/project/oauth2/railway",
-```
-
-**NEGATIVE CONSTRAINT**:
-```typescript
-// Induced defect failure mode:
-// Defect-prone omission of boundary validation
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `40012595` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

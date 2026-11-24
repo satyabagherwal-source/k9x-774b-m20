@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T05:42:49.878Z",
+  "updated_at": "2026-11-24T06:12:12.863Z",
   "stats": {
-    "total_discovered": 8396,
-    "approved_pending_harvest": 7957,
+    "total_discovered": 8399,
+    "approved_pending_harvest": 7960,
     "harvested_count": 0,
     "rejected_count": 439,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7943,
+      "COMMUNITY_AND_EXPERT": 7946,
       "OFFICIAL_DOCUMENTATION": 266,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -181662,6 +181662,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
         "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-E67B0DB1DFD7": {
+      "id": "SRC-E67B0DB1DFD7",
+      "url": "https://github.com/saltstack/salt/blame/v3008.5/salt/minion.py",
+      "title": "https://github.com/saltstack/salt/blame/v3008.5/salt/minion.py",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T06:12:12.670Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/saltstack-salt-learnings.md",
+        "fileName": "saltstack-salt-learnings.md"
+      }
+    },
+    "SRC-43655B4849EE": {
+      "id": "SRC-43655B4849EE",
+      "url": "https://github.com…",
+      "title": "https://github.com…",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T06:12:12.774Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/saltstack-salt-learnings.md",
+        "fileName": "saltstack-salt-learnings.md"
+      }
+    },
+    "SRC-9E0246784353": {
+      "id": "SRC-9E0246784353",
+      "url": "https://github.com/saltstack/salt/issues/68967",
+      "title": "https://github.com/saltstack/salt/issues/68967",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T06:12:12.863Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/saltstack-salt-learnings.md",
+        "fileName": "saltstack-salt-learnings.md"
       }
     }
   }

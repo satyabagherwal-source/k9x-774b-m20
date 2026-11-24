@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T05:42:43.199Z",
-  "total_cycles_completed": 11983,
-  "total_learnings_persisted": 11983,
-  "total_rules_promoted": 11063,
+  "last_updated": "2026-11-24T06:11:24.114Z",
+  "total_cycles_completed": 11987,
+  "total_learnings_persisted": 11987,
+  "total_rules_promoted": 11066,
   "history": [
-    {
-      "timestamp": "2026-11-23T17:20:46.109Z",
-      "repository": "envoyproxy/envoy",
-      "learningId": "learn-github-envoyproxy-envoy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T17:20:47.869Z",
-      "repository": "rustls/rustls",
-      "learningId": "learn-github-rustls-rustls",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T17:20:51.850Z",
-      "repository": "apache/shardingsphere",
-      "learningId": "learn-github-apache-shardingsphere",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T17:29:31.552Z",
-      "repository": "mudler/locate-anything.cpp-gguf",
-      "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T17:29:33.856Z",
       "repository": "yvgude/lean-ctx",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-24T05:42:43.199Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T06:11:11.852Z",
+      "repository": "FalkorDB/FalkorDB",
+      "learningId": "learn-github-falkordb-falkordb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T06:11:17.523Z",
+      "repository": "appwrite/appwrite",
+      "learningId": "learn-github-appwrite-appwrite",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T06:11:19.290Z",
+      "repository": "saltstack/salt",
+      "learningId": "learn-github-saltstack-salt",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T06:11:24.114Z",
+      "repository": "lioensky/VCPToolBox",
+      "learningId": "learn-github-lioensky-vcptoolbox",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

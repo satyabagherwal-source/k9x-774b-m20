@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T07:45:13.794Z",
+  "timestamp": "2026-11-24T06:12:13.070Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-saltstack-salt-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [saltstack-salt-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T07:45:13.794Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T06:12:13.070Z`  
 > **Learning ID**: `LEARN-EVO-saltstack-salt-learnings`
 
 
@@ -26,10 +26,10 @@ PROVENANCE_END -->
 ## 2. Operational Capabilities
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/saltstack-salt-learnings.md`  
 > **Source**: github ([https://github.com/saltstack/salt](https://github.com/saltstack/salt))  
-> **Source Version**: `d025cc57`  
+> **Source Version**: `55df51a7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T07:45:07.752Z  
+> **Timestamp**: 2026-11-24T06:11:17.655Z  
 > **Learning ID**: `learn-github-saltstack-salt`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -43,7 +43,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/saltstack-salt-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/saltstack/salt](https://github.com/saltstack/salt))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T07:45:07.747Z  
+> **Harvest Timestamp**: 2026-11-24T06:11:17.644Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -53,7 +53,7 @@ PROVENANCE_END -->
 - **Description**: Software to automate the management and configuration of infrastructure and applications at scale.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml
-- **Stars / Engagement**: 15768 stars
+- **Stars / Engagement**: 15769 stars
 
 ---
 
@@ -2333,11 +2333,11 @@ def start(cmd, output="json", interval=1, onchange=False):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #70891** (2026-11-24): **Downgrade "Skipping req for other master" from log.error to log.debug (minion.py)**
+  *Symptoms*: ### Description  `salt/minion.py` at v3008.5 lines 4581-4587 logs at ERROR level when the minion receives a request event for a master OTHER than the one that originally dispatched the job. This path is reached by DESIGN on every multi-master / failover topology and syndic setup — it is not an error state.  Permalink: https://github.com/saltstack/salt/blame/v3008.5/salt/minion.py#L4581-L4587  ```python             else:                 log.error(                     "Skipping req for other master: cmd=%s master=%s id=%s",                     data["cmd"],                     job_master,                     request_id,                 ) ```  ### Context  Operators hit this noise regularly in multi-master setups — see the user discussion at #70698 ("Multi Master error") for a representative report.  ### Impact  Any multi-master or failover deployment has these lines firing at ERROR level for benign skip decisions. Real error-level messages from the minion get buried. Operators tuning alerting on "error" severity get false positives.  ### Requested change  Change `log.error(...)` to `log.debug(...)`. No other code change needed; the branch is doing the correct thing (skipping the req for the non-originating master). It is only the severity classification that is wrong.  ### Branches affected  Reproduces on current `3008.x`, `master`, and likely 3007.x too. Confirm before porting.  ### Affects  - Multi-master minions (`master:` configured as a list) - `master_type: failover` - Any
+
 - **Issue #70819** (2026-11-23): **[Bug]: manage.down <minion_id> deletes keys of all down minions: removekeys is the first positional arg**
   *Symptoms*: ### What happened?  ### Description  `salt-run manage.down <minion_id>` deletes the keys of **every** down minion in the fleet.  `removekeys` is the first positional parameter of `manage.down`, and it is tested by truthiness:  ```python def down(     removekeys=False, tgt="*", tgt_type="glob", timeout=None, gather_job_timeout=None ):     ret = status(...).get("down", [])     for minion in ret:         if removekeys:             wheel = salt.wheel.Wheel(__opts__)             wheel.call_func("key.delete", match=minion)     return ret ```  So a positional argument meant as a target (a minion ID, a glob, a nodegroup name) binds to `removekeys`, is a non-empty string and therefore truthy, while `tgt` stays at its default `"*"`. The runner checks the whole fleet and calls `key.delete` on every minion that is down. Each deletion also rotates the master's AES key, forcing every minion in the fleet to re-authenticate.  Nothing validates the type and nothing asks for confirmation, so the command reads as a harmless status check for one host.  The neighbouring runners make the mistake easy. `manage.up` takes `tgt` as its first positional parameter, so `salt-run manage.up <minion_id>` does exactly what it looks like it does. The identical form on `manage.down` destroys keys instead. (`manage.status` has the same shape with a non-destructive first parameter, `output`, so `manage.status <minion_id>` silently ignores the intended target rather than deleting anything.)  ### Setup  Salt 3008.
-
-- **Issue #70793** (2026-11-19): **[Bug]: whitelist_modules / whitelist_state_modules cannot restrict to specific functions**
-  *Symptoms*: ### What happened? `whitelist_modules` and `whitelist_state_modules` only accept bare module names. There is no way to allow a single function of a module while blocking its siblings -- e.g. "allow cmd.run but not cmd.shell / cmd.retcode / cmd.run_bg". Operators who want to give a minion access to one function of a module today have to allow the entire module, which widens the attack surface well beyond what the deployment actually needs.  Expected: entries of the form `module.func` are accepted and enforce function-level filtering. `[cmd]` still means "all functions of cmd"; `[cmd.run]` means "only cmd.run". Mixing (e.g. `[cmd, cmd.run]`) should narrow to the listed functions (dotted wins) so an existing whitelist can be tightened without first removing the broader entry.  Reproduce (any supported branch): ```yaml # /etc/salt/minion.d/whitelist.conf whitelist_modules:   - cmd.run ``` ``` $ salt-call cmd.run 'id' # fails: module `cmd` not in whitelist, because the loader only looks at the # part before the dot and the full `cmd.run` entry is not recognised. ```  Affects: 3006.x, 3007.x, 3008.x, master. Enforcement lives in `salt.loader.lazy.LazyLoader` so a single fix covers execution modules, state modules, and every other subsystem that uses it.  ### Type of salt install n/a -- configuration-level issue, affects all install types.  ### Major version 3006.x, 3007.x, 3008.x  ### What OS n/a -- not OS-specific.  ### salt --versions-report output n/a -- reproducible on any buil
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2354,102 +2354,321 @@ def start(cmd, output="json", interval=1, onchange=False):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `61a49c41` (2026-11-23)
-**Commit Message**: Restrict Dependabot to security-only updates on stable branches (#70913)
+### Incident Patch 1: `ce59328c` (2026-11-23)
+**Commit Message**: Fix kernelpkg.latest_available regex for Debian Bullseye / Ubuntu Noble (#68204) (#70912)
 
-Non-master branches (3006.x, 3007.x, 3008.x) now accept Dependabot PRs
-only for GHSA security advisories, not routine version bumps. Master
-keeps grouped weekly updates unchanged.
+* Fix kernelpkg.latest_available() regex for Debian Bullseye/Ubuntu Noble (#68204)
 
-Set open-pull-requests-limit: 0 on each stable-branch entry to disable
-version-update PRs; security updates continue to fire on their own
-internal limit of 10. Drop the all-pip-updates group from the stable
-branches since it only applies to version updates. Keep the vcert /
-pylint ignore entries so stable branches don't attempt those bumps
-even for security advisories.
+This fix addresses a critical bug in Salt's kernelpkg_linux_apt module where the
+latest_available() function would crash with AttributeError on modern Debian and
+Ubuntu systems due to a regex pattern that couldn't parse current package version formats.
 
-**File**: `.github/dependabot.yml` (modified, +8/-15)
+## Problem
+The kernelpkg.latest_available() function used a regex pattern that expected version
+formats like '6.1.0.147' but modern Debian/Ubuntu package managers return formats like:
+- Debian 12: '6.1.147-1'
+- Ubuntu 24.04: '6.8.0-45-generic'
+- Debian 11: '5.10.0-18-amd64'
+
+The original regex ^(\d+\.\d+\.\d+)\.(\d+) failed to match these formats, causing:
+  AttributeError: 'NoneType' object has no attribute 'group'
+
+This made kernelpkg.latest_available() completely unusable on:
+- Debian 11 (Bullseye)
+- Debian 12 (Bookworm)
+- Ubuntu 22.04 (Jammy)
+- Ubuntu 23.04 (Lunar)
+- Ubuntu 24.04 (Noble)
+
+## Root Cause
+In salt/modules/kernelpkg_linux_apt.py line 86, the regex pattern was too restrictive:
+
+## Solution
+Updated the regex pattern to handle modern Debian/Ubuntu 
+
+**File**: `changelog/68204.fixed.md` (added, +1/-0)
 ```diff
-@@ -1,5 +1,6 @@
- version: 2
- updates:
-+  # master: full version + security updates, grouped weekly
-   - package-ecosystem: "pip"
-     directories:
-       - "/"
-@@ -24,6 +25,8 @@ updates:
-         patterns:
-           - "*"
+@@ -0,0 +1 @@
++Fixed ``kernelpkg.latest_available()`` regex so it no longer raises ``AttributeError`` on Debian Bullseye/Bookworm and Ubuntu Noble kernel package version strings (e.g. ``6.1.147-1``, ``6.8.0-45-generic``).
+```
+
+**File**: `salt/modules/kernelpkg_linux_apt.py` (modified, +28/-2)
+```diff
+@@ -83,8 +83,34 @@ def latest_available():
+     if result == "":
+         return latest_installed()
  
-+  # 3008.x: security advisories only. open-pull-requests-limit: 0 disables
-+  # version-update PRs; security-update PRs still fire on GHSA advisories.
-   - package-ecosystem: "pip"
-     directories:
-       - "/"
-@@ -34,17 +37,14 @@ updates:
-     target-branch: 3008.x
-     labels:
-       - "test:full"
--    open-pull-requests-limit: 5
-+    open-pull-requests-limit: 0
-     ignore:
-       - dependency-name: "vcert"
-         versions: [">=0.10.0"]
-       - dependency-name: "pylint"
-         versions: [">=4.0.0"]
--    groups:
--      all-pip-updates:
--        patterns:
--          - "*"
+-    version = re.match(r"^(\d+\.\d+\.\d+)\.(\d+)", result)
+-    return f"{version.group(1)}-{version.group(2)}-{_kernel_type()}"
++    # Updated regex to handle modern Debian/Ubuntu version formats:
++    # - Debian: "6.1.147-1" -> (6.1, 147, 1)
++    # - Ubuntu: "6.8.0-45-generic" -> (6.8, 0, 45-generic)
++    version = re.match(r"^(\d+\.\d+)\.(\d+)[-.](.+)", result)
++    if not version:
++        # Fallback: if regex fails, return the latest installed version
++        return latest_installed()
++
++    # Extract version components: major.minor, patch, build/suffix
++    major_minor = version.group(1)  # e.g., "6.1" or "6.8"
++    patch = version.group(2)  # e.g., "147" or "0"
++    suffix = version.group(3)  # e.g., "1" or "45-generic"
++
++    # For simple Debian format like "6.1.147-1", suffix is just build number
++    # For Ubuntu format like "6.8.0-45-generic", extract build number from suffix
++    if re.match(r"^\d+$", suffix):
++        # Simple case: suffix is just a build number (Debian format)
++        return f"{major_minor}.{patch}-{suffix}-{_kernel_type()}"
++    else:
++        # Complex case: suffix contains build number and kernel type (Ubuntu format)
++        # Extract the first number from the suffix as build number
++        build_match = re.match(r"^(\d+)", suffix)
++        if build_match:
++            build_num = build_match.group(1)
++            return f"{major_minor}.{patch}-{build_num}-{_kernel_type()}"
++        else:
++            # Fallback: use the original suffix
++            return f"{major_minor}.{patch}-{suffix}-{_kernel_type()}"
  
-+  # 3007.x: security advisories only.
-   - package-ecosystem: "pip"
-     directories:
-       - "/"
-@@ -55,17 +55,14 @@ updates:
-     target-branch: 3007.x
-     labels:
-       - "test:full"
--    open-pull-requests-limit: 5
-+    open-pull-requests-limit: 0
-     ignore:
-       - dependency-name: "vcert"
-         versions: [">=0.10.0"]
-       - dependency-name: "pylint"
-         versions: [">=4.0.0"]
--    groups:
--      all-pip-updates:
--        patterns:
--          - "*"
  
-+  # 3006.x: security advisories only.
-   - package-ecosystem: "pip"
-     directories:
-       - "/"
-@@ -76,13 +73,9 @@ updates:
-     target-branch: 3006.x
-     labels:
-       - "test:full"
--    open-pull-requests-limit: 5
-+    open-pull-requests-limit: 0
-     ignore:
-       - dependency-name: "vcert"
-         versions: [">=0.10.0"]
-       - dependency-name: "pylint"
-         versions: [">=4.0.0"]
--    groups:
--      all-pip-updates:
--        patterns:
--          - "*"
+ def latest_installed():
+```
+
+**File**: `tests/pytests/unit/modules/test_kernelpkg_linux_apt.py` (added, +282/-0)
+```diff
+@@ -0,0 +1,282 @@
++"""
++Unit tests for Salt issue #68204: regex in kernelpkg latest_available() fails on Debian Bullseye / Ubuntu Noble
++
++This test file specifically tests the fix for the regex pattern in kernelpkg_linux_apt.latest_available()
++that was failing on modern Debian and Ubuntu systems.
++"""
++
++import pytest
++
++try:
++    import salt.modules.kernelpkg_linux_apt as kernelpkg
++    from tests.support.mock import MagicMock, patch
++
++    HAS_MODULES = True
++except ImportError:
++    HAS_MODULES = False
++
++
++@pytest.fixture
++def configure_loader_modules():
++    """Fixture to configure the loader modules for testing"""
++    return {
++        kernelpkg: {
++            "__grains__": {"kernelrelease": "6.1.0-38-cloud-amd64"},
++            "__salt__": {
++                "pkg.install": MagicMock(return_value={}),
++                "pkg.latest_version": MagicMock(return_value=""),
++                "pkg.list_pkgs": MagicMock(return_value={}),
++                "pkg.purge": MagicMock(return_value=None),
++                "system.reboot": MagicMock(return_value=None),
++            },
++        }
++    }
++
++
++@pytest.mark.skipif(not HAS_MODULES, reason="Salt modules could not be loaded")
++def test_issue_68204_debian_bookworm_format():
++    """
++    Test - Debian 12 (Bookworm) version format: 6.1.147-1
++    This was one of the main failing cases in the bug report
++    """
++    # Mock pkg.latest_version to return Debian Bookworm format
++    mock_latest_version = MagicMock(return_value="6.1.147-1")
++    mock_latest_installed = MagicMock(return_value="6.1.0-38-cloud-amd64")
++
++    with patch.dict(kernelpkg.__salt__, {"pkg.latest_version": mock_latest_version}):
++        with patch.object(kernelpkg, "latest_installed", mock_latest_installed):
++            result = kernelpkg.latest_available()
++
++            # Should not crash and should return a properly formatted version
++            assert isinstance(result, str)
++            assert "6.1.147" in result
++            # kernel type is the last "-([^-]+)$" segment of kernelrelease;
++            # for "6.1.0-38-cloud-amd64" that is "amd64", not "cloud-amd64".
++            assert "amd64" in result
++
++
++@pytest.mark.skipif(not HAS_MODULES, reason="Salt modules could not be loaded")
++def test_issue_68204_ubuntu_noble_format():
++    """
++    Test - Ubuntu 24.04 (Noble) version format: 6.8.0-45-generic
++    This was the other main failing case mentioned in the bug report
++    """
++    # Mock pkg.latest_version to return Ubuntu Noble format
++    mock_latest_version = MagicMock(return_value="6.8.0-45-generic")
++    mock_latest_installed = MagicMock(return_value="6.1.0-38-generic")
++
++    # Mock kernel type to return "generic" for this test
++    with patch.object(kernelpkg, "_kernel_type", return_value="generic"):
++        with patch.dict(
++            kernelpkg.__salt__, {"pkg.latest_version": mock_latest_version}
++        ):
++            with patch.object(kernelpkg, "latest_installed", mock_latest_installed):
++                result = kernelpkg.latest_available()
++
++                # Should not crash and should return a properly formatted version
++                assert isinstance(result, str)
++                assert "6.8.0" in result
++                assert "45" in result
++                assert "generic" in result
++
++
++@pytest.mark.skipif(not HAS_MODULES, reason="Salt modules could not be loaded")
++def test_issue_68204_debian_bullseye_format():
++    """
++    Test - Debian 11 (Bullseye) version format: 5.10.0-18-amd64
++    """
++    mock_latest_version = MagicMock(return_value="5.10.0-18-amd64")
++    mock_latest_installed = MagicMock(return_value="5.10.0-17-amd64")
++
++    with patch.object(kernelpkg, "_kernel_type", return_value="amd64"):
++        with patch.dict(
++            kernelpkg.__salt__, {"pkg.latest_version": mock_latest_version}
++        ):
++            with patch.object(kernelpkg, "latest_installed", mock_latest_installed):
++                result = kernelpkg.latest_available()
++
++                assert isinstance(result, str)
++                assert "5.10.0" in result
++                assert "18" in result
++                assert "amd64" in result
++
++
++@pytest.mark.skipif(not HAS_MODULES, reason="Salt modules could not be loaded")
++def test_issue_68204_ubuntu_jammy_format():
++    """
++    Test - Ubuntu 22.04 (Jammy) version format: 5.15.0-91-generic
++    """
++    mock_latest_version = MagicMock(return_value="5.15.0-91-generic")
++    mock_latest_installed = MagicMock(return_value="5.15.0-90-generic")
++
++    with patch.object(kernelpkg, "_kernel_type", return_value="generic"):
++        with patch.dict(
++            kernelpkg.__salt__, {"pkg.latest_version": mock_latest_version}
++        ):
++            with patch.object(kernelpkg, "latest_installed", mock_latest_installed):
++                result = kernelpkg.latest_available()
++
++                assert isinstance(result, str)
++                assert "5.15.0" in result
++                assert "91" in result
++             
+```
+
+---
+
+### Incident Patch 2: `f1aab820` (2026-11-23)
+**Commit Message**: fixed bad copy paste errors according to the issue https://github.com… (#68988)
+
+* fixed bad copy paste errors according to the issue https://github.com/saltstack/salt/issues/68967
+
+* Add changelog and regression tests for #68988
+
+Add changelog/68988.fixed.md and two unit tests that verify
+the corrected error-log variable in schedule.postpone_job and
+guard against regression.
+
+Refs: #68967
+
+---------
+
+Co-authored-by: Daniel A. Wozniak <[REDACTED_EMAIL]>
+
+**File**: `changelog/68988.fixed.md` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++Fix ``schedule.postpone_job`` error log referencing wrong variable (``new_time`` instead of ``current_time``) and fix ``win_dacl.check_ace`` normalising ``acetype`` based on ``permission`` truthiness instead of ``acetype`` itself.
+```
+
+**File**: `salt/modules/schedule.py` (modified, +1/-1)
+```diff
+@@ -1325,7 +1325,7 @@ def postpone_job(name, current_time, new_time, **kwargs):
+             # Validate date string
+             datetime.datetime.strptime(current_time, time_fmt)
+         except (TypeError, ValueError):
+-            log.error("Date string could not be parsed: %s, %s", new_time, time_fmt)
++            log.error("Date string could not be parsed: %s, %s", current_time, time_fmt)
+ 
+             ret["comment"] = "Date string could not be parsed."
+             ret["result"] = False
+```
+
+**File**: `salt/modules/win_dacl.py` (modified, +1/-1)
+```diff
+@@ -937,7 +937,7 @@ def check_ace(
+     path = dc.processPath(path, objectTypeBit)
+ 
+     permission = permission.upper() if permission else None
+-    acetype = acetype.upper() if permission else None
++    acetype = acetype.upper() if acetype else None
+     propagation = propagation.upper() if propagation else None
+ 
+     permissionbit = (
+```
+
+**File**: `tests/pytests/unit/modules/test_schedule.py` (modified, +43/-0)
+```diff
+@@ -1308,3 +1308,46 @@ def test_list_global_disabled(job1):
+         ) as fopen_mock:
+             ret = schedule.list_()
+             assert ret == expected
++
++
++# 'postpone_job' error-log regression tests: 2
++
++
++def test_postpone_job_invalid_current_time_logs_current_time(caplog):
++    """
++    When current_time cannot be parsed, the error log must reference current_time,
++    not new_time.  Regression test for the copy-paste bug fixed in #68988.
++    """
++    with caplog.at_level(logging.ERROR, logger="salt.modules.schedule"):
++        ret = schedule.postpone_job(
++            "job1",
++            current_time="not-a-date",
++            new_time="2099-01-01T00:00:00",
++        )
++    assert ret["result"] is False
++    assert ret["comment"] == "Date string could not be parsed."
++    # The log message must contain the bad current_time value, not new_time.
++    assert any(
++        "not-a-date" in r.message for r in caplog.records
++    ), "Error log did not mention the unparsable current_time value"
++    assert not any(
++        "2099-01-01T00:00:00" in r.message for r in caplog.records
++    ), "Error log mentioned new_time instead of current_time"
++
++
++def test_postpone_job_invalid_new_time_logs_new_time(caplog):
++    """
++    When new_time cannot be parsed, the error log must reference new_time.
++    Ensures the sibling log call (which was already correct) stays correct.
++    """
++    with caplog.at_level(logging.ERROR, logger="salt.modules.schedule"):
++        ret = schedule.postpone_job(
++            "job1",
++            current_time="2099-01-01T00:00:00",
++            new_time="not-a-date",
++        )
++    assert ret["result"] is False
++    assert ret["comment"] == "Date string could not be parsed."
++    assert any(
++        "not-a-date" in r.message for r in caplog.records
++    ), "Error log did not mention the unparsable new_time value"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #70917** (closed): Handle COM error when querying update download state in win_update.download (@LakshmikanthRaju)
-- **PR #70916** (closed): Handle COM error when querying update download state in win_update.download (@LakshmikanthRaju)
-- **PR #70915** (2026-11-23): Tighten Dependabot ignore list to respect documented version caps (@dwoz)
-- **PR #70914** (2026-11-23): Improve and validate Salt delta proxy minion documentation (#68285) (@dwoz)
-- **PR #70913** (2026-11-23): Restrict Dependabot to security-only updates on stable branches (@dwoz)
-- **PR #70909** (2026-11-22): Select all Ruff rules and list the ones not enabled yet (@charzl)
+- **PR #70928** (closed): Enable 5 more Ruff checks and group the rest of Wave 4 (@charzl)
+- **PR #70926** (2026-11-24): Enable 63 more Ruff checks and fix the tmp_path_world_rw fixture (@charzl)
+- **PR #70925** (closed): Enable 74 Ruff checks that report nothing today (@charzl)
+- **PR #70924** (2026-11-23): Remove misplaced salt-cloud note from top-level README (@dwoz)
+- **PR #70922** (2026-11-23): Split multidict and importlib-metadata by python_version (@dwoz)
+- **PR #70921** (closed): Design: ZeroMQ ReqServer load-balancing broker (supersedes #67215) (@dwoz)
 
 ---
 
@@ -2469,52 +2688,31 @@ even for security advisories.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Restrict Dependabot to security-only updates on stable branches
+## X. kernelpkg.latest_available regex for Debian Bullseye / Ubuntu Noble
 
 **RULE**:
-When implementing operations in `.github/dependabot.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in saltstack/salt. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog/68204.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in saltstack/salt. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `61a49c41`: Restrict Dependabot to security-only updates on stable branches. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ce59328c`: kernelpkg.latest_available regex for Debian Bullseye / Ubuntu Noble. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/dependabot.yml`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/68204.fixed.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-  # master: full version + security updates, grouped weekly
-  # 3008.x: security advisories only. open-pull-requests-limit: 0 disables
-  # version-update PRs; security-update PRs still fire on GHSA advisories.
-    open-pull-requests-limit: 0
-  # 3007.x: security advisories only.
-    open-pull-requests-limit: 0
-  # 3006.x: security advisories only.
-    open-pull-requests-limit: 0
+Fixed ``kernelpkg.latest_available()`` regex so it no longer raises ``AttributeError`` on Debian Bullseye/Bookworm and Ubuntu Noble kernel package version strings (e.g. ``6.1.147-1``, ``6.8.0-45-generic``).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-    open-pull-requests-limit: 5
-    groups:
-      all-pip-updates:
-        patterns:
-          - "*"
-    open-pull-requests-limit: 5
-    groups:
-      all-pip-updates:
-        patterns:
-          - "*"
-    open-pull-requests-limit: 5
-    groups:
-      all-pip-updates:
-        patterns:
-          - "*"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `61a49c41` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ce59328c` are properly handled with clean fallback behavior.
 
 
 ## 3. Decision Protocol & Boundary Restrictions
