@@ -12721,3 +12721,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-harness-hub-qwen3-8-27b-opencode-adapted` | `https://huggingface.co/harness-hub/Qwen3.8-27B-opencode-adapted` | `hf-harness` | Multi-dimensional audit evidence | 2026-11-24T13:56:28.410Z |
 | `learn-github-pimalaya-himalaya` | `https://github.com/pimalaya/himalaya` | `db0c9a6b` | Multi-dimensional audit evidence | 2026-11-24T13:56:32.165Z |
 | `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `7feaf262` | Multi-dimensional audit evidence | 2026-11-24T13:56:43.163Z |
+| `learn-huggingface-tencent-hy4` | `https://huggingface.co/tencent/Hy4` | `hf-tencent` | Multi-dimensional audit evidence | 2026-11-24T14:05:34.874Z |
+| `learn-github-actions-actions-runner-controller` | `https://github.com/actions/actions-runner-controller` | `50f96097` | Multi-dimensional audit evidence | 2026-11-24T14:05:43.109Z |
+| `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `58f80b14` | Multi-dimensional audit evidence | 2026-11-24T14:05:49.364Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `2bf1c0b8` | Multi-dimensional audit evidence | 2026-11-24T14:05:52.333Z |
+| `learn-dom-d-5e40c2c7` | `project://actions-actions-runner-controller` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actions-actions-runner-controller-learnings.md` | 2026-11-24T14:06:33.298Z |

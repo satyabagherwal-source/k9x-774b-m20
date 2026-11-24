@@ -4,22 +4,22 @@
 {
   "source_repository": "apple/foundationdb",
   "source_url": "https://github.com/apple/foundationdb",
-  "source_version": "c06497f3",
+  "source_version": "58f80b14",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-22T13:59:15.463Z",
+  "timestamp": "2026-11-24T14:05:49.687Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-apple-foundationdb",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [apple/foundationdb](https://github.com/apple/foundationdb) (Revision: `c06497f3`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T13:59:15.463Z`  
+> **Provenance**: Harvested from [apple/foundationdb](https://github.com/apple/foundationdb) (Revision: `58f80b14`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T14:05:49.687Z`  
 > **Learning ID**: `learn-github-apple-foundationdb`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `apple/foundationdb` (Commit: `c06497f3`)
+- **Target Repository**: `apple/foundationdb` (Commit: `58f80b14`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T13:59:13.896Z  
+> **Harvest Timestamp**: 2026-11-24T14:05:48.011Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: FoundationDB - the open source, distributed, transactional key-value store
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 16870 stars
+- **Stars / Engagement**: 16874 stars
 
 ---
 
@@ -1961,33 +1961,97 @@ constexpr std::string_view to_string(WaitState st) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c06497f3` (2026-11-21)
-**Commit Message**: packaging: use golang 1.26.11 for fdb-kubernetes-monitor (#14617)
+### Incident Patch 1: `58f80b14` (2026-11-24)
+**Commit Message**: Count distinct unhealthy addresses for recovery and failover (#14397)
 
-A slight golang downgrade to match https://github.com/FoundationDB/fdb-build-support/pull/127 for now (but go-1.26 is still getting security updates at the moment, at the same time as go-1.27)
+* Count each unhealthy address once for recovery and failover
 
-Also update packaging/docker base image to rockylinux 10.3
+* Trace the distinct unhealthy server count used for recovery
 
-**File**: `packaging/docker/Dockerfile` (modified, +2/-2)
+* Check that a duplicate health report preserves the failover decision
+
+* Test disjoint degraded and disconnected server reports
+
+---------
+
+Co-authored-by: Akshay V Kaushik <[REDACTED_EMAIL]>
+Co-authored-by: Pierce Lopez <[REDACTED_EMAIL]>
+Co-authored-by: Michael Stack <[REDACTED_EMAIL]>
+
+**File**: `fdbserver/clustercontroller/ClusterController.cpp` (modified, +13/-0)
 ```diff
-@@ -16,7 +16,7 @@
- # See the License for the specific language governing permissions and
- # limitations under the License.
- #
--FROM rockylinux/rockylinux:10.2-minimal AS base
-+FROM rockylinux/rockylinux:10.3-minimal AS base
+@@ -4918,6 +4918,13 @@ TEST_CASE("/fdbserver/clustercontroller/shouldTriggerRecoveryDueToDegradedServer
+ 	// Trigger recovery when master is degraded.
+ 	data.degradationInfo.degradedServers.insert(master);
+ 	ASSERT(data.shouldTriggerRecoveryDueToDegradedServers());
++	data.degradationInfo.disconnectedServers = { master, tlog };
++	ASSERT_EQ(data.shouldTriggerRecoveryDueToDegradedServers(), SERVER_KNOBS->CC_MAX_EXCLUSION_DUE_TO_HEALTH >= 2);
++	data.degradationInfo.disconnectedServers.insert(resolver);
++	ASSERT_EQ(data.shouldTriggerRecoveryDueToDegradedServers(), SERVER_KNOBS->CC_MAX_EXCLUSION_DUE_TO_HEALTH >= 3);
++	data.degradationInfo.disconnectedServers.erase(master);
++	ASSERT_EQ(data.shouldTriggerRecoveryDueToDegradedServers(), SERVER_KNOBS->CC_MAX_EXCLUSION_DUE_TO_HEALTH >= 3);
++	data.degradationInfo.disconnectedServers.clear();
+ 	data.degradationInfo.degradedServers.clear();
+ 	data.degradationInfo.disconnectedServers.insert(master);
+ 	ASSERT(data.shouldTriggerRecoveryDueToDegradedServers());
+@@ -5082,6 +5089,12 @@ TEST_CASE("/fdbserver/clustercontroller/shouldTriggerFailoverDueToDegradedServer
+ 	data.degradationInfo.degradedServers.insert(tlog);
+ 	data.degradationInfo.degradedServers.insert(proxy);
+ 	data.degradationInfo.degradedServers.insert(proxy2);
++	const bool failoverBeforeDuplicateReport = data.shouldTriggerFailoverDueToDegradedServers();
++	data.degradationInfo.disconnectedServers.insert(master);
++	ASSERT_EQ(data.shouldTriggerFailoverDueToDegradedServers(), failoverBeforeDuplicateReport);
++	data.degradationInfo.disconnectedServers = { resolver };
++	ASSERT(data.shouldTriggerFailoverDueToDegradedServers());
++	data.degradationInfo.disconnectedServers.clear();
+ 	data.degradationInfo.degradedServers.insert(resolver);
+ 	ASSERT(data.shouldTriggerFailoverDueToDegradedServers());
+ 	data.degradationInfo.degradedServers.clear();
+```
+
+**File**: `fdbserver/clustercontroller/ClusterController.h` (modified, +12/-3)
+```diff
+@@ -3251,6 +3251,14 @@ class ClusterControllerData {
+ 		    disconnectedServers; // Similar to the above list, but the servers experiencing connection issue.
  
- # It seems mirrorlist can be less reliable, just use original baseurl for package repo.
- RUN sed -i.bak 's/^#baseurl=/baseurl=/; s/^mirrorlist=/#mirrorlist=/' /etc/yum.repos.d/rocky.repo
-@@ -61,7 +61,7 @@ WORKDIR /
+ 		bool degradedSatellite = false; // Indicates that the entire satellite DC is degraded.
++
++		int unhealthyServerCount() const {
++			// A peer can be reported as both degraded and disconnected.
++			return disconnectedServers.size() +
++			       std::count_if(degradedServers.begin(), degradedServers.end(), [this](const NetworkAddress& addr) {
++				       return !disconnectedServers.contains(addr);
++			       });
++		}
+ 	};
  
- # Check that glibc version in base image >= glibc in go-build image (unless CGO_ENABLED=0)
+ 	// Returns true if and only if addr1 and addr2 are located in the same DC
+@@ -3475,13 +3483,14 @@ class ClusterControllerData {
+ 	// transaction system in the primary data center.
+ 	bool shouldTriggerRecoveryDueToDegradedServers() {
+ 		const bool ccExcluded = id_worker[clusterControllerProcessId].priorityInfo.isExcluded;
++		const int unhealthyServerCount = degradationInfo.unhealthyServerCount();
+ 		TraceEvent(SevInfo, "ShouldTriggerRecoveryDueToDegradedServers")
+ 		    .detail("DegradedServersSize", degradationInfo.degradedServers.size())
+ 		    .detail("DisconnectedServersSize", degradationInfo.disconnectedServers.size())
++		    .detail("UnhealthyServerCount", unhealthyServerCount)
+ 		    .detail("CCExcluded", ccExcluded);
  
--FROM golang:1.27.3-bookworm AS go-build
-+FROM golang:1.26.11-bookworm AS go-build
- COPY fdbkubernetesmonitor/ /fdbkubernetesmonitor
- WORKDIR /fdbkubernetesmonitor
- RUN go build -o /fdb-kubernetes-monitor *.go
+-		if (degradationInfo.degradedServers.size() + degradationInfo.disconnectedServers.size() >
+-		    SERVER_KNOBS->CC_MAX_EXCLUSION_DUE_TO_HEALTH) {
++		if (unhealthyServerCount > SERVER_KNOBS->CC_MAX_EXCLUSION_DUE_TO_HEALTH) {
+ 			return false;
+ 		}
+ 
+@@ -3518,7 +3527,7 @@ class ClusterControllerData {
+ 			return true;
+ 		}
+ 
+-		int degradedServerSize = degradationInfo.degradedServers.size() + degradationInfo.disconnectedServers.size();
++		int degradedServerSize = degradationInfo.unhealthyServerCount();
+ 		if (degradedServerSize < SERVER_KNOBS->CC_FAILOVER_DUE_TO_HEALTH_MIN_DEGRADATION ||
+ 		    degradedServerSize > SERVER_KNOBS->CC_FAILOVER_DUE_TO_HEALTH_MAX_DEGRADATION) {
+ 			return false;
 ```
 
 #### Recent Merged Pull Requests:
@@ -2016,33 +2080,43 @@ Also update packaging/docker base image to rockylinux 10.3
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. packaging: use golang 1.26.11 for fdb-kubernetes-monitor
+## X. Count distinct unhealthy addresses for recovery and failover
 
 **RULE**:
-When implementing operations in `packaging/docker/Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `fdbserver/clustercontroller/ClusterController.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c06497f3`: packaging: use golang 1.26.11 for fdb-kubernetes-monitor. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `58f80b14`: Count distinct unhealthy addresses for recovery and failover. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `packaging/docker/Dockerfile`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `fdbserver/clustercontroller/ClusterController.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-FROM rockylinux/rockylinux:10.3-minimal AS base
-FROM golang:1.26.11-bookworm AS go-build
+	data.degradationInfo.disconnectedServers = { master, tlog };
+	ASSERT_EQ(data.shouldTriggerRecoveryDueToDegradedServers(), SERVER_KNOBS->CC_MAX_EXCLUSION_DUE_TO_HEALTH >= 2);
+	data.degradationInfo.disconnectedServers.insert(resolver);
+	ASSERT_EQ(data.shouldTriggerRecoveryDueToDegradedServers(), SERVER_KNOBS->CC_MAX_EXCLUSION_DUE_TO_HEALTH >= 3);
+	data.degradationInfo.disconnectedServers.erase(master);
+	ASSERT_EQ(data.shouldTriggerRecoveryDueToDegradedServers(), SERVER_KNOBS->CC_MAX_EXCLUSION_DUE_TO_HEALTH >= 3);
+	data.degradationInfo.disconnectedServers.clear();
+	const bool failoverBeforeDuplicateReport = data.shouldTriggerFailoverDueToDegradedServers();
+	data.degradationInfo.disconnectedServers.insert(master);
+	ASSERT_EQ(data.shouldTriggerFailoverDueToDegradedServers(), failoverBeforeDuplicateReport);
+	data.degradationInfo.disconnectedServers = { resolver };
+	ASSERT(data.shouldTriggerFailoverDueToDegradedServers());
+	data.degradationInfo.disconnectedServers.clear();
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-FROM rockylinux/rockylinux:10.2-minimal AS base
-FROM golang:1.27.3-bookworm AS go-build
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c06497f3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `58f80b14` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T13:56:43.168Z",
-  "total_cycles_completed": 12059,
-  "total_learnings_persisted": 12059,
-  "total_rules_promoted": 11129,
+  "last_updated": "2026-11-24T14:05:52.340Z",
+  "total_cycles_completed": 12063,
+  "total_learnings_persisted": 12063,
+  "total_rules_promoted": 11131,
   "history": [
-    {
-      "timestamp": "2026-11-23T21:14:47.634Z",
-      "repository": "ClickHouse/ClickHouse",
-      "learningId": "learn-github-clickhouse-clickhouse",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T21:23:03.310Z",
-      "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
-      "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T21:23:05.089Z",
-      "repository": "zenbu-labs/terminal-browser",
-      "learningId": "learn-github-zenbu-labs-terminal-browser",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T21:23:10.925Z",
-      "repository": "wzh4869/AppPorts",
-      "learningId": "learn-github-wzh4869-appports",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T21:23:13.140Z",
       "repository": "moby/buildkit",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-24T13:56:43.168Z",
       "repository": "rqlite/rqlite",
       "learningId": "learn-github-rqlite-rqlite",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T14:05:34.881Z",
+      "repository": "tencent/Hy4",
+      "learningId": "learn-huggingface-tencent-hy4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T14:05:43.116Z",
+      "repository": "actions/actions-runner-controller",
+      "learningId": "learn-github-actions-actions-runner-controller",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T14:05:49.371Z",
+      "repository": "apple/foundationdb",
+      "learningId": "learn-github-apple-foundationdb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T14:05:52.340Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

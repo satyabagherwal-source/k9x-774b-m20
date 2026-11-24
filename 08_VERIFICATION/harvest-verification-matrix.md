@@ -12688,3 +12688,8 @@
 | `CYCLE-20261124-D1MD` | `2026-11-24T13:56:28.405Z` | `harness-hub/Qwen3.8-27B-opencode-adapted` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-harness-hub-qwen3.8-27b-opencode-adapted-learnings.md` | Yes (`69414851...`) |
 | `CYCLE-20261124-D4IO` | `2026-11-24T13:56:32.160Z` | `pimalaya/himalaya` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10272` | Yes (`c078c7de...`) |
 | `CYCLE-20261124-DD06` | `2026-11-24T13:56:43.158Z` | `rqlite/rqlite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9302` | Yes (`9047bd27...`) |
+| `CYCLE-20261124-OR9X` | `2026-11-24T14:05:34.869Z` | `tencent/Hy4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tencent-hy4-learnings.md` | Yes (`966666fb...`) |
+| `CYCLE-20261124-OXMO` | `2026-11-24T14:05:43.104Z` | `actions/actions-runner-controller` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/actions-actions-runner-controller-learnings.md` | Yes (`24f13b66...`) |
+| `CYCLE-20261124-P2GF` | `2026-11-24T14:05:49.359Z` | `apple/foundationdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10273` | Yes (`2345a5f2...`) |
+| `CYCLE-20261124-P4QW` | `2026-11-24T14:05:52.328Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10274` | Yes (`c2f6e946...`) |
+| `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T14:06:33.298Z` | `actions-actions-runner-controller` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-5E40C2C7` [Domain D] | Yes (`d73c4520...`) |

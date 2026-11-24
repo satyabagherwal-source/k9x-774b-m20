@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/actions-actions-runner-controller-learnings.md`  
 > **Source**: github ([https://github.com/actions/actions-runner-controller](https://github.com/actions/actions-runner-controller))  
-> **Source Version**: `b27dac72`  
+> **Source Version**: `50f96097`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T13:08:24.021Z  
+> **Timestamp**: 2026-11-24T14:05:42.462Z  
 > **Learning ID**: `learn-github-actions-actions-runner-controller`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/actions-actions-runner-controller-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/actions/actions-runner-controller](https://github.com/actions/actions-runner-controller))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T13:08:23.856Z  
+> **Harvest Timestamp**: 2026-11-24T14:05:42.456Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Kubernetes controller for GitHub Actions self-hosted runners
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 6675 stars
+- **Stars / Engagement**: 6684 stars
 
 ---
 
@@ -1501,246 +1501,81 @@ func (s *server) Errorf(format string, args ...interface{}) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b27dac72` (2026-11-19)
-**Commit Message**: Bump the actions group across 1 directory with 8 updates (#4746)
+### Incident Patch 1: `50f96097` (2026-11-24)
+**Commit Message**: Remove ProxyConfig.ProxyFunc orphaned by #4090 (#4743)
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `.github/workflows/arc-publish-chart.yaml` (modified, +4/-4)
+**File**: `apis/actions.github.com/v1alpha1/autoscalingrunnerset_types.go` (modified, +0/-14)
 ```diff
-@@ -45,7 +45,7 @@ jobs:
-           fetch-depth: 0
+@@ -19,7 +19,6 @@ package v1alpha1
+ import (
+ 	"crypto/x509"
+ 	"fmt"
+-	"net/http"
+ 	"net/url"
+ 	"strings"
  
-       - name: Set up Helm
--        uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310
-+        uses: azure/setup-helm@2f5e7bc67f1f9972ab16657bb795f36d8f04de0e
-         with:
-           version: ${{ env.HELM_VERSION }}
+@@ -245,19 +244,6 @@ func (c *ProxyConfig) ToSecretData(secretFetcher func(string) (*corev1.Secret, e
+ 	return data, nil
+ }
  
-@@ -63,7 +63,7 @@ jobs:
-           python-version: "3.11"
- 
-       - name: Set up chart-testing
--        uses: helm/chart-testing-action@6ec842c01de15ebb84c8627d2744a0c2f2755c9f
-+        uses: helm/chart-testing-action@720270857a28afd41e2426521a7801db09e9b510
- 
-       - name: Run chart-testing (list-changed)
-         id: list-changed
-@@ -79,7 +79,7 @@ jobs:
- 
-       - name: Create kind cluster
-         if: steps.list-changed.outputs.changed == 'true'
--        uses: helm/kind-action@06c1ae10762d3b9c1644e7fe69596ae519e015a2
-+        uses: helm/kind-action@ea822c7bf1874f08e5a491df991c228edffc3376
- 
-       # We need cert-manager already installed in the cluster because we assume the CRDs exist
-       - name: Install cert-manager
-@@ -152,7 +152,7 @@ jobs:
-           organization: ${{ env.CHART_TARGET_ORG }}
- 
-       - name: Install chart-releaser
--        uses: helm/chart-releaser-action@cae68fefc6b5f367a0275617c9f83181ba54714f
-+        uses: helm/chart-releaser-action@92c6b97fa9f664492a2592e0d1d80bc6bf378957
-         with:
-           install_only: true
-           install_dir: ${{ github.workspace }}/bin
+-func (c *ProxyConfig) ProxyFunc(secretFetcher func(string) (*corev1.Secret, error)) (func(*http.Request) (*url.URL, error), error) {
+-	config, err := c.ToHTTPProxyConfig(secretFetcher)
+-	if err != nil {
+-		return nil, err
+-	}
+-
+-	proxyFunc := func(req *http.Request) (*url.URL, error) {
+-		return config.ProxyFunc()(req.URL)
+-	}
+-
+-	return proxyFunc, nil
+-}
+-
+ type ProxyServerConfig struct {
+ 	// Required
+ 	Url string `json:"url,omitempty"`
 ```
 
-**File**: `.github/workflows/arc-validate-chart.yaml` (modified, +3/-3)
+**File**: `apis/actions.github.com/v1alpha1/proxy_config_test.go` (modified, +4/-3)
 ```diff
-@@ -45,7 +45,7 @@ jobs:
-           fetch-depth: 0
+@@ -45,7 +45,7 @@ func TestProxyConfig_ToSecret(t *testing.T) {
+ 	assert.Equal(t, "noproxy.example.com,noproxy2.example.com", string(result["no_proxy"]))
+ }
  
-       - name: Set up Helm
--        uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310
-+        uses: azure/setup-helm@2f5e7bc67f1f9972ab16657bb795f36d8f04de0e
-         with:
-           version: ${{ env.HELM_VERSION }}
+-func TestProxyConfig_ProxyFunc(t *testing.T) {
++func TestProxyConfig_ToHTTPProxyConfig(t *testing.T) {
+ 	config := &v1alpha1.ProxyConfig{
+ 		HTTP: &v1alpha1.ProxyServerConfig{
+ 			Url:                 "http://proxy.example.com:8080",
+@@ -70,8 +70,9 @@ func TestProxyConfig_ProxyFunc(t *testing.T) {
+ 		}, nil
+ 	}
  
-@@ -55,7 +55,7 @@ jobs:
-           python-version: "3.11"
+-	result, err := config.ProxyFunc(secretFetcher)
++	proxyConfig, err := config.ToHTTPProxyConfig(secretFetcher)
+ 	require.NoError(t, err)
++	result := proxyConfig.ProxyFunc()
  
-       - name: Set up chart-testing
--        uses: helm/chart-testing-action@6ec842c01de15ebb84c8627d2744a0c2f2755c9f
-+        uses: helm/chart-testing-action@720270857a28afd41e2426521a7801db09e9b510
+ 	tests := []struct {
+ 		name string
+@@ -104,7 +105,7 @@ func TestProxyConfig_ProxyFunc(t *testing.T) {
+ 		t.Run(test.name, func(t *testing.T) {
+ 			req, err := http.NewRequest("GET", test.in, nil)
+ 			require.NoError(t, err)
+-			u, err := result(req)
++			u, err := result(req.URL)
+ 			require.NoError(t, err)
  
-       - name: Run chart-testing (list-changed)
-         id: list-changed
-@@ -70,7 +70,7 @@ jobs:
-           ct lint --config charts/.ci/ct-config.yaml
- 
-       - name: Create kind cluster
--        uses: helm/kind-action@06c1ae10762d3b9c1644e7fe69596ae519e015a2
-+        uses: helm/kind-action@ea822c7bf1874f08e5a491df991c228edffc3376
-         if: steps.list-changed.outputs.changed == 'true'
- 
-       # We need cert-manager already installed in the cluster because we assume the CRDs exist
-```
-
-**File**: `.github/workflows/gha-publish-chart.yaml` (modified, +8/-8)
-```diff
-@@ -82,10 +82,10 @@ jobs:
-           echo "repository_owner=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
- 
-       - name: Set up QEMU
--        uses: docker/setup-qemu-action@1f40c72289eff860ee54a304f1438e3cff362e0a
-+        uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1
- 
-       - name: Set up Docker Buildx
--        uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e
-+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069
-         with:
-           # Pinning v0.9.1 for Buildx and BuildKit v0.10.6
-           # BuildKit v0.11 which has a bug causing intermittent
-@@ -94,14 +94,14 @@ jobs:
-           driver-opts: image=moby/buildkit:v0.10.6
- 
-       - name: Login to GitHub Container Registry
--        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f
-+        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550
-         with:
-           registry: ghcr.io
-           username: ${{ github.actor }}
-           password: ${{ secrets.GITHUB_TOKEN }}
- 
-       - name: Build & push controller image
--        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a
-+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc
-         with:
-           context: .
-           file: Dockerfile
-@@ -149,7 +149,7 @@ jobs:
-           echo "repository_owner=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
- 
-       - name: Set up Helm
--        uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310
-+        uses: azure/setup-helm@2f5e7bc67f1f9972ab16657bb795f36d8f04de0e
-         with:
-           version: ${{ env.HELM_VERSION }}
- 
-@@ -197,7 +197,7 @@ jobs:
-           echo "repository_owner=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
- 
-       - name: Set up Helm
--        uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310
-+        uses: azure/setup-helm@2f5e7bc67f1f9972ab16657bb795f36d8f04de0e
-         with:
-           version: ${{ env.HELM_VERSION }}
- 
-@@ -244,7 +244,7 @@ jobs:
-           echo "repository_owner=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
- 
-       - name: Set up Helm
--        uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310
-+        uses: azure/setup-helm@2f5e7bc67f1f9972ab16657bb795f36d8f04de0e
-         with:
-           version: ${{ env.HELM_VERSION }}
- 
-@@ -293,7 +293,7 @@ jobs:
-           echo "repository_owner=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
- 
-       - name: Set up Helm
--        uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310
-+        uses: azure/setup-helm@2f5e7bc67f1f9972ab16657bb795f36d8f04de0e
-         with:
-           version: ${{ env.HELM_VERSION }}
- 
-```
-
-**File**: `.github/workflows/gha-validate-chart.yaml` (modified, +4/-4)
-```diff
-@@ -42,7 +42,7 @@ jobs:
-           fetch-depth: 0
- 
-       - name: Set up Helm
--        uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310
-+        uses: azure/setup-helm@2f5e7bc67f1f9972ab16657bb795f36d8f04de0e
-         with:
-           version: ${{ env.HELM_VERSION }}
- 
-@@ -52,7 +52,7 @@ jobs:
-           python-version: "3.11"
- 
-       - name: Set up chart-testing
--        uses: helm/chart-testing-action@6ec842c01de15ebb84c8627d2744a0c2f2755c9f
-+        uses: helm/chart-testing-action@720270857a28afd41e2426521a7801db09e9b510
- 
-       - name: Run chart-testing (list-changed)
-         id: list-changed
-@@ -80,7 +80,7 @@ jobs:
-           fetch-depth: 0
- 
-       - name: Set up Helm
--        uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310
-+        uses: azure/setup-helm@2f5e7bc67f1f9972ab16657bb795f36d8f04de0e
-         with:
-           version: ${{ env.HELM_VERSION }}
- 
-@@ -90,7 +90,7 @@ jobs:
-           python-version: "3.11"
- 
-       - name: Set up chart-testing
--        uses: helm/chart-testing-action@6ec842c01de15ebb84c8627d2744a0c2f2755c9f
-+        uses: helm/chart-testing-action@720270857a28afd41e2426521a7801db09e9b510
- 
-       - name: Run chart-testing (list-changed)
-         id: list-changed
-```
-
-**File**: `.github/workflows/global-publish-canary.yaml` (modified, +4/-4)
-```diff
-@@ -93,7 +93,7 @@ jobs:
-         uses: actions/checkout@v7
- 
-       - name: Login to GitHub Container Registry
--        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f
-+        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550
-         with:
-           registry: ghcr.io
-           username: ${{ github.actor }}
-@@ -110,16 +110,16 @@ jobs:
-           echo "repository_owner=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
- 
-       - name: Set up QEMU
--        uses: docker/setup-qemu-action@1f40c72289eff860ee54a304f1438e3cff362e0a
-+        uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1
- 
-       - name: Set up Docker Buildx
--        uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e
-+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069
-         with:
-           version: latest
- 
-       # Unstable builds - run at your own risk
-       - name: Build and Push
--        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a
-+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc
-         with:
-           context: .
-           file: ./Dockerfile
-```
-
-**File**: `.github/workflows/go.yaml` (modified, +1/-1)
-```diff
-@@ -92,7 +92,7 @@ jobs:
-         with:
-           go-version-file: "go.mod"
-       - name: Set up Helm
--        uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310
-+        uses: azure/setup-helm@2f5e7bc67f1f9972ab16657bb795f36d8f04de0e
-         with:
-           version: ${{ env.HELM_VERSION }}
-       - run: make manifests
+ 			if test.out == "" {
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #4746** (2026-11-19): Bump the actions group across 1 directory with 8 updates (@dependabot[bot])
+- **PR #4745** (closed): Bump the gomod group across 1 directory with 10 updates (@dependabot[bot])
+- **PR #4743** (2026-11-24): Remove ProxyConfig.ProxyFunc orphaned by #4090 (@Okabe-Junya)
 - **PR #4741** (closed): Bump the gomod group across 1 directory with 9 updates (@dependabot[bot])
 - **PR #4733** (closed): Bump the actions group across 1 directory with 7 updates (@dependabot[bot])
 - **PR #4732** (closed): Bump the gomod group with 5 updates (@dependabot[bot])
-- **PR #4730** (2026-10-27): Updates: runner to v2.338.2 (@github-actions[bot])
-- **PR #4729** (closed): Bump the actions group across 1 directory with 6 updates (@dependabot[bot])
 
 ---
 
@@ -1754,40 +1589,3 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Bump the actions group across 1 directory with 8 updates
-
-**RULE**:
-When implementing operations in `.github/workflows/arc-publish-chart.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in actions/actions-runner-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `b27dac72`: Bump the actions group across 1 directory with 8 updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/arc-publish-chart.yaml`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```go
-// Verified production-grade fix pattern:
-        uses: azure/setup-helm@2f5e7bc67f1f9972ab16657bb795f36d8f04de0e
-        uses: helm/chart-testing-action@720270857a28afd41e2426521a7801db09e9b510
-        uses: helm/kind-action@ea822c7bf1874f08e5a491df991c228edffc3376
-        uses: helm/chart-releaser-action@92c6b97fa9f664492a2592e0d1d80bc6bf378957
-```
-
-**NEGATIVE CONSTRAINT**:
-```go
-// Induced defect failure mode:
-        uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310
-        uses: helm/chart-testing-action@6ec842c01de15ebb84c8627d2744a0c2f2755c9f
-        uses: helm/kind-action@06c1ae10762d3b9c1644e7fe69596ae519e015a2
-        uses: helm/chart-releaser-action@cae68fefc6b5f367a0275617c9f83181ba54714f
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b27dac72` are properly handled with clean fallback behavior.

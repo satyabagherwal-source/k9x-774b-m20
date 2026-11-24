@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "984b16cb",
+    "sourceVersion": "2bf1c0b8",
     "license": "NOASSERTION",
-    "contentHash": "07409b9f3d46d08323382958336ea563277304a03398c5bcaea6bae88021757e",
-    "lastHarvestedAt": "2026-11-24T13:30:23.866Z",
+    "contentHash": "c2f6e946da405787adac53d1b651ac8fb254c8776597205355a37794340cd922",
+    "lastHarvestedAt": "2026-11-24T14:05:52.333Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -4973,10 +4973,10 @@
     "repository": "apple/foundationdb",
     "platform": "github",
     "sourceUrl": "https://github.com/apple/foundationdb",
-    "sourceVersion": "c06497f3",
+    "sourceVersion": "58f80b14",
     "license": "Apache-2.0",
-    "contentHash": "7c79b813caaf32ed7cf3fb86975eceb454b3ba8bdcdcbaa7fec7e38152f42212",
-    "lastHarvestedAt": "2026-11-22T13:59:15.180Z",
+    "contentHash": "2345a5f24a112ed55028fe8f02d953b590e0757d9c6c42897c82ec1520cb391a",
+    "lastHarvestedAt": "2026-11-24T14:05:49.364Z",
     "learningId": "learn-github-apple-foundationdb"
   },
   "kucherenko-jscpd": {
@@ -6603,10 +6603,10 @@
     "repository": "actions/actions-runner-controller",
     "platform": "github",
     "sourceUrl": "https://github.com/actions/actions-runner-controller",
-    "sourceVersion": "b27dac72",
+    "sourceVersion": "50f96097",
     "license": "Apache-2.0",
-    "contentHash": "366b924a088e09c4289ee95ff6a69555455a4f7f5e11d497b1599f34ab402cf5",
-    "lastHarvestedAt": "2026-11-20T13:08:25.039Z",
+    "contentHash": "24f13b669c4b7a531fe19e68cae63a36dc731fd5cde0decf8cfbb5f415a6070b",
+    "lastHarvestedAt": "2026-11-24T14:05:43.109Z",
     "learningId": "learn-github-actions-actions-runner-controller"
   },
   "vectifyai-pageindex": {
@@ -13025,8 +13025,8 @@
     "sourceUrl": "https://huggingface.co/tencent/Hy4",
     "sourceVersion": "hf-tencent-hy4",
     "license": "Open-Source",
-    "contentHash": "ec25fdd5dc8c74a2901fa277389f13894f3a31812852e84172074fb8b63a41f4",
-    "lastHarvestedAt": "2026-11-20T11:30:39.837Z",
+    "contentHash": "966666fb066ea085af1acc2cf8fbf1bc16948afd01bacf524ec8bc633490c289",
+    "lastHarvestedAt": "2026-11-24T14:05:34.874Z",
     "learningId": "learn-huggingface-tencent-hy4"
   },
   "hf-harness-hub-qwen3.8-27b-opencode-adapted": {

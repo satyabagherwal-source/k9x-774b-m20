@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T13:56:49.203Z",
-  "total_records": 2526,
+  "last_updated": "2026-11-24T14:06:35.343Z",
+  "total_records": 2529,
   "domains": {
     "A": {
       "total": 22,
@@ -69,7 +69,7 @@
       ]
     },
     "D": {
-      "total": 957,
+      "total": 958,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1027,7 +1027,8 @@
         "DOM-D-07A2BC67",
         "domain_intelligence-research-knowledge-intelligence-hf-nari-labs-qwen3-8-27b-nariq-gguf-learnings-co",
         "domain_intelligence-research-knowledge-intelligence-gluesql-gluesql-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-gluesql-gluesql-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-gluesql-gluesql-learnings-core-invariants",
+        "DOM-D-5E40C2C7"
       ]
     },
     "E": {
@@ -2205,7 +2206,7 @@
       ]
     },
     "I": {
-      "total": 146,
+      "total": 148,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -2352,7 +2353,9 @@
         "domain_intelligence-content-information-intelligence-folkbench-folkbench-core-invariants",
         "domain_intelligence-content-information-intelligence-folkbench-folkbench-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-jithin-sabu-purge-app-core-invariants",
-        "domain_intelligence-content-information-intelligence-jithin-sabu-purge-app-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-jithin-sabu-purge-app-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-actions-actions-runner-controller-core-invarian",
+        "domain_intelligence-content-information-intelligence-actions-actions-runner-controller-learnings-cor"
       ]
     },
     "J": {
@@ -12583,8 +12586,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "bea6a1b2671cf937ef7f0ab04a95b8b06b14a0d2b90f1f92629d77c2d79f8d60",
-      "created_at": "2026-11-24T13:30:24.413Z"
+      "content_hash": "1ae304b28365ad2ea15edd333aa29cc3f5c085ed2bf89e769902cdb5b92d35b7",
+      "created_at": "2026-11-24T14:05:52.895Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -16550,8 +16553,8 @@
       "title": "Quality & Verification Intelligence: apple/foundationdb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-apple-foundationdb-quality-verification-intelligence-apple-foundationdb-core-inv.md",
       "repository": "apple/foundationdb",
-      "content_hash": "cd6ae65c79c246a45d7ca6f04dfb88dcddf2511fad236c15f997368d8b1fea72",
-      "created_at": "2026-11-22T13:59:15.681Z"
+      "content_hash": "8f5a091d8ecb0cdd7b898a56010831748ee96d57827f9eb18927fc3557f38721",
+      "created_at": "2026-11-24T14:05:49.914Z"
     },
     "DOM-F-0C4992D6": {
       "record_id": "DOM-F-0C4992D6",
@@ -16652,8 +16655,8 @@
       "title": "Quality & Verification Intelligence: apple-foundationdb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-apple-foundationdb-learnings-quality-verification-intelligence-apple-foundationd.md",
       "repository": "apple-foundationdb-learnings",
-      "content_hash": "dfe4626324f408b87f5d7450dbbb3f68aaa14902bde63db0f56430ea6d098ac9",
-      "created_at": "2026-11-22T13:59:21.709Z"
+      "content_hash": "1156d16af41f9e3871903f1d619c56a9c2eba2511b038c832c7b70852a648958",
+      "created_at": "2026-11-24T14:06:35.343Z"
     },
     "domain_intelligence-research-knowledge-intelligence-baai-bge-large-en-v1-5-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-baai-bge-large-en-v1-5-core-invariants",
@@ -36055,8 +36058,8 @@
       "title": "Research & Knowledge Intelligence: tencent/Hy4 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-tencent-hy4-research-knowledge-intelligence-tencent-hy4-core-invariants.md",
       "repository": "tencent/Hy4",
-      "content_hash": "0b11909a32788dbf9feefe33a6b4e8ba59ae9b6bf94d0de87236d36e4e93237e",
-      "created_at": "2026-11-20T11:30:40.036Z"
+      "content_hash": "dffc945b50e2579222c7e4472e0b7c6501ba0ee63aa42f0f5ae95600f1a41da3",
+      "created_at": "2026-11-24T14:05:35.191Z"
     },
     "domain_intelligence-content-information-intelligence-touchlab-kermit-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-touchlab-kermit-core-invariants",
@@ -36184,8 +36187,8 @@
       "title": "Research & Knowledge Intelligence: hf-tencent-hy4-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-tencent-hy4-learnings-research-knowledge-intelligence-hf-tencent-hy4-learning.md",
       "repository": "hf-tencent-hy4-learnings",
-      "content_hash": "0a28a7020096c1dc68d66b2e11dd5da2c90bd028afd36fa97a92cc09735340ea",
-      "created_at": "2026-11-20T11:32:48.235Z"
+      "content_hash": "11057258f7e86d1e596756750c0ac3d0d89c1b2bffc82640b319f81f9df5ed2f",
+      "created_at": "2026-11-24T14:05:56.403Z"
     },
     "domain_intelligence-content-information-intelligence-touchlab-kermit-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-touchlab-kermit-learnings-core-invariants",
@@ -42418,6 +42421,66 @@
       "confidence": 0.62,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-24T13:48:09.842Z"
+    },
+    "domain_intelligence-content-information-intelligence-actions-actions-runner-controller-core-invarian": {
+      "record_id": "domain_intelligence-content-information-intelligence-actions-actions-runner-controller-core-invarian",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: actions/actions-runner-controller Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-actions-actions-runner-controller-content-information-intelligence-actions-actio.md",
+      "repository": "actions/actions-runner-controller",
+      "content_hash": "ab84302adbfe746473e4d846f2d9f89344ae28a77f0b5f389ef4f5d62d9f095c",
+      "created_at": "2026-11-24T14:05:43.420Z"
+    },
+    "DOM-D-5E40C2C7": {
+      "record_id": "DOM-D-5E40C2C7",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): actions/actions-runner-controller",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/actions-actions-runner-controller-learnings.md`  \n> **Source**: github ([https://github.com/actions/actions-runner-controller](https://github.com/actions/actions-runner-controller))  \n> **Source Version**: `50f96097`  \n> **License**: Apache-2.0",
+      "content_hash": "d73c4520775a366252a4c28aad29050815f8251fc756d649810174a30f34b4a5",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/actions-actions-runner-controller-learnings.md`  \n> **Source**: github ([https://git -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/actions-actions-runner-controller-learnings.md`  \n> **Source**: github ([https://git",
+      "provenance": {
+        "source_uri": "project://actions-actions-runner-controller/actions-actions-runner-controller-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-24T14:05:56.630Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (actions-actions-runner-controller)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of actions-actions-runner-controller"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-24T14:06:33.260Z"
+    },
+    "domain_intelligence-content-information-intelligence-actions-actions-runner-controller-learnings-cor": {
+      "record_id": "domain_intelligence-content-information-intelligence-actions-actions-runner-controller-learnings-cor",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: actions-actions-runner-controller-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-actions-actions-runner-controller-learnings-content-information-intelligence-act.md",
+      "repository": "actions-actions-runner-controller-learnings",
+      "content_hash": "41854869cf3e19f9bc1b031464a241847ac1021f9c6760ba68122a59e601b195",
+      "created_at": "2026-11-24T14:06:34.216Z"
     }
   }
 }

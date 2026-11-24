@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T13:56:49.026Z",
+  "last_updated": "2026-11-24T14:06:35.093Z",
   "directives": [
     {
       "id": "CD-001",
@@ -55011,6 +55011,37 @@
       "source_repo": "rqlite-rqlite",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-FE0C93-update-changelog-md.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-Q1QG",
+      "directive_title": "Count distinct unhealthy addresses for recovery and failover",
+      "source_repo": "apple-foundationdb-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-Q1QG-count-distinct-unhealthy-addresses-for-recovery-and-failover.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-P502",
+      "directive_title": "drop unused direct deps bytemuck and spreadsheet-ods",
+      "source_repo": "dathere/qsv",
+      "source_commit": "2bf1c0b8",
+      "staged_file": "11_INBOX/candidate-directives/CD-P502-drop-unused-direct-deps-bytemuck-and-spreadsheet-ods.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-967357",
+      "directive_title": "Count distinct unhealthy addresses for recovery and failover",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "apple-foundationdb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-967357-count-distinct-unhealthy-addresses-for-r.md",
       "staged_date": "2026-11-24"
     }
   ]

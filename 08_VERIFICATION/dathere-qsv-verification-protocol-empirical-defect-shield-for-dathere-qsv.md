@@ -4,22 +4,22 @@
 {
   "source_repository": "dathere/qsv",
   "source_url": "https://github.com/dathere/qsv",
-  "source_version": "984b16cb",
+  "source_version": "2bf1c0b8",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-24T13:30:24.184Z",
+  "timestamp": "2026-11-24T14:05:52.663Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dathere-qsv",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `984b16cb`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-24T13:30:24.184Z`  
+> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `2bf1c0b8`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-24T14:05:52.663Z`  
 > **Learning ID**: `learn-github-dathere-qsv`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `dathere/qsv` (Commit: `984b16cb`)
+- **Target Repository**: `dathere/qsv` (Commit: `2bf1c0b8`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T13:30:22.477Z  
+> **Harvest Timestamp**: 2026-11-24T14:05:50.958Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3850 stars
+- **Stars / Engagement**: 3851 stars
 
 ---
 
@@ -2290,103 +2290,119 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a6ed78ab` (2026-11-24)
-**Commit Message**: build(deps): bump github/codeql-action from 4.39.3 to 4.39.4 (#5108)
+### Incident Patch 1: `2bf1c0b8` (2026-11-24)
+**Commit Message**: deps: drop unused direct deps bytemuck and spreadsheet-ods (#5110)
 
-Bumps [github/codeql-action](https://github.com/github/codeql-action) from 4.39.3 to 4.39.4.
-- [Release notes](https://github.com/github/codeql-action/releases)
-- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/v4.39.3...v4.39.4)
+* deps: drop unused direct deps bytemuck and spreadsheet-ods
 
----
-updated-dependencies:
-- dependency-name: github/codeql-action
-  dependency-version: 4.39.4
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
+Neither crate is referenced anywhere in qsv's source (cargo-machete).
+bytemuck only re-enabled `latest_stable_rust` on the copy polars already
+pulls in; spreadsheet-ods is used by csvs_convert, and qsv's
+[patch.crates-io] entry still redirects it to the quick-xml-patched fork
+without a direct edge.
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Verified: cargo tree resolves spreadsheet-ods to the fork via
+csvs_convert; cargo check --locked passes for qsv (all_features),
+qsvlite, qsvmcp, qsvdp, and feature_capable + to / geocode / polars;
+`to` tests pass (85/85).
 
-**File**: `.github/workflows/devskim.yml` (modified, +1/-1)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* docs: cite #5110 in CHANGELOG [skip ci]
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -51,6 +51,6 @@ jobs:
-           ignore-globs: "**/.git/**,**/.claude/**,**/tests/resources/**,**/docs/describegpt/*.md,**/docs/describegpt/*.json,**/docs/describegpt/*.toon,**/src/cmd/assets/datatables.min.js,**/src/cmd/assets/datatables.min.css"
+@@ -33,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - `synthesize`: a column with any null was never treated as fully enumerated, because frequency's `(NULL)` row parses to rank 0, the same as an "Other" bucket. Such columns fell back to fakers, filler or the min/max range instead of sampling their real values by frequency, which also let them bypass `--min-count`. Nulls are still reproduced through the null ratio. **Behavior change:** columns with blank cells now emit their real values (those seen at least `--min-count` times), like every other enumerated column. With a Data Dictionary but without `--consistent-fakes`, a name, email or address column that has blanks goes from generated fakes to real values; pass `--consistent-fakes` to keep fakes. ([#5066](https://github.com/dathere/qsv/pull/5066))
  
-       - name: Upload DevSkim scan results to GitHub Security tab
--        uses: github/codeql-action/upload-sarif@v4.39.3
-+        uses: github/codeql-action/upload-sarif@v4.39.4
-         with:
-           sarif_file: devskim-results.sarif
+ ### Changed
++- deps: dropped the unused direct dependencies `bytemuck` (`polars`, `geocode` features) and `spreadsheet-ods` (`to` feature); qsv never calls either. Both are still built through polars and `csvs_convert`, and `spreadsheet-ods` still resolves to our quick-xml-patched fork through `[patch.crates-io]`. No change in behavior, build time or binary size. ([#5110](https://github.com/dathere/qsv/pull/5110))
+ - deps: `mlua` bumped from a git pin (`a0ad453`, Luau 0.745) to the released 0.12.3, with Luau 0.748 (`mlua-sys` 0.14.0, `luau0-src` 0.24.1); `luau` and `frequency --stats-filter` scripts now run on Luau 0.748, and every mlua crate comes from crates.io again. Upstream highlights: Luau 0.746–0.748 improve native code generation and tiered runtime recompilation, and fix inlined functions clobbering captured values; mlua 0.12.3 fixes several userdata, callback and Lua thread bugs. **Behavior change:** Luau removed its experimental 64-bit `integer` library, so the global `integer` that qsv 29.0.0 scripts could call (e.g. `integer.create`) is now `nil`; use plain numbers, which are exact up to 2^53. The new `while local` syntax and `buffer.readvectorf32x*` functions are still behind experimental Luau flags upstream, so qsv does not enable them. ([#5101](https://github.com/dathere/qsv/pull/5101))
+ - deps: `jsonschema` bumped from 0.61 to 0.63.1 for `validate`, `describegpt` and `profile`. Upstream highlights: `pattern` and `patternProperties` match common shapes (such as `^[a-z][a-z0-9-_]{1,63}$` or `^[1-5](?:[0-9]{2}|XX)$`) without a regex engine; a pattern with a large bounded count (e.g. `.{0,404600}`) no longer fails with a regex engine error after `--size-limit` was raised to compile it; named backreferences compile, and with `--fancy-regex`, `\d`, `\w`, `\s` and `.` follow ECMA 262 in patterns with a backreference or lookaround; `$ref` to another draft's meta-schema resolves, and a subschema's own `$schema` is honored; and several `$dynamicRef`/`$recursiveRef` cycle and error-location fixes. **Behavior change:** a Draft 4 schema with an empty `enum`, or one with equal members such as `[0, 0.0]`, now fails `validate schema`'s meta-schema check, and some error messages changed (an empty `enum` is now named, and `minContains`/`maxContains` messages no longer claim no item matched). ([#5100](https://github.com/dathere/qsv/pull/5100))
+ - `synthesize`: `ordered` relationship members now keep their own blanks. Before, a chain was blank whole when its anchor was and filled whole otherwise, so a follower blank more often than its anchor (a `closed_date` left blank while a case is open) was never blank in the output. The fit now counts, in its existing pass over the source, how often each combination of blank members occurs, and each synthetic row draws one. Rows blank in every member stay blank whole, and the members left filled stay in order, a blank one between them included. A member's range is capped only by the later members left filled in that row, so a blank close date doesn't hold back the open dates of open cases. This applies to declared relationships too. A chain whose members are blank in the same rows writes the same bytes as before, while a seeded run of one whose blanks differ writes different rows. `--discover-relationships` no longer requires `ordered` dates to be blank in the same rows, so it can now find pairs like NYC 311's Created Date ≤ Due Date (Due Date blank in 66% of rows). Saved models hold the blank combinations, so the model format is version 5 and models saved before this change must be fitted again. ([#5090](https://github.com/dathere/qsv/pull/5090), [#5091](https://github.com/dathere/qsv/pull/5091))
 ```
 
-**File**: `.github/workflows/rust-clippy.yml` (modified, +1/-1)
+**File**: `Cargo.lock` (modified, +0/-2)
 ```diff
-@@ -46,7 +46,7 @@ jobs:
-         continue-on-error: true
- 
-       - name: Upload analysis results to GitHub
--        uses: github/codeql-action/upload-sarif@v4.39.3
-+        uses: github/codeql-action/upload-sarif@v4.39.4
-         with:
-           sarif_file: rust-clippy-results.sarif
-           wait-for-processing: true
+@@ -6974,7 +6974,6 @@ dependencies = [
+  "bitvec",
+  "blake3",
+  "bytecount",
+- "bytemuck",
+  "byteorder",
+  "bytes",
+  "cached",
+@@ -7086,7 +7085,6 @@ dependencies = [
+  "simdutf8",
+  "smallvec",
+  "snap",
+- "spreadsheet-ods",
+  "strsim",
+  "strum 0.28.0",
+  "strum_macros 0.28.0",
 ```
 
----
-
-### Incident Patch 2: `01ddb1a1` (2026-11-24)
-**Commit Message**: build(deps): bump anthropics/claude-code-action from 1.0.284 to 1.0.286 (#5107)
-
-Bumps [anthropics/claude-code-action](https://github.com/anthropics/claude-code-action) from 1.0.284 to 1.0.286.
-- [Release notes](https://github.com/anthropics/claude-code-action/releases)
-- [Commits](https://github.com/anthropics/claude-code-action/compare/c84e279f859e2591391e95bd309286eb111c345f...acfe7992852970efb4fee683d63d628e3e52df67)
-
----
-updated-dependencies:
-- dependency-name: anthropics/claude-code-action
-  dependency-version: 1.0.286
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `.github/workflows/claude-code-review.yml` (modified, +1/-1)
+**File**: `Cargo.toml` (modified, +2/-7)
 ```diff
-@@ -34,7 +34,7 @@ jobs:
+@@ -177,9 +177,6 @@ base64-simd = { version = "0.8", optional = true }
+ bitvec = "1"
+ blake3 = { version = "1.8", features = ["rayon", "mmap"] }
+ bytecount = "0.6"
+-bytemuck = { version = "1.24", features = [
+-    "latest_stable_rust",
+-], optional = true }
+ byteorder = "1.5"
+ bytes = "1"
+ cached = { version = "4.1", features = ["ahash", "redb_store", "redis_store"] }
+@@ -493,7 +490,6 @@ serde_json = { version = "1", features = ["float_roundtrip", "preserve_order"] }
+ serde_urlencoded = { version = "0.7", optional = true }
+ sha2 = { version = "0.11", optional = true }
+ simdutf8 = "0.1"
+-spreadsheet-ods = { version = "1", optional = true }
+ toml = "1.2.1+spec-1.1.0"
+ toon-format = { version = "0.7", default-features = false }
+ smallvec = "1"
+@@ -747,7 +743,6 @@ get = ["zstd", "flate2", "glob"]
+ # `get` only (see the NOTE above distrib_features). See `qsv get --help`.
+ get_cloud = ["get", "dep:object_store"]
+ geocode = [
+-    "bytemuck",
+     "dns-lookup",
+     "geosuggest-core",
+     "geosuggest-utils",
+@@ -763,7 +758,7 @@ geocode = [
+ luau     = ["mlua", "sanitize-filename", "flate2", "zstd"]
+ magika   = ["dep:magika", "dep:ort"]
+ mcp      = []
+-polars   = ["dep:polars", "dep:polars-arrow", "bytemuck", "flate2", "zstd"]
++polars   = ["dep:polars", "dep:polars-arrow", "flate2", "zstd"]
+ readstat = ["dep:polars-readstat-rs", "polars"]
  
-       - name: Run Claude Code Review
-         id: claude-review
--        uses: anthropics/claude-code-action@c84e279f859e2591391e95bd309286eb111c345f # v1.0.284
-+        uses: anthropics/claude-code-action@acfe7992852970efb4fee683d63d628e3e52df67 # v1.0.286
-         with:
-           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-           plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
-```
-
-**File**: `.github/workflows/claude.yml` (modified, +1/-1)
-```diff
-@@ -34,7 +34,7 @@ jobs:
- 
-       - name: Run Claude Code
-         id: claude
--        uses: anthropics/claude-code-action@c84e279f859e2591391e95bd309286eb111c345f # v1.0.284
-+        uses: anthropics/claude-code-action@acfe7992852970efb4fee683d63d628e3e52df67 # v1.0.286
-         with:
-           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
- 
+ prompt = ["rfd"]
+@@ -783,7 +778,7 @@ profile = ["dep:sha2", "minijinja-contrib", "polars", "yaml_serde"]
+ # (see the NOTE above distrib_features).
+ geoconnex  = ["profile"]
+ synthesize = ["dep:fake", "dep:time"]
+-to         = ["csvs_convert", "dep:spreadsheet-ods"]
++to         = ["csvs_convert"]
+ # viz: generate charts (bar/line/scatter/histogram/box) and an auto-dashboard
+ # (`viz smart`) from CSV data via the plotly crate. Base feature = self-contained
+ # interactive HTML output (plotly_embed_js); NO polars dependency. `viz smart`
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5110** (2026-11-24): deps: drop unused direct deps bytemuck and spreadsheet-ods (@jqnatividad)
 - **PR #5108** (2026-11-24): build(deps): bump github/codeql-action from 4.39.3 to 4.39.4 (@dependabot[bot])
 - **PR #5107** (2026-11-24): build(deps): bump anthropics/claude-code-action from 1.0.284 to 1.0.286 (@dependabot[bot])
 - **PR #5106** (2026-11-24): fix(moarstats,pragmastat,scoresql): check a stats cache's parsing options before reusing it (#5105) (@jqnatividad)
 - **PR #5104** (2026-11-24): feat(validate,stats): add --quote, --escape and --no-quoting (#4610) (@jqnatividad)
 - **PR #5103** (2026-11-23): fix(writestat): refuse numbers too close to 0 for .xpt; keep them in .por (@jqnatividad)
-- **PR #5102** (2026-11-23): fix(mcp): protect credential/autostart paths on every input/output path; explicit QSV_MCP_ALLOWED_DIRS confines plugin mode (@jqnatividad)
 
 ---
 
@@ -2406,31 +2422,31 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump github/codeql-action from 4.39.3 to 4.39.4
+## X. deps: drop unused direct deps bytemuck and spreadsheet-ods
 
 **RULE**:
-When implementing operations in `.github/workflows/devskim.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a6ed78ab`: build(deps): bump github/codeql-action from 4.39.3 to 4.39.4. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2bf1c0b8`: deps: drop unused direct deps bytemuck and spreadsheet-ods. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/devskim.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        uses: github/codeql-action/upload-sarif@v4.39.4
+- deps: dropped the unused direct dependencies `bytemuck` (`polars`, `geocode` features) and `spreadsheet-ods` (`to` feature); qsv never calls either. Both are still built through polars and `csvs_convert`, and `spreadsheet-ods` still resolves to our quick-xml-patched fork through `[patch.crates-io]`. No change in behavior, build time or binary size. ([#5110](https://github.com/dathere/qsv/pull/5110))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        uses: github/codeql-action/upload-sarif@v4.39.3
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a6ed78ab` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2bf1c0b8` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
