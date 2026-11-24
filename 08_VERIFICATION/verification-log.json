@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-5AS9",
-    "timestamp": "2026-11-22T09:35:10.041Z",
-    "repository": "higurashi-ai/Haru-4B",
-    "learningId": "learn-huggingface-higurashi-ai-haru-4b",
-    "contentHash": "2d7f6f7dd5467cf447c92165503f2369b4195295574e8d37784daedbe6e4ef0d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-L3SM",
     "timestamp": "2026-11-22T09:47:27.478Z",
     "repository": "ConceptCountry/qwen-concept-27b",
@@ -7490,6 +7475,21 @@
     "repository": "Ontos-AI/knowhere",
     "learningId": "learn-github-ontos-ai-knowhere",
     "contentHash": "3bc5f61ce194049093b7117fefb0b44a78aca6799d6d781927ddcd14a1a836df",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-2ZSY",
+    "timestamp": "2026-11-24T04:28:47.170Z",
+    "repository": "sharkdp/bat",
+    "learningId": "learn-github-sharkdp-bat",
+    "contentHash": "10c19903f59718333631781d16537653dc0c6a11bc267d01657735a3037fa2b9",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

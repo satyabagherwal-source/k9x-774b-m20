@@ -4,22 +4,22 @@
 {
   "source_repository": "sharkdp/bat",
   "source_url": "https://github.com/sharkdp/bat",
-  "source_version": "dbc11b69",
+  "source_version": "4bd5c5b6",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-21T12:19:37.718Z",
+  "timestamp": "2026-11-24T04:28:47.402Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-sharkdp-bat",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [sharkdp/bat](https://github.com/sharkdp/bat) (Revision: `dbc11b69`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T12:19:37.718Z`  
+> **Provenance**: Harvested from [sharkdp/bat](https://github.com/sharkdp/bat) (Revision: `4bd5c5b6`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T04:28:47.402Z`  
 > **Learning ID**: `learn-github-sharkdp-bat`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `sharkdp/bat` (Commit: `dbc11b69`)
+- **Target Repository**: `sharkdp/bat` (Commit: `4bd5c5b6`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sharkdp-bat-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sharkdp/bat](https://github.com/sharkdp/bat))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T12:19:36.547Z  
+> **Harvest Timestamp**: 2026-11-24T04:28:46.263Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A cat(1) clone with wings.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 61344 stars
+- **Stars / Engagement**: 61393 stars
 
 ---
 
@@ -619,72 +619,10 @@ impl AssetsMetadata {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4a50cfbe` (2026-11-20)
-**Commit Message**: Merge pull request #3892 from JMak-Security/gh-1534-async-await-highlight
+### Incident Patch 1: `4bd5c5b6` (2026-11-22)
+**Commit Message**: Merge pull request #4141 from curious-rabbit/sanitize-modes
 
-Highlight Rust async and await as keywords
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -104,6 +104,7 @@
- 
- ## Syntaxes
- 
-+- Highlight Rust `async` and `await` as keywords. Closes #1534, see #3892 (@JMak-Security)
- - Add shebang-based detection for Tcl (`tclsh`, `wish`) and Expect (`expect`) scripts, see #3647 (@mvanhorn)
- - Change the URL of Zig submodule from GitHub to Codeberg, see #3519 (@sorairolake)
- - Don't color strings inside CSV files, to make it easier to tell which column they belong to, see #3521 (@keith-hall)
-```
-
-**File**: `assets/patches/Rust.sublime-syntax.patch` (modified, +3/-0)
-```diff
-@@ -2,6 +2,9 @@ diff --git syntaxes/01_Packages/Rust/Rust.sublime-syntax syntaxes/01_Packages/Ru
- index 3c354486..24727a4e 100644
- --- syntaxes/01_Packages/Rust/Rust.sublime-syntax
- +++ syntaxes/01_Packages/Rust/Rust.sublime-syntax
-+@@ -139 +139 @@ contexts:
-+-    - match: \b(break|else|for|if|loop|match|while|continue)\b
-++    - match: \b(async|await|break|else|for|if|loop|match|while|continue)\b
- @@ -907,6 +907,8 @@ contexts:
-      - include: type-any-identifier
-      - match: ':'
-```
-
-**File**: `tests/syntax-tests/highlighted/Rust/output.rs` (modified, +4/-0)
-```diff
-@@ -159,3 +159,7 @@
- [38;2;248;248;242m        [0m[38;2;248;248;242m}[0m
- [38;2;248;248;242m    [0m[38;2;248;248;242m}[0m
- [38;2;248;248;242m}[0m
-+
-+[38;2;249;38;114masync[0m[38;2;248;248;242m [0m[3;38;2;102;217;239mfn[0m[38;2;248;248;242m [0m[38;2;166;226;46mfoo[0m[38;2;248;248;242m([0m[38;2;248;248;242m)[0m[38;2;248;248;242m [0m[38;2;248;248;242m{[0m
-+[38;2;248;248;242m    [0m[38;2;102;217;239masync_foo[0m[38;2;248;248;242m([0m[38;2;248;248;242m)[0m[38;2;248;248;242m.[0m[38;2;249;38;114mawait[0m[38;2;248;248;242m.[0m[38;2;249;38;114mawait[0m[38;2;248;248;242m.[0m[38;2;249;38;114mawait[0m[38;2;248;248;242m;[0m
-+[38;2;248;248;242m}[0m
-```
-
-**File**: `tests/syntax-tests/source/Rust/output.rs` (modified, +4/-0)
-```diff
-@@ -159,3 +159,7 @@ impl Drop for OutputType {
-         }
-     }
- }
-+
-+async fn foo() {
-+    async_foo().await.await.await;
-+}
-```
-
----
-
-### Incident Patch 2: `93db2dbb` (2026-11-21)
-**Commit Message**: fix: support SHA-256 git repositories in --diff
-
-gix was built without its `sha256` feature, so repositories created with
-`git init --object-format=sha256` could not be opened and `get_git_diff`
-returned None. `--diff` then printed no content and `--style=changes` showed
-no change markers, both with exit code 0.
-
-Enable the gix `sha256` feature and add a regression test.
+fix sanitize config options
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
@@ -692,7 +630,149 @@ Enable the gix `sha256` feature and add a regression test.
  - Fix zsh tab completion word-splitting language names containing spaces (e.g. `HTML (Jinja2)`, `Apache Conf`), see #3693 (@YoshKoz)
  - Fix zsh tab completion offering invalid `-l` arguments (file globs, paths, hidden filenames) sourced from the second column of `--list-languages`. Closes #3735, see #3737 (@truffle-dev)
  - Fix `usize` underflow in `--list-languages` when `--terminal-width` is smaller than the longest language name, see #3812 (@greymoth-jp)
-+- Show changes in `--diff` mode and the change-marker column in Git repositories that use the SHA-256 object format (`git init --object-format=sha256`), see #XXXX (@BlueX888)
++- `--sanitize=always` now also sanitizes piped output. `--sanitize=auto` now sanitizes every file type, but only when the output is a terminal, see #4141 (@curious-rabbit)
+ - Show changes in `--diff` mode and the change-marker column in Git repositories that use the SHA-256 object format (`git init --object-format=sha256`), see #4143 (@BlueX888)
+ 
+ ## Other
+```
+
+**File**: `README.md` (modified, +2/-0)
+```diff
+@@ -852,6 +852,8 @@ passing the `--color=never --wrap=never` options to `bat`.
+ For untrusted input, the `--sanitize=auto|always|never` option replaces terminal-active control
+ bytes, including the escape character, and Unicode bidi / zero-width formatting characters with the
+ Unicode replacement character. Escape sequences are not removed, so they cannot hide text.
++The `auto` mode only sanitizes output to a terminal. Use `always` to also sanitize piped output,
++for example in a file-manager preview pane.
+ 
+ > [!NOTE]
+ > The `auto` option of `--strip-ansi` avoids removing escape sequences when the syntax is plain text.
+```
+
+**File**: `doc/long-help.txt` (modified, +3/-2)
+```diff
+@@ -180,8 +180,9 @@ Options:
+           Unicode bidi / zero-width formatting characters with the Unicode replacement character
+           (U+FFFD). Escape sequences are not removed, so they cannot hide text. Overrides
+           --strip-ansi. Tab, LF, FF, and CRLF pass through. Useful for displaying untrusted file
+-          content (e.g. file-manager preview panes). Piped output is not sanitized. Possible values:
+-          auto, always, *never*.
++          content (e.g. file-manager preview panes). The automatic mode only sanitizes if an
++          interactive terminal is detected. Use 'always' to also sanitize piped output. Possible
++          values: auto, always, *never*.
+ 
+       --style <components>
+           Configure which elements (line numbers, file headers, grid borders, Git modifications, ..)
+```
+
+**File**: `src/bin/bat/app.rs` (modified, +10/-6)
+```diff
+@@ -460,12 +460,16 @@ impl App {
+                     .map(|s| s.as_str()),
+                 "--strip-ansi",
+             ),
+-            sanitize: parse_strip_ansi_value(
+-                self.matches
+-                    .get_one::<String>("sanitize")
+-                    .map(|s| s.as_str()),
+-                "--sanitize",
+-            ),
++            sanitize: match self
++                .matches
++                .get_one::<String>("sanitize")
++                .map(|s| s.as_str())
++            {
++                Some("always") => true,
++                // Piped output stays unchanged unless sanitizing is forced.
++                Some("auto") => self.interactive_output,
++                _ => false,
++            },
+             quiet_empty: self.matches.get_flag("quiet-empty"),
+             unbuffered: self.matches.get_flag("unbuffered"),
+             number_nonblank: self.matches.get_flag("number-nonblank")
+```
+
+**File**: `src/bin/bat/clap_app.rs` (modified, +3/-1)
+```diff
+@@ -524,7 +524,9 @@ pub fn build_app(interactive_output: bool) -> Command {
+                 removed, so they cannot hide text. Overrides --strip-ansi. \
+                 Tab, LF, FF, and CRLF pass through. Useful \
+                 for displaying untrusted file content (e.g. file-manager preview panes). \
+-                Piped output is not sanitized. Possible values: auto, always, *never*.")
++                The automatic mode only sanitizes if an interactive terminal is detected. \
++                Use 'always' to also sanitize piped output. \
++                Possible values: auto, always, *never*.")
+                 .hide_short_help(true)
+         )
+         .arg(
+```
+
+**File**: `src/config.rs` (modified, +1/-1)
+```diff
+@@ -112,7 +112,7 @@ pub struct Config<'a> {
+     pub strip_ansi: StripAnsiMode,
+ 
+     /// Substitute terminal-active and spoofing-relevant bytes; overrides strip_ansi.
+-    pub sanitize: StripAnsiMode,
++    pub sanitize: bool,
+ 
+     /// Whether or not to produce no output when input is empty
+     pub quiet_empty: bool,
+```
+
+**File**: `src/preprocessor.rs` (modified, +0/-3)
+```diff
+@@ -307,9 +307,6 @@ pub fn strip_overstrike(line: &str, first_backspace: usize) -> String {
+ }
+ 
+ /// Specify when to strip ANSI escape sequences from the input.
+-///
+-/// Used for both the `--strip-ansi` and the `--sanitize` option, the latter
+-/// implying the former with the same value.
+ #[derive(Debug, PartialEq, Clone, Copy, Default)]
+ pub enum StripAnsiMode {
+     /// Keep escape sequences in the output
+```
+
+**File**: `src/pretty_printer.rs` (modified, +3/-3)
+```diff
+@@ -192,11 +192,11 @@ impl<'a> PrettyPrinter<'a> {
+         self
+     }
+ 
+-    /// Whether to sanitize untrusted input for safe display (default: never)
++    /// Whether to sanitize untrusted input for safe display (default: false)
+     ///
+     /// Substitutes control bytes and bidi / zero-width codepoints with U+FFFD. Overrides `strip_ansi`.
+-    pub fn sanitize(&mut self, mode: StripAnsiMode) -> &mut Self {
+-        self.config.sanitize = mode;
++    pub fn sanitize(&mut self, yes: bool) -> &mut Self {
++        self.config.sanitize = yes;
+         self
+     }
+ 
+```
+
+---
+
+### Incident Patch 2: `25d43020` (2026-11-22)
+**Commit Message**: Merge branch 'master' into sanitize-modes
+
+**File**: `CHANGELOG.md` (modified, +2/-0)
+```diff
+@@ -11,6 +11,7 @@
+ - Update Cargo dependencies to resolve current RustSec advisories, see #3861 (@TyceHerrman)
+ - Add instructions for removing fish help abbreviations to README, see #3655 (@claw-explorer). Closes #3536
+ - Add .NET slnx extension, see #3682 (@ltrzesniewski)
++- Remove `BAT_WIDTH`, `BAT_PAGING`, `BAT_THEME_DARK` and `BAT_THEME_LIGHT` from the test environment, so exporting them no longer breaks `cargo test`, see #4137 (@divya0795)
+ 
+ ## Features
+ 
+@@ -94,6 +95,7 @@
+ - Fix zsh tab completion offering invalid `-l` arguments (file globs, paths, hidden filenames) sourced from the second column of `--list-languages`. Closes #3735, see #3737 (@truffle-dev)
+ - Fix `usize` underflow in `--list-languages` when `--terminal-width` is smaller than the longest language name, see #3812 (@greymoth-jp)
+ - `--sanitize=always` now also sanitizes piped output. `--sanitize=auto` now sanitizes every file type, but only when the output is a terminal, see #4141 (@curious-rabbit)
++- Show changes in `--diff` mode and the change-marker column in Git repositories that use the SHA-256 object format (`git init --object-format=sha256`), see #4143 (@BlueX888)
  
  ## Other
  - Use git version of cross. See #3533 (@OctopusET)
@@ -872,25 +952,6 @@ Enable the gix `sha256` feature and add a regression test.
          let repo = setup_repo();
 ```
 
----
-
-### Incident Patch 3: `e118c20e` (2026-11-20)
-**Commit Message**: Merge pull request #4137 from divya0795/fix/test-env-scrub
-
-Remove BAT_WIDTH, BAT_PAGING and BAT_THEME_DARK/LIGHT in test harnesses
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -11,6 +11,7 @@
- - Update Cargo dependencies to resolve current RustSec advisories, see #3861 (@TyceHerrman)
- - Add instructions for removing fish help abbreviations to README, see #3655 (@claw-explorer). Closes #3536
- - Add .NET slnx extension, see #3682 (@ltrzesniewski)
-+- Remove `BAT_WIDTH`, `BAT_PAGING`, `BAT_THEME_DARK` and `BAT_THEME_LIGHT` from the test environment, so exporting them no longer breaks `cargo test`, see #4137 (@divya0795)
- 
- ## Features
- 
-```
-
 **File**: `tests/syntax-tests/create_highlighted_versions.py` (modified, +4/-0)
 ```diff
 @@ -48,9 +48,13 @@ def create_highlighted_version(args):
@@ -929,11 +990,11 @@ Remove BAT_WIDTH, BAT_PAGING and BAT_THEME_DARK/LIGHT in test harnesses
 
 #### Recent Merged Pull Requests:
 - **PR #4143** (2026-11-21): fix: support SHA-256 git repositories in --diff (@BlueX888)
+- **PR #4141** (2026-11-22): fix sanitize config options (@curious-rabbit)
 - **PR #4137** (2026-11-20): Remove BAT_WIDTH, BAT_PAGING and BAT_THEME_DARK/LIGHT in test harnesses (@divya0795)
 - **PR #4132** (2026-11-16): cargo upgrade -i -p gix (@keith-hall)
 - **PR #4131** (2026-11-15): Auto-build the cache when custom themes or syntaxes are in subfolders (@NotAFlightRisk)
 - **PR #4130** (2026-11-15): fix: keep automatic cache build progress off stdout (@intertermux-code)
-- **PR #4128** (2026-11-14): Fix CI packaging of generated assets (@Copilot)
 
 ---
 
@@ -959,7 +1020,7 @@ Remove BAT_WIDTH, BAT_PAGING and BAT_THEME_DARK/LIGHT in test harnesses
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sharkdp/bat. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4a50cfbe`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4bd5c5b6`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -967,7 +1028,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Highlight Rust `async` and `await` as keywords. Closes #1534, see #3892 (@JMak-Security)
+- `--sanitize=always` now also sanitizes piped output. `--sanitize=auto` now sanitizes every file type, but only when the output is a terminal, see #4141 (@curious-rabbit)
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -977,7 +1038,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4a50cfbe` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4bd5c5b6` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T04:20:39.685Z",
+  "last_updated": "2026-11-24T04:28:59.565Z",
   "total_verified_learnings": 9089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "3c74b7155c6a4f7d193145bb64bd20c660f1c4bc369f6cd9ca2a3a44820b9f3b",
+      "content_hash": "d5f076debc41b782b6dc1bf93c25a8c3633b81c4f8bed9d2e296e5f34457df8d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T03:05:30.397Z"
+      "persisted_at": "2026-11-24T04:28:58.458Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "ae495d5ddf92a2bca1ce3b8e7c3e44ecd99e963d5f0deeaab99624268cbcd751",
+      "content_hash": "a67f749602b6e143c0e64e11681b8991dd2b11ddc1cf34260bd2c31d84208075",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T03:05:30.546Z"
+      "persisted_at": "2026-11-24T04:28:58.597Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -220521,13 +220521,13 @@
       "item_id": "candidate_directive-empirical-invariant-guard-in-changelog-md",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-52EO-empirical-invariant-guard-in-changelog-md.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-37J2-empirical-invariant-guard-in-changelog-md.md",
       "title": "Empirical Invariant Guard in CHANGELOG.md",
-      "repository": "fabio-rovai-open-ontologies-learnings",
+      "repository": "sharkdp-bat-learnings",
       "source_version": "HEAD",
-      "content_hash": "128b97ebf82ab7e6e09bbc6c7d95a5c0f947fcfdca0b86c4d0310b7f67931aa4",
+      "content_hash": "f8dd80c8daaf753a1a9c1c7838241ea794e884c20a06462ab09c176e4360ae95",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T17:46:32.691Z"
+      "persisted_at": "2026-11-24T04:28:57.183Z"
     },
     "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-core-invariants",
@@ -229181,9 +229181,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "3c9f4544221259e7ebc9e99a8e938211e0c3b224c183b7f53cc09b9ff4c09f1e",
+      "content_hash": "28f48e10adf41bdbc79ae8bd2a9e96267a78f01941163cb504415d423b93a1b7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T20:08:40.460Z"
+      "persisted_at": "2026-11-24T04:28:59.398Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -229193,9 +229193,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "8e58b4ae84bc653d2fa58c67d406c463ccb7e0cae715e5109a6660a8025a91fa",
+      "content_hash": "996c673c2484d8aabf0545d874fc0cbb82444753bf6bf6a7f18ff56d8d830286",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T20:08:40.638Z"
+      "persisted_at": "2026-11-24T04:28:59.565Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -240375,14 +240375,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 8545,
       "title": "Empirical Invariant Guard in CHANGELOG.md",
-      "source_url": "https://github.com/fabio-rovai/open-ontologies",
-      "source_version": "1ba7ecf8",
+      "source_url": "https://github.com/sharkdp/bat",
+      "source_version": "4bd5c5b6",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-23T17:46:20.957Z"
+      "verified_at": "2026-11-24T04:28:46.955Z"
     },
     "domain_intelligence-search-distribution-intelligence-sharkdp-fd-core-invariants": {
       "item_id": "domain_intelligence-search-distribution-intelligence-sharkdp-fd-core-invariants",
@@ -255910,9 +255910,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "e7ce87a3adf69b1d31900ee2f717928ba15d35c27d845b03af57535de2c54ad4",
+      "content_hash": "3de63cae4bcfbfa1c0e555fbcea5b21cbf4c49f1bed3bc5195e846c73a6d3776",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T03:05:30.204Z"
+      "persisted_at": "2026-11-24T04:28:58.292Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
@@ -263027,8 +263027,8 @@
       "slug": "sharkdp-bat",
       "platform": "github",
       "source_url": "https://github.com/sharkdp/bat",
-      "source_version": "dbc11b69",
-      "content_hash": "923beee69297150abaef93279337b91390eb6fed14ead3941754d146701b0d0d",
+      "source_version": "4bd5c5b6",
+      "content_hash": "10c19903f59718333631781d16537653dc0c6a11bc267d01657735a3037fa2b9",
       "dossier_path": "07_PROJECT_LEARNING/sharkdp-bat-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sharkdp-bat-learnings.md",
       "promoted_rules": [
@@ -263048,7 +263048,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T12:19:37.203Z",
+      "verified_at": "2026-11-24T04:28:46.955Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -263090,10 +263090,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-sharkdp-bat-design-intelligence-sharkdp-bat-core-invariants.md",
       "title": "Design Intelligence: sharkdp/bat Core Invariants",
       "repository": "sharkdp/bat",
-      "source_version": "dbc11b69",
-      "content_hash": "369b1a672bf581197095ae8bef2dab93d2c61208fa4482e800c8bdf0df5410af",
+      "source_version": "4bd5c5b6",
+      "content_hash": "56d8fb6de9ecdc3906e2ef1499e88d0b6b73c571726ac1a72ed194fc1d3e496b",
       "domain_letter": "F",
-      "persisted_at": "2026-11-21T12:19:37.918Z"
+      "persisted_at": "2026-11-24T04:28:47.571Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-sharkdp-bat": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sharkdp-bat",
@@ -263102,10 +263102,10 @@
       "relative_path": "08_VERIFICATION/sharkdp-bat-verification-protocol-empirical-defect-shield-for-sharkdp-bat.md",
       "title": "Verification Protocol: Empirical Defect Shield for sharkdp/bat",
       "repository": "sharkdp/bat",
-      "source_version": "dbc11b69",
-      "content_hash": "2c8106ecdbc6b54d4220d4c3f5d7db4591325311711ce343f2cbeaf42c6f6da3",
+      "source_version": "4bd5c5b6",
+      "content_hash": "4788f4beaf3e12d50663c2ec76f33a42943a549605eae240f000c82234c253c0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T12:19:38.127Z"
+      "persisted_at": "2026-11-24T04:28:47.741Z"
     },
     "candidate_directive-release-0-17-0": {
       "item_id": "candidate_directive-release-0-17-0",
@@ -263230,9 +263230,9 @@
       "title": "Design Intelligence: sharkdp-bat-learnings Core Invariants",
       "repository": "sharkdp-bat-learnings",
       "source_version": "HEAD",
-      "content_hash": "6aa2ada6395ff75b3822f4002f1bfedb01aa9749491a7697597ed34e16b74776",
+      "content_hash": "d8432a8bd4fd7d1124513f84301b234678ca2d153c99f7271eb6fdf2984c95d7",
       "domain_letter": "F",
-      "persisted_at": "2026-11-21T12:19:50.038Z"
+      "persisted_at": "2026-11-24T04:28:57.367Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-sharkdp-bat-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sharkdp-bat-learnings",
@@ -263242,9 +263242,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for sharkdp-bat-learnings",
       "repository": "sharkdp-bat-learnings",
       "source_version": "HEAD",
-      "content_hash": "efdbbe69d711912406cd83b2a812dd3e32692e6a205532270c6e44db05462deb",
+      "content_hash": "5fe9a6b25539f7766b04e25d198ac9bbdf21a10c5300e1c04b3dc8fd3f940ab0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T12:19:50.244Z"
+      "persisted_at": "2026-11-24T04:28:57.533Z"
     },
     "domain_intelligence-human-need-intelligence-defguard-defguard-learnings-core-invariants": {
       "item_id": "domain_intelligence-human-need-intelligence-defguard-defguard-learnings-core-invariants",
@@ -303960,13 +303960,13 @@
       "item_id": "candidate_directive-dead-license-badge-link-in-readme",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-7UCC-dead-license-badge-link-in-readme.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-3942-dead-license-badge-link-in-readme.md",
       "title": "dead license badge link in README",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "c047ddbcf24e734de43b65006137ab91f3b1536500396ad9140ab61338dcb2e2",
+      "content_hash": "c2ae38ef125cac851d7b80a556103cc15414c1db38d87f1487102b1814c0930d",
       "domain_letter": "I",
-      "persisted_at": "2026-11-23T20:08:40.284Z"
+      "persisted_at": "2026-11-24T04:28:59.235Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-core-invaria": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-core-invaria",
@@ -329727,13 +329727,13 @@
       "item_id": "candidate_directive-rust-resolve-python-calls-through-annotated-parameters-and-self-members",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-3VZJ-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-388T-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
       "title": "rust): resolve python calls through annotated parameters and self members",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "be27b18e8bd689000edfa2652b47e8e98cf2d746cc2d2bdd6b5cc7cc2a1b7353",
+      "content_hash": "3f622e04cca3ba266b3708e0d41f6423c143c4cb330c9f905f5dd4f1df53bd03",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T03:05:30.034Z"
+      "persisted_at": "2026-11-24T04:28:58.112Z"
     },
     "learn-github-iziz-libphonenumber-ios": {
       "learning_id": "learn-github-iziz-libphonenumber-ios",

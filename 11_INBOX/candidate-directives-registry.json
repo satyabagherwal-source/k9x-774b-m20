@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T04:20:39.177Z",
+  "last_updated": "2026-11-24T04:28:59.235Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3678,14 +3678,14 @@
       "learning_id": "learn-github-prometheus-prometheus"
     },
     {
-      "id": "CD-52EO",
+      "id": "CD-37J2",
       "directive_title": "Empirical Invariant Guard in CHANGELOG.md",
-      "source_repo": "fabio-rovai-open-ontologies-learnings",
+      "source_repo": "sharkdp-bat-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-52EO-empirical-invariant-guard-in-changelog-md.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-37J2-empirical-invariant-guard-in-changelog-md.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-23",
+      "date_staged": "2026-11-24",
       "domain_letter": "D"
     },
     {
@@ -36242,14 +36242,14 @@
       "staged_date": "2026-11-20"
     },
     {
-      "id": "CD-7UCC",
+      "id": "CD-3942",
       "directive_title": "dead license badge link in README",
       "source_repo": "zoontek-react-native-bootsplash-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-7UCC-dead-license-badge-link-in-readme.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-3942-dead-license-badge-link-in-readme.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-23",
+      "date_staged": "2026-11-24",
       "domain_letter": "I"
     },
     {
@@ -50870,11 +50870,11 @@
       "domain_letter": "D"
     },
     {
-      "id": "CD-3VZJ",
+      "id": "CD-388T",
       "directive_title": "rust): resolve python calls through annotated parameters and self members",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-3VZJ-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-388T-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-24",
@@ -52925,6 +52925,33 @@
       "source_repo": "ontos-ai-knowhere",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-AD68F8-empirical-invariant-guard-in-test-retrie.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-REV-C77724",
+      "directive_title": "Empirical Invariant Guard in CHANGELOG.md",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "sharkdp-bat",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C77724-empirical-invariant-guard-in-changelog-m.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-REV-8EAC90",
+      "directive_title": "rust): resolve python calls through annotated parameters and self members",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8EAC90-rust-resolve-python-calls-through-annota.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-REV-A0F95C",
+      "directive_title": "dead license badge link in README",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-bootsplash",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A0F95C-dead-license-badge-link-in-readme.md",
       "staged_date": "2026-11-24"
     }
   ]

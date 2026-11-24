@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T04:20:39.345Z",
+  "last_updated": "2026-11-24T04:28:59.398Z",
   "total_records": 2490,
   "domains": {
     "A": {
@@ -15281,8 +15281,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "3c9f4544221259e7ebc9e99a8e938211e0c3b224c183b7f53cc09b9ff4c09f1e",
-      "created_at": "2026-11-23T20:08:40.460Z"
+      "content_hash": "28f48e10adf41bdbc79ae8bd2a9e96267a78f01941163cb504415d423b93a1b7",
+      "created_at": "2026-11-24T04:28:59.398Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -23661,8 +23661,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "e7ce87a3adf69b1d31900ee2f717928ba15d35c27d845b03af57535de2c54ad4",
-      "created_at": "2026-11-24T03:05:30.204Z"
+      "content_hash": "3de63cae4bcfbfa1c0e555fbcea5b21cbf4c49f1bed3bc5195e846c73a6d3776",
+      "created_at": "2026-11-24T04:28:58.292Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",
@@ -25024,8 +25024,8 @@
       "title": "Design Intelligence: sharkdp/bat Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-sharkdp-bat-design-intelligence-sharkdp-bat-core-invariants.md",
       "repository": "sharkdp/bat",
-      "content_hash": "369b1a672bf581197095ae8bef2dab93d2c61208fa4482e800c8bdf0df5410af",
-      "created_at": "2026-11-21T12:19:37.918Z"
+      "content_hash": "56d8fb6de9ecdc3906e2ef1499e88d0b6b73c571726ac1a72ed194fc1d3e496b",
+      "created_at": "2026-11-24T04:28:47.571Z"
     },
     "domain_intelligence-human-need-intelligence-defguard-defguard-core-invariants": {
       "record_id": "domain_intelligence-human-need-intelligence-defguard-defguard-core-invariants",
@@ -25042,8 +25042,8 @@
       "title": "Design Intelligence: sharkdp-bat-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-sharkdp-bat-learnings-design-intelligence-sharkdp-bat-learnings-core-invariants.md",
       "repository": "sharkdp-bat-learnings",
-      "content_hash": "6aa2ada6395ff75b3822f4002f1bfedb01aa9749491a7697597ed34e16b74776",
-      "created_at": "2026-11-21T12:19:50.038Z"
+      "content_hash": "d8432a8bd4fd7d1124513f84301b234678ca2d153c99f7271eb6fdf2984c95d7",
+      "created_at": "2026-11-24T04:28:57.367Z"
     },
     "domain_intelligence-human-need-intelligence-defguard-defguard-learnings-core-invariants": {
       "record_id": "domain_intelligence-human-need-intelligence-defguard-defguard-learnings-core-invariants",

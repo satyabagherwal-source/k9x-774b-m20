@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T04:20:34.887Z",
-    "lastVerified": "2026-11-24T04:20:34.887Z",
+    "lastChecked": "2026-11-24T04:28:56.771Z",
+    "lastVerified": "2026-11-24T04:28:56.771Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -379,8 +379,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T03:41:48.011Z",
-    "lastVerified": "2026-11-24T03:41:48.011Z",
+    "lastChecked": "2026-11-24T04:28:56.763Z",
+    "lastVerified": "2026-11-24T04:28:56.763Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1275,22 +1275,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "sharkdp-bat": {
-    "name": "bat",
+    "name": "sharkdp/bat",
     "officialUrl": "https://github.com/sharkdp/bat",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T20:46:43.081Z",
-    "lastVerified": "2026-11-22T20:46:43.081Z",
+    "lastChecked": "2026-11-24T04:28:46.263Z",
+    "lastVerified": "2026-11-24T04:28:46.263Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sharkdp-bat",
-    "contentHash": "923beee69297150abaef93279337b91390eb6fed14ead3941754d146701b0d0d",
+    "contentHash": "10c19903f59718333631781d16537653dc0c6a11bc267d01657735a3037fa2b9",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "dbc11b69"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-qwen-qwen-image-2.1": {
     "name": "Qwen/Qwen-Image-2.1",
@@ -2185,12 +2184,12 @@
     "lastVerified": "2026-11-23T21:39:51.903Z"
   },
   "tailscale-tailscale": {
-    "name": "tailscale/tailscale",
+    "name": "tailscale",
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-23T23:39:56.354Z",
-    "lastVerified": "2026-11-23T23:39:56.354Z",
+    "lastChecked": "2026-11-24T04:28:51.856Z",
+    "lastVerified": "2026-11-24T04:28:51.856Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
@@ -2199,7 +2198,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "da6276d7"
   },
   "oceanbase-oceanbase": {
     "name": "oceanbase",
@@ -2763,12 +2763,12 @@
     "lastVerified": "2026-11-23T22:56:16.506Z"
   },
   "giancarloerra-socraticode": {
-    "name": "giancarloerra/SocratiCode",
+    "name": "SocratiCode",
     "officialUrl": "https://github.com/giancarloerra/SocratiCode",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-23T05:24:03.075Z",
-    "lastVerified": "2026-11-23T05:24:03.075Z",
+    "lastChecked": "2026-11-24T04:28:54.335Z",
+    "lastVerified": "2026-11-24T04:28:54.335Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-giancarloerra-socraticode",
@@ -2777,7 +2777,8 @@
     "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "d7bc0dc4"
   },
   "ratatui-ratatui": {
     "name": "ratatui/ratatui",
@@ -4613,8 +4614,8 @@
     "officialUrl": "https://github.com/clastix/kamaji",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-23T06:37:35.326Z",
-    "lastVerified": "2026-11-23T06:37:35.326Z",
+    "lastChecked": "2026-11-24T04:28:49.344Z",
+    "lastVerified": "2026-11-24T04:28:49.344Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-clastix-kamaji",
@@ -9479,9 +9480,9 @@
   "iaincollins-structured-data-testing-tool": {
     "name": "structured-data-testing-tool",
     "officialUrl": "https://github.com/iaincollins/structured-data-testing-tool",
-    "lastChecked": "2026-11-20T00:33:10.970Z",
+    "lastChecked": "2026-11-24T04:28:44.262Z",
     "revisionIdentifier": "8300079044",
-    "lastVerified": "2026-11-20T00:33:10.970Z"
+    "lastVerified": "2026-11-24T04:28:44.262Z"
   },
   "ivanvorobei-swiftui": {
     "name": "SwiftUI",
@@ -12402,9 +12403,9 @@
   "chocoford-excalidrawz": {
     "name": "ExcalidrawZ",
     "officialUrl": "https://github.com/chocoford/ExcalidrawZ",
-    "lastChecked": "2026-11-21T07:41:54.766Z",
+    "lastChecked": "2026-11-24T04:28:46.783Z",
     "revisionIdentifier": "19216eb2",
-    "lastVerified": "2026-11-21T07:41:54.766Z"
+    "lastVerified": "2026-11-24T04:28:46.783Z"
   },
   "hf-autogluon-chronos-2": {
     "name": "autogluon/chronos-2",

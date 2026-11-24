@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T04:20:31.470Z",
+  "last_updated": "2026-11-24T04:28:47.190Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3861,14 +3861,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sharkdp-bat",
-      "content_hash": "923beee69297150abaef93279337b91390eb6fed14ead3941754d146701b0d0d",
-      "verified_at": "2026-11-21T12:19:37.462Z",
+      "content_hash": "10c19903f59718333631781d16537653dc0c6a11bc267d01657735a3037fa2b9",
+      "verified_at": "2026-11-24T04:28:47.189Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T12:19:37.462Z"
+      "last_updated": "2026-11-24T04:28:47.189Z"
     },
     "karakeep-app/karakeep": {
       "repository": "karakeep-app/karakeep",
