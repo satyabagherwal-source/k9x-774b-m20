@@ -4,24 +4,24 @@
 {
   "source_repository": "projectdiscovery/nuclei",
   "source_url": "https://github.com/projectdiscovery/nuclei",
-  "source_version": "3fa285c4",
+  "source_version": "12d12a40",
   "license": "MIT",
-  "timestamp": "2026-11-23T15:12:46.610Z",
+  "timestamp": "2026-11-24T19:00:39.503Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-projectdiscovery-nuclei",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei) (Revision: `3fa285c4`).  
-> **License**: MIT | **Timestamp**: `2026-11-23T15:12:46.610Z`  
+> **Provenance**: Harvested from [projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei) (Revision: `12d12a40`).  
+> **License**: MIT | **Timestamp**: `2026-11-24T19:00:39.503Z`  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), A (Human & Need Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence)
-- **Confidence Rating**: 85%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 83%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from projectdiscovery/nuclei:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T15:12:45.384Z  
+> **Harvest Timestamp**: 2026-11-24T19:00:38.028Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 33224 stars
+- **Stars / Engagement**: 33250 stars
 
 ---
 
@@ -1672,154 +1672,322 @@ type ipOptions struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3fa285c4` (2026-11-23)
-**Commit Message**: chore(deps): bump the modules group with 9 updates (#8308)
+### Incident Patch 1: `12d12a40` (2026-11-24)
+**Commit Message**: Merge pull request #8200 from linzch3/fix/pdcp-scanid-warning-logger
 
-Bumps the modules group with 9 updates:
+fix(pdcp): log invalid scan id warning via the writer logger
 
-| Package | From | To |
-| --- | --- | --- |
-| [github.com/projectdiscovery/gologger](https://github.com/projectdiscovery/gologger) | `1.1.75` | `1.1.76` |
-| [github.com/projectdiscovery/hmap](https://github.com/projectdiscovery/hmap) | `0.0.104` | `0.0.105` |
-| [github.com/projectdiscovery/networkpolicy](https://github.com/projectdiscovery/networkpolicy) | `0.1.58` | `0.1.59` |
-| [github.com/projectdiscovery/retryabledns](https://github.com/projectdiscovery/retryabledns) | `1.0.118` | `1.0.119` |
-| [github.com/projectdiscovery/retryablehttp-go](https://github.com/projectdiscovery/retryablehttp-go) | `1.3.34` | `1.3.35` |
-| [github.com/projectdiscovery/tlsx](https://github.com/projectdiscovery/tlsx) | `1.4.3-0.20261020052910-acb80c2c7c75` | `1.5.0` |
-| [github.com/projectdiscovery/utils](https://github.com/projectdiscovery/utils) | `0.11.13` | `0.11.15` |
-| [github.com/projectdiscovery/wappalyzergo](https://github.com/projectdiscovery/wappalyzergo) | `0.3.8` | `0.3.10` |
-| [github.com/projectdiscovery/blackrock](https://github.com/projectdiscovery/blackrock) | `0.0.2` | `0.0.4` |
-
-
-U
-
-**File**: `go.mod` (modified, +11/-11)
+**File**: `internal/pdcp/writer.go` (modified, +1/-1)
 ```diff
-@@ -87,26 +87,26 @@ require (
- 	github.com/projectdiscovery/goimpacket v0.1.1-0.20261007205806-6042a8213eeb
- 	github.com/projectdiscovery/goja v0.0.0-20261012075649-9b78f2e05b9c
- 	github.com/projectdiscovery/goja_nodejs v0.0.0-20260618132410-8519f75f703d
--	github.com/projectdiscovery/gologger v1.1.75
-+	github.com/projectdiscovery/gologger v1.1.76
- 	github.com/projectdiscovery/gostruct v0.0.2
- 	github.com/projectdiscovery/govaluate v0.0.0-20261102102118-9294133b15a2
- 	github.com/projectdiscovery/gozero v0.1.1
--	github.com/projectdiscovery/hmap v0.0.104
-+	github.com/projectdiscovery/hmap v0.0.105
- 	github.com/projectdiscovery/httpx v1.12.0
- 	github.com/projectdiscovery/interactsh v1.4.1
- 	github.com/projectdiscovery/mapcidr v1.1.97
- 	github.com/projectdiscovery/n3iwf v0.0.0-20230523120440-b8cd232ff1f5
--	github.com/projectdiscovery/networkpolicy v0.1.58
-+	github.com/projectdiscovery/networkpolicy v0.1.59
- 	github.com/projectdiscovery/ratelimit v0.0.95
- 	github.com/projectdiscovery/rawhttp v0.3.1
--	github.com/projectdiscovery/retryabledns v1.0.118
--	github.com/projectdiscovery/retryablehttp-go v1.3.34
-+	github.com/projectdiscovery/retryabledns v1.0.119
-+	github.com/projectdiscovery/retryablehttp-go v1.3.35
- 	github.com/projectdiscovery/sarif v0.1.0
--	github.com/projectdiscovery/tlsx v1.4.3-0.20261020052910-acb80c2c7c75
-+	github.com/projectdiscovery/tlsx v1.5.0
- 	github.com/projectdiscovery/uncover v1.2.1
- 	github.com/projectdiscovery/useragent v0.0.110
--	github.com/projectdiscovery/utils v0.11.13
--	github.com/projectdiscovery/wappalyzergo v0.3.8
-+	github.com/projectdiscovery/utils v0.11.15
-+	github.com/projectdiscovery/wappalyzergo v0.3.10
- 	github.com/projectdiscovery/yamldoc-go v1.0.9
- 	github.com/redis/go-redis/v9 v9.19.0
- 	github.com/remeh/sizedwaitgroup v1.0.0
-@@ -220,7 +220,7 @@ require (
- 	github.com/charmbracelet/x/term v0.2.1 // indirect
- 	github.com/cheggaaa/pb/v3 v3.1.7 // indirect
- 	github.com/chzyer/readline v1.5.1 // indirect
--	github.com/cloudflare/cfssl v1.6.5 // indirect
-+	github.com/cloudflare/cfssl v1.7.1 // indirect
- 	github.com/cloudflare/circl v1.6.3 // indirect
- 	github.com/cloudwego/base64x v0.1.6 // indirect
- 	github.com/cncf/xds/go v0.0.0-20260202195803-dba9d589def2 // indirect
-@@ -281,7 +281,7 @@ require (
- 	github.com/golang/groupcache v0.0.0-20241129210726-2c02b8208cf8 // indirect
- 	github.com/golang/protobuf v1.5.4 // indirect
- 	github.com/golang/snappy v1.0.0 // indirect
--	github.com/google/certificate-transparency-go v1.3.3 // indirect
-+	github.com/google/certificate-transparency-go v1.4.0 // indirect
- 	github.com/google/go-cmp v0.7.0 // indirect
- 	github.com/google/go-querystring v1.2.0 // indirect
- 	github.com/google/pprof v0.0.0-20240727154555-813a5fbdbec8 // indirect
-@@ -370,7 +370,7 @@ require (
- 	github.com/planetscale/vtprotobuf v0.6.1-0.20240319094008-0393e58bdf10 // indirect
- 	github.com/power-devops/perfstat v0.0.0-20240221224432-82ca36839d55 // indirect
- 	github.com/projectdiscovery/asnmap v1.2.0 // indirect
--	github.com/projectdiscovery/blackrock v0.0.2 // indirect
-+	github.com/projectdiscovery/blackrock v0.0.4 // indirect
- 	github.com/projectdiscovery/cdncheck v1.4.0 // indirect
- 	github.com/projectdiscovery/freeport v0.0.8 // indirect
- 	github.com/projectdiscovery/jarm-go v0.0.0-20260910160638-430e2bae86f6 // indirect
+@@ -128,7 +128,7 @@ func newUploadClient() *retryablehttp.Client {
+ // SetScanID sets the scan id for the upload writer
+ func (u *UploadWriter) SetScanID(id string) error {
+ 	if !xidRegex.MatchString(id) {
+-		gologger.Warning().Msgf("invalid asset id provided (unknown xid format): %s", id)
++		u.Logger.Warning().Msgf("invalid asset id provided (unknown xid format): %s", id)
+ 	}
+ 	u.scanID = id
+ 	return nil
 ```
 
-**File**: `go.sum` (modified, +22/-22)
+**File**: `internal/pdcp/writer_logger_test.go` (added, +30/-0)
 ```diff
-@@ -316,8 +316,8 @@ github.com/chzyer/test v1.0.0/go.mod h1:2JlltgoNkt4TW/z9V/IzDdFaMTM2JPIi26O1pF38
- github.com/clbanning/mxj/v2 v2.7.0 h1:WA/La7UGCanFe5NpHF0Q3DNtnCsVoxbPKuyBNHWRyME=
- github.com/clbanning/mxj/v2 v2.7.0/go.mod h1:hNiWqW14h+kc+MdF9C6/YoRfjEJoR3ou6tn/Qo+ve2s=
- github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
--github.com/cloudflare/cfssl v1.6.5 h1:46zpNkm6dlNkMZH/wMW22ejih6gIaJbzL2du6vD7ZeI=
--github.com/cloudflare/cfssl v1.6.5/go.mod h1:Bk1si7sq8h2+yVEDrFJiz3d7Aw+pfjjJSZVaD+Taky4=
-+github.com/cloudflare/cfssl v1.7.1 h1:nMC84ouypIM/AXrrY24ql70cEtkelfxq4NZ67Ur8pG8=
-+github.com/cloudflare/cfssl v1.7.1/go.mod h1:WLpD4XaYgn44qgQ4W+tvGJEr59/snfQn6LwUrXloxx0=
- github.com/cloudflare/circl v1.6.3 h1:9GPOhQGF9MCYUeXyMYlqTR6a5gTrgR/fBLXvUgtVcg8=
- github.com/cloudflare/circl v1.6.3/go.mod h1:2eXP6Qfat4O/Yhh8BznvKnJ+uzEoTQ6jVKJRn81BiS4=
- github.com/cloudwego/base64x v0.1.6 h1:t11wG9AECkCDk5fMSoxmufanudBtJ+/HemLstXDLI2M=
-@@ -565,8 +565,8 @@ github.com/golang/snappy v1.0.0 h1:Oy607GVXHs7RtbggtPBnr2RmDArIsAefDwvrdWvRhGs=
- github.com/golang/snappy v1.0.0/go.mod h1:/XxbfmMg8lxefKM7IXC3fBNl/7bRcc72aCRzEWrmP2Q=
- github.com/google/btree v0.0.0-20180813153112-4030bb1f1f0c/go.mod h1:lNA+9X1NB3Zf8V7Ke586lFgjr2dZNuvo3lPJSGZ5JPQ=
- github.com/google/btree v1.0.0/go.mod h1:lNA+9X1NB3Zf8V7Ke586lFgjr2dZNuvo3lPJSGZ5JPQ=
--github.com/google/certificate-transparency-go v1.3.3 h1:hq/rSxztSkXN2tx/3jQqF6Xc0O565UQPdHrOWvZwybo=
--github.com/google/certificate-transparency-go v1.3.3/go.mod h1:iR17ZgSaXRzSa5qvjFl8TnVD5h8ky2JMVio+dzoKMgA=
-+github.com/google/certificate-transparency-go v1.4.0 h1:78uNaR2knzCoKKXXDSAGVkz9XPkDg5xXJRP9tP6+rr0=
-+github.com/google/certificate-transparency-go v1.4.0/go.mod h1:iR17ZgSaXRzSa5qvjFl8TnVD5h8ky2JMVio+dzoKMgA=
- github.com/google/go-cmp v0.2.0/go.mod h1:oXzfMopK8JAjlY9xF4vHSVASa0yLyX7SntLO5aqRK0M=
- github.com/google/go-cmp v0.3.0/go.mod h1:8QqcDgzrUqlUb/G2PQTWiueGozuR1884gddMywk6iLU=
- github.com/google/go-cmp v0.3.1/go.mod h1:8QqcDgzrUqlUb/G2PQTWiueGozuR1884gddMywk6iLU=
-@@ -923,8 +923,8 @@ github.com/praetorian-inc/fingerprintx v1.1.15 h1:CVIxrIQARbmdk5h8E9tIJZbvFoY2sG
- github.com/praetorian-inc/fingerprintx v1.1.15/go.mod h1:hqRroITBwKpP8BOGF+n/A+qv9wSF7OSVinmu5NCyOUI=
- github.com/projectdiscovery/asnmap v1.2.0 h1:xxZxVYJYPyBNbwF7jL/rtpThKBMdjomQBmlAZRqhq7E=
- github.com/projectdiscovery/asnmap v1.2.0/go.mod h1:0tNdUGHUE7TFWDaHZtuXcVpQfRTZZ1BKmFfl8gtQbiU=
--github.com/projectdiscovery/blackrock v0.0.2 h1:mxXdu0uM8P2L2Qi210COlU8QiICPFW/Rxk5QUhlPO2k=
--github.com/projectdiscovery/blackrock v0.0.2/go.mod h1:ANUtjDfaVrqB453bzToU+YB4cUbvBRpLvEwoWIwlTss=
-+github.com/projectdiscovery/blackrock v0.0.4 h1:xFqk3gqbLDfJuqfpTer+rtwz3q7JLnz/a/A2hbFB8rI=
-+github.com/projectdiscovery/blackrock v0.0.4/go.mod h1:ANUtjDfaVrqB453bzToU+YB4cUbvBRpLvEwoWIwlTss=
- github.com/projectdiscovery/cdncheck v1.4.0 h1:FP+ALhMtm+HyE8WgeWp3lUvNp3WaE7LCsC7LpB9QsWw=
- github.com/projectdiscovery/cdncheck v1.4.0/go.mod h1:27FjISwBKtdQXsC31q16xspX5xAu0gbYfF0rs3yGNxs=
- github.com/projectdiscovery/clistats v0.1.10 h1:G+Ml7L1RoYPhkspkGPwSse7r2Nhnee2Z5wsr7YE0HTs=
-@@ -947,16 +947,16 @@ github.com/projectdiscovery/goja v0.0.0-20261012075649-9b78f2e05b9c h1:4H/CfVNlu
- github.com/projectdiscovery/goja v0.0.0-20261012075649-9b78f2e05b9c/go.mod h1:SO0AP+uKfYeeoR6jyVH/PKRYJE/f5gJrPMAM00iGEMc=
- github.com/projectdiscovery/goja_nodejs v0.0.0-20260618132410-8519f75f703d h1:fqqH9LHpN2WDz9QuxFrhKNxXSRtzk+Sa6jAhbB7tXcQ=
- github.com/projectdiscovery/goja_nodejs v0.0.0-20260618132410-8519f75f703d/go.mod h1:Ezmbgdaw4EunGGBU4MQViLoGMJc37LA3ip55YV3KeRI=
--github.com/projectdiscovery/gologger v1.1.75 h1:w+8DgCOCFpUegE2Ww8LQBUWPACkJUOvJ4Q1C0f2N9qI=
--github.com/projectdiscovery/gologger v1.1.75/go.mod h1:LDeWHizV+0QVuvDP4uJHM/M+eQlp0XLWlQ1z8PgOE1k=
-+github.com/projectdiscovery/gologger v1.1.76 h1:QeIZ2VT9ZdRNx+XBuE7XkH3S33plPYtKA4l/TgsSsks=
-+github.com/projectdiscovery/gologger v1.1.76/go.mod h1:jaR2D5zhFl+ReRNof6M+Zgn7i4OmorazLXheeqgDh7k=
- github.com/projectdiscovery/gostruct v0.0.2 h1:s8gP8ApugGM4go1pA+sVlPDXaWqNP5BBDDSv7VEdG1M=
- github.com/projectdiscovery/gostruct v0.0.2/go.mod h1:H86peL4HKwMXcQQtEa6lmC8FuD9XFt6gkNR0B/Mu5PE=
- github.com/projectdiscovery/govaluate v0.0.0-20261102102118-9294133b15a2 h1:aSLbDvrJQPlp4HvojU+bTU5XV8xdAVCjoc5gX1Wfbw4=
- github.com/projectdiscovery/govaluate v0.0.0-20261102102118-9294133b15a2/go.mod h1:Z3VjpUJV1pnXDwvAddA8aZ4e839SoeftB7CSdZntAVI=
- github.com/projectdiscovery/gozero v0.1.1 h1:wLiJH11YTMzgrV9AWB24S08wYfGF4/ggm4xdlduQmLk=
- github.com/projectdiscovery/gozero v0.1.1/go.mod h1:RFHYWR70/YBV74h/0P2l0Crht6lHq8zhJfAluVg97OI=
--github.com/projectdiscovery/hmap v0.0.104 h1:38j4A2gttI48tI5MrdRV2ZTH3SWEysoSYeDxqYqW3rA=
--github.com/projectdiscovery/hmap v0.0.104/go.mod h1:koGp3dcpH+BNj/9JuoZnXhbRfAiZrgIiCzsiBCtSIFs=
-+github.com/projectdiscovery/hmap v0.0.105 h1:m2jNLk0HEJTh5h/QaCtzmbEWGP/JzshlmmzCU/yMsN8=
-+github.com/projectdiscovery/hmap v0.0.105/go.mod h1:qI2qGiJxO7X6t4+eajcl62SHHc2tBfLh6Zp+/jk
+@@ -0,0 +1,30 @@
++package pdcp
++
++import (
++	"bytes"
++	"testing"
++
++	"github.com/projectdiscovery/gologger"
++	"github.com/projectdiscovery/gologger/formatter"
++	"github.com/projectdiscovery/gologger/levels"
++	"github.com/projectdiscovery/nuclei/v3/pkg/utils"
++	"github.com/stretchr/testify/require"
++)
++
++func TestSetScanIDWarnsOnWriterLogger(t *testing.T) {
++	var buf bytes.Buffer
++	logger := &gologger.Logger{}
++	logger.SetWriter(&utils.CaptureWriter{Buffer: &buf})
++	logger.SetFormatter(formatter.NewCLI(true))
++	logger.SetMaxLevel(levels.LevelWarning)
++
++	u := &UploadWriter{Logger: logger}
++	require.NoError(t, u.SetScanID("invalid-id"))
++	require.Equal(t, "invalid-id", u.scanID)
++	require.Contains(t, buf.String(), "invalid asset id provided (unknown xid format): invalid-id")
++
++	// a valid xid doesn't log anything
++	buf.Reset()
++	require.NoError(t, u.SetScanID("abcdefghij0123456789"))
++	require.Empty(t, buf.String())
++}
+```
+
+---
+
+### Incident Patch 2: `6a1fdb88` (2026-11-23)
+**Commit Message**: Merge branch 'dev' into fix/pdcp-scanid-warning-logger
+
+**File**: `.github/workflows/auto-merge.yaml` (modified, +11/-19)
+```diff
+@@ -1,24 +1,16 @@
+ name: 🔀 Auto merge PR
+ 
+ on:
+-  # pull_request:
+-  #   types: [opened, synchronize, reopened, ready_for_review]
+-  # pull_request_review:
+-  #   types: [submitted]
+-  workflow_run:
+-    workflows: ["♾️ Compatibility Checks"]
+-    types: [completed]
+-
+-permissions:
+-  contents: write
+-  pull-requests: write
++  pull_request:
++    branches:
++      - dev
+ 
+ jobs:
+-  auto-merge-dependabot:
+-    runs-on: ubuntu-latest
+-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+-    steps:
+-      - uses: projectdiscovery/actions/pr/approve@v1
+-      - uses: projectdiscovery/actions/pr/merge@v1
+-        with:
+-          auto: "true"
+\ No newline at end of file
++  dependabot:
++    uses: projectdiscovery/workflows/.github/workflows/dependabot-auto-merge.yaml@v1
++    permissions:
++      contents: write
++      pull-requests: write
++    with:
++      go-compat-checks: true
++      release-test: true
+```
+
+**File**: `.github/workflows/compat-checks.yaml` (removed, +0/-19)
+```diff
+@@ -1,19 +0,0 @@
+-name: ♾️ Compatibility Checks
+-
+-on:
+-  pull_request:
+-    types: [opened, synchronize]
+-    branches:
+-      - dev
+-
+-jobs:
+-  compat-checks:
+-    if: ${{ github.actor == 'dependabot[bot]' }}
+-    runs-on: ubuntu-latest
+-    permissions:
+-      contents: write
+-    steps:
+-      - uses: actions/checkout@v7.0.1
+-      - uses: projectdiscovery/actions/setup/go/compat-checks@v1
+-        with:
+-          release-test: true
+```
+
+**File**: `README.md` (modified, +3/-3)
+```diff
+@@ -143,7 +143,7 @@ TARGET:
+    -l, -list string              path to file containing a list of target URLs/hosts to scan (one per line)
+    -targets-inline string        inline multiline target list (for use in template profiles)
+    -eh, -exclude-hosts string[]  hosts to exclude to scan from the input list (ip, cidr, hostname)
+-   -resume string                resume scan from and save to specified file (clustering will be disabled)
++   -resume string                resume scan from and save to specified file
+    -sa, -scan-all-ips            scan all the IP's associated with dns record
+    -iv, -ip-version string[]     IP version to scan of hostname (4,6); default uses dialer fallback, -sa scans all addresses
+    -dun, -disable-url-normalization  keep targets exactly as supplied instead of collapsing urls that address the same resource
+@@ -173,7 +173,7 @@ TEMPLATES:
+    -td, -template-display                 displays the templates content
+    -tl                                    list all templates matching current filters
+    -tgl                                   list all available tags
+-   -sign                                  signs the templates with the private key defined in NUCLEI_SIGNATURE_PRIVATE_KEY env variable
++   -sign                                  signs the templates with the key in NUCLEI_USER_PRIVATE_KEY and NUCLEI_USER_CERTIFICATE, or in the keys folder
+    -code                                  enable loading code protocol-based templates
+    -dut, -disable-unsigned-templates      disable running unsigned templates or templates with mismatched signature
+    -esc, -enable-self-contained           enable loading self-contained templates
+@@ -322,7 +322,7 @@ OPTIMIZATIONS:
+    -timeout int                     time to wait in seconds before timeout (default 10)
+    -retries int                     number of times to retry a failed request (default 1)
+    -ldp, -leave-default-ports       leave default HTTP/HTTPS ports (eg. host:80,host:443)
+-   -mhe, -max-host-error int        max errors for a host before skipping from scan (default 30)
++   -mhe, -max-host-error int        max http errors for a host:port before skipping requests to it (default 30)
+    -te, -track-error string[]       adds given error to max-host-error watchlist (standard, file)
+    -nmhe, -no-mhe                   disable skipping host from scan based on errors
+    -project                         use a project folder to avoid sending same request multiple times
+```
+
+**File**: `README_CN.md` (modified, +3/-3)
+```diff
+@@ -143,7 +143,7 @@ TARGET:
+    -l, -list string              path to file containing a list of target URLs/hosts to scan (one per line)
+    -targets-inline string        inline multiline target list (for use in template profiles)
+    -eh, -exclude-hosts string[]  hosts to exclude to scan from the input list (ip, cidr, hostname)
+-   -resume string                resume scan from and save to specified file (clustering will be disabled)
++   -resume string                resume scan from and save to specified file
+    -sa, -scan-all-ips            scan all the IP's associated with dns record
+    -iv, -ip-version string[]     IP version to scan of hostname (4,6) - (default 4)
+ 
+@@ -171,7 +171,7 @@ TEMPLATES:
+    -td, -template-display                 displays the templates content
+    -tl                                    list all templates matching current filters
+    -tgl                                   list all available tags
+-   -sign                                  signs the templates with the private key defined in NUCLEI_SIGNATURE_PRIVATE_KEY env variable
++   -sign                                  signs the templates with the key in NUCLEI_USER_PRIVATE_KEY and NUCLEI_USER_CERTIFICATE, or in the keys folder
+    -code                                  enable loading code protocol-based templates
+    -dut, -disable-unsigned-templates      disable running unsigned templates or templates with mismatched signature
+    -esc, -enable-self-contained           enable loading self-contained templates
+@@ -315,7 +315,7 @@ OPTIMIZATIONS:
+    -timeout int                     time to wait in seconds before timeout (default 10)
+    -retries int                     number of times to retry a failed request (default 1)
+    -ldp, -leave-default-ports       leave default HTTP/HTTPS ports (eg. host:80,host:443)
+-   -mhe, -max-host-error int        max errors for a host before skipping from scan (default 30)
++   -mhe, -max-host-error int        max http errors for a host:port before skipping requests to it (default 30)
+    -te, -track-error string[]       adds given error to max-host-error watchlist (standard, file)
+    -nmhe, -no-mhe                   disable skipping host from scan based on errors
+    -project                         use a project folder to avoid sending same request multiple times
+```
+
+**File**: `README_ES.md` (modified, +3/-3)
+```diff
+@@ -143,7 +143,7 @@ TARGET:
+    -l, -list string              path to file containing a list of target URLs/hosts to scan (one per line)
+    -targets-inline string        inline multiline target list (for use in template profiles)
+    -eh, -exclude-hosts string[]  hosts to exclude to scan from the input list (ip, cidr, hostname)
+-   -resume string                resume scan from and save to specified file (clustering will be disabled)
++   -resume string                resume scan from and save to specified file
+    -sa, -scan-all-ips            scan all the IP's associated with dns record
+    -iv, -ip-version string[]     IP version to scan of hostname (4,6) - (default 4)
+ 
+@@ -171,7 +171,7 @@ TEMPLATES:
+    -td, -template-display                 displays the templates content
+    -tl                                    list all templates matching current filters
+    -tgl                                   list all available tags
+-   -sign                                  signs the templates with the private key defined in NUCLEI_SIGNATURE_PRIVATE_KEY env variable
++   -sign                                  signs the templates with the key in NUCLEI_USER_PRIVATE_KEY and NUCLEI_USER_CERTIFICATE, or in the keys folder
+    -code                                  enable loading code protocol-based templates
+    -dut, -disable-unsigned-templates      disable running unsigned templates or templates with mismatched signature
+    -esc, -enable-self-contained           enable loading self-contained templates
+@@ -315,7 +315,7 @@ OPTIMIZATIONS:
+    -timeout int                     time to wait in seconds before timeout (default 10)
+    -retries int                     number of times to retry a failed request (default 1)
+    -ldp, -leave-default-ports       leave default HTTP/HTTPS ports (eg. host:80,host:443)
+-   -mhe, -max-host-error int        max errors for a host before skipping from scan (default 30)
++   -mhe, -max-host-error int        max http errors for a host:port before skipping requests to it (default 30)
+    -te, -track-error string[]       adds given error to max-host-error watchlist (standard, file)
+    -nmhe, -no-mhe                   disable skipping host from scan based on errors
+    -project                         use a project folder to avoid sending same request multiple times
+```
+
+**File**: `README_FA.md` (modified, +3/-3)
+```diff
+@@ -158,7 +158,7 @@ TARGET:
+    -l, -list string              path to file containing a list of target URLs/hosts to scan (one per line)
+    -targets-inline string        inline multiline target list (for use in template profiles)
+    -eh, -exclude-hosts string[]  hosts to exclude to scan from the input list (ip, cidr, hostname)
+-   -resume string                resume scan from and save to specified file (clustering will be disabled)
++   -resume string                resume scan from and save to specified file
+    -sa, -scan-all-ips            scan all the IP's associated with dns record
+    -iv, -ip-version string[]     IP version to scan of hostname (4,6) - (default 4)
+    -dun, -disable-url-normalization  keep targets exactly as supplied instead of collapsing urls that address the same resource
+@@ -188,7 +188,7 @@ TEMPLATES:
+    -td, -template-display                 displays the templates content
+    -tl                                    list all templates matching current filters
+    -tgl                                   list all available tags
+-   -sign                                  signs the templates with the private key defined in NUCLEI_SIGNATURE_PRIVATE_KEY env variable
++   -sign                                  signs the templates with the key in NUCLEI_USER_PRIVATE_KEY and NUCLEI_USER_CERTIFICATE, or in the keys folder
+    -code                                  enable loading code protocol-based templates
+    -dut, -disable-unsigned-templates      disable running unsigned templates or templates with mismatched signature
+    -esc, -enable-self-contained           enable loading self-contained templates
+@@ -335,7 +335,7 @@ OPTIMIZATIONS:
+    -timeout int                     time to wait in seconds before timeout (default 10)
+    -retries int                     number of times to retry a failed request (default 1)
+    -ldp, -leave-default-ports       leave default HTTP/HTTPS ports (eg. host:80,host:443)
+-   -mhe, -max-host-error int        max errors for a host before skipping from scan (default 30)
++   -mhe, -max-host-error int        max http errors for a host:port before skipping requests to it (default 30)
+    -te, -track-error string[]       adds given error to max-host-error watchlist (standard, file)
+    -nmhe, -no-mhe                   disable skipping host from scan based on errors
+    -project                         use a project folder to avoid sending same request multiple times
+```
+
+**File**: `README_ID.md` (modified, +3/-3)
+```diff
+@@ -143,7 +143,7 @@ TARGET:
+    -l, -list string              path to file containing a list of target URLs/hosts to scan (one per line)
+    -targets-inline string        inline multiline target list (for use in template profiles)
+    -eh, -exclude-hosts string[]  hosts to exclude to scan from the input list (ip, cidr, hostname)
+-   -resume string                resume scan from and save to specified file (clustering will be disabled)
++   -resume string                resume scan from and save to specified file
+    -sa, -scan-all-ips            scan all the IP's associated with dns record
+    -iv, -ip-version string[]     IP version to scan of hostname (4,6) - (default 4)
+ 
+@@ -171,7 +171,7 @@ TEMPLATES:
+    -td, -template-display                 displays the templates content
+    -tl                                    list all templates matching current filters
+    -tgl                                   list all available tags
+-   -sign                                  signs the templates with the private key defined in NUCLEI_SIGNATURE_PRIVATE_KEY env variable
++   -sign                                  signs the templates with the key in NUCLEI_USER_PRIVATE_KEY and NUCLEI_USER_CERTIFICATE, or in the keys folder
+    -code                                  enable loading code protocol-based templates
+    -dut, -disable-unsigned-templates      disable running unsigned templates or templates with mismatched signature
+    -esc, -enable-self-contained           enable loading self-contained templates
+@@ -315,7 +315,7 @@ OPTIMIZATIONS:
+    -timeout int                     time to wait in seconds before timeout (default 10)
+    -retries int                     number of times to retry a failed request (default 1)
+    -ldp, -leave-default-ports       leave default HTTP/HTTPS ports (eg. host:80,host:443)
+-   -mhe, -max-host-error int        max errors for a host before skipping from scan (default 30)
++   -mhe, -max-host-error int        max http errors for a host:port before skipping requests to it (default 30)
+    -te, -track-error string[]       adds given error to max-host-error watchlist (standard, file)
+    -nmhe, -no-mhe                   disable skipping host from scan based on errors
+    -project                         use a project folder to avoid sending same request multiple times
+```
+
+**File**: `README_JP.md` (modified, +3/-3)
+```diff
+@@ -143,7 +143,7 @@ TARGET:
+    -l, -list string              path to file containing a list of target URLs/hosts to scan (one per line)
+    -targets-inline string        inline multiline target list (for use in template profiles)
+    -eh, -exclude-hosts string[]  hosts to exclude to scan from the input list (ip, cidr, hostname)
+-   -resume string                resume scan from and save to specified file (clustering will be disabled)
++   -resume string                resume scan from and save to specified file
+    -sa, -scan-all-ips            scan all the IP's associated with dns record
+    -iv, -ip-version string[]     IP version to scan of hostname (4,6) - (default 4)
+ 
+@@ -171,7 +171,7 @@ TEMPLATES:
+    -td, -template-display                 displays the templates content
+    -tl                                    list all templates matching current filters
+    -tgl                                   list all available tags
+-   -sign                                  signs the templates with the private key defined in NUCLEI_SIGNATURE_PRIVATE_KEY env variable
++   -sign                                  signs the templates with the key in NUCLEI_USER_PRIVATE_KEY and NUCLEI_USER_CERTIFICATE, or in the keys folder
+    -code                                  enable loading code protocol-based templates
+    -dut, -disable-unsigned-templates      disable running unsigned templates or templates with mismatched signature
+    -esc, -enable-self-contained           enable loading self-contained templates
+@@ -315,7 +315,7 @@ OPTIMIZATIONS:
+    -timeout int                     time to wait in seconds before timeout (default 10)
+    -retries int                     number of times to retry a failed request (default 1)
+    -ldp, -leave-default-ports       leave default HTTP/HTTPS ports (eg. host:80,host:443)
+-   -mhe, -max-host-error int        max errors for a host before skipping from scan (default 30)
++   -mhe, -max-host-error int        max http errors for a host:port before skipping requests to it (default 30)
+    -te, -track-error string[]       adds given error to max-host-error watchlist (standard, file)
+    -nmhe, -no-mhe                   disable skipping host from scan based on errors
+    -project                         use a project folder to avoid sending same request multiple times
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8313** (closed): fix(jira): close HTTP response bodies to prevent socket leaks (@DhyaanKanoja11)
+- **PR #8310** (closed): fix: read full KDC reply length prefix over TCP (@CJstate)
+- **PR #8309** (closed): fix: report invalid JSON extractor queries with query and error (@CJstate)
 - **PR #8308** (2026-11-23): chore(deps): bump the modules group with 9 updates (@dependabot[bot])
 - **PR #8300** (2026-11-21): fix(resume): keep the loaded progress of templates not yet reached (@dwisiswant0)
 - **PR #8299** (2026-11-21): fix(input): let a template port replace a reserved port in a URL target (@dwisiswant0)
-- **PR #8297** (2026-11-21): fix(http): dump a pipelined request as the pipeline client writes it (@dwisiswant0)
-- **PR #8296** (2026-11-21): fix(network): dial a tls:// entry that repeats a plain address (@dwisiswant0)
-- **PR #8295** (2026-11-21): fix(network): write no trace entry when the final read ends (@dwisiswant0)
 
 ---
 
@@ -1839,51 +2007,31 @@ U
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump the modules group with 9 updates
+## X. Empirical Invariant Guard in writer.go
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/pdcp/writer.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3fa285c4`: deps): bump the modules group with 9 updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `12d12a40`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/pdcp/writer.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/projectdiscovery/gologger v1.1.76
-	github.com/projectdiscovery/hmap v0.0.105
-	github.com/projectdiscovery/networkpolicy v0.1.59
-	github.com/projectdiscovery/retryabledns v1.0.119
-	github.com/projectdiscovery/retryablehttp-go v1.3.35
-	github.com/projectdiscovery/tlsx v1.5.0
-	github.com/projectdiscovery/utils v0.11.15
-	github.com/projectdiscovery/wappalyzergo v0.3.10
-	github.com/cloudflare/cfssl v1.7.1 // indirect
-	github.com/google/certificate-transparency-go v1.4.0 // indirect
-	github.com/projectdiscovery/blackrock v0.0.4 // indirect
+		u.Logger.Warning().Msgf("invalid asset id provided (unknown xid format): %s", id)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	github.com/projectdiscovery/gologger v1.1.75
-	github.com/projectdiscovery/hmap v0.0.104
-	github.com/projectdiscovery/networkpolicy v0.1.58
-	github.com/projectdiscovery/retryabledns v1.0.118
-	github.com/projectdiscovery/retryablehttp-go v1.3.34
-	github.com/projectdiscovery/tlsx v1.4.3-0.20261020052910-acb80c2c7c75
-	github.com/projectdiscovery/utils v0.11.13
-	github.com/projectdiscovery/wappalyzergo v0.3.8
-	github.com/cloudflare/cfssl v1.6.5 // indirect
-	github.com/google/certificate-transparency-go v1.3.3 // indirect
-	github.com/projectdiscovery/blackrock v0.0.2 // indirect
+		gologger.Warning().Msgf("invalid asset id provided (unknown xid format): %s", id)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3fa285c4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `12d12a40` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

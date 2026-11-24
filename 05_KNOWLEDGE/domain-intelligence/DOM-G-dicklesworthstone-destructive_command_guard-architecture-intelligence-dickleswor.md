@@ -4,24 +4,24 @@
 {
   "source_repository": "Dicklesworthstone/destructive_command_guard",
   "source_url": "https://github.com/Dicklesworthstone/destructive_command_guard",
-  "source_version": "b4f82a73",
+  "source_version": "4e6cb47a",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-23T17:11:49.089Z",
+  "timestamp": "2026-11-24T19:00:29.554Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dicklesworthstone-destructive_command_guard",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard) (Revision: `b4f82a73`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-23T17:11:49.089Z`  
+> **Provenance**: Harvested from [Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard) (Revision: `4e6cb47a`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-24T19:00:29.554Z`  
 > **Learning ID**: `learn-github-dicklesworthstone-destructive_command_guard`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), F (Design Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 54%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), F (Design Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 67%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from Dicklesworthstone/destructive_command_guard:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T17:11:47.739Z  
+> **Harvest Timestamp**: 2026-11-24T19:00:27.672Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A fast Rust safety hook that blocks destructive shell, git, and filesystem commands before AI coding agents run them. 50+ security packs (databases, Kubernetes, Docker, cloud, Terraform), heredoc/inline-script scanning, CI scan mode, and explain mode; works with Claude Code, Codex, Gemini, Copilot, Cursor, and more.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6378 stars
+- **Stars / Engagement**: 6379 stars
 
 ---
 
@@ -2524,1203 +2524,2148 @@ pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, &'static str>
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3459216e` (2026-11-22)
-**Commit Message**: fix: bind lookaround exemptions to their segments (#671) [skip ci]
+### Incident Patch 1: `4e6cb47a` (2026-11-24)
+**Commit Message**: fix(security): harden modprobe sudo folding, oversized scan bounds, binding model, cross-dialect parsing, and degraded heredoc attribution [skip ci]
 
-Keep full-command custom matches tied to their innermost owning segment so
-a parent's local safe match cannot suppress a child's lookaround. Preserve
-explicit inherited grants and half-open ownership of zero-width positions.
+Security & normalization fixes:
+- Enforce exact deny-wins over {env_reset, env_keep} when MODPROBE_OPTIONS or
+  POSIXLY_CORRECT crosses sudo without explicit -E / --preserve-env covering
+  the variable, and whitelist known safe sudo long options (--preserve-env,
+  --user, etc.) while keeping unknown long options (--list, --edit) unstripped.
+- Remove the literal "modprobe" substring pre-filter in
+  leading_unstripped_posixly_correct_before_modprobe so quoted/escaped argv0
+  forms ('mod'probe, m\odprobe) still fold --.
+- Split MODPROBE_OPTIONS on C isspace() bytes including vertical tab (\x0b).
+- Split cmd_elided_argv0_has_nonempty_basename on both '\' and '/' so
+  forward-slash wholly-dynamic paths (C:/Windows/System32/%TOOL%) stay inert.
+- Harden oversized lexical windowing (src/main.rs): expand rebind-head
+  detection across POSIX/PowerShell/Cmd/Unknown, widen UTF-8 step boundary to
+  5 bytes, and fail closed when multi-window splitting may sever earlier
+  assignments from later expansions.
 
-Retain the raw pass's exclusion for already-checked masked children without
-hiding visible substitution syntax or later matches.
+Bead closures:
+- bd-binding-model-variants
 
-Add nine CLI and hook regression tests for lookahead, lookbehind, scoped
-rules, source spans, exemptions, overlapping matches, and masked
-substitutions. Document the contract and format the upstream regressions.
-
-Validation:
-- cargo fmt --check and git diff --check passed.
-- The checksum-verified v0.17.0 baseline reproduced seven fail-opens and
-  passed four controls.
-- Independent production and regression-test reviews completed.
-- UBS completed the full three-file static scan with exit 1: all five
-  critical findings are in unchanged test harness code; no finding
-  intersects the changed production code.
-- Patched tests did not execute: DCG library rustc received SIGKILL in
-  serial builds both with and without incremental compilation, without
-  a Rust source diag
-
-**File**: `docs/custom-packs.md` (modified, +16/-4)
+**File**: `.beads/issues.jsonl` (modified, +3/-3)
 ```diff
-@@ -193,10 +193,14 @@ Omit the key to leave the rule unscoped, matching anywhere in the command as
- before. An explicitly empty list is rejected so a misspelled scope cannot
- silently become broader or turn into a dead rule.
- 
--Unscoped rules retain the complete matching context across shell separators,
--including text read by lookahead and lookbehind assertions outside the consumed
--match. Safe-pattern exemptions still apply to the segment they authorize;
--skipping an exempt match does not hide later matches of the same rule.
-+Unscoped destructive rules are checked against individual segments and the
-+complete, data-sanitized command. In the complete-command check, lookarounds
-+retain that full context even when the text they consume stays inside one
-+segment. For example, `mytool(?=[^\r\n]*?publish)` can match `mytool status;
-+publish`: the lookahead reads the later segment without including it in the
-+highlighted match. This also applies to the original custom-policy view that
-+preserves assignments and wrappers. Rules with `executables` keep their
-+segment-local matching context.
- 
- ### Safe Pattern Fields
- 
-@@ -268,6 +272,14 @@ new exemption. Use anchors to constrain the command forms you authorize.
- Losing a safe match means destructive evaluation continues; it does not by
- itself deny a command that no destructive rule covers.
- 
-+A whole-command search continues past an occurrence covered by its innermost
-+segment's safe exemption, so an exempt earlier occurrence cannot hide a later
-+one. An enclosing segment's local safe match cannot be borrowed to authorize a
-+child. Grants from a complete carrier still follow the inheritance rules above.
-+A match that consumes text from multiple segments cannot borrow the safe
-+exemption of just one segment. Exempt segments remain visible as context for
-+other matches' lookarounds.
-+
- ### Substitutions inside prose arguments
- 
- Custom destructive rules can recognize active POSIX command substitutions in
+@@ -69,7 +69,7 @@
+ {"id":"bd-adfq","title":"Reduce hook heredoc latency with measured deep AST optimization (#555)","description":"Investigate GitHub issue #555 against main 00a1c8b5325544568758766e45649215cb88f350. Improve sophisticated AST analysis without reducing escalation frequency, changing safety deadlines, weakening fallback, or treating unexamined input as safe.\n\n## Working checklist\n\n- [x] Read repository guidance and comprehensive improvement plans; inspect current Beads graph and issue report/comments.\n- [x] Preserve the incumbent source in a detached worktree and start an identical-toolchain shipping-profile build.\n- [x] Assign disjoint AST, instrumentation, and benchmark/regression work; keep one Beads writer.\n- [x] Add opt-in request parsing, input wait, configuration, normalization, extraction/detection, pattern, AST compile/parse/match, and history timings.\n- [x] Account separately for worker-thread timings, overlapping phases, incomplete work, and total hook time; keep wire stdout unchanged.\n- [x] Reproduce short ls, pipeline, compound command, 40/300-line executable Python heredocs, and quoted commit-message/data heredocs.\n- [x] Compare incumbent and candidate in the same invocation with alternating order, matched bypass, CPU/wall samples, and exact timed-child verdict checks (16 cases, disabled/enabled, 30 pairs, all timed verdicts pass).\n- [x] Finish writer-contended and synthetic 247,625-row history comparisons (six representative cases, 15 pairs); all timed verdicts pass, and SQLite writer contention remains visible as wall time in history flush.\n- [x] Avoid eager initialization of unrelated AST language corpora; share immutable compiled patterns instead of cloning them for each body.\n- [x] Index AST candidates by ast-grep's own node-kind information and walk each source tree once; preserve wildcard rules, all nested matches, and pattern-major order.\n- [x] Measure repeated full-input parsing/extraction; implement exact shared stdin-source facts, indexed AST traversal, and necessary-byte keyword candidate search without reducing deep analysis.\n- [x] Add differential old-versus-new AST matching tests for every supported grammar, wildcards, contextual patterns, nested/multiple matches, and large inputs.\n- [x] Add deterministic hook regressions for executable quoted/unquoted bodies, substitutions, nested interpreters, quoted data, compound commands, and ambiguous syntax (execution remains pending below).\n- [x] Add Criterion coverage for small/large extraction and the complete deep-analysis path with safe and dangerous bodies.\n- [x] Run the initial focused Rust tests (34/34 pass); preserve full initial library results (4,661 pass, two stale-fixture failures, seven skips).\n- [x] Run combined focused Rust and profiling-output regressions after upstream integration and the robot-output repair (4,670 library tests and 71 hook integration tests pass).\n- [ ] Run cargo fmt --check, cargo check --all-targets --locked, cargo clippy --all-targets --locked -- -D warnings, and feasible full Rust suites; record actual resource failures separately.\n- [ ] Run real-binary E2E protocol/security suites and absolute latency gate without relaxing deadlines or expectations.\n- [ ] Review security invariants and complete patch independently; inspect bounded cache/lifetime and worker-timeout behavior.\n- [ ] Commit meaningful implementation batches directly to main through GitHub with expected-head protection; verify remote source and CI where feasible.\n- [x] Record the first integrated-stage paired numbers, environment/build identities, limitations, remaining bottlenecks, and reporter reproduction commands in repository documentation; preserve raw output byte for byte.\n- [ ] Update completed Beads with cited evidence; inspect remaining validation bead bd-cgy0 against its exact acceptance criteria.\n- [x] Verify the already-implemented archive-extraction destination task against protected paths and safe controls through both hook and CLI (20 cases, 40 observations).\n- [x] Close archive-extraction bead with the concrete acceptance evidence.\n- [x] Preserve nested interpreter heredoc wrappers and trigger recursive analysis without requiring shell pack keywords; real hook now denies the previously allowed destructive Python body.\n- [x] Correct here-string body language routing and validate nested multiline Python, safe bodies, data consumers, ambiguous targets, and exact destructive rule identity (all 48 real-hook security controls pass integrated candidate).\n- [x] Make history capture/replacement regex compilation lazy behind the unchanged RegexSet; add differential tests including Unicode and fallback behavior.\n- [x] Implement shared exact stdin source facts to eliminate repeated whole-command provenance processing in core.filesystem; add an independent legacy differential oracle (execution remains pending).\n- [x] Finish the integrated-stage static UBS scan using the pinned official t
 ```
 
-**File**: `src/evaluator.rs` (modified, +43/-36)
+**File**: `src/evaluator.rs` (modified, +1352/-213)
 ```diff
-@@ -766,8 +766,9 @@ impl<'a> SafePatternInputs<'a> {
-         })
+@@ -12802,6 +12802,27 @@ fn powershell_pipeline_consumer_mode(
+         }
+         _ => {}
      }
++    // Windows Python launcher (`py` / `py.exe`), optionally preceded by a
++    // `-3` / `-3.12` / `-2` version selector argument before Python's argv.
++    if executable == "py" {
++        let forwarded = match args.first().map(String::as_str) {
++            Some(first)
++                if first.starts_with('-')
++                    && first.len() >= 2
++                    && first[1..]
++                        .bytes()
++                        .all(|b| b.is_ascii_digit() || b == b'.' || b == b'-')
++                    && first.as_bytes()[1].is_ascii_digit() =>
++            {
++                &args[1..]
++            }
++            _ => args,
++        };
++        let mode =
++            python_pipeline_input_mode("", forwarded, crate::heredoc::ScriptLanguage::Python);
++        let terminal = mode == PipelineShellInputMode::DoesNotReadStdin;
++        return Some((mode, terminal));
++    }
+     let language = crate::heredoc::ScriptLanguage::from_command(&executable);
+     match language {
+         crate::heredoc::ScriptLanguage::Python => {
+@@ -13505,6 +13526,13 @@ fn find_powershell_scriptblock_create(command: &str, start: usize) -> Option<(us
+ }
  
--    /// A full-command match is exempt only when its own segment has a safe
--    /// grant. Its consumed span does not bound the context read by lookarounds.
-+    /// A whole-command match belongs to its innermost segment. An enclosing
-+    /// segment's local safe match cannot replace a child's own or inherited
-+    /// grant. An already-checked masked child must not become a new match.
-     fn match_is_exempt(
-         &self,
-         pack: &crate::packs::Pack,
-@@ -777,43 +778,49 @@ impl<'a> SafePatternInputs<'a> {
-         sanitize_segment: bool,
-         deadline: Option<&Deadline>,
-     ) -> bool {
-+        if sanitize_segment && pack.safe_patterns.is_empty() {
-+            return false;
+ fn local_powershell_prefix(prefix: &str) -> &str {
++    if prefix.contains("@'") || prefix.contains("@\"") {
++        if let Ok(statements) = split_top_level_powershell_statements(prefix)
++            && let Some(last) = statements.last()
++        {
++            return last;
 +        }
-+        let Some(matched) = detection_command.get(span.start..span.end) else {
-+            return false;
-+        };
-+        let trimmed = matched.trim();
-+        let (match_start, match_end) = if trimmed.is_empty() {
-+            // Preserve authored whitespace and zero-width positions rather
-+            // than moving them into a neighboring command's grant.
-+            (span.start, span.end)
-+        } else {
-+            let start = span.start + matched.len() - matched.trim_start().len();
-+            (start, start + trimmed.len())
-+        };
-+        // A zero-width point belongs to a half-open segment, never to the
-+        // previous segment's closing boundary or an empty segment.
-+        let Some(&(start, end)) = segment_ranges
++    }
+     prefix.rsplit([';', '\n', '|']).next().unwrap_or(prefix)
+ }
+ 
+@@ -15383,6 +15411,33 @@ fn collect_executable_text_sinks(command: &str, dialect: ShellDialect) -> Vec<Ex
+     // dialects; the POSIX/Unknown pipe path is the bash-AST collector above.
+     if matches!(dialect, ShellDialect::Cmd | ShellDialect::PowerShell) {
+         collect_dialect_pipeline_stdin_sinks(command, dialect, &mut sinks);
++    } else if dialect == ShellDialect::Unknown
++        && command.contains('|')
++        && (command.contains("@'") || command.contains("@\""))
++    {
++        // A PowerShell here-string piped into an interpreter (`@'\n...\n'@ | python3`)
++        // looks like an unknown producer to POSIX; collect its native PowerShell
++        // pipeline payloads ahead of unverified POSIX sinks so concrete language
++        // rules win while preserving fail-closed posture.
++        let mut ps_sinks = Vec::new();
++        collect_dialect_pipeline_stdin_sinks(command, ShellDialect::PowerShell, &mut ps_sinks);
++        let has_concrete_payload = ps_sinks
 +            .iter()
-+            .filter(|&&(start, end)| match_start >= start && match_end <= end && match_start < end)
-+            .min_by_key(|&&(start, end)| end - start)
-+        else {
-+            return false;
-+        };
-+        let Some(segment) = detection_command.get(start..end) else {
-+            return false;
-+        };
-+        if !sanitize_segment && segment.trim().is_empty() {
-+            // The raw segment pass already skipped this checked child. Keep
-+            // that exclusion even when the pack has no safe patterns.
-+            return true;
-+        }
-         if pack.safe_patterns.is_empty() {
-             return false;
-         }
--        let trimmed_span = detection_command
--            .get(span.start..span.end)
--            .and_then(|matched| {
--                let trimmed = matched.trim();
--                if trimmed.is_empty() {
--                    return None;
--                }
--                let start = span.start + matched.len() - matched.trim_start().len();
--                Some(MatchSpan {
--                    start,
--                    end: start + trimmed.len(),
--                })
--            });
--        segment_ranges.iter().any(|&(start, end)| {
--            let contains = |candidate: MatchSpan| {
--                candidate.start >= start
--                    && candidate.end <= end
--                    && (candidate.start < end || start == end)
--            };
--            if !(contains(span) || trimmed_span.is_some_and(contains)) {
--                return false;
--            }
--            let Some(segment) = detection_command.get(start..end) else {
--                return false;
--            };
--            // Keep the same detection input as the corresponding segment
--            // pass. The custom source view already carries its own masks.
--            let detection_input = if sanitize_segment {
--                sanitize_for_pattern_matching(segment)
--            } else {
--                Cow::Borrowed(segment)
--            };
--            self.matches(pack, detection_input.as_ref(), Some((start, end)), deadline)
--        })
-+        // Keep the same detection input as the corresponding segment pass.
-+        // The custom source view already carries its own masks.
-+        let detection_input = if sanitize_segment {
-+            sanitize_for_pattern_matching(segment)
-+        } else {
-+            Cow::Borrowed(segment)
-+        };
-+        self.matches(pack, detection_input.as_ref(), Some((start, end)), deadline)
-     }
- }
- 
-```
-
-**File**: `tests/cli_e2e.rs` (modified, +390/-5)
-```diff
-@@ -10904,11 +10904,6 @@ safe_patterns:
-             destructive_pattern: &str,
-             keywords: &[&str],
-         ) -> Self {
--            let root = tempfile::tempdir().expect("isolated safe-pattern fixture");
--            for directory in ["home", "tmp", "cwd", "xdg"] {
--                std::fs::create_dir_all(root.path().join(directory)).expect("fixture directory");
--            }
--            let pack_path = root.path().join("pack.yaml");
-             let mut pack = format!(
-                 "schema_version: 1\nid: synthetic.environment\nname: Environment exemption regression\n\
-                  version: 1.0.0\nkeywords: {}\ndestructive_patterns:\n  - name: requires-review\n    pattern: {}\n    severity: critical\n    description: This command requires explicit review\nsafe_patterns:\n",
-@@ -10927,6 +10922,15 @@ safe_patterns:
-                     .expect("append safe pattern");
-                 }
-             }
-+            Self::from_pack(&pack)
-+        }
-+
-+        fn from_pack(pack: &str) -> Self {
-+            let root = tempfile::tempdir().expect("isolated safe-pattern fixture");
-+            for directory in ["home", "tmp", "cwd", "xdg"] {
-+                std::fs::create_dir_all(root.path().join(directory)).expect("fixture directory");
-+            }
-+            let pack_path = root.path().join("pack.yaml");
-             std::fs::write(&pack_path, pack).expect("write custom pack");
-             let config = root.path().join("config.toml");
-             std::fs::write(
-@@ -11131,6 +11135,387 @@ safe_patterns:
-         }
-     }
- 
-+    // The exact pack from #671. Every candidate below is passed as data to
-+    // dcg; none of these synthetic programs is executed.
-+    const LOOKAROUND_PACK: &str = r"schema_version: 1
-+id: probe.c2
-+name: Probe claim 2, lookaround horizon
-+version: 1.0.0
-+keywords: [zzka, zzkb, zzkc]
-+destructive_patterns:
-+  - name: la-only
-+    pattern: 'zzka(?=[^\r\n]*?zzend)'
-+    severity: critical
-+    description: probe rule
-+  - name: la-consume
-+    pattern: 'zzkb(?=[^\r\n]*?zzend)[^\r\n]*?zzend'
-+    severity: critical
-+    description: probe rule
-+  - name: lb-only
-+    pattern: '(?<=zzpre[^\r\n]{3})zzkc'
-+    severity: critical
-+    description: probe rule
-+";
-+
-+    fn lookaround_fixture(pack: &str) -> SafePatternFixture {
-+        let fixture = SafePatternFixture::from_pack(pack);
-+        std::fs::write(
-+            &fixture.config,
-+            format!(
-+                "[general]\nself_heal_hook = false\nunverified_decision = \"ask\"\n\
-+                 fail_closed = true\nhook_timeout_ms = 3000\n\
-+                 [packs]\nenabled = []\ncustom_paths = [{}]\n",
-+                serde_json::to_string(&fixture.root.path().join("pack.yaml"))
-+                    .expect("serialize reporter pack path")
-+            ),
-+        )
-+        .expect("write reporter configuration");
-+        fixture
-+    }
-+
-+    fn assert_lookaround_test(
-+        fixture: &SafePatternFixture,
-+        candidate: &str,
-+        dialect: &str,
-+        rule: Option<&str>,
-+    ) -> serde_json::Value {
-+        let mut child = fixture
-+            .command()
-+            .args(["test", "--stdin", "--dialect", dialect, "--format", "json"])
-+            .spawn()
-+            .expect("spawn lookaround CLI test");
-+        child
-+            .stdin
-+            .take()
-+            .expect("CLI stdin")
-+            .write_all(candidate.as_bytes())
-+            .expect("write candidate as stdin data");
-+        let output = child.wait_with_output().expect("lookaround CLI output");
-+        assert_eq!(
-+            output.status.code(),
-+            Some(i32::from(rule.is_some())),
-+            "[{dialect}] {candidate:?}: {output:?}"
-+        );
-+        let json: serde_json::Value = serde_json::from_slice(&output.stdout)
-+            .unwrap_or_else(|error| panic!("[{dialect}] {candidate:?}: {error}; {output:?}"));
-+        assert_eq!(
-+            json["decision"],
-+            if rule.is_some() { "deny" } else { "allow" },
-+            "[{dialect}] {candidate:?}: {json}"
-+        );
-+        assert_eq!(json["rule_id"].as_str(), rule, "{candidate:?}: {json}");
-+        json
-+    }
-+
-+    fn assert_lookaround_hook(
-+        fixture: &SafePatternFixture,
-+        candidate: &str,
-+        tool: &str,
-+        rule: Option<&str>,
-+    ) {
-+        let payload = serde_json::json!({
-+            "hook_event_name": "PreToolUse",
-+            "tool_name": tool,
-+            "tool_input": {"command": candidate},
-+        });
-+        let mut child = fixture
-+            .command()
-+            .args(["--agent", "claude-code", "hook"])
-+            .spawn()
-+            .expect("spawn lookaround hook");
-+        child
-+            .stdin
-+            .take()
-+            .expect("hook stdin")
-+            .write_all(payload.to_string().as_bytes())
-+            .expect("write candidate as hook JSON data");
-+        let output = child.wait_with_output().expect("lookaround hook output");
-+     
-```
-
-**File**: `tests/repro_402_external_pack_keyword_gating.rs` (modified, +6/-5)
-```diff
-@@ -569,7 +569,10 @@ fn issue_671_lookarounds_read_across_shell_segments() {
-     let fixture = Fixture::new();
-     let config = fixture.lookaround_config(LOOKAROUND_PACK);
-     for separator in [";", "&&", "|", "||", "&"] {
--        for (prefix, rule) in [("zzka", "probe.c2:la-only"), ("zzkb", "probe.c2:la-consume")] {
-+        for (prefix, rule) in [
-+            ("zzka", "probe.c2:la-only"),
-+            ("zzkb", "probe.c2:la-consume"),
-+        ] {
-             fixture.assert_lookaround_verdict(
-                 &config,
-                 &format!("{prefix} abc{separator} zzend"),
-@@ -788,13 +791,11 @@ impl Fixture {
-                 let json: serde_json::Value = serde_json::from_slice(&hook.stdout)
-                     .unwrap_or_else(|error| panic!("{tool}: {command:?}: {error}: {hook:?}"));
-                 assert_eq!(
--                    json["hookSpecificOutput"]["permissionDecision"],
--                    "deny",
-+                    json["hookSpecificOutput"]["permissionDecision"], "deny",
-                     "{tool}: {command:?}: {json}"
-                 );
-                 assert_eq!(
--                    json["hookSpecificOutput"]["ruleId"],
--                    rule,
-+                    json["hookSpecificOutput"]["ruleId"], rule,
-                     "{tool}: {command:?}: {json}"
-                 );
-             } else {
-```
-
----
-
-### Incident Patch 2: `6faca3fa` (2026-11-22)
-**Commit Message**: fix: preserve custom rule lookaround context (#671) [skip ci]
-
-Retain full-command matches for unscoped external patterns when their
-lookarounds read across shell segments. Suppress only actual safe grants,
-then continue searching the intact subject for later or overlapping matches.
-
-Keep source-preserving custom matching available for assertions involving
-assignments or wrappers. Preserve single-command authorization, scoped and
-built-in behavior, source spans, UTF-8 boundaries, and deadline handling.
-
-Add six real-binary regression tests covering 40 command cases through Bash
-and PowerShell hooks and POSIX/PowerShell CLI inputs. Document the matching
-contract and the fix in the changelog.
-
-Validation: independent static production and regression-test reviews
-completed. Cargo checks, rustfmt, Clippy, UBS, and tests could not run because
-the execution environment became unavailable.
-
-Fixes #671
-
-**File**: `CHANGELOG.md` (modified, +11/-0)
-```diff
-@@ -11,6 +11,17 @@ Repository: <https://github.com/Dicklesworthstone/destructive_command_guard>
- 
- ---
- 
-+## Unreleased
-+
-+**Unscoped custom-pack lookarounds retain whole-command context (#671).** A
-+lookahead or lookbehind can depend on text across a shell separator even when
-+the rule consumes text inside only one segment. Those matches no longer get
-+discarded as duplicates of a segment-only evaluation. Source-preserving custom
-+matching also retains assignments and wrappers needed by such assertions.
-+Safe-pattern exemptions and rule allowlists still apply; an exempt occurrence
-+cannot hide a later or overlapping match of the same rule. Searches preserve
-+anchors, lookbehind, UTF-8 boundaries, and the evaluation deadline.
-+
- ## [v0.17.0](https://github.com/Dicklesworthstone/destructive_command_guard/releases/tag/v0.17.0) -- 2026-11-21 [Release]
- 
- This release closes more commands that ran unguarded (PowerShell
-```
-
-**File**: `docs/custom-packs.md` (modified, +5/-0)
-```diff
-@@ -193,6 +193,11 @@ Omit the key to leave the rule unscoped, matching anywhere in the command as
- before. An explicitly empty list is rejected so a misspelled scope cannot
- silently become broader or turn into a dead rule.
- 
-+Unscoped rules retain the complete matching context across shell separators,
-+including text read by lookahead and lookbehind assertions outside the consumed
-+match. Safe-pattern exemptions still apply to the segment they authorize;
-+skipping an exempt match does not hide later matches of the same rule.
-+
- ### Safe Pattern Fields
- 
- | Field | Type | Required | Description |
-```
-
-**File**: `src/evaluator.rs` (modified, +145/-11)
-```diff
-@@ -765,6 +765,56 @@ impl<'a> SafePatternInputs<'a> {
-                     }))
-         })
-     }
-+
-+    /// A full-command match is exempt only when its own segment has a safe
-+    /// grant. Its consumed span does not bound the context read by lookarounds.
-+    fn match_is_exempt(
-+        &self,
-+        pack: &crate::packs::Pack,
-+        detection_command: &str,
-+        span: MatchSpan,
-+        segment_ranges: &[(usize, usize)],
-+        sanitize_segment: bool,
-+        deadline: Option<&Deadline>,
-+    ) -> bool {
-+        if pack.safe_patterns.is_empty() {
-+            return false;
-+        }
-+        let trimmed_span = detection_command
-+            .get(span.start..span.end)
-+            .and_then(|matched| {
-+                let trimmed = matched.trim();
-+                if trimmed.is_empty() {
-+                    return None;
++            .any(|sink| matches!(sink, ExecutableTextSink::Payload { .. }));
++        if has_concrete_payload {
++            let mut ordered = Vec::with_capacity(ps_sinks.len() + sinks.len());
++            for sink in ps_sinks {
++                if matches!(sink, ExecutableTextSink::Payload { .. }) && !ordered.contains(&sink) {
++                    ordered.push(sink);
 +                }
-+                let start = span.start + matched.len() - matched.trim_start().len();
-+                Some(MatchSpan {
-+                    start,
-+                    end: start + trimmed.len(),
-+                })
-+            });
-+        segment_ranges.iter().any(|&(start, end)| {
-+            let contains = |candidate: MatchSpan| {
-+                candidate.start >= start
-+                    && candidate.end <= end
-+                    && (candidate.start < end || start == end)
-+            };
-+            if !(contains(span) || trimmed_span.is_some_and(contains)) {
-+                return false;
 +            }
-+            let Some(segment) = detection_command.get(start..end) else {
-+                return false;
-+            };
-+            // Keep the same detection input as the corresponding segment
-+            // pass. The custom source view already carries its own masks.
-+            let detection_input = if sanitize_segment {
-+                sanitize_for_pattern_matching(segment)
-+            } else {
-+                Cow::Borrowed(segment)
-+            };
-+            self.matches(pack, detection_input.as_ref(), Some((start, end)), deadline)
-+        })
-+    }
++            for sink in sinks {
++                if !ordered.contains(&sink) {
++                    ordered.push(sink);
++                }
++            }
++            return ordered;
++        }
+     }
+     sinks
+ }
+@@ -16237,7 +16292,9 @@ struct PosixExecutableAssignmentModel {
  }
  
- fn compute_normalized_offset(command_for_match: &str, normalized: &str) -> Option<usize> {
-@@ -28616,6 +28666,9 @@ fn evaluate_packs_with_allowlists_at_depth(
-     let original_len = original_command.len();
-     let segment_ranges = command_segment_ranges_in_dialect(command_for_packs, shell_dialect);
-     let safe_inputs = SafePatternInputs::new(command_for_packs, input_command, shell_dialect);
-+    // Only external policies need the source-preserving view. Share its
-+    // segment correspondence between the local pass and full-context retry.
-+    let custom_pattern_inputs = std::cell::OnceCell::new();
-     let has_cmd_grouping_or_separator = shell_dialect == ShellDialect::Cmd
-         && tokenize_for_shell_dialect(command_for_packs, ShellDialect::Cmd)
-             .iter()
-@@ -28781,6 +28834,7 @@ fn evaluate_packs_with_allowlists_at_depth(
-         } else {
-             continue;
-         };
-+        let is_external_pack = REGISTRY.get_entry(pack_id).is_none();
-         if deadline_exceeded(deadline) || remaining_below(deadline, &crate::perf::PATTERN_MATCH) {
-             return EvaluationResult::indeterminate_due_to_budget();
-         }
-@@ -28831,15 +28885,18 @@ fn evaluate_packs_with_allowlists_at_depth(
-         // in their destructive regex (#598). Keep that detection input in
-         // addition to the normalized one. It also retains substitution syntax
-         // in data arguments (#614), while the prose and checked bodies stay masked.
--        if REGISTRY.get_entry(pack_id).is_none() && custom_command_for_match != command_for_packs {
-+        if is_external_pack && custom_command_for_match != command_for_packs {
-             // Both views preserve source offsets. Split the source: blanking a
-             // checked child body removes its segment from the detection view,
-             // but must not break the correspondence used to authorize a safe
-             // pattern against the complete original parent or a later sibling.
--            let raw_ranges = command_segment_ranges_in_dialect(original_command, shell_dialect);
--            let raw_safe_inputs =
--                SafePatternInputs::new(original_command, input_command, shell_dialect);
--            for &(start, end) in &raw_ranges {
-+            let (raw_ranges, raw_safe_inputs) = custom_pattern_inputs.get_or_init(|| {
-+                (
-+                    command_segment_ranges_in_dialect(original_command, shell_dialect),
-+                    SafePatternInputs::new(original_command, input_command, shell_dialect),
-+                )
-+            });
-+            for &(start, end) in raw_ranges {
-                 let segment = &custom_command_for_match[start..end];
-                 // A checked child's body can be entirely masked. It remains
-                 // in the source map, but is not a new empty command to match.
-@@ -29646,14 +29703,69 @@ fn evaluate_packs_with_allowlists_at_depth(
-             /
+ const MAX_POSIX_EXECUTABLE_BINDINGS: usize = 64;
+-const MAX_POSIX_EXECUTABLE_SEGMENTS: usize = 128;
++const MAX_POSIX_EXECUTABLE_OVERFLOW_NAMES: usize = 512;
++const MAX_POSIX_EXECUTABLE_BRANCH_VALUES: usize = 4;
++const MAX_POSIX_EXECUTABLE_SEGMENTS: usize = 256;
+ const MAX_POSIX_EXECUTABLE_FIELDS: usize = 128;
+ const MAX_POSIX_EXECUTABLE_VALUE_BYTES: usize = 16 * 1024;
+ const POSIX_EXECUTABLE_UNVERIFIED_RULE: &str = "heredoc.posix.executable-unverified";
+@@ -16249,12 +16306,132 @@ enum ModeledPosixIfs {
+     Unverified,
+ }
+ 
+-#[derive(Debug)]
++#[derive(Debug, Clone)]
+ enum ModeledPosixBinding {
+-    Literal(String),
++    /// One or more possible literal values (more than one only after merging
++    /// conditional `&&`/`||` branches in deny-only mode).
++    Literal(Vec<String>),
+     Unverified(&'static str),
+ }
+ 
++/// Bounded binding store: tracks up to `MAX_POSIX_EXECUTABLE_BINDINGS` (64)
++/// active variables in recency order, evicting the oldest into `overflowed`
++/// rather than blindly poisoning every later `$var` invocation
++/// (bd-binding-model-variants-fd5q).
++#[derive(Clone, Default)]
++struct ModeledPosixBindings {
++    entries: HashMap<String, ModeledPosixBinding>,
++    order: std::collections::VecDeque<String>,
++    overflowed: HashSet<String>,
++    overflow_exhausted: bool,
++}
++
++impl ModeledPosixBindings {
++    fn get(&self, name: &str) -> Option<&ModeledPosixBinding> {
++        self.entries.get(name)
++    }
++
++    fn is_overflowed(&self, name: &str) -> bool {
++        self.overflow_exhausted || self.overflowed.contains(name)
++    }
++
++    fn insert(&mut self, name: String, binding: ModeledPosixBinding) {
++        self.overflowed.re
 ```
 
-**File**: `tests/repro_402_external_pack_keyword_gating.rs` (modified, +285/-0)
+**File**: `src/main.rs` (modified, +150/-24)
 ```diff
-@@ -542,7 +542,292 @@ destructive_patterns:
+@@ -1595,34 +1595,98 @@ fn scan_oversized_top_level_segments(
+ /// boundaries: whitespace-only, a single-line `#` comment (non-Cmd), or a plain
+ /// literal `echo`/`Write-Output` with zero metacharacters, expansions,
+ /// redirections, escapes, or shell-function overrides.
++fn contains_ascii_word_ci(haystack: &str, needle: &str) -> bool {
++    let h = haystack.as_bytes();
++    let n = needle.as_bytes();
++    if n.is_empty() || h.len() < n.len() {
++        return false;
++    }
++    let is_word = |b: u8| b.is_ascii_alphanumeric() || b == b'_' || b == b'-';
++    h.windows(n.len()).enumerate().any(|(idx, window)| {
++        window.eq_ignore_ascii_case(n)
++            && (idx == 0 || !is_word(h[idx - 1]))
++            && (idx + n.len() == h.len() || !is_word(h[idx + n.len()]))
++    })
++}
++
+ fn command_may_rebind_inert_head(command: &str, dialect: ShellDialect) -> bool {
+-    match dialect {
+-        ShellDialect::Cmd => {
+-            // doskey macros can rebind cmd built-ins/commands.
+-            command
+-                .as_bytes()
+-                .windows(6)
+-                .any(|w| w.eq_ignore_ascii_case(b"doskey"))
+-        }
+-        ShellDialect::PowerShell => {
+-            let bytes = command.as_bytes();
+-            bytes
++    let cmd_rebind = || {
++        command
++            .as_bytes()
++            .windows(6)
++            .any(|w| w.eq_ignore_ascii_case(b"doskey"))
++    };
++    let ps_rebind = || {
++        let bytes = command.as_bytes();
++        bytes
++            .windows(8)
++            .any(|w| w.eq_ignore_ascii_case(b"function"))
++            || bytes.windows(6).any(|w| w.eq_ignore_ascii_case(b"filter"))
++            || bytes.windows(5).any(|w| w.eq_ignore_ascii_case(b"alias"))
++            || bytes
++                .windows(8)
++                .any(|w| w.eq_ignore_ascii_case(b"set-item"))
++            || bytes
+                 .windows(8)
+-                .any(|w| w.eq_ignore_ascii_case(b"function"))
+-                || bytes.windows(6).any(|w| w.eq_ignore_ascii_case(b"filter"))
+-                || bytes.windows(5).any(|w| w.eq_ignore_ascii_case(b"alias"))
+-                || bytes
+-                    .windows(9)
+-                    .any(|w| w.eq_ignore_ascii_case(b"function:"))
++                .any(|w| w.eq_ignore_ascii_case(b"new-item"))
++            || bytes
++                .windows(17)
++                .any(|w| w.eq_ignore_ascii_case(b"invoke-expression"))
++            || bytes
++                .windows(13)
++                .any(|w| w.eq_ignore_ascii_case(b"import-module"))
++            || contains_ascii_word_ci(command, "sal")
++            || contains_ascii_word_ci(command, "nal")
++            || contains_ascii_word_ci(command, "iex")
++            || contains_ascii_word_ci(command, "ipmo")
++    };
++    let posix_rebind = || {
++        // Any `()` catches `echo  () { ... }`, `echo\t() { ... }`, `'echo'()`,
++        // and arbitrary shell function definitions without relying on exact
++        // spacing. `eval`, `source`, `enable`, `shopt`, and dot-sourcing can
++        // likewise define functions/aliases or override builtins.
++        command.contains("()")
++            || command.contains("PATH=")
++            || contains_ascii_word_ci(command, "alias")
++            || contains_ascii_word_ci(command, "function")
++            || contains_ascii_word_ci(command, "eval")
++            || contains_ascii_word_ci(command, "source")
++            || contains_ascii_word_ci(command, "enable")
++            || contains_ascii_word_ci(command, "shopt")
++            || command.starts_with(". ")
++            || command.starts_with(".\t")
++            || command.contains("; . ")
++            || command.contains("; .\t")
++            || command.contains("\n. ")
++            || command.contains("\n.\t")
++            || command.contains("&& . ")
++            || command.contains("|| . ")
++    };
++    match dialect {
++        ShellDialect::Cmd => cmd_rebind(),
++        ShellDialect::PowerShell => ps_rebind(),
++        ShellDialect::Posix => posix_rebind(),
++        ShellDialect::Unknown => posix_rebind() || ps_rebind() || cmd_rebind(),
++    }
++}
++
++/// Whether splitting an oversized command across multiple scan windows could
++/// sever a variable assignment in an earlier window from an expansion in a
++/// later window (e.g., `d=mkfs.ext4\n# <70 KiB>\n$d /dev/sda`).
++fn oversized_windows_may_sever_binding(windows: &[String]) -> bool {
++    if windows.len() <= 1 {
++        return false;
++    }
++    let mut saw_assignment_in_earlier_window = false;
++    for window in windows {
++        if saw_assignment_in_earlier_window && window.contains(['$', '%', '!']) {
++            return true;
+         }
+-        ShellDialect::Posix | ShellDialect::Unknown => {
+-            command.contains("alias")
+-                || command.contains("function")
+-                || command.contains("echo(")
+-                || command.contains("echo (")
+-                || command.contains("PATH=")
++        if window.contains('=
+```
+
+**File**: `src/normalize.rs` (modified, +566/-38)
+```diff
+@@ -169,7 +169,10 @@ pub fn strip_wrapper_prefixes(command: &str) -> NormalizedCommand<'_> {
+         {
+             modprobe_env.posixly_correct = true;
+         }
+-        if (modprobe_env.modprobe_options.is_some() || modprobe_env.posixly_correct)
++        if (modprobe_env.modprobe_options.is_some()
++            || modprobe_env.pre_sudo_modprobe_options.is_some()
++            || modprobe_env.posixly_correct
++            || modprobe_env.pre_sudo_posixly_correct)
+             && let Some(folded) = fold_modprobe_env_into_command(&current, &modprobe_env)
+         {
+             current = folded;
+@@ -201,8 +204,19 @@ pub fn strip_wrapper_prefixes(command: &str) -> NormalizedCommand<'_> {
+ ///   module name rather than a dry-run flag.
+ #[derive(Default)]
+ struct ModprobeEnvState {
++    /// `MODPROBE_OPTIONS` unconditionally visible to `modprobe` (either set
++    /// without crossing a non-preserving `sudo`, or preserved across `sudo`
++    /// via `-E` / `--preserve-env`).
+     modprobe_options: Option<String>,
++    /// `MODPROBE_OPTIONS` set before a `sudo` that does NOT explicitly
++    /// preserve it: dropped under default `env_reset`, kept under `env_keep`
++    /// / `!env_reset`. Evaluated deny-wins over `{env_reset, env_keep}`.
++    pre_sudo_modprobe_options: Option<String>,
++    /// `POSIXLY_CORRECT` unconditionally visible to `modprobe`.
+     posixly_correct: bool,
++    /// `POSIXLY_CORRECT` set before a `sudo` that does NOT explicitly preserve
++    /// it. Evaluated deny-wins over `{env_reset, env_keep}`.
++    pre_sudo_posixly_correct: bool,
+ }
+ 
+ fn record_modprobe_assignment(state: &mut ModprobeEnvState, raw: &str) {
+@@ -214,8 +228,17 @@ fn record_modprobe_assignment(state: &mut ModprobeEnvState, raw: &str) {
+         return;
+     };
+     match name {
+-        "MODPROBE_OPTIONS" => state.modprobe_options = Some(value.to_string()),
+-        "POSIXLY_CORRECT" => state.posixly_correct = true,
++        "MODPROBE_OPTIONS" => {
++            state.modprobe_options = Some(value.to_string());
++            // An assignment after `sudo` overrides any pre-sudo value in both
++            // `env_reset` and `env_keep` worlds (or sudo rejects SETENV and
++            // does not run modprobe at all).
++            state.pre_sudo_modprobe_options = None;
++        }
++        "POSIXLY_CORRECT" => {
++            state.posixly_correct = true;
++            state.pre_sudo_posixly_correct = false;
++        }
+         _ => {}
+     }
+ }
+@@ -226,16 +249,118 @@ fn unset_modprobe_env_name(state: &mut ModprobeEnvState, raw_name: &str) {
+         .decode(raw_name.trim(), ShellTokenRole::Syntax)
+         .unwrap_or_else(|| Cow::Borrowed(raw_name.trim()));
+     match decoded.as_ref() {
+-        "MODPROBE_OPTIONS" => state.modprobe_options = None,
+-        "POSIXLY_CORRECT" => state.posixly_correct = false,
++        "MODPROBE_OPTIONS" => {
++            state.modprobe_options = None;
++            state.pre_sudo_modprobe_options = None;
++        }
++        "POSIXLY_CORRECT" => {
++            state.posixly_correct = false;
++            state.pre_sudo_posixly_correct = false;
++        }
+         _ => {}
      }
  }
  
-+/// #671: only the consumed match span is segment-local. The lookarounds
-+/// still need the complete command, including sibling shell segments.
-+const LOOKAROUND_PACK: &str = r"schema_version: 1
-+id: probe.c2
-+name: Lookaround horizon regression
-+version: 1.0.0
-+keywords: [zzka, zzkb, zzkc]
-+destructive_patterns:
-+  - name: la-only
-+    pattern: 'zzka(?=[^\r\n]*?zzend)'
-+    severity: critical
-+    description: Lookahead reads beyond the consumed match
-+  - name: la-consume
-+    pattern: 'zzkb(?=[^\r\n]*?zzend)[^\r\n]*?zzend'
-+    severity: critical
-+    description: Consuming cross-segment control
-+  - name: lb-only
-+    pattern: '(?<=zzpre[^\r\n]{3})zzkc'
-+    severity: critical
-+    description: Lookbehind reads before the consumed match
-+";
++/// Whether a stripped `sudo ...` prefix explicitly preserves `var_name`
++/// (via `-E`, `--preserve-env`, or `--preserve-env=...,VAR,...`).
++fn sudo_preserves_env_var(stripped_sudo: &str, var_name: &str) -> bool {
++    const ARG_FLAGS: &[char] = &['u', 'g', 'h', 'p', 'C', 'r', 'U', 'D', 't', 'a', 'T'];
++    const ARG_LONG_OPTIONS: &[&str] = &[
++        "--user",
++        "--group",
++        "--host",
++        "--prompt",
++        "--close-from",
++        "--role",
++        "--other-user",
++        "--chdir",
++        "--type",
++        "--command-timeout",
++    ];
++    let tokens = tokenize_for_normalization(stripped_sudo);
++    let words: Vec<&str> = tokens
++        .iter()
++        .filter(|token| token.kind == NormalizeTokenKind::Word)
++        .filter_map(|token| token.text(stripped_sudo))
++        .collect();
++    let mut decoder = ShellTokenDecoder::new(ShellDialect::Posix);
++    let mut index = 1usize; // skip leading `sudo`
++    while index < words.len() {
++        let word = words[index];
++        if word == "--" {
++            break;
++        }
++        if !word.starts_with('-') || word.len() == 1 {
++            break;
++        }
++        if word.starts_with("--") {
++            let (name, value_opt) = word
++                .find('=')
++                .map_or((word, None), |eq| (&word[..eq], Some(&word[eq + 1..])));
++            if name == "--preserve-env" {
++                match value_opt {
++                    None => return true,
++                    Some(raw_list) => {
++                        let decoded = decoder
++                            .decode(raw_list, ShellTokenRole::Syntax)
++                            .unwrap_or(Cow::Borrowed(raw_list));
++                        if decoded.split(',').any(|entry| entry.trim() == var_name) {
++                            return true;
++                        }
++       
+```
+
+**File**: `src/packs/core/git.rs` (modified, +96/-11)
+```diff
+@@ -1683,16 +1683,76 @@ fn git_dynamic_fragments(decoded: &str, dialect: ShellDialect) -> Vec<String> {
+     let chars: Vec<char> = decoded.chars().collect();
+     let mut index = 0usize;
+     let mut dynamic = false;
++    let mut posix_single = false;
++    let mut posix_double = false;
+     while index < chars.len() {
++        if matches!(dialect, ShellDialect::Posix | ShellDialect::Unknown) {
++            let ch = chars[index];
++            if posix_single {
++                if ch == '\'' {
++                    posix_single = false;
++                } else {
++                    fragments.last_mut().expect("seeded").push(ch);
++                }
++                index += 1;
++                continue;
++            }
++            if posix_double {
++                match ch {
++                    '"' => {
++                        posix_double = false;
++                        index += 1;
++                        continue;
++                    }
++                    '\\' => {
++                        if let Some(&next) = chars.get(index + 1) {
++                            if matches!(next, '$' | '`' | '"' | '\\') {
++                                fragments.last_mut().expect("seeded").push(next);
++                            } else if next != '\n' {
++                                fragments.last_mut().expect("seeded").push('\\');
++                                fragments.last_mut().expect("seeded").push(next);
++                            }
++                            index += 2;
++                            continue;
++                        }
++                    }
++                    _ => {}
++                }
++            } else {
++                match ch {
++                    '\'' => {
++                        posix_single = true;
++                        index += 1;
++                        continue;
++                    }
++                    '"' => {
++                        posix_double = true;
++                        index += 1;
++                        continue;
++                    }
++                    '\\' => {
++                        if let Some(&next) = chars.get(index + 1) {
++                            if next != '\n' {
++                                fragments.last_mut().expect("seeded").push(next);
++                            }
++                            index += 2;
++                            continue;
++                        }
++                    }
++                    _ => {}
++                }
++            }
++        }
+         let starts_dynamic = match dialect {
+             ShellDialect::Posix | ShellDialect::Unknown => match chars[index] {
+-                '$' | '`' | '*' | '?' => true,
++                '$' | '`' => true,
++                '*' | '?' if !posix_double => true,
+                 // A `[`/`{` with no later closing delimiter in the word is
+                 // literal (the test builtin / brace reserved word) and must
+                 // contribute a literal fragment rather than a wildcard. Brace
+                 // groups additionally need a `,`/`..` inside to expand.
+-                '[' => chars[index + 1..].contains(&']'),
+-                '{' => {
++                '[' if !posix_double => chars[index + 1..].contains(&']'),
++                '{' if !posix_double => {
+                     let remainder = &chars[index + 1..];
+                     remainder
+                         .iter()
+@@ -1969,7 +2029,11 @@ fn powershell_call_expression(command: &str) -> bool {
+     command
+         .trim_start()
+         .strip_prefix('&')
+-        .filter(|rest| rest.chars().next().is_some_and(char::is_whitespace))
++        .filter(|rest| {
++            rest.chars()
++                .next()
++                .is_some_and(|ch| ch.is_whitespace() || matches!(ch, '(' | '$' | '@'))
++        })
+         .map(str::trim_start)
+         .is_some_and(|rest| {
+             rest.starts_with('(') || rest.starts_with("$(") || rest.starts_with("@(")
+@@ -1999,7 +2063,11 @@ fn powershell_dynamic_call_operator(command: &str) -> bool {
+     command
+         .trim_start()
+         .strip_prefix('&')
+-        .filter(|rest| rest.chars().next().is_some_and(char::is_whitespace))
++        .filter(|rest| {
++            rest.chars()
++                .next()
++                .is_some_and(|ch| ch.is_whitespace() || matches!(ch, '(' | '$' | '@'))
++        })
+         .map(str::trim_start)
+         .is_some_and(|rest| {
+             rest.starts_with('$') || rest.starts_with("@(") || rest.starts_with('(')
+@@ -2289,7 +2357,11 @@ fn powershell_call_expression_parts(command: &str) -> Option<(&str, &str)> {
+     let rest = command
+         .trim_start()
+         .strip_prefix('&')
+-        .filter(|rest| rest.chars().next().is_some_and(char::is_whitespace))?
++        .filter(|rest| {
++            rest.chars()
++                .next()
++                .is_some_and(|ch| ch.is_whitespace() || matches!(ch, '(' | '$' | '@'))
++        })?
+         .trim_start();
+     let open = if rest.starts_with("$(") || res
+```
+
+**File**: `tests/repro_567_569_quoted_interpreter_source.rs` (modified, +113/-0)
+```diff
+@@ -473,3 +473,116 @@ fn issue_567_external_pack_still_judges_every_executed_shell_route() {
+         }
+     }
+ }
 +
 +#[test]
-+fn issue_671_lookarounds_read_across_shell_segments() {
-+    let fixture = Fixture::new();
-+    let config = fixture.lookaround_config(LOOKAROUND_PACK);
-+    for separator in [";", "&&", "|", "||", "&"] {
-+        for (prefix, rule) in [("zzka", "probe.c2:la-only"), ("zzkb", "probe.c2:la-consume")] {
-+            fixture.assert_lookaround_verdict(
-+                &config,
-+                &format!("{prefix} abc{separator} zzend"),
-+                Some(rule),
++fn bd_oxtg_tight_heredoc_budget_reports_incomplete_analysis_not_literal_rule() {
++    let heredoc_data = "python3 - <<'EOF'\nprint('x|git reset --hard')\nEOF";
++    let exterior = "rm -rf / && python3 - <<'EOF'\nprint('x|git reset --hard')\nEOF";
++
++    let run_with_heredoc_budget = |source: &str, route: Route, heredoc_ms: &str| -> Verdict {
++        let temp = tempfile::tempdir().expect("isolated working directory");
++        let home = temp.path().join("home");
++        std::fs::create_dir(&home).expect("isolated home");
++        let mut command = Command::new(env!("CARGO_BIN_EXE_dcg"));
++        let hook_input = serde_json::json!({
++            "hook_event_name": "PreToolUse",
++            "tool_name": "Bash",
++            "tool_input": {"command": source},
++        })
++        .to_string();
++        let input = match route {
++            Route::Hook => {
++                command.args(["--agent", "claude-code"]);
++                hook_input
++            }
++            Route::Batch => {
++                command.args(["hook", "--batch"]);
++                hook_input
++            }
++            Route::CliPosix => {
++                command.args(["test", "--stdin", "--dialect", "posix", "--format", "json"]);
++                source.to_string()
++            }
++        };
++        command
++            .env_clear()
++            .env("HOME", &home)
++            .env("USERPROFILE", &home)
++            .env("XDG_CONFIG_HOME", home.join(".config"))
++            .env("DCG_ALLOWLIST_SYSTEM_PATH", "")
++            .env("DCG_NO_SELF_HEAL", "1")
++            .env("DCG_SELF_HEAL_HOOK", "0")
++            .env("DCG_HISTORY_DISABLED", "1")
++            .env("DCG_HOOK_TIMEOUT_MS", "5000")
++            .env("DCG_AST_TIMEOUT_MS", "5000")
++            .env("DCG_HEREDOC_TIMEOUT_MS", heredoc_ms)
++            .current_dir(temp.path());
++        let mut child = command
++            .stdin(Stdio::piped())
++            .stdout(Stdio::piped())
++            .stderr(Stdio::piped())
++            .spawn()
++            .expect("spawn classifier");
++        child
++            .stdin
++            .take()
++            .expect("piped stdin")
++            .write_all(input.as_bytes())
++            .expect("write input");
++        let output = child.wait_with_output().expect("wait");
++        let stdout = String::from_utf8_lossy(&output.stdout);
++        let stderr = String::from_utf8_lossy(&output.stderr);
++        if route == Route::Hook && stdout.trim().is_empty() {
++            assert!(output.status.success(), "{source:?}: {stderr}");
++            return Verdict {
++                decision: "allow".to_string(),
++                rule: None,
++            };
++        }
++        let value: serde_json::Value = serde_json::from_str(stdout.trim())
++            .unwrap_or_else(|e| panic!("{route:?}: {e}; stdout={stdout}; stderr={stderr}"));
++        if route == Route::Hook {
++            let out = &value["hookSpecificOutput"];
++            let rule = out["ruleId"].as_str().map(str::to_string);
++            let decision = match out["permissionDecision"].as_str() {
++                Some("deny") => "deny",
++                Some("ask") if rule.is_none() => "indeterminate",
++                other => panic!("unexpected hook decision {other:?}: {value}"),
++            };
++            return Verdict {
++                decision: decision.to_string(),
++                rule,
++            };
++        }
++        Verdict {
++            decision: value["decision"].as_str().unwrap_or("").to_string(),
++            rule: value["rule_id"].as_str().map(str::to_string),
++        }
++    };
++
++    for route in ROUTES {
++        // Forced hot-path heredoc timeout (0 ms) triggers bounded fallback:
++        // must report heredoc.shell:incomplete-analysis, never core.git:reset-hard.
++        let degraded = run_with_heredoc_budget(heredoc_data, route, "0");
++        assert_eq!(
++            (degraded.decision.as_str(), degraded.rule.as_deref()),
++            ("deny", Some("heredoc.shell:incomplete-analysis")),
++            "{route:?} degraded data heredoc: {degraded:?}"
++        );
++
++        // Exterior destructive command retains its real pack rule even at 0 ms.
++        let ext = run_with_heredoc_budget(exterior, route, "0");
++        assert_eq!(
++            (ext.decision.as_str(), ext.rule.as_deref()),
++            ("deny", Some("core.filesystem:rm-rf-root-home")),
++            "{route:?} exterior command: {ext:?}"
++        );
++
++        // Normal budget allows the data heredoc.
++        let normal = run_with_heredoc_budget(heredoc_data, route, "5000");
++        assert_eq!(
++            normal.decision, "allow",
++            "{route:?} normal budget: {normal:?}"
++        );
++    }
++}
+```
+
+**File**: `tests/repro_ewf3_cross_dialect_gaps.rs` (added, +254/-0)
+```diff
+@@ -0,0 +1,254 @@
++//! bd-ps-cross-dialect-gaps-ewf3: real-binary CLI + PreToolUse hook tests for:
++//!   (a) PowerShell call expressions (`& ('gi'+'t')`, `& ('{0}{1}' -f 'gi','t')`, `& ($c)`) in `unknown` & `powershell`
++//!   (b) `cmd` caret+percent mixes (`rm^%x% -rf /`, `r^m%x% -rf /`, `g^i%x%t reset --hard`)
++//!   (c) PowerShell here-strings piped to interpreters (`python3`, `py`, `iex`, `pwsh`) in `powershell` & `unknown`
++//!   (d) `cmd` `%VAR%` and `!VAR!` names containing whitespace
++
++use std::io::Write;
++use std::process::{Command, Stdio};
++
++fn dcg_test_verdict(command: &str, dialect: &str) -> serde_json::Value {
++    let scratch = tempfile::tempdir().expect("scratch dir");
++    let home = scratch.path().join("home");
++    std::fs::create_dir(&home).expect("home dir");
++
++    let mut child = Command::new(env!("CARGO_BIN_EXE_dcg"))
++        .args(["test", "--stdin", "--dialect", dialect, "--format", "json"])
++        .env_clear()
++        .env("HOME", &home)
++        .env("USERPROFILE", &home)
++        .env("XDG_CONFIG_HOME", home.join(".config"))
++        .env("DCG_ALLOWLIST_SYSTEM_PATH", "")
++        .env("DCG_NO_SELF_HEAL", "1")
++        .env("DCG_SELF_HEAL_HOOK", "0")
++        .env("DCG_HISTORY_DISABLED", "1")
++        .env("DCG_HOOK_TIMEOUT_MS", "5000")
++        .env("DCG_AST_TIMEOUT_MS", "5000")
++        .env("DCG_HEREDOC_TIMEOUT_MS", "5000")
++        .current_dir(scratch.path())
++        .stdin(Stdio::piped())
++        .stdout(Stdio::piped())
++        .stderr(Stdio::piped())
++        .spawn()
++        .expect("spawn dcg test");
++    child
++        .stdin
++        .take()
++        .expect("stdin")
++        .write_all(command.as_bytes())
++        .expect("write command");
++    let output = child.wait_with_output().expect("wait dcg test");
++    let stdout = String::from_utf8_lossy(&output.stdout);
++    let stderr = String::from_utf8_lossy(&output.stderr);
++    serde_json::from_str(stdout.trim()).unwrap_or_else(|err| {
++        panic!("invalid JSON for {command:?} ({dialect}): {err}\nstdout={stdout}\nstderr={stderr}")
++    })
++}
++
++fn hook_decision(command: &str, tool_name: &str) -> (String, String) {
++    let scratch = tempfile::tempdir().expect("scratch dir");
++    let home = scratch.path().join("home");
++    std::fs::create_dir(&home).expect("home dir");
++    let payload = serde_json::json!({
++        "hook_event_name": "PreToolUse",
++        "tool_name": tool_name,
++        "tool_input": { "command": command }
++    })
++    .to_string();
++
++    let mut child = Command::new(env!("CARGO_BIN_EXE_dcg"))
++        .env_clear()
++        .env("HOME", &home)
++        .env("USERPROFILE", &home)
++        .env("XDG_CONFIG_HOME", home.join(".config"))
++        .env("DCG_ALLOWLIST_SYSTEM_PATH", "")
++        .env("DCG_NO_SELF_HEAL", "1")
++        .env("DCG_SELF_HEAL_HOOK", "0")
++        .env("DCG_HISTORY_DISABLED", "1")
++        .env("DCG_HOOK_TIMEOUT_MS", "5000")
++        .env("DCG_AST_TIMEOUT_MS", "5000")
++        .env("DCG_HEREDOC_TIMEOUT_MS", "5000")
++        .current_dir(scratch.path())
++        .stdin(Stdio::piped())
++        .stdout(Stdio::piped())
++        .stderr(Stdio::piped())
++        .spawn()
++        .expect("spawn dcg hook");
++    child
++        .stdin
++        .take()
++        .expect("stdin")
++        .write_all(payload.as_bytes())
++        .expect("write hook payload");
++    let output = child.wait_with_output().expect("wait dcg hook");
++    let stdout = String::from_utf8_lossy(&output.stdout).trim().to_string();
++    let stderr = String::from_utf8_lossy(&output.stderr).to_string();
++    if stdout.is_empty() {
++        assert!(output.status.success(), "{command:?}: {stderr}");
++        return ("allow".to_string(), stdout);
++    }
++    let value: serde_json::Value = serde_json::from_str(&stdout)
++        .unwrap_or_else(|e| panic!("invalid hook JSON for {command:?}: {e}; stdout={stdout}"));
++    let decision = value["hookSpecificOutput"]["permissionDecision"]
++        .as_str()
++        .unwrap_or("unknown")
++        .to_string();
++    (decision, stdout)
++}
++
++#[test]
++fn ewf3_powershell_call_expressions_in_unknown_and_powershell() {
++    for command in [
++        "& ('gi'+'t') reset --hard",
++        "&('gi'+'t') reset --hard",
++        "& ('{0}{1}' -f 'gi','t') reset --hard",
++        "& ([string]'gi'+'t') reset --hard",
++        "& ($c) reset --hard",
++        r#"echo "x\"; & ('gi'+'t') reset --hard"#,
++    ] {
++        for dialect in ["powershell", "unknown"] {
++            let verdict = dcg_test_verdict(command, dialect);
++            assert_eq!(
++                verdict["decision"].as_str(),
++                Some("deny"),
++                "{command:?} ({dialect}): {verdict}"
 +            );
 +        }
-+    }
-+    // Exactly three characters must separate zzpre from the consumed zzkc.
-+    for command in [
-+        "zzpre ; zzkc",
-+        "zzpre &&zzkc",
-+        "zzpre | zzkc",
-+        "zzpre ||zzkc",
-+        "zzpre & zzkc",
-+    ] {
-+        fixture.assert_lookaround_verdict(&config, command, Some("probe.c2:lb-only"));
-+    }
-+    for (command, rule) in [
-+        ("zzka abc zzend", "probe.c2:la-only"),
-+        (r#"zzka "abc; zzend""#, "probe.c2:la-only"),
-+        ("zzkb abc zzend", "probe.c2:la-consume"),
-+        ("zzpre , zzkc", "probe.c2:lb-only"),
-+    ] {
-+        fixture.assert_lookaround_verdict(&config, command, Some(rule));
-+    }
-+    // A missing assertion is a completed nonmatch, not an incomplete result.
-+    for command in ["zzka abc; zzother", "zzkb abc; zzother", "zzother ; zzkc"] {
-+        fixture.assert_lookaround_verdict(&config, command, None);
-+    }
-+}
-+
-+#[test]
-+fn issue_671_safe_segments_do_not_hide_later_lookaround_matches() {
-+    let fixture = Fixture::new();
-+    let config = fixture.lookaround_config(&format!(
-+        "{LOOKAROUND_PACK}safe_patterns:\n  - name: safe-command\n    pattern: '^zzka safe$'\n"
-+    ));
-+    fixture.assert_lookaround_verdict(&config, "zzka safe; zzend", None);
-+    // The first full-command match is exempt. Continue searching with the
-+    // original lookaround context so the later occurrence cannot disappear.
-+    for command in ["zzka safe; zzka abc; zzend", "zzka abc; zzka safe; zzend"] {
-+        fixture.assert_lookaround_verdict(&config, command, Some("probe.c2:la-only"));
-+    }
-+}
-+
-+#[test]
-+fn issue_671_lookaround_rule_allowlists_remain_rule_scoped() {
-+    let fixture = Fixture::new();
-+    let config = fixture.lookaround_config(LOOKAROUND_PACK);
-+    fs::create_dir_all(fixture.root.join("config/dcg")).unwrap();
-+    fs::write(
-+        fixture.root.join("config/dcg/allowlist.toml"),
-+        "[[allow]]\nrule = \"probe.c2:la-only\"\nreason = \"Authorize only this probe rule\"\n",
-+    )
-+    .unwrap();
-+    fixture.assert_lookaround_verdict(&config, "zzka abc; zzend", None);
-+    fixture.assert_lookaround_verdict(&config, "zzpre ; zzkc", Some("probe.c2:lb-only"));
-+    fixture.assert_lookaround_verdict(
-+        &config,
-+        "zzka abc; zzend; zzpre ; zzkc",
-+        Some("probe.c2:lb-only"),
-+    );
-+}
-+
-+#[test]
-+fn issue_671_source_preserving_lookarounds_keep_assignment_context() {
-+    let fixture = Fixture::new();
-+    let config = fixture.lookaround_config(
-+        r"schema_version: 1
-+id: probe.assignment
-+name: Source-preserving lookaround
-+version: 1.0.0
-+keywords: [zzka]
-+destructive_patterns:
-+  - name: assignment-lookaround
-+    pattern: '(?<=ZZENV=deny )zzka(?=[^\r\n]*?zzend)'
-+    severity: critical
-+    description: Both the assignment and a later segment are required
-+",
-+    );
-+    for command in ["ZZENV=deny zzka abc zzend", "ZZENV=deny zzka abc; zzend"] {
-+        fixture.assert_lookaround_verdict(
-+            &config,
-+            command,
-+            Some("probe.assignment:assignment-lookaround"),
++        let (decision, stdout) = hook_decision(command, "PowerShell");
++        assert_eq!(
++            decision, "deny",
++            "PowerShell hook must deny {command:?}: {stdout}"
 +        );
++        let (decision_u, stdout_u) = hook_decision(command, "shell");
++        assert
+```
+
+**File**: `tests/repro_fd5q_binding_model_variants.rs` (added, +257/-0)
+```diff
+@@ -0,0 +1,257 @@
++//! bd-binding-model-variants-fd5q: real-binary CLI + PreToolUse hook tests for
++//! POSIX executable binding model improvements:
++//!   (a) per-segment separator handling (`||`, `|`, `&&`, `&`)
++//!   (b) stepping over neutral commands (`echo`, `:`, `[ ]`, `[[ ]]`, `test`, `true`, `X=1 true`)
++//!   (c) `export` / `readonly` / `declare` bindings and use-site wrappers (`sudo`, `env`, `time`, `exec`, `command`, `nohup`, `nice`)
++//!   (d) unified quoted `"$VAR"` handling between `posix` and `unknown`
++//!   (e) bounded >64 assignment handling without blanket fail-closed on later unrelated vars
++
++use std::io::Write;
++use std::process::{Command, Stdio};
++
++fn dcg_test_verdict(command: &str, dialect: &str) -> serde_json::Value {
++    let scratch = tempfile::tempdir().expect("scratch dir");
++    let home = scratch.path().join("home");
++    std::fs::create_dir(&home).expect("home dir");
++
++    let mut child = Command::new(env!("CARGO_BIN_EXE_dcg"))
++        .args(["test", "--stdin", "--dialect", dialect, "--format", "json"])
++        .env_clear()
++        .env("HOME", &home)
++        .env("USERPROFILE", &home)
++        .env("XDG_CONFIG_HOME", home.join(".config"))
++        .env("DCG_ALLOWLIST_SYSTEM_PATH", "")
++        .env("DCG_NO_SELF_HEAL", "1")
++        .env("DCG_SELF_HEAL_HOOK", "0")
++        .env("DCG_HISTORY_DISABLED", "1")
++        .env("DCG_HOOK_TIMEOUT_MS", "5000")
++        .env("DCG_AST_TIMEOUT_MS", "5000")
++        .env("DCG_HEREDOC_TIMEOUT_MS", "5000")
++        .current_dir(scratch.path())
++        .stdin(Stdio::piped())
++        .stdout(Stdio::piped())
++        .stderr(Stdio::piped())
++        .spawn()
++        .expect("spawn dcg test");
++    child
++        .stdin
++        .take()
++        .expect("stdin")
++        .write_all(command.as_bytes())
++        .expect("write command");
++    let output = child.wait_with_output().expect("wait dcg test");
++    let stdout = String::from_utf8_lossy(&output.stdout);
++    let stderr = String::from_utf8_lossy(&output.stderr);
++    serde_json::from_str(stdout.trim()).unwrap_or_else(|err| {
++        panic!("invalid JSON for {command:?} ({dialect}): {err}\nstdout={stdout}\nstderr={stderr}")
++    })
++}
++
++fn hook_decision(command: &str, tool_name: &str) -> (String, String) {
++    let scratch = tempfile::tempdir().expect("scratch dir");
++    let home = scratch.path().join("home");
++    std::fs::create_dir(&home).expect("home dir");
++    let payload = serde_json::json!({
++        "hook_event_name": "PreToolUse",
++        "tool_name": tool_name,
++        "tool_input": { "command": command }
++    })
++    .to_string();
++
++    let mut child = Command::new(env!("CARGO_BIN_EXE_dcg"))
++        .env_clear()
++        .env("HOME", &home)
++        .env("USERPROFILE", &home)
++        .env("XDG_CONFIG_HOME", home.join(".config"))
++        .env("DCG_ALLOWLIST_SYSTEM_PATH", "")
++        .env("DCG_NO_SELF_HEAL", "1")
++        .env("DCG_SELF_HEAL_HOOK", "0")
++        .env("DCG_HISTORY_DISABLED", "1")
++        .env("DCG_HOOK_TIMEOUT_MS", "5000")
++        .env("DCG_AST_TIMEOUT_MS", "5000")
++        .env("DCG_HEREDOC_TIMEOUT_MS", "5000")
++        .current_dir(scratch.path())
++        .stdin(Stdio::piped())
++        .stdout(Stdio::piped())
++        .stderr(Stdio::piped())
++        .spawn()
++        .expect("spawn dcg hook");
++    child
++        .stdin
++        .take()
++        .expect("stdin")
++        .write_all(payload.as_bytes())
++        .expect("write hook payload");
++    let output = child.wait_with_output().expect("wait dcg hook");
++    let stdout = String::from_utf8_lossy(&output.stdout).trim().to_string();
++    let stderr = String::from_utf8_lossy(&output.stderr).to_string();
++    if stdout.is_empty() {
++        assert!(output.status.success(), "{command:?}: {stderr}");
++        return ("allow".to_string(), stdout);
 +    }
-+    fixture.assert_lookaround_verdict(&config, "ZZENV=allow zzka abc; zzend", None);
++    let value: serde_json::Value = serde_json::from_str(&stdout)
++        .unwrap_or_else(|e| panic!("invalid hook JSON for {command:?}: {e}; stdout={stdout}"));
++    let decision = value["hookSpecificOutput"]["permissionDecision"]
++        .as_str()
++        .unwrap_or("unknown")
++        .to_string();
++    (decision, stdout)
 +}
 +
 +#[test]
-+fn issue_671_lookarounds_respect_executable_scope() {
-+    let fixture = Fixture::new();
-+    let config = fixture.lookaround_config(
-+        r"schema_version: 1
-+id: probe.scoped
-+name: Scoped lookaround
-+version: 1.0.0
-+keywords: [zzka]
-+destructive_patterns:
-+  - name: la-only
-+    pattern: 'zzka(?=[^\r\n]*?zzend)'
-+    executables: [zzka]
-+    severity: critical
-+    description: Match only inside a zzka invocation
-+",
-+    );
-+    fixture.assert_lookaround_verdict(&config, "zzka abc zzend", S
++fn fd5q_separators_neutral_commands_declarations_and_wrappers_deny_destructive() {
++    let destructive = [
++        // (a) Per-segment separator handling (`||`, `|`, `&&`, `&`)
++        "d=mkfs.ext4; false || $d /dev/sda",
++        "false || d=git; $d reset --hard",
++        "d=mkfs.ext4; echo x | $d /dev/sda",
++        "d=mkfs.ext4; true & $d /dev/sda",
++        // (b) Stepping over neutral commands between binding and use
++        "d=mkfs.ext4; echo checking; $d /dev/sda",
++        "d=mkfs.ext4; :; $d /dev/sda",
++        "d=mkfs.ext4; [ -d /tmp ]; $d /dev/sda",
++        "d=mkfs.ext4; [[ -d /tmp ]]; $d /dev/sda",
++        "d=mkfs.ext4; test -d /tmp && $d /dev/sda",
++        "d=mkfs.ext4; true; $d /dev/sda",
++        "d=mkfs.ext4; X=1 true; $d /dev/sda",
++        // (c) export / readonly / declare bindi
 ```
 
 ---
 
-### Incident Patch 3: `b4f82a73` (2026-11-23)
-**Commit Message**: fix: tri-state guardrail proof, minimal-container install.sh, and release v0.17.1 [skip ci]
+### Incident Patch 2: `7a90b02a` (2026-11-24)
+**Commit Message**: fix(hook): mask inert oversized data heredocs and preserve lexical window coverage [skip ci]
 
-- Fix bd-guardrails-global-options: add tri-state DcgSegmentAction /
-  DcgControlActionProof (Action / Inert / Unprovable) so static inert
-  dcg argument data (e.g. --agent="dcg --robot allow-once ...") skips
-  only dcg-command regex fallback within proven-inert segments while
-  preserving all self-weakening DENY controls, leading env-var overrides
-  (DCG_BYPASS / DCG_DISABLE), dynamic expansions, and redirections.
-- Fix install.sh in minimal containers without python3: delegate Claude
-  Code settings.json hook merge to native `dcg install` when python3 is
-  unavailable, guard optional agent hook configuration calls against
-  exiting under set -e, and fix Linux procps-ng pgrep -fl Cursor
-  self-match detection via cursor_process_running().
-- Update cookie 0.18.2 -> 0.18.3 (RUSTSEC-2026-0594).
-- Bump version to 0.17.1 and update CHANGELOG.md (also shipping the #671
-  lookaround fixes on main).
+Closes bd-oversized-data-heredoc-window-fp-jj7f, bd-oversized-window-coverage-o36a, and bd-oversized-code-heredoc-receivers-azu4.
 
-**File**: `.beads/issues.jsonl` (modified, +1/-1)
+- Mask AST-proven inert quoted data-heredoc bodies (length-preserving, preserving newlines and all exterior bytes/headers/terminators) before dialect refinement and window slicing in try_deny_unparseable_payload, failing closed (zero masking) on unverified receivers, pipes, substitutions, overrides, unterminated/unquoted heredocs, device sinks, or >4 MiB cap.
+- Advance streaming heredoc compaction past compacted bodies so interior << tokens in large source files (e.g. Rust/C++ shifts) do not exhaust the 256-operator bound while preserving exterior operator limits.
+- Replace blind stride-only windowing on the oversized salvage path with dialect-aware (Cmd/PowerShell/POSIX) lexical statement-boundary windowing and quote-parity prefix restoration, keeping single commands and pipelines up to max_command_bytes whole and reporting incomplete coverage (fail-closed indeterminate) on non-inert >max_command_bytes statements, nesting overflow, cap exhaustion, and zero/tin
+
+**File**: `.beads/issues.jsonl` (modified, +3/-3)
 ```diff
-@@ -84,7 +84,7 @@
- {"id":"bd-f16f","title":"Segment-scope overrides.allow matching: naive substring patterns allow chained unrelated destruction (#327 sharp edge)","status":"closed","priority":2,"issue_type":"task","created_at":"2026-08-20T18:11:54.866705Z","created_by":"jemanuel","updated_at":"2026-09-22T18:21:24.894261767Z","closed_at":"2026-09-22T18:21:24.878665477Z","close_reason":"Already implemented under #340: CompiledOverrides::check_allow is segment-scoped, so an allow entry must cover every segment. Pinned by src/config.rs tests unanchored_allow_override_does_not_launder_later_segments (&&, ;, ||, |), allow_override_does_not_launder_command_substitution, allow_override_permits_fully_covered_compound.","source_repo":"destructive_command_guard","compaction_level":0,"original_size":0}
- {"id":"bd-fg8f","title":"P4.7: Update scan command progress and results display","status":"closed","priority":2,"issue_type":"task","created_at":"2026-01-19T21:12:05.227501776Z","created_by":"ubuntu","updated_at":"2026-01-21T21:53:05.030745430Z","closed_at":"2026-01-21T21:53:05.030657314Z","source_repo":".","compaction_level":0,"original_size":0,"dependencies":[{"issue_id":"bd-fg8f","depends_on_id":"bd-2cvj","type":"blocks","created_at":"2026-02-16T07:00:29Z","created_by":"import","metadata":"{}","thread_id":""},{"issue_id":"bd-fg8f","depends_on_id":"bd-2e8p","type":"blocks","created_at":"2026-02-16T07:00:29Z","created_by":"import","metadata":"{}","thread_id":""},{"issue_id":"bd-fg8f","depends_on_id":"bd-2jp9","type":"blocks","created_at":"2026-02-16T07:00:29Z","created_by":"import","metadata":"{}","thread_id":""},{"issue_id":"bd-fg8f","depends_on_id":"bd-2loz","type":"blocks","created_at":"2026-02-16T07:00:29Z","created_by":"import","metadata":"{}","thread_id":""}]}
- {"id":"bd-git-backslash-attribution-ptpo","title":"Windows-separator .git paths deny under the escaped-path rule, not git-internals","status":"closed","priority":2,"issue_type":"bug","created_at":"2026-09-24T16:23:11.237677557Z","created_by":"ubuntu","updated_at":"2026-09-24T17:50:29.885365887Z","closed_at":"2026-09-24T17:50:29.884650196Z","close_reason":"Measured; converted to GitHub #492. The attribution is POSIX-correct (> .git\\config opens .gitconfig there), so the live defect is grantability, not naming: allowlisting the High redirect-truncate-dynamic-path also grants the Windows-separator spellings of two Critical rules. Repair changes existing allowlist meaning, so it is a maintainer decision, filed with options and a recommendation.","source_repo":"destructive_command_guard","compaction_level":0,"original_size":0}
--{"id":"bd-guardrails-global-options","title":"Enabled guardrails pack misses dcg self-weakening commands with global options","description":"## Confirmed defect\n\nA fresh isolated probe against executable source content corresponding to published commit 10bc819cc0906019037024d4ab6d769bb3d9b6db confirms that the explicitly enabled careful_company_running_windows.guardrails pack denies direct dcg self-weakening subcommands but permits the same commands when the valid global --robot option precedes the subcommand.\n\nPaired fixture results:\n- dcg allow-once abc123 --yes -> deny; dcg --robot allow-once abc123 --yes -> allow. Expected rule: careful_company_running_windows.guardrails:dcg-policy-self-weakening.\n- dcg allowlist add core.git:reset-hard --reason approved -> deny; dcg --robot allowlist add core.git:reset-hard --reason approved -> allow. Expected rule: careful_company_running_windows.guardrails:dcg-policy-self-weakening.\n- dcg uninstall --yes -> deny; dcg --robot uninstall --yes -> allow. Expected rule: careful_company_running_windows.guardrails:dcg-bypass-or-uninstall.\n\n## Retained reproduction evidence\n\nThe six results are retained in /tmp/dcg-guardrails-repro-f5f64oyl/results.json. Recorded binary SHA-256: a735d6be7fea590c1dd8472e9a92658e35b73471b7a07692b58fa4c40ee6ea00. Probe invocation: dcg test --stdin --config <empty isolated config> --with-packs careful_company_running_windows.guardrails --format json, with isolated HOME/config/state. All three direct forms exited 1 with the expected denial rule; all three --robot-prefixed forms exited 0 with decision allow. The inputs were inert fixture strings: target commands were never executed.\n\n## Code evidence and scope\n\nThe guardrails rules in src/packs/careful_company_running_windows/guardrails.rs require dcg (or dcg.exe) immediately followed by uninstall, allow-once, allow, or allowlist add/add-command/import. src/cli.rs declares robot as a global CLI argument, so --robot before a subcommand is valid but defeats those adjacent-token patterns. Verify supported global-option positions using actual CLI argv semantics; do not solve this by treating arbitrary argument text as an executed dcg subcommand.\n\nThis is a correctness defect in an explicitly enabled protection. The separate default-on/self-approval policy question remains tracked by bd-hgm5; resolving that policy
+@@ -101,9 +101,9 @@
+ {"id":"bd-migo","title":"cleanup(core.filesystem): rm regexes are unanchored at the pack layer","description":"core.filesystem's rm rules use a bare `rm\\s+...` with no argv0 anchor, so at the PACK layer they match inside a longer word: pack.check(\"charm -r -f build\") and pack.check(\"swarm -r -f nodes\") both return Some.\n\nNOT a live false positive: end to end those commands are correctly ALLOWED, because the evaluator resolves argv0 before a denial stands. This is defense-in-depth only — it bites any caller that uses Pack::check directly without the evaluator's gating.\n\nSame class as the bug found in database.bigquery during the 2026-08-10 review, where `\\brm\\b` matched `git rm old_file.txt` at the pack layer; that was fixed by anchoring each CLI regex on the executable.\n\nFIX SHAPE (mirror bigquery): prefix each rm rule with\n  (?:^|[\\s;&|(])(?:[^\\s;&|]*[/\\\\])?rm\\s+\nwhich keeps every real invocation — plain `rm`, `/bin/rm`, `./rm`, and subcommand forms `git rm` / `bq rm` (space-preceded) — while excluding `charm`/`swarm`. It is a strict narrowing, no coverage loss.\n\nRISK: core.filesystem is the always-on tier-1 pack with many rm rules (rm-rf-general, rm-rf-root-home, rm-r-f-separate, rm-recursive-*, ...). Every rule must be changed together and validated against the full corpus; a partial edit would be worse than none. Deliberately NOT bundled into bd-pwvp, which was about attribution rather than anchoring.\n\nFound 2026-08-11 while working bd-pwvp: a test asserting is_none() at the pack layer failed and exposed it.","status":"closed","priority":3,"issue_type":"task","created_at":"2026-08-11T04:06:50.572834Z","created_by":"jemanuel","updated_at":"2026-09-22T18:35:18.830766799Z","closed_at":"2026-09-22T18:35:18.828606892Z","close_reason":"Fixed in 3813c06: all six rm rules (root-home x3, general x3) prefixed with (?:^|[^A-Za-z0-9_.-]); strict narrowing. Test rm_regexes_do_not_match_inside_a_longer_word (charm/swarm/farm allowed at Pack::check; /bin/rm and chained rm still match).","source_repo":"destructive_command_guard","compaction_level":0,"original_size":0}
+ {"id":"bd-modprobe-env-option-bypass-fhep","title":"modprobe MODPROBE_OPTIONS/POSIXLY_CORRECT env-option removal bypasses the stripped-prefix layer","description":"MODPROBE_OPTIONS=-r modprobe nvidia (and POSIXLY_CORRECT=1 modprobe -r nvidia -n) remove a module, but the evaluator strips a leading environment assignment as a wrapper prefix before any pack sees the command (confirmed: FOO=bar modprobe -r nvidia denies, MODPROBE_OPTIONS=-r modprobe nvidia allows). So a system.services regex cannot see the variable. A real fix must act at the env-assignment layer: when stripping a leading NAME=value, recognize option-injecting vars (MODPROBE_OPTIONS, and POSIXLY_CORRECT which stops getopt permutation) and fold their effect into the stripped command, or decline to strip them for executables whose parsing they change. Exotic; reviewer F4 medium confidence. NOTE: an earlier attempt put MODPROBE_OPTIONS/POSIXLY branches in the modprobe_removal regex; that was dead in production (pack.check saw it, the hook did not) and was reverted.","status":"open","priority":3,"issue_type":"bug","created_at":"2026-11-03T14:01:44.094415Z","created_by":"jemanuel","updated_at":"2026-11-03T14:01:44.094415Z","source_repo":"destructive_command_guard","compaction_level":0,"original_size":0}
+ {"id":"bd-nxn1","title":"Fork-bomb rule exhausts its regex work limit on long one-shape bodies","description":"The core.filesystem fork-bomb rule can use up its regex work limit on a long body that holds no function definition at all. The check is then incomplete, so the command comes back `indeterminate`: a client with a review prompt asks, and any other client blocks.\n\nIts pattern, `(?<![A-Za-z0-9_:])((?>[A-Za-z0-9_:]+))\\s*\\(\\s*\\)\\s*\\{\\s*\\1\\s*\\|\\s*\\1\\s*&\\s*;?\\s*\\}\\s*;\\s*\\1`, needs fancy-regex for the back-reference, and the search is bounded at 100,000 backtracking steps.\n\nRow: a quoted `perl - <<'EOF'` heredoc whose body is 7,875 lines of `\"nope\";` (63 KB). 0.16.0 asks after about 370 ms (`phase: regex_match, incomplete: find_from`); the dcg_perf log names this pattern. At 52 KB the same body allows in about 340 ms, and `dcg explain` gives allow at both sizes. 0.15.3 asks on this body from about 40 KB, when its 1,000 ms clock runs out.\n\nWhat changed since 0.15.3:\n- The limit did not. `BACKTRACK_LIMIT` is 100,000 in both, with the same fancy-regex version.\n- The handling did (553263f1). 0.15.3 counted an exhausted search as no match, which failed open. 0.16.0 records it as incomplete analysis.\n- The pattern did (1475a05f, #555). The name group now starts at a word start and is atomic, so long programs full of calls no longer exhaust it. A long body of one repeated shape still does.\n\nFix idea: check the text first with a linear superset of the pattern on the regex crate, the same pattern without the lookbehind, the atom
 ```
 
-**File**: `CHANGELOG.md` (modified, +33/-1)
+**File**: `src/heredoc.rs` (modified, +494/-136)
 ```diff
-@@ -11,7 +11,15 @@ Repository: <https://github.com/Dicklesworthstone/destructive_command_guard>
- 
- ---
- 
--## Unreleased
-+## [v0.17.1](https://github.com/Dicklesworthstone/destructive_command_guard/releases/tag/v0.17.1) -- 2026-11-23 [Release]
-+
-+This patch release ships whole-command lookaround preservation for custom
-+packs (`#671`), finishes the `careful_company_running_windows.guardrails`
-+tri-state native argv proof so command-looking `--agent` argument data with
-+escaped quotes is not falsely blocked while preserving all self-weakening and
-+environment-override blocks, fixes `install.sh` on minimal containers lacking
-+`python3` (plus Linux `procps-ng` Cursor detection), and resolves
-+`RUSTSEC-2026-0594` (`cookie` `0.18.3`).
- 
- **Unscoped custom-pack lookarounds retain whole-command context (#671).** A
- lookahead or lookbehind can depend on text across a shell separator even when
-@@ -22,6 +30,30 @@ Safe-pattern exemptions and rule allowlists still apply; an exempt occurrence
- cannot hide a later or overlapping match of the same rule. Searches preserve
- anchors, lookbehind, UTF-8 boundaries, and the evaluation deadline.
- 
-+**Guardrails pack tri-state argv proof & leading env-var overrides (`bd-guardrails-global-options`).**
-+`dcg_segment_action_span` now returns a tri-state proof (`Action` / `Inert` /
-+`Unprovable`). Proven-inert top-level `dcg` invocations with command-looking
-+`--agent` values (including escaped quotes such as POSIX `"`, ANSI-C `\'`
-+and PowerShell backtick-escaped quotes) no longer trigger the regex fallback's
-+`dcg`-command branch, while all self-weakening subcommands (`allow-once`,
-+`allow`, `allowlist add|add-command|import`, `uninstall`), unprovable segments
-+(wrappers, substitutions, unknown flags, redirections), and environment
-+override branches (`DCG_BYPASS=1`, `DCG_DISABLE=...`, `Set-Item env:DCG_BYPASS`,
-+including leading `NAME=value` prefixes) remain strictly blocked.
-+
-+**Minimal-container `install.sh` without `python3` & Linux `pgrep` Cursor detection.**
-+When `python3` is unavailable and `~/.claude/settings.json` already exists,
-+`configure_claude_code` now delegates to the freshly installed native `dcg
-+install` binary (atomic, host-field-preserving pure-Rust merge) and falls back
-+gracefully with a non-fatal warning when native merge is inapplicable; all
-+`configure_*` calls in `install.sh` are guarded so a hook-merge failure never
-+aborts installation under `set -e`. Cursor process detection now captures
-+`pgrep -fa` on Linux (`-fl` on macOS) before filtering so `procps-ng`'s short
-+process name output no longer matches its own `grep` sibling on bare containers.
-+
-+**Security advisory fix (`RUSTSEC-2026-0594`).** Updated `cookie` from
-+`0.18.2` to `0.18.3` in `Cargo.lock` (`cargo audit`: 0 vulnerabilities).
-+
- ## [v0.17.0](https://github.com/Dicklesworthstone/destructive_command_guard/releases/tag/v0.17.0) -- 2026-11-21 [Release]
- 
- This release closes more commands that ran unguarded (PowerShell
-```
-
-**File**: `Cargo.lock` (modified, +3/-3)
-```diff
-@@ -593,9 +593,9 @@ dependencies = [
- 
- [[package]]
- name = "cookie"
--version = "0.18.2"
-+version = "0.18.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1a373e3602691c3cdea496d2f0ee5935151e6168fe87739483c463db1b2f2f87"
-+checksum = "d55f2d6c30eeec7d5c6f98bd4395d4abb1895629eab97ee6522d340623615f8a"
- dependencies = [
-  "percent-encoding",
-  "time",
-@@ -931,7 +931,7 @@ dependencies = [
- 
- [[package]]
- name = "destructive_command_guard"
--version = "0.17.0"
-+version = "0.17.1"
- dependencies = [
-  "aho-corasick",
-  "assert_cmd",
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "destructive_command_guard"
--version = "0.17.0"
-+version = "0.17.1"
- edition = "2024"
- resolver = "2"
- authors = [
-```
-
-**File**: `install.sh` (modified, +111/-22)
-```diff
-@@ -5,7 +5,7 @@
- # Authenticate a pinned release installer before running this script:
- #   https://github.com/Dicklesworthstone/destructive_command_guard#quick-install-verified-release
- # After verifying the signature and pinned digest, run the local file:
--#   bash ./install.sh --version v0.17.0 --require-minisign
-+#   bash ./install.sh --version v0.17.1 --require-minisign
- #
- # Options:
- #   --version vX.Y.Z   Install specific version (default: latest)
-@@ -31,7 +31,7 @@ if [ -z "${BASH_VERSION:-}" ]; then
-   printf '%s\n' \
-     'dcg installer: this script needs bash. Authenticate the release installer first:' \
-     '  https://github.com/Dicklesworthstone/destructive_command_guard#quick-install-verified-release' \
--    'Then run the verified local file with bash ./install.sh --version v0.17.0 --require-minisign' >&2
-+    'Then run the verified local file with bash ./install.sh --version v0.17.1 --require-minisign' >&2
-   exit 1
- fi
- # bash run as `sh` starts in POSIX mode, which rejects the process
-@@ -436,6 +436,36 @@ reasonix_home_dir() {
-   printf '%s\n' "$dir"
- }
- 
-+# Check whether a Cursor IDE process is running without matching a sibling
-+# grep process or macOS CursorUIViewService system helpers.
-+# On Linux procps-ng, `pgrep -fl` prints only the short process name (not full
-+# args, which requires `-fa`), so piping into `grep -qv CursorUIViewService`
-+# matched the grep sibling itself on bare Linux containers. Capturing pgrep
-+# output first avoids any live grep sibling, and `-fa` (Linux) / `-fl` (macOS)
-+# inspects full command lines cleanly.
-+cursor_process_running() {
-+  command -v pgrep >/dev/null 2>&1 || return 1
-+  local procs=""
-+  local pgrep_rc=0
-+  case "$(uname -s 2>/dev/null || true)" in
-+    Darwin)
-+      procs=$(pgrep -fl "[Cc]ursor" 2>/dev/null) || return 1
-+      ;;
-+    *)
-+      procs=$(pgrep -fa "[Cc]ursor" 2>/dev/null) || pgrep_rc=$?
-+      if [ "$pgrep_rc" -gt 1 ]; then
-+        procs=$(pgrep -fl "[Cc]ursor" 2>/dev/null) || return 1
-+      elif [ "$pgrep_rc" -ne 0 ]; then
-+        return 1
-+      fi
-+      ;;
-+  esac
-+  [ -n "$procs" ] || return 1
-+  printf '%s\n' "$procs" |
-+    grep -Ev 'CursorUIViewService|/System/Library/' |
-+    grep -qvE '^[0-9]+[[:space:]]+(pgrep|grep)([[:space:]]|$)'
+@@ -8749,168 +8749,347 @@ pub(crate) fn first_heredoc_target_command(command: &str) -> Option<String> {
+ /// text or arithmetic is not exempt when its complete proof exceeds them.
+ #[must_use]
+ pub fn oversized_heredoc_requires_analysis(command: &str) -> bool {
+-    const MAX_HEREDOC_OPERATORS: usize = 256;
+-    if command.len() > MAX_OVERSIZED_HEREDOC_SOURCE_BYTES {
+-        return true;
++    analyze_oversized_heredocs(command).requires_analysis
 +}
 +
- detect_agents() {
-   DETECTED_AGENTS=()
- 
-@@ -484,10 +514,8 @@ detect_agents() {
-   local cursor_settings_linux="$HOME/.config/Cursor/User/settings.json"
-   if [[ -d "$HOME/.cursor" ]] || [[ -f "$cursor_settings_mac" ]] || [[ -f "$cursor_settings_linux" ]] || command -v cursor &>/dev/null; then
-     cursor_detected=1
--  elif command -v pgrep >/dev/null 2>&1; then
--    if pgrep -fl "[Cc]ursor" 2>/dev/null | grep -qv 'CursorUIViewService\|/System/Library/'; then
--      cursor_detected=1
--    fi
-+  elif cursor_process_running; then
-+    cursor_detected=1
-   fi
- 
-   if [ "$cursor_detected" -eq 1 ]; then
-@@ -2316,8 +2344,54 @@ PYEOF
-     fi
- 
-     if ! command -v python3 >/dev/null 2>&1; then
-+      # Without python3, delegate to the freshly installed native dcg binary
-+      # when available and no legacy git_safety_guard predecessor cleanup is
-+      # needed. `dcg install` applies the same #582 atomic, host-field-preserving
-+      # JSON merge semantics in pure Rust without requiring Python.
-+      local settings_base="${settings_file##*/}"
-+      if [ "$settings_base" = "settings.json" ] && [ -x "$DEST/dcg" ] &&
-+         { [ "$cleanup_predecessor" -eq 0 ] || ! grep -qF "git_safety_guard" "$settings_file" 2>/dev/null; }; then
-+        local backup_base backup_suffix=0
-+        backup_base="${settings_file}.bak.$(date +%Y%m%d%H%M%S)"
-+        CLAUDE_BACKUP="$backup_base"
-+        while [ -e "$CLAUDE_BACKUP" ] || [ -L "$CLAUDE_BACKUP" ]; do
-+          backup_suffix=$((backup_suffix + 1))
-+          CLAUDE_BACKUP="${backup_base}.${backup_suffix}"
-+        done
-+        if ! cp "$settings_file" "$CLAUDE_BACKUP"; then
-+          CLAUDE_STATUS="failed"
-+          CLAUDE_FAILURE_REASON="could not back up existing settings.json; left unchanged"
-+          CLAUDE_BACKUP=""
-+          return 0
-+        fi
-+        local native_out=""
-+        local native_rc=0
-+        native_out=$(CLAUDE_CONFIG_DIR="$settings_dir" NO_COLOR=1 "$DEST/dcg" install 2>&1) || native_rc=$?
-+        if [ "$native_rc" -eq 0 ]; then
-+          if printf '%s\n' "$native_out" | grep -qF "Hook installed successfully!"; then
-+            CLAUDE_STATUS="merged"
-+            AUTO_CONFIGURED=1
-+            return 0
-+          elif printf '%s\n' "$native_out" | grep -qF "Hook already installed!"; then
-+            rm -f "$CLAUDE_BACKUP" 2>/dev/null || true
-+            CLAUDE_BACKUP=""
-+            CLAUDE_STATUS="already"
-+            AUTO_CONFIGURED=1
-+            return 0
-+          fi
-+        fi
-+        rm -f "$CLAUDE_BACKUP" 2>/dev/null || true
-+        CLAUDE_BACKUP=""
-+        if [ "$native_rc" -ne 0 ] && [ -n "$native_out" ]; then
-+          CLAUDE_STATUS="failed"
-+          CLAUDE_FAILURE_REASON="native merge faile
-```
-
-**File**: `src/evaluator.rs` (modified, +118/-56)
-```diff
-@@ -29738,40 +29738,70 @@ fn evaluate_packs_with_allowlists_at_depth(
-                         )
-                 },
-             );
-+            let guardrail_env_rule = pack_id == "careful_company_running_windows.guardrails"
-+                && matches!(
-+                    pattern.name,
-+                    Some("dcg-bypass-or-uninstall" | "dcg-policy-self-weakening")
-+                );
-             if matched_span.is_none()
--                && unscoped_external
-+                && (unscoped_external || guardrail_env_rule)
-                 && custom_command_for_match != command_for_packs
-             {
--                // Normalization may remove an assignment or wrapper read by
--                // the assertion. Retry the complete source-preserving view,
--                // retaining its masks and byte-for-byte source mapping.
--                let (raw_ranges, raw_safe_inputs) = custom_pattern_inputs.get_or_init(|| {
--                    (
--                        command_segment_ranges_in_dialect(original_command, shell_dialect),
--                        SafePatternInputs::new(original_command, input_command, shell_dialect),
--                    )
--                });
-+                // Normalization strips leading `NAME=value` assignments and
-+                // wrappers. Retry the complete source-preserving view for
-+                // unscoped custom rules (#671) and for guardrail env-var
-+                // branches (`DCG_BYPASS=1 ...`, `DCG_DISABLE=...`), accepting
-+                // only non-`dcg`-command branches on the guardrail retry so a
-+                // harmless leading `FOO=bar` never bypasses a proven-inert
-+                // `dcg` segment.
-                 matching_command = custom_command_for_match;
-                 matching_offset = Some(0);
--                matched_span = find_actionable_command_pattern_span(
--                    pack_id,
--                    pattern.name,
--                    &pattern.regex,
--                    matching_command,
--                    Some((original_command, 0)),
--                    shell_dialect,
--                    deadline,
--                    |span| {
--                        !raw_safe_inputs.match_is_exempt(
--                            pack,
--                            matching_command,
--                            span,
--                            raw_ranges,
--                            false,
--                            deadline,
-+                if unscoped_external {
-+                    let (raw_ranges, raw_safe_inputs) = custom_pattern_inputs.get_or_init(|| {
-+                        (
-+                            command_segment_ranges_in_dialect(original_command, shell_dialect),
-+                            SafePatternInputs::new(original_command, input_command, shell_dialect),
-                         )
--                    },
--                );
-+                    });
-+                    matched_span = find_actionable_command_pattern_span(
-+                        pack_id,
-+                        pattern.name,
-+                        &pattern.regex,
-+                        matching_command,
-+                        Some((original_command, 0)),
-+                        shell_dialect,
-+                        deadline,
-+                        |span| {
-+                            !raw_safe_inputs.match_is_exempt(
-+                                pack,
-+                                matching_command,
-+                                span,
-+                                raw_ranges,
-+                                false,
-+                                deadline,
-+                            )
-+                        },
-+                    );
-+                } else {
-+                    matched_span = find_actionable_command_pattern_span(
-+                        pack_id,
-+                        pattern.name,
-+                        &pattern.regex,
-+                        matching_command,
-+                        Some((original_command, 0)),
-+                        shell_dialect,
-+                        deadline,
-+                        |span| {
-+                            !matching_command
-+                                .get(span.start..span.end)
-+                                .and_then(|matched| matched.split_ascii_whitespace().next())
-+                                .is_some_and(|word| {
-+                                    word.eq_ignore_ascii_case("dcg")
-+                                        || word.eq_ignore_ascii_case("dcg.exe")
-+                                })
-+                        },
-+                    );
-+                }
-             }
- 
-             if deadline_exceeded(deadline) {
-@@ -36655,40 +36685,56 @@ fn find_actionable_command_pattern_span(
-     if deadline_exceeded(deadline) {
-         return None;
-     }
--    // The guardrails regex also covers environment/control mutations. Add a
--    // native argv proof for its DCG-command branches so an escaped space in
--    // 
-```
-
-**File**: `src/packs/careful_company_running_windows/guardrails.rs` (modified, +387/-43)
-```diff
-@@ -76,6 +76,42 @@ macro_rules! dcg_global_options {
-     };
- }
- 
-+/// Tri-state outcome of native argv analysis for a single top-level `dcg`
-+/// command segment.
-+#[derive(Debug, Clone, PartialEq, Eq)]
-+enum DcgSegmentAction {
-+    /// Native argv parsing proved this segment performs `expected_rule` over
-+    /// the returned byte range.
-+    Action(Range<usize>),
-+    /// Native argv parsing proved this segment is a complete, static,
-+    /// top-level `dcg` invocation that does NOT perform `expected_rule`
-+    /// (covering the full segment byte range).
-+    Inert(Range<usize>),
-+    /// Native argv parsing could not certify the segment (not a literal `dcg`
-+    /// invocation, dynamic/unquoted expansion, unknown option, redirection,
-+    /// incomplete quoting, or grouped syntax). The regex fallback must remain
-+    /// active on this segment.
-+    Unprovable,
-+}
-+
-+/// Result of native `dcg` guardrail proof across all top-level segments of a
-+/// command string.
-+#[derive(Debug, Clone, PartialEq, Eq)]
-+pub(crate) enum DcgControlActionProof {
-+    /// Native argv or authorization-store analysis proved `expected_rule` at
-+    /// this byte range.
-+    Action(Range<usize>),
-+    /// No action was proved. `proven_inert_segments` contains byte ranges of
-+    /// complete top-level `dcg` invocations proven inert for `expected_rule`
-+    /// under native dialect argv semantics; `dcg`-command regex hits lying
-+    /// wholly inside one of those ranges are command-looking argument data,
-+    /// while env-var / `uninstall.ps1` branches and unproved segments still
-+    /// fall through to the regex.
-+    NoAction {
-+        proven_inert_segments: Vec<Range<usize>>,
-+    },
-+}
-+
- /// Prove a dcg control action from native argv boundaries without rewriting
- /// opaque agent values. This supplements the regex view, whose whitespace
- /// boundaries cannot represent unquoted escaped spaces in one argv word.
-@@ -88,22 +124,28 @@ pub(crate) fn dcg_control_action_span(
-     dialect: ShellDialect,
-     expected_rule: &str,
- ) -> Option<std::ops::Range<usize>> {
--    dcg_control_action_span_in_source(command, dialect, expected_rule, None)
-+    match dcg_control_action_proof_in_source(command, dialect, expected_rule, None) {
-+        DcgControlActionProof::Action(span) => Some(span),
-+        DcgControlActionProof::NoAction { .. } => None,
++/// Analyze an oversized command's heredocs and mask AST-proven inert quoted data bodies.
++///
++/// When the whole command is AST-proven to consist exclusively of inert data
++/// commands with complete quoted-delimiter stdin heredocs, returns a strictly
++/// length-preserving view with those proven body ranges blanked (preserving
++/// newlines and all exterior bytes, headers, terminators, and trailing commands).
++///
++/// Fails closed: if the command exceeds size/work bounds, is unterminated, or
++/// contains any unproven receiver, pipe, substitution, override, or non-data
++/// command, returns `(true, Cow::Borrowed(command))` without masking any byte
++/// (bd-oversized-data-heredoc-window-fp-jj7f, bd-oversized-code-heredoc-receivers-azu4).
++#[must_use]
++pub fn analyze_and_mask_oversized_heredocs(command: &str) -> (bool, Cow<'_, str>) {
++    let analysis = analyze_oversized_heredocs(command);
++    if analysis.requires_analysis || analysis.inert_body_ranges.is_empty() {
++        return (analysis.requires_analysis, Cow::Borrowed(command));
 +    }
- }
- 
- /// Preserve the enclosing request when a pack evaluates one command segment.
- /// Relative write destinations depend on directory changes before that segment.
--pub(crate) fn dcg_control_action_span_in_source(
-+pub(crate) fn dcg_control_action_proof_in_source(
-     command: &str,
-     dialect: ShellDialect,
-     expected_rule: &str,
-     source_context: Option<(&str, usize)>,
--) -> Option<std::ops::Range<usize>> {
-+) -> DcgControlActionProof {
-+    let no_action = || DcgControlActionProof::NoAction {
-+        proven_inert_segments: Vec::new(),
-+    };
-     if !matches!(
-         expected_rule,
-         "dcg-bypass-or-uninstall" | "dcg-policy-self-weakening"
-     ) {
--        return None;
-+        return no_action();
++    if !analysis.inert_body_ranges.iter().all(|range| {
++        range.start <= range.end
++            && range.end <= command.len()
++            && command.is_char_boundary(range.start)
++            && command.is_char_boundary(range.end)
++    }) {
++        return (true, Cow::Borrowed(command));
      }
-     let dialect = if dialect == ShellDialect::Unknown {
-         ShellDialect::Posix
-@@ -114,15 +156,20 @@ pub(crate) fn dcg_control_action_span_in_source(
-         && let Some(span) =
-             authorization_store_write_span_from_source(command, dialect, source_context)
-     {
--        return Some(span);
-+        return DcgControlActionProof::Action(span);
-     }
-     let tokens = tokenize_for_shell_dialect(command, dialect);
-+    let mut proven_inert_segments = Vec::new();
-     let mut start = 0;
-     let mut depth = 0usize;
-     let mut grouped = false;
-     let mut comment = false;
-     for (index, token) in tokens.iter().enumerate() {
--        let raw = token.text(command)?;
-+        let Some(raw) = token.text(command) else {
-+            return DcgControlActionProof::NoAction {
-+                proven_inert_segments,
-+            };
-+        };
-         let newline = matches!(raw, "\n" | "\r" | "\r\n");
-         if comment {
-             if newline {
-@@ -134,16 +181,19 @@ pub(crate) fn dcg_control_action_span_in_source(
+-    let bytes = command.as_bytes();
+-    let mut search = 0usize;
+-    let mut operators = Vec::new();
++    let masked = blank_ranges(command, &analysis.inert_body_ranges);
++    debug_assert_eq!(masked.len(), command.len());
++    (false, Cow::Owned(masked))
++}
++
++#[derive(Debug, PartialEq, Eq)]
++struct OversizedHeredocAnalysis {
++    requires_analysis: bool,
++    inert_body_ranges: Vec<Range<usize>>,
++}
++
++const MAX_OVERSIZED_HEREDOC_OPERATORS: usize = 256;
++
++fn next_non_herestring_heredoc_operator(bytes: &[u8], mut search: usize) -> Option<usize> {
+     while let Some(relative) = memchr::memmem::find(&bytes[search..], b"<<") {
+         let operator = search + relative;
+         search = operator + 2;
+         if bytes.get(operator + 2) == Some(&b'<') || (operator > 0 && bytes[operator - 1] == b'<') {
+             continue;
          }
-         if token.kind == NormalizeTokenKind::Word {
-             if dialect != ShellDialect::Cmd && raw.starts_with('#') {
--                if depth == 0
--                    && !grouped
--                    && let Some(span) = dcg_segment_action_span(
-+                if depth == 0 && !grouped {
-+                    match dcg_segment_action_span(
-                         command,
-                         &tokens[start..index],
-                         dialect,
-                         expected_rule,
--                    )
--                {
--                    return Some(span);
-+                    ) {
-+                        DcgSegmentAction::Action(span) => {
-+                            return DcgControlActionProof::Action(span);
-+                        }
-+                        DcgSegmentAction::Inert(span) 
+-        if operators.len() == MAX_HEREDOC_OPERATORS {
+-            return true;
+-        }
+-        operators.push(operator);
++        return Some(operator);
+     }
+-    if operators.is_empty() {
+-        return false;
++    None
++}
++
++fn analyze_oversized_heredocs(command: &str) -> OversizedHeredocAnalysis {
++    if command.len() > MAX_OVERSIZED_HEREDOC_SOURCE_BYTES {
++        return OversizedHeredocAnalysis {
++            requires_analysis: true,
++            inert_body_ranges: Vec::new(),
++        };
+     }
++    let bytes = command.as_bytes();
++    let Some(first_operator) = next_non_herestring_heredoc_operator(bytes, 0) else {
++        return OversizedHeredocAnalysis {
++            requires_analysis: false,
++            inert_body_ranges: Vec::new(),
++        };
++    };
+     // With no elisions, the complete tree can prove that a quoted `<<` or
+     // numeric arithmetic is ordinary argv data. No outer heredoc nodes alone
+     // would be insufficient: `bash -c '... <<EOF ...'` is an executable carrier.
++    // Only take the uncompacted path when the raw `<<` count is also within
++    // the operator bound; a large quoted file body carrying many literal `<<`
++    // tokens (e.g. C++/Rust shifts) falls through to streaming compaction,
++    // which jumps over compacted bodies while still bounding exterior `<<`.
+     if command.len() <= MAX_OVERSIZED_HEREDOC_VIEW_BYTES {
+-        return !oversized_heredoc_view_is_inert(command, &[]);
++        let mut count = 1usize;
++        let mut search = first_operator + 2;
++        while count <= MAX_OVERSIZED_HEREDOC_OPERATORS {
++            let Some(next) = next_non_herestring_heredoc_operator(bytes, search) else {
++                break;
++            };
++            count += 1;
++            search = next + 2;
++        }
++        if count <= MAX_OVERSIZED_HEREDOC_OPERATORS {
++            return match proven_inert_heredoc_bodies(command, &[]) {
++                Some(inert_body_ranges) => OversizedHeredocAnalysis {
++                    requires_analysis: false,
++                    inert_body_ranges,
++                },
++                None => OversizedHeredocAnalysis {
++                    requires_analysis: true,
++                    inert_body_ranges: Vec::new(),
++                },
++            };
++        }
+     }
+-    let Some((view, elisio
 ```
 
-**File**: `tests/install/agent_config_test.bats` (modified, +75/-0)
+**File**: `src/main.rs` (modified, +1512/-14)
 ```diff
-@@ -6393,3 +6393,78 @@ MOCKEOF
-     [ -x "$HOME/.local/bin/dcg" ]
-     cmp -s "$TEST_TMPDIR/escaped-factory-before.json" "$HOME/.factory/settings.json"
+@@ -667,6 +667,7 @@ const OVERSIZED_SCAN_MAX_WINDOWS: usize = 128;
+ /// dropped. Windows always start and end on char boundaries. Returns whether
+ /// the windows cover every byte of the command: a zero limit, exhausted window
+ /// cap, or a code point wider than a window must not look like a completed scan.
++#[cfg_attr(not(test), allow(dead_code))]
+ fn push_oversized_scan_windows(
+     out: &mut Vec<String>,
+     command: &str,
+@@ -714,6 +715,1243 @@ fn push_oversized_scan_windows(
+     false
+ }
+ 
++const MAX_OVERSIZED_LEX_DEPTH: usize = 64;
++
++#[derive(Clone, Copy, Debug, PartialEq, Eq)]
++enum OversizedQuoteContext {
++    Unquoted,
++    Single,
++    Double,
++    AnsiC,
++    PowerShellHereSingle,
++    PowerShellHereDouble,
++    PowerShellBlockComment,
++    LineComment,
++}
++
++impl OversizedQuoteContext {
++    const fn opening_prefix(self) -> &'static str {
++        match self {
++            Self::Unquoted => "",
++            Self::Single => "'",
++            Self::Double => "\"",
++            Self::AnsiC => "$'",
++            Self::PowerShellHereSingle => "@'\n",
++            Self::PowerShellHereDouble => "@\"\n",
++            Self::PowerShellBlockComment => "<#",
++            Self::LineComment => "#",
++        }
++    }
++}
++
++#[derive(Clone, Copy, Debug, PartialEq, Eq)]
++enum OversizedLexKind {
++    Single,
++    Double,
++    AnsiC,
++    PowerShellHereSingle,
++    PowerShellHereDouble,
++    PowerShellBlockComment,
++    LineComment,
++    Paren,
++    DollarParen,
++    Backtick,
++}
++
++#[derive(Clone, Copy, Debug, PartialEq, Eq)]
++struct OversizedLexFrame {
++    kind: OversizedLexKind,
++    open_offset: usize,
++}
++
++struct OversizedLexCursor<'a> {
++    source: &'a str,
++    bytes: &'a [u8],
++    dialect: ShellDialect,
++    pos: usize,
++    stack: Vec<OversizedLexFrame>,
++    at_word_start: bool,
++    at_line_start: bool,
++    powershell_literal_mode: bool,
++    last_word_start: Option<usize>,
++    depth_overflow: bool,
++}
++
++impl<'a> OversizedLexCursor<'a> {
++    fn new(source: &'a str, dialect: ShellDialect) -> Self {
++        Self {
++            source,
++            bytes: source.as_bytes(),
++            dialect,
++            pos: 0,
++            stack: Vec::new(),
++            at_word_start: true,
++            at_line_start: true,
++            powershell_literal_mode: false,
++            last_word_start: None,
++            depth_overflow: false,
++        }
++    }
++
++    fn push_frame(&mut self, kind: OversizedLexKind, open_offset: usize) {
++        if self.stack.len() >= MAX_OVERSIZED_LEX_DEPTH {
++            self.depth_overflow = true;
++            return;
++        }
++        self.stack.push(OversizedLexFrame { kind, open_offset });
++    }
++
++    fn char_width_at(&self, index: usize) -> usize {
++        self.source
++            .get(index..)
++            .and_then(|tail| tail.chars().next())
++            .map_or(1, char::len_utf8)
++    }
++
++    fn active_quote_context(&self, unclosed_opens: &[usize]) -> OversizedQuoteContext {
++        let Some(top) = self.stack.last() else {
++            return OversizedQuoteContext::Unquoted;
++        };
++        let context = match top.kind {
++            OversizedLexKind::Single => OversizedQuoteContext::Single,
++            OversizedLexKind::Double => OversizedQuoteContext::Double,
++            OversizedLexKind::AnsiC => OversizedQuoteContext::AnsiC,
++            OversizedLexKind::PowerShellHereSingle => OversizedQuoteContext::PowerShellHereSingle,
++            OversizedLexKind::PowerShellHereDouble => OversizedQuoteContext::PowerShellHereDouble,
++            OversizedLexKind::PowerShellBlockComment => {
++                OversizedQuoteContext::PowerShellBlockComment
++            }
++            OversizedLexKind::LineComment => return OversizedQuoteContext::LineComment,
++            OversizedLexKind::Paren
++            | OversizedLexKind::DollarParen
++            | OversizedLexKind::Backtick => return OversizedQuoteContext::Unquoted,
++        };
++        if unclosed_opens.contains(&top.open_offset) {
++            OversizedQuoteContext::Unquoted
++        } else {
++            context
++        }
++    }
++
++    /// Advance by one atomic lexical step (never splitting a multi-byte UTF-8
++    /// character or an escape sequence). Returns `Some((sep_start, sep_end))`
++    /// when a top-level neutral list/statement separator was just consumed
++    /// (excluding pipeline operators `|`/`|&`, which couple adjacent stages).
++    fn step(&mut self) -> Option<(usize, usize)> {
++        let len = self.bytes.len();
++        if self.pos >= len {
++            return None;
++        }
++        match self.dialect {
++            ShellDialect::Cmd => self.step_cmd(),
++            ShellDialect::PowerShell => self.step_powershell(),
++            ShellDialect::Posix | ShellDialect::Unknown => self.step_posix(),
++        }
++    }
++
++    fn step_cmd(&mut self) -> Option<(usize, usize)> {
++        let len = self.bytes.len();
++        let i = self.pos;
++        let b = self.bytes[i];
++
++        // In 
+```
+
+**File**: `tests/repro_290_oversized_hook_input.rs` (modified, +171/-0)
+```diff
+@@ -1145,3 +1145,174 @@ fn antigravity_recovery_preserves_real_shell_batch_precedence() {
+     assert_eq!(json["hookSpecificOutput"]["permissionDecision"], "deny");
+     assert!(json.get("decision").is_none(), "{json}");
  }
 +
-+@test "installer: minimal container without python3 and existing Claude settings completes cleanly" {
-+    log_test "Testing full install.sh without python3 when settings.json already exists..."
++#[test]
++fn oversized_quote_parity_does_not_hide_destructive_tails_o36a() {
++    let pad = "A".repeat(270 * 1024);
++    let mid_pad = "A".repeat(70 * 1024);
++    let tail_pad = "B".repeat(200 * 1024);
++    let envelope = |tool: &str, command: String| {
++        serde_json::json!({ "tool_name": tool, "tool_input": { "command": command } }).to_string()
++    };
 +
-+    make_claude_installer_artifact
-+    mkdir -p "$HOME/.claude"
-+    printf '%s\n' '{"theme":"dark","hooks":{"PreToolUse":[{"matcher":"Read","hooks":[{"type":"command","command":"unrelated"}]}]}}' > "$HOME/.claude/settings.json"
-+    cp "$HOME/.claude/settings.json" "$TEST_TMPDIR/before-nopy.json"
-+
-+    # Build a PATH without python3 while retaining standard POSIX utilities.
-+    local no_python_path="$TEST_TMPDIR/minimal-path"
-+    mkdir -p "$no_python_path"
-+    local tool
-+    for tool in bash sh env uname id dirname basename mkdir rm mv cp cat chmod head tail grep sed awk tr wc cut sort uniq date mktemp tar xz gzip curl touch ln ls find printf true false ps pgrep; do
-+        if command -v "$tool" >/dev/null 2>&1; then
-+            ln -sf "$(command -v "$tool")" "$no_python_path/$tool"
-+        fi
-+    done
-+
-+    run env PATH="$no_python_path" HOME="$HOME" DCG_SELF_HEAL_HOOK=0 SHELL=/bin/false \
-+        bash "$INSTALL_SCRIPT" \
-+            --version v9.9.9 \
-+            --artifact-url "file://$CLAUDE_FIXTURE_ARTIFACT" \
-+            --dest "$HOME/.local/bin" \
-+            --easy-mode --offline --no-verify --no-gum
-+    log_test "status=$status output=$output"
-+
-+    [ "$status" -eq 0 ]
-+    [ -x "$HOME/.local/bin/dcg" ]
-+    [[ "$output" == *"Claude Code: Configuration failed (python3 required for merge)"* ]]
-+    cmp -s "$TEST_TMPDIR/before-nopy.json" "$HOME/.claude/settings.json"
++    // Every case below pairs a long quoted string before the real destructive
++    // command with a trailing quoted string after it, so blind windowing that
++    // started inside the first quote used to flip quote parity and read the
++    // destructive command as quoted data.
++    for (label, tool, command) in [
++        (
++            "cmd double-quote parity flip",
++            "cmd",
++            format!("echo \"{pad}\" & rd /s /q C:\\ & echo \"done\""),
++        ),
++        (
++            "cmd apostrophe + backslash-quote parity",
++            "cmd",
++            format!("echo it's \"C:\\dir\\{pad}\\\" & rd /s /q C:\\ & echo \"done\""),
++        ),
++        (
++            "cmd unclosed quote reset by newline",
++            "cmd",
++            format!("echo \"{pad}\nrd /s /q C:\\\n"),
++        ),
++        (
++            "powershell single-quote parity flip",
++            "PowerShell",
++            format!("Write-Output '{pad}'; Remove-Item -Recurse -Force C:\\; Write-Output 'done'"),
++        ),
++        (
++            "powershell double-quote trailing backslash parity",
++            "PowerShell",
++            format!(
++                "Write-Output \"C:\\dir\\{pad}\\\"; Remove-Item -Recurse -Force C:\\; Write-Output \"done\""
++            ),
++        ),
++        (
++            "powershell call operator after long prefix",
++            "PowerShell",
++            format!(
++                "Write-Output '{}'; & 'Remove-Item' -Recurse -Force C:\\; Write-Output '{tail_pad}'",
++                "A".repeat(63 * 1024)
++            ),
++        ),
++        (
++            "powershell mid-statement paren quote parity",
++            "PowerShell",
++            format!(
++                "Write-Output ('{mid_pad}' + $(Remove-Item -Recurse -Force C:\\) + '{tail_pad}')"
++            ),
++        ),
++        (
++            "powershell here-string parity",
++            "PowerShell",
++            format!("$x = @'\n{pad}\n'@; Remove-Item -Recurse -Force C:\\; Write-Output 'done'"),
++        ),
++        (
++            "posix single-quote parity flip",
++            "Bash",
++            format!("echo '{pad}'; rm -rf /; echo 'done'"),
++        ),
++        (
++            "posix mid-statement concat quote parity",
++            "Bash",
++            format!("echo '{mid_pad}'$(rm -rf /)'{tail_pad}'"),
++        ),
++        (
++            "mislabeled bash carrying powershell backslash-quote",
++            "Bash",
++            format!(
++                "Write-Output \"C:\\dir\\{pad}\\\"; Remove-Item -Recurse -Force C:\\; Write-Output \"done\""
++            ),
++        ),
++    ] {
++        assert_denied(label, &envelope(tool, command));
++    }
 +}
 +
-+@test "configure_claude_code: delegates to native dcg install when python3 is absent" {
-+    log_test "Testing native dcg install fallback when python3 is unavailable..."
++#[test]
++fn oversized_boundary_straddling_commands_and_pipelines_are_caught_o36a() {
++    let envelope = |tool: &str, command: String| {
++        serde_json::json!({ "tool_name": tool, "tool_input": { "command": command } }).to_string()
++    };
 +
-+    CLAUDE_SETTINGS="$HOME/.claude/settings.json"
-+    mkdir -p "$HOME/.claude" "$DEST"
-+    printf '%s\n' '{"theme":"dark"}' > "$CLAUDE_SETTINGS"
++    // Single commands longer than the 4 KiB window overlap (here ~8 KiB) placed
++    // directly across the 64 KiB window boundary must be evaluated whole and
++    // concretely denied rather than split across windows.
++    let prefix_60k = "p".repeat(60 * 1024);
++    let suffix_240k = "q".repeat(240 * 1024);
++    let gap_8k = " ".repeat(8 * 1024);
++    let rm_args_8k = "/tmp/a ".repeat(1_200);
++    for (label, tool, command) in [
++        (
++            "posix 8 KiB git command straddling 64 KiB",
++            "Bash",
++            format!("# {prefix_60k}\ngit{gap_8k}reset --hard\n# {suffix_240k}"),
++        ),
++        (
++            "posix 8 KiB rm command straddling 64 KiB",
++            "Bash",
++            format!("# {prefix_60k}\nrm {rm_args_8k}-rf /\n# {suffix_240k}"),
++        ),
++        (
++            "powershell 8 KiB Remove-Item straddling 64 KiB",
++            "PowerShell",
++            format!("# {prefix_60k}\nRemove-Item{gap_8k}-Recurse -Force C:\\\n# {suffix_240k}"),
++        ),
++        (
++            "cmd 8 KiB rd straddling 64 KiB",
++            "cmd",
++            format!("echo {prefix_60k} & rd{gap_8k}/s /q C:\\ & echo {suffix_240k}"),
++        ),
++        (
++            "posix pipeline straddling 64 KiB",
++            "Bash",
++            format!(
++                "# {}\necho 'rm -rf /' | sh\n# {suffix_240k}",
++                "p".repeat(64 * 1024 - 16)
++            ),
++        ),
++    ] {
++        assert_denied(label, &envelope(tool, command));
+```
+
+**File**: `tests/repro_ym0p_oversized_code_heredoc.rs` (modified, +203/-0)
+```diff
+@@ -444,3 +444,206 @@ fn oversized_exported_data_receiver_is_unverified_azu4() {
+         assert!(!stderr.contains("fail-open"), "{stderr}");
+     }
+ }
 +
-+    # Mock native dcg binary implementing `dcg install`
-+    cat > "$DEST/dcg" <<'MOCKEOF'
-+#!/bin/bash
-+if [ "${1:-}" = "install" ]; then
-+    target="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/settings.json"
-+    printf '{"theme":"dark","hooks":{"PreToolUse":[{"matcher":"Bash|PowerShell|Monitor","hooks":[{"type":"command","command":"%s"}]}]}}
-+' "$0" > "$target"
-+    printf 'Hook installed successfully!\n'
-+    exit 0
-+fi
-+exit 1
-+MOCKEOF
-+    chmod +x "$DEST/dcg"
++#[test]
++fn oversized_data_heredoc_real_repo_files_are_allowed_jj7f() {
++    let manifest_dir = Path::new(env!("CARGO_MANIFEST_DIR"));
++    let readme = fs::read_to_string(manifest_dir.join("README.md")).expect("read README.md");
++    let normalize =
++        fs::read_to_string(manifest_dir.join("src/normalize.rs")).expect("read src/normalize.rs");
++    let heredoc_rs =
++        fs::read_to_string(manifest_dir.join("src/heredoc.rs")).expect("read src/heredoc.rs");
++    let mut scripts_bundle = String::new();
++    for script in [
++        "scripts/e2e_test.sh",
++        "scripts/e2e_destructive_equivalents.sh",
++        "scripts/e2e_codex.sh",
++        "scripts/e2e_fleet_install.sh",
++        "scripts/e2e_harness_matrix.sh",
++    ] {
++        scripts_bundle.push_str(&fs::read_to_string(manifest_dir.join(script)).expect(script));
++        scripts_bundle.push('\n');
++    }
++    let synthetic_hazardous = format!(
++        "rm -rf /\ngit reset --hard\neval(x);\n`rm -rf /`\nRemove-Item -Recurse -Force C:\\\nformat C: /q /y\n🛡 UTF-8 prose\n{}",
++        "documentation line mentioning rm -rf / and git reset --hard and eval(x);\n".repeat(4_500)
++    );
 +
-+    local no_python_path="$TEST_TMPDIR/no-python-native"
-+    mkdir -p "$no_python_path"
-+    local tool
-+    for tool in dirname mkdir cp date grep sed tr rm mv cat printf bash; do
-+        ln -sf "$(command -v "$tool")" "$no_python_path/$tool"
-+    done
++    // Ensure every case exceeds the 256 KiB hook input limit when wrapped in JSON.
++    let pad_to_oversized = |mut content: String| {
++        while content.len() < 270 * 1024 {
++            content.push_str("# padding line mentioning rm -rf / and git reset --hard\n");
++        }
++        content
++    };
 +
-+    local old_path="$PATH"
-+    PATH="$no_python_path"
-+    local rc=0
-+    configure_claude_code "$CLAUDE_SETTINGS" "0" || rc=$?
-+    PATH="$old_path"
++    let cases = [
++        (
++            "README.md",
++            "cat > out.md <<'DCG_FILE_EOF'",
++            pad_to_oversized(readme),
++            "DCG_FILE_EOF",
++        ),
++        (
++            "src/normalize.rs",
++            "cat > normalize.rs <<'DCG_FILE_EOF'",
++            pad_to_oversized(normalize),
++            "DCG_FILE_EOF",
++        ),
++        (
++            "src/heredoc.rs (>1000 interior <<)",
++            "cat > heredoc.rs <<'DCG_FILE_EOF'",
++            heredoc_rs,
++            "DCG_FILE_EOF",
++        ),
++        (
++            "scripts/*.sh bundle",
++            "cat <<-'DCG_FILE_EOF' > bundle.sh",
++            pad_to_oversized(scripts_bundle),
++            "\tDCG_FILE_EOF",
++        ),
++        (
++            "synthetic hazardous prose via tee",
++            "tee notes.txt <<\"DCG_FILE_EOF\"",
++            synthetic_hazardous,
++            "DCG_FILE_EOF",
++        ),
++    ];
 +
-+    log_test "CLAUDE_STATUS=$CLAUDE_STATUS rc=$rc backup=$CLAUDE_BACKUP"
-+    [ "$rc" -eq 0 ]
-+    [ "$CLAUDE_STATUS" = "merged" ]
-+    [ -n "$CLAUDE_BACKUP" ]
-+    [ -f "$CLAUDE_BACKUP" ]
-+    grep -qF '"theme":"dark"' "$CLAUDE_SETTINGS"
-+    grep -qF 'Bash|PowerShell|Monitor' "$CLAUDE_SETTINGS"
++    for (label, header, content, terminator) in cases {
++        let command = format!("{header}\n{content}\n{terminator}\n");
++        let input = envelope(&command);
++        assert!(
++            input.len() > 256 * 1024,
++            "{label}: payload ({} bytes) must exceed 256 KiB",
++            input.len()
++        );
++        let home = tempfile::tempdir().expect("isolated hook home");
++        let (stdout, stderr, exit_code) = run_hook(&input, home.path());
++        assert_eq!(exit_code, 0, "{label}: hook exits 0\n{stderr}");
++        assert!(
++            stdout.trim().is_empty(),
++            "{label}: benign oversized quoted data heredoc must be allowed (fail-open), got: {stdout:?}\nstderr: {stderr}"
++        );
++        assert!(
++            stderr.contains("exceeds limit"),
++            "{label}: expected oversized warning on stderr, got: {stderr:?}"
++        );
++    }
++
++    // Multiple sequential quoted data heredocs in one command are also allowed.
++    let half = "docs mentioning rm -rf / and eval(x);\n".repeat(4_000);
++    let multi = format!(
++        "cat > a.txt <<'DCG_A'\n{half}DCG_A\ncat > b.txt <<'DCG_B'\n{half}DCG_B\necho done\n"
++    );
++    let multi_input = envelope(&multi);
++    assert!(multi_input.len() > 256 * 1024);
++    let home = tempfile::tempdir().expect("isolated hook home");
++    let (stdout, stderr, exit_code) = run_hook(&multi_input, home.path());
++    assert_eq!(exit_code, 0, "multi-heredoc: {stderr}");
++    assert!(
++        stdout.trim().is_empty(),
++        "multi-heredoc benign data write must be allowed: {stdout:?}\n{stderr}"
++    );
 +}
++
++#[test]
++fn oversized_data_heredoc_planted_negatives_fail_closed_jj7f_azu4() {
++    let benign_body = body("done = 1");
++
++    // 1. Destructive command AFTER the heredoc terminator MUST be concretely denied.
++    for (label, tail, expected_rule) in [
++        (
++            "rm -rf / after terminator",
++            "rm -rf /",
++            "core.filesystem:rm-rf-root-home",
++        ),
++        (
++            "command substitution after terminator",
++            "echo $(rm -rf /)",
++            "core.filesystem:rm-rf-root-home",
++        ),
++        (
++            "git reset --hard after terminator",
++            "git reset --hard",
++            "core.git:reset-hard",
++        ),
++    ] {
++        let command = format!("cat > out.txt <<'EOF'\n{benign_body}EOF\n{tail}\n");
++        assert_concrete_rule_verdict(&command, "",
+```
+
+---
+
+### Incident Patch 3: `daf7e865` (2026-11-24)
+**Commit Message**: fix(security): close cmd dynamic argv0 windows-rule and modprobe env-option bypasses [skip ci]
+
+Closes bd-cmd-dynamic-argv0-windows-rules-j70t and bd-modprobe-env-option-bypass-fhep.
+
+- cmd.exe dynamic argv0 / windows rules (bd-cmd-dynamic-argv0-windows-rules-j70t):
+  - Handle unquoted cmd %VAR%/!VAR! split prefixes in windows.filesystem
+    (e.g. `r%x%md /s /q C:\` where `%x%` can expand to `"d "` -> `rd`),
+    glued switches on dynamic/call-prefixed argv0 (`r%x%mdir/s/q`,
+    `r%x%d/s/q`, `d%x%el/s/q`, `form%x%at/q`, `ca%x%ll r%x%mdir/s/q`),
+    packed dynamic switches (`/%y%s/q`), and variable names containing
+    path/command separators or spaces via `decode_cmd_symbolic_word` and
+    `tokenize_cmd_expansion_view`.
+  - Add deny-wins Cmd argv0-only `%NAME%`/`!NAME!` expansion elision in the
+    evaluator (respecting cmd.exe `%` vs `^!` precedence and skipping wholly
+    dynamic executables like `%LOGGER%`) so `windows.system` and `windows.misc`
+    rules catch obfuscated `vssadmin`, `wbadmin`, `wmic`, `diskpart`, `cipher`,
+    `bcdedit`, `fsutil`, `reg`, `net`, `sc`, `schtasks`, `wsl`, and `robocopy`
+    invocations under both `--dialect cmd` and `--dialect unknown` while
+    pr
+
+**File**: `.beads/issues.jsonl` (modified, +2/-2)
+```diff
+@@ -75,7 +75,7 @@
+ {"id":"bd-builtin-wrapper-bypass-pbxa","title":"builtin wrapper hides the executed command (builtin command git reset --hard allowed in Claude Bash)","description":"## Confirmed defect\n\n`builtin NAME ARGS` runs the shell builtin NAME (bash, ksh; zsh for its builtins). When NAME is\n`command`, `exec` or `builtin`, the command after it executes. `strip_wrapper_prefixes` strips\n`command`, `sudo`, `env`, `exec` and others, but not `builtin`, so dcg sees an unknown program\nnamed `builtin`.\n\nProbe with `dcg test --stdin --dialect D --format json`, 0.16.0 tree at 606f29f3 (inert strings only):\n\n| command | posix (Claude Bash) | unknown |\n|---|---|---|\n| `builtin command git reset --hard` | allow | deny core.git:reset-hard |\n| `builtin command mkfs.ext4 /dev/sda1` | allow | allow |\n| `command builtin command git reset --hard` | allow | deny |\n| `builtin command -p git reset --hard` | allow | deny |\n| `builtin builtin command git reset --hard` | allow | deny |\n| `command git reset --hard` (control) | deny | deny |\n| `builtin echo git reset --hard` (control) | allow | deny (FP) |\n\nThe Claude Code hook (tool `Bash`) answered ALLOW for the first row. `bash -c 'builtin command printf ...'` runs\nprintf, so the bypass is real in bash. v0.15.3 (homebrew) denied the mkfs row as system.disk:mkfs,\nso that row is a 0.16.0 regression in a default-on pack. The corpus case\ntests/corpus/bypass_attempts/wrappers.toml \"builtin command git reset is blocked\" passes only\nbecause the corpus harness evaluates under the unknown dialect.\n\n## Fix direction\n\nStrip `builtin` (and an optional `--`) as a wrapper in `strip_wrapper_prefixes`, next to\n`strip_command_wrapper`. A NAME that is not a builtin makes the shell fail without running anything,\nso stripping it anyway can only add denials.\n\n## Acceptance\n\nEvery row above denies in posix and unknown under the plain rule. `builtin echo …`, `builtin cd …`,\n`builtin command git status` stay allowed. Hook-level regression for the Claude Bash tool.\n","status":"closed","priority":1,"issue_type":"bug","created_at":"2026-11-03T01:48:51.921489Z","created_by":"jemanuel","updated_at":"2026-11-03T02:16:50.331376Z","closed_at":"2026-11-03T02:16:50.321413Z","close_reason":"Fixed in 2975ad77. builtin + zsh noglob/nocorrect/- stripped by the shared POSIX frontend model; macOS arch/xcrun/taskpolicy/sandbox-exec added to the unmodeled launcher lists (evaluator, git, heredoc); credential classifier's catch-all arm reads the first writer operand of any launcher git's unmodeled_exec_wrapper (plus watch) knows runs its operands (strace/firejail/gosu/unshare/taskset/flock/faketime/xvfb-run/nsenter/chroot/watch ... tee ~/.ssh/authorized_keys were ALLOWED, also on 0.15.3). Evidence: every bead row + sweep row denies in posix and unknown under the plain rule; tests/repro_builtin_wrapper.rs hook-level (Claude Bash) + normalize/credential unit tests 362/362; full nextest 7520 pass, rest = pre-existing #623 set + load flakes passing alone; clippy -D warnings clean. Remaining known: unknown-dialect 'builtin echo git reset --hard' still denies (pre-existing unknown conservatism; posix allows).","source_repo":"destructive_command_guard","compaction_level":0,"original_size":0}
+ {"id":"bd-c0di","title":"P7.4: Update configuration.md with DCG_NO_RICH environment variable docs","status":"closed","priority":2,"issue_type":"task","created_at":"2026-01-19T21:16:22.771173546Z","created_by":"ubuntu","updated_at":"2026-04-28T07:50:19.620382Z","closed_at":"2026-04-28T07:50:19.619972Z","close_reason":"Documented DCG_NO_RICH, rich/plain output controls, robot mode, and hook stdout/stderr behavior in 9ff58b1.","source_repo":".","compaction_level":0,"original_size":0,"dependencies":[{"issue_id":"bd-c0di","depends_on_id":"bd-3jl0","type":"blocks","created_at":"2026-02-16T07:00:29Z","created_by":"import","metadata":"{}","thread_id":""}],"comments":[{"id":46,"issue_id":"bd-c0di","author":"Dicklesworthstone","text":"## Task: Update configuration.md documentation\n\n### What to Do\n\nDocument all new configuration options and environment variables related to rich output.\n\n### File: docs/configuration.md\n\nAdd new section:\n\n```markdown\n## Output Configuration\n\n### Rich Terminal Output\n\ndcg uses rich terminal formatting by default when output is a TTY.\n\n#### Environment Variables\n\n| Variable | Default | Description |\n|----------|---------|-------------|\n| `DCG_NO_RICH` | unset | Set to any value to disable rich formatting |\n| `NO_COLOR` | unset | Standard env var to disable all colors |\n| `TERM` | - | If `dumb`, uses ASCII-only output |\n| `CI` | - | If set, disables TTY detection |\n\n#### Examples\n\n```bash\n# Force plain output\nDCG_NO_RICH=1 dcg scan .\n\n# Disable colors but keep Unicode\nNO_COLOR=1 dcg doctor\n\n# Pipeline-friendly (auto-detected)\ndcg scan . | head  # Automatically uses plain output\n```\n\n### Theme Configuration\n\ndcg detects terminal theme automa
+```
+
+**File**: `src/evaluator.rs` (modified, +335/-4)
+```diff
+@@ -17580,12 +17580,16 @@ fn view_decode_exposes_pack_keyword(
+         return view_escape_present || elided.is_some();
+     };
+     // The elided view is measured against cmd's own view, so it answers only
+-    // for what the expansions hid.
++    // for what the expansions hid. An argv0 whose elided spelling names an
++    // enabled keyword also requires a Cmd replay even if that same keyword
++    // already appeared elsewhere in the command (e.g., in an earlier segment
++    // or a registry path such as `re%x%g delete HKLM\Software\reg\Foo`).
+     (view_escape_present
+         && index.exposes_keyword_absent_from(view_normalized.as_ref(), posix_normalized.as_ref()))
+         || elided.is_some_and(|elided| {
+             index.exposes_keyword_absent_from(&elided, view_normalized.as_ref())
+         })
++        || (view == ShellDialect::Cmd && cmd_elided_argv0_matches_keyword(command, index))
+ }
+ 
+ /// The byte ranges of cmd.exe `%NAME%`, delayed `!NAME!` and batch-parameter
+@@ -17689,6 +17693,190 @@ fn elide_cmd_percent_expansions(command: &str) -> Option<String> {
+     })
+ }
+ 
++fn cmd_elided_argv0_has_nonempty_basename(elided: &str) -> bool {
++    let unquoted: String = elided.chars().filter(|&ch| ch != '"').collect();
++    let trimmed = unquoted.trim_start_matches('@');
++    let after_backslash = trimmed.rsplit('\\').next().unwrap_or(trimmed).trim();
++    !after_backslash.is_empty() && after_backslash.chars().any(char::is_alphanumeric)
++}
++
++/// Elide active `%NAME%` and `!NAME!` expansions from one Cmd argv0 word.
++///
++/// Matches cmd.exe's two-phase expansion precedence: `%NAME%` expands before
++/// caret removal (so `^%x%` still expands), whereas unquoted `^!` escapes `!`
++/// into a literal exclamation mark (so `vssad^!LITERAL^!%EMPTY%min` elides
++/// only `%EMPTY%` and does not collapse into `vssadmin`).
++fn elide_cmd_argv0_word(raw: &str) -> Option<String> {
++    let bytes = raw.as_bytes();
++    let mut spans = Vec::new();
++    let mut index = 0usize;
++    let mut double = false;
++    while index < bytes.len() {
++        let byte = bytes[index];
++        if byte == b'%'
++            && let Some(end) = crate::normalize::cmd_expansion_end(bytes, index)
++        {
++            spans.push(index..end);
++            index = end;
++            continue;
++        }
++        if byte == b'!'
++            && let Some(end) = crate::normalize::cmd_expansion_end(bytes, index)
++        {
++            spans.push(index..end);
++            index = end;
++            continue;
++        }
++        match byte {
++            b'"' => {
++                double = !double;
++                index += 1;
++            }
++            b'^' if !double => {
++                if bytes.get(index + 1) == Some(&b'%')
++                    && let Some(end) = crate::normalize::cmd_expansion_end(bytes, index + 1)
++                {
++                    spans.push(index + 1..end);
++                    index = end;
++                } else {
++                    // Caret escapes the next byte (including `^!`).
++                    index = index.saturating_add(2).min(bytes.len());
++                }
++            }
++            _ => index += 1,
++        }
++    }
++    if spans.is_empty() {
++        return None;
++    }
++    let mut out = String::with_capacity(raw.len());
++    let mut copied_from = 0usize;
++    for span in spans {
++        out.push_str(&raw[copied_from..span.start]);
++        copied_from = span.end;
++    }
++    out.push_str(&raw[copied_from..]);
++    Some(out)
++}
++
++fn cmd_elided_argv0_edits_for_tokens(
++    command: &str,
++    tokens: &[crate::normalize::NormalizeToken],
++) -> Vec<(std::ops::Range<usize>, String)> {
++    let mut edits = Vec::new();
++    let mut start = 0usize;
++    for end in 0..=tokens.len() {
++        if end < tokens.len() && tokens[end].kind != NormalizeTokenKind::Separator {
++            continue;
++        }
++        let statement = &tokens[start..end];
++        start = end + 1;
++        let mut next_is_redirect_target = false;
++        for token in statement {
++            let Some(raw) = token.text(command) else {
++                break;
++            };
++            if next_is_redirect_target {
++                next_is_redirect_target = false;
++                continue;
++            }
++            if let Some(needs_target) = cmd_leading_redirect_needs_target(raw) {
++                next_is_redirect_target = needs_target;
++                continue;
++            }
++            if !raw.contains(['"', '%', '!'])
++                && raw.trim_start_matches('@').eq_ignore_ascii_case("call")
++            {
++                continue;
++            }
++            if raw.contains(['%', '!'])
++                && let Some(elided_word) = elide_cmd_argv0_word(raw)
++                && cmd_elided_argv0_has_nonempty_basename(&elided_word)
++            {
++                let is_obfuscated_call = !raw.contains('"')
++                    && elided_word
++                        .trim_start_matches('@')
++                        .eq_i
+```
+
+**File**: `src/normalize.rs` (modified, +573/-1)
+```diff
+@@ -95,6 +95,7 @@ pub fn strip_wrapper_prefixes(command: &str) -> NormalizedCommand<'_> {
+ 
+     let mut current = trimmed.to_string();
+     let mut stripped_wrappers = Vec::new();
++    let mut modprobe_env = ModprobeEnvState::default();
+ 
+     // Iteratively strip wrappers until no more are found
+     // Limit iterations to prevent DoS from maliciously crafted commands
+@@ -114,36 +115,42 @@ pub fn strip_wrapper_prefixes(command: &str) -> NormalizedCommand<'_> {
+ 
+         // Try stripping each wrapper type in order
+         if let Some((remaining, wrapper)) = strip_sudo(&current) {
++            record_modprobe_env_wrapper(&mut modprobe_env, &wrapper);
+             stripped_wrappers.push(wrapper);
+             current = remaining;
+             continue;
+         }
+ 
+         if let Some((remaining, wrapper)) = strip_env(&current) {
++            record_modprobe_env_wrapper(&mut modprobe_env, &wrapper);
+             stripped_wrappers.push(wrapper);
+             current = remaining;
+             continue;
+         }
+ 
+         if let Some((remaining, wrapper)) = strip_command_wrapper(&current) {
++            record_modprobe_env_wrapper(&mut modprobe_env, &wrapper);
+             stripped_wrappers.push(wrapper);
+             current = remaining;
+             continue;
+         }
+ 
+         if let Some((remaining, wrapper)) = strip_posix_assignment_prefix(&current) {
++            record_modprobe_env_wrapper(&mut modprobe_env, &wrapper);
+             stripped_wrappers.push(wrapper);
+             current = remaining;
+             continue;
+         }
+ 
+         if let Some((remaining, wrapper)) = strip_execution_wrapper(&current) {
++            record_modprobe_env_wrapper(&mut modprobe_env, &wrapper);
+             stripped_wrappers.push(wrapper);
+             current = remaining;
+             continue;
+         }
+ 
+         if let Some((remaining, wrapper)) = strip_leading_backslash(&current) {
++            record_modprobe_env_wrapper(&mut modprobe_env, &wrapper);
+             stripped_wrappers.push(wrapper);
+             current = remaining;
+             continue;
+@@ -155,7 +162,22 @@ pub fn strip_wrapper_prefixes(command: &str) -> NormalizedCommand<'_> {
+         }
+     }
+ 
+-    if stripped_wrappers.is_empty() {
++    let mut modprobe_env_folded = false;
++    if !limit_reached {
++        if !modprobe_env.posixly_correct
++            && leading_unstripped_posixly_correct_before_modprobe(&current)
++        {
++            modprobe_env.posixly_correct = true;
++        }
++        if (modprobe_env.modprobe_options.is_some() || modprobe_env.posixly_correct)
++            && let Some(folded) = fold_modprobe_env_into_command(&current, &modprobe_env)
++        {
++            current = folded;
++            modprobe_env_folded = true;
++        }
++    }
++
++    if stripped_wrappers.is_empty() && !modprobe_env_folded {
+         NormalizedCommand::unchanged(command)
+     } else {
+         NormalizedCommand {
+@@ -167,6 +189,453 @@ pub fn strip_wrapper_prefixes(command: &str) -> NormalizedCommand<'_> {
+     }
+ }
+ 
++/// Environment variables stripped before `modprobe` that change how kmod
++/// parses its command line (bd-modprobe-env-option-bypass-fhep).
++///
++/// - `MODPROBE_OPTIONS`: kmod splits this on ASCII whitespace and prepends the
++///   resulting tokens before `argv[1..]`, so `MODPROBE_OPTIONS=-r modprobe x`
++///   unloads `x`.
++/// - `POSIXLY_CORRECT`: glibc `getopt_long` stops permuting options at the
++///   first non-option operand whenever this variable is present (even empty),
++///   so `POSIXLY_CORRECT=1 modprobe -r nvidia -n` treats `-n` as another
++///   module name rather than a dry-run flag.
++#[derive(Default)]
++struct ModprobeEnvState {
++    modprobe_options: Option<String>,
++    posixly_correct: bool,
++}
++
++fn record_modprobe_assignment(state: &mut ModprobeEnvState, raw: &str) {
++    let mut decoder = ShellTokenDecoder::new(ShellDialect::Posix);
++    let Some(decoded) = decoder.decode(raw, ShellTokenRole::Syntax) else {
++        return;
++    };
++    let Some((name, value)) = decoded.split_once('=') else {
++        return;
++    };
++    match name {
++        "MODPROBE_OPTIONS" => state.modprobe_options = Some(value.to_string()),
++        "POSIXLY_CORRECT" => state.posixly_correct = true,
++        _ => {}
++    }
++}
++
++fn unset_modprobe_env_name(state: &mut ModprobeEnvState, raw_name: &str) {
++    let mut decoder = ShellTokenDecoder::new(ShellDialect::Posix);
++    let decoded = decoder
++        .decode(raw_name.trim(), ShellTokenRole::Syntax)
++        .unwrap_or_else(|| Cow::Borrowed(raw_name.trim()));
++    match decoded.as_ref() {
++        "MODPROBE_OPTIONS" => state.modprobe_options = None,
++        "POSIXLY_CORRECT" => state.posixly_correct = false,
++        _ => {}
++    }
++}
++
++fn record_modprobe_env_wrapper(state: &mut ModprobeEnvState, wrapper: &StrippedWrapper) {
++    match wrapper.wrapper_type {
++        "assignment" => record_modprobe_assignment(state, &wrapper.stripped_text),
++        "env" => record_modprob
+```
+
+**File**: `src/packs/system/services.rs` (modified, +4/-4)
+```diff
+@@ -60,10 +60,10 @@ macro_rules! modprobe_dry_run_ahead {
+ /// abbreviation of it, or a short-flag cluster holding `r` such as `-rf`),
+ /// unless they ask for a dry run.
+ ///
+-/// `MODPROBE_OPTIONS=-r`/`POSIXLY_CORRECT` prefixes cannot be matched here:
+-/// the evaluator strips a leading environment assignment as a wrapper before
+-/// any pack sees the command, so the variable is gone by match time. That
+-/// env-layer bypass is bd-modprobe-env-option-bypass-fhep.
++/// `MODPROBE_OPTIONS` and `POSIXLY_CORRECT` leading assignments (bare or via
++/// `env`/`sudo`) are folded into the `modprobe` command by
++/// `normalize::strip_wrapper_prefixes` before this rule runs
++/// (bd-modprobe-env-option-bypass-fhep).
+ macro_rules! modprobe_removal {
+     () => {
+         concat!(
+```
+
+**File**: `src/packs/windows/filesystem.rs` (modified, +350/-37)
+```diff
+@@ -849,6 +849,170 @@ fn cmd_drive_target(decoded: &str) -> bool {
+ /// word only when its prefix is exactly a protected internal command, and a
+ /// switch word only when every piece is a one-letter switch or `/?`, so a
+ /// path or a `/fs:NTFS`-style valued switch is never taken apart.
++fn split_cmd_packed_dynamic_switches(word: &str) -> Option<Vec<String>> {
++    if !word.starts_with('/') || !word.contains(['%', '!', '^']) {
++        return None;
++    }
++    let bytes = word.as_bytes();
++    let mut slash_positions = vec![0usize];
++    let mut index = 1usize;
++    let mut double = false;
++    while index < bytes.len() {
++        if let Some(end) = crate::normalize::cmd_expansion_end(bytes, index) {
++            index = end;
++            continue;
++        }
++        match bytes[index] {
++            b'"' => {
++                double = !double;
++                index += 1;
++            }
++            b'^' if !double => {
++                if bytes.get(index + 1) == Some(&b'%')
++                    && let Some(end) = crate::normalize::cmd_expansion_end(bytes, index + 1)
++                {
++                    index = end;
++                } else {
++                    index = index.saturating_add(2).min(bytes.len());
++                }
++            }
++            b'/' if !double => {
++                slash_positions.push(index);
++                index += 1;
++            }
++            _ => index += 1,
++        }
++    }
++    if slash_positions.len() < 2 {
++        return None;
++    }
++    let mut pieces = Vec::with_capacity(slash_positions.len());
++    for (idx, &start) in slash_positions.iter().enumerate() {
++        let end = slash_positions.get(idx + 1).copied().unwrap_or(word.len());
++        let piece = &word[start..end];
++        let is_plain_switch =
++            piece == "/?" || (piece.len() == 2 && piece.as_bytes()[1].is_ascii_alphabetic());
++        let is_dynamic_switch = piece.len() > 1 && piece.contains(['%', '!', '^']);
++        if !(is_plain_switch || is_dynamic_switch) {
++            return None;
++        }
++        pieces.push(piece.to_string());
++    }
++    Some(pieces)
++}
++
++fn cmd_first_glued_switch_slash(word: &str) -> Option<usize> {
++    let bytes = word.as_bytes();
++    let mut index = 0usize;
++    let mut double = false;
++    while index < bytes.len() {
++        if let Some(end) = crate::normalize::cmd_expansion_end(bytes, index) {
++            index = end;
++            continue;
++        }
++        match bytes[index] {
++            b'"' => {
++                double = !double;
++                index += 1;
++            }
++            b'^' if !double => {
++                if bytes.get(index + 1) == Some(&b'%')
++                    && let Some(end) = crate::normalize::cmd_expansion_end(bytes, index + 1)
++                {
++                    index = end;
++                } else {
++                    index = index.saturating_add(2).min(bytes.len());
++                }
++            }
++            b'/' if !double => return Some(index),
++            _ => index += 1,
++        }
++    }
++    None
++}
++
++fn symbolic_cmd_executable_may_split_into(word: &WindowsFilesystemWord, candidate: &str) -> bool {
++    if !word.dynamic || !word.may_split {
++        return false;
++    }
++    // An unquoted `%VAR%`/`!VAR!` in argv0 expands before whitespace
++    // splitting in cmd.exe: `set "x=d "` turns `r%x%md /s /q C:\` into
++    // `rd md /s /q C:\`. When a non-empty literal prefix before the first
++    // unquoted expansion prefixes a protected deletion command, the runtime
++    // argv0 can resolve to that command while pushing the remaining suffix
++    // into argv[1].
++    let Some(fragments) = word.cmd_fragments.as_ref() else {
++        return false;
++    };
++    let Some(first) = fragments.first() else {
++        return false;
++    };
++    if first.is_empty() {
++        return false;
++    }
++    let first_lower = first.to_ascii_lowercase();
++    candidate.to_ascii_lowercase().starts_with(&first_lower)
++}
++
++fn cmd_word_is_or_elides_to_call(word: &str) -> bool {
++    if word.contains('"') {
++        return false;
++    }
++    if !word.contains(['%', '!']) {
++        return word.trim_start_matches('@').eq_ignore_ascii_case("call");
++    }
++    let bytes = word.as_bytes();
++    let mut out = String::with_capacity(word.len());
++    let mut index = 0usize;
++    while index < bytes.len() {
++        let byte = bytes[index];
++        if matches!(byte, b'%' | b'!')
++            && let Some(end) = crate::normalize::cmd_expansion_end(bytes, index)
++        {
++            index = end;
++            continue;
++        }
++        if byte == b'^' {
++            if bytes.get(index + 1) == Some(&b'%')
++                && let Some(end) = crate::normalize::cmd_expansion_end(bytes, index + 1)
++            {
++                index = end;
++                continue;
++            }
++            if let Some(&next) = bytes.get(index + 1) {
++                out.push(next as char);
++                index += 2;
++               
+```
+
+**File**: `tests/repro_fhep_modprobe_env_bypass.rs` (added, +250/-0)
+```diff
+@@ -0,0 +1,250 @@
++//! bd-modprobe-env-option-bypass-fhep: `MODPROBE_OPTIONS` and
++//! `POSIXLY_CORRECT` leading env assignments (bare or through `env`/`sudo`)
++//! must be folded into `modprobe` before `system.services` evaluates the
++//! command, without breaking benign dry-run or load commands.
++//!
++//! Exercises the real compiled `dcg` binary through both `dcg test` (posix and
++//! unknown dialects, heredoc extractor on and off) and the PreToolUse hook JSON
++//! stdin protocol. No kernel operation runs: commands are only classified.
++
++use std::io::Write;
++use std::process::{Command, Stdio};
++
++const BENIGN_ALLOW_CONTROLS: &[&str] = &[
++    "FOO=bar modprobe nvidia",
++    "MODPROBE_OPTIONS=-n modprobe nvidia",
++    "MODPROBE_OPTIONS=\"-r -n\" modprobe nvidia",
++    "MODPROBE_OPTIONS=\"-n -r\" modprobe nvidia",
++    "MODPROBE_OPTIONS=--dry-run modprobe nvidia",
++    "MODPROBE_OPTIONS=\"--show -r\" modprobe nvidia",
++    "MODPROBE_OPTIONS=-n modprobe -r nvidia",
++    "MODPROBE_OPTIONS=-r modprobe -n nvidia",
++    "MODPROBE_OPTIONS=\"\" modprobe nvidia",
++    "MODPROBE_OPTIONS=-v modprobe nvidia",
++    "MODPROBE_OPTIONS=\"--config=/etc/modprobe.conf -r -n\" modprobe nvidia",
++    "MODPROBE_OPTIONS=-r MODPROBE_OPTIONS=-n modprobe nvidia",
++    "MODPROBE_OPTIONS=-r env -u MODPROBE_OPTIONS modprobe nvidia",
++    "MODPROBE_OPTIONS=-r env -i modprobe nvidia",
++    "POSIXLY_CORRECT=1 modprobe -n -r nvidia",
++    "POSIXLY_CORRECT=$(echo 1) modprobe -n -r nvidia",
++    "POSIXLY_CORRECT=1 modprobe -r -n nvidia",
++    "POSIXLY_CORRECT=1 modprobe --dry-run -r nvidia",
++    "POSIXLY_CORRECT=1 modprobe -C /etc/modprobe.conf -n -r nvidia",
++    "POSIXLY_CORRECT=1 modprobe --config=/etc/modprobe.conf -n -r nvidia",
++    "POSIXLY_CORRECT=1 modprobe --config /etc/modprobe.conf -n -r nvidia",
++    "POSIXLY_CORRECT=1 modprobe nvidia",
++    "POSIXLY_CORRECT=1 MODPROBE_OPTIONS=\"-r -n\" modprobe nvidia",
++    "POSIXLY_CORRECT=1 MODPROBE_OPTIONS=-n modprobe -r nvidia",
++    "echo ok && MODPROBE_OPTIONS=-n modprobe -r nvidia",
++    "echo ok && MODPROBE_OPTIONS=\"-r -n\" modprobe nvidia",
++    "echo ok && POSIXLY_CORRECT=1 modprobe -n -r nvidia",
++    "POSIXLY_CORRECT=1 ls -la /tmp",
++];
++
++const DESTRUCTIVE_DENY_CONTROLS: &[&str] = &[
++    "MODPROBE_OPTIONS=-r modprobe nvidia",
++    "MODPROBE_OPTIONS=--remove modprobe nvidia",
++    "MODPROBE_OPTIONS=\"--remove\" modprobe nvidia",
++    "MODPROBE_OPTIONS=\"--remove-dependencies\" modprobe nvidia",
++    "MODPROBE_OPTIONS=\"--remove-holders\" modprobe nvidia",
++    "MODPROBE_OPTIONS=\"-rv\" modprobe nvidia",
++    "MODPROBE_OPTIONS='-r' modprobe nvidia",
++    "MODPROBE_OPTIONS=\"--config=/etc/modprobe.conf -r\" modprobe nvidia",
++    "MODPROBE_OPTIONS=-C modprobe -n -r nvidia",
++    "MODPROBE_OPTIONS=\"-r --\" modprobe -n nvidia",
++    "MODPROBE_OPTIONS=-n MODPROBE_OPTIONS=-r modprobe nvidia",
++    "FOO=bar MODPROBE_OPTIONS=-r BAZ=qux modprobe nvidia",
++    "env MODPROBE_OPTIONS=-r modprobe nvidia",
++    "env -i MODPROBE_OPTIONS=-r modprobe nvidia",
++    "env -- MODPROBE_OPTIONS=-r modprobe nvidia",
++    "env -S \"MODPROBE_OPTIONS=-r modprobe nvidia\"",
++    "sudo env MODPROBE_OPTIONS=-r modprobe nvidia",
++    "sudo MODPROBE_OPTIONS=-r modprobe nvidia",
++    "sudo -u root MODPROBE_OPTIONS=-r modprobe nvidia",
++    "MODPROBE_OPTIONS=-r sudo -E modprobe nvidia",
++    "MODPROBE_OPTIONS=-r /sbin/modprobe nvidia",
++    "MODPROBE_OPTIONS=-r /usr/sbin/modprobe nvidia",
++    "MODPROBE_OPTIONS=-r \"modprobe\" nvidia",
++    "MODPROBE_OPTIONS=-r \\modprobe nvidia",
++    "POSIXLY_CORRECT=1 modprobe -r nvidia -n",
++    "POSIXLY_CORRECT=1 modprobe -r nvidia --dry-run",
++    "POSIXLY_CORRECT=1 modprobe -r nvidia --show",
++    "POSIXLY_CORRECT= modprobe -r nvidia -n",
++    "POSIXLY_CORRECT=$(echo 1) modprobe -r nvidia -n",
++    "POSIXLY_CORRECT=1 env modprobe -r nvidia -n",
++    "env POSIXLY_CORRECT=1 modprobe -r nvidia -n",
++    "POSIXLY_CORRECT=1 /usr/sbin/modprobe -r nvidia -n",
++    "POSIXLY_CORRECT=1 modprobe -C /etc/modprobe.conf -r nvidia -n",
++    "POSIXLY_CORRECT=1 modprobe --conf /etc/modprobe.conf -r nvidia -n",
++    "POSIXLY_CORRECT=1 modprobe --rem nvidia -n",
++    "POSIXLY_CORRECT=1 modprobe --remove-h nvidia -n",
++    "POSIXLY_CORRECT=1 modprobe --remove-d nvidia -n",
++    "POSIXLY_CORRECT=1 MODPROBE_OPTIONS=\"--rem\" modprobe nvidia -n",
++    "POSIXLY_CORRECT=1 MODPROBE_OPTIONS=-r modprobe nvidia -n",
++    "POSIXLY_CORRECT=1 MODPROBE_OPTIONS=\"-r nvidia\" modprobe -n",
++    "echo ok && MODPROBE_OPTIONS=-r modprobe nvidia",
++    "echo ok; POSIXLY_CORRECT=1 modprobe -r nvidia -n",
++];
++
++const NESTED_DENY_CONTROLS: &[&str] = &[
++    "ssh gpu-host MODPROBE_OPTIONS=-r modprobe nvidia",
++    "ssh gpu-host 'MODPROBE_OPTIONS=-r modprobe nvidia'",
++    "ssh gpu-host 'POSIXLY_CORRECT=1 modprobe -r nvidia -n'",
++    "bash -c 'MODPROBE_OPTIONS=-r modprobe nvidia'",
++    "bash -c 'POSIXLY_CORRECT=1 modprobe -r nvidia -n'",
++];
++
++fn dcg_test_verdict(command: &str, dialect: &str, heredoc: bool) 
+```
+
+**File**: `tests/repro_j70t_cmd_dynamic_argv0_windows.rs` (added, +281/-0)
+```diff
+@@ -0,0 +1,281 @@
++//! bd-cmd-dynamic-argv0-windows-rules-j70t: `%VAR%` (including always-empty
++//! `%PATH:~0,0%`) and `!VAR!` expansions inside cmd.exe program names must not
++//! skip `windows.filesystem`, `windows.system`, or `windows.misc` rules, while
++//! keeping benign cmd commands and read-only operations allowed.
++//!
++//! Exercises the real compiled `dcg` binary through both `dcg test` (`cmd` and
++//! `unknown` dialects) and the PreToolUse hook JSON stdin protocol (`cmd` and
++//! `Bash` tools). No commands execute: they are only classified.
++
++use std::io::Write;
++use std::process::{Command, Stdio};
++
++const WINDOWS_PACKS: &str = "core.git,core.filesystem,system.services,windows.filesystem,windows.system,windows.misc,windows.powershell";
++
++const DESTRUCTIVE_DENY_CONTROLS: &[&str] = &[
++    // windows.filesystem: rmdir/rd/del/format with %VAR%, !VAR!, glued switches,
++    // variable-name separators/spaces, and unquoted split prefixes
++    r"r%x%md /s /q C:\",
++    r"r%PATH:~0,0%md /s /q C:\",
++    r"r%x%mdir /s /q C:\",
++    r"rm%x%dir /s /q C:\",
++    r"r%x%d /s /q C:\",
++    r"R%x%MDIR /S /Q C:\",
++    r"r%PATH:~0, 0%mdir /s /q C:\",
++    r"r%NAME\WITH\SEP%mdir /s /q C:\",
++    r"r%NAME&WITH|PUNCT%mdir /s /q C:\",
++    r"r%x%mdir/s/q C:\",
++    r"r%x%d/s/q C:\",
++    r"d%x%el/s/q C:\",
++    r"call r%x%mdir/s/q C:\",
++    r"ca%x%ll r%x%md /s /q C:\",
++    r"ca%x%ll r%x%mdir/s/q C:\",
++    r"C:\Windows\System32\r%x%md /s /q C:\",
++    r"r!x!mdir /s /q C:\",
++    r"form%x%at C:",
++    r"form%x%at/q C:",
++    // windows.system: vssadmin + wbadmin + wmic + diskpart + cipher + bcdedit + fsutil
++    r"vssad%x%min delete shadows /all",
++    r"vssad%PATH:~0,0%min delete shadows /all",
++    r"vssad%x%min.exe delete shadows /all",
++    r"VSSAD%x%MIN DELETE SHADOWS /ALL",
++    r"C:\Windows\System32\vssad%x%min.exe delete shadows /all",
++    r"vssad!x!min delete shadows /all",
++    r"wba%x%dmin delete catalog",
++    r"wba%PATH:~0,0%dmin delete backup -keepVersions:0",
++    r"wm%x%ic shadowcopy delete",
++    r"diskp%x%art /s wipe.txt",
++    r"ciph%x%er /w:C:",
++    r"bcde%x%dit /delete {current}",
++    r"fsut%x%il file setzerodata offset=0 length=4096 C:\data.db",
++    r"fsut%x%il volume dismount C:",
++    // windows.misc: reg, net, sc, schtasks, wsl, robocopy
++    r"re%x%g delete HKLM\Software\Foo /f",
++    r"re%PATH:~0,0%g delete HKLM\Software\Foo /f",
++    r"RE%x%G.EXE DELETE HKLM\Software\Foo /f",
++    r"C:\Windows\System32\re%x%g.exe delete HKLM\Software\Foo /f",
++    r"re%x%g delete HKLM\Software\reg\Foo /f",
++    r"reg query HKLM\Foo & re%x%g delete HKLM\Bar /f",
++    r#"re"%x%"g delete HKLM\Software\Foo /f"#,
++    r"re!x!g delete HKLM\Software\Foo /f",
++    r"call re%x%g delete HKLM\Software\Foo /f",
++    r"ca%x%ll re%x%g delete HKLM\Software\Foo /f",
++    r"ca%x%ll vssad%x%min delete shadows /all",
++    r"2>nul re%x%g delete HKLM\Software\Foo /f",
++    r"ne%x%t user alice /delete",
++    r"s%x%c delete MyService",
++    r"r%x%mdir /%y%s/q C:\",
++    r"echo %undefined & re%x%g delete HKLM\Software\Foo /f & tail%",
++    r"ws%x%l --unregister Ubuntu",
++    r"roboc%x%opy C:\src D:\dst /MIR",
++    // Delayed expansion in core.git + cmd /c wrapper
++    r"gi!x!t reset --hard",
++    r#"cmd /c "r%x%md /s /q C:\""#,
++    r#"cmd /c "r%x%mdir /s /q C:\""#,
++    r#"cmd /c "vssad%x%min delete shadows /all""#,
++    r#"cmd /c "re%x%g delete HKLM\Software\Foo /f""#,
++    r#"cmd /v:on /c "re!x!g delete HKLM\Software\Foo /f""#,
++];
++
++const BENIGN_CMD_CORPUS: &[&str] = &[
++    r"echo %PATH%",
++    r"dir %USERPROFILE%",
++    r"dir /s %USERPROFILE%",
++    r"set FOO=%BAR%",
++    r"rd /?",
++    r"rmdir /?",
++    r"r%x%mdir /?",
++    r"r%x%md /?",
++    r"r%x%md C:\empty_dir",
++    r#""r%x%md" /s /q C:\"#,
++    r"vssadmin list shadows",
++    r"vssad%x%min list shadows",
++    r"vssad%x%min /?",
++    r"reg query HKLM\Software\Foo",
++    r"re%x%g query HKLM\Software\Foo",
++    r"re%x%g export HKLM\Software\Foo backup.reg",
++    r"sc query MyService",
++    r"s%x%c query MyService",
++    r"wsl --list --verbose",
++    r"ws%x%l --list --verbose",
++    r"schtasks /query /tn MyTask",
++    r"schta%x%sks /query /tn MyTask",
++    r"robocopy C:\src D:\dst /E",
++    r"roboc%x%opy C:\src D:\dst /E",
++    r"net user alice",
++    r"ne%x%t user alice",
++    r#"echo "vssad%x%min delete shadows /all""#,
++    r#"echo "r%x%mdir /s /q C:\""#,
++    r#"echo "re%x%g delete HKLM\Software\Foo /f""#,
++    r#"git commit -m "vssad%x%min delete shadows /all""#,
++    r"%LOGGER% rmmod nvidia",
++    r"vssad^!LITERAL^!%EMPTY%min delete shadows /all",
++    r"run_%ENV%.exe /s",
++    r"deploy_%ENV%.cmd /s",
++    r"echo 50% off 20%",
++];
++
++fn dcg_test_verdict(command: &str, dialect: &str) -> serde_json::Value {
++    let scratch = tempfile::tempdir().expect("scratch dir");
++    let home = scratch.path().join("home");
++    std::fs::create_dir_all(&home).expect("isolated home");
++    let config = scratch.path().join("config.toml");
++    std::fs::write(&config, "[her
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #672** (2026-11-23): deps(deps): bump nix from 0.31.4 to 0.32.0 (@dependabot[bot])
 - **PR #659** (2026-11-17): deps(deps): bump rusqlite from 0.41.1 to 0.42.0 (@dependabot[bot])
 - **PR #658** (2026-11-17): deps(deps): bump the rust-minor-patch group with 3 updates (@dependabot[bot])
 - **PR #657** (2026-11-17): ci(deps): bump sigstore/cosign-installer from 4.1.2 to 4.1.3 in the actions group (@dependabot[bot])
 - **PR #651** (closed): ci(deps): bump sigstore/cosign-installer from 4.1.2 to 4.1.3 in the actions group (@dependabot[bot])
 - **PR #650** (closed): deps(deps): bump flate2 from 1.1.10 to 1.1.11 in the rust-minor-patch group (@dependabot[bot])
-- **PR #637** (closed): fix(powershell): preserve call/dot-source operators across compound statements, scriptblock .Invoke(), and *.exe tool names (@stevemoraco)
 
 ---
 
@@ -3734,55 +4679,6 @@ Fixes #671
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. bind lookaround exemptions to their segments [skip ci]
-
-**RULE**:
-When implementing operations in `docs/custom-packs.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Dicklesworthstone/destructive_command_guard. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `3459216e`: bind lookaround exemptions to their segments [skip ci]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/custom-packs.md`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-Unscoped destructive rules are checked against individual segments and the
-complete, data-sanitized command. In the complete-command check, lookarounds
-retain that full context even when the text they consume stays inside one
-segment. For example, `mytool(?=[^\r\n]*?publish)` can match `mytool status;
-publish`: the lookahead reads the later segment without including it in the
-highlighted match. This also applies to the original custom-policy view that
-preserves assignments and wrappers. Rules with `executables` keep their
-segment-local matching context.
-A whole-command search continues past an occurrence covered by its innermost
-segment's safe exemption, so an exempt earlier occurrence cannot hide a later
-one. An enclosing segment's local safe match cannot be borrowed to authorize a
-child. Grants from a complete carrier still follow the inheritance rules above.
-A match that consumes text from multiple segments cannot borrow the safe
-exemption of just one segment. Exempt segments remain visible as context for
-other matches' lookarounds.
-
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Induced defect failure mode:
-Unscoped rules retain the complete matching context across shell separators,
-including text read by lookahead and lookbehind assertions outside the consumed
-match. Safe-pattern exemptions still apply to the segment they authorize;
-skipping an exempt match does not hide later matches of the same rule.
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3459216e` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

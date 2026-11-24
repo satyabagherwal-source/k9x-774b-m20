@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T18:52:10.231Z",
+  "last_updated": "2026-11-24T19:00:48.037Z",
   "total_records": 2565,
   "domains": {
     "A": {
@@ -15914,8 +15914,8 @@
       "title": "Architecture Intelligence: projectdiscovery/nuclei Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-architecture-intelligence-projectdiscovery-nuclei-core-i.md",
       "repository": "projectdiscovery/nuclei",
-      "content_hash": "dbce473b982d7dff86fc8bf5b7bab1b7ba2f676a6df55770b584912221a0ac78",
-      "created_at": "2026-11-23T15:12:46.766Z"
+      "content_hash": "fccd817404674dcdf31a432c02e9e809ca10395d17a39173ac0382d206781623",
+      "created_at": "2026-11-24T19:00:39.709Z"
     },
     "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-learnings-core-invar": {
       "record_id": "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-learnings-core-invar",
@@ -20463,8 +20463,8 @@
       "title": "Architecture Intelligence: projectdiscovery-nuclei-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-learnings-architecture-intelligence-projectdiscovery-nuc.md",
       "repository": "projectdiscovery-nuclei-learnings",
-      "content_hash": "3141349f362b7da4fa5a219ab4b1b0a0645e68e60e5dd2a22eef124c53887850",
-      "created_at": "2026-11-23T15:13:18.015Z"
+      "content_hash": "5958aa458cc21a4f12459eefbe87401bf07db68e64a973916ebe341c8552a6cd",
+      "created_at": "2026-11-24T19:00:46.773Z"
     },
     "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-omni-2b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-omni-2b-core-invariants",
@@ -22996,8 +22996,8 @@
       "title": "Architecture Intelligence: Dicklesworthstone/destructive_command_guard Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dicklesworthstone-destructive_command_guard-architecture-intelligence-dickleswor.md",
       "repository": "Dicklesworthstone/destructive_command_guard",
-      "content_hash": "ac9032157be23bc0844bff794a8e18bc493b671feab46eec7343d844250fc8f0",
-      "created_at": "2026-11-23T17:11:49.278Z"
+      "content_hash": "5def13eab1780279d0be8ebb0b53b565eb938f9dc6be8058dd98b5422d494789",
+      "created_at": "2026-11-24T19:00:29.562Z"
     },
     "domain_intelligence-architecture-intelligence-slatedb-slatedb-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-slatedb-slatedb-learnings-core-invariants",
@@ -25261,8 +25261,8 @@
       "title": "Technical Construction Intelligence: nodejs/undici Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nodejs-undici-technical-construction-intelligence-nodejs-undici-core-invariants.md",
       "repository": "nodejs/undici",
-      "content_hash": "eebfd7cf08f32b4b924c28fffc8d28ed3830698fa856826625315761fe408196",
-      "created_at": "2026-11-20T19:44:35.572Z"
+      "content_hash": "5fd988270de5cd7d5bbd68f67ca0e9d5d9bc107c8c5dac3a48d984fecd0d0792",
+      "created_at": "2026-11-24T19:00:32.125Z"
     },
     "domain_intelligence-technical-construction-intelligence-nodejs-undici-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-nodejs-undici-learnings-core-invariants",
@@ -25270,8 +25270,8 @@
       "title": "Technical Construction Intelligence: nodejs-undici-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nodejs-undici-learnings-technical-construction-intelligence-nodejs-undici-learni.md",
       "repository": "nodejs-undici-learnings",
-      "content_hash": "848739b2aa668040e8545d7cece090a12df5448ae3ce9b177edd95268dcd5e5d",
-      "created_at": "2026-11-20T19:44:49.585Z"
+      "content_hash": "dd2ce180560d775512f19247c7e57c080fe9ac4ba91cbcd6b5302a27ccf22122",
+      "created_at": "2026-11-24T19:00:45.856Z"
     },
     "domain_intelligence-technical-construction-intelligence-axios-axios-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-axios-axios-core-invariants",
@@ -36469,8 +36469,8 @@
       "title": "Content & Information Intelligence: vcaesar/riot Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-vcaesar-riot-content-information-intelligence-vcaesar-riot-core-invariants.md",
       "repository": "vcaesar/riot",
-      "content_hash": "50bf5436c437666c2a46ca690c3014701cd74af071e339d634aacd6848e2d62e",
-      "created_at": "2026-11-21T20:48:19.744Z"
+      "content_hash": "8f19cec56587e84f37b1a329826978e14de026cfe01471ac7c66c92380d9bc56",
+      "created_at": "2026-11-24T19:00:41.063Z"
     },
     "domain_intelligence-architecture-intelligence-archivebox-archivebox-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-archivebox-archivebox-learnings-core-invariants",
@@ -36487,8 +36487,8 @@
       "title": "Content & Information Intelligence: vcaesar-riot-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-vcaesar-riot-learnings-content-information-intelligence-vcaesar-riot-learnings-c.md",
       "repository": "vcaesar-riot-learnings",
-      "content_hash": "c8580f0ae0b65ce88278f80bdccd9b45be72e4f10d4acf2cb53f922dab41226d",
-      "created_at": "2026-11-21T20:52:09.826Z"
+      "content_hash": "c4044f1734fae5c7b386dde3903ed3bcaa1df635100e97fb13e0477ffae195db",
+      "created_at": "2026-11-24T19:00:48.037Z"
     },
     "domain_intelligence-technical-construction-intelligence-defguard-defguard-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-defguard-defguard-core-invariants",

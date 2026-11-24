@@ -12813,3 +12813,7 @@ Every entry in this ledger must capture:
 | `learn-github-kubearmor-kubearmor` | `https://github.com/kubearmor/KubeArmor` | `a95bfe7d` | Multi-dimensional audit evidence | 2026-11-24T18:51:50.875Z |
 | `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `b0144700` | Multi-dimensional audit evidence | 2026-11-24T18:52:03.633Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `c69b970d` | Multi-dimensional audit evidence | 2026-11-24T18:52:03.875Z |
+| `learn-github-dicklesworthstone-destructive_command_guard` | `https://github.com/Dicklesworthstone/destructive_command_guard` | `4e6cb47a` | Multi-dimensional audit evidence | 2026-11-24T19:00:29.277Z |
+| `learn-github-nodejs-undici` | `https://github.com/nodejs/undici` | `34151bf8` | Multi-dimensional audit evidence | 2026-11-24T19:00:31.670Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `12d12a40` | Multi-dimensional audit evidence | 2026-11-24T19:00:39.214Z |
+| `learn-github-vcaesar-riot` | `https://github.com/vcaesar/riot` | `6493e166` | Multi-dimensional audit evidence | 2026-11-24T19:00:40.543Z |

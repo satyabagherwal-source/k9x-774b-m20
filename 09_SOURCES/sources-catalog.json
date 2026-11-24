@@ -3453,10 +3453,10 @@
     "repository": "projectdiscovery/nuclei",
     "platform": "github",
     "sourceUrl": "https://github.com/projectdiscovery/nuclei",
-    "sourceVersion": "3fa285c4",
+    "sourceVersion": "12d12a40",
     "license": "MIT",
-    "contentHash": "dc9e179106d6cf9656b53d06ea7ab87f7d6c76050bbbc225050a3e53af4c2fc9",
-    "lastHarvestedAt": "2026-11-23T15:12:46.391Z",
+    "contentHash": "5099bcd96453875e2387b8b1b600bcb231e2fd9138998eb28f9dce76d89ec1e7",
+    "lastHarvestedAt": "2026-11-24T19:00:39.214Z",
     "learningId": "learn-github-projectdiscovery-nuclei"
   },
   "okteto-okteto": {
@@ -6143,10 +6143,10 @@
     "repository": "Dicklesworthstone/destructive_command_guard",
     "platform": "github",
     "sourceUrl": "https://github.com/Dicklesworthstone/destructive_command_guard",
-    "sourceVersion": "b4f82a73",
+    "sourceVersion": "4e6cb47a",
     "license": "NOASSERTION",
-    "contentHash": "86b9dfb823a7b881a1ea56eaae673b3d624e6bd568e8a96c342ed1c526d3aed5",
-    "lastHarvestedAt": "2026-11-23T17:11:48.856Z",
+    "contentHash": "7ec0fec095c4536195067a92ce849b73b8a4a6a836f1647a16f90ddef8304109",
+    "lastHarvestedAt": "2026-11-24T19:00:29.277Z",
     "learningId": "learn-github-dicklesworthstone-destructive_command_guard"
   },
   "xinthink-react-native-material-kit": {
@@ -9573,10 +9573,10 @@
     "repository": "nodejs/undici",
     "platform": "github",
     "sourceUrl": "https://github.com/nodejs/undici",
-    "sourceVersion": "322a7eed",
+    "sourceVersion": "34151bf8",
     "license": "MIT",
-    "contentHash": "8bd7834eae9de3adeef2d08c7395861cbc9e344491e0759d177e1a2751123171",
-    "lastHarvestedAt": "2026-11-20T19:44:35.220Z",
+    "contentHash": "3dc0640601d8e0e5e750707316f8d9d4e12ca6e0a0c7782850b8f70852093617",
+    "lastHarvestedAt": "2026-11-24T19:00:31.670Z",
     "learningId": "learn-github-nodejs-undici"
   },
   "jordansinger-swiftui-kit": {
@@ -12953,10 +12953,10 @@
     "repository": "vcaesar/riot",
     "platform": "github",
     "sourceUrl": "https://github.com/vcaesar/riot",
-    "sourceVersion": "fd10bdae",
+    "sourceVersion": "6493e166",
     "license": "Apache-2.0",
-    "contentHash": "0596b0501f64e2e9301644d29c804c3b342b741a3728eed81f72d1ccb3ed97aa",
-    "lastHarvestedAt": "2026-11-21T20:48:19.153Z",
+    "contentHash": "36fc1d2e7ef43405cd58ebe4e1ca31a5c1aa8b73f5c6a6be602edf8eac6639ea",
+    "lastHarvestedAt": "2026-11-24T19:00:40.543Z",
     "learningId": "learn-github-vcaesar-riot"
   },
   "hf-radixark-daisyrose-27b": {

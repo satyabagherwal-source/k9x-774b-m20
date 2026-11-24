@@ -12780,3 +12780,7 @@
 | `CYCLE-20261124-WWD3` | `2026-11-24T18:51:50.871Z` | `kubearmor/KubeArmor` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10334` | Yes (`43ae716e...`) |
 | `CYCLE-20261124-X67G` | `2026-11-24T18:52:03.628Z` | `Mintplex-Labs/anything-llm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10335` | Yes (`f0da7d6f...`) |
 | `CYCLE-20261124-X6E7` | `2026-11-24T18:52:03.871Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10336` | Yes (`63736863...`) |
+| `CYCLE-20261124-80D5` | `2026-11-24T19:00:29.273Z` | `Dicklesworthstone/destructive_command_guard` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md` | Yes (`7ec0fec0...`) |
+| `CYCLE-20261124-827L` | `2026-11-24T19:00:31.665Z` | `nodejs/undici` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10337` | Yes (`3dc06406...`) |
+| `CYCLE-20261124-8816` | `2026-11-24T19:00:39.210Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10338` | Yes (`5099bcd9...`) |
+| `CYCLE-20261124-8922` | `2026-11-24T19:00:40.538Z` | `vcaesar/riot` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10339` | Yes (`36fc1d2e...`) |

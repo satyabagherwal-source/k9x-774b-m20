@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T18:52:03.881Z",
-  "total_cycles_completed": 12143,
-  "total_learnings_persisted": 12143,
-  "total_rules_promoted": 11202,
+  "last_updated": "2026-11-24T19:00:40.549Z",
+  "total_cycles_completed": 12147,
+  "total_learnings_persisted": 12147,
+  "total_rules_promoted": 11205,
   "history": [
-    {
-      "timestamp": "2026-11-24T02:12:50.664Z",
-      "repository": "langchain4j/langchain4j",
-      "learningId": "learn-github-langchain4j-langchain4j",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T02:20:58.316Z",
-      "repository": "strata-engine/Inkling-2-Mini-Strata",
-      "learningId": "learn-huggingface-strata-engine-inkling-2-mini-strata",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T02:21:13.488Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T02:31:00.243Z",
-      "repository": "rtk-ai/rtk",
-      "learningId": "learn-github-rtk-ai-rtk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T02:31:13.169Z",
       "repository": "lancedb/lancedb",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-24T18:52:03.881Z",
       "repository": "cilium/cilium",
       "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T19:00:29.282Z",
+      "repository": "Dicklesworthstone/destructive_command_guard",
+      "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T19:00:31.676Z",
+      "repository": "nodejs/undici",
+      "learningId": "learn-github-nodejs-undici",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T19:00:39.220Z",
+      "repository": "projectdiscovery/nuclei",
+      "learningId": "learn-github-projectdiscovery-nuclei",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T19:00:40.549Z",
+      "repository": "vcaesar/riot",
+      "learningId": "learn-github-vcaesar-riot",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T18:52:03.895Z",
+  "last_updated": "2026-11-24T19:00:40.561Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5301,14 +5301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectdiscovery-nuclei",
-      "content_hash": "dc9e179106d6cf9656b53d06ea7ab87f7d6c76050bbbc225050a3e53af4c2fc9",
-      "verified_at": "2026-11-23T15:12:46.398Z",
+      "content_hash": "5099bcd96453875e2387b8b1b600bcb231e2fd9138998eb28f9dce76d89ec1e7",
+      "verified_at": "2026-11-24T19:00:39.231Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T15:12:46.398Z"
+      "last_updated": "2026-11-24T19:00:39.231Z"
     },
     "okteto/okteto": {
       "repository": "okteto/okteto",
@@ -9336,14 +9336,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dicklesworthstone-destructive_command_guard",
-      "content_hash": "86b9dfb823a7b881a1ea56eaae673b3d624e6bd568e8a96c342ed1c526d3aed5",
-      "verified_at": "2026-11-23T17:11:48.864Z",
+      "content_hash": "7ec0fec095c4536195067a92ce849b73b8a4a6a836f1647a16f90ddef8304109",
+      "verified_at": "2026-11-24T19:00:29.294Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T17:11:48.864Z"
+      "last_updated": "2026-11-24T19:00:29.294Z"
     },
     "xinthink/react-native-material-kit": {
       "repository": "xinthink/react-native-material-kit",
@@ -14406,14 +14406,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nodejs-undici",
-      "content_hash": "8bd7834eae9de3adeef2d08c7395861cbc9e344491e0759d177e1a2751123171",
-      "verified_at": "2026-11-20T19:44:35.228Z",
+      "content_hash": "3dc0640601d8e0e5e750707316f8d9d4e12ca6e0a0c7782850b8f70852093617",
+      "verified_at": "2026-11-24T19:00:31.687Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T19:44:35.228Z"
+      "last_updated": "2026-11-24T19:00:31.687Z"
     },
     "jordansinger/SwiftUI-Kit": {
       "repository": "jordansinger/SwiftUI-Kit",
@@ -19521,14 +19521,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vcaesar-riot",
-      "content_hash": "0596b0501f64e2e9301644d29c804c3b342b741a3728eed81f72d1ccb3ed97aa",
-      "verified_at": "2026-11-21T20:48:19.206Z",
+      "content_hash": "36fc1d2e7ef43405cd58ebe4e1ca31a5c1aa8b73f5c6a6be602edf8eac6639ea",
+      "verified_at": "2026-11-24T19:00:40.560Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T20:48:19.206Z"
+      "last_updated": "2026-11-24T19:00:40.560Z"
     },
     "RadixArk/DaisyRose-27B": {
       "repository": "RadixArk/DaisyRose-27B",
