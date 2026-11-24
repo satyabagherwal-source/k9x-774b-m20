@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T19:56:00.980Z",
-  "total_records": 2571,
+  "last_updated": "2026-11-24T20:04:30.156Z",
+  "total_records": 2573,
   "domains": {
     "A": {
       "total": 22,
@@ -1057,7 +1057,7 @@
       ]
     },
     "F": {
-      "total": 110,
+      "total": 112,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -1168,7 +1168,9 @@
         "domain_intelligence-design-intelligence-encoredev-encore-core-invariants",
         "domain_intelligence-design-intelligence-encoredev-encore-learnings-core-invariants",
         "domain_intelligence-design-intelligence-nucleoidai-nucleoid-core-invariants",
-        "domain_intelligence-design-intelligence-nucleoidai-nucleoid-learnings-core-invariants"
+        "domain_intelligence-design-intelligence-nucleoidai-nucleoid-learnings-core-invariants",
+        "domain_intelligence-design-intelligence-dembrandt-dembrandt-core-invariants",
+        "domain_intelligence-design-intelligence-dembrandt-dembrandt-learnings-core-invariants"
       ]
     },
     "G": {
@@ -9304,8 +9306,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "1a0d2bb38510ce21b4286fe9b4b9a07a9083814b9c9ac425aa5394452bb0a0af",
-      "created_at": "2026-11-24T19:56:00.980Z"
+      "content_hash": "22d2f5fa64b536a6c29d7f7ea2834252e15a767b0443e7136fccae27adb93d63",
+      "created_at": "2026-11-24T20:04:30.156Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -37126,8 +37128,8 @@
       "title": "Research & Knowledge Intelligence: skyhook-io/radar Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-skyhook-io-radar-research-knowledge-intelligence-skyhook-io-radar-core-invariant.md",
       "repository": "skyhook-io/radar",
-      "content_hash": "8c64c9bf396e269ce436c3cb35596d0f840e5fd5174a1a8c491f15952a52c870",
-      "created_at": "2026-11-20T22:41:36.723Z"
+      "content_hash": "58b0533fba9a06d1ab0f4479722deda46654e2382da04744e636d4eb11556459",
+      "created_at": "2026-11-24T20:04:23.556Z"
     },
     "DOM-D-6E87E9F5": {
       "record_id": "DOM-D-6E87E9F5",
@@ -37177,8 +37179,8 @@
       "title": "Research & Knowledge Intelligence: skyhook-io-radar-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-skyhook-io-radar-learnings-research-knowledge-intelligence-skyhook-io-radar-lear.md",
       "repository": "skyhook-io-radar-learnings",
-      "content_hash": "2a9440d9f9e34c5447c34ca2a4e638ee2fc6a1e8d4783860c9c72faea12a61ee",
-      "created_at": "2026-11-20T22:42:06.023Z"
+      "content_hash": "6bcebd6180ee194808719bcf29cb9d575037e4c2bef252135e2f5706bb28e7b2",
+      "created_at": "2026-11-24T20:04:29.015Z"
     },
     "domain_intelligence-quality-verification-intelligence-jhspetersson-fselect-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-jhspetersson-fselect-core-invariants",
@@ -43204,6 +43206,24 @@
       "repository": "hf-orcarouter-inkling-2-mini-abliterated-gguf-learnings",
       "content_hash": "69752b6555d28503fdfc64c522db0cfca2c729753b3091ebc7b67c2d0bdb47e0",
       "created_at": "2026-11-24T19:55:59.702Z"
+    },
+    "domain_intelligence-design-intelligence-dembrandt-dembrandt-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-dembrandt-dembrandt-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: dembrandt/dembrandt Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-dembrandt-dembrandt-design-intelligence-dembrandt-dembrandt-core-invariants.md",
+      "repository": "dembrandt/dembrandt",
+      "content_hash": "c5994b080936153ccdacf66851b06add4c4767ad9a5d7931a5b1f493bb5a3ff7",
+      "created_at": "2026-11-24T20:04:14.068Z"
+    },
+    "domain_intelligence-design-intelligence-dembrandt-dembrandt-learnings-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-dembrandt-dembrandt-learnings-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: dembrandt-dembrandt-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-dembrandt-dembrandt-learnings-design-intelligence-dembrandt-dembrandt-learnings-.md",
+      "repository": "dembrandt-dembrandt-learnings",
+      "content_hash": "13df815401ad07869b9ef52b9787b922c482985e4275946a6a40737c85f9a345",
+      "created_at": "2026-11-24T20:04:28.163Z"
     }
   }
 }

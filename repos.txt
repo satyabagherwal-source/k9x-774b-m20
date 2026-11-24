@@ -5388,3 +5388,7 @@ https://huggingface.co/AtomicChat/Inkling-2-Mini-GGUF
 # --- Automatically Discovered by AI Scout Engine [2026-11-24T19:55:10.709Z] ---
 # [HUGGINGFACE-AI-MODELS] orcarouter/Inkling-2-Mini-abliterated-GGUF (3420 score) - Verified Hugging Face Model: orcarouter/Inkling-2-Mini-abliterated-GGUF (142 lik
 https://huggingface.co/orcarouter/Inkling-2-Mini-abliterated-GGUF
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-24T20:04:04.852Z] ---
+# [FULLSTACK-UI] dembrandt/dembrandt (2400 score) - Extract any website’s design system into tokens in seconds: logo, colors, typogr
+https://github.com/dembrandt/dembrandt

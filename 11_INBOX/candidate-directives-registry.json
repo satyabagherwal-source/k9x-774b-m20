@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T19:56:00.777Z",
+  "last_updated": "2026-11-24T20:04:29.979Z",
   "directives": [
     {
       "id": "CD-001",
@@ -56032,11 +56032,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-7EYO",
+      "id": "CD-IBVC",
       "directive_title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-7EYO-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-IBVC-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-24",
@@ -56923,6 +56923,55 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-E67E7B-deps-bump-url-to-2-5-9-and-heapless-to-0.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-IABZ",
+      "directive_title": "Control heights render only as a positive number of pixels on every surface",
+      "source_repo": "dembrandt-dembrandt-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-IABZ-control-heights-render-only-as-a-positive-number-of-pixels-on-every-surface.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "F"
+    },
+    {
+      "id": "CD-IAZM",
+      "directive_title": "Withhold memory reductions after unexplained recent Pod restarts",
+      "source_repo": "skyhook-io-radar-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-IAZM-withhold-memory-reductions-after-unexplained-recent-pod-restarts.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-E4133B",
+      "directive_title": "Control heights render only as a positive number of pixels on every surface",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "dembrandt-dembrandt",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E4133B-control-heights-render-only-as-a-positiv.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-REV-01384A",
+      "directive_title": "Withhold memory reductions after unexplained recent Pod restarts",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "skyhook-io-radar",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-01384A-withhold-memory-reductions-after-unexpla.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-REV-2E67BF",
+      "directive_title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2E67BF-deps-bump-url-to-2-5-9-and-heapless-to-0.md",
       "staged_date": "2026-11-24"
     }
   ]

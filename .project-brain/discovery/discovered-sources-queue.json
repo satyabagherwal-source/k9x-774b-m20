@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T19:55:59.436Z",
+  "updated_at": "2026-11-24T20:04:27.733Z",
   "stats": {
-    "total_discovered": 8874,
-    "approved_pending_harvest": 8399,
+    "total_discovered": 8888,
+    "approved_pending_harvest": 8413,
     "harvested_count": 0,
     "rejected_count": 475,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8394,
+      "COMMUNITY_AND_EXPERT": 8408,
       "OFFICIAL_DOCUMENTATION": 270,
       "STANDARDS_AND_SPECIFICATIONS": 146,
       "ENGINEERING_BLOGS": 7,
@@ -191930,6 +191930,314 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-orcarouter-inkling-2-mini-abliterated-gguf-learnings.md",
         "fileName": "hf-orcarouter-inkling-2-mini-abliterated-gguf-learnings.md"
+      }
+    },
+    "SRC-CF10FE905D1D": {
+      "id": "SRC-CF10FE905D1D",
+      "url": "https://github.com/dembrandt/dembrandt",
+      "title": "https://github.com/dembrandt/dembrandt",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T20:04:26.864Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dembrandt-dembrandt-learnings.md",
+        "fileName": "dembrandt-dembrandt-learnings.md"
+      }
+    },
+    "SRC-38A023F0D85A": {
+      "id": "SRC-38A023F0D85A",
+      "url": "https://www.dembrandt.com/",
+      "title": "https://www.dembrandt.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T20:04:26.927Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dembrandt-dembrandt-learnings.md",
+        "fileName": "dembrandt-dembrandt-learnings.md"
+      }
+    },
+    "SRC-F599ECA7F9E2": {
+      "id": "SRC-F599ECA7F9E2",
+      "url": "https://ethereum.com/",
+      "title": "https://ethereum.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T20:04:26.985Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dembrandt-dembrandt-learnings.md",
+        "fileName": "dembrandt-dembrandt-learnings.md"
+      }
+    },
+    "SRC-44CF244D84AC": {
+      "id": "SRC-44CF244D84AC",
+      "url": "https://registry.npmjs.org/dembrandt",
+      "title": "https://registry.npmjs.org/dembrandt",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T20:04:27.044Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dembrandt-dembrandt-learnings.md",
+        "fileName": "dembrandt-dembrandt-learnings.md"
+      }
+    },
+    "SRC-596E887DDD4F": {
+      "id": "SRC-596E887DDD4F",
+      "url": "https://registry.npmjs.org/adm-zip/-/adm-zip-0.6.0.tgz",
+      "title": "https://registry.npmjs.org/adm-zip/-/adm-zip-0.6.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T20:04:27.160Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dembrandt-dembrandt-learnings.md",
+        "fileName": "dembrandt-dembrandt-learnings.md"
+      }
+    },
+    "SRC-71C3A2E2381D": {
+      "id": "SRC-71C3A2E2381D",
+      "url": "https://registry.npmjs.org/adm-zip/-/adm-zip-0.6.1.tgz",
+      "title": "https://registry.npmjs.org/adm-zip/-/adm-zip-0.6.1.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T20:04:27.219Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dembrandt-dembrandt-learnings.md",
+        "fileName": "dembrandt-dembrandt-learnings.md"
+      }
+    },
+    "SRC-55AB76F956EC": {
+      "id": "SRC-55AB76F956EC",
+      "url": "https://registry.npmjs.org/fast-uri/-/fast-uri-4.1.1.tgz",
+      "title": "https://registry.npmjs.org/fast-uri/-/fast-uri-4.1.1.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T20:04:27.284Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dembrandt-dembrandt-learnings.md",
+        "fileName": "dembrandt-dembrandt-learnings.md"
+      }
+    },
+    "SRC-65ECF04C7686": {
+      "id": "SRC-65ECF04C7686",
+      "url": "https://registry.npmjs.org/fast-uri/-/fast-uri-4.2.3.tgz",
+      "title": "https://registry.npmjs.org/fast-uri/-/fast-uri-4.2.3.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T20:04:27.348Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dembrandt-dembrandt-learnings.md",
+        "fileName": "dembrandt-dembrandt-learnings.md"
+      }
+    },
+    "SRC-0A8D71602C14": {
+      "id": "SRC-0A8D71602C14",
+      "url": "https://registry.npmjs.org/proxy-addr/-/proxy-addr-2.0.7.tgz",
+      "title": "https://registry.npmjs.org/proxy-addr/-/proxy-addr-2.0.7.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T20:04:27.415Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dembrandt-dembrandt-learnings.md",
+        "fileName": "dembrandt-dembrandt-learnings.md"
+      }
+    },
+    "SRC-DD3047BA169B": {
+      "id": "SRC-DD3047BA169B",
+      "url": "https://registry.npmjs.org/proxy-addr/-/proxy-addr-2.0.8.tgz",
+      "title": "https://registry.npmjs.org/proxy-addr/-/proxy-addr-2.0.8.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T20:04:27.493Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dembrandt-dembrandt-learnings.md",
+        "fileName": "dembrandt-dembrandt-learnings.md"
+      }
+    },
+    "SRC-E1E71F2AB342": {
+      "id": "SRC-E1E71F2AB342",
+      "url": "https://opencollective.com/express",
+      "title": "https://opencollective.com/express",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T20:04:27.549Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dembrandt-dembrandt-learnings.md",
+        "fileName": "dembrandt-dembrandt-learnings.md"
+      }
+    },
+    "SRC-D502A34E0B2C": {
+      "id": "SRC-D502A34E0B2C",
+      "url": "https://registry.npmjs.org/zod/-/zod-4.6.5.tgz",
+      "title": "https://registry.npmjs.org/zod/-/zod-4.6.5.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T20:04:27.610Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dembrandt-dembrandt-learnings.md",
+        "fileName": "dembrandt-dembrandt-learnings.md"
+      }
+    },
+    "SRC-003FA70F1150": {
+      "id": "SRC-003FA70F1150",
+      "url": "https://registry.npmjs.org/zod/-/zod-4.6.7.tgz",
+      "title": "https://registry.npmjs.org/zod/-/zod-4.6.7.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T20:04:27.673Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dembrandt-dembrandt-learnings.md",
+        "fileName": "dembrandt-dembrandt-learnings.md"
+      }
+    },
+    "SRC-D777E32C2870": {
+      "id": "SRC-D777E32C2870",
+      "url": "https://github.com/sponsors/colinhacks",
+      "title": "https://github.com/sponsors/colinhacks",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T20:04:27.733Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dembrandt-dembrandt-learnings.md",
+        "fileName": "dembrandt-dembrandt-learnings.md"
       }
     }
   }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T19:55:19.354Z",
+  "last_updated": "2026-11-24T20:04:23.147Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5211,14 +5211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-skyhook-io-radar",
-      "content_hash": "84b4441d1e2154b53ee55341bf559351e78a762c4738b20c832a40e51a0a8c58",
-      "verified_at": "2026-11-24T00:57:23.355Z",
+      "content_hash": "d73e05893c62b4895d3006fd066285016121d2302b1631ed833787e34b3dae23",
+      "verified_at": "2026-11-24T20:04:23.146Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T00:57:23.355Z"
+      "last_updated": "2026-11-24T20:04:23.146Z"
     },
     "mitmproxy/mitmproxy": {
       "repository": "mitmproxy/mitmproxy",
@@ -20219,6 +20219,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-24T19:55:16.837Z"
+    },
+    "dembrandt/dembrandt": {
+      "repository": "dembrandt/dembrandt",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-dembrandt-dembrandt",
+      "content_hash": "e73305320ef97be2e164825d5b69a92e68aabab43f07dce07be76258644c7614",
+      "verified_at": "2026-11-24T20:04:13.653Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-24T20:04:13.653Z"
     }
   },
   "repos": {

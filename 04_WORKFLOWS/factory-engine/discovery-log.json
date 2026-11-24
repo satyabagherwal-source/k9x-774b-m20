@@ -22213,5 +22213,20 @@
     "downloads": 5446,
     "qualityScore": 3420,
     "discoveredAt": "2026-11-24T19:53:02.243Z"
+  },
+  {
+    "name": "dembrandt",
+    "fullName": "dembrandt/dembrandt",
+    "url": "https://github.com/dembrandt/dembrandt",
+    "type": "github",
+    "domain": "fullstack-ui",
+    "description": "Extract any website’s design system into tokens in seconds: logo, colors, typography, borders & more. One command.",
+    "stars": 4083,
+    "forks": 348,
+    "openIssues": 2,
+    "language": "TypeScript",
+    "qualityScore": 2400,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-24T20:00:58.556Z"
   }
 ]

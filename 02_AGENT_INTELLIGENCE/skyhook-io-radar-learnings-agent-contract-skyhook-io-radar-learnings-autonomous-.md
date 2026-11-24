@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T01:58:09.096Z",
+  "timestamp": "2026-11-24T20:04:28.702Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-skyhook-io-radar-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [skyhook-io-radar-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T01:58:09.096Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T20:04:28.702Z`  
 > **Learning ID**: `LEARN-EVO-skyhook-io-radar-learnings`
 
 
@@ -26,10 +26,10 @@ PROVENANCE_END -->
 ## 2. Operational Capabilities
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source**: github ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
-> **Source Version**: `495dc890`  
+> **Source Version**: `f7efd90e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T01:58:03.578Z  
+> **Timestamp**: 2026-11-24T20:04:22.010Z  
 > **Learning ID**: `learn-github-skyhook-io-radar`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -43,7 +43,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T01:58:03.572Z  
+> **Harvest Timestamp**: 2026-11-24T20:04:22.004Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -53,7 +53,7 @@ PROVENANCE_END -->
 - **Description**: The missing open-source Kubernetes UI with a built-in MCP server for AI agents. See what's broken, why, and what changed. Issues, Topology, event timeline, Helm, GitOps, live service traffic, and cluster audits - all in one Go binary.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 4145 stars
+- **Stars / Engagement**: 4223 stars
 
 ---
 
@@ -1163,9 +1163,11 @@ package k8s
 
 import (
 	"context"
+	"crypto/rand"
 	"crypto/x509"
 	"errors"
 	"net"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -1177,9 +1179,10 @@ import (
 type ConnectionState string
 
 const (
-	StateConnected    ConnectionState = "connected"
-	StateDisconnected ConnectionState = "disconnected"
-	StateConnecting   ConnectionState = "connecting"
+	switchStoppedErrorType                 = "switch-stopped"
+	StateConnected         ConnectionState = "connected"
+	StateDisconnected      ConnectionState = "disconnected"
+	StateConnecting        ConnectionState = "connecting"
 )
 
 // ConnectionStatus holds detailed information about the cluster connection
@@ -1195,6 +1198,79 @@ type ConnectionStatus struct {
 	// so the UI can say how long the cluster has been down. Set by
 	// SetConnectionStatus; callers leave it empty.
 	DisconnectedAt string `json:"disconnectedAt,omitempty"`
+
+	// ConnectionID names the admitted connection Radar is serving: one
+	// admission of one cluster, unique for this process and across restarts.
+	// Empty while nothing is serving. Set by the publisher; callers leave it empty.
+	ConnectionID string `json:"connectionId,omitempty"`
+}
+
+var (
+	bootNonce = rand.Text()[:10]
+
+	// Guarded by connectionStatusMu.
+	serving              *Connection
+	connectionAdmissions uint64
+	admissionsClosed     bool
+)
+
+// ServingConnectionID returns the admitted connection Radar is serving, or ""
+// while nothing is serving (a switch, rescope or rebuild is between its point
+// of no return and its admission).
+func ServingConnectionID() string {
+	connectionStatusMu.RLock()
+	defer connectionStatusMu.RUnlock()
+	return servingIDLocked()
+}
+
+func servingIDLocked() string {
+	if serving == nil {
+		return ""
+	}
+	return serving.id
+}
+
+// admissionCandidate returns the installed connection, installing an empty
+// one if none exists yet. A connection admitted again after a retirement with
+// no rebuild in between is the same build, so it keeps its clients and caches
+// and only gets a new ID. Lock-free: connectionStatusMu is held, and installs
+// take clientMu.
+func admissionCandidate() *Connection {
+	for {
+		if c := installedConn.Load(); c != nil {
+			return c
+		}
+		installedConn.CompareAndSwap(nil, &Connection{})
+	}
+}
+
+// RetireServingConnection is the point of no return: called before any
+// destructive teardown, it clears the serving ID so no request can be admitted
+// against a half-retired connection. A connected status becomes connecting.
+func RetireServingConnection() {
+	connectionStatusMu.Lock()
+	if serving == nil {
+		connectionStatusMu.Unlock()
+		return
+	}
+	serving = nil
+	status := connectionStatus
+	if status.State == StateConnected {
+		status.State = StateConnecting
+	}
+	status.ConnectionID = ""
+	connectionStatus = status
+	connectionStatusMu.Unlock()
+	notifyConnectionChange(status)
+}
+
+// CloseConnectionAdmissions retires the serving connection for good: after it,
+// no publication can admit a new one. Shutdown calls it before tearing down.
+func CloseConnectionAdmissions() {
+	connectionStatusMu.Lock()
+	admissionsClosed = true
+	connectionStatusMu.Unlock()
+	RetireServingConnection()
 }
 
 // outageStart carries DisconnectedAt from one status to the next: it starts
@@ -1233,35 +1309,56 @@ func GetConnectionStatus() ConnectionStatus {
 
 // SetConnectionStatus updates the connection status and notifies callbacks
 func SetConnectionStatus(status ConnectionStatus) {
+	SetConnectionStatusIfCurrent(context.Background(), status)
+}
+
+// SetConnectionStatusIfCurrent keeps a late bootstrap or liveness probe from
+// overwriting a status published after its operation was cancelled.
+func SetConnectionStatusIfCurrent(operation context.Context, status ConnectionStatus) bool {
 	connectionStatusMu.Lock()
+	if operation.Err() != nil {
+		connectionStatusMu.Unlock()
+		return false
+	}
 	status.DisconnectedAt = outageStart(connectionStatus, status, time.Now())
+	if status.State == StateConnected && serving == nil {
+		if admissionsClosed {
+			connectionStatusMu.Unlock()
+			return false
+		}
+		connectionAdmissions++
+		serving = admissionCandidate()
+		serving.id = bootNonce + "-" + strconv.FormatUint(connectionAdmissions, 10)
+	}
+	status.ConnectionID = servingIDLocked()
 	if connectionStatus == status {
 		connectionStatusMu.Unlock()
-		return
+		return true
 	}
 	connectionStatus = status
-	connectionStatusMu.Unlock()
 
 	// Publish-side recovery ownership: every route into an auth-shaped
 	// disconnect (bootstrap with expired credentials, failed retry, failed
 	// context switch) must leave a reconnect loop running — the browser no
 	// longer auto-retries auth failures. Owed survives later non-auth
 	// republications (a hung-plugin retry classifies "timeout") and is only
-	// settled by a successful connect.
-	switch status.State {
-	case StateConnected:
+	// settled by a successful connect or an explicit switch stop.
+	switch {
+	case status.State == StateConnected || status.ErrorType == switchStoppedErrorType:
 		runtimeAuthRecoveryOwed.Store(false)
+	case status.State == StateDisconnected && isAuthClassification(status.ErrorType):
+		runtimeAuthRecoveryOwed.Store(true)
+	}
+	connectionStatusMu.Unlock()
+	if status.State == StateConnected {
 		resetInconclusiveStreak()
-	case StateDisconnected:
-		if isAuthClassification(status.ErrorType) {
-			runtimeAuthRecoveryOwed.Store(true)
-		}
-		if runtimeAuthRecoveryOwed.Load() {
-			startRuntimeAuthRecovery()
-		}
+	}
+	if status.State == StateDisconnected && runtimeAuthRecoveryOwed.Load() {
+		startRuntimeAuthRecovery()
 	}
 
 	notifyConnectionChange(status)
+	return true
 }
 
 func notifyConnectionChange(status ConnectionStatus) {
@@ -1285,16 +1382,21 @@ func MarkDisconnectedIfClusterUnreachable(message string) bool {
 		// the teardown AND disarm the pipeline (candidate intake requires
 		// StateConnected), leaving informers hammering the dead credential
 		// for the whole outage.
-		clientMu.RLock()
-		generation := activeClientGeneration
-		clientMu.RUnlock()
+		generation := Current().ClientGeneration()
 		reportRuntimeAuthFailure(generation, errors.New(message))
 		return false
 	}
 	if !isClusterUnreachableMessage(message) {
 		return false
 	}
-	current := GetConnectionStatus()
+	var current ConnectionStatus
+	var operation context.Context
+	if !CaptureClusterReads(func() {
+		operation = OperationContext()
+		current = GetConnectionStatus()
+	}) || current.ErrorType == switchStoppedErrorType {
+		return false
+	}
 	if current.State == StateDisconnected && current.Error == message {
 		return true
 	}
@@ -1309,8 +1411,7 @@ func MarkDisconnectedIfClusterUnreachable(message string) bool {
 		Error:       message,
 		ErrorType:   ClassifyError(errors.New(message)),
 	}
-	SetConnectionStatus(status)
-	return true
+	return SetConnectionStatusIfCurrent(operation, status)
 }
 
 func clusterReachableNow(timeout time.Duration) bool {
@@ -1358,130 +1459,7 @@ func isHelmKubernetesOperationError(lower string) bool {
 		"failed to get values for revision",
 		"failed to get release revision",
 		"failed to inspect release storage namespaces",
-		"failed to inspect existing release",
-		"failed to preview values change",
-		"failed to apply values",
-		"rollback failed",
-		"uninstall failed",
-		"upgrade failed",
-		"install failed",
-	}
-	for _, prefix := range kubernetesOperationPrefixes {
-		if strings.HasPrefix(lower, prefix) {
-			return true
-		}
-	}
-	return false
-}
-
-func isTransportConnectivityError(lower string) bool {
-	return isTransportNetworkMessage(lower) || isTransportTimeoutMessage(lower)
-}
-
-func isTransportNetworkMessage(lower string) bool {
-	transportMarkers := []string{
-		"connection refused",
-		"no such host",
-		"dial tcp",
-		"dial udp",
-		"no route to host",
-		"connection reset by peer",
-		"network is unreachable",
-	}
-	for _, marker := range transportMarkers {
-		if strings.Contains(lower, marker) {
-			return true
-		}
-	}
-	return false
-}
-
-func isTransportTimeoutMessage(lower string) bool {
-	timeoutMarkers := []string{
-		"i/o timeout",
-		"context deadline exceeded",
-		"tls handshake timeout",
-		"timed out",
-		"timeout",
-	}
-	for _, marker := range timeoutMarkers {
-		if strings.Contains(lower, marker) {
-			return true
-		}
-	}
-	return false
-}
-
-// isAuthErrorMessage matches client-side credential acquisition failures (exec
-// plugins, SSO sessions) — no request reached the API server, and
-// re-authenticating locally is the fix.
-func isAuthErrorMessage(lower string) bool {
-	authMarkers := []string{
-		"token has expired",
-		"expired token",
-		"sso session",
-		"sso token",
-		"ssoproviderinvalidtoken",
-		"aws sso login",
-		"getting credentials",
-		"credentials expired",
-		"credential plugin",
-		"exec credential",
-		"exec plugin",
-		"gke-gcloud-auth-plugin",
-		// client-go's in-tree oidc auth provider returns refresh failures RAW
-		// from RoundTrip (no "getting credentials:" wrapper) — Keycloak/Dex/
-		// IBM IKS kubeconfigs die here. "invalid_grant" is the RFC 6749 code
-		// every IdP emits for an expired/revoked refresh token.
-		"failed to refresh token",
-		"invalid_grant",
-		"cannot refresh without refresh-token",
-		// The exec plugin's TLS client-certificate path (e.g. tsh) fails
-		// without the "getting credentials:" wrapper; this phrasing is
-		// produced only by client-go's exec plugin runner.
-		"exec: executable ",
-		"failed to read token file",
-		"read empty token from file",
-	}
-	for _, marker := range authMarkers {
-		if strings.Contains(lower, marker) {
-			return true
-		}
-	}
-	return false
-}
-
-// isAuthRejectedMessage matches HTTP 401 responses: the request reached the API
-// server but could not be authenticated. Checked only after isAuthErrorMessage
-// so exec-plugin stderr that quotes a server error (e.g. "UnauthorizedException")
-// still classifies as client-side auth.
-func isAuthRejectedMessage(lower string) bool {
-	if strings.Contains(lower, "proxy authentication required") {
-		return false
-	}
-	rejectedMarkers := []string{
-		"unauthorized",
-		"authentication required",
-		"the server has asked for the client to provide credentials",
-	}
-	for _, marker := range rejectedMarkers {
-		if strings.Contains(lower, marker) {
-			return true
-		}
-	}
-	return false
-}
-
-func isRBACErrorMessage(lower string) bool {
-	return strings.Contains(lower, " is forbidden") ||
-		strings.Contains(lower, "forbidden:") ||
-		strings.Contains(lower, "cannot list resource") ||
-		strings.Contains(lower, "cannot get resource")
-}
-
-func isConfigErrorMessage(lower string) bool {
-	configMarkers := []string{
-		"no context con
+		"failed to inspect existing r
 ```
 
 ### Core Architecture Module: `internal/k8s/restart_loop.go`
@@ -2452,11 +2430,11 @@ func (s *Server) refreshAIEngine(ctx context.Context) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2689** (2026-11-20): **Release Desktop workflow fails due to Go toolchain version mismatch**
+  *Symptoms*: ## Describe the bug  The Release Desktop GitHub Actions workflow is failing during dependency installation because the project is using Go 1.26.11 while a required dependency (`github.com/goreleaser/nfpm/v2@v2.49.0`) requires Go >= 1.27.4.  The failing job is `Release Desktop` for run `117535128137` / job `132767922940` (`https://github.com/skyhook-io/radar/actions/runs/43406103414/job/132767922940`).  ## To reproduce  1. Trigger the `Release Desktop` GitHub Actions workflow. 2. The job reaches the Go dependency installation step for `nfpm`. 3. The workflow exits with code 1 before producing the desktop artifacts.  ## Expected behavior  The Release Desktop workflow should complete successfully with the required Go toolchain version and produce the expected desktop release artifacts (`.tar.gz`, `.deb`, `.rpm`, `.AppImage`).  ## Screenshots  Not applicable.  ## Diagnostics (optional)  <details><summary>Diagnostics snapshot</summary>  <!-- Paste here -->  </details>  - Radar version: not specified - Kubernetes: not applicable to this CI release job  ## Logs  ```text go: downloading github.com/goreleaser/nfpm v1.10.3 go: downloading github.com/goreleaser/nfpm/v2 v2.49.0 go: github.com/goreleaser/nfpm/v2/cmd/nfpm@latest: github.com/goreleaser/nfpm/v2@v2.49.0 requires go >= 1.27.4 (running go 1.26.11; GOTOOLCHAIN=local) ##[error]Process completed with exit code 1. ```  ## Additional context  This appears to be a CI/toolchain mismatch rather than a code regression in the app itself.
+
 - **Issue #2687** (2026-11-15): **Release Desktop workflow fails during Apple notarization due to missing/expired agreement**
   *Symptoms*: ## Describe the bug  The `Release Desktop` GitHub Actions workflow fails during the Apple notarization step for the macOS release artifact. The job reaches the notarization request, then exits with a 403 from Apple’s notarization service.  ## To reproduce  1. Trigger the `Release Desktop` workflow in `skyhook-io/radar` 2. Wait for the macOS build to finish packaging the app 3. Observe the workflow attempt to submit the artifact for Apple notarization 4. The job fails before finishing the release  ## Expected behavior  The release workflow should successfully submit the signed/notarized macOS artifact to Apple and complete the release process without failing.  ## Screenshots  Not applicable.  ## Diagnostics (optional)  N/A  ## Logs  ```text 2026-11-13T10:14:58.9407140Z Conducting pre-submission checks for radar-desktop_v1.20.3_darwin_universal.zip and initiating connection to the Apple notary service... 2026-11-13T10:15:00.9809290Z Error: HTTP status code: 403. A required agreement is missing or has expired. This request requires an in-effect agreement that has not been signed or has expired. Ensure your team has signed the necessary legal agreements and that they are not expired. 2026-11-13T10:15:00.9857090Z ##[error]Process completed with exit code 1. ```  ## Additional context  The workflow URL is: https://github.com/skyhook-io/radar/actions/runs/43406103414/job/131820798764  This appears to be an Apple Developer / notarization account issue rather than a code-level build f
-
-- **Issue #2670** (2026-11-15): **Timeline: "spec changed (gen N→N+1, fields not specifically tracked)" for every Argo CD Application every few minutes**
-  *Symptoms*: ## Describe the bug  The timeline shows "spec changed (gen N→N+1, fields not specifically tracked)" for every Argo CD Application every 2–3 minutes. Nothing in spec changed. The noise hides real events.  Argo CD Applications have no status subresource (argoproj/argo-cd#22967), so each status write (e.g. status.reconciledAt on every reconcile) bumps metadata.generation.  In internal/k8s/cache.go, generationBumpSignalsSpecChange() runs the generic check (genericDesiredState ignores metadata and status) only for kinds without an audited differ. Application has one (diffApplication in history.go), so the check is skipped and the function returns true for any generation bump.  ## To reproduce  1. Install Argo CD 3.6 with a few auto-synced Applications. 2. Install Radar (Helm chart 1.20.2, in-cluster, auth mode oidc). 3. Open the timeline and wait 5–10 minutes without changing anything.  ## Expected behavior  No "spec changed" event when only status/metadata changed, like for kinds without an audited differ. Possible fix: also compare genericDesiredState for audited unstructured kinds.  ## Screenshots  - Radar version: 1.20.2 - Kubernetes: 1.35.8 (kubeadm), Argo CD 3.6.1  <img width="1438" height="742" alt="2026-11-14_184927" src="https://github.com/user-attachments/assets/aff5c3ae-2e9e-468a-8b06-ce4051c041db" /> <img width="1441" height="744" alt="2026-11-14_184842" src="https://github.com/user-attachments/assets/200f14aa-f41c-4f3d-b5d0-bd80db87886a" /> <img width="1439" height="7
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2473,2135 +2451,995 @@ func (s *Server) refreshAIEngine(ctx context.Context) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1a0f7e1e` (2026-11-17)
-**Commit Message**: Serve built-in kinds through discovery in census mode (#2760)
+### Incident Patch 1: `55249927` (2026-11-24)
+**Commit Message**: Withhold memory reductions after unexplained recent Pod restarts (#2877)
 
-## Summary
+A native Prometheus scan proposed a memory reduction for a container
+whose Pod had restarted in the seven-day sizing window. Its first
+retained counter sample was already one, and Kubernetes had lost the
+previous exit reason. Across 5,767 identical raw samples, native
+Prometheus reported zero counter increase and VictoriaMetrics reported
+one. Neither store had a termination reason or timestamp for that Pod.
 
-A `-census` fixture seeds typed objects only, with no discovery catalog.
-Ownership and the relation families resolve kinds through discovery, and
-count a kind as an owner's dependent only when it's served with delete,
-list and watch. So on a census fixture every relationship answer came
-back empty.
+Fleet and detail use the live Pods already matched to their controller
+UID. A Pod created within the sizing window can establish that its
+nonzero lifetime restart count is recent. Radar withholds a memory
+reduction when this Pod's latest exit is missing or ambiguous.
+Historical activity and reason are aggregated across replicas, so they
+cannot identify that exit. When only the latest of several exits is
+known, the earlier exits remain unexplained even if workload-wide
+counters and a benign last termination were observed. A dated exit with
+an ambiguous reason can establish a recent restart in an older Pod. A
+recent ambiguous SIGKILL also withholds the cut if the container died
+before its first restart or t
 
-`cmd/testserver -census` now serves the census's built-in kinds
-(`resourceid.Builtins`) through discovery, with the verbs a real API
-server lists.
-
-**Census relationship answers from builds before this change aren't
-comparable with ones after it.** Startup and list timings aren't
-affected; only answers that resolve kinds through discovery are.
-
-This was split out of #2708 (the relationship replay harness), which
-doesn't depend on it.
-
-## Testing
-
-- `TestCensusDiscoveryServesBuiltinsWithGCVerbs` (new).
-- `go vet` and `go test ./cmd/testserver/...`.
-- Smoke test: `-census large-eks -census-scale 0.01`. A Deployment's
-`relationships` returns 3 children (its ReplicaSets) and an ownership
-answer, plus services, ingresses, config refs, network policies and
-service account.
-
-**File**: `cmd/testserver/census_discovery.go` (added, +43/-0)
+**File**: `docs/mcp.md` (modified, +2/-0)
 ```diff
-@@ -0,0 +1,43 @@
-+package main
-+
-+import (
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/client-go/kubernetes/fake"
-+
-+	"github.com/skyhook-io/radar/internal/k8s"
-+	"github.com/skyhook-io/radar/pkg/resourceid"
-+)
-+
-+// installCensusDiscovery serves the built-in kinds through discovery, as a
-+// real API server does. A census fixture seeds typed objects only; without a
-+// discovery catalog, readers that resolve kinds through discovery have nothing
-+// to resolve against.
-+func installCensusDiscovery(client *fake.Clientset) error {
-+	lists := map[string]*metav1.APIResourceList{}
-+	var order []string
-+	for _, b := range resourceid.Builtins {
-+		if b.Version == "" {
-+			continue
-+		}
-+		gv := b.Version
-+		if b.Group != "" {
-+			gv = b.Group + "/" + b.Version
-+		}
-+		l, ok := lists[gv]
-+		if !ok {
-+			l = &metav1.APIResourceList{GroupVersion: gv}
-+			lists[gv] = l
-+			order = append(order, gv)
-+		}
-+		l.APIResources = append(l.APIResources, metav1.APIResource{
-+			Name: b.Resource, Kind: b.Kind, Group: b.Group, Version: b.Version, Namespaced: b.Namespaced,
-+			Verbs: metav1.Verbs{"create", "delete", "deletecollection", "get", "list", "patch", "update", "watch"},
-+		})
-+	}
-+	client.Resources = nil
-+	for _, gv := range order {
-+		client.Resources = append(client.Resources, lists[gv])
-+	}
-+	_, err := k8s.SetTestResourceDiscovery(client.Discovery())
-+	return err
-+}
-```
-
-**File**: `cmd/testserver/census_discovery_test.go` (added, +32/-0)
-```diff
-@@ -0,0 +1,32 @@
-+package main
-+
-+import (
-+	"slices"
-+	"testing"
-+
-+	"k8s.io/client-go/kubernetes/fake"
-+
-+	"github.com/skyhook-io/radar/internal/k8s"
-+)
-+
-+// Ownership and the relation families resolve kinds through discovery, and
-+// count a kind as an owner's dependent only when it is served with the
-+// garbage collector's verbs. A census fixture must serve them, or every
-+// relationship answer reads as unavailable.
-+func TestCensusDiscoveryServesBuiltinsWithGCVerbs(t *testing.T) {
-+	if err := installCensusDiscovery(fake.NewClientset()); err != nil {
-+		t.Fatal(err)
-+	}
-+	t.Cleanup(k8s.ResetResourceDiscovery)
-+	for _, r := range k8s.GetResourceDiscovery().Catalog().Resources {
-+		if r.Group == "apps" && r.Kind == "Deployment" {
-+			for _, verb := range []string{"delete", "list", "watch"} {
-+				if !slices.Contains(r.Verbs, verb) {
-+					t.Fatalf("Deployment verbs = %v, missing %s", r.Verbs, verb)
-+				}
-+			}
-+			return
-+		}
-+	}
-+	t.Fatal("census discovery doesn't serve apps/Deployment")
-+}
-```
-
-**File**: `cmd/testserver/main.go` (modified, +3/-0)
-```diff
-@@ -115,6 +115,9 @@ func main() {
- 		if err := k8s.InitLoadTestResourceCache(fakeClient); err != nil {
- 			log.Fatalf("InitLoadTestResourceCache: %v", err)
- 		}
-+		if err := installCensusDiscovery(fakeClient); err != nil {
-+			log.Fatalf("installCensusDiscovery: %v", err)
-+		}
- 	} else if err := k8s.InitTestResourceCache(fakeClient); err != nil {
- 		log.Fatalf("InitTestResourceCache: %v", err)
- 	}
-```
-
----
-
-### Incident Patch 2: `d734e671` (2026-11-17)
-**Commit Message**: Measure a Radar process's memory and CPU under a fixed reader and SSE workload (#2709)
-
-## Summary
-
-A tool that drives a fixed workload against a running Radar and samples
-the process: memory (RSS and Go heap), CPU, GC, and per-endpoint
-latency. Because it only speaks HTTP, the same run can be pointed at two
-builds on the same cluster and compared. It exists to measure what
-retiring the all-namespace relationship graph saves on real clusters,
-but works for any server-side change.
-
-## What it does
-
-`radarload -url http://127.0.0.1:9280 -pid <radar pid> -duration 10m
--sse 3 -askers 4 -qps 20 -out run.json`
-
-- **Readiness:** `/api/connection` must say connected and
-`/api/diagnostics` must report the typed informers fully synced before
-anything is timed.
-- **Subjects:**
-- Taken from Radar's own lists (the `{items, coverage}` envelope): the
-eight built-in kinds, plus relationship-relevant CRD kinds from
-`/api/api-resources`.
-- Sampled deterministically with a seed. `-subjects-from` replays a
-saved subject set. Each build GET-probes every subject, replayed or
-fresh, with the configured identity and drops the unreadable ones
-(counted in `subject_probe_errors`), so two builds run the same 
-
-**File**: `cmd/radarload/README.md` (added, +93/-0)
-```diff
-@@ -0,0 +1,93 @@
-+# radarload
-+
-+Measure a **local Radar process** while driving it through HTTP. The target
-+binary can be built from another checkout; radarload imports only the shared
-+stdlib-only resource identity helper. No Kubernetes credentials are needed.
-+
-+```sh
-+go run ./cmd/radarload -url http://localhost:9280 -pid 12345 \
-+  -duration 10m -sse 3 -askers 4 -qps 20 -seed 1 -per-kind 100 \
-+  -label main-SHA -out old.json
-+# Start the other build against the same cluster, then:
-+go run ./cmd/radarload -url http://localhost:9280 -pid 23456 \
-+  -duration 10m -sse 3 -askers 4 -qps 20 -seed 1 \
-+  -subjects-from old.json -label new-SHA -out new.json
-+go run ./cmd/radarload compare old.json new.json
-+```
-+
-+Use the **binary's PID**, not the `go run` parent. RSS and CPU come from local
-+`ps`; the URL and PID must identify the same process. Use matching startup flags,
-+identity, subject manifest, cluster activity, and warmup for both builds.
-+`-user fleet-argo -groups team-a,viewers` sends Radar's default proxy headers
-+(`X-Forwarded-User`, `X-Forwarded-Groups`) on every request, including SSE and
-+pprof, for a target running `--auth-mode=proxy`.
-+
-+Readiness requires `/api/connection?contexts=0` to say `connected` and
-+`/api/diagnostics` to report `informers.syncStatus.phase=complete`, including
-+deferred typed informers. Diagnostics also supplies Radar/Go version and OS/arch;
-+it does not report a git SHA, so use `-label`. The tool avoids `/api/version-check`,
-+which can trigger an external update lookup.
-+
-+Inventory uses Pod, Deployment, Service, ConfigMap, Secret, Ingress, Node and
-+PersistentVolumeClaim lists. `/api/api-resources` adds discovered HTTPRoute,
-+GRPCRoute, Gateway, VirtualService, DestinationRule, Application, Kustomization,
-+HelmRelease and Certificate kinds. Subjects are sorted before seeded sampling
-+and saved in the JSON; unreadable kinds, unavailable discovery and each list's
-+coverage are recorded. For an offline target, point it at the replay or census
-+testservers. Lists above the server's 50,000-object limit fail in inventory
-+rather than being truncated.
-+
-+`-subjects-from` reuses a prior run's subjects; current inventory is still
-+recorded. Every subject, fresh or replayed, is GET-probed with the configured
-+identity before measurement, and unreadable ones are dropped and counted by kind
-+and group in `subject_probe_errors`, so two builds compared against one manifest
-+run the same subjects only when neither drops any (`compare` warns when they
-+differ). Neighborhood roots are probed and saved separately, since grouped Pods
-+and ordinary Nodes can be listed yet absent from the topology. Replay keeps the
-+saved roots that survive the subject probe and fails if one of them no longer
-+returns a neighborhood.
-+
-+A seeded 20-request cycle fixes the offered mix:
-+
-+| Share | Endpoint |
-+| --- | --- |
-+| 60% | `/api/resources/{kind}/{namespace}/{name}` |
-+| 10% | `/api/ai/resources/{kind}/{namespace}/{name}` (includes resource context) |
-+| 10% | `/api/ai/neighborhood/{kind}/{namespace}/{name}?profile=auto&hops=1` |
-+| 10% | Same HTTP neighborhood route with `profile=all&hops=2` |
-+| 5% | `/api/applications` |
-+| 5% | `/api/resources/{kind}?include=summary` |
-+
-+Both neighborhood shares use the same read-only route; there is no separate
-+non-AI neighborhood endpoint.
-+
-+QPS is combined across workers. A slot without a free worker is dropped and
-+counted, with no growing queue. Compare achieved QPS, drops and errors alongside
-+latency; overload can change the successful request mix. Latencies include full
-+body consumption and errors, including in-flight requests canceled at run end.
-+SSE consumers discard arbitrarily large frames, count dispatched data events,
-+and reconnect after errors. The tool does **not** mutate the cluster: a quiet
-+cluster has fewer change-driven topology broadcasts. Keep the external change
-+workload fixed when comparing builds.
-+
-+RSS and cumulative process CPU are read every two seconds. Go heap figures
-+(HeapAlloc/HeapInuse/HeapSys/NumGC) and the goroutine count are read before the
-+workload, every 30 seconds and on the window's last tick, because producing a
-+heap profile costs the target CPU. `ps` CPU precision is platform-dependent
-+(Linux commonly whole seconds). Samples that finish after the window are
-+discarded. GC pause time comes from the 256-entry `PauseNs` ring between
-+consecutive heap reads; if the ring was overwritten (more than 256 GCs between
-+reads), `gc_pause_ns` is null with a reason, never zero.
-+
-+Pprof must be reachable: loopback listeners enable it by default; authenticated
-+installations also enable it; shared unauthenticated listeners require
-+`RADAR_PPROF=true`; Cloud does not mount it. Missing/malformed heap or goroutine
-+profiles fail preflight instead of running without heap samples. Sample and
-+binary-profile failures during a run are saved and return a nonzero exit.
-+
-+A 30-second CPU profile is taken in the middle of the 
-```
-
-**File**: `cmd/radarload/client.go` (added, +302/-0)
-```diff
-@@ -0,0 +1,302 @@
-+package main
-+
-+import (
-+	"context"
-+	"encoding/json"
-+	"fmt"
-+	"io"
-+	"math/rand"
-+	"net/http"
-+	"net/url"
-+	"os"
-+	"path/filepath"
-+	"sort"
-+	"strings"
-+	"time"
-+
-+	"github.com/skyhook-io/radar/pkg/resourceid"
-+)
-+
-+type radarClient struct {
-+	c    config
-+	http *http.Client
-+}
-+
-+func newClient(c config) (*radarClient, error) {
-+	u, err := url.Parse(c.URL)
-+	if err != nil {
-+		return nil, err
-+	}
-+	if (u.Scheme != "http" && u.Scheme != "https") || u.Host == "" || u.RawQuery != "" || u.Fragment != "" || u.User != nil {
-+		return nil, fmt.Errorf("-url must be an HTTP(S) origin with optional base path, without credentials/query/fragment")
-+	}
-+	c.URL = strings.TrimRight(c.URL, "/")
-+	tr := http.DefaultTransport.(*http.Transport).Clone()
-+	tr.MaxIdleConnsPerHost = c.Askers + c.SSE + 8
-+	tr.ResponseHeaderTimeout = 45 * time.Second
-+	return &radarClient{c: c, http: &http.Client{Transport: tr, CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }}}, nil
-+}
-+
-+func (c *radarClient) get(ctx context.Context, path string) (*http.Response, error) {
-+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, c.c.URL+path, nil)
-+	if err != nil {
-+		return nil, err
-+	}
-+	if c.c.User != "" {
-+		req.Header.Set("X-Forwarded-User", c.c.User)
-+	}
-+	if c.c.Groups != "" {
-+		req.Header.Set("X-Forwarded-Groups", c.c.Groups)
-+	}
-+	return c.http.Do(req)
-+}
-+
-+func (c *radarClient) bytes(ctx context.Context, path string) ([]byte, error) {
-+	ctx, cancel := context.WithTimeout(ctx, requestTimeout)
-+	defer cancel()
-+	resp, err := c.get(ctx, path)
-+	if err != nil {
-+		return nil, err
-+	}
-+	defer resp.Body.Close()
-+	if resp.StatusCode != 200 {
-+		return nil, fmt.Errorf("GET %s: HTTP %d", path, resp.StatusCode)
-+	}
-+	return io.ReadAll(resp.Body)
-+}
-+
-+func (c *radarClient) json(ctx context.Context, path string, v any) error {
-+	b, err := c.bytes(ctx, path)
-+	if err != nil {
-+		return err
-+	}
-+	if err = json.Unmarshal(b, v); err != nil {
-+		return fmt.Errorf("GET %s: %w", path, err)
-+	}
-+	return nil
-+}
-+
-+func (c *radarClient) waitReady(ctx context.Context) (map[string]string, error) {
-+	ctx, cancel := context.WithTimeout(ctx, c.c.ReadyTimeout)
-+	defer cancel()
-+	var last error
-+	for {
-+		var connection struct {
-+			State string `json:"state"`
-+		}
-+		err := c.json(ctx, "/api/connection?contexts=0", &connection)
-+		if err == nil && connection.State == "connected" {
-+			var d struct {
-+				Version   string `json:"radarVersion"`
-+				GoVersion string `json:"goVersion"`
-+				OS        string `json:"goos"`
-+				Arch      string `json:"goarch"`
-+				Informers struct {
-+					Sync *struct {
-+						Phase string `json:"phase"`
-+					} `json:"syncStatus"`
-+				} `json:"informers"`
-+			}
-+			err = c.json(ctx, "/api/diagnostics", &d)
-+			if err == nil && d.Informers.Sync != nil && d.Informers.Sync.Phase == "complete" {
-+				return map[string]string{"version": d.Version, "go_version": d.GoVersion, "os": d.OS, "arch": d.Arch, "source": "/api/diagnostics"}, nil
-+			}
-+			if err == nil {
-+				err = fmt.Errorf("cache sync has not reported complete in /api/diagnostics")
-+			}
-+		}
-+		if err == nil {
-+			err = fmt.Errorf("connection state %q", connection.State)
-+		}
-+		last = err
-+		select {
-+		case <-ctx.Done():
-+			return nil, fmt.Errorf("readiness: %w (last observation: %v)", ctx.Err(), last)
-+		case <-time.After(time.Second):
-+		}
-+	}
-+}
-+
-+type subject = resourceid.Ref
-+
-+type inventory struct {
-+	Kind     string          `json:"kind"`
-+	Group    string          `json:"group"`
-+	Count    int             `json:"count"`
-+	Sampled  int             `json:"sampled"`
-+	Error    string          `json:"error,omitempty"`
-+	Coverage json.RawMessage `json:"coverage,omitempty"`
-+}
-+type kindRef struct {
-+	Kind  string `json:"kind"`
-+	Group string `json:"group"`
-+}
-+
-+func (c *radarClient) subjects(ctx context.Context) ([]subject, []inventory, []string, error) {
-+	kinds := []kindRef{{"Pod", ""}, {"Deployment", "apps"}, {"Service", ""}, {"ConfigMap", ""}, {"Secret", ""}, {"Ingress", "networking.k8s.io"}, {"Node", ""}, {"PersistentVolumeClaim", ""}}
-+	relevant := map[string]bool{"HTTPRoute": true, "GRPCRoute": true, "Gateway": true, "VirtualService": true, "DestinationRule": true, "Application": true, "Kustomization": true, "HelmRelease": true, "Certificate": true}
-+	var discovered []kindRef
-+	var notes []string
-+	if err := c.json(ctx, "/api/api-resources", &discovered); err != nil {
-+		notes = append(notes, "CRD discovery unavailable: "+err.Error())
-+	} else {
-+		seen := map[kindRef]bool{}
-+		sort.Slice(discovered, func(i, j int) bool {
-+			if discovered[i].Kind != discovered[j].Kind {
-+				return discovered[i].Kind < discovered[j].Kind
-+			}
-+			return discovered[i].Group < discovered[j].Group
-+		})
-+		for _, k := range discovered {
-+			if relevant[k.Kind] && !seen[k] {
-+				kinds = append(kinds, k)
-+				seen[k] = true
-+			}
-+		}
-+	}
-+	rng := rand.New(rand.NewSource(c.c.Seed))
-+	var subjects []subject
-+
-```
-
-**File**: `cmd/radarload/main.go` (added, +278/-0)
-```diff
-@@ -0,0 +1,278 @@
-+package main
-+
-+import (
-+	"context"
-+	"encoding/json"
-+	"errors"
-+	"flag"
-+	"fmt"
-+	"math"
-+	"os"
-+	"os/signal"
-+	"path/filepath"
-+	"syscall"
-+	"time"
-+)
-+
-+type config struct {
-+	URL          string        `json:"url"`
-+	PID          int           `json:"pid"`
-+	Duration     time.Duration `json:"duration_ns"`
-+	SSE          int           `json:"sse"`
-+	Askers       int           `json:"askers"`
-+	QPS          float64       `json:"qps"`
-+	PerKind      int           `json:"per_kind"`
-+	Seed         int64         `json:"seed"`
-+	User         string        `json:"user,omitempty"`
-+	Groups       string        `json:"groups,omitempty"`
-+	ReadyTimeout time.Duration `json:"ready_timeout_ns"`
-+	Out          string        `json:"out"`
-+	SubjectsFrom string        `json:"subjects_from,omitempty"`
-+	Label        string        `json:"label,omitempty"`
-+}
-+
-+const (
-+	requestTimeout = 15 * time.Second
-+	sampleEvery    = 2 * time.Second
-+	// Producing a heap profile costs the target real CPU, so Go heap and
-+	// goroutine reads are spaced further apart than RSS and CPU.
-+	runtimeEvery = 30 * time.Second
-+)
-+
-+// runtimeDue also forces a read on the window's last tick, so GC counts and
-+// pause totals cover the whole run rather than stopping at the previous read.
-+func runtimeDue(now, last, deadline time.Time) bool {
-+	return now.Sub(last) >= runtimeEvery || deadline.Sub(now) < sampleEvery+time.Second
-+}
-+
-+type result struct {
-+	SubjectProbeErrors      map[string]int           `json:"subject_probe_errors"`
-+	NeighborhoodSubjects    []subject                `json:"neighborhood_subjects"`
-+	NeighborhoodProbeErrors map[string]int           `json:"neighborhood_probe_errors"`
-+	Schema                  int                      `json:"schema"`
-+	Config                  config                   `json:"config"`
-+	Started                 time.Time                `json:"started"`
-+	Ended                   time.Time                `json:"ended"`
-+	Build                   map[string]string        `json:"radar_build"`
-+	Subjects                []subject                `json:"subjects"`
-+	Inventory               []inventory              `json:"inventory"`
-+	Notes                   []string                 `json:"notes"`
-+	Samples                 []sample                 `json:"samples"`
-+	Summary                 summary                  `json:"summary"`
-+	Profiles                map[string]profileResult `json:"profiles"`
-+}
-+
-+type profileResult struct {
-+	Path    string    `json:"path,omitempty"`
-+	Error   string    `json:"error,omitempty"`
-+	Started time.Time `json:"started"`
-+}
-+
-+func main() {
-+	if err := command(os.Args[1:]); err != nil {
-+		fmt.Fprintln(os.Stderr, "radarload:", err)
-+		os.Exit(1)
-+	}
-+}
-+
-+func command(args []string) error {
-+	if len(args) > 0 && args[0] == "compare" {
-+		if len(args) != 3 {
-+			return errors.New("usage: radarload compare a.json b.json")
-+		}
-+		var a, b result
-+		if err := readResult(args[1], &a); err != nil {
-+			return err
-+		}
-+		if err := readResult(args[2], &b); err != nil {
-+			return err
-+		}
-+		return compare(os.Stdout, a, b)
-+	}
-+	c := config{}
-+	f := flag.NewFlagSet("radarload", flag.ContinueOnError)
-+	f.StringVar(&c.URL, "url", "http://localhost:9280", "Radar HTTP base URL (may include a base path)")
-+	f.IntVar(&c.PID, "pid", 0, "local Radar process PID (not the go run wrapper)")
-+	f.DurationVar(&c.Duration, "duration", 10*time.Minute, "measurement duration; minimum 35s for CPU profiling")
-+	f.IntVar(&c.SSE, "sse", 3, "concurrent SSE connections")
-+	f.IntVar(&c.Askers, "askers", 4, "concurrent request workers")
-+	f.Float64Var(&c.QPS, "qps", 20, "combined offered requests/second; saturated slots are counted as dropped")
-+	f.IntVar(&c.PerKind, "per-kind", 100, "maximum sampled subjects per kind")
-+	f.Int64Var(&c.Seed, "seed", 1, "deterministic inventory and request seed")
-+	f.StringVar(&c.User, "user", "", "optional proxy identity")
-+	f.StringVar(&c.Groups, "groups", "", "optional comma-separated proxy groups")
-+	f.DurationVar(&c.ReadyTimeout, "ready-timeout", 2*time.Minute, "wait for connected and synced caches")
-+	f.StringVar(&c.Out, "out", "result.json", "JSON output; profiles use the same filename stem")
-+	f.StringVar(&c.SubjectsFrom, "subjects-from", "", "reuse subjects from a prior result for exact replay")
-+	f.StringVar(&c.Label, "label", "", "build label, e.g. git SHA (server reports version, not git SHA)")
-+	if err := f.Parse(args); err != nil {
-+		if errors.Is(err, flag.ErrHelp) {
-+			return nil
-+		}
-+		return err
-+	}
-+	if f.NArg() != 0 {
-+		return errors.New("unexpected positional arguments")
-+	}
-+	if c.PID <= 0 || c.Duration < 35*time.Second || c.SSE < 0 || c.Askers < 1 || c.QPS <= 0 || c.QPS > 1e6 || math.IsNaN(c.QPS) || math.IsInf(c.QPS, 0) || c.PerKind < 1 || c.ReadyTimeout <= 0 {
-+		return errors.New("require -pid > 0, -duration >= 35s, -sse >= 0, -askers >= 1, 0 < -qps <= 1000000, -per-kind >= 1, -ready-timeout > 0")
-+	}
-+	if err := os.MkdirAll(file
-```
-
-**File**: `cmd/radarload/main_test.go` (added, +266/-0)
-```diff
-@@ -0,0 +1,266 @@
-+package main
-+
-+import (
-+	"bytes"
-+	"context"
-+	"encoding/json"
-+	"fmt"
-+	"io"
-+	"math"
-+	"net/http"
-+	"os"
-+	"path/filepath"
-+	"reflect"
-+	"strings"
-+	"testing"
-+	"time"
-+)
-+
-+func TestParseHeap(t *testing.T) {
-+	text := "heap profile: 1: 2 [3: 4] @ heap/1048576\n# HeapAlloc = 1024\n# HeapSys = 8192\n# HeapInuse = 4096\n# NumGC = 257\n# PauseNs = ["
-+	for i := range 256 {
-+		text += fmt.Sprintf("%d ", i+1)
-+	}
-+	text += "]\n"
-+	h, err := parseHeap(text)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	if h.Alloc != 1024 || h.Inuse != 4096 || h.Sys != 8192 || h.GC != 257 {
-+		t.Fatalf("bad heap: %+v", h)
-+	}
-+	d, err := pauseDelta(&heapStats{GC: 255}, h)
-+	if err != nil || d != 257 {
-+		t.Fatalf("wrap delta: %d, %v", d, err)
-+	}
-+	if _, err := pauseDelta(&heapStats{GC: 0}, h); err == nil {
-+		t.Fatal("overwritten ring reported as exact")
-+	}
-+	for _, bad := range []string{"<html>SPA</html>", strings.Replace(text, "# HeapAlloc = 1024\n", "", 1), strings.Replace(text, "HeapInuse = 4096", "HeapInuse = bad", 1)} {
-+		if _, err := parseHeap(bad); err == nil {
-+			t.Fatal("accepted invalid/missing header")
-+		}
-+	}
-+}
-+
-+func TestCompareMath(t *testing.T) {
-+	for _, tc := range []struct {
-+		a, b, d, p float64
-+		defined    bool
-+	}{{100, 75, -25, -25, true}, {100, 125, 25, 25, true}, {0, 0, 0, 0, true}, {0, 5, 5, 0, false}} {
-+		d, p := delta(tc.a, tc.b)
-+		if d != tc.d || (p != nil) != tc.defined || (p != nil && *p != tc.p) {
-+			t.Fatalf("delta(%v,%v): %v %v", tc.a, tc.b, d, p)
-+		}
-+	}
-+	v := []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20}
-+	d := describe(v)
-+	if d.Mean != 10.5 || d.P95 != 19 || d.Peak != 20 || percentile(v, .99) != 20 {
-+		t.Fatalf("bad distribution: %+v", d)
-+	}
-+	a := result{Summary: summary{RSS: distribution{Count: 1, Mean: 100 << 20, P95: 100 << 20, Peak: 100 << 20}}}
-+	b := a
-+	b.Summary.RSS.Mean = 75 << 20
-+	var out bytes.Buffer
-+	if err := compare(&out, a, b); err != nil {
-+		t.Fatal(err)
-+	}
-+	if !strings.Contains(out.String(), "-25.00%") || !strings.Contains(out.String(), "n/a") {
-+		t.Fatal(out.String())
-+	}
-+}
-+
-+func TestParseCPU(t *testing.T) {
-+	for s, want := range map[string]float64{"00:01.23": 1.23, "12:34": 754, "02:03:04": 7384, "1-02:03:04": 93784} {
-+		got, err := parseCPU(s)
-+		if err != nil || math.Abs(got-want) > 1e-6 {
-+			t.Fatalf("%s: %v, %v", s, got, err)
-+		}
-+	}
-+	for _, s := range []string{"oops", "00:NaN", "-1:00", "00:Inf"} {
-+		if _, err := parseCPU(s); err == nil {
-+			t.Fatalf("accepted %q", s)
-+		}
-+	}
-+}
-+
-+type subjectProbeTransport func(*http.Request) (*http.Response, error)
-+
-+// emptyBody answers resource lists with an empty envelope and everything else
-+// (API discovery, single-object GETs) with an empty array.
-+func emptyBody(path string) string {
-+	if rest, ok := strings.CutPrefix(strings.TrimPrefix(path, "/prefix"), "/api/resources/"); ok && !strings.Contains(rest, "/") {
-+		return `{"items":[]}`
-+	}
-+	return `[]`
-+}
-+
-+func (f subjectProbeTransport) RoundTrip(r *http.Request) (*http.Response, error) { return f(r) }
-+
-+func TestReadableSubjectsRejectsListedAndReplayedSubjects(t *testing.T) {
-+	pod := subject{Kind: "Pod", Namespace: "default", Name: "readable"}
-+	secret := subject{Kind: "Secret", Namespace: "default", Name: "denied"}
-+	node := subject{Kind: "Node", Name: "node"}
-+	deleted := subject{Kind: "Widget", Group: "example.io", Namespace: "default", Name: "deleted"}
-+	c, err := newClient(config{URL: "http://radar.invalid/prefix", PerKind: 10, User: "reader", Groups: "viewers"})
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	c.http.Transport = subjectProbeTransport(func(r *http.Request) (*http.Response, error) {
-+		if r.Header.Get("X-Forwarded-User") != "reader" || r.Header.Get("X-Forwarded-Groups") != "viewers" {
-+			t.Fatal("configured identity missing from request")
-+		}
-+		status, body := 200, emptyBody(r.URL.Path)
-+		switch r.URL.Path {
-+		case "/prefix/api/resources/Pod":
-+			body = `{"items":[{"apiVersion":"v1","metadata":{"namespace":"default","name":"readable"}}]}`
-+		case "/prefix/api/resources/Secret":
-+			body = `{"items":[{"apiVersion":"v1","metadata":{"namespace":"default","name":"denied"}}]}`
-+		case "/prefix/api/resources/Node":
-+			body = `{"items":[{"apiVersion":"v1","metadata":{"name":"node"}}]}`
-+		case "/prefix/api/resources/Secret/default/denied":
-+			status, body = 403, `{"error":"forbidden"}`
-+		case "/prefix/api/resources/Widget/default/deleted":
-+			if r.URL.Query().Get("group") != "example.io" {
-+				t.Fatal("group lost from resource GET")
-+			}
-+			status, body = 404, `{"error":"not found"}`
-+		}
-+		return &http.Response{StatusCode: status, Header: http.Header{"Content-Type": []string{"application/json"}}, Body: io.NopCloser(strings.NewReader(body))}, nil
-+	})
-+	listed, _, _, err := c.subjects(context.Background())
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	if len(listed) != 3 {
-+		t.Fatalf("expected listed subjects including the denied Secret: %+v", listed)
-+	}
-+	readable, reje
-```
-
-**File**: `cmd/radarload/sample.go` (added, +215/-0)
-```diff
-@@ -0,0 +1,215 @@
-+package main
-+
-+import (
-+	"bufio"
-+	"context"
-+	"errors"
-+	"fmt"
-+	"math"
-+	"os/exec"
-+	"strconv"
-+	"strings"
-+	"time"
-+)
-+
-+type heapStats struct {
-+	Alloc  uint64 `json:"heap_alloc_bytes"`
-+	Inuse  uint64 `json:"heap_inuse_bytes"`
-+	Sys    uint64 `json:"heap_sys_bytes"`
-+	GC     uint64 `json:"num_gc"`
-+	pauses []uint64
-+}
-+type sample struct {
-+	At         time.Time  `json:"at"`
-+	Elapsed    float64    `json:"elapsed_seconds"`
-+	RSS        *uint64    `json:"rss_bytes"`
-+	CPU        *float64   `json:"cpu_seconds"`
-+	Heap       *heapStats `json:"heap"`
-+	Goroutines *int       `json:"goroutines"`
-+	GCPauseNS  *uint64    `json:"gc_pause_since_previous_ns"`
-+	Errors     []string   `json:"errors,omitempty"`
-+}
-+
-+func parseHeap(text string) (*heapStats, error) {
-+	h := &heapStats{}
-+	seen := map[string]bool{}
-+	scanner := bufio.NewScanner(strings.NewReader(text))
-+	scanner.Buffer(make([]byte, 4096), 1024*1024)
-+	for scanner.Scan() {
-+		line := scanner.Text()
-+		if !strings.HasPrefix(line, "# ") {
-+			continue
-+		}
-+		key, value, ok := strings.Cut(strings.TrimPrefix(line, "# "), " = ")
-+		if !ok {
-+			continue
-+		}
-+		if key == "PauseNs" {
-+			value = strings.TrimSpace(value)
-+			if !strings.HasPrefix(value, "[") || !strings.HasSuffix(value, "]") {
-+				return nil, errors.New("invalid PauseNs array")
-+			}
-+			for _, v := range strings.Fields(strings.Trim(value, "[]")) {
-+				n, err := strconv.ParseUint(v, 10, 64)
-+				if err != nil {
-+					return nil, fmt.Errorf("PauseNs: %w", err)
-+				}
-+				h.pauses = append(h.pauses, n)
-+			}
-+			continue
-+		}
-+		var target *uint64
-+		switch key {
-+		case "HeapAlloc":
-+			target = &h.Alloc
-+		case "HeapInuse":
-+			target = &h.Inuse
-+		case "HeapSys":
-+			target = &h.Sys
-+		case "NumGC":
-+			target = &h.GC
-+		default:
-+			continue
-+		}
-+		n, err := strconv.ParseUint(strings.TrimSpace(value), 10, 64)
-+		if err != nil {
-+			return nil, fmt.Errorf("%s: %w", key, err)
-+		}
-+		*target = n
-+		seen[key] = true
-+	}
-+	if err := scanner.Err(); err != nil {
-+		return nil, err
-+	}
-+	for _, key := range []string{"HeapAlloc", "HeapInuse", "HeapSys", "NumGC"} {
-+		if !seen[key] {
-+			return nil, fmt.Errorf("pprof heap text missing %s", key)
-+		}
-+	}
-+	return h, nil
-+}
-+
-+func parseGoroutines(text string) (int, error) {
-+	first, _, _ := strings.Cut(text, "\n")
-+	var n int
-+	if _, err := fmt.Sscanf(first, "goroutine profile: total %d", &n); err != nil || n < 1 {
-+		return 0, fmt.Errorf("invalid goroutine profile first line %q", first)
-+	}
-+	return n, nil
-+}
-+
-+func parseCPU(s string) (float64, error) {
-+	days := 0.0
-+	if d, rest, ok := strings.Cut(s, "-"); ok {
-+		n, err := strconv.ParseUint(d, 10, 32)
-+		if err != nil {
-+			return 0, err
-+		}
-+		days = float64(n)
-+		s = rest
-+	}
-+	parts := strings.Split(s, ":")
-+	if len(parts) < 2 || len(parts) > 3 {
-+		return 0, fmt.Errorf("invalid ps CPU time %q", s)
-+	}
-+	total := 0.0
-+	for _, p := range parts {
-+		n, err := strconv.ParseFloat(p, 64)
-+		if err != nil || n < 0 || math.IsNaN(n) || math.IsInf(n, 0) {
-+			return 0, fmt.Errorf("invalid ps CPU component %q", p)
-+		}
-+		total = total*60 + n
-+	}
-+	return days*86400 + total, nil
-+}
-+
-+func processStats(ctx context.Context, pid int) (uint64, float64, error) {
-+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
-+	defer cancel()
-+	b, err := exec.CommandContext(ctx, "ps", "-o", "rss=,time=", "-p", strconv.Itoa(pid)).Output()
-+	if err != nil {
-+		return 0, 0, fmt.Errorf("ps for PID %d: %w", pid, err)
-+	}
-+	fields := strings.Fields(string(b))
-+	if len(fields) != 2 {
-+		return 0, 0, fmt.Errorf("unexpected ps output %q", b)
-+	}
-+	rss, err := strconv.ParseUint(fields[0], 10, 64)
-+	if err != nil {
-+		return 0, 0, err
-+	}
-+	cpu, err := parseCPU(fields[1])
-+	return rss * 1024, cpu, err
-+}
-+
-+func (c *radarClient) sample(ctx context.Context, start time.Time, pid int, runtime bool) sample {
-+	s := sample{At: time.Now()}
-+	if !start.IsZero() {
-+		s.Elapsed = s.At.Sub(start).Seconds()
-+	}
-+	rss, cpu, err := processStats(ctx, pid)
-+	if err != nil {
-+		s.Errors = append(s.Errors, err.Error())
-+	} else {
-+		s.RSS = &rss
-+		s.CPU = &cpu
-+	}
-+	if !runtime {
-+		return s
-+	}
-+	b, err := c.bytes(ctx, "/debug/pprof/heap?debug=1")
-+	if err == nil {
-+		s.Heap, err = parseHeap(string(b))
-+	}
-+	if err != nil {
-+		s.Errors = append(s.Errors, "heap: "+err.Error())
-+	}
-+	b, err = c.bytes(ctx, "/debug/pprof/goroutine?debug=1")
-+	if err == nil {
-+		var n int
-+		n, err = parseGoroutines(string(b))
-+		if err == nil {
-+			s.Goroutines = &n
-+		}
-+	}
-+	if err != nil {
-+		s.Errors = append(s.Errors, "goroutines: "+err.Error())
-+	}
-+	return s
-+}
-+
-+func pauseDelta(a, b *heapStats) (uint64, error) {
-+	if b.GC < a.GC {
-+		return 0, errors.New("GC counter decreased")
-+	}
-+	n := b.GC - a.GC
-+	if n == 0 {
-+		return 0, nil
-+	}
-+	if len(b.pauses) != 256 || n > 256 {
-+		return 0, errors.New("GC pause ring unavailable or overwritten between samples")
-+	}
-+	var total uint64
-+	for gc := a.GC; gc < b.GC; gc++ {
-+		total += 
-```
-
-**File**: `cmd/radarload/stats.go` (added, +235/-0)
-```diff
-@@ -0,0 +1,235 @@
-+package main
-+
-+import (
-+	"fmt"
-+	"io"
-+	"math"
-+	"reflect"
-+	"sort"
-+	"text/tabwriter"
-+)
-+
-+type distribution struct {
-+	Mean  float64 `json:"mean"`
-+	P95   float64 `json:"p95"`
-+	Peak  float64 `json:"peak"`
-+	Count int     `json:"count"`
-+}
-+type latencySummary struct {
-+	Count      int            `json:"count"`
-+	Errors     int            `json:"errors"`
-+	ErrorKinds map[string]int `json:"error_kinds"`
-+	P50        float64        `json:"p50_ms"`
-+	P95        float64        `json:"p95_ms"`
-+	P99        float64        `json:"p99_ms"`
-+	Bytes      int64          `json:"response_bytes"`
-+}
-+type summary struct {
-+	Seconds      float64                   `json:"measured_seconds"`
-+	RSS          distribution              `json:"rss_bytes"`
-+	HeapInuse    distribution              `json:"heap_inuse_bytes"`
-+	CPUSeconds   *float64                  `json:"cpu_seconds"`
-+	CPUPerMinute *float64                  `json:"cpu_seconds_per_minute"`
-+	GCCount      *uint64                   `json:"gc_count"`
-+	PauseNS      *uint64                   `json:"gc_pause_ns"`
-+	PauseError   string                    `json:"gc_pause_error,omitempty"`
-+	SSE          sseStats                  `json:"sse"`
-+	Offered      int                       `json:"offered_requests"`
-+	Dropped      int                       `json:"dropped_requests"`
-+	ActualQPS    float64                   `json:"actual_qps"`
-+	Endpoints    map[string]latencySummary `json:"endpoints"`
-+}
-+
-+func percentile(sorted []float64, p float64) float64 {
-+	if len(sorted) == 0 {
-+		return 0
-+	}
-+	return sorted[max(0, int(math.Ceil(float64(len(sorted))*p))-1)]
-+}
-+func describe(v []float64) distribution {
-+	if len(v) == 0 {
-+		return distribution{}
-+	}
-+	sort.Float64s(v)
-+	var sum float64
-+	for _, n := range v {
-+		sum += n
-+	}
-+	return distribution{sum / float64(len(v)), percentile(v, .95), v[len(v)-1], len(v)}
-+}
-+
-+func summarize(samples []sample, c *workloadCounters, seconds float64) summary {
-+	s := summary{Seconds: seconds, Endpoints: map[string]latencySummary{}}
-+	var rss, heap []float64
-+	for _, v := range samples {
-+		if v.RSS != nil {
-+			rss = append(rss, float64(*v.RSS))
-+		}
-+		if v.Heap != nil {
-+			heap = append(heap, float64(v.Heap.Inuse))
-+		}
-+	}
-+	s.RSS = describe(rss)
-+	s.HeapInuse = describe(heap)
-+	if len(samples) >= 2 {
-+		a, b := samples[0], samples[len(samples)-1]
-+		if a.CPU != nil && b.CPU != nil && *b.CPU >= *a.CPU {
-+			delta := *b.CPU - *a.CPU
-+			s.CPUSeconds = &delta
-+			rate := delta * 60 / b.At.Sub(a.At).Seconds()
-+			s.CPUPerMinute = &rate
-+		}
-+		// Heap reads are spaced out (runtimeEvery), so GC and pause totals
-+		// come from the samples that carry one.
-+		var withHeap []int
-+		for i := range samples {
-+			if samples[i].Heap != nil {
-+				withHeap = append(withHeap, i)
-+			}
-+		}
-+		if len(withHeap) >= 2 {
-+			first, last := samples[withHeap[0]].Heap, samples[withHeap[len(withHeap)-1]].Heap
-+			if last.GC >= first.GC {
-+				delta := last.GC - first.GC
-+				s.GCCount = &delta
-+			}
-+		}
-+		var pause uint64
-+		if len(withHeap) < 2 {
-+			s.PauseError = "fewer than two heap samples"
-+		}
-+		for j := 1; j < len(withHeap); j++ {
-+			prev, cur := withHeap[j-1], withHeap[j]
-+			delta, err := pauseDelta(samples[prev].Heap, samples[cur].Heap)
-+			if err != nil {
-+				s.PauseError = err.Error()
-+				continue
-+			}
-+			samples[cur].GCPauseNS = &delta
-+			pause += delta
-+		}
-+		if s.PauseError == "" {
-+			s.PauseNS = &pause
-+		}
-+	}
-+	c.mu.Lock()
-+	defer c.mu.Unlock()
-+	s.SSE = c.SSE
-+	s.Offered = c.Offered
-+	s.Dropped = c.Dropped
-+	var requests int
-+	for name, d := range c.Endpoints {
-+		sort.Float64s(d.latencies)
-+		n := 0
-+		for _, v := range d.Errors {
-+			n += v
-+		}
-+		s.Endpoints[name] = latencySummary{len(d.latencies), n, d.Errors, percentile(d.latencies, .5), percentile(d.latencies, .95), percentile(d.latencies, .99), d.Bytes}
-+		requests += len(d.latencies)
-+	}
-+	if seconds > 0 {
-+		s.ActualQPS = float64(requests) / seconds
-+	}
-+	return s
-+}
-+
-+func delta(a, b float64) (float64, *float64) {
-+	d := b - a
-+	if a == 0 {
-+		if b == 0 {
-+			z := 0.0
-+			return d, &z
-+		}
-+		return d, nil
-+	}
-+	p := d / math.Abs(a) * 100
-+	return d, &p
-+}
-+
-+func compare(out io.Writer, a, b result) error {
-+	if a.Config.Duration != b.Config.Duration || a.Config.SSE != b.Config.SSE || a.Config.Askers != b.Config.Askers || a.Config.QPS != b.Config.QPS || a.Config.Seed != b.Config.Seed || a.Config.User != b.Config.User || a.Config.Groups != b.Config.Groups || !reflect.DeepEqual(a.Subjects, b.Subjects) || !reflect.DeepEqual(a.NeighborhoodSubjects, b.NeighborhoodSubjects) {
-+		fmt.Fprintln(out, "WARNING: workload configuration or sampled subjects differ")
-+	}
-+	fmt.Fprintf(out, "A: %s (%s)\nB: %s (%s)\n", a.Config.Label, a.Build["version"], b.Config.Label, b.Build["version"])
-+	w := tabwriter.NewWriter(out, 0, 4, 2, ' ', 0)
-+	fmt.Fprintln(w, "Metric\tA\tB\tDelta (B-A)\tChange")
-+	row := func(name string, a, b *float64) {
-+		if a == nil || b == ni
-```
-
-**File**: `cmd/radarload/workload.go` (added, +214/-0)
-```diff
-@@ -0,0 +1,214 @@
-+package main
-+
-+import (
-+	"bufio"
-+	"context"
-+	"errors"
-+	"fmt"
-+	"io"
-+	"math/rand"
-+	"net/url"
-+	"strings"
-+	"sync"
-+	"time"
-+)
-+
-+type requestJob struct {
-+	Endpoint string
-+	Path     string
-+}
-+type endpointData struct {
-+	latencies []float64
-+	Errors    map[string]int
-+	Bytes     int64
-+}
-+type sseStats struct {
-+	Events      int64          `json:"events"`
-+	Connections int64          `json:"connections"`
-+	Errors      int64          `json:"errors"`
-+	ErrorKinds  map[string]int `json:"error_kinds"`
-+}
-+type workloadCounters struct {
-+	mu        sync.Mutex
-+	Endpoints map[string]*endpointData
-+	SSE       sseStats
-+	Offered   int
-+	Dropped   int
-+}
-+
-+func requestFor(slot int, s subject) requestJob {
-+	switch {
-+	case slot < 12:
-+		return requestJob{"resource_get", resourcePath("/api/resources", s)}
-+	case slot < 14:
-+		return requestJob{"ai_context", resourcePath("/api/ai/resources", s)}
-+	case slot < 16:
-+		return requestJob{"ai_neighborhood", resourcePath("/api/ai/neighborhood", s) + "&profile=auto&hops=1"}
-+	case slot < 18:
-+		return requestJob{"rest_neighborhood", resourcePath("/api/ai/neighborhood", s) + "&profile=all&hops=2"}
-+	case slot == 18:
-+		return requestJob{"applications", "/api/applications"}
-+	default:
-+		return requestJob{"list_summary", "/api/resources/" + url.PathEscape(s.Kind) + "?include=summary&maxItems=50000&group=" + url.QueryEscape(s.Group)}
-+	}
-+}
-+
-+func startWorkload(ctx context.Context, c *radarClient, subjects, neighborhoods []subject) (*workloadCounters, <-chan struct{}) {
-+	stats := &workloadCounters{Endpoints: map[string]*endpointData{}, SSE: sseStats{ErrorKinds: map[string]int{}}}
-+	done := make(chan struct{})
-+	jobs := make(chan requestJob)
-+	var workers sync.WaitGroup
-+	for range c.c.Askers {
-+		workers.Add(1)
-+		go func() {
-+			defer workers.Done()
-+			for job := range jobs {
-+				reqCtx, cancel := context.WithTimeout(ctx, requestTimeout)
-+				start := time.Now()
-+				resp, err := c.get(reqCtx, job.Path)
-+				var bytes int64
-+				var reason string
-+				if err == nil {
-+					bytes, err = io.Copy(io.Discard, resp.Body)
-+					resp.Body.Close()
-+					if resp.StatusCode != 200 {
-+						reason = fmt.Sprintf("HTTP %d", resp.StatusCode)
-+					} else if !strings.HasPrefix(resp.Header.Get("Content-Type"), "application/json") {
-+						reason = "non-JSON response"
-+					}
-+				}
-+				if err != nil {
-+					reason = err.Error()
-+					if errors.Is(err, context.DeadlineExceeded) {
-+						reason = "timeout"
-+					}
-+					if ctx.Err() != nil {
-+						reason = "run ended in flight"
-+					}
-+				}
-+				elapsed := time.Since(start).Seconds() * 1000
-+				cancel()
-+				stats.mu.Lock()
-+				d := stats.Endpoints[job.Endpoint]
-+				if d == nil {
-+					d = &endpointData{Errors: map[string]int{}}
-+					stats.Endpoints[job.Endpoint] = d
-+				}
-+				d.latencies = append(d.latencies, elapsed)
-+				d.Bytes += bytes
-+				if reason != "" {
-+					d.Errors[reason]++
-+				}
-+				stats.mu.Unlock()
-+			}
-+		}()
-+	}
-+	for range c.c.SSE {
-+		workers.Add(1)
-+		go func() { defer workers.Done(); c.stream(ctx, stats) }()
-+	}
-+	go func() {
-+		defer close(done)
-+		rng := rand.New(rand.NewSource(c.c.Seed))
-+		order := rng.Perm(20)
-+		start := time.Now()
-+		deadline, _ := ctx.Deadline()
-+		slot := 0
-+		for {
-+			target := start.Add(time.Duration(float64(slot) / c.c.QPS * float64(time.Second)))
-+			if !deadline.IsZero() && !target.Before(deadline) {
-+				<-ctx.Done()
-+				close(jobs)
-+				workers.Wait()
-+				return
-+			}
-+			t := time.NewTimer(time.Until(target))
-+			select {
-+			case <-ctx.Done():
-+				t.Stop()
-+				close(jobs)
-+				workers.Wait()
-+				return
-+			case <-t.C:
-+			}
-+			if ctx.Err() != nil {
-+				close(jobs)
-+				workers.Wait()
-+				return
-+			}
-+			endpointSlot := order[slot%20]
-+			pool := subjects
-+			if endpointSlot >= 14 && endpointSlot < 18 {
-+				pool = neighborhoods
-+			}
-+			job := requestFor(endpointSlot, pool[rng.Intn(len(pool))])
-+			stats.mu.Lock()
-+			stats.Offered++
-+			stats.mu.Unlock()
-+			select {
-+			case jobs <- job:
-+			default:
-+				stats.mu.Lock()
-+				stats.Dropped++
-+				stats.mu.Unlock()
-+			}
-+			slot++
-+		}
-+	}()
-+	return stats, done
-+}
-+
-+func (c *radarClient) stream(ctx context.Context, stats *workloadCounters) {
-+	for ctx.Err() == nil {
-+		resp, err := c.get(ctx, "/api/events/stream")
-+		if err == nil {
-+			if resp.StatusCode != 200 {
-+				err = fmt.Errorf("HTTP %d", resp.StatusCode)
-+			} else if !strings.HasPrefix(resp.Header.Get("Content-Type"), "text/event-stream") {
-+				err = errors.New("non-SSE response")
-+			}
-+			if err == nil {
-+				stats.mu.Lock()
-+				stats.SSE.Connections++
-+				stats.mu.Unlock()
-+				reader := bufio.NewReaderSize(resp.Body, 64*1024)
-+				hasData := false
-+				continuation := false
-+				for {
-+					line, readErr := reader.ReadSlice('\n')
-+					if !continuation {
-+						if strings.HasPrefix(string(line), "data:") {
-+							hasData = true
-+						}
-+						if len(line) == 1 && line[0] == '\n' || len(line) == 2 && line[0] ==
-```
-
----
-
-### Incident Patch 3: `b9cd4b5f` (2026-11-17)
-**Commit Message**: Replay a frozen cluster capture into two Radar builds and diff every relationship reader (#2708)
-
-## Summary
-
-Tooling to show that a change to how Radar answers relationships gives
-the same answers, or to list exactly where it doesn't. Comparing two
-builds on a live cluster doesn't work, because the cluster changes
-between the two reads. So this captures a cluster once, replays the
-frozen capture into two Radar builds through the test server's
-in-process fake client, and diffs what every relationship reader returns
-over HTTP and MCP.
-
-It's built for retiring the relationship graph: the old build is main,
-the new build is the cutover branch, and both run against identical
-state. It works for any reader-level change.
-
-## What's here
-
-- **`cmd/clustercapture -context <ctx> -out c.ndjson.gz`**: a read-only
-capture.
-- Lists every served, listable resource in pages of 500, plus the
-discovery document; writes gzipped NDJSON.
-- **Privacy:** Secret and ConfigMap values are blanked (keys kept), env
-`value`s are blanked, inline secrets are redacted
-(`pkg/ai/context.RedactInlineSecrets`), and `managedFields` and
-last-applied annotations are dropped. The header stores a hash of the
-context name
-
-**File**: `cmd/clustercapture/main.go` (added, +71/-0)
-```diff
-@@ -0,0 +1,71 @@
-+package main
-+
-+import (
-+	"context"
-+	"flag"
-+	"fmt"
-+	"os"
-+	"os/signal"
-+	"path/filepath"
-+	"syscall"
-+	"time"
-+
-+	"github.com/skyhook-io/radar/internal/clusterreplay"
-+	"k8s.io/client-go/discovery"
-+	"k8s.io/client-go/dynamic"
-+	"k8s.io/client-go/tools/clientcmd"
-+)
-+
-+func main() {
-+	if err := run(); err != nil {
-+		fmt.Fprintln(os.Stderr, err)
-+		os.Exit(1)
-+	}
-+}
-+
-+func run() error {
-+	name := flag.String("context", "", "kubeconfig context to capture (required)")
-+	out := flag.String("out", "", "destination .ndjson.gz (required; must not exist)")
-+	flag.Parse()
-+	if *name == "" || *out == "" {
-+		return fmt.Errorf("-context and -out are required")
-+	}
-+	cfg, err := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(clientcmd.NewDefaultClientConfigLoadingRules(), &clientcmd.ConfigOverrides{CurrentContext: *name}).ClientConfig()
-+	if err != nil {
-+		return fmt.Errorf("load kubeconfig: %w", err)
-+	}
-+	cfg.Timeout = 30 * time.Second
-+	d, err := discovery.NewDiscoveryClientForConfig(cfg)
-+	if err != nil {
-+		return fmt.Errorf("create discovery client: %w", err)
-+	}
-+	c, err := dynamic.NewForConfig(cfg)
-+	if err != nil {
-+		return fmt.Errorf("create dynamic client: %w", err)
-+	}
-+	// A failed list must not leave a plausible-looking complete snapshot.
-+	f, err := os.CreateTemp(filepath.Dir(*out), ".capture-*.partial")
-+	if err != nil {
-+		return err
-+	}
-+	partial := f.Name()
-+	defer os.Remove(partial)
-+	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
-+	defer cancel()
-+	count, skipped, captureErr := clusterreplay.Capture(ctx, d, c, *name, f)
-+	closeErr := f.Close()
-+	if captureErr != nil {
-+		return fmt.Errorf("capture failed; no snapshot published: %w", captureErr)
-+	}
-+	if closeErr != nil {
-+		return closeErr
-+	}
-+	if err := os.Link(partial, *out); err != nil {
-+		return err
-+	}
-+	fmt.Printf("Captured %d objects to %s\n", count, *out)
-+	if len(skipped) > 0 {
-+		fmt.Printf("Skipped %d resources whose lists failed; details are in the capture header\n", len(skipped))
-+	}
-+	return nil
-+}
-```
-
-**File**: `cmd/clustercapture/main_test.go` (added, +24/-0)
-```diff
-@@ -0,0 +1,24 @@
-+package main
-+
-+import (
-+	"os"
-+	"path/filepath"
-+	"strings"
-+	"testing"
-+)
-+
-+func TestRunReportsKubeconfigCause(t *testing.T) {
-+	dir := t.TempDir()
-+	kubeconfig := filepath.Join(dir, "config")
-+	if err := os.WriteFile(kubeconfig, []byte("apiVersion: v1\nkind: Config\n"), 0600); err != nil {
-+		t.Fatal(err)
-+	}
-+	t.Setenv("KUBECONFIG", kubeconfig)
-+	args := os.Args
-+	defer func() { os.Args = args }()
-+	os.Args = []string{"clustercapture", "-context", "absent", "-out", filepath.Join(dir, "c.ndjson.gz")}
-+	err := run()
-+	if err == nil || !strings.Contains(err.Error(), `context "absent" does not exist`) {
-+		t.Fatalf("err = %v, want the kubeconfig loader's cause", err)
-+	}
-+}
-```
-
-**File**: `cmd/reldiff/main.go` (added, +592/-0)
-```diff
-@@ -0,0 +1,592 @@
-+package main
-+
-+import (
-+	"bytes"
-+	"encoding/json"
-+	"flag"
-+	"fmt"
-+	"io"
-+	"math"
-+	"net"
-+	"net/http"
-+	"net/url"
-+	"os"
-+	"reflect"
-+	"regexp"
-+	"sort"
-+	"strings"
-+	"time"
-+
-+	"github.com/skyhook-io/radar/internal/clusterreplay"
-+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-+	"k8s.io/apimachinery/pkg/runtime/schema"
-+)
-+
-+type subject struct {
-+	Kind      string `json:"kind"`
-+	Group     string `json:"group"`
-+	Namespace string `json:"namespace"`
-+	Name      string `json:"name"`
-+}
-+type request struct {
-+	Reader, Kind, Path string
-+	Subject            subject
-+	Tool               string
-+	Args               map[string]any
-+	Relationships      bool
-+}
-+type example struct {
-+	Subject subject `json:"subject"`
-+	A       any     `json:"a"`
-+	B       any     `json:"b"`
-+}
-+type delta struct {
-+	Reader   string    `json:"reader"`
-+	Field    string    `json:"field"`
-+	Kind     string    `json:"kind"`
-+	Count    int       `json:"count"`
-+	Examples []example `json:"examples"`
-+}
-+type timing struct {
-+	Reader string  `json:"reader"`
-+	Kind   string  `json:"kind"`
-+	Side   string  `json:"side"`
-+	Count  int     `json:"count"`
-+	Median float64 `json:"median_ms"`
-+	P95    float64 `json:"p95_ms"`
-+}
-+type failure struct {
-+	Reader  string  `json:"reader"`
-+	Subject subject `json:"subject"`
-+	Side    string  `json:"side"`
-+	Error   string  `json:"error"`
-+}
-+type captureGaps struct {
-+	FailedGroups []string                `json:"failed_groups"`
-+	Skipped      []clusterreplay.Skipped `json:"skipped"`
-+}
-+
-+type report struct {
-+	CaptureGaps captureGaps `json:"capture_gaps"`
-+	Requests    int         `json:"request_pairs"`
-+	DeltaCount  int         `json:"delta_count"`
-+	Deltas      []*delta    `json:"deltas"`
-+	// Noise holds deltas whose (reader, kind, field) also differed between two runs
-+	// of one build (-baseline): output that varies run to run, not between builds.
-+	NoiseCount int            `json:"noise_count,omitempty"`
-+	Noise      []*delta       `json:"noise,omitempty"`
-+	Latency    []timing       `json:"latency"`
-+	Failures   []failure      `json:"failures"`
-+	Readiness  map[string]any `json:"readiness"`
-+}
-+
-+func main() {
-+	a := flag.String("a", "", "first Radar URL")
-+	b := flag.String("b", "", "second Radar URL")
-+	capture := flag.String("capture", "", "subject capture .ndjson.gz")
-+	out := flag.String("out", "report.json", "JSON report")
-+	max := flag.Int("max-per-kind", 0, "maximum subjects per group/kind (0 = all)")
-+	adminA := flag.String("ready-a", "", "optional replay admin URL; otherwise infer main port+1")
-+	adminB := flag.String("ready-b", "", "optional replay admin URL; otherwise infer main port+1")
-+	baseline := flag.String("baseline", "", "report from two runs of one build; fields that differed there are reported as noise")
-+	flag.Parse()
-+	if *a == "" || *b == "" || *capture == "" || *max < 0 {
-+		fmt.Fprintln(os.Stderr, "-a, -b, -capture required; -max-per-kind must be >= 0")
-+		os.Exit(1)
-+	}
-+	if err := run(*a, *b, *capture, *out, *max, *adminA, *adminB, *baseline); err != nil {
-+		fmt.Fprintln(os.Stderr, err)
-+		os.Exit(1)
-+	}
-+}
-+
-+func run(a, b, capture, out string, max int, adminA, adminB, baseline string) error {
-+	noise, err := loadNoise(baseline)
-+	if err != nil {
-+		return fmt.Errorf("baseline: %w", err)
-+	}
-+	f, err := os.Open(capture)
-+	if err != nil {
-+		return err
-+	}
-+	defer f.Close()
-+	var objects []*unstructured.Unstructured
-+	header, err := clusterreplay.Read(f, func(o *unstructured.Unstructured) error { objects = append(objects, o); return nil })
-+	if err != nil {
-+		return err
-+	}
-+	requests := plan(objects, header, max)
-+	client := &http.Client{Timeout: 65 * time.Second}
-+	result := report{Deltas: []*delta{}, Failures: []failure{}, Readiness: map[string]any{}, CaptureGaps: captureGaps{header.FailedGroups, header.Skipped}}
-+	if len(header.FailedGroups) > 0 || len(header.Skipped) > 0 {
-+		fmt.Fprintf(os.Stderr, "Warning: incomplete capture: %d failed groups, %d skipped resources; see capture_gaps in the report\n", len(header.FailedGroups), len(header.Skipped))
-+	}
-+	for _, side := range []struct{ Name, Base, Admin string }{{"a", a, adminA}, {"b", b, adminB}} {
-+		status, err := waitReady(side.Base, side.Admin)
-+		if err != nil {
-+			return fmt.Errorf("%s readiness: %w", side.Name, err)
-+		}
-+		result.Readiness[side.Name] = status
-+	}
-+	groups, noiseGroups := map[string]*delta{}, map[string]*delta{}
-+	times := map[string][]float64{}
-+	// Alternate the first side to distribute warm-cache and machine-load bias.
-+	for i, r := range requests {
-+		var values [2]any
-+		order := []int{0, 1}
-+		if i%2 != 0 {
-+			order = []int{1, 0}
-+		}
-+		for _, side := range order {
-+			base := a
-+			label := "a"
-+			if side == 1 {
-+				base = b
-+				label = "b"
-+			}
-+			start := time.Now()
-+			value, err := fetch(client, base, r)
-+			elapsed := float64(time.Since(start)) / float64(time.Millisecond)
-+			times[r.Reader+"\x00"+r.Kind+"\x00"+label] = append(times[r
-```
-
-**File**: `cmd/reldiff/main_test.go` (added, +246/-0)
-```diff
-@@ -0,0 +1,246 @@
-+package main
-+
-+import (
-+	"compress/gzip"
-+	"encoding/json"
-+	"io"
-+	"net/http"
-+	"net/http/httptest"
-+	"os"
-+	"path/filepath"
-+	"reflect"
-+	"strings"
-+	"testing"
-+	"time"
-+
-+	"github.com/skyhook-io/radar/internal/clusterreplay"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-+)
-+
-+func TestNormalizationAndDeltas(t *testing.T) {
-+	a := map[string]any{"owner": map[string]any{"name": "x", "generation": 1}, "children": []any{map[string]any{"kind": "Pod", "name": "b"}, map[string]any{"kind": "Pod", "name": "a"}}, "conditions": []any{"first", "second"}}
-+	b := map[string]any{"owner": map[string]any{"name": "x", "generation": 2}, "children": []any{map[string]any{"kind": "Pod", "name": "a"}, map[string]any{"kind": "Pod", "name": "b"}}, "conditions": []any{"first", "second"}}
-+	if !reflect.DeepEqual(normalize(a), normalize(b)) {
-+		t.Fatal("ref ordering/generation changed equality")
-+	}
-+	b["owner"].(map[string]any)["name"] = "y"
-+	out := map[string][2]any{}
-+	compare("", normalize(a), normalize(b), out)
-+	if len(out) != 1 || out["/owner/name"] != [2]any{"x", "y"} {
-+		t.Fatal(out)
-+	}
-+	b["conditions"] = []any{"second", "first"}
-+	out = map[string][2]any{}
-+	compare("", normalize(a), normalize(b), out)
-+	if len(out) != 3 {
-+		t.Fatal("ordered arrays must retain order", out)
-+	}
-+}
-+
-+func TestMCPTextDecodedAndErrorsRecorded(t *testing.T) {
-+	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		if r.Method != "POST" || r.Header.Get("MCP-Protocol-Version") == "" {
-+			t.Error("bad MCP request")
-+		}
-+		w.Header().Set("Content-Type", "text/event-stream")
-+		_, _ = w.Write([]byte("event: message\ndata: {\"jsonrpc\":\"2.0\",\"id\":1,\"result\":{\"content\":[{\"type\":\"text\",\"text\":\"{\\\"owner\\\":{\\\"name\\\":\\\"a\\\"}}\"}]}}\n\n"))
-+	}))
-+	defer s.Close()
-+	value, err := fetch(s.Client(), s.URL, request{Tool: "get_resource"})
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	b, _ := json.Marshal(value)
-+	if string(b) != "{\"content\":[{\"text\":{\"owner\":{\"name\":\"a\"}},\"type\":\"text\"}]}" {
-+		t.Fatalf("not decoded: %s", b)
-+	}
-+}
-+
-+func TestPlanIncludesAllReadersAndDoesNotCapTrees(t *testing.T) {
-+	objects := []*unstructured.Unstructured{}
-+	for _, name := range []string{"first", "second"} {
-+		objects = append(objects, &unstructured.Unstructured{Object: map[string]any{"apiVersion": "argoproj.io/v1alpha1", "kind": "Application", "metadata": map[string]any{"name": name, "namespace": "default"}}})
-+	}
-+	requests := plan(objects, clusterreplay.Header{}, 1)
-+	counts := map[string]int{}
-+	for _, r := range requests {
-+		counts[r.Reader]++
-+	}
-+	for _, reader := range []string{"relationships", "neighborhood", "ai_context", "mcp_get_resource", "mcp_get_neighborhood", "summary", "applications"} {
-+		if counts[reader] != 1 {
-+			t.Fatalf("%s calls=%d", reader, counts[reader])
-+		}
-+	}
-+	if counts["gitops_tree"] != 2 {
-+		t.Fatal("trees capped", counts)
-+	}
-+}
-+
-+func TestMissingAndNullRemainDifferent(t *testing.T) {
-+	out := map[string][2]any{}
-+	compare("", map[string]any{}, map[string]any{"owner": nil}, out)
-+	if len(out) != 1 || out["/owner"][0] == nil {
-+		t.Fatal(out)
-+	}
-+}
-+
-+func TestContainerOrderIsNotNormalizedAway(t *testing.T) {
-+	a := []any{map[string]any{"name": "first", "image": "a"}, map[string]any{"name": "second", "image": "b"}}
-+	b := []any{a[1], a[0]}
-+	if reflect.DeepEqual(normalize(a), normalize(b)) {
-+		t.Fatal("ordered container array sorted as references")
-+	}
-+}
-+
-+func TestRunReportsCaptureGapsAndScopesNoiseByKind(t *testing.T) {
-+	dir := t.TempDir()
-+	capture, baseline, output := filepath.Join(dir, "capture.gz"), filepath.Join(dir, "baseline.json"), filepath.Join(dir, "report.json")
-+	header := clusterreplay.Header{
-+		CapturedAt: time.Now().UTC(), Discovery: clusterreplay.Discovery{Resources: []*metav1.APIResourceList{}},
-+		FailedGroups: []string{"broken.io"}, Skipped: []clusterreplay.Skipped{{Resource: "secrets", Error: "forbidden"}},
-+	}
-+	f, err := os.Create(capture)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	z := gzip.NewWriter(f)
-+	enc := json.NewEncoder(z)
-+	if err := enc.Encode(header); err != nil {
-+		t.Fatal(err)
-+	}
-+	for _, kind := range []string{"Pod", "Service"} {
-+		if err := enc.Encode(map[string]any{"apiVersion": "v1", "kind": kind, "metadata": map[string]any{"namespace": "default", "name": "one"}}); err != nil {
-+			t.Fatal(err)
-+		}
-+	}
-+	if err := z.Close(); err != nil {
-+		t.Fatal(err)
-+	}
-+	if err := f.Close(); err != nil {
-+		t.Fatal(err)
-+	}
-+	base, err := json.Marshal(report{Deltas: []*delta{{Reader: "relationships", Kind: "Pod.", Field: "/owner/name"}}})
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	if err := os.WriteFile(baseline, base, 0600); err != nil {
-+		t.Fatal(err)
-+	}
-+	server := func(side string) *httptest.Server {
-+		return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+			w.Header().Set("Content-Type", "application/jso
-```
-
-**File**: `cmd/testserver/main.go` (modified, +22/-6)
-```diff
-@@ -45,6 +45,7 @@ import (
- 	"github.com/skyhook-io/radar/internal/config"
- 	"github.com/skyhook-io/radar/internal/k8s"
- 	"github.com/skyhook-io/radar/internal/loadtest"
-+	"github.com/skyhook-io/radar/internal/mcp"
- 	"github.com/skyhook-io/radar/internal/server"
- 	"github.com/skyhook-io/radar/internal/static"
- 	"github.com/skyhook-io/radar/internal/timeline"
-@@ -61,6 +62,9 @@ func main() {
- 	censusScale := flag.Float64("census-scale", 1.0, "load-test: scale factor applied to -census counts")
- 	vulnReports := flag.Bool("vulnerability-reports", false, "seed Trivy Operator VulnerabilityReports and the workloads they describe (with the default fixture)")
- 	flag.Parse()
-+	if *replayPath != "" && (*pods != 0 || *censusProfile != "" || *vulnReports) {
-+		log.Fatal("-replay cannot be combined with -pods, -census or -vulnerability-reports")
-+	}
+@@ -920,6 +920,8 @@ By default a scan returns only `oversized`, `under_requested` and `missing_reque
  
- 	// Isolate config/settings writes to a temp directory so e2e tests
- 	// don't touch the developer's real ~/.radar/config.json.
-@@ -76,8 +80,12 @@ func main() {
- 	var (
- 		fakeClient *fake.Clientset
- 		gen        *loadtest.Generator
-+		replay     *replayState
+ `oomEvidenceAvailable` is emitted on **memory rows only**. It never gates a CPU recommendation, and a literal `false` there would read as an evidence gap. `throttleAvailable` is its CPU counterpart: on CPU rows only, and `false` means throttling was not measured — not that the container is unthrottled.
+ 
++When a recent container exit has no reliable cause, Radar withholds memory reductions for that container. Check the Pod’s current and last termination state and its events. A generic exit 137 or SIGKILL does not by itself establish an OOM. A verified OOM produces its own review reason.
++
+ ### `state: partial` always names its cause
+ 
+ A partial response carries a `reason`, and `guidance` names the causes that are actually present rather than listing every field that could explain one. Causes:
+```
+
+**File**: `internal/prometheus/podscope_test.go` (modified, +2/-1)
+```diff
+@@ -5,6 +5,7 @@ import (
+ 	"errors"
+ 	"reflect"
+ 	"testing"
++	"time"
+ 
+ 	appsv1 "k8s.io/api/apps/v1"
+ 	batchv1 "k8s.io/api/batch/v1"
+@@ -171,7 +172,7 @@ func TestCurrentReadersExcludePreviousControllerIncarnations(t *testing.T) {
+ 		pod("previous-rs", staleOwner, corev1.PodQOSGuaranteed),
+ 		pod("wrong-group", wrongGroup, corev1.PodQOSGuaranteed),
  	)
--	if *censusProfile != "" {
-+	if *replayPath != "" {
-+		replay = mustLoadReplay(*replayPath)
-+		fakeClient = replay.client
-+	} else if *censusProfile != "" {
- 		c, ok := loadtest.Profiles[*censusProfile]
- 		if !ok {
- 			log.Fatalf("unknown -census profile %q", *censusProfile)
-@@ -122,6 +130,11 @@ func main() {
- 		log.Fatalf("InitTestResourceCache: %v", err)
+-	scan, _, _ := snapshotScanWorkloads(context.Background(), cache, map[string][]string{"Deployment": {"shop"}})
++	scan, _, _ := snapshotScanWorkloads(context.Background(), cache, map[string][]string{"Deployment": {"shop"}}, time.Now())
+ 	var currentQoS rightsizing.PodQoS
+ 	currentQoS.Observe(corev1.PodQOSBurstable)
+ 	if len(scan) != 1 || scan[0].workload.qos != currentQoS || !reflect.DeepEqual(scan[0].workload.currentPodOOM, map[string]bool{"current": true}) {
+```
+
+**File**: `internal/prometheus/rightsizing.go` (modified, +46/-11)
+```diff
+@@ -297,6 +297,7 @@ type rightsizingWorkload struct {
+ 	podRestartEvidence    map[string]sizingPodRestarts
+ 	qos                   rightsizing.PodQoS
+ 	currentPodOOM         map[string]bool
++	unexplainedPodExits   map[string]bool
+ 	hpaManaged            map[string]bool
+ 	hpaAvailable          bool
+ 	replicas              int
+@@ -425,30 +426,64 @@ func loadRightsizingWorkload(ctx context.Context, kind, namespace, name string)
+ 		return workload, nil
  	}
+ 	collectPodIdentities := cloud.IsAuthenticatedTunnelRequest(ctx)
++	windowEnd := time.Now()
+ 	for _, pod := range pods {
+ 		workload.qos.Observe(pod.Status.QOSClass)
+ 		workload.podNames = append(workload.podNames, pod.Name)
+ 		if collectPodIdentities {
+ 			workload.observeSizingPodIdentity(ctx, cache, pod)
+ 		}
+-		collectCurrentPodOOM(workload.currentPodOOM, pod.Status.ContainerStatuses)
+-		collectCurrentPodOOM(workload.currentPodOOM, pod.Status.InitContainerStatuses)
++		workload.observePodTerminations(pod, windowEnd)
+ 	}
+ 	sort.Strings(workload.podNames)
+ 	return workload, nil
+ }
  
-+	if replay != nil {
-+		replay.mustStart()
-+		defer k8s.ResetTestDynamicState()
-+	}
-+
- 	if *vulnReports {
- 		_, reports := vulnerabilityFixture()
- 		if err := initVulnerabilityReports(reports); err != nil {
-@@ -148,6 +161,7 @@ func main() {
- 		StaticFS:        static.FS,
- 		StaticRoot:      "dist",
- 		EffectiveConfig: effectiveCfg,
-+		MCPHandler:      mcp.NewReadOnlyHandler(),
- 	})
- 
- 	ready := make(chan struct{})
-@@ -161,11 +175,13 @@ func main() {
- 	fmt.Fprintf(os.Stderr, "Test server ready on http://localhost:%d (fake k8s)\n", *port)
- 
- 	var adminSrv *http.Server
--	if gen != nil {
--		ap := *adminPort
--		if ap == 0 {
--			ap = *port + 1
+-func collectCurrentPodOOM(dst map[string]bool, statuses []corev1.ContainerStatus) {
+-	for _, status := range statuses {
+-		if status.State.Terminated != nil && status.State.Terminated.Reason == "OOMKilled" {
+-			dst[status.Name] = true
 -		}
-+	ap := *adminPort
-+	if ap == 0 {
-+		ap = *port + 1
+-		if status.LastTerminationState.Terminated != nil && status.LastTerminationState.Terminated.Reason == "OOMKilled" {
+-			dst[status.Name] = true
++func (w *rightsizingWorkload) observePodTerminations(pod *corev1.Pod, windowEnd time.Time) {
++	inWindow := func(t time.Time) bool { return !t.Before(windowEnd.Add(-rightsizingWindow)) && !t.After(windowEnd) }
++	bornInWindow := inWindow(pod.CreationTimestamp.Time)
++	// SIGKILL alone cannot distinguish a manual kill from an OOM.
++	unexplained := func(exit *corev1.ContainerStateTerminated) bool {
++		return exit == nil || exit.Reason == "" || exit.Reason == "ContainerStatusUnknown" || exit.Reason == "Unknown" || exit.ExitCode == 137 || exit.Signal == 9
 +	}
-+	if replay != nil {
-+		adminSrv = startReplayAdmin(ap, replay)
-+	} else if gen != nil {
- 		adminSrv = startAdminServer(ap, gen, fakeClient)
++	recent := func(exit *corev1.ContainerStateTerminated) bool {
++		return bornInWindow || (exit != nil && inWindow(exit.FinishedAt.Time))
++	}
++	for _, statuses := range [][]corev1.ContainerStatus{pod.Status.ContainerStatuses, pod.Status.InitContainerStatuses} {
++		for _, status := range statuses {
++			current, last := status.State.Terminated, status.LastTerminationState.Terminated
++			if (current != nil && current.Reason == "OOMKilled") || (last != nil && last.Reason == "OOMKilled") {
++				w.currentPodOOM[status.Name] = true
++			}
++			// A counter already positive at its first scrape has no visible increase.
++			// A Pod born inside the window dates its restarts even when the scrape cannot.
++			if pod.UID == "" {
++				continue
++			}
++			// A container can die and the Pod disappear before the kubelet restarts it.
++			currentGap := current != nil && unexplained(current) && recent(current)
++			lastGap := (status.RestartCount > 0 || last != nil) && unexplained(last) && recent(last)
++			earlierGap := bornInWindow && status.RestartCount > 1
++			if !currentGap && !lastGap && !earlierGap {
++				continue
++			}
++			if w.unexplainedPodExits == nil {
++				w.unexplainedPodExits = map[string]bool{}
++			}
++			w.unexplainedPodExits[status.Name] = true
+ 		}
  	}
+ }
+ 
++func (w rightsizingWorkload) hasOOMEvidence(container string, restartActivity float64, restartAvailable bool, termination terminationEvidence) bool {
++	if termination.OOM {
++		return true
++	}
++	// The aggregated historical reason could describe another replica or just
++	// the last of several restarts. It cannot clear a known gap in a live Pod.
++	return restartAvailable && !w.unexplainedPodExits[container] && (restartActivity <= 0 || termination.Any)
++}
++
+ func loadHPAManagedResources(ctx context.Context, cache *k8s.ResourceCache, kind, namespace, name string) (map[string]bool, bool) {
+ 	managed := map[string]bool{}
+ 	if cache.HorizontalPodAutoscalers() == nil {
+@@ -802,11 +837,11 @@ func buildRightsizingRow(container containerSpec, resourceName string, expected
+ 		row.CurrentPodOOM = workload.currentPodOOM[container.name]
+ 		restarts := results["restart_activity"]
+ 		terminations := results["termination_history"]
+-		if restarts.err == nil && terminations.err == nil {
++		if terminations.err == nil {
+ 			restartActivity, restartAvailable := restarts.values[container.name]
+ 			termination := terminations.terminations[container.name]
+ 			row.WindowOOMEvidence = termination.OOM
+-			row.OOMEvidenceAvailable = termination.OOM || (restartAvailable && (restartActivity <= 0 || termination.Any))
++			row.OOMEvidenceAvailable = workload.hasOOMEvidence(container.name, restartActivity, restarts.err == nil && restartAvailable, termination)
+ 		}
+ 	}
+ 	rightsizing.SetCurrentQuantities(&row, req, lim, resourceName)
+```
+
+**File**: `internal/prometheus/rightsizing_manager_test.go` (modified, +1/-1)
+```diff
+@@ -121,7 +121,7 @@ func TestScanSkipsDaemonSetsThatMatchNoNode(t *testing.T) {
+ 	var skipped []string
+ 	deadline := time.Now().Add(2 * time.Second)
+ 	for time.Now().Before(deadline) {
+-		workloads, _, skipped = snapshotScanWorkloads(context.Background(), cache, scopes)
++		workloads, _, skipped = snapshotScanWorkloads(context.Background(), cache, scopes, time.Now())
+ 		if len(workloads)+len(skipped) == 4 {
+ 			break
+ 		}
+```
+
+**File**: `internal/prometheus/rightsizing_pod_identity_test.go` (modified, +1/-1)
+```diff
+@@ -132,7 +132,7 @@ func TestCurrentPodRightsizingDetailAndScanAgreeOnDaemonSetCohort(t *testing.T)
+ 			t.Fatalf("standalone restricted to current UIDs: %s", q)
+ 		}
+ 	}
+-	workloads, _, _ := snapshotScanWorkloads(sizingTunnelTestContext(ctx), k8s.GetResourceCache(), map[string][]string{"DaemonSet": {"apps"}})
++	workloads, _, _ := snapshotScanWorkloads(sizingTunnelTestContext(ctx), k8s.GetResourceCache(), map[string][]string{"DaemonSet": {"apps"}}, time.Now())
+ 	if len(workloads) != 2 {
+ 		t.Fatalf("scan snapshot: %+v", workloads)
+ 	}
+```
+
+**File**: `internal/prometheus/rightsizing_scan.go` (modified, +7/-8)
+```diff
+@@ -231,7 +231,7 @@ func runRightsizingScan(ctx context.Context, scope RightsizingScanScope, client
+ 	effective, partiallyCached := clampScopeToCacheCoverage(cache, scope.NamespacesByKind)
+ 	resp.Coverage.PartiallyCachedKinds = partiallyCached
+ 	resp.Coverage.ScannedNamespacesByKind = effective
+-	workloads, unavailable, skippedDaemonSets := snapshotScanWorkloads(ctx, cache, effective)
++	workloads, unavailable, skippedDaemonSets := snapshotScanWorkloads(ctx, cache, effective, resp.ScannedAt)
+ 	resp.Coverage.UnavailableKinds = unavailable
+ 	resp.Coverage.DaemonSetsWithoutNodes = len(skippedDaemonSets)
+ 	sort.Strings(skippedDaemonSets)
+@@ -767,11 +767,11 @@ func buildScanRow(container containerSpec, resourceName string, key scanKey, exp
+ 		statistic = "Max"
+ 		series = evidence.memory[key]
+ 		row.CurrentPodOOM = workload.currentPodOOM[container.name]
+-		if evidence.errors["restart_activity"] == nil && evidence.errors["termination_history"] == nil {
++		if evidence.errors["termination_history"] == nil {
+ 			restartActivity, restartAvailable := evidence.restarts[key]
+ 			termination := evidence.terminations[key]
+ 			row.WindowOOMEvidence = termination.OOM
+-			row.OOMEvidenceAvailable = termination.OOM || (restartAvailable && (restartActivity <= 0 || termination.Any))
++			row.OOMEvidenceAvailable = workload.hasOOMEvidence(container.name, restartActivity, evidence.errors["restart_activity"] == nil && restartAvailable, termination)
+ 		}
+ 	}
+ 	rightsizing.SetCurrentQuantities(&row, request, limit, resourceName)
+@@ -976,7 +976,7 @@ func sortScanWorkloads(workloads []scanWorkload) {
+ 
+ // snapshotScanWorkloads also returns each DaemonSet it skipped for matching no
+ // node, as namespace/name.
+-func snapshotScanWorkloads(ctx context.Context, cache *k8s.ResourceCache, scopes map[string][]string) ([]scanWorkload, []string, []string) {
++func snapshotScanWorkloads(ctx context.Context, cache *k8s.ResourceCache, scopes map[string][]string, windowEnd time.Time) ([]scanWorkload, []string, []string) {
+ 	workloads := map[string]*scanWorkload{}
+ 	var unavailable, skippedDaemonSets []string
+ 	add := func(obj metav1.Object, kind string, replicas int, podSpec *corev1.PodSpec, scaledToZero, cohortReady bool) {
+@@ -1036,7 +1036,7 @@ func snapshotScanWorkloads(ctx context.Context, cache *k8s.ResourceCache, scopes
+ 	}
+ 
+ 	enrichScanHPA(ctx, cache, scopes, workloads)
+-	enrichScanCurrentOOM(ctx, cache, scopes, workloads)
++	enrichScanCurrentOOM(ctx, cache, scopes, workloads, windowEnd)
+ 	out := make([]scanWorkload, 0, len(workloads))
+ 	for _, workload := range workloads {
+ 		out = append(out, *workload)
+@@ -1200,7 +1200,7 @@ func scanNeedsReplicaSets(workloads map[string]*scanWorkload) bool {
+ 	return false
+ }
+ 
+-func enrichScanCurrentOOM(ctx context.Context, cache *k8s.ResourceCache, scopes map[string][]string, workloads map[string]*scanWorkload) {
++func enrichScanCurrentOOM(ctx context.Context, cache *k8s.ResourceCache, scopes map[string][]string, workloads map[string]*scanWorkload, windowEnd time.Time) {
+ 	// A warming informer hands out a non-nil lister that answers nothing, which
+ 	// would read as a cluster with no OOM-killed pods anywhere. The scan pays
+ 	// this wait once rather than per workload.
+@@ -1277,8 +1277,7 @@ func enrichScanCurrentOOM(ctx context.Context, cache *k8s.ResourceCache, scopes
+ 			workload.workload.observeSizingPodIdentity(ctx, cache, pod)
+ 		}
+ 		workload.workload.qos.Observe(pod.Status.QOSClass)
+-		collectCurrentPodOOM(workload.workload.currentPodOOM, pod.Status.ContainerStatuses)
+-		collectCurrentPodOOM(workload.workload.currentPodOOM, pod.Status.InitContainerStatuses)
++		workload.workload.observePodTerminations(pod, windowEnd)
+ 	}
+ }
  
 ```
 
-**File**: `cmd/testserver/replay.go` (added, +195/-0)
+**File**: `internal/prometheus/rightsizing_scan_test.go` (modified, +5/-5)
 ```diff
-@@ -0,0 +1,195 @@
-+package main
-+
-+import (
-+	"flag"
-+	"fmt"
-+	"log"
-+	"net"
-+	"net/http"
-+	"os"
-+	"strings"
+@@ -440,7 +440,7 @@ func TestScanMarksWorkloadsWhenPodInventoryIsUnreadable(t *testing.T) {
+ 	t.Run("pods readable", func(t *testing.T) {
+ 		cache := scopeTestCache(t, map[string]bool{k8score.Pods: true, k8score.ReplicaSets: true}, replicaSet, oomed)
+ 		workloads := newWorkloads()
+-		enrichScanCurrentOOM(context.Background(), cache, scopes, workloads)
++		enrichScanCurrentOOM(context.Background(), cache, scopes, workloads, time.Now())
+ 		got := workloads[workloadIdentity("Deployment", "shop", "api")].workload
+ 		if got.liveInventoryUnavailable {
+ 			t.Error("pods were readable; the row must not claim the inventory was denied")
+@@ -453,7 +453,7 @@ func TestScanMarksWorkloadsWhenPodInventoryIsUnreadable(t *testing.T) {
+ 	t.Run("pod lister denied", func(t *testing.T) {
+ 		cache := scopeTestCache(t, map[string]bool{k8score.ReplicaSets: true}, replicaSet)
+ 		workloads := newWorkloads()
+-		enrichScanCurrentOOM(context.Background(), cache, scopes, workloads)
++		enrichScanCurrentOOM(context.Background(), cache, scopes, workloads, time.Now())
+ 		got := workloads[workloadIdentity("Deployment", "shop", "api")].workload
+ 		if !got.liveInventoryUnavailable {
+ 			t.Error("the pod lister was denied, so the empty OOM map must be reported as unanswered")
+@@ -487,7 +487,7 @@ func TestScanMarksOnlyDeploymentsWhenReplicaSetOwnershipIsUnreadable(t *testing.
+ 			workload: rightsizingWorkload{currentPodOOM: map[string]bool{}},
+ 		},
+ 	}
+-	enrichScanCurrentOOM(context.Background(), cache, map[string][]string{"Deployment": {"shop"}}, workloads)
++	enrichScanCurrentOOM(context.Background(), cache, map[string][]string{"Deployment": {"shop"}}, workloads, time.Now())
+ 
+ 	if !workloads[workloadIdentity("Deployment", "shop", "api")].workload.liveInventoryUnavailable {
+ 		t.Error("no ReplicaSet lister, so the Deployment never sees its pods; that has to be reported")
+@@ -528,7 +528,7 @@ func TestScanMarksWorkloadsOutsideTheInformersNamespaces(t *testing.T) {
+ 			workload: rightsizingWorkload{currentPodOOM: map[string]bool{}},
+ 		},
+ 	}
+-	enrichScanCurrentOOM(context.Background(), cache, map[string][]string{"StatefulSet": {"team-a", "team-b"}}, workloads)
++	enrichScanCurrentOOM(context.Background(), cache, map[string][]string{"StatefulSet": {"team-a", "team-b"}}, workloads, time.Now())
+ 
+ 	if workloads[workloadIdentity("StatefulSet", "team-a", "watched")].workload.liveInventoryUnavailable {
+ 		t.Error("team-a is watched, so its empty pod list is authoritative and must not be flagged")
+@@ -552,7 +552,7 @@ func TestScanSkipsReplicaSetWaitWithoutDeployments(t *testing.T) {
+ 		t.Fatal("a DaemonSet-only scan reported that it needs ReplicaSet ownership")
+ 	}
+ 	start := time.Now()
+-	enrichScanCurrentOOM(context.Background(), cache, map[string][]string{"DaemonSet": {"shop"}}, workloads)
++	enrichScanCurrentOOM(context.Background(), cache, map[string][]string{"DaemonSet": {"shop"}}, workloads, time.Now())
+ 	if elapsed := time.Since(start); elapsed >= warmingRetryBudget {
+ 		t.Errorf("waited %v on ReplicaSets a DaemonSet-only scan never reads", elapsed)
+ 	}
+```
+
+**File**: `internal/prometheus/rightsizing_test.go` (modified, +139/-0)
+```diff
+@@ -6,11 +6,14 @@ import (
+ 	"strings"
+ 	"sync"
+ 	"testing"
 +	"time"
-+
-+	"github.com/skyhook-io/radar/internal/clusterreplay"
-+	"github.com/skyhook-io/radar/internal/k8s"
-+	"github.com/skyhook-io/radar/pkg/k8score"
+ 
+ 	"github.com/skyhook-io/radar/pkg/prom"
+ 	"github.com/skyhook-io/radar/pkg/rightsizing"
+ 	corev1 "k8s.io/api/core/v1"
+ 	"k8s.io/apimachinery/pkg/api/resource"
 +	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-+	"k8s.io/apimachinery/pkg/runtime"
-+	"k8s.io/apimachinery/pkg/runtime/schema"
-+	discoveryfake "k8s.io/client-go/discovery/fake"
-+	dynamicfake "k8s.io/client-go/dynamic/fake"
-+	"k8s.io/client-go/kubernetes/fake"
-+	"k8s.io/client-go/kubernetes/scheme"
-+)
-+
-+var replayPath = flag.String("replay", "", "replay a frozen .ndjson.gz cluster capture")
-+
-+type replayState struct {
-+	client       *fake.Clientset
-+	dynamic      *dynamicfake.FakeDynamicClient
-+	discovery    *replayDiscovery
-+	gvrs         []schema.GroupVersionResource
-+	unsupported  []string
-+	failedGroups []string
-+	skipped      []clusterreplay.Skipped
-+	objects      int
-+}
-+
-+func loadReplay(path string) (*replayState, error) {
-+	f, err := os.Open(path)
-+	if err != nil {
-+		return nil, err
-+	}
-+	defer f.Close()
-+	var objects []*unstructured.Unstructured
-+	header, err := clusterreplay.Read(f, func(obj *unstructured.Unstructured) error { objects = append(objects, obj); return nil })
-+	if err != nil {
-+		return nil, err
-+	}
-+	s := &replayState{client: fake.NewClientset(), objects: len(objects), failedGroups: header.FailedGroups, skipped: header.Skipped}
-+	s.discovery = &replayDiscovery{FakeDiscovery: s.client.Discovery().(*discoveryfake.FakeDiscovery), groups: header.Discovery.Groups}
-+	s.discovery.Resources = header.Discovery.Resources
-+	kinds := map[schema.GroupVersionResource]string{}
-+	byGVK := map[schema.GroupVersionKind]schema.GroupVersionResource{}
-+	for _, list := range header.Discovery.Resources {
-+		gv, err := schema.ParseGroupVersion(list.GroupVersion)
-+		if err != nil {
-+			return nil, err
++	"k8s.io/apimachinery/pkg/types"
+ )
+ 
+ type fakeRightsizingQuerier func(string) (*prom.QueryResult, error)
+@@ -224,6 +227,32 @@ func TestMemoryReductionRequiresVerifiedRestartHistory(t *testing.T) {
+ 	}
+ }
+ 
++func TestHistoricalOOMSurvivesRestartQueryFailure(t *testing.T) {
++	const usage = 50 * 1024 * 1024
++	const keySamples = 2016
++	key := scanKey{namespace: "shop", kind: "Deployment", workload: "api", container: "server"}
++	container := containerSpec{name: key.container, memReq: mustQuantity(t, "256Mi")}
++	workload := rightsizingWorkload{hpaAvailable: true}
++	termination := terminationEvidence{Any: true, OOM: true}
++	err := errors.New("restart counter unavailable")
++	detail := buildRightsizingRow(container, "memory", keySamples, OwnerCoverageKSMHistory, workload, map[string]queryOutcome{
++		"memory_stat":         {values: map[string]float64{key.container: usage}},
++		"memory_coverage":     {values: map[string]float64{key.container: keySamples}},
++		"restart_activity":    {err: err},
++		"termination_history": {terminations: map[string]terminationEvidence{key.container: termination}},
++	})
++	fleet := buildScanRow(container, "memory", key, keySamples, workload, scanBatchEvidence{
++		memory:       map[scanKey][]float64{key: repeatedValues(usage)},
++		errors:       map[string]error{"restart_activity": err},
++		terminations: map[scanKey]terminationEvidence{key: termination},
++	})
++	for _, row := range []RightsizingRow{detail, fleet} {
++		if !row.WindowOOMEvidence || !row.OOMEvidenceAvailable || row.RecommendationReason != "oom_evidence" || row.RecommendedReq != nil {
++			t.Errorf("lost verified OOM on partial safety history: %+v", row)
 +		}
-+		for _, r := range list.APIResources {
-+			if !clusterreplay.Listable(gv, r) {
-+				continue
-+			}
-+			gvr := gv.WithResource(r.Name)
-+			kinds[gvr] = r.Kind + "List"
-+			byGVK[gv.WithKind(r.Kind)] = gvr
-+			// Production serves built-in kinds from typed informers and starts
-+			// dynamic ones only for custom resources and DRA, so replay does too.
-+			if k8score.IsBuiltInAPIGroup(gv.Group) && gv.Group != "resource.k8s.io" {
-+				continue
-+			}
-+			canWatch := false
-+			for _, verb := range r.Verbs {
-+				if verb == "watch" {
-+					canWatch = true
-+				}
-+			}
-+			if canWatch {
-+				s.gvrs = append(s.gvrs, gvr)
-+			} else {
-+				s.unsupported = append(s.unsupported, gvr.String()+": discovery has no watch verb")
-+			}
-+		}
-+	}
-+	s.dynamic = dynamicfake.NewSimpleDynamicClientWithCustomListKinds(runtime.NewScheme(), kinds)
-+	typedScheme := runtime.NewScheme()
-+	if err := scheme.AddToScheme(typedScheme); err != nil {
-+		return nil, err
-+	}
-+	seenTyped := map[string]bool{}
-+	for _, obj := range objects {
-+		gvk := obj.GroupVersionKind()
-+		gvr, ok := byGVK[gvk]
-+		if !ok {
-+			return nil, fmt.Errorf("%s %s missing listable discovery entry", gvk, obj.GetName())
-+		}
-+		if err := s.dynamic.Tracker().Create(gvr, obj, obj.GetNamespace()); err != nil {
-+			return nil, err
-+		}
-+		typed, err := typedScheme.New(gvk)
-+		if runtime.IsNotRegisteredError(err) {
-+			continue
-+		}
-+		if err != nil {
-+			return nil, err
-+		}
-+		if err := runtime.DefaultUnstructuredConverter.FromUnstructured(obj.Object, typed); err != nil {
-+			return nil, fmt.Errorf("decode %s: %w", gvk, err)
-+		}
-+		key := strings.Join([]string{gvk.Group, gvk.Kind, obj.GetNamespace(), obj.GetName()}, "/")
-+		if seenTyped[key] {
-+			continue
-+		}
-+		seenTyped[key] = true
-+		if err := s.client.Tracker().Add(typed); err != nil {
-+			return nil, err
-+		}
-+	}
-+	return s, nil
-+}
-+
-+func mustLoadReplay(path string) *replayState {
-+	s, err := loadReplay(path)
-+	if err != nil {
-+		log.Fatal(err)
-+	}
-+	return s
-+}
-+
-+func (s *replayState) mustStart() {
-+	if err := s.start(); err != nil {
-+		log.Fatal(err)
 +	}
 +}
 +
-+func (s *replayState) start() error {
-+	if err := k8s.InitTestReplayClients(s.dynamic, s.discovery); err != nil {
-+		return err
-+	}
-+	cache := k8s.GetDynamicResourceCache()
-+	for _, gvr := range s.gvrs {
-+		if err := cache.EnsureWatching(gvr); err != nil {
-+			s.unsupported = append(s.unsupported, fmt.Sprintf("%s: %v", gvr, err))
-+			continue
-+		}
-+		if !cache.WaitForSync(gvr, 10*time.Second) {
-+			s.unsupported = append(s.unsupported, gvr.String()+": sync timeout")
-+		}
-+	}
-+	fmt.Fprintf(os.Stderr, "Replay caches synced: %d objects; %d unsupported resources\n", s.objects, len(s.unsupported))
-+	for _, gap := range s.unsupported {
-+		fmt.Fprintln(os.Stderr, "Replay unsupported:", gap)
-+	}
-+	for _, group := range s.failedGroups {
-+		fmt.Fprintln(os.Stderr, "Replay capture failed group:", group)
-+	}
-+	for _, gap := range s.skipped {
-+		fmt.Fprintf(os.Stderr, "Replay capture skipped: %s: %s\n", gap.Resource, gap.Error)
-+	}
-+	return nil
-+}
+ func TestTerminationEvidenceKeepsHistoricalOOMReason(t *testing.T) {
+ 	evidence := terminationEvidenceByContainer(terminationResult(map[string][]string{"server": {"Error", "OOMKilled"}}))
+ 	if !evidence["server"].Any || !evidence["server"].OOM {
+@@ -505,3 +534,113 @@ func TestLostThrottleReadingClearsTheReviewReason(t *testing.T) {
+ 		t.Error("without the ratio the row reads as a clean cut, which is why a failed throttle query has to reach the caller")
+ 	}
+ }
 +
-+ty
++func TestRecentPodRestartWithMissingHistory(t *testing.T) {
++	end := time.Date(2026, 11, 24, 8, 12, 30, 0, time.UTC)
++	birth := end.Add(-6 * 24 * time.Hour)
++	key := scanKey{namespace: "lws-system", kind: "Deployment", workload: "lws-controller-manager", container: "manager"}
++	container := containerSpec{name: key.container, memReq: mustQuantity(t, "256Mi")}
++	clean := &corev1.ContainerStateTerminated{Reason: "Completed", ExitCode: 0}
++	for _, tt := range []struct {
++		name       string
++		created    time.Time
++		uid        types.UID
++		restarts   int32
++		last       *corev1.ContainerStateTerminated
++		ksm        terminationEvidence
++		wantReason string
++	}{
++		{"first sample already one", birth, "local", 1, nil, terminationEvidence{}, ReasonOOMEvidenceUnavailable},
++		{"old Pod count alone cannot date its restart", end.Add(-8 * 24 * time.Hour), "local", 1, nil, terminationEvidence{}, ""},
++		{"born during the latest partial five-minute bucket", end.Add(-time.Minute), "local", 1, nil, terminationEvidence{}, ReasonOOMEvidenceUnavailable},
++		{"unknown runtime reason", birth, "local", 1, &corev1.ContainerStateTerminated{Reason: "ContainerStatusUnknown"}, terminationEvidence{}, ReasonOOMEvidenceUnavailable},
++		{"generic SIGKILL", birth, "local", 1, &corev1.ContainerStateTerminated{Reason: "Error", ExitCode: 137}, terminationEvidence{}, ReasonOOMEvidenceUnavailable},
++		{"older Pod with dated ambiguous exit", end.Add(-8 * 24 * time.Hour), "local", 1, &corev1.ContainerStateTerminated{Reason: "Error", Signal: 9, FinishedAt: metav1.NewTime(end.Add(-24 * time.Hour))}, terminationEvidence{}, ReasonOOMEvidenceUnavailable},
++		{"dated last exit survives a reset kubelet counter", end.Add(-8 * 24 * time.Hour), "local", 0, &corev1.ContainerStateTerminated{Reason: "Unknown", FinishedAt: metav1.NewTime(end.Add(-time.Hour))}, terminationEvidence{}, ReasonOOMEvidenceUnavailable},
++		{"older Pod with a dated known final exit", end.Add(-8 * 24 * time.Hour), "local", 2, &corev1.ContainerStateTerminated{Reason: "Completed", FinishedAt: metav1.NewTime(end.Add(-24 * time.Hour))}, terminationEvidence{}, ""},
++		{"missing birth", time.Time{}, "local", 1, nil, terminationEvidence{}, ""},
++		{"future birth", end.Add(time.Minute), "local", 1, nil, terminationEvidence{}, ""},
++		{"unverified Pod", birth, "", 1, nil, terminationEvidence{}, ""},
++		{"no restart", birth, "local", 0, nil, terminationEvidence{}, ""},
++		{"one known clean exit", birth, "local", 1, clean, terminationEvidence{}, ""},
++		{"two exits with one known reason", birth, "local", 2, clean, term
 ```
 
-**File**: `cmd/testserver/replay_test.go` (added, +108/-0)
+---
+
+### Incident Patch 2: `17b3f3b4` (2026-11-24)
+**Commit Message**: Flux: follow ArtifactGenerator → ExternalArtifact chains and show health-check expressions (#2640)
+
+## Description
+
+Follows Flux 2.7's ArtifactGenerator chain through Radar's GitOps tree
+and cluster topology, gives ArtifactGenerator and ExternalArtifact real
+drawers and columns, and lists `healthCheckExprs` in the Kustomization
+and HelmRelease drawers (#2639).
+
+### What changes
+
+**Source chain** (`pkg/gitops`, `pkg/gitops/tree`, `pkg/topology`)
+- `FluxSourceReferences` learns two hops:
+- ExternalArtifact → the ArtifactGenerator in its `spec.sourceRef` (role
+`generator`; a foreign `apiVersion` group names none).
+- ArtifactGenerator → the GitRepository / OCIRepository / Bucket /
+HelmChart / ExternalArtifact in `spec.sources` (role `source`, alias
+kept).
+- `FluxSourceRef` gains `Alias string` — additive, but exported to Radar
+Hub.
+- The tree builder replaces the single HelmChart hop with a loop over
+upstream kinds:
+- only objects already reached from the root are followed, so a release
+consuming one of a generator's 143 artifacts gets exactly one
+ExternalArtifact node;
+  - at most 8 levels (`gitops.MaxFluxSourceLevels`), with a seen-set;
+- one `prefetchObjects` call per level, and eve
+
+**File**: `README.md` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,108 @@
-+package main
+@@ -365,7 +365,7 @@ Monitor, diagnose, and manage FluxCD and ArgoCD resources in one place.
+   <br><em>GitOps fleet view — Argo + Flux applications side-by-side with sync, health, source, destination, and lifecycle state</em>
+ </p>
+ 
+-- Fleet view + per-app detail page for **ArgoCD** (`Application`, `ApplicationSet`, `AppProject`) and **FluxCD** (`GitRepository`, `OCIRepository`, `HelmRepository`, `Bucket`, `Kustomization`, `HelmRelease`, `Alert`)
++- Fleet view + per-app detail page for **ArgoCD** (`Application`, `ApplicationSet`, `AppProject`) and **FluxCD** (`GitRepository`, `OCIRepository`, `HelmRepository`, `Bucket`, `ExternalArtifact`, `ArtifactGenerator`, `Kustomization`, `HelmRelease`, `Alert`)
+ - **Flux Operator** — a Flux card on the GitOps page (version, controllers, reconciler counts from `FluxReport`) and views for `FluxInstance`, `FluxReport`, `ResourceSet`, `ResourceSetInputProvider`
+ - **Diagnosis** — field-level drift, recent events per resource, stuck-drift-loop detection, parsed operation failures, one-click remediation
+ - Sync, suspend, resume, reconcile, and rollback from the UI or through MCP
+@@ -474,7 +474,7 @@ The Helm chart grants read access to common built-in Kubernetes kinds; Secrets,
+ | **Autoscaling** | HorizontalPodAutoscalers, VerticalPodAutoscalers |
+ | **Cluster** | Nodes, Namespaces, ServiceAccounts, Events |
+ | **Other Kubernetes APIs** | CertificateSigningRequests; Workloads, PodGroups, CompositePodGroups, PodCertificateRequests, ClusterTrustBundles (only when served by the cluster) |
+-| **GitOps (FluxCD)** | GitRepository, OCIRepository, HelmRepository, Kustomization, HelmRelease, Alert |
++| **GitOps (FluxCD)** | GitRepository, OCIRepository, HelmRepository, ExternalArtifact, ArtifactGenerator, Kustomization, HelmRelease, Alert |
+ | **GitOps (Flux Operator)** | FluxInstance, FluxReport, ResourceSet, ResourceSetInputProvider |
+ | **GitOps (ArgoCD)** | Application, ApplicationSet, AppProject |
+ | **Argo Rollouts** | Rollout |
+```
+
+**File**: `deploy/helm/radar/README.md` (modified, +1/-1)
+```diff
+@@ -741,7 +741,7 @@ retain their finite grants.
+ | `externalDns` | `externaldns.k8s.io` |
+ | `externalSecrets` | `external-secrets.io` |
+ | `flagger` | `flagger.app` (`canaries`, `metrictemplates` only); **off by default**. Enable `rbac.crdGroups.flagger=true` for native browsing and failed-rollout Issues. |
+-| `flux` | `*.toolkit.fluxcd.io` |
++| `flux` | `*.toolkit.fluxcd.io`, `source.extensions.fluxcd.io` (ArtifactGenerator) |
+ | `fluxOperator` | `fluxcd.controlplane.io` (FluxInstance, FluxReport, ResourceSet, ResourceSetInputProvider) |
+ | `k3sHelm` | `helm.cattle.io` (`helmcharts`, `helmchartconfigs` only); **off by default**, because `spec.valuesContent` and `spec.set` can carry credentials. Enable `rbac.crdGroups.k3sHelm=true` on k3s/RKE2 for the HelmChart drawers and the `k3s` badge on the releases they manage. |
+ | `gatewayApi` | `gateway.networking.k8s.io` |
+```
+
+**File**: `deploy/helm/radar/files/integration-read-baseline.yaml` (modified, +7/-0)
+```diff
+@@ -906,6 +906,13 @@ entries:
+     decision: grant
+     reason: "Operational configuration and status. Credentials are referenced by Secret name only (secretRef, certSecretRef, proxySecretRef); no inline credential fields in source.toolkit.fluxcd.io/v1."
+     source: "internal/k8s/dynamic_cache.go (supportedCRDFallbacks); source-controller v1.9 CRD schemas"
++  - group: "source.extensions.fluxcd.io"
++    resources: ["artifactgenerators"]
++    scope: Namespaced
++    collection: "flux"
++    decision: grant
++    reason: "Operational configuration and status; sources are referenced by name, no inline credentials."
++    source: "internal/k8s/dynamic_cache.go (supportedCRDFallbacks); source-watcher v1beta1 CRD schema"
+   - group: "sources.knative.dev"
+     resources: ["apiserversources","containersources","pingsources","sinkbindings"]
+     scope: Namespaced
+```
+
+**File**: `deploy/helm/radar/templates/clusterrole.yaml` (modified, +1/-1)
+```diff
+@@ -392,7 +392,7 @@ rules:
+     verbs: ["get", "list", "watch"]
+   {{- end }}
+   {{- if .Values.rbac.crdGroups.flux }}
+-  - apiGroups: ["source.toolkit.fluxcd.io", "kustomize.toolkit.fluxcd.io", "helm.toolkit.fluxcd.io", "notification.toolkit.fluxcd.io", "image.toolkit.fluxcd.io"]
++  - apiGroups: ["source.toolkit.fluxcd.io", "source.extensions.fluxcd.io", "kustomize.toolkit.fluxcd.io", "helm.toolkit.fluxcd.io", "notification.toolkit.fluxcd.io", "image.toolkit.fluxcd.io"]
+     resources: ["*"]
+     verbs: ["get", "list", "watch"]
+   {{- end }}
+```
+
+**File**: `deploy/helm/radar/values.yaml` (modified, +1/-1)
+```diff
+@@ -208,7 +208,7 @@ rbac:
+     inferenceGateway: true  # inference.networking.k8s.io, inference.networking.x-k8s.io, llm-d.ai (Inference Gateway + llm-d routing APIs)
+     externalDns: true       # externaldns.k8s.io
+     externalSecrets: true   # external-secrets.io
+-    flux: true              # *.toolkit.fluxcd.io
++    flux: true              # *.toolkit.fluxcd.io, source.extensions.fluxcd.io
+     fluxOperator: true      # fluxcd.controlplane.io (FluxInstance, FluxReport, ResourceSet, ResourceSetInputProvider)
+     gatewayApi: true        # gateway.networking.k8s.io
+     gcpMonitoring: true     # monitoring.googleapis.com
+```
+
+**File**: `docs/gitops.md` (modified, +1/-1)
+```diff
+@@ -53,7 +53,7 @@ Graph or table sub-modes. The graph starts from the resources the controller rec
+ 
+ You see only the resources you can read. A readable resource under a hidden parent stays visible. Resources on another cluster, from a remote Application or a Flux object with `spec.kubeConfig`, are not expanded. When Radar can't read part of the tree, a **Limited resource view** notice says so.
+ 
+-For Flux, the graph also shows where the root's content comes from. Its sources sit to the left of the root, with arrows pointing into it: the GitRepository, OCIRepository, Bucket or ExternalArtifact a Kustomization reads, the Kustomizations it `dependsOn`, and for a HelmRelease the chart chain. An inline `spec.chart` release draws release ← generated HelmChart (`status.helmChart`) ← the chart's source (HelmRepository, GitRepository or Bucket), so a chart that fails to pull shows as its own red node; `spec.chartRef` draws the referenced HelmChart, OCIRepository or ExternalArtifact. Source cards show what each kind has: the URL, the fetched revision, or for a HelmChart the requested chart and version. Sources are dependencies, not managed resources: they are counted separately and listed under the **Dependency** role. A source the root also manages, like a bootstrap Kustomization's own GitRepository, stays with the managed resources.
++For Flux, the graph also shows where the root's content comes from. Its sources sit to the left of the root, with arrows pointing into it: the GitRepository, OCIRepository, Bucket or ExternalArtifact a Kustomization reads, the Kustomizations it `dependsOn`, and for a HelmRelease the chart chain. An inline `spec.chart` release draws release ← generated HelmChart (`status.helmChart`) ← the chart's source (HelmRepository, GitRepository or Bucket), so a chart that fails to pull shows as its own red node; `spec.chartRef` draws the referenced HelmChart, OCIRepository or ExternalArtifact; an ExternalArtifact made by an ArtifactGenerator (Flux 2.7+, source-watcher) continues to that generator and its sources, labelled with their aliases. A generator fed by another generator's artifact is followed the same way. Only the artifact the root consumes is drawn, never the generator's other artifacts. The walk stops after eight upstream levels (four nested generators), and never revisits an object, so a cycle ends; when it stops with more to follow, the card where it stopped reads **chain continues…** and a notice names the object to open to follow it further. A generator paused with `source.extensions.fluxcd.io/reconcile: disabled` reads as Suspended, not failing, even though it keeps its last Ready condition. Source cards show what each kind has: the URL, the fetched revision, for a HelmChart the requested chart and version, or for an ArtifactGenerator how many ExternalArtifacts its inventory lists (not the Namespaces it manages; no count when Radar can't read an inventory). A generator that isn't Ready, and isn't paused, raises a warning, since the artifacts it generates may then be out of date. The Kustomization and HelmRelease drawers list `spec.healthCheckExprs` (HelmRelease from Flux 2.8) under **Health checks (expressions)**; Flux records no result per expression, so the Ready condition still names what failed. Sources are dependencies, not managed resources: they are counted separately and listed under the **Dependency** role. A source the root also manages, like a bootstrap Kustomization's own GitRepository, stays with the managed resources.
+ 
+ GitOps CRs that are themselves managed (a child Application from an app-of-apps parent, a Kustomization referenced by another Kustomization, ApplicationSet children) render with a small `Argo` or `Flux` tool badge and a `→` chevron — click to open that CR's own GitOps detail page. The child page's breadcrumb shows the lineage `GitOps / parent-ns/parent / child-ns/child`; the parent segment is clickable to navigate back.
+ 
+```
+
+**File**: `docs/integrations.md` (modified, +13/-1)
+```diff
+@@ -894,7 +894,9 @@ See the main [README](../README.md#gitops) for the user-facing overview. This se
+ | GitRepository | `source.toolkit.fluxcd.io/v1` | Yes | Yes | — |
+ | OCIRepository | `source.toolkit.fluxcd.io/v1beta2` | Yes | Yes | — |
+ | HelmRepository | `source.toolkit.fluxcd.io/v1` | Yes | Yes | — |
+-| Bucket / HelmChart / ExternalArtifact | `source.toolkit.fluxcd.io` | When referenced | Generic | — |
++| Bucket / HelmChart | `source.toolkit.fluxcd.io` | When referenced | Generic | — |
++| ExternalArtifact | `source.toolkit.fluxcd.io/v1` | When referenced | Yes | — |
++| ArtifactGenerator | `source.extensions.fluxcd.io/v1beta1` (source-watcher) | When referenced | Yes | — |
+ | Kustomization | `kustomize.toolkit.fluxcd.io/v1` | Yes | Yes | Yes |
+ | HelmRelease | `helm.toolkit.fluxcd.io/v2` | Yes | Yes | Yes |
+ | Alert | `notification.toolkit.fluxcd.io/v1beta3` | — | Yes | — |
+@@ -906,6 +908,16 @@ observed Flux sources in both directions within Radar's namespace scope.
+ Kustomizations use `spec.sourceRef`; HelmReleases use `spec.chart.spec.sourceRef`
+ or `spec.chartRef`. Inline releases also link the generated HelmChart named by
+ `status.helmChart`; an observed HelmChart links its source in its own namespace.
++An ExternalArtifact links the ArtifactGenerator named by its `spec.sourceRef`, and a
++generator links the GitRepository / OCIRepository / Bucket / HelmChart /
++ExternalArtifact in its `spec.sources` (with their aliases). Its artifact count
++reads the ExternalArtifacts in `status.inventory`, not the Namespaces
++source-watcher 2.3 also records there, and shows `-` when Radar can't read an
++inventory. These upstream hops follow only objects already reached
++from a root, at most eight levels, so a release that consumes one of a
++generator's artifacts never pulls in the generator's other artifacts. A
++generator paused with `source.extensions.fluxcd.io/reconcile: disabled` is
++Suspended, not failing, in every surface (tree, topology, table, drawer, Issues).
+ `spec.dependsOn` links a Kustomization or HelmRelease to the objects of the same
+ kind it waits for (an entry without a namespace means its own namespace).
+ These are dependencies, not owners: topology draws each source upstream, with
+```
+
+**File**: `docs/ownership.md` (modified, +1/-1)
+```diff
+@@ -139,7 +139,7 @@ The families so far:
+ | `GatewayBackends` | Gateway API routes → the Services their rules send traffic to, in any namespace, whether or not a ReferenceGrant permits it | `families.go` |
+ | `GatewayClasses` | Gateways → the GatewayClass they name | `families.go` |
+ | `CertManagerIssuers` | cert-manager Certificates, CertificateRequests, ACME Orders and Challenges → the Issuer or ClusterIssuer their `issuerRef` names (external issuers aren't followed) | `families.go` |
+-| `FluxSources` | Flux Kustomizations, HelmReleases, HelmCharts → the GitRepository, OCIRepository, Bucket, ExternalArtifact, HelmRepository or HelmChart they build from, in any namespace (an inline HelmRelease also declares the HelmChart the controller recorded) | `families.go` |
++| `FluxSources` | Flux Kustomizations, HelmReleases, HelmCharts → the GitRepository, OCIRepository, Bucket, ExternalArtifact, HelmRepository or HelmChart they build from, in any namespace (an inline HelmRelease also declares the HelmChart the controller recorded); up the artifact chain, ExternalArtifacts → the ArtifactGenerator their `spec.sourceRef` names (another producer isn't followed), and ArtifactGenerators → the GitRepository, OCIRepository, Bucket, HelmChart or ExternalArtifact their `spec.sources` list | `families.go` |
+ | `NodeClasses` | Karpenter NodePools → their provider's NodeClass, or EKS Auto Mode's (`IsTarget`: each provider defines its own kind) | `families.go` |
+ | `ClusterClasses` | Cluster API Clusters → the ClusterClass their topology names, in any namespace | `families.go` |
+ | `KnativeEventDestinations` | Knative Triggers, event sources and Channels → where they send events (subscriber, sink, backing channel), in any namespace: core Services and any kind in a Knative group, such as JobSink | `families.go` |
+```
+
+---
+
+### Incident Patch 3: `f9020ce3` (2026-11-24)
+**Commit Message**: fix(traffic): count Beyla flows between two nodes once (#2754)
+
+## Description
+
+Beyla runs one agent per node, and a flow between pods on two different
+nodes is reported by both agents. The two copies have the same labels
+except the agent's own target labels. Every L4 query summed them, so
+cross-node edges showed twice their bytes (#2753).
+
+- `beylaRateQuery` now splits the series into three disjoint selectors
+joined with `or`:
+  - series with `k8s_src_node_name`;
+  - series with only `k8s_dst_node_name`;
+  - series with neither.
+
+The first two are collapsed with `max without (instance, pod, node,
+host)` before the `sum by`, and the third is summed as before. A cluster
+that doesn't export the node labels gets exactly today's numbers. The
+node labels are what makes `max` safe: without them, two replicas on
+different nodes look like a duplicate. That is why series without them
+are not collapsed. The change applies to all three L4 queries: sent
+bytes, received bytes and unorientable flows.
+- `node` and `host` are in the list because common scrape configs add
+them per agent (the Beyla demo's own Prometheus relabels the pod's node
+to `node`). Without them, the copies stay apart.
+- When 
+
+**File**: `internal/traffic/beyla.go` (modified, +41/-1)
+```diff
+@@ -397,6 +397,9 @@ type l4LabelPresence struct {
+ 	portedDsts map[dstKey]bool
+ 	port       bool
+ 	transport  bool
++	// nodeLabelsMissing is set when the probe answered that no series carries
++	// a node label, so cross-node flows cannot be collapsed and count twice.
++	nodeLabelsMissing bool
+ 	// replyLossFraction is how much of the return traffic Prometheus could not
+ 	// measure, between 0 and 1. Exporting dst.port makes Beyla label each reply
+ 	// with the client's port, which is new for every connection and gone again
+@@ -435,6 +438,10 @@ func (s *BeylaSource) GetFlows(ctx context.Context, opts FlowOptions) (*FlowsRes
+ 		presence.replyLossFraction = s.replyLossFraction(ctx, rateWindowFor(opts.Since), scopes.l4Selector())
+ 	}
+ 
++	if len(flows) > 0 {
++		presence.nodeLabelsMissing = s.nodeLabelsMissing(ctx, scopes.l4Selector())
++	}
 +
-+import (
-+	"compress/gzip"
-+	"encoding/json"
-+	"net/http/httptest"
-+	"os"
-+	"path/filepath"
-+	"reflect"
-+	"strings"
-+	"testing"
+ 	response := &FlowsResponse{Source: "beyla", Timestamp: time.Now(), Flows: flows}
+ 	if warning := presence.warning(len(flows)); warning != "" {
+ 		response.Warning = warning
+@@ -540,6 +547,11 @@ func (p l4LabelPresence) warning(flowCount int) string {
+ 					"received-byte figures would become unreliable. It is a trade rather than a fix.")
+ 			}
+ 		}
++		if p.nodeLabelsMissing {
++			parts = append(parts, fmt.Sprintf("Flows between two nodes are reported by both nodes' Beyla agents and "+
++				"counted twice here. Add k8s.src.node.name and k8s.dst.node.name to attributes.select for %s (keep "+
++				"the default attributes in the list) and Radar will count them once.", strings.TrimSuffix(p.metric, "_total")))
++		}
+ 	}
+ 
+ 	return strings.Join(parts, " ")
+@@ -854,12 +866,29 @@ const (
+ 	beylaL7DetailGroupBy = `k8s_namespace_name, k8s_owner_name, k8s_pod_name, server_port`
+ )
+ 
++// beylaAgentLabels are the scrape target labels that differ between two agents'
++// copies of one flow; any other per-agent label would keep the copies apart.
++const beylaAgentLabels = "instance, pod, node, host"
 +
-+	"github.com/skyhook-io/radar/internal/k8s"
-+	"k8s.io/apimachinery/pkg/runtime/schema"
-+)
+ // beylaRateQuery builds `sum by (groupBy) (rate(metric{job=~...,extra}[window]))`. A
+ // namespace filter has to become two OR'd selectors: PromQL cannot express
+ // "src OR dst namespace matches" inside a single label selector.
++//
++// A flow between two nodes is reported by both nodes' agents, identical except
++// for beylaAgentLabels. Collapsing them with max is safe only for series that
++// carry a node label: without one, two replicas of an owner on different nodes
++// are indistinguishable from a duplicate. So the series are split three ways,
++// by which node labels they carry, and only the labelled sets are collapsed.
++// The sets are disjoint and their label sets differ, so `or` keeps all three.
+ func beylaRateQuery(groupBy, metric, sel, namespace, extra string, w rateWindow) string {
+ 	sum := func(more string) string {
+-		return fmt.Sprintf(`sum by (%s) (rate(%s{%s%s%s}[%s]))`, groupBy, metric, sel, extra, more, w.promQL)
++		rate := func(nodes string) string {
++			return fmt.Sprintf(`rate(%s{%s%s%s%s}[%s])`, metric, sel, extra, nodes, more, w.promQL)
++		}
++		return fmt.Sprintf(`sum by (%s) (max without (%s) (%s) or max without (%s) (%s) or %s)`, groupBy,
++			beylaAgentLabels, rate(`, k8s_src_node_name!=""`),
++			beylaAgentLabels, rate(`, k8s_src_node_name="", k8s_dst_node_name!=""`),
++			rate(`, k8s_src_node_name="", k8s_dst_node_name=""`))
+ 	}
+ 	if namespace == "" {
+ 		return sum("")
+@@ -960,6 +989,17 @@ func (s *BeylaSource) replyLossFraction(ctx context.Context, w rateWindow, sel s
+ 	return val
+ }
+ 
++// nodeLabelsMissing reports whether Prometheus answered that no flow series
++// carries a node label on a cluster that may have more than one node: with one
++// node no flow crosses nodes. An unknown node count keeps the warning. A failed
++// probe reports false: it drives a warning.
++func (s *BeylaSource) nodeLabelsMissing(ctx context.Context, sel string) bool {
++	metric := s.flowMetricName()
++	result, err := s.query(ctx, fmt.Sprintf(`count(%s{%s, k8s_src_node_name!=""} or %s{%s, k8s_dst_node_name!=""})`,
++		metric, sel, metric, sel))
++	return err == nil && result != nil && len(result.Series) == 0 && countClusterNodes(ctx, s.k8sClient) != 1
++}
 +
-+func TestReplayTypedAndDynamic(t *testing.T) {
-+	data, err := os.ReadFile("../../internal/clusterreplay/testdata/tiny.ndjson")
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	data = []byte(strings.Replace(string(data), `"context_hash":`, `"failed_groups":["broken.io"],"skipped":[{"resource":"secrets","error":"forbidden"}],"context_hash":`, 1))
-+	data = []byte(strings.Replace(string(data), `{"groupVersion":"argoproj.io/v1alpha1"`, `{"groupVersion":"resource.k8s.io/v1","resources":[{"name":"resourceclaims","kind":"ResourceClaim","namespaced":true,"verbs":["create","delete","deletecollection","get","list","patch","update","watch"]}]},{"groupVersion":"argoproj.io/v1alpha1"`, 1))
-+	path := filepath.Join(t.TempDir(), "capture.gz")
-+	f, err := os.Create(path)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	z := gzip.NewWriter(f)
-+	if _, err = z.Write(data); err != nil {
-+		t.Fatal(err)
-+	}
-+	if err = z.Close(); err != nil {
-+		t.Fatal(err)
-+	}
-+	f.Close()
-+	s, err := loadReplay(path)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	admin := startReplayAdmin(0, s)
-+	defer admin.Close()
-+	status := httptest.NewRecorder()
-+	admin.Handler.ServeHTTP(status, httptest.NewRequest("GET", "/loadtest/status", nil))
-+	var body struct {
-+		FailedGroups []string `json:"failed_groups"`
-+		Skipped      []struct {
-+			Resource string
-+			Error    string
-+		} `json:"skipped"`
-+	}
-+	if err := json.Unmarshal(status.Body.Bytes(), &body); err != nil {
-+		t.Fatal(err)
-+	}
-+	if len(body.FailedGroups) != 1 || body.FailedGroups[0] != "broken.io" || len(body.Skipped) != 1 || body.Skipped[0].Resource != "secrets" || body.Skipped[0].Error != "forbidden" {
-+		t.Fatalf("capture gaps absent from status: %s", status.Body.String())
-+	}
-+	defer k8s.ResetTestState()
-+	defer k8s.ResetTestDynamicState()
-+	if err = k8s.InitTestResourceCache(s.client); err != nil {
-+		t.Fatal(err)
-+	}
-+	if err = s.start(); err != nil {
-+		t.Fatal(err)
-+	}
-+	if len(s.unsupported) != 0 {
-+		t.Fatal(s.unsupported)
-+	}
-+	watched := map[string]bool{}
-+	for _, gvr := range k8s.GetDynamicResourceCache().GetWatchedResources() {
-+		watched[gvr.Group+"/"+gvr.Resource] = true
-+	}
-+	want := map[string]bool{"example.io/widgets": true, "argoproj.io/applications": true, "resource.k8s.io/resourceclaims": true}
-+	if !reflect.DeepEqual(watched, want) {
-+		t.Fatalf("dynamic informers = %v, want custom resources and DRA only", watched)
-+	}
-+	if got := k8s.GetResourceCache().GetKindObjectCounts()["Pod"]; got != 1 {
-+		t.Fatalf("pods=%d", got)
-+	}
-+	gvr := schema.GroupVersionResource{Group: "example.io", Version: "v1", Resource: "widgets"}
-+	items, err := k8s.GetDynamicResourceCache().List(gvr, "default")
-+	if err != nil || len(items) != 2 {
-+		t.Fatalf("widgets=%d err=%v", len(items), err)
-+	}
-+	discovery := k8s.GetResourceDiscovery()
-+	if _, ok := discovery.GetGVRWithGroup("Widget", "example.io"); !ok {
-+		t.Fatal("missing Widget discovery")
-+	}
-+	if err = discovery.Refresh(); err != nil {
-+		t.Fatal(err)
-+	}
-+	if _, ok := discovery.GetGVRWithGroup("Widget", "example.io"); !ok {
-+		t.Fatal("catalog lost on refresh")
-+	}
-+	session, err := k8s.BeginOwnershipRead(k8s.GetResourceCache())
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	dependents := map[string]bool{}
-+	for _, kind := range session.Catalog().DependentKinds() {
-+		dependents[kind.GroupKind.Group+"/"+kind.GroupKind.Kind] = true
-+	}
-+	for _, want := range []string{"apps/ReplicaSet", "/Pod", "example.io/Widget"} {
-+		if !dependents[want] {
-+			t.Fatalf("ownership can't search %s for dependents: %v", want, dependents)
+ func (s *BeylaSource) queryReceivedBytes(ctx context.Context, opts FlowOptions, sel string) (map[flowKey]int64, error) {
+ 	// k8s_*_owner_type belongs in the group-by even though the key ignores it.
+ 	// Beyla reports a Service-routed conversation twice, once attributed to the
+```
+
+**File**: `internal/traffic/beyla_test.go` (modified, +101/-0)
+```diff
+@@ -749,6 +749,107 @@ func TestBeylaSource_QueryL4_NamespaceFilterIsValidPromQL(t *testing.T) {
+ 	}
+ }
+ 
++func TestBeylaRateQuery_CountsCrossNodeFlowsOnce(t *testing.T) {
++	// Both nodes' agents report a cross-node flow with identical labels apart
++	// from instance and pod. Only series carrying a node label can be collapsed:
++	// without one, two replicas on different nodes look exactly like a duplicate.
++	got := beylaRateQuery("a, b", "m", `job="x"`, "", `, direction="request"`, rateWindowFor(0))
++	want := `sum by (a, b) (` +
++		`max without (instance, pod, node, host) (rate(m{job="x", direction="request", k8s_src_node_name!=""}[5m])) or ` +
++		`max without (instance, pod, node, host) (rate(m{job="x", direction="request", k8s_src_node_name="", k8s_dst_node_name!=""}[5m])) or ` +
++		`rate(m{job="x", direction="request", k8s_src_node_name="", k8s_dst_node_name=""}[5m]))`
++	assertEq(t, "query", got, want)
++}
++
++func TestBeylaRateQuery_NamespaceFilterReachesEveryBranch(t *testing.T) {
++	q := beylaRateQuery(beylaL4GroupBy, beylaFlowMetric, beylaJobSelector(), "ns1", beylaL4DirectionFilter, rateWindowFor(0))
++	for _, label := range []string{"k8s_src_namespace", "k8s_dst_namespace"} {
++		if n := strings.Count(q, label+`="ns1"`); n != 3 {
++			t.Errorf("%s matcher appears %d times, want once per node branch (3): %s", label, n, q)
 +		}
 +	}
 +}
++
++func beylaNodeProbeFake(probe func() (*prom.QueryResult, error)) promQueryFunc {
++	return func(_ context.Context, query string) (*prom.QueryResult, error) {
++		if strings.Contains(query, `direction="unknown"`) {
++			return emptyResult(), nil
++		}
++		if strings.HasPrefix(query, "count(") && strings.Contains(query, `k8s_src_node_name!=""`) {
++			return probe()
++		}
++		if strings.Contains(query, "beyla_network_flow_bytes_total") {
++			return promResult("vector", promSeries(map[string]string{
++				"k8s_src_owner_name": "client", "k8s_src_namespace": "demo",
++				"k8s_dst_owner_name": "web", "k8s_dst_namespace": "demo",
++				"dst_port": "80", "transport": "TCP",
++			}, 12.0)), nil
++		}
++		return emptyResult(), nil
++	}
++}
++
++const nodeLabelAdvice = "Flows between two nodes are reported by both nodes' Beyla agents and counted twice here."
++
++func TestBeylaSource_GetFlows_WarnsWhenNodeLabelsAreAbsent(t *testing.T) {
++	src := &BeylaSource{k8sClient: fake.NewSimpleClientset()}
++	src.queryFn = beylaNodeProbeFake(func() (*prom.QueryResult, error) { return emptyResult(), nil })
++
++	resp, err := src.GetFlows(context.Background(), FlowOptions{})
++	if err != nil {
++		t.Fatalf("unexpected error: %v", err)
++	}
++	for _, want := range []string{nodeLabelAdvice, "k8s.src.node.name and k8s.dst.node.name", "beyla_network_flow_bytes"} {
++		if !strings.Contains(resp.Warning, want) {
++			t.Errorf("warning should contain %q, got: %q", want, resp.Warning)
++		}
++	}
++	assertEq(t, "warningKind", resp.WarningKind, WarningPartial)
++}
++
++func TestBeylaSource_GetFlows_NoNodeLabelWarningOnOneNode(t *testing.T) {
++	// With one node no flow crosses nodes, so nothing is counted twice.
++	src := &BeylaSource{k8sClient: fake.NewSimpleClientset(&corev1.Node{ObjectMeta: metav1.ObjectMeta{Name: "n1"}})}
++	src.queryFn = beylaNodeProbeFake(func() (*prom.QueryResult, error) { return emptyResult(), nil })
++
++	resp, err := src.GetFlows(context.Background(), FlowOptions{})
++	if err != nil {
++		t.Fatalf("unexpected error: %v", err)
++	}
++	if resp.Warning != "" {
++		t.Errorf("expected no warning on a single-node cluster, got: %q", resp.Warning)
++	}
++}
++
++func TestBeylaSource_GetFlows_NoNodeLabelWarningWhenPresent(t *testing.T) {
++	src := &BeylaSource{k8sClient: fake.NewSimpleClientset()}
++	src.queryFn = beylaNodeProbeFake(func() (*prom.QueryResult, error) {
++		return promResult("vector", promSeries(map[string]string{}, 4)), nil
++	})
++
++	resp, err := src.GetFlows(context.Background(), FlowOptions{})
++	if err != nil {
++		t.Fatalf("unexpected error: %v", err)
++	}
++	if resp.Warning != "" {
++		t.Errorf("expected no warning when node labels are exported, got: %q", resp.Warning)
++	}
++}
++
++func TestBeylaSource_GetFlows_NoNodeLabelWarningWhenProbeFails(t *testing.T) {
++	// A warning invented from a failed query is worse than none.
++	src := &BeylaSource{k8sClient: fake.NewSimpleClientset()}
++	src.queryFn = beylaNodeProbeFake(func() (*prom.QueryResult, error) { return nil, fmt.Errorf("timeout") })
++
++	resp, err := src.GetFlows(context.Background(), FlowOptions{})
++	if err != nil {
++		t.Fatalf("unexpected error: %v", err)
++	}
++	if strings.Contains(resp.Warning, nodeLabelAdvice) {
++		t.Errorf("a failed probe must not produce the node-label advice, got: %q", resp.Warning)
++	}
++}
++
+ func TestBeylaSource_QueryL7_UsesCorrectMetricAndLabels(t *testing.T) {
+ 	q := beylaL7RateQuery(beylaJobSelector(), "test-ns", rateWindowFor(0))
+ 	if !strings.Contains(q, "http_server_request_duration_seconds_count") {
 ```
 
-**File**: `docs/relationship-replay.md` (added, +156/-0)
+**File**: `internal/traffic/hubble.go` (modified, +5/-5)
 ```diff
-@@ -0,0 +1,156 @@
-+# Relationship replay
+@@ -1309,7 +1309,7 @@ func (h *HubbleSource) connectedNodes(ctx context.Context, client observerpb.Obs
+ 	defer cancel()
+ 	if status, err := client.ServerStatus(statusCtx, &observerpb.ServerStatusRequest{}); err == nil {
+ 		n = int(status.GetNumConnectedNodes().GetValue())
+-	} else if c := h.clusterNodeCount(ctx); c > 0 {
++	} else if c := countClusterNodes(ctx, h.k8sClient); c > 0 {
+ 		n = c
+ 	}
+ 	if ctx.Err() != nil {
+@@ -1323,16 +1323,16 @@ func (h *HubbleSource) connectedNodes(ctx context.Context, client observerpb.Obs
+ 	return n
+ }
+ 
+-// clusterNodeCount counts the cluster's nodes from a one-item page: the API
++// countClusterNodes counts the cluster's nodes from a one-item page: the API
+ // server reports how many it left out, so this reads one node, not all. 0 when
+ // it cannot tell.
+-func (h *HubbleSource) clusterNodeCount(ctx context.Context) int {
+-	if h.k8sClient == nil {
++func countClusterNodes(ctx context.Context, client kubernetes.Interface) int {
++	if client == nil {
+ 		return 0
+ 	}
+ 	listCtx, cancel := context.WithTimeout(ctx, hubbleStatusTimeout)
+ 	defer cancel()
+-	nodes, err := h.k8sClient.CoreV1().Nodes().List(listCtx, metav1.ListOptions{Limit: 1})
++	nodes, err := client.CoreV1().Nodes().List(listCtx, metav1.ListOptions{Limit: 1})
+ 	if err != nil {
+ 		return 0
+ 	}
+```
+
+**File**: `scripts/beyla-demo.sh` (modified, +43/-2)
+```diff
+@@ -19,6 +19,8 @@
+ #   attrs         Beyla config B: same, plus attributes.select adding dst.port and
+ #                 transport. Watch the series count explode via ephemeral ports.
+ #   no-network    Beyla config C: application only. The network flow metric disappears.
++#   nodes         Beyla config D: config B plus k8s.src.node.name and k8s.dst.node.name,
++#                 which let a consumer count a flow reported by two nodes' agents once.
+ #   port-forward  Port-forward Prometheus to localhost:$PROM_LOCAL_PORT (foreground).
+ #   help          Show this message.
+ #
+@@ -29,6 +31,8 @@
+ #   - curl, python3
+ #
+ # Set CLUSTER_NAME=foo to use a different cluster (default: radar-beyla-demo).
++# Set BEYLA_DEMO_NODES=2 on `up` for a control plane plus a worker, with client on
++# the control plane and web/db on the worker, so their flows cross nodes.
+ #
+ # NOTES, learned the hard way:
+ #   - Beyla's network flow metric exports `dst_port` and `transport` ONLY when they are
+@@ -49,6 +53,7 @@
+ set -euo pipefail
+ 
+ CLUSTER_NAME="${CLUSTER_NAME:-radar-beyla-demo}"
++BEYLA_DEMO_NODES="${BEYLA_DEMO_NODES:-1}"
+ KUBECTL_CTX="kind-${CLUSTER_NAME}"
+ 
+ # Versions pinned so the demo behaves consistently across runs. Bump deliberately.
+@@ -146,9 +151,10 @@ config:
+ YAML
+ }
+ 
++# $1: extra attributes.select entries, one YAML list line each.
+ beyla_values_attrs() {
+   beyla_values_common
+-  cat <<'YAML'
++  cat <<YAML
+ env:
+   OTEL_EBPF_METRICS_FEATURES: "application,network"
+   OTEL_EBPF_LOG_LEVEL: "info"
+@@ -173,6 +179,7 @@ config:
+             - dst.port
+             - transport
+             - direction
++${1:-}
+     network:
+       enable: true
+     discovery:
+@@ -212,6 +219,10 @@ apply_beyla() {
+   case "$mode" in
+     default)    beyla_values_default    > "$values" ;;
+     attrs)      beyla_values_attrs      > "$values" ;;
++    # Both nodes' agents report a cross-node flow; the node names are what tell
++    # that duplicate apart from two replicas of one owner on different nodes.
++    nodes)      beyla_values_attrs "            - k8s.src.node.name
++            - k8s.dst.node.name" > "$values" ;;
+     no-network) beyla_values_no_network > "$values" ;;
+     *) fail "unknown Beyla mode: $mode" ;;
+   esac
+@@ -406,6 +417,22 @@ YAML
+   ok "web (2 replicas, :80 and :8080, each with a failing route), db (:6379), and two callers applied"
+ }
+ 
++# client on the control plane, web and db on the worker: every client flow crosses
++# nodes, so both agents report it.
++pin_across_nodes() {
++  kctl get node "${CLUSTER_NAME}-worker" >/dev/null 2>&1 ||
++    fail "Cluster '${CLUSTER_NAME}' has no worker node. It was created without BEYLA_DEMO_NODES=2; run 'BEYLA_DEMO_NODES=2 $0 reset'."
++  step "Pinning client to ${CLUSTER_NAME}-control-plane, web and db to ${CLUSTER_NAME}-worker"
++  kctl -n "${DEMO_NS}" patch deploy client --type merge -p "{\"spec\":{\"template\":{\"spec\":{
++    \"nodeSelector\":{\"kubernetes.io/hostname\":\"${CLUSTER_NAME}-control-plane\"},
++    \"tolerations\":[{\"key\":\"node-role.kubernetes.io/control-plane\",\"operator\":\"Exists\",\"effect\":\"NoSchedule\"}]}}}}" >/dev/null
++  for d in web db; do
++    kctl -n "${DEMO_NS}" patch deploy "$d" --type merge -p "{\"spec\":{\"template\":{\"spec\":{
++      \"nodeSelector\":{\"kubernetes.io/hostname\":\"${CLUSTER_NAME}-worker\"}}}}}" >/dev/null
++  done
++  ok "client and web/db on different nodes"
++}
 +
-+Capture once, run two testserver builds over that file, and compare their HTTP
-+and MCP relationship readers. Replay never loads kubeconfig or contacts a
-+cluster. The capture command is the only command below that uses a real cluster.
+ apply_prometheus() {
+   step "Deploying Prometheus in namespace '${MONITORING_NS}'"
+   # Deliberately minimal: one Deployment, pod service discovery, 2h retention. All we
+@@ -592,7 +619,12 @@ cmd_up() {
+     step "Cluster '${CLUSTER_NAME}' already exists — reusing"
+   else
+     step "Creating kind cluster '${CLUSTER_NAME}'"
+-    kind create cluster --name "${CLUSTER_NAME}" --wait 90s
++    if [ "${BEYLA_DEMO_NODES}" = "2" ]; then
++      printf 'kind: Cluster\napiVersion: kind.x-k8s.io/v1alpha4\nnodes:\n  - role: control-plane\n  - role: worker\n' |
++        kind create cluster --name "${CLUSTER_NAME}" --config - --wait 90s
++    else
++      kind create cluster --name "${CLUSTER_NAME}" --wait 90s
++    fi
+     ok "Cluster created"
+   fi
+ 
+@@ -603,6 +635,7 @@ cmd_up() {
+   fi
+ 
+   apply_workloads
++  if [ "${BEYLA_DEMO_NODES}" = "2" ]; then pin_across_nodes; fi
+   apply_prometheus
+   apply_beyla default
+ 
+@@ -710,6 +743,12 @@ cmd_query() {
+   note "sum by (8 labels) (rate(beyla_network_flow_bytes_total{${JOB_SELECTOR}, direction=\"request\"}[5m]))"
+   prom_query "sum by (k8s_src_owner_name, k8s_src_namespace, k8s_src_owner_type, k8s_dst_owner_name, k8s_dst_namespace, k8s_dst_owner_type, dst_port, transport) (rate(beyla_network_flow_bytes_total{${JOB_SELECTOR}, direction=\"request\"}[5m]))" | print_series
+ 
++  step "The same edges as Radar counts them: two agents' copies of a cross-node flow collapsed"
++  note "series with a node label: max without (instance, pod, node, host) before the sum; others summed as above"
++  local sel="${JOB_SELECTOR}, direction=\"request\""
++  local m="beyla_
+```
+
+**File**: `scripts/beyla-demo/README.md` (modified, +17/-3)
+```diff
+@@ -13,12 +13,15 @@ of any consumer.
+ ./scripts/beyla-demo.sh query         # the exact L4 and L7 PromQL the Beyla source runs
+ ./scripts/beyla-demo.sh attrs         # config B: adds dst.port and transport to attributes.select
+ ./scripts/beyla-demo.sh no-network    # config C: application only, network feature off
++./scripts/beyla-demo.sh nodes         # config D: config B plus k8s.src.node.name and k8s.dst.node.name
+ ./scripts/beyla-demo.sh default       # back to config A
+ ./scripts/beyla-demo.sh port-forward  # Prometheus on localhost:39090
+ ./scripts/beyla-demo.sh down
+ ```
+ 
+-`make beyla-demo` is `up`.
++`make beyla-demo` is `up`. `BEYLA_DEMO_NODES=2 ./scripts/beyla-demo.sh up` builds a
++control plane and a worker instead, with `client` pinned to the control plane and
++`web`/`db` to the worker, so their flows cross nodes. Use it with config D.
+ 
+ ## The three configurations, and why all three matter
+ 
+@@ -27,6 +30,7 @@ of any consumer.
+ | **A** (`default`) | network + application | none | An operator turned network metrics on and changed nothing else. **This is the realistic default.** |
+ | **B** (`attrs`) | network + application | `dst.port`, `transport`, `direction` | What a per-port traffic map actually needs. |
+ | **C** (`no-network`) | application only | none | Stock Beyla. The network flow metric does not exist. |
++| **D** (`nodes`) | network + application | B plus `k8s.src.node.name`, `k8s.dst.node.name` | What counting a cross-node flow once needs. Two-node cluster only. |
+ 
+ Test against A before B. A is what users will have.
+ 
+@@ -96,6 +100,16 @@ no port detail but truthful byte counts, B has exact ports and a received-byte
+ figure that is roughly a tenth of the truth. Anything that recommends B for the
+ sake of per-port edges should say what it costs.
+ 
++**A flow between two nodes is reported by both nodes' agents.** With two nodes,
++`client -> web` arrives as two series with identical flow labels, one per agent,
++so a consumer summing them doubles the bytes. The copies differ only in the
++scrape's own target labels: `instance`, plus the `node` label this Prometheus
++adds by relabelling. Radar drops `instance`, `pod`, `node` and `host` before
++collapsing the copies; any other per-agent target label would keep them apart and
++the flow would still count twice. Without the node attributes (configs A-C), the copies cannot
++be told apart from two replicas of one owner running on different nodes. The
++Service-attributed series has no destination node and comes from one agent only.
 +
-+## Capture (operator-run)
-+
-+```sh
-+go run ./cmd/clustercapture -context YOUR_CONTEXT -out /tmp/cluster.ndjson.gz
-+```
-+
-+Discovery covers every served group/version, including CRDs. Lists use a limit
-+of 500 across all namespaces. Events, coordination leases and subresources are
-+excluded. A resource whose list fails is skipped and recorded in the capture
-+header (see below); a discovery failure or an interrupt fails the capture, and
-+an incomplete capture is never published. The destination must not already
-+exist. Capture uses list and discovery reads only, with a 30-second timeout per
-+network request.
-+
-+The gzip contains a header with `captured_at`, SHA-256 `context_hash`, and
-+`discovery.groups` / `discovery.resources`, followed by Kubernetes objects.
-+Every version is retained. Subject comparison deduplicates versions by
-+(group, kind, namespace, name); empty discovered kinds are still listed.
-+
-+This is a frozen **recording**, not an atomic cross-resource apiserver snapshot:
-+objects may change while capture lists different kinds/versions. Both replays
-+nevertheless receive exactly the same recorded inputs.
-+
-+## Build old and new
-+
-+Build the testserver of both revisions from commits that contain this harness,
-+plus `reldiff` from either:
-+
-+```sh
-+(cd OLD_TREE && go build -o /tmp/radar-old-testserver ./cmd/testserver)
-+(cd NEW_TREE && go build -o /tmp/radar-new-testserver ./cmd/testserver)
-+go build -o /tmp/reldiff ./cmd/reldiff
-+```
-+
-+## Replay and compare
-+
-+```sh
-+/tmp/radar-old-testserver -replay /tmp/cluster.ndjson.gz -port 9381 -admin-port 9382 > /tmp/radar-old.log 2>&1 &
-+OLD_PID=$!
-+/tmp/radar-new-testserver -replay /tmp/cluster.ndjson.gz -port 9383 -admin-port 9384 > /tmp/radar-new.log 2>&1 &
-+NEW_PID=$!
-+/tmp/reldiff -a http://127.0.0.1:9381 -b http://127.0.0.1:9383 \
-+  -capture /tmp/cluster.ndjson.gz -out /tmp/relationship-diff.json
-+kill "$OLD_PID" "$NEW_PID"
-+```
-+
-+Readiness is `GET /loadtest/status` on the admin listener (default main port+1).
-+Reldiff polls it for up to 30 seconds. Override custom admin locations with
-+`-ready-a URL -ready-b URL`. Readiness includes unsupported resources. Built-in
-+kinds with a typed informer are served by it, as in Radar. Custom resources and
-+`resource.k8s.io` are synced before the server reports ready; a captured kind
-+without a watch verb stays in discovery and the fake tracker and is reported as
-+unsupported. Other built-in kinds (CustomResourceDefinitions, for example)
-+start watching when first requested, as in Radar, and until then ownership
-+reports them as not collected. Start both servers fresh for every comparison,
-+so both sides see the same request sequence.
-+
-+Each subject exercises resource GET `relationships`, REST
-+`/api/ai/neighborhood`, REST AI resource context, and MCP `get_resource` /
-+`get_neighborhood` through JSON-RPC `tools/call`. There is no separate non-AI
-+REST neighborhood route in today's server. MCP is mounted read-only at `/mcp`.
-+Reldiff also reads `/api/applications`, each kind's `include=summary` list, and
-+every captured Argo Application / Flux Kustomization / HelmRelease GitOps tree.
-+`-max-per-kind N` caps subject readers per group/kind; trees and list readers
-+remain exhaustive. Group query parameters disambiguate colliding kind names.
-+
-+The JSON groups deltas by reader, JSON-pointer field and subject group/kind,
-+with full counts and at most five examples. Reference/object sets are sorted;
-+ordered scalar arrays remain ordered. Normalization drops the explicit volatile
-+key set in `cmd/reldiff/main.go` (timestamps, ages, durations, request IDs and
-+generation/resource-version counters). Other content is retained, including
-+errors. Failures are recorded independently on both sides; **zero deltas with
-+failed calls is not full coverage**. Inspect `failures` and readiness's
-+`unsupported` arrays before claiming parity. A missing endpoint is a failed
-+reader call, not a silently skipped reader.
-+
-+Latency is one timed call per reader/subject/side, reported as median/p95 by
-+reader and group/kind, including errors. Side order alternates to distribute
-+cache/load bias. Small captures do not support meaningful p95 claims. This is
-+an inexpensive comparison, not an isolated benchmark. Successful report writing
-+returns exit zero even when deltas or reader failures exist; inspect the report.
-+Responses over 64 MiB fail explicitly.
-+
-+## Local fixture
-+
-+```sh
-+gzip -c internal/clusterreplay/testdata/tiny.ndjson > /tmp/tiny.ndjson.gz
-+go build -o /tmp/replay-testserver ./cmd/testserver
-+# Use the replay/diff commands above with this binary on both sides.
-+```
-+
-+The fixture has a Deployment → ReplicaSet → Pod, Service, Node, Namespace,
+ ## Metric names
+ 
+ Grafana's Beyla emits `beyla_network_flow_bytes_total`; upstream OpenTelemetry
+@@ -130,8 +144,8 @@ owner-type series.
+ 
+ ## Limits
+ 
+-Single node, so node-spanning flows and two agents reporting the same
+-conversation are not exercised. No SCTP or ICMP, so non-TCP/UDP transport handling
++Single node by default, so node-spanning flows and two agents reporting the same
++conversation are exercised only with `BEYLA_DEMO_NODES=2`. No SCTP or ICMP, so non-TCP/UDP transport handling
+ is untested. Upstream OBI is not installed, and neither is Alloy, so the
+ Alloy-detection path is not exercised here.
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2760** (2026-11-17): Serve built-in kinds through discovery in census mode (@nadaverell)
-- **PR #2747** (2026-11-16): test(traffic): make the layout-engine tests independent of machine load (@nadaverell)
-- **PR #2746** (2026-11-16): Issue and check cards: the severity rail spans the open card (@nadaverell)
-- **PR #2745** (2026-11-16): Recover panics in MCP request handlers (@nadaverell)
-- **PR #2744** (2026-11-16): fix(traffic): show Data per protocol and label byte-only edges with their throughput (@nadaverell)
-- **PR #2743** (2026-11-16): Return 404 for missing assets, serve ranges uncompressed, and always declare Vary (@nadaverell)
+- **PR #2890** (2026-11-24): Let application lists show followed apps first (@nadaverell)
+- **PR #2880** (closed): Replay rightsizing reductions against verified workload history (@nadaverell)
+- **PR #2878** (2026-11-24): Serve the Sealed Secrets controller’s public sealing certificate (@nadaverell)
+- **PR #2877** (2026-11-24): Withhold memory reductions after unexplained recent Pod restarts (@nadaverell)
+- **PR #2876** (2026-11-24): Keep rightsizing samples isolated across reused cluster names (@nadaverell)
+- **PR #2875** (2026-11-24): Keep fleet rightsizing queries within backend limits (@nadaverell)
 
 ---
 
@@ -4621,59 +3459,22 @@ context name
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Serve built-in kinds through discovery in census mode
+## X. Withhold memory reductions after unexplained recent Pod restarts
 
 **RULE**:
-When implementing operations in `cmd/testserver/census_discovery.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/mcp.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1a0f7e1e`: Serve built-in kinds through discovery in census mode. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `55249927`: Withhold memory reductions after unexplained recent Pod restarts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/testserver/census_discovery.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/mcp.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-package main
+When a recent container exit has no reliable cause, Radar withholds memory reductions for that container. Check the Pod’s current and last termination state and its events. A generic exit 137 or SIGKILL does not by itself establish an OOM. A verified OOM produces its own review reason.
 
-import (
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/client-go/kubernetes/fake"
-
-	"github.com/skyhook-io/radar/internal/k8s"
-	"github.com/skyhook-io/radar/pkg/resourceid"
-)
-
-// installCensusDiscovery serves the built-in kinds through discovery, as a
-// real API server does. A census fixture seeds typed objects only; without a
-// discovery catalog, readers that resolve kinds through discovery have nothing
-// to resolve against.
-func installCensusDiscovery(client *fake.Clientset) error {
-	lists := map[string]*metav1.APIResourceList{}
-	var order []string
-	for _, b := range resourceid.Builtins {
-		if b.Version == "" {
-			continue
-		}
-		gv := b.Version
-		if b.Group != "" {
-			gv = b.Group + "/" + b.Version
-		}
-		l, ok := lists[gv]
-		if !ok {
-			l = &metav1.APIResourceList{GroupVersion: gv}
-			lists[gv] = l
-			order = append(order, gv)
-		}
-		l.APIResources = append(l.APIResources, metav1.APIResource{
-			Name: b.Resource, Kind: b.Kind, Group: b.Group, Version: b.Version, Namespaced: b.Namespaced,
-			Verbs: metav1.Verbs{"create", "delete", "deletecollection", "get", "list", "patch", "update", "watch"},
-		})
-	}
-	client.Resources = nil
-	for _, gv := range order {
-		
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -4683,7 +3484,7 @@ func installCensusDiscovery(client *fake.Clientset) error {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1a0f7e1e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `55249927` are properly handled with clean fallback behavior.
 
 
 ## 3. Decision Protocol & Boundary Restrictions

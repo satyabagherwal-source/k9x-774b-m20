@@ -3393,10 +3393,10 @@
     "repository": "skyhook-io/radar",
     "platform": "github",
     "sourceUrl": "https://github.com/skyhook-io/radar",
-    "sourceVersion": "f49b558c",
+    "sourceVersion": "f7efd90e",
     "license": "Apache-2.0",
-    "contentHash": "84b4441d1e2154b53ee55341bf559351e78a762c4738b20c832a40e51a0a8c58",
-    "lastHarvestedAt": "2026-11-24T00:57:23.347Z",
+    "contentHash": "d73e05893c62b4895d3006fd066285016121d2302b1631ed833787e34b3dae23",
+    "lastHarvestedAt": "2026-11-24T20:04:23.130Z",
     "learningId": "learn-github-skyhook-io-radar"
   },
   "mitmproxy-mitmproxy": {
@@ -13398,5 +13398,15 @@
     "contentHash": "7f33b8cc073571a2f5362a805fee9f68e14f1c66f0850dc6e355c21c4120dc4d",
     "lastHarvestedAt": "2026-11-24T19:55:16.820Z",
     "learningId": "learn-huggingface-orcarouter-inkling-2-mini-abliterated-gguf"
+  },
+  "dembrandt-dembrandt": {
+    "repository": "dembrandt/dembrandt",
+    "platform": "github",
+    "sourceUrl": "https://github.com/dembrandt/dembrandt",
+    "sourceVersion": "16af19ac",
+    "license": "MIT",
+    "contentHash": "e73305320ef97be2e164825d5b69a92e68aabab43f07dce07be76258644c7614",
+    "lastHarvestedAt": "2026-11-24T20:04:13.636Z",
+    "learningId": "learn-github-dembrandt-dembrandt"
   }
 }

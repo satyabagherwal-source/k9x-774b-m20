@@ -12799,3 +12799,5 @@
 | `CYCLE-20261124-6H1R` | `2026-11-24T19:55:16.815Z` | `orcarouter/Inkling-2-Mini-abliterated-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-inkling-2-mini-abliterated-gguf-learnings.md` | Yes (`7f33b8cc...`) |
 | `CYCLE-20261124-6IZQ` | `2026-11-24T19:55:19.334Z` | `thinkingmachines/Inkling-2-Mini` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-thinkingmachines-inkling-2-mini-learnings.md` | Yes (`094e0038...`) |
 | `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T19:55:59.406Z` | `hf-orcarouter-inkling-2-mini-abliterated-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-3B305647` [Domain D] | Yes (`da7ce184...`) |
+| `CYCLE-20261124-HZ9C` | `2026-11-24T20:04:13.632Z` | `dembrandt/dembrandt` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10351` | Yes (`e7330532...`) |
+| `CYCLE-20261124-I6L1` | `2026-11-24T20:04:23.125Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10352` | Yes (`d73e0589...`) |

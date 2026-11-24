@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T19:56:01.182Z",
-  "total_verified_learnings": 9101,
+  "last_updated": "2026-11-24T20:04:30.339Z",
+  "total_verified_learnings": 9102,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24889,
+  "total_items": 24898,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "1a0d2bb38510ce21b4286fe9b4b9a07a9083814b9c9ac425aa5394452bb0a0af",
+      "content_hash": "22d2f5fa64b536a6c29d7f7ea2834252e15a767b0443e7136fccae27adb93d63",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T19:56:00.980Z"
+      "persisted_at": "2026-11-24T20:04:30.156Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "47034ddc99cba08b6f398dfb5c5503f6ae0c83223667a3d13acb7c570ffafcc0",
+      "content_hash": "6feb984bb4a1a0141240baa21d0556df33effb9e7610b125c8a6982282c88491",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T19:56:01.182Z"
+      "persisted_at": "2026-11-24T20:04:30.339Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -229896,8 +229896,8 @@
       "slug": "skyhook-io-radar",
       "platform": "github",
       "source_url": "https://github.com/skyhook-io/radar",
-      "source_version": "f49b558c",
-      "content_hash": "84b4441d1e2154b53ee55341bf559351e78a762c4738b20c832a40e51a0a8c58",
+      "source_version": "f7efd90e",
+      "content_hash": "d73e05893c62b4895d3006fd066285016121d2302b1631ed833787e34b3dae23",
       "dossier_path": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "promoted_rules": [
@@ -229940,6 +229940,11 @@
           "number": 10161,
           "title": "Keep the PolicyReport index on the connection it was built for",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10352,
+          "title": "Withhold memory reductions after unexplained recent Pod restarts",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -229947,7 +229952,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T00:57:23.114Z",
+      "verified_at": "2026-11-24T20:04:22.915Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230001,10 +230006,10 @@
       "relative_path": "08_VERIFICATION/skyhook-io-radar-verification-protocol-empirical-defect-shield-for-skyhook-io-ra.md",
       "title": "Verification Protocol: Empirical Defect Shield for skyhook-io/radar",
       "repository": "skyhook-io/radar",
-      "source_version": "f49b558c",
-      "content_hash": "3708743742b799bd633003ec99f035a9241f4464e9eefff523fb58aebda53fb8",
+      "source_version": "f7efd90e",
+      "content_hash": "f29ae3521da301076dc8a99ef04e04c272b3cb077e7bc41b27cbd4916e9322ec",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T00:57:24.165Z"
+      "persisted_at": "2026-11-24T20:04:24.012Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v3-2-learnings-core-inva": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v3-2-learnings-core-inva",
@@ -230050,9 +230055,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for skyhook-io-radar-learnings",
       "repository": "skyhook-io-radar-learnings",
       "source_version": "HEAD",
-      "content_hash": "5cbec8477bfde0dd052ca62641ee4401d8aa6e66cfa0da5278fec6c194c7fc63",
+      "content_hash": "79c4b2a0fde0ebfd597fea21be5169f92d47de0de0eb8af9b41f7e72f413645b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T00:58:05.513Z"
+      "persisted_at": "2026-11-24T20:04:29.510Z"
     },
     "learn-huggingface-qwen-qwen3-vl-8b-instruct": {
       "learning_id": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
@@ -252703,10 +252708,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/skyhook-io-radar-agent-contract-skyhook-io-radar-autonomous-specialist-persona.md",
       "title": "Agent Contract: skyhook-io/radar Autonomous Specialist Persona",
       "repository": "skyhook-io/radar",
-      "source_version": "495dc890",
-      "content_hash": "d37afeaf86592e6e0fd0ec6062879593b4c383087a4ee4d5e475462386d104a5",
-      "domain_letter": "G",
-      "persisted_at": "2026-11-18T01:58:04.960Z"
+      "source_version": "f7efd90e",
+      "content_hash": "3d8667922df17f428c85039901284647fd5b78d851030725edf302b692b4ff87",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-24T20:04:23.870Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-image-learnings-core-inv": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-image-learnings-core-inv",
@@ -285341,9 +285346,9 @@
       "title": "Agent Contract: skyhook-io-radar-learnings Autonomous Specialist Persona",
       "repository": "skyhook-io-radar-learnings",
       "source_version": "HEAD",
-      "content_hash": "8f06751f649334a680c16cfc53378ddac9de66d34509fe7a40fd0fd3458a0d83",
-      "domain_letter": "G",
-      "persisted_at": "2026-11-18T01:58:09.474Z"
+      "content_hash": "77ffed174d6b008f16403173295269d325f443c42aa2eebaf4c2fd34b155991f",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-24T20:04:29.356Z"
     },
     "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo": {
       "learning_id": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
@@ -311099,10 +311104,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-skyhook-io-radar-research-knowledge-intelligence-skyhook-io-radar-core-invariant.md",
       "title": "Research & Knowledge Intelligence: skyhook-io/radar Core Invariants",
       "repository": "skyhook-io/radar",
-      "source_version": "778697dd",
-      "content_hash": "8c64c9bf396e269ce436c3cb35596d0f840e5fd5174a1a8c491f15952a52c870",
+      "source_version": "f7efd90e",
+      "content_hash": "58b0533fba9a06d1ab0f4479722deda46654e2382da04744e636d4eb11556459",
       "domain_letter": "D",
-      "persisted_at": "2026-11-20T22:41:36.723Z"
+      "persisted_at": "2026-11-24T20:04:23.556Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-skyhook-io-radar": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-skyhook-io-radar",
@@ -311111,10 +311116,10 @@
       "relative_path": "12_DECISIONS/ADR-skyhook-io-radar-adr-subsystem-boundary-modular-decoupling-in-skyhook-io-radar.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in skyhook-io/radar",
       "repository": "skyhook-io/radar",
-      "source_version": "f49b558c",
-      "content_hash": "8bb29b1e1d7813d4f9fadfa0f01d685daa309b0d7a3838c67d7823bed685ced8",
-      "domain_letter": "G",
-      "persisted_at": "2026-11-24T00:57:24.014Z"
+      "source_version": "f7efd90e",
+      "content_hash": "b5c88ec33bec41487d3292738c9009913dc5754dea6b33f29ede7a0e6c73d6f4",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-24T20:04:23.729Z"
     },
     "candidate_directive-docs-update-user-guides-for-appports-2-3-1": {
       "item_id": "candidate_directive-docs-update-user-guides-for-appports-2-3-1",
@@ -311136,9 +311141,9 @@
       "title": "Research & Knowledge Intelligence: skyhook-io-radar-learnings Core Invariants",
       "repository": "skyhook-io-radar-learnings",
       "source_version": "HEAD",
-      "content_hash": "2a9440d9f9e34c5447c34ca2a4e638ee2fc6a1e8d4783860c9c72faea12a61ee",
+      "content_hash": "6bcebd6180ee194808719bcf29cb9d575037e4c2bef252135e2f5706bb28e7b2",
       "domain_letter": "D",
-      "persisted_at": "2026-11-20T22:42:06.023Z"
+      "persisted_at": "2026-11-24T20:04:29.015Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-skyhook-io-radar-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-skyhook-io-radar-learnings",
@@ -311148,9 +311153,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in skyhook-io-radar-learnings",
       "repository": "skyhook-io-radar-learnings",
       "source_version": "HEAD",
-      "content_hash": "bdce91243c871529dd35e301941a509dfc9eb2ebc489d9d982b9a32e4aa8bc8d",
-      "domain_letter": "G",
-      "persisted_at": "2026-11-24T00:58:05.347Z"
+      "content_hash": "35ac5403e05461a5ba4d413db9d0dcaa62b0bb19d9f449347373461721561aad",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-24T20:04:29.191Z"
     },
     "rule-9649": {
       "learning_id": "rule-9649",
@@ -338666,13 +338671,13 @@
       "item_id": "candidate_directive-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-7EYO-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-IBVC-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
       "title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "725445d19bb06f2e2bc2f3365afff391f1c5846278380d87a930cd701dd1c490",
+      "content_hash": "29016d114a7added1a837e08f6bc4402a2d6e901e0e8430ed30de4832dba25fa",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T19:56:00.777Z"
+      "persisted_at": "2026-11-24T20:04:29.979Z"
     },
     "rule-10315": {
       "learning_id": "rule-10315",
@@ -340000,6 +340005,139 @@
       "content_hash": "69752b6555d28503fdfc64c522db0cfca2c729753b3091ebc7b67c2d0bdb47e0",
       "domain_letter": "D",
       "persisted_at": "2026-11-24T19:55:59.702Z"
+    },
+    "learn-github-dembrandt-dembrandt": {
+      "learning_id": "learn-github-dembrandt-dembrandt",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "dembrandt/dembrandt",
+      "repository": "dembrandt/dembrandt",
+      "slug": "dembrandt-dembrandt",
+      "platform": "github",
+      "source_url": "https://github.com/dembrandt/dembrandt",
+      "source_version": "16af19ac",
+      "content_hash": "e73305320ef97be2e164825d5b69a92e68aabab43f07dce07be76258644c7614",
+      "dossier_path": "07_PROJECT_LEARNING/dembrandt-dembrandt-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/dembrandt-dembrandt-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 10351,
+          "title": "Control heights render only as a positive number of pixels on every surface",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-24T20:04:13.422Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-10351": {
+      "learning_id": "rule-10351",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10351,
+      "title": "Control heights render only as a positive number of pixels on every surface",
+      "source_url": "https://github.com/dembrandt/dembrandt",
+      "source_version": "16af19ac",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T20:04:13.422Z"
+    },
+    "candidate_directive-control-heights-render-only-as-a-positive-number-of-pixels-on-every-surface": {
+      "item_id": "candidate_directive-control-heights-render-only-as-a-positive-number-of-pixels-on-every-surface",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IABZ-control-heights-render-only-as-a-positive-number-of-pixels-on-every-surface.md",
+      "title": "Control heights render only as a positive number of pixels on every surface",
+      "repository": "dembrandt-dembrandt-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7e4d8dfc91ec58d50ee5c693f620466a86e83cef62dcadf2ff1d369dd34c3915",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-24T20:04:27.986Z"
+    },
+    "domain_intelligence-design-intelligence-dembrandt-dembrandt-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-dembrandt-dembrandt-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-dembrandt-dembrandt-design-intelligence-dembrandt-dembrandt-core-invariants.md",
+      "title": "Design Intelligence: dembrandt/dembrandt Core Invariants",
+      "repository": "dembrandt/dembrandt",
+      "source_version": "16af19ac",
+      "content_hash": "c5994b080936153ccdacf66851b06add4c4767ad9a5d7931a5b1f493bb5a3ff7",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-24T20:04:14.068Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-dembrandt-dembrandt": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dembrandt-dembrandt",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/dembrandt-dembrandt-verification-protocol-empirical-defect-shield-for-dembrandt-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for dembrandt/dembrandt",
+      "repository": "dembrandt/dembrandt",
+      "source_version": "16af19ac",
+      "content_hash": "ce3062a61aa9479fce2ada2ced40fc0f714ad61c7c74fdacfd2e45fa3caea078",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-24T20:04:14.245Z"
+    },
+    "rule-10352": {
+      "learning_id": "rule-10352",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10352,
+      "title": "Withhold memory reductions after unexplained recent Pod restarts",
+      "source_url": "https://github.com/skyhook-io/radar",
+      "source_version": "f7efd90e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T20:04:22.915Z"
+    },
+    "candidate_directive-withhold-memory-reductions-after-unexplained-recent-pod-restarts": {
+      "item_id": "candidate_directive-withhold-memory-reductions-after-unexplained-recent-pod-restarts",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IAZM-withhold-memory-reductions-after-unexplained-recent-pod-restarts.md",
+      "title": "Withhold memory reductions after unexplained recent Pod restarts",
+      "repository": "skyhook-io-radar-learnings",
+      "source_version": "HEAD",
+      "content_hash": "835fd17fbc0544e0a7721b0fca6c0d808d64302ea43d8eb3e8e2758d8beea208",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T20:04:28.838Z"
+    },
+    "domain_intelligence-design-intelligence-dembrandt-dembrandt-learnings-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-dembrandt-dembrandt-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-dembrandt-dembrandt-learnings-design-intelligence-dembrandt-dembrandt-learnings-.md",
+      "title": "Design Intelligence: dembrandt-dembrandt-learnings Core Invariants",
+      "repository": "dembrandt-dembrandt-learnings",
+      "source_version": "HEAD",
+      "content_hash": "13df815401ad07869b9ef52b9787b922c482985e4275946a6a40737c85f9a345",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-24T20:04:28.163Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-dembrandt-dembrandt-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dembrandt-dembrandt-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/dembrandt-dembrandt-learnings-verification-protocol-empirical-defect-shield-for-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for dembrandt-dembrandt-learnings",
+      "repository": "dembrandt-dembrandt-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9217e4d4d45f50721b6d8584d3414fb7104934fb34419c594d8a29a836f7ea28",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-24T20:04:28.345Z"
     }
   },
   "ai-builder-brain": {

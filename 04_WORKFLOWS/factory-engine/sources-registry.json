@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T19:55:31.221Z",
-    "lastVerified": "2026-11-24T19:55:31.221Z",
+    "lastChecked": "2026-11-24T20:04:26.687Z",
+    "lastVerified": "2026-11-24T20:04:26.687Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -186,8 +186,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T19:27:47.557Z",
-    "lastVerified": "2026-11-24T19:27:47.557Z",
+    "lastChecked": "2026-11-24T20:04:25.481Z",
+    "lastVerified": "2026-11-24T20:04:25.481Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -253,8 +253,8 @@
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-24T16:01:34.597Z",
-    "lastVerified": "2026-11-24T16:01:34.597Z",
+    "lastChecked": "2026-11-24T20:04:20.354Z",
+    "lastVerified": "2026-11-24T20:04:20.354Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
@@ -648,9 +648,9 @@
   "qdrant-qdrant": {
     "name": "qdrant",
     "officialUrl": "https://github.com/qdrant/qdrant",
-    "lastChecked": "2026-11-23T23:48:49.882Z",
+    "lastChecked": "2026-11-24T20:04:22.847Z",
     "revisionIdentifier": "23065a0b",
-    "lastVerified": "2026-11-23T23:48:49.882Z"
+    "lastVerified": "2026-11-24T20:04:22.847Z"
   },
   "iii-hq-iii": {
     "name": "iii-hq/iii",
@@ -3452,14 +3452,14 @@
     "officialUrl": "https://github.com/skyhook-io/radar",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-24T00:57:22.183Z",
-    "lastVerified": "2026-11-24T00:57:22.183Z",
+    "lastChecked": "2026-11-24T20:04:22.004Z",
+    "lastVerified": "2026-11-24T20:04:22.004Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-skyhook-io-radar",
-    "contentHash": "84b4441d1e2154b53ee55341bf559351e78a762c4738b20c832a40e51a0a8c58",
+    "contentHash": "d73e05893c62b4895d3006fd066285016121d2302b1631ed833787e34b3dae23",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6072,9 +6072,9 @@
   "gitpoint-git-point": {
     "name": "git-point",
     "officialUrl": "https://github.com/gitpoint/git-point",
-    "lastChecked": "2026-11-22T05:39:42.391Z",
+    "lastChecked": "2026-11-24T20:04:15.444Z",
     "revisionIdentifier": "3f015344",
-    "lastVerified": "2026-11-22T05:39:42.391Z"
+    "lastVerified": "2026-11-24T20:04:15.444Z"
   },
   "snyk-driftctl": {
     "name": "driftctl",
@@ -11255,9 +11255,9 @@
   "digitalbazaar-jsonld.js": {
     "name": "jsonld.js",
     "officialUrl": "https://github.com/digitalbazaar/jsonld.js",
-    "lastChecked": "2026-11-20T20:57:42.488Z",
+    "lastChecked": "2026-11-24T20:04:12.874Z",
     "revisionIdentifier": "7a93609e",
-    "lastVerified": "2026-11-20T20:57:42.488Z"
+    "lastVerified": "2026-11-24T20:04:12.874Z"
   },
   "williewangwei-swiftui-tutorials": {
     "name": "SwiftUI-Tutorials",
@@ -15054,6 +15054,23 @@
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "dembrandt-dembrandt": {
+    "name": "dembrandt/dembrandt",
+    "officialUrl": "https://github.com/dembrandt/dembrandt",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-24T20:04:12.372Z",
+    "lastVerified": "2026-11-24T20:04:12.372Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-dembrandt-dembrandt",
+    "contentHash": "e73305320ef97be2e164825d5b69a92e68aabab43f07dce07be76258644c7614",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 7,
+    "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   }

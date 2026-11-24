@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T19:55:19.344Z",
-  "total_cycles_completed": 12160,
-  "total_learnings_persisted": 12160,
-  "total_rules_promoted": 11216,
+  "last_updated": "2026-11-24T20:04:23.136Z",
+  "total_cycles_completed": 12162,
+  "total_learnings_persisted": 12162,
+  "total_rules_promoted": 11218,
   "history": [
-    {
-      "timestamp": "2026-11-24T03:50:04.739Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T03:58:34.560Z",
-      "repository": "lingyired/status-trio",
-      "learningId": "learn-github-lingyired-status-trio",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T03:58:37.183Z",
       "repository": "zarf-dev/zarf",
@@ -1403,6 +1389,20 @@
       "repository": "thinkingmachines/Inkling-2-Mini",
       "learningId": "learn-huggingface-thinkingmachines-inkling-2-mini",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T20:04:13.642Z",
+      "repository": "dembrandt/dembrandt",
+      "learningId": "learn-github-dembrandt-dembrandt",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T20:04:23.136Z",
+      "repository": "skyhook-io/radar",
+      "learningId": "learn-github-skyhook-io-radar",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

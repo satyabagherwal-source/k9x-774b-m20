@@ -12832,3 +12832,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-orcarouter-inkling-2-mini-abliterated-gguf` | `https://huggingface.co/orcarouter/Inkling-2-Mini-abliterated-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-24T19:55:16.820Z |
 | `learn-huggingface-thinkingmachines-inkling-2-mini` | `https://huggingface.co/thinkingmachines/Inkling-2-Mini` | `hf-thinkin` | Multi-dimensional audit evidence | 2026-11-24T19:55:19.338Z |
 | `learn-dom-d-3b305647` | `project://hf-orcarouter-inkling-2-mini-abliterated-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-orcarouter-inkling-2-mini-abliterated-gguf-learnings.md` | 2026-11-24T19:55:59.406Z |
+| `learn-github-dembrandt-dembrandt` | `https://github.com/dembrandt/dembrandt` | `16af19ac` | Multi-dimensional audit evidence | 2026-11-24T20:04:13.636Z |
+| `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `f7efd90e` | Multi-dimensional audit evidence | 2026-11-24T20:04:23.130Z |

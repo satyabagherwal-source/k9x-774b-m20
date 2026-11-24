@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-P6LP",
-    "timestamp": "2026-11-23T04:58:21.997Z",
-    "repository": "meta-llama/Meta-Llama-3-8B",
-    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
-    "contentHash": "b69014412928ec67921ab96978d8198e7427cfc86d20ca3085083000f6b296e9",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-P7VR",
-    "timestamp": "2026-11-23T04:58:23.655Z",
-    "repository": "Kuberwastaken/claurst",
-    "learningId": "learn-github-kuberwastaken-claurst",
-    "contentHash": "3363025640c1745dc14c30fb5c9576d2f3972387d1839a358515ef28dccbe244",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-ZP14",
     "timestamp": "2026-11-23T05:06:32.440Z",
     "repository": "openai/whisper-large-v3",
@@ -7492,6 +7462,36 @@
     "contentHash": "094e003860576a2d2c2f89409341826f2be33a54224a7de0cc7adbc4fbba61d5",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-HZ9C",
+    "timestamp": "2026-11-24T20:04:13.632Z",
+    "repository": "dembrandt/dembrandt",
+    "learningId": "learn-github-dembrandt-dembrandt",
+    "contentHash": "e73305320ef97be2e164825d5b69a92e68aabab43f07dce07be76258644c7614",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-I6L1",
+    "timestamp": "2026-11-24T20:04:23.125Z",
+    "repository": "skyhook-io/radar",
+    "learningId": "learn-github-skyhook-io-radar",
+    "contentHash": "d73e05893c62b4895d3006fd066285016121d2302b1631ed833787e34b3dae23",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
