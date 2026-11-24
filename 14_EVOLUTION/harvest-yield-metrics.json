@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T03:41:50.762Z",
-  "total_cycles_completed": 11958,
-  "total_learnings_persisted": 11958,
-  "total_rules_promoted": 11038,
+  "last_updated": "2026-11-24T03:50:04.739Z",
+  "total_cycles_completed": 11961,
+  "total_learnings_persisted": 11961,
+  "total_rules_promoted": 11041,
   "history": [
-    {
-      "timestamp": "2026-11-23T16:20:31.172Z",
-      "repository": "ntex-rs/ntex",
-      "learningId": "learn-github-ntex-rs-ntex",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T16:20:38.097Z",
-      "repository": "rook/rook",
-      "learningId": "learn-github-rook-rook",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T16:28:39.180Z",
-      "repository": "inworld/voice-isolator",
-      "learningId": "learn-huggingface-inworld-voice-isolator",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T16:28:46.115Z",
       "repository": "duongductrong/Snapzy",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-24T03:41:50.762Z",
       "repository": "infiniflow/infinity",
       "learningId": "learn-github-infiniflow-infinity",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T03:49:53.506Z",
+      "repository": "max-sixty/worktrunk",
+      "learningId": "learn-github-max-sixty-worktrunk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T03:49:58.862Z",
+      "repository": "sceneview/sceneview",
+      "learningId": "learn-github-sceneview-sceneview",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T03:50:04.739Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -46,8 +46,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-24T03:14:25.202Z",
-    "lastVerified": "2026-11-24T03:14:25.202Z",
+    "lastChecked": "2026-11-24T03:50:02.686Z",
+    "lastVerified": "2026-11-24T03:50:02.686Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T03:41:54.043Z",
-    "lastVerified": "2026-11-24T03:41:54.043Z",
+    "lastChecked": "2026-11-24T03:50:07.953Z",
+    "lastVerified": "2026-11-24T03:50:07.953Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -844,14 +844,14 @@
     "officialUrl": "https://github.com/max-sixty/worktrunk",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T20:16:53.294Z",
-    "lastVerified": "2026-11-22T20:16:53.294Z",
+    "lastChecked": "2026-11-24T03:49:52.179Z",
+    "lastVerified": "2026-11-24T03:49:52.179Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-max-sixty-worktrunk",
-    "contentHash": "6458bf61ed5c1383cd133a3faca0c4de21753524945136657adae806bcb79b21",
+    "contentHash": "ebfaba4f8dcafdc270021d6b84cd784e74ef06704fdf96dc318ac921557031a1",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1930,12 +1930,12 @@
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-23T23:10:00.864Z",
-    "lastVerified": "2026-11-23T23:10:00.864Z",
+    "lastChecked": "2026-11-24T03:50:03.659Z",
+    "lastVerified": "2026-11-24T03:50:03.659Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
-    "contentHash": "9a07cee7e9c8e1bd3d945b2a93d9364bbb680719561378b4d3b93b560115f90c",
+    "contentHash": "c3916dba7d4503699ec674634cd3eadb7bd0663ace7ac39f3ef90b3ed3376a89",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -2578,9 +2578,9 @@
   "caviraoss-longmemory": {
     "name": "LongMemory",
     "officialUrl": "https://github.com/CaviraOSS/LongMemory",
-    "lastChecked": "2026-11-23T04:44:59.550Z",
+    "lastChecked": "2026-11-24T03:50:00.243Z",
     "revisionIdentifier": "aec98ced",
-    "lastVerified": "2026-11-23T04:44:59.550Z"
+    "lastVerified": "2026-11-24T03:50:00.243Z"
   },
   "kuddev-pebrel": {
     "name": "pebrel",
@@ -4422,9 +4422,9 @@
   "sealerio-sealer": {
     "name": "sealer",
     "officialUrl": "https://github.com/sealerio/sealer",
-    "lastChecked": "2026-11-23T05:59:47.555Z",
+    "lastChecked": "2026-11-24T03:49:55.286Z",
     "revisionIdentifier": "e426153a",
-    "lastVerified": "2026-11-23T05:59:47.555Z"
+    "lastVerified": "2026-11-24T03:49:55.286Z"
   },
   "trailbaseio-trailbase": {
     "name": "trailbase",
@@ -9405,9 +9405,9 @@
   "booltools-booltools-seo-crawler": {
     "name": "booltools-seo-crawler",
     "officialUrl": "https://github.com/booltools/booltools-seo-crawler",
-    "lastChecked": "2026-11-20T00:06:27.593Z",
+    "lastChecked": "2026-11-24T03:49:50.164Z",
     "revisionIdentifier": "e5394ed024",
-    "lastVerified": "2026-11-20T00:06:27.593Z"
+    "lastVerified": "2026-11-24T03:49:50.164Z"
   },
   "vinceglb-filekit": {
     "name": "FileKit",
@@ -12322,14 +12322,14 @@
     "officialUrl": "https://github.com/sceneview/sceneview",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-21T06:27:56.581Z",
-    "lastVerified": "2026-11-21T06:27:56.581Z",
+    "lastChecked": "2026-11-24T03:49:57.750Z",
+    "lastVerified": "2026-11-24T03:49:57.750Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sceneview-sceneview",
-    "contentHash": "182b94ce1530bf6844eb01a08bc9839e4148de79561a59b8515f5b7cc656b94a",
+    "contentHash": "b5f2ed678cdc53b2d64bd660e9bb85af9fb75f4b9229b90abcd2ebf6cd760ea2",
     "promotedRulesCount": 1,
-    "recentFixesCount": 20,
+    "recentFixesCount": 15,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

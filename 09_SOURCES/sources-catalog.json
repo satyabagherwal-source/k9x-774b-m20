@@ -2323,10 +2323,10 @@
     "repository": "max-sixty/worktrunk",
     "platform": "github",
     "sourceUrl": "https://github.com/max-sixty/worktrunk",
-    "sourceVersion": "5a427391",
+    "sourceVersion": "c6cc8601",
     "license": "Apache-2.0",
-    "contentHash": "6458bf61ed5c1383cd133a3faca0c4de21753524945136657adae806bcb79b21",
-    "lastHarvestedAt": "2026-11-22T20:16:54.387Z",
+    "contentHash": "ebfaba4f8dcafdc270021d6b84cd784e74ef06704fdf96dc318ac921557031a1",
+    "lastHarvestedAt": "2026-11-24T03:49:53.501Z",
     "learningId": "learn-github-max-sixty-worktrunk"
   },
   "mattermost-mattermost": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "69961019",
+    "sourceVersion": "20bb8be8",
     "license": "Apache-2.0",
-    "contentHash": "9a07cee7e9c8e1bd3d945b2a93d9364bbb680719561378b4d3b93b560115f90c",
-    "lastHarvestedAt": "2026-11-23T23:10:01.871Z",
+    "contentHash": "c3916dba7d4503699ec674634cd3eadb7bd0663ace7ac39f3ef90b3ed3376a89",
+    "lastHarvestedAt": "2026-11-24T03:50:04.734Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -12253,10 +12253,10 @@
     "repository": "sceneview/sceneview",
     "platform": "github",
     "sourceUrl": "https://github.com/sceneview/sceneview",
-    "sourceVersion": "8a3f4274",
+    "sourceVersion": "a1c2b6b5",
     "license": "Apache-2.0",
-    "contentHash": "182b94ce1530bf6844eb01a08bc9839e4148de79561a59b8515f5b7cc656b94a",
-    "lastHarvestedAt": "2026-11-21T06:27:57.544Z",
+    "contentHash": "b5f2ed678cdc53b2d64bd660e9bb85af9fb75f4b9229b90abcd2ebf6cd760ea2",
+    "lastHarvestedAt": "2026-11-24T03:49:58.856Z",
     "learningId": "learn-github-sceneview-sceneview"
   },
   "hf-tencent-qwen3.8-27b-dspine-b16": {

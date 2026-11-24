@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T03:41:50.774Z",
+  "last_updated": "2026-11-24T03:50:04.749Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3621,14 +3621,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-max-sixty-worktrunk",
-      "content_hash": "6458bf61ed5c1383cd133a3faca0c4de21753524945136657adae806bcb79b21",
-      "verified_at": "2026-11-22T20:16:54.395Z",
+      "content_hash": "ebfaba4f8dcafdc270021d6b84cd784e74ef06704fdf96dc318ac921557031a1",
+      "verified_at": "2026-11-24T03:49:53.517Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T20:16:54.395Z"
+      "last_updated": "2026-11-24T03:49:53.517Z"
     },
     "mattermost/mattermost": {
       "repository": "mattermost/mattermost",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "9a07cee7e9c8e1bd3d945b2a93d9364bbb680719561378b4d3b93b560115f90c",
-      "verified_at": "2026-11-23T23:10:01.879Z",
+      "content_hash": "c3916dba7d4503699ec674634cd3eadb7bd0663ace7ac39f3ef90b3ed3376a89",
+      "verified_at": "2026-11-24T03:50:04.748Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T23:10:01.879Z"
+      "last_updated": "2026-11-24T03:50:04.748Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -18441,14 +18441,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sceneview-sceneview",
-      "content_hash": "182b94ce1530bf6844eb01a08bc9839e4148de79561a59b8515f5b7cc656b94a",
-      "verified_at": "2026-11-21T06:27:57.552Z",
+      "content_hash": "b5f2ed678cdc53b2d64bd660e9bb85af9fb75f4b9229b90abcd2ebf6cd760ea2",
+      "verified_at": "2026-11-24T03:49:58.871Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T06:27:57.552Z"
+      "last_updated": "2026-11-24T03:49:58.871Z"
     },
     "tencent/Qwen3.8-27B-DSpine-b16": {
       "repository": "tencent/Qwen3.8-27B-DSpine-b16",

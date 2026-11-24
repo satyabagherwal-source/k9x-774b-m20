@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T03:41:54.293Z",
+  "updated_at": "2026-11-24T03:50:09.904Z",
   "stats": {
-    "total_discovered": 8292,
-    "approved_pending_harvest": 7855,
+    "total_discovered": 8295,
+    "approved_pending_harvest": 7858,
     "harvested_count": 0,
     "rejected_count": 437,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7840,
+      "COMMUNITY_AND_EXPERT": 7843,
       "OFFICIAL_DOCUMENTATION": 266,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -179388,6 +179388,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/automattic-harper-learnings.md",
         "fileName": "automattic-harper-learnings.md"
+      }
+    },
+    "SRC-BF3C536539C0": {
+      "id": "SRC-BF3C536539C0",
+      "url": "https://github.com/sceneview/sceneview/issues/4969",
+      "title": "https://github.com/sceneview/sceneview/issues/4969",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T03:50:08.983Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sceneview-sceneview-learnings.md",
+        "fileName": "sceneview-sceneview-learnings.md"
+      }
+    },
+    "SRC-F97823EE5D3C": {
+      "id": "SRC-F97823EE5D3C",
+      "url": "https://github.com/sceneview/sceneview/issues/5219",
+      "title": "https://github.com/sceneview/sceneview/issues/5219",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T03:50:09.043Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sceneview-sceneview-learnings.md",
+        "fileName": "sceneview-sceneview-learnings.md"
+      }
+    },
+    "SRC-3915996EFF62": {
+      "id": "SRC-3915996EFF62",
+      "url": "https://kind.sigs.k8s.io/",
+      "title": "https://kind.sigs.k8s.io/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T03:50:09.904Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+        "fileName": "cilium-cilium-learnings.md"
       }
     }
   }

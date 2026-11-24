@@ -12611,3 +12611,6 @@ Every entry in this ledger must capture:
 | `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `eeaf0d20` | Multi-dimensional audit evidence | 2026-11-24T03:41:38.175Z |
 | `learn-github-dosco-deeporg` | `https://github.com/dosco/deeporg` | `4c697dc8` | Multi-dimensional audit evidence | 2026-11-24T03:41:45.036Z |
 | `learn-github-infiniflow-infinity` | `https://github.com/infiniflow/infinity` | `e7db7afb` | Multi-dimensional audit evidence | 2026-11-24T03:41:50.756Z |
+| `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `c6cc8601` | Multi-dimensional audit evidence | 2026-11-24T03:49:53.501Z |
+| `learn-github-sceneview-sceneview` | `https://github.com/sceneview/sceneview` | `a1c2b6b5` | Multi-dimensional audit evidence | 2026-11-24T03:49:58.856Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `20bb8be8` | Multi-dimensional audit evidence | 2026-11-24T03:50:04.734Z |

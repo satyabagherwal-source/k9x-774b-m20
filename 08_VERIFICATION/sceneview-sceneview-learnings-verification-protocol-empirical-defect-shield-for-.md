@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T06:28:10.321Z",
+  "timestamp": "2026-11-24T03:50:09.141Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-sceneview-sceneview-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [sceneview-sceneview-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T06:28:10.321Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T03:50:09.141Z`  
 > **Learning ID**: `LEARN-EVO-sceneview-sceneview-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sceneview-sceneview-learnings.md`  
 > **Source**: github ([https://github.com/sceneview/sceneview](https://github.com/sceneview/sceneview))  
-> **Source Version**: `8a3f4274`  
+> **Source Version**: `a1c2b6b5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T06:27:56.587Z  
+> **Timestamp**: 2026-11-24T03:49:57.756Z  
 > **Learning ID**: `learn-github-sceneview-sceneview`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sceneview-sceneview-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sceneview/sceneview](https://github.com/sceneview/sceneview))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T06:27:56.581Z  
+> **Harvest Timestamp**: 2026-11-24T03:49:57.750Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Declarative 3D and AR for Android with Jetpack Compose, Filament and ARCore, plus web and Compose Multiplatform desktop. Open source, Apache 2.0. SwiftUI, Flutter and React Native: end of life at 4.68.0.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1379 stars
+- **Stars / Engagement**: 1380 stars
 
 ---
 
@@ -1011,6 +1011,7 @@ internal class ARTrackingStateLog {
 package io.github.sceneview.ar
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import io.github.sceneview.math.Size
@@ -1173,6 +1174,28 @@ class AutoPlacementState {
     var showsContactShadow: Boolean by mutableStateOf(true)
 
     /**
+     * Draw the detected surfaces while the object looks for one and while it moves, then fade them
+     * once it stands still (#5209): the rule [guide] describes. On by default; set `false` for a
+     * scene that should never show the surfaces.
+     */
+    var showsPlaneGuide: Boolean by mutableStateOf(true)
+
+    /**
+     * What the placement shows right now: the surfaces, the footprint ring, and whether dimension
+     * marks should be drawn. [AutoPlacementScene] keeps it current; read [PlacementGuide.dimensions]
+     * to show marks of your own at the same moments.
+     */
+    var guide: PlacementGuide by mutableStateOf(PlacementGuide.Nothing)
+        internal set
+
+    /**
+     * Keep [PlacementGuide.dimensions] on for as long as the object is placed, instead of only
+     * after it lands and while it is selected or moved (#5209). For an app whose answer is the
+     * size itself, such as a furniture fit; off by default.
+     */
+    var alwaysShowsDimensions: Boolean by mutableStateOf(false)
+
+    /**
      * Let the user resize the placed object with a pinch, [scaleTo] or the double-tap.
      *
      * Set `false` for anything that must stay at real size (furniture, a pool, a shed): the
@@ -1220,28 +1243,7 @@ class AutoPlacementState {
     /** [scaleRange], or the default one when it is unusable. */
     internal val usableScaleRange: ClosedFloatingPointRange<Float>
         get() = scaleRange.takeIf {
-            it.start > 0f && it.start.isFinite() && it.endInclusive.isFinite() && it.start <= it.endInclusive
-        } ?: ScaleSnap.RANGE
-
-    /**
-     * Accessibility alternative: uniform base-size multiplier, clamped to [scaleRange]
-     * (25–400 % by default) without notice — a factor outside it lands on the nearest bound.
-     * Ignored while [allowsScaling] is `false`.
-     */
-    fun scaleTo(factor: Float) {
-        if (allowsScaling && canManipulate && factor.isFinite()) {
-            val range = usableScaleRange
-            scaleAction?.invoke(factor.coerceIn(range.start, range.endInclusive))
-        }
-    }
-
-    /**
-     * The double-tap on the placed object: selects it, then animates it back to exactly
-     * 100 % if it was resized — or, already at 100 %, back to the size the user had pinched
-     * it to before (a toggle, not a one-way reset). Never resized, it plays the 100 %
-     * rebound so the tap is acknowledged. While [allowsScaling] is `false` it only selects.
-     * Wire it to `onDoubleTap` when the tapped node is the placed model;
-     * [AutoPlacementScene] already
+            it.start > 0f && it.sta
 ```
 
 ### Core Architecture Module: `arsceneview/src/main/java/io/github/sceneview/ar/HostLifecycle.kt`
@@ -1354,11 +1356,11 @@ suspend fun ArCoreApk.awaitAvailability(context: Context): Availability =
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5162** (2026-11-19): **Node editing overlay: the selection ring collapses to a dot when the node's yaw is ~90° from the camera**
-  *Symptoms*: Found while reviewing #5161 (the PR does not cause it; present on `main` since #3357).  **Symptom.** In the demo "Camera & object controls" → Move, on the Damaged Helmet: during a twist the selection ring shrinks to a dot, stays a dot at rest, and stays a dot during a pinch; a second twist brings back a full ring.  **Cause.** `sceneview/src/main/java/io/github/sceneview/gesture/NodeEditingOverlay.kt` (~521): `radiusX` is only the screen-x span of the node-local X chord, so the ring width is `R · |cos(node yaw − camera azimuth)|`. The helmet rests at −22° yaw with the Hero camera at 32°, so the ring is already at 59 % width at rest; after a −35°/−37° twist the yaw is ~90° from the camera → 1.7 %, a dot.  **Fix.** Project both local axes and take the ellipse's extent from both: with `a = (xPos − xNeg)/2` and `b = (zPos − zNeg)/2` in screen space, `radiusX = hypot(a.x, b.x)` and `radiusY = hypot(a.y, b.y)`. Add a JVM test: rotating the node about Y keeps the ring's screen width within a tolerance of its rest width.  Proof needed: emulator captures of the same twist before/after, light and dark. 
+- **Issue #5211** (2026-11-22): **fix(demo): Finger Drawing and Streetscape forget a closed session's objects**
+  *Symptoms*: Fixes #5208  Follow-up to #5205. Two AR demos kept ARCore objects from a session that a fatal failure closed, and read them on every frame after "Try again":  - **Finger Drawing.** `readAnchors()` called `anchor.trackingState` on every stroke anchor. `extendStroke()` read `pen.anchor`, and the `AnchorNode`s held them. - **Streetscape** (`ARSceneGeometryDemo.kt`). `onFrame()` called `trackingState` on kept `StreetscapeGeometry`, `StreetscapeGeometryNode.update()` read them too, and the coverage check held the closed `Session`.  ## What changed  Same pattern as #5205: one `DemoSessionState` holder per demo, cleared through the existing `onFailure(failure)` helper. It clears only on `ARSessionFailure.Fatal`, and a camera resume failure keeps everything. References are forgotten, never detached: the session is gone, and `AnchorNode` already skips `detach()` on a closed session. There is no SDK change.  - `DrawingSessionState<A>` holds the drawing, `anchorOf` and `healthOf`. A fatal failure drops the strokes along with their anchors, because strokes are drawn in anchor space. Stroke ids keep counting, so `key(stroke.id)` never reuses the id of a dropped stroke. The handler also resets the pen (`anchor`, `steady`, pending down/up) and `isTracking`. It does not reset `cameraReady`, because the init scrim would then cover the SDK's retry card. - `StreetscapeSessionState<S, G>` holds `session` and `geometries`. `SceneGeometryState.onSessionFailure()` also resets `geometryCount`, `isTr
 
-- **Issue #5134** (2026-11-18): **ARSceneView: sceneUnderstanding silently overrides planeRenderer (occlusion = true turns planes back on)**
-  *Symptoms*: Found while reviewing #5087.  `ARSceneView` applies two plane-visibility knobs in two `SideEffect`s (`ARSceneView.kt` ~1519-1540): `planeRenderer`, then the grouped `sceneUnderstanding.planeVisualization`. Both run on the main thread and the grouped one always wins, as the KDoc (~600-612) and `llms.txt` (~677) say. It is not a race, but it is a trap:  - `SceneUnderstanding(occlusion = true)` — the `llms.txt` sample (~702) — silently forces planes back on over `planeRenderer = false`. An app that turns occlusion on through the grouped settings loses its plane toggle with no warning. - Each recomposition where the two disagree refreshes every plane renderable twice.  Proposed fix: - [ ] Skip the `planeRenderer` write when `sceneUnderstanding.planeVisualization` is non-null (or the reverse: let an explicit `planeRenderer` win), so only one knob writes. - [ ] Document "do not combine `planeRenderer` with `sceneUnderstanding`" in the KDoc and `llms.txt`, and fix the `llms.txt` sample so turning occlusion on does not force planes on. - [ ] A test: `sceneUnderstanding = SceneUnderstanding(occlusion = true)` with `planeRenderer = false` keeps planes hidden. 
+- **Issue #5208** (2026-11-22): **Demo: Finger Drawing and Scene Geometry read ARCore objects after a fatal session failure**
+  *Symptoms*: Follow-up to #5132 / #5205, found in review.  Two AR demos outside the #5132 list keep ARCore objects from a session that a fatal failure closed, and read them every frame:  - `FingerDrawingArDemo.kt:244` reads `anchor.trackingState` on kept anchors. - `ARSceneGeometryDemo.kt:373` reads `it.trackingState` on kept `StreetscapeGeometry`.  Neither passes `onSessionFailure`, so after "Try again" they keep the scene and the SDK retry card while holding objects of the closed session. Fix as in #5205: clear the held objects in `onSessionFailure` when the failure is fatal.  Also from the same review: the 3D Scan capture keeps recording into the same trace after a fatal failure and "Try again", because `forgetSession()` leaves the pose-continuity guard untouched (it is rate-based and reads the first new frame as continuous). Tracked in #5205 if fixed there.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1375,1525 +1377,1280 @@ suspend fun ArCoreApk.awaitAvailability(context: Context): Availability =
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0db548c6` (2026-11-20)
-**Commit Message**: fix(demo): bound the 3D scan journal and release the live model on exit (#5186)
+### Incident Patch 1: `f8e0bdd7` (2026-11-23)
+**Commit Message**: fix(sceneview): confirm an idle backend with a bounded fence wait after 5 s (#4969) (#5239)
 
-* fix(demo): bound the 3D scan journal and release the live model on exit
+* fix(sceneview): confirm an idle backend with a bounded fence wait after 5 s (#4969)
 
-A 406-second room scan ran a real user's 256 MB Java heap out of memory
-(Crashlytics, 4.69.5). Two retentions grew with the scan or outlived it:
+A release deferred until the backend is idle needs a reached fence no
+older than 48 ms. A main thread polling less often than that, common on
+the low-end devices behind the nDestroyRenderer ANRs, never sees one, so
+on an engine that outlives its screens every renderer stayed pending
+until Engine.destroy.
 
-- the scan's replay journal had no total budget; it is now an
-  ArDebugJournal capped at 4 MiB that halves camera and point
-  observations across the timeline when full, keeping photo poses,
-  planes, depth counts and floor cells;
-- the live model's TSDF (up to ~48 MB) stayed in a process-wide slot
-  after leaving the demo; a per-demo owner now forgets it on exit or on a
-  discarded capture, while a successful save still hands it to the
-  result screen.
-
-Closing a capture also releases its trace, dense map, photos and
-thumbnails. Debug builds log heap and journal sizes every minute of a
-scan (tag SceneView/ScanMem) for device measurements.
-
-Refs #5043
+After the five-second warning, the replacement fence a poll arms is now
+waited for at most FRESH_FENCE_CONFIRM_BUDGET_MS (4 ms) instead of zero.
+Reached within it, the backend is idle right now and the release runs in
+the same message, so FRenderer::terminate finds nothing queued behind
+it. A busy backend misses the budget and the release stays pending; an
+unreached fence is never waited for. At most two such waits a second,
+only while a release is pending.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* chore(changelog): number the scan memory fragment
+* fix(sceneview): confirm the fence a poll arms, state the per-wake-up bound
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Review follow-up on the bounded teardown confirmation.
 
-* test(demo): check ScanMem log lines only in debug builds
+- The fence a scheduled poll arms right after an invalidation is
 
-The memory release a
-
-**File**: `changelog.d/5186-scan-oom.md` (added, +2/-0)
+**File**: `changelog.d/4969-teardown-no-block.md` (added, +2/-0)
 ```diff
 @@ -0,0 +1,2 @@
 +<!-- category: Fixed -->
-+- **Demo app: smoother, more reliable 3D scans.** The demo now requests a large heap, so long room scans keep full model detail, with a memory safety net on phones still below 384 MiB. The replay journal, previously unbounded, is capped (8 MiB on a 512 MiB heap) and always keeps photos, floor coverage, anchors and when each plane appeared or was removed. Leaving a scan frees its memory reliably, and the saved-scans list loads lazily, so exits no longer freeze.
++- **Android: renderers and other deferred releases on a long-lived engine are freed on slow devices too ([#4969](https://github.com/sceneview/sceneview/issues/4969)).** A release deferred until the backend is idle needs a fence that is both reached and recent. A main thread polling less often than every 48 ms, common on low-end devices, never saw one, so on an engine shared by several screens every renderer stayed pending until `Engine.destroy`. After five seconds of waiting, each poll now creates a fence and waits at most 4 ms for it. If it is reached, the backend is idle at that moment and the release runs straight away, in the same main-thread message, so its own native wait finds nothing queued behind it. A backend that is still busy, with a new screen's shaders for instance, misses the 4 ms and the release keeps waiting. Nothing ever forces a release behind a busy fence.
 ```
 
-**File**: `samples/android-demo/src/main/AndroidManifest.xml` (modified, +1/-0)
+**File**: `sceneview/src/main/java/io/github/sceneview/BackendIdleTeardowns.kt` (modified, +7/-2)
 ```diff
-@@ -102,6 +102,7 @@
-         android:fullBackupContent="@xml/backup_descriptor"
-         android:icon="@mipmap/ic_launcher"
-         android:label="@string/launcher_label"
-+        android:largeHeap="true"
-         android:roundIcon="@mipmap/ic_launcher_round"
-         android:supportsRtl="true"
-         android:theme="@style/Theme.SceneViewDemo">
-```
-
-**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/ARRerunDemo.kt` (modified, +113/-33)
-```diff
-@@ -29,6 +29,9 @@ import androidx.compose.foundation.layout.Column
- import androidx.compose.foundation.layout.Row
- import androidx.compose.foundation.layout.Spacer
- import androidx.compose.foundation.layout.WindowInsets
-+import androidx.compose.foundation.layout.WindowInsetsSides
-+import androidx.compose.foundation.layout.only
-+import androidx.compose.foundation.layout.windowInsetsPadding
- import androidx.compose.foundation.layout.fillMaxSize
- import androidx.compose.foundation.layout.fillMaxWidth
- import androidx.compose.foundation.layout.heightIn
-@@ -41,6 +44,7 @@ import androidx.compose.foundation.layout.widthIn
- import androidx.compose.foundation.shape.CircleShape
- import androidx.compose.foundation.shape.RoundedCornerShape
- import androidx.compose.material.icons.Icons
-+import androidx.compose.material.icons.automirrored.filled.ArrowBack
- import androidx.compose.material.icons.outlined.RestartAlt
- import androidx.compose.material.icons.rounded.ExpandLess
- import androidx.compose.material.icons.rounded.ExpandMore
-@@ -90,6 +94,7 @@ import androidx.compose.ui.platform.LocalConfiguration
- import androidx.compose.ui.platform.LocalContext
- import androidx.compose.ui.platform.LocalDensity
- import androidx.compose.ui.platform.LocalLayoutDirection
-+import androidx.compose.ui.platform.LocalLocale
- import androidx.compose.ui.platform.LocalWindowInfo
- import androidx.compose.ui.platform.testTag
- import androidx.compose.ui.res.stringResource
-@@ -216,7 +221,6 @@ import io.github.sceneview.demo.demos.internal.rerunShowsSaveAction
- import io.github.sceneview.demo.demos.internal.rerunStatusUx
- import io.github.sceneview.demo.demos.internal.turnedBy
- import io.github.sceneview.demo.rememberArPlaybackDataset
--import io.github.sceneview.demo.theme.LocalStageChrome
- import io.github.sceneview.demo.theme.SceneViewTokens
- import io.github.sceneview.demo.theme.SceneViewTokens.ArOverlay
- import io.github.sceneview.demo.theme.SceneViewTokens.Space
-@@ -237,6 +241,8 @@ import kotlin.math.roundToInt
- import kotlin.math.sin
- import kotlinx.coroutines.CancellationException
- import kotlinx.coroutines.Dispatchers
-+import io.github.sceneview.demo.ui.GlassIconButton
-+import io.github.sceneview.demo.ui.GlassPill
- import kotlinx.coroutines.Job
- import kotlinx.coroutines.cancel
- import kotlinx.coroutines.delay
-@@ -279,6 +285,7 @@ fun ARRerunDemo(onBack: () -> Unit, startInDollhouse: Boolean = false) {
-     val context = LocalContext.current
-     val scope = rememberCoroutineScope()
-     ForgetRoomSurveysOnExit()
-+    val liveModels = rememberRerunLiveModels()
-     // Replay a recorded ARCore dataset when the device-QA harness deep-links this demo
-     // with `--es ar_playback_file <path>` (#1576): that harness drives the live path.
-     val arPlaybackDataset = rememberArPlaybackDataset()
-@@ -304,8 +311,9 @@ fun ARRerunDemo(onBack: () -> Unit, startInDollhouse: Boolean = false) {
-     var exampleRead by remember { mutableStateOf(false) }
-     var exampleAsked by remember { mutableStateOf(false) }
-     // The room feeds the example replay and the staged QA capture states.
--    val sample by produceState<RerunReplayMedia?>(null) {
--        value = runCatching { loadRerunReplay(context) }.getOrNull()
-+    var sample by remember { mutableStateOf<RerunReplayMedia?>(null) }
-+    LaunchedEffect(Unit) {
-+        sample = runCatching { loadRerunReplay(context) }.getOrNull()
-         exampleRead = true
-     }
+@@ -1,6 +1,10 @@
+ package io.github.sceneview
  
-@@ -314,8 +322,10 @@ fun ARRerunDemo(onBack: () -> Unit, startInDollhouse: Boolean = false) {
-     var sessionsVersion by remember { mutableIntStateOf(0) }
-     // A scan saved after its capture screen was left (#4500) lands in the list too.
-     val savedAway = RerunScanBuilds.savedAway
--    val sessions by produceState<List<LandingSession>?>(null, sessionsVersion, savedAway) {
--        value = store.landingSessions()
-+    val landingCache = remember { RerunLandingCache() }
-+    val landingLocale = LocalLocale.current.platformLocale
-+    val sessions by produceState<List<LandingSession>?>(null, sessionsVersion, savedAway, landingLocale) {
-+        value = store.landingSessions(landingCache, landingLocale)
-     }
-     // What the landing says about the last file opened: why it did not open, or that it is opening.
-     var notice by remember { mutableStateOf<String?>(null) }
-@@ -362,6 +372,13 @@ fun ARRerunDemo(onBack: () -> Unit, startInDollhouse: Boolean = false) {
-             },
-         )
-     }
-+    // Save hands the live TSDF to this demo, not to one result tab. mesh releases it after
-+    // extraction, clearScanResult releases it on leaving the result, and this effect covers
-+    // source replacement and demo exit. Capture Discard uses dropCapture/ScanCapture.close(false).
-+    DisposableEffect(modelSource) {
-+        val live = modelSource as? RerunModelSource.Live
-+        onDispose { live?.release() }
-+    }
-     // The model on screen, once built or read back: what the export sheet writes first.
-     var resultModel by remember { 
-```
-
-**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/ArDebugView.kt` (modified, +4/-1)
-```diff
-@@ -299,7 +299,10 @@ internal class ArDebugRecorder {
-         livePlanes += seen
-     }
- 
--    private fun reset(trace: ArDebugTrace) {
-+    /** Detaches a closed capture even when no subsequent AR frame arrives. */
-+    fun clear() = reset(null)
-+
-+    private fun reset(trace: ArDebugTrace?) {
-         recordedFor = trace
-         pointsGate.reset()
-         planesGate.reset()
-```
-
-**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/RerunLandingUi.kt` (modified, +83/-77)
-```diff
-@@ -7,6 +7,9 @@ import androidx.compose.foundation.clickable
- import androidx.compose.foundation.layout.Arrangement
- import androidx.compose.foundation.layout.Box
- import androidx.compose.foundation.layout.Column
-+import androidx.compose.foundation.layout.PaddingValues
-+import androidx.compose.foundation.lazy.LazyColumn
-+import androidx.compose.foundation.lazy.items
- import androidx.compose.foundation.layout.Row
- import androidx.compose.foundation.layout.RowScope
- import androidx.compose.foundation.layout.WindowInsets
-@@ -63,7 +66,6 @@ import androidx.compose.ui.graphics.drawscope.Stroke
- import androidx.compose.ui.graphics.vector.ImageVector
- import androidx.compose.ui.layout.ContentScale
- import androidx.compose.ui.platform.LocalContext
--import androidx.compose.ui.platform.LocalLocale
- import androidx.compose.ui.platform.testTag
- import androidx.compose.ui.res.stringResource
- import androidx.compose.ui.semantics.Role
-@@ -120,63 +122,42 @@ internal class RerunLandingActions(
-  */
- @Composable
- internal fun RerunLanding(state: RerunLandingState, actions: RerunLandingActions) {
--    LandingPage(state, actions)
-+    SessionsSection(state, actions)
- }
- 
- /** The themed stage the landing is drawn on. */
- private val stage: StageChrome @Composable get() = LocalStageChrome.current
- 
- @Composable
- private fun LandingPage(state: RerunLandingState, actions: RerunLandingActions) {
--    Box(
--        modifier = Modifier
--            .fillMaxSize()
--            .background(stage.ground),
--        contentAlignment = Alignment.TopCenter,
--    ) {
--        Column(
--            modifier = Modifier
--                .fillMaxSize()
--                .rerunPageScroll()
--                .padding(horizontal = Space.md),
--            horizontalAlignment = Alignment.CenterHorizontally,
--        ) {
--            Column(
--                modifier = Modifier
--                    .widthIn(max = RerunPageMaxWidth)
--                    .fillMaxWidth(),
--                verticalArrangement = Arrangement.spacedBy(Space.md),
--            ) {
--                Column(verticalArrangement = Arrangement.spacedBy(Space.xs)) {
--                    Text(
--                        text = ScanCopy.LANDING_TITLE,
--                        style = Type.display.copy(color = stage.onGlass),
--                        modifier = Modifier.semantics { heading() },
--                    )
--                    Text(text = ScanCopy.LANDING_BODY, style = Type.body.copy(color = stage.onGlassMuted))
--                }
--                RecordRoomCard(onClick = actions.onRecord)
--                Row(horizontalArrangement = Arrangement.spacedBy(Space.sm)) {
--                    GlassAction(
--                        icon = Icons.Rounded.PlayArrow,
--                        label = ScanCopy.WATCH_SAMPLE,
--                        onClick = actions.onWatchSample,
--                        modifier = Modifier.weight(1f).testTag(WATCH_SAMPLE_TAG),
--                    )
--                    GlassAction(
--                        icon = Icons.Outlined.FileOpen,
--                        label = ScanCopy.OPEN_FILE,
--                        onClick = actions.onOpenFile,
--                        modifier = Modifier.testTag(OPEN_FILE_TAG),
--                    )
--                }
--                // What happened to the file just opened: under the button that opened it, not
--                // inside the list of sessions.
--                state.notice?.let { NoticeCard(it, onDismiss = actions.onDismissNotice) }
--                if (state.openingFile) OpeningCard(ScanCopy.OPENING_FILE)
--                SessionsSection(state, actions)
--            }
-+    Column(verticalArrangement = Arrangement.spacedBy(Space.md)) {
-+        Column(verticalArrangement = Arrangement.spacedBy(Space.xs)) {
-+            Text(
-+                text = ScanCopy.LANDING_TITLE,
-+                style = Type.display.copy(color = stage.onGlass),
-+                modifier = Modifier.semantics { heading() },
-+            )
-+            Text(text = ScanCopy.LANDING_BODY, style = Type.body.copy(color = stage.onGlassMuted))
-         }
-+        RecordRoomCard(onClick = actions.onRecord)
-+        Row(horizontalArrangement = Arrangement.spacedBy(Space.sm)) {
-+            GlassAction(
-+                icon = Icons.Rounded.PlayArrow,
-+                label = ScanCopy.WATCH_SAMPLE,
-+                onClick = actions.onWatchSample,
-+                modifier = Modifier.weight(1f).testTag(WATCH_SAMPLE_TAG),
-+            )
-+            GlassAction(
-+                icon = Icons.Outlined.FileOpen,
-+                label = ScanCopy.OPEN_FILE,
-+                onClick = actions.onOpenFile,
-+                modifier = Modifier.testTag(OPEN_FILE_TAG),
-+            )
-+        }
-+        // What happened to the file just opened: under the button that opened it, not
-+        // inside the list of sessions.
-+        state.notice?.let { NoticeCard(it, onDismiss = actions.onDismissNotice) }
-+        if (state.openingFile) OpeningCard(ScanC
-```
-
-**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/RerunModelUi.kt` (modified, +111/-40)
-```diff
-@@ -135,6 +135,7 @@ import io.github.sceneview.demo.demos.internal.RoomMeasure
- import io.github.sceneview.demo.demos.internal.ScanGround
- import io.github.sceneview.demo.demos.internal.ScanGroundMeshes
- import io.github.sceneview.demo.demos.internal.ScanPreset
-+import io.github.sceneview.demo.demos.internal.ScanMemoryBudget
- import io.github.sceneview.demo.demos.internal.ScanResultCamera
- import io.github.sceneview.demo.demos.internal.ScanResultCut
- import io.github.sceneview.demo.demos.internal.ScanResultFrame
-@@ -274,10 +275,15 @@ internal sealed interface RerunModelSource {
-  * lens, fresh depth only — on its own worker: a frame that arrives while one integrates is left
-  * to the surfel map alone, so neither slows the other.
-  */
--internal class RerunLiveModel(private val preset: ScanPreset = ScanPreset.ROOM) {
-+internal class RerunLiveModel(
-+    private val owner: RerunLiveModels.Owner,
-+    private val preset: ScanPreset = ScanPreset.ROOM,
-+    budget: ScanMemoryBudget = ScanMemoryBudget(Runtime.getRuntime().maxMemory()),
-+) {
-     /** The TSDF while it records; `null` once [keepFor] has handed it on, so only its slot holds it. */
-     @Volatile
--    private var tsdf: RerunTsdf? = RerunTsdf(voxelM = preset.modelVoxelM)
-+    private var tsdf: RerunTsdf? = RerunTsdf(voxelM = budget.modelVoxelM(preset), maxBytes = budget.tsdfBytes)
-+    private var transferred: java.lang.ref.WeakReference<RerunTsdf>? = null
-     private val busy = AtomicBoolean(false)
- 
-     @Volatile
-@@ -315,31 +321,86 @@ internal class RerunLiveModel(private val preset: ScanPreset = ScanPreset.ROOM)
-     fun keepFor(pack: RerunCapturePack?) {
-         val tsdf = tsdf ?: return
-         this.tsdf = null
--        if (pack != null && tsdf.frames > 0) RerunLiveModels.keep(pack, tsdf)
-+        if (pack != null && tsdf.frames > 0) {
-+            owner.keep(pack, tsdf)
-+            transferred = java.lang.ref.WeakReference(tsdf)
-+        }
-+    }
-+
-+    /** Drops an abandoned capture's TSDF; an integration already running releases its local copy on return. */
-+    fun close(keepTransferred: Boolean = false): Job? {
-+        val worker = job
-+        worker?.cancel()
-+        job = null
-+        tsdf = null
-+        if (!keepTransferred) transferred?.get()?.let(RerunLiveModels::forget)
-+        transferred = null
-+        return worker
-     }
- }
- 
- /**
-  * The last recording's TSDF, kept in memory with the scan it belongs to (one slot: ~50 MB at
-- * most). A scan reopened from the list in the same process finds it by its manifest's bytes.
-+ * most). It survives capture -> result so [RerunModelSource.of] can mesh it. The owning demo
-+ * releases it on exit; a later reopen uses the saved model or surfels instead.
-  */
- internal object RerunLiveModels {
-     @Volatile
-     private var kept: Pair<ByteArray, RerunTsdf>? = null
- 
--    fun keep(pack: RerunCapturePack, tsdf: RerunTsdf) {
-+    @Synchronized
-+    private fun keep(pack: RerunCapturePack, tsdf: RerunTsdf) {
-         kept = pack.manifest to tsdf
-     }
- 
-+    @Synchronized
-     fun find(pack: RerunCapturePack?): RerunTsdf? {
-         pack ?: return null
-         return kept?.takeIf { it.first.contentEquals(pack.manifest) }?.second
-     }
- 
-     /** Empties the slot when it holds [tsdf]. */
-+    @Synchronized
-     fun forget(tsdf: RerunTsdf) {
-         if (kept?.second === tsdf) kept = null
-     }
-+
-+    /** One demo composition, including its result screen. A detached save cannot refill a closed owner. */
-+    class Owner : AutoCloseable {
-+        private var closed = false
-+        // The owner must not undo Live.release() by retaining a second strong reference.
-+        private var held: java.lang.ref.WeakReference<RerunTsdf>? = null
-+
-+        @Synchronized
-+        fun keep(pack: RerunCapturePack, tsdf: RerunTsdf) {
-+            if (closed) return
-+            held = java.lang.ref.WeakReference(tsdf)
-+            RerunLiveModels.keep(pack, tsdf)
-+        }
-+
-+        @Synchronized
-+        override fun close() {
-+            closed = true
-+            forget()
-+        }
-+
-+        /** AR placement has no model-result reader. The owner stays reusable for another capture. */
-+        @Synchronized
-+        fun forget() {
-+            held?.get()?.let(RerunLiveModels::forget)
-+            held = null
-+        }
-+    }
-+}
-+
-+/** The cache belongs to the entire demo, so capture -> result can still use the live TSDF. */
-+@Composable
-+internal fun rememberRerunLiveModels(): RerunLiveModels.Owner {
-+    val owner = remember { RerunLiveModels.Owner() }
-+    DisposableEffect(owner) {
-+        onDispose { owner.close() }
-+    }
-+    return owner
- }
- 
- /**
-@@ -485,8 +546,9 @@ private class Meshed(
- /**
-  * Fuses [source] (unless done) and meshes it. Nothing past this function holds the TSDF, so the
-  * finish's peak — the cleaning and the photos — never sits on top of its up to
-- * [RerunTsdf.MAX_BYTES]. A recording's TSDF that big is also let go from its slot: reopened
-- * without a model kep
-```
-
-**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/RerunScan.kt` (modified, +125/-16)
-```diff
-@@ -8,6 +8,7 @@ import android.util.Log
- import com.google.ar.core.CameraIntrinsics
- import com.google.ar.core.Frame
- import com.google.ar.core.Pose
-+import io.github.sceneview.demo.BuildConfig
- import io.github.sceneview.demo.demos.internal.AdaptiveConfidence
- import io.github.sceneview.demo.demos.internal.ArDebugEvent
- import io.github.sceneview.demo.demos.internal.ArDebugGeometry
-@@ -38,6 +39,7 @@ import io.github.sceneview.demo.demos.internal.ScanCutoff
- import io.github.sceneview.demo.demos.internal.ScanPhotoMotion
- import io.github.sceneview.demo.demos.internal.ScanPhotoPolicy
- import io.github.sceneview.demo.demos.internal.ScanPreset
-+import io.github.sceneview.demo.demos.internal.ScanMemoryBudget
- import io.github.sceneview.demo.demos.internal.ScanProjection
- import io.github.sceneview.demo.demos.internal.ScanSharpPicker
- import io.github.sceneview.demo.demos.internal.YuvFrame
-@@ -75,20 +77,28 @@ import java.util.concurrent.atomic.AtomicInteger
-  * Main thread, like the recorder, except the photo encoding and the depth fusion it launches in
-  * [scope].
-  */
--internal class ScanCapture private constructor(
-+internal class ScanCapture(
-     /** The CPU camera image's lens: the photos' and the sparse points' colours. */
-     private val intrinsics: ScanIntrinsics,
-     /** The GPU camera texture's lens, which ARCore aligns the raw depth with. */
-     private val textureIntrinsics: ScanIntrinsics?,
-     private val lens: ReplayLens,
-     private val scope: CoroutineScope,
-+    private val modelOwner: RerunLiveModels.Owner,
-     /** Whether the session runs ARCore's raw depth: the scan's tier. */
-     val rawDepth: Boolean,
-     /** What is scanned decides the photo spacing, the depth kept and the model's voxel (#4647). */
-     val preset: ScanPreset = ScanPreset.ROOM,
--) {
-+    private val budget: ScanMemoryBudget = ScanMemoryBudget(Runtime.getRuntime().maxMemory()),
-+) : AutoCloseable {
-     /** The scan's trace; its journal is what [finish] saves. */
--    val trace = ArDebugTrace().apply {
-+    val trace = ArDebugTrace(
-+        journalMaxBytes = budget.journalBytes,
-+        observationMaxBytes = budget.observationBytes,
-+        observationMaxCount = ArDebugTrace.MAX_OBSERVATIONS,
-+    ) {
-+        Log.w(MEMORY_TAG, "journal cap ${budget.journalBytes} bytes reached; decimating scan observations")
-+    }.apply {
-         keyframeSpacing = ReplayGeometry.KEYFRAME_SPACING_M
-         journal = ArrayList()
-         // #4683: an object keeps arm's length in its sparse points and planes too, depth or not.
-@@ -115,11 +125,12 @@ internal class ScanCapture private constructor(
-     // one runs is skipped, never queued, so a slow phone thins the depth instead of lagging.
-     // The map keeps a whole flat or house within this phone's budget: past it, it coarsens the
-     // regions the camera has left instead of dropping what is new (#4629).
--    private val dense = if (rawDepth) ScanDenseMap() else null
-+    private var dense = if (rawDepth) ScanDenseMap(maxPoints = budget.densePoints) else null
-     private val fusing = AtomicBoolean(false)
-     private var fuseJob: Job? = null
-     // The final model's TSDF, fed the same depth copies on its own worker (RerunModelUi.kt).
--    private val model = if (rawDepth) RerunLiveModel(preset) else null
-+    private var model = if (rawDepth) RerunLiveModel(modelOwner, preset, budget) else null
-+    private val closed = AtomicBoolean(false)
-     // Which depth estimate was taken last, and how long the scan has waited for one.
-     private val depthWindow = DepthWindow()
-     private var loggedSizes = false
-@@ -135,9 +146,9 @@ internal class ScanCapture private constructor(
-     private val denseKept = AtomicInteger(0)
-     private var recordedTotal = 0
- 
--    // The dense frame count each DepthStats on the timeline was written at, in order: what
--    // [finish] turns into the saved cloud's prefix found by then (ScanDenseMap.revealed).
--    private val recordedFrames = ArrayList<Int>()
-+    // The dense frame count at each DepthStats timestamp. Keyed by time so journal decimation
-+    // cannot shift the saved cloud's reveal counts onto different events.
-+    private val recordedFrames = HashMap<Long, Int>()
- 
-     // Why depth frames did or did not grow the map, logged every two seconds for a device run.
-     private val intake = DepthIntake()
-@@ -150,6 +161,11 @@ internal class ScanCapture private constructor(
- 
-     /** The journal [finish] took, kept so Try again rebuilds from it after a build that threw. */
-     private var finishedEvents: List<ArDebugEvent>? = null
-+    private var finishedBytes = 0L
-+
-+    /** Cleanup outlives the capture scope, which the screen cancels before calling [close]. */
-+    internal var releaseJob: Job? = null
-+        private set
- 
-     /**
-      * Points the saved scan keeps so far: the HUD's count, the same figure the saved scan shows.
-@@ -199,14 +215,15 @@ internal class ScanCapture private constructor(
-     /** The scan as it grow
-```
-
-**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/RerunScanBuilds.kt` (modified, +22/-0)
-```diff
-@@ -1,5 +1,9 @@
- package io.github.sceneview.demo.demos
- 
-+import androidx.compose.runtime.Composable
-+import androidx.compose.runtime.DisposableEffect
-+import androidx.compose.runtime.SideEffect
-+import androidx.compose.runtime.remember
- import androidx.compose.runtime.getValue
- import androidx.compose.runtime.mutableIntStateOf
- import androidx.compose.runtime.setValue
-@@ -37,3 +41,21 @@ internal object RerunScanBuilds {
-         if (away) savedAway++
-     }
- }
-+
-+/** A stale accessibility node keeps only this small, cleared handle after its screen closes. */
-+internal class RerunClick : () -> Unit {
-+    internal var action: (() -> Unit)? = null
-+        private set
-+
-+    fun update(action: () -> Unit) { this.action = action }
-+    fun clear() { action = null }
-+    override fun invoke() { action?.invoke() }
-+}
-+
-+@Composable
-+internal fun rememberRerunClick(action: () -> Unit): RerunClick {
-+    val click = remember { RerunClick() }
-+    SideEffect { click.update(action) }
-+    DisposableEffect(click) { onDispose { click.clear() } }
-+    return click
-+}
-```
-
----
-
-### Incident Patch 2: `ce630c48` (2026-11-20)
-**Commit Message**: fix(demo): discard AR session state after a fatal session failure (#5196)
-
-* fix(demo): discard AR session state after a fatal session failure
-
-After a fatal session.update() failure the SDK closes the session and
-creates a new one on Retry. Seven demos kept anchors, augmented images,
-frames or futures of the closed session and read them afterwards.
-
-- Each demo's session-bound state now lives in a small holder
-  (DemoSessionState) cleared on ARSessionFailure.Fatal; late async
-  results from the old session are rejected by a generation counter.
-- AR Image, Orbital AR, Depth of Field, Cloud Anchor, Geospatial
-  Anchors, Record & Playback, Point and Ask, and the shared
-  FeaturePlacementScene.
-- AR Surfaces keeps the sofa on a nonfatal resume failure, where its
-  anchor is still valid.
-
-Measure and 3D Scan are left for a later change: other branches are
-editing them.
-
-Tests: DemoClosedSessionTest (12). Whole demo debug suite: 4685 pass;
-detekt clean.
-
-Refs #5132
-
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-* fix(demo): address the closed-session review
-
-- Point and Ask no longer hands its failure flag to DemoScaffold, which
-  replaced the scene with the no-retry card and dis
-
-**File**: `changelog.d/5132-ar-demos-closed-session.md` (added, +2/-0)
-```diff
-@@ -0,0 +1,2 @@
-+<!-- category: Fixed -->
-+- **Demo app: AR demos no longer touch a closed camera session after a failure, preventing crashes.** AR Surfaces keeps its sofa when the camera only failed to resume.
-```
-
-**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/common/placement/ARFeatureComparison.kt` (modified, +3/-0)
-```diff
-@@ -285,6 +285,9 @@ private fun FeatureComparisonSession(feature: PlacementFeature, onBack: () -> Un
-                     }
-                 },
-                 onSessionFailed = { cameraFailed = true },
-+                onSessionFailure = { failure ->
-+                    if (failure is ARSessionFailure.Fatal) session = null
-+                },
-                 onARCoreAvailability = { availability = it },
-                 onTrackingFailureChanged = { trackingFailure = it },
-             ) { placement ->
-```
-
-**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/common/placement/FeaturePlacementScene.kt` (modified, +11/-4)
-```diff
-@@ -13,6 +13,8 @@ import io.github.sceneview.ar.camera.ARCameraStream
- import io.github.sceneview.ar.rememberHostLifecycle
- import io.github.sceneview.loaders.MaterialLoader
- import io.github.sceneview.loaders.ModelLoader
-+import io.github.sceneview.demo.demos.internal.FeaturePlacementSessionState
-+import io.github.sceneview.demo.demos.internal.onFailure
- import io.github.sceneview.rememberOnGestureListener
- import java.io.File
- 
-@@ -34,6 +36,7 @@ internal fun FeaturePlacementScene(
-     onSessionResumed: (Session) -> Unit = {},
-     onSessionUpdated: (Session, Frame) -> Unit = { _, _ -> },
-     onSessionFailed: (Exception) -> Unit = {},
-+    onSessionFailure: (ARSessionFailure) -> Unit = {},
-     onARCoreAvailability: (ARCoreAvailability?) -> Unit = {},
-     arCoreAvailabilityOverlay: (@Composable BoxScope.(ARCoreAvailabilityState) -> Unit)? =
-         { ARCoreAvailabilityOverlay(it) },
-@@ -42,8 +45,9 @@ internal fun FeaturePlacementScene(
-     content: @Composable ARSceneScope.(AutoPlacementResult?) -> Unit,
- ) {
-     var viewport by remember { mutableStateOf(IntSize.Zero) }
--    var placement by remember(state) { mutableStateOf<AutoPlacementResult?>(null) }
--    var planes by remember { mutableStateOf<List<Plane>>(emptyList()) }
-+    val sessionState = remember(state) { FeaturePlacementSessionState<AutoPlacementResult, Plane>() }
-+    var placement by sessionState::placement
-+    var planes by sessionState::planes
-     val ready by rememberUpdatedState(assetReady)
-     LaunchedEffect(state, assetReady) {
-         if (assetReady) state.requestPlacement() else state.withdrawRequest()
-@@ -55,10 +59,9 @@ internal fun FeaturePlacementScene(
-             placement = null
-         }
-     }
--    val currentPlacement by rememberUpdatedState(placement)
-     DisposableEffect(state) {
-         onDispose {
--            currentPlacement?.anchor?.detach()
-+            sessionState.placement?.anchor?.detach()
-             state.dismiss()
-         }
-     }
-@@ -77,6 +80,10 @@ internal fun FeaturePlacementScene(
-             onSessionResumed(session)
-         },
-         onSessionFailed = { state.cameraFailed(); onSessionFailed(it) },
-+        onSessionFailure = { failure ->
-+            if (sessionState.onFailure(failure)) state.resetPlacement(SystemClock.uptimeMillis())
-+            onSessionFailure(failure)
-+        },
-         onARCoreAvailability = onARCoreAvailability,
-         arCoreAvailabilityOverlay = arCoreAvailabilityOverlay,
-         onTrackingFailureChanged = onTrackingFailureChanged,
-```
-
-**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/ARCloudAnchorDemo.kt` (modified, +22/-9)
-```diff
-@@ -51,7 +51,8 @@ import io.github.sceneview.ar.ARHapticFeedback
- import io.github.sceneview.ar.AutoPlacementModel
- import io.github.sceneview.ar.rememberAutoPlacementState
- import io.github.sceneview.demo.common.placement.FeaturePlacementScene
--import io.github.sceneview.demo.demos.internal.CloudRequestGeneration
-+import io.github.sceneview.demo.demos.internal.CloudAnchorSessionState
-+import io.github.sceneview.demo.demos.internal.onFailure
- import io.github.sceneview.math.Position
- import io.github.sceneview.ar.rememberARCameraStream
- import io.github.sceneview.demo.ARCameraInitScrim
-@@ -172,18 +173,21 @@ fun ARCloudAnchorDemo(onBack: () -> Unit) {
-     ARHapticFeedback(placementState)
-     var show3D by remember { mutableStateOf(false) }
-     var invalidMove by remember { mutableStateOf(false) }
--    var localPlacement by remember { mutableStateOf<AutoPlacementResult?>(null) }
--    var resolvedAnchor by remember { mutableStateOf<Anchor?>(null) }
--    val requestGeneration = remember { CloudRequestGeneration() }
-+    val sessionState = remember {
-+        CloudAnchorSessionState<Session, AutoPlacementResult, Anchor, HostCloudAnchorFuture, ResolveCloudAnchorFuture>()
-+    }
-+    var localPlacement by sessionState::localPlacement
-+    var resolvedAnchor by sessionState::resolvedAnchor
-+    val requestGeneration = sessionState.requests
-     val mainHandler = remember { Handler(Looper.getMainLooper()) }
--    var hostFuture by remember { mutableStateOf<HostCloudAnchorFuture?>(null) }
--    var hostAnchor by remember { mutableStateOf<Anchor?>(null) }
-+    var hostFuture by sessionState::hostFuture
-+    var hostAnchor by sessionState::hostAnchor
-     var isTracking by remember { mutableStateOf(false) }
-     var cameraReady by remember { mutableStateOf(false) }
-     var arCoreAvailability by remember { mutableStateOf<ARCoreAvailability?>(null) }
-     var trackingFailureReason by remember { mutableStateOf<TrackingFailureReason?>(null) }
--    var arSession by remember { mutableStateOf<Session?>(null) }
--    var resolveFuture by remember { mutableStateOf<ResolveCloudAnchorFuture?>(null) }
-+    var arSession by sessionState::arSession
-+    var resolveFuture by sessionState::resolveFuture
- 
-     // ── Flow state ──────────────────────────────────────────────────────────
-     // `rememberSaveable` on the two pieces a rotation must not destroy: a hosted code the
-@@ -373,7 +377,7 @@ fun ARCloudAnchorDemo(onBack: () -> Unit) {
-                 // cancelled Compose coroutine would strand a late native anchor result.
-                 mainHandler.post {
-                     if (!requestGeneration.accepts(generation)) {
--                        anchor?.detach()
-+                        if (requestGeneration.canRelease(generation)) anchor?.detach()
-                     } else {
-                         resolveFuture = null
-                         if (result == Anchor.CloudAnchorState.SUCCESS && anchor != null) {
-@@ -563,6 +567,15 @@ fun ARCloudAnchorDemo(onBack: () -> Unit) {
-                 },
-                 onPlaced = { localPlacement = it },
-                 onSessionCreated = { session -> arSession = session },
-+                onSessionFailure = { failure ->
-+                    if (sessionState.onFailure(failure)) {
-+                        hostTask = CloudAnchorTask.Idle
-+                        resolveTask = CloudAnchorTask.Idle
-+                        roomQuality = RoomQuality.Insufficient
-+                        cameraReady = false
-+                        isTracking = false
-+                    }
-+                },
-                 onARCoreAvailability = { arCoreAvailability = it },
-                 arCoreAvailabilityOverlay = if (forcedScenario != null) null else { { ARCoreAvailabilityOverlay(it) } },
-                 onSessionUpdated = { session: Session, frame: Frame ->
-```
-
-**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/ARDepthOfFieldDemo.kt` (modified, +11/-2)
-```diff
-@@ -42,6 +42,7 @@ import com.google.ar.core.Frame
- import com.google.ar.core.Session
- import com.google.ar.core.TrackingState
- import io.github.sceneview.ar.ARSceneView
-+import io.github.sceneview.demo.demos.internal.PortraitSessionState
- import io.github.sceneview.ar.createARCameraStream
- import io.github.sceneview.ar.postprocessing.ARDepthOfFieldOptions
- import io.github.sceneview.ar.postprocessing.arDepthOfField
-@@ -120,7 +121,8 @@ fun ARDepthOfFieldDemo(onBack: () -> Unit) {
-     val appliedFocus = PortraitFocus.focusDistance(target, subjectDistance) ?: DEFAULT_FOCUS_METRES
- 
-     // Latest Frame for tap-to-focus. The depth API requires the Frame from the same update tick.
--    var latestFrame by remember { mutableStateOf<Frame?>(null) }
-+    val sessionState = remember { PortraitSessionState<Frame>() }
-+    var latestFrame by sessionState::latestFrame
-     // Where the focus ring is drawn, and a counter that restarts its fade on every tap.
-     var ringAt by remember { mutableStateOf<Offset?>(null) }
-     var ringTap by remember { mutableIntStateOf(0) }
-@@ -206,7 +208,14 @@ fun ARDepthOfFieldDemo(onBack: () -> Unit) {
-         Box(modifier = Modifier.fillMaxSize()) {
-             ARSceneView(
-                 lifecycle = rememberHostLifecycle(),
--                onSessionFailure = { arSessionFailed = true },
-+                onSessionFailure = {
-+                    arSessionFailed = true
-+                    // The scaffold removes the scene and closes the session on every failure.
-+                    if (sessionState.onFailure(fatal = true)) {
-+                        subjectDistance = null
-+                        ringAt = null
-+                    }
-+                },
-                 onARCoreAvailability = { arSessionUnavailable = it != null },
-                 modifier = Modifier.fillMaxSize(),
-                 engine = engine,
-```
-
-**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/ARGeospatialAnchorsDemo.kt` (modified, +47/-17)
-```diff
-@@ -40,7 +40,6 @@ import androidx.compose.runtime.Stable
- import androidx.compose.runtime.getValue
- import androidx.compose.runtime.key
- import androidx.compose.runtime.mutableIntStateOf
--import androidx.compose.runtime.mutableStateListOf
- import androidx.compose.runtime.mutableStateOf
- import androidx.compose.runtime.remember
- import androidx.compose.runtime.rememberUpdatedState
-@@ -64,7 +63,6 @@ import dev.romainguy.kotlin.math.Quaternion
- import io.github.sceneview.NodeScope
- import io.github.sceneview.ar.ARCoreAvailability
- import io.github.sceneview.ar.ARSceneView
--import io.github.sceneview.ar.arcore.awaitVpsAvailability
- import io.github.sceneview.ar.rememberARCameraStream
- import io.github.sceneview.ar.rememberHostLifecycle
- import io.github.sceneview.demo.ARCameraInitScrim
-@@ -87,7 +85,9 @@ import io.github.sceneview.demo.common.rememberHasArcoreApiKey
- import io.github.sceneview.demo.common.rememberIsNetworkAvailable
- import io.github.sceneview.demo.common.rememberQaCameraBackdropActive
- import io.github.sceneview.demo.common.toCloudServiceStatus
-+import io.github.sceneview.demo.demos.internal.GeospatialSessionState
- import io.github.sceneview.demo.demos.internal.CloudRequestGeneration
-+import io.github.sceneview.demo.demos.internal.onFailure
- import io.github.sceneview.demo.demos.internal.DropFeedback
- import io.github.sceneview.demo.demos.internal.DropOutcome
- import io.github.sceneview.demo.demos.internal.GeospatialAnchorMode
-@@ -122,6 +122,8 @@ import io.github.sceneview.rememberModelInstance
- import io.github.sceneview.rememberModelLoader
- import io.github.sceneview.sample.rememberUnlitMaterialInstance
- import java.util.Locale
-+import kotlinx.coroutines.suspendCancellableCoroutine
-+import kotlin.coroutines.resume
- import kotlin.coroutines.cancellation.CancellationException
- import kotlin.math.roundToInt
- import kotlin.math.sqrt
-@@ -356,11 +358,6 @@ private class GeospatialDrop(val id: Int, val mode: GeospatialAnchorMode) {
-     }
- }
- 
--/** Plain holder for the latest camera pose: written per frame, read on tap, never drawn. */
--private class CameraPoseHolder {
--    var pose: Pose? = null
--}
--
- @Composable
- private fun GeospatialSection(
-     onBack: () -> Unit,
-@@ -378,7 +375,8 @@ private fun GeospatialSection(
-     // rejected key (#3262).
-     val isNetworkAvailable = rememberIsNetworkAvailable()
- 
--    var arSession by remember { mutableStateOf<Session?>(null) }
-+    val sessionState = remember { GeospatialSessionState<Session, Pose, GeospatialDrop>() }
-+    var arSession by sessionState::arSession
-     var cameraReady by remember { mutableStateOf(false) }
-     // Whether ARCameraInitScrim's card is the one saying "Starting camera…" (#3825).
-     var cameraScrimNarrating by remember { mutableStateOf(true) }
-@@ -393,10 +391,9 @@ private fun GeospatialSection(
-     var sessionError by remember { mutableStateOf<String?>(null) }
-     val qaBackdrop = rememberQaCameraBackdropActive(cameraReady)
- 
--    val cameraPose = remember { CameraPoseHolder() }
--    val drops = remember { mutableStateListOf<GeospatialDrop>() }
-+    val drops = sessionState.drops
-     var nextId by remember { mutableStateOf(0) }
--    val requestGeneration = remember { CloudRequestGeneration() }
-+    val requestGeneration = sessionState.requests
-     val mainHandler = remember { Handler(Looper.getMainLooper()) }
- 
-     // Street View (VPS) coverage where the user stands, re-asked every ~100 m. The helper
-@@ -408,7 +405,7 @@ private fun GeospatialSection(
-         val here = latestFix ?: return@LaunchedEffect
-         if (vps == VpsCoverage.Unknown) vps = VpsCoverage.Checking
-         vps = try {
--            when (session.awaitVpsAvailability(here.latitude, here.longitude)) {
-+            when (session.awaitDemoVpsAvailability(here.latitude, here.longitude, requestGeneration, mainHandler)) {
-                 VpsAvailability.AVAILABLE -> VpsCoverage.Available
-                 VpsAvailability.UNAVAILABLE -> VpsCoverage.Unavailable
-                 else -> VpsCoverage.Error
-@@ -460,8 +457,10 @@ private fun GeospatialSection(
-         rooftop: RooftopAnchorNodeImpl?,
-     ) {
-         if (!requestGeneration.accepts(generation) || drop !in drops) {
--            terrain?.destroy()
--            rooftop?.destroy()
-+            if (requestGeneration.canRelease(generation)) {
-+                terrain?.destroy()
-+                rooftop?.destroy()
-+            }
-             return
-         }
-         drop.future = null
-@@ -480,7 +479,7 @@ private fun GeospatialSection(
-     val onDrop: () -> Unit = onDrop@{
-         val session = arSession ?: return@onDrop
-         val earth = session.earth ?: return@onDrop
--        val camera = cameraPose.pose ?: return@onDrop
-+        val camera = sessionState.cameraPose ?: return@onDrop
-         if (earth.trackingState != TrackingState.TRACKING) return@onDrop
-         val target = dropPoseAhead(
-             cameraX = camera.tx(),
-@@ -645,12 +644,25 @@ private fun GeospatialSection(
-               
-```
-
-**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/ARImageDemo.kt` (modified, +28/-5)
-```diff
-@@ -25,7 +25,6 @@ import androidx.compose.material3.Surface
- import androidx.compose.material3.Text
- import androidx.compose.runtime.Composable
- import androidx.compose.runtime.getValue
--import androidx.compose.runtime.mutableStateListOf
- import androidx.compose.runtime.mutableStateOf
- import androidx.compose.runtime.remember
- import androidx.compose.runtime.rememberCoroutineScope
-@@ -44,6 +43,7 @@ import com.google.ar.core.TrackingFailureReason
- import com.google.ar.core.TrackingState
- import io.github.sceneview.ar.ARCoreAvailability
- import io.github.sceneview.ar.ARSceneView
-+import io.github.sceneview.demo.demos.internal.ImageSessionState
- import io.github.sceneview.ar.rememberARCameraStream
- import io.github.sceneview.ar.rememberHostLifecycle
- import io.github.sceneview.demo.common.QaCameraBackdrop
-@@ -73,6 +73,7 @@ import io.github.sceneview.rememberMaterialLoader
- import io.github.sceneview.rememberModelLoader
- import kotlinx.coroutines.CoroutineStart
- import kotlinx.coroutines.Dispatchers
-+import kotlinx.coroutines.Job
- import kotlinx.coroutines.launch
- import kotlinx.coroutines.withContext
- 
-@@ -117,7 +118,10 @@ fun ARImageDemo(onBack: () -> Unit) {
-     // image the user captures on-device via the "Capture this view" button (#1553).
-     val runtimeDatabase = rememberRuntimeAugmentedImageDatabase()
- 
--    val detectedImages = remember { mutableStateListOf<AugmentedImage>() }
-+    val sessionState = remember { ImageSessionState<AugmentedImage>() }
-+    val detectedImages = sessionState.detectedImages
-+    var captureJob by remember { mutableStateOf<Job?>(null) }
-+    var registrationJob by remember { mutableStateOf<Job?>(null) }
-     var isTracking by remember { mutableStateOf(false) }
-     // Cover the jet-black ARSceneView surface until ARCore delivers its first camera
-     // frame, so the ~1–3 s warm-up on entry doesn't read as a frozen screen (#2484).
-@@ -322,7 +326,21 @@ fun ARImageDemo(onBack: () -> Unit) {
-             if (qaBackdrop) QaCameraBackdrop(seed = "ar-image")
-             ARSceneView(
-                 lifecycle = rememberHostLifecycle(),
--                onSessionFailure = { arSessionFailed = true },
-+                onSessionFailure = {
-+                    arSessionFailed = true
-+                    // The scaffold removes the scene and closes the session on every failure.
-+                    if (sessionState.onFailure(fatal = true)) {
-+                        imageCount = 0
-+                        cameraReady = false
-+                        isTracking = false
-+                        captureRequested = false
-+                        isCapturing = false
-+                        captureStatus = null
-+                        runtimeDatabase.unbind()
-+                        captureJob?.cancel()
-+                        registrationJob?.cancel()
-+                    }
-+                },
-                 modifier = Modifier.fillMaxSize(),
-                 engine = engine,
-                 modelLoader = modelLoader,
-@@ -344,7 +362,7 @@ fun ARImageDemo(onBack: () -> Unit) {
-                     // Bind the live session so RuntimeAugmentedImageDatabase.addImage can
-                     // rebuild + reconfigure on its own. Seed the pre-bundled reference image.
-                     runtimeDatabase.bind(session)
--                    scope.launch {
-+                    registrationJob = scope.launch {
-                         runtimeDatabase.addImage("reference", referenceBitmap, 0.15f)
-                     }
-                 },
-@@ -361,12 +379,17 @@ fun ARImageDemo(onBack: () -> Unit) {
-                         // withContext). `null` (warm-up, image pool full) lands on the "try
-                         // again" message.
-                         val image = frame.cameraImage()
--                        scope.launch(start = CoroutineStart.ATOMIC) {
-+                        val generation = sessionState.generation
-+                        captureJob = scope.launch(start = CoroutineStart.ATOMIC) {
-                             val photo = image?.use { img ->
-                                 withContext(Dispatchers.Default) {
-                                     img.toArgbBitmap(rotationDegrees = 0)
-                                 }
-                             }
-+                            if (sessionState.generation != generation) {
-+                                photo?.recycle()
-+                                return@launch
-+                            }
-                             val (message, tone) = if (photo == null) {
-                                 "Camera image not ready yet — try again" to
-                                     DemoStatusTone.Guidance
-```
-
-**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/ARRecordPlaybackDemo.kt` (modified, +27/-5)
-```diff
-@@ -39,6 +39,7 @@ import com.google.ar.core.TrackingState
- import io.github.sceneview.ar.ARCoreAvailability
- import io.github.sceneview.ar.ARCoreAvailabilityOverlay
- import io.github.sceneview.ar.ARSceneView
-+import io.github.sceneview.demo.demos.internal.RecordingSessionState
- import io.github.sceneview.ar.recording.ARRecordInterpretation
- import io.github.sceneview.ar.recording.ARRecordInterpreter
- import io.github.sceneview.ar.recording.ARRecorder
-@@ -209,6 +210,7 @@ fun ARRecordPlaybackDemo(onBack: () -> Unit) {
-     }
- 
-     fun startRecording() {
-+        if (take.arSession == null) return
-         take.placementTrack = take.recorder.addTrack(PlacementTrack.TRACK_ID, PlacementTrack.MIME_TYPE)
-         take.interpreter.reset()
-         take.writeSchedule.reset()
-@@ -550,8 +552,7 @@ private fun TakeScene(
-         if (qaBackdrop) QaCameraBackdrop(seed = QA_SEED)
-         ARSceneView(
-             lifecycle = rememberHostLifecycle(),
--            onSessionFailure = { take.sessionFailed = true },
--            onSessionResumed = { take.sessionFailed = false },
-+            onSessionFailure = { take.onSessionFailure() },
-             modifier = Modifier.fillMaxSize(),
-             engine = engine,
-             modelLoader = modelLoader,
-@@ -626,9 +627,10 @@ private class TakeState(
-     var trackingFailureReason by mutableStateOf<TrackingFailureReason?>(null)
- 
-     /** Published for `rememberARPlaybackStatus`, which has no other handle on the session. */
--    var arSession by mutableStateOf<Session?>(null)
-+    private val sessionState = RecordingSessionState<Session, Frame, Anchor>()
-+    var arSession by sessionState::arSession
- 
--    val anchors = mutableStateListOf<Anchor>()
-+    val anchors = sessionState.anchors
-     var restoredCount by mutableIntStateOf(0)
-     var replayElapsedMillis by mutableLongStateOf(0L)
- 
-@@ -638,7 +640,7 @@ private class TakeState(
-     var placementTrack: ARRecorder.TrackHandle? = null
-     val writeSchedule = PlacementWriteSchedule()
- 
--    private var latestFrame: Frame? = null
-+    private var latestFrame by sessionState::latestFrame
-     private var firstFrameNanos = 0L
-     private val frameGate = NewFrameGate()
-     private val replayQueue = PlacementReplayQueue()
-@@ -647,6 +649,26 @@ private class TakeState(
-     private val packet: ByteBuffer =
-         ByteBuffer.allocateDirect(PlacementTrack.PACKET_BYTES).order(ByteOrder.LITTLE_ENDIAN)
- 
-+    fun onSessionFailure() {
-+        sessionFailed = true
-+        // The scaffold removes the scene and closes the session on every failure.
-+        if (sessionState.onFailure(fatal = true)) {
-+            // Detach first: stop then resets the recorder without touching the closed session.
-+            recorder.detach()
-+            recorder.stop()
-+            interpreter.reset()
-+            placementTrack = null
-+            writeSchedule.reset()
-+            replayQueue.reset()
-+            frameGate.reset()
-+            firstFrameNanos = 0L
-+            replayElapsedMillis = 0L
-+            restoredCount = 0
-+            cameraReady = false
-+            isTracking = false
-+        }
-+    }
-+
-     /** `onSessionUpdated` — runs on the thread that owns [frame]. */
-     fun onFrame(session: Session, frame: Frame, replaying: Boolean) {
-         cameraReady = true
-```
-
----
-
-### Incident Patch 3: `85852640` (2026-11-20)
-**Commit Message**: fix(demo): draw Measure's doors and windows on the plan, its walls list and its shares (#4783) (#5194)
-
-* fix(demo): draw Measure's doors and windows on the plan, its walls list and its shares (#4783)
-
-Measure's Plan page handed RerunPlanView the room's survey only: the doors
-and windows marked on its walls, and the net wall area, reached the card
-under the plan and nothing else.
-
-RerunPlanView now takes a PlanOpenings (openings in the plan's frame plus
-the net wall area; PlanOpenings.None by default, so 3D Scan is unchanged):
-- RoomPlanLayout breaks each wall between an opening's jambs, to scale and
-  at its position along the wall; a window gets its frame, a door (bottom
-  within 15 cm of the floor) its leaf and swing into the room.
-- SurveyReport.wallRows lists each opening under its wall and the net wall
-  area last; SurveyReport.text adds a line per opening and the net area.
-- RoomPlanPdf draws and lists them; its page drawing is split out (draw)
-  so a test can read the first page back. The DXF share gets them too.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* changelog: format the #4783 fragment as a bullet
-
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-* fix
-
-**File**: `changelog.d/4783-measure-plan-openings.md` (added, +2/-0)
-```diff
-@@ -0,0 +1,2 @@
-+<!-- category: Fixed -->
-+- **Demo app: Measure's plan shows the doors and windows you marked.** Each one is drawn on its wall, listed under that wall with the net wall area, and carried into the PDF, DXF and text shares (#4783).
-```
-
-**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/ARMeasureDemo.kt` (modified, +12/-1)
-```diff
-@@ -162,6 +162,7 @@ import io.github.sceneview.demo.demos.internal.MeasurePlaneKind
- import io.github.sceneview.demo.demos.internal.MeasurePlanOpening
- import io.github.sceneview.demo.demos.internal.measurePlanCard
- import io.github.sceneview.demo.demos.internal.measurePlanOpenings
-+import io.github.sceneview.demo.demos.internal.measurePlanOpeningsOnPlan
- import io.github.sceneview.demo.demos.internal.measurePlanRoom
- import io.github.sceneview.demo.demos.internal.MeasurePlanTap
- import io.github.sceneview.demo.demos.internal.measurePlanTap
-@@ -1011,6 +1012,8 @@ internal class MeasurePlanPage(
-  * The whole page reads in [units], the Measure screen's: the plan, its PDF and text shares, and,
-  * with doors or windows marked, the card under the plan that names each one by the wall the plan
-  * letters it on and reads the walls' net area ([measurePlanCard]). One page, one unit system.
-+ * The doors and windows are drawn on the plan's walls too, listed under each wall with the net
-+ * area after them, and carried by the PDF, DXF and text shares (#4783).
-  */
- @Composable
- internal fun MeasurePlanOverlay(
-@@ -1053,7 +1056,15 @@ internal fun MeasurePlanOverlay(
-             },
-             bottomOverlayReservesScene = true,
-         ) {
--            RerunPlanView(survey = page.survey, title = title, date = date, units = units, locale = locale)
-+            // The doors and windows, and the walls' net area, reach the plan, its walls and its shares, not the card alone (#4783).
-+            RerunPlanView(
-+                survey = page.survey,
-+                title = title,
-+                date = date,
-+                units = units,
-+                locale = locale,
-+                openings = measurePlanOpeningsOnPlan(page.openings, net),
-+            )
-         }
-     }
- }
-```
-
-**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/RerunPlanDxf.kt` (modified, +8/-2)
-```diff
-@@ -11,11 +11,17 @@ import io.github.sceneview.demo.demos.internal.RoomSurvey
-  * handed to the share sheet alone, typed [DXF_MIME_TYPE]; `false` when the survey has no plan to
-  * draw or the drawing could not be written. The drawing is named after the PDF of the same plan.
-  */
--internal suspend fun sharePlanDxf(context: Context, survey: RoomSurvey, words: PlanWords, title: String): Boolean {
-+internal suspend fun sharePlanDxf(
-+    context: Context,
-+    survey: RoomSurvey,
-+    words: PlanWords,
-+    title: String,
-+    openings: List<RoomPlanDxf.Opening> = emptyList(),
-+): Boolean {
-     if (!survey.hasPlan) return false
-     val drawing = planDxfWords(context, survey, words, title)
-     val name = words.pdfFile.format(title).substringBeforeLast('.') + DXF_EXTENSION
--    val uri = writePlanShare(context, name) { RoomPlanDxf.write(it, survey, words.survey, drawing) } ?: return false
-+    val uri = writePlanShare(context, name) { RoomPlanDxf.write(it, survey, words.survey, drawing, openings) } ?: return false
-     sharePlanFile(context, uri, DXF_MIME_TYPE, title)
-     return true
- }
-```
-
-**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/RerunPlanUi.kt` (modified, +172/-49)
-```diff
-@@ -78,6 +78,9 @@ import io.github.sceneview.demo.demos.internal.DepthBackProjection
- import io.github.sceneview.demo.demos.internal.MeasureUnitSystem
- import io.github.sceneview.demo.demos.internal.PlanLine
- import io.github.sceneview.demo.demos.internal.PlanMetrics
-+import io.github.sceneview.demo.demos.internal.PlanOpening
-+import io.github.sceneview.demo.demos.internal.PlanOpenings
-+import io.github.sceneview.demo.demos.internal.RoomPlanDxf
- import io.github.sceneview.demo.demos.internal.PlanPage
- import io.github.sceneview.demo.demos.internal.PlanStroke
- import io.github.sceneview.demo.demos.internal.PlanTextRole
-@@ -197,6 +200,9 @@ private fun planWords(units: MeasureUnitSystem, locale: Locale): PlanWords = Pla
-         ),
-         units = units,
-         locale = locale,
-+        door = stringResource(R.string.demo_ar_rerun_plan_door),
-+        window = stringResource(R.string.demo_ar_rerun_plan_window),
-+        netWallArea = stringResource(R.string.demo_ar_measure_label_net_walls),
-     ),
-     surveyTitle = stringResource(R.string.demo_ar_rerun_plan_survey_title),
-     emptyTitle = stringResource(R.string.demo_ar_rerun_plan_empty_title),
-@@ -273,7 +279,11 @@ internal fun RerunPlanScreen(media: RerunReplayMedia?, title: String, date: Stri
-  * the page starts under them and is clipped there, so nothing scrolls behind a pill.
-  *
-  * @param zones the parts of the scan still to scan, in the scan's frame, laid on the plan (#4735).
-+ * @param openings the doors and windows marked on the plan's walls and the walls' net area (#4783):
-+ *   drawn on the plan, listed under their walls, and carried by the PDF, DXF and text shares. A
-+ *   3D Scan has none.
-  */
-+@Suppress("LongParameterList") // a survey, its heading, its units, and what is laid on its plan
- @Composable
- internal fun RerunPlanView(
-     survey: RoomSurvey?,
-@@ -283,6 +293,7 @@ internal fun RerunPlanView(
-     units: MeasureUnitSystem = SurveyFormat.units(LocalLocale.current.platformLocale),
-     locale: Locale = LocalLocale.current.platformLocale,
-     zones: List<RescanZone> = emptyList(),
-+    openings: PlanOpenings = PlanOpenings.None,
- ) {
-     val words = rememberPlanWords(units, locale)
-     val context = LocalContext.current
-@@ -326,9 +337,9 @@ internal fun RerunPlanView(
-                 }
-             }
-         }
--        val sharePdf = { shareFile { sharePlanPdf(context, survey, words, title, date) } }
--        val shareDxf = { shareFile { sharePlanDxf(context, survey, words, title) } }
--        val shareText = { sharePlanText(context, SurveyReport.text(survey, words.survey, title, date), title) }
-+        val sharePdf = { shareFile { sharePlanPdf(context, survey, words, title, date, openings) } }
-+        val shareDxf = { shareFile { sharePlanDxf(context, survey, words, title, openings.openings.map(::dxfOpening)) } }
-+        val shareText = { sharePlanText(context, SurveyReport.text(survey, words.survey, title, date, openings), title) }
-         val dock = maxOf(SETTINGS_FAB_RESERVED_SPACE, LocalDemoBottomChromeCover.current) + Space.md
-         // Under the header: a scrolling column clips to its own box, which starts below the pills.
-         val frame = Modifier
-@@ -344,10 +355,13 @@ internal fun RerunPlanView(
-             Row(modifier = frame, horizontalArrangement = Arrangement.spacedBy(Space.md)) {
-                 BoxWithConstraints(Modifier.weight(PLAN_SHARE).fillMaxHeight()) {
-                     if (maxHeight - dock >= maxWidth / MAX_PLAN_RATIO) {
--                        PlanCard(survey, words, Modifier.fillMaxHeight().padding(bottom = dock), fill = true, zones = zones)
-+                        PlanCard(
-+                            survey, words, Modifier.fillMaxHeight().padding(bottom = dock),
-+                            fill = true, zones = zones, openings = openings,
-+                        )
-                     } else {
-                         Column(Modifier.verticalScroll(rememberScrollState()).padding(bottom = dock)) {
--                            PlanCard(survey, words, hint = words.scrollHint, zones = zones)
-+                            PlanCard(survey, words, hint = words.scrollHint, zones = zones, openings = openings)
-                         }
-                     }
-                 }
-@@ -358,7 +372,7 @@ internal fun RerunPlanView(
-                         .padding(bottom = dock),
-                     verticalArrangement = Arrangement.spacedBy(Space.md),
-                 ) {
--                    SurveyDetails(survey, words, title, date, PlanShares(sharePdf, shareDxf, shareText))
-+                    SurveyDetails(survey, words, title, date, PlanShares(sharePdf, shareDxf, shareText), openings)
-                 }
-             }
-         } else {
-@@ -368,8 +382,8 @@ internal fun RerunPlanView(
-                     modifier = Modifier.widthIn(max = RerunPageMaxWidth).fillMaxWidth(),
-                     verticalArrangement = Arrangement.spacedBy(Space.md),
-                 ) {
--                    if (s
-```
-
-**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/internal/MeasurePlan.kt` (modified, +19/-4)
-```diff
-@@ -94,6 +94,17 @@ fun measurePlanOpenings(outline: List<Position>, openings: List<MeasureOpening>)
-         .map { it.second }
- }
- 
+-/** Polling backs off after the diagnostic, without authorizing a blocking release. */
 +/**
-+ * What a traced room's plan shows besides its survey (#4783): its [openings] on the plan's walls
-+ * and the walls' [netWallArea], for the drawing, the walls' table and the PDF and text shares.
++ * Polling backs off after the diagnostic, without authorizing a release behind a busy fence. Each
++ * poll may then wait [FRESH_FENCE_CONFIRM_BUDGET_MS] (per wake-up) for a fence it has just created,
++ * and releases at most one entry: pending entries drain at about two a second.
 + */
-+fun measurePlanOpeningsOnPlan(openings: List<MeasurePlanOpening>, netWallArea: Float?): PlanOpenings = PlanOpenings(
-+    openings = openings.map {
-+        PlanOpening(wall = it.opening.wall, from = it.opening.from, to = it.opening.to, bottom = it.opening.bottom, top = it.opening.top)
-+    },
-+    netWallArea = netWallArea,
-+)
-+
- /** One door or window on the card under a traced room's plan: the plan's [wall] letter, its [width] × [height]. */
- data class MeasurePlanCardOpening(val wall: String, val width: String, val height: String)
+ internal const val BACKEND_IDLE_BACKOFF_MS = 1_000L
  
-@@ -117,14 +128,18 @@ fun measurePlanCard(
-     openings = openings.map {
-         MeasurePlanCardOpening(
-             wall = it.wall,
--            width = planCardLength(it.opening.width, units, locale),
--            height = planCardLength(it.opening.height, units, locale),
-+            width = measurePlanLength(it.opening.width, units, locale),
-+            height = measurePlanLength(it.opening.height, units, locale),
-         )
+ /**
+@@ -72,7 +76,8 @@ internal class BackendIdleTeardowns(
+ 
+     /** Shared by fence-dependent releases and stalled model loads, at most once per poll. */
+     fun isBackendBusy(): Boolean = backendBusy ?: checkNotNull(probe)
+-        .isBusy(requireFresh = !retiring).also { backendBusy = it }
++        // The bounded confirmation runs from the scheduled poll only, never from a registration.
++        .isBusy(requireFresh = !retiring, mayWait = polling).also { backendBusy = it }
+ 
+     private fun invalidateProbe() {
+         probe?.release()
+```
+
+**File**: `sceneview/src/main/java/io/github/sceneview/Engine.kt` (modified, +48/-14)
+```diff
+@@ -147,9 +147,12 @@ internal fun Engine.destroyWhenBackendIdle(onDestroyed: () -> Unit = {}) {
+  * When the backend is already idle — the usual case — the renderer is destroyed one poll later,
+  * once that fence has made the round trip to the backend, exactly as [safeDestroyRenderer] would.
+  * On a shared engine, polling less often than every 48 ms keeps the destroy pending unless a
+- * replacement fence is already reached in the same poll. Once the engine is retiring,
+- * Engine.destroy reclaims the renderer. Five seconds triggers a warning and slower polls,
+- * never permission to destroy behind a busy fence.
++ * replacement fence is already reached in the same poll. Five seconds triggers a warning and
++ * slower polls, never permission to destroy behind a busy fence: from then on, the fence a poll
++ * arms may be waited for [FRESH_FENCE_CONFIRM_BUDGET_MS] per wake-up (several wake-ups when earlier
++ * fences signal meanwhile), and the renderer is destroyed only if it is reached, the backend idle
++ * at that instant (#4969). Pending releases then drain one per poll, about two a second. Once the
++ * engine is retiring, Engine.destroy reclaims the renderer.
+  *
+  * `FRenderer::terminate` then joins the frame-info job thread, parked in a GPU fence wait unless
+  * the engine was built without the GPU frame-complete metric — see [createEngine].
+@@ -196,8 +199,10 @@ internal fun Engine.isBackendBusy(): Boolean = teardowns().isBackendBusy()
+  * `reclaimWithEngine` are left to Engine.destroy. See [BackendIdleTeardowns].
+  *
+  * One poll and probe are shared per engine. After five seconds polling backs off, with occasional
+- * short confirmation polls for freshness. There is no timeout-triggered destruction. Neither a
+- * reached nor a fresh fence bounds native destruction or command submission time.
++ * short confirmation polls for freshness, and each poll may wait for a fence it has just created,
++ * [FRESH_FENCE_CONFIRM_BUDGET_MS] per wake-up of Filament's fence wait. There is no
++ * timeout-triggered destruction. Neither a reached nor a fresh fence bounds native destruction or command
++ * submission time.
+  *
+  * [onIdle] receives `deferred = false` if it runs before this call returns. [onEngineGone] runs
+  * instead after a raw engine destruction, without touching the fence. [safeDestroy] explicitly
+@@ -219,23 +224,52 @@ internal fun Engine.whenBackendIdle(
+     onIdle = onIdle,
+ )
+ 
+-/** Zero-timeout fence polling; FLUSH itself can still block on a full command stream. */
++/**
++ * Zero-timeout fence polling, then after five seconds one bounded wait per poll:
++ * [FRESH_FENCE_CONFIRM_BUDGET_MS] per wake-up, not wall-clock, since Filament v1.77.3's
++ * `FEngine::waitFence` restarts its `wait_for` each time an earlier fence signals. Each wait is
++ * timed and logged once above [FRESH_FENCE_CONFIRM_LOG_ABOVE_MS]. FLUSH itself can still block on
++ * a full command stream.
++ */
+ private fun Engine.freshFenceProbe(): FreshFenceProbe<Fence> = FreshFenceProbe(
+     createFence = { runCatching { createFence() }.getOrNull() },
+-    isReached = { fence ->
+-        when (runCatching { fence.wait(Fence.Mode.FLUSH, 0L) }.getOrNull()) {
+-            Fence.FenceStatus.CONDITION_SATISFIED -> true
+-            Fence.FenceStatus.TIMEOUT_EXPIRED -> false
+-            else -> null // ERROR (or a failed wait) must re-arm, not poll a broken fence forever.
+-        }
+-    },
++    isReached = { fence -> fence.reachedWithin(0L) },
+     destroyFence = { destroyFence(it) },
+     now = SystemClock::uptimeMillis,
+     onStillBusy = {
+-        Log.w("Sceneview", "Backend teardown still pending after 5 s; backing off polls (#4969)")
++        Log.w(
++            "Sceneview",
++            "Backend teardown still pending after 5 s; backing off polls, each confirmed by a " +
++                "wait of $FRESH_FENCE_CONFIRM_BUDGET_MS ms per wake-up (#4969)",
++        )
++    },
++    awaitReached = { fence ->
++        val startedAt = System.nanoTime()
++        fence.reachedWithin(FRESH_FENCE_CONFIRM_BUDGET_MS * NANOS_PER_MS).also {
++            val waitedMs = (System.nanoTime() - startedAt) / NANOS_PER_MS
++            if (waitedMs > FRESH_FENCE_CONFIRM_LOG_ABOVE_MS && !slowConfirmationLogged) {
++                slowConfirmationLogged = true
++                Log.w("Sceneview", "Bounded teardown fence wait took $waitedMs ms; logged once (#4969)")
++            }
++        }
      },
  )
  
--/** A length on the plan's card: in metres below one too, `0.90 m`; feet and inches as the Measure screen writes them. */
--private fun planCardLength(metres: Float, units: MeasureUnitSystem, locale: Locale): String = when (units) {
-+/**
-+ * A door's or a window's side on a traced room's plan page, on its card and in its walls' table
-+ * alike: in metres to the centimetre, below one too, `0.90 m`; feet and inches as the Measure
-+ * screen writes them.
-+ */
-+fun measurePlanLength(metres: Float, units: MeasureUnitSystem, locale: Locale): String = when (units) {
-     MeasureUnitSystem.Metric -> String.format(locale, "%.2f m", (metres.coerceAtLeast(0f) * CENTIMETRES_PER_METRE).roundToInt() / CENTIMETRES_PER_METRE)
-     MeasureUnitSystem.Imperial -> formatMeasureLength(metres, units, locale)
- }
++private const val NANOS_PER_MS = 1_000_000L
++
++/** A bounded confirmation longer than this took several fence wake-ups: logged once. */
++private const val FRESH_FENCE_CONFIRM_LOG_ABOVE_MS = 16L
++
++/** Main thread only, like every probe call. */
++private var slowConfirmationLogged = false
++
++private fun Fence.reachedWithin(timeoutNanos: Long): Boolean? =
++    when (runCatching { wait(Fence.Mode.FLUSH, timeoutNanos) }.getOrNull()) {
++        Fence.FenceStatus.CONDITION_SATISFIED -> true
++        Fence.FenceStatus.TIMEOUT_EXPIRED -> false
++        else -> null // ERROR 
 ```
 
-**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/internal/RoomPlanDxf.kt` (modified, +9/-2)
+**File**: `sceneview/src/main/java/io/github/sceneview/FreshFenceProbe.kt` (modified, +51/-11)
 ```diff
-@@ -8,6 +8,7 @@ import kotlin.math.cos
- import kotlin.math.hypot
- import kotlin.math.max
- import kotlin.math.min
-+import kotlin.math.roundToInt
- import kotlin.math.sin
- import kotlin.math.sqrt
+@@ -12,9 +12,36 @@ package io.github.sceneview
+  */
+ internal const val FRESH_FENCE_MAX_AGE_MS = 3 * BACKEND_IDLE_POLL_MS
  
-@@ -92,10 +93,15 @@ object RoomPlanDxf {
-         out.write(drawing.file().toByteArray(Charsets.US_ASCII))
+-/** Diagnostic threshold only: elapsed time never makes a stale fence safe. */
++/**
++ * After this delay a poll may also confirm with a bounded wait. Elapsed time never makes a
++ * stale fence safe: it only lets the probe ask, with a fence created in that poll, whether the
++ * backend is idle right now.
++ */
+ internal const val FRESH_FENCE_WARN_AFTER_MS = 5_000L
+ 
++/**
++ * Timeout of the one bounded fence check a poll makes after [FRESH_FENCE_WARN_AFTER_MS] (#4969).
++ *
++ * A fence created in the poll and reached within this budget covers everything queued so far, so
++ * a release run right after it in the same message waits for nothing the main thread queued
++ * since. That is what the 48 ms freshness window approximates, and what a main thread polling
++ * less often than every 48 ms never satisfies: without it, a shared engine on a low-end device
++ * kept its pending releases until Engine.destroy. A backend still busy (a new screen's shaders)
++ * misses the budget, and the release stays pending.
++ *
++ * The bound is per wake-up, not wall-clock. Filament v1.77.3's `FEngine::waitFence` loops on
++ * `wait_for(timeout)` while the fence is unsignalled, on a condition variable shared by every
++ * fence: each earlier fence signalled meanwhile restarts the 4 ms. The worst case is about
++ * 4 ms × (fences queued before this one + 1). SceneView keeps one probe fence per engine, so that
++ * count is usually small. `Engine.kt` times each wait and logs once if one exceeds 16 ms.
++ *
++ * Cost and rate: one check per poll, only while a release is pending past the warning. The poll
++ * then alternates a 1 s back-off and a short confirmation, so at most two checks, and at most two
++ * releases, about every second. Each release invalidates the probe, so pending releases drain
++ * one per poll: 20 renderers take about ten seconds on a 15 fps main thread.
++ */
++internal const val FRESH_FENCE_CONFIRM_BUDGET_MS = 4L
++
+ /** Elapsed waiting time never grants readiness; retirement after producers stop drops freshness. */
+ internal fun fenceAllowsTeardown(
+     reached: Boolean?,
+@@ -24,7 +51,8 @@ internal fun fenceAllowsTeardown(
+ ): Boolean = reached == true && (!requireFresh || ageMs in 0..maxFreshAgeMs)
+ 
+ /**
+- * Polls the backend backlog on the engine's thread, without waiting for a fence.
++ * Polls the backend backlog on the engine's thread. Fences are checked without waiting, except
++ * the bounded [awaitReached] check described below.
+  *
+  * A dispose-time fence covers commands queued before it. `destroyRenderer` and `asyncCancelLoad`
+  * wait for everything queued when they run, including a new screen's shaders on a shared engine.
+@@ -38,8 +66,14 @@ internal fun fenceAllowsTeardown(
+  * releases cover that teardown's commands too. Other conditions, such as decoders, still apply.
+  *
+  * After [warnAfterMs], counted from the first poll rather than construction (a load may delay
+- * polling), [onStillBusy] runs once. This never authorizes destruction. The owner backs off,
+- * keeping occasional short confirmation polls for shared engines to observe a fresh fence.
++ * polling), [onStillBusy] runs once. This never authorizes destruction behind a stale fence. The
++ * owner backs off, keeping occasional short confirmation polls for shared engines to observe a
++ * fresh fence. From then on a fence armed by the call itself (the first after an invalidation,
++ * or the replacement of a stale one) is checked with [awaitReached], a wait bounded by the caller
++ * ([FRESH_FENCE_CONFIRM_BUDGET_MS] per wake-up on an engine), instead of the zero-timeout
++ * [isReached]: reached within it, the backend is idle right now, whatever the main thread's
++ * cadence. Only a caller passing `mayWait` gets it: the owner does so from its scheduled poll,
++ * never from a registration. Without [awaitReached] the probe never waits.
+  * Missing fences remain busy; an errored fence ([isReached] returns null) is replaced.
+  *
+  * Filament-free for JVM tests. The owner must release the probe before destroying its engine,
+@@ -53,6 +87,7 @@ internal class FreshFenceProbe<F : Any>(
+     private val maxFreshAgeMs: Long = FRESH_FENCE_MAX_AGE_MS,
+     private val warnAfterMs: Long = FRESH_FENCE_WARN_AFTER_MS,
+     private val onStillBusy: () -> Unit = {},
++    private val awaitReached: ((F) -> Boolean?)? = null,
+ ) {
+     private var fence: F? = null
+     private var armedAt = 0L
+@@ -63,27 +98,32 @@ internal class FreshFenceProbe<F : Any>(
+     /**
+      * `true` while the backend has not recently caught up with what is queued on it.
+      * Failure to create a fence is not evidence that the backend is idle. Fence waits use a zero
+-     * timeout, but submitting commands can still block in Filament.
++     * timeout, or [awaitReached]'s bound after the warning; submitting commands can still block
++     * in Filament.
+      */
+     fun isBus
+```
+
+**File**: `sceneview/src/test/java/io/github/sceneview/BackendTeardownPolicyTest.kt` (modified, +80/-0)
+```diff
+@@ -67,6 +67,86 @@ class BackendTeardownPolicyTest {
+         }
      }
  
--    /** `Door 0.90 × 2.10`, `Window 1.20 × 1.20, sill 0.90`: the size the plan knows, in its units. */
 +    /**
-+     * `Door 0.93 × 2.04`, `Window 1.20 × 1.20, sill 0.90`: the size the plan knows, in its units —
-+     * to the centimetre, as the plan page's card, walls list, PDF and text write a door or a window
-+     * (#4783), not in the 5 cm steps of a wall's dimension; to the inch in feet and inches.
++     * #4969: an engine that outlives its screens (one per activity, or a home hero hoisted above
++     * navigation) on a main thread too slow for the 48 ms window. Every screen's renderer used to
++     * stay pending until Engine.destroy; the bounded confirmation releases each on the live engine.
 +     */
-     private fun label(opening: Opening, words: Words, units: MeasureUnitSystem): String {
-         fun length(metres: Float) = when (units) {
--            MeasureUnitSystem.Metric -> SurveyFormat.length(metres)
-+            MeasureUnitSystem.Metric ->
-+                "%.2f".format(Locale.US, (metres.coerceAtLeast(0f) * CENTIMETRES_PER_METRE).roundToInt() / CENTIMETRES_PER_METRE)
-             MeasureUnitSystem.Imperial -> SurveyFormat.feetAndInchesMark(metres)
-         }
-         val size = length(opening.width) + (opening.height?.let { " × " + length(it) } ?: "")
-@@ -777,6 +783,7 @@ object RoomPlanDxf {
- 
-     // Sizes and distances on the drawing, millimetres: a 1:50 print reads its dimensions at 3 mm.
-     private const val MM = 1000.0
-+    private const val CENTIMETRES_PER_METRE = 100f
-     private const val MM_PER_INCH = 25.4
-     private const val JOIN = 1.0
-     private const val DIMENSION_OFFSET = 600.0
-```
-
-**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/internal/RoomPlanLayout.kt` (modified, +173/-6)
-```diff
-@@ -3,10 +3,12 @@ package io.github.sceneview.demo.demos.internal
- import java.util.Locale
- import kotlin.math.abs
- import kotlin.math.ceil
-+import kotlin.math.cos
- import kotlin.math.hypot
- import kotlin.math.max
- import kotlin.math.min
- import kotlin.math.roundToInt
-+import kotlin.math.sin
- 
- /*
-  * A room survey as a dimensioned floor plan (#4540): the outline to scale, each wall's length on
-@@ -123,8 +125,11 @@ object SurveyFormat {
-     private const val EPSILON = 1e-3f
- }
- 
--/** What a line of the plan is, so each surface paints it its own way. */
--enum class PlanStroke { Wall, WallUnseen, Dimension, Extension, Tick, Scale }
-+/**
-+ * What a line of the plan is, so each surface paints it its own way. [Opening] is a door's or a
-+ * window's jambs, a window's frame and a door's leaf; [Swing] the arc a door sweeps (#4783).
-+ */
-+enum class PlanStroke { Wall, WallUnseen, Dimension, Extension, Tick, Scale, Opening, Swing }
- 
- /** What a text of the plan is. */
- enum class PlanTextRole { Dimension, Area, AreaNote, Tag, Scale }
-@@ -198,6 +203,9 @@ object RoomPlanLayout {
-     private const val SCALE_MIN = 56f
-     private const val TAG_INSET = 11f
-     private const val TAG_MIN_WALL = 26f
-+    private const val JAMB = 3.5f
-+    private const val FRAME = 1.75f
-+    private const val SWING_STEPS = 12
-     private const val TOP = 0
-     private const val RIGHT = 1
-     private const val BOTTOM = 2
-@@ -207,21 +215,30 @@ object RoomPlanLayout {
-     private const val POLE_STEPS = 40
-     private const val ALIGNED = 0.01f
- 
-+    private const val HALF_PI = (Math.PI / 2).toFloat()
-+
-     /** The round lengths a scale bar is drawn at, metres. */
-     private val SCALE_BARS = floatArrayOf(0.5f, 1f, 2f, 5f, 10f)
- 
-     /**
-      * Lays [survey] out in a [width] × [height] box. With [scales] (pixels per metre, any
-      * order) the plan is drawn at the largest of them that fits — a paper plan is at 1:50, not
-      * at 1:43; without, it fills the box.
-+     *
-+     * Each of [openings] (#4783) is drawn on its wall, to scale, where it was marked along it: the
-+     * wall broken between its two jambs, a window's frame across the gap, a door's leaf open
-+     * square into the room and the quarter circle it sweeps. A plan without any is drawn as
-+     * it always was.
-      */
-+    @Suppress("LongParameterList") // a box, its ruler and the scales and openings it may be drawn with
-     fun layout(
-         survey: RoomSurvey,
-         texts: PlanTexts,
-         width: Float,
-         height: Float,
-         metrics: PlanMetrics,
-         scales: List<Float>? = null,
-+        openings: List<PlanOpening> = emptyList(),
-     ): RoomPlanDrawing {
-         if (!survey.hasPlan) return RoomPlanDrawing(width, height, 0f, FloatArray(0), emptyList(), emptyList())
-         var rows = IntArray(SIDES)
-@@ -230,7 +247,7 @@ object RoomPlanLayout {
-         repeat(MAX_PASSES) {
-             if (drawing != null && rows.all { it == 0 }) return@repeat
-             val needed = IntArray(SIDES)
--            val pass = Pass(survey, texts, width, height, metrics, scales, rows.copyOf(), needed)
-+            val pass = Pass(survey, texts, width, height, metrics, scales, rows.copyOf(), needed, openings)
-             val settled = drawing != null && (0 until SIDES).all { needed[it] <= rows[it] }
-             drawing = pass.drawing
-             if (settled || needed.all { it == 0 }) return drawing!!
-@@ -277,6 +294,7 @@ object RoomPlanLayout {
-         scales: List<Float>?,
-         private val rows: IntArray,
-         private val needed: IntArray,
-+        private val openings: List<PlanOpening>,
-     ) {
-         private val u = metrics.unit
-         private val lines = ArrayList<PlanLine>()
-@@ -347,13 +365,18 @@ object RoomPlanLayout {
-         }
- 
-         private fun walls() {
--            for (wall in survey.walls) {
-+            survey.walls.forEachIndexed { index, wall ->
-                 val length = wall.length.value
--                if (length <= 0f) continue
-+                if (length <= 0f) return@forEachIndexed
-                 val dx = (wall.bx - wall.ax) / length
-                 val dy = (wall.by - wall.ay) / length
-+                // The doors and windows on this wall, each kept on it: the wall is not drawn across them.
-+                val cuts = openings.filter { it.wall == index }
-+                    .map { Cut(it.from.coerceIn(0f, length), it.to.coerceIn(0f, length), it.door) }
-+                    .filter { it.to > it.from }
-+                    .sortedBy { it.from }
-                 var at = 0f
--                fun run(from: Float, to: Float, stroke: PlanStroke) {
-+                fun segment(from: Float, to: Float, stroke: PlanStroke) {
-                     if (to - from <= 0f) return
-                     lines += PlanLine(
-                         x(wall.ax + dx * from),
-@@ -363,15 +386,128 @@ object RoomPlanLayout {
-                         stroke,
-                     )
-                 }
-+                fun run(from: F
-```
-
-**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/internal/RoomSurveyReport.kt` (modified, +97/-6)
-```diff
-@@ -1,5 +1,6 @@
- package io.github.sceneview.demo.demos.internal
- 
-+import io.github.sceneview.demo.demos.internal.room.WallOpenings
- import java.util.Locale
- import kotlin.math.max
- 
-@@ -95,10 +96,51 @@ class SurveyWording(
-      * English when none is given; the Plan view, 3D Scan's and Measure's alike, passes the phone's.
-      */
-     val locale: Locale = Locale.US,
-+    /** A door, then a window, as the walls' table names an opening on a wall (#4783). */
-+    val door: String = "",
-+    val window: String = "",
-+    /** The walls' area once their doors and windows are taken off. */
-+    val netWallArea: String = "",
- )
- 
--/** One line of the survey's table. [muted] ones say a figure is missing. */
--class SurveyRow(val label: String, val value: String, val muted: Boolean = false)
-+/**
-+ * One line of the survey's table. [muted] ones say a figure is missing. A door's or a window's row
-+ * names the letter of the wall it stands on in [wall], for a table that may set it apart from that
-+ * wall's row: the PDF, at the top of a column.
-+ */
-+class SurveyRow(val label: String, val value: String, val muted: Boolean = false, val wall: String? = null)
-+
-+/**
-+ * A door or a window on a plan's wall (#4783), in the plan's frame: on the survey's wall number
-+ * [wall] (its index in [RoomSurvey.walls]), [from]..[to] metres along it from its start
-+ * ([SurveyWall.ax], [SurveyWall.ay]), [bottom]..[top] metres above the floor.
-+ */
-+data class PlanOpening(val wall: Int, val from: Float, val to: Float, val bottom: Float, val top: Float) {
-+    val width: Float get() = to - from
-+    val height: Float get() = top - bottom
-+
-+    /**
-+     * A door: an opening whose bottom is under the lowest sill 3D Scan gives a window
-+     * ([WallOpenings.belowWindowSill], 0.30 m). Measure marks doors and windows the same way, two
-+     * opposite corners, so its bottom is all that tells them apart, and on the scan's own rule.
-+     */
-+    val door: Boolean get() = WallOpenings.belowWindowSill(bottom)
-+}
-+
-+/**
-+ * What a plan shows besides its survey (#4783): the doors and windows marked on its walls, in the
-+ * plan's wall order then along each wall, and [netWallArea], the walls' area without them (m²),
-+ * `null` when none was worked out. A room traced in Measure has them; a 3D Scan has none
-+ * ([None]), and its plan, its PDF and its text read as they always have.
-+ */
-+class PlanOpenings(val openings: List<PlanOpening>, val netWallArea: Float?) {
-+    /** `true` when there is nothing to add to the survey: no opening and no net wall area. */
-+    val isEmpty: Boolean get() = openings.isEmpty() && netWallArea == null
-+
-+    companion object {
-+        val None = PlanOpenings(emptyList(), null)
-+    }
-+}
- 
- object SurveyReport {
-     private const val SEPARATOR = " · "
-@@ -276,10 +318,42 @@ object SurveyReport {
-             muted = area == null,
-         )
- 
--    /** One row per wall: its letter, its length, and whether it was seen. */
--    fun wallRows(survey: RoomSurvey, wording: SurveyWording): List<SurveyRow> = survey.walls.map { wall ->
-+    /**
-+     * One row per wall: its letter, its length, and whether it was seen. With [openings] (#4783),
-+     * each wall's row is followed by one per door or window on it ([openingRow]), and the walls'
-+     * net area comes last ([netWallAreaRow]); without, the rows a 3D Scan has always had.
-+     */
-+    fun wallRows(survey: RoomSurvey, wording: SurveyWording, openings: PlanOpenings = PlanOpenings.None): List<SurveyRow> {
-+        val walls = survey.walls.map { wallRow(it, wording) }
-+        if (openings.isEmpty) return walls
-+        val rows = ArrayList<SurveyRow>()
-+        walls.forEachIndexed { i, row ->
-+            rows += row
-+            openings.openings.filter { it.wall == i }.forEach { rows += openingRow(it, wording, survey.walls[i].tag) }
++    @Test
++    fun aLongLivedSharedEngineDoesNotAccumulatePendingRenderers() {
++        for (bounded in listOf(false, true)) {
++            val clock = Clock()
++            val probe = FreshFenceProbe(
++                createFence = { clock.time },
++                // Zero-timeout checks never see a fence armed in the same poll; later ones are stale.
++                isReached = { clock.time > it },
++                destroyFence = {},
++                now = { clock.time },
++                awaitReached = if (bounded) ({ true }) else null,
++            )
++            val teardowns = BackendIdleTeardowns(probe)
++            var destroyed = 0
++            repeat(20) {
++                teardowns.defer(
++                    isEngineAlive = { true }, schedule = clock.schedule,
++                    teardown = { destroyed++ }, reclaimWithEngine = true,
++                )
++                repeat(30) { if (clock.callbacks.isNotEmpty()) clock.poll() }
++            }
++            repeat(200) { if (clock.callbacks.isNotEmpty()) clock.poll() }
++            if (bounded) {
++                assertEquals("every renderer released on the live engine", 20, destroyed)
++                assertEquals(0, teardowns.size)
++                assertTrue("polling stops once nothing is pending", clock.callbacks.isEmpty())
++            } else {
++                assertEquals("zero-timeout checks alone release nothing", 0, destroyed)
++                assertEquals(20, teardowns.size)
++            }
 +        }
-+        openings.netWallArea?.let { rows += netWallAreaRow(it, wording) }
-+        return rows
 +    }
 +
 +    /**
-+     * A door or a window as the walls' table lists it under its wall: `Door` · `0.93 m × 2.04 m`,
-+     * as wide by as high as it was marked. Written as the card under Measure's plan writes it
-+     * ([measurePlanLength]): to the centimetre in metres, so the page says one size for it.
++     * The drain rate after the warning: one release per poll (each release invalidates the probe,
++     * and the next poll confirms the fence it arms), polls alternating 1 s and a short confirmation.
++     * Registrations themselves never wait.
 +     */
-+    fun openingRow(opening: PlanOpening, wording: SurveyWording, wall: String? = null): SurveyRow = SurveyRow(
-+        label = if (opening.door) wording.door else wording.window,
-+        value = measurePlanLength(opening.width, wording.units, wording.locale) + " × " +
-+            measurePlanLength(opening.height, wording.units, wording.locale),
-+        wall = wall,
++    @Test
++    fun pendingReleasesDrainAtAboutTwoPerSecondAndRegistrationsNeverWait() {
++        val clock = Clock()
++        var waits = 0
++        var waitsDuringRegistration = 0
++        var registering = false
++        val probe = FreshFenceProbe(
++            createFence = { clock.time },
++            isReached = { clock.time > it },
++            destroyFence = {},
++            now = { clock.time },
++            awaitReached = {
++                waits++
++                if (registering) waitsDuringRegistration++
++                true
++            },
++        )
++        val teardowns = BackendIdleTeardowns(probe)
++        val releasedAt = mutableListOf<Long>()
++        repeat(20) {
++            registering = true
++            teardowns.defer(
++                isEngineAlive = { true }, schedule = clock.schedule,
++                teardown = { releasedAt += clock.time }, reclaimWithEngine = true,
++            )
++            registering = false
++        }
++        while (clock.callbacks.isNotEmpty()) clock.poll()
++        println("20 pending at 66 ms polls: first released at ${releasedAt.first()} ms, last at ${releasedAt.last()} ms")
++        assertEquals(20, releasedAt.size)
++        assertEquals(0, waitsDuringRegistration)
++        assertTrue("first at ${releasedAt.first()} ms", releasedAt.first() >= FRESH_FENCE_WARN_AFTER_MS)
++        val span = releasedAt.last() - releasedAt.first()
++        assertTrue("20 releases over $span ms", span <= 10 * (BACKEND_IDLE_BACKOFF_MS + clock.minimumGap))
++        assertEquals("one bounded wait per release", 20, waits)
++    }
++
+     @Test
+     fun retirementDoesNotAccumulateCallbacksForLateEngineOwnedResources() {
+         val clock = Clock()
+```
+
+**File**: `sceneview/src/test/java/io/github/sceneview/FreshFenceTeardownTest.kt` (modified, +148/-4)
+```diff
+@@ -49,6 +49,9 @@ class FreshFenceTeardownTest {
+         fun createFence(): Int = enqueue(FENCE_ROUND_TRIP_MS)
+         fun isReached(fence: Int) = doneAt[fence] <= now
+ 
++        /** How long a wait for [fence] would keep the caller now, unbounded. */
++        fun msUntilReached(fence: Int) = maxOf(0L, doneAt[fence] - now)
++
+         /** How long a wait for everything queued so far would block the caller now. */
+         fun drainWaitMs() = maxOf(0L, freeAt - now)
+ 
+@@ -98,7 +101,28 @@ class FreshFenceTeardownTest {
+         pollGaps: List<Long> = listOf(BACKEND_IDLE_POLL_MS),
+         recoverAtMs: Long? = null,
+         busy: (SimBackend) -> () -> Boolean,
+-    ): Result {
++    ): Result = checkNotNull(
++        replayOrNull(
++            backlogMs, nextScreenAtMs, nextScreenWorkMs, frameWorkMs, mainThreadBusy, pollGaps, recoverAtMs, busy,
++        ),
++    ) { "the teardown never ran" }
++
++    /**
++     * [replay], or null when the teardown is still pending after 20 s. With [probe], the registry
++     * owns it, as `Engine.whenBackendIdle` does: its warning also drives the 1 s back-off.
++     */
++    @Suppress("LongParameterList")
++    private fun replayOrNull(
++        backlogMs: Long = 200,
++        nextScreenAtMs: Long = 20,
++        nextScreenWorkMs: Long = 3_000,
++        frameWorkMs: Long = 4,
++        mainThreadBusy: LongRange = LongRange.EMPTY,
++        pollGaps: List<Long> = listOf(BACKEND_IDLE_POLL_MS),
++        recoverAtMs: Long? = null,
++        busy: ((SimBackend) -> () -> Boolean)? = null,
++        probe: ((SimBackend) -> FreshFenceProbe<Int>)? = null,
++    ): Result? {
+         val backend = SimBackend()
+         backend.mainThreadBusy = mainThreadBusy
+         backend.pollGaps = pollGaps
+@@ -107,9 +131,10 @@ class FreshFenceTeardownTest {
+         }
+         var result: Result? = null
+         if (backlogMs > 0) backend.enqueue(backlogMs)
+-        BackendIdleTeardowns().defer(
++        val teardowns = probe?.let { BackendIdleTeardowns(probe = it(backend)) } ?: BackendIdleTeardowns()
++        teardowns.defer(
+             isEngineAlive = { true },
+-            isBackendBusy = busy(backend),
++            isBackendBusy = busy?.invoke(backend) ?: teardowns::isBackendBusy,
+             schedule = backend.schedule,
+             teardown = { deferred -> result = Result(backend.now, backend.drainWaitMs(), deferred) },
+         )
+@@ -121,7 +146,7 @@ class FreshFenceTeardownTest {
+             frame += 16
+         }
+         backend.runUntil(20_000)
+-        return checkNotNull(result) { "the teardown never ran" }
++        return result
+     }
+ 
+     /** `Engine.whenBackendIdle` before this change: one fence, created when the scene is disposed. */
+@@ -169,6 +194,24 @@ class FreshFenceTeardownTest {
+ 
+     private val freshFence: (SimBackend) -> () -> Boolean = { backend -> newProbe(backend)::isBusy }
+ 
++    /** Every bounded wait the probe made: when, and how long it kept the main thread. */
++    private class BoundedWaits {
++        val waits = mutableListOf<Pair<Long, Long>>()
++    }
++
++    /** The production probe: zero-timeout checks, then the bounded confirmation after 5 s. */
++    private fun boundedProbe(backend: SimBackend, log: BoundedWaits = BoundedWaits()) = FreshFenceProbe(
++        createFence = backend::createFence,
++        isReached = backend::isReached,
++        destroyFence = {},
++        now = { backend.now },
++        awaitReached = { fence ->
++            val until = backend.msUntilReached(fence)
++            log.waits += backend.now to minOf(until, FRESH_FENCE_CONFIRM_BUDGET_MS)
++            until <= FRESH_FENCE_CONFIRM_BUDGET_MS
++        },
 +    )
 +
-+    /** The walls' area net of their doors and windows, [squareMetres], as the card under Measure's plan writes it. */
-+    fun netWallAreaRow(squareMetres: Float, wording: SurveyWording): SurveyRow =
-+        SurveyRow(wording.netWallArea, formatMeasureArea(squareMetres, wording.units, wording.locale))
+     @Test
+     fun `a dispose-time fence releases into the next screen's backlog`() {
+         val before = replay(busy = disposeTimeFence)
+@@ -443,6 +486,107 @@ class FreshFenceTeardownTest {
+         }
+     }
+ 
++    /**
++     * #4969: a steady main thread slower than the 48 ms window, on a shared engine that stays
++     * alive. Zero-timeout checks never see a fresh fence, so the release waited for Engine.destroy;
++     * the bounded confirmation finds the idle backend shortly after the warning.
++     */
++    @Test
++    fun `a main thread too slow for freshness still releases once the backend is idle`() {
++        for (gap in listOf(66L, 100L, 300L)) {
++            val zeroTimeout = replayOrNull(
++                // Like-for-like with the run below: a registry-owned probe, so the 1 s back-off applies.
++                backlogMs = 0, nextScreenWorkMs = 0, pollGaps = listOf(gap), probe = { newProbe(it) },
++            )
++            assertEquals("a poll every $gap ms, zero-timeout only", null, zeroTimeout)
 +
-+    private fun wallRow(wall: SurveyWal
++            val after = checkNotNull(
++                replayOrNull(backlogMs = 0, nextScreenWorkMs = 0, pollGaps = listOf(gap), probe = { boundedProbe(it) }),
++            ) { "a poll every $gap ms: never released" }
++            println("a poll every $gap ms, bounded check: released at ${after.ranAtMs} ms, blocked ${after.
+```
+
+---
+
+### Incident Patch 2: `dc4c361c` (2026-11-23)
+**Commit Message**: fix(sceneview, arsceneview): share the exact Rec.2020 tone-map inverse with every pass-through material (#5219) (#5227)
+
+* fix(sceneview, arsceneview): share the exact Rec.2020 tone-map inverse with every pass-through material (#5219)
+
+Filament's ColorGrading applies the tone mapper in its Rec.2020 working
+space. The AR camera feed, video, view-texture and splat materials undid
+it channel by channel in Rec.709, which is exact for greys only: a
+#66B0F5 sky in the camera feed showed at #93B2FA.
+
+- New sceneview/src/main/materials/include/view_tone_map_inverse.fs: the
+  exact sRGB EOTF, Rec.709 <-> Rec.2020 matrices, the exact inverse of
+  Filmic and of PBR Neutral, and inverseViewTonemapSRGB(srgb, filmic),
+  the inverse #5102 introduced for semantics_overlay. Plain GLSL, so
+  splat.mat includes it in its vertex block.
+- video_texture, video_texture_chroma_key, view_texture_lit,
+  view_texture_unlit, semantics_overlay, splat and the three
+  camera_stream materials include it through matc's #include instead of
+  carrying their own copy. In a Filmic view, VideoNode and ViewNode also
+  decode with the exact sRGB EOTF instead of pow(c, 2.2).
+- The nine blobs recompiled with the pinned mat
+
+**File**: `arsceneview/src/main/java/io/github/sceneview/ar/camera/ARCameraStream.kt` (modified, +1/-1)
+```diff
+@@ -372,7 +372,7 @@ open class ARCameraStream(
+                 setParameter(kFogEnabledParameter, 1f)
+                 // Compose Color is sRGB; the shader does its haze blend in the
+                 // pre-tone-mapped space the shader decodes into with
+-                // `Inverse_Tonemap_Filmic(srgbToLinearExact(...))` (#3338).
++                // `inverseViewTonemapSRGB(camera, true)` (#3338, #5219).
+                 // Use the linear components straight (`red`/`green`/`blue` on
+                 // Compose Color are already in the colour-space's component
+                 // domain) — matches how `FogNode` writes to `fogOptions.color`.
+```
+
+**File**: `arsceneview/src/main/materials/camera_stream_depth.mat` (modified, +7/-15)
+```diff
+@@ -220,28 +220,20 @@ fragment {
+         return mix(kNoDepthDistanceMeters, occluder_m, depth_valid * in_range);
+     }
+ 
+-    // Exact sRGB EOTF (IEC 61966-2-1), issue #3338 — see camera_stream_flat.mat for the
+-    // full rationale. Short version: the camera texel is sRGB-encoded full-range BT.709
+-    // (ARCore dataspace 0x08810000), and Filament re-encodes with the exact sRGB OETF at
+-    // the color-grading output stage, so decoding with `pow(c, 2.2)` (what Filament's
+-    // `inverseTonemapSRGB()` does) left an achromatic S-curve on the camera background
+-    // worth up to -8.5/255 in the shadows. Kept verbatim in all three camera materials —
+-    // matc has no include mechanism.
+-    vec3 srgbToLinearExact(const vec3 srgb) {
+-        vec3 s = clamp(srgb, 0.0, 1.0);
+-        return mix(s * (1.0 / 12.92),
+-                   pow((s + 0.055) * (1.0 / 1.055), vec3(2.4)),
+-                   step(vec3(0.04045), s));
+-    }
++    // The exact inverse of the View's Filmic tone mapper and sRGB OETF: exact sRGB EOTF
++    // (#3338), curve inverted in the Rec.2020 space Filament grades in (#5219). See
++    // camera_stream_flat.mat for the rationale; shared by all three camera materials.
++    #include "../../../../sceneview/src/main/materials/include/view_tone_map_inverse.fs"
+ 
+     void material(inout MaterialInputs material) {
+         prepareMaterial(material);
+         // EIS supplies homogeneous texture coordinates. Divide AFTER interpolation (#2728).
+         // OFF samples UV0 exactly as before EIS support, without a second Y flip.
+         highp vec2 cameraUv = materialParams.imageStabilizationEnabled
+                 ? variable_cameraUv.xy / variable_cameraUv.z : getUV0();
+-        vec3 camera = Inverse_Tonemap_Filmic(
+-                srgbToLinearExact(texture(materialParams_cameraTexture, cameraUv).rgb));
++        // The View is createARView's: Filmic.
++        vec3 camera = inverseViewTonemapSRGB(
++                texture(materialParams_cameraTexture, cameraUv).rgb, true);
+         vec2 packed_depth = texture(materialParams_depthTexture, cameraUv).xy;
+         float depth_mm = dot(packed_depth, vec2(255.f, 256.f * 255.f));
+         float depth_m = depth_mm / 1000.f;
+```
+
+**File**: `arsceneview/src/main/materials/camera_stream_flat.mat` (modified, +14/-23)
+```diff
+@@ -36,42 +36,33 @@ material {
+ }
+ 
+ fragment {
+-    // Exact sRGB EOTF (IEC 61966-2-1), issue #3338.
+-    //
+     // The camera texel arriving from the external sampler is already sRGB-encoded,
+     // full-range BT.709 RGB: ARCore hands the buffer over with dataspace 0x08810000
+     // (STANDARD_BT709 | TRANSFER_SRGB | RANGE_FULL), so the EGL external sampler has
+     // already done YUV -> RGB with the right matrix and the right range.
+     //
+-    // To survive the pipeline untouched the pixel has to be decoded with the SAME
+-    // transfer function Filament re-encodes with at the end. Filament's color-grading
+-    // output stage is Rec709-sRGB-D65 — the exact piecewise sRGB OETF, linear segment
+-    // included. Filament's own `inverseTonemapSRGB()` helper decodes with `pow(c, 2.2)`
+-    // instead, which is only an approximation of that curve, so the round trip
+-    // `sRGB_OETF(pow(c, 2.2))` was not the identity: up to -8.5/255 of error in the
+-    // shadows (peak at code 16), crossing back to +1.5/255 in the highlights. Achromatic,
+-    // so not a tint — an S-curve contrast boost applied to the camera background ONLY,
+-    // which graded the real world differently from the virtual content composited over it.
+-    //
+-    // Decoding with the exact curve makes the round trip bit-exact at every 8-bit code.
+-    vec3 srgbToLinearExact(const vec3 srgb) {
+-        vec3 s = clamp(srgb, 0.0, 1.0);
+-        return mix(s * (1.0 / 12.92),
+-                   pow((s + 0.055) * (1.0 / 1.055), vec3(2.4)),
+-                   step(vec3(0.04045), s));
+-    }
++    // To survive the pipeline untouched the pixel is pre-distorted by the exact inverse of
++    // what the View does after this shader: createARView's ToneMapper.Filmic, then the exact
++    // sRGB OETF. Two corrections live in that inverse:
++    //  - #3338: decode with the exact sRGB EOTF. Filament's inverseTonemapSRGB() decodes with
++    //    pow(c, 2.2), and the round trip sRGB_OETF(pow(c, 2.2)) was an S-curve on the camera
++    //    background only: up to -8.5/255 in the shadows.
++    //  - #5219: invert the curve in Rec.2020, where Filament's ColorGrading applies it.
++    //    Inverted channel by channel in Rec.709 it was exact for greys only: a #66B0F5 sky
++    //    showed at about #93B2FA, lighter and less saturated than the real world.
++    // The inverse is shared with the other pass-through materials (video, view texture, splat,
++    // Scene Semantics overlay) through this include.
++    #include "../../../../sceneview/src/main/materials/include/view_tone_map_inverse.fs"
+ 
+     void material(inout MaterialInputs material) {
+         prepareMaterial(material);
+         // EIS supplies homogeneous texture coordinates. Divide AFTER interpolation (#2728).
+         // OFF samples UV0 exactly as before EIS support, without a second Y flip.
+         highp vec2 cameraUv = materialParams.imageStabilizationEnabled
+                 ? variable_cameraUv.xy / variable_cameraUv.z : getUV0();
+-        // Inverse_Tonemap_Filmic is the exact analytic inverse of ToneMapper.Filmic,
+-        // which createARView() installs on the View — that leg already cancelled and is
+-        // kept as-is. Only the transfer-function leg changes (#3338).
++        // The View is createARView's: Filmic.
+         vec3 camera = texture(materialParams_cameraTexture, cameraUv).rgb;
+-        material.baseColor.rgb = Inverse_Tonemap_Filmic(srgbToLinearExact(camera));
++        material.baseColor.rgb = inverseViewTonemapSRGB(camera, true);
+         material.baseColor.a = 1.f;
+     }
+ }
+```
+
+**File**: `arsceneview/src/main/materials/camera_stream_person_occlusion.mat` (modified, +7/-10)
+```diff
+@@ -218,23 +218,20 @@ fragment {
+     // fragment can be" — what the PERSON mask has to write to win every depth test.
+     const float kNdcNearPlane = 1.0;
+ 
+-    // Exact sRGB EOTF (IEC 61966-2-1), issue #3338 — copied verbatim from
+-    // `camera_stream_depth.mat`; see `camera_stream_flat.mat` for the full rationale.
+-    vec3 srgbToLinearExact(const vec3 srgb) {
+-        vec3 s = clamp(srgb, 0.0, 1.0);
+-        return mix(s * (1.0 / 12.92),
+-                   pow((s + 0.055) * (1.0 / 1.055), vec3(2.4)),
+-                   step(vec3(0.04045), s));
+-    }
++    // The exact inverse of the View's Filmic tone mapper and sRGB OETF: exact sRGB EOTF
++    // (#3338), curve inverted in the Rec.2020 space Filament grades in (#5219). See
++    // camera_stream_flat.mat for the rationale; shared by all three camera materials.
++    #include "../../../../sceneview/src/main/materials/include/view_tone_map_inverse.fs"
+ 
+     void material(inout MaterialInputs material) {
+         prepareMaterial(material);
+         // EIS supplies homogeneous texture coordinates. Divide AFTER interpolation (#2728).
+         // OFF samples UV0 exactly as before EIS support, without a second Y flip.
+         highp vec2 cameraUv = materialParams.imageStabilizationEnabled
+                 ? variable_cameraUv.xy / variable_cameraUv.z : getUV0();
+-        vec3 camera = Inverse_Tonemap_Filmic(
+-                srgbToLinearExact(texture(materialParams_cameraTexture, cameraUv).rgb));
++        // The View is createARView's: Filmic.
++        vec3 camera = inverseViewTonemapSRGB(
++                texture(materialParams_cameraTexture, cameraUv).rgb, true);
+         vec2 packed_depth = texture(materialParams_depthTexture, cameraUv).xy;
+         float depth_mm = dot(packed_depth, vec2(255.f, 256.f * 255.f));
+         float depth_m = depth_mm / 1000.f;
+```
+
+**File**: `arsceneview/src/test/java/io/github/sceneview/ar/camera/CameraStreamColorContractTest.kt` (modified, +85/-0)
+```diff
+@@ -3,6 +3,7 @@ package io.github.sceneview.ar.camera
+ import org.junit.Assert.assertEquals
+ import org.junit.Assert.assertTrue
+ import org.junit.Test
++import java.io.File
+ import kotlin.math.abs
+ import kotlin.math.pow
+ import kotlin.math.sqrt
+@@ -29,6 +30,12 @@ import kotlin.math.sqrt
+  *     Filament's `inverseTonemapSRGB()` helper does), and `sRGB_OETF(pow(c, 2.2))` is not the
+  *     identity. That mismatch is the bug.
+  *
++ * A third correction came with #5219: Filament's ColorGrading applies the tone mapper in its
++ * Rec.2020 working space. Inverted channel by channel in Rec.709, the Filmic leg cancelled for
++ * greys only, and a `#66B0F5` sky showed at `#93B2FA`. The three materials now include the
++ * inverse every pass-through material shares (`sceneview/src/main/materials/include/
++ * view_tone_map_inverse.fs`), which converts to Rec.2020, inverts there and converts back.
++ *
+  * The shader chain is reproduced as pure Kotlin so its output can be checked directly.
+  */
+ class CameraStreamColorContractTest {
+@@ -109,4 +116,82 @@ class CameraStreamColorContractTest {
+         )
+     }
+ 
++    // --- Rec.2020 grading (#5219) ---------------------------------------------------------
++
++    /** Filament's sRGB_to_REC2020 and REC2020_to_sRGB, row-major. */
++    private val rec709ToRec2020 = arrayOf(
++        doubleArrayOf(0.6274040, 0.3292820, 0.0433136),
++        doubleArrayOf(0.0690970, 0.9195400, 0.0113612),
++        doubleArrayOf(0.0163916, 0.0880132, 0.8955950),
++    )
++    private val rec2020ToRec709 = arrayOf(
++        doubleArrayOf(1.6604910, -0.5876411, -0.0728499),
++        doubleArrayOf(-0.1245505, 1.1328999, -0.0083494),
++        doubleArrayOf(-0.0181508, -0.1005789, 1.1187297),
++    )
++
++    private fun Array<DoubleArray>.times(v: DoubleArray) =
++        DoubleArray(3) { r -> (0..2).sumOf { this[r][it] * v[it] } }
++
++    /** What the View shows for a scene colour: Filmic per channel in Rec.2020, then the OETF. */
++    private fun shown(scene: DoubleArray): List<Int> {
++        val graded = rec2020ToRec709.times(rec709ToRec2020.times(scene).map(::filmic).toDoubleArray())
++        return graded.map { Math.round(linearToSrgbExact(it.coerceIn(0.0, 1.0)) * 255).toInt() }
++    }
++
++    /** `inverseViewTonemapSRGB(camera, true)` of the shared include. */
++    private fun cameraScene(srgb: IntArray): DoubleArray {
++        val working = rec709ToRec2020.times(DoubleArray(3) { srgbToLinearExact(srgb[it] / 255.0) })
++        return rec2020ToRec709.times(working.map(::inverseFilmic).toDoubleArray()).map { maxOf(it, 0.0) }
++            .toDoubleArray()
++    }
++
++    private fun bytes(rgb: Int) = IntArray(3) { (rgb shr (16 - 8 * it)) and 0xFF }
++
++    @Test
++    fun `a saturated camera colour displays as it came from the camera`() {
++        val chart = listOf(0x66B0F5, 0xD95F57, 0x4CB050, 0x2196F2, 0xF5428C, 0x00BDD4, 0xFFC207, 0x9E75BD, 0x808080)
++        chart.forEach { rgb ->
++            val source = bytes(rgb)
++            val got = shown(cameraScene(source))
++            for (c in 0..2) {
++                // A channel that would need a negative scene value is clipped at zero.
++                val tolerance = if (source[c] < 0x30) 16 else 1
++                assertTrue(
++                    "#%06X shows $got (tolerance $tolerance)".format(rgb),
++                    abs(got[c] - source[c]) <= tolerance,
++                )
++            }
++        }
++    }
++
++    @Test
++    fun `inverted channel by channel in Rec 709, the sky was lighter and less saturated`() {
++        val sky = bytes(0x66B0F5)
++        val per709 = DoubleArray(3) { inverseFilmic(srgbToLinearExact(sky[it] / 255.0)) }
++        assertEquals(listOf(0x93, 0xB2, 0xFA), shown(per709))
++    }
++
++    @Test
++    fun `the three camera materials include the shared inverse for a Filmic view`() {
++        val include = "../../../../sceneview/src/main/materials/include/view_tone_map_inverse.fs"
++        assertTrue(
++            "the include the materials name resolves from their directory",
++            File("src/main/materials", include).isFile,
++        )
++        for (name in listOf("flat", "depth", "person_occlusion")) {
++            val source = File("src/main/materials/camera_stream_$name.mat").readText()
++            val code = source.lines().filterNot { it.trimStart().startsWith("//") }.joinToString("\n")
++            assertTrue("$name includes the shared inverse", code.contains("#include \"$include\""))
++            assertTrue(
++                "$name pre-distorts the camera for createARView's Filmic",
++                Regex("inverseViewTonemapSRGB\\(\\s*texture\\(materialParams_cameraTexture, cameraUv\\)\\.rgb, true\\)")
++                    .containsMatchIn(code) ||
++                    code.contains("inverseViewTonemapSRGB(camera, true)"),
++            )
++            listOf("Inverse_Tonemap_Filmic(", "srgbToLinearExact(", "inverseTonemapSRGB(").forEach {
++                assertTrue("$name still calls $it", !code.contains(it))
++         
+```
+
+**File**: `changelog.d/5219-rec2020-tone-map-inverse.md` (added, +2/-0)
+```diff
+@@ -0,0 +1,2 @@
++<!-- category: Fixed -->
++- **Video, view-texture, splat and AR camera-feed colours stay saturated ([#5219](https://github.com/sceneview/sceneview/issues/5219)).** These materials undid the view's tone mapper channel by channel in Rec.709, but Filament tone-maps in Rec.2020, so only greys came back unchanged: a `#66B0F5` sky showed at about `#93B2FA`. All nine pass-through materials now include one shared exact inverse (`include/view_tone_map_inverse.fs`, the one the Scene Semantics overlay got in #5102), so in-gamut colours display as their source. A vivid colour the view cannot show (such as `#00FFFF`) is never shown further from its source than before. A `VideoNode` or `ViewNode` in an AR view also decodes with the exact sRGB curve instead of `pow(c, 2.2)`.
+```
+
+**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/internal/model/SurfelSplats.kt` (modified, +4/-1)
+```diff
+@@ -238,7 +238,10 @@ internal object SurfelSplats {
+         for (c in 0 until 3) out[c] = linearToSrgb(toned[c]).coerceIn(0f, 1f)
+     }
+ 
+-    /** The exact sRGB EOTF, as `splat.mat`'s `splatSrgbToLinear`. */
++    /**
++     * The exact sRGB EOTF, as `viewInverseSrgbToLinear` in `include/view_tone_map_inverse.fs`,
++     * which `splat.mat` includes.
++     */
+     fun srgbToLinear(c: Float): Float = if (c <= 0.04045f) c / 12.92f else ((c + 0.055f) / 1.055f).pow(2.4f)
+ 
+     /** The exact sRGB OETF, the inverse of [srgbToLinear]. */
+```
+
+**File**: `sceneview/src/androidTest/java/io/github/sceneview/render/ToneMapPassThroughRenderTest.kt` (added, +277/-0)
+```diff
+@@ -0,0 +1,277 @@
++package io.github.sceneview.render
++
++import android.graphics.SurfaceTexture
++import android.util.Log
++import android.view.Surface
++import androidx.test.ext.junit.runners.AndroidJUnit4
++import androidx.test.platform.app.InstrumentationRegistry
++import com.google.android.filament.Camera
++import com.google.android.filament.ColorGrading
++import com.google.android.filament.EntityManager
++import com.google.android.filament.MaterialInstance
++import com.google.android.filament.Skybox
++import com.google.android.filament.Stream
++import com.google.android.filament.Texture
++import com.google.android.filament.ToneMapper
++import com.google.android.filament.android.StreamHelper
++import io.github.sceneview.SceneNodeManager
++import io.github.sceneview.collision.CollisionSystem
++import io.github.sceneview.filmicViews
++import io.github.sceneview.loaders.MaterialLoader
++import io.github.sceneview.math.Direction
++import io.github.sceneview.math.Position
++import io.github.sceneview.math.Size
++import io.github.sceneview.node.PlaneNode
++import org.junit.AfterClass
++import org.junit.Assert.assertTrue
++import org.junit.BeforeClass
++import org.junit.Test
++import org.junit.runner.RunWith
++import kotlin.math.abs
++
++/**
++ * The pass-through materials display a saturated source colour as it is (#5219).
++ *
++ * `video_texture.mat` (a `VideoNode`) and `view_texture_unlit.mat` (an unlit `ViewNode`) sample
++ * an external stream, an sRGB image, and pre-distort it by the inverse of the View's tone mapper
++ * so the View's grading lands it back on the source colour. Filament grades in Rec.2020: the
++ * inverse used to run channel by channel in Rec.709, exact for greys only, so a `#66B0F5` sky
++ * came out lighter and less saturated.
++ *
++ * Each colour of a saturated chart is painted into the stream through a [Surface], as a decoded
++ * video frame or a drawn View lands in it, then drawn full frame and read back at the centre, in
++ * a [io.github.sceneview.createView] view (PBR Neutral) and in a Filmic view like
++ * [io.github.sceneview.createARView]'s. Needs pixel readback ([RenderTestCapabilities]): run with
++ * `-e gpuReadback true`.
++ */
++@RunWith(AndroidJUnit4::class)
++class ToneMapPassThroughRenderTest {
++
++    companion object {
++        private const val SIZE = 64
++        private const val TAG = "ToneMapPassThrough"
++
++        /**
++         * A saturated chart, sRGB bytes: the Scene Semantics legend's most saturated classes
++         * (sky, terracotta, green, strong blue, pink, cyan, amber, purple), and a grey.
++         */
++        private val CHART = intArrayOf(
++            0x66B0F5, 0xD95F57, 0x4CB050, 0x2196F2, 0xF5428C, 0x00BDD4, 0xFFC207, 0x9E75BD, 0x808080,
++        )
++
++        /**
++         * Vivid cyans no inverse can show as they are: they need a negative Rec.709 channel, which
++         * the colour buffer cannot hold. Each maps to what `ToneMapInverseContractTest`'s model of
++         * the shared inverse predicts: under PBR Neutral, the per-channel Rec.709 inverse's result
++         * (clipping alone showed #00FFFF as (150, 254, 254)); under Filmic, the clipped one, nearer
++         * the source than before (#00FFFF used to show (245, 255, 255)).
++         */
++        private val VIVID_IN_A_3D_VIEW = mapOf(0x00FFFF to 0x00E9E9, 0x00E5FF to 0x00E3E9)
++        private val VIVID_IN_AN_AR_VIEW = mapOf(0x00FFFF to 0xDFF9FE, 0x00E5FF to 0xAEE2FE)
++
++        /** 8-bit steps per channel left to the grading LUT, the colour buffer and dithering. */
++        private const val TOLERANCE = 6
++
++        /**
++         * A channel darker than [DARK_CHANNEL] may land up to [DARK_TOLERANCE] steps above its
++         * source: under Filmic, a strong blue's or a cyan's red would need a negative scene value,
++         * which the colour buffer cannot hold (the inverse clips it at zero).
++         */
++        private const val DARK_CHANNEL = 0x30
++        private const val DARK_TOLERANCE = 16
++
++        private lateinit var harness: RenderTestHarness
++        private lateinit var materialLoader: MaterialLoader
++        private lateinit var nodeManager: SceneNodeManager
++        private var cameraEntity: Int? = null
++
++        @JvmStatic
++        @BeforeClass
++        fun setupClass() {
++            harness = RenderTestHarness(width = SIZE, height = SIZE)
++            harness.runOnMain {
++                val context = InstrumentationRegistry.getInstrumentation().targetContext
++                materialLoader = MaterialLoader(harness.engine, context)
++                nodeManager = SceneNodeManager(harness.scene, CollisionSystem(harness.view))
++            }
++        }
++
++        @JvmStatic
++        @AfterClass
++        fun teardownClass() {
++            harness.runOnMain {
++                materialLoader.destroy()
++                cameraEntity?.let {
++                    harness.engine.destroyCameraComponent(it)
++                    EntityManager.get().destroy(it)
++                }
++            }
++            harness.destr
+```
+
+---
+
+### Incident Patch 3: `88e64cea` (2026-11-23)
+**Commit Message**: fix(sceneview): free the SDK's ColorGrading when rememberView / rememberARView dispose (#5232) (#5238)
+
+* fix(sceneview): free the SDK's ColorGrading when rememberView / rememberARView dispose (#5232)
+
+createView and createARView each build a ColorGrading (a 3D LUT) that
+Engine.destroyView leaves alive. On an engine that outlives the screen
+(hoisted above navigation, shared, app-level), every exit of the
+composable left one behind.
+
+Both factories now record the grading they built in a weak map keyed by
+the view, and rememberView / rememberARView destroy the view, then that
+grading, whether the view still holds it or the app replaced it. A
+grading the app set is never freed by the SDK. The new helper lives next
+to the factories in SceneFactories.kt; Engine.kt is untouched.
+
+The demo's rememberFilmicView now builds on rememberView and frees only
+its own Filmic grading, after the view: each object is destroyed once.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* fix(sceneview): review follow-ups for the view ColorGrading teardown (#5232)
+
+- KDoc: rememberView / rememberARView free the SDK grading read through
+  view.colorGrading, so it must not be shared with a view that outl
+
+**File**: `changelog.d/5232-view-colorgrading-leak.md` (added, +2/-0)
+```diff
+@@ -0,0 +1,2 @@
++<!-- category: Fixed -->
++- **`rememberView` / `rememberARView` no longer leave a `ColorGrading` on an engine that outlives the screen.** `createView` and `createARView` each build a grading (a 3D LUT) that `Engine.destroyView` leaves alive. With an engine hoisted above navigation, shared or held app-wide, every exit of the composable left one behind, and one more when the app had replaced it with `view.colorGrading = …`. Disposal now frees the view, then the grading the SDK built for it, attached or replaced. A grading the app set is never freed by the SDK: it may be shared. The demo's `rememberFilmicView` now builds on `rememberView` and frees only its own Filmic grading. An app that worked around the leak by freeing `view.colorGrading` itself after the view must drop that workaround: the grading is already freed, and the call now throws `Calling method on destroyed ColorGrading`. (#5232)
+```
+
+**File**: `llms.txt` (modified, +2/-2)
+```diff
+@@ -4926,8 +4926,8 @@ Most are default parameter values in `SceneView`/`ARSceneView` — call them exp
+ | `rememberViewNodeManager()` | `ViewNode.WindowManager` | Required for ViewNode composables |
+ | `rememberSceneRecorder()` | `SceneRecorder` | Photo (PixelCopy, JPEG/PNG) and MP4 video (1080p30, optional mic, time limit, watermark) of the rendered scene — pass `recorder.surfaceMirrorer` to the scene (see "Capture the scene") |
+ | `rememberSurfaceMirrorer()` | `SurfaceMirrorer` | Lower level: mirror frames to your own encoder surface, no MediaProjection (see "Capture the scene") |
+-| `rememberView(engine)` | `View` | Filament view (one per viewport), PBR Neutral tone mapper |
+-| `rememberARView(engine)` | `View` | AR-tuned view (Filmic tone mapper — round-trips the camera background, #1434) |
++| `rememberView(engine)` | `View` | Filament view (one per viewport), PBR Neutral tone mapper; disposal frees the view and the `ColorGrading` it built, never one you set (#5232) |
++| `rememberARView(engine)` | `View` | AR-tuned view (Filmic tone mapper — round-trips the camera background, #1434); disposal frees it like `rememberView` |
+ | `rememberRenderer(engine)` | `Renderer` | Filament renderer (one per window) |
+ | `rememberScene(engine)` | `Scene` | Filament scene graph |
+ | `rememberCollisionSystem(view)` | `CollisionSystem` | Hit-testing system |
+```
+
+**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/common/FilmicView.kt` (modified, +11/-19)
+```diff
+@@ -8,7 +8,7 @@ import com.google.android.filament.Engine
+ import com.google.android.filament.ToneMapper
+ import com.google.android.filament.View
+ import io.github.sceneview.createView
+-import io.github.sceneview.safeDestroyView
++import io.github.sceneview.rememberView
+ 
+ /**
+  * A [createView] view that keeps the Filmic tone mapper the SDK used before it moved to PBR
+@@ -23,24 +23,16 @@ import io.github.sceneview.safeDestroyView
+  */
+ @Composable
+ fun rememberFilmicView(engine: Engine): View {
+-    val graded = remember(engine) {
+-        val view = createView(engine)
+-        // The PBR Neutral grading `createView` gave the view: replaced, not freed by the swap.
+-        val replaced = view.colorGrading
+-        view.colorGrading = ColorGrading.Builder().toneMapper(ToneMapper.Filmic()).build(engine)
+-        GradedView(view, listOfNotNull(replaced, view.colorGrading))
++    val filmic = remember(engine) {
++        ColorGrading.Builder().toneMapper(ToneMapper.Filmic()).build(engine)
+     }
+-    // Not `rememberView`: `destroyView` frees the view alone, and on an engine that outlives the
+-    // screen (the home hero's, #5202) both gradings, a 3D LUT each, would pile up visit after
+-    // visit. The view goes first: a grading must not be freed while a view still holds it.
+-    DisposableEffect(graded) {
+-        onDispose {
+-            engine.safeDestroyView(graded.view)
+-            graded.gradings.forEach { runCatching { engine.destroyColorGrading(it) } }
+-        }
++    // Declared before the view, so disposed after it: a grading must not be freed while a view
++    // still holds it. On an engine that outlives the screen (the home hero's, #5202) it would
++    // otherwise pile up, a 3D LUT per visit.
++    DisposableEffect(filmic) {
++        onDispose { runCatching { engine.destroyColorGrading(filmic) } }
+     }
+-    return graded.view
++    // `rememberView` frees the view and the PBR Neutral grading `createView` gave it (#5232):
++    // each object is destroyed once, by whoever made it.
++    return rememberView(engine) { createView(engine).apply { colorGrading = filmic } }
+ }
+-
+-/** A view and every [ColorGrading] made for it, freed with it. */
+-private class GradedView(val view: View, val gradings: List<ColorGrading>)
+```
+
+**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/RerunModelUi.kt` (modified, +2/-1)
+```diff
+@@ -1209,9 +1209,10 @@ internal fun RerunModelScreen(
+         val environment = rememberModelEnvironment(engine, chrome.ground)
+         val darkStage = chrome.ground.luminance() < HALF_LUMINANCE
+         val shadowPool = remember { radialPool(LightingStage.FLOOR_COLOR) }
+-        val view = rememberView(engine)
++        // Declared before the view, so disposed after it: never freed under the view holding it.
+         val colorGrading = remember(engine) { ColorGrading.Builder().toneMapper(ToneMapper.Linear()).build(engine) }
+         DisposableEffect(colorGrading) { onDispose { engine.destroyColorGrading(colorGrading) } }
++        val view = rememberView(engine)
+         // Before the first frame, not on it: the tone mapping is part of the first picture.
+         DisposableEffect(view, colorGrading) {
+             view.configureForDebug(colorGrading)
+```
+
+**File**: `sceneview/src/main/java/io/github/sceneview/SceneFactories.kt` (modified, +39/-0)
+```diff
+@@ -141,6 +141,14 @@ fun createEngine(eglContext: EGLContext): Engine = try {
+ 
+ fun createScene(engine: Engine): com.google.android.filament.Scene = engine.createScene()
+ 
++/**
++ * Creates the [View] `SceneView` renders with by default: [RenderQuality.Default] and the Khronos
++ * PBR Neutral tone mapper, in a [ColorGrading] built for this view.
++ *
++ * [rememberView] destroys both. Calling this directly, destroy the view with
++ * `engine.destroyView(view)`, then its grading with `engine.destroyColorGrading(grading)`, the one
++ * read from `view.colorGrading` before you replace it: `destroyView` leaves it alive (#5232).
++ */
+ fun createView(engine: Engine): View = engine.createView().apply {
+     // The out-of-the-box look is [RenderQuality.Default]: FXAA, MEDIUM HDR buffer, SSAO at
+     // MEDIUM quality with bilateral upsampling, bloom 0.10, soft (DPCF) shadows. `SceneView`
+@@ -162,6 +170,7 @@ fun createView(engine: Engine): View = engine.createView().apply {
+     colorGrading = ColorGrading.Builder()
+         .toneMapper(ToneMapper.PBRNeutral())
+         .build(engine)
++        .also { sdkColorGradings[this] = it }
+ }
+ 
+ /**
+@@ -210,6 +219,11 @@ fun createView(engine: Engine): View = engine.createView().apply {
+  * Shadows are enabled by default, soft (`ShadowType.DPCF`), because AR users commonly want 3D
+  * content to cast shadows on detected planes. Disable via `View.setShadowingEnabled(false)` when
+  * not needed.
++ *
++ * [rememberARView] destroys the view and its Filmic [ColorGrading]. Calling this directly, destroy
++ * the view with `engine.destroyView(view)`, then its grading with
++ * `engine.destroyColorGrading(grading)`, the one read from `view.colorGrading` before you replace
++ * it: `destroyView` leaves it alive (#5232).
+  */
+ fun createARView(engine: Engine): View = engine.createView().apply {
+     // [RenderQuality.Default] minus SSAO and bloom (#657): FXAA, MEDIUM HDR buffer, soft (DPCF)
+@@ -225,9 +239,34 @@ fun createARView(engine: Engine): View = engine.createView().apply {
+     colorGrading = ColorGrading.Builder()
+         .toneMapper(ToneMapper.Filmic())
+         .build(engine)
++        .also { sdkColorGradings[this] = it }
+     filmicViews += this
+ }
+ 
++/**
++ * The [ColorGrading] that [createView] or [createARView] built for each view: the SDK's own, a 3D
++ * LUT that `Engine.destroyView` leaves behind (#5232). [destroyViewAndSdkGrading] frees it with its
++ * view, whether the view still holds it or the app replaced it. A grading the app set is never
++ * here: it may be shared with another view. Weak: a view nobody destroys drops out with its key.
++ */
++internal val sdkColorGradings: MutableMap<View, ColorGrading> =
++    java.util.Collections.synchronizedMap(java.util.WeakHashMap())
++
++/**
++ * Destroys [view], then the [ColorGrading] [createView] or [createARView] built for it, if any.
++ *
++ * The view goes first: a grading is never freed while a view still holds it. Only the SDK's own
++ * grading is freed, even when the app replaced it with `view.colorGrading = …`; the app's stays
++ * the app's to destroy. A view from another factory is destroyed alone.
++ */
++internal fun Engine.destroyViewAndSdkGrading(view: View) {
++    val sdkGrading = sdkColorGradings.remove(view)
++    safeDestroyView(view)
++    // Already freed through the same Java object (by an app that worked around #5232), the call
++    // throws before it reaches Filament: nothing is freed twice.
++    sdkGrading?.let { runCatching { destroyColorGrading(it) } }
++}
++
+ /**
+  * Views created by [createARView], whose tone mapper is Filmic rather than [createView]'s PBR
+  * Neutral. A material that pre-distorts its colour by the inverse of the view's tone mapper
+```
+
+**File**: `sceneview/src/main/java/io/github/sceneview/SceneView.kt` (modified, +14/-2)
+```diff
+@@ -1754,6 +1754,12 @@ fun rememberScene(engine: Engine, creator: () -> Scene = { createScene(engine) }
+  * A `View` is a heavy object that holds all rendering state for a single viewport — anti-aliasing,
+  * shadows, post-processing, etc. One per window is recommended. Destroyed on disposal.
+  *
++ * Disposal frees the view and the [com.google.android.filament.ColorGrading] that [createView]
++ * built for it, even if you replaced it with `view.colorGrading = …`, so an [Engine] that outlives
++ * the screen keeps nothing. A grading you set is yours to destroy, after this view. The SDK's
++ * grading, read through `view.colorGrading`, is freed with this view: do not share it with a view
++ * that outlives it.
++ *
+  * You rarely need to call this directly — `SceneView { }` creates one by default.
+  * Provide your own if you want to share the view with a [CollisionSystem] that is declared
+  * outside the `SceneView { }` block.
+@@ -1766,7 +1772,7 @@ fun rememberView(engine: Engine, creator: () -> View = { createView(engine) }) =
+     remember(engine, creator).also { view ->
+         DisposableEffect(view) {
+             onDispose {
+-                engine.safeDestroyView(view)
++                engine.destroyViewAndSdkGrading(view)
+             }
+         }
+     }
+@@ -1779,14 +1785,20 @@ fun rememberView(engine: Engine, creator: () -> View = { createView(engine) }) =
+  * camera-stream shader's `Inverse_Tonemap_Filmic` needs in order to round-trip back to the
+  * original camera pixels.
+  *
++ * Disposal frees the view and the [com.google.android.filament.ColorGrading] that [createARView]
++ * built for it, even if you replaced it with `view.colorGrading = …`, so an [Engine] that outlives
++ * the screen keeps nothing. A grading you set is yours to destroy, after this view. The SDK's
++ * grading, read through `view.colorGrading`, is freed with this view: do not share it with a view
++ * that outlives it.
++ *
+  * @see createARView for a full explanation of the AR camera-background tone-mapping pipeline.
+  */
+ @Composable
+ fun rememberARView(engine: Engine, creator: () -> View = { createARView(engine) }) =
+     remember(engine, creator).also { view ->
+         DisposableEffect(view) {
+             onDispose {
+-                engine.safeDestroyView(view)
++                engine.destroyViewAndSdkGrading(view)
+             }
+         }
+     }
+```
+
+**File**: `sceneview/src/main/java/io/github/sceneview/snapshot/ModelSnapshot.kt` (modified, +3/-7)
+```diff
+@@ -37,6 +37,7 @@ import io.github.sceneview.DefaultCameraNode
+ import io.github.sceneview.ExperimentalSceneViewApi
+ import io.github.sceneview.createView
+ import io.github.sceneview.destroyRendererWhenBackendIdle
++import io.github.sceneview.destroyViewAndSdkGrading
+ import io.github.sceneview.isValid
+ import io.github.sceneview.loaders.ModelLoader
+ import io.github.sceneview.math.Position
+@@ -48,7 +49,6 @@ import io.github.sceneview.safeDestroyIndirectLight
+ import io.github.sceneview.safeDestroyLight
+ import io.github.sceneview.safeDestroyScene
+ import io.github.sceneview.safeDestroyTexture
+-import io.github.sceneview.safeDestroyView
+ import io.github.sceneview.utils.readBuffer
+ import io.github.sceneview.verticalFovDegreesForFocalLength
+ import io.github.sceneview.whenBackendIdle
+@@ -669,9 +669,7 @@ class ModelSnapshot @MainThread constructor(
+             engine.safeDestroyLight(light)
+             EntityManager.get().destroy(light)
+         }
+-        val colorGrading = view.colorGrading
+-        engine.safeDestroyView(view)
+-        colorGrading?.let { runCatching { engine.destroyColorGrading(it) } }
++        engine.destroyViewAndSdkGrading(view)
+         engine.safeDestroyScene(scene)
+         engine.safeDestroyCamera(camera)
+         EntityManager.get().destroy(cameraEntity)
+@@ -695,9 +693,7 @@ class ModelSnapshot @MainThread constructor(
+             engine.safeDestroyLight(light)
+             EntityManager.get().destroy(light)
+         }
+-        val colorGrading = view.colorGrading
+-        engine.safeDestroyView(view)
+-        colorGrading?.let { runCatching { engine.destroyColorGrading(it) } }
++        engine.destroyViewAndSdkGrading(view)
+         engine.safeDestroyCamera(camera)
+         EntityManager.get().destroy(cameraEntity)
+         engine.safeDestroyScene(scene)
+```
+
+**File**: `sceneview/src/test/java/io/github/sceneview/RememberViewColorGradingTest.kt` (added, +254/-0)
+```diff
+@@ -0,0 +1,254 @@
++package io.github.sceneview
++
++import androidx.compose.runtime.AbstractApplier
++import androidx.compose.runtime.BroadcastFrameClock
++import androidx.compose.runtime.Composable
++import androidx.compose.runtime.Composition
++import androidx.compose.runtime.DisposableEffect
++import androidx.compose.runtime.Recomposer
++import androidx.compose.runtime.getValue
++import androidx.compose.runtime.mutableStateOf
++import androidx.compose.runtime.setValue
++import androidx.compose.runtime.snapshots.Snapshot
++import com.google.android.filament.ColorGrading
++import com.google.android.filament.Engine
++import com.google.android.filament.ToneMapper
++import com.google.android.filament.View
++import io.github.sceneview.node.FilamentWithoutJni
++import io.github.sceneview.testing.ShadowFilamentEngine
++import kotlinx.coroutines.ExperimentalCoroutinesApi
++import kotlinx.coroutines.launch
++import kotlinx.coroutines.test.TestScope
++import kotlinx.coroutines.test.runCurrent
++import kotlinx.coroutines.test.runTest
++import org.junit.Assert.assertEquals
++import org.junit.Assert.assertFalse
++import org.junit.Assert.assertNotNull
++import org.junit.Assert.assertTrue
++import org.junit.Before
++import org.junit.Test
++import org.junit.runner.RunWith
++import org.robolectric.RobolectricTestRunner
++import org.robolectric.annotation.Config
++import org.robolectric.annotation.Implementation
++import org.robolectric.annotation.Implements
++import org.robolectric.annotation.RealObject
++
++/**
++ * `rememberView` / `rememberARView` on an engine that outlives the screen (#5232).
++ *
++ * `Engine.destroyView` leaves the view's [ColorGrading] (a 3D LUT) alive. When the engine is torn
++ * down with the screen its own teardown reclaims it; on a hoisted, shared or app-level engine each
++ * exit used to leave the grading `createView` / `createARView` built. The engine here is created
++ * once, outside the composition, and every visit is one remember/forget cycle.
++ *
++ * Filament without JNI (Robolectric): the recording engine hands out real `View` and
++ * `ColorGrading` Java objects and logs what is destroyed, in order.
++ */
++@OptIn(ExperimentalCoroutinesApi::class)
++@RunWith(RobolectricTestRunner::class)
++@Config(
++    instrumentedPackages = ["com.google.android.filament"],
++    shadows = [
++        RememberViewColorGradingTest.RecordingEngine::class,
++        RememberViewColorGradingTest.RecordingGradingBuilder::class,
++    ],
++)
++class RememberViewColorGradingTest {
++
++    private lateinit var engine: Engine
++
++    @Before
++    fun hoistTheEngine() {
++        engine = FilamentWithoutJni.engine()
++        created.clear()
++        destroyed.clear()
++        sdkColorGradings.clear()
++    }
++
++    @Test
++    fun `a rememberView visit leaves no SDK grading behind`() = runTest {
++        val view = visit { rememberView(engine) }
++        val sdkGrading = view.colorGrading
++        assertNotNull(sdkGrading)
++
++        // The view first, then its grading: never a grading under a live view.
++        assertEquals(listOf<Any>(view, sdkGrading!!), destroyed)
++        assertTrue(sdkColorGradings.isEmpty())
++    }
++
++    @Test
++    fun `a rememberARView visit leaves no SDK grading behind`() = runTest {
++        val view = visit { rememberARView(engine) }
++
++        assertEquals(listOf<Any>(view, created.single()), destroyed)
++        assertTrue(sdkColorGradings.isEmpty())
++    }
++
++    @Test
++    fun `twenty visits on one engine free every grading they made`() = runTest {
++        repeat(VISITS) { index ->
++            if (index % 2 == 0) visit { rememberView(engine) } else visit { rememberARView(engine) }
++        }
++
++        assertEquals(VISITS, created.size)
++        assertEquals(VISITS, destroyed.count { it is View })
++        assertEquals(created, destroyed.filterIsInstance<ColorGrading>())
++        assertTrue(sdkColorGradings.isEmpty())
++    }
++
++    @Test
++    fun `a grading the app set is the app's, the one it replaced is still freed`() = runTest {
++        // An app grading, shared between views and destroyed by the app after them.
++        val appGrading = grading()
++        var replaced: ColorGrading? = null
++        val view = visit {
++            rememberView(engine) {
++                createView(engine).apply {
++                    replaced = colorGrading
++                    colorGrading = appGrading
++                }
++            }
++        }
++
++        assertEquals(listOf<Any>(view, replaced!!), destroyed)
++        assertFalse(appGrading in destroyed)
++    }
++
++    @Test
++    fun `a view from another factory is destroyed alone`() = runTest {
++        val appGrading = grading()
++        val view = visit { rememberView(engine) { engine.createView().apply { colorGrading = appGrading } } }
++
++        assertEquals(listOf<Any>(view), destroyed)
++    }
++
++    @Test
++    fun `a grading the app already freed is not freed twice`() = runTest {
++        // An app that worked around #5232 before the fix: it frees `view.colorGrading` itself.
++        v
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5197** (2026-11-20): release: 4.70.0 — version bump + changelog collate (@github-actions[bot])
-- **PR #5196** (2026-11-20): fix(demo): discard AR session state after a fatal session failure (@ThomasGorisse)
-- **PR #5195** (2026-11-20): chore(listing): one dark Play set, four real frames, galaxy banner (@ThomasGorisse)
-- **PR #5194** (2026-11-20): fix(demo): draw Measure's doors and windows on the plan, its walls list and its shares (#4783) (@ThomasGorisse)
-- **PR #5192** (2026-11-20): fix(demo): opaque settings sheet and bottom fade on the 3D Scan landing (@ThomasGorisse)
-- **PR #5190** (2026-11-20): fix(ios-demo): label a bundled model "Built-in model", not "Offline model" (@ThomasGorisse)
+- **PR #5264** (2026-11-23): ci(build-apks): build a side-by-side demo APK for a branch proof (@ThomasGorisse)
+- **PR #5261** (2026-11-23): ci(dependabot): no material3 1.6.0 pre-releases for the published library (@ThomasGorisse)
+- **PR #5256** (closed): chore(deps): bump androidx.compose.material3:material3 from 1.5.0-rc01 to 1.6.0-alpha01 (@dependabot[bot])
+- **PR #5254** (2026-11-23): fix(demo): no third-party trademark on the demo's own scenes and cards (#5247) (@ThomasGorisse)
+- **PR #5250** (2026-11-23): release(mcp): sceneview-mcp 4.3.4 (@ThomasGorisse)
+- **PR #5249** (2026-11-23): docs(migration): a transparent background needs isOpaque = false as well as TextureSurface (@ThomasGorisse)
 
 ---
 
@@ -2913,22 +2670,22 @@ Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. demo): bound the 3D scan journal and release the live model on exit
+## X. sceneview): confirm an idle backend with a bounded fence wait after 5 s
 
 **RULE**:
-When implementing operations in `changelog.d/5186-scan-oom.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sceneview/sceneview. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/4969-teardown-no-block.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sceneview/sceneview. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0db548c6`: demo): bound the 3D scan journal and release the live model on exit. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f8e0bdd7`: sceneview): confirm an idle backend with a bounded fence wait after 5 s. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/5186-scan-oom.md`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/4969-teardown-no-block.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
 <!-- category: Fixed -->
-- **Demo app: smoother, more reliable 3D scans.** The demo now requests a large heap, so long room scans keep full model detail, with a memory safety net on phones still below 384 MiB. The replay journal, previously unbounded, is capped (8 MiB on a 512 MiB heap) and always keeps photos, floor coverage, anchors and when each plane appeared or was removed. Leaving a scan frees its memory reliably, and the saved-scans list loads lazily, so exits no longer freeze.
+- **Android: renderers and other deferred releases on a long-lived engine are freed on slow devices too ([#4969](https://github.com/sceneview/sceneview/issues/4969)).** A release deferred until the backend is idle needs a fence that is both reached and recent. A main thread polling less often than every 48 ms, common on low-end devices, never saw one, so on an engine shared by several screens every renderer stayed pending until `Engine.destroy`. After five seconds of waiting, each poll now creates a fence and waits at most 4 ms for it. If it is reached, the backend is idle at that moment and the release runs straight away, in the same main-thread message, so its own native wait finds nothing queued behind it. A backend that is still busy, with a new screen's shaders for instance, misses the 4 ms and the release keeps waiting. Nothing ever forces a release behind a busy fence.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2938,7 +2695,7 @@ Subsystems managing Kotlin data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0db548c6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f8e0bdd7` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

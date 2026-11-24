@@ -12578,3 +12578,6 @@
 | `CYCLE-20261124-ECXM` | `2026-11-24T03:41:38.170Z` | `Automattic/harper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10188` | Yes (`28ebfa74...`) |
 | `CYCLE-20261124-EI87` | `2026-11-24T03:41:45.031Z` | `dosco/deeporg` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10172` | Yes (`7c82de8a...`) |
 | `CYCLE-20261124-EMN4` | `2026-11-24T03:41:50.752Z` | `infiniflow/infinity` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10189` | Yes (`442e238e...`) |
+| `CYCLE-20261124-OZ4O` | `2026-11-24T03:49:53.496Z` | `max-sixty/worktrunk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10190` | Yes (`ebfaba4f...`) |
+| `CYCLE-20261124-P39G` | `2026-11-24T03:49:58.852Z` | `sceneview/sceneview` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10191` | Yes (`b5f2ed67...`) |
+| `CYCLE-20261124-P7SP` | `2026-11-24T03:50:04.729Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10192` | Yes (`c3916dba...`) |

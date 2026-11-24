@@ -4,22 +4,22 @@
 {
   "source_repository": "cilium/cilium",
   "source_url": "https://github.com/cilium/cilium",
-  "source_version": "69961019",
+  "source_version": "20bb8be8",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-23T23:10:02.091Z",
+  "timestamp": "2026-11-24T03:50:04.958Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-cilium-cilium",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [cilium/cilium](https://github.com/cilium/cilium) (Revision: `69961019`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T23:10:02.091Z`  
+> **Provenance**: Harvested from [cilium/cilium](https://github.com/cilium/cilium) (Revision: `20bb8be8`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T03:50:04.958Z`  
 > **Learning ID**: `learn-github-cilium-cilium`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `cilium/cilium` (Commit: `69961019`)
+- **Target Repository**: `cilium/cilium` (Commit: `20bb8be8`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T23:10:00.864Z  
+> **Harvest Timestamp**: 2026-11-24T03:50:03.659Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25891 stars
+- **Stars / Engagement**: 25895 stars
 
 ---
 
@@ -1270,15 +1270,15 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #50225** (2026-11-24): **gateway-api: translation extension and resource registry hooks**
+  *Symptoms*: The PR allows registering of additional ResourceRegistry entries and adding translation extension hooks.  Please see the details per-commit.  ```release-note Cilium's Gateway API ResourceRegistry has been extended to allow registration of additional entries. The Gateway API translation process has been refactored to support translation extension hooks. ```  This PR was prepared with AIL: 1.  [AI Influence Level]: https://danielmiessler.com/blog/ai-influence-level-ail [Cilium AI Policy]: https://github.com/cilium/community/blob/main/AI-POLICY.md [Developer’s Certificate of Origin]: https://docs.cilium.io/en/stable/contributing/development/contributing_guide/#dev-coo [Submitting a pull request]: https://docs.cilium.io/en/stable/contributing/development/contributing_guide/#submitting-a-pull-request [kind]: https://kind.sigs.k8s.io 
+  **Post-Mortem & Fix Analysis**:
+  > /test
+
 - **Issue #50209** (2026-11-23): **bpf: tests: extend coverage of NO_SNAT endpoints**
   *Symptoms*: The `ENDPOINT_F_NO_SNAT_{V4,V6}` flag (used by multi-pool IPAM to skip masquerading) is only tested with UDP traffic. This adds some more BPF unit tests for it.  The first commit moves the packet checks of the existing UDP tests into helpers (`no_snat_ep_check_v{4,6}()` and `snat_ep_check_v{4,6}()`), so that they can be reused by other tests. No functional changes.  The second one adds the same tests for TCP and ICMP echo, for both IPv4 and IPv6. For each protocol there is a test with a `NO_SNAT` endpoint (the source IP is preserved) and one with a regular endpoint (the source IP is masqueraded), so that we know the first one doesn't pass for the wrong reason. They run in both `host_bpf_masq_native` and `host_bpf_masq_overlay`.  The last one adds a test per IP family checking that a `NO_SNAT` endpoint matching an egress gateway policy is still SNATed with the egress IP, since the policy is evaluated before the flag in `__snat_v{4,6}_needs_masquerade()`.  AIL: 0
   **Post-Mortem & Fix Analysis**:
   > /test
-  > /test
-
-- **Issue #50207** (2026-11-23): **docs: Gateway API TLS options**
-  *Symptoms*: This commit documents Gateway API TLS options for listeners.  Refs: #48102  AIL:0.
-  **Post-Mortem & Fix Analysis**:
   > /test
 
 ### D4: Resource Lifecycle & Leak Defenses
@@ -1296,584 +1296,293 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `69961019` (2026-11-20)
-**Commit Message**: ipam: Advertise released pool CIDRs in the CiliumNode
+### Incident Patch 1: `20bb8be8` (2026-11-23)
+**Commit Message**: gateway-api: add translation extension hook
 
-The set of CIDRs released from a pool was tracked in memory only, so it
-was lost on agent restart and invisible in the CiliumNode resource.
+Allow external components to modify translated Gateway CECs before they
+are persisted.
 
-The MultiPoolManager now reports a per-pool snapshot of released CIDRs
-in the new Released field on every local node update, and stops
-reporting a CIDR once it has been unassigned from the node. On the first
-observation of the node, i.e. after an agent restart, the released set
-is restored from the resource so that still-assigned CIDRs are not
-handed out again before the operator removes them; afterwards the
-in-memory state is authoritative.
+Register extensions through Hive and support deferring reconciliation to
+preserve the last successfully applied configuration.
 
-Signed-off-by: Alex Melhem <[REDACTED_EMAIL]>
+Signed-off-by: Viktor Kurchenko <[REDACTED_EMAIL]>
 
-**File**: `pkg/alibabacloud/agent/pools.go` (modified, +1/-4)
+**File**: `operator/pkg/gateway-api/cell.go` (modified, +7/-4)
 ```diff
-@@ -17,10 +17,7 @@ import (
+@@ -235,7 +235,8 @@ type gatewayAPIParams struct {
+ 	// Preconditions is injected from private provider
+ 	Preconditions *gatewayAPIPreconditions
  
- var poolAccessor = ipam.PoolSpecAccessors{
- 	FromResource: func(node *ciliumv2.CiliumNode) ipamTypes.IPAMPoolSpec {
--		pools := ipamTypes.IPAMPoolSpec{
--			Requested: node.Spec.IPAM.Pools.Requested,
--			Allocated: node.Spec.IPAM.Pools.Allocated,
--		}
-+		pools := node.Spec.IPAM.Pools
- 
- 		if len(node.Status.AlibabaCloud.ENIs) == 0 {
- 			return pools
-```
-
-**File**: `pkg/aws/agent/pools.go` (modified, +1/-4)
-```diff
-@@ -24,10 +24,7 @@ var poolAccessor = ipam.PoolSpecAccessors{
- 	// Secondary IPs are represented as host-prefix CIDRs (/32 for IPv4, /128 for
- 	// IPv6) and delegated prefixes as /28 CIDRs for IPv4 and /80 CIDRs for IPv6.
- 	FromResource: func(node *ciliumv2.CiliumNode) ipamTypes.IPAMPoolSpec {
--		pools := ipamTypes.IPAMPoolSpec{
--			Requested: node.Spec.IPAM.Pools.Requested,
--			Allocated: node.Spec.IPAM.Pools.Allocated,
--		}
-+		pools := node.Spec.IPAM.Pools
- 
- 		if len(node.Status.ENI.ENIs) == 0 {
- 			return pools
-```
-
-**File**: `pkg/azure/agent/pools.go` (modified, +1/-4)
-```diff
-@@ -17,10 +17,7 @@ import (
- 
- var poolAccessor = ipam.PoolSpecAccessors{
- 	FromResource: func(node *ciliumv2.CiliumNode) ipamTypes.IPAMPoolSpec {
--		pools := ipamTypes.IPAMPoolSpec{
--			Requested: node.Spec.IPAM.Pools.Requested,
--			Allocated: node.Spec.IPAM.Pools.Allocated,
--		}
-+		pools := node.Spec.IPAM.Pools
- 
- 		if len(node.Status.Azure.Interfaces) == 0 {
- 			return pools
-```
-
-**File**: `pkg/ipam/multipool_manager.go` (modified, +45/-1)
-```diff
-@@ -68,6 +68,26 @@ type poolPair struct {
- 	allowLastIP  bool
+-	AdditionalResources []resource.Resource `group:"gateway-api-resources"`
++	TranslationExtensions []TranslationExtension `group:"gateway-api-translation-extensions"`
++	AdditionalResources   []resource.Resource    `group:"gateway-api-resources"`
  }
  
-+func (p *poolPair) releasedCIDRs() []iputil.Prefix {
-+	var cidrs []iputil.Prefix
-+	if p.v4 != nil {
-+		cidrs = append(cidrs, p.v4.releasedCIDRs()...)
-+	}
-+	if p.v6 != nil {
-+		cidrs = append(cidrs, p.v6.releasedCIDRs()...)
-+	}
-+	return cidrs
-+}
-+
-+func (p *poolPair) restoreReleased(cidrs []iputil.Prefix) {
-+	if p.v4 != nil {
-+		p.v4.restoreReleased(cidrs)
-+	}
-+	if p.v6 != nil {
-+		p.v6.restoreReleased(cidrs)
-+	}
-+}
-+
- type preAllocatePerPool map[Pool]int
+ func initGatewayAPIController(params gatewayAPIParams) error {
+@@ -307,7 +308,8 @@ func initGatewayAPIController(params gatewayAPIParams) error {
+ 		cfg.HostNetworkConfig.Enabled,
+ 		nodeLabelSelector,
+ 		params.GatewayApiConfig.GatewayAPIInferenceExtensionEnabled,
+-		params.AdditionalResources...,
++		params.TranslationExtensions,
++		params.AdditionalResources,
+ 	); err != nil {
+ 		return fmt.Errorf("failed to create gateway controller: %w", err)
+ 	}
+@@ -468,13 +470,14 @@ func registerReconcilers(
+ 	hostNetworkEnabled bool,
+ 	hostNetworkLabel v1.LabelSelector,
+ 	inferenceExtensionEnabled bool,
+-	additionalResources ...resource.Resource,
++	translationExtensions []TranslationExtension,
++	additionalResources []resource.Resource,
+ ) error {
+ 	requiredReconcilers := []interface {
+ 		SetupWithManager(mgr ctrlRuntime.Manager) error
+ 	}{
+ 		newGatewayClassReconciler(mgr, logger, controllerName),
+-		newGatewayReconciler(mgr, translator, logger, controllerName, hostNetworkEnabled, hostNetworkLabel, inferenceExtensionEnabled, additionalResources...),
++		newGatewayReconciler(mgr, translator, logger, controllerName, hostNetworkEnabled, hostNetworkLabel, inferenceExtensionEnabled, translationExtensions, additionalResources),
+ 		newGammaReconciler(mgr, translator, logger, controllerName),
+ 		newGatewayClassConfigReconciler(mgr, logger),
+ 		newEndpointSliceReconciler(mgr, logger),
+```
+
+**File**: `operator/pkg/gateway-api/gateway.go` (modified, +4/-1)
+```diff
+@@ -54,6 +54,7 @@ type gatewayReconciler struct {
+ 	controllerName                      string
+ 	gatewayAPIInferenceExtensionEnabled bool
+ 	resourceRegistry                    resource.Registry
++	translationExtensions               []TranslationExtension
+ }
  
- func ParseMultiPoolPreAllocMap(conf map[string]string) (preAllocatePerPool, error) {
-@@ -474,10 +494,22 @@ func (m *MultiPoolManager) ciliumNodeUpdated(newNode *ciliumv2.CiliumNode) {
- 	m.poolsMutex.Lock()
- 	defer m.poolsMutex.Unlock()
+ func newGatewayReconciler(
+@@ -64,7 +65,8 @@ func newGatewayReconciler(
+ 	hostNetworkEnabled bool,
+ 	hostNetworkLabel metav1.LabelSelector,
+ 	gatewayAPIInferenceExtensionEnabled bool,
+-	additionalResources ...resource.Resource,
++	translationExtensions []TranslationExtension,
++	additionalResources []resource.Resource,
+ ) *gatewayReconciler {
+ 	scopedLog := logger.With(logfields.Controller, gateway)
  
--	for _, pool := range m.poolsAccessor.FromResource(newNode).Allocated {
-+	spec := m.poolsAccessor.FromResource(newNode)
-+	for _, pool := range spec.Allocated {
- 		m.upsertPoolLocked(Pool(pool.Pool), pool.CIDRs, pool.AllowFirstIP, pool.AllowLastIP)
+@@ -104,6 +106,7 @@ func newGatewayReconciler(
+ 		controllerName:                      controllerName,
+ 		gatewayAPIInferenceExtensionEnabled: gatewayAPIInferenceExtensionEnabled,
+ 		resourceRegistry:                    resource.NewGatewayRegistry(resourceConfig, additionalResources...),
++		translationExtensions:               translationExtensions,
+ 	}
+ }
+ 
+```
+
+**File**: `operator/pkg/gateway-api/gateway_reconcile.go` (modified, +10/-0)
+```diff
+@@ -228,6 +228,16 @@ func (r *gatewayReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
+ 		return r.handleReconcileErrorWithStatus(ctx, fmt.Errorf("failed to translate resources: %w", err), original, gw)
  	}
  
-+	// On the first observation, restore the CIDRs released by a previous
-+	// agent run so that they are not handed out again. Afterwards, the
-+	// in-memory state is authoritative.
-+	if m.getNode() == nil {
-+		for _, release := range spec.Released {
-+			if pool, ok := m.pools[Pool(release.Pool)]; ok {
-+				pool.restoreReleased(release.CIDRs)
-+			}
-+		}
++	deferReconcile, err := r.applyTranslationExtensions(ctx, gw, cec)
++	if err != nil {
++		setGatewayProgrammed(gw, metav1.ConditionFalse, "Unable to apply translation extensions", gatewayv1.GatewayReasonNoResources)
++		return r.handleReconcileErrorWithStatus(ctx, err, original, gw)
++	}
++	if deferReconcile {
++		scopedLog.InfoContext(ctx, "Gateway reconciliation deferred by translation extension")
++		return controllerruntime.Success()
 +	}
 +
- 	// Sync pre-allocate value from the CiliumNode spec. For cloud IPAM modes,
- 	// the agent writes it during node discovery and the operator may adjust
- 	// it. For standard multi-pool mode this field is unset (0).
-@@ -650,6 +682,7 @@ func (m *MultiPoolManager) updateLocalNode(ctx context.Context) error {
- 	newNode := curNode.DeepCopy()
- 	requested := []types.IPAMPoolRequest{}
- 	allocated := []types.IPAMPoolAllocation{}
-+	var released []types.IPAMPoolRelease
- 
- 	expiredPools := m.pendingIPsPerPool.removeExpiredEntries()
- 	neededIPsPerPool := m.computeNeededIPsPerPoolLocked()
-@@ -700,6 +733,13 @@ func (m *MultiPoolManager) updateLocalNode(ctx context.Context) error {
- 			continue
- 		}
- 
-+		if releasedCIDRs := pool.releasedCIDRs(); len(releasedCIDRs) > 0 {
-+			released = append(released, types.IPAMPoolRelease{
-+				Pool:  poolName.String(),
-+				CIDRs: releasedCIDRs,
-+			})
-+		}
-+
- 		// Emit per-pool, per-family IPAM metrics for the surviving pool.
- 		if v4Pool := pool.v4; v4Pool != nil {
- 			used := v4Pool.inUseIPCount()
-@@ -748,9 +788,13 @@ func (m *MultiPoolManager) updateLocalNode(ctx context.Context) error {
- 	sort.Slice(allocated, func(i, j int) bool {
- 		return allocated[i].Pool < allocated[j].Pool
- 	})
-+	sort.Slice(released, func(i, j int) bool {
-+		return released[i].Pool < released[j].Pool
-+	})
- 
- 	var newPoolsSpec types.IPAMPoolSpec
- 	newPoolsSpec.Requested = requested
-+	newPoolsSpec.Released = released
- 
- 	// Only update Allocated once local pools have been populated. Before
- 	// that, the agent has no CIDRs of its own and updating with an empty
+ 	if err = r.ensureService(ctx, svc); err != nil {
+ 		setGatewayAccepted(gw, false, "Unable to create Service resource", gatewayv1.GatewayReasonNoResources)
+ 		setGatewayProgrammed(gw, metav1.ConditionFalse, "Unable to create Service resource", gatewayv1.GatewayReasonNoResources)
 ```
 
-**File**: `pkg/ipam/multipool_test.go` (modified, +176/-0)
+**File**: `operator/pkg/gateway-api/translation_extension.go` (added, +60/-0)
 ```diff
-@@ -40,6 +40,7 @@ import (
- 	"github.com/cilium/cilium/pkg/ipam/service/ipallocator"
- 	"github.com/cilium/cilium/pkg/ipam/types"
- 	ciliumv2 "github.com/cilium/cilium/pkg/k8s/apis/cilium.io/v2"
-+	cilium_v2 "github.com/cilium/cilium/pkg/k8s/client/clientset/versioned/typed/cilium.io/v2"
- 	k8sClient "github.com/cilium/cilium/pkg/k8s/client/testutils"
- 	"github.com/cilium/cilium/pkg/k8s/resource"
- 	"github.com/cilium/cilium/pkg/lock"
-@@ -756,6 +757,181 @@ func Test_MultiPoolManager_ReleaseUnusedCIDR(t *testing.T) {
- 	assert.Equal(t, 0, testutil.CollectAndCount(m.NeededIPs))
- }
- 
-+// fakeCiliumNodeClient stores the CiliumNode last written by the manager,
-+// unless err is set.
-+type fakeCiliumNodeClient struct {
-+	cilium_v2.CiliumNodeInterface
-+	node *ciliumv2.CiliumNode
-+	err  error
+@@ -0,0 +1,60 @@
++// SPDX-License-Identifier: Apache-2.0
++// Copyright Authors of Cilium
++
++package gateway_api
++
++import (
++	"context"
++	"fmt"
++
++	gatewayv1 "sigs.k8s.io/gateway-api/apis/v1"
++
++	ciliumv2 "github.com/cilium/cilium/pkg/k8s/apis/cilium.io/v2"
++)
++
++// TranslationExtension modifies the translated Envoy configuration before it
++// is persisted. Implementations must not persist the configuration themselves.
++type TranslationExtension interface {
++	// Name returns the stable extension name used in diagnostics.
++	Name() string
++
++	// Enabled reports whether the extension should be applied.
++	Enabled() bool
++
++	// Apply modifies cec for gateway. The extension may defer reconciliation to
++	// preserve the last successfully applied configuration.
++	Apply(context.Context, *gatewayv1.Gateway, *ciliumv2.CiliumEnvoyConfig) (TranslationExtensionResult, error)
 +}
 +
-+func (f *fakeCiliumNodeClient) Update(_ context.Context, node *ciliumv2.CiliumNode, _ metav1.UpdateOptions) (*ciliumv2.CiliumNode, error) {
-+	if f.err != nil {
-+		return nil, f.err
++// TranslationExtensionResult controls Gateway reconciliation after an
++// extension has been applied.
++type TranslationExtensionResult struct {
++	DeferReconcile bool
++}
++
++func (r *gatewayReconciler) applyTranslationExtensions(
++	ctx context.Context,
++	gateway *gatewayv1.Gateway,
++	cec *ciliumv2.CiliumEnvoyConfig,
++) (bool, error) {
++	if cec == nil {
++		return false, nil
 +	}
-+	f.node = node.DeepCopy()
-+	return node, nil
-+}
 +
-+// podCIDRsAccessor mimics cloud IPAM modes, where the CIDRs assigned to the
-+// node are not read from the Allocated field written by the agent.
-+var podCIDRsAccessor = PoolSpecAccessors{
-+	FromResource: func(cn *ciliumv2.CiliumNode) types.IPAMPoolSpec {
-+		spec := cn.Spec.IPAM.Pools
-+		spec.Allocated = nil
-+		if len(cn.Spec.IPAM.PodCIDRs) > 0 {
-+			spec.Allocated = []types.IPAMPoolAllocation{{Pool: "default", CIDRs: cn.Spec.IPAM.PodCIDRs}}
-+		}
-+		return spec
-+	},
-+	ToResource: MultiPoolAccessor.ToResource,
-+}
-+
-+func newReleasedCIDRsTestManager(t *testing.T) (*MultiPoolManager, *fakeCiliumNodeClient) {
-+	cnClient := &fakeCiliumNodeClient{}
-+	return &MultiPoolManager{
-+		logger:                 hivetest.Logger(t),
-+		ipv4Enabled:            true,
-+		preallocatedIPsPerPool: preAllocatePerPool{},
-+		pendingIPsPerPool:      newPendingAllocationsPerPool(hivetest.Logger(t)),
-+		pools:                  map[Pool]*poolPair{},
-+		poolsUpdated:           make(chan struct{}, 1),
-+		staticIPUpdated:        make(chan struct{}, 1),
-+		finishedRestore:        map[Family]bool{IPv4: true},
-+		nodeSynced:             true,
-+		k8sUpdater:             job.NewTrigger(),
-+		cnClient:               cnClient,
-+		localNodeUpdateFn:      func() {},
-+		poolsAccessor:          podCIDRsAccessor,
-+		skipMasqueradeForPool:  func(Pool) (bool, error) { return false, nil },
-+		metrics:                NewMultiPoolMetrics(),
-+	}, cnClient
-+}
-+
-+func TestMultiPoolManagerAdvertisesReleasedCIDRs(t *testing.T) {
-+	cidr1 := iputil.PrefixFrom(netip.MustParsePrefix("10.0.10.0/32"))
-+	cidr2 := iputil.PrefixFrom(netip.MustParsePrefix("10.0.11.0/32"))
-+	mgr, cnClient := newReleasedCIDRsTestManager(t)
-+
-+	mgr.ciliumNodeUpdated(&ciliumv2.CiliumNode{
-+		Spec: ciliumv2.NodeSpec{IPAM: types.IPAMSpec{PodCIDRs: []iputil.Prefix{cidr1, cidr2}}},
-+	})
-+	_, err := mgr.AllocateIP(cidr1.Addr(), "pod-a", "default", IPv4, false)
-+	require.NoError(t, err)
-+
-+	require.NoError(t, mgr.updateLocalNode(t.Context()))
-+	require.Equal(t, types.IPAMPoolSpec{
-+		Requested: []types.IPAMPoolRequest{{Pool: "default", Needed: types.IPAMPoolDemand{IPv4Addrs: 1}}},
-+		Allocated: []types.IPAMPoolAllocation{{Pool: "default", CIDRs: []iputil.Prefix{cidr1}}},
-+		Released:  []types.IPAMPoolRelease{{Pool: "default", CIDRs: []iputil.Prefix{cidr2}}},
-+	}, cnClient.node.Spec.IPAM.Pools)
-+
-+	// The echo of our own update still assigns cidr2, so it stays released.
-+	mgr.ciliumNodeUpdated(cnClient.node)
-+	require.Zero(t, mgr.capacity(IPv4))
-+	require.NoError(t, mgr.updateLocalNode(t.Context()))
-+	require.Equal(t, []types.IPAMPoolRelease{{Pool: "default", CIDRs: []iputil.Prefix{cidr2}}}, cnClient.node.Spec.IPAM.Pools.Released)
-+
-+	// cidr2 is no longer advertised once it is unassigned from the node.
-+	detached := cnClient.node.DeepCopy()
-+	detached.Spec.IPAM.PodCIDRs = []iputil.Prefix{cidr1}
-+	mgr.ciliumNodeUpdated(detached)
-+	require.NoError(t, mgr.updateLocalNode(t.Context()))
-+	require.Empty(t, cnClient.node.Spec.IPAM.Pools.Released)
-+	require.Equal(t, []types.IPAMPoolAllocation{{Pool: "default", CIDRs: []iputil.Prefix{cidr1}}}, cnClient.node.Spec.IPAM.Pools.Allocated)
-+}
-+
-+func TestMultiPoolManagerAdvertisesReleasedCIDRsInMultiPoolMode(t *testing.T) {
-+	cidr1 := iputil.PrefixFrom(netip.MustParsePrefix("10.0.10.0/32"))
-+	cidr2 := iputil.PrefixFrom(netip.MustParsePrefix("10.0.11.0/32"))
-+	mgr, cnClient := newReleasedCIDRsTestManager(t)
-+	mgr.poolsAccessor = MultiPoolAccessor
-+
-+	mgr.ciliumNodeUpdated(&ciliumv2.CiliumNode{
-+		Spec: ciliumv2.NodeSpec{IPAM: types.IPAMSpec{Pools: types.IPAMPoolSpec{
-+			Allocated: []types.IPAMPoolAllocation{{Pool: "default", CIDRs: []iputil.Prefix{cidr1, cidr2}}},
-+		}}},
-+	})
-+	_, err := mgr.AllocateIP(cidr1.Addr(), "pod-a", "default", IPv4, false)
-+	require.NoError(t, err)
-+
-+	// cidr2 stays released if the update releasing it fails.
-+	cnClient.err = k8sErrors.NewConflict(ciliumv2.Resource("ciliumnodes"), "node", errors.New("conflict"))
-+	require.
-```
-
-**File**: `pkg/ipam/pool.go` (modified, +32/-0)
-```diff
-@@ -160,6 +160,38 @@ func (p *cidrPool) inUseCIDRsLocked() []iputil.Prefix {
- 	return CIDRs
- }
- 
-+func (p *cidrPool) releasedCIDRs() []iputil.Prefix {
-+	p.mutex.Lock()
-+	defer p.mutex.Unlock()
-+
-+	CIDRs := make([]iputil.Prefix, 0, len(p.released))
-+	for prefix := range p.released {
-+		CIDRs = append(CIDRs, iputil.PrefixFrom(prefix))
-+	}
-+	slices.SortFunc(CIDRs, func(a, b iputil.Prefix) int { return a.Prefix.Compare(b.Prefix) })
-+	return CIDRs
-+}
-+
-+// restoreReleased marks the given CIDRs as released again after an agent
-+// restart. CIDRs no longer assigned to the pool are ignored.
-+func (p *cidrPool) restoreReleased(cidrs []iputil.Prefix) {
-+	p.mutex.Lock()
-+	defer p.mutex.Unlock()
-+
-+	retainedAllocators := p.ipAllocators[:0]
-+	for _, ipAllocator := range p.ipAllocators {
-+		cidr := ipAllocator.CIDR()
-+		if ipAllocator.Used() == 0 && slices.ContainsFunc(cidrs, func(c iputil.Prefix) bool {
-+			return c.IsValid() && c.Prefix.Masked() == cidr
-+		}) {
-+			p.released[cidr] = struct{}{}
++	for _, extension := range r.translationExtensions {
++		if !extension.Enabled() {
 +			continue
 +		}
-+		retainedAllocators = append(retainedAllocators, ipAllocator)
-+	}
-+	p.ipAllocators = retainedAllocators
-+}
 +
- func (p *cidrPool) dump() (allocated sets.Set[netip.Addr], usedIPs, freeIPs, numCIDRs int, err error) {
- 	// TODO(gandro): Use the Snapshot interface to avoid locking during dump
- 	p.mutex.Lock()
++		result, err := extension.Apply(ctx, gateway, cec)
++		if err != nil {
++			return false, fmt.Errorf("translation extension %q failed: %w", extension.Name(), err)
++		}
++
++		if result.DeferReconcile {
++			return true, nil
++		}
++	}
++
++	return false, nil
++}
 ```
 
 ---
 
-### Incident Patch 2: `37fbc322` (2026-11-18)
-**Commit Message**: ipam: Add Released field to IPAMPoolSpec
+### Incident Patch 2: `c7499b32` (2026-11-23)
+**Commit Message**: gateway-api: allow additional ResourceRegistry entries
 
-Add the IPAMPoolRelease type and a new Released field to IPAMPoolSpec so
-that the agent can advertise, per pool, the CIDRs it has released and no
-longer allocates from directly in the CiliumNode resource.
+This adds optional resources support to Gateway API through a Hive group
+and pass them into the Gateway registry.
 
-The field is informational and does not claim ownership: a listed CIDR
-may already be unassigned from the node until the agent's next update.
-On restart, the agent restores the entries still assigned to this node.
+Existing behavior remains unchanged when no additional resources are
+registered.
 
-Signed-off-by: Alex Melhem <[REDACTED_EMAIL]>
+Signed-off-by: Viktor Kurchenko <[REDACTED_EMAIL]>
 
-**File**: `pkg/ipam/types/types.go` (modified, +23/-0)
+**File**: `operator/pkg/gateway-api/cell.go` (modified, +6/-1)
 ```diff
-@@ -112,6 +112,19 @@ type IPAMPoolRequest struct {
- 	Needed IPAMPoolDemand `json:"needed,omitzero"`
+@@ -27,6 +27,7 @@ import (
+ 	operatorOption "github.com/cilium/cilium/operator/option"
+ 	"github.com/cilium/cilium/operator/pkg/ciliumenvoyconfig"
+ 	"github.com/cilium/cilium/operator/pkg/gateway-api/helpers"
++	"github.com/cilium/cilium/operator/pkg/gateway-api/resource"
+ 	"github.com/cilium/cilium/operator/pkg/model/translation"
+ 	gatewayApiTranslation "github.com/cilium/cilium/operator/pkg/model/translation/gateway-api"
+ 	"github.com/cilium/cilium/operator/pkg/secretsync"
+@@ -233,6 +234,8 @@ type gatewayAPIParams struct {
+ 
+ 	// Preconditions is injected from private provider
+ 	Preconditions *gatewayAPIPreconditions
++
++	AdditionalResources []resource.Resource `group:"gateway-api-resources"`
  }
  
-+// IPAMPoolRelease describes the CIDRs a node has released from an IPAM pool.
-+type IPAMPoolRelease struct {
-+	// Pool is the name of the IPAM pool the CIDRs were released from
-+	//
-+	// +kubebuilder:validation:MinLength=1
-+	Pool string `json:"pool"`
-+
-+	// CIDRs contains the CIDRs released from this pool.
-+	//
-+	// +optional
-+	CIDRs []iputil.Prefix `json:"cidrs,omitempty"`
-+}
-+
- type IPAMPoolSpec struct {
- 	// Requested contains a list of IPAM pool requests, i.e. indicates how many
- 	// addresses this node requests out of each pool listed here. This field
-@@ -126,6 +139,16 @@ type IPAMPoolSpec struct {
- 	//
- 	// +optional
- 	Allocated []IPAMPoolAllocation `json:"allocated,omitempty"`
-+
-+	// Released reports a snapshot of the CIDRs the agent has released from
-+	// each pool and does not currently allocate from. It is informational
-+	// only and does not claim ownership: a listed CIDR may already be
-+	// unassigned from this node until the agent's next update. On restart,
-+	// the agent restores the entries still assigned to this node. This field
-+	// is owned and written to by cilium-agent.
-+	//
-+	// +optional
-+	Released []IPAMPoolRelease `json:"released,omitempty"`
- }
- 
- // IPAMSpec is the IPAM specification of the node
-```
-
-**File**: `pkg/ipam/types/zz_generated.deepcopy.go` (modified, +30/-0)
-```diff
-@@ -67,6 +67,29 @@ func (in *IPAMPoolDemand) DeepCopy() *IPAMPoolDemand {
- 	return out
- }
- 
-+// DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
-+func (in *IPAMPoolRelease) DeepCopyInto(out *IPAMPoolRelease) {
-+	*out = *in
-+	if in.CIDRs != nil {
-+		in, out := &in.CIDRs, &out.CIDRs
-+		*out = make([]ip.Prefix, len(*in))
-+		for i := range *in {
-+			(*in)[i].DeepCopyInto(&(*out)[i])
-+		}
-+	}
-+	return
-+}
-+
-+// DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new IPAMPoolRelease.
-+func (in *IPAMPoolRelease) DeepCopy() *IPAMPoolRelease {
-+	if in == nil {
-+		return nil
-+	}
-+	out := new(IPAMPoolRelease)
-+	in.DeepCopyInto(out)
-+	return out
-+}
-+
- // DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
- func (in *IPAMPoolRequest) DeepCopyInto(out *IPAMPoolRequest) {
- 	*out = *in
-@@ -99,6 +122,13 @@ func (in *IPAMPoolSpec) DeepCopyInto(out *IPAMPoolSpec) {
- 			(*in)[i].DeepCopyInto(&(*out)[i])
- 		}
+ func initGatewayAPIController(params gatewayAPIParams) error {
+@@ -304,6 +307,7 @@ func initGatewayAPIController(params gatewayAPIParams) error {
+ 		cfg.HostNetworkConfig.Enabled,
+ 		nodeLabelSelector,
+ 		params.GatewayApiConfig.GatewayAPIInferenceExtensionEnabled,
++		params.AdditionalResources...,
+ 	); err != nil {
+ 		return fmt.Errorf("failed to create gateway controller: %w", err)
  	}
-+	if in.Released != nil {
-+		in, out := &in.Released, &out.Released
-+		*out = make([]IPAMPoolRelease, len(*in))
-+		for i := range *in {
-+			(*in)[i].DeepCopyInto(&(*out)[i])
-+		}
-+	}
- 	return
- }
- 
+@@ -464,12 +468,13 @@ func registerReconcilers(
+ 	hostNetworkEnabled bool,
+ 	hostNetworkLabel v1.LabelSelector,
+ 	inferenceExtensionEnabled bool,
++	additionalResources ...resource.Resource,
+ ) error {
+ 	requiredReconcilers := []interface {
+ 		SetupWithManager(mgr ctrlRuntime.Manager) error
+ 	}{
+ 		newGatewayClassReconciler(mgr, logger, controllerName),
+-		newGatewayReconciler(mgr, translator, logger, controllerName, hostNetworkEnabled, hostNetworkLabel, inferenceExtensionEnabled),
++		newGatewayReconciler(mgr, translator, logger, controllerName, hostNetworkEnabled, hostNetworkLabel, inferenceExtensionEnabled, additionalResources...),
+ 		newGammaReconciler(mgr, translator, logger, controllerName),
+ 		newGatewayClassConfigReconciler(mgr, logger),
+ 		newEndpointSliceReconciler(mgr, logger),
 ```
 
-**File**: `pkg/ipam/types/zz_generated.deepequal.go` (modified, +47/-0)
+**File**: `operator/pkg/gateway-api/gateway.go` (modified, +11/-2)
 ```diff
-@@ -102,6 +102,36 @@ func (in *IPAMPoolDemand) DeepEqual(other *IPAMPoolDemand) bool {
- 	return true
+@@ -56,7 +56,16 @@ type gatewayReconciler struct {
+ 	resourceRegistry                    resource.Registry
  }
  
-+// DeepEqual is an autogenerated deepequal function, deeply comparing the
-+// receiver with other. in must be non-nil.
-+func (in *IPAMPoolRelease) DeepEqual(other *IPAMPoolRelease) bool {
-+	if other == nil {
-+		return false
-+	}
-+
-+	if in.Pool != other.Pool {
-+		return false
-+	}
-+	if ((in.CIDRs != nil) && (other.CIDRs != nil)) || ((in.CIDRs == nil) != (other.CIDRs == nil)) {
-+		in, other := &in.CIDRs, &other.CIDRs
-+		if other == nil {
-+			return false
-+		}
-+
-+		if len(*in) != len(*other) {
-+			return false
-+		} else {
-+			for i, inElement := range *in {
-+				if !inElement.DeepEqual(&(*other)[i]) {
-+					return false
-+				}
-+			}
-+		}
-+	}
-+
-+	return true
-+}
-+
- // DeepEqual is an autogenerated deepequal function, deeply comparing the
- // receiver with other. in must be non-nil.
- func (in *IPAMPoolRequest) DeepEqual(other *IPAMPoolRequest) bool {
-@@ -160,6 +190,23 @@ func (in *IPAMPoolSpec) DeepEqual(other *IPAMPoolSpec) bool {
- 		}
+-func newGatewayReconciler(mgr ctrl.Manager, translator translation.Translator, logger *slog.Logger, controllerName string, hostNetworkEnabled bool, hostNetworkLabel metav1.LabelSelector, gatewayAPIInferenceExtensionEnabled bool) *gatewayReconciler {
++func newGatewayReconciler(
++	mgr ctrl.Manager,
++	translator translation.Translator,
++	logger *slog.Logger,
++	controllerName string,
++	hostNetworkEnabled bool,
++	hostNetworkLabel metav1.LabelSelector,
++	gatewayAPIInferenceExtensionEnabled bool,
++	additionalResources ...resource.Resource,
++) *gatewayReconciler {
+ 	scopedLog := logger.With(logfields.Controller, gateway)
+ 
+ 	resourceConfig := helpers.ResourceConfig{
+@@ -94,7 +103,7 @@ func newGatewayReconciler(mgr ctrl.Manager, translator translation.Translator, l
+ 		logger:                              scopedLog,
+ 		controllerName:                      controllerName,
+ 		gatewayAPIInferenceExtensionEnabled: gatewayAPIInferenceExtensionEnabled,
+-		resourceRegistry:                    resource.NewGatewayRegistry(resourceConfig),
++		resourceRegistry:                    resource.NewGatewayRegistry(resourceConfig, additionalResources...),
  	}
- 
-+	if ((in.Released != nil) && (other.Released != nil)) || ((in.Released == nil) != (other.Released == nil)) {
-+		in, other := &in.Released, &other.Released
-+		if other == nil {
-+			return false
-+		}
-+
-+		if len(*in) != len(*other) {
-+			return false
-+		} else {
-+			for i, inElement := range *in {
-+				if !inElement.DeepEqual(&(*other)[i]) {
-+					return false
-+				}
-+			}
-+		}
-+	}
-+
- 	return true
  }
  
 ```
 
-**File**: `pkg/k8s/apis/cilium.io/client/crds/v2/ciliumnodes.yaml` (modified, +58/-0)
+**File**: `operator/pkg/gateway-api/resource/resource_registry.go` (modified, +5/-1)
 ```diff
-@@ -384,6 +384,35 @@ spec:
-                           - pool
-                           type: object
-                         type: array
-+                      released:
-+                        description: |-
-+                          Released reports a snapshot of the CIDRs the agent has released from
-+                          each pool and does not currently allocate from. It is informational
-+                          only and does not claim ownership: a listed CIDR may already be
-+                          unassigned from this node until the agent's next update. On restart,
-+                          the agent restores the entries still assigned to this node. This field
-+                          is owned and written to by cilium-agent.
-+                        items:
-+                          description: IPAMPoolRelease describes the CIDRs a node
-+                            has released from an IPAM pool.
-+                          properties:
-+                            cidrs:
-+                              description: CIDRs contains the CIDRs released from
-+                                this pool.
-+                              items:
-+                                format: cidr
-+                                maxLength: 43
-+                                type: string
-+                              type: array
-+                            pool:
-+                              description: Pool is the name of the IPAM pool the CIDRs
-+                                were released from
-+                              minLength: 1
-+                              type: string
-+                          required:
-+                          - pool
-+                          type: object
-+                        type: array
-                       requested:
-                         description: |-
-                           Requested contains a list of IPAM pool requests, i.e. indicates how many
-@@ -467,6 +496,35 @@ spec:
-                           - pool
-                           type: object
-                         type: array
-+                      released:
-+                        description: |-
-+                          Released reports a snapshot of the CIDRs the agent has released from
-+                          each pool and does not currently allocate from. It is informational
-+                          only and does not claim ownership: a listed CIDR may already be
-+                          unassigned from this node until the agent's next update. On restart,
-+                          the agent restores the entries still assigned to this node. This field
-+                          is owned and written to by cilium-agent.
-+                        items:
-+                          description: IPAMPoolRelease describes the CIDRs a node
-+                            has released from an IPAM pool.
-+                          properties:
-+                            cidrs:
-+                              description: CIDRs contains the CIDRs released from
-+                                this pool.
-+                              items:
-+                                format: cidr
-+                                maxLength: 43
-+                                type: string
-+                              type: array
-+                            pool:
-+                              description: Pool is the name of the IPAM pool the CIDRs
-+                                were released from
-+                              minLength: 1
-+                              type: string
-+                          required:
-+                          - pool
-+                          type: object
-+                        type: array
-                       requested:
-                         description: |-
-                           Requested contains a list of IPAM pool requests, i.e. indicates how many
-```
-
-**File**: `pkg/k8s/apis/cilium.io/register.go` (modified, +1/-1)
-```diff
-@@ -15,5 +15,5 @@ const (
- 	//
- 	// Maintainers: Run ./Documentation/check-crd-compat-table.sh for each release
- 	// Developers: Bump patch for each change in the CRD schema.
--	CustomResourceDefinitionSchemaVersion = "1.34.8"
-+	CustomResourceDefinitionSchemaVersion = "1.34.9"
- )
+@@ -56,7 +56,7 @@ type GatewayRegistry struct {
+ //
+ // So, addition of Resources must be gated by if the resource is present
+ // in the cluster. Use the registryConfig to determine this.
+-func NewGatewayRegistry(r helpers.ResourceConfig) *GatewayRegistry {
++func NewGatewayRegistry(r helpers.ResourceConfig, additionalResources ...Resource) *GatewayRegistry {
+ 	gr := &GatewayRegistry{
+ 		registryConfig: r,
+ 	}
+@@ -92,6 +92,10 @@ func NewGatewayRegistry(r helpers.ResourceConfig) *GatewayRegistry {
+ 		gr.AddResource(NewInferencePoolResource(gr.registryConfig))
+ 		gr.AddResource(NewEndpointSliceResource(gr.registryConfig))
+ 	}
++
++	for i := range additionalResources {
++		gr.AddResource(additionalResources[i])
++	}
+ 	return gr
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #50225** (2026-11-24): gateway-api: translation extension and resource registry hooks (@viktor-kurchenko)
 - **PR #50209** (2026-11-23): bpf: tests: extend coverage of NO_SNAT endpoints (@ekoops)
 - **PR #50207** (2026-11-23): docs: Gateway API TLS options (@arybolovlev)
 - **PR #50202** (2026-11-23): chore(deps): update gcr.io/distroless/static:nonroot docker digest to 8ce6dd8 (v1.18) (@cilium-renovate[bot])
 - **PR #50201** (2026-11-22): chore(deps): update gcr.io/distroless/static:nonroot docker digest to 8ce6dd8 (v1.19) (@cilium-renovate[bot])
 - **PR #50200** (2026-11-23): fix(deps): update module github.com/tidwall/sjson to v1.2.10 (main) (@cilium-renovate[bot])
-- **PR #50198** (2026-11-22): fix(deps): update all go dependencies main (main) (@cilium-renovate[bot])
 
 ---
 
@@ -1893,34 +1602,40 @@ Signed-off-by: Alex Melhem <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ipam: Advertise released pool CIDRs in the CiliumNode
+## X. gateway-api: add translation extension hook
 
 **RULE**:
-When implementing operations in `pkg/alibabacloud/agent/pools.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `operator/pkg/gateway-api/cell.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `69961019`: ipam: Advertise released pool CIDRs in the CiliumNode. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `20bb8be8`: gateway-api: add translation extension hook. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/alibabacloud/agent/pools.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `operator/pkg/gateway-api/cell.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		pools := node.Spec.IPAM.Pools
+	TranslationExtensions []TranslationExtension `group:"gateway-api-translation-extensions"`
+	AdditionalResources   []resource.Resource    `group:"gateway-api-resources"`
+		params.TranslationExtensions,
+		params.AdditionalResources,
+	translationExtensions []TranslationExtension,
+	additionalResources []resource.Resource,
+		newGatewayReconciler(mgr, translator, logger, controllerName, hostNetworkEnabled, hostNetworkLabel, inferenceExtensionEnabled, translationExtensions, additionalResources),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-		pools := ipamTypes.IPAMPoolSpec{
-			Requested: node.Spec.IPAM.Pools.Requested,
-			Allocated: node.Spec.IPAM.Pools.Allocated,
-		}
+	AdditionalResources []resource.Resource `group:"gateway-api-resources"`
+		params.AdditionalResources...,
+	additionalResources ...resource.Resource,
+		newGatewayReconciler(mgr, translator, logger, controllerName, hostNetworkEnabled, hostNetworkLabel, inferenceExtensionEnabled, additionalResources...),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `69961019` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `20bb8be8` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

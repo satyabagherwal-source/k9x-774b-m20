@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T03:41:56.710Z",
+  "last_updated": "2026-11-24T03:50:10.458Z",
   "total_verified_learnings": 9089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24400,
+  "total_items": 24409,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -111993,10 +111993,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "repository": "cilium/cilium",
-      "source_version": "69961019",
-      "content_hash": "943e757db426bb5d02fe8b26010395cc07dbb4636fd6d0cc9fc2a9bb11c5ca7b",
+      "source_version": "20bb8be8",
+      "content_hash": "23f05ec22791726c2bbb103346ec431101281e511138a00d82eafba9473b4366",
       "domain_letter": "B",
-      "persisted_at": "2026-11-23T23:10:02.258Z"
+      "persisted_at": "2026-11-24T03:50:05.117Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium",
@@ -112005,10 +112005,10 @@
       "relative_path": "08_VERIFICATION/cilium-cilium-verification-protocol-empirical-defect-shield-for-cilium-cilium.md",
       "title": "Verification Protocol: Empirical Defect Shield for cilium/cilium",
       "repository": "cilium/cilium",
-      "source_version": "69961019",
-      "content_hash": "7d4ceb6261f5acf5b5495db14c4fb36238aa25758d7061d018ad1b07c63a7523",
+      "source_version": "20bb8be8",
+      "content_hash": "fb6a297c87ea14d98897ef95dba54ac566c42b419010ced2c3cf425c13ec59b6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T23:10:02.416Z"
+      "persisted_at": "2026-11-24T03:50:05.281Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -112030,9 +112030,9 @@
       "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
       "repository": "cilium-cilium-learnings",
       "source_version": "HEAD",
-      "content_hash": "9beeed964738780776bd082d209ddd1c868ef2774509e4643923f408503dbb8e",
+      "content_hash": "57b06c60e6893e34f7cc1b926d2a26d8901f1c03dd9553e39443260a477bac43",
       "domain_letter": "B",
-      "persisted_at": "2026-11-23T19:01:43.402Z"
+      "persisted_at": "2026-11-24T03:50:10.295Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium-learnings",
@@ -112042,9 +112042,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for cilium-cilium-learnings",
       "repository": "cilium-cilium-learnings",
       "source_version": "HEAD",
-      "content_hash": "676df483489d9e331fd431c8a2b12b514b69e9f1ee6bc0244c10bb6c4890b38b",
+      "content_hash": "059813d0eee390cc7009dfef05146772bee51877342bac7bc052844308dc476c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T19:01:43.645Z"
+      "persisted_at": "2026-11-24T03:50:10.458Z"
     },
     "candidate_directive-engine-restore-text-fallback-for-unknown-file-extensions-394": {
       "item_id": "candidate_directive-engine-restore-text-fallback-for-unknown-file-extensions-394",
@@ -214282,8 +214282,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "69961019",
-      "content_hash": "9a07cee7e9c8e1bd3d945b2a93d9364bbb680719561378b4d3b93b560115f90c",
+      "source_version": "20bb8be8",
+      "content_hash": "c3916dba7d4503699ec674634cd3eadb7bd0663ace7ac39f3ef90b3ed3376a89",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -214396,6 +214396,11 @@
           "number": 10141,
           "title": "Advertise released pool CIDRs in the CiliumNode",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10192,
+          "title": "add translation extension hook",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -214403,7 +214408,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T23:10:01.678Z",
+      "verified_at": "2026-11-24T03:50:04.537Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -223975,8 +223980,8 @@
       "slug": "sceneview-sceneview",
       "platform": "github",
       "source_url": "https://github.com/sceneview/sceneview",
-      "source_version": "8a3f4274",
-      "content_hash": "182b94ce1530bf6844eb01a08bc9839e4148de79561a59b8515f5b7cc656b94a",
+      "source_version": "a1c2b6b5",
+      "content_hash": "b5f2ed678cdc53b2d64bd660e9bb85af9fb75f4b9229b90abcd2ebf6cd760ea2",
       "dossier_path": "07_PROJECT_LEARNING/sceneview-sceneview-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sceneview-sceneview-learnings.md",
       "promoted_rules": [
@@ -223994,6 +223999,11 @@
           "number": 9737,
           "title": "bound the 3D scan journal and release the live model on exit",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10191,
+          "title": "confirm an idle backend with a bounded fence wait after 5 s",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -224001,7 +224011,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T06:27:57.353Z",
+      "verified_at": "2026-11-24T03:49:58.651Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -224043,10 +224053,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-sceneview-sceneview-quality-verification-intelligence-sceneview-sceneview-core-i.md",
       "title": "Quality & Verification Intelligence: sceneview/sceneview Core Invariants",
       "repository": "sceneview/sceneview",
-      "source_version": "0600bf13",
-      "content_hash": "ef30f044d386404d90522cf2617c2ec2c6222fe0115ca07d6f83e236a4437b2e",
+      "source_version": "a1c2b6b5",
+      "content_hash": "780fb23f1054cc98b8d6c5e715dc3db00fa71f7c869ac7565f577ede43b96393",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T16:46:41.575Z"
+      "persisted_at": "2026-11-24T03:49:59.257Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-sceneview-sceneview": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sceneview-sceneview",
@@ -224055,10 +224065,10 @@
       "relative_path": "08_VERIFICATION/sceneview-sceneview-verification-protocol-empirical-defect-shield-for-sceneview-.md",
       "title": "Verification Protocol: Empirical Defect Shield for sceneview/sceneview",
       "repository": "sceneview/sceneview",
-      "source_version": "8a3f4274",
-      "content_hash": "2ef5e21b7d48e1d5a7e97fdee959a637ded3d1c8fe047fc7170767f847ea7fd8",
+      "source_version": "a1c2b6b5",
+      "content_hash": "983bc481c62d9fffe6178fad6642a88dcd1bf6938e210e1871db51bdc1aa50bf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T06:27:58.051Z"
+      "persisted_at": "2026-11-24T03:49:59.422Z"
     },
     "learn-github-higress-group-higress": {
       "learning_id": "learn-github-higress-group-higress",
@@ -224399,9 +224409,9 @@
       "title": "Quality & Verification Intelligence: sceneview-sceneview-learnings Core Invariants",
       "repository": "sceneview-sceneview-learnings",
       "source_version": "HEAD",
-      "content_hash": "4bc89f8e2b12620ad274e47292e0f6a3631908195079e10be04936c5fb22b24a",
+      "content_hash": "b818d11c16a45af9751a5c2e33812f7c88c783a76ba88f72d3e2260998acc0ff",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T16:47:26.195Z"
+      "persisted_at": "2026-11-24T03:50:09.445Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-sceneview-sceneview-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sceneview-sceneview-learnings",
@@ -224411,9 +224421,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for sceneview-sceneview-learnings",
       "repository": "sceneview-sceneview-learnings",
       "source_version": "HEAD",
-      "content_hash": "17d8c49a97ef4e30e1be801b7d9df441d2b3a90d9638de2a6328e6a0f238ec18",
+      "content_hash": "b46e7669cdb6c519e8ae88fe09d2142c36b10614269f3e4289ecb53d73ac69f7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T06:28:10.708Z"
+      "persisted_at": "2026-11-24T03:50:09.613Z"
     },
     "candidate_directive-mcp-server-preserve-proxy-tool-input-schemas": {
       "item_id": "candidate_directive-mcp-server-preserve-proxy-tool-input-schemas",
@@ -239349,8 +239359,8 @@
       "slug": "max-sixty-worktrunk",
       "platform": "github",
       "source_url": "https://github.com/max-sixty/worktrunk",
-      "source_version": "5a427391",
-      "content_hash": "6458bf61ed5c1383cd133a3faca0c4de21753524945136657adae806bcb79b21",
+      "source_version": "c6cc8601",
+      "content_hash": "ebfaba4f8dcafdc270021d6b84cd784e74ef06704fdf96dc318ac921557031a1",
       "dossier_path": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "promoted_rules": [
@@ -239388,6 +239398,11 @@
           "number": 9985,
           "title": "don't suggest clear --stale when there is no project config",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10190,
+          "title": "build raw spawns through Cmd::into_command",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -239395,7 +239410,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T20:16:54.175Z",
+      "verified_at": "2026-11-24T03:49:53.300Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -239437,10 +239452,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-max-sixty-worktrunk-research-knowledge-intelligence-max-sixty-worktrunk-core-inv.md",
       "title": "Research & Knowledge Intelligence: max-sixty/worktrunk Core Invariants",
       "repository": "max-sixty/worktrunk",
-      "source_version": "5a427391",
-      "content_hash": "4d1d9578b211ff89098d8d4ac453fe7b9b99c7e504c247482953eb1d2e5e3fdc",
+      "source_version": "c6cc8601",
+      "content_hash": "7db1a42bddde9a700bf5e55c1a6172af43c6b8f0b2c966014c36cdd21d2c839a",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T20:16:54.774Z"
+      "persisted_at": "2026-11-24T03:49:53.904Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-max-sixty-worktrunk": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-max-sixty-worktrunk",
@@ -239449,10 +239464,10 @@
       "relative_path": "08_VERIFICATION/max-sixty-worktrunk-verification-protocol-empirical-defect-shield-for-max-sixty-.md",
       "title": "Verification Protocol: Empirical Defect Shield for max-sixty/worktrunk",
       "repository": "max-sixty/worktrunk",
-      "source_version": "5a427391",
-      "content_hash": "91fedeb4da2b3d8f42c2bff3b95b54ccadc135f5057321bfc73cf9eb57b74a61",
+      "source_version": "c6cc8601",
+      "content_hash": "2785af657cd906061baf24f74a458cb3b6487cfcdfb2b2bc2b8511de5380cf6b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T20:16:54.940Z"
+      "persisted_at": "2026-11-24T03:49:54.080Z"
     },
     "candidate_directive-state-stop-a-branch-s-vars-from-including-a-dotted-branch-s-vars": {
       "item_id": "candidate_directive-state-stop-a-branch-s-vars-from-including-a-dotted-branch-s-vars",
@@ -239474,9 +239489,9 @@
       "title": "Research & Knowledge Intelligence: max-sixty-worktrunk-learnings Core Invariants",
       "repository": "max-sixty-worktrunk-learnings",
       "source_version": "HEAD",
-      "content_hash": "781034dd48013818de942790c232b8dbec37d170f6334e36228b753d189362ab",
+      "content_hash": "5a573232450dc7e66a6a670e2f07399562777e0159a35c39470e52f34093b51d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T20:17:13.292Z"
+      "persisted_at": "2026-11-24T03:50:08.598Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-max-sixty-worktrunk-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-max-sixty-worktrunk-learnings",
@@ -239486,9 +239501,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for max-sixty-worktrunk-learnings",
       "repository": "max-sixty-worktrunk-learnings",
       "source_version": "HEAD",
-      "content_hash": "d6027ccaa9998b08ac8c7eb7a21a02425a85c613d0b905e943f67063779d5e2f",
+      "content_hash": "2654754f11077c173c6037adf996e99bdfe4afbcd97dea46a25fa88c47b68c79",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T20:17:13.448Z"
+      "persisted_at": "2026-11-24T03:50:08.768Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-microsoft-frognano-4b-2609-learnings-core-inv": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-microsoft-frognano-4b-2609-learnings-core-inv",
@@ -332820,6 +332835,120 @@
       "content_hash": "1a5c824bcec9b106c23f3bc5d4ca2bdc87086d7c45725a25909413e4ad141834",
       "domain_letter": "G",
       "persisted_at": "2026-11-24T03:41:56.353Z"
+    },
+    "rule-10190": {
+      "learning_id": "rule-10190",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10190,
+      "title": "build raw spawns through Cmd::into_command",
+      "source_url": "https://github.com/max-sixty/worktrunk",
+      "source_version": "c6cc8601",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T03:49:53.300Z"
+    },
+    "candidate_directive-build-raw-spawns-through-cmd-into_command": {
+      "item_id": "candidate_directive-build-raw-spawns-through-cmd-into_command",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-OZBC-build-raw-spawns-through-cmd-into_command.md",
+      "title": "build raw spawns through Cmd::into_command",
+      "repository": "max-sixty/worktrunk",
+      "source_version": "c6cc8601",
+      "content_hash": "4f0e6be9ba5763d075139f47b0d264be306e12f9a14e7a2b475ec8f3e1415ac6",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-24T03:49:53.740Z"
+    },
+    "rule-10191": {
+      "learning_id": "rule-10191",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10191,
+      "title": "confirm an idle backend with a bounded fence wait after 5 s",
+      "source_url": "https://github.com/sceneview/sceneview",
+      "source_version": "a1c2b6b5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T03:49:58.651Z"
+    },
+    "candidate_directive-confirm-an-idle-backend-with-a-bounded-fence-wait-after-5-s": {
+      "item_id": "candidate_directive-confirm-an-idle-backend-with-a-bounded-fence-wait-after-5-s",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-P3G0-confirm-an-idle-backend-with-a-bounded-fence-wait-after-5-s.md",
+      "title": "confirm an idle backend with a bounded fence wait after 5 s",
+      "repository": "sceneview/sceneview",
+      "source_version": "a1c2b6b5",
+      "content_hash": "00a5155f4e559e454f67813fe8ece5979f0fbe11c7f36c51081f5dc5c9050a80",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-24T03:49:59.092Z"
+    },
+    "rule-10192": {
+      "learning_id": "rule-10192",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10192,
+      "title": "add translation extension hook",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "20bb8be8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T03:50:04.537Z"
+    },
+    "candidate_directive-add-translation-extension-hook": {
+      "item_id": "candidate_directive-add-translation-extension-hook",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-P7Z2-add-translation-extension-hook.md",
+      "title": "add translation extension hook",
+      "repository": "cilium/cilium",
+      "source_version": "20bb8be8",
+      "content_hash": "44d9f9d81f1fb334e68f78b839dda57aebd4f6c19d14c29cb806d58b4d40915b",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-24T03:50:04.959Z"
+    },
+    "candidate_directive-shell_exec-build-raw-spawns-through-cmd-into_command": {
+      "item_id": "candidate_directive-shell_exec-build-raw-spawns-through-cmd-into_command",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PANI-shell_exec-build-raw-spawns-through-cmd-into_command.md",
+      "title": "shell_exec): build raw spawns through Cmd::into_command",
+      "repository": "max-sixty-worktrunk-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cf462894ac4bcac8ef686703dc7b138c0c8e8b70125b79d4d1e0b7d496030cd0",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-24T03:50:08.434Z"
+    },
+    "candidate_directive-sceneview-confirm-an-idle-backend-with-a-bounded-fence-wait-after-5-s": {
+      "item_id": "candidate_directive-sceneview-confirm-an-idle-backend-with-a-bounded-fence-wait-after-5-s",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PBAW-sceneview-confirm-an-idle-backend-with-a-bounded-fence-wait-after-5-s.md",
+      "title": "sceneview): confirm an idle backend with a bounded fence wait after 5 s",
+      "repository": "sceneview-sceneview-learnings",
+      "source_version": "HEAD",
+      "content_hash": "78c82a46c75eff77e51ff6cf6595581d9ab7d2a318b7d28fb6d05a44c318da3e",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-24T03:50:09.276Z"
+    },
+    "candidate_directive-gateway-api-add-translation-extension-hook": {
+      "item_id": "candidate_directive-gateway-api-add-translation-extension-hook",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PBYN-gateway-api-add-translation-extension-hook.md",
+      "title": "gateway-api: add translation extension hook",
+      "repository": "cilium-cilium-learnings",
+      "source_version": "HEAD",
+      "content_hash": "adb6ab8cf4f00b1511c255c5a3475d2f5fd9c54e9c0a381943aa409108b015cf",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-24T03:50:10.128Z"
     }
   },
   "ai-builder-brain": {

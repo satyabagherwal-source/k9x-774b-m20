@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T03:41:56.525Z",
+  "last_updated": "2026-11-24T03:50:10.295Z",
   "total_records": 2488,
   "domains": {
     "A": {
@@ -8231,8 +8231,8 @@
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "repository": "cilium/cilium",
-      "content_hash": "943e757db426bb5d02fe8b26010395cc07dbb4636fd6d0cc9fc2a9bb11c5ca7b",
-      "created_at": "2026-11-23T23:10:02.258Z"
+      "content_hash": "23f05ec22791726c2bbb103346ec431101281e511138a00d82eafba9473b4366",
+      "created_at": "2026-11-24T03:50:05.117Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -8249,8 +8249,8 @@
       "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-learnings-product-intelligence-cilium-cilium-learnings-core-invari.md",
       "repository": "cilium-cilium-learnings",
-      "content_hash": "9beeed964738780776bd082d209ddd1c868ef2774509e4643923f408503dbb8e",
-      "created_at": "2026-11-23T19:01:43.402Z"
+      "content_hash": "57b06c60e6893e34f7cc1b926d2a26d8901f1c03dd9553e39443260a477bac43",
+      "created_at": "2026-11-24T03:50:10.295Z"
     },
     "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -13420,8 +13420,8 @@
       "title": "Quality & Verification Intelligence: sceneview/sceneview Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-sceneview-sceneview-quality-verification-intelligence-sceneview-sceneview-core-i.md",
       "repository": "sceneview/sceneview",
-      "content_hash": "ef30f044d386404d90522cf2617c2ec2c6222fe0115ca07d6f83e236a4437b2e",
-      "created_at": "2026-11-17T16:46:41.575Z"
+      "content_hash": "780fb23f1054cc98b8d6c5e715dc3db00fa71f7c869ac7565f577ede43b96393",
+      "created_at": "2026-11-24T03:49:59.257Z"
     },
     "domain_intelligence-content-information-intelligence-higress-group-higress-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-higress-group-higress-core-invariants",
@@ -13498,8 +13498,8 @@
       "title": "Quality & Verification Intelligence: sceneview-sceneview-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-sceneview-sceneview-learnings-quality-verification-intelligence-sceneview-scenev.md",
       "repository": "sceneview-sceneview-learnings",
-      "content_hash": "4bc89f8e2b12620ad274e47292e0f6a3631908195079e10be04936c5fb22b24a",
-      "created_at": "2026-11-17T16:47:26.195Z"
+      "content_hash": "b818d11c16a45af9751a5c2e33812f7c88c783a76ba88f72d3e2260998acc0ff",
+      "created_at": "2026-11-24T03:50:09.445Z"
     },
     "domain_intelligence-content-information-intelligence-higress-group-higress-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-higress-group-higress-learnings-core-invariants",
@@ -18445,8 +18445,8 @@
       "title": "Research & Knowledge Intelligence: max-sixty/worktrunk Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-max-sixty-worktrunk-research-knowledge-intelligence-max-sixty-worktrunk-core-inv.md",
       "repository": "max-sixty/worktrunk",
-      "content_hash": "4d1d9578b211ff89098d8d4ac453fe7b9b99c7e504c247482953eb1d2e5e3fdc",
-      "created_at": "2026-11-22T20:16:54.774Z"
+      "content_hash": "7db1a42bddde9a700bf5e55c1a6172af43c6b8f0b2c966014c36cdd21d2c839a",
+      "created_at": "2026-11-24T03:49:53.904Z"
     },
     "domain_intelligence-research-knowledge-intelligence-max-sixty-worktrunk-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-max-sixty-worktrunk-learnings-core-invariants",
@@ -18454,8 +18454,8 @@
       "title": "Research & Knowledge Intelligence: max-sixty-worktrunk-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-max-sixty-worktrunk-learnings-research-knowledge-intelligence-max-sixty-worktrun.md",
       "repository": "max-sixty-worktrunk-learnings",
-      "content_hash": "781034dd48013818de942790c232b8dbec37d170f6334e36228b753d189362ab",
-      "created_at": "2026-11-22T20:17:13.292Z"
+      "content_hash": "5a573232450dc7e66a6a670e2f07399562777e0159a35c39470e52f34093b51d",
+      "created_at": "2026-11-24T03:50:08.598Z"
     },
     "DOM-D-88E5B240": {
       "record_id": "DOM-D-88E5B240",

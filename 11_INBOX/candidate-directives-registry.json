@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T03:41:56.353Z",
+  "last_updated": "2026-11-24T03:50:10.128Z",
   "directives": [
     {
       "id": "CD-001",
@@ -52738,6 +52738,72 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-24",
       "domain_letter": "G"
+    },
+    {
+      "id": "CD-OZBC",
+      "directive_title": "build raw spawns through Cmd::into_command",
+      "source_repo": "max-sixty/worktrunk",
+      "source_commit": "c6cc8601",
+      "staged_file": "11_INBOX/candidate-directives/CD-OZBC-build-raw-spawns-through-cmd-into_command.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-P3G0",
+      "directive_title": "confirm an idle backend with a bounded fence wait after 5 s",
+      "source_repo": "sceneview/sceneview",
+      "source_commit": "a1c2b6b5",
+      "staged_file": "11_INBOX/candidate-directives/CD-P3G0-confirm-an-idle-backend-with-a-bounded-fence-wait-after-5-s.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-P7Z2",
+      "directive_title": "add translation extension hook",
+      "source_repo": "cilium/cilium",
+      "source_commit": "20bb8be8",
+      "staged_file": "11_INBOX/candidate-directives/CD-P7Z2-add-translation-extension-hook.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "B"
+    },
+    {
+      "id": "CD-PANI",
+      "directive_title": "shell_exec): build raw spawns through Cmd::into_command",
+      "source_repo": "max-sixty-worktrunk-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-PANI-shell_exec-build-raw-spawns-through-cmd-into_command.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-PBAW",
+      "directive_title": "sceneview): confirm an idle backend with a bounded fence wait after 5 s",
+      "source_repo": "sceneview-sceneview-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-PBAW-sceneview-confirm-an-idle-backend-with-a-bounded-fence-wait-after-5-s.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-PBYN",
+      "directive_title": "gateway-api: add translation extension hook",
+      "source_repo": "cilium-cilium-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-PBYN-gateway-api-add-translation-extension-hook.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "B"
     }
   ]
 }
