@@ -2663,10 +2663,10 @@
     "repository": "ajeetdsouza/zoxide",
     "platform": "github",
     "sourceUrl": "https://github.com/ajeetdsouza/zoxide",
-    "sourceVersion": "daf56a37",
+    "sourceVersion": "8f588052",
     "license": "MIT",
-    "contentHash": "00895328165f1e2fe51797237bb518a7cae52dff30edcf17bc80670d9dc4873b",
-    "lastHarvestedAt": "2026-11-22T21:31:58.543Z",
+    "contentHash": "677ce3fdbaae00baed51a505de37ee9231c7c3549ab2ae6d1d7673e8a1ee151d",
+    "lastHarvestedAt": "2026-11-24T04:53:49.312Z",
     "learningId": "learn-github-ajeetdsouza-zoxide"
   },
   "react-native-elements-react-native-elements": {
@@ -10273,10 +10273,10 @@
     "repository": "react/react-native",
     "platform": "github",
     "sourceUrl": "https://github.com/react/react-native",
-    "sourceVersion": "32a5aa6a",
+    "sourceVersion": "ad969b28",
     "license": "MIT",
-    "contentHash": "892d3af58ad6969e83b8523b4e74d797a80081ecdc6b53b1cdb99fab3a0d1191",
-    "lastHarvestedAt": "2026-11-21T08:52:53.135Z",
+    "contentHash": "f8b733d7a1bdf9d1b70dfa3b6119c3abf8da8fc53a2b95c9450bb82c87813506",
+    "lastHarvestedAt": "2026-11-24T04:53:55.601Z",
     "learningId": "learn-github-react-react-native"
   },
   "faker-js-faker": {

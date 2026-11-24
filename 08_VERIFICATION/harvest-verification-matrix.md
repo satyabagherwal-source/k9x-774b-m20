@@ -12592,3 +12592,6 @@
 | `CYCLE-20261124-O2K2` | `2026-11-24T04:45:10.514Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10200` | Yes (`4a356a2d...`) |
 | `CYCLE-20261124-O5AN` | `2026-11-24T04:45:14.063Z` | `yazinsai/OpenOats` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10201` | Yes (`cc308f54...`) |
 | `CYCLE-20261124-O90I` | `2026-11-24T04:45:18.882Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10202` | Yes (`e33d75b6...`) |
+| `CYCLE-20261124-Z6V0` | `2026-11-24T04:53:49.308Z` | `ajeetdsouza/zoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10203` | Yes (`677ce3fd...`) |
+| `CYCLE-20261124-ZBPO` | `2026-11-24T04:53:55.596Z` | `react/react-native` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10204` | Yes (`f8b733d7...`) |
+| `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T04:54:34.114Z` | `react-react-native` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-F2861F87` [Domain H] | Yes (`36fa9292...`) |

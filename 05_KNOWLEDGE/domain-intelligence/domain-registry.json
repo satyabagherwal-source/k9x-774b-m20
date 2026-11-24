@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T04:45:24.354Z",
-  "total_records": 2490,
+  "last_updated": "2026-11-24T04:54:36.197Z",
+  "total_records": 2491,
   "domains": {
     "A": {
       "total": 20,
@@ -1579,7 +1579,7 @@
       ]
     },
     "H": {
-      "total": 587,
+      "total": 588,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2167,7 +2167,8 @@
         "domain_intelligence-technical-construction-intelligence-karmada-io-karmada-learnings-core-invariants",
         "DOM-H-AB1B4707",
         "domain_intelligence-technical-construction-intelligence-automattic-harper-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-automattic-harper-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-automattic-harper-learnings-core-invariants",
+        "DOM-H-F2861F87"
       ]
     },
     "I": {
@@ -9223,8 +9224,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "fc688e6f69f1666f06700c990b505392195c226aa040a58bd54b1e78421f5b6c",
-      "created_at": "2026-11-24T04:37:07.024Z"
+      "content_hash": "928caaedaa2e31cc0f33da2af4f17efb022caaf6a95747139248d18c465de775",
+      "created_at": "2026-11-24T04:54:36.197Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -9439,8 +9440,8 @@
       "title": "Technical Construction Intelligence: react/react-native Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-react-native-technical-construction-intelligence-react-react-native-core-i.md",
       "repository": "react/react-native",
-      "content_hash": "b9f6437766a1c8b2f303d1e552f96731eb65d08868e26125ffeaf9b85aa7add9",
-      "created_at": "2026-11-21T08:52:53.597Z"
+      "content_hash": "ffebee48026c6398742891de7154964a84458c6690732668678c3faffcdb0528",
+      "created_at": "2026-11-24T04:53:56.203Z"
     },
     "domain_intelligence-architecture-intelligence-mixelpixx-kicad-mcp-server-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mixelpixx-kicad-mcp-server-learnings-core-invariants",
@@ -26566,8 +26567,8 @@
       "title": "Technical Construction Intelligence: react-react-native-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-react-native-learnings-technical-construction-intelligence-react-react-nat.md",
       "repository": "react-react-native-learnings",
-      "content_hash": "7f41d617748cc4b6b4998be49801b19642ec9368fea339af395c39e2fdca6647",
-      "created_at": "2026-11-21T08:54:43.467Z"
+      "content_hash": "51536c57812baa8a5d741ab892c7f4b64ef7d3df8b10a3b31c2340f2b17a4bc2",
+      "created_at": "2026-11-24T04:54:35.087Z"
     },
     "domain_intelligence-quality-verification-intelligence-mswjs-msw-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-mswjs-msw-core-invariants",
@@ -31613,8 +31614,8 @@
       "title": "Technical Construction Intelligence: ajeetdsouza/zoxide Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ajeetdsouza-zoxide-technical-construction-intelligence-ajeetdsouza-zoxide-core-i.md",
       "repository": "ajeetdsouza/zoxide",
-      "content_hash": "dc92dafd1223e725edc7a37bbb2a0ff965952ce228c641ec50757075ade1cafc",
-      "created_at": "2026-11-22T21:31:59.101Z"
+      "content_hash": "f1ba87ae54b220c67a79f6d5b55d4a0081400b10f59f637a9ef52ace7336e302",
+      "created_at": "2026-11-24T04:53:49.805Z"
     },
     "domain_intelligence-technical-construction-intelligence-ajeetdsouza-zoxide-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-ajeetdsouza-zoxide-learnings-core-invariants",
@@ -31622,8 +31623,8 @@
       "title": "Technical Construction Intelligence: ajeetdsouza-zoxide-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ajeetdsouza-zoxide-learnings-technical-construction-intelligence-ajeetdsouza-zox.md",
       "repository": "ajeetdsouza-zoxide-learnings",
-      "content_hash": "a1bb716f3df74c833342c8d2ab846eabce3f198db08979402ae53e162248fdfe",
-      "created_at": "2026-11-22T21:32:10.212Z"
+      "content_hash": "2989162b1510670eb4efe1942daff86369144755727694b09bebe16872e89c24",
+      "created_at": "2026-11-24T04:53:59.999Z"
     },
     "DOM-H-50457654": {
       "record_id": "DOM-H-50457654",
@@ -41757,6 +41758,48 @@
       "repository": "jithin-sabu-purge-app-learnings",
       "content_hash": "f21d75647729c3e622908627433e54598133fcdc6b46f492c3160916cde1e546",
       "created_at": "2026-11-24T04:20:38.534Z"
+    },
+    "DOM-H-F2861F87": {
+      "record_id": "DOM-H-F2861F87",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        }
+      ],
+      "title": "[Android] Anti-aliased rounded overflow clips on Android 9 and 10",
+      "content": "When implementing operations in `packages/react-native/ReactAndroid/api/ReactAndroid.api`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/react-native. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "36fa92929903250b6f8d9e61b7af6561f798b368217c2c5f49e88d46d6fd5dd1",
+      "summary": "Prevents defects observed in production commit `5dc1d781`: [Android] Anti-aliased rounded overflow clips on Android 9 and 10. Unvalidated ex -> When implementing operations in `packages/react-native/ReactAndroid/api/ReactAndroid.api`, engineers MUST enforce rigorous boundary validati",
+      "provenance": {
+        "source_uri": "project://react-react-native/react-react-native-learnings.md",
+        "source_version": "ad969b28",
+        "observed_at": "2026-11-24T04:53:54.298Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (react-react-native)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of react-react-native"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.81,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-24T04:54:34.006Z"
     }
   }
 }

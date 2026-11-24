@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T04:45:18.890Z",
-  "total_cycles_completed": 11972,
-  "total_learnings_persisted": 11972,
-  "total_rules_promoted": 11052,
+  "last_updated": "2026-11-24T04:53:55.608Z",
+  "total_cycles_completed": 11974,
+  "total_learnings_persisted": 11974,
+  "total_rules_promoted": 11054,
   "history": [
-    {
-      "timestamp": "2026-11-23T16:53:44.444Z",
-      "repository": "sqlpage/SQLPage",
-      "learningId": "learn-github-sqlpage-sqlpage",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T17:03:25.960Z",
-      "repository": "lilylilith/QI_2.1_AnyAngle",
-      "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T17:03:28.803Z",
       "repository": "kubearmor/KubeArmor",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-24T04:45:18.890Z",
       "repository": "aleo-labs-protocol/snarkOS",
       "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T04:53:49.318Z",
+      "repository": "ajeetdsouza/zoxide",
+      "learningId": "learn-github-ajeetdsouza-zoxide",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T04:53:55.608Z",
+      "repository": "react/react-native",
+      "learningId": "learn-github-react-react-native",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

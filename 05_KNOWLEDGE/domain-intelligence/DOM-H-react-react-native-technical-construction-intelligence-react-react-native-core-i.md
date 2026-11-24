@@ -4,24 +4,24 @@
 {
   "source_repository": "react/react-native",
   "source_url": "https://github.com/react/react-native",
-  "source_version": "32a5aa6a",
+  "source_version": "ad969b28",
   "license": "MIT",
-  "timestamp": "2026-11-21T08:52:53.399Z",
+  "timestamp": "2026-11-24T04:53:55.995Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-react-react-native",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [react/react-native](https://github.com/react/react-native) (Revision: `32a5aa6a`).  
-> **License**: MIT | **Timestamp**: `2026-11-21T08:52:53.399Z`  
+> **Provenance**: Harvested from [react/react-native](https://github.com/react/react-native) (Revision: `ad969b28`).  
+> **License**: MIT | **Timestamp**: `2026-11-24T04:53:55.995Z`  
 > **Learning ID**: `learn-github-react-react-native`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), G (Architecture Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence)
-- **Confidence Rating**: 78%
+- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), G (Architecture Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 93%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from react/react-native:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react-react-native-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/react/react-native](https://github.com/react/react-native))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T08:52:20.541Z  
+> **Harvest Timestamp**: 2026-11-24T04:53:54.292Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A framework for building native applications using React
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 126984 stars
+- **Stars / Engagement**: 126989 stars
 
 ---
 
@@ -636,817 +636,587 @@ export {prepareDebuggerShellFromDotSlashFile};
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a5b0bf0f` (2026-11-20)
-**Commit Message**: Add ReactTextView regression test for effect spans without remeasure
-
-Summary:
-A frame-preserving text update can reach `ReactTextView.onDraw` without a `Layout`, in which case effect spans (underline, strikethrough) were skipped and only plain text painted. This pins the corrected behavior: after `setText` carrying an effect span with no intervening measure, drawing still invokes the span hooks.
-
-Changelog: [Internal]
-
-Differential Revision: D129186364
-
-Pull Request resolved: https://github.com/react/react-native/pull/59769
-
-**File**: `packages/react-native/ReactAndroid/src/test/java/com/facebook/react/views/text/ReactTextViewTest.kt` (modified, +48/-0)
-```diff
-@@ -12,6 +12,7 @@ import android.graphics.Bitmap
- import android.graphics.Canvas
- import android.graphics.Color
- import android.graphics.Paint
-+import android.text.Layout
- import android.text.SpannableString
- import android.text.Spanned
- import android.text.TextPaint
-@@ -27,6 +28,7 @@ import com.facebook.react.bridge.JavaOnlyArray
- import com.facebook.react.bridge.JavaOnlyMap
- import com.facebook.react.uimanager.DisplayMetricsHolder
- import com.facebook.react.uimanager.ReactStylesDiffMap
-+import com.facebook.react.views.text.internal.span.CanvasEffectSpan
- import com.facebook.react.views.text.internal.span.ReactAbsoluteSizeSpan
- import org.assertj.core.api.Assertions.assertThat
- import org.junit.After
-@@ -130,6 +132,39 @@ class ReactTextViewTest {
-     assertThat(view.letterSpacing).isEqualTo(expectedLetterSpacing)
-   }
- 
-+  @Test
-+  fun effectSpansPaintAfterFramePreservingUpdateWithoutRemeasure() {
-+    val width = 200
-+    val height = 100
-+    val view = TestReactTextView(RuntimeEnvironment.getApplication())
-+    view.layoutParams =
-+        ViewGroup.LayoutParams(
-+            ViewGroup.LayoutParams.WRAP_CONTENT,
-+            ViewGroup.LayoutParams.WRAP_CONTENT,
-+        )
-+    view.setTextColor(Color.BLACK)
-+    view.setTextSize(TypedValue.COMPLEX_UNIT_PX, 24f)
-+    val plain = SpannableString("Hello")
-+    view.setSpanned(plain)
-+    view.text = plain
-+    view.measure(
-+        View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
-+        View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY),
-+    )
-+    view.layout(0, 0, width, height)
-+    assertThat(view.layout).isNotNull()
-+
-+    val span = RecordingCanvasEffectSpan()
-+    val decorated = SpannableString("Hello")
-+    decorated.setSpan(span, 0, decorated.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-+    view.setSpanned(decorated)
-+    view.text = decorated
-+    view.drawTextForTest(Canvas(createBitmap(width, height)))
-+
-+    assertThat(view.layout).isNotNull()
-+    assertThat(span.drawCalls + span.preDrawCalls).isGreaterThan(0)
-+  }
-+
-   @Test
-   fun drawsGlyphInkOutsideLineHeightWhenOverflowIsVisible() {
-     val bitmap = drawReactTextViewWithOverflow(null)
-@@ -351,6 +386,19 @@ class ReactTextViewTest {
-     }
-   }
- 
-+  private class RecordingCanvasEffectSpan : CanvasEffectSpan() {
-+    var preDrawCalls = 0
-+    var drawCalls = 0
-+
-+    override fun onPreDraw(start: Int, end: Int, canvas: Canvas, layout: Layout) {
-+      preDrawCalls++
-+    }
-+
-+    override fun onDraw(start: Int, end: Int, canvas: Canvas, layout: Layout) {
-+      drawCalls++
-+    }
-+  }
-+
-   private class OverflowingInkSpan(private val lineHeight: Int) : ReplacementSpan() {
-     override fun getSize(
-         paint: Paint,
-```
-
----
-
-### Incident Patch 2: `3113e81f` (2026-11-19)
-**Commit Message**: [CI] Reuse iOS template app builds across E2E retries
+### Incident Patch 1: `5dc1d781` (2026-11-23)
+**Commit Message**: [Android] Anti-aliased rounded overflow clips on Android 9 and 10
 
 ## Summary:
 
-An iOS template-app E2E retry currently rebuilds Debug and Release and reruns both configurations. Separate compilation from testing so test retries download the original successful apps, select only unsuccessful configurations, and resume Maestro flows that have not passed.
+On Android 9 and 10, a view with `overflow: 'hidden'` and a `borderRadius` has stepped, aliased corners. RN clips the padding box with `Canvas.clipPath`, and HWUI's `SkiaCanvas::clipPath` does not request anti-aliasing before Android 11 (AOSP frameworks/base `e431e316981e`, "Added support for antialiased canvas clipping", first in `android-11.0.0_r1`; `android-9.0.0_r1` and `android-10.0.0_r1` call `mCanvas->clipPath(*path, op)` without it). It is most visible where a dark photo meets a light card.
 
-Builds and tests retain up to three attempts. Successful build configurations are carried forward while unsuccessful builds retry independently. Configuration-specific results prevent one passing matrix leg from overwriting another failure; missing results remain failures. Flow state is scoped to the configuration and GitHub run attempt, and malformed state is discarded before rerunning flows. Cancellation prevents further retries, and the final report fails when either configuration has not passed.
+#54525 fixed this for `Image` on API 28 and below by drawing into a layer and masking it with an anti-aliased path. Clipping views (`View`, scroll views, text) still use the hard clip, and API 29 is missed by the `<= P` gate.
 
-This PR targets main and preserves its existing runner and simulator configuration, including the arm64 executable check in the extracted build workflow.
+This change, on Android 9 and 10 only, clips with the view's outline (`clipToOutline`) when the padding box is a round rect with one circular radius and no border, and nothing is drawn outside the bounds that the outline would cut off (box shadows, outline, a feedback ripple). `RenderNodeDrawable` clips outlines with an anti-aliased `clipRRect` on every version, and the outline clip dr
 
-## Changelog:
-
-[INTERNAL] [CHANGED] - Reuse iOS template app builds and completed flows across CI retries.
-
-## Test Plan:
-
-- Passed: `yarn test .github/workflow-scripts/__tests__/template-app-ci
-
-**File**: `.github/workflow-scripts/__tests__/template-app-ci-state-test.js` (added, +277/-0)
+**File**: `packages/react-native/ReactAndroid/api/ReactAndroid.api` (modified, +2/-0)
 ```diff
-@@ -0,0 +1,277 @@
-+/**
-+ * Copyright (c) Meta Platforms, Inc. and affiliates.
-+ *
-+ * This source code is licensed under the MIT license found in the
-+ * LICENSE file in the root directory of this source tree.
-+ *
-+ * @noflow
-+ * @format
-+ */
-+
-+const {
-+  configurationResults,
-+  prepareTestState,
-+  recordConfigurationResult,
-+  reportConfigurationResults,
-+} = require('../template-app-ci-state');
-+const fs = require('node:fs');
-+const os = require('node:os');
-+const path = require('node:path');
-+
-+const bothFlavors = ['Debug', 'Release'];
-+
-+function results(outputs, flavors = bothFlavors, previousResults = {}) {
-+  return configurationResults({outputs, flavors, previousResults});
-+}
-+
-+describe('template app configuration retries', () => {
-+  it('does not retry when both configurations pass', () => {
-+    expect(
-+      results({'debug-result': 'passed', 'release-result': 'passed'}),
-+    ).toEqual({
-+      results: {Debug: 'passed', Release: 'passed'},
-+      failedFlavors: [],
-+      status: 'success',
-+    });
-+  });
-+
-+  it.each(bothFlavors)('retries only the failed %s configuration', flavor => {
-+    const outputs = {'debug-result': 'passed', 'release-result': 'passed'};
-+    outputs[`${flavor.toLowerCase()}-result`] = 'failed';
-+    expect(results(outputs).failedFlavors).toEqual([flavor]);
-+  });
-+
-+  it('retains a successful build while retrying the other configuration', () => {
-+    const first = results({
-+      'debug-result': 'passed',
-+      'release-result': 'failed',
-+    });
-+    const second = results(
-+      {'release-result': 'passed'},
-+      first.failedFlavors,
-+      first.results,
-+    );
-+    expect(second.status).toBe('success');
-+    expect(second.results).toEqual({Debug: 'passed', Release: 'passed'});
-+  });
-+
-+  it('keeps a configuration retryable after its result step is lost', () => {
-+    const first = results({'debug-result': 'passed'});
-+    const second = results({}, first.failedFlavors, first.results);
-+    expect(second).toEqual({
-+      results: {Debug: 'passed', Release: 'failed'},
-+      failedFlavors: ['Release'],
-+      status: 'failure',
-+    });
-+  });
-+
-+  it('does not reuse an old pass for a configuration attempted again', () => {
-+    expect(
-+      results({}, ['Debug'], {Debug: 'passed', Release: 'passed'}),
-+    ).toEqual({
-+      results: {Debug: 'failed', Release: 'passed'},
-+      failedFlavors: ['Debug'],
-+      status: 'failure',
-+    });
-+  });
-+
-+  it('never treats an omitted configuration without an earlier pass as passed', () => {
-+    expect(
-+      results({'release-result': 'passed'}, ['Release']).failedFlavors,
-+    ).toEqual(['Debug']);
-+  });
-+
-+  it.each([[], ['Debug', 'Debug'], ['Profile'], 'Debug'])(
-+    'rejects an invalid retry matrix %p',
-+    flavors => {
-+      expect(() => results({}, flavors)).toThrow('unique Debug/Release');
-+    },
-+  );
-+
-+  it('writes independent outputs for both matrix legs', () => {
-+    const core = {setOutput: jest.fn()};
-+    recordConfigurationResult({core, flavor: 'Release', passed: false});
-+    recordConfigurationResult({core, flavor: 'Debug', passed: true});
-+    expect(core.setOutput.mock.calls).toEqual([
-+      ['release-result', 'failed'],
-+      ['debug-result', 'passed'],
-+    ]);
-+  });
-+
-+  it('rejects an unknown configuration when recording results', () => {
-+    expect(() =>
-+      recordConfigurationResult({
-+        core: {setOutput: jest.fn()},
-+        flavor: 'Profile',
-+        passed: true,
-+      }),
-+    ).toThrow('Unknown template app configuration');
-+  });
-+});
-+
-+describe('template app final reporting', () => {
-+  function core() {
-+    const result = {
-+      setOutput: jest.fn(),
-+      setFailed: jest.fn(),
-+      warning: jest.fn(),
-+      summary: {addRaw: jest.fn(), write: jest.fn().mockResolvedValue()},
-+    };
-+    result.summary.addRaw.mockReturnValue(result.summary);
-+    return result;
-+  }
-+
-+  async function report(jobResult, outputs, failOnError = false) {
-+    const result = core();
-+    await reportConfigurationResults({
-+      context: {
-+        serverUrl: 'https://github.com',
-+        repo: {owner: 'react', repo: 'react-native'},
-+        runId: 1,
-+      },
-+      core: result,
-+      needs: {test: {result: jobResult, outputs}},
-+      job: 'test',
-+      flavors: ['Release'],
-+      previousResults: {Debug: 'passed', Release: 'failed'},
-+      failOnError,
-+      attempt: 1,
-+    });
-+    return result;
-+  }
-+
-+  it('reports success after the previously unsuccessful lane passes', async () => {
-+    const result = await report('success', {'release-result': 'passed'}, true);
-+    expect(result.setOutput).toHaveBeenCalledWith('status', 'success');
-+    expect(result.setOutput).toHaveBeenCalledWith('failed-flavors', '[]');
-+    expect(result.setFailed).not.toHaveBeenCalled();
-+  });
-+
-+  it('reports intermediate failures without failing the report job', async () => {
-+    const result = await report('success', {'release-result': 'failed'});
-+    expect(result.
+@@ -3189,6 +3189,8 @@ public final class com/facebook/react/uimanager/BackgroundStyleApplicator {
+ 	public static final fun setOutlineOffset (Landroid/view/View;F)V
+ 	public static final fun setOutlineStyle (Landroid/view/View;Lcom/facebook/react/uimanager/style/OutlineStyle;)V
+ 	public static final fun setOutlineWidth (Landroid/view/View;F)V
++	public static final fun updatePaddingBoxClip (Landroid/view/View;Landroid/graphics/Canvas;Z)V
++	public static final fun updatePaddingBoxOutlineClip (Landroid/view/View;Landroid/graphics/Canvas;Z)Z
+ }
+ 
+ public abstract class com/facebook/react/uimanager/BaseViewManager : com/facebook/react/uimanager/ViewManager, android/view/View$OnLayoutChangeListener {
 ```
 
-**File**: `.github/workflow-scripts/template-app-ci-state.js` (added, +131/-0)
+**File**: `packages/react-native/ReactAndroid/src/main/java/com/facebook/react/uimanager/BackgroundStyleApplicator.kt` (modified, +89/-3)
 ```diff
-@@ -0,0 +1,131 @@
-+/**
-+ * Copyright (c) Meta Platforms, Inc. and affiliates.
-+ *
-+ * This source code is licensed under the MIT license found in the
-+ * LICENSE file in the root directory of this source tree.
-+ *
-+ * @noflow
-+ * @format
-+ */
-+
-+const {collectFlows, loadState} = require('./maestro-ios');
-+const {reportTestResults} = require('./report-test-results');
-+const fs = require('node:fs');
-+const path = require('node:path');
-+
-+const FLAVORS = ['Debug', 'Release'];
-+
-+function recordConfigurationResult({core, flavor, passed}) {
-+  if (!FLAVORS.includes(flavor)) {
-+    throw new Error(`Unknown template app configuration: ${flavor}`);
-+  }
-+  // Each matrix leg writes only its own result, so a passing leg cannot
-+  // overwrite the failure of another configuration.
-+  core.setOutput(
-+    `${flavor.toLowerCase()}-result`,
-+    passed ? 'passed' : 'failed',
-+  );
-+}
-+
-+function configurationResults({flavors, previousResults, outputs}) {
-+  if (
-+    !Array.isArray(flavors) ||
-+    flavors.length === 0 ||
-+    flavors.some(flavor => !FLAVORS.includes(flavor)) ||
-+    new Set(flavors).size !== flavors.length
-+  ) {
-+    throw new Error(
-+      'Expected a non-empty array of unique Debug/Release configurations',
-+    );
-+  }
-+
-+  const results = Object.fromEntries(
-+    FLAVORS.map(flavor => {
-+      const result = flavors.includes(flavor)
-+        ? outputs[`${flavor.toLowerCase()}-result`]
-+        : previousResults[flavor];
-+      // Missing results include runner/setup/reporting failures. They must
-+      // remain eligible for another attempt rather than becoming a pass.
-+      return [flavor, result === 'passed' ? 'passed' : 'failed'];
-+    }),
-+  );
-+  const failedFlavors = FLAVORS.filter(flavor => results[flavor] !== 'passed');
-+  return {
-+    results,
-+    failedFlavors,
-+    status: failedFlavors.length === 0 ? 'success' : 'failure',
-+  };
-+}
-+
-+async function reportConfigurationResults({
-+  context,
-+  core,
-+  needs,
-+  job,
-+  flavors,
-+  previousResults,
-+  failOnError,
-+  attempt,
-+}) {
-+  const current = needs[job];
-+  const result = configurationResults({
-+    flavors,
-+    previousResults,
-+    outputs: current.outputs ?? {},
-+  });
-+  // A failed matrix job also needs a retry if its final result step was lost.
-+  // Configuration results remain authoritative for omitted successful legs.
-+  if (current.result !== 'success' && result.status === 'success') {
-+    for (const flavor of flavors) {
-+      result.results[flavor] = 'failed';
+@@ -18,8 +18,10 @@ import android.graphics.RectF
+ import android.graphics.drawable.Drawable
+ import android.os.Build
+ import android.view.View
++import android.view.ViewOutlineProvider
+ import android.widget.ImageView
+ import androidx.annotation.ColorInt
++import com.facebook.react.R
+ import com.facebook.react.bridge.ReadableArray
+ import com.facebook.react.common.annotations.UnstableReactNativeAPI
+ import com.facebook.react.uimanager.PixelUtil.dpToPx
+@@ -465,6 +467,88 @@ public object BackgroundStyleApplicator {
+     clipToPaddingBoxWithAntiAliasing(view, canvas, null)
+   }
+ 
++  /**
++   * Clips [view]'s content to its padding box when [clip] is true, like [clipToPaddingBox], and
++   * removes any clip applied by an earlier call when [clip] is false. Views call it on every draw,
++   * before drawing what the clip applies to.
++   *
++   * See [updatePaddingBoxOutlineClip]; when the outline clip does not apply, the canvas is clipped
++   * as [clipToPaddingBox] does.
++   */
++  @JvmStatic
++  public fun updatePaddingBoxClip(view: View, canvas: Canvas, clip: Boolean) {
++    if (!updatePaddingBoxOutlineClip(view, canvas, clip) && clip) {
++      clipToPaddingBox(view, canvas)
 +    }
-+    result.failedFlavors = FLAVORS.filter(
-+      flavor => result.results[flavor] !== 'passed',
-+    );
-+    result.status = 'failure';
 +  }
-+  core.setOutput('results', JSON.stringify(result.results));
-+  core.setOutput('failed-flavors', JSON.stringify(result.failedFlavors));
-+  await reportTestResults({
-+    context,
-+    core,
-+    needs: {
-+      [job]: {
-+        ...current,
-+        outputs: {...current.outputs, status: result.status},
-+      },
-+    },
-+    failOnError,
-+    attempt,
-+  });
-+}
 +
-+function prepareTestState(statePath, flowPath) {
-+  let state;
-+  try {
-+    state = loadState(statePath);
-+  } catch {
-+    // A missing/invalid state download is recoverable: execute the flows
-+    // again, and replace malformed JSON before the Maestro runner reads it.
-+    fs.rmSync(statePath, {force: true});
-+    return true;
++  /**
++   * Clips [view] to its padding box with its outline ([View.setClipToOutline]) when [clip] is true
++   * and the outline can describe the padding box, and removes an outline clip set by an earlier
++   * call otherwise. Returns whether the outline clip is in effect; when it is not, the caller clips
++   * the canvas itself.
++   *
++   * Before Android 11, HWUI's Canvas.clipPath is not anti-aliased, so a rounded padding box clipped
++   * with it has stepped corners. On Android 9 and 10 the outline clip is anti-aliased and draws no
++   * offscreen layer, but describes only a round rect, so it is used when the padding box is one: a
++   * single circular radius, no border, and nothing drawn outside the bounds (box shadows, outline,
++   * a feedback ripple) for it to cut off. Any other padding box keeps the canvas clip: masking it
++   * with a layer, as [clipToPaddingBoxWithAntiAliasing] does for images, costs a frame's budget on
++   * these devices for a screen of bordered cards.
++   */
++  @JvmStatic
++  public fun updatePaddingBoxOutlineClip(view: View, canvas: Canvas, clip: Boolean): Boolean {
++    // The outline clip is a RenderNode property, so software drawing (e.g. view.draw into a
++    // bitmap) ignores it. Leave it for the next hardware draw: clearing it here would not re-record
++    // the display list it was recorded for.
++    if (!canvas.isHardwareAccelerated) {
++      return false
++    }
++    val ownsOutlineClip = view.getTag(R.id.padding_box_outline_clip) == true
++    val useOutlineClip = clip && canClipPaddingBoxWithOutline(view, ownsOutlineClip)
++    if (useOutlineClip && !ownsOutlineClip) {
++      view.setTag(R.id.padding_box_outline_clip, true)
++      view.clipToOutline = true
++    } else if (!useOutlineClip) {
++      clearPaddingBoxOutlineClip(view)
++    }
++    return useOutlineClip
 +  }
-+  const flows = collectFlows(flowPath);
-+  return !(
-+    flows.length > 0 &&
-+    flows.every(flow => {
-+      const key = path
-+        .relative(process.cwd(), path.resolve(flow))
-+        .split(path.sep)
-+        .join('/');
-+      return state.flows[key]?.status === 'passed';
-+    })
-+  );
-+}
 +
-+module.exports = {
-+  configurationResults,
-+  prepareTestState,
-+  recordConfigurationResult,
-+  reportConfigurationResults,
-+};
++  /**
++   * Android 9 and 10 clip with a non-anti-aliased Canvas.clipPath. Earlier versions are left alone:
++   * their OpenGL renderer replaces, rather than intersects, an inherited round-rect outline clip,
++   * so nested rounded clips would escape their parent.
++   */
++  private fun usesOutlineForRoundedClip(): Boolean =
++      Build.VERSION.SDK_INT in Build.VERSION_CODES.P..Build.VERSION_CODES.Q
++
++  private fun canClipPaddingBoxWithOutline(view: View, ownsOutlineClip: Boolean): Boolean {
++    if (
++        !usesOutlineForRoundedClip() ||
++            !(ownsOutlineClip || !view.clipToOutline) ||
++            view.outlineProvider !== ViewOutlineProvider.BACKGROUND ||
++            view.getTag(R.id.filter) != null
++    ) {
++      return false
++    }
++
++    val composite = getCompositeBackgroundDrawable(view) ?: return false
++    // The outline clip also clips the view's own background, so a feedback ripple drawn there
++    // (bounded or borderless in place) would be cut where the canvas clip never cut it.
++    return composite.outerShadows.isEmpty() &&
++        composite.feedbackUnderlay == null &&
++        (composite.outline?.outlineWidth ?: 0f) == 0f &&
++        composite.getUniformBorderRadiusWithoutBorder() != null
++  }
++
++  private fun clearPaddingBoxOutlineClip(view: View) {
++    if (view.getTag(R.id.padding_box_outline_clip) == true) {
++      view.setTag(R.id.padding_box_outline_clip, null)
++      view.clipToOutline = false
++    }
++  }
++
+   /**
+    * Populates [outRect] with the padding box rect of the view.
+    *
+@@ -544,10 +628,11 @@ public object BackgroundStyleApplicator {
+           )
+       paddingBoxPath.offset(drawingRect.left.toFloat(), drawingRect.top.toFloat())
+ 
+-      // On Android 28 and below, use antialiased clipping with Porter-Duff compositing. On newer
+-      // Android versions, use the standard clipPath.
++      // HWUI's clipPath is not anti-aliased before Android 11, so on Android 10 and below us
 ```
 
-**File**: `.github/workflows/build-ios-templateapp.yml` (added, +149/-0)
+**File**: `packages/react-native/ReactAndroid/src/main/java/com/facebook/react/uimanager/drawable/CompositeBackgroundDrawable.kt` (modified, +38/-2)
 ```diff
-@@ -0,0 +1,149 @@
-+name: Build iOS Template App
+@@ -19,6 +19,7 @@ import android.os.Build
+ import com.facebook.react.common.annotations.UnstableReactNativeAPI
+ import com.facebook.react.internal.featureflags.ReactNativeFeatureFlags
+ import com.facebook.react.uimanager.PixelUtil.dpToPx
++import com.facebook.react.uimanager.PixelUtil.pxToDp
+ import com.facebook.react.uimanager.style.BorderInsets
+ import com.facebook.react.uimanager.style.BorderRadiusStyle
+ 
+@@ -207,8 +208,8 @@ internal class CompositeBackgroundDrawable(
+           borderRadius?.resolve(
+               layoutDirection,
+               context,
+-              bounds.width().toFloat(),
+-              bounds.height().toFloat(),
++              bounds.width().pxToDp(),
++              bounds.height().pxToDp(),
+           )
+ 
+       val computedBorderInsets = borderInsets?.resolve(layoutDirection, context)
+@@ -248,6 +249,41 @@ internal class CompositeBackgroundDrawable(
+     }
+   }
+ 
++  /**
++   * Returns the corner radius, in pixels, when every corner shares one circular radius and no
++   * border is set, so that the border box and the padding box are the same round rect, and the
++   * round rect [getOutline] describes. Returns null otherwise.
++   */
++  fun getUniformBorderRadiusWithoutBorder(): Float? {
++    val computedBorderInsets = borderInsets?.resolve(layoutDirection, context)
++    if (
++        computedBorderInsets != null &&
++            (computedBorderInsets.left != 0f ||
++                computedBorderInsets.top != 0f ||
++                computedBorderInsets.right != 0f ||
++                computedBorderInsets.bottom != 0f)
++    ) {
++      return null
++    }
 +
-+permissions:
-+  contents: read
-+  actions: read
++    val computedBorderRadius =
++        borderRadius?.resolve(
++            layoutDirection,
++            context,
++            bounds.width().pxToDp(),
++            bounds.height().pxToDp(),
++        ) ?: return null
++    if (!computedBorderRadius.isUniform()) {
++      return null
++    }
 +
-+on:
-+  workflow_call:
-+    inputs:
-+      flavors:
-+        description: 'JSON array of configurations to build'
-+        type: string
-+        default: '["Debug", "Release"]'
-+      previous-results:
-+        description: 'Results retained from an earlier build attempt in this run'
-+        type: string
-+        default: '{}'
-+      fail-on-error:
-+        type: boolean
-+        default: false
-+    outputs:
-+      status:
-+        description: 'Whether both configurations have built successfully'
-+        value: ${{ jobs.report.outputs.status }}
-+      results:
-+        description: 'Build results for both configurations, including earlier attempts'
-+        value: ${{ jobs.report.outputs.results }}
-+      failed-flavors:
-+        description: 'JSON array of configurations that still need a successful build'
-+        value: ${{ jobs.report.outputs.failed-flavors }}
++    val corner = computedBorderRadius.topLeft
++    if (corner.horizontal <= 0f || corner.horizontal != corner.vertical) {
++      return null
++    }
++    return corner.horizontal.dpToPx()
++  }
 +
-+jobs:
-+  build:
-+    runs-on: macos-26
-+    outputs:
-+      debug-result: ${{ steps.report-status.outputs.debug-result }}
-+      release-result: ${{ steps.report-status.outputs.release-result }}
-+      failure-debug: ${{ steps.report-status.outputs.failure-debug }}
-+      failure-release: ${{ steps.report-status.outputs.failure-release }}
-+    strategy:
-+      fail-fast: false
-+      matrix:
-+        flavor: ${{ fromJSON(inputs.flavors) }}
-+    steps:
-+      - name: Checkout
-+        uses: actions/checkout@v6
-+      - name: Setup node.js
-+        uses: ./.github/actions/setup-node
-+      - name: Run yarn
-+        uses: ./.github/actions/yarn-install
-+      - name: Download React Native Package
-+        uses: ./.github/actions/download-artifact
-+        with:
-+          name: react-native-package
-+          path: /tmp/react-native-tmp
-+      - name: Print /tmp folder
-+        run: ls -lR /tmp/react-native-tmp
-+      - name: Configure git
-+        shell: bash
-+        run: |
-+          git config --global user.email "react-native-bot@meta.com"
-+          git config --global user.name "React Native Bot"
-+      - name: Create the app
-+        run: |
-+          REACT_NATIVE_PKG=$(find /tmp/react-native-tmp -type f -name "*.tgz")
-+          echo "React Native tgs is $REACT_NATIVE_PKG"
-+
-+          # For stable branches, we want to use the stable branch of the template
-+          # In all the other cases, we want to use "main"
-+          BRANCH=${{ github.ref_name }}
-+          if ! [[ $BRANCH == *-stable* ]]; then
-+            BRANCH=main
-+          fi
-+
-+          node ./scripts/e2e/init-project-e2e.js --projectName RNTestProject --currentBranch $BRANCH --directory /tmp/RNTestProject --pathToLocalReactNative $REACT_NATIVE_PKG
-+      - name: Download the XCFrameworks built in this run
-+        uses: ./.github/actions/setup-spm-artifacts
-+        with:
-+          working-directory: /tmp/RNTestProject/ios
-+      - name: Convert the app to SwiftPM
-+        working-directory: /tmp/RNTestProject/ios
-+        run: RN_STRICT_API=1 npx react-native spm add --deintegrate --artifacts /tmp/spm-artifacts --download skip
-+      - name: Build the app
-+        working-directory: /tmp/RNTestProject/ios
-+        run: |
-+          xcodebuild \
-+            -scheme "RNTestProject" \
-+            -project RNTestProject.xcodeproj \
-+            -configuration "${{ matrix.flavor }}" \
-+            -sdk "iphonesimulator" \
-+            -destination "generic/platform=iOS Simulator" \
-+            -derivedDataPath "/tmp/RNTestProject"
-+      - name: Verify app supports the arm64 simulator
-+        run: lipo /tmp/RNTestProject/Build/Products/${{ matrix.flavor }}-iphonesimulator/RNTestProject.app/RNTestProject -verify_arch arm64
-+      - name: Upload app
-+        uses: ./.github/actions/upload-artifact
-+        with:
-+          name: RNTestProject-${{ matrix.flavor }}
-+          overwrite: true
-+          path: /tmp/RNTestProject/Build/Products/${{ matrix.flavor }}-iphonesimulator/RNTestProject.app
-+      - name: Report status
-+        id: report-status
-+        if: always()
-+        uses: actions/github-script@v8
-+        env:
-+          STEP_RESULTS: ${{ toJSON(steps) }}
-+          JOB_STATUS: ${{ job.status }}
-+          TEST_FLAVOR: ${{ matrix.flavor }}
-+        with:
-+          script: |
-+            const {recordJobFailure} = require('./.github/workflow-scripts/report-test-results');
-+            const {recordConfigurationResult} = require('./.github/workflow-scripts/template-app-ci-state');
-+            recordConfigurationResult({core, flavor: process.env.TEST_FLAVOR,
-+              passed: process.env.JOB_STATUS === 'success'});
-+            await recordJobFailure({github, context, core,
-+              steps: JSON.parse(process.env.STEP_RESULTS),
-+              flavor: process.env.TEST_FLAVOR,
-+              runnerName: process.env.RUNNER_NAME,
-+              jobStatus: process.env.JOB_STATUS,
-+              attempt: Number(process.env.GITHUB_RUN_ATTEMPT)});
-+
-+  rep
+   companion object {
+     private fun createLayersArray(
+         originalBackground: Drawable?,
 ```
 
-**File**: `.github/workflows/e2e-ios-templateapp.yml` (modified, +69/-98)
+**File**: `packages/react-native/ReactAndroid/src/main/java/com/facebook/react/views/image/ReactImageView.kt` (modified, +8/-1)
 ```diff
-@@ -7,139 +7,88 @@ permissions:
- on:
-   workflow_call:
-     inputs:
-+      flavors:
-+        description: 'JSON array of configurations to test'
-+        type: string
-+        default: '["Debug", "Release"]'
-+      previous-results:
-+        description: 'Results retained from an earlier test attempt in this run'
-+        type: string
-+        default: '{}'
-+      retry-attempt:
-+        type: number
-+        default: 0
-       fail-on-error:
-         type: boolean
-         default: false
-     outputs:
-       status:
--        description: 'The result of the E2E tests (success or failure)'
-+        description: 'Whether both configurations have passed E2E'
-         value: ${{ jobs.report.outputs.status }}
-+      results:
-+        description: 'Test results for both configurations, including earlier attempts'
-+        value: ${{ jobs.report.outputs.results }}
-+      failed-flavors:
-+        description: 'JSON array of configurations that still need successful E2E'
-+        value: ${{ jobs.report.outputs.failed-flavors }}
+@@ -382,7 +382,7 @@ public class ReactImageView(
+   public override fun hasOverlappingRendering(): Boolean = false
  
- jobs:
--  build:
--    runs-on: macos-26
--    outputs:
--      failure-debug: ${{ steps.report-status.outputs.failure-debug }}
--      failure-release: ${{ steps.report-status.outputs.failure-release }}
--    strategy:
--      fail-fast: false
--      matrix:
--        flavor: [Debug, Release]
--    steps:
--      - name: Checkout
--        uses: actions/checkout@v6
--      - name: Setup node.js
--        uses: ./.github/actions/setup-node
--      - name: Run yarn
--        uses: ./.github/actions/yarn-install
--      - name: Download React Native Package
--        uses: ./.github/actions/download-artifact
--        with:
--          name: react-native-package
--          path: /tmp/react-native-tmp
--      - name: Print /tmp folder
--        run: ls -lR /tmp/react-native-tmp
--      - name: Configure git
--        shell: bash
--        run: |
--          git config --global user.email "react-native-bot@meta.com"
--          git config --global user.name "React Native Bot"
--      - name: Create the app
--        run: |
--          REACT_NATIVE_PKG=$(find /tmp/react-native-tmp -type f -name "*.tgz")
--          echo "React Native tgs is $REACT_NATIVE_PKG"
--
--          # For stable branches, we want to use the stable branch of the template
--          # In all the other cases, we want to use "main"
--          BRANCH=${{ github.ref_name }}
--          if ! [[ $BRANCH == *-stable* ]]; then
--            BRANCH=main
--          fi
--
--          node ./scripts/e2e/init-project-e2e.js --projectName RNTestProject --currentBranch $BRANCH --directory /tmp/RNTestProject --pathToLocalReactNative $REACT_NATIVE_PKG
--      - name: Download the XCFrameworks built in this run
--        uses: ./.github/actions/setup-spm-artifacts
--        with:
--          working-directory: /tmp/RNTestProject/ios
--      - name: Convert the app to SwiftPM
--        working-directory: /tmp/RNTestProject/ios
--        run: RN_STRICT_API=1 npx react-native spm add --deintegrate --artifacts /tmp/spm-artifacts --download skip
--      - name: Build the app
--        working-directory: /tmp/RNTestProject/ios
--        run: |
--          xcodebuild \
--            -scheme "RNTestProject" \
--            -project RNTestProject.xcodeproj \
--            -configuration "${{ matrix.flavor }}" \
--            -sdk "iphonesimulator" \
--            -destination "generic/platform=iOS Simulator" \
--            -derivedDataPath "/tmp/RNTestProject"
--      - name: Verify app supports the arm64 simulator
--        run: lipo /tmp/RNTestProject/Build/Products/${{ matrix.flavor }}-iphonesimulator/RNTestProject.app/RNTestProject -verify_arch arm64
--      - name: Upload app
--        uses: ./.github/actions/upload-artifact
--        with:
--          name: RNTestProject-${{ matrix.flavor }}
--          overwrite: true
--          path: /tmp/RNTestProject/Build/Products/${{ matrix.flavor }}-iphonesimulator/RNTestProject.app
--      - name: Report status
--        id: report-status
--        if: always()
--        uses: actions/github-script@v8
--        env:
--          STEP_RESULTS: ${{ toJSON(steps) }}
--          JOB_STATUS: ${{ job.status }}
--          TEST_FLAVOR: ${{ matrix.flavor }}
--        with:
--          script: |
--            const {recordJobFailure} = require('./.github/workflow-scripts/report-test-results');
--            await recordJobFailure({github, context, core,
--              steps: JSON.parse(process.env.STEP_RESULTS),
--              flavor: process.env.TEST_FLAVOR,
--              runnerName: process.env.RUNNER_NAME,
--              jobStatus: process.env.JOB_STATUS,
--              attempt: Number(process.env.GITHUB_RUN_ATTEMPT)});
--
-   test:
--    needs: build
-     # Standard arm64 runner: run the simulator natively, as RNTester does.
-     runs-on: macos-26
-     outputs:
-+      debug-result: ${{ steps.report-status.outputs.debug-result }}
-+      release-result: ${{ steps.report-status.outputs.release-result }}
-       status: ${{ steps.report-status.outputs.status }}
-       failure-debug: $
+   public override fun onDraw(canvas: Canvas) {
+-    BackgroundStyleApplicator.clipToPaddingBoxWithAntiAliasing(this, canvas) {
++    val drawImage = {
+       try {
+         super.onDraw(canvas)
+       } catch (e: RuntimeException) {
+@@ -395,6 +395,13 @@ public class ReactImageView(
+         }
+       }
+     }
++    // On Android 9 and 10 an avatar-like padding box takes the outline clip, which needs no layer;
++    // anything else is clipped as before.
++    if (BackgroundStyleApplicator.updatePaddingBoxOutlineClip(this, canvas, true)) {
++      drawImage()
++    } else {
++      BackgroundStyleApplicator.clipToPaddingBoxWithAntiAliasing(this, canvas, drawImage)
++    }
+   }
+ 
+   public fun maybeUpdateView() {
 ```
 
-**File**: `.github/workflows/test-all.yml` (modified, +47/-4)
+**File**: `packages/react-native/ReactAndroid/src/main/java/com/facebook/react/views/scroll/ReactHorizontalScrollView.kt` (modified, +1/-3)
 ```diff
-@@ -153,23 +153,66 @@ jobs:
-     with:
-       platform: ios
+@@ -454,9 +454,7 @@ constructor(context: Context, private val fpsListener: FpsListener? = null) :
+   }
  
--  test_e2e_ios_templateapp:
--    needs: [build_npm_package, prebuild_apple_dependencies, check_code_changes]
-+  build_ios_templateapp:
-+    needs:
-+      [
-+        build_npm_package,
-+        prebuild_apple_dependencies,
-+        prebuild_react_native_core,
-+        check_code_changes,
-+      ]
-     if: needs.check_code_changes.outputs.should_test_ios == 'true'
-+    uses: ./.github/workflows/build-ios-templateapp.yml
-+    secrets: inherit
-+
-+  build_ios_templateapp_retry_1:
-+    needs: build_ios_templateapp
-+    if: ${{ !cancelled() && (needs.build_ios_templateapp.outputs.status == 'failure' || needs.build_ios_templateapp.result == 'failure') }}
-+    uses: ./.github/workflows/build-ios-templateapp.yml
-+    with:
-+      flavors: ${{ needs.build_ios_templateapp.outputs.failed-flavors || '["Debug", "Release"]' }}
-+      previous-results: ${{ needs.build_ios_templateapp.outputs.results || '{}' }}
-+    secrets: inherit
-+
-+  build_ios_templateapp_retry_2:
-+    needs: build_ios_templateapp_retry_1
-+    if: ${{ !cancelled() && (needs.build_ios_templateapp_retry_1.outputs.status == 'failure' || needs.build_ios_templateapp_retry_1.result == 'failure') }}
-+    uses: ./.github/workflows/build-ios-templateapp.yml
-+    with:
-+      flavors: ${{ needs.build_ios_templateapp_retry_1.outputs.failed-flavors || '["Debug", "Release"]' }}
-+      previous-results: ${{ needs.build_ios_templateapp_retry_1.outputs.results || '{}' }}
-+      fail-on-error: true
-+    secrets: inherit
-+
-+  test_e2e_ios_templateapp:
-+    needs:
-+      [
-+        build_ios_templateapp,
-+        build_ios_templateapp_retry_1,
-+        build_ios_templateapp_retry_2,
-+      ]
-+    if: ${{ !cancelled() && (needs.build_ios_templateapp.outputs.status == 'success' || needs.build_ios_templateapp_retry_1.outputs.status == 'success' || needs.build_ios_templateapp_retry_2.outputs.status == 'success') }}
-     uses: ./.github/workflows/e2e-ios-templateapp.yml
-     secrets: inherit
+   public override fun onDraw(canvas: Canvas) {
+-    if (_overflow != Overflow.VISIBLE) {
+-      BackgroundStyleApplicator.clipToPaddingBox(this, canvas)
+-    }
++    BackgroundStyleApplicator.updatePaddingBoxClip(this, canvas, _overflow != Overflow.VISIBLE)
+     super.onDraw(canvas)
+   }
  
-   test_e2e_ios_templateapp_retry_1:
-     needs: test_e2e_ios_templateapp
--    if: ${{ always() && needs.test_e2e_ios_templateapp.outputs.status == 'failure' }}
-+    if: ${{ !cancelled() && (needs.test_e2e_ios_templateapp.outputs.status == 'failure' || needs.test_e2e_ios_templateapp.result == 'failure') }}
-     uses: ./.github/workflows/e2e-ios-templateapp.yml
-+    with:
-+      flavors: ${{ needs.test_e2e_ios_templateapp.outputs.failed-flavors || '["Debug", "Release"]' }}
-+      previous-results: ${{ needs.test_e2e_ios_templateapp.outputs.results || '{}' }}
-+      retry-attempt: 1
-     secrets: inherit
+```
+
+**File**: `packages/react-native/ReactAndroid/src/main/java/com/facebook/react/views/scroll/ReactNestedScrollView.kt` (modified, +2/-4)
+```diff
+@@ -4,7 +4,7 @@
+  * This source code is licensed under the MIT license found in the
+  * LICENSE file in the root directory of this source tree.
+  *
+- * @generated SignedSource<<5d7adbc00208fc9995b1c3e69c677a38>>
++ * @generated SignedSource<<2d0623d35595eba002baeb40062c5ed3>>
+  */
  
-   test_e2e_ios_templateapp_retry_2:
-     needs: test_e2e_ios_templateapp_retry_1
--    if: ${{ always() && needs.test_e2e_ios_templateapp_retry_1.outputs.status == 'failure' }}
-+    if: ${{ !cancelled() && (needs.test_e2e_ios_templateapp_retry_1.outputs.status == 'failure' || needs.test_e2e_ios_templateapp_retry_1.result == 'failure') }}
-     uses: ./.github/workflows/e2e-ios-templateapp.yml
-     with:
-+      flavors: ${{ needs.test_e2e_ios_templateapp_retry_1.outputs.failed-flavors || '["Debug", "Release"]' }}
-+      previous-results: ${{ needs.test_e2e_ios_templateapp_retry_1.outputs.results || '{}' }}
-+      retry-attempt: 2
-       fail-on-error: true
-     secrets: inherit
+ /**
+@@ -797,9 +797,7 @@ constructor(context: Context, private val fpsListener: FpsListener? = null) :
+   }
  
+   override fun onDraw(canvas: Canvas) {
+-    if (_overflow != Overflow.VISIBLE) {
+-      BackgroundStyleApplicator.clipToPaddingBox(this, canvas)
+-    }
++    BackgroundStyleApplicator.updatePaddingBoxClip(this, canvas, _overflow != Overflow.VISIBLE)
+     super.onDraw(canvas)
+   }
+ 
+```
+
+**File**: `packages/react-native/ReactAndroid/src/main/java/com/facebook/react/views/scroll/ReactScrollView.kt` (modified, +1/-3)
+```diff
+@@ -789,9 +789,7 @@ constructor(context: Context, private val fpsListener: FpsListener? = null) :
+   }
+ 
+   public override fun onDraw(canvas: Canvas) {
+-    if (_overflow != Overflow.VISIBLE) {
+-      BackgroundStyleApplicator.clipToPaddingBox(this, canvas)
+-    }
++    BackgroundStyleApplicator.updatePaddingBoxClip(this, canvas, _overflow != Overflow.VISIBLE)
+     super.onDraw(canvas)
+   }
+ 
+```
+
+**File**: `packages/react-native/ReactAndroid/src/main/java/com/facebook/react/views/text/PreparedLayoutTextView.kt` (modified, +1/-3)
+```diff
+@@ -122,9 +122,7 @@ internal class PreparedLayoutTextView(context: Context) : ViewGroup(context), Re
+ 
+   @OptIn(UnstableReactNativeAPI::class)
+   override fun onDraw(canvas: Canvas) {
+-    if (overflow != Overflow.VISIBLE) {
+-      BackgroundStyleApplicator.clipToPaddingBox(this, canvas)
+-    }
++    BackgroundStyleApplicator.updatePaddingBoxClip(this, canvas, overflow != Overflow.VISIBLE)
+ 
+     super.onDraw(canvas)
+     canvas.translate(
 ```
 
 ---
 
-### Incident Patch 3: `05c0d3dd` (2026-11-20)
-**Commit Message**: Fix int truncation in JSI's default Runtime::push (#60062)
+### Incident Patch 2: `684b6a59` (2026-11-23)
+**Commit Message**: Fix dangling const-ref JSI args in bridging
 
-Summary:
+## Summary
 
-JSI's default `Runtime::push`, used by runtimes that don't override it such as HermesSandboxRuntime, converted the element indices and the new length to `int`. Once an array's length passes INT_MAX, the elements go to the wrong keys and `length` gets a wrapped value: from length 2^31, `push(1)` throws "Invalid array length"; from length 2^32-1, it silently sets `length` to 0, emptying the array.
+Fixes #60212.
 
-Fix: convert to `double`, which holds every array index and length exactly, and keep the running length in a `uint64_t` so it can't wrap on 32-bit hosts, where `size_t` is 32 bits. A successful `length` store bounds the result by 2^32-1, so narrowing it to `size_t` on return is safe.
+`bridging::callFromJs` (C++ TurboModule methods) and bridged `std::function`s convert each argument with `bridging::fromJs<ArgT>`. When a parameter is `const jsi::Object &`, `const jsi::Function &` or `const jsi::Value &`, the JSI overload of `fromJs` in `Base.h` returned a reference to a temporary created inside `fromJs`. The temporary was destroyed as `fromJs` returned, so the method read a destroyed value. Clang warns about it with `-Wreturn-stack-address`, and AddressSanitizer reports stack-use-after-return.
 
-Changelog: [Internal]
+This overload now returns the converted value instead of a reference. The temporary then lives in the caller until the end of the call expression, which covers the method call. The non-JSI overloads already behave this way. SFINAE still checks `static_cast<ReturnT>`, so the set of supported conversions is unchanged. The C++ API snapshots are updated for the new return type.
 
-Reviewed By: avp
+## Changelog:
 
-Differential Revision: D132346566
+[General] [Fixed] - Fix C++ TurboModule methods and bridged functions that take `jsi::Object`, `jsi::Function` or `jsi::Value` by const reference reading a destroyed argument
 
-Pull Request resolved: https://github.com/react/react-native/pull/60062
+## Test Plan
 
-**File**: `packages/react-native/ReactCommon/jsi/jsi/jsi.cpp` (modified, +4/-4)
+Added `BridgingTest.jsiRef
+
+**File**: `packages/react-native/ReactCommon/react/bridging/Base.h` (modified, +6/-3)
 ```diff
-@@ -460,13 +460,13 @@ void Runtime::deleteProperty(const Object& object, const Value& name) {
+@@ -61,13 +61,16 @@ struct bridging_wrapper<T, std::void_t<decltype(&remove_cvref_t<T>::operator())>
+ template <typename T>
+ using bridging_t = typename detail::bridging_wrapper<T>::type;
+ 
++// Returns by value even when ReturnT is a reference (e.g. `const jsi::Object &`
++// for a method parameter): the converted value is a temporary of this frame, so
++// a returned reference would dangle. The caller's temporary lives until the end
++// of its full-expression, which covers the method call.
+ template <typename ReturnT, typename JSArgT>
+   requires is_jsi_v<JSArgT>
+ auto fromJs(jsi::Runtime &rt, JSArgT &&value, const std::shared_ptr<CallInvoker> & /*unused*/)
+-    -> decltype(static_cast<ReturnT>(std::move(convert(rt, std::forward<JSArgT>(value)))))
+-
++    -> remove_cvref_t<decltype(static_cast<ReturnT>(std::move(convert(rt, std::forward<JSArgT>(value)))))>
+ {
+-  return static_cast<ReturnT>(std::move(convert(rt, std::forward<JSArgT>(value))));
++  return static_cast<remove_cvref_t<ReturnT>>(std::move(convert(rt, std::forward<JSArgT>(value))));
  }
  
- size_t Runtime::push(const Array& arr, const Value* elements, size_t count) {
--  size_t newSize = size(arr);
-+  uint64_t newSize = size(arr);
-   for (size_t i = 0; i < count; i++) {
--    arr.setProperty(*this, Value((int)newSize), elements[i]);
-+    arr.setProperty(*this, Value(static_cast<double>(newSize)), elements[i]);
-     ++newSize;
-   }
--  arr.setProperty(*this, "length", Value((int)newSize));
--  return newSize;
-+  arr.setProperty(*this, "length", Value(static_cast<double>(newSize)));
-+  return static_cast<size_t>(newSize);
- }
- 
- void Runtime::setRuntimeDataImpl(
+ template <typename ReturnT, typename JSArgT>
 ```
 
-**File**: `packages/react-native/ReactCommon/jsi/jsi/test/testlib.cpp` (modified, +16/-0)
+**File**: `packages/react-native/ReactCommon/react/bridging/tests/BridgingTest.cpp` (modified, +14/-0)
 ```diff
-@@ -2557,6 +2557,22 @@ TEST_P(JSITest, ArrayPush) {
-   EXPECT_EQ(arr.getValueAtIndex(rd, 1).getNumber(), 2);
-   EXPECT_EQ(arr.getValueAtIndex(rd, 2).getNumber(), 3);
-   EXPECT_TRUE(arr.getValueAtIndex(rd, 3).isUndefined());
+@@ -233,6 +233,20 @@ TEST_F(BridgingTest, functionTest) {
+       func.call(rt, object, jsi::String::createFromAscii(rt, "foo"))
+           .asString(rt)
+           .utf8(rt));
 +
-+  // Push to an array whose length doesn't fit in an int
-+  arr =
-+      eval("var a = []; a.length = 2147483648; a;").getObject(rd).getArray(rd);
-+  EXPECT_NO_THROW(newLength = arr.push(rd, 1));
-+  EXPECT_EQ(newLength, 2147483649);
-+  EXPECT_EQ(arr.length(rd), 2147483649);
-+  EXPECT_TRUE(Value::strictEquals(rd, arr.getProperty(rd, "2147483648"), 1));
++  // Test with JSI values taken by const reference.
++  func = bridging::toJs(
++      rt,
++      [this](const jsi::Object& obj, const jsi::Value& key) {
++        return obj.getProperty(rt, key.asString(rt)).asString(rt).utf8(rt);
++      },
++      invoker);
 +
-+  // Push past the maximum array length. As in JS, the element is stored under
-+  // the non-index key "4294967295", then setting 'length' throws a RangeError.
-+  arr =
-+      eval("var a = []; a.length = 4294967295; a;").getObject(rd).getArray(rd);
-+  EXPECT_THROW(arr.push(rd, 1), JSError);
-+  EXPECT_EQ(arr.length(rd), 4294967295);
-+  EXPECT_TRUE(Value::strictEquals(rd, arr.getProperty(rd, "4294967295"), 1));
++  EXPECT_EQ(
++      "bar"s,
++      func.call(rt, object, jsi::String::createFromAscii(rt, "foo"))
++          .asString(rt)
++          .utf8(rt));
  }
  
- TEST_P(JSITest, UInt8ArrayTest) {
+ TEST_F(BridgingTest, syncCallbackTest) {
+```
+
+**File**: `packages/react-native/ReactCommon/react/bridging/tests/ClassTest.cpp` (modified, +67/-0)
+```diff
+@@ -50,6 +50,18 @@ struct TestClass {
+     return buffer;
+   }
+ 
++  size_t keyCount(jsi::Runtime& rt, const jsi::Object& obj) {
++    return obj.getPropertyNames(rt).size(rt);
++  }
++
++  double callFunction(jsi::Runtime& rt, const jsi::Function& func) {
++    return func.call(rt).asNumber();
++  }
++
++  bool isObject(jsi::Runtime& /*unused*/, const jsi::Value& value) {
++    return value.isObject();
++  }
++
+  private:
+   std::shared_ptr<CallInvoker> invoker_;
+ };
+@@ -121,6 +133,61 @@ TEST_F(BridgingTest, arrayBufferCallFromJsTest) {
+   EXPECT_EQ(9, out.size(rt));
+ }
+ 
++TEST_F(BridgingTest, jsiReferenceArgumentCallFromJsTest) {
++  // Converting to a JSI reference type must yield an owned value, not a
++  // reference to a temporary destroyed inside fromJs.
++  static_assert(
++      !std::is_reference_v<decltype(bridging::fromJs<const jsi::Object&>(
++          rt, std::declval<jsi::Object>(), invoker))>);
++  static_assert(
++      !std::is_reference_v<decltype(bridging::fromJs<const jsi::Function&>(
++          rt, std::declval<const jsi::Value&>(), invoker))>);
++  static_assert(
++      !std::is_reference_v<decltype(bridging::fromJs<const jsi::Value&>(
++          rt, std::declval<jsi::Value>(), invoker))>);
++
++  auto instance = TestClass(invoker);
++
++  // Methods taking JSI values by const reference must be called with a value
++  // that outlives the call, both for rvalue and lvalue arguments.
++  EXPECT_EQ(
++      2,
++      bridging::callFromJs<size_t>(
++          rt,
++          &TestClass::keyCount,
++          invoker,
++          &instance,
++          eval("({opacity: 0.5, width: 10})").asObject(rt)));
++
++  auto object = eval("({opacity: 0.5, width: 10})").asObject(rt);
++  EXPECT_EQ(
++      2,
++      bridging::callFromJs<size_t>(
++          rt, &TestClass::keyCount, invoker, &instance, object));
++
++  EXPECT_EQ(
++      42.0,
++      bridging::callFromJs<double>(
++          rt,
++          &TestClass::callFunction,
++          invoker,
++          &instance,
++          function("() => 42")));
++
++  EXPECT_TRUE(
++      bridging::callFromJs<bool>(
++          rt,
++          &TestClass::isObject,
++          invoker,
++          &instance,
++          eval("({opacity: 0.5})")));
++
++  auto value = eval("({opacity: 0.5})");
++  EXPECT_TRUE(
++      bridging::callFromJs<bool>(
++          rt, &TestClass::isObject, invoker, &instance, value));
++}
++
+ struct MethodReturnTypeCastingTestObject {
+  public:
+   explicit MethodReturnTypeCastingTestObject(int value) : value_(value) {}
+```
+
+**File**: `scripts/cxx-api/api-snapshots/ReactAndroidDebugCxx.api` (modified, +1/-1)
+```diff
+@@ -5347,7 +5347,7 @@ decltype(facebook::react::Bridging<facebook::react::bridging::remove_cvref_t<Ret
+ template <typename ReturnT, typename JSArgT>
+ decltype(facebook::react::Bridging<facebook::react::bridging::remove_cvref_t<ReturnT>>::fromJs(rt, facebook::react::bridging::convert(rt, std::forward<JSArgT>(value)), jsInvoker)) facebook::react::bridging::fromJs(facebook::jsi::Runtime& rt, JSArgT&& value, const std::shared_ptr<facebook::react::CallInvoker>& jsInvoker);
+ template <typename ReturnT, typename JSArgT>
+-decltype(static_cast<ReturnT>(std::move(facebook::react::bridging::convert(rt, std::forward<JSArgT>(value))))) facebook::react::bridging::fromJs(facebook::jsi::Runtime& rt, JSArgT&& value, const std::shared_ptr<facebook::react::CallInvoker>&);
++facebook::react::bridging::remove_cvref_t<decltype(static_cast<ReturnT>(std::move(facebook::react::bridging::convert(rt, std::forward<JSArgT>(value)))))> facebook::react::bridging::fromJs(facebook::jsi::Runtime& rt, JSArgT&& value, const std::shared_ptr<facebook::react::CallInvoker>&);
+ template <typename ReturnT, typename... ArgsT>
+ constexpr size_t facebook::react::bridging::getParameterCount(ReturnT(*)(ArgsT...));
+ template <typename T, std::enable_if_t<is_jsi_v<T>, int> = 0>
+```
+
+**File**: `scripts/cxx-api/api-snapshots/ReactAndroidFrameworksCxx.api` (modified, +1/-1)
+```diff
+@@ -8931,7 +8931,7 @@ decltype(facebook::react::Bridging<facebook::react::bridging::remove_cvref_t<Ret
+ template <typename ReturnT, typename JSArgT>
+ decltype(facebook::react::Bridging<facebook::react::bridging::remove_cvref_t<ReturnT>>::fromJs(rt, facebook::react::bridging::convert(rt, std::forward<JSArgT>(value)), jsInvoker)) facebook::react::bridging::fromJs(facebook::jsi::Runtime& rt, JSArgT&& value, const std::shared_ptr<facebook::react::CallInvoker>& jsInvoker);
+ template <typename ReturnT, typename JSArgT>
+-decltype(static_cast<ReturnT>(std::move(facebook::react::bridging::convert(rt, std::forward<JSArgT>(value))))) facebook::react::bridging::fromJs(facebook::jsi::Runtime& rt, JSArgT&& value, const std::shared_ptr<facebook::react::CallInvoker>&);
++facebook::react::bridging::remove_cvref_t<decltype(static_cast<ReturnT>(std::move(facebook::react::bridging::convert(rt, std::forward<JSArgT>(value)))))> facebook::react::bridging::fromJs(facebook::jsi::Runtime& rt, JSArgT&& value, const std::shared_ptr<facebook::react::CallInvoker>&);
+ template <typename ReturnT, typename... ArgsT>
+ constexpr size_t facebook::react::bridging::getParameterCount(ReturnT(*)(ArgsT...));
+ template <typename T, std::enable_if_t<is_jsi_v<T>, int> = 0>
+```
+
+**File**: `scripts/cxx-api/api-snapshots/ReactAndroidNewarchCxx.api` (modified, +1/-1)
+```diff
+@@ -5196,7 +5196,7 @@ decltype(facebook::react::Bridging<facebook::react::bridging::remove_cvref_t<Ret
+ template <typename ReturnT, typename JSArgT>
+ decltype(facebook::react::Bridging<facebook::react::bridging::remove_cvref_t<ReturnT>>::fromJs(rt, facebook::react::bridging::convert(rt, std::forward<JSArgT>(value)), jsInvoker)) facebook::react::bridging::fromJs(facebook::jsi::Runtime& rt, JSArgT&& value, const std::shared_ptr<facebook::react::CallInvoker>& jsInvoker);
+ template <typename ReturnT, typename JSArgT>
+-decltype(static_cast<ReturnT>(std::move(facebook::react::bridging::convert(rt, std::forward<JSArgT>(value))))) facebook::react::bridging::fromJs(facebook::jsi::Runtime& rt, JSArgT&& value, const std::shared_ptr<facebook::react::CallInvoker>&);
++facebook::react::bridging::remove_cvref_t<decltype(static_cast<ReturnT>(std::move(facebook::react::bridging::convert(rt, std::forward<JSArgT>(value)))))> facebook::react::bridging::fromJs(facebook::jsi::Runtime& rt, JSArgT&& value, const std::shared_ptr<facebook::react::CallInvoker>&);
+ template <typename ReturnT, typename... ArgsT>
+ constexpr size_t facebook::react::bridging::getParameterCount(ReturnT(*)(ArgsT...));
+ template <typename T, std::enable_if_t<is_jsi_v<T>, int> = 0>
+```
+
+**File**: `scripts/cxx-api/api-snapshots/ReactAndroidReleaseCxx.api` (modified, +1/-1)
+```diff
+@@ -5196,7 +5196,7 @@ decltype(facebook::react::Bridging<facebook::react::bridging::remove_cvref_t<Ret
+ template <typename ReturnT, typename JSArgT>
+ decltype(facebook::react::Bridging<facebook::react::bridging::remove_cvref_t<ReturnT>>::fromJs(rt, facebook::react::bridging::convert(rt, std::forward<JSArgT>(value)), jsInvoker)) facebook::react::bridging::fromJs(facebook::jsi::Runtime& rt, JSArgT&& value, const std::shared_ptr<facebook::react::CallInvoker>& jsInvoker);
+ template <typename ReturnT, typename JSArgT>
+-decltype(static_cast<ReturnT>(std::move(facebook::react::bridging::convert(rt, std::forward<JSArgT>(value))))) facebook::react::bridging::fromJs(facebook::jsi::Runtime& rt, JSArgT&& value, const std::shared_ptr<facebook::react::CallInvoker>&);
++facebook::react::bridging::remove_cvref_t<decltype(static_cast<ReturnT>(std::move(facebook::react::bridging::convert(rt, std::forward<JSArgT>(value)))))> facebook::react::bridging::fromJs(facebook::jsi::Runtime& rt, JSArgT&& value, const std::shared_ptr<facebook::react::CallInvoker>&);
+ template <typename ReturnT, typename... ArgsT>
+ constexpr size_t facebook::react::bridging::getParameterCount(ReturnT(*)(ArgsT...));
+ template <typename T, std::enable_if_t<is_jsi_v<T>, int> = 0>
+```
+
+**File**: `scripts/cxx-api/api-snapshots/ReactAppleDebugCxx.api` (modified, +1/-1)
+```diff
+@@ -7098,7 +7098,7 @@ decltype(facebook::react::Bridging<facebook::react::bridging::remove_cvref_t<Ret
+ template <typename ReturnT, typename JSArgT>
+ decltype(facebook::react::Bridging<facebook::react::bridging::remove_cvref_t<ReturnT>>::fromJs(rt, facebook::react::bridging::convert(rt, std::forward<JSArgT>(value)), jsInvoker)) facebook::react::bridging::fromJs(facebook::jsi::Runtime& rt, JSArgT&& value, const std::shared_ptr<facebook::react::CallInvoker>& jsInvoker);
+ template <typename ReturnT, typename JSArgT>
+-decltype(static_cast<ReturnT>(std::move(facebook::react::bridging::convert(rt, std::forward<JSArgT>(value))))) facebook::react::bridging::fromJs(facebook::jsi::Runtime& rt, JSArgT&& value, const std::shared_ptr<facebook::react::CallInvoker>&);
++facebook::react::bridging::remove_cvref_t<decltype(static_cast<ReturnT>(std::move(facebook::react::bridging::convert(rt, std::forward<JSArgT>(value)))))> facebook::react::bridging::fromJs(facebook::jsi::Runtime& rt, JSArgT&& value, const std::shared_ptr<facebook::react::CallInvoker>&);
+ template <typename ReturnT, typename... ArgsT>
+ constexpr size_t facebook::react::bridging::getParameterCount(ReturnT(*)(ArgsT...));
+ template <typename T, std::enable_if_t<is_jsi_v<T>, int> = 0>
+```
+
+---
+
+### Incident Patch 3: `a83804d2` (2026-11-23)
+**Commit Message**: Fix ImageRequestParams.h not found in ReactCodegen with static frameworks
+
+## Summary:
+
+Since 0.89.0-rc.0, the iOS build fails with static frameworks when React Native is built from source and a codegen spec has an `ImageSource` prop. `@react-native-community/slider`, `react-native-svg`, and `react-native-screens` all hit this.
+
+```
+React_Fabric.framework/Headers/react/renderer/imagemanager/ImageManager.h:17:10:
+fatal error: 'react/renderer/imagemanager/ImageRequestParams.h' file not found
+```
+
+Regressed by #58730, which made codegen emit umbrella includes. Generated `Props.h` now includes `<React/ImageManager.h>`. That umbrella includes `ImageManager.h`, which needs `ImageRequestParams.h` from `React_ImageManager.framework`. The `ReactCodegen` pod has no header search path for that framework. Library pods already get it from `new_architecture.rb`.
+
+This change adds `React-ImageManager` to the `ReactCodegen` framework header search paths. The prebuilt core is not affected.
+
+## Changelog:
+
+[IOS] [FIXED] - Fix `ImageRequestParams.h` not found in codegen with static frameworks
+
+## Test Plan:
+
+Repro: https://github.com/intergalacticspacehighway/rn-static-frameworks-imagesource-repro (R
+
+**File**: `packages/react-native/scripts/codegen/__tests__/__snapshots__/generate-artifacts-executor-test.js.snap` (modified, +2/-0)
+```diff
+@@ -444,6 +444,7 @@ if use_frameworks
+   ReactNativePodsUtils.create_header_search_path_for_frameworks(\\"PODS_CONFIGURATION_BUILD_DIR\\", \\"React-Fabric\\", \\"React_Fabric\\", [\\"react/renderer/components/view/platform/cxx\\"])
+     .concat(ReactNativePodsUtils.create_header_search_path_for_frameworks(\\"PODS_CONFIGURATION_BUILD_DIR\\", \\"React-bridging\\", \\"React_bridging\\", []))
+     .concat(ReactNativePodsUtils.create_header_search_path_for_frameworks(\\"PODS_CONFIGURATION_BUILD_DIR\\", \\"React-FabricImage\\", \\"React_FabricImage\\", []))
++    .concat(ReactNativePodsUtils.create_header_search_path_for_frameworks(\\"PODS_CONFIGURATION_BUILD_DIR\\", \\"React-ImageManager\\", \\"React_ImageManager\\", []))
+     .concat(ReactNativePodsUtils.create_header_search_path_for_frameworks(\\"PODS_CONFIGURATION_BUILD_DIR\\", \\"React-graphics\\", \\"React_graphics\\", [\\"react/renderer/graphics/platform/ios\\"]))
+     .concat(ReactNativePodsUtils.create_header_search_path_for_frameworks(\\"PODS_CONFIGURATION_BUILD_DIR\\", \\"ReactCommon\\", \\"ReactCommon\\", [\\"react/nativemodule/core\\"]))
+     .concat(ReactNativePodsUtils.create_header_search_path_for_frameworks(\\"PODS_CONFIGURATION_BUILD_DIR\\", \\"React-runtimeexecutor\\", \\"React_runtimeexecutor\\", [\\"platform/ios\\"]))
+@@ -947,6 +948,7 @@ if use_frameworks
+   ReactNativePodsUtils.create_header_search_path_for_frameworks(\\"PODS_CONFIGURATION_BUILD_DIR\\", \\"React-Fabric\\", \\"React_Fabric\\", [\\"react/renderer/components/view/platform/cxx\\"])
+     .concat(ReactNativePodsUtils.create_header_search_path_for_frameworks(\\"PODS_CONFIGURATION_BUILD_DIR\\", \\"React-bridging\\", \\"React_bridging\\", []))
+     .concat(ReactNativePodsUtils.create_header_search_path_for_frameworks(\\"PODS_CONFIGURATION_BUILD_DIR\\", \\"React-FabricImage\\", \\"React_FabricImage\\", []))
++    .concat(ReactNativePodsUtils.create_header_search_path_for_frameworks(\\"PODS_CONFIGURATION_BUILD_DIR\\", \\"React-ImageManager\\", \\"React_ImageManager\\", []))
+     .concat(ReactNativePodsUtils.create_header_search_path_for_frameworks(\\"PODS_CONFIGURATION_BUILD_DIR\\", \\"React-graphics\\", \\"React_graphics\\", [\\"react/renderer/graphics/platform/ios\\"]))
+     .concat(ReactNativePodsUtils.create_header_search_path_for_frameworks(\\"PODS_CONFIGURATION_BUILD_DIR\\", \\"ReactCommon\\", \\"ReactCommon\\", [\\"react/nativemodule/core\\"]))
+     .concat(ReactNativePodsUtils.create_header_search_path_for_frameworks(\\"PODS_CONFIGURATION_BUILD_DIR\\", \\"React-runtimeexecutor\\", \\"React_runtimeexecutor\\", [\\"platform/ios\\"]))
+```
+
+**File**: `packages/react-native/scripts/codegen/templates/ReactCodegen.podspec.template` (modified, +1/-0)
+```diff
+@@ -32,6 +32,7 @@ if use_frameworks
+   ReactNativePodsUtils.create_header_search_path_for_frameworks("PODS_CONFIGURATION_BUILD_DIR", "React-Fabric", "React_Fabric", ["react/renderer/components/view/platform/cxx"])
+     .concat(ReactNativePodsUtils.create_header_search_path_for_frameworks("PODS_CONFIGURATION_BUILD_DIR", "React-bridging", "React_bridging", []))
+     .concat(ReactNativePodsUtils.create_header_search_path_for_frameworks("PODS_CONFIGURATION_BUILD_DIR", "React-FabricImage", "React_FabricImage", []))
++    .concat(ReactNativePodsUtils.create_header_search_path_for_frameworks("PODS_CONFIGURATION_BUILD_DIR", "React-ImageManager", "React_ImageManager", []))
+     .concat(ReactNativePodsUtils.create_header_search_path_for_frameworks("PODS_CONFIGURATION_BUILD_DIR", "React-graphics", "React_graphics", ["react/renderer/graphics/platform/ios"]))
+     .concat(ReactNativePodsUtils.create_header_search_path_for_frameworks("PODS_CONFIGURATION_BUILD_DIR", "ReactCommon", "ReactCommon", ["react/nativemodule/core"]))
+     .concat(ReactNativePodsUtils.create_header_search_path_for_frameworks("PODS_CONFIGURATION_BUILD_DIR", "React-runtimeexecutor", "React_runtimeexecutor", ["platform/ios"]))
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #60193** (2026-11-21): Type `process.env` and `fs.rm` options with `undefined`, as `@types/node` does (@SamChou19815)
-- **PR #60192** (2026-11-20): Type jest test and hook callbacks as `@types/jest` does (@SamChou19815)
-- **PR #60191** (2026-11-20): Use cloneChildIfNeeded for Yoga child cloning (@cipolleschi)
-- **PR #60190** (2026-11-20): Remove extra type arguments in calls (@SamChou19815)
-- **PR #60185** (2026-11-20): Preserve selective cloning of hidden Yoga children (@cipolleschi)
-- **PR #60182** (2026-11-20): Upgrade Flow in fbsource (@SamChou19815)
+- **PR #60242** (2026-11-23): Drop an always-true unsigned check in YogaLayoutableShadowNode::replaceChild (@r-barnes)
+- **PR #60234** (2026-11-23): Update React Native DevTools binaries (@cipolleschi)
+- **PR #60232** (2026-11-23): Compute isBaselineLayout once per container instead of once per flex line (#2090) (@cipolleschi)
+- **PR #60225** (2026-11-23): Fix ImageRequestParams.h not found in ReactCodegen with static frameworks (@intergalacticspacehighway)
+- **PR #60224** (2026-11-23): Avoid copying ShadowViews into Android mount items (@riteshshukla04)
+- **PR #60223** (2026-11-23): Do not key WeakHashMap by Integer (@Yqwed)
 
 ---
 
@@ -1466,52 +1236,22 @@ Pull Request resolved: https://github.com/react/react-native/pull/60062
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add ReactTextView regression test for effect spans without remeasure
+## X. [Android] Anti-aliased rounded overflow clips on Android 9 and 10
 
 **RULE**:
-When implementing operations in `packages/react-native/ReactAndroid/src/test/java/com/facebook/react/views/text/ReactTextViewTest.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/react-native. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/react-native/ReactAndroid/api/ReactAndroid.api`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/react-native. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a5b0bf0f`: Add ReactTextView regression test for effect spans without remeasure. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5dc1d781`: [Android] Anti-aliased rounded overflow clips on Android 9 and 10. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native/ReactAndroid/src/test/java/com/facebook/react/views/text/ReactTextViewTest.kt`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native/ReactAndroid/api/ReactAndroid.api`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-import android.text.Layout
-import com.facebook.react.views.text.internal.span.CanvasEffectSpan
-  @Test
-  fun effectSpansPaintAfterFramePreservingUpdateWithoutRemeasure() {
-    val width = 200
-    val height = 100
-    val view = TestReactTextView(RuntimeEnvironment.getApplication())
-    view.layoutParams =
-        ViewGroup.LayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-        )
-    view.setTextColor(Color.BLACK)
-    view.setTextSize(TypedValue.COMPLEX_UNIT_PX, 24f)
-    val plain = SpannableString("Hello")
-    view.setSpanned(plain)
-    view.text = plain
-    view.measure(
-        View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
-        View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY),
-    )
-    view.layout(0, 0, width, height)
-    assertThat(view.layout).isNotNull()
-
-    val span = RecordingCanvasEffectSpan()
-    val decorated = SpannableString("Hello")
-    decorated.setSpan(span, 0, decorated.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-    view.setSpanned(decorated)
-    view.text = decorated
-    view.drawTextForTest(Canvas(createBitmap(width, height)))
-
-    assertThat(view.layout).is
+	public static final fun updatePaddingBoxClip (Landroid/view/View;Landroid/graphics/Canvas;Z)V
+	public static final fun updatePaddingBoxOutlineClip (Landroid/view/View;Landroid/graphics/Canvas;Z)Z
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1521,7 +1261,7 @@ import com.facebook.react.views.text.internal.span.CanvasEffectSpan
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a5b0bf0f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5dc1d781` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

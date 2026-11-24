@@ -12625,3 +12625,6 @@ Every entry in this ledger must capture:
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `f7634e86` | Multi-dimensional audit evidence | 2026-11-24T04:45:10.518Z |
 | `learn-github-yazinsai-openoats` | `https://github.com/yazinsai/OpenOats` | `8e84f291` | Multi-dimensional audit evidence | 2026-11-24T04:45:14.067Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `2325502f` | Multi-dimensional audit evidence | 2026-11-24T04:45:18.886Z |
+| `learn-github-ajeetdsouza-zoxide` | `https://github.com/ajeetdsouza/zoxide` | `8f588052` | Multi-dimensional audit evidence | 2026-11-24T04:53:49.312Z |
+| `learn-github-react-react-native` | `https://github.com/react/react-native` | `ad969b28` | Multi-dimensional audit evidence | 2026-11-24T04:53:55.601Z |
+| `learn-dom-h-f2861f87` | `project://react-react-native` | `ad969b28` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-react-native-learnings.md` | 2026-11-24T04:54:34.114Z |

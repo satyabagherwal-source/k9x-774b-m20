@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T04:45:24.508Z",
+  "last_updated": "2026-11-24T04:54:36.468Z",
   "total_verified_learnings": 9089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24436,
+  "total_items": 24441,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "fc688e6f69f1666f06700c990b505392195c226aa040a58bd54b1e78421f5b6c",
+      "content_hash": "928caaedaa2e31cc0f33da2af4f17efb022caaf6a95747139248d18c465de775",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T04:37:07.024Z"
+      "persisted_at": "2026-11-24T04:54:36.197Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "cd3668070df58c52f0ec6b9971e7fcc34cf9ef7016d30dfac3a3d431c3b8aeaa",
+      "content_hash": "f9c58169f41812d997f724dedcad3af443adea3f14124e2ed1e478a57375d4e5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T04:37:07.195Z"
+      "persisted_at": "2026-11-24T04:54:36.468Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -114093,10 +114093,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-react-native-technical-construction-intelligence-react-react-native-core-i.md",
       "title": "Technical Construction Intelligence: react/react-native Core Invariants",
       "repository": "react/react-native",
-      "source_version": "32a5aa6a",
-      "content_hash": "b9f6437766a1c8b2f303d1e552f96731eb65d08868e26125ffeaf9b85aa7add9",
+      "source_version": "ad969b28",
+      "content_hash": "ffebee48026c6398742891de7154964a84458c6690732668678c3faffcdb0528",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T08:52:53.597Z"
+      "persisted_at": "2026-11-24T04:53:56.203Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-react-react-native": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-react-react-native",
@@ -114105,10 +114105,10 @@
       "relative_path": "08_VERIFICATION/react-react-native-verification-protocol-empirical-defect-shield-for-react-react.md",
       "title": "Verification Protocol: Empirical Defect Shield for react/react-native",
       "repository": "react/react-native",
-      "source_version": "32a5aa6a",
-      "content_hash": "cf5551ef7187583a84dfe4cad2d94e074d6a99950af41468b1896396bf70248c",
+      "source_version": "ad969b28",
+      "content_hash": "651ccb97cebf4141041716b3608d6f92d1bfe7b7eaedd35497e3290d655f1fa2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T08:52:53.799Z"
+      "persisted_at": "2026-11-24T04:53:56.410Z"
     },
     "domain_intelligence-architecture-intelligence-mixelpixx-kicad-mcp-server-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-mixelpixx-kicad-mcp-server-learnings-core-invariants",
@@ -271320,8 +271320,8 @@
       "slug": "react-react-native",
       "platform": "github",
       "source_url": "https://github.com/react/react-native",
-      "source_version": "32a5aa6a",
-      "content_hash": "892d3af58ad6969e83b8523b4e74d797a80081ecdc6b53b1cdb99fab3a0d1191",
+      "source_version": "ad969b28",
+      "content_hash": "f8b733d7a1bdf9d1b70dfa3b6119c3abf8da8fc53a2b95c9450bb82c87813506",
       "dossier_path": "07_PROJECT_LEARNING/react-react-native-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-react-native-learnings.md",
       "promoted_rules": [
@@ -271339,6 +271339,11 @@
           "number": 9762,
           "title": "Add ReactTextView regression test for effect spans without remeasure",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10204,
+          "title": "[Android] Anti-aliased rounded overflow clips on Android 9 and 10",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -271346,7 +271351,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T08:52:52.892Z",
+      "verified_at": "2026-11-24T04:53:55.320Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -271437,9 +271442,9 @@
       "title": "Technical Construction Intelligence: react-react-native-learnings Core Invariants",
       "repository": "react-react-native-learnings",
       "source_version": "HEAD",
-      "content_hash": "7f41d617748cc4b6b4998be49801b19642ec9368fea339af395c39e2fdca6647",
+      "content_hash": "51536c57812baa8a5d741ab892c7f4b64ef7d3df8b10a3b31c2340f2b17a4bc2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T08:54:43.467Z"
+      "persisted_at": "2026-11-24T04:54:35.087Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-react-react-native-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-react-react-native-learnings",
@@ -271449,9 +271454,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for react-react-native-learnings",
       "repository": "react-react-native-learnings",
       "source_version": "HEAD",
-      "content_hash": "fc3b1a882f6b56c7720e81db0f959429f8dfa5bb96fde3991c09d6b432fdc1ac",
+      "content_hash": "763a3d789827512a0afd122358b258dcd21c15b690659de67faf81b36f320a8c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T08:54:43.668Z"
+      "persisted_at": "2026-11-24T04:54:35.329Z"
     },
     "learn-github-mswjs-msw": {
       "learning_id": "learn-github-mswjs-msw",
@@ -291071,8 +291076,8 @@
       "slug": "ajeetdsouza-zoxide",
       "platform": "github",
       "source_url": "https://github.com/ajeetdsouza/zoxide",
-      "source_version": "daf56a37",
-      "content_hash": "00895328165f1e2fe51797237bb518a7cae52dff30edcf17bc80670d9dc4873b",
+      "source_version": "8f588052",
+      "content_hash": "677ce3fdbaae00baed51a505de37ee9231c7c3549ab2ae6d1d7673e8a1ee151d",
       "dossier_path": "07_PROJECT_LEARNING/ajeetdsouza-zoxide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ajeetdsouza-zoxide-learnings.md",
       "promoted_rules": [
@@ -291085,6 +291090,11 @@
           "number": 9995,
           "title": "quote the current directory in init, z and zi",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10203,
+          "title": "fix init script leaving exit status 1 without compinit",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -291092,7 +291102,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T21:31:58.277Z",
+      "verified_at": "2026-11-24T04:53:49.067Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -291134,10 +291144,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ajeetdsouza-zoxide-technical-construction-intelligence-ajeetdsouza-zoxide-core-i.md",
       "title": "Technical Construction Intelligence: ajeetdsouza/zoxide Core Invariants",
       "repository": "ajeetdsouza/zoxide",
-      "source_version": "daf56a37",
-      "content_hash": "dc92dafd1223e725edc7a37bbb2a0ff965952ce228c641ec50757075ade1cafc",
+      "source_version": "8f588052",
+      "content_hash": "f1ba87ae54b220c67a79f6d5b55d4a0081400b10f59f637a9ef52ace7336e302",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T21:31:59.101Z"
+      "persisted_at": "2026-11-24T04:53:49.805Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ajeetdsouza-zoxide": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ajeetdsouza-zoxide",
@@ -291146,10 +291156,10 @@
       "relative_path": "08_VERIFICATION/ajeetdsouza-zoxide-verification-protocol-empirical-defect-shield-for-ajeetdsouza.md",
       "title": "Verification Protocol: Empirical Defect Shield for ajeetdsouza/zoxide",
       "repository": "ajeetdsouza/zoxide",
-      "source_version": "daf56a37",
-      "content_hash": "13c8638173aedd043b011c945db515a10745cee84332d67323916a68ca680557",
+      "source_version": "8f588052",
+      "content_hash": "337235a0e110adc1dc780fb9c341eb02bb7ac20346f041df0de767fa31595aba",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T21:31:59.344Z"
+      "persisted_at": "2026-11-24T04:53:50.055Z"
     },
     "rule-9220": {
       "learning_id": "rule-9220",
@@ -291197,9 +291207,9 @@
       "title": "Technical Construction Intelligence: ajeetdsouza-zoxide-learnings Core Invariants",
       "repository": "ajeetdsouza-zoxide-learnings",
       "source_version": "HEAD",
-      "content_hash": "a1bb716f3df74c833342c8d2ab846eabce3f198db08979402ae53e162248fdfe",
+      "content_hash": "2989162b1510670eb4efe1942daff86369144755727694b09bebe16872e89c24",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T21:32:10.212Z"
+      "persisted_at": "2026-11-24T04:53:59.999Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ajeetdsouza-zoxide-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ajeetdsouza-zoxide-learnings",
@@ -291209,9 +291219,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for ajeetdsouza-zoxide-learnings",
       "repository": "ajeetdsouza-zoxide-learnings",
       "source_version": "HEAD",
-      "content_hash": "b0f7359ec598e9f6b998f8618a3097447f6e3bcd8433404a6499ea0a4c589989",
+      "content_hash": "9d0c27836eec6caeccb36245784a1d74385bff4854f1ad101925fea94a79e6a6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T21:32:10.465Z"
+      "persisted_at": "2026-11-24T04:54:00.247Z"
     },
     "rule-9221": {
       "learning_id": "rule-9221",
@@ -319728,13 +319738,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-DPD1-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-06UO-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "2432f089cca2bb8a5d7b8e9582264f95e8cf21cff9dc3c564f076684189638e3",
+      "content_hash": "183d84420783fc24c7df1e624095e1e7031c7708d85074941fd471d582ed55ea",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T04:37:06.856Z"
+      "persisted_at": "2026-11-24T04:54:35.967Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
@@ -333343,6 +333353,70 @@
       "content_hash": "8465f4d63786f8c97d247a9fe0bdf93826c853a538bb5bec09dd22fac8036520",
       "domain_letter": "G",
       "persisted_at": "2026-11-24T04:45:22.493Z"
+    },
+    "rule-10203": {
+      "learning_id": "rule-10203",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10203,
+      "title": "fix init script leaving exit status 1 without compinit",
+      "source_url": "https://github.com/ajeetdsouza/zoxide",
+      "source_version": "8f588052",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T04:53:49.067Z"
+    },
+    "candidate_directive-fix-init-script-leaving-exit-status-1-without-compinit": {
+      "item_id": "candidate_directive-fix-init-script-leaving-exit-status-1-without-compinit",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Z730-fix-init-script-leaving-exit-status-1-without-compinit.md",
+      "title": "fix init script leaving exit status 1 without compinit",
+      "repository": "ajeetdsouza/zoxide",
+      "source_version": "8f588052",
+      "content_hash": "b7f0541c55857e445f465cb90070d8ae2376b3e999a5b2160cdaffd169892d95",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T04:53:49.597Z"
+    },
+    "rule-10204": {
+      "learning_id": "rule-10204",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10204,
+      "title": "[Android] Anti-aliased rounded overflow clips on Android 9 and 10",
+      "source_url": "https://github.com/react/react-native",
+      "source_version": "ad969b28",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T04:53:55.320Z"
+    },
+    "candidate_directive-android-anti-aliased-rounded-overflow-clips-on-android-9-and-10": {
+      "item_id": "candidate_directive-android-anti-aliased-rounded-overflow-clips-on-android-9-and-10",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-05ZX-android-anti-aliased-rounded-overflow-clips-on-android-9-and-10.md",
+      "title": "[Android] Anti-aliased rounded overflow clips on Android 9 and 10",
+      "repository": "react-react-native-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b978a9b494d01f256e7f1921d64ffc660ffde39fd011e21929c0ae5b5d5ef740",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T04:54:34.845Z"
+    },
+    "candidate_directive-zsh-fix-init-script-leaving-exit-status-1-without-compinit": {
+      "item_id": "candidate_directive-zsh-fix-init-script-leaving-exit-status-1-without-compinit",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZEY2-zsh-fix-init-script-leaving-exit-status-1-without-compinit.md",
+      "title": "Zsh: fix init script leaving exit status 1 without compinit",
+      "repository": "ajeetdsouza-zoxide-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0767272bfbb9aa0abb660a6233ae0e5a89e1d00b898654f4ccb256a9f16b1f25",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T04:53:59.787Z"
     }
   },
   "ai-builder-brain": {

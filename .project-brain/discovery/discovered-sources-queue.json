@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T04:37:05.810Z",
+  "updated_at": "2026-11-24T04:54:34.500Z",
   "stats": {
-    "total_discovered": 8337,
-    "approved_pending_harvest": 7900,
+    "total_discovered": 8338,
+    "approved_pending_harvest": 7901,
     "harvested_count": 0,
     "rejected_count": 437,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7885,
+      "COMMUNITY_AND_EXPERT": 7886,
       "OFFICIAL_DOCUMENTATION": 266,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -180378,6 +180378,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/metrolistgroup-metrolist-learnings.md",
         "fileName": "metrolistgroup-metrolist-learnings.md"
+      }
+    },
+    "SRC-769A5C436B7C": {
+      "id": "SRC-769A5C436B7C",
+      "url": "https://github.com/intergalacticspacehighway/rn-static-frameworks-imagesource-repro",
+      "title": "https://github.com/intergalacticspacehighway/rn-static-frameworks-imagesource-repro",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T04:54:34.500Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-react-native-learnings.md",
+        "fileName": "react-react-native-learnings.md"
       }
     }
   }

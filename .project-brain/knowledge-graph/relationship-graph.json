@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-24T03:23:14.798Z",
+  "updated_at": "2026-11-24T04:54:34.111Z",
   "statistics": {
-    "total_nodes": 496,
+    "total_nodes": 497,
     "total_edges": 205,
     "domain_distribution": {
       "D": 301,
       "M": 1,
-      "H": 88,
+      "H": 89,
       "J": 22,
       "K": 30,
       "L": 8,
@@ -11079,6 +11079,28 @@
       ],
       "created_at": "2026-11-24T03:23:14.798Z",
       "updated_at": "2026-11-24T03:23:14.798Z"
+    },
+    "DOM-H-F2861F87": {
+      "id": "DOM-H-F2861F87",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "[Android] Anti-aliased rounded overflow clips on Android 9 and 10",
+      "summary": "Prevents defects observed in production commit `5dc1d781`: [Android] Anti-aliased rounded overflow clips on Android 9 and 10. Unvalidated ex -> When implementing operations in `packages/react-native/ReactAndroid/api/ReactAndroid.api`, engineers MUST enforce rigorous boundary validati",
+      "confidence": 0.81,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://react-react-native/react-react-native-learnings.md",
+        "source_version": "ad969b28",
+        "observed_at": "2026-11-24T04:53:54.298Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (react-react-native)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-24T04:54:34.111Z",
+      "updated_at": "2026-11-24T04:54:34.111Z"
     }
   },
   "edges": [
