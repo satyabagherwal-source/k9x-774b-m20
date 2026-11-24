@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T09:00:01.247Z",
-    "lastVerified": "2026-11-24T09:00:01.247Z",
+    "lastChecked": "2026-11-24T09:18:44.048Z",
+    "lastVerified": "2026-11-24T09:18:44.048Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -185,8 +185,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T08:24:39.946Z",
-    "lastVerified": "2026-11-24T08:24:39.946Z",
+    "lastChecked": "2026-11-24T09:18:31.666Z",
+    "lastVerified": "2026-11-24T09:18:31.666Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1741,8 +1741,8 @@
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T03:33:29.544Z",
-    "lastVerified": "2026-11-24T03:33:29.544Z",
+    "lastChecked": "2026-11-24T09:18:26.769Z",
+    "lastVerified": "2026-11-24T09:18:26.769Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
@@ -1808,9 +1808,9 @@
   "infinitered-reactotron": {
     "name": "reactotron",
     "officialUrl": "https://github.com/infinitered/reactotron",
-    "lastChecked": "2026-11-21T15:59:38.793Z",
+    "lastChecked": "2026-11-24T09:18:21.761Z",
     "revisionIdentifier": "acdd7c73",
-    "lastVerified": "2026-11-21T15:59:38.793Z"
+    "lastVerified": "2026-11-24T09:18:21.761Z"
   },
   "loft-sh-vcluster": {
     "name": "loft-sh/vcluster",
@@ -2957,14 +2957,14 @@
     "officialUrl": "https://github.com/Orange-OpenSource/hurl",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T00:31:15.700Z",
-    "lastVerified": "2026-11-23T00:31:15.700Z",
+    "lastChecked": "2026-11-24T09:18:22.859Z",
+    "lastVerified": "2026-11-24T09:18:22.859Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-orange-opensource-hurl",
-    "contentHash": "2cc6f92508a527a99c054e179235693738dc3be39d8bedd6f20347ed34280770",
+    "contentHash": "a477ef1f0e7d2164f9245d33ea9e9ac09e7b98375de0a908224bcd5a680c43e3",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4163,14 +4163,14 @@
     "officialUrl": "https://github.com/risingwavelabs/risingwave",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T14:12:53.016Z",
-    "lastVerified": "2026-11-23T14:12:53.016Z",
+    "lastChecked": "2026-11-24T09:18:39.816Z",
+    "lastVerified": "2026-11-24T09:18:39.816Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-risingwavelabs-risingwave",
-    "contentHash": "26762ea613b4c0cff03a5708e99fa9e2d1e3511b5fe9360cf47e63df358bfd5f",
+    "contentHash": "b76e663dbf1546c722b44e47c6376b645181ca05113b520c3746d025c9ec012e",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6053,9 +6053,9 @@
   "snyk-driftctl": {
     "name": "driftctl",
     "officialUrl": "https://github.com/snyk/driftctl",
-    "lastChecked": "2026-11-23T15:04:25.383Z",
+    "lastChecked": "2026-11-24T09:18:24.260Z",
     "revisionIdentifier": "724f896a",
-    "lastVerified": "2026-11-23T15:04:25.383Z"
+    "lastVerified": "2026-11-24T09:18:24.260Z"
   },
   "pingcap-talent-plan": {
     "name": "talent-plan",
@@ -9880,12 +9880,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "crawlcove-crawlcove-hreflang-checker": {
-    "name": "CrawlCove/hreflang-checker",
+    "name": "crawlcove-hreflang-checker",
     "officialUrl": "https://github.com/CrawlCove/crawlcove-hreflang-checker",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-20T05:07:42.863Z",
-    "lastVerified": "2026-11-20T05:07:42.863Z",
+    "lastChecked": "2026-11-24T09:18:19.155Z",
+    "lastVerified": "2026-11-24T09:18:19.155Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-crawlcove-hreflang-checker",
@@ -9894,7 +9894,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "e5c444d2"
   },
   "zoontek-react-native-permissions": {
     "name": "react-native-permissions",

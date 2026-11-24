@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T08:59:57.911Z",
+  "last_updated": "2026-11-24T09:18:40.869Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5721,14 +5721,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-orange-opensource-hurl",
-      "content_hash": "2cc6f92508a527a99c054e179235693738dc3be39d8bedd6f20347ed34280770",
-      "verified_at": "2026-11-23T00:31:16.990Z",
+      "content_hash": "a477ef1f0e7d2164f9245d33ea9e9ac09e7b98375de0a908224bcd5a680c43e3",
+      "verified_at": "2026-11-24T09:18:23.775Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T00:31:16.990Z"
+      "last_updated": "2026-11-24T09:18:23.775Z"
     },
     "gregberge/svgr": {
       "repository": "gregberge/svgr",
@@ -5781,14 +5781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-risingwavelabs-risingwave",
-      "content_hash": "26762ea613b4c0cff03a5708e99fa9e2d1e3511b5fe9360cf47e63df358bfd5f",
-      "verified_at": "2026-11-23T14:12:54.069Z",
+      "content_hash": "b76e663dbf1546c722b44e47c6376b645181ca05113b520c3746d025c9ec012e",
+      "verified_at": "2026-11-24T09:18:40.869Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T14:12:54.069Z"
+      "last_updated": "2026-11-24T09:18:40.869Z"
     },
     "mertJF/tailblocks": {
       "repository": "mertJF/tailblocks",

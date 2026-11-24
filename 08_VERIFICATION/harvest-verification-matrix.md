@@ -12640,3 +12640,5 @@
 | `CYCLE-20261124-CS95` | `2026-11-24T08:48:20.489Z` | `XinaTian/MROffice` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10235` | Yes (`9eac349f...`) |
 | `CYCLE-20261124-RKHE` | `2026-11-24T08:59:50.258Z` | `pubkey/rxdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10236` | Yes (`4d533760...`) |
 | `CYCLE-20261124-RQDI` | `2026-11-24T08:59:57.894Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10237` | Yes (`a3f0be60...`) |
+| `CYCLE-20261124-FFNT` | `2026-11-24T09:18:23.753Z` | `Orange-OpenSource/hurl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7098` | Yes (`a477ef1f...`) |
+| `CYCLE-20261124-FSUQ` | `2026-11-24T09:18:40.850Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10238` | Yes (`b76e663d...`) |

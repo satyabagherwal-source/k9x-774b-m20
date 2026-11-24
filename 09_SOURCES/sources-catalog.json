@@ -3733,10 +3733,10 @@
     "repository": "Orange-OpenSource/hurl",
     "platform": "github",
     "sourceUrl": "https://github.com/Orange-OpenSource/hurl",
-    "sourceVersion": "d3f1771a",
+    "sourceVersion": "8d907486",
     "license": "Apache-2.0",
-    "contentHash": "2cc6f92508a527a99c054e179235693738dc3be39d8bedd6f20347ed34280770",
-    "lastHarvestedAt": "2026-11-23T00:31:16.979Z",
+    "contentHash": "a477ef1f0e7d2164f9245d33ea9e9ac09e7b98375de0a908224bcd5a680c43e3",
+    "lastHarvestedAt": "2026-11-24T09:18:23.757Z",
     "learningId": "learn-github-orange-opensource-hurl"
   },
   "gregberge-svgr": {
@@ -3773,10 +3773,10 @@
     "repository": "risingwavelabs/risingwave",
     "platform": "github",
     "sourceUrl": "https://github.com/risingwavelabs/risingwave",
-    "sourceVersion": "6c258d07",
+    "sourceVersion": "78d02432",
     "license": "Apache-2.0",
-    "contentHash": "26762ea613b4c0cff03a5708e99fa9e2d1e3511b5fe9360cf47e63df358bfd5f",
-    "lastHarvestedAt": "2026-11-23T14:12:54.062Z",
+    "contentHash": "b76e663dbf1546c722b44e47c6376b645181ca05113b520c3746d025c9ec012e",
+    "lastHarvestedAt": "2026-11-24T09:18:40.855Z",
     "learningId": "learn-github-risingwavelabs-risingwave"
   },
   "mertjf-tailblocks": {

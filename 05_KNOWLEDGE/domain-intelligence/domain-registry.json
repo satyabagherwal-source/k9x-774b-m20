@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T09:00:04.395Z",
+  "last_updated": "2026-11-24T09:18:46.808Z",
   "total_records": 2509,
   "domains": {
     "A": {
@@ -9242,8 +9242,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "f22f0778dd599cab1a5d5ac33fac092645b8fdd725cdeff95303ca4af5754689",
-      "created_at": "2026-11-24T09:00:04.395Z"
+      "content_hash": "3faa3a69ac3006dc6ea210b0b60497520a621dcfbada0bec907099b930e0ec12",
+      "created_at": "2026-11-24T09:18:46.808Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -30074,8 +30074,8 @@
       "title": "Content & Information Intelligence: risingwavelabs/risingwave Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-risingwavelabs-risingwave-content-information-intelligence-risingwavelabs-rising.md",
       "repository": "risingwavelabs/risingwave",
-      "content_hash": "2ae66295594f91ae44dfd52b25daa289af113d6a51f602d2da60020ddf5ab6c9",
-      "created_at": "2026-11-18T18:38:21.995Z"
+      "content_hash": "31913cbdd5992e2938d034983fcce6d3e25f0a57fa7026f1bcb1dd449a2f20b0",
+      "created_at": "2026-11-24T09:18:41.234Z"
     },
     "domain_intelligence-architecture-intelligence-amir1376-ab-download-manager-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-amir1376-ab-download-manager-learnings-core-invariants",
@@ -30092,8 +30092,8 @@
       "title": "Content & Information Intelligence: risingwavelabs-risingwave-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-risingwavelabs-risingwave-learnings-content-information-intelligence-risingwavel.md",
       "repository": "risingwavelabs-risingwave-learnings",
-      "content_hash": "6d29fdfae73449f3ea00b95d7eb677515962ab1934f04ef030bf5f60620686e4",
-      "created_at": "2026-11-18T18:39:03.475Z"
+      "content_hash": "5dad627a40786db81c95f734aa1904d1c4d36387c75ec8f2fad5da3891f70b69",
+      "created_at": "2026-11-24T09:18:46.039Z"
     },
     "domain_intelligence-research-knowledge-intelligence-dathere-qsv-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-dathere-qsv-core-invariants",
@@ -30468,8 +30468,8 @@
       "title": "Architecture Intelligence: Orange-OpenSource/hurl Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-orange-opensource-hurl-architecture-intelligence-orange-opensource-hurl-core-inv.md",
       "repository": "Orange-OpenSource/hurl",
-      "content_hash": "65ae6f79b6bf6dbe52979ad0e6452a1f4da08e37a1592056d568f03a48246d5e",
-      "created_at": "2026-11-23T00:31:17.490Z"
+      "content_hash": "234797d019a7a0f911669c665e223ba0a86aa45ec0276e5912f6942d95f61b1c",
+      "created_at": "2026-11-24T09:18:24.172Z"
     },
     "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-core-invariants",
@@ -30486,8 +30486,8 @@
       "title": "Architecture Intelligence: orange-opensource-hurl-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-orange-opensource-hurl-learnings-architecture-intelligence-orange-opensource-hur.md",
       "repository": "orange-opensource-hurl-learnings",
-      "content_hash": "b0a9b86b8090198ad810fe339364a993d9f92d1e133bdc36072c7398d99d3267",
-      "created_at": "2026-11-23T00:31:36.718Z"
+      "content_hash": "9ebae05c8a641f7a3d6b2af2e730486dc2dbc329a46723ebbeb76e5d78bb3efd",
+      "created_at": "2026-11-24T09:18:45.196Z"
     },
     "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-learnings-core-invariants",

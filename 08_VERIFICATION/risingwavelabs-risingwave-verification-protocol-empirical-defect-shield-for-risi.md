@@ -4,22 +4,22 @@
 {
   "source_repository": "risingwavelabs/risingwave",
   "source_url": "https://github.com/risingwavelabs/risingwave",
-  "source_version": "6c258d07",
+  "source_version": "78d02432",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-23T14:12:54.281Z",
+  "timestamp": "2026-11-24T09:18:41.069Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-risingwavelabs-risingwave",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave) (Revision: `6c258d07`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T14:12:54.281Z`  
+> **Provenance**: Harvested from [risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave) (Revision: `78d02432`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T09:18:41.069Z`  
 > **Learning ID**: `learn-github-risingwavelabs-risingwave`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `risingwavelabs/risingwave` (Commit: `6c258d07`)
+- **Target Repository**: `risingwavelabs/risingwave` (Commit: `78d02432`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T14:12:53.016Z  
+> **Harvest Timestamp**: 2026-11-24T09:18:39.816Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Event streaming platform for agentic AI. Continuously ingest, transform, and serve event streams in real time, at scale.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9426 stars
+- **Stars / Engagement**: 9428 stars
 
 ---
 
@@ -1088,241 +1088,271 @@ pub(crate) use def_path_lookup;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8429b5b9` (2026-11-23)
-**Commit Message**: build: speed up Dashboard builds and Docker image publishing (#28123)
+### Incident Patch 1: `78d02432` (2026-11-24)
+**Commit Message**: chore(deps): Bump opendal from 0.58.1 to 0.59.5 (#27393)
 
-Signed-off-by: Li0k <[REDACTED_EMAIL]>
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Co-authored-by: Dylan Chen <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: Li0k <[REDACTED_EMAIL]>
 Co-authored-by: Li0k <[REDACTED_EMAIL]>
 
-**File**: `.dockerignore` (modified, +7/-0)
+**File**: `Cargo.lock` (modified, +84/-273)
 ```diff
-@@ -45,6 +45,13 @@ log/
- .bin/
+@@ -6993,7 +6993,7 @@ dependencies = [
+  "futures",
+  "iceberg",
+  "once_cell",
+- "opendal 0.59.3",
++ "opendal",
+  "opendal-layer-prometheus",
+  "prometheus",
+  "reqsign-aws-v4",
+@@ -9976,78 +9976,33 @@ dependencies = [
  
- # generated files
-+dashboard/.next/
-+dashboard/node_modules/
-+dashboard/out/
-+dashboard/proto/gen/
-+dashboard/public/monaco/
-+dashboard/tmp_gen/
-+dashboard/*.tsbuildinfo
- risedev-components.user.env
- riselab-components.user.env
+ [[package]]
+ name = "opendal"
+-version = "0.58.1"
++version = "0.59.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "4f20562cc7447fcc915fc5c23df305a412ea80a733c9f2fd9e2d267e2815be6d"
++checksum = "46081824c74bac9f68f0bc4408077f77b0e315c006514719c97af1c2227ac2d2"
+ dependencies = [
+  "ctor 1.0.12",
+- "opendal-core 0.58.1",
+- "opendal-http-transport-reqwest 0.58.1",
+- "opendal-layer-concurrent-limit 0.58.1",
+- "opendal-layer-logging 0.58.1",
+- "opendal-layer-retry 0.58.1",
+- "opendal-layer-timeout 0.58.1",
+- "opendal-service-azblob 0.58.1",
++ "opendal-core",
++ "opendal-http-transport-reqwest",
++ "opendal-layer-concurrent-limit",
++ "opendal-layer-logging",
++ "opendal-layer-retry",
++ "opendal-layer-timeout",
++ "opendal-service-azblob",
++ "opendal-service-azdls",
+  "opendal-service-azfile",
+- "opendal-service-fs 0.58.1",
+- "opendal-service-gcs 0.58.1",
++ "opendal-service-fs",
++ "opendal-service-gcs",
+  "opendal-service-obs",
+  "opendal-service-oss",
+- "opendal-service-s3 0.58.1",
++ "opendal-service-s3",
+  "opendal-service-webhdfs",
+ ]
  
-```
-
-**File**: `.github/workflows/dashboard.yml` (modified, +2/-2)
-```diff
-@@ -18,10 +18,10 @@ jobs:
-       - uses: actions/checkout@v5
-       - uses: pnpm/action-setup@v4
-         with:
--          version: 10.14.0
-+          package_json_file: dashboard/package.json
-       - uses: actions/setup-node@v4
-         with:
--          node-version: 20
-+          node-version-file: dashboard/.node-version
-           cache: pnpm
-           cache-dependency-path: dashboard/pnpm-lock.yaml
-       - uses: arduino/setup-protoc@v3
-```
-
-**File**: `ci/docker-compose.yml` (modified, +5/-12)
-```diff
-@@ -553,23 +553,16 @@ services:
-       - ..:/risingwave
- 
-   release-env-x86:
--    # Build binaries on a earlier Linux distribution (therefore with earlier version GLIBC)
--    # `manylinux_2_28` is based on AlmaLinux 8 with GLIBC 2.28.
--    #
--    # GLIBC versions on some systems:
--    # - Amazon Linux 2023 (AL2023): 2.34
--    # - Ubuntu 20.04: 2.31
--    #
--    # Systems that we don't provide support for:
--    # - Ubuntu 18.04: 2.27 (Already EOL 2023-05-31)
--    # - Amazon Linux 2: 2.26 (Originally EOL 2023-06-30, superseded by AL2023)
--    image: quay.io/pypa/manylinux_2_28_x86_64:2025.03.23-1
-+    # Build standalone Linux releases on AlmaLinux 9 with glibc 2.34.
-+    # Amazon Linux 2023, RHEL 9, and Ubuntu 22.04 meet this glibc baseline.
-+    # RHEL 8 and Ubuntu 20.04 have older glibc versions.
-+    image: quay.io/pypa/manylinux_2_34_x86_64:2026.11.14-1
-     working_dir: /mnt
-     volumes:
-       - ..:/mnt
- 
-   release-env-arm:
--    image: quay.io/pypa/manylinux_2_28_aarch64:2025.03.23-1
-+    image: quay.io/pypa/manylinux_2_34_aarch64:2026.11.14-1
-     working_dir: /mnt
-     volumes:
-       - ..:/mnt
-```
-
-**File**: `ci/scripts/docker.sh` (modified, +31/-22)
-```diff
-@@ -32,25 +32,36 @@ docker buildx create \
-   --name container \
-   --driver=docker-container
- 
--PULL_PARAM=""
-+cache_ref="ghcr.io/risingwavelabs/risingwave-build-cache:${arch}"
-+build_args=(
-+  -f docker/Dockerfile
-+  --build-arg "GIT_SHA=${BUILDKITE_COMMIT}"
-+  --build-arg "CARGO_PROFILE=${CARGO_PROFILE}"
-+  --progress plain
-+  --builder=container
-+  --cache-from "type=registry,ref=${cache_ref}"
-+)
-+pull_args=()
- if [[ "${ALWAYS_PULL:-false}" = "true" ]]; then
--  PULL_PARAM="--pull"
-+  pull_args=(--pull)
- fi
-+tag="${BUILDKITE_COMMIT}-${arch}"
-+test_image="risingwave-image-test:${tag}"
-+container_id=
-+cleanup() {
-+  if [[ -n "$container_id" ]]; then
-+    docker rm -f "$container_id" >/dev/null || true
-+  fi
-+  docker image rm "$test_image" >/dev/null 2>&1 || true
-+}
-+trap cleanup EXIT
- 
--docker buildx build -f docker/Dockerfile \
--  --build-arg "GIT_SHA=${BUILDKITE_COMMIT}" \
--  --build-arg "CARGO_PROFILE=${CARGO_PROFILE}" \
--  -t "${ghcraddr}:${BUILDKITE_COMMIT}-${arch}" \
--  --progress plain \
--  --builder=container \
--  --load \
--  ${PULL_PARAM} \
--  --cache-to "type=registry,ref=ghcr.io/risingwavelabs/risingwave-build-cache:${arch}" \
--  --cache-from "type=registry,ref=ghcr.io/risingwavelabs/risingwave-build-cache:${arch}" \
-+docker buildx build "${build_args[@]}" "${pull_args[@]}" \
-+  --target risingwave-nodwp --load -t "$test_image" \
-   .
- 
- echo "--- check the image can start correctly"
--container_id=$(docker run -d "${ghcraddr}:${BUILDKITE_COMMIT}-${arch}" playground)
-+container_id=$(docker run -d "$test_image" playground)
- sleep 10
- container_status=$(docker inspect --format='{{.State.Status}}' "$container_id")
- if [ "$container_status" != "running" ]; then
-@@ -60,12 +71,10 @@ if [ "$container_status" != "running" ]; then
-   exit 1
- fi
- 
--echo "--- docker images"
--docker images
+-[[package]]
+-name = "opendal"
+-version = "0.59.3"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ef16fe6b19b73b49ce39e3e0f4cec27e54789eee5d5f752cb2d26bd3e9449686"
+-dependencies = [
+- "ctor 1.0.12",
+- "opendal-core 0.59.3",
+- "opendal-http-transport-reqwest 0.59.3",
+- "opendal-layer-concurrent-limit 0.59.3",
+- "opendal-layer-logging 0.59.3",
+- "opendal-layer-retry 0.59.3",
+- "opendal-layer-timeout 0.59.3",
+- "opendal-service-azblob 0.59.3",
+- "opendal-service-azdls",
+- "opendal-service-fs 0.59.3",
+- "opendal-service-gcs 0.59.3",
+- "opendal-service-s3 0.59.3",
+-]
 -
--echo "--- docker push to ghcr"
--docker push "${ghcraddr}:${BUILDKITE_COMMIT}-${arch}"
+ [[package]]
+ name = "opendal-core"
+-version = "0.58.1"
++version = "0.59.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ec75551ff4cf3e57da98979f6a937aaa9ddb3915bf68cc17d03df733be6646ed"
+-dependencies = [
+- "anyhow",
+- "base64 0.23.1",
+- "bytes",
+- "futures",
+- "http",
+- "jiff",
+- "log",
+- "md-5 0.11.0",
+- "mea",
+- "percent-encoding",
+- "quick-xml 0.41.0",
+- "reqsign-core",
+- "serde",
+- "serde_json",
+- "tokio",
+- "url",
+- "uuid",
+- "web-time",
+-]
 -
--echo "--- docker push to dockerhub"
--docker tag "${ghcraddr}:${BUILDKITE_COMMIT}-${arch}" "${dockerhubaddr}:${BUILDKITE_COMMIT}-${arch}"
--docker push "${dockerhubaddr}:${BUILDKITE_COMMIT}-${arch}"
-+echo "--- export and push the image with debug symbols"
-+# Publish single-architecture manifests for multi-arch-docker.sh.
-+docker buildx build "${build_args[@]}" \
-+  --target risingwave --provenance=false --push \
-+  -t "${ghcraddr}:${tag}" -t "${dockerhubaddr}:${tag}" \
-+  --cache-to "type=registry,ref=${cache_ref}" \
-+  .
-```
-
-**File**: `ci/scripts/release.sh` (modified, +3/-3)
-```diff
-@@ -26,8 +26,8 @@ ld.lld --version
+-[[package]]
+-name = "opendal-core"
+-version = "0.59.3"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ddff5c648dcb3922c2bec71e0d26e881ddf9c367cb7c9a59ed7f2d39a4f38218"
++checksum = "33d5a635dfea36a7a0c3bbb2ca34c97af17f98dd69b0cdf31a1d436a346e0a12"
+ dependencies = [
+  "anyhow",
+  "asyncband",
+@@ -10059,7 +10014,7 @@ dependencies = [
+  "log",
+  "md-5 0.11.0",
+  "percent-encoding",
+- "quick-xml 0.41.0",
++ "quick-xml 0.42.0",
+  "reqsign-core",
+  "serde",
+  "serde_json",
+@@ -10071,174 +10026,96 @@ dependencies = [
  
- echo "--- Install dependencies"
- dnf install -y perl-core wget python3.12 python3.12-devel cyrus-sasl-devel rsync openssl-devel blas-devel lapack-devel libgomp
--# python udf compiling requires python3.12
--update-alternatives --install /usr/bin/python3 python3 /usr/local/bin/python3.12 3
-+# Use the distribution's shared Python library for embedded UDFs.
-+export PYO3_PYTHON=/usr/bin/python3.12
+ [[package]]
+ name = "opendal-http-transport-reqwest"
+-version = "0.58.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ad4d4f19c3ce01126a30611f8e544eaa217104a278c889ac17c9374fe4f9e4ef"
+-dependencies = [
+- "bytes",
+- "futures",
+- "http",
+- "http-body",
+- "opendal-core 0.58.1",
+- "reqwest 0.13.4",
+-]
+-
+-[[package]]
+-name = "opendal-http-transport-reqwest"
+-version = "0.59.3"
++version = "0.59.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "56fcee7ac4b4b815d38346ceb4f3a5d7ef18869c369e000cc7f622b51bcfa938"
++checksum = "fc025e163c43993e30cf1829a30b791934e5b0f7cd4d7e03acc902a9efb7e8f5"
+ dependencies = [
+  "bytes",
+  "futures",
+  "http",
+  "http-body",
+- "opendal-core 0.59.3",
++ "opendal-core",
+  "reqwest 0.13.4",
+ ]
  
- echo "--- Install java and maven"
- dnf install -y java-21-openjdk java-21-openjdk-devel
-@@ -61,7 +61,7 @@ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
- export NVM_DIR="$HOME/.nvm"
- . "$NVM_DIR/nvm.sh"
- cd dashboard && nvm install && nvm use && cd ..
--npm install --global pnpm@10.14.0
-+npm install --global "$(node -p 'require("./dashboard/package.json").packageManager')"
+ [[package]]
+ name = "opendal-layer-concurrent-limit"
+-version = "0.58.1"
++version = "0.59.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "249ac5b0aa5a7a6c3737342d10456067937f9c9a6f3f02544271f7908ab91081"
+-dependencies = [
+- "futures",
+- "http",
+- "mea",
+- "opendal-core 0.58.1",
+-]
+-
+-[[package]]
+-name = "opendal-layer-concurrent-limit"
+-version = "0.59.3"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "b454e68e5f6b331bd079a2ee02ebe05078fc0ddaae6822767ef54ab3c2ac0aa8"
++checksum = "06b44bdf694cccb7d90515b3eac6623975a2813abf4f5c438b4949a329d6a45b"
+ dependencies = [
+  "asyncband",
+  "futures",
+  "http",
+- "opendal-core 0.59.3",
++ "opendal-core",
+ ]
  
- echo "--- Check risingwave release version"
- if [[ -n "${BUILDKITE_TAG}" ]]; then
+ [[package]]
+ name = "opendal-layer-logging"
+-version = "0.58.1"
++version = "0.59.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "5c75411ab00f77851ff086b686c1e9ca8175ac18c15afa2cb75b9036436cb06c"
++checksum = "520d3de5d246c82a246c431ef0f52b8d2f091c7c49a3fd7a6f0ff519b1e7725f"
+ dependencies = [
+  "log",
+- "opendal-core 0.58.1",
+-]
+-
+-[[package]]
+-name = "opendal-layer-logging"
+-version = "0.59.3"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "e6fd30cc4be601d5adf4936f3bcc186be5e09046
 ```
 
-**File**: `dashboard/.node-version` (modified, +1/-1)
+**File**: `Cargo.toml` (modified, +2/-2)
 ```diff
-@@ -1 +1 @@
--20
-+24.22.3
+@@ -206,8 +206,8 @@ mysql_async = { version = "0.37", features = [
+     "native-tls-tls",
+     "rust_decimal",
+ ] }
+-opendal = "0.58.1"
+-opendal-http-transport-reqwest = "0.58.1"
++opendal = "0.59.5"
++opendal-http-transport-reqwest = "0.59.5"
+ openssl = "0.10.80"
+ opentelemetry = "0.31"
+ opentelemetry-otlp = { version = "0.31", features = ["grpc-tonic"] }
 ```
 
-**File**: `dashboard/.pnpmfile.cjs` (added, +22/-0)
+**File**: `src/object_store/src/object/opendal_engine/concurrent_limit.rs` (modified, +19/-4)
 ```diff
-@@ -0,0 +1,22 @@
-+const lintPackages = new Set([
-+  "eslint-config-next",
-+  "prettier-plugin-organize-imports",
-+  "ts-api-utils",
-+  "ts-declaration-location",
-+  "typescript-eslint",
-+])
+@@ -18,8 +18,9 @@ use opendal::layers::{
+     ConcurrentLimitLayer as OpendalConcurrentLimitLayer, ConcurrentLimitSemaphore,
+ };
+ use opendal::raw::{
+-    Layer, OpCopier, OpCopy, OpCreateDir, OpList, OpPresign, OpRead, OpRename, OpStat, OpWrite,
+-    RpCreateDir, RpPresign, RpRename, RpStat, Service, ServiceInfo, Servicer, oio,
++    Layer, OpCompose, OpCopy, OpCreateDir, OpList, OpPresign, OpRead, OpRename, OpRestore, OpStat,
++    OpWrite, RpCreateDir, RpPresign, RpRename, RpRestore, RpStat, Service, ServiceInfo, Servicer,
++    oio,
+ };
+ use opendal::{Capability, OperationContext, Result};
+ use tokio::sync::{OwnedSemaphorePermit, Semaphore};
+@@ -94,6 +95,7 @@ struct ConcurrentLimitService {
+ }
+ 
+ impl Service for ConcurrentLimitService {
++    type Composer = oio::Composer;
+     type Copier = oio::Copier;
+     type Deleter = oio::Deleter;
+     type Lister = ConcurrentLimitLister;
+@@ -148,9 +150,22 @@ impl Service for ConcurrentLimitService {
+         from: &str,
+         to: &str,
+         args: OpCopy,
+-        opts: OpCopier,
+     ) -> Result<Self::Copier> {
+-        self.limited.copy(ctx, from, to, args, opts)
++        self.limited.copy(ctx, from, to, args)
++    }
 +
-+function readPackage(pkg) {
-+  const usesLegacyCompiler =
-+    pkg.name?.startsWith("@typescript-eslint/") || lintPackages.has(pkg.name)
++    // Forward compose and restore so they match capability(); the defaults return Unsupported.
++    fn compose(&self, ctx: &OperationContext, to: &str, args: OpCompose) -> Result<Self::Composer> {
++        self.limited.compose(ctx, to, args)
++    }
 +
-+  if (usesLegacyCompiler && pkg.peerDependencies?.typescript) {
-+    // Isolate consumers of the JavaScript compiler API from Next's native CLI.
-+    pkg.dependencies = { ...pkg.dependencies, typescript: "5.4.2" }
-+    delete pkg.peerDependencies.typescript
-+  }
-+
-+  return pkg
-+}
-+
-+module.exports = { hooks: { readPackage } }
-```
-
-**File**: `dashboard/package.json` (modified, +3/-3)
-```diff
-@@ -3,7 +3,7 @@
-   "packageManager": "pnpm@10.14.0",
-   "scripts": {
-     "dev": "next dev",
--    "build": "next build --webpack",
-+    "build": "next build",
-     "start": "next start",
-     "gen-proto": "./scripts/generate_proto.sh",
-     "lint": "prettier --check . && eslint .",
-@@ -41,7 +41,7 @@
-     "framer-motion": "^6.5.1",
-     "lodash": "^4.18.1",
-     "monaco-editor": "^0.56.0",
--    "next": "^16.4.5",
-+    "next": "^16.4.6",
-     "nuqs": "^2.8.6",
-     "react": "^18.2.0",
-     "react-dom": "^18.2.0",
-@@ -73,7 +73,7 @@
-     "express": "^4.21.1",
-     "prettier": "^2.7.1",
-     "prettier-plugin-organize-imports": "^3.1.1",
--    "typescript": "5.4.2"
-+    "typescript": "7.0.2"
-   },
-   "overrides": {
-     "react-json-view": {
++    async fn restore(
++        &self,
++        ctx: &OperationContext,
++        path: &str,
++        args: OpRestore,
++    ) -> Result<RpRestore> {
++        self.limited.restore(ctx, path, args).await
+     }
+ 
+     async fn rename(
 ```
 
 #### Recent Merged Pull Requests:
@@ -1330,8 +1360,8 @@ Co-authored-by: Li0k <[REDACTED_EMAIL]>
 - **PR #28149** (closed): cherry-pick feat(expr): add typed AI_DECIDE for batch and streaming SQL (backport #27933 to release-3.1) (@rw-jarvis-bot[bot])
 - **PR #28143** (2026-11-23): chore: update version to v3.1.2 (@cyliu0)
 - **PR #28136** (closed): perf(optimizer): avoid redundant sorts and TopN for ordered index scans (@Standing-Man)
+- **PR #28134** (closed): chore(deps): bump firestore from 0.57.3 to 0.62.0 (@dependabot[bot])
 - **PR #28133** (2026-11-23): chore(deps): align LanceDB with DataFusion 54 (@dependabot[bot])
-- **PR #28126** (2026-11-23): chore(deps): migrate frontend to DataFusion 54.1 (@Li0k)
 
 ---
 
@@ -1351,37 +1381,95 @@ Co-authored-by: Li0k <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build: speed up Dashboard builds and Docker image publishing
+## X. deps): Bump opendal from 0.58.1 to 0.59.5
 
 **RULE**:
-When implementing operations in `.dockerignore`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8429b5b9`: build: speed up Dashboard builds and Docker image publishing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `78d02432`: deps): Bump opendal from 0.58.1 to 0.59.5. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.dockerignore`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-dashboard/.next/
-dashboard/node_modules/
-dashboard/out/
-dashboard/proto/gen/
-dashboard/public/monaco/
-dashboard/tmp_gen/
-dashboard/*.tsbuildinfo
+ "opendal",
+version = "0.59.5"
+checksum = "46081824c74bac9f68f0bc4408077f77b0e315c006514719c97af1c2227ac2d2"
+ "opendal-core",
+ "opendal-http-transport-reqwest",
+ "opendal-layer-concurrent-limit",
+ "opendal-layer-logging",
+ "opendal-layer-retry",
+ "opendal-layer-timeout",
+ "opendal-service-azblob",
+ "opendal-service-azdls",
+ "opendal-service-fs",
+ "opendal-service-gcs",
+ "opendal-service-s3",
+version = "0.59.5"
+checksum = "33d5a635dfea36a7a0c3bbb2ca34c97af17f98dd69b0cdf31a1d436a346e0a12"
+ "quick-xml 0.42.0",
+version = "0.59.5"
+checksum = "fc025e163c43993e30cf1829a30b791934e5b0f7cd4d7e03acc902a9efb7e8f5"
+ "opendal-core",
+version = "0.59.5"
+checksum = "06b44bdf694cccb7d90515b3eac6623975a2813abf4f5c438b4949a329d6a45b"
+ "opendal-core",
+version = "0.59.5"
+checksum = "520d3de5d246c82a246c431ef0f52b8d2f091c7c49a3fd7a6f0ff519b1e7725f"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+ "opendal 0.59.3",
+version = "0.58.1"
+checksum = "4f20562cc7447fcc915fc5c23df305a412ea80a733c9f2fd9e2d267e2815be6d"
+ "opendal-core 0.58.1",
+ "opendal-http-transport-reqwest 0.58.1",
+ "opendal-layer-concurrent-limit 0.58.1",
+ "opendal-layer-logging 0.58.1",
+ "opendal-layer-retry 0.58.1",
+ "opendal-layer-timeout 0.58.1",
+ "opendal-service-azblob 0.58.1",
+ "opendal-service-fs 0.58.1",
+ "opendal-service-gcs 0.58.1",
+ "opendal-service-s3 0.58.1",
+[[package]]
+name = "opendal"
+version = "0.59.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ef16fe6b19b73b49ce39e3e0f4cec27e54789eee5d5f752cb2d26bd3e9449686"
+dependencies = [
+ "ctor 1.0.12",
+ "opendal-core 0.59.3",
+ "opendal-http-transport-reqwest 0.59.3",
+ "opendal-layer-concurrent-limit 0.59.3",
+ "opendal-layer-logging 0.59.3",
+ "opendal-layer-retry 0.59.3",
+ "opendal-layer-timeout 0.59.3",
+ "opendal-service-azblob 0.59.3",
+ "opendal-service-azdls",
+ "opendal-service-fs 0.59.3",
+ "opendal-service-gcs 0.59.3",
+ "opendal-service-s3 0.59.3",
+]
+
+version = "0.58.1"
+checksum = "ec75551ff4cf3e57da98979f6a937aaa9ddb3915bf68cc17d03df733be6646ed"
+dependencies = [
+ "anyhow",
+ "base64 0.23.1",
+ "bytes",
+ "futures",
+ "http
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8429b5b9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `78d02432` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

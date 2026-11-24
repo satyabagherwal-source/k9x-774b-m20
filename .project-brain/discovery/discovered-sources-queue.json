@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T09:00:03.105Z",
+  "updated_at": "2026-11-24T09:18:44.799Z",
   "stats": {
-    "total_discovered": 8523,
+    "total_discovered": 8528,
     "approved_pending_harvest": 8083,
     "harvested_count": 0,
-    "rejected_count": 440,
+    "rejected_count": 445,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8068,
+      "COMMUNITY_AND_EXPERT": 8073,
       "OFFICIAL_DOCUMENTATION": 268,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -184449,6 +184449,81 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
         "fileName": "pixeltable-pixeltable-learnings.md"
+      }
+    },
+    "SRC-DB6D32F8B3A5": {
+      "id": "SRC-DB6D32F8B3A5",
+      "url": "http://localhost:8000/follow-redirect-leak/host-a-step-1",
+      "title": "http://localhost:8000/follow-redirect-leak/host-a-step-1",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-24T09:18:44.587Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
+        "fileName": "orange-opensource-hurl-learnings.md"
+      }
+    },
+    "SRC-23083B8ED66E": {
+      "id": "SRC-23083B8ED66E",
+      "url": "http://localhost:8000/follow-redirect-leak/host-a-step-1?trusted=%7B%7Btrusted",
+      "title": "http://localhost:8000/follow-redirect-leak/host-a-step-1?trusted=%7B%7Btrusted",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-24T09:18:44.641Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
+        "fileName": "orange-opensource-hurl-learnings.md"
+      }
+    },
+    "SRC-B6B7F7891816": {
+      "id": "SRC-B6B7F7891816",
+      "url": "http://127.0.0.1:8000/follow-redirect-leak/host-b-step-2",
+      "title": "http://127.0.0.1:8000/follow-redirect-leak/host-b-step-2",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-24T09:18:44.692Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
+        "fileName": "orange-opensource-hurl-learnings.md"
+      }
+    },
+    "SRC-AB16D2D45E69": {
+      "id": "SRC-AB16D2D45E69",
+      "url": "http://localhost:8000/follow-redirect-leak/host-a-step-3",
+      "title": "http://localhost:8000/follow-redirect-leak/host-a-step-3",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-24T09:18:44.752Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
+        "fileName": "orange-opensource-hurl-learnings.md"
+      }
+    },
+    "SRC-4D2F733A5C6B": {
+      "id": "SRC-4D2F733A5C6B",
+      "url": "http://127.0.0.1:8000/follow-redirect-leak/host-b-step-2?trusted=%7Btrusted",
+      "title": "http://127.0.0.1:8000/follow-redirect-leak/host-b-step-2?trusted=%7Btrusted",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-24T09:18:44.799Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
+        "fileName": "orange-opensource-hurl-learnings.md"
       }
     }
   }

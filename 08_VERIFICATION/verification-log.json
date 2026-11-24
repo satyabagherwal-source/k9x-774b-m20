@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-UUL3",
-    "timestamp": "2026-11-22T15:58:57.111Z",
-    "repository": "convaiinnovations/laya",
-    "learningId": "learn-huggingface-convaiinnovations-laya",
-    "contentHash": "b896dc9713cda126bc410a4ca85032a781120d52977957da4fb578f4a70d817d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-C0J5",
-    "timestamp": "2026-11-22T16:12:17.969Z",
-    "repository": "Edge0/Audio8-ASR-Infinite",
-    "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
-    "contentHash": "ad47f7cf5e82ac2c941fddb464808b8af14b51f9281f1ff9d6c554a5b7a8bfa3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-C2OF",
     "timestamp": "2026-11-22T16:12:20.751Z",
     "repository": "oven-sh/bun",
@@ -7490,6 +7460,36 @@
     "repository": "pixeltable/pixeltable",
     "learningId": "learn-github-pixeltable-pixeltable",
     "contentHash": "a3f0be602e63ccbf6ded02ef3fc8d10fb294d6d6e280e4a243fa5c6a8231b5c4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-FFNT",
+    "timestamp": "2026-11-24T09:18:23.753Z",
+    "repository": "Orange-OpenSource/hurl",
+    "learningId": "learn-github-orange-opensource-hurl",
+    "contentHash": "a477ef1f0e7d2164f9245d33ea9e9ac09e7b98375de0a908224bcd5a680c43e3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-FSUQ",
+    "timestamp": "2026-11-24T09:18:40.850Z",
+    "repository": "risingwavelabs/risingwave",
+    "learningId": "learn-github-risingwavelabs-risingwave",
+    "contentHash": "b76e663dbf1546c722b44e47c6376b645181ca05113b520c3746d025c9ec012e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

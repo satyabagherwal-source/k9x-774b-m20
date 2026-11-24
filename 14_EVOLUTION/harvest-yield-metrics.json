@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T08:59:57.902Z",
-  "total_cycles_completed": 12015,
-  "total_learnings_persisted": 12015,
-  "total_rules_promoted": 11091,
+  "last_updated": "2026-11-24T09:18:40.860Z",
+  "total_cycles_completed": 12017,
+  "total_learnings_persisted": 12017,
+  "total_rules_promoted": 11093,
   "history": [
-    {
-      "timestamp": "2026-11-23T19:01:02.249Z",
-      "repository": "ydb-platform/ydb",
-      "learningId": "learn-github-ydb-platform-ydb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T19:09:13.599Z",
-      "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
-      "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T19:09:14.649Z",
       "repository": "apache/maka",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-24T08:59:57.902Z",
       "repository": "pixeltable/pixeltable",
       "learningId": "learn-github-pixeltable-pixeltable",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T09:18:23.763Z",
+      "repository": "Orange-OpenSource/hurl",
+      "learningId": "learn-github-orange-opensource-hurl",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T09:18:40.860Z",
+      "repository": "risingwavelabs/risingwave",
+      "learningId": "learn-github-risingwavelabs-risingwave",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

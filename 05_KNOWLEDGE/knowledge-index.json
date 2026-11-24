@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T09:00:04.553Z",
+  "last_updated": "2026-11-24T09:18:46.966Z",
   "total_verified_learnings": 9093,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24551,
+  "total_items": 24554,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -109504,13 +109504,13 @@
       "rule_number": 7098,
       "title": "Update crates",
       "source_url": "https://github.com/Orange-OpenSource/hurl",
-      "source_version": "6d29cb9f",
+      "source_version": "8d907486",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-21T18:44:18.053Z"
+      "verified_at": "2026-11-24T09:18:23.541Z"
     },
     "rule-7099": {
       "learning_id": "rule-7099",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "f22f0778dd599cab1a5d5ac33fac092645b8fdd725cdeff95303ca4af5754689",
+      "content_hash": "3faa3a69ac3006dc6ea210b0b60497520a621dcfbada0bec907099b930e0ec12",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T09:00:04.395Z"
+      "persisted_at": "2026-11-24T09:18:46.808Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "e4d5c70b79fa90fe4a7ccafc475876e22853e0bb05e5a9206028efa91d4a7d0e",
+      "content_hash": "babb3e21d0d81702dc906971f41864335e9465e5bcef0ebdd0c4f427d834ffe5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T09:00:04.553Z"
+      "persisted_at": "2026-11-24T09:18:46.966Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -226544,8 +226544,8 @@
       "slug": "risingwavelabs-risingwave",
       "platform": "github",
       "source_url": "https://github.com/risingwavelabs/risingwave",
-      "source_version": "6c258d07",
-      "content_hash": "26762ea613b4c0cff03a5708e99fa9e2d1e3511b5fe9360cf47e63df358bfd5f",
+      "source_version": "78d02432",
+      "content_hash": "b76e663dbf1546c722b44e47c6376b645181ca05113b520c3746d025c9ec012e",
       "dossier_path": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "promoted_rules": [
@@ -226583,6 +226583,11 @@
           "number": 10049,
           "title": "speed up Dashboard builds and Docker image publishing",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10238,
+          "title": "Bump opendal from 0.58.1 to 0.59.5",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -226590,7 +226595,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T14:12:53.846Z",
+      "verified_at": "2026-11-24T09:18:40.655Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -226644,10 +226649,10 @@
       "relative_path": "08_VERIFICATION/risingwavelabs-risingwave-verification-protocol-empirical-defect-shield-for-risi.md",
       "title": "Verification Protocol: Empirical Defect Shield for risingwavelabs/risingwave",
       "repository": "risingwavelabs/risingwave",
-      "source_version": "6c258d07",
-      "content_hash": "8d31703df728e48f71ca622f30a48b344fc513066cbbbfabf5a8f188234ce9bb",
+      "source_version": "78d02432",
+      "content_hash": "0653c7f70e26a8e730a5624f75e131e68a42e910d87a3f758865b1e8bbe0c6ea",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T14:12:54.630Z"
+      "persisted_at": "2026-11-24T09:18:41.392Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fermionresearch-phonon-2-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fermionresearch-phonon-2-learnings-core-invar",
@@ -226705,9 +226710,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for risingwavelabs-risingwave-learnings",
       "repository": "risingwavelabs-risingwave-learnings",
       "source_version": "HEAD",
-      "content_hash": "79566a9706cc6c6ecb6cbe59edf309f53334214e9ea50065a7ecab04c9adbe11",
+      "content_hash": "02cda21f20f8124b72ccb0dc35baf03bef17c6bd687bd4997813f34b512ad653",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T14:13:01.602Z"
+      "persisted_at": "2026-11-24T09:18:46.207Z"
     },
     "learn-github-zvec-ai-zvec-grep": {
       "learning_id": "learn-github-zvec-ai-zvec-grep",
@@ -245531,8 +245536,8 @@
       "slug": "orange-opensource-hurl",
       "platform": "github",
       "source_url": "https://github.com/Orange-OpenSource/hurl",
-      "source_version": "d3f1771a",
-      "content_hash": "2cc6f92508a527a99c054e179235693738dc3be39d8bedd6f20347ed34280770",
+      "source_version": "8d907486",
+      "content_hash": "a477ef1f0e7d2164f9245d33ea9e9ac09e7b98375de0a908224bcd5a680c43e3",
       "dossier_path": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
       "promoted_rules": [
@@ -245572,7 +245577,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T00:31:16.711Z",
+      "verified_at": "2026-11-24T09:18:23.541Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -245626,10 +245631,10 @@
       "relative_path": "08_VERIFICATION/orange-opensource-hurl-verification-protocol-empirical-defect-shield-for-orange-.md",
       "title": "Verification Protocol: Empirical Defect Shield for Orange-OpenSource/hurl",
       "repository": "Orange-OpenSource/hurl",
-      "source_version": "d3f1771a",
-      "content_hash": "04abba034749660eaf5f96db12c8063e54bcc3254e3ef3576ea595ec1b4efe11",
+      "source_version": "8d907486",
+      "content_hash": "d9b12f5c70a244206e57a2076f6d24d82b0d6907ac58f214663927f2ccffda6a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T00:31:17.746Z"
+      "persisted_at": "2026-11-24T09:18:24.341Z"
     },
     "domain_intelligence-technical-construction-intelligence-orange-opensource-hurl-learnings-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-orange-opensource-hurl-learnings-core-invari",
@@ -245651,9 +245656,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for orange-opensource-hurl-learnings",
       "repository": "orange-opensource-hurl-learnings",
       "source_version": "HEAD",
-      "content_hash": "c4ec8e5990d188f087e8413434edef88ae95e19e9d30724b4528e5634e9dfe65",
+      "content_hash": "6d913adaaf6503f912b6c0d73091ecda18207b6339414970664d00c4fe26d424",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T00:31:36.950Z"
+      "persisted_at": "2026-11-24T09:18:45.351Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-omni-2b-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-omni-2b-learnings-core-invarian",
@@ -285604,10 +285609,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-risingwavelabs-risingwave-content-information-intelligence-risingwavelabs-rising.md",
       "title": "Content & Information Intelligence: risingwavelabs/risingwave Core Invariants",
       "repository": "risingwavelabs/risingwave",
-      "source_version": "e3c035e0",
-      "content_hash": "2ae66295594f91ae44dfd52b25daa289af113d6a51f602d2da60020ddf5ab6c9",
+      "source_version": "78d02432",
+      "content_hash": "31913cbdd5992e2938d034983fcce6d3e25f0a57fa7026f1bcb1dd449a2f20b0",
       "domain_letter": "I",
-      "persisted_at": "2026-11-18T18:38:21.995Z"
+      "persisted_at": "2026-11-24T09:18:41.234Z"
     },
     "domain_intelligence-architecture-intelligence-amir1376-ab-download-manager-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-amir1376-ab-download-manager-learnings-core-invariants",
@@ -285653,9 +285658,9 @@
       "title": "Content & Information Intelligence: risingwavelabs-risingwave-learnings Core Invariants",
       "repository": "risingwavelabs-risingwave-learnings",
       "source_version": "HEAD",
-      "content_hash": "6d29fdfae73449f3ea00b95d7eb677515962ab1934f04ef030bf5f60620686e4",
+      "content_hash": "5dad627a40786db81c95f734aa1904d1c4d36387c75ec8f2fad5da3891f70b69",
       "domain_letter": "I",
-      "persisted_at": "2026-11-18T18:39:03.475Z"
+      "persisted_at": "2026-11-24T09:18:46.039Z"
     },
     "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf": {
       "learning_id": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
@@ -287771,10 +287776,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-orange-opensource-hurl-architecture-intelligence-orange-opensource-hurl-core-inv.md",
       "title": "Architecture Intelligence: Orange-OpenSource/hurl Core Invariants",
       "repository": "Orange-OpenSource/hurl",
-      "source_version": "d3f1771a",
-      "content_hash": "65ae6f79b6bf6dbe52979ad0e6452a1f4da08e37a1592056d568f03a48246d5e",
+      "source_version": "8d907486",
+      "content_hash": "234797d019a7a0f911669c665e223ba0a86aa45ec0276e5912f6942d95f61b1c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T00:31:17.490Z"
+      "persisted_at": "2026-11-24T09:18:24.172Z"
     },
     "rule-9147": {
       "learning_id": "rule-9147",
@@ -287822,9 +287827,9 @@
       "title": "Architecture Intelligence: orange-opensource-hurl-learnings Core Invariants",
       "repository": "orange-opensource-hurl-learnings",
       "source_version": "HEAD",
-      "content_hash": "b0a9b86b8090198ad810fe339364a993d9f92d1e133bdc36072c7398d99d3267",
+      "content_hash": "9ebae05c8a641f7a3d6b2af2e730486dc2dbc329a46723ebbeb76e5d78bb3efd",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T00:31:36.718Z"
+      "persisted_at": "2026-11-24T09:18:45.196Z"
     },
     "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-learnings-core-invariants": {
       "item_id": "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-learnings-core-invariants",
@@ -317383,13 +317388,13 @@
       "item_id": "candidate_directive-update-crates",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-BW4Q-update-crates.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-FW2U-update-crates.md",
       "title": "Update crates",
       "repository": "orange-opensource-hurl-learnings",
       "source_version": "HEAD",
-      "content_hash": "586869578f2d5d5d5339dfa96de0deb528219422044c5290ef17b4ae5956a797",
+      "content_hash": "b21cd7fb08a3c30b53a9d51fcd7af8eb35a9d36d03d93ad2761fa29a2ddfbb4e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T18:44:29.936Z"
+      "persisted_at": "2026-11-24T09:18:45.034Z"
     },
     "rule-9820": {
       "learning_id": "rule-9820",
@@ -319878,13 +319883,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-RV9N-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-FXBQ-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "686e75b3fec7f55f937f893a922ef1c2d0a948391cabcd6449aee11542c5e3d4",
+      "content_hash": "ec1642a9e56d9fb631460d0eb5d42292ae277537bf57e2a1f899214d50d33804",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T09:00:04.238Z"
+      "persisted_at": "2026-11-24T09:18:46.649Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
@@ -335023,6 +335028,44 @@
       "content_hash": "dfd133c1eafc170360cc1537bbed89b9ea75d564c52d976155a7aff4ffef9833",
       "domain_letter": "I",
       "persisted_at": "2026-11-24T09:00:03.327Z"
+    },
+    "rule-10238": {
+      "learning_id": "rule-10238",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10238,
+      "title": "Bump opendal from 0.58.1 to 0.59.5",
+      "source_url": "https://github.com/risingwavelabs/risingwave",
+      "source_version": "78d02432",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T09:18:40.655Z"
+    },
+    "candidate_directive-bump-opendal-from-0-58-1-to-0-59-5": {
+      "item_id": "candidate_directive-bump-opendal-from-0-58-1-to-0-59-5",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FT0S-bump-opendal-from-0-58-1-to-0-59-5.md",
+      "title": "Bump opendal from 0.58.1 to 0.59.5",
+      "repository": "risingwavelabs/risingwave",
+      "source_version": "78d02432",
+      "content_hash": "00744a911dfcd9d6230b2269eed3841c708e799425dd3247597a4e22b70ef8dc",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-24T09:18:41.069Z"
+    },
+    "candidate_directive-deps-bump-opendal-from-0-58-1-to-0-59-5": {
+      "item_id": "candidate_directive-deps-bump-opendal-from-0-58-1-to-0-59-5",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FWQ7-deps-bump-opendal-from-0-58-1-to-0-59-5.md",
+      "title": "deps): Bump opendal from 0.58.1 to 0.59.5",
+      "repository": "risingwavelabs-risingwave-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d091605be455a409fc4fba7d9679b6d02ff3d4ea00296ea0570f6445c50a718f",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-24T09:18:45.871Z"
     }
   },
   "ai-builder-brain": {

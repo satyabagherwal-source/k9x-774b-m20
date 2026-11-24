@@ -12673,3 +12673,5 @@ Every entry in this ledger must capture:
 | `learn-github-xinatian-mroffice` | `https://github.com/XinaTian/MROffice` | `93ed64ad` | Multi-dimensional audit evidence | 2026-11-24T08:48:20.493Z |
 | `learn-github-pubkey-rxdb` | `https://github.com/pubkey/rxdb` | `cbac2d49` | Multi-dimensional audit evidence | 2026-11-24T08:59:50.262Z |
 | `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `f89365df` | Multi-dimensional audit evidence | 2026-11-24T08:59:57.897Z |
+| `learn-github-orange-opensource-hurl` | `https://github.com/Orange-OpenSource/hurl` | `8d907486` | Multi-dimensional audit evidence | 2026-11-24T09:18:23.757Z |
+| `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `78d02432` | Multi-dimensional audit evidence | 2026-11-24T09:18:40.855Z |

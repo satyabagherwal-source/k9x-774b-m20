@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T18:39:03.128Z",
+  "timestamp": "2026-11-24T09:18:45.746Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-risingwavelabs-risingwave-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [risingwavelabs-risingwave-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T18:39:03.128Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T09:18:45.746Z`  
 > **Learning ID**: `LEARN-EVO-risingwavelabs-risingwave-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 60%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 53%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from risingwavelabs-risingwave-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source**: github ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
-> **Source Version**: `e3c035e0`  
+> **Source Version**: `78d02432`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T18:38:20.371Z  
+> **Timestamp**: 2026-11-24T09:18:39.821Z  
 > **Learning ID**: `learn-github-risingwavelabs-risingwave`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T18:38:20.365Z  
+> **Harvest Timestamp**: 2026-11-24T09:18:39.816Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Event streaming platform for agentic AI. Continuously ingest, transform, and serve event streams in real time, at scale.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9423 stars
+- **Stars / Engagement**: 9428 stars
 
 ---
 
@@ -1105,283 +1105,280 @@ pub(crate) use def_path_lookup;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e3c035e0` (2026-11-18)
-**Commit Message**: fix(iceberg): honor `s3.iam_role_arn` in the storage catalog (#28035)
+### Incident Patch 1: `78d02432` (2026-11-24)
+**Commit Message**: chore(deps): Bump opendal from 0.58.1 to 0.59.5 (#27393)
 
-**File**: `src/connector/src/connector_common/iceberg/mod.rs` (modified, +1/-0)
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Co-authored-by: Dylan Chen <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: Li0k <[REDACTED_EMAIL]>
+Co-authored-by: Li0k <[REDACTED_EMAIL]>
+
+**File**: `Cargo.lock` (modified, +84/-273)
 ```diff
-@@ -632,6 +632,7 @@ impl IcebergCommon {
-                     .warehouse(warehouse)
-                     .access_key(self.s3_access_key.clone())
-                     .secret_key(self.s3_secret_key.clone())
-+                    .iam_role_arn(self.s3_iam_role_arn.clone())
-                     .region(self.s3_region.clone())
-                     .endpoint(self.s3_endpoint.clone())
-                     .path_style_access(Some(self.effective_s3_path_style_access()))
+@@ -6993,7 +6993,7 @@ dependencies = [
+  "futures",
+  "iceberg",
+  "once_cell",
+- "opendal 0.59.3",
++ "opendal",
+  "opendal-layer-prometheus",
+  "prometheus",
+  "reqsign-aws-v4",
+@@ -9976,78 +9976,33 @@ dependencies = [
+ 
+ [[package]]
+ name = "opendal"
+-version = "0.58.1"
++version = "0.59.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "4f20562cc7447fcc915fc5c23df305a412ea80a733c9f2fd9e2d267e2815be6d"
++checksum = "46081824c74bac9f68f0bc4408077f77b0e315c006514719c97af1c2227ac2d2"
+ dependencies = [
+  "ctor 1.0.12",
+- "opendal-core 0.58.1",
+- "opendal-http-transport-reqwest 0.58.1",
+- "opendal-layer-concurrent-limit 0.58.1",
+- "opendal-layer-logging 0.58.1",
+- "opendal-layer-retry 0.58.1",
+- "opendal-layer-timeout 0.58.1",
+- "opendal-service-azblob 0.58.1",
++ "opendal-core",
++ "opendal-http-transport-reqwest",
++ "opendal-layer-concurrent-limit",
++ "opendal-layer-logging",
++ "opendal-layer-retry",
++ "opendal-layer-timeout",
++ "opendal-service-azblob",
++ "opendal-service-azdls",
+  "opendal-service-azfile",
+- "opendal-service-fs 0.58.1",
+- "opendal-service-gcs 0.58.1",
++ "opendal-service-fs",
++ "opendal-service-gcs",
+  "opendal-service-obs",
+  "opendal-service-oss",
+- "opendal-service-s3 0.58.1",
++ "opendal-service-s3",
+  "opendal-service-webhdfs",
+ ]
+ 
+-[[package]]
+-name = "opendal"
+-version = "0.59.3"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ef16fe6b19b73b49ce39e3e0f4cec27e54789eee5d5f752cb2d26bd3e9449686"
+-dependencies = [
+- "ctor 1.0.12",
+- "opendal-core 0.59.3",
+- "opendal-http-transport-reqwest 0.59.3",
+- "opendal-layer-concurrent-limit 0.59.3",
+- "opendal-layer-logging 0.59.3",
+- "opendal-layer-retry 0.59.3",
+- "opendal-layer-timeout 0.59.3",
+- "opendal-service-azblob 0.59.3",
+- "opendal-service-azdls",
+- "opendal-service-fs 0.59.3",
+- "opendal-service-gcs 0.59.3",
+- "opendal-service-s3 0.59.3",
+-]
+-
+ [[package]]
+ name = "opendal-core"
+-version = "0.58.1"
++version = "0.59.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ec75551ff4cf3e57da98979f6a937aaa9ddb3915bf68cc17d03df733be6646ed"
+-dependencies = [
+- "anyhow",
+- "base64 0.23.1",
+- "bytes",
+- "futures",
+- "http",
+- "jiff",
+- "log",
+- "md-5 0.11.0",
+- "mea",
+- "percent-encoding",
+- "quick-xml 0.41.0",
+- "reqsign-core",
+- "serde",
+- "serde_json",
+- "tokio",
+- "url",
+- "uuid",
+- "web-time",
+-]
+-
+-[[package]]
+-name = "opendal-core"
+-version = "0.59.3"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ddff5c648dcb3922c2bec71e0d26e881ddf9c367cb7c9a59ed7f2d39a4f38218"
++checksum = "33d5a635dfea36a7a0c3bbb2ca34c97af17f98dd69b0cdf31a1d436a346e0a12"
+ dependencies = [
+  "anyhow",
+  "asyncband",
+@@ -10059,7 +10014,7 @@ dependencies = [
+  "log",
+  "md-5 0.11.0",
+  "percent-encoding",
+- "quick-xml 0.41.0",
++ "quick-xml 0.42.0",
+  "reqsign-core",
+  "serde",
+  "serde_json",
+@@ -10071,174 +10026,96 @@ dependencies = [
+ 
+ [[package]]
+ name = "opendal-http-transport-reqwest"
+-version = "0.58.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ad4d4f19c3ce01126a30611f8e544eaa217104a278c889ac17c9374fe4f9e4ef"
+-dependencies = [
+- "bytes",
+- "futures",
+- "http",
+- "http-body",
+- "opendal-core 0.58.1",
+- "reqwest 0.13.4",
+-]
+-
+-[[package]]
+-name = "opendal-http-transport-reqwest"
+-version = "0.59.3"
++version = "0.59.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "56fcee7ac4b4b815d38346ceb4f3a5d7ef18869c369e000cc7f622b51bcfa938"
++checksum = "fc025e163c43993e30cf1829a30b791934e5b0f7cd4d7e03acc902a9efb7e8f5"
+ dependencies = [
+  "bytes",
+  "futures",
+  "http",
+  "http-body",
+- "opendal-core 0.59.3",
++ "opendal-core",
+  "reqwest 0.13.4",
+ ]
+ 
+ [[package]]
+ name = "opendal-layer-concurrent-limit"
+-version = "0.58.1"
++version = "0.59.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "249ac5b0aa5a7a6c3737342d10456067937f9c9a6f3f02544271f7908ab91081"
+-dependencies = [
+- "futures",
+- "http",
+- "mea",
+- "opendal-core 0.58.1",
+-]
+-
+-[[package]]
+-name = "opendal-layer-concurrent-limit"
+-version = "0.59.3"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "b454e68e5f6b331bd079a2ee02ebe05078fc0ddaae6822767ef54ab3c2ac0aa8"
++checksum = "06b44bdf694cccb7d90515b3eac6623975a2813abf4f5c438b4949a329d6a45b"
+ dependencies = [
+  "asyncband",
+  "futures",
+  "http",
+- "opendal-core 0.59.3",
++ "opendal-core",
+ ]
+ 
+ [[package]]
+ name = "opendal-layer-logging"
+-version = "0.58.1"
++version = "0.59.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "5c75411ab00f77851ff086b686c1e9ca8175ac18c15afa2cb75b9036436cb06c"
++checksum = "520d3de5d246c82a246c431ef0f52b8d2f091c7c49a3fd7a6f0ff519b1e7725f"
+ dependencies = [
+  "log",
+- "opendal-core 0.58.1",
+-]
+-
+-[[package]]
+-name = "opendal-layer-logging"
+-version = "0.59.3"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "e6fd30cc4be601d5adf4936f3bcc186be5e09046
 ```
 
-**File**: `src/connector/src/connector_common/iceberg/storage_catalog.rs` (modified, +6/-2)
+**File**: `Cargo.toml` (modified, +2/-2)
 ```diff
-@@ -26,8 +26,8 @@ use async_trait::async_trait;
- use futures::TryStreamExt;
- use iceberg::io::{
-     AZBLOB_ACCOUNT_KEY, AZBLOB_ACCOUNT_NAME, AZBLOB_ENDPOINT, FileIO, FileIOBuilder,
--    GCS_CREDENTIALS_JSON, GCS_DISABLE_CONFIG_LOAD, S3_ACCESS_KEY_ID, S3_DISABLE_CONFIG_LOAD,
--    S3_ENDPOINT, S3_PATH_STYLE_ACCESS, S3_REGION, S3_SECRET_ACCESS_KEY,
-+    GCS_CREDENTIALS_JSON, GCS_DISABLE_CONFIG_LOAD, S3_ACCESS_KEY_ID, S3_ASSUME_ROLE_ARN,
-+    S3_DISABLE_CONFIG_LOAD, S3_ENDPOINT, S3_PATH_STYLE_ACCESS, S3_REGION, S3_SECRET_ACCESS_KEY,
+@@ -206,8 +206,8 @@ mysql_async = { version = "0.37", features = [
+     "native-tls-tls",
+     "rust_decimal",
+ ] }
+-opendal = "0.58.1"
+-opendal-http-transport-reqwest = "0.58.1"
++opendal = "0.59.5"
++opendal-http-transport-reqwest = "0.59.5"
+ openssl = "0.10.80"
+ opentelemetry = "0.31"
+ opentelemetry-otlp = { version = "0.31", features = ["grpc-tonic"] }
+```
+
+**File**: `src/object_store/src/object/opendal_engine/concurrent_limit.rs` (modified, +19/-4)
+```diff
+@@ -18,8 +18,9 @@ use opendal::layers::{
+     ConcurrentLimitLayer as OpendalConcurrentLimitLayer, ConcurrentLimitSemaphore,
  };
- use iceberg::spec::{TableMetadata, TableMetadataBuilder, TableProperties};
- use iceberg::table::Table;
-@@ -52,6 +52,7 @@ pub struct StorageCatalogS3Config {
-     warehouse: String,
-     access_key: Option<String>,
-     secret_key: Option<String>,
-+    iam_role_arn: Option<String>,
-     endpoint: Option<String>,
-     region: Option<String>,
-     path_style_access: Option<bool>,
-@@ -91,6 +92,9 @@ impl StorageCatalog {
-                 if let Some(secret_key) = &config.secret_key {
-                     file_io_builder = file_io_builder.with_prop(S3_SECRET_ACCESS_KEY, secret_key)
-                 };
-+                if let Some(iam_role_arn) = &config.iam_role_arn {
-+                    file_io_builder = file_io_builder.with_prop(S3_ASSUME_ROLE_ARN, iam_role_arn);
-+                }
-                 if let Some(endpoint) = &config.endpoint {
-                     file_io_builder = file_io_builder.with_prop(S3_ENDPOINT, endpoint)
-                 }
-```
-
----
-
-### Incident Patch 2: `4084d839` (2026-11-18)
-**Commit Message**: fix(optimizer): preserve LIKE filtering for trailing underscores (#28002)
-
-Signed-off-by: StandingMan <[REDACTED_EMAIL]>
-
-**File**: `e2e_test/batch/functions/like.slt.part` (modified, +45/-0)
-```diff
-@@ -116,3 +116,48 @@ statement ok
- drop table like_escape_trades;
+ use opendal::raw::{
+-    Layer, OpCopier, OpCopy, OpCreateDir, OpList, OpPresign, OpRead, OpRename, OpStat, OpWrite,
+-    RpCreateDir, RpPresign, RpRename, RpStat, Service, ServiceInfo, Servicer, oio,
++    Layer, OpCompose, OpCopy, OpCreateDir, OpList, OpPresign, OpRead, OpRename, OpRestore, OpStat,
++    OpWrite, RpCreateDir, RpPresign, RpRename, RpRestore, RpStat, Service, ServiceInfo, Servicer,
++    oio,
+ };
+ use opendal::{Capability, OperationContext, Result};
+ use tokio::sync::{OwnedSemaphorePermit, Semaphore};
+@@ -94,6 +95,7 @@ struct ConcurrentLimitService {
+ }
  
- # End
-+
-+# A trailing underscore must retain LIKE filtering after prefix range rewriting.
-+statement ok
-+create table like_prefix_rewrite(v varchar);
-+
-+statement ok
-+insert into like_prefix_rewrite values
-+    ('ABC'), ('ABCx'), ('ABCxx'), ('ABC_'), ('ABC_x'), ('ABC_xx'),
-+    ('ABD'), (NULL);
-+
-+query T rowsort
-+select v from like_prefix_rewrite where v like 'ABC_';
-+----
-+ABC_
-+ABCx
-+
-+query T rowsort
-+select v from like_prefix_rewrite where v like 'ABC%';
-+----
-+ABC
-+ABC_
-+ABC_x
-+ABC_xx
-+ABCx
-+ABCxx
-+
-+query T rowsort
-+select v from like_prefix_rewrite where v like 'ABC\__';
-+----
-+ABC_x
-+
-+query T rowsort
-+select v from like_prefix_rewrite where v like 'ABC\_%';
-+----
-+ABC_
-+ABC_x
-+ABC_xx
-+
-+query T rowsort
-+select v from like_prefix_rewrite where v like 'ABC\_';
-+----
-+ABC_
-+
-+statement ok
-+drop table like_prefix_rewrite;
-```
-
-**File**: `src/frontend/planner_test/tests/testdata/input/index_selection.yaml` (modified, +14/-0)
-```diff
-@@ -415,6 +415,20 @@
-     select * from t1 where a like 'ABC%'
-   expected_outputs:
-   - batch_plan
-+- name: trailing underscore LIKE keeps residual filter with index range
-+  sql: |
-+    create table t1 (a varchar);
-+    create index idx on t1(a);
-+    select * from t1 where a like 'ABC_'
-+  expected_outputs:
-+  - batch_plan
-+- name: escaped underscore prefix LIKE uses index range without residual filter
-+  sql: |
-+    create table t1 (a varchar);
-+    create index idx on t1(a);
-+    select * from t1 where a like 'ABC\_%'
-+  expected_outputs:
-+  - batch_plan
- - sql: |
-     create table t1 (a varchar, b int, c int, d int);
-     create index idx on t1(a);
-```
-
-**File**: `src/frontend/planner_test/tests/testdata/output/index_selection.yaml` (modified, +17/-0)
-```diff
-@@ -743,6 +743,23 @@
-   batch_plan: |-
-     BatchExchange { order: [], dist: Single }
-     └─BatchScan { table: idx, columns: [idx.a, idx.b, idx.c, idx.d], scan_ranges: [idx.a >= Utf8("ABC") AND idx.a < Utf8("ABD")], distribution: UpstreamHashShard(idx.a) }
-+- name: trailing underscore LIKE keeps residual filter with index range
-+  sql: |
-+    create table t1 (a varchar);
-+    create index idx on t1(a);
-+    select * from t1 where a like 'ABC_'
-+  batch_plan: |-
-+    BatchExchange { order: [], dist: Single }
-+    └─BatchFilter { predicate: Like(idx.a, 'ABC_':Varchar) }
-+      └─BatchScan { table: idx, columns: [idx.a], scan_ranges: [idx.a >= Utf8("ABC") AND idx.a < Utf8("ABD")], distribution: UpstreamHashShard(idx.a) }
-+- name: escaped underscore prefix LIKE uses index range without residual filter
-+  sql: |
-+    create table t1 (a varchar);
-+    create index idx on t1(a);
-+    select * from t1 where a like 'ABC\_%'
-+  batch_plan: |-
-+    BatchExchange { order: [], dist: Single }
-+    └─BatchScan { table: idx, columns: [idx.a], scan_ranges: [idx.a >= Utf8("ABC_") AND idx.a < Utf8("ABC`")], distribution: UpstreamHashShard(idx.a) }
- - sql: |
-     create table t1 (a varchar, b int, c int, d int);
-     create index idx on t1(a);
-```
-
-**File**: `src/frontend/src/optimizer/rule/rewrite_like_expr_rule.rs` (modified, +2/-2)
-```diff
-@@ -24,6 +24,7 @@ use crate::optimizer::plan_node::{ExprRewritable, LogicalFilter};
- /// `RewriteLikeExprRule` rewrites simple like expression, so that it can benefit from index selection.
- /// col like 'ABC' => col = 'ABC'
- /// col like 'ABC%' => col >= 'ABC' and col < 'ABD'
-+/// col like 'ABC_' => col >= 'ABC' and col < 'ABD' and col like 'ABC_'
- /// col like 'ABC%E' => col >= 'ABC' and col < 'ABD' and col like 'ABC%E'
- pub struct RewriteLikeExprRule {}
- impl Rule<Logical> for RewriteLikeExprRule {
-@@ -131,7 +132,6 @@ impl ExprRewriter for LikeExprRewriter {
-         };
- 
-         let bytes = data.as_bytes();
--        let len = bytes.len();
- 
-         let (char_wildcard_idx, str_wildcard_idx, unescaped_bytes) =
-             Self::cal_index_and_unescape(bytes);
-@@ -204,7 +204,7 @@ impl ExprRewriter for LikeExprRewriter {
-             DataType::Boolean,
-         );
- 
--        if idx == len - 1 {
-+        if str_wildcard_idx == Some(idx) && idx == unescaped_bytes.len() - 1 {
-             between.into()
-         } else {
-             FunctionCall::new_unchecked(
-```
-
----
-
-### Incident Patch 3: `e0a6bd27` (2026-11-18)
-**Commit Message**: build(docker): provide additional -nodwp image (#27841)
-
-**File**: `ci/scripts/multi-arch-docker.sh` (modified, +21/-0)
-```diff
-@@ -31,6 +31,25 @@ fi
- 
- echo "--- arches: ${arches[*]}"
- 
-+# A docker config mounted from the CI agent is not readable inside the container.
-+function regctl() {
-+  DOCKER_AUTH_CONFIG=$(jq -n '{
-+    auths: {
-+      "ghcr.io": { username: $ENV.GHCR_USERNAME, password: $ENV.GHCR_TOKEN },
-+      "docker.io": { username: "risingwavelabs", password: $ENV.DOCKER_TOKEN }
+ impl Service for ConcurrentLimitService {
++    type Composer = oio::Composer;
+     type Copier = oio::Copier;
+     type Deleter = oio::Deleter;
+     type Lister = ConcurrentLimitLister;
+@@ -148,9 +150,22 @@ impl Service for ConcurrentLimitService {
+         from: &str,
+         to: &str,
+         args: OpCopy,
+-        opts: OpCopier,
+     ) -> Result<Self::Copier> {
+-        self.limited.copy(ctx, from, to, args, opts)
++        self.limited.copy(ctx, from, to, args)
 +    }
-+  }') docker run --rm -e DOCKER_AUTH_CONFIG regclient/regctl:v0.11.7 "$@"
-+}
 +
-+# Push `<tag>-nodwp`: the image `<tag>` without the layer of the split debug info `risingwave.dwp`.
-+function pushNodwp() {
-+  echo "push image tag: $1-nodwp"
-+  if ! regctl image mod "$1" --create "$1-nodwp" --layer-rm-created-by 'risingwave\.dwp'; then
-+    echo "^^^ +++"
-+    echo "WARN: failed to push $1-nodwp; the image $1 is unaffected"
-+  fi
-+}
++    // Forward compose and restore so they match capability(); the defaults return Unsupported.
++    fn compose(&self, ctx: &OperationContext, to: &str, args: OpCompose) -> Result<Self::Composer> {
++        self.limited.compose(ctx, to, args)
++    }
 +
- # push images to gchr
- function pushGchr() {
-   GHCRTAG="${ghcraddr}:$1"
-@@ -42,6 +61,7 @@ function pushGchr() {
-   done
-   docker manifest create --insecure "$GHCRTAG" "${args[@]}"
-   docker manifest push --insecure "$GHCRTAG"
-+  pushNodwp "$GHCRTAG"
- }
++    async fn restore(
++        &self,
++        ctx: &OperationContext,
++        path: &str,
++        args: OpRestore,
++    ) -> Result<RpRestore> {
++        self.limited.restore(ctx, path, args).await
+     }
  
- # push images to dockerhub
-@@ -55,6 +75,7 @@ function pushDockerhub() {
-   done
-   docker manifest create --insecure "$DOCKERTAG" "${args[@]}"
-   docker manifest push --insecure "$DOCKERTAG"
-+  pushNodwp "$DOCKERTAG"
- }
- 
- function isStableVersion() {
-```
-
-**File**: `docker/Dockerfile` (modified, +5/-2)
-```diff
-@@ -123,7 +123,7 @@ RUN ./build-debezium.sh && \
-   mkdir -p /risingwave/bin/connector-node && \
-   tar -zxvf /risingwave/java/connector-node/assembly/target/risingwave-connector-1.0.0.tar.gz -C /risingwave/bin/connector-node
- 
--FROM base AS risingwave
-+FROM base AS risingwave-nodwp
- 
- LABEL org.opencontainers.image.source https://github.com/risingwavelabs/risingwave
- 
-@@ -141,7 +141,6 @@ RUN rustup show && sed -i '1s/^/default_toolchain = "stable"\n/' ~/.rustup/setti
- RUN mkdir -p /risingwave/bin/connector-node && mkdir -p /risingwave/lib
- 
- COPY --from=rust-builder /risingwave/bin/risingwave /risingwave/bin/risingwave
--COPY --from=rust-builder /risingwave/bin/risingwave.dwp /risingwave/bin/risingwave.dwp
- COPY --from=java-builder /risingwave/bin/connector-node /risingwave/bin/connector-node
- COPY --from=rust-builder /risingwave/bin/jeprof /usr/local/bin/jeprof
- COPY --from=rust-base /root/.cargo/bin/flamegraph /usr/local/bin/flamegraph
-@@ -161,3 +160,7 @@ ENV LD_LIBRARY_PATH /risingwave/lib/adbc:${LD_LIBRARY_PATH}
- 
- ENTRYPOINT [ "/risingwave/bin/risingwave" ]
- CMD [ "single_node" ]
-+
-+FROM risingwave-nodwp AS risingwave
-+
-+COPY --from=rust-builder /risingwave/bin/risingwave.dwp /risingwave/bin/risingwave.dwp
+     async fn rename(
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #28054** (2026-11-18): cherry-pick chore(deps): patch `chrono-tz` with 2026f (#27811) to release-3.0 (@maybe-vibe)
-- **PR #28053** (2026-11-18): cherry-pick fix(frontend): allow kinesis with plain avro aws glue schema registry (#27611) to release-3.0 (@maybe-vibe)
-- **PR #28052** (2026-11-18): cherry-pick chore(deps): patch `chrono-tz` with 2026f (#27811) to release-3.1 (@maybe-vibe)
-- **PR #28051** (2026-11-18): cherry-pick fix(frontend): allow kinesis with plain avro aws glue schema registry (#27611) to release-3.1 (@maybe-vibe)
-- **PR #28050** (2026-11-18): build(docker): provide additional -nodwp image (#27841) (@risingwave-ci)
-- **PR #28049** (2026-11-18): build(docker): provide additional -nodwp image (#27841) (@risingwave-ci)
+- **PR #28150** (2026-11-23): cherry-pick feat(expr): backport AI_DECIDE to release-3.1 (#27933) (@hzxa21)
+- **PR #28149** (closed): cherry-pick feat(expr): add typed AI_DECIDE for batch and streaming SQL (backport #27933 to release-3.1) (@rw-jarvis-bot[bot])
+- **PR #28143** (2026-11-23): chore: update version to v3.1.2 (@cyliu0)
+- **PR #28136** (closed): perf(optimizer): avoid redundant sorts and TopN for ordered index scans (@Standing-Man)
+- **PR #28134** (closed): chore(deps): bump firestore from 0.57.3 to 0.62.0 (@dependabot[bot])
+- **PR #28133** (2026-11-23): chore(deps): align LanceDB with DataFusion 54 (@dependabot[bot])
 
 ---
 
@@ -1401,31 +1398,95 @@ Signed-off-by: StandingMan <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. iceberg): honor `s3.iam_role_arn` in the storage catalog
+## X. deps): Bump opendal from 0.58.1 to 0.59.5
 
 **RULE**:
-When implementing operations in `src/connector/src/connector_common/iceberg/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e3c035e0`: iceberg): honor `s3.iam_role_arn` in the storage catalog. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `78d02432`: deps): Bump opendal from 0.58.1 to 0.59.5. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/connector/src/connector_common/iceberg/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                    .iam_role_arn(self.s3_iam_role_arn.clone())
+ "opendal",
+version = "0.59.5"
+checksum = "46081824c74bac9f68f0bc4408077f77b0e315c006514719c97af1c2227ac2d2"
+ "opendal-core",
+ "opendal-http-transport-reqwest",
+ "opendal-layer-concurrent-limit",
+ "opendal-layer-logging",
+ "opendal-layer-retry",
+ "opendal-layer-timeout",
+ "opendal-service-azblob",
+ "opendal-service-azdls",
+ "opendal-service-fs",
+ "opendal-service-gcs",
+ "opendal-service-s3",
+version = "0.59.5"
+checksum = "33d5a635dfea36a7a0c3bbb2ca34c97af17f98dd69b0cdf31a1d436a346e0a12"
+ "quick-xml 0.42.0",
+version = "0.59.5"
+checksum = "fc025e163c43993e30cf1829a30b791934e5b0f7cd4d7e03acc902a9efb7e8f5"
+ "opendal-core",
+version = "0.59.5"
+checksum = "06b44bdf694cccb7d90515b3eac6623975a2813abf4f5c438b4949a329d6a45b"
+ "opendal-core",
+version = "0.59.5"
+checksum = "520d3de5d246c82a246c431ef0f52b8d2f091c7c49a3fd7a6f0ff519b1e7725f"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+ "opendal 0.59.3",
+version = "0.58.1"
+checksum = "4f20562cc7447fcc915fc5c23df305a412ea80a733c9f2fd9e2d267e2815be6d"
+ "opendal-core 0.58.1",
+ "opendal-http-transport-reqwest 0.58.1",
+ "opendal-layer-concurrent-limit 0.58.1",
+ "opendal-layer-logging 0.58.1",
+ "opendal-layer-retry 0.58.1",
+ "opendal-layer-timeout 0.58.1",
+ "opendal-service-azblob 0.58.1",
+ "opendal-service-fs 0.58.1",
+ "opendal-service-gcs 0.58.1",
+ "opendal-service-s3 0.58.1",
+[[package]]
+name = "opendal"
+version = "0.59.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ef16fe6b19b73b49ce39e3e0f4cec27e54789eee5d5f752cb2d26bd3e9449686"
+dependencies = [
+ "ctor 1.0.12",
+ "opendal-core 0.59.3",
+ "opendal-http-transport-reqwest 0.59.3",
+ "opendal-layer-concurrent-limit 0.59.3",
+ "opendal-layer-logging 0.59.3",
+ "opendal-layer-retry 0.59.3",
+ "opendal-layer-timeout 0.59.3",
+ "opendal-service-azblob 0.59.3",
+ "opendal-service-azdls",
+ "opendal-service-fs 0.59.3",
+ "opendal-service-gcs 0.59.3",
+ "opendal-service-s3 0.59.3",
+]
+
+version = "0.58.1"
+checksum = "ec75551ff4cf3e57da98979f6a937aaa9ddb3915bf68cc17d03df733be6646ed"
+dependencies = [
+ "anyhow",
+ "base64 0.23.1",
+ "bytes",
+ "futures",
+ "http
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e3c035e0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `78d02432` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

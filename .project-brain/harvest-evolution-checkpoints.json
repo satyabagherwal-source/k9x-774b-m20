@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T09:00:04.683Z",
+  "last_updated": "2026-11-24T09:18:47.099Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-24T08:48:27.026Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-24T09:00:03.962Z",
+      "processed_at": "2026-11-24T09:18:46.379Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -463,7 +463,7 @@
       "staged_for_review": 1
     },
     "risingwavelabs-risingwave-learnings.md": {
-      "processed_at": "2026-11-23T14:13:00.919Z",
+      "processed_at": "2026-11-24T09:18:45.508Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -568,7 +568,7 @@
       "staged_for_review": 1
     },
     "orange-opensource-hurl-learnings.md": {
-      "processed_at": "2026-11-23T00:31:35.391Z",
+      "processed_at": "2026-11-24T09:18:44.199Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3813,7 +3813,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3717,
+  "total_dossiers_evaluated": 3720,
   "total_canonical_promoted": 503,
-  "total_staged_for_review": 2805
+  "total_staged_for_review": 2808
 }

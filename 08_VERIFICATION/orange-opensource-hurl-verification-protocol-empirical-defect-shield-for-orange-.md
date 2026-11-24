@@ -4,22 +4,22 @@
 {
   "source_repository": "Orange-OpenSource/hurl",
   "source_url": "https://github.com/Orange-OpenSource/hurl",
-  "source_version": "d3f1771a",
+  "source_version": "8d907486",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-23T00:31:17.276Z",
+  "timestamp": "2026-11-24T09:18:24.004Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-orange-opensource-hurl",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl) (Revision: `d3f1771a`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T00:31:17.276Z`  
+> **Provenance**: Harvested from [Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl) (Revision: `8d907486`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T09:18:24.004Z`  
 > **Learning ID**: `learn-github-orange-opensource-hurl`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `Orange-OpenSource/hurl` (Commit: `d3f1771a`)
+- **Target Repository**: `Orange-OpenSource/hurl` (Commit: `8d907486`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T00:31:15.700Z  
+> **Harvest Timestamp**: 2026-11-24T09:18:22.859Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Hurl, run and test HTTP requests with plain text.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 19350 stars
+- **Stars / Engagement**: 19355 stars
 
 ---
 
@@ -1879,152 +1879,229 @@ pub mod visit;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d3f1771a` (2026-11-22)
-**Commit Message**: Rename Cookie::match_domain to Cookie::match_host and fix the method matching any IPs.
+### Incident Patch 1: `8d907486` (2026-11-24)
+**Commit Message**: Update crates
 
-**File**: `packages/hurl/src/http/cookie_store.rs` (modified, +103/-52)
+**File**: `Cargo.lock` (modified, +6/-6)
 ```diff
-@@ -229,22 +229,43 @@ impl Cookie {
-         self.include_subdomain
-     }
+@@ -238,9 +238,9 @@ dependencies = [
  
--    pub fn match_domain(&self, url: &Url) -> bool {
-+    /// Returns `true` if this cookie applies to `url`, based on the host and the path of the URL.
-+    pub fn match_url(&self, url: &Url) -> bool {
-+        self.match_host(url) && url.path().starts_with(&self.path)
-+    }
-+
-+    /// Returns `true` if the host of `url` matches this cookie domain.
-+    fn match_host(&self, url: &Url) -> bool {
-+        // The host of `url` must be equal to the cookie domain (case-insensitive) or, if the cookie
-+        // includes subdomains, be a subdomain of the cookie domain. Subdomain matching is only done
-+        // for domain names: an IP address must be strictly equal to the cookie domain. The path of
-+        // `url` must start with the cookie path.
-+
-         // We remove the legacy optional dot in cookie domain.
--        let cookie_domain = self.domain.strip_prefix(".").unwrap_or(&self.domain);
--        if let Some(url_domain) = url.domain() {
--            if !self.include_subdomain() {
--                if url_domain != cookie_domain {
--                    return false;
--                }
--            } else if !url_domain.ends_with(&cookie_domain) {
--                return false;
--            }
-+        let cookie_domain = self.domain.strip_prefix('.').unwrap_or(&self.domain);
-+        let cookie_domain = cookie_domain.to_ascii_lowercase();
-+        // The host of an IPv6 URL is bracketed, while libcurl stores (and only matches) the
-+        // cookie domain without brackets.
-+        let host = url.host();
-+        let host = trim_brackets(&host).to_ascii_lowercase();
-+        if host == cookie_domain {
-+            return true;
-         }
--        url.path().starts_with(&self.path)
-+        // Subdomain matching only applies to domain names, never to IP addresses. When `url` is
-+        // an IP address, `domain()` is `None`.
-+        self.include_subdomain
-+            && url.domain().is_some()
-+            && host.ends_with(&format!(".{cookie_domain}"))
-     }
- }
+ [[package]]
+ name = "clap"
+-version = "4.6.7"
++version = "4.6.8"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "aa8876b300ab35ba921adea3dfd70157a46249b33f95c9084ae5709785478946"
++checksum = "ac230478587d0269d8d6998b82ae69ea51509d55df66d9e92edd1f986904cd4a"
+ dependencies = [
+  "clap_builder",
+ ]
+@@ -260,9 +260,9 @@ dependencies = [
  
-+/// Removes the optional brackets around an IPv6 address host.
-+fn trim_brackets(host: &str) -> &str {
-+    host.strip_prefix('[')
-+        .and_then(|h| h.strip_suffix(']'))
-+        .unwrap_or(host)
-+}
-+
- impl fmt::Display for Cookie {
-     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-         let repr = self.to_netscape();
-@@ -330,6 +351,19 @@ mod tests {
-     use super::*;
-     use std::str::FromStr;
+ [[package]]
+ name = "clap_lex"
+-version = "1.1.1"
++version = "1.1.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "1c133bc6a41be0d194c306b5506d15e6feeea7b1d6604bd3f8310dfb2ca96486"
++checksum = "e0921b3876b3a1df8a1c9f912e7f94342458022c2e84288015893d83c4d62a79"
  
-+    fn new_cookie(domain: &str, include_subdomain: bool, path: &str) -> Cookie {
-+        Cookie {
-+            domain: domain.to_string(),
-+            include_subdomain,
-+            path: path.to_string(),
-+            https: true,
-+            expires: 0,
-+            name: String::new(),
-+            value: String::new(),
-+            http_only: false,
-+        }
-+    }
-+
-     #[test]
-     pub fn parse_cookie_from_str() {
-         assert_eq!(
-@@ -395,49 +429,66 @@ mod tests {
+ [[package]]
+ name = "colorchoice"
+@@ -1224,9 +1224,9 @@ checksum = "3a3b425286980a367278453f3b6d28cdcb134b574e5a35824a6ff5eebad50bb6"
  
-     #[test]
-     fn test_match_cookie() {
--        let cookie = Cookie {
--            domain: "example.com".to_string(),
--            include_subdomain: false,
--            path: "/".to_string(),
--            https: true,
--            expires: 0,
--            name: String::new(),
--            value: String::new(),
--            http_only: false,
--        };
--        assert!(cookie.match_domain(&Url::from_str("http://example.com/toto").unwrap()));
--        assert!(!cookie.match_domain(&Url::from_str("http://sub.example.com/tata").unwrap()));
--        assert!(!cookie.match_domain(&Url::from_str("http://toto/tata").unwrap()));
--
--        let cookie = Cookie {
--            domain: "example.com".to_string(),
--            include_subdomain: true,
--            path: "/toto".to_string(),
--            https: true,
--            expires: 0,
--            name: String::new(),
--            value: String::new(),
--            http_only: false,
--        };
--        assert!(cookie.match_domain(&Url::from_str("http://example.com/toto").unwrap()));
--        assert!(cookie.match_domain(&Url::from_str("http://sub.example.com/toto").unwrap()));
--        assert!(!cookie.match_domain(&Url::from_str("http://example.com/tata").unwrap()));
-+        let cookie = new_cookie("example.com", false, "/");
-+        assert!(cookie.match_url(&Url::from_str("http://example.com/toto").unwrap()));
-+        assert!(!cookie.match_url(&Url::from_str("http://sub.example.com/tata").unwrap()));
-+        assert!(!cookie.match_url(&Url::from_str("http://toto/tata").unwrap()));
-+
-+        let cookie = new_cookie("example.com", true, "/toto");
-+        assert!(cookie.match_url(&Url::from_str("http://example.com/toto").unwrap()));
-+        assert!(cookie.match_url(&Url::from_str("http://sub.example.com/toto").unwrap()));
-+        assert!(!cookie.match_url(&Url::from_str("http://example.com/tata").unwrap()));
- 
-         // Legacy cookie domain with dot prefix
--        let cookie = Cookie {
--            domain: ".example.com".to
+ [[package]]
+ name = "uuid"
+-version = "1.29.2"
++version = "1.29.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "bed99139f7dac9b5cfe5f17be4d66dc7079a34dee1d74bcc77217119240e267c"
++checksum = "3c14b15dffa2f4bd712103e857140aa04a4f2ff6e955c77d7eb8e53ee02a3b64"
+ dependencies = [
+  "getrandom",
+  "js-sys",
 ```
 
-**File**: `packages/hurl/src/http/curl_cmd.rs` (modified, +1/-1)
+**File**: `packages/hurl/Cargo.toml` (modified, +2/-2)
 ```diff
-@@ -274,7 +274,7 @@ fn cookies_params(request_spec: &RequestSpec, cookie_store: &CookieStore) -> Vec
-     let mut cookies_from_store = cookie_store
-         .cookies()
-         .filter(|c| !c.is_expired())
--        .filter(|c| c.match_domain(&request_spec.url))
-+        .filter(|c| c.match_url(&request_spec.url))
-         .map(|c| (c.name(), c.value()))
-         .collect::<Vec<_>>();
+@@ -21,7 +21,7 @@ static-openssl = ["curl/static-ssl", "curl-sys/static-ssl"]
+ base64 = "0.23.1"
+ brotli = "9.1.3"
+ chrono = { version = "0.4.45", default-features = false, features = ["clock"] }
+-clap = { version = "4.6.7", features = ["string", "wrap_help"] }
++clap = { version = "4.6.8", features = ["string", "wrap_help"] }
+ curl = "0.4.51"
+ curl-sys = "0.4.91"
+ encoding_rs = "0.8.44"
+@@ -38,7 +38,7 @@ sha2 = "0.11.1"
+ url = "2.5.8"
+ xml = "1.4.0"
+ # uuid features: lets you generate random UUIDs and use a faster (but still sufficiently random) RNG
+-uuid = { version = "1.29.2", features = ["v4" , "fast-rng"] }
++uuid = { version = "1.29.3", features = ["v4" , "fast-rng"] }
+ similar = "3.2.1"
+ terminal_size = "0.4.4"
  
+```
+
+**File**: `packages/hurlfmt/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -11,7 +11,7 @@ rust-version = "1.100.0"
+ 
+ [dependencies]
+ base64 = "0.23.1"
+-clap = { version = "4.6.7", features = ["cargo", "wrap_help"] }
++clap = { version = "4.6.8", features = ["cargo", "wrap_help"] }
+ hurl_core = { version = "9.0.0", path = "../hurl_core" }
+ regex = "1.13.1"
+ 
+```
+
+---
+
+### Incident Patch 2: `23285145` (2026-11-23)
+**Commit Message**: Update integration test with --cookie and --location/--location-trusted
+
+**File**: `integration/hurl/tests_ok/follow_redirect/cookies.txt` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++localhost	FALSE	/	FALSE	0	fruit	lemon
+```
+
+**File**: `integration/hurl/tests_ok/follow_redirect/follow_redirect_leak.hurl` (modified, +3/-3)
+```diff
+@@ -1,9 +1,9 @@
+-GET http://localhost:8000/follow-redirect-leak/host-a-step-1
++GET http://localhost:8000/follow-redirect-leak/host-a-step-1?trusted={{trusted}}
+ HTTP 200
+ [Asserts]
+ redirects count == 2
+-redirects nth 0 location == "http://127.0.0.1:8000/follow-redirect-leak/host-b-step-2"
+-redirects nth 1 location == "http://localhost:8000/follow-redirect-leak/host-a-step-3"
++redirects nth 0 location startsWith "http://127.0.0.1:8000/follow-redirect-leak/host-b-step-2"
++redirects nth 1 location startsWith "http://localhost:8000/follow-redirect-leak/host-a-step-3"
+ url == "http://localhost:8000/follow-redirect-leak/host-a-step-3"
+ header "Location" not exists
+ `Followed redirect!`
+```
+
+**File**: `integration/hurl/tests_ok/follow_redirect/follow_redirect_leak.out` (modified, +1/-1)
+```diff
+@@ -1 +1 @@
+-Followed redirect!
+\ No newline at end of file
++Followed redirect!Followed redirect!Followed redirect!
+\ No newline at end of file
+```
+
+**File**: `integration/hurl/tests_ok/follow_redirect/follow_redirect_leak.ps1` (modified, +20/-0)
+```diff
+@@ -4,4 +4,24 @@ $ErrorActionPreference = 'Stop'
+ hurl --location `
+   --header 'Authorization: Basic Ym9iQGVtYWlsLmNvbTpzZWNyZXQ=' `
+   --header 'Cookie: fruit=lemon' `
++  --variable trusted=false `
+   tests_ok/follow_redirect/follow_redirect_leak.hurl
++
++hurl --location-trusted `
++  --header 'Authorization: Basic Ym9iQGVtYWlsLmNvbTpzZWNyZXQ=' `
++  --header 'Cookie: fruit=lemon' `
++  --variable trusted=true `
++  tests_ok/follow_redirect/follow_redirect_leak.hurl
++
++hurl --location `
++  --header 'Authorization: Basic Ym9iQGVtYWlsLmNvbTpzZWNyZXQ=' `
++  --cookie tests_ok/follow_redirect/cookies.txt `
++  --variable trusted=false `
++  tests_ok/follow_redirect/follow_redirect_leak.hurl
++
++# FIXME: --cookie and --location-trusted should work
++#hurl --location-trusted `
++#  --header 'Authorization: Basic Ym9iQGVtYWlsLmNvbTpzZWNyZXQ=' `
++#  --cookie tests_ok/follow_redirect/cookies.txt `
++#  --variable trusted=true `
++#  tests_ok/follow_redirect/follow_redirect_leak.hurl
+```
+
+**File**: `integration/hurl/tests_ok/follow_redirect/follow_redirect_leak.py` (modified, +18/-3)
+```diff
+@@ -4,15 +4,26 @@
+ 
+ @app.route("/follow-redirect-leak/host-a-step-1")
+ def follow_redirect_leak_host_a_step_1():
++    # step-1 domain is localhost
++    trusted = get_trusted_param()
+     assert "Authorization" in request.headers
+     assert request.cookies.get("fruit") is not None
+-    return redirect("http://127.0.0.1:8000/follow-redirect-leak/host-b-step-2")
++    return redirect(
++        f"http://127.0.0.1:8000/follow-redirect-leak/host-b-step-2?trusted={trusted}"
++    )
+ 
+ 
+ @app.route("/follow-redirect-leak/host-b-step-2")
+ def follow_redirect_leak_host_b_step_2():
+-    assert "Authorization" not in request.headers
+-    assert request.cookies.get("fruit") is None
++    trusted = get_trusted_param()
++    # step-1 domain is 127.0.0.1, we change domain.
++    # We need to check if the credentials are here when the domain is trusted
++    if trusted == "true":
++        assert "Authorization" in request.headers
++        assert request.cookies.get("fruit") is not None
++    else:
++        assert "Authorization" not in request.headers
++        assert request.cookies.get("fruit") is None
+     return redirect("http://localhost:8000/follow-redirect-leak/host-a-step-3")
+ 
+ 
+@@ -22,3 +33,7 @@ def follow_redirect_leak_host_a_step_3():
+     assert "Authorization" in request.headers
+     assert request.cookies.get("fruit") is not None
+     return "Followed redirect!"
++
++
++def get_trusted_param():
++    return request.args.get("trusted", "false")
+```
+
+**File**: `integration/hurl/tests_ok/follow_redirect/follow_redirect_leak.sh` (modified, +21/-0)
+```diff
+@@ -4,4 +4,25 @@ set -Eeuo pipefail
+ hurl --location \
+   --header 'Authorization: Basic Ym9iQGVtYWlsLmNvbTpzZWNyZXQ=' \
+   --header 'Cookie: fruit=lemon' \
++  --variable trusted=false \
+   tests_ok/follow_redirect/follow_redirect_leak.hurl
++
++hurl --location-trusted \
++  --header 'Authorization: Basic Ym9iQGVtYWlsLmNvbTpzZWNyZXQ=' \
++  --header 'Cookie: fruit=lemon' \
++  --variable trusted=true \
++  tests_ok/follow_redirect/follow_redirect_leak.hurl
++
++hurl --location \
++  --header 'Authorization: Basic Ym9iQGVtYWlsLmNvbTpzZWNyZXQ=' \
++  --cookie tests_ok/follow_redirect/cookies.txt \
++  --variable trusted=false \
++  tests_ok/follow_redirect/follow_redirect_leak.hurl
++
++# FIXME: --cookie and --location-trusted should work
++#hurl --location-trusted \
++#  --header 'Authorization: Basic Ym9iQGVtYWlsLmNvbTpzZWNyZXQ=' \
++#  --cookie tests_ok/follow_redirect/cookies.txt \
++#  --variable trusted=true \
++#  tests_ok/follow_redirect/follow_redirect_leak.hurl
++
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5456** (2026-11-24): Update crates (@hurl-bot)
+- **PR #5455** (2026-11-23): Update integration test with --cookie and --location/--location-trusted (@jcamiel)
+- **PR #5454** (2026-11-23): Update crates (@hurl-bot)
 - **PR #5453** (2026-11-22): Rename Cookie::match_domain to Cookie::match_host and fix the method method matching any IPs. (@jcamiel)
 - **PR #5451** (2026-11-21): Update crates (@hurl-bot)
 - **PR #5450** (2026-11-20): Update crates (@hurl-bot)
-- **PR #5449** (2026-11-19): Add age of crate if not updated because too recent. (@jcamiel)
-- **PR #5448** (2026-11-18): Update crates (@hurl-bot)
-- **PR #5447** (closed): Update crates (@hurl-bot)
 
 ---
 
@@ -2044,79 +2121,41 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Rename Cookie::match_domain to Cookie::match_host and fix the method matching an
+## X. Update crates
 
 **RULE**:
-When implementing operations in `packages/hurl/src/http/cookie_store.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-OpenSource/hurl. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-OpenSource/hurl. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d3f1771a`: Rename Cookie::match_domain to Cookie::match_host and fix the method matching any IPs.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8d907486`: Update crates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/hurl/src/http/cookie_store.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// Returns `true` if this cookie applies to `url`, based on the host and the path of the URL.
-    pub fn match_url(&self, url: &Url) -> bool {
-        self.match_host(url) && url.path().starts_with(&self.path)
-    }
-
-    /// Returns `true` if the host of `url` matches this cookie domain.
-    fn match_host(&self, url: &Url) -> bool {
-        // The host of `url` must be equal to the cookie domain (case-insensitive) or, if the cookie
-        // includes subdomains, be a subdomain of the cookie domain. Subdomain matching is only done
-        // for domain names: an IP address must be strictly equal to the cookie domain. The path of
-        // `url` must start with the cookie path.
-
-        let cookie_domain = self.domain.strip_prefix('.').unwrap_or(&self.domain);
-        let cookie_domain = cookie_domain.to_ascii_lowercase();
-        // The host of an IPv6 URL is bracketed, while libcurl stores (and only matches) the
-        // cookie domain without brackets.
-        let host = url.host();
-        let host = trim_brackets(&host).to_ascii_lowercase();
-        if host == cookie_domain {
-            return true;
-        // Subdomain matching only applies to domain names, never to IP
+version = "4.6.8"
+checksum = "ac230478587d0269d8d6998b82ae69ea51509d55df66d9e92edd1f986904cd4a"
+version = "1.1.2"
+checksum = "e0921b3876b3a1df8a1c9f912e7f94342458022c2e84288015893d83c4d62a79"
+version = "1.29.3"
+checksum = "3c14b15dffa2f4bd712103e857140aa04a4f2ff6e955c77d7eb8e53ee02a3b64"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    pub fn match_domain(&self, url: &Url) -> bool {
-        let cookie_domain = self.domain.strip_prefix(".").unwrap_or(&self.domain);
-        if let Some(url_domain) = url.domain() {
-            if !self.include_subdomain() {
-                if url_domain != cookie_domain {
-                    return false;
-                }
-            } else if !url_domain.ends_with(&cookie_domain) {
-                return false;
-            }
-        url.path().starts_with(&self.path)
-        let cookie = Cookie {
-            domain: "example.com".to_string(),
-            include_subdomain: false,
-            path: "/".to_string(),
-            https: true,
-            expires: 0,
-            name: String::new(),
-            value: String::new(),
-            http_only: false,
-        };
-        assert!(cookie.match_domain(&Url::from_str("http://example.com/toto").unwrap()));
-        assert!(!cookie.match_domain(&Url::from_str("http://sub.example.com/tata").unwrap()));
-        assert!(!cookie.match_domain(&Url::from_str("http://toto/tata").unwrap()));
-
-        let cookie = Cookie {
-            domain: "example.com".to_string(),
-            include_subdomain: true,
-            path: "/toto".to_str
+version = "4.6.7"
+checksum = "aa8876b300ab35ba921adea3dfd70157a46249b33f95c9084ae5709785478946"
+version = "1.1.1"
+checksum = "1c133bc6a41be0d194c306b5506d15e6feeea7b1d6604bd3f8310dfb2ca96486"
+version = "1.29.2"
+checksum = "bed99139f7dac9b5cfe5f17be4d66dc7079a34dee1d74bcc77217119240e267c"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d3f1771a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8d907486` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

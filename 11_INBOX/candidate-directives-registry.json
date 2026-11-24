@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T09:00:04.238Z",
+  "last_updated": "2026-11-24T09:18:46.649Z",
   "directives": [
     {
       "id": "CD-001",
@@ -43204,14 +43204,14 @@
       "staged_date": "2026-11-21"
     },
     {
-      "id": "CD-BW4Q",
+      "id": "CD-FW2U",
       "directive_title": "Update crates",
       "source_repo": "orange-opensource-hurl-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-BW4Q-update-crates.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-FW2U-update-crates.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-21",
+      "date_staged": "2026-11-24",
       "domain_letter": "G"
     },
     {
@@ -44573,11 +44573,11 @@
       "staged_date": "2026-11-22"
     },
     {
-      "id": "CD-RV9N",
+      "id": "CD-FXBQ",
       "directive_title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-RV9N-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-FXBQ-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-24",
@@ -53985,6 +53985,46 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-3FDC78-test-collab-write-trust-fixtures-with-ex.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-FT0S",
+      "directive_title": "Bump opendal from 0.58.1 to 0.59.5",
+      "source_repo": "risingwavelabs/risingwave",
+      "source_commit": "78d02432",
+      "staged_file": "11_INBOX/candidate-directives/CD-FT0S-bump-opendal-from-0-58-1-to-0-59-5.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-EAD31B",
+      "directive_title": "Update crates",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "orange-opensource-hurl",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-EAD31B-update-crates.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-FWQ7",
+      "directive_title": "deps): Bump opendal from 0.58.1 to 0.59.5",
+      "source_repo": "risingwavelabs-risingwave-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-FWQ7-deps-bump-opendal-from-0-58-1-to-0-59-5.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-861343",
+      "directive_title": "test(collab): write trust fixtures with explicit 0644 permissions",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-861343-test-collab-write-trust-fixtures-with-ex.md",
       "staged_date": "2026-11-24"
     }
   ]
