@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-R7I7",
-    "timestamp": "2026-11-22T22:28:01.855Z",
-    "repository": "metalbear-co/mirrord",
-    "learningId": "learn-github-metalbear-co-mirrord",
-    "contentHash": "eb60ad8c113b452d4de3b3d3c6f5cdedaacadfb22069ac6aaf762e10743439c2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-RIMB",
-    "timestamp": "2026-11-22T22:28:16.259Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "c025b312199987b5c80ff3bb5c3ff9693d9e0719152c96e1db16982461c2005b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-34BB",
-    "timestamp": "2026-11-22T22:37:17.591Z",
-    "repository": "Alissonerdx/BFS-Best-Face-Swap",
-    "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap",
-    "contentHash": "5977c9c00cd82e436f39735613eade89c6804c7911a2579179ee0857f6fbf519",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-IPRV",
-    "timestamp": "2026-11-22T22:49:25.243Z",
-    "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
-    "contentHash": "37dd007266816de8620d7e66e644e1a58920a499f1687710435ce0746dc4b90a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-IRD1",
-    "timestamp": "2026-11-22T22:49:27.302Z",
-    "repository": "fallow-rs/fallow",
-    "learningId": "learn-github-fallow-rs-fallow",
-    "contentHash": "fd1618c791cee11374a4eca9ae6cc3e265d19970e13bbd75c32a0da52781ed09",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-TUWI",
     "timestamp": "2026-11-22T22:58:05.106Z",
     "repository": "PSRben/VisionHOPE",
@@ -7490,6 +7415,81 @@
     "repository": "genkit-ai/genkit",
     "learningId": "learn-github-genkit-ai-genkit",
     "contentHash": "d3c6bc422d31a1e0d54e4d916e2ced52db6cf78658bb3126536c6582ae783376",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-EG6D",
+    "timestamp": "2026-11-24T17:13:31.237Z",
+    "repository": "Aleph-Alpha/Kolibri-1.1",
+    "learningId": "learn-huggingface-aleph-alpha-kolibri-1-1",
+    "contentHash": "a55946688504cbeede06b523ce0eb2cbeb1ee90c1a59ec72de25ab169f1ea19b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-EI55",
+    "timestamp": "2026-11-24T17:13:33.785Z",
+    "repository": "OVHaiLLM/Olala-v1.0-mini-7A1B",
+    "learningId": "learn-huggingface-ovhaillm-olala-v1-0-mini-7a1b",
+    "contentHash": "c0f32927ca0678f9dcd0e9a2a46068e1395a45a424fdcc74abc9b172a2f6f2a8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-EOBS",
+    "timestamp": "2026-11-24T17:13:41.800Z",
+    "repository": "ZSeven-W/openpencil",
+    "learningId": "learn-github-zseven-w-openpencil",
+    "contentHash": "2585546ecff5595e5ce4f0c36ede38a7d0f4e63dcb50336000c9069c74face50",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-ERKS",
+    "timestamp": "2026-11-24T17:13:46.012Z",
+    "repository": "rustls/rustls",
+    "learningId": "learn-github-rustls-rustls",
+    "contentHash": "d49c43ced8480e5afeb20d54f56faece3efdb46edfaf3aced6f4c4cb27612290",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-EU27",
+    "timestamp": "2026-11-24T17:13:49.231Z",
+    "repository": "RediSearch/RediSearch",
+    "learningId": "learn-github-redisearch-redisearch",
+    "contentHash": "03ffe91e33cc6ceabdc9a1f7a8f4455158881c7d333ed936cf50780f8f241f99",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

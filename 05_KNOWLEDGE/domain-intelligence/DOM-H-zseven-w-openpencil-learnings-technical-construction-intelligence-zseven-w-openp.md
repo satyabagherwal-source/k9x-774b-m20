@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T16:54:53.460Z",
+  "timestamp": "2026-11-24T17:14:29.824Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-zseven-w-openpencil-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [zseven-w-openpencil-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T16:54:53.460Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T17:14:29.824Z`  
 > **Learning ID**: `LEARN-EVO-zseven-w-openpencil-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 71%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 66%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from zseven-w-openpencil-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md`  
 > **Source**: github ([https://github.com/ZSeven-W/openpencil](https://github.com/ZSeven-W/openpencil))  
-> **Source Version**: `4110b3e0`  
+> **Source Version**: `c939f85c`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T02:09:08.309Z  
+> **Timestamp**: 2026-11-24T17:13:40.417Z  
 > **Learning ID**: `learn-github-zseven-w-openpencil`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ZSeven-W/openpencil](https://github.com/ZSeven-W/openpencil))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T02:09:08.305Z  
+> **Harvest Timestamp**: 2026-11-24T17:13:40.408Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The world's first open-source AI-native vector design tool and the first to feature concurrent Agent Teams. Design-as-Code. Turn prompts into UI directly on the live canvas. A modern alternative to Pencil.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7313 stars
+- **Stars / Engagement**: 7355 stars
 
 ---
 
@@ -1799,11 +1799,14 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #285** (2026-11-23): **GUI only Chinese ;-)**
+  *Symptoms*: ### Version  0.8.5  ### Platform  macOS (native desktop)  ### Bug Description  Hi there,  the MacOS App i have only a Chinese GUI and i can't find how to change the GUI Language. My OS Language is German so i think it's change automaticaly to Chinese. I Hope Someone can help me.  MacBook pro 27.2.1  So i can't use or test it until now.  Kind regards Chris  ### Steps to Reproduce  GUI Language  ### Expected Behavior  GUI Language  ### Screenshots / Recordings  _No response_  ### Additional Context  _No response_
+  **Post-Mortem & Fix Analysis**:
+  > Hi Chris! To switch the interface to German in OpenPencil 0.8.5, click the globe icon 🌐 near the top-right corner of the editor toolbar. Its tooltip reads **语言** in Chinese. Then select **Deutsch** from the list. You can also select **English** from the same menu.  If the globe icon is missing or the interface stays in Chinese after selecting Deutsch, please share a screenshot of the toolbar so we can take a closer look.
+  > <img width="1512" height="898" alt="image" src="https://github.com/user-attachments/assets/5dd39aeb-d00b-4a87-b137-ed9dd4285159" />  <img width="64" height="46" alt="image" src="https://github.com/user-attachments/assets/b99b7a12-9c6b-46a9-9978-ad8e2cd6c9ba" />  you can get pro canvas   next version we will Improve 
+
 - **Issue #280** (2026-11-06): **Memory cross-boundary**
   *Symptoms*: ### Version  0.16  ### Platform  Web (browser)  ### Bug Description  macOS desktop client, codex often encounters memory over-boundary errors when calling mcp.  ### Steps to Reproduce  1. open openpencil 2. codex connects mcp for design   ### Expected Behavior  macOS desktop client, codex often encounters memory over-boundary errors when calling mcp.  ### Screenshots / Recordings  _No response_  ### Additional Context  _No response_
-
-- **Issue #271** (2026-11-21): **[Bug] Layer blur stays off after scroll-panning the canvas**
-  *Symptoms*: ### Version  0.8.5  ### Platform  macOS (native desktop)  ### Bug Description  After scrolling to pan the editor canvas, text inside frames with layer blur becomes sharp and stays sharp for at least 10 seconds with no further input. Clicking an empty area of the canvas restores the blur.  I reproduced this in both an existing 22,834-node document and a minimal four-node document containing an outer board, a blurred card, a text node, and a rectangle. The minimal document uses a blur radius of 5 and reproduces the issue at both 41% and 100% zoom.  ### Steps to Reproduce  1. Extract the attached ZIP and open blur-pan-repro.op. 2. Set zoom to 100% (41% also reproduces) and bring the card into view. Confirm that its text and edges look blurred. 3. Scroll over the canvas to pan it a short distance, keeping the card visible. 4. Stop scrolling and send no further pointer or keyboard input for 10 seconds. The text and rectangle remain sharp. 5. Click an empty area of the canvas. The blur returns without changing any effect settings.  The ZIP contains only the minimal .op document, with no external assets, scripts, or executables.  [blur-pan-repro.zip](https://github.com/user-attachments/files/34356926/blur-pan-repro.zip)  ### Expected Behavior  After scrolling stops, the blur should return automatically without requiring another pointer event.  ### Screenshots / Recordings  <img width="1280" height="220" alt="Image" src="https://github.com/user-attachments/assets/a57f0d12-782b-4639-8
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1820,419 +1823,439 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1c7f0448` (2026-11-19)
-**Commit Message**: test(collab): write trust fixtures with explicit 0644 permissions
+### Incident Patch 1: `e094beac` (2026-11-22)
+**Commit Message**: fix(deps): bump url to 2.5.9 and heapless to 0.9.4
 
-The trust-root reader rejects group-writable files, so fixtures written under a 0002 umask failed spuriously. The locator HSM stub also blocked forever in accept when the check failed before signing; it now gives up after a deadline so the test reports the real error.
+cargo-deny now rejects url 2.5.8 (RUSTSEC-2026-0592, stack overflow in
+Url::origin on nested blob: URLs) and heapless 0.8.0 (nine unsound
+advisories). jian moves rstar to 0.14, which pulls heapless 0.9.4.
 
-**File**: `crates/op-collab-relay-locator-server/src/production/production_check_tests.rs` (modified, +27/-5)
+**File**: `Cargo.lock` (modified, +29/-19)
 ```diff
-@@ -7,7 +7,7 @@ use std::{
-     os::unix::net::UnixListener,
-     path::Path,
-     thread,
--    time::Duration,
-+    time::{Duration, Instant},
- };
- 
- use ed25519_dalek::{Signer as _, SigningKey};
-@@ -124,7 +124,7 @@ fn run_check_with_inputs(
-     let policy_path = directory.path().join("policy.json");
-     let public_keys_path = directory.path().join("locator-public-keys.json");
-     let socket_path = directory.path().join("signer.sock");
--    std::fs::write(&policy_path, policy_body).expect("policy file");
-+    write_public_fixture(&policy_path, policy_body);
-     write_public_keys(&public_keys_path, published_seed);
- 
-     let hsm = exercise_hsm.then(|| {
-@@ -162,7 +162,22 @@ fn policy_sha256() -> String {
- }
- 
- fn serve_one_signature(listener: UnixListener, signer_seed: [u8; 32]) {
--    let (mut stream, _) = listener.accept().expect("HSM accept");
-+    listener
-+        .set_nonblocking(true)
-+        .expect("HSM listener non-blocking");
-+    let deadline = Instant::now() + Duration::from_secs(10);
-+    let mut stream = loop {
-+        match listener.accept() {
-+            Ok((stream, _)) => break stream,
-+            Err(error)
-+                if error.kind() == std::io::ErrorKind::WouldBlock && Instant::now() < deadline =>
-+            {
-+                thread::sleep(Duration::from_millis(10));
-+            }
-+            Err(_) => return,
-+        }
-+    };
-+    stream.set_nonblocking(false).expect("HSM stream blocking");
-     let mut request = Vec::new();
-     stream.read_to_end(&mut request).expect("HSM request");
-     assert_eq!(request.len(), HSM_SIGN_REQUEST_BYTES);
-@@ -203,8 +218,15 @@ fn write_public_keys(path: &Path, seed: [u8; 32]) {
-             "public_key_ed25519": URL_SAFE_NO_PAD.encode(verifying_key.as_bytes()),
-         }],
-     });
--    std::fs::write(path, serde_json::to_vec(&body).expect("public keys JSON"))
--        .expect("public keys file");
-+    write_public_fixture(path, &serde_json::to_vec(&body).expect("public keys JSON"));
-+}
-+
-+fn write_public_fixture(path: &Path, body: &[u8]) {
-+    use std::os::unix::fs::PermissionsExt as _;
-+
-+    std::fs::write(path, body).expect("public fixture file");
-+    std::fs::set_permissions(path, std::fs::Permissions::from_mode(0o644))
-+        .expect("public fixture permissions");
- }
- 
- fn current_peer() -> ExpectedUnixPeer {
-```
-
-**File**: `crates/op-collab-relay-server/src/production_auth_tests.rs` (modified, +14/-5)
-```diff
-@@ -578,7 +578,7 @@ fn authentication_debug_output_is_anonymous() {
- fn pinned_policy_fetcher_reads_regular_files_with_a_strict_bound() {
-     let fixture = TempFixture::new();
-     let path = fixture.path().join("operator-secret-policy.json");
--    fs::write(&path, b"{\"keys\":[]}").expect("write policy fixture");
-+    write_public_fixture(&path, b"{\"keys\":[]}");
-     let config = TestCollabIssuer::verifier_config().expect("test config");
-     let fetcher = PinnedPolicyFileFetcher::new(
-         &config,
-@@ -681,14 +681,23 @@ fn write_locator_key_file(
-             "public_key_ed25519": URL_SAFE_NO_PAD.encode(signing_key.verifying_key().to_bytes()),
-         }],
-     });
--    fs::write(
-+    write_public_fixture(
-         &path,
--        serde_json::to_vec(&body).expect("serialize key file"),
--    )
--    .expect("write verifier key file");
-+        &serde_json::to_vec(&body).expect("serialize key file"),
-+    );
-     path
- }
- 
-+fn write_public_fixture(path: &Path, body: &[u8]) {
-+    fs::write(path, body).expect("write public fixture");
-+    #[cfg(unix)]
-+    {
-+        use std::os::unix::fs::PermissionsExt as _;
-+        fs::set_permissions(path, fs::Permissions::from_mode(0o644))
-+            .expect("public fixture permissions");
-+    }
-+}
-+
- fn write_x25519_key_file(fixture: &TempFixture, filename: &str) -> PathBuf {
-     let path = fixture.path().join(filename);
-     let body = serde_json::json!({
-```
-
-**File**: `crates/op-collab-relay-server/src/production_check_tests.rs` (modified, +18/-10)
-```diff
-@@ -35,11 +35,10 @@ fn production_check_rejects_a_policy_with_a_rewritten_signature() {
-         "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-     );
-     let rewritten_policy = serde_json::to_vec(&policy).expect("policy JSON");
--    std::fs::write(
--        fixture.directory.path().join("policy.json"),
-+    write_public_fixture(
-+        &fixture.directory.path().join("policy.json"),
-         &rewritten_policy,
--    )
--    .expect("rewrite policy");
-+    );
-     assert_eq!(
-         check_production_config_at(
-             &fixture.config(),
-@@ -113,7 +112,7 @@ struct Fixture {
- impl Fixture {
-     fn new() -> Self {
-         let directory = tempfile::tempdir().expect("temporary directory");
--        std::fs::write(directory.path().join("policy.json"), POLICY).expect("policy file");
-+        write_public_fixture(&directory.path().join("policy.json"), POLICY);
-         write_locator_keys(directory.path());
-         write_x25519_keys(directory.path());
-         Self { directory }
-@@ -141,11 +140,20 @@ fn write_locator_keys(directory: &Path) {
-             "public_key_ed25519": URL_SAFE_NO_PAD.encode(key.verifying_key().as_bytes()),
-         }],
-     });
--    std::fs::write(
--        directory.join("locator-keys.json"),
--        serde_json::to_vec(&body).expect("locator keys JSON"),
--    )
--    .expect("locator keys file");
-+    write_public_fixture(
-+        &directory.join("locator-keys.json"),
-+        &serde_json::to_vec(&body).expect("locator keys JSON"),
-+    );
-+}
-+
-+fn write_public_fixture(path: &Path, body: &[u8]) {
-+    std::fs::write(path, body).expect("public fixture file");
-+    #[cfg(unix)]
-+    {
-+        use std::os::unix::fs::PermissionsExt as _;
-+        std::fs::set_permissions(path, std::fs::Permissions::from_mode(0o644))
-+            .expect("public fixture permissions");
-+    }
- }
- 
- fn write_x25519_keys(directory: &Path) {
-```
-
----
-
-### Incident Patch 2: `0c4bb995` (2026-11-19)
-**Commit Message**: fix(renderer): reject cpu frame strides whose buffer size overflows
-
-op_frame_cpu multiplied the caller's height and stride unchecked. A huge stride wrapped to a small value in release builds, passed the buffer-length check, and the row copies then wrote outside the caller's buffer. Saturate the product so the existing length check rejects it with InvalidArg.
-
-**File**: `crates/op-engine-ffi/src/lifecycle.rs` (modified, +1/-1)
-```diff
-@@ -672,7 +672,7 @@ impl Session {
-                 "frame stride is smaller than the physical row",
-             ));
-         }
--        let required = height as usize * stride;
-+        let required = (height as usize).saturating_mul(stride); // a wrap would pass the check
-         if buffer_len < required {
-             return Err(FfiError::invalid(format!(
-                 "frame buffer covers {buffer_len} bytes but {required} are required"
-```
-
-**File**: `crates/op-engine-ffi/tests/abi.rs` (modified, +13/-0)
-```diff
-@@ -165,6 +165,19 @@ fn engine_is_bound_to_its_creator_thread() {
-     assert_eq!(status, OpStatus::Ok);
- }
- 
-+#[test]
-+fn frame_cpu_rejects_a_stride_whose_buffer_size_overflows() {
-+    let engine = create_engine(200.0, 200.0, 1.0).expect("engine creation");
-+    // 200 rows × 2^63 wraps to 0 in an unchecked multiply, which would pass
-+    // the buffer-length check and send the row copies out of bounds.
-+    let stride = usize::MAX / 2 + 1;
-+    let mut buffer = vec![0u8; 16];
-+    let status = unsafe { op_frame_cpu(engine, 0, buffer.as_mut_ptr(), buffer.len(), stride) };
-+    assert_eq!(status, OpStatus::InvalidArg, "{}", last_error(engine));
-+    assert!(buffer.iter().all(|&byte| byte == 0));
-+    assert_eq!(unsafe { op_destroy(engine) }, OpStatus::Ok);
-+}
-+
- #[test]
- fn resize_updates_pixel_size() {
-     let engine = create_engine(300.0, 400.0, 1.0).expect("engine creation");
-```
-
----
-
-### Incident Patch 3: `70d66e0e` (2026-11-20)
-**Commit Message**: feat(renderer): add lottie motion export
-
-Export sampled motion and outlined text through the editor, CLI and MCP. Embed raster fallbacks for unsupported paint and composite fades. Keep changing path topology in discrete layers to prevent playback flicker.
-
-**File**: `Cargo.lock` (modified, +2/-0)
-```diff
-@@ -5036,7 +5036,9 @@ dependencies = [
-  "png 0.18.1",
-  "rusty_h264-common",
-  "rusty_h264-decoder",
-+ "serde_json",
-  "skia-safe",
-+ "usvg",
-  "zip",
+@@ -1642,7 +1642,7 @@ dependencies = [
+  "libc",
+  "option-ext",
+  "redox_users 0.5.2",
+- "windows-sys 0.59.0",
++ "windows-sys 0.61.2",
  ]
  
-```
-
-**File**: `crates/op-chat-agent/src/tool_schemas.rs` (modified, +1/-1)
-```diff
-@@ -49,7 +49,7 @@ pub const TOOL_SCHEMAS: &[&str] = &[
-     r#"{"name":"set_node_transition","description":"Set a layer's property transition, or pass null to clear it.","inputSchema":{"type":"object","properties":{"nodeId":{"type":"string","description":"Node id on the active page"},"transition":{"type":["object","null"],"description":"Transition with durationMs, easing, and optional properties array"}},"required":["nodeId","transition"]}}"#,
-     r#"{"name":"set_motion_preference","description":"Set the document-level motion preference.","inputSchema":{"type":"object","properties":{"value":{"type":"string","enum":["full","reduced"]}},"required":["value"]}}"#,
-     r#"{"name":"get_motion_frames","description":"Render exact clip samples into a PNG contact sheet. Cells are ordered left to right and top to bottom. The accompanying metadata maps each sample timestamp to its pixel bounds.","inputSchema":{"type":"object","properties":{"rootId":{"type":"string","description":"Authored root layer or board node id"},"trigger":{"type":"string","enum":["mount","inView","manual"],"description":"Defaults to manual with clipId, otherwise mount"},"clipId":{"type":"string","description":"Named manual animation id"},"scale":{"type":"number","exclusiveMinimum":0},"timesMs":{"type":"array","items":{"type":"integer","minimum":0},"minItems":1,"maxItems":8}},"required":["rootId","timesMs"]}}"#,
--    r#"{"name":"export_motion","description":"Export an animation as base64 GIF, APNG, a ZIP of PNG frames, or H.264 MP4 when the server has an encoder. Supply durationMs for a fully looping clip.","inputSchema":{"type":"object","properties":{"rootId":{"type":"string","description":"Authored root layer or board node id"},"trigger":{"type":"string","enum":["mount","inView","manual"],"description":"Defaults to manual with clipId, otherwise mount"},"clipId":{"type":"string","description":"Named manual animation id"},"scale":{"type":"number","exclusiveMinimum":0},"format":{"type":"string","enum":["gif","apng","png-seq","mp4"]},"fps":{"type":"integer","minimum":1,"maximum":60},"durationMs":{"type":"integer","minimum":0},"background":{"type":"string","enum":["transparent","white"]},"reducedMotion":{"type":"boolean","description":"Override the document's reduced-motion preference for this export."}},"required":["rootId","format"]}}"#,
-+    r#"{"name":"export_motion","description":"Export an animation as base64 GIF, APNG, a ZIP of PNG frames, Lottie JSON, or H.264 MP4 when the server has an encoder. Supply durationMs for a fully looping clip.","inputSchema":{"type":"object","properties":{"rootId":{"type":"string","description":"Authored root layer or board node id"},"trigger":{"type":"string","enum":["mount","inView","manual"],"description":"Defaults to manual with clipId, otherwise mount"},"clipId":{"type":"string","description":"Named manual animation id"},"scale":{"type":"number","exclusiveMinimum":0},"format":{"type":"string","enum":["gif","apng","png-seq","mp4","lottie"]},"fps":{"type":"integer","minimum":1,"maximum":60},"durationMs":{"type":"integer","minimum":0},"background":{"type":"string","enum":["transparent","white"]},"reducedMotion":{"type":"boolean","description":"Override the document's reduced-motion preference for this export."}},"required":["rootId","format"]}}"#,
-     r#"{"name":"export_nodes","description":"Export one or more nodes to base64-encoded image/PDF bytes. format is one of png|jpeg|webp|pdf.","inputSchema":{"type":"object","properties":{"nodeIds":{"type":"array","items":{"type":"string"}},"format":{"type":"string","enum":["png","jpeg","webp","pdf"]},"scale":{"type":"number"}},"required":["nodeIds","format"]}}"#,
-     r#"{"name":"export_deck","description":"Export the active page's boards as a presentation deck in PowerPoint, self-contained HTML, or PDF. Writes a file at outputPath; use export_item/export_nodes for base64 node-level exports.","inputSchema":{"type":"object","properties":{"format":{"type":"string","enum":["pptx","html","pdf"]},"outputPath":{"type":"string","description":"Destination file path for the deck"}},"required":["format","outputPath"]}}"#,
-     r#"{"name":"export_frames","description":"Export every top-level frame on the active page into a directory, one image per frame, using the editor's own file naming.","inputSchema":{"type":"object","properties":{"outputDir":{"type":"string","description":"Destination directory; created if absent"},"format":{"type":"string","enum":["png","jpeg","webp"],"default":"png"}},"required":["outputDir"]}}"#,
-```
-
-**File**: `crates/op-cli/src/cli_export_tests.rs` (modified, +31/-0)
-```diff
-@@ -364,3 +364,34 @@ fn motion_export_can_inherit_or_override_the_document_preference() {
-         );
-     }
- }
+ [[package]]
+@@ -1788,7 +1788,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
+ dependencies = [
+  "libc",
+- "windows-sys 0.52.0",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+@@ -1976,9 +1976,9 @@ checksum = "aa9a19cbb55df58761df49b23516a86d432839add4af60fc256da840f66ed35b"
+ 
+ [[package]]
+ name = "form_urlencoded"
+-version = "1.2.2"
++version = "1.2.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
++checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
+ dependencies = [
+  "percent-encoding",
+ ]
+@@ -2411,9 +2411,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "heapless"
+-version = "0.8.0"
++version = "0.9.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "0bfb9eb618601c89945a70e254898da93b13be0388091d42117462b265bb3fad"
++checksum = "411fdef4df93751117bd9ef8caa0e7f99c65dafec5bd84313eb8e2fdd75e32f2"
+ dependencies = [
+  "hash32",
+  "stable_deref_trait",
+@@ -3668,7 +3668,7 @@ version = "0.50.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "7957b9740744892f114936ab4a57b3f487491bbeafaf8083688b16841a4240e5"
+ dependencies = [
+- "windows-sys 0.59.0",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+@@ -5175,6 +5175,15 @@ dependencies = [
+  "libredox",
+ ]
+ 
++[[package]]
++name = "ordered-float"
++version = "5.5.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "7f59006ce1e204c30956638535b74d317bca99477b9356dfaec54c37f6f600ab"
++dependencies = [
++ "num-traits",
++]
 +
-+#[test]
-+fn lottie_export_uses_the_motion_flags_and_json_destination() {
-+    let parsed = parse_args(&args(&[
-+        "export",
-+        "--item",
-+        "board",
-+        "--output",
-+        "board.json",
-+        "--format",
-+        "lottie",
-+        "--fps",
-+        "24",
-+        "--duration-ms",
-+        "5000",
-+    ]))
-+    .unwrap();
-+    let Command::Export {
-+        format,
-+        output,
-+        motion: Some(motion),
-+        ..
-+    } = parsed.command
-+    else {
-+        panic!("expected Lottie export");
-+    };
-+    assert_eq!(format, "lottie");
-+    assert_eq!(output, "board.json");
-+    assert_eq!(motion.arguments()["fps"], serde_json::json!(24));
-+    assert_eq!(motion.arguments()["durationMs"], serde_json::json!(5000));
-+}
+ [[package]]
+ name = "ordered-stream"
+ version = "0.2.0"
+@@ -5192,7 +5201,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "7d8fae84b431384b68627d0f9b3b1245fcf9f46f6c0e3dc902e9dce64edd1967"
+ dependencies = [
+  "libc",
+- "windows-sys 0.45.0",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+@@ -6064,12 +6073,13 @@ dependencies = [
+ 
+ [[package]]
+ name = "rstar"
+-version = "0.12.2"
++version = "0.14.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "421400d13ccfd26dfa5858199c30a5d76f9c54e0dba7575273025b43c5175dbb"
++checksum = "d95c33d01e9acee7be3363f99e9ef88b1a587186e81e03843fbe39d77d9a0c1f"
+ dependencies = [
+  "heapless",
+  "num-traits",
++ "ordered-float",
+  "smallvec",
+ ]
+ 
+@@ -6111,7 +6121,7 @@ dependencies = [
+  "errno",
+  "libc",
+  "linux-raw-sys 0.12.1",
+- "windows-sys 0.52.0",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+@@ -6169,7 +6179,7 @@ dependencies = [
+  "security-framework 3.7.0",
+  "security-framework-sys",
+  "webpki-root-certs",
+- "windows-sys 0.52.0",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+@@ -6789,7 +6799,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "3a766e1110788c36f4fa1c2b71b387a7815aa65f88ce0229841826633d93723e"
+ dependencies = [
+  "libc",
+- "windows-sys 0.60.2",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+@@ -6827,7 +6837,7 @@ dependencies = [
+  "cfg-if",
+  "libc",
+  "psm",
+- "windows-sys 0.60.2",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+@@ -7025,7 +7035,7 @@ dependencies = [
+  "getrandom 0.4.2",
+  "once_cell",
+  "rustix 1.1.6",
+- "windows-sys 0.52.0",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+@@ -7560,7 +7570,7 @@ checksum = "f2f6fb2847f6742cd76af783a2a2c49e9375d0a111c7bef6f71cd9e738c72d6e"
+ dependencies = [
+  "memoffset",
+  "tempfile",
+- "windows-sys 0.60.2",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+@@ -7634,9 +7644,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "url"
+-version = "2.5.8"
++version = "2.5.9"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
++checksum = "f00cd2407bb42c0ef17be88d4cf020f5cceffd121665bac9b8b9493a369b3b1a"
+ dependencies = [
+  "form_urlencoded",
+  "idna",
+@@ -8118,7 +8128,7 @@ version = "0.1.11"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
+ dependencies = [
+- "windows-sys 0.48.0",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
 ```
 
-**File**: `crates/op-cli/src/export_cli.rs` (modified, +3/-3)
+**File**: `vendor/jian` (modified, +1/-1)
 ```diff
-@@ -41,7 +41,7 @@ impl MotionExportFlags {
- }
- 
- fn motion_flags(flags: &Flags, format: &str) -> Result<Option<MotionExportFlags>, CliError> {
--    let enabled = matches!(format, "gif" | "apng" | "png-seq" | "mp4");
-+    let enabled = matches!(format, "gif" | "apng" | "png-seq" | "mp4" | "lottie");
-     if !enabled {
-         if [
-             "fps",
-@@ -55,7 +55,7 @@ fn motion_flags(flags: &Flags, format: &str) -> Result<Option<MotionExportFlags>
-         .any(|name| flags.contains_key(name))
-         {
-             return Err(CliError::usage(
--                "motion options require gif, apng, png-seq, or mp4 export",
-+                "motion options require gif, apng, png-seq, mp4, or lottie export",
-             ));
-         }
-         return Ok(None);
-@@ -136,7 +136,7 @@ pub(crate) fn map_export(flags: &Flags) -> Result<Command, CliError> {
-     let format = format_flag.or(formats_flag).unwrap_or_else(|| "png".into());
-     if !matches!(
-         format.as_str(),
--        "png" | "jpeg" | "jpg" | "webp" | "pdf" | "gif" | "apng" | "png-seq" | "mp4"
-+        "png" | "jpeg" | "jpg" | "webp" | "pdf" | "gif" | "apng" | "png-seq" | "mp4" | "lottie"
-     ) {
-         return Err(CliError::Usage(format!(
-             "unsupported export format {format:?}"
+@@ -1 +1 @@
+-Subproject commit a588d459a49c1dfb23284147dab8e78cfccb522b
++Subproject commit 7d8163aca071829f589720e42f323dba91d0f4a2
 ```
 
-**File**: `crates/op-cli/src/usage.txt` (modified, +1/-1)
-```diff
-@@ -24,7 +24,7 @@ COMMON COMMANDS:
-                                           export a page, arbitrary node, or the
-                                           current Live Canvas selection; omitting
-                                           --item is equivalent to --selection
--  op export --item ID --output PATH --format gif|apng|png-seq|mp4 [--fps N]
-+  op export --item ID --output PATH --format gif|apng|png-seq|mp4|lottie [--fps N]
-             [--duration-ms N] [--trigger mount|inView|manual] [--clip ID]
-             [--background transparent|white] [--reduced-motion [true|false]]
-                                           export a node's motion (PNG sequence
-```
+---
 
-**File**: `crates/op-editor-core/src/motion_export.rs` (modified, +10/-1)
+### Incident Patch 2: `8c119f40` (2026-11-22)
+**Commit Message**: fix(sdk): check connector plugin files in the selective install smoke
+
+The verifier was ported from op-codex and still required Codex's
+.agents/plugins/marketplace.json, which no connector ships, so every
+connector release stopped before publishing. Require each connector's
+own MCP launcher (and WorkBuddy's marketplace manifest) instead.
+
+**File**: `packages/op-doubao/scripts/verify-selective-install.mjs` (modified, +2/-2)
 ```diff
-@@ -29,17 +29,25 @@ pub enum MotionExportFormat {
-     #[serde(rename = "png-seq")]
-     PngSequence,
-     Mp4,
-+    Lottie,
- }
- 
- impl MotionExportFormat {
--    pub const ALL: [Self; 4] = [Self::Gif, Self::Apng, Self::PngSequence, Self::Mp4];
-+    pub const ALL: [Self; 5] = [
-+        Self::Gif,
-+        Self::Apng,
-+        Self::PngSequence,
-+        Self::Mp4,
-+        Self::Lottie,
-+    ];
- 
-     pub const fn label(self) -> &'static str {
-         match self {
-             Self::Gif => "GIF",
-             Self::Apng => "APNG",
-             Self::PngSequence => "PNG ZIP",
-             Self::Mp4 => "MP4",
-+            Self::Lottie => "Lottie",
-         }
+@@ -59,8 +59,8 @@ async function verifySelection(platform, dependencies, root) {
+       throw new Error(`${platform.id}: expected ${expected}, installed ${installed.join(', ') || 'nothing'}`);
      }
- 
-@@ -53,6 +61,7 @@ impl MotionExportFormat {
-             Self::Apng => "apng",
-             Self::PngSequence => "zip",
-             Self::Mp4 => "mp4",
-+            Self::Lottie => "json",
-         }
+     const installedRoot = await realpath(join(directory, 'node_modules', '@zseven-w', 'doubao-openpencil'));
+-    if (!(await stat(join(installedRoot, '.agents', 'plugins', 'marketplace.json'))).isFile()) {
+-      throw new Error(`${platform.id}: installed root package is missing .agents/plugins/marketplace.json`);
++    if (!(await stat(join(installedRoot, 'plugins', 'openpencil', 'scripts', 'launch-mcp'))).isFile()) {
++      throw new Error(`${platform.id}: installed root package is missing plugins/openpencil/scripts/launch-mcp`);
      }
- }
+     const cli = spawnSync(process.execPath, [join(installedRoot, 'bin', 'doubao-openpencil.mjs'), '--version'], {
+       cwd: directory,
 ```
 
-**File**: `crates/op-editor-ui/src/widgets/canvas_viewport_text.rs` (modified, +1/-1)
+**File**: `packages/op-qoder/scripts/verify-selective-install.mjs` (modified, +2/-2)
 ```diff
-@@ -275,7 +275,7 @@ fn decorate_slice(
- /// translucent bar ("greeking") instead of running the full layout.
- const GREEK_TEXT_MAX_DEVICE_PX: f32 = 3.0;
- 
--pub(crate) fn paint_text_node(
-+pub fn paint_text_node(
-     cx: &mut PaintCx<'_>,
-     node: &SceneNode,
-     world_rect: Rect,
+@@ -59,8 +59,8 @@ async function verifySelection(platform, dependencies, root) {
+       throw new Error(`${platform.id}: expected ${expected}, installed ${installed.join(', ') || 'nothing'}`);
+     }
+     const installedRoot = await realpath(join(directory, 'node_modules', '@zseven-w', 'qoder-openpencil'));
+-    if (!(await stat(join(installedRoot, '.agents', 'plugins', 'marketplace.json'))).isFile()) {
+-      throw new Error(`${platform.id}: installed root package is missing .agents/plugins/marketplace.json`);
++    if (!(await stat(join(installedRoot, 'plugins', 'openpencil', 'scripts', 'launch-mcp'))).isFile()) {
++      throw new Error(`${platform.id}: installed root package is missing plugins/openpencil/scripts/launch-mcp`);
+     }
+     const cli = spawnSync(process.execPath, [join(installedRoot, 'bin', 'qoder-openpencil.mjs'), '--version'], {
+       cwd: directory,
 ```
 
-**File**: `crates/op-editor-ui/src/widgets/export_dialog_motion.rs` (modified, +20/-0)
+**File**: `packages/op-qwenwork/scripts/verify-selective-install.mjs` (modified, +2/-2)
 ```diff
-@@ -455,4 +455,24 @@ mod tests {
-             }
-         }
+@@ -59,8 +59,8 @@ async function verifySelection(platform, dependencies, root) {
+       throw new Error(`${platform.id}: expected ${expected}, installed ${installed.join(', ') || 'nothing'}`);
      }
-+    #[test]
-+    fn lottie_is_selectable_and_fits_the_motion_format_row() {
-+        let mut state = state();
-+        let dialog = ExportDialog::for_editor(&state, 1000.0, 900.0);
-+        let (rect, hit) = dialog
-+            .motion_formats()
-+            .find(|(_, hit)| *hit == ExportDialogHit::MotionFormat(MotionExportFormat::Lottie))
-+            .unwrap();
-+        assert!(rect.origin.x + rect.size.x <= dialog.rect.origin.x + dialog.rect.size.x - PAD);
-+        assert!(dialog.motion_hit_enabled(hit, &state.editor_ui));
-+        select(&mut state, hit);
-+        let choices = motion_export_choices(&state);
-+        let request = state
-+            .editor_ui
-+            .motion_export
-+            .request(&choices, 1.0)
-+            .unwrap();
-+        assert_eq!(request.format, MotionExportFormat::Lottie);
-+        assert_eq!(request.format.extension(), "json");
+     const installedRoot = await realpath(join(directory, 'node_modules', '@zseven-w', 'qwenwork-openpencil'));
+-    if (!(await stat(join(installedRoot, '.agents', 'plugins', 'marketplace.json'))).isFile()) {
+-      throw new Error(`${platform.id}: installed root package is missing .agents/plugins/marketplace.json`);
++    if (!(await stat(join(installedRoot, 'plugins', 'openpencil', 'scripts', 'launch-mcp'))).isFile()) {
++      throw new Error(`${platform.id}: installed root package is missing plugins/openpencil/scripts/launch-mcp`);
+     }
+     const cli = spawnSync(process.execPath, [join(installedRoot, 'bin', 'qwenwork-openpencil.mjs'), '--version'], {
+       cwd: directory,
+```
+
+**File**: `packages/op-workbuddy/scripts/verify-selective-install.mjs` (modified, +5/-2)
+```diff
+@@ -59,8 +59,11 @@ async function verifySelection(platform, dependencies, root) {
+       throw new Error(`${platform.id}: expected ${expected}, installed ${installed.join(', ') || 'nothing'}`);
+     }
+     const installedRoot = await realpath(join(directory, 'node_modules', '@zseven-w', 'workbuddy-openpencil'));
+-    if (!(await stat(join(installedRoot, '.agents', 'plugins', 'marketplace.json'))).isFile()) {
+-      throw new Error(`${platform.id}: installed root package is missing .agents/plugins/marketplace.json`);
++    if (!(await stat(join(installedRoot, 'plugins', 'openpencil', 'scripts', 'launch-mcp'))).isFile()) {
++      throw new Error(`${platform.id}: installed root package is missing plugins/openpencil/scripts/launch-mcp`);
 +    }
++    if (!(await stat(join(installedRoot, '.workbuddy-plugin', 'marketplace.json'))).isFile()) {
++      throw new Error(`${platform.id}: installed root package is missing .workbuddy-plugin/marketplace.json`);
+     }
+     const cli = spawnSync(process.execPath, [join(installedRoot, 'bin', 'workbuddy-openpencil.mjs'), '--version'], {
+       cwd: directory,
+```
+
+---
+
+### Incident Patch 3: `4d8ce07b` (2026-11-22)
+**Commit Message**: fix(renderer): keep faded-in leaves recoverable across preview and export
+
+Leaves authored at opacity 0 now carry that alpha on their composite
+layer instead of baking it into paint, so motion can fade them in; the
+painter skips a zero layer, so they cost nothing until visible. jian
+rebakes leaf paint for every other value. The Preview focus caret and
+Lottie export read the effective (painted) alpha, and the preview tests
+assert it.
+
+**File**: `crates/op-pen-loader/src/layout_scene.rs` (modified, +6/-2)
+```diff
+@@ -214,8 +214,12 @@ pub(crate) fn node_payload_to_scene(
+     // independently. Non-Normal node blending already requires the same
+     // isolation layer, so it carries local opacity there even for leaves. Keep
+     // ordinary leaves on the direct-paint path to avoid allocating a layer.
+-    let isolates_output =
+-        blend_mode != ImageBlendMode::Normal || (!node.children.is_empty() && local_opacity < 1.0);
++    // A fully transparent leaf is the exception: baking alpha 0 into its paint
++    // would leave motion nothing to fade in, while a zero composite layer is
++    // skipped by the painter and costs nothing until it becomes visible.
++    let isolates_output = blend_mode != ImageBlendMode::Normal
++        || (!node.children.is_empty() && local_opacity < 1.0)
++        || (node.children.is_empty() && local_opacity <= 0.0);
+     let paint_opacity = if isolates_output {
+         inherited_paint_opacity
+     } else {
+```
+
+**File**: `crates/op-preview-core/src/session_paint.rs` (modified, +5/-1)
+```diff
+@@ -717,5 +717,9 @@ fn widget_field_foreground(node: &SceneNode) -> Color {
+     );
+     // Scene fill/stroke already carry direct-paint opacity; the contrast-derived
+     // caret does not, so fold it exactly once through the shared widget policy.
+-    Color::from_jian(with_visual_opacity(visual.foreground, node.opacity))
++    // Effective opacity also covers a leaf held transparent on its layer.
++    Color::from_jian(with_visual_opacity(
++        visual.foreground,
++        node.effective_opacity(),
++    ))
  }
+```
+
+**File**: `crates/op-preview-core/src/tests_animation.rs` (modified, +2/-2)
+```diff
+@@ -36,7 +36,7 @@ fn opacity(session: &PreviewSession) -> f32 {
+         .active_page()
+         .and_then(|page| page.find("box"))
+         .expect("box")
+-        .opacity
++        .effective_opacity()
+ }
+ 
+ fn tap(session: &mut PreviewSession) {
+@@ -382,7 +382,7 @@ fn every_builtin_property_applies_through_r6_invalidation() {
+         .active_page()
+         .and_then(|page| page.find("box"))
+         .expect("box");
+-    assert!((box_node.opacity - 0.5).abs() < 0.001);
++    assert!((box_node.effective_opacity() - 0.5).abs() < 0.001);
+     assert!((box_node.rotation - std::f32::consts::FRAC_PI_4).abs() < 0.001);
+     assert_eq!(box_node.corner_radius, 5.0);
+     assert_eq!(
+```
+
+**File**: `crates/op-preview-core/src/tests_binding_overlay.rs` (modified, +6/-6)
+```diff
+@@ -266,7 +266,7 @@ fn non_content_bindings_apply_to_the_preview_scene() {
+     let scene = session.preview_scene_for_test();
+     let card = find(&scene, "card");
+     assert!(card.hidden, "visible=false removes the node from hit/paint");
+-    assert_eq!(card.opacity, 0.5);
++    assert_eq!(card.effective_opacity(), 0.5);
+     let fill = card.fill.expect("bound fill");
+     assert_eq!((fill.r, fill.g, fill.b), (1.0, 0.0, 0.0));
+     assert_eq!(card.bounds.origin.x, 24.0);
+@@ -545,13 +545,13 @@ fn scroll_phase_updates_namespace_and_moves_only_unpinned_content() {
+         "ordinary content moves with the scroll offset"
+     );
+     assert!(
+-        body.opacity > 0.0 && body.opacity < 1.0,
++        body.effective_opacity() > 0.0 && body.effective_opacity() < 1.0,
+         "$scroll.progress drives the PaintOnly binding"
+     );
+     assert!(
+-        (body.opacity - (1.0 / 3.0)).abs() < 0.01,
++        (body.effective_opacity() - (1.0 / 3.0)).abs() < 0.01,
+         "offset=60 and maxOffset=180 produce progress=1/3, got {}",
+-        body.opacity
++        body.effective_opacity()
+     );
+     assert_eq!(
+         session
+@@ -575,7 +575,7 @@ fn scroll_phase_updates_namespace_and_moves_only_unpinned_content() {
+         "Ended changes direction to none"
+     );
+     assert_eq!(
+-        find(&session.preview_scene_for_test(), "body").opacity,
++        find(&session.preview_scene_for_test(), "body").effective_opacity(),
+         0.0,
+         "ScrollPhase::Ended is consumed by the $scroll producer"
+     );
+@@ -614,7 +614,7 @@ fn scroll_binding_rejects_relayout_and_warns_once_without_ancestor() {
+         "a top-level binding is never orphaned: it binds to the page scroll"
+     );
+     assert_eq!(
+-        find(&session.preview_scene_for_test(), "orphan").opacity,
++        find(&session.preview_scene_for_test(), "orphan").effective_opacity(),
+         0.0,
+         "an unscrolled page evaluates $scroll.progress to 0"
+     );
+```
+
+**File**: `crates/op-preview-core/src/tests_generated_controls.rs` (modified, +1/-1)
+```diff
+@@ -11,7 +11,7 @@ fn scene_snapshot(scene: &LayoutScene) -> BTreeMap<String, Value> {
+         for node in nodes {
+             out.insert(node.id.clone(), json!({
+                 "text":node.text, "fill":format!("{:?}",node.fill),
+-                "opacity":node.opacity, "hidden":node.hidden, "rotation":node.rotation,
++                "opacity":node.effective_opacity(), "hidden":node.hidden, "rotation":node.rotation,
+                 "rect":[node.bounds.origin.x,node.bounds.origin.y,node.bounds.size.x,node.bounds.size.y]
+             }));
+             collect(&node.children, out);
+```
+
+**File**: `crates/op-preview-core/src/tests_motion.rs` (modified, +1/-1)
+```diff
+@@ -58,7 +58,7 @@ fn color(session: &PreviewSession, id: &str) -> op_editor_ui::Color {
+ }
+ 
+ fn opacity(session: &PreviewSession, id: &str) -> f32 {
+-    node(session, id).opacity
++    node(session, id).effective_opacity()
+ }
+ 
+ #[test]
+```
+
+**File**: `crates/op-preview-core/src/tests_motion_golden.rs` (modified, +1/-1)
+```diff
+@@ -603,7 +603,7 @@ fn node_json(node: &SceneNode, out: &mut serde_json::Map<String, Value>) {
+                 "y": node.bounds.origin.y,
+                 "w": node.bounds.size.x,
+                 "h": node.bounds.size.y,
+-                "opacity": node.opacity,
++                "opacity": node.effective_opacity(),
+                 "fill": node.fill.map(color_json),
+                 "stroke": node.stroke.as_ref().map(|stroke| color_json(stroke.color)),
+                 "cornerRadius": node.corner_radius,
+```
+
+**File**: `crates/op-preview-core/src/tests_motion_viewport.rs` (modified, +1/-1)
+```diff
+@@ -72,7 +72,7 @@ fn opacity(session: &PreviewSession, id: &str) -> f32 {
+         .active_page()
+         .and_then(|page| page.find(id))
+         .expect("scene node")
+-        .opacity
++        .effective_opacity()
+ }
+ 
+ fn assert_mid(value: f32, what: &str) {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #295** (closed): chore(release): update Nix release manifest for v0.8.6 (@Kayshen-X)
+- **PR #294** (closed): docs(readme): sync README.zh.md with README.md (@PerryLink)
 - **PR #293** (2026-11-20): fix(agent): find a brief's opening sentence at any sentence boundary (@wilderchavezl)
 - **PR #292** (2026-11-20): fix(renderer): reject cpu frame strides whose buffer size overflows (@wilderchavezl)
 - **PR #291** (2026-11-20): test(renderer): read gpu probe pixels in bottom-left gl rows (@wilderchavezl)
 - **PR #290** (2026-11-20): test(collab): write trust fixtures with explicit 0644 permissions (@wilderchavezl)
-- **PR #286** (2026-11-17): fix(desktop): fall back to visual-agnostic gl configs on nvidia egl (@wilderchavezl)
-- **PR #282** (2026-11-08): fix(mcp): accept fractional geometry in update_node and U() updates (@1AbdullahButt)
 
 ---
 
@@ -2252,61 +2275,77 @@ Export sampled motion and outlined text through the editor, CLI and MCP. Embed r
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test(collab): write trust fixtures with explicit 0644 permissions
+## X. deps): bump url to 2.5.9 and heapless to 0.9.4
 
 **RULE**:
-When implementing operations in `crates/op-collab-relay-locator-server/src/production/production_check_tests.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ZSeven-W/openpencil. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ZSeven-W/openpencil. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1c7f0448`: test(collab): write trust fixtures with explicit 0644 permissions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e094beac`: deps): bump url to 2.5.9 and heapless to 0.9.4. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/op-collab-relay-locator-server/src/production/production_check_tests.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    time::{Duration, Instant},
-    write_public_fixture(&policy_path, policy_body);
-    listener
-        .set_nonblocking(true)
-        .expect("HSM listener non-blocking");
-    let deadline = Instant::now() + Duration::from_secs(10);
-    let mut stream = loop {
-        match listener.accept() {
-            Ok((stream, _)) => break stream,
-            Err(error)
-                if error.kind() == std::io::ErrorKind::WouldBlock && Instant::now() < deadline =>
-            {
-                thread::sleep(Duration::from_millis(10));
-            }
-            Err(_) => return,
-        }
-    };
-    stream.set_nonblocking(false).expect("HSM stream blocking");
-    write_public_fixture(path, &serde_json::to_vec(&body).expect("public keys JSON"));
-}
+ "windows-sys 0.61.2",
+ "windows-sys 0.61.2",
+version = "1.2.3"
+checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
+version = "0.9.4"
+checksum = "411fdef4df93751117bd9ef8caa0e7f99c65dafec5bd84313eb8e2fdd75e32f2"
+ "windows-sys 0.61.2",
+[[package]]
+name = "ordered-float"
+version = "5.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7f59006ce1e204c30956638535b74d317bca99477b9356dfaec54c37f6f600ab"
+dependencies = [
+ "num-traits",
+]
 
-fn write_public_fixture(path: &Path, body: &[u8]) {
-    use std::os::unix::fs::PermissionsExt as _;
-
-    std::fs::write(path, body).expect("public fixture file");
-    std::fs::set_permissions(path, std::fs::Permissions::from_mode(0o644))
-        .expect("public fixture permissions");
+ "windows-sys 0.61.2",
+version = "0.14.0"
+checksum = "d95c33d01e9acee7be3363f99e9ef88b1a587186e81e03843fbe39d77d9a0c1f"
+ "ordered-float",
+ "windows-sys 0.61.2",
+ "windows-sys 0.61.2",
+ "windows-sys 0.61.2",
+ "windows-sys 0.61.2",
+ "windows-sys 0.61.2",
+ "windows-sys 0.61.2",
+version = "2.5.9"
+checksum = "f00cd2407bb42c0ef17be88d4cf020f5cceffd121665bac9b8b9493a369b3b1a"
+ "windows-sys 0.61.2",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    time::Duration,
-    std::fs::write(&policy_path, policy_body).expect("policy file");
-    let (mut stream, _) = listener.accept().expect("HSM accept");
-    std::fs::write(path, serde_json::to_vec(&body).expect("public keys JSON"))
-        .expect("public keys file");
+ "windows-sys 0.59.0",
+ "windows-sys 0.52.0",
+version = "1.2.2"
+checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
+version = "0.8.0"
+checksum = "0bfb9eb618601c89945a70e254898da93b13be0388091d42117462b265bb3fad"
+ "windows-sys 0.59.0",
+ "windows-sys 0.45.0",
+version = "0.12.2"
+checksum = "421400d13ccfd26dfa5858199c30a5d76f9c54e0dba7575273025b43c5175dbb"
+ "windows-sys 0.52.0",
+ "windows-sys 0.52.0",
+ "windows-sys 0.60.2",
+ "windows-sys 0.60.2",
+ "windows-sys 0.52.0",
+ "windows-sys 0.60.2",
+version = "2.5.8"
+checksum = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
+ "windows-sys 0.48.0",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1c7f0448` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e094beac` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

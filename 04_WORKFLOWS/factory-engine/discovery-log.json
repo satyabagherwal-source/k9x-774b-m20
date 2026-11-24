@@ -22165,5 +22165,17 @@
     "qualityScore": 1733,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-24T16:51:42.000Z"
+  },
+  {
+    "name": "Aleph-Alpha/Kolibri-1.1",
+    "fullName": "Aleph-Alpha/Kolibri-1.1",
+    "url": "https://huggingface.co/Aleph-Alpha/Kolibri-1.1",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: Aleph-Alpha/Kolibri-1.1 (84 likes, 272 downloads)",
+    "likes": 84,
+    "downloads": 272,
+    "qualityScore": 1112,
+    "discoveredAt": "2026-11-24T17:11:16.223Z"
   }
 ]

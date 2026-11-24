@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T17:03:23.014Z",
+  "last_updated": "2026-11-24T17:14:30.706Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-24T16:36:54.164Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-24T16:54:53.312Z",
+      "processed_at": "2026-11-24T17:14:29.418Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3603,8 +3603,8 @@
       "staged_for_review": 0
     },
     "hf-ovhaillm-olala-v1.0-mini-7a1b-learnings.md": {
-      "processed_at": "2026-11-20T16:58:11.265Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-24T17:14:28.799Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "syntax-tree-hast-util-to-html-learnings.md": {
@@ -3836,9 +3836,14 @@
       "processed_at": "2026-11-24T16:54:51.360Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-aleph-alpha-kolibri-1.1-learnings.md": {
+      "processed_at": "2026-11-24T17:14:28.111Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 3852,
-  "total_canonical_promoted": 511,
-  "total_staged_for_review": 2924
+  "total_dossiers_evaluated": 3855,
+  "total_canonical_promoted": 512,
+  "total_staged_for_review": 2925
 }

@@ -4,22 +4,22 @@
 {
   "source_repository": "rustls/rustls",
   "source_url": "https://github.com/rustls/rustls",
-  "source_version": "4ce60f1a",
+  "source_version": "e11f9809",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-22T14:40:45.821Z",
+  "timestamp": "2026-11-24T17:13:46.354Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-rustls-rustls",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [rustls/rustls](https://github.com/rustls/rustls) (Revision: `4ce60f1a`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-22T14:40:45.821Z`  
+> **Provenance**: Harvested from [rustls/rustls](https://github.com/rustls/rustls) (Revision: `e11f9809`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-24T17:13:46.354Z`  
 > **Learning ID**: `learn-github-rustls-rustls`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `rustls/rustls` (Commit: `4ce60f1a`)
+- **Target Repository**: `rustls/rustls` (Commit: `e11f9809`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T14:40:44.544Z  
+> **Harvest Timestamp**: 2026-11-24T17:13:44.604Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A modern TLS library in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7780 stars
+- **Stars / Engagement**: 7793 stars
 
 ---
 
@@ -2259,17 +2259,17 @@ fn exec(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3450** (2026-11-22): **Take semver-compatible dependency updates**
-  *Symptoms*: Notably updates url past https://rustsec.org/advisories/RUSTSEC-2026-0592.
+- **Issue #3454** (2026-11-24): **client: reject invalid 0 early data max for QUIC**
+  *Symptoms*: Fixes #3451.  (Backport but no immediate release?)
   **Post-Mortem & Fix Analysis**:
-  >   # Benchmark results  ## Instruction counts    #### Significant differences    ⚠️ There are significant instruction count differences  <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_tickets_1.3_no_crypto_server | 1311136 | 1270936 | ✅ [-40200](https://bench.rustls.dev/comparisons/10bb7f9c711278bf11b0f4985313f97fd2e42df1:abfaa2cb263ef51a6972652d6551a8fc33897008/cachegrind-diff/handshake_tickets_1.3_no_crypto_server) (-3.07%) | 0.20% | | handshake_session_id_1.3_no_crypto_server | 1361416 | 1321156 | ✅ [-40260](https://bench.rustls.dev/comparisons/10bb7f9c711278bf11b0f4985313f97fd2e42df1:abfaa2cb263ef51a6972652d6551a8fc33897008/cachegrind-diff/handshake_session_id_1.3_no_crypto_server) (-2.96%) | 0.20% | | handshake_no_resume_1.3_no_crypto_server | 42561 | 41493 | ✅ [-1068](https://bench.rustls.dev/comparisons/10bb7f9c711278bf11b0f4985313f97fd2e42df1:abfaa2cb263ef51
-  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3450?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 96.10%. Comparing base ([`10bb7f9`](https://app.codecov.io/gh/rustls/rustls/commit/10bb7f9c711278bf11b0f4985313f97fd2e42df1?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`abfaa2c`](https://app.codecov.io/gh/rustls/rustls/commit/abfaa2cb263ef51a6972652d6551a8fc33897008?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main    #3450   +/-   ## ======================================= 
+  >   # Benchmark results  ## Instruction counts    #### Significant differences    ⚠️ There are significant instruction count differences  <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_rsa_chacha_client | 2381073 | 2368021 | ✅ [-13052](https://bench.rustls.dev/comparisons/a40acf9d3bcc413a0860f174ef71f049f20be7d9:bbe92daa6e57e7ff38e5b4292b846721db68efc3/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_rsa_chacha_client) (-0.55%) | 0.46% | | handshake_no_resume_aws_lc_rs_1.3_ecdsap256_chacha_server | 1339456 | 1332968 | ✅ [-6488](https://bench.rustls.dev/comparisons/a40acf9d3bcc413a0860f174ef71f049f20be7d9:bbe92daa6e57e7ff38e5b4292b846721db68efc3/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap256_chacha_server) (-0.48%) | 0.20% |   </details>    #### Other differences    <details> <summary>Click to expand</summary>  | Scen
+  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3454?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 96.11%. Comparing base ([`a40acf9`](https://app.codecov.io/gh/rustls/rustls/commit/a40acf9d3bcc413a0860f174ef71f049f20be7d9?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`bbe92da`](https://app.codecov.io/gh/rustls/rustls/commit/bbe92daa6e57e7ff38e5b4292b846721db68efc3?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main    #3454   +/-   ## ======================================= 
 
-- **Issue #3449** (2026-11-21): **Fix typos in test and example comments**
-  *Symptoms*: Fix typos and grammar in test/example comments: "A ECH" -> "An ECH", "don't sent" -> "don't send", "don't do complete" -> "don't complete", "Maybe be used" -> "May be used" (matching sibling flag docs), and a `set_ver` -> `set_var` typo in a comment (the test uses std::env::set_var). Comment text only, no behavior change.  AI assistance: I used an AI tool to help locate these typos. I reviewed all changes myself. 
+- **Issue #3453** (2026-11-23): **Remove meaningless benchmark**
+  *Symptoms*: This was benchmarking how fast a `VecInput::read` could report an IO error.  That is both not interesting and also not related to rustls-ring.
   **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3449?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 96.10%. Comparing base ([`796b8d3`](https://app.codecov.io/gh/rustls/rustls/commit/796b8d3b08481e7f5119c0b3d0b640586c45f0d8?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`c8dee27`](https://app.codecov.io/gh/rustls/rustls/commit/c8dee279b8f8fc3dd9f3a03d3d0585214793d4b1?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)). :warning: Report is 2 commits behind head on main.  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main    #3449 
-  >   # Benchmark results  ## Instruction counts    #### Significant differences    _There are no significant instruction count differences_    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_rsa_aes_server | 10922753 | 10980622 | [57869](https://bench.rustls.dev/comparisons/796b8d3b08481e7f5119c0b3d0b640586c45f0d8:c8dee279b8f8fc3dd9f3a03d3d0585214793d4b1/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_rsa_aes_server) (0.53%) | 1.04% | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_aes_client | 8768128 | 8747945 | [-20183](https://bench.rustls.dev/comparisons/796b8d3b08481e7f5119c0b3d0b640586c45f0d8:c8dee279b8f8fc3dd9f3a03d3d0585214793d4b1/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap384_aes_client) (-0.23%) | 0.89% | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_chacha_client | 8764476 | 8783831 | [193
+  >   # Benchmark results  ## Instruction counts    #### Significant differences    _There are no significant instruction count differences_    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_rsa_aes_client | 2372926 | 2360230 | [-12696](https://bench.rustls.dev/comparisons/8b0a810da770acbae47fb7d4aaf1ca41bdd7d3d1:74b3a6960387266ebbddec2fc23aa4d065b855e5/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_rsa_aes_client) (-0.54%) | 2.17% | | handshake_no_resume_aws_lc_rs_1.3_ecdsap384_aes_client | 8781746 | 8740315 | [-41431](https://bench.rustls.dev/comparisons/8b0a810da770acbae47fb7d4aaf1ca41bdd7d3d1:74b3a6960387266ebbddec2fc23aa4d065b855e5/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap384_aes_client) (-0.47%) | 0.82% | | handshake_no_resume_aws_lc_rs_1.3_rsa_chacha_server | 10912370 | 10943196 | [30826](
+  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3453?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 96.10%. Comparing base ([`8b0a810`](https://app.codecov.io/gh/rustls/rustls/commit/8b0a810da770acbae47fb7d4aaf1ca41bdd7d3d1?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`74b3a69`](https://app.codecov.io/gh/rustls/rustls/commit/74b3a6960387266ebbddec2fc23aa4d065b855e5?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main    #3453   +/-   ## ======================================= 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2286,51 +2286,132 @@ fn exec(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4ce60f1a` (2026-11-20)
-**Commit Message**: doc: fix objective documentation defects
+### Incident Patch 1: `e11f9809` (2026-11-24)
+**Commit Message**: client: reject invalid 0 early data max for QUIC
 
-Signed-off-by: Chareonwit Kunna <[REDACTED_EMAIL]>
-
-**File**: `SECURITY.md` (modified, +1/-1)
+**File**: `rustls-test/src/lib.rs` (modified, +1/-0)
 ```diff
-@@ -72,7 +72,7 @@ Make sure to disclose any use of AI assistance upfront.
- We'll then:
+@@ -2471,6 +2471,7 @@ pub mod encoding {
  
- - Prepare a fix and regression tests.
--- Backport the fix and make a patch release for most recent release.
-+- Backport the fix and make a patch release for the most recent release.
- - Submit an advisory to [rustsec/advisory-db](https://github.com/RustSec/advisory-db).
- - Refer to the advisory on the main README.md and release notes.
- 
+         pub const ELLIPTIC_CURVES: u16 = 0x000a;
+         pub const SIGNATURE_ALGORITHMS: u16 = 0x000d;
++        pub const EARLY_DATA: u16 = 0x002a;
+         pub const SUPPORTED_VERSIONS: u16 = 0x002b;
+         pub const KEY_SHARE: u16 = 0x0033;
+         pub const TRANSPORT_PARAMETERS: u16 = 0x0039;
 ```
 
----
-
-### Incident Patch 2: `e5d0d099` (2026-11-20)
-**Commit Message**: doc: fix objective documentation defects
-
-Signed-off-by: Chareonwit Kunna <[REDACTED_EMAIL]>
-
-**File**: `CONTRIBUTING.md` (modified, +1/-1)
+**File**: `rustls-test/tests/api/quic.rs` (modified, +46/-3)
 ```diff
-@@ -388,7 +388,7 @@ unnecessary. The one exception to this is when the symbol name is overly
- generic, or easily confused between different crates. In this case we prefer to
- import the symbol name under an alias, or if the parent module name is short,
- using a one-level qualified path. E.g. for a crate with a local `Error` type,
--prefer to `import std::error::Error as StdError`.
-+prefer to `use std::error::Error as StdError`.
+@@ -7,7 +7,7 @@ use std::sync::Arc;
  
- ### Exports
+ use rustls::client::Resumption;
+ use rustls::crypto::{CipherSuite, CryptoProvider};
+-use rustls::enums::ProtocolVersion;
++use rustls::enums::{HandshakeType, ProtocolVersion};
+ use rustls::error::{
+     AlertDescription, ApiMisuse, CertificateError, Error, InvalidMessage, PeerIncompatible,
+     PeerMisbehaved,
+@@ -709,7 +709,7 @@ fn test_quic_acceptor_read_error_is_terminal() {
+     let err = needs_input
+         .process(
+             &mut SliceInput::new(&mut encoding::handshake_framing(
+-                rustls::enums::HandshakeType::ClientHello,
++                HandshakeType::ClientHello,
+                 vec![0x00; 32],
+             )),
+             &mut vec![],
+@@ -817,7 +817,7 @@ fn test_quic_read_deframer_failure() {
  
+     let err = server
+         .read_hs(&mut SliceInput::new(&mut encoding::handshake_framing(
+-            rustls::enums::HandshakeType::ClientHello,
++            HandshakeType::ClientHello,
+             vec![0x00; 32],
+         )))
+         .err()
+@@ -1536,6 +1536,49 @@ fn server_rejects_client_choosing_non_quic_suite() {
+     );
+ }
+ 
++#[test]
++fn quic_client_rejects_ticket_with_invalid_max_early_data_size() {
++    let provider = provider::DEFAULT_TLS13_PROVIDER;
++    let client_config = Arc::new(make_client_config(KeyType::default(), &provider));
++    let server_config = Arc::new(make_server_config(KeyType::default(), &provider));
++
++    for (max_early_data_size, expected) in [
++        (0xffff_ffff_u32, Ok(())),
++        (0, Err(PeerMisbehaved::InvalidMaxEarlyDataSize.into())),
++        (16_384, Err(PeerMisbehaved::InvalidMaxEarlyDataSize.into())),
++    ] {
++        let mut client = client_config
++            .connect(server_name("localhost"))
++            .build_quic(quic::Version::V1, b"client params".to_vec())
++            .unwrap();
++        let mut server = Connection::new_quic(
++            server_config.clone(),
++            quic::Version::V1,
++            b"server params".to_vec(),
++        )
++        .unwrap();
++        do_quic_handshake(&mut client, &mut server);
++
++        let mut body = vec![];
++        body.extend_from_slice(&3600u32.to_be_bytes()); // ticket_lifetime
++        body.extend_from_slice(&[0; 4]); // ticket_age_add
++        body.extend(encoding::len_u8(vec![0])); // ticket_nonce
++        body.extend(encoding::len_u16(vec![0x12; 32])); // ticket
++        let mut exts = vec![];
++        exts.extend_from_slice(&encoding::Extension::EARLY_DATA.to_be_bytes());
++        exts.extend_from_slice(&4u16.to_be_bytes());
++        exts.extend_from_slice(&max_early_data_size.to_be_bytes());
++        body.extend(encoding::len_u16(exts));
++        let mut ticket = encoding::handshake_framing(HandshakeType::NewSessionTicket, body);
++
++        assert_eq!(
++            client.read_hs(&mut SliceInput::new(&mut ticket)),
++            expected,
++            "max_early_data_size {max_early_data_size:#x}"
++        );
++    }
++}
++
+ // A session stored from a TCP connection may name a cipher suite that cannot be
+ // used for QUIC.  Such a session is simply not resumable on a QUIC connection:
+ // it must not prevent the connection being made at all.
+```
+
+**File**: `rustls/src/client/tls13.rs` (modified, +3/-2)
+```diff
+@@ -1607,15 +1607,16 @@ pub(super) struct ExpectTraffic {
+ 
+ impl ExpectTraffic {
+     fn handle_new_ticket_impl(&self, nst: &NewSessionTicketPayloadTls13) -> Result<(), Error> {
++        // RFC 9001 section 4.6.1: the only valid `max_early_data_size` is 0xffffffff.
+         if self.key_schedule_recv.is_quic() {
+             if let Some(sz) = nst.extensions.max_early_data_size {
+-                if sz != 0 && sz != 0xffff_ffff {
++                if sz != 0xffff_ffff {
+                     return Err(PeerMisbehaved::InvalidMaxEarlyDataSize.into());
+                 }
+             }
+         }
+ 
+-        // RFC 9846 section 4.6.1: a zero `ticket_lifetime` means the ticket
++        // RFC 9846 section 4.7.1: a zero `ticket_lifetime` means the ticket
+         // should be discarded immediately.
+         if nst.lifetime.is_zero() {
+             return Ok(());
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3454** (2026-11-24): client: reject invalid 0 early data max for QUIC (@djc)
+- **PR #3453** (2026-11-23): Remove meaningless benchmark (@ctz)
+- **PR #3452** (2026-11-23): client: keep the original epoch of a resumed TLS1.2 session (@ctz)
 - **PR #3450** (2026-11-22): Take semver-compatible dependency updates (@djc)
 - **PR #3449** (2026-11-21): Fix typos in test and example comments (@CharoenwitKunna)
 - **PR #3448** (2026-11-21): Fix doubled word and article in doc comments (@CharoenwitKunna)
-- **PR #3447** (2026-11-22): Fix Rust keyword and article in docs (@CharoenwitKunna)
-- **PR #3446** (2026-11-20): Fix grammar in post-quantum README (@CharoenwitKunna)
-- **PR #3442** (2026-11-21): ci: allow warnings from nightly clippy (@djc)
 
 ---
 
@@ -2350,31 +2431,31 @@ Signed-off-by: Chareonwit Kunna <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. doc: fix objective documentation defects
+## X. client: reject invalid 0 early data max for QUIC
 
 **RULE**:
-When implementing operations in `SECURITY.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rustls-test/src/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4ce60f1a`: doc: fix objective documentation defects. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e11f9809`: client: reject invalid 0 early data max for QUIC. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `SECURITY.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rustls-test/src/lib.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Backport the fix and make a patch release for the most recent release.
+        pub const EARLY_DATA: u16 = 0x002a;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-- Backport the fix and make a patch release for most recent release.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4ce60f1a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e11f9809` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

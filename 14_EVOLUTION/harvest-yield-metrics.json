@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T17:03:17.037Z",
-  "total_cycles_completed": 12111,
-  "total_learnings_persisted": 12111,
-  "total_rules_promoted": 11174,
+  "last_updated": "2026-11-24T17:13:49.244Z",
+  "total_cycles_completed": 12116,
+  "total_learnings_persisted": 12116,
+  "total_rules_promoted": 11177,
   "history": [
-    {
-      "timestamp": "2026-11-24T00:31:36.744Z",
-      "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T00:31:38.664Z",
-      "repository": "pola-rs/polars",
-      "learningId": "learn-github-pola-rs-polars",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T00:31:44.625Z",
-      "repository": "sweetpad-dev/sweetpad",
-      "learningId": "learn-github-sweetpad-dev-sweetpad",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T00:31:51.200Z",
-      "repository": "weaviate/weaviate",
-      "learningId": "learn-github-weaviate-weaviate",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T00:39:58.182Z",
-      "repository": "datalab-to/indra-ocr",
-      "learningId": "learn-huggingface-datalab-to-indra-ocr",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T00:40:00.989Z",
       "repository": "apache/arrow",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-11-24T17:03:17.037Z",
       "repository": "genkit-ai/genkit",
       "learningId": "learn-github-genkit-ai-genkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T17:13:31.249Z",
+      "repository": "Aleph-Alpha/Kolibri-1.1",
+      "learningId": "learn-huggingface-aleph-alpha-kolibri-1-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T17:13:33.797Z",
+      "repository": "OVHaiLLM/Olala-v1.0-mini-7A1B",
+      "learningId": "learn-huggingface-ovhaillm-olala-v1-0-mini-7a1b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T17:13:41.811Z",
+      "repository": "ZSeven-W/openpencil",
+      "learningId": "learn-github-zseven-w-openpencil",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T17:13:46.023Z",
+      "repository": "rustls/rustls",
+      "learningId": "learn-github-rustls-rustls",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T17:13:49.244Z",
+      "repository": "RediSearch/RediSearch",
+      "learningId": "learn-github-redisearch-redisearch",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

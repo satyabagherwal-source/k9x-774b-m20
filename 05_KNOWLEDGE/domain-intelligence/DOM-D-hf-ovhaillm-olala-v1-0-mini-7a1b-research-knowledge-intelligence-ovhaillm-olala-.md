@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/OVHaiLLM/Olala-v1.0-mini-7A1B",
   "source_version": "hf-ovhaillm-olala-v1.0-mini-7a1b",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T16:56:27.603Z",
+  "timestamp": "2026-11-24T17:13:34.088Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-ovhaillm-olala-v1-0-mini-7a1b",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [OVHaiLLM/Olala-v1.0-mini-7A1B](https://huggingface.co/OVHaiLLM/Olala-v1.0-mini-7A1B) (Revision: `hf-ovhaill`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T16:56:27.603Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T17:13:34.088Z`  
 > **Learning ID**: `learn-huggingface-ovhaillm-olala-v1-0-mini-7a1b`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-ovhaillm-olala-v1.0-mini-7a1b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/OVHaiLLM/Olala-v1.0-mini-7A1B](https://huggingface.co/OVHaiLLM/Olala-v1.0-mini-7A1B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T16:56:26.696Z  
+> **Harvest Timestamp**: 2026-11-24T17:13:33.148Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 1021 downloads | 100 likes
+- **Stars / Engagement**: 63930 downloads | 307 likes
 
 ---
 

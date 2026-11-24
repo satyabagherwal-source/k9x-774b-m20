@@ -12777,3 +12777,9 @@ Every entry in this ledger must capture:
 | `learn-huggingface-apple-depthpro2` | `https://huggingface.co/apple/DepthPro2` | `hf-apple-d` | Multi-dimensional audit evidence | 2026-11-24T17:03:03.013Z |
 | `learn-github-higress-group-higress` | `https://github.com/higress-group/higress` | `c4c537f3` | Multi-dimensional audit evidence | 2026-11-24T17:03:12.687Z |
 | `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `76f631c6` | Multi-dimensional audit evidence | 2026-11-24T17:03:17.032Z |
+| `learn-huggingface-aleph-alpha-kolibri-1-1` | `https://huggingface.co/Aleph-Alpha/Kolibri-1.1` | `hf-aleph-a` | Multi-dimensional audit evidence | 2026-11-24T17:13:31.242Z |
+| `learn-huggingface-ovhaillm-olala-v1-0-mini-7a1b` | `https://huggingface.co/OVHaiLLM/Olala-v1.0-mini-7A1B` | `hf-ovhaill` | Multi-dimensional audit evidence | 2026-11-24T17:13:33.790Z |
+| `learn-github-zseven-w-openpencil` | `https://github.com/ZSeven-W/openpencil` | `c939f85c` | Multi-dimensional audit evidence | 2026-11-24T17:13:41.805Z |
+| `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `e11f9809` | Multi-dimensional audit evidence | 2026-11-24T17:13:46.016Z |
+| `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `3bfa11a6` | Multi-dimensional audit evidence | 2026-11-24T17:13:49.236Z |
+| `learn-dom-d-17a2d54e` | `project://hf-aleph-alpha-kolibri-1.1` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1.1-learnings.md` | 2026-11-24T17:14:28.111Z |

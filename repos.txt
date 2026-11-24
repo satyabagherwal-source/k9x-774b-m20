@@ -5372,3 +5372,7 @@ https://github.com/NihilDigit/piko
 # --- Automatically Discovered by AI Scout Engine [2026-11-24T16:54:20.460Z] ---
 # [HIGH-PERF-SYSTEMS] indexable-inc/blaze (1733 score) - Incremental rust builds up to 92x faster than cargo/rustc. Backed by Y Combinato
 https://github.com/indexable-inc/blaze
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-24T17:13:24.742Z] ---
+# [HUGGINGFACE-AI-MODELS] Aleph-Alpha/Kolibri-1.1 (1112 score) - Verified Hugging Face Model: Aleph-Alpha/Kolibri-1.1 (84 likes, 272 downloads)
+https://huggingface.co/Aleph-Alpha/Kolibri-1.1

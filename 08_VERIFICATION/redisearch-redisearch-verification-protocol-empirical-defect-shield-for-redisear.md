@@ -4,22 +4,22 @@
 {
   "source_repository": "RediSearch/RediSearch",
   "source_url": "https://github.com/RediSearch/RediSearch",
-  "source_version": "bcd7b33c",
+  "source_version": "3bfa11a6",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-23T20:47:56.514Z",
+  "timestamp": "2026-11-24T17:13:49.569Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-redisearch-redisearch",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [RediSearch/RediSearch](https://github.com/RediSearch/RediSearch) (Revision: `bcd7b33c`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-23T20:47:56.514Z`  
+> **Provenance**: Harvested from [RediSearch/RediSearch](https://github.com/RediSearch/RediSearch) (Revision: `3bfa11a6`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-24T17:13:49.569Z`  
 > **Learning ID**: `learn-github-redisearch-redisearch`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `RediSearch/RediSearch` (Commit: `bcd7b33c`)
+- **Target Repository**: `RediSearch/RediSearch` (Commit: `3bfa11a6`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/RediSearch/RediSearch](https://github.com/RediSearch/RediSearch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T20:47:54.928Z  
+> **Harvest Timestamp**: 2026-11-24T17:13:47.872Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1010,6 +1010,7 @@ export function gitVcs(root: string): Vcs {
 
 /** The {@link Forge} on GitHub: stage PRs pushed from the checkout, their review threads and CI. */
 import { Octokit } from '@octokit/rest';
+import { execa } from 'execa';
 import { hash, type NewFinding, type FindingSource } from './job.ts';
 import type { Forge, Stage } from './ports.ts';
 import { git } from './git.ts';
@@ -1065,14 +1066,39 @@ function trimComment(body: string, max = 1500): string {
   return text.length > max ? `${text.slice(0, max)}… (full text at the link)` : text;
 }
 
-/** Amp configures git's credential helper in Orbs, so this needs nothing beyond git itself. */
-async function githubToken(cwd: string): Promise<string> {
+/** Selects credentials with repository access before any write can be attempted. */
+async function githubClient(cwd: string, owner: string, repo: string): Promise<Octokit> {
   const env = process.env.GH_TOKEN ?? process.env.GITHUB_TOKEN;
-  if (env) return env;
-  const fill = await git(cwd, ['credential', 'fill'], 'protocol=https\nhost=github.com\n\n');
-  const password = fill.match(/^password=(.*)$/m)?.[1];
-  if (!password) throw new Error('git has no credentials for github.com');
-  return password;
+  const fill = env
+    ? ''
+    : await git(cwd, ['credential', 'fill'], 'protocol=https\nhost=github.com\n\n').catch(() => '');
+  const token = env || fill.match(/^password=(.*)$/m)?.[1];
+  let denied: unknown;
+  if (token) {
+    const client = new Octokit({ auth: token });
+    try {
+      await client.rest.repos.get({ owner, repo });
+      return client;
+    } catch (error) {
+      if (![401, 403, 404].includes((error as { status?: number }).status ?? 0)) throw error;
+      denied = error;
+    }
+  }
+  const auth = await execa('gh', ['auth', 'token', '--hostname', 'github.com'], {
+    cwd,
+    // Environment tokens override gh's stored login, which may have broader repository access.
+    env: { GH_TOKEN: undefined, GITHUB_TOKEN: undefined, GH_PROMPT_DISABLED: '1' },
+  })
+    .then(({ stdout }) => stdout.trim())
+    .catch(() => '');
+  if (!auth)
+    throw (
+      denied ??
+      new Error('No GitHub credentials available; run gh auth login or connect the GitHub App.')
+    );
+  const client = new Octokit({ auth });
+  await client.rest.repos.get({ owner, repo });
+  return client;
 }
 
 /**
@@ -1197,7 +1223,7 @@ export function github(o: { root: string; repository: string; ci: CI }): Forge {
   const [owner, repo] = repository.split('/');
   // Made on first use, so inspecting a plan needs no credentials.
   let client: Promise<Octokit> | undefined;
-  const api = () => (client ??= githubToken(root).then((auth) => new Octokit({ auth })));
+  const api = () => (client ??= githubClient(root, owner, repo));
   const sh = (args: string[]) => git(root, args);
 
   return {
@@ -1224,23 +1250,7 @@ export function github(o: { root: string; repository: string; ci: CI }): Forge {
       const data = await query();
       // Only review threads are paged in full: they are where unresolved feedback lives.
       const threads = data.repository.pullRequest.reviewThreads;
-      for (let page = threads; page.pageInfo.hasNextPage; ) {
-        page = (await query(page.pageInfo.endCursor)).repository.pullRequest.reviewThreads;
-        threads.nodes.push(...page.nodes);
-      }
-      return readFeedback(ci, data, stage, number, posted, head);
-    },
-
-    /** An existing PR keeps its base: GitHub refuses to change it within a stack. */
-    async publish(o) {
-      const octokit = await api();
-      const fetched = o.existing
-        ? (await octokit.rest.pulls.get({ owner, repo, pull_number: o.existing.number })).data
-        : undefined;
-      // A merged or closed PR cannot carry a new candidate: a new one replaces it. A merged one
-      // still takes a new description for the candidate it merged, such as the retrospective.
-      const current =
-        fetched?.state === 'open' || (fetched?.merged && o.existing!.head === o.candidat
+      for (let pag
 ```
 
 ### Core Architecture Module: `.amp/plugins/rust-port/core/job.ts`
@@ -1858,164 +1868,188 @@ export interface Profile<X = {}> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bcd7b33c` (2026-11-23)
-**Commit Message**: [MOD-21404] CI: install LLVM 21 from EL8 AppStream and EL9 EPEL to keep LTO on Rocky/Alma (#12482)
+### Incident Patch 1: `c6f4388f` (2026-11-23)
+**Commit Message**: Fix rust-port Amp plugin reviewer creation for the current Amp API (#12504)
 
-Port of #12433.
+Fix rust-port reviewer creation for the current Amp API
 
-Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+Replace deprecated mode inheritance with an explicit Claude Opus 5.5
+model, update the plugin SDK, and validate reviewer configuration in
+the existing adapter test. Regenerate the runtime bundle.
 
-**File**: `.github/workflows/task-get-config.yml` (modified, +4/-2)
+Amp-Thread-ID: T-01a20817-38b2-74fa-a9fe-ceabf28b1181
+
+**File**: `.amp/plugins/rust-port/amp/plugin.ts` (modified, +1/-1)
 ```diff
-@@ -202,16 +202,18 @@ jobs:
-                       'container': 'rockylinux:8',
-                       'setup_script': 'dnf update -y && dnf install -y git',
-                       'name': 'Rocky Linux 8 x86_64',
--                      'enable_lto': '0' # Shipped glibc (2.28) is too old for clang 21 tarball (requires 2.34).
-+                      'enable_lto': '1' # LLVM 21 comes from the EL8 AppStream (install_llvm.sh).
-                   },
-                   "aarch64": {
-                       'container': 'rockylinux:8',
-                       'setup_script': 'dnf update -y && dnf install -y git',
-                       'name': 'Rocky Linux 8 ARM64',
--                      'enable_lto': '0' # Shipped glibc (2.28) is too old for clang 21 tarball (requires 2.34).
-+                      'enable_lto': '1' # LLVM 21 comes from the EL8 AppStream (install_llvm.sh).
-                   }
-               },
-               "rockylinux:9": {
-+                  # LLVM 21 comes from EPEL (install_llvm.sh); the official tarball
-+                  # cannot run on EL9's libstdc++.
-                   "x86_64": {
-                       'container': 'rockylinux:9',
-                       'setup_script': 'dnf update -y && dnf install -y git',
+@@ -45,7 +45,7 @@ export function ampHost(
+     async startThread({ parent, labels, role }) {
+       const agent = role
+         ? amp.createAgent({
+-            extends: 'high',
++            model: 'anthropic/claude-opus-5-5',
+             instructions: role,
+             tools: { include: ['Read', 'Grep', 'glob'], exclude: ['tool_search', 'code_exec'] },
+           })
 ```
 
-**File**: `.install/install_llvm.sh` (modified, +99/-4)
+**File**: `.amp/plugins/rust-port/amp/test/plugin.test.ts` (modified, +7/-4)
 ```diff
-@@ -178,6 +178,25 @@ llvm_major() {
-         -e 's/^LLD[[:space:]]+([0-9]+).*/\1/p'
- }
- 
-+# The official LLVM tarballs are built on Ubuntu 22.04 and need GLIBCXX_3.4.30
-+# from libstdc++. EL9 (GCC 11) stops at 3.4.29, so a tarball clang cannot even
-+# start there: "version `GLIBCXX_3.4.30' not found (required by clang-21)".
-+TARBALL_MIN_GLIBCXX="3.4.30"
-+tarball_runtime_ok() {
-+    local lib
-+    lib=$(ls /usr/lib64/libstdc++.so.6 /usr/lib/*-linux-gnu/libstdc++.so.6 2>/dev/null | head -1)
-+    [[ -n "$lib" ]] || return 0  # nothing to check against; let the tarball try
-+    grep -aq "GLIBCXX_${TARBALL_MIN_GLIBCXX}" "$lib"
-+}
-+
-+# Keep whatever clang the distro ships, for bindgen's libclang only: LTO needs
-+# clang-${LLVM_VER} and stays off (task-get-config sets enable_lto accordingly).
-+accept_native_libclang() {
-+    command -v clang &>/dev/null || return 1
-+    [[ -n "${GITHUB_ENV:-}" ]] && echo "LIBCLANG_PATH=/usr/lib64" >> "$GITHUB_ENV"
-+    export LIBCLANG_PATH=/usr/lib64
-+}
-+
- accept_native_llvm() {
-     local clang_cmd="$1"
-     local lld_cmd="$2"
-@@ -189,9 +208,41 @@ accept_native_llvm() {
-     actual=$(llvm_major "$clang_cmd")
-     [[ "$actual" == "$LLVM_VER" ]] || return 1
- 
--    # RHEL-family puts shared libs in /usr/lib64; expose for bindgen/clang-sys.
--    [[ -n "${GITHUB_ENV:-}" ]] && echo "LIBCLANG_PATH=/usr/lib64" >> "$GITHUB_ENV"
--    export LIBCLANG_PATH=/usr/lib64
-+    # RHEL-family puts shared libs in /usr/lib64, except for side-by-side LLVM
-+    # packages (EPEL's clang21) that use their own libdir; expose it for
-+    # bindgen/clang-sys.
-+    local libdir=/usr/lib64 cfg_libdir=""
-+    if command -v "llvm-config-${LLVM_VER}" &>/dev/null; then
-+        cfg_libdir=$("llvm-config-${LLVM_VER}" --libdir 2>/dev/null || true)
-+        if [[ -n "$cfg_libdir" ]] && compgen -G "${cfg_libdir}/libclang*.so*" >/dev/null; then
-+            libdir="$cfg_libdir"
-+        fi
-+    fi
-+    [[ -n "${GITHUB_ENV:-}" ]] && echo "LIBCLANG_PATH=${libdir}" >> "$GITHUB_ENV"
-+    export LIBCLANG_PATH="$libdir"
-+}
-+
-+# On EL8 LLVM ${LLVM_VER} and the newer default are versions of the same
-+# packages, so any later `dnf update` or `dnf install clang` (other modules'
-+# bootstrap scripts do both) silently moves them to the newer LLVM and breaks
-+# LTO. Lock the installed LLVM packages at their current versions.
-+lock_llvm_packages() {
-+    $MODE dnf install -y python3-dnf-plugin-versionlock >/dev/null 2>&1 || return 1
-+    local pkgs
-+    pkgs=$(rpm -qa --qf '%{NAME}-%{VERSION}-%{RELEASE}\n' 'clang*' 'llvm*' 'lld*' 'libomp*' 'compiler-rt*' 2>/dev/null)
-+    [[ -n "$pkgs" ]] || return 1
-+    # shellcheck disable=SC2086
-+    $MODE dnf versionlock add $pkgs >/dev/null 2>&1
-+}
-+
-+# EPEL carries LLVM ${LLVM_VER} side by side with the distro's newer default
-+# (EL9 only ships the newer one), under versioned package names.
-+install_epel_llvm() {
-+    $MODE dnf install -y epel-release dnf-plugins-core >/dev/null 2>&1 || return 1
-+    $MODE dnf config-manager --set-enabled crb >/dev/null 2>&1 \
-+        || $MODE dnf config-manager --set-enabled powertools >/dev/null 2>&1 || true
-+    $MODE dnf install -y --nobest "clang${LLVM_VER}" "clang${LLVM_VER}-devel" \
-+        "lld${LLVM_VER}" "llvm${LLVM_VER}" 2>/dev/null
- }
- 
- # ---------------------------------------------------------------------------
-@@ -344,12 +395,34 @@ install_llvm() {
-                 "clang-${LLVM_VER}" "lld-${LLVM_VER}" "clang-devel-${LLVM_VER}" 2>/dev/null \
-                 && accept_native_llvm "clang-${LLVM_VER}" "lld-${LLVM_VER}"; then
-             echo ">>> Installed clang-${LLVM_VER} from native dnf repos"
-+        # EL8 keeps LLVM ${LLVM_VER} in AppStream as version ${LLVM_VER}.x of the
-+        # unversioned packages, not as clang-${LLVM_VER}.
-+        elif $MODE dnf install -y --nobest --skip-broken \
-+                "clang-${LLVM_VER}.*" "lld-${LLVM_VER}.*" "clang-devel-${LLVM_VER}.*" "llvm-${LLVM_VER}.*" 2>/dev/null \
-+                && accept_native_llvm "clang-${LLVM_VER}" "lld-${LLVM_VER}"; then
-+            lock_llvm_packages \
-+                && echo ">>> Locked LLVM ${LLVM_VER}.x packages against later dnf updates" \
-+                || echo ">>> WARNING: could not lock LLVM ${LLVM_VER}.x packages; a later dnf update may replace them" >&2
-+            echo ">>> Installed clang ${LLVM_VER}.x from native dnf repos (versioned package spec)"
-+        elif install_epel_llvm && accept_native_llvm "clang-${LLVM_VER}" "lld-${LLVM_VER}"; then
-+            echo ">>> Installed clang ${LLVM_VER} from EPEL"
-         elif $MODE dnf install -y --nobest --skip-broken clang lld clang-devel 2>/dev/null \
-                 && accept_native_llvm clang lld; then
-             echo ">>> Installed default clang from native dnf repos (may not be ${LLVM_VER})"
-         elif $MODE yum install -y clang lld clang-devel 2>/dev/null \
-                 && accept_native_llvm clang lld; then
-             echo ">>> Installed clang from native yum repos"
-+        elif ! tar
+@@ -6,6 +6,7 @@
+  * (RSALv2); or (b) the Server Side Public License v1 (SSPLv1); or (c) the
+  * GNU Affero General Public License v3 (AGPLv3).
+  */
++import type { CreateAgentConfig } from '@ampcode/plugin';
+ import assert from 'node:assert/strict';
+ import { test } from 'node:test';
+ import { ampHost } from '../plugin.ts';
+@@ -30,10 +31,12 @@ function amp(text: string) {
+   };
+   const api = {
+     system: { ampURL: new URL('https://ampcode.com') },
+-    createAgent: (config: { instructions: string }) => (
+-      (seen.instructions = config.instructions),
+-      agent
+-    ),
++    createAgent: (config: CreateAgentConfig) => {
++      assert.equal(config.extends, undefined);
++      assert.match(config.model, /^[^/]+\/[^/]+$/);
++      seen.instructions = config.instructions;
++      return agent;
++    },
+     threads: { get: () => ({ ...thread, agent: async () => agent }) },
+   } as any;
+   return { api, seen };
 ```
 
-**File**: `.install/rocky_linux_8.sh` (modified, +6/-1)
+**File**: `.amp/plugins/rust-port/dist/plugin.js` (modified, +1/-1)
 ```diff
-@@ -24,7 +24,7 @@ dnf_install epel-release
- dnf_install gcc-toolset-13-gcc gcc-toolset-13-gcc-c++ \
-     gcc-toolset-13-libatomic-devel make wget git openssl openssl-devel \
-     bzip2-devel libffi-devel zlib-devel tar xz which rsync \
--    clang curl clang-devel lld gdb
-+    curl gdb
+@@ -17005,7 +17005,7 @@ function ampHost(amp, name) {
+         async startThread({ parent, labels, role }) {
+             const agent = role
+                 ? amp.createAgent({
+-                    extends: 'high',
++                    model: 'anthropic/claude-opus-5-5',
+                     instructions: role,
+                     tools: { include: ['Read', 'Grep', 'glob'], exclude: ['tool_search', 'code_exec'] },
+                 })
+```
+
+**File**: `.amp/plugins/rust-port/package-lock.json` (modified, +5/-10)
+```diff
+@@ -10,7 +10,7 @@
+         "execa": "10.1.1"
+       },
+       "devDependencies": {
+-        "@ampcode/plugin": "0.0.0-20261029001459-g185813a",
++        "@ampcode/plugin": "0.0.0-20261123001411-g03d1fb9",
+         "@rollup/plugin-commonjs": "29.0.3",
+         "@rollup/plugin-node-resolve": "16.0.3",
+         "@rollup/plugin-typescript": "12.3.0",
+@@ -22,9 +22,9 @@
+       }
+     },
+     "node_modules/@ampcode/plugin": {
+-      "version": "0.0.0-20261029001459-g185813a",
+-      "resolved": "https://registry.npmjs.org/@ampcode/plugin/-/plugin-0.0.0-20261029001459-g185813a.tgz",
+-      "integrity": "sha512-ItK9Gey8qcEfXN5UVCCWGj9eZ173Jvbki3iBv1F9VhOfA+Addl1octRt7UhHiF/E2Gb2nhTbUnOsdxwz93nf8w==",
++      "version": "0.0.0-20261123001411-g03d1fb9",
++      "resolved": "https://registry.npmjs.org/@ampcode/plugin/-/plugin-0.0.0-20261123001411-g03d1fb9.tgz",
++      "integrity": "sha512-AMRqv6OD1Ac2yxXq9zkFdzvIS1HFkWLTA+KrX7JiBuHgWMB/UCTgN/mpXf19FXUbxUGnggnL4deyRpEAQLGr/A==",
+       "dev": true,
+       "license": "Amp Commercial License"
+     },
+@@ -66,7 +66,6 @@
+       "resolved": "https://registry.npmjs.org/@octokit/core/-/core-7.0.8.tgz",
+       "integrity": "sha512-L7y8eYc+AwxGr2PWI4WFt1VG4TiJ66c26BD16mXpYIlXxG0SMigM1+m4aTSlYyBr5BlQsGAlz8uDCoZN4SEMcg==",
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "@octokit/auth-token": "^6.0.0",
+         "@octokit/graphql": "^9.0.5",
+@@ -1045,7 +1044,6 @@
+       "integrity": "sha512-qcJu88Q2IWqJsDD529JKMdwGm/dvInW4HvQnRwiH9JtihJvzGOscDtHE3x1pBKeUOTysQ8kVmLnJ2kJu7yhcGA==",
+       "dev": true,
+       "license": "MIT",
+-      "peer": true,
+       "engines": {
+         "node": ">=12"
+       },
+@@ -1112,7 +1110,6 @@
+       "integrity": "sha512-aCiJONoZp0lNGJ6sYqspLkh6UXaWEey/7Ko2TZyXQ4kgzAhDUxAgbt/oulXKmD+zFHXw1k+RF6ZZWOrjp7DZnQ==",
+       "dev": true,
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "@types/estree": "1.0.9"
+       },
+@@ -1202,16 +1199,14 @@
+       "resolved": "https://registry.npmjs.org/tslib/-/tslib-2.8.1.tgz",
+       "integrity": "sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==",
+       "dev": true,
+-      "license": "0BSD",
+-      "peer": true
++      "license": "0BSD"
+     },
+     "node_modules/typescript": {
+       "version": "5.9.3",
+       "resolved": "https://registry.npmjs.org/typescript/-/typescript-5.9.3.tgz",
+       "integrity": "sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==",
+       "dev": true,
+       "license": "Apache-2.0",
+-      "peer": true,
+       "bin": {
+         "tsc": "bin/tsc",
+         "tsserver": "bin/tsserver"
+```
+
+**File**: `.amp/plugins/rust-port/package.json` (modified, +1/-1)
+```diff
+@@ -14,7 +14,7 @@
+     "execa": "10.1.1"
+   },
+   "devDependencies": {
+-    "@ampcode/plugin": "0.0.0-20261029001459-g185813a",
++    "@ampcode/plugin": "0.0.0-20261123001411-g03d1fb9",
+     "@rollup/plugin-commonjs": "29.0.3",
+     "@rollup/plugin-node-resolve": "16.0.3",
+     "@rollup/plugin-typescript": "12.3.0",
+```
+
+---
+
+### Incident Patch 2: `3bfa11a6` (2026-11-24)
+**Commit Message**: MOD-21590 Fix false OOM in Flex background scans (#12529)
+
+MOD-21590 Fix total quota accounting for Flex background scans
+
+**File**: `src/util/redis_mem_info.c` (modified, +1/-2)
+```diff
+@@ -49,7 +49,6 @@ RedisMemoryFlexRatios RedisMemory_GetFlexRatios(RedisModuleCtx *ctx) {
+   size_t max_process_mem = RedisModule_ServerInfoGetFieldUnsigned(info, "max_process_mem", NULL);
  
- # We need Python headers to build psutil@5.x.y from
- # source, since it only started providing wheels for aarch64
-@@ -60,3 +60,8 @@ else
-     _toolset13_shim_ok as as || _run ln -sf "$_toolset13_bindir/as" /usr/local/bin/as
-     _toolset13_shim_ok make make || _run ln -sf "$_toolset13_bindir/make" /usr/local/bin/make
- fi
-+
-+# Install the pinned LLVM (see LLVM_VERSION.sh) for LTO. Unversioned
-+# `clang`/`lld` packages track the distro's current LLVM, which can move past
-+# the version Rust uses and break cross-language LTO.
-+source "$(dirname "${BASH_SOURCE[0]}")/install_llvm.sh" $MODE
+   size_t maxmemory = RedisModule_ServerInfoGetFieldUnsigned(info, "maxmemory", NULL);
+-  size_t total_limit = MIN_NOT_0(maxmemory, max_process_mem);
+   float used_memory = (float)RedisModule_ServerInfoGetFieldUnsigned(info, "used_memory", NULL);
+ 
+   // max_ram does not fold in max_process_mem, but getMaxRAM() does, so apply it here too for parity
+@@ -64,7 +63,7 @@ RedisMemoryFlexRatios RedisMemory_GetFlexRatios(RedisModuleCtx *ctx) {
+   RedisModule_FreeServerInfo(ctx, info);
+ 
+   return (RedisMemoryFlexRatios){
+-      .total_memory_ratio = total_limit ? used_memory / (float)total_limit : 0,
++      .total_memory_ratio = maxmemory ? used_memory / (float)maxmemory : 0,
+       .ram_ratio = ram_limit ? (float)used_ram / (float)ram_limit : 0,
+       .ram_for_swapout_ratio = ram_limit ? (float)used_ram_for_swapout / (float)ram_limit : 0,
+   };
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #12529** (2026-11-24): MOD-21590 Fix false OOM in Flex background scans (@GuyAv46)
+- **PR #12516** (2026-11-24): [2.10] CI: keep Bash available during Rocky 9 setup (@lerman25)
+- **PR #12515** (2026-11-24): [2.8] CI: keep Bash available during Rocky 9 setup (@lerman25)
+- **PR #12508** (2026-11-24): [MOD-21542] Keep moved documents in the source's results until the trim (@JoanFM)
 - **PR #12507** (closed): Switch token separators to Rust and remove the C implementation (@gdesmott)
-- **PR #12505** (closed): Add Rust token separator scanning and C comparison benchmarks (@gdesmott)
-- **PR #12503** (closed): Extract token separator implementation into toksep.c (@gdesmott)
-- **PR #12497** (closed): [MOD-14129] Preserve restore compatibility for disk TAG snapshots (@dor-forer)
-- **PR #12484** (2026-11-23): [8.8] [MOD-21404] CI: install LLVM 21 from the EL8 AppStream to keep LTO on Rocky 8 (@oshadmi)
-- **PR #12483** (2026-11-22): [8.10] [MOD-21404] CI: install LLVM 21 from EL8 AppStream and EL9 EPEL to keep LTO on Rocky/Alma (@oshadmi)
+- **PR #12506** (2026-11-23): Fall back to local gh in the rust-port Amp plugin when GitHub App access is unavailable (@gdesmott)
 
 ---
 
@@ -2035,35 +2069,31 @@ Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [MOD-21404] CI: install LLVM 21 from EL8 AppStream and EL9 EPEL to keep LTO on R
+## X. rust-port Amp plugin reviewer creation for the current Amp API
 
 **RULE**:
-When implementing operations in `.github/workflows/task-get-config.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RediSearch/RediSearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.amp/plugins/rust-port/amp/plugin.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RediSearch/RediSearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bcd7b33c`: [MOD-21404] CI: install LLVM 21 from EL8 AppStream and EL9 EPEL to keep LTO on Rocky/Alma. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c6f4388f`: rust-port Amp plugin reviewer creation for the current Amp API. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/task-get-config.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.amp/plugins/rust-port/amp/plugin.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                      'enable_lto': '1' # LLVM 21 comes from the EL8 AppStream (install_llvm.sh).
-                      'enable_lto': '1' # LLVM 21 comes from the EL8 AppStream (install_llvm.sh).
-                  # LLVM 21 comes from EPEL (install_llvm.sh); the official tarball
-                  # cannot run on EL9's libstdc++.
+            model: 'anthropic/claude-opus-5-5',
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-                      'enable_lto': '0' # Shipped glibc (2.28) is too old for clang 21 tarball (requires 2.34).
-                      'enable_lto': '0' # Shipped glibc (2.28) is too old for clang 21 tarball (requires 2.34).
+            extends: 'high',
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bcd7b33c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c6f4388f` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T17:03:22.697Z",
-  "total_records": 2550,
+  "last_updated": "2026-11-24T17:14:30.247Z",
+  "total_records": 2553,
   "domains": {
     "A": {
       "total": 22,
@@ -69,7 +69,7 @@
       ]
     },
     "D": {
-      "total": 961,
+      "total": 964,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1031,7 +1031,10 @@
         "DOM-D-5E40C2C7",
         "domain_intelligence-research-knowledge-intelligence-sentinel7-h3-core-invariants",
         "DOM-D-A5C5FED6",
-        "domain_intelligence-research-knowledge-intelligence-hf-sentinel7-h3-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-sentinel7-h3-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-aleph-alpha-kolibri-1-1-core-invariants",
+        "DOM-D-17A2D54E",
+        "domain_intelligence-research-knowledge-intelligence-hf-aleph-alpha-kolibri-1-1-learnings-core-invari"
       ]
     },
     "E": {
@@ -9283,8 +9286,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "d2cca78ae5a4defcf944896a59bc605cee46a63cb665b496a146a2af66574014",
-      "created_at": "2026-11-24T16:54:53.752Z"
+      "content_hash": "c596d482870ddbd40e15fab6dca924485a49363852e86cb0f1b5fda7609ee056",
+      "created_at": "2026-11-24T17:14:30.247Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -24808,8 +24811,8 @@
       "title": "Technical Construction Intelligence: rustls/rustls Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rustls-rustls-technical-construction-intelligence-rustls-rustls-core-invariants.md",
       "repository": "rustls/rustls",
-      "content_hash": "869a4b2f49d55708500f1d96bfa106eb489639b34f9a5e2745dbc5da19d191d4",
-      "created_at": "2026-11-23T17:20:48.167Z"
+      "content_hash": "6706838a5eebbfcfd34c5a6794a09d1cf0bdabc17b2b304782388f21d29ca0c6",
+      "created_at": "2026-11-24T17:13:46.591Z"
     },
     "domain_intelligence-architecture-intelligence-nginx-kubernetes-ingress-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nginx-kubernetes-ingress-learnings-core-invariants",
@@ -28101,8 +28104,8 @@
       "title": "Architecture Intelligence: RediSearch/RediSearch Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-redisearch-redisearch-architecture-intelligence-redisearch-redisearch-core-invar.md",
       "repository": "RediSearch/RediSearch",
-      "content_hash": "49c404fe8907fcd38dc11baf99a9d41dea8c14fb8116e773c8d8893ba58132cc",
-      "created_at": "2026-11-23T20:47:56.732Z"
+      "content_hash": "35c265777648a3cd76d3501cc7537e789ac983d81d78f2ff98a20c224e30a013",
+      "created_at": "2026-11-24T17:13:49.796Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autogluon-chronos-2-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autogluon-chronos-2-core-invariants",
@@ -36610,8 +36613,8 @@
       "title": "Research & Knowledge Intelligence: OVHaiLLM/Olala-v1.0-mini-7A1B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ovhaillm-olala-v1-0-mini-7a1b-research-knowledge-intelligence-ovhaillm-olala-.md",
       "repository": "OVHaiLLM/Olala-v1.0-mini-7A1B",
-      "content_hash": "a4775f328eae7d7f2d925257c1967e254d95f62e43610dd86b6744affa1dff38",
-      "created_at": "2026-11-20T16:56:27.604Z"
+      "content_hash": "27209d448b33d38ca91d3f727b76a50f2a54dd0639394488d361ea243301dfd5",
+      "created_at": "2026-11-24T17:13:34.089Z"
     },
     "DOM-D-F2660B55": {
       "record_id": "DOM-D-F2660B55",
@@ -36712,8 +36715,8 @@
       "title": "Research & Knowledge Intelligence: hf-ovhaillm-olala-v1.0-mini-7a1b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ovhaillm-olala-v1-0-mini-7a1b-learnings-research-knowledge-intelligence-hf-ov.md",
       "repository": "hf-ovhaillm-olala-v1.0-mini-7a1b-learnings",
-      "content_hash": "bab20c95a7a60d051795fced80045cdcdbc071c7e5ed87e88ecc28e531442883",
-      "created_at": "2026-11-20T16:58:11.587Z"
+      "content_hash": "54630a73fcfca2d65f0409ecbd8be3070db213ad5aa2e24cc45aa4c39e7151fe",
+      "created_at": "2026-11-24T17:14:29.130Z"
     },
     "DOM-I-74EC8661": {
       "record_id": "DOM-I-74EC8661",
@@ -39194,8 +39197,8 @@
       "title": "Technical Construction Intelligence: ZSeven-W/openpencil Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-technical-construction-intelligence-zseven-w-openpencil-core.md",
       "repository": "ZSeven-W/openpencil",
-      "content_hash": "3e68038ae8a3746c8707c7f637a85b90f49cd2522d57a38378b7da67edc9d231",
-      "created_at": "2026-11-22T02:09:09.418Z"
+      "content_hash": "370bd681e35c7a3601075ef81983b9946082581a10db130d10b943f7ff2cb9de",
+      "created_at": "2026-11-24T17:13:42.361Z"
     },
     "DOM-D-60FE0061": {
       "record_id": "DOM-D-60FE0061",
@@ -42796,6 +42799,66 @@
       "repository": "higress-group-higress-learnings",
       "content_hash": "049bdb3b5bc00460a91d4ba0c34495fad7974efd4b5de180d4e78b8df9ef48b7",
       "created_at": "2026-11-24T17:03:21.456Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-aleph-alpha-kolibri-1-1-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-aleph-alpha-kolibri-1-1-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Aleph-Alpha/Kolibri-1.1 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-aleph-alpha-kolibri-1-1-research-knowledge-intelligence-aleph-alpha-kolibri-1.md",
+      "repository": "Aleph-Alpha/Kolibri-1.1",
+      "content_hash": "fc06d66669696c67b06b03060363abca03768832fbc3961c1866089f8a4bcd48",
+      "created_at": "2026-11-24T17:13:31.544Z"
+    },
+    "DOM-D-17A2D54E": {
+      "record_id": "DOM-D-17A2D54E",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Aleph-Alpha/Kolibri-1.1",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1.1-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Aleph-Alpha/Kolibri-1.1](https://huggingface.co/Aleph-Alpha/Kolibri-1.1))  \n> **Source Version**: `hf-aleph-alp`  \n> **License**: Open-Source  \n> **Sy",
+      "content_hash": "398e38177dc681a1278efd29ba9ad77e263166031bbb860b1e164eee49691dcb",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1.1-learnings.md`  \n> **Source**: huggingface ([https://huggi -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1.1-learnings.md`  \n> **Source**: huggingface ([https://huggi",
+      "provenance": {
+        "source_uri": "project://hf-aleph-alpha-kolibri-1.1/hf-aleph-alpha-kolibri-1.1-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-24T17:13:52.946Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-aleph-alpha-kolibri-1.1)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-aleph-alpha-kolibri-1.1"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-24T17:14:28.072Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-aleph-alpha-kolibri-1-1-learnings-core-invari": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-aleph-alpha-kolibri-1-1-learnings-core-invari",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-aleph-alpha-kolibri-1.1-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-aleph-alpha-kolibri-1-1-learnings-research-knowledge-intelligence-hf-aleph-al.md",
+      "repository": "hf-aleph-alpha-kolibri-1.1-learnings",
+      "content_hash": "db88095c1a902d64f456671051245a78cd538e46f43805954bf6fc62c778f12c",
+      "created_at": "2026-11-24T17:14:28.508Z"
     }
   }
 }

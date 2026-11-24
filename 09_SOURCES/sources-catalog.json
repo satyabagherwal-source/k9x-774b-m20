@@ -2693,10 +2693,10 @@
     "repository": "rustls/rustls",
     "platform": "github",
     "sourceUrl": "https://github.com/rustls/rustls",
-    "sourceVersion": "a40acf9d",
+    "sourceVersion": "e11f9809",
     "license": "NOASSERTION",
-    "contentHash": "74450d7e40295833c41accdc66a2b87e0a389a9aeba7dfd0d19df6a5ac9976e4",
-    "lastHarvestedAt": "2026-11-23T17:20:47.863Z",
+    "contentHash": "d49c43ced8480e5afeb20d54f56faece3efdb46edfaf3aced6f4c4cb27612290",
+    "lastHarvestedAt": "2026-11-24T17:13:46.016Z",
     "learningId": "learn-github-rustls-rustls"
   },
   "liyupi-yu-ai-agent": {
@@ -5253,10 +5253,10 @@
     "repository": "ZSeven-W/openpencil",
     "platform": "github",
     "sourceUrl": "https://github.com/ZSeven-W/openpencil",
-    "sourceVersion": "4110b3e0",
+    "sourceVersion": "c939f85c",
     "license": "MIT",
-    "contentHash": "6c8f5d65be97114fd685e57d24d27ae03695590c6ab70835fecd338c85850ea4",
-    "lastHarvestedAt": "2026-11-22T02:09:09.110Z",
+    "contentHash": "2585546ecff5595e5ce4f0c36ede38a7d0f4e63dcb50336000c9069c74face50",
+    "lastHarvestedAt": "2026-11-24T17:13:41.805Z",
     "learningId": "learn-github-zseven-w-openpencil"
   },
   "diggerhq-digger": {
@@ -6023,10 +6023,10 @@
     "repository": "RediSearch/RediSearch",
     "platform": "github",
     "sourceUrl": "https://github.com/RediSearch/RediSearch",
-    "sourceVersion": "bcd7b33c",
+    "sourceVersion": "3bfa11a6",
     "license": "NOASSERTION",
-    "contentHash": "58de50613d5d089d54951748551e0721c0a4a70bbb413da04d33337be7016c5e",
-    "lastHarvestedAt": "2026-11-23T20:47:56.219Z",
+    "contentHash": "03ffe91e33cc6ceabdc9a1f7a8f4455158881c7d333ed936cf50780f8f241f99",
+    "lastHarvestedAt": "2026-11-24T17:13:49.236Z",
     "learningId": "learn-github-redisearch-redisearch"
   },
   "taiga-family-taiga-ui": {
@@ -13095,8 +13095,8 @@
     "sourceUrl": "https://huggingface.co/OVHaiLLM/Olala-v1.0-mini-7A1B",
     "sourceVersion": "hf-ovhaillm-olala-v1.0-mini-7a1b",
     "license": "Open-Source",
-    "contentHash": "7e8f55c0e8766dce5e7d51145608d4f0bc63b9b780187a413837aadf44abd3b5",
-    "lastHarvestedAt": "2026-11-20T16:56:27.344Z",
+    "contentHash": "c0f32927ca0678f9dcd0e9a2a46068e1395a45a424fdcc74abc9b172a2f6f2a8",
+    "lastHarvestedAt": "2026-11-24T17:13:33.790Z",
     "learningId": "learn-huggingface-ovhaillm-olala-v1-0-mini-7a1b"
   },
   "hf-thinkingmachines-inkling-2-mini": {
@@ -13358,5 +13358,15 @@
     "contentHash": "0469ed4d1ad0b61bd916f1cf8682b312995c9c2f6c12bce1ac6d4cd973877ff0",
     "lastHarvestedAt": "2026-11-24T16:54:33.873Z",
     "learningId": "learn-github-indexable-inc-blaze"
+  },
+  "hf-aleph-alpha-kolibri-1.1": {
+    "repository": "Aleph-Alpha/Kolibri-1.1",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Aleph-Alpha/Kolibri-1.1",
+    "sourceVersion": "hf-aleph-alpha-kolibri-1.1",
+    "license": "Open-Source",
+    "contentHash": "a55946688504cbeede06b523ce0eb2cbeb1ee90c1a59ec72de25ab169f1ea19b",
+    "lastHarvestedAt": "2026-11-24T17:13:31.242Z",
+    "learningId": "learn-huggingface-aleph-alpha-kolibri-1-1"
   }
 }

@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-24T15:28:00.701Z",
+  "updated_at": "2026-11-24T17:14:28.108Z",
   "statistics": {
-    "total_nodes": 510,
-    "total_edges": 213,
+    "total_nodes": 511,
+    "total_edges": 214,
     "domain_distribution": {
-      "D": 307,
+      "D": 308,
       "M": 1,
       "H": 94,
       "J": 22,
@@ -20,7 +20,7 @@
       "I": 12
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 209,
+      "CONSTRAINED_BY_ARCHITECTURE": 210,
       "VERIFIED_BY_TEST": 2,
       "STYLED_BY_DESIGN": 2
     }
@@ -11386,6 +11386,29 @@
       ],
       "created_at": "2026-11-24T15:28:00.701Z",
       "updated_at": "2026-11-24T15:28:00.701Z"
+    },
+    "DOM-D-17A2D54E": {
+      "id": "DOM-D-17A2D54E",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): Aleph-Alpha/Kolibri-1.1",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1.1-learnings.md`  \n> **Source**: huggingface ([https://huggi -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1.1-learnings.md`  \n> **Source**: huggingface ([https://huggi",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-aleph-alpha-kolibri-1.1/hf-aleph-alpha-kolibri-1.1-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-24T17:13:52.946Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-aleph-alpha-kolibri-1.1)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-24T17:14:28.107Z",
+      "updated_at": "2026-11-24T17:14:28.107Z"
     }
   },
   "edges": [
@@ -13518,6 +13541,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-A5C5FED6 [D] with Domain M",
       "created_at": "2026-11-24T15:28:00.701Z"
+    },
+    {
+      "id": "EDGE-6F8D0225DE37",
+      "sourceId": "DOM-D-17A2D54E",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-17A2D54E [D] with Domain M",
+      "created_at": "2026-11-24T17:14:28.107Z"
     }
   ]
 }

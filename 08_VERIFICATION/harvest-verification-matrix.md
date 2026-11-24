@@ -12744,3 +12744,9 @@
 | `CYCLE-20261124-0ZFL` | `2026-11-24T17:03:03.009Z` | `apple/DepthPro2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-apple-depthpro2-learnings.md` | Yes (`e00ac44a...`) |
 | `CYCLE-20261124-16WB` | `2026-11-24T17:03:12.683Z` | `higress-group/higress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10310` | Yes (`aee1178c...`) |
 | `CYCLE-20261124-1A90` | `2026-11-24T17:03:17.028Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10311` | Yes (`d3c6bc42...`) |
+| `CYCLE-20261124-EG6D` | `2026-11-24T17:13:31.237Z` | `Aleph-Alpha/Kolibri-1.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1.1-learnings.md` | Yes (`a5594668...`) |
+| `CYCLE-20261124-EI55` | `2026-11-24T17:13:33.785Z` | `OVHaiLLM/Olala-v1.0-mini-7A1B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ovhaillm-olala-v1.0-mini-7a1b-learnings.md` | Yes (`c0f32927...`) |
+| `CYCLE-20261124-EOBS` | `2026-11-24T17:13:41.800Z` | `ZSeven-W/openpencil` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10312` | Yes (`2585546e...`) |
+| `CYCLE-20261124-ERKS` | `2026-11-24T17:13:46.012Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10313` | Yes (`d49c43ce...`) |
+| `CYCLE-20261124-EU27` | `2026-11-24T17:13:49.231Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10314` | Yes (`03ffe91e...`) |
+| `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T17:14:28.111Z` | `hf-aleph-alpha-kolibri-1.1` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-17A2D54E` [Domain D] | Yes (`398e3817...`) |

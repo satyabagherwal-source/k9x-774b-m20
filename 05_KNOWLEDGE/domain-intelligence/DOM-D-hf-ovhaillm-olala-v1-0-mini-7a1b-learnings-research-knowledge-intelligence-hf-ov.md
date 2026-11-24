@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T16:58:11.472Z",
+  "timestamp": "2026-11-24T17:14:28.996Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-ovhaillm-olala-v1.0-mini-7a1b-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-ovhaillm-olala-v1.0-mini-7a1b-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T16:58:11.472Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T17:14:28.996Z`  
 > **Learning ID**: `LEARN-EVO-hf-ovhaillm-olala-v1.0-mini-7a1b-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-ovhaillm-`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T16:56:26.701Z  
+> **Timestamp**: 2026-11-24T17:13:33.153Z  
 > **Learning ID**: `learn-huggingface-ovhaillm-olala-v1-0-mini-7a1b`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-ovhaillm-olala-v1.0-mini-7a1b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/OVHaiLLM/Olala-v1.0-mini-7A1B](https://huggingface.co/OVHaiLLM/Olala-v1.0-mini-7A1B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T16:56:26.696Z  
+> **Harvest Timestamp**: 2026-11-24T17:13:33.148Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 1021 downloads | 100 likes
+- **Stars / Engagement**: 63930 downloads | 307 likes
 
 ---
 
