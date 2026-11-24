@@ -4,22 +4,22 @@
 {
   "source_repository": "NucleoidAI/Nucleoid",
   "source_url": "https://github.com/NucleoidAI/Nucleoid",
-  "source_version": "8f515043",
+  "source_version": "f45b916b",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-24T21:15:52.033Z",
+  "timestamp": "2026-11-24T22:51:10.284Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nucleoidai-nucleoid",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `8f515043`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T21:15:52.033Z`  
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `f45b916b`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T22:51:10.284Z`  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `NucleoidAI/Nucleoid` (Commit: `8f515043`)
+- **Target Repository**: `NucleoidAI/Nucleoid` (Commit: `f45b916b`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T21:15:50.542Z  
+> **Harvest Timestamp**: 2026-11-24T22:51:09.006Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1592,338 +1592,408 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8f515043` (2026-11-24)
-**Commit Message**: Resume NUC 138 Reactive Secant
+### Incident Patch 1: `f45b916b` (2026-11-24)
+**Commit Message**: Draft NUC 141 Reactive Cosecant
 
-Refresh this held Draft claim for fresh revision3 after Accepted NUC139 advanced the shared accepted runtime during revision2 preparation. Revision2 stops at its preparation checkpoint, without freezing or evaluation; preserve every source, baseline and log. No outcome recorded.
+Category: Utility enhancement.
 
-Original allocation: abc138d4a03c8631f7639946cf605eff0be3b332
-Previous held claim: 87d99403cf02872fc52ee2c5dd9a11bfed5c0c25
-Current accepted source basis: df1f1406f2481169243859f063498b7baf1e734c
-Category: Utility enhancement; mode: continuous. This is an early held-claim renewal for baseline alignment, not a stale takeover.
+Request: Add only native static Math.csc(value), taking radians and computing exactly 1.0 / first.sin() through the existing intrinsic conversion and unary dispatcher. Preserve all accepted syntax, Math argument evaluation, supplied-Undefined gating, dependencies, deferral, shadowing and rollback.
+
+Continuous mode; one uniform draw from the live eligible registry selected Utility enhancement. This allocation changes only the Draft proposal and its two index rows. No runtime, executable corpus, tests, generated exports, dependencies or versions change.
 
 Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
+**File**: `docs/nuc-0000.md` (modified, +2/-0)
+```diff
+@@ -141,6 +141,7 @@ Created: 31-Jul-2026
+ | [124](nuc-0124.md) | List and Population Quantiles | Accepted |
+ | [129](nuc-0129.md) | List and Population Zipping | Accepted |
+ | [138](nuc-0138.md) | Reactive Secant | Accepted |
++| [141](nuc-0141.md) | Reactive Cosecant | Draft |
+ 
+ ### Reasoning enhancement
+ 
+@@ -335,6 +336,7 @@ Created: 31-Jul-2026
+ | [138](nuc-0138.md) | Reactive Secant | Standards Track | Utility enhancement | Accepted |
+ | [139](nuc-0139.md) | Symmetric Difference Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
+ | [140](nuc-0140.md) | Match Statements | Standards Track | Runtime features | Draft |
++| [141](nuc-0141.md) | Reactive Cosecant | Standards Track | Utility enhancement | Draft |
+ 
+ ## Copyright
+ 
+```
 
+**File**: `docs/nuc-0141.md` (added, +58/-0)
+```diff
+@@ -0,0 +1,58 @@
++# NUC 141 -- Reactive Cosecant
++
++```
++NUC: 141
++Title: Reactive Cosecant
++Author: Copilot <223556219+Copilot@users.noreply.github.com>
++Status: Draft
++Type: Standards Track
++Category: Utility enhancement
++Created: 24-Nov-2026
++```
++
++## Abstract
++
++- Add only native static `Math.csc(value)`, taking radians and naming the
++  accepted `1 / Math.sin(value)` composition.
++- Intrinsically convert the first argument, then compute exactly
++  `1.0 / first.sin()`, retaining sine and reciprocal rounding rather than
++  introducing angle normalization, pole shortcuts or another numerical model.
++- Preserve Math's supplied-Undefined gate, eager argument evaluation, ignored
++  extras, dependencies, deferral, shadowing, rollback and every accepted form.
++- This continuous proposal follows one uniform draw from the live eligible
++  category registry, which selected Utility enhancement. Paired lexer-token
++  comparison and every hard criterion remain mandatory.
++
++## Motivation
++
++- Geometry and declarative trigonometric models use cosecant as the reciprocal
++  of sine; a named helper expresses that operation in live properties without
++  repeating its surrounding division.
++- Accepted sine and division already provide an executable counterpart,
++  while the accepted native runtime rejects `Math.csc(1)` as an unknown
++  function and returns `1.1883951057781212` for `1 / Math.sin(1)`.
++- Extend the existing unary dispatcher without changing the parser, public
++  Rust API, dependencies, options, versions or ARC implementation.
++
++## Rationale
++
++- Pending: the proposer completes this section.
++
++## Specification
++
++- Pending: the proposer completes this section.
++
++## Errors
++
++- Pending: the proposer completes this section.
++
++## Reference Implementation
++
++- Pending: the proposer completes this section.
++
++## Copyright
++
++Copyright 2020 Nucleoid
++
++This document is licensed under the Apache License, Version 2.0. See
++[LICENSE](../LICENSE) for the full text.
+```
 
 ---
 
-### Incident Patch 2: `df1f1406` (2026-11-24)
-**Commit Message**: Rename ARC object tags to kinds
+### Incident Patch 2: `a5042ae6` (2026-11-24)
+**Commit Message**: NUC 138 Reactive Secant
 
-Rename the geometry property across ARC datasets, snapshots, documentation, and agent guidance. Update the default puzzle to 6150a2bd and clarify test instance naming.
+Accepted.
 
-**File**: `.claude/agents/arc-dataset.agent.md` (modified, +14/-12)
+Continuous Utility enhancement; all three hard criteria and every independent policy check passed. The frozen candidate is integrated unchanged, apart from outcome metadata.
+
+Build --all-targets, warning-denied Clippy, formatting and strict rustdoc passed independently and on integration. Full cargo test --no-fail-fast:4032 passed,0 failed,25 unchanged ignored. All4049 accepted scoped test identities/statuses and11 expected-panic labels retained;8 additions passed. All1308 original accepted programs including cosine extras replayed;1308 candidate cases preserved assertions, returns and coverage.
+
+Required lexer-token comparison ran:2 less,1306 same,0 more; secant cases115->113 and88->86. No missing,unpaired,invalid or incompatible case.
+
+Frozen proposal7235424ffafb3702c9fc45639e0b55037a683deb; accepted claim8f515043a546d4e509f2d809e6f14352b4472ff9; normalized candidate tree378830a51e079d88015186b2c3e2b8a9cdb34e21. Core reportf76887245307c04727bcc2d784c4a2557d9a2dad; independent report8b0eb20155801c20d59e661709d06031ce9b4379; caller integrated validationd05c6d142d6c20b7b094686a71b4b921574c3af4.
+
+Advisory usefulness/reward unscored:missing_rubric. 
+
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +1/-0)
 ```diff
-@@ -79,7 +79,7 @@ output-canvas mode for the whole dataset, inferred only from the training pairs.
- Before writing, read `arc/src/dataset/dataset.28bf18c6.json`, at least one other
- dataset, and the "Instruction datasets" and "Analysis" sections of
- `arc/README.md`. Every dataset in `arc/src/dataset/` may serve as a reference
--for world-model idioms, properties, rules, and tags. The solver sends every
-+for world-model idioms, properties, rules, and kinds. The solver sends every
- JSON instruction dataset as shared few-shot context. Match their structure,
- key order, and
- formatting exactly:
-@@ -129,16 +129,16 @@ formatting exactly:
- - `declarations[0]` holds every class declaration of the world model, because
-   the solver runs it alone to build input states. Existing datasets declare
-   one class, `Obj(x: int, y: int, width: int, height: int, orientation: int,
--  volume: int, tag: str = 'lNNNN', ...)`; add another class only for a
--  distinct kind of object the transformation needs. Each class whose
-+  volume: int, kind: str = 'lNNNN', ...)`; add another class only for a
-+  distinct sort of object the transformation needs. Each class whose
-   instances are annotated objects takes the standard entries `x: int, y: int,
-   width: int, height: int, orientation: int, volume: int` first, in that
--  order, then the optional `tag: str = 'lNNNN'`, whose default is the class's
--  initial tag, and its body assigns every parameter to `this`, the tag with
--  `this.tag is tag` right after `this.volume is volume`. An implementation
--  passes `tag` only when its object needs a tag other than the default, as
-+  order, then the optional `kind: str = 'lNNNN'`, whose default is the class's
-+  initial kind, and its body assigns every parameter to `this`, the kind with
-+  `this.kind is kind` right after `this.volume is volume`. An implementation
-+  passes `kind` only when its object needs a kind other than the default, as
-   every implementation in `dataset.27a28665.json` names its block's shape
--  with `tag='l4262'` and the like; otherwise it leaves `tag` out. The default
-+  with `kind='l4262'` and the like; otherwise it leaves `kind` out. The default
-   keeps its quotes, because accepted Nucleoid takes only a literal as a
-   parameter default. Add only the descriptive properties the transformation
-   needs, such as categorical colors.
-@@ -182,9 +182,11 @@ formatting exactly:
-   populations, such as `Obj.filter`, `map`, `reduce`, `some`, `every`,
-   `find`, and reasoning selections, where they express the rule. Avoid `for`
-   loops, imperative steps, and manual bookkeeping.
--- A tag is `l` followed by four digits and names a geometry. Reuse the tag an
--  existing dataset uses for the same geometry; otherwise mint one unused
--  elsewhere.
-+- A kind is `l` followed by four digits and names a geometry. It acts as a
-+  child class that the rules assign declaratively: an instance never changes
-+  its class, so a rule such as `$Obj.kind is l1707` moves it to another kind.
-+  Reuse the kind an existing dataset uses for the same geometry; otherwise
-+  mint one unused elsewhere.
- - Orientation is degrees clockwise from north (N = 0, E = 90, S = 180,
-   W = 270, diagonals 45, 135, 225, and 315). Use 0 for shapes that are
-   symmetric or not rotated.
-@@ -331,7 +333,7 @@ Add one paragraph about the dataset to the "Instruction datasets" section of
- `arc/README.md`, in the style of the `dataset.28bf18c6.json` paragraph: source
- puzzle, its single canonical path, that it contains the exact original training
- pairs in order followed by the test pairs, pair and instance counts,
--instances, the transformation, properties the rules create, tags, the original
-+instances, the transformation, properties the rules create, kinds, the original
- canvas and object sizes, and orientation.
- With a candidate executable, also name the NUC whose feature the rules use.
+@@ -874,3 +874,4 @@
+ {"id":"spec-0874","description":"Nucleoid tests negated membership with Kotlin's !in","code":"xs = [1, 2, 3]\nassert([2 !in xs, 4 !in xs], [false, true])\nassert([2 !in xs, 4 !in xs], [2 not in xs, 4 not in xs])\nword = \"hello\"\nassert([\"z\" !in word, \"ell\" !in word], [true, false])\nclass Seat\nfront = Seat()\nassert([front !in Seat, 3 !in Seat], [false, true])\nassert([1 + 3 !in xs, 4 !in xs == true, 2 !in xs or 4 !in xs], [true, true, true])\nassert([!(4 in xs), 4 not in xs, 4 !in xs], [true, true, true])\nmissing = 4 !in xs\nxs.push(4)\nassert(missing, false)\nmissing","return":"false"}
+ {"id":"spec-0875","description":"Nucleoid keeps !in rules live over class populations","code":"class Order(status):\n    this.status = status\napproved = [\"paid\", \"shipped\"]\n$Order.pending = $Order.status !in approved\nfirst = Order(\"new\")\nsecond = Order(\"paid\")\nassert([first.pending, second.pending], [true, false])\napproved.push(\"new\")\nassert([first.pending, second.pending], [false, false])\nfirst.status = \"lost\"\nassert(first.pending, true)\nopen = Order.filter(order -> order.pending).map(order -> order.status)\nassert(open, [\"lost\"])\nsecond.status = \"held\"\nassert(open, [\"lost\", \"held\"])\nfailure = \"\"\ntry:\n    approved = 5\ncatch error:\n    failure = error\nassert(failure, TypeError(\"approved is not a collection\"))\nassert([approved, open], [[\"paid\", \"shipped\", \"new\"], [\"lost\", \"held\"]])\nopen","return":"[\"lost\",\"held\"]"}
+ {"id":"spec-0876","description":"Nucleoid rolls back failed updates through !in","code":"items = [\"a\"]\nabsent = \"b\" !in items\nassert(absent, true)\nfailure = \"\"\ntry:\n    items = {a: 1}\ncatch error:\n    failure = error\nassert(failure, TypeError(\"items is not a collection\"))\nassert([items, absent], [[\"a\"], true])\nitems.push(\"b\")\nassert(absent, false)\ntags = null\nuntagged = \"red\" !in tags\nassert(untagged, null)\ntags = [\"blue\"]\nassert(untagged, true)\nabsent","return":"false"}
++{"id":"spec-0877","description":"Nucleoid keeps secants reactive","code":"angle = 0\nratio = Math.sec(angle)\nassert(ratio, 1)\nangle = Math.PI\nassert(ratio, -1)\nangle = Math.PI / 3\nassert(ratio, 1 / Math.cos(angle))\nangle = -Math.PI / 3\nassert(ratio, 1 / Math.cos(angle))\nangle = Math.PI / 2\nassert(ratio, 1 / Math.cos(angle))\nangle = 0\nassert(ratio, 1)\nratio","return":"1"}
+```
+
+**File**: `dataset/nucleoid.synth.138.jsonl` (added, +2/-0)
+```diff
+@@ -0,0 +1,2 @@
++{"id":"synth-138-0001","description":"Nucleoid keeps secant scale factors live as angles change","code":"angle = 0\nscale = Math.sec(angle)\nassert(scale, 1)\nangle = Math.PI\nassert(scale, -1)\nangle = Math.PI / 3\nassert(scale, 1 / Math.cos(angle))\nangle = 0\nassert(scale, 1)\nscale","return":"1"}
++{"id":"synth-138-0002","description":"Nucleoid maintains independent secant class rules through deletion and recovery","code":"class Direction(angle):\n    this.angle = angle\n$Direction.scale = Math.sec($Direction.angle)\nfirst = Direction(0)\nsecond = Direction(Math.PI)\nassert([first.scale, second.scale], [1, -1])\nfirst.angle = Math.PI\nassert([first.scale, second.scale], [-1, -1])\ndelete first.angle\nassert(first.scale, undefined)\nassert(second.scale, -1)\nfirst.angle = 0\nassert(first.scale, 1)\n[first.scale, second.scale]","return":"[1,-1]"}
+```
+
+**File**: `docs/README.md` (modified, +44/-0)
+```diff
+@@ -2786,6 +2786,14 @@ Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md), [NUC 119](nuc-0119.md)
+   See the [cotangent contract](../nucleoid.spec.md#reactive-cotangent),
+   `Nucleoid preserves cotangent argument dependencies` in `tests/reference.md`,
+   and the [direction example](examples.md#reactive-cotangent).
++- [NUC 138](nuc-0138.md) adds only native static `Math.sec(value)`, exactly
++  `1 / Math.cos(value)` in radians, preserving cosine rounding followed by
++  reciprocal rounding, not a pole shortcut. Both zero signs yield positive
++  `1`; omission gives NaN. The supplied top-level-Undefined gate, intrinsic
++  first-input conversion, eager extras, dependencies, deferral, shadowing and
++  rollback remain unchanged.
++  See the [secant contract](../nucleoid.spec.md#reactive-secant) and the
++  [argument-dependency case](#reactive-secant-argument-dependencies).
+ - Accepted [NUC 56](nuc-0056.md) adds only static `Math.exp2(value)`, computing
+   exactly the accepted `Math.pow(2, value)` host powf operation after intrinsic
+   first-input conversion and the existing supplied-Undefined gate. The
+@@ -5946,6 +5954,7 @@ Math.remap(start, end, targetStart, targetEnd, value) unclamped static remapping
+ Math.toRadians(value)                   static division-first degree conversion (NUC 50 candidate)
+ Math.exp2(value)                        static powf-based base-two power (Accepted NUC 56)
+ Math.cot(value)                         static reciprocal of tangent in radians (NUC 100 candidate)
++Math.sec(value)                         static reciprocal of cosine in radians (NUC 138)
+ Name[0]  Name["id"]  Name.find(...)    address an instance
+ value[start:end]  value[-n:]           slice, negative counts from the end
+ Name[start:end]  Name[:]  Name[-n:]    instance list range (NUC 61)
+@@ -6046,6 +6055,41 @@ selection |> diff                     steps new or changed since the running blo
+ 
+ ---
+ 
++## Reactive secant argument dependencies
++
++```
++angle = 0
++gate = 1
++ratio = Math.sec(angle, gate)
++assert(ratio, 1)
++angle = Math.PI
++assert(ratio, -1)
++gate = 2
++assert(ratio, -1)
++delete gate
++assert(ratio, undefined)
++gate = 3
++assert(ratio, -1)
++angle = 0
++assert(ratio, 1)
++ratio
++```
++
++- This is the complete `Nucleoid preserves secant argument dependencies`
++  case in `tests/reference.md`, without its title and return comments; its
++  explicit expected return is `1`. The specification's
++  [secant contract](../nucleoid.spec.md#reactive-secant) is authoritative.
++- Every argument evaluates once left to right, even after Undefined.
++  Extras retain strict errors, effects, reads and dependencies without numeric
++  conversion. Deleting the ignored `gate` defers the live call; restoring it
++  recovers the result.
++- Preserve native cosine followed by reciprocal rounding; no range
++  normalization, pole shortcut or accuracy/performance claim is added.
++  Literal-null coercion and live-null/parameter deferral stay distinct.
++- Native method value reads remain Undefined/non-callable, ordinary `.sec`
++  and `.Math` members and Math shadowing stay ordinary, and existing class
++  subscriptions, captured values, frames and rollback are unchanged.
++
+ ## Copyright
+ 
+ Copyright 2020 Nucleoid
+```
+
+**File**: `docs/nuc-0000.md` (modified, +2/-2)
+```diff
+@@ -140,7 +140,7 @@ Created: 31-Jul-2026
+ | [123](nuc-0123.md) | List and Population Variances and Standard Deviations | Accepted |
+ | [124](nuc-0124.md) | List and Population Quantiles | Accepted |
+ | [129](nuc-0129.md) | List and Population Zipping | Accepted |
+-| [138](nuc-0138.md) | Reactive Secant | Draft |
++| [138](nuc-0138.md) | Reactive Secant | Accepted |
+ 
+ ### Reasoning enhancement
+ 
+@@ -332,7 +332,7 @@ Created: 31-Jul-2026
+ | [135](nuc-0135.md) | Kotlin Negated Membership Operator | Standards Track | Language compatibility | Accepted |
+ | [136](nuc-0136.md) | Unknown Constructor Arguments as Properties | Standards Track | Runtime features | Accepted |
+ | [137](nuc-0137.md) | Floating-Point Absolute Value Alias | Standards Track | Language compatibility | Accepted |
+-| [138](nuc-0138.md) | Reactive Secant | Standards Track | Utility enhancement | Draft |
++| [138](nuc-0138.md) | Reactive Secant | Standards Track | Utility enhancement | Accepted |
+ | [139](nuc-0139.md) | Symmetric Difference Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
+ | [140](nuc-0140.md) | Match Statements | Standards Track | Runtime features | Draft |
  
 ```
 
-**File**: `.claude/skills/arc-purposal/SKILL.md` (modified, +2/-2)
+**File**: `docs/nuc-0138.md` (modified, +202/-10)
 ```diff
-@@ -86,7 +86,7 @@ solver run.
- ## References
+@@ -4,7 +4,7 @@
+ NUC: 138
+ Title: Reactive Secant
+ Author: Copilot <223556219+Copilot@users.noreply.github.com>
+-Status: Draft
++Status: Accepted
+ Type: Standards Track
+ Category: Utility enhancement
+ Created: 23-Nov-2026
+@@ -19,8 +19,8 @@ Created: 23-Nov-2026
+   introducing angle normalization, pole shortcuts or another numerical model.
+ - Preserve Math's supplied-Undefined gate, eager argument evaluation, ignored
+   extras, dependencies, deferral, shadowing, rollback and every accepted form.
+-- This continuous cycle selected Utility enhancement with one unbiased draw
+-  from the live eligible registry, index 2 among five categories. Paired
++- This continuous stale-Draft pickup keeps the allocated Utility enhancement
++  category and request; no new category draw or allocation occurs. Paired
+   lexer-token comparison and every hard criterion remain mandatory.
  
- The workflow and its workers may use every dataset in `arc/src/dataset/` as a
--reference for structure, world-model idioms, properties, rules, and tags.
-+reference for structure, world-model idioms, properties, rules, and kinds.
- The solver sends every JSON instruction dataset as shared few-shot context,
- including the running puzzle's own annotated test pairs. That is intended
- while the datasets are prepared as few-shot examples, under the
-@@ -148,7 +148,7 @@ wherever the run's runtime, run as `arc/src/lib/nucleoid.ts` runs it, reads
- that word as the same value, as NUC 86, NUC 93 and NUC 94 read `right` in
- `if $Obj.repeat_direction is right:`, `$Obj.repeat_direction is right` and
- `$Obj.repeat_direction is right if $Obj.wide else down`. The arc-dataset
--profile's quoted default, `tag: str = 'lNNNN'`, is a quote that accepted
-+profile's quoted default, `kind: str = 'lNNNN'`, is a quote that accepted
- Nucleoid cannot do without, because it rejects a bare parameter default
- with `SyntaxError`. Have the
- handoff list every quote it keeps, with the actual result of its bare
+ ## Motivation
+@@ -36,22 +36,214 @@ Created: 23-Nov-2026
+ 
+ ## Rationale
+ 
+-- Pending isolated preparation against the pushed allocation and immutable
+-  accepted-syntax baseline.
++- Secant is a bounded standard-library utility, not a syntax change or a new
++  numeric model. Accepted cosine followed by division defines its complete
++  numeric contract; the cotangent dispatcher added by accepted NUC 100 is the
++  analogous implementation pattern.
++- Reuse the intrinsic conversion, argument evaluator and Undefined gate.
++  Adding one unary arm avoids lowering into shadowable source helpers,
++  changing dependencies or introducing a second call path.
++- Do not normalize angles, approximate cosine, infer mathematical poles,
++  rearrange operations, use fused arithmetic or claim improved accuracy or
++  performance. Preserve the actual rounded cosine before its reciprocal.
++- The original allocation recorded a uniform Utility enhancement selection.
++  The caller subsequently picked up the lowest stale allocated Draft under
++  that same category and renewed its held claim for this source-alignment
++  revision. This worker neither redraws nor allocates a proposal.
++- Keep the caller's continuous mode and Utility enhancement. Runtime
++  applicability is `not_applicable`, with runtime-category inputs absent.
++  No hint or frozen usefulness rubric is supplied; usefulness is unscored
++  (`missing_rubric`). Strategy learning is `not_configured` and unattributed:
++  no policy, selection receipt, trial or selected strategy is supplied.
+ 
+ ## Specification
+ 
+-- Pending isolated preparation; preserve all existing corpus identities,
+-  canonical assertions, expected returns and executed coverage.
++- Add only native static `Math.sec(value)`, with radians as for `Math.cos`.
++  The accepted `1 / Math.cos(value)` spelling remains unchanged and available.
++- Evaluate each supplied argument expression exactly once from left to right,
++  including ignored extras and expressions after Undefined. Preserve all
++  effects, strict errors, reads, dependency subscriptions and rollback.
++- After successful argument evaluation, return Undefined if any supplied
++  top-level value is Undefined, before numeric conversion. Nested Undefined
++  is not a top-level gate. Otherwise convert only the first value through
++  intrinsic `Value::to_number`; omission supplies numeric NaN.
++- Compute exactly `1.0 / first.cos()`. Non-NaN results agree with the accepted
++  cosine-then-reciprocal composition by bits; NaNs agree by classification,
++  without a payload guarantee.
++- Both zero signs yield positive `1`. Finite extremes, subnormal inputs and
++  values near `Math.PI / 2` follow the actual cosine, not inferred infinity
++  at a mathematical pole. Infinite and NaN inputs yield numeric NaN.
++- Literal null converts to zero; booleans, trimmed numeric strings, lists,
++  dates and nonnumeric values retain their existing conversion. Conversion
++  does not resolve or subscribe to shadowable `Number`.
++- Extras are numerically ignored and never converted. Their Undefined values,
++  including missing/deleted property reads, still defer the call; definitions
++  restore it. Literal-null conversion does not override live-input or
++  parameter-null deferral.
++- Named functions, class rules, independent instances, subscriptions,
++  deletion/recovery, captured values, frames and transactions use unchanged
++  machinery. Preserve the written `Math.sec(...)` AST and graph rule source,
++  without lowering.
++- State/local/receiver `Math` shadowing and ordinary `.Math` or `.sec` lookup
++  stay ordinary. Native `Math.sec` read as a value remains Undefined and
++  non-callable. No aliases, global forms or non-native receiver methods are
++  introduced. List/population aggregate fallback remains behind the existing
++  closed method-name dispatch.
++- The intended extension is native `sec` calls that formerly reached the
++  unknown-method error after successful eager argument evaluation without a
++  supplied Undefined value. Already successful supplied-Undefined calls keep
++  their Undefined result. No other accepted parse 
 ```
 
-**File**: `arc/README.md` (modified, +108/-105)
+**File**: `nucleoid.spec.md` (modified, +48/-0)
 ```diff
-@@ -400,12 +400,12 @@ color-9 point with its color-2 rim below and a color-4 point with its color-8
- rim above, and a vertical line that extends up from its bottom endpoint with
- a horizontal line that extends left from its right endpoint.
- Each genesis class takes the standard entries `x`, `y`, `width`, `height`,
--`orientation`, and `volume` first, then the optional `tag`, then its
-+`orientation`, and `volume` first, then the optional `kind`, then its
- descriptive properties in their existing order, and every implementation
- passes the input shape's bounding-box `width` and `height` and its input
--mask's `volume`, its number of nonzero cells, and leaves out `tag`. A rule
-+mask's `volume`, its number of nonzero cells, and leaves out `kind`. A rule
- that grows a shape computes its new size
--from its first values in the branch that sets its output tag: a core corner
-+from its first values in the branch that sets its output kind: a core corner
- grows from 2 by 2 to 3 by 3 with its outside marker, and its origin moves one
- column left when it points west, at orientation 225 or 315, and one row up
- when it points north, at orientation 45 or 315; a curve point grows from
-@@ -439,16 +439,19 @@ every program it runs, as
- rules read it from those variables. Native snapshots are captured the same
- way, with the pair's `input_matrix` size declared first.
+@@ -29457,6 +29457,24 @@ tags = ["blue"]
+ assert(untagged, true)
+ absent
+ # return: false
++---
++# Nucleoid keeps secants reactive
++
++angle = 0
++ratio = Math.sec(angle)
++assert(ratio, 1)
++angle = Math.PI
++assert(ratio, -1)
++angle = Math.PI / 3
++assert(ratio, 1 / Math.cos(angle))
++angle = -Math.PI / 3
++assert(ratio, 1 / Math.cos(angle))
++angle = Math.PI / 2
++assert(ratio, 1 / Math.cos(angle))
++angle = 0
++assert(ratio, 1)
++ratio
++# return: 1
+ ```
  
--Every class takes `tag` right after `volume` as an optional parameter whose
--default is the dataset's initial tag, such as `tag: str = 'l9100'`, and its
--constructor stores it with `this.tag is tag`. An implementation passes `tag`
--only when its object needs a tag other than that default: every
--implementation of `dataset.27a28665.json` passes the tag of its block's
--shape, as in `tag='l4262'`, and every other implementation leaves it out, so
-+Every class takes `kind` right after `volume` as an optional parameter whose
-+default is the dataset's initial kind, such as `kind: str = 'l9100'`, and its
-+constructor stores it with `this.kind is kind`. An implementation passes `kind`
-+only when its object needs a kind other than that default: every
-+implementation of `dataset.27a28665.json` passes the kind of its block's
-+shape, as in `kind='l4262'`, and every other implementation leaves it out, so
- its input state carries the default. The parameter comes before the
- descriptive parameters, in the order of the constructor's assignments:
- Nucleoid lets a default occupy any parameter slot, and every implementation
--names its arguments.
-+names its arguments. A kind acts as a child class that the rules assign
-+declaratively: Nucleoid never converts an instance to another class, so a
-+class-level rule such as `$Obj.kind is l1707` moves the instance to another
-+kind instead. The property was called `tag` until 24-Nov-2026.
- 
- Every dataset writes its assignments with `is`, the opt-in assignment of
- [NUC 93](../docs/nuc-0093.md), and its equality tests with `is` and `is not`,
-@@ -459,15 +462,15 @@ and implementations construct
- each `target is value` builds exactly the syntax tree of `target = value`. When
- a whole value, or the whole right operand of an `is` comparison, is one bare
- word, it reads the name of that spelling if one exists and otherwise its own
--text, so tags and directions drop their quotes there, as in
--`$Obj.tag is l3337` and `$Obj.extension_direction is right`, while
--`this.tag is tag` reads the constructor's `tag` parameter. No dataset
-+text, so kinds and directions drop their quotes there, as in
-+`$Obj.kind is l3337` and `$Obj.extension_direction is right`, while
-+`this.kind is kind` reads the constructor's `kind` parameter. No dataset
- program defines a name with those spellings, and the solver adds only
- `canvas_width` and `canvas_height`. Other strings keep their quotes, such as
- the object keys of the `fill_color` rule in `dataset.27a28665.json`, keyword
--arguments such as `tag='l1707'`, which are not assignments, and the default
--of the `tag` parameter, such as `tag: str = 'l9100'`: accepted Nucleoid takes
--only a literal as a parameter default and rejects the bare `tag: str = l9100`
-+arguments such as `kind='l1707'`, which are not assignments, and the default
-+of the `kind` parameter, such as `kind: str = 'l9100'`: accepted Nucleoid takes
-+only a literal as a parameter default and rejects the bare `kind: str = l9100`
- with `SyntaxError: Expected a scalar literal parameter default`.
- `src\lib\nucleoid.ts` passes no syntax flag: the runtime reads `is`
- assignments without one since `d945213`, which removed the opt-in syntax
-@@ -508,14 +511,14 @@ derives them as `COMMENT`:
- 
- ```nuc
- # Each object is all the cells of one color, touching or not. Every color except the one with the most cells turns 5
--class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l9100', color: int):
-+class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, kind: str = 'l9100', color: int):
-     this.x is x
-     this.y 
+ ## Floating-point absolute value alias
+@@ -29478,3 +29496,33 @@ absent
+   Native method value reads remain Undefined, not callable references.
+ - No global aliases, additional receivers, other math names, flags,
+   parser/lexer changes, public API changes or dependencies are introduced.
++
++## Reactive secant
++
++- NUC 138 adds only native static `Math.sec(value)`, with radians as input
++  and exactly the accepted `1 / Math.cos(value)` result.
++- After successful eager evaluation of every argument, the existing
++  any-supplied-top-level-Undefined gate returns Undefined before conversion.
++  Otherwise intrinsically convert only the first value with `Value::to_number`,
++  then compute exactly `1.0 / first.cos()`. Omission gives numeric NaN.
++- Preserve cosine rounding followed by reciprocal rounding: no normalization,
++  approximation, inferred pole infinity, rearrangement or shadowable helper.
++  Non-NaNs match the accepted composition by bits; NaNs match by classification.
++  Both zero signs yield positive `1`; finite extremes, subnormals and values
++  near `Math.PI / 2` follow the actual cosine, while infinite inputs give NaN.
++- Extras still evaluate exactly once left to right, including after Undefined,
++  with their effects, strict errors, reads and dependencies; they are not
++  numerically converted. Only top-level Undefined triggers the native gate.
++- Literal null retains numeric zero conversion. Inherited live-input and
++  parameter-null deferral, named functions, independent class rules, instance
++  subscriptions, deletion/recovery, frames, captured values and rollback stay
++  unchanged. Numeric conversion does not resolve shadowable `Number`.
++- State/local/receiver `Math` shadowing and ordinary `.Math` or `.sec` lookup
++  stay ordinary. Native `Math.sec` value reads remain Undefined/non-callable.
++  No aliases, global forms, non-native receiver methods or syntax are added;
++  list/population aggregates keep their existing closed method-name dispatch.
++- Formerly failing native `sec` calls gain numbers only after successful
++  argument evaluation without supplied Undefined. Already successful calls
++  with supplied Undefined retain Undefined. All other accepted behavior,
++  strict diagnostics, error positions and transaction effects remain unchanged;
++  `Math.toDegrees` remains unsupported.
 ```
 
-**File**: `arc/docs/ARC-NUC-017c7c7b.md` (modified, +19/-0)
+**File**: `src/builtins/numeric.rs` (modified, +1/-0)
 ```diff
-@@ -363,6 +363,25 @@ No NUC was requested, so no proposal strategy was selected and strategy
- learning did not apply. No solver run has measured this version, so its
- difference is unknown, not zero.
- 
-+### Kind instead of tag
-+
-+On 24-Nov-2026, at the user's request, the property that names the object's
-+geometry is called `kind` instead of `tag`. It acts as a child class that the
-+rules assign declaratively, since Nucleoid never converts an instance to
-+another class. The class takes `kind: str = 'l9100'` and stores it with
-+`this.kind is kind`, and its rules move instances to the kind `l8384` with
-+`$Obj.kind is`. Every snapshot's `tag` key is now `kind`, and every value is
-+unchanged.
-+
-+Offline, with the accepted runtime at `9dac162` (last runtime change
-+`fda179e`), all 4 input and 4 output snapshots of the 4 pairs replay unchanged
-+apart from that key, and the old and new datasets replay alike. The dataset
-+differs from the old one only in its 12 uses of the name, byte for byte.
-+
-+No NUC was requested, so no proposal strategy was selected and strategy
-+learning did not apply. No solver run has measured this version, so its
-+difference is unknown, not zero.
-+
- ## Runs
- 
- | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
+@@ -72,6 +72,7 @@ fn math_unary(name: &str, first: f64) -> Option<f64> {
+         "log10" => first.log10(),
+         "sin" => first.sin(),
+         "cos" => first.cos(),
++        "sec" => 1.0 / first.cos(),
+         "tan" => first.tan(),
+         "cot" => 1.0 / first.tan(),
+         "atan" => first.atan(),
 ```
 
-**File**: `arc/docs/ARC-NUC-0ca9ddb6.md` (modified, +20/-0)
+**File**: `tests/case_conversion_aliases.rs` (modified, +2/-2)
 ```diff
-@@ -442,6 +442,26 @@ No NUC was requested, so no proposal strategy was selected and strategy
- learning did not apply. No solver run has measured this version, so its
- difference is unknown, not zero.
+@@ -370,7 +370,7 @@ fn only_the_appended_cases_call_the_aliases_and_they_run_every_assertion() {
+         }
+     }
+     assert_eq!(assertions, 23);
+-    assert_eq!(cases, 1306);
++    assert_eq!(cases, 1308);
+ }
  
-+### Kind instead of tag
-+
-+On 24-Nov-2026, at the user's request, the property that names the object's
-+geometry is called `kind` instead of `tag`. It acts as a child class that the
-+rules assign declaratively, since Nucleoid never converts an instance to
-+another class. The class takes `kind: str = 'l7544'` and stores it with
-+`this.kind is kind`, and its rules move instances to the kinds `l1707` and
-+`l2404` with `$Obj.kind is`. Every snapshot's `tag` key is now `kind`, and
-+every value is unchanged.
-+
-+Offline, with the accepted runtime at `9dac162` (last runtime change
-+`fda179e`), all 15 input and 15 output snapshots of the 4 pairs replay
-+unchanged apart from that key, and the old and new datasets replay alike. The
-+dataset differs from the old one only in its 35 uses of the name, byte for
-+byte.
-+
-+No NUC was requested, so no proposal strategy was selected and strategy
-+learning did not apply. No solver run has measured this version, so its
-+difference is unknown, not zero.
-+
- ## Runs
- 
- | Date | Run | Commit | Exit status | Difference | Seconds |
-```
-
-**File**: `arc/docs/ARC-NUC-0d3d703e.md` (modified, +20/-0)
-```diff
-@@ -330,6 +330,26 @@ No NUC was requested, so no proposal strategy was selected and strategy
- learning did not apply. No solver run has measured this version, so its
- difference is unknown, not zero.
- 
-+### Kind instead of tag
-+
-+On 24-Nov-2026, at the user's request, the property that names the object's
-+geometry is called `kind` instead of `tag`. It acts as a child class that the
-+rules assign declaratively, since Nucleoid never converts an instance to
-+another class. The class takes `kind: str = 'l6953'` and stores it with
-+`this.kind is kind`, and no rule changes it, so every instance keeps the kind
-+`l6953`. Every snapshot's `tag` key is now `kind`, and every value is
-+unchanged.
-+
-+Offline, with the accepted runtime at `9dac162` (last runtime change
-+`fda179e`), all 15 input and 15 output snapshots of the 5 pairs replay
-+unchanged apart from that key, and the old and new datasets replay alike. The
-+dataset differs from the old one only in its 33 uses of the name, byte for
-+byte.
-+
-+No NUC was requested, so no proposal strategy was selected and strategy
-+learning did not apply. No solver run has measured this version, so its
-+difference is unknown, not zero.
-+
- ## Runs
- 
- | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
-```
-
-**File**: `arc/docs/ARC-NUC-25d8a9c8.md` (modified, +20/-0)
-```diff
-@@ -346,6 +346,26 @@ No NUC was requested, so no proposal strategy was selected and strategy
- learning did not apply. No solver run has measured this version, so its
- difference is unknown, not zero.
- 
-+### Kind instead of tag
-+
-+On 24-Nov-2026, at the user's request, the property that names the object's
-+geometry is called `kind` instead of `tag`. It acts as a child class that the
-+rules assign declaratively, since Nucleoid never converts an instance to
-+another class. The class takes `kind: str = 'l3058'` and stores it with
-+`this.kind is kind`, and no rule changes it, so every instance keeps the kind
-+`l3058`. Every snapshot's `tag` key is now `kind`, and every value is
-+unchanged.
-+
-+Offline, with the accepted runtime at `9dac162` (last runtime change
-+`fda179e`), all 15 input and 15 output snapshots of the 5 pairs replay
-+unchanged apart from that key, and the old and new datasets replay alike. The
-+dataset differs from the old one only in its 33 uses of the name, byte for
-+byte.
-+
-+No NUC was requested, so no proposal strategy was selected and strategy
-+learning did not apply. No solver run has measured this version, so its
-+difference is unknown, not zero.
-+
- ## Runs
- 
- | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
-```
-
-**File**: `arc/docs/ARC-NUC-25ff71a9.md` (modified, +19/-0)
-```diff
-@@ -278,6 +278,25 @@ No NUC was requested, so no proposal strategy was selected and strategy
- learning did not apply. No solver run has measured this version, so its
- difference is unknown, not zero.
- 
-+### Kind instead of tag
-+
-+On 24-Nov-2026, at the user's request, the property that names the object's
-+geometry is called `kind` instead of `tag`. It acts as a child class that the
-+rules assign declaratively, since Nucleoid never converts an instance to
-+another class. The class takes `kind: str = 'l9100'` and stores it with
-+`this.kind is kind`, and no rule changes it, so every instance keeps the kind
-+`l9100`. Every snapshot's `tag` key is now `kind`, and every value is
-+unchanged.
-+
-+Offline, with the accepted runtime at `9dac162` (last runtime change
-+`fda179e`), all 6 input and 6 output snapshots of the 6 pairs replay unchanged
-+apart from that key, and the old and new datasets replay alike. The dataset
-+differs from the old one only in its 15 uses of the name, byte for byte.
-+
-+No NUC was requested, so no proposal strategy was selected and strategy
-+learning did not apply. No solver run has measured this version, so its
-+difference is unknown, not zero.
-+
- ## Runs
- 
- | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
+ #[test]
+@@ -442,7 +442,7 @@ fn the_appended_cases_stand_after_nuc_117_and_before_nuc_103() {
+         let index = cases.iter().position(|case| case.title == title).unwrap();
+         assert_eq!(
+             index,
+-            cases.len() - 21 - 2 * usize::from(title == REFERENCE_TITLE),
++            cases.len() - 21 - 3 * usize::from(title == REFERENCE_TITLE),
+             "{title}"
+         );
+         assert_eq!(cases[index - 1].title, previous);
 ```
 
 #### Recent Merged Pull Requests:
@@ -1952,55 +2022,32 @@ Rename the geometry property across ARC datasets, snapshots, documentation, and 
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Rename ARC object tags to kinds
+## X. Draft NUC 141 Reactive Cosecant
 
 **RULE**:
-When implementing operations in `.claude/agents/arc-dataset.agent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `df1f1406`: Rename ARC object tags to kinds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f45b916b`: Draft NUC 141 Reactive Cosecant. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/agents/arc-dataset.agent.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-for world-model idioms, properties, rules, and kinds. The solver sends every
-  volume: int, kind: str = 'lNNNN', ...)`; add another class only for a
-  distinct sort of object the transformation needs. Each class whose
-  order, then the optional `kind: str = 'lNNNN'`, whose default is the class's
-  initial kind, and its body assigns every parameter to `this`, the kind with
-  `this.kind is kind` right after `this.volume is volume`. An implementation
-  passes `kind` only when its object needs a kind other than the default, as
-  with `kind='l4262'` and the like; otherwise it leaves `kind` out. The default
-- A kind is `l` followed by four digits and names a geometry. It acts as a
-  child class that the rules assign declaratively: an instance never changes
-  its class, so a rule such as `$Obj.kind is l1707` moves it to another kind.
-  Reuse the kind an existing dataset uses for the same geometry; otherwise
-  mint one unused elsewhere.
-instances, the transformation, properties the rules create, kinds, the original
+| [141](nuc-0141.md) | Reactive Cosecant | Draft |
+| [141](nuc-0141.md) | Reactive Cosecant | Standards Track | Utility enhancement | Draft |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-for world-model idioms, properties, rules, and tags. The solver sends every
-  volume: int, tag: str = 'lNNNN', ...)`; add another class only for a
-  distinct kind of object the transformation needs. Each class whose
-  order, then the optional `tag: str = 'lNNNN'`, whose default is the class's
-  initial tag, and its body assigns every parameter to `this`, the tag with
-  `this.tag is tag` right after `this.volume is volume`. An implementation
-  passes `tag` only when its object needs a tag other than the default, as
-  with `tag='l4262'` and the like; otherwise it leaves `tag` out. The default
-- A tag is `l` followed by four digits and names a geometry. Reuse the tag an
-  existing dataset uses for the same geometry; otherwise mint one unused
-  elsewhere.
-instances, the transformation, properties the rules create, tags, the original
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `df1f1406` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f45b916b` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

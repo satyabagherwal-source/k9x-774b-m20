@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T22:42:44.507Z",
+  "last_updated": "2026-11-24T22:51:15.947Z",
   "total_records": 2587,
   "domains": {
     "A": {
@@ -11048,8 +11048,8 @@
       "title": "Technical Construction Intelligence: langchain4j/langchain4j Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-langchain4j-langchain4j-technical-construction-intelligence-langchain4j-langchai.md",
       "repository": "langchain4j/langchain4j",
-      "content_hash": "b98473fd9ee6a71393b2009f393280c54849779c55bc19c47aeb6fea9f015da3",
-      "created_at": "2026-11-24T02:12:51.069Z"
+      "content_hash": "d82fbb2f9ee2dd81bb289a3d5c748479b52a1b0b35a87e60d61c3451f889fbb5",
+      "created_at": "2026-11-24T22:51:07.893Z"
     },
     "DOM-D-9936936B": {
       "record_id": "DOM-D-9936936B",
@@ -15666,8 +15666,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "fdb4194b0a629870a7a19ea0574db9f4c538175c1ee17655fcc2e833bbfc7afa",
-      "created_at": "2026-11-24T21:15:52.261Z"
+      "content_hash": "740d8041e736a4aaeff88dc8b427e26ac85deb72b269eec68f71b80dec8fbcef",
+      "created_at": "2026-11-24T22:51:10.437Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -16116,8 +16116,8 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-learnings-architecture-intelligence-nucleoidai-nucleoid-lear.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "bada6f678d04bf4f9f0da75697e3fe04a25c4dd6d5c2313e77523b00b92c3503",
-      "created_at": "2026-11-24T21:15:57.606Z"
+      "content_hash": "80ad2b13ef3aa33d8571d71af614b00dcca8dd8fe70b1843e66986126e6cd5f3",
+      "created_at": "2026-11-24T22:51:15.947Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants",
@@ -26158,8 +26158,8 @@
       "title": "Technical Construction Intelligence: sveltejs/svelte Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-sveltejs-svelte-technical-construction-intelligence-sveltejs-svelte-core-invaria.md",
       "repository": "sveltejs/svelte",
-      "content_hash": "492b8de4fa5c49ac26c913415c3d538f72a09c75a4d8600ce7d0b84961e06bde",
-      "created_at": "2026-11-20T23:13:30.545Z"
+      "content_hash": "860c475c47976ade8dc51c0fd68b9402700e1745359b76d7a1b464b6d842ef5c",
+      "created_at": "2026-11-24T22:51:00.469Z"
     },
     "domain_intelligence-research-knowledge-intelligence-materializeinc-materialize-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-materializeinc-materialize-core-invariants",
@@ -26185,8 +26185,8 @@
       "title": "Technical Construction Intelligence: sveltejs-svelte-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-sveltejs-svelte-learnings-technical-construction-intelligence-sveltejs-svelte-le.md",
       "repository": "sveltejs-svelte-learnings",
-      "content_hash": "21611de476cac1f5a195d9b17545e6c86c67ae1bc42038f6c4722c5354c70558",
-      "created_at": "2026-11-20T23:13:42.137Z"
+      "content_hash": "83bf4d7311d158dca5531e11def3b0f833aa763a456959b0e75a3eeaa51d9a4b",
+      "created_at": "2026-11-24T22:51:14.229Z"
     },
     "domain_intelligence-research-knowledge-intelligence-materializeinc-materialize-learnings-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-materializeinc-materialize-learnings-core-invari",
@@ -29129,8 +29129,8 @@
       "title": "Technical Construction Intelligence: langchain4j-langchain4j-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-langchain4j-langchain4j-learnings-technical-construction-intelligence-langchain4.md",
       "repository": "langchain4j-langchain4j-learnings",
-      "content_hash": "958e2258cb0da53ac99c6c1fb9ce47d42de4276e9d9c27f03496ab3f51b085da",
-      "created_at": "2026-11-24T02:12:58.021Z"
+      "content_hash": "749f952cf69133ffb51d4c2ad5914f5d544f59ea3de1aac94ac6c2a632d39009",
+      "created_at": "2026-11-24T22:51:14.999Z"
     },
     "domain_intelligence-research-knowledge-intelligence-fastvideo-fasth3-omni-comfy-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-fastvideo-fasth3-omni-comfy-core-invariants",

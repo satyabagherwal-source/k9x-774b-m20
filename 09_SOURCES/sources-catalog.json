@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "8f515043",
+    "sourceVersion": "f45b916b",
     "license": "Apache-2.0",
-    "contentHash": "45c958622b18b49dfa0f22e5468e66d71ca5055b950572f256ad644e8aa13daf",
-    "lastHarvestedAt": "2026-11-24T21:15:51.752Z",
+    "contentHash": "dbae65b48ccdb9f59604f08a29280249e3e182dafed38a156cfb63de49207040",
+    "lastHarvestedAt": "2026-11-24T22:51:10.055Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -7353,10 +7353,10 @@
     "repository": "langchain4j/langchain4j",
     "platform": "github",
     "sourceUrl": "https://github.com/langchain4j/langchain4j",
-    "sourceVersion": "911e4203",
+    "sourceVersion": "212cbf3c",
     "license": "Apache-2.0",
-    "contentHash": "9e6e0756548d613ec2247dc7567cf10e39768fb007f3937746d8e310cb9d43fa",
-    "lastHarvestedAt": "2026-11-24T02:12:50.658Z",
+    "contentHash": "bb6c8cdfb7d045a0c31b23163edca8c8655c6fedf7944eca23e257886b912da3",
+    "lastHarvestedAt": "2026-11-24T22:51:07.504Z",
     "learningId": "learn-github-langchain4j-langchain4j"
   },
   "railwayapp-nixpacks": {
@@ -9963,10 +9963,10 @@
     "repository": "sveltejs/svelte",
     "platform": "github",
     "sourceUrl": "https://github.com/sveltejs/svelte",
-    "sourceVersion": "04c5d8da",
+    "sourceVersion": "36cb19ee",
     "license": "MIT",
-    "contentHash": "a6544c37c372f2274ece56eb323ae09a846d207e15dc2de6254a71e686c91e25",
-    "lastHarvestedAt": "2026-11-20T23:13:30.171Z",
+    "contentHash": "ef6dc4e10264d11eead6779a6b47a834afcc807cfcfe23f56d0beec327b9b6eb",
+    "lastHarvestedAt": "2026-11-24T22:51:00.061Z",
     "learningId": "learn-github-sveltejs-svelte"
   },
   "solidjs-solid": {

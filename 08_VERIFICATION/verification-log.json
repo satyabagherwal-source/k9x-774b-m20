@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-PJ6C",
-    "timestamp": "2026-11-23T07:18:36.372Z",
-    "repository": "ShiftHackZ/SDAI-KMP",
-    "learningId": "learn-github-shifthackz-sdai-kmp",
-    "contentHash": "26a2ad5cd7a75a31d8a40e986e5eb0d67a80407b1485373a20105293483cf8aa",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-2F2H",
-    "timestamp": "2026-11-23T07:28:37.577Z",
-    "repository": "AhmadHassan-BTed/Jantt",
-    "learningId": "learn-github-ahmadhassan-bted-jantt",
-    "contentHash": "a3770f8666de2e69255401bf65c036bbbe53f338ccfd5f2631e4db95e7cfa1ea",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-2GYB",
-    "timestamp": "2026-11-23T07:28:40.019Z",
-    "repository": "meta-llama/Llama-2-7b-chat-hf",
-    "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
-    "contentHash": "e07357155fb841b15798bf4f843b4ca73a2acb2b9f8714c541ed9bd312e85f53",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-2MJU",
     "timestamp": "2026-11-23T07:28:47.274Z",
     "repository": "SimonSchubert/Kai",
@@ -7490,6 +7445,51 @@
     "repository": "alibaba/zvec",
     "learningId": "learn-github-alibaba-zvec",
     "contentHash": "2eb9e5f50a9cf3ca75af40c8ffffe6a5cce4deb024c087cc77272c17d36870c6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-GG9K",
+    "timestamp": "2026-11-24T22:51:00.056Z",
+    "repository": "sveltejs/svelte",
+    "learningId": "learn-github-sveltejs-svelte",
+    "contentHash": "ef6dc4e10264d11eead6779a6b47a834afcc807cfcfe23f56d0beec327b9b6eb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-GM0D",
+    "timestamp": "2026-11-24T22:51:07.501Z",
+    "repository": "langchain4j/langchain4j",
+    "learningId": "learn-github-langchain4j-langchain4j",
+    "contentHash": "bb6c8cdfb7d045a0c31b23163edca8c8655c6fedf7944eca23e257886b912da3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-GNZ8",
+    "timestamp": "2026-11-24T22:51:10.052Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "dbae65b48ccdb9f59604f08a29280249e3e182dafed38a156cfb63de49207040",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

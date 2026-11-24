@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T22:42:44.929Z",
+  "last_updated": "2026-11-24T22:51:16.252Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-24T21:53:47.661Z",
@@ -773,7 +773,7 @@
       "staged_for_review": 1
     },
     "nucleoidai-nucleoid-learnings.md": {
-      "processed_at": "2026-11-24T21:15:56.846Z",
+      "processed_at": "2026-11-24T22:51:15.310Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1078,7 +1078,7 @@
       "staged_for_review": 1
     },
     "sveltejs-svelte-learnings.md": {
-      "processed_at": "2026-11-20T23:13:40.957Z",
+      "processed_at": "2026-11-24T22:51:13.418Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3353,7 +3353,7 @@
       "staged_for_review": 1
     },
     "langchain4j-langchain4j-learnings.md": {
-      "processed_at": "2026-11-24T02:12:57.570Z",
+      "processed_at": "2026-11-24T22:51:14.561Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3868,7 +3868,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3951,
+  "total_dossiers_evaluated": 3954,
   "total_canonical_promoted": 519,
-  "total_staged_for_review": 3012
+  "total_staged_for_review": 3015
 }

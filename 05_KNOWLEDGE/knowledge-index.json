@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T22:42:44.737Z",
+  "last_updated": "2026-11-24T22:51:16.108Z",
   "total_verified_learnings": 9103,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24968,
+  "total_items": 24975,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -216265,8 +216265,8 @@
       "slug": "langchain4j-langchain4j",
       "platform": "github",
       "source_url": "https://github.com/langchain4j/langchain4j",
-      "source_version": "911e4203",
-      "content_hash": "9e6e0756548d613ec2247dc7567cf10e39768fb007f3937746d8e310cb9d43fa",
+      "source_version": "212cbf3c",
+      "content_hash": "bb6c8cdfb7d045a0c31b23163edca8c8655c6fedf7944eca23e257886b912da3",
       "dossier_path": "07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
       "promoted_rules": [
@@ -216304,6 +216304,11 @@
           "number": 10179,
           "title": "support primitive arrays in the parallel mapper",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10376,
+          "title": "notify composed agent listeners in registration order, closing callback",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -216311,7 +216316,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T02:12:50.441Z",
+      "verified_at": "2026-11-24T22:51:07.304Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -216353,10 +216358,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-langchain4j-langchain4j-technical-construction-intelligence-langchain4j-langchai.md",
       "title": "Technical Construction Intelligence: langchain4j/langchain4j Core Invariants",
       "repository": "langchain4j/langchain4j",
-      "source_version": "911e4203",
-      "content_hash": "b98473fd9ee6a71393b2009f393280c54849779c55bc19c47aeb6fea9f015da3",
+      "source_version": "212cbf3c",
+      "content_hash": "d82fbb2f9ee2dd81bb289a3d5c748479b52a1b0b35a87e60d61c3451f889fbb5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T02:12:51.069Z"
+      "persisted_at": "2026-11-24T22:51:07.893Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-langchain4j-langchain4j": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-langchain4j-langchain4j",
@@ -216365,10 +216370,10 @@
       "relative_path": "08_VERIFICATION/langchain4j-langchain4j-verification-protocol-empirical-defect-shield-for-langch.md",
       "title": "Verification Protocol: Empirical Defect Shield for langchain4j/langchain4j",
       "repository": "langchain4j/langchain4j",
-      "source_version": "911e4203",
-      "content_hash": "b2edbdae5fe18f879d65e072a559fedf5bd37f2c581b2b7ddf459dbe3cf36a94",
+      "source_version": "212cbf3c",
+      "content_hash": "fca9ee69c3c44f2e5da42081ca46d4cbc7c49f0248c3ec5f314ad3c67a032270",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T02:12:51.246Z"
+      "persisted_at": "2026-11-24T22:51:08.069Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-google-electra-base-discriminator-learnings-c": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-google-electra-base-discriminator-learnings-c",
@@ -230485,8 +230490,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "8f515043",
-      "content_hash": "45c958622b18b49dfa0f22e5468e66d71ca5055b950572f256ad644e8aa13daf",
+      "source_version": "f45b916b",
+      "content_hash": "dbae65b48ccdb9f59604f08a29280249e3e182dafed38a156cfb63de49207040",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -230749,6 +230754,11 @@
           "number": 10362,
           "title": "Rename ARC object tags to kinds",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10377,
+          "title": "Draft NUC 141 Reactive Cosecant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -230756,7 +230766,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T21:15:51.482Z",
+      "verified_at": "2026-11-24T22:51:09.864Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230798,10 +230808,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "8f515043",
-      "content_hash": "fdb4194b0a629870a7a19ea0574db9f4c538175c1ee17655fcc2e833bbfc7afa",
+      "source_version": "f45b916b",
+      "content_hash": "740d8041e736a4aaeff88dc8b427e26ac85deb72b269eec68f71b80dec8fbcef",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T21:15:52.261Z"
+      "persisted_at": "2026-11-24T22:51:10.437Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -230810,10 +230820,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "8f515043",
-      "content_hash": "782e6af596a9f45432967cc21599661903a7a61d73babc2fa52c446e58310ef6",
+      "source_version": "f45b916b",
+      "content_hash": "8a28814cf5a6c7c0a4b248645f9136a42dc115abf3808506fd9464c0b30d07ad",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T21:15:52.451Z"
+      "persisted_at": "2026-11-24T22:51:10.593Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -231936,9 +231946,9 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "bada6f678d04bf4f9f0da75697e3fe04a25c4dd6d5c2313e77523b00b92c3503",
+      "content_hash": "80ad2b13ef3aa33d8571d71af614b00dcca8dd8fe70b1843e66986126e6cd5f3",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T21:15:57.606Z"
+      "persisted_at": "2026-11-24T22:51:15.947Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings",
@@ -231948,9 +231958,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nucleoidai-nucleoid-learnings",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "9029243f359ab9f5fba1586bff9420b882ee0333f80e8ad8739f0e5d244aa956",
+      "content_hash": "915107b4a2b4183cccebbb6d2bfbd41b14b34cfe79982976385a566f2056ccec",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T21:15:57.800Z"
+      "persisted_at": "2026-11-24T22:51:16.108Z"
     },
     "learn-huggingface-qwen-qwen3-8b": {
       "learning_id": "learn-huggingface-qwen-qwen3-8b",
@@ -268998,8 +269008,8 @@
       "slug": "sveltejs-svelte",
       "platform": "github",
       "source_url": "https://github.com/sveltejs/svelte",
-      "source_version": "04c5d8da",
-      "content_hash": "a6544c37c372f2274ece56eb323ae09a846d207e15dc2de6254a71e686c91e25",
+      "source_version": "36cb19ee",
+      "content_hash": "ef6dc4e10264d11eead6779a6b47a834afcc807cfcfe23f56d0beec327b9b6eb",
       "dossier_path": "07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
       "promoted_rules": [
@@ -269012,6 +269022,11 @@
           "number": 9657,
           "title": "custom renderers API",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10375,
+          "title": "avoid quadratic batch write collection during effect flushing",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -269019,7 +269034,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T23:13:29.958Z",
+      "verified_at": "2026-11-24T22:50:59.842Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -269061,10 +269076,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-sveltejs-svelte-technical-construction-intelligence-sveltejs-svelte-core-invaria.md",
       "title": "Technical Construction Intelligence: sveltejs/svelte Core Invariants",
       "repository": "sveltejs/svelte",
-      "source_version": "04c5d8da",
-      "content_hash": "492b8de4fa5c49ac26c913415c3d538f72a09c75a4d8600ce7d0b84961e06bde",
+      "source_version": "36cb19ee",
+      "content_hash": "860c475c47976ade8dc51c0fd68b9402700e1745359b76d7a1b464b6d842ef5c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T23:13:30.545Z"
+      "persisted_at": "2026-11-24T22:51:00.469Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-sveltejs-svelte": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sveltejs-svelte",
@@ -269073,10 +269088,10 @@
       "relative_path": "08_VERIFICATION/sveltejs-svelte-verification-protocol-empirical-defect-shield-for-sveltejs-svelt.md",
       "title": "Verification Protocol: Empirical Defect Shield for sveltejs/svelte",
       "repository": "sveltejs/svelte",
-      "source_version": "04c5d8da",
-      "content_hash": "2f2567344f36252ba902b47cfdfba0874c32ac3fcff87d863c774ec2f219942f",
+      "source_version": "36cb19ee",
+      "content_hash": "ef00ef62ef2974838ab9138d878b34390f3484e22600c0ff2bc264848b51b727",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T23:13:30.697Z"
+      "persisted_at": "2026-11-24T22:51:00.655Z"
     },
     "rule-8860": {
       "learning_id": "rule-8860",
@@ -269160,9 +269175,9 @@
       "title": "Technical Construction Intelligence: sveltejs-svelte-learnings Core Invariants",
       "repository": "sveltejs-svelte-learnings",
       "source_version": "HEAD",
-      "content_hash": "21611de476cac1f5a195d9b17545e6c86c67ae1bc42038f6c4722c5354c70558",
+      "content_hash": "83bf4d7311d158dca5531e11def3b0f833aa763a456959b0e75a3eeaa51d9a4b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T23:13:42.137Z"
+      "persisted_at": "2026-11-24T22:51:14.229Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-sveltejs-svelte-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sveltejs-svelte-learnings",
@@ -269172,9 +269187,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for sveltejs-svelte-learnings",
       "repository": "sveltejs-svelte-learnings",
       "source_version": "HEAD",
-      "content_hash": "dfaee714e18d4056603685d5de307e008a7352a964fe6b9a466254d549523439",
+      "content_hash": "b905cea0133ab8230e2a6b1bd4e943d318e9ebb952b3652fa66db8b2a0ff910a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T23:13:42.307Z"
+      "persisted_at": "2026-11-24T22:51:14.393Z"
     },
     "candidate_directive-persist-build-txn-wal-batches-without-hollow-runs": {
       "item_id": "candidate_directive-persist-build-txn-wal-batches-without-hollow-runs",
@@ -281543,9 +281558,9 @@
       "title": "Technical Construction Intelligence: langchain4j-langchain4j-learnings Core Invariants",
       "repository": "langchain4j-langchain4j-learnings",
       "source_version": "HEAD",
-      "content_hash": "958e2258cb0da53ac99c6c1fb9ce47d42de4276e9d9c27f03496ab3f51b085da",
+      "content_hash": "749f952cf69133ffb51d4c2ad5914f5d544f59ea3de1aac94ac6c2a632d39009",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T02:12:58.021Z"
+      "persisted_at": "2026-11-24T22:51:14.999Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-langchain4j-langchain4j-learni": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-langchain4j-langchain4j-learni",
@@ -281555,9 +281570,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for langchain4j-langchain4j-learnings",
       "repository": "langchain4j-langchain4j-learnings",
       "source_version": "HEAD",
-      "content_hash": "d8c263fd5e5a6045ef7cad780484ae0197f0e894175e68f5fadbed46c982f285",
+      "content_hash": "fa82f38469e6e94e2a19f59e0d513ed4829b0d1cc30fbca16fd7cbef7e36af4c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T02:12:58.197Z"
+      "persisted_at": "2026-11-24T22:51:15.158Z"
     },
     "learn-huggingface-fastvideo-fasth3-omni-comfy": {
       "learning_id": "learn-huggingface-fastvideo-fasth3-omni-comfy",
@@ -341148,6 +341163,96 @@
       "content_hash": "c4d817e2aef29e10f30337de44a043d781c5440ac2eeedeec6cf5ed573c2a129",
       "domain_letter": "H",
       "persisted_at": "2026-11-24T22:42:44.275Z"
+    },
+    "rule-10375": {
+      "learning_id": "rule-10375",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10375,
+      "title": "avoid quadratic batch write collection during effect flushing",
+      "source_url": "https://github.com/sveltejs/svelte",
+      "source_version": "36cb19ee",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T22:50:59.842Z"
+    },
+    "candidate_directive-avoid-quadratic-batch-write-collection-during-effect-flushing": {
+      "item_id": "candidate_directive-avoid-quadratic-batch-write-collection-during-effect-flushing",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GR2L-avoid-quadratic-batch-write-collection-during-effect-flushing.md",
+      "title": "avoid quadratic batch write collection during effect flushing",
+      "repository": "sveltejs-svelte-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5b4b7b5b6e8e9743a0924472a298c8bf24698e32f456cfbe81623b0504673620",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T22:51:14.065Z"
+    },
+    "rule-10376": {
+      "learning_id": "rule-10376",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10376,
+      "title": "notify composed agent listeners in registration order, closing callback",
+      "source_url": "https://github.com/langchain4j/langchain4j",
+      "source_version": "212cbf3c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T22:51:07.304Z"
+    },
+    "candidate_directive-notify-composed-agent-listeners-in-registration-order-closing-callback": {
+      "item_id": "candidate_directive-notify-composed-agent-listeners-in-registration-order-closing-callback",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GM6S-notify-composed-agent-listeners-in-registration-order-closing-callback.md",
+      "title": "notify composed agent listeners in registration order, closing callback",
+      "repository": "langchain4j/langchain4j",
+      "source_version": "212cbf3c",
+      "content_hash": "d1c0cbf3ebb7f5df01c47e23183be29a0bfc3668c093d05f23ed9c17ef50eb2c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T22:51:07.735Z"
+    },
+    "rule-10377": {
+      "learning_id": "rule-10377",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10377,
+      "title": "Draft NUC 141 Reactive Cosecant",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "f45b916b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T22:51:09.864Z"
+    },
+    "candidate_directive-draft-nuc-141-reactive-cosecant": {
+      "item_id": "candidate_directive-draft-nuc-141-reactive-cosecant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GSEF-draft-nuc-141-reactive-cosecant.md",
+      "title": "Draft NUC 141 Reactive Cosecant",
+      "repository": "nucleoidai-nucleoid-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8afd274523f1ae223a46b199c8133f6d59c15e41c51a7c2229534dcfb88f94f8",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T22:51:15.786Z"
+    },
+    "candidate_directive-agentic-notify-composed-agent-listeners-in-registration-order-closing-callback": {
+      "item_id": "candidate_directive-agentic-notify-composed-agent-listeners-in-registration-order-closing-callback",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GRNU-agentic-notify-composed-agent-listeners-in-registration-order-closing-callback.md",
+      "title": "agentic: notify composed agent listeners in registration order, closing callback",
+      "repository": "langchain4j-langchain4j-learnings",
+      "source_version": "HEAD",
+      "content_hash": "23ab4b2412e6189589ca9df2f3d678da341de58b2bacbe758a4955109ed98776",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T22:51:14.827Z"
     }
   },
   "ai-builder-brain": {

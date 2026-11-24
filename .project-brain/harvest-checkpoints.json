@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T22:42:37.216Z",
+  "last_updated": "2026-11-24T22:51:10.070Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "45c958622b18b49dfa0f22e5468e66d71ca5055b950572f256ad644e8aa13daf",
-      "verified_at": "2026-11-24T21:15:51.769Z",
+      "content_hash": "dbae65b48ccdb9f59604f08a29280249e3e182dafed38a156cfb63de49207040",
+      "verified_at": "2026-11-24T22:51:10.069Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T21:15:51.769Z"
+      "last_updated": "2026-11-24T22:51:10.069Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -11076,14 +11076,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-langchain4j-langchain4j",
-      "content_hash": "9e6e0756548d613ec2247dc7567cf10e39768fb007f3937746d8e310cb9d43fa",
-      "verified_at": "2026-11-24T02:12:50.666Z",
+      "content_hash": "bb6c8cdfb7d045a0c31b23163edca8c8655c6fedf7944eca23e257886b912da3",
+      "verified_at": "2026-11-24T22:51:07.518Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T02:12:50.666Z"
+      "last_updated": "2026-11-24T22:51:07.518Z"
     },
     "railwayapp/nixpacks": {
       "repository": "railwayapp/nixpacks",
@@ -14991,14 +14991,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sveltejs-svelte",
-      "content_hash": "a6544c37c372f2274ece56eb323ae09a846d207e15dc2de6254a71e686c91e25",
-      "verified_at": "2026-11-20T23:13:30.180Z",
+      "content_hash": "ef6dc4e10264d11eead6779a6b47a834afcc807cfcfe23f56d0beec327b9b6eb",
+      "verified_at": "2026-11-24T22:51:00.078Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T23:13:30.180Z"
+      "last_updated": "2026-11-24T22:51:00.078Z"
     },
     "solidjs/solid": {
       "repository": "solidjs/solid",

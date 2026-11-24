@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T22:42:37.202Z",
-  "total_cycles_completed": 12189,
-  "total_learnings_persisted": 12189,
-  "total_rules_promoted": 11243,
+  "last_updated": "2026-11-24T22:51:10.060Z",
+  "total_cycles_completed": 12192,
+  "total_learnings_persisted": 12192,
+  "total_rules_promoted": 11246,
   "history": [
-    {
-      "timestamp": "2026-11-24T06:30:07.366Z",
-      "repository": "metalbear-co/mirrord",
-      "learningId": "learn-github-metalbear-co-mirrord",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T06:30:13.715Z",
-      "repository": "expo/expo",
-      "learningId": "learn-github-expo-expo",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T06:38:20.216Z",
-      "repository": "unhappychoice/gitlogue",
-      "learningId": "learn-github-unhappychoice-gitlogue",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T06:38:25.050Z",
       "repository": "dkhamsing/open-source-ios-apps",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-24T22:42:37.202Z",
       "repository": "alibaba/zvec",
       "learningId": "learn-github-alibaba-zvec",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T22:51:00.067Z",
+      "repository": "sveltejs/svelte",
+      "learningId": "learn-github-sveltejs-svelte",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T22:51:07.510Z",
+      "repository": "langchain4j/langchain4j",
+      "learningId": "learn-github-langchain4j-langchain4j",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T22:51:10.060Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

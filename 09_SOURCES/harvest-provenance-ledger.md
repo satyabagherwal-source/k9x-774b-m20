@@ -12863,3 +12863,6 @@ Every entry in this ledger must capture:
 | `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `d0c6ad20` | Multi-dimensional audit evidence | 2026-11-24T22:42:26.322Z |
 | `learn-github-google-closure-compiler` | `https://github.com/google/closure-compiler` | `1b85768e` | Multi-dimensional audit evidence | 2026-11-24T22:42:27.740Z |
 | `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `fe49e548` | Multi-dimensional audit evidence | 2026-11-24T22:42:37.195Z |
+| `learn-github-sveltejs-svelte` | `https://github.com/sveltejs/svelte` | `36cb19ee` | Multi-dimensional audit evidence | 2026-11-24T22:51:00.061Z |
+| `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `212cbf3c` | Multi-dimensional audit evidence | 2026-11-24T22:51:07.504Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `f45b916b` | Multi-dimensional audit evidence | 2026-11-24T22:51:10.055Z |

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T22:30:18.108Z",
+  "updated_at": "2026-11-24T22:51:13.821Z",
   "stats": {
-    "total_discovered": 8968,
-    "approved_pending_harvest": 8491,
+    "total_discovered": 8972,
+    "approved_pending_harvest": 8495,
     "harvested_count": 0,
     "rejected_count": 477,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8486,
+      "COMMUNITY_AND_EXPERT": 8490,
       "OFFICIAL_DOCUMENTATION": 271,
       "STANDARDS_AND_SPECIFICATIONS": 147,
       "ENGINEERING_BLOGS": 7,
@@ -193984,6 +193984,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kotest-kotest-learnings.md",
         "fileName": "kotest-kotest-learnings.md"
+      }
+    },
+    "SRC-CFCFC57C4FD1": {
+      "id": "SRC-CFCFC57C4FD1",
+      "url": "https://github.com/sveltejs/kit/issues/2977",
+      "title": "https://github.com/sveltejs/kit/issues/2977",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T22:51:13.630Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
+        "fileName": "sveltejs-svelte-learnings.md"
+      }
+    },
+    "SRC-EFEB78AEFE3B": {
+      "id": "SRC-EFEB78AEFE3B",
+      "url": "https://github.com/Rich-Harris/code-red/pull/70",
+      "title": "https://github.com/Rich-Harris/code-red/pull/70",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T22:51:13.687Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
+        "fileName": "sveltejs-svelte-learnings.md"
+      }
+    },
+    "SRC-7B2AE98E63D9": {
+      "id": "SRC-7B2AE98E63D9",
+      "url": "https://github.com/sveltejs/svelte/issues/19392",
+      "title": "https://github.com/sveltejs/svelte/issues/19392",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T22:51:13.766Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
+        "fileName": "sveltejs-svelte-learnings.md"
+      }
+    },
+    "SRC-BDCB417E5024": {
+      "id": "SRC-BDCB417E5024",
+      "url": "https://github.com/sveltejs/svelte/pull/19030",
+      "title": "https://github.com/sveltejs/svelte/pull/19030",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T22:51:13.821Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
+        "fileName": "sveltejs-svelte-learnings.md"
       }
     }
   }

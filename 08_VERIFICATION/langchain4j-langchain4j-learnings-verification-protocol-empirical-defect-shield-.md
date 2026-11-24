@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T02:12:57.716Z",
+  "timestamp": "2026-11-24T22:51:14.711Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-langchain4j-langchain4j-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [langchain4j-langchain4j-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T02:12:57.716Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T22:51:14.711Z`  
 > **Learning ID**: `LEARN-EVO-langchain4j-langchain4j-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md`  
 > **Source**: github ([https://github.com/langchain4j/langchain4j](https://github.com/langchain4j/langchain4j))  
-> **Source Version**: `911e4203`  
+> **Source Version**: `212cbf3c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T02:12:49.527Z  
+> **Timestamp**: 2026-11-24T22:51:06.457Z  
 > **Learning ID**: `learn-github-langchain4j-langchain4j`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/langchain4j/langchain4j](https://github.com/langchain4j/langchain4j))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T02:12:49.522Z  
+> **Harvest Timestamp**: 2026-11-24T22:51:06.453Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: LangChain4j is an idiomatic, open-source Java library for building LLM-powered applications on the JVM. It offers a unified API over popular LLM providers and vector stores, and makes implementing tool calling (including MCP support), agents and RAG easy. It integrates seamlessly with enterprise Java frameworks like Quarkus and Spring Boot.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13437 stars
+- **Stars / Engagement**: 13440 stars
 
 ---
 
@@ -863,386 +863,596 @@ public class TokenStreamToStringFlowAdapter : TokenStreamAdapter {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fc45d349` (2026-11-23)
-**Commit Message**: fix(agentic): support primitive arrays in the parallel mapper (#7162)
+### Incident Patch 1: `212cbf3c` (2026-11-24)
+**Commit Message**: agentic: notify composed agent listeners in registration order, closing callbacks in reverse (#7250)
 
 ## Issue
-Closes #7160
+Closes #7249
 
 ## Change
-A parallel mapper whose items are an array of a primitive type (`int[]`,
-`double[]`, ...) failed with a `ClassCastException`, since
-`ParallelMapperPlanner` cast the array to `Object[]`. Returning an array
-of a primitive type, like `int[]`, failed the same way, since the
-results were copied with `Arrays.copyOf` into a `Class<? extends
-Object[]>`.
+`ComposedAgentListener` kept its listeners in a `HashSet`, so they were
+notified in identity-hash-code order. That order could change from one
+run to the next, and it contradicted the tutorial ("notified in the
+order they were registered"). A listener that makes a context current
+for the others, like quarkus-flow's `FlowAgentContextListener` with the
+OpenTelemetry context, couldn't rely on which listeners saw that
+context.
 
-- `ParallelMapperPlanner` now reads the items and builds the result
-array through `java.lang.reflect.Array`, which handles any component
-type and unboxes each result into an array of a primitive type. Arrays
-of objects and collections behave as before.
-- The existing constructor `ParallelMapperPlanner(String, boolean,
-Class<? extends Object[]>)` is kept unchanged (revapi is green), and
-delegates to a new `ParallelMapperPlanner(String, Class<?>)`, whose
-array type may have a primitive component type.
-`ParallelMapperServiceImpl` uses the new one.
+- **Registration order:** the listeners are kept in a `LinkedHashSet`,
+which keeps the de-duplication and the order `compose` and
+`composeWithInherited` give them (inherited listeners first).
+- **The listeners nest like interceptors:** the callbacks that close a
+scope notify them in reverse order. Those are `afterAgentInvocation`,
+`onAgentInvocationError`, `afterAgentToolExecution`,
+`beforeAgenticScopeDestroyed` and `onAgenticSystemSuspended`. The rest
+stay in registration order. So a listener that opens a context in
+`beforeAgentInvocation` and closes it in `afterAgentInvocation` gives
+every listener registered after it that cont
 
-`ParallelMapperPrimitiveArrayTest` covers `int[]` items mapped to a
-list, an empty `int[]`, `double[]` items converted to the subagent's
-`int` argument, and `int[]` / empty `int[]` results. All 5
-
-**File**: `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/workflow/impl/ParallelMapperPlanner.java` (modified, +34/-7)
+**File**: `docs/docs/tutorials/agents.md` (modified, +1/-1)
 ```diff
-@@ -1,7 +1,5 @@
- package dev.langchain4j.agentic.workflow.impl;
+@@ -1076,7 +1076,7 @@ public void onPlannerModelResponse(PlannerModelResponse response) {
+ This method is invoked once for each model call, on the thread running the pattern, as soon as the model returns and before the pattern acts on its response, so it is also notified when the invocation of the pattern later fails. A [custom pattern](#custom-agentic-patterns) calling a model reports its responses in the same way.
  
--import static java.util.Arrays.copyOf;
--
- import dev.langchain4j.agentic.internal.AgentExecutor;
- import dev.langchain4j.agentic.internal.MapperAgentInvoker;
- import dev.langchain4j.agentic.planner.Action;
-@@ -10,6 +8,7 @@
- import dev.langchain4j.agentic.planner.InitPlanningContext;
- import dev.langchain4j.agentic.planner.Planner;
- import dev.langchain4j.agentic.planner.PlanningContext;
-+import java.lang.reflect.Array;
+ `AgentListener`s have 2 important properties, they are:
+-- **composable**, meaning that you can register multiple listeners to the same agent, by invoking the `listener` method more than once, and they will be notified in the order they were registered; 
++- **composable**, meaning that you can register multiple listeners to the same agent, by invoking the `listener` method more than once. They nest like interceptors: `beforeAgentInvocation`, `beforeAgentToolExecution` and `afterAgenticScopeCreated`, as well as the events notified between them and their counterparts, are notified to the listeners in the order they were registered, while `afterAgentInvocation`, `onAgentInvocationError`, `afterAgentToolExecution`, `beforeAgenticScopeDestroyed` and `onAgenticSystemSuspended` are notified in the reverse order. So a listener that makes some context current when an agent starts and restores the previous one when it ends gives the listeners registered after it that context in both callbacks. The listeners inherited from a parent agent count as registered before the agent's own;
+ - **optionally hierarchical**, meaning that by default they are only local to the agent where they are directly registered, but they can also be inherited by all its subagents, simply making its `inheritedBySubagents` method to return `true`. In that case a listener registered on a top level agent will also be notified of the invocations to all its subagents at any level and composed with all listeners that these subagents could have registered on their own.
+ 
+ ### Monitoring
+```
+
+**File**: `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/observability/ComposedAgentListener.java` (modified, +60/-18)
+```diff
+@@ -4,19 +4,30 @@
+ import dev.langchain4j.agentic.scope.AgenticScope;
  import java.util.ArrayList;
  import java.util.Collection;
+-import java.util.HashSet;
++import java.util.Iterator;
  import java.util.List;
-@@ -19,7 +18,7 @@ public class ParallelMapperPlanner implements Planner {
+-import java.util.Set;
++import java.util.ListIterator;
+ import java.util.function.Consumer;
+ import java.util.function.Predicate;
++import java.util.stream.Collectors;
  
-     private final String itemsProvider;
-     private final boolean isArrayResult;
--    private final Class<? extends Object[]> arrayclass;
-+    private final Class<?> arrayClass;
- 
-     private AgentExecutor subagent;
-     private String mapperAgentId;
-@@ -29,9 +28,18 @@ public class ParallelMapperPlanner implements Planner {
-     private final AtomicInteger completedCount = new AtomicInteger();
- 
-     public ParallelMapperPlanner(String itemsProvider, boolean isArrayResult, Class<? extends Object[]> arrayclass) {
-+        this(itemsProvider, isArrayResult ? arrayclass : null);
-+    }
-+
-+    /**
-+     * @param itemsProvider the name of the state holding the items to map
-+     * @param arrayClass the type of the array to return the results in, which can be an array of a primitive type,
-+     *        like {@code int[]}, or {@code null} to return them in a list
-+     */
-+    public ParallelMapperPlanner(String itemsProvider, Class<?> arrayClass) {
-         this.itemsProvider = itemsProvider;
--        this.isArrayResult = isArrayResult;
--        this.arrayclass = arrayclass;
-+        this.isArrayResult = arrayClass != null;
-+        this.arrayClass = arrayClass;
-     }
- 
-     @Override
-@@ -76,7 +84,13 @@ private List<?> collectItems(Object collectionObj) {
-         } else if (collectionObj instanceof Collection<?> collection) {
-             items = new ArrayList<>(collection);
-         } else if (collectionObj.getClass().isArray()) {
--            items = java.util.Arrays.asList((Object[]) collectionObj);
-+            // read through reflection, since an array of a primitive type, like int[], is not an Object[]
-+            int length = Array.getLength(collectionObj);
-+            List<Object> elements = new ArrayList<>(length);
-+            for (int i = 0; i < length; i++) {
-+                elements.add(Array.get(collectionObj, i));
-+            }
-+            items = elements;
-         } else {
-             throw new IllegalArgumentException(
-                     "The value for itemsProvider '" + itemsProvider + "' must be a Collection or array, but was: "
-@@ -100,13 +114,26 @@ public Action nextAction(PlanningContext planningContext) {
-     }
- 
-     private Action doneWithResults(PlanningContext planningContext, List<Object> results) {
--        Object result = isArrayResult ? copyOf(results.toArray(), results.size(), arrayclass) : results;
-+        Object result = isArrayResult ? toArray(results) : results;
-         if (outputKey != null && !outputKey.isBlank()) {
-             planningContext.agenticScope().writeState(outputKey, result);
-         }
-         return done(result);
-     }
- 
-+    private Object toArray(List<Object> results) {
-+        // filled through reflection, which unboxes each result when the array is of a primitive type, like int[]
-+        Object array = Array.newInstance(arrayClass.getComponentType(), results.size());
-+        for (int i = 0; i < results.size(); i++) {
-+            Object result = results.get(i);
-+            // a null result keeps the default value of the component type: 0 or false for a primitive, null otherwise
-+            if (result != null) {
-+                Array.set(array, i, result);
-+            }
-+        }
-+        return array;
-+    }
-+
-     @Override
-     public AgenticSystemTopology topology() {
-         return AgenticSystemTopology.PARALLEL;
-```
-
-**File**: `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/workflow/impl/ParallelMapperServiceImpl.java` (modified, +2/-4)
-```diff
-@@ -50,10 +50,8 @@ public T build() {
-                     "A parallel mapper service requires exactly one subagent, but " + subagents.size()
-                             + " were provided.");
-         }
--        boolean isArrayResult = isArrayResult();
--        Class<? extends Object[]> arrayclass =
--                isArrayResult ? (Class<? extends Object[]>) agenticMethod.getReturnType() : null;
--        return build(() -> new ParallelMapperPlanner(itemsProvider(), isArrayResult, arrayclass));
-+        Class<?> arrayClass = isArrayResult() ? agenticMethod.getReturnType() : null;
-+        return build(() -> new ParallelMapperPlanner(itemsProvider(), arrayClass));
-     }
- 
-     private String itemsProvider() {
-```
-
-**File**: `langchain4j-agentic/src/test/java/dev/langchain4j/agentic/ParallelMapperPrimitiveArrayTest.java` (added, +140/-0)
-```diff
-@@ -0,0 +1,140 @@
-+package dev.langchain4j.agentic;
-+
-+import static org.assertj.core.api.Assertions.assertThat;
-+
-+import dev.langchain4j.service.V;
-+import java.util.List;
-+import org.junit.jupiter.api.Test;
-+
 +/**
-+ * A parallel mapper accepts an array of items and can return an array of results, which may be arrays of a primitive
-+ * type, like {@code int[]}, rather than of objects.
++ * Composes several {@link AgentListener}s into one, notifying them in a defined order: the callbacks that open a scope
++ * ({@code beforeAgentInvocation}, {@code beforeAgentToolExecution}, {@code afterAgenticScopeCreated}) and the events
++ * notified within it notify the listeners in the order they were registered, inherited listeners first, while the
++ * callbacks that close a scope ({@code afterAgentInvocation}, {@code onAgentInvocationError},
++ * {@code afterAgentToolExecution}, {@code beforeAgenticScopeDestroyed}, {@code onAgenticSystemSuspended}) notify them in
++ * the reverse order. This way the listeners nest like interceptors: a listener that makes a context current in
++ * {@code beforeAgentInvocation} and restores the previous one in {@code afterAgentInvocation} gives every listener
++ * registered after it that same context in both callbacks.
 + */
-+class ParallelMapperPrimitiveArrayTest {
-+
-+    public static class Doubler {
-+
-+        @Agent(description = "Doubles a number", outputKey = "doubled")
-+        public int doubleIt(@V("number") int number) {
-+            return number * 2;
+ @Internal
+ public class ComposedAgentListener implements AgentListener {
+ 
+-    private final Set<AgentListener> listeners;
++    private final List<AgentListener> listeners;
+ 
+     private ComposedAgentListener(List<AgentListener> listeners) {
+-        this.listeners = new HashSet<>(listeners);
++        this.listeners = listeners.stream().distinct().collect(Collectors.toCollection(ArrayList::new));
+     }
+ 
+     public ComposedAgentListener(AgentListener... listeners) {
+@@ -40,9 +51,17 @@ private static List<AgentListener> collectListeners(AgentListener... listeners)
+ 
+     public void addListener(AgentListener listener) {
+         if (listener instanceof ComposedAgentListener composed) {
+-            this.listeners.addAll(composed.listeners);
++            for (AgentListener composedListener : composed.listeners) {
++                addIfAbsent(composedListener);
++            }
+         } else {
+-            this.listeners.add(listener);
++            addIfAbsent(listener);
 +        }
 +    }
 +
-+    public static class NullForEvenDoubler {
-+
-+        @Agent(description = "Doubles an odd number", outputKey = "doubled")
-+        public Integer doubleIt(@V("number") int number) {
-+            return number % 2 == 0 ? null : number * 2;
-+        }
++    private void addIfAbsent(AgentListener listener) {
++        if (!listeners.contains(listener)) {
++            listeners.add(listener);
+         }
+     }
+ 
+@@ -57,12 +76,12 @@ public void beforeAgentInvocation(final AgentRequest agentRequest) {
+ 
+     @Override
+     public void afterAgentInvocation(final AgentResponse agentResponse) {
+-        notifyEach(listener -> listener.afterAgentInvocation(agentResponse));
++        notifyEachInReverse(listener -> listener.afterAgentInvocation(agentResponse));
+     }
+ 
+     @Override
+     public void onAgentInvocationError(final AgentInvocationError agentInvocationError) {
+-        notifyEach(listener -> listener.onAgentInvocationError(agentInvocationError));
++        notifyEachInReverse(listener -> listener.onAgentInvocationError(agentInvocationError));
+     }
+ 
+     @Override
+@@ -72,7 +91,7 @@ public void onAgentSkipped(final AgentSkipped agentSkipped) {
+ 
+     @Override
+     public void afterAgentToolExecution(AfterAgentToolExecution afterAgentToolExecution) {
+-        notifyEach(listener -> listener.afterAgentToolExecution(afterAgentToolExecution));
++        notifyEachInReverse(listener -> listener.afterAgentToolExecution(afterAgentToolExecution));
+     }
+ 
+     @Override
+@@ -97,24 +116,47 @@ public void afterAgenticScopeCreated(final AgenticScope agenticScope) {
+ 
+     @Override
+     public void beforeAgenticScopeDestroyed(final AgenticScope agenticScope) {
+-        notifyEach(listener -> listener.beforeAgenticScopeDestroyed(agenticScope));
++        notifyEachInReverse(listener -> listener.beforeAgenticScopeDestroyed(agenticScope));
+     }
+ 
+     @Override
+     public void onAgenticSystemSuspended(final AgenticScope agenticScope) {
+-        notifyEach(listener -> listener.onAgenticSystemSuspended(agenticScope));
++        notifyEachInReverse(listener -> listener.onAgenticSystemSuspended(agenticScope));
 +    }
 +
-+    public static class NullForEvenChecker {
-+
-+        @Agent(description = "Checks an odd number", outputKey = "checked")
-+        public Boolean check(@V("number") int number) {
-+            return number % 2 == 0 ? null : true;
-+        }
++    private void notifyEach(Consumer<AgentListener> notification) {
++        notifyEach(listeners.iterator(), notification);
 +    }
 +
-+    public interface IntArrayToListMapper {
-+
-+        @Agent
-+        List<Integer> mapAll(@V("numbers") int[] numbers);
++    private void notifyEachInReverse(Consumer<AgentListener> notification) {
++        notifyEach(reverseIterator(), notification);
 +    }
 +
-+    public interface IntArrayToIntArrayMapper {
++    private Iterator<AgentListener> reverseIterator() {
++        ListIterator<AgentListener> iterator = listeners.listIterator(listeners.size());
++        return new Iterator<>() {
++            @Override
++            public boolean hasNext() {
++                return iterator.hasPrevious();
++            }
 +
-+        @Agent
-+        int[] mapAll(@V("numbers") int... numbers);
-+    }
-+
-+    public interface IntArrayToBooleanArrayMapper {
-+
-+        @Agent
-+        boolean[] mapAll(@V("numbers") int... numbers);
-+    }
-+
-+    public interface IntArrayToIntegerArrayMapper {
-+
-+        @Agent
-+        Integer[] mapAll(@V("numbers") int... numbers);
-+    }
-+
-+    public interface DoubleArrayToListMapper {
-+
-+        @Agent
-+        List<Integer> mapAll(@V("numbers") double[] numbers);
-+    }
-+
++            @Override
++            public AgentListener next() {
++                return iterator.previous();
++            }
++        };
+     }
+ 
+     /**
+-     * Notifies every composed listener, even when one of them throws: a failing listener must not keep th
+```
+
+**File**: `langchain4j-agentic/src/test/java/dev/langchain4j/agentic/observability/ComposedAgentListenerTest.java` (modified, +228/-29)
+```diff
+@@ -4,18 +4,19 @@
+ import static org.assertj.core.api.Assertions.assertThatCode;
+ import static org.assertj.core.api.Assertions.assertThatThrownBy;
+ 
++import dev.langchain4j.agentic.scope.AgenticScope;
+ import java.util.ArrayList;
+ import java.util.List;
+ import java.util.Map;
+ import org.junit.jupiter.api.Test;
+ 
+ class ComposedAgentListenerTest {
+ 
+-    // The composed listeners are kept in a HashSet, which iterates small hash codes in ascending order. Giving the
+-    // failing listener the lower one makes it run first, so the tests below can't pass by the listener under test
+-    // happening to run before it.
+-    private static final int FIRST = 0;
+-    private static final int SECOND = 1;
++    // A HashSet iterates small hash codes in ascending order. Giving the listener registered first the higher one makes
++    // a HashSet iterate the listeners against their registration order, so the ordering tests below fail if the
++    // registration order is lost.
++    private static final int HIGHER_HASH = 1;
++    private static final int LOWER_HASH = 0;
+ 
+     @Test
+     void compose_without_existing_listener_returns_the_new_one() {
+@@ -32,7 +33,7 @@ void compose_with_existing_listener_wraps_both() {
+         AgentListener composed = ComposedAgentListener.compose(first, second);
+ 
+         assertThat(composed).isInstanceOf(ComposedAgentListener.class);
+-        assertThat(((ComposedAgentListener) composed).listeners()).containsExactlyInAnyOrder(first, second);
++        assertThat(((ComposedAgentListener) composed).listeners()).containsExactly(first, second);
+     }
+ 
+     @Test
+@@ -43,7 +44,7 @@ void compose_with_existing_composed_listener_adds_to_it() {
+         AgentListener composed = ComposedAgentListener.compose(first, second);
+ 
+         assertThat(ComposedAgentListener.compose(composed, third)).isSameAs(composed);
+-        assertThat(((ComposedAgentListener) composed).listeners()).containsExactlyInAnyOrder(first, second, third);
++        assertThat(((ComposedAgentListener) composed).listeners()).containsExactly(first, second, third);
+     }
+ 
+     @Test
+@@ -96,22 +97,12 @@ void a_failing_listener_does_not_keep_the_others_from_being_notified_before_an_i
+                     public void beforeAgentInvocation(AgentRequest agentRequest) {
+                         throw failure;
+                     }
+-
+-                    @Override
+-                    public int hashCode() {
+-                        return FIRST;
+-                    }
+                 },
+                 new AgentListener() {
+                     @Override
+                     public void beforeAgentInvocation(AgentRequest agentRequest) {
+                         requests.add(agentRequest);
+                     }
+-
+-                    @Override
+-                    public int hashCode() {
+-                        return SECOND;
+-                    }
+                 });
+         AgentRequest request = new AgentRequest(null, null, Map.of());
+ 
+@@ -123,27 +114,19 @@ public int hashCode() {
+     void a_failing_listener_does_not_keep_the_others_from_being_notified_of_an_error() {
+         List<AgentInvocationError> errors = new ArrayList<>();
+         IllegalStateException failure = new IllegalStateException("error listener failed");
++        // Errors are notified in reverse registration order, so the failing listener is registered last to be notified
++        // first
+         AgentListener composed = ComposedAgentListener.compose(
+                 new AgentListener() {
+                     @Override
+                     public void onAgentInvocationError(AgentInvocationError agentInvocationError) {
+-                        throw failure;
+-                    }
+-
+-                    @Override
+-                    public int hashCode() {
+-                        return FIRST;
++                        errors.add(agentInvocationError);
+                     }
+                 },
+                 new AgentListener() {
+                     @Override
+                     public void onAgentInvocationError(AgentInvocationError agentInvocationError) {
+-                        errors.add(agentInvocationError);
+-                    }
+-
+-                    @Override
+-                    public int hashCode() {
+-                        return SECOND;
++                        throw failure;
+                     }
+                 });
+         AgentInvocationError error =
+@@ -178,6 +161,222 @@ void nothing_is_thrown_when_no_listener_fails() {
+         assertThat(secondSkips).containsExactly(skip);
+     }
+ 
 +    @Test
-+    void items_of_a_primitive_array_are_mapped_one_by_one() {
-+        IntArrayToListMapper mapper = AgenticServices.parallelMapperBuilder(IntArrayToListMapper.class)
-+                .subAgents(new Doubler())
-+                .build();
++    void scope_opening_callbacks_and_events_notify_the_listeners_in_registration_order() {
++        List<String> calls = new ArrayList<>();
++        AgentListener composed = ComposedAgentListener.compose(
++                callRecorder("first", calls, HIGHER_HASH), callRecorder("second", calls, LOWER_HASH));
 +
-+        assertThat(mapper.mapAll(new int[] {1, 2, 3})).containsExactly(2, 4, 6);
-+    }
-+
-+    @Test
-+    void items_of_an_empty_primitive_array_are_mapped_to_an_empty_list() {
-+        IntArrayToListMapper mapper = AgenticServices.parallelMapperBuilder(IntArrayToListMapper.class)
-+                .subAgents(new Doubler())
-+                .build();
-+
-+        assertThat(mapper.mapAll(new int[0])).isEmpty();
-+    }
-+
-+    @Test
-+    void items_of_a_primitive_array_are_converted_to_the_type_of_the_subagent_argument() {
-+        DoubleArrayToListMapper mapper = AgenticServices.parallelMapperBuilder(DoubleArrayToListMapper.class)
-+                .subAgents(new Doubler())
-+                .build();
-+
-+        assertThat(mapper.mapAll(new double[] {1.0, 2.0})).containsExactly(2, 4);
-+    }
-+
-+    @Test
-+    void results_are_returned_as_a_primitive_array() {
-+        IntArrayToIntArrayMapper mapper = AgenticServices.parallelMapperBuilder(IntArrayToIntArrayMapper.class)
-+                .subAgents(new Doubler())
-+                .build();
-+
-+        assertThat(mapper.mapAll(1, 2, 3)).containsExactly(2, 4, 6);
-+    }
-+
-+    @Test
-+    void an_empty_primitive_array_is_mapped_to_an_empty_primitive_array() {
-+        IntArrayToIntArrayMapper mapper = AgenticServices.parallelMapperBuilder(IntArrayToIntArrayMapper.class)
-+                .subAgents(new Doubler())
-+                .build();
-+
-+        assertThat(mapper.mapAll()).isEmpty();
-+    }
-+
-+    @Test
-+    void null_result_is_returned_as_zero_in_a_numeric_primitive_array() {
-+        IntArrayToIntArrayMapper mapper = AgenticServices.parallelMapperBuilder(IntArrayToIntArrayMapper.class)
-+                .subAgents(new NullForEvenDoubler())
-+                .build();
-+
-+        assertThat(mapper.mapAll(1, 2, 3)).containsExactly(2, 0, 6);
-+    }
-+
-+    @Test
-+    void null_result_is_returned_as_false_in_a_boolean_array() {
-+        IntArrayToBooleanArrayMapper mapper = AgenticServices.parallelMapperBuilder(IntArrayToBooleanArrayMapper.class)
-+                .subAgents(new NullForEvenChecker())
-+                .build();
-+
-+        assertThat(mapper.mapAll(1, 2, 3)).containsExactly(true, false, true);
-+    }
-+
-+    @Test
-+    void null_result_is_returned_as_null_in_an_array_of_objects() {
-+        IntArrayToIntegerArrayMapper mapper = AgenticServices.parallelMapperBuilder(IntArrayToIntegerArrayMapper.class)
-+                .subAgents(new NullForEvenDoubler())
-+                .build();
-+
-+        assertThat(mapper.mapAll(1, 2, 3)).containsExactly(2, null, 6);
-+    }
-+}
++        composed.beforeAgentInvocation(new AgentRequest(null, null, Map.of()));
++        composed.beforeAgentToolExecution(ne
 ```
 
 ---
 
-### Incident Patch 2: `1b0551ba` (2026-11-23)
-**Commit Message**: Require all fields in the Gemini POJO ITs' JSON schemas
+### Incident Patch 2: `c3542cb0` (2026-11-24)
+**Commit Message**: Ollama ITs: stop test containers after each test class (#7276)
 
-JsonSchemas.jsonSchemaFrom only marks a field as required when it carries
-@JsonProperty(required = true), so both should_deserialize_to_POJO tests sent
-"required": [] and Gemini could leave a field out. Jackson then filled the
-missing field with its default (age = 0), which made the streaming test flaky.
+The Ollama integration tests start their Ollama containers
+(Testcontainers) in static initializers and never stop them, so every
+container stays alive until the test JVM exits. A full run therefore
+piles them up: on a 31 GB machine, 11 containers were alive at once (5
+of them with llama3.1), about 26 GB of RAM went to loaded models, and
+the machine ran out of memory.
 
-Mark every record component as required, so the schema requires them and a
-missing field fails with "Missing required creator property" instead of a
-silent default. Also print the streaming response, whose body is not logged.
+This change stops each container when the test class that uses it
+finishes:
+- Abstract bases shared by several test classes
+(`AbstractOllama*Infrastructure`) now start a fresh container in
+`@BeforeAll` and stop it in `@AfterAll`. A static initializer runs only
+once for all subclasses, so it cannot be used together with a stop after
+each class.
+- Test classes with their own container still start it in their static
+initializer and now stop it in `@AfterAll`. `common/OllamaChatModelIT`
+and `common/OllamaStreamingChatModelIT` stop every container in their
+`CONTAINER_MAP`.
+- Test classes that used another class's container
+(`OllamaStreamingChatModelListenerIT`, `OllamaCustomMessageChatModelIT`,
+`common/OllamaAiServiceIT`, `common/OllamaStreamingAiServiceIT`) n
 
-**File**: `langchain4j-google-ai-gemini/src/test/java/dev/langchain4j/model/googleai/GoogleAiGeminiChatModelIT.java` (modified, +6/-22)
+**File**: `langchain4j-ollama/src/test/java/dev/langchain4j/model/ollama/AbstractOllamaEmbeddingModelInfrastructure.java` (modified, +14/-1)
 ```diff
-@@ -13,7 +13,6 @@
- import static org.assertj.core.api.Assertions.assertThatThrownBy;
- import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+@@ -6,13 +6,19 @@
+ import static dev.langchain4j.model.ollama.OllamaImage.OLLAMA_IMAGE;
+ import static dev.langchain4j.model.ollama.OllamaImage.localOllamaImage;
  
--import com.fasterxml.jackson.annotation.JsonCreator;
- import com.fasterxml.jackson.annotation.JsonProperty;
- import com.fasterxml.jackson.annotation.JsonSubTypes;
- import com.fasterxml.jackson.annotation.JsonTypeInfo;
-@@ -364,27 +363,12 @@ void should_allow_array_as_response_schema() throws JsonProcessingException {
-         assertThat(diceRolls.length).isEqualTo(3);
++import org.junit.jupiter.api.AfterAll;
++import org.junit.jupiter.api.BeforeAll;
++
+ class AbstractOllamaEmbeddingModelInfrastructure {
+ 
+     private static final String MODEL_NAME = ALL_MINILM_MODEL;
+ 
+     static LC4jOllamaContainer ollama;
+ 
+-    static {
++    // Started before and stopped after each test class, so that a finished test class does not keep its
++    // container (and the loaded model) in memory. A static initializer would run only once for all subclasses.
++    @BeforeAll
++    static void startOllama() {
+         if (isNullOrEmpty(OLLAMA_BASE_URL)) {
+             String localOllamaImage = localOllamaImage(MODEL_NAME);
+             ollama = new LC4jOllamaContainer(OllamaImage.resolve(OLLAMA_IMAGE, localOllamaImage))
+@@ -21,4 +27,11 @@ class AbstractOllamaEmbeddingModelInfrastructure {
+             ollama.commitToImage(localOllamaImage);
+         }
      }
- 
--    private static class Color {
--        private String name;
--        private int red;
--        private int green;
--        private int blue;
--        private boolean muted;
--
--        @JsonCreator
--        public Color(
--                @JsonProperty("name") String name,
--                @JsonProperty("red") int red,
--                @JsonProperty("green") int green,
--                @JsonProperty("blue") int blue,
--                @JsonProperty("muted") boolean muted) {
--            this.name = name;
--            this.red = red;
--            this.green = green;
--            this.blue = blue;
--            this.muted = muted;
--        }
--    }
-+    private record Color(
-+            @JsonProperty(required = true) String name,
-+            @JsonProperty(required = true) int red,
-+            @JsonProperty(required = true) int green,
-+            @JsonProperty(required = true) int blue,
-+            @JsonProperty(required = true) boolean muted) {}
- 
-     @Test
-     void should_deserialize_to_POJO() throws JsonProcessingException {
++
++    @AfterAll
++    static void stopOllama() {
++        if (ollama != null) {
++            ollama.stop();
++        }
++    }
+ }
 ```
 
-**File**: `langchain4j-google-ai-gemini/src/test/java/dev/langchain4j/model/googleai/GoogleAiGeminiStreamingChatModelIT.java` (modified, +4/-1)
+**File**: `langchain4j-ollama/src/test/java/dev/langchain4j/model/ollama/AbstractOllamaLanguageModelInfrastructure.java` (modified, +14/-1)
 ```diff
-@@ -8,6 +8,7 @@
- import static java.util.concurrent.TimeUnit.SECONDS;
- import static org.assertj.core.api.Assertions.assertThat;
+@@ -4,6 +4,9 @@
+ import static dev.langchain4j.model.ollama.OllamaImage.TINY_DOLPHIN_MODEL;
+ import static dev.langchain4j.model.ollama.OllamaImage.localOllamaImage;
  
-+import com.fasterxml.jackson.annotation.JsonProperty;
- import com.fasterxml.jackson.core.JsonProcessingException;
- import com.fasterxml.jackson.databind.ObjectMapper;
- import dev.langchain4j.agent.tool.P;
-@@ -339,7 +340,7 @@ void should_allow_array_as_response_schema() throws JsonProcessingException {
-     void should_deserialize_to_POJO() throws Exception {
- 
-         // given
--        record Person(String name, int age) {}
-+        record Person(@JsonProperty(required = true) String name, @JsonProperty(required = true) int age) {}
- 
-         GoogleAiGeminiStreamingChatModel gemini = GoogleAiGeminiStreamingChatModel.builder()
-                 .apiKey(GOOGLE_AI_GEMINI_API_KEY)
-@@ -357,6 +358,8 @@ record Person(String name, int age) {}
-         gemini.chat("Klaus is 37 years old", handler);
-         ChatResponse response = handler.get();
- 
-+        System.out.println("response = " + response);
++import org.junit.jupiter.api.AfterAll;
++import org.junit.jupiter.api.BeforeAll;
 +
-         Person person = new ObjectMapper().readValue(response.aiMessage().text(), Person.class);
+ public class AbstractOllamaLanguageModelInfrastructure {
  
-         // then
+     public static final String OLLAMA_BASE_URL = System.getenv("OLLAMA_BASE_URL");
+@@ -12,7 +15,10 @@ public class AbstractOllamaLanguageModelInfrastructure {
+ 
+     static LC4jOllamaContainer ollama;
+ 
+-    static {
++    // Started before and stopped after each test class, so that a finished test class does not keep its
++    // container (and the loaded model) in memory. A static initializer would run only once for all subclasses.
++    @BeforeAll
++    static void startOllama() {
+         if (isNullOrEmpty(OLLAMA_BASE_URL)) {
+             String localOllamaImage = localOllamaImage(MODEL_NAME);
+             ollama = new LC4jOllamaContainer(OllamaImage.resolve(OllamaImage.OLLAMA_IMAGE, localOllamaImage))
+@@ -22,6 +28,13 @@ public class AbstractOllamaLanguageModelInfrastructure {
+         }
+     }
+ 
++    @AfterAll
++    static void stopOllama() {
++        if (ollama != null) {
++            ollama.stop();
++        }
++    }
++
+     public static String ollamaBaseUrl(LC4jOllamaContainer ollama) {
+         if (isNullOrEmpty(OLLAMA_BASE_URL)) {
+             return ollama.getEndpoint();
+```
+
+**File**: `langchain4j-ollama/src/test/java/dev/langchain4j/model/ollama/AbstractOllamaStructuredOutputLanguageModelInfrastructure.java` (modified, +14/-1)
+```diff
+@@ -6,18 +6,31 @@
+ import static dev.langchain4j.model.ollama.OllamaImage.OLLAMA_IMAGE;
+ import static dev.langchain4j.model.ollama.OllamaImage.localOllamaImage;
+ 
++import org.junit.jupiter.api.AfterAll;
++import org.junit.jupiter.api.BeforeAll;
++
+ abstract class AbstractOllamaStructuredOutputLanguageModelInfrastructure {
+ 
+     protected static final String MODEL_NAME = LLAMA_3_1;
+ 
+     static LC4jOllamaContainer ollama;
+ 
+-    static {
++    // Started before and stopped after each test class, so that a finished test class does not keep its
++    // container (and the loaded model) in memory. A static initializer would run only once for all subclasses.
++    @BeforeAll
++    static void startOllama() {
+         if (isNullOrEmpty(OLLAMA_BASE_URL)) {
+             String localOllamaImage = localOllamaImage(MODEL_NAME);
+             ollama = new LC4jOllamaContainer(OllamaImage.resolve(OLLAMA_IMAGE, localOllamaImage)).withModel(MODEL_NAME);
+             ollama.start();
+             ollama.commitToImage(localOllamaImage);
+         }
+     }
++
++    @AfterAll
++    static void stopOllama() {
++        if (ollama != null) {
++            ollama.stop();
++        }
++    }
+ }
+```
+
+**File**: `langchain4j-ollama/src/test/java/dev/langchain4j/model/ollama/AbstractOllamaThinkingModelInfrastructure.java` (modified, +14/-1)
+```diff
+@@ -5,13 +5,19 @@
+ import static dev.langchain4j.model.ollama.OllamaImage.QWEN3_06B;
+ import static dev.langchain4j.model.ollama.OllamaImage.localOllamaImage;
+ 
++import org.junit.jupiter.api.AfterAll;
++import org.junit.jupiter.api.BeforeAll;
++
+ class AbstractOllamaThinkingModelInfrastructure {
+ 
+     protected static final String MODEL_NAME = QWEN3_06B;
+ 
+     static LC4jOllamaContainer ollama;
+ 
+-    static {
++    // Started before and stopped after each test class, so that a finished test class does not keep its
++    // container (and the loaded model) in memory. A static initializer would run only once for all subclasses.
++    @BeforeAll
++    static void startOllama() {
+         if (isNullOrEmpty(OLLAMA_BASE_URL)) {
+             String localOllamaImage = localOllamaImage(MODEL_NAME);
+             ollama = new LC4jOllamaContainer(OllamaImage.resolve(OllamaImage.OLLAMA_IMAGE, localOllamaImage))
+@@ -20,4 +26,11 @@ class AbstractOllamaThinkingModelInfrastructure {
+             ollama.commitToImage(localOllamaImage);
+         }
+     }
++
++    @AfterAll
++    static void stopOllama() {
++        if (ollama != null) {
++            ollama.stop();
++        }
++    }
+ }
+```
+
+**File**: `langchain4j-ollama/src/test/java/dev/langchain4j/model/ollama/AbstractOllamaVisionModelInfrastructure.java` (modified, +14/-1)
+```diff
+@@ -5,13 +5,19 @@
+ import static dev.langchain4j.model.ollama.OllamaImage.GEMMA_4;
+ import static dev.langchain4j.model.ollama.OllamaImage.localOllamaImage;
+ 
++import org.junit.jupiter.api.AfterAll;
++import org.junit.jupiter.api.BeforeAll;
++
+ class AbstractOllamaVisionModelInfrastructure {
+ 
+     protected static final String MODEL_NAME = GEMMA_4;
+ 
+     static LC4jOllamaContainer ollama;
+ 
+-    static {
++    // Started before and stopped after each test class, so that a finished test class does not keep its
++    // container (and the loaded model) in memory. A static initializer would run only once for all subclasses.
++    @BeforeAll
++    static void startOllama() {
+         if (isNullOrEmpty(OLLAMA_BASE_URL)) {
+             String localOllamaImage = localOllamaImage(MODEL_NAME);
+             ollama = new LC4jOllamaContainer(OllamaImage.resolve(OllamaImage.OLLAMA_IMAGE, localOllamaImage))
+@@ -20,4 +26,11 @@ class AbstractOllamaVisionModelInfrastructure {
+             ollama.commitToImage(localOllamaImage);
+         }
+     }
++
++    @AfterAll
++    static void stopOllama() {
++        if (ollama != null) {
++            ollama.stop();
++        }
++    }
+ }
+```
+
+**File**: `langchain4j-ollama/src/test/java/dev/langchain4j/model/ollama/OllamaChatModelListenerIT.java` (modified, +8/-0)
+```diff
+@@ -11,6 +11,7 @@
+ import dev.langchain4j.model.chat.ChatModel;
+ import dev.langchain4j.model.chat.common.AbstractChatModelListenerIT;
+ import dev.langchain4j.model.chat.listener.ChatModelListener;
++import org.junit.jupiter.api.AfterAll;
+ 
+ class OllamaChatModelListenerIT extends AbstractChatModelListenerIT {
+ 
+@@ -27,6 +28,13 @@ class OllamaChatModelListenerIT extends AbstractChatModelListenerIT {
+         }
+     }
+ 
++    @AfterAll
++    static void stopOllama() {
++        if (ollama != null) {
++            ollama.stop();
++        }
++    }
++
+     @Override
+     protected ChatModel createModel(ChatModelListener listener) {
+         return OllamaChatModel.builder()
+```
+
+**File**: `langchain4j-ollama/src/test/java/dev/langchain4j/model/ollama/OllamaCustomMessageChatModelIT.java` (modified, +11/-1)
+```diff
+@@ -1,6 +1,7 @@
+ package dev.langchain4j.model.ollama;
+ 
+ import static dev.langchain4j.internal.Utils.isNullOrEmpty;
++import static dev.langchain4j.model.ollama.AbstractOllamaLanguageModelInfrastructure.OLLAMA_BASE_URL;
+ import static dev.langchain4j.model.ollama.AbstractOllamaLanguageModelInfrastructure.ollamaBaseUrl;
+ import static dev.langchain4j.model.ollama.OllamaImage.GRANITE_3_GUARDIAN;
+ import static dev.langchain4j.model.ollama.OllamaImage.localOllamaImage;
+@@ -16,11 +17,13 @@
+ import dev.langchain4j.model.chat.response.ChatResponse;
+ import java.util.List;
+ import java.util.Map;
++import org.junit.jupiter.api.AfterAll;
+ import org.junit.jupiter.api.Test;
+ 
+-class OllamaCustomMessageChatModelIT extends AbstractOllamaLanguageModelInfrastructure {
++class OllamaCustomMessageChatModelIT {
+ 
+     private static final String MODEL_NAME = GRANITE_3_GUARDIAN;
++    private static LC4jOllamaContainer ollama;
+ 
+     static {
+         if (isNullOrEmpty(OLLAMA_BASE_URL)) {
+@@ -32,6 +35,13 @@ class OllamaCustomMessageChatModelIT extends AbstractOllamaLanguageModelInfrastr
+         }
+     }
+ 
++    @AfterAll
++    static void stopOllama() {
++        if (ollama != null) {
++            ollama.stop();
++        }
++    }
++
+     ChatModel ollamaChatModel = OllamaChatModel.builder()
+             .baseUrl(ollamaBaseUrl(ollama))
+             .modelName(GRANITE_3_GUARDIAN)
+```
+
+**File**: `langchain4j-ollama/src/test/java/dev/langchain4j/model/ollama/OllamaDecisionModelIT.java` (modified, +8/-0)
+```diff
+@@ -9,6 +9,7 @@
+ import dev.langchain4j.model.decision.DecisionModel;
+ import dev.langchain4j.model.decision.common.AbstractDecisionModelIT;
+ import dev.langchain4j.model.decision.listener.DecisionModelListener;
++import org.junit.jupiter.api.AfterAll;
+ 
+ class OllamaDecisionModelIT extends AbstractDecisionModelIT {
+ 
+@@ -24,6 +25,13 @@ class OllamaDecisionModelIT extends AbstractDecisionModelIT {
+         }
+     }
+ 
++    @AfterAll
++    static void stopOllama() {
++        if (ollama != null) {
++            ollama.stop();
++        }
++    }
++
+     static OllamaDecisionModel.OllamaDecisionModelBuilder builder() {
+         return OllamaDecisionModel.builder().baseUrl(ollamaBaseUrl(ollama)).modelName(TEV1);
+     }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7276** (2026-11-24): Ollama ITs: stop test containers after each test class (@dliubarskyi)
+- **PR #7274** (2026-11-24): Make -DskipTests skip integration tests again (@dliubarskyi)
+- **PR #7250** (2026-11-24): agentic: notify composed agent listeners in registration order, closing callbacks in reverse (@edeandrea)
 - **PR #7245** (2026-11-23): Avoid deep regex recursion on long inputs in the prompt injection guardrail and the Azure ACA sessions tool (@dliubarskyi)
+- **PR #7243** (2026-11-24): Update dependency org.apache.httpcomponents.core5:httpcore5-h2 to v5.5 (@renovate[bot])
 - **PR #7235** (2026-11-23): Update dependency org.apache.httpcomponents.core5:httpcore5 to v5.5 (@renovate[bot])
-- **PR #7219** (2026-11-20): CI: generate images in the Google ITs only in the JDK 21 nightly and when a Google module changes (@dliubarskyi)
-- **PR #7217** (2026-11-23): Wait for the onError handler in the StreamingTest rethrow test (@edeandrea)
-- **PR #7210** (2026-11-23): Docs: write the testing tutorial and add an evaluation page (@dliubarskyi)
-- **PR #7209** (2026-11-23): Update milvusdb/milvus Docker tag to v3.0.6 (@renovate[bot])
 
 ---
 
@@ -1262,60 +1472,31 @@ silent default. Also print the streaming response, whose body is not logged.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. agentic): support primitive arrays in the parallel mapper
+## X. agentic: notify composed agent listeners in registration order, closing callback
 
 **RULE**:
-When implementing operations in `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/workflow/impl/ParallelMapperPlanner.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in langchain4j/langchain4j. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/docs/tutorials/agents.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in langchain4j/langchain4j. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fc45d349`: agentic): support primitive arrays in the parallel mapper. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `212cbf3c`: agentic: notify composed agent listeners in registration order, closing callbacks in reverse. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/workflow/impl/ParallelMapperPlanner.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/docs/tutorials/agents.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-import java.lang.reflect.Array;
-    private final Class<?> arrayClass;
-        this(itemsProvider, isArrayResult ? arrayclass : null);
-    }
-
-    /**
-     * @param itemsProvider the name of the state holding the items to map
-     * @param arrayClass the type of the array to return the results in, which can be an array of a primitive type,
-     *        like {@code int[]}, or {@code null} to return them in a list
-     */
-    public ParallelMapperPlanner(String itemsProvider, Class<?> arrayClass) {
-        this.isArrayResult = arrayClass != null;
-        this.arrayClass = arrayClass;
-            // read through reflection, since an array of a primitive type, like int[], is not an Object[]
-            int length = Array.getLength(collectionObj);
-            List<Object> elements = new ArrayList<>(length);
-            for (int i = 0; i < length; i++) {
-                elements.add(Array.get(collectionObj, i));
-            }
-            items = elements;
-        Object result = isArrayResult ? toArray(results) : results;
-    private Object toArray(List<Object> results) {
-        // filled through reflection, which unboxes each result when the array is of a primitive type, like int[]
-   
+- **composable**, meaning that you can register multiple listeners to the same agent, by invoking the `listener` method more than once. They nest like interceptors: `beforeAgentInvocation`, `beforeAgentToolExecution` and `afterAgenticScopeCreated`, as well as the events notified between them and their counterparts, are notified to the listeners in the order they were registered, while `afterAgentInvocation`, `onAgentInvocationError`, `afterAgentToolExecution`, `beforeAgenticScopeDestroyed` and `onAgenticSystemSuspended` are notified in the reverse order. So a listener that makes some context current when an agent starts and restores the previous one when it ends gives the listeners registered after it that context in both callbacks. The listeners inherited from a parent agent count as registered before the agent's own;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-import static java.util.Arrays.copyOf;
-
-    private final Class<? extends Object[]> arrayclass;
-        this.isArrayResult = isArrayResult;
-        this.arrayclass = arrayclass;
-            items = java.util.Arrays.asList((Object[]) collectionObj);
-        Object result = isArrayResult ? copyOf(results.toArray(), results.size(), arrayclass) : results;
+- **composable**, meaning that you can register multiple listeners to the same agent, by invoking the `listener` method more than once, and they will be notified in the order they were registered; 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fc45d349` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `212cbf3c` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

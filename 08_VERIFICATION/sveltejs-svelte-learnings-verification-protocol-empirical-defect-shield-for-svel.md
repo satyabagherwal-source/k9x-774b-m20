@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T23:13:41.870Z",
+  "timestamp": "2026-11-24T22:51:13.937Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-sveltejs-svelte-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [sveltejs-svelte-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T23:13:41.870Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T22:51:13.937Z`  
 > **Learning ID**: `LEARN-EVO-sveltejs-svelte-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sveltejs-svelte-learnings.md`  
 > **Source**: github ([https://github.com/sveltejs/svelte](https://github.com/sveltejs/svelte))  
-> **Source Version**: `04c5d8da`  
+> **Source Version**: `36cb19ee`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T23:13:29.128Z  
+> **Timestamp**: 2026-11-24T22:50:59.001Z  
 > **Learning ID**: `learn-github-sveltejs-svelte`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sveltejs-svelte-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sveltejs/svelte](https://github.com/sveltejs/svelte))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T23:13:28.946Z  
+> **Harvest Timestamp**: 2026-11-24T22:50:58.899Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: web development for the rest of us
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 89834 stars
+- **Stars / Engagement**: 89837 stars
 
 ---
 
@@ -410,7 +410,7 @@ function profile_to_markdown(profile) {
 			const id = typeof node.id === 'number' ? node.id : '';
 			const parentId =
 				typeof id === 'number' && included_node_ids.has(parent_by_id.get(id) ?? NaN)
-					? parent_by_id.get(id) ?? ''
+					? (parent_by_id.get(id) ?? '')
 					: '';
 			const functionName =
 				typeof callFrame.functionName === 'string' && callFrame.functionName.length > 0
@@ -456,7 +456,7 @@ export async function with_cpu_profile(profile_dir, profile_name, fn) {
 	session.connect();
 
 	await session.post('Profiler.enable');
-	aw
+	
 ```
 
 ### Core Architecture Module: `packages/svelte/renderer.d.ts`
@@ -1996,11 +1996,14 @@ function validate_code(code, is_attribute_value) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #18490** (2026-07-02): **SSR compilation of `{let ...= $derived(...)}` can incorrectly use getter instead of actual value**
-  *Symptoms*: ### Describe the bug  Using `{let foo = $derived()}` can, in at least some cases, result in `foo` being exposed as a _function_ that returns the appropriate value, rather than as the value itself. Client-side rendering seems to be fine, and using `let foo = $derived(...);` in the `<script>` block seems to be fine.  ### Reproduction  SSR compilation of:  ```svelte <div> 	{let dt = $derived(Date.parse("2026-10-01T00:00:00Z"))} 	{typeof dt} </div> ```  results in  ```js import 'svelte/internal/flags/async'; import * as $ from 'svelte/internal/server';  export default function App($$renderer) { 	{ 		let dt = $.derived(() => Date.parse("2026-10-01T00:00:00Z"));  		$$renderer.push(`<div>${$.escape(typeof dt)}</div>`); 	} } ```  which renders `<div>function</div>`.  For comparison,  ```svelte <script> 	let dt = $derived(Date.parse("2026-10-01T00:00:00Z")); </script>  <div> 	{typeof dt} </div> ```  SSR-compiles into  ```js import 'svelte/internal/flags/async'; import * as $ from 'svelte/internal/server';  export default function App($$renderer) { 	let dt = $.derived(() => Date.parse("2026-10-01T00:00:00Z"));  	$$renderer.push(`<div>${$.escape(typeof dt())}</div>`); } ```  ### Logs  ```shell  ```  ### System Info  ```shell   System:     OS: Linux 6.18 Ubuntu 26.04 LTS 26.04 LTS (Resolute Raccoon)     CPU: (8) x64 Intel(R) Core(TM) Ultra 7 258V     Memory: 11.68 GB / 15.39 GB     Container: Yes     Shell: 5.3.9 - /bin/bash   Binaries:     Node: 24.18.0     Yarn: 1.22.22     npm: 11.16.
+- **Issue #7469** (2024-04-01): **fix: do not reuse claimed nodes if the html does not match**
+  *Symptoms*: Fixes https://github.com/sveltejs/kit/issues/2977  ### Before submitting the PR, please make sure you do the following - [x] Prefix your PR title with `[feat]`, `[fix]`, `[chore]`, or `[docs]`. - [x] This message body should clearly illustrate what problems it solves. - [x] Ideally, include a test that fails without this PR but passes with it.  ### Tests -  [x] Run the tests with `npm test` and lint the project with `npm run lint` 
+  **Post-Mortem & Fix Analysis**:
+  > According to the repl of https://github.com/sveltejs/kit/issues/2977, now it works OK. But if `{@html}` has multiple root nodes like `<div>foo</div><div>bar</div>`, always `if (ssr_html !== html)` returns false now. So I think we should handle this case also.  Should we do like this way?  ```ts let ssr_html = ''; for (const n of claimed_nodes) {   ssr_html += n.outerHTML || ''; }  let normalized_html = ''; const temp_div = document.createElement('div'); temp_div.innerHTML = html; for (const n of normalized_html.childNodes) {   normalized_html += n.outerHTML || ''; } if (ssr_html !== normalized_html) {   for (const n of claimed_nodes) {     detach(n);   }   return new HtmlTagHydration(undefined, is_svg); } ```
+  > i hvnt tried, but what was the reason that multiple root nodes causes the `ssr_html !== html`?  one thing i can think of that this approach has potential bug is that, the parent element cannot always be `div`. i remember that elements like `<td>` need to be added into `<tr>`
 
-- **Issue #18334** (2026-06-01): **Declaration tag bugs**
-  *Symptoms*: [This doesn't work](https://svelte.dev/playground/aaac159f0f73466bb3859dfed6792cab?version=5.56.0#H4sIAAAAAAAAE23OwQrCMAwG4FcJwcMm4sRjcQOfwaPz0LlMCjUrazaVsXc3HR69FPL175_OyPZJaPAiVggcQ2QXAknEHXbOU0RznVE-IYUSqP-enEPYx4m8JGtspH9-71mItc7g7Emg63soYRPTuuyQ76CxQ4KWBjdRm6X7LRzzpeaaT47DKJC2lzUOlh9UIzSOWzNZP1I5a3yBolrDodLJwGqnIlQrab2Snivph4TegkaGkZabTtb5l_ah6ayPtHwBLUNLvRABAAA) — the `foo` declaration isn't correctly transformed inside the `bar` declaration:  ```svelte {let foo = $state(0), bar = $derived(foo * 2)}  <input type="range" bind:value={foo} />  <p>foo: {foo}</p> <p>bar: {bar}</p> ```  Either we should make this work, or prohibit declarations with multiple declarators.  You can put them in [separate declarations](https://svelte.dev/playground/hello-world?version=5.56.0#H4sIAAAAAAAAE23OwWrDMAwG4FcRYod0jLXsaJrAbnuHpQenVoZBs42tpC0h717Z7LiLQZ9-_2jDYH8JDX4Rc4RbzOygI-eF3AHfcPZMBc33hvJINVdB_e_XZ0rvZSWWapMt9J9fYxAKojW4MQnMMUIPL0WsUHc67GNoPNlc2VH2K7mupl7ho67HcPYhLQL1hn7EbMMPjQiTD86slhfqN43vcBxaOA06GWh2PqahkdYr6dtIzxK6CxrJC-0Xnaznm_ahmS0X2p_iXweHGQEAAA) and it works, but there's an erroneous compiler warning:  ```svelte {let foo = $state(0)} {let bar = $derived(foo * 2)}  <input type="range" bind:value={foo} />  <p>foo: {foo}</p> <p>bar: {bar}</p> ```  [Whitespace](https://svelte.dev/playground/aaac159f0f73466bb3859dfed6792cab?version=5.56.0#H4sIAAAAAAAAE23OzQrCMAwH8FcJwcMUUfFY3MBn8Gg9dC6TQs3Kmk1l7N1Nh0d7KOTHPx8TsnsSGryIEwLPkNjHSJJwi60PlNBcJ5RPzKEM6r-Wc4y7NFKQbLVL9M_vHQuxjjM4WbYSSKDtO
+- **Issue #7110** (2022-01-06): **[fix] code generation with arrow functions and object destructuring assignments**
+  *Symptoms*: Fixes #7087 via https://github.com/Rich-Harris/code-red/pull/70.  No test, as code-red included one.  ### Before submitting the PR, please make sure you do the following - [x] It's really useful if your PR references an issue where it is discussed ahead of time. In many cases, features are absent for a reason. For large changes, please create an RFC: https://github.com/sveltejs/rfcs - [x] Prefix your PR title with `[feat]`, `[fix]`, `[chore]`, or `[docs]`. - [x] This message body should clearly illustrate what problems it solves. - [ ] Ideally, include a test that fails without this PR but passes with it.  ### Tests -  [x] Run the tests with `npm test` and lint the project with `npm run lint`
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2017,491 +2020,527 @@ function validate_code(code, is_attribute_value) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8720544f` (2026-11-20)
-**Commit Message**: feat: custom renderers API (#18042)
+### Incident Patch 1: `d9f33ed2` (2026-11-24)
+**Commit Message**: fix: avoid quadratic batch write collection during effect flushing (#19395)
 
-Closes #15470 
+Fixes https://github.com/sveltejs/svelte/issues/19392
 
-We're so back!
+Mounting many components that write state after mounting became
+quadratic because each writing effect rescanned every write accumulated
+in `Batch.current`. Legacy `bind:this` assignments expose this
+particularly clearly, but the same collection path handles runes and
+queued async render effects.
 
-Finally, thanks to [Syntax](https://syntax.fm) and
-[SuppCo](https://supp.co) that sponsored the [Custom Renderers
-initiative](https://svelte-custom-renderers.com), I was able to work
-full-time for a bit on this (thanks again to my employer,
-[Mainmatter](https://mainmatter.com/svelte) for allowing me to do this).
+The collection introduced in
+[#19030](https://github.com/sveltejs/svelte/pull/19030) still serves an
+important purpose: eager block teardowns must revert the running
+effect's writes while retaining earlier effects' writes. Deferred branch
+callbacks also retain snapshots of that view. Removing this machinery or
+bypassing it only for legacy components would either lose those ordering
+guarantees or leave other effect types with the same performance defect.
 
-This, the fact that we recently revisited the direction we were going
-(that lead to much less code needed), plus the fact that Claude now is
-decently good at navigating the Svelte codebase allowed me to do a lot
-of progress (I was also able to re-use part of the code I already had
-before).
+Instead, `Batch.capture` records touched source keys in a collector
+scoped to the queued-effect flush. After each effect and its eager block
+reruns, only that delta is visited. Entries are still selected from the
+current batch with the existing version filter, preserving
+overwritten/equal-version writes and ex
 
-As you can see, this is a big PR, but I tried to split the commits
-reasonably so that the review process shouldn't be too bad and there
-wasn't really a way to verify it worked before having built most of it.
-There are still a few To-dos but luckily, I also have a few more days to
-work on this (and at this point is in a place where I can also do it in
-my spare time).
-
-## To-dos
-
-- [ ] Documentation
-- [x] Lift HTML-specific compiler warnings/errors if a custom renderer
-is defined
-- [ ] Write more tests
-- [ ] (Stretch) fi
-
-**File**: `.changeset/salty-steaks-wash.md` (added, +5/-0)
+**File**: `.changeset/quick-batches-write-once.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
-+'svelte': minor
++'svelte': patch
 +---
 +
-+feat: custom renderer api
++fix: avoid quadratic work when flushing effects that write state
 ```
 
-**File**: `documentation/docs/05-special-elements/07-svelte-options.md` (modified, +1/-0)
+**File**: `packages/svelte/src/internal/client/reactivity/batch.js` (modified, +36/-10)
 ```diff
-@@ -13,6 +13,7 @@ The `<svelte:options>` element provides a place to specify per-component compile
- - `namespace="..."` — the namespace where this component will be used, can be "html" (the default), "svg" or "mathml"
- - `customElement={...}` — the [options](custom-elements#Component-options) to use when compiling this component as a custom element. If a string is passed, it is used as the `tag` option
- - `css="injected"` — the component will inject its styles inline: During server-side rendering, it's injected as a `<style>` tag in the `head`, during client side rendering, it's loaded via JavaScript
-+- `customRenderer="..."` — the module that provides the [custom renderer](custom-renderers) this component renders with. Use `customRenderer={null}` to render with the DOM instead of the default renderer. Requires the `experimental.customRenderer` compiler option
+@@ -692,14 +692,23 @@ export class Batch {
+ 		// append/remove branches
+ 		this.#run_callbacks(this.#commit_callbacks);
  
- > [!LEGACY] Deprecated options
- > Svelte 4 also included the following options. They are deprecated in Svelte 5 and non-functional in runes mode.
-```
-
-**File**: `documentation/docs/07-misc/08-custom-renderers.md` (added, +443/-0)
-```diff
-@@ -0,0 +1,443 @@
-+---
-+title: Custom renderers
-+---
-+
-+By default, Svelte components render to the DOM. A _custom renderer_ lets them render to something else instead — a WebGL scene, a native mobile UI, a terminal, a PDF document — while you keep writing ordinary Svelte components with state, props, control flow and everything else you're used to.
-+
-+The renderer is a small object that tells Svelte how to create, arrange and update the nodes of the target environment. Svelte takes care of everything else.
-+
-+This feature is currently experimental, and you must opt in by adding the `experimental.customRenderer` option wherever you [configure](/docs/kit/configuration) Svelte, usually `svelte.config.js` or `vite.config.js`:
-+
-+```js
-+// @noErrors
-+/// file: svelte.config.js
-+export default {
-+	compilerOptions: {
-+		experimental: {
-+			customRenderer: true
-+		}
-+	}
-+};
-+```
-+
-+The API may change before the experimental flag is removed.
-+
-+## Choosing a renderer
-+
-+With the option set to `true`, components still render to the DOM unless they say otherwise. A component chooses a renderer with [`<svelte:options>`](svelte-options), by pointing to the module that exports it:
-+
-+```svelte
-+<!--- file: Scene.svelte --->
-+<svelte:options customRenderer="three-renderer" />
-+
-+<script>
-+	let { speed } = $props();
-+	let rotation = $state(0);
-+</script>
-+
-+<mesh rotation={[0, rotation, 0]} onclick={() => (rotation += speed)}>
-+	<boxGeometry args={[1, 1, 1]} />
-+</mesh>
-+```
-+
-+> [!NOTE] `three-renderer` is a made-up package, used as an example throughout this page.
-+
-+The elements in a custom renderer component — `<mesh>` and `<boxGeometry>` here — have no special meaning to Svelte. It passes their names and attributes to the renderer, which decides what to do with them.
-+
-+The module path is resolved like any other import in the component, so it can be a package name, an alias, or a path relative to the component (`customRenderer="./renderer.js"`).
-+
-+### Setting a default renderer
-+
-+If most of your components use the same renderer, you can make it the default by passing the module path instead of `true`:
-+
-+```js
-+// @noErrors
-+/// file: svelte.config.js
-+export default {
-+	compilerOptions: {
-+		experimental: {
-+			customRenderer: 'three-renderer'
-+		}
-+	}
-+};
-+```
-+
-+Individual components can still choose a different renderer, or no custom renderer at all with `<svelte:options customRenderer={null} />`.
-+
-+Every component imports the default renderer module, so a globally configured path can't be relative — it would be resolved relative to each component, rather than relative to your config file. Use a package name, a subpath import like `#lib/renderer.js`, or an absolute path.
-+
-+### Choosing a renderer by file
-+
-+For more control, pass a function. It receives the filename of each component, and returns the renderer module for that component, or `null` for the DOM:
-+
-+```js
-+// @noErrors
-+/// file: svelte.config.js
-+export default {
-+	compilerOptions: {
-+		experimental: {
-+			customRenderer: ({ filename }) => {
-+				return filename.includes('/src/scene/') ? 'three-renderer' : null;
+-		var earlier_writes = flush_queued_effects(render_effects);
++		var was_flushing_effects = is_flushing_effects;
++		var previous_captured_writes = captured_writes;
+ 
+-		// the content has been updated, and user effects are about to see it
+-		if (custom_renderers_flag && before_effects !== null) {
+-			before_effects();
+-		}
++		try {
++			is_flushing_effects = true;
++			var earlier_writes = flush_queued_effects(render_effects);
+ 
+-		flush_queued_effects(effects, earlier_writes);
++			// the content has been updated, and user effects are about to see it
++			if (custom_renderers_flag && before_effects !== null) {
++				before_effects();
 +			}
++
++			flush_queued_effects(effects, earlier_writes);
++		} finally {
++			is_flushing_effects = was_flushing_effects;
++			captured_writes = previous_captured_writes;
++		}
+ 
+ 		this.#deferred?.resolve();
+ 
+@@ -1011,6 +1020,10 @@ export class Batch {
+ 
+ 		this.current.set(source, entry);
+ 
++		if (is_flushing_effects) {
++			(captured_writes ??= new Set()).add(source);
++		}
++
+ 		// The active view of the world sees writes made while it's active, even if they don't belong to the batch whose
+ 		// view it is — e.g. those of effects that run while a batch commits, which go to a new batch. (Async results
+ 		// are only captured while no view is active, see `async_derived`)
+@@ -1645,6 +1658,15 @@ function infinite_loop_guard() {
+ 	}
+ }
+ 
++var is_flushing_effects = false;
++
++/**
++ * Sources captured since the last effect in `flush_queued_effects` finished, including
++ * writes by its eager block reruns. Nested flushes use their own collector.
++ * @type {Set<Value> | null}
++ */
++var captured_writes = null;
++
+ /** @type {Set<Effect> | null} */
+ export let eager_block_effects = null;
+ 
+@@ -1772,15 +1794,19 @@ function flush_queued_effects(effects, earlier_writes = null) {
+ 				}
+ 			}
+ 
+-			// if the effect — or the block effects — wrote anything
+-			if (write_version !== version && current_batch !== null) {
+-				for (const [value, write] of current_batch.current) {
+-					if (write.wv > version) {
++			// Only visit sources captured by this effect or its eager block reruns.
++			// A nested flush may have drained their batch, so use the current entry.
++			if (write_version !== version && current_batch !== null && captured_writes !== null) {
++				for (const value of captured_writes) {
++					var write = current_batch.current.get(value);
++					if (write !== undefined && write.wv > version) {
+ 						(earlier_writes ??= new Map()).set(value, write);
+ 					}
+ 				}
+ 			}
+ 		}
++
++		captured_writes?.clear();
+ 	}
+ 
+ 	eager_block_effects = null;
+```
+
+**File**: `packages/svelte/tests/signals/batch.test.ts` (added, +71/-0)
+```diff
+@@ -0,0 +1,71 @@
++import { assert, it } from 'vitest';
++import { push, pop } from '../../src/internal/client/context';
++import {
++	disable_async_mode_flag,
++	enable_async_mode_flag,
++	enable_legacy_mode_flag
++} from '../../src/internal/flags';
++import { flushSync } from '../../src/internal/client/reactivity/batch';
++import { block, effect, effect_root } from '../../src/internal/client/reactivity/effects';
++import { state, set } from '../../src/internal/client/reactivity/sources';
++import { get } from '../../src/internal/client/runtime';
++
++enable_legacy_mode_flag();
++
++it.each([
++	{ async: false, runes: false },
++	{ async: false, runes: true },
++	{ async: true, runes: false },
++	{ async: true, runes: true }
++])(
++	'retains writes after a nested effect flush (async: $async, runes: $runes)',
++	({ async, runes }) => {
++		if (async) enable_async_mode_flag();
++		push({}, runes);
++
++		const trigger = state(0);
++		const nested_trigger = state(0);
++		const nested_value = state(0);
++		const earlier = state(0);
++		const show = state(true);
++		const log: string[] = [];
++
++		// A separate root ensures the nested flush doesn't also traverse the outer siblings.
++		const destroy_nested = effect_root(() => {
++			effect(() => {
++				if (get(nested_trigger) === 1) set(nested_value, 42);
++			});
++		});
++
++		const destroy = effect_root(() => {
++			block(() => {
++				get(show);
++				return () => log.push(`${get(earlier)}:${get(show)}`);
++			});
++
++			effect(() => {
++				if (get(trigger) === 1) {
++					flushSync(() => set(nested_trigger, 1));
++					set(earlier, 1);
++					set(earlier, 2);
++				}
++			});
++
++			effect(() => {
++				if (get(trigger) === 1) set(show, false);
++			});
++		});
++		pop();
++
++		try {
++			flushSync();
++			flushSync(() => set(trigger, 1));
++			assert.equal(get(nested_value), 42);
++			assert.deepEqual(log, ['2:true']);
++		} finally {
++			destroy();
++			destroy_nested();
++			disable_async_mode_flag();
 +		}
 +	}
-+};
-+```
++);
+```
+
+**File**: `packages/svelte/tests/signals/test.ts` (modified, +79/-1)
+```diff
+@@ -22,7 +22,7 @@ import {
+ import type { Derived, Effect, Source, Value } from '../../src/internal/client/types';
+ import { proxy } from '../../src/internal/client/proxy';
+ import { derived } from '../../src/internal/client/reactivity/deriveds';
+-import { source_stacks } from '../../src/internal/client/reactivity/batch';
++import { Batch, source_stacks } from '../../src/internal/client/reactivity/batch';
+ import { snapshot } from '../../src/internal/shared/clone.js';
+ import { SvelteSet } from '../../src/reactivity/set';
+ import { CONNECTED, DESTROYED } from '../../src/internal/client/constants';
+@@ -65,6 +65,84 @@ test.skip = (text: string, fn: (runes: boolean) => any) => {
+ };
+ 
+ describe('signals', () => {
++	for (const [async, render] of [
++		[false, false],
++		[true, false],
++		[true, true]
++	]) {
++		test(`flushing writing ${render ? 'render' : 'user'} effects does linear work (async: ${async})`, () => {
++			if (async) enable_async_mode_flag();
++			const count = 100;
++			const trigger = state(0);
++			const create = render ? render_effect : effect;
++			const values = Array.from({ length: count }, () => state(0));
++			let visited = 0;
 +
-+Since the function knows which file it's choosing for, it can also return a path relative to that file. A `<svelte:options customRenderer={...}>` in a component takes precedence over the function.
++			for (const [i, value] of values.entries()) {
++				create(() => {
++					if ($.get(trigger) === 0) return;
++					set(value, 1);
++					if (i === 0) {
++						// Count visits to batch writes, rather than asserting wall-clock timings.
++						const writes = Batch.ensure().current;
++						const iterate = writes[Symbol.iterator].bind(writes);
++						Object.defineProperty(writes, Symbol.iterator, {
++							value: function* () {
++								for (const entry of iterate()) {
++									visited++;
++									yield entry;
++								}
++							}
++						});
++					}
++				});
++			}
 +
-+## Running outside the browser
++			return () => {
++				try {
++					flushSync();
++					flushSync(() => set(trigger, 1));
++					assert.deepEqual(
++						values.map((value) => $.get(value)),
++						Array(count).fill(1)
++					);
++					assert.isAtMost(visited, count * 4);
++				} finally {
++					if (async) disable_async_mode_flag();
++				}
++			};
++		});
++	}
 +
-+Many renderers target environments that aren't browsers at all, such as a terminal, a PDF generator, a native runtime or a test runner. In those environments, `svelte` normally resolves to its server-side implementation, which renders components to HTML strings rather than running them.
++	test('eager block teardowns retain the last write of an earlier effect', () => {
++		const trigger = state(0);
++		const earlier = state(0);
++		const show = state(true);
++		const log: string[] = [];
 +
-+To use custom renderers there, add the `svelte-custom-renderer` [resolve condition](https://nodejs.org/api/packages.html#conditional-exports), which makes `svelte` resolve to the implementation that runs components. With Node, run your code with `--conditions=svelte-custom-renderer`. If you're using a bundler, add `svelte-custom-renderer` to its list of resolve conditions. If the condition is missing, Svelte throws an error explaining what to do.
++		block(() => {
++			$.get(show);
++			return () => log.push(`${$.get(earlier)}:${$.get(show)}`);
++		});
 +
-+Your components still need to be compiled, as with any Svelte app — for example by bundling them with Vite and `vite-plugin-svelte`.
++		effect(() => {
++			if ($.get(trigger) === 1) {
++				set(earlier, 1);
++				set(earlier, 2);
++			}
++		});
 +
-+As an example, here's a clock that runs in a terminal:
++		effect(() => {
++			if ($.get(trigger) === 1) set(show, false);
++		});
 +
-+```svelte
-+<!--- file: Clock.svelte --->
-+<svelte:options customRenderer="terminal-renderer" />
-+
-+<script>
-+	let time = $state(new Date());
-+
-+	$effect(() => {
-+		const interval = setInterval(() => (time = new Date()), 1000);
-+		return () => clearInterval(interval);
++		return () => {
++			flushSync();
++			flushSync(() => set(trigger, 1));
++			assert.deepEqual(log, ['2:true']);
++		};
 +	});
-+</script>
 +
-+<box border="round" padding={1}>
-+	<text bold>The time is {time.toLocaleTimeString()}</text>
-+</box>
-+```
-+
-+To start it, pass the renderer to [`mount`](svelte#mount), along with a target created by that renderer:
-+
-+```js
-+/// file: main.js
-+// @noErrors
-+import { mount } from 'svelte';
-+import renderer, { draw } from 'terminal-renderer';
-+import Clock from './Clock.svelte';
-+
-+
-```
-
-**File**: `documentation/docs/07-misc/99-faq.md` (modified, +1/-1)
-```diff
-@@ -101,7 +101,7 @@ While most mobile apps are written without using JavaScript, if you'd like to le
- 
- You can also write apps in Svelte that compiles to native components by using [Symbiote Native](https://docs.symbiote-native.dev/), which leverages the infrastructure provided by React Native.
- 
--Work has been completed towards [custom renderer support in Svelte 5](https://github.com/sveltejs/svelte/issues/15470), but this feature is not yet merged. The custom rendering API will allow support in additional mobile frameworks like Lynx JS and Svelte Native. Symbiote Native will also adopt this API. Svelte Native was an option available for Svelte 4, but Svelte 5 does not currently support it. Svelte Native lets you write NativeScript apps using Svelte components that contain [NativeScript UI components](https://docs.nativescript.org/ui/) rather than DOM elements.
-+Svelte 5 also has experimental support for [custom renderers](custom-renderers), which let Svelte components render to targets other than the DOM. This will allow support in additional mobile frameworks like Lynx JS and Svelte Native, and Symbiote Native will also adopt this API. Svelte Native was an option available for Svelte 4, but Svelte 5 does not currently support it. Svelte Native lets you write NativeScript apps using Svelte components that contain [NativeScript UI components](https://docs.nativescript.org/ui/) rather than DOM elements.
- 
- ## Can I tell Svelte not to remove my unused styles?
- 
-```
-
-**File**: `documentation/docs/98-reference/.generated/client-errors.md` (modified, +26/-0)
-```diff
-@@ -46,6 +46,14 @@ Attempted to instantiate %component% with `new %name%`, which is no longer valid
- 
- See the [migration guide](/docs/svelte/v5-migration-guide#Components-are-no-longer-classes) for more information.
- 
-+### custom_renderer_unsupported_operation
-+
-+```
-+`%operation%` is not supported when rendering with a custom renderer
-+```
-+
-+Some of Svelte's internals only work with the DOM, and are never expected to run while a custom renderer is active — for example, `{@html ...}` and hydration are not available with custom renderers. Reaching one of these code paths indicates a bug in Svelte rather than in your app or renderer, so please [open an issue](https://github.com/sveltejs/svelte/issues) with a reproduction.
-+
- ### derived_references_self
- 
- ```
-@@ -209,6 +217,12 @@ Failed to hydrate the application
- Could not `{@render}` snippet due to the expression being `null` or `undefined`. Consider using optional chaining `{@render snippet?.()}`
- ```
- 
-+### invalid_snippet_in_custom_renderer
-+
-+```
-+`createRawSnippet` cannot be used with a custom renderer
-+```
-+
- ### lifecycle_legacy_only
- 
- ```
-@@ -227,12 +241,24 @@ Cannot do `bind:%key%={undefined}` when `%key%` has a fallback value
- Rest element properties of `$props()` such as `%property%` are readonly
- ```
- 
-+### renderer_cannot_cross
-+
-+```
-+Cannot render content belonging to %guest% inside %host%. A custom renderer must define `embed` or `host` to be combined with another renderer
-+```
-+
- ### rune_outside_svelte
- 
- ```
- The `%rune%` rune is only available inside `.svelte` and `.svelte.js/ts` files
- ```
- 
-+### snippet_renderer_mismatch
-+
-+```
-+A snippet created in a component that was compiled without `experimental.customRenderer` cannot be rendered by a custom renderer
-+```
-+
- ### state_descriptors_fixed
- 
- ```
-```
-
-**File**: `documentation/docs/98-reference/.generated/compile-errors.md` (modified, +12/-0)
-```diff
-@@ -617,6 +617,12 @@ Cannot use `await` in deriveds and template expressions, or at the top level of
- Imports of `svelte/internal/*` are forbidden. It contains private runtime code which is subject to change without notice. If you're importing from `svelte/internal/*` to work around a limitation of Svelte, please open an issue at https://github.com/sveltejs/svelte and explain your use case
- ```
- 
-+### incompatible_with_custom_renderer
-+
-+```
-+%message% is not compatible with `customRenderer`
-+```
-+
- ### inspect_trace_generator
- 
- ```
-@@ -1131,6 +1137,12 @@ A component can only have one `<%name%>` element
- Valid `<svelte:...>` tag names are %list%
- ```
- 
-+### svelte_options_customrenderer_disabled
-+
-+```
-+`customRenderer` cannot be set in `<svelte:options>` unless the `experimental.customRenderer` compiler option is enabled
-+```
-+
- ### svelte_options_deprecated_tag
- 
- ```
-```
-
-**File**: `documentation/docs/98-reference/.generated/shared-errors.md` (modified, +8/-0)
-```diff
-@@ -1,5 +1,13 @@
- <!-- This file is generated by scripts/process-messages/index.js. Do not edit! -->
- 
-+### custom_renderer_unavailable_on_server
-+
-+```
-+You need to specify a custom condition to use a custom renderer in a non-browser environment such as Node. Add the `svelte-custom-renderer` resolve condition (eg. run Node with `--conditions=svelte-custom-renderer`).
-+
-+If you're using a bundler, add `svelte-custom-renderer` to its list of resolve conditions instead.
-+```
-+
- ### experimental_async_required
- 
- ```
-```
-
-**File**: `documentation/docs/98-reference/21-svelte-renderer.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+title: svelte/renderer
-+---
-+
-+> MODULE: svelte/renderer
+ 	test('nested commit retains latest block dependencies', () => {
+ 		const trigger = state(0);
+ 		const mode = state(0);
 ```
 
 ---
 
-### Incident Patch 2: `dd3f1c2a` (2026-11-18)
-**Commit Message**: fix: batch views of reactions (#19030)
+### Incident Patch 2: `1bbeac7c` (2026-11-24)
+**Commit Message**: fix: hint at missing `lang="ts"` when TypeScript syntax fails to parse (#19428)
 
-This changes the async reactivity system when multiple batches are
-active such that they check if they need to be re-executed in a batch by
-comparing the write versions of the dependencies they last saw with the
-ones they have now - if there's any difference, they re-execute. These
-write version arrays, the value, the dependencies that batch sees - all
-is stored in a record local to the batch. Logic exists to promote them
-to the real world if we know the derived was computed from
-real-world/latest dependencies only, and async/block effects promote
-once the batch commits.
+Closes #16835. Builds on and supersedes #17954.
 
-This introduces some complexity, on the other hand various things are
-simplified or removed (`#commit` for example got easier).
+When TypeScript syntax is used without `<script lang="ts">`, report a
+parse error with a hint such as:
 
-This is WIP, but I've commited a
-[readme](https://github.com/sveltejs/svelte/blob/batch-views/batch-views.md)
-that gives a good overview of how the system works in more detail and
-the gaps vs `async-reactivity-another-try-pt-1`
+```text
+Unexpected token (did you forget to add `lang="ts"`?)
+```
 
-- Fixes #19260
-- Fixes #19233
-- Fixes #19253
-- Fixes #19099
-- Fixes #19030
-- Fixes #19154
-- Fixes #19157
-- Fixes #18997
-- Fixes #18355
-- Fixes #18761
-- Fixes #18624
-- Fixes #18503
-- Fixes #18662
-- Fixes https://github.com/s
+### Delta from #17954
 
-**File**: `.changeset/calm-forks-commit.md` (added, +5/-0)
+#17954 started with snippet parameter annotations, but its current
+implementation also handles template expressions and attributes using a
+`:` check at Acorn's error position and lookahead checks for `:`, `as`,
+`satisfies`, and `!` after expressions.
+
+This PR replaces those token/regex heuristics with a single retry of the
+component parser in TypeScript mode:
+
+- Covers cases the heuristics miss, including nested assertions (`{foo(x
+as number)}`), type arguments (`{foo<string>()}`), typed `<script>`
+declarations, typed declaration/`@const` tags, typed each-block
+bindings, and generic snippets.
+- Avoids suggesting `lang="ts"` for invalid syntax such as `{x:
+number}`, `{foo(a: 1)}`, and broken ternaries.
+- Removes the expression lookahead checks from the successful parsing
+path. There are no separate probes for individual expression, statement,
+script, or snippet con
+
+**File**: `.changeset/gentle-dots-dream.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
 +'svelte': patch
 +---
 +
-+fix: don't throw when committing a fork whose changes were all superseded by other updates
++fix: hint at missing `lang="ts"` when TypeScript syntax fails to parse
 ```
 
-**File**: `.changeset/eager-block-commit.md` (added, +5/-0)
+**File**: `packages/svelte/src/compiler/phases/1-parse/index.js` (modified, +50/-7)
 ```diff
-@@ -0,0 +1,5 @@
-+---
-+'svelte': patch
-+---
+@@ -1,10 +1,12 @@
+-/** @import { AST } from '#compiler' */
++/** @import { AST, CompileError } from '#compiler' */
+ /** @import { Location } from 'locate-character' */
+ /** @import * as ESTree from 'estree' */
+ // @ts-expect-error acorn type definitions are borked in the release we use
+ import { isIdentifierStart, isIdentifierChar } from 'acorn';
+ import fragment from './state/fragment.js';
+ import * as e from '../../errors.js';
++import * as w from '../../warnings.js';
++import { walk } from 'zimmerframe';
+ import { create_fragment, disallow_children } from '../nodes.js';
+ import read_options from './read/options.js';
+ import { is_reserved } from '../../../utils.js';
+@@ -77,8 +79,9 @@ export class Parser {
+ 	/**
+ 	 * @param {string} template
+ 	 * @param {boolean} loose
++	 * @param {boolean} [ts] Force TypeScript parsing when checking for a missing `lang="ts"`
+ 	 */
+-	constructor(template, loose) {
++	constructor(template, loose, ts = false) {
+ 		if (typeof template !== 'string') {
+ 			throw new TypeError('Template must be a string');
+ 		}
+@@ -94,7 +97,7 @@ export class Parser {
+ 
+ 		regex_lang_attribute.lastIndex = 0; // reset matched index to pass tests - otherwise declare the regex inside the constructor
+ 
+-		this.ts = match_lang?.[2] === 'ts';
++		this.ts = ts || match_lang?.[2] === 'ts';
+ 
+ 		this.root = {
+ 			css: null,
+@@ -116,10 +119,50 @@ export class Parser {
+ 		this.fragments.push(this.root.fragment);
+ 
+ 		/** @type {ParserState} */
+-		let state = fragment;
++		let next = fragment;
+ 
+-		while (this.index < this.template.length) {
+-			state = state(this) || fragment;
++		try {
++			while (this.index < this.template.length) {
++				next = next(this) || fragment;
++			}
++		} catch (error) {
++			const err = /** @type {CompileError} */ (error);
 +
-+fix: apply the branch changes of blocks that re-run while effects are flushed when the batch with the effects' writes commits
++			if (
++				!this.ts &&
++				!loose &&
++				(err?.code === 'js_parse_error' || err?.code === 'expected_token')
++			) {
++				// Only suggest `lang="ts"` if it would make the component parse successfully.
++				// Suppress warnings during the retry, including calls to the user's warningFilter.
++				state.ignore_stack.push(new Set(w.codes));
++				let ts = false;
++				try {
++					walk(/** @type {any} */ (new Parser(template, false, true).root), null, {
++						_(node, { next }) {
++							// Acorn also accepts Flow-style casts, which aren't valid TypeScript.
++							if (node.type === 'TSTypeCastExpression') throw error;
++							if (node.type.startsWith('TS')) ts = true;
++							next();
++						}
++					});
++				} catch {
++					throw error;
++				} finally {
++					state.ignore_stack.pop();
++				}
++
++				if (!ts) throw error;
++
++				const message =
++					err.code === 'js_parse_error' ? err.message.split('\n')[0] : 'Unexpected token';
++				e.js_parse_error(
++					err.position?.[0] ?? null,
++					`${message} (did you forget to add \`lang="ts"\`?)`
++				);
++			}
++
++			throw error;
+ 		}
+ 
+ 		if (this.stack.length > 1) {
+@@ -136,7 +179,7 @@ export class Parser {
+ 			}
+ 		}
+ 
+-		if (state !== fragment) {
++		if (next !== fragment) {
+ 			e.unexpected_eof(this.index);
+ 		}
+ 
 ```
 
-**File**: `.changeset/exact-batch-versions.md` (added, +5/-0)
+**File**: `packages/svelte/src/compiler/phases/1-parse/read/context.js` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,5 @@
-+---
-+'svelte': patch
-+---
-+
-+fix: keep values computed in a batch's view of the world local to that batch, and don't needlessly re-run deriveds while several batches are pending
+@@ -56,7 +56,7 @@ function read_type_annotation(parser) {
+ 	const start = parser.index;
+ 	parser.allow_whitespace();
+ 
+-	if (!parser.eat(':')) {
++	if (!parser.ts || !parser.eat(':')) {
+ 		parser.index = start;
+ 		return undefined;
+ 	}
 ```
 
-**File**: `.changeset/lemon-apples-care.md` (added, +5/-0)
+**File**: `packages/svelte/tests/compiler-errors/samples/snippet-ts-annotation-no-lang/_config.js` (added, +9/-0)
 ```diff
-@@ -0,0 +1,5 @@
-+---
-+'svelte': patch
-+---
+@@ -0,0 +1,9 @@
++import { test } from '../../test';
 +
-+fix: restore teardown context when destroying effects after outros
++export default test({
++	error: {
++		code: 'js_parse_error',
++		message: 'Unexpected token (did you forget to add `lang="ts"`?)',
++		position: [18, 18]
++	}
++});
 ```
 
-**File**: `.changeset/pink-mirrors-decide.md` (added, +5/-0)
+**File**: `packages/svelte/tests/compiler-errors/samples/snippet-ts-annotation-no-lang/main.svelte` (added, +3/-0)
 ```diff
-@@ -0,0 +1,5 @@
-+---
-+'svelte': patch
-+---
-+
-+breaking: in experimental async mode, `getAbortSignal()` must be called before an `await`
+@@ -0,0 +1,3 @@
++{#snippet bar(text: string)}
++	{text}
++{/snippet}
 ```
 
-**File**: `.changeset/quiet-forks-inspect.md` (added, +5/-0)
+**File**: `packages/svelte/tests/compiler-errors/samples/ts-annotation-no-lang-as/_config.js` (added, +9/-0)
 ```diff
-@@ -0,0 +1,5 @@
-+---
-+'svelte': patch
-+---
+@@ -0,0 +1,9 @@
++import { test } from '../../test';
 +
-+fix: don't run `$inspect` and `$state.eager` with the values of a fork before it is committed
++export default test({
++	error: {
++		code: 'js_parse_error',
++		message: 'Unexpected token (did you forget to add `lang="ts"`?)',
++		position: [3, 3]
++	}
++});
 ```
 
-**File**: `.changeset/tired-bears-beam.md` (added, +5/-0)
+**File**: `packages/svelte/tests/compiler-errors/samples/ts-annotation-no-lang-as/main.svelte` (added, +1/-0)
 ```diff
-@@ -0,0 +1,5 @@
-+---
-+'svelte': patch
-+---
-+
-+fix: revert state changes in effect teardowns based on the currently committing batch
+@@ -0,0 +1 @@
++{x as number}
+\ No newline at end of file
 ```
 
-**File**: `documentation/docs/98-reference/.generated/client-errors.md` (modified, +11/-3)
+**File**: `packages/svelte/tests/compiler-errors/samples/ts-annotation-no-lang-attribute/_config.js` (added, +9/-0)
 ```diff
-@@ -3,14 +3,14 @@
- ### async_derived_orphan
- 
- ```
--Cannot create a `$derived(...)` with an `await` expression outside of an effect tree
-+Can only create a `$derived(...)` with an `await` expression during component initialization or in a declaration tag
- ```
- 
--In Svelte there are two types of reaction — [`$derived`](/docs/svelte/$derived) and [`$effect`](/docs/svelte/$effect). Deriveds can be created anywhere, because they run _lazily_ and can be [garbage collected](https://developer.mozilla.org/en-US/docs/Glossary/Garbage_collection) if nothing references them. Effects, by contrast, keep running eagerly whenever their dependencies change, until they are destroyed.
-+In Svelte there are two types of reaction — [`$derived`](/docs/svelte/$derived) and [`$effect`](/docs/svelte/$effect). Deriveds can normally be created anywhere, because they run _lazily_ and can be [garbage collected](https://developer.mozilla.org/en-US/docs/Glossary/Garbage_collection) if nothing references them. Effects, by contrast, keep running eagerly whenever their dependencies change, until they are destroyed.
- 
- Because of this, effects can only be created inside other effects (or [effect roots](/docs/svelte/$effect#$effect.root), such as the one that is created when you first mount a component) so that Svelte knows when to destroy them.
- 
--Some sleight of hand occurs when a derived contains an `await` expression: Since waiting until we read `{await getPromise()}` to call `getPromise` would be too late, we use an effect to instead call it proactively, notifying Svelte when the value is available. But since we're using an effect, we can only create asynchronous deriveds inside another effect.
-+Some sleight of hand occurs when a derived contains an `await` expression: Since waiting until we read `$derived(await getPromise())` to call `getPromise` would be too late, we use an effect to instead call it proactively, notifying Svelte when the value is available. But since we're using an effect, this can only happen during component initialization or in a [declaration tag](/docs/svelte/declaration-tags).
- 
- ### bind_invalid_checkbox_value
- 
-@@ -164,6 +164,14 @@ Cannot commit a fork that was already discarded
- Cannot create a fork inside an effect or when state changes are pending
- ```
- 
-+### get_abort_signal_after_await
+@@ -0,0 +1,9 @@
++import { test } from '../../test';
 +
-+```
-+`getAbortSignal()` cannot be called after an `await`
-+```
-+
-+Abort signals must be associated with their deriveds/effects as soon as they run — if it happens after an `await`, it's too late. Create the abort signal first, before awaiting anything.
-+
- ### get_abort_signal_outside_reaction
- 
- ```
++export default test({
++	error: {
++		code: 'js_parse_error',
++		message: 'Unexpected token (did you forget to add `lang="ts"`?)',
++		position: [14, 14]
++	}
++});
 ```
 
 ---
 
-### Incident Patch 3: `04c5d8da` (2026-11-20)
-**Commit Message**: docs: skip type checking `svelte/renderer` type argument examples (#19361)
+### Incident Patch 3: `2e919580` (2026-11-23)
+**Commit Message**: docs: note that the `css` compiler option defaults to `'external'` (#19261)
 
-The docs sync to svelte.dev is failing
-(https://github.com/sveltejs/svelte.dev/pull/2377) because the two `ts`
-examples in the `svelte/renderer` reference are type checked there and
-don't compile:
-
-```
-[2304] Cannot find name 'createRenderer'.
-[2304] Cannot find name 'MyFragment'.
-[1109] Expression expected.
-```
-
-A version that compiles would need a whole renderer implementation, so
-both examples now opt out of the check, the same way the import snippets
-on the reference pages do. The directive is stripped from the rendered
-page.
-
-```ts
-// @noErrors
-const renderer: Renderer<{ fragment: MyFragment; element: MyElement; text: MyText; comment: MyComment }> = ...
-```
+The `css` compile option has no `@default` in its JSDoc, unlike the
+options around it, so from the docs you can't tell that CSS isn't
+injected unless you ask for it. In `validate-options.js` the default is
+`'external'`, and compiling a component with a `<style>` block and no
+options confirms it (styles come back in `result.css`, not in the JS).
+This adds `@default 'external'` and updates the generated types to
+match.
 
 ### Before submitting the PR, please make sure you do the following
 
@@ -2512,59 +2551,58 @@ https://github.com/sveltejs/rfcs
 - [x] Prefix your PR title with `feat:`, `fix:`, `chore:`, or `docs:`.
 - [x] This message body should clearly illustrate what problems it
 solves.
-- [ ] Ideally, includ
+- [ ] Ideally, include a test that fails without this PR but passes with
+it.
+- [ ] If this PR changes code within `packages/svelte/src`, add a
+changeset (`npx changeset`).
 
-**File**: `packages/svelte/src/internal/client/custom-renderer/index.js` (modified, +1/-0)
-```diff
-@@ -8,6 +8,7 @@
-  * the others. Alternatively, pass them as the type argument:
-  *
-  * ```ts
-+ * // @noErrors
-  * const renderer = createRenderer<{ fragment: MyFragment; element: MyElement; text: MyText; comment: MyComment }>({
-  * 	// ...
-  * });
-```
+### Tests and linting
 
-**File**: `packages/svelte/src/internal/client/custom-renderer/types.d.ts` (modified, +1/-0)
-```diff
-@@ -2,6 +2,7 @@
-  * A custom renderer. `N` describes the types of the renderer's nodes, for example:
-  *
-  * ```ts
-+ * // @noErrors
-  * const renderer: Renderer<{ fragment: MyFragment; element: MyElement; text: MyText; comment: MyComment }> = ...
-  * ```
-  */
-```
+- [ ] Run the tests with `pnpm test` and lint the project with `pnpm
+lint`
 
-**File**: `packages/svelte/types/index.d.ts` (modified, +2/-0)
+**File**: `packages/svelte/src/compiler/types/index.d.ts` (modified, +2/-0)
 ```diff
-@@ -2735,6 +2735,7 @@ declare module 'svelte/renderer' {
- 	 * A custom renderer. `N` describes the types of the renderer's nodes, for example:
+@@ -105,6 +105,8 @@ export interface CompileOptions extends ModuleCompileOptions {
+ 	 * This is always `'injected'` when compiling with `customElement` mode.
  	 *
- 	 * ```ts
-+	 * // @noErrors
- 	 * const renderer: Renderer<{ fragment: MyFragment; element: MyElement; text: MyText; comment: MyComment }> = ...
- 	 * ```
+ 	 * You can also pass a function that receives `{ filename }` and returns either `'injected'` or `'external'`.
++	 *
++	 * @default 'external'
  	 */
-@@ -2869,6 +2870,7 @@ declare module 'svelte/renderer' {
- 	 * the others. Alternatively, pass them as the type argument:
- 	 *
- 	 * ```ts
-+	 * // @noErrors
- 	 * const renderer = createRenderer<{ fragment: MyFragment; element: MyElement; text: MyText; comment: MyComment }>({
- 	 * 	// ...
- 	 * });
+ 	css?: 'injected' | 'external' | ((options: { filename: string }) => 'injected' | 'external');
+ 	/**
+```
+
+**File**: `packages/svelte/types/index.d.ts` (modified, +4/-0)
+```diff
+@@ -1102,6 +1102,8 @@ declare module 'svelte/compiler' {
+ 		 * This is always `'injected'` when compiling with `customElement` mode.
+ 		 *
+ 		 * You can also pass a function that receives `{ filename }` and returns either `'injected'` or `'external'`.
++		 *
++		 * @default 'external'
+ 		 */
+ 		css?: 'injected' | 'external' | ((options: { filename: string }) => 'injected' | 'external');
+ 		/**
+@@ -3373,6 +3375,8 @@ declare module 'svelte/types/compiler/interfaces' {
+ 		 * This is always `'injected'` when compiling with `customElement` mode.
+ 		 *
+ 		 * You can also pass a function that receives `{ filename }` and returns either `'injected'` or `'external'`.
++		 *
++		 * @default 'external'
+ 		 */
+ 		css?: 'injected' | 'external' | ((options: { filename: string }) => 'injected' | 'external');
+ 		/**
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #19361** (2026-11-20): docs: skip type checking `svelte/renderer` type argument examples (@teemingc)
-- **PR #19359** (2026-11-20): Version Packages (@github-actions[bot])
-- **PR #19358** (closed): fix: keep `hydrate` and `mount` callable in a union (@teemingc)
-- **PR #19357** (2026-11-20): fix: keep `hydrate` and `mount` type parameters in sync so a union of them is callable (@paoloricciuti)
-- **PR #19348** (2026-11-20): Version Packages (@github-actions[bot])
-- **PR #19347** (2026-11-20): fix: commit the state that hydration ran with, so that updates while hydration is pending don't undo it (@dummdidumm)
+- **PR #19441** (2026-11-24): fix: do not cache setters for unregistered custom elements (@elliott-with-the-longest-name-on-github)
+- **PR #19429** (2026-11-24): docs: remove h4 headers (@sacrosanctic)
+- **PR #19428** (2026-11-24): fix: hint at missing `lang="ts"` when TypeScript syntax fails to parse (@Rich-Harris)
+- **PR #19426** (2026-11-24): fix: don't keep a stale value for a derived that disconnects while another batch is pending (@Rich-Harris)
+- **PR #19419** (2026-11-24): docs: use an uncloneable value in the `state_snapshot_uncloneable` example (@Nic-Polumeyv)
+- **PR #19418** (2026-11-24): docs: clarify which `bind:group` inputs can span components (@Nic-Polumeyv)
 
 ---
 
@@ -2584,21 +2622,25 @@ solves.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. custom renderers API
+## X. avoid quadratic batch write collection during effect flushing
 
 **RULE**:
-When implementing operations in `documentation/docs/05-special-elements/07-svelte-options.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sveltejs/svelte. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/quick-batches-write-once.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sveltejs/svelte. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8720544f`: custom renderers API. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d9f33ed2`: avoid quadratic batch write collection during effect flushing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `documentation/docs/05-special-elements/07-svelte-options.md`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/quick-batches-write-once.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-- `customRenderer="..."` — the module that provides the [custom renderer](custom-renderers) this component renders with. Use `customRenderer={null}` to render with the DOM instead of the default renderer. Requires the `experimental.customRenderer` compiler option
+---
+'svelte': patch
+---
+
+fix: avoid quadratic work when flushing effects that write state
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2608,7 +2650,7 @@ Subsystems managing JavaScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8720544f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d9f33ed2` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

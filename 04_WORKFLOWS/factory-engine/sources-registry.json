@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T22:42:40.719Z",
-    "lastVerified": "2026-11-24T22:42:40.719Z",
+    "lastChecked": "2026-11-24T22:51:13.255Z",
+    "lastVerified": "2026-11-24T22:51:13.255Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -375,22 +375,21 @@
     "lastVerified": "2026-11-24T19:27:45.062Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T22:07:30.528Z",
-    "lastVerified": "2026-11-24T22:07:30.528Z",
+    "lastChecked": "2026-11-24T22:51:09.006Z",
+    "lastVerified": "2026-11-24T22:51:09.006Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "45c958622b18b49dfa0f22e5468e66d71ca5055b950572f256ad644e8aa13daf",
+    "contentHash": "dbae65b48ccdb9f59604f08a29280249e3e182dafed38a156cfb63de49207040",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "8f515043"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1520,9 +1519,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-24T18:09:08.197Z",
+    "lastChecked": "2026-11-24T22:51:00.408Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-24T18:09:08.197Z"
+    "lastVerified": "2026-11-24T22:51:00.408Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -1850,14 +1849,14 @@
     "officialUrl": "https://github.com/langchain4j/langchain4j",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-24T02:12:49.522Z",
-    "lastVerified": "2026-11-24T02:12:49.522Z",
+    "lastChecked": "2026-11-24T22:51:06.453Z",
+    "lastVerified": "2026-11-24T22:51:06.453Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-langchain4j-langchain4j",
-    "contentHash": "9e6e0756548d613ec2247dc7567cf10e39768fb007f3937746d8e310cb9d43fa",
+    "contentHash": "bb6c8cdfb7d045a0c31b23163edca8c8655c6fedf7944eca23e257886b912da3",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4350,9 +4349,9 @@
   "go-eagle-eagle": {
     "name": "eagle",
     "officialUrl": "https://github.com/go-eagle/eagle",
-    "lastChecked": "2026-11-24T03:22:32.237Z",
+    "lastChecked": "2026-11-24T22:50:57.771Z",
     "revisionIdentifier": "b1301b09",
-    "lastVerified": "2026-11-24T03:22:32.237Z"
+    "lastVerified": "2026-11-24T22:50:57.771Z"
   },
   "materializeinc-materialize": {
     "name": "MaterializeInc/materialize",
@@ -6959,9 +6958,9 @@
   "iconoir-icons-iconoir": {
     "name": "iconoir",
     "officialUrl": "https://github.com/iconoir-icons/iconoir",
-    "lastChecked": "2026-11-22T07:56:35.112Z",
+    "lastChecked": "2026-11-24T22:50:55.271Z",
     "revisionIdentifier": "39834e3f",
-    "lastVerified": "2026-11-22T07:56:35.112Z"
+    "lastVerified": "2026-11-24T22:50:55.271Z"
   },
   "opentofu-opentofu": {
     "name": "opentofu",
@@ -7594,12 +7593,12 @@
     "lastVerified": "2026-11-24T18:25:59.839Z"
   },
   "jhspetersson-fselect": {
-    "name": "jhspetersson/fselect",
+    "name": "fselect",
     "officialUrl": "https://github.com/jhspetersson/fselect",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T19:59:28.589Z",
-    "lastVerified": "2026-11-23T19:59:28.589Z",
+    "lastChecked": "2026-11-24T22:50:50.277Z",
+    "lastVerified": "2026-11-24T22:50:50.277Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-jhspetersson-fselect",
@@ -7608,7 +7607,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "42d1f169"
   },
   "hf-liquidai-d1-3b": {
     "name": "LiquidAI/d1-3B",
@@ -11557,14 +11557,14 @@
     "officialUrl": "https://github.com/sveltejs/svelte",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-20T23:13:28.946Z",
-    "lastVerified": "2026-11-20T23:13:28.946Z",
+    "lastChecked": "2026-11-24T22:50:58.899Z",
+    "lastVerified": "2026-11-24T22:50:58.899Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sveltejs-svelte",
-    "contentHash": "a6544c37c372f2274ece56eb323ae09a846d207e15dc2de6254a71e686c91e25",
+    "contentHash": "ef6dc4e10264d11eead6779a6b47a834afcc807cfcfe23f56d0beec327b9b6eb",
     "promotedRulesCount": 1,
-    "recentFixesCount": 13,
+    "recentFixesCount": 18,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

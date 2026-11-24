@@ -12830,3 +12830,6 @@
 | `CYCLE-20261124-5FV1` | `2026-11-24T22:42:26.317Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10372` | Yes (`58a29a68...`) |
 | `CYCLE-20261124-5GYG` | `2026-11-24T22:42:27.736Z` | `google/closure-compiler` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10373` | Yes (`4742c193...`) |
 | `CYCLE-20261124-5O92` | `2026-11-24T22:42:37.190Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10374` | Yes (`2eb9e5f5...`) |
+| `CYCLE-20261124-GG9K` | `2026-11-24T22:51:00.056Z` | `sveltejs/svelte` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10375` | Yes (`ef6dc4e1...`) |
+| `CYCLE-20261124-GM0D` | `2026-11-24T22:51:07.501Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10376` | Yes (`bb6c8cdf...`) |
+| `CYCLE-20261124-GNZ8` | `2026-11-24T22:51:10.052Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10377` | Yes (`dbae65b4...`) |
