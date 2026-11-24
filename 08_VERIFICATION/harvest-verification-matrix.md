@@ -12816,3 +12816,4 @@
 | `CYCLE-20261124-1P0H` | `2026-11-24T21:15:32.705Z` | `unsloth/Inkling-2-Mini-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-inkling-2-mini-gguf-learnings.md` | Yes (`6be3bcb4...`) |
 | `CYCLE-20261124-20YR` | `2026-11-24T21:15:48.195Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10361` | Yes (`041113dd...`) |
 | `CYCLE-20261124-23PG` | `2026-11-24T21:15:51.748Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10362` | Yes (`45c95862...`) |
+| `CYCLE-20261124-D1T8` | `2026-11-24T21:24:22.508Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10326` | Yes (`22a97ca1...`) |

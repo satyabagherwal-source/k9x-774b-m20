@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T21:15:57.420Z",
+  "last_updated": "2026-11-24T21:24:28.206Z",
   "directives": [
     {
       "id": "CD-001",
@@ -53863,11 +53863,11 @@
       "staged_date": "2026-11-24"
     },
     {
-      "id": "CD-8XN8",
+      "id": "CD-D67F",
       "directive_title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
       "source_repo": "zulip-zulip-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-8XN8-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-D67F-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-24",
@@ -56032,11 +56032,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-QEUH",
+      "id": "CD-D5FZ",
       "directive_title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-QEUH-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-D5FZ-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-24",
@@ -56280,11 +56280,11 @@
       "domain_letter": "H"
     },
     {
-      "id": "CD-36FR",
+      "id": "CD-D4R2",
       "directive_title": "Merge 'core: keep the program builder and the state of each statement in the sta",
-      "source_repo": "tursodatabase-limbo-learnings",
+      "source_repo": "tursodatabase-turso-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-36FR-merge-core-keep-the-program-builder-and-the-state-of-each-statement-in-the-sta.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-D4R2-merge-core-keep-the-program-builder-and-the-state-of-each-statement-in-the-sta.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-24",
@@ -57245,6 +57245,33 @@
       "source_repo": "nucleoidai-nucleoid",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-08EE97-rename-arc-object-tags-to-kinds.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-REV-03124A",
+      "directive_title": "Merge 'core: keep the program builder and the state of each statement in the sta",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "tursodatabase-turso",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-03124A-merge-core-keep-the-program-builder-and-.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-REV-1399A3",
+      "directive_title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-1399A3-deps-bump-url-to-2-5-9-and-heapless-to-0.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-REV-B4EDD4",
+      "directive_title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B4EDD4-server-events-dispatch-rerender-dm-statu.md",
       "staged_date": "2026-11-24"
     }
   ]

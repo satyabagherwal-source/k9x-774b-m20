@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-EQ3Y",
-    "timestamp": "2026-11-23T06:14:12.910Z",
-    "repository": "Tongyi-MAI/Z-Image-Turbo",
-    "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
-    "contentHash": "ed34a30a206eb8363a28cdd5bd91c0b9b803b93c9d3ff38dadca44448a255e70",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-ER4Q",
     "timestamp": "2026-11-23T06:14:14.234Z",
     "repository": "erkamyaman/rust-anything",
@@ -7490,6 +7475,21 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "45c958622b18b49dfa0f22e5468e66d71ca5055b950572f256ad644e8aa13daf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-D1T8",
+    "timestamp": "2026-11-24T21:24:22.508Z",
+    "repository": "tursodatabase/turso",
+    "learningId": "learn-github-tursodatabase-turso",
+    "contentHash": "22a97ca174db3922f34aa10a43ff67db0d7cb9dbb572c50681752b762f43816b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

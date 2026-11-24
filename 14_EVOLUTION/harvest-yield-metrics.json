@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T21:15:51.758Z",
-  "total_cycles_completed": 12176,
-  "total_learnings_persisted": 12176,
-  "total_rules_promoted": 11229,
+  "last_updated": "2026-11-24T21:24:22.518Z",
+  "total_cycles_completed": 12177,
+  "total_learnings_persisted": 12177,
+  "total_rules_promoted": 11230,
   "history": [
-    {
-      "timestamp": "2026-11-24T05:14:15.488Z",
-      "repository": "liyupi/yu-ai-agent",
-      "learningId": "learn-github-liyupi-yu-ai-agent",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T05:28:14.039Z",
       "repository": "cachix/devenv",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-24T21:15:51.758Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T21:24:22.518Z",
+      "repository": "tursodatabase/turso",
+      "learningId": "learn-github-tursodatabase-turso",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

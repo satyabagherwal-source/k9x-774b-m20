@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T21:15:57.800Z",
+  "last_updated": "2026-11-24T21:24:28.568Z",
   "total_verified_learnings": 9102,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "2743a910da98e5884e1f51af62df78d824653baf4c45f6549362be91ccf49506",
+      "content_hash": "47fb68aa62a60787296ee9191386ce23c621ddbdeeecc1484fa182bed78e0d7d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T20:53:11.119Z"
+      "persisted_at": "2026-11-24T21:24:28.386Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "2c1efa8b306f1533b870d44884992622f065de9cffe9a07758b71a4cfbfcba6d",
+      "content_hash": "593a0a5b6be96e1195fc92acafd1367bebcafbcd881a84de73efebf1f1a338a3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T20:53:11.351Z"
+      "persisted_at": "2026-11-24T21:24:28.568Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -113010,25 +113010,25 @@
       "item_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-technical-construction-intelligence-tursodatabase-turso-core.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-technical-construction-intelligence-tursodatabase-turso-core.md",
       "title": "Technical Construction Intelligence: tursodatabase/turso Core Invariants",
       "repository": "tursodatabase/turso",
-      "source_version": "bae03862",
-      "content_hash": "8ca050b3663447d42e336f196eee722a25df2742e69f2cc12624f9c4b3969e01",
+      "source_version": "352c5882",
+      "content_hash": "8bf608703f511bed63e6f1feea0c2bc6bd6b5cd74cbe8de486fcd51c7f0121be",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T18:00:38.605Z"
+      "persisted_at": "2026-11-24T21:24:22.942Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/tursodatabase-limbo-verification-protocol-empirical-defect-shield-for-tursodatab.md",
+      "relative_path": "08_VERIFICATION/tursodatabase-turso-verification-protocol-empirical-defect-shield-for-tursodatab.md",
       "title": "Verification Protocol: Empirical Defect Shield for tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "source_version": "bae03862",
-      "content_hash": "37796544fcb78362e81f1fa08cf9cb46fa8d5123604558eeec415e078722b243",
+      "source_version": "352c5882",
+      "content_hash": "c9ac8e7fc0a3688f1fc544122a52703d8f6838ff7fb6f7c7327bf12dc160f814",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T18:00:38.801Z"
+      "persisted_at": "2026-11-24T21:24:23.123Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-altworld-hemmingway-1-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-altworld-hemmingway-1-learnings-core-invarian",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "2387ec6dd6509376747ec49dae05752d67575230241cc408fa269037d4ce8397",
+      "content_hash": "f657b587201ba21baf1a4590ec2ed946d8ab25852374f7e4efdf97e51666e327",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T20:38:46.859Z"
+      "persisted_at": "2026-11-24T21:24:27.397Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "5b31c5b2e1cc6b356b11ef09cd384d633ccd80bf58591b755af188de4a12ce14",
+      "content_hash": "e1e5767be251e576d608253148a9e5af7409754c8be7424778c1e405ff5f0e9b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T20:38:47.016Z"
+      "persisted_at": "2026-11-24T21:24:27.584Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -213671,13 +213671,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-limbo",
+      "slug": "tursodatabase-turso",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/limbo",
-      "source_version": "bae03862",
-      "content_hash": "7f9bd676be3e28487a9628e6bee2c3eced07314d9297d3f6c52815cb86c994d5",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "352c5882",
+      "content_hash": "22a97ca174db3922f34aa10a43ff67db0d7cb9dbb572c50681752b762f43816b",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
       "promoted_rules": [
         {
           "number": 8367,
@@ -213747,7 +213747,7 @@
         {
           "number": 10326,
           "title": "Merge 'core: keep the program builder and the state of each statement in the sta",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213755,7 +213755,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T18:00:37.862Z",
+      "verified_at": "2026-11-24T21:24:22.286Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -261698,9 +261698,9 @@
       "title": "Technical Construction Intelligence: tursodatabase-turso-learnings Core Invariants",
       "repository": "tursodatabase-turso-learnings",
       "source_version": "HEAD",
-      "content_hash": "571cd251aababfa1aa028ddbdf53f5a381783fad22ccd2c3aa482ea086508958",
+      "content_hash": "f74006668b199c552244ed01df4743389d37d9022cd0cfaf0f0561f9320ccddc",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T23:16:25.223Z"
+      "persisted_at": "2026-11-24T21:24:26.508Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso-learnings",
@@ -261710,9 +261710,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tursodatabase-turso-learnings",
       "repository": "tursodatabase-turso-learnings",
       "source_version": "HEAD",
-      "content_hash": "9245e4463c63c719d37c81138aa6d7cf49be430580ac7c5c16a15bc0fe7a810f",
+      "content_hash": "b8faed28b038bf7be7df88d9e7d5c8ef97b56f4bb300ac4bf7132bb3636877b2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T23:16:25.449Z"
+      "persisted_at": "2026-11-24T21:24:26.690Z"
     },
     "learn-huggingface-n4ze3m-tiny-voca": {
       "learning_id": "learn-huggingface-n4ze3m-tiny-voca",
@@ -335478,13 +335478,13 @@
       "item_id": "candidate_directive-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-8XN8-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-D67F-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
       "title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "65475401576f66b0c649c154440162eba2db3e481af7dff854afe37f2afb32eb",
+      "content_hash": "ea92f550baecf1ffc8e2cabc3f09f5cf1d10cb6714044a1497fc48c0baa07ea3",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T20:53:10.875Z"
+      "persisted_at": "2026-11-24T21:24:28.206Z"
     },
     "learn-github-xinatian-mroffice": {
       "learning_id": "learn-github-xinatian-mroffice",
@@ -338722,13 +338722,13 @@
       "item_id": "candidate_directive-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-QEUH-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-D5FZ-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
       "title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "259a2c3da7173eb19a147f7f37ea833e64cc0269d51d024e566d78e8cd8c2347",
+      "content_hash": "5f629ec17af8504bb16ee9f6f2517d995ab1483e605dcf63beab5f07d02daeee",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T20:38:46.700Z"
+      "persisted_at": "2026-11-24T21:24:27.218Z"
     },
     "rule-10315": {
       "learning_id": "rule-10315",
@@ -339132,26 +339132,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 10326,
       "title": "Merge 'core: keep the program builder and the state of each statement in the sta",
-      "source_url": "https://github.com/tursodatabase/limbo",
-      "source_version": "bae03862",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "352c5882",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-24T18:00:37.862Z"
+      "verified_at": "2026-11-24T21:24:22.286Z"
     },
     "candidate_directive-merge-core-keep-the-program-builder-and-the-state-of-each-statement-in-the-sta": {
       "item_id": "candidate_directive-merge-core-keep-the-program-builder-and-the-state-of-each-statement-in-the-sta",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-36FR-merge-core-keep-the-program-builder-and-the-state-of-each-statement-in-the-sta.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-D4R2-merge-core-keep-the-program-builder-and-the-state-of-each-statement-in-the-sta.md",
       "title": "Merge 'core: keep the program builder and the state of each statement in the sta",
-      "repository": "tursodatabase-limbo-learnings",
+      "repository": "tursodatabase-turso-learnings",
       "source_version": "HEAD",
-      "content_hash": "efa5fa058ab52067c3f1e66550d51873a1cbb3bfb0e285df5a3333f9bbd6f450",
+      "content_hash": "8e6fc4e83d61c55addbaea9a464fad2f3a30fe2a9aeaa8c289c6e87130e79cd4",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T18:00:44.637Z"
+      "persisted_at": "2026-11-24T21:24:26.322Z"
     },
     "rule-10327": {
       "learning_id": "rule-10327",

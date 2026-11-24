@@ -46,8 +46,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-24T20:38:37.903Z",
-    "lastVerified": "2026-11-24T20:38:37.903Z",
+    "lastChecked": "2026-11-24T21:24:19.906Z",
+    "lastVerified": "2026-11-24T21:24:19.906Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T21:15:55.164Z",
-    "lastVerified": "2026-11-24T21:15:55.164Z",
+    "lastChecked": "2026-11-24T21:24:25.802Z",
+    "lastVerified": "2026-11-24T21:24:25.802Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -909,9 +909,9 @@
   "bee-san-ciphey": {
     "name": "Ciphey",
     "officialUrl": "https://github.com/bee-san/Ciphey",
-    "lastChecked": "2026-11-24T17:03:09.355Z",
+    "lastChecked": "2026-11-24T21:24:14.880Z",
     "revisionIdentifier": "c500baff",
-    "lastVerified": "2026-11-24T17:03:09.355Z"
+    "lastVerified": "2026-11-24T21:24:14.880Z"
   },
   "weaviate-weaviate": {
     "name": "weaviate/weaviate",
@@ -1258,14 +1258,14 @@
     "officialUrl": "https://github.com/tursodatabase/turso",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T01:07:23.979Z",
-    "lastVerified": "2026-11-24T01:07:23.979Z",
+    "lastChecked": "2026-11-24T21:24:21.607Z",
+    "lastVerified": "2026-11-24T21:24:21.607Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "51e4d06653566a14378b0cde71d04ad3af1bc85b57a0b9fdc502971087c14552",
+    "contentHash": "22a97ca174db3922f34aa10a43ff67db0d7cb9dbb572c50681752b762f43816b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3939,9 +3939,9 @@
   "go-dev-frame-sponge": {
     "name": "sponge",
     "officialUrl": "https://github.com/go-dev-frame/sponge",
-    "lastChecked": "2026-11-24T02:04:10.450Z",
+    "lastChecked": "2026-11-24T21:24:12.396Z",
     "revisionIdentifier": "beef9eec",
-    "lastVerified": "2026-11-24T02:04:10.450Z"
+    "lastVerified": "2026-11-24T21:24:12.396Z"
   },
   "llphant-llphant": {
     "name": "LLPhant",
@@ -6498,9 +6498,9 @@
   "amir1376-ab-download-manager": {
     "name": "ab-download-manager",
     "officialUrl": "https://github.com/amir1376/ab-download-manager",
-    "lastChecked": "2026-11-22T06:49:20.833Z",
+    "lastChecked": "2026-11-24T21:24:09.879Z",
     "revisionIdentifier": "f15b691c",
-    "lastVerified": "2026-11-22T06:49:20.833Z"
+    "lastVerified": "2026-11-24T21:24:09.879Z"
   },
   "argoproj-argo-workflows": {
     "name": "argoproj/argo-workflows",
@@ -7148,9 +7148,9 @@
   "pauljuliusmartinez-jless": {
     "name": "jless",
     "officialUrl": "https://github.com/PaulJuliusMartinez/jless",
-    "lastChecked": "2026-11-23T19:00:40.507Z",
+    "lastChecked": "2026-11-24T21:24:04.949Z",
     "revisionIdentifier": "e6cdef71",
-    "lastVerified": "2026-11-23T19:00:40.507Z"
+    "lastVerified": "2026-11-24T21:24:04.949Z"
   },
   "hf-jialinyyzz-humanizer": {
     "name": "jialinyyzz/humanizer",
@@ -11403,9 +11403,9 @@
   "rdfjs-namespace": {
     "name": "namespace",
     "officialUrl": "https://github.com/rdfjs/namespace",
-    "lastChecked": "2026-11-20T22:07:12.940Z",
+    "lastChecked": "2026-11-24T21:24:07.427Z",
     "revisionIdentifier": "b7efbf00",
-    "lastVerified": "2026-11-20T22:07:12.940Z"
+    "lastVerified": "2026-11-24T21:24:07.427Z"
   },
   "sozercan-kaset": {
     "name": "sozercan/kaset",

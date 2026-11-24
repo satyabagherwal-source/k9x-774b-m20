@@ -4,22 +4,22 @@
 {
   "source_repository": "tursodatabase/turso",
   "source_url": "https://github.com/tursodatabase/turso",
-  "source_version": "84382d49",
+  "source_version": "352c5882",
   "license": "MIT",
-  "timestamp": "2026-11-24T01:07:25.279Z",
+  "timestamp": "2026-11-24T21:24:22.761Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-tursodatabase-turso",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [tursodatabase/turso](https://github.com/tursodatabase/turso) (Revision: `84382d49`).  
-> **License**: MIT | **Timestamp**: `2026-11-24T01:07:25.279Z`  
+> **Provenance**: Harvested from [tursodatabase/turso](https://github.com/tursodatabase/turso) (Revision: `352c5882`).  
+> **License**: MIT | **Timestamp**: `2026-11-24T21:24:22.761Z`  
 > **Learning ID**: `learn-github-tursodatabase-turso`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `tursodatabase/turso` (Commit: `84382d49`)
+- **Target Repository**: `tursodatabase/turso` (Commit: `352c5882`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T01:07:23.979Z  
+> **Harvest Timestamp**: 2026-11-24T21:24:21.607Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 25331 stars
+- **Stars / Engagement**: 25341 stars
 
 ---
 
@@ -1443,14 +1443,11 @@ export class Statement {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #12343** (2026-11-23): **core/dialect: write the row of a virtual table through the catalog**
-  *Symptoms*: ## Description  Stacked on #12342 (triggers). Two commits of its own: the change, then a test. No behavior change.  `CREATE VIRTUAL TABLE` wrote its `sqlite_schema` row itself, so a dialect's catalog never saw a new virtual table.  1. `CatalogCmd` gets `CreateVirtualTable`. The code that writes the row moves from `translate_create_virtual_table` into `SqliteCatalog`. The bytecode is the same as before. 2. A test: a dialect with a catalog of its own sees the new virtual table.  The PostgreSQL catalog keeps no class row for a virtual table, so it adds nothing to what `SqliteCatalog` writes.  `DROP TABLE` of a virtual table already goes through the catalog (`CatalogCmd::DropTable` with `is_virtual`), so only the create side changes.  ## Motivation and context  The goal of the series is that each SQL dialect owns its catalog. For that, every write of a schema row for a user's object has to go through the `Catalog` trait. Triggers were the first place that wrote `sqlite_schema` directly (#12342); this is the second.  ## Description of AI Usage  Written by Claude Code, which also ran fmt, clippy, the native extension, FTS and dialect tests, and the SQL conformance tests.  🤖 Generated with [Claude Code](https://claude.com/claude-code)  https://claude.ai/code/session_019cgs5YAWjWBmLYpihhDiFc
-  **Post-Mortem & Fix Analysis**:
-  > ### Autofixer review <sub>🔄 Autofixer updates this comment while the review runs.</sub>  A maintainer asked Autofixer to review this pull request. The review of `8c0257403987` is [here](https://github.com/tursodatabase/turso/pull/12343#pullrequestreview-6029694796).  ✅ **Verdict: looks good to merge.**  <sub>Automated review by Autofixer; maintainers decide what to merge. Autofixer reviews every new commit pushed to this pull request, up to 3 reviews each time the `autofixer: review-requested` label is added. It then removes the label; adding the label again asks for more.</sub>  <!-- autofixer:contributor-review:8c0257403987c3c02cbc7f466831c450c9b03646 --> <!-- autofixer:contributor-review-recommends:8c0257403987c3c02cbc7f466831c450c9b03646 --> <!-- autofixer:contributor-review-state:eyJ2ZXJzaW9uIjoxLCJyZXZpZXdzIjpbeyJoZWFkU2hhIjoiOGMwMjU3NDAzOTg3YzNjMDJjYmM3ZjQ2NjgzMWM0NTBjOWIwMzY0NiIsImF1ZGl0ZWRBdCI6IjIwMjYtMTEtMjNUMjE6MTk6MjMuODMyWiIsInZlcmRpY3QiOiJhcHByb3ZlIiwicmVjb21tZW5kYXRpb24
-  > ### Autofixer follow-ups  - Filed #12348: Every CREATE VIRTUAL TABLE whose name has a schema qualifier ignores the…  <!-- autofixer:follow-up-filed:0:12348 --> <!-- autofixer:follow-ups-done -->
+- **Issue #12426** (2026-11-24): **.claude: allow claude docs and artifact tools without prompts**
+  *Symptoms*: Claude Code cloud sessions on this repository asked for approval on each Claude Docs call and on each artifact publish (for example a slide deck). Cloud sessions do not read personal settings files. They read only the permission rules that are committed to the repository.  This PR adds `.claude/settings.json` with two allow rules:  - `Artifact`: publishes pages and slide decks. - `mcp__Claude_Docs`: all tools of the Claude Docs connector. This is the tool prefix that cloud sessions show for this connector.  Notes:  - The file applies to each contributor who runs Claude Code in this repository. It only removes prompts for these two tools. It does not change other permissions. - Some prompts stay, for example deleting an artifact or sharing it publicly, and organization admin rules still take priority.  --- _Generated by [Claude Code](https://claude.ai/code)_
 
-- **Issue #12342** (2026-11-23): **core/dialect: write the rows of triggers through the catalog**
-  *Symptoms*: ## Description  Two commits on `main`: the change, then a test. No behavior change.  `CREATE TRIGGER` and `DROP TRIGGER` wrote and deleted their `sqlite_schema` row themselves. Every other DDL statement for tables, indexes, views and sequences already asks the dialect's catalog to store its object (`Catalog::emit`). Triggers did not, so a catalog never saw one.  1. `CatalogCmd` gets two commands, `CreateTrigger` and `DropTrigger`. The code that writes and deletes the row moves from `core/translate/trigger.rs` into `SqliteCatalog`. The bytecode is the same as before. 2. A test: a dialect with a catalog of its own sees the new trigger and the dropped trigger.  The PostgreSQL catalog keeps no class row for a trigger, so it adds nothing to what `SqliteCatalog` writes.  `CreateTrigger` carries the table's database as well as its namespace, because a trigger of the temp database can be on a table of another database.  ## Motivation and context  The goal of the series is that each SQL dialect owns its catalog. For that, every write of a schema row has to go through the `Catalog` trait. About a dozen places in core still write `sqlite_schema` directly. This is the first of them; `CREATE VIRTUAL TABLE` and the engine's own tables come next, each in its own pull request.  ## Description of AI Usage  Written by Claude Code, which also ran fmt, clippy and the trigger and dialect tests.  --- _Generated by [Claude Code](https://claude.ai/code)_
+- **Issue #12395** (2026-11-24): **postgres/catalog: add a generator of Rust tables from postgres.bki**
+  *Symptoms*: Replaced by #12404, which has the same generator commit on top of #12403. GitHub did not let this pull request change its base branch, so it also showed `postgres.bki`.  🤖 Generated with [Claude Code](https://claude.com/claude-code)  https://claude.ai/code/session_019cgs5bMoU8i4BcYaASwVg2
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1467,1415 +1464,1255 @@ export class Statement {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `13d6d828` (2026-11-23)
-**Commit Message**: Merge 'build: link with the LLD of the Rust toolchain and optimize proc macros in dev builds' from Mikaël Francoeur
+### Incident Patch 1: `fa535be1` (2026-11-24)
+**Commit Message**: Merge 'core: keep the program builder and the state of each statement in the statement allocator' from Mikaël Francoeur
 
-This PR makes the rebuild after a small edit faster. It has two changes
-and one fix:
+## Description
 
-1. **Link x86_64 Linux builds with the LLD of the Rust toolchain.**
-`.cargo/config.toml` sets `scripts/link-with-rust-lld.sh` as the linker.
-The script runs `cc -B<sysroot>/lib/rustlib/x86_64-unknown-linux-
-gnu/bin/gcc-ld -fuse-ld=lld -Wl,-z,nostart-stop-gc`. Rust 1.90 and later
-do the same by default on this target, but `rust-toolchain.toml` pins
-1.88. LLD is in the `rustc` component of rustup, so you do not need to
-install it.
-   The third commit keeps GNU ld for `turso_node` and `turso_sync_js`
-(see below).
-2. **Optimize `syn`, `proc-macro2`, `quote` and `turso_macros` in dev
-builds.** Proc macros run inside rustc each time that a crate that uses
-them compiles. `#[turso_macros::test]` runs on more than 800 functions
-in each rebuild of `tests/integration`.
+This PR puts more values of statements in the statement allocator that
+#12299 added:
 
-### The files that change most
+- **The program builder of a statement.** `translate` made the
+`ProgramBuilder` of each statement with `Box::new`. It now makes it in a
+`DynBox` from the statement allocator. Two functions that are not
+inlined make the builder and build its program: `new_program_builder`
+takes an allocation site and a function that makes the builder, and
+`build_program` takes the builder out of its box and builds the program.
+Before, the frame of `translate` kept space for the builder anyway,
+because `build()` takes the builder as a value and took it out of its
+box there.
+- **The other program builders.** The program of a blob handle, the
+maintenance program of a materialized view and the builder that plans
+the query of a materialized view kept their builders on the stack. They
+now use `new_program_builder` and `build_program` too. The compilation
+of nested triggers also uses these two functions, in place of
+`new_trigger_program_builder` and `build_trigger_program` from #12299.
+T
 
-The clone has the history from 2026-06-18 to 2026-11-20. In this period,
-2,359 commits (merges not counted) change Rust files:
-
-- 1,756 commits (74%) change `turso_core`.
-- 567 commits (24%) chan
-
-**File**: `.cargo/config.toml` (modified, +8/-0)
+**File**: `core/alloc/allocation_site.rs` (modified, +7/-0)
 ```diff
-@@ -37,6 +37,14 @@ rustflags = [
-   "link-args=-Wl,-z,nodelete",
- ]
+@@ -37,6 +37,13 @@ pub enum StatementAllocationSite {
+     /// The statement that executes a nested trigger or foreign key action
+     /// program.
+     SubprogramStatement,
++    /// The builder of the program of a statement, of a blob handle or of the
++    /// maintenance of a materialized view, or the builder that plans the
++    /// query of a materialized view.
++    ProgramBuilder,
++    /// The state of a statement, which keeps its registers and cursors while
++    /// the statement executes.
++    ProgramState,
+ }
  
-+# Link with the LLD that ships with the Rust toolchain, which is much faster
-+# than GNU ld (see the script). The path is relative to the workspace root.
-+# A build that has this file but not the script fails. Because the recipe of
-+# `cargo chef` has this file, the Dockerfiles copy the script before
-+# `cargo chef cook`.
-+[target.x86_64-unknown-linux-gnu]
-+linker = "scripts/link-with-rust-lld.sh"
-+
- # To be able to run unit tests on Windows, support compilation to MSVC targets.
- [target.'cfg(target_env = "msvc")']
- rustflags = [
+ impl From<StatementAllocationSite> for AllocationSite {
 ```
 
-**File**: `CONTRIBUTING.md` (modified, +12/-11)
+**File**: `core/connection.rs` (modified, +35/-9)
 ```diff
-@@ -7,7 +7,7 @@ This document is a quick helper to get you going.
- <!--toc:start-->
- - [Contributing to Turso](#contributing-to-turso)
-   - [Getting Started](#getting-started)
--    - [Configuring `mold` Linker](#configuring-mold-linker)
-+    - [Linker](#linker)
-     - [Running Tests On Linux](#running-tests-on-linux)
-   - [Developing with AI coding agents](#developing-with-ai-coding-agents)
-   - [Debugging bugs](#debugging-bugs)
-@@ -92,11 +92,14 @@ cargo build -p turso_sqlite3 --features capi
- cargo test
- ```
+@@ -1164,15 +1164,15 @@ impl Connection {
+                 .trim();
+             let (program, pager, mode) = self.compile_cmd(cmd, input, origin)?;
  
--### Configuring `mold` Linker
-+### Linker
- 
--The `mold` linker (Linux only) can reduce your build time from a minute to just few seconds.
-+On x86_64 Linux, `.cargo/config.toml` sets `scripts/link-with-rust-lld.sh` as the linker.
-+The script links with the LLD linker that comes with the Rust toolchain, so you do not need
-+to install a linker. On a machine with 4 cores, LLD links a debug build of `tursodb` in 1.4
-+seconds. GNU ld needs 10 seconds.
- 
--First, install `mold`:
-+To use the `mold` linker, install it:
- 
- ```console
- # Fedora/RHEL
-@@ -106,16 +109,14 @@ sudo dnf install mold
- sudo apt install mold
- ```
- 
--Then configure Cargo to use mold by creating `.cargo/config.toml`:
-+Then add this line to your shell profile:
- 
--**For Linux:**
--
--```toml
--[target.x86_64-unknown-linux-gnu]
--linker = "clang"
--rustflags = ["-C", "link-arg=-fuse-ld=mold"]
-+```console
-+export CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_RUSTFLAGS="-C link-arg=-fuse-ld=mold"
- ```
- 
-+To use the default linker of your C compiler, set `CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER=cc`.
-+
- ### Running Tests On Linux
- 
- > [!NOTE]
-```
-
-**File**: `Cargo.toml` (modified, +16/-0)
-```diff
-@@ -196,6 +196,22 @@ windows-sys = "0.61.2"
- loom = { version = "0.7" }
- shuttle = { version = "0.8.1" }
- 
-+# Proc macros run inside rustc each time that a crate that uses them compiles.
-+# For example, #[turso_macros::test] runs on more than 800 functions in each
-+# rebuild of tests/integration. Proc macros spend most of their time in syn,
-+# proc-macro2 and quote, so these crates and turso_macros are optimized.
-+[profile.dev.package.turso_macros]
-+opt-level = 3
-+
-+[profile.dev.package.syn]
-+opt-level = 3
-+
-+[profile.dev.package.proc-macro2]
-+opt-level = 3
-+
-+[profile.dev.package.quote]
-+opt-level = 3
-+
- [profile.dev.package.similar]
- opt-level = 3
- 
-```
-
-**File**: `Dockerfile.antithesis` (modified, +2/-0)
-```diff
-@@ -28,6 +28,8 @@ RUN pip install --break-system-packages maturin
- ADD https://antithesis.com/assets/instrumentation/libvoidstar.so /opt/antithesis/libvoidstar.so
- 
- COPY --from=planner /tmp/recipe.json recipe.json
-+# The recipe has .cargo/config.toml, and its linker is this script.
-+COPY scripts/link-with-rust-lld.sh scripts/link-with-rust-lld.sh
- RUN cargo chef cook --bin turso_stress --release --recipe-path recipe.json
- COPY . .
- 
-```
-
-**File**: `flake.nix` (modified, +6/-0)
-```diff
-@@ -36,6 +36,10 @@
-           src = ./.;
-           pname = "turso";
-           nativeBuildInputs = with pkgs; [ python3 ];
-+          # .cargo/config.toml sets scripts/link-with-rust-lld.sh as the
-+          # linker, but the dummy source of buildDepsOnly has no scripts/
-+          # directory. In a Nix build, that script runs cc anyway.
-+          CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER = "cc";
-         };
- 
-         commonArgs = {
-@@ -44,6 +48,8 @@
-           src = ./.;
-           nativeBuildInputs = with pkgs; [ python3 ];
-           strictDeps = true;
-+          # The same linker as cargoArtifacts, so that Cargo reuses its build.
-+          CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER = "cc";
-         };
- 
-         craneLib = ((crane.mkLib pkgs).overrideToolchain toolchain);
-```
-
-**File**: `scripts/link-with-rust-lld.sh` (added, +38/-0)
-```diff
-@@ -0,0 +1,38 @@
-+#!/bin/sh
-+# link-with-rust-lld.sh - The linker for x86_64-unknown-linux-gnu (see .cargo/config.toml)
-+#
-+# Runs `cc` with the LLD linker that ships with the Rust toolchain. On a
-+# machine with 4 cores, LLD links a debug build of tursodb in 1.4 seconds, and
-+# GNU ld in 10 seconds. Rust 1.90 and later use this linker by default on this
-+# target. When rust-toolchain.toml moves to 1.90 or later, remove this script,
-+# but keep GNU ld for the crates in the `case` below.
-+#
-+# rustc puts the bin directory of its toolchain first in PATH when it runs the
-+# linker. That directory has rust-lld and gcc-ld/ld.lld. If they are not
-+# there, the script runs `cc` with its default linker.
-+#
-+# In a Nix build environment (NIX_CC is set), the script runs `cc` with its
-+# default linker, because -fuse-ld=lld skips the Nix linker wrapper, which
-+# adds the path of the Nix dynamic linker to each binary.
-+#
-+# The test binaries of the Node.js bindings (turso_node and turso_sync_js)
-+# refer to Node-API symbols that only the node process defines. GNU ld with
-+# --warn-unresolved-symbols (see .cargo/config.toml) resolves these symbols
-+# to 0. LLD puts them into the dynamic symbol table, and because the binaries
-+# link with -z now, they stop at start with "undefined symbol". So these two
-+# crates link with GNU ld. Cargo sets CARGO_PKG_NAME for rustc, and rustc
-+# gives its environment to the linker.
-+#
-+# -z nostart-stop-gc: with Rust 1.88, LLD removes the sections that only the
-+# __start_ and __stop_ symbols refer to, and the link fails with undefined
-+# symbols. linkme (a dependency of antithesis_sdk) uses these symbols. GNU ld
-+# keeps these sections, and this option makes LLD keep them too.
-+
-+case "$CARGO_PKG_NAME" in
-+  turso_node | turso_sync_js) exec cc "$@" ;;
-+esac
-+
-+if [ -z "$NIX_CC" ] && lld=$(command -v rust-lld) && [ -x "${lld%/*}/gcc-ld/ld.lld" ]; then
-+  exec cc -B"${lld%/*}/gcc-ld" -fuse-ld=lld -Wl,-z,nostart-stop-gc "$@"
-+fi
-+exec cc "$@"
-```
-
-**File**: `testing/simulator/simulator-docker-runner/Dockerfile.simulator` (modified, +2/-0)
-```diff
-@@ -20,6 +20,8 @@ RUN --mount=type=bind,source=.,target=/app \
- FROM chef AS builder 
- 
- COPY --from=planner /tmp/recipe.json recipe.json
-+# The recipe has .cargo/config.toml, and its linker is this script.
-+COPY scripts/link-with-rust-lld.sh scripts/link-with-rust-lld.sh
- RUN cargo chef cook --bin limbo_sim --release --recipe-path recipe.json
- COPY . .
- 
-```
-
-**File**: `testing/sqlancer/sqlancer-runner/Dockerfile.sqlancer` (modified, +2/-0)
-```diff
-@@ -27,6 +27,8 @@ RUN --mount=type=bind,source=.,target=/app \
- FROM chef AS builder
- 
- COPY --from=planner /tmp/recipe.json recipe.json
-+# The recipe has .cargo/config.toml, and its linker is this script.
-+COPY scripts/link-with-rust-lld.sh scripts/link-with-rust-lld.sh
- RUN cargo chef cook --release -p turso-java --recipe-path recipe.json
- 
- # Copy full source
-```
-
----
-
-### Incident Patch 2: `2c9cb016` (2026-11-23)
-**Commit Message**: Merge 'core: add a Type trait and write the built-in types in Rust' from Pekka Enberg
-
-A built-in type such as `boolean` is defined today by a `CREATE TYPE`
-statement in a string:
-
-```rust
-"CREATE TYPE boolean(value any) BASE integer ENCODE boolean_to_int(value) DECODE CASE WHEN value THEN 1 ELSE 0 END OPERATOR '<'"
-```
-
-That has three problems:
-
-- Core parses the 17 strings on every schema build.
-- ENCODE, COERCE and DECODE are SQL expressions that name SQL functions.
-Every statement that uses the type looks `boolean_to_int` up by name
-again, and the helper is a public SQL function as a side effect.
-- The rest of what core knows about a built-in type is in two more
-places: a tuple of flags next to the string, and three functions that
-match on the type's name (`builtin_value_type`, `builtin_ordering`,
-`builtin_signatures`). A dialect cannot describe a type of its own
-through that.
-
-This pull request adds a `Type` trait and writes the built-in types in
-Rust.
-
-## The trait
-
-`core/types/custom_type.rs`:
-
-```rust
-pub trait Type: Debug + Send + Sync {
-    fn name(&self) -> &str;
-    fn params(&self) -> Vec<ast::TypeParam>;
-    fn base(&self) -> &str;
-    fn encode(&self) -> Option<Conve
-
-**File**: `core/connection/reparse.rs` (modified, +1/-1)
-```diff
-@@ -245,7 +245,7 @@ mod tests {
-             schema.dialect_schema = Some(Arc::new(()));
-         })
-         .unwrap();
--        let fresh = crate::schema::builtin::schema_builder(&DialectThatCannotParse, false)
-+        let fresh = crate::schema::builtin::schema_builder(false)
-             .unwrap()
-             .build();
-         assert!(fresh.dialect_schema.is_none());
-```
-
-**File**: `core/dialect/mod.rs` (modified, +1/-1)
-```diff
-@@ -260,7 +260,7 @@ pub trait Dialect: Send + Sync + 'static {
-     ///
-     /// [`Dialect::new_schema`] finishes the schema.
-     fn schema_builder(&self, enable_custom_types: bool) -> Result<SchemaBuilder> {
--        crate::schema::builtin::schema_builder(self, enable_custom_types)
-+        crate::schema::builtin::schema_builder(enable_custom_types)
-     }
- 
-     fn register_native_extensions(&self, options: OpenOptions) -> OpenOptions {
-```
-
-**File**: `core/functions/builtin.rs` (modified, +118/-83)
-```diff
-@@ -1068,35 +1068,7 @@ pub fn call_builtin_scalar(
-         }
-         ScalarFunc::BooleanToInt => {
-             check_arg_count(args, 1)?;
--            Ok(match args[0].get_value() {
--                Value::Null => Value::Null,
--                Value::Numeric(Numeric::Integer(i)) => match *i {
--                    0 => Value::from_i64(0),
--                    1 => Value::from_i64(1),
--                    _ => {
--                        return Err(LimboError::Constraint(format!(
--                            "invalid input for type boolean: \"{i}\""
--                        )));
--                    }
--                },
--                Value::Text(t) => {
--                    let v = &t.value;
--                    match v.to_ascii_lowercase().as_str() {
--                        "true" | "t" | "yes" | "on" | "1" => Value::from_i64(1),
--                        "false" | "f" | "no" | "off" | "0" => Value::from_i64(0),
--                        _ => {
--                            return Err(LimboError::Constraint(format!(
--                                "invalid input for type boolean: \"{v}\""
--                            )));
--                        }
--                    }
--                }
--                other => {
--                    return Err(LimboError::Constraint(format!(
--                        "invalid input for type boolean: \"{other}\""
--                    )));
--                }
--            })
-+            exec_boolean_to_int(args[0].get_value())
-         }
-         ScalarFunc::IntToBoolean => {
-             check_arg_count(args, 1)?;
-@@ -1108,73 +1080,27 @@ pub fn call_builtin_scalar(
-         }
-         ScalarFunc::ValidateIpAddr => {
-             check_arg_count(args, 1)?;
--            Ok(match args[0].get_value() {
--                Value::Null => Value::Null,
--                Value::Text(t) => {
--                    let v = &t.value;
--                    v.parse::<std::net::IpAddr>().map_err(|_| {
--                        LimboError::Constraint(format!("invalid input for type inet: \"{v}\""))
--                    })?;
--                    args[0].get_value().clone()
--                }
--                other => {
--                    return Err(LimboError::Constraint(format!(
--                        "invalid input for type inet: \"{other}\""
--                    )));
--                }
--            })
-+            exec_validate_ipaddr(args[0].get_value())
-         }
-         ScalarFunc::NumericEncode => {
-             check_arg_count(args, 1)?;
--            Ok(match args[0].get_value() {
--                Value::Null => Value::Null,
--                other => {
--                    let bd = numeric_from_value(other)?;
--                    Value::from_blob(bigdecimal_to_blob(&bd))
--                }
--            })
-+            exec_numeric_encode(args[0].get_value())
-         }
-         ScalarFunc::TemporalEncode => {
-             check_arg_count(args, 2)?;
-             exec_temporal_encode(args[0].get_value(), args[1].get_value())
-         }
-         ScalarFunc::NumericFit => {
-             check_arg_count(args, 3)?;
--            Ok(match args[0].get_value() {
--                Value::Null => Value::Null,
--                Value::Blob(stored) => {
--                    let bd = blob_to_bigdecimal(stored)?;
--                    let (
--                        Value::Numeric(Numeric::Integer(precision)),
--                        Value::Numeric(Numeric::Integer(scale)),
--                    ) = (args[1].get_value(), args[2].get_value())
--                    else {
--                        return Err(LimboError::Constraint(
--                            "numeric_fit: precision and scale must be integers".to_string(),
--                        ));
--                    };
--                    let fitted = validate_precision_scale(&bd, *precision, *scale)?;
--                    Value::from_blob(bigdecimal_to_blob(&fitted))
--                }
--                other => {
--                    return Err(LimboError::InternalError(format!(
--                        "numeric_fit expects a stored numeric, got {}",
--                        other.value_type()
--                    )));
--                }
--            })
-+            exec_numeric_fit(
-+                args[0].get_value(),
-+                args[1].get_value(),
-+                args[2].get_value(),
+-            Ok(Statement::new_with_origin(
++            Statement::new_with_origin(
+                 program,
+                 self.clone(),
+                 pager,
+                 mode,
+                 byte_offset_end,
+                 origin,
+                 needs_nested_guard,
+-            ))
 +            )
+         })();
+         if result.is_err() && needs_nested_guard {
+             self.end_nested();
+@@ -1221,15 +1221,15 @@ impl Connection {
          }
-         ScalarFunc::NumericDecode => {
-             check_arg_count(args, 1)?;
--            Ok(match args[0].get_value() {
--                Value::Null => Value::Null,
--                Value::Blob(b) => Value::build_text(format_numeric(&blob_to_bigdecimal(b)?)),
--                other => {
--                    return Err(LimboError::Constraint(format!(
--                        "numeric_decode: expected blob, got \"{other}\""
--                    )));
--                }
--            })
-+            exec_numeric_decode(args[0].get_value())
+         let result = (|| {
+             let (program, pager, mode) = self.compile_cmd(cmd, input, origin)?;
+-            Ok(Statement::new_with_origin(
++            Statement::new_with_origin(
+                 program,
+                 self.clone(),
+                 pager,
+                 mode,
+                 0,
+                 origin,
+                 needs_nested_guard,
+-            ))
++            )
+         })();
+         if result.is_err() && needs_nested_guard {
+             self.end_nested();
+@@ -1509,7 +1509,7 @@ impl Connection {
+                 .unwrap()
+                 .trim();
+             let (program, pager, mode) = self.compile_cmd(cmd, input, StatementOrigin::Root)?;
+-            Statement::new(program, self.clone(), pager, mode, 0).run_ignore_rows()?;
++            Statement::new(program, self.clone(), pager, mode, 0)?.run_ignore_rows()?;
+             remaining = &remaining[byte_offset_end..];
          }
-         ScalarFunc::NumericAdd
-         | ScalarFunc::NumericSub
-@@ -1325,6
-```
-
-**File**: `core/schema.rs` (modified, +120/-209)
-```diff
-@@ -21,6 +21,7 @@ use crate::translate::schema::type_def_uses_type;
- use crate::type_ordering::TypeOrdering;
- use crate::types::IOResultOr;
- use crate::types::StrictType;
-+use crate::types::{Conversion, StorageClass, UserType};
- use crate::types::{IOResult, ImmutableRecord, ImmutableRecordRef};
- use crate::util::{exprs_are_equivalent, is_builtin_strict_type, normalize_ident};
- use crate::vdbe::affinity::Affinity;
-@@ -248,9 +249,9 @@ pub enum TypeDefKind {
-     Custom {
-         params: std::vec::Vec<ast::TypeParam>,
-         base: String,
--        encode: Option<Box<ast::Expr>>,
--        coerce: Option<Box<ast::Expr>>,
--        decode: Option<Box<ast::Expr>>,
-+        encode: Option<Conversion>,
-+        coerce: Option<Conversion>,
-+        decode: Option<Conversion>,
-         /// How values of the type compare, for built-in types that have their
-         /// own order, such as numeric. `None` compares the stored values as
-         /// SQLite does.
-@@ -319,116 +320,8 @@ pub enum OperatorArg {
- pub const BINARY_OPERATORS: [&str; 9] = ["+", "-", "*", "/", "%", "&", "|", "<<", ">>"];
- pub const PREFIX_OPERATORS: [&str; 2] = ["-", "~"];
- 
--/// The order of a built-in type whose stored values do not sort in the type's
--/// order: numeric is stored as a blob. Every other type, and every user type,
--/// sorts and compares by its stored value as SQLite does.
--fn builtin_ordering(type_name: &str) -> Option<TypeOrdering> {
--    match type_name {
--        "numeric" => Some(TypeOrdering::Numeric),
--        _ => None,
--    }
--}
--
--/// The kind of value a built-in type reads as. uuid, jsonb and numeric store
--/// blobs and DECODE them to text. The built-in types are registered before any
--/// connection's functions, so the kind of `uuid_str(value)` can't be worked
--/// out from the DECODE then; a test checks these against the DECODE of each
--/// type.
--fn builtin_value_type(type_name: &str) -> crate::Result<BuiltinType> {
--    Ok(match type_name {
--        "boolean" | "smallint" | "bigint" => BuiltinType::Integer,
--        "uuid" | "json" | "jsonb" | "numeric" | "varchar" | "date" | "time" | "timestamp"
--        | "timestamptz" | "inet" | "cidr" | "macaddr" | "macaddr8" => BuiltinType::Text,
--        "bytea" => BuiltinType::Blob,
--        _ => {
--            return Err(LimboError::InternalError(format!(
--                "built-in type {type_name} has no kind of value"
--            )))
--        }
--    })
--}
--
--/// Operators on built-in types. User types have none: `x + 1` on a user type is
--/// an error. The functions read plain values as they are, so nothing is encoded first:
--/// - `numeric op x` and `x op numeric` for `+ - * / %`, and `-numeric`, compute
--///   exactly, and the result is a numeric. Encoding a literal to the column's type would round it
--///   to the column's scale first (`n * 0.005` would be `n * 0.01`). With a REAL
--///   value `+ - * /` are SQLite's operators and give a REAL, as PostgreSQL gives
--///   double precision; `%` with a REAL value does not exist, as in PostgreSQL.
--/// - `date + integer`, `integer + date` and `date - integer` add or subtract
--///   days and give a date. `date - date` gives the number of days between them;
--///   a text literal on either side is encoded to a date first. Each signature
--///   has its own function, so its result type is known before the statement
--///   runs.
--/// - `smallint` and `bigint` store plain integers, so SQLite's operators run,
--///   including `-`, `~`, `&`, `|`, `<<` and `>>`.
--///
--/// Other built-in types have no operators, and these types have no others:
--/// `-date` and `numeric & 1` are errors, as in PostgreSQL.
--fn builtin_signatures(type_name: &str) -> std::vec::Vec<OperatorSignature> {
--    use OperatorArg::{EncodableLiteral, Exact, Integer, Real, Value};
--    let call = |op, args: &[OperatorArg], func: &str, result| OperatorSignature {
--        op,
--        args: args.to_vec(),
--        func: Some(func.to_string()),
--        result,
--    };
--    match type_name {
--        "numeric" => {
--            let mut signatures = std::vec::Vec::new();
--            for (op, func) in [
--                ("+", "numeric_add"),
--                ("-", "numeric_sub"),
--                ("*", "numeric_mul"),
--                ("/", "numeric_div"),
--                ("%", "numeric_mod"),
--            ] {
--                for args in [[Value, Value], [Value, Exact], [Exact, Value]] {
--                    signatures.push(call(op, &args, func, Some("numeric")));
--                }
--                if op != "%" {
--                    signatures.extend(sqlite_operator(op, Real));
--                }
--            }
--            signatures.push(call("-", &[Value], "numeric_neg", Some("numeric")));
--            signatures
--        }
--        "date" => std::vec![
--            call("+", &[Value, Integer], "date_plus", Some("date")),
--            call("+", &[Integer, Value], "date_plus", Some("date")),
--            call("-", &[Value, Value], "date_diff", Some("integer")),
-
-```
-
-**File**: `core/schema/builtin.rs` (modified, +5/-81)
-```diff
-@@ -1,7 +1,7 @@
- //! The catalog tables and types that the schema of every database has,
- //! whatever its dialect.
- 
--use super::{RangeOffsets, SchemaBuilder, Table, TypeDef, TypeOrigin};
-+use super::{SchemaBuilder, Table};
- use crate::pragma::PragmaVirtualTable;
- use crate::sync::Arc;
- use crate::vtab::{VirtualTable, VirtualTableType};
-@@ -10,90 +10,14 @@ use turso_ext::VTabKind;
- /// Starts the schema of a database: the built-in catalog tables and, if
- /// `enable_custom_types`, the built-in types. A dialect adds its own tables
- /// and types to the builder.
--pub fn schema_builder(
--    dialect: &(impl crate::dialect::Dialect + ?Sized),
--    enable_custom_types: bool,
--) -> crate::Result<SchemaBuilder> {
-+pub fn schema_builder(enable_custom_types: bool) -> crate::Result<SchemaBuilder> {
-     let mut builder = SchemaBuilder::new()?.custom_types(enable_custom_types);
-     if enable_custom_types {
--        builder = builtin_types(dialect, builder)?;
--    }
--    builtin_catalog(builder, enable_custom_types)
--}
--
--fn builtin_types(
--    dialect: &(impl crate::dialect::Dialect + ?Sized),
--    mut builder: SchemaBuilder,
--) -> crate::Result<SchemaBuilder> {
--    use crate::ast::{Cmd, Stmt};
--
--    // Whether values of the type take a COLLATE. In PostgreSQL only text
--    // types do, so of the types below only varchar does.
--    const COLLATE: bool = true;
--    const NO_COLLATE: bool = false;
--    // Whether the stored form sorts in the same order as the values.
--    const SORTS: bool = true;
--    const NO_SORT: bool = false;
--    let types: &[(bool, RangeOffsets, bool, &str)] = &[
--        #[cfg(feature = "uuid")]
--        (NO_COLLATE, RangeOffsets::None, NO_SORT, "CREATE TYPE uuid(value any) BASE blob ENCODE CASE WHEN value IS NULL THEN NULL WHEN typeof(value) = 'blob' AND length(value) = 16 THEN value ELSE coalesce(uuid_blob(value), RAISE(ABORT, 'invalid UUID value')) END DECODE uuid_str(value) OPERATOR '<'"),
--        (NO_COLLATE, RangeOffsets::None, NO_SORT, "CREATE TYPE boolean(value any) BASE integer ENCODE boolean_to_int(value) DECODE CASE WHEN value THEN 1 ELSE 0 END OPERATOR '<'"),
--        #[cfg(feature = "json")]
--        (NO_COLLATE, RangeOffsets::None, NO_SORT, "CREATE TYPE json(value text) BASE text ENCODE json(value) DECODE value"),
--        #[cfg(feature = "json")]
--        (NO_COLLATE, RangeOffsets::None, NO_SORT, "CREATE TYPE jsonb(value text) BASE blob ENCODE jsonb(value) DECODE json(value)"),
--        (COLLATE, RangeOffsets::None, NO_SORT, "CREATE TYPE varchar(value text, maxlen integer) BASE text COERCE CASE WHEN length(value) <= maxlen THEN value ELSE RAISE(ABORT, 'value too long for varchar') END DECODE value OPERATOR '<'"),
--        // The ENCODEs read PostgreSQL's input forms and store one text form
--        // with a 4-digit year, which sorts in time order (see
--        // functions/datetime_input.rs).
--        (NO_COLLATE, RangeOffsets::None, SORTS, "CREATE TYPE date(value text) BASE text ENCODE temporal_encode(value, 'date') DECODE value OPERATOR '<'"),
--        (NO_COLLATE, RangeOffsets::None, SORTS, "CREATE TYPE time(value text) BASE text ENCODE temporal_encode(value, 'time') DECODE value OPERATOR '<'"),
--        (NO_COLLATE, RangeOffsets::None, SORTS, "CREATE TYPE timestamp(value text) BASE text ENCODE temporal_encode(value, 'timestamp') DECODE value OPERATOR '<'"),
--        (NO_COLLATE, RangeOffsets::None, SORTS, "CREATE TYPE timestamptz(value text) BASE text ENCODE temporal_encode(value, 'timestamptz') DECODE value OPERATOR '<'"),
--        (NO_COLLATE, RangeOffsets::Integer, NO_SORT, "CREATE TYPE smallint(value integer) BASE integer COERCE CASE WHEN value BETWEEN -32768 AND 32767 THEN value ELSE RAISE(ABORT, 'integer out of range for smallint') END OPERATOR '<'"),
--        (NO_COLLATE, RangeOffsets::Integer, NO_SORT, "CREATE TYPE bigint(value integer) BASE integer"),
--        (NO_COLLATE, RangeOffsets::None, NO_SORT, "CREATE TYPE inet(value text) BASE text ENCODE validate_ipaddr(value) DECODE value"),
--        (NO_COLLATE, RangeOffsets::None, NO_SORT, "CREATE TYPE cidr(value text) BASE text ENCODE value DECODE value"),
--        (NO_COLLATE, RangeOffsets::None, NO_SORT, "CREATE TYPE macaddr(value text) BASE text ENCODE value DECODE value"),
--        (NO_COLLATE, RangeOffsets::None, NO_SORT, "CREATE TYPE macaddr8(value text) BASE text ENCODE value DECODE value"),
--        (NO_COLLATE, RangeOffsets::None, NO_SORT, "CREATE TYPE bytea(value blob) BASE blob OPERATOR '<'"),
--        (NO_COLLATE, RangeOffsets::Numeric, NO_SORT, "CREATE TYPE numeric(value any, precision integer, scale integer) BASE blob ENCODE numeric_encode(value) COERCE numeric_fit(value, precision, scale) DECODE numeric_decode(value)"),
--    ];
--
--    let aliases: &[(&str, &str)] = &[
--        ("bool", "boolean"),
--        ("int2", "smallint"),
--        ("int8", "bigint"),
--    ];
--    for &(accepts_collate, range_offsets, stored_form_sorts_in_value_order, sql) in types {
--        let Ok(Some(Cmd::Stmt(Stmt::CreateTy
-```
-
-**File**: `core/translate/expr/custom_types.rs` (modified, +51/-17)
-```diff
-@@ -1,5 +1,6 @@
- use super::*;
- use crate::schema::ResolvedType;
-+use crate::types::Conversion;
- 
- /// Get the effective type name of a literal expression.
- pub(super) fn literal_type_name(expr: &ast::Expr) -> Option<&'static str> {
-@@ -565,8 +566,8 @@ pub(crate) fn emit_decode(
- 
-     // Apply decode in reverse order (parent/ancestor first, then child)
-     for td in resolved.chain.iter().rev() {
--        if let Some(decode_expr) = td.decode() {
--            emit_type_expr(program, decode_expr, reg, reg, resolver)?;
-+        if let Some(decode) = td.decode() {
-+            emit_conversion(program, td, "DECODE", decode, reg, resolver)?;
-         }
-     }
- 
-@@ -698,15 +699,15 @@ pub(crate) fn emit_store_value(
-     });
-     for type_def in &resolved.chain {
-         if let Some(encode) = type_def.encode() {
--            emit_type_expr(program, encode, reg, reg, resolver)?;
-+            emit_conversion(program, type_def, "ENCODE", encode, reg, resolver)?;
-         }
-         let type_params = match coerce {
-             Coerce::WithArgs(type_params) => type_params,
-             Coerce::Skip => continue,
+         Ok(())
+@@ -1531,7 +1531,7 @@ impl Connection {
+             return Ok(None);
          };
--        if let Some(coerce_expr) = coerce_to_run(type_def, type_params) {
-+        if let Some(coerce) = coerce_to_run(type_def, type_params) {
-             program.emit_insn(convert.clone());
--            emit_coerce(program, type_def, coerce_expr, reg, type_params, resolver)?;
-+            emit_coerce(program, type_def, coerce, reg, type_params, resolver)?;
+         let (program, pager, mode) = self.compile_cmd(cmd, input, StatementOrigin::Root)?;
+-        Ok(Some(Statement::new(program, self.clone(), pager, mode, 0)))
++        Ok(Some(Statement::new(program, self.clone(), pager, mode, 0)?))
+     }
+ 
+     /// Execute will run a query from start to finish taking ownership of I/O because it will run pending I/Os if it didn't finish.
+@@ -1551,7 +1551,7 @@ impl Connection {
+             let (program, pager, mode) = self.compile_cmd(cmd, input, StatementOrigin::Root)?;
+             {
+                 crate::stack::trace_stack!("run");
+-                Statement::new(program, self.clone(), pager.clone(), mode, 0).run_ignore_rows()?;
++                Statement::new(program, self.clone(), pager.clone(), mode, 0)?.run_ignore_rows()?;
+             }
+             remaining = &remaining[byte_offset_end..];
          }
-     }
-     program.emit_insn(convert);
-@@ -727,7 +728,7 @@ pub(crate) fn emit_encode_for_comparison(
- ) -> Result<()> {
-     for type_def in chain {
-         if let Some(encode) = type_def.encode() {
--            emit_type_expr(program, encode, reg, reg, resolver)?;
-+            emit_conversion(program, type_def, "ENCODE", encode, reg, resolver)?;
-         }
-     }
-     program.emit_insn(Insn::Affinity {
-@@ -738,24 +739,39 @@ pub(crate) fn emit_encode_for_comparison(
-     Ok(())
- }
- 
--/// Emit bytecode for a custom type ENCODE or DECODE expression, with `value`
--/// referencing `value_reg`. The result is written to `dest_reg`.
--pub(crate) fn emit_type_expr(
-+/// Emits `conversion`, which is the ENCODE or DECODE of `type_def` as `clause`
-+/// says, on the value in `reg`. A SQL expression is compiled with `value`
-+/// referencing `reg`. A Rust function is called, unless the value is NULL.
-+pub(crate) fn emit_conversion(
-     program: &mut ProgramBuilder,
--    expr: &ast::Expr,
--    value_reg: usize,
--    dest_reg: usize,
-+    type_def: &TypeDef,
-+    clause: &str,
-+    conversion: &Conversion,
-+    reg: usize,
-     resolver: &Resolver,
--) -> Result<usize> {
--    emit_expr_with_bindings(program, expr, value_reg, dest_reg, &[], resolver)
-+) -> Result<()> {
-+    match conversion {
-+        Conversion::Unchanged => {}
-+        Conversion::Function(function) => program.emit_insn(Insn::TypeConversion {
-+            function: *function,
-+            reg,
-+            params_reg: reg,
-+            param_count: 0,
-+            description: format!("{} {clause}", type_def.name),
-+        }),
-+        Conversion::Expr(expr) => {
-+            emit_expr_with_bindings(program, expr, reg, reg, &[], resolver)?;
-+        }
-+    }
-+    Ok(())
- }
- 
- /// The type's COERCE, unless the type has parameters and is used without
- /// arguments, as a column declared `numeric`: it then has no limits.
- fn coerce_to_run<'a>(
-     type_def: &'a TypeDef,
-     type_params: &[Box<ast::Expr>],
--) -> Option<&'a ast::Expr> {
-+) -> Option<&'a Conversion> {
-     let coerce = type_def.coerce()?;
-     if type_params.is_empty() && type_def.user_params().next().is_some() {
-         return None;
-@@ -768,7 +784,7 @@ fn coerce_to_run<'a>(
- fn emit_coerce(
-     program: &mut ProgramBuilder,
-     type_def: &TypeDef,
--    coerce: &ast::Expr,
-+    coerce: &Conversion,
-     reg: usize,
-     type_params: &[Box<ast::Expr>],
-     resolver: &Resolver,
-@@ -788,7 +804,25 @@ fn emit_coerce(
-         reg,
-         target_pc: skip_null,
-     });
--    emit_expr_with_bindings(program, coerce, reg, reg, &bindings, resolver)?;
-+    match coerce {
-+        Conversion::Unchanged => {}
-+        Conversion::Function(function) => {
-+            let params_reg = program.alloc_registers(bindings.len());
-+            for (i, (_, arg)) in bindings.iter().enumerate() {
-+                translate_expr(program, None, arg, params_reg + i, resolver)?;
-+            }
-+            program.emit_insn(Insn::TypeConversion {
-+                function: *function,
-+                reg,
-+                params_reg,
-+                param_count: bindings.len(),
-+                description: format!("{} COERCE", type_def.name),
-+            });
-+        }
-+        Conversion::Expr(expr) => {
-+            emit_expr_with_bindings(program, expr, reg, reg, &bindings, resolver)?;
-+        }
-+    }
-     program.preassign_label_to_next_insn(skip_null);
-     Ok(())
- }
-```
-
-**File**: `core/translate/expr/expr_type.rs` (modified, +19/-81)
-```diff
-@@ -16,7 +16,7 @@ use crate::translate::emitter::Resolver;
- use crate::translate::expr_context::TableMetadata;
- use crate::translate::plan::{Plan, SelectPlan, TableReferences};
- use crate::type_ordering::TypeOrdering;
--use crate::types::{StorageClass, StrictType};
-+use crate::types::{Conversion, StorageClass, StrictType};
- use crate::vdbe::affinity::Affinity;
- use crate::{Result, SymbolTable};
- 
-@@ -954,7 +954,13 @@ pub(crate) fn decode_type(
-     if type_def.decode_returns_value_unchanged() {
-         return None;
-     }
--    let decode = type_def.decode()?;
-+    let decode = match type_def.decode()? {
-+        Conversion::Expr(decode) => decode,
-+        // A type written in Rust says what its DECODE gives when it is
-+        // registered.
-+        Conversion::Function(_) => return Some(ExprType::Builtin(type_def.value_type())),
-+        Conversion::Unchanged => return None,
-+    };
-     Some(type_of(
-         decode,
-         &TypeEnv::TypeBody {
-@@ -1413,7 +1419,7 @@ mod tests {
-     use super::*;
-     use crate::ast::{Expr, Literal, Name, Operator, UnaryOperator};
-     use crate::dialect::cannot_parse::DialectThatCannotParse;
--    use crate::schema::{RangeOffsets, SchemaBuilder, TypeOrigin};
-+    use crate::schema::SchemaBuilder;
-     use crate::translate::emitter::DoubleQuotedDml;
-     use crate::{DatabaseCatalog, RwLock, SymbolTable};
-     use rustc_hash::FxHashMap as HashMap;
-@@ -1806,8 +1812,8 @@ mod tests {
-         let mut schema = SchemaBuilder::new()
+@@ -1574,7 +1574,7 @@ impl Connection {
              .unwrap()
-             .custom_types(true)
--            .type_def("numeric", Arc::new(builtin_numeric()))
--            .type_def("smallint", Arc::new(builtin_smallint()))
-+            .type_def("numeric", Arc::new(builtin_type("numeric")))
-+            .type_def("smallint", Arc::new(builtin_type("smallint")))
-             .build();
-         let sql = "CREATE TYPE cents BASE integer ENCODE value * 100 DECODE value / 100";
-         let cents = ast::CreateTypeBody::CustomType {
-@@ -1819,86 +1825,18 @@ mod tests {
-             operators: vec![],
-             default: None,
-         };
--        let cents =
--            TypeDef::from_create_type("cents", &cents, TypeOrigin::User, sql.to_string()).unwrap();
-+        let cents = TypeDef::from_create_type("cents", &cents, sql.to_string()).unwrap();
-         schema.add_type(cents, &SymbolTable::new()).unwrap();
-         schema
+             .trim();
+         let (program, pager, mode) = self.compile_cmd(cmd, input, StatementOrigin::Root)?;
+-        let stmt = Statement::new(program, self.clone(), pager, mode, 0);
++        let stmt = Statement::new(program, self.clone(), pager, mode, 0)?;
+         Ok(Some((stmt, byte_offset_end)))
      }
  
--    /// The built-in type numeric, as the database creates it when custom
-+    /// The built-in type `name`, as the database creates it when custom
-     /// types are on.
--    fn builtin_numeric() -> TypeDef {
--        let sql = "CREATE TYPE numeric(value any, precision integer, scale integer) BASE blob \
--                   ENCODE numeric_encode(value) COERCE numeric_fit(value, precision, scale) \
--                   DECODE numeric_decode(value)";
--        let body = ast::CreateTypeBody::CustomType {
--            params: vec![
--                type_param("value", "any"),
--                type_param("precision", "integer"),
--                type_param("scale", "integer"),
--            ],
--            base: "blob".to_string(),
--            encode: Some(Box::new(call("numeric_encode", vec![id("value")]))),
--            coerce: Some(Box::new(call(
--                "numeric_fit",
--                vec![id("value"), id("precision"), id("scale")],
--            ))),
--            decode: Some(Box::new(call("numeric_decode", vec![id("value")]))),
--            operators: vec![],
--            default: None,
--        };
--        let origin = TypeOrigin::Builtin {
--            accepts_collate: false,
--            range_offsets: RangeOffsets::Numeric,
--            stored_form_sorts_in_value_order: false,
--        };
--        TypeDef::from_create_type("numeric", &body, origin, sql.to_string()).unwrap()
--    }
--
--    /// The built-in type smallint, as the database creates it when custom
--    /// types are on.
--    fn builtin_smallint() -> TypeDef {
--        let sql = "CREATE TYPE smallint(value integer) BASE integer COERCE CASE WHEN value \
--                   BETWEEN -32768 AND 32767 THEN value ELSE RAISE(ABORT, 'integer out of range \
--                   for smallint') END OPERATOR '<'";
--        let in_range = Expr::Between {
--            lhs: Box::new(id("value")),
--            not: false,
--            start: Box::new(neg(int(32768))),
--            end: Box::new(int(32767)),
--        };
--        let out_of_range = Expr::Raise(
--            ast::ResolveType::Abort,
--            Some(Box::new(text("integer out of range for smallint"))),
--        );
--        let body = ast::CreateTypeBody::CustomType {
--            params: vec![type_param("value", "integer")],
--            base: "integer".to_string(),
--            encode: None,
--            coerce: Some(Box::new(case_when(
--                in_range,
--                id("value"),
--                Some(out_of_range),
--            ))),
--            decode: None,
--            operators: vec![ast::TypeOperator {
--                op:
+@@ -4076,13 +4076,17 @@ impl Connection {
+ 
+     /// The error for a statement on a sequence backing table that failed
+     /// with `err`. The backing table is the engine's own, so the failure
+-    /// means the file is corrupt.
++    /// means the file is corrupt, except when no memory was available: then
++    /// the error stays `OutOfMemory`, and the statement can run again later.
+     pub(crate) fn sequence_backing_table_corrupt(
+         backing_table_name: &str,
+         seq_name: &str,
+         problem: &str,
+         err: &LimboError,
+     ) -> LimboError {
++        if matches!(err, LimboError::OutOfMemory) {
++            return LimboError::OutOfMemory;
++        }
+         LimboError::Corrupt(format!(
+             "internal sequence backing table \"{backing_table_name}\" for sequence \
+              \"{seq_name}\": {problem}: {err}"
+@@ -5281,6 +5285,28 @@ mod tests {
+         (entry.db.clone(), entry.pager.clone())
+     }
+ 
++    /// A statement on a sequence backing table can fail because the statement
++    /// allocator gives no memory. That is not corruption, so the error must
++    /// stay `OutOfMemory`: the concurrent simulator stops at a `Corrupt` error.
++    #[test]
++    fn sequence_backing_table_error_keeps_out_of_memory() {
++        let err = Connection::sequence_backing_table_corrupt(
++            "__turso_internal_seq_s",
++            "s",
++            "cannot prepare descriptor SELECT",
++            &LimboError::OutOfMemory,
++        );
++        assert!(matches!(err, LimboError::OutOfMemory), "{err}");
++
++        let err = Connection::sequence_backing_table_corrupt(
++            "__turso_internal_seq_s",
++            "s",
++            "descriptor row read failed",
++            &LimboError::InternalError("no row".to_string()),
++        );
++        assert!(matches!(err, LimboError::Corrupt(_)), "{err}");
++    }
++
+     #[test]
+     fn close_marks_connection_closed_and_decrements_count_once() {
+         let directory = TempDir::new().unwrap();
 ```
 
-**File**: `core/translate/expr/mod.rs` (modified, +2/-2)
+**File**: `core/database.rs` (modified, +14/-5)
 ```diff
-@@ -108,8 +108,8 @@ pub(crate) use custom_type_operators::{
- };
- pub(crate) use custom_types::read_untyped_operand_as;
- pub(crate) use custom_types::{
--    emit_constraint_values_decode, emit_decode, emit_dml_expr_index_value,
--    emit_encode_for_comparison, emit_store_value, emit_trigger_decode_registers, emit_type_expr,
-+    emit_constraint_values_decode, emit_conversion, emit_decode, emit_dml_expr_index_value,
-+    emit_encode_for_comparison, emit_store_value, emit_trigger_decode_registers,
-     emit_untyped_operand_store, emit_user_facing_column_value,
- };
- pub(crate) use custom_types::{runs_custom_type_function, takes_input_of_type};
+@@ -210,11 +210,20 @@ pub struct DatabaseAllocators<
+ > {
+     pub mv_store: M,
+     pub fts: F,
+-    /// Allocator for the values that the code of nested trigger and foreign
+-    /// key action programs keeps in the heap and not on the stack, because
+-    /// this code recurses one time for each level of nesting. The other
+-    /// memory of statements, for example their registers and cursors, does not
+-    /// come from this allocator.
++    /// Allocator for these values of statements:
++    ///
++    /// - The state of each statement.
++    /// - The program builders of statements, blob handles, nested trigger
++    ///   programs and the maintenance of materialized views, and the builder
++    ///   that plans the query of a materialized view. The builders of foreign
++    ///   key action programs do not come from this allocator.
++    /// - The statement that executes a nested trigger or foreign key action
++    ///   program.
++    ///
++    /// The code of nested programs recurses one time for each level of
++    /// nesting, so it keeps its values in the heap and not on the stack. The
++    /// memory in the vectors of the builders and the states, for example the
++    /// registers and the cursors, does not come from this allocator.
+     pub statement: S,
+ }
+ 
+```
+
+**File**: `core/incremental/vdbe_maintenance.rs` (modified, +22/-12)
+```diff
+@@ -24,6 +24,7 @@
+ //! completion (or before an in-statement view read), or inside the CREATE
+ //! MATERIALIZED VIEW statement for initial population.
+ 
++use crate::alloc::StatementAllocationSite;
+ use crate::ast;
+ use crate::namespace::NamespaceRef;
+ use rustc_hash::FxHashMap;
+@@ -33,6 +34,7 @@ use crate::schema::Schema;
+ use crate::security::roles::RoleId;
+ use crate::sync::Arc;
+ use crate::translate::emitter::Resolver;
++use crate::translate::{build_program, new_program_builder};
+ use crate::vdbe::builder::{ProgramBuilder, ProgramBuilderOpts};
+ use crate::vdbe::{PreparedProgram, Program};
+ use crate::{Connection, LimboError, QueryMode, Result};
+@@ -172,17 +174,20 @@ fn compile_maintenance_plan(
+     schema: &Schema,
+     connection: &Arc<Connection>,
+ ) -> Result<Program> {
+-    let mut program = ProgramBuilder::new_for_subprogram(
+-        QueryMode::Normal,
+-        None,
+-        ProgramBuilderOpts {
+-            num_cursors: 13,
+-            approx_num_insns: 128 + 64 * num_view_columns,
+-            approx_num_labels: 48,
+-        },
+-        connection.mvcc_enabled(),
+-        0,
+-    );
++    let mut program =
++        new_program_builder(connection, StatementAllocationSite::ProgramBuilder, || {
++            ProgramBuilder::new_for_subprogram(
++                QueryMode::Normal,
++                None,
++                ProgramBuilderOpts {
++                    num_cursors: 13,
++                    approx_num_insns: 128 + 64 * num_view_columns,
++                    approx_num_labels: 48,
++                },
++                connection.mvcc_enabled(),
++                0,
++            )
++        })?;
+     program.prologue();
+     emit_plan_to_sink(
+         &mut program,
+@@ -197,7 +202,12 @@ fn compile_maintenance_plan(
+         connection,
+     )?;
+     program.epilogue(schema);
+-    program.build(connection, false, "materialized view DAG maintenance")
++    build_program(
++        program,
++        connection,
++        false,
++        "materialized view DAG maintenance",
++    )
+ }
+ 
+ #[cfg(feature = "test_helper")]
+```
+
+**File**: `core/incremental/vdbe_maintenance/plan.rs` (modified, +12/-7)
+```diff
+@@ -3,6 +3,7 @@ use rustc_hash::{FxHashMap, FxHashSet};
+ 
+ use super::output::NodeOutputContract;
+ use super::stream::{binding_rowid_metadata_width, DeltaIdentity};
++use crate::alloc::StatementAllocationSite;
+ use crate::function::{AggFunc, Func};
+ use crate::incremental::dag;
+ use crate::schema::BTreeTable;
+@@ -11,6 +12,7 @@ use crate::translate::collate::{first_collation, CollationSeq};
+ use crate::translate::emitter::Resolver;
+ use crate::translate::expr::{expr_contains_nondeterministic_scalar_function, WalkControl};
+ use crate::translate::expr_context::ExprContext;
++use crate::translate::new_program_builder;
+ use crate::translate::optimizer::optimize_plan;
+ use crate::translate::optimizer::unnest::rewrite_correlated_subqueries;
+ use crate::translate::plan::{
+@@ -984,13 +986,16 @@ pub(crate) fn plan_view(
+     resolver: &Resolver,
+     connection: &Arc<Connection>,
+ ) -> Result<MaintenancePlan> {
+-    let mut planner_program = ProgramBuilder::new_for_subprogram(
+-        QueryMode::Normal,
+-        None,
+-        ProgramBuilderOpts::new(8, 32, 8),
+-        connection.mvcc_enabled(),
+-        0,
+-    );
++    let mut planner_program =
++        new_program_builder(connection, StatementAllocationSite::ProgramBuilder, || {
++            ProgramBuilder::new_for_subprogram(
++                QueryMode::Normal,
++                None,
++                ProgramBuilderOpts::new(8, 32, 8),
++                connection.mvcc_enabled(),
++                0,
++            )
++        })?;
+     let mut relational_plan = prepare_select_plan(
+         select.clone(),
+         resolver,
+```
+
+**File**: `core/incremental_blob.rs` (modified, +7/-4)
+```diff
+@@ -29,10 +29,11 @@
+ use crate::ast::Privilege;
+ use crate::namespace::NamespaceId;
+ use crate::translate::collate::CollationSeq;
++use crate::translate::{build_program, new_program_builder};
+ use std::num::NonZero;
+ use std::sync::Arc;
+ 
+-use crate::alloc::TursoSliceExt;
++use crate::alloc::{StatementAllocationSite, TursoSliceExt};
+ use crate::schema::{BTreeTable, Column, Schema};
+ use crate::security::permission::{Action, Object, PermissionDenied};
+ use crate::storage::pager::Pager;
+@@ -354,7 +355,7 @@ impl Connection {
+         let root = table_ref.root_page;
+         let program = build_blob_program(self, table_ref, root, record_column, rowid, read_write)?;
+         let pager = self.get_pager();
+-        let mut stmt = Statement::new(program, self.clone(), pager.clone(), QueryMode::Normal, 0);
++        let mut stmt = Statement::new(program, self.clone(), pager.clone(), QueryMode::Normal, 0)?;
+         // Excluded from the explicit-checkpoint guard's active-statement
+         // count: the handle parks at its row for its whole lifetime, and an
+         // open blob handle must not block checkpointing until it is closed.
+@@ -437,7 +438,9 @@ fn build_blob_program(
+     rowid: i64,
+     read_write: bool,
+ ) -> Result<crate::vdbe::Program> {
+-    let mut b = ProgramBuilder::new(QueryMode::Normal, None, ProgramBuilderOpts::new(1, 64, 16));
++    let mut b = new_program_builder(conn, StatementAllocationSite::ProgramBuilder, || {
++        ProgramBuilder::new(QueryMode::Normal, None, ProgramBuilderOpts::new(1, 64, 16))
++    })?;
+     b.prologue();
+     if read_write {
+         b.begin_write_operation()
+@@ -564,6 +567,6 @@ fn build_blob_program(
+     b.preassign_label_to_next_insn(l_end);
+ 
+     conn.with_schema_mut(|schema| b.epilogue(schema))?;
+-    b.build(conn, false, "incremental blob io")
++    build_program(b, conn, false, "incremental blob io")
+         .map_err(|e| LimboError::InternalError(format!("blob program build failed: {e}")))
+ }
+```
+
+**File**: `core/statement.rs` (modified, +10/-7)
+```diff
+@@ -10,7 +10,7 @@ use std::{
+ use crate::ast::{fmt::WriteSql, Cmd};
+ use tracing::{instrument, Level};
+ 
+-use crate::alloc::TursoIteratorExt;
++use crate::alloc::{DynBox, TursoIteratorExt};
+ use crate::{
+     busy::BusyHandlerState,
+     parameters,
+@@ -213,7 +213,7 @@ pub struct ColumnOrigin {
+ 
+ pub struct Statement {
+     pub(crate) program: vdbe::Program,
+-    state: Box<vdbe::ProgramState>,
++    state: DynBox<vdbe::ProgramState>,
+     connection: Arc<Connection>,
+     pager: Arc<Pager>,
+     /// indicates if the statement is a NORMAL/EXPLAIN/EXPLAIN QUERY PLAN
+@@ -292,7 +292,7 @@ impl Statement {
+         pager: Arc<Pager>,
+         query_mode: QueryMode,
+         tail_offset: usize,
+-    ) -> Self {
++    ) -> Result<Self> {
+         Self::new_with_origin(
+             program,
+             connection,
+@@ -313,7 +313,7 @@ impl Statement {
+         tail_offset: usize,
+         origin: StatementOrigin,
+         nested_guard_active: bool,
+-    ) -> Self {
++    ) -> Result<Self> {
+         let (max_registers, cursor_count) = match query_mode {
+             QueryMode::Normal => (program.max_registers, program.cursor_ref.len()),
+             QueryMode::Explain => (EXPLAIN_COLUMNS.len(), 0),
+@@ -325,9 +325,12 @@ impl Statement {
+             } => (EXPLAIN_QUERY_PLAN_JSON_COLUMNS.len(), 0),
+         };
+         let state = vdbe::ProgramState::new(max_registers, cursor_count);
+-        Self {
++        let alloc = connection.db.allocators.statement.clone();
++        let state =
++            crate::with_statement_allocation_site!(ProgramState, DynBox::try_new_in(state, alloc))?;
++        Ok(Self {
+             program,
+-            state: Box::new(state),
++            state,
+             connection,
+             pager,
+             query_mode,
+@@ -343,7 +346,7 @@ impl Statement {
+             nested_guard_active,
+             analyze_refresh: None,
+             reprepare_cmd: None,
+-        }
++        })
+     }
+ 
+     /// Mark this statement as the parked backing statement of an incremental
+```
+
+**File**: `core/translate/mod.rs` (modified, +47/-8)
+```diff
+@@ -53,6 +53,7 @@ mod values;
+ pub(crate) mod view;
+ mod window;
+ 
++use crate::alloc::{DynBox, StatementAllocationSite, TursoBoxExt};
+ use crate::ast;
+ use crate::schema::Schema;
+ use crate::storage::pager::Pager;
+@@ -100,13 +101,15 @@ pub fn translate(
+     } else {
+         connection.get_capture_data_changes_info().clone()
+     };
+-    // Boxed so the ~800 B builder sits on the heap instead of the prepare frame.
+-    let mut program = Box::new(ProgramBuilder::new(
+-        query_mode,
+-        capture_data_changes_info,
+-        // These options will be extended whithin each translate program
+-        ProgramBuilderOpts::new(1, 32, 2),
+-    ));
++    let mut program =
++        new_program_builder(&connection, StatementAllocationSite::ProgramBuilder, || {
++            ProgramBuilder::new(
++                query_mode,
++                capture_data_changes_info,
++                // These options will be extended whithin each translate program
++                ProgramBuilderOpts::new(1, 32, 2),
++            )
++        })?;
+     program.set_mvcc_enabled(connection.mvcc_enabled());
+     program.flags.set_reads_stored_values(matches!(
+         origin,
+@@ -198,7 +201,43 @@ pub fn translate(
+ 
+     program.epilogue(schema);
+ 
+-    program.build(&connection, change_cnt_on, input)
++    build_program(program, &connection, change_cnt_on, input)
++}
++
++/// Makes a program builder with `new`, in memory from the statement allocator
++/// of the database. The allocation is at `site`. Rust makes the builder on the
++/// stack and then copies it into the box. This function is not inlined, so
++/// that the builder is in the stack frame of this function, and not in the
++/// frame of its caller.
++#[inline(never)]
++pub(crate) fn new_program_builder(
++    connection: &Connection,
++    site: StatementAllocationSite,
++    new: impl FnOnce() -> ProgramBuilder,
++) -> Result<DynBox<ProgramBuilder>> {
++    let builder = new();
++    let alloc = connection.db.allocators.statement.clone();
++    #[cfg(feature = "allocation_metric")]
++    let _site_guard = crate::alloc::enter_allocation_site(site);
++    #[cfg(not(feature = "allocation_metric"))]
++    let _ = site;
++    Ok(DynBox::try_new_in(builder, alloc)?)
++}
++
++/// Builds the program of a builder in memory from the statement allocator.
++/// [ProgramBuilder::build] takes the builder as a value, so the builder leaves
++/// its box here. This function is not inlined, so that the builder is in the
++/// stack frame of this function, and not in the frame of its caller. The
++/// compilation of nested triggers recurses one time for each level, so the
++/// builder must not be in the frame of the code that recurses.
++#[inline(never)]
++pub(crate) fn build_program(
++    builder: DynBox<ProgramBuilder>,
++    connection: &Arc<Connection>,
++    change_cnt_on: bool,
++    input: &str,
++) -> Result<Program> {
++    TursoBoxExt::into_inner(builder).build(connection, change_cnt_on, input)
+ }
+ 
+ // TODO: for now leaving the return value as a Program. But ideally to support nested parsing of arbitraty
 ```
 
 ---
 
-### Incident Patch 3: `400c8653` (2026-11-23)
-**Commit Message**: core: add a Type trait and write the built-in types in Rust
+### Incident Patch 2: `adf3b41f` (2026-11-24)
+**Commit Message**: Merge 'core/translate/optimizer: fix two TPC-C plan choices that cost 26x in instructions' from Jussi Saurio
 
-A built-in type was a CREATE TYPE statement in a string. Core parsed the
-string on every schema build, and the ENCODE, COERCE and DECODE of the
-type were SQL expressions that named SQL functions, such as
-`boolean_to_int`. Each statement that used the type looked the function
-up by name again. The rest of what core knows about a built-in type was
-in two more places: a tuple of flags next to the string, and three
-functions that matched on the name of the type. So a dialect could not
-define a type of its own without a SQL string and a SQL function for
-each conversion.
+On main, the planner picks the wrong index for lookups on a composite
+primary key, and skips the MIN fast path for `COALESCE(MIN(x), 0)`. So
+TPC-C runs 54x more instructions in Turso than in SQLite.
 
-Add the trait `Type` in `core/types/custom_type.rs`. It says what a type
-takes, stores and reads back, and everything else that was spread over
-those places. A conversion is a `Conversion`: a Rust function, a SQL
-expression, or none. The schema builds the `TypeDef` of a type from a
-`Type`.
+Instructions for 1000 TPC-C transactions (callgrind; `tpcc_start -w 1 -c
+1 -r 0 -t 1000 -s 1`):
 
-- `UserType` is the type that CREATE TYPE defines. Its conversions are
-  the SQL expressions of the statement, which the translator compiles
-  into each statement as before.
-- The built-in types are in `core/types/builtin.rs`, one `Type` each,
-  with Rust functions as conve
+| Build | Instructions |
+|---|---|
+| main | 33.31G |
+| main + commit 2 | 1.68G |
+| this PR (commits 1–3) | 1.29G |
+| SQLite | 0.62G |
 
-**File**: `core/connection/reparse.rs` (modified, +1/-1)
+1. **perf/tpc-c: `-s <seed>` fixes the random seed.** With `-t N`, the
+harness also skips the ramp-up and timer and waits for the threads. Two
+seeded runs differed by 0.0003% in instructions.
+2. **Estimate `=` on part of a composite primary key as several rows.**
+On main, any primary key column counts as a one-row lookup:
+   ```sql
+   CREATE TABLE orders (o_w_id INT, o_d_id INT, o_id INT, o_c_id INT,
+     PRIMARY KEY (o_w_id, o_d_id, o_id));
+   CREATE INDEX idx_orders ON orders (o_w_id, o_d_id, o_c_id, o_id);
+   EXPLAIN QUERY PLAN SELECT o_c_id FROM orders WHERE o_id = 1 AND o_d_id = 2 AND o_w_id = 3;
+   -- main:    SEARCH orders USING COVERING INDEX
+
+**File**: `core/translate/optimizer/constraints.rs` (modified, +11/-3)
 ```diff
-@@ -245,7 +245,7 @@ mod tests {
-             schema.dialect_schema = Some(Arc::new(()));
-         })
-         .unwrap();
--        let fresh = crate::schema::builtin::schema_builder(&DialectThatCannotParse, false)
-+        let fresh = crate::schema::builtin::schema_builder(false)
-             .unwrap()
-             .build();
-         assert!(fresh.dialect_schema.is_none());
+@@ -4,7 +4,7 @@ use crate::ast::{self, SortOrder, TableInternalId};
+ use crate::translate::expr::comparison_affinity;
+ use crate::translate::expr_context::{ExprContext, ExprProperties, TableMetadata};
+ use crate::{
+-    schema::{Column, Index, IndexColumn, Schema},
++    schema::{Column, Index, IndexColumn, Schema, Table},
+     translate::{
+         collate::{comparison_collation, in_list_collation, CollationSeq},
+         expr::{
+@@ -408,8 +408,16 @@ fn estimate_selectivity(
+ 
+     match op {
+         ConstraintOperator::AstNativeOperator(ast::Operator::Equals) => {
+-            let is_pk_or_rowid_alias =
+-                is_rowid || column.is_some_and(|c| c.is_rowid_alias() || c.primary_key());
++            // One column of a primary key with several columns is not unique
++            // on its own, so it takes the indexed-column estimate below.
++            let is_single_column_primary_key = column.is_some_and(|c| c.primary_key())
++                && matches!(
++                    &table_reference.table,
++                    Table::BTree(table) if table.primary_key_columns.len() == 1
++                );
++            let is_pk_or_rowid_alias = is_rowid
++                || column.is_some_and(|c| c.is_rowid_alias())
++                || is_single_column_primary_key;
+ 
+             let selectivity_when_unique = if row_count > 0 {
+                 1.0 / row_count as f64
 ```
 
-**File**: `core/dialect/mod.rs` (modified, +1/-1)
+**File**: `core/translate/optimizer/cost.rs` (modified, +61/-0)
 ```diff
-@@ -260,7 +260,7 @@ pub trait Dialect: Send + Sync + 'static {
-     ///
-     /// [`Dialect::new_schema`] finishes the schema.
-     fn schema_builder(&self, enable_custom_types: bool) -> Result<SchemaBuilder> {
--        crate::schema::builtin::schema_builder(self, enable_custom_types)
-+        crate::schema::builtin::schema_builder(enable_custom_types)
-     }
- 
-     fn register_native_extensions(&self, options: OpenOptions) -> OpenOptions {
-```
-
-**File**: `core/schema.rs` (modified, +120/-209)
-```diff
-@@ -21,6 +21,7 @@ use crate::translate::schema::type_def_uses_type;
- use crate::type_ordering::TypeOrdering;
- use crate::types::IOResultOr;
- use crate::types::StrictType;
-+use crate::types::{Conversion, StorageClass, UserType};
- use crate::types::{IOResult, ImmutableRecord, ImmutableRecordRef};
- use crate::util::{exprs_are_equivalent, is_builtin_strict_type, normalize_ident};
- use crate::vdbe::affinity::Affinity;
-@@ -248,9 +249,9 @@ pub enum TypeDefKind {
-     Custom {
-         params: std::vec::Vec<ast::TypeParam>,
-         base: String,
--        encode: Option<Box<ast::Expr>>,
--        coerce: Option<Box<ast::Expr>>,
--        decode: Option<Box<ast::Expr>>,
-+        encode: Option<Conversion>,
-+        coerce: Option<Conversion>,
-+        decode: Option<Conversion>,
-         /// How values of the type compare, for built-in types that have their
-         /// own order, such as numeric. `None` compares the stored values as
-         /// SQLite does.
-@@ -319,116 +320,8 @@ pub enum OperatorArg {
- pub const BINARY_OPERATORS: [&str; 9] = ["+", "-", "*", "/", "%", "&", "|", "<<", ">>"];
- pub const PREFIX_OPERATORS: [&str; 2] = ["-", "~"];
- 
--/// The order of a built-in type whose stored values do not sort in the type's
--/// order: numeric is stored as a blob. Every other type, and every user type,
--/// sorts and compares by its stored value as SQLite does.
--fn builtin_ordering(type_name: &str) -> Option<TypeOrdering> {
--    match type_name {
--        "numeric" => Some(TypeOrdering::Numeric),
--        _ => None,
--    }
--}
--
--/// The kind of value a built-in type reads as. uuid, jsonb and numeric store
--/// blobs and DECODE them to text. The built-in types are registered before any
--/// connection's functions, so the kind of `uuid_str(value)` can't be worked
--/// out from the DECODE then; a test checks these against the DECODE of each
--/// type.
--fn builtin_value_type(type_name: &str) -> crate::Result<BuiltinType> {
--    Ok(match type_name {
--        "boolean" | "smallint" | "bigint" => BuiltinType::Integer,
--        "uuid" | "json" | "jsonb" | "numeric" | "varchar" | "date" | "time" | "timestamp"
--        | "timestamptz" | "inet" | "cidr" | "macaddr" | "macaddr8" => BuiltinType::Text,
--        "bytea" => BuiltinType::Blob,
--        _ => {
--            return Err(LimboError::InternalError(format!(
--                "built-in type {type_name} has no kind of value"
--            )))
--        }
--    })
--}
--
--/// Operators on built-in types. User types have none: `x + 1` on a user type is
--/// an error. The functions read plain values as they are, so nothing is encoded first:
--/// - `numeric op x` and `x op numeric` for `+ - * / %`, and `-numeric`, compute
--///   exactly, and the result is a numeric. Encoding a literal to the column's type would round it
--///   to the column's scale first (`n * 0.005` would be `n * 0.01`). With a REAL
--///   value `+ - * /` are SQLite's operators and give a REAL, as PostgreSQL gives
--///   double precision; `%` with a REAL value does not exist, as in PostgreSQL.
--/// - `date + integer`, `integer + date` and `date - integer` add or subtract
--///   days and give a date. `date - date` gives the number of days between them;
--///   a text literal on either side is encoded to a date first. Each signature
--///   has its own function, so its result type is known before the statement
--///   runs.
--/// - `smallint` and `bigint` store plain integers, so SQLite's operators run,
--///   including `-`, `~`, `&`, `|`, `<<` and `>>`.
--///
--/// Other built-in types have no operators, and these types have no others:
--/// `-date` and `numeric & 1` are errors, as in PostgreSQL.
--fn builtin_signatures(type_name: &str) -> std::vec::Vec<OperatorSignature> {
--    use OperatorArg::{EncodableLiteral, Exact, Integer, Real, Value};
--    let call = |op, args: &[OperatorArg], func: &str, result| OperatorSignature {
--        op,
--        args: args.to_vec(),
--        func: Some(func.to_string()),
--        result,
--    };
--    match type_name {
--        "numeric" => {
--            let mut signatures = std::vec::Vec::new();
--            for (op, func) in [
--                ("+", "numeric_add"),
--                ("-", "numeric_sub"),
--                ("*", "numeric_mul"),
--                ("/", "numeric_div"),
--                ("%", "numeric_mod"),
--            ] {
--                for args in [[Value, Value], [Value, Exact], [Exact, Value]] {
--                    signatures.push(call(op, &args, func, Some("numeric")));
--                }
--                if op != "%" {
--                    signatures.extend(sqlite_operator(op, Real));
--                }
--            }
--            signatures.push(call("-", &[Value], "numeric_neg", Some("numeric")));
--            signatures
--        }
--        "date" => std::vec![
--            call("+", &[Value, Integer], "date_plus", Some("date")),
--            call("+", &[Integer, Value], "date_plus", Some("date")),
--            call("-", &[Value, Value], "date_diff", Some("integer")),
-
-```
-
-**File**: `core/schema/builtin.rs` (modified, +5/-81)
-```diff
-@@ -1,7 +1,7 @@
- //! The catalog tables and types that the schema of every database has,
- //! whatever its dialect.
- 
--use super::{RangeOffsets, SchemaBuilder, Table, TypeDef, TypeOrigin};
-+use super::{SchemaBuilder, Table};
- use crate::pragma::PragmaVirtualTable;
- use crate::sync::Arc;
- use crate::vtab::{VirtualTable, VirtualTableType};
-@@ -10,90 +10,14 @@ use turso_ext::VTabKind;
- /// Starts the schema of a database: the built-in catalog tables and, if
- /// `enable_custom_types`, the built-in types. A dialect adds its own tables
- /// and types to the builder.
--pub fn schema_builder(
--    dialect: &(impl crate::dialect::Dialect + ?Sized),
--    enable_custom_types: bool,
--) -> crate::Result<SchemaBuilder> {
-+pub fn schema_builder(enable_custom_types: bool) -> crate::Result<SchemaBuilder> {
-     let mut builder = SchemaBuilder::new()?.custom_types(enable_custom_types);
-     if enable_custom_types {
--        builder = builtin_types(dialect, builder)?;
--    }
--    builtin_catalog(builder, enable_custom_types)
--}
--
--fn builtin_types(
--    dialect: &(impl crate::dialect::Dialect + ?Sized),
--    mut builder: SchemaBuilder,
--) -> crate::Result<SchemaBuilder> {
--    use crate::ast::{Cmd, Stmt};
--
--    // Whether values of the type take a COLLATE. In PostgreSQL only text
--    // types do, so of the types below only varchar does.
--    const COLLATE: bool = true;
--    const NO_COLLATE: bool = false;
--    // Whether the stored form sorts in the same order as the values.
--    const SORTS: bool = true;
--    const NO_SORT: bool = false;
--    let types: &[(bool, RangeOffsets, bool, &str)] = &[
--        #[cfg(feature = "uuid")]
--        (NO_COLLATE, RangeOffsets::None, NO_SORT, "CREATE TYPE uuid(value any) BASE blob ENCODE CASE WHEN value IS NULL THEN NULL WHEN typeof(value) = 'blob' AND length(value) = 16 THEN value ELSE coalesce(uuid_blob(value), RAISE(ABORT, 'invalid UUID value')) END DECODE uuid_str(value) OPERATOR '<'"),
--        (NO_COLLATE, RangeOffsets::None, NO_SORT, "CREATE TYPE boolean(value any) BASE integer ENCODE boolean_to_int(value) DECODE CASE WHEN value THEN 1 ELSE 0 END OPERATOR '<'"),
--        #[cfg(feature = "json")]
--        (NO_COLLATE, RangeOffsets::None, NO_SORT, "CREATE TYPE json(value text) BASE text ENCODE json(value) DECODE value"),
--        #[cfg(feature = "json")]
--        (NO_COLLATE, RangeOffsets::None, NO_SORT, "CREATE TYPE jsonb(value text) BASE blob ENCODE jsonb(value) DECODE json(value)"),
--        (COLLATE, RangeOffsets::None, NO_SORT, "CREATE TYPE varchar(value text, maxlen integer) BASE text COERCE CASE WHEN length(value) <= maxlen THEN value ELSE RAISE(ABORT, 'value too long for varchar') END DECODE value OPERATOR '<'"),
--        // The ENCODEs read PostgreSQL's input forms and store one text form
--        // with a 4-digit year, which sorts in time order (see
--        // functions/datetime_input.rs).
--        (NO_COLLATE, RangeOffsets::None, SORTS, "CREATE TYPE date(value text) BASE text ENCODE temporal_encode(value, 'date') DECODE value OPERATOR '<'"),
--        (NO_COLLATE, RangeOffsets::None, SORTS, "CREATE TYPE time(value text) BASE text ENCODE temporal_encode(value, 'time') DECODE value OPERATOR '<'"),
--        (NO_COLLATE, RangeOffsets::None, SORTS, "CREATE TYPE timestamp(value text) BASE text ENCODE temporal_encode(value, 'timestamp') DECODE value OPERATOR '<'"),
--        (NO_COLLATE, RangeOffsets::None, SORTS, "CREATE TYPE timestamptz(value text) BASE text ENCODE temporal_encode(value, 'timestamptz') DECODE value OPERATOR '<'"),
--        (NO_COLLATE, RangeOffsets::Integer, NO_SORT, "CREATE TYPE smallint(value integer) BASE integer COERCE CASE WHEN value BETWEEN -32768 AND 32767 THEN value ELSE RAISE(ABORT, 'integer out of range for smallint') END OPERATOR '<'"),
--        (NO_COLLATE, RangeOffsets::Integer, NO_SORT, "CREATE TYPE bigint(value integer) BASE integer"),
--        (NO_COLLATE, RangeOffsets::None, NO_SORT, "CREATE TYPE inet(value text) BASE text ENCODE validate_ipaddr(value) DECODE value"),
--        (NO_COLLATE, RangeOffsets::None, NO_SORT, "CREATE TYPE cidr(value text) BASE text ENCODE value DECODE value"),
--        (NO_COLLATE, RangeOffsets::None, NO_SORT, "CREATE TYPE macaddr(value text) BASE text ENCODE value DECODE value"),
--        (NO_COLLATE, RangeOffsets::None, NO_SORT, "CREATE TYPE macaddr8(value text) BASE text ENCODE value DECODE value"),
--        (NO_COLLATE, RangeOffsets::None, NO_SORT, "CREATE TYPE bytea(value blob) BASE blob OPERATOR '<'"),
--        (NO_COLLATE, RangeOffsets::Numeric, NO_SORT, "CREATE TYPE numeric(value any, precision integer, scale integer) BASE blob ENCODE numeric_encode(value) COERCE numeric_fit(value, precision, scale) DECODE numeric_decode(value)"),
--    ];
--
--    let aliases: &[(&str, &str)] = &[
--        ("bool", "boolean"),
--        ("int2", "smallint"),
--        ("int8", "bigint"),
--    ];
--    for &(accepts_collate, range_offsets, stored_form_sorts_in_value_order, sql) in types {
--        let Ok(Some(Cmd::Stmt(Stmt::CreateTy
-```
-
-**File**: `core/translate/expr/custom_types.rs` (modified, +51/-17)
-```diff
-@@ -1,5 +1,6 @@
- use super::*;
- use crate::schema::ResolvedType;
-+use crate::types::Conversion;
- 
- /// Get the effective type name of a literal expression.
- pub(super) fn literal_type_name(expr: &ast::Expr) -> Option<&'static str> {
-@@ -565,8 +566,8 @@ pub(crate) fn emit_decode(
- 
-     // Apply decode in reverse order (parent/ancestor first, then child)
-     for td in resolved.chain.iter().rev() {
--        if let Some(decode_expr) = td.decode() {
--            emit_type_expr(program, decode_expr, reg, reg, resolver)?;
-+        if let Some(decode) = td.decode() {
-+            emit_conversion(program, td, "DECODE", decode, reg, resolver)?;
+@@ -366,6 +366,15 @@ pub(crate) fn estimate_rows_per_seek(
          }
      }
  
-@@ -698,15 +699,15 @@ pub(crate) fn emit_store_value(
-     });
-     for type_def in &resolved.chain {
-         if let Some(encode) = type_def.encode() {
--            emit_type_expr(program, encode, reg, reg, resolver)?;
-+            emit_conversion(program, type_def, "ENCODE", encode, reg, resolver)?;
-         }
-         let type_params = match coerce {
-             Coerce::WithArgs(type_params) => type_params,
-             Coerce::Skip => continue,
-         };
--        if let Some(coerce_expr) = coerce_to_run(type_def, type_params) {
-+        if let Some(coerce) = coerce_to_run(type_def, type_params) {
-             program.emit_insn(convert.clone());
--            emit_coerce(program, type_def, coerce_expr, reg, type_params, resolver)?;
-+            emit_coerce(program, type_def, coerce, reg, type_params, resolver)?;
-         }
-     }
-     program.emit_insn(convert);
-@@ -727,7 +728,7 @@ pub(crate) fn emit_encode_for_comparison(
- ) -> Result<()> {
-     for type_def in chain {
-         if let Some(encode) = type_def.encode() {
--            emit_type_expr(program, encode, reg, reg, resolver)?;
-+            emit_conversion(program, type_def, "ENCODE", encode, reg, resolver)?;
-         }
-     }
-     program.emit_insn(Insn::Affinity {
-@@ -738,24 +739,39 @@ pub(crate) fn emit_encode_for_comparison(
-     Ok(())
- }
- 
--/// Emit bytecode for a custom type ENCODE or DECODE expression, with `value`
--/// referencing `value_reg`. The result is written to `dest_reg`.
--pub(crate) fn emit_type_expr(
-+/// Emits `conversion`, which is the ENCODE or DECODE of `type_def` as `clause`
-+/// says, on the value in `reg`. A SQL expression is compiled with `value`
-+/// referencing `reg`. A Rust function is called, unless the value is NULL.
-+pub(crate) fn emit_conversion(
-     program: &mut ProgramBuilder,
--    expr: &ast::Expr,
--    value_reg: usize,
--    dest_reg: usize,
-+    type_def: &TypeDef,
-+    clause: &str,
-+    conversion: &Conversion,
-+    reg: usize,
-     resolver: &Resolver,
--) -> Result<usize> {
--    emit_expr_with_bindings(program, expr, value_reg, dest_reg, &[], resolver)
-+) -> Result<()> {
-+    match conversion {
-+        Conversion::Unchanged => {}
-+        Conversion::Function(function) => program.emit_insn(Insn::TypeConversion {
-+            function: *function,
-+            reg,
-+            params_reg: reg,
-+            param_count: 0,
-+            description: format!("{} {clause}", type_def.name),
-+        }),
-+        Conversion::Expr(expr) => {
-+            emit_expr_with_bindings(program, expr, reg, reg, &[], resolver)?;
-+        }
++    if let Some(rows) = default_rows_for_first_column_of_unique_key(
++        index_info,
++        constraints,
++        usable_constraint_refs,
++        base_row_count,
++    ) {
++        return rows * join_probe_constant_selectivity;
 +    }
-+    Ok(())
++
+     let selectivity_multiplier: f64 = usable_constraint_refs
+         .iter()
+         .map(|cref| {
+@@ -386,6 +395,58 @@ pub(crate) fn estimate_rows_per_seek(
+     (selectivity_multiplier * *base_row_count).max(1.0) * join_probe_constant_selectivity
  }
  
- /// The type's COERCE, unless the type has parameters and is used without
- /// arguments, as a column declared `numeric`: it then has no limits.
- fn coerce_to_run<'a>(
-     type_def: &'a TypeDef,
-     type_params: &[Box<ast::Expr>],
--) -> Option<&'a ast::Expr> {
-+) -> Option<&'a Conversion> {
-     let coerce = type_def.coerce()?;
-     if type_params.is_empty() && type_def.user_params().next().is_some() {
-         return None;
-@@ -768,7 +784,7 @@ fn coerce_to_run<'a>(
- fn emit_coerce(
-     program: &mut ProgramBuilder,
-     type_def: &TypeDef,
--    coerce: &ast::Expr,
-+    coerce: &Conversion,
-     reg: usize,
-     type_params: &[Box<ast::Expr>],
-     resolver: &Resolver,
-@@ -788,7 +804,25 @@ fn emit_coerce(
-         reg,
-         target_pc: skip_null,
-     });
--    emit_expr_with_bindings(program, coerce, reg, reg, &bindings, resolver)?;
-+    match coerce {
-+        Conversion::Unchanged => {}
-+        Conversion::Function(function) => {
-+            let params_reg = program.alloc_registers(bindings.len());
-+            for (i, (_, arg)) in bindings.iter().enumerate() {
-+                translate_expr(program, None, arg, params_reg + i, resolver)?;
++/// Default number of rows that match `=` on the first column of an index
++/// without ANALYZE stats. This is the value SQLite's sqlite3DefaultRowEst()
++/// uses for a one-column prefix.
++const DEFAULT_ROWS_PER_FIRST_COLUMN_OF_INDEX: f64 = 10.0;
++
++/// Rows per seek with `=` on only the first column of a unique index with
++/// several columns, such as a composite primary key, when ANALYZE has no
++/// stats. Returns `None` for any other seek.
++///
++/// The per-column estimate for that column is a fixed fraction of the table,
++/// so `l_orderkey = ?` on TPC-H's PRIMARY KEY (l_orderkey, l_linenumber)
++/// estimates thousands of rows of a 6M-row lineitem table, where the first
++/// key column usually matches a few rows. Like SQLite, the estimate is 10
++/// rows, times the selectivity of any range constraint on the next column.
++/// Longer prefixes keep the product of the per-column estimates, which
++/// includes the factor of every column that leads no index.
++fn default_rows_for_first_column_of_unique_key(
++    index_info: IndexInfo,
++    constraints: &[Constraint],
++    usable_constraint_refs: &[RangeConstraintRef],
++    base_row_count: RowCountEstimate,
++) -> Option<f64> {
++    if !index_info.unique || index_info.column_count < 2 {
++        return None;
++    }
++    let eq_prefix_len = usable_constraint_refs
++        .iter()
++        .take_while(|cref| cref.eq.is_some())
++        .count();
++    if eq_prefix_len != 1 {
++        return None;
++    }
++    let range_selectivity: f64 = usable_constraint_refs[1..]
++        .iter()
++        .map(|cref| {
++            let mut selectivity = 1.0;
++            if let Some(lower_bound) = cref.lower_bound {
++                selectivity *= constraints[lower_bound].selectivity;
 +            }
-+            program.emit_insn(Insn::TypeConversion {
-+                function: *function,
-+                reg,
-+                params_reg,
-+                param_count: bindings.len(),
-+                description: format!("{} COERCE", type_def.name),
-+            });
-+        }
-+        Conversion::Expr(expr) => {
-+            emit_expr_with_bindings(program, expr, reg, reg, &bindings, resolver)?;
-+        }
-+    }
-     program.preassign_label_to_next_insn(skip_null);
-     Ok(())
++            if let Some(upper_bound) = cref.upper_bound {
++                selectivity *= constraints[upper_bound].selectivity;
++            }
++            selectivity
++        })
++        .product();
++    Some(
++        (DEFAULT_ROWS_PER_FIRST_COLUMN_OF_INDEX * range_selectivity)
++            .min(*base_row_count)
++            .max(1.0),
++    )
++}
++
+ fn join_probe_constant_selectivity(
+     constraints: &[Constraint],
+     usable_constraint_refs: &[RangeConstraintRef],
+```
+
+**File**: `core/translate/optimizer/mod.rs` (modified, +55/-3)
+```diff
+@@ -890,9 +890,17 @@ fn detect_simple_aggregate(
+     let agg = plan.aggregates.first().unwrap();
+     let result_expr = &plan.result_columns.first().unwrap().expr;
+ 
+-    // The result column must be exactly the aggregate expression (not wrapped in
+-    // something like `length(count(*))`).
+-    if !exprs_are_equivalent(result_expr, &agg.original_expr) {
++    // The COUNT fast path writes the count straight into the result register,
++    // so its result column must be exactly the aggregate (not wrapped in
++    // something like `length(count(*))`). The MIN/MAX fast path only stops the
++    // loop at the first qualifying row and then computes the result column as
++    // usual, so it also accepts a wrapper such as `COALESCE(MIN(x), 0)`, like
++    // SQLite's minMaxQuery().
++    let result_is_aggregate = exprs_are_equivalent(result_expr, &agg.original_expr);
++    if !result_is_aggregate
++        && (!matches!(agg.func, AggFunc::Min | AggFunc::Max)
++            || !wrapper_reads_only_aggregate(result_expr, &agg.original_expr)?)
++    {
+         return Ok(None);
+     }
+ 
+@@ -942,6 +950,50 @@ fn detect_simple_aggregate(
+     })
  }
-```
-
-**File**: `core/translate/expr/expr_type.rs` (modified, +19/-81)
-```diff
-@@ -16,7 +16,7 @@ use crate::translate::emitter::Resolver;
- use crate::translate::expr_context::TableMetadata;
- use crate::translate::plan::{Plan, SelectPlan, TableReferences};
- use crate::type_ordering::TypeOrdering;
--use crate::types::{StorageClass, StrictType};
-+use crate::types::{Conversion, StorageClass, StrictType};
- use crate::vdbe::affinity::Affinity;
- use crate::{Result, SymbolTable};
  
-@@ -954,7 +954,13 @@ pub(crate) fn decode_type(
-     if type_def.decode_returns_value_unchanged() {
-         return None;
++/// Returns true when `result_expr` reads no table column, subquery or
++/// register outside `aggregate`. The MIN/MAX fast path leaves the cursor on the
++/// extremum row, so a column read outside the aggregate would see that row
++/// instead of the row the normal aggregate loop leaves behind.
++fn wrapper_reads_only_aggregate(result_expr: &Expr, aggregate: &Expr) -> Result<bool> {
++    let mut reads_only_aggregate = true;
++    walk_expr(result_expr, &mut |expr: &Expr| -> Result<WalkControl> {
++        if exprs_are_equivalent(expr, aggregate) {
++            return Ok(WalkControl::SkipChildren);
++        }
++        // Allow only expressions that compute a value from their operands.
++        // Everything else (columns, subqueries, registers, unresolved names)
++        // could read state outside the aggregate.
++        let is_window_call = matches!(
++            expr,
++            Expr::FunctionCall { filter_over, .. } if filter_over.over_clause.is_some()
++        );
++        if !is_window_call
++            && matches!(
++                expr,
++                Expr::Literal(..)
++                    | Expr::Variable(..)
++                    | Expr::FunctionCall { .. }
++                    | Expr::Binary(..)
++                    | Expr::Unary(..)
++                    | Expr::Parenthesized(..)
++                    | Expr::Cast { .. }
++                    | Expr::Collate(..)
++                    | Expr::Case { .. }
++                    | Expr::Between { .. }
++                    | Expr::InList { .. }
++                    | Expr::IsNull(..)
++                    | Expr::NotNull(..)
++                    | Expr::Like { .. }
++            )
++        {
++            return Ok(WalkControl::Continue);
++        }
++        reads_only_aggregate = false;
++        Ok(WalkControl::SkipChildren)
++    })?;
++    Ok(reads_only_aggregate)
++}
++
+ /// The table reads chosen by the join search.
+ struct TableAccessPlan {
+     access_methods: Vec<AccessMethod>,
+```
+
+**File**: `perf/tpc-c/src/main.c` (modified, +54/-38)
+```diff
+@@ -109,6 +109,7 @@ int main(int argc, char *argv[]) {
+   struct itimerval itval;
+   struct sigaction sigact;
+   int fd, seed;
++  int seed_given = 0;
+ 
+   printf("CHECKING IF SQLITE IS THREADSAFE: RETURN VALUE = %d\n",
+          sqlite3_threadsafe());
+@@ -150,7 +151,7 @@ int main(int argc, char *argv[]) {
+ 
+   /* Parse args */
+ 
+-  while ((c = getopt(argc, argv, "w:c:r:l:i:m:o:t:0:1:2:3:4:")) != -1) {
++  while ((c = getopt(argc, argv, "w:c:r:l:i:m:o:t:s:0:1:2:3:4:")) != -1) {
+     switch (c) {
+     case 'w':
+       printf("option w with value '%s'\n", optarg);
+@@ -180,6 +181,11 @@ int main(int argc, char *argv[]) {
+       printf("option t (number of transactions) with value '%s'\n", optarg);
+       num_trans = atoi(optarg);
+       break;
++    case 's':
++      printf("option s (random seed) with value '%s'\n", optarg);
++      seed = atoi(optarg);
++      seed_given = 1;
++      break;
+     case 'i':
+       printf("option i with value '%s'\n", optarg);
+       PRINT_INTERVAL = atoi(optarg);
+@@ -320,20 +326,23 @@ int main(int argc, char *argv[]) {
+     exit(1);
+   }
+ 
+-  fd = open("/dev/urandom", O_RDONLY);
+-  if (fd == -1) {
+-    fd = open("/dev/random", O_RDONLY);
++  /* -s fixes the seed, so that with -c 1 and -t a run is repeatable. */
++  if (!seed_given) {
++    fd = open("/dev/urandom", O_RDONLY);
+     if (fd == -1) {
+-      struct timeval tv;
+-      gettimeofday(&tv, NULL);
+-      seed = (tv.tv_sec ^ tv.tv_usec) * tv.tv_sec * tv.tv_usec ^ tv.tv_sec;
++      fd = open("/dev/random", O_RDONLY);
++      if (fd == -1) {
++        struct timeval tv;
++        gettimeofday(&tv, NULL);
++        seed = (tv.tv_sec ^ tv.tv_usec) * tv.tv_sec * tv.tv_usec ^ tv.tv_sec;
++      } else {
++        read(fd, &seed, sizeof(seed));
++        close(fd);
++      }
+     } else {
+       read(fd, &seed, sizeof(seed));
+       close(fd);
      }
--    let decode = type_def.decode()?;
-+    let decode = match type_def.decode()? {
-+        Conversion::Expr(decode) => decode,
-+        // A type written in Rust says what its DECODE gives when it is
-+        // registered.
-+        Conversion::Function(_) => return Some(ExprType::Builtin(type_def.value_type())),
-+        Conversion::Unchanged => return None,
-+    };
-     Some(type_of(
-         decode,
-         &TypeEnv::TypeBody {
-@@ -1413,7 +1419,7 @@ mod tests {
-     use super::*;
-     use crate::ast::{Expr, Literal, Name, Operator, UnaryOperator};
-     use crate::dialect::cannot_parse::DialectThatCannotParse;
--    use crate::schema::{RangeOffsets, SchemaBuilder, TypeOrigin};
-+    use crate::schema::SchemaBuilder;
-     use crate::translate::emitter::DoubleQuotedDml;
-     use crate::{DatabaseCatalog, RwLock, SymbolTable};
-     use rustc_hash::FxHashMap as HashMap;
-@@ -1806,8 +1812,8 @@ mod tests {
-         let mut schema = SchemaBuilder::new()
-             .unwrap()
-             .custom_types(true)
--            .type_def("numeric", Arc::new(builtin_numeric()))
--            .type_def("smallint", Arc::new(builtin_smallint()))
-+            .type_def("numeric", Arc::new(builtin_type("numeric")))
-+            .type_def("smallint", Arc::new(builtin_type("smallint")))
-             .build();
-         let sql = "CREATE TYPE cents BASE integer ENCODE value * 100 DECODE value / 100";
-         let cents = ast::CreateTypeBody::CustomType {
-@@ -1819,86 +1825,18 @@ mod tests {
-             operators: vec![],
-             default: None,
-         };
--        let cents =
--            TypeDef::from_create_type("cents", &cents, TypeOrigin::User, sql.to_string()).unwrap();
-+        let cents = TypeDef::from_create_type("cents", &cents, sql.to_string()).unwrap();
-         schema.add_type(cents, &SymbolTable::new()).unwrap();
-         schema
+-  } else {
+-    read(fd, &seed, sizeof(seed));
+-    close(fd);
+   }
+   SetSeed(seed);
+ 
+@@ -394,46 +403,53 @@ int main(int argc, char *argv[]) {
+                    (void *)&(thd_arg[t_num]));
+   }
+ 
+-  printf("\nRAMP-UP TIME.(%d sec.)\n", lampup_time);
+-  fflush(stdout);
+-  sleep(lampup_time);
+-  printf("\nMEASURING START.\n\n");
+-  fflush(stdout);
++  if (num_trans > 0) {
++    /* With -t, each thread stops after its transaction count. Count every
++       transaction and wait for the threads, so a run does the same work
++       every time (used for instruction-count profiling). */
++    counting_on = 1;
++  } else {
++    printf("\nRAMP-UP TIME.(%d sec.)\n", lampup_time);
++    fflush(stdout);
++    sleep(lampup_time);
++    printf("\nMEASURING START.\n\n");
++    fflush(stdout);
+ 
+-  /* sleep(measure_time); */
+-  /* start timer */
++    /* sleep(measure_time); */
++    /* start timer */
+ 
+ #ifndef _SLEEP_ONLY_
+-  if (setitimer(ITIMER_REAL, &itval, NULL) == -1) {
+-    fprintf(stderr, "error in setitimer()\n");
+-  }
++    if (setitimer(ITIMER_REAL, &itval, NULL) == -1) {
++      fprintf(stderr, "error in setitimer()\n");
++    }
+ #endif
+ 
+-  counting_on = 1;
+-  /* wait for measurement period */
+-  for (i = 0; i < (measure_time / PRINT_INTERVAL); i++) {
++    counting_on = 1;
++    /* wait for measurement period */
++    for (i = 0; i < (measure_time / PRINT_INTERVAL); i++) {
+ #ifndef _SLEEP_ONLY_
+-    pause();
++      pause();
+ #else
+-    sleep(PRINT_INTERVAL);
+-    alarm_dummy();
++      sleep(PRINT_INTERVAL);
++      alarm_dummy();
+ #endif
+-  }
+-  counting_on = 0;
++    }
++    counting_on = 0;
+ 
+ #ifndef _SLEEP_ONLY_
+-  /* stop timer */
+-  itval.it_interval.tv_sec = 0;
+-  itval.it_interval.tv_usec = 0;
+-  itval.it_value.tv_sec = 0;
+-  itval.it_value.tv_usec = 0;
+-  if (setitimer(ITIMER_REAL, &itval, NULL) == -1) {
+-    fprintf(stderr, "error in setitimer()\n");
+-  }
++    /* stop timer */
++    itval.it_interval.tv_sec = 0;
++    itval.it_interval.tv_usec = 0;
++    itval.it_value.tv_sec = 0;
++    itval.it_value.tv_usec = 0;
++    if (setitimer(ITIMER_REAL, &itval, NULL) == -1) {
++      fprintf(stderr, "error in setitimer()\n");
++    }
+ #endif
+ 
+-  printf("\nSTOPPING THREADS");
+-  activate_transaction = 0;
++    printf("\nSTOPPING THREADS");
++    activate_transaction = 0;
++  }
+ 
+   /* wait threads' ending and close connections*/
+   for (i = 0; i < num_conn; i++) {
+```
+
+**File**: `sqlite/conformance/sqlite-sqltests/composite-primary-key-index-choice.sqltest` (added, +98/-0)
+```diff
+@@ -0,0 +1,98 @@
++# Index choice for tables with a composite primary key, without ANALYZE stats.
++# One column of a composite primary key is not unique on its own, so `= ?` on
++# it must not be estimated as a one-row lookup. These statements come from TPC-C.
++
++@database :memory:
++
++setup tpcc_like {
++    CREATE TABLE warehouse (w_id INTEGER PRIMARY KEY, w_tax REAL);
++
++    CREATE TABLE customer (
++        c_w_id INTEGER, c_d_id INTEGER, c_id INTEGER,
++        c_last TEXT, c_first TEXT, c_credit TEXT, c_discount REAL,
++        PRIMARY KEY (c_w_id, c_d_id, c_id)
++    );
++    CREATE INDEX idx_customer ON customer (c_w_id, c_d_id, c_last, c_first);
++
++    CREATE TABLE orders (
++        o_w_id INTEGER, o_d_id INTEGER, o_id INTEGER, o_c_id INTEGER, o_carrier_id INTEGER,
++        PRIMARY KEY (o_w_id, o_d_id, o_id)
++    );
++    CREATE INDEX idx_orders ON orders (o_w_id, o_d_id, o_c_id, o_id);
++
++    CREATE TABLE stock (
++        s_w_id INTEGER, s_i_id INTEGER, s_quantity INTEGER, s_data TEXT,
++        PRIMARY KEY (s_w_id, s_i_id)
++    );
++    CREATE INDEX fkey_stock_2 ON stock (s_i_id);
++}
++
++@setup tpcc_like
++@skip-if sqlite "Turso prints query plan rows in a different format"
++test full-primary-key-beats-index-on-key-prefix {
++    EXPLAIN QUERY PLAN
++    SELECT c_last FROM customer WHERE c_w_id = 1 AND c_d_id = 2 AND c_id = 3;
++}
++expect {
++    1|0|0|SEARCH customer USING INDEX sqlite_autoindex_customer_1 (c_w_id=? AND c_d_id=? AND c_id=?)
++}
++
++@setup tpcc_like
++@skip-if sqlite "Turso prints query plan rows in a different format"
++test full-primary-key-beats-index-on-key-prefix-in-join {
++    EXPLAIN QUERY PLAN
++    SELECT c_discount, c_last, c_credit, w_tax FROM customer, warehouse
++    WHERE w_id = 1 AND c_w_id = w_id AND c_d_id = 2 AND c_id = 3;
++}
++expect {
++    1|0|0|SEARCH warehouse USING INTEGER PRIMARY KEY (rowid=?)
++    2|0|0|SEARCH customer USING INDEX sqlite_autoindex_customer_1 (c_w_id=? AND c_d_id=? AND c_id=?)
++}
++
++@setup tpcc_like
++@skip-if sqlite "Turso prints query plan rows in a different format"
++test full-primary-key-beats-covering-index-on-key-prefix {
++    EXPLAIN QUERY PLAN
++    SELECT o_c_id FROM orders WHERE o_id = 1 AND o_d_id = 2 AND o_w_id = 3;
++}
++expect {
++    1|0|0|SEARCH orders USING INDEX sqlite_autoindex_orders_1 (o_w_id=? AND o_d_id=? AND o_id=?)
++}
++
++@setup tpcc_like
++@skip-if sqlite "Turso prints query plan rows in a different format"
++test full-primary-key-beats-index-on-one-key-column {
++    EXPLAIN QUERY PLAN
++    SELECT s_quantity FROM stock WHERE s_i_id = 1 AND s_w_id = 2;
++}
++expect {
++    1|0|0|SEARCH stock USING INDEX sqlite_autoindex_stock_1 (s_w_id=? AND s_i_id=?)
++}
++
++@setup tpcc_like
++@skip-if sqlite "Turso prints query plan rows in a different format"
++test index-matching-more-columns-beats-primary-key-prefix {
++    EXPLAIN QUERY PLAN
++    SELECT count(c_id) FROM customer WHERE c_w_id = 1 AND c_d_id = 2 AND c_last = 'BAR';
++}
++expect {
++    1|0|0|SEARCH customer USING INDEX idx_customer (c_w_id=? AND c_d_id=? AND c_last=?)
++}
++
++# `d = ?` on the second column of a composite primary key, outside a primary
++# key search, filters like `=` on any indexed column.
++setup non_leading_key_column {
++    CREATE TABLE t (w INTEGER, d INTEGER, id INTEGER, x INTEGER, PRIMARY KEY (w, d, id));
++    CREATE INDEX t_d_x ON t (d, x);
++    CREATE INDEX t_x ON t (x);
++}
++
++@setup non_leading_key_column
++@skip-if sqlite "Turso prints query plan rows in a different format"
++test index-on-non-leading-key-column-and-other-column {
++    EXPLAIN QUERY PLAN
++    SELECT id FROM t WHERE d = 2 AND x = 52;
++}
++expect {
++    1|0|0|SEARCH t USING INDEX t_d_x (d=? AND x=?)
++}
+```
+
+**File**: `sqlite/conformance/sqlite-sqltests/select/simple_min_max.sqltest` (modified, +33/-0)
+```diff
+@@ -625,3 +625,36 @@ expect {
+     2|
+     3|5
+ }
++
++test indexed-min-inside-coalesce {
++    CREATE TABLE t(a INTEGER, b INTEGER, c INTEGER, PRIMARY KEY (a, b));
++    INSERT INTO t VALUES (1, 5, NULL), (1, 3, 7), (1, 9, 2), (2, 4, NULL), (3, 1, NULL);
++
++    SELECT COALESCE(MIN(b), 0) FROM t WHERE a = 1;
++    SELECT COALESCE(MIN(b), 0) FROM t WHERE a = 99;
++    SELECT COALESCE(MAX(b), -1) FROM t WHERE a = 1;
++    SELECT MIN(b) + 1 FROM t WHERE a = 2;
++    SELECT CASE WHEN MAX(b) > 4 THEN 'big' ELSE 'small' END FROM t WHERE a = 1;
++}
++expect {
++    3
++    0
++    9
++    5
++    big
++}
++
++test indexed-min-inside-coalesce-skips-nulls {
++    CREATE TABLE t(a INTEGER, c INTEGER);
++    CREATE INDEX tac ON t(a, c);
++    INSERT INTO t VALUES (1, NULL), (1, 7), (1, 2), (2, NULL);
++
++    SELECT COALESCE(MIN(c), 42) FROM t WHERE a = 1;
++    SELECT COALESCE(MIN(c), 42) FROM t WHERE a = 2;
++    SELECT COALESCE(MAX(c), 42) FROM t WHERE a = 2;
++}
++expect {
++    2
++    42
++    42
++}
+```
+
+**File**: `sqlite/conformance/sqlite-sqltests/snapshot_tests/indexes/indexes.sqltest` (modified, +6/-0)
+```diff
+@@ -677,6 +677,12 @@ snapshot max-with-equality-prefix-bytecode {
+     SELECT MAX(value) FROM measurements WHERE category = 'a';
+ }
+ 
++# COALESCE(MIN(x), 0) stops at the first index entry, like MIN(x).
++@setup min_max_equality_prefix
++snapshot coalesce-min-with-equality-prefix-bytecode {
++    SELECT COALESCE(MIN(value), 0) FROM measurements WHERE category = 'a';
++}
++
+ @setup schema
+ snapshot-eqp index-for-max-materialized-cte {
+     WITH prices(price) AS MATERIALIZED (
+```
+
+**File**: `sqlite/conformance/sqlite-sqltests/snapshot_tests/indexes/snapshots/indexes__coalesce-min-with-equality-prefix-bytecode.snap` (added, +35/-0)
+```diff
+@@ -0,0 +1,35 @@
++---
++source: indexes.sqltest
++expression: SELECT COALESCE(MIN(value), 0) FROM measurements WHERE category = 'a';
++info:
++  statement_type: SELECT
++  tables:
++  - measurements
++  setup_blocks:
++  - min_max_equality_prefix
++  database: ':memory:'
++---
++QUERY PLAN
++`--SEARCH measurements USING COVERING INDEX idx_measurements_category_value (category=?)
++
++BYTECODE
++addr  opcode       p1  p2  p3  p4           p5  comment
++   0  Init          0  17   0                0  Start at 17
++   1  Null          0   2   0                0  r[2]=NULL
++   2  OpenRead      0   3   0  k(3,B,B)      0  index=idx_measurements_category_value, root=3, iDb=0
++   3  String8       0   3   0  a             0  r[3]='a'
++   4  SeekGE        0  11   3                0  key=[3..3]
++   5    IdxGT       0  11   3                0  key=[3..3]
++   6    Column      0   1   4                0  r[4]=idx_measurements_category_value.value
++   7    IsNull      4  10   0                0  if (r[4]==NULL) goto 10
++   8    AggStep     0   4   2  min(Binary)   0  accum=r[2] step(r[4])
++   9    Goto        0  11   0                0
++  10  Next          0   5   0                0
++  11  AggFinal      0   2   0  min           0  accum=r[2]
++  12  Copy          2   1   0                0  r[1]=r[2]
++  13  NotNull       1  15   0                0  r[1]!=NULL -> goto 15
++  14  Integer       0   1   0                0  r[1]=0
++  15  ResultRow     1   1   0                0  output=r[1]
++  16  Halt          0   0   0                0
++  17  Transaction   0   1   2                0  iDb=0 tx_mode=Read
++  18  Goto          0   1   0                0
+```
+
+---
+
+### Incident Patch 3: `abb0589a` (2026-11-24)
+**Commit Message**: Merge 'testing/sqltest: let a fixed gap test move to another file' from Jussi Saurio
+
+## TLDR
+
+On main, the gap-removal CI check fails when a PR fixes a gap and moves
+its test to another `.sqltest` file. A gap test is a test marked
+`@compat-gap`: it records a known difference from PostgreSQL. With this
+PR, a moved test passes if it keeps its name and passes the same checks
+as a test that stays in its file.
+
+## Why
+
+- On main, `removed_gaps` looks for the fixed test only in the file that
+held the gap test.
+- So CI reports `gap test <name> (<label>) removed`, even when the moved
+test has the same SQL, setups and PostgreSQL answer.
+
+## How
+
+- `removed_gaps` looks in every test file of the PR branch for a test
+with the same name, and applies the existing `conversion_problem` checks
+to each.
+- If none passes, the error shows the problem of the test in the same
+file, else of the first test in another file. Example: `(moved to
+b.sqltest, but its SQL changed)`.
+- Renamed and deleted gap tests fail as before
+(`a_renamed_gap_test_fails`, `a_deleted_gap_test_fails`).
+- `dsl-spec.md` and the Makefile comment say a fixed test may move.
+
+## Tests
+
+- `a_gap_test_moved_to_another_file_passes`: gap
+
+**File**: `postgres/conformance/Makefile` (modified, +2/-2)
+```diff
+@@ -99,8 +99,8 @@ gaps: build-runner
+ # Fail when a gap test in the checkout at $(BASE) is gone from this one:
+ # deleted, renamed, or converted into a plain test with other SQL, setups or
+ # PostgreSQL answer. A fixed gap keeps its test and loses only @compat-gap and
+-# the expect @tursopg block. CI runs it on pull requests with BASE set to the
+-# target branch:
++# the expect @tursopg block; the test may move to another file. CI runs it on
++# pull requests with BASE set to the target branch:
+ # make check-gap-removals BASE=/path/to/base/checkout
+ check-gap-removals: build-runner
+ 	@test -n "$(BASE)" || { echo "set BASE to the checkout to compare with" >&2; exit 2; }
+```
+
+**File**: `testing/sqltest/docs/dsl-spec.md` (modified, +2/-2)
+```diff
+@@ -372,13 +372,13 @@ A pretty-format run prints the gap counts after the summary: by kind, by class a
+ 
+ #### Removed Gap Tests
+ 
+-When tursopg gets a gap right, the test stays: the change removes only `@compat-gap` and the `expect @tursopg` block, and the test keeps checking the PostgreSQL answer. `sqltest gap-removals --base <dir> --head <dir>` compares the test files of two trees and fails for each gap test of the base tree that the head tree does not keep. The head tree keeps a gap test when a test with the same file and name either is still a gap test, or is the same test without `@compat-gap` and the `expect @tursopg` block:
++When tursopg gets a gap right, the test stays: the change removes only `@compat-gap` and the `expect @tursopg` block, and the test keeps checking the PostgreSQL answer. `sqltest gap-removals --base <dir> --head <dir>` compares the test files of two trees and fails for each gap test of the base tree that the head tree does not keep. The head tree keeps a gap test when a test with the same name, in any file, either is still a gap test, or is the same test without `@compat-gap` and the `expect @tursopg` block:
+ 
+ - its SQL and setups equal the base test's after trimming whitespace, and its default `expect` block equals the base test's as parsed: the parser removes the indentation of each row, except in an `expect raw` block;
+ - its `@skip`, `@skip-if`, `@backend` and `@requires` modifiers, and the file-level skip and requires directives of its file, equal the base test's;
+ - it has no `expect @tursopg` block, or an `expect @tursopg` error block with the default block's SQLSTATE that only changes the message.
+ 
+-A deleted test, a renamed test and a test moved to another file count as removed. The command fails when `--base` or `--head` is not a directory, or when the base directory has no `.sqltest` files.
++A test may move to another file when it keeps its name. A deleted test and a renamed test count as removed. The command fails when `--base` or `--head` is not a directory, or when the base directory has no `.sqltest` files.
+ 
+ CI runs `make -C postgres/conformance check-gap-removals` on pull requests, with the target branch as the base tree. A change that must delete a gap test fails this check, and a reviewer decides whether it merges.
+ 
+```
+
+**File**: `testing/sqltest/src/gap_removals.rs` (modified, +58/-33)
+```diff
+@@ -3,57 +3,66 @@
+ //! A gap test records a known difference from PostgreSQL. When a change
+ //! fixes the gap, the test stays and becomes a plain test: the change removes
+ //! only `@compat-gap` and the `expect @tursopg` block, or keeps that block when it
+-//! only changes the error message. A change that deletes a
+-//! gap test, renames it, or edits its SQL, setups or PostgreSQL answer while
+-//! it removes the gap loses the record that the gap was fixed. This check
+-//! compares the gap tests of a base tree with a head tree and reports each
+-//! one that the head tree does not keep.
++//! only changes the error message. The test may move to another file. A change
++//! that deletes a gap test, renames it, or edits its SQL, setups or PostgreSQL
++//! answer while it removes the gap loses the record that the gap was fixed.
++//! This check compares the gap tests of a base tree with a head tree and
++//! reports each one that the head tree does not keep.
+ 
+ use crate::parser::ast::{Backend, TestCase, TestFile};
+-use std::collections::HashMap;
+ use std::path::{Path, PathBuf};
+ 
+ /// The test files of one tree, with paths relative to the root of the tree.
+ pub type Tree<'a> = &'a [(PathBuf, TestFile)];
+ 
+ /// Returns one message per gap test of `base` that `head` does not keep.
+-/// A test is kept when `head` has a test with the same file and name that
+-/// is still a gap test, or that is a plain test with the same SQL, setups
+-/// and default `expect` block as the gap test in `base`.
++/// A test is kept when some file of `head` has a test with the same name
++/// that is still a gap test, or that is a plain test with the same SQL,
++/// setups and default `expect` block as the gap test in `base`. The file may
++/// differ, so a change can move a test to another file when it fixes the gap.
+ pub fn removed_gaps(base: Tree<'_>, head: Tree<'_>) -> Vec<String> {
+-    let head_files: HashMap<&Path, &TestFile> = head
+-        .iter()
+-        .map(|(path, file)| (path.as_path(), file))
+-        .collect();
+     let mut errors = Vec::new();
+     for (path, base_file) in base {
+         for base_test in &base_file.tests {
+             let Some(label) = &base_test.gap else {
+                 continue;
+             };
+-            let head_test = head_files.get(path.as_path()).and_then(|head_file| {
+-                head_file
+-                    .tests
+-                    .iter()
+-                    .find(|t| t.name == base_test.name)
+-                    .map(|t| (*head_file, t))
+-            });
+-            let problem = match head_test {
+-                None => None,
+-                Some((head_file, head_test)) => {
+-                    match conversion_problem(base_file, base_test, head_file, head_test) {
+-                        Ok(()) => continue,
+-                        Err(problem) => Some(problem),
+-                    }
+-                }
+-            };
++            // The test in the same file comes first, so its problem is the
++            // one reported when no test of `head` keeps the gap test.
++            let mut candidates: Vec<(&Path, &TestFile, &TestCase)> = head
++                .iter()
++                .flat_map(|(head_path, head_file)| {
++                    head_file
++                        .tests
++                        .iter()
++                        .filter(|t| t.name == base_test.name)
++                        .map(move |t| (head_path.as_path(), head_file, t))
++                })
++                .collect();
++            candidates.sort_by_key(|(head_path, _, _)| *head_path != path.as_path());
++            let results: Vec<_> = candidates
++                .iter()
++                .map(|(head_path, head_file, head_test)| {
++                    conversion_problem(base_file, base_test, head_file, head_test).map_err(|p| {
++                        if *head_path == path.as_path() {
++                            p.to_string()
++                        } else {
++                            format!("moved to {}, but {p}", head_path.display())
++                        }
++                    })
++                })
++                .collect();
++            if results.iter().any(Result::is_ok) {
++                continue;
++            }
++            let problems: Vec<&String> = results.iter().filter_map(|r| r.as_ref().err()).collect();
+             let mut message = format!(
+                 "{}: gap test {} ({label}) removed: if the gap is fixed, keep the test and \
+                  remove only the @compat-gap and the expect @tursopg override",
+                 path.display(),
+                 base_test.name
+             );
+-            if let Some(problem) = problem {
++            if let Some(problem) = problems.first() {
+                 message.push_str(&format!(" ({problem})"));
+             }
+             errors.push(message);
+@@ -254,12 +263,28 @@ expect @tursopg {
      }
  
--    /// The built-in type numeric, as the database creates it when custom
-+    /// The built-in type `name`, as the database creates it when custom
-     /// types are on.
--    fn builtin_numeric() -> TypeDef {
--        let sql = "CREATE TYPE numeric(value any, precision integer, scale integer) BASE blob \
--                   ENCODE numeric_encode(value) COERCE numeric_fit(value, precision, scale) \
--                   DECODE numeric_decode(value)";
--        let body = ast::CreateTypeBody::CustomType {
--            params: vec![
--                type_param("value", "any"),
--                type_param("precision", "integer"),
--                type_param("scale", "integer"),
--            ],
--            base: "blob".to_string(),
--            encode: Some(Box::new(call("numeric_encode", vec![id("value")]))),
--            coerce: Some(Box::new(call(
--                "numeric_fit",
--                vec![id("value"), id("precision"), id("scale")],
--            ))),
--            decode: Some(Box::new(call("numeric_decode", vec![id("value")]))),
--            operators: vec![],
--            default: None,
--        };
--        let origin = TypeOrigin::Builtin {
--            accepts_collate: false,
--            range_offsets: RangeOffsets::Numeric,
--            stored_form_sorts_in_value_order: false,
--        };
--        TypeDef::from_create_type("numeric", &body, origin, sql.to_string()).unwrap()
--    }
--
--    /// The built-in type smallint, as the database creates it when custom
--    /// types are on.
--    fn builtin_smallint() -> TypeDef {
--        let sql = "CREATE TYPE smallint(value integer) BASE integer COERCE CASE WHEN value \
--                   BETWEEN -32768 AND 32767 THEN value ELSE RAISE(ABORT, 'integer out of range \
--                   for smallint') END OPERATOR '<'";
--        let in_range = Expr::Between {
--            lhs: Box::new(id("value")),
--            not: false,
--            start: Box::new(neg(int(32768))),
--            end: Box::new(int(32767)),
--        };
--        let out_of_range = Expr::Raise(
--            ast::ResolveType::Abort,
--            Some(Box::new(text("integer out of range for smallint"))),
--        );
--        let body = ast::CreateTypeBody::CustomType {
--            params: vec![type_param("value", "integer")],
--            base: "integer".to_string(),
--            encode: None,
--            coerce: Some(Box::new(case_when(
--                in_range,
--                id("value"),
--                Some(out_of_range),
--            ))),
--            decode: None,
--            operators: vec![ast::TypeOperator {
--                op:
-```
-
-**File**: `core/translate/expr/mod.rs` (modified, +2/-2)
-```diff
-@@ -108,8 +108,8 @@ pub(crate) use custom_type_operators::{
- };
- pub(crate) use custom_types::read_untyped_operand_as;
- pub(crate) use custom_types::{
--    emit_constraint_values_decode, emit_decode, emit_dml_expr_index_value,
--    emit_encode_for_comparison, emit_store_value, emit_trigger_decode_registers, emit_type_expr,
-+    emit_constraint_values_decode, emit_conversion, emit_decode, emit_dml_expr_index_value,
-+    emit_encode_for_comparison, emit_store_value, emit_trigger_decode_registers,
-     emit_untyped_operand_store, emit_user_facing_column_value,
- };
- pub(crate) use custom_types::{runs_custom_type_function, takes_input_of_type};
-```
-
-**File**: `core/translate/order_by.rs` (modified, +5/-4)
-```diff
-@@ -363,16 +363,17 @@ impl EmitOrderBy {
-                     &plan.table_references,
-                     t_ctx.resolver.schema(),
-                 ) {
--                    if let Some(decode_expr) = type_def.decode() {
-+                    if let Some(decode) = type_def.decode() {
-                         let skip_label = program.allocate_label();
-                         program.emit_insn(Insn::IsNull {
-                             reg,
-                             target_pc: skip_label,
-                         });
--                        super::expr::emit_type_expr(
-+                        super::expr::emit_conversion(
-                             program,
--                            decode_expr,
--                            reg,
-+                            &type_def,
-+                            "DECODE",
-+                            decode,
-                             reg,
-                             &t_ctx.resolver,
-                         )?;
+     #[test]
+-    fn a_gap_test_moved_to_another_file_fails() {
++    fn a_gap_test_moved_to_another_file_passes() {
++      
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12343** (2026-11-23): core/dialect: write the row of a virtual table through the catalog (@pedrocarlo)
-- **PR #12342** (2026-11-23): core/dialect: write the rows of triggers through the catalog (@pedrocarlo)
-- **PR #12323** (2026-11-23): core: add a Type trait and write the built-in types in Rust (@penberg)
-- **PR #12306** (2026-11-23): core/translate: cast nonzero integers to true for a cast to boolean in postgres (@penberg)
-- **PR #12298** (2026-11-23): core: limit the encryption shuttle yields to turso_core unit tests (@LeMikaelF)
-- **PR #12290** (2026-11-23): sqltest: update the subquery-after-subquery-materialized snapshot for the min/max flag register (@jussisaurio)
+- **PR #12426** (2026-11-24): .claude: allow claude docs and artifact tools without prompts (@pedrocarlo)
+- **PR #12395** (closed): postgres/catalog: add a generator of Rust tables from postgres.bki (@pedrocarlo)
+- **PR #12391** (closed): core, sqlite/parser: run queries at the nesting limits on a 2 MiB stack (@LeMikaelF)
+- **PR #12384** (2026-11-24): core: replace casts_nonzero_integer_to_true with a cast conversion of the type (@penberg)
+- **PR #12373** (2026-11-24): testing/sqltest: let a fixed gap test move to another file (@jussisaurio)
+- **PR #12370** (2026-11-24): contribution instructions (@LeMikaelF)
 
 ---
 
@@ -2895,28 +2732,27 @@ expression, or none. The schema builds the `TypeDef` of a type from a
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge 'build: link with the LLD of the Rust toolchain and optimize proc macros i
+## X. Merge 'core: keep the program builder and the state of each statement in the sta
 
 **RULE**:
-When implementing operations in `.cargo/config.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/alloc/allocation_site.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `13d6d828`: Merge 'build: link with the LLD of the Rust toolchain and optimize proc macros in dev builds' from Mikaël Francoeur. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fa535be1`: Merge 'core: keep the program builder and the state of each statement in the statement allocator' from Mikaël Francoeur. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cargo/config.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/alloc/allocation_site.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# Link with the LLD that ships with the Rust toolchain, which is much faster
-# than GNU ld (see the script). The path is relative to the workspace root.
-# A build that has this file but not the script fails. Because the recipe of
-# `cargo chef` has this file, the Dockerfiles copy the script before
-# `cargo chef cook`.
-[target.x86_64-unknown-linux-gnu]
-linker = "scripts/link-with-rust-lld.sh"
-
+    /// The builder of the program of a statement, of a blob handle or of the
+    /// maintenance of a materialized view, or the builder that plans the
+    /// query of a materialized view.
+    ProgramBuilder,
+    /// The state of a statement, which keeps its registers and cursors while
+    /// the statement executes.
+    ProgramState,
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2926,7 +2762,7 @@ linker = "scripts/link-with-rust-lld.sh"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `13d6d828` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fa535be1` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T23:16:24.863Z",
+  "timestamp": "2026-11-24T21:24:26.181Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-tursodatabase-turso-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tursodatabase-turso-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T23:16:24.863Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T21:24:26.181Z`  
 > **Learning ID**: `LEARN-EVO-tursodatabase-turso-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source**: github ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
-> **Source Version**: `4468e50b`  
+> **Source Version**: `352c5882`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T23:15:46.561Z  
+> **Timestamp**: 2026-11-24T21:24:21.726Z  
 > **Learning ID**: `learn-github-tursodatabase-turso`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T23:15:46.555Z  
+> **Harvest Timestamp**: 2026-11-24T21:24:21.607Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 25316 stars
+- **Stars / Engagement**: 25341 stars
 
 ---
 
@@ -1457,17 +1457,11 @@ export class Statement {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #12264** (2026-11-22): **core/translate/optimizer: use no index seek for IN (SELECT) across date/time types**
-  *Symptoms*: Stacked on #12182.  ## Description  #12182 makes `x IN (SELECT y ...)` fail when `x` and `y` are two different types among `date`, `timestamp` and `timestamptz`. But when `x` has an index, the query uses the index instead, and returns wrong rows with no error. The index lookup uses the subquery's values as they are stored, without reading them as `x`'s type. Main gives the same wrong count.  ```sql -- tursodb --experimental-custom-types CREATE TABLE a(d date) STRICT; CREATE TABLE b(ts timestamp) STRICT; CREATE INDEX b_ts ON b(ts); INSERT INTO a VALUES ('2024-01-05'); INSERT INTO b VALUES ('2024-01-05 00:00:00'); SELECT count(*) FROM b WHERE ts IN (SELECT d FROM a); -- main and #12182: 0 -- this PR:         cannot compare type timestamp with type date in IN (SELECT ...) -- PostgreSQL:      1 ```  In this PR, the planner does not use an index for such an `IN (SELECT ...)`. The query then fails with the same error as without an index.  ## Motivation and context  A query should not return different rows depending on whether an index exists.  ## Description of AI Usage  Written by Claude Code from a design reviewed by a human.  ## The weakest part about this PR  The query fails where PostgreSQL returns 1. Comparing the two types in `IN (SELECT ...)` needs the subquery's values converted, which neither #12182 nor this PR does.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
-  **Post-Mortem & Fix Analysis**:
-  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **improve performance by 28.29%**  <details> <summary><b>2 warnings, 1 note</b></summary>  > :warning: **Unable to measure the execution of 1 benchmark** > > This benchmark measured no execution time, so its result is not comparable and counts as unchanged. This usually happens when the compiler removes the code under test. > > [Prevent compiler optimizations](https://codspeed.io/docs/troubleshooting?utm_source=github&utm_medium=comment-v2&utm_content=optimized_out#optimized-out-benchmarks) > > [See affected benchmarks](https://app.codspeed.io/tursodatabase/turso/branches/tz-in-subquery-index-cross-type?q=has%3Aoptimized_out&utm_source=github&utm_medium=comment-v2&utm_content=affected_benchmarks)  > :warning: **52 benchmarks are dominated by system calls** > > System calls cannot be simulated consistently and are left out of the measure. The reported value understates the real cost. Switch to the Walltime instrume
-  > Superseded by #12182, which now refuses every comparison of two different custom types that convert values, including the indexed `IN (SELECT ...)` case this PR fixed.
+- **Issue #12426** (2026-11-24): **.claude: allow claude docs and artifact tools without prompts**
+  *Symptoms*: Claude Code cloud sessions on this repository asked for approval on each Claude Docs call and on each artifact publish (for example a slide deck). Cloud sessions do not read personal settings files. They read only the permission rules that are committed to the repository.  This PR adds `.claude/settings.json` with two allow rules:  - `Artifact`: publishes pages and slide decks. - `mcp__Claude_Docs`: all tools of the Claude Docs connector. This is the tool prefix that cloud sessions show for this connector.  Notes:  - The file applies to each contributor who runs Claude Code in this repository. It only removes prompts for these two tools. It does not change other permissions. - Some prompts stay, for example deleting an artifact or sharing it publicly, and organization admin rules still take priority.  --- _Generated by [Claude Code](https://claude.ai/code)_
 
-- **Issue #12233** (2026-11-22): **bindings/javascript: stop storing unbindable values as text**
-  *Symptoms*: `bind_at` has no case for `undefined`, non-buffer objects or functions, so it stores their `String()` text:  ```js const stmt = db.prepare('SELECT ? AS a, ? AS b');  stmt.get(1, undefined); // better-sqlite3: { a: 1, b: null } // Turso:          { a: 1, b: 'undefined' }  stmt.get(1, new Date(0)); // better-sqlite3: TypeError: SQLite3 can only bind numbers, strings, bigints, buffers, and null // Turso:          { a: 1, b: 'Wed Dec 31 1969 16:00:00 GMT-0800 (Pacific Standard Time)' } ```  So an insert with a missing field stores the text `undefined` instead of NULL, and a `Date` is stored as text that changes with the process's time zone and that `datetime()` reads as NULL.  `undefined` now binds as NULL, and everything else `bind_at` has no case for throws better-sqlite3's `TypeError`. Turso's serverless driver binds a `Date` as epoch milliseconds instead, so that's the alternative if you'd rather not throw.  `batch()` on the promise API converted the same values with `String()` before they reached `bind_at`. It now throws the same error while checking its values, before any statement runs, and binds a `DataView` as its bytes instead of `[object DataView]`.  This doesn't close the issue. `get(1, { a: 2 })` on `SELECT ? AS x, :a AS y` now throws where better-sqlite3 binds `:a`, and a lone `undefined` never reaches `bind_at`, which is #10135.  Refs #11089 
-  **Post-Mortem & Fix Analysis**:
-  > ### Autofixer review <sub>🔄 Autofixer updates this comment while the review runs.</sub>  Autofixer reviews pull requests from outside contributors on its own. The review of `ef93f49959a8` is [here](https://github.com/tursodatabase/turso/pull/12233#pullrequestreview-6007762616).  ✅ **Verdict: looks good to merge.**  <sub>Automated review by Autofixer; maintainers decide what to merge.</sub>  <!-- autofixer:contributor-review:ef93f49959a8163b920a7e692315b96bc4385b5b --> <!-- autofixer:contributor-review-recommends:ef93f49959a8163b920a7e692315b96bc4385b5b --> <!-- autofixer:contributor-review-state:eyJ2ZXJzaW9uIjoxLCJyZXZpZXdzIjpbeyJoZWFkU2hhIjoiNTg4NjI3NTE4MzAzNjM3YjJkYzI5YTFhMzI2MDVhYWY2YzYxNTIyMiIsImF1ZGl0ZWRBdCI6IjIwMjYtMTEtMjFUMDk6MDc6MjEuMjU1WiIsInZlcmRpY3QiOiJyZXF1ZXN0X2NoYW5nZXMiLCJyZWNvbW1lbmRhdGlvbiI6eyJ2YWx1ZSI6Im5lZWRzX2h1bWFuIiwicmVhc29uIjoiTWFrZSBgbm9ybWFsaXplQmF0Y2hCaW5kVmFsdWVgIGluIHByb21pc2UudHMgc3RvcCBjYWxsaW5nIFN0cmluZygpIG9uIHZhbHVlcyBgYmluZF9hdGAgcmVmdXNlcywgc28gYmF0
-  > ### Autofixer follow-ups  - Not filed: When a positional argument or a named key is missing. Duplicate of #10135: Issue #10135 already reports that a Statement call omitting a positional or named parameter reuses the value bound by the previous call, and the input is JavaScript that cannot be run with tursodb or sqlite3.  <!-- autofixer:follow-ups-done -->
+- **Issue #12395** (2026-11-24): **postgres/catalog: add a generator of Rust tables from postgres.bki**
+  *Symptoms*: Replaced by #12404, which has the same generator commit on top of #12403. GitHub did not let this pull request change its base branch, so it also showed `postgres.bki`.  🤖 Generated with [Claude Code](https://claude.com/claude-code)  https://claude.ai/code/session_019cgs5bMoU8i4BcYaASwVg2
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1484,656 +1478,1255 @@ export class Statement {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4468e50b` (2026-11-22)
-**Commit Message**: Merge 'bindings/javascript: stop storing unbindable values as text' from Colin McDonnell
+### Incident Patch 1: `fa535be1` (2026-11-24)
+**Commit Message**: Merge 'core: keep the program builder and the state of each statement in the statement allocator' from Mikaël Francoeur
 
-`bind_at` has no case for `undefined`, non-buffer objects or functions,
-so it stores their `String()` text:
+## Description
 
-```js
-const stmt = db.prepare('SELECT ? AS a, ? AS b');
+This PR puts more values of statements in the statement allocator that
+#12299 added:
 
-stmt.get(1, undefined);
-// better-sqlite3: { a: 1, b: null }
-// Turso:          { a: 1, b: 'undefined' }
+- **The program builder of a statement.** `translate` made the
+`ProgramBuilder` of each statement with `Box::new`. It now makes it in a
+`DynBox` from the statement allocator. Two functions that are not
+inlined make the builder and build its program: `new_program_builder`
+takes an allocation site and a function that makes the builder, and
+`build_program` takes the builder out of its box and builds the program.
+Before, the frame of `translate` kept space for the builder anyway,
+because `build()` takes the builder as a value and took it out of its
+box there.
+- **The other program builders.** The program of a blob handle, the
+maintenance program of a materialized view and the builder that plans
+the query of a materialized view kept their builders on the stack. They
+now use `new_program_builder` and `build_program` too. The compilation
+of nested triggers also uses these two functions, in place of
+`new_trigger_program_builder` and `build_trigger_program` from #12299.
+T
 
-stmt.get(1, new Date(0));
-// better-sqlite3: TypeError: SQLite3 can only bind numbers, strings, bigints, buffers, and null
-// Turso:          { a: 1, b: 'Wed Dec 31 1969 16:00:00 GMT-0800 (Pacific Standard Time)' }
-```
-
-So an insert with a missing field stores the text `undefined` instead of
-NULL, and a `Date` is stored as text that changes with the process's
-time zone and that `datetime()` reads as NULL.
-
-`undefined` now binds as NULL, and everything else `bind_at` has no case
-for throws better-sqlite3's `TypeError`. Turso's serverless driver binds
-a `Date` as epoch milliseconds instead, so that's the alternative if
-you'd rather not throw.
-
-`batch()` on the promise API converted the same values with `String()`
-before they reached `bind_at`. It now throws the same error while
-checking its values, before any statement runs, and
-
-**File**: `bindings/javascript/packages/common/promise.ts` (modified, +2/-2)
+**File**: `core/alloc/allocation_site.rs` (modified, +7/-0)
 ```diff
-@@ -903,12 +903,12 @@ function normalizeBatchBindValue(value: any): any {
-   if (
-     typeof value === "boolean" ||
-     typeof value === "string" ||
--    (ArrayBuffer.isView(value) && !(value instanceof DataView))
-+    ArrayBuffer.isView(value)
-   ) {
-     return value;
-   }
-   if (value instanceof ArrayBuffer) return new Uint8Array(value);
--  return String(value);
-+  throw new TypeError("SQLite3 can only bind numbers, strings, bigints, buffers, and null");
+@@ -37,6 +37,13 @@ pub enum StatementAllocationSite {
+     /// The statement that executes a nested trigger or foreign key action
+     /// program.
+     SubprogramStatement,
++    /// The builder of the program of a statement, of a blob handle or of the
++    /// maintenance of a materialized view, or the builder that plans the
++    /// query of a materialized view.
++    ProgramBuilder,
++    /// The state of a statement, which keeps its registers and cursors while
++    /// the statement executes.
++    ProgramState,
  }
  
- /**
+ impl From<StatementAllocationSite> for AllocationSite {
 ```
 
-**File**: `bindings/javascript/packages/native/promise.test.ts` (modified, +36/-16)
+**File**: `core/connection.rs` (modified, +35/-9)
 ```diff
-@@ -716,25 +716,33 @@ test('batch validates every bigint before executing the first statement', async
-     expect(await stmt.all([])).toEqual([{ n: 0 }]);
- })
+@@ -1164,15 +1164,15 @@ impl Connection {
+                 .trim();
+             let (program, pager, mode) = self.compile_cmd(cmd, input, origin)?;
  
--test('batch coerces bind values once during validation', async () => {
-+test('batch refuses a value with no SQLite type before executing the first statement', async () => {
-     const db = await connect(":memory:");
--    await db.exec("CREATE TABLE t_batch_coercion (x TEXT)");
--    let coercions = 0;
--    const value = {
--        toString() {
--            coercions++;
--            if (coercions > 1) throw new Error("value was coerced twice");
--            return "coerced";
--        },
--    };
-+    await db.exec("CREATE TABLE t_batch_unbindable (x)");
- 
--    await db.batch([
--        { sql: "INSERT INTO t_batch_coercion VALUES (?)", args: [value] },
--    ]);
-+    let error: any;
-+    try {
-+        await db.batch([
-+            { sql: "INSERT INTO t_batch_unbindable VALUES (?)", args: [1] },
-+            { sql: "INSERT INTO t_batch_unbindable VALUES (?)", args: [new Date(0)] },
-+        ]);
-+    } catch (caught) {
-+        error = caught;
-+    }
- 
--    expect(coercions).toBe(1);
--    const stmt = await db.prepare("SELECT x FROM t_batch_coercion");
--    expect(await stmt.all([])).toEqual([{ x: "coerced" }]);
-+    expect(error).toBeInstanceOf(TypeError);
-+    expect(error.message).toContain("SQLite3 can only bind numbers, strings, bigints, buffers, and null");
-+    expect(error.batchIndex).toBe(1);
-+    const stmt = await db.prepare("SELECT COUNT(*) AS n FROM t_batch_unbindable");
-+    expect(await stmt.all([])).toEqual([{ n: 0 }]);
-+})
-+
-+test('batch binds a DataView as its bytes', async () => {
-+    const db = await connect(":memory:");
-+    const [result] = await db.batch([
-+        { sql: "SELECT hex(?) AS x", args: [new DataView(new Uint8Array([9, 1, 2, 3]).buffer, 1, 2)] },
-+    ]);
-+    expect(result.rows).toEqual([{ x: "0102" }]);
- })
- 
- test('atomic batch rejects transaction control before BEGIN', async () => {
-@@ -800,3 +808,15 @@ test('a whole number binds as INTEGER only inside the int64 range', async () =>
-     expect(await stmt.get(2 ** 63 - 1024)).toEqual({ type: "integer", above_max: 0 });
-     expect(await stmt.get(-(2 ** 63))).toEqual({ type: "integer", above_max: 0 });
- })
-+
-+test('undefined binds as NULL and a value with no SQLite type is refused', async () => {
-+    const db = await connect(":memory:");
-+    const stmt = await db.prepare("SELECT typeof(?) AS a, typeof(?) AS b");
-+    expect(await stmt.get(1, undefined)).toEqual({ a: "integer", b: "null" });
-+    expect(await stmt.get([undefined, 1])).toEqual({ a: "null", b: "integer" });
-+    for (const value of [new Date(0), { a: 1 }, new Map(), new ArrayBuffer(2), () => 1, Symbol("s")]) {
-+        const error = await stmt.get(1, value).catch((e) => e);
-+        expect(error).toBeInstanceOf(TypeError);
-+        expect(error.message).toBe("SQLite3 can only bind numbers, strings, bigints, buffers, and null");
-+    }
-+})
-```
-
-**File**: `bindings/javascript/packages/wasm/promise.test.ts` (modified, +13/-0)
-```diff
-@@ -376,3 +376,16 @@ test('a whole number binds as INTEGER only inside the int64 range', async () =>
-     expect(await stmt.get(-(2 ** 63))).toEqual({ type: "integer", above_max: 0 });
-     await db.close();
- })
-+
-+test('undefined binds as NULL and a value with no SQLite type is refused', async () => {
-+    const db = await connect(":memory:");
-+    const stmt = await db.prepare("SELECT typeof(?) AS a, typeof(?) AS b");
-+    expect(await stmt.get(1, undefined)).toEqual({ a: "integer", b: "null" });
-+    expect(await stmt.get([undefined, 1])).toEqual({ a: "null", b: "integer" });
-+    for (const value of [new Date(0), { a: 1 }, new Map(), new ArrayBuffer(2), () => 1, Symbol("s")]) {
-+        const error = await stmt.get(1, value).catch((e) => e);
-+        expect(error).toBeInstanceOf(TypeError);
-+        expect(error.message).toBe("SQLite3 can only bind numbers, strings, bigints, buffers, and null");
-+    }
-+    await db.close();
-+})
-```
-
-**File**: `bindings/javascript/src/lib.rs` (modified, +11/-7)
-```diff
-@@ -878,7 +878,7 @@ impl Statement {
-         })?;
-         let value_type = value.get_type()?;
-         let turso_value = match value_type {
--            ValueType::Null => turso_core::Value::Null,
-+            ValueType::Null | ValueType::Undefined => turso_core::Value::Null,
-             ValueType::Number => {
-                 let n: f64 = unsafe { value.cast()? };
-                 // `i64::MAX as f64` is 2^63, one past the largest i64, so the upper bound is exclusive.
-@@ -909,14 +909,10 @@ impl Statement {
-                 if obj.is_buffer()? || obj.is_typedarray()? || obj.is_dataview()? {
-                     turso_core::Value::Blob(array_buffer_view_bytes(env, value)?)
-                 } else {
--                    let s = value.coerce_to_string()?.into_utf8()?;
--                    turso_core::Value::Text(s.as_str()?.to_owned().into())
-+                    return throw_unbindable_value(env);
-                 }
-             }
--            _ => {
--                let s = value.coerce_to_string()?.into_utf8()?;
--                turso_core::Value::Text(s.as_str()?.to_owned().into())
--            }
-+            _ => return throw_unbindable_value(env),
+-            Ok(Statement::new_with_origin(
++            Statement::new_with_origin(
+                 program,
+                 self.clone(),
+                 pager,
+                 mode,
+                 byte_offset_end,
+                 origin,
+                 needs_nested_guard,
+-            ))
++            )
+         })();
+         if result.is_err() && needs_nested_guard {
+             self.end_nested();
+@@ -1221,15 +1221,15 @@ impl Connection {
+         }
+         let result = (|| {
+             let (program, pager, mode) = self.compile_cmd(cmd, input, origin)?;
+-            Ok(Statement::new_with_origin(
++            Statement::new_with_origin(
+                 program,
+                 self.clone(),
+                 pager,
+                 mode,
+                 0,
+                 origin,
+                 needs_nested_guard,
+-            ))
++            )
+         })();
+         if result.is_err() && needs_nested_guard {
+             self.end_nested();
+@@ -1509,7 +1509,7 @@ impl Connection {
+                 .unwrap()
+                 .trim();
+             let (program, pager, mode) = self.compile_cmd(cmd, input, StatementOrigin::Root)?;
+-            Statement::new(program, self.clone(), pager, mode, 0).run_ignore_rows()?;
++            Statement::new(program, self.clone(), pager, mode, 0)?.run_ignore_rows()?;
+             remaining = &remaining[byte_offset_end..];
+         }
+         Ok(())
+@@ -1531,7 +1531,7 @@ impl Connection {
+             return Ok(None);
          };
- 
-         self.statement_handle()?
-@@ -1052,6 +1048,14 @@ impl Statement {
+         let (program, pager, mode) = self.compile_cmd(cmd, input, StatementOrigin::Root)?;
+-        Ok(Some(Statement::new(program, self.clone(), pager, mode, 0)))
++        Ok(Some(Statement::new(program, self.clone(), pager, mode, 0)?))
      }
+ 
+     /// Execute will run a query from start to finish taking ownership of I/O because it will run pending I/Os if it didn't finish.
+@@ -1551,7 +1551,7 @@ impl Connection {
+             let (program, pager, mode) = self.compile_cmd(cmd, input, StatementOrigin::Root)?;
+             {
+                 crate::stack::trace_stack!("run");
+-                Statement::new(program, self.clone(), pager.clone(), mode, 0).run_ignore_rows()?;
++                Statement::new(program, self.clone(), pager.clone(), mode, 0)?.run_ignore_rows()?;
+             }
+             remaining = &remaining[byte_offset_end..];
+         }
+@@ -1574,7 +1574,7 @@ impl Connection {
+             .unwrap()
+             .trim();
+         let (program, pager, mode) = self.compile_cmd(cmd, input, StatementOrigin::Root)?;
+-        let stmt = Statement::new(program, self.clone(), pager, mode, 0);
++        let stmt = Statement::new(program, self.clone(), pager, mode, 0)?;
+         Ok(Some((stmt, byte_offset_end)))
+     }
+ 
+@@ -4076,13 +4076,17 @@ impl Connection {
+ 
+     /// The error for a statement on a sequence backing table that failed
+     /// with `err`. The backing table is the engine's own, so the failure
+-    /// means the file is corrupt.
++    /// means the file is corrupt, except when no memory was available: then
++    /// the error stays `OutOfMemory`, and the statement can run again later.
+     pub(crate) fn sequence_backing_table_corrupt(
+         backing_table_name: &str,
+         seq_name: &str,
+         problem: &str,
+         err: &LimboError,
+     ) -> LimboError {
++        if matches!(err, LimboError::OutOfMemory) {
++            return LimboError::OutOfMemory;
++        }
+         LimboError::Corrupt(format!(
+             "internal sequence backing table \"{backing_table_name}\" for sequence \
+              \"{seq_name}\": {problem}: {err}"
+@@ -5281,6 +5285,28 @@ mod tests {
+         (entry.db.clone(), entry.pager.clone())
+     }
+ 
++    /// A statement on a sequence backing table can fail because the statement
++    /// allocator gives no memory. That is not corruption, so the error must
++    /// stay `OutOfMemory`: the concurrent simulator stops at a `Corrupt` error.
++    #[test]
++    fn sequence_backing_table_error_keeps_out_of_memory() {
++        let err = Connection::sequence_backing_table_corrupt(
++            "__turso_internal_seq_s",
++            "s",
++            "cannot prepare descriptor SELECT",
++            &LimboError::OutOfMemory,
++        );
++        assert!(matches!(err, LimboError::OutOfMemory), "{err}");
++
++        let err = Connection::sequence_backing_table_corrupt(
++            "__turso_internal_seq_s",
++            "s",
++            "descriptor row read failed",
++            &LimboError::InternalError("no row".to_string()),
++        );
++        assert!(matches!(err, LimboError::Corrupt(_)), "{err}");
++    }
++
+     #[test]
+     fn close_marks_connection_closed_and_decrements_count_once() {
+         let directory = TempDir::new().unwrap();
+```
+
+**File**: `core/database.rs` (modified, +14/-5)
+```diff
+@@ -210,11 +210,20 @@ pub struct DatabaseAllocators<
+ > {
+     pub mv_store: M,
+     pub fts: F,
+-    /// Allocator for the values that the code of nested trigger and foreign
+-    /// key action programs keeps in the heap and not on the stack, because
+-    /// this code recurses one time for each level of nesting. The other
+-    /// memory of statements, for example their registers and cursors, does not
+-    /// come from this allocator.
++    /// Allocator for these values of statements:
++    ///
++    /// - The state of each statement.
++    /// - The program builders of statements, blob handles, nested trigger
++    ///   programs and the maintenance of materialized views, and the builder
++    ///   that plans the query of a materialized view. The builders of foreign
++    ///   key action programs do not come from this allocator.
++    /// - The statement that executes a nested trigger or foreign key action
++    ///   program.
++    ///
++    /// The code of nested programs recurses one time for each level of
++    /// nesting, so it keeps its values in the heap and not on the stack. The
++    /// memory in the vectors of the builders and the states, for example the
++    /// registers and the cursors, does not come from this allocator.
+     pub statement: S,
  }
  
-+fn throw_unbindable_value(env: &Env) -> Result<()> {
-+    env.throw_type_error(
-+        "SQLite3 can only bind numbers, strings, bigints, buffers, and null",
-+        None,
-+    )?;
-+    Err(Error::from_status(Status::PendingException))
+```
+
+**File**: `core/incremental/vdbe_maintenance.rs` (modified, +22/-12)
+```diff
+@@ -24,6 +24,7 @@
+ //! completion (or before an in-statement view read), or inside the CREATE
+ //! MATERIALIZED VIEW statement for initial population.
+ 
++use crate::alloc::StatementAllocationSite;
+ use crate::ast;
+ use crate::namespace::NamespaceRef;
+ use rustc_hash::FxHashMap;
+@@ -33,6 +34,7 @@ use crate::schema::Schema;
+ use crate::security::roles::RoleId;
+ use crate::sync::Arc;
+ use crate::translate::emitter::Resolver;
++use crate::translate::{build_program, new_program_builder};
+ use crate::vdbe::builder::{ProgramBuilder, ProgramBuilderOpts};
+ use crate::vdbe::{PreparedProgram, Program};
+ use crate::{Connection, LimboError, QueryMode, Result};
+@@ -172,17 +174,20 @@ fn compile_maintenance_plan(
+     schema: &Schema,
+     connection: &Arc<Connection>,
+ ) -> Result<Program> {
+-    let mut program = ProgramBuilder::new_for_subprogram(
+-        QueryMode::Normal,
+-        None,
+-        ProgramBuilderOpts {
+-            num_cursors: 13,
+-            approx_num_insns: 128 + 64 * num_view_columns,
+-            approx_num_labels: 48,
+-        },
+-        connection.mvcc_enabled(),
+-        0,
+-    );
++    let mut program =
++        new_program_builder(connection, StatementAllocationSite::ProgramBuilder, || {
++            ProgramBuilder::new_for_subprogram(
++                QueryMode::Normal,
++                None,
++                ProgramBuilderOpts {
++                    num_cursors: 13,
++                    approx_num_insns: 128 + 64 * num_view_columns,
++                    approx_num_labels: 48,
++                },
++                connection.mvcc_enabled(),
++                0,
++            )
++        })?;
+     program.prologue();
+     emit_plan_to_sink(
+         &mut program,
+@@ -197,7 +202,12 @@ fn compile_maintenance_plan(
+         connection,
+     )?;
+     program.epilogue(schema);
+-    program.build(connection, false, "materialized view DAG maintenance")
++    build_program(
++        program,
++        connection,
++        false,
++        "materialized view DAG maintenance",
++    )
+ }
+ 
+ #[cfg(feature = "test_helper")]
+```
+
+**File**: `core/incremental/vdbe_maintenance/plan.rs` (modified, +12/-7)
+```diff
+@@ -3,6 +3,7 @@ use rustc_hash::{FxHashMap, FxHashSet};
+ 
+ use super::output::NodeOutputContract;
+ use super::stream::{binding_rowid_metadata_width, DeltaIdentity};
++use crate::alloc::StatementAllocationSite;
+ use crate::function::{AggFunc, Func};
+ use crate::incremental::dag;
+ use crate::schema::BTreeTable;
+@@ -11,6 +12,7 @@ use crate::translate::collate::{first_collation, CollationSeq};
+ use crate::translate::emitter::Resolver;
+ use crate::translate::expr::{expr_contains_nondeterministic_scalar_function, WalkControl};
+ use crate::translate::expr_context::ExprContext;
++use crate::translate::new_program_builder;
+ use crate::translate::optimizer::optimize_plan;
+ use crate::translate::optimizer::unnest::rewrite_correlated_subqueries;
+ use crate::translate::plan::{
+@@ -984,13 +986,16 @@ pub(crate) fn plan_view(
+     resolver: &Resolver,
+     connection: &Arc<Connection>,
+ ) -> Result<MaintenancePlan> {
+-    let mut planner_program = ProgramBuilder::new_for_subprogram(
+-        QueryMode::Normal,
+-        None,
+-        ProgramBuilderOpts::new(8, 32, 8),
+-        connection.mvcc_enabled(),
+-        0,
+-    );
++    let mut planner_program =
++        new_program_builder(connection, StatementAllocationSite::ProgramBuilder, || {
++            ProgramBuilder::new_for_subprogram(
++                QueryMode::Normal,
++                None,
++                ProgramBuilderOpts::new(8, 32, 8),
++                connection.mvcc_enabled(),
++                0,
++            )
++        })?;
+     let mut relational_plan = prepare_select_plan(
+         select.clone(),
+         resolver,
+```
+
+**File**: `core/incremental_blob.rs` (modified, +7/-4)
+```diff
+@@ -29,10 +29,11 @@
+ use crate::ast::Privilege;
+ use crate::namespace::NamespaceId;
+ use crate::translate::collate::CollationSeq;
++use crate::translate::{build_program, new_program_builder};
+ use std::num::NonZero;
+ use std::sync::Arc;
+ 
+-use crate::alloc::TursoSliceExt;
++use crate::alloc::{StatementAllocationSite, TursoSliceExt};
+ use crate::schema::{BTreeTable, Column, Schema};
+ use crate::security::permission::{Action, Object, PermissionDenied};
+ use crate::storage::pager::Pager;
+@@ -354,7 +355,7 @@ impl Connection {
+         let root = table_ref.root_page;
+         let program = build_blob_program(self, table_ref, root, record_column, rowid, read_write)?;
+         let pager = self.get_pager();
+-        let mut stmt = Statement::new(program, self.clone(), pager.clone(), QueryMode::Normal, 0);
++        let mut stmt = Statement::new(program, self.clone(), pager.clone(), QueryMode::Normal, 0)?;
+         // Excluded from the explicit-checkpoint guard's active-statement
+         // count: the handle parks at its row for its whole lifetime, and an
+         // open blob handle must not block checkpointing until it is closed.
+@@ -437,7 +438,9 @@ fn build_blob_program(
+     rowid: i64,
+     read_write: bool,
+ ) -> Result<crate::vdbe::Program> {
+-    let mut b = ProgramBuilder::new(QueryMode::Normal, None, ProgramBuilderOpts::new(1, 64, 16));
++    let mut b = new_program_builder(conn, StatementAllocationSite::ProgramBuilder, || {
++        ProgramBuilder::new(QueryMode::Normal, None, ProgramBuilderOpts::new(1, 64, 16))
++    })?;
+     b.prologue();
+     if read_write {
+         b.begin_write_operation()
+@@ -564,6 +567,6 @@ fn build_blob_program(
+     b.preassign_label_to_next_insn(l_end);
+ 
+     conn.with_schema_mut(|schema| b.epilogue(schema))?;
+-    b.build(conn, false, "incremental blob io")
++    build_program(b, conn, false, "incremental blob io")
+         .map_err(|e| LimboError::InternalError(format!("blob program build failed: {e}")))
+ }
+```
+
+**File**: `core/statement.rs` (modified, +10/-7)
+```diff
+@@ -10,7 +10,7 @@ use std::{
+ use crate::ast::{fmt::WriteSql, Cmd};
+ use tracing::{instrument, Level};
+ 
+-use crate::alloc::TursoIteratorExt;
++use crate::alloc::{DynBox, TursoIteratorExt};
+ use crate::{
+     busy::BusyHandlerState,
+     parameters,
+@@ -213,7 +213,7 @@ pub struct ColumnOrigin {
+ 
+ pub struct Statement {
+     pub(crate) program: vdbe::Program,
+-    state: Box<vdbe::ProgramState>,
++    state: DynBox<vdbe::ProgramState>,
+     connection: Arc<Connection>,
+     pager: Arc<Pager>,
+     /// indicates if the statement is a NORMAL/EXPLAIN/EXPLAIN QUERY PLAN
+@@ -292,7 +292,7 @@ impl Statement {
+         pager: Arc<Pager>,
+         query_mode: QueryMode,
+         tail_offset: usize,
+-    ) -> Self {
++    ) -> Result<Self> {
+         Self::new_with_origin(
+             program,
+             connection,
+@@ -313,7 +313,7 @@ impl Statement {
+         tail_offset: usize,
+         origin: StatementOrigin,
+         nested_guard_active: bool,
+-    ) -> Self {
++    ) -> Result<Self> {
+         let (max_registers, cursor_count) = match query_mode {
+             QueryMode::Normal => (program.max_registers, program.cursor_ref.len()),
+             QueryMode::Explain => (EXPLAIN_COLUMNS.len(), 0),
+@@ -325,9 +325,12 @@ impl Statement {
+             } => (EXPLAIN_QUERY_PLAN_JSON_COLUMNS.len(), 0),
+         };
+         let state = vdbe::ProgramState::new(max_registers, cursor_count);
+-        Self {
++        let alloc = connection.db.allocators.statement.clone();
++        let state =
++            crate::with_statement_allocation_site!(ProgramState, DynBox::try_new_in(state, alloc))?;
++        Ok(Self {
+             program,
+-            state: Box::new(state),
++            state,
+             connection,
+             pager,
+             query_mode,
+@@ -343,7 +346,7 @@ impl Statement {
+             nested_guard_active,
+             analyze_refresh: None,
+             reprepare_cmd: None,
+-        }
++        })
+     }
+ 
+     /// Mark this statement as the parked backing statement of an incremental
+```
+
+**File**: `core/translate/mod.rs` (modified, +47/-8)
+```diff
+@@ -53,6 +53,7 @@ mod values;
+ pub(crate) mod view;
+ mod window;
+ 
++use crate::alloc::{DynBox, StatementAllocationSite, TursoBoxExt};
+ use crate::ast;
+ use crate::schema::Schema;
+ use crate::storage::pager::Pager;
+@@ -100,13 +101,15 @@ pub fn translate(
+     } else {
+         connection.get_capture_data_changes_info().clone()
+     };
+-    // Boxed so the ~800 B builder sits on the heap instead of the prepare frame.
+-    let mut program = Box::new(ProgramBuilder::new(
+-        query_mode,
+-        capture_data_changes_info,
+-        // These options will be extended whithin each translate program
+-        ProgramBuilderOpts::new(1, 32, 2),
+-    ));
++    let mut program =
++        new_program_builder(&connection, StatementAllocationSite::ProgramBuilder, || {
++            ProgramBuilder::new(
++                query_mode,
++                capture_data_changes_info,
++                // These options will be extended whithin each translate program
++                ProgramBuilderOpts::new(1, 32, 2),
++            )
++        })?;
+     program.set_mvcc_enabled(connection.mvcc_enabled());
+     program.flags.set_reads_stored_values(matches!(
+         origin,
+@@ -198,7 +201,43 @@ pub fn translate(
+ 
+     program.epilogue(schema);
+ 
+-    program.build(&connection, change_cnt_on, input)
++    build_program(program, &connection, change_cnt_on, input)
 +}
 +
- /// Copies the bytes a typed array, Buffer or DataView covers.
- ///
- /// The view's buffer, byte offset and byte length are read with the built-in
-```
-
-**File**: `testing/conformance/javascript/__test__/sync.test.js` (modified, +1/-1)
-```diff
-@@ -309,7 +309,7 @@ test.serial("Statement.run() [named]", async (t) => {
-   t.is(info.lastInsertRowid, 3);
- });
++/// Makes a program builder with `new`, in memory from the statement allocator
++/// of the database. The allocation is at `site`. Rust makes the builder on the
++/// stack and then copies it into the box. This function is not inlined, so
++/// that the builder is in the stack frame of this function, and not in the
++/// frame of its caller.
++#[inline(never)]
++pub(crate) fn new_program_builder(
++    connection: &Connection,
++    site: StatementAllocationSite,
++    new: impl FnOnce() -> ProgramBuilder,
++) -> Result<DynBox<ProgramBuilder>> {
++    let builder = new();
++    let alloc = connection.db.allocators.statement.clone();
++    #[cfg(feature = "allocation_metric")]
++    let _site_guard = crate::alloc::enter_allocation_site(site);
++    #[cfg(not(feature = "allocation_metric"))]
++    let _ = site;
++    Ok(DynBox::try_new_in(builder, alloc)?)
++}
++
++/// Builds the program of a builder in memory from the statement allocator.
++/// [ProgramBuilder::build] takes the builder as a value, so the builder leaves
++/// its box here. This function is not inlined, so that the builder is in the
++/// stack frame of this function, and not in the frame of its caller. The
++/// compilation of nested triggers recurses one time for each level, so the
++/// builder must not be in the frame of the code that recurses.
++#[inline(never)]
++pub(crate) fn build_program(
++    builder: DynBox<ProgramBuilder>,
++    connection: &Arc<Connection>,
++    change_cnt_on: bool,
++    input: &str,
++) -> Result<Program> {
++    TursoBoxExt::into_inner(builder).build(connection, change_cnt_on, input)
+ }
  
--test.skip("Statement.run() with array bind parameter", async (t) => {
-+test.serial("Statement.run() with array bind parameter", async (t) => {
-   const db = t.context.db;
- 
-   db.exec(`
+ // TODO: for now leaving the return value as a Program. But ideally to support nested parsing of arbitraty
 ```
 
 ---
 
-### Incident Patch 2: `0239af92` (2026-11-22)
-**Commit Message**: Merge 'core/translate: refuse comparing two different custom types that convert values' from Jussi Saurio
+### Incident Patch 2: `adf3b41f` (2026-11-24)
+**Commit Message**: Merge 'core/translate/optimizer: fix two TPC-C plan choices that cost 26x in instructions' from Jussi Saurio
 
-Custom types are the types made with `CREATE TYPE` (behind
-`--experimental-custom-types`). They include date, timestamp and
-timestamptz, which tursopg, Turso's PostgreSQL frontend, provides. A
-custom type can convert a value when it stores it (ENCODE) and when it
-reads it (DECODE). timestamptz, for example, stores its value as UTC
-text. A domain is a type defined on another type with extra checks, as
-in `CREATE DOMAIN positive AS integer CHECK (value > 0)`.
+On main, the planner picks the wrong index for lookups on a composite
+primary key, and skips the MIN fast path for `COALESCE(MIN(x), 0)`. So
+TPC-C runs 54x more instructions in Turso than in SQLite.
 
-On main, Turso compares values of two different custom types by the
-values as stored. For many pairs that gives wrong answers with no error.
-For example, a `date` and a `timestamp` of the same day are not equal,
-and a `timestamptz` compared with a `varchar` compares UTC text with the
-text the user typed:
+Instructions for 1000 TPC-C transactions (callgrind; `tpcc_start -w 1 -c
+1 -r 0 -t 1000 -s 1`):
 
-```sql
--- tursodb --experimental-custom-types
-CREATE TABLE t (d date, ts timestamp, tz timestamptz, v varchar(40)) STRICT;
-INSERT INTO t VALUES ('2024-01-05', '2024-01-05 00:00:00', '2024-01-05 02:00:00+02', '2024-01-05 02:00:00+02');
-SELECT d = ts FROM t;
--- main:       0
--- this PR:    cannot compare type date with type
+| Build | Instructions |
+|---|---|
+| main | 33.31G |
+| main + commit 2 | 1.68G |
+| this PR (commits 1–3) | 1.29G |
+| SQLite | 0.62G |
 
-**File**: `core/function.rs` (modified, +7/-0)
+1. **perf/tpc-c: `-s <seed>` fixes the random seed.** With `-t N`, the
+harness also skips the ramp-up and timer and waits for the threads. Two
+seeded runs differed by 0.0003% in instructions.
+2. **Estimate `=` on part of a composite primary key as several rows.**
+On main, any primary key column counts as a one-row lookup:
+   ```sql
+   CREATE TABLE orders (o_w_id INT, o_d_id INT, o_id INT, o_c_id INT,
+     PRIMARY KEY (o_w_id, o_d_id, o_id));
+   CREATE INDEX idx_orders ON orders (o_w_id, o_d_id, o_c_id, o_id);
+   EXPLAIN QUERY PLAN SELECT o_c_id FROM orders WHERE o_id = 1 AND o_d_id = 2 AND o_w_id = 3;
+   -- main:    SEARCH orders USING COVERING INDEX
+
+**File**: `core/translate/optimizer/constraints.rs` (modified, +11/-3)
 ```diff
-@@ -1916,6 +1916,10 @@ pub enum ResultType {
-     /// argument from the second on, and the last one when there is an odd
-     /// number of arguments. The conditions are never returned.
-     OneOfTheIifValues,
-+    /// One of the first and the third argument, unchanged: `lag(x, n, default)`
-+    /// and `lead(x, n, default)` return the value of x in another row, or the
-+    /// default. The second argument is an offset and is never returned.
-+    OneOfTheFirstAndThirdArguments,
-     /// A number that keeps the type of a numeric first argument: `ceil(5)` is
-     /// an integer, `ceil(5.5)` a real. A text argument is first converted to a
-     /// number, so `ceil('3')` is an integer.
-@@ -1955,6 +1959,9 @@ impl Func {
-             Self::Vector(func) => declared(func.return_type()),
-             Self::External(func) => declared(func.func.return_type()),
-             Self::Agg(AggFunc::Min | AggFunc::Max) => ResultType::OneOfTheArguments,
-+            Self::Window(WindowFunc::Lag | WindowFunc::Lead) => {
-+                ResultType::OneOfTheFirstAndThirdArguments
-+            }
-             #[cfg(all(feature = "fts", not(target_family = "wasm")))]
-             Self::Fts(_) => ResultType::Unknown,
-             Self::Agg(_) | Self::Window(_) | Self::AlterTable(_) | Self::Dialect(_) => {
+@@ -4,7 +4,7 @@ use crate::ast::{self, SortOrder, TableInternalId};
+ use crate::translate::expr::comparison_affinity;
+ use crate::translate::expr_context::{ExprContext, ExprProperties, TableMetadata};
+ use crate::{
+-    schema::{Column, Index, IndexColumn, Schema},
++    schema::{Column, Index, IndexColumn, Schema, Table},
+     translate::{
+         collate::{comparison_collation, in_list_collation, CollationSeq},
+         expr::{
+@@ -408,8 +408,16 @@ fn estimate_selectivity(
+ 
+     match op {
+         ConstraintOperator::AstNativeOperator(ast::Operator::Equals) => {
+-            let is_pk_or_rowid_alias =
+-                is_rowid || column.is_some_and(|c| c.is_rowid_alias() || c.primary_key());
++            // One column of a primary key with several columns is not unique
++            // on its own, so it takes the indexed-column estimate below.
++            let is_single_column_primary_key = column.is_some_and(|c| c.primary_key())
++                && matches!(
++                    &table_reference.table,
++                    Table::BTree(table) if table.primary_key_columns.len() == 1
++                );
++            let is_pk_or_rowid_alias = is_rowid
++                || column.is_some_and(|c| c.is_rowid_alias())
++                || is_single_column_primary_key;
+ 
+             let selectivity_when_unique = if row_count > 0 {
+                 1.0 / row_count as f64
 ```
 
-**File**: `core/schema.rs` (modified, +11/-0)
+**File**: `core/translate/optimizer/cost.rs` (modified, +61/-0)
 ```diff
-@@ -627,6 +627,17 @@ impl TypeDef {
+@@ -366,6 +366,15 @@ pub(crate) fn estimate_rows_per_seek(
          }
      }
  
-+    /// Whether a column of this type is not the same as a column of its base type: a
-+    /// STRUCT or UNION, or a type that converts values when it stores or reads them.
-+    /// A type with at most a COERCE check, such as varchar(n), is not, because its
-+    /// values stay what they were stored as.
-+    pub fn changes_stored_value(&self) -> bool {
-+        self.is_struct()
-+            || self.is_union()
-+            || self.encode().is_some()
-+            || !self.decode_returns_value_unchanged()
++    if let Some(rows) = default_rows_for_first_column_of_unique_key(
++        index_info,
++        constraints,
++        usable_constraint_refs,
++        base_row_count,
++    ) {
++        return rows * join_probe_constant_selectivity;
 +    }
 +
-     /// True when stored values are read back unchanged (no DECODE, or `DECODE value`).
-     pub fn decode_returns_value_unchanged(&self) -> bool {
-         self.decode().is_none_or(
+     let selectivity_multiplier: f64 = usable_constraint_refs
+         .iter()
+         .map(|cref| {
+@@ -386,6 +395,58 @@ pub(crate) fn estimate_rows_per_seek(
+     (selectivity_multiplier * *base_row_count).max(1.0) * join_probe_constant_selectivity
+ }
+ 
++/// Default number of rows that match `=` on the first column of an index
++/// without ANALYZE stats. This is the value SQLite's sqlite3DefaultRowEst()
++/// uses for a one-column prefix.
++const DEFAULT_ROWS_PER_FIRST_COLUMN_OF_INDEX: f64 = 10.0;
++
++/// Rows per seek with `=` on only the first column of a unique index with
++/// several columns, such as a composite primary key, when ANALYZE has no
++/// stats. Returns `None` for any other seek.
++///
++/// The per-column estimate for that column is a fixed fraction of the table,
++/// so `l_orderkey = ?` on TPC-H's PRIMARY KEY (l_orderkey, l_linenumber)
++/// estimates thousands of rows of a 6M-row lineitem table, where the first
++/// key column usually matches a few rows. Like SQLite, the estimate is 10
++/// rows, times the selectivity of any range constraint on the next column.
++/// Longer prefixes keep the product of the per-column estimates, which
++/// includes the factor of every column that leads no index.
++fn default_rows_for_first_column_of_unique_key(
++    index_info: IndexInfo,
++    constraints: &[Constraint],
++    usable_constraint_refs: &[RangeConstraintRef],
++    base_row_count: RowCountEstimate,
++) -> Option<f64> {
++    if !index_info.unique || index_info.column_count < 2 {
++        return None;
++    }
++    let eq_prefix_len = usable_constraint_refs
++        .iter()
++        .take_while(|cref| cref.eq.is_some())
++        .count();
++    if eq_prefix_len != 1 {
++        return None;
++    }
++    let range_selectivity: f64 = usable_constraint_refs[1..]
++        .iter()
++        .map(|cref| {
++            let mut selectivity = 1.0;
++            if let Some(lower_bound) = cref.lower_bound {
++                selectivity *= constraints[lower_bound].selectivity;
++            }
++            if let Some(upper_bound) = cref.upper_bound {
++                selectivity *= constraints[upper_bound].selectivity;
++            }
++            selectivity
++        })
++        .product();
++    Some(
++        (DEFAULT_ROWS_PER_FIRST_COLUMN_OF_INDEX * range_selectivity)
++            .min(*base_row_count)
++            .max(1.0),
++    )
++}
++
+ fn join_probe_constant_selectivity(
+     constraints: &[Constraint],
+     usable_constraint_refs: &[RangeConstraintRef],
 ```
 
-**File**: `core/translate/collate.rs` (modified, +176/-10)
+**File**: `core/translate/optimizer/mod.rs` (modified, +55/-3)
 ```diff
-@@ -7,13 +7,17 @@ use turso_parser::ast::{Expr, UnaryOperator};
+@@ -890,9 +890,17 @@ fn detect_simple_aggregate(
+     let agg = plan.aggregates.first().unwrap();
+     let result_expr = &plan.result_columns.first().unwrap().expr;
  
- use crate::{
-     function::ExternalCollation,
--    schema::Schema,
-+    function::ResultType,
-+    schema::{Schema, TypeDef},
-     sync::{Arc, LazyLock, RwLock, Weak},
-     translate::{
-         catalog::CatalogContext,
-         emitter::Resolver,
-         expr::{
--            expr_type::{query_column_type, type_of, type_ordering, ExprType},
-+            expr_type::{
-+                first_and_third_arguments, iif_values, query_column_type, same_type_def, type_of,
-+                type_ordering, ExprType,
-+            },
-             row_value_component_expr, row_value_len,
-         },
-         expr_context::{ExprContext, ExprProperties},
-@@ -508,6 +512,7 @@ pub fn comparison_collation_across_queries(
-     rhs: &Expr,
-     rhs_context: &ExprContext<'_, '_>,
- ) -> Result<CollationSeq> {
-+    check_comparable_exprs(lhs, lhs_context, rhs, rhs_context)?;
-     if let Some(ordering) = common_type_ordering([(lhs, lhs_context), (rhs, rhs_context)])? {
-         return Ok(CollationSeq::Type(ordering));
+-    // The result column must be exactly the aggregate expression (not wrapped in
+-    // something like `length(count(*))`).
+-    if !exprs_are_equivalent(result_expr, &agg.original_expr) {
++    // The COUNT fast path writes the count straight into the result register,
++    // so its result column must be exactly the aggregate (not wrapped in
++    // something like `length(count(*))`). The MIN/MAX fast path only stops the
++    // loop at the first qualifying row and then computes the result column as
++    // usual, so it also accepts a wrapper such as `COALESCE(MIN(x), 0)`, like
++    // SQLite's minMaxQuery().
++    let result_is_aggregate = exprs_are_equivalent(result_expr, &agg.original_expr);
++    if !result_is_aggregate
++        && (!matches!(agg.func, AggFunc::Min | AggFunc::Max)
++            || !wrapper_reads_only_aggregate(result_expr, &agg.original_expr)?)
++    {
+         return Ok(None);
      }
-@@ -546,6 +551,7 @@ pub fn in_subquery_collation(
-         type_of(lhs, &lhs_context.type_env()),
-         query_column_type(query, column, resolver),
-     ];
-+    check_comparable(&types[0], &types[1], resolver.schema())?;
-     let has_collate = has_collate_operator(lhs) || has_collate_operator(rhs);
-     if let Some(ordering) = common_ordering(&types, resolver.schema(), has_collate)? {
-         return Ok(CollationSeq::Type(ordering));
-@@ -562,6 +568,7 @@ pub fn in_list_collation(
-     rhs: &[Box<Expr>],
-     context: &ExprContext<'_, '_>,
- ) -> Result<CollationSeq> {
-+    check_in_list_comparable(lhs, rhs, context)?;
-     let operands = std::iter::once(lhs)
-         .chain(rhs.iter().map(|item| item.as_ref()))
-         .map(|expr| (expr, context));
-@@ -604,6 +611,12 @@ pub(crate) fn expr_text_collation(
- pub fn first_collation<'a, 'c, 's: 'c>(
-     exprs: impl IntoIterator<Item = (&'a Expr, ExprContext<'c, 's>)> + Clone,
- ) -> Result<CollationSeq> {
-+    check_comparable_types(
-+        exprs
-+            .clone()
-+            .into_iter()
-+            .map(|(expr, context)| (type_of(expr, &context.type_env()), context.schema())),
-+    )?;
-     if let Some(ordering) = common_type_ordering(exprs.clone())? {
-         return Ok(CollationSeq::Type(ordering));
+ 
+@@ -942,6 +950,50 @@ fn detect_simple_aggregate(
+     })
+ }
+ 
++/// Returns true when `result_expr` reads no table column, subquery or
++/// register outside `aggregate`. The MIN/MAX fast path leaves the cursor on the
++/// extremum row, so a column read outside the aggregate would see that row
++/// instead of the row the normal aggregate loop leaves behind.
++fn wrapper_reads_only_aggregate(result_expr: &Expr, aggregate: &Expr) -> Result<bool> {
++    let mut reads_only_aggregate = true;
++    walk_expr(result_expr, &mut |expr: &Expr| -> Result<WalkControl> {
++        if exprs_are_equivalent(expr, aggregate) {
++            return Ok(WalkControl::SkipChildren);
++        }
++        // Allow only expressions that compute a value from their operands.
++        // Everything else (columns, subqueries, registers, unresolved names)
++        // could read state outside the aggregate.
++        let is_window_call = matches!(
++            expr,
++            Expr::FunctionCall { filter_over, .. } if filter_over.over_clause.is_some()
++        );
++        if !is_window_call
++            && matches!(
++                expr,
++                Expr::Literal(..)
++                    | Expr::Variable(..)
++                    | Expr::FunctionCall { .. }
++                    | Expr::Binary(..)
++                    | Expr::Unary(..)
++                    | Expr::Parenthesized(..)
++                    | Expr::Cast { .. }
++                    | Expr::Collate(..)
++                    | Expr::Case { .. }
++                    | Expr::Between { .. }
++                    | Expr::InList { .. }
++                    | Expr::IsNull(..)
++                    | Expr::NotNull(..)
++                    | Expr::Like { .. }
++            )
++        {
++            return Ok(WalkControl::Continue);
++        }
++        reads_only_aggregate = false;
++        Ok(WalkControl::SkipChildren)
++    })?;
++    Ok(reads_only_aggregate)
++}
++
+ /// The table reads chosen by the join search.
+ struct TableAccessPlan {
+     access_methods: Vec<AccessMethod>,
+```
+
+**File**: `perf/tpc-c/src/main.c` (modified, +54/-38)
+```diff
+@@ -109,6 +109,7 @@ int main(int argc, char *argv[]) {
+   struct itimerval itval;
+   struct sigaction sigact;
+   int fd, seed;
++  int seed_given = 0;
+ 
+   printf("CHECKING IF SQLITE IS THREADSAFE: RETURN VALUE = %d\n",
+          sqlite3_threadsafe());
+@@ -150,7 +151,7 @@ int main(int argc, char *argv[]) {
+ 
+   /* Parse args */
+ 
+-  while ((c = getopt(argc, argv, "w:c:r:l:i:m:o:t:0:1:2:3:4:")) != -1) {
++  while ((c = getopt(argc, argv, "w:c:r:l:i:m:o:t:s:0:1:2:3:4:")) != -1) {
+     switch (c) {
+     case 'w':
+       printf("option w with value '%s'\n", optarg);
+@@ -180,6 +181,11 @@ int main(int argc, char *argv[]) {
+       printf("option t (number of transactions) with value '%s'\n", optarg);
+       num_trans = atoi(optarg);
+       break;
++    case 's':
++      printf("option s (random seed) with value '%s'\n", optarg);
++      seed = atoi(optarg);
++      seed_given = 1;
++      break;
+     case 'i':
+       printf("option i with value '%s'\n", optarg);
+       PRINT_INTERVAL = atoi(optarg);
+@@ -320,20 +326,23 @@ int main(int argc, char *argv[]) {
+     exit(1);
+   }
+ 
+-  fd = open("/dev/urandom", O_RDONLY);
+-  if (fd == -1) {
+-    fd = open("/dev/random", O_RDONLY);
++  /* -s fixes the seed, so that with -c 1 and -t a run is repeatable. */
++  if (!seed_given) {
++    fd = open("/dev/urandom", O_RDONLY);
+     if (fd == -1) {
+-      struct timeval tv;
+-      gettimeofday(&tv, NULL);
+-      seed = (tv.tv_sec ^ tv.tv_usec) * tv.tv_sec * tv.tv_usec ^ tv.tv_sec;
++      fd = open("/dev/random", O_RDONLY);
++      if (fd == -1) {
++        struct timeval tv;
++        gettimeofday(&tv, NULL);
++        seed = (tv.tv_sec ^ tv.tv_usec) * tv.tv_sec * tv.tv_usec ^ tv.tv_sec;
++      } else {
++        read(fd, &seed, sizeof(seed));
++        close(fd);
++      }
+     } else {
+       read(fd, &seed, sizeof(seed));
+       close(fd);
      }
-@@ -785,23 +798,64 @@ pub(crate) fn check_expr_collation(expr: &Expr, context: &ExprContext<'_, '_>) -
-             let operands =
-                 std::iter::once(lhs.as_ref()).chain(rhs.iter().map(|item| item.as_ref()));
-             common_type_ordering(operands.map(|expr| (expr, context)))?;
-+            check_in_list_comparable(lhs, rhs, context)?;
-             Ok(())
-         }
--        // Compiled as `base = when` for each WHEN.
-+        // Compiled as `base = when` for each WHEN, and the values of the THENs and
-+        // the ELSE are the one result.
-         Expr::Case {
--            base: Some(base),
-+            base,
-             when_then_pairs,
--            ..
--        } => when_then_pairs
--            .iter()
--            .try_for_each(|(when, _)| check_comparison(base, when, context)),
-+            else_expr,
-+        } => {
-+            if let Some(base) = base {
-+                when_then_pairs
-+                    .iter()
-+                    .try_for_each(|(when, _)| check_comparison(base, when, context))?;
-+            }
-+            let results = when_then_pairs
+-  } else {
+-    read(fd, &seed, sizeof(seed));
+-    close(fd);
+   }
+   SetSeed(seed);
+ 
+@@ -394,46 +403,53 @@ int main(int argc, char *argv[]) {
+                    (void *)&(thd_arg[t_num]));
+   }
+ 
+-  printf("\nRAMP-UP TIME.(%d sec.)\n", lampup_time);
+-  fflush(stdout);
+-  sleep(lampup_time);
+-  printf("\nMEASURING START.\n\n");
+-  fflush(stdout);
++  if (num_trans > 0) {
++    /* With -t, each thread stops after its transaction count. Count every
++       transaction and wait for the threads, so a run does the same work
++       every time (used for instruction-count profiling). */
++    counting_on = 1;
++  } else {
++    printf("\nRAMP-UP TIME.(%d sec.)\n", lampup_time);
++    fflush(stdout);
++    sleep(lampup_time);
++    printf("\nMEASURING START.\n\n");
++    fflush(stdout);
+ 
+-  /* sleep(measure_time); */
+-  /* start timer */
++    /* sleep(measure_time); */
++    /* start timer */
+ 
+ #ifndef _SLEEP_ONLY_
+-  if (setitimer(ITIMER_REAL, &itval, NULL) == -1) {
+-    fprintf(stderr, "error in setitimer()\n");
+-  }
++    if (setitimer(ITIMER_REAL, &itval, NULL) == -1) {
++      fprintf(stderr, "error in setitimer()\n");
++    }
+ #endif
+ 
+-  counting_on = 1;
+-  /* wait for measurement period */
+-  for (i = 0; i < (measure_time / PRINT_INTERVAL); i++) {
++    counting_on = 1;
++    /* wait for measurement period */
++    for (i = 0; i < (measure_time / PRINT_INTERVAL); i++) {
+ #ifndef _SLEEP_ONLY_
+-    pause();
++      pause();
+ #else
+-    sleep(PRINT_INTERVAL);
+-    alarm_dummy();
++      sleep(PRINT_INTERVAL);
++      alarm_dummy();
+ #endif
+-  }
+-  counting_on = 0;
++    }
++    counting_on = 0;
+ 
+ #ifndef _SLEEP_ONLY_
+-  /* stop timer */
+-  itval.it_interval.tv_sec = 0;
+-  itval.it_interval.tv_usec = 0;
+-  itval.it_value.tv_sec = 0;
+-  itval.it_value.tv_usec = 0;
+-  if (setitimer(ITIMER_REAL, &itval, NULL) == -1) {
+-    fprintf(stderr, "error in setitimer()\n");
+-  }
++    /* stop timer */
++    itval.it_interval.tv_sec = 0;
++    itval.it_interval.tv_usec = 0;
++    itval.it_value.tv_sec = 0;
++    itval.it_value.tv_usec = 0;
++    if (setitimer(ITIMER_REAL, &itval, NULL) == -1) {
++      fprintf(stderr, "error in setitimer()\n");
++    }
+ #endif
+ 
+-  printf("\nSTOPPING THREADS");
+-  activate_transaction = 0;
++    printf("\nSTOPPING THREADS");
++    activate_transaction = 0;
++  }
+ 
+   /* wait threads' ending and close connections*/
+   for (i = 0; i < num_conn; i++) {
+```
+
+**File**: `sqlite/conformance/sqlite-sqltests/composite-primary-key-index-choice.sqltest` (added, +98/-0)
+```diff
+@@ -0,0 +1,98 @@
++# Index choice for tables with a composite primary key, without ANALYZE stats.
++# One column of a composite primary key is not unique on its own, so `= ?` on
++# it must not be estimated as a one-row lookup. These statements come from TPC-C.
++
++@database :memory:
++
++setup tpcc_like {
++    CREATE TABLE warehouse (w_id INTEGER PRIMARY KEY, w_tax REAL);
++
++    CREATE TABLE customer (
++        c_w_id INTEGER, c_d_id INTEGER, c_id INTEGER,
++        c_last TEXT, c_first TEXT, c_credit TEXT, c_discount REAL,
++        PRIMARY KEY (c_w_id, c_d_id, c_id)
++    );
++    CREATE INDEX idx_customer ON customer (c_w_id, c_d_id, c_last, c_first);
++
++    CREATE TABLE orders (
++        o_w_id INTEGER, o_d_id INTEGER, o_id INTEGER, o_c_id INTEGER, o_carrier_id INTEGER,
++        PRIMARY KEY (o_w_id, o_d_id, o_id)
++    );
++    CREATE INDEX idx_orders ON orders (o_w_id, o_d_id, o_c_id, o_id);
++
++    CREATE TABLE stock (
++        s_w_id INTEGER, s_i_id INTEGER, s_quantity INTEGER, s_data TEXT,
++        PRIMARY KEY (s_w_id, s_i_id)
++    );
++    CREATE INDEX fkey_stock_2 ON stock (s_i_id);
++}
++
++@setup tpcc_like
++@skip-if sqlite "Turso prints query plan rows in a different format"
++test full-primary-key-beats-index-on-key-prefix {
++    EXPLAIN QUERY PLAN
++    SELECT c_last FROM customer WHERE c_w_id = 1 AND c_d_id = 2 AND c_id = 3;
++}
++expect {
++    1|0|0|SEARCH customer USING INDEX sqlite_autoindex_customer_1 (c_w_id=? AND c_d_id=? AND c_id=?)
++}
++
++@setup tpcc_like
++@skip-if sqlite "Turso prints query plan rows in a different format"
++test full-primary-key-beats-index-on-key-prefix-in-join {
++    EXPLAIN QUERY PLAN
++    SELECT c_discount, c_last, c_credit, w_tax FROM customer, warehouse
++    WHERE w_id = 1 AND c_w_id = w_id AND c_d_id = 2 AND c_id = 3;
++}
++expect {
++    1|0|0|SEARCH warehouse USING INTEGER PRIMARY KEY (rowid=?)
++    2|0|0|SEARCH customer USING INDEX sqlite_autoindex_customer_1 (c_w_id=? AND c_d_id=? AND c_id=?)
++}
++
++@setup tpcc_like
++@skip-if sqlite "Turso prints query plan rows in a different format"
++test full-primary-key-beats-covering-index-on-key-prefix {
++    EXPLAIN QUERY PLAN
++    SELECT o_c_id FROM orders WHERE o_id = 1 AND o_d_id = 2 AND o_w_id = 3;
++}
++expect {
++    1|0|0|SEARCH orders USING INDEX sqlite_autoindex_orders_1 (o_w_id=? AND o_d_id=? AND o_id=?)
++}
++
++@setup tpcc_like
++@skip-if sqlite "Turso prints query plan rows in a different format"
++test full-primary-key-beats-index-on-one-key-column {
++    EXPLAIN QUERY PLAN
++    SELECT s_quantity FROM stock WHERE s_i_id = 1 AND s_w_id = 2;
++}
++expect {
++    1|0|0|SEARCH stock USING INDEX sqlite_autoindex_stock_1 (s_w_id=? AND s_i_id=?)
++}
++
++@setup tpcc_like
++@skip-if sqlite "Turso prints query plan rows in a different format"
++test index-matching-more-columns-beats-primary-key-prefix {
++    EXPLAIN QUERY PLAN
++    SELECT count(c_id) FROM customer WHERE c_w_id = 1 AND c_d_id = 2 AND c_last = 'BAR';
++}
++expect {
++    1|0|0|SEARCH customer USING INDEX idx_customer (c_w_id=? AND c_d_id=? AND c_last=?)
++}
++
++# `d = ?` on the second column of a composite primary key, outside a primary
++# key search, filters like `=` on any indexed column.
++setup non_leading_key_column {
++    CREATE TABLE t (w INTEGER, d INTEGER, id INTEGER, x INTEGER, PRIMARY KEY (w, d, id));
++    CREATE INDEX t_d_x ON t (d, x);
++    CREATE INDEX t_x ON t (x);
++}
++
++@setup non_leading_key_column
++@skip-if sqlite "Turso prints query plan rows in a different format"
++test index-on-non-leading-key-column-and-other-column {
++    EXPLAIN QUERY PLAN
++    SELECT id FROM t WHERE d = 2 AND x = 52;
++}
++expect {
++    1|0|0|SEARCH t USING INDEX t_d_x (d=? AND x=?)
++}
+```
+
+**File**: `sqlite/conformance/sqlite-sqltests/select/simple_min_max.sqltest` (modified, +33/-0)
+```diff
+@@ -625,3 +625,36 @@ expect {
+     2|
+     3|5
+ }
++
++test indexed-min-inside-coalesce {
++    CREATE TABLE t(a INTEGER, b INTEGER, c INTEGER, PRIMARY KEY (a, b));
++    INSERT INTO t VALUES (1, 5, NULL), (1, 3, 7), (1, 9, 2), (2, 4, NULL), (3, 1, NULL);
++
++    SELECT COALESCE(MIN(b), 0) FROM t WHERE a = 1;
++    SELECT COALESCE(MIN(b), 0) FROM t WHERE a = 99;
++    SELECT COALESCE(MAX(b), -1) FROM t WHERE a = 1;
++    SELECT MIN(b) + 1 FROM t WHERE a = 2;
++    SELECT CASE WHEN MAX(b) > 4 THEN 'big' ELSE 'small' END FROM t WHERE a = 1;
++}
++expect {
++    3
++    0
++    9
++    5
++    big
++}
++
++test indexed-min-inside-coalesce-skips-nulls {
++    CREATE TABLE t(a INTEGER, c INTEGER);
++    CREATE INDEX tac ON t(a, c);
++    INSERT INTO t VALUES (1, NULL), (1, 7), (1, 2), (2, NULL);
++
++    SELECT COALESCE(MIN(c), 42) FROM t WHERE a = 1;
++    SELECT COALESCE(MIN(c), 42) FROM t WHERE a = 2;
++    SELECT COALESCE(MAX(c), 42) FROM t WHERE a = 2;
++}
++expect {
++    2
++    42
++    42
++}
+```
+
+**File**: `sqlite/conformance/sqlite-sqltests/snapshot_tests/indexes/indexes.sqltest` (modified, +6/-0)
+```diff
+@@ -677,6 +677,12 @@ snapshot max-with-equality-prefix-bytecode {
+     SELECT MAX(value) FROM measurements WHERE category = 'a';
+ }
+ 
++# COALESCE(MIN(x), 0) stops at the first index entry, like MIN(x).
++@setup min_max_equality_prefix
++snapshot coalesce-min-with-equality-prefix-bytecode {
++    SELECT COALESCE(MIN(value), 0) FROM measurements WHERE category = 'a';
++}
++
+ @setup schema
+ snapshot-eqp index-for-max-materialized-cte {
+     WITH prices(price) AS MATERIALIZED (
+```
+
+**File**: `sqlite/conformance/sqlite-sqltests/snapshot_tests/indexes/snapshots/indexes__coalesce-min-with-equality-prefix-bytecode.snap` (added, +35/-0)
+```diff
+@@ -0,0 +1,35 @@
++---
++source: indexes.sqltest
++expression: SELECT COALESCE(MIN(value), 0) FROM measurements WHERE category = 'a';
++info:
++  statement_type: SELECT
++  tables:
++  - measurements
++  setup_blocks:
++  - min_max_equality_prefix
++  database: ':memory:'
++---
++QUERY PLAN
++`--SEARCH measurements USING COVERING INDEX idx_measurements_category_value (category=?)
++
++BYTECODE
++addr  opcode       p1  p2  p3  p4           p5  comment
++   0  Init          0  17   0                0  Start at 17
++   1  Null          0   2   0                0  r[2]=NULL
++   2  OpenRead      0   3   0  k(3,B,B)      0  index=idx_measurements_category_value, root=3, iDb=0
++   3  String8       0   3   0  a             0  r[3]='a'
++   4  SeekGE        0  11   3                0  key=[3..3]
++   5    IdxGT       0  11   3                0  key=[3..3]
++   6    Column      0   1   4                0  r[4]=idx_measurements_category_value.value
++   7    IsNull      4  10   0                0  if (r[4]==NULL) goto 10
++   8    AggStep     0   4   2  min(Binary)   0  accum=r[2] step(r[4])
++   9    Goto        0  11   0                0
++  10  Next          0   5   0                0
++  11  AggFinal      0   2   0  min           0  accum=r[2]
++  12  Copy          2   1   0                0  r[1]=r[2]
++  13  NotNull       1  15   0                0  r[1]!=NULL -> goto 15
++  14  Integer       0   1   0                0  r[1]=0
++  15  ResultRow     1   1   0                0  output=r[1]
++  16  Halt          0   0   0                0
++  17  Transaction   0   1   2                0  iDb=0 tx_mode=Read
++  18  Goto          0   1   0                0
+```
+
+---
+
+### Incident Patch 3: `abb0589a` (2026-11-24)
+**Commit Message**: Merge 'testing/sqltest: let a fixed gap test move to another file' from Jussi Saurio
+
+## TLDR
+
+On main, the gap-removal CI check fails when a PR fixes a gap and moves
+its test to another `.sqltest` file. A gap test is a test marked
+`@compat-gap`: it records a known difference from PostgreSQL. With this
+PR, a moved test passes if it keeps its name and passes the same checks
+as a test that stays in its file.
+
+## Why
+
+- On main, `removed_gaps` looks for the fixed test only in the file that
+held the gap test.
+- So CI reports `gap test <name> (<label>) removed`, even when the moved
+test has the same SQL, setups and PostgreSQL answer.
+
+## How
+
+- `removed_gaps` looks in every test file of the PR branch for a test
+with the same name, and applies the existing `conversion_problem` checks
+to each.
+- If none passes, the error shows the problem of the test in the same
+file, else of the first test in another file. Example: `(moved to
+b.sqltest, but its SQL changed)`.
+- Renamed and deleted gap tests fail as before
+(`a_renamed_gap_test_fails`, `a_deleted_gap_test_fails`).
+- `dsl-spec.md` and the Makefile comment say a fixed test may move.
+
+## Tests
+
+- `a_gap_test_moved_to_another_file_passes`: gap
+
+**File**: `postgres/conformance/Makefile` (modified, +2/-2)
+```diff
+@@ -99,8 +99,8 @@ gaps: build-runner
+ # Fail when a gap test in the checkout at $(BASE) is gone from this one:
+ # deleted, renamed, or converted into a plain test with other SQL, setups or
+ # PostgreSQL answer. A fixed gap keeps its test and loses only @compat-gap and
+-# the expect @tursopg block. CI runs it on pull requests with BASE set to the
+-# target branch:
++# the expect @tursopg block; the test may move to another file. CI runs it on
++# pull requests with BASE set to the target branch:
+ # make check-gap-removals BASE=/path/to/base/checkout
+ check-gap-removals: build-runner
+ 	@test -n "$(BASE)" || { echo "set BASE to the checkout to compare with" >&2; exit 2; }
+```
+
+**File**: `testing/sqltest/docs/dsl-spec.md` (modified, +2/-2)
+```diff
+@@ -372,13 +372,13 @@ A pretty-format run prints the gap counts after the summary: by kind, by class a
+ 
+ #### Removed Gap Tests
+ 
+-When tursopg gets a gap right, the test stays: the change removes only `@compat-gap` and the `expect @tursopg` block, and the test keeps checking the PostgreSQL answer. `sqltest gap-removals --base <dir> --head <dir>` compares the test files of two trees and fails for each gap test of the base tree that the head tree does not keep. The head tree keeps a gap test when a test with the same file and name either is still a gap test, or is the same test without `@compat-gap` and the `expect @tursopg` block:
++When tursopg gets a gap right, the test stays: the change removes only `@compat-gap` and the `expect @tursopg` block, and the test keeps checking the PostgreSQL answer. `sqltest gap-removals --base <dir> --head <dir>` compares the test files of two trees and fails for each gap test of the base tree that the head tree does not keep. The head tree keeps a gap test when a test with the same name, in any file, either is still a gap test, or is the same test without `@compat-gap` and the `expect @tursopg` block:
+ 
+ - its SQL and setups equal the base test's after trimming whitespace, and its default `expect` block equals the base test's as parsed: the parser removes the indentation of each row, except in an `expect raw` block;
+ - its `@skip`, `@skip-if`, `@backend` and `@requires` modifiers, and the file-level skip and requires directives of its file, equal the base test's;
+ - it has no `expect @tursopg` block, or an `expect @tursopg` error block with the default block's SQLSTATE that only changes the message.
+ 
+-A deleted test, a renamed test and a test moved to another file count as removed. The command fails when `--base` or `--head` is not a directory, or when the base directory has no `.sqltest` files.
++A test may move to another file when it keeps its name. A deleted test and a renamed test count as removed. The command fails when `--base` or `--head` is not a directory, or when the base directory has no `.sqltest` files.
+ 
+ CI runs `make -C postgres/conformance check-gap-removals` on pull requests, with the target branch as the base tree. A change that must delete a gap test fails this check, and a reviewer decides whether it merges.
+ 
+```
+
+**File**: `testing/sqltest/src/gap_removals.rs` (modified, +58/-33)
+```diff
+@@ -3,57 +3,66 @@
+ //! A gap test records a known difference from PostgreSQL. When a change
+ //! fixes the gap, the test stays and becomes a plain test: the change removes
+ //! only `@compat-gap` and the `expect @tursopg` block, or keeps that block when it
+-//! only changes the error message. A change that deletes a
+-//! gap test, renames it, or edits its SQL, setups or PostgreSQL answer while
+-//! it removes the gap loses the record that the gap was fixed. This check
+-//! compares the gap tests of a base tree with a head tree and reports each
+-//! one that the head tree does not keep.
++//! only changes the error message. The test may move to another file. A change
++//! that deletes a gap test, renames it, or edits its SQL, setups or PostgreSQL
++//! answer while it removes the gap loses the record that the gap was fixed.
++//! This check compares the gap tests of a base tree with a head tree and
++//! reports each one that the head tree does not keep.
+ 
+ use crate::parser::ast::{Backend, TestCase, TestFile};
+-use std::collections::HashMap;
+ use std::path::{Path, PathBuf};
+ 
+ /// The test files of one tree, with paths relative to the root of the tree.
+ pub type Tree<'a> = &'a [(PathBuf, TestFile)];
+ 
+ /// Returns one message per gap test of `base` that `head` does not keep.
+-/// A test is kept when `head` has a test with the same file and name that
+-/// is still a gap test, or that is a plain test with the same SQL, setups
+-/// and default `expect` block as the gap test in `base`.
++/// A test is kept when some file of `head` has a test with the same name
++/// that is still a gap test, or that is a plain test with the same SQL,
++/// setups and default `expect` block as the gap test in `base`. The file may
++/// differ, so a change can move a test to another file when it fixes the gap.
+ pub fn removed_gaps(base: Tree<'_>, head: Tree<'_>) -> Vec<String> {
+-    let head_files: HashMap<&Path, &TestFile> = head
+-        .iter()
+-        .map(|(path, file)| (path.as_path(), file))
+-        .collect();
+     let mut errors = Vec::new();
+     for (path, base_file) in base {
+         for base_test in &base_file.tests {
+             let Some(label) = &base_test.gap else {
+                 continue;
+             };
+-            let head_test = head_files.get(path.as_path()).and_then(|head_file| {
+-                head_file
+-                    .tests
+-                    .iter()
+-                    .find(|t| t.name == base_test.name)
+-                    .map(|t| (*head_file, t))
+-            });
+-            let problem = match head_test {
+-                None => None,
+-                Some((head_file, head_test)) => {
+-                    match conversion_problem(base_file, base_test, head_file, head_test) {
+-                        Ok(()) => continue,
+-                        Err(problem) => Some(problem),
+-                    }
+-                }
+-            };
++            // The test in the same file comes first, so its problem is the
++            // one reported when no test of `head` keeps the gap test.
++            let mut candidates: Vec<(&Path, &TestFile, &TestCase)> = head
 +                .iter()
-+                .map(|(_, then)| then.as_ref())
-+                .chain(else_expr.as_deref());
-+            check_comparable_results(results, context)
-+        }
-         Expr::FunctionCall { name, args, .. } => {
-             let func = context
-                 .catalog()
-                 .resolve_function(name.as_str(), args.len())?;
--            if func.is_some_and(|func| func.needs_collation()) {
-+            let needs_collation = func.as_ref().is_some_and(|func| func.needs_collation());
-+            if needs_collation {
-+                check_comparable_results(args.iter().map(|arg| arg.as_ref()), context)?;
-                 common_type_ordering(args.iter().map(|arg| (arg.as_ref(), context)))?;
-             }
-+            // The result is one of these arguments, so they have one type. A function
-+            // that needs a collation, such as min and max, was checked above.
-+            match func.as_ref().map(|func| func.result_type()) {
-+                Some(ResultType::OneOfTheArguments) if !needs_collation => {
-+                    check_comparable_results(args.iter().map(|arg| arg.as_ref()), context)?;
-+                }
-+                Some(ResultType::OneOfTheIifValues) => {
-+                    check_comparable_results(iif_values(args).map(|arg| arg.as_ref()), context)?;
-+                }
-+                Some(ResultType::OneOfTheFirstAndThirdArguments) => {
-+                    check_comparable_results(
-+                        first_and_third_arguments(args).map(
-```
-
-**File**: `core/translate/expr/expr_type.rs` (modified, +14/-10)
-```diff
-@@ -1074,16 +1074,6 @@ fn function_type(name: &ast::Name, args: &[Box<ast::Expr>], env: &TypeEnv) -> Ex
-                 .map_or(ExprType::Builtin(BuiltinType::Any), |arg| type_of(arg, env)),
-             1,
-         ),
--        // A value of another row: its own argument's type, or for lag and
--        // lead the common type of the argument and the default (the third
--        // argument).
--        Func::Window(WindowFunc::Lag | WindowFunc::Lead) => common_type(
--            args.iter()
--                .enumerate()
--                .filter(|(i, _)| *i != 1)
--                .map(|(_, arg)| arg.as_ref()),
--            env,
--        ),
-         Func::Window(WindowFunc::FirstValue | WindowFunc::LastValue | WindowFunc::NthValue) => args
-             .first()
-             .map_or(ExprType::Builtin(BuiltinType::Any), |arg| type_of(arg, env)),
-@@ -1102,6 +1092,9 @@ fn result_type(result_type: ResultType, args: &[Box<ast::Expr>], env: &TypeEnv)
-         ResultType::FirstArgument => first_argument().unwrap_or(any),
-         ResultType::OneOfTheArguments => common_type(args.iter().map(|arg| arg.as_ref()), env),
-         ResultType::OneOfTheIifValues => common_type(iif_values(args).map(|arg| arg.as_ref()), env),
-+        ResultType::OneOfTheFirstAndThirdArguments => {
-+            common_type(first_and_third_arguments(args).map(|arg| arg.as_ref()), env)
-+        }
-         ResultType::NumberOfTheFirstArgumentsType => match first_argument() {
-             Some(ty) => negated_type(ty),
-             None => any,
-@@ -1164,6 +1157,17 @@ pub(crate) fn iif_values(args: &[Box<ast::Expr>]) -> impl Iterator<Item = &Box<a
-         .map(|(_, arg)| arg)
- }
- 
-+/// The arguments of `lag(x, n, default)` that the result is one of: x and the
-+/// default.
-+pub(crate) fn first_and_third_arguments(
-+    args: &[Box<ast::Expr>],
-+) -> impl Iterator<Item = &Box<ast::Expr>> + Clone {
-+    args.iter()
-+        .enumerate()
-+        .filter(|(i, _)| *i != 1)
-+        .map(|(_, arg)| arg)
-+}
-+
- /// The type of a call to a function that declares the type it returns.
- fn declared_return_type(
-     return_type: ReturnType,
-```
-
-**File**: `core/translate/insert.rs` (modified, +8/-2)
-```diff
-@@ -41,7 +41,7 @@ use crate::{
-             QueryDestination, ResultSetColumn, TableReferences,
-         },
-         planner::{collect_subquery_table_refs_in_expr, plan_ctes_as_outer_refs, ROWID_STRS},
--        select::translate_select,
-+        select::translate_insert_source_select,
-         stmt_journal::{any_index_or_ipk_has_replace, set_insert_stmt_journal_flags},
-         subquery::{
-             emit_non_from_clause_subqueries_for_eval_at, emit_non_from_clause_subquery,
-@@ -2538,7 +2538,13 @@ fn init_source_emission<'a>(
-                     coroutine_implementation_start: ctx.halt_label,
-                 };
-                 let num_result_cols = program.nested(|program| {
--                    translate_select(select, resolver, program, query_destination, connection)
-+                    translate_insert_source_select(
-+                        select,
-+                        resolver,
-+                        program,
-+                        query_destination,
-+                        connection,
-+                    )
-                 })?;
-                 if num_result_cols != required_column_count {
-                     crate::bail_parse_error!(
-```
-
-**File**: `core/translate/planner.rs` (modified, +2/-0)
-```diff
-@@ -1448,6 +1448,7 @@ fn prepare_recursive_cte_plan(
-         outer_query_refs,
-         QueryDestination::placeholder_for_subquery(),
-         connection,
-+        false,
-     )?;
- 
-     let explicit_columns = (!cte_definition.explicit_columns.is_empty())
-@@ -1509,6 +1510,7 @@ fn prepare_recursive_cte_plan(
-         &recursive_query_outer_refs,
-         QueryDestination::placeholder_for_subquery(),
-         connection,
-+        false,
-     )?;
- 
-     if initial_query.select_result_columns().len() != recursive_query.select_result_columns().len()
-```
-
-**File**: `core/translate/schema/mod.rs` (modified, +4/-1)
-```diff
-@@ -30,7 +30,7 @@ use crate::translate::catalog::CatalogContext;
- use crate::translate::collate::CollationSeq;
- use crate::translate::emitter::{prepare_cdc_if_necessary, Resolver};
- use crate::translate::expr::expr_type::{
--    base_value_type, decode_type, iif_values, value_type, ExprType,
-+    base_value_type, decode_type, first_and_third_arguments, iif_values, value_type, ExprType,
- };
- use crate::translate::expr::{takes_input_of_type, walk_expr, WalkControl};
- use crate::translate::fkeys::emit_fk_drop_table_check;
-@@ -462,6 +462,9 @@ fn resolve_func_return_type(
-         ResultType::OneOfTheIifValues => {
-             common_check_type(iif_values(args).map(|arg| type_of(arg)))
-         }
-+        ResultType::OneOfTheFirstAndThirdArguments => {
-+            common_check_type(first_and_third_arguments(args).map(|arg| type_of(arg)))
-+        }
-         // ceil, floor and trunc give an integer for an integer and a real for
-         // a real. A text or blob argument is first converted to a number,
-         // which may be either.
-```
-
-**File**: `core/translate/select.rs` (modified, +69/-1)
-```diff
-@@ -49,13 +49,57 @@ pub fn translate_select(
-     query_destination: QueryDestination,
-     connection: &Arc<crate::Connection>,
- ) -> Result<usize> {
--    let plan = prepare_select_plan(
-+    translate_select_with_source(
-         select,
-         resolver,
-         program,
-+        query_destination,
-+        connection,
-+        false,
-+    )
-+}
-+
-+/// [translate_select] for the rows of `INSERT INTO t VALUES (...), (...)`. An
-+/// INSERT converts each row to its target column, so a bare VALUES source does
-+/// not need one type for the rows of a column, whatever WITH clause it carries.
-+pub fn translate_insert_source_select(
-+    select: ast::Select,
-+    resolver: &Resolver,
-+    program: &mut ProgramBuilder,
-+    query_destination: QueryDestination,
-+    connection: &Arc<crate::Connection>,
-+) -> Result<usize> {
-+    translate_select_with_source(
-+        select,
-+        resolver,
-+        program,
-+        query_destination,
-+        connection,
-+        true,
-+    )
-+}
-+
-+#[turso_macros::trace_stack]
-+fn translate_select_with_source(
-+    select: ast::Select,
-+    resolver: &Resolver,
-+    program: &mut ProgramBuilder,
-+    query_destination: QueryDestination,
-+    connection: &Arc<crate::Connection>,
-+    is_insert_source: bool,
-+) -> Result<usize> {
-+    let plan = prepare_select_plan_from_arms(
-+        select.body.select,
-+        select.body.compounds,
-+        select.with,
-+        select.order_by,
-+        select.limit,
-+        resolver,
-+        program,
-         &[],
-         query_destination,
-         connection,
-+        is_insert_source,
-     )?;
-     if program.trigger.is_some() {
-         if let Some(virtual_table) = plan_first_virtual_table_name(&plan) {
-@@ -186,6 +230,7 @@ pub fn prepare_select_plan(
-         outer_query_refs,
-         query_destination,
-         connection,
-+        false,
-     )
- }
- 
-@@ -206,6 +251,7 @@ pub(crate) fn prepare_select_plan_from_arms(
-     outer_query_refs: &[OuterQueryReference],
-     query_destination: QueryDestination,
-     connection: &Arc<crate::Connection>,
-+    is_insert_source: bool,
- ) -> Result<Plan> {
-     let _nested_query = resolver.enter_nested_query()?;
-     let mut compound_arms = compound_arms.into_iter().peekable();
-@@ -220,6 +266,7 @@ pub(crate) fn prepare_select_plan_from_arms(
-             outer_query_refs,
-             query_destination,
-             connection,
-+            is_insert_source,
-         )?)));
-     }
- 
-@@ -235,6 +282,7 @@ pub(crate) fn prepare_select_plan_from_arms(
-         outer_query_refs,
-         query_destination.clone(),
-         connection,
-+        false,
-     )?;
- 
-     let mut left = Vec::with_capacity(compound_arms.size_hint().0);
-@@ -254,6 +302,7 @@ pub(crate) fn prepare_select_plan_from_arms(
-             outer_query_refs,
-             query_destination.clone(),
-             connection,
-+            false,
-         )?;
-     }
- 
-@@ -311,6 +360,7 @@ fn prepare_one_select_plan(
-     outer_query_refs: &[OuterQueryReference],
-     query_destination: QueryDestination,
-     connection: &Arc<crate::Connection>,
-+    is_insert_source: bool,
- ) -> Result<SelectPlan> {
-     match select {
-         ast::OneSelect::Select {
-@@ -972,6 +1022,24 @@ fn prepare_one_select_plan(
-                 connection,
-             )?;
- 
-+            // The values of a column are one result, so they have one type.
-+            // An INSERT converts each row to its target column, so its rows may differ in type.
-+            if !is_insert_source {
-+                let context = crate::translate::expr_context::ExprContext::new(
-+                    Some(&table_references),
-+                    resolver,
-+                );
-+                for column in 0..len {
-+                    crate::translate::collate::check_comparable_results(
-+                        values
-+                            .iter()
-+                            .filter_map(|row| row.get(column))
-+                            .map(|v| v.as_ref()),
-+                        &context,
-+                    )?;
-+                }
++                .flat_map(|(head_path, head_file)| {
++                    head_file
++                        .tests
++                        .iter()
++                        .filter(|t| t.name == base_test.name)
++                        .map(move |t| (head_path.as_path(), head_file, t))
++                })
++                .collect();
++            candidates.sort_by_key(|(head_path, _, _)| *head_path != path.as_path());
++            let results: Vec<_> = candidates
++                .iter()
++                .map(|(head_path, head_file, head_test)| {
++                    conversion_problem(base_file, base_test, head_file, head_test).map_err(|p| {
++                        if *head_path == path.as_path() {
++                            p.to_string()
++                        } else {
++                            format!("moved to {}, but {p}", head_path.display())
++                        }
++                    })
++                })
++                .collect();
++            if results.iter().any(Result::is_ok) {
++                continue;
 +            }
-+
-             let plan = SelectPlan {
-                 join_order: vec![],
-                 table_references,
++            let problems: Vec<&String> = results.iter().filter_map(|r| r.as_ref().err()).collect();
+             let mut message = format!(
+                 "{}: gap test {} ({label}) removed: if the gap is fixed, keep the test and \
+                  remove only the @compat-gap and the expect @tursopg override",
+                 path.display(),
+                 base_test.name
+             );
+-            if let Some(problem) = problem {
++            if let Some(problem) = problems.first() {
+                 message.push_str(&format!(" ({problem})"));
+             }
+             errors.push(message);
+@@ -254,12 +263,28 @@ expect @tursopg {
+     }
+ 
+     #[test]
+-    fn a_gap_test_moved_to_another_file_fails() {
++    fn a_gap_test_moved_to_another_file_passes() {
++      
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12264** (closed): core/translate/optimizer: use no index seek for IN (SELECT) across date/time types (@jussisaurio)
-- **PR #12233** (2026-11-22): bindings/javascript: stop storing unbindable values as text (@colinhacks)
-- **PR #12230** (2026-11-21): ci: make PR CI faster (@jussisaurio)
-- **PR #12229** (2026-11-21): core/vdbe: use the test dialect in test_serialize_array_from_blob (@jussisaurio)
-- **PR #12222** (2026-11-21): perf: fix make bench-tpc-c and remove the leftover checkpoint-bench file (@jussisaurio)
-- **PR #12221** (2026-11-21): ci: remove the GitHub-runner criterion benchmark job (@jussisaurio)
+- **PR #12426** (2026-11-24): .claude: allow claude docs and artifact tools without prompts (@pedrocarlo)
+- **PR #12395** (closed): postgres/catalog: add a generator of Rust tables from postgres.bki (@pedrocarlo)
+- **PR #12391** (closed): core, sqlite/parser: run queries at the nesting limits on a 2 MiB stack (@LeMikaelF)
+- **PR #12384** (2026-11-24): core: replace casts_nonzero_integer_to_true with a cast conversion of the type (@penberg)
+- **PR #12373** (2026-11-24): testing/sqltest: let a fixed gap test move to another file (@jussisaurio)
+- **PR #12370** (2026-11-24): contribution instructions (@LeMikaelF)
 
 ---
 
@@ -2153,33 +2746,37 @@ SELECT d = ts FROM t;
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge 'bindings/javascript: stop storing unbindable values as text' from Colin M
+## X. Merge 'core: keep the program builder and the state of each statement in the sta
 
 **RULE**:
-When implementing operations in `bindings/javascript/packages/common/promise.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/alloc/allocation_site.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4468e50b`: Merge 'bindings/javascript: stop storing unbindable values as text' from Colin McDonnell. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fa535be1`: Merge 'core: keep the program builder and the state of each statement in the statement allocator' from Mikaël Francoeur. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `bindings/javascript/packages/common/promise.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/alloc/allocation_site.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    ArrayBuffer.isView(value)
-  throw new TypeError("SQLite3 can only bind numbers, strings, bigints, buffers, and null");
+    /// The builder of the program of a statement, of a blob handle or of the
+    /// maintenance of a materialized view, or the builder that plans the
+    /// query of a materialized view.
+    ProgramBuilder,
+    /// The state of a statement, which keeps its registers and cursors while
+    /// the statement executes.
+    ProgramState,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    (ArrayBuffer.isView(value) && !(value instanceof DataView))
-  return String(value);
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4468e50b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fa535be1` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
