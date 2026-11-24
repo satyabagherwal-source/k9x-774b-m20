@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T13:30:30.948Z",
+  "last_updated": "2026-11-24T13:38:56.468Z",
   "total_verified_learnings": 9095,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24644,
+  "total_items": 24647,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "361d7ad3f8e1e9bdd5df79de8f33ef90f7acf35172ca28efe2ed03c19ee52f29",
+      "content_hash": "d45143a7fe491849a343cf0973bbc7b1aceaa5c00a069b720c0e77c4b94e513b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T13:04:20.418Z"
+      "persisted_at": "2026-11-24T13:38:56.283Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "4028380a51e999da7ecdd908de3519e9a77213cab581786a0a1de1fc81413bc1",
+      "content_hash": "2a7b29ba2a58f59df3f648d5adc39cae21cb210262d8e740eb901b76779cf88e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T13:04:20.632Z"
+      "persisted_at": "2026-11-24T13:38:56.468Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -114657,10 +114657,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "repository": "freenet/freenet-core",
-      "source_version": "fe85b027",
-      "content_hash": "469728ffeec8bc72e6f6fdf9079373b7a87ab2dc6dd10b22278695bdeceff2b3",
+      "source_version": "d67e8468",
+      "content_hash": "f13636f4d3066904528d6bfbadc8d4c3b319ea455f649705ee8e4ccf6e834cf3",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T07:55:47.940Z"
+      "persisted_at": "2026-11-24T13:38:51.127Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core",
@@ -114669,10 +114669,10 @@
       "relative_path": "08_VERIFICATION/freenet-freenet-core-verification-protocol-empirical-defect-shield-for-freenet-f.md",
       "title": "Verification Protocol: Empirical Defect Shield for freenet/freenet-core",
       "repository": "freenet/freenet-core",
-      "source_version": "fe85b027",
-      "content_hash": "b93b78c32b9eaa34aa8b2354bfdc2ace29c385e22efc47f56099586f01800c01",
+      "source_version": "d67e8468",
+      "content_hash": "28217d9c0ed9491b542e96e36237c6904b75fb9070da6841c6dff33301a0091b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T07:55:48.115Z"
+      "persisted_at": "2026-11-24T13:38:51.311Z"
     },
     "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674": {
       "item_id": "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674",
@@ -114754,9 +114754,9 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "15a107e7627ebc3c41f385c99cf8792cb5b6cc6cf5afea137b5f8f490834c396",
+      "content_hash": "a9f63f3e3b5f6b61cb256391d3c0508bc9280dff2640adad7bfafc07afe9620d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T07:55:53.222Z"
+      "persisted_at": "2026-11-24T13:38:54.591Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings",
@@ -114766,9 +114766,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for freenet-freenet-core-learnings",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "551c608fa7f0372aaa7d8d3cf2e4752d13f67529369b496e19c0b204ba59f1dc",
+      "content_hash": "0711d8f3f16fe142691f61c9e9f72f6735046abf0e8ee40e806d8bee2d3c2ac9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T07:55:53.398Z"
+      "persisted_at": "2026-11-24T13:38:54.770Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -219231,13 +219231,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-STPY-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-QH04-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "9e4e9f82fbe5527dd94712e9a1cabc864ad56030ce3443b16e92608af729a171",
+      "content_hash": "ef80e003edbf73d2f1190f4dc0e96fc8db6a1eea23cf6a513715ae67a1a9bf87",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T13:12:45.430Z"
+      "persisted_at": "2026-11-24T13:38:55.252Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -219247,9 +219247,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "f1cf01459a6a324b076f78026942401c88f27d64d45b304eecb2d4305434ae05",
+      "content_hash": "8ca0d3c51fd276d1488ee051d00a450a8f4f8652a2d7ff18364d053c304cb6fc",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T13:12:45.605Z"
+      "persisted_at": "2026-11-24T13:38:55.443Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -219259,9 +219259,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "16d7c417ce4b53877f40286573e9c471f38009d036a89be770fd11d143485550",
+      "content_hash": "9334b08f489df5a199af22faac3ec0a012d0cfddbb6f984ed10356176303e668",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T13:12:45.787Z"
+      "persisted_at": "2026-11-24T13:38:55.624Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -220771,8 +220771,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "fe85b027",
-      "content_hash": "72ada69e6d1787e2641acd4c199a9240a381640dbab08904bb125e95d5df753a",
+      "source_version": "d67e8468",
+      "content_hash": "443fc7a1126f797fd6dfa18f4ff8c3ec619a376831f4921281b2c565e5895320",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -220910,6 +220910,11 @@
           "number": 10232,
           "title": "the manual release driver never changes the handshake floor",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10269,
+          "title": "raise the Fmt job timeout from 5 to 10 minutes",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -220917,7 +220922,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T07:55:47.318Z",
+      "verified_at": "2026-11-24T13:38:50.458Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -320028,13 +320033,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-HZVQ-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-QHNN-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "da2cbfd289f57901709869fc8e6c5193e84c39626eaa0a1e30a707f77533d8b9",
+      "content_hash": "18563234d77856ba9abb06d916486670acccbb76ad91a84c0edf5907b53a299e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T13:04:20.202Z"
+      "persisted_at": "2026-11-24T13:38:56.103Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
@@ -336386,6 +336391,44 @@
       "content_hash": "5eb40abe6dd9e04d6bacbc056da6ed6417b283daa2660a8b8695872d715dfd09",
       "domain_letter": "G",
       "persisted_at": "2026-11-24T13:30:24.185Z"
+    },
+    "rule-10269": {
+      "learning_id": "rule-10269",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10269,
+      "title": "raise the Fmt job timeout from 5 to 10 minutes",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "d67e8468",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T13:38:50.458Z"
+    },
+    "candidate_directive-raise-the-fmt-job-timeout-from-5-to-10-minutes": {
+      "item_id": "candidate_directive-raise-the-fmt-job-timeout-from-5-to-10-minutes",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QDOC-raise-the-fmt-job-timeout-from-5-to-10-minutes.md",
+      "title": "raise the Fmt job timeout from 5 to 10 minutes",
+      "repository": "freenet/freenet-core",
+      "source_version": "d67e8468",
+      "content_hash": "7df671ecbab8759fc6cd14a8a69c80919cf76988c53553113bafcea91c148aaa",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T13:38:50.944Z"
+    },
+    "candidate_directive-ci-raise-the-fmt-job-timeout-from-5-to-10-minutes": {
+      "item_id": "candidate_directive-ci-raise-the-fmt-job-timeout-from-5-to-10-minutes",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QGCM-ci-raise-the-fmt-job-timeout-from-5-to-10-minutes.md",
+      "title": "ci: raise the Fmt job timeout from 5 to 10 minutes",
+      "repository": "freenet-freenet-core-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f7c26416ba31888c1dc785e983c04c1acf5099d77be85805178c638579688352",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T13:38:54.410Z"
     }
   },
   "ai-builder-brain": {

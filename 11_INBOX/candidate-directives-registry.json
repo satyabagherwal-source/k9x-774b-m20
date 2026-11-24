@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T13:30:30.475Z",
+  "last_updated": "2026-11-24T13:38:56.103Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4498,11 +4498,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-HZVQ",
+      "id": "CD-QHNN",
       "directive_title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-HZVQ-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-QHNN-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-24",
@@ -5336,11 +5336,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-STPY",
+      "id": "CD-QH04",
       "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "source_repo": "zoontek-react-native-permissions-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-STPY-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-QH04-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-24",
@@ -54889,6 +54889,46 @@
       "source_repo": "etcd-io-etcd",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-BB2DCF-build-deps-bump-ossf-scorecard-action-fr.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-QDOC",
+      "directive_title": "raise the Fmt job timeout from 5 to 10 minutes",
+      "source_repo": "freenet/freenet-core",
+      "source_commit": "d67e8468",
+      "staged_file": "11_INBOX/candidate-directives/CD-QDOC-raise-the-fmt-job-timeout-from-5-to-10-minutes.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-QGCM",
+      "directive_title": "ci: raise the Fmt job timeout from 5 to 10 minutes",
+      "source_repo": "freenet-freenet-core-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-QGCM-ci-raise-the-fmt-job-timeout-from-5-to-10-minutes.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-855AA9",
+      "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-permissions",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-855AA9-android-skip-explicit-kotlin-plugin-when.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-REV-E902AE",
+      "directive_title": "test(collab): write trust fixtures with explicit 0644 permissions",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E902AE-test-collab-write-trust-fixtures-with-ex.md",
       "staged_date": "2026-11-24"
     }
   ]

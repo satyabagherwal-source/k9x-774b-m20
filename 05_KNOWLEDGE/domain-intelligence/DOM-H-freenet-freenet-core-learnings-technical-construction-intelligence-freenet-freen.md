@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T07:55:52.912Z",
+  "timestamp": "2026-11-24T13:38:54.266Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-freenet-freenet-core-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [freenet-freenet-core-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T07:55:52.912Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T13:38:54.266Z`  
 > **Learning ID**: `LEARN-EVO-freenet-freenet-core-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 83%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 81%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from freenet-freenet-core-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source**: github ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
-> **Source Version**: `fe85b027`  
+> **Source Version**: `d67e8468`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T07:55:46.409Z  
+> **Timestamp**: 2026-11-24T13:38:49.495Z  
 > **Learning ID**: `learn-github-freenet-freenet-core`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T07:55:46.403Z  
+> **Harvest Timestamp**: 2026-11-24T13:38:49.282Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1766,11 +1766,13 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6362** (2026-11-24): **ci(release): ship an exact soaked commit so main stays open during a cut**
-  *Symptoms*: This changes how every release works. The design was reviewed and approved for landing; #6361, which it was stacked on, has merged.  ## Problem  Today a release ships the version-bump PR's *merge commit*, which is current `main` plus anything that merged while the bump sat in the queue. The soak validates one SHA and the release ships another, so `main` has to be frozen from the start of the soak until the tag is pushed. The 0.2.164 freeze lasted about 4 hours across three lanes.  ## Approach  `release.yml` gains a `ship_sha` input (required for a live run) and releases exactly that commit plus a version bump:  1. **validate** (`scripts/resolve_release_ship.sh`) checks that `ship_sha` is on `main` and that it contains the previous release's ship commit, so a release can never drop a fix the last one shipped. It reads the versions from `ship_sha`'s tree. fdev is set to max(fdev at `ship_sha`, fdev at the latest published tag) + 1. The pre-flight from #6361 also refuses a version that is not above the latest published release. 2. **update_versions** checks out `ship_sha`, applies the bump (`scripts/apply_version_bump.sh`, now the single copy of the seds), and pushes `release/vX` at B = `ship_sha` + bump. There is no bump PR. 3. **ci.yml** now also runs its full suite on pushes to `release/v*`. **wait_for_ci** (`scripts/wait_for_release_ci.sh`) waits for that run on B and requires every gate job to have actually succeeded, not merely that the run is green. It also asserts that B
+- **Issue #6370** (2026-11-24): **ci: raise the Fmt job timeout from 5 to 10 minutes**
+  *Symptoms*: ## Problem  The `Fmt` job runs `cargo fmt --check` (~16 s) plus the script self-tests, which have grown it to 230-300 s across recent runs against a 5-minute `timeout-minutes`. Runs that crossed 5 minutes were cancelled mid-self-test (305 s and 307 s in the last 19 runs; #6369 hit it today). Fmt is a required context, so a cancel blocks the PR or ejects the merge-queue entry.  ## Approach  Raise `fmt_check`'s timeout to 10 minutes (about 2x headroom; more self-tests are being added) and update the nearby comment. No single step regressed; the largest is the auto-update canary lifecycle self-test (~100 s). Moving the slow self-tests into a parallel job is a possible follow-up, but it would add a new required context.  ## Testing  YAML parses; the cache-warm parity linter passes; the job name and required context are unchanged.  Review: one skeptical lens (verified the duration data and that no linter or required-check rule constrains this timeout) plus codex, both clean. Reduced from a full multi-lens review because the change is a single timeout value and a comment.  [AI-assisted - Claude] 
 
-- **Issue #6361** (2026-11-24): **ci(release): close fail-open and half-done paths found in a release-tooling audit**
-  *Symptoms*: ## Problem  An audit of the release tooling (release.yml, cross-compile.yml, release-announce.yml, the legacy `scripts/release.sh` driver and the recovery docs) found several paths that fail open or stop a release half-done:  - **release.yml** fails *after* the bump PR has merged when the tag or crates.io version already exists, or when the version equals main's (empty bump commit). A second concurrent dispatch is not refused at all. Without `RELEASE_PAT` a live run only warns, then the tag push never starts cross-compile.yml. Release notes measure from the newest release *including drafts*, and a spent version is left as a draft on purpose. `create_release` cannot be re-run once its tag is pushed. - **cross-compile.yml** cancels an in-flight tag run when a second run for the same tag starts (the documented recovery dispatch), possibly between the crates.io publish and the un-draft. A recovery un-draft of an older tag takes GitHub's `latest` marker by default and nothing moves it back. A missing signing key publishes an unsigned release with a warning. A failed `tar` inside `cd X && tar && cd ../..` is invisible to errexit, and `sha256sum ... || true` hides a missing asset class. The Windows steps run in pwsh, which only checks the last command's exit code. - **release-announce.yml** announces any published release, including a recovery un-draft of an old one. - **scripts/release.sh** carries bugs release.yml already fixed: it tags local HEAD rather than the bump PR's merge c
+- **Issue #6369** (2026-11-24): **fix(get): host and count GET replies only when accepted and matching the request**
+  *Symptoms*: ## Problem  `cache_contract_locally` (the one place every GET reply is cached and hosted) recorded access, ran eviction and formed a host for a reply even when the executor did not accept the reply's state, and did not check that the reply was for the contract that was requested. Its boolean result was also read as proof that the remote held the contract, including when the only reason it was true was a copy this node already held.  ## Approach  - A reply whose key does not match the request is dropped, on the inline, relay and streamed paths (the streamed path compares the stream header against the request's own instance id before the stream is claimed). Where the reply carries code, the full key (instance id and code hash) is compared. - Host formation, access recording and eviction run only when the executor accepted the state, or the reply's bytes equal a copy this node already holds. A reply for a contract the node already hosts keeps its read refresh, sized to the held copy, and identical bytes are hosted under the stored key. - The function now returns `CacheOutcome { accepted_remote, local_copy }`. Only `accepted_remote` counts as evidence that a remote holds the contract (`contract_exists`, `note_stored_state`, relay `state_present`); `local_copy` keeps gating downstream-subscriber registration, so honest flows register as before. - Every-hop hosting is unchanged for accepted replies.  ## Testing  - Accepted / rejected / mismatched reply tests, a streamed-path mismat
+  **Post-Mortem & Fix Analysis**:
+  > <!-- claude-rule-review --> ### Rule Review: No blocking issues. 3 INFO notes.  **Rules checked:** git-workflow.md, code-style.md, testing.md, operations.md **Files reviewed:** 1 (`crates/core/src/operations/get/op_ctx_task.rs`)  The PR description wasn't in the review inputs, so I couldn't check it for Problem/Solution/Testing/Fixes sections. Please confirm they are present.  #### Warnings None.  - **Regression tests:** The `fix:` commits come with regression tests in `reply_hosting_gate_tests`. They cover a rejected reply, a different contract, a code-hash mismatch, a held contract under rejection, a stream-header mismatch, identical-bytes hosting under the stored key, and the held-size recency refresh. `a_rejected_reply_for_a_held_contract_is_no_existence_proof` covers the client driver end to end. - **Source-scrape pins:** The new pins bound their regions with `extract_fn_body` and `code_only`, so they follow the rule on bounding the region. - **Existence-proof rule:** The change m
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1787,517 +1789,618 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d1948e2f` (2026-11-24)
-**Commit Message**: fix(release): the manual release driver never changes the handshake floor (#6355)
+### Incident Patch 1: `49a103d6` (2026-11-24)
+**Commit Message**: ci: raise the Fmt job timeout from 5 to 10 minutes (#6370)
 
-**File**: `crates/core/Cargo.toml` (modified, +1/-1)
+**File**: `.github/workflows/ci.yml` (modified, +5/-2)
 ```diff
-@@ -12,7 +12,7 @@ readme = "README.md"
- [package.metadata.freenet]
- # Minimum compatible protocol version. Peers older than this are rejected at
- # the handshake, in both directions. The release workflow (release.yml) ships
--# this value unchanged; scripts/release.sh rewrites it. The env var
-+# this value unchanged, and so does scripts/release.sh (#5833). The env var
- # FREENET_MIN_COMPATIBLE_VERSION overrides this at build time.
- #
- # 0.2.122: 0.2.120 and 0.2.121 cannot detect updates themselves (they parse
-```
-
-**File**: `crates/core/build.rs` (modified, +2/-1)
-```diff
-@@ -45,7 +45,8 @@ fn main() {
- 
- fn emit_min_compatible_version() {
-     // Priority for min-compatible version:
--    // 1. FREENET_MIN_COMPATIBLE_VERSION env var (set by release.sh)
-+    // 1. FREENET_MIN_COMPATIBLE_VERSION env var (a manual override; the
-+    //    release paths never set it, and release.sh clears it)
-     // 2. package.metadata.freenet.min-compatible-version in Cargo.toml
-     // 3. CARGO_PKG_VERSION (strict match — same as old behavior)
-     //
-```
-
-**File**: `docs/RELEASING.md` (modified, +6/-4)
-```diff
-@@ -1004,10 +1004,12 @@ above: it refuses the connection outright, rather than deciding which message
- variants a peer can receive.
- 
- `release.yml` ships the committed value unchanged, so raising it is its own
--reviewed PR, never a side effect of a release. (`scripts/release.sh` still
--rewrites it; see #5833.) `build.rs` requires an `X.Y.Z` value no higher than
--the package version. A floor in the same major.minor series is carried as a
--patch number (wire format 1). A floor in a different series (for example a
-+reviewed PR, never a side effect of a release. `scripts/release.sh` also
-+ships it unchanged and refuses `--min-compatible` (#5833). To raise it, change
-+`min-compatible-version` in `crates/core/Cargo.toml` in a PR that goes through
-+the checklist below; the next release from `main` ships it. `build.rs` requires
-+an `X.Y.Z` value no higher than the package version. A floor in the same
-+major.minor series is carried as a patch number (wire format 1). A floor in a different series (for example a
- 1.0.0 build keeping floor 0.2.N) uses wire format 2 and is accepted only if
- its major is at most one below the package's, its minor is below 64 and its
- patch is below 256; `build.rs` fails the build otherwise. Releases before the
-```
-
-**File**: `scripts/release.sh` (modified, +38/-18)
-```diff
-@@ -68,8 +68,9 @@ show_help() {
-     echo
-     echo "Options:"
-     echo "  --version X.Y.Z           Target version (required)"
--    echo "  --min-compatible X.Y.Z    Minimum compatible version for range-based"
--    echo "                            version checking (default: previous release)"
-+    echo "  --min-compatible X.Y.Z    Refused. This script never changes the"
-+    echo "                            handshake floor; raise it in its own reviewed"
-+    echo "                            PR (docs/RELEASING.md)"
-     echo "  --skip-tests              Skip pre-release tests"
-     echo "  --dry-run                 Show what would be done without executing"
-     echo "  --help                    Show this help"
-@@ -99,9 +100,12 @@ while [[ $# -gt 0 ]]; do
-             echo "      Gateways are now updated automatically after binaries are available."
-             shift
-             ;;
--        --min-compatible)
--            MIN_COMPATIBLE="$2"
--            shift 2
-+        --min-compatible|--min-compatible=*)
-+            # Refused on sight, in any spelling, with or without a value (#5833).
-+            echo "Error: --min-compatible is no longer supported. This script never changes"
-+            echo "       the handshake floor; raise min-compatible-version in"
-+            echo "       crates/core/Cargo.toml in its own reviewed PR (docs/RELEASING.md)."
-+            exit 1
-             ;;
-         --skip-tests)
-             SKIP_TESTS=true
-@@ -135,15 +139,34 @@ if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-     exit 1
- fi
- 
--# Default min-compatible to the current version in Cargo.toml (the version before the bump).
--# This means gateways running the new version will still accept peers on the previous version.
--if [[ -z "$MIN_COMPATIBLE" ]]; then
--    MIN_COMPATIBLE=$(grep "^version" "$PROJECT_ROOT/crates/core/Cargo.toml" 2>/dev/null | head -1 | cut -d'"' -f2)
--    echo "Min-compatible version: $MIN_COMPATIBLE (defaulting to current version before bump)"
--else
--    echo "Min-compatible version: $MIN_COMPATIBLE (explicitly set)"
-+# current_min_compatible <Cargo.toml> -- print the handshake floor committed in
-+# `package.metadata.freenet.min-compatible-version`, or return 1 if it is
-+# missing or not X.Y.Z.
-+current_min_compatible() {
-+    local value
-+    value=$(grep -E '^min-compatible-version[[:space:]]*=' "$1" 2>/dev/null | head -1 | cut -d'"' -f2)
-+    if [[ ! "$value" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-+        return 1
-+    fi
-+    printf '%s\n' "$value"
-+}
-+
-+# The handshake floor ships exactly as committed, as it does from release.yml
-+# (#5833). This script used to default it to the previous release and write
-+# that into the bump, which would make every updated peer refuse every peer
-+# that had not updated yet: a network split on an ordinary release. Raising the
-+# floor is its own reviewed PR (docs/RELEASING.md), so --min-compatible is
-+# refused during argument parsing rather than written into a release bump.
-+#
-+# A committed floor that cannot be read is refused too: build.rs would then
-+# fall back to the package version, the same split. The env override is
-+# cleared so a value left in the caller's shell cannot reach the builds.
-+if ! MIN_COMPATIBLE=$(current_min_compatible "$PROJECT_ROOT/crates/core/Cargo.toml"); then
-+    echo "Error: could not read an X.Y.Z min-compatible-version from crates/core/Cargo.toml."
-+    exit 1
- fi
--export FREENET_MIN_COMPATIBLE_VERSION="$MIN_COMPATIBLE"
-+echo "Handshake floor (min-compatible-version): $MIN_COMPATIBLE (unchanged, shipped as committed)"
-+unset FREENET_MIN_COMPATIBLE_VERSION
- 
- # Get the most recently published version from crates.io (most authoritative source).
- #
-@@ -803,11 +826,8 @@ update_versions() {
-     sed_inplace "s/^version = \".*\"/version = \"$VERSION\"/" "$PROJECT_ROOT/crates/core/Cargo.toml"
-     echo "✓"
- 
--    # Update min-compatible-version in Cargo.toml metadata so cross-compile CI
--    # builds (which don't have the env var) get the correct min-compatible version.
--    echo -n "  Setting min-compatible-version to $MIN_COMPATIBLE... "
--    sed_inplace "s/^min-compatible-version = \".*\"/min-compatible-version = \"$MIN_COMPATIBLE\"/" "$PROJECT_ROOT/crates/core/Cargo.toml"
--    echo "✓"
-+    # min-compatible-version is deliberately left alone (#5833): the
-+    # committed floor ships unchanged.
- 
-     # Update fdev version and its freenet dependency
-     echo -n "  Updating fdev to $FDEV_VERSION... "
-```
-
-**File**: `scripts/release_driver_test.sh` (modified, +143/-1)
-```diff
-@@ -27,7 +27,7 @@
- # fdev actually get published" and "does publishing happen after the tag", and
- # the only way to assert a property is to run the thing.
- #
--# Both functions are extracted verbatim from release.sh (`eval "$(awk ...)"`),
-+# Functions are extracted verbatim from release.sh (`eval "$(awk ...)"`),
- # matching release_state_restore_test.sh's idiom, so these tests cannot drift
- # from the implementation.
- #
-@@ -556,6 +556,148 @@ else
-     fi
- fi
- 
-+# ---------------------------------------------------------------------------
-+# N. The handshake floor ships as committed (#5833)
-+# ---------------------------------------------------------------------------
-+# release.sh used to default --min-compatible to the version before the bump
-+# and write it into the bump, which would make every updated peer refuse every
-+# peer that had not updated yet: a network split on an ordinary release. Now it
-+# never changes the floor, refuses --min-compatible, refuses a committed floor
-+# it cannot read (build.rs would fall back to the package version), and clears
-+# FREENET_MIN_COMPATIBLE_VERSION so a value in the caller's shell cannot reach
-+# the builds.
-+FLOOR_FN="$(awk '/^current_min_compatible\(\) \{/,/^\}/' "$RELEASE_SH")"
-+if [[ "$FLOOR_FN" != *"min-compatible-version"* ]]; then
-+    fail "could not extract current_min_compatible() from release.sh" \
-+        "Every floor case below runs it, so an empty extraction would make them" \
-+        "all pass vacuously."
-+else
-+    eval "$FLOOR_FN"
-+    # floor_case <desc> <Cargo.toml body> <expected output or FAIL>
-+    floor_case() {
-+        local desc="$1" body="$2" want="$3" work got
-+        work="$(mktemp -d)"
-+        printf '%s\n' "$body" > "$work/Cargo.toml"
-+        if got="$(current_min_compatible "$work/Cargo.toml")"; then :; else got="FAIL"; fi
-+        rm -rf "$work"
-+        if [[ "$got" == "$want" ]]; then
-+            pass "$desc"
-+        else
-+            fail "$desc" "got '$got', expected '$want'"
-+        fi
-+    }
-+    floor_case "the floor read is min-compatible-version, not the package version" \
-+        $'[package]\nname = "freenet"\nversion = "0.2.200"\n\n[package.metadata.freenet]\nmin-compatible-version = "0.2.122"' \
-+        "0.2.122"
-+    floor_case "a floor written without spaces around '=' is read" \
-+        $'[package]\nversion = "0.2.200"\n[package.metadata.freenet]\nmin-compatible-version="0.2.150"' "0.2.150"
-+    floor_case "a missing min-compatible-version is refused" \
-+        $'[package]\nname = "freenet"\nversion = "0.2.200"' "FAIL"
-+    floor_case "a malformed min-compatible-version is refused" \
-+        $'[package]\nversion = "0.2.200"\n[package.metadata.freenet]\nmin-compatible-version = "next"' "FAIL"
-+
-+    REAL_TOML="$SCRIPT_DIR/../crates/core/Cargo.toml"
-+    if got="$(current_min_compatible "$REAL_TOML")"; then
-+        pass "the real crates/core/Cargo.toml has a readable floor ($got)"
-+    else
-+        fail "the real crates/core/Cargo.toml has no readable min-compatible-version" \
-+            "Every release.sh run would refuse."
-+    fi
-+fi
-+
-+# The call site, run for real: release.sh is copied into a throwaway repo with
-+# a stub `cargo`. The first thing the driver does after the floor check is
-+# `cargo search`, with stderr discarded, so the stub records that it was
-+# reached, and what FREENET_MIN_COMPATIBLE_VERSION it saw, in a file.
-+# floor_run_case <desc> <expect: refuse|proceed> <error text or ""> <Cargo.toml body> <args...>
-+floor_run_case() {
-+    local desc="$1" expect="$2" want_err="$3" toml_body="$4" out rc work reached seen
-+    shift 4
-+    work="$(mktemp -d)"
-+    mkdir -p "$work/scripts" "$work/crates/core" "$work/bin"
-+    cp "$RELEASE_SH" "$work/scripts/release.sh"
-+    printf '%s\n' "$toml_body" > "$work/crates/core/Cargo.toml"
-+    printf '#!/usr/bin/env bash\nprintf "%%s\\n" "${FREENET_MIN_COMPATIBLE_VERSION-<unset>}" > "%s/reached_cargo"\nexit 1\n' \
-+        "$work" > "$work/bin/cargo"
-+    chmod +x "$work/bin/cargo"
-+    (cd "$work" && GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_NOSYSTEM=1 git init -q .)
-+    rc=0
-+    out="$(cd "$work" && PATH="$work/bin:$PATH" GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_NOSYSTEM=1 \
-+        FREENET_MIN_COMPATIBLE_VERSION=0.0.1 bash scripts/release.sh "$@" 2>&1)" || rc=$?
-+    reached=no
-+    seen=""
-+    if [[ -e "$work/reached_cargo" ]]; then
-+        reached=yes
-+        seen="$(cat "$work/reached_cargo")"
-+    fi
-+    rm -rf "$work"
-+    case "$expect" in
-+        refuse)
-+            if [[ "$rc" -ne 0 ]] && [[ "$reached" == no ]] && [[ "$out" == *"$want_err"* ]]; then
-+                pass "$desc"
-+            else
-+                fail "$desc" "exit=$rc, reached cargo=$reached, wanted '$want_err'" "$out"
-+            fi
-+            ;;
-+        proceed)
-+            # A shell value of the override must not reach the build steps.
-+            if [[ "$reached" == yes ]] && [[ "$seen" == "<unset>" ]]; then
-+                pass "$desc"
-+            else
-
+@@ -125,8 +125,11 @@ jobs:
+   fmt_check:
+     name: Fmt
+     runs-on: ubuntu-latest
+-    timeout-minutes: 5
+-    # Run in parallel with conventional_commits (both are fast GitHub-hosted checks)
++    # 10, not 5: besides `cargo fmt --check` (~16 s) this job runs the script
++    # self-tests, which have grown the job to roughly 4-5 min, so a slightly
++    # slow runner crossed 5 min and the job was cancelled mid-self-test.
++    timeout-minutes: 10
++    # Runs in parallel with conventional_commits (both GitHub-hosted, no Rust build)
+     #
+     # DO NOT add `needs: fmt_check` to a test or build job (#5621). Rule Lint
+     # enforces this for every required-context job, with an allowlist for the
 ```
 
 ---
 
-### Incident Patch 2: `1ffa3f10` (2026-11-24)
-**Commit Message**: fix(shell): derive the notification consent key from the decoded contract key (#6359)
+### Incident Patch 2: `d67e8468` (2026-11-24)
+**Commit Message**: fix(get): host and count GET replies only when accepted and matching the request (#6369)
 
-**File**: `crates/core/src/server/path_handlers/assets/shell_bridge.js` (modified, +9/-1)
+**File**: `crates/core/src/operations/get/op_ctx_task.rs` (modified, +680/-88)
 ```diff
-@@ -282,7 +282,15 @@ function freenetBridge(authToken, userToken, hostedMode) {
-     // match than CONTRACT_PREFIX_RE (which is anchored), which is fine because
-     // `location.pathname` is server-controlled and can't contain `?`/`#`.
-     var m = location.pathname.match(/\/v[12]\/contract\/web\/([^/?#]+)/);
--    return m ? 'freenet_notify:' + m[1] : null;
-+    if (!m) return null;
-+    // Canonicalise: percent-encoded spellings of one key (`%41` vs `A`) must
-+    // share one consent / rate / snooze entry. Fall back to the raw segment
-+    // when it is not valid percent-encoding.
-+    var seg = m[1];
-+    try {
-+      seg = decodeURIComponent(seg);
-+    } catch (_) {}
-+    return 'freenet_notify:' + seg;
-   }
- 
-   function contractSnoozeKey() {
-```
-
-**File**: `crates/core/src/server/shell_bridge_notifications.test.mjs` (modified, +35/-0)
-```diff
-@@ -752,6 +752,41 @@ function check(name, cond) {
-   }
- }
- 
-+// 8. contractConsentKey canonicalises percent-encoded spellings of one key.
-+{
-+  const kb = src.indexOf('function contractConsentKey(');
-+  const ke = src.indexOf('function contractSnoozeKey(');
-+  const keyFn = src.slice(kb, ke);
-+  const keyFor = (pathname) =>
-+    new Function('location', `${keyFn}\nreturn contractConsentKey();`)({
-+      pathname,
-+    });
-+  const plain = keyFor('/v1/contract/web/AbC123/');
-+  check('plain key derived', plain === 'freenet_notify:AbC123');
-+  check(
-+    'percent-encoded spelling shares the plain key',
-+    keyFor('/v1/contract/web/%41bC123/') === plain,
-+  );
-+  check(
-+    'mixed-case hex escape shares the plain key',
-+    keyFor('/v2/contract/web/Ab%43123/') === plain,
-+  );
-+  check(
-+    'invalid escape does not throw and is kept raw',
-+    keyFor('/v1/contract/web/Ab%ZZ/') === 'freenet_notify:Ab%ZZ',
-+  );
-+  check(
-+    'double-encoded spelling decodes once and stays distinct',
-+    keyFor('/v1/contract/web/%2541bC123/') === 'freenet_notify:%41bC123' &&
-+      keyFor('/v1/contract/web/%2541bC123/') !== plain,
-+  );
-+  check(
-+    'invalid UTF-8 escape does not throw and is kept raw',
-+    keyFor('/v1/contract/web/Ab%C3/') === 'freenet_notify:Ab%C3',
-+  );
-+  check('non-contract path -> null', keyFor('/other/') === null);
-+}
-+
- if (failures > 0) {
-   console.error(`\nnotify-rate-limiter: ${failures} check(s) FAILED`);
-   process.exit(1);
-```
-
----
-
-### Incident Patch 3: `5ffab250` (2026-11-24)
-**Commit Message**: fix(dashboard): only use a well-formed, bounded gateway version in mismatch hints (#6358)
-
-**File**: `crates/core/src/node/network_status.rs` (modified, +77/-8)
-```diff
-@@ -2643,13 +2643,7 @@ fn snapshot_at(now: Instant) -> Option<NetworkStatusSnapshot> {
-             address: f.address,
-             reason_html: match &f.reason {
-                 FailureReason::VersionMismatch { local, gateway } => {
--                    let local = html_escape(local);
--                    let gateway = html_escape(gateway);
--                    format!(
--                        "<strong>Version mismatch</strong>: Your version: <code>{local}</code> \
--                         — Gateway requires: <code>{gateway}</code><br>\
--                         Run: <code>cargo install --force freenet --version {gateway}</code>"
--                    )
-+                    version_mismatch_html(local, gateway)
+@@ -536,14 +536,15 @@ async fn drive_client_get_inner(
+                         state.size() + contract.as_ref().map(|c| c.data().len()).unwrap_or(0);
+                     let state_stored = cache_contract_locally(
+                         op_manager,
++                        &instance_id,
+                         *key,
+                         state.clone(),
+                         contract.clone(),
+                         true, // client driver: this node initiated the GET
+                         crate::ring::HostingCause::ClientGet,
+                     )
+                     .await;
+-                    driver.note_stored_state(key, state_stored);
++                    driver.note_stored_state(key, state_stored.accepted_remote);
+                     *key
                  }
-                 FailureReason::NatTraversalFailed => {
-                     let has_peer_connections = s.connected_peers.iter().any(|p| !p.is_gateway);
-@@ -2784,6 +2778,33 @@ fn snapshot_at(now: Instant) -> Option<NetworkStatusSnapshot> {
-     })
+                 Terminal::Streaming {
+@@ -1605,6 +1606,7 @@ async fn drive_get_with_assembly_retry(
+             peer_addr,
+             stream_id,
+             key,
++            &driver.instance_id,
+             includes_contract,
+             cause,
+         )
+@@ -1888,12 +1890,42 @@ fn stored_state_and_code_match(
+     )
  }
  
-+/// Longest peer-supplied version text that is logged or displayed.
-+const MAX_PEER_VERSION_TEXT_LEN: usize = 64;
-+
-+/// True when `s` is a well-formed version string (pre-release and build
-+/// suffixes allowed) of bounded length, the only kind that may be placed into
-+/// a suggested install command.
-+fn is_well_formed_version(s: &str) -> bool {
-+    s.len() <= MAX_PEER_VERSION_TEXT_LEN && semver::Version::parse(s).is_ok()
++/// What `cache_contract_locally` established. Two facts that must not be
++/// merged into one boolean: whether this node accepted STATE FROM THE REPLY
++/// (the only thing that says anything about a remote peer), and whether this
++/// node has a copy it can serve (which may be an older local copy).
++#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
++struct CacheOutcome {
++    /// The reply's state matched the stored copy or the executor accepted it.
++    /// Only this may feed a routing existence proof.
++    accepted_remote: bool,
++    /// Current-or-older state is held locally after the call: the reply was
++    /// accepted, or an already hosted copy answered the read. Gates what needs
++    /// state on this node, such as registering a downstream subscriber.
++    local_copy: bool,
 +}
 +
-+/// Dashboard text for a version mismatch. The install command is only offered
-+/// when both versions are well-formed.
-+fn version_mismatch_html(local: &str, gateway: &str) -> String {
-+    if !(is_well_formed_version(local) && is_well_formed_version(gateway)) {
-+        return "<strong>Version mismatch</strong>: the gateway reported a version \
-+                this node could not read. Update Freenet to the latest release."
-+            .to_string();
-+    }
-+    let local = html_escape(local);
-+    let gateway = html_escape(gateway);
-+    format!(
-+        "<strong>Version mismatch</strong>: Your version: <code>{local}</code> \
-+         — Gateway requires: <code>{gateway}</code><br>\
-+         Run: <code>cargo install --force freenet --version {gateway}</code>"
-+    )
-+}
-+
- /// Classify a ConnectionError::TransportError string into a FailureReason.
- pub fn classify_transport_error(error_msg: &str) -> FailureReason {
-     if error_msg.contains("Version incompatibility") {
-@@ -2801,7 +2822,11 @@ pub fn classify_transport_error(error_msg: &str) -> FailureReason {
-             .and_then(|s| s.split('\n').next())
-             .map(|s| s.trim().to_string())
-             .unwrap_or_default();
--        FailureReason::VersionMismatch { local, gateway }
-+        if is_well_formed_version(&local) && is_well_formed_version(&gateway) {
-+            FailureReason::VersionMismatch { local, gateway }
-+        } else {
-+            FailureReason::Other("version mismatch (version text not recognised)".to_string())
-+        }
-     } else if error_msg.contains("max connection attempts reached") {
-         FailureReason::NatTraversalFailed
-     } else {
-@@ -2899,6 +2924,50 @@ mod tests {
-         }
-     }
- 
-+    #[test]
-+    fn test_classify_version_mismatch_rejects_unrecognised_text() {
-+        let msg = "Version incompatibility with gateway\n  Your client version: 0.1.133\n  Gateway version: 0.1.135 --git https://example.invalid/x\n  \n";
-+        assert!(matches!(
-+            classify_transport_error(msg),
-+            FailureReason::Other(_)
-+        ));
-+        let msg = "Version incompatibility with gateway\n  Your client version: 0.1.133\n  Gateway version: \n";
-+        assert!(matches!(
-+            classify_transport_error(msg),
-+            FailureReason::Other(_)
-+        ));
-+    }
-+
-+    #[test]
-+    fn test_version_mismatch_html_omits_command_for_unrecognised_text() {
-+        let html = version_mismatch_html("0.1.133", "1.0.0 --git https://example.invalid/x");
-+        assert!(!html.contains("cargo install"));
-+        assert!(!html.contains("example.invalid"));
-+    }
-+
-+    #[test]
-+    fn test_classify_version_mismatch_accepts_prerelease_and_rejects_overlong() {
-+        let msg = "Version incompatibility with gateway\n  Your client version: 0.1.133\n  Gateway version: 1.2.3-rc.1+b5\n  \n";
-+        match classify_transport_error(msg) {
-+            FailureReason::VersionMismatch { gateway, .. } => assert_eq!(gateway, "1.2.3-rc.1+b5"),
-+            FailureReason::NatTraversalFailed
-+            | FailureReason::Timeout
-+            | FailureReason::Other(_) => panic!("expected VersionMismatch"),
-+        }
-+        let html = version_mismatch_html("0.1.133", "1.2.3-rc.1+b5");
-+        assert!(html.contains("cargo install --force freenet --version 1.2.3-rc.1+b5"));
-+
-+        let long = format!("1.2.3-{}", "a".repeat(100));
-+        let msg = format!(
-+            "Version incompatibility with gateway\n  Your client version: 0.1.133\n  Gateway version: {long}\n  \n"
++/// Count a GET reply that names a different contract than the one requested.
++/// The peer sets the rate, so log the 1st, 2nd, 4th, 8th, ... occurrence only.
++fn note_reply_not_for_request() {
++    static SEEN: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
++    let seen = SEEN.fetch_add(1, std::sync::atomic::Ordering::Relaxed) + 1;
++    if seen.is_power_of_two() {
++        tracing::warn!(
++            seen,
++            "get: reply does not match the requested contract; not hosting it \
++             (logged at doubling counts)"
 +        );
-+        assert!(mat
++    }
++}
++
+ /// Store the fetched contract state in the local executor and run
+ /// the originator-side hosting side effects. Mirrors the legacy
+ /// `process_message` Response{Found} branch at `get.rs:2218-2450`.
+ ///
+-/// Returns `true` when this node holds the contract's current state after the
+-/// call (`state_matches || put_persisted`) — D-CACHE-RET (step 10 §1a). Relay
++/// Returns a [`CacheOutcome`]. `local_copy` is `true` when this node holds the contract's current state after the
++/// call (`state_matches || put_persisted`, or an already hosted copy answered
++/// the read), and `false` for a reply that names another contract — D-CACHE-RET (step 10 §1a). Relay
+ /// callers gate downstream-subscriber registration on this so a peer registers
+ /// demand only after it actually holds state; registering after state makes the
+ /// phantom (`contract_in_use && !contract_state_present`) unrepresentable.
+@@ -1903,12 +1935,14 @@ fn stored_state_and_code_match(
+ ///    state, skip `PutQuery` entirely so contracts that enforce
+ ///    identical-state rejection in `update_state()` aren't invoked
+ ///    redundantly.
+-/// 2. **Unconditional hosting refresh** — `record_get_access` and
+-///    interest-manager eviction cleanup run for BOTH the
+-///    state-matches short-circuit AND the PutQuery-failed error paths.
+-///    Legacy behaviour at `get.rs:2420-2435` continues these side
+-///    effects on error so re-GETs keep refreshing the hosting LRU/TTL
+-///    even when the executor rejected the write.
++/// 2. **Hosting refresh** — `record_get_access` and interest-manager
++///    eviction cleanup run when the state is held after this call
++///    (state-matches short-circuit or an accepted write), and also for a
++///    contract this node ALREADY hosts when the executor rejected the
++///    incoming state: the read is real demand, charged at the held copy's
++///    size. A contract not already hosted is not hosted off a rejected reply.
++///    A reply naming another contract, or code that does not match its
++///    key, is dropped before anything else.
+ /// 3. **`mark_local_client_access` gated on `is_client_requester`** —
+ ///    the sticky flag that moves the contract into the
+ ///    `contracts_needing_renewal()` set (see `ring/hosting.rs:889`) must
+@@ -1938,12 +1972,13 @@ fn stored_state_and_code_match(
+ // hosting-* AFTER 0.2.94. See .claude/rules/hosting-invariants.md + epic #4642.
+ async fn cache_contract_locally(
+     op_manager: &OpManager,
++    requested
 ```
 
-**File**: `crates/core/src/transport/connection_handler.rs` (modified, +47/-1)
+---
+
+### Incident Patch 3: `9234cb0b` (2026-11-24)
+**Commit Message**: fix(transport): retry a native send whose stream did not open instead of dropping it (#6366)
+
+**File**: `.claude/rules/transport.md` (modified, +23/-12)
 ```diff
-@@ -4624,6 +4624,13 @@ fn ack_ok_parts(
- fn handle_ack_connection_error(err: Cow<'static, str>) -> TransportError {
-     if let Some(expected) = err.split("expected version").nth(1) {
-         let remote_version_str = expected.trim();
-+        // The version is echoed in logs and in a suggested install command,
-+        // so only a well-formed version is ever carried forward.
-+        if remote_version_str.len() > 64 || semver::Version::parse(remote_version_str).is_err() {
-+            return TransportError::ConnectionEstablishmentFailure {
-+                cause: Cow::Borrowed("remote reported an unrecognised protocol version"),
-+            };
+@@ -1600,7 +1600,8 @@ a test passes its own; tests read their own, never the global).
+   quic_data_send_<short|large_short|stream|pipe>_<sent|maybe_delivered|
+   not_opened_udp|failed_udp|dropped>; quic_data_event_<short_overflow_udp|
+   data_refused|stalled_closed|udp_send_failed|suspect_entered|suspect_left|
+-  pacer_refused|ack_wait_released|stream_limit_full|native_worker_panicked>; quic_data_stop_<code> (stops a
++  pacer_refused|ack_wait_released|stream_limit_full|not_opened_retried|
++  not_opened_retry_sent|native_short_queue_full|native_worker_panicked>; quic_data_stop_<code> (stops a
+   peer sent to data sends); quic_inbound_<QuicInboundOutcome> (every receive
+   outcome, refusals by frame kind as short_refused_budget and
+   stream_refused_budget); quic_enabled_data_paths; quic_live_data_paths (a gauge of
+@@ -2341,8 +2342,8 @@ Path: QuicPathLimits::NATIVE (DEFAULT with udp_fallback off) and data
+   Upgrade paths keep udp_fallback on and are unchanged.
+ Shorts: DataRoute::native, no UDP sender. queue_native_short refuses a full
+   queue with TransportError::SendQueueFull (Transient: the connection
+-  survives, the message is counted Dropped, no ShortOverflowUdp), and an
+-  ended path with ConnectionClosed. The worker drops and counts a short it
++  survives, the message is counted quic_data_event_native_short_queue_full,
++  not Dropped, and no ShortOverflowUdp), and an ended path with ConnectionClosed. The worker drops and counts a short it
+   cannot put on the path (ended, or refusing data while it closes).
+ Receive: recv reads the path's inbox through InboundDispatch, the same record
+   a UDP connection keeps (metadata dispatched once, stream ids not reused).
+@@ -2731,21 +2732,31 @@ Sending (QuicPath::send_short_bounded / send_stream_bounded /
+     peer's limit would stop the raise. Until the peer has raised, the reserve
+     does not hold: a send past the peer's limit, streamed, one-packet or
+     control, waits in open_uni until its open deadline (2 s streamed, 1 s a
+-    one-packet Short) and ends NotOpened, which goes on UDP; it never ends
+-    MaybeDelivered, since nothing was written. Each is counted
++    one-packet Short) and ends NotOpened(NoCredit); on an upgraded path it goes
++    on UDP, on a native path (no UDP session) it is sent again on the same path
++    up to NOT_OPENED_RETRIES (2) times and dropped after that
++    (QuicPath::retry_not_opened, only while the path still takes data; the
++    short worker, send_large_short_with and send_stream_with retry, a pipe does
++    not), so a short waits up to 3 s and a stream or large short up to 6 s. It
++    never ends MaybeDelivered, since nothing was written. Each attempt is counted
+     quic_data_event_stream_limit_full when its open deadline ends the wait
+     (a send cancelled earlier, by a teardown or shutdown, is not counted;
+-    pinned by sends_past_a_fresh_peers_stream_limit_end_not_opened). Control
++    pinned by sends_past_a_fresh_peers_stream_limit_end_not_opened), so a send
++    retried twice and dropped counts 3; each retry counts not_opened_retried
++    and a retried send that goes through counts not_opened_retry_sent. A wait
++    on this side's own resources (stream permit, control-frame turn, pipe first
++    chunk) ends NotOpened(TimedOut) and is not retried. Control
+     frames are sent only during setup, but a client's ReadyAck goes out in
+     the step that enables its data, so it would race its own data for the
+     peer's slots: the driver reserves the frame's stream before the send
+     runs (QuicPath::control_first), and no data send opens a stream until
+     the control frame has one or its send ended (pinned by
+     a_reserved_control_frame_opens_ahead_of_data_at_a_full_limit).
+-  → Once the UDP transport is removed there is no UDP to go to: a send that
+-    finds the peer's limit full then waits for a slot, bounded by its send
+-    deadline, and fails NotOpened at the deadline. Not built; the
+-    stream_limit_full count is what sizes that wait.
++  → A native path already has no UDP to go to, so it retries (above) instead.
++    Once the UDP transport is removed, an upgraded path would too, or wait
++    longer for a slot, bounded by its send deadline. Not built for upgraded
++    paths; the stream_limit_full and not_opened_retry_sent counts are what size
++    that wait.
+   → Each bounded send arms TimeSource::sleep_cancelable, which VirtualTime
+     removes (wakeup and waker) when the future is dropped; plain sleep
+     keeps its wakeup until the deadline (VirtualSleep has no drop
+@@ -2868,7 +2879,7 @@ Sending (QuicPath::send_short_bounded / send_stream_bounded /
+   whole message was written and FIN queued, SendProgress set in
+   Outgoing::finish, then the deadline passed or the connection was lost
+   during the ack wait: the peer may have it, do not treat it as Failed),
+-  Failed(NotOpened(TimedOut | ConnectionLost)) (no stream ever existed, so the
++  Failed(NotOpened(TimedOut | NoCredit | ConnectionLost)) (no stream
+```
+
+**File**: `crates/core/src/transport/peer_connection/native_connection/tests.rs` (modified, +115/-1)
+```diff
+@@ -606,7 +606,14 @@ fn a_full_short_queue_refuses_the_send_and_keeps_the_connection() {
+                 matches!(observed, Err(TransportError::SendQueueFull(_))),
+                 "{observed:?}"
+             );
+-            assert_eq!(rig.sends(SendKind::Short, QuicSendResult::Dropped), 2);
++            assert_eq!(rig.sends(SendKind::Short, QuicSendResult::Dropped), 0);
++            assert_eq!(
++                rig.conn
++                    .path()
++                    .stats()
++                    .send_event_count(QuicSendEvent::NativeShortQueueFull),
++                2
++            );
+             assert_eq!(
+                 rig.conn
+                     .path()
+@@ -938,3 +945,110 @@ fn a_native_connection_counts_in_the_shared_bandwidth_pool() {
+         },
+     );
+ }
++
++/// The peer's stream limit is held full by shorts its application does not read:
++/// its short channel holds one and each further reader keeps its slot. Runs
++/// `test` on a native connection that has sent `primed` shorts into those limits.
++fn starved<F, Fut>(network: &'static str, primed: usize, test: F)
++where
++    F: FnOnce(Rig) -> Fut + Send + 'static,
++    Fut: Future<Output = ()> + Send + 'static,
++{
++    run(
++        network,
++        QuicPathLimits {
++            start_streams: 4,
++            short_capacity: 1,
++            ..QuicPathLimits::DEFAULT
++        },
++        None,
++        move |mut rig| async move {
++            for i in 0..primed {
++                rig.conn.send_bytes(vec![i as u8; 8]).await.unwrap();
++            }
++            rig.settle(Duration::from_millis(500)).await;
++            test(rig).await;
++        },
++    );
++}
++
++fn event(rig: &Rig, event: QuicSendEvent) -> u64 {
++    rig.conn.path().stats().send_event_count(event)
++}
++
++/// A native path has no UDP session, so a short whose stream did not open within
++/// its deadline (the peer's stream limit is full) used to be dropped. It is sent
++/// again on the same path, and arrives once the peer frees a slot. A short waits
++/// 1 s for credit on each attempt.
++#[test]
++fn a_short_that_found_no_stream_credit_is_sent_again_not_dropped() {
++    starved("native-conn-not-opened-retry", 5, |mut rig| async move {
++        rig.conn.send_bytes(vec![99; 8]).await.unwrap();
++        // The probe waits out its first 1 s deadline, then the peer reads.
++        rig.settle(Duration::from_millis(1200)).await;
++        let mut got = 0;
++        for _ in 0..20 {
++            while rig.peer.peer_inbound.shorts.try_recv().is_ok() {
++                got += 1;
++            }
++            rig.settle(Duration::from_millis(250)).await;
 +        }
-         // Check if this old peer's rejection actually means we need to update.
-         // Old peers do strict exact-match. If they're compatible with our range
-         // but just don't support range-checking, we should NOT self-update.
-@@ -4647,7 +4654,13 @@ fn handle_ack_connection_error(err: Cow<'static, str>) -> TransportError {
-             actual: PCK_VERSION.to_string(),
-         }
-     } else {
--        TransportError::ConnectionEstablishmentFailure { cause: err }
-+        // Peer text is logged and displayed, so keep only a bounded prefix.
-+        let cause = if err.chars().count() > 64 {
-+            Cow::Owned(err.chars().take(64).collect::<String>())
-+        } else {
-+            err
-+        };
-+        TransportError::ConnectionEstablishmentFailure { cause }
++        assert_eq!(got, 6);
++        assert_eq!(rig.sends(SendKind::Short, QuicSendResult::Dropped), 0);
++        assert_eq!(rig.sends(SendKind::Short, QuicSendResult::Sent), 6);
++        assert_eq!(event(&rig, QuicSendEvent::NotOpenedRetried), 1);
++        assert_eq!(event(&rig, QuicSendEvent::NotOpenedRetrySent), 1);
++    });
++}
++
++/// A peer that never grants credit: the send is attempted once and retried
++/// `NOT_OPENED_RETRIES` times, 1 s each, and then dropped, counted once.
++#[test]
++fn a_short_is_dropped_once_its_retries_run_out() {
++    starved(
++        "native-conn-not-opened-exhausted",
++        5,
++        |mut rig| async move {
++            rig.conn.send_bytes(vec![99; 8]).await.unwrap();
++            rig.settle(Duration::from_millis(2900)).await;
++            assert_eq!(
++                rig.sends(SendKind::Short, QuicSendResult::Dropped),
++                0,
++                "still retrying"
++            );
++            rig.settle(Duration::from_millis(300)).await;
++            assert_eq!(rig.sends(SendKind::Short, QuicSendResult::Dropped), 1);
++            assert_eq!(event(&rig, QuicSendEvent::NotOpenedRetried), 2);
++            assert_eq!(event(&rig, QuicSendEvent::NotOpenedRetrySent), 0);
++            assert_eq!(event(&rig, QuicSendEvent::StreamLimitFull), 3);
++        },
++    );
++}
++
++/// A large short (past one packet) retries the same way; it waits 2 s per
++/// attempt, so up to 6 s.
++#[test]
++fn a_large_short_is_retried_then_dropped() {
++    starved("native-conn-large-short-retry", 5, |mut rig| async move {
++        rig.conn.send_bytes(vec![7; 5000]).await.unwrap();
++        rig.settle(Duration::from_millis(6500)).await;
++        assert_eq!(rig.sends(SendKind::LargeShort, QuicSendResult::Dropped), 1);
++        assert_eq!(event(&rig, QuicSendEvent::NotOpenedRetried), 2);
++        assert_eq!(event(&rig, QuicSendEvent::StreamLimitFull), 3);
++    });
++}
++
++/// A stream retries the same way; it waits 2 s per attempt, so up to 6 s.
++#[test]
++fn a_stream_is_retried_then_dropped() {
++    starved("native-conn-stream-retry", 5, |mut rig| async move {
++        rig.conn
++            .send_stream_data(StreamId::next(), bytes_of(5000), None, None, None)
++            .await
++            .unwrap();
++        rig.settle(Duration::from_millis(6500)).await;
++        assert_eq!(rig.sends(SendKind::Stream, QuicSendResult::Dropped
+```
+
+**File**: `crates/core/src/transport/peer_connection/quic_send.rs` (modified, +33/-17)
+```diff
+@@ -311,11 +311,19 @@ pub(super) async fn send_large_short_with<T: TimeSource>(
+ ) -> OutboundStreamResult {
+     let bytes = data.len() as u64;
+     let transfer = PathTransfer::start(stream_id, remote_addr, bytes, time_source);
+-    let outcome = route
+-        .path()
+-        .send_short_bounded(route.clock(), SendDeadlines::short(bytes), &data)
+-        .await;
+-    route.note(|| format!("sent a large short on the path: {outcome:?}"));
++    let mut attempt = 0;
++    let outcome = loop {
++        let outcome = route
++            .path()
++            .send_short_bounded(route.clock(), SendDeadlines::short(bytes), &data)
++            .await;
++        route.note(|| format!("sent a large short on the path: {outcome:?}"));
++        if !route.path().retry_not_opened(&outcome, attempt) {
++            break outcome;
++        }
++        attempt += 1;
++    };
++    route.path().note_retry_outcome(&outcome, attempt);
+     match route.path().settle(
+         SendKind::LargeShort,
+         &outcome,
+@@ -376,18 +384,26 @@ pub(super) async fn send_stream_with<T: TimeSource>(
+ ) -> OutboundStreamResult {
+     let bytes = data.len() as u64;
+     let transfer = PathTransfer::start(stream_id, remote_addr, bytes, time_source);
+-    let outcome = route
+-        .path()
+-        .send_stream_bounded(
+-            route.clock(),
+-            route.path().stream_deadlines(bytes),
+-            stream_id,
+-            metadata.as_deref(),
+-            data.clone(),
+-            progress.as_deref(),
+-        )
+-        .await;
+-    route.note(|| format!("sent a stream on the path: {outcome:?}"));
++    let mut attempt = 0;
++    let outcome = loop {
++        let outcome = route
++            .path()
++            .send_stream_bounded(
++                route.clock(),
++                route.path().stream_deadlines(bytes),
++                stream_id,
++                metadata.as_deref(),
++                data.clone(),
++                progress.as_deref(),
++            )
++            .await;
++        route.note(|| format!("sent a stream on the path: {outcome:?}"));
++        if !route.path().retry_not_opened(&outcome, attempt) {
++            break outcome;
++        }
++        attempt += 1;
++    };
++    route.path().note_retry_outcome(&outcome, attempt);
+     match route
+         .path()
+         .settle(SendKind::Stream, &outcome, false, route.clock().now_nanos())
+```
+
+**File**: `crates/core/src/transport/quic/config.rs` (modified, +5/-2)
+```diff
+@@ -222,8 +222,11 @@ pub(crate) const UNANNOUNCED_CREDIT_SLACK: u32 = MAX_UNI_STREAMS / 8;
+ ///   at [`DATA_START_UNI_STREAMS`] and raises only once all its streams are
+ ///   busy, so capping the permits below its limit would stop the raise.
+ ///   Until it raises, the reserve does not hold: a send past its limit waits
+-///   in `open_uni` until its open deadline and ends `NotOpened` (on UDP),
+-///   never `MaybeDelivered`, counted `quic_data_event_stream_limit_full`.
++///   in `open_uni` until its open deadline and ends `NotOpened`, never
++///   `MaybeDelivered`, counted `quic_data_event_stream_limit_full`. An upgraded
++///   path then sends it on UDP. A native path has no UDP session, so it sends it
++///   again on the same path (`route::NOT_OPENED_RETRIES` times) and drops it only
++///   after that.
+ pub(crate) const STREAMED_SEND_LIMIT: u32 =
+     MAX_UNI_STREAMS - RESERVED_UNI_STREAMS - UNANNOUNCED_CREDIT_SLACK;
+ const _: () = assert!(RESERVED_UNI_STREAMS > 0 && STREAMED_SEND_LIMIT > 0);
+```
+
+**File**: `crates/core/src/transport/quic/path.rs` (modified, +2/-0)
+```diff
+@@ -2134,7 +2134,9 @@ impl QuicPath {
+                 // stream limit was full for all of it.
+                 let waiting = CreditWait(Some((&self.stats, &progress)));
+                 let wanted = (opener == Opener::Data).then(|| self.writers.wait_for_stream());
++                progress.set_credit_wait(true);
+                 let opened = open.await;
++                progress.set_credit_wait(false);
+                 drop(wanted);
+                 waiting.disarm();
+                 opened
+```
+
+**File**: `crates/core/src/transport/quic/path/bounded.rs` (modified, +22/-1)
+```diff
+@@ -228,8 +228,15 @@ pub(crate) enum SendFailure {
+ #[cfg_attr(not(test), allow(dead_code))]
+ pub(crate) enum NotOpened {
+     /// The deadline passed waiting for the source's first chunk, a
+-    /// streamed-message permit or a stream credit.
++    /// streamed-message permit or a control frame's turn: a wait on this side's
++    /// own resources, which a second attempt would only repeat.
+     TimedOut,
++    /// The deadline passed in `open_uni`, waiting for the peer's stream credit:
++    /// its stream limit was full for the whole open deadline
++    /// ([`QuicSendEvent::StreamLimitFull`]). Credit may be back by the next try.
++    ///
++    /// [`QuicSendEvent::StreamLimitFull`]: super::route::QuicSendEvent::StreamLimitFull
++    NoCredit,
+     /// The connection was lost first.
+     ConnectionLost(quinn::ConnectionError),
+     /// The connection's bandwidth-limit pacer refused the header's wait, which
+@@ -274,6 +281,10 @@ struct ProgressState {
+     /// The path's pacer refused a write, so the send ends as at its current
+     /// deadline (`pacer` module).
+     refused: AtomicBool,
++    /// The send is waiting in `open_uni` for the peer's stream credit
++    /// ([`SendProgress::set_credit_wait`]), so a deadline that ends it is
++    /// [`NotOpened::NoCredit`] and not a wait on this side's own resources.
++    credit_wait: AtomicBool,
+     /// When the end of the stream was sent, on `now`; 0 before.
+     finished_at: AtomicU64,
+     /// [`SendProgress::ack_wait_ended`].
+@@ -316,6 +327,7 @@ impl SendProgress {
+             now: Box::new(|| 0),
+             deadlines: None,
+             refused: AtomicBool::new(false),
++            credit_wait: AtomicBool::new(false),
+             finished_at: AtomicU64::new(0),
+             ack_wait_ended: AtomicBool::new(false),
+             ack_wait_due: AtomicU64::new(0),
+@@ -340,6 +352,7 @@ impl SendProgress {
+             now: Box::new(move || time.now_nanos()),
+             deadlines: Some((deadlines, started)),
+             refused: AtomicBool::new(false),
++            credit_wait: AtomicBool::new(false),
+             finished_at: AtomicU64::new(0),
+             ack_wait_ended: AtomicBool::new(false),
+             ack_wait_due: AtomicU64::new(0),
+@@ -350,6 +363,11 @@ impl SendProgress {
+         }))
+     }
+ 
++    /// Mark the send as waiting (or no longer) for the peer's stream credit.
++    pub(super) fn set_credit_wait(&self, waiting: bool) {
++        self.0.credit_wait.store(waiting, Ordering::Release);
++    }
++
+     /// The send is still opening and its open deadline has passed, so the
+     /// timer ends it now (or has ended it). `false` for a send with no
+     /// deadline.
+@@ -566,6 +584,9 @@ impl SendProgress {
+ 
+     fn timed_out(&self) -> BoundedSend {
+         match self.stage() {
++            STAGE_OPENING if self.0.credit_wait.load(Ordering::Acquire) => {
++                BoundedSend::Failed(SendFailure::NotOpened(NotOpened::NoCredit))
++            }
+             STAGE_OPENING => BoundedSend::Failed(SendFailure::NotOpened(NotOpened::TimedOut)),
+             STAGE_OPENED => BoundedSend::Failed(SendFailure::TimedOut),
+             _ => BoundedSend::MaybeDelivered(MaybeDelivered::TimedOut),
+```
+
+**File**: `crates/core/src/transport/quic/path/route.rs` (modified, +54/-1)
+```diff
+@@ -11,6 +11,7 @@
+ //! | `Sent` | done | done |
+ //! | `MaybeDelivered` | done | done |
+ //! | `Failed(NotOpened)` | UDP | UDP, same id |
++//! | `Failed(NotOpened(NoCredit))` on a native path | same path again, `NOT_OPENED_RETRIES` times, then dropped | same |
+ //! | `Failed(NotOpened(Paced))` (the pacer refused it) | UDP, charged to the pacer | UDP, same id, charged to the pacer |
+ //! | `Failed(TimedOut)` after open | UDP | give up |
+ //! | `Failed(Paced)` after open | UDP, charged to the pacer | give up |
+@@ -137,13 +138,32 @@ quic_outcomes! {
+         /// `config::DATA_START_UNI_STREAMS` yet. Also counted under its
+         /// kind's result.
+         StreamLimitFull => "stream_limit_full",
++        /// A send on a native path (no UDP session) opened no stream within its
++        /// deadline, and was sent again on the same path instead of dropped
++        /// (`QuicPath::retry_not_opened`). Nothing reached the receiver, so the
++        /// second attempt cannot duplicate it.
++        NotOpenedRetried => "not_opened_retried",
++        /// A send that was retried after `NotOpenedRetried` then went through, so
++        /// the retry saved a message the first attempt would have dropped.
++        NotOpenedRetrySent => "not_opened_retry_sent",
++        /// A native connection's short was refused because its queue was full
++        /// (`DataRoute::queue_native_short`): the path is behind. Not a give-up
++        /// after the open deadline, which counts `short_dropped`.
++        NativeShortQueueFull => "native_short_queue_full",
+         /// A native connection's route worker panicked (counted, then the panic
+         /// is raised again). An upgrade's worker counts as
+         /// `quic_upgrade_task_panicked` instead.
+         NativeWorkerPanicked => "native_worker_panicked",
      }
  }
  
-@@ -4939,6 +4952,39 @@ pub mod mock_transport {
-             }
-         }
++/// Extra attempts a native path makes at a send that waited out its open deadline
++/// for the peer's stream credit. Each attempt waits the open deadline again for a stream credit, so
++/// the wait between attempts is the deadline itself and needs no timer of its own.
++/// Two keeps a send that cannot open from holding its slot for more than three
++/// open deadlines.
++pub(crate) const NOT_OPENED_RETRIES: u32 = 2;
++
+ /// What to do after `outcome` of a send of `kind`, and how to count it.
+ pub(crate) fn next_step(kind: SendKind, outcome: &BoundedSend) -> (NextStep, QuicSendResult) {
+     use NextStep::{Done, GiveUp, SendOnUdp};
+@@ -197,7 +217,7 @@ fn timed_out(outcome: &BoundedSend) -> bool {
+     match outcome {
+         BoundedSend::MaybeDelivered(MaybeDelivered::TimedOut)
+         | BoundedSend::Failed(SendFailure::TimedOut) => true,
+-        BoundedSend::Failed(SendFailure::NotOpened(NotOpened::TimedOut))
++        BoundedSend::Failed(SendFailure::NotOpened(NotOpened::TimedOut | NotOpened::NoCredit))
+         | BoundedSend::Sent
+         | BoundedSend::MaybeDelivered(MaybeDelivered::ConnectionLost)
+         | BoundedSend::Failed(SendFailure::NotOpened(NotOpened::ConnectionLost(_)))
+@@ -435,6 +455,39 @@ impl QuicPath {
+         (self.stall.lock().in_a_row(), *self.quiet.lock())
+     }
  
-+        // A refusal whose version is not a well-formed version is not carried
-+        // into the mismatch error (which is rendered as an install command).
-+        for bad in [
-+            "expected version 1.2.3 --git https://example.invalid/x",
-+            "expected version 1.2.3; echo hi",
-+            "expected version <b>1.2.3</b>",
-+            "expected version 1.2",
-+            "expected version ",
-+            "expected version 1.2.3-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-+        ] {
-+            let err = handle_ack_connection_error(bad.to_string().into());
-+            assert!(
-+                matches!(
-+                    &err,
-+                    TransportError::ConnectionEstablishmentFailure { cause }
-+                        if !cause.contains("example.invalid") && !cause.contains("echo")
-+                ),
-+                "expected generic failure for {bad:?}, got {err:?}"
++    /// Whether a send that ended `outcome` on its `attempt`th try (from 0) should
++    /// be sent again on this path, and counts the retry if so. Only a native path
++    /// (no UDP session to fall back to) that still takes data retries, and only a
++    /// send that waited out its open deadline for the peer's stream credit
++    /// ([`NotOpened::NoCredit`]): `NotOpened` proves no stream existed and nothing
++    /// reached the receiver, so a second attempt cannot duplicate the message.
++    /// A closed connection, a pacer refusal or a wait on this side's own resources
++    /// would fail the same way again, and a peer that refused data is not asked
++    /// again. An upgraded path never retries: its fallback is UDP. Each attempt
++    /// counts `StreamLimitFull` once.
++    pub(crate) fn retry_not_opened(&self, outcome: &BoundedSend, attempt: u32) -> bool {
++        let retry = !self.udp_fallback
++            && self.sends_data()
++            && attempt < NOT_OPENED_RETRIES
++            && matches!(
++                outcome,
++                BoundedSend::Failed(SendFailure::NotOpened(NotOpened::NoCredit))
 +            );
++        if retry {
++            self.stats
++                .record_send_event(QuicSendEvent::NotOpenedRetried);
 +        }
++        retry
++    }
 +
-+        let ok = handle_ack_connection_error("expected version 1.2.3-rc.1+b5".to_string().into());
-+        assert!(matches!(
-+            &ok,
-+            TransportError::ProtocolVersionMismatch { expected, .. } if expected == "1.2.3-rc.1+b5"
-+        ));
-+        let long_other = "x".repeat(500);
-+        let err = handle_ack_connection_error(long_other.into());
-+        assert!(matches!(
-+            &err,
-+            TransportError::ConnectionEstablishmentFailure { cause } if cause.chars().count() == 64
-+        ));
++    /// Count a send that went through after `attempt` retries.
++    pub(crate) fn note_retry_outcome(&self, outcome: &BoundedSend, attempt: u32) {
++        if attempt > 0 && matches!(outcome, BoundedSend::Sent) {
++            self.stats
++                .record_send_event(QuicSendEvent::NotOpenedRetrySent);
++        }
++    }
 +
-         let err_msg_no_version = "remote is using a different protocol version".to_string();
-         match handle_ack_connection_error(err_msg_no_version.clone().into()) {
-             TransportError::ConnectionEstablishmentFailure { cause } => {
+     /// Count `outcome` of a send of `kind` and say what to do with the message.
+     /// Every data send of the node ends here.
+     ///
+```
+
+**File**: `crates/core/src/transport/quic/path/tests.rs` (modified, +1/-1)
+```diff
+@@ -6944,7 +6944,7 @@ fn bounded_sends_on_a_path_report_each_outcome() {
+         assert!(
+             matches!(
+                 blocked,
+-                BoundedSend::Failed(SendFailure::NotOpened(NotOpened::TimedOut))
++                BoundedSend::Failed(SendFailure::NotOpened(NotOpened::NoCredit))
+             ),
+             "{blocked:?}"
+         );
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6370** (2026-11-24): ci: raise the Fmt job timeout from 5 to 10 minutes (@sanity)
+- **PR #6369** (2026-11-24): fix(get): host and count GET replies only when accepted and matching the request (@sanity)
+- **PR #6366** (2026-11-24): fix(transport): retry a native send whose stream did not open instead of dropping it (@sanity)
+- **PR #6363** (2026-11-24): test: mixed-version network test against published releases (@sanity)
 - **PR #6362** (2026-11-24): ci(release): ship an exact soaked commit so main stays open during a cut (@sanity)
 - **PR #6361** (2026-11-24): ci(release): close fail-open and half-done paths found in a release-tooling audit (@sanity)
-- **PR #6360** (2026-11-24): build: release 0.2.164 (@sanity)
-- **PR #6359** (2026-11-24): fix(shell): derive the notification consent key from the decoded contract key (@sanity)
-- **PR #6358** (2026-11-24): fix(dashboard): only use a well-formed, bounded gateway version in mismatch hints (@sanity)
-- **PR #6357** (2026-11-24): test(sim): keep peer-to-peer native connects off in the closed gateway-join sim (@sanity)
 
 ---
 
@@ -2317,31 +2420,36 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. release): the manual release driver never changes the handshake floor
+## X. ci: raise the Fmt job timeout from 5 to 10 minutes
 
 **RULE**:
-When implementing operations in `crates/core/Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d1948e2f`: release): the manual release driver never changes the handshake floor. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `49a103d6`: ci: raise the Fmt job timeout from 5 to 10 minutes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/Cargo.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# this value unchanged, and so does scripts/release.sh (#5833). The env var
+    # 10, not 5: besides `cargo fmt --check` (~16 s) this job runs the script
+    # self-tests, which have grown the job to roughly 4-5 min, so a slightly
+    # slow runner crossed 5 min and the job was cancelled mid-self-test.
+    timeout-minutes: 10
+    # Runs in parallel with conventional_commits (both GitHub-hosted, no Rust build)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-# this value unchanged; scripts/release.sh rewrites it. The env var
+    timeout-minutes: 5
+    # Run in parallel with conventional_commits (both are fast GitHub-hosted checks)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d1948e2f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `49a103d6` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

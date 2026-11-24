@@ -12681,3 +12681,4 @@
 | `CYCLE-20261124-FF6E` | `2026-11-24T13:30:19.670Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8826` | Yes (`fe8b2450...`) |
 | `CYCLE-20261124-FGQT` | `2026-11-24T13:30:21.701Z` | `etcd-io/etcd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10267` | Yes (`5bee2fab...`) |
 | `CYCLE-20261124-FIEU` | `2026-11-24T13:30:23.862Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10268` | Yes (`07409b9f...`) |
+| `CYCLE-20261124-QDHC` | `2026-11-24T13:38:50.688Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10269` | Yes (`443fc7a1...`) |

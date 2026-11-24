@@ -12714,3 +12714,4 @@ Every entry in this ledger must capture:
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `045bb278` | Multi-dimensional audit evidence | 2026-11-24T13:30:19.675Z |
 | `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `776d2ee8` | Multi-dimensional audit evidence | 2026-11-24T13:30:21.706Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `984b16cb` | Multi-dimensional audit evidence | 2026-11-24T13:30:23.866Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `d67e8468` | Multi-dimensional audit evidence | 2026-11-24T13:38:50.692Z |

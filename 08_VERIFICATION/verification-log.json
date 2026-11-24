@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-FX2O",
-    "timestamp": "2026-11-22T18:35:18.192Z",
-    "repository": "yyjeqhc/webcodex",
-    "learningId": "learn-github-yyjeqhc-webcodex",
-    "contentHash": "03e3f96af1c343e5e469a6b349a59725ba0f00b6cde705e216102a21d3a459e6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-R5SY",
     "timestamp": "2026-11-22T18:44:02.722Z",
     "repository": "Qwen/Qwen-Image-2.1",
@@ -7490,6 +7475,21 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "07409b9f3d46d08323382958336ea563277304a03398c5bcaea6bae88021757e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-QDHC",
+    "timestamp": "2026-11-24T13:38:50.688Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "443fc7a1126f797fd6dfa18f4ff8c3ec619a376831f4921281b2c565e5895320",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
