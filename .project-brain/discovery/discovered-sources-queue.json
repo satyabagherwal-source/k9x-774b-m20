@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T09:18:44.799Z",
+  "updated_at": "2026-11-24T09:42:34.385Z",
   "stats": {
-    "total_discovered": 8528,
-    "approved_pending_harvest": 8083,
+    "total_discovered": 8544,
+    "approved_pending_harvest": 8099,
     "harvested_count": 0,
     "rejected_count": 445,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8073,
+      "COMMUNITY_AND_EXPERT": 8089,
       "OFFICIAL_DOCUMENTATION": 268,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -184524,6 +184524,358 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
         "fileName": "orange-opensource-hurl-learnings.md"
+      }
+    },
+    "SRC-CF3EAD297A1D": {
+      "id": "SRC-CF3EAD297A1D",
+      "url": "https://appdistribution.firebase.google.com/testerapps/1:178156234792:android:5c60019871e79043d06d1d/releases/72mgi220e6hd8",
+      "title": "https://appdistribution.firebase.google.com/testerapps/1:178156234792:android:5c60019871e79043d06d1d/releases/72mgi220e6hd8",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T09:42:33.207Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
+        "fileName": "streetwriters-notesnook-learnings.md"
+      }
+    },
+    "SRC-EC1A3B11CE08": {
+      "id": "SRC-EC1A3B11CE08",
+      "url": "https://appdistribution.firebase.google.com/testerapps/1:178156234792:ios:7d0d8b7b6332eb72d06d1d/releases/4bmdjajml4r1o",
+      "title": "https://appdistribution.firebase.google.com/testerapps/1:178156234792:ios:7d0d8b7b6332eb72d06d1d/releases/4bmdjajml4r1o",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T09:42:33.287Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
+        "fileName": "streetwriters-notesnook-learnings.md"
+      }
+    },
+    "SRC-8F6FC9BED03E": {
+      "id": "SRC-8F6FC9BED03E",
+      "url": "https://git-lfs.github.com/spec/v1",
+      "title": "https://git-lfs.github.com/spec/v1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T09:42:33.367Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
+        "fileName": "streetwriters-notesnook-learnings.md"
+      }
+    },
+    "SRC-BB9B2457BCE4": {
+      "id": "SRC-BB9B2457BCE4",
+      "url": "https://registry.npmjs.org/@ammarahmed/react-native-sodium/-/react-native-sodium-2.0.0-alpha.1.tgz",
+      "title": "https://registry.npmjs.org/@ammarahmed/react-native-sodium/-/react-native-sodium-2.0.0-alpha.1.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T09:42:33.444Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
+        "fileName": "streetwriters-notesnook-learnings.md"
+      }
+    },
+    "SRC-61D67DB54A7A": {
+      "id": "SRC-61D67DB54A7A",
+      "url": "https://registry.npmjs.org/@ammarahmed/react-native-sodium/-/react-native-sodium-2.0.0-alpha.2.tgz",
+      "title": "https://registry.npmjs.org/@ammarahmed/react-native-sodium/-/react-native-sodium-2.0.0-alpha.2.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T09:42:33.537Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
+        "fileName": "streetwriters-notesnook-learnings.md"
+      }
+    },
+    "SRC-7CA41C2C27FB": {
+      "id": "SRC-7CA41C2C27FB",
+      "url": "https://registry.npmjs.org/@sqltools/formatter/-/formatter-1.2.5.tgz",
+      "title": "https://registry.npmjs.org/@sqltools/formatter/-/formatter-1.2.5.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T09:42:33.609Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
+        "fileName": "streetwriters-notesnook-learnings.md"
+      }
+    },
+    "SRC-0D16717D0363": {
+      "id": "SRC-0D16717D0363",
+      "url": "https://registry.npmjs.org/@streetwriters/kysely/-/kysely-0.27.4.tgz",
+      "title": "https://registry.npmjs.org/@streetwriters/kysely/-/kysely-0.27.4.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T09:42:33.686Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
+        "fileName": "streetwriters-notesnook-learnings.md"
+      }
+    },
+    "SRC-86C85918A0F4": {
+      "id": "SRC-86C85918A0F4",
+      "url": "https://github.com/chalk/ansi-styles?sponsor=1",
+      "title": "https://github.com/chalk/ansi-styles?sponsor=1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T09:42:33.762Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
+        "fileName": "streetwriters-notesnook-learnings.md"
+      }
+    },
+    "SRC-9D44F877C43A": {
+      "id": "SRC-9D44F877C43A",
+      "url": "https://registry.npmjs.org/ansis/-/ansis-3.17.0.tgz",
+      "title": "https://registry.npmjs.org/ansis/-/ansis-3.17.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T09:42:33.843Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
+        "fileName": "streetwriters-notesnook-learnings.md"
+      }
+    },
+    "SRC-E034342942D0": {
+      "id": "SRC-E034342942D0",
+      "url": "https://registry.npmjs.org/any-observable/-/any-observable-0.3.0.tgz",
+      "title": "https://registry.npmjs.org/any-observable/-/any-observable-0.3.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T09:42:33.919Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
+        "fileName": "streetwriters-notesnook-learnings.md"
+      }
+    },
+    "SRC-03AF1C8AFFE4": {
+      "id": "SRC-03AF1C8AFFE4",
+      "url": "https://registry.npmjs.org/app-root-path/-/app-root-path-3.1.0.tgz",
+      "title": "https://registry.npmjs.org/app-root-path/-/app-root-path-3.1.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T09:42:33.994Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
+        "fileName": "streetwriters-notesnook-learnings.md"
+      }
+    },
+    "SRC-769181829443": {
+      "id": "SRC-769181829443",
+      "url": "https://registry.npmjs.org/appdirsjs/-/appdirsjs-1.2.7.tgz",
+      "title": "https://registry.npmjs.org/appdirsjs/-/appdirsjs-1.2.7.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T09:42:34.071Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
+        "fileName": "streetwriters-notesnook-learnings.md"
+      }
+    },
+    "SRC-3947810F4C00": {
+      "id": "SRC-3947810F4C00",
+      "url": "https://registry.npmjs.org/available-typed-arrays/-/available-typed-arrays-1.0.7.tgz",
+      "title": "https://registry.npmjs.org/available-typed-arrays/-/available-typed-arrays-1.0.7.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T09:42:34.150Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
+        "fileName": "streetwriters-notesnook-learnings.md"
+      }
+    },
+    "SRC-ED094E477DB6": {
+      "id": "SRC-ED094E477DB6",
+      "url": "https://github.com/sponsors/ljharb",
+      "title": "https://github.com/sponsors/ljharb",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T09:42:34.228Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
+        "fileName": "streetwriters-notesnook-learnings.md"
+      }
+    },
+    "SRC-7E2D6B6CFB99": {
+      "id": "SRC-7E2D6B6CFB99",
+      "url": "https://registry.npmjs.org/avvio/-/avvio-8.4.0.tgz",
+      "title": "https://registry.npmjs.org/avvio/-/avvio-8.4.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T09:42:34.308Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
+        "fileName": "streetwriters-notesnook-learnings.md"
+      }
+    },
+    "SRC-2B81B7F258EE": {
+      "id": "SRC-2B81B7F258EE",
+      "url": "https://registry.npmjs.org/call-bind/-/call-bind-1.0.9.tgz",
+      "title": "https://registry.npmjs.org/call-bind/-/call-bind-1.0.9.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T09:42:34.384Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md",
+        "fileName": "streetwriters-notesnook-learnings.md"
       }
     }
   }

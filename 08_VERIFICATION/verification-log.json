@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-C2OF",
-    "timestamp": "2026-11-22T16:12:20.751Z",
-    "repository": "oven-sh/bun",
-    "learningId": "learn-github-oven-sh-bun",
-    "contentHash": "ccfea3d53fda0162ab7b516cbec3ec7f4163bd5fa09f9bb4861eca27267ed7c2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-CCAC",
-    "timestamp": "2026-11-22T16:12:33.204Z",
-    "repository": "yugabyte/yugabyte-db",
-    "learningId": "learn-github-yugabyte-yugabyte-db",
-    "contentHash": "37354a618c6bb86ee6afb7a8da4b86cdd460598646d61c721b1c488a7fdb3c01",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-WGX5",
     "timestamp": "2026-11-22T16:28:12.329Z",
     "repository": "astral-sh/uv",
@@ -7490,6 +7460,36 @@
     "repository": "risingwavelabs/risingwave",
     "learningId": "learn-github-risingwavelabs-risingwave",
     "contentHash": "b76e663dbf1546c722b44e47c6376b645181ca05113b520c3746d025c9ec012e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-8X6U",
+    "timestamp": "2026-11-24T09:41:19.494Z",
+    "repository": "streetwriters/notesnook",
+    "learningId": "learn-github-streetwriters-notesnook",
+    "contentHash": "a72d32878b7a96a456bf067775eee45e554e14c25bc2b1328ab3b05101b3424a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-AF1I",
+    "timestamp": "2026-11-24T09:42:29.286Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "b5d82a1cc09467908a1c32ea3da12fd83a6ab82accf15d16a9c09d92a6e3aab5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

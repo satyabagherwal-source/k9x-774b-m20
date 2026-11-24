@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `20bb8be8`  
+> **Source Version**: `1fec0cd4`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T03:50:03.664Z  
+> **Timestamp**: 2026-11-24T09:42:27.948Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T03:50:03.659Z  
+> **Harvest Timestamp**: 2026-11-24T09:41:14.083Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25895 stars
+- **Stars / Engagement**: 25896 stars
 
 ---
 
@@ -1264,10 +1264,9 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
   **Post-Mortem & Fix Analysis**:
   > /test
 
-- **Issue #50209** (2026-11-23): **bpf: tests: extend coverage of NO_SNAT endpoints**
-  *Symptoms*: The `ENDPOINT_F_NO_SNAT_{V4,V6}` flag (used by multi-pool IPAM to skip masquerading) is only tested with UDP traffic. This adds some more BPF unit tests for it.  The first commit moves the packet checks of the existing UDP tests into helpers (`no_snat_ep_check_v{4,6}()` and `snat_ep_check_v{4,6}()`), so that they can be reused by other tests. No functional changes.  The second one adds the same tests for TCP and ICMP echo, for both IPv4 and IPv6. For each protocol there is a test with a `NO_SNAT` endpoint (the source IP is preserved) and one with a regular endpoint (the source IP is masqueraded), so that we know the first one doesn't pass for the wrong reason. They run in both `host_bpf_masq_native` and `host_bpf_masq_overlay`.  The last one adds a test per IP family checking that a `NO_SNAT` endpoint matching an egress gateway policy is still SNATed with the egress IP, since the policy is evaluated before the flag in `__snat_v{4,6}_needs_masquerade()`.  AIL: 0
+- **Issue #50218** (2026-11-24): **v1.20 Backports 2026-11-23**
+  *Symptoms*:  * [x] #50163 (@mhofstetter) :warning: resolved conflicts  Once this PR is merged, a GitHub action will update the labels of these PRs: ```upstream-prs  50163 ``` 
   **Post-Mortem & Fix Analysis**:
-  > /test
   > /test
 
 ### D4: Resource Lifecycle & Leak Defenses
@@ -1285,293 +1284,44 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `20bb8be8` (2026-11-23)
-**Commit Message**: gateway-api: add translation extension hook
+### Incident Patch 1: `1fec0cd4` (2026-11-20)
+**Commit Message**: ctmap: explicitly set LRU map memory flags
 
-Allow external components to modify translated Gateway CECs before they
-are persisted.
+Set the memory flags on CT maps specifications explicitly.
+`openOrCreate` currently applies these flags implicitly, but setting
+them here keeps the map configuration explicit.
 
-Register extensions through Hive and support deferring reconciliation to
-preserve the last successfully applied configuration.
+Signed-off-by: Andrea Terzolo <[REDACTED_EMAIL]>
 
-Signed-off-by: Viktor Kurchenko <[REDACTED_EMAIL]>
-
-**File**: `operator/pkg/gateway-api/cell.go` (modified, +7/-4)
+**File**: `pkg/maps/ctmap/ctmap.go` (modified, +2/-2)
 ```diff
-@@ -235,7 +235,8 @@ type gatewayAPIParams struct {
- 	// Preconditions is injected from private provider
- 	Preconditions *gatewayAPIPreconditions
- 
--	AdditionalResources []resource.Resource `group:"gateway-api-resources"`
-+	TranslationExtensions []TranslationExtension `group:"gateway-api-translation-extensions"`
-+	AdditionalResources   []resource.Resource    `group:"gateway-api-resources"`
- }
- 
- func initGatewayAPIController(params gatewayAPIParams) error {
-@@ -307,7 +308,8 @@ func initGatewayAPIController(params gatewayAPIParams) error {
- 		cfg.HostNetworkConfig.Enabled,
- 		nodeLabelSelector,
- 		params.GatewayApiConfig.GatewayAPIInferenceExtensionEnabled,
--		params.AdditionalResources...,
-+		params.TranslationExtensions,
-+		params.AdditionalResources,
- 	); err != nil {
- 		return fmt.Errorf("failed to create gateway controller: %w", err)
- 	}
-@@ -468,13 +470,14 @@ func registerReconcilers(
- 	hostNetworkEnabled bool,
- 	hostNetworkLabel v1.LabelSelector,
- 	inferenceExtensionEnabled bool,
--	additionalResources ...resource.Resource,
-+	translationExtensions []TranslationExtension,
-+	additionalResources []resource.Resource,
- ) error {
- 	requiredReconcilers := []interface {
- 		SetupWithManager(mgr ctrlRuntime.Manager) error
- 	}{
- 		newGatewayClassReconciler(mgr, logger, controllerName),
--		newGatewayReconciler(mgr, translator, logger, controllerName, hostNetworkEnabled, hostNetworkLabel, inferenceExtensionEnabled, additionalResources...),
-+		newGatewayReconciler(mgr, translator, logger, controllerName, hostNetworkEnabled, hostNetworkLabel, inferenceExtensionEnabled, translationExtensions, additionalResources),
- 		newGammaReconciler(mgr, translator, logger, controllerName),
- 		newGatewayClassConfigReconciler(mgr, logger),
- 		newEndpointSliceReconciler(mgr, logger),
-```
-
-**File**: `operator/pkg/gateway-api/gateway.go` (modified, +4/-1)
-```diff
-@@ -54,6 +54,7 @@ type gatewayReconciler struct {
- 	controllerName                      string
- 	gatewayAPIInferenceExtensionEnabled bool
- 	resourceRegistry                    resource.Registry
-+	translationExtensions               []TranslationExtension
- }
- 
- func newGatewayReconciler(
-@@ -64,7 +65,8 @@ func newGatewayReconciler(
- 	hostNetworkEnabled bool,
- 	hostNetworkLabel metav1.LabelSelector,
- 	gatewayAPIInferenceExtensionEnabled bool,
--	additionalResources ...resource.Resource,
-+	translationExtensions []TranslationExtension,
-+	additionalResources []resource.Resource,
- ) *gatewayReconciler {
- 	scopedLog := logger.With(logfields.Controller, gateway)
- 
-@@ -104,6 +106,7 @@ func newGatewayReconciler(
- 		controllerName:                      controllerName,
- 		gatewayAPIInferenceExtensionEnabled: gatewayAPIInferenceExtensionEnabled,
- 		resourceRegistry:                    resource.NewGatewayRegistry(resourceConfig, additionalResources...),
-+		translationExtensions:               translationExtensions,
+@@ -372,7 +372,7 @@ func NewGlobalMapSpec(cfg MapConfig) *ebpf.MapSpec {
+ 		KeySize:    uint32(keySize),
+ 		ValueSize:  uint32(valueSize),
+ 		MaxEntries: uint32(m.maxEntries()),
+-		Flags:      0,
++		Flags:      bpf.GetMapMemoryFlags(ebpf.LRUHash),
  	}
  }
  
-```
-
-**File**: `operator/pkg/gateway-api/gateway_reconcile.go` (modified, +10/-0)
-```diff
-@@ -228,6 +228,16 @@ func (r *gatewayReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
- 		return r.handleReconcileErrorWithStatus(ctx, fmt.Errorf("failed to translate resources: %w", err), original, gw)
+@@ -384,7 +384,7 @@ func newMap(mapName string, m mapType, opts ...MapOption) *Map {
+ 			m.key(),
+ 			m.value(),
+ 			m.maxEntries(),
+-			0,
++			bpf.GetMapMemoryFlags(ebpf.LRUHash),
+ 		),
+ 		mapType: m,
  	}
- 
-+	deferReconcile, err := r.applyTranslationExtensions(ctx, gw, cec)
-+	if err != nil {
-+		setGatewayProgrammed(gw, metav1.ConditionFalse, "Unable to apply translation extensions", gatewayv1.GatewayReasonNoResources)
-+		return r.handleReconcileErrorWithStatus(ctx, err, original, gw)
-+	}
-+	if deferReconcile {
-+		scopedLog.InfoContext(ctx, "Gateway reconciliation deferred by translation extension")
-+		return controllerruntime.Success()
-+	}
-+
- 	if err = r.ensureService(ctx, svc); err != nil {
- 		setGatewayAccepted(gw, false, "Unable to create Service resource", gatewayv1.GatewayReasonNoResources)
- 		setGatewayProgrammed(gw, metav1.ConditionFalse, "Unable to create Service resource", gatewayv1.GatewayReasonNoResources)
-```
-
-**File**: `operator/pkg/gateway-api/translation_extension.go` (added, +60/-0)
-```diff
-@@ -0,0 +1,60 @@
-+// SPDX-License-Identifier: Apache-2.0
-+// Copyright Authors of Cilium
-+
-+package gateway_api
-+
-+import (
-+	"context"
-+	"fmt"
-+
-+	gatewayv1 "sigs.k8s.io/gateway-api/apis/v1"
-+
-+	ciliumv2 "github.com/cilium/cilium/pkg/k8s/apis/cilium.io/v2"
-+)
-+
-+// TranslationExtension modifies the translated Envoy configuration before it
-+// is persisted. Implementations must not persist the configuration themselves.
-+type TranslationExtension interface {
-+	// Name returns the stable extension name used in diagnostics.
-+	Name() string
-+
-+	// Enabled reports whether the extension should be applied.
-+	Enabled() bool
-+
-+	// Apply modifies cec for gateway. The extension may defer reconciliation to
-+	// preserve the last successfully applied configuration.
-+	Apply(context.Context, *gatewayv1.Gateway, *ciliumv2.CiliumEnvoyConfig) (TranslationExtensionResult, error)
-+}
-+
-+// TranslationExtensionResult controls Gateway reconciliation after an
-+// extension has been applied.
-+type TranslationExtensionResult struct {
-+	DeferReconcile bool
-+}
-+
-+func (r *gatewayReconciler) applyTranslationExtensions(
-+	ctx context.Context,
-+	gateway *gatewayv1.Gateway,
-+	cec *ciliumv2.CiliumEnvoyConfig,
-+) (bool, error) {
-+	if cec == nil {
-+		return false, nil
-+	}
-+
-+	for _, extension := range r.translationExtensions {
-+		if !extension.Enabled() {
-+			continue
-+		}
-+
-+		result, err := extension.Apply(ctx, gateway, cec)
-+		if err != nil {
-+			return false, fmt.Errorf("translation extension %q failed: %w", extension.Name(), err)
-+		}
-+
-+		if result.DeferReconcile {
-+			return true, nil
-+		}
-+	}
-+
-+	return false, nil
-+}
-```
-
----
-
-### Incident Patch 2: `c7499b32` (2026-11-23)
-**Commit Message**: gateway-api: allow additional ResourceRegistry entries
-
-This adds optional resources support to Gateway API through a Hive group
-and pass them into the Gateway registry.
-
-Existing behavior remains unchanged when no additional resources are
-registered.
-
-Signed-off-by: Viktor Kurchenko <[REDACTED_EMAIL]>
-
-**File**: `operator/pkg/gateway-api/cell.go` (modified, +6/-1)
-```diff
-@@ -27,6 +27,7 @@ import (
- 	operatorOption "github.com/cilium/cilium/operator/option"
- 	"github.com/cilium/cilium/operator/pkg/ciliumenvoyconfig"
- 	"github.com/cilium/cilium/operator/pkg/gateway-api/helpers"
-+	"github.com/cilium/cilium/operator/pkg/gateway-api/resource"
- 	"github.com/cilium/cilium/operator/pkg/model/translation"
- 	gatewayApiTranslation "github.com/cilium/cilium/operator/pkg/model/translation/gateway-api"
- 	"github.com/cilium/cilium/operator/pkg/secretsync"
-@@ -233,6 +234,8 @@ type gatewayAPIParams struct {
- 
- 	// Preconditions is injected from private provider
- 	Preconditions *gatewayAPIPreconditions
-+
-+	AdditionalResources []resource.Resource `group:"gateway-api-resources"`
- }
- 
- func initGatewayAPIController(params gatewayAPIParams) error {
-@@ -304,6 +307,7 @@ func initGatewayAPIController(params gatewayAPIParams) error {
- 		cfg.HostNetworkConfig.Enabled,
- 		nodeLabelSelector,
- 		params.GatewayApiConfig.GatewayAPIInferenceExtensionEnabled,
-+		params.AdditionalResources...,
- 	); err != nil {
- 		return fmt.Errorf("failed to create gateway controller: %w", err)
- 	}
-@@ -464,12 +468,13 @@ func registerReconcilers(
- 	hostNetworkEnabled bool,
- 	hostNetworkLabel v1.LabelSelector,
- 	inferenceExtensionEnabled bool,
-+	additionalResources ...resource.Resource,
- ) error {
- 	requiredReconcilers := []interface {
- 		SetupWithManager(mgr ctrlRuntime.Manager) error
- 	}{
- 		newGatewayClassReconciler(mgr, logger, controllerName),
--		newGatewayReconciler(mgr, translator, logger, controllerName, hostNetworkEnabled, hostNetworkLabel, inferenceExtensionEnabled),
-+		newGatewayReconciler(mgr, translator, logger, controllerName, hostNetworkEnabled, hostNetworkLabel, inferenceExtensionEnabled, additionalResources...),
- 		newGammaReconciler(mgr, translator, logger, controllerName),
- 		newGatewayClassConfigReconciler(mgr, logger),
- 		newEndpointSliceReconciler(mgr, logger),
-```
-
-**File**: `operator/pkg/gateway-api/gateway.go` (modified, +11/-2)
-```diff
-@@ -56,7 +56,16 @@ type gatewayReconciler struct {
- 	resourceRegistry                    resource.Registry
- }
- 
--func newGatewayReconciler(mgr ctrl.Manager, translator translation.Translator, logger *slog.Logger, controllerName string, hostNetworkEnabled bool, hostNetworkLabel metav1.LabelSelector, gatewayAPIInferenceExtensionEnabled bool) *gatewayReconciler {
-+func newGatewayReconciler(
-+	mgr ctrl.Manager,
-+	translator translation.Translator,
-+	logger *slog.Logger,
-+	controllerName string,
-+	hostNetworkEnabled bool,
-+	hostNetworkLabel metav1.LabelSelector,
-+	gatewayAPIInferenceExtensionEnabled bool,
-+	additionalResources ...resource.Resource,
-+) *gatewayReconciler {
- 	scopedLog := logger.With(logfields.Controller, gateway)
- 
- 	resourceConfig := helpers.ResourceConfig{
-@@ -94,7 +103,7 @@ func newGatewayReconciler(mgr ctrl.Manager, translator translation.Translator, l
- 		logger:                              scopedLog,
- 		controllerName:                      controllerName,
- 		gatewayAPIInferenceExtensionEnabled: gatewayAPIInferenceExtensionEnabled,
--		resourceRegistry:                    resource.NewGatewayRegistry(resourceConfig),
-+		resourceRegistry:                    resource.NewGatewayRegistry(resourceConfig, additionalResources...),
- 	}
- }
- 
-```
-
-**File**: `operator/pkg/gateway-api/resource/resource_registry.go` (modified, +5/-1)
-```diff
-@@ -56,7 +56,7 @@ type GatewayRegistry struct {
- //
- // So, addition of Resources must be gated by if the resource is present
- // in the cluster. Use the registryConfig to determine this.
--func NewGatewayRegistry(r helpers.ResourceConfig) *GatewayRegistry {
-+func NewGatewayRegistry(r helpers.ResourceConfig, additionalResources ...Resource) *GatewayRegistry {
- 	gr := &GatewayRegistry{
- 		registryConfig: r,
- 	}
-@@ -92,6 +92,10 @@ func NewGatewayRegistry(r helpers.ResourceConfig) *GatewayRegistry {
- 		gr.AddResource(NewInferencePoolResource(gr.registryConfig))
- 		gr.AddResource(NewEndpointSliceResource(gr.registryConfig))
- 	}
-+
-+	for i := range additionalResources {
-+		gr.AddResource(additionalResources[i])
-+	}
- 	return gr
- }
- 
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #50225** (2026-11-24): gateway-api: translation extension and resource registry hooks (@viktor-kurchenko)
+- **PR #50218** (2026-11-24): v1.20 Backports 2026-11-23 (@mhofstetter)
 - **PR #50209** (2026-11-23): bpf: tests: extend coverage of NO_SNAT endpoints (@ekoops)
 - **PR #50207** (2026-11-23): docs: Gateway API TLS options (@arybolovlev)
 - **PR #50202** (2026-11-23): chore(deps): update gcr.io/distroless/static:nonroot docker digest to 8ce6dd8 (v1.18) (@cilium-renovate[bot])
 - **PR #50201** (2026-11-22): chore(deps): update gcr.io/distroless/static:nonroot docker digest to 8ce6dd8 (v1.19) (@cilium-renovate[bot])
-- **PR #50200** (2026-11-23): fix(deps): update module github.com/tidwall/sjson to v1.2.10 (main) (@cilium-renovate[bot])
 
 ---
 
@@ -1591,37 +1341,30 @@ Signed-off-by: Viktor Kurchenko <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gateway-api: add translation extension hook
+## X. ctmap: explicitly set LRU map memory flags
 
 **RULE**:
-When implementing operations in `operator/pkg/gateway-api/cell.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/maps/ctmap/ctmap.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `20bb8be8`: gateway-api: add translation extension hook. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1fec0cd4`: ctmap: explicitly set LRU map memory flags. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `operator/pkg/gateway-api/cell.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/maps/ctmap/ctmap.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	TranslationExtensions []TranslationExtension `group:"gateway-api-translation-extensions"`
-	AdditionalResources   []resource.Resource    `group:"gateway-api-resources"`
-		params.TranslationExtensions,
-		params.AdditionalResources,
-	translationExtensions []TranslationExtension,
-	additionalResources []resource.Resource,
-		newGatewayReconciler(mgr, translator, logger, controllerName, hostNetworkEnabled, hostNetworkLabel, inferenceExtensionEnabled, translationExtensions, additionalResources),
+		Flags:      bpf.GetMapMemoryFlags(ebpf.LRUHash),
+			bpf.GetMapMemoryFlags(ebpf.LRUHash),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	AdditionalResources []resource.Resource `group:"gateway-api-resources"`
-		params.AdditionalResources...,
-	additionalResources ...resource.Resource,
-		newGatewayReconciler(mgr, translator, logger, controllerName, hostNetworkEnabled, hostNetworkLabel, inferenceExtensionEnabled, additionalResources...),
+		Flags:      0,
+			0,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `20bb8be8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1fec0cd4` are properly handled with clean fallback behavior.

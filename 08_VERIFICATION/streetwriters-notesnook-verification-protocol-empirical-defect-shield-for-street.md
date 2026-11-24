@@ -4,22 +4,22 @@
 {
   "source_repository": "streetwriters/notesnook",
   "source_url": "https://github.com/streetwriters/notesnook",
-  "source_version": "8bb25559",
+  "source_version": "18c27502",
   "license": "GPL-3.0",
-  "timestamp": "2026-11-17T13:05:48.782Z",
+  "timestamp": "2026-11-24T09:41:19.816Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-streetwriters-notesnook",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [streetwriters/notesnook](https://github.com/streetwriters/notesnook) (Revision: `8bb25559`).  
-> **License**: GPL-3.0 | **Timestamp**: `2026-11-17T13:05:48.782Z`  
+> **Provenance**: Harvested from [streetwriters/notesnook](https://github.com/streetwriters/notesnook) (Revision: `18c27502`).  
+> **License**: GPL-3.0 | **Timestamp**: `2026-11-24T09:41:19.816Z`  
 > **Learning ID**: `learn-github-streetwriters-notesnook`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `streetwriters/notesnook` (Commit: `8bb25559`)
+- **Target Repository**: `streetwriters/notesnook` (Commit: `18c27502`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/streetwriters-notesnook-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/streetwriters/notesnook](https://github.com/streetwriters/notesnook))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T13:05:47.561Z  
+> **Harvest Timestamp**: 2026-11-24T09:41:08.096Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A fully open source & end-to-end encrypted note taking alternative to Evernote.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 14950 stars
+- **Stars / Engagement**: 14960 stars
 
 ---
 
@@ -765,16 +765,14 @@ function setDockMenuOnMacOs() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #10679** (2026-11-13): **Email confirmation failed. Invalid token**
-  *Symptoms*: new account/user  Received email to verify email but get this error. Solution/fix please  Uh oh! Email confirmation failed. Please try again! Invalid token  <img width="636" height="363" alt="Email Confirmation Failed - Notesnook" src="https://github.com/user-attachments/assets/ea8e6b8a-2c66-464c-b8c2-eeebb1d54470" />
-  **Post-Mortem & Fix Analysis**:
-  > Resolved. 
-
-- **Issue #10667** (2026-11-16): **mobile: release v3.4.16**
+- **Issue #10722** (2026-11-23): **mobile: release v3.4.17**
   *Symptoms*: 
   **Post-Mortem & Fix Analysis**:
-  > <!-- pages-preview-comment --> **Cloudflare Pages Preview**  https://8490e420.notesnook-app.pages.dev  Commit: cf6303c5056aa8d43491bfa74c9c9845e0e88eed 
-  > <!-- desktop-preview-comment --> **Desktop Previews**  - [macOS](https://github.com/streetwriters/notesnook/actions/runs/43812968242/artifacts/14201680996) - [Linux x64](https://github.com/streetwriters/notesnook/actions/runs/43812968242/artifacts/14201690556) - [Linux arm64](https://github.com/streetwriters/notesnook/actions/runs/43812968242/artifacts/14201695998) - [Windows x64](https://github.com/streetwriters/notesnook/actions/runs/43812968242/artifacts/14201228171)  Commit: cf6303c5056aa8d43491bfa74c9c9845e0e88eed 
+  > <!-- android-preview-comment --> **Android App Preview**  https://appdistribution.firebase.google.com/testerapps/1:178156234792:android:5c60019871e79043d06d1d/releases/72mgi220e6hd8?utm_source=firebase-tools  Commit: 593ea2c4dc8b40e8ca050047ca108e907abd07cc 
+  > <!-- ios-preview-comment --> **iOS App Preview**  https://appdistribution.firebase.google.com/testerapps/1:178156234792:ios:7d0d8b7b6332eb72d06d1d/releases/4bmdjajml4r1o?utm_source=firebase-tools  Commit: 593ea2c4dc8b40e8ca050047ca108e907abd07cc 
+
+- **Issue #10721** (2026-11-23): **web: bump version to 3.4.14**
+  *Symptoms*:  ## Description <!-- Add a detailed summary of what this feature/bugfix does -->  ## Type of Change - [ ] Bug fix - [ ] Feature  ## Visuals - [ ] Attached relevant screenshots / screen recording / GIF - [ ] N/A (not a feature or no UI changes)  ## Testing - [ ] Ran all E2E tests - [ ] Ran all integration tests - [ ] Added/updated tests for this change (if needed) - [ ] N/A (tests not needed — explanation provided below)  ### If tests were not added, explain why <!-- explanation -->  ## Platform <!-- Describe which platforms this PR is related to -->  - [ ] Web - [ ] Mobile - [ ] Desktop  ## Sign-off - [ ] QA passed - [ ] UI/UX passed 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -791,218 +789,470 @@ function setDockMenuOnMacOs() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cf6303c5` (2026-11-16)
-**Commit Message**: mobile: fix locked note history does not save note title
+### Incident Patch 1: `926059b0` (2026-11-23)
+**Commit Message**: Merge pull request #10632 from streetwriters/fix/android-code-block-triple-enter
 
-**File**: `apps/mobile/app/screens/editor/tiptap/use-editor.ts` (modified, +2/-1)
+editor: exit code block on triple enter on android
+
+**File**: `packages/editor/src/extensions/code-block/code-block.ts` (modified, +51/-0)
 ```diff
-@@ -441,7 +441,8 @@ export const useEditor = (
-           if (typeof noteData.title === "string") {
-             await db.notes.add({
-               title: noteData.title,
--              id: noteData.id
-+              id: noteData.id,
-+              sessionId: noteData?.sessionId
-             });
-           }
- 
+@@ -533,6 +533,57 @@ export const CodeBlock = Node.create<CodeBlockOptions>({
+       HighlighterPlugin({
+         name: this.name,
+         defaultLanguage
++      }),
++      new Plugin({
++        props: {
++          handleDOMEvents: {
++            beforeinput: (view, event) => {
++              const inputEvent = event as InputEvent;
++              const isEnter =
++                inputEvent.inputType === "insertParagraph" ||
++                inputEvent.inputType === "insertLineBreak" ||
++                (inputEvent.inputType === "insertText" &&
++                  inputEvent.data === "\n");
++
++              if (!isEnter) return false;
++
++              const { $from, empty } = view.state.selection;
++              if (!empty || $from.parent.type.name !== this.name) return false;
++
++              if (
++                this.options.exitOnTripleEnter &&
++                exitOnTripleEnter(this.editor, $from)
++              ) {
++                event.preventDefault();
++                // PM's beforeinput is skipped, so cancel the patched
++                // prosemirror-view Android/iOS Enter fallbacks ourselves
++                const input = (
++                  view as unknown as {
++                    input?: {
++                      lastAndroidEnter?: number;
++                      androidEnterFallbackTimeout?: ReturnType<
++                        typeof setTimeout
++                      >;
++                      lastIOSEnter?: number;
++                      lastIOSEnterFallbackTimeout?: ReturnType<
++                        typeof setTimeout
++                      >;
++                    };
++                  }
++                ).input;
++                if (input) {
++                  clearTimeout(input.androidEnterFallbackTimeout);
++                  input.lastAndroidEnter = 0;
++                  clearTimeout(input.lastIOSEnterFallbackTimeout);
++                  input.lastIOSEnter = 0;
++                }
++                return true;
++              }
++
++              return false;
++            }
++          }
++        }
+       })
+     ];
+   },
 ```
 
----
-
-### Incident Patch 2: `bc170a3c` (2026-11-16)
-**Commit Message**: Merge pull request #10590 from streetwriters/fix/sse-stale-token
-
-Fix SSE retrying forever with an expired token
-
-**File**: `apps/mobile/app/utils/sse/event-source.js` (modified, +17/-2)
+**File**: `packages/editor/src/extensions/code-block/tests/code-block.test.ts` (modified, +209/-0)
 ```diff
-@@ -25,12 +25,18 @@ const EventEmitter =
-   Platform.OS === "ios" ? null : new NativeEventEmitter(NativeEventSource);
- 
- export default class EventSource {
-+  CONNECTING = 0;
-+  OPEN = 1;
-+  CLOSED = 2;
+@@ -324,3 +324,212 @@ test("Toggling from a codeblock should make codeblock disappear", async () => {
+   expect(codeBlockNodes).toHaveLength(0);
+   expect(paragraphNodes).toHaveLength(2);
+ });
 +
-   constructor(url, options) {
-     this.url = url;
-     this.options = options;
-+    this.readyState = this.CONNECTING;
-     this.connect();
-     this.open;
-     this.message;
-+    this.error;
-   }
- 
-   connect() {
-@@ -39,20 +45,29 @@ export default class EventSource {
-   }
- 
-   close() {
-+    this.readyState = this.CLOSED;
-     NativeEventSource.close();
-     this.open?.remove();
-     this.message?.remove();
-+    this.error?.remove();
-   }
- 
-   registerEvents() {
-     this.open = EventEmitter.addListener("open", () => {
--      this.onopen();
-+      this.readyState = this.OPEN;
-+      this.onopen?.();
-     });
- 
-     this.message = EventEmitter.addListener("message", (ev) => {
-       const { message } = ev;
-       const eventData = { data: message };
--      this.onmessage(eventData);
-+      this.onmessage?.(eventData);
++test("exit codeblock on triple enter via beforeinput (Android simulation)", async () => {
++  const editorElement = document.createElement("div");
++  const { editor } = createEditor({
++    element: editorElement,
++    initialContent: "<pre><code>const a = 1;</code></pre>",
++    extensions: {
++      codeblock: CodeBlock,
++      codeBlock: false,
++      code: false
++    }
++  });
++
++  editor.commands.setTextSelection(editor.state.doc.nodeSize - 2);
++
++  // 1st Enter (inserts \n)
++  editor.commands.insertContent("\n");
++  // 2nd Enter (inserts \n)
++  editor.commands.insertContent("\n");
++
++  // 3rd Enter dispatches beforeinput on Android
++  const beforeInputEvent = new InputEvent("beforeinput", {
++    inputType: "insertParagraph",
++    cancelable: true,
++    bubbles: true
++  });
++  editor.view.dom.dispatchEvent(beforeInputEvent);
++
++  expect(beforeInputEvent.defaultPrevented).toBe(true);
++
++  const docJSON = editor.state.doc.toJSON();
++  const content = docJSON.content;
++
++  expect(content).toHaveLength(2);
++  expect(content[0].type).toBe("codeblock");
++  expect(content[0].content?.[0].text).toBe("const a = 1;");
++  expect(content[1].type).toBe("paragraph");
++  expect(editor.state.selection.$from.parent.type.name).toBe("paragraph");
++});
++
++test("exit empty codeblock on triple enter via beforeinput (Android simulation)", async () => {
++  const editorElement = document.createElement("div");
++  const { editor } = createEditor({
++    element: editorElement,
++    initialContent: "<pre><code></code></pre>",
++    extensions: {
++      codeblock: CodeBlock,
++      codeBlock: false,
++      code: false
++    }
++  });
++
++  editor.commands.setTextSelection(editor.state.doc.nodeSize - 2);
++
++  editor.commands.insertContent("\n");
++  editor.commands.insertContent("\n");
++
++  const beforeInputEvent = new InputEvent("beforeinput", {
++    inputType: "insertLineBreak",
++    cancelable: true,
++    bubbles: true
++  });
++  editor.view.dom.dispatchEvent(beforeInputEvent);
++
++  expect(beforeInputEvent.defaultPrevented).toBe(true);
++
++  const docJSON = editor.state.doc.toJSON();
++  const content = docJSON.content;
++
++  expect(content).toHaveLength(2);
++  expect(content[0].type).toBe("codeblock");
++  expect(content[0].content).toBeUndefined();
++  expect(content[1].type).toBe("paragraph");
++  expect(editor.state.selection.$from.parent.type.name).toBe("paragraph");
++});
++
++test("cancel pending Android Enter fallback after exiting codeblock on triple enter", async () => {
++  vi.useFakeTimers();
++  try {
++    const editorElement = document.createElement("div");
++    const { editor } = createEditor({
++      element: editorElement,
++      initialContent: "<pre><code>const a = 1;</code></pre>",
++      extensions: {
++        codeblock: CodeBlock,
++        codeBlock: false,
++        code: false
++      }
 +    });
 +
-+    // the native side gave up after a 401/403 instead of retrying
-+    this.error = EventEmitter.addListener("error", (ev) => {
-+      this.readyState = this.CLOSED;
-+      this.onerror?.({ status: ev.status });
-     });
-   }
- }
-```
-
-**File**: `apps/mobile/patches/@ammarahmed+react-native-eventsource+1.1.0.patch` (added, +22/-0)
-```diff
-@@ -0,0 +1,22 @@
-+diff --git a/node_modules/@ammarahmed/react-native-eventsource/android/src/main/java/com/github/jonnybgod/RNEventSource/RNEventSourceModule.java b/node_modules/@ammarahmed/react-native-eventsource/android/src/main/java/com/github/jonnybgod/RNEventSource/RNEventSourceModule.java
-+index d874cde..e7947b3 100644
-+--- a/node_modules/@ammarahmed/react-native-eventsource/android/src/main/java/com/github/jonnybgod/RNEventSource/RNEventSourceModule.java
-++++ b/node_modules/@ammarahmed/react-native-eventsource/android/src/main/java/com/github/jonnybgod/RNEventSource/RNEventSourceModule.java
-+@@ -201,6 +201,17 @@ public class RNEventSourceModule extends ReactContextBaseJavaModule {
-+       @WorkerThread
-+       @Override
-+       public boolean onRetryError(ServerSentEvent sse, Throwable throwable, Response response) {
-++        // retrying with the same (expired or revoked) token fails forever; let JS refresh it and reconnect
-++        if (response != null && (response.code() == 401 || response.code() == 403)) {
-++          WritableMap map = new WritableNativeMap();
-++          map.putInt("status", response.code());
-++          if (reactContext.hasActiveCatalystInstance()) {
-++            reactContext
-++                    .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-++                    .emit("error", map);
-++          }
-++          return false;
-++        }
-+         return true; // True to retry, false otherwise
-+       }
-+ 
-```
-
-**File**: `packages/core/src/api/index.ts` (modified, +18/-2)
-```diff
-@@ -106,6 +106,8 @@ class Database {
-   isInitialized = false;
-   eventManager = new EventManager();
-   sseMutex = new Mutex();
-+  sseRetries = 0;
-+  sseRetryTimeout?: ReturnType<typeof setTimeout>;
-   _fs?: FileStorage;
-   _compressor?: Promise<ICompressor>;
-   private databaseReady = new LazyPromise<
-@@ -299,7 +301,10 @@ class Database {
-       this.connectSSE,
-       this
-     );
--    this.eventManager.subscribe(EVENTS.tokenRefreshed, () => this.connectSSE());
-+    // the open channel still uses the old token, which stops working once it expires
-+    this.eventManager.subscribe(EVENTS.tokenRefreshed, () =>
-+      this.connectSSE({ force: true })
-+    );
-     this.eventManager.subscribe(
-       EVENTS.attachmentDeleted,
-       async (attachment: Attachment) => {
-@@ -367,6 +372,7 @@ class Database {
-   }
- 
-   disconnectSSE() {
-+    clearTimeout(this.sseRetryTimeout);
-     if (!this.eventSource) return;
-     this.eventSource.onopen = null;
-     this.eventSource.onmessage = null;
-@@ -400,11 +406,21 @@ class Database {
-       });
- 
-       this.eventSource.onopen = async () => {
-+        this.sseRetries = 0;
-         logger.log("SSE: opened channel successfully!");
-       };
- 
--      this.eventSource.onerror = function (error) {
-+      this.eventSource.onerror = (error) => {
-         logger.error(error, "SSE: error");
-+        if ((error as { status?: number }).status !== 401) return;
++    editor.commands.setTextSelection(editor.state.doc.nodeSize - 2);
++    editor.commands.insertContent("\n");
++    editor.commands.insertContent("\n");
 +
-+        // refreshing publishes tokenRefreshed, which reconnects; back off in case the session is dead
-+        const delay = Math.min(5000 * 2 ** this.sseRetries++, 5 * 60 * 1000);
-+        clearTimeout(this.sseRetryTimeout);
-+        this.sseRetryTimeout = setTimeout(
-+          () => this.tokenManager.getAccessToken(undefined, true),
-+          delay
-+        );
-       };
- 
-       this.eventSource.onmessage = async (event) => {
++    // simulate the fallback armed by the patched prosemirror-view keydown
++    // handler (the `android` flag is computed at load, so we can't drive it)
++    const input = (
++      editor.view as unknown as {
++        input: {
++          lastAndroidEnter: number;
++          androidEnterFallbackTimeout: ReturnType<typeof setTimeout>;
++        };
++      }
++    ).input;
++    const stamp = Date.now();
++    const fallback = vi.fn(() => editor.commands.splitBlock());
++    input.lastAndroidEnter = stamp;
++    input.androidEnterFallbackTimeout = setTimeout(() => {
++      if (input.lastAndroidEnter === stamp) fallback();
++    }, 200);
++
++    const beforeInputEvent = new InputEvent("beforeinput", {
++      inputType: "insertParagraph",
++      cancelable: true,
++      bubbles: true
++    });
++    editor.view.dom.dispatchEvent(beforeInputEvent);
++    vi.advanceTimersByTime(300);
++
++    expect(fallback).not.toHaveBeenCalled();
++    const content = editor.state.doc.toJSON().content;
++    expect(content).toHaveLength(2);
++    expect(content[0].type).toBe("codeblock");
++    expect(content[1].type).toBe("paragraph");
++  } finally {
++    vi.useRealTimers();
++  }
++});
++
++test("cancel pending iOS Enter fallback after exiting codeblock on triple enter", async () => {
++  vi.useFakeTimers();
++  try {
++    const editorElement = document.createElement("div");
++    const { editor } = createEditor({
++      element: editorElement,
++      initialContent: "<pre><code>const a = 1;</code></pre>",
++      extensions: {
++        codeblock: CodeBlock,
++        codeBlock: false,
++        code: false
++      }
++    });
++
++    editor.commands.setTextSelection(editor.state.doc.nodeSize - 2);
++    editor.commands.insertContent("\n");
++    editor.commands.insertContent("\n");
++
++    const input = (
++      editor.view as unknown as {
+
 ```
 
 ---
 
-### Incident Patch 3: `f8f68696` (2026-11-13)
-**Commit Message**: mobile: fix title is not resized correctly to fit content size
+### Incident Patch 2: `43389411` (2026-10-24)
+**Commit Message**: mobile: fix ios build failing on arm64 simulator
 
-**File**: `packages/editor-mobile/src/components/title.tsx` (modified, +6/-3)
+**File**: `apps/mobile/android/.prebuilt-aars/react-native-quick-sqlite-debug-6b980757.aar` (added, +3/-0)
 ```diff
-@@ -47,10 +47,10 @@ function Title({
+@@ -0,0 +1,3 @@
++version https://git-lfs.github.com/spec/v1
++oid sha256:666724d95d3edeaeb542474d54cbbc25a0521884cf434e7ba377e1bfc080ec83
++size 29984111
+```
+
+**File**: `apps/mobile/android/.prebuilt-aars/react-native-quick-sqlite-release-6b980757.aar` (added, +3/-0)
+```diff
+@@ -0,0 +1,3 @@
++version https://git-lfs.github.com/spec/v1
++oid sha256:469e4fcd4a6bc153a9c064e395069c2c39940df8b887666fbacafab21cfa0888
++size 8897563
+```
+
+**File**: `apps/mobile/ios/.prebuilt-xcframeworks/react-native-quick-sqlite-debug-7d4fd352.xcframework.zip` (added, +3/-0)
+```diff
+@@ -0,0 +1,3 @@
++version https://git-lfs.github.com/spec/v1
++oid sha256:fc97d60e27a68371e401e41942d27d43ad2daecde8cb2f81317871f569fd0ad3
++size 15393082
+```
+
+**File**: `apps/mobile/ios/.prebuilt-xcframeworks/react-native-quick-sqlite-release-7d4fd352.xcframework.zip` (added, +3/-0)
+```diff
+@@ -0,0 +1,3 @@
++version https://git-lfs.github.com/spec/v1
++oid sha256:b0738d27a2201be7f0a9a9e63f8a5d1fb5b12e0f79006d1eede517bd5a4d02a9
++size 16781701
+```
+
+**File**: `apps/mobile/ios/Podfile.lock` (modified, +3/-3)
+```diff
+@@ -1755,7 +1755,7 @@ PODS:
+     - Yoga
+   - react-native-share-extension (2.9.5):
+     - React
+-  - react-native-sodium (2.0.0-alpha.1):
++  - react-native-sodium (2.0.0-alpha.2):
+     - Base64
+     - React-Core
+   - react-native-theme-switch-animation (0.6.0):
+@@ -3173,12 +3173,12 @@ SPEC CHECKSUMS:
+   react-native-notification-sounds: ce106d58df0dd384bccbd2e84fb53accab7cc068
+   react-native-orientation-locker: cc6f357b289a2e0dd2210fea0c52cb8e0727fdaa
+   react-native-pdf: 70836b3b48595c7f85a3aa2b5d122b175c455733
+-  react-native-quick-sqlite: 41588741c066601d29ee2fb7a295e5cf46f62d23
++  react-native-quick-sqlite: c8abd0e68fe045620fcc626041950d6b2fa2c88a
+   react-native-restart: f2a57ccec2e6481deb1f19958ac60c0813313784
+   react-native-safe-area-context: 42a1b4f8774b577d03b53de7326e3d5757fe9513
+   react-native-screenguard: 4daf8cb9c41b1c5a37c1db285832c481459ed4de
+   react-native-share-extension: fdc6aaab51591a2d445df239c446aaa3a99658ec
+-  react-native-sodium: bcea1f5e08a3f2ea918c96dce7b7964c8c9c196f
++  react-native-sodium: 12293ab339b0561a710493bb34888ce2709849df
+   react-native-theme-switch-animation: eaa4470e7539e317c7612e60028d6ee902fe1183
+   react-native-upload: 7b7ad336c3db703b68a8c07cf38e9319ae90d695
+   react-native-view-shot: fb3c0774edb448f42705491802a455beac1502a2
+```
+
+**File**: `apps/mobile/package-lock.json` (modified, +7/-431)
+```diff
+@@ -15,7 +15,7 @@
+         "@ammarahmed/react-native-eventsource": "1.1.0",
+         "@ammarahmed/react-native-fingerprint-scanner": "^5.0.1",
+         "@ammarahmed/react-native-share-extension": "^2.9.5",
+-        "@ammarahmed/react-native-sodium": "^2.0.0-alpha.1",
++        "@ammarahmed/react-native-sodium": "2.0.0-alpha.2",
+         "@ammarahmed/react-native-upload": "^6.33.0",
+         "@azure/core-asynciterator-polyfill": "^1.0.2",
+         "@bam.tech/react-native-image-resizer": "3.0.11",
+@@ -108,7 +108,7 @@
+         "react-native-pdf": "^7.0.3",
+         "react-native-progress": "5.0.0",
+         "react-native-qrcode-svg": "^6.0.6",
+-        "react-native-quick-sqlite": "github:streetwriters/react-native-quick-sqlite",
++        "react-native-quick-sqlite": "github:streetwriters/react-native-quick-sqlite#02e75698b088325106d28ac2010e0e8df386d665",
+         "react-native-reanimated": "^4.2.0",
+         "react-native-reanimated-progress-bar": "1.0.1",
+         "react-native-restart": "^0.0.28",
+@@ -532,9 +532,9 @@
+       }
+     },
+     "node_modules/@ammarahmed/react-native-sodium": {
+-      "version": "2.0.0-alpha.1",
+-      "resolved": "https://registry.npmjs.org/@ammarahmed/react-native-sodium/-/react-native-sodium-2.0.0-alpha.1.tgz",
+-      "integrity": "sha512-8vdUot+exS2/taq5HxkAab7h6nQfLuA1X4wgwSAVfv8qjKRrMoqD/obJoXWh17We0t6flNgFKZX8t63XYs9B4g==",
++      "version": "2.0.0-alpha.2",
++      "resolved": "https://registry.npmjs.org/@ammarahmed/react-native-sodium/-/react-native-sodium-2.0.0-alpha.2.tgz",
++      "integrity": "sha512-u13BUb3Vg8xCIMo7dwwyQK8YyZ3deAY3B1KE+XeOPQRcW6LpvYU6HmFDCSTlxmCB3yPLKjU3CgpfTcoiv8X+aA==",
+       "license": "ISC"
+     },
+     "node_modules/@ammarahmed/react-native-upload": {
+@@ -5325,12 +5325,6 @@
+         "node": ">=18"
+       }
+     },
+-    "node_modules/@sqltools/formatter": {
+-      "version": "1.2.5",
+-      "resolved": "https://registry.npmjs.org/@sqltools/formatter/-/formatter-1.2.5.tgz",
+-      "integrity": "sha512-Uy0+khmZqUrUGm5dmMqVlnvufZRSK0FbYzVgp0UMstm+F5+W2/jnEEQyc9vo1ZR/E5ZI/B1WjjoTqBqwJL6Krw==",
+-      "license": "MIT"
+-    },
+     "node_modules/@streetwriters/kysely": {
+       "version": "0.27.4",
+       "resolved": "https://registry.npmjs.org/@streetwriters/kysely/-/kysely-0.27.4.tgz",
+@@ -6510,15 +6504,6 @@
+         "url": "https://github.com/chalk/ansi-styles?sponsor=1"
+       }
+     },
+-    "node_modules/ansis": {
+-      "version": "3.17.0",
+-      "resolved": "https://registry.npmjs.org/ansis/-/ansis-3.17.0.tgz",
+-      "integrity": "sha512-0qWUglt9JEqLFr3w1I1pbrChn1grhaiAR2ocX1PP/flRmxgtwTzPFFFnfIlD6aMOLQZgSuCRlidD70lvx8yhzg==",
+-      "license": "ISC",
+-      "engines": {
+-        "node": ">=14"
+-      }
+-    },
+     "node_modules/any-observable": {
+       "version": "0.3.0",
+       "resolved": "https://registry.npmjs.org/any-observable/-/any-observable-0.3.0.tgz",
+@@ -6542,15 +6527,6 @@
+         "node": ">= 8"
+       }
+     },
+-    "node_modules/app-root-path": {
+-      "version": "3.1.0",
+-      "resolved": "https://registry.npmjs.org/app-root-path/-/app-root-path-3.1.0.tgz",
+-      "integrity": "sha512-biN3PwB2gUtjaYy/isrU3aNWI5w+fAfvHkSvCKeQGxhmYpwKFUxudR3Yya+KqVRHBmEDYh+/lTozYCFbmzX4nA==",
+-      "license": "MIT",
+-      "engines": {
+-        "node": ">= 6.0.0"
+-      }
+-    },
+     "node_modules/appdirsjs": {
+       "version": "1.2.7",
+       "resolved": "https://registry.npmjs.org/appdirsjs/-/appdirsjs-1.2.7.tgz",
+@@ -6623,21 +6599,6 @@
+         "node": ">=8.0.0"
+       }
+     },
+-    "node_modules/available-typed-arrays": {
+-      "version": "1.0.7",
+-      "resolved": "https://registry.npmjs.org/available-typed-arrays/-/available-typed-arrays-1.0.7.tgz",
+-      "integrity": "sha512-wvUjBtSGN7+7SjNpq/9M2Tg350UZD3q62IFZLbRAR1bSMlCo1ZaeW+BJ+D090e4hIIZLBcTDWe4Mh4jvUDajzQ==",
+-      "license": "MIT",
+-      "dependencies": {
+-        "possible-typed-array-names": "^1.0.0"
+-      },
+-      "engines": {
+-        "node": ">= 0.4"
+-      },
+-      "funding": {
+-        "url": "https://github.com/sponsors/ljharb"
+-      }
+-    },
+     "node_modules/avvio": {
+       "version": "8.4.0",
+       "resolved": "https://registry.npmjs.org/avvio/-/avvio-8.4.0.tgz",
+@@ -7361,24 +7322,6 @@
+       "dev": true,
+       "license": "MIT"
+     },
+-    "node_modules/call-bind": {
+-      "version": "1.0.9",
+-      "resolved": "https://registry.npmjs.org/call-bind/-/call-bind-1.0.9.tgz",
+-      "integrity": "sha512-a/hy+pNsFUTR+Iz8TCJvXudKVLAnz/DyeSUo10I5yvFDQJBFU2s9uqQpoSrJlroHUKoKqzg+epxyP9lqFdzfBQ==",
+-      "license": "MIT",
+-      "dependencies": {
+-        "call-bind-apply-helpers": "^1.0.2",
+-        "es-define-property": "^1.0.1",
+-        "get-intrinsic": "^1.3.0",
+-        "set-function-length": "^1.2.2"
+-      },
+-      "engines": {
+-        "node": ">= 0.4"
+-      },
+-      "funding": {
+-        "url": "https://github.com/sponsors/ljharb"
+-      }
+-    },
+     "node_modules/call-bind-apply-helpers": {
+       "version": "1.0.2",
+       "resolved": "https:
+```
+
+**File**: `apps/mobile/package.json` (modified, +2/-2)
+```diff
+@@ -33,7 +33,7 @@
+     "@ammarahmed/react-native-eventsource": "1.1.0",
+     "@ammarahmed/react-native-fingerprint-scanner": "^5.0.1",
+     "@ammarahmed/react-native-share-extension": "^2.9.5",
+-    "@ammarahmed/react-native-sodium": "^2.0.0-alpha.1",
++    "@ammarahmed/react-native-sodium": "2.0.0-alpha.2",
+     "@ammarahmed/react-native-upload": "^6.33.0",
+     "@azure/core-asynciterator-polyfill": "^1.0.2",
+     "@bam.tech/react-native-image-resizer": "3.0.11",
+@@ -126,7 +126,7 @@
+     "react-native-pdf": "^7.0.3",
+     "react-native-progress": "5.0.0",
+     "react-native-qrcode-svg": "^6.0.6",
+-    "react-native-quick-sqlite": "github:streetwriters/react-native-quick-sqlite",
++    "react-native-quick-sqlite": "github:streetwriters/react-native-quick-sqlite#02e75698b088325106d28ac2010e0e8df386d665",
+     "react-native-reanimated": "^4.2.0",
+     "react-native-reanimated-progress-bar": "1.0.1",
+     "react-native-restart": "^0.0.28",
+```
+
+---
+
+### Incident Patch 3: `593ea2c4` (2026-11-23)
+**Commit Message**: mobile: fix prebuilt pod unzip
+
+**File**: `apps/mobile/ios/scripts/prebuilt_pods.rb` (modified, +1/-1)
+```diff
+@@ -64,7 +64,7 @@ def self.unzip_artifact(zip, destination)
  
-   const resizeTextarea = useCallback(() => {
-     if (!titleSizeDiv.current || !titleRef.current) return;
-+    titleSizeDiv.current.style.width = `${titleRef.current.clientWidth}px`;
-     titleSizeDiv.current.innerText = titleRef.current.value;
-     titleRef.current.style.height = `${titleSizeDiv.current.clientHeight}px`;
-     titleRef.current.style.minHeight = `${titleSizeDiv.current.clientHeight}px`;
--    titleSizeDiv.current.style.width = `${titleRef.current.clientWidth}px`;
-   }, []);
-   useEffect(() => {
-     if (titleRef.current) {
-@@ -100,9 +100,10 @@ function Title({
-           userSelect: "none",
-           WebkitUserSelect: "none",
-           pointerEvents: "none",
--          overflowWrap: "anywhere",
-+          overflowWrap: "break-word",
-           paddingTop: 3,
--          whiteSpace: "break-spaces"
-+          paddingBottom: 0,
-+          whiteSpace: "pre-wrap"
-         }}
-       />
-       <textarea
-@@ -123,6 +124,8 @@ function Title({
-           opacity: 1,
-           paddingRight: 16,
-           paddingLeft: 16,
-+          paddingTop: 3,
-+          paddingBottom: 0,
-           fontWeight: 600,
-           fontFamily: getFontById(fontFamily)?.font || "Inter",
-           backgroundColor: "transparent",
+     FileUtils.rm_rf(destination)
+     FileUtils.mkdir_p(destination)
+-    system('unzip', '-oq', zip, '-d', destination) || raise(
++    system('ditto', '-x', '-k', zip, destination) || raise(
+       "[Prebuilt iOS] failed to unzip #{zip}"
+     )
+     FileUtils.touch(marker)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #10667** (2026-11-16): mobile: release v3.4.16 (@ammarahm-ed)
-- **PR #10661** (2026-11-11): web: ask vault password when trashing locked archived notes (@01zulfi)
-- **PR #10657** (closed): web: warn when published notes are not trashed (@federicoiosue)
-- **PR #10656** (2026-11-10): web: bump version to 3.4.13 (@01zulfi)
-- **PR #10653** (2026-11-09): Report issues as the signed-in user, or with an email when logged out (@thecodrr)
-- **PR #10650** (2026-11-09): web: reset arrowDown flag when tag suggestion menu closes (@mohdsultan18)
+- **PR #10722** (2026-11-23): mobile: release v3.4.17 (@kashaf-ansari-dev)
+- **PR #10721** (2026-11-23): web: bump version to 3.4.14 (@01zulfi)
+- **PR #10693** (2026-11-19): mobile: don't show tabId error when re-uploading attachments (@kashaf-ansari-dev)
+- **PR #10692** (2026-11-18): mobile: fix legacy backup restore from files on iOS (@kashaf-ansari-dev)
+- **PR #10691** (2026-11-18): mobile: ask for password only when legacy backup is encrypted (@kashaf-ansari-dev)
+- **PR #10682** (2026-11-23): Fix/mobile report issue toast (@kashaf-ansari-dev)
 
 ---
 
@@ -1022,32 +1272,61 @@ Fix SSE retrying forever with an expired token
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mobile: fix locked note history does not save note title
+## X. Empirical Invariant Guard in code-block.ts
 
 **RULE**:
-When implementing operations in `apps/mobile/app/screens/editor/tiptap/use-editor.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in streetwriters/notesnook. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/editor/src/extensions/code-block/code-block.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in streetwriters/notesnook. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cf6303c5`: mobile: fix locked note history does not save note title. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `926059b0`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/mobile/app/screens/editor/tiptap/use-editor.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/editor/src/extensions/code-block/code-block.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-              id: noteData.id,
-              sessionId: noteData?.sessionId
+      }),
+      new Plugin({
+        props: {
+          handleDOMEvents: {
+            beforeinput: (view, event) => {
+              const inputEvent = event as InputEvent;
+              const isEnter =
+                inputEvent.inputType === "insertParagraph" ||
+                inputEvent.inputType === "insertLineBreak" ||
+                (inputEvent.inputType === "insertText" &&
+                  inputEvent.data === "\n");
+
+              if (!isEnter) return false;
+
+              const { $from, empty } = view.state.selection;
+              if (!empty || $from.parent.type.name !== this.name) return false;
+
+              if (
+                this.options.exitOnTripleEnter &&
+                exitOnTripleEnter(this.editor, $from)
+              ) {
+                event.preventDefault();
+                // PM's beforeinput is skipped, so cancel the patched
+                // prosemirror-view Android/iOS Enter fallbacks ourselves
+                const input = (
+                  view as unknown as {
+                    input?: {
+                      lastAndroidEnter?: number;
+                      androidEnterFallbackTimeout?: ReturnType<
+                        typeof setTimeout
+   
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-              id: noteData.id
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cf6303c5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `926059b0` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

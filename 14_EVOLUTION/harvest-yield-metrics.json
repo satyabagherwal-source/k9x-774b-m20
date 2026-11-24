@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T09:18:40.860Z",
-  "total_cycles_completed": 12017,
-  "total_learnings_persisted": 12017,
-  "total_rules_promoted": 11093,
+  "last_updated": "2026-11-24T09:42:29.297Z",
+  "total_cycles_completed": 12019,
+  "total_learnings_persisted": 12019,
+  "total_rules_promoted": 11095,
   "history": [
-    {
-      "timestamp": "2026-11-23T19:09:14.649Z",
-      "repository": "apache/maka",
-      "learningId": "learn-github-apache-maka",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T19:09:21.275Z",
-      "repository": "projectcontour/contour",
-      "learningId": "learn-github-projectcontour-contour",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T19:17:47.101Z",
       "repository": "autotrust/GEV-26B-Decide-NVFP4",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-24T09:18:40.860Z",
       "repository": "risingwavelabs/risingwave",
       "learningId": "learn-github-risingwavelabs-risingwave",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T09:41:19.505Z",
+      "repository": "streetwriters/notesnook",
+      "learningId": "learn-github-streetwriters-notesnook",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T09:42:29.297Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

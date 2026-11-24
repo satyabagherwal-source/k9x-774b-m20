@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T09:18:40.869Z",
+  "last_updated": "2026-11-24T09:42:29.311Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4386,14 +4386,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-streetwriters-notesnook",
-      "content_hash": "add312a6ead69a8d9ef464f557349796ba249d3a4ebf3eab03d417656490bdc0",
-      "verified_at": "2026-11-17T13:05:48.613Z",
+      "content_hash": "a72d32878b7a96a456bf067775eee45e554e14c25bc2b1328ab3b05101b3424a",
+      "verified_at": "2026-11-24T09:41:19.518Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T13:05:48.613Z"
+      "last_updated": "2026-11-24T09:41:19.518Z"
     },
     "kgateway-dev/kgateway": {
       "repository": "kgateway-dev/kgateway",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "c3916dba7d4503699ec674634cd3eadb7bd0663ace7ac39f3ef90b3ed3376a89",
-      "verified_at": "2026-11-24T03:50:04.748Z",
+      "content_hash": "b5d82a1cc09467908a1c32ea3da12fd83a6ab82accf15d16a9c09d92a6e3aab5",
+      "verified_at": "2026-11-24T09:42:29.310Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T03:50:04.748Z"
+      "last_updated": "2026-11-24T09:42:29.310Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",

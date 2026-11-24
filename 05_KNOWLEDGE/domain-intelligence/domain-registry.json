@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T09:28:56.806Z",
-  "total_records": 2509,
+  "last_updated": "2026-11-24T09:42:37.288Z",
+  "total_records": 2511,
   "domains": {
     "A": {
       "total": 22,
@@ -1587,7 +1587,7 @@
       ]
     },
     "H": {
-      "total": 597,
+      "total": 599,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2185,7 +2185,9 @@
         "DOM-H-8C352294",
         "domain_intelligence-technical-construction-intelligence-seekstorm-seekstorm-learnings-core-invariant",
         "domain_intelligence-technical-construction-intelligence-xinatian-mroffice-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-xinatian-mroffice-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-xinatian-mroffice-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-streetwriters-notesnook-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-streetwriters-notesnook-learnings-core-invar"
       ]
     },
     "I": {
@@ -8252,8 +8254,8 @@
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "repository": "cilium/cilium",
-      "content_hash": "23f05ec22791726c2bbb103346ec431101281e511138a00d82eafba9473b4366",
-      "created_at": "2026-11-24T03:50:05.117Z"
+      "content_hash": "e1c548033a966d82f0f9e15d0ea2011b79a4e42d41b231ce0d0099fe114eeb62",
+      "created_at": "2026-11-24T09:42:29.841Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -8270,8 +8272,8 @@
       "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-learnings-product-intelligence-cilium-cilium-learnings-core-invari.md",
       "repository": "cilium-cilium-learnings",
-      "content_hash": "57b06c60e6893e34f7cc1b926d2a26d8901f1c03dd9553e39443260a477bac43",
-      "created_at": "2026-11-24T03:50:10.295Z"
+      "content_hash": "ff2752cead68917b3e4c1e4ed3952eb5ce6f89607eb6ba54ad43401c33733b80",
+      "created_at": "2026-11-24T09:42:36.094Z"
     },
     "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -8324,8 +8326,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "a4c4fc0d6a6c8a645690c347f6ce1193d862d0ed9dbdc7ede69ff53d37893ee7",
-      "created_at": "2026-11-24T09:28:55.448Z"
+      "content_hash": "8ce1c9b115a5904325d0d031fcee58f1bd88432cc3a760074d77f6cddbcf2912",
+      "created_at": "2026-11-24T09:42:37.288Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -42104,6 +42106,24 @@
       "repository": "xinatian-mroffice-learnings",
       "content_hash": "fdd80cd7c169c1e39cc6edd65434b36de457f4c3d28e0b40d0536ebbbb44d942",
       "created_at": "2026-11-24T08:48:26.665Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-streetwriters-notesnook-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-streetwriters-notesnook-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: streetwriters/notesnook Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-streetwriters-notesnook-technical-construction-intelligence-streetwriters-notesn.md",
+      "repository": "streetwriters/notesnook",
+      "content_hash": "79c9c8c12b22418cbc807c7b893dbbd5c50391ba797a64a44ee63282a8c71699",
+      "created_at": "2026-11-24T09:41:20.064Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-streetwriters-notesnook-learnings-core-invar": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-streetwriters-notesnook-learnings-core-invar",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: streetwriters-notesnook-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-streetwriters-notesnook-learnings-technical-construction-intelligence-streetwrit.md",
+      "repository": "streetwriters-notesnook-learnings",
+      "content_hash": "651b940964e769d92f8b2360f81895193798eded3f25ce9db5dba48e1f0e0107",
+      "created_at": "2026-11-24T09:42:34.971Z"
     }
   }
 }

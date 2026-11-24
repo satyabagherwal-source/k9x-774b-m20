@@ -2833,10 +2833,10 @@
     "repository": "streetwriters/notesnook",
     "platform": "github",
     "sourceUrl": "https://github.com/streetwriters/notesnook",
-    "sourceVersion": "8bb25559",
+    "sourceVersion": "18c27502",
     "license": "GPL-3.0",
-    "contentHash": "add312a6ead69a8d9ef464f557349796ba249d3a4ebf3eab03d417656490bdc0",
-    "lastHarvestedAt": "2026-11-17T13:05:48.605Z",
+    "contentHash": "a72d32878b7a96a456bf067775eee45e554e14c25bc2b1328ab3b05101b3424a",
+    "lastHarvestedAt": "2026-11-24T09:41:19.498Z",
     "learningId": "learn-github-streetwriters-notesnook"
   },
   "kgateway-dev-kgateway": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "20bb8be8",
+    "sourceVersion": "1fec0cd4",
     "license": "Apache-2.0",
-    "contentHash": "c3916dba7d4503699ec674634cd3eadb7bd0663ace7ac39f3ef90b3ed3376a89",
-    "lastHarvestedAt": "2026-11-24T03:50:04.734Z",
+    "contentHash": "b5d82a1cc09467908a1c32ea3da12fd83a6ab82accf15d16a9c09d92a6e3aab5",
+    "lastHarvestedAt": "2026-11-24T09:42:29.291Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {

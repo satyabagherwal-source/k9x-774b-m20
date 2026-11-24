@@ -12675,3 +12675,5 @@ Every entry in this ledger must capture:
 | `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `f89365df` | Multi-dimensional audit evidence | 2026-11-24T08:59:57.897Z |
 | `learn-github-orange-opensource-hurl` | `https://github.com/Orange-OpenSource/hurl` | `8d907486` | Multi-dimensional audit evidence | 2026-11-24T09:18:23.757Z |
 | `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `78d02432` | Multi-dimensional audit evidence | 2026-11-24T09:18:40.855Z |
+| `learn-github-streetwriters-notesnook` | `https://github.com/streetwriters/notesnook` | `18c27502` | Multi-dimensional audit evidence | 2026-11-24T09:41:19.498Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `1fec0cd4` | Multi-dimensional audit evidence | 2026-11-24T09:42:29.291Z |
