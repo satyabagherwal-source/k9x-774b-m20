@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T13:04:21.581Z",
+  "last_updated": "2026-11-24T13:12:45.605Z",
   "total_records": 2524,
   "domains": {
     "A": {
@@ -11270,8 +11270,8 @@
       "title": "Content & Information Intelligence: prometheus/prometheus Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-prometheus-prometheus-content-information-intelligence-prometheus-prometheus-cor.md",
       "repository": "prometheus/prometheus",
-      "content_hash": "a96a6dd395c05c7032dabef89683e80d707235262feb0d87c4bf28e648c3d444",
-      "created_at": "2026-11-21T15:17:46.277Z"
+      "content_hash": "f900da247ffdaa3e620f5064e3ace7eddd1955ef09d21dea6b047f52a1473f8a",
+      "created_at": "2026-11-24T13:12:40.476Z"
     },
     "domain_intelligence-content-information-intelligence-lancedb-lancedb-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-lancedb-lancedb-core-invariants",
@@ -11915,8 +11915,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "00f5965c3d62505e2841c6a105439392933acd9e32a4894f00d042bac6dbf112",
-      "created_at": "2026-11-24T08:25:14.008Z"
+      "content_hash": "f1cf01459a6a324b076f78026942401c88f27d64d45b304eecb2d4305434ae05",
+      "created_at": "2026-11-24T13:12:45.605Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -24587,8 +24587,8 @@
       "title": "Content & Information Intelligence: prometheus-prometheus-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-prometheus-prometheus-learnings-content-information-intelligence-prometheus-prom.md",
       "repository": "prometheus-prometheus-learnings",
-      "content_hash": "424a57e5c4dd5d970d1a945f26c04adf2119d14c1019f0f5d04c6ca3d235f5ff",
-      "created_at": "2026-11-21T15:17:59.844Z"
+      "content_hash": "5effe94c1569f0b658d15f89e8e059fea8631159e1e5e6a2e83c927877b96d2b",
+      "created_at": "2026-11-24T13:12:44.809Z"
     },
     "domain_intelligence-technical-construction-intelligence-stakater-reloader-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-stakater-reloader-core-invariants",
@@ -40405,8 +40405,8 @@
       "title": "Architecture Intelligence: erkamyaman/rust-anything Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-erkamyaman-rust-anything-architecture-intelligence-erkamyaman-rust-anything-core.md",
       "repository": "erkamyaman/rust-anything",
-      "content_hash": "35a66aa1161d4674ad3385450cd87ae051c873052a99d1e9a3171daf07bb3d7d",
-      "created_at": "2026-11-23T06:14:14.824Z"
+      "content_hash": "ef99a264d483deb65847e57803e47ea42645d8eb4a636f1d759270950387b233",
+      "created_at": "2026-11-24T13:12:33.759Z"
     },
     "domain_intelligence-architecture-intelligence-erkamyaman-rust-anything-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-erkamyaman-rust-anything-learnings-core-invariants",
@@ -40414,8 +40414,8 @@
       "title": "Architecture Intelligence: erkamyaman-rust-anything-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-erkamyaman-rust-anything-learnings-architecture-intelligence-erkamyaman-rust-any.md",
       "repository": "erkamyaman-rust-anything-learnings",
-      "content_hash": "30b6d6733c199cc0213f778933c8951266e408e208a9e7c444274461571b912d",
-      "created_at": "2026-11-23T06:14:28.984Z"
+      "content_hash": "9a59caa363e3e278172761efdfab8cf853a9bc3687eba0e5583c8a1beccf2396",
+      "created_at": "2026-11-24T13:12:43.963Z"
     },
     "domain_intelligence-architecture-intelligence-xerj-org-xerj-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-xerj-org-xerj-core-invariants",

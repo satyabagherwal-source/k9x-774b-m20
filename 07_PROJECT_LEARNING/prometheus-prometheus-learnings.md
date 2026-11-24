@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
 > **Source**: github ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
-> **Source Version**: `a5022ef6`  
+> **Source Version**: `ad8f26ee`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T17:37:57.600Z  
+> **Timestamp**: 2026-11-24T13:12:38.864Z  
 > **Learning ID**: `learn-github-prometheus-prometheus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T17:37:57.594Z  
+> **Harvest Timestamp**: 2026-11-24T13:12:38.859Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Prometheus monitoring system and time series database.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 67768 stars
+- **Stars / Engagement**: 67789 stars
 
 ---
 
@@ -1781,14 +1781,14 @@ func OpenDir(path string) (*os.File, error) { return os.Open(path) }
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #20548** (2026-11-24): **chore: Fix repos sync**
+  *Symptoms*: Fix the invalid `manifest unknown` golang-builder SHA.  <!--     - Please give your PR a title in the form "area: short description".  For example "tsdb: reduce disk usage by 95%"      - Please sign CNCF's Developer Certificate of Origin and sign-off your commits by adding the -s / --signoff flag to `git commit`. See https://github.com/apps/dco for more information.      - If the PR adds or changes a behaviour or fixes a bug of an exported API it would need a unit/e2e test.      - Where possible use only exported APIs for tests to simplify the review and make it as close as possible to an actual library usage.      - Performance improvements would need a benchmark test to prove it.      - All exposed objects should have a comment.      - All comments should start with a capital letter and end with a full stop.  -->  #### Which issue(s) does the PR fix: <!-- If it applies. Automatically closes linked issue when PR is merged. Usage: `Fixes #<issue number>`, or `Fixes (paste link of issue)`. More at https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword -->  #### Release notes for end users (**ALL** commits must be considered). *Reviewers should verify clarity and quality.*  <!-- Write NONE only if there is no user-facing change.  Otherwise use one of: [FEATURE] [ENHANCEMENT] [PERF] [BUGFIX] [SECURITY] [CHANGE] Following the pattern `[TYPE] Component: description.`  Examp
+
 - **Issue #20541** (2026-11-23): **tsdb: protect series with pending exemplars from eviction**
   *Symptoms*: Appending an exemplar does not take a pending-commit reservation on its series, unlike appending a sample. Since #20467, stale or selected series compaction can then evict the series between an exemplar-only append and its commit. The remote-write receiver can do such appends. The commit logs the exemplar under the evicted ref, after the series' full-range tombstone, and drops it from memory. On WAL replay, the late exemplar can be attributed to a series later recreated with the same labels (see #20512).  This reserves the series when appending an exemplar, in both appenders, and releases it on commit or rollback. If the series was garbage collected before the reservation, it uses the series that replaced it, as sample appends do.  `TestSeriesEviction_PendingExemplarProtectsSeries` fails on main for both appenders and both eviction paths.  This is not in a release: v3.16.0 keeps the identity of series with exemplars that still need replay.  <details> <summary>Benchmark</summary>  `BenchmarkHeadAppender_AppendCommit`, before: f1486b6753663ba3f49a3c75c21c6bf93ff304b2, after: 4fafc6b47622ff0537fe5499eab5e8efdd35ae02. Pinned to two P-cores with the test directory on tmpfs, alternating the binaries 10 times.  ```console goos: linux goarch: amd64 pkg: github.com/prometheus/prometheus/tsdb cpu: Intel(R) Core(TM) Ultra 9 185H                                                                                                          │ before.txt  │             after.txt              │   
   **Post-Mortem & Fix Analysis**:
   > Would you like help adding deterministic tests for eviction between exemplar lookup and reservation in both appenders? I can cover replacement references in the returned value and WAL, reservation release on commit or rollback, and rejection when no replacement exists. 
   > To the best of my knowledge, this is an alternative for #20512. So, please don't reference #20512 in this PR's description.
-
-- **Issue #20536** (2026-11-23): **otlp: drop metrics with unsupported temporality instead of rejecting the request**
-  *Symptoms*: #### Which issue(s) does the PR fix:  No issue filed. Same regression as #19338, with a different trigger.  Since #16951 (v3.7.0), `ConsumeMetrics` rolls back the whole OTLP request when `FromMetrics` returns an error, and the handler answers 500. A delta metric sent without `otlp-native-delta-ingestion` (or `otlp-deltatocumulative`) is such an error, so one delta metric in a request drops every other metric in it:  ``` request: Sum "good" (cumulative) + Sum "bad" (delta), default flags main:    500 invalid temporality and type combination for metric "bad", nothing stored v3.6:    good_total stored, the error logged ```  `docs/feature_flags.md` describes delta metrics as dropped without the flag, and `TestTemporality` already expects `test_metric_1` to be appended in "delta rejected when not allowed". The test commits the appender even when `FromMetrics` returns an error, so it did not catch this. Mixed requests are common: SDKs configured to prefer delta, or a collector batching metrics from several services.  This reports the unsupported temporality as a warning instead of an error, the way #19343 handled metrics with no data points, so only that metric is dropped. The warning is counted in `prometheus_api_otlp_translation_warnings_total{category="invalid_temporality"}`.  Tests: `TestTemporality` now checks the warnings, and its 5 invalid-temporality cases expect a warning instead of an error. In `TestOTLPWriteHandler` the "empty metric does not reject healthy metrics" case
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1805,590 +1805,33 @@ func OpenDir(path string) (*os.File, error) { return os.Open(path) }
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a5022ef6` (2026-11-23)
-**Commit Message**: Merge pull request #20541 from roidelapluie/roidelapluie/exemplar-pending-commit
+### Incident Patch 1: `ad8f26ee` (2026-11-24)
+**Commit Message**: chore: Fix repos sync (#20548)
 
-tsdb: protect series with pending exemplars from eviction
+Fix the invalid `manifest unknown` golang-builder SHA.
 
-**File**: `tsdb/head.go` (modified, +8/-2)
+Signed-off-by: SuperQ <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/repo_sync.yml` (modified, +1/-1)
 ```diff
-@@ -98,7 +98,7 @@ type Head struct {
- 	// TODO(bwplotka): Consider using record.Pools that's reused with WAL watchers.
- 	refSeriesPool       zeropool.Pool[[]record.RefSeries]
- 	floatsPool          zeropool.Pool[[]record.RefSample]
--	exemplarsPool       zeropool.Pool[[]exemplarWithSeriesRef]
-+	exemplarsPool       zeropool.Pool[[]exemplarWithSeries]
- 	histogramsPool      zeropool.Pool[[]record.RefHistogramSample]
- 	floatHistogramsPool zeropool.Pool[[]record.RefFloatHistogramSample]
- 	metadataPool        zeropool.Pool[[]record.RefMetadata]
-@@ -3338,11 +3338,17 @@ func newMemSeries(lset labels.Labels, id chunks.HeadSeriesRef, shardHash uint64,
- // updateExemplarTimestamp records the latest exemplar time while holding the series lock.
- func (s *memSeries) updateExemplarTimestamp(ts int64) {
- 	s.Lock()
-+	s.updateExemplarTimestampLocked(ts)
-+	s.Unlock()
-+}
-+
-+// updateExemplarTimestampLocked records the latest exemplar time.
-+// Must be called with the series lock held.
-+func (s *memSeries) updateExemplarTimestampLocked(ts int64) {
- 	if !s.hasExemplar || ts > s.lastExemplarTs {
- 		s.lastExemplarTs = ts
- 	}
- 	s.hasExemplar = true
--	s.Unlock()
- }
- 
- func (s *memSeries) minTime() int64 {
-```
-
-**File**: `tsdb/head_append.go` (modified, +59/-28)
-```diff
-@@ -256,20 +256,20 @@ func (h *Head) putFloatBuffer(b []record.RefSample) {
- 	h.floatsPool.Put(b[:0])
- }
- 
--func (h *Head) getExemplarBuffer() []exemplarWithSeriesRef {
-+func (h *Head) getExemplarBuffer() []exemplarWithSeries {
- 	b := h.exemplarsPool.Get()
- 	if b == nil {
--		return make([]exemplarWithSeriesRef, 0, 512)
-+		return make([]exemplarWithSeries, 0, 512)
- 	}
- 	return b
- }
- 
--func (h *Head) putExemplarBuffer(b []exemplarWithSeriesRef) {
-+func (h *Head) putExemplarBuffer(b []exemplarWithSeries) {
- 	if b == nil {
- 		return
- 	}
--	for i := range b { // Zero out to avoid retaining label data.
--		b[i].exemplar.Labels = labels.EmptyLabels()
-+	for i := range b { // Zero out to avoid retaining label data and series.
-+		b[i] = exemplarWithSeries{}
- 	}
- 
- 	h.exemplarsPool.Put(b[:0])
-@@ -354,8 +354,11 @@ func (h *Head) putBytesBuffer(b []byte) {
- 	h.bytesPool.Put(b[:0])
- }
- 
--type exemplarWithSeriesRef struct {
--	ref      storage.SeriesRef
-+// exemplarWithSeries is an exemplar held by an appender. The appender holds a
-+// pending-commit reservation on the series until the exemplar is committed or
-+// rolled back.
-+type exemplarWithSeries struct {
-+	series   *memSeries
- 	exemplar exemplar.Exemplar
- }
- 
-@@ -389,7 +392,7 @@ type appendBatch struct {
- 	floatHistogramSeries []*memSeries                     // FloatHistogramSamples series corresponding to the samples held by this appender (using corresponding slice indices - same series may appear more than once).
- 	metadata             []record.RefMetadata             // New metadata held by this appender.
- 	metadataSeries       []*memSeries                     // Series corresponding to the metadata held by this appender.
--	exemplars            []exemplarWithSeriesRef          // New exemplars held by this appender.
-+	exemplars            []exemplarWithSeries             // New exemplars held by this appender.
- }
- 
- // close returns all the slices to the pools in Head and nil's them.
-@@ -904,6 +907,9 @@ func (a *headAppender) AppendExemplar(ref storage.SeriesRef, lset labels.Labels,
- 	if s == nil {
- 		return 0, fmt.Errorf("unknown HeadSeriesRef when trying to add exemplar: %d", ref)
- 	}
-+	if hook := a.head.testAfterSeriesLookup; hook != nil {
-+		hook(s)
-+	}
- 
- 	// Ensure no empty labels have gotten through.
- 	e.Labels = e.Labels.WithoutEmpty()
-@@ -917,14 +923,39 @@ func (a *headAppender) AppendExemplar(ref storage.SeriesRef, lset labels.Labels,
- 		return 0, err
- 	}
- 
--	b := a.getCurrentBatch(stNone, chunks.HeadSeriesRef(ref))
--	// Protect the series from ordinary compaction before the exemplar is committed.
--	s.updateExemplarTimestamp(e.Ts)
--	b.exemplars = append(b.exemplars, exemplarWithSeriesRef{ref, e})
-+	if s = a.reserveSeriesForExemplar(s, e.Ts); s == nil {
-+		return 0, fmt.Errorf("unknown HeadSeriesRef when trying to add exemplar: %d", ref)
-+	}
-+	b := a.getCurrentBatch(stNone, s.ref)
-+	b.exemplars = append(b.exemplars, exemplarWithSeries{s, e})
- 
- 	return storage.SeriesRef(s.ref), nil
- }
- 
-+// reserveSeriesForExemplar takes a pending-commit reservation on s for an
-+// exemplar with timestamp ts, so that the series cannot be garbage collected
-+// before the exemplar is committed. Otherwise, the commit would log the
-+// exemplar after the tombstone of the series. If s was garbage collected in the
-+// meantime, it uses the series that replaced it, if any. It returns the reserved
-+// series, or nil if there is none.
-+func (a *headAppenderBase) reserveSeriesForExemplar(s *memSeries, ts int64) *memSeries {
-+	for {
-+		s.Lock()
-+		if !s.isGCed() {
-+			s.updateExemplarTimestampLocked(ts)
-+			s.markPendingCommit()
-+			s.Unlock()
-+			return s
-+		}
-+		lset := s.lset // Safe to access; the series is locked.
-+		s.Unlock()
-+
-+		if s = a.head.series.getByHash(lset.Hash(), lset); s == nil {
-+			return nil
-+		}
-+	}
-+}
-+
- func (a *headAppender) AppendHistogram(ref storage.SeriesRef, lset labels.Labels, t int64, h *histogram.Histogram, fh *histogram.FloatHistogram) (storage.SeriesRef, error) {
- 	// Fail fast if OOO is disabled and the sample is out of bounds.
- 	// Otherwise a full check will be done later to decide if the sample is in-order or out-of-order.
-@@ -1271,11 +1302,11 @@ func (a *headAppenderBase) log() error {
- 	return nil
- }
- 
--func exemplarsForEncoding(es []exemplarWithSeriesRef) []record.RefExemplar {
-+func exemplarsForEncoding(es []exemplarWithSeries) []record.RefExemplar {
- 	ret := make([]record.RefExemplar, 0, len(es))
- 	for _, e := range es {
- 		ret = append(ret, record.RefExemplar{
--			Ref:    chunks.HeadSeriesRef(e.ref),
-+			Ref:    e.series.ref,
- 			T:      e.exemplar.Ts,
- 			V:      e.exemplar.Value,
- 			Labels: e.exemplar.Labels,
-@@ -1329,20 +1360,14 @@ type appenderCommitContext struct {
- func (a *headAppenderBase) commitExemplars(b *appendBatch) {
- 	// No errors logging to WAL, so pass the exemplars along to the in memory storage.
- 	for _, e := range b.exemplars {
--		s := a.head.series.getByID(chunks.HeadSeriesRef(e.ref))
--		if s == nil {
--			// This is 
-```
-
-**File**: `tsdb/head_append_v2.go` (modified, +19/-8)
-```diff
-@@ -224,7 +224,7 @@ func (a *headAppenderV2) Append(ref storage.SeriesRef, ls labels.Labels, st, t i
- 	// Append exemplars if any and if storage was configured for it.
- 	if len(opts.Exemplars) > 0 && a.head.opts.EnableExemplarStorage && a.head.opts.MaxExemplars.Load() > 0 {
- 		// Currently only exemplars can return partial errors.
--		partialErr = a.appendExemplars(s, opts.Exemplars)
-+		s, partialErr = a.appendExemplars(s, opts.Exemplars)
- 	}
- 	if a.head.opts.EnableMetadataWALRecords && !opts.Metadata.IsEmpty() {
- 		s.Lock()
-@@ -256,11 +256,15 @@ func (a *headAppenderV2) AppendExemplars(ref storage.SeriesRef, ls labels.Labels
- 	if s == nil {
- 		return 0, fmt.Errorf("unknown HeadSeriesRef when trying to add exemplars: %d: %w", ref, storage.ErrNotFound)
- 	}
-+	if hook := a.head.testAfterSeriesLookup; hook != nil {
-+		hook(s)
-+	}
- 	if len(exemplars) == 0 || !a.head.opts.EnableExemplarStorage || a.head.opts.MaxExemplars.Load() <= 0 {
- 		return storage.SeriesRef(s.ref), nil
- 	}
- 
--	return storage.SeriesRef(s.ref), a.appendExemplars(s, exemplars)
-+	s, err := a.appendExemplars(s, exemplars)
-+	return storage.SeriesRef(s.ref), err
- }
- 
- // appendFloat appends v to s, and returns the series the sample was appended to, which
-@@ -363,7 +367,10 @@ func (a *headAppenderV2) appendFloatHistogram(s *memSeries, st, t int64, fh *his
- 	return s, nil
- }
- 
--func (a *headAppenderV2) appendExemplars(s *memSeries, exemplars []exemplar.Exemplar) error {
-+// appendExemplars appends the exemplars to s. It returns the series they were
-+// appended to, which may differ from s if s was garbage-collected in the
-+// meantime (see reserveSeriesForExemplar).
-+func (a *headAppenderV2) appendExemplars(s *memSeries, exemplars []exemplar.Exemplar) (*memSeries, error) {
- 	var errs []storage.ExemplarError
- 	for i, e := range exemplars {
- 		// Ensure no empty labels have gotten through.
-@@ -379,15 +386,19 @@ func (a *headAppenderV2) appendExemplars(s *memSeries, exemplars []exemplar.Exem
- 			}
- 			continue
- 		}
-+		reserved := a.reserveSeriesForExemplar(s, e.Ts)
-+		if reserved == nil {
-+			errs = append(errs, storage.ExemplarError{Index: i, Err: fmt.Errorf("unknown HeadSeriesRef when trying to add exemplars: %d: %w", s.ref, storage.ErrNotFound)})
-+			continue
-+		}
-+		s = reserved
- 		b := a.getCurrentBatch(stNone, s.ref)
--		// Protect the series from compaction before the exemplar is committed.
--		s.updateExemplarTimestamp(e.Ts)
--		b.exemplars = append(b.exemplars, exemplarWithSeriesRef{storage.SeriesRef(s.ref), e})
-+		b.exemplars = append(b.exemplars, exemplarWithSeries{s, e})
- 	}
- 	if len(errs) > 0 {
--		return &storage.AppendPartialError{ExemplarErrors: errs}
-+		return s, &storage.AppendPartialError{ExemplarErrors: errs}
- 	}
--	return nil
-+	return s, nil
- }
- 
- // NOTE(bwplotka): This feature might be deprecated and removed once PROM-60
-```
-
-**File**: `tsdb/head_series_eviction_test.go` (modified, +159/-0)
-```diff
-@@ -626,6 +626,165 @@ func TestSeriesEviction_SeriesAreOnlyPublishedWhileTheyAreEvicted(t *testing.T)
- 	}
- }
- 
-+// evictionTestExemplarAppenders returns the ways of appending an exemplar without a sample. Each returns the
-+// uncommitted appender and the ref of the series the exemplar was appended to.
-+func evictionTestExemplarAppenders() map[string]func(*DB, storage.SeriesRef, labels.Labels, exemplar.Exemplar) (storage.AppenderTransaction, storage.SeriesRef, error) {
-+	return map[string]func(*DB, storage.SeriesRef, labels.Labels, exemplar.Exemplar) (storage.AppenderTransaction, storage.SeriesRef, error){
-+		"Appender": func(db *DB, ref storage.SeriesRef, lset labels.Labels, e exemplar.Exemplar) (storage.AppenderTransaction, storage.SeriesRef, error) {
-+			app := db.Appender(context.Background())
-+			ref, err := app.AppendExemplar(ref, lset, e)
-+			return app, ref, err
-+		},
-+		"AppenderV2": func(db *DB, ref storage.SeriesRef, lset labels.Labels, e exemplar.Exemplar) (storage.AppenderTransaction, storage.SeriesRef, error) {
-+			app := db.AppenderV2(context.Background())
-+			ref, err := app.(storage.ExemplarAppenderV2).AppendExemplars(ref, lset, []exemplar.Exemplar{e})
-+			return app, ref, err
-+		},
-+	}
-+}
-+
-+// TestSeriesEviction_PendingExemplarProtectsSeries verifies that a series that only received an exemplar in an
-+// uncommitted appender is not evicted. Otherwise, the commit logs the exemplar after the series' tombstone and
-+// drops it from memory. Once the appender is committed or rolled back, the series can be evicted again.
-+func TestSeriesEviction_PendingExemplarProtectsSeries(t *testing.T) {
-+	for appName, appendExemplar := range evictionTestExemplarAppenders() {
-+		for evictName, evict := range evictionTestEvictions() {
-+			for _, commit := range []bool{true, false} {
-+				t.Run(fmt.Sprintf("%s/%s/commit=%t", appName, evictName, commit), func(t *testing.T) {
-+					testDB := newSeriesEvictionTestDB(t, 0)
-+					db := testDB.db
-+					head := db.Head()
-+					lset := evictionTestLabels(0)
-+
-+					app, _, err := appendExemplar(db, testDB.evictedRefs[0], lset, exemplar.Exemplar{
-+						Labels: labels.FromStrings("trace_id", "pending"), Value: 1, Ts: 300,
-+					})
-+					require.NoError(t, err)
-+					require.NoError(t, evict(db, testDB.evictedRefs))
-+					require.Equal(t, uint64(evictionTestSeries-evictionTestEvictedSeries+1), head.NumSeries())
-+					if commit {
-+						require.NoError(t, app.Commit())
-+					} else {
-+						require.NoError(t, app.Rollback())
-+					}
-+
-+					expectedTraceID := "0"
-+					if commit {
-+						expectedTraceID = "pending"
-+					}
-+					q, err := head.ExemplarQuerier(t.Context())
-+					require.NoError(t, err)
-+					res, err := q.Select(0, 1000, []*labels.Matcher{labels.MustNewMatcher(labels.MatchEqual, "id", lset.Get("id"))})
-+					require.NoError(t, err)
-+					require.Len(t, res, 1)
-+					require.Len(t, res[0].Exemplars, 1)
-+					require.Equal(t, expectedTraceID, res[0].Exemplars[0].Labels.Get("trace_id"))
-+
-+					// The exemplar survives a restart.
-+					opts := db.opts
-+					require.NoError(t, db.Close())
-+					db, err = Open(db.Dir(), nil, nil, opts, nil)
-+					require.NoError(t, err)
-+					t.Cleanup(func() { require.NoError(t, db.Close()) })
-+					head = db.Head()
-+					q, err = head.ExemplarQuerier(t.Context())
-+					require.NoError(t, err)
-+					res, err = q.Select(0, 1000, []*labels.Matcher{labels.MustNewMatcher(labels.MatchEqual, "id", lset.Get("id"))})
-+					require.NoError(t, err)
-+					require.Len(t, res, 1)
-+					require.Len(t, res[0].Exemplars, 1)
-+					require.Equal(t, expectedTraceID, res[0].Exemplars[0].Labels.Get("trace_id"))
-+
-+					// The appender released the series.
-+					require.NoError(t, evict(db, testDB.evictedRefs))
-+					require.Equal(t, uint64(evictionTestSeries-evictionTestEvictedSeries), head.NumSeries())
-+					require.Equal(t, float64(0), prom_testutil.ToFloat64(head.metrics.pendingCommitUnderflow))
-+				})
-+			}
-+		}
-+	}
-+}
-+
-+// TestSeriesEviction_ExemplarAppendRetriesAfterEviction verifies that an exemplar append that looked up a series
-+// just before its eviction does not reserve the evicted series. It uses the series recreated with the same labels if
-+// there is one, and fails otherwise.
-+func TestSeriesEviction_ExemplarAppendRetriesAfterEviction(t *testing.T) {
-+	for appName, appendExemplar := range evictionTestExemplarAppenders() {
-+		for _, recreated := range []bool{true, false} {
-+			t.Run(fmt.Sprintf("%s/recreated=%t", appName, recreated), func(t *testing.T) {
-+				testDB := newSeriesEvictionTestDB(t, 0)
-+				db := testDB.db
-+				head := db.Head()
-+				oldRef := testDB.evictedRefs[0]
-+				lset := evictionTestLabels(0)
-+				oldSeries := head.series.getByID(chunks.HeadSeriesRef(oldRef))
-+				require.NotNil(t, oldSeries)
-+
-+				lookupDone := make(chan struct{})
-+				resumeAppend := make(chan struct{})
-+				// Pause after the appender resolves the old series, before it reserves it.
-+				head.testAfterSeriesLookup = func(series *memSeries) {
-```
-
----
-
-### Incident Patch 2: `f1486b67` (2026-11-23)
-**Commit Message**: Merge pull request #20469 from roidelapluie/roidelapluie/wal-replay-tombstoned-exemplars
-
-tsdb: delete tombstoned series after replaying their exemplars
-
-**File**: `tsdb/head_wal.go` (modified, +37/-12)
-```diff
-@@ -97,7 +97,9 @@ func (h *Head) loadWAL(r *wlog.Reader, syms *labels.SymbolTable, multiRef map[ch
- 		wg             sync.WaitGroup
- 		concurrency    = h.opts.WALReplayConcurrency
- 		processors     = make([]walSubsetProcessor, concurrency)
--		exemplarsInput chan record.RefExemplar
-+		exemplarsInput chan exemplarReplayItem
-+		// Closed when the exemplar worker exits.
-+		exemplarsDone = make(chan struct{})
- 
- 		shards          = make([][]record.RefSample, concurrency)
- 		histogramShards = make([][]histogramRecord, concurrency)
-@@ -110,10 +112,12 @@ func (h *Head) loadWAL(r *wlog.Reader, syms *labels.SymbolTable, multiRef map[ch
- 		// For CorruptionErr ensure to terminate all workers before exiting.
- 		_, ok := err.(*wlog.CorruptionErr)
- 		if ok || seriesCreationErr != nil {
-+			// The exemplar worker forwards deletions to the processors, so it must exit first.
-+			close(exemplarsInput)
-+			<-exemplarsDone
- 			for i := range concurrency {
- 				processors[i].closeAndDrain()
- 			}
--			close(exemplarsInput)
- 			wg.Wait()
- 		}
- 	}()
-@@ -132,13 +136,19 @@ func (h *Head) loadWAL(r *wlog.Reader, syms *labels.SymbolTable, multiRef map[ch
- 		}(&processors[i])
- 	}
- 
--	wg.Add(1)
--	exemplarsInput = make(chan record.RefExemplar, 300)
--	go func(input <-chan record.RefExemplar) {
-+	exemplarsInput = make(chan exemplarReplayItem, 300)
-+	go func(input <-chan exemplarReplayItem) {
- 		missingSeries := make(map[chunks.HeadSeriesRef]struct{})
- 		var err error
--		defer wg.Done()
--		for e := range input {
-+		defer close(exemplarsDone)
-+		for in := range input {
-+			if len(in.deletedSeriesRefs) > 0 {
-+				// The exemplars preceding the tombstone have been processed, so the
-+				// processor owning the series can delete them.
-+				processors[in.shard].input <- walSubsetProcessorInputItem{deletedSeriesRefs: in.deletedSeriesRefs}
-+				continue
-+			}
-+			e := in.exemplar
- 			ms := h.series.getByID(e.Ref)
- 			if ms == nil {
- 				unknownExemplarRefs.Inc()
-@@ -336,8 +346,8 @@ Outer:
- 					if series := h.series.getByID(ref); series != nil {
- 						// Remove the series from the hash index so that a later series
- 						// record with the same labels creates a fresh series instead of
--						// mapping onto this one. It stays in the by-ref map so
--						// already-queued samples still resolve until the deletion applies.
-+						// mapping onto this one. It stays in the by-ref map so already-queued
-+						// samples and exemplars still resolve until the deletion applies.
- 						h.series.unlinkHash(series.lset.Hash(), ref)
- 						mod := uint64(ref) % uint64(concurrency)
- 						deleteSeriesShards[mod] = append(deleteSeriesShards[mod], ref)
-@@ -364,7 +374,12 @@ Outer:
- 
- 			for i := range concurrency {
- 				if len(deleteSeriesShards[i]) > 0 {
--					processors[i].input <- walSubsetProcessorInputItem{deletedSeriesRefs: deleteSeriesShards[i]}
-+					// Exemplars are replayed by a separate worker. Route the deletion
-+					// through it, so that the exemplars preceding the tombstone still
-+					// find their series. Records following the tombstone for the same
-+					// series, which are not expected, may still be applied to the
-+					// series before its deletion.
-+					exemplarsInput <- exemplarReplayItem{deletedSeriesRefs: deleteSeriesShards[i], shard: i}
- 					deleteSeriesShards[i] = nil
- 				}
- 			}
-@@ -381,7 +396,7 @@ Outer:
- 					h.updateWALExpiry(e.Ref, e.T)
- 					e.Ref = r
- 				}
--				exemplarsInput <- e
-+				exemplarsInput <- exemplarReplayItem{exemplar: e}
- 			}
- 			for i := range v { // Zero out to avoid retaining label data.
- 				v[i].Labels = labels.EmptyLabels()
-@@ -495,10 +510,12 @@ Outer:
- 	}
- 
- 	// Signal termination to each worker and wait for it to close its output channel.
-+	// The exemplar worker forwards deletions to the processors, so it must exit first.
-+	close(exemplarsInput)
-+	<-exemplarsDone
- 	for i := range concurrency {
- 		processors[i].closeAndDrain()
- 	}
--	close(exemplarsInput)
- 	wg.Wait()
- 
- 	if err := r.Err(); err != nil {
-@@ -644,6 +661,14 @@ type walSubsetProcessor struct {
- 	histogramsOutput chan []histogramRecord
- }
- 
-+// exemplarReplayItem is either an exemplar, or series deleted by tombstones that the
-+// exemplar worker forwards to the processor of the given shard.
-+type exemplarReplayItem struct {
-+	exemplar          record.RefExemplar
-+	deletedSeriesRefs []chunks.HeadSeriesRef
-+	shard             int
-+}
-+
- type walSubsetProcessorInputItem struct {
- 	samples           []record.RefSample
- 	histogramSamples  []histogramRecord
-```
-
-**File**: `tsdb/head_wal_replay_test.go` (modified, +86/-0)
-```diff
-@@ -14,20 +14,28 @@
- package tsdb
- 
- import (
-+	"context"
- 	"fmt"
- 	"math"
- 	"os"
-+	"strconv"
-+	"sync"
- 	"testing"
- 	"time"
- 
- 	prom_testutil "github.com/prometheus/client_golang/prometheus/testutil"
- 	"github.com/stretchr/testify/require"
-+	"go.uber.org/atomic"
- 
-+	"github.com/prometheus/prometheus/model/exemplar"
- 	"github.com/prometheus/prometheus/model/labels"
- 	"github.com/prometheus/prometheus/storage"
- 	"github.com/prometheus/prometheus/tsdb/chunkenc"
- 	"github.com/prometheus/prometheus/tsdb/chunks"
-+	"github.com/prometheus/prometheus/tsdb/record"
-+	"github.com/prometheus/prometheus/tsdb/tombstones"
- 	"github.com/prometheus/prometheus/tsdb/wlog"
-+	"github.com/prometheus/prometheus/util/compression"
- )
- 
- func TestWALReplayPreservesMappedChunksAcrossSeriesRefs(t *testing.T) {
-@@ -207,3 +215,81 @@ func TestMergeReplayMmappedChunks(t *testing.T) {
- 		})
- 	}
- }
-+
-+// recordingExemplarStorage records the series of the exemplars added to it.
-+type recordingExemplarStorage struct {
-+	ExemplarStorage
-+	added sync.Map
-+}
-+
-+func (s *recordingExemplarStorage) AddExemplar(l labels.Labels, e exemplar.Exemplar) error {
-+	err := s.ExemplarStorage.AddExemplar(l, e)
-+	if err == nil {
-+		s.added.Store(l.String(), struct{}{})
-+	}
-+	return err
-+}
-+
-+// exemplarCheckingSeriesCallback counts the deleted series whose exemplar has not been added yet.
-+type exemplarCheckingSeriesCallback struct {
-+	// Keep missing first so that it is 64-bit aligned on 32-bit platforms.
-+	missing atomic.Int64
-+	noopSeriesLifecycleCallback
-+	exemplars *recordingExemplarStorage
-+}
-+
-+func (c *exemplarCheckingSeriesCallback) PostDeletion(deleted map[chunks.HeadSeriesRef]labels.Labels) {
-+	for _, l := range deleted {
-+		if _, ok := c.exemplars.added.Load(l.String()); !ok {
-+			c.missing.Inc()
-+		}
-+	}
-+}
-+
-+// TestHead_WALReplay_ExemplarsBeforeFullRangeTombstone verifies that a series deleted by
-+// a full-range tombstone during WAL replay is only deleted after the exemplars preceding
-+// the tombstone have been replayed, so that they are not counted as unknown references.
-+func TestHead_WALReplay_ExemplarsBeforeFullRangeTombstone(t *testing.T) {
-+	// The exemplar of the last series is queued behind the others when its tombstone
-+	// is replayed.
-+	const numSeries = 1000
-+	series := make([]record.RefSeries, 0, numSeries)
-+	samples := make([]record.RefSample, 0, numSeries)
-+	exemplars := make([]record.RefExemplar, 0, numSeries)
-+	for i := range numSeries {
-+		ref := chunks.HeadSeriesRef(i + 1)
-+		series = append(series, record.RefSeries{Ref: ref, Labels: labels.FromStrings("a", strconv.Itoa(i))})
-+		samples = append(samples, record.RefSample{Ref: ref, T: 100, V: 1})
-+		exemplars = append(exemplars, record.RefExemplar{Ref: ref, T: 100, V: 1, Labels: labels.FromStrings("trace_id", strconv.Itoa(i))})
-+	}
-+	stones := []tombstones.Stone{{Ref: numSeries, Intervals: tombstones.Intervals{{Mint: math.MinInt64, Maxt: math.MaxInt64}}}}
-+	entries := []any{series, samples, exemplars, stones}
-+
-+	cb := &exemplarCheckingSeriesCallback{}
-+	opts := newTestHeadDefaultOptions(1000, false)
-+	opts.SeriesCallback = cb
-+	head, w := newTestHeadWithOptions(t, compression.None, opts)
-+	defer func() {
-+		require.NoError(t, head.Close())
-+	}()
-+	populateTestWL(t, w, entries, nil, false)
-+
-+	cb.exemplars = &recordingExemplarStorage{ExemplarStorage: head.exemplars}
-+	head.exemplars = cb.exemplars
-+
-+	require.NoError(t, head.Init(math.MinInt64))
-+
-+	require.Equal(t, uint64(numSeries-1), head.NumSeries())
-+	require.Zero(t, cb.missing.Load(), "series must not be deleted before their exemplars are replayed")
-+	require.Zero(t, prom_testutil.ToFloat64(head.metrics.walReplayUnknownRefsTotal.WithLabelValues("exemplars")))
-+
-+	q, err := head.ExemplarQuerier(context.Background())
-+	require.NoError(t, err)
-+	res, err := q.Select(0, 100, []*labels.Matcher{labels.MustNewMatcher(labels.MatchRegexp, "a", ".+")})
-+	require.NoError(t, err)
-+	require.Len(t, res, numSeries)
-+	for _, r := range res {
-+		require.Len(t, r.Exemplars, 1)
-+		require.Equal(t, r.SeriesLabels.Get("a"), r.Exemplars[0].Labels.Get("trace_id"))
-+	}
-+}
+@@ -12,7 +12,7 @@ jobs:
+     runs-on: ubuntu-latest
+     if: github.repository_owner == 'prometheus'
+     container:
+-      image: quay.io/prometheus/golang-builder@sha256:24333f0d2950931d355b21d8b36ba0d0811c573169131c63c289aea65aedd2d6
++      image: quay.io/prometheus/golang-builder@sha256:a99557c1271464cdccd3947ab366c0bcd1c29e6c9c51c1449a59ba0ef8ef5284
+     steps:
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+         with:
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #20548** (2026-11-24): chore: Fix repos sync (@SuperQ)
 - **PR #20541** (2026-11-23): tsdb: protect series with pending exemplars from eviction (@roidelapluie)
 - **PR #20536** (2026-11-23): otlp: drop metrics with unsupported temporality instead of rejecting the request (@r0h1tb)
+- **PR #20526** (closed): chore(deps): update quay.io/prometheus/golang-builder docker digest to 6071272 - autoclosed (@renovate[bot])
 - **PR #20521** (2026-11-20): cmd/prometheus: pass --scrape.discovery-reload-interval=100ms in scrape tests (@machine424)
 - **PR #20520** (2026-11-20): tsdb: downgrade compaction cancel log from error to info on shutdown (@machine424)
-- **PR #20512** (closed): tsdb: honor full-range tombstones during exemplar replay (@aknuds1)
-- **PR #20499** (2026-11-19): ui: fix function signatures in the codemirror-promql lint table (@BahaaMattar)
 
 ---
 
@@ -2408,36 +1851,28 @@ tsdb: delete tombstoned series after replaying their exemplars
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in head.go
+## X. Fix repos sync
 
 **RULE**:
-When implementing operations in `tsdb/head.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/repo_sync.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a5022ef6`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ad8f26ee`: Fix repos sync. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tsdb/head.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/repo_sync.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	exemplarsPool       zeropool.Pool[[]exemplarWithSeries]
-	s.updateExemplarTimestampLocked(ts)
-	s.Unlock()
-}
-
-// updateExemplarTimestampLocked records the latest exemplar time.
-// Must be called with the series lock held.
-func (s *memSeries) updateExemplarTimestampLocked(ts int64) {
+      image: quay.io/prometheus/golang-builder@sha256:a99557c1271464cdccd3947ab366c0bcd1c29e6c9c51c1449a59ba0ef8ef5284
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	exemplarsPool       zeropool.Pool[[]exemplarWithSeriesRef]
-	s.Unlock()
+      image: quay.io/prometheus/golang-builder@sha256:24333f0d2950931d355b21d8b36ba0d0811c573169131c63c289aea65aedd2d6
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a5022ef6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ad8f26ee` are properly handled with clean fallback behavior.

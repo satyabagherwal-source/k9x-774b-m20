@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-751N",
-    "timestamp": "2026-11-22T18:00:29.003Z",
-    "repository": "tailscale/tailscale",
-    "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "0121c05d0bbcadf9b2a173d4269f60bb77a950c8f8481892ac7e309f80699b5c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-MFDS",
-    "timestamp": "2026-11-22T18:12:22.240Z",
-    "repository": "meta-llama/Llama-3.1-8B-Instruct",
-    "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
-    "contentHash": "fdd861ee8905e334efc5a88e99e6b708f1b1f181020da3c9062b0545c7b9e298",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-Y1MK",
     "timestamp": "2026-11-22T18:21:24.284Z",
     "repository": "KORMo-VL/KORMo-Web-11B",
@@ -7490,6 +7460,36 @@
     "repository": "k3s-io/k3s",
     "learningId": "learn-github-k3s-io-k3s",
     "contentHash": "4f6bb903a12657887e8c875c5cd031dc2f3958b8057341f04c64897159c9955d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-SKE8",
+    "timestamp": "2026-11-24T13:12:33.344Z",
+    "repository": "erkamyaman/rust-anything",
+    "learningId": "learn-github-erkamyaman-rust-anything",
+    "contentHash": "cb4b782edad4507c9c389025a7d04fe5940c44112276617070d5a7737c9a6d8a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-SPJV",
+    "timestamp": "2026-11-24T13:12:40.027Z",
+    "repository": "prometheus/prometheus",
+    "learningId": "learn-github-prometheus-prometheus",
+    "contentHash": "eb005ef67f1d2c79d6e65c27810f29acfe71b2198434350de331893ff8a22628",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

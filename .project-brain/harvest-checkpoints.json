@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T13:04:14.124Z",
+  "last_updated": "2026-11-24T13:12:40.049Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9711,14 +9711,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-prometheus-prometheus",
-      "content_hash": "345d797a2d38a7f061df65aa6beb908233a75dea55186089e1ed45b66c88a466",
-      "verified_at": "2026-11-23T17:37:58.666Z",
+      "content_hash": "eb005ef67f1d2c79d6e65c27810f29acfe71b2198434350de331893ff8a22628",
+      "verified_at": "2026-11-24T13:12:40.048Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T17:37:58.666Z"
+      "last_updated": "2026-11-24T13:12:40.048Z"
     },
     "meilisearch/meilisearch": {
       "repository": "meilisearch/meilisearch",
@@ -19461,14 +19461,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-erkamyaman-rust-anything",
-      "content_hash": "eca9f2ee4067a960d1d458b1fab68f0a2cc90f88fe35620fe03c12653b177fca",
-      "verified_at": "2026-11-23T06:14:14.266Z",
+      "content_hash": "cb4b782edad4507c9c389025a7d04fe5940c44112276617070d5a7737c9a6d8a",
+      "verified_at": "2026-11-24T13:12:33.365Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T06:14:14.266Z"
+      "last_updated": "2026-11-24T13:12:33.365Z"
     },
     "akhaliq/MiniMax-H3-Image-Character-Swap": {
       "repository": "akhaliq/MiniMax-H3-Image-Character-Swap",

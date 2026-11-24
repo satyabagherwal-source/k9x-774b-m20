@@ -4,24 +4,24 @@
 {
   "source_repository": "erkamyaman/rust-anything",
   "source_url": "https://github.com/erkamyaman/rust-anything",
-  "source_version": "b30206b1",
+  "source_version": "ef7e9fc4",
   "license": "MIT",
-  "timestamp": "2026-11-23T06:14:14.588Z",
+  "timestamp": "2026-11-24T13:12:33.583Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-erkamyaman-rust-anything",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [erkamyaman/rust-anything](https://github.com/erkamyaman/rust-anything) (Revision: `b30206b1`).  
-> **License**: MIT | **Timestamp**: `2026-11-23T06:14:14.588Z`  
+> **Provenance**: Harvested from [erkamyaman/rust-anything](https://github.com/erkamyaman/rust-anything) (Revision: `ef7e9fc4`).  
+> **License**: MIT | **Timestamp**: `2026-11-24T13:12:33.583Z`  
 > **Learning ID**: `learn-github-erkamyaman-rust-anything`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), B (Product Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 56%
+- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), F (Design Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 55%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from erkamyaman/rust-anything:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/erkamyaman-rust-anything-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/erkamyaman/rust-anything](https://github.com/erkamyaman/rust-anything))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T06:14:12.843Z  
+> **Harvest Timestamp**: 2026-11-24T13:12:32.059Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Rewrite your whole app in Rust, one piece at a time, checked against the original's recorded behavior at every step. CLIs, HTTP servers and libraries in TypeScript, Python, C, Go, Ruby and Java.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 8161 stars
+- **Stars / Engagement**: 9048 stars
 
 ---
 
@@ -1933,8 +1933,15 @@ pub fn is_default_this_binding(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #126** (2026-11-20): **analyze: C dependency is missed when only the source file's header includes it**
-  *Symptoms*: ### What happened  `rust-anything analyze --lang c --whole-app --json` puts `src/a.c` and `src/b.c` in the same migration wave with no internal dependency between them. `a.c` calls `b()`, and the declaration is available through `a.c` → `a.h` → `b.h`.  I expected `src/a.c` to list `src/b.c` in `internal_deps` and run in a later wave. Adding `#include "b.h"` directly to `a.c` gives that result. The dependency chain also appears if `a.h` is renamed to `api.h` and the include in `a.c` is updated. This points to [`discover()` dropping headers with a matching `.c` basename](https://github.com/erkamyaman/rust-anything/blob/v2.1.0/src/lang/c.rs#L108-L117) before the analyzer reads their includes.  ### How to reproduce  ```shell rust-anything --version repro=$(mktemp -d) mkdir -p "$repro/src" printf '#include "a.h"\nint a(void) { return b(); }\n' > "$repro/src/a.c" printf '#pragma once\n#include "b.h"\nint a(void);\n' > "$repro/src/a.h" printf '#include "b.h"\nint b(void) { return 42; }\n' > "$repro/src/b.c" printf '#pragma once\nint b(void);\n' > "$repro/src/b.h"  (cd "$repro/src" && gcc -MM a.c b.c) rust-anything analyze "$repro" --lang c --whole-app --json |   python3 -c 'import json,sys; r=json.load(sys.stdin); print([(u["id"], u["internal_deps"], u["wave"]) for u in r["units"]])' ```  ### Output  ```text rust-anything 2.1.0 a.o: a.c a.h b.h b.o: b.c b.h [('src/a.c', [], 0), ('src/b.c', [], 0)]   The last line shows `(id, internal_deps, wave)` for each unit. The two entries in `w
+- **Issue #364** (2026-11-24): **Java C-style array parameters are bridged as scalars and record 0 cases**
+  *Symptoms*: **What happens**  ```java package acme;  public class Stats {     public static int sum(int values[]) {         int s = 0;         for (int v : values) s += v;         return s;     } } ```  ``` $ rust-anything bridge . src/main/java/acme/Stats.java $ grep "pub fn" rust/stats-rs/src/port.rs pub fn sum(values: i64) -> Result<i64, String> { $ rust-anything record rust/stats-rs Recorded 0 cases (0 threw) in .../rust/stats-rs/cases.jsonl ```  Written as `int[] values`, the same method gets `values: Vec<i64>` and 158 cases are recorded.  **Expected**  `int values[]` is the same type as `int[] values`, so the bridge gives `Vec<i64>` and records cases. If that is not supported, the export should be kept in Java with a reason, not recorded with nothing and no warning.  **Where**  `src/lang/java.rs:502`: the parameter type is read from the `type` field only. In tree-sitter-java, the `[]` of a C-style declarator is a separate `dimensions` child of `formal_parameter`, so it is dropped.  **Notes**  The same applies to `String args[]` and multi-dimensional `int grid[][]`. 
+  **Post-Mortem & Fix Analysis**:
+  > Working on this.
+
+- **Issue #361** (2026-11-24): **YARD @param tags with types before the name are ignored**
+  *Symptoms*: **What happens**  YARD accepts both `@param name [Type]` and `@param [Type] name`. Only the first is read:  ```ruby module Pad   # @param text [String] the text   # @param width [Integer] the width   # @return [String]   def self.left(text, width) = text.rjust(width)    # @param [String] text the text   # @param [Integer] width the width   # @return [String]   def self.right(text, width) = text.ljust(width) end ```  ``` $ rust-anything bridge . lib/pad.rb $ grep "pub fn" rust/pad-rs/src/port.rs pub fn left(text: String, width: i64) -> Result<String, String> { pub fn right(text: serde_json::Value, width: serde_json::Value) -> Result<String, String> { ```  **Expected**  `right` gets `text: String, width: i64`, the same as `left`.  **Where**  `src/lang/ruby.rs:581`: `yard_param` splits the rest of the tag at the first space and compares the first word to the parameter name. With types first, that word is `[String]`, so it never matches.  **Notes**  The types-first form is common in older gems and in what RubyMine generates. With `Value` parameters, `record` also generates untyped inputs for these methods. 
+  **Post-Mortem & Fix Analysis**:
+  > Working on this.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1951,575 +1958,332 @@ pub fn is_default_this_binding(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8a675e19` (2026-11-22)
-**Commit Message**: fix(js): capture `--from-tests` arguments with the codec `record` uses (#198)
+### Incident Patch 1: `15ad3fcc` (2026-11-24)
+**Commit Message**: fix(http): fail when fixed port is already in use or build exits before listening (#395)
 
-The JS capture hook had its own copy of the encoder, behind `CODEC_JS`: a `Buffer` was captured
-as a `Uint8Array`, other typed arrays as objects with numeric keys, and an object shaped like a
-marker (`{ $date: 'x' }`) was replayed as a `Date`, so the original recorded results its tests
-never saw. The hook now takes `enc` from `CODEC_JS` and leaves out a call whose arguments `dec`
-would turn into a different value (a RegExp, Error, URL, ArrayBuffer, boxed primitive, or an
-object with `toJSON`). Its names take a `__ra` prefix and it reads built-ins from `globalThis`,
-so a wrapped function named `enc` or `Buffer` changes nothing. Array holes stay `undefined`, and
-a typed array subclass is captured as its built-in kind. A unit test keeps the copy in step with
-`CODEC_JS`.
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Co-authored-by: Kam <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +8/-0)
+**File**: `CHANGELOG.md` (modified, +3/-0)
 ```diff
-@@ -11,6 +11,14 @@
-   failed every case with `TypeError: unexpected keyword argument`. A Python mismatch shows its
-   keyword arguments after the positional ones, as Ruby's does, so a `known-diffs.jsonl` entry
-   for `f(x)` no longer explains `f(x, flag=True)`.
-+- JS/TS `record --from-tests` encodes the captured arguments with the codec `record` and `diff`
-+  use, instead of a copy of it that had fallen behind. A `Buffer` was captured as a `Uint8Array`
-+  (so `b.toString('hex')` recorded `"104,105"`), a `Float64Array` or other typed array as an
-+  object with numeric keys, and an object shaped like a marker (`{ $date: 'x' }`) was replayed as
-+  a `Date`. A call is now left out, as one that passes a function or a cycle already was, when an
-+  argument is a RegExp, an Error, a `URL`, an `ArrayBuffer`, a boxed primitive or an object with
-+  `toJSON`: those were captured as `{}`, their own fields or their `toJSON` result, which replay
-+  passed as a different value. A class instance is still captured as its own fields.
- 
- ## 3.1.0 (2026-11-22)
- 
-```
-
-**File**: `src/from_tests.rs` (modified, +111/-17)
-```diff
-@@ -167,6 +167,7 @@ fn instrument_js(m: &Manifest, skipped: &mut Vec<String>) -> Result<Restore> {
-         by_file.entry(&f.file).or_default().push(&f.name);
-     }
-     let mut guard = Restore(Vec::new());
-+    let capture = JS_CAPTURE.replace("__CODEC__", &js_codec());
-     for (file, names) in by_file {
-         let path = m.root.join(file);
-         restore(&path);
-@@ -202,7 +203,7 @@ fn instrument_js(m: &Manifest, skipped: &mut Vec<String>) -> Result<Restore> {
-         let instrumented = format!(
-             "{}{text}\n{}",
-             if ts { "// @ts-nocheck\n" } else { "" },
--            JS_CAPTURE.replace("__WRAPS__", &wraps)
-+            capture.replace("__WRAPS__", &wraps)
-         );
-         std::fs::write(&path, instrumented)
-             .with_context(|| format!("instrumenting {}", path.display()))?;
-@@ -216,29 +217,19 @@ const JS_CAPTURE: &str = r#"// rust-anything record --from-tests: removed when t
- {
-   const __raFs = globalThis.process?.getBuiltinModule?.('node:fs')
-   const __raOut = globalThis.process?.env?.RUST_ANYTHING_CAPTURE
--  const __raCount = new Map()
--  const __raReplacer = function (k, v) {
--    const raw = this[k]
--    if (typeof raw === 'function' || typeof raw === 'symbol') throw new Error('not data')
--    if (raw instanceof Date) return { $date: Number.isNaN(raw.getTime()) ? 'Invalid' : raw.toISOString() }
--    if (raw instanceof Uint8Array) return { $bytes: Array.from(raw) }
--    if (raw instanceof Map) return { $map: [...raw] }
--    if (raw instanceof Set) return { $set: [...raw] }
--    return v === undefined ? { $undefined: true }
--      : typeof v === 'bigint' ? { $bigint: String(v) }
--      : typeof v === 'number' ? (Number.isFinite(v) && !Object.is(v, -0) ? v : { $num: Object.is(v, -0) ? '-0' : String(v) })
--      : typeof v === 'string' && !v.isWellFormed() ? { $utf16: Array.from({ length: v.length }, (_, i) => v.charCodeAt(i)) }
--      : v
--  }
-+  const __raCount = new globalThis.Map()
-+  // The built-in name of a typed array, which a subclass cannot change.
-+  const __raTypedName = globalThis.Object.getOwnPropertyDescriptor(globalThis.Object.getPrototypeOf(globalThis.Uint8Array.prototype), globalThis.Symbol.toStringTag).get
-+__CODEC__
-   const __raWrap = (name, orig) => {
-     if (!__raFs || !__raOut || typeof orig !== 'function') return orig
-     const wrapped = function (...args) {
-       const n = __raCount.get(name) ?? 0
-       if (n < 5000) {
-         __raCount.set(name, n + 1)
--        try { __raFs.appendFileSync(__raOut, JSON.stringify({ fn: name, args }, __raReplacer) + '\n') } catch {}
-+        try { __raFs.appendFileSync(__raOut, globalThis.JSON.stringify({ fn: name, args: globalThis.Array.from(args, a => __raEnc(a)) }) + '\n') } catch {}
-       }
--      return new.target ? Reflect.construct(orig, args, new.target) : orig.apply(this, args)
-+      return new.target ? globalThis.Reflect.construct(orig, args, new.target) : orig.apply(this, args)
-     }
-     if (typeof exports === 'object' && exports !== null) {
-       for (const key of [name, 'default']) if (exports[key] === orig) exports[key] = wrapped
-@@ -249,6 +240,71 @@ __WRAPS__}
- /* c8 ignore stop */
- "#;
- 
-+/// What the capture hook changes in the `enc` of `CODEC_JS`: a value `dec` cannot give back
-+/// throws, so the call is left out. That is a function, symbol, cycle, RegExp or Error, an
-+/// object `dec` would rebuild as a plain one although it is not (a `URL`, an `ArrayBuffer`, a
-+/// boxed string, anything with `toJSON`, or a RegExp, Error, Map, Set or Date from another
-+/// realm), and a typed array keeps its built-in kind (a subclass is not a global `dec` can find).
-+/// Array holes stay `undefined`, as `JSON.stringify` saw them before. A class instance is still
-+/// captured as its own fields, as before.
-+const JS_CAPTURE_ENC: &[(&str, &str)] = &[
-+    ("return { $function: v.name }", NOT_DATA),
-+    ("return { $symbol: String(v.description) }", NOT_DATA),
-+    ("return { $cycle: true }", NOT_DATA),
-+    ("return { $regexp: String(v) }", NOT_DATA),
-+    ("return { $error: v.message }", NOT_DATA),
-+    (
-+        "if (Array.isArray(v)) return v.map(x => enc(x, next))",
-+        "if (Array.isArray(v)) return Array.from(v, x => enc(x, next))",
-+    ),
-+    ("kind: v.constructor.name,", "kind: __raTypedName.call(v),"),
-+    (
-+        "const plain = Object.fromEntries(",
-+        "if (Object.prototype.toString.call(v) !== '[object Object]' || typeof v.toJSON === 'function') throw new Error('not data')\n  const plain = Object.fromEntries(",
-+    ),
-+];
-+
-+const NOT_DATA: &str = "throw new Error('not data')";
-+
-+/// The `enc` of `CODEC_JS`, which `record` uses, for the capture hook, changed as
-+/// `JS_CAPTURE_ENC` says. It runs inside the user's module: its names take a `__ra` prefix so
-+/// they cannot shadow a wrapped function of the same name, and the built-ins it uses are read
-+/// from `globalThis` so the module's own names cannot shadow them. Strings and comments are left
-+/// as they ar
-```
-
-**File**: `tests/recording.rs` (modified, +72/-0)
-```diff
-@@ -289,6 +289,78 @@ fn records_the_calls_a_js_test_suite_makes_and_restores_the_source() {
-     assert!(inputs.contains(r#"{"fn":"label","args":[7]}"#), "{inputs}");
- }
- 
-+#[test]
-+fn js_test_calls_are_captured_with_the_codec_record_uses() {
-+    if !common::have("node") {
-+        return;
-+    }
-+    let root = project(
-+        "ts-codec",
-+        &[
-+            (
-+                "package.json",
-+                r#"{"name":"bin","version":"0.1.0","type":"module"}"#,
-+            ),
-+            (
-+                "src/bin.ts",
-+                "export function hex(b: Buffer): string {\n  return b.toString('hex')\n}\n\n\
-+                 export function total(xs: Float64Array): number {\n  let s = 0\n  for (const x of xs) s += x\n  return s\n}\n\n\
-+                 export function tag(o: { $date: string }): string {\n  return typeof o.$date\n}\n\n\
-+                 export function hole(xs: (number | undefined)[]): boolean {\n  return xs[1] === undefined\n}\n\n\
-+                 export function enc(s: string): string {\n  return s + '!'\n}\n\n\
-+                 export function looksLikeMarker(s: string): string {\n  return s + '?'\n}\n\n\
-+                 export function kind(v: unknown): string {\n  return Object.prototype.toString.call(v)\n}\n\n\
-+                 export function Buffer(s: string): string {\n  return s + '#'\n}\n",
-+            ),
-+            (
-+                "test.ts",
-+                "import { hex, total, tag, hole, enc, looksLikeMarker, kind, Buffer as B } from './src/bin.ts'\n\
-+                 class Sub extends Float64Array {}\n\
-+                 class Tagged extends Float64Array { get [Symbol.toStringTag]() { return 'Tagged' } }\n\
-+                 class T { a = 1; toJSON() { return 1 } }\n\
-+                 const cyclic: any = {}\ncyclic.self = cyclic\n\
-+                 if (hex(Buffer.from('hi')) !== '6869') process.exit(1)\n\
-+                 if (total(new Float64Array([1.5, 2])) !== 3.5) process.exit(1)\n\
-+                 if (total(new Sub([1, 2])) !== 3 || total(new Tagged([2, 2])) !== 4) process.exit(1)\n\
-+                 if (B('c') !== 'c#') process.exit(1)\n\
-+                 if (tag({ $date: 'x' }) !== 'string') process.exit(1)\n\
-+                 if (!hole([1, , 3])) process.exit(1)\n\
-+                 if (enc('a') !== 'a!' || looksLikeMarker('b') !== 'b?') process.exit(1)\n\
-+                 for (const v of [() => 1, Symbol('s'), cyclic, /a/, new Error('e'), { r: /a/ },\n\
-+                   new URL('https://example.com/'), new ArrayBuffer(2), new String('s'), new T()]) kind(v)\n\
-+                 if (kind([0]) !== '[object Array]') process.exit(1)\n",
-+            ),
-+        ],
-+    );
-+    let (printed, inputs) = from_tests(&root, "src/bin.ts", &["node", "test.ts"]);
-+    let cases = std::fs::read_to_string(root.join("port").join("cases.jsonl")).unwrap();
-+    std::fs::remove_dir_all(&root).unwrap();
-+    // Values `dec` cannot give back (a function, symbol, cycle, RegExp, Error, URL, ArrayBuffer,
-+    // boxed string, or anything with `toJSON`, also nested) leave their call out; functions of
-+    // the unit named like the codec's `enc` and `looksLikeMarker` are still wrapped, and one
-+    // named `Buffer` does not stop the codec from telling a `Buffer`.
-+    assert!(
-+        printed.contains("Captured 10 call(s)"),
-+        "{printed}\n{inputs}"
-+    );
-+    assert_eq!(inputs.matches(r#"{"fn":"kind""#).count(), 1, "{inputs}");
-+    // Replayed through `dec`, each captured input gives the original what the test passed.
-+    for line in [
-+        r#"{"fn":"hex","args":[{"$buffer":[104,105]}],"ok":"6869"}"#,
-+        r#"{"fn":"total","args":[{"$typed":{"kind":"Float64Array","values":[1.5,2]}}],"ok":3.5}"#,
-+        r#"{"fn":"total","args":[{"$typed":{"kind":"Float64Array","values":[1,2]}}],"ok":3}"#,
-+        r#"{"fn":"total","args":[{"$typed":{"kind":"Float64Array","values":[2,2]}}],"ok":4}"#,
-+        r#"{"fn":"Buffer","args":["c"],"ok":"c#"}"#,
-+        r#"{"fn":"tag","args":[{"$object":{"$date":"x"}}],"ok":"string"}"#,
-+        r#"{"fn":"hole","args":[[1,{"$undefined":true},3]],"ok":true}"#,
-+        r#"{"fn":"enc","args":["a"],"ok":"a!"}"#,
-+        r#"{"fn":"looksLikeMarker","args":["b"],"ok":"b?"}"#,
-+        r#"{"fn":"kind","args":[[0]],"ok":"[object Array]"}"#,
-+    ] {
-+        assert!(cases.contains(line), "{line}\n{cases}");
-+    }
-+}
-+
- #[test]
- fn record_reports_lines_of_the_original_no_case_reached() {
-     if !common::have("node") {
-```
-
----
-
-### Incident Patch 2: `ca817a1d` (2026-11-22)
-**Commit Message**: fix(demo): link the Ruby and Python real-world crates on macOS
-
-ruby-shellwords-rs and python-colorsys-rs predate the build.rs that bridge now writes for magnus
-and PyO3, so they failed to link on macOS without -undefined dynamic_lookup.
-
-**File**: `demo/real-world/python-colorsys-rs/build.rs` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+fn main() {
-+    if std::env::var("CARGO_CFG_TARGET_OS").as_deref() == Ok("macos") {
-+        println!("cargo:rustc-link-arg=-Wl,-undefined,dynamic_lookup");
-+    }
-+}
-```
-
-**File**: `demo/real-world/ruby-shellwords-rs/build.rs` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+fn main() {
-+    if std::env::var("CARGO_CFG_TARGET_OS").as_deref() == Ok("macos") {
-+        println!("cargo:rustc-link-arg=-Wl,-undefined,dynamic_lookup");
-+    }
-+}
-```
-
----
-
-### Incident Patch 3: `7b9f7e99` (2026-11-22)
-**Commit Message**: fix(python): keep `--from-tests` calls that pass arguments by keyword (#193)
-
-* fix(python): keep `--from-tests` calls that pass arguments by keyword
-
-The Python capture hook wrote a call only when `inspect.Signature.bind` put every argument in
-`bound.args`. A keyword-only argument (`def f(x, *, flag)`) or one named after a skipped default
-(`f(x, fill='*')`) lands in `bound.kwargs`, so those calls were silently dropped. They are now
-written with a `kwargs` object of encoded values, which `run_case` in the driver already reads.
-The `--inputs` help and the `RecordOptions` doc now mention `kwargs`.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* fix(python): replay keyword arguments under the bindings' names, and key mismatches by them
-
-`diff` and `bench` passed captured and generated keyword arguments to the Rust bindings under
-the original's names, while `signature()` names each binding parameter in snake_case: a
-keyword-only `scaleBy` failed every case with `unexpected keyword argument 'scaleBy'`. The driver
-now renames them with `binding_name()`, a copy of `bridge::snake_case` without `r#`.
-
-A Python mismatch now shows keyword arguments after the positional ones, as Ruby's 
-
-**File**: `CHANGELOG.md` (modified, +10/-0)
-```diff
-@@ -2,6 +2,16 @@
+@@ -2,6 +2,9 @@
  
  ## Unreleased
  
-+- Python `record --from-tests` keeps the calls that pass arguments by keyword where Python does
-+  not bind them by position: keyword-only parameters (`def f(x, *, flag)`) and an argument named
-+  after a skipped default (`f(x, fill='*')`). They were dropped from `test-inputs.jsonl`; they
-+  are now written with a `kwargs` object, which the driver already replays.
-+- Python `diff` and `bench` pass keyword arguments to the Rust bindings under the bindings'
-+  snake_case names (`scaleBy=10` as `scale_by=10`); a keyword-only parameter named in camelCase
-+  failed every case with `TypeError: unexpected keyword argument`. A Python mismatch shows its
-+  keyword arguments after the positional ones, as Ruby's does, so a `known-diffs.jsonl` entry
-+  for `f(x)` no longer explains `f(x, flag=True)`.
++- `app record` and `app replay` fail with `port <port> is already in use` before spawning a server
++  on an occupied port and check whether the child exited before treating the port as ready (#326).
 +
- ## 3.1.0 (2026-11-22)
+ ## 4.0.0 (2026-11-24)
  
- - `go` runs `bench` after gate and switches a unit on only when it is not slower as its callers
+ - A documentation site at [rust-anything.com](https://rust-anything.com): the README, the guides
 ```
 
-**File**: `src/from_tests.rs` (modified, +10/-6)
+**File**: `src/http.rs` (modified, +9/-3)
 ```diff
-@@ -26,7 +26,8 @@ const BACKUP: &str = ".rust-anything-backup";
+@@ -348,6 +348,9 @@ struct Server {
  
- #[derive(Debug)]
- pub struct Capture {
--    /// The captured inputs, one `{"fn", "args"}` per line, in the `--inputs` format.
-+    /// The captured inputs, one `{"fn", "args"}` per line (with `"kwargs"` for Python arguments
-+    /// passed by keyword), in the `--inputs` format.
-     pub inputs: PathBuf,
-     pub per_function: BTreeMap<String, usize>,
-     /// Exports the capture cannot see (not a function declaration), with why.
-@@ -292,11 +293,14 @@ def _wrap(name, orig):
-         if n < 5000 and sig is not None:
-             try:
-                 bound = sig.bind(*args, **kwargs)
--                if not bound.kwargs:
--                    line = json.dumps({"fn": name, "args": enc(list(bound.args))}, ensure_ascii=False, allow_nan=False)
--                    with open(_OUT, "a", encoding="utf-8") as f:
--                        f.write(line + "\n")
--                    _COUNT[name] = n + 1
-+                case = {"fn": name, "args": enc(list(bound.args))}
-+                # Keyword-only arguments, and those named after a skipped default.
-+                if bound.kwargs:
-+                    case["kwargs"] = {k: enc(v) for k, v in bound.kwargs.items()}
-+                line = json.dumps(case, ensure_ascii=False, allow_nan=False)
-+                with open(_OUT, "a", encoding="utf-8") as f:
-+                    f.write(line + "\n")
-+                _COUNT[name] = n + 1
-             except Exception:
-                 pass
-         return orig(*args, **kwargs)
+ impl Server {
+     fn start(command: &[String], launch: &Launch, repo: &Path, port: u16) -> Result<Server> {
++        if TcpStream::connect_timeout(&local(port), Duration::from_millis(100)).is_ok() {
++            bail!("port {port} is already in use");
++        }
+         let dir = app::temp_dir("server")?;
+         let words: Vec<String> = command
+             .iter()
+@@ -390,11 +393,14 @@ impl Server {
+             .with_context(|| format!("starting `{}`", command.join(" ")))?;
+         let deadline = Instant::now() + READY;
+         loop {
+-            if TcpStream::connect_timeout(&local(port), Duration::from_millis(200)).is_ok() {
+-                break;
+-            }
+             let failure = if let Some(status) = child.try_wait()? {
+                 Some(format!("exited ({status}) before listening"))
++            } else if TcpStream::connect_timeout(&local(port), Duration::from_millis(200)).is_ok() {
++                if let Some(status) = child.try_wait()? {
++                    Some(format!("exited ({status}) before listening"))
++                } else {
++                    break;
++                }
+             } else if Instant::now() > deadline {
+                 Some(format!("did not listen within {}s", READY.as_secs()))
+             } else {
 ```
 
-**File**: `src/harness.rs` (modified, +2/-1)
+**File**: `tests/http.rs` (modified, +93/-0)
 ```diff
-@@ -110,7 +110,8 @@ pub struct RecordOptions<'a> {
-     pub crate_dir: &'a Path,
-     /// Generated cases per function.
-     pub count: usize,
--    /// Extra cases, one `{"fn": name, "args": [...]}` JSON object per line.
-+    /// Extra cases, one `{"fn": name, "args": [...]}` JSON object per line, with `"kwargs": {...}`
-+    /// for Python and Ruby arguments passed by keyword.
-     pub inputs: Option<&'a Path>,
-     /// Import the original from this JS module instead of the TS source files.
-     pub module: Option<&'a Path>,
+@@ -654,3 +654,96 @@ fn csharp_server() {
+         original: "server",
+     });
+ }
++
++#[test]
++fn http_fixed_port_rejects_existing_listener_and_early_exit() {
++    if !common::have("node") {
++        return;
++    }
++    let repo = fixture("ts", "fixed-port-guard");
++    let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
++    let port = listener.local_addr().unwrap().port();
++
++    // Recording against an already-occupied fixed port fails before spawning the server.
++    let record_err = app::record(&RecordOptions {
++        repo: &repo,
++        run: &words("node server.js"),
++        inputs: None,
++        normalize: &[],
++        name: None,
++        traps: false,
++        timeout_secs: None,
++        http: true,
++        server_args: &[],
++        fresh: &[],
++        pace_ms: None,
++        port: Some(port),
++        float_tolerance: None,
++        float_files: &[],
++        effects: None,
++    })
++    .unwrap_err();
++    assert!(
++        record_err
++            .to_string()
++            .contains(&format!("port {port} is already in use")),
++        "expected port-in-use error on record, got: {record_err:#}"
++    );
++    drop(listener);
++
++    // Record cleanly while the fixed port is free.
++    let recorded = app::record(&RecordOptions {
++        repo: &repo,
++        run: &words("node server.js"),
++        inputs: None,
++        normalize: &[],
++        name: None,
++        traps: false,
++        timeout_secs: None,
++        http: true,
++        server_args: &[],
++        fresh: &[],
++        pace_ms: None,
++        port: Some(port),
++        float_tolerance: None,
++        float_files: &[],
++        effects: None,
++    })
++    .unwrap();
++    assert!(recorded.cases > 0);
++
++    // Reoccupying the fixed port must fail replay instead of passing against the unrelated listener.
++    let occupied = std::net::TcpListener::bind(("127.0.0.1", port)).unwrap();
++    let replay_occupied_err = app::replay(&ReplayOptions {
++        case: None,
++        repo: &repo,
++        build: Some("false"),
++        timeout_secs: None,
++        port: None,
++    })
++    .unwrap_err();
++    assert!(
++        replay_occupied_err
++            .to_string()
++            .contains(&format!("port {port} is already in use")),
++        "expected port-in-use error on replay, got: {replay_occupied_err:#}"
++    );
++    drop(occupied);
++
++    // With the port free, a build that exits immediately must fail as exited before listening.
++    let early_exit_err = app::replay(&ReplayOptions {
++        case: None,
++        repo: &repo,
++        build: Some("false"),
++        timeout_secs: None,
++        port: None,
++    })
++    .unwrap_err();
++    let msg = early_exit_err.to_string();
++    assert!(
++        msg.contains("exited") && msg.contains("before listening"),
++        "expected exited-before-listening error, got: {early_exit_err:#}"
++    );
++
++    std::fs::remove_dir_all(repo).unwrap();
++}
 ```
 
-**File**: `src/harness_py.rs` (modified, +35/-8)
+---
+
+### Incident Patch 2: `758b6b12` (2026-11-24)
+**Commit Message**: fix(kotlin): say why a primitive array cannot cross the Java wire (#386)
+
+**File**: `src/lang/kotlin.rs` (modified, +30/-2)
 ```diff
-@@ -389,7 +389,34 @@ def call_args(args):
-     return [dec(a) for a in args]
+@@ -360,8 +360,7 @@ pub fn kotlin_to_ts(t: &str) -> Result<String, String> {
+         | "DoubleArray" | "BooleanArray" => {
+             let inner = if head.ends_with("Array") && !matches!(head, "Array") {
+                 match head {
+-                    "IntArray" => "int".into(),
+-                    "LongArray" => "int".into(),
++                    "IntArray" | "LongArray" => "int".into(),
+                     "DoubleArray" => "number".into(),
+                     "BooleanArray" => "boolean".into(),
+                     _ => arg(0)?,
+@@ -381,6 +380,14 @@ pub fn kotlin_to_ts(t: &str) -> Result<String, String> {
+             }
+             format!("Record<string, {}>", arg(1)?)
+         }
++        // The TS side could map these (`int[]`/`number[]`), but the Java wire only converts element
++        // arrays of int, long, double and boolean: `java_ty` returns None for byte, short and float, so
++        // the generated glue would have no call wrapper for the unit.
++        "ByteArray" | "ShortArray" | "FloatArray" => {
++            return Err(format!(
++                "uses `{head}`, which the Java wire cannot carry yet"
++            ));
++        }
+         "Char" => return Err("uses `Char`, a UTF-16 code unit".into()),
+         "Any" | "Any?" => return Err("takes or returns `Any`: values of any type".into()),
+         "Set" | "MutableSet" | "HashSet" => {
+@@ -812,6 +819,27 @@ pub fn receiver(f: &ExportedFn) -> (String, String) {
+ mod tests {
+     use super::*;
  
- 
--def run_case(mod, c):
-+def binding_name(name):
-+    """The name the Rust bindings give a parameter: `bridge::snake_case`, without `r#`."""
-+    out = []
-+    for i, ch in enumerate(name):
-+        if ch.isupper():
-+            prev = name[i - 1] if i else ""
-+            nxt = name[i + 1:i + 2]
-+            if prev and (prev.islower() or "0" <= prev <= "9") or (prev.isupper() and nxt.islower()):
-+                out.append("_")
-+            out.append(ch.lower())
-+        else:
-+            out.append(ch if ch.isalnum() else "_")
-+    return "".join(out)
++    #[test]
++    fn a_primitive_array_is_named_with_the_reason_the_wire_gives() {
++        // int, long, double and boolean element arrays are what the Java wire converts.
++        for (kotlin, ts) in [
++            ("IntArray", "int[]"),
++            ("LongArray", "int[]"),
++            ("DoubleArray", "number[]"),
++            ("BooleanArray", "boolean[]"),
++        ] {
++            assert_eq!(kotlin_to_ts(kotlin), Ok(ts.to_string()), "{kotlin}");
++        }
++        // The other three are refused, and the reason names the wire rather than a "class".
++        for kotlin in ["ByteArray", "ShortArray", "FloatArray"] {
++            let reason = kotlin_to_ts(kotlin).unwrap_err();
++            assert!(reason.contains("Java wire"), "{kotlin}: {reason}");
++            assert!(!reason.contains("uses the class"), "{kotlin}: {reason}");
++        }
++        // `CharArray` is UTF-16 code units, like `Char`, and keeps that reason.
++        assert!(kotlin_to_ts("CharArray").is_err());
++    }
 +
-+
-+def call_kwargs(c, rename=None):
-+    """Keyword arguments by their names in the original, or in the bindings with `rename`."""
-+    return {(rename(k) if rename else k): dec(v) for k, v in c.get("kwargs", {}).items()}
-+
-+
-+def shown_args(c):
-+    """A case's arguments as mismatches show them: keyword arguments appended, as Ruby does."""
-+    if c.get("class"):
-+        return [c.get("ctor"), c.get("calls")]
-+    return c["args"] + [c["kwargs"]] if c.get("kwargs") else c["args"]
-+
-+
-+def run_case(mod, c, rename=None):
-     if c.get("class"):
-         cls = getattr(mod, c["class"])
-         results = []
-@@ -409,7 +436,7 @@ def run_case(mod, c):
-             except BaseException as e:  # noqa: BLE001
-                 results.append({"error": error_text(e)})
-         return {"results": results}
--    kwargs = {k: dec(v) for k, v in c.get("kwargs", {}).items()}
-+    kwargs = call_kwargs(c, rename)
-     try:
-         return {"ok": enc(getattr(mod, c["fn"])(*call_args(c["args"]), **kwargs))}
-     except (KeyboardInterrupt, SystemExit):
-@@ -474,7 +501,7 @@ def diff(cases_path, out_path, package_dir, name, key_order):
-             continue
-         if PIN_CASE:
-             PIN_CASE(index)
--        got = run_case(mod, c)
-+        got = run_case(mod, c, binding_name)
-         if c.get("class"):
-             want, have = c["results"], got["results"]
-             ok = len(want) == len(have) and all(same(w, h, sort) for w, h in zip(want, have))
-@@ -487,7 +514,7 @@ def diff(cases_path, out_path, package_dir, name, key_order):
-             summary["passed"] += 1
-         else:
-             summary["failed"] += 1
--            summary["mismatches"].append({"fn": name_, "args": c.get("args", [c.get("ctor"), c.get("calls")]), "expected": expected, "actual": actual})
-+            summary["mismatches"].append({"fn": name_, "args": shown_args(c), "expected": expected, "actual": actual})
-     json.dump(summary, open(out_path, "w", encoding="utf-8"), ensure_ascii=False)
- 
- 
-@@ -505,15 +532,15 @@ def bench(cases_path, out_path, package_dir, name, modules_path, min_ms):
-             continue
-         old = load(sources[key])
- 
--        def timed(mod):
-+        def timed(mod, rename=None):
-             if cases[0].get("class"):
-                 def once():
-                     for c in cases:
--                        run_case(mod, c)
-+                        run_case(mod, c, rename)
-             else:
-                 # Arguments are decoded once: only the calls are timed.
-                 fn = getattr(mod, key)
--                prepared = [(call_args(c["args"]), {k: dec(v) for k, v in c.get("kwargs", {}).items()}) for c in cases]
-+                prepared = [(call_args(c["args"]), call_kwargs(c, rename)) for c in cases]
- 
-                 def once():
-                     for args, kwargs in prepared:
-@@ -531,7 +558,7 @@ def bench(cases_path, out_path, package_dir, name, modules_path, min_ms):
-                 elapsed = time.perf_counter() - start
-                 if elapsed * 1000 >= min_ms:
-                     return elapsed * 1e9 / (passes * len(cases))
--        original_ns, rust_ns = timed(old), timed(new)
-+        original_ns, rust_ns = timed(old), timed(new, binding_name)
-         label = f"class {key}" if cases[0].get("class") else key
-         rows.append({"fn": label, "cases": len(cases), "original_ns": original_ns, "rust_ns": rust_ns, "speedup": original_ns / rust_ns})
-     json.dump(rows, open(out_path, "w", encoding="utf-8"))
+     #[test]
+     fn scans_risks_and_imports() {
+         let src =
 ```
 
-**File**: `src/main.rs` (modified, +2/-1)
+---
+
+### Incident Patch 3: `cfd2ff34` (2026-11-24)
+**Commit Message**: fix(analyze): refuse a --lang the folder does not hold (#385)
+
+* fix(analyze): refuse a --lang the folder does not hold
+
+* fix(analyze): judge an empty language by its files and give the reason
+
+Review follow-up: the check looks at whether any file of the language was found (UI and tests included), so a Go module with a .tsx file still analyzes as TypeScript, and the error carries the warnings that explain why files were left out, such as ignore rules.
+
+---------
+
+Co-authored-by: Kam <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +4/-0)
 ```diff
-@@ -118,7 +118,8 @@ enum Cmd {
-         /// Generated cases per function.
-         #[arg(long, default_value_t = 200)]
-         count: usize,
--        /// Extra cases: JSONL of `{"fn": name, "args": [...]}`.
-+        /// Extra cases: JSONL of `{"fn": name, "args": [...]}`, plus `"kwargs": {...}` for Python
-+        /// and Ruby arguments passed by keyword.
-         #[arg(long)]
-         inputs: Option<PathBuf>,
-         /// Import the original from this JS module (e.g. built output) instead of the TS source.
+@@ -13,6 +13,10 @@
+ - `app record` joins example commands wrapped with a trailing `\` before reading them, so a curl
+   example split over lines becomes its request instead of being dropped, and a wrapped `$ tool`
+   line is no longer recorded with `\` as an argument (#328).
++- `analyze --lang` for a language the folder does not hold is an error that names the language it
++  found (`no Python source files found; the code here looks like TypeScript/JavaScript`) and why
++  any of its files were left out (such as ignore rules), instead of an empty plan with exit 0
++  (#345).
+ 
+ ## 3.4.0 (2026-11-23)
+ 
 ```
 
-**File**: `tests/recording.rs` (modified, +119/-0)
+**File**: `src/analyze.rs` (modified, +14/-0)
 ```diff
-@@ -132,6 +132,125 @@ fn records_the_calls_a_python_test_suite_makes() {
-     assert!(inputs.contains(r#"{"$num": "NaN"}"#), "{inputs}");
+@@ -295,6 +295,20 @@ pub fn analyze_lang(root: &Path, lang: Lang) -> Result<Report> {
+         })
+         .collect();
+     let mut report = build(root, &ws, &facts, lang);
++    // A language the folder does not hold (a typo, or code in a subfolder) would read like a
++    // finished plan with nothing to do. Any file of the language counts, UI and tests included,
++    // and the warnings (files hidden by ignore rules) say why the plan would have been empty.
++    if ws.files.is_empty() {
++        let detected = Lang::detect(root);
++        if detected != lang {
++            let reasons: String = report.warnings.iter().map(|w| format!(". {w}")).collect();
++            bail!(
++                "no {} source files found; the code here looks like {}{reasons}",
++                lang.name(),
++                detected.name()
++            );
++        }
++    }
+     check_bridgeable(root, &mut report, lang);
+     Ok(report)
+ }
+```
+
+**File**: `tests/analyze.rs` (modified, +41/-0)
+```diff
+@@ -220,6 +220,47 @@ fn a_c_unit_depends_on_what_its_own_header_includes() {
+     assert!(a.wave > unit(&report, "src/b.c").wave);
  }
  
 +#[test]
-+fn records_python_test_calls_that_pass_arguments_by_keyword() {
-+    if !common::have("python3") {
-+        return;
-+    }
-+    let root = project(
-+        "py-kw",
-+        &[
-+            (
-+                "pyproject.toml",
-+                "[project]\nname = \"shape\"\nversion = \"0.1.0\"\n",
-+            ),
-+            (
-+                "shape.py",
-+                "def scale(n: float, *, by: float = 2.0) -> float:\n    return n * by\n\n\n\
-+                 def pad(s: str, width: int = 4, fill: str = ' ') -> str:\n    return s.ljust(width, fill)\n",
-+            ),
-+            (
-+                "test_shape.py",
-+                "import unittest\nfrom shape import pad, scale\n\n\
-+                 class T(unittest.TestCase):\n    def test_it(self):\n        \
-+                 self.assertEqual(scale(3), 6)\n        self.assertEqual(scale(3, by=10), 30)\n        \
-+                 self.assertEqual(pad('a', fill='*'), 'a***')\n",
-+            ),
-+        ],
-+    );
-+    let (printed, inputs) = from_tests(&root, "shape.py", &["python3", "-m", "unittest"]);
-+    let cases = std::fs::read_to_string(root.join("port").join("cases.jsonl")).unwrap();
++fn a_language_the_folder_lacks_is_an_error_not_an_empty_plan() {
++    use rust_anything::analyze::analyze_lang;
++    use rust_anything::lang::Lang;
++    let mini = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/mini");
++    let err = analyze_lang(&mini, Lang::Python).unwrap_err().to_string();
++    assert!(err.contains("no Python source files"), "{err}");
++    assert!(err.contains("TypeScript/JavaScript"), "{err}");
++    assert!(analyze_lang(&mini, Lang::Ts).is_ok());
++
++    // A folder that is empty in its own detected language still gets its (empty) plan.
++    let empty = std::env::temp_dir().join(format!("ra-lang-empty-{}", std::process::id()));
++    let _ = std::fs::remove_dir_all(&empty);
++    std::fs::create_dir_all(&empty).unwrap();
++    let plan = analyze(&empty);
++    std::fs::remove_dir_all(&empty).unwrap();
++    assert_eq!(plan.unwrap().summary.source_files, 0);
++
++    let root = std::env::temp_dir().join(format!("ra-lang-cases-{}", std::process::id()));
++    let _ = std::fs::remove_dir_all(&root);
++    let write = |path: &str, text: &str| {
++        let path = root.join(path);
++        std::fs::create_dir_all(path.parent().unwrap()).unwrap();
++        std::fs::write(path, text).unwrap();
++    };
++    // UI files are the language too: a Go module whose TypeScript is only a React frontend.
++    write("go.mod", "module example.com/app\n\ngo 1.22\n");
++    write("web/App.tsx", "export function App() { return <div />; }\n");
++    assert_eq!(Lang::detect(&root), Lang::Go);
++    let frontend = analyze_lang(&root, Lang::Ts);
++    // Python files hidden by ignore rules: the error keeps analyze's reason for the empty plan.
++    write(".ignore", "py/\n");
++    write("py/tool.py", "def tool():\n    return 1\n");
++    let hidden = analyze_lang(&root, Lang::Python);
 +    std::fs::remove_dir_all(&root).unwrap();
-+    // The original ran with the keyword arguments when the cases were recorded.
-+    assert!(
-+        cases.contains(r#""args": [3], "kwargs": {"by": 10}, "ok": 30"#),
-+        "{cases}"
-+    );
-+    assert!(
-+        cases.contains(r#""args": ["a"], "kwargs": {"fill": "*"}, "ok": "a***""#),
-+        "{cases}"
-+    );
-+    // A keyword-only argument, and one passed by name after a skipped default.
-+    assert!(printed.contains("Captured 3 call(s)"), "{printed}");
-+    assert!(
-+        inputs.contains(r#"{"fn": "scale", "args": [3], "kwargs": {"by": 10}}"#),
-+        "{inputs}"
-+    );
-+    assert!(
-+        inputs.contains(r#"{"fn": "pad", "args": ["a"], "kwargs": {"fill": "*"}}"#),
-+        "{inputs}"
-+    );
++    assert_eq!(frontend.unwrap().summary.ui_files, 1);
++    let err = hidden.unwrap_err().to_string();
++    assert!(err.contains("no Python source files"), "{err}");
++    assert!(err.contains("excluded by ignore rules"), "{err}");
 +}
 +
-+#[test]
-+fn diff_replays_python_keyword_arguments_by_their_binding_names() {
-+    if !common::have("python3") {
-+        return;
-+    }
-+    let root = project(
-+        "py-kw-diff",
-+        &[
-+            (
-+                "pyproject.toml",
-+                "[project]\nname = \"shape\"\nversion = \"0.1.0\"\n",
-+            ),
-+            (
-+                "shape.py",
-+                "def scale(n: float, *, scaleBy: float = 2.0) -> float:\n    return n * scaleBy\n\n\n\
-+                 def pad(s: str, width: int = 4, fill: str = ' ') -> str:\n    return s.ljust(width, fill)\n",
-+            ),
-+            (
-+                "test_shape.py",
-+                "import unittest\nfrom shape import pad, scale\n\n\
-+                 class T(unittest.TestCase):\n    def test_it(self):\n        \
-+                 self.assertEqual(scale(3, scaleBy=10), 30)\n        \
-+                 self.assertEqual(pad('a'), 'a   ')\n        self.assertEqual(pad('a', fill='*'), 'a***')\n",
-+            ),
-+        ],
-+    );
-+    let (printed, _) = from_tests(&root, "shape.py", &["python3", "-m", "unittest"]);
-+    assert!(printed.contains("Captured 3 call(s)"), "{printed}");
-+    let crate_dir = root.join("port");
-+    let lib = std::fs::read_to_string(crate_dir.join("src/lib.rs")).unwrap();
-+    // The bindings name the parameter in snake_case.
-+    assert!(lib.contains("signature = (n, *, scale_by="), "{lib}");
-+    // A pure-Python stand-in for the built package, with the bindings' parameter names: `scale`
-+    // is right, and `pad` ignores a `fill` of `*`.
-+    let manifest = Manifest::load(&crate_dir).unwrap();
-+    let package = crate_dir.join("python").join(manifest.lib_name());
-+    std::fs::create_dir_all(&package).unwrap();
-+    std::fs::write(
-+        package.join("__init__.py"),
-+        "def scale(n, *, scale_by=2.0):\n    return n * scale_by\n\n\n\
-+         def pad(s, width=4, fill=' '):\n    return s.ljust(width, ' ' if fill == '*' else fill)\n",
-+    )
-+    .unwrap();
-+    let outcome = rust_anything::harness::diff(&rust_anything::harness::DiffOptions {
-+        crate_dir: &crate_dir,
-+        module: None,
-+        ignore_key_order: false,
-+        float_tolerance: None,
-+        node_args: &[],
-+    })
-+    .unwrap();
-+    // A known difference for `pad('a')` does not explain `pad('a', fill='*')`.
-+    let known = [serde_json::json!({
-+        "fn": "pad", "args": ["a"], "actual": {"ok": "a   "}, "reason": "x"
-+    })];
-+    let (failed, mismatches) = (outcome.failed, outcome.mismatches.clone());
-+    let accepted = recording::apply_known(outcome, &known);
-+    std::fs::remove_dir_all(&root).unwrap();
-+    // `scaleBy=10` reached the bindings as `scale_by=10`.
-+    assert_eq!(failed, 1, "{mismatches:?}");
-+    // The mismatch shows the keyword argument, as Ruby's do.
-+    assert_eq!(mismatches[0]["fn"], "pad");
-+    assert_eq!(
-+        mis
+ #[test]
+ fn json_output_is_versioned() {
+     let json = serde_json::to_value(mini()).unwrap();
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #206** (2026-11-22): fix(profile): judge hot functions with the rules `bridge` applies, so `go` skips what it keeps in JS (@OnurrUgur)
-- **PR #205** (2026-11-22): fix(enable): switch a wasm port on through its wrapper (@XiaoBinGan)
-- **PR #203** (2026-11-22): fix(python): record a float subclass as its float value (@fullfud)
-- **PR #201** (2026-11-22): docs(status): say which command covers which language (@XiaoBinGan)
-- **PR #199** (2026-11-22): fix(analyze): judge bridgeable exports with the rules `bridge` applies (@OnurrUgur)
-- **PR #198** (2026-11-22): fix(js): capture `--from-tests` arguments with the codec `record` uses (@OnurrUgur)
+- **PR #402** (2026-11-24): feat(report): take --resolve-from like bench and fuzz (@XiaoBinGan)
+- **PR #401** (2026-11-24): docs: list the per-language shadow --out defaults in the CLI help (@hkhkkh)
+- **PR #400** (2026-11-24): docs: Spanish C# unit is a file or folder (@hkhkkh)
+- **PR #399** (2026-11-24): docs: add Kotlin and PowerShell to the German language table (@hkhkkh)
+- **PR #396** (2026-11-24): docs: add PowerShell to the Spanish and Italian language tables (@hkhkkh)
+- **PR #395** (2026-11-24): fix(http): fail when fixed port is already in use or build exits before listening (@brixtonpham)
 
 ---
 
@@ -2539,13 +2303,13 @@ A Python mismatch now shows keyword arguments after the positional ones, as Ruby
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. js): capture `--from-tests` arguments with the codec `record` uses
+## X. http): fail when fixed port is already in use or build exits before listening
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in erkamyaman/rust-anything. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8a675e19`: js): capture `--from-tests` arguments with the codec `record` uses. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `15ad3fcc`: http): fail when fixed port is already in use or build exits before listening. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2553,14 +2317,9 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- JS/TS `record --from-tests` encodes the captured arguments with the codec `record` and `diff`
-  use, instead of a copy of it that had fallen behind. A `Buffer` was captured as a `Uint8Array`
-  (so `b.toString('hex')` recorded `"104,105"`), a `Float64Array` or other typed array as an
-  object with numeric keys, and an object shaped like a marker (`{ $date: 'x' }`) was replayed as
-  a `Date`. A call is now left out, as one that passes a function or a cycle already was, when an
-  argument is a RegExp, an Error, a `URL`, an `ArrayBuffer`, a boxed primitive or an object with
-  `toJSON`: those were captured as `{}`, their own fields or their `toJSON` result, which replay
-  passed as a different value. A class instance is still captured as its own fields.
+- `app record` and `app replay` fail with `port <port> is already in use` before spawning a server
+  on an occupied port and check whether the child exited before treating the port as ready (#326).
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2570,7 +2329,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8a675e19` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `15ad3fcc` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

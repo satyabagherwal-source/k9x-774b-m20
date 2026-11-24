@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T13:04:17.574Z",
-    "lastVerified": "2026-11-24T13:04:17.574Z",
+    "lastChecked": "2026-11-24T13:12:43.333Z",
+    "lastVerified": "2026-11-24T13:12:43.334Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -378,8 +378,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T12:36:30.009Z",
-    "lastVerified": "2026-11-24T12:36:30.009Z",
+    "lastChecked": "2026-11-24T13:12:40.608Z",
+    "lastVerified": "2026-11-24T13:12:40.608Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -973,8 +973,8 @@
     "officialUrl": "https://github.com/rustls/rustls",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T07:07:36.585Z",
-    "lastVerified": "2026-11-24T07:07:36.585Z",
+    "lastChecked": "2026-11-24T13:12:35.653Z",
+    "lastVerified": "2026-11-24T13:12:35.653Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustls-rustls",
@@ -3141,9 +3141,9 @@
   "leecade-react-native-swiper": {
     "name": "react-native-swiper",
     "officialUrl": "https://github.com/leecade/react-native-swiper",
-    "lastChecked": "2026-11-21T20:48:07.267Z",
+    "lastChecked": "2026-11-24T13:12:30.435Z",
     "revisionIdentifier": "98cc9060",
-    "lastVerified": "2026-11-21T20:48:07.267Z"
+    "lastVerified": "2026-11-24T13:12:30.435Z"
   },
   "taubyte-tau": {
     "name": "tau",
@@ -4150,15 +4150,15 @@
     "officialUrl": "https://github.com/erkamyaman/rust-anything",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T06:14:12.843Z",
-    "lastVerified": "2026-11-23T06:14:12.843Z",
+    "lastChecked": "2026-11-24T13:12:32.059Z",
+    "lastVerified": "2026-11-24T13:12:32.059Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-erkamyaman-rust-anything",
-    "contentHash": "eca9f2ee4067a960d1d458b1fab68f0a2cc90f88fe35620fe03c12653b177fca",
+    "contentHash": "cb4b782edad4507c9c389025a7d04fe5940c44112276617070d5a7737c9a6d8a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 12,
-    "closedIssuesCount": 1,
+    "recentFixesCount": 9,
+    "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   },
@@ -5301,12 +5301,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "sfu-db-connector-x": {
-    "name": "sfu-db/connector-x",
+    "name": "connector-x",
     "officialUrl": "https://github.com/sfu-db/connector-x",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T16:44:54.436Z",
-    "lastVerified": "2026-11-23T16:44:54.436Z",
+    "lastChecked": "2026-11-24T13:12:37.944Z",
+    "lastVerified": "2026-11-24T13:12:37.944Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sfu-db-connector-x",
@@ -5315,7 +5315,8 @@
     "recentFixesCount": 17,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "580a386f"
   },
   "tokio-rs-console": {
     "name": "console",
@@ -7232,14 +7233,14 @@
     "officialUrl": "https://github.com/prometheus/prometheus",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-23T17:37:57.594Z",
-    "lastVerified": "2026-11-23T17:37:57.594Z",
+    "lastChecked": "2026-11-24T13:12:38.859Z",
+    "lastVerified": "2026-11-24T13:12:38.859Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-prometheus-prometheus",
-    "contentHash": "345d797a2d38a7f061df65aa6beb908233a75dea55186089e1ed45b66c88a466",
+    "contentHash": "eb005ef67f1d2c79d6e65c27810f29acfe71b2198434350de331893ff8a22628",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10264,9 +10265,9 @@
   "jafforgehq-site-analytics-tool": {
     "name": "site-analytics-tool",
     "officialUrl": "https://github.com/jafforgehq/site-analytics-tool",
-    "lastChecked": "2026-11-20T09:09:42.484Z",
+    "lastChecked": "2026-11-24T13:12:27.922Z",
     "revisionIdentifier": "1788648c",
-    "lastVerified": "2026-11-20T09:09:42.484Z"
+    "lastVerified": "2026-11-24T13:12:27.922Z"
   },
   "mikepenz-multiplatform-markdown-renderer": {
     "name": "multiplatform-markdown-renderer",

@@ -12706,3 +12706,5 @@ Every entry in this ledger must capture:
 | `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `ef0e49cf` | Multi-dimensional audit evidence | 2026-11-24T12:54:06.968Z |
 | `learn-dom-h-e38fcd3b` | `project://software-mansion-react-native-reanimated` | `22cbff88` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md` | 2026-11-24T12:54:40.835Z |
 | `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `b9f8b6b0` | Multi-dimensional audit evidence | 2026-11-24T13:04:14.104Z |
+| `learn-github-erkamyaman-rust-anything` | `https://github.com/erkamyaman/rust-anything` | `ef7e9fc4` | Multi-dimensional audit evidence | 2026-11-24T13:12:33.349Z |
+| `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `ad8f26ee` | Multi-dimensional audit evidence | 2026-11-24T13:12:40.031Z |

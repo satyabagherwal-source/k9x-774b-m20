@@ -6413,10 +6413,10 @@
     "repository": "prometheus/prometheus",
     "platform": "github",
     "sourceUrl": "https://github.com/prometheus/prometheus",
-    "sourceVersion": "a5022ef6",
+    "sourceVersion": "ad8f26ee",
     "license": "Apache-2.0",
-    "contentHash": "345d797a2d38a7f061df65aa6beb908233a75dea55186089e1ed45b66c88a466",
-    "lastHarvestedAt": "2026-11-23T17:37:58.657Z",
+    "contentHash": "eb005ef67f1d2c79d6e65c27810f29acfe71b2198434350de331893ff8a22628",
+    "lastHarvestedAt": "2026-11-24T13:12:40.031Z",
     "learningId": "learn-github-prometheus-prometheus"
   },
   "meilisearch-meilisearch": {
@@ -12913,10 +12913,10 @@
     "repository": "erkamyaman/rust-anything",
     "platform": "github",
     "sourceUrl": "https://github.com/erkamyaman/rust-anything",
-    "sourceVersion": "b30206b1",
+    "sourceVersion": "ef7e9fc4",
     "license": "MIT",
-    "contentHash": "eca9f2ee4067a960d1d458b1fab68f0a2cc90f88fe35620fe03c12653b177fca",
-    "lastHarvestedAt": "2026-11-23T06:14:14.239Z",
+    "contentHash": "cb4b782edad4507c9c389025a7d04fe5940c44112276617070d5a7737c9a6d8a",
+    "lastHarvestedAt": "2026-11-24T13:12:33.349Z",
     "learningId": "learn-github-erkamyaman-rust-anything"
   },
   "hf-akhaliq-minimax-h3-image-character-swap": {

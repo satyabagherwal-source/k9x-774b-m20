@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T15:17:59.517Z",
+  "timestamp": "2026-11-24T13:12:44.506Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-prometheus-prometheus-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [prometheus-prometheus-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T15:17:59.517Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T13:12:44.506Z`  
 > **Learning ID**: `LEARN-EVO-prometheus-prometheus-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), G (Architecture Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 61%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 63%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from prometheus-prometheus-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
 > **Source**: github ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
-> **Source Version**: `06170caa`  
+> **Source Version**: `ad8f26ee`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T15:17:44.548Z  
+> **Timestamp**: 2026-11-24T13:12:38.864Z  
 > **Learning ID**: `learn-github-prometheus-prometheus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T15:17:44.541Z  
+> **Harvest Timestamp**: 2026-11-24T13:12:38.859Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The Prometheus monitoring system and time series database.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 67744 stars
+- **Stars / Engagement**: 67789 stars
 
 ---
 
@@ -1809,11 +1809,14 @@ func OpenDir(path string) (*os.File, error) { return os.Open(path) }
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #20521** (2026-11-20): **cmd/prometheus: pass --scrape.discovery-reload-interval=100ms in scrape tests**
-  *Symptoms*: Triggered by https://github.com/prometheus/prometheus/pull/18727#discussion_r4530902102  Reduce test runtime by passing --scrape.discovery-reload-interval=100ms to TestRemoteWrite_PerQueueMetricsAfterRelabeling (~5s saved on my laptop) and TestScrapeFailureLogFile (~3s saved on my laptop). The default 5s reload interval is pure wait time in tests with static targets.  Follows the same pattern used in pthjer tests.  <!--     - Please give your PR a title in the form "area: short description".  For example "tsdb: reduce disk usage by 95%"      - Please sign CNCF's Developer Certificate of Origin and sign-off your commits by adding the -s / --signoff flag to `git commit`. See https://github.com/apps/dco for more information.      - If the PR adds or changes a behaviour or fixes a bug of an exported API it would need a unit/e2e test.      - Where possible use only exported APIs for tests to simplify the review and make it as close as possible to an actual library usage.      - Performance improvements would need a benchmark test to prove it.      - All exposed objects should have a comment.      - All comments should start with a capital letter and end with a full stop.  -->  #### Which issue(s) does the PR fix: <!-- If it applies. Automatically closes linked issue when PR is merged. Usage: `Fixes #<issue number>`, or `Fixes (paste link of issue)`. More at https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue#linking-a-pu
+- **Issue #20548** (2026-11-24): **chore: Fix repos sync**
+  *Symptoms*: Fix the invalid `manifest unknown` golang-builder SHA.  <!--     - Please give your PR a title in the form "area: short description".  For example "tsdb: reduce disk usage by 95%"      - Please sign CNCF's Developer Certificate of Origin and sign-off your commits by adding the -s / --signoff flag to `git commit`. See https://github.com/apps/dco for more information.      - If the PR adds or changes a behaviour or fixes a bug of an exported API it would need a unit/e2e test.      - Where possible use only exported APIs for tests to simplify the review and make it as close as possible to an actual library usage.      - Performance improvements would need a benchmark test to prove it.      - All exposed objects should have a comment.      - All comments should start with a capital letter and end with a full stop.  -->  #### Which issue(s) does the PR fix: <!-- If it applies. Automatically closes linked issue when PR is merged. Usage: `Fixes #<issue number>`, or `Fixes (paste link of issue)`. More at https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword -->  #### Release notes for end users (**ALL** commits must be considered). *Reviewers should verify clarity and quality.*  <!-- Write NONE only if there is no user-facing change.  Otherwise use one of: [FEATURE] [ENHANCEMENT] [PERF] [BUGFIX] [SECURITY] [CHANGE] Following the pattern `[TYPE] Component: description.`  Examp
 
-- **Issue #20520** (2026-11-20): **tsdb: downgrade compaction cancel log from error to info on shutdown**
-  *Symptoms*: Triggered by https://github.com/prometheus/prometheus/pull/18340#discussion_r4626779980  `DB.Close()` cancels the compaction context. If a compaction is in-flight, it returns `context.Canceled` and `run()` logs it at `level=ERROR`, even though the codebase already treats this as expected shutdown behavior (skips the failure metric [here](https://github.com/prometheus/prometheus/blob/2b311b9762bb5834a17374fcf45a8e5b2043293f/tsdb/db.go#L1570), skips marking blocks as failed [here](https://github.com/prometheus/prometheus/blob/2b311b9762bb5834a17374fcf45a8e5b2043293f/tsdb/compact.go#L674)).  This change adds a check at both compaction call sites in `run()` and downgrades the log to `info`. Per the [docs](https://prometheus.io/docs/prometheus/2.55/getting_started/#shutting-down-your-instance-gracefully), `SIGTERM` is the recommended clean shutdown, it should not emit `level=ERROR`.  <!--     - Please give your PR a title in the form "area: short description".  For example "tsdb: reduce disk usage by 95%"      - Please sign CNCF's Developer Certificate of Origin and sign-off your commits by adding the -s / --signoff flag to `git commit`. See https://github.com/apps/dco for more information.      - If the PR adds or changes a behaviour or fixes a bug of an exported API it would need a unit/e2e test.      - Where possible use only exported APIs for tests to simplify the review and make it as close as possible to an actual library usage.      - Performance improvements would need a b
+- **Issue #20541** (2026-11-23): **tsdb: protect series with pending exemplars from eviction**
+  *Symptoms*: Appending an exemplar does not take a pending-commit reservation on its series, unlike appending a sample. Since #20467, stale or selected series compaction can then evict the series between an exemplar-only append and its commit. The remote-write receiver can do such appends. The commit logs the exemplar under the evicted ref, after the series' full-range tombstone, and drops it from memory. On WAL replay, the late exemplar can be attributed to a series later recreated with the same labels (see #20512).  This reserves the series when appending an exemplar, in both appenders, and releases it on commit or rollback. If the series was garbage collected before the reservation, it uses the series that replaced it, as sample appends do.  `TestSeriesEviction_PendingExemplarProtectsSeries` fails on main for both appenders and both eviction paths.  This is not in a release: v3.16.0 keeps the identity of series with exemplars that still need replay.  <details> <summary>Benchmark</summary>  `BenchmarkHeadAppender_AppendCommit`, before: f1486b6753663ba3f49a3c75c21c6bf93ff304b2, after: 4fafc6b47622ff0537fe5499eab5e8efdd35ae02. Pinned to two P-cores with the test directory on tmpfs, alternating the binaries 10 times.  ```console goos: linux goarch: amd64 pkg: github.com/prometheus/prometheus/tsdb cpu: Intel(R) Core(TM) Ultra 9 185H                                                                                                          │ before.txt  │             after.txt              │   
+  **Post-Mortem & Fix Analysis**:
+  > Would you like help adding deterministic tests for eviction between exemplar lookup and reservation in both appenders? I can cover replacement references in the returned value and WAL, reservation release on commit or rollback, and rejection when no replacement exists. 
+  > To the best of my knowledge, this is an alternative for #20512. So, please don't reference #20512 in this PR's description.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1830,102 +1833,33 @@ func OpenDir(path string) (*os.File, error) { return os.Open(path) }
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `06170caa` (2026-11-20)
-**Commit Message**: cmd/prometheus: pass --scrape.discovery-reload-interval=100ms in scrape tests
+### Incident Patch 1: `ad8f26ee` (2026-11-24)
+**Commit Message**: chore: Fix repos sync (#20548)
 
-Reduce test runtime by passing --scrape.discovery-reload-interval=100ms
-to TestRemoteWrite_PerQueueMetricsAfterRelabeling (~5s saved on my laptop) and
-TestScrapeFailureLogFile (~3s saved on my laptop). The default 5s reload interval
-is pure wait time in tests with static targets.
+Fix the invalid `manifest unknown` golang-builder SHA.
 
-Follows the same pattern used in pthjer tests.
+Signed-off-by: SuperQ <[REDACTED_EMAIL]>
 
-Signed-off-by: Ayoub Mrini <[REDACTED_EMAIL]>
-
-**File**: `cmd/prometheus/main_test.go` (modified, +1/-0)
+**File**: `.github/workflows/repo_sync.yml` (modified, +1/-1)
 ```diff
-@@ -1408,6 +1408,7 @@ remote_write:
- 		configFile,
- 		port,
- 		fmt.Sprintf("--storage.tsdb.path=%s", tmpDir),
-+		"--scrape.discovery-reload-interval=100ms",
- 	)
- 	require.NoError(t, prom.Start())
- 
-```
-
-**File**: `cmd/prometheus/scrape_failure_log_test.go` (modified, +1/-0)
-```diff
-@@ -77,6 +77,7 @@ scrape_configs:
- 		"--storage.tsdb.path=" + filepath.Join(tempDir, "data"),
- 		fmt.Sprintf("--web.listen-address=127.0.0.1:%d", port),
- 		"--web.enable-lifecycle",
-+		"--scrape.discovery-reload-interval=100ms",
- 	}
- 	prometheusProcess := exec.Command(promPath, params...)
- 	prometheusProcess.Stdout = os.Stdout
-```
-
----
-
-### Incident Patch 2: `6c2b2964` (2026-11-20)
-**Commit Message**: tsdb: downgrade compaction cancel log from error to info on shutdown (#20520)
-
-Triggered by https://github.com/prometheus/prometheus/pull/18340#discussion_r4626779980
-
-`DB.Close()` cancels the compaction context. If a compaction is in-flight,
-it returns `context.Canceled` and `run()` logs it at `level=ERROR`,
-even though the codebase already treats this as expected shutdown
-behavior (skips the failure metric
-[here](https://github.com/prometheus/prometheus/blob/2b311b9762bb5834a17374fcf45a8e5b2043293f/tsdb/db.go#L1570),
-skips marking blocks as failed
-[here](https://github.com/prometheus/prometheus/blob/2b311b9762bb5834a17374fcf45a8e5b2043293f/tsdb/compact.go#L674)).
-
-This change adds a check at both
-compaction call sites in `run()` and downgrades the log to `info`.
-Per the [docs](https://prometheus.io/docs/prometheus/2.55/getting_started/#shutting-down-your-instance-gracefully),
-`SIGTERM` is the recommended clean shutdown, it should not emit
-`level=ERROR`.
-
-Signed-off-by: Ayoub Mrini <[REDACTED_EMAIL]>
-
-**File**: `tsdb/db.go` (modified, +10/-2)
-```diff
-@@ -1341,7 +1341,11 @@ func (db *DB) run(ctx context.Context) {
- 
- 					if !nextCompactionIsSoon {
- 						if err := db.CompactStaleHead(); err != nil {
--							db.logger.Error("immediate stale series compaction failed", "err", err)
-+							if errors.Is(err, context.Canceled) {
-+								db.logger.Info("immediate stale series compaction cancelled", "err", err)
-+							} else {
-+								db.logger.Error("immediate stale series compaction failed", "err", err)
-+							}
- 						}
- 					}
- 				}
-@@ -1353,7 +1357,11 @@ func (db *DB) run(ctx context.Context) {
- 			db.autoCompactMtx.Lock()
- 			if db.autoCompact {
- 				if err := db.Compact(ctx); err != nil {
--					db.logger.Error("compaction failed", "err", err)
-+					if errors.Is(err, context.Canceled) {
-+						db.logger.Info("compaction cancelled", "err", err)
-+					} else {
-+						db.logger.Error("compaction failed", "err", err)
-+					}
- 					backoff = exponential(backoff, 1*time.Second, 1*time.Minute)
- 				} else {
- 					backoff = 0
+@@ -12,7 +12,7 @@ jobs:
+     runs-on: ubuntu-latest
+     if: github.repository_owner == 'prometheus'
+     container:
+-      image: quay.io/prometheus/golang-builder@sha256:24333f0d2950931d355b21d8b36ba0d0811c573169131c63c289aea65aedd2d6
++      image: quay.io/prometheus/golang-builder@sha256:a99557c1271464cdccd3947ab366c0bcd1c29e6c9c51c1449a59ba0ef8ef5284
+     steps:
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+         with:
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #20548** (2026-11-24): chore: Fix repos sync (@SuperQ)
+- **PR #20541** (2026-11-23): tsdb: protect series with pending exemplars from eviction (@roidelapluie)
+- **PR #20536** (2026-11-23): otlp: drop metrics with unsupported temporality instead of rejecting the request (@r0h1tb)
+- **PR #20526** (closed): chore(deps): update quay.io/prometheus/golang-builder docker digest to 6071272 - autoclosed (@renovate[bot])
 - **PR #20521** (2026-11-20): cmd/prometheus: pass --scrape.discovery-reload-interval=100ms in scrape tests (@machine424)
 - **PR #20520** (2026-11-20): tsdb: downgrade compaction cancel log from error to info on shutdown (@machine424)
-- **PR #20499** (2026-11-19): ui: fix function signatures in the codemirror-promql lint table (@BahaaMattar)
-- **PR #20488** (2026-11-19): ui: highlight missing PromQL functions and keywords in the editor (@BahaaMattar)
-- **PR #20470** (2026-11-17): ui: emphasize focused graph series (@divyanshAgarwal123)
-- **PR #20467** (2026-11-16): tsdb: tombstone series with exemplars during early compaction (@duricanikolic)
 
 ---
 
@@ -1945,31 +1879,31 @@ Signed-off-by: Ayoub Mrini <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cmd/prometheus: pass --scrape.discovery-reload-interval=100ms in scrape tests
+## X. Fix repos sync
 
 **RULE**:
-When implementing operations in `cmd/prometheus/main_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/repo_sync.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `06170caa`: cmd/prometheus: pass --scrape.discovery-reload-interval=100ms in scrape tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ad8f26ee`: Fix repos sync. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/prometheus/main_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/repo_sync.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		"--scrape.discovery-reload-interval=100ms",
+      image: quay.io/prometheus/golang-builder@sha256:a99557c1271464cdccd3947ab366c0bcd1c29e6c9c51c1449a59ba0ef8ef5284
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+      image: quay.io/prometheus/golang-builder@sha256:24333f0d2950931d355b21d8b36ba0d0811c573169131c63c289aea65aedd2d6
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `06170caa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ad8f26ee` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T13:04:14.111Z",
-  "total_cycles_completed": 12045,
-  "total_learnings_persisted": 12045,
-  "total_rules_promoted": 11117,
+  "last_updated": "2026-11-24T13:12:40.037Z",
+  "total_cycles_completed": 12047,
+  "total_learnings_persisted": 12047,
+  "total_rules_promoted": 11119,
   "history": [
-    {
-      "timestamp": "2026-11-23T20:38:57.463Z",
-      "repository": "nolabs-ai/nono",
-      "learningId": "learn-github-nolabs-ai-nono",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T20:39:00.575Z",
-      "repository": "genkit-ai/genkit",
-      "learningId": "learn-github-genkit-ai-genkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T20:47:42.247Z",
       "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-24T13:04:14.111Z",
       "repository": "k3s-io/k3s",
       "learningId": "learn-github-k3s-io-k3s",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T13:12:33.355Z",
+      "repository": "erkamyaman/rust-anything",
+      "learningId": "learn-github-erkamyaman-rust-anything",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T13:12:40.037Z",
+      "repository": "prometheus/prometheus",
+      "learningId": "learn-github-prometheus-prometheus",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
