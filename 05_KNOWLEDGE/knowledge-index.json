@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T06:12:14.074Z",
+  "last_updated": "2026-11-24T06:21:19.539Z",
   "total_verified_learnings": 9091,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24479,
+  "total_items": 24485,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "4799f41bb25c547a7aae14b1665fa5b071ebc2edb72ebb79bab48560828f98c9",
+      "content_hash": "34afe7a2e6e055a51f8c9bb2312fe7f3f6fad850110066158ba4c63d9554e07f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T05:42:51.598Z"
+      "persisted_at": "2026-11-24T06:21:19.352Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "3d6dff04fd5166b58125b6825c3174c5ceb4aa35a1fdc1bcf38053afa71adebd",
+      "content_hash": "e7b42cb8b7bc820b757060f466477b4cfbc0052411ff55d0fe9713f8adbe03e1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T05:42:51.845Z"
+      "persisted_at": "2026-11-24T06:21:19.539Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -114621,10 +114621,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-laurent22-joplin-technical-construction-intelligence-laurent22-joplin-core-invar.md",
       "title": "Technical Construction Intelligence: laurent22/joplin Core Invariants",
       "repository": "laurent22/joplin",
-      "source_version": "268fd6f1",
-      "content_hash": "02f9c5a8263eabfaae43eefcd68ae9ad679c53f412e2a9431254f880c3abb617",
+      "source_version": "58fbd837",
+      "content_hash": "dfbc83cc984bfaa5a1bdddbfaaf55e5249f49aa1bdfdc1013a64756352f3e6b5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T11:38:39.415Z"
+      "persisted_at": "2026-11-24T06:20:45.796Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-laurent22-joplin": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-laurent22-joplin",
@@ -114633,10 +114633,10 @@
       "relative_path": "08_VERIFICATION/laurent22-joplin-verification-protocol-empirical-defect-shield-for-laurent22-jop.md",
       "title": "Verification Protocol: Empirical Defect Shield for laurent22/joplin",
       "repository": "laurent22/joplin",
-      "source_version": "268fd6f1",
-      "content_hash": "b608b1ff32262683ebfecf215a7e80300a2dc2cae1940d17ba04752235d43761",
+      "source_version": "58fbd837",
+      "content_hash": "595c45b16c69b77694829b71995754fd85609c7c7cdb489c45883caab172b3de",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T11:38:39.606Z"
+      "persisted_at": "2026-11-24T06:20:45.968Z"
     },
     "candidate_directive-test-a-lost-virtualtime-wakeup-and-drive_on_threads-advancing-over-busy-worker": {
       "item_id": "candidate_directive-test-a-lost-virtualtime-wakeup-and-drive_on_threads-advancing-over-busy-worker",
@@ -114730,9 +114730,9 @@
       "title": "Technical Construction Intelligence: laurent22-joplin-learnings Core Invariants",
       "repository": "laurent22-joplin-learnings",
       "source_version": "HEAD",
-      "content_hash": "41bff71b431dcb643850811f69bd1eae17427850c8213a47fa418b5aa979bb58",
+      "content_hash": "b053f2d442f37c259953c78461f7618b078478c1eb686538e27d21c43aa30693",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T11:38:51.439Z"
+      "persisted_at": "2026-11-24T06:20:51.920Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-laurent22-joplin-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-laurent22-joplin-learnings",
@@ -114742,9 +114742,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for laurent22-joplin-learnings",
       "repository": "laurent22-joplin-learnings",
       "source_version": "HEAD",
-      "content_hash": "10f3fe3dee43380ed8d992f5adf914c1db46c797aed8fe0c3b372b3a90cff803",
+      "content_hash": "0efa18dd3294a3da5ce8edc189752f66f5ac91c68f45ef9b496f45ea425a2bac",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T11:38:51.630Z"
+      "persisted_at": "2026-11-24T06:20:52.079Z"
     },
     "domain_intelligence-technical-construction-intelligence-freenet-freenet-core-learnings-core-invarian": {
       "item_id": "domain_intelligence-technical-construction-intelligence-freenet-freenet-core-learnings-core-invarian",
@@ -237814,8 +237814,8 @@
       "slug": "aws-aws-cdk",
       "platform": "github",
       "source_url": "https://github.com/aws/aws-cdk",
-      "source_version": "629d0164",
-      "content_hash": "6ad9fbc60d194fa0713652f9574e550c543bde44e70fee5f569e7d7e055b43dd",
+      "source_version": "b74b07e2",
+      "content_hash": "15f14b38fe61c2ad485b7a6f8e8475ba0491b9897abf58036227f0030c1c2be1",
       "dossier_path": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
       "promoted_rules": [
@@ -237848,6 +237848,11 @@
           "number": 9718,
           "title": "Revert \"chore: update lambda runtime integration tests\"",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10217,
+          "title": "allow eventExpiryDuration minimum of 3 days",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -237855,7 +237860,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T03:36:45.446Z",
+      "verified_at": "2026-11-24T06:20:47.873Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -237897,10 +237902,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aws-aws-cdk-technical-construction-intelligence-aws-aws-cdk-core-invariants.md",
       "title": "Technical Construction Intelligence: aws/aws-cdk Core Invariants",
       "repository": "aws/aws-cdk",
-      "source_version": "629d0164",
-      "content_hash": "01b95e0595743975e9229d18b3326f5fa6ac2d3cd6073f92a36ed45797a1b93e",
+      "source_version": "b74b07e2",
+      "content_hash": "56d3d2fe23edbd6b9fe84388c5aa001d92c8a000ecc92027bfe583e38f3a412a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T03:36:46.004Z"
+      "persisted_at": "2026-11-24T06:20:48.472Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aws-aws-cdk": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aws-aws-cdk",
@@ -237909,10 +237914,10 @@
       "relative_path": "08_VERIFICATION/aws-aws-cdk-verification-protocol-empirical-defect-shield-for-aws-aws-cdk.md",
       "title": "Verification Protocol: Empirical Defect Shield for aws/aws-cdk",
       "repository": "aws/aws-cdk",
-      "source_version": "629d0164",
-      "content_hash": "b47c4da3a5b83139a407e5303bc9a5bce314555bf171b42259484fb67b80bded",
+      "source_version": "b74b07e2",
+      "content_hash": "6671a81018aa001f3eaf39af34a73f17b0a57f11f8dfead9c630470d97917f24",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T03:36:46.160Z"
+      "persisted_at": "2026-11-24T06:20:48.642Z"
     },
     "learn-huggingface-qwen-qwen3-4b": {
       "learning_id": "learn-huggingface-qwen-qwen3-4b",
@@ -237985,9 +237990,9 @@
       "title": "Technical Construction Intelligence: aws-aws-cdk-learnings Core Invariants",
       "repository": "aws-aws-cdk-learnings",
       "source_version": "HEAD",
-      "content_hash": "8695e7de7ae23a7dd6cbbed73ae894fa5f4ab9077ffe94c45d43118384db29cd",
+      "content_hash": "ac7c58f809854399fd6674e0700309f72e805b3dbe96b618e031deb85c4b875f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T03:36:55.372Z"
+      "persisted_at": "2026-11-24T06:21:18.466Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aws-aws-cdk-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aws-aws-cdk-learnings",
@@ -237997,9 +238002,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for aws-aws-cdk-learnings",
       "repository": "aws-aws-cdk-learnings",
       "source_version": "HEAD",
-      "content_hash": "b4f7db7051167a1f9f80d96e339219718cec370e774d642e2fde46996c5da25a",
+      "content_hash": "607113883ecf1a31af38395f5a2bb0db4a3d47f645166fa8d0bd66b41bd4aa4e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T03:36:55.524Z"
+      "persisted_at": "2026-11-24T06:21:18.654Z"
     },
     "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0": {
       "learning_id": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
@@ -272300,8 +272305,8 @@
       "slug": "laurent22-joplin",
       "platform": "github",
       "source_url": "https://github.com/laurent22/joplin",
-      "source_version": "268fd6f1",
-      "content_hash": "16981e5f8cae9ee64ed5c4602d9f4bebdbc2bda8075cfe7d5fc97fd677ab8790",
+      "source_version": "58fbd837",
+      "content_hash": "dbc01eebac58e8a267f2fd07c1ac6378eff56bc81dce31e3b8a2d6179d4fc0f1",
       "dossier_path": "07_PROJECT_LEARNING/laurent22-joplin-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/laurent22-joplin-learnings.md",
       "promoted_rules": [
@@ -272314,6 +272319,11 @@
           "number": 9770,
           "title": "Desktop, Mobile, Cli: Security: Disable unencrypted uploads by default when E2EE",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10216,
+          "title": "Fixes #17124: Fix revision viewer crash caused by renovate tooltip libr",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -272321,7 +272331,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T11:38:38.710Z",
+      "verified_at": "2026-11-24T06:20:45.193Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -319783,13 +319793,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-Q8YP-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-3PO0-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "5c2bf40601ab66b12bf05a226b74ee31616eff616a59861f5e0cf6ca72cc2766",
+      "content_hash": "e42d3feea1850800e8d884059cbefad1d49ad59ca88eac068464d63e02ef27fd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T05:42:51.364Z"
+      "persisted_at": "2026-11-24T06:21:19.162Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
@@ -333980,6 +333990,82 @@
       "content_hash": "e55ac7a46508041d4352dead9d453044d264fc7071688c5254387dc872a0e3e5",
       "domain_letter": "H",
       "persisted_at": "2026-11-24T06:11:28.486Z"
+    },
+    "rule-10216": {
+      "learning_id": "rule-10216",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10216,
+      "title": "Fixes #17124: Fix revision viewer crash caused by renovate tooltip libr",
+      "source_url": "https://github.com/laurent22/joplin",
+      "source_version": "58fbd837",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T06:20:45.193Z"
+    },
+    "candidate_directive-fixes-17124-fix-revision-viewer-crash-caused-by-renovate-tooltip-libr": {
+      "item_id": "candidate_directive-fixes-17124-fix-revision-viewer-crash-caused-by-renovate-tooltip-libr",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2ZSU-fixes-17124-fix-revision-viewer-crash-caused-by-renovate-tooltip-libr.md",
+      "title": "Fixes #17124: Fix revision viewer crash caused by renovate tooltip libr",
+      "repository": "laurent22/joplin",
+      "source_version": "58fbd837",
+      "content_hash": "4f84f043260d7193987dcf3193a7f7c2b4edb6941d7fd39db557b7249e95773f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T06:20:45.631Z"
+    },
+    "rule-10217": {
+      "learning_id": "rule-10217",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10217,
+      "title": "allow eventExpiryDuration minimum of 3 days",
+      "source_url": "https://github.com/aws/aws-cdk",
+      "source_version": "b74b07e2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T06:20:47.873Z"
+    },
+    "candidate_directive-allow-eventexpiryduration-minimum-of-3-days": {
+      "item_id": "candidate_directive-allow-eventexpiryduration-minimum-of-3-days",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-31V6-allow-eventexpiryduration-minimum-of-3-days.md",
+      "title": "allow eventExpiryDuration minimum of 3 days",
+      "repository": "aws/aws-cdk",
+      "source_version": "b74b07e2",
+      "content_hash": "80337fd5b5182d7d7d59ef13037cd4017821ca1685b1d40413d7eee14c74a8f8",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T06:20:48.307Z"
+    },
+    "candidate_directive-desktop-fixes-17124-fix-revision-viewer-crash-caused-by-renovate-tooltip-libr": {
+      "item_id": "candidate_directive-desktop-fixes-17124-fix-revision-viewer-crash-caused-by-renovate-tooltip-libr",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-34J4-desktop-fixes-17124-fix-revision-viewer-crash-caused-by-renovate-tooltip-libr.md",
+      "title": "Desktop: Fixes #17124: Fix revision viewer crash caused by renovate tooltip libr",
+      "repository": "laurent22-joplin-learnings",
+      "source_version": "HEAD",
+      "content_hash": "dea6ee83f1a5fb9b3186e6a6c8ebd45321d18399bdaf1b77a832a4494b5078a3",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T06:20:51.761Z"
+    },
+    "candidate_directive-bedrockagentcore-allow-eventexpiryduration-minimum-of-3-days": {
+      "item_id": "candidate_directive-bedrockagentcore-allow-eventexpiryduration-minimum-of-3-days",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3OZV-bedrockagentcore-allow-eventexpiryduration-minimum-of-3-days.md",
+      "title": "bedrockagentcore): allow eventExpiryDuration minimum of 3 days",
+      "repository": "aws-aws-cdk-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3848afa643f05648d70fcdfe3cec40b4a07d960471b278f9f6f86988679cb833",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T06:21:18.283Z"
     }
   },
   "ai-builder-brain": {

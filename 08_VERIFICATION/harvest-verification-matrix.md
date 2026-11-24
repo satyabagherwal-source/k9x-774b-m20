@@ -12609,3 +12609,6 @@
 | `CYCLE-20261124-QUSS` | `2026-11-24T06:11:19.276Z` | `saltstack/salt` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10214` | Yes (`5ec8cbd6...`) |
 | `CYCLE-20261124-QYIQ` | `2026-11-24T06:11:24.098Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10215` | Yes (`b7f414ee...`) |
 | `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T06:12:11.412Z` | `appwrite-appwrite` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-3B23634E` [Domain D] | Yes (`7f92b263...`) |
+| `CYCLE-20261124-2ZM9` | `2026-11-24T06:20:45.393Z` | `laurent22/joplin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10216` | Yes (`dbc01eeb...`) |
+| `CYCLE-20261124-31ON` | `2026-11-24T06:20:48.071Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10217` | Yes (`15f14b38...`) |
+| `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T06:21:17.868Z` | `aws-aws-cdk` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-E1D0F50E` [Domain H] | Yes (`4aa89f82...`) |

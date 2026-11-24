@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T06:11:27.895Z",
-    "lastVerified": "2026-11-24T06:11:27.895Z",
+    "lastChecked": "2026-11-24T06:20:51.324Z",
+    "lastVerified": "2026-11-24T06:20:51.324Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -378,8 +378,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T05:14:12.474Z",
-    "lastVerified": "2026-11-24T05:14:12.474Z",
+    "lastChecked": "2026-11-24T06:20:48.937Z",
+    "lastVerified": "2026-11-24T06:20:48.937Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -545,12 +545,12 @@
     "revisionIdentifier": "741e1637"
   },
   "nolabs-ai-nono": {
-    "name": "nolabs-ai/nono",
+    "name": "nono",
     "officialUrl": "https://github.com/nolabs-ai/nono",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T01:07:21.170Z",
-    "lastVerified": "2026-11-24T01:07:21.170Z",
+    "lastChecked": "2026-11-24T06:20:43.883Z",
+    "lastVerified": "2026-11-24T06:20:43.883Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nolabs-ai-nono",
@@ -559,7 +559,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "d0c52cdf"
   },
   "vectifyai-pageindex": {
     "name": "PageIndex",
@@ -608,14 +609,14 @@
     "officialUrl": "https://github.com/laurent22/joplin",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-21T11:38:37.723Z",
-    "lastVerified": "2026-11-21T11:38:37.723Z",
+    "lastChecked": "2026-11-24T06:20:44.181Z",
+    "lastVerified": "2026-11-24T06:20:44.181Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-laurent22-joplin",
-    "contentHash": "16981e5f8cae9ee64ed5c4602d9f4bebdbc2bda8075cfe7d5fc97fd677ab8790",
+    "contentHash": "dbc01eebac58e8a267f2fd07c1ac6378eff56bc81dce31e3b8a2d6179d4fc0f1",
     "promotedRulesCount": 1,
-    "recentFixesCount": 16,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2042,9 +2043,9 @@
   "michael-a-kuykendall-shimmy": {
     "name": "shimmy",
     "officialUrl": "https://github.com/Michael-A-Kuykendall/shimmy",
-    "lastChecked": "2026-11-22T22:14:58.824Z",
+    "lastChecked": "2026-11-24T06:20:33.836Z",
     "revisionIdentifier": "9f6d996e",
-    "lastVerified": "2026-11-22T22:14:58.824Z"
+    "lastVerified": "2026-11-24T06:20:33.836Z"
   },
   "hf-fastino-gliner2.5-decide": {
     "name": "fastino/GLiNER2.5-Decide",
@@ -3248,9 +3249,9 @@
   "vearch-vearch": {
     "name": "vearch",
     "officialUrl": "https://github.com/vearch/vearch",
-    "lastChecked": "2026-11-23T06:54:00.771Z",
+    "lastChecked": "2026-11-24T06:20:46.637Z",
     "revisionIdentifier": "bae78b18",
-    "lastVerified": "2026-11-23T06:54:00.771Z"
+    "lastVerified": "2026-11-24T06:20:46.637Z"
   },
   "hf-briaai-rmbg-3.0": {
     "name": "briaai/RMBG-3.0",
@@ -5144,22 +5145,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "aws-aws-cdk": {
-    "name": "aws-cdk",
+    "name": "aws/aws-cdk",
     "officialUrl": "https://github.com/aws/aws-cdk",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-23T08:06:38.309Z",
-    "lastVerified": "2026-11-23T08:06:38.309Z",
+    "lastChecked": "2026-11-24T06:20:47.018Z",
+    "lastVerified": "2026-11-24T06:20:47.018Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aws-aws-cdk",
-    "contentHash": "6ad9fbc60d194fa0713652f9574e550c543bde44e70fee5f569e7d7e055b43dd",
+    "contentHash": "15f14b38fe61c2ad485b7a6f8e8475ba0491b9897abf58036227f0030c1c2be1",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "629d0164"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "orbitinghail-sqlsync": {
     "name": "sqlsync",
@@ -9627,9 +9627,9 @@
   "logiover-website-seo-audit-crawler": {
     "name": "website-seo-audit-crawler",
     "officialUrl": "https://github.com/logiover/website-seo-audit-crawler",
-    "lastChecked": "2026-11-20T02:14:52.413Z",
+    "lastChecked": "2026-11-24T06:20:36.325Z",
     "revisionIdentifier": "9b22241e56",
-    "lastVerified": "2026-11-20T02:14:52.413Z"
+    "lastVerified": "2026-11-24T06:20:36.325Z"
   },
   "emergetools-pow": {
     "name": "Pow",

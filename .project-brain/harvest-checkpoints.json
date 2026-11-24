@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T06:11:24.135Z",
+  "last_updated": "2026-11-24T06:20:48.089Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7326,14 +7326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aws-aws-cdk",
-      "content_hash": "6ad9fbc60d194fa0713652f9574e550c543bde44e70fee5f569e7d7e055b43dd",
-      "verified_at": "2026-11-21T03:36:45.647Z",
+      "content_hash": "15f14b38fe61c2ad485b7a6f8e8475ba0491b9897abf58036227f0030c1c2be1",
+      "verified_at": "2026-11-24T06:20:48.089Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T03:36:45.647Z"
+      "last_updated": "2026-11-24T06:20:48.089Z"
     },
     "cockroachdb/cockroach": {
       "repository": "cockroachdb/cockroach",
@@ -15486,14 +15486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-laurent22-joplin",
-      "content_hash": "16981e5f8cae9ee64ed5c4602d9f4bebdbc2bda8075cfe7d5fc97fd677ab8790",
-      "verified_at": "2026-11-21T11:38:38.964Z",
+      "content_hash": "dbc01eebac58e8a267f2fd07c1ac6378eff56bc81dce31e3b8a2d6179d4fc0f1",
+      "verified_at": "2026-11-24T06:20:45.412Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T11:38:38.964Z"
+      "last_updated": "2026-11-24T06:20:45.412Z"
     },
     "appwrite/appwrite": {
       "repository": "appwrite/appwrite",
