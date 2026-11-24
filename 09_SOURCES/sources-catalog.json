@@ -7433,10 +7433,10 @@
     "repository": "lancedb/lancedb",
     "platform": "github",
     "sourceUrl": "https://github.com/lancedb/lancedb",
-    "sourceVersion": "f38d42e9",
+    "sourceVersion": "52209f10",
     "license": "Apache-2.0",
-    "contentHash": "71b2c75dc49f8d2ee3127df51067ab07b73023981994308986accc8986a0c2b7",
-    "lastHarvestedAt": "2026-11-23T00:48:32.770Z",
+    "contentHash": "82575462f0a39b4b3a9bf6cb10c78d13b9d044f049a88e5bc327110f80566865",
+    "lastHarvestedAt": "2026-11-24T02:31:13.162Z",
     "learningId": "learn-github-lancedb-lancedb"
   },
   "agent-of-empires-agent-of-empires": {
@@ -7843,10 +7843,10 @@
     "repository": "rtk-ai/rtk",
     "platform": "github",
     "sourceUrl": "https://github.com/rtk-ai/rtk",
-    "sourceVersion": "762708cd",
+    "sourceVersion": "c43b5c44",
     "license": "Apache-2.0",
-    "contentHash": "e144b1b4edb21ab40a44798e6e30d17f85e6fdf0e0cf7c1f5f33fbf392799bd4",
-    "lastHarvestedAt": "2026-11-22T19:01:35.505Z",
+    "contentHash": "9b96751146a7c5d461c67f307dfec4808038862928992fdf314dedd715eca955",
+    "lastHarvestedAt": "2026-11-24T02:31:00.236Z",
     "learningId": "learn-github-rtk-ai-rtk"
   },
   "gao-sun-eul": {

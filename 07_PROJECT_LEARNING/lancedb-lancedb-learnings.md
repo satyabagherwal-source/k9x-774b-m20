@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source**: github ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
-> **Source Version**: `f38d42e9`  
+> **Source Version**: `52209f10`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T00:48:32.023Z  
+> **Timestamp**: 2026-11-24T02:31:11.748Z  
 > **Learning ID**: `learn-github-lancedb-lancedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T00:48:32.018Z  
+> **Harvest Timestamp**: 2026-11-24T02:31:11.742Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Developer-friendly OSS embedded retrieval library for multimodal AI. Search More; Manage Less.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 11968 stars
+- **Stars / Engagement**: 11973 stars
 
 ---
 
@@ -1266,11 +1266,11 @@ pub fn rename_column(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5160** (2026-11-22): **fix: reject blob request concurrency above semaphore limit**
-  *Symptoms*: ## Summary  A `blob_request_concurrency` value above tokio's `Semaphore::MAX_PERMITS` reached `Semaphore::new` and panicked, aborting the process instead of reporting a configuration error. The value can come from explicit client configuration or `LANCE_CLIENT_BLOB_REQUEST_CONCURRENCY`, with a default of 8.  Resolve the value with the existing precedence, preserve the existing zero and parse errors, and return `Error::InvalidInput` for values above `Semaphore::MAX_PERMITS`. The supported range is documented on `ClientConfig::blob_request_concurrency`.  ## Tests  Added a focused resolver test covering the maximum accepted value and one above it. The test passes an explicit value and does not mutate environment variables.
+- **Issue #5170** (2026-11-23): **fix: resolve agent plugin marketplace source (UAX-250)**
+  *Symptoms*: Looks like we have an issue with the plugin config pointing to a non-existent dir.   Part of UAX-250. Related to UAX-245.  Clicktest, can ask Chat for example to create a fresh disposable config.   <img width="584" height="452" alt="Screenshot 2026-11-23 at 9 38 25 AM" src="https://github.com/user-attachments/assets/d359f9e2-bd3f-4cb8-993a-7db3b2b20342" />  Clicktesting: Use a disposable Claude configuration. Add this checkout as a marketplace, then install `lancedb@lancedb`. Confirm that installation fetches `lancedb/lancedb-agent-plugins` and exposes its skill.  *original prompt:*  "Work on Linear issue UAX-250:\ \ Suggested branch name: luciacerchie/uax-250-add-enterprise-functions-guidance-to\ \ \<issue identifier="UAX-250">\ \<title>Add Enterprise Functions guidance to the lancedb agent skill\</title>\ \<description>\ The public \`lancedb\` agent skill (\`lancedb/lancedb-agent-plugins\`, v0.1.0) has no guidance on LanceDB Enterprise Functions. It also routes "UDF / backfill" tasks to the Geneva/Ray path, which Functions is meant to replace. Agents using the skill steer users away from our newest product.\ \ \## Problem\ \ \* Nothing on \`@function\`, \`create_function\`, computed columns, \`refresh_column_async\`, secrets, GPU classes, chunkers, or function failure handling.\ \* The skill description does not trigger on Functions tasks.\ \* Function refresh jobs are not covered. \`remote_jobs.md\` only describes \`geneva_jobs\`.\ \* \`lancedb/la
 
-- **Issue #5158** (2026-11-22): **fix(deps): update url to 2.5.9 for RUSTSEC-2026-0592**
-  *Symptoms*: Updates the lockfile from `url` 2.5.8 to 2.5.9, the first release patched for RUSTSEC-2026-0592, and from `form_urlencoded` 1.2.2 to 1.2.3, which `url` 2.5.9 requires (`^1.2.3`).  `main` also locks `url` 2.5.8. The advisory is the cargo-deny failure currently blocking #5157, whose Lance beta.26 bump leaves the same lockfile entry in place.  No dependency requirement or advisory ignore changes: `url = "2"` already permits 2.5.9. `url` 2.5.9 declares MSRV 1.63 and `form_urlencoded` 1.2.3 declares 1.51, both below the workspace's 1.95.0.  Validation: - `cargo metadata --locked` - `cargo tree -i url@2.5.9 --locked` - `git diff --check`
+- **Issue #5162** (2026-11-23): **fix(rust): validate batch vector column before planning**
+  *Symptoms*: Batch vector queries resolved an explicit vector column with an infallible schema lookup before the existing vector-column validation ran. A column that could not be resolved would abort planning instead of returning the SDK's normal validation error.  Use the resolved column with `get_vector_type` so the batch path reports the same typed error as ordinary vector queries, while keeping explicit and inferred columns, multivector and binary routing, namespace pushdown, and query-plan selection unchanged.  Adds a focused synthetic-schema validation test for the error path.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1287,146 +1287,302 @@ pub fn rename_column(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b63cec40` (2026-11-22)
-**Commit Message**: fix(deps): update url to 2.5.9 for RUSTSEC-2026-0592 (#5158)
+### Incident Patch 1: `0f648bba` (2026-11-23)
+**Commit Message**: fix: allow BTree indexes on LargeUtf8 columns (#5089)
 
-Updates the lockfile from `url` 2.5.8 to 2.5.9, the first release
-patched for RUSTSEC-2026-0592, and from `form_urlencoded` 1.2.2 to
-1.2.3, which `url` 2.5.9 requires (`^1.2.3`).
+## What changed
 
-`main` also locks `url` 2.5.8. The advisory is the cargo-deny failure
-currently blocking #5157, whose Lance beta.26 bump leaves the same
-lockfile entry in place.
+`supported_btree_data_type` in `rust/lancedb/src/utils/mod.rs` now
+accepts `LargeUtf8` next to `Utf8`. This is the only code change, one
+line.
 
-No dependency requirement or advisory ignore changes: `url = "2"`
-already permits 2.5.9. `url` 2.5.9 declares MSRV 1.63 and
-`form_urlencoded` 1.2.3 declares 1.51, both below the workspace's
-1.95.0.
+Python and TypeScript have no BTree type check of their own and call
+into this function, so the fix covers all three SDKs. `Index::Auto` also
+picks BTree for `LargeUtf8` columns now, locally and in the remote
+client.
 
-Validation:
-- `cargo metadata --locked`
-- `cargo tree -i url@2.5.9 --locked`
-- `git diff --check`
+## Why
 
-**File**: `Cargo.lock` (modified, +4/-4)
+Fixes #5088
+
+Lance builds BTree indexes on `LargeUtf8`, but this check in lancedb
+rejected them with `A BTree index cannot be created on the field ...
+which has data type LargeUtf8`. pandas 3 stores text columns as
+`large_string`, so `create_index(col, config=BTree())` and
+`create_scalar_index(col)` fail on tables created from a plain
+DataFrame. #2297 removed a similar extra check for `FixedSizeBinary`.
+
+`Binary`, `LargeBinary` and `Utf8View` may also be supported by Lance
+but are left out of this PR.
+
+## How it was tested
+
+Run in a `rust:1.97.0-bookworm` container with `--profile ci --locked
+--features remote`, on `main` at e29ec0e0. The branch is now rebased on
+a6d7d02f, which only changes version numbers in
+`Cargo.toml`/`Cargo.lock`; the commits
+
+**File**: `rust/lancedb/src/table/create_index.rs` (modified, +68/-0)
 ```diff
-@@ -3737,9 +3737,9 @@ checksum = "ee1b05cbd864bcaecbd3455d6d967862d446e4ebfc3c2e5e5b9841e53cba6673"
+@@ -1664,6 +1664,74 @@ mod tests {
+         assert_eq!(null_count, 1);
+     }
  
- [[package]]
- name = "form_urlencoded"
--version = "1.2.2"
-+version = "1.2.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
-+checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
- dependencies = [
-  "percent-encoding",
- ]
-@@ -11788,9 +11788,9 @@ dependencies = [
- 
- [[package]]
- name = "url"
--version = "2.5.8"
-+version = "2.5.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
-+checksum = "f00cd2407bb42c0ef17be88d4cf020f5cceffd121665bac9b8b9493a369b3b1a"
- dependencies = [
-  "form_urlencoded",
-  "idna",
++    #[tokio::test]
++    async fn test_create_btree_index_on_large_utf8() {
++        let conn = connect("memory://").execute().await.unwrap();
++        let schema = Arc::new(Schema::new(vec![
++            Field::new("explicit", DataType::LargeUtf8, true),
++            Field::new("auto", DataType::LargeUtf8, true),
++        ]));
++        let values = || {
++            Arc::new(LargeStringArray::from(vec![
++                Some("alpha"),
++                None,
++                Some("omega"),
++                Some("alpha"),
++            ])) as ArrayRef
++        };
++        let batch = RecordBatch::try_new(schema, vec![values(), values()]).unwrap();
++        let table = conn
++            .create_table("large_utf8_btree_table", batch)
++            .execute()
++            .await
++            .unwrap();
++
++        table
++            .create_index(&["explicit"], Index::BTree(BTreeIndexBuilder::default()))
++            .execute()
++            .await
++            .unwrap();
++        // Auto picks BTree for string columns, so LargeUtf8 must get one too.
++        table
++            .create_index(&["auto"], Index::Auto)
++            .execute()
++            .await
++            .unwrap();
++        table
++            .wait_for_index(&["explicit_idx", "auto_idx"], Duration::from_millis(10))
++            .await
++            .unwrap();
++
++        let index_configs = table.list_indices().await.unwrap();
++        assert_eq!(index_configs.len(), 2);
++        for index in index_configs {
++            assert_eq!(index.index_type, crate::index::IndexType::BTree);
++        }
++
++        for column in ["explicit", "auto"] {
++            for (filter, expected_rows) in [
++                (format!("{column} = 'alpha'"), 2),
++                (format!("{column} > 'beta'"), 1),
++                (format!("{column} IS NULL"), 1),
++            ] {
++                let query = table.query().only_if(filter.as_str());
++                let plan = query.explain_plan(false).await.unwrap();
++                assert!(plan.contains("ScalarIndexQuery"), "{filter}: {plan}");
++                let num_rows = query
++                    .execute()
++                    .await
++                    .unwrap()
++                    .try_collect::<Vec<_>>()
++                    .await
++                    .unwrap()
++                    .iter()
++                    .map(|b| b.num_rows())
++                    .sum::<usize>();
++                assert_eq!(num_rows, expected_rows, "{filter}");
++            }
++        }
++    }
++
+     #[tokio::test]
+     async fn test_create_builtin_scalar_index() {
+         for (index, index_type, predicate, invalid_column) in [
+```
+
+**File**: `rust/lancedb/src/utils/mod.rs` (modified, +1/-0)
+```diff
+@@ -539,6 +539,7 @@ pub fn supported_btree_data_type(dtype: &DataType) -> bool {
+             dtype,
+             DataType::Boolean
+                 | DataType::Utf8
++                | DataType::LargeUtf8
+                 | DataType::Time32(_)
+                 | DataType::Time64(_)
+                 | DataType::Date32
 ```
 
 ---
 
-### Incident Patch 2: `59615eaf` (2026-11-22)
-**Commit Message**: fix: reject blob request concurrency above semaphore limit (#5160)
+### Incident Patch 2: `7c7765c9` (2026-11-23)
+**Commit Message**: fix(rust): validate batch vector column before planning (#5162)
 
-## Summary
+Batch vector queries resolved an explicit vector column with an
+infallible schema lookup before the existing vector-column validation
+ran. A column that could not be resolved would abort planning instead of
+returning the SDK's normal validation error.
 
-A `blob_request_concurrency` value above tokio's
-`Semaphore::MAX_PERMITS` reached `Semaphore::new` and panicked, aborting
-the process instead of reporting a configuration error. The value can
-come from explicit client configuration or
-`LANCE_CLIENT_BLOB_REQUEST_CONCURRENCY`, with a default of 8.
+Use the resolved column with `get_vector_type` so the batch path reports
+the same typed error as ordinary vector queries, while keeping explicit
+and inferred columns, multivector and binary routing, namespace
+pushdown, and query-plan selection unchanged.
 
-Resolve the value with the existing precedence, preserve the existing
-zero and parse errors, and return `Error::InvalidInput` for values above
-`Semaphore::MAX_PERMITS`. The supported range is documented on
-`ClientConfig::blob_request_concurrency`.
+Adds a focused synthetic-schema validation test for the error path.
 
-## Tests
-
-Added a focused resolver test covering the maximum accepted value and
-one above it. The test passes an explicit value and does not mutate
-environment variables.
-
-**File**: `rust/lancedb/src/remote/client.rs` (modified, +34/-1)
+**File**: `rust/lancedb/src/table/query.rs` (modified, +57/-6)
 ```diff
-@@ -87,7 +87,9 @@ pub struct ClientConfig {
-     /// Maximum concurrent blob HTTP requests for this connection, shared by all
-     /// tables and blob handles. Defaults to 8. The environment variable
-     /// `LANCE_CLIENT_BLOB_REQUEST_CONCURRENCY` can also set this limit.
--    /// The value must be greater than zero.
-+    /// The value must be between 1 and [`Semaphore::MAX_PERMITS`], inclusive.
-+    /// Values outside that range are rejected with [`Error::InvalidInput`] when
-+    /// the connection is created.
-     pub blob_request_concurrency: Option<usize>,
-     /// User agent to use for requests. The default provides the library
-     /// name and version.
-@@ -648,6 +650,14 @@ impl RestfulLanceDbClient<Sender> {
-                 message: "blob request concurrency must be greater than zero".into(),
-             });
+@@ -273,13 +273,11 @@ pub async fn create_plan(
+                 Some(query.query_vector[0].len() as i32),
+             )?);
          }
-+        if value > Semaphore::MAX_PERMITS {
-+            return Err(Error::InvalidInput {
-+                message: format!(
-+                    "blob request concurrency must be at most {}, got {value}",
-+                    Semaphore::MAX_PERMITS
-+                ),
-+            });
-+        }
-         Ok(value)
-     }
- 
-@@ -1505,6 +1515,29 @@ mod tests {
+-        let vector_field = schema.field(column.as_ref().unwrap()).unwrap();
+-        let (_, element_type) =
++        let (vector_type, element_type) =
+             lance::index::vector::utils::get_vector_type(schema, column.as_ref().unwrap())?;
++        let is_list_vector = matches!(&vector_type, DataType::List(_));
+         let is_binary = matches!(element_type, DataType::UInt8);
+-        if matches!(vector_field.data_type(), DataType::List(_))
+-            || (query.base.offset.unwrap_or(0) == 0 && !is_binary)
+-        {
++        if is_list_vector || (query.base.offset.unwrap_or(0) == 0 && !is_binary) {
+             // Lance distinguishes these cases from the vector column type: a
+             // list-like query against a List column is one multivector query,
+             // while the same query against a FixedSizeList column is a batch of
+@@ -315,7 +313,7 @@ pub async fn create_plan(
+                 fsl_builder.append(true);
+             }
+             query_vector = Some(Arc::new(fsl_builder.finish()));
+-            is_batch_query = !matches!(vector_field.data_type(), DataType::List(_));
++            is_batch_query = !is_list_vector;
+         } else {
+             // Lance's batch path has no per-query offset, and its binary path
+             // requires primitive UInt8 queries rather than a fixed-size list.
+@@ -2091,6 +2089,59 @@ mod tests {
+             "plan should add query_index column, got:\n{display}"
          );
      }
- 
-+    /// A semaphore cannot hold more than `MAX_PERMITS`, so a larger configured
-+    /// value is refused where it was set instead of panicking when the
-+    /// connection is created.
-+    #[test]
-+    fn test_blob_request_concurrency_must_fit_a_semaphore() {
-+        let error = RestfulLanceDbClient::<Sender>::resolve_blob_request_concurrency(Some(
-+            super::Semaphore::MAX_PERMITS + 1,
-+        ))
-+        .expect_err("a concurrency above the semaphore limit must be refused");
-+        assert!(matches!(error, Error::InvalidInput { .. }));
++
++    #[tokio::test]
++    async fn test_create_plan_batch_vector_missing_column_returns_sdk_error() {
++        use crate::connect;
++        use crate::table::query::create_plan;
++        use arrow_array::{Float32Array, RecordBatch};
++        use arrow_schema::{DataType, Field, Schema};
++
++        let conn = connect("memory://").execute().await.unwrap();
++        let schema = Arc::new(Schema::new(vec![
++            Field::new("id", DataType::Int32, false),
++            Field::new(
++                "vector",
++                DataType::FixedSizeList(Arc::new(Field::new("item", DataType::Float32, true)), 2),
++                false,
++            ),
++        ]));
++        let batch = RecordBatch::new_empty(schema);
++        let table = conn
++            .create_table("test_batch_vector_missing_column", vec![batch])
++            .execute()
++            .await
++            .unwrap();
++        let native_table = table.as_native().unwrap();
++
++        let query = AnyQuery::VectorQuery(VectorQueryRequest {
++            base: QueryRequest {
++                limit: Some(1),
++                ..Default::default()
++            },
++            column: Some("missing_vector".to_string()),
++            query_vector: vec![
++                Arc::new(Float32Array::from(vec![1.0, 2.0])),
++                Arc::new(Float32Array::from(vec![3.0, 4.0])),
++            ],
++            ..Default::default()
++        });
++
++        let error = create_plan(native_table, &query, QueryExecutionOptions::default())
++            .await
++            .unwrap_err();
++
 +        assert!(
-+            error.to_string().contains("blob request concurrency"),
-+            "{error}"
-+        );
-+        assert_eq!(
-+            RestfulLanceDbClient::<Sender>::resolve_blob_request_concurrency(Some(
-+                super::Semaphore::MAX_PERMITS
-+            ))
-+            .unwrap(),
-+            super::Semaphore::MAX_PERMITS
++            matches!(
++                &error,
++                Error::Lance {
++                    source: lance::Error::Index { message, .. }
++                } if message.contains("column missing_vector does not exist in schema")
++            ),
++            "expected ordinary vector column validation error, got: {error:?}"
 +        );
 +    }
 +
-     use super::*;
-     use serial_test::serial;
-     use std::time::Duration;
+     #[rstest::rstest]
+     #[case::modern(false)]
+     #[case::legacy(true)]
+```
+
+---
+
+### Incident Patch 3: `e9319c86` (2026-11-23)
+**Commit Message**: fix: resolve agent plugin marketplace source (UAX-250) (#5170)
+
+Looks like we have an issue with the plugin config pointing to a
+non-existent dir.
+
+Part of UAX-250. Related to UAX-245.
+
+Clicktest, can ask Chat for example to create a fresh disposable config.
+
+<img width="584" height="452" alt="Screenshot 2026-11-23 at 9 38 25 AM"
+src="https://github.com/user-attachments/assets/d359f9e2-bd3f-4cb8-993a-7db3b2b20342"
+/>
+
+Clicktesting: Use a disposable Claude configuration. Add this checkout
+as a marketplace, then install `lancedb@lancedb`. Confirm that
+installation fetches `lancedb/lancedb-agent-plugins` and exposes its
+skill.
+
+*original prompt:*
+
+"Work on Linear issue UAX-250:\
+\
+Suggested branch name:
+luciacerchie/uax-250-add-enterprise-functions-guidance-to\
+\
+\<issue identifier="UAX-250">\
+\<title>Add Enterprise Functions guidance to the lancedb agent
+skill\</title>\
+\<description>\
+The public \`lancedb\` agent skill (\`lancedb/lancedb-agent-plugins\`,
+v0.1.0) has no guidance on LanceDB Enterprise Functions. It also routes
+"UDF / backfill" tasks to the Geneva/Ray path, which Functions is meant
+to replace. Agents using the skill steer users away from our newest
+product.\
+\
+\## Prob
+
+**File**: `.claude-plugin/marketplace.json` (modified, +4/-1)
+```diff
+@@ -7,7 +7,10 @@
+   "plugins": [
+     {
+       "name": "lancedb",
+-      "source": "./plugins/lancedb",
++      "source": {
++        "source": "github",
++        "repo": "lancedb/lancedb-agent-plugins"
++      },
+       "description": "Write, review, debug, and document LanceDB pipelines in Python and TypeScript that work with both LanceDB Embedded and LanceDB Enterprise.",
+       "version": "0.1.0",
+       "author": {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5172** (2026-11-24): chore!: drop Python 3.10 support (@rahulsjha)
+- **PR #5170** (2026-11-23): fix: resolve agent plugin marketplace source (UAX-250) (@Cerchie)
+- **PR #5163** (2026-11-23): chore: update lance dependency to v15.0.0-beta.28 (@lancedb-robot)
+- **PR #5162** (2026-11-23): fix(rust): validate batch vector column before planning (@Xuanwo)
 - **PR #5160** (2026-11-22): fix: reject blob request concurrency above semaphore limit (@Xuanwo)
 - **PR #5159** (2026-11-22): chore: update lance dependency to v15.0.0-beta.27 (@lancedb-robot)
-- **PR #5158** (2026-11-22): fix(deps): update url to 2.5.9 for RUSTSEC-2026-0592 (@Xuanwo)
-- **PR #5157** (2026-11-22): chore: update lance dependency to v15.0.0-beta.26 (@lancedb-robot)
-- **PR #5154** (2026-11-22): feat: report capacity waits in function refresh job status (@BubbleCal)
-- **PR #5153** (2026-11-22): feat: resume a failed Function refresh from its table (@BubbleCal)
 
 ---
 
@@ -1446,34 +1602,62 @@ environment variables.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update url to 2.5.9 for RUSTSEC-2026-0592
+## X. allow BTree indexes on LargeUtf8 columns
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rust/lancedb/src/table/create_index.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b63cec40`: deps): update url to 2.5.9 for RUSTSEC-2026-0592. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0f648bba`: allow BTree indexes on LargeUtf8 columns. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/lancedb/src/table/create_index.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "1.2.3"
-checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
-version = "2.5.9"
-checksum = "f00cd2407bb42c0ef17be88d4cf020f5cceffd121665bac9b8b9493a369b3b1a"
+    #[tokio::test]
+    async fn test_create_btree_index_on_large_utf8() {
+        let conn = connect("memory://").execute().await.unwrap();
+        let schema = Arc::new(Schema::new(vec![
+            Field::new("explicit", DataType::LargeUtf8, true),
+            Field::new("auto", DataType::LargeUtf8, true),
+        ]));
+        let values = || {
+            Arc::new(LargeStringArray::from(vec![
+                Some("alpha"),
+                None,
+                Some("omega"),
+                Some("alpha"),
+            ])) as ArrayRef
+        };
+        let batch = RecordBatch::try_new(schema, vec![values(), values()]).unwrap();
+        let table = conn
+            .create_table("large_utf8_btree_table", batch)
+            .execute()
+            .await
+            .unwrap();
+
+        table
+            .create_index(&["explicit"], Index::BTree(BTreeIndexBuilder::default()))
+            .execute()
+            .await
+            .unwrap();
+        // Auto picks BTree for string columns, so LargeUtf8 must get one too.
+        table
+            .create_index(&["auto"], Index::Auto)
+            .execute()
+            .await
+            .unwrap();
+        table
+            .wait_for_inde
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "1.2.2"
-checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
-version = "2.5.8"
-checksum = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b63cec40` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0f648bba` are properly handled with clean fallback behavior.

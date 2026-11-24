@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T20:11:48.636Z",
+  "timestamp": "2026-11-24T02:31:18.337Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-lancedb-lancedb-learnings",
@@ -14,13 +14,13 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [lancedb-lancedb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T20:11:48.636Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T02:31:18.337Z`  
 > **Learning ID**: `LEARN-EVO-lancedb-lancedb-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence)
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence)
 - **Confidence Rating**: 51%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -28,10 +28,10 @@ The following architectural invariants have been empirically discovered and reco
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source**: github ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
-> **Source Version**: `bf4d6c80`  
+> **Source Version**: `52209f10`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T20:11:17.347Z  
+> **Timestamp**: 2026-11-24T02:31:11.748Z  
 > **Learning ID**: `learn-github-lancedb-lancedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T20:11:17.342Z  
+> **Harvest Timestamp**: 2026-11-24T02:31:11.742Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Developer-friendly OSS embedded retrieval library for multimodal AI. Search More; Manage Less.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 11912 stars
+- **Stars / Engagement**: 11973 stars
 
 ---
 
@@ -235,22 +235,51 @@ class BackgroundEventLoop:
     A background event loop that can run futures.
 
     Used to bridge sync and async code, without messing with users event loops.
+
+    The loop and its thread are created by the first call to :meth:`run`, not
+    by constructing this object, so importing lancedb does not leave an idle
+    background thread behind.
     """
 
     def __init__(self):
-        self._start()
+        self.loop: asyncio.AbstractEventLoop | None = None
+        self.thread: threading.Thread | None = None
+        self._start_lock = threading.Lock()
 
-    def _start(self):
-        self.loop = asyncio.new_event_loop()
-        self.thread = threading.Thread(
-            target=self.loop.run_forever,
-            name="LanceDBBackgroundEventLoop",
-            daemon=True,
-        )
-        self.thread.start()
+    def _start(self) -> asyncio.AbstractEventLoop:
+        loop = self.loop
+        if loop is not None:
+            return loop
+        with self._start_lock:
+            loop = self.loop
+            if loop is not None:
+                return loop
+            loop = asyncio.new_event_loop()
+            thread = threading.Thread(
+                target=loop.run_forever,
+                name="LanceDBBackgroundEventLoop",
+                daemon=True,
+            )
+            thread.start()
+            # Publish the loop first and the thread last. Callers that reach
+            # _start while this is in progress wait on _start_lock, so they
+            # cannot observe a half-initialized loop/thread pair.
+            self.loop = loop
+            self.thread = thread
+            return loop
+
+    def _reset_after_fork(self):
+        # Threads do not survive fork(). Reset to the unstarted state without
+        # calling into the inherited loop or thread: the thread is gone, and
+        # it may have held _start_lock when the fork happened. A fresh lock
+        # lets the child start a new loop on its first run().
+        self.loop = None
+        self.thread = None
+        self._start_lock = threading.Lock()
 
     def run(self, future):
-        concurrent_future = asyncio.run_coroutine_threadsafe(future, self.loop)
+        loop = self._start()
+        concurrent_future = asyncio.run_coroutine_threadsafe(future, loop)
         try:
             return concurrent_future.result()
         except BaseException:
@@ -282,12 +311,15 @@ _FORK_WARNED = False
 
 
 def _reset_after_fork():
-    # Threads do not survive fork(), so the asyncio loop in LOOP.thread is
-    # dead in the child. Re-initialize the singleton in place so existing
+    # Threads do not survive fork(), so the loop in LOOP.thread is dead in
+    # the child. Reset the singleton in place so existing
     # `from .background_loop import LOOP` references in other modules see
-    # the new state. The Rust-side tokio runtime is reset analogously by a
-    # pthread_atfork hook installed in the _lancedb extension.
-    LOOP._start()
+    # the unstarted state and create a fresh loop on their first run(). Do
+    # not restart it here: the child may never use LanceDB, and the at-fork
+    # handler must not touch the vanished thread or acquire inherited locks.
+    # The Rust-side tokio runtime is reset analogously by a pthread_atfork
+    # hook installed in the _lancedb extension.
+    LOOP._reset_after_fork()
     # The embedding executor's worker threads are dead in the child as well.
     # Replace it with a fresh pool (threads are spawned lazily, so this is
     # cheap); we don't shut down the old one, since joining its dead workers
@@ -741,9 +773,11 @@ import importlib
 import math
 import os
 import pathlib
+import sys
 import warnings
 from datetime import date, datetime, time, timedelta
 from decimal import Decimal
+from enum import Enum
 from functools import singledispatch
 from typing import Tuple, Union, Optional, Any, List
 from urllib.parse import urlparse
@@ -1052,8 +1086,7 @@ def _query_vector_dim(query: Optional[Any]) -> Optional[int]:
             first = query[0].as_py()
             return len(first) if first is not None else None
         return len(query)
-    if isinstance(query, (list, tuple)) and query:
-        
+    if isinstance(query, (
 ```
 
 ### Core Architecture Module: `python/src/util.rs`
@@ -1261,11 +1294,11 @@ pub fn rename_column(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5062** (2026-11-16): **fix: allow matched merge updates to Function inputs**
-  *Symptoms*: Matched merge-insert updates rejected every non-key source column that a Function binding reads, while update already accepts input changes and the merge freshness path records their changed signatures. Use the same `ensure_not_written` guard for the matched source columns: inputs pass, computed outputs and assignment columns stay rejected before any write, and insert-only or unrelated-column merges keep their behavior.  Regressions confirm a matched input update retains prior outputs, dirties only the affected rows, keeps an independent binding fresh, and rejects mixed input/output sources without committing.  Tested on `2ab103d7` + this change: `cargo test -p lancedb --lib` 1083 passed, 82 ignored.  Refs ENT-3515 
+- **Issue #5170** (2026-11-23): **fix: resolve agent plugin marketplace source (UAX-250)**
+  *Symptoms*: Looks like we have an issue with the plugin config pointing to a non-existent dir.   Part of UAX-250. Related to UAX-245.  Clicktest, can ask Chat for example to create a fresh disposable config.   <img width="584" height="452" alt="Screenshot 2026-11-23 at 9 38 25 AM" src="https://github.com/user-attachments/assets/d359f9e2-bd3f-4cb8-993a-7db3b2b20342" />  Clicktesting: Use a disposable Claude configuration. Add this checkout as a marketplace, then install `lancedb@lancedb`. Confirm that installation fetches `lancedb/lancedb-agent-plugins` and exposes its skill.  *original prompt:*  "Work on Linear issue UAX-250:\ \ Suggested branch name: luciacerchie/uax-250-add-enterprise-functions-guidance-to\ \ \<issue identifier="UAX-250">\ \<title>Add Enterprise Functions guidance to the lancedb agent skill\</title>\ \<description>\ The public \`lancedb\` agent skill (\`lancedb/lancedb-agent-plugins\`, v0.1.0) has no guidance on LanceDB Enterprise Functions. It also routes "UDF / backfill" tasks to the Geneva/Ray path, which Functions is meant to replace. Agents using the skill steer users away from our newest product.\ \ \## Problem\ \ \* Nothing on \`@function\`, \`create_function\`, computed columns, \`refresh_column_async\`, secrets, GPU classes, chunkers, or function failure handling.\ \* The skill description does not trigger on Functions tasks.\ \* Function refresh jobs are not covered. \`remote_jobs.md\` only describes \`geneva_jobs\`.\ \* \`lancedb/la
 
-- **Issue #5060** (2026-11-16): **fix(python): explain blob descriptor copy guidance**
-  *Symptoms*: The descriptor-copy error only named the missing `data`/`uri` child. It now says that this shape is an SDK blob descriptor rather than payload bytes, and points to `blob_mode="bytes"` for supported materialization, `blob_mode="descriptions"` for inspection, and the row-id plus `fetch_blobs`/`fetch_blob_files` copy path while the source stays unchanged.  This reuses the merged guidance from #4940 and the direct-materialization contract from #4973. Ray integration remains out of scope for ENT-3556.  Refs ENT-3556  Test: `python/tests/test_blob.py` (210 passed, 39 skipped), including a regression that writes default lazy descriptor rows into a blob-schema table, checks the guidance, and confirms no target is created. `python/tests/test_util.py -k blob` (12 passed, 2 skipped). 
+- **Issue #5162** (2026-11-23): **fix(rust): validate batch vector column before planning**
+  *Symptoms*: Batch vector queries resolved an explicit vector column with an infallible schema lookup before the existing vector-column validation ran. A column that could not be resolved would abort planning instead of returning the SDK's normal validation error.  Use the resolved column with `get_vector_type` so the batch path reports the same typed error as ordinary vector queries, while keeping explicit and inferred columns, multivector and binary routing, namespace pushdown, and query-plan selection unchanged.  Adds a focused synthetic-schema validation test for the error path.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1282,853 +1315,302 @@ pub fn rename_column(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3aed07c3` (2026-11-15)
-**Commit Message**: fix(python): show Function registration progress and image details (#5040)
+### Incident Patch 1: `0f648bba` (2026-11-23)
+**Commit Message**: fix: allow BTree indexes on LargeUtf8 columns (#5089)
 
-Report registration lifecycle and client elapsed time through existing job handles, and provide concise image inspection. Preserve quiet wait behavior, environment-lock forwarding, failure diagnostics and timeout recovery.
+## What changed
 
-**File**: `docs/src/python/python.md` (modified, +19/-0)
+`supported_btree_data_type` in `rust/lancedb/src/utils/mod.rs` now
+accepts `LargeUtf8` next to `Utf8`. This is the only code change, one
+line.
+
+Python and TypeScript have no BTree type check of their own and call
+into this function, so the fix covers all three SDKs. `Index::Auto` also
+picks BTree for `LargeUtf8` columns now, locally and in the remote
+client.
+
+## Why
+
+Fixes #5088
+
+Lance builds BTree indexes on `LargeUtf8`, but this check in lancedb
+rejected them with `A BTree index cannot be created on the field ...
+which has data type LargeUtf8`. pandas 3 stores text columns as
+`large_string`, so `create_index(col, config=BTree())` and
+`create_scalar_index(col)` fail on tables created from a plain
+DataFrame. #2297 removed a similar extra check for `FixedSizeBinary`.
+
+`Binary`, `LargeBinary` and `Utf8View` may also be supported by Lance
+but are left out of this PR.
+
+## How it was tested
+
+Run in a `rust:1.97.0-bookworm` container with `--profile ci --locked
+--features remote`, on `main` at e29ec0e0. The branch is now rebased on
+a6d7d02f, which only changes version numbers in
+`Cargo.toml`/`Cargo.lock`; the commits
+
+**File**: `rust/lancedb/src/table/create_index.rs` (modified, +68/-0)
 ```diff
-@@ -424,6 +424,25 @@ code that used the former LanceDB Enterprise-only argument order.
+@@ -1664,6 +1664,74 @@ mod tests {
+         assert_eq!(null_count, 1);
+     }
  
- ## Functions and Jobs
- 
-+Use `progress=True` when waiting for Function registration in a notebook or
-+terminal. A callback receives structured snapshots instead:
-+
-+```python
-+fn = db.create_function(my_function, progress=True)
-+registration = db.create_function_async(other_function)
-+fn = registration.wait(progress=lambda snapshot: print(snapshot))
-+print(fn.image.describe())
-+```
-+
-+Registration uses the existing SQL query handle. The current handle reports
-+lifecycle state and `client_elapsed_time_millis` since the handle was created;
-+detailed build phases and build logs are unavailable. Keep the same handle after
-+a wait timeout to resume waiting. Failures retain the server error and request
-+identifiers. `fn.image` has a concise representation; `describe()` exposes Python
-+and CUDA requirements without inspecting Pydantic internals. Platforms, base image
-+and size are `None` until the service reports them. The full image descriptor and
-+canonical JSON remain available.
-+
- A `@function` definition is also a local callable. Call a decorated function
- directly with row inputs, or call a decorated class with its initialization fields
- and then call the returned instance; call `close()` if the class defines it. This
-```
-
-**File**: `python/python/lancedb/db.py` (modified, +9/-2)
-```diff
-@@ -1051,6 +1051,7 @@ def create_function(
-         exist_ok: bool = False,
-         namespace_path: Optional[List[str]] = None,
-         refresh_lock: bool = False,
-+        progress: Any = False,
-     ) -> FunctionVersion:
-         """Build and register a scalar Python function, then return its version.
- 
-@@ -1076,6 +1077,9 @@ def create_function(
-         refresh_lock : bool, default False
-             Ask the server to resolve a fresh environment lock instead of
-             reusing the published version's lock.
-+        progress : bool, callable, or tqdm-like object, default False
-+            Display lifecycle state and elapsed time, or receive structured
-+            snapshots through a callback. See [Job.wait][lancedb.job.Job.wait].
- 
-         When the registration job resolves, each resolved-environment warning
-         reported by the server is emitted as a Python ``UserWarning``. Catalog
-@@ -1095,13 +1099,16 @@ def create_function(
-         )
-         ```
-         """
--        return self.create_function_async(
-+        job = self.create_function_async(
-             definition,
-             secrets=secrets,
-             exist_ok=exist_ok,
-             namespace_path=namespace_path,
-             refresh_lock=refresh_lock,
--        ).wait()
-+        )
-+        if progress is False or progress is None:
-+            return job.wait()
-+        return job.wait(progress=progress)
- 
-     def create_function_async(
-         self,
-```
-
-**File**: `python/python/lancedb/functions.py` (modified, +58/-1)
-```diff
-@@ -544,13 +544,70 @@ def digest(self) -> str:
- 
- 
- class FunctionImage(_RemoteValue):
--    """A complete OCI Function image identified by its exact manifest digest."""
-+    """A complete OCI Function image identified by its exact manifest digest.
-+
-+    ``describe()`` and the concise representation inspect the descriptor without
-+    walking Pydantic model internals. Missing metadata is ``None`` (unknown).
-+    The current service does not report image platforms, base image or byte size;
-+    these cannot be inferred from the client's platform or the manifest digest.
-+    The full descriptor remains available through ``descriptor``.
-+    """
- 
-     manifest_digest: str
-     descriptor: Mapping[str, Any]
-     source: bool
-     models: tuple[HuggingFaceModel, ...] = ()
- 
-+    def describe(self) -> dict[str, Any]:
-+        """Return concise image details without fetching registry content.
-+
-+        ``requires_gpu`` reflects a ``lance.cuda`` requirement in a v1
-+        descriptor, rather than promising compatibility with every GPU.
-+        ``platforms``, ``base_image`` and ``size_bytes`` are unavailable from
-+        the current wire contract and return ``None``.
-+
-+        Examples
-+        --------
-+        >>> print(fn.image.describe())  # doctest: +SKIP
-+        """
-+        python = self.descriptor.get("python")
-+        requires = self.descriptor.get("requires")
-+        capabilities = (
-+            requires.get("capabilities") if isinstance(requires, Mapping) else None
-+        )
-+        known_capabilities = (
-+            self.descriptor.get("format_version") == 1
-+            and isinstance(capabilities, (list, tuple))
-+            and all(isinstance(item, Mapping) for item in capabilities)
-+        )
-+        cuda = (
-+            next(
-+                (item for item in capabilities if item.get("type") == "lance.cuda"),
++    #[tokio::test]
++    async fn test_create_btree_index_on_large_utf8() {
++        let conn = connect("memory://").execute().await.unwrap();
++        let schema = Arc::new(Schema::new(vec![
++            Field::new("explicit", DataType::LargeUtf8, true),
++            Field::new("auto", DataType::LargeUtf8, true),
++        ]));
++        let values = || {
++            Arc::new(LargeStringArray::from(vec![
++                Some("alpha"),
 +                None,
-+            )
-+            if known_capabilities
-+            else None
-+        )
-+        python_version = python.get("version") if isinstance(python, Mapping) else None
-+        cuda_toolkit = cuda.get("cuda_toolkit") if cuda is not None else None
-+        return {
-+            "manifest_digest": self.manifest_digest,
-+            "python_version": python_version
-+            if isinstance(python_version, str)
-+            else None,
-+            "requires_gpu": cuda is not None if known_capabilities else None,
-+            "cuda_toolkit": cuda_toolkit if isinstance(cuda_toolkit, str) else None,
-+            "platforms": None,
-+            "base_image": None,
-+            "size_bytes": None,
-+        }
-+
-+    def __repr_args__(self):
-+        for name, value in self.describe().items():
-+            if isinstance(value, str) and len(value) > 80:
-+                value = value[:77] + "..."
-+            yield name, value
-+
- 
- class ResolvedPackage(_RemoteValue):
-     """One installed Python distribution measured from a baked environment.
-```
-
-**File**: `python/python/lancedb/job.py` (modified, +68/-7)
-```diff
-@@ -4,8 +4,10 @@
- """Handles to asynchronous registry jobs, SQL queries, and local operations."""
- 
- import asyncio
-+import logging
- import reprlib
- import time
-+from contextlib import suppress
- from datetime import timedelta
- from os import PathLike
- from pathlib import Path
-@@ -53,18 +55,21 @@ def _timeout_message(
-     )
- 
- 
--def _normalize_job_progress(progress):
-+def _normalize_job_progress(progress, *, query=False):
-     """Normalize ``wait(progress=...)`` using the same convention as writes."""
-     if progress is True:
-         from tqdm.auto import tqdm
- 
-+        if query:
-+            return tqdm(bar_format="Query{postfix} [{elapsed}]"), True
-         return tqdm(unit=" rows"), True
-     if progress is False or progress is None:
-         return None, False
-     return progress, False
- 
- 
- _ETA_MAX_SAMPLE_INTERVAL_MILLIS = 10 * 60 * 1_000
-+_QUERY_PROGRESS_INTERVAL_SECONDS = 1.0
- 
- 
- def _progress_eta(previous, current):
-@@ -203,6 +208,7 @@ def __init__(
-         self._inner = inner
-         self._result_decoder = result_decoder
-         self._last_progress_snapshot = None
-+        self._created_at = time.monotonic()
- 
-     def _enrich_progress(self, snapshot):
-         enriched = _with_progress_eta(self._last_progress_snapshot, snapshot)
-@@ -235,17 +241,29 @@ async def status(self) -> str:
-     async def progress(self) -> Optional[dict[str, Any]]:
-         """Fetch a structured progress snapshot.
- 
--        Registry jobs always report lifecycle fields. Queue metadata and
--        counters are included when supplied by the server. Older servers may
-+        Registry jobs always report lifecycle fields. SQL query handles report
-+        lifecycle state and ``client_elapsed_time_millis``, measured since this
-+        handle was created. They do not expose server build phases or logs.
-+        Queue metadata and counters are included when supplied by the server.
-+        Older servers may
-         omit counters, and in-process operations return ``None``. A missing
-         counter is unknown rather than zero. This is additive to :meth:`status`,
-         whose string contract is unchanged.
-         """
-         if self._inner is None:
-             return None
--        await self._inner.status()
-+        state = await self._inner.status()
-         description = getattr(self._inner, "_description", None)
-         if description is None or description.progress is None:
-+            if self.job_type == "query":
-+                return {
-+                    "job_id": self.id,
-+                    "job_type": "query",
-+                    "state": state,
-+                    "client_elapsed_time_millis": int(
-+                        (time.monotonic() - self._created_at) * 1_000
-+                    ),
-+                }
-             return None
-         return self._enrich_progress(description.progress)
- 
-@@ -270,6 +288,13 @@ async def wait(
-         new execution epoch or smaller plan resets the bar to that plan.
-         ``False`` preserves the original wait behavior.
- 
-+        For SQL-backed Function registration, progress shows the query's
-+        lifecycle state and client elapsed time. It observes the existing
-+        query handle while its original waiter runs; it does not resubmit or
-+        cancel the registration. Detailed bake phases and build logs are not
-+        available from the current query handle. Failure exceptions retain the
-+        server's cause and request identifiers.
-+
-         Raises `JobFailedError` if the operation failed, `JobCancelledError`
-         if it was cancelled, and `TimeoutError` if `timeout` elapses first.
-         Transient connection and read errors are retried with capped exponential
-@@ -285,7 +310,10 @@ async def wait(
-         """
-         if self._inner is None:
-             return cast(T, None)
--        progress_obj, owns = _normalize_job_progress(progress)
-+        query_progress = (
-+            progress is not False and progress is not None and self.job_type == "query"
-+        )
-+        progress_obj, owns = _normalize_job_progress(progress, query=query_progress)
-         progress_callback = _job_progress_callback(progress_obj, self._enrich_progress)
-         last_error = None
- 
-@@ -311,13 +339,46 @@ async def wait_with_retries():
-                 await asyncio.sleep(delay)
-                 delay = min(delay * 2, 30.0)
- 
-+        async def observe_query():
-+            async def report():
-+                try:
-+                    snapshot = await self.progress()
-+                    if snapshot is not None:
-+                        progress_callback(snapshot)
-+                except Exception:
-+                    logging.getLogger(__name__).warning(
-+                        "job progress observer failed", exc_info=True
-+                    )
-+
-+            waiter = asyncio.create_task(wait_with_retries())
-+            try:
-+                while not waiter.done():
-+                    await report()
-+                    await asyncio.wait(
-+       
-```
-
-**File**: `python/python/tests/test_first_class_function_slice1.py` (modified, +55/-0)
-```diff
-@@ -2,6 +2,7 @@
- # SPDX-FileCopyrightText: Copyright The LanceDB Authors
- 
- import json
-+import warnings
- from collections import UserDict
- from pathlib import Path
- from types import MappingProxyType
-@@ -13,6 +14,7 @@
- from lancedb.functions import (
-     FunctionApplication,
-     FunctionBinding,
-+    FunctionImage,
-     FunctionVersion,
-     PythonRuntimeSpec,
-     SecretBinding,
-@@ -149,6 +151,59 @@ def test_function_version_identity_is_immutable_and_exact():
-             FunctionVersion(**{**value, "version": invalid})
- 
- 
-+@pytest.mark.parametrize("gpu", [False, True])
-+def test_image_inspection_is_concise_warning_free_and_preserves_wire_state(gpu):
-+    value = job_result("remote_function_job.json")["image"]
-+    value["descriptor"]["future_metadata"] = "x" * 100_000
-+    if gpu:
-+        value["descriptor"]["requires"]["capabilities"] = [
-+            {
-+                "type": "lance.cuda",
-+                "version": 1,
-+                "device_count": 1,
-+                "cuda_toolkit": "12.4",
-+            }
-+        ]
-+    image = FunctionImage(**value)
-+    with warnings.catch_warnings():
-+        warnings.simplefilter("error", DeprecationWarning)
-+        details = image.describe()
-+        rendered = repr(image)
-+        assert "manifest_digest=" in str(image)
-+        encoded = json.loads(image.to_canonical_json())
-+    assert details == {
-+        "manifest_digest": value["manifest_digest"],
-+        "python_version": "3.12.14",
-+        "requires_gpu": gpu,
-+        "cuda_toolkit": "12.4" if gpu else None,
-+        "platforms": None,
-+        "base_image": None,
-+        "size_bytes": None,
-+    }
-+    assert len(rendered) < 350
-+    assert f"requires_gpu={gpu}" in rendered
-+    assert "future_metadata" not in rendered
-+    assert encoded == value
-+
-+
-+@pytest.mark.parametrize(
-+    "descriptor",
-+    [
-+        {},
-+        {"format_version": 2, "requires": {"capabilities": []}},
-+        {"format_version": 1, "requires": {"capabilities": [None]}},
-+        {"python": {"version": {"future": "x" * 100_000}}},
-+    ],
-+)
-+def test_image_inspection_leaves_missing_or_unrecognized_metadata_unknown(descriptor):
-+    image = FunctionImage(
-+        manifest_digest="sha256:example", descriptor=descriptor, source=True
-+    )
-+    assert image.describe()["requires_gpu"] is None
-+    assert image.describe()["python_version"] is None
-+    assert len(repr(image)) < 350
-+
-+
- @pytest.mark.parametrize(
-     "case", json.loads(fixture("runtime_identity.json")), ids=lambda case: case["name"]
- )
-```
-
-**File**: `python/python/tests/test_job.py` (modified, +187/-3)
-```diff
-@@ -11,6 +11,7 @@
- import pytest
- 
- from lancedb.exceptions import JobCancelledError, JobFailedError
-+from lancedb.db import DBConnection
- from lancedb.job import AsyncJob, Job, _progress_eta
- from lancedb.remote.errors import HttpError, RetryError
- 
-@@ -729,15 +730,198 @@ async def wait(self, progress):
- 
- 
- @pytest.mark.asyncio
--async def test_wait_progress_false_keeps_legacy_inner_wait_call():
-+@pytest.mark.parametrize("progress", [False, None])
-+async def test_wait_progress_false_keeps_legacy_inner_wait_call(progress):
-     class NoProgressArgument:
-         id = "job-legacy"
--        job_type = None
-+
-+        @property
-+        def job_type(self):
-+            raise AssertionError("quiet waits must not inspect progress metadata")
- 
-         async def wait(self):
-             return None
- 
--    assert await AsyncJob(NoProgressArgument()).wait(progress=False) is None
-+    assert await AsyncJob(NoProgressArgument()).wait(progress=progress) is None
-+
-+
-+class _RegistrationQuery:
-+    id = "registration-query"
-+    job_type = "query"
-+    _description = None
-+
-+    def __init__(self, error=None):
-+        self.ready = asyncio.Event()
-+        self.error = error
-+        self.state = "running"
-+        self.wait_calls = 0
-+        self.cancel_calls = 0
-+
-+    async def status(self):
-+        return self.state
-+
-+    async def wait(self, progress=None):
-+        self.wait_calls += 1
-+        await self.ready.wait()
-+        if self.error is not None:
-+            self.state = (
-+                "cancelled" if isinstance(self.error, JobCancelledError) else "failed"
-+            )
-+            raise self.error
-+        self.state = "finished"
-+        return '{"version": "1"}'
-+
-+    async def cancel(self):
-+        self.cancel_calls += 1
-+
-+
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("sync", [False, True])
-+async def test_query_progress_observes_one_registration_waiter(sync, monkeypatch):
-+    monkeypatch.setattr("lancedb.job._QUERY_PROGRESS_INTERVAL_SECONDS", 0)
-+    inner = _RegistrationQuery()
-+    job = AsyncJob(inner, json.loads)
-+    updates = []
-+
-+    def observe(snapshot):
-+        updates.append(snapshot)
-+        if len(updates) == 2:
-+            inner.ready.set()
-+
-+    if sync:
-+        result = await asyncio.to_thread(Job(job).wait, progress=observe)
-+    else:
-+        result = await job.wait(progress=observe)
-+    assert result == {"version": "1"}
-+    assert inner.wait_calls == 1
-+    assert inner.cancel_calls == 0
-+    assert updates[0]["state"] == "running"
-+    assert updates[-1]["state"] == "finished"
-+    assert all(snapshot["job_id"] == inner.id for snapshot in updates)
-+    elapsed = [snapshot["client_elapsed_time_millis"] for snapshot in updates]
-+    assert elapsed == sorted(elapsed)
-+    assert elapsed[0] >= 0
-+    assert all("phase" not in snapshot for snapshot in updates)
-+
-+
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize(
-+    "error",
-+    [
-+        JobFailedError("bake failed", job_id="registration-query"),
-+        JobCancelledError("cancelled"),
-+    ],
-+)
-+async def test_query_progress_preserves_terminal_exceptions(error):
-+    inner = _RegistrationQuery(error)
-+    inner.ready.set()
-+    updates = []
-+    with pytest.raises(type(error)) as raised:
-+        await AsyncJob(inner).wait(progress=updates.append)
-+    assert raised.value is error
-+    assert updates[-1]["state"] == inner.state
-+    assert inner.wait_calls == 1
-+
-+
-+@pytest.mark.asyncio
-+async def test_query_progress_display_has_no_row_counter_and_closes_on_failure(
-+    monkeypatch,
-+):
-+    tqdm_module = pytest.importorskip("tqdm.auto")
-+    bar = SimpleNamespace(
-+        n=0,
-+        total=None,
-+        update=MagicMock(),
-+        set_postfix_str=MagicMock(),
-+        close=MagicMock(),
-+    )
-+    constructor = MagicMock(return_value=bar)
-+    monkeypatch.setattr(tqdm_module, "tqdm", constructor)
-+    inner = _RegistrationQuery(JobFailedError("bake failed"))
-+    inner.ready.set()
-+
-+    with pytest.raises(JobFailedError, match="bake failed"):
-+        await AsyncJob(inner).wait(progress=True)
-+    assert "elapsed" in constructor.call_args.kwargs["bar_format"]
-+    assert "rows" not in str(constructor.call_args)
-+    assert bar.set_postfix_str.call_args.args == ("failed",)
-+    bar.close.assert_called_once_with()
-+
-+
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("failed", [False, True])
-+@pytest.mark.parametrize("observer_error", ["status", "callback"])
-+async def test_query_progress_observer_errors_do_not_replace_result_or_server_failure(
-+    failed, observer_error, caplog
-+):
-+    error = (
-+        JobFailedError("bake failed", job_id="registration-query") if failed else None
-+    )
-+    inner = _RegistrationQuery(error)
-+    inner.ready.set()
-+    if observer_error == "status":
-+        inner.status = AsyncMock(side_effect=RuntimeError("observer failed"))
-+
-+    def observe(snapshot):
-+        if observer_error == "callback":
-+            raise RuntimeError("observer failed")
-+
-+    job = As
-```
-
----
-
-### Incident Patch 2: `3b7c4dcf` (2026-11-16)
-**Commit Message**: fix: allow matched merge updates to Function inputs (#5062)
-
-Matched merge-insert updates rejected every non-key source column that a
-Function binding reads, while update already accepts input changes and
-the merge freshness path records their changed signatures. Use the same
-`ensure_not_written` guard for the matched source columns: inputs pass,
-computed outputs and assignment columns stay rejected before any write,
-and insert-only or unrelated-column merges keep their behavior.
-
-Regressions confirm a matched input update retains prior outputs,
-dirties only the affected rows, keeps an independent binding fresh, and
-rejects mixed input/output sources without committing.
-
-Tested on `2ab103d7` + this change: `cargo test -p lancedb --lib` 1083
-passed, 82 ignored.
-
-Refs ENT-3515
-
-**File**: `rust/lancedb/src/table/freshness.rs` (modified, +130/-0)
-```diff
-@@ -3248,6 +3248,136 @@ mod tests {
-         }
-     }
- 
-+    #[tokio::test]
-+    async fn input_merge_dirties_only_the_updated_rows_and_retains_outputs() {
-+        let table = fresh_function_table().await;
-+        let source =
-+            arrow_array::record_batch!(("title", Utf8, ["a"]), ("body", Utf8, ["changed"]))
-+                .unwrap();
-+        let mut merge = table.merge_insert(&["title"]);
-+        merge.when_matched_update_all(None);
-+        let result = merge
-+            .execute(Box::new(RecordBatchIterator::new(
-+                [Ok(source.clone())],
-+                source.schema(),
-+            )))
-+            .await
-+            .unwrap();
-+        assert_eq!(result.num_updated_rows, 1);
-+        let dataset = table.as_native().unwrap().dataset.get().await.unwrap();
-+        for output in ["search_text", "search_token_count"] {
-+            let stale = function_plan(&dataset, output).await;
-+            let mut dirty_rows = 0;
-+            for fragment in dataset.get_fragments() {
-+                if stale.needs_recompute(fragment.id() as u32) {
-+                    let batch = fragment
-+                        .scan()
-+                        .project(&["title"])
-+                        .unwrap()
-+                        .try_into_batch()
-+                        .await
-+                        .unwrap();
-+                    let titles = batch
-+                        .column(0)
-+                        .as_any()
-+                        .downcast_ref::<arrow_array::StringArray>()
-+                        .unwrap();
-+                    assert!(titles.iter().all(|title| title == Some("a")), "{stale:?}");
-+                    dirty_rows += batch.num_rows();
-+                }
-+            }
-+            assert_eq!(dirty_rows, 1, "{stale:?}");
-+        }
-+        assert_eq!(table.count_rows(Some("title = 'a' AND body = 'changed' AND search_text = 'a x' AND search_token_count = 2".into())).await.unwrap(), 1);
-+    }
-+
-+    #[tokio::test]
-+    async fn input_merge_keeps_an_independent_function_binding_fresh() {
-+        let batch = arrow_array::record_batch!(
-+            ("title", Utf8, ["a", "b", "c", "d"]),
-+            ("body", Utf8, ["x", "y", "z", "w"]),
-+            ("search_text", Utf8, ["a x", "b y", "c z", "d w"]),
-+            ("search_token_count", Int64, [2, 2, 2, 2]),
-+            ("search_text_other", Utf8, ["a a", "b b", "c c", "d d"]),
-+            ("search_token_count_other", Int64, [2, 2, 2, 2])
-+        )
-+        .unwrap();
-+        let table = crate::connect("memory://")
-+            .execute()
-+            .await
-+            .unwrap()
-+            .create_table("independent_merge", batch)
-+            .write_options(crate::table::WriteOptions {
-+                lance_write_params: Some(WriteParams {
-+                    max_rows_per_file: 2,
-+                    ..Default::default()
-+                }),
-+            })
++                Some("omega"),
++                Some("alpha"),
++            ])) as ArrayRef
++        };
++        let batch = RecordBatch::try_new(schema, vec![values(), values()]).unwrap();
++        let table = conn
++            .create_table("large_utf8_btree_table", batch)
 +            .execute()
 +            .await
 +            .unwrap();
-+        let mut other = serde_json::to_value(text_features_binding("_other")).unwrap();
-+        other["inputs"][1]["field_path"] = serde_json::json!("title");
-+        other["inputs"][1]["field_id"] = other["inputs"][0]["field_id"].clone();
-+        let bindings = [
-+            text_features_binding(""),
-+            serde_json::from_value(other).unwrap(),
-+        ];
-+        stamp_bindings(&table, &bindings).await;
-+        let native = table.as_native().unwrap();
-+        let mut dataset = native.dataset.get().await.unwrap().as_ref().clone();
-+        for binding in &bindings {
-+            let paths = binding
-+                .inputs()
-+                .iter()
-+                .map(|input| input.field_path.clone())
-+                .collect::<Vec<_>>();
-+            let inputs = fields_for_paths(dataset.schema(), &paths).unwrap();
-+            let signatures = signatures_for(&dataset, &[0, 1], &inputs).unwrap();
-+            for output in binding.outputs() {
-+                write_signatures(
-+                    &mut dataset,
-+                    &output.output_name,
-+                    binding.binding_id(),
-+                    signatures.clone(),
-+                )
-+                .await
-+                .unwrap();
-+            }
-+        }
-+        native.dataset.update(dataset);
-+        let source =
-+            arrow_array::record_batch!(("title", Utf8, ["a"]), ("body", Utf8, ["changed"]))
-+                .unwrap();
-+        let mut merge = table.merge_insert(&["title"]);
-+        merge.when_matched_update_all(None);
-+        merge
-+            .execute(Box::new(RecordBatchIterator::new(
-+                [Ok(source.clone())],
-+                source.schema(),
-+            )))
++
++        table
++            .create_index(&["explicit"], Index::BTree(BTreeIndexBuilder::default()))
++            .execute()
 +            .await
 +            .unwrap();
-+        let dataset = native.dataset.get().await.unwrap();
-+        assert!(
-+            function_plan(&dataset, "search_text")
-+                .await
-+                .needs_recompute(2)
-+        );
-+        let other = &bindings[1];
-+        l
-```
-
-**File**: `rust/lancedb/src/table/merge.rs` (modified, +50/-18)
-```diff
-@@ -249,11 +249,13 @@ impl MergeInsertBuilder {
-         Ok(())
-     }
- 
--    /// The existing columns a matched row takes from `source`: every source
--    /// column but the join keys, which a match leaves equal. An insert-only
--    /// merge rewrites none; its new rows get Function outputs from the next
--    /// refresh, as appended rows do.
--    pub(crate) fn function_guarded_columns(&self, source: &Fields) -> Vec<String> {
-+    /// The source columns a matched row writes: every column but the join
-+    /// keys, which a match leaves equal. Function inputs stay writable; the
-+    /// merge records their changed signatures so the next refresh recomputes
-+    /// the affected rows. Computed outputs and assignment columns remain
-+    /// protected by the direct-write guard. An insert-only merge writes none;
-+    /// its new rows get Function outputs from the next refresh.
-+    pub(crate) fn matched_source_columns(&self, source: &Fields) -> Vec<String> {
-         if !self.when_matched_update_all {
-             return Vec::new();
-         }
-@@ -351,10 +353,10 @@ pub(crate) async fn execute_merge_insert(
- ) -> Result<MergeResult> {
-     params.canonicalize_filters()?;
-     let schema = table.schema().await?;
--    super::computed_columns::ensure_not_function_bound(
-+    let matched_columns = params.matched_source_columns(new_data.schema().fields());
-+    super::computed_columns::ensure_not_written(
-         schema.as_ref(),
--        "merge_insert",
--        params.function_guarded_columns(new_data.schema().fields()),
-+        matched_columns.iter().map(String::as_str),
-     )?;
-     // Normalize blob layouts and JSON extension metadata just as on append.
-     // Keep arrow.json text labelled until Lance encodes it as JSONB.
-@@ -970,10 +972,11 @@ mod tests {
-         assert_eq!(table.count_rows(None).await.unwrap(), 2);
-     }
- 
--    /// A matched row takes every non-key source column, so the merge is
--    /// refused only when one of those is a binding's input or output.
-+    /// A matched row takes every non-key source column. Function inputs are
-+    /// writable and become stale for the next refresh; computed outputs stay
-+    /// protected, and a mixed input/output source is rejected before commit.
++        // Auto picks BTree for string columns, so LargeUtf8 must get one too.
++        table
++            .create_index(&["auto"], Index::Auto)
++            .execute()
++            .await
++            .unwrap();
++        table
++            .wait_for_index(&["explicit_idx", "auto_idx"], Duration::from_millis(10))
++            .await
++            .unwrap();
++
++        let index_configs = table.list_indices().await.unwrap();
++        assert_eq!(index_configs.len(), 2);
++        for index in index_configs {
++            assert_eq!(index.index_type, crate::index::IndexType::BTree);
++        }
++
++        for column in ["explicit", "auto"] {
++            for (filter, expected_rows) in [
++                (format!("{column} = 'alpha'"), 2),
++                (format!("{column} > 'beta'"), 1),
++                (format!("{column} IS NULL"), 1),
++            ] {
++                let query = table.query().only_if(filter.as_str());
++                let plan = query.explain_plan(false).await.unwrap();
++                assert!(plan.contains("ScalarIndexQuery"), "{filter}: {plan}");
++                let num_rows = query
++                    .execute()
++                    .await
++                    .unwrap()
++                    .try_collect::<Vec<_>>()
++                    .await
++                    .unwrap()
++                    .iter()
++                    .map(|b| b.num_rows())
++                    .sum::<usize>();
++                assert_eq!(num_rows, expected_rows, "{filter}");
++            }
++        }
++    }
++
      #[tokio::test]
--    async fn merge_update_on_a_function_table_refuses_only_bound_columns() {
-+    async fn merge_update_allows_function_inputs_but_protects_outputs() {
-         let table = crate::table::computed_columns::test_support::bound_table_from(
-             arrow_array::record_batch!(
-                 ("id", Int32, [1]),
-@@ -998,18 +1001,47 @@ mod tests {
- 
-         let mut merge = table.merge_insert(&["id"]);
-         merge.when_matched_update_all(None);
--        let err = merge
-+        let result = merge
-             .execute(reader(
-                 arrow_array::record_batch!(("id", Int32, [1]), ("title", Utf8, ["z"])).unwrap(),
-             ))
-             .await
--            .unwrap_err();
--        assert!(
--            matches!(&err, crate::Error::InvalidInput { message }
--                if message.contains("merge_insert of 'title'")
--                    && message.contains("a Function binding reads or writes it")),
--            "{err:?}"
-+            .unwrap();
-+        assert_eq!(result.num_updated_rows, 1);
-+        assert_eq!(
-+            table
-+                .count_rows(Some("title = 'z' AND search_text = 'a b'".into()))
-+                .await
-+                .unwrap(),
-+            1
-         );
-+
-+        let version = table.version().await.unwrap();
-+        for source in [
-+            arrow_array::record_batch!(("id", Int32, [1]), ("search_text", Utf8, ["uncomputed"]))
-+                .unwrap(),
-+            arrow_array::record_batch!(
-+                ("id", Int32, [1]),
-+                ("title", Utf8, ["must not commit"]),
-+                ("search_text", Utf8, ["uncomputed"])
-+            )
-+            .unwrap(),
-+        ] {
-+            let mut merge = table.merge_insert(&["id"]);
-+            merge.when_matched_update_all(None);
-+            let err = merge.execute(reader(source)).await.unwrap_err();
-+            assert!(
-+                matches!(&err, crate::Error::InvalidInput { message }
-+                    if message.contains("is computed")
-+                        && message.contains("cannot be written directly")),
-+                "{err:?}"
-+            );
-+            assert_eq!(table.version().await.unwrap(), version);
-+            assert_eq!(
-+                table.count_rows(Some("title = 'z'".into())).await.unwrap(),
-+                1
-+            );
-+        }
-     }
- }
- 
+     async fn test_create_builtin_scalar_index() {
+         for (index, index_type, predicate, invalid_column) in [
+```
+
+**File**: `rust/lancedb/src/utils/mod.rs` (modified, +1/-0)
+```diff
+@@ -539,6 +539,7 @@ pub fn supported_btree_data_type(dtype: &DataType) -> bool {
+             dtype,
+             DataType::Boolean
+                 | DataType::Utf8
++                | DataType::LargeUtf8
+                 | DataType::Time32(_)
+                 | DataType::Time64(_)
+                 | DataType::Date32
 ```
 
 ---
 
-### Incident Patch 3: `c7d972fe` (2026-11-16)
-**Commit Message**: fix(python): explain blob descriptor copy guidance (#5060)
+### Incident Patch 2: `7c7765c9` (2026-11-23)
+**Commit Message**: fix(rust): validate batch vector column before planning (#5162)
 
-The descriptor-copy error only named the missing `data`/`uri` child. It
-now says that this shape is an SDK blob descriptor rather than payload
-bytes, and points to `blob_mode="bytes"` for supported materialization,
-`blob_mode="descriptions"` for inspection, and the row-id plus
-`fetch_blobs`/`fetch_blob_files` copy path while the source stays
-unchanged.
+Batch vector queries resolved an explicit vector column with an
+infallible schema lookup before the existing vector-column validation
+ran. A column that could not be resolved would abort planning instead of
+returning the SDK's normal validation error.
 
-This reuses the merged guidance from #4940 and the
-direct-materialization contract from #4973. Ray integration remains out
-of scope for ENT-3556.
+Use the resolved column with `get_vector_type` so the batch path reports
+the same typed error as ordinary vector queries, while keeping explicit
+and inferred columns, multivector and binary routing, namespace
+pushdown, and query-plan selection unchanged.
 
-Refs ENT-3556
+Adds a focused synthetic-schema validation test for the error path.
 
-Test: `python/tests/test_blob.py` (210 passed, 39 skipped), including a
-regression that writes default lazy descriptor rows into a blob-schema
-table, checks the guidance, and confirms no target is created.
-`python/tests/test_util.py -k blob` (12 passed, 2 skipped).
-
-**File**: `python/python/lancedb/table.py` (modified, +8/-1)
+**File**: `rust/lancedb/src/table/query.rs` (modified, +57/-6)
 ```diff
-@@ -1150,7 +1150,14 @@ def _align_field(field: pa.Field, target_field: pa.Field) -> pa.Field:
-             if not any(child.name in ("data", "uri") for child in source_type):
-                 raise ValueError(
-                     f"blob struct input for column '{field.name}' must contain "
--                    "a 'data' or 'uri' child"
-+                    "a 'data' or 'uri' child. A blob query returns an SDK "
-+                    "descriptor in this shape, and a descriptor is not payload "
-+                    "bytes. Use blob_mode='bytes' to materialize payloads, or "
-+                    "inspect descriptors with blob_mode='descriptions'. To copy "
-+                    "payloads, select row IDs with with_row_id(True), then call "
-+                    "table.fetch_blobs(column, row_ids) or "
-+                    "table.fetch_blob_files(column, row_ids). Keep the source "
-+                    "unchanged between selection and fetching."
-                 )
-         elif not _can_coerce_to_blob(source_type) and not isinstance(
-             source_type, pa.ExtensionType
+@@ -273,13 +273,11 @@ pub async fn create_plan(
+                 Some(query.query_vector[0].len() as i32),
+             )?);
+         }
+-        let vector_field = schema.field(column.as_ref().unwrap()).unwrap();
+-        let (_, element_type) =
++        let (vector_type, element_type) =
+             lance::index::vector::utils::get_vector_type(schema, column.as_ref().unwrap())?;
++        let is_list_vector = matches!(&vector_type, DataType::List(_));
+         let is_binary = matches!(element_type, DataType::UInt8);
+-        if matches!(vector_field.data_type(), DataType::List(_))
+-            || (query.base.offset.unwrap_or(0) == 0 && !is_binary)
+-        {
++        if is_list_vector || (query.base.offset.unwrap_or(0) == 0 && !is_binary) {
+             // Lance distinguishes these cases from the vector column type: a
+             // list-like query against a List column is one multivector query,
+             // while the same query against a FixedSizeList column is a batch of
+@@ -315,7 +313,7 @@ pub async fn create_plan(
+                 fsl_builder.append(true);
+             }
+             query_vector = Some(Arc::new(fsl_builder.finish()));
+-            is_batch_query = !matches!(vector_field.data_type(), DataType::List(_));
++            is_batch_query = !is_list_vector;
+         } else {
+             // Lance's batch path has no per-query offset, and its binary path
+             // requires primitive UInt8 queries rather than a fixed-size list.
+@@ -2091,6 +2089,59 @@ mod tests {
+             "plan should add query_index column, got:\n{display}"
+         );
+     }
++
++    #[tokio::test]
++    async fn test_create_plan_batch_vector_missing_column_returns_sdk_error() {
++        use crate::connect;
++        use crate::table::query::create_plan;
++        use arrow_array::{Float32Array, RecordBatch};
++        use arrow_schema::{DataType, Field, Schema};
++
++        let conn = connect("memory://").execute().await.unwrap();
++        let schema = Arc::new(Schema::new(vec![
++            Field::new("id", DataType::Int32, false),
++            Field::new(
++                "vector",
++                DataType::FixedSizeList(Arc::new(Field::new("item", DataType::Float32, true)), 2),
++                false,
++            ),
++        ]));
++        let batch = RecordBatch::new_empty(schema);
++        let table = conn
++            .create_table("test_batch_vector_missing_column", vec![batch])
++            .execute()
++            .await
++            .unwrap();
++        let native_table = table.as_native().unwrap();
++
++        let query = AnyQuery::VectorQuery(VectorQueryRequest {
++            base: QueryRequest {
++                limit: Some(1),
++                ..Default::default()
++            },
++            column: Some("missing_vector".to_string()),
++            query_vector: vec![
++                Arc::new(Float32Array::from(vec![1.0, 2.0])),
++                Arc::new(Float32Array::from(vec![3.0, 4.0])),
++            ],
++            ..Default::default()
++        });
++
++        let error = create_plan(native_table, &query, QueryExecutionOptions::default())
++            .await
++            .unwrap_err();
++
++        assert!(
++            matches!(
++                &error,
++                Error::Lance {
++                    source: lance::Error::Index { message, .. }
++                } if message.contains("column missing_vector does not exist in schema")
++            ),
++            "expected ordinary vector column validation error, got: {error:?}"
++        );
++    }
++
+     #[rstest::rstest]
+     #[case::modern(false)]
+     #[case::legacy(true)]
 ```
 
-**File**: `python/python/tests/test_blob.py` (modified, +18/-0)
+---
+
+### Incident Patch 3: `e9319c86` (2026-11-23)
+**Commit Message**: fix: resolve agent plugin marketplace source (UAX-250) (#5170)
+
+Looks like we have an issue with the plugin config pointing to a
+non-existent dir.
+
+Part of UAX-250. Related to UAX-245.
+
+Clicktest, can ask Chat for example to create a fresh disposable config.
+
+<img width="584" height="452" alt="Screenshot 2026-11-23 at 9 38 25 AM"
+src="https://github.com/user-attachments/assets/d359f9e2-bd3f-4cb8-993a-7db3b2b20342"
+/>
+
+Clicktesting: Use a disposable Claude configuration. Add this checkout
+as a marketplace, then install `lancedb@lancedb`. Confirm that
+installation fetches `lancedb/lancedb-agent-plugins` and exposes its
+skill.
+
+*original prompt:*
+
+"Work on Linear issue UAX-250:\
+\
+Suggested branch name:
+luciacerchie/uax-250-add-enterprise-functions-guidance-to\
+\
+\<issue identifier="UAX-250">\
+\<title>Add Enterprise Functions guidance to the lancedb agent
+skill\</title>\
+\<description>\
+The public \`lancedb\` agent skill (\`lancedb/lancedb-agent-plugins\`,
+v0.1.0) has no guidance on LanceDB Enterprise Functions. It also routes
+"UDF / backfill" tasks to the Geneva/Ray path, which Functions is meant
+to replace. Agents using the skill steer users away from our newest
+product.\
+\
+\## Prob
+
+**File**: `.claude-plugin/marketplace.json` (modified, +4/-1)
 ```diff
-@@ -1135,6 +1135,24 @@ def test_copy_blob_subset_preserves_payloads_nulls_and_empty_values(tmp_path):
-     assert sorted(copied, key=lambda row: row["id"]) == rows[:3]
- 
- 
-+def test_copy_blob_descriptor_rows_explains_payload_materialization(tmp_path):
-+    db = lancedb.connect(tmp_path)
-+    schema = pa.schema([pa.field("id", pa.int64()), lancedb.blob("image")])
-+    source = db.create_table("source", data=[{"id": 1, "image": b"one"}], schema=schema)
-+    hits = source.search().where("id = 1").to_arrow()
-+
-+    with pytest.raises(ValueError, match="must contain a 'data' or 'uri' child") as exc:
-+        db.create_table("copy", data=hits, schema=schema)
-+
-+    message = str(exc.value)
-+    assert "blob_mode='bytes'" in message
-+    assert "blob_mode='descriptions'" in message
-+    assert "with_row_id(True)" in message
-+    assert "fetch_blobs(column, row_ids)" in message
-+    assert "fetch_blob_files(column, row_ids)" in message
-+    assert not db.table_exists(["copy"])
-+
-+
- def test_fetch_blobs_round_trip():
-     table = _blob_table(
-         "round_trip",
+@@ -7,7 +7,10 @@
+   "plugins": [
+     {
+       "name": "lancedb",
+-      "source": "./plugins/lancedb",
++      "source": {
++        "source": "github",
++        "repo": "lancedb/lancedb-agent-plugins"
++      },
+       "description": "Write, review, debug, and document LanceDB pipelines in Python and TypeScript that work with both LanceDB Embedded and LanceDB Enterprise.",
+       "version": "0.1.0",
+       "author": {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5063** (2026-11-16): chore: update lance dependency to v15.0.0-beta.23 (@lancedb-robot)
-- **PR #5062** (2026-11-16): fix: allow matched merge updates to Function inputs (@Xuanwo)
-- **PR #5060** (2026-11-16): fix(python): explain blob descriptor copy guidance (@Xuanwo)
-- **PR #5059** (closed): docs: add Simplified Chinese translation (README.zh.md) (@JasonYeYuhe)
-- **PR #5057** (2026-11-15): chore: update lance dependency to v15.0.0-beta.22 (@lancedb-robot)
-- **PR #5055** (closed): feat(sdk): add durable compaction jobs with typed results (@ChilePiquin)
+- **PR #5172** (2026-11-24): chore!: drop Python 3.10 support (@rahulsjha)
+- **PR #5170** (2026-11-23): fix: resolve agent plugin marketplace source (UAX-250) (@Cerchie)
+- **PR #5163** (2026-11-23): chore: update lance dependency to v15.0.0-beta.28 (@lancedb-robot)
+- **PR #5162** (2026-11-23): fix(rust): validate batch vector column before planning (@Xuanwo)
+- **PR #5160** (2026-11-22): fix: reject blob request concurrency above semaphore limit (@Xuanwo)
+- **PR #5159** (2026-11-22): chore: update lance dependency to v15.0.0-beta.27 (@lancedb-robot)
 
 ---
 
@@ -2148,39 +1630,55 @@ table, checks the guidance, and confirms no target is created.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. python): show Function registration progress and image details
+## X. allow BTree indexes on LargeUtf8 columns
 
 **RULE**:
-When implementing operations in `docs/src/python/python.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rust/lancedb/src/table/create_index.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3aed07c3`: python): show Function registration progress and image details. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0f648bba`: allow BTree indexes on LargeUtf8 columns. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/src/python/python.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/lancedb/src/table/create_index.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-Use `progress=True` when waiting for Function registration in a notebook or
-terminal. A callback receives structured snapshots instead:
+    #[tokio::test]
+    async fn test_create_btree_index_on_large_utf8() {
+        let conn = connect("memory://").execute().await.unwrap();
+        let schema = Arc::new(Schema::new(vec![
+            Field::new("explicit", DataType::LargeUtf8, true),
+            Field::new("auto", DataType::LargeUtf8, true),
+        ]));
+        let values = || {
+            Arc::new(LargeStringArray::from(vec![
+                Some("alpha"),
+                None,
+                Some("omega"),
+                Some("alpha"),
+            ])) as ArrayRef
+        };
+        let batch = RecordBatch::try_new(schema, vec![values(), values()]).unwrap();
+        let table = conn
+            .create_table("large_utf8_btree_table", batch)
+            .execute()
+            .await
+            .unwrap();
 
-```python
-fn = db.create_function(my_function, progress=True)
-registration = db.create_function_async(other_function)
-fn = registration.wait(progress=lambda snapshot: print(snapshot))
-print(fn.image.describe())
-```
-
-Registration uses the existing SQL query handle. The current handle reports
-lifecycle state and `client_elapsed_time_millis` since the handle was created;
-detailed build phases and build logs are unavailable. Keep the same handle after
-a wait timeout to resume waiting. Failures retain the server error and request
-identifiers. `fn.image` has a concise representation; `describe()` exposes Python
-and CUDA requirements without inspecting Pydantic internals. Platforms, base image
-and size are `None` until the service reports them. The full image descriptor and
-canonical JSON remain available.
-
+        table
+            .create_index(&["explicit"], Index::BTree(BTreeIndexBuilder::default()))
+            .execute()
+            .await
+            .unwrap();
+        // Auto picks BTree for string columns, so LargeUtf8 must get one too.
+        table
+            .create_index(&["auto"], Index::Auto)
+            .execute()
+            .await
+            .unwrap();
+        table
+            .wait_for_inde
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2190,7 +1688,7 @@ canonical JSON remain available.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3aed07c3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0f648bba` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

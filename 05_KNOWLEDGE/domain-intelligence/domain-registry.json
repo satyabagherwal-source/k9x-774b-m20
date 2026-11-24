@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T02:21:44.547Z",
+  "last_updated": "2026-11-24T02:31:19.850Z",
   "total_records": 2485,
   "domains": {
     "A": {
@@ -9218,8 +9218,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "8ae2b460a3a1078803c6bbe093c2ddda63805b2d2f508401922b96b6f95f0c01",
-      "created_at": "2026-11-24T02:21:44.547Z"
+      "content_hash": "4b43d041fd12aa8cdbf12b64469bcc8cd71e7f0f86d854943b1978982a81e9a5",
+      "created_at": "2026-11-24T02:31:19.850Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -20979,8 +20979,8 @@
       "title": "Technical Construction Intelligence: lancedb/lancedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lancedb-lancedb-technical-construction-intelligence-lancedb-lancedb-core-invaria.md",
       "repository": "lancedb/lancedb",
-      "content_hash": "7a246fc0bd810da72ea95a5e37442e52f212ca179f66fb203b94a04899cc73a1",
-      "created_at": "2026-11-18T13:17:32.659Z"
+      "content_hash": "0a5455a506b61a8ea1da3fad9f72f97ad79b6e8d61f71c48d9da76092f3bd61a",
+      "created_at": "2026-11-24T02:31:13.707Z"
     },
     "domain_intelligence-technical-construction-intelligence-meshtastic-meshtastic-android-core-invariant": {
       "record_id": "domain_intelligence-technical-construction-intelligence-meshtastic-meshtastic-android-core-invariant",
@@ -21040,8 +21040,8 @@
       "title": "Technical Construction Intelligence: lancedb-lancedb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lancedb-lancedb-learnings-technical-construction-intelligence-lancedb-lancedb-le.md",
       "repository": "lancedb-lancedb-learnings",
-      "content_hash": "386e3053c6f17b78c40b724d048f24ed7ecd09c625ac72666e81f2337a7cc494",
-      "created_at": "2026-11-16T20:11:48.865Z"
+      "content_hash": "8698356a7b0912171b8b3969baf630cba89fd75371b9dacf5cab3e83f176f8be",
+      "created_at": "2026-11-24T02:31:18.720Z"
     },
     "domain_intelligence-quality-verification-intelligence-thaw-app-thaw-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-thaw-app-thaw-core-invariants",
@@ -24602,8 +24602,8 @@
       "title": "Quality & Verification Intelligence: rtk-ai/rtk Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-rtk-ai-rtk-quality-verification-intelligence-rtk-ai-rtk-core-invariants.md",
       "repository": "rtk-ai/rtk",
-      "content_hash": "ad19baec11cf1a822772e474a6b23dd20b100645860e4611f40d2127b85237a8",
-      "created_at": "2026-11-22T19:01:36.060Z"
+      "content_hash": "448461ea5a333129f19bf4e048671986fda3417649dc97b4cc0647d06b07be6a",
+      "created_at": "2026-11-24T02:31:00.822Z"
     },
     "domain_intelligence-quality-verification-intelligence-rtk-ai-rtk-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-rtk-ai-rtk-learnings-core-invariants",
@@ -24611,8 +24611,8 @@
       "title": "Quality & Verification Intelligence: rtk-ai-rtk-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-rtk-ai-rtk-learnings-quality-verification-intelligence-rtk-ai-rtk-learnings-core.md",
       "repository": "rtk-ai-rtk-learnings",
-      "content_hash": "866999014a1f6fbbf957ba707d28ee3b9f75eafe7754f2c6af85f26043755c3a",
-      "created_at": "2026-11-22T19:01:51.917Z"
+      "content_hash": "25612c08769e33dea3e276071ece4d8874a8ea561036aff7606212c8045bf19f",
+      "created_at": "2026-11-24T02:31:17.548Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-audio-2b-learnings-core-invaria": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-audio-2b-learnings-core-invaria",

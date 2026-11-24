@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T19:01:51.559Z",
+  "timestamp": "2026-11-24T02:31:17.152Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-rtk-ai-rtk-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [rtk-ai-rtk-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T19:01:51.559Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T02:31:17.152Z`  
 > **Learning ID**: `LEARN-EVO-rtk-ai-rtk-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md`  
 > **Source**: github ([https://github.com/rtk-ai/rtk](https://github.com/rtk-ai/rtk))  
-> **Source Version**: `762708cd`  
+> **Source Version**: `c43b5c44`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T19:01:34.559Z  
+> **Timestamp**: 2026-11-24T02:30:58.777Z  
 > **Learning ID**: `learn-github-rtk-ai-rtk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rtk-ai/rtk](https://github.com/rtk-ai/rtk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T19:01:34.551Z  
+> **Harvest Timestamp**: 2026-11-24T02:30:58.616Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: CLI proxy that reduces LLM token consumption by 60-90% on common dev commands. Single Rust binary, zero dependencies
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 87496 stars
+- **Stars / Engagement**: 87617 stars
 
 ---
 
@@ -1747,11 +1747,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #5122** (2026-11-23): **fix(engine): stop rtk:delegate-reads from shunting images and PDFs**
+  *Symptoms*: ## Summary  - `rtk:delegate-reads` no longer routes whole-file reads of png, jpg, jpeg, gif, webp and pdf files to `bulk-read`: an agent's read tool renders those itself, and `bulk-read` cannot show an image. - The exclusion lists each extension in lower and upper case (`png`, `PNG`, ...), so `.PNG` is covered without changing how conditions compare strings. - Notebooks (`.ipynb`) stay in the shunt: they are text and one of the most verbose files an agent opens.  Fixes #5106  ## Root cause  `shunt-large-read` fires on `file_lines_gt = 350`, and `file_lines` counts `\n` bytes (`file_line_count` in `src/core/pipeline_config.rs`). A binary file has no real lines, but any PNG with a few hundred 0x0A bytes counts as "1083 lines" and is denied with a pointer to `rtk bulk-read`, which cannot read it (`stream did not contain valid UTF-8`).  ## Fix  - `engine/builtin/delegate-reads.toml`: add `extension_not_in = [...]` (images and PDFs, both cases) to the rule's `when` (a user `[override.shunt-large-read] when.file_lines_gt = 500` keeps it, since `when` keys merge). The header comment is scoped to the rule. - `docs/guide/pipelines/reference-pipelines.md`: the literal copy of the built-in, plus one sentence scoped to the rule. - `engine/src/pipeline/eval.rs`: tests for the rule. `conditions.rs` is untouched.  Alternative considered: skip any file the binary detection in `rtk read` flags (8886c14, #822). It would also cover unlisted binary formats, but it needs a new fact (a file read o
+
 - **Issue #5115** (2026-11-14): **rtk x86_64-unknown-linux-musl binary crashes with SIGILL on CPUs without AVX2 (Ivy Bridge / Sandy Bridge) — request a baseline build**
   *Symptoms*: # `rtk` x86_64-unknown-linux-musl binary crashes with SIGILL on CPUs without AVX2 (Ivy Bridge / Sandy Bridge) — request a baseline build  ## Summary  The prebuilt `rtk-x86_64-unknown-linux-musl` binary from the latest release (v1.2.0) crashes immediately with `SIGILL` (Illegal instruction, exit code 132) on x86-64 CPUs that lack AVX2. The binary contains unguarded AVX2 instructions that execute before any runtime CPU-feature dispatch can pick a scalar fallback. A baseline build artifact (compiled with `target-cpu=x86-64` and AVX2/BMI2/FMA disabled at codegen) is needed for the many homelab and older-server machines still on Ivy Bridge / Sandy Bridge / pre-Excavator AMD.  ## Environment  - **OS:** Alpine Linux edge (musl), kernel 6.x - **CPU:** Intel Xeon E5-2695 v2 (Ivy Bridge, 2012) — has AVX, **no AVX2, no BMI1/BMI2, no FMA** - **CPU flags:** `sse sse2 ssse3 sse4_1 sse4_2 avx` (no `avx2`, no `bmi1`, no `bmi2`, no `fma`) - **rtk:** `v1.2.0`, installed via `curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh` (asset `rtk-x86_64-unknown-linux-musl.tar.gz`) - **Reproduced commands:** `rtk`, `rtk --help`, `rtk --version` — all exit 132  ## Steps to reproduce  1. On any x86-64 CPU without AVX2 (Ivy Bridge, Sandy Bridge, pre-Ryzen AMD), run:    ```bash    curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh    rtk --version    ``` 2. Alternatively, on an AVX2-capable machine, reproduce under QEMU:    ```bas
-
-- **Issue #5066** (2026-11-22): **fix(pipe): support Windows drive paths and tee recovery hints in grep filter**
-  *Symptoms*: ## Problem  While running `rtk pipe --filter grep` (and `rtk pipe` auto-detection) in coding-agent workflows, we hit two silent failure modes where an agent loses search results without realizing it:  1. **Windows absolute paths are silently dropped:**    When `rg` or `grep` emits paths with a drive letter (e.g. `C:\proj\src\main.rs:42:fn main()` or `D:/repo/lib.rs:7:let x = 1;`), `pipe_cmd` splits on the first `:` (`C:`), treats `\proj\src\main.rs` as the line number, fails numeric parsing, and drops the line. Auto-detection fails to recognize the stream, and in mixed output (Windows absolute + relative paths), all drive-prefixed matches disappear silently.  2. **Truncated matches (`> 10` per file) cannot be recovered in pipe mode:**    Direct `rtk grep` appends a recovery hint when capping past 10 matches per file (matching `CONTRIBUTING.md`: *"capping output at N items is only acceptable if accompanied by a hint that lets the agent recover the hidden data"*). In contrast, `rtk pipe --filter grep` printed a bare `+240` with no `rtk recall` / `tee` hint, leaving the agent with no way to inspect the omitted matches.  ## Before / After  **Before:** ```text # 1) Windows paths in `rtk pipe --filter grep` (mixed with a relative path): # C:\proj\src\main.rs:42:fn main()   <-- silently dropped! [file] src/unix.rs (1):     19: pub fn run() {}  # 2) File with 15 matches in `rtk pipe --filter grep`:   +5 ```  **After:** ```text # 1) Windows + Unix paths preserved and auto-detected: [f
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1768,594 +1768,176 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `762708cd` (2026-11-22)
-**Commit Message**: Merge pull request #3991 from tianhaotian/fix/parser-crlf-json-offset
+### Incident Patch 1: `c52bc886` (2026-11-23)
+**Commit Message**: fix(gain): mark the console-mode unsafe block for semgrep
 
-fix(parser): preserve CRLF byte offsets during JSON extraction
+#5186 added an `unsafe` GetConsoleMode call in gain.rs without the
+`nosemgrep: unsafe-block` marker the other audited unsafe blocks carry,
+so the semgrep security scan has failed on develop since that merge.
 
-**File**: `src/parser/mod.rs` (modified, +51/-10)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `src/analytics/gain.rs` (modified, +1/-0)
 ```diff
-@@ -150,19 +150,15 @@ pub fn extract_json_object(input: &str) -> Option<&str> {
-     } else {
-         // Fallback: find first `{` on its own line or after whitespace
-         let mut found_start = None;
--        for (idx, line) in input.lines().enumerate() {
--            let trimmed = line.trim();
-+        let mut line_start = 0;
-+        // Keep line terminators so offsets remain exact for LF, CRLF, or a mix.
-+        for line in input.split_inclusive('\n') {
-+            let trimmed = line.trim_start();
-             if trimmed.starts_with('{') {
--                // Calculate byte offset
--                found_start = Some(
--                    input[..]
--                        .lines()
--                        .take(idx)
--                        .map(|l| l.len() + 1)
--                        .sum::<usize>(),
--                );
-+                found_start = Some(line_start + line.len() - trimmed.len());
-                 break;
-             }
-+            line_start += line.len();
-         }
-         found_start?
-     };
-@@ -349,4 +345,49 @@ Scope: all 6 workspace projects
-             extract_json_object(input).expect("Should extract nested JSON with mixed multibyte");
-         assert_eq!(extracted, input);
-     }
-+
-+    #[test]
-+    fn test_extract_json_object_crlf_multibyte_prefix() {
-+        let input = "ligne un\r\n ligne deux\r\n fin é\r\n{\"a\": 1}\r\n";
-+        assert_eq!(extract_json_object(input), Some(r#"{"a": 1}"#));
-+    }
-+
-+    #[test]
-+    fn test_extract_json_object_line_endings_and_unicode() {
-+        let objects = [
-+            r#"{"a": 1}"#,
-+            r#"{"message": "café 中文 🚀 {\"quoted\"}", "nested": {"ok": true}}"#,
-+            r#"{"numTotalTests": 1, "message": "café 中文 🚀", "nested": {"ok": true}}"#,
-+        ];
-+        for (first_eol, second_eol) in [("\n", "\n"), ("\r\n", "\r\n"), ("\r\n", "\n")] {
-+            for prefix in ["", "build output", "café 中文 🚀"] {
-+                for indent in ["", " \t", "\u{2003}"] {
-+                    for object in objects {
-+                        for suffix in ["", "\r\ntrailing 中文 🚀 output"] {
-+                            let input = format!(
-+                                "{prefix}{first_eol}warning{second_eol}{indent}{object}{suffix}"
-+                            );
-+                            let extracted =
-+                                extract_json_object(&input).expect("Should extract JSON");
-+                            assert_eq!(extracted, object, "input: {input:?}");
-+                            let parsed: serde_json::Value = serde_json::from_str(extracted)
-+                                .expect("Extracted JSON must be valid");
-+                            assert!(parsed.is_object());
-+                        }
-+                    }
-+                }
-+            }
-+        }
-+    }
-+
-+    #[test]
-+    fn test_extract_json_object_incomplete_crlf_fallback() {
-+        for input in [
-+            "café\r\n中文\r\nno object here 🚀",
-+            "café\r\n中文\r\n  {\"nested\": {\"ok\": true}",
-+            "café\r\n中文\r\n  {\"message\": \"unterminated 🚀",
-+        ] {
-+            assert_eq!(extract_json_object(input), None, "input: {input:?}");
-+        }
-+    }
- }
+@@ -32,6 +32,7 @@ pub(crate) fn configure_console_color() {
+     let mut mode = 0;
+     // SAFETY: stdout owns the handle for this call and mode is writable.
+     #[allow(unsafe_code)]
++    // nosemgrep: unsafe-block
+     let has_mode = unsafe { GetConsoleMode(stdout.as_raw_handle(), &mut mode) } != 0;
+     if requires_plain_console_output(has_mode.then_some(mode))
+         && crate::core::user_env::var("CLICOLOR_FORCE").is_none_or(|value| value == "0")
 ```
 
 ---
 
-### Incident Patch 2: `210ef109` (2026-11-22)
-**Commit Message**: Merge branch 'develop' into fix/parser-crlf-json-offset
+### Incident Patch 2: `c43b5c44` (2026-11-23)
+**Commit Message**: Merge pull request #5230 from rtk-ai/fix/semgrep-gain-console-mode
 
-**File**: `.cargo/config.toml` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+# clap's derive-expanded parser overflows the 2 MiB stack cargo gives test
-+# threads in a debug build. This raises the floor for every cargo-spawned
-+# process, CI and local alike; release builds never needed it (optimized
-+# frames, main thread).
-+[env]
-+RUST_MIN_STACK = "8388608"
-```
+fix(gain): mark the console-mode unsafe block for semgrep
 
-**File**: `.claude/agents/code-reviewer.md` (modified, +3/-3)
+**File**: `src/analytics/gain.rs` (modified, +1/-0)
 ```diff
-@@ -27,7 +27,7 @@ src/main.rs (Commands enum + routing)
- 
- **Non-negotiable constraints:**
- - Startup time <10ms (zero async, single-threaded)
--- Token savings ≥60% per filter
-+- Token savings ≥20% per filter
- - Fallback to raw command if filter fails
- - Exit codes propagated from underlying commands
- 
-@@ -74,7 +74,7 @@ Raise alarms immediately when you see:
- 
- **Token Savings:**
- - `count_tokens()` helper in tests
--- Savings ≥60% for all filters (release blocker)
-+- Savings ≥20% for all filters (release blocker)
- - Output: failures only, summary stats, no verbose metadata
- - Truncation strategy: consistent across filters
- 
-@@ -225,7 +225,7 @@ Both paths MUST have tests.
- 
- ## Adversarial Questions for RTK
- 
--1. **Savings**: If I run `count_tokens(input)` vs `count_tokens(output)` — is savings ≥60%?
-+1. **Savings**: If I run `count_tokens(input)` vs `count_tokens(output)` — is savings ≥20%?
- 2. **Fallback**: If the filter panics, does the user still get their command output?
- 3. **Startup**: Does this change add any I/O or initialization before the command runs?
- 4. **Exit code**: If the underlying command returns non-zero, does RTK propagate it?
-```
-
-**File**: `.claude/agents/debugger.md` (modified, +2/-2)
-```diff
-@@ -97,7 +97,7 @@ docker run --rm -v $(pwd):/rtk -w /rtk rust:latest cargo test --test shell_escap
- | Filter crashes | Regex panic on malformed input | Add test with empty/malformed fixture |
- | Performance regression | Regex recompiled at runtime | Check flamegraph for `Regex::new()` calls |
- | Shell escaping error | Platform-specific quoting | Test on macOS + Linux + Windows |
--| Token savings <60% | Weak condensation logic | Review filter algorithm, compare fixtures |
-+| Token savings <20% | Weak condensation logic | Review filter algorithm, compare fixtures |
- | Test failure | Fixture outdated or test assertion wrong | Update fixture from real command output |
- 
- **Example hypothesis testing**:
-@@ -214,7 +214,7 @@ Command::new(cmd).args(args).spawn();
- - [ ] All tests pass (`cargo test --all`)
- - [ ] Performance benchmarks pass (`hyperfine` <10ms)
- - [ ] Cross-platform tests pass (macOS + Linux)
--- [ ] Token savings verified (≥60% in tests)
-+- [ ] Token savings verified (≥20% in tests)
- - [ ] Code formatted (`cargo fmt --all --check`)
- - [ ] Clippy clean (`cargo clippy --all-targets`)
- 
-```
-
-**File**: `.claude/agents/rtk-testing-specialist.md` (modified, +9/-9)
-```diff
-@@ -12,7 +12,7 @@ You are a testing expert specializing in RTK's unique testing needs: command out
- ## Core Responsibilities
- 
- - **Snapshot testing**: Use `insta` crate for output validation
--- **Token accuracy**: Verify 60-90% savings claims with real fixtures
-+- **Token accuracy**: Verify the ≥20% savings floor with real fixtures
- - **Cross-platform**: Test bash/zsh/PowerShell compatibility
- - **Regression prevention**: Detect performance degradation in CI
- - **Integration tests**: Real command execution (git, cargo, gh, pnpm, etc.)
-@@ -84,7 +84,7 @@ ls -la src/snapshots/
- 
- ### Token Count Validation
- 
--All filters **MUST** verify token savings claims (60-90%) in tests:
-+All filters **MUST** verify the ≥20% savings floor in tests:
- 
- ```rust
- #[cfg(test)]
-@@ -124,7 +124,7 @@ mod tests {
- }
- ```
- 
--**Why critical**: RTK promises 60-90% token savings. Tests must verify these claims with real fixtures. If savings drop below 60%, it's a **release blocker**.
-+**Why critical**: RTK requires ≥20% savings per filter. Tests must verify these claims with real fixtures. If savings drop below 20%, it's a **release blocker**.
- 
- **Creating fixtures**:
- 
-@@ -242,7 +242,7 @@ cargo test --ignored test_real_git_log
- 
- **Coverage goals**:
- - **100% filter coverage**: Every filter has snapshot test + token accuracy test
--- **95% token savings verification**: Fixtures with known savings (60-90%)
-+- **95% token savings verification**: Fixtures with known savings (≥20%)
- - **Cross-platform tests**: macOS + Linux (Windows in CI only)
- 
- **Coverage verification**:
-@@ -300,8 +300,8 @@ docker run --rm -v $(pwd):/rtk -w /rtk rust:latest cargo test
- - Memory usage must be <5MB
- - Use `hyperfine` and `time -l` to verify
- 
--❌ **DON'T** accept <60% token savings → Fails promise to users
--- All filters must achieve 60-90% savings
-+❌ **DON'T** accept <20% token savings → Fails promise to users
-+- All filters must achieve ≥20% savings
- - Test with real fixtures, not synthetic data
- - If savings drop, investigate and fix before merge
- 
-@@ -313,7 +313,7 @@ docker run --rm -v $(pwd):/rtk -w /rtk rust:latest cargo test
- ✅ **DO** verify token savings with real fixtures
- - Use real command output, not synthetic
- - Calculate savings: `100.0 - (output_tokens / input_tokens * 100.0)`
--- Assert `savings >= 60.0`
-+- Assert `savings >= 20.0`
- 
- ✅ **DO** test shell escaping on all platforms
- - Use `#[cfg(target_os = "...")]` for platform-specific tests
-@@ -375,7 +375,7 @@ fn test_newcmd_token_savings() {
-     let output_tokens = count_tokens(&output);
-     let savings = 100.0 - (output_tokens as f64 / input_tokens as f64 * 100.0);
- 
--    assert!(savings >= 60.0, "Expected ≥60% savings, got {:.1}%", savings);
-+    assert!(savings >= 20.0, "Expected ≥20% savings, got {:.1}%", savings);
- }
- ```
- 
-@@ -441,7 +441,7 @@ rtk/
- ├── src/
- │   ├── cmds/
- │   │   ├── git/
--│   │   │   ├── git.rs                    # Filter implementation
-+│   │   │   ├── git_cmd.rs                    # Filter implementation
- │   │   │   │   └── #[cfg(test)] mod tests { ... }  # Unit tests
- │   │   │   └── snapshots/                # Insta snapshots for git module
- │   │   ├── js/
-```
-
-**File**: `.claude/agents/rust-rtk.md` (modified, +12/-12)
-```diff
-@@ -89,7 +89,7 @@ pub fn filter_git_log(input: &str) -> String {
- 
- ### Token Count Validation (Testing Critical)
- 
--All filters **MUST** verify token savings claims (60-90%) in tests:
-+All filters **MUST** verify the ≥20% savings floor in tests:
- 
- ```rust
- #[cfg(test)]
-@@ -113,10 +113,10 @@ mod tests {
- 
-         let savings = 100.0 - (output_tokens as f64 / input_tokens as f64 * 100.0);
- 
--        // RTK promise: 60-90% savings
-+        // RTK floor: >=20% savings
-         assert!(
--            savings >= 60.0,
--            "Git log filter: expected ≥60% savings, got {:.1}%",
-+            savings >= 20.0,
-+            "Git log filter: expected ≥20% savings, got {:.1}%",
-             savings
-         );
- 
-@@ -126,7 +126,7 @@ mod tests {
- }
- ```
- 
--**Why**: Token savings claims (60-90%) must be **verifiable**. Tests with real fixtures prevent regressions. If savings drop below 60%, it's a release blocker.
-+**Why**: Token savings (≥20% floor) must be **verifiable**. Tests with real fixtures prevent regressions. If savings drop below 20%, it's a release blocker.
- 
- ### Cross-Platform Shell Escaping
- 
-@@ -235,11 +235,11 @@ mod tests {
-         // Verify format preservation
-         assert!(output.contains("test result:"));
- 
--        // Verify token savings ≥60%
-+        // Verify token savings ≥20%
-         let input_tokens = count_tokens(input);
-         let output_tokens = count_tokens(&output);
-         let savings = 100.0 - (output_tokens as f64 / input_tokens as f64 * 100.0);
--        assert!(savings >= 60.0, "Expected ≥60% savings, got {:.1}%", savings);
-+        assert!(savings >= 20.0, "Expected ≥20% savings, got {:.1}%", savings);
-     }
- 
-     #[test]
-@@ -315,7 +315,7 @@ fn test_real_git_log() {
- - `src/core/config.rs` - User configuration (~/.config/rtk/config.toml)
- 
- **Command modules** (`src/cmds/<ecosystem>/`):
--- `src/cmds/git/` - git.rs, gh_cmd.rs, gt_cmd.rs, diff_cmd.rs
-+- `src/cmds/git/` - git_cmd.rs, gh_cmd.rs, gt_cmd.rs, diff_cmd.rs
- - `src/cmds/rust/` - cargo_cmd.rs, runner.rs
- - `src/cmds/js/` - lint_cmd.rs, tsc_cmd.rs, next_cmd.rs, prettier_cmd.rs, playwright_cmd.rs, prisma_cmd.rs, vitest_cmd.rs, pnpm_cmd.rs, npm_cmd.rs
- - `src/cmds/python/` - ruff_cmd.rs, pytest_cmd.rs, mypy_cmd.rs, pip_cmd.rs
-@@ -325,7 +325,7 @@ fn test_real_git_log() {
- - `src/cmds/system/` - ls.rs, tree.rs, read.rs, grep_cmd.rs, find_cmd.rs, etc.
- 
- **Hook & analytics** (`src/hooks/`, `src/analytics/`):
--- `src/hooks/init.rs` - rtk init command
-+- `src/hooks/init/` - rtk init command
- - `src/analytics/gain.rs` - rtk gain command
- 
- **Tests**:
-@@ -395,7 +395,7 @@ docker run --rm -v $(pwd):/rtk -w /rtk rust:latest cargo test  # Linux via Docke
- 
- ✅ **DO** provide fallback to raw command on filter failure
- ✅ **DO** compile fixed, reused regexes once with `LazyLock<Regex>`
--✅ **DO** verify token savings claims in tests (≥60%)
-+✅ **DO** verify token savings claims in tests (≥20%)
- ✅ **DO** test on macOS + Linux + Windows (via CI or manual)
- ✅ **DO** run `cargo fmt && cargo clippy --all-targets && cargo test` before commit
- ✅ **DO** benchmark startup time with `hyperfine` (<10ms target)
-@@ -437,7 +437,7 @@ mod tests {
-         let output = filter_newcmd(input).unwrap();
- 
-         let savings = calculate_savings(input, &output);
--        assert!(savings >= 60.0, "Expected ≥60% savings, got {:.1}%", savings);
-+        assert!(savings >= 20.0, "Expected ≥20% savings, got {:.1}%", savings);
-     }
- }
- ```
-@@ -516,7 +516,7 @@ rtk newcmd args
- |--------|--------|--------------|
- | Startup time | <10ms | `hyperfine 'rtk git status'` |
- | Memory overhead | <5MB | `/usr/bin/time -l rtk git status` |
--| Token savings | 60-90% | Tests with `count_tokens()` |
-+| Token savings | ≥20% floor | Tests with `count_tokens()` |
- | Binary size | <5MB stripped | `ls -lh target/release/rtk` |
- 
- **Performance regressions are release blockers** - always benchmark before/after changes.
-```
-
-**File**: `.claude/agents/system-architect.md` (modified, +2/-2)
-```diff
-@@ -32,7 +32,7 @@ Think in terms of filter families, not individual commands. Every new `*_cmd.rs`
- ```
- src/main.rs
- ├── Commands enum (clap derive)
--│   ├── Git(GitArgs)      → cmds/git/git.rs
-+│   ├── Git(GitArgs)      → cmds/git/git_cmd.rs
- │   ├── Cargo(CargoArgs)  → cmds/rust/runner.rs
- │   ├── Gh(GhArgs)        → cmds/git/gh_cmd.rs
- │   ├── Grep(GrepArgs)    → cmds/system/grep_cmd.rs
-@@ -181,5 +181,5 @@ Before adding code to a module, check `utils.rs`:
- **Will not:**
- - Implement the full filter logic (→ rust-rtk agent)
- - Write the actual regex patterns (→ implementation detail)
--- Make decisions about token savings targets (→ fixed at ≥60%)
-+- Make decisions about token savings targets (→ fixed at ≥20%)
- - Override the <10ms startup constraint (→ non-negotiable)
-```
-
-**File**: `.claude/agents/technical-writer.md` (modified, +5/-5)
-```diff
-@@ -28,7 +28,7 @@ Write for developers using RTK, not for yourself. Prioritize clarity with workin
- ## Key Actions RTK
- 
- 1. **Document CLI Commands**: Clear syntax, flags, examples with real output
--2. **Evidence Performance Claims**: Benchmark data supporting 60-90% token savings
-+2. **Evidence Performance Claims**: Measured token savings (≥20% floor per filter)
- 3. **Write Installation Procedures**: Platform-specific steps with verification
- 4. **Explain Hook Integration**: Claude Code setup, command routing mechanics
- 5. **Guide Filter Development**: Contribution workflow, testing patterns, quality standards
-@@ -73,7 +73,7 @@ commit def5678 Fix bug Y
- **Methodology**:
- - Fixtures: Real command output from production environments
- - Measurement: Whitespace-based tokenization (`count_tokens()`)
--- Verification: Tests enforce ≥60% savings threshold
-+- Verification: Tests enforce ≥20% savings threshold
- 
- **Results by Filter**:
- 
-@@ -97,7 +97,7 @@ Range (min … max):     5.8 ms …   7.1 ms    100 runs
- # Run token accuracy tests
- cargo test test_token_savings
- 
--# All tests should pass, enforcing ≥60% savings
-+# All tests should pass, enforcing ≥20% savings
- ```
- ```
- 
-@@ -254,7 +254,7 @@ mod tests {
-         let output = filter_newcmd(input).unwrap();
- 
-         let savings = calculate_savings(input, &output);
--        assert!(savings >= 60.0);
-+        assert!(savings >= 20.0);
-     }
- }
- ```
-@@ -297,7 +297,7 @@ cargo fmt --all && cargo clippy --all-targets && cargo test --all
- 
- ## Filter Quality Standards
- 
--- **Token savings**: ≥60% verified in tests
-+- **Token savings**: ≥20% verified in tests
- - **Startup time**: <10ms with `hyperfine`
- - **Lazy regex**: Fixed, reused patterns use `LazyLock<Regex>`
- - **Error handling**: Fallback to raw command on failure
-```
-
-**File**: `.claude/commands/tech/codereview.md` (modified, +4/-4)
-```diff
-@@ -63,7 +63,7 @@ git diff "$BASE_BRANCH"...HEAD --stat
- | `src/main.rs`                  | Command routing + Commands enum            |
- | `src/core/tracking.rs`         | SQLite patterns + DB path config           |
- | `src/core/config.rs`           | Configuration system                       |
--| `src/hooks/init.rs`            | Init patterns + hook installation          |
-+| `src/hooks/init/`              | Init patterns + hook installation          |
- | `.github/workflows/`           | CI/CD multi-platform build targets         |
- | `tests/` ou `fixtures/`        | Testing Strategy (CLAUDE.md)               |
- | `Cargo.toml`                   | Dependencies + build optimizations         |
-@@ -84,7 +84,7 @@ git diff "$BASE_BRANCH"...HEAD --stat
- **Tests**:
- - `#[cfg(test)] mod tests` embarqué dans chaque module
- - Fixtures réelles dans `tests/fixtures/<cmd>_raw.txt`
--- `count_tokens()` pour vérifier savings ≥60%
-+- `count_tokens()` pour vérifier savings ≥20%
- - `assert_snapshot!` (insta) pour output format
- 
- **Module**:
-@@ -93,7 +93,7 @@ git diff "$BASE_BRANCH"...HEAD --stat
- - `strip_ansi()` depuis `utils.rs` — pas re-implémenté
- 
- **Filtres**:
--- Token savings ≥60% obligatoire (release blocker)
-+- Token savings ≥20% obligatoire (release blocker)
- - Fallback: si filter échoue → raw command exécutée
- - Pas d'output ASCII art, pas de verbose metadata inutile
- 
-@@ -105,7 +105,7 @@ git diff "$BASE_BRANCH"...HEAD --stat
- - Pattern regex fixe recompilé dans une fonction
- - `?` sans `.context()` — erreur sans description
- - Dépendance async ajoutée (tokio, async-std, futures)
--- Token savings <60% pour un nouveau filtre
-+- Token savings <20% pour un nouveau filtre
- - Pas de fallback vers commande brute sur échec de filtre
- - `panic!()` en production (hors tests)
- - Exit code non propagé sur commande sous-jacente
+@@ -32,6 +32,7 @@ pub(crate) fn configure_console_color() {
+     let mut mode = 0;
+     // SAFETY: stdout owns the handle for this call and mode is writable.
+     #[allow(unsafe_code)]
++    // nosemgrep: unsafe-block
+     let has_mode = unsafe { GetConsoleMode(stdout.as_raw_handle(), &mut mode) } != 0;
+     if requires_plain_console_output(has_mode.then_some(mode))
+         && crate::core::user_env::var("CLICOLOR_FORCE").is_none_or(|value| value == "0")
 ```
 
 ---
 
-### Incident Patch 3: `75d12498` (2026-11-22)
-**Commit Message**: Merge pull request #5066 from larancibia/fix/pipe-grep-windows-paths-and-tee-hint
+### Incident Patch 3: `e5e7c55a` (2026-11-23)
+**Commit Message**: Merge pull request #3700 from bdngeorge/fix/install-support-windows-git-bash
 
-fix(pipe): support Windows drive paths and tee recovery hints in grep filter
+fix(install): fix install script crashing when run on Windows with Git Bash
 
-**File**: `src/cmds/system/pipe_cmd.rs` (modified, +185/-15)
+**File**: `.github/workflows/ci.yml` (modified, +14/-0)
 ```diff
-@@ -85,22 +85,53 @@ fn vitest_wrapper(input: &str) -> String {
-     }
- }
+@@ -151,6 +151,20 @@ jobs:
+         # `--all` is `--workspace`: `rtk` + `engine`. `proxy/` is tested in
+         # its own job, since it is not a member.
+       - run: cargo test --all
++      # install.sh end to end against a fake release. On Windows this runs under
++      # Git Bash and installs the rtk.exe the step above built.
++      - name: install.sh tests
++        shell: bash
++        run: |
++          if [ "$RUNNER_OS" = Windows ]; then
++            target=$CARGO_BUILD_TARGET
++            [ "$target" = host-tuple ] && target=$(rustc -vV | sed -n 's/^host: //p')
++            export RTK_TEST_EXE="$PWD/target/$target/debug/rtk.exe"
++          fi
++          sh scripts/test-install.sh | tee "$RUNNER_TEMP/test-install.log"
++          # A skip here means the runner lost unzip, python or a sha256 tool;
++          # fail rather than pass with no install exercised.
++          ! grep -F 'SKIP: end-to-end' "$RUNNER_TEMP/test-install.log"
  
-+fn parse_pipe_grep_line(line: &str) -> Option<(&str, &str, &str)> {
-+    let bytes = line.as_bytes();
-+    let search_start = if bytes.len() >= 3
-+        && bytes[0].is_ascii_alphabetic()
-+        && bytes[1] == b':'
-+        && (bytes[2] == b'\\' || bytes[2] == b'/')
-+    {
-+        2
-+    } else {
-+        0
-+    };
-+
-+    let rel_colon = line[search_start..].find(':')?;
-+    let colon1 = search_start + rel_colon;
-+    let file = &line[..colon1];
-+    if file.is_empty() || (search_start == 2 && colon1 <= 3) {
-+        return None;
-+    }
-+
-+    let rest = &line[colon1 + 1..];
-+    let (line_num, content) = rest.split_once(':')?;
-+    if line_num.parse::<usize>().is_ok() {
-+        Some((file, line_num, content))
-+    } else {
-+        None
-+    }
-+}
-+
-+fn pipe_grep_slug(idx: usize, path: &str) -> String {
-+    let cleaned: String = path
-+        .chars()
-+        .map(|c| if c.is_ascii_alphanumeric() { c } else { '_' })
-+        .collect();
-+    let tail = &cleaned[cleaned.len().saturating_sub(32)..];
-+    format!("pipe_grep_{}_{}", idx, tail)
-+}
-+
- fn grep_wrapper(input: &str) -> String {
-     use std::collections::HashMap;
+   security:
+     name: Security Scan
+```
+
+**File**: `INSTALL.md` (modified, +1/-1)
+```diff
+@@ -41,7 +41,7 @@ If you accidentally installed Rust Type Kit:
+ cargo uninstall rtk
+ ```
  
-     let mut by_file: HashMap<&str, Vec<(&str, &str)>> = HashMap::new();
-     let mut total = 0;
+-### Quick Install (Linux/macOS)
++### Quick Install (Linux/macOS/Git for Windows)
  
-     for line in input.lines() {
--        let parts: Vec<&str> = line.splitn(3, ':').collect();
--        if parts.len() == 3
--            && let Ok(_line_num) = parts[1].parse::<usize>()
--        {
-+        if let Some((file, line_num, content)) = parse_pipe_grep_line(line) {
-             total += 1;
--            by_file
--                .entry(parts[0])
--                .or_default()
--                .push((parts[1], parts[2]));
-+            by_file.entry(file).or_default().push((line_num, content));
-         }
-     }
+ ```bash
+ curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/master/install.sh | sh
+```
+
+**File**: `README.md` (modified, +1/-1)
+```diff
+@@ -80,7 +80,7 @@ brew install rtk
+ winget install rtk-ai.rtk
+ ```
  
-@@ -112,13 +143,22 @@ fn grep_wrapper(input: &str) -> String {
-     let mut files: Vec<_> = by_file.iter().collect();
-     files.sort_by_key(|(f, _)| *f);
+-**Linux, macOS or WSL, with the install script**
++**Linux, macOS, WSL, or Git Bash on Windows, with the install script**
  
--    for (file, matches) in files {
-+    for (idx, (file, matches)) in files.into_iter().enumerate() {
-         out.push_str(&format!("[file] {} ({}):\n", file, matches.len()));
-         for (line_num, content) in matches.iter().take(MAX_PIPE_MATCHES) {
-             out.push_str(&format!("  {:>4}: {}\n", line_num, content.trim()));
-         }
-         if matches.len() > MAX_PIPE_MATCHES {
--            out.push_str(&format!("  +{}\n", matches.len() - MAX_PIPE_MATCHES));
-+            let remaining = matches.len() - MAX_PIPE_MATCHES;
-+            let mut full_block = String::new();
-+            for (line_num, content) in matches {
-+                full_block.push_str(&format!("{}:{}:{}\n", file, line_num, content));
-+            }
-+            let slug = pipe_grep_slug(idx, file);
-+            match crate::core::tee::force_tee_tail_hint(&full_block, &slug, MAX_PIPE_MATCHES + 1) {
-+                Some(hint) => out.push_str(&format!("  +{} {}\n", remaining, hint)),
-+                None => out.push_str(&format!("  +{}\n", remaining)),
-+            }
-         }
-         out.push('\n');
-     }
-@@ -212,10 +252,7 @@ pub fn auto_detect_filter(input: &str) -> fn(&str) -> String {
-         .lines()
-         .take(5)
-         .filter(|l| !l.trim().is_empty())
--        .any(|l| {
--            let parts: Vec<_> = l.splitn(3, ':').collect();
--            parts.len() == 3 && parts[1].parse::<usize>().is_ok()
--        })
-+        .any(|l| parse_pipe_grep_line(l).is_some())
-     {
-         return grep_wrapper;
-     }
-@@ -676,7 +713,8 @@ Total Test time (real) =   0.01 sec\n";
-                 ));
-             }
-         }
--        let output = grep_wrapper(&input);
-+        let tmp = crate::core::test_isolation::tempdir();
-+        let output = crate::core::test_isolation::with_root(tmp.path(), || grep_wrapper(&input));
-         let savings = 100.0 - (count_tokens(&output) as f64 / count_tokens(&input) as f64 * 100.0);
-         assert!(
-             savings >= 40.0, // TODO: grep pipe filter below 60% target — improve grouping
-@@ -719,4 +757,136 @@ Total Test time (real) =   0.01 sec\n";
-         let out = f(input);
-         assert!(!out.is_empty());
-     }
-+
-+    #[test]
-+    fn test_parse_pipe_grep_line_unix_and_windows_paths() {
-+        assert_eq!(
-+            parse_pipe_grep_line("src/main.rs:42:fn main() {"),
-+            Some(("src/main.rs", "42", "fn main() {"))
-+        );
-+        assert_eq!(
-+            parse_pipe_grep_line(r"C:\proj\src\main.rs:42:fn main()"),
-+            Some((r"C:\proj\src\main.rs", "42", "fn main()"))
-+        );
-+        assert_eq!(
-+            parse_pipe_grep_line("D:/repo/lib.rs:7:let x: i32 = Foo::bar();"),
-+            Some(("D:/repo/lib.rs", "7", "let x: i32 = Foo::bar();"))
-+        );
-+        assert_eq!(
-+            parse_pipe_grep_line(r"e:\work\mod.rs:100:let url = 'http://localhost:8080';"),
-+            Some((
-+                r"e:\work\mod.rs",
-+                "100",
-+                "let url = 'http://loc
+ ```bash
+ curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh
+```
+
+**File**: `README_es.md` (modified, +1/-1)
+```diff
+@@ -80,7 +80,7 @@ La forma mas facil de instalar en Windows — un solo comando, sin configuracion
+ winget install rtk-ai.rtk
+ ```
+ 
+-### Instalacion rapida (Linux/macOS)
++### Instalacion rapida (Linux/macOS/Git for Windows)
+ 
+ ```bash
+ curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh
+```
+
+**File**: `README_fr.md` (modified, +1/-1)
+```diff
+@@ -80,7 +80,7 @@ La manière la plus simple d'installer sur Windows — une seule commande, aucun
+ winget install rtk-ai.rtk
+ ```
+ 
+-### Installation rapide (Linux/macOS)
++### Installation rapide (Linux/macOS/Git for Windows)
+ 
+ ```bash
+ curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh
+```
+
+**File**: `README_ja.md` (modified, +1/-1)
+```diff
+@@ -80,7 +80,7 @@ Windowsで最も簡単なインストール方法 — コマンド1つ、PATHの
+ winget install rtk-ai.rtk
+ ```
+ 
+-### クイックインストール（Linux/macOS）
++### クイックインストール（Linux/macOS/Git for Windows）
+ 
+ ```bash
+ curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh
+```
+
+**File**: `README_ko.md` (modified, +1/-1)
+```diff
+@@ -80,7 +80,7 @@ Windows에서 가장 쉬운 설치 방법 — 명령어 하나로 끝, PATH 설
+ winget install rtk-ai.rtk
+ ```
+ 
+-### 빠른 설치 (Linux/macOS)
++### 빠른 설치 (Linux/macOS/Git for Windows)
+ 
+ ```bash
+ curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh
+```
+
+**File**: `README_pt.md` (modified, +1/-1)
+```diff
+@@ -81,7 +81,7 @@ A forma mais simples de instalar no Windows — um único comando, sem configura
+ winget install rtk-ai.rtk
+ ```
+ 
+-### Instalação rápida (Linux/macOS)
++### Instalação rápida (Linux/macOS/Git for Windows)
+ 
+ ```bash
+ curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5230** (2026-11-23): fix(gain): mark the console-mode unsafe block for semgrep (@pszymkowiak)
 - **PR #5188** (2026-11-19): chore(master): release 1.2.1 (@rtk-release-bot[bot])
 - **PR #5186** (2026-11-22): fix(gain): suppress ANSI on Windows consoles without VT support (@zhiwuyazhe-fjr)
 - **PR #5183** (2026-11-22): fix(exit): read an MSYS signal exit (signal << 8) as 128 + signal on Windows (@LeviReisJs)
 - **PR #5181** (2026-11-19): fix: Pro line in rtk gain, stale proxy lockfile, proxy variable docs (@aeppling)
 - **PR #5180** (2026-11-19): fix(recall): keep clippy clean on Windows, where FileId is () (@LeviReisJs)
-- **PR #5170** (closed): feat(recall): include context around grep matches (@shiroha777777)
 
 ---
 
@@ -2375,65 +1957,31 @@ fix(pipe): support Windows drive paths and tee recovery hints in grep filter
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in mod.rs
+## X. gain): mark the console-mode unsafe block for semgrep
 
 **RULE**:
-When implementing operations in `src/parser/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rtk-ai/rtk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/analytics/gain.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rtk-ai/rtk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `762708cd`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c52bc886`: gain): mark the console-mode unsafe block for semgrep. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/parser/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/analytics/gain.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        let mut line_start = 0;
-        // Keep line terminators so offsets remain exact for LF, CRLF, or a mix.
-        for line in input.split_inclusive('\n') {
-            let trimmed = line.trim_start();
-                found_start = Some(line_start + line.len() - trimmed.len());
-            line_start += line.len();
-
-    #[test]
-    fn test_extract_json_object_crlf_multibyte_prefix() {
-        let input = "ligne un\r\n ligne deux\r\n fin é\r\n{\"a\": 1}\r\n";
-        assert_eq!(extract_json_object(input), Some(r#"{"a": 1}"#));
-    }
-
-    #[test]
-    fn test_extract_json_object_line_endings_and_unicode() {
-        let objects = [
-            r#"{"a": 1}"#,
-            r#"{"message": "café 中文 🚀 {\"quoted\"}", "nested": {"ok": true}}"#,
-            r#"{"numTotalTests": 1, "message": "café 中文 🚀", "nested": {"ok": true}}"#,
-        ];
-        for (first_eol, second_eol) in [("\n", "\n"), ("\r\n", "\r\n"), ("\r\n", "\n")] {
-            for prefix in ["", "build output", "café 中文 🚀"] {
-                for indent in ["", " \t", "\u{2003}"] {
-                    for object in objects {
-                        for suffix in ["", "\r\ntrailing 中文 🚀 output"] {
-                        
+    // nosemgrep: unsafe-block
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        for (idx, line) in input.lines().enumerate() {
-            let trimmed = line.trim();
-                // Calculate byte offset
-                found_start = Some(
-                    input[..]
-                        .lines()
-                        .take(idx)
-                        .map(|l| l.len() + 1)
-                        .sum::<usize>(),
-                );
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `762708cd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c52bc886` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

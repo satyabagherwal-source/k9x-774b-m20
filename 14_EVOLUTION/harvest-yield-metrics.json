@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T02:21:13.488Z",
-  "total_cycles_completed": 11946,
-  "total_learnings_persisted": 11946,
-  "total_rules_promoted": 11027,
+  "last_updated": "2026-11-24T02:31:13.169Z",
+  "total_cycles_completed": 11948,
+  "total_learnings_persisted": 11948,
+  "total_rules_promoted": 11029,
   "history": [
-    {
-      "timestamp": "2026-11-23T15:37:31.688Z",
-      "repository": "mitmproxy/mitmproxy",
-      "learningId": "learn-github-mitmproxy-mitmproxy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T15:37:32.111Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T15:45:43.240Z",
       "repository": "intfloat/multilingual-e5-small",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-24T02:21:13.488Z",
       "repository": "freenet/freenet-core",
       "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T02:31:00.243Z",
+      "repository": "rtk-ai/rtk",
+      "learningId": "learn-github-rtk-ai-rtk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T02:31:13.169Z",
+      "repository": "lancedb/lancedb",
+      "learningId": "learn-github-lancedb-lancedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

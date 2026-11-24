@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T02:21:44.723Z",
+  "last_updated": "2026-11-24T02:31:20.147Z",
   "total_verified_learnings": 9089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24370,
+  "total_items": 24375,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "8ae2b460a3a1078803c6bbe093c2ddda63805b2d2f508401922b96b6f95f0c01",
+      "content_hash": "4b43d041fd12aa8cdbf12b64469bcc8cd71e7f0f86d854943b1978982a81e9a5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T02:21:44.547Z"
+      "persisted_at": "2026-11-24T02:31:19.850Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "a53e34047bbc78d54f5062451dd6ebacec7552b3d2a6256876b793d3031c48ea",
+      "content_hash": "c823c0aaafdad523b442515711db45302a799ee08cf5ff1e8dcd01014fbdf0cd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T02:21:44.723Z"
+      "persisted_at": "2026-11-24T02:31:20.147Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -217011,8 +217011,8 @@
       "slug": "lancedb-lancedb",
       "platform": "github",
       "source_url": "https://github.com/lancedb/lancedb",
-      "source_version": "f38d42e9",
-      "content_hash": "71b2c75dc49f8d2ee3127df51067ab07b73023981994308986accc8986a0c2b7",
+      "source_version": "52209f10",
+      "content_hash": "82575462f0a39b4b3a9bf6cb10c78d13b9d044f049a88e5bc327110f80566865",
       "dossier_path": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "promoted_rules": [
@@ -217060,6 +217060,11 @@
           "number": 10007,
           "title": "update url to 2.5.9 for RUSTSEC-2026-0592",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 10182,
+          "title": "allow BTree indexes on LargeUtf8 columns",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -217067,7 +217072,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T00:48:32.555Z",
+      "verified_at": "2026-11-24T02:31:12.822Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217121,10 +217126,10 @@
       "relative_path": "08_VERIFICATION/lancedb-lancedb-verification-protocol-empirical-defect-shield-for-lancedb-lanced.md",
       "title": "Verification Protocol: Empirical Defect Shield for lancedb/lancedb",
       "repository": "lancedb/lancedb",
-      "source_version": "f38d42e9",
-      "content_hash": "f8f1c67f8b993727fd262b132e4a5efc69a89adb3c93f293866b7eeff6808239",
+      "source_version": "52209f10",
+      "content_hash": "52cd5b619f77acaa32524353e980473659c93a8bfb1f838f9f8b6c9bb3243ce0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T00:48:33.338Z"
+      "persisted_at": "2026-11-24T02:31:13.944Z"
     },
     "domain_intelligence-technical-construction-intelligence-nvidia-cuda-rust-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-nvidia-cuda-rust-learnings-core-invariants",
@@ -247122,10 +247127,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lancedb-lancedb-technical-construction-intelligence-lancedb-lancedb-core-invaria.md",
       "title": "Technical Construction Intelligence: lancedb/lancedb Core Invariants",
       "repository": "lancedb/lancedb",
-      "source_version": "a6d7d02f",
-      "content_hash": "7a246fc0bd810da72ea95a5e37442e52f212ca179f66fb203b94a04899cc73a1",
+      "source_version": "52209f10",
+      "content_hash": "0a5455a506b61a8ea1da3fad9f72f97ad79b6e8d61f71c48d9da76092f3bd61a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T13:17:32.659Z"
+      "persisted_at": "2026-11-24T02:31:13.707Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-lancedb-lancedb": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-lancedb-lancedb",
@@ -247326,9 +247331,9 @@
       "title": "Technical Construction Intelligence: lancedb-lancedb-learnings Core Invariants",
       "repository": "lancedb-lancedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "386e3053c6f17b78c40b724d048f24ed7ecd09c625ac72666e81f2337a7cc494",
+      "content_hash": "8698356a7b0912171b8b3969baf630cba89fd75371b9dacf5cab3e83f176f8be",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T20:11:48.865Z"
+      "persisted_at": "2026-11-24T02:31:18.720Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-lancedb-lancedb-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-lancedb-lancedb-learnings",
@@ -247350,9 +247355,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for lancedb-lancedb-learnings",
       "repository": "lancedb-lancedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "0f172cd6504fc02f9b07857f2ebc64a088bdb99b96170a2512d249af57fa887e",
+      "content_hash": "b68e4052185d7f0f2678d714d43231d2818df1ba0d2f9e366e2ec1ca23ed4b63",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T00:48:37.172Z"
+      "persisted_at": "2026-11-24T02:31:18.994Z"
     },
     "learn-github-thaw-app-thaw": {
       "learning_id": "learn-github-thaw-app-thaw",
@@ -260696,8 +260701,8 @@
       "slug": "rtk-ai-rtk",
       "platform": "github",
       "source_url": "https://github.com/rtk-ai/rtk",
-      "source_version": "762708cd",
-      "content_hash": "e144b1b4edb21ab40a44798e6e30d17f85e6fdf0e0cf7c1f5f33fbf392799bd4",
+      "source_version": "c43b5c44",
+      "content_hash": "9b96751146a7c5d461c67f307dfec4808038862928992fdf314dedd715eca955",
       "dossier_path": "07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
       "promoted_rules": [
@@ -260740,6 +260745,11 @@
           "number": 9744,
           "title": "Empirical Invariant Guard in telemetry.rs",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10181,
+          "title": "mark the console-mode unsafe block for semgrep",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -260747,7 +260757,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T19:01:35.218Z",
+      "verified_at": "2026-11-24T02:30:59.908Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -260789,10 +260799,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-rtk-ai-rtk-quality-verification-intelligence-rtk-ai-rtk-core-invariants.md",
       "title": "Quality & Verification Intelligence: rtk-ai/rtk Core Invariants",
       "repository": "rtk-ai/rtk",
-      "source_version": "762708cd",
-      "content_hash": "ad19baec11cf1a822772e474a6b23dd20b100645860e4611f40d2127b85237a8",
+      "source_version": "c43b5c44",
+      "content_hash": "448461ea5a333129f19bf4e048671986fda3417649dc97b4cc0647d06b07be6a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T19:01:36.060Z"
+      "persisted_at": "2026-11-24T02:31:00.822Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rtk-ai-rtk": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rtk-ai-rtk",
@@ -260801,10 +260811,10 @@
       "relative_path": "08_VERIFICATION/rtk-ai-rtk-verification-protocol-empirical-defect-shield-for-rtk-ai-rtk.md",
       "title": "Verification Protocol: Empirical Defect Shield for rtk-ai/rtk",
       "repository": "rtk-ai/rtk",
-      "source_version": "762708cd",
-      "content_hash": "4278c794083387f16e7bc4026da295de944dfea75347e8ef966131d2a9304c4c",
+      "source_version": "c43b5c44",
+      "content_hash": "463bbf6832d84a96e9f4962d6c6de7ee400c08a47cd770a3fdc24865a54a59f8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T19:01:36.285Z"
+      "persisted_at": "2026-11-24T02:31:01.072Z"
     },
     "rule-8761": {
       "learning_id": "rule-8761",
@@ -260840,9 +260850,9 @@
       "title": "Quality & Verification Intelligence: rtk-ai-rtk-learnings Core Invariants",
       "repository": "rtk-ai-rtk-learnings",
       "source_version": "HEAD",
-      "content_hash": "866999014a1f6fbbf957ba707d28ee3b9f75eafe7754f2c6af85f26043755c3a",
+      "content_hash": "25612c08769e33dea3e276071ece4d8874a8ea561036aff7606212c8045bf19f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T19:01:51.917Z"
+      "persisted_at": "2026-11-24T02:31:17.548Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rtk-ai-rtk-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rtk-ai-rtk-learnings",
@@ -260852,9 +260862,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for rtk-ai-rtk-learnings",
       "repository": "rtk-ai-rtk-learnings",
       "source_version": "HEAD",
-      "content_hash": "e1e67abe0535c2be7e7adca1ab5e1ee923d1988dbe6bf71b550d5b38a671f7b6",
+      "content_hash": "37807ea5be15468a7d329b630a0801e675bec7bba62b2ef5a50dc23f7bc53a33",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T19:01:52.144Z"
+      "persisted_at": "2026-11-24T02:31:17.817Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-audio-2b-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-audio-2b-learnings-core-invaria",
@@ -319618,13 +319628,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-JM0H-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-VXV2-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "f36e304f8e29d53aefd5c2c50d590dd236548070532f3cfab9e0d53bf86250bb",
+      "content_hash": "768aec5bfa53a0647d60a7f23f429c5473d9961efa4178a63ca49793f3266f20",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T02:21:44.375Z"
+      "persisted_at": "2026-11-24T02:31:19.601Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
@@ -332397,6 +332407,70 @@
       "content_hash": "e6f398a020bb8d7ffd06f73509cbb05dc33e3af5ec006e1471bf5dd947ee6ff5",
       "domain_letter": "D",
       "persisted_at": "2026-11-24T02:21:42.955Z"
+    },
+    "rule-10181": {
+      "learning_id": "rule-10181",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10181,
+      "title": "mark the console-mode unsafe block for semgrep",
+      "source_url": "https://github.com/rtk-ai/rtk",
+      "source_version": "c43b5c44",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T02:30:59.908Z"
+    },
+    "candidate_directive-mark-the-console-mode-unsafe-block-for-semgrep": {
+      "item_id": "candidate_directive-mark-the-console-mode-unsafe-block-for-semgrep",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VJ5L-mark-the-console-mode-unsafe-block-for-semgrep.md",
+      "title": "mark the console-mode unsafe block for semgrep",
+      "repository": "rtk-ai/rtk",
+      "source_version": "c43b5c44",
+      "content_hash": "19aefb6d6df86e0e8d24e5585adc216737e254a2e353d433d3e5d835b3a427ec",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-24T02:31:00.538Z"
+    },
+    "rule-10182": {
+      "learning_id": "rule-10182",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10182,
+      "title": "allow BTree indexes on LargeUtf8 columns",
+      "source_url": "https://github.com/lancedb/lancedb",
+      "source_version": "52209f10",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T02:31:12.822Z"
+    },
+    "candidate_directive-allow-btree-indexes-on-largeutf8-columns": {
+      "item_id": "candidate_directive-allow-btree-indexes-on-largeutf8-columns",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VX03-allow-btree-indexes-on-largeutf8-columns.md",
+      "title": "allow BTree indexes on LargeUtf8 columns",
+      "repository": "lancedb-lancedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "833e61dac4c38e6caf74d8b4c86702326f41ca23605d6c7ebc8414e1518eaf71",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T02:31:18.484Z"
+    },
+    "candidate_directive-gain-mark-the-console-mode-unsafe-block-for-semgrep": {
+      "item_id": "candidate_directive-gain-mark-the-console-mode-unsafe-block-for-semgrep",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VW3K-gain-mark-the-console-mode-unsafe-block-for-semgrep.md",
+      "title": "gain): mark the console-mode unsafe block for semgrep",
+      "repository": "rtk-ai-rtk-learnings",
+      "source_version": "HEAD",
+      "content_hash": "accc85a7e1c10a4861bbfee7a45d358d778dc42da834a298c8236c7befbb6e4d",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-24T02:31:17.313Z"
     }
   },
   "ai-builder-brain": {

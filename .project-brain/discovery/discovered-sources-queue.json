@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T02:21:42.695Z",
+  "updated_at": "2026-11-24T02:31:18.204Z",
   "stats": {
-    "total_discovered": 8277,
-    "approved_pending_harvest": 7842,
+    "total_discovered": 8279,
+    "approved_pending_harvest": 7843,
     "harvested_count": 0,
-    "rejected_count": 435,
+    "rejected_count": 436,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7825,
+      "COMMUNITY_AND_EXPERT": 7827,
       "OFFICIAL_DOCUMENTATION": 266,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -179072,6 +179072,43 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-strata-engine-inkling-2-mini-strata-learnings.md",
         "fileName": "hf-strata-engine-inkling-2-mini-strata-learnings.md"
+      }
+    },
+    "SRC-A836F39E69F8": {
+      "id": "SRC-A836F39E69F8",
+      "url": "https://raw.githubusercontent.com/rtk-ai/rtk/master/install.sh",
+      "title": "https://raw.githubusercontent.com/rtk-ai/rtk/master/install.sh",
+      "status": "REJECTED_BINARY_EXECUTABLE_REJECTED",
+      "rejection_reasons": [
+        "BINARY_EXECUTABLE_REJECTED"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-24T02:31:17.016Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
+        "fileName": "rtk-ai-rtk-learnings.md"
+      }
+    },
+    "SRC-C027F4BC2ED2": {
+      "id": "SRC-C027F4BC2ED2",
+      "url": "https://github.com/user-attachments/assets/d359f9e2-bd3f-4cb8-993a-7db3b2b20342",
+      "title": "https://github.com/user-attachments/assets/d359f9e2-bd3f-4cb8-993a-7db3b2b20342",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T02:31:18.204Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
+        "fileName": "lancedb-lancedb-learnings.md"
       }
     }
   }
