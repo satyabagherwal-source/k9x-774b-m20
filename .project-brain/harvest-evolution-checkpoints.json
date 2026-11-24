@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T23:51:10.843Z",
+  "last_updated": "2026-11-24T23:59:46.994Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-24T21:53:47.661Z",
@@ -308,9 +308,9 @@
       "staged_for_review": 1
     },
     "necolas-react-native-web-learnings.md": {
-      "processed_at": "2026-11-22T09:47:39.508Z",
+      "processed_at": "2026-11-24T23:59:46.195Z",
       "promoted_canonical": 0,
-      "staged_for_review": 0
+      "staged_for_review": 1
     },
     "burntsushi-ripgrep-learnings.md": {
       "processed_at": "2026-11-24T04:20:35.053Z",
@@ -1693,9 +1693,9 @@
       "staged_for_review": 0
     },
     "tanstack-router-learnings.md": {
-      "processed_at": "2026-11-21T00:24:51.808Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-24T23:59:45.329Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "michael-a-kuykendall-shimmy-learnings.md": {
       "processed_at": "2026-11-13T09:37:48.070Z",
@@ -3876,9 +3876,14 @@
       "processed_at": "2026-11-24T23:25:39.381Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "str4d-rage-learnings.md": {
+      "processed_at": "2026-11-24T23:59:15.874Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 3972,
-  "total_canonical_promoted": 520,
-  "total_staged_for_review": 3032
+  "total_dossiers_evaluated": 3975,
+  "total_canonical_promoted": 522,
+  "total_staged_for_review": 3033
 }

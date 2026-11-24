@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T23:51:03.477Z",
-  "total_cycles_completed": 12209,
-  "total_learnings_persisted": 12209,
-  "total_rules_promoted": 11261,
+  "last_updated": "2026-11-24T23:58:50.035Z",
+  "total_cycles_completed": 12213,
+  "total_learnings_persisted": 12213,
+  "total_rules_promoted": 11263,
   "history": [
-    {
-      "timestamp": "2026-11-24T08:24:33.012Z",
-      "repository": "ratatui/ratatui",
-      "learningId": "learn-github-ratatui-ratatui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T08:25:06.819Z",
-      "repository": "zulip/zulip",
-      "learningId": "learn-github-zulip-zulip",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T08:34:30.881Z",
-      "repository": "1jehuang/jcode",
-      "learningId": "learn-github-1jehuang-jcode",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T08:48:20.499Z",
-      "repository": "XinaTian/MROffice",
-      "learningId": "learn-github-xinatian-mroffice",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T08:59:50.267Z",
       "repository": "pubkey/rxdb",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-24T23:51:03.477Z",
       "repository": "paradedb/paradedb",
       "learningId": "learn-github-paradedb-paradedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T23:58:36.645Z",
+      "repository": "str4d/rage",
+      "learningId": "learn-github-str4d-rage",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T23:58:38.574Z",
+      "repository": "TanStack/router",
+      "learningId": "learn-github-tanstack-router",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T23:58:42.008Z",
+      "repository": "necolas/react-native-web",
+      "learningId": "learn-github-necolas-react-native-web",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T23:58:50.035Z",
+      "repository": "trufflesecurity/trufflehog",
+      "learningId": "learn-github-trufflesecurity-trufflehog",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

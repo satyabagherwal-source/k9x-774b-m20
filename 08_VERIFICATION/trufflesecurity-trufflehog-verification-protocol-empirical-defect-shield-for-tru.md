@@ -4,22 +4,22 @@
 {
   "source_repository": "trufflesecurity/trufflehog",
   "source_url": "https://github.com/trufflesecurity/trufflehog",
-  "source_version": "2921dcc5",
+  "source_version": "23255461",
   "license": "AGPL-3.0",
-  "timestamp": "2026-11-24T19:09:57.778Z",
+  "timestamp": "2026-11-24T23:58:50.250Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-trufflesecurity-trufflehog",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog) (Revision: `2921dcc5`).  
-> **License**: AGPL-3.0 | **Timestamp**: `2026-11-24T19:09:57.778Z`  
+> **Provenance**: Harvested from [trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog) (Revision: `23255461`).  
+> **License**: AGPL-3.0 | **Timestamp**: `2026-11-24T23:58:50.250Z`  
 > **Learning ID**: `learn-github-trufflesecurity-trufflehog`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `trufflesecurity/trufflehog` (Commit: `2921dcc5`)
+- **Target Repository**: `trufflesecurity/trufflehog` (Commit: `23255461`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T19:09:55.988Z  
+> **Harvest Timestamp**: 2026-11-24T23:58:49.100Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Find, verify, and analyze leaked credentials
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 29619 stars
+- **Stars / Engagement**: 29622 stars
 
 ---
 
@@ -1151,551 +1151,396 @@ func (s Scanner) Description() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2921dcc5` (2026-11-24)
-**Commit Message**: Stop detector integration tests from panicking (#5599)
+### Incident Patch 1: `23255461` (2026-11-24)
+**Commit Message**: Duo: only treat 200 as verified and 40103 as invalid; everything else is indeterminate (#5586)
 
-cmp.Diff panicked on unexported Result fields and MustGetField panicked on
-missing secrets, so whole packages stopped early. Ignore unexported fields,
-fail the test instead of panicking, fix seven tests that did not build, and
-only check that timeout cases return an error.
+* Stop treating Duo 403 responses as verified
 
-**File**: `pkg/analyzer/analyzers/airtable/airtableoauth/airtable_test.go` (modified, +1/-1)
+* changed this to verify as rotated only on 40103
+
+* fixed whitespace and typo
+
+**File**: `pkg/detectors/duo/duo.go` (modified, +74/-61)
 ```diff
-@@ -31,7 +31,7 @@ func TestAnalyzer_Analyze(t *testing.T) {
- 		wantErr bool
- 	}{
- 		{
--			token:   testSecrets.MustGetField("AIRTABLEOAUTH_TOKEN"),
-+			token:   testSecrets.MustGetField(t, "AIRTABLEOAUTH_TOKEN"),
- 			name:    "valid Airtable OAuth Token",
- 			want:    string(expectedOutput),
- 			wantErr: false,
-```
-
-**File**: `pkg/analyzer/analyzers/airtable/airtablepat/airtable_test.go` (modified, +1/-1)
-```diff
-@@ -31,7 +31,7 @@ func TestAnalyzer_Analyze(t *testing.T) {
- 		wantErr bool
- 	}{
- 		{
--			token:   testSecrets.MustGetField("AIRTABLEOAUTH_TOKEN"),
-+			token:   testSecrets.MustGetField(t, "AIRTABLEOAUTH_TOKEN"),
- 			name:    "valid Airtable Personal Access Token",
- 			want:    string(expectedOutput),
- 			wantErr: false,
-```
-
-**File**: `pkg/analyzer/analyzers/anthropic/anthropic_test.go` (modified, +1/-1)
-```diff
-@@ -23,7 +23,7 @@ func TestAnalyzer_Analyze(t *testing.T) {
- 		t.Fatalf("could not get test secrets from GCP: %s", err)
- 	}
- 
--	secret := testSecrets.MustGetField("ANTHROPIC")
-+	secret := testSecrets.MustGetField(t, "ANTHROPIC")
- 
- 	tests := []struct {
- 		name    string
-```
-
-**File**: `pkg/analyzer/analyzers/asana/asana_test.go` (modified, +1/-1)
-```diff
-@@ -32,7 +32,7 @@ func TestAnalyzer_Analyze(t *testing.T) {
- 	}{
- 		{
- 			name:    "valid Asana OAUTH Token",
--			key:     testSecrets.MustGetField("ASANAOAUTH_TOKEN"),
-+			key:     testSecrets.MustGetField(t, "ASANAOAUTH_TOKEN"),
- 			want:    string(expectedOutput),
- 			wantErr: false,
- 		},
-```
-
-**File**: `pkg/analyzer/analyzers/bitbucket/bitbucket_test.go` (modified, +1/-1)
-```diff
-@@ -32,7 +32,7 @@ func TestAnalyzer_Analyze(t *testing.T) {
- 	}{
- 		{
- 			name:    "valid Bitbucket key",
--			key:     testSecrets.MustGetField("BITBUCKET_ANALYZE_TOKEN"),
-+			key:     testSecrets.MustGetField(t, "BITBUCKET_ANALYZE_TOKEN"),
- 			want:    string(expectedOutput),
- 			wantErr: false,
- 		},
-```
-
-**File**: `pkg/analyzer/analyzers/databricks/databricks_test.go` (modified, +2/-2)
-```diff
-@@ -24,8 +24,8 @@ func TestAnalyzer_Analyze(t *testing.T) {
- 		t.Fatalf("could not get test secrets from GCP: %s", err)
- 	}
- 
--	token := testSecrets.MustGetField("DATABRICKS_TOKEN")
--	domain := testSecrets.MustGetField("DATABRICKS_DOMAIN")
-+	token := testSecrets.MustGetField(t, "DATABRICKS_TOKEN")
-+	domain := testSecrets.MustGetField(t, "DATABRICKS_DOMAIN")
- 
- 	tests := []struct {
- 		name    string
-```
-
-**File**: `pkg/analyzer/analyzers/datadog/datadog_test.go` (modified, +3/-3)
-```diff
-@@ -32,8 +32,8 @@ func TestAnalyzer_Analyze(t *testing.T) {
- 	}
- 
- 	// Get the required credentials
--	apiKey = testSecrets.MustGetField("DATADOG_API_KEY")
--	appKey = testSecrets.MustGetField("DATADOG_APP_KEY")
-+	apiKey = testSecrets.MustGetField(t, "DATADOG_API_KEY")
-+	appKey = testSecrets.MustGetField(t, "DATADOG_APP_KEY")
- 
- 	// Fail if credentials are not available
- 	if apiKey == "" || appKey == "" {
-@@ -168,7 +168,7 @@ func TestAnalyzer_Analyze_ApiKeyOnly(t *testing.T) {
- 	}
- 
- 	// Get the required credentials
--	apiKey = testSecrets.MustGetField("DATADOG_API_KEY")
-+	apiKey = testSecrets.MustGetField(t, "DATADOG_API_KEY")
- 
- 	// Fail if credentials are not available
- 	if apiKey == "" {
-```
-
-**File**: `pkg/analyzer/analyzers/digitalocean/digitalocean_test.go` (modified, +1/-1)
-```diff
-@@ -32,7 +32,7 @@ func TestAnalyzer_Analyze(t *testing.T) {
- 	}{
- 		{
- 			name:    "valid digitalocean key",
--			key:     testSecrets.MustGetField("DIGITALOCEAN_PERSONAL_ACCESS_TOKEN"),
-+			key:     testSecrets.MustGetField(t, "DIGITALOCEAN_PERSONAL_ACCESS_TOKEN"),
- 			want:    string(expectedOutput),
- 			wantErr: false,
- 		},
-```
-
----
-
-### Incident Patch 2: `83af27f0` (2026-11-24)
-**Commit Message**: Clean up GitHub Experimental source logging for per-source debug (#5556)
-
-* Clean up GitHub Experimental source logging for per-source debug
-
-Remove the stored logger and give each line its proper level: init at
-V(1), the guessing plan and repo scan at V(2), clone, batches and fetch
-at V(3), retries and rate limit waits at V(4), and each GraphQL request
-at V(5). Add the repo field to every call. Cache write failures are now
-logged as errors, they were V(2).
-
-Object discovery retried a failed batch forever, even after cancel or
-with a bad token. It now stops when the context is done and after 10
-failed checks in a row, and the rate limit wait can be cancelled. Found
-commits stay cached for the next run. Add the first tests for the
-package.
-
-* Add README for the GitHub Experimental source
-
-* Don't count secondary rate limits as object discovery failures
-
-**File**: `pkg/sources/github_experimental/README.md` (added, +154/-0)
-```diff
-@@ -0,0 +1,154 @@
-+# GitHub Experimental Source
-+
-+## Overview
-+
-+The GitHub Experimental source runs experimental GitHub scans. It is an alpha release, so its behavior and flags may change. Today it has one sub-module, object discovery, which finds commits that GitHub still serves for a repository but that a normal clone does not get, and scans them for secrets, credentials, and sensitive data along with the rest of the repository.
-+
-+## GitHub Experimental Fundamentals
-+
-+### What does this source scan?
-+
-+This source scans one GitHub repository: every commit a normal clone gets, plus hidden commits found by object discovery. A hidden commit is one that still exists on GitHub, for example from a deleted fork or a force push, but is not reachable from any branch or tag of the repository.
-+
-+GitHub lets any commit in a repository's fork network be fetched by its hash, and a short hash is enough to look it up. Object discovery asks GitHub about every possible short hash to find the ones that exist.
-+
-+### Key Terminology
-+
-+| Term | Description |
-+|------|-------------|
-+| **Hidden commit** | A commit GitHub still serves for the repository that is not in a normal clone |
-+| **Short SHA** | The first few characters of a commit hash. GitHub can look up a commit by its short SHA |
-+| **Collision** | Two commits sharing the same short SHA, so one short SHA can't find both |
-+| **Collision threshold** | How many collisions the scan accepts. A lower value means longer short SHAs, more requests, and fewer missed commits |
-+| **Fork network** | A repository and all its forks. Commits pushed to any fork can be fetched from the others |
-+
-+## Features
-+
-+- **Hidden Commit Discovery**: Finds commits that GitHub serves but a normal clone misses
-+- **Resumable**: Results are cached on disk, so a stopped run picks up where it left off
-+- **Adaptive Batch Size**: GitHub lookups are sent in batches that shrink after an error and grow after a success
-+- **Full Repository Scan**: Hidden commits are scanned together with the normal history of the repository
-+
-+## Configuration
-+
-+This source can only be run from the CLI. `pkg/config/config.go` has no case for it, so a YAML `--config` file cannot be used. Git must be installed.
-+
-+### Authentication
-+
-+A GitHub token is required, even for public repositories. Every lookup is a GitHub GraphQL API request, and those always need a token.
-+
-+**CLI Usage:**
-+```bash
-+trufflehog github-experimental --repo https://github.com/my-org/my-repo.git --object-discovery --token ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-+```
-+
-+The token can also be set with the `GITHUB_TOKEN` environment variable instead of `--token`.
-+
-+### Options
-+
-+| Flag | Description |
-+|------|-------------|
-+| `--repo` | Required. The repository to scan, as a full URL like `https://github.com/my-org/my-repo.git`, or as `my-org/my-repo` |
-+| `--object-discovery` | Runs the object discovery sub-module. At least one sub-module must be turned on, and today this is the only one |
-+| `--collision-threshold` | How many short SHA collisions to accept. Default `1`. A higher value means shorter short SHAs and a faster run, but hidden commits can be missed |
-+| `--delete-cached-data` | Deletes the cached results after the scan |
-+
-+Only repositories on github.com are supported. GitHub Enterprise Server, GitHub Enterprise Cloud with data residency, and gists are not.
-+
-+## How Scanning Works
-+
-+### Scanning Process
-+
-+1. **Repository Metadata**: Fetches the repository and its fork count from the GitHub API
-+2. **Clone**: Clones the repository into a temporary folder and lists the objects it already has
-+3. **Plan**: Estimates how many commits exist across the fork network, and picks the shortest short SHA length, from 4 to 6 characters, that keeps the expected number of collisions under the collision threshold
-+4. **Resume**: Reads the results of earlier runs from `~/.trufflehog/<owner>/<repo>/`, and leaves out short SHAs already known
-+5. **Lookup**: Asks GitHub about every remaining short SHA in batches. Found commits are written to `valid_hidden.txt` and the rest to `invalid.txt` in the cache folder after every batch
-+6. **Fetch**: Fetches every hidden commit into the clone and checks each one out as a branch named `_<commit hash>`, so the scan picks it up
-+7. **Scan**: Scans the whole clone the same way the git source does
-+8. **Cleanup**: Deletes the temporary clone. With `--delete-cached-data`, also deletes the cache folder
-+
-+### Retries and Rate Limits
-+
-+- A failed batch is retried right away with a smaller batch size.
-+- When GitHub reports its secondary rate limit, the scan waits 60 seconds before retrying.
-+- After 10 failed batches in a row, the scan stops with an error. Secondary rate limit waits do not count toward this. This happens with a bad token or when the primary rate limit is used up. Results found so far stay in the cache folder, so running the scan again continues from there.
-+
-+### What Gets Scanned
-+
-+- 
-```
-
-**File**: `pkg/sources/github_experimental/github_experimental.go` (modified, +6/-4)
-```diff
-@@ -4,7 +4,6 @@ import (
+@@ -6,6 +6,8 @@ import (
+ 	"crypto/sha1"
+ 	"encoding/base64"
+ 	"encoding/hex"
++	"encoding/json"
++	"errors"
  	"fmt"
- 	"strings"
+ 	"io"
+ 	"net/http"
+@@ -40,6 +42,22 @@ var (
+ 	apiHost = regexp.MustCompile(`\b([a-z0-9-]{6,}\.duosecurity\.com)\b`)
+ )
  
--	"github.com/go-logr/logr"
- 	"google.golang.org/protobuf/proto"
- 	"google.golang.org/protobuf/types/known/anypb"
- 
-@@ -33,7 +32,6 @@ type Source struct {
- 	useCustomContentWriter bool
- 	git                    *git.Git
- 	scanOptions            *git.ScanOptions
--	log                    logr.Logger
- 	conn                   *sourcespb.GitHubExperimental
- 	connector              githubsource.Connector
- 
-@@ -73,8 +71,6 @@ func (s *Source) Init(aCtx context.Context, name string, jobID sources.JobID, so
- 		return err
- 	}
- 
--	s.log = aCtx.Logger()
--
- 	s.name = name
- 	s.sourceID = sourceID
- 	s.jobID = jobID
-@@ -148,6 +144,12 @@ func (s *Source) Init(aCtx context.Context, name string, jobID sources.JobID, so
- 	}
- 	s.git = git.NewGit(cfg)
- 
-+	// The repo is not logged here, since the configured URL can hold credentials.
-+	aCtx.Logger().V(1).Info("GitHub Experimental source initialized",
-+		"object_discovery", s.conn.ObjectDiscovery,
-+		"collision_threshold", s.conn.CollisionThreshold,
-+		"delete_cached_data", s.conn.DeleteCachedData,
-+	)
- 	return nil
- }
- 
-```
-
-**File**: `pkg/sources/github_experimental/github_experimental_test.go` (added, +153/-0)
-```diff
-@@ -0,0 +1,153 @@
-+package github_experimental
++const (
++	adminAPIPath = "/admin/v1/info/summary" // https://duo.com/docs/adminapi#account-info
++	authAPIPath  = "/auth/v2/check"         // https://duo.com/docs/authapi#check
 +
-+import (
-+	stdcontext "context"
-+	"fmt"
-+	"net/http"
-+	"net/http/httptest"
-+	"net/url"
-+	"os"
-+	"path/filepath"
-+	"strings"
-+	"sync/atomic"
-+	"testing"
-+	"time"
++	adminApplication = "Admin API"
++	authApplication  = "Auth API"
 +
-+	"github.com/google/go-github/v67/github"
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+	"go.uber.org/zap/zaptest/observer"
-+	"google.golang.org/protobuf/types/known/anypb"
-+
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/context"
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/log/logtest"
-+	"github.com/trufflesecurity/trufflehog/v3/pkg/pb/sourcespb"
++	duoCodeInvalidSignature = 40103
++	duoCodeAccessForbidden  = 40301
 +)
 +
-+const testToken = "ghexperimentaldebuglogtesttoken"
-+
-+// testClient returns a GitHub client that sends every request to server, with the
-+// test token as the bearer token, like the source's authenticated client.
-+func testClient(t *testing.T, server *httptest.Server) *github.Client {
-+	t.Helper()
-+	target, err := url.Parse(server.URL)
-+	require.NoError(t, err)
-+	return github.NewClient(&http.Client{Transport: roundTripFunc(func(req *http.Request) (*http.Response, error) {
-+		req = req.Clone(req.Context())
-+		req.URL.Scheme = target.Scheme
-+		req.URL.Host = target.Host
-+		req.Header.Set("Authorization", "Bearer "+testToken)
-+		return http.DefaultTransport.RoundTrip(req)
-+	})})
++type duoReply struct {
++	status int
++	code   int
 +}
 +
-+type roundTripFunc func(*http.Request) (*http.Response, error)
-+
-+func (f roundTripFunc) RoundTrip(req *http.Request) (*http.Response, error) { return f(req) }
-+
-+func TestSource_DebugLogging(t *testing.T) {
-+	const hiddenOID = "abcd000000000000000000000000000000000000"
-+
-+	conn, err := anypb.New(&sourcespb.GitHubExperimental{
-+		Repository:      "owner/repo",
-+		Credential:      &sourcespb.GitHubExperimental_Token{Token: testToken},
-+		ObjectDiscovery: true,
-+	})
-+	require.NoError(t, err)
-+
-+	runSource := func(t *testing.T, debug bool) []observer.LoggedEntry {
-+		t.Helper()
-+		var requests atomic.Int32
-+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+			w.Header().Set("Content-Type", "application/json")
-+			// The first request fails, so the retry line is logged.
-+			if requests.Add(1) == 1 {
-+				_, _ = fmt.Fprint(w, `{"errors":[{"message":"Something went wrong. Try again"}]}`)
-+				return
-+			}
-+			_, _ = fmt.Fprintf(w, `{"data":{"repository":{"commitabcd":{"oid":"%s"},"commitef01":null}}}`, hiddenOID)
-+		}))
-+		defer server.Close()
-+
-+		ctx, logs := logtest.SourceContext(debug)
-+		s := new(Source)
-+		require.NoError(t, s.Init(ctx, "test source", 1, 1, false, conn, 1))
-+		if debug {
-+			logtest.CheckInitLine(t, logs.All())
-+		}
-+
-+		dir := t.TempDir()
-+		require.NoError(t, processCommits(ctx, testClient(t, server), []string{"abcd", "ef01"}, "owner", "repo", dir))
-+
-+		valid, err := readCommitsFromDisk(validHiddenCommit, dir)
-+		require.NoError(t, err)
-+		assert.Equal(t, []string{hiddenOID}, valid)
-+		invalid, err := readCommitsFromDisk(invalidCommit, dir)
-+		require.NoError(t, err)
-+		assert.Equal(t, []string{"ef01"}, invalid)
-+		return logs.All()
-+	}
-+
-+	t.Run("debug on", func(t *testing.T) {
-+		logtest.CheckSourceLines(t, runSource(t, true), testToken)
-+	})
-+
-+	t.Run("debug off", func(t *testing.T) {
-+		logtest.CheckNoDebugLines(t, runSource(t, false))
-+	})
-+}
-+
-+func TestProcessCommits_StopsOnCancel(t *testing.T) {
-+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		t.Error("no request should be sent after cancel")
-+	}))
-+	defer server.Close()
-+
-+	ctx, cancel := context.WithCancel(context.Background())
-+	cancel()
-+	err := processCommits(ctx, testClient(t, server), []string{"abcd"}, "owner", "repo", t.TempDir())
-+	assert.ErrorIs(t, err, stdcontext.Canceled)
-+}
-+
-+func TestProcessCommits_StopsAfterFailures(t *testing.T) {
-+	var requests atomic.Int32
-+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		requests.Add(1)
-+		w.WriteHeader(http.StatusUnauthorized)
-+		_, _ = fmt.Fprint(w, `{"message":"Bad credentials"}`)
-+	}))
-+	defer server.Close()
-+
-+	dir := t.TempDir()
-+	err := processCommits(context.Background(), testClient(t, server), []string{"abcd"}, "owner", "repo", dir)
-+	require.Error(t, err)
-+	assert.True(t, strings.Contains(err.Error(), "Bad credentials"), err.Error())
-+	assert.Equal(t, int32(maxConsecutiveFailures), requests.Load())
-+	_, statErr := os.Stat(filepath.Join(dir, validHiddenCommit+".txt"))
-+	assert.True(t, os.IsNotExist(statErr))
-+}
-+
-+// Secondary rate limits don't count toward maxConsecutiveFailures, since the scan
-+// waits for them to reset.
-+func TestProcessCommits_SecondaryRateLimitIsNotAFailure(t *testing.T) {
-+	orig := secondaryRateLimitWait
-+	secondaryRateLimitWait = time.Millisecond
-+	t.Cleanup(func() { secondaryRateLimitWait = orig })
-+
-+	var requests atomic.Int32
-+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		w.Header().Set("Content-Type", "application/json")
-+		if requests.Add(1) <= maxConsecutiveFailures+2 {
-
-```
-
-**File**: `pkg/sources/github_experimental/object_discovery.go` (modified, +82/-25)
-```diff
-@@ -21,7 +21,8 @@ import (
- 
- // Assumption: sleeping for 60 seconds is enough to reset the secondary rate limit
- // see https://docs.github.com/en/graphql/overview/rate-limits-and-node-limits-for-the-graphql-api#secondary-rate-limits
--const secondaryRateLimitSleep = 60
-+// It is a var so tests can shorten it.
-+var secondaryRateLimitWait = 60 * time.Second
- 
- // Assumption: on average, a fork contributes 0.1% additional commits
- const forkCommitMultiplier = 0.001
-@@ -46,6 +47,12 @@ const maxCharLen = 6
- const maxChunkSize = 900
- const initialChunkSize = 350
- 
-+// Number of failed commit checks in a row after which object discovery gives up.
-+// A bad token or the primary rate limit fails every request, and retrying it forever
-+// would never end the scan. Secondary rate limits are not counted, since the scan
-+// waits for them to reset.
-+const maxConsecutiveFailures = 10
-+
- // Max number of commits to fetch from the repository in one command
- // ex: git fetch origin <commit1> <commit2> ... <commit1000>
- const gitFetchMax = 1000
-@@ -293,9 +300,11 @@ func removeBySHA(existingCommits, newCommits []string, charLen int) []string {
- 	return filteredCommits
+ // Keywords are used for efficiently pre-filtering chunks.
+ // Use identifiers in the secret preferably, or the provider name.
+ func (s Scanner) Keywords() []string {
+@@ -53,7 +71,7 @@ func (s Scanner) getClient() *http.Client {
+ 	return defaultClient
  }
  
--func processCommits(ctx context.Context, apiClient *github.Client, needsProcessing []string, owner, repo, path string) {
--	repoCtx := context.WithValue(ctx, "repo", repo)
--
-+// processCommits checks every hash in needsProcessing against GitHub and writes the
-+// results to disk under path. It returns an error when ctx is done, or after
-+// maxConsecutiveFailures failed checks in a row. Results found before that stay on
-+// disk, so the next run picks up where this one stopped.
-+func processCommits(ctx context.Context, apiClient *github.Client, needsProcessing []string, owner, repo, path string) error {
- 	startingSize := float64(len(needsProcessing))
- 	queryChunkSize := newBackoff(initialChunkSize, 10, 10, 1)
+-// FromData will find and optionally verify DeepSeek secrets in a given set of bytes.
++// FromData will find and optionally verify Duo secrets in a given set of bytes.
+ func (s Scanner) FromData(ctx context.Context, verify bool, data []byte) (results []detectors.Result, err error) {
+ 	dataStr := string(data)
  
-@@ -306,40 +315,69 @@ func processCommits(ctx context.Context, apiClient *github.Client, needsProcessi
- 		progressbar.OptionEnableColorCodes(true),
- 	)
+@@ -77,31 +95,19 @@ func (s Scanner) FromData(ctx context.Context, verify bool, data []byte) (result
+ 					Raw:          []byte(apiKey),
+ 					RawV2:        []byte(fmt.Sprintf("%s:%s:%s", host, apiKey, apiSecret)),
+ 					ExtraData: map[string]string{
+-						"application": "Admin API",
++						"application": adminApplication,
+ 					},
+ 					SecretParts: map[string]string{
+ 						"host":        host,
+ 						"ikey":        apiKey,
+ 						"skey":        apiSecret,
+-						"application": "Admin API",
++						"application": adminApplication,
+ 					},
+ 				}
+ 				if verify {
+-					verified, verificationErr := VerifyAdminToken(ctx, s.getClient(), host, apiKey, apiSecret)
+-					// we will try auth api verification if admin api verification fails without error,
+-					// which is in the case of it returning 401 unauthorized due to invalid credentials.
+-					if !verified && verificationErr == nil {
+-						var authStatusCode int
+-						verified, authStatusCode, verificationErr = VerifyAuthToken(ctx, s.getClient(), host, apiKey, apiSecret)
+-						// The Auth API responds 403 (not 401) when ikey/skey are
+-						// structurally valid Admin API keys, active or not. That still
+-						// counts as verified, but the keys remain Admin API keys, so
+-						// only relabel to Auth API when the check actually succeeded (200).
+-						if authStatusCode != http.StatusForbidden {
+-							s1.ExtraData["application"] = "Auth API"
+-							s1.SecretParts["application"] = "Auth API"
+-						}
+-					}
++					verified, application, verificationErr := verifyMatch(ctx, s.getClient(), host, apiKey, apiSecret)
++					s1.ExtraData["application"] = application
++					s1.SecretParts["application"] = application
+ 					s1.SetVerificationError(verificationErr, host, apiKey, apiSecret)
+ 					s1.Verified = verified
+ 				}
+@@ -112,49 +118,56 @@ func (s Scanner) FromData(ctx context.Context, verify bool, data []byte) (result
+ 	return results, nil
+ }
  
-+	failures := 0
- 	for len(needsProcessing) > 0 {
-+		if err := ctx.Err(); err != nil {
-+			return err
-+		}
- 		if len(needsProcessing) < queryChunkSize.getValue() {
- 			queryChunkSize.value = float64(len(needsProcessing))
- 		}
- 		chunkSize := queryChunkSize.getValue()
- 		chunk := needsProcessing[:chunkSize]
- 		needsProcessing = needsProcessing[chunkSize:]
+-// returns verified=true if credentials are valid and belong to auth api, false if creds are invalid, and error if creds belong to auth api or for anything else (e.g., network error).
+-// The HTTP status code is also returned so callers can distinguish a genuine 200 from a
+-// 403, which the Auth API returns for structurally valid Admin API keys (active or not).
+-func VerifyAuthToken(
++// verifyMatch checks the credentials against the Admin API, then the Auth API, and
++// returns whether they are valid and which application they belong to.
++//
++// Only a 200 from either API proves the credentials valid, and only error code 40103
++// (invalid signature) from either API proves them invalid: that API recognized the
++// integration key and rejected the secret key. Other responses are reported as a verification error.
++func verifyMatch(
+ 	ctx context.Context,
+ 	client *http.Client,
+ 	host, ikey, skey string,
+-) (bool, int, error) {
+-	// Docs: https://duo.com/docs/authapi#check
+-	return verifyDuoRequest(
+-		ctx,
+-		client,
+-		host,
+-		ikey,
+-		skey,
+-		"/auth/v2/check",
+-	)
+-}
++) (bool, string, error) {
++	admin, adminErr := duoRequest(ctx, client, host, ikey, skey, adminAPIPath)
++	if adminErr == nil && admin.status == http.StatusOK {
++		return true, adminApplication, nil
++	}
  
--		commitData, err := checkHashes(repoCtx, apiClient, owner, repo, chunk)
-+		commitData, err := checkHashes(ctx, apiClient, owner, repo, chunk)
- 		if err != nil {
--			repoCtx.Logger().V(2).Info("Temporary error occurred in guessing commits", "error", err)
-+			if ctxErr := ctx.Err(); ctxErr != nil {
-+				return ctxErr
-+			}
-+			rateLimited := strings.Contains(err.Error(), "You have exceeded a secondary rate limit")
-+			if !rateLimited {
-+				failures++
-+				if failures >= maxConsecutiveFailures {
-+					return fmt.Errorf("giving up after %d failed commit checks in a row: %w", failures, err)
+-// returns 401 unauthorized if credentials are invalid, 200 OK if valid, and error for anything else
+-func VerifyAdminToken(
+-	ctx context.Context,
+-	client *http.Client,
+-	host, ikey, skey string,
+-) (bool, error) {
+-	// Docs: https://duo.com/docs/adminapi#account-info
+-	verified, _, err := verifyDuoRequest(
+-		ctx,
+-		client,
+-		host,
+-		ikey,
+-		skey,
+-		"/admin/v1/info/summary",
++	auth, authErr := duoRequest(ctx, client, host, ikey, skey, authAPIPath)
++	if authErr == nil && auth.status == http.StatusOK {
++		return true, authApplication, nil
++	}
++
++	if (adminErr == nil && admin.code ==
+```
+
+**File**: `pkg/detectors/duo/duo_integration_test.go` (modified, +12/-3)
+```diff
+@@ -166,8 +166,11 @@ func TestDuo_FromChunk(t *testing.T) {
+ 			ignoreOpts := cmpopts.IgnoreFields(
+ 				detectors.Result{},
+ 				"ExtraData",
++				"SecretParts",
+ 				"verificationError",
+ 				"primarySecret",
++				"chunkOffset",
++				"chunkOffsetSet",
+ 			)
+ 
+ 			if diff := cmp.Diff(got, tt.want, ignoreOpts, cmpopts.IgnoreUnexported(detectors.Result{})); diff != "" {
+@@ -210,7 +213,9 @@ func TestDuo_FromChunk_AdminAPI(t *testing.T) {
+ 		wantVerificationErr bool
+ 	}{
+ 		{
+-			name: "admin key, verified",
++			// Duo answers this integration with 403 from both APIs, the same responses it
++			// gives for a bogus secret key, so the credentials cannot be confirmed either way.
++			name: "admin key, indeterminate (403 from both APIs)",
+ 			s:    Scanner{},
+ 			args: args{
+ 				ctx: context.Background(),
+@@ -224,14 +229,15 @@ func TestDuo_FromChunk_AdminAPI(t *testing.T) {
+ 			want: []detectors.Result{
+ 				{
+ 					DetectorType: detector_typepb.DetectorType_Duo,
+-					Verified:     true,
++					Verified:     false,
+ 					Raw:          []byte(adminIKey),
+ 					RawV2:        []byte(fmt.Sprintf("%s:%s:%s", host, adminIKey, adminSKey)),
+ 					ExtraData: map[string]string{
+ 						"application": "Admin API",
+ 					},
+ 				},
+ 			},
++			wantVerificationErr: true,
+ 		},
+ 		{
+ 			name: "admin key, unverified (invalid secret)",
+@@ -252,7 +258,7 @@ func TestDuo_FromChunk_AdminAPI(t *testing.T) {
+ 					Raw:          []byte(inactiveIKey),
+ 					RawV2:        []byte(fmt.Sprintf("%s:%s:%s", host, inactiveIKey, inactiveSKey)),
+ 					ExtraData: map[string]string{
+-						"application": "Auth API",
++						"application": "Admin API",
+ 					},
+ 				},
+ 			},
+@@ -282,8 +288,11 @@ func TestDuo_FromChunk_AdminAPI(t *testing.T) {
+ 
+ 			ignoreOpts := cmpopts.IgnoreFields(
+ 				detectors.Result{},
++				"SecretParts",
+ 				"verificationError",
+ 				"primarySecret",
++				"chunkOffset",
++				"chunkOffsetSet",
+ 			)
+ 
+ 			if diff := cmp.Diff(got, tt.want, ignoreOpts, cmpopts.IgnoreUnexported(detectors.Result{})); diff != "" {
+```
+
+**File**: `pkg/detectors/duo/duo_verify_test.go` (added, +354/-0)
+```diff
+@@ -0,0 +1,354 @@
++package duo
++
++import (
++	"context"
++	"encoding/base64"
++	"errors"
++	"fmt"
++	"io"
++	"net/http"
++	"strings"
++	"sync"
++	"testing"
++
++	"github.com/trufflesecurity/trufflehog/v3/pkg/common"
++)
++
++const (
++	testHost = "api-1a2b3c4d.duosecurity.com"
++	testIKey = "DIABCDEFGHIJ12345678"
++	testSKey = "abcdefghijABCDEFGHIJ0123456789abcdefghij"
++)
++
++// Messages Duo sends with each error code, as seen from live responses.
++var duoMessages = map[int]string{
++	40101: "Missing request credentials",
++	40102: "Invalid identity in request credentials",
++	40103: "Invalid signature in request credentials",
++	40301: "Access forbidden",
++}
++
++var errNetwork = errors.New("network unreachable")
++
++// duoResponse is the fake answer for one API path. A nil value means the transport
++// fails for that path.
++type duoResponse *fakeReply
++
++type fakeReply struct {
++	status int
++	body   string
++}
++
++// duoError answers with a Duo error body; the HTTP status is its first three digits.
++func duoError(c int) duoResponse {
++	return &fakeReply{
++		status: c / 100,
++		body:   fmt.Sprintf(`{"code": %d, "message": %q, "stat": "FAIL"}`, c, duoMessages[c]),
++	}
++}
++
++// raw answers with a status and a body that is not a Duo error.
++func raw(status int, body string) duoResponse { return &fakeReply{status: status, body: body} }
++
++var okReply = raw(http.StatusOK, `{"stat": "OK", "response": {}}`)
++
++type fakeDuo struct {
++	mu       sync.Mutex
++	requests map[string]*http.Request
++}
++
++func newFakeDuoClient(t *testing.T, admin, auth duoResponse) (*http.Client, *fakeDuo) {
++	t.Helper()
++	fake := &fakeDuo{requests: map[string]*http.Request{}}
++	responses := map[string]duoResponse{adminAPIPath: admin, authAPIPath: auth}
++	client := &http.Client{
++		Transport: common.FakeTransport{
++			CreateResponse: func(req *http.Request) (*http.Response, error) {
++				fake.mu.Lock()
++				fake.requests[req.URL.Path] = req
++				fake.mu.Unlock()
++
++				resp, found := responses[req.URL.Path]
++				if !found {
++					t.Errorf("unexpected request path %s", req.URL.Path)
++					return nil, errNetwork
 +				}
-+			}
- 			// Prepend the failed chunk to the FRONT of the queue for immediate retry
- 			// This ensures we retry the same hashes instead of moving to the next batch
- 			needsProcessing = append(chunk, needsProcessing...)
- 			queryChunkSize.errorOccurred()
--			if strings.Contains(err.Error(), "You have exceeded a secondary rate limit") {
--				repoCtx.Logger().V(2).Info("Reached secondary GitHub Rate Limit. Sleeping for 60 seconds.")
--				time.Sleep(secondaryRateLimitSleep * time.Second)
-+			// Logged as a field, since V(4).Error would ignore the level.
-+			ctx.Logger().V(4).Info("Commit check failed, retrying",
-+				"batch_size", chunkSize,
-+				"next_batch_size", queryChunkSize.getValue(),
-+				"failures", failures,
-+				"error", err.Error(),
-+			)
-+			if rateLimited {
-+				ctx.Logger().V(4).Info("Hit secondary rate limit, waiting", "wait", secondaryRateLimitWait)
-+				select {
-+				case <-ctx.Done():
-+					return ctx.Err()
-+				case <-time.After(secondaryRateLimitWait):
++				if resp == nil {
++					return nil, errNetwork
 +				}
- 			}
- 			continue
- 		}
-+		failures = 0
- 
- 		percentCompleted := (1 - (float64(len(needsProcessing)) / startingSize)) * 100
--
--		repoCtx.Logger().V(2).Info("Progress", "percent_completed", percentCompleted, "needs_processing", len(needsProcessing))
-+		ctx.Logger().V(3).Info("Checked commit batch",
-+			"batch_size", chunkSize,
-+			"found", len(commitData[validHiddenCommit]),
-+			"remaining", len(needsProcessing),
-+			"percent_completed", percentCompleted,
-+		)
- 
- 		queryChunkSize.successOccurred()
- 		err = writeCommitsToDisk(commitData[validHiddenCommit], validHiddenCommit, path)
- 		if err != nil {
--			repoCtx.Logger().V(2).Info("Failed to write valid hidden commits to disk", "error", err)
-+			ctx.Logger().Error(err, "Failed to write valid hidden commits to disk")
- 		}
- 		err = writeCommitsToDisk(commitData[invalidCommit], invalidCommit, path)
- 		if err != nil {
--			repoCtx.Logger().V(2).Info("Failed to write invalid commits to disk", "error", err)
-+			ctx.Logger().Error(err, "Failed
++				return &http.Response{
++					Request:    req,
++					StatusCode: resp.status,
++					Body:       io.NopCloser(strings.NewReader(resp.body)),
++				}, nil
++			},
++		},
++	}
++	return client, fake
++}
++
++func (f *fakeDuo) called(path string) bool {
++	f.mu.Lock()
++	defer f.mu.Unlock()
++	_, found := f.requests[path]
++	return found
++}
++
++func testData() []byte {
++	return []byte("DUO_APIHOST=" + testHost + " DUO_IKEY=" + testIKey + " DUO_SKEY=" + testSKey)
++}
++
++func TestDuo_Verification_Outcomes(t *testing.T) {
++	tests := []struct {
++		name            string
++		admin           duoResponse
++		auth            duoResponse
++		wantVerified    bool
++		wantApplication string
++		wantErr         bool
++		wantAuthCalled  bool
++	}{
++		// Verified: an API accepted the credentials.
++		{
++			name:  "admin 200 verifies an Admin API key",
++			admin: okReply, auth: duoError(40301),
++			wantVerified: true, wantApplication: adminApplication,
++		},
++		{
++			name:  "admin 40102, auth 200 verifies an Auth API key",
++			admin: duoError(40102), auth: okReply,
++			wantVerified: true, wantApplication: authApplication, wantAuthCalled: true,
++		},
++		{
++			name:  "admin 40301, auth 200 verifies an Auth API key",
++			admin: duoError(40301), auth: okReply,
++			wantVerified: true, wantApplication: authApplication, wantAuthCalled: true,
++		},
++
++		// Invalid: an API recognized the integration key and rejected the secret key.
++		{
++			name:  "admin 40103, auth 40301 is an Admin API key with a wrong secret",
++			admin: duoError(40103), auth: duoError(40301),
++			wantApplication: adminApplication, wantAuthCalled: true,
++		},
++		{
++			name:  "admin 40102, auth 40103 is an Auth API key with a wrong secret",
++			admin: duoError(40102), auth: duoError(40103),
++			wantApplication: adminApplication, wantAuthCalled: true,
++		},
++		{
++			name:  "admin network error, auth 40103 is invalid",
++			admin: nil, auth: duoError(40103),
++			wantApplication: adminApplication, wantAuthCalled: true,
++		},
++		{
++			name:  "admin 40103, auth network error is invalid",
++			admin: duoError(40103), auth: nil,
++			wantApplication: adminApplication, wantAuthCalled: true,
++		},
++
++		// Indeterminate: no response judged the secret key.
++		{
++			name:  "admin 40102, auth 40301 is another integration type",
++			admin: duoError(40102), auth: duoError(40301),
++			wantApplication: adminApplication, wantErr: true, wantAuthCalled: true,
++		},
++		{
++			name:  "admin 40102, auth 40102 is unknown to both APIs",
++			admin: duoError(40102), auth: duoError(40102),
++			wantApplication: adminApplication, wantErr: true, wantAuthCalled: true,
++		},
++		{
++			name:  "admin 40301, auth 40301 is an Admin API key without permission",
++			admin: duoError(40301), auth: duoError(40301),
++			wantApplication: adminApplication, wantErr: true, wantAuthCalled: true,
++		},
++		{
++			name:  "40101 m
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #5599** (2026-11-24): Stop detector integration tests from panicking (@kashifkhan0771)
 - **PR #5593** (2026-11-23): Update github-actions (@renovate[bot])
+- **PR #5586** (2026-11-24): Duo: only treat 200 as verified and 40103 as invalid; everything else is indeterminate (@jordanTunstill)
 - **PR #5582** (2026-11-19): only treat HubSpot MISSING_SCOPES 403s as live tokens (@jordanTunstill)
 - **PR #5581** (2026-11-19): Saucelabs: verify via identity endpoint so proxy 403s aren't reported as live (@jordanTunstill)
 - **PR #5566** (2026-11-16): Add upsert_error to AWSSecretsManager source metadata (@Ahmer-Zuberi)
-- **PR #5560** (closed): Update module go.opentelemetry.io/otel/trace to v1.47.0 [SECURITY] - autoclosed (@renovate[bot])
 
 ---
 
@@ -1715,31 +1560,80 @@ package.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Stop detector integration tests from panicking
+## X. Duo: only treat 200 as verified and 40103 as invalid; everything else is indeter
 
 **RULE**:
-When implementing operations in `pkg/analyzer/analyzers/airtable/airtableoauth/airtable_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/detectors/duo/duo.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2921dcc5`: Stop detector integration tests from panicking. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `23255461`: Duo: only treat 200 as verified and 40103 as invalid; everything else is indeterminate. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/analyzer/analyzers/airtable/airtableoauth/airtable_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/detectors/duo/duo.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-			token:   testSecrets.MustGetField(t, "AIRTABLEOAUTH_TOKEN"),
+	"encoding/json"
+	"errors"
+const (
+	adminAPIPath = "/admin/v1/info/summary" // https://duo.com/docs/adminapi#account-info
+	authAPIPath  = "/auth/v2/check"         // https://duo.com/docs/authapi#check
+
+	adminApplication = "Admin API"
+	authApplication  = "Auth API"
+
+	duoCodeInvalidSignature = 40103
+	duoCodeAccessForbidden  = 40301
+)
+
+type duoReply struct {
+	status int
+	code   int
+}
+
+// FromData will find and optionally verify Duo secrets in a given set of bytes.
+						"application": adminApplication,
+						"application": adminApplication,
+					verified, application, verificationErr := verifyMatch(ctx, s.getClient(), host, apiKey, apiSecret)
+					s1.ExtraData["application"] = application
+					s1.SecretParts["application"] = application
+// verifyMatch checks the credentials against the Admin API, then the Auth API, and
+// returns whether they are valid and which application they belong to.
+//
+// Only a 200 from either API proves the credentials valid, and only error code 40103
+// (invalid signature) from either API proves them invalid: that API recognized the
+// integration key and rejected the secret key. Other responses are reported as a verification error.
+func verifyMatch(
+) (bool
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-			token:   testSecrets.MustGetField("AIRTABLEOAUTH_TOKEN"),
+// FromData will find and optionally verify DeepSeek secrets in a given set of bytes.
+						"application": "Admin API",
+						"application": "Admin API",
+					verified, verificationErr := VerifyAdminToken(ctx, s.getClient(), host, apiKey, apiSecret)
+					// we will try auth api verification if admin api verification fails without error,
+					// which is in the case of it returning 401 unauthorized due to invalid credentials.
+					if !verified && verificationErr == nil {
+						var authStatusCode int
+						verified, authStatusCode, verificationErr = VerifyAuthToken(ctx, s.getClient(), host, apiKey, apiSecret)
+						// The Auth API responds 403 (not 401) when ikey/skey are
+						// structurally valid Admin API keys, active or not. That still
+						// counts as verified, but the keys remain Admin API keys, so
+						// only relabel to Auth API when the check actually succeeded (200).
+						if authStatusCode != http.StatusForbidden {
+							s1.ExtraData["application"] = "Auth API"
+							s1.SecretParts["application"] = "Auth API"
+						}
+					}
+// returns verified=true if credentials are valid and belong to auth api, false if creds are invalid, and error if creds belong to auth api or fo
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2921dcc5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `23255461` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

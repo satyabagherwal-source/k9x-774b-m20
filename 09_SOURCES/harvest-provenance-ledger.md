@@ -12884,3 +12884,9 @@ Every entry in this ledger must capture:
 | `learn-github-parcel-bundler-parcel` | `https://github.com/parcel-bundler/parcel` | `63a71c9c` | Multi-dimensional audit evidence | 2026-11-24T23:50:54.167Z |
 | `learn-github-clastix-kamaji` | `https://github.com/clastix/kamaji` | `063f358d` | Multi-dimensional audit evidence | 2026-11-24T23:50:57.783Z |
 | `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `3db63451` | Multi-dimensional audit evidence | 2026-11-24T23:51:03.471Z |
+| `learn-github-str4d-rage` | `https://github.com/str4d/rage` | `eaa85530` | Multi-dimensional audit evidence | 2026-11-24T23:58:36.640Z |
+| `learn-github-tanstack-router` | `https://github.com/TanStack/router` | `61d5cdda` | Multi-dimensional audit evidence | 2026-11-24T23:58:38.568Z |
+| `learn-github-necolas-react-native-web` | `https://github.com/necolas/react-native-web` | `9fa18288` | Multi-dimensional audit evidence | 2026-11-24T23:58:42.003Z |
+| `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `23255461` | Multi-dimensional audit evidence | 2026-11-24T23:58:50.031Z |
+| `learn-dom-d-74b4b6c4` | `project://str4d-rage` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/str4d-rage-learnings.md` | 2026-11-24T23:59:15.874Z |
+| `learn-dom-d-ff5af4f8` | `project://tanstack-router` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tanstack-router-learnings.md` | 2026-11-24T23:59:45.329Z |

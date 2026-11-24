@@ -12851,3 +12851,9 @@
 | `CYCLE-20261124-LHHT` | `2026-11-24T23:50:54.161Z` | `parcel-bundler/parcel` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10389` | Yes (`1963c926...`) |
 | `CYCLE-20261124-LKAA` | `2026-11-24T23:50:57.778Z` | `clastix/kamaji` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/clastix-kamaji-learnings.md` | Yes (`20d684bf...`) |
 | `CYCLE-20261124-LOOA` | `2026-11-24T23:51:03.466Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10390` | Yes (`6ba9f5f7...`) |
+| `CYCLE-20261124-VECD` | `2026-11-24T23:58:36.637Z` | `str4d/rage` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/str4d-rage-learnings.md` | Yes (`8caecbbe...`) |
+| `CYCLE-20261124-VFTX` | `2026-11-24T23:58:38.565Z` | `TanStack/router` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/tanstack-router-learnings.md` | Yes (`ddd5dc78...`) |
+| `CYCLE-20261124-VIHC` | `2026-11-24T23:58:42.000Z` | `necolas/react-native-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10391` | Yes (`2c1711a3...`) |
+| `CYCLE-20261124-VOOB` | `2026-11-24T23:58:50.027Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10392` | Yes (`04a833a5...`) |
+| `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T23:59:15.874Z` | `str4d-rage` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-74B4B6C4` [Domain D] | Yes (`81e30e62...`) |
+| `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T23:59:45.329Z` | `tanstack-router` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-FF5AF4F8` [Domain D] | Yes (`bf2ce3d1...`) |

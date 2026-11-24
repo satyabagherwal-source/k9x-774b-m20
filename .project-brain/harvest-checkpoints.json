@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T23:51:03.491Z",
+  "last_updated": "2026-11-24T23:58:50.045Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5586,14 +5586,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trufflesecurity-trufflehog",
-      "content_hash": "faf463871ec42268a3750db9870ac8eb67be1d61f57c830939d0cf15ca9faafe",
-      "verified_at": "2026-11-24T19:09:57.460Z",
+      "content_hash": "04a833a51cdb8b1343fe5097963bc8b6a0eb65644e44cbbd4d687f9ba532e931",
+      "verified_at": "2026-11-24T23:58:50.044Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T19:09:57.460Z"
+      "last_updated": "2026-11-24T23:58:50.044Z"
     },
     "neural-maze/ava-whatsapp-agent-course": {
       "repository": "neural-maze/ava-whatsapp-agent-course",
@@ -10731,14 +10731,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-necolas-react-native-web",
-      "content_hash": "9ae4ebfe744ca8de8bc6f7c5028c645ac2ff25622c0869f45ff18f86d4eaaca2",
-      "verified_at": "2026-11-22T09:47:33.367Z",
+      "content_hash": "2c1711a315d21b9849c27a268d1cff25ed52a84edb8d97deb34702da4fb2dfab",
+      "verified_at": "2026-11-24T23:58:42.017Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T09:47:33.367Z"
+      "last_updated": "2026-11-24T23:58:42.017Z"
     },
     "zvec-ai/zvec-grep": {
       "repository": "zvec-ai/zvec-grep",
@@ -10956,14 +10956,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-str4d-rage",
-      "content_hash": "ba7eda3d38d98ef1ea47762588d525b69fc04c29f6eca0413293ca1214c7484f",
-      "verified_at": "2026-10-19T08:22:50.610Z",
+      "content_hash": "8caecbbe2857583e926fe76b5a4631f3954a347572462d1aa74a5726dd6d9b61",
+      "verified_at": "2026-11-24T23:58:36.655Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T08:22:50.610Z"
+      "last_updated": "2026-11-24T23:58:36.655Z"
     },
     "memvid/memvid": {
       "repository": "memvid/memvid",
@@ -17106,14 +17106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tanstack-router",
-      "content_hash": "2d0640cc9f066917a9559e1974a963412bf052b78e68305dcff328ca96b642ed",
-      "verified_at": "2026-11-21T00:24:38.689Z",
+      "content_hash": "ddd5dc783e87b91bed147ffc12a76ee45030c1ef61c6b6f87bb3713487c6b849",
+      "verified_at": "2026-11-24T23:58:38.585Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T00:24:38.689Z"
+      "last_updated": "2026-11-24T23:58:38.585Z"
     },
     "tencent/Hy-SimulMT-30B-A3B-FP8": {
       "repository": "tencent/Hy-SimulMT-30B-A3B-FP8",

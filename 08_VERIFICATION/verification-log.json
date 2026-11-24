@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-5AF3",
-    "timestamp": "2026-11-23T13:06:46.911Z",
-    "repository": "EL4CTEO/fast-anything",
-    "learningId": "learn-github-el4cteo-fast-anything",
-    "contentHash": "df4143a6081a9c2f20066d56c06238923e500fe99c0c74966ddbcce87fb65820",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-5GV1",
-    "timestamp": "2026-11-23T13:06:55.261Z",
-    "repository": "bridgecrewio/checkov",
-    "learningId": "learn-github-bridgecrewio-checkov",
-    "contentHash": "6ba557375b0824ce42b2d5ef18d5cc919ae2afa0fbcaf2d06e513d7d4e9bfe18",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-5JI1",
-    "timestamp": "2026-11-23T13:06:58.681Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "0f5bbb7e880550e53378f08bf7c8ca0dd2e5a51bb4ccf50f9295fdb971c2e6aa",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-QQJN",
-    "timestamp": "2026-11-23T13:23:27.587Z",
-    "repository": "daveebbelaar/bama",
-    "learningId": "learn-github-daveebbelaar-bama",
-    "contentHash": "cc18914fab509f43aaaeebb6c0f1ec849348528ee4acdd7d437225ddba8d3dd3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-QWKU",
     "timestamp": "2026-11-23T13:23:35.406Z",
     "repository": "freenet/freenet-core",
@@ -7490,6 +7430,66 @@
     "repository": "paradedb/paradedb",
     "learningId": "learn-github-paradedb-paradedb",
     "contentHash": "6ba9f5f75593547ce09792e4b746e4557cb587052689d6a973da39c61a76ef6a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-VECD",
+    "timestamp": "2026-11-24T23:58:36.637Z",
+    "repository": "str4d/rage",
+    "learningId": "learn-github-str4d-rage",
+    "contentHash": "8caecbbe2857583e926fe76b5a4631f3954a347572462d1aa74a5726dd6d9b61",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-VFTX",
+    "timestamp": "2026-11-24T23:58:38.565Z",
+    "repository": "TanStack/router",
+    "learningId": "learn-github-tanstack-router",
+    "contentHash": "ddd5dc783e87b91bed147ffc12a76ee45030c1ef61c6b6f87bb3713487c6b849",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-VIHC",
+    "timestamp": "2026-11-24T23:58:42.000Z",
+    "repository": "necolas/react-native-web",
+    "learningId": "learn-github-necolas-react-native-web",
+    "contentHash": "2c1711a315d21b9849c27a268d1cff25ed52a84edb8d97deb34702da4fb2dfab",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-VOOB",
+    "timestamp": "2026-11-24T23:58:50.027Z",
+    "repository": "trufflesecurity/trufflehog",
+    "learningId": "learn-github-trufflesecurity-trufflehog",
+    "contentHash": "04a833a51cdb8b1343fe5097963bc8b6a0eb65644e44cbbd4d687f9ba532e931",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

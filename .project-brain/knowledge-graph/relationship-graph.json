@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-24T23:25:39.376Z",
+  "updated_at": "2026-11-24T23:59:45.327Z",
   "statistics": {
-    "total_nodes": 519,
+    "total_nodes": 521,
     "total_edges": 215,
     "domain_distribution": {
-      "D": 313,
+      "D": 315,
       "M": 1,
       "H": 95,
       "J": 22,
@@ -11587,6 +11587,50 @@
       ],
       "created_at": "2026-11-24T23:25:39.376Z",
       "updated_at": "2026-11-24T23:25:39.376Z"
+    },
+    "DOM-D-74B4B6C4": {
+      "id": "DOM-D-74B4B6C4",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): str4d/rage",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/str4d-rage-learnings.md`  \n> **Source**: github ([https://github.com/str4d/rage](htt -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/str4d-rage-learnings.md`  \n> **Source**: github ([https://github.com/str4d/rage](htt",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://str4d-rage/str4d-rage-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-24T23:58:53.460Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (str4d-rage)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-24T23:59:15.872Z",
+      "updated_at": "2026-11-24T23:59:15.872Z"
+    },
+    "DOM-D-FF5AF4F8": {
+      "id": "DOM-D-FF5AF4F8",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): TanStack/router",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tanstack-router-learnings.md`  \n> **Source**: github ([https://github.com/TanStack/r -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tanstack-router-learnings.md`  \n> **Source**: github ([https://github.com/TanStack/r",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://tanstack-router/tanstack-router-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-24T23:59:17.259Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (tanstack-router)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-24T23:59:45.327Z",
+      "updated_at": "2026-11-24T23:59:45.327Z"
     }
   },
   "edges": [

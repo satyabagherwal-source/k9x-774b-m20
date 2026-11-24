@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T23:51:10.410Z",
-  "total_records": 2598,
+  "last_updated": "2026-11-24T23:59:46.669Z",
+  "total_records": 2602,
   "domains": {
     "A": {
       "total": 22,
@@ -71,7 +71,7 @@
       ]
     },
     "D": {
-      "total": 977,
+      "total": 979,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1049,7 +1049,9 @@
         "DOM-D-BA194D6E",
         "domain_intelligence-research-knowledge-intelligence-prism-ml-ternary-bonsai-2-5-27b-gguf-core-invari",
         "DOM-D-C22BA2DB",
-        "domain_intelligence-research-knowledge-intelligence-hf-prism-ml-ternary-bonsai-2-5-27b-gguf-learning"
+        "domain_intelligence-research-knowledge-intelligence-hf-prism-ml-ternary-bonsai-2-5-27b-gguf-learning",
+        "DOM-D-74B4B6C4",
+        "DOM-D-FF5AF4F8"
       ]
     },
     "E": {
@@ -1178,7 +1180,7 @@
       ]
     },
     "G": {
-      "total": 454,
+      "total": 456,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1633,7 +1635,9 @@
         "domain_intelligence-architecture-intelligence-medialab-xan-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-kotest-kotest-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-vitejs-vite-core-invariants",
-        "domain_intelligence-architecture-intelligence-vitejs-vite-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-vitejs-vite-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-str4d-rage-core-invariants",
+        "domain_intelligence-architecture-intelligence-str4d-rage-learnings-core-invariants"
       ]
     },
     "H": {
@@ -13312,8 +13316,8 @@
       "title": "Architecture Intelligence: trufflesecurity/trufflehog Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trufflesecurity-trufflehog-architecture-intelligence-trufflesecurity-trufflehog-.md",
       "repository": "trufflesecurity/trufflehog",
-      "content_hash": "08be166612cdeb350f11d79f4d564c21bd467961d93189bf84f0ac0404c86979",
-      "created_at": "2026-11-24T19:09:58.017Z"
+      "content_hash": "08b1aa13ff37c6adb8b7671bec7742f83b6810d00ad6c7ecef0db0fa61e333b0",
+      "created_at": "2026-11-24T23:58:50.517Z"
     },
     "domain_intelligence-technical-construction-intelligence-matrixorigin-matrixone-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-matrixorigin-matrixone-core-invariants",
@@ -19257,8 +19261,8 @@
       "title": "Technical Construction Intelligence: necolas/react-native-web Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-necolas-react-native-web-technical-construction-intelligence-necolas-react-nativ.md",
       "repository": "necolas/react-native-web",
-      "content_hash": "de7fc5c68a60d49f6afe804c6759afe9cd878e5a28fe42ce4356b7fefbcf524d",
-      "created_at": "2026-11-22T09:47:33.790Z"
+      "content_hash": "a60abd6e7eef63b5cc765219e391fd2b0948f47a5e157cb35162515ba972b31e",
+      "created_at": "2026-11-24T23:58:42.376Z"
     },
     "domain_intelligence-architecture-intelligence-cachix-devenv-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-cachix-devenv-learnings-core-invariants",
@@ -19326,8 +19330,8 @@
       "title": "Technical Construction Intelligence: necolas-react-native-web-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-necolas-react-native-web-learnings-technical-construction-intelligence-necolas-r.md",
       "repository": "necolas-react-native-web-learnings",
-      "content_hash": "77f1497635d658c3aef212cf02a859a19bc822fa72e76e6c6a3dd9664c43b787",
-      "created_at": "2026-11-22T09:47:39.931Z"
+      "content_hash": "cb40c4d4b073e84524d160d257ec5dfb53585f467c1565b56de7f510878c6ce9",
+      "created_at": "2026-11-24T23:59:46.669Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-35b-nvfp4-core-i": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-35b-nvfp4-core-i",
@@ -29257,8 +29261,8 @@
       "title": "Architecture Intelligence: TanStack/router Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tanstack-router-architecture-intelligence-tanstack-router-core-invariants.md",
       "repository": "TanStack/router",
-      "content_hash": "1a9e5580e67814a49355ae2379df5da67ed72a6506e71529bea43292fbc11f07",
-      "created_at": "2026-11-21T00:24:39.000Z"
+      "content_hash": "08f8193a07176eb154d4a7c3db1c37bcf781523d689467ebf1dc204b54dfe50c",
+      "created_at": "2026-11-24T23:58:38.796Z"
     },
     "domain_intelligence-architecture-intelligence-tanstack-router-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-tanstack-router-learnings-core-invariants",
@@ -29266,8 +29270,8 @@
       "title": "Architecture Intelligence: tanstack-router-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tanstack-router-learnings-architecture-intelligence-tanstack-router-learnings-co.md",
       "repository": "tanstack-router-learnings",
-      "content_hash": "c55dc7449893be0516185ea8acd97eb2a2ca4be75aff19c216281dfc7c59f1f2",
-      "created_at": "2026-11-21T00:24:52.263Z"
+      "content_hash": "a7a42bf7baeff7caa9c9ecb2bda2fa5299db8ab3a0fe331b4d62c190ef9e1d17",
+      "created_at": "2026-11-24T23:59:45.986Z"
     },
     "domain_intelligence-research-knowledge-intelligence-convaiinnovations-laya-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-convaiinnovations-laya-core-invariants",
@@ -43565,6 +43569,108 @@
       "repository": "rollup-rollup-learnings",
       "content_hash": "55d1b684cf81bafc0c8280a62876ceb6299886adbfadb9ebb43a22c5dbec54c1",
       "created_at": "2026-11-24T23:33:31.640Z"
+    },
+    "domain_intelligence-architecture-intelligence-str4d-rage-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-str4d-rage-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: str4d/rage Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-str4d-rage-architecture-intelligence-str4d-rage-core-invariants.md",
+      "repository": "str4d/rage",
+      "content_hash": "36be978ef1838f98144467ebdc3f2f71584beedb98c3bb7e35bf5507218d4633",
+      "created_at": "2026-11-24T23:58:36.878Z"
+    },
+    "DOM-D-74B4B6C4": {
+      "record_id": "DOM-D-74B4B6C4",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): str4d/rage",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/str4d-rage-learnings.md`  \n> **Source**: github ([https://github.com/str4d/rage](https://github.com/str4d/rage))  \n> **Source Version**: `eaa85530`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clone-structural-synthesizer  \n> **Time",
+      "content_hash": "81e30e620966d5266125ed3a72c909c336f2a7120dbf33d5d9391ab59d604637",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/str4d-rage-learnings.md`  \n> **Source**: github ([https://github.com/str4d/rage](htt -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/str4d-rage-learnings.md`  \n> **Source**: github ([https://github.com/str4d/rage](htt",
+      "provenance": {
+        "source_uri": "project://str4d-rage/str4d-rage-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-24T23:58:53.460Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (str4d-rage)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of str4d-rage"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-24T23:59:15.843Z"
+    },
+    "domain_intelligence-architecture-intelligence-str4d-rage-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-str4d-rage-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: str4d-rage-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-str4d-rage-learnings-architecture-intelligence-str4d-rage-learnings-core-invaria.md",
+      "repository": "str4d-rage-learnings",
+      "content_hash": "0f93577274dbd6391343caa35386051fc278b2e42f82a46d01284f393afb2aca",
+      "created_at": "2026-11-24T23:59:17.039Z"
+    },
+    "DOM-D-FF5AF4F8": {
+      "record_id": "DOM-D-FF5AF4F8",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): TanStack/router",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tanstack-router-learnings.md`  \n> **Source**: github ([https://github.com/TanStack/router](https://github.com/TanStack/router))  \n> **Source Version**: `61d5cdda`  \n> **License**: MIT  \n> **Synthesized By**: zero-clone-structural-synthesizer",
+      "content_hash": "bf2ce3d1b4c94970f61dc7b26d8fe73a966136f06b78a9f8653199e295058e82",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tanstack-router-learnings.md`  \n> **Source**: github ([https://github.com/TanStack/r -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tanstack-router-learnings.md`  \n> **Source**: github ([https://github.com/TanStack/r",
+      "provenance": {
+        "source_uri": "project://tanstack-router/tanstack-router-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-24T23:59:17.259Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (tanstack-router)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of tanstack-router"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-24T23:59:45.306Z"
     }
   }
 }

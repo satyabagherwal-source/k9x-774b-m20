@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T23:51:09.858Z",
+  "updated_at": "2026-11-24T23:59:45.751Z",
   "stats": {
-    "total_discovered": 9010,
-    "approved_pending_harvest": 8532,
+    "total_discovered": 9030,
+    "approved_pending_harvest": 8552,
     "harvested_count": 0,
     "rejected_count": 478,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8523,
+      "COMMUNITY_AND_EXPERT": 8541,
       "OFFICIAL_DOCUMENTATION": 272,
-      "STANDARDS_AND_SPECIFICATIONS": 147,
+      "STANDARDS_AND_SPECIFICATIONS": 149,
       "ENGINEERING_BLOGS": 7,
       "SECURITY_ADVISORIES": 50,
       "LEGAL_AND_REGULATORY": 2,
@@ -194901,6 +194901,446 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
         "fileName": "paradedb-paradedb-learnings.md"
+      }
+    },
+    "SRC-CB98F37F2D0F": {
+      "id": "SRC-CB98F37F2D0F",
+      "url": "https://github.com/str4d/rage",
+      "title": "https://github.com/str4d/rage",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:59:15.901Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/str4d-rage-learnings.md",
+        "fileName": "str4d-rage-learnings.md"
+      }
+    },
+    "SRC-9248F02543AC": {
+      "id": "SRC-9248F02543AC",
+      "url": "https://crates.io/crates/age",
+      "title": "https://crates.io/crates/age",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:59:15.981Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/str4d-rage-learnings.md",
+        "fileName": "str4d-rage-learnings.md"
+      }
+    },
+    "SRC-8060390F077F": {
+      "id": "SRC-8060390F077F",
+      "url": "https://tools.ietf.org/html/rfc7539",
+      "title": "https://tools.ietf.org/html/rfc7539",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:59:16.030Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/str4d-rage-learnings.md",
+        "fileName": "str4d-rage-learnings.md"
+      }
+    },
+    "SRC-61595967F52C": {
+      "id": "SRC-61595967F52C",
+      "url": "https://tools.ietf.org/html/rfc5869",
+      "title": "https://tools.ietf.org/html/rfc5869",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:59:16.096Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/str4d-rage-learnings.md",
+        "fileName": "str4d-rage-learnings.md"
+      }
+    },
+    "SRC-7F30A8835962": {
+      "id": "SRC-7F30A8835962",
+      "url": "https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki",
+      "title": "https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:59:16.156Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/str4d-rage-learnings.md",
+        "fileName": "str4d-rage-learnings.md"
+      }
+    },
+    "SRC-96B9D666B8B8": {
+      "id": "SRC-96B9D666B8B8",
+      "url": "https://tools.ietf.org/html/rfc9180",
+      "title": "https://tools.ietf.org/html/rfc9180",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:59:16.199Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/str4d-rage-learnings.md",
+        "fileName": "str4d-rage-learnings.md"
+      }
+    },
+    "SRC-6586D43CDC45": {
+      "id": "SRC-6586D43CDC45",
+      "url": "https://c2sp.org/age-plugin",
+      "title": "https://c2sp.org/age-plugin",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:59:16.254Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/str4d-rage-learnings.md",
+        "fileName": "str4d-rage-learnings.md"
+      }
+    },
+    "SRC-F74DDE2EE5ED": {
+      "id": "SRC-F74DDE2EE5ED",
+      "url": "https://age-encryption.org/v1",
+      "title": "https://age-encryption.org/v1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:59:16.311Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/str4d-rage-learnings.md",
+        "fileName": "str4d-rage-learnings.md"
+      }
+    },
+    "SRC-4696D134A2F5": {
+      "id": "SRC-4696D134A2F5",
+      "url": "https://crates.io/crates/rage",
+      "title": "https://crates.io/crates/rage",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:59:16.358Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/str4d-rage-learnings.md",
+        "fileName": "str4d-rage-learnings.md"
+      }
+    },
+    "SRC-2D4FF5BC9D78": {
+      "id": "SRC-2D4FF5BC9D78",
+      "url": "https://app.codecov.io/gh/str4d/rage/pull/516?dropdown=coverage&src=pr&el=h1",
+      "title": "https://app.codecov.io/gh/str4d/rage/pull/516?dropdown=coverage&src=pr&el=h1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:59:16.415Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/str4d-rage-learnings.md",
+        "fileName": "str4d-rage-learnings.md"
+      }
+    },
+    "SRC-24B398946690": {
+      "id": "SRC-24B398946690",
+      "url": "https://app.codecov.io/gh/str4d/rage/commit/0cf17d916a29738cbc880d3e9a38ad5cdcd3f1f7?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/str4d/rage/commit/0cf17d916a29738cbc880d3e9a38ad5cdcd3f1f7?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:59:16.473Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/str4d-rage-learnings.md",
+        "fileName": "str4d-rage-learnings.md"
+      }
+    },
+    "SRC-34160ECEC81D": {
+      "id": "SRC-34160ECEC81D",
+      "url": "https://app.codecov.io/gh/str4d/rage/commit/7e3c62b98b32d536dd5456043bcd86ff937188f8?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/str4d/rage/commit/7e3c62b98b32d536dd5456043bcd86ff937188f8?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:59:16.516Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/str4d-rage-learnings.md",
+        "fileName": "str4d-rage-learnings.md"
+      }
+    },
+    "SRC-0D917155C3FC": {
+      "id": "SRC-0D917155C3FC",
+      "url": "https://app.codecov.io/gh/str4d/rage/pull/516?dropdown=coverage&src=pr&el=tree",
+      "title": "https://app.codecov.io/gh/str4d/rage/pull/516?dropdown=coverage&src=pr&el=tree",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:59:16.572Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/str4d-rage-learnings.md",
+        "fileName": "str4d-rage-learnings.md"
+      }
+    },
+    "SRC-049A1111B6CF": {
+      "id": "SRC-049A1111B6CF",
+      "url": "https://github.com/str4d/rage/blob/d2c2e895bfdd1fa37429d44776e490a43c0e4cf1/age/src/cli_common/recipients.rs",
+      "title": "https://github.com/str4d/rage/blob/d2c2e895bfdd1fa37429d44776e490a43c0e4cf1/age/src/cli_common/recipients.rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:59:16.629Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/str4d-rage-learnings.md",
+        "fileName": "str4d-rage-learnings.md"
+      }
+    },
+    "SRC-A44D91EF4C28": {
+      "id": "SRC-A44D91EF4C28",
+      "url": "https://www.rfc-editor.org/rfc/rfc7539",
+      "title": "IETF RFC 7539",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:59:16.705Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/str4d-rage-learnings.md",
+        "fileName": "str4d-rage-learnings.md"
+      }
+    },
+    "SRC-55BC67C63ACA": {
+      "id": "SRC-55BC67C63ACA",
+      "url": "https://www.rfc-editor.org/rfc/rfc5869",
+      "title": "IETF RFC 5869",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:59:16.749Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/str4d-rage-learnings.md",
+        "fileName": "str4d-rage-learnings.md"
+      }
+    },
+    "SRC-2ACDE34A921E": {
+      "id": "SRC-2ACDE34A921E",
+      "url": "https://www.coderabbit.ai/?via=tanstack&dub_id=aCcEEdAOqqutX6OS",
+      "title": "https://www.coderabbit.ai/?via=tanstack&dub_id=aCcEEdAOqqutX6OS",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:59:45.568Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tanstack-router-learnings.md",
+        "fileName": "tanstack-router-learnings.md"
+      }
+    },
+    "SRC-9127B9798B1E": {
+      "id": "SRC-9127B9798B1E",
+      "url": "https://raw.githubusercontent.com/TanStack/tanstack.com/main/src/images/coderabbit-dark.svg",
+      "title": "https://raw.githubusercontent.com/TanStack/tanstack.com/main/src/images/coderabbit-dark.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:59:45.644Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tanstack-router-learnings.md",
+        "fileName": "tanstack-router-learnings.md"
+      }
+    },
+    "SRC-D5529649D29C": {
+      "id": "SRC-D5529649D29C",
+      "url": "https://raw.githubusercontent.com/TanStack/tanstack.com/main/src/images/coderabbit-light.svg",
+      "title": "https://raw.githubusercontent.com/TanStack/tanstack.com/main/src/images/coderabbit-light.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:59:45.689Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tanstack-router-learnings.md",
+        "fileName": "tanstack-router-learnings.md"
+      }
+    },
+    "SRC-A6AD87B96B6F": {
+      "id": "SRC-A6AD87B96B6F",
+      "url": "https://www.cloudflare.com/",
+      "title": "https://www.cloudflare.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T23:59:45.751Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tanstack-router-learnings.md",
+        "fileName": "tanstack-router-learnings.md"
       }
     }
   }

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T23:51:10.181Z",
+  "last_updated": "2026-11-24T23:59:46.472Z",
   "directives": [
     {
       "id": "CD-001",
@@ -57974,6 +57974,37 @@
       "source_repo": "paradedb-paradedb",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-743B56-synchronize-resource-cleanup-on-abort.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-WW88",
+      "directive_title": "Enable more oxlint rules and fix their errors",
+      "source_repo": "necolas-react-native-web-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-WW88-enable-more-oxlint-rules-and-fix-their-errors.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-VOUH",
+      "directive_title": "only treat 200 as verified and 40103 as invalid; everything else is indeter",
+      "source_repo": "trufflesecurity/trufflehog",
+      "source_commit": "23255461",
+      "staged_file": "11_INBOX/candidate-directives/CD-VOUH-only-treat-200-as-verified-and-40103-as-invalid-everything-else-is-indeter.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-00C298",
+      "directive_title": "Enable more oxlint rules and fix their errors",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "necolas-react-native-web",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-00C298-enable-more-oxlint-rules-and-fix-their-e.md",
       "staged_date": "2026-11-24"
     }
   ]

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T09:47:39.655Z",
+  "timestamp": "2026-11-24T23:59:46.375Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-necolas-react-native-web-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [necolas-react-native-web-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T09:47:39.655Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T23:59:46.375Z`  
 > **Learning ID**: `LEARN-EVO-necolas-react-native-web-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 64%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence)
+- **Confidence Rating**: 81%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from necolas-react-native-web-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/necolas-react-native-web-learnings.md`  
 > **Source**: github ([https://github.com/necolas/react-native-web](https://github.com/necolas/react-native-web))  
-> **Source Version**: `0e0a4202`  
+> **Source Version**: `9fa18288`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T09:47:32.244Z  
+> **Timestamp**: 2026-11-24T23:58:41.078Z  
 > **Learning ID**: `learn-github-necolas-react-native-web`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/necolas-react-native-web-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/necolas/react-native-web](https://github.com/necolas/react-native-web))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T09:47:32.239Z  
+> **Harvest Timestamp**: 2026-11-24T23:58:41.074Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -69,6 +69,7 @@ The following architectural invariants have been empirically discovered and reco
 ```
 import React from 'react';
 import { AppState, Text } from 'react-native';
+
 import Example from '../../shared/example';
 
 export default function AppStatePage() {
@@ -117,19 +118,19 @@ export default function AppStatePage() {
  * LICENSE file in the root directory of this source tree.
  */
 
+import invariant from 'invariant';
 import type {
   ComponentProps,
   ComponentType,
   ReactElement,
   ReactNode
 } from 'react';
+import React from 'react';
 
-import AppContainer from './AppContainer';
-import invariant from 'invariant';
+import type { Nullable } from '../../types';
 import render, { hydrate } from '../render';
 import StyleSheet from '../StyleSheet';
-import React from 'react';
-import type { Nullable } from '../../types';
+import AppContainer from './AppContainer';
 
 export type Application = {
   unmount: () => void;
@@ -210,12 +211,12 @@ export function getApplication(
 
 'use client';
 
-import type { EventSubscription } from '../../vendor/react-native/vendor/emitter/EventEmitter';
-
 import invariant from 'invariant';
-import EventEmitter from '../../vendor/react-native/vendor/emitter/EventEmitter';
+
 import canUseDOM from '../../modules/canUseDom';
 import type { Nullable } from '../../types';
+import type { EventSubscription } from '../../vendor/react-native/vendor/emitter/EventEmitter';
+import EventEmitter from '../../vendor/react-native/vendor/emitter/EventEmitter';
 
 const EVENT_TYPES = ['change', 'memoryWarning'];
 
@@ -244,7 +245,7 @@ export default class AppState {
   static addEventListener(
     type: string,
     handler: (state: AppStateStatus) => unknown
-  ): Nullable<EventSubscription> {
+  ): EventSubscription {
     if (isAvailable) {
       invariant(
         EVENT_TYPES.indexOf(type) !== -1,
@@ -265,10 +266,11 @@ export default class AppState {
           );
         }
 
-        // TODO: Remove `?.` after the TypeScript migration
-        return changeEmitter?.addListener('change', handler);
+        return changeEmitter.addListener('change', handler);
       }
     }
+
+    return { remove() {} };
   }
 }
 
@@ -285,12 +287,11 @@ export default class AppState {
 
 'use client';
 
+import type { ReactNode } from 'react';
 import {
   createRoot as domCreateRoot,
   hydrateRoot as domHydrateRoot
 } from 'react-dom/client';
-
-import type { ReactNode } from 'react';
 
 import { createSheet } from '../StyleSheet/dom';
 
@@ -371,7 +372,7 @@ const emptyObject = {};
 
 const propsToAccessibilityComponent = (
   props: Readonly<Record<string, unknown>> = emptyObject
-): void | string => {
+): string | undefined => {
   const roleProp = props.role || props.accessibilityRole;
   // special-case for "label" role which doesn't map to an ARIA role
   if (roleProp === 'label') {
@@ -427,7 +428,7 @@ const propsToAriaRole = ({
 }: {
   readonly accessibilityRole?: Nullable<string>;
   readonly role?: Nullable<string>;
-}): string | void => {
+}): string | undefined => {
   const _role = role || accessibilityRole;
   if (_role) {
     const inferredRole = accessibilityRoleToWebRole[_role];
@@ -563,16 +564,15 @@ export default TextInputState;
  * LICENSE file in the root directory of this source tree.
  */
 
-import type { ResponderDOMEvent } from './ResponderEventTypes';
-
 import isSelectionValid from '../../modules/isSelectionValid';
 import type { Nullable } from '../../types';
+import { isMouseEvent } from './ResponderEventTypes';
 
 const keyName = '__reactResponderId';
 
 export type ResponderNode = HTMLElement & { __reactResponderId?: number };
 
-function getEventPath(domEvent: ResponderDOMEvent): Array<ResponderNode> {
+function getEventPath(domEvent: Event): Array<ResponderNode> {
   // The 'selectionchange' event always has the 'document' as the target.
   // Use the anchor node as the initial target to reconstruct a path.
   // (We actually only need the first "responder" node in practice.)
@@ -615,7 +615,7 @@ export function setResponderId(node: Nullable<ResponderNode>, id: number) {
 /**
  * Filter the event path to contain only the nodes attached to the responder system
  */
-export function getResponderPaths(domEvent: ResponderDOMEvent): {
+export function getResponderPaths(domEvent: Event): {
   idPath: Array<number>;
   nodePath: Array<ResponderNode>;
 } {
@@ -710,7 +710,7 @@ export function hasTargetTouches(
  * Ignore 'selectionchange' and 'select' events that don't correspond with a person's intent to
  * select text.
  */
-export function hasValidSelection(domEvent: ResponderDOMEvent): boolean {
+export function hasValidSelection(domEvent: Event): boolean {
   if (domEvent.type === 'selectionchange') {
     return isSelectionValid();
   }
@@ -720,7 +720,8 @@ export function hasValidSelection(domEvent: ResponderDOMEvent): boolean {
 
   try {
     const { selectionStart, selectionEnd } = domEvent.target as
-      HTMLInputElement | HTMLTextAreaElement;
+      | HTMLInputElement
+      | HTMLTextAreaElement;
 
     if (
       typeof selectionStart === 'number' &&
@@ -739,22 +740,21 @@ export function hasValidSelection(domEvent: ResponderDOMEvent): boolean {
 /**
  * Events are only valid if the primary button was used without specific modifier keys.
  */
-export function isPrimaryPointerDown(domEvent: ResponderDOMEvent): boolean {
-  const { altKey, button, buttons, ctrlKey, type } = domEvent;
-  const isTouch = type === 'touchstart' || type === 'touchmove';
+export function isPrimaryPointerDown(event: TouchEvent | MouseEvent): boolean {
+  const { type } = event;
+  if (type === 'touchstart' || type === 'touchmove') {
+    return true;
+  }
+  if (!isMouseEvent(event)) {
+    return false;
+  }
+  const { altKey, button, buttons, ctrlKey } = event;
   const isPrimaryMouseDown =
     type === 'mousedown' && (button === 0 || buttons === 1);
   const isPrimaryMouseMove = type === 'mousemove' && buttons === 1;
   const noModifiers = altKey === false && ctrlKey === false;
 
-  if (
-    isTouch ||
-    (isPrimaryMouseDown && noModifiers) ||
-    (isPrimaryMouseMove && noModifiers)
-  ) {
-    return true;
-  }
-  return false;
+  return (isPrimaryMouseDown || isPrimaryMouseMove) && noModifiers;
 }
 
 ```
@@ -786,264 +786,385 @@ export function isPrimaryPointerDown(domEvent: ResponderDOMEvent): boolean {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0cbcdded` (2026-11-19)
-**Commit Message**: [fix] StyleSheet: output valid CSS for logical transitionProperty values (#2972)
+### Incident Patch 1: `ea9eb896` (2026-11-23)
+**Commit Message**: Enable more oxlint rules and fix their errors
 
-**File**: `packages/react-native-web/src/exports/StyleSheet/__tests__/compiler-test.js` (modified, +91/-0)
+**File**: `oxlint.config.ts` (modified, +3/-16)
 ```diff
-@@ -219,6 +219,62 @@ describe('StyleSheet/compile', () => {
-        ]
-       `);
-     });
-+
-+    test('converts logical transitionProperty values', () => {
-+      expect(atomic({ transitionProperty: 'margin-inline-start, opacity' }))
-+        .toMatchInlineSnapshot(`
-+       [
-+         {
-+           "$$css": true,
-+           "$$css$localize": true,
-+           "transitionProperty": [
-+             "r-transitionProperty-1b4l1tn",
-+             "r-transitionProperty-1mussrw",
-+           ],
-+         },
-+         [
-+           [
-+             [
-+               ".r-transitionProperty-1b4l1tn{transition-property:margin-left, opacity;}",
-+             ],
-+             3,
-+           ],
-+           [
-+             [
-+               ".r-transitionProperty-1mussrw{transition-property:margin-right, opacity;}",
-+             ],
-+             3,
-+           ],
-+         ],
-+       ]
-+      `);
-+
-+      expect(atomic({ transitionProperty: 'margin-left, opacity' }))
-+        .toMatchInlineSnapshot(`
-+       [
-+         {
-+           "$$css": true,
-+           "transitionProperty": "r-transitionProperty-1b4l1tn",
-+         },
-+         [
-+           [
-+             [
-+               ".r-transitionProperty-1b4l1tn{transition-property:margin-left, opacity;}",
-+             ],
-+             3,
-+           ],
-+         ],
-+       ]
-+      `);
-+
-+      expect(
-+        atomic({ transitionProperty: 'marginInlineStart, opacity' })
-+      ).toEqual(atomic({ transitionProperty: 'margin-inline-start, opacity' }));
-+
-+      expect(atomic({ transitionProperty: 'marginStart, opacity' })).toEqual(
-+        atomic({ transitionProperty: 'margin-inline-start, opacity' })
-+      );
-+    });
-   });
+@@ -84,32 +84,19 @@ export default defineConfig({
+     'react/rules-of-hooks': 'error',
+     'react/exhaustive-deps': 'warn',
  
-   describe('classic', () => {
-@@ -325,6 +381,41 @@ describe('StyleSheet/compile', () => {
-           expect(inline(initial, isRTL)).toEqual(initial);
-         });
++    // typescript
++    'typescript/no-empty-object-type': 'error',
+     'typescript/no-explicit-any': 'error',
+     'typescript/no-import-type-side-effects': 'error',
++    'typescript/no-invalid-void-type': 'error',
+     'typescript/no-wrapper-object-types': 'error',
  
-+        test(`converts transitionProperty values for ${dir}`, () => {
-+          const string = {
-+            transitionProperty: 'inset-inline-start, marginInlineEnd,opacity'
-+          };
-+
-+          const array = {
-+            transitionProperty: [
-+              'borderStartEndRadius',
-+              'padding-inline-start,opacity'
-+            ]
-+          };
-+
-+          expect(inline(string, isRTL)).toEqual({
-+            transitionProperty: isRTL
-+              ? 'right, margin-left, opacity'
-+              : 'left, margin-right, opacity'
-+          });
-+
-+          expect(inline(array, isRTL)).toEqual({
-+            transitionProperty: isRTL
-+              ? ['border-top-left-radius', 'padding-right, opacity']
-+              : ['border-top-right-radius', 'padding-left, opacity']
-+          });
-+        });
-+
-+        test(`does not mutate transitionProperty arrays for ${dir}`, () => {
-+          const initial = {
-+            transitionProperty: Object.freeze(['marginInlineStart'])
-+          };
-+
-+          expect(inline(initial, isRTL)).toEqual({
-+            transitionProperty: [isRTL ? 'margin-right' : 'margin-left']
-+          });
-+        });
-+
-         test(`converts "start" properties for ${dir}`, () => {
-           const initial = {
-             borderInlineStartColor: 'red',
+     // temporarily disabled
+-    'capitalized-calls': 'off',
+-    'no-await-in-loop': 'off',
+-
+-    'react/jsx-no-constructed-context-values': 'off',
+-    'react/no-array-index-key': 'off',
+-    'react/purity': 'off',
+-
+-    'typescript/await-thenable': 'off',
+     'typescript/consistent-return': 'off',
+     'typescript/no-base-to-string': 'off',
+-    'typescript/no-empty-object-type': 'off',
+     'typescript/no-extraneous-class': 'off',
+-    'typescript/no-floating-promises': 'off',
+-    'typescript/no-invalid-void-type': 'off',
+-    'typescript/no-misused-spread': 'off',
+     'typescript/no-non-null-assertion': 'off',
+-    'typescript/no-redundant-type-constituents': 'off',
+     'typescript/no-unnecessary-boolean-literal-compare': 'off',
+-    'typescript/no-unnecessary-template-expression': 'off',
+-    'typescript/no-unnecessary-type-arguments': 'off',
+-    'typescript/no-unnecessary-type-conversion': 'off',
+     'typescript/no-unsafe-type-assertion': 'off',
+     'typescript/unbound-method': 'off',
+ 
 ```
 
-**File**: `packages/react-native-web/src/exports/StyleSheet/compiler/index.js` (modified, +53/-41)
+**File**: `packages/benchmarks/src/app/Benchmark/index.js` (modified, +5/-3)
 ```diff
-@@ -13,6 +13,7 @@ import hyphenateStyleName from './hyphenateStyleName';
- import normalizeValueWithProperty, {
-   type StyleValue
- } from './normalizeValueWithProperty';
-+import { PROPERTIES_STANDARD } from '../preprocess';
+@@ -51,11 +51,13 @@ export const BenchmarkType = {
  
- export type Style = Readonly<Record<string, ?StyleValue>>;
- type Keyframes = Readonly<Record<string, Style>>;
-@@ -139,6 +140,50 @@ const PROPERTIES_I18N: Record<string, string> = {
+ /** @typedef {typeof BenchmarkType[keyof typeof BenchmarkType]} BenchmarkTypeValue */
  
- const PROPERTIES_VALUE = new Set(['clear', 'float', 'textAlign']);
++/** @typedef {Record<string, unknown>} ComponentPropsType */
++
+ /**
+  * @typedef {Object} BenchmarkPropsType
+- * @property {React.ComponentType<any>} component
++ * @property {React.ComponentType<ComponentPropsType>} component
+  * @property {boolean} [forceLayout]
+- * @property {(x: { cycle: number }) => Object} getComponentProps
++ * @property {(x: { cycle: number }) => ComponentPropsType} getComponentProps
+  * @property {(x: BenchResultsType) => void} onComplete
+  * @property {number} sampleCount
+  * @property {number} timeout
+@@ -64,7 +66,7 @@ export const BenchmarkType = {
  
-+// Maps of I18N property names and React Native aliases to their hyphenated
-+// LTR and RTL equivalent, for transitionProperty values.
-+const TRANSITION_PROPERTIES_LTR: Record<string, string> = {};
-+const TRANSITION_PROPERTIES_RTL: Record<string, string> = {};
-+
-+for (const prop of [
-+  ...Object.keys(PROPERTIES_I18N),
-+  ...Object.keys(PROPERTIES_STANDARD)
-+]) {
-+  const ltrProp = PROPERTIES_I18N[PROPERTIES_STANDARD[prop] ?? prop];
-+
-+  if (ltrProp != null) {
-+    const ltrName = hyphenateStyleName(ltrProp);
-+    const rtlName = hyphenateStyleName(PROPERTIES_FLIP[ltrProp]);
-+
-+    [prop, hyphenateStyleName(prop)].forEach((name) => {
-+      TRANSITION_PROPERTIES_LTR[name] = ltrName;
-+      TRANSITION_PROPERTIES_RTL[name] = rtlName;
-+    });
-+  }
-+}
-+
-+function localizeTransitionProperty(
-+  value: StyleValue,
-+  isRTL?: boolean
-+): StyleValue {
-+  if (Array.isArray(value)) {
-+    return value.map((item) => localizeTransitionProperty(item, isRTL));
-+  }
-+  if (typeof value !== 'string') {
-+    return value;
-+  }
-+
-+  const map = isRTL ? TRANSITION_PROPERTIES_RTL : TRANSITION_PROPERTIES_LTR;
-+
-+  return value
-+    .split(',')
-+    .map((name) => {
-+      const trimmedName = name.trim();
-+      return map[trimmedName] ?? trimmedName;
-+    })
-+    .join(', ');
-+}
-+
- export function atomic(style: Style): CompilerOutput {
-   const compiledStyle: CompiledStyle = { $$css: true };
-   const compiledRules = [];
-@@ -196,31 +241,12 @@ export function atomic(style: Style): CompilerOutput {
-         }
-         // BiDi flip transitionProperty value
-         if (srcProp === 'transitionProperty') {
--          const values = Array.isArray(value) ? value : [value];
--          const polyfillIndices = [];
--
--          for (let i = 0; i < values.length; i++) {
--            const val = values[i];
--            if (typeof val === 'string' && PROPERTIES_I18N[val] != null) {
--              polyfillIndices.push(i);
--            }
--          }
--
--          if (polyfillIndices.length > 0) {
--            const ltrPolyfillValues = [...values];
--            const rtlPolyfillValues = [...values];
--            polyfillIndices.forEach((i) => {
--              const ltrVal = ltrPolyfillValues[i];
--              if (typeof ltrVal === 'string') {
--                const ltrPolyfill = PROPERTIES_I18N[ltrVal];
--                const rtlPolyfill = PROPERTIES_FLIP[ltrPolyfill];
--                ltrPolyfillValues[i] = ltrPolyfill;
--                rtlPolyfillValues[i] = rtlPolyfill;
--                const ltr = atomicCompile(srcProp, srcProp, ltrPolyfillValues);
--                const rtl = atomicCompile(srcProp, srcProp, rtlPolyfillValues);
--                localizeableValue = [ltr, rtl];
--              }
--            });
-+          const ltrValue = localizeTransitionProperty(value, false);
-+          const rtlValue = localizeTransitionProperty(value, true);
-+          if (String(ltrValue) !== String(rtlValue)) {
-+            const ltr = atomicCompile(srcProp, srcProp, ltrValue);
-+            const rtl = atomicCompile(srcProp, srcProp, rtlValue);
-+            localizeableValue = [ltr, rtl];
-           }
-         }
- 
-@@ -303,22 +329,8 @@ export function inline(
-     }
-     // BiDi flip transitionProperty value
-     if (originalProp === 'transitionProperty') {
--      const originalValues = Array.isArray(originalValue)
--        ? originalValue
--        : [originalValue];
--      originalValues.forEach((val, i) => {
--        if (typeof val === 'string') {
--          const valuePolyfill = PROPERTIES_I18N[val];
--          if (valuePolyfill != null) {
--            // $FlowFixMe[cannot-write] Array.isArray() refines unknown to a read-only array
--            originalValues[i] = isRTL
--              ? PROPERTIES_FLIP[valuePolyfill]
--              : valuePolyfill;
--
--            value = originalValues.join(' ');
--          }
--        }
--      });
-+      // $FlowFixMe[incompatible-type] inline style values are not checked to be style values at runtime
-+      value = localizeTransitionProperty(originalValue, isRTL);
-     }
- 
-     // Create finalized style
+ /**
+  * @typedef {Object} BenchmarkStateType
+- * @property {Object} componentProps
++ * @property {ComponentPropsType} componentProps
+  * @property {number} cycle
+  * @property {boolean} running
+  */
 ```
 
-**File**: `packages/react-native-web/src/exports/StyleSheet/preprocess.js` (modified, +1/-1)
+**File**: `packages/benchmarks/src/cases/Tree.js` (modified, +1/-1)
 ```diff
-@@ -178,7 +178,7 @@ const mergeFontFeatureSettings = (a: ?string, b: ?string): ?string => {
-   return a;
- };
+@@ -21,7 +21,7 @@ class Tree extends Component {
+               components={components}
+               depth={depth - 1}
+               id={i}
+-              key={i}
++              key={i} // oxlint-disable-line react/no-array-index-key
+               wrap={wrap}
+             />
+           ))}
+```
+
+**File**: `packages/benchmarks/src/implementations/stylesheet/Dot.js` (modified, +1/-1)
+```diff
+@@ -2,7 +2,7 @@ import React from 'react';
+ import { StyleSheet } from 'react-native-web';
  
--const PROPERTIES_STANDARD: Record<string, string> = {
-+export const PROPERTIES_STANDARD: Record<string, string> = {
-   borderBottomEndRadius: 'borderEndEndRadius',
-   borderBottomStartRadius: 'borderEndStartRadius',
-   borderTopEndRadius: 'borderStartEndRadius',
+ const Dot = ({ size, x, y, children, color }) => {
+-  const [className, inlineStyle] = StyleSheet([
++  const [className, inlineStyle] = StyleSheet.resolve([
+     styles.root$raw,
+     {
+       borderBottomColor: color,
+```
+
+**File**: `packages/benchmarks/src/implementations/stylesheet/View.js` (modified, +5/-1)
+```diff
+@@ -2,7 +2,11 @@ import React from 'react';
+ import { StyleSheet } from 'react-native-web';
+ 
+ function View(props) {
+-  const [className, inlineStyle] = StyleSheet([styles.root$raw, props.style]);
++  const [className, inlineStyle] = StyleSheet.resolve([
++    styles.root$raw,
++    props.style
++  ]);
++
+   return <div {...props} className={className} style={inlineStyle} />;
+ }
+ 
+```
+
+**File**: `packages/react-native-web-examples/pages/lists/index.js` (modified, +1/-1)
+```diff
+@@ -262,7 +262,7 @@ class SingleColumnExample extends React.PureComponent {
+   }
+ 
+   render() {
+-    const filterRegex = new RegExp(String(this.state.filterText), 'i');
++    const filterRegex = new RegExp(this.state.filterText, 'i');
+     const filter = (item) =>
+       filterRegex.test(item.text) || filterRegex.test(item.title);
+     const filteredData = this.state.data.filter(filter);
+```
+
+**File**: `packages/react-native-web-examples/pages/modal/index.js` (modified, +6/-7)
+```diff
+@@ -46,15 +46,14 @@ function AnimatedModalStack() {
+ 
+ const WIGGLE_ROOM = 128;
+ 
++const getRandomOffset = () => ({
++  top: Math.random() * WIGGLE_ROOM - WIGGLE_ROOM / 2,
++  left: Math.random() * WIGGLE_ROOM - WIGGLE_ROOM / 2
++});
++
+ function Modalception({ depth = 1 }) {
+   const [isVisible, setIsVisible] = useState(false);
+-
+-  const offset = useMemo(() => {
+-    return {
+-      top: Math.random() * WIGGLE_ROOM - WIGGLE_ROOM / 2,
+-      left: Math.random() * WIGGLE_ROOM - WIGGLE_ROOM / 2
+-    };
+-  }, []);
++  const offset = useMemo(() => getRandomOffset(), []);
+ 
+   return (
+     <>
+```
+
+**File**: `packages/react-native-web-examples/pages/pressable/index.js` (modified, +6/-4)
+```diff
+@@ -8,13 +8,15 @@ export default function PressablePage() {
+   const [eventLog, updateEventLog] = React.useState([]);
+   const [disabled, setDisabled] = React.useState(false);
+   const [delay, setDelay] = React.useState(0);
++  const nextEventId = React.useRef(0);
+ 
+-  const handleEvent = (eventName) => {
++  const handleEvent = (name) => {
+     return () => {
+       const limit = 10;
++      const id = nextEventId.current++;
+       updateEventLog((state) => {
+         const nextState = state.slice(0, limit - 1);
+-        nextState.unshift(eventName);
++        nextState.unshift({ id, name });
+         return nextState;
+       });
+     };
+@@ -64,8 +66,8 @@ export default function PressablePage() {
+         </View>
+ 
+         <ScrollView style={styles.eventLogBox}>
+-          {eventLog.map((e, i) => (
+-            <Text key={i}>{e}</Text>
++          {eventLog.map((e) => (
++            <Text key={e.id}>{e.name}</Text>
+           ))}
+         </ScrollView>
+       </View>
+```
+
+---
+
+### Incident Patch 2: `2ba89609` (2026-11-23)
+**Commit Message**: Remove Flow workarounds that TypeScript does not need
+
+**File**: `packages/react-native-web/src/exports/Modal/ModalFocusTrap.tsx` (modified, +1/-2)
+```diff
+@@ -82,8 +82,7 @@ const ModalFocusTrap = ({
+   active,
+   children
+ }: ModalFocusTrapProps): React.ReactNode => {
+-  // @ts-expect-error
+-  const trapElementRef = React.useRef<HostNode | null>();
++  const trapElementRef = React.useRef<HostNode>(null);
+   const focusRef = React.useRef<{
+     trapFocusInProgress: boolean;
+     lastFocusedElement: Nullable<Element>;
+```
+
+**File**: `packages/react-native-web/src/modules/useResponderEvents/ResponderSystem.ts` (modified, +1/-1)
+```diff
+@@ -514,7 +514,7 @@ function findWantsResponder(
+   domEvent: ResponderDOMEvent,
+   responderEvent: ResponderEvent
+ ) {
+-  const shouldSetCallbacks = shouldSetResponderEvents[domEvent.type]; // for Flow
++  const shouldSetCallbacks = shouldSetResponderEvents[domEvent.type];
+ 
+   if (shouldSetCallbacks != null) {
+     const { idPath, nodePath } = eventPaths;
+```
+
+**File**: `packages/react-native-web/src/vendor/react-native/Animated/nodes/AnimatedColor.ts` (modified, +33/-11)
+```diff
+@@ -15,7 +15,7 @@ import normalizeColor from '@react-native/normalize-colors';
+ import NativeAnimatedHelper from '../NativeAnimatedHelper';
+ 
+ import type {PlatformConfig} from '../AnimatedPlatformConfig';
+-import type { Nullable } from '../../../../types';
++import type {Nullable} from '../../../../types';
+ 
+ type ColorValue = string | number;
+ type NativeColorValue = ColorValue;
+@@ -89,20 +89,42 @@ function processColor(
+   return null;
+ }
+ 
++type RgbaLike = {
++  r: unknown,
++  g: unknown,
++  b: unknown,
++  a: unknown,
++};
++
++function isRgbaLike(value: unknown): value is RgbaLike {
++  return (
++    typeof value === 'object' &&
++    value !== null &&
++    'r' in value &&
++    'g' in value &&
++    'b' in value &&
++    'a' in value
++  );
++}
++
+ function isRgbaValue(value: unknown): value is RgbaValue {
+-  return (value &&
+-    typeof (value as RgbaValue).r === 'number' &&
+-    typeof (value as RgbaValue).g === 'number' &&
+-    typeof (value as RgbaValue).b === 'number' &&
+-    typeof (value as RgbaValue).a === 'number') as boolean;
++  return (
++    isRgbaLike(value) &&
++    typeof value.r === 'number' &&
++    typeof value.g === 'number' &&
++    typeof value.b === 'number' &&
++    typeof value.a === 'number'
++  );
+ }
+ 
+ function isRgbaAnimatedValue(value: unknown): value is RgbaAnimatedValue {
+-  return (value &&
+-    (value as RgbaAnimatedValue).r instanceof AnimatedValue &&
+-    (value as RgbaAnimatedValue).g instanceof AnimatedValue &&
+-    (value as RgbaAnimatedValue).b instanceof AnimatedValue &&
+-    (value as RgbaAnimatedValue).a instanceof AnimatedValue) as boolean;
++  return (
++    isRgbaLike(value) &&
++    value.r instanceof AnimatedValue &&
++    value.g instanceof AnimatedValue &&
++    value.b instanceof AnimatedValue &&
++    value.a instanceof AnimatedValue
++  );
+ }
+ 
+ export default class AnimatedColor extends AnimatedWithChildren {
+```
+
+**File**: `packages/react-native-web/src/vendor/react-native/Animated/nodes/AnimatedNode.ts` (modified, +3/-4)
+```diff
+@@ -34,8 +34,6 @@ type ListenerCallback<T> = T extends AnimatedColor
+ 
+ let _uniqueId = 1;
+ 
+-// Note(vjeux): this would be better as an interface but flow doesn't
+-// support them yet
+ class AnimatedNode {
+   _listeners: Record<string, unknown>;
+   _platformConfig: Nullable<PlatformConfig>;
+@@ -47,8 +45,9 @@ class AnimatedNode {
+       this.__nativeTag = undefined;
+     }
+   }
+-  __getValue(): unknown;
+-  __getValue(): void {}
++  __getValue(): unknown {
++    return undefined;
++  }
+   __getAnimatedValue(): unknown {
+     return this.__getValue();
+   }
+```
+
+**File**: `packages/react-native-web/src/vendor/react-native/Animated/useAnimatedProps.ts` (modified, +4/-5)
+```diff
+@@ -149,13 +149,12 @@ function useAnimatedPropsLifecycle(node: AnimatedProps): void {
+   }, [node]);
+ }
+ 
+-type ScrollableInstance = {getScrollableNode: () => unknown};
+-
+ function getEventTarget(instance: unknown): unknown {
+   return typeof instance === 'object' &&
+-    typeof (instance as Partial<ScrollableInstance> | null)?.getScrollableNode ===
+-      'function'
+-    ? (instance as ScrollableInstance).getScrollableNode()
++    instance !== null &&
++    'getScrollableNode' in instance &&
++    typeof instance.getScrollableNode === 'function'
++    ? instance.getScrollableNode()
+     : instance;
+ }
+ 
+```
+
+**File**: `packages/react-native-web/src/vendor/react-native/FillRateHelper/index.ts` (modified, +2/-3)
+```diff
+@@ -107,8 +107,7 @@ class FillRateHelper {
+     if (!this._enabled) {
+       return;
+     }
+-    const start = this._samplesStartTime; // const for flow
+-    if (start == null) {
++    if (this._samplesStartTime == null) {
+       DEBUG &&
+         console.debug('FillRateHelper: bail on deactivate with no start time');
+       return;
+@@ -118,7 +117,7 @@ class FillRateHelper {
+       this._resetData();
+       return;
+     }
+-    const total_time_spent = global.performance.now() - start;
++    const total_time_spent = global.performance.now() - this._samplesStartTime;
+     const info = {
+       ...this._info,
+       total_time_spent,
+```
+
+**File**: `packages/react-native-web/src/vendor/react-native/VirtualizedSectionList/index.tsx` (modified, +2/-2)
+```diff
+@@ -320,10 +320,10 @@ class VirtualizedSectionList<
+       onViewableItemsChanged({
+         viewableItems: viewableItems
+           .map(this._convertViewable, this)
+-          .filter(Boolean) as Array<ViewToken>,
++          .filter(viewable => viewable != null),
+         changed: changed
+           .map(this._convertViewable, this)
+-          .filter(Boolean) as Array<ViewToken>,
++          .filter(viewable => viewable != null),
+       });
+     }
+   };
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2978** (2026-11-24): Upgrade to TypeScript 7 (@zoontek)
+- **PR #2977** (2026-11-24): Migrate to Vitest (@zoontek)
+- **PR #2976** (2026-11-23): Replace ESLint and Prettier with oxlint and oxfmt (@zoontek)
 - **PR #2975** (2026-11-20): [change] View, Text: rename "type" prop to "unstable_type" (@zoontek)
 - **PR #2974** (2026-11-20): [change] Migrate from Flow to TypeScript (@zoontek)
 - **PR #2972** (2026-11-19): [fix] StyleSheet: output valid CSS for logical transitionProperty values (@zoontek)
-- **PR #2971** (closed): [fix] StyleSheet: do not mutate inline transitionProperty arrays (@goranai)
-- **PR #2969** (2026-11-18): [fix] Docs: dead MDN link for TextInput autoComplete (@farisbasha)
-- **PR #2967** (closed): Bump next from 16.4.2 to 16.4.5 (@dependabot[bot])
 
 ---
 
@@ -1063,76 +1184,48 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [fix] StyleSheet: output valid CSS for logical transitionProperty values
+## X. Enable more oxlint rules and fix their errors
 
 **RULE**:
-When implementing operations in `packages/react-native-web/src/exports/StyleSheet/__tests__/compiler-test.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in necolas/react-native-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `oxlint.config.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in necolas/react-native-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0cbcdded`: [fix] StyleSheet: output valid CSS for logical transitionProperty values. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ea9eb896`: Enable more oxlint rules and fix their errors. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native-web/src/exports/StyleSheet/__tests__/compiler-test.js`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `oxlint.config.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-
-    test('converts logical transitionProperty values', () => {
-      expect(atomic({ transitionProperty: 'margin-inline-start, opacity' }))
-        .toMatchInlineSnapshot(`
-       [
-         {
-           "$$css": true,
-           "$$css$localize": true,
-           "transitionProperty": [
-             "r-transitionProperty-1b4l1tn",
-             "r-transitionProperty-1mussrw",
-           ],
-         },
-         [
-           [
-             [
-               ".r-transitionProperty-1b4l1tn{transition-property:margin-left, opacity;}",
-             ],
-             3,
-           ],
-           [
-             [
-               ".r-transitionProperty-1mussrw{transition-property:margin-right, opacity;}",
-             ],
-             3,
-           ],
-         ],
-       ]
-      `);
-
-      expect(atomic({ transitionProperty: 'margin-left, opacity' }))
-        .toMatchInlineSnapshot(`
-       [
-         {
-           "$$css": true,
-           "transitionProperty": "r-transitionProperty-1b4l1tn",
-         },
-         [
-           [
-             [
-               ".r-transitionProperty-1b4l1tn{transition-property:margin-left, opacity;}",
-             ],
-             3,
-           ],
-         ],
-       
+    // typescript
+    'typescript/no-empty-object-type': 'error',
+    'typescript/no-invalid-void-type': 'error',
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+    'capitalized-calls': 'off',
+    'no-await-in-loop': 'off',
+
+    'react/jsx-no-constructed-context-values': 'off',
+    'react/no-array-index-key': 'off',
+    'react/purity': 'off',
+
+    'typescript/await-thenable': 'off',
+    'typescript/no-empty-object-type': 'off',
+    'typescript/no-floating-promises': 'off',
+    'typescript/no-invalid-void-type': 'off',
+    'typescript/no-misused-spread': 'off',
+    'typescript/no-redundant-type-constituents': 'off',
+    'typescript/no-unnecessary-template-expression': 'off',
+    'typescript/no-unnecessary-type-arguments': 'off',
+    'typescript/no-unnecessary-type-conversion': 'off',
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0cbcdded` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ea9eb896` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -3643,10 +3643,10 @@
     "repository": "trufflesecurity/trufflehog",
     "platform": "github",
     "sourceUrl": "https://github.com/trufflesecurity/trufflehog",
-    "sourceVersion": "2921dcc5",
+    "sourceVersion": "23255461",
     "license": "AGPL-3.0",
-    "contentHash": "faf463871ec42268a3750db9870ac8eb67be1d61f57c830939d0cf15ca9faafe",
-    "lastHarvestedAt": "2026-11-24T19:09:57.436Z",
+    "contentHash": "04a833a51cdb8b1343fe5097963bc8b6a0eb65644e44cbbd4d687f9ba532e931",
+    "lastHarvestedAt": "2026-11-24T23:58:50.031Z",
     "learningId": "learn-github-trufflesecurity-trufflehog"
   },
   "neural-maze-ava-whatsapp-agent-course": {
@@ -7123,10 +7123,10 @@
     "repository": "necolas/react-native-web",
     "platform": "github",
     "sourceUrl": "https://github.com/necolas/react-native-web",
-    "sourceVersion": "0e0a4202",
+    "sourceVersion": "9fa18288",
     "license": "MIT",
-    "contentHash": "9ae4ebfe744ca8de8bc6f7c5028c645ac2ff25622c0869f45ff18f86d4eaaca2",
-    "lastHarvestedAt": "2026-11-22T09:47:33.358Z",
+    "contentHash": "2c1711a315d21b9849c27a268d1cff25ed52a84edb8d97deb34702da4fb2dfab",
+    "lastHarvestedAt": "2026-11-24T23:58:42.003Z",
     "learningId": "learn-github-necolas-react-native-web"
   },
   "zvec-ai-zvec-grep": {
@@ -7273,10 +7273,10 @@
     "repository": "str4d/rage",
     "platform": "github",
     "sourceUrl": "https://github.com/str4d/rage",
-    "sourceVersion": "b5b68c4f",
+    "sourceVersion": "eaa85530",
     "license": "Apache-2.0",
-    "contentHash": "ba7eda3d38d98ef1ea47762588d525b69fc04c29f6eca0413293ca1214c7484f",
-    "lastHarvestedAt": "2026-10-19T08:22:50.604Z",
+    "contentHash": "8caecbbe2857583e926fe76b5a4631f3954a347572462d1aa74a5726dd6d9b61",
+    "lastHarvestedAt": "2026-11-24T23:58:36.640Z",
     "learningId": "learn-github-str4d-rage"
   },
   "memvid-memvid": {
@@ -11383,10 +11383,10 @@
     "repository": "TanStack/router",
     "platform": "github",
     "sourceUrl": "https://github.com/TanStack/router",
-    "sourceVersion": "ce46b21b",
+    "sourceVersion": "61d5cdda",
     "license": "MIT",
-    "contentHash": "2d0640cc9f066917a9559e1974a963412bf052b78e68305dcff328ca96b642ed",
-    "lastHarvestedAt": "2026-11-21T00:24:38.681Z",
+    "contentHash": "ddd5dc783e87b91bed147ffc12a76ee45030c1ef61c6b6f87bb3713487c6b849",
+    "lastHarvestedAt": "2026-11-24T23:58:38.568Z",
     "learningId": "learn-github-tanstack-router"
   },
   "hf-tencent-hy-simulmt-30b-a3b-fp8": {
