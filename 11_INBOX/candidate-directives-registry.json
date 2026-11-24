@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T16:10:45.689Z",
+  "last_updated": "2026-11-24T16:20:00.786Z",
   "directives": [
     {
       "id": "CD-001",
@@ -53863,11 +53863,11 @@
       "staged_date": "2026-11-24"
     },
     {
-      "id": "CD-5P5L",
+      "id": "CD-HMZ3",
       "directive_title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
       "source_repo": "zulip-zulip-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-5P5L-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-HMZ3-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-24",
@@ -55736,6 +55736,55 @@
       "source_repo": "zleap-ai-sag",
       "domain_letter": "M",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-259D70-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-HLFZ",
+      "directive_title": "upload readiness, crawl start logging, and first-paint test interception",
+      "source_repo": "archivebox-archivebox-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-HLFZ-upload-readiness-crawl-start-logging-and-first-paint-test-interception.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "J"
+    },
+    {
+      "id": "CD-HM9T",
+      "directive_title": "[FIXED] Replies to first concurrent requests on fresh server can be dropped",
+      "source_repo": "nats-io-nats-server-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-HM9T-fixed-replies-to-first-concurrent-requests-on-fresh-server-can-be-dropped.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-9B36EF",
+      "directive_title": "upload readiness, crawl start logging, and first-paint test interception",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "archivebox-archivebox",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-9B36EF-upload-readiness-crawl-start-logging-and.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-REV-8C6821",
+      "directive_title": "[FIXED] Replies to first concurrent requests on fresh server can be dropped",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nats-io-nats-server",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8C6821--fixed-replies-to-first-concurrent-reque.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-REV-CA8FB5",
+      "directive_title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-CA8FB5-server-events-dispatch-rerender-dm-statu.md",
       "staged_date": "2026-11-24"
     }
   ]

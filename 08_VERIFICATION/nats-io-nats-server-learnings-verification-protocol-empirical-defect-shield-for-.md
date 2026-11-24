@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T20:48:01.064Z",
+  "timestamp": "2026-11-24T16:19:59.740Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nats-io-nats-server-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nats-io-nats-server-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T20:48:01.064Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T16:19:59.740Z`  
 > **Learning ID**: `LEARN-EVO-nats-io-nats-server-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nats-io-nats-server-learnings.md`  
 > **Source**: github ([https://github.com/nats-io/nats-server](https://github.com/nats-io/nats-server))  
-> **Source Version**: `5a7a03c3`  
+> **Source Version**: `44f6fc4d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T20:47:50.249Z  
+> **Timestamp**: 2026-11-24T16:19:53.709Z  
 > **Learning ID**: `learn-github-nats-io-nats-server`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nats-io-nats-server-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nats-io/nats-server](https://github.com/nats-io/nats-server))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T20:47:50.241Z  
+> **Harvest Timestamp**: 2026-11-24T16:19:53.703Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: High-Performance server for NATS.io, the cloud and edge native messaging system.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 21123 stars
+- **Stars / Engagement**: 21130 stars
 
 ---
 
@@ -2751,848 +2751,511 @@ func (l *Logger) Tracef(format string, v ...any) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6e319bdf` (2026-11-23)
-**Commit Message**: [FIXED] Validate source FilterSubject on stream updates (#8923)
+### Incident Patch 1: `253bc39b` (2026-11-24)
+**Commit Message**: [FIXED] Replies to first concurrent requests on fresh server can be dropped (#8929)
 
-## Problem
-Stream creation validates source `FilterSubject` values, but stream
-updates do not apply the same validation.
+### Problem
+In `newServiceReply`, `a.mu` was unlocked after generating the wildcard
+prefix but before registering the `_R_.>` subscription in the internal
+client sublist. When multiple concurrent requests arrived on a freshly
+started server, the first caller returned the reply subject and
+published before the subscription was active, causing early replies to
+be dropped.
 
-As a result, an update containing an invalid filter such as `origin..x`
-can be accepted and persisted. The sourcing stream then stops receiving
-messages without reporting an error. In a single-server setup, the
-stream can also fail to load after a restart. In clustered deployments,
-the stream can go offline across all peers.
+### Solution
+- I added a `sync.Once` (`siReplyOnce`) on `Account` to synchronize the
+service import reply wildcard setup and subscription.
+- Concurrent callers now wait until the `_R_.>` subscription is fully
+registered before receiving their reply subject.
+- Added a regression test
+`TestAccountNewServiceReplyWaitsForSubscription` to verify concurrent
+callers block until the subscription is active.
 
-## Solution
-Add source `FilterSubject` validation to `checkStreamCfgLocked`, using
-the same validation and error handling already applied to
-SubjectTransforms sources.
+Resolves #8823
 
-Invalid updates are now rejected before the configuration is committed.
-In clustered deployments, the meta leader's pre-check prevents invalid
-proposals from being applied.
-
-This also ensures that peers retain their existing valid configuration
-if an invalid update reaches the meta layer.
-
-## Tests
-Added `TestJetStreamStreamUpdateInvalidSourceFilterSubject` in
-`server/jetstream_test.go`.
-
-The test covers invalid filters:
-
-* `origin..x`
-* `origin x`
-* `origin.>.x`
-* `.origin`
-
-It verifies that both creation and 
-
-**File**: `server/jetstream_test.go` (modified, +41/-0)
+**File**: `locksordering.txt` (modified, +9/-0)
 ```diff
-@@ -25955,6 +25955,47 @@ func TestJetStreamFlowControlCrossAccountFanOut(t *testing.T) {
+@@ -81,3 +81,12 @@ another account (which would take that account's locks in unknown order).
+ 
+     cmu -> Account
+     cmu -> client
++
++The "siReplyOnce" in the Account serializes the initialization of the service
++reply wildcard prefix and its wildcard subscription for service import responses,
++so that concurrent callers wait until the subscription is registered.
++It must be acquired before the Account and client locks, and neither must be
++held when calling newServiceReply.
++
++    siReplyOnce -> Account
++    siReplyOnce -> client
+```
+
+**File**: `server/accounts.go` (modified, +15/-17)
+```diff
+@@ -100,6 +100,7 @@ type Account struct {
+ 	srv          *Server // server this account is registered with (possibly nil)
+ 	lds          string  // loop detection subject for leaf nodes
+ 	siReply      []byte  // service reply prefix, will form wildcard subscription.
++	siReplyOnce  sync.Once
+ 	eventIds     *nuid.NUID
+ 	eventIdsMu   sync.Mutex
+ 	defaultPerms *Permissions
+@@ -2527,25 +2528,22 @@ func isTrackedReply(reply []byte) bool {
+ // Generate a new service reply from the wildcard prefix.
+ // FIXME(dlc) - probably do not have to use rand here. about 25ns per.
+ func (a *Account) newServiceReply(tracking bool) []byte {
+-	a.mu.Lock()
+-	s := a.srv
+-	rn := rand.Uint64()
++	a.siReplyOnce.Do(func() {
++		a.mu.Lock()
++		if a.siReply == nil {
++			a.createRespWildcard()
++		}
++		replyPre := a.siReply
++		a.mu.Unlock()
++		a.subscribeServiceImportResponse(string(append(replyPre, '>')))
++	})
+ 
+-	// Check if we need to create the reply here.
+-	var createdSiReply bool
+-	if a.siReply == nil {
+-		a.createRespWildcard()
+-		createdSiReply = true
+-	}
++	a.mu.RLock()
++	s := a.srv
+ 	replyPre := a.siReply
+-	a.mu.Unlock()
+-
+-	// If we created the siReply and we are not bound to a leafnode
+-	// we need to do the wildcard subscription.
+-	if createdSiReply {
+-		a.subscribeServiceImportResponse(string(append(replyPre, '>')))
+-	}
++	a.mu.RUnlock()
+ 
++	rn := rand.Uint64()
+ 	var b [replyLen]byte
+ 	for i, l := 0, rn; i < len(b); i++ {
+ 		b[i] = digits[l%base]
+@@ -2556,7 +2554,7 @@ func (a *Account) newServiceReply(tracking bool) []byte {
+ 	reply = append(reply, replyPre...)
+ 	reply = append(reply, b[:]...)
+ 
+-	if tracking {
++	if tracking && s != nil {
+ 		if shash := s.Node(); shash != _EMPTY_ {
+ 			// Add in our tracking identifier. This allows the metrics to get back to only
+ 			// this server without needless SUBS/UNSUBS.
+```
+
+**File**: `server/accounts_test.go` (modified, +60/-0)
+```diff
+@@ -3456,6 +3456,66 @@ func BenchmarkNewRouteReply(b *testing.B) {
  	}
  }
  
-+func TestJetStreamStreamUpdateInvalidSourceFilterSubject(t *testing.T) {
-+	s := RunBasicJetStreamServer(t)
-+	defer s.Shutdown()
-+
-+	nc, js := jsClientConnect(t, s)
-+	defer nc.Close()
-+
-+	_, err := js.AddStream(&nats.StreamConfig{Name: "ORIGIN", Subjects: []string{"origin.>"}})
++// A reply prefix must not be handed out before the wildcard subscription
++// for service import responses is registered, otherwise replies published
++// to it are dropped.
++func TestAccountNewServiceReplyWaitsForSubscription(t *testing.T) {
++	opts := defaultServerOptions
++	s := New(&opts)
++	a, err := s.RegisterAccount("SVC_REPLY")
 +	require_NoError(t, err)
 +
-+	invalid := []string{"origin..x", "origin x", "origin.>.x", ".origin"}
++	a.mu.Lock()
++	require_True(t, a.siReply == nil)
++	ic := a.internalClient()
++	a.mu.Unlock()
++	require_NotNil(t, ic)
 +
-+	// Creating a stream with an invalid source filter subject errors.
-+	for _, filter := range invalid {
-+		_, err = js.AddStream(&nats.StreamConfig{
-+			Name:    "SOURCE",
-+			Sources: []*nats.StreamSource{{Name: "ORIGIN", FilterSubject: filter}},
-+		})
-+		require_Error(t, err)
++	// Block the first caller while it registers the subscription.
++	ic.mu.Lock()
++	unlocked := false
++	defer func() {
++		if !unlocked {
++			ic.mu.Unlock()
++		}
++	}()
++
++	replies := make(chan []byte, 2)
++	go func() { replies <- a.newServiceReply(false) }()
++
++	// Wait for the first caller to have created the prefix.
++	checkFor(t, 2*time.Second, 5*time.Millisecond, func() error {
++		a.mu.RLock()
++		defer a.mu.RUnlock()
++		if a.siReply == nil {
++			return fmt.Errorf("reply prefix not created yet")
++		}
++		return nil
++	})
++
++	// A second caller must wait, the subscription is not registered yet.
++	go func() { replies <- a.newServiceReply(false) }()
++	select {
++	case r := <-replies:
++		t.Fatalf("Got reply %q before the subscription was registered", r)
++	case <-time.After(250 * time.Millisecond):
 +	}
 +
-+	cfg := &nats.StreamConfig{
-+		Name:    "SOURCE",
-+		Sources: []*nats.StreamSource{{Name: "ORIGIN", FilterSubject: "origin.valid"}},
-+	}
-+	_, err = js.AddStream(cfg)
-+	require_NoError(t, err)
++	ic.mu.Unlock()
++	unlocked = true
 +
-+	// So does updating an existing stream, and the stored config must not change.
-+	for _, filter := range invalid {
-+		_, err = js.UpdateStream(&nats.StreamConfig{
-+			Name:    "SOURCE",
-+			Sources: []*nats.StreamSource{{Name: "ORIGIN", FilterSubject: filter}},
-+		})
-+		require_Error(t, err, NewJSSourceInvalidSubjectFilterError(fmt.Errorf("%w %s", ErrBadSubject, filter)))
++	for i := 0; i < 2; i++ {
++		select {
++		case r := <-replies:
++			if res := a.sl.Match(string(r)); len(res.psubs) == 0 {
++				t.Fatalf("No subscription for reply %q", r)
++			}
++		case <-time.After(5 * time.Second):
++			t.Fatal("Timed out waiting for replies")
++		}
 +	}
-+	si, err := js.StreamInfo("SOURCE")
-+	require_NoError(t, err)
-+	require_Equal(t, si.Config.Sources[0].FilterSubject, "origin.valid")
 +}
 +
- func TestJetStreamStreamCheckSourcesWithExternal(t *testing.T) {
- 	s := RunBasicJetStreamServer(t)
- 	defer s.Shutdown()
-```
-
-**File**: `server/stream.go` (modified, +3/-0)
-```diff
-@@ -2299,6 +2299,9 @@ func (s *Server) checkStreamCfgLocked(config *StreamConfig, acc *Account, pedant
- 		if src.FilterSubject != _EMPTY_ && len(src.SubjectTransforms) != 0 {
- 			return StreamConfig{}, NewJSSourceMultipleFiltersNotAllowedError()
- 		}
-+		if src.FilterSubject != _EMPTY_ && !IsValidSubject(src.FilterSubject) {
-+			return StreamConfig{}, NewJSSourceInvalidSubjectFilterError(fmt.Errorf("%w %s", ErrBadSubject, src.FilterSubject))
-+		}
- 
- 		for _, tr := range src.SubjectTransforms {
- 			if tr.Source != _EMPTY_ && !IsValidSubject(tr.Source) {
+ func TestSamplingHeader(t *testing.T) {
+ 	test := func(expectSampling bool, h http.Header) {
+ 		t.Helper()
 ```
 
 ---
 
-### Incident Patch 2: `dcdafc24` (2026-11-23)
-**Commit Message**: [FIXED] MQTT: Pipeline retained message stores to avoid blocking read… (#8801)
+### Incident Patch 2: `ed85c34e` (2026-11-23)
+**Commit Message**: [FIXED] Replies to the first concurrent requests on a new server can be dropped
 
-Resolves #8790
-  
-When an MQTT client sends a PUBLISH with `RETAIN=1`,
-`mqttHandlePubRetain()` stores the retained message synchronously within
-the `readLoop`. On topologies where JetStream is remote (such as leaf
-nodes with `mqtt { js_domain: ... }`), a backlog of retained messages
-stalls the `readLoop`, causing keepalive timeouts and client
-disconnects.
+newServiceReply released the account lock before registering the _R_ wildcard subscription, so concurrent callers could get a reply prefix before it was subscribed. Use a sync.Once so they wait for the subscription.
 
-For QoS1 and QoS2, the retained message store now goes through the async
-ack pipeline. `PUBACK`/`PUBCOMP` are still only sent after the store
-succeeds, and a failed store closes the connection. QoS0 and wills still
-store synchronously.
+Resolves #8823
 
-**File**: `server/mqtt.go` (modified, +20/-5)
+Signed-off-by: Anshul Jagota <[REDACTED_EMAIL]>
+
+**File**: `locksordering.txt` (modified, +9/-0)
 ```diff
-@@ -4832,10 +4832,12 @@ func (s *Server) mqttAckLoop(c *client, pipe *mqttAckPipeline) {
+@@ -81,3 +81,12 @@ another account (which would take that account's locks in unknown order).
+ 
+     cmu -> Account
+     cmu -> client
++
++The "siReplyOnce" in the Account serializes the initialization of the service
++reply wildcard prefix and its wildcard subscription for service import responses,
++so that concurrent callers wait until the subscription is registered.
++It must be acquired before the Account and client locks, and neither must be
++held when calling newServiceReply.
++
++    siReplyOnce -> Account
++    siReplyOnce -> client
+```
+
+**File**: `server/accounts.go` (modified, +15/-17)
+```diff
+@@ -100,6 +100,7 @@ type Account struct {
+ 	srv          *Server // server this account is registered with (possibly nil)
+ 	lds          string  // loop detection subject for leaf nodes
+ 	siReply      []byte  // service reply prefix, will form wildcard subscription.
++	siReplyOnce  sync.Once
+ 	eventIds     *nuid.NUID
+ 	eventIdsMu   sync.Mutex
+ 	defaultPerms *Permissions
+@@ -2527,25 +2528,22 @@ func isTrackedReply(reply []byte) bool {
+ // Generate a new service reply from the wildcard prefix.
+ // FIXME(dlc) - probably do not have to use rand here. about 25ns per.
+ func (a *Account) newServiceReply(tracking bool) []byte {
+-	a.mu.Lock()
+-	s := a.srv
+-	rn := rand.Uint64()
++	a.siReplyOnce.Do(func() {
++		a.mu.Lock()
++		if a.siReply == nil {
++			a.createRespWildcard()
++		}
++		replyPre := a.siReply
++		a.mu.Unlock()
++		a.subscribeServiceImportResponse(string(append(replyPre, '>')))
++	})
+ 
+-	// Check if we need to create the reply here.
+-	var createdSiReply bool
+-	if a.siReply == nil {
+-		a.createRespWildcard()
+-		createdSiReply = true
+-	}
++	a.mu.RLock()
++	s := a.srv
+ 	replyPre := a.siReply
+-	a.mu.Unlock()
+-
+-	// If we created the siReply and we are not bound to a leafnode
+-	// we need to do the wildcard subscription.
+-	if createdSiReply {
+-		a.subscribeServiceImportResponse(string(append(replyPre, '>')))
+-	}
++	a.mu.RUnlock()
+ 
++	rn := rand.Uint64()
+ 	var b [replyLen]byte
+ 	for i, l := 0, rn; i < len(b); i++ {
+ 		b[i] = digits[l%base]
+@@ -2556,7 +2554,7 @@ func (a *Account) newServiceReply(tracking bool) []byte {
+ 	reply = append(reply, replyPre...)
+ 	reply = append(reply, b[:]...)
+ 
+-	if tracking {
++	if tracking && s != nil {
+ 		if shash := s.Node(); shash != _EMPTY_ {
+ 			// Add in our tracking identifier. This allows the metrics to get back to only
+ 			// this server without needless SUBS/UNSUBS.
+```
+
+**File**: `server/accounts_test.go` (modified, +60/-0)
+```diff
+@@ -3456,6 +3456,66 @@ func BenchmarkNewRouteReply(b *testing.B) {
+ 	}
+ }
+ 
++// A reply prefix must not be handed out before the wildcard subscription
++// for service import responses is registered, otherwise replies published
++// to it are dropped.
++func TestAccountNewServiceReplyWaitsForSubscription(t *testing.T) {
++	opts := defaultServerOptions
++	s := New(&opts)
++	a, err := s.RegisterAccount("SVC_REPLY")
++	require_NoError(t, err)
++
++	a.mu.Lock()
++	require_True(t, a.siReply == nil)
++	ic := a.internalClient()
++	a.mu.Unlock()
++	require_NotNil(t, ic)
++
++	// Block the first caller while it registers the subscription.
++	ic.mu.Lock()
++	unlocked := false
++	defer func() {
++		if !unlocked {
++			ic.mu.Unlock()
++		}
++	}()
++
++	replies := make(chan []byte, 2)
++	go func() { replies <- a.newServiceReply(false) }()
++
++	// Wait for the first caller to have created the prefix.
++	checkFor(t, 2*time.Second, 5*time.Millisecond, func() error {
++		a.mu.RLock()
++		defer a.mu.RUnlock()
++		if a.siReply == nil {
++			return fmt.Errorf("reply prefix not created yet")
++		}
++		return nil
++	})
++
++	// A second caller must wait, the subscription is not registered yet.
++	go func() { replies <- a.newServiceReply(false) }()
++	select {
++	case r := <-replies:
++		t.Fatalf("Got reply %q before the subscription was registered", r)
++	case <-time.After(250 * time.Millisecond):
++	}
++
++	ic.mu.Unlock()
++	unlocked = true
++
++	for i := 0; i < 2; i++ {
++		select {
++		case r := <-replies:
++			if res := a.sl.Match(string(r)); len(res.psubs) == 0 {
++				t.Fatalf("No subscription for reply %q", r)
++			}
++		case <-time.After(5 * time.Second):
++			t.Fatal("Timed out waiting for replies")
++		}
++	}
++}
++
+ func TestSamplingHeader(t *testing.T) {
+ 	test := func(expectSampling bool, h http.Header) {
+ 		t.Helper()
+```
+
+---
+
+### Incident Patch 3: `44f6fc4d` (2026-11-24)
+**Commit Message**: [FIXED] Deferred pull statuses lost on a shared reply subject (#8935)
+
+`waitingDelivery` held a single deferred pull status per reply subject,
+so a second status queued while replicated deliveries were still pending
+replaced the first. Clients like `jetstream` `Consume`/`Messages` reuse
+one inbox across pull requests, so a dropped status (e.g. `408 Request
+Timeout`) left the client's pending counts too high, stalling refills
+until the missed heartbeat reset them.
+
+This PR keeps all deferred statuses and sends them in order after the
+last pending delivery.
+
+**File**: `server/consumer.go` (modified, +6/-5)
+```diff
+@@ -3229,7 +3229,8 @@ func (o *consumer) addReplicatedQueuedMsg(pmsg *jsPubMsg) {
+ // Lock should be held.
+ func (o *consumer) sendPullStatus(reply string, hdr []byte) {
+ 	if wd, ok := o.waitingDeliveries[reply]; ok {
+-		wd.hdr = hdr
++		// Pulls can share a reply subject, so keep every status.
++		wd.hdrs = append(wd.hdrs, hdr)
+ 		return
+ 	}
+ 	o.outq.send(newJSPubMsg(reply, _EMPTY_, _EMPTY_, hdr, nil, nil, 0))
+@@ -4217,10 +4218,10 @@ func (wr *waitingRequest) recycle() {
+ 	}
+ }
+ 
+-// Tracks the last pending delivery for a reply and its optional pull status.
++// Tracks the last pending delivery for a reply and its deferred pull statuses.
+ type waitingDelivery struct {
+-	seq uint64
+-	hdr []byte
++	seq  uint64
++	hdrs [][]byte
+ }
+ 
+ // sync.Pool for waiting deliveries.
+@@ -4233,7 +4234,7 @@ var wdPool = sync.Pool{
+ // Force a recycle.
+ func (wd *waitingDelivery) recycle() {
+ 	if wd != nil {
+-		wd.seq, wd.hdr = 0, nil
++		wd.seq, wd.hdrs = 0, nil
+ 		wdPool.Put(wd)
+ 	}
+ }
+```
+
+**File**: `server/jetstream_cluster.go` (modified, +2/-2)
+```diff
+@@ -9265,8 +9265,8 @@ func (js *jetStream) applyConsumerMsgOpLocked(o *consumer, buf []byte) (afterUnl
+ 
+ 			// Send any deferred pull status after the last replicated delivery.
+ 			if wd, ok := o.waitingDeliveries[dsubj]; ok && wd.seq == seq {
+-				if wd.hdr != nil {
+-					o.outq.send(newJSPubMsg(dsubj, _EMPTY_, _EMPTY_, wd.hdr, nil, nil, 0))
++				for _, hdr := range wd.hdrs {
++					o.outq.send(newJSPubMsg(dsubj, _EMPTY_, _EMPTY_, hdr, nil, nil, 0))
  				}
- 				return
- 			}
--			c.mu.Lock()
--			trace := c.trace
--			c.mu.Unlock()
--			c.mqttEnqueuePubResponse(p.resp, p.pi, trace)
-+			if p.resp != 0 {
-+				c.mu.Lock()
-+				trace := c.trace
-+				c.mu.Unlock()
-+				c.mqttEnqueuePubResponse(p.resp, p.pi, trace)
-+			}
- 			p.returnToPool()
- 
- 		case <-pipe.quitCh:
-@@ -5380,7 +5382,20 @@ func (c *client) mqttHandlePubRetain() {
- 	// Earlier messages from this read may have left a connection in c.pcd.
- 	// It won't flush the store request until we flush it.
- 	c.flushClients(0)
--	_, err := asm.jsa.storeMsg(mqttRetainedMsgsStreamSubject+key, hdr, rmBytes)
-+
-+	subject := mqttRetainedMsgsStreamSubject + key
-+	var err error
-+	if pp.hasClientPI() {
-+		// QoS1 PUBLISH or QoS2 PUBREL delivery: pipelined, not blocking the readLoop.
-+		// Its PUBACK/PUBCOMP is queued behind this entry, so waits for the store.
-+		jsa := c.mqtt.sess.jsa
-+		p := newMQTTPipelined(0, pp.pi)
-+		p.submitStore(jsa, subject, hdr, rmBytes, _EMPTY_)
-+		err = c.srv.mqttPipelinePush(c, jsa, p)
-+	} else {
-+		// QoS0 and wills owe no response, stored synchronously.
-+		_, err = asm.jsa.storeMsg(subject, hdr, rmBytes)
-+	}
- 	if err != nil {
- 		c.mu.Lock()
- 		acc := c.acc
+ 				wd.recycle()
+ 				delete(o.waitingDeliveries, dsubj)
 ```
 
-**File**: `server/mqtt_test.go` (modified, +135/-0)
+**File**: `server/jetstream_cluster_1_test.go` (modified, +2/-2)
 ```diff
-@@ -11819,3 +11819,138 @@ func TestMQTTQoS2UntrackedPubRecNotStored(t *testing.T) {
- 	testMQTTSendPIPacket(mqttPacketPubComp, t, c, rpi)
- 	testMQTTExpectNothing(t, r)
- }
-+
-+// https://github.com/nats-io/nats-server/issues/8790
-+func TestMQTTQoS1RetainPubAckPipelineOrderAndPing(t *testing.T) {
-+	o := testMQTTDefaultOptions()
-+	s := testMQTTRunServer(t, o)
-+	defer testMQTTShutdownServer(s)
-+
-+	mcp, mpr := testMQTTConnect(t, &mqttConnInfo{clientID: "pub", cleanSess: true}, o.MQTT.Host, o.MQTT.Port)
-+	defer mcp.Close()
-+	testMQTTCheckConnAck(t, mpr, mqttConnAckRCConnectionAccepted, false)
-+
-+	// Send a burst of QoS 1 retained messages back-to-back without waiting for PUBACKs.
-+	const numMsgs = 50
-+	for pi := uint16(1); pi <= numMsgs; pi++ {
-+		testMQTTSendPublishPacket(t, mcp, 1, false, true, "foo", pi, []byte(fmt.Sprintf("msg-%d", pi)))
-+	}
-+
-+	// Send PINGREQ immediately after the burst: readLoop must not be blocked
-+	// waiting for JetStream acks, and must promptly respond with PINGRESP.
-+	w := newMQTTWriter(0)
-+	w.WriteByte(mqttPacketPing)
-+	w.WriteByte(0)
-+	mcp.Write(w.Bytes())
-+
-+	// Read packets until we receive all PUBACKs in order and the PINGRESP.
-+	var gotPingResp bool
-+	var nextPI uint16 = 1
-+	for nextPI <= numMsgs || !gotPingResp {
-+		b, _ := testMQTTReadPacket(t, mpr)
-+		switch pt := b & mqttPacketMask; pt {
-+		case mqttPacketPubAck:
-+			rpi, err := mpr.readUint16("packet identifier")
-+			if err != nil {
-+				t.Fatalf("Error reading packet identifier: %v", err)
-+			}
-+			if rpi != nextPI {
-+				t.Fatalf("Expected PUBACK for pi=%v, got pi=%v (out of order)", nextPI, rpi)
-+			}
-+			nextPI++
-+		case mqttPacketPingResp:
-+			gotPingResp = true
-+		default:
-+			t.Fatalf("Unexpected packet type: %x", pt)
-+		}
-+	}
-+	if !gotPingResp {
-+		t.Fatal("Expected PINGRESP")
-+	}
-+
-+	// Verify that a new subscriber receives the latest retained message with RETAIN=1.
-+	mcs, msr := testMQTTConnect(t, &mqttConnInfo{clientID: "sub", cleanSess: true}, o.MQTT.Host, o.MQTT.Port)
-+	defer mcs.Close()
-+	testMQTTCheckConnAck(t, msr, mqttConnAckRCConnectionAccepted, false)
-+	testMQTTSub(t, 1, mcs, msr, []*mqttFilter{{filter: "foo", qos: 1}}, []byte{1})
-+
-+	pflags, _ := testMQTTGetPubMsg(t, mcs, msr, "foo", []byte(fmt.Sprintf("msg-%d", numMsgs)))
-+	if !mqttIsRetained(pflags) {
-+		t.Fatalf("Expected retained flag on received message, got %v", pflags)
-+	}
-+}
-+
-+func TestMQTTQoS2RetainPubCompPipeline(t *testing.T) {
-+	o := testMQTTDefaultOptions()
-+	s := testMQTTRunServer(t, o)
-+	defer testMQTTShutdownServer(s)
-+
-+	mcp, mpr := testMQTTConnect(t, &mqttConnInfo{clientID: "pub2", cleanSess: true}, o.MQTT.Host, o.MQTT.Port)
-+	defer mcp.Close()
-+	testMQTTCheckConnAck(t, mpr, mqttConnAckRCConnectionAccepted, false)
-+
-+	// Send QoS2 PUBLISH with RETAIN=1.
-+	pi := uint16(42)
-+	testMQTTSendPublishPacket(t, mcp, 2, false, true, "bar", pi, []byte("qos2-retained"))
-+
-+	// Receive PUBREC.
-+	testMQTTReadPIPacket(mqttPacketPubRec, t, mpr, pi)
-+
-+	// Send PUBREL.
-+	testMQTTSendPIPacket(mqttPacketPubRel|0x2, t, mcp, pi)
-+
-+	// Receive PUBCOMP (waited for delivery store, held delete, and retain store).
-+	testMQTTReadPIPacket(mqttPacketPubComp, t, mpr, pi)
-+
-+	// Send PINGREQ to ensure readLoop is responsive.
-+	testMQTTFlush(t, mcp, nil, mpr)
-+
-+	// Verify subscriber gets the retained message.
-+	mcs, msr := testMQTTConnect(t, &mqttConnInfo{clientID: "sub2", cleanSess: true}, o.MQTT.Host, o.MQTT.Port)
-+	defer mcs.Close()
-+	testMQTTCheckConnAck(t, msr, mqttConnAckRCConnectionAccepted, false)
-+	testMQTTSub(t, 1, mcs, msr, []*mqttFilter{{filter: "bar", qos: 2}}, []byte{2})
-+
-+	pflags, _ := testMQTTGetPubMsg(t, mcs, msr, "bar", []byte("qos2-retained"))
-+	if !mqttIsRetained(pflags) {
-+		t.Fatalf("Expected retained flag, got %v", pflags)
-+	}
-+}
-+
-+func TestMQTTQoS0RetainSynchronous(t *testing.T) {
-+	o := testMQTTDefaultOptions()
-+	s := testMQTTRunServer(t, o)
-+	defer testMQTTShutdownServer(s)
-+
-+	mcp, mpr := testMQTTConnect(t, &mqttConnInfo{clientID: "pub0", cleanSess: true}, o.MQTT.Host, o.MQTT.Port)
-+	defer mcp.Close()
-+	testMQTTCheckConnAck(t, mpr, mqttConnAckRCConnectionAccepted, false)
-+
-+	// Send a burst of QoS 0 retained messages back-to-back.
-+	const numMsgs = 50
-+	for i := 1; i <= numMsgs; i++ {
-+		testMQTTSendPublishPacket(t, mcp, 0, false, true, "baz", 0, []byte(fmt.Sprintf("msg-%d", i)))
-+	}
-+
-+	// Send PINGREQ immediately after the burst to ensure no PUBACKs are emitted.
-+	w := newMQTTWriter(0)
-+	w.WriteByte(mqttPacketPing)
-+	w.WriteByte(0)
-+	mcp.Write(w.Bytes())
-+
-+	b, _ := testMQTTReadPacket(t, mpr)
-+	if pt := b & mqttPacketMask; pt != mqttPacketPingResp {
-+		t.Fatalf("Expected PINGRESP, got packet type %x", pt)
-+	}
-+
-+	// Verify that a new subscriber immediately receives the latest retained message with RETAIN=1.
-+	mcs, msr := testMQTTConnect(t, &mqttConnInfo{clientID: "sub0", cleanSess: true}, o.MQTT.Host, o.MQTT.Port)
-+	defer mcs.Close()
-+	testMQTTCheckConnAck(t, msr, mqttConnAckRCConnectionAccepted, false)
-+	testMQTTSub(t, 1, mcs, msr, []*
-```
-
----
-
-### Incident Patch 3: `302f7133` (2026-11-23)
-**Commit Message**: Fix AckAll ack floor jump when terminating deleted pending messages (#8659)
-
-When a pending message gets deleted from the stream (filtered purge,
-retention limits), the consumer terminates its delivery so it isn't
-redelivered forever. Under `AckPolicy: All` that termination went
-through the regular ack path, which moves the ack floor to the
-terminated message's sequence and drops every pending entry below it.
-Any unacknowledged message sitting below the deleted one was silently
-treated as acked and never came back. Resolves #8648, which has a full
-client-level repro of this.
-
-Two places feed into it:
-
-1. `processTermLocked` ran the terminated message through the same
-`AckAll` branch in `processAckMsgLocked` as a normal ack, jumping
-`adflr`/`asflr` and clearing `pending <= sseq`.
-2. `consumer.purge` skipped its per-message pending check entirely when
-the purge didn't move the stream's first sequence past the current ack
-floor (the `o.asflr < sseq` guard), so store-deleted messages stayed
-pending until a redelivery attempt failed to load them and hit the term
-path above. And when the purge path did remove deleted entries, it
-pushed `adflr` past lower still-pending entries as a side e
-
-**File**: `server/consumer.go` (modified, +73/-43)
-```diff
-@@ -2918,7 +2918,7 @@ func (o *consumer) processAck(subject, reply string, hdr int, rmsg []byte) {
- 		if buf := msg[len(AckTerm):]; len(buf) > 0 {
- 			reason = string(bytes.TrimSpace(buf))
- 		}
--		if !o.processTerm(sseq, dseq, dc, reason, reply) {
-+		if !o.processTerm(sseq, dseq, dc, reason, reply, false) {
- 			// We handle replies for acks in updateAcks
- 			skipAckReply = true
- 		}
-@@ -3223,20 +3223,26 @@ func (o *consumer) addReplicatedQueuedMsg(pmsg *jsPubMsg) {
- }
- 
- // Lock should be held.
--func (o *consumer) updateAcks(dseq, sseq uint64, reply string) {
-+func (o *consumer) updateAcks(dseq, sseq uint64, reply string, explicit bool) {
- 	if o.isClustered() {
- 		// Inline for now, use variable compression.
--		var b [2*binary.MaxVarintLen64 + 1]byte
-+		// A trailing byte marks the ack as explicit; older versions ignore it
-+		// when decoding and apply regular ack semantics.
-+		var b [2*binary.MaxVarintLen64 + 2]byte
- 		b[0] = byte(updateAcksOp)
- 		n := 1
- 		n += binary.PutUvarint(b[n:], dseq)
- 		n += binary.PutUvarint(b[n:], sseq)
-+		if explicit {
-+			b[n] = 1
-+			n++
-+		}
- 		o.propose(b[:n])
- 		if reply != _EMPTY_ {
- 			o.addAckReply(sseq, reply)
- 		}
- 	} else if o.store != nil {
--		o.store.UpdateAcks(dseq, sseq)
-+		o.store.UpdateAcks(dseq, sseq, explicit)
- 		if reply != _EMPTY_ {
- 			// Already locked so send direct.
- 			o.outq.sendMsg(reply, nil)
-@@ -3424,13 +3430,16 @@ func (o *consumer) processNak(sseq, dseq, dc uint64, nak []byte) {
- // Returns `true` if the ack was processed in place and the sender can now respond
- // to the client, or `false` if there was an error or the ack is replicated (in which
- // case the reply will be sent later).
--func (o *consumer) processTerm(sseq, dseq, dc uint64, reason, reply string) bool {
--	return o.processTermLocked(sseq, dseq, dc, reason, reply, true)
-+// explicit reports that this term is scoped to sseq only, e.g. the message was
-+// deleted from the stream. Under AckAll/AckFlowControl an explicit term must not
-+// ack the messages below sseq like a client-initiated term would.
-+func (o *consumer) processTerm(sseq, dseq, dc uint64, reason, reply string, explicit bool) bool {
-+	return o.processTermLocked(sseq, dseq, dc, reason, reply, true, explicit)
- }
- 
--func (o *consumer) processTermLocked(sseq, dseq, dc uint64, reason, reply string, needLock bool) bool {
-+func (o *consumer) processTermLocked(sseq, dseq, dc uint64, reason, reply string, needLock, explicit bool) bool {
- 	// Treat like an ack to suppress redelivery.
--	ackedInPlace := o.processAckMsgLocked(sseq, dseq, dc, reply, false, needLock)
-+	ackedInPlace := o.processAckMsgLocked(sseq, dseq, dc, reply, false, needLock, explicit)
- 
- 	if needLock {
- 		o.mu.Lock()
-@@ -3836,10 +3845,10 @@ func (o *consumer) sampleAck(sseq, dseq, dc uint64) {
- // to the client, or `false` if there was an error or the ack is replicated (in which
- // case the reply will be sent later).
- func (o *consumer) processAckMsg(sseq, dseq, dc uint64, reply string, doSample bool) bool {
--	return o.processAckMsgLocked(sseq, dseq, dc, reply, doSample, true)
-+	return o.processAckMsgLocked(sseq, dseq, dc, reply, doSample, true, false)
- }
- 
--func (o *consumer) processAckMsgLocked(sseq, dseq, dc uint64, reply string, doSample bool, needLock bool) bool {
-+func (o *consumer) processAckMsgLocked(sseq, dseq, dc uint64, reply string, doSample bool, needLock, explicit bool) bool {
- 	lock := func() {
- 		if needLock {
- 			o.mu.Lock()
-@@ -3911,6 +3920,24 @@ func (o *consumer) processAckMsgLocked(sseq, dseq, dc uint64, reply string, doSa
- 		delete(o.rdc, sseq)
- 		o.removeFromRedeliverQueue(sseq)
- 	case AckAll, AckFlowControl:
-+		if explicit {
-+			// Server-side removal of a message that was deleted from the stream.
-+			// Scoped to this message only, like an explicit ack: the pending
-+			// entries below it are left alone, and the floor only moves across
-+			// sequences that are already clear.
-+			if p, ok := o.pending[sseq]; ok {
-+				if o.maxp > 0 && len(o.pending) >= o.maxp {
-+					needSignal = true
-+				}
-+				delete(o.pending, sseq)
-+				// Use the original deliver sequence from our pending record.
-+				dseq = p.Sequence
-+				o.moveAckFloor(dseq, sseq)
-+			}
-+			delete(o.rdc, sseq)
-+			o.removeFromRedeliverQueue(sseq)
-+			break
-+		}
- 		// no-op
- 		if dseq <= o.adflr || sseq <= o.asflr {
- 			unlock()
-@@ -3971,8 +3998,9 @@ func (o *consumer) processAckMsgLocked(sseq, dseq, dc uint64, reply string, doSa
- 	if ackInPlace {
- 		reply = _EMPTY_
+@@ -12253,8 +12253,8 @@ func TestJetStreamClusterConsumerPendingDeliveriesOnMaxAckPendingUpdate(t *testi
+ 	l = len(o.pendingDeliveries)
+ 	wd := o.waitingDeliveries[reply]
+ 	var queuedStatus string
+-	if wd != nil {
+-		queuedStatus = string(wd.hdr)
++	if wd != nil && len(wd.hdrs) == 1 {
++		queuedStatus = string(wd.hdrs[0])
  	}
--	// Update underlying store.
--	o.updateAcks(dseq, sseq, reply)
-+	// Update underlying store. Client acks and terms are regular acks; a
-+	// server-side removal of a deleted message is scoped as an explicit ack.
-+	o.updateAcks(dseq, sseq, reply, explicit)
- 	unlock()
- 
- 	if ackInPlace {
-@@ -5129,7 +5157,7 @@ func (o *consumer) getNextMsg() (*jsPubMsg, uint64, error) {
- 				pmsg.returnToPool()
- 				pmsg = nil
- 				if p, ok := o.pending[seq]; ok {
--					o.processTermLocked(seq, p.Sequence, dc-1, ackTermUnackedLimitsReas
+ 	o.mu.Unlock()
+ 	require_Equal(t, l, 1)
 ```
 
-**File**: `server/filestore.go` (modified, +5/-2)
+**File**: `server/jetstream_consumer_test.go` (modified, +68/-1)
 ```diff
-@@ -14342,7 +14342,7 @@ func (o *consumerFileStore) UpdateDelivered(dseq, sseq, dc uint64, ts int64) err
- }
- 
- // UpdateAcks is called whenever a consumer with explicit ack or ack all acks a message.
--func (o *consumerFileStore) UpdateAcks(dseq, sseq uint64) error {
-+func (o *consumerFileStore) UpdateAcks(dseq, sseq uint64, explicit bool) error {
- 	o.mu.Lock()
- 	defer o.mu.Unlock()
- 
-@@ -14379,7 +14379,10 @@ func (o *consumerFileStore) UpdateAcks(dseq, sseq uint64) error {
- 	// Done with the consistency checks, we'll always kick for below updates.
- 	kick = true
- 
--	if ackAll {
-+	// Check for AckAll here (or AckFlowControl which functions like AckAll).
-+	// An explicit ack is scoped to this message only, so it falls through to
-+	// the per-message path even under AckAll.
-+	if !explicit && ackAll {
- 		// Use the original delivery sequence.
- 		if p := o.state.Pending[sseq]; dseq > p.Sequence && p.Sequence > 0 {
- 			dseq = p.Sequence
-```
-
-**File**: `server/filestore_test.go` (modified, +7/-7)
-```diff
-@@ -3143,11 +3143,11 @@ func TestFileStoreConsumerRedeliveredLost(t *testing.T) {
- 			t.Fatalf("Did not recover pending correctly")
- 		}
- 
--		o.UpdateAcks(7, 3)
--		o.UpdateAcks(6, 2)
-+		o.UpdateAcks(7, 3, false)
-+		o.UpdateAcks(6, 2, false)
- 
- 		restartConsumer()
--		o.UpdateAcks(4, 1)
-+		o.UpdateAcks(4, 1, false)
- 
- 		state, _ := o.State()
- 		if len(state.Pending) != 0 {
-@@ -3195,7 +3195,7 @@ func TestFileStoreConsumerUpdateAcksFlushesRedelivered(t *testing.T) {
- 		// Acking sseq 1 deletes it from Redelivered, but UpdateAcks bails out with
- 		// ErrStoreMsgNotFound since it is no longer pending. The deletion must still
- 		// be flushed.
--		require_Error(t, o.UpdateAcks(2, 1), ErrStoreMsgNotFound)
-+		require_Error(t, o.UpdateAcks(2, 1, false), ErrStoreMsgNotFound)
- 
- 		restartConsumer()
- 		defer o.Stop()
-@@ -3355,7 +3355,7 @@ func TestFileStoreConsumerDeliveredUpdates(t *testing.T) {
- 		testDelivered(5, 130)
- 
- 		// If we try to do an ack this should err since we are not configured with ack policy.
--		if err := o.UpdateAcks(1, 100); err != ErrNoAckPolicy {
-+		if err := o.UpdateAcks(1, 100, false); err != ErrNoAckPolicy {
- 			t.Fatalf("Expected a no ack policy error on update acks, got %v", err)
- 		}
- 		// Also if we do an update with a delivery count of anything but 1 here should also give same error.
-@@ -3413,7 +3413,7 @@ func TestFileStoreConsumerDeliveredAndAckUpdates(t *testing.T) {
- 
- 		testBadAck := func(dseq, sseq uint64) {
- 			t.Helper()
--			if err := o.UpdateAcks(dseq, sseq); err == nil {
-+			if err := o.UpdateAcks(dseq, sseq, false); err == nil {
- 				t.Fatalf("Expected error but got none")
- 			}
- 		}
-@@ -3422,7 +3422,7 @@ func TestFileStoreConsumerDeliveredAndAckUpdates(t *testing.T) {
- 
- 		testAck := func(dseq, sseq, dflr, sflr uint64) {
- 			t.Helper()
--			if err := o.UpdateAcks(dseq, sseq); err != nil {
-+			if err := o.UpdateAcks(dseq, sseq, false); err != nil {
- 				t.Fatalf("Unexpected error: %v", err)
- 			}
- 			pending--
-```
-
-**File**: `server/jetstream_cluster.go` (modified, +17/-9)
-```diff
-@@ -9277,12 +9277,12 @@ func (js *jetStream) applyConsumerMsgOpLocked(o *consumer, buf []byte) (afterUnl
- 			return nil, err
- 		}
- 	case updateAcksOp:
--		dseq, sseq, err := decodeAckUpdate(buf[1:])
-+		dseq, sseq, explicit, err := decodeAckUpdate(buf[1:])
- 		if err != nil {
- 			logDecodeErr("ack")
- 			return nil, err
- 		}
--		mset, ackAllSeqs, err := o.processReplicatedAckLocked(dseq, sseq)
-+		mset, ackAllSeqs, err := o.processReplicatedAckLocked(dseq, sseq, explicit)
- 		if err == errConsumerClosed {
- 			return nil, err
- 		}
-@@ -9406,12 +9406,14 @@ var errConsumerClosed = errors.New("consumer closed")
- // processReplicatedAckLocked stores a replicated ack.
- // Returns the stream if the acked messages must still be acked on it, after the lock is released.
- // Lock should be held.
--func (o *consumer) processReplicatedAckLocked(dseq, sseq uint64) (*stream, []uint64, error) {
-+func (o *consumer) processReplicatedAckLocked(dseq, sseq uint64, explicit bool) (*stream, []uint64, error) {
- 	// Update activity.
- 	o.lat = time.Now()
- 
- 	var ackAllSeqs []uint64
--	if o.retention != LimitsPolicy && (o.cfg.AckPolicy == AckAll || o.cfg.AckPolicy == AckFlowControl) {
-+	// An explicit ack is scoped to the message itself, so it does not collect
-+	// the messages below it even under AckAll.
-+	if !explicit && o.retention != LimitsPolicy && (o.cfg.AckPolicy == AckAll || o.cfg.AckPolicy == AckFlowControl) {
- 		// Always use the store state, as o.asflr is skipped ahead already.
- 		// Capture before updating store, which clears the pending below.
- 		state, err := o.store.BorrowState()
-@@ -9431,7 +9433,7 @@ func (o *consumer) processReplicatedAckLocked(dseq, sseq uint64) (*stream, []uin
- 
- 	// Do actual ack update to store.
- 	// Always do this to have it recorded.
--	o.store.UpdateAcks(dseq, sseq)
-+	o.store.UpdateAcks(dseq, sseq, explicit)
- 
- 	mset := o.mset
- 	if o.closed || mset == nil {
-@@ -9459,16 +9461,22 @@ var errBadDeliveredUpdate = errors.New("jetstream cluster bad replicated deliver
- var errBadSkipUpdate = errors.New("jetstream cluster bad replicated skip update")
- var errBadResetUpdate = errors.New("jetstream cluster bad replicated reset update")
- 
--func decodeAckUpdate(buf []byte) (dseq, sseq uint64, err error) {
-+func decodeAckUpdate(buf []byte) (dseq, sseq uint64, explicit bool, err error) {
- 	var bi, n int
- 	if dseq, n = binary.Uvarint(buf); n <= 0 {
--		return 0, 0, errBadAckUpdate
-+		return 0, 0, false, errBadAckUpdate
+@@ -10267,7 +10267,7 @@ func TestJetStreamConsumerReplicatedPullStatusOrder(t *testing.T) {
+ 	})
+ 	require_NoError(t, err)
+ 	data := bytes.Repeat([]byte("x"), 200)
+-	for i := 0; i < 3; i++ {
++	for range 3 {
+ 		_, err := js.Publish("TEST", data)
+ 		require_NoError(t, err)
  	}
- 	bi += n
- 	if sseq, n = binary.Uvarint(buf[bi:]); n <= 0 {
--		return 0, 0, errBadAckUpdate
-+		return 0, 0, false, errBadAckUpdate
+@@ -10339,6 +10339,73 @@ func TestJetStreamConsumerReplicatedPullStatusOrder(t *testing.T) {
+ 			require_Equal(t, status.Header.Get("Description"), test.description)
+ 		})
  	}
--	return dseq, sseq, nil
-+	bi += n
-+	// Optional trailing byte marks this ack as explicit. Versions that predate
-+	// it stop after the two sequences and apply regular ack semantics.
-+	if bi < len(buf) && buf[bi] == 1 {
-+		explicit = true
-+	}
-+	return dseq, sseq, explicit, nil
- }
- 
- func decodeDeliveredUpdate(buf []byte) (dseq, sseq, dc uint64, ts int64, err error) {
-```
-
-**File**: `server/jetstream_cluster_4_test.go` (modified, +13/-2)
-```diff
-@@ -9279,11 +9279,22 @@ func TestJetStreamClusterDecodeUpdatesRejectMalformed(t *testing.T) {
- 	t.Run("AckUpdate", func(t *testing.T) {
- 		valid := binary.AppendUvarint(nil, 10)
- 		valid = binary.AppendUvarint(valid, 20)
--		if _, _, err := decodeAckUpdate(valid); err != nil {
-+		if _, _, explicit, err := decodeAckUpdate(valid); err != nil {
- 			t.Fatalf("expected valid ack update to decode, got %v", err)
-+		} else if explicit {
-+			t.Fatalf("expected explicit to default to false")
-+		}
-+		// An optional trailing byte marks the update as explicit.
-+		marked := binary.AppendUvarint(nil, 10)
-+		marked = binary.AppendUvarint(marked, 20)
-+		marked = append(marked, 1)
-+		if _, _, explicit, err := decodeAckUpdate(marked); err != nil {
-+			t.Fatalf("expected valid explicit ack update to decode, got %v", err)
-+		} else if !explicit {
-+			t.Fatalf("expected trailing byte to decode as explicit")
- 		}
- 		for _, buf := range [][]byte{nil, valid[:1]} {
--			if _, _, err := decodeAckUpdate(buf); err != errBadAckUpdate {
-+			if _, _, _, err := decodeAckUpdate(buf); err != errBadAckUpdate {
- 				t.Fatalf("expected errBadAckUpdate for %v, got %v", buf, err)
- 			}
- 		}
-```
-
-**File**: `server/jetstream_test.go` (modified, +351/-0)
-```diff
-@@ -2643,6 +2643,357 @@ func TestJetStreamWorkQueueTerminateDelivery(t *testing.T) {
- 	}
- }
- 
-+func TestJetStreamAckAllTermDeletedPendingDoesNotAckBelow(t *testing.T) {
-+	cases := []struct {
-+		name    string
-+		mconfig *StreamConfig
-+	}{
-+		{"MemoryStore", &StreamConfig{Name: "TERMALL", Subjects: []string{"n.>"}, Storage: MemoryStorage}},
-+		{"FileStore", &StreamConfig{Name: "TERMALL", Subjects: []string{"n.>"}, Storage: FileStorage}},
-+	}
-+	for _, c := range cases {
-+		t.Run(c.name, func(t *testing.T) {
-+			s := RunBasicJetStreamServer(t)
-+			defer s.Shutdown()
 +
-+			mset, err := s.GlobalAccount().addStream(c.mconfig)
++	// Two pull requests on the same reply subject, each ending with a status.
++	t.Run("Shared Reply", func(t *testing.T) {
++		for range 2 {
++			_, err := js.Publish("TEST", data)
 +			require_NoError(t, err)
-+			defer mset.delete()
++		}
 +
-+			ackWait := 100 * time.Millisecond
-+			o, err := mset.addConsumer(&ConsumerConfig{Durable: "C", AckPolicy: AckAll, AckWait: ackWait})
-+			require_NoError(t, err)
-+			defer o.delete()
++		reply := nc.NewInbox()
++		sub, err := nc.SubscribeSync(reply)
++		require_NoError(t, err)
++		defer sub.Unsubscribe()
 +
-+			nc := clientConnectToServer(t, s)
-+			defer nc.Close()
-+
-+			getMsg := func() *nats.Msg {
-+				t.Helper()
-+				m, err := nc.Request(o.requestNextMsgSubject(), nil, time.Second)
-+				require_NoError(t, err)
-+				return m
++		o.mu.Lock()
++		o.switching = true
++		o.mu.Unlock()
++		resumeProposals := func() {
++			o.mu.Lock()
++			defer o.mu.Unlock()
++			o.switching = false
++			select {
++			case o.pch <- struct{}{}:
++			default:
 +			}
++		}
++		defer resumeProposals()
 +
-+			// First message is acked so the ack floor moves off zero.
-+			sendStreamMsg(t, nc, "n.a", "m1")
-+			getMsg().Respond(nil)
-+			checkFor(t, time.Second, 10*time.Millisecond, func() error {
-+				o.mu.RLock()
-+				defer o.mu.RUnlock()
-+				if o.asflr != 1 {
-+					return fmt.Errorf("expected ack floor 1, got %d", o.asflr)
-+				}
-+				return nil
-+			})
-+
-+			// Four more messages, the middle two share a subject that gets purged.
-+			sendStreamMsg(t, nc, "n.a", "m2") // sseq 2
-+			sendStreamMsg(t, nc, "n.x", "m3") // sseq 3
-+			sendStreamMsg(t, nc, "n.x", "m4") // sseq 4
-+			sendStreamMsg(t, nc, "n.b", "m5") // sseq 5
-+
-+			// Fetch all four but do not ack them.
-+			for i := 0; i < 4; i++ {
-+				getMsg()
-+			}
-+
-+			// Deleting pending messages 3 and 4 terminates their delivery.
-+			purged, err := mset.purge(&JSApiStreamPurgeRequest{Subject: "n.x"})
++		for _, r := range []JSApiConsumerGetNextRequest{
++			{Batch: 1, MaxBytes: 10_000, Expires: 2 * time.Second},
++			{Batch: 2, Expires: 200 * time.Millisecond},
++		} {
++			req, err := json.Marshal(r)
 +			require_NoError(t, err)
-+			require_Equal(t, purged, 2)
++			require_NoError(t, nc.PublishRequest(fmt.Sprintf(JSApiRequestNextT, "TEST", "C"), reply, req))
++		}
 +
-+			// The terminations must not drop message 2, which sits below them
-+			// and was never acked.
-+			checkFor(t, time.Second, 10*time.Millisecond, func() error {
-+				o.mu.RLock()
-+				defer o.mu.RUnlock()
-+				if len(o.pending) != 2 {
-+					return fmt.Errorf("expected 2 pending, got %d", len(o.pending))
-+				}
-+				return nil
-+			})
++		checkFor(t, time.Second, 10*time.Millisecond, func() error {
 +			o.mu.RLock()
-+			_, ok2 := o.pending[2]
-+			_, ok5 := o.pending[5]
-+			adflr, asflr := o.adflr, o.asflr
-+			o.mu.RUnlock()
-+			if !ok2 || !ok5 {
-+				t.Fatalf("expected pending messages 2 and 5, got 2=%v 5=%v", ok2, ok5)
++			defer o.mu.RUnlock()
++			if wd := o.waitingDeliveries[reply]; wd == nil || len(wd.hdrs) != 2 {
++				return errors.New("pull statuses have not finished queueing")
 +			}
-+			if adflr != 1 || asflr != 1 {
-+				t.Fatalf("termination of deleted pending messages moved ack floor to %d/%d, expected 1/1", adflr, asflr)
-+			}
-+
-+			// Once ackWait lapses the survivors must be redelivered.
-+			time.Sleep(3 * ackWait)
-+			m := getMsg()
-+			if sseq, _, _, _, _ := ackReplyInfo(m.Reply); sseq != 2 {
-+				t.Fatalf("expected redelivery of message 2, got %d", sseq)
-+			}
-+			m = getMsg()
-+			if sseq, _, _, _, _ := ackReplyInfo(m.Reply); sseq != 5 {
-+				t.Fatalf("expected redelivery of message 5, got %d", sseq)
-+			}
++			return nil
 +		})
-+	}
-+}
++		_, err = sub.NextMsg(100 * time.Millisecond)
++		require_Error(t, err, nats.ErrTimeout)
 +
-+func TestJetStreamAckAllClientTermAcksBelow(t *testing.T) {
-+	cases := []struct {
-+		name    string
-+		mconfig *StreamConfig
-+	}{
-+		{"MemoryStore", &StreamConfig{Name: "TERMCLIENT", Subjects: []string{"n.>"}, Storage: MemoryStorage}},
-+		{"FileStore", &StreamConfig{Name: "TERMCLIENT", Subjects: []string{"n.>"}, Storage: FileStorage}},
-+	}
-+	for _, c := range cases {
-+		t.Run(c.name, func(t *testing.T) {
-+			s := RunBasicJetStreamServer(t)
-+			defer s.Shutdown()
-+
-+			mset, err := s.GlobalAccount().addStream(c.mconfig)
++		resumeProposals()
++		for range 2 {
++			msg, err := sub.NextMsg(time.Second)
 +			require_NoError(t, err)
-+			defer mset.delete()
-+
-+			o, err := mset.addConsumer(&ConsumerConfig{Durable: "C", AckPolicy: AckAll, AckWait: 100 * time.Millisecond})
++			require_Equal(t, msg.Header.Get("Description"), "")
++			require_Equal(t, string(msg.Data), string(data))
++		}
++		for _, expected := range []struct {
++			status      string
++			description string
++		}{
++			{"409", "Batch Completed"},
++			{"408", "Request Timeout"},
++		} {
++			status, err := sub.NextMsg(time.Second)
 +			require_NoError(t, err)
-+			defer o.delete()
-+
-+			nc := clientConnectToServer(t, s)
-+			defer nc.Close()
-+
-+			getMsg := func() *nats.Msg {
-+				t.Helper()
-+				m, err := nc.Request(o.requestNextMsgSubject(), nil, time.Second)
-+				require_NoError(t, err)
-+				return m
-+			}
-+
-+			sendStreamMsg(t, nc, "n.a", "m1")
-+			sendStreamMsg(t, nc, "n.a", "m2")
-+			sendStreamMsg(t, nc, "n.a", "m3")
-+
-+			// Fetch all three, then terminate the last one from the client.
-+			getMsg()
-+			getMsg()
-+			m := getMsg()
-+			m.Respond(AckTerm)
-+
-+			// A client-initiated term keeps its long-standing behavior: under
-+			// AckAll it works like an ack, so the messages below it are acked
-+			// too and nothing is redelivered.
-+			checkFor(t, time.Second, 10*time.Millisecond, func() error {
-+				o.mu.RLock()
-+				defer o.mu.RUnlock()
-+				if len(o.pending) != 0 {
-+					return fmt.Errorf("expected no pending, got %d", len(o.pending))
-+				}
-+				if o.asflr != 3 {
-+					return fmt.Errorf("expected ack floor 3, got %d", o.asflr)
-+				}
-+				return nil
-+			})
-+		})
-+	}
-+}
-+
-+func TestJetStreamAckAllTermDeletedPendingViaStoreRemoveDoesNotAckBelow(t *testing.T) {
-
-```
-
-**File**: `server/memstore.go` (modified, +5/-2)
-```diff
-@@ -2975,7 +2975,7 @@ func (o *consumerMemStore) UpdateDelivered(dseq, sseq, dc uint64, ts int64) erro
- 	return nil
++			require_Equal(t, status.Header.Get("Status"), expected.status)
++			require_Equal(t, status.Header.Get("Description"), expected.description)
++		}
++	})
  }
  
--func (o *consumerMemStore) UpdateAcks(dseq, sseq uint64) error {
-+func (o *consumerMemStore) UpdateAcks(dseq, sseq uint64, explicit bool) error {
- 	o.mu.Lock()
- 	defer o.mu.Unlock()
- 
-@@ -2999,7 +2999,10 @@ func (o *consumerMemStore) UpdateAcks(dseq, sseq uint64) error {
- 		return ErrStoreMsgNotFound
- 	}
- 
--	if ackAll {
-+	// Check for AckAll here (or AckFlowControl which functions like AckAll).
-+	// An explicit ack is scoped to this message only, so it falls through to
-+	// the per-message path even under AckAll.
-+	if !explicit && ackAll {
- 		// Use the original delivery sequence.
- 		if p := o.state.Pending[sseq]; dseq > p.Sequence && p.Sequence > 0 {
- 			dseq = p.Sequence
-```
-
-**File**: `server/store.go` (modified, +4/-1)
-```diff
-@@ -440,7 +440,10 @@ type ConsumerStore interface {
- 	Reset(sseq uint64) error
- 	HasState() bool
- 	UpdateDelivered(dseq, sseq, dc uint64, ts int64) error
--	UpdateAcks(dseq, sseq uint64) error
-+	// explicit reports that this update acks sseq only, e.g. the message was
-+	// deleted from the stream. Under AckAll/AckFlowControl an explicit ack
-+	// must not ack messages below sseq like a regular ack would.
-+	UpdateAcks(dseq, sseq uint64, explicit bool) error
- 	RemoveRedeliveredBelow(seq uint64)
- 	GetConfig() *ConsumerConfig
- 	UpdateConfig(cfg *ConsumerConfig) error
+ func TestJetStreamConsumerPullMaxBytes(t *testing.T) {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8935** (2026-11-24): [FIXED] Deferred pull statuses lost on a shared reply subject (@MauriceVanVeen)
+- **PR #8933** (closed): Fix typo in MQTT README (@Dani-Google)
+- **PR #8932** (2026-11-24): Data race on parse() max_control_line (@huynguyen7)
 - **PR #8930** (2026-11-23): [FIXED] Consumers not woken after stream catchup completes (@MauriceVanVeen)
+- **PR #8929** (2026-11-24): [FIXED] Replies to first concurrent requests on fresh server can be dropped (#8823) (@ansh0014)
 - **PR #8927** (2026-11-23): [FIXED] JetStream: Avoid stream option races during reload (@Zitniks)
-- **PR #8923** (2026-11-23): [FIXED] Validate source FilterSubject on stream updates (@sohailshk)
-- **PR #8922** (2026-11-20): [FIXED] Filestore tombstones lost around empty blocks and compaction (@MauriceVanVeen)
-- **PR #8920** (2026-11-20): [FIXED] Filestore compression, empty block and subject state fixes (@MauriceVanVeen)
-- **PR #8919** (2026-11-20): [FIXED] Truncate and FilteredState differing between file and memory store (@MauriceVanVeen)
 
 ---
 
@@ -3612,55 +3275,29 @@ pushed `adflr` past lower still-pending entries as a side e
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [FIXED] Validate source FilterSubject on stream updates
+## X. [FIXED] Replies to first concurrent requests on fresh server can be dropped
 
 **RULE**:
-When implementing operations in `server/jetstream_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `locksordering.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6e319bdf`: [FIXED] Validate source FilterSubject on stream updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `253bc39b`: [FIXED] Replies to first concurrent requests on fresh server can be dropped. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/jetstream_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `locksordering.txt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-func TestJetStreamStreamUpdateInvalidSourceFilterSubject(t *testing.T) {
-	s := RunBasicJetStreamServer(t)
-	defer s.Shutdown()
 
-	nc, js := jsClientConnect(t, s)
-	defer nc.Close()
+The "siReplyOnce" in the Account serializes the initialization of the service
+reply wildcard prefix and its wildcard subscription for service import responses,
+so that concurrent callers wait until the subscription is registered.
+It must be acquired before the Account and client locks, and neither must be
+held when calling newServiceReply.
 
-	_, err := js.AddStream(&nats.StreamConfig{Name: "ORIGIN", Subjects: []string{"origin.>"}})
-	require_NoError(t, err)
-
-	invalid := []string{"origin..x", "origin x", "origin.>.x", ".origin"}
-
-	// Creating a stream with an invalid source filter subject errors.
-	for _, filter := range invalid {
-		_, err = js.AddStream(&nats.StreamConfig{
-			Name:    "SOURCE",
-			Sources: []*nats.StreamSource{{Name: "ORIGIN", FilterSubject: filter}},
-		})
-		require_Error(t, err)
-	}
-
-	cfg := &nats.StreamConfig{
-		Name:    "SOURCE",
-		Sources: []*nats.StreamSource{{Name: "ORIGIN", FilterSubject: "origin.valid"}},
-	}
-	_, err = js.AddStream(cfg)
-	require_NoError(t, err)
-
-	// So does updating an existing stream, and the stored config must not change.
-	for _, filter := range invalid {
-		_, err = js.UpdateStream(&nats.StreamConfig{
-			Name:    "SOURCE",
-			Sources: []*nats.StreamSource{{Name: "ORIGIN", FilterSubject: filter}},
-		})
-		require_Error(t, err, NewJSSourceInvalidSubjectFilterError(fmt.Errorf("%w %s", ErrBadSubject, filter))
+    siReplyOnce -> Account
+    siReplyOnce -> client
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3670,7 +3307,7 @@ func TestJetStreamStreamUpdateInvalidSourceFilterSubject(t *testing.T) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6e319bdf` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `253bc39b` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

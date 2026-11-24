@@ -12764,3 +12764,5 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `dbec78ae` | Multi-dimensional audit evidence | 2026-11-24T15:53:48.074Z |
 | `learn-github-goharbor-harbor` | `https://github.com/goharbor/harbor` | `e864be67` | Multi-dimensional audit evidence | 2026-11-24T16:01:38.267Z |
 | `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `3d402381` | Multi-dimensional audit evidence | 2026-11-24T16:01:45.760Z |
+| `learn-github-archivebox-archivebox` | `https://github.com/ArchiveBox/ArchiveBox` | `6e6064f9` | Multi-dimensional audit evidence | 2026-11-24T16:19:50.904Z |
+| `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `44f6fc4d` | Multi-dimensional audit evidence | 2026-11-24T16:19:54.834Z |

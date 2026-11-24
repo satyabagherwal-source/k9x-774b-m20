@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T16:10:46.766Z",
+  "last_updated": "2026-11-24T16:20:01.154Z",
   "total_verified_learnings": 9096,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24744,
+  "total_items": 24748,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "79fda4f772d690ad61e7069aa7c1576df0433c178f0741b22eb35a69bff13b8e",
+      "content_hash": "85b098ea265532eabfa52f43b1fbfb053d8e71b6bd5cd56d5cb09c19cee471d4",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T16:10:43.992Z"
+      "persisted_at": "2026-11-24T16:20:00.961Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "53bc6ffb8dc34073b6e1ec6f3a9f844f703462b8078a6575020ee77794a9ac24",
+      "content_hash": "785947e58a0203bfdebdea972501dcc220b13a59dd2103beedebf25c448ac887",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T16:10:44.226Z"
+      "persisted_at": "2026-11-24T16:20:01.154Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -222511,8 +222511,8 @@
       "slug": "nats-io-nats-server",
       "platform": "github",
       "source_url": "https://github.com/nats-io/nats-server",
-      "source_version": "5a7a03c3",
-      "content_hash": "b5689b4decb61adc1943d863067f5b98ed68a67363cfb7d8c962a40dec789a5d",
+      "source_version": "44f6fc4d",
+      "content_hash": "d3b07a59d3f9d079698b037e882ccdad6afd1379a6d36eeffc791e4d3c6b6c2b",
       "dossier_path": "07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
       "promoted_rules": [
@@ -222550,6 +222550,11 @@
           "number": 10117,
           "title": "[FIXED] Validate source FilterSubject on stream updates",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10303,
+          "title": "[FIXED] Replies to first concurrent requests on fresh server can be dropped",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -222557,7 +222562,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T20:47:51.271Z",
+      "verified_at": "2026-11-24T16:19:54.619Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222599,10 +222604,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nats-io-nats-server-technical-construction-intelligence-nats-io-nats-server-core.md",
       "title": "Technical Construction Intelligence: nats-io/nats-server Core Invariants",
       "repository": "nats-io/nats-server",
-      "source_version": "5a7a03c3",
-      "content_hash": "8b0895cf9de7d85f1578747184c67718203d2c72d740d8e632019fa93384330a",
+      "source_version": "44f6fc4d",
+      "content_hash": "66dab6ac7d348e345ae5aa79d3a7b376931fae05bb4927dd94655e2bedf19e66",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T20:47:52.078Z"
+      "persisted_at": "2026-11-24T16:19:55.253Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nats-io-nats-server": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nats-io-nats-server",
@@ -222611,10 +222616,10 @@
       "relative_path": "08_VERIFICATION/nats-io-nats-server-verification-protocol-empirical-defect-shield-for-nats-io-na.md",
       "title": "Verification Protocol: Empirical Defect Shield for nats-io/nats-server",
       "repository": "nats-io/nats-server",
-      "source_version": "5a7a03c3",
-      "content_hash": "4600afed10f0ce84f20d8855258358dff14faaf52d298a482cd05f7da55eb056",
+      "source_version": "44f6fc4d",
+      "content_hash": "7a20341c848d5a99f8ac5b001653deaf5cb81bc45e899caad21611cbd162b859",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T20:47:52.301Z"
+      "persisted_at": "2026-11-24T16:19:55.440Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-meituan-longcat-longcat-2-5-learnings-core-in": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-meituan-longcat-longcat-2-5-learnings-core-in",
@@ -222648,9 +222653,9 @@
       "title": "Technical Construction Intelligence: nats-io-nats-server-learnings Core Invariants",
       "repository": "nats-io-nats-server-learnings",
       "source_version": "HEAD",
-      "content_hash": "b6ce7615bc4d15a5a498994f37ededddc17a6a7c7d1c82af049bfea112758051",
+      "content_hash": "d145257b5deac5f43532d6668988fd12cfb30ecd5847946de6f47f85014df101",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T20:48:01.422Z"
+      "persisted_at": "2026-11-24T16:20:00.049Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nats-io-nats-server-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nats-io-nats-server-learnings",
@@ -222660,9 +222665,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nats-io-nats-server-learnings",
       "repository": "nats-io-nats-server-learnings",
       "source_version": "HEAD",
-      "content_hash": "cba2d8bbc3ded21caf735f802d0a6f6df1e13483c092ba2489fa637da613aaf9",
+      "content_hash": "5f53c124d849ae77282c2b5e05b56598dadb08409a41987bc2ea8d720e2aad89",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T20:48:01.653Z"
+      "persisted_at": "2026-11-24T16:20:00.229Z"
     },
     "learn-huggingface-meta-llama-meta-llama-3-8b-instruct": {
       "learning_id": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
@@ -261338,8 +261343,8 @@
       "slug": "archivebox-archivebox",
       "platform": "github",
       "source_url": "https://github.com/ArchiveBox/ArchiveBox",
-      "source_version": "5254facc",
-      "content_hash": "f706c8c2bd463a40b491ba4fb80058d76b87e2bffd7e8d02f3570a7d43c7f168",
+      "source_version": "6e6064f9",
+      "content_hash": "44d6a4cb69c151c2509815b94b7964b9885513238d4dfa0c41a4ecff76b0d54d",
       "dossier_path": "07_PROJECT_LEARNING/archivebox-archivebox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/archivebox-archivebox-learnings.md",
       "promoted_rules": [
@@ -261352,6 +261357,11 @@
           "number": 9592,
           "title": "Bump release version to 0.9.78rc372",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10302,
+          "title": "upload readiness, crawl start logging, and first-paint test interception",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -261359,7 +261369,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T15:43:55.441Z",
+      "verified_at": "2026-11-24T16:19:50.683Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -261401,10 +261411,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-archivebox-archivebox-search-distribution-intelligence-archivebox-archivebox-cor.md",
       "title": "Search & Distribution Intelligence: ArchiveBox/ArchiveBox Core Invariants",
       "repository": "ArchiveBox/ArchiveBox",
-      "source_version": "de6e9dbe",
-      "content_hash": "d799a80aabfc597af058f13dea8b7f689535a7bd3977515ad815d7a3172b95ac",
+      "source_version": "6e6064f9",
+      "content_hash": "835a4c9f6da48c33a2bf4172bbc29a85bff87c0c74c68f75d602a6216cf2e01e",
       "domain_letter": "J",
-      "persisted_at": "2026-11-16T17:43:55.051Z"
+      "persisted_at": "2026-11-24T16:19:51.317Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-archivebox-archivebox": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-archivebox-archivebox",
@@ -261413,10 +261423,10 @@
       "relative_path": "08_VERIFICATION/archivebox-archivebox-verification-protocol-empirical-defect-shield-for-archiveb.md",
       "title": "Verification Protocol: Empirical Defect Shield for ArchiveBox/ArchiveBox",
       "repository": "ArchiveBox/ArchiveBox",
-      "source_version": "5254facc",
-      "content_hash": "0b955b9f5c30e2b7dba4f38dfd5e52d848e8e922e59dbb0aeb09effc24d13160",
+      "source_version": "6e6064f9",
+      "content_hash": "de38a07022378aae7fc3dc19d2aeee5d2e7001500de6e1f205300bb656e1b074",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T15:43:56.172Z"
+      "persisted_at": "2026-11-24T16:19:51.492Z"
     },
     "rule-8763": {
       "learning_id": "rule-8763",
@@ -261452,9 +261462,9 @@
       "title": "Search & Distribution Intelligence: archivebox-archivebox-learnings Core Invariants",
       "repository": "archivebox-archivebox-learnings",
       "source_version": "HEAD",
-      "content_hash": "f976f48eaee84d524f5e415d40e3257e6a3a1f9d5571bbd304378d671b306ce8",
+      "content_hash": "2b139ebdd314eca9987de76a886dc3d2ed4e0767c866a35fc1d974035cb69dd0",
       "domain_letter": "J",
-      "persisted_at": "2026-11-16T17:44:03.580Z"
+      "persisted_at": "2026-11-24T16:19:58.978Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-archivebox-archivebox-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-archivebox-archivebox-learning",
@@ -261464,9 +261474,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for archivebox-archivebox-learnings",
       "repository": "archivebox-archivebox-learnings",
       "source_version": "HEAD",
-      "content_hash": "1aeb45d0cb47f60291f1e5bbd61c6bf1c111f22775a5ebd0b1289a2c71ec0b4d",
+      "content_hash": "d26b2023bdfcd2381c96b1a661747d843b916e46480144d1a79c50fa23b94aee",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T15:44:09.819Z"
+      "persisted_at": "2026-11-24T16:19:59.154Z"
     },
     "candidate_directive-core-require-create-on-the-schema-for-the-new-owner-of-alter-owner-to": {
       "item_id": "candidate_directive-core-require-create-on-the-schema-for-the-new-owner-of-alter-owner-to",
@@ -335177,13 +335187,13 @@
       "item_id": "candidate_directive-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-5P5L-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-HMZ3-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
       "title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "32585918cb3bbe0a6083eb887464423f42b502850594a23fff13cbae1a7fb115",
+      "content_hash": "f57ed06eaca7ea29fe234370cd645cf5be69422453a438f052039dc6eb91977b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T16:10:43.741Z"
+      "persisted_at": "2026-11-24T16:20:00.786Z"
     },
     "learn-github-xinatian-mroffice": {
       "learning_id": "learn-github-xinatian-mroffice",
@@ -337838,6 +337848,58 @@
       "content_hash": "d396c0787efb87473247363a9aaecb987d1569100d61c77e7eddc575b4ac4608",
       "domain_letter": "H",
       "persisted_at": "2026-11-24T16:01:50.714Z"
+    },
+    "rule-10302": {
+      "learning_id": "rule-10302",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10302,
+      "title": "upload readiness, crawl start logging, and first-paint test interception",
+      "source_url": "https://github.com/ArchiveBox/ArchiveBox",
+      "source_version": "6e6064f9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T16:19:50.683Z"
+    },
+    "candidate_directive-upload-readiness-crawl-start-logging-and-first-paint-test-interception": {
+      "item_id": "candidate_directive-upload-readiness-crawl-start-logging-and-first-paint-test-interception",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HLFZ-upload-readiness-crawl-start-logging-and-first-paint-test-interception.md",
+      "title": "upload readiness, crawl start logging, and first-paint test interception",
+      "repository": "archivebox-archivebox-learnings",
+      "source_version": "HEAD",
+      "content_hash": "70c89c28c4488a605aa74ff1bac7f2b8770519515ab8cd347ccff42188ae1c01",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-24T16:19:58.803Z"
+    },
+    "rule-10303": {
+      "learning_id": "rule-10303",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10303,
+      "title": "[FIXED] Replies to first concurrent requests on fresh server can be dropped",
+      "source_url": "https://github.com/nats-io/nats-server",
+      "source_version": "44f6fc4d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T16:19:54.619Z"
+    },
+    "candidate_directive-fixed-replies-to-first-concurrent-requests-on-fresh-server-can-be-dropped": {
+      "item_id": "candidate_directive-fixed-replies-to-first-concurrent-requests-on-fresh-server-can-be-dropped",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HM9T-fixed-replies-to-first-concurrent-requests-on-fresh-server-can-be-dropped.md",
+      "title": "[FIXED] Replies to first concurrent requests on fresh server can be dropped",
+      "repository": "nats-io-nats-server-learnings",
+      "source_version": "HEAD",
+      "content_hash": "098f2319474790eefcda318b1bdc9465c544e3b5216b5fd0eb31a865e957ee30",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T16:19:59.876Z"
     }
   },
   "ai-builder-brain": {

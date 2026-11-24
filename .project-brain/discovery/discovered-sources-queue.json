@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T16:01:50.453Z",
+  "updated_at": "2026-11-24T16:19:58.552Z",
   "stats": {
-    "total_discovered": 8749,
-    "approved_pending_harvest": 8286,
+    "total_discovered": 8753,
+    "approved_pending_harvest": 8290,
     "harvested_count": 0,
     "rejected_count": 463,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8270,
+      "COMMUNITY_AND_EXPERT": 8274,
       "OFFICIAL_DOCUMENTATION": 269,
       "STANDARDS_AND_SPECIFICATIONS": 146,
       "ENGINEERING_BLOGS": 7,
@@ -189260,6 +189260,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
         "fileName": "ytsaurus-ytsaurus-learnings.md"
+      }
+    },
+    "SRC-15F32DFDB087": {
+      "id": "SRC-15F32DFDB087",
+      "url": "https://cubic.dev/pr/ArchiveBox/ArchiveBox/pull/1999",
+      "title": "https://cubic.dev/pr/ArchiveBox/ArchiveBox/pull/1999",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T16:19:58.330Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/archivebox-archivebox-learnings.md",
+        "fileName": "archivebox-archivebox-learnings.md"
+      }
+    },
+    "SRC-B091D32C55FD": {
+      "id": "SRC-B091D32C55FD",
+      "url": "https://www.cubic.dev/buttons/review-in-cubic-light",
+      "title": "https://www.cubic.dev/buttons/review-in-cubic-light",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T16:19:58.437Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/archivebox-archivebox-learnings.md",
+        "fileName": "archivebox-archivebox-learnings.md"
+      }
+    },
+    "SRC-34C12F32B0F6": {
+      "id": "SRC-34C12F32B0F6",
+      "url": "https://cubic.dev/pr/ArchiveBox/ArchiveBox/pull/1998",
+      "title": "https://cubic.dev/pr/ArchiveBox/ArchiveBox/pull/1998",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T16:19:58.493Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/archivebox-archivebox-learnings.md",
+        "fileName": "archivebox-archivebox-learnings.md"
+      }
+    },
+    "SRC-0F52B5BD12D5": {
+      "id": "SRC-0F52B5BD12D5",
+      "url": "https://www.cubic.dev/buttons/review-in-cubic-light.sv",
+      "title": "https://www.cubic.dev/buttons/review-in-cubic-light.sv",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T16:19:58.552Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/archivebox-archivebox-learnings.md",
+        "fileName": "archivebox-archivebox-learnings.md"
       }
     }
   }

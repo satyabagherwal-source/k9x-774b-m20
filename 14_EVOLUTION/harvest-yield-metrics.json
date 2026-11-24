@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T16:01:45.765Z",
-  "total_cycles_completed": 12098,
-  "total_learnings_persisted": 12098,
-  "total_rules_promoted": 11163,
+  "last_updated": "2026-11-24T16:19:54.840Z",
+  "total_cycles_completed": 12100,
+  "total_learnings_persisted": 12100,
+  "total_rules_promoted": 11165,
   "history": [
-    {
-      "timestamp": "2026-11-23T23:31:31.660Z",
-      "repository": "TypeWhisper/typewhisper-mac",
-      "learningId": "learn-github-typewhisper-typewhisper-mac",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T23:31:35.940Z",
-      "repository": "trufflesecurity/trufflehog",
-      "learningId": "learn-github-trufflesecurity-trufflehog",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T23:39:46.267Z",
       "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-24T16:01:45.765Z",
       "repository": "ytsaurus/ytsaurus",
       "learningId": "learn-github-ytsaurus-ytsaurus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T16:19:50.910Z",
+      "repository": "ArchiveBox/ArchiveBox",
+      "learningId": "learn-github-archivebox-archivebox",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T16:19:54.840Z",
+      "repository": "nats-io/nats-server",
+      "learningId": "learn-github-nats-io-nats-server",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

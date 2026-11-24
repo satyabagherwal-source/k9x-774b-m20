@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T16:01:45.776Z",
+  "last_updated": "2026-11-24T16:19:54.851Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10941,14 +10941,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nats-io-nats-server",
-      "content_hash": "b5689b4decb61adc1943d863067f5b98ed68a67363cfb7d8c962a40dec789a5d",
-      "verified_at": "2026-11-23T20:47:51.550Z",
+      "content_hash": "d3b07a59d3f9d079698b037e882ccdad6afd1379a6d36eeffc791e4d3c6b6c2b",
+      "verified_at": "2026-11-24T16:19:54.850Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T20:47:51.550Z"
+      "last_updated": "2026-11-24T16:19:54.850Z"
     },
     "str4d/rage": {
       "repository": "str4d/rage",
@@ -13971,14 +13971,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-archivebox-archivebox",
-      "content_hash": "f706c8c2bd463a40b491ba4fb80058d76b87e2bffd7e8d02f3570a7d43c7f168",
-      "verified_at": "2026-11-20T15:43:55.660Z",
+      "content_hash": "44d6a4cb69c151c2509815b94b7964b9885513238d4dfa0c41a4ecff76b0d54d",
+      "verified_at": "2026-11-24T16:19:50.920Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T15:43:55.660Z"
+      "last_updated": "2026-11-24T16:19:50.920Z"
     },
     "buriy/python-readability": {
       "repository": "buriy/python-readability",

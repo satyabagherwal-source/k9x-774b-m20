@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T16:10:46.766Z",
+  "last_updated": "2026-11-24T16:20:00.961Z",
   "total_records": 2544,
   "domains": {
     "A": {
@@ -8359,8 +8359,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "79fda4f772d690ad61e7069aa7c1576df0433c178f0741b22eb35a69bff13b8e",
-      "created_at": "2026-11-24T16:10:43.992Z"
+      "content_hash": "85b098ea265532eabfa52f43b1fbfb053d8e71b6bd5cd56d5cb09c19cee471d4",
+      "created_at": "2026-11-24T16:20:00.961Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -12958,8 +12958,8 @@
       "title": "Technical Construction Intelligence: nats-io/nats-server Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nats-io-nats-server-technical-construction-intelligence-nats-io-nats-server-core.md",
       "repository": "nats-io/nats-server",
-      "content_hash": "8b0895cf9de7d85f1578747184c67718203d2c72d740d8e632019fa93384330a",
-      "created_at": "2026-11-23T20:47:52.078Z"
+      "content_hash": "66dab6ac7d348e345ae5aa79d3a7b376931fae05bb4927dd94655e2bedf19e66",
+      "created_at": "2026-11-24T16:19:55.253Z"
     },
     "DOM-D-3A6226D8": {
       "record_id": "DOM-D-3A6226D8",
@@ -13069,8 +13069,8 @@
       "title": "Technical Construction Intelligence: nats-io-nats-server-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nats-io-nats-server-learnings-technical-construction-intelligence-nats-io-nats-s.md",
       "repository": "nats-io-nats-server-learnings",
-      "content_hash": "b6ce7615bc4d15a5a498994f37ededddc17a6a7c7d1c82af049bfea112758051",
-      "created_at": "2026-11-23T20:48:01.422Z"
+      "content_hash": "d145257b5deac5f43532d6668988fd12cfb30ecd5847946de6f47f85014df101",
+      "created_at": "2026-11-24T16:20:00.049Z"
     },
     "domain_intelligence-research-knowledge-intelligence-meta-llama-meta-llama-3-8b-instruct-core-invaria": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-meta-llama-meta-llama-3-8b-instruct-core-invaria",
@@ -24688,8 +24688,8 @@
       "title": "Search & Distribution Intelligence: ArchiveBox/ArchiveBox Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-archivebox-archivebox-search-distribution-intelligence-archivebox-archivebox-cor.md",
       "repository": "ArchiveBox/ArchiveBox",
-      "content_hash": "d799a80aabfc597af058f13dea8b7f689535a7bd3977515ad815d7a3172b95ac",
-      "created_at": "2026-11-16T17:43:55.051Z"
+      "content_hash": "835a4c9f6da48c33a2bf4172bbc29a85bff87c0c74c68f75d602a6216cf2e01e",
+      "created_at": "2026-11-24T16:19:51.317Z"
     },
     "domain_intelligence-search-distribution-intelligence-archivebox-archivebox-learnings-core-invariants": {
       "record_id": "domain_intelligence-search-distribution-intelligence-archivebox-archivebox-learnings-core-invariants",
@@ -24697,8 +24697,8 @@
       "title": "Search & Distribution Intelligence: archivebox-archivebox-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-archivebox-archivebox-learnings-search-distribution-intelligence-archivebox-arch.md",
       "repository": "archivebox-archivebox-learnings",
-      "content_hash": "f976f48eaee84d524f5e415d40e3257e6a3a1f9d5571bbd304378d671b306ce8",
-      "created_at": "2026-11-16T17:44:03.580Z"
+      "content_hash": "2b139ebdd314eca9987de76a886dc3d2ed4e0767c866a35fc1d974035cb69dd0",
+      "created_at": "2026-11-24T16:19:58.978Z"
     },
     "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-learnings-core-invariant": {
       "record_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-learnings-core-invariant",

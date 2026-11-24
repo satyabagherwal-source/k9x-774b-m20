@@ -12731,3 +12731,5 @@
 | `CYCLE-20261124-JXGL` | `2026-11-24T15:53:48.069Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10299` | Yes (`181237dc...`) |
 | `CYCLE-20261124-U09J` | `2026-11-24T16:01:38.263Z` | `goharbor/harbor` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10300` | Yes (`7e7bb60c...`) |
 | `CYCLE-20261124-U61O` | `2026-11-24T16:01:45.756Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10301` | Yes (`011cd001...`) |
+| `CYCLE-20261124-HFCK` | `2026-11-24T16:19:50.900Z` | `ArchiveBox/ArchiveBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10302` | Yes (`44d6a4cb...`) |
+| `CYCLE-20261124-HIDQ` | `2026-11-24T16:19:54.830Z` | `nats-io/nats-server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10303` | Yes (`d3b07a59...`) |
