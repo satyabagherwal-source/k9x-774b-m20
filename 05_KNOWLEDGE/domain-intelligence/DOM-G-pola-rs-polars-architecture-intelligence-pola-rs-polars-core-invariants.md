@@ -4,24 +4,24 @@
 {
   "source_repository": "pola-rs/polars",
   "source_url": "https://github.com/pola-rs/polars",
-  "source_version": "7ff0ffa2",
+  "source_version": "83f1675f",
   "license": "MIT",
-  "timestamp": "2026-11-22T16:48:07.613Z",
+  "timestamp": "2026-11-24T00:31:38.904Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-pola-rs-polars",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [pola-rs/polars](https://github.com/pola-rs/polars) (Revision: `7ff0ffa2`).  
-> **License**: MIT | **Timestamp**: `2026-11-22T16:48:07.613Z`  
+> **Provenance**: Harvested from [pola-rs/polars](https://github.com/pola-rs/polars) (Revision: `83f1675f`).  
+> **License**: MIT | **Timestamp**: `2026-11-24T00:31:38.904Z`  
 > **Learning ID**: `learn-github-pola-rs-polars`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 57%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence)
+- **Confidence Rating**: 51%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from pola-rs/polars:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pola-rs-polars-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pola-rs/polars](https://github.com/pola-rs/polars))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T16:48:06.075Z  
+> **Harvest Timestamp**: 2026-11-24T00:31:37.609Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Extremely fast Query Engine for DataFrames, written in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 40433 stars
+- **Stars / Engagement**: 40463 stars
 
 ---
 
@@ -1711,13 +1711,13 @@ pub fn check_same_len(lhs: &dyn Array, rhs: &dyn Array) -> PolarsResult<()> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #31005** (2026-11-23): **Segmentation fault or bus error comparing a Null column inside `over(..., mapping_strategy="join")`**
+  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import polars as pl  df = pl.DataFrame(     {"a": pl.Series([None, None, None], dtype=pl.Null), "g": ["x", "y", "x"]} ) e = (     pl.col("g")     .first()     .eq(pl.lit("1d").le(pl.col("a")).is_null())     .over("g", mapping_strategy="join") )  print(df.lazy().select(e).collect(engine="in-memory"))  # works: [false, false] print(df.lazy().select(e).collect())  # Segmentation fault (exit code 139) ```   ### Log output  ```shell shape: (3, 1) ┌────────────────┐ │ g              │ │ ---            │ │ list[bool]     │ ╞════════════════╡ │ [false, false] │ │ [false]        │ │ [false, false] │ └────────────────┘ ----- stderr (log output) total memory: 24.000 GiB (25769803776 bytes) async thread count: 8 blocking thread count: 512 polars-stream: updating graph state updating in-memory-sink, before: [Blocked] [] updating in-memory-sink, after: [Ready] [] (took 333ns) updating select, before: [Blocked] [Ready] updating select, after: [Ready] [Blocked] (took 542ns) updating in-memory-map, before: [Blocked] [Ready] updating in-memory-map, after: [Ready] [Blocked] (took 542ns) updating in-memory-source, before: [] [Ready] updating in-memory-source, after: [] [Ready] (took 2.099625ms) updating in-memory-map, before: [Ready] [Ready] updating in-memory-map, after: [R
+  **Post-Mortem & Fix Analysis**:
+  > Thanks!  (With AI) Already fixed on main by #30564 (#30518); it will be in the next release. It isn't platform-specific: 2.1.0 crashes on Linux x86 too once `POLARS_MAX_THREADS` is at least the row count.  ```python import os  os.environ["POLARS_MAX_THREADS"] = "3"  # before importing polars import polars as pl  df = pl.DataFrame(     {"a": pl.Series([None, None, None], dtype=pl.Null), "g": ["x", "y", "x"]} ) e = (     pl.col("g")     .first()     .eq(pl.lit("1d").le(pl.col("a")).is_null())     .over("g", mapping_strategy="join") ) print(df.lazy().select(e).collect()) # 2.1.0: exit code 139; main: [[false, false], [false], [false, false]] ``` 
+
 - **Issue #30995** (2026-11-22): **SQL `UNNEST` of an empty or NULL list returns a row with NULL**
   *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import polars as pl  df = pl.DataFrame({"id": [1, 2, 3], "xs": [[10, 11], [], None]})  df.sql("SELECT id, UNNEST(xs) AS x FROM self ORDER BY id, x").rows() # [(1, 10), (1, 11), (2, None), (3, None)]  df.sql(     "SELECT id, count(*) AS n FROM (SELECT id, UNNEST(xs) AS x FROM self) "     "GROUP BY id ORDER BY id" ).rows() # [(1, 2), (2, 1), (3, 1)] ```  ### Log output  ```shell [(1, 10), (1, 11), (2, None), (3, None)] [(1, 2), (2, 1), (3, 1)] ```  ### Issue description  `UNNEST` of an empty or NULL list returns one row with a NULL, so a count per row counts an item that is not there: ids 2 and 3 above have none. `CROSS JOIN UNNEST(xs) AS u(x)` gives the same rows.  ### Expected behavior  No row for an empty or NULL list, as in Postgres:  ```python [(1, 10), (1, 11)] [(1, 2)] ```  A NULL element of a list still gives a row.  ### Installed versions  <details>  Polars 2.1.0 (latest on PyPI), and main at 1dad4e572d.  </details> 
-
-- **Issue #30977** (2026-11-21): **DataFrame.transpose() inflates Decimal values by the column's scale factor**
-  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import polars as pl df = pl.DataFrame({"company": ["A"], "value": [104011.54]}).with_columns( pl.col("value").cast(pl.Decimal(scale=6)) ) print(df) transposed = df.drop("company").transpose( include_header=True, header_name="measure" ) print(transposed) ```   ### Log output  ```shell  ```  ### Issue description  It looks like after `transpose()` the raw unscaled integer is reinterpreted with the scale applied again, so the value is 10^scale too big. In the example `104011.540000` (`decimal[38,6]`) becomes `104011540000.000000` (`decimal[38,6]`).  Casting to Float64 before calling `.transpose()` avoids the issue entirely, which points at transpose()'s decimal handling specifically rather than anything upstream.  `Unpivot()` works as a workaround.  ### Expected behavior  In the example `104011.540000` (`decimal[38,6]`) stays the same after `transpose()`.  ### Installed versions  <details>  ``` --------Version info--------- Polars:              2.1.0 Build:               7f902bd3ffd27ff82d14278a09a295ff2f7aed92 Index type:          UInt32 Platform:            Windows-11-10.0.26200-SP0 Python:              3.15.2 (tags/v3.15.2:5e58eaa, Oct 25 2026, 17:27:03) [MSC v.1951 64 bit (AMD64)] Runtime:             rt32 ```  </details> 
-  **Post-Mortem & Fix Analysis**:
-  > Thanks @kdn36 for the quick fix!
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1734,1454 +1734,561 @@ pub fn check_same_len(lhs: &dyn Array, rhs: &dyn Array) -> PolarsResult<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1695451f` (2026-11-21)
-**Commit Message**: fix(rust): Give the polars-cli query thread the stack of the main thread (#30988)
+### Incident Patch 1: `60fd1bc3` (2026-11-23)
+**Commit Message**: fix: Check Arrow temporal dictionary overflow on import (#31011)
 
-**File**: `Cargo.lock` (modified, +1/-0)
+**File**: `py-polars/src/polars/_utils/construction/other.py` (modified, +16/-0)
 ```diff
-@@ -3156,6 +3156,7 @@ dependencies = [
-  "polars",
-  "polars-arrow",
-  "polars-ooc",
-+ "recursive",
-  "signal-hook",
-  "sqlparser",
-  "unicode-width",
+@@ -66,6 +66,22 @@ def coerce_arrow(array: pa.Array) -> pa.Array:
+             or pa.types.is_int32(array.type.index_type)
+         ):
+             value_type = array.type.value_type
++            if (
++                pa.types.is_timestamp(value_type) or pa.types.is_duration(value_type)
++            ) and value_type.unit == "s":
++                target = (
++                    pa.timestamp("ms", value_type.tz)
++                    if pa.types.is_timestamp(value_type)
++                    else pa.duration("ms")
++                )
++                # Decode first so only referenced values are checked for overflow.
++                return pa.chunked_array(
++                    [
++                        pc.cast(chunk.dictionary_decode(), target, safe=True)
++                        for chunk in array.iterchunks()
++                    ],
++                    type=target,
++                )
+             if pa.types.is_binary(value_type) or _is_pa_type(value_type, "binary_view"):
+                 value_type = pa.large_binary()
+             elif not _keeps_dictionary_value_type(value_type):
 ```
 
-**File**: `crates/polars-cli/Cargo.toml` (modified, +1/-0)
+**File**: `py-polars/tests/unit/interop/test_interop.py` (modified, +54/-0)
 ```diff
-@@ -21,6 +21,7 @@ polars-arrow = { workspace = true, features = ["io_ipc"] }
- polars-ooc = { workspace = true, features = ["fast_alloc"] }
+@@ -212,6 +212,60 @@ def test_arrow_dict_chunks_keep_value_type_30729(
+     assert_series_equal(pl.DataFrame({"c": ca})["c"], expected)
  
- clap = { workspace = true, features = ["env"] }
-+recursive = { workspace = true }
- signal-hook = "0.4"
- sqlparser = { workspace = true }
- unicode-width = { workspace = true }
-```
-
-**File**: `crates/polars-cli/src/lib.rs` (modified, +4/-0)
-```diff
-@@ -28,6 +28,9 @@ pub use error::{ErrorRecord, Location};
- pub use printer::{Event, Format, Printer};
- pub use script::{Script, StatementKind};
  
-+/// The stack of the threads that plan and run statements, as a main thread on Linux has.
-+pub const STACK_SIZE: usize = 8 * 1024 * 1024;
++@pytest.mark.parametrize("value_type", [pa.duration("s"), pa.timestamp("s", "UTC")])
++@pytest.mark.parametrize("overflow", [-(2**63 // 1000) - 1, (2**63 - 1) // 1000 + 1])
++def test_arrow_dict_chunks_temporal_seconds_overflow(
++    value_type: pa.DataType, overflow: int
++) -> None:
++    ca = _two_dict_chunks(pa.int8(), pa.array([1, 2, overflow], value_type))
++    with pytest.raises(pa.ArrowInvalid, match="out of bounds"):
++        pl.from_arrow(ca)
++    with pytest.raises(pa.ArrowInvalid, match="out of bounds"):
++        pl.Series("c", ca)
++    with pytest.raises(pa.ArrowInvalid, match="out of bounds"):
++        pl.DataFrame({"c": ca})
 +
- /// The exit codes of the `polars` command.
- pub mod exit_code {
-     pub const OK: u8 = 0;
-@@ -237,6 +240,7 @@ where
-     std::thread::scope(|scope| {
-         let engine = std::thread::Builder::new()
-             .name("polars-cli-query".to_string())
-+            .stack_size(STACK_SIZE)
-             .spawn_scoped(scope, move || {
-                 catch_polars_abort(AssertUnwindSafe(|| {
-                     plan.collect_with_engine(Engine::Streaming)
-```
-
-**File**: `crates/polars-cli/src/main.rs` (modified, +7/-5)
-```diff
-@@ -5,17 +5,19 @@ use std::sync::atomic::{AtomicBool, Ordering};
- 
- use clap::error::ErrorKind;
- use clap::{CommandFactory, Parser};
--use polars_cli::{Args, Input, Printer, Script, exit_code, run};
-+use polars_cli::{Args, Input, Printer, STACK_SIZE, Script, exit_code, run};
- 
- // The allocator of the Python runtime, so that both perform alike.
- #[global_allocator]
- static ALLOC: polars_ooc::Allocator = polars_ooc::Allocator;
- 
--/// The stack of the thread that runs the command: the usual size of a main thread on Linux.
--/// The main thread on Windows has 1 MiB, which a debug build of the engine overflows.
--const STACK_SIZE: usize = 8 * 1024 * 1024;
--
- fn main() -> ExitCode {
-+    // Debug frames are large, as in the Python package.
-+    #[cfg(debug_assertions)]
-+    {
-+        recursive::set_minimum_stack_size(1024 * 1024);
-+        recursive::set_stack_allocation_size(1024 * 1024 * 16);
-+    }
-     let command = std::thread::Builder::new()
-         .name("polars-cli".to_string())
-         .stack_size(STACK_SIZE)
++
++@pytest.mark.parametrize(
++    ("value_type", "dtype"),
++    [
++        (pa.duration("s"), pl.Duration("ms")),
++        (pa.timestamp("s", "Europe/Amsterdam"), pl.Datetime("ms", "Europe/Amsterdam")),
++    ],
++)
++def test_arrow_dict_chunks_temporal_seconds_bounds(
++    value_type: pa.DataType, dtype: pl.DataType
++) -> None:
++    min_seconds = -(2**63 // 1000)
++    max_seconds = (2**63 - 1) // 1000
++    ca = pa.chunked_array(
++        [
++            pa.DictionaryArray.from_arrays(
++                pa.array([0, 1, None], pa.int8()),
++                pa.array([min_seconds, None, max_seconds + 1], value_type),
++            ),
++            pa.DictionaryArray.from_arrays(
++                pa.array([None], pa.int8()), pa.array([min_seconds - 1], value_type)
++            ),
++            pa.DictionaryArray.from_arrays(
++                pa.array([0, 1], pa.int8()),
++                pa.array([max_seconds, min_seconds], value_type),
++            ),
++        ]
++    )
++    expected = pl.Series(
++        "c",
++        [min_seconds * 1000, None, None, None, max_seconds * 1000, min_seconds * 1000],
++    )
++    for s in (
++        cast("pl.Series", pl.from_arrow(ca)).alias("c"),
++        pl.Series("c", ca),
++        pl.DataFrame({"c": ca})["c"],
++    ):
++        assert s.dtype == dtype
++        assert_series_equal(s.to_physical(), expected)
++
++
+ def test_arrow_dict_chunks_small_index_overflow_30729() -> None:
+     # The combined dictionary has more entries than an int8 index can address.
+     ca = pa.chunked_array(
 ```
 
 ---
 
-### Incident Patch 2: `8cb3f575` (2026-11-22)
-**Commit Message**: fix: Fix scan_database issues (#30910)
+### Incident Patch 2: `e2985639` (2026-11-23)
+**Commit Message**: fix: Race condition in spill token waiters bit (#31021)
 
-Co-authored-by: ritchie46 <[REDACTED_EMAIL]>
-
-**File**: `crates/polars-database/src/database/backend/adbc/mod.rs` (modified, +204/-2)
+**File**: `crates/polars-ooc/src/spill_token.rs` (modified, +1/-1)
 ```diff
-@@ -224,6 +224,22 @@ pub fn connect_options(
-             },
-         }
-     }
-+    if dialect == DialectName::Trino
-+        && let Some(u) = &mut uri
-+    {
-+        // (the user's `connect_options` are added after the URI, below)
-+        let password = options
-+            .iter()
-+            .any(|(k, _)| k.as_c_str() == ADBC_OPTION_PASSWORD)
-+            || spec
-+                .connect_options
-+                .iter()
-+                .any(|(k, _)| is_trino_credential(k))
-+            || u.split_once("://")
-+                .and_then(|(_, rest)| secret_userinfo_end(rest).map(|at| rest[..at].contains(':')))
-+                .unwrap_or(false);
-+        *u = trino_ssl_uri(u, password)?;
-+    }
-     if let Some(uri) = uri {
-         options.insert(0, (ADBC_OPTION_URI.to_owned(), cstring(&uri, "uri")?));
-     }
-@@ -262,6 +278,92 @@ fn cstring(s: &str, what: &str) -> PolarsResult<CString> {
-     CString::new(s).map_err(|_| polars_err!(ComputeError: "ADBC {what} contains a NUL byte"))
- }
+@@ -125,7 +125,7 @@ impl<T: Spillable> SpillTokenInner<T> {
+         // while holding the lock to reduce critical section.
+         let mut lock = self.lock.lock().unwrap();
+         let waiters = core::mem::take(&mut lock.waiters);
+-        self.state.fetch_sub(HAS_WAITERS_BIT, Ordering::Relaxed);
++        self.state.fetch_and(!HAS_WAITERS_BIT, Ordering::Relaxed);
+         drop(lock);
  
-+/// A Trino connection parameter that carries a credential.
-+fn is_trino_credential(key: &str) -> bool {
-+    ["password", "accessToken", "extra_credentials"]
-+        .iter()
-+        .any(|k| key.eq_ignore_ascii_case(k))
-+}
-+
-+/// The URI for the ADBC Trino driver, which connects over HTTPS unless the URI says `SSL=false`
-+/// (exactly that, or `False`), where the `trino` Python driver connects over HTTP unless `SSL`
-+/// is true or the port is 443: made to behave alike. A password (`password`: one in the
-+/// URI's userinfo, its parameters or the connect options) or another credential parameter
-+/// (`accessToken`, `extra_credentials`) is only sent over HTTPS (as the
-+/// Python driver does), whatever `SSL` says. `SSL` takes the booleans the Python driver takes
-+/// (and `disabled`, which the ADBC driver once took for `false`); another value, or the key in
-+/// another case, is refused rather than read as HTTPS. Without `SSL`, `http_scheme` decides,
-+/// else a TLS option (`SSLVerification`, `SSLTrustedCertificatePath`, ...) keeps HTTPS.
-+fn trino_ssl_uri(uri: &str, password: bool) -> PolarsResult<String> {
-+    let (base, query) = uri.split_once('?').unwrap_or((uri, ""));
-+    let mut ssl = None;
-+    let mut kept = vec![];
-+    let mut password = password;
-+    let mut tls_option = false;
-+    let mut http_scheme = None;
-+    for kv in query.split('&').filter(|kv| !kv.is_empty()) {
-+        let (key, value) = kv.split_once('=').unwrap_or((kv, ""));
-+        // (the driver decodes the keys)
-+        let key = percent_decode(key);
-+        if !key.eq_ignore_ascii_case("ssl") {
-+            password |= is_trino_credential(&key);
-+            tls_option |= key.get(..3).is_some_and(|p| p.eq_ignore_ascii_case("ssl"));
-+            if key.eq_ignore_ascii_case("http_scheme") {
-+                let scheme = percent_decode(value);
-+                http_scheme = Some(match scheme.trim().to_ascii_lowercase().as_str() {
-+                    "https" => true,
-+                    "http" => false,
-+                    _ => polars_bail!(
-+                        InvalidOperation:
-+                        "URI parameter http_scheme={scheme:?} for trino: expected http or https"
-+                    ),
-+                });
-+            }
-+            kept.push(kv.to_string());
-+            continue;
-+        }
-+        polars_ensure!(
-+            key == "SSL",
-+            InvalidOperation:
-+            "URI parameter {key}={value} for trino: the parameter is named `SSL`"
-+        );
-+        let decoded = percent_decode(value);
-+        ssl = Some(match decoded.trim().to_ascii_lowercase().as_str() {
-+            "1" | "true" | "yes" | "on" => true,
-+            "0" | "false" | "no" | "off" | "disabled" => false,
-+            _ => polars_bail!(
-+                InvalidOperation:
-+                "URI parameter SSL={decoded:?} for trino: expected a boolean (true or false)"
-+            ),
-+        });
-+    }
-+    // (HTTPS is the driver's default)
-+    let https = match ssl {
-+        Some(ssl) => ssl,
-+        None => http_scheme.unwrap_or(tls_option || trino_uri_port(base) == Some(443)),
-+    };
-+    if !(password || https) {
-+        kept.push("SSL=false".to_string());
-+    }
-+    Ok(if kept.is_empty() {
-+        base.to_string()
-+    } else {
-+        format!("{base}?{}", kept.join("&"))
-+    })
-+}
-+
-+/// The port of a `scheme://[userinfo@]host[:port]/…` URI, if it has one.
-+fn trino_uri_port(uri: &str) -> Option<u16> {
-+    let rest = uri.split_once("://")?.1;
-+    let rest = &rest[secret_userinfo_end(rest).map_or(0, |at| at + 1)..];
-+    let authority = &rest[..rest.find(['/', '?', '#']).unwrap_or(rest.len())];
-+    // (after an IPv6 literal's `]`)
-+    let host_end = authority.rfind(']').unwrap_or(0);
-+    authority[host_end..]
-+        .rsplit_once(':')
-+        .and_then(|(_, port)| port.parse().ok())
-+}
-+
- /// The `uri` database option for a connection target.
- fn adbc_uri(spec: &ConnectionSpec, dialect: DialectName) -> Pol
+         for w in waiters {
 ```
 
-**File**: `crates/polars-database/src/database/backend/mod.rs` (modified, +212/-0)
+---
+
+### Incident Patch 3: `63a0a176` (2026-11-23)
+**Commit Message**: fix: Report the failing object path in object-store errors (#29450)
+
+**File**: `crates/polars-io/src/cloud/cloud_writer/internal_writer.rs` (modified, +3/-3)
 ```diff
-@@ -164,6 +164,12 @@ pub trait DatabaseSession: Send {
-     fn time_with_zone_columns(&self) -> Vec<String> {
-         vec![]
-     }
-+
-+    /// A SQL Server session's `SET TEXTSIZE`, where it cuts long values (see
-+    /// [`mssql_session_limits`]).
-+    fn text_size_limit(&self) -> Option<i64> {
-+        None
-+    }
+@@ -42,12 +42,12 @@ impl InternalCloudWriter {
+             let path_ref = &self.path;
+             let multipart = PlMultipartUpload::new(
+                 self.store
+-                    .exec_with_rebuild_retry_on_err(|s| async move {
++                    .exec_with_rebuild_retry_on_err(path_ref, |s| async move {
+                         s.put_multipart_opts(path_ref, object_store::PutMultipartOptions::default())
+                             .await
+                     })
+                     .await?,
+-                self.store.error_context(),
++                self.store.error_context(path_ref),
+             );
+ 
+             let (error_capture, error_handle) = ErrorCapture::new();
+@@ -131,7 +131,7 @@ impl InternalCloudWriter {
+         let path_ref = &self.path;
+         let num_bytes = payload.content_length() as u64;
+ 
+-        let upload_fut = self.store.exec_with_rebuild_retry_on_err(|s| {
++        let upload_fut = self.store.exec_with_rebuild_retry_on_err(path_ref, |s| {
+             let payload = payload.clone();
+             async move {
+                 s.put_opts(path_ref, payload, object_store::PutOptions::default())
+```
+
+**File**: `crates/polars-io/src/cloud/glob.rs` (modified, +7/-6)
+```diff
+@@ -235,7 +235,7 @@ pub async fn glob(
+             expansion,
+         },
+         store,
+-    ) = super::build_object_store(url, cloud_options, true).await?;
++    ) = super::build_object_store(url.clone(), cloud_options, true).await?;
+     let matcher = &Matcher::new(
+         if scheme == "file" {
+             // For local paths the returned location has the leading slash stripped.
+@@ -246,13 +246,12 @@ pub async fn glob(
+         expansion.as_deref(),
+     )?;
+ 
+-    let path = Path::from(prefix.as_str());
+-    let path = Some(&path);
++    let path = &Path::from(prefix.as_str());
+ 
+     let mut locations = store
+-        .exec_with_rebuild_retry_on_err(|store| async move {
++        .exec_with_rebuild_retry_on_err(path, |store| async move {
+             store
+-                .list(path)
++                .list(Some(path))
+                 .try_filter_map(|x| async move {
+                     // Keep the LIST-reported byte size alongside the path.
+                     let out = (x.size > 0 && matcher.is_matching(x.location.as_ref()))
+@@ -262,7 +261,9 @@ pub async fn glob(
+                 .try_collect::<Vec<_>>()
+                 .await
+         })
+-        .await?;
++        .await
++        // Name the glob.
++        .map_err(|e| e.wrap_msg(|e| format!("listing glob {url} failed: {e}")))?;
+ 
+     locations.sort_unstable_by(|a, b| a.0.cmp(&b.0));
+     Ok(locations
+```
+
+**File**: `crates/polars-io/src/cloud/object_store_setup.rs` (modified, +23/-8)
+```diff
+@@ -238,18 +238,28 @@ pub(crate) struct PolarsObjectStoreBuilder {
  }
  
- /// The batches of a query's result as one frame.
-@@ -328,9 +334,135 @@ pub fn open_session(
+ impl PolarsObjectStoreBuilder {
++    /// The URL of the request that built the store.
+     pub(super) fn path(&self) -> &PlRefPath {
+         &self.path
+     }
+ 
++    /// The URL the store is rooted at.
++    pub(super) fn base_url(&self) -> PlRefPath {
++        match self.cloud_type {
++            // The origin, or the full URL for a store tied to one URL.
++            CloudType::Http => self.path.clone(),
++            _ => self.path.sliced(0..self.path.authority_end_position()),
++        }
++    }
++
+     pub(crate) fn rate_limit_signal(&self) -> Option<PacingBudget> {
+         self.rate_limiter.as_ref().map(|r| r.read_budget())
+     }
+ 
+     pub(super) async fn build_impl(
+         &self,
+-        // Whether to clear cached credentials for Python credential providers.
+-        clear_cached_credentials: bool,
++        // On a rebuild, clear cached Python credentials and leave the URL out of build errors.
++        rebuild: bool,
+     ) -> PolarsResult<Arc<dyn ObjectStore>> {
+         let options = self
+             .options
+@@ -296,7 +306,8 @@ impl PolarsObjectStoreBuilder {
+                     let store = options
+                         .build_aws(
+                             self.path.clone(),
+-                            clear_cached_credentials,
++                            super::ObjectStoreErrorContext::for_build(self.path.clone(), rebuild),
++                            rebuild,
+                             self.rate_limiter.as_deref(),
+                         )
+                         .await?;
+@@ -310,7 +321,8 @@ impl PolarsObjectStoreBuilder {
+                 {
+                     let store = options.build_gcp(
+                         self.path.clone(),
+-                        clear_cached_credentials,
++                        super::ObjectStoreErrorContext::for_build(self.path.clone(), rebuild),
++                        rebuild,
+                         self.rate_limiter.as_deref(),
+                     )?;
+ 
+@@ -325,7 +337,8 @@ impl PolarsObjectStoreBuilder {
+                     {
+                         let store = options.build_azure(
+                             self.path.clone(),
+-                            clear_cached_credentials,
++                            super::ObjectStoreErrorContext::for_build(self.path.clone(), rebuild),
++                            rebuild,
+                             self.rate_limiter.as_deref(),
+                         )?;
+                         Ok::<_, PolarsError>(Arc::new(store) as Arc<dyn ObjectStore>)
+@@ -427,15 +440,15 @@ impl PolarsObjectStoreBuilder {
+             let cache = OBJECT_STORE_CACHE.read().await;
+ 
+             if let Some(store) = cache.get(cache_key) {
+-                return Ok(store.clone());
++                return Ok(store.clone().with_base_url(self.base_url()));
+             }
+ 
+             drop(cache);
+ 
+             let cache = OBJECT_STORE_CACHE.write().await;
+ 
+             if let Some(store) = cache.get(cache_key) {
+-                return Ok(store.clone());
++                return Ok(store.clone().with_base_url(self.base_url()));
+             }
+ 
+             Some(cache)
+@@ -491,12 +504,14 @@ impl PolarsObjectStoreBuilder {
+             cell
+         };
+ 
++        let base_url = self.base_url();
++
+         cell.get_or_try_init(|| async {
+             let store = self.build_impl(false).await?;
+             PolarsResult::Ok(PolarsObjectStore::new_from_inner(store, self))
+         })
+         .await
+-        .cloned()
++        .map(|store| store.clone().with_base_url(base_url))
+     }
+ 
+     pub(crate) fn is_azure(&self) -> bool {
+```
+
+**File**: `crates/polars-io/src/cloud/options.rs` (modified, +6/-8)
+```diff
+@@ -480,6 +480,7 @@ impl CloudOptions {
+     pub(crate) async fn build_aws(
+         &self,
+         url: PlRefPath,
++        error_cx: ObjectStoreErrorContext,
+         clear_cached_credentials: bool,
+         rate_limiter: Option<&RateLimiter>,
+     ) -> PolarsResult<impl object_store::ObjectStore> {
+@@ -660,7 +661,7 @@ impl CloudOptions {
+         let out = builder
+             .with_unsigned_payload(true)
+             .build()
+-            .map_err(|e| ObjectStoreErrorContext::new(url).attach_err_info(e))?;
++            .map_err(|e| error_cx.attach_err_info(e))?;
+ 
+         Ok(out)
+     }
+@@ -682,13 +683,13 @@ impl CloudOptions {
+     pub(crate) fn build_azure(
+         &self,
+         url: PlRefPath,
++        error_cx: ObjectStoreErrorContext,
+         clear_cached_credentials: bool,
+         rate_limiter: Option<&RateLimiter>,
+     ) -> PolarsResult<impl object_store::ObjectStore> {
+         use object_store::client::ReqwestConnector;
+ 
+         use super::credential_provider::IntoCredentialProvider;
+-        use crate::cloud::ObjectStoreErrorContext;
+ 
+         let verbose = polars_core::config::verbose();
+ 
+@@ -737,9 +738,7 @@ impl CloudOptions {
+             None => builder,
+         };
+ 
+-        let out = builder
+-            .build()
+-            .map_err(|e| ObjectStoreErrorContext::new(url).attach_err_info(e))?;
++        let out = builder.build().map_err(|e| error_cx.attach_err_info(e))?;
+ 
+         Ok(out)
+     }
+@@ -761,6 +760,7 @@ impl CloudOptions {
+     pub(crate) fn build_gcp(
+         &self,
+         url: PlRefPath,
++        error_cx: ObjectStoreErrorContext,
+         clear_cached_credentials: bool,
+         rate_limiter: Option<&RateLimiter>,
+     ) -> PolarsResult<impl object_store::ObjectStore> {
+@@ -811,9 +811,7 @@ impl CloudOptions {
+             None => builder,
+         };
+ 
+-        let out = builder
+-            .build()
+-            .map_err(|e| ObjectStoreErrorContext::new(url).attach_err_info(e))?;
++        let out = builder.build().map_err(|e| error_cx.attach_err_info(e))?;
+ 
+         Ok(out)
+     }
+```
+
+**File**: `crates/polars-io/src/cloud/polars_object_store.rs` (modified, +74/-22)
+```diff
+@@ -24,17 +24,18 @@ use crate::pl_async::{
+ 
+ #[derive(Debug)]
+ pub struct PolarsObjectStoreError {
++    /// The URL of the failing object or of the store being built. Empty on a rebuild.
+     pub base_url: PlRefPath,
+     pub source: object_store::Error,
+ }
+ 
+ impl Display for PolarsObjectStoreError {
+     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+-        write!(
+-            f,
+-            "object-store error: {} (path: {})",
+-            self.source, self.base_url
+-        )
++        write!(f, "object-store error: {}", self.source)?;
++        if !self.base_url.as_str().is_empty() {
++            write!(f, " (path: {})", self.base_url)?;
++        }
++        Ok(())
+     }
+ }
+ 
+@@ -111,8 +112,10 @@ mod inner {
+     use std::sync::Arc;
+ 
+     use object_store::ObjectStore;
++    use object_store::path::Path;
+     use polars_core::config;
+     use polars_error::{PolarsError, PolarsResult};
++    use polars_utils::pl_path::PlRefPath;
+     use polars_utils::relaxed_cell::RelaxedCell;
+ 
+     use crate::cloud::concurrency::{ConcurrencyController, ControllerConfig};
+@@ -131,6 +134,8 @@ mod inner {
+     #[derive(Clone, Debug)]
+     pub struct PolarsObjectStore {
+         inner: Arc<Inner>,
++        /// The URL the store is rooted at, as this caller spelled it.
++        base_url: PlRefPath,
+         /// Avoid contending the Mutex `lock()` until the first re-build.
+         initial_store: std::sync::Arc<dyn ObjectStore>,
+         io_metrics: OptIOMetrics,
+@@ -148,6 +153,7 @@ mod inner {
+             // suffix range there: https://learn.microsoft.com/en-us/rest/api/storageservices/specifying-the-range-header-for-blob-service-operations
+             let suffix_range_supported = RelaxedCell::from(!builder.is_azure());
+             Self {
++                base_url: builder.base_url(),
+                 inner: Arc::new(Inner {
+                     store: tokio::sync::RwLock::new(store),
+                     builder,
+@@ -160,6 +166,11 @@ mod inner {
              }
          }
-     }
-+    if dialect == DialectName::Mssql && backend.choice().kind.has_sessions() {
-+        session = mssql_session_limits(session, spec.opened_by_plugin())?;
-+    }
-     Ok(session)
- }
  
-+/// `SET TEXTSIZE` at which nothing is cut (as `-1` is, which ODBC drivers set).
-+const MSSQL_MAX_TEXTSIZE: i64 = i32::MAX as i64;
-+
-+/// Sets what a SQL Server session the plugin opened reads, or reads what a user's session reads.
-+/// `SET ROWCOUNT n` stops every `SELECT` after `n` rows (the read's, and the catalog's own
-+/// lookups), and `SET TEXTSIZE n` cuts every `(n)varchar(max)`, `varbinary(max)`, `text`,
-+/// `ntext`, `image` or `xml` value after `n` bytes (also one converted to `NVARCHAR(MAX)`): both
-+/// without a sign. A session the plugin opened (a URI, an ODBC string) is its own: both are set
-+/// to read everything (a FreeTDS `text size` could apply otherwise). A user's session (a live
-+/// connection, a factory's or a pool's, whose connect hook may set either) is left as found:
-+/// its settings are read once (`DBCC USEROPTIONS`), a row count refuses it, and a text size
-+/// stays on the session ([`DatabaseSession::text_size_limit`]), for the reader to refuse a read
-+/// whose columns it may cut.
-+fn mssql_session_limits(
-+    mut session: Box<dyn DatabaseSession>,
-+    ours: bool,
-+) -> PolarsResult<Box<dyn DatabaseSession>> {
-+    if ours {
-+        let sql = format!("SET ROWCOUNT 0; SET TEXTSIZE {MSSQL_MAX_TEXTSIZE}");
-+        session.execute_update(&sql).map_err(|e| {
-+            e.context(format!("session setup '{sql}' failed; the scan relies on it").into())
-+        })?;
-+        return Ok(session);
-+    }
-+    let (rowcount, text_size) = mssql_user_options(session.as_mut());
-+    if let Some(n) = rowcount.filter(|n| *n != 0) {
-+        polars_bail!(
-+            InvalidOperation:
-+            "this SQL Server session has SET ROWCOUNT {n} in effect: every query would stop \
-+            after {n} rows, and the scan would read incomplete data. Run SET ROWCOUNT 0 on the \
-+            connection, or remove it from the connection's setup"
-+        );
-+    }
-+    Ok(match text_size {
-+        Some(n) if (0..MSSQL_MAX_TEXTSIZE).contains(&n) => Box::new(TextSizeLimited {
-+            inner: session,
-+            limit: n,
-+        }),
-+        _ => session,
-+    })
-+}
-+
-+/// A session's `SET ROWCOUNT` (0 when it isn't listed) and `SET TEXTSIZE`, from `DBCC
-+/// USEROPTIONS` (which every user may run, and a row count doesn't cut); `None` where they
-+/// can't be read. Where `DBCC` fails, the text size is read from `@@TEXTSIZE`, and a row count
-+/// under 10,000 is found by a query of 10,000 rows.
-+fn mssql_user_options(session: &mut dyn DatabaseSession) -> (Option<i64>, Option<i64>) {
-+    use super::catalog::cell_str;
-+    let number = |s: Option<String>| s.and_then(|s| s.trim().parse::<i64>().ok());
-+    match session.catalog_query("DBCC USEROPTIONS") {
-+        Ok(df) if df.width() >= 2 => {
-+            let value = |name: &str| {
-+                (0..df.height())
-+                    .find(|&row| {
-+                        cell_str(&df, 0, row).is_some_and(|k| k.trim().eq_ignore_ascii_case(name))
-+                    })
-+                    .map(|row| number(cell_str(&df, 1, row)))
-+            };
-+            (
-+                Some(value("rowcount").map_or(0, |n| n.unwrap_or(-1))),
-+                value("textsize").flatten(),
-+            )
-+        },
-+        _ => {
-+            let text_size = session
-+                .catalog_query("SELECT @@TEXTSIZE AS textsize")
-+                .ok()
-+                .and_then(|df| number(cell_str(&df, 0, 0)));
-+            let digits = "(VALUES (1), (2), (3), (4), (5), (6), (7), (8), (9), (10))";
-+            let probe = format!(
-+                "SELECT 1 AS x FROM {digits} AS a(x), {digits} AS b(x), {digits} AS c(x), \
-+                {digits} AS d(x)"
-+            );
-+            let rowcount = session
-+                .catalog_query(&probe)
-+                .ok()
-+                .map(|df| df.height())
-+                .map(|n| if n < 10_000 { n as i64 } else { 0 });
-+            (rowcount, text_size)
-+        },
-+    }
-+}
-+
-+/// A user's SQL Server session under `SET TEXTSIZE` ([`mssql_session_limits`]).
-+struct TextSizeLimited {
-+    inner: Box<dyn DatabaseSession>,
-+    limit: i64,
-+}
-+
-+impl DatabaseSession for TextSizeLimited {
-+    fn execute(&mut self, sql: &str, batch_size: Option<usize>) -> PolarsResult<BatchIter> {
-+        self.inner.execute(sql, batch_size)
-+    }
-+
-+    fn execute_update(&mut self, s
-```
-
-**File**: `crates/polars-database/src/database/catalog.rs` (modified, +149/-14)
-```diff
-@@ -530,6 +530,82 @@ fn databricks_collations(info: &mut CatalogInfo) {
-         .collect();
- }
- 
-+/// The static types (`typeof`) of a Trino query's output columns by position, for one that
-+/// can't be wrapped (it names two columns alike): an alias list renames them, and the query
-+/// itself never runs. `None` if the lookup fails.
-+pub fn trino_positional_types(
-+    session: &mut dyn DatabaseSession,
-+    query: &str,
-+    columns: usize,
-+) -> Option<Vec<String>> {
-+    if columns == 0 {
-+        return None;
-+    }
-+    let sql = format!(
-+        "SELECT {} FROM (SELECT 1) pl_d LEFT JOIN ({}) pl_q({}) ON false",
-+        (0..columns)
-+            .map(|i| format!("typeof(pl_q.\"c{i}\") AS t{i}"))
-+            .collect::<Vec<_>>()
-+            .join(", "),
-+        super::planner::wrappable(query),
-+        (0..columns)
-+            .map(|i| format!("\"c{i}\""))
-+            .collect::<Vec<_>>()
-+            .join(", ")
-+    );
-+    let df = match session.query(&sql) {
-+        Ok(df) => df,
-+        Err(e) => {
-+            if polars_core::config::verbose() {
-+                eprintln!("[scan_database]: lookup of the query's types failed: {e}");
-+            }
-+            return None;
-+        },
-+    };
-+    (0..columns).map(|i| cell_str(&df, i, 0)).collect()
-+}
-+
-+/// The output columns of a SQL Server query, if one has no name (`SELECT count(*)`: a derived
-+/// table over it is an error, and drivers name it `''`, `column_1` or nothing): every column
-+/// as the server describes it, an unnamed one `column_<position from 0>` (the name
-+/// ConnectorX gives it), made unique. `None` if all are named, or the query can't be described
-+/// (its columns are then read as the server names them).
-+pub fn mssql_unnamed_columns(
-+    session: &mut dyn DatabaseSession,
-+    sql: &str,
-+) -> Option<Vec<PlSmallStr>> {
-+    let df = session
-+        .catalog_query(&format!(
-+            "SELECT name FROM sys.dm_exec_describe_first_result_set(N{}, NULL, 0) \
-+            WHERE is_hidden = 0 ORDER BY column_ordinal",
-+            DialectName::Mssql.quote_str(sql)
-+        ))
-+        .ok()?;
-+    let names: Vec<Option<String>> = (0..df.height())
-+        .map(|i| cell_str(&df, 0, i).filter(|n| !n.is_empty()))
-+        .collect();
-+    if names.iter().all(Option::is_some) {
-+        return None;
-+    }
-+    let mut out: Vec<String> = vec![];
-+    for (i, name) in names.iter().enumerate() {
-+        out.push(name.clone().unwrap_or_else(|| format!("column_{i}")));
-+    }
-+    // a generated name that is a real one too gets a `_`
-+    for i in 0..out.len() {
-+        if names[i].is_none() {
-+            while out
-+                .iter()
-+                .enumerate()
-+                .any(|(j, o)| j != i && o.eq_ignore_ascii_case(&out[i]))
-+            {
-+                out[i].push('_');
-+            }
++        pub(crate) fn with_base_url(mut self, base_url: PlRefPath) -> Self {
++            self.base_url = base_url;
++            self
 +        }
-+    }
-+    Some(out.into_iter().map(Into::into).collect())
-+}
 +
- /// Looks up the result types of a query source, which decide how the database compares its
- /// columns (they don't change how the columns are read). `from` is the wrapped query
- /// (`(...) pl_q`), `columns` its output columns. Dialects without a lookup, or a failing one,
-@@ -1057,7 +1133,7 @@ impl CatalogQueries {
-                         "SELECT c.name, CASE WHEN b.name IN ('decimal', 'numeric') \
-                         THEN CONCAT(b.name, '(', c.precision, ',', c.scale, ')') \
-                         WHEN b.name IN ('datetime2', 'time', 'datetimeoffset') \
--                        THEN CONCAT(b.name, '(', c.scale, ')') ELSE b.name END \
-+                        THEN CONCAT(b.name, '(', c.scale, ')') ELSE b.name END AS type_name \
-                         FROM sys.columns c JOIN sys.types t ON t.user_type_id = c.user_type_id \
-                         CROSS APPLY (SELECT CASE WHEN t.is_user_defined = 1 \
-                         AND t.is_assembly_type = 0 AND t.is_table_type = 0 \
-@@ -1067,7 +1143,8 @@ impl CatalogQueries {
-                     compare_types: None,
-                     declared_sql: None,
-                     stats: Some(format!(
--                        "SELECT SUM(row_count), SUM(used_page_count) * 8192 \
-+                        "SELECT SUM(row_count) AS row_count, \
-+                        SUM(used_page_count) * 8192 AS size_bytes \
-                         FROM sys.dm_db_partition_stats WHERE object_id = {object} AND index_id IN (0, 1)"
-                     )),
-                 }
-@@ -1668,10 +1745,12 @@ pub fn view_definition(
+         pub fn set_io_metrics(&mut self, io_metrics: Option<Arc<IOMetrics>>) -> &mut Self {
+             self.io_metrics = OptIOMetrics(io_metrics);
+             self
+@@ -204,7 +215,13 @@ mod inner {
+                         .build_impl(true)
+                         .await
+                         .map_err(|e| {
+-                            e.wrap_msg(|e| format!("attempt to rebuild object store failed: {e}"))
++                            let url = self.inner.builder.path();
++                            e.wrap_msg(|e| {
++                                format!(
++                                    "attempt to rebuild object store failed: {e} \
++                                     (store built for: {url})"
++                                )
++                            })
+                         })?;
+             }
+ 
+@@ -213,8 +230,10 @@ mod inner {
+             Ok((*current_store).clone())
+         }
+ 
++        /// `path` is the object `func` addresses.
+         pub async fn exec_with_rebuild_retry_on_err<'s, 'f, Fn, Fut, O>(
+             &'s self,
++            path: &Path,
+             mut func: Fn,
+         ) -> PolarsResult<O>
+         where
+@@ -241,17 +260,18 @@ mod inner {
+             }
+ 
+             let store = if rebuild {
+-                let store = self
+-                    .rebuild_inner(&store)
+-                    .await
+-                    .map_err(|e| e.wrap_msg(|e| format!("{e}; original error: {orig_err}")))?;
++                let store = self.rebuild_inner(&store).await.map_err(|e| {
++                    // The failing request first, then the rebuild error.
++                    let orig_err = self.error_context(path).attach_err_info(orig_err);
++                    e.wrap_msg(|e| format!("{orig_err}; {e}"))
++                })?;
+                 Cow::Owned(store)
+             } else {
+                 store
              };
-         },
-         DialectName::Mssql => format!(
--            "SELECT CASE WHEN o.type = 'V' THEN 1 ELSE 0 END, \
--            CASE WHEN o.type = 'V' THEN OBJECT_DEFINITION(o.object_id) END, \
-+            "SELECT CASE WHEN o.type = 'V' THEN 1 ELSE 0 END AS is_view, \
-+            CASE WHEN o.type = 'V' THEN OBJECT_DEFINITION(o.object_id) END AS definition, \
-             CASE WHEN o.type = 'SN' THEN (SELECT s.base_object_name FROM sys.synonyms s \
--            WHERE s.obj
-```
-
-**File**: `crates/polars-database/src/database/config.rs` (modified, +14/-0)
-```diff
-@@ -111,6 +111,11 @@ pub struct DatabaseScanConfig {
-     /// float comparisons are pushed only then.
-     #[serde(default)]
-     pub sqlite_floats_exact: bool,
-+    /// A SQL Server query with a column of no name: the derived table the read wraps it in lists
-+    /// the schema's names in its alias (`(q) AS "_pl"("a", "column_1")`), as SQL Server refuses
-+    /// a derived table with an unnamed column.
-+    #[serde(default)]
-+    pub unnamed_columns: bool,
-     /// Columns the planner found unreadable right, with why: raised when one is read.
-     #[serde(default)]
-     pub refused_columns: Vec<(PlSmallStr, PlSmallStr)>,
-@@ -134,6 +139,15 @@ pub(crate) fn session_setup_runs(connection: &ConnectionSpec, kind: &BackendKind
- pub type BoundsCache = Arc<Mutex<PlHashMap<String, (Option<f64>, Option<f64>)>>>;
  
- impl DatabaseScanConfig {
-+    /// The columns the alias of a derived table over the query lists (`unnamed_columns`).
-+    pub fn derived_columns(&self) -> Vec<PlSmallStr> {
-+        if self.unnamed_columns {
-+            self.schema.iter_names().cloned().collect()
-+        } else {
-+            vec![]
-+        }
-+    }
-+
-     pub fn column(&self, name: &str) -> Option<&ColumnMeta> {
-         self.columns.iter().find(|c| c.name == name)
-     }
-```
-
-**File**: `crates/polars-database/src/database/dialect.rs` (modified, +221/-2)
-```diff
-@@ -65,6 +65,125 @@ pub(crate) fn trino_wide_temporal(t: &str) -> Option<TrinoWide> {
-     )
- }
+             func(store).await.map_err(|e| {
+-                let e: PolarsError = self.error_context().attach_err_info(e).into();
++                let e: PolarsError = self.error_context(path).attach_err_info(e).into();
  
-+/// The `name` and the type of a `row(..)` field (`x timestamp(3)`, `"a b" integer`, `"a""b"
-+/// integer`, or an unnamed `timestamp(3)`).
-+fn split_row_field(field: &str) -> (&str, &str) {
-+    let end = if field.starts_with('"') {
-+        // past the closing quote, a doubled one being part of the name
-+        let mut i = 1;
-+        loop {
-+            match field[i..].find('"') {
-+                Some(j) if field[i + j + 1..].starts_with('"') => i += j + 2,
-+                Some(j) => break i + j + 1,
-+                None => break field.len(),
-+            }
-+        }
-+    } else {
-+        field.find([' ', '(']).unwrap_or(field.len())
-+    };
-+    // an unnamed field is a type (`timestamp(3) ..`, `integer`) on its own
-+    if field[end..].starts_with('(') || end == field.len() {
-+        ("", field)
-+    } else {
-+        (&field[..end], field[end..].trim_start())
-+    }
-+}
-+
-+/// `expr` of Trino type `ty` with every `timestamp(p) with time zone` it holds as the same
-+/// instant in UTC, and the resulting type. `None` if it holds none. A value of that type holds
-+/// its zone's name: a named zone's repeated hour reads an hour off in the drivers, and the same
-+/// instant in UTC doesn't.
-+fn trino_utc_inside(ty: &str, expr: &str, depth: usize) -> Option<(String, String)> {
-+    let ty = ty.trim();
-+    let lower = ty.to_ascii_lowercase();
-+    let inner = |prefix: &str| {
-+        lower
-+            .starts_with(prefix)
-+            .then(|| ty.strip_suffix(')'))
-+            .flatten()
-+            .map(|t| &t[prefix.len()..])
-+    };
-+    if lower.starts_with("timestamp(") && lower.ends_with("with time zone") {
-+        return Some((format!("{expr} AT TIME ZONE 'UTC'"), ty.to_string()));
-+    }
-+    if let Some(element) = inner("array(") {
-+        let var = format!("pl_x{depth}");
-+        let (sql, t) = trino_utc_inside(element, &var, depth + 1)?;
-+        return Some((
-+            format!("transform({expr}, {var} -> {sql})"),
-+            format!("array({t})"),
-+        ));
-+    }
-+    if let Some(kv) = inner("map(") {
-+        let [key, value] = super::planner::split_top_level(kv)[..] else {
-+            return None;
-+        };
-+        let (k, v) = (format!("pl_k{depth}"), format!("pl_v{depth}"));
-+        let new_value = trino_utc_inside(value, &v, depth + 1);
-+        let new_key = trino_utc_inside(key, &k, depth + 1);
-+        if new_value.is_none() && new_key.is_none() {
-+            return None;
-+        }
-+        let (mut sql, mut key_type, mut value_type) =
-+            (expr.to_string(), key.to_string(), value.to_string());
-+        if let Some((e, t)) = new_value {
-+            sql = format!("transform_values({sql}, ({k}, {v}) -> {e})");
-+            value_type = t;
-+        }
-+        if let Some((e, t)) = new_key {
-+            sql = format!("transform_keys({sql}, ({k}, {v}) -> {e})");
-+            key_type = t;
-+        }
-+        return Some((sql, format!("map({key_type}, {value_type})")));
-+    }
-+    if let Some(fields) = inner("row(") {
-+        let mut found = false;
-+        let (mut values, mut types) = (vec![], vec![]);
-+        for (i, field) in super::planner::split_top_level(fields)
-+            .into_iter()
-+            .enumerate()
-+        {
-+            let (name, field_type) = split_row_field(field);
-+            let item = format!("({expr})[{}]", i + 1);
-+            let (sql, t) = match trino_utc_inside(field_type, &item, depth + 1) {
-+                Some(done) => {
-+                    found = true;
-+                    done
-+                },
-+                None => (item, field_type.to_string()),
-+            };
-+            values.push(sql);
-+            types.push(if name.is_empty() {
-+                t
-+            } else {
-+                format!("{name} {t}")
-+            });
-+        }
-+        if !found {
-+            return None;
-+        }
-+        let new_type = format!("row({})", types.join(", "));
-+        return Some((
-+            format!(
-+                "CASE WHEN {expr} IS NULL THEN NULL ELSE CAST(ROW({}) AS {new_type}) END",
-+                values.join(", ")
-+            ),
-+            new_type,
-+        ));
-+    }
-+    None
-+}
-+
-+/// A Trino array, map or row (`db_type`) of `column` with the `timestamp(p) with time zone`
-+/// values in it as UTC instants, or `None` if it holds none (see [`trino_utc_inside`]).
-+pub(crate) fn trino_nested_utc(db_type: &str, column: &str) -> Option<String> {
-+    let lower = db_type.trim().to_ascii_lowercase();
-+    if !(lower.starts_with("array(") || lower.starts_with("map(") || lower.starts_with("row(")) {
-+        return None;
-+    }
-+    trino_utc_inside(db_type, column, 0).map(|(sql, _)| sql)
-+}
-+
- /// How string comparisons behave in the database, relative to Polars' byte-wise comparison.
- #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
- pub struct StringSemantics {
-@@ -27
-```
-
-**File**: `crates/polars-database/src/database/planner.rs` (modified, +340/-23)
-```diff
-@@ -37,17 +37,41 @@ fn verbose() -> bool {
- }
- 
- /// The `FROM` target of a relation, for the fixed discovery and catalog SQL.
--fn quoted_relation(dialect: DialectName, relation: &DatabaseRelation) -> String {
-+fn quoted_relation(
-+    dialect: DialectName,
-+    relation: &DatabaseRelation,
-+    columns: &[PlSmallStr],
-+) -> String {
-     match relation {
-         DatabaseRelation::Table { parts, .. } => parts
-             .iter()
-             .map(|p| dialect.quote_ident(p))
-             .collect::<Vec<_>>()
-             .join("."),
--        DatabaseRelation::Query { sql } => format!("({}) pl_q", wrappable(sql)),
-+        DatabaseRelation::Query { sql } => {
-+            format!(
-+                "({}) pl_q{}",
-+                wrappable(sql),
-+                derived_column_list(dialect, columns)
-+            )
-+        },
-     }
- }
- 
-+/// The alias's column list (`("a", "b")`) of a derived table over a SQL Server query with a
-+/// column of no name (see [`DatabaseScanConfig::unnamed_columns`]); empty without the columns.
-+fn derived_column_list(dialect: DialectName, columns: &[PlSmallStr]) -> String {
-+    if columns.is_empty() {
-+        return String::new();
-+    }
-+    let names = columns
-+        .iter()
-+        .map(|c| dialect.quote_ident(c))
-+        .collect::<Vec<_>>()
-+        .join(", ");
-+    format!("({names})")
-+}
-+
- fn strip_statement_end(sql: &str) -> &str {
-     sql.trim().trim_end_matches(';').trim_end()
- }
-@@ -207,6 +231,26 @@ fn first_keyword(sql: &str) -> &str {
-     &s[..end]
- }
- 
-+/// The output column names given more than once, as the database tells names apart: Trino
-+/// folds every name to lower case (`SELECT 1 AS T, 2 AS t` names two columns `t`), and names
-+/// each column of no name apart (`_col0`, `_col1`).
-+fn duplicated_output_names(dialect: DialectName, cols: &[PlSmallStr]) -> Vec<PlSmallStr> {
-+    let trino = dialect == DialectName::Trino;
-+    let mut seen = PlHashSet::with_capacity(cols.len());
-+    let mut duplicated = vec![];
-+    for c in cols.iter().filter(|c| !(trino && c.is_empty())) {
-+        let key: PlSmallStr = if trino {
-+            c.to_lowercase().into()
-+        } else {
-+            c.clone()
-+        };
-+        if !seen.insert(key.clone()) && !duplicated.contains(&key) {
-+            duplicated.push(key);
-+        }
-+    }
-+    duplicated
-+}
-+
- /// Why a user query can't be wrapped as a derived table, if it can't.
- fn wrap_blocker(facts: &QueryFacts, dialect: DialectName) -> Option<&'static str> {
-     if !facts.parses {
-@@ -221,15 +265,112 @@ fn wrap_blocker(facts: &QueryFacts, dialect: DialectName) -> Option<&'static str
-     if dialect == DialectName::Mssql && facts.top_level_order_by_without_limit {
-         return Some("SQL Server does not allow ORDER BY without TOP inside a derived table");
-     }
--    if let Some(cols) = &facts.output_columns {
--        let mut seen = PlHashSet::with_capacity(cols.len());
--        if !cols.iter().all(|c| seen.insert(c)) {
--            return Some("the query has duplicate output column names");
--        }
-+    if let Some(cols) = &facts.output_columns
-+        && !duplicated_output_names(dialect, cols).is_empty()
-+    {
-+        return Some("the query has duplicate output column names");
-     }
-     None
- }
- 
-+/// Trino names an output column of no name `_col<position>` (`SELECT count(*)`), and a query
-+/// wrapping it can't refer to that name: such a query is refused.
-+fn refuse_trino_unnamed(dialect: DialectName, names: &[PlSmallStr]) -> PolarsResult<()> {
-+    let unnamed = dialect == DialectName::Trino
-+        && names.iter().any(|n| {
-+            n.strip_prefix("_col")
-+                .is_some_and(|i| !i.is_empty() && i.bytes().all(|b| b.is_ascii_digit()))
-+        });
-+    polars_ensure!(
-+        !unnamed,
-+        InvalidOperation:
-+        "the query has a column of no name, which Trino doesn't let a wrapping query refer to; \
-+        alias each of its expressions (`SELECT count(*) AS n`)"
-+    );
-+    Ok(())
-+}
-+
-+/// [`refuse_unwrappable_conversions`] for a scan planned under `schema=` (no I/O then): run
-+/// on the first session opened.
-+pub fn check_unwrappable_conversions(
-+    session: &mut dyn DatabaseSession,
-+    config: &DatabaseScanConfig,
-+) -> PolarsResult<()> {
-+    let DatabaseRelation::Query { sql } = &config.options.relation else {
-+        return Ok(());
-+    };
-+    if !config.user_schema || config.dialect != DialectName::Trino {
-+        return Ok(());
-+    }
-+    let Some(columns) = sql_renderer()
-+        .and_then(|r| r.inspect_query(sql, config.dialect))
-+        .ok()
-+        .and_then(|f| f.output_columns)
-+    else {
-+        return Ok(());
-+    };
-+    refuse_unwrappable_conversions(
-+        session,
-+        &config.options,
-+        config.dialect,
-+        &columns,
-+        &config.backend.kind,
-+        config.session_setup_runs(),
-+    )
-+}
-+
-+/// Refuses a query that names two output columns alike and has a column read through a conversion.
-+pub(crate) fn re
-```
-
-**File**: `crates/polars-database/src/database/schema.rs` (modified, +154/-6)
-```diff
-@@ -12,12 +12,7 @@ pub fn normalize_dtype(dtype: &DataType) -> DataType {
-     match dtype {
-         DataType::Datetime(tu, Some(tz)) if tz.as_str().is_empty() => DataType::Datetime(*tu, None),
-         // The session time zone is UTC; drivers spell it differently.
--        DataType::Datetime(tu, Some(tz))
--            if matches!(
--                tz.as_str(),
--                "Etc/UTC" | "Etc/UCT" | "UCT" | "Universal" | "Etc/Universal" | "Zulu" | "Etc/Zulu"
--            ) =>
--        {
-+        DataType::Datetime(tu, Some(tz)) if is_utc_alias(tz.as_str()) => {
-             DataType::Datetime(*tu, Some(TimeZone::UTC))
-         },
-         // Opaque driver types are read as their storage, except ADBC Postgres `NUMERIC`
-@@ -51,6 +46,25 @@ pub fn normalize_dtype(dtype: &DataType) -> DataType {
-     }
- }
- 
-+/// A spelling of UTC other than `UTC` itself, which Polars names zones by.
-+fn is_utc_alias(tz: &str) -> bool {
-+    matches!(
-+        tz,
-+        "Etc/UTC" | "Etc/UCT" | "UCT" | "Universal" | "Etc/Universal" | "Zulu" | "Etc/Zulu"
-+    )
-+}
-+
-+/// Whether a dtype holds a time zone that [`normalize_dtype`] renames (a spelling of UTC).
-+fn has_utc_alias(dtype: &DataType) -> bool {
-+    match dtype {
-+        DataType::Datetime(_, Some(tz)) => is_utc_alias(tz.as_str()),
-+        DataType::List(inner) | DataType::Array(inner, _) => has_utc_alias(inner),
-+        DataType::Map(key, value) => has_utc_alias(key) || has_utc_alias(value),
-+        DataType::Struct(fields) => fields.iter().any(|f| has_utc_alias(f.dtype())),
-+        _ => false,
-+    }
-+}
-+
- /// The dtype of a `NUMERIC` without precision, whose values each have their own scale
- /// (read as exact text). A value with more digits than the scale is an error; use
- /// `schema_overrides` for another precision.
-@@ -128,6 +142,23 @@ pub fn declared_dtype(dialect: DialectName, db_type: &str) -> Option<DataType> {
-             Some(TimeZone::UTC),
-         ));
-     }
-+    // An array of them, also nested: read as UTC instants too (the values are converted,
-+    // see `column_conversion`; the driver would plan the zone of the first value it reads).
-+    // Wider ones keep the unit the driver reads.
-+    if dialect == DialectName::Trino
-+        && t.starts_with("array(")
-+        && t.ends_with(')')
-+        && t.contains("timestamp(")
-+        && t.match_indices("timestamp(")
-+            .all(|(i, _)| crate::database::dialect::trino_wide_temporal(&t[i..]).is_none())
-+    {
-+        let inner = &t["array(".len()..t.len() - 1];
-+        if let Some(element @ (DataType::Datetime(_, Some(_)) | DataType::List(_))) =
-+            declared_dtype(dialect, inner)
-+        {
-+            return Some(DataType::List(Box::new(element)));
-+        }
-+    }
-     // Postgres `timestamptz` is an instant, read as UTC (a live connection's session zone
-     // may be another: see `column_conversion`).
-     if matches!(dialect, DialectName::Postgresql | DialectName::Redshift)
-@@ -338,6 +369,14 @@ pub fn cast_columns(
-         } else {
-             col
-         };
-+        let relabelled;
-+        let col = match relabel_utc_zones(col, dtype)? {
-+            Some(c) => {
-+                relabelled = c;
-+                &relabelled
-+            },
-+            None => col,
-+        };
-         let converted;
-         let col = match duration_to_time(col, dtype)? {
-             Some(c) => {
-@@ -528,6 +567,46 @@ fn value_kind_changed(from: &DataType, to: &DataType, converted: bool) -> bool {
-         })
- }
- 
-+/// A column with a map (also in lists, arrays and structs) whose time zone names are spellings of UTC
-+/// (`Etc/UTC`) where the plan has `UTC`, as the plan. A Map key can't be cast between zone
-+/// names (the cast refuses it), so the map is rebuilt from its entries cast on their own.
-+fn relabel_utc_zones(col: &Column, to: &DataType) -> PolarsResult<Option<Column>> {
-+    if !has_utc_alias(col.dtype()) || normalize_dtype(col.dtype()) != *to {
-+        return Ok(None);
-+    }
-+    Ok(relabel_map_zones(col.as_materialized_series())?.map(Series::into_column))
-+}
-+
-+fn relabel_map_zones(s: &Series) -> PolarsResult<Option<Series>> {
-+    let nested =
-+        |inner: Series| -> PolarsResult<Series> { Ok(relabel_map_zones(&inner)?.unwrap_or(inner)) };
-+    Ok(match s.dtype() {
-+        DataType::Map(_, _) => {
-+            let normal = normalize_dtype(s.dtype());
-+            let storage_dtype = normal.map_storage_dtype().ok_or_else(|| {
-+                polars_err!(ComputeError: "can't take the storage dtype of the map type {normal}")
-+            })?;
-+            // maps inside the entries first: their keys can't be cast either
-+            let storage = nested(s.map()?.storage().clone())?
-+                .cast_with_options(&storage_dtype, CastOptions::Strict)?;
-+            let map = MapChunked::try_from_storage(normal, storage.with_name(s.name().clone()))?;
-+            Some(map.into_series())
-+        },
-+        DataType::List(inner) if inner.contains_map() => {
-+   
-```
-
-**File**: `crates/polars-database/src/database/sql.rs` (modified, +8/-2)
-```diff
-@@ -298,8 +298,14 @@ pub enum SqlSelectItem {
- pub enum SqlFrom {
-     /// `[catalog.][schema.]name`, unquoted parts.
-     Table(Vec<PlSmallStr>),
--    /// A user query, wrapped as a derived table.
--    Subquery(String),
-+    /// A user query, wrapped as a derived table. `columns`, if any, are its output columns, named
-+    /// in the alias (`(q) AS "_pl"("a", "b")`): a SQL Server query with a column of no name,
-+    /// which it refuses in a derived table.
-+    Subquery {
-+        sql: String,
-+        #[serde(default)]
-+        columns: Vec<PlSmallStr>,
-+    },
- }
- 
- #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
-```
-
----
-
-### Incident Patch 3: `66810e33` (2026-11-22)
-**Commit Message**: fix: Export Map columns with more than i32::MAX entries as several Arrow arrays (#30865)
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Co-authored-by: ritchie46 <[REDACTED_EMAIL]>
-
-**File**: `crates/polars-cli/src/printer.rs` (modified, +2/-2)
-```diff
-@@ -234,8 +234,8 @@ impl<O: Write, E: Write> Printer<O, E> {
-                         table.vstack_mut(&rows)?;
-                     },
-                     ResultWriter::ArrowStream(writer) => {
--                        for batch in rows.iter_chunks(ARROW_COMPAT, true) {
--                            writer.write(&batch, None)?;
-+                        for batch in rows.try_iter_chunks(ARROW_COMPAT, true) {
-+                            writer.write(&batch?, None)?;
-                         }
-                     },
-                 }
-```
-
-**File**: `crates/polars-core/src/frame/chunks.rs` (modified, +33/-19)
-```diff
-@@ -1,3 +1,5 @@
-+use std::ops::Range;
-+
- use polars_arrow::record_batch::RecordBatch;
- use rayon::prelude::*;
- 
-@@ -41,26 +43,31 @@ impl DataFrame {
-         // Follows the first column that has chunks (a series, or a dictionary column's codes);
-         // scalar columns have none and are sliced.
-         let chunk_lengths: Vec<usize> = self.first_col_chunk_lengths().collect();
--        let mut prev_height = 0;
--        (0..chunk_lengths.len()).map(move |i| unsafe {
--            let chunk_size = chunk_lengths[i];
--            let columns = self
--                .columns()
--                .iter()
--                .map(|col| match col {
--                    Column::Series(s) => Column::from(s.select_chunk(i)),
--                    Column::Scalar(_) | Column::Dictionary(_) => {
--                        col.slice((prev_height, chunk_size))
--                    },
--                })
--                .collect::<Vec<_>>();
--
--            prev_height += chunk_size;
--
--            DataFrame::new_unchecked(chunk_size, columns)
-+        let mut offset = 0;
-+        (0..chunk_lengths.len()).map(move |i| {
-+            let rows = offset..offset + chunk_lengths[i];
-+            offset += chunk_lengths[i];
-+            self.chunk_frame(i, rows)
-         })
-     }
- 
-+    /// Chunk `chunk_idx` of this aligned frame, which holds `rows`, as a frame of single chunks.
-+    pub(crate) fn chunk_frame(&self, chunk_idx: usize, rows: Range<usize>) -> DataFrame {
-+        let columns = self
-+            .columns()
-+            .iter()
-+            .map(|col| match col {
-+                // `Column::from` would turn a one-row chunk into a Scalar, which reads the row.
-+                Column::Series(s) => Column::Series(s.select_chunk(chunk_idx).into()),
-+                // These are sliced by offset.
-+                Column::Scalar(_) | Column::Dictionary(_) => col.slice(rows.clone()),
-+            })
-+            .collect();
-+
-+        // SAFETY: each column holds the chunk's rows.
-+        unsafe { DataFrame::new_unchecked(rows.len(), columns) }
-+    }
-+
-     pub fn split_chunks_by_n(self, n: usize, parallel: bool) -> Vec<DataFrame> {
-         let split = _split_offsets(self.height(), n);
- 
-@@ -74,15 +81,19 @@ impl DataFrame {
-         }
-     }
- 
--    /// Convert the columns of this [DataFrame] to arrow arrays.
-+    /// Convert the columns of this [DataFrame] to arrow arrays, one per column.
-+    ///
-+    /// Use [`DataFrame::try_iter_chunks`] for Map columns that may need several arrays.
-     pub fn rechunk_to_arrow(&self, compat_level: CompatLevel) -> Vec<ArrayRef> {
-         self.columns()
-             .iter()
-             .map(|c| c.clone().rechunk_to_arrow(compat_level))
-             .collect()
-     }
- 
--    /// Convert the columns of this [DataFrame] to arrow arrays.
-+    /// Convert the columns of this [DataFrame] to arrow arrays, one per column.
-+    ///
-+    /// Use [`DataFrame::try_iter_chunks`] for Map columns that may need several arrays.
-     pub fn rechunk_into_arrow(self, compat_level: CompatLevel) -> Vec<ArrayRef> {
-         self.into_columns()
-             .into_iter()
-@@ -95,6 +106,9 @@ impl DataFrame {
- /// maximum number of rows per chunk to ensure reasonable memory efficiency when
- /// reading the resulting file, and a minimum size per chunk to ensure
- /// reasonable performance when writing.
-+///
-+/// [`DataFrame::iter_chunks`] can still cut a chunk into several record batches, where its
-+/// arrow MAP arrays would overflow their `i32` offsets.
- pub fn chunk_df_for_writing(
-     df: &mut DataFrame,
-     row_group_size: usize,
-```
-
-**File**: `crates/polars-core/src/frame/mod.rs` (modified, +302/-75)
-```diff
-@@ -55,6 +55,7 @@ use crate::hashing::_df_rows_to_hashes_threaded_vertical;
- use crate::prelude::sort::arg_sort;
- use crate::runtime::RAYON;
- use crate::series::IsSorted;
-+use crate::series::arrow_export::{arrow_export_cut, contains_arrow_map, map_spans_fit};
- 
- #[derive(Copy, Clone, Debug, PartialEq, Eq, Default, Hash, IntoStaticStr)]
- #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-@@ -2157,48 +2158,55 @@ impl DataFrame {
- 
-     /// Iterator over the rows in this [`DataFrame`] as Arrow RecordBatches.
-     ///
--    /// # Panics
-+    /// A chunk is split into several batches where its arrow MAP arrays would overflow
-+    /// their `i32` offsets.
-     ///
--    /// Panics if the [`DataFrame`] that is passed is not rechunked.
-+    /// The columns' chunks must be aligned ([`DataFrame::should_rechunk`] is false); only debug
-+    /// builds check this. Aligning is left to the caller, which can reuse the aligned frame.
-     ///
--    /// This responsibility is left to the caller as we don't want to take mutable references here,
--    /// but we also don't want to rechunk here, as this operation is costly and would benefit the caller
--    /// as well.
-+    /// # Panics
-+    ///
-+    /// Panics where [`DataFrame::try_iter_chunks`] yields an error.
-     pub fn iter_chunks(
-         &self,
-         compat_level: CompatLevel,
-         parallel: bool,
-     ) -> impl Iterator<Item = RecordBatch> + '_ {
--        debug_assert!(!self.should_rechunk(), "expected equal chunks");
--
--        if self.width() == 0 {
--            return RecordBatchIterWrap::new_zero_width(self.height());
--        }
-+        self.try_iter_chunks(compat_level, parallel)
-+            .map(|batch| batch.unwrap())
-+    }
- 
-+    /// Like [`DataFrame::iter_chunks`], but yields export errors, such as a row with more map
-+    /// entries than the `i32` offsets of an arrow MAP can hold.
-+    ///
-+    /// The columns' chunks must be aligned, as for [`DataFrame::iter_chunks`].
-+    pub fn try_iter_chunks(
-+        &self,
-+        compat_level: CompatLevel,
-+        parallel: bool,
-+    ) -> impl Iterator<Item = PolarsResult<RecordBatch>> + Send + '_ {
-         // If any of the columns is binview and we don't convert `compat_level` we allow parallelism
-         // as we must allocate arrow strings/binaries.
--        let must_convert = compat_level.0 == 0;
-         let parallel = parallel
--            && must_convert
--            && self.width() > 1
-+            && compat_level.0 == 0
-             && self
-                 .columns()
-                 .iter()
-                 .any(|s| matches!(s.dtype(), DataType::String | DataType::Binary));
-+        RecordBatchIterWrap::new(Cow::Borrowed(self), compat_level, parallel)
-+    }
- 
--        RecordBatchIterWrap::Batches(RecordBatchIter {
--            df: self,
--            schema: Arc::new(
--                self.columns()
--                    .iter()
--                    .map(|c| c.field().to_arrow(compat_level))
--                    .collect(),
--            ),
--            cursor: ChunkCursor::new(self),
--            compat_level,
--            parallel,
--            offset: 0,
--        })
-+    /// Like [`DataFrame::try_iter_chunks`], but the iterator owns the frame, for consumers that
-+    /// outlive it, such as an arrow C stream.
-+    ///
-+    /// With `parallel`, the columns of each batch are exported on the thread pool, whatever their
-+    /// dtypes.
-+    pub fn into_try_iter_chunks(
-+        self,
-+        compat_level: CompatLevel,
-+        parallel: bool,
-+    ) -> impl Iterator<Item = PolarsResult<RecordBatch>> + Send + 'static {
-+        RecordBatchIterWrap::new(Cow::Owned(self), compat_level, parallel)
-     }
- 
-     /// Iterator over the rows in this [`DataFrame`] as Arrow RecordBatches as physical values.
-@@ -2213,21 +2221,22 @@ impl DataFrame {
-     pub fn iter_chunks_physical(&self) -> impl Iterator<Item = RecordBatch> + '_ {
-         debug_assert!(!self.should_rechunk());
- 
--        if self.width() == 0 {
--            return RecordBatchIterWrap::new_zero_width(self.height());
--        }
--
--        RecordBatchIterWrap::PhysicalBatches(PhysRecordBatchIter {
--            df: self,
--            schema: Arc::new(
--                self.columns()
--                    .iter()
--                    .map(|c| c.field().to_arrow(CompatLevel::newest()))
--                    .collect(),
--            ),
--            cursor: ChunkCursor::new(self),
--            offset: 0,
--        })
-+        let iter = if self.width() == 0 {
-+            RecordBatchIterWrap::new_zero_width(self.height())
-+        } else {
-+            RecordBatchIterWrap::PhysicalBatches(PhysRecordBatchIter {
-+                df: self,
-+                schema: Arc::new(
-+                    self.columns()
-+                        .iter()
-+                        .map(|c| c.field().to_arrow(CompatLevel::newest()))
-+                        .collect(),
-+                ),
-+                cursor: ChunkCursor::new(self),
-+                off
-```
-
-**File**: `crates/polars-core/src/serde/df.rs` (modified, +3/-2)
-```diff
-@@ -68,9 +68,10 @@ impl DataFrame {
- 
-         ipc_writer.start(&schema.to_arrow(CompatLevel::newest()), None)?;
- 
--        for batch in chunk_df_for_writing(self, 512 * 512)?.iter_chunks(CompatLevel::newest(), true)
-+        for batch in
-+            chunk_df_for_writing(self, 512 * 512)?.try_iter_chunks(CompatLevel::newest(), true)
-         {
--            ipc_writer.write(&batch, None)?;
-+            ipc_writer.write(&batch?, None)?;
+                 if self.inner.builder.is_azure()
+                     && std::env::var("POLARS_AUTO_USE_AZURE_STORAGE_ACCOUNT_KEY").as_deref()
+@@ -280,27 +300,59 @@ and use the storage account keys from Azure CLI to authenticate"
+             self.inner.suffix_range_supported.store(false);
          }
  
-         ipc_writer.finish()?;
-```
-
-**File**: `crates/polars-core/src/series/arrow_export/mod.rs` (modified, +98/-12)
-```diff
-@@ -11,13 +11,16 @@ macro_rules! bail_unhandled_arrow_conversion_dtype_pair {
- 
- #[cfg(feature = "dtype-categorical")]
- pub mod categorical;
-+mod split;
- 
- use std::borrow::Cow;
- use std::sync::Arc;
- 
-+use either::Either;
- use polars_compute::cast::cast_unchecked;
- use polars_compute::rebuild_list::rebuild_list_shallow;
- use polars_error::{PolarsError, PolarsResult, polars_ensure, polars_err};
-+pub(crate) use split::{arrow_export_cut, contains_arrow_map, map_spans_fit};
- 
- use crate::prelude::{
-     Array, ArrayRef, ArrowDataType, ArrowField, BinaryViewArray, CompatLevel, DataType, ListArray,
-@@ -51,6 +54,11 @@ fn normalize_map_entries(arr: &ListArray<i64>) -> Option<ListArray<i64>> {
-         return Some(compacted);
+-        pub fn error_context(&self) -> ObjectStoreErrorContext {
+-            ObjectStoreErrorContext::new(self.inner.builder.path().clone())
++        /// Context for an error of a request to `path`.
++        pub fn error_context(&self, path: &Path) -> ObjectStoreErrorContext {
++            ObjectStoreErrorContext::new(self.base_url.clone()).with_path(path.clone())
+         }
      }
- 
-+    trim_list_child(arr)
-+}
-+
-+/// Slice the child of `arr` to the elements its offsets span; `None` if it already is.
-+fn trim_list_child(arr: &ListArray<i64>) -> Option<ListArray<i64>> {
-     let offsets = arr.offsets();
-     let first = *offsets.first() as usize;
-     let len = offsets.range() as usize;
-@@ -78,7 +86,20 @@ fn ensure_no_nulls(array: &dyn Array) -> PolarsResult<()> {
- impl Series {
-     /// Export this Series to an arrow array. The dtype of the returned array will be chosen
-     /// according to the provided `compat_level`.
-+    ///
-+    /// # Panics
-+    /// Panics if the chunk cannot be exported, see [`Series::try_to_arrow`].
-     pub fn to_arrow(&self, chunk_idx: usize, compat_level: CompatLevel) -> ArrayRef {
-+        self.try_to_arrow(chunk_idx, compat_level).unwrap()
-+    }
-+
-+    /// Export this Series to an arrow array, or error if the chunk does not fit the arrow
-+    /// type, e.g. a Map chunk with more than `i32::MAX` entries.
-+    pub fn try_to_arrow(
-+        &self,
-+        chunk_idx: usize,
-+        compat_level: CompatLevel,
-+    ) -> PolarsResult<ArrayRef> {
-         self.to_arrow_with_field(
-             chunk_idx,
-             Cow::Owned(
-@@ -87,7 +108,58 @@ impl Series {
-             ),
-             true,
-         )
--        .unwrap()
-+    }
-+
-+    /// Export a chunk of this Series as one or more arrow arrays, split at rows so that each
-+    /// arrow MAP array fits in `i32` offsets; the pieces are converted as the iterator reaches them.
-+    pub fn try_to_arrow_split(
-+        &self,
-+        chunk_idx: usize,
-+        compat_level: CompatLevel,
-+    ) -> impl Iterator<Item = PolarsResult<ArrayRef>> + Send + use<> {
-+        if !self.dtype().contains_map() {
-+            return Either::Left(std::iter::once(self.try_to_arrow(chunk_idx, compat_level)));
-+        }
-+        let arrow_dtype = self.dtype().to_arrow(compat_level);
-+        let chunk = self.chunks()[chunk_idx].as_ref();
-+        if !contains_arrow_map(&arrow_dtype)
-+            || map_spans_fit(chunk, &arrow_dtype, 0..chunk.len(), 1)
-+        {
-+            return Either::Left(std::iter::once(self.try_to_arrow(chunk_idx, compat_level)));
-+        }
-+
-+        let chunk = self.select_chunk(chunk_idx);
-+        let mut start = 0;
-+        Either::Right(std::iter::from_fn(move || {
-+            let arr = chunk.chunks()[0].as_ref();
-+            let rows = start..arr.len();
-+            if rows.is_empty() {
-+                return None;
-+            }
-+            let end = arrow_export_cut(rows, |r| map_spans_fit(arr, &arrow_dtype, r, 1));
-+            let piece = chunk
-+                .slice(start..end)
-+                .try_piece_to_arrow(&arrow_dtype, compat_level);
-+            start = end;
-+            Some(piece)
-+        }))
-+    }
-+
-+    /// Export this single-chunk Series, a piece cut by [`arrow_export_cut`], as `arrow_dtype`.
-+    ///
-+    /// A one-row piece can still span more map entries than an arrow MAP holds. Its nulls are
-+    /// then pushed down to its maps, which drop the entries of their null rows.
-+    pub(crate) fn try_piece_to_arrow(
-+        &self,
-+        arrow_dtype: &ArrowDataType,
-+        compat_level: CompatLevel,
-+    ) -> PolarsResult<ArrayRef> {
-+        if self.len() == 1 && !map_spans_fit(self.chunks()[0].as_ref(), arrow_dtype, 0..1, 1) {
-+            if let Some(s) = self.propagate_nulls() {
-+                return s.try_to_arrow(0, compat_level);
-+            }
-+        }
-+        self.try_to_arrow(0, compat_level)
-     }
- 
-     /// Export this Series to an arrow array. The dtype of the returned array will match the
-@@ -210,8 +282,21 @@ impl ToArrowConverter {
- 
-                 Box::new(arr)
-             },
--            (DataType::List(item_dtype), ArrowDataType::LargeList(_)) => {
-+            (DataType::List(item_dtype), ArrowDataType::LargeList(arrow_item_field)) => {
-                 let arr: &ListArray<i64> = array.as_any().downcast_ref().unwrap();
-+                // A split piece of a list of maps must export only the child it spans, as its
-+                // whole child may overflow the `i32` offsets of an arrow MAP.
-+                let item_dtype_arrow = arrow_item_field.dtype();
-+                let trimmed = (contains_arrow_map(item_dtyp
-```
-
-**File**: `crates/polars-core/src/series/arrow_export/split.rs` (added, +423/-0)
-```diff
-@@ -0,0 +1,423 @@
-+use std::ops::Range;
-+
-+use polars_arrow::array::{Array, FixedSizeListArray, ListArray, StructArray};
-+use polars_arrow::datatypes::ArrowDataType;
-+
-+/// The most entries an arrow MAP array can hold, as its offsets are `i32`.
-+const MAX_MAP_ENTRIES: u64 = i32::MAX as u64;
-+
-+/// Whether exporting to `dtype` builds an arrow MAP, whose offsets are `i32`.
-+pub(crate) fn contains_arrow_map(dtype: &ArrowDataType) -> bool {
-+    match dtype {
-+        ArrowDataType::Map(_, _) => true,
-+        ArrowDataType::LargeList(field) | ArrowDataType::FixedSizeList(field, _) => {
-+            contains_arrow_map(field.dtype())
-+        },
-+        ArrowDataType::Struct(fields) => fields.iter().any(|f| contains_arrow_map(f.dtype())),
-+        ArrowDataType::Extension(ext) => contains_arrow_map(&ext.inner),
-+        _ => false,
-+    }
-+}
-+
-+/// The most entries any MAP of `dtype` spans over `rows` of `array`, a Polars physical array laid
-+/// out as `ToArrowConverter` expects; reads two offsets per list level.
-+///
-+/// A span bounds what export keeps, which can be less: a MAP drops the entries of its null rows
-+/// (`normalize_map_entries`). An array that `dtype` doesn't describe spans nothing, which leaves
-+/// the mismatch for conversion to report.
-+fn max_map_span(array: &dyn Array, rows: Range<usize>, dtype: &ArrowDataType) -> u64 {
-+    match dtype {
-+        ArrowDataType::Map(entries, _) | ArrowDataType::LargeList(entries) => {
-+            let Some(arr) = array.as_any().downcast_ref::<ListArray<i64>>() else {
-+                return 0;
-+            };
-+            let offsets = arr.offsets().as_slice();
-+            let child_rows = offsets[rows.start] as usize..offsets[rows.end] as usize;
-+            let own = match dtype {
-+                ArrowDataType::Map(_, _) => child_rows.len() as u64,
-+                _ => 0,
-+            };
-+            own.max(max_map_span(
-+                arr.values().as_ref(),
-+                child_rows,
-+                entries.dtype(),
-+            ))
-+        },
-+        ArrowDataType::FixedSizeList(item, width) => {
-+            let Some(arr) = array
-+                .as_any()
-+                .downcast_ref::<FixedSizeListArray>()
-+                .filter(|arr| arr.size() == *width)
-+            else {
-+                return 0;
-+            };
-+            let child_rows = rows.start * width..rows.end * width;
-+            max_map_span(arr.values().as_ref(), child_rows, item.dtype())
-+        },
-+        ArrowDataType::Struct(fields) => {
-+            let Some(arr) = array.as_any().downcast_ref::<StructArray>() else {
-+                return 0;
-+            };
-+            arr.values()
-+                .iter()
-+                .zip(fields)
-+                .map(|(values, f)| max_map_span(values.as_ref(), rows.clone(), f.dtype()))
-+                .max()
-+                .unwrap_or(0)
-+        },
-+        ArrowDataType::Extension(ext) => max_map_span(array, rows, &ext.inner),
-+        _ => 0,
-+    }
-+}
-+
-+/// Whether every arrow MAP that exporting `rows` of `array` to `dtype` builds fits in `i32`
-+/// offsets, with `rows` repeated `repeat` times, as a scalar column repeats its one row.
-+pub(crate) fn map_spans_fit(
-+    array: &dyn Array,
-+    dtype: &ArrowDataType,
-+    rows: Range<usize>,
-+    repeat: usize,
-+) -> bool {
-+    max_map_span(array, rows, dtype).saturating_mul(repeat as u64) <= MAX_MAP_ENTRIES
-+}
-+
-+/// The end of the longest range from `rows.start` within `rows` that `fits`, or the single row
-+/// at `rows.start`, which conversion must then check.
-+///
-+/// `fits` must stay false once a range doesn't fit, as spans only grow with the range; this
-+/// calls it `log2(rows.len())` times.
-+pub(crate) fn arrow_export_cut(rows: Range<usize>, fits: impl Fn(Range<usize>) -> bool) -> usize {
-+    if rows.is_empty() || fits(rows.clone()) {
-+        return rows.end;
-+    }
-+    let (mut end, mut hi) = (rows.start + 1, rows.end - 1);
-+    while end < hi {
-+        let mid = end + (hi - end).div_ceil(2);
-+        if fits(rows.start..mid) {
-+            end = mid;
-+        } else {
-+            hi = mid - 1;
-+        }
-+    }
-+    end
-+}
-+
-+#[cfg(all(test, feature = "dtype-map"))]
-+mod tests {
-+    use std::borrow::Cow;
-+
-+    #[cfg(feature = "dtype-array")]
-+    use polars_arrow::array::FixedSizeListArray;
-+    use polars_arrow::array::{BooleanArray, Int32Array, MapArray, NullArray};
-+    use polars_arrow::bitmap::Bitmap;
-+    use polars_arrow::offset::Offsets;
-+
-+    use super::arrow_export_cut;
-+    use crate::frame::RecordBatchIter;
-+    use crate::frame::column::ScalarColumn;
-+    use crate::prelude::*;
-+
-+    fn map_dtype() -> DataType {
-+        DataType::Map(Box::new(DataType::Boolean), Box::new(DataType::Null))
-+    }
-+
-+    /// A `Map(Boolean, Null)` chunk with `lens` entries per row; its zeroed keys are allocated
-+    /// lazily, so the entries cost no memory until read.
-+    fn map_chunk(lens: &[i64], validity: Option<Bitmap>) -> ArrayRef {
-+       
-```
-
-**File**: `crates/polars-expr/src/dispatch/struct_.rs` (modified, +4/-4)
-```diff
-@@ -113,11 +113,11 @@ pub(super) fn to_json(col: &Column) -> PolarsResult<Column> {
- 
-     let s = col.as_materialized_series();
-     s.dtype().ensure_json_map_keys()?;
--    let iter = (0..s.n_chunks()).map(|i| {
--        polars_json::json::write::serialize_to_utf8(&*s.to_arrow(i, CompatLevel::newest()))
--    });
-+    let iter = (0..s.n_chunks())
-+        .flat_map(|i| s.try_to_arrow_split(i, CompatLevel::newest()))
-+        .map(|arr| PolarsResult::Ok(polars_json::json::write::serialize_to_utf8(&*arr?)));
- 
--    Ok(StringChunked::from_chunk_iter(s.name().clone(), iter).into_column())
-+    Ok(StringChunked::try_from_chunk_iter(s.name().clone(), iter)?.into_column())
  }
  
- /// Merge the evaluated fields in `args[1..]` into the input struct `args[0]`.
+ #[derive(Clone)]
+ pub struct 
 ```
 
-**File**: `crates/polars-ffi/src/version_0.rs` (modified, +10/-6)
+**File**: `crates/polars-io/src/path_utils/mod.rs` (modified, +1/-1)
 ```diff
-@@ -104,12 +104,16 @@ pub fn export_series(s: &Series) -> SeriesExport {
-         .to_arrow_field(s.name().clone(), CompatLevel::newest());
-     let schema = Box::new(ffi::export_field_to_c(&field));
+@@ -348,7 +348,7 @@ async fn expand_path_cloud(
+         let prefix_ref = &prefix;
  
--    let mut arrays = (0..s.chunks().len())
--        .map(|i| {
--            // Make sure we export the logical type.
--            let arr = s.to_arrow(i, CompatLevel::newest());
--            Box::into_raw(Box::new(ffi::export_array_to_c(arr.clone())))
--        })
-+    // A chunk becomes several arrays where an arrow MAP would overflow its `i32` offsets. Only a
-+    // single row with more map entries than that panics, as this ABI has no way to return errors.
-+    // All pieces convert before any is handed over, so that panic leaks none of them.
-+    let arrays = (0..s.chunks().len())
-+        .flat_map(|i| s.try_to_arrow_split(i, CompatLevel::newest()))
-+        .collect::<PolarsResult<Vec<_>>>()
-+        .unwrap();
-+    let mut arrays = arrays
-+        .into_iter()
-+        .map(|arr| Box::into_raw(Box::new(ffi::export_array_to_c(arr))))
-         .collect::<Box<_>>();
+         let mut paths = store
+-            .exec_with_rebuild_retry_on_err(|s| async move {
++            .exec_with_rebuild_retry_on_err(prefix_ref, |s| async move {
+                 let out = s
+                     .list(Some(prefix_ref))
+                     .try_filter_map(|x| async move {
+```
+
+**File**: `crates/polars-python/src/io/iceberg_plugin/v1/host.rs` (modified, +3/-3)
+```diff
+@@ -281,9 +281,9 @@ unsafe extern "C" fn storage_get(
+                 let path = &loc.path;
  
-     let len = arrays.len();
+                 loc.store
+-                    .exec_with_rebuild_retry_on_err(
+-                        |s| async move { s.get(path).await?.bytes().await },
+-                    )
++                    .exec_with_rebuild_retry_on_err(path, |s| async move {
++                        s.get(path).await?.bytes().await
++                    })
+                     .await
+                     .map_err(to_ffi_err)
+             };
+```
+
+**File**: `py-polars/tests/unit/io/cloud/test_cloud.py` (modified, +22/-0)
+```diff
+@@ -518,6 +518,28 @@ def test_cloud_timeout_error() -> None:
+     assert "operation timed out" in str(exc.value)
+ 
+ 
++@pytest.mark.slow
++@pytest.mark.parametrize("op", ["scan", "sink"])
++def test_cloud_error_names_failing_path_29446(s3: CountingS3, op: str) -> None:
++    storage_options = {**s3.storage_options, "max_retries": 0}
++
++    # Builds the bucket's cached store, then removes the object for later tests.
++    df = pl.DataFrame({"x": range(10)})
++    df.lazy().sink_parquet("s3://bucket/a.parquet", storage_options=storage_options)
++    s3.client.delete_object(Bucket="bucket", Key="a.parquet")
++
++    s3.on_request = lambda environ: environ["PATH_INFO"].endswith("/b.parquet") or None
++    url = "s3://bucket/query=B/b.parquet"
++    run = (
++        pl.scan_parquet(url, storage_options=storage_options).collect
++        if op == "scan"
++        else partial(df.lazy().sink_parquet, url, storage_options=storage_options)
++    )
++
++    with pytest.raises(OSError, match=re.escape(f"(path: {url})")):
++        run()
++
++
+ @pytest.mark.slow
+ @pytest.mark.parametrize(
+     "sink",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #30998** (closed): fix(python): Fix scan_database reads on Trino, SQL Server, Databricks, Oracle, ClickHouse and MariaDB (@ritchie46)
-- **PR #30996** (2026-11-22): fix: Return no rows from SQL `UNNEST` of an empty or NULL list (@kdn36)
-- **PR #30993** (closed): Stop streaming NDJSON at the forward slice limit (@CodexDot)
-- **PR #30990** (2026-11-21): fix(python): Normalize Windows paths in Iceberg add_files (@ritchie46)
-- **PR #30989** (2026-11-22): fix: Compute a SQL `INSERT` or `DELETE` that reads its own table when it runs (@kdn36)
-- **PR #30988** (2026-11-21): fix(rust): Give the polars-cli query thread the stack of the main thread (@kdn36)
+- **PR #31032** (2026-11-23): build: Revert sharing generic instantiations between crates in release builds (#30960) (@ritchie46)
+- **PR #31031** (2026-11-23): fix: Sum a negative constant expression in SQL `SUM` (@kdn36)
+- **PR #31030** (2026-11-23): fix: Take the SQL `USING` key from either side of a `FULL` or `RIGHT` join (@kdn36)
+- **PR #31029** (2026-11-23): fix(python): Refuse files in Iceberg `add_files` that a scan of the table cannot read (@kdn36)
+- **PR #31027** (2026-11-23): fix: Return null for a null `quantile` fraction (@dancsi)
+- **PR #31026** (2026-11-23): fix!: Add Expr.bin.find(_many), and return char offsets in Expr.str.find(_many) (@orlp)
 
 ---
 
@@ -3201,21 +2308,36 @@ Co-authored-by: ritchie46 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. rust): Give the polars-cli query thread the stack of the main thread
+## X. Check Arrow temporal dictionary overflow on import
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `py-polars/src/polars/_utils/construction/other.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1695451f`: rust): Give the polars-cli query thread the stack of the main thread. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `60fd1bc3`: Check Arrow temporal dictionary overflow on import. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `py-polars/src/polars/_utils/construction/other.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "recursive",
+            if (
+                pa.types.is_timestamp(value_type) or pa.types.is_duration(value_type)
+            ) and value_type.unit == "s":
+                target = (
+                    pa.timestamp("ms", value_type.tz)
+                    if pa.types.is_timestamp(value_type)
+                    else pa.duration("ms")
+                )
+                # Decode first so only referenced values are checked for overflow.
+                return pa.chunked_array(
+                    [
+                        pc.cast(chunk.dictionary_decode(), target, safe=True)
+                        for chunk in array.iterchunks()
+                    ],
+                    type=target,
+                )
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3225,7 +2347,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1695451f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `60fd1bc3` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

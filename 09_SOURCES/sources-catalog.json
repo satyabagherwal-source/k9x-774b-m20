@@ -1695,8 +1695,8 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017",
     "sourceVersion": "hf-deepseek-ai-deepseek-v4.1-flash-1017",
     "license": "Open-Source",
-    "contentHash": "de6a12d6aa33073a5e3f74e7b7de196903f7e8a5112d790c17817849a7cebec1",
-    "lastHarvestedAt": "2026-11-19T18:48:51.953Z",
+    "contentHash": "1c088cd51b50607a0715a99545fb93ab693cab117638576f01aa16ecc8589ae2",
+    "lastHarvestedAt": "2026-11-24T00:31:36.739Z",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017"
   },
   "tw93-pake": {
@@ -6853,10 +6853,10 @@
     "repository": "weaviate/weaviate",
     "platform": "github",
     "sourceUrl": "https://github.com/weaviate/weaviate",
-    "sourceVersion": "cf81225f",
+    "sourceVersion": "5852883d",
     "license": "NOASSERTION",
-    "contentHash": "a9979bc4eda7de3512298ca032c0758ed1cd6743fb7f6b92b870389e76c318ce",
-    "lastHarvestedAt": "2026-11-20T17:53:57.532Z",
+    "contentHash": "70fcfd9c547d157fb98c10460bbae26dcd6a0d44462ed807b302c73f52fb6c50",
+    "lastHarvestedAt": "2026-11-24T00:31:51.194Z",
     "learningId": "learn-github-weaviate-weaviate"
   },
   "topgrade-rs-topgrade": {
@@ -7743,10 +7743,10 @@
     "repository": "pola-rs/polars",
     "platform": "github",
     "sourceUrl": "https://github.com/pola-rs/polars",
-    "sourceVersion": "7ff0ffa2",
+    "sourceVersion": "83f1675f",
     "license": "MIT",
-    "contentHash": "47824c59f914792b04338567c854e3fec244e58dbc546ab9ba226b268f6590f0",
-    "lastHarvestedAt": "2026-11-22T16:48:07.387Z",
+    "contentHash": "5624014237a65927828e393cb4099e341913547fb8e4bdff064f4b11c2ebc121",
+    "lastHarvestedAt": "2026-11-24T00:31:38.659Z",
     "learningId": "learn-github-pola-rs-polars"
   },
   "mrkai77-loop": {
@@ -10183,10 +10183,10 @@
     "repository": "sweetpad-dev/sweetpad",
     "platform": "github",
     "sourceUrl": "https://github.com/sweetpad-dev/sweetpad",
-    "sourceVersion": "4b5b7817",
+    "sourceVersion": "11b271ee",
     "license": "MIT",
-    "contentHash": "826af8c52fd7dcd7ae74123b629ab5d8657efc0bdafc5bd46aca77994cdf4a23",
-    "lastHarvestedAt": "2026-11-17T03:34:15.611Z",
+    "contentHash": "975a8dc964d4b0d13e74339da9bebe3eee3e97843800d549b8eeb94d88065bb4",
+    "lastHarvestedAt": "2026-11-24T00:31:44.619Z",
     "learningId": "learn-github-sweetpad-dev-sweetpad"
   },
   "wcandillon-react-native-skia": {

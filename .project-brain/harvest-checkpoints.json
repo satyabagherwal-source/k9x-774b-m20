@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T00:22:33.448Z",
+  "last_updated": "2026-11-24T00:31:51.203Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2676,14 +2676,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
-      "content_hash": "de6a12d6aa33073a5e3f74e7b7de196903f7e8a5112d790c17817849a7cebec1",
-      "verified_at": "2026-11-19T18:48:51.963Z",
+      "content_hash": "1c088cd51b50607a0715a99545fb93ab693cab117638576f01aa16ecc8589ae2",
+      "verified_at": "2026-11-24T00:31:36.753Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T18:48:51.963Z"
+      "last_updated": "2026-11-24T00:31:36.753Z"
     },
     "tw93/Pake": {
       "repository": "tw93/Pake",
@@ -10341,14 +10341,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-weaviate-weaviate",
-      "content_hash": "a9979bc4eda7de3512298ca032c0758ed1cd6743fb7f6b92b870389e76c318ce",
-      "verified_at": "2026-11-20T17:53:57.539Z",
+      "content_hash": "70fcfd9c547d157fb98c10460bbae26dcd6a0d44462ed807b302c73f52fb6c50",
+      "verified_at": "2026-11-24T00:31:51.203Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T17:53:57.539Z"
+      "last_updated": "2026-11-24T00:31:51.203Z"
     },
     "topgrade-rs/topgrade": {
       "repository": "topgrade-rs/topgrade",
@@ -11661,14 +11661,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pola-rs-polars",
-      "content_hash": "47824c59f914792b04338567c854e3fec244e58dbc546ab9ba226b268f6590f0",
-      "verified_at": "2026-11-22T16:48:07.395Z",
+      "content_hash": "5624014237a65927828e393cb4099e341913547fb8e4bdff064f4b11c2ebc121",
+      "verified_at": "2026-11-24T00:31:38.667Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T16:48:07.395Z"
+      "last_updated": "2026-11-24T00:31:38.667Z"
     },
     "mrkai77/Loop": {
       "repository": "mrkai77/Loop",
@@ -15321,14 +15321,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sweetpad-dev-sweetpad",
-      "content_hash": "826af8c52fd7dcd7ae74123b629ab5d8657efc0bdafc5bd46aca77994cdf4a23",
-      "verified_at": "2026-11-17T03:34:15.621Z",
+      "content_hash": "975a8dc964d4b0d13e74339da9bebe3eee3e97843800d549b8eeb94d88065bb4",
+      "verified_at": "2026-11-24T00:31:44.627Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T03:34:15.621Z"
+      "last_updated": "2026-11-24T00:31:44.627Z"
     },
     "testing-library/dom-testing-library": {
       "repository": "testing-library/dom-testing-library",

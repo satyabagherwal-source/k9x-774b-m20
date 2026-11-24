@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sweetpad-dev-sweetpad-learnings.md`  
 > **Source**: github ([https://github.com/sweetpad-dev/sweetpad](https://github.com/sweetpad-dev/sweetpad))  
-> **Source Version**: `4b5b7817`  
+> **Source Version**: `11b271ee`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T03:34:14.461Z  
+> **Timestamp**: 2026-11-24T00:31:43.503Z  
 > **Learning ID**: `learn-github-sweetpad-dev-sweetpad`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sweetpad-dev-sweetpad-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sweetpad-dev/sweetpad](https://github.com/sweetpad-dev/sweetpad))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T03:34:14.455Z  
+> **Harvest Timestamp**: 2026-11-24T00:31:43.498Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: xcodebuild for humans and agents: build, run, debug, and test iOS, macOS, tvOS, watchOS, and visionOS apps from your terminal.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 1931 stars
+- **Stars / Engagement**: 1936 stars
 
 ---
 
@@ -374,11 +374,11 @@ public typealias GenCoreDataFrameworkManagedObject = NSManagedObject
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #363** (2026-11-16): **0.1.26: `.xip` SDK import reads `Xcode.app/Contents/Info.plist`, which the archive extractor never selects**
-  *Symptoms*: ### Summary In 0.1.26, the Linux SDK import from an Xcode `.xip` (`sweetpad setup --sdk Xcode.xip`, or `linux-sdk.py import`) fails right after the archive is verified:  ``` Verified complete archive: ... {"error": "[Errno 2] No such file or directory: '.../.swiftpm/swift-sdks/.sweetpad-sdk-XXXXXXXX/Xcode.app/Contents/Info.plist'"} ```  Because `IMPORTER_VERSION` is now 2, existing installs are told to rerun with `--replace-sdk`, and that rerun then fails this way. So an install that imports from a `.xip` can't move to 0.1.26.  ### Cause `unpack_xcode_archive` in `sweetpad-lib/ci/linux-sdk.py` (around line 273) now reads the bundle's `Info.plist` for `BuildMachineOSBuild`:  ```python info = plistlib.loads((xcode / "Contents/Info.plist").read_bytes()) ```  But `selected()` in `sweetpad-lib/ci/linux-xcode-archive.py` (around line 408) only selects `Contents/version.plist` at the top of the bundle, so that file is never extracted:  ```python if relative == "Contents/version.plist":     return "Xcode.app/" + relative ```  The `sweetpad-export` path (`unpack_verified`) isn't affected; only `sourceFormat: xip` is.  ### Suggested fix ```diff -    if relative == "Contents/version.plist": +    if relative in ("Contents/version.plist", "Contents/Info.plist"): ```  With this change the import completes, and `setup --sdk` then reuses the SDK (receipt `importerVersion: 2`). It may also be worth reading `BuildMachineOSBuild` only when the file exists (as `linux-setup.sh` already does) and 
+- **Issue #366** (2026-11-22): **Fix Linux watchOS linking, setup races, and CLI failure output**
+  *Symptoms*: ## Changes  - Fix watchOS Simulator links for dynamic SwiftPM frameworks by letting Swift Build select the linker flag for each compiler driver. Add a watchOS test project and check its framework and XCTest Mach-O binaries in the opt-in private-SDK Linux package job. - Create owner-only cache directories under umask 0002, including when the build-settings catalog writes first. Verify bundled hot-reload client bytes before reuse. - Write one-shot JSON errors to stdout so redirection captures both outcomes. Failed test runs return exit 3 and include the same error and available test report in JSON and the final NDJSON event. NDJSON retains its compact stderr diagnostic. - Serialize Swift installation and archive access across setup processes. Verify the compiler in staging before publishing the installation.  ## Verification  The macOS CLI and shared-library suites passed 1,802 tests with one ignored. Clippy and formatting passed. In the arm64 Linux VM, the packaged CLI built an iOS device app and linked the watchOS Simulator dynamic framework and XCTest bundle using an imported Apple SDK. Two concurrent setup processes shared one download, and a waiting process recovered when the downloader was interrupted. 
 
-- **Issue #362** (2026-11-15): **Close most of the open Linux backlog**
-  *Symptoms*: Works through the open PLAN_LINUX.md items in the agreed order, with one commit per item. I checked each item on the Mac and in the Linux VM, and its PLAN entry records what the check showed. Still open: P01, E24 and the hayro/resvg decision. D01 still needs the phone.
+- **Issue #365** (2026-11-21): **Address 104 Dependabot alerts across SweetPad dependencies**
+  *Symptoms*: ## Changes  The updated lockfiles resolve outside the affected ranges for 104 of the 106 Dependabot alerts open when this change was prepared.  - Upgrade the CLI’s ZIP dependency from 2.6.1 to 9.8.1 and adapt archive member lookup to the fallible filename API. - Update the extension and docs npm dependencies, including scoped overrides for packages whose parents still request affected releases. - Update both React Native CI fixtures. Patch the pinned template’s manifest constraints so a fresh checkout can install the updated lockfiles in frozen mode.  ## Remaining alerts  Both React Native fixtures still resolve Active Support 7.x. The first patched release is 8.0.5.2, and CocoaPods Core 1.17.0 still requires Active Support below 8. [Alert 209](https://github.com/sweetpad-dev/sweetpad/security/dependabot/209) · [Alert 210](https://github.com/sweetpad-dev/sweetpad/security/dependabot/210)  ## Verification  - Built and type-checked the extension. All 675 unit tests and 19 VS Code end-to-end tests passed. - Ran the Rust ZIP, notarization, and upload tests, along with formatting and CLI Clippy checks. - Type-checked and built the docs, including a separate production build with two rendering workers. - Ran frozen dependency preparation and CocoaPods deployment installs for both React Native fixtures on macOS.  A separate npm audit reported existing advisories for glob and diff in the workspace tooling. Both packages resolve to the same versions as on the base commit. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -395,447 +395,420 @@ public typealias GenCoreDataFrameworkManagedObject = NSManagedObject
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bcedc3c5` (2026-11-15)
-**Commit Message**: Note that legacy macOS tools block Linux builds by name
+### Incident Patch 1: `b2ff0f84` (2026-11-21)
+**Commit Message**: Restart the test simulator after a hot-reload install timeout
 
-**File**: `sweetpad-cli/PLAN_LINUX.md` (modified, +11/-4)
+**File**: `sweetpad-lib/ci/hot-reload-e2e.sh` (modified, +20/-6)
 ```diff
-@@ -511,13 +511,20 @@ Swift Build names these in its xcspecs. The Swift toolchain has `llvm-ar`,
- - [ ] `TextureAtlas`: SpriteKit `.atlas` to `.atlasc` *(optional)*
- - [ ] SceneKit tools (`scntool`, `copySceneKitAssets`,
-       `compileSceneKitShaders`): copy first *(optional)*
--- [ ] `metal`: the compiler is closed; fail clearly, maybe try the Windows
--      build under Wine *(optional)*
-+- [x] `metal`: the compiler is closed; fail clearly, maybe try the Windows
-+      build under Wine *(optional)*. A build that needs it is blocked and
-+      names the task and the tool (E22, checked with a `.metal` file); Wine
-+      isn't tried.
- - [ ] `realitytool`, `referenceobjectc`, Skybox, App Playground catalogs:
-       fail clearly *(optional)*
--- [ ] macOS-only legacy tools (`osacompile`, `Rez`, `ResMerger`, `mig`,
-+- [x] macOS-only legacy tools (`osacompile`, `Rez`, `ResMerger`, `mig`,
-       `iig`, `dtrace`, `exutil`, `lsregister`): skip or fail clearly
--      *(optional)*
-+      *(optional)*. A macOS target with a `.defs` file, a `.r` file or an
-+      AppleScript is blocked in the VM, naming the task and `mig`, `Rez` or
-+      `/usr/bin/osacompile` (E22's list, which also names `ResMerger`, `iig`
-+      and `dtrace`). A failed `lsregister` start is a note (the Swift Build
-+      patch). `exutil` isn't on the list, so it gets the generic "couldn't
-+      find" blocker.
+@@ -61,22 +61,36 @@ esac
+ cleanup() {
+   perl -e 'alarm shift; exec @ARGV' 30 xcrun simctl shutdown "$UDID" >/dev/null 2>&1 || true
+   perl -e 'alarm shift; exec @ARGV' 30 xcrun simctl delete "$UDID" >/dev/null 2>&1 || true
++  if [ -n "${selfcheck_log:-}" ]; then rm -f "$selfcheck_log"; fi
+ }
++selfcheck_log=
+ trap cleanup EXIT
++selfcheck_log=$(mktemp)
+ DEST="platform=iOS Simulator,id=$UDID"
+ echo "  $DEST"
+-xcrun simctl boot "$UDID"
+-perl -e 'alarm shift; exec @ARGV' 600 xcrun simctl bootstatus "$UDID" -b \
+-  || fail "simulator $UDID failed to boot (10-minute timeout)"
++boot_simulator() {
++  perl -e 'alarm shift; exec @ARGV' 600 xcrun simctl bootstatus "$UDID" -b \
++    || fail "simulator $UDID failed to boot (10-minute timeout)"
++}
++boot_simulator
  
- ## ibtool
+ # `app run --hot --hot-selfcheck` exits 0 only on a confirmed `.injected` whose
+ # new code demonstrably ran (nonce observed in the unified log).
+ run_selfcheck() {
+   local mode="$1"
+   section "hot reload self-check — iOS Simulator, $mode recompiler"
+-  "$BIN" app run --project "$APP" --scheme SweetpadCIApp --destination "$DEST" \
+-    --hot --hot-recompiler "$mode" --hot-selfcheck "$SRC" \
+-    || fail "simulator/$mode: injection self-check failed"
++  local args=(app run --project "$APP" --scheme SweetpadCIApp --destination "$DEST"
++    --hot --hot-recompiler "$mode" --hot-selfcheck "$SRC")
++  if ! "$BIN" "${args[@]}" 2>&1 | tee "$selfcheck_log"; then
++    # CoreSimulator can report a completed boot while app installation is wedged.
++    grep -Fq "'xcrun simctl install' didn't finish within" "$selfcheck_log" \
++      || fail "simulator/$mode: injection self-check failed"
++    echo "  Install timed out. Restarting test simulator $UDID and retrying $mode once."
++    perl -e 'alarm shift; exec @ARGV' 60 xcrun simctl shutdown "$UDID" \
++      || fail "simulator $UDID failed to shut down for install recovery"
++    boot_simulator
++    "$BIN" "${args[@]}" || fail "simulator/$mode: injection self-check failed after restart"
++  fi
+   echo "  ✓ simulator/$mode injected"
+ }
  
 ```
 
 ---
 
-### Incident Patch 2: `c2d8ebab` (2026-11-15)
-**Commit Message**: Show command lines with -v and name a missing macOS tool as the build's blocker
+### Incident Patch 2: `11b271ee` (2026-11-23)
+**Commit Message**: Move the Apple SDK license warning to the top of the Linux build post
 
-**File**: `sweetpad-cli/CLI_DESIGN.md` (modified, +24/-0)
+**File**: `sweetpad-docs/blog/2026-11-21-build-xcode-projects-on-linux.md` (modified, +6/-8)
 ```diff
-@@ -3004,6 +3004,11 @@ through the same watcher and builds its error with the same function
- (`xcodebuild::build_failure`), so a blocked build under `run` or `run --hot`
- ends on the same hint as under `build`.
+@@ -10,6 +10,12 @@ SweetPad is a command-line tool for building, running, and testing Xcode project
  
-+**The error object names the blocker.** The headline is for a person; a
-+caller gets the same hint as `error.blocker`, beside `code: build_failure`, so
-+it can tell a blocked build from a broken one without matching the message.
-+Both engines set it through `tool_failure`.
+ <!-- truncate -->
+ 
++:::warning Apple SDK license
++The build needs the iPhone SDK from Xcode, and Apple licenses that SDK with conditions on where it runs.
 +
- ### A path guessed at positionally
- 
- `sweetpad app screenshot shot.png` — a command whose whole job is writing one
-@@ -4622,6 +4627,25 @@ the target's dependency on the plugin product, as Xcode's PIF does, so the
- tool still builds. The engine warns for each such plugin in the build's
- target graph that its commands are skipped.
- 
-+**A tool Linux doesn't have blocks the build.** Swift Build reports
-+`unable to spawn process 'metal' (No such file or directory)` against the
-+task that needed it, then that it couldn't read the serialized diagnostics
-+the tool never wrote. The message parser drops that second warning and makes
-+the first the build's blocker, naming the task and the tool, and what the
-+tool is when it's one Apple has no Linux version of (Metal, `osacompile`,
-+`Rez`, `mig`, `iig`, `dtrace`, `realitytool`, `coremlc`, the SceneKit and
-+SpriteKit compilers). A tool that exists but won't start isn't a blocker.
++Using an Apple SDK on hardware that Apple didn’t make may violate your agreement with Apple. Apple’s standard terms limit execution to Apple-branded hardware running macOS. Before you import the SDK, check that your terms permit the machine you build on. See the [Xcode and Apple SDKs Agreement](https://www.apple.com/legal/sla/docs/xcode.pdf).
++:::
 +
-+**`-v` shows what xcodebuild's log shows.** The parsed view drops each
-+task's command line and the output of tasks that succeed; under `-v` both
-+come through as `Event::Other`, the command line under its task and the
-+output when the task completes. A task's output is left out when the task
-+reported a diagnostic, which already says the same, and so is lld's notice
-+about the platform. A task that runs inside Swift Build shows only a `cd`
-+line and is left out. Swift Build has no `-verbose` or `-quiet` of its own,
-+so those after `--` set the progress to `-v`'s or `-q`'s level instead of
-+being refused.
-+
- **Scheme actions run as xcodebuild runs them.** Only shell scripts run;
- xcodebuild skips a Send Email action without a word, and the engine skips it
- with a note. A script that selects a target in a local package gets that
-```
-
-**File**: `sweetpad-cli/PLAN_LINUX.md` (modified, +1/-1)
-```diff
-@@ -130,7 +130,7 @@ they do not establish physical-device execution for these changes.
- - [x] E19: Verify macOS cross-architecture builds and Info.plist preprocessing on Linux (`swbuild.rs::DarwinSdk::overrides`). Archives build every `ARCHS_STANDARD` architecture: the delivery fixture's universal Mac app launches as arm64 and as x86_64, and is notarized. Info.plist preprocessing failed on a host whose `cc` is GCC, which refuses the `-target` Swift Build passes. A `cc` stand-in now sends a run for an Apple target to Clang and any other to the host's `cc`. With a prefix header, `-D` definitions and an `#if` block, the Info.plist built on Linux equals Xcode 27.2's.
- - [x] E20: Preserve required linker settings when projects supply OTHER_LDFLAGS on additional platforms (`swbuild.rs::Invocation`). A tvOS build with `OTHER_LDFLAGS=-ObjC`, or with an `-xcconfig` file setting `OTHER_LDFLAGS = -lz`, lost `-fuse-ld=lld` and failed to link: the engine's `$(inherited) -fuse-ld=lld` sat among the command-line settings, which a user's value replaces and Swift Build places below the xcconfig. Settings the engine adds to now go in the request's environment-config level, the top one. In the VM, the tvOS probe links with `-ObjC -fuse-ld=lld`, `-lz -fuse-ld=lld`, and `-lc++ -fuse-ld=lld` from an xcconfig `[sdk=appletvsimulator*]` setting; watchOS, visionOS and iOS builds still succeed.
- - [ ] E21: Warn for missing workspace members, explain path case mismatches, and map ASSET_TAGS (`sweetpad-lib/src/workspace_pif.rs`, `swbuild.rs`).
--- [ ] E22: Define verbose passthrough and structured blocker reporting for Swift Build (`swbuild.rs`).
-+- [x] E22: Define verbose passthrough and structured blocker reporting for Swift Build (`swbuild.rs`). `-v` prints each task's command line and the output of tasks that report no diagnostic; `-- -verbose` and `-- -quiet` set the same levels as `-v` and `-q` instead of being refused. A task whose tool isn't on the machine (`unable to spawn process 'metal'`) makes the build blocked, not broken, naming the task and the tool, and the JSON error carries the hint as `error.blocker` on both engines. Checked in the VM with a `.metal` file.
- - [ ] E23: A process a script phase leaves running in the background holds Swift Build's service socket (it inherits fd 18 and the service's pipes), so `swbuild` never exits until that process does; a Gradle daemon would hold a build for hours. Found while checking E17; Xcode's spawns don't leak those descriptors. Close inherited descriptors in Swift Build's Linux task spawns (`swift-build-linux.patch`).
- - [ ] E24: Run build-tool plugins on Xcode project targets. Xcode evaluates them in the IDE through `XcodeProjectPlugin` and gives Swift Build a script phase per command, with outputs in `BuildToolPluginIntermediates/<Target>.output/<Target>/<Plugin>/`; the Linux toolchain has no `XcodeProjectPlugin`. One route is a generated package whose target stands in for the project target, evaluated by `swift package dump-pif` through the plugin's `BuildToolPlugin` entry, with its custom tasks moved onto the project target; most plugins (SwiftLint, SwiftGen, R.swift) implement both entries. Inputs that differ between the two contexts (the package directory, `XcodeTarget.inputFiles`) need checking per plugin.
- - [ ] E25: Build every standard arch for a generic destination. Xcode builds a Debug app for `generic/platform=iOS Simulator` with `ONLY_ACTIVE_ARCH=NO`, giving `arm64 x86_64`, and exports that to scripts; the Swift Build engine keeps the project's `ONLY_ACTIVE_ARCH=YES` and builds arm64 only. Pass `ONLY_ACTIVE_ARCH=NO` for generic destinations as xcodebuild does, after checking a capture for each platform.
-```
-
-**File**: `sweetpad-cli/src/cli/buildlog.rs` (modified, +14/-0)
-```diff
-@@ -383,6 +383,20 @@ impl BuildProgress {
-         }
-     }
+ On Linux, SweetPad reads the Xcode project, describes it to Swift Build, and lets Swift Build run the build. The Linux Swift compiler, Clang, and LLD produce the iPhone code against the SDK imported from Xcode. SweetPad stands in for the Xcode tools that compile resources and sign the app.
  
-+    /// Raise the detail to `-v`'s or lower it to `-q`'s, for a build tool's
-+    /// own switches (xcodebuild's `-verbose` and `-quiet`, passed through to
-+    /// Swift Build). Quiet wins, as `--quiet` does over `--verbose`, and
-+    /// stops the spinner.
-+    #[must_use]
-+    pub fn with_levels(mut self, verbose: bool, quiet: bool) -> Self {
-+        self.quiet |= quiet;
-+        self.verbose = (self.verbose || verbose) && !self.quiet;
-+        if self.quiet {
-+            self.spinner = None;
-+        }
-+        self
-+    }
-+
-     /// Render one raw `xcodebuild` line for display, or `None` to suppress it.
-     /// The first line that renders stops and erases the spinner; the closing
-     /// success banner is stamped with the elapsed build time. With
-```
-
-**File**: `sweetpad-cli/src/cli/mod.rs` (modified, +25/-6)
-```diff
-@@ -2078,8 +2078,14 @@ pub struct CliError {
-     /// The command to run next, when the failure points at one its message
-     /// does not name. Human output closes on it as a `tip:` line, even when
-     /// the failure is [`shown`](CliError::shown); the error object carries it
--    /// as `tip`.
--    tip: Option<String>,
-+    /// as `tip`. Boxed, like `blocker`, to keep every `Result<_, CliError>`
-+    /// small.
-+    tip: Option<Box<str>>,
-+    /// How past a blocked build, which no edit to the code fixes: the flag to
-+    /// pass or the place to build. The headline says it too; the error object
-+    /// carries it as `blocker`, so a caller tells a blocked build from a
-+    /// broken one without reading the message.
-+    blocker: Option<Box<str>>,
- }
+ <ThemedImage
+@@ -155,11 +161,3 @@ Two builds that share a DerivedData folder run one after the other. The second p
+ ## Next steps
  
- impl std::fmt::Display for CliError {
-@@ -2102,6 +2108,7 @@ impl CliError {
-             diagnostics: Vec::new(),
-             shown: false,
-             tip: None,
-+            blocker: None,
-         }
-     }
- 
-@@ -2148,6 +2155,7 @@ impl CliError {
-             diagnostics: self.diagnostics,
-             shown: self.shown,
-             tip: self.tip,
-+            blocker: self.blocker,
-         }
-     }
- 
-@@ -2180,7 +2188,15 @@ impl CliError {
-     /// without one. It survives [`context`](CliError::context).
-     #[must_use]
-     pub fn tip(mut self, tip: Option<String>) -> Self {
--        self.tip = tip;
-+        self.tip = tip.map(String::into_boxed_str);
-+        self
-+    }
-+
-+    /// Mark this failure as a blocked build, with the way past it (see the
-+    /// field). It survives [`context`](CliError::context).
-+    #[must_use]
-+    pub fn blocker(mut self, blocker: Option<String>) -> Self {
-+        self.blocker = blocker.map(String::into_boxed_str);
-         self
-     }
- 
-@@ -2192,8 +2208,8 @@ impl CliError {
-     }
- 
-     /// The machine-readable error object: the taxonomy code, the flattened
--    /// message, and — when the failure carried them — the parsed diagnostics
--    /// and the tip. The single shape every `--json`/`-o ndjson` error surface
-+    /// message, and — when the failure carried them — the parsed diagnostics,
-+    /// the tip and the blocker. The single shape every `--json`/`-o ndjson` error surface
-     /// renders.
-     #[must_use]
-     pub fn json(&self) -> serde_json::Value {
-@@ -2206,7 +2222,10 @@ impl CliError {
-                 map.insert("diagnostics".into(), self.diagnostics.clone().into());
-             }
-             if let Some(tip) = &self.tip {
--                map.insert("tip".into(), tip.clone().into());
-+                map.insert("tip".into(), tip.as_ref().into());
-+            }
-+            if let Some(blocker) = &self.blocker {
-+                map.insert("blocker".into(), blocker.as_ref().into());
-             }
-         }
-         value
-```
-
-**File**: `sweetpad-cli/src/cli/swbuild.rs` (modified, +262/-47)
-```diff
-@@ -132,8 +132,9 @@ pub fn run(plan: &BuildPlan<'_>, out: &Output) -> Result<Option<buildlog::BuildS
-     let mut parser = MessageParser::default();
-     let mut diagnostics = Vec::new();
-     let mut transcript = String::new();
--    let mut progress =
--        (!out.is_json() && !out.is_ndjson()).then(|| BuildProgress::start(out, "Building"));
-+    let (verbose, quiet) = output_levels(plan.passthrough);
-+    let mut progress = (!out.is_json() && !out.is_ndjson())
-+        .then(|| BuildProgress::start(out, "Building").with_levels(verbose, quiet));
-     let mut take = |parsed: &Parsed| {
-         if matches!(parsed.event, Event::Diagnostic { .. })
-             && let Some(json) = buildlog::event_json(&parsed.event)
-@@ -193,20 +194,12 @@ pub fn run(plan: &BuildPlan<'_>, out: &Output) -> Result<Option<buildlog::BuildS
-         || "swbuild exited with a non-zero status".to_string(),
-         |signal| format!("swbuild was killed by {}", signal_name(signal)),
-     );
--    let read_log = recorded.map(|p| format!("read full build log: {}", p.display()));
--    let tip = if killer == Some(libc::SIGKILL) && cfg!(target_os = "linux") {
--        Some(format!(
--            "the kernel's out-of-memory killer sends SIGKILL, and 'journalctl -k' says if it did{}",
--            read_log.map_or_else(String::new, |tip| format!("; {tip}"))
--        ))
--    } else {
--        read_log
--    };
-+    let tip = failure_tip(killer, recorded.as_deref());
-     Err(xcodebuild::tool_failure(
-         &ended,
-         &invocation.args,
-         diagnostics,
--        None,
-+        parser.blocker(),
-         progress.is_some(),
-         !Output::streams_share_a_file(),
-         &detail,
-@@ -215,6 +208,20 @@ pub fn run(plan: &BuildPlan<'_>, out: &Output) -> Result<Option<buildlog::BuildS
-     .tip(tip))
- }
- 
-+/// Where a failed build points next: the log it left in `recorded`, after
-+/// the out-of-memory killer when SIGKILL ended it on Linux.
-+fn failure_tip(killer: Option<i32>, recorded: Option<&Path>) -> Option<String> {
-+    let read_log = recorded.map(|p| format!("read full build log: {}", p.display()));
-+    if killer == Some(libc::SIGKILL) && cfg!(target_os = "linux") {
-+        Some(format!(
-+            "the kernel's out-of-memory killer sends SIGKILL, and 'journalctl -k' says if it did{}",
-+            read_log.map_or_else(String::new, |tip| format!("; {tip}"))
-+        ))
-+    } else {
-+        read_log
-+    }
-+}
-+
- /// The signal that killed `swbuild`, if one did. `bwrap`, which runs it
- /// where `/bin/sh` isn't Bash, exits with 128 plus that signal's number.
- fn killed_by(status: std::process::ExitStatus, wrapped: bool) -> Option<i32> {
-@@ -1203,11 +1210,13 @@ fn refuse_xcodebuild_flags(passthrough: &[String]) -> Result<(), CliError> {
-             "-derivedDataPath" | "-xcconfig" => {
-                 args.next();
-             }
-+            // Output levels, which the build's progress takes (see `output_levels`).
-+            "-verbose" | "-quiet" => {}
-             flag if flag.starts_with('-') => {
-                 return Err(CliError::new(format!(
-                     "'{flag}' is an xcodebuild flag from passthrough arguments or sweetpad.toml's [xcodebuild].args; this build runs on Swift Build, which \
--                     takes only build settings ('KEY=VALUE'), '-derivedDataPath', '-xcconfig' and '-testPlan' \
--                     after '--'"
-+                     takes only build settings ('KEY=VALUE'), '-derivedDataPath', '-xcconfig', '-testPlan', \
-+                     '-verbose' and '-quiet' after '--'"
-                 ))
-                 .kind(ErrorKind::Usage));
-             }
-@@ -1217,6 +1226,14 @@ fn refuse_xcodebuild_flags(passthrough: &[String]) -> Result<(), CliError> {
-     Ok(())
- }
- 
-+/// xcodebuild's `-verbose` and `-quiet` among the passthrough arguments, as
-+/// the levels of `-v` and `-q` they stand for here: the build's progress
-+/// shows what `-v` shows, or only what `-q` leaves.
-+fn output_levels(passthrough: &[String]) -> (bool, bool) {
-+    let has = |flag: &str| passthrough.iter().any(|a| a == flag);
-+    (has("-verbose"), has("-quiet"))
-+}
-+
- fn test_plan_name(passthrough: &[String]) -> Option<&str> {
-     passthrough
-         .windows(2)
-@@ -1855,6 +1872,12 @@ fn build_machine_settings(plist: &[(String, String)]) -> Vec<(&'static str, Stri
- /// carries the task's output, which would otherwise go unseen, and so do the
- /// warnings a successful link leaves in its output. Text lines are swbuild's
- /// own errors, written before or after the build.
-+///
-+/// What xcodebuild's raw log shows and the parsed view drops comes through as
-+/// [`Event::Other`], which only `-v` renders: each task's command line, and
-+/// the output of a task that reported nothing of its own. A task whose tool
-+/// can't be started blocks the build rather than breaking it
-+/// ([`blocker`](Self::blocker)).
- #[derive(Debug, Default)]
- pub struct MessageParser {
-     /// What each started task is, by task ID.
-@@ -1864,6 
-```
-
-**File**: `sweetpad-cli/src/cli/xcodebuild.rs` (modified, +3/-2)
-```diff
-@@ -459,7 +459,7 @@ pub(crate) fn tool_failure(
-     let streamed_error = blocker.is_none() && streamed_an_error(streamed, &diagnostics);
-     let shown = streamed_error && !stderr_apart;
-     let repeated = (streamed_error && stderr_apart).then(|| repeated_errors(&diagnostics));
--    let headline = blocker.map_or_else(
-+    let headline = blocker.as_ref().map_or_else(
-         || format!("{ended}{}", repeated.as_deref().unwrap_or(detail)),
-         |hint| format!("the build is blocked, not broken: {hint}"),
-     );
-@@ -469,7 +469,8 @@ pub(crate) fn tool_failure(
-     let err = CliError::new(headline)
-         .kind(ErrorKind::BuildFailure)
-         .diagnostics(diagnostics)
--        .tip(tip);
-+        .tip(tip)
-+        .blocker(blocker);
-     if shown { err.shown() } else { err }
- }
- 
-```
-
-**File**: `sweetpad-cli/tests/cli_build_result.rs` (modified, +15/-0)
-```diff
-@@ -924,6 +924,21 @@ fn a_blocked_build_names_the_flag_in_the_run_session_too() {
-     }
- }
- 
-+/// The error object says a build is blocked, and how past it, apart from the
-+/// message, so a caller doesn't read the headline to tell.
-+#[test]
-+fn a_blocked_builds_error_object_carries_the_way_past() {
-+    let out = build_with_stub("blocked-json", BLOCKED, 65, &["--json"]);
-+    assert_eq!(out.status.code(), Some(3), "{out:?}");
-+    let stderr = String::from_utf8(out.stderr).unwrap();
-+    let envelope: serde_json::Value = serde_json::from_str(stderr.trim()).unwrap();
-+    let blocker = envelope["error"]["blocker"].as_str().unwrap_or_default();
-+    assert!(
-+        blocker.contains("retry with '-- -skipPackagePluginValidation'"),
-+        "{stderr}"
-+    );
-+}
-+
- /// A 24x80 pty: the master end, and the slave end a child takes as its
- /// terminal.
- fn pty() -> (std::fs::File, OwnedFd) {
-```
-
-**File**: `sweetpad-docs/docs/cli/linux/reference.md` (modified, +1/-0)
-```diff
-@@ -73,6 +73,7 @@ Xcode runs those plugins itself through `XcodeProjectPlugin`, which the Linux Sw
- The build warns for each such plugin and goes on without the files it would generate.
- 
- Metal shaders, Core ML model classes, SceneKit assets, and RealityKit assets require native tools.
-+When a build needs a tool that Linux doesn't have, such as `metal`, it stops and names the tool and the file that needs it.
- Scripts that import Darwin or call other macOS-only tools need adaptation or a Mac preparation stage.
- Advanced Core Data mapping expressions remain outside the supported mapping-model forms.
- 
+ To see the greeting on a phone, [build with development signing](/docs/cli/linux/signing-and-testing#configure-development-signing), then [install the signed app](/docs/cli/linux/ubuntu-usb#build-install-and-launch). For iOS tests, Linux can build the test bundles and write the manifest Xcode needs to [run them on a Mac](/docs/cli/linux/signing-and-testing#run-the-tests-on-a-mac).
+-
+-## Apple’s license terms
+-
+-The build needs the iPhone SDK from Xcode, and Apple licenses that SDK with conditions on where it runs.
+-
+-:::warning Apple SDK license
+-Using an Apple SDK on hardware that Apple didn’t make may violate your agreement with Apple. Apple’s standard terms limit execution to Apple-branded hardware running macOS. Before you import the SDK, check that your terms permit the machine you build on. See the [Xcode and Apple SDKs Agreement](https://www.apple.com/legal/sla/docs/xcode.pdf).
+-:::
 ```
 
 ---
 
-### Incident Patch 3: `5885b5b6` (2026-11-16)
-**Commit Message**: Fix SDK import from Xcode archives failing on a missing Info.plist
+### Incident Patch 3: `ac276a38` (2026-11-22)
+**Commit Message**: Fix Linux watchOS test links, cache permissions, concurrent setup, and CLI error output (#366)
 
-The archive extractor kept only version.plist from the top of Xcode.app, so
-every .xip and .aea import, including 'setup --xcode', failed reading
-BuildMachineOSBuild from 0.1.24 on. Fixes #363.
-
-**File**: `sweetpad-lib/ci/linux-sdk.py` (modified, +2/-1)
+**File**: `.github/workflows/linux-arm64-package.yaml` (modified, +31/-0)
 ```diff
-@@ -270,7 +270,8 @@ def unpack_xcode_archive(archive, work, args):
-     # Check the baseline inputs before invoking any SDK builder.
-     export_roots(xcode)
-     # No Mac takes part, so Xcode's own build machine stands in for one.
--    info = plistlib.loads((xcode / "Contents/Info.plist").read_bytes())
-+    info_path = xcode / "Contents/Info.plist"
-+    info = plistlib.loads(info_path.read_bytes()) if info_path.is_file() else {}
-     return {"xcodeVersion": version["CFBundleShortVersionString"], "xcodeBuild": version["ProductBuildVersion"],
-             "buildMachineOSBuild": info.get("BuildMachineOSBuild")}
- 
-```
-
-**File**: `sweetpad-lib/ci/linux-xcode-archive.py` (modified, +1/-1)
-```diff
-@@ -405,7 +405,7 @@ def selected(name):
-     if not parts or not parts[0].endswith(".app") or "prebuilt-modules" in parts:
-         return None
-     relative = "/".join(parts[1:])
--    if relative == "Contents/version.plist":
-+    if relative in ("Contents/version.plist", "Contents/Info.plist"):
-         return "Xcode.app/" + relative
-     base = "Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/"
-     if relative.startswith(base):
-```
-
-**File**: `sweetpad-lib/ci/test_linux_sdk.py` (modified, +20/-0)
-```diff
-@@ -17,6 +17,10 @@
- SPEC = importlib.util.spec_from_file_location("linux_sdk", Path(__file__).with_name("linux-sdk.py"))
- sdk = importlib.util.module_from_spec(SPEC)
- SPEC.loader.exec_module(sdk)
-+GENERATOR_SPEC = importlib.util.spec_from_file_location(
-+    "generate_xcode_archive_fixtures", Path(__file__).with_name("generate_xcode_archive_fixtures.py"))
-+generator = importlib.util.module_from_spec(GENERATOR_SPEC)
-+GENERATOR_SPEC.loader.exec_module(generator)
- 
- 
- class SDKTests(unittest.TestCase):
-@@ -131,6 +135,22 @@ def test_export_omits_signing_files_and_host_executables(self):
-             path = xcode / relative; path.parent.mkdir(parents=True, exist_ok=True); path.write_text("test")
-         self.assertEqual(set(sdk.export_entries(xcode)), {"Xcode.app/Contents/version.plist"})
- 
-+    def test_xcode_archive_import_reads_the_build_machine_from_xcode(self):
-+        info = plistlib.dumps({"CFBundleIdentifier": "com.apple.dt.Xcode", "BuildMachineOSBuild": "25C56"})
-+        platforms = [(f"Xcode.app/Contents/Developer/Platforms/{name}.platform/Developer/SDKs/{name}.sdk/SDKSettings.json",
-+                      b"{}", 0o100644, 10 + index, 1) for index, name in enumerate(sdk.BASE_PLATFORMS)]
-+        version = ("Xcode.app/Contents/version.plist", generator.VERSION, 0o100644, 2, 1)
-+        for name, items, build in [
-+            ("with-info", [("Xcode.app/Contents/Info.plist", info, 0o100644, 1, 1), version] + platforms, "25C56"),
-+            ("without-info", [version] + platforms, None),
-+        ]:
-+            with self.subTest(name):
-+                archive = self.root / f"{name}.xip"
-+                archive.write_bytes(generator.xip(generator.cpio(items)))
-+                with patch("sys.stderr", io.StringIO()):
-+                    manifest = sdk.unpack_xcode_archive(archive, self.root / name, SimpleNamespace())
-+                self.assertEqual(manifest, {"xcodeVersion": "27.2", "xcodeBuild": "fixture", "buildMachineOSBuild": build})
+@@ -24,6 +24,11 @@ on:
+       - ".github/workflows/cli-release.yaml"
+       - ".github/workflows/cli-distribute.yaml"
+   workflow_dispatch:
++    inputs:
++      private_sdk:
++        description: Build the iOS and watchOS fixtures on the provisioned SDK runner
++        type: boolean
++        default: false
+   workflow_call:
+ permissions:
+   contents: read
+@@ -293,3 +298,29 @@ jobs:
+           name: linux-helpers-${{ matrix.arch }}-${{ strategy.job-index }}
+           path: ${{ runner.temp }}/helpers/run/*
+           if-no-files-found: warn
 +
-     def test_import_supplies_linux_compiler_resource_headers(self):
-         resource = self.root / "linux-swift"
-         include = resource / "clang/include"; include.mkdir(parents=True)
++  private-sdk:
++    name: iOS device and watchOS simulator package builds
++    if: >-
++      (github.event_name == 'workflow_dispatch' && inputs.private_sdk) ||
++      (github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.SWEETPAD_PRIVATE_SDK_CI == 'true')
++    needs: package
++    runs-on: [self-hosted, Linux, ARM64, sweetpad-linux]
++    timeout-minutes: 20
++    steps:
++      - uses: actions/checkout@v7
++        with:
++          persist-credentials: false
++      - uses: actions/download-artifact@v8
++        with:
++          name: cli-tarball-linux-arm64
++          path: dist
++      - name: Build and inspect the linked Mach-O products
++        run: |
++          version=$(jq -r .swift sweetpad-lib/ci/linux-toolchain.json)
++          archives=(dist/*.tar.gz)
++          test "${#archives[@]}" -eq 1
++          python3 sweetpad-cli/ci/check-linux-sdk-install.py \
++            --archive "${archives[0]}" --out "$RUNNER_TEMP/sdk-check-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" \
++            --swift "$HOME/swift/swift-$version-RELEASE" \
++            --sdk "$HOME/.swiftpm/swift-sdks/darwin.artifactbundle"
+```
+
+**File**: `skills/sweetpad/SKILL.md` (modified, +4/-4)
+```diff
+@@ -22,12 +22,12 @@ projects. This skill covers the everyday flows and how to discover the rest.
+ ## Read results correctly
+ 
+ - Success is `{"schema":N,"ok":true,"data":{…}}` on stdout. Errors are
+-  `{"schema":1,"ok":false,"error":{"code":…,"message":…}}` on stderr, where
++  `{"schema":1,"ok":false,"error":{"code":…,"message":…}}` on stdout, where
+   `code` is one of: `generic`, `usage_error`, `build_failure`,
+   `target_resolution`, `tool_missing`, `user_cancel`.
+-- `ok: true` means "the command ran", not "the outcome was good". A failing test
+-  run still reports `ok: true` with `data.passed: false` — read the payload's own
+-  status field, not just `ok`.
++- A failing test run exits 3 with `ok: false`. Read the available test summary
++  from `data` in the same envelope. A completed diagnostic report such as
++  `doctor` can have `ok: true` and exit nonzero when it finds problems.
+ - Exit codes: `0` ok · `1` generic · `2` bad flags, or a flag a prompt needs
+   off a terminal (`--yes`, `--product`) · `3` build/test failure ·
+   `4` target resolution (unknown scheme/destination) · `5` missing tool ·
+```
+
+**File**: `sweetpad-cli/CLI_DESIGN.md` (modified, +14/-19)
+```diff
+@@ -307,13 +307,13 @@ builds it with real `xcodebuild`.
+ 
+ - Success: `{"schema": 1, "ok": true, "data": …}` on **stdout**,
+   pretty-printed. Errors: `{"schema": 1, "ok": false, "error": {code,
+-  message}}` on **stderr**, compact single-line by design (robust to scrape
+-  even when child-process stderr interleaves). A build failure adds the
++  message}}` on **stdout**, compact on one line. A build failure adds the
+   parsed `diagnostics`; a failure that points at a next command adds it as
+   `tip`, which human output prints as its closing `tip:` line even when the
+   streamed log already showed the error.
+-- **`ok` means "the command executed"**, not "the outcome was good": a red
+-  test suite is `ok: true` with `data.passed: false` (exit 3), `doctor` with
++- A red test suite returns `ok: false` and `error.code: "build_failure"` (exit 3).
++  Its report stays in the same envelope under `data`, including `data.passed: false`.
++  A completed diagnostic report can identify problems: `doctor` with
+   problems is `ok: true` with per-check statuses (exit 1), `device info` on a
+   device that is not ready is `ok: true` with `data.ready: false` (exit 1),
+   `format --check` reports findings in `data` (exit 3). Every such payload
+@@ -330,8 +330,7 @@ builds it with real `xcodebuild`.
+   `log stream` NDJSON events (one JSON object per line, no envelope; on macOS,
+   captured stdout/stderr lines are `{"source":"stdout",…}`), except under
+   `--exits`, whose finite report takes the envelope like any other;
+-  `completions` ignores it. Clap usage errors (exit 2) print clap's human
+-  text on stderr regardless of `--json`.
++  `completions` ignores it. Clap usage errors produce a `usage_error` envelope when JSON mode is recognized.
+ 
+ ### The NDJSON stream (`-o ndjson`)
+ 
+@@ -390,8 +389,7 @@ simulator) exits 1 instead of 0, since the app may still be running. A
+ session already exiting non-zero keeps its code and prints the stop's error
+ too (`quit_result`).
+ 
+-Exit 2 has two sources. clap reports what it can't parse, in its own text
+-even under `--json`. The command reports what it parses but refuses: a flag
++Exit 2 has two sources. clap reports what it can't parse. The command reports what it parses but refuses: a flag
+ on a verb it means nothing to (`test build --failed`, `build diagnostics
+ --clean`), two flags that can't go together (`--on` with `--destination`,
+ `--gh-annotations` with `-o json`, `app debug --batch` with `-o json`,
+@@ -953,8 +951,8 @@ Notes / heuristics:
+   for its members, and a local package's for its products. Scheme files for
+   other targets don't stand in the way, so `scheme list`, `settings show` and
+   the build's product lookup agree on the set `xcodebuild -list` prints.
+-- `test run` exits non-zero on failures; the `--json` summary lands on stdout
+-  and the failure error on stderr, so both are independently consumable.
++- A failed test suite exits 3. The JSON envelope and final NDJSON result both include
++  `ok: false`, `error.code: "build_failure"`, and the available summary in `data` on stdout.
+ - simulator inline logs use a best-effort `processImagePath CONTAINS` log
+   predicate; may need refinement per app.
+ - New deps (under the `cli` feature only): `clap_complete`, `dialoguer`, `libc`
+@@ -4754,15 +4752,12 @@ are copied as they are. An import writes a receipt, `sweetpad-sdk.json`,
+ whose `importerVersion` changes whenever the layout does, and setup reuses a
+ bundle only while the receipt matches.
+ 
+-**The engine's additions sit above the user's settings.** Some overrides
+-add to a setting rather than set it: `-fuse-ld=lld` in `OTHER_LDFLAGS` for
+-tvOS, watchOS and visionOS, and the Swift library and header search paths.
+-Swift Build stacks a request's levels as command-line settings, then the
+-`-xcconfig` file, then the environment config, so an addition among the
+-command-line settings is lost to a user's `OTHER_LDFLAGS=-ObjC` or to an
+-xcconfig that sets the flags without `$(inherited)`. The additions go in the
+-environment-config table instead, where `$(inherited)` takes in everything
+-below: `-ObjC -fuse-ld=lld`.
++**Linker selection and search paths.** For tvOS, watchOS and visionOS, the
++engine sets `ALTERNATE_LINKER=lld` for the target SDK. Swift Build then passes
++`-use-ld=lld` to Swift and `-fuse-ld=lld` to Clang. Projects can supply their
++own `OTHER_LDFLAGS`. The engine appends the Swift library and header search
++paths in the environment-config table. At that level, `$(inherited)` includes
++the project's settings, command-line overrides and the user's `-xcconfig` file.
+ 
+ **A stand-in is the sweetpad binary under the tool's name.** The engine
+ links the binary into the stand-ins' folder under each name, puts the folder
+```
+
+**File**: `sweetpad-cli/ci/check-linux-gaps.py` (modified, +1/-1)
+```diff
+@@ -38,7 +38,7 @@ def invoke(name, arguments, success=True, environment=None):
+         (out / (name + ".stderr")).write_text(result.stderr)
+         if (result.returncode == 0) != success:
+             raise AssertionError(f"{name}: exit {result.returncode}; see {out / (name + '.stderr')}")
+-        return json.loads(result.stdout if success else result.stderr)
++        return json.loads(result.stdout)
+ 
+     build = ["build", *common, "--destination", "generic/platform=iOS Simulator,arch=arm64", "--", "ARCHS=arm64", "CODE_SIGNING_ALLOWED=NO"]
+     built=invoke("script-build", build)["data"]
+```
+
+**File**: `sweetpad-cli/ci/check-linux-package.py` (modified, +6/-6)
+```diff
+@@ -79,26 +79,26 @@ def invoke(name, args, success=True):
+     missing_session = out / "missing-apple-session.json"
+     auth_login = invoke("auth-no-session", [binary, "auth", "login", "--apple-id", "synthetic@example.com",
+                                             "--session-file", missing_session, "--json"], success=False)
+-    assert "needs a terminal" in json.loads(auth_login.stderr)["error"]["message"]
++    assert "needs a terminal" in json.loads(auth_login.stdout)["error"]["message"]
+     for name, arguments in [("download-no-session", ["sdk", "download"]), ("setup-xcode-no-session", ["setup"])]:
+         response = invoke(name, [binary, *arguments, "--xcode", "27.3 beta", "--session-file", missing_session, "--json"], success=False)
+-        assert "no Apple session file" in json.loads(response.stderr)["error"]["message"]
++        assert "no Apple session file" in json.loads(response.stdout)["error"]["message"]
+     logged_out = invoke("auth-logout-empty", [binary, "auth", "logout", "--session-file", missing_session, "--json"])
+     assert json.loads(logged_out.stdout)["data"]["loggedOut"] is True
+     assert not missing_session.exists()
+     invalid_sdk=out / "invalid-sdk.tar.gz"
+     invalid_sdk.write_bytes(b"not an SDK archive")
+     invalid_sdk.with_name(invalid_sdk.name + ".sha256").write_text(f"{hashlib.sha256(invalid_sdk.read_bytes()).hexdigest()}  {invalid_sdk.name}\n")
+     raw_setup=invoke("raw-setup-source-discovery", [extracted / "sweetpad", "setup", "--sdk", invalid_sdk, "--json"], success=False)
+-    raw_error=json.loads(raw_setup.stderr)["error"]
++    raw_error=json.loads(raw_setup.stdout)["error"]
+     assert "Expected a Sweetpad SDK export" in raw_error["message"]
+     installed_setup=invoke("standalone-setup-source-discovery", [binary, "setup", "--sdk", invalid_sdk, "--json"], success=False)
+-    assert "Expected a Sweetpad SDK export" in json.loads(installed_setup.stderr)["error"]["message"]
++    assert "Expected a Sweetpad SDK export" in json.loads(installed_setup.stdout)["error"]["message"]
+     doctor = json.loads(invoke("linux-doctor-missing-tools", [binary, "doctor", "--target", "ios", "--json"], success=False).stdout)
+     assert doctor["ok"] and doctor["data"]["summary"]["problems"] > 0
+     checks = {c["name"]: c for c in doctor["data"]["checks"]}
+     missing = invoke("missing-host-packages", [binary, "setup", "--no-sdk", "--json"], success=False)
+-    message = json.loads(missing.stderr)["error"]["message"]
++    message = json.loads(missing.stdout)["error"]["message"]
+     assert checks["Host packages"]["status"] == "problem", checks["Host packages"]
+     assert checks["Host packages"]["detail"] == message and "apt-get install" in message, message
+     assert checks["Swift Build"]["status"] == "ok", checks["Swift Build"]
+@@ -113,7 +113,7 @@ def invoke(name, args, success=True):
+     assert value["ok"] and "LinuxApp" in json.dumps(value["data"])
+     result = invoke("missing-toolchain", [binary, "build", "--project", project, "--scheme", "LinuxApp",
+                     "--destination", "generic/platform=iOS Simulator", "--json"], success=False)
+-    error = json.loads(result.stderr)
++    error = json.loads(result.stdout)
+     assert error["ok"] is False and any(s in error["error"]["message"].lower() for s in ["sdk", "swift", "swbuild"])
+     assert shutil.which("swift", path=env["PATH"]) is None
+     report = {"passed": True, "archiveSha256": expected[0], "binarySha256": manifest["files"]["sweetpad"],
+```
+
+**File**: `sweetpad-cli/ci/check-linux-sdk-install.py` (modified, +29/-5)
+```diff
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env python3
+-"""Build the packaged example with a fresh home and explicit read-only tools.
++"""Build the iOS sample and watchOS test fixture with the packaged CLI and a fresh home.
+ 
+ Bubblewrap exposes no developer home, source checkout, signing files, or app
+ build cache. The private SDK and the public compiler are prerequisites; Swift
+@@ -22,6 +22,8 @@ def check(args):
+     unpacked, work = out / "unpacked", out / "work"
+     unpacked.mkdir()
+     work.mkdir()
++    fixture = Path(__file__).resolve().parent.parent / "fixtures/watch-link"
++    shutil.copytree(fixture, work / "WatchLink", ignore=shutil.ignore_patterns(".build", "xcuserdata"))
+     with tarfile.open(args.archive) as source:
+         source.extractall(unpacked, filter="data")
+     manifest = json.loads((unpacked / "manifest.json").read_text())
+@@ -42,6 +44,7 @@ def check(args):
+                 "--setenv", "SWEETPAD_DARWIN_SDK", "/opt/darwin-sdk",
+                 "--setenv", "LANG", "C.UTF-8", "--setenv", "NO_COLOR", "1"]
+     script = '''set -eu
++umask 0002
+ mkdir -p "$HOME"
+ mkdir -p "$HOME/.local/bin"
+ # A link on PATH to the unpacked archive, which keeps libexec/sweetpad beside
+@@ -60,18 +63,38 @@ def check(args):
+ sweetpad build --project /work/Example/LinuxApp.xcodeproj --scheme LinuxApp \
+   --destination 'generic/platform=iOS' --json --non-interactive -- \
+   -derivedDataPath /work/DerivedData CODE_SIGNING_ALLOWED=NO > /work/build.json
++sweetpad test build --project /work/WatchLink/WatchLink.xcodeproj --scheme WatchProbe \
++  --destination 'generic/platform=watchOS Simulator,arch=arm64' --json --non-interactive -- \
++  -derivedDataPath /work/WatchDerivedData CODE_SIGNING_ALLOWED=NO OTHER_LDFLAGS=-lz > /work/watch-build.json
+ '''
+     result = subprocess.run([*command, "/bin/bash", "-c", script], capture_output=True, text=True, timeout=600)
+     (out / "sandbox.stdout").write_text(result.stdout)
+     (out / "sandbox.stderr").write_text(result.stderr)
+-    result.check_returncode()
++    if result.returncode:
++        for name in ("build.json", "watch-build.json"):
++            envelope = work / name
++            if envelope.exists():
++                print(envelope.read_text())
++        print(result.stderr)
++        result.check_returncode()
+     build = json.loads((work / "build.json").read_text())
+     assert build["ok"] and build["data"]["built"]
+     product = work / Path(build["data"]["productPath"]).relative_to("/work")
+     executable = product / "LinuxApp"
+     assert executable.is_file()
+     description = subprocess.check_output(["file", str(executable)], text=True).strip()
+     assert "Mach-O" in description and "arm64" in description
++    watch = json.loads((work / "watch-build.json").read_text())
++    assert watch["ok"] and watch["data"]["built"], watch
++    products = work / "WatchDerivedData/Build/Products/Debug-watchsimulator"
++    watch_binaries = {}
++    for name, kind in [
++        ("PackageFrameworks/ValueKit.framework/ValueKit", "shared library"),
++        ("WatchTests.xctest/WatchTests", "bundle"),
++    ]:
++        info = subprocess.check_output(["file", "-b", str(products / name)], text=True).strip()
++        assert all(word in info for word in ("Mach-O", "arm64", kind)), (name, info)
++        watch_binaries[name] = info
+     doctor = {c["name"]: c for c in json.loads((work / "doctor.json").read_text())["data"]["checks"]}
+     for name in ("Swift Build", "Swift Build service", "Swift Build patches", "Macro plugin"):
+         assert doctor[name]["status"] == "ok", doctor[name]
+@@ -80,13 +103,14 @@ def check(args):
+               "developerHomeVisible": False, "networkAvailable": False, "appBuildCacheReused": False,
+               "toolchainsReadOnly": True, "sdkReadOnly": True, "signingMaterialAvailable": False,
+               "installedBinarySha256": manifest["files"]["sweetpad"], "packagedSwiftHelpers": True,
+-              "product": str(product), "executableDescription": description,
++              "watchSimulatorBinaries": watch_binaries, "product": str(product), "executableDescription": description,
+               "scope": "Fresh app build from the installed release artifact; compiler and SDK installation are explicit prerequisites."}
+     (out / "summary.json").write_text(json.dumps(report, indent=2) + "\n")
+     print(json.dumps(report, indent=2))
+     if not args.keep_build_cache:
+-        for relative in ["Build/Intermediates.noindex", "ModuleCache.noindex", "SDKStatCaches.noindex", "Index.noindex"]:
+-            shutil.rmtree(work / "DerivedData" / relative, ignore_errors=True)
++        for build_dir in ["DerivedData", "WatchDerivedData"]:
++            for relative in ["Build/Intermediates.noindex", "ModuleCache.noindex", "SDKStatCaches.noindex", "Index.noindex"]:
++                shutil.rmtree(work / build_dir / relative, ignore_errors=True)
+ 
+ 
+ if __name__ == "__main__":
+```
+
+**File**: `sweetpad-cli/ci/linux-release-README.md` (modified, +7/-0)
+```diff
+@@ -81,6 +81,7 @@ Installing system packages takes sudo or a root shell. Run `sudo -v` first if yo
+ sweetpad finds Swift and the SDK on its own. Source `~/.config/sweetpad/linux-env.sh` only to run `swift` by hand.
+ An unchanged archive reuses the installed SDK. A different archive requires `--replace-sdk`.
+ The SDK stays private. The prebuilt CLI requires no Rust installation or Sweetpad source checkout.
++
+ App signing requires your development identity and profiles, configured separately.
+ 
+ CLI 0.1.22 also accepts private Xcode `.xip` downloads directly:
+@@ -109,6 +110,12 @@ Other Linux architectures, including 32-bit x86, are not release targets.
+ Public host-toolchain checks cover Ubuntu, Debian, and Arch. Private SDK app builds cover these distributions separately.
+ Additional distributions remain unverified.
+ 
++The Linux packages workflow can also build the iOS device sample and the watchOS Simulator
++test fixture on the provisioned ARM64 runner. Select `private_sdk` when starting a manual run,
++or set the repository variable `SWEETPAD_PRIVATE_SDK_CI=true` to enable it on package builds
++pushed to `main`. The check uses the package from the same run and verifies the arm64 Mach-O
++types of the watch package framework and XCTest bundle.
++
+ Run `sweetpad help linux-devices` for pairing and bounded logs.
+ See the [Linux guide](https://sweetpad.hyzyla.dev/docs/cli/linux) for build setup and current limitations.
+ 
+```
+
+**File**: `sweetpad-cli/fixtures/watch-link/Probe/WatchProbe.swift` (added, +2/-0)
+```diff
+@@ -0,0 +1,2 @@
++import ValueKit
++public func probe() -> Int { value }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #366** (2026-11-22): Fix Linux watchOS linking, setup races, and CLI failure output (@hyzyla)
+- **PR #365** (2026-11-21): Address 104 Dependabot alerts across SweetPad dependencies (@hyzyla)
+- **PR #364** (2026-11-21): Set up Linux builds with sweetpad's own SDK import and LLVM linker (@hyzyla)
 - **PR #362** (2026-11-15): Close most of the open Linux backlog (@hyzyla)
 - **PR #361** (2026-11-15): Fix six Linux backlog items (@hyzyla)
 - **PR #360** (2026-11-15): Export, upload and notarize Apple builds from Linux and macOS (@hyzyla)
-- **PR #359** (2026-11-14): Stop reporting a dismissed test picker as an error (@hyzyla)
-- **PR #358** (2026-11-13): Add terminal Apple authentication and Xcode downloads for Linux (@hyzyla)
-- **PR #357** (2026-11-12): Fix shared data, resources and caching in Xcode SDK imports (@hyzyla)
 
 ---
 
@@ -855,41 +828,52 @@ BuildMachineOSBuild from 0.1.24 on. Fixes #363.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Note that legacy macOS tools block Linux builds by name
+## X. Restart the test simulator after a hot-reload install timeout
 
 **RULE**:
-When implementing operations in `sweetpad-cli/PLAN_LINUX.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sweetpad-dev/sweetpad. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `sweetpad-lib/ci/hot-reload-e2e.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sweetpad-dev/sweetpad. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bcedc3c5`: Note that legacy macOS tools block Linux builds by name. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b2ff0f84`: Restart the test simulator after a hot-reload install timeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sweetpad-cli/PLAN_LINUX.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sweetpad-lib/ci/hot-reload-e2e.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- [x] `metal`: the compiler is closed; fail clearly, maybe try the Windows
-      build under Wine *(optional)*. A build that needs it is blocked and
-      names the task and the tool (E22, checked with a `.metal` file); Wine
-      isn't tried.
-- [x] macOS-only legacy tools (`osacompile`, `Rez`, `ResMerger`, `mig`,
-      *(optional)*. A macOS target with a `.defs` file, a `.r` file or an
-      AppleScript is blocked in the VM, naming the task and `mig`, `Rez` or
-      `/usr/bin/osacompile` (E22's list, which also names `ResMerger`, `iig`
-      and `dtrace`). A failed `lsregister` start is a note (the Swift Build
-      patch). `exutil` isn't on the list, so it gets the generic "couldn't
-      find" blocker.
+  if [ -n "${selfcheck_log:-}" ]; then rm -f "$selfcheck_log"; fi
+selfcheck_log=
+selfcheck_log=$(mktemp)
+boot_simulator() {
+  perl -e 'alarm shift; exec @ARGV' 600 xcrun simctl bootstatus "$UDID" -b \
+    || fail "simulator $UDID failed to boot (10-minute timeout)"
+}
+boot_simulator
+  local args=(app run --project "$APP" --scheme SweetpadCIApp --destination "$DEST"
+    --hot --hot-recompiler "$mode" --hot-selfcheck "$SRC")
+  if ! "$BIN" "${args[@]}" 2>&1 | tee "$selfcheck_log"; then
+    # CoreSimulator can report a completed boot while app installation is wedged.
+    grep -Fq "'xcrun simctl install' didn't finish within" "$selfcheck_log" \
+      || fail "simulator/$mode: injection self-check failed"
+    echo "  Install timed out. Restarting test simulator $UDID and retrying $mode once."
+    perl -e 'alarm shift; exec @ARGV' 60 xcrun simctl shutdown "$UDID" \
+      || fail "simulator $UDID failed to shut down for install recovery"
+    boot_simulator
+    "$BIN" "${args[@]}" || fail "simulator/$mode: injection self-check failed after restart"
+  fi
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-- [ ] `metal`: the compiler is closed; fail clearly, maybe try the Windows
-      build under Wine *(optional)*
-- [ ] macOS-only legacy tools (`osacompile`, `Rez`, `ResMerger`, `mig`,
-      *(optional)*
+xcrun simctl boot "$UDID"
+perl -e 'alarm shift; exec @ARGV' 600 xcrun simctl bootstatus "$UDID" -b \
+  || fail "simulator $UDID failed to boot (10-minute timeout)"
+  "$BIN" app run --project "$APP" --scheme SweetpadCIApp --destination "$DEST" \
+    --hot --hot-recompiler "$mode" --hot-selfcheck "$SRC" \
+    || fail "simulator/$mode: injection self-check failed"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bcedc3c5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b2ff0f84` are properly handled with clean fallback behavior.

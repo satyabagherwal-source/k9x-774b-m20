@@ -4,22 +4,22 @@
 {
   "source_repository": "weaviate/weaviate",
   "source_url": "https://github.com/weaviate/weaviate",
-  "source_version": "cf81225f",
+  "source_version": "5852883d",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-20T17:53:57.709Z",
+  "timestamp": "2026-11-24T00:31:51.428Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-weaviate-weaviate",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [weaviate/weaviate](https://github.com/weaviate/weaviate) (Revision: `cf81225f`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-20T17:53:57.709Z`  
+> **Provenance**: Harvested from [weaviate/weaviate](https://github.com/weaviate/weaviate) (Revision: `5852883d`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-24T00:31:51.428Z`  
 > **Learning ID**: `learn-github-weaviate-weaviate`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `weaviate/weaviate` (Commit: `cf81225f`)
+- **Target Repository**: `weaviate/weaviate` (Commit: `5852883d`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/weaviate-weaviate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/weaviate/weaviate](https://github.com/weaviate/weaviate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T17:53:56.705Z  
+> **Harvest Timestamp**: 2026-11-24T00:31:50.100Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Weaviate is an open-source vector database that stores both objects and vectors, allowing for the combination of vector search with structured filtering with the fault tolerance and scalability of a cloud-native database​.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: pyproject.toml, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 16956 stars
+- **Stars / Engagement**: 16958 stars
 
 ---
 
@@ -1745,995 +1745,1159 @@ func (s *State) SetGraphQLIfCurrent(gql graphql.GraphQL, gen uint64) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4ffbd0c7` (2026-11-18)
-**Commit Message**: reranker-openai: review fixes for header-host errors, the error object and tests [api]
+### Incident Patch 1: `9132cef5` (2026-11-23)
+**Commit Message**: Merge pull request #13594 from weaviate/hfresh-zero-memory
 
-No error from a host named by X-Openai-Baseurl names an object. Before,
-some of its errors carried "object <id>:" and others did not, which told
-the caller what the host replied.
+hfresh: zero-memory usage for low volume tenants
 
-The error object decodes an error that is a string, and keeps param and
-code when the message is not a string. Before, either case dropped the
-whole object.
-
-Quoted text of 512 bytes or less is cleaned of bytes that are not UTF-8,
-as longer text already was.
-
-The image magics are named constants in the block at the top of
-image.go. The comment on hostFromHeader matches the code.
-
-Tests: the acceptance test sends the key and the base URL in the request
-headers to the fake provider, records the score margins of the real API
-and names the one-object subtest after what it asserts. Unit rows cover
-the two error shapes and truncate.
-
-**File**: `modules/reranker-openai/clients/image.go` (modified, +13/-5)
+**File**: `adapters/repos/db/vector/hfresh/config.go` (modified, +31/-4)
 ```diff
-@@ -28,6 +28,15 @@ const (
- 	inputRoleUser  = "user"
- 	inputImageType = "input_image"
- 
-+	// pngMagic, jpegMagic and gifMagic are the first bytes of those formats.
-+	// A WebP image is a RIFF container with webpMagic at webpMagicOffset; a
-+	// WAVE file shares the RIFF header.
-+	pngMagic        = "\x89PNG"
-+	jpegMagic       = "\xff\xd8\xff"
-+	gifMagic        = "GIF8"
-+	riffMagic       = "RIFF"
-+	webpMagic       = "WEBP"
-+	webpMagicOffset = 8
- 	// magicChars is 16 base64 characters: the first 12 bytes of an image.
- 	magicChars = 16
- 	// maxImageBytes is 20 MiB (20,971,520 bytes). The API rejects a larger
-@@ -45,15 +54,14 @@ type inputPart struct {
- 	ImageURL string `json:"image_url,omitempty"`
- }
- 
--// WebP is a RIFF container with "WEBP" at offset 8; a WAVE file shares the RIFF header.
- var imageTypes = []struct {
- 	mime   string
- 	magics []magic
- }{
--	{"image/png", []magic{{0, []byte("\x89PNG")}}},
--	{"image/jpeg", []magic{{0, []byte("\xff\xd8\xff")}}},
--	{"image/gif", []magic{{0, []byte("GIF8")}}},
--	{"image/webp", []magic{{0, []byte("RIFF")}, {8, []byte("WEBP")}}},
-+	{"image/png", []magic{{0, []byte(pngMagic)}}},
-+	{"image/jpeg", []magic{{0, []byte(jpegMagic)}}},
-+	{"image/gif", []magic{{0, []byte(gifMagic)}}},
-+	{"image/webp", []magic{{0, []byte(riffMagic)}, {webpMagicOffset, []byte(webpMagic)}}},
- }
- 
- type magic struct {
-```
-
-**File**: `modules/reranker-openai/clients/ranker.go` (modified, +38/-14)
-```diff
-@@ -226,16 +226,17 @@ type judgeRequest struct {
- 	apiKey       string
- 	organization string
- 	// hostFromHeader says the request header named the host. Anyone who may
--	// query can name one, so status errors quote no reply body for it. A wrong
--	// answer name or type is quoted (cut to 512 bytes) for every host.
-+	// query can name one, so an error quotes nothing of its replies and names
-+	// no object.
- 	hostFromHeader bool
- 	model          string
- 	query          string
- 	image          bool
- }
- 
- // judge names the document's object in a 400 about the document and in a
--// rejected answer.
-+// rejected answer. It names no object for a host the request header named:
-+// which errors carry the name would tell what that host replied.
- func (c *client) judge(ctx context.Context, r judgeRequest, document ent.Document) (float64, int64, error) {
- 	response, err := c.send(ctx, r, document.Value)
- 	if err != nil {
-@@ -247,7 +248,10 @@ func (c *client) judge(ctx context.Context, r judgeRequest, document ent.Documen
- 	}
- 	score, err := response.score(questionName)
- 	if err != nil {
--		return 0, 0, fmt.Errorf("object %s: %w", document.ID, c.replyError(err, r.hostFromHeader))
-+		if r.hostFromHeader {
-+			return 0, 0, c.replyError(err, true)
-+		}
-+		return 0, 0, fmt.Errorf("object %s: %w", document.ID, err)
- 	}
- 	return score, response.inputTokens(), nil
- }
-@@ -362,12 +366,33 @@ func (c *client) readResponse(ctx context.Context, res *http.Response, hostFromH
- }
- 
- // Param and Code are any: OpenAI sends a string or null, and other servers
--// send a number as the code. A value of another type must not fail the decode
--// of the message.
-+// send a number as the code.
- type apiError struct {
--	Message string `json:"message"`
--	Param   any    `json:"param"`
--	Code    any    `json:"code"`
-+	Message string
-+	Param   any
-+	Code    any
-+}
-+
-+// UnmarshalJSON takes the error object of OpenAI and an error that is a
-+// string, which some OpenAI-compatible servers send. A message that is not a
-+// string reads as no message, so that param and code are still decoded.
-+func (e *apiError) UnmarshalJSON(data []byte) error {
-+	var message string
-+	if json.Unmarshal(data, &message) == nil {
-+		e.Message = message
-+		return nil
-+	}
-+	var fields struct {
-+		Message any `json:"message"`
-+		Param   any `json:"param"`
-+		Code    any `json:"code"`
-+	}
-+	if err := json.Unmarshal(data, &fields); err != nil {
-+		return err
-+	}
-+	e.Message, _ = fields.Message.(string)
-+	e.Param, e.Code = fields.Param, fields.Code
-+	return nil
- }
- 
- func (e apiError) message() string {
-@@ -415,7 +440,7 @@ func (c *client) statusError(res *http.Response, hostFromHeader bool) error {
- 	return rejectedError{
- 		status:        res.StatusCode,
- 		message:       apiErr.message(),
--		aboutDocument: apiErr.aboutDocument(res.StatusCode),
-+		aboutDocument: !hostFromHeader && apiErr.aboutDocument(res.StatusCode),
- 	}
- }
- 
-@@ -446,11 +471,10 @@ func (e rejectedError) Error() string {
- 	return fmt.Sprintf("connection to OpenAI API failed with status %d: %s", e.status, e.message)
- }
- 
-+// truncate cuts s to maxErrorMessageBytes and drops the bytes that are not
-+// valid UTF-8, such as those of a character the cut splits.
- func truncate(s string) string {
--	if len(s) <= maxErrorMessageBytes {
--		return s
--	}
--	return strings.ToValidUTF8(s[:maxErrorMessageBytes], "")
-+	return strings.ToValidUTF8(s[:min(len(s), maxErrorMessageBytes)], "")
- }
- 
- // The server's organization never goes to a host the request header named, as
-```
-
-**File**: `modules/reranker-openai/clients/ranker_test.go` (modified, +52/-6)
-```diff
-@@ -635,6 +635,22 @@ func TestRankFailsAtOnceOnProviderErrors(t *testing.T) {
- 			},
- 			wantErr: "object " + secondID + ": connection to OpenAI API failed with status 400: Invalid input",
- 		},
-+		{
-+			name: "400 with a message that is not a string keeps the param and names no object",
-+			reply: fakeReply{
-+				status: http.StatusBadRequest,
-+				body:   `{"error":{"message":["Unsupported model"],"param":"model","code":"invalid_value"}}`,
-+			},
-+			wantErr: "connection to OpenAI API failed with status 400",
-+		},
-+		{
-+			name: "400 with an error that is a string names the object and quotes it",
-+			reply: fakeReply{
-+				status: http.StatusBadRequest,
-+				body:   `{"error":"Invalid input"}`,
-+			},
-+			wantErr: "object " + secondID + ": connection to OpenAI API failed with status 400: Invalid input",
-+		},
- 		{
- 			name: "400 with a param in the questions names no object",
- 			reply: fakeReply{
-@@ -791,6 +807,11 @@ func TestRankReportsAnErrorObjectInA200(t *testing.T) {
- 			body:    `{"error":{"message":"The model is overloaded","type":"server_error"}}`,
- 			wantErr: "OpenAI API returned an error: The model is overloaded",
- 		},
-+		{
-+			name:    "an error that is a string",
-+			body:    `{"error":"The model is overloaded"}`,
-+			wantErr: "OpenAI API returned an error: The model is overloaded",
-+		},
- 		{
- 			name:    "an error object next to an answer",
- 			body:    `{"answers":[{"type":"predicate","name":"condition","probability":0.5}],"error":{"message":"The model is overloaded"}}`,
-@@ -1129,7 +1150,7 @@ func TestRankQuotesNoBodyOfAHostTheRequestNames(t *testing.T) {
- 			name:       "a 400 from the header base URL",
- 			reply:      fakeReply{status: http.StatusBadRequest, body: banner},
- 			fromHeader: true,
--			wantErr:    "object " + firstID + ": connection to OpenAI API failed with status 400",
-+			wantErr:    "connection to OpenAI API failed with status 400",
- 		},
- 		{
- 			name:       "a 500 from the header base URL",
-@@ -1180,25 +1201,25 @@ func TestRankQuotesNoBodyOfAHostTheRequestNames(t *testing.T) {
- 			name:       "a wrong answer name from the header base URL",
- 			reply:      fakeReply{status: http.StatusOK, body: `{"answers":[{"type":"predicate","name":"internal banner","probability":0.5}]}`},
- 			fromHeader: true,
--			wantErr:    "object " + firstID + ": " + unexpectedHeaderHostReply,
-+			wantErr:    unexpectedHeaderHostReply,
- 		},
- 		{
- 			name:       "an answer of another type from the header base URL",
- 			reply:      fakeReply{status: http.StatusOK, body: `{"answers":[{"type":"internal banner","name":"condition","probability":0.5}]}`},
- 			fromHeader: true,
--			wantErr:    "object " + firstID + ": " + unexpectedHeaderHostReply,
-+			wantErr:    unexpectedHeaderHostReply,
- 		},
- 		{
- 			name:       "a probability outside 0 to 1 from the header base URL",
- 			reply:      fakeReply{status: http.StatusOK, body: `{"answers":[{"type":"predicate","name":"condition","probability":7.25}]}`},
- 			fromHeader: true,
--			wantErr:    "object " + firstID + ": " + unexpectedHeaderHostReply,
-+			wantErr:    unexpectedHeaderHostReply,
- 		},
- 		{
- 			name:       "two answers from the header base URL",
- 			reply:      fakeReply{status: http.StatusOK, body: `{"answers":[{"type":"predicate","name":"condition","probability":0.5},{"type":"predicate","name":"condition","probability":0.5}]}`},
- 			fromHeader: true,
--			wantErr:    "object " + firstID + ": " + unexpectedHeaderHostReply,
-+			wantErr:    unexpectedHeaderHostReply,
- 		},
- 	}
- 	for _, tt := range tests {
-@@ -1242,7 +1263,7 @@ func TestRankDoesNotReadAnErrorBodyItDoesNotQuote(t *testing.T) {
- 			name:       "a 400 from the header base URL",
- 			status:     http.StatusBadRequest,
- 			fromHeader: true,
--			wantErr:    "object " + firstID + ": connection to OpenAI API failed with status 400",
-+			wantErr:    "connection to OpenAI API failed with status 400",
- 		},
- 		{
- 			name:       "a 401 from the header base URL",
-@@ -1494,6 +1515,31 @@ func closedPort(t *testing.T) string {
- 	return listener.Addr().String()
- }
- 
-+func TestTruncate(t *testing.T) {
-+	tests := []struct {
-+		name string
-+		in   string
-+		want string
-+	}{
-+		{name: "empty", in: "", want: ""},
-+		{name: "short", in: "a 400", want: "a 400"},
-+		{name: "at the limit", in: strings.Repeat("a", maxErrorMessageBytes), want: strings.Repeat("a", maxErrorMessageBytes)},
-+		{name: "above the limit", in: strings.Repeat("a", maxErrorMessageBytes+1), want: strings.Repeat("a", maxErrorMessageBytes)},
-+		{
-+			name: "the limit splits a character",
-+			in:   strings.Repeat("a", maxErrorMessageBytes-1) + "é",
-+			want: strings.Repeat("a", maxErrorMessageBytes-1),
-+		},
-+		{name: "a short text that ends inside a character", in: "caf\xc3", want: "caf"},
-+		{name: "a short text with bytes that are not UTF-8", in: "\xff\xfe not json", want: " not json"},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			assert.Equal(t, tt.want, truncate(tt.in))
-+		})
-+	}
-+}
-+
- func TestRankCuts
-```
-
-**File**: `test/modules/reranker-openai/reranker_openai_test.go` (modified, +28/-1)
-```diff
-@@ -27,6 +27,7 @@ import (
- 	"github.com/go-openapi/strfmt"
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
-+	"google.golang.org/grpc/metadata"
- 
- 	"github.com/weaviate/weaviate/entities/models"
- 	"github.com/weaviate/weaviate/entities/schema"
-@@ -80,6 +81,9 @@ func testRerankerOpenAI(restURI, grpcURI string) func(t *testing.T) {
- 
- 		white := grayPNG(t, 400, 0xff)
- 		cross := crossPNG(t, 400)
-+		// The scores come from the model, so the assertions on their order
-+		// need a wide margin. Three runs on 2026-11-18 with gpt-6-luna gave
-+		// 0.84, 0.78 and 0.05 for the tickets, and 0.95 and 0 for the images.
- 		tests := []struct {
- 			name       string
- 			tickets    []ticket
-@@ -132,7 +136,7 @@ func testRerankerOpenAI(restURI, grpcURI string) func(t *testing.T) {
- 			})
- 		}
- 
--		t.Run("a page of one is a request of one document", func(t *testing.T) {
-+		t.Run("a page of one object has a score between 0 and 1", func(t *testing.T) {
- 			createTickets(t, map[string]any{}, tickets())
- 			request := rerankRequest("text", new(churn))
- 			request.Limit = 1
-@@ -343,6 +347,29 @@ func testRerankerOpenAIAgainstAFakeProvider(fake *fakeProvider, restURI, grpcURI
- 			assert.Empty(t, reply.Results)
- 			assert.Empty(t, fake.received())
- 		})
-+
-+		// The class base URL resolves to no host, so the requests reach the
-+		// fake only through the base URL header. The server's organization
-+		// does not go to a host the request names.
-+		t.Run("the base URL and the key of the request headers are used", func(t *testing.T) {
-+			const headerKey = "header-key"
-+			fake.reset(allProbabilities, nil, nil)
-+			createTickets(t, map[string]any{"baseURL": "http://class-base-url.invalid"}, tickets())
-+			ctx := metadata.AppendToOutgoingContext(context.Background(),
-+				"X-Openai-Api-Key", headerKey, "X-Openai-Baseurl", fake.baseURL())
-+
-+			reply, err := grpcClient.Search(ctx, rerankRequest("text", new(churn)))
-+
-+			require.NoError(t, err)
-+			assert.Equal(t, []string{noRefundID, chargedTwiceID, changeEmailID}, resultIDs(reply.Results))
-+			requests := fake.received()
-+			require.Len(t, requests, 3)
-+			for _, r := range requests {
-+				assert.Equal(t, "/v1/decisions", r.path)
-+				assert.Equal(t, "Bearer "+headerKey, r.authorization)
-+				assert.Empty(t, r.organization)
-+			}
-+		})
- 	}
- }
- 
-```
-
----
-
-### Incident Patch 2: `cb0efc16` (2026-11-17)
-**Commit Message**: reranker-openai: fixed limits, the core rerank check, helpers as methods [api]
-
-RERANKER_OPENAI_MAX_CONCURRENT_REQUESTS and
-RERANKER_OPENAI_MAX_DOCUMENTS_PER_QUERY are removed. Each pool has 32
-slots and a query takes at most 1,000 documents, the former defaults. A
-class setting is the place for an override if one is needed later.
-
-The module no longer implements RerankPropertyDataTypes and
-RerankQueryValidator, which the core PR removed. On gRPC the core check
-rejects a blank query and a property that is not text or blob before the
-search. The rank call keeps the same rules for GraphQL, and now also
-rejects a query of whitespace: the API answers it with a probability and
-bills the request.
-
-A query above 100,000 bytes fails in the rank call only, so a search
-without objects no longer fails for it.
-
-Functions whose logic belongs to one struct are methods of it:
-validateQuery, propertyInput, transportError, readResponse, statusError,
-readAPIError and checkImages on the client, input on judgeRequest,
-aboutDocument on apiError, inputTokens on the response.
-
-**File**: `modules/reranker-openai/clients/image.go` (modified, +3/-3)
-```diff
-@@ -98,7 +98,7 @@ func imageDataURL(encoded string) (string, error) {
- }
- 
- // checkImages runs before any request is sent and billed.
--func checkImages(documents []ent.Document, positions []int) error {
-+func (c *client) checkImages(documents []ent.Document, positions []int) error {
- 	for _, position := range positions {
- 		if _, err := imageMIME(documents[position].Value); err != nil {
- 			return fmt.Errorf("object %s: image: %w", documents[position].ID, err)
-@@ -107,8 +107,8 @@ func checkImages(documents []ent.Document, positions []int) error {
- 	return nil
- }
- 
--func newInput(document string, image bool) (any, error) {
--	if !image {
-+func (r judgeRequest) input(document string) (any, error) {
-+	if !r.image {
- 		return document, nil
- 	}
- 	url, err := imageDataURL(document)
-```
-
-**File**: `modules/reranker-openai/clients/image_test.go` (modified, +2/-2)
-```diff
-@@ -82,8 +82,8 @@ func TestImageDataURL(t *testing.T) {
- func TestCheckImages(t *testing.T) {
- 	documents := documentsOf(pngBase64, textBase64, "", jpegBase64)
- 
--	assert.NoError(t, checkImages(documents, []int{0, 3}))
--	assert.EqualError(t, checkImages(documents, []int{0, 1, 3}),
-+	assert.NoError(t, (&client{}).checkImages(documents, []int{0, 3}))
-+	assert.EqualError(t, (&client{}).checkImages(documents, []int{0, 1, 3}),
- 		"object 00000000-0000-0000-0000-000000000001: image: not a PNG, JPEG, GIF or WebP image")
- }
- 
-```
-
-**File**: `modules/reranker-openai/clients/ranker.go` (modified, +36/-38)
-```diff
-@@ -34,18 +34,14 @@ import (
- )
- 
- const (
--	// DefaultMaxConcurrentRequests is 32: the default size of each of the two
--	// pools of the client, set by RERANKER_OPENAI_MAX_CONCURRENT_REQUESTS. Up
--	// to twice the value can be in flight per process. A request for an image
--	// holds about three copies of its base64 while it holds a slot (80 MiB for
--	// a 20 MiB image).
--	DefaultMaxConcurrentRequests = 32
--	// MaxConcurrentRequestsLimit is 256: the largest value the setting takes.
--	MaxConcurrentRequestsLimit = 256
--	// DefaultMaxDocumentsPerQuery is 1,000 documents. A query sends one billed
-+	// MaxConcurrentRequests is 32: the size of each of the two pools of the
-+	// client, so a process has up to 64 requests in flight. A request for an
-+	// image holds about three copies of its base64 while it holds a slot
-+	// (80 MiB for a 20 MiB image).
-+	MaxConcurrentRequests = 32
-+	// MaxDocumentsPerQuery is 1,000 documents. A query sends one billed
- 	// request per object.
--	DefaultMaxDocumentsPerQuery = 1000
--	MaxDocumentsPerQueryEnv     = "RERANKER_OPENAI_MAX_DOCUMENTS_PER_QUERY"
-+	MaxDocumentsPerQuery = 1000
- 
- 	apiPath            = "/v1/decisions"
- 	predicateType      = "predicate"
-@@ -101,10 +97,12 @@ func New(apiKey, organization string, timeout time.Duration, maxConcurrentReques
- 	}
- }
- 
--// ValidateQuery returns the error of a rerank.query the module does not rank
--// with: an empty one, and one above maxQueryBytes.
--func ValidateQuery(query string) error {
--	if query == "" {
-+// validateQuery returns the error of a rerank.query the module does not rank
-+// with: a blank one, and one above maxQueryBytes. The gRPC search rejects a
-+// blank query before the search; GraphQL reaches this check only. The API
-+// answers a blank query with a probability and bills the request.
-+func (c *client) validateQuery(query string) error {
-+	if strings.TrimSpace(query) == "" {
- 		return errors.New("rerank.query is required by reranker-openai: the query is the condition the model judges")
- 	}
- 	if len(query) > maxQueryBytes {
-@@ -124,10 +122,10 @@ func ValidateQuery(query string) error {
- func (c *client) RankProperty(ctx context.Context, query, property string, documents []ent.Document,
- 	cfg moduletools.ClassConfig,
- ) (*ent.RankResult, error) {
--	if err := ValidateQuery(query); err != nil {
-+	if err := c.validateQuery(query); err != nil {
- 		return nil, err
- 	}
--	image, err := propertyInput(cfg, property)
-+	image, err := c.propertyInput(cfg, property)
- 	if err != nil {
- 		return nil, err
- 	}
-@@ -153,12 +151,12 @@ func (c *client) RankProperty(ctx context.Context, query, property string, docum
- 		pending = append(pending, i)
- 	}
- 	if len(pending) > c.maxDocumentsPerQuery {
--		return nil, fmt.Errorf("rerank of %d objects: reranker-openai sends one request per object and takes at most %d per query (%s)",
--			len(pending), c.maxDocumentsPerQuery, MaxDocumentsPerQueryEnv)
-+		return nil, fmt.Errorf("rerank of %d objects: reranker-openai sends one request per object and takes at most %d per query",
-+			len(pending), c.maxDocumentsPerQuery)
- 	}
- 
- 	if image {
--		if err := checkImages(documents, pending); err != nil {
-+		if err := c.checkImages(documents, pending); err != nil {
- 			return nil, err
- 		}
- 	}
-@@ -208,7 +206,7 @@ func (c *client) RankProperty(ctx context.Context, query, property string, docum
- }
- 
- // The gRPC parser runs the same check before the search; GraphQL has none.
--func propertyInput(cfg moduletools.ClassConfig, property string) (image bool, err error) {
-+func (c *client) propertyInput(cfg moduletools.ClassConfig, property string) (image bool, err error) {
- 	if cfg == nil {
- 		return false, errors.New("no class config")
- 	}
-@@ -251,7 +249,7 @@ func (c *client) judge(ctx context.Context, r judgeRequest, document ent.Documen
- 	if err != nil {
- 		return 0, 0, fmt.Errorf("object %s: %w", document.ID, err)
- 	}
--	return score, inputTokens(response.Usage), nil
-+	return score, response.inputTokens(), nil
- }
- 
- func (c *client) slotsFor(hostFromHeader bool) chan struct{} {
-@@ -277,7 +275,7 @@ func (c *client) send(ctx context.Context, r judgeRequest, document string) (dec
- 		return decisionResponse{}, ctx.Err()
- 	}
- 
--	input, err := newInput(document, r.image)
-+	input, err := r.input(document)
- 	if err != nil {
- 		return decisionResponse{}, fmt.Errorf("image: %w", err)
- 	}
-@@ -301,17 +299,17 @@ func (c *client) send(ctx context.Context, r judgeRequest, document string) (dec
- 
- 	res, err := c.httpClient.Do(req)
- 	if err != nil {
--		return decisionResponse{}, transportError(ctx, "send OpenAI request", "no HTTP response from", err, r.hostFromHeader)
-+		return decisionResponse{}, c.transportError(ctx, "send OpenAI request", "no HTTP response from", err, r.hostFromHeader)
- 	}
- 	defer res.Body.Close()
--	return readResponse(ctx, res, r.hostFromHeader)
-+	return c.readResponse(ctx, res, r.hostFromHeader)
- }
- 
- // transportError keeps the transport's error for the class or default host.
- // For a host the request header name
-```
-
-**File**: `modules/reranker-openai/clients/ranker_test.go` (modified, +39/-30)
-```diff
-@@ -238,7 +238,7 @@ func TestRankSkipsEmptyAndDuplicateDocuments(t *testing.T) {
- 	f := newFake(t)
- 	f.probabilities = map[string]float64{"a": 0.8, "b": 0.2}
- 	logger, hook := debugLogger()
--	c := New(defaultFakeKey, "", testTimeout, DefaultMaxConcurrentRequests, DefaultMaxDocumentsPerQuery, logger)
-+	c := New(defaultFakeKey, "", testTimeout, MaxConcurrentRequests, MaxDocumentsPerQuery, logger)
- 
- 	res, err := c.RankProperty(context.Background(), churn, "text", documentsOf("", "a", "a", "b"), classConfig(f.url(), nil))
- 
-@@ -282,13 +282,25 @@ func TestRankWithEveryDocumentEmpty(t *testing.T) {
- }
- 
- func TestRankRequiresAQuery(t *testing.T) {
--	f := newFake(t)
-+	tests := []struct {
-+		name  string
-+		query string
-+	}{
-+		{name: "no query", query: ""},
-+		{name: "a space", query: " "},
-+		{name: "whitespace", query: " \t\n"},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			f := newFake(t)
- 
--	_, err := newTestClient(defaultFakeKey).RankProperty(context.Background(), "", "text",
--		documentsOf(noRefund), classConfig(f.url(), nil))
-+			_, err := newTestClient(defaultFakeKey).RankProperty(context.Background(), tt.query, "text",
-+				documentsOf(noRefund), classConfig(f.url(), nil))
- 
--	require.EqualError(t, err, "rerank.query is required by reranker-openai: the query is the condition the model judges")
--	assert.Empty(t, f.received())
-+			require.EqualError(t, err, "rerank.query is required by reranker-openai: the query is the condition the model judges")
-+			assert.Empty(t, f.received())
-+		})
-+	}
- }
- 
- func TestRankLimitsTheQuerySize(t *testing.T) {
-@@ -343,8 +355,7 @@ func TestRankCapsTheDocumentsOfAQuery(t *testing.T) {
- 			cap:       3,
- 			property:  "text",
- 			documents: []string{"a", "b", "c", "d"},
--			wantErr: "rerank of 4 objects: reranker-openai sends one request per object and takes at most 3 per query " +
--				"(RERANKER_OPENAI_MAX_DOCUMENTS_PER_QUERY)",
-+			wantErr:   "rerank of 4 objects: reranker-openai sends one request per object and takes at most 3 per query",
- 		},
- 		{
- 			name:      "blank and duplicate documents do not count",
-@@ -358,8 +369,7 @@ func TestRankCapsTheDocumentsOfAQuery(t *testing.T) {
- 			cap:       1,
- 			property:  "photo",
- 			documents: []string{pngBase64, "%%%%"},
--			wantErr: "rerank of 2 objects: reranker-openai sends one request per object and takes at most 1 per query " +
--				"(RERANKER_OPENAI_MAX_DOCUMENTS_PER_QUERY)",
-+			wantErr:   "rerank of 2 objects: reranker-openai sends one request per object and takes at most 1 per query",
- 		},
- 		{
- 			name:      "a cap below one is one",
-@@ -373,14 +383,13 @@ func TestRankCapsTheDocumentsOfAQuery(t *testing.T) {
- 			cap:       -2,
- 			property:  "text",
- 			documents: []string{"a", "b"},
--			wantErr: "rerank of 2 objects: reranker-openai sends one request per object and takes at most 1 per query " +
--				"(RERANKER_OPENAI_MAX_DOCUMENTS_PER_QUERY)",
-+			wantErr:   "rerank of 2 objects: reranker-openai sends one request per object and takes at most 1 per query",
- 		},
- 	}
- 	for _, tt := range tests {
- 		t.Run(tt.name, func(t *testing.T) {
- 			f := newFake(t)
--			c := New(defaultFakeKey, "", testTimeout, DefaultMaxConcurrentRequests, tt.cap, nullLogger())
-+			c := New(defaultFakeKey, "", testTimeout, MaxConcurrentRequests, tt.cap, nullLogger())
- 
- 			res, err := c.RankProperty(context.Background(), churn, tt.property, documentsOf(tt.documents...),
- 				classConfig(f.url(), nil))
-@@ -677,7 +686,7 @@ func TestRankStopsAfterTheFirstProviderError(t *testing.T) {
- 	f := newFake(t)
- 	f.replies = map[int]fakeReply{0: {status: http.StatusTooManyRequests, body: `{"error":{"message":"slow down"}}`}}
- 
--	res, err := New(defaultFakeKey, "", testTimeout, 1, DefaultMaxDocumentsPerQuery, nullLogger()).RankProperty(context.Background(), churn, "text",
-+	res, err := New(defaultFakeKey, "", testTimeout, 1, MaxDocumentsPerQuery, nullLogger()).RankProperty(context.Background(), churn, "text",
- 		documentsOf("first", "second", "third"), classConfig(f.url(), nil))
- 
- 	require.EqualError(t, err, "connection to OpenAI API failed with status 429: slow down")
-@@ -751,7 +760,7 @@ func TestRankReportsA401AndA403WithoutTheBody(t *testing.T) {
- 			f := newFake(t)
- 			f.replies = map[int]fakeReply{0: {status: tt.status, body: tt.body}}
- 			logger, hook := debugLogger()
--			c := New(secret, "", testTimeout, DefaultMaxConcurrentRequests, DefaultMaxDocumentsPerQuery, logger)
-+			c := New(secret, "", testTimeout, MaxConcurrentRequests, MaxDocumentsPerQuery, logger)
- 
- 			_, err := c.RankProperty(context.Background(), churn, "text", documentsOf(noRefund), classConfig(f.url(), nil))
- 
-@@ -919,7 +928,7 @@ func TestRankHeaders(t *testing.T) {
- 			if tt.headerBaseURL {
- 				ctx = context.WithValue(ctx, "X-Openai-Baseurl", []string{headerServer.url()})
- 			}
--			c := New(tt.serverKey, tt.serverOrganization, testTimeout, DefaultMaxConcurrentRequests, DefaultMaxDocumentsPerQuery, nullLogger())
-+			c := New(tt.serverKey, tt.serverOrgani
-```
-
-**File**: `modules/reranker-openai/module.go` (modified, +3/-59)
-```diff
-@@ -13,27 +13,17 @@ package modrerankeropenai
+@@ -13,7 +13,9 @@ package hfresh
  
  import (
- 	"context"
--	"fmt"
- 	"os"
--	"strconv"
--
--	"github.com/pkg/errors"
+ 	"math"
++	"os"
  
- 	"github.com/weaviate/weaviate/entities/modulecapabilities"
- 	"github.com/weaviate/weaviate/entities/moduletools"
--	"github.com/weaviate/weaviate/entities/schema"
- 	"github.com/weaviate/weaviate/modules/reranker-openai/clients"
- 	"github.com/weaviate/weaviate/modules/reranker-openai/config"
- 	rerankeradditional "github.com/weaviate/weaviate/usecases/modulecomponents/additional"
- 	"github.com/weaviate/weaviate/usecases/modulecomponents/ent"
++	"github.com/dustin/go-humanize"
+ 	"github.com/pkg/errors"
+ 	"github.com/sirupsen/logrus"
+ 	"github.com/weaviate/weaviate/adapters/repos/db/lsmkv"
+@@ -33,6 +35,25 @@ const (
+ 	minPostingSizeFloor uint32 = 3   // Minimum vectors for split threshold
  )
  
--const (
--	Name = config.ModuleName
--
--	maxConcurrentRequestsEnv = "RERANKER_OPENAI_MAX_CONCURRENT_REQUESTS"
--	maxDocumentsPerQueryEnv  = clients.MaxDocumentsPerQueryEnv
--)
-+const Name = config.ModuleName
++const singlePostingMaxSizeEnv = "EXPERIMENTAL_HFRESH_SINGLE_POSTING_MAX_SIZE"
++
++// singlePostingMaxSizeFromEnv reads the size, such as 10MiB, up to which an
++// index stays in one posting. Unset, zero or invalid leaves the feature off.
++func singlePostingMaxSizeFromEnv(logger logrus.FieldLogger) uint64 {
++	v := os.Getenv(singlePostingMaxSizeEnv)
++	if v == "" {
++		return 0
++	}
++
++	size, err := humanize.ParseBytes(v)
++	if err != nil {
++		logger.WithField("value", v).Warnf("invalid %s, single-posting mode stays disabled: %v",
++			singlePostingMaxSizeEnv, err)
++		return 0
++	}
++	return size
++}
++
+ type Config struct {
+ 	Logger                       logrus.FieldLogger
+ 	Scheduler                    *queue.Scheduler
+@@ -161,20 +182,25 @@ func validateImmutableField(u immutableParameter,
+ // Dims is the number of dimensions of the vector, after compression
+ // if applicable.
+ func (h *HFresh) computeMaxPostingSize(dims int) uint32 {
++	maxBytes := h.maxPostingSizeKB * 1024 // budget
++
++	return uint32(math.Ceil(float64(maxBytes) / postingEntryBytes(dims)))
++}
++
++// postingEntryBytes is the size of one posting entry with dims dimensions.
++func postingEntryBytes(dims int) float64 {
+ 	bytesPerDim := 0.125                                  // RQ1
+-	maxBytes := h.maxPostingSizeKB * 1024                 // budget
+ 	metadata := 8 + 1 + compressionhelpers.RQMetadataSize // id + version + RQ metadata
  
- func New() *ReRankerOpenAIModule {
- 	return &ReRankerOpenAIModule{}
-@@ -57,62 +47,18 @@ func (m *ReRankerOpenAIModule) Type() modulecapabilities.ModuleType {
- 	return modulecapabilities.Text2TextReranker
+-	vBytes := float64(dims)*bytesPerDim + float64(metadata)
+-
+-	return uint32(math.Ceil(float64(maxBytes) / vBytes))
++	return float64(dims)*bytesPerDim + float64(metadata)
  }
  
--func (m *ReRankerOpenAIModule) RerankPropertyDataTypes() []schema.DataType {
--	return []schema.DataType{schema.DataTypeText, schema.DataTypeBlob}
--}
--
--// ValidateRerankQuery applies the rule of the rank call, which the GraphQL
--// search reaches without this check.
--func (m *ReRankerOpenAIModule) ValidateRerankQuery(query string) error {
--	return clients.ValidateQuery(query)
--}
--
- func (m *ReRankerOpenAIModule) Init(ctx context.Context,
- 	params moduletools.ModuleInitParams,
- ) error {
--	maxConcurrentRequests, err := maxConcurrentRequestsFromEnv()
--	if err != nil {
--		return errors.Wrap(err, "init reranker")
--	}
--	maxDocumentsPerQuery, err := maxDocumentsPerQueryFromEnv()
--	if err != nil {
--		return errors.Wrap(err, "init reranker")
--	}
--
- 	apiKey := os.Getenv("OPENAI_APIKEY")
- 	organization := os.Getenv("OPENAI_ORGANIZATION")
--	client := clients.New(apiKey, organization, params.GetConfig().ModuleHttpClientTimeout, maxConcurrentRequests,
--		maxDocumentsPerQuery, params.GetLogger())
-+	client := clients.New(apiKey, organization, params.GetConfig().ModuleHttpClientTimeout, clients.MaxConcurrentRequests,
-+		clients.MaxDocumentsPerQuery, params.GetLogger())
- 	m.reranker = client
- 	m.additionalPropertiesProvider = rerankeradditional.NewPropertyRankerProvider(client)
+ func (h *HFresh) setMaxPostingSize(dims uint32) error {
+ 	if dims == 0 || h.maxPostingSizeKB < ent.MaxPostingSizeKBFloor {
+ 		return errors.New("unable to set max posting size")
+ 	}
+ 	h.maxPostingSize = max(h.computeMaxPostingSize(int(dims)), maxPostingSizeFloor)
++	h.bootstrapThreshold = uint32(min(float64(h.singlePostingMaxSize)/postingEntryBytes(int(dims)), math.MaxUint32))
+ 	h.minPostingSize = max(h.maxPostingSize/3, minPostingSizeFloor)
+ 
+ 	if h.minPostingSize >= h.maxPostingSize {
+@@ -188,6 +214,7 @@ func (h *HFresh) setMaxPostingSize(dims uint32) error {
+ 			"minPostingSize":   h.minPostingSize,
+ 			"maxPostingSize":   h.maxPostingSize,
+ 			"maxPostingSizeKB": h.maxPostingSizeKB,
++			"singlePostingMax": h.bootstrapThreshold,
+ 		},
+ 	).Warn("hfresh posting sizes configured")
  	return nil
- }
- 
--func maxConcurrentRequestsFromEnv() (int, error) {
--	v := os.Getenv(maxConcurrentRequestsEnv)
--	if v == "" {
--		return clients.DefaultMaxConcurrentRequests, nil
--	}
--	n, err := strconv.Atoi(v)
--	if err != nil || n < 1 || n > clients.MaxConcurrentRequestsLimit {
--		return 0, fmt.Errorf("%s must be a whole number between 1 and %d, got %q",
--			maxConcurrentRequestsEnv, clients.MaxConcurrentRequestsLimit, v)
--	}
--	return n, nil
--}
--
--func maxDocumentsPerQueryFromEnv() (int, error) {
--	v := os.Getenv(maxDocumentsPerQueryEnv)
--	if v == "" {
--		return clients.DefaultMaxDocumentsPerQuery, nil
--	}
--	n, err := strconv.Atoi(v)
--	if err != nil || n < 1 {
--		return 0, fmt.Errorf("%s must be a whole number of at least 1, got %q", maxDocumentsPerQueryEnv, v)
--	}
--	return n, nil
--}
--
- func (m *ReRankerOpenAIModule) MetaInfo() (map[string]any, error) {
- 	return m.reranker.MetaInfo()
- }
-@@ -126,6 +72,4 @@ var (
- 	_ = modulecapabilities.Module(New())
- 	_ = modulecapabilities.AdditionalProperties(New())
- 	_ = modulecapabilities.MetaProvider(New())
--	_ = modulecapabilities.RerankPropertyDataTypes(New())
--	_ = modulecapabilities.RerankQueryValidator(New())
- )
 ```
 
-**File**: `modules/reranker-openai/module_test.go` (modified, +8/-173)
+**File**: `adapters/repos/db/vector/hfresh/config_test.go` (modified, +57/-0)
 ```diff
-@@ -15,12 +15,13 @@ import (
+@@ -15,6 +15,7 @@ import (
+ 	"testing"
+ 
+ 	"github.com/pkg/errors"
++	"github.com/sirupsen/logrus"
+ 	"github.com/stretchr/testify/assert"
+ 	"github.com/stretchr/testify/require"
+ 	"github.com/weaviate/weaviate/entities/schema/config"
+@@ -133,3 +134,59 @@ func TestOutOfBoundsMuveraConfigStillLoads(t *testing.T) {
+ 	tf := newTestIndex(t, uc, newMuveraTestStore())
+ 	require.NotNil(t, tf.Index)
+ }
++
++func TestSinglePostingThresholdFromSize(t *testing.T) {
++	const tenMiB = 10 * 1024 * 1024
++	tests := []struct {
++		name     string
++		size     uint64
++		dims     uint32
++		expected uint32
++	}{
++		// each entry takes dims/8 + 25 bytes
++		{"8 dims", tenMiB, 8, 403_298},
++		{"256 dims", tenMiB, 256, 183_960},
++		{"1536 dims", tenMiB, 1536, 48_321},
++		{"3072 dims", tenMiB, 3072, 25_637},
++		{"disabled", 0, 1536, 0},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			h := HFresh{
++				logger:               logrus.New(),
++				singlePostingMaxSize: tt.size,
++				maxPostingSizeKB:     ent.DefaultMaxPostingSizeKB,
++			}
++			require.NoError(t, h.setMaxPostingSize(tt.dims))
++			require.Equal(t, tt.expected, h.bootstrapThreshold)
++		})
++	}
++}
++
++func TestSinglePostingMaxSizeFromEnv(t *testing.T) {
++	tests := []struct {
++		name     string
++		value    *string
++		expected uint64
++	}{
++		{"unset disables", nil, 0},
++		{"zero disables", ptr("0"), 0},
++		{"bytes", ptr("1048576"), 1 << 20},
++		{"binary unit", ptr("10MiB"), 10 * 1024 * 1024},
++		{"decimal unit", ptr("10MB"), 10 * 1000 * 1000},
++		{"invalid disables", ptr("ten megabytes"), 0},
++		{"negative disables", ptr("-1"), 0},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			if tt.value != nil {
++				t.Setenv("EXPERIMENTAL_HFRESH_SINGLE_POSTING_MAX_SIZE", *tt.value)
++			}
++			require.Equal(t, tt.expected, singlePostingMaxSizeFromEnv(logrus.New()))
++		})
++	}
++}
++
++func ptr(s string) *string {
++	return &s
++}
+```
+
+**File**: `adapters/repos/db/vector/hfresh/helper_for_test.go` (modified, +20/-0)
+```diff
+@@ -15,6 +15,7 @@ import (
  	"context"
+ 	"fmt"
+ 	"math/rand"
++	"strconv"
+ 	"sync"
+ 	"testing"
+ 
+@@ -53,6 +54,13 @@ func (s *testVectorStore) put(id uint64, v []float32) {
+ 	s.m[id] = v
+ }
+ 
++// remove drops a vector as deleting its object does.
++func (s *testVectorStore) remove(id uint64) {
++	s.mu.Lock()
++	defer s.mu.Unlock()
++	delete(s.m, id)
++}
++
+ func (s *testVectorStore) get(_ context.Context, id uint64) ([]float32, error) {
+ 	s.mu.RLock()
+ 	defer s.mu.RUnlock()
+@@ -128,6 +136,18 @@ func withDistanceProvider(provider distancer.Provider) testIndexOption {
+ 	}
+ }
+ 
++// setSinglePostingLimit keeps indexes created by the test in single-posting
++// mode until their posting exceeds n vectors; 0 builds the graph up front.
++func setSinglePostingLimit(t testing.TB, n uint32) {
++	t.Setenv(singlePostingMaxSizeEnv, strconv.FormatUint(singlePostingSize(n), 10))
++}
++
++// singlePostingSize is the byte budget that holds n vectors of
++// singlePostingDims dimensions.
++func singlePostingSize(n uint32) uint64 {
++	return uint64(float64(n) * postingEntryBytes(singlePostingDims))
++}
++
+ // newTestIndex is the single index constructor behind every test fixture in
+ // this package: it wires an HFresh index on top of a dummy LSM store and a
+ // noop-bucket centroid HNSW. Pass a non-nil mvStore to wire the
+```
+
+**File**: `adapters/repos/db/vector/hfresh/hfresh.go` (modified, +21/-7)
+```diff
+@@ -67,6 +67,13 @@ type HFresh struct {
+ 	rescoreLimit     uint32
+ 	store            *lsmkv.Store
+ 
++	// singlePostingMaxSize is the size in bytes up to which the index keeps a
++	// single posting; 0 builds the centroid index up front.
++	singlePostingMaxSize uint64
++	// bootstrapThreshold is singlePostingMaxSize as a vector count, set once
++	// the dimensions are known.
++	bootstrapThreshold uint32
++
+ 	// needsNormalization is precomputed at construction from the configured
+ 	// distance: cosine-dot only equals the cosine distance on unit vectors,
+ 	// so inputs must be normalized on insert, query, and rescore. L2 (and
+@@ -170,6 +177,8 @@ func New(cfg *Config, uc ent.UserConfig, store *lsmkv.Store) (*HFresh, error) {
+ 		rescoreLimit:       uint32(uc.RQ.RescoreLimit),
+ 		rootPath:           cfg.RootPath,
+ 		needsNormalization: cfg.DistanceProvider.Type() == "cosine-dot",
++
++		singlePostingMaxSize: singlePostingMaxSizeFromEnv(logger),
+ 	}
+ 
+ 	h.muvera.Store(uc.Multivector.MuveraConfig.Enabled)
+@@ -193,7 +202,7 @@ func New(cfg *Config, uc ent.UserConfig, store *lsmkv.Store) (*HFresh, error) {
+ 		}
+ 	}
+ 
+-	h.Centroids, err = NewHNSWIndex(metrics, store, cfg, 1024*1024, 1024)
++	h.Centroids, err = NewHNSWIndex(metrics, store, cfg, h.singlePostingMaxSize > 0)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+@@ -223,6 +232,11 @@ func New(cfg *Config, uc ent.UserConfig, store *lsmkv.Store) (*HFresh, error) {
+ }
+ 
+ func (h *HFresh) setPostingVectorIDs(ctx context.Context, postingID uint64, posting Posting) error {
++	// the single posting keeps no id list, which its appends would leave stale
++	if postingID == singlePostingID && !h.Centroids.Built() {
++		return h.PostingSizes.Set(ctx, postingID, len(posting))
++	}
++
+ 	if err := h.PostingMap.SetVectorIDs(ctx, postingID, posting); err != nil {
+ 		return err
+ 	}
+@@ -318,7 +332,7 @@ func (h *HFresh) Shutdown(ctx context.Context) error {
+ 		errs = append(errs, err)
+ 	}
+ 
+-	err = h.Centroids.hnsw.Shutdown(ctx)
++	err = h.Centroids.Shutdown(ctx)
+ 	if err != nil {
+ 		errs = append(errs, err)
+ 	}
+@@ -330,7 +344,7 @@ func (h *HFresh) Flush() error {
+ 	var errs []error
+ 
+ 	// flush the HNSW commit log
+-	err := h.Centroids.hnsw.Flush()
++	err := h.Centroids.Flush()
+ 	if err != nil {
+ 		errs = append(errs, err)
+ 	}
+@@ -345,7 +359,7 @@ func (h *HFresh) Flush() error {
+ }
+ 
+ func (h *HFresh) PrepareForBackup(ctx context.Context) error {
+-	err := h.Centroids.hnsw.PrepareForBackup(ctx)
++	err := h.Centroids.PrepareForBackup(ctx)
+ 	if err != nil {
+ 		return err
+ 	}
+@@ -375,15 +389,15 @@ func (h *HFresh) ResumeAfterBackup(ctx context.Context) error {
+ 		queue.DisableMaintenanceMode()
+ 	}
+ 
+-	return h.Centroids.hnsw.ResumeAfterBackup(ctx)
++	return h.Centroids.ResumeAfterBackup(ctx)
+ }
+ 
+ func (h *HFresh) SnapshotMutableFiles(ctx context.Context, basePath string, dstFor func(relPath string) string) ([]string, error) {
+ 	return nil, nil
+ }
+ 
+ func (h *HFresh) ListFiles(ctx context.Context, basePath string) ([]string, error) {
+-	hnswFiles, err := h.Centroids.hnsw.ListFiles(ctx, basePath)
++	hnswFiles, err := h.Centroids.ListFiles(ctx, basePath)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+@@ -424,7 +438,7 @@ func (h *HFresh) PostStartup(ctx context.Context) {
+ 	// Warm the version map in the background
+ 	enterrors.GoWrapper(h.warmVersionMap, h.logger)
+ 
+-	h.Centroids.hnsw.PostStartup(ctx)
++	h.Centroids.PostStartup(ctx)
+ }
+ 
+ var (
+```
+
+**File**: `adapters/repos/db/vector/hfresh/hfresh_test.go` (modified, +253/-0)
+```diff
+@@ -16,11 +16,13 @@ import (
+ 	"encoding/binary"
+ 	"fmt"
+ 	"log"
++	"math/rand"
  	"net/http"
- 	"net/http/httptest"
--	"strings"
+ 	_ "net/http/pprof"
+ 	"os"
+ 	"path/filepath"
+ 	"runtime"
 +	"strconv"
  	"sync"
  	"sync/atomic"
  	"testing"
- 	"time"
+@@ -41,6 +43,7 @@ import (
+ 	"github.com/weaviate/weaviate/adapters/repos/db/vector/hnsw/distancer"
+ 	"github.com/weaviate/weaviate/adapters/repos/db/vector/testinghelpers"
+ 	"github.com/weaviate/weaviate/entities/cyclemanager"
++	enterrors "github.com/weaviate/weaviate/entities/errors"
+ 	ent "github.com/weaviate/weaviate/entities/vectorindex/hfresh"
+ 	hnswent "github.com/weaviate/weaviate/entities/vectorindex/hnsw"
+ 	"github.com/weaviate/weaviate/usecases/memwatch"
+@@ -65,6 +68,9 @@ func distanceWrapper(provider distancer.Provider) func(x, y []float32) float32 {
+ // Uncomment to enable pprof and prometheus metrics when running tests
  
-+	"github.com/go-openapi/strfmt"
- 	"github.com/sirupsen/logrus/hooks/test"
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
-@@ -33,101 +34,6 @@ import (
- 	"github.com/weaviate/weaviate/usecases/modules"
- )
+ func TestMain(m *testing.M) {
++	// tests opt into single-posting mode explicitly, whatever the shell exports
++	_ = os.Unsetenv(singlePostingMaxSizeEnv)
++
+ 	runtime.SetMutexProfileFraction(1)
  
--func TestMaxConcurrentRequestsFromEnv(t *testing.T) {
--	tests := []struct {
--		name    string
--		value   string
--		want    int
--		wantErr string
--	}{
--		{name: "unset or empty", value: "", want: 32},
--		{name: "lower bound", value: "1", want: 1},
--		{name: "upper bound", value: "256", want: 256},
--		{name: "zero", value: "0", wantErr: `RERANKER_OPENAI_MAX_CONCURRENT_REQUESTS must be a whole number between 1 and 256, got "0"`},
--		{name: "above the limit", value: "257", wantErr: `RERANKER_OPENAI_MAX_CONCURRENT_REQUESTS must be a whole number between 1 and 256, got "257"`},
--		{name: "negative", value: "-4", wantErr: `RERANKER_OPENAI_MAX_CONCURRENT_REQUESTS must be a whole number between 1 and 256, got "-4"`},
--		{name: "not a number", value: "many", wantErr: `RERANKER_OPENAI_MAX_CONCURRENT_REQUESTS must be a whole number between 1 and 256, got "many"`},
--	}
--	for _, tt := range tests {
--		t.Run(tt.name, func(t *testing.T) {
--			t.Setenv(maxConcurrentRequestsEnv, tt.value)
--			got, err := maxConcurrentRequestsFromEnv()
--			if tt.wantErr != "" {
--				require.EqualError(t, err, tt.wantErr)
--				return
--			}
--			require.NoError(t, err)
--			assert.Equal(t, tt.want, got)
--		})
--	}
--}
--
--func TestMaxDocumentsPerQueryFromEnv(t *testing.T) {
--	tests := []struct {
--		name    string
--		value   string
--		want    int
--		wantErr string
--	}{
--		{name: "unset or empty", value: "", want: 1000},
--		{name: "lower bound", value: "1", want: 1},
--		{name: "above the default", value: "5000", want: 5000},
--		{name: "zero", value: "0", wantErr: `RERANKER_OPENAI_MAX_DOCUMENTS_PER_QUERY must be a whole number of at least 1, got "0"`},
--		{name: "negative", value: "-4", wantErr: `RERANKER_OPENAI_MAX_DOCUMENTS_PER_QUERY must be a whole number of at least 1, got "-4"`},
--		{name: "not a number", value: "many", wantErr: `RERANKER_OPENAI_MAX_DOCUMENTS_PER_QUERY must be a whole number of at least 1, got "many"`},
--		{name: "a fraction", value: "1.5", wantErr: `RERANKER_OPENAI_MAX_DOCUMENTS_PER_QUERY must be a whole number of at least 1, got "1.5"`},
--		{
--			name:    "above the int range",
--			value:   "99999999999999999999",
--			wantErr: `RERANKER_OPENAI_MAX_DOCUMENTS_PER_QUERY must be a whole number of at least 1, got "99999999999999999999"`,
--		},
--	}
--	for _, tt := range tests {
--		t.Run(tt.name, func(t *testing.T) {
--			t.Setenv(maxDocumentsPerQueryEnv, tt.value)
--			got, err := maxDocumentsPerQueryFromEnv()
--			if tt.wantErr != "" {
--				require.EqualError(t, err, tt.wantErr)
--				return
--			}
--			require.NoError(t, err)
--			assert.Equal(t, tt.want, got)
--		})
--	}
--}
--
--func TestRerankPropertyDataTypes(t *testing.T) {
--	assert.Equal(t, []schema.DataType{schema.DataTypeText, schema.DataTypeBlob}, New().RerankPropertyDataTypes())
--}
--
--func TestValidateRerankQuery(t *testing.T) {
--	tests := []struct {
--		name    string
--		query   string
--		wantErr string
--	}{
--		{name: "a query", query: "The customer is about to churn"},
--		{name: "a blank query is a query", query: " "},
--		{name: "no query", wantErr: "rerank.query is required by reranker-openai: the query is the condition the model judges"},
--		{name: "the longest query", query: strings.Repeat("q", 100_000)},
--		{
--			name:    "a query one byte above the limit",
--			query:   strings.Repeat("q", 100_001),
--			wantErr: "rerank.query is 100001 bytes; reranker-openai sends it with every document and takes at most 100000 bytes",
--		},
--	}
--	for _, tt := range tests {
--		t.Run(tt.name, func(t *testing.T) {
--			err := New().ValidateRerankQuery(tt.query)
--			if tt.wantErr != "" {
--				require.EqualError(t, err, tt.wantErr)
--				return
--			}
--			require.NoError(t, err)
--		})
--	}
--}
--
- func TestValidateClassRejectsAWrongSetting(t *testing.T) {
- 	class := &models.Class{
- 		Class: "Doc",
-@@ -142,79 +48,7 @@ func TestValidateClassRejectsAWrongSetting(t *testing.T) {
- 	assert.Contains(t, err.Error(), "model")
+ 	go func() {
+@@ -339,3 +345,250 @@ func TestCentroidPrefillNeverReadsObjectStorage(t *testing.T) {
+ 			"centroid graph must never prefill from object storage, but doc id %d was found in its cache", docID)
+ 	}
  }
- 
--func TestInitReadsTheConcurrencyEnv(t *testing.T) {
--	tests := []struct {
--		name    string
--		value   string
--		set     bool
--		wantErr bool
--	}{
--		{name: "unset"},
--		{name: "a valid value", value: "8", set: true},
--		{name: "zero", value: "0", set: true, wantErr: true},
--		{name: "not a number", value: "abc", set: true, wantErr: true},
--		{name: "above the limit", value: "257", set: true, wantErr: true},
--	}
--	for _, tt := range tests {
--		t.Run(tt.name, func(t *testing.T) {
--			t.Setenv(maxConcurrentRequestsEnv, "")
--			if tt.set {
--				t.Setenv(maxConcurrentRequestsEnv, tt.value)
--			}
--			logger, _ := test.NewNullLogger()
--			m := New()
--
--			err := m.Init(context.Background(), moduletools.NewInitParam
++
++// singlePostingDims keeps the per-vector work small; at 8 dimensions and
++// the smallest I/O budget a posting holds 315 vectors, so a threshold of
++// 1000 forces a split cascade of two levels once the centroid index is built.
++const (
++	singlePostingDims      = 8
++	singlePostingThreshold = 1000
++)
++
++func singlePostingUserConfig() ent.UserConfig {
++	uc := ent.NewDefaultUserConfig()
++	uc.MaxPostingSizeKB = ent.MaxPostingSizeKBFloor
++	return uc
++}
++
++func TestSinglePostingMode(t *testing.T) {
++	ctx := context.Background()
++
++	insert := func(t *testing.T, tf *TestHFresh, n int) [][]float32 {
++		vectors, _ := testinghelpers.RandomVecsFixedSeed(n, 0, singlePostingDims)
++		for i, v := range vectors {
++			addVectorToIndex(t, tf, uint64(i), v)
++		}
++		return vectors
++	}
++
++	assertSelfSearch := func(t *testing.T, tf *TestHFresh, vectors [][]float32) {
++		for i, v := range vectors {
++			ids, _, err := tf.Index.SearchByVector(ctx, v, 1, nil)
++			require.NoError(t, err)
++			require.Equal(t, []uint64{uint64(i)}, ids, "vector %d", i)
++		}
++	}
++
++	t.Run("threshold zero builds the centroid index eagerly", func(t *testing.T) {
++		tf := newTestIndex(t, singlePostingUserConfig(), nil)
++		require.True(t, tf.Index.Centroids.Built())
++	})
++
++	t.Run("stays in one posting below the threshold", func(t *testing.T) {
++		setSinglePostingLimit(t, singlePostingThreshold)
++		tf := newTestIndex(t, singlePostingUserConfig(), nil)
++		vectors := insert(t, &tf, singlePostingThreshold)
++		tf.Index.waitForMaintenance(t)
++
++		require.False(t, tf.Index.Centroids.Built())
++		require.EqualValues(t, 1, tf.Index.PostingSizes.Count())
++		requireSinglePostingSize(t, tf.Index, singlePostingThreshold)
++		require.EqualValues(t, 0, tf.Index.taskQueue.Size(), "no maintenance task may be queued in single-posting mode")
++
++		assertSelfSearch(t, &tf, vectors)
++
++		var sizeSlots int
++		for range tf.Index.PostingSizes.data.IterAllocated() {
++			sizeSlots++
++		}
++		require.LessOrEqual(t, sizeSlots, postingPageSize, "one posting must not reserve a 64k-entry size page")
++
++		// deletes are honoured by the scan
++		require.NoError(t, tf.Index.Delete(3))
++		ids, _, err := tf.Index.SearchByVector(ctx, vectors[3], 1, nil)
++		require.NoError(t, err)
++		require.NotEqual(t, []uint64{3}, ids)
++
++		// an allow list larger than the flat-search cutoff goes through the
++		// posting scan and must still be applied
++		allowed := make([]uint64, 0, flatSearchCutoff+1)
++		for id := uint64(5); id < uint64(flatSearchCutoff+6); id++ {
++			allowed = append(allowed, id)
++		}
++		ids, _, err = tf.Index.SearchByVector(ctx, vectors[0], 1, helpers.NewAllowList(allowed...))
++		require.NoError(t, err)
++		require.Len(t, ids, 1)
++		require.GreaterOrEqual(t, ids[0], uint64(5))
++
++		require.NoError(t, tf.Index.Flush())
++		require.NoError(t, tf.Index.Shutdown(ctx))
++	})
++
++	t.Run("never splits the single posting inline", func(t *testing.T) {
++		// far past the inline split of graph mode, still under the limit
++		setSinglePostingLimit(t, 2000)
++		tf := newTestIndex(t, singlePostingUserConfig(), nil)
++		insert(t, &tf, 1600)
++		require.Greater(t, uint32(1600), 5*tf.Index.maxPostingSize)
++		require.False(t, tf.Index.Centroids.Built())
++		require.EqualValues(t, 1, tf.Index.PostingSizes.Count())
++	})
++
++	t.Run("splits the single posting inline far above its limit", func(t *testing.T) {
++		// a limit under the max posting size leaves the latter as the limit
++		setSinglePostingLimit(t, 100)
++		tf := newTestIndex(t, singlePostingUserConfig(), nil)
++		require.NoError(t, tf.Index.taskQueue.splitQueue.Pause(ctx))
++		defer tf.Index.taskQueue.splitQueue.Resume()
++
++		vectors := insert(t, &tf, 1600)
++		require.Greater(t, uint32(1600), 5*tf.Index.maxPostingSize)
++		require.True(t, tf.
 ```
 
-**File**: `test/modules/reranker-openai/reranker_openai_test.go` (modified, +14/-10)
+**File**: `adapters/repos/db/vector/hfresh/hnsw.go` (modified, +208/-17)
 ```diff
-@@ -251,7 +251,15 @@ func testRerankerOpenAIAgainstAFakeProvider(fake *fakeProvider, restURI, grpcURI
- 			{
- 				name:        "a missing query fails before any request",
- 				property:    "text",
--				wantErr:     []string{"rerank.query is required by reranker-openai"},
-+				wantErr:     []string{"rerank: query is required"},
-+				minRequests: 0,
-+				maxRequests: 0,
-+			},
-+			{
-+				name:        "a query above the limit fails before any request",
-+				property:    "text",
-+				query:       new(strings.Repeat("q", 100_001)),
-+				wantErr:     []string{"rerank.query is 100001 bytes"},
- 				minRequests: 0,
- 				maxRequests: 0,
- 			},
-@@ -302,20 +310,16 @@ func testRerankerOpenAIAgainstAFakeProvider(fake *fakeProvider, restURI, grpcURI
- 			})
- 		}
+@@ -13,8 +13,11 @@ package hfresh
  
--		// The rank call does not run for a search without objects, so the
--		// query is checked before the search.
-+		// The rank call does not run for a search without objects. The gRPC
-+		// search rejects a blank query before the search.
- 		rejectedQueries := []struct {
- 			name    string
- 			query   *string
- 			wantErr string
- 		}{
--			{name: "a missing query", wantErr: "rerank.query is required by reranker-openai"},
--			{name: "an empty query", query: new(""), wantErr: "rerank.query is required by reranker-openai"},
--			{
--				name:    "a query above the limit",
--				query:   new(strings.Repeat("q", 100_001)),
--				wantErr: "rerank.query is 100001 bytes",
--			},
-+			{name: "a missing query", wantErr: "rerank: query is required"},
-+			{name: "an empty query", query: new(""), wantErr: "rerank: query is required"},
-+			{name: "a query of whitespace", query: new("  "), wantErr: "rerank: query is required"},
+ import (
+ 	"context"
++	"io/fs"
+ 	"math"
++	"os"
+ 	"slices"
++	"sync"
+ 	"sync/atomic"
+ 	"time"
+ 
+@@ -60,21 +63,77 @@ func (c *Centroid) Distance(distancer *Distancer, v Vector) (float32, error) {
+ 	return dist, nil
+ }
+ 
++// singlePostingID is the posting that holds every vector before the centroid
++// graph exists.
++const singlePostingID = 1
++
++// HNSWIndex holds the centroids in an HNSW graph. A lazy index has no graph
++// until its first split: posting 1 holds every vector and has no centroid.
+ type HNSWIndex struct {
+ 	metrics *Metrics
+-	hnsw    *hnsw.HNSW
++	store   *lsmkv.Store
++	cfg     *Config
+ 	counter atomic.Int32
++
++	state atomic.Pointer[centroidState]
++	// pending receives the children of the first split, and becomes the
++	// graph when the split deletes posting 1
++	pending *hnsw.HNSW
++	buildMu sync.Mutex
++}
++
++// centroidState is replaced as a whole, so a reader never combines the graph
++// of one moment with the single posting of another.
++type centroidState struct {
++	// nil in single-posting mode
++	hnsw *hnsw.HNSW
++	// single reports whether posting 1 exists, while there is no graph
++	single bool
++}
++
++// load returns the graph and, without one, whether posting 1 exists.
++func (i *HNSWIndex) load() (*hnsw.HNSW, bool) {
++	state := i.state.Load()
++	return state.hnsw, state.single
+ }
+ 
+-func NewHNSWIndex(metrics *Metrics, store *lsmkv.Store, cfg *Config, pages, pageSize uint64) (*HNSWIndex, error) {
++// NewHNSWIndex creates the centroid graph, reloading it from its commit log.
++// A lazy index only does so if the graph was created before, which left its
++// commit log directory.
++func NewHNSWIndex(metrics *Metrics, store *lsmkv.Store, cfg *Config, lazy bool) (*HNSWIndex, error) {
+ 	index := HNSWIndex{
+ 		metrics: metrics,
++		store:   store,
++		cfg:     cfg,
+ 	}
++	index.state.Store(&centroidState{})
+ 
+ 	cfg.Centroids.HNSWConfig.VectorForIDThunk = func(ctx context.Context, id uint64) ([]float32, error) {
+ 		return nil, nil
+ 	}
++	cfg.Centroids.HNSWConfig.WaitForCachePrefill = true
++	cfg.Centroids.HNSWConfig.AcornFilterRatio = math.MaxFloat64
++
++	if lazy {
++		_, err := os.Stat(hnsw.CommitLogDirectory(cfg.Centroids.HNSWConfig.RootPath, cfg.Centroids.HNSWConfig.ID))
++		if errors.Is(err, fs.ErrNotExist) {
++			return &index, nil
++		}
++		if err != nil {
++			return nil, errors.Wrap(err, "check the centroid graph's commit log")
++		}
++	}
++
++	h, err := index.newGraph()
++	if err != nil {
++		return nil, err
++	}
++	index.state.Store(&centroidState{hnsw: h})
++
++	return &index, nil
++}
+ 
++func (i *HNSWIndex) newGraph() (*hnsw.HNSW, error) {
+ 	var userConfig ent.UserConfig
+ 	userConfig.SetDefaults()
+ 	userConfig.EF = 64
+@@ -83,22 +142,39 @@ func NewHNSWIndex(metrics *Metrics, store *lsmkv.Store, cfg *Config, pages, page
+ 	userConfig.RQ.Bits = 8
+ 	userConfig.RQ.RescoreLimit = 0
+ 	userConfig.FilterStrategy = ent.FilterStrategyAcorn
+-	cfg.Centroids.HNSWConfig.WaitForCachePrefill = true
+-	cfg.Centroids.HNSWConfig.AcornFilterRatio = math.MaxFloat64
+ 
+-	h, err := hnsw.New(*cfg.Centroids.HNSWConfig, userConfig, cfg.TombstoneCallbacks, store)
++	h, err := hnsw.New(*i.cfg.Centroids.HNSWConfig, userConfig, i.cfg.TombstoneCallbacks, i.store)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+ 	h.PostStartup(context.Background())
+ 
+-	index.hnsw = h
++	return h, nil
++}
+ 
+-	return &index, nil
++// Built reports whether the centroid graph exists.
++func (i *HNSWIndex) Built() bool {
++	g, _ := i.load()
++	return g != nil
++}
++
++// restoreSingle reinstates the single posting found on disk at a restart.
++func (i *HNSWIndex) restoreSingle() {
++	i.state.Store(&centroidState{single: true})
++	i.counter.Store(1)
+ }
+ 
+ func (i *HNSWIndex) Get(id uint64) (*Centroid, error) {
+-	vec, err := i.hnsw.Get(id)
++	g, single := i.load()
++	if g == nil {
++		if id != singlePostingID || !single {
++			return nil, errors.Wrapf(ErrPostingNotFound, "centroid %d", id)
++		}
++		// no vector: with a single candidate nothing compares it
++		return &Centroid{}, nil
++	}
++
++	vec, err := g.Get(id)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+@@ -118,7 +194,31 @@ func (i *HNSWIndex) Insert(id uint64, centroid *Centroid) error {
+ 		return nil
+ 	}
+ 
+-	err := i.hnsw.Add(context.Background(), id, centroid.Uncompressed)
++	g, single := i.load()
++	if g == nil {
++		if id == singlePostingID {
++			i.state.Store(&centroidState{single: true})
++			i.counter.Add(1)
++			return nil
++		}
++		if !single {
++			return errors.Errorf("centroid graph not built: cannot add posting %d", id)
++		}
++
++		// a child of the first split
++		var err error
++		i.buildMu.Lock()
++		if i.pending == nil {
++			i.pending, err = i.newGraph()
++		}
++		g = i.pending
++		i.buildMu.Unlock()
++		if err != nil {
++			return errors.Wrap(err, "create the centroid graph")
++		}
++	}
++
++	err := g.Add(context.Background(), id, centroid.Uncompressed)
+ 	if err != nil {
+ 		return errors.Wrap(err, "add to hnsw")
+ 	}
+@@ -128,21 +228,42 @@ func (i *HNSWIndex) Insert(id uint64, centroid *Centroid) error {
+ }
+ 
+ func (i *HN
+```
+
+**File**: `adapters/repos/db/vector/hfresh/index_metadata.go` (modified, +30/-0)
+```diff
+@@ -15,6 +15,7 @@ import (
+ 	"context"
+ 	"encoding/binary"
+ 	"fmt"
++	"slices"
+ 	"sync/atomic"
+ 
+ 	"github.com/weaviate/weaviate/adapters/repos/db/helpers"
+@@ -266,10 +267,34 @@ func (h *HFresh) restoreMetadata() error {
+ 	if err := h.PostingSizes.Restore(h.ctx); err != nil {
+ 		return err
+ 	}
++	if !h.Centroids.Built() {
++		err = h.restoreSinglePosting()
++		if err != nil {
++			return err
++		}
++	}
+ 
+ 	return h.restoreMetrics()
+ }
+ 
++// restoreSinglePosting finds posting 1 by its size, persisted on each append,
++// without reading the posting.
++func (h *HFresh) restoreSinglePosting() error {
++	size, err := h.PostingSizes.Get(h.ctx, singlePostingID)
++	if err != nil || size == 0 {
++		return err
++	}
++
++	h.Centroids.restoreSingle()
++
++	// a crash can lose the queued split, and a lowered limit applies without
++	// waiting for an insert
++	if size > h.splitLimit() {
++		return h.taskQueue.EnqueueSplit(singlePostingID)
++	}
++	return nil
++}
++
+ // restoreDimensions restores dimension-dependent components from persisted
+ // metadata. If quantization data is missing (e.g. crash before it was
+ // persisted), the quantizer is re-created from scratch.
+@@ -459,6 +484,11 @@ func (h *HFresh) repairOrphanPostings() {
+ 			orphans = append(orphans, postingID)
  		}
- 		for _, tt := range rejectedQueries {
- 			t.Run(tt.name+" fails a search without objects", func(t *testing.T) {
+ 	}
++	// a first split cut short after the graph existed leaves posting 1 full,
++	// outside the graph and without a persisted map entry
++	if h.Centroids.Built() && !h.Centroids.Exists(singlePostingID) && !slices.Contains(orphans, singlePostingID) {
++		orphans = append(orphans, singlePostingID)
++	}
+ 
+ 	for _, postingID := range orphans {
+ 		queued, err := h.repairOrphanPosting(h.ctx, postingID)
+```
+
+**File**: `adapters/repos/db/vector/hfresh/index_metadata_test.go` (modified, +483/-1)
+```diff
+@@ -22,6 +22,7 @@ import (
+ 	"github.com/stretchr/testify/require"
+ 	"github.com/weaviate/weaviate/adapters/repos/db/helpers"
+ 	"github.com/weaviate/weaviate/adapters/repos/db/lsmkv"
++	"github.com/weaviate/weaviate/adapters/repos/db/vector/hnsw"
+ 	"github.com/weaviate/weaviate/adapters/repos/db/vector/hnsw/compact"
+ 	"github.com/weaviate/weaviate/adapters/repos/db/vector/testinghelpers"
+ 	ent "github.com/weaviate/weaviate/entities/vectorindex/hfresh"
+@@ -159,6 +160,487 @@ func TestStartupDeletesLegacyReassignBucketKey(t *testing.T) {
+ 	require.Equal(t, unrelatedValue, data)
+ }
+ 
++// singlePostingRestartConfig wires a real centroid commit logger and a
++// vector store, so the bootstrap split can run after a restart.
++func singlePostingRestartConfig(t *testing.T, threshold uint32) (*Config, ent.UserConfig, *testVectorStore) {
++	cfg, uc := makeHFreshConfig(t)
++	setSinglePostingLimit(t, threshold)
++	uc.MaxPostingSizeKB = ent.MaxPostingSizeKBFloor
++	vectors := &testVectorStore{m: make(map[uint64][]float32)}
++	cfg.VectorForIDThunk = vectors.get
++	return cfg, uc, vectors
++}
++
++func addRestartVectors(t *testing.T, index *HFresh, store *testVectorStore, from, to int) [][]float32 {
++	t.Helper()
++	all, _ := testinghelpers.RandomVecsFixedSeed(to, 0, singlePostingDims)
++	for i := from; i < to; i++ {
++		store.put(uint64(i), all[i])
++		require.NoError(t, index.Add(t.Context(), uint64(i), all[i]))
++	}
++	return all
++}
++
++func requireSelfSearchExcept(t *testing.T, index *HFresh, vectors [][]float32, skip int) {
++	t.Helper()
++	for i, v := range vectors {
++		if i == skip {
++			continue
++		}
++		ids, _, err := index.SearchByVector(t.Context(), v, 1, nil)
++		require.NoError(t, err)
++		require.Equal(t, []uint64{uint64(i)}, ids, "vector %d", i)
++	}
++}
++
++// inMemoryVersion reads a version without faulting it in from the store.
++func inMemoryVersion(v *VersionMap, id uint64) VectorVersion {
++	page, slot := v.data.GetPageFor(id)
++	if page == nil {
++		return 0
++	}
++	v.locks.RLock(id)
++	defer v.locks.RUnlock(id)
++	return page[slot]
++}
++
++func TestSinglePostingSurvivesRestart(t *testing.T) {
++	store := testinghelpers.NewDummyStore(t)
++	cfg, uc, vectors := singlePostingRestartConfig(t, singlePostingThreshold)
++
++	index := makeHFreshWithConfig(t, store, cfg, uc)
++	all := addRestartVectors(t, index, vectors, 0, 300)
++	// persisted by the appends, without waiting for a shutdown
++	requireSinglePostingSize(t, index, 300)
++	requireNoSinglePostingIDs(t, index)
++	require.NoError(t, index.Delete(7))
++	require.NoError(t, index.Shutdown(t.Context()))
++
++	index = makeHFreshWithConfig(t, store, cfg, uc)
++	require.False(t, index.Centroids.Built())
++	requireSinglePostingSize(t, index, 300)
++	requireNoSinglePostingIDs(t, index)
++
++	require.Eventually(t, func() bool {
++		return inMemoryVersion(index.VersionMap, 7).Deleted()
++	}, 10*time.Second, 10*time.Millisecond, "the version warmup must load the delete")
++
++	ids, _, err := index.SearchByVector(t.Context(), all[7], 1, nil)
++	require.NoError(t, err)
++	require.NotEqual(t, []uint64{7}, ids, "delete must survive the restart")
++	requireSelfSearchExcept(t, index, all, 7)
++
++	// the restored posting keeps counting towards the threshold
++	all = addRestartVectors(t, index, vectors, 300, singlePostingThreshold+1)
++	index.waitForMaintenance(t)
++	require.True(t, index.Centroids.Built())
++	require.Greater(t, index.PostingSizes.Count(), uint64(2))
++	requireSelfSearchExcept(t, index, all, 7)
++}
++
++// requireSinglePostingSize checks posting 1's size, in memory and in the
++// store, where each append persists it.
++func requireSinglePostingSize(t *testing.T, index *HFresh, size uint32) {
++	t.Helper()
++	inMemory, err := index.PostingSizes.Get(t.Context(), 1)
++	require.NoError(t, err)
++	require.Equal(t, size, inMemory)
++	persisted, err := index.PostingSizes.store.Get(t.Context(), 1)
++	require.NoError(t, err)
++	require.Equal(t, size, persisted)
++}
++
++// requireNoSinglePostingIDs checks that posting 1 keeps no id list.
++func requireNoSinglePostingIDs(t *testing.T, index *HFresh) {
++	t.Helper()
++	_, err := index.PostingMap.Get(t.Context(), 1)
++	require.ErrorIs(t, err, ErrPostingNotFound)
++}
++
++// A merge rewrites the single posting and persists its size, which later
++// appends must keep current for the restart.
++func TestSinglePostingRestartAfterMerge(t *testing.T) {
++	store := testinghelpers.NewDummyStore(t)
++	cfg, uc, vectors := singlePostingRestartConfig(t, singlePostingThreshold)
++
++	index := makeHFreshWithConfig(t, store, cfg, uc)
++	addRestartVectors(t, index, vectors, 0, 300)
++	for id := range uint64(10) {
++		require.NoError(t, index.Delete(id))
++		vectors.remove(id)
++	}
++	require.NoError(t, index.doMerge(t.Context(), 1))
++	requireSinglePostingSize(t, index, 290)
++	requireNoSinglePostingIDs(t, index)
++
++	all := addRestartVectors(t, index, vectors, 300, 400)
++	requireSinglePostingSize(t, index, 390)
++	require.NoError(t, index.Shutdown(t.Context()))
++
++	index = makeHFreshWithConfig(t, store, cfg, uc)
++	require.False(t, 
 ```
 
 ---
 
-### Incident Patch 3: `e580c541` (2026-11-17)
-**Commit Message**: reranker-openai: fixed error also for an oversized reply and an error object of a header-named host [api]
+### Incident Patch 2: `6abe4346` (2026-11-23)
+**Commit Message**: Merge branch 'main' into hfresh-zero-memory
 
-A reply above 1 MiB and a 200 with an error object from a host named by
-X-Openai-Baseurl each had a message of their own, which told the caller
-which of the two the host sent. Both now return the same fixed message
-as every other 200 reply the client cannot use.
-
-**File**: `modules/reranker-openai/clients/ranker.go` (modified, +2/-2)
+**File**: `.github/workflows/pull_requests.yaml` (modified, +5/-0)
 ```diff
-@@ -336,7 +336,7 @@ func (c *client) readResponse(ctx context.Context, res *http.Response, hostFromH
- 		return decisionResponse{}, c.transportError(ctx, "read OpenAI response", "no complete body from", err, hostFromHeader)
+@@ -585,6 +585,10 @@ jobs:
+             test: "--only-module-text2vec-cohere"
+           - name: "reranker-cohere"
+             test: "--only-module-reranker-cohere"
++          - name: "reranker-typesafeai"
++            test: "--only-module-reranker-typesafeai"
++          - name: "reranker-openai"
++            test: "--only-module-reranker-openai"
+           - name: "text2vec-voyageai"
+             test: "--only-module-text2vec-voyageai"
+           - name: "multi2vec-voyageai"
+@@ -655,6 +659,7 @@ jobs:
+           JINAAI_APIKEY: ${{ secrets.JINAAI_APIKEY }}
+           DIGITALOCEAN_APIKEY: ${{ secrets.DIGITALOCEAN_APIKEY }}
+           META_APIKEY: ${{ secrets.META_APIKEY }}
++          TYPESAFEAI_APIKEY: ${{ secrets.TYPESAFEAI_APIKEY }}
+         run: ./test/run.sh ${{ matrix.test }}
+   Acceptance-Tests:
+     name: acceptance (${{ matrix.name }})
+```
+
+**File**: `adapters/handlers/graphql/local/aggregate/resolver.go` (modified, +3/-3)
+```diff
+@@ -63,7 +63,7 @@ func makeResolveClass(authorizer authorization.Authorizer, modulesProvider Modul
+ 
+ func resolveAggregate(p graphql.ResolveParams, authorizer authorization.Authorizer, modulesProvider ModulesProvider, class *models.Class) (interface{}, error) {
+ 	principal := restCtx.GetPrincipalFromContext(p.Context)
+-	className := schema.ClassName(p.Info.FieldName)
++	className := schema.ClassName(class.Class)
+ 
+ 	source, ok := p.Source.(map[string]interface{})
+ 	if !ok {
+@@ -95,7 +95,7 @@ func resolveAggregate(p graphql.ResolveParams, authorizer authorization.Authoriz
+ 		return nil, fmt.Errorf("could not extract properties for class '%s': %w", className, err)
  	}
- 	if len(body) > maxResponseBodyBytes {
--		return decisionResponse{}, fmt.Errorf("OpenAI response exceeds %d bytes", maxResponseBodyBytes)
-+		return decisionResponse{}, c.replyError(fmt.Errorf("OpenAI response exceeds %d bytes", maxResponseBodyBytes), hostFromHeader)
+ 
+-	groupBy, err := extractGroupBy(p.Args, p.Info.FieldName)
++	groupBy, err := extractGroupBy(p.Args, className.String())
+ 	if err != nil {
+ 		return nil, fmt.Errorf("could not extract groupBy path: %w", err)
  	}
- 	var response decisionResponse
- 	if err := json.Unmarshal(body, &response); err != nil {
-@@ -354,7 +354,7 @@ func (c *client) readResponse(ctx context.Context, res *http.Response, hostFromH
- 	if response.Error != nil {
- 		message := response.Error.message()
- 		if hostFromHeader || message == "" {
--			return decisionResponse{}, errors.New("OpenAI API returned an error")
-+			return decisionResponse{}, c.replyError(errors.New("OpenAI API returned an error"), hostFromHeader)
- 		}
- 		return decisionResponse{}, fmt.Errorf("OpenAI API returned an error: %s", message)
+@@ -113,7 +113,7 @@ func resolveAggregate(p graphql.ResolveParams, authorizer authorization.Authoriz
+ 		return nil, fmt.Errorf("could not extract objectLimit: %w", err)
+ 	}
+ 
+-	filters, err := common_filters.ExtractFilters(p.Args, p.Info.FieldName)
++	filters, err := common_filters.ExtractFilters(p.Args, className.String())
+ 	if err != nil {
+ 		return nil, fmt.Errorf("could not extract filters: %w", err)
  	}
 ```
 
-**File**: `modules/reranker-openai/clients/ranker_test.go` (modified, +12/-1)
+**File**: `adapters/handlers/graphql/local/aggregate/resolver_test.go` (modified, +22/-0)
 ```diff
-@@ -1152,7 +1152,18 @@ func TestRankQuotesNoBodyOfAHostTheRequestNames(t *testing.T) {
- 			name:       "a 200 with an error object from the header base URL",
- 			reply:      fakeReply{status: http.StatusOK, body: banner},
- 			fromHeader: true,
--			wantErr:    "OpenAI API returned an error",
-+			wantErr:    unexpectedHeaderHostReply,
+@@ -1042,3 +1042,25 @@ func TestAggregate_AdmissionShedMapsToRateLimit(t *testing.T) {
+ 		"raw ErrOverloaded message must not leak to the client")
+ 	resolver.AssertExpectations(t)
+ }
++
++func TestAggregateWithAlias(t *testing.T) {
++	t.Parallel()
++	resolver := newMockResolver(config.Config{})
++
++	resolver.On("Aggregate", &aggregation.Params{
++		ClassName:  "Car",
++		Properties: []aggregation.ParamProperty{},
++		GroupBy:    groupCarByMadeByManufacturerName(),
++		Filters: &filters.LocalFilter{Root: &filters.Clause{
++			Operator: filters.OperatorEqual,
++			On:       &filters.Path{Class: "Car", Property: "modelName"},
++			Value:    &filters.Value{Value: "Fast", Type: schema.DataTypeText},
++		}},
++		IncludeMetaCount: true,
++	}).Return([]aggregation.Group{}, nil).Once()
++
++	resolver.AssertResolve(t, `{ Aggregate { CarAlias(
++		where:{path:["modelName"] operator:Equal valueText:"Fast"}
++		groupBy:["madeBy", "Manufacturer", "name"]
++	) { meta { count } } } }`)
++}
+```
+
+**File**: `adapters/handlers/graphql/local/get/class_builder_fields.go` (modified, +1/-1)
+```diff
+@@ -388,7 +388,7 @@ func (r *resolver) resolveGet(p graphql.ResolveParams, className string) (interf
+ 		sort = filters.ExtractSortFromArgs(sortArg.([]interface{}))
+ 	}
+ 
+-	filters, err := common_filters.ExtractFilters(p.Args, p.Info.FieldName)
++	filters, err := common_filters.ExtractFilters(p.Args, className)
+ 	if err != nil {
+ 		return nil, fmt.Errorf("could not extract filters: %w", err)
+ 	}
+```
+
+**File**: `adapters/handlers/graphql/local/get/get_test.go` (modified, +32/-7)
+```diff
+@@ -28,6 +28,7 @@ import (
+ 	"github.com/weaviate/weaviate/entities/dto"
+ 	"github.com/weaviate/weaviate/entities/filters"
+ 	"github.com/weaviate/weaviate/entities/models"
++	"github.com/weaviate/weaviate/entities/schema"
+ 	"github.com/weaviate/weaviate/entities/search"
+ 	"github.com/weaviate/weaviate/entities/searchparams"
+ 	helper "github.com/weaviate/weaviate/test/helper"
+@@ -1917,16 +1918,40 @@ func TestGetRelation(t *testing.T) {
+ 
+ func TestGetWithAlias(t *testing.T) {
+ 	t.Parallel()
+-	resolver := newMockResolver()
+-	expectedParams := dto.GetParams{
+-		ClassName:  "SomeAction",
+-		Properties: []search.SelectProperty{{Name: "intField", IsPrimitive: true}},
++	tests := []struct {
++		name    string
++		query   string
++		filters *filters.LocalFilter
++	}{
++		{
++			name:  "without where",
++			query: "{ Get { SomeActionAlias { intField } } }",
 +		},
 +		{
-+			name:    "a 200 above 1 MiB from the class base URL",
-+			reply:   fakeReply{status: http.StatusOK, body: strings.Repeat(" ", maxResponseBodyBytes+1)},
-+			wantErr: "OpenAI response exceeds 1048576 bytes",
++			name:  "with where",
++			query: `{ Get { SomeActionAlias(where:{path:["intField"] operator:Equal valueInt:7}) { intField } } }`,
++			filters: &filters.LocalFilter{Root: &filters.Clause{
++				Operator: filters.OperatorEqual,
++				On:       &filters.Path{Class: "SomeAction", Property: "intField"},
++				Value:    &filters.Value{Value: 7, Type: schema.DataTypeInt},
++			}},
++		},
+ 	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			resolver := newMockResolver()
++			expectedParams := dto.GetParams{
++				ClassName:  "SomeAction",
++				Properties: []search.SelectProperty{{Name: "intField", IsPrimitive: true}},
++				Filters:    tt.filters,
++			}
+ 
+-	resolver.On("GetClass", expectedParams).
+-		Return(test_helper.EmptyList(), nil).Once()
++			resolver.On("GetClass", expectedParams).
++				Return(test_helper.EmptyList(), nil).Once()
+ 
+-	resolver.AssertResolve(t, "{ Get { SomeActionAlias { intField } } }")
++			resolver.AssertResolve(t, tt.query)
++		})
++	}
+ }
+ 
+ func TestNearObject(t *testing.T) {
+```
+
+**File**: `adapters/handlers/graphql/test/helper/schema_fixtures.go` (modified, +1/-0)
+```diff
+@@ -91,6 +91,7 @@ func CreateSimpleSchema(vectorizer string) schema.SchemaWithAliases {
+ 
+ // CarSchema contains a car which has every primitive field and a ref field there is
+ var CarSchema = schema.SchemaWithAliases{
++	Aliases: map[string]string{"CarAlias": "Car"},
+ 	Schema: schema.Schema{
+ 		Objects: &models.Schema{
+ 			Classes: []*models.Class{
+```
+
+**File**: `adapters/handlers/grpc/v1/parse_search_request.go` (modified, +5/-1)
+```diff
+@@ -381,10 +381,14 @@ func (p *Parser) Search(req *pb.SearchRequest, config *config.Config) (dto.GetPa
+ 	}
+ 
+ 	if req.Rerank != nil {
++		rerank := extractRerank(req)
++		if err := rerank.Validate(class); err != nil {
++			return dto.GetParams{}, err
++		}
+ 		if out.AdditionalProperties.ModuleParams == nil {
+ 			out.AdditionalProperties.ModuleParams = make(map[string]interface{})
+ 		}
+-		out.AdditionalProperties.ModuleParams["rerank"] = extractRerank(req)
++		out.AdditionalProperties.ModuleParams["rerank"] = rerank
+ 	}
+ 
+ 	if req.Boost != nil {
+```
+
+**File**: `adapters/handlers/grpc/v1/parse_search_request_test.go` (modified, +93/-12)
+```diff
+@@ -298,6 +298,7 @@ func TestGRPCSearchRequest(t *testing.T) {
+ 	defaultPagination := &filters.Pagination{Limit: 10}
+ 	quorum := pb.ConsistencyLevel_CONSISTENCY_LEVEL_QUORUM
+ 	someString1 := "a word"
++	rerankProperty := "name"
+ 	someString2 := "other"
+ 
+ 	tests := []struct {
+@@ -2314,33 +2315,42 @@ func TestGRPCSearchRequest(t *testing.T) {
+ 			name: "Rerank without query",
+ 			req: &pb.SearchRequest{
+ 				Collection: classname,
+-				Rerank:     &pb.Rerank{Property: someString1},
++				Rerank:     &pb.Rerank{Property: rerankProperty},
++			},
++			error: true,
 +		},
 +		{
-+			name:       "a 200 above 1 MiB from the header base URL",
-+			reply:      fakeReply{status: http.StatusOK, body: strings.Repeat(" ", maxResponseBodyBytes+1)},
-+			fromHeader: true,
-+			wantErr:    unexpectedHeaderHostReply,
++			name: "Rerank with query",
++			req: &pb.SearchRequest{
++				Collection: classname,
++				Properties: &pb.PropertiesRequest{NonRefProperties: []string{"int"}},
++				Rerank:     &pb.Rerank{Property: rerankProperty, Query: &someString2},
+ 			},
+ 			out: dto.GetParams{
+ 				ClassName: classname, Pagination: defaultPagination,
+-				Properties: append(defaultTestClassProps, search.SelectProperty{Name: someString1, IsPrimitive: true}),
++				Properties: search.SelectProperties{{Name: "int", IsPrimitive: true}, {Name: rerankProperty, IsPrimitive: true}},
+ 				AdditionalProperties: additional.Properties{
+ 					NoProps:      false,
+-					ModuleParams: map[string]interface{}{"rerank": &rank.Params{Property: &someString1}},
++					ModuleParams: map[string]interface{}{"rerank": &rank.Params{Property: &rerankProperty, Query: &someString2}},
+ 				},
+ 			},
+ 			error: false,
  		},
  		{
- 			name:    "a 200 that is not JSON from the class base URL",
+-			name: "Rerank with query",
++			name: "Rerank on a property the class does not have",
+ 			req: &pb.SearchRequest{
+ 				Collection: classname,
+ 				Rerank:     &pb.Rerank{Property: someString1, Query: &someString2},
+ 			},
+-			out: dto.GetParams{
+-				ClassName: classname, Pagination: defaultPagination,
+-				Properties: append(defaultTestClassProps, search.SelectProperty{Name: someString1, IsPrimitive: true}),
+-				AdditionalProperties: additional.Properties{
+-					NoProps:      false,
+-					ModuleParams: map[string]interface{}{"rerank": &rank.Params{Property: &someString1, Query: &someString2}},
+-				},
++			error: true,
++		},
++		{
++			name: "Rerank on an int property",
++			req: &pb.SearchRequest{
++				Collection: classname,
++				Rerank:     &pb.Rerank{Property: "int", Query: &someString2},
+ 			},
+-			error: false,
++			error: true,
+ 		},
+ 
+ 		{
+@@ -3035,6 +3045,77 @@ func TestGRPCSearchRequestBoostPropertyTypeValidation(t *testing.T) {
+ 	}
+ }
+ 
++func TestGRPCSearchRequestRerank(t *testing.T) {
++	class := &models.Class{
++		Class: "RerankClass",
++		Properties: []*models.Property{
++			{Name: "text", DataType: schema.DataTypeText.PropString()},
++			{Name: "photo", DataType: schema.DataTypeBlob.PropString()},
++			{Name: "count", DataType: schema.DataTypeInt.PropString()},
++		},
++		VectorIndexConfig: hnsw.UserConfig{Distance: vectorIndex.DefaultDistanceMetric},
++	}
++	getClass := func(string) (*models.Class, error) { return class, nil }
++	query := "any"
++	blank := "  "
++	selected := search.SelectProperty{Name: "count", IsPrimitive: true}
++	tests := []struct {
++		name           string
++		rerank         *pb.Rerank
++		wantProperties search.SelectProperties
++		wantErr        string
++	}{
++		{
++			name:           "a text property that is not selected is added to the selection",
++			rerank:         &pb.Rerank{Property: "text", Query: &query},
++			wantProperties: search.SelectProperties{selected, {Name: "text", IsPrimitive: true}},
++		},
++		{
++			name:           "a blob property is added to the selection as not primitive",
++			rerank:         &pb.Rerank{Property: "photo", Query: &query},
++			wantProperties: search.SelectProperties{selected, {Name: "photo", IsPrimitive: false}},
++		},
++		{
++			name:    "an int property",
++			rerank:  &pb.Rerank{Property: "count", Query: &query},
++			wantErr: `rerank: property "count" of collection "RerankClass" is of type int; a rerank reads a text or blob property`,
++		},
++		{
++			name:    "no query",
++			rerank:  &pb.Rerank{Property: "text"},
++			wantErr: "rerank: query is required",
++		},
++		{
++			name:    "a query of whitespace",
++			rerank:  &pb.Rerank{Property: "text", Query: &blank},
++			wantErr: "rerank: query is required",
++		},
++		{
++			name:    "a property the class does not have",
++			rerank:  &pb.Rerank{Property: "nope", Query: &query},
++			wantErr: "rerank: no such prop with name 'nope' found in class 'RerankClass'",
++		},
++	}
++	parser := NewParser(false, getClass, nil, namespacing.Disabled)
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			out, err := parser.Search(&pb.SearchRequest{
++				Collection: class.Class,
++				Properties: &pb.PropertiesRequest{NonRefProperties: []string{"count"}},
++				Rerank:     tt.rerank,
++			}, &config.Config{QueryDefaults: config.QueryDefaults{Limit: 10}})
++
++			if tt.wantErr != "" {
++				require.ErrorContains(t, err, tt.wantErr)
++				return
++			}
++			require.NoError(t, err)
++			require.Equal(t, tt.wantProperties, out.Properties)
++			require.Equal(t, tt.rerank.Property, out.AdditionalPropert
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #13991** (2026-11-23): prepare release v1.41.0 (@antas-marcin)
+- **PR #13990** (2026-11-23): fix(db): class-less exists lookup no longer names collections (@moogacs)
+- **PR #13989** (2026-11-23): Move `RebalancePlanner` into `wl/` directory to gate behind enterprise (@tsmith023)
+- **PR #13987** (2026-11-23): Merge stable/v1.40 into main (@antas-marcin)
 - **PR #13974** (2026-11-20): prepare release v1.41.0-rc.1 (@jfrancoa)
 - **PR #13973** (2026-11-20): Merge stable/v1.40 into main (@antas-marcin)
-- **PR #13970** (2026-11-20): prepare release v1.40.7 (@databyjp)
-- **PR #13968** (2026-11-20): Merge stable/v1.39 into stable/v1.40 (@antas-marcin)
-- **PR #13967** (2026-11-20): Deprecate remaining classless endpoints (@dirkkul)
-- **PR #13962** (2026-11-19): Merge stable140 into main (@dirkkul)
 
 ---
 
@@ -2753,47 +2917,64 @@ as every other 200 reply the client cannot use.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. reranker-openai: review fixes for header-host errors, the error object and tests
+## X. Empirical Invariant Guard in config.go
 
 **RULE**:
-When implementing operations in `modules/reranker-openai/clients/image.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in weaviate/weaviate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `adapters/repos/db/vector/hfresh/config.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in weaviate/weaviate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4ffbd0c7`: reranker-openai: review fixes for header-host errors, the error object and tests [api]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9132cef5`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `modules/reranker-openai/clients/image.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `adapters/repos/db/vector/hfresh/config.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// pngMagic, jpegMagic and gifMagic are the first bytes of those formats.
-	// A WebP image is a RIFF container with webpMagic at webpMagicOffset; a
-	// WAVE file shares the RIFF header.
-	pngMagic        = "\x89PNG"
-	jpegMagic       = "\xff\xd8\xff"
-	gifMagic        = "GIF8"
-	riffMagic       = "RIFF"
-	webpMagic       = "WEBP"
-	webpMagicOffset = 8
-	{"image/png", []magic{{0, []byte(pngMagic)}}},
-	{"image/jpeg", []magic{{0, []byte(jpegMagic)}}},
-	{"image/gif", []magic{{0, []byte(gifMagic)}}},
-	{"image/webp", []magic{{0, []byte(riffMagic)}, {webpMagicOffset, []byte(webpMagic)}}},
+	"os"
+	"github.com/dustin/go-humanize"
+const singlePostingMaxSizeEnv = "EXPERIMENTAL_HFRESH_SINGLE_POSTING_MAX_SIZE"
+
+// singlePostingMaxSizeFromEnv reads the size, such as 10MiB, up to which an
+// index stays in one posting. Unset, zero or invalid leaves the feature off.
+func singlePostingMaxSizeFromEnv(logger logrus.FieldLogger) uint64 {
+	v := os.Getenv(singlePostingMaxSizeEnv)
+	if v == "" {
+		return 0
+	}
+
+	size, err := humanize.ParseBytes(v)
+	if err != nil {
+		logger.WithField("value", v).Warnf("invalid %s, single-posting mode stays disabled: %v",
+			singlePostingMaxSizeEnv, err)
+		return 0
+	}
+	return size
+}
+
+	maxBytes := h.maxPostingSizeKB * 1024 // budget
+
+	return uint32(math.Ceil(float64(maxBytes) / postingEntryBytes(dims)))
+}
+
+// postingEntryBytes is the size of one posting entry with dims dimensions.
+func postingEntryBytes(dims int) float64 {
+	return float64(dims)*bytesPerDim + float64(metadata)
+	h.bootstrapThreshold = uint32(min(float64(h.singlePostingMaxSize)/postingEntryBytes(int(dims)), math.MaxUint32))
+			"singlePostingMax": h.bootstrapThreshold,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// WebP is a RIFF container with "WEBP" at offset 8; a WAVE file shares the RIFF header.
-	{"image/png", []magic{{0, []byte("\x89PNG")}}},
-	{"image/jpeg", []magic{{0, []byte("\xff\xd8\xff")}}},
-	{"image/gif", []magic{{0, []byte("GIF8")}}},
-	{"image/webp", []magic{{0, []byte("RIFF")}, {8, []byte("WEBP")}}},
+	maxBytes := h.maxPostingSizeKB * 1024                 // budget
+	vBytes := float64(dims)*bytesPerDim + float64(metadata)
+
+	return uint32(math.Ceil(float64(maxBytes) / vBytes))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4ffbd0c7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9132cef5` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

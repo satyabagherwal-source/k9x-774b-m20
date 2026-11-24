@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T00:23:24.400Z",
+  "updated_at": "2026-11-24T00:31:56.041Z",
   "stats": {
-    "total_discovered": 8141,
-    "approved_pending_harvest": 7709,
+    "total_discovered": 8146,
+    "approved_pending_harvest": 7714,
     "harvested_count": 0,
     "rejected_count": 432,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7690,
+      "COMMUNITY_AND_EXPERT": 7695,
       "OFFICIAL_DOCUMENTATION": 265,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -176101,6 +176101,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microfeed-microfeed-learnings.md",
         "fileName": "microfeed-microfeed-learnings.md"
+      }
+    },
+    "SRC-A78CE5094BA7": {
+      "id": "SRC-A78CE5094BA7",
+      "url": "https://learn.microsoft.com/en-us/rest/api/storageservices/specifying-the-range-header-for-blob-service-operations",
+      "title": "https://learn.microsoft.com/en-us/rest/api/storageservices/specifying-the-range-header-for-blob-service-operations",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:31:54.732Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pola-rs-polars-learnings.md",
+        "fileName": "pola-rs-polars-learnings.md"
+      }
+    },
+    "SRC-066C17546354": {
+      "id": "SRC-066C17546354",
+      "url": "https://github.com/sweetpad-dev/sweetpad/security/dependabot/209",
+      "title": "https://github.com/sweetpad-dev/sweetpad/security/dependabot/209",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:31:55.894Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sweetpad-dev-sweetpad-learnings.md",
+        "fileName": "sweetpad-dev-sweetpad-learnings.md"
+      }
+    },
+    "SRC-9459638630FD": {
+      "id": "SRC-9459638630FD",
+      "url": "https://github.com/sweetpad-dev/sweetpad/security/dependabot/210",
+      "title": "https://github.com/sweetpad-dev/sweetpad/security/dependabot/210",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:31:55.941Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sweetpad-dev-sweetpad-learnings.md",
+        "fileName": "sweetpad-dev-sweetpad-learnings.md"
+      }
+    },
+    "SRC-EA3CEA3FB669": {
+      "id": "SRC-EA3CEA3FB669",
+      "url": "https://www.apple.com/legal/sla/docs/xcode.pdf",
+      "title": "https://www.apple.com/legal/sla/docs/xcode.pdf",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:31:55.990Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sweetpad-dev-sweetpad-learnings.md",
+        "fileName": "sweetpad-dev-sweetpad-learnings.md"
+      }
+    },
+    "SRC-4B88C3634538": {
+      "id": "SRC-4B88C3634538",
+      "url": "https://sweetpad.hyzyla.dev/docs/cli/linux",
+      "title": "https://sweetpad.hyzyla.dev/docs/cli/linux",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:31:56.041Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sweetpad-dev-sweetpad-learnings.md",
+        "fileName": "sweetpad-dev-sweetpad-learnings.md"
       }
     }
   }

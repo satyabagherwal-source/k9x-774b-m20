@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T00:23:27.317Z",
-  "total_records": 2470,
+  "last_updated": "2026-11-24T00:31:56.405Z",
+  "total_records": 2472,
   "domains": {
     "A": {
       "total": 20,
@@ -2354,7 +2354,7 @@
       ]
     },
     "K": {
-      "total": 146,
+      "total": 148,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -2501,7 +2501,9 @@
         "domain_intelligence-quality-verification-intelligence-siteline-swiftui-introspect-learnings-core-inv",
         "domain_intelligence-quality-verification-intelligence-hf-black-forest-labs-flux-1-schnell-learnings-",
         "domain_intelligence-quality-verification-intelligence-apache-pinot-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-apache-pinot-learnings-core-invariants"
+        "domain_intelligence-quality-verification-intelligence-apache-pinot-learnings-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-sweetpad-dev-sweetpad-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-sweetpad-dev-sweetpad-learnings-core-invariant"
       ]
     },
     "L": {
@@ -10004,8 +10006,8 @@
       "title": "Architecture Intelligence: weaviate/weaviate Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-weaviate-weaviate-architecture-intelligence-weaviate-weaviate-core-invariants.md",
       "repository": "weaviate/weaviate",
-      "content_hash": "0aecd301b0933fe7169b080a40692c6b6de1bf9a227d8bba2d256c1e1a542405",
-      "created_at": "2026-11-20T17:53:57.831Z"
+      "content_hash": "e9226f6bb16a3c967daa4409200affd30a5f9417ba0f731dcaaed483750ee2ef",
+      "created_at": "2026-11-24T00:31:51.609Z"
     },
     "DOM-K-199063A7": {
       "record_id": "DOM-K-199063A7",
@@ -17352,8 +17354,8 @@
       "title": "Architecture Intelligence: pola-rs/polars Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-pola-rs-polars-architecture-intelligence-pola-rs-polars-core-invariants.md",
       "repository": "pola-rs/polars",
-      "content_hash": "92327028bcff3fa320c4c191a951d20343ade35ef2102af4b496063bf48c8e7b",
-      "created_at": "2026-11-22T16:48:07.784Z"
+      "content_hash": "dc8c7997bc530ce8b6aa88812182383c0ff7650d43899e6d1a30ec08cf39a7fd",
+      "created_at": "2026-11-24T00:31:39.077Z"
     },
     "domain_intelligence-content-information-intelligence-yugabyte-yugabyte-db-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-yugabyte-yugabyte-db-core-invariants",
@@ -17370,8 +17372,8 @@
       "title": "Architecture Intelligence: pola-rs-polars-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-pola-rs-polars-learnings-architecture-intelligence-pola-rs-polars-learnings-core.md",
       "repository": "pola-rs-polars-learnings",
-      "content_hash": "8df79279492c4d757f641f77650b6c1030096b3a7cc2169f6532bb4ca256f3dd",
-      "created_at": "2026-11-22T16:48:24.733Z"
+      "content_hash": "005d7198647f0694ff1aa35b2defe19841efa2f356ecde31e4c28ce6ab23522f",
+      "created_at": "2026-11-24T00:31:55.130Z"
     },
     "DOM-D-A6170DB1": {
       "record_id": "DOM-D-A6170DB1",
@@ -20290,8 +20292,8 @@
       "title": "Research & Knowledge Intelligence: deepseek-ai/DeepSeek-V4.1-Flash-1017 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-v4-1-flash-1017-research-knowledge-intelligence-deepseek.md",
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
-      "content_hash": "2ec2a043880777ed6556add2c312cf599624d502bdb4fbe50d12a36f75decc86",
-      "created_at": "2026-11-19T18:48:52.214Z"
+      "content_hash": "883ae4526a948a4c5b3c9737a2c87241a5fb9b3a7c8a83d940da8511f6527309",
+      "created_at": "2026-11-24T00:31:36.946Z"
     },
     "domain_intelligence-architecture-intelligence-temporalio-temporal-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-temporalio-temporal-core-invariants",
@@ -20350,8 +20352,8 @@
       "title": "Research & Knowledge Intelligence: hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-v4-1-flash-1017-learnings-research-knowledge-intelligenc.md",
       "repository": "hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings",
-      "content_hash": "2a10f6340582fa78474148c41a7a206e613f1f9d6e788c3d3f5c4065011ef40b",
-      "created_at": "2026-11-19T18:49:05.586Z"
+      "content_hash": "535bbbab619056f9b5d8f5d0140dc60a92a134b101ac6e2920fb168e720038f7",
+      "created_at": "2026-11-24T00:31:55.665Z"
     },
     "domain_intelligence-architecture-intelligence-temporalio-temporal-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-temporalio-temporal-learnings-core-invariants",
@@ -41433,6 +41435,24 @@
       "repository": "microfeed-microfeed-learnings",
       "content_hash": "7adf54e7bc6428bb8498cdd01e71078794684605d6680f921b2b6d8acf64d8a2",
       "created_at": "2026-11-24T00:23:25.005Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-sweetpad-dev-sweetpad-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-sweetpad-dev-sweetpad-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: sweetpad-dev/sweetpad Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-sweetpad-dev-sweetpad-quality-verification-intelligence-sweetpad-dev-sweetpad-co.md",
+      "repository": "sweetpad-dev/sweetpad",
+      "content_hash": "2c5c81b8d16e24bf2198beefe09135bbccdc2048f77357d1f7c865ddc907bea4",
+      "created_at": "2026-11-24T00:31:45.034Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-sweetpad-dev-sweetpad-learnings-core-invariant": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-sweetpad-dev-sweetpad-learnings-core-invariant",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: sweetpad-dev-sweetpad-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-sweetpad-dev-sweetpad-learnings-quality-verification-intelligence-sweetpad-dev-s.md",
+      "repository": "sweetpad-dev-sweetpad-learnings",
+      "content_hash": "002082ff20d95c5c8755636e08c26d1585c561ca35df0c9170a8a85c136b9c8e",
+      "created_at": "2026-11-24T00:31:56.405Z"
     }
   }
 }

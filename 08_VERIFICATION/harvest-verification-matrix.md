@@ -12527,3 +12527,7 @@
 | `CYCLE-20261124-ABZ7` | `2026-11-24T00:22:32.995Z` | `microfeed/microfeed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10151` | Yes (`e391259d...`) |
 | `CYCLE-20261124-ACB2` | `2026-11-24T00:22:33.422Z` | `OpenMOSS-Team/MOSS-Image-SFT` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openmoss-team-moss-image-sft-learnings.md` | Yes (`4cc6d7c4...`) |
 | `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T00:23:21.751Z` | `microfeed-microfeed` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-I-4B3595B4` [Domain I] | Yes (`499edaf0...`) |
+| `CYCLE-20261124-LZJ2` | `2026-11-24T00:31:36.734Z` | `deepseek-ai/DeepSeek-V4.1-Flash-1017` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings.md` | Yes (`1c088cd5...`) |
+| `CYCLE-20261124-M10F` | `2026-11-24T00:31:38.655Z` | `pola-rs/polars` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10152` | Yes (`56240142...`) |
+| `CYCLE-20261124-M5LZ` | `2026-11-24T00:31:44.615Z` | `sweetpad-dev/sweetpad` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10153` | Yes (`975a8dc9...`) |
+| `CYCLE-20261124-MAOL` | `2026-11-24T00:31:51.190Z` | `weaviate/weaviate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10154` | Yes (`70fcfd9c...`) |

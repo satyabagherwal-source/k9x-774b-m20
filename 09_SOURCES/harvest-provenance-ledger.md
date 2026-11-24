@@ -12560,3 +12560,7 @@ Every entry in this ledger must capture:
 | `learn-github-microfeed-microfeed` | `https://github.com/microfeed/microfeed` | `4deb5fc8` | Multi-dimensional audit evidence | 2026-11-24T00:22:33.000Z |
 | `learn-huggingface-openmoss-team-moss-image-sft` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT` | `hf-openmos` | Multi-dimensional audit evidence | 2026-11-24T00:22:33.427Z |
 | `learn-dom-i-4b3595b4` | `project://microfeed-microfeed` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microfeed-microfeed-learnings.md` | 2026-11-24T00:23:21.751Z |
+| `learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-24T00:31:36.739Z |
+| `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `83f1675f` | Multi-dimensional audit evidence | 2026-11-24T00:31:38.659Z |
+| `learn-github-sweetpad-dev-sweetpad` | `https://github.com/sweetpad-dev/sweetpad` | `11b271ee` | Multi-dimensional audit evidence | 2026-11-24T00:31:44.619Z |
+| `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `5852883d` | Multi-dimensional audit evidence | 2026-11-24T00:31:51.194Z |
