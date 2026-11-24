@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T01:56:08.496Z",
+  "last_updated": "2026-11-24T02:04:27.514Z",
   "total_records": 2480,
   "domains": {
     "A": {
@@ -9213,8 +9213,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "467405c356d0a1a315b42a6c122c6e97ced801d151f44a49c7554cdbceba5544",
-      "created_at": "2026-11-24T01:47:04.108Z"
+      "content_hash": "8e48916c7aeb5aac0abff7d979e983111bf679f5a7b6efda21c6371e6ab5cdea",
+      "created_at": "2026-11-24T02:04:27.514Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -20816,8 +20816,8 @@
       "title": "Architecture Intelligence: tuist/tuist Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tuist-tuist-architecture-intelligence-tuist-tuist-core-invariants.md",
       "repository": "tuist/tuist",
-      "content_hash": "067454663c6ac97f88c020fe2f34104d83f42c23bbd8a011d2439d46ddd8b4cf",
-      "created_at": "2026-11-22T18:44:06.836Z"
+      "content_hash": "003cd7deb5250b17d921b83f5829ba2ba1cf84236b78bb34409620c732e2dcf0",
+      "created_at": "2026-11-24T02:04:11.422Z"
     },
     "domain_intelligence-quality-verification-intelligence-obliteratus-deepseek-v4-1-flash-1017-obliterat": {
       "record_id": "domain_intelligence-quality-verification-intelligence-obliteratus-deepseek-v4-1-flash-1017-obliterat",
@@ -20843,8 +20843,8 @@
       "title": "Architecture Intelligence: tuist-tuist-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tuist-tuist-learnings-architecture-intelligence-tuist-tuist-learnings-core-invar.md",
       "repository": "tuist-tuist-learnings",
-      "content_hash": "530d8fea49f849afee5d2b9067cd1264b36e950d35fbb39e8c4475999f234e93",
-      "created_at": "2026-11-22T18:44:15.197Z"
+      "content_hash": "751f83a5c7012adf89ac10ff87a4e2802b225fc651c528180c84efca56d084cc",
+      "created_at": "2026-11-24T02:04:25.971Z"
     },
     "domain_intelligence-quality-verification-intelligence-hf-obliteratus-deepseek-v4-1-flash-1017-oblite": {
       "record_id": "domain_intelligence-quality-verification-intelligence-hf-obliteratus-deepseek-v4-1-flash-1017-oblite",
@@ -24855,8 +24855,8 @@
       "title": "Technical Construction Intelligence: alibaba/zvec Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-alibaba-zvec-technical-construction-intelligence-alibaba-zvec-core-invariants.md",
       "repository": "alibaba/zvec",
-      "content_hash": "b31a93fd9c97b3f625a528691be7a723752cc0a00789465c9bd73dcb9e3129fd",
-      "created_at": "2026-11-20T20:41:44.657Z"
+      "content_hash": "b6f7ca619ff2aa364a3f01ed9e5ace119dc2b3633a22823df7910025f7e239c4",
+      "created_at": "2026-11-24T02:04:21.604Z"
     },
     "domain_intelligence-technical-construction-intelligence-fb55-htmlparser2-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-fb55-htmlparser2-learnings-core-invariants",
@@ -36852,8 +36852,8 @@
       "title": "Technical Construction Intelligence: alibaba-zvec-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-alibaba-zvec-learnings-technical-construction-intelligence-alibaba-zvec-learning.md",
       "repository": "alibaba-zvec-learnings",
-      "content_hash": "cefce82a25d61b31b35fff9243234a18fd86b27ff8e80af298c8d78277086065",
-      "created_at": "2026-11-20T20:41:49.544Z"
+      "content_hash": "8b8d89e133121425e9704d150ac2060f82e72bbeacaeafb0307ace39601876b4",
+      "created_at": "2026-11-24T02:04:26.726Z"
     },
     "domain_intelligence-research-knowledge-intelligence-thinkingmachines-inkling-2-mini-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-thinkingmachines-inkling-2-mini-core-invariants",

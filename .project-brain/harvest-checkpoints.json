@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T01:56:01.676Z",
+  "last_updated": "2026-11-24T02:04:21.210Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10986,14 +10986,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-alibaba-zvec",
-      "content_hash": "c7cc4c5d0675008acae37b4fbb17e9e555270e02e938a788837cf163b3d70b7f",
-      "verified_at": "2026-11-20T20:41:44.196Z",
+      "content_hash": "66c166465240ab19f9225b709830d0f742b103ba1461562f56f75f8cd2c09875",
+      "verified_at": "2026-11-24T02:04:21.209Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T20:41:44.196Z"
+      "last_updated": "2026-11-24T02:04:21.209Z"
     },
     "zenbu-labs/terminal-browser": {
       "repository": "zenbu-labs/terminal-browser",
@@ -18741,14 +18741,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tuist-tuist",
-      "content_hash": "635b355e61a407692ae661adbaa26aff03631c408d293d9be0d69ddca6b7a382",
-      "verified_at": "2026-11-22T18:44:06.323Z",
+      "content_hash": "1fb62a9182595e701d74a063abd9e3b2d737520c85f304d3eac85866c1ccd7a1",
+      "verified_at": "2026-11-24T02:04:11.003Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T18:44:06.323Z"
+      "last_updated": "2026-11-24T02:04:11.003Z"
     },
     "mixelpixx/KiCAD-MCP-Server": {
       "repository": "mixelpixx/KiCAD-MCP-Server",

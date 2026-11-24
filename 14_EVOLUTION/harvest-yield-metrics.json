@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T01:56:01.664Z",
-  "total_cycles_completed": 11939,
-  "total_learnings_persisted": 11939,
-  "total_rules_promoted": 11021,
+  "last_updated": "2026-11-24T02:04:21.201Z",
+  "total_cycles_completed": 11941,
+  "total_learnings_persisted": 11941,
+  "total_rules_promoted": 11023,
   "history": [
-    {
-      "timestamp": "2026-11-23T15:12:33.945Z",
-      "repository": "Qwen/Qwen3-VL-8B-Instruct",
-      "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T15:12:46.395Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T15:20:45.713Z",
       "repository": "nomic-ai/nomic-embed-text-v1.5",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-24T01:56:01.664Z",
       "repository": "gauthierpiarrette/highball",
       "learningId": "learn-github-gauthierpiarrette-highball",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T02:04:11.000Z",
+      "repository": "tuist/tuist",
+      "learningId": "learn-github-tuist-tuist",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T02:04:21.201Z",
+      "repository": "alibaba/zvec",
+      "learningId": "learn-github-alibaba-zvec",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

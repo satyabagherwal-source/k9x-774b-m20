@@ -12557,3 +12557,5 @@
 | `CYCLE-20261124-AUAV` | `2026-11-24T01:46:55.591Z` | `dosco/deeporg` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10172` | Yes (`15aacb48...`) |
 | `CYCLE-20261124-MI0O` | `2026-11-24T01:55:59.544Z` | `yyjeqhc/webcodex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10173` | Yes (`d5800c97...`) |
 | `CYCLE-20261124-MJNA` | `2026-11-24T01:56:01.654Z` | `gauthierpiarrette/highball` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10174` | Yes (`aef2a912...`) |
+| `CYCLE-20261124-X17X` | `2026-11-24T02:04:10.989Z` | `tuist/tuist` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10175` | Yes (`1fb62a91...`) |
+| `CYCLE-20261124-X93B` | `2026-11-24T02:04:21.191Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10176` | Yes (`66c16646...`) |

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T01:56:08.834Z",
+  "last_updated": "2026-11-24T02:04:27.827Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-24T00:23:26.082Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-24T01:47:03.490Z",
+      "processed_at": "2026-11-24T02:04:27.060Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1853,7 +1853,7 @@
       "staged_for_review": 1
     },
     "tuist-tuist-learnings.md": {
-      "processed_at": "2026-11-22T18:44:14.333Z",
+      "processed_at": "2026-11-24T02:04:24.615Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2153,7 +2153,7 @@
       "staged_for_review": 1
     },
     "alibaba-zvec-learnings.md": {
-      "processed_at": "2026-11-20T20:41:49.050Z",
+      "processed_at": "2026-11-24T02:04:26.311Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3793,7 +3793,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3612,
+  "total_dossiers_evaluated": 3615,
   "total_canonical_promoted": 496,
-  "total_staged_for_review": 2706
+  "total_staged_for_review": 2709
 }

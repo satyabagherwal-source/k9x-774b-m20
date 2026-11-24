@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T01:56:05.034Z",
-    "lastVerified": "2026-11-24T01:56:05.034Z",
+    "lastChecked": "2026-11-24T02:04:24.455Z",
+    "lastVerified": "2026-11-24T02:04:24.455Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -274,9 +274,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-24T01:29:00.637Z",
+    "lastChecked": "2026-11-24T02:04:17.900Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-24T01:29:00.637Z"
+    "lastVerified": "2026-11-24T02:04:17.900Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1066,9 +1066,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-11-23T21:31:24.486Z",
+    "lastChecked": "2026-11-24T02:04:13.112Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-11-23T21:31:24.486Z"
+    "lastVerified": "2026-11-24T02:04:13.112Z"
   },
   "chroma-core-chroma": {
     "name": "chroma",
@@ -1755,22 +1755,21 @@
     "revisionIdentifier": "0383d4d1"
   },
   "alibaba-zvec": {
-    "name": "zvec",
+    "name": "alibaba/zvec",
     "officialUrl": "https://github.com/alibaba/zvec",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-23T00:07:53.429Z",
-    "lastVerified": "2026-11-23T00:07:53.429Z",
+    "lastChecked": "2026-11-24T02:04:20.077Z",
+    "lastVerified": "2026-11-24T02:04:20.077Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-alibaba-zvec",
-    "contentHash": "c7cc4c5d0675008acae37b4fbb17e9e555270e02e938a788837cf163b3d70b7f",
+    "contentHash": "66c166465240ab19f9225b709830d0f742b103ba1461562f56f75f8cd2c09875",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "8d978b06"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "cachix-devenv": {
     "name": "devenv",
@@ -3895,9 +3894,9 @@
   "go-dev-frame-sponge": {
     "name": "sponge",
     "officialUrl": "https://github.com/go-dev-frame/sponge",
-    "lastChecked": "2026-11-23T03:46:54.084Z",
+    "lastChecked": "2026-11-24T02:04:10.450Z",
     "revisionIdentifier": "beef9eec",
-    "lastVerified": "2026-11-23T03:46:54.084Z"
+    "lastVerified": "2026-11-24T02:04:10.450Z"
   },
   "llphant-llphant": {
     "name": "LLPhant",
@@ -9077,14 +9076,14 @@
     "officialUrl": "https://github.com/tuist/tuist",
     "sourceType": "github",
     "technology": "Elixir",
-    "lastChecked": "2026-11-22T18:44:05.066Z",
-    "lastVerified": "2026-11-22T18:44:05.066Z",
+    "lastChecked": "2026-11-24T02:04:09.668Z",
+    "lastVerified": "2026-11-24T02:04:09.668Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tuist-tuist",
-    "contentHash": "635b355e61a407692ae661adbaa26aff03631c408d293d9be0d69ddca6b7a382",
+    "contentHash": "1fb62a9182595e701d74a063abd9e3b2d737520c85f304d3eac85866c1ccd7a1",
     "promotedRulesCount": 1,
-    "recentFixesCount": 11,
+    "recentFixesCount": 22,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9245,9 +9244,9 @@
   "serpapi-google-search-results-nodejs": {
     "name": "google-search-results-nodejs",
     "officialUrl": "https://github.com/serpapi/google-search-results-nodejs",
-    "lastChecked": "2026-11-19T21:43:36.840Z",
+    "lastChecked": "2026-11-24T02:04:05.422Z",
     "revisionIdentifier": "f6d03fc9",
-    "lastVerified": "2026-11-19T21:43:36.840Z"
+    "lastVerified": "2026-11-24T02:04:05.422Z"
   },
   "amosgyamfi-open-swiftui-animations": {
     "name": "open-swiftui-animations",
@@ -12086,12 +12085,12 @@
     "lastVerified": "2026-11-21T03:36:34.239Z"
   },
   "shiguangschedule-shiguangschedule": {
-    "name": "ShiGuangSchedule/shiguangschedule",
+    "name": "shiguangschedule",
     "officialUrl": "https://github.com/ShiGuangSchedule/shiguangschedule",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-21T03:36:41.974Z",
-    "lastVerified": "2026-11-21T03:36:41.974Z",
+    "lastChecked": "2026-11-24T02:04:07.976Z",
+    "lastVerified": "2026-11-24T02:04:07.976Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-shiguangschedule-shiguangschedule",
@@ -12100,7 +12099,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "790f3072"
   },
   "scrapinghub-scrapy-poet": {
     "name": "scrapy-poet",

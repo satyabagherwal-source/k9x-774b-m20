@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-XHIZ",
-    "timestamp": "2026-11-22T06:41:07.835Z",
-    "repository": "Cactus-Compute/mirage",
-    "learningId": "learn-huggingface-cactus-compute-mirage",
-    "contentHash": "47200bb90b24d57ec9c706507203b3f32f812efbfbb582501b53fd01dbed0cf8",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-80PA",
-    "timestamp": "2026-11-22T06:49:19.246Z",
-    "repository": "Comfy-Org/RelayVSR",
-    "learningId": "learn-huggingface-comfy-org-relayvsr",
-    "contentHash": "c518870b1fe1f8ed567fdebf1927ade100d4917bd1f004bea9e7fdb91c69b713",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-8D42",
     "timestamp": "2026-11-22T06:49:35.330Z",
     "repository": "NucleoidAI/Nucleoid",
@@ -7490,6 +7460,36 @@
     "repository": "gauthierpiarrette/highball",
     "learningId": "learn-github-gauthierpiarrette-highball",
     "contentHash": "aef2a9124eb6dd3e3aa7c03924de8793e83aca4712300b48a27fc157131d092c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-X17X",
+    "timestamp": "2026-11-24T02:04:10.989Z",
+    "repository": "tuist/tuist",
+    "learningId": "learn-github-tuist-tuist",
+    "contentHash": "1fb62a9182595e701d74a063abd9e3b2d737520c85f304d3eac85866c1ccd7a1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-X93B",
+    "timestamp": "2026-11-24T02:04:21.191Z",
+    "repository": "alibaba/zvec",
+    "learningId": "learn-github-alibaba-zvec",
+    "contentHash": "66c166465240ab19f9225b709830d0f742b103ba1461562f56f75f8cd2c09875",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

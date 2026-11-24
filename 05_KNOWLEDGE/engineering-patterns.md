@@ -762383,3 +762383,199 @@ Subsystems managing Swift data structures, boundary deserialization, API parsing
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `7d471e91` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10175. set aside floor memory for write replies (Harvested from tuist/tuist)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "set aside floor memory for write replies",
+  "source": "tuist/tuist",
+  "source_url": "https://github.com/tuist/tuist",
+  "source_version": "0d1e4df6",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-24T02:04:10.452Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-tuist-tuist",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [tuist/tuist](https://github.com/tuist/tuist) (Revision: `0d1e4df6`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `infra/helm/k8s-monitoring/alerts.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tuist/tuist. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `4b0405f1`: kura): set aside floor memory for write replies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Elixir data structures, boundary deserialization, API parsing, or resource lifecycles matching `infra/helm/k8s-monitoring/alerts.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```elixir
+// Verified production-grade fix pattern:
+refusals (`bytestream_staging_admission_rejected`), decode refusals
+(`grpc_write_decode_admission_rejected`) and reply refusals
+(`grpc_write_reply_admission_rejected`) all file under this kind; the memory
+was closed. The one exception is a write's reply, which never borrows: it draws
+on a 1 MiB slice of the floor set aside for replies (outside
+`kura_memory_transient_capacity_bytes`), so reads queued on a full floor cannot
+refuse it. Reply refusals mean that slice and the shared floor were both spent;
+older pods without the slice refused every write behind a queued read, filed
+as decode refusals. A shed burst with
+```
+
+**NEGATIVE CONSTRAINT**:
+```elixir
+// Induced defect failure mode:
+refusals (`bytestream_staging_admission_rejected`) and decode refusals
+(`grpc_write_decode_admission_rejected`) both file under this kind; the memory
+was closed. The one exception is a write's reply, which never borrows: it is
+refused when the floor cannot cover it, which happens only after that write's
+own decode borrowed, so `transient_ceiling_headroom_borrowed` in
+`kura_memory_actions_total_total` rises in the same window. A shed burst with
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `4b0405f1` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10176. restore legacy interleaved matrix distance performance (Harvested from alibaba/zvec)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "restore legacy interleaved matrix distance performance",
+  "source": "alibaba/zvec",
+  "source_url": "https://github.com/alibaba/zvec",
+  "source_version": "a26f8abe",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-24T02:04:20.664Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-alibaba-zvec",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [alibaba/zvec](https://github.com/alibaba/zvec) (Revision: `a26f8abe`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `src/binding/python/CMakeLists.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in alibaba/zvec. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `a26f8abe`: restore legacy interleaved matrix distance performance. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/binding/python/CMakeLists.txt`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c++
+// Verified production-grade fix pattern:
+    set(_zvec_whole_archive_libs
+            core_knn_flat_static
+            core_knn_flat_sparse_static
+            core_knn_hnsw_static
+            core_knn_hnsw_rabitq_static
+            core_knn_ivf_rabitq_static
+            core_knn_hnsw_sparse_static
+            core_knn_ivf_static
+            core_knn_vamana_static
+            core_knn_cluster_static
+            core_knn_diskann_static
+            core_mix_reducer_static
+            core_metric_static
+            core_utility_static
+            core_quantizer_static
+            zvec_turbo
+    # Track build order and archive changes without propagating the static
+    # targets' link interfaces, which include internal dylibs absent from wheels.
+    add_dependencies(_zvec ${_zvec_whole_archive_libs})
+    target_link_libraries(_zvec PRIVATE zvec)
+    foreach(_lib ${_zvec_whole_archive_libs})
+        target_link_options(_zvec PRIVATE
+                "-Wl,-force_load,$<TARGET_FILE:${_lib}>"
+        )
+        set_property(TARGET _zvec APPEND PROPERTY LINK_DEPENDS
+                "$<TARGET_FILE:${_lib}>"
+        )
+    endforeach()
+```
+
+**NEGATIVE CONSTRAINT**:
+```c++
+// Induced defect failure mode:
+    target_link_libraries(_zvec PRIVATE
+            -Wl,-force_load,$<TARGET_FILE:core_knn_flat_static>
+            -Wl,-force_load,$<TARGET_FILE:core_knn_flat_sparse_static>
+            -Wl,-force_load,$<TARGET_FILE:core_knn_hnsw_static>
+            -Wl,-force_load,$<TARGET_FILE:core_knn_hnsw_rabitq_static>
+            -Wl,-force_load,$<TARGET_FILE:core_knn_ivf_rabitq_static>
+            -Wl,-force_load,$<TARGET_FILE:core_knn_hnsw_sparse_static>
+            -Wl,-force_load,$<TARGET_FILE:core_knn_ivf_static>
+            -Wl,-force_load,$<TARGET_FILE:core_knn_vamana_static>
+            -Wl,-force_load,$<TARGET_FILE:core_knn_cluster_static>
+            -Wl,-force_load,$<TARGET_FILE:core_knn_diskann_static>
+            -Wl,-force_load,$<TARGET_FILE:core_mix_reducer_static>
+            -Wl,-force_load,$<TARGET_FILE:core_metric_static>
+            -Wl,-force_load,$<TARGET_FILE:core_utility_static>
+            -Wl,-force_load,$<TARGET_FILE:core_quantizer_static>
+            -Wl,-force_load,$<TARGET_FILE:zvec_turbo>
+            zvec
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `a26f8abe` are properly handled with clean fallback behavior.

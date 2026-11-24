@@ -7293,10 +7293,10 @@
     "repository": "alibaba/zvec",
     "platform": "github",
     "sourceUrl": "https://github.com/alibaba/zvec",
-    "sourceVersion": "8d978b06",
+    "sourceVersion": "a26f8abe",
     "license": "Apache-2.0",
-    "contentHash": "c7cc4c5d0675008acae37b4fbb17e9e555270e02e938a788837cf163b3d70b7f",
-    "lastHarvestedAt": "2026-11-20T20:41:44.184Z",
+    "contentHash": "66c166465240ab19f9225b709830d0f742b103ba1461562f56f75f8cd2c09875",
+    "lastHarvestedAt": "2026-11-24T02:04:21.195Z",
     "learningId": "learn-github-alibaba-zvec"
   },
   "zenbu-labs-terminal-browser": {
@@ -12453,10 +12453,10 @@
     "repository": "tuist/tuist",
     "platform": "github",
     "sourceUrl": "https://github.com/tuist/tuist",
-    "sourceVersion": "d7dac153",
+    "sourceVersion": "0d1e4df6",
     "license": "NOASSERTION",
-    "contentHash": "635b355e61a407692ae661adbaa26aff03631c408d293d9be0d69ddca6b7a382",
-    "lastHarvestedAt": "2026-11-22T18:44:06.313Z",
+    "contentHash": "1fb62a9182595e701d74a063abd9e3b2d737520c85f304d3eac85866c1ccd7a1",
+    "lastHarvestedAt": "2026-11-24T02:04:10.993Z",
     "learningId": "learn-github-tuist-tuist"
   },
   "mixelpixx-kicad-mcp-server": {

@@ -12590,3 +12590,5 @@ Every entry in this ledger must capture:
 | `learn-github-dosco-deeporg` | `https://github.com/dosco/graphjin` | `48344754` | Multi-dimensional audit evidence | 2026-11-24T01:46:55.595Z |
 | `learn-github-yyjeqhc-webcodex` | `https://github.com/yyjeqhc/webcodex` | `026413dc` | Multi-dimensional audit evidence | 2026-11-24T01:55:59.548Z |
 | `learn-github-gauthierpiarrette-highball` | `https://github.com/gauthierpiarrette/highball` | `062ea35b` | Multi-dimensional audit evidence | 2026-11-24T01:56:01.658Z |
+| `learn-github-tuist-tuist` | `https://github.com/tuist/tuist` | `0d1e4df6` | Multi-dimensional audit evidence | 2026-11-24T02:04:10.993Z |
+| `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `a26f8abe` | Multi-dimensional audit evidence | 2026-11-24T02:04:21.195Z |
