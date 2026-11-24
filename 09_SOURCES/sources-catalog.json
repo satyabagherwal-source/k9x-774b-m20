@@ -4503,10 +4503,10 @@
     "repository": "BuilderIO/builder",
     "platform": "github",
     "sourceUrl": "https://github.com/BuilderIO/builder",
-    "sourceVersion": "9e133430",
+    "sourceVersion": "0b87ae3c",
     "license": "MIT",
-    "contentHash": "098bb5b58dfa8b42a5abb1951c6af3fbb74021f8aa98f4f5b9b456b1c449c489",
-    "lastHarvestedAt": "2026-11-21T22:56:52.221Z",
+    "contentHash": "d7c7da30a2e9776e8e528997b8a1b32fc66447f34fa6e81846a06e9e779040b3",
+    "lastHarvestedAt": "2026-11-24T14:59:39.450Z",
     "learningId": "learn-github-builderio-builder"
   },
   "gocrane-crane": {
@@ -5193,10 +5193,10 @@
     "repository": "actix/actix-web",
     "platform": "github",
     "sourceUrl": "https://github.com/actix/actix-web",
-    "sourceVersion": "0581ada7",
+    "sourceVersion": "12df9de5",
     "license": "Apache-2.0",
-    "contentHash": "4009d31aa87203b57167a657ebbac220a66311c752d83c80db45b2c78f3bda93",
-    "lastHarvestedAt": "2026-11-22T00:32:38.935Z",
+    "contentHash": "c8b2dc04d37875c078352541504d861c6a9ba247c52de098f1c15c71322ebc98",
+    "lastHarvestedAt": "2026-11-24T14:59:34.953Z",
     "learningId": "learn-github-actix-actix-web"
   },
   "wix-react-native-ui-lib": {
@@ -6893,10 +6893,10 @@
     "repository": "gardener/gardener",
     "platform": "github",
     "sourceUrl": "https://github.com/gardener/gardener",
-    "sourceVersion": "31c91dd2",
+    "sourceVersion": "86782dd1",
     "license": "Apache-2.0",
-    "contentHash": "ac5004077176e63b3915ade6ca303b5c961de532a936620377259bf4317e0f01",
-    "lastHarvestedAt": "2026-11-23T19:26:14.976Z",
+    "contentHash": "ee89560c474315d843a57fd9d57325f2fd626609cc50c7a1c12d408cd2e44501",
+    "lastHarvestedAt": "2026-11-24T14:59:42.480Z",
     "learningId": "learn-github-gardener-gardener"
   },
   "nirdiamant-rag_techniques": {
@@ -13055,8 +13055,8 @@
     "sourceUrl": "https://huggingface.co/microsoft/Aion-1.0-Instruct-2.3B",
     "sourceVersion": "hf-microsoft-aion-1.0-instruct-2.3b",
     "license": "Open-Source",
-    "contentHash": "d9cd20bd3fe9389b573f560c54e0ffbd868081e8d6507e1eb66be747bf2a1e69",
-    "lastHarvestedAt": "2026-11-20T13:26:32.708Z",
+    "contentHash": "95b6294dc6eb25da5574395b1111cc4185a93a1eb87eed0a89fa6240a2bfcb67",
+    "lastHarvestedAt": "2026-11-24T14:59:31.173Z",
     "learningId": "learn-huggingface-microsoft-aion-1-0-instruct-2-3b"
   },
   "hf-sentinel7-h3": {

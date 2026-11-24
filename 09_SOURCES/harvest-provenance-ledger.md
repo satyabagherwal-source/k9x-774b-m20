@@ -12743,3 +12743,7 @@ Every entry in this ledger must capture:
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `4bc6dc81` | Multi-dimensional audit evidence | 2026-11-24T14:50:42.133Z |
 | `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `07de763f` | Multi-dimensional audit evidence | 2026-11-24T14:50:44.726Z |
 | `learn-dom-h-01e5eb37` | `project://kube-rs-kube` | `6ed29aa0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kube-rs-kube-learnings.md` | 2026-11-24T14:51:14.723Z |
+| `learn-huggingface-microsoft-aion-1-0-instruct-2-3b` | `https://huggingface.co/microsoft/Aion-1.0-Instruct-2.3B` | `hf-microso` | Multi-dimensional audit evidence | 2026-11-24T14:59:31.173Z |
+| `learn-github-actix-actix-web` | `https://github.com/actix/actix-web` | `12df9de5` | Multi-dimensional audit evidence | 2026-11-24T14:59:34.953Z |
+| `learn-github-builderio-builder` | `https://github.com/BuilderIO/builder` | `0b87ae3c` | Multi-dimensional audit evidence | 2026-11-24T14:59:39.450Z |
+| `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `86782dd1` | Multi-dimensional audit evidence | 2026-11-24T14:59:42.480Z |

@@ -12710,3 +12710,7 @@
 | `CYCLE-20261124-AS7L` | `2026-11-24T14:50:42.129Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`7cc33e0f...`) |
 | `CYCLE-20261124-AU7M` | `2026-11-24T14:50:44.722Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10286` | Yes (`9249333b...`) |
 | `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T14:51:14.723Z` | `kube-rs-kube` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-01E5EB37` [Domain H] | Yes (`52639cab...`) |
+| `CYCLE-20261124-M4F4` | `2026-11-24T14:59:31.168Z` | `microsoft/Aion-1.0-Instruct-2.3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-aion-1.0-instruct-2.3b-learnings.md` | Yes (`95b6294d...`) |
+| `CYCLE-20261124-M7C5` | `2026-11-24T14:59:34.949Z` | `actix/actix-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10287` | Yes (`c8b2dc04...`) |
+| `CYCLE-20261124-MAT1` | `2026-11-24T14:59:39.445Z` | `BuilderIO/builder` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10288` | Yes (`d7c7da30...`) |
+| `CYCLE-20261124-MD57` | `2026-11-24T14:59:42.475Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10289` | Yes (`ee89560c...`) |

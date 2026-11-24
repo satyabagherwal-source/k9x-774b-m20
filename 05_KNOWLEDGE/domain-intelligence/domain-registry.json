@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T14:51:16.464Z",
+  "last_updated": "2026-11-24T14:59:49.429Z",
   "total_records": 2539,
   "domains": {
     "A": {
@@ -10055,8 +10055,8 @@
       "title": "Technical Construction Intelligence: actix/actix-web Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-actix-actix-web-technical-construction-intelligence-actix-actix-web-core-invaria.md",
       "repository": "actix/actix-web",
-      "content_hash": "7dc9f765e1b01a176c72a1f21d7cecaae053c7a4002bd58b7ee3454ff4dc8700",
-      "created_at": "2026-11-22T00:32:39.304Z"
+      "content_hash": "bbbc8a99332db37e9bee8b1b58d5ff27ae9ce35a49329087a114479a6e7d1e4c",
+      "created_at": "2026-11-24T14:59:35.366Z"
     },
     "domain_intelligence-architecture-intelligence-dkhamsing-open-source-ios-apps-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-dkhamsing-open-source-ios-apps-core-invariants",
@@ -10124,8 +10124,8 @@
       "title": "Technical Construction Intelligence: actix-actix-web-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-actix-actix-web-learnings-technical-construction-intelligence-actix-actix-web-le.md",
       "repository": "actix-actix-web-learnings",
-      "content_hash": "7adf56f8be969ce348056d9ec01de98b178528de203ecf1819dbfbcc1e6eacde",
-      "created_at": "2026-11-22T00:32:48.642Z"
+      "content_hash": "c7a665b999495e330b4254dec65ada9e192a23e9cfee99a7bf21bd27006700c5",
+      "created_at": "2026-11-24T14:59:48.161Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-core-i": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-core-i",
@@ -12128,8 +12128,8 @@
       "title": "Deployment & Operations Intelligence: gardener/gardener Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-gardener-gardener-deployment-operations-intelligence-gardener-gardener-core-inva.md",
       "repository": "gardener/gardener",
-      "content_hash": "afa2e1761a070b646bf8e54734942ec261ed5aa4a97735feb64e5c24a65c661e",
-      "created_at": "2026-11-23T19:26:15.372Z"
+      "content_hash": "032d9a2ffc416166302eaa3427879580c98d7a0ce2b6be3053edfdafd7ef170b",
+      "created_at": "2026-11-24T14:59:42.875Z"
     },
     "domain_intelligence-design-intelligence-openai-whisper-large-v3-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-openai-whisper-large-v3-core-invariants",
@@ -14229,8 +14229,8 @@
       "title": "Architecture Intelligence: BuilderIO/builder Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-builderio-builder-architecture-intelligence-builderio-builder-core-invariants.md",
       "repository": "BuilderIO/builder",
-      "content_hash": "ed9ce68b09c81eca669a0a22d140d92acaca1fd859b2d09f66625f730740444e",
-      "created_at": "2026-11-21T22:56:52.649Z"
+      "content_hash": "e7a24d61d758a9bd5346d071a2786db93c8ebbf318ae08632b8b8810a9e3b4da",
+      "created_at": "2026-11-24T14:59:39.866Z"
     },
     "domain_intelligence-technical-construction-intelligence-pixeltable-pixeltable-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-pixeltable-pixeltable-core-invariants",
@@ -14298,8 +14298,8 @@
       "title": "Architecture Intelligence: builderio-builder-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-builderio-builder-learnings-architecture-intelligence-builderio-builder-learning.md",
       "repository": "builderio-builder-learnings",
-      "content_hash": "92bf67e07c645b5453da9d88c0608cd31f294d86e7fcd48a446fa2b19a1bf429",
-      "created_at": "2026-11-21T22:57:58.698Z"
+      "content_hash": "657e06f10388817565e293f715123329bd0059e8cd552840c7bca47a78b46ea3",
+      "created_at": "2026-11-24T14:59:49.429Z"
     },
     "domain_intelligence-technical-construction-intelligence-pixeltable-pixeltable-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-pixeltable-pixeltable-learnings-core-invaria",
@@ -36311,8 +36311,8 @@
       "title": "Research & Knowledge Intelligence: microsoft/Aion-1.0-Instruct-2.3B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-microsoft-aion-1-0-instruct-2-3b-research-knowledge-intelligence-microsoft-ai.md",
       "repository": "microsoft/Aion-1.0-Instruct-2.3B",
-      "content_hash": "c3d2ad454d88b4f2d642d9ec404aeeacccea8148a3bf1efcfe7d899a4933192c",
-      "created_at": "2026-11-20T13:26:32.897Z"
+      "content_hash": "deab2bd2c3100eb36426260c0718f69911f4d8e1983c7d0ec6281b40c48a30ef",
+      "created_at": "2026-11-24T14:59:31.395Z"
     },
     "domain_intelligence-content-information-intelligence-itsdecodingai-llm-twin-course-learnings-core-in": {
       "record_id": "domain_intelligence-content-information-intelligence-itsdecodingai-llm-twin-course-learnings-core-in",
@@ -36371,8 +36371,8 @@
       "title": "Research & Knowledge Intelligence: hf-microsoft-aion-1.0-instruct-2.3b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-microsoft-aion-1-0-instruct-2-3b-learnings-research-knowledge-intelligence-hf.md",
       "repository": "hf-microsoft-aion-1.0-instruct-2.3b-learnings",
-      "content_hash": "207347064c43f3ccece34ac03b52bda06de3cea6fa46be40ce4fbb288ae7abfb",
-      "created_at": "2026-11-20T13:27:15.452Z"
+      "content_hash": "ead6113381eb59d31e601179c00286066f2684b07de3fcd804dae44a44e48bc5",
+      "created_at": "2026-11-24T14:59:48.708Z"
     },
     "domain_intelligence-search-distribution-intelligence-open-source-legal-opencontracts-core-invariants": {
       "record_id": "domain_intelligence-search-distribution-intelligence-open-source-legal-opencontracts-core-invariants",

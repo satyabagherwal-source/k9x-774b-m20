@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T14:51:16.265Z",
+  "last_updated": "2026-11-24T14:59:49.263Z",
   "directives": [
     {
       "id": "CD-001",
@@ -55323,6 +55323,59 @@
       "source_repo": "cilium-cilium",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-80A5AB-images-update-cilium-runtime-builder-.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-M7IT",
+      "directive_title": "add cookie 0.18 support alongside 0.16",
+      "source_repo": "actix/actix-web",
+      "source_commit": "12df9de5",
+      "staged_file": "11_INBOX/candidate-directives/CD-M7IT-add-cookie-0-18-support-alongside-0-16.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-MIDQ",
+      "directive_title": "fix[sdks][unflatten]: block prototype pollution from Studio user attribute query",
+      "source_repo": "builderio-builder-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-MIDQ-fix-sdks-unflatten-block-prototype-pollution-from-studio-user-attribute-query.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "A"
+    },
+    {
+      "id": "CD-MDBO",
+      "directive_title": "Update gcr.io/distroless/static-debian13:nonroot Docker digest to 8ce6dd8",
+      "source_repo": "gardener/gardener",
+      "source_commit": "86782dd1",
+      "staged_file": "11_INBOX/candidate-directives/CD-MDBO-update-gcr-io-distroless-static-debian13-nonroot-docker-digest-to-8ce6dd8.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "L"
+    },
+    {
+      "id": "CD-MHE1",
+      "directive_title": "web): add cookie 0.18 support alongside 0.16",
+      "source_repo": "actix-actix-web-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-MHE1-web-add-cookie-0-18-support-alongside-0-16.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-953EE7",
+      "directive_title": "fix[sdks][unflatten]: block prototype pollution from Studio user attribute query",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "builderio-builder",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-953EE7-fix-sdks-unflatten-block-prototype-pollu.md",
       "staged_date": "2026-11-24"
     }
   ]

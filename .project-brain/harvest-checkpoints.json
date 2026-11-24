@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T14:50:44.741Z",
+  "last_updated": "2026-11-24T14:59:42.497Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6876,14 +6876,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-builderio-builder",
-      "content_hash": "098bb5b58dfa8b42a5abb1951c6af3fbb74021f8aa98f4f5b9b456b1c449c489",
-      "verified_at": "2026-11-21T22:56:52.229Z",
+      "content_hash": "d7c7da30a2e9776e8e528997b8a1b32fc66447f34fa6e81846a06e9e779040b3",
+      "verified_at": "2026-11-24T14:59:39.466Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T22:56:52.229Z"
+      "last_updated": "2026-11-24T14:59:39.466Z"
     },
     "gocrane/crane": {
       "repository": "gocrane/crane",
@@ -7911,14 +7911,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-actix-actix-web",
-      "content_hash": "4009d31aa87203b57167a657ebbac220a66311c752d83c80db45b2c78f3bda93",
-      "verified_at": "2026-11-22T00:32:38.942Z",
+      "content_hash": "c8b2dc04d37875c078352541504d861c6a9ba247c52de098f1c15c71322ebc98",
+      "verified_at": "2026-11-24T14:59:34.969Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T00:32:38.942Z"
+      "last_updated": "2026-11-24T14:59:34.969Z"
     },
     "wix/react-native-ui-lib": {
       "repository": "wix/react-native-ui-lib",
@@ -10401,14 +10401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gardener-gardener",
-      "content_hash": "ac5004077176e63b3915ade6ca303b5c961de532a936620377259bf4317e0f01",
-      "verified_at": "2026-11-23T19:26:14.984Z",
+      "content_hash": "ee89560c474315d843a57fd9d57325f2fd626609cc50c7a1c12d408cd2e44501",
+      "verified_at": "2026-11-24T14:59:42.496Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T19:26:14.984Z"
+      "last_updated": "2026-11-24T14:59:42.496Z"
     },
     "NirDiamant/RAG_Techniques": {
       "repository": "NirDiamant/RAG_Techniques",
@@ -19671,14 +19671,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-microsoft-aion-1-0-instruct-2-3b",
-      "content_hash": "d9cd20bd3fe9389b573f560c54e0ffbd868081e8d6507e1eb66be747bf2a1e69",
-      "verified_at": "2026-11-20T13:26:32.716Z",
+      "content_hash": "95b6294dc6eb25da5574395b1111cc4185a93a1eb87eed0a89fa6240a2bfcb67",
+      "verified_at": "2026-11-24T14:59:31.186Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T13:26:32.716Z"
+      "last_updated": "2026-11-24T14:59:31.186Z"
     },
     "Sentinel7/h3": {
       "repository": "Sentinel7/h3",

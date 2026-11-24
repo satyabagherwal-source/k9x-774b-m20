@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T14:51:16.807Z",
+  "last_updated": "2026-11-24T14:59:49.751Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-24T13:21:19.659Z",
@@ -868,7 +868,7 @@
       "staged_for_review": 1
     },
     "actix-actix-web-learnings.md": {
-      "processed_at": "2026-11-22T00:32:48.167Z",
+      "processed_at": "2026-11-24T14:59:45.861Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2428,7 +2428,7 @@
       "staged_for_review": 0
     },
     "builderio-builder-learnings.md": {
-      "processed_at": "2026-11-21T22:57:58.069Z",
+      "processed_at": "2026-11-24T14:59:48.913Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3583,8 +3583,8 @@
       "staged_for_review": 1
     },
     "hf-microsoft-aion-1.0-instruct-2.3b-learnings.md": {
-      "processed_at": "2026-11-20T13:27:15.208Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-24T14:59:48.489Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-sentinel7-h3-learnings.md": {
@@ -3833,7 +3833,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3807,
+  "total_dossiers_evaluated": 3810,
   "total_canonical_promoted": 510,
-  "total_staged_for_review": 2884
+  "total_staged_for_review": 2886
 }

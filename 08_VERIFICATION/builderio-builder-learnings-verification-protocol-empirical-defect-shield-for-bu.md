@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T22:57:58.406Z",
+  "timestamp": "2026-11-24T14:59:49.139Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-builderio-builder-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [builderio-builder-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T22:57:58.406Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T14:59:49.139Z`  
 > **Learning ID**: `LEARN-EVO-builderio-builder-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/builderio-builder-learnings.md`  
 > **Source**: github ([https://github.com/BuilderIO/builder](https://github.com/BuilderIO/builder))  
-> **Source Version**: `9e133430`  
+> **Source Version**: `0b87ae3c`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T22:56:51.153Z  
+> **Timestamp**: 2026-11-24T14:59:38.375Z  
 > **Learning ID**: `learn-github-builderio-builder`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/builderio-builder-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/BuilderIO/builder](https://github.com/BuilderIO/builder))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T22:56:51.148Z  
+> **Harvest Timestamp**: 2026-11-24T14:59:38.370Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -630,390 +630,418 @@ export { builder } from './src/constants/builder';
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9e133430` (2026-11-19)
-**Commit Message**: fix(utils): add repository field for npm provenance publish (#4949)
+### Incident Patch 1: `e4ce5a4f` (2026-11-23)
+**Commit Message**: fix[sdks][unflatten]: block prototype pollution from Studio user attribute query params (#4924)
 
-The Publish SDKs run on main failed publishing
-`@builder.io/utils@1.1.37` with E422: `package.json: "repository.url" is
-"", expected to match "https://github.com/BuilderIO/builder" from
-provenance`.
+## Description
 
-Adds the `repository` field to `packages/utils/package.json`. Once
-merged, the next run publishes 1.1.37 (the only package still
-unpublished).
+Fixes #4824.
 
-Failed run:
-https://github.com/BuilderIO/builder/actions/runs/44511201007
+When the page URL contains `builder.preview=BUILDER_STUDIO`,
+`generateContentUrl` collects every `builder.userAttributes.*` query
+parameter and rebuilds the nested object with `unflatten()`
+(`packages/sdks/src/helpers/flatten.ts`). `unflatten()` walked each
+dot-separated key with no guard, so a single crafted link polluted
+`Object.prototype` in the visitor's tab:
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-**File**: `packages/utils/package.json` (modified, +5/-0)
-```diff
-@@ -3,6 +3,11 @@
-   "version": "1.1.37",
-   "description": "Utils for working with Builder.io content",
-   "main": "./dist/index.js",
-+  "repository": {
-+    "type": "git",
-+    "url": "https://github.com/BuilderIO/builder",
-+    "directory": "packages/utils"
-+  },
-   "scripts": {
-     "build": "tsc",
-     "test": "jest"
+```
+?builder.preview=BUILDER_STUDIO&builder.userAttributes.__proto__.polluted=1
 ```
 
----
+`constructor.prototype.*` paths and inherited members
+(`toString.polluted`) had the same problem. Separately, a key nesting
+under an earlier primitive (`a=1&a.b=2`) threw a `TypeError` while
+building the content URL.
 
-### Incident Patch 2: `db04bf95` (2026-11-19)
-**Commit Message**: fix[sdks][text]: ENG-13905 prevent duplicate text during ssr hydration (#4946)
+**Change:** `unflatten()` now delegates to the shared `set()` helper.
+#4878 already hardened that helper for block bindings: it rejects
+`__proto__`, refuses `constructor`/`prototype` as intermediate segments,
+only walks own properties, and replaces non-object parents. Unsafe paths
+are dropped and every other attribute is kept.
 
-**File**: `.changeset/tame-flowers-deliver.md` (added, +11/-0)
+One behaviour difference: `set()` builds arrays for numeric segments, so
+
+
+**File**: `.changeset/quiet-owls-guard.md` (added, +12/-0)
 ```diff
-@@ -0,0 +1,11 @@
+@@ -0,0 +1,12 @@
 +---
-+"@builder.io/sdk-angular": patch
-+"@builder.io/sdk-react-nextjs": patch
-+"@builder.io/sdk-qwik": patch
-+"@builder.io/sdk-react": patch
-+"@builder.io/sdk-solid": patch
-+"@builder.io/sdk-svelte": patch
-+"@builder.io/sdk-vue": patch
++'@builder.io/sdk-react-native': patch
++'@builder.io/sdk-angular': patch
++'@builder.io/sdk-react-nextjs': patch
++'@builder.io/sdk-svelte': patch
++'@builder.io/sdk-react': patch
++'@builder.io/sdk-solid': patch
++'@builder.io/sdk-qwik': patch
++'@builder.io/sdk-vue': patch
 +---
 +
-+Fix duplicate text after SSR hydration when paragraph wrappers contain built-in Text blocks, including nested Text blocks. Preserve valid paragraph wrappers and custom Text overrides.
++Fix: ignore `__proto__`, `constructor` and `prototype` paths in Studio `builder.userAttributes.*` query parameters so a crafted preview URL cannot pollute `Object.prototype`
 ```
 
-**File**: `packages/sdks-tests/src/e2e-tests/blocks.spec.ts` (modified, +54/-0)
+**File**: `packages/sdks/src/functions/get-content/generate-content-url.test.ts` (modified, +33/-0)
 ```diff
-@@ -59,6 +59,60 @@ test.describe('Blocks', () => {
+@@ -378,4 +378,37 @@ describe('Generate Content URL', () => {
+       vi.unstubAllGlobals();
      }
    });
- 
-+  for (const { name, markers, tag } of [
-+    { name: 'plain', markers: ['Plain text marker'], tag: 'div' },
-+    { name: 'rich', markers: ['First paragraph marker', 'Second paragraph marker'], tag: 'div' },
-+    { name: 'direct', markers: ['Direct text marker'], tag: 'div' },
-+    { name: 'nested', markers: ['Nested text marker'], tag: 'div' },
-+    { name: 'valid', markers: [], tag: 'p' },
-+    { name: 'custom', markers: ['Direct text marker'], tag: 'p' },
-+  ]) {
-+    test(`Text paragraph wrapper: ${name}`, async ({ page, browser, sdk, packageName }) => {
-+      test.skip(checkIsRN(sdk) || checkIsGen1React(sdk));
-+      test.skip(name === 'custom' && packageName !== 'nuxt');
-+      await page.goto(
-+        name === 'custom'
-+          ? '/text-paragraph-direct?customText=true'
-+          : `/text-paragraph-${name}`
-+      );
-+      await page.waitForLoadState('networkidle');
 +
-+      const parentSelector = `${tag}[builder-id="builder-paragraph-parent"]`;
-+      const parent = page.locator(parentSelector);
-+      await expect(parent).toHaveCount(1);
-+      if (name === 'valid') {
-+        await expect(
-+          parent.locator('span[builder-id="builder-inline-child"]')
-+        ).toHaveCount(1);
-+      }
-+      for (const marker of markers) {
-+        await expect(page.getByText(marker, { exact: true })).toHaveCount(1);
-+        await expect(parent.getByText(marker, { exact: true })).toBeVisible();
-+      }
-+
-+      if (isSSRFramework(packageName)) {
-+        const ssrContext = await browser.newContext({ javaScriptEnabled: false });
-+        try {
-+          const ssrPage = await ssrContext.newPage();
-+          await ssrPage.goto(page.url());
-+          const ssrParent = ssrPage.locator(parentSelector);
-+          await expect(ssrParent).toHaveCount(1);
-+          if (name === 'valid') {
-+            await expect(
-+              ssrParent.locator('span[builder-id="builder-inline-child"]')
-+            ).toHaveCount(1);
-+          }
-+          for (const marker of markers) {
-+            await expect(ssrPage.getByText(marker, { exact: true })).toHaveCount(1);
-+            await expect(ssrParent.getByText(marker, { exact: true })).toBeVisible();
-+          }
-+        } finally {
-+          await ssrContext.close();
-+        }
-+      }
++  test.each([
++    'builder.userAttributes.__proto__.polluted=yes',
++    'builder.userAttributes.constructor.prototype.polluted=yes',
++    'builder.userAttributes.toString.polluted=yes',
++  ])('does not pollute prototypes from Studio query parameter %s', (param) => {
++    vi.stubGlobal('window', {
++      location: {
++        search: `?builder.preview=BUILDER_STUDIO&${param}&builder.userAttributes.audience=members`,
++        pathname: '/products',
++        host: 'www.example.com',
++      },
 +    });
-+  }
++    vi.stubGlobal('document', {});
 +
-   test('Button', async ({ page, sdk }) => {
-     await page.goto('/reactive-state');
-     const button = checkIsRN(sdk)
-```
-
-**File**: `packages/sdks-tests/src/specs/index.ts` (modified, +7/-1)
-```diff
-@@ -53,7 +53,7 @@ import {
-   CONTENT as symbols,
- } from './symbols.js';
- import { TABS } from './tabs.js';
--import { CONTENT as textBlock } from './text-block.js';
-+import { CONTENT as textBlock, PARAGRAPH_TEXT_CASES } from './text-block.js';
- import { CONTENT as textEval } from './text-eval.js';
- import type { BuilderContent } from './types.js';
- import { CONTENT as video } from './video.js';
-@@ -179,6 +179,12 @@ export const PAGES: Record<string, Page> = {
-   '/show-hide-if-repeats': { content: SHOW_HIDE_IF_REPEATS },
-   '/custom-breakpoints-reset': { content: customBreakpointsReset },
-   '/text-block': { content: textBlock },
-+  ...Object.fromEntries(
-+    Object.entries(PARAGRAPH_TEXT_CASES).map(([name, block]) => [
-+      `/text-paragraph-${name}`,
-+      { content: { ...textBlock, data: { ...textBlock.data, blocks: [block] } } },
-+    ])
-+  ),
-   '/text-eval': { content: textEval },
-   '/state-binding': { content: stateBinding },
-   '/nested-symbols': { content: nestedSymbols },
-```
-
-**File**: `packages/sdks-tests/src/specs/text-block.ts` (modified, +70/-0)
-```diff
-@@ -109,3 +109,73 @@ export const CONTENT = {
-   lastUpdatedBy: 'OcOewqA7uqVVlVfqY453F8vgcc33',
-   rev: 'wqcxm1p64gj',
- };
++    try {
++      const output = generateContentUrl({
++        apiKey: testKey,
++        model: testModel,
++      });
 +
-+export const PARAGRAPH_TEXT_CASES = {
-+  plain: {
-+    '@type': '@builder.io/sdk:Element',
-+    id: 'builder-paragraph-parent',
-+    tagName: 'p',
-+    children: [
-+      {
-+        '@type': '@builder.io/sdk:Element',
-+        id: 'builder-paragraph-text',
-+        tagName: 'span',
-+        component: { name: 'Text', options: { text: 'Plain text marker' } },
-+      },
-+    ],
-+  },
-+  rich: {
-+    '@type': '@builder.io/sdk:Element',
-+    id: 'builder-paragraph-parent',
-+    tagName: 'p',
-+    children: [
-+      {
-+        '@type': '@builder.io/sdk:Element',
-+        id: 'builder-paragraph-text',
-+        tagName: 'span',
-+        component: {
-+          name: 'Text',
-+          options: { text: '<p>First paragraph marker</p><p>Second paragraph marker</p>' },
-+        },
-+      },
-+    ],
-+  },
-+  direct: {
-+    '@type': '@builder.io/sdk:Element',
-+    id: 'builder-paragraph-parent',
-+    tagName: 'p',
-+    component: { name: 'Text', options: { text: 'Direct text marker' } },
-+  },
-+  nested: {
-+    '@type': '@builder.io/sdk:Element',
-+    id: 'builder-paragraph-parent',
-+    tagName: 'p',
-+    children: [
-+      {
-+        '@type': '@builder.io/sdk:Element',
-+        id: 'builder-text-wrapper',
-+        tagName: 'span',
-+        children: [
-+          {
-+            '@type': '@builder.io/sdk:Element',
-+            id: 'builder-nested-text',
-+            tagName: 'span',
-+            component: { name: 'Text', options: { text: 'Nested text marker' } },
-+          },
-+        ],
-+      },
-+    ],
-+  },
-+  valid: {
-+    '@type': '@builder.io/sdk:Element',
-+    id: 'builder-paragraph-parent',
-+    tagName: 'p',
-+    children: [
-+      {
-+        '@type': '@builder.io/sdk:Element',
-+        id: 'builder-inline-child',
-+        tagName: 'span',
-+      },
-+    ],
-+  },
-+};
++      expect(({} as any).polluted).toBeUndefined();
++      expect((Object as any).polluted).toBeUndefined();
++      expect((Object.prototype.toString as any).polluted).toBeUndefined();
++      expect(
++        JSON.parse(output.searchParams.get('userAttributes')!).audience
++      ).toBe('members');
++    } finally {
++      delete (Object.prototype as any).polluted;
++      delete (Object.prototype.toString as any).polluted;
++      vi.unstubAllGlobals();
++    }
++  });
+ });
 ```
 
-**File**: `packages/sdks/e2e/nuxt/pages/[...app].vue` (modified, +12/-0)
+**File**: `packages/sdks/src/helpers/flatten.test.ts` (added, +46/-0)
 ```diff
-@@ -5,6 +5,7 @@ import {
-   setClientUserAttributes,
-   registerAction,
- } from '@builder.io/sdk-vue';
-+import { defineComponent, h } from 'vue';
- import BuilderBlockWithClassName from '../components/BuilderBlockWithClassName.vue';
- import { getProps } from '@sdk/tests';
- 
-@@ -35,6 +36,17 @@ if (typeof window !== 'undefined') {
- const route = useRoute();
- 
- const REGISTERED_COMPONENTS = [
-+  ...(route.query.customText === 'true'
-+    ? [
-+        {
-+          name: 'Text',
-+          component: defineComponent({
-+            props: ['text'],
-+            setup: (props) => () => h('span', props.text),
-+          }),
-+        },
-+      ]
-+    : []),
-   {
-     name: 'BuilderBlockWithClassName',
-     component: BuilderBlockWithClassName,
-```
-
-**File**: `packages/sdks/src/components/block/block.helpers.ts` (modified, +4/-0)
-```diff
-@@ -11,6 +11,10 @@ import { isEditingOrPreviewing } from '../../functions/is-editing-or-previewing.
- import type { BuilderBlock } from '../../types/builder-block.js';
- import type { RepeatData } from './types.js';
- 
-+export const hasTextComponent = (block: BuilderBlock): boolean =>
-+  block.component?.name === 'Text' ||
-+  (block.children?.some(hasTextComponent) ?? false);
+@@ -0,0 +1,46 @@
++import { unflatten } from './flatten.js';
 +
- const checkIsComponentRestricted = (
-   component: RegisteredComponent | null | undefined,
-   model: string
++describe('unflatten', () => {
++  afterEach(() => {
++    delete (Object.prototype as any).polluted;
++    delete (Object.prototype.toString as any).polluted;
++  });
++
++  test('rebuilds nested objects from dot-separated keys', () => {
++    expect(unflatten({ 'foo.bar': 'baz', 'foo.qux': 1, top: true })).toEqual({
++      foo: { bar: 'baz', qux: 1 },
++      top: true,
++    });
++  });
++
++  test('keeps numeric segments as object keys', () => {
++    expect(unflatten({ 'list.0': 'x', 'list.5': 'y' })).toEqual({
++      list: { 0: 'x', 5: 'y' },
++    });
++  });
++
++  test.each([
++    '__proto__.polluted',
++    'foo.__proto__.polluted',
++    'constructor.prototype.polluted',
++    'foo.constructor.prototype.polluted',
++    'foo.prototype.polluted',
++  ])('does not pollute Object.prototype via %s', (key) => {
++    expect(unflatten({ [key]: 'yes', safe: 'kept' })).toEqual({ safe: 'kept' });
++    expect(({} as any).polluted).toBeUndefined();
++    expect((Object as any).polluted).toBeUndefined();
++  });
++
++  test('does not write onto inherited members', () => {
++    const result = unflatten({ 'toString.polluted': 'yes' });
++
++    expect((Object.prototype.toString as any).polluted).toBeUndefined();
++    expect(result.toString).toEqual({ polluted: 'yes' });
++  });
++
++  test('replaces a primitive when a later key nests under it', () => {
++    expect(unflatten({ foo: 'bar', 'foo.baz': 'qux' })).toEqual({
++      foo: { baz: 'qux' },
++    });
++  });
++});
 ```
 
-**File**: `packages/sdks/src/components/block/block.lite.tsx` (modified, +10/-2)
+**File**: `packages/sdks/src/helpers/flatten.ts` (modified, +11/-2)
 ```diff
-@@ -8,6 +8,7 @@ import {
-   useStore,
-   useTarget,
- } from '@builder.io/mitosis';
-+import Text from '../../blocks/text/index.js';
- import { TARGET } from '../../constants/target.js';
- import type {
-   BuilderContextInterface,
-@@ -23,6 +24,7 @@ import {
-   generateKey,
-   getComponent,
-   getInheritedStyles,
-+  hasTextComponent,
-   getRepeatItemData,
-   provideBuilderBlock,
-   provideBuilderContext,
-@@ -140,15 +142,21 @@ export default function Block(props: BlockProps) {
-         );
+@@ -52,6 +52,8 @@ export function flattenMongoQuery(
+   return _res;
+ }
+ 
++const UNSAFE_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
++
+ /**
+  * Unflatten a flat object with dot-separated keys back into a nested object.
+  *
+@@ -61,14 +63,21 @@ export function unflatten(obj: any): any {
+   const result: any = {};
+   for (const key in obj) {
+     const parts = key.split('.');
++    // keys come from URL query params: never let them reach the prototype chain
++    if (parts.some((part) => UNSAFE_KEYS.has(part))) continue;
+     let current = result;
+     for (let i = 0; i < parts.length; i++) {
+       const part = parts[i];
+       if (i === parts.length - 1) {
+         current[part] = obj[key];
+       } else {
+-        current[part] = current[part] || {};
+-        current = current[part];
++        // own, object-valued parents only: never walk into inherited members
++        // (e.g. `toString`) or write onto a primitive
++        const next = Object.prototype.hasOwnProperty.call(current, part)
++          ? current[part]
++          : undefined;
++        current = current[part] =
++          typeof next === 'object' && next !== null ? next : {};
        }
- 
-+      // Text renders a div, which makes a paragraph wrapper auto-close before hydration.
-+      const shouldUseDiv =
-+        props.block.tagName === 'p' &&
-+        props.registeredComponents.Text?.component === Text &&
-+        hasTextComponent(state.processedBlock);
-+
-       return useTarget({
-         /**
-          * `tagName` will always be an HTML element. In the future, we might't map those to the right React Native components
-          * For now, we just use `View` for all of them.
-          * eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          * @ts-ignore */
-         reactNative: View,
--        angular: props.block.tagName || DynamicDiv,
--        default: props.block.tagName || 'div',
-+        angular: shouldUseDiv ? DynamicDiv : props.block.tagName || DynamicDiv,
-+        default: shouldUseDiv ? 'div' : props.block.tagName || 'div',
-       });
-     },
-     get canShowBlock() {
+     }
+   }
 ```
 
 ---
 
-### Incident Patch 3: `9f7a983a` (2026-11-19)
-**Commit Message**: fix[widgets][carousel]: ENG-12409 prevent dom-prop warnings and hide the empty arrows (#4550)
+### Incident Patch 2: `ee5f0c46` (2026-11-24)
+**Commit Message**: fix(react): preserve useId during personalization hydration (#4951)
 
-**File**: `packages/widgets/src/components/Carousel.tsx` (modified, +20/-5)
+Co-authored-by: Sridhar Maskeri <[REDACTED_EMAIL]>
+
+**File**: `.changeset/forty-mirrors-scream.md` (added, +5/-0)
 ```diff
-@@ -13,6 +13,16 @@ import Slider, { ResponsiveObject, Settings } from 'react-slick';
- 
- type BuilderBlockType = BuilderElement;
- 
-+const CarouselArrow = ({
-+  currentSlide,
-+  slideCount,
-+  children,
-+  ...rest
-+}: React.HTMLAttributes<HTMLDivElement> & {
-+  currentSlide?: number;
-+  slideCount?: number;
-+}) => <div {...rest}>{children}</div>;
+@@ -0,0 +1,5 @@
++---
++"@builder.io/react": patch
++---
 +
- interface CarouselProps {
-   slides: Array<
-     React.ReactNode | { content: BuilderBlockType[] } /* BuilderBlock <- export this type */
-@@ -145,26 +155,31 @@ export class CarouselComponent extends React.Component<CarouselProps> {
-                     focusOnSelect={this.props.focusOnSelect}
-                     // TODO: on change emit event on element?
-                     // renderBottomCenterControls={this.props.hideDots ? () => null : undefined}
--
-+                    arrows={
-+                      !!(
-+                        (this.props.prevButton && this.props.prevButton.length) ||
-+                        (this.props.nextButton && this.props.nextButton.length)
-+                      )
-+                    }
-                     // OOF!!
-                     nextArrow={
--                      <div>
-+                      <CarouselArrow>
-                         <BuilderBlocks
-                           parentElementId={this.props.builderBlock.id}
-                           dataPath="component.options.prevButton"
-                           blocks={this.props.prevButton}
-                         />
--                      </div>
-+                      </CarouselArrow>
-                     }
-                     // OOF!!
-                     prevArrow={
--                      <div>
-+                      <CarouselArrow>
-                         <BuilderBlocks
-                           parentElementId={this.props.builderBlock.id}
-                           dataPath="component.options.nextButton"
-                           blocks={this.props.nextButton}
-                         />
--                      </div>
-+                      </CarouselArrow>
-                     }
-                     {...this.props.slickProps}
-                     slidesToShow={this.state.slidesToShow}
++Fix a hydration bug in Dynamic Containers that could break accessibility references by generating different `useId` values on the server and client.
+```
+
+**File**: `packages/react/src/blocks/PersonalizationContainer.test.tsx` (added, +176/-0)
+```diff
+@@ -0,0 +1,176 @@
++import React, { useId, useState } from 'react';
++import { renderToString } from 'react-dom/server';
++import { JSDOM } from 'jsdom';
++import { act, create } from 'react-test-renderer';
++import { Builder, builder } from '@builder.io/sdk';
++import { PersonalizationContainer } from './PersonalizationContainer';
++
++jest.mock('../components/builder-blocks.component', () => ({
++  BuilderBlocks: ({ blocks }: any) => <>{blocks}</>,
++}));
++
++function Probe({ branch }: { branch: string }) {
++  const id = useId();
++  const [open, setOpen] = useState(false);
++  return (
++    <>
++      <button
++        data-branch={branch}
++        aria-controls={id}
++        aria-describedby={open ? id : undefined}
++        onClick={() => setOpen(true)}
++      >
++        Open
++      </button>
++      <p id={id}>Answer</p>
++    </>
++  );
++}
++
++['first', 'second', 'fallback'].forEach(selected =>
++  test(`preserves useId when hydrating ${selected}`, async () => {
++    builder.setUserAttributes({ locale: 'en-GB' });
++    const fixture = (
++      <PersonalizationContainer
++        attributes={{}}
++        builderBlock={{
++          '@type': '@builder.io/sdk:Element',
++          id: 'use-id-test',
++          children: [<Probe key="fallback" branch="fallback" />] as any,
++        }}
++        builderState={{ state: { locale: 'en-GB' } }}
++        previewingIndex={null}
++        variants={
++          ['first', 'second'].map(name => ({
++            query: [
++              { property: 'locale', operator: 'is', value: name === selected ? 'en-GB' : 'fr-FR' },
++            ],
++            blocks: [<Probe key={name} branch={name} />],
++          })) as any
++        }
++      >
++        {null}
++      </PersonalizationContainer>
++    );
++    const html = renderToString(fixture);
++    const dom = new JSDOM(`<div id="root">${html}</div>`, {
++      url: 'http://localhost/',
++      runScripts: 'dangerously',
++    });
++    const globals = global as any;
++    const original = {
++      window: globals.window,
++      document: globals.document,
++      CustomEvent: globals.CustomEvent,
++      IntersectionObserver: globals.IntersectionObserver,
++      IS_REACT_ACT_ENVIRONMENT: globals.IS_REACT_ACT_ENVIRONMENT,
++    };
++    const flags = { isServer: Builder.isServer, isBrowser: Builder.isBrowser };
++    Object.assign(global, {
++      window: dom.window,
++      document: dom.window.document,
++      CustomEvent: dom.window.CustomEvent,
++      IS_REACT_ACT_ENVIRONMENT: true,
++      IntersectionObserver: class {
++        observe() {}
++        disconnect() {}
++      },
++    });
++    Builder.isServer = false;
++    Builder.isBrowser = true;
++    const { hydrateRoot } = require('react-dom/client');
++    const { act } = require('react-dom/test-utils');
++    const container = document.getElementById('root')!;
++    let root: any;
++    const errors = jest.spyOn(console, 'error');
++    try {
++      const serverButton = container.querySelector('button')!;
++      expect(serverButton).toHaveAttribute('data-branch', selected);
++      const serverId = serverButton.getAttribute('aria-controls')!;
++      const serverTarget = document.getElementById(serverId);
++      expect(serverTarget).not.toBeNull();
++
++      await act(async () => {
++        root = hydrateRoot(container, fixture);
++      });
++      expect(container.querySelector('button')).toBe(serverButton);
++      await act(async () => {
++        serverButton.click();
++      });
++      expect(serverButton).toHaveAttribute('aria-describedby', serverId);
++      expect(document.getElementById(serverId)).toBe(serverTarget);
++      expect(errors).not.toHaveBeenCalled();
++      // User attributes can change after hydration without leaving stale ID links.
++      await act(async () => {
++        builder.setUserAttributes({ locale: selected === 'fallback' ? 'fr-FR' : 'zz-ZZ' });
++      });
++      const switchedButton = container.querySelector('button')!;
++      expect(switchedButton).toHaveAttribute(
++        'data-branch',
++        selected === 'fallback' ? 'first' : 'fallback'
++      );
++      await act(async () => {
++        switchedButton.click();
++      });
++      expect(
++        document.getElementById(switchedButton.getAttribute('aria-describedby')!)
++      ).not.toBeNull();
++      expect(errors).not.toHaveBeenCalled();
++    } finally {
++      if (root) await act(async () => root.unmount());
++      Object.assign(Builder, flags);
++      Object.assign(global, original);
++      builder.setUserAttributes({ locale: undefined });
++      errors.mockRestore();
++      dom.window.close();
++    }
++  })
++);
++
++[
++  { previewingIndex: null, expected: 'fallback' },
++  { previewingIndex: 1, expected: 'preview' },
++  { previewingIndex: 2, expected: 'matched' },
++].forEach(({ previewingIndex, expected }) => {
++  test(`shows ${expected} in the editor with preview index ${previewingIndex}`, () => {
++    const flags = { isServer: Builder.isServer, isEditing: Builder.isEditing };
++    const { locale } = builder.getUserAttributes();
++ 
+```
+
+**File**: `packages/react/src/blocks/PersonalizationContainer.tsx` (modified, +28/-19)
+```diff
+@@ -189,6 +189,9 @@ export function PersonalizationContainer(props: PersonalizationContainerProps) {
+       variant.endDate
+     );
+   });
++  const isEditingDefault =
++    isHydrated && Builder.isEditing && typeof props.previewingIndex !== 'number';
++  const activeVariant = isClient && !isEditingDefault ? filteredVariants[0] : undefined;
+ 
+   return (
+     <React.Fragment>
+@@ -215,26 +218,32 @@ export function PersonalizationContainer(props: PersonalizationContainerProps) {
+             dataPath={`component.options.variants.${props.previewingIndex}.blocks`}
+             child
+           />
+-        ) : // If editing the default or we're on the server and there are no matching variants show the default
+-        (isHydrated && Builder.isEditing && typeof props.previewingIndex !== 'number') ||
+-          !isClient ||
+-          !filteredVariants.length ? (
+-          <BuilderBlocks
+-            blocks={props.builderBlock?.children}
+-            parentElementId={props.builderBlock?.id}
+-            dataPath="this.children"
+-            child
+-          />
+         ) : (
+-          // Show the variant matching the current user attributes
+-          <BuilderBlocks
+-            blocks={filteredVariants[0]?.blocks}
+-            parentElementId={props.builderBlock?.id}
+-            dataPath={`component.options.variants.${props.variants?.indexOf(
+-              filteredVariants[0]
+-            )}.blocks`}
+-            child
+-          />
++          <>
++            {/* Match the server's variant, script, and default slots for React useId. */}
++            {props.variants?.map((variant, index) =>
++              variant === activeVariant ? (
++                <React.Fragment key={index}>
++                  <BuilderBlocks
++                    blocks={variant.blocks}
++                    parentElementId={props.builderBlock?.id}
++                    dataPath={`component.options.variants.${index}.blocks`}
++                    child
++                  />
++                </React.Fragment>
++              ) : null
++            )}
++            {/* Reserve the server-only selection script's slot for useId. */}
++            {null}
++            {!activeVariant && (
++              <BuilderBlocks
++                blocks={props.builderBlock?.children}
++                parentElementId={props.builderBlock?.id}
++                dataPath="this.children"
++                child
++              />
++            )}
++          </>
+         )}
+       </div>
+       <script
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4955** (2026-11-24): 📦 Publish SDKs (@builder-io-integration[bot])
+- **PR #4951** (2026-11-24): fix(react): preserve useId during personalization hydration (@davilima6)
+- **PR #4950** (2026-11-23): 📦 Publish SDKs (@builder-io-integration[bot])
 - **PR #4949** (2026-11-19): fix(utils): add repository field for npm provenance publish (@lihuelg)
 - **PR #4948** (2026-11-19): 📦 Publish SDKs (@builder-io-integration[bot])
 - **PR #4946** (2026-11-19): fix[sdks][text]: ENG-13905 prevent duplicate text during ssr hydration (@floating-dynamo)
-- **PR #4945** (2026-11-18): 📦 Publish SDKs (@builder-io-integration[bot])
-- **PR #4944** (2026-11-18): chore(utils): publish @builder.io/utils via changesets (@lihuelg)
-- **PR #4942** (2026-11-18): fix[utils]: don't throw on Symbol blocks without data when translating (@lihuelg)
 
 ---
 
@@ -1033,25 +1061,32 @@ Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. utils): add repository field for npm provenance publish
+## X. fix[sdks][unflatten]: block prototype pollution from Studio user attribute query
 
 **RULE**:
-When implementing operations in `packages/utils/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in BuilderIO/builder. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/quiet-owls-guard.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in BuilderIO/builder. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9e133430`: utils): add repository field for npm provenance publish. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e4ce5a4f`: fix[sdks][unflatten]: block prototype pollution from Studio user attribute query params. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/utils/package.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/quiet-owls-guard.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/BuilderIO/builder",
-    "directory": "packages/utils"
-  },
+---
+'@builder.io/sdk-react-native': patch
+'@builder.io/sdk-angular': patch
+'@builder.io/sdk-react-nextjs': patch
+'@builder.io/sdk-svelte': patch
+'@builder.io/sdk-react': patch
+'@builder.io/sdk-solid': patch
+'@builder.io/sdk-qwik': patch
+'@builder.io/sdk-vue': patch
+---
+
+Fix: ignore `__proto__`, `constructor` and `prototype` paths in Studio `builder.userAttributes.*` query parameters so a crafted preview URL cannot pollute `Object.prototype`
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1061,7 +1096,7 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9e133430` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e4ce5a4f` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

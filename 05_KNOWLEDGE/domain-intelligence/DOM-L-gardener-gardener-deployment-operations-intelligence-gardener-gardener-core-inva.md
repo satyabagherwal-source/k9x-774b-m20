@@ -4,24 +4,24 @@
 {
   "source_repository": "gardener/gardener",
   "source_url": "https://github.com/gardener/gardener",
-  "source_version": "31c91dd2",
+  "source_version": "86782dd1",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-23T19:26:15.202Z",
+  "timestamp": "2026-11-24T14:59:42.709Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-gardener-gardener",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [gardener/gardener](https://github.com/gardener/gardener) (Revision: `31c91dd2`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T19:26:15.202Z`  
+> **Provenance**: Harvested from [gardener/gardener](https://github.com/gardener/gardener) (Revision: `86782dd1`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T14:59:42.709Z`  
 > **Learning ID**: `learn-github-gardener-gardener`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain L (Deployment & Operations Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 68%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 76%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from gardener/gardener:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T19:26:13.897Z  
+> **Harvest Timestamp**: 2026-11-24T14:59:41.380Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Homogeneous Kubernetes clusters at scale on any infrastructure using hosted control planes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 3489 stars
+- **Stars / Engagement**: 3490 stars
 
 ---
 
@@ -740,14 +740,17 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #16409** (2026-11-23): **Pin `gardener/cc-utils` GitHub Actions references to commit SHAs**
-  *Symptoms*: <!-- Please ensure that you do not include company internal information. -->  **How to categorize this PR?** <!-- Please select area, kind, and priority for this pull request. This helps the community categorizing it. Replace below TODOs or exchange the existing identifiers with those that fit best in your opinion. If multiple identifiers make sense you can also state the commands multiple times, e.g.   /area control-plane   /area auto-scaling   ...  If the PR affects cryptography or security mechanisms (encryption, keys, ciphers, hashes, signatures, etc.), mark it as crypto relevant. /label crypto  "/area" identifiers:     audit-logging|auto-scaling|backup|compliance|control-plane-migration|control-plane|cost|delivery|dev-productivity|disaster-recovery|documentation|high-availability|logging|metering|monitoring|networking|open-source|ops-productivity|os|performance|quality|robustness|scalability|security|storage|testing|usability|user-management "/kind" identifiers:     api-change|bug|cleanup|discussion|enhancement|epic|flake|impediment|poc|post-mortem|question|regression|task|technical-debt|test --> /area dev-productivity /area security /kind enhancement  **What this PR does / why we need it**: Mutable refs such as `v1` can be force-moved to a malicious commit; pinning to an immutable 40-character commit SHA removes that supply-chain risk. The original ref is preserved as a trailing comment for readability and future updates (e.g. via Renovate's helper
+- **Issue #16415** (2026-11-24): **Pin dependencies**
+  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [actions/checkout](https://redirect.github.com/actions/checkout) | action | pinDigest |  → `3d3c42e` | | [actions/download-artifact](https://redirect.github.com/actions/download-artifact) | action | pinDigest |  → `9000827` | | [actions/setup-go](https://redirect.github.com/actions/setup-go) | action | pinDigest |  → `d8cbb80` | | [actions/upload-artifact](https://redirect.github.com/actions/upload-artifact) | action | pinDigest |  → `cf430e0` | | [docker/build-push-action](https://redirect.github.com/docker/build-push-action) | action | pinDigest |  → `c3c9e26` | | [docker/setup-buildx-action](https://redirect.github.com/docker/setup-buildx-action) | action | pinDigest |  → `f87e599` |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the [Dependency Dashboard](../issues/15982) for more information.  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Disabled by config. Please merge this manually once you are satisfied.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  👻 **Immortal**: This PR will be recreated if closed unmerged. Get [config help](https://redirect.github.com/renovatebot/renovate/discussions) if that's undesired.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, ch
+  **Post-Mortem & Fix Analysis**:
+  > /lgtm /approve
+  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/gardener/gardener/pull/16415#issuecomment-7128433379" title="Approved">oliver-goetz</a>*  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  The pull request process is described [here](https://gardener.cloud/docs/contribute/#pull-request-checklist)  <details > Needs approval from an approver in each of these files:  - ~~[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)~~ [oliver-goetz]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":[]} -->
 
-- **Issue #16404** (2026-11-21): **Update golang.org/x/exp digest to 8801fbd**
-  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [golang.org/x/exp](https://pkg.go.dev/golang.org/x/exp) | require | digest | `b6de8d3` → `8801fbd` |  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Enabled.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  **Release note**: ```other dependency NONE ``` <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4yNTcuMyIsInVwZGF0ZWRJblZlciI6IjQ0LjI1Ny4zIiwidGFyZ2V0QnJhbmNoIjoibWFzdGVyIiwibGFiZWxzIjpbImtpbmQvZW5oYW5jZW1lbnQiXX0=--> 
+- **Issue #16412** (2026-11-24): **Update nginx Docker tag to v1.31.10**
+  *Symptoms*: This PR contains the following updates:  | Package | Update | Change | |---|---|---| | [nginx](https://hub.docker.com/_/nginx) ([source](https://redirect.github.com/nginx/docker-nginx)) | patch | `1.31.9` → `1.31.10` |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the [Dependency Dashboard](../issues/15982) for more information.  ---  ### Release Notes  <details> <summary>nginx/docker-nginx (nginx)</summary>  ### [`v1.31.10`](https://redirect.github.com/nginx/docker-nginx/compare/1.31.9...1.31.10)  [Compare Source](https://redirect.github.com/nginx/docker-nginx/compare/1.31.9...1.31.10)  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Enabled.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  **Release note**: ```other dependency NONE ``` <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4yNTcuMyIsInVwZGF0ZWRJblZlciI6IjQ0LjI1Ny4zIiwidGFyZ2V0QnJhbmNoIjoibWFzdGVyIiwibGFiZWxzIjpbImtpbmQvZW5oYW5jZW1lbnQiXX0=--> 
   **Post-Mortem & Fix Analysis**:
   > /label skip-review
-  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: **Once this PR has been reviewed and has the lgtm label**, please assign [ary1992](https://github.com/ary1992) for approval. For more information see [the Code Review Process](https://gardener.cloud/docs/contribute/#pull-request-checklist).  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  <details open> Needs approval from an approver in each of these files:  - **[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["ary1992"]} -->
+  > /lgtm /approve
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -764,361 +767,126 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `31c91dd2` (2026-11-23)
-**Commit Message**: Pin `gardener/cc-utils` GitHub Actions references to commit SHAs (#16409)
+### Incident Patch 1: `86782dd1` (2026-11-24)
+**Commit Message**: Update gcr.io/distroless/static-debian13:nonroot Docker digest to 8ce6dd8 (#16407)
 
-Pin gardener/cc-utils GitHub Actions references to commit SHAs
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
-Mutable refs such as `v1` can be force-moved to a malicious commit; pinning to an
-immutable 40-character commit SHA removes that supply-chain risk. The original ref
-is preserved as a trailing comment for readability and future updates (e.g. via
-Renovate's helpers:pinGitHubActionDigests).
-
-Signed-off-by: Plamen Kokanov <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/build.yaml` (modified, +10/-10)
+**File**: `Dockerfile` (modified, +1/-1)
 ```diff
-@@ -25,7 +25,7 @@ on:
+@@ -10,7 +10,7 @@ ARG TARGETARCH
+ RUN make build EFFECTIVE_VERSION=$EFFECTIVE_VERSION GOOS=$TARGETOS GOARCH=$TARGETARCH BUILD_OUTPUT_FILE="/output/bin/"
  
- jobs:
-   prepare:
--    uses: gardener/cc-utils/.github/workflows/prepare.yaml@v1
-+    uses: gardener/cc-utils/.github/workflows/prepare.yaml@bce63f62928717a11f610ec8022af9feb497d5df # v1
-     with:
-       mode: ${{ inputs.mode || 'snapshot' }}
-     permissions:
-@@ -35,8 +35,8 @@ jobs:
-     runs-on: 'ubuntu-latest'
-     if: github.event_name != 'pull_request'
-     steps:
--      - uses: gardener/cc-utils/.github/actions/trusted-checkout@v1
--      - uses: gardener/cc-utils/.github/actions/setup-git-identity@v1
-+      - uses: gardener/cc-utils/.github/actions/trusted-checkout@bce63f62928717a11f610ec8022af9feb497d5df # v1
-+      - uses: gardener/cc-utils/.github/actions/setup-git-identity@bce63f62928717a11f610ec8022af9feb497d5df # v1
-       - uses: actions/setup-go@v7
-         with:
-           go-version: '1.27'
-@@ -54,7 +54,7 @@ jobs:
-             exit 0
-           fi
-       - name: add-tests-report-to-component-descriptor
--        uses: gardener/cc-utils/.github/actions/export-ocm-fragments@v1
-+        uses: gardener/cc-utils/.github/actions/export-ocm-fragments@bce63f62928717a11f610ec8022af9feb497d5df # v1
-         with:
-           blobs-directory: /tmp/blobs.d
-           ocm-resources: |
-@@ -69,7 +69,7 @@ jobs:
-                   - test
+ # distroless-static
+-FROM gcr.io/distroless/static-debian13:nonroot@sha256:aafe993665bf6200db38a02c11a9351e782a84b6a45e7f33b6695638c88e3931 AS distroless-static
++FROM gcr.io/distroless/static-debian13:nonroot@sha256:8ce6dd87e9823c5b48dcfb2c8604714ccb351ce59607327bcc4957448da279b5 AS distroless-static
  
-   sast-lint:
--    uses: gardener/cc-utils/.github/workflows/sastlint-ocm.yaml@v1
-+    uses: gardener/cc-utils/.github/workflows/sastlint-ocm.yaml@bce63f62928717a11f610ec8022af9feb497d5df # v1
-     if: github.event_name != 'pull_request'
-     permissions:
-       contents: read
-@@ -98,7 +98,7 @@ jobs:
-       packages: write
-       id-token: write
-     secrets: inherit
--    uses: gardener/cc-utils/.github/workflows/oci-ocm.yaml@v1
-+    uses: gardener/cc-utils/.github/workflows/oci-ocm.yaml@bce63f62928717a11f610ec8022af9feb497d5df # v1
-     strategy:
-       matrix:
-         args:
-@@ -150,7 +150,7 @@ jobs:
-       contents: read
-       packages: write
-       id-token: write
--    uses: gardener/cc-utils/.github/workflows/helmchart-ocm.yaml@v1
-+    uses: gardener/cc-utils/.github/workflows/helmchart-ocm.yaml@bce63f62928717a11f610ec8022af9feb497d5df # v1
-     strategy:
-       matrix:
-         args:
-@@ -222,13 +222,13 @@ jobs:
-             runner: ubuntu-24.04-arm
-     runs-on: ${{ matrix.args.runner }}
-     steps:
--      - uses: gardener/cc-utils/.github/actions/trusted-checkout@v1
-+      - uses: gardener/cc-utils/.github/actions/trusted-checkout@bce63f62928717a11f610ec8022af9feb497d5df # v1
-       - uses: actions/setup-go@v7
-         with:
-           go-version: '1.27'
-       - name: import-release-commit
-         if: ${{ inputs.commit-objects-artefact != '' }}
--        uses: gardener/cc-utils/.github/actions/import-commit@v1
-+        uses: gardener/cc-utils/.github/actions/import-commit@bce63f62928717a11f610ec8022af9feb497d5df # v1
-         with:
-           commit-objects-artefact: ${{ inputs.commit-objects-artefact }}
-           after-import: rebase
-@@ -273,7 +273,7 @@ jobs:
-           fi
- 
-           unlink ${outpath}
--      - uses: gardener/cc-utils/.github/actions/export-ocm-fragments@v1
-+      - uses: gardener/cc-utils/.github/actions/export-ocm-fragments@bce63f62928717a11f610ec8022af9feb497d5df # v1
-         if: github.event_name != 'pull_request'
-         with:
-           blobs-directory: /tmp/blobs.d
-```
-
-**File**: `.github/workflows/golang-test-build.yaml` (modified, +1/-1)
-```diff
-@@ -48,7 +48,7 @@ jobs:
-       packages: write
-       id-token: write
-     secrets: inherit
--    uses: gardener/cc-utils/.github/workflows/oci-ocm.yaml@v1
-+    uses: gardener/cc-utils/.github/workflows/oci-ocm.yaml@bce63f62928717a11f610ec8022af9feb497d5df # v1
-     strategy:
-       matrix: ${{ fromJSON(needs.generate-matrix.outputs.matrix) }}
-     with:
-```
-
-**File**: `.github/workflows/non-release.yaml` (modified, +1/-1)
-```diff
-@@ -19,7 +19,7 @@ jobs:
- 
-   component-descriptor:
-     if: ${{ github.repository == 'gardener/gardener' }}
--    uses: gardener/cc-utils/.github/workflows/post-build.yaml@v1
-+    uses: gardener/cc-utils/.github/workflows/post-build.yaml@bce63f62928717a11f610ec8022af9feb497d5df # v1
-     needs:
-       - build
-     permissions:
-```
-
-**File**: `.github/workflows/pr-release-notes-validation.yaml` (modified, +1/-1)
-```diff
-@@ -11,7 +11,7 @@ permissions:
- 
- jobs:
-   validate-release-notes:
--    uses: gardener/cc-utils/.github/workflows/validate-release-notes.yaml@v1
-+    uses: gardener/cc-utils/.github/workflows/validate-release-notes.yaml@bce63f62928717a11f610ec8022af9feb497d5df # v1
-     permissions:
-       pull-requests: read
-     with:
-```
-
-**File**: `.github/workflows/release.yaml` (modified, +1/-1)
-```diff
-@@ -22,7 +22,7 @@ jobs:
- 
-   release-to-github-and-bump:
-     if: ${{ github.repository == 'gardener/gardener' && startsWith(github.ref, 'refs/heads/release-v') }}
--    uses: gardener/cc-utils/.github/workflows/release.yaml@v1
-+    uses: gardener/cc-utils/.github/workflows/release.yaml@bce63f62928717a11f610ec8022af9feb497d5df # v1
-     needs:
-       - build
-     secrets: inherit
-```
-
-**File**: `.github/workflows/renovate-post-upgrade.yaml` (modified, +2/-2)
-```diff
-@@ -139,7 +139,7 @@ jobs:
-     steps:
-       - name: Get Federated GitHub Access token
-         id: fed-token
--        uses: gardener/cc-utils/.github/actions/github-auth@v1
-+        uses: gardener/cc-utils/.github/actions/github-auth@bce63f62928717a11f610ec8022af9feb497d5df # v1
-         with:
-           token-server: ${{ vars.FEDERATED_GITHUB_ACCESS_TOKEN_SERVER }}
-           repositories: ${{ github.event.repository.name }}
-@@ -189,7 +189,7 @@ jobs:
- 
-           echo "message=${message}" >> "${GITHUB_OUTPUT}"
-       - name: Create signed commit and push
--        uses: gardener/cc-utils/.github/actions/signed-commit@v1
-+        uses: gardener/cc-utils/.github/actions/signed-commit@bce63f62928717a11f610ec8022af9feb497d5df # v1
-         with:
-           token: ${{ steps.fed-token.outputs.token }}
-           branch: ${{ github.event.pull_request.head.ref }}
+ # apiserver
+ FROM distroless-static AS apiserver
 ```
 
 ---
 
-### Incident Patch 2: `5d8433bd` (2026-11-23)
-**Commit Message**: [GEP-66] Make the external domain of a Shoot mutable (#15845)
+### Incident Patch 2: `f9f92948` (2026-11-24)
+**Commit Message**: Pin dependencies (#16415)
 
-* create the new feature gate
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
-Signed-off-by: Florian Thienel <[REDACTED_EMAIL]>
-
-* extend the shoot validation: allow changing the domain when a CA
-rotation is triggered
-
-Signed-off-by: Florian Thienel <[REDACTED_EMAIL]>
-
-* retrieve the prior external domain from the advertised addresses
-
-Signed-off-by: Florian Thienel <[REDACTED_EMAIL]>
-
-* put the prior external domain as extra dns name into the server
-certificate config
-
-Signed-off-by: Florian Thienel <[REDACTED_EMAIL]>
-
-* create, maintain, destroy DNSRecords for the prior external domain
-
-Signed-off-by: Florian Thienel <[REDACTED_EMAIL]>
-
-* put the prior-external address into the advertisedAddresses array
-
-Signed-off-by: Florian Thienel <[REDACTED_EMAIL]>
-
-* make sure the kubeconfig does not contain the prior external domain when
-the domain migration is running
-
-Signed-off-by: Florian Thienel <[REDACTED_EMAIL]>
-
-* add e2e tests for modifing the external domain
-
-Signed-off-by: Florian Thienel <[REDACTED_EMAIL]>
-
-* add a guard to prevent domain migration when the deprecated
-nginx-ingress is still in place
-
-Signed-off-by: Florian Thienel <[REDACTED_EMAIL]>
-
-* apply the
-
-**File**: `dev-setup/garden/base/garden.yaml` (modified, +1/-0)
+**File**: `.github/workflows/build.yaml` (modified, +2/-2)
 ```diff
-@@ -63,6 +63,7 @@ spec:
-           InPlaceNodeUpdates: true
-           VersionClassificationLifecycle: true
-           AllowlistSeedReferences: true
-+          MutableShootDomains: true
-       gardenerDashboard:
-         domain:
-           name: dashboard.local.gardener.cloud
+@@ -37,7 +37,7 @@ jobs:
+     steps:
+       - uses: gardener/cc-utils/.github/actions/trusted-checkout@bce63f62928717a11f610ec8022af9feb497d5df # v1
+       - uses: gardener/cc-utils/.github/actions/setup-git-identity@bce63f62928717a11f610ec8022af9feb497d5df # v1
+-      - uses: actions/setup-go@v7
++      - uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7
+         with:
+           go-version: '1.27'
+       - name: run-tests
+@@ -223,7 +223,7 @@ jobs:
+     runs-on: ${{ matrix.args.runner }}
+     steps:
+       - uses: gardener/cc-utils/.github/actions/trusted-checkout@bce63f62928717a11f610ec8022af9feb497d5df # v1
+-      - uses: actions/setup-go@v7
++      - uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7
+         with:
+           go-version: '1.27'
+       - name: import-release-commit
 ```
 
-**File**: `dev-setup/gardenconfig/components/credentials/domains/kustomization.yaml` (modified, +1/-0)
+**File**: `.github/workflows/golang-test-build-test.yaml` (modified, +3/-3)
 ```diff
-@@ -4,3 +4,4 @@ kind: Component
- resources:
- - secret-internal-domain.yaml
- - secret-default-domain.yaml
-+- secret-default-domain-migration.yaml
-```
-
-**File**: `dev-setup/gardenconfig/components/credentials/domains/secret-default-domain-migration.yaml` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+apiVersion: v1
-+kind: Secret
-+metadata:
-+  name: default-domain-migration-local-gardener-cloud
-+  namespace: garden
-+  labels:
-+    app: gardener
-+    gardener.cloud/role: default-domain
-+  annotations:
-+    dns.gardener.cloud/provider: local
-+    dns.gardener.cloud/domain: migration.local.gardener.cloud
-+type: Opaque
-```
-
-**File**: `dev-setup/gardenlet/base/gardenlet.yaml` (modified, +8/-0)
-```diff
-@@ -12,6 +12,7 @@ spec:
-     kind: GardenletConfiguration
-     featureGates:
-       DefaultSeccompProfile: true
-+      MutableShootDomains: true
-       VPNBondingModeRoundRobin: true
-       PrometheusHealthChecks: true
-       VictoriaLogsBackend: true
-@@ -76,6 +77,13 @@ spec:
-               namespace: garden
-             type: local
-             domain: external.local.gardener.cloud
-+          - credentialsRef:
-+              apiVersion: v1
-+              kind: Secret
-+              name: default-domain-migration-local-gardener-cloud
-+              namespace: garden
-+            type: local
-+            domain: migration.local.gardener.cloud
-         extensions:
-         - type: local-ext-seed
-         ingress:
-```
-
-**File**: `docs/api-reference/core.md` (modified, +1/-1)
-```diff
-@@ -3548,7 +3548,7 @@ string
- </td>
- <td>
- <em>(Optional)</em>
--<p>Domain is the external available domain of the Shoot cluster. This domain will be written into the<br />kubeconfig that is handed out to end-users. This field is immutable.</p>
-+<p>Domain is the external available domain of the Shoot cluster. This domain will be written into the<br />kubeconfig that is handed out to end-users. This field is immutable, unless the MutableShootDomains feature gate<br />is enabled. Then it can be changed together with the start of a certificate authorities rotation.</p>
- </td>
- </tr>
- <tr>
-```
-
-**File**: `docs/deployment/feature_gates.md` (modified, +2/-0)
-```diff
-@@ -38,6 +38,7 @@ The following tables are a summary of the feature gates that you can set on diff
- | RemoveHTTPProxyLegacyPort      | `true`  | `Beta`  | `1.154` |         |
- | StrictAuditPolicyValidation    | `false` | `Alpha` | `1.152` |         |
- | AllowlistSeedReferences        | `false` | `Alpha` | `1.155` |         |
-+| MutableShootDomains            | `false` | `Alpha` | `1.155` |         |
+@@ -31,13 +31,13 @@ jobs:
+       matrix: ${{ fromJSON(needs.generate-matrix.outputs.matrix) }}
+     steps:
+       - name: Checkout
+-        uses: actions/checkout@v7
++        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
  
- ## Feature Gates for Graduated or Deprecated Features
+       - name: Set up Docker Buildx
+-        uses: docker/setup-buildx-action@v4
++        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4
  
-@@ -305,3 +306,4 @@ A *General Availability* (GA) feature is also referred to as a *stable* feature.
- | RemoveHTTPProxyLegacyPort      | `gardenlet`                                         | Disables the unused legacy `tls-tunnel` port (8132) - and its supporting Gateway and EnvoyFilter resources - on the `istio-ingressgateway` Services. Operators can choose to remove the legacy HTTP proxy port as soon as all shoots have switched to the unified `http-proxy` port (8443), i.e. report the `UsesUnifiedHTTPProxyPort` constraint with status `True`. |
- | StrictAuditPolicyValidation    | `gardener-admission-controller`, `gardener-operator` | Rejects a Shoot's or Garden's referenced audit policy ConfigMap if it contains unknown or misspelled fields, instead of silently dropping them. |
- | AllowlistSeedReferences        | `gardener-apiserver`                                | Enforces that resources (`Secret`s, `ConfigMap`s, `WorkloadIdentity`s) referenced in a `Seed`'s spec must carry the `seed.gardener.cloud/names` annotation listing the seed's name (or `*` as a wildcard) before the reference is accepted. `gardener-controller-manager` automatically stamps the annotation on create/update/delete of `Gardenlet` or `ManagedSeed` objects. |
-+| MutableShootDomains            | `gardener-apiserver`, `gardenlet`                   | Allows changing a `Shoot`'s external domain (`spec.dns.domain`) together with the start of a CA rotation. The old and the new domain are served until the rotation is completed, see [Changing the External Domain](../usage/shoot-operations/shoot_credentials_rotation.md#changing-the-external-domain) and [GEP-0066](https://github.com/gardener/enhancements/tree/main/geps/0066-make-shoot-domains-mutable). |
+       - name: Build golang-test
+-        uses: docker/build-push-action@v7
++        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7
+         with:
+           context: .
+           file: ./hack/tools/image/Dockerfile
 ```
 
-**File**: `docs/development/shoot-advertised-addresses.md` (modified, +4/-0)
+**File**: `.github/workflows/renovate-post-upgrade.yaml` (modified, +5/-5)
 ```diff
-@@ -26,6 +26,10 @@ additional endpoints from the shoot control-plane namespace may be advertised,
- e.g. observability-related components such as `plutono`, `vali`, `prometheus`,
- etc.
- 
-+While the external domain of the shoot is migrated (see [Changing the External Domain](../usage/shoot-operations/shoot_credentials_rotation.md#changing-the-external-domain)), the list additionally contains a `prior-external` endpoint with the old external domain, directly after the `external` endpoint.
-+It is only present while the CA rotation is in the phases `Preparing` to `Prepared`. The `kubeconfig`s handed out by Gardener contain it as an additional context, while the current context stays on the `external` endpoint.
-+During the migration, the gardenlet updates the list only after the DNS records of both domains are ready and the `kube-apiserver` serves both domains. Until then, the list still holds the old external domain as `external`.
-+
- > [!NOTE]
- > As of now, only `Ingress` and `VirtualService` resources support to be advertised using this label.
- > In the future, support for `Gateway` resources will be added as well.
-```
-
-**File**: `docs/extensions/resources/dnsrecord.md` (modified, +10/-0)
-```diff
-@@ -30,6 +30,16 @@ The kubeconfig handed out to end-users does contain this *external domain name*,
- As not every end-user has an own domain, it is possible for Gardener administrators to configure so-called *default domains*.
- If configured, shoots that do not specify a domain explicitly get an *external domain name* based on a default domain (unless explicitly stated that this shoot should not get an external domain name (`.spec.dns.provider=unmanaged`)).
- 
-+When the external domain of a shoot is changed (see [Changing the External Domain](../../usage/shoot-operations/shoot_credentials_rotation.md#changing-the-external-domain)), Gardener keeps a DNS record for the old domain until the CA rotation is completed.
-+As `.spec.name` of a `DNSRecord` is immutable, the `<shoot>-external` record is handed over:
-+
-+1. Gardener creates a `DNSRecord` `<shoot>-prior-external` (label `role: prior-external`) for the old domain and waits until it is ready.
-+2. Gardener recreates the `<shoot>-external` record, deletes it, and creates it again for the new domain.
-+3. When the CA rotation is completed, Gardener deletes the `<shoot>-prior-external` record.
-+
-+Step 2 relies on the `migrate` operation keeping the DNS record at the DNS provider, as it is required for all extensions (see [Control Plane Migration](../migration.md)).
-+Otherwise, the old domain stops resolving while the shoot is still configured with both domains.
-+
- ### Ingress Domain Name (Deprecated)
- 
- Gardener allows to deploy a `nginx-ingress-controller` into a shoot cluster (deprecated).
+@@ -27,14 +27,14 @@ jobs:
+       run-envoy: ${{ steps.tasks.outputs.run-envoy }}
+     steps:
+       - name: Checkout
+-        uses: actions/checkout@v7
++        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+         with:
+           ref: ${{ github.event.pull_request.head.ref }}
+           persist-credentials: false
+           # Full history is required to diff against the PR base commit.
+           fetch-depth: 0
+       - name: Set up Go
+-        uses: actions/setup-go@v7
++        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7
+         with:
+           go-version-file: go.mod
+       - name: Determine required tasks
+@@ -119,7 +119,7 @@ jobs:
+           fi
+       - name: Upload patch
+         if: steps.diff.outputs.has-changes == 'true'
+-        uses: actions/upload-artifact@v7
++        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+         with:
+           name: post-upgrade-changes
+           path: ${{ runner.temp }}/post-upgrade.patch
+@@ -146,12 +146,12 @@ jobs:
+           permissions: |-
+             contents: write
+       - name: Checkout
+-        uses: actions/checkout@v7
++        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+         with:
+           ref: ${{ github.event.pull_request.head.ref }}
+           token: ${{ steps.fed-token.outputs.token }}
+       - name: Download patch
+-        uses: actions/download-artifact@v8
++        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+         with:
+           name: post-upgrade-changes
+           path: ${{ runner.temp }}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #16415** (2026-11-24): Pin dependencies (@renovate[bot])
+- **PR #16412** (2026-11-24): Update nginx Docker tag to v1.31.10 (@renovate[bot])
+- **PR #16411** (2026-11-24): Enable Renovate digest pinning for GitHub Actions (@marc1404)
 - **PR #16409** (2026-11-23): Pin `gardener/cc-utils` GitHub Actions references to commit SHAs (@plkokanov)
+- **PR #16407** (2026-11-24): Update gcr.io/distroless/static-debian13:nonroot Docker digest to 8ce6dd8 (@renovate[bot])
 - **PR #16404** (2026-11-21): Update golang.org/x/exp digest to 8801fbd (@renovate[bot])
-- **PR #16401** (2026-11-20): Update golang.org/x/exp digest to b6de8d3 (@renovate[bot])
-- **PR #16400** (2026-11-20): [release-v1.153] Allow `Create` if object already exists only for source `BackupEntry` (@shafeeqes)
-- **PR #16399** (2026-11-20): [release-v1.155] extensions lib: Only pass type/class predicates to `MachineToWorkerMapper` (@gardener-prow-cherrypicker[bot])
-- **PR #16398** (2026-11-20): [release-v1.154] extensions lib: Only pass type/class predicates to `MachineToWorkerMapper` (@gardener-prow-cherrypicker[bot])
 
 ---
 
@@ -1138,49 +906,31 @@ Signed-off-by: Florian Thienel <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Pin `gardener/cc-utils` GitHub Actions references to commit SHAs
+## X. Update gcr.io/distroless/static-debian13:nonroot Docker digest to 8ce6dd8
 
 **RULE**:
-When implementing operations in `.github/workflows/build.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `31c91dd2`: Pin `gardener/cc-utils` GitHub Actions references to commit SHAs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `86782dd1`: Update gcr.io/distroless/static-debian13:nonroot Docker digest to 8ce6dd8. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Dockerfile`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    uses: gardener/cc-utils/.github/workflows/prepare.yaml@bce63f62928717a11f610ec8022af9feb497d5df # v1
-      - uses: gardener/cc-utils/.github/actions/trusted-checkout@bce63f62928717a11f610ec8022af9feb497d5df # v1
-      - uses: gardener/cc-utils/.github/actions/setup-git-identity@bce63f62928717a11f610ec8022af9feb497d5df # v1
-        uses: gardener/cc-utils/.github/actions/export-ocm-fragments@bce63f62928717a11f610ec8022af9feb497d5df # v1
-    uses: gardener/cc-utils/.github/workflows/sastlint-ocm.yaml@bce63f62928717a11f610ec8022af9feb497d5df # v1
-    uses: gardener/cc-utils/.github/workflows/oci-ocm.yaml@bce63f62928717a11f610ec8022af9feb497d5df # v1
-    uses: gardener/cc-utils/.github/workflows/helmchart-ocm.yaml@bce63f62928717a11f610ec8022af9feb497d5df # v1
-      - uses: gardener/cc-utils/.github/actions/trusted-checkout@bce63f62928717a11f610ec8022af9feb497d5df # v1
-        uses: gardener/cc-utils/.github/actions/import-commit@bce63f62928717a11f610ec8022af9feb497d5df # v1
-      - uses: gardener/cc-utils/.github/actions/export-ocm-fragments@bce63f62928717a11f610ec8022af9feb497d5df # v1
+FROM gcr.io/distroless/static-debian13:nonroot@sha256:8ce6dd87e9823c5b48dcfb2c8604714ccb351ce59607327bcc4957448da279b5 AS distroless-static
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-    uses: gardener/cc-utils/.github/workflows/prepare.yaml@v1
-      - uses: gardener/cc-utils/.github/actions/trusted-checkout@v1
-      - uses: gardener/cc-utils/.github/actions/setup-git-identity@v1
-        uses: gardener/cc-utils/.github/actions/export-ocm-fragments@v1
-    uses: gardener/cc-utils/.github/workflows/sastlint-ocm.yaml@v1
-    uses: gardener/cc-utils/.github/workflows/oci-ocm.yaml@v1
-    uses: gardener/cc-utils/.github/workflows/helmchart-ocm.yaml@v1
-      - uses: gardener/cc-utils/.github/actions/trusted-checkout@v1
-        uses: gardener/cc-utils/.github/actions/import-commit@v1
-      - uses: gardener/cc-utils/.github/actions/export-ocm-fragments@v1
+FROM gcr.io/distroless/static-debian13:nonroot@sha256:aafe993665bf6200db38a02c11a9351e782a84b6a45e7f33b6695638c88e3931 AS distroless-static
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `31c91dd2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `86782dd1` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

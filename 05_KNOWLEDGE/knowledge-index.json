@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T14:51:16.655Z",
+  "last_updated": "2026-11-24T14:59:49.596Z",
   "total_verified_learnings": 9096,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24703,
+  "total_items": 24710,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114945,10 +114945,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-actix-actix-web-technical-construction-intelligence-actix-actix-web-core-invaria.md",
       "title": "Technical Construction Intelligence: actix/actix-web Core Invariants",
       "repository": "actix/actix-web",
-      "source_version": "0581ada7",
-      "content_hash": "7dc9f765e1b01a176c72a1f21d7cecaae053c7a4002bd58b7ee3454ff4dc8700",
+      "source_version": "12df9de5",
+      "content_hash": "bbbc8a99332db37e9bee8b1b58d5ff27ae9ce35a49329087a114479a6e7d1e4c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T00:32:39.304Z"
+      "persisted_at": "2026-11-24T14:59:35.366Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-actix-actix-web": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-actix-actix-web",
@@ -114957,10 +114957,10 @@
       "relative_path": "08_VERIFICATION/actix-actix-web-verification-protocol-empirical-defect-shield-for-actix-actix-we.md",
       "title": "Verification Protocol: Empirical Defect Shield for actix/actix-web",
       "repository": "actix/actix-web",
-      "source_version": "0581ada7",
-      "content_hash": "f8f59e24ed0b8e985322ef28ada1f737763966a14180b912fe4e0ba2786d2166",
+      "source_version": "12df9de5",
+      "content_hash": "3b47f2beae7873bd9f4b9b7788507687342afe1db113a82dfa7aa3c1c5d02dcf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T00:32:39.471Z"
+      "persisted_at": "2026-11-24T14:59:35.536Z"
     },
     "candidate_directive-update-yt-music-now-a-native-swiftui-app-2523": {
       "item_id": "candidate_directive-update-yt-music-now-a-native-swiftui-app-2523",
@@ -115042,9 +115042,9 @@
       "title": "Technical Construction Intelligence: actix-actix-web-learnings Core Invariants",
       "repository": "actix-actix-web-learnings",
       "source_version": "HEAD",
-      "content_hash": "7adf56f8be969ce348056d9ec01de98b178528de203ecf1819dbfbcc1e6eacde",
+      "content_hash": "c7a665b999495e330b4254dec65ada9e192a23e9cfee99a7bf21bd27006700c5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T00:32:48.642Z"
+      "persisted_at": "2026-11-24T14:59:48.161Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-actix-actix-web-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-actix-actix-web-learnings",
@@ -115054,9 +115054,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for actix-actix-web-learnings",
       "repository": "actix-actix-web-learnings",
       "source_version": "HEAD",
-      "content_hash": "f9675b7b76f093dacaa139d7bffa3f4e0b57c8cb91b9665dbe87d09cf4237238",
+      "content_hash": "0876ee67d950951ae630447effd53008cd6db82cd16d6ba68095a59805f75a82",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T00:32:48.804Z"
+      "persisted_at": "2026-11-24T14:59:48.329Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-core-i",
@@ -219894,8 +219894,8 @@
       "slug": "gardener-gardener",
       "platform": "github",
       "source_url": "https://github.com/gardener/gardener",
-      "source_version": "31c91dd2",
-      "content_hash": "ac5004077176e63b3915ade6ca303b5c961de532a936620377259bf4317e0f01",
+      "source_version": "86782dd1",
+      "content_hash": "ee89560c474315d843a57fd9d57325f2fd626609cc50c7a1c12d408cd2e44501",
       "dossier_path": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "promoted_rules": [
@@ -219943,6 +219943,11 @@
           "number": 10102,
           "title": "Pin `gardener/cc-utils` GitHub Actions references to commit SHAs",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10289,
+          "title": "Update gcr.io/distroless/static-debian13:nonroot Docker digest to 8ce6dd8",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -219950,7 +219955,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T19:26:14.770Z",
+      "verified_at": "2026-11-24T14:59:42.258Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219992,10 +219997,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-gardener-gardener-deployment-operations-intelligence-gardener-gardener-core-inva.md",
       "title": "Deployment & Operations Intelligence: gardener/gardener Core Invariants",
       "repository": "gardener/gardener",
-      "source_version": "31c91dd2",
-      "content_hash": "afa2e1761a070b646bf8e54734942ec261ed5aa4a97735feb64e5c24a65c661e",
+      "source_version": "86782dd1",
+      "content_hash": "032d9a2ffc416166302eaa3427879580c98d7a0ce2b6be3053edfdafd7ef170b",
       "domain_letter": "L",
-      "persisted_at": "2026-11-23T19:26:15.372Z"
+      "persisted_at": "2026-11-24T14:59:42.875Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gardener-gardener": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gardener-gardener",
@@ -220004,10 +220009,10 @@
       "relative_path": "08_VERIFICATION/gardener-gardener-verification-protocol-empirical-defect-shield-for-gardener-gar.md",
       "title": "Verification Protocol: Empirical Defect Shield for gardener/gardener",
       "repository": "gardener/gardener",
-      "source_version": "31c91dd2",
-      "content_hash": "626a63aad56d0a0112fe36f44b5fe9b082cec44f2cf953e30679c346830f08f8",
+      "source_version": "86782dd1",
+      "content_hash": "5a148c0a9f93ed4d7433592c5d9f17ae397c7f3154aa387a046aaac957fb6d44",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T19:26:15.550Z"
+      "persisted_at": "2026-11-24T14:59:43.042Z"
     },
     "rule-8406": {
       "learning_id": "rule-8406",
@@ -226207,8 +226212,8 @@
       "slug": "builderio-builder",
       "platform": "github",
       "source_url": "https://github.com/BuilderIO/builder",
-      "source_version": "9e133430",
-      "content_hash": "098bb5b58dfa8b42a5abb1951c6af3fbb74021f8aa98f4f5b9b456b1c449c489",
+      "source_version": "0b87ae3c",
+      "content_hash": "d7c7da30a2e9776e8e528997b8a1b32fc66447f34fa6e81846a06e9e779040b3",
       "dossier_path": "07_PROJECT_LEARNING/builderio-builder-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/builderio-builder-learnings.md",
       "promoted_rules": [
@@ -226231,6 +226236,11 @@
           "number": 9858,
           "title": "add repository field for npm provenance publish",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10288,
+          "title": "fix[sdks][unflatten]: block prototype pollution from Studio user attribute query",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -226238,7 +226248,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T22:56:52.017Z",
+      "verified_at": "2026-11-24T14:59:39.237Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -226280,10 +226290,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-builderio-builder-architecture-intelligence-builderio-builder-core-invariants.md",
       "title": "Architecture Intelligence: BuilderIO/builder Core Invariants",
       "repository": "BuilderIO/builder",
-      "source_version": "9e133430",
-      "content_hash": "ed9ce68b09c81eca669a0a22d140d92acaca1fd859b2d09f66625f730740444e",
+      "source_version": "0b87ae3c",
+      "content_hash": "e7a24d61d758a9bd5346d071a2786db93c8ebbf318ae08632b8b8810a9e3b4da",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T22:56:52.649Z"
+      "persisted_at": "2026-11-24T14:59:39.866Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-builderio-builder": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-builderio-builder",
@@ -226292,10 +226302,10 @@
       "relative_path": "08_VERIFICATION/builderio-builder-verification-protocol-empirical-defect-shield-for-builderio-bu.md",
       "title": "Verification Protocol: Empirical Defect Shield for BuilderIO/builder",
       "repository": "BuilderIO/builder",
-      "source_version": "9e133430",
-      "content_hash": "823e4c02e76f2871694bbc85331f0889d72b4b11c1a75bc4165717ef837b8f7d",
+      "source_version": "0b87ae3c",
+      "content_hash": "edbe4958f3f86ca9fbbc176abdcf9b7a05070e6645e2f08e3cb317cf20679750",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T22:56:52.818Z"
+      "persisted_at": "2026-11-24T14:59:40.045Z"
     },
     "learn-github-pixeltable-pixeltable": {
       "learning_id": "learn-github-pixeltable-pixeltable",
@@ -226467,9 +226477,9 @@
       "title": "Architecture Intelligence: builderio-builder-learnings Core Invariants",
       "repository": "builderio-builder-learnings",
       "source_version": "HEAD",
-      "content_hash": "92bf67e07c645b5453da9d88c0608cd31f294d86e7fcd48a446fa2b19a1bf429",
+      "content_hash": "657e06f10388817565e293f715123329bd0059e8cd552840c7bca47a78b46ea3",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T22:57:58.698Z"
+      "persisted_at": "2026-11-24T14:59:49.429Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-builderio-builder-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-builderio-builder-learnings",
@@ -226479,9 +226489,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for builderio-builder-learnings",
       "repository": "builderio-builder-learnings",
       "source_version": "HEAD",
-      "content_hash": "24add9637bae8ee065bdbe0e3e862efbaff9ae751ea4c1274aedc5a80db89936",
+      "content_hash": "1528c9d2b766ead42f70d4e947324506b8d8cc0e4a29c71928f20855acf0141a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T22:57:58.906Z"
+      "persisted_at": "2026-11-24T14:59:49.596Z"
     },
     "domain_intelligence-technical-construction-intelligence-pixeltable-pixeltable-learnings-core-invaria": {
       "item_id": "domain_intelligence-technical-construction-intelligence-pixeltable-pixeltable-learnings-core-invaria",
@@ -250457,8 +250467,8 @@
       "slug": "actix-actix-web",
       "platform": "github",
       "source_url": "https://github.com/actix/actix-web",
-      "source_version": "0581ada7",
-      "content_hash": "4009d31aa87203b57167a657ebbac220a66311c752d83c80db45b2c78f3bda93",
+      "source_version": "12df9de5",
+      "content_hash": "c8b2dc04d37875c078352541504d861c6a9ba247c52de098f1c15c71322ebc98",
       "dossier_path": "07_PROJECT_LEARNING/actix-actix-web-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/actix-actix-web-learnings.md",
       "promoted_rules": [
@@ -250481,6 +250491,11 @@
           "number": 9874,
           "title": "keep the method on 301 and 302 redirects unless it is POST",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10287,
+          "title": "add cookie 0.18 support alongside 0.16",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -250488,7 +250503,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T00:32:38.727Z",
+      "verified_at": "2026-11-24T14:59:34.719Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -307273,7 +307288,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/microsoft/Aion-1.0-Instruct-2.3B",
       "source_version": "hf-microsoft-aion-1.0-instruct-2.3b",
-      "content_hash": "d9cd20bd3fe9389b573f560c54e0ffbd868081e8d6507e1eb66be747bf2a1e69",
+      "content_hash": "95b6294dc6eb25da5574395b1111cc4185a93a1eb87eed0a89fa6240a2bfcb67",
       "dossier_path": "07_PROJECT_LEARNING/hf-microsoft-aion-1.0-instruct-2.3b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-microsoft-aion-1.0-instruct-2.3b-learnings.md",
       "promoted_rules": [],
@@ -307282,7 +307297,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T13:26:32.492Z",
+      "verified_at": "2026-11-24T14:59:30.948Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -307299,9 +307314,9 @@
       "title": "Research & Knowledge Intelligence: microsoft/Aion-1.0-Instruct-2.3B Core Invariants",
       "repository": "microsoft/Aion-1.0-Instruct-2.3B",
       "source_version": "hf-microsoft-aion-1.0-instruct-2.3b",
-      "content_hash": "c3d2ad454d88b4f2d642d9ec404aeeacccea8148a3bf1efcfe7d899a4933192c",
+      "content_hash": "deab2bd2c3100eb36426260c0718f69911f4d8e1983c7d0ec6281b40c48a30ef",
       "domain_letter": "D",
-      "persisted_at": "2026-11-20T13:26:32.897Z"
+      "persisted_at": "2026-11-24T14:59:31.395Z"
     },
     "rule-9575": {
       "learning_id": "rule-9575",
@@ -307361,9 +307376,9 @@
       "title": "Research & Knowledge Intelligence: hf-microsoft-aion-1.0-instruct-2.3b-learnings Core Invariants",
       "repository": "hf-microsoft-aion-1.0-instruct-2.3b-learnings",
       "source_version": "HEAD",
-      "content_hash": "207347064c43f3ccece34ac03b52bda06de3cea6fa46be40ce4fbb288ae7abfb",
+      "content_hash": "ead6113381eb59d31e601179c00286066f2684b07de3fcd804dae44a44e48bc5",
       "domain_letter": "D",
-      "persisted_at": "2026-11-20T13:27:15.452Z"
+      "persisted_at": "2026-11-24T14:59:48.708Z"
     },
     "rule-9576": {
       "learning_id": "rule-9576",
@@ -337241,6 +337256,96 @@
       "content_hash": "bf71ad07ce30c3b7150eb36b618a959c2081ad1e2b4238bff50c689b73e2435d",
       "domain_letter": "H",
       "persisted_at": "2026-11-24T14:51:15.504Z"
+    },
+    "rule-10287": {
+      "learning_id": "rule-10287",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10287,
+      "title": "add cookie 0.18 support alongside 0.16",
+      "source_url": "https://github.com/actix/actix-web",
+      "source_version": "12df9de5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T14:59:34.719Z"
+    },
+    "candidate_directive-add-cookie-0-18-support-alongside-0-16": {
+      "item_id": "candidate_directive-add-cookie-0-18-support-alongside-0-16",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-M7IT-add-cookie-0-18-support-alongside-0-16.md",
+      "title": "add cookie 0.18 support alongside 0.16",
+      "repository": "actix/actix-web",
+      "source_version": "12df9de5",
+      "content_hash": "be9679b6d18bbe1f3fd74a984bbbaa92aa29b1a8312175d455f86b3b9003af77",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T14:59:35.192Z"
+    },
+    "rule-10288": {
+      "learning_id": "rule-10288",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10288,
+      "title": "fix[sdks][unflatten]: block prototype pollution from Studio user attribute query",
+      "source_url": "https://github.com/BuilderIO/builder",
+      "source_version": "0b87ae3c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T14:59:39.237Z"
+    },
+    "candidate_directive-fix-sdks-unflatten-block-prototype-pollution-from-studio-user-attribute-query": {
+      "item_id": "candidate_directive-fix-sdks-unflatten-block-prototype-pollution-from-studio-user-attribute-query",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MIDQ-fix-sdks-unflatten-block-prototype-pollution-from-studio-user-attribute-query.md",
+      "title": "fix[sdks][unflatten]: block prototype pollution from Studio user attribute query",
+      "repository": "builderio-builder-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a24e22361a986d8254ab493b3762bff84bd336726ea979ef60eebbdac39cdff7",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-24T14:59:49.263Z"
+    },
+    "rule-10289": {
+      "learning_id": "rule-10289",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10289,
+      "title": "Update gcr.io/distroless/static-debian13:nonroot Docker digest to 8ce6dd8",
+      "source_url": "https://github.com/gardener/gardener",
+      "source_version": "86782dd1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T14:59:42.258Z"
+    },
+    "candidate_directive-update-gcr-io-distroless-static-debian13-nonroot-docker-digest-to-8ce6dd8": {
+      "item_id": "candidate_directive-update-gcr-io-distroless-static-debian13-nonroot-docker-digest-to-8ce6dd8",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MDBO-update-gcr-io-distroless-static-debian13-nonroot-docker-digest-to-8ce6dd8.md",
+      "title": "Update gcr.io/distroless/static-debian13:nonroot Docker digest to 8ce6dd8",
+      "repository": "gardener/gardener",
+      "source_version": "86782dd1",
+      "content_hash": "89eae2b66f0f3bbf7e128c21a72ca3460d3fea2d5135bbe924a17a9af34010ec",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-24T14:59:42.709Z"
+    },
+    "candidate_directive-web-add-cookie-0-18-support-alongside-0-16": {
+      "item_id": "candidate_directive-web-add-cookie-0-18-support-alongside-0-16",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MHE1-web-add-cookie-0-18-support-alongside-0-16.md",
+      "title": "web): add cookie 0.18 support alongside 0.16",
+      "repository": "actix-actix-web-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d29d70f45f753ab9e8122484ea93150e6580c2817ea5caa34aee691c8c574858",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T14:59:47.981Z"
     }
   },
   "ai-builder-brain": {
