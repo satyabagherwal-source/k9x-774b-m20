@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T11:21:58.647Z",
-  "total_cycles_completed": 12027,
-  "total_learnings_persisted": 12027,
-  "total_rules_promoted": 11102,
+  "last_updated": "2026-11-24T11:30:26.429Z",
+  "total_cycles_completed": 12030,
+  "total_learnings_persisted": 12030,
+  "total_rules_promoted": 11104,
   "history": [
-    {
-      "timestamp": "2026-11-23T19:34:43.012Z",
-      "repository": "ytsaurus/ytsaurus",
-      "learningId": "learn-github-ytsaurus-ytsaurus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T19:42:50.421Z",
-      "repository": "Qwen/Qwen3-4B",
-      "learningId": "learn-huggingface-qwen-qwen3-4b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T19:42:53.095Z",
-      "repository": "medialab/xan",
-      "learningId": "learn-github-medialab-xan",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T19:43:03.416Z",
       "repository": "aleo-labs-protocol/snarkOS",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-24T11:21:58.647Z",
       "repository": "juicedata/juicefs",
       "learningId": "learn-github-juicedata-juicefs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T11:30:08.377Z",
+      "repository": "llamaindex/OCRia-nano-1",
+      "learningId": "learn-huggingface-llamaindex-ocria-nano-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T11:30:22.715Z",
+      "repository": "rook/rook",
+      "learningId": "learn-github-rook-rook",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T11:30:26.429Z",
+      "repository": "skyzh/mini-lsm",
+      "learningId": "learn-github-skyzh-mini-lsm",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

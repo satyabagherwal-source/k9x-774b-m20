@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T11:22:04.559Z",
+  "last_updated": "2026-11-24T11:31:04.040Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-24T11:22:03.656Z",
@@ -133,7 +133,7 @@
       "staged_for_review": 0
     },
     "rook-rook-learnings.md": {
-      "processed_at": "2026-11-23T16:20:43.698Z",
+      "processed_at": "2026-11-24T11:31:01.004Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3773,7 +3773,7 @@
       "staged_for_review": 0
     },
     "skyzh-mini-lsm-learnings.md": {
-      "processed_at": "2026-11-23T15:29:12.325Z",
+      "processed_at": "2026-11-24T11:31:02.646Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3811,9 +3811,14 @@
       "processed_at": "2026-11-24T08:48:25.247Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-llamaindex-ocria-nano-1-learnings.md": {
+      "processed_at": "2026-11-24T11:31:00.451Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 3744,
-  "total_canonical_promoted": 503,
-  "total_staged_for_review": 2831
+  "total_dossiers_evaluated": 3747,
+  "total_canonical_promoted": 504,
+  "total_staged_for_review": 2833
 }

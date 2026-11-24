@@ -22111,5 +22111,17 @@
     "qualityScore": 2015,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-24T08:44:43.594Z"
+  },
+  {
+    "name": "llamaindex/OCRia-nano-1",
+    "fullName": "llamaindex/OCRia-nano-1",
+    "url": "https://huggingface.co/llamaindex/OCRia-nano-1",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: llamaindex/OCRia-nano-1 (88 likes, 0 downloads)",
+    "likes": 88,
+    "downloads": 0,
+    "qualityScore": 880,
+    "discoveredAt": "2026-11-24T11:27:53.077Z"
   }
 ]

@@ -4,24 +4,24 @@
 {
   "source_repository": "rook/rook",
   "source_url": "https://github.com/rook/rook",
-  "source_version": "40d33b11",
+  "source_version": "d7d7a0e1",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-23T16:20:38.415Z",
+  "timestamp": "2026-11-24T11:30:22.956Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-rook-rook",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [rook/rook](https://github.com/rook/rook) (Revision: `40d33b11`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T16:20:38.415Z`  
+> **Provenance**: Harvested from [rook/rook](https://github.com/rook/rook) (Revision: `d7d7a0e1`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T11:30:22.956Z`  
 > **Learning ID**: `learn-github-rook-rook`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 66%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 68%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from rook/rook:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rook-rook-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rook/rook](https://github.com/rook/rook))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T16:20:37.379Z  
+> **Harvest Timestamp**: 2026-11-24T11:30:21.531Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1441,122 +1441,267 @@ func quanityToInt64(qty string) (*int64, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `40d33b11` (2026-11-23)
-**Commit Message**: Merge pull request #18091 from Greenpepper15/wip-rgw-isolated-root-pool-design
+### Incident Patch 1: `dc3975fd` (2026-11-23)
+**Commit Message**: helm: fix purge-osd ClusterRole Helm ownership conflict
 
-docs: add design for a namespaced RGW root pool
+PR #18634 converted the rook-ceph-purge-osd Role/RoleBinding to a
+cluster-scoped ClusterRole/ClusterRoleBinding (the purge job now needs
+persistentvolumes access, which a namespaced Role cannot grant), but left
+them in the shared library templates library.cluster.roles and
+library.cluster.rolebindings. Both the operator chart (rook-ceph) and the
+cluster chart (rook-ceph-cluster) render those templates when the cluster
+runs in a different namespace than the operator, so two Helm releases each
+tried to own the same cluster-scoped, fixed-name object. The second
+release's upgrade then failed:
 
-**File**: `design/ceph/object/namespaced-root-pool.md` (added, +575/-0)
+  ClusterRole "rook-ceph-purge-osd" exists and cannot be imported into the
+  current release: invalid ownership metadata
+
+This broke the Helm upgrade suite on master.
+
+Follow the pattern already used for the rook-ceph-mgr-cluster and
+rook-ceph-osd cluster-scoped RBAC: define the ClusterRole once in the
+operator chart's clusterrole.yaml, and give the ClusterRoleBinding a
+per-cluster-namespace name suffix via library.suffix-cluster-namespace so
+each release owns a uniquely named binding. The namespaced ServiceAccount
+is unchanged, and deploy/
+
+**File**: `deploy/charts/library/templates/_cluster-clusterrolebinding.tpl` (modified, +16/-0)
 ```diff
-@@ -0,0 +1,575 @@
+@@ -34,4 +34,20 @@ subjects:
+   - kind: ServiceAccount
+     name: rook-ceph-osd
+     namespace: {{ .Release.Namespace }} # namespace:cluster
 +---
-+title: namespaced-root-pool
-+target-version: release-1.22
++# Allow the osd purge job to run and clean up cluster-wide resources
++kind: ClusterRoleBinding
++apiVersion: rbac.authorization.k8s.io/v1
++metadata:
++  name: rook-ceph-purge-osd{{ include "library.suffix-cluster-namespace" . }}
++  labels:
++    {{- include "library.rook-ceph.labels" . | nindent 4 }}
++roleRef:
++  apiGroup: rbac.authorization.k8s.io
++  kind: ClusterRole
++  name: rook-ceph-purge-osd
++subjects:
++  - kind: ServiceAccount
++    name: rook-ceph-purge-osd
++    namespace: {{ .Release.Namespace }} # namespace:cluster
+ {{- end }}
+```
+
+**File**: `deploy/charts/library/templates/_cluster-role.tpl` (modified, +0/-24)
+```diff
+@@ -121,28 +121,4 @@ rules:
+       - create
+       - update
+       - delete
+----
+-# Aspects of ceph osd purge job that require access to the cluster namespace
+-kind: ClusterRole
+-apiVersion: rbac.authorization.k8s.io/v1
+-metadata:
+-  name: rook-ceph-purge-osd
+-  labels:
+-    {{- include "library.rook-ceph.labels" . | nindent 4 }}
+-rules:
+-  - apiGroups: [""]
+-    resources: ["configmaps"]
+-    verbs: ["get"]
+-  - apiGroups: ["apps"]
+-    resources: ["deployments"]
+-    verbs: ["get", "update", "delete"]
+-  - apiGroups: ["batch"]
+-    resources: ["jobs"]
+-    verbs: ["get", "list", "create", "delete"]
+-  - apiGroups: [""]
+-    resources: ["persistentvolumeclaims"]
+-    verbs: ["get", "update", "delete", "list"]
+-  - apiGroups: [""]
+-    resources: ["persistentvolumes"]
+-    verbs: ["get"]
+ {{- end }}
+```
+
+**File**: `deploy/charts/library/templates/_cluster-rolebinding.tpl` (modified, +0/-16)
+```diff
+@@ -86,20 +86,4 @@ subjects:
+   - kind: ServiceAccount
+     name: rook-ceph-cmd-reporter
+     namespace: {{ .Release.Namespace }} # namespace:cluster
+----
+-# Allow the osd purge job to run in this namespace
+-kind: ClusterRoleBinding
+-apiVersion: rbac.authorization.k8s.io/v1
+-metadata:
+-  name: rook-ceph-purge-osd
+-  labels:
+-    {{- include "library.rook-ceph.labels" . | nindent 4 }}
+-roleRef:
+-  apiGroup: rbac.authorization.k8s.io
+-  kind: ClusterRole
+-  name: rook-ceph-purge-osd
+-subjects:
+-  - kind: ServiceAccount
+-    name: rook-ceph-purge-osd
+-    namespace: {{ .Release.Namespace }} # namespace:cluster
+ {{- end }}
+```
+
+**File**: `deploy/charts/rook-ceph/templates/clusterrole.yaml` (modified, +24/-0)
+```diff
+@@ -412,6 +412,30 @@ rules:
+   - get
+   - list
+ ---
++# Aspects of the ceph osd purge job that require access to cluster-wide resources
++kind: ClusterRole
++apiVersion: rbac.authorization.k8s.io/v1
++metadata:
++  name: rook-ceph-purge-osd
++  labels:
++    {{- include "library.rook-ceph.labels" . | nindent 4 }}
++rules:
++  - apiGroups: [""]
++    resources: ["configmaps"]
++    verbs: ["get"]
++  - apiGroups: ["apps"]
++    resources: ["deployments"]
++    verbs: ["get", "update", "delete"]
++  - apiGroups: ["batch"]
++    resources: ["jobs"]
++    verbs: ["get", "list", "create", "delete"]
++  - apiGroups: [""]
++    resources: ["persistentvolumeclaims"]
++    verbs: ["get", "update", "delete", "list"]
++  - apiGroups: [""]
++    resources: ["persistentvolumes"]
++    verbs: ["get"]
 +---
-+
-+# Namespaced RGW Topology Pool (`rootPoolNamespaceStrategy`)
-+
-+Store a realm's RGW topology records in a RADOS namespace of `.rgw.root` instead of using the raw `.rgw.root` pool.
-+
-+## Summary
-+
-+`sharedPools` collapses a store's data and metadata into shared pools partitioned by RADOS
-+namespaces, which are named after the zone name. The **RGW topology records** — realm, zone group, zone, and
-+period — are not covered by this feature. Instead every store in the cluster keeps the realm information together in a single, un-namespaced `.rgw.root` pool.
-+
-+To mitigate this we propose a new `rootPoolNamespaceStrategy` field.
-+`rootPoolNamespaceStrategy: RealmName` should be an opt-in setting for storing a realm's topology records in a RADOS namespace of `.rgw.root`. A store using `sharedPools` together with `rootPoolNamespaceStrategy` would then have its entire RADOS footprint (data, metadata, and topology) stored with RADOS namespaces.
-+
-+### Motivation
-+
-+- **Enabling realm separation at the cephx level.** With `rootPoolNamespaceStrategy` and `sharedPools`
-+  together, a realm's entire RADOS footprint (data, metadata, and topology) would lie in
-+  distinct RADOS namespaces. A Rook user could then achieve cephx-enforced realm separation by manually provisioning an RGW instance with a cephx user scoped to those namespaces (the user's mon caps must use the [`profile rgw`](https://github.com/ceph/ceph/pull/70538) cap profile; a bare `mon 'allow rw'` would undermine the separation).
-+  Separating realms like this closes confidentiality gaps between realms. For example, the zone record in `.rgw.root` carries the realm's `system_key` (the
-+  credentials used for multisite replication) in cleartext, so under broad OSD
-+  capabilities any RGW can read another realm's replication credentials out of the
-+  shared pool. An OSD capability scoped to the realm's namespaces stops that read.
-+- **Decrease coupling of realms stored in the same `.rgw.root` pool.** If every realm shares a `.rgw.root` pool then every `radosgw-admin` invocation can reach any realm, so a wrong `--rgw-realm`, a default-realm-fallback commit, or a `realm list` delete sweep can hit a neighboring realm. Invoking any `radosgw-admin` command against a namespace-separated realm would not influence realms living in other namespaces.
-+
-+    Keeping each realm in a separate RADOS namespace would also help with:
-+    - Backing up realm topology: back up the RADOS namespace
-+    - Deleting a realm: delete every RADOS namespace associated with it
-+- **No reliance on the root pool's default location.** Every `radosgw-admin` invocation implicitly relies on the root pool location being `.rgw.root` and Rook relies on that default today. Rook otherwise tries consistently to be explicit rather than depend on defaults.
-+
-+### Goals
-+
-+- Opt-in partitioning of `.rgw.root` by RADOS namespace, for single-site and multisite setups.
-+- Off by default: existing stores, and stores that do not set the
-+  field, should be untouched and keep using the shared `.rgw.root`.
-+- Backward compatible: existing shared `.rgw.root` stores and realms should be untouched, and enabling
-+  the feature should never rewrite or migrate an already-provisioned layout. (Operator downgrade is
-+  not supported by Rook. See Open Question 2.)
-+- Should apply to newly created realms and object stores only.
-+
-+### Non-Goals
-+
-+- Relocating existing shared `.rgw.root` topology to a RADOS namespaced `.rgw.root` (and the other way around)
-+    - `rootPoolNamespaceStrategy` is immutable on a CR, so the layout cannot be flipped in place. Deleting a realm
-+      and re-creating it under the same name with the other layout is accepted, but this does not cause a
-+      migration. Instead it provisions at the new location and leaves the old records orphaned.
-+- Configurable namespace or pool names. The pool would always be `.rgw.root` and the namespace
-+  always the realm name. No new naming knobs are introduced.
-+- Changing the `sharedPools` data/metadata model or its API.
-+- Access control. This feature would control the placement of topology records. It would not change
-+  what any RGW daemon or client is authorized to read or write. It would, however, arrange the
-+  layout that namespace-scoped cephx capabilities require (see Motivation).
-+- Automated Ceph-side cleanup of multisite realms. The prerequisite finalizers (see Prerequisite
-+  work) only order the deletion of the CRs.
-+
-+### Constraints and assumptions
-+
-+The design builds on the following pre-existing behaviors and accepts the constraints they impose:
-+
-+- In Rook (up-to-date as of v1.21), deleting a `CephObjectRealm` CR in multisite does not delete the realm on the Ceph side. CephObjectRealm's reconcile performs no Ceph-side work on delete. In contrast, in single-site `CephObjectStore` teardown the associated realm records are removed. This design is inten
+ kind: ClusterRole
+ apiVersion: rbac.authorization.k8s.io/v1
+ metadata:
+```
+
+**File**: `deploy/examples/common.yaml` (modified, +2/-2)
+```diff
+@@ -427,7 +427,7 @@ rules:
+       - get
+       - list
+ ---
+-# Aspects of ceph osd purge job that require access to the cluster namespace
++# Aspects of the ceph osd purge job that require access to cluster-wide resources
+ kind: ClusterRole
+ apiVersion: rbac.authorization.k8s.io/v1
+ metadata:
+@@ -587,7 +587,7 @@ subjects:
+     name: rook-ceph-osd
+     namespace: rook-ceph # namespace:cluster
+ ---
+-# Allow the osd purge job to run in this namespace
++# Allow the osd purge job to run and clean up cluster-wide resources
+ kind: ClusterRoleBinding
+ apiVersion: rbac.authorization.k8s.io/v1
+ metadata:
 ```
 
 ---
 
-### Incident Patch 2: `3eec68fc` (2026-11-23)
-**Commit Message**: Merge pull request #18841 from rook/dependabot/go_modules/k8s-dependencies-d4cee4bf15
+### Incident Patch 2: `23e7253f` (2026-11-23)
+**Commit Message**: build(deps): bump ossf/scorecard-action from 2.5.0 to 2.6.0
 
-build(deps): bump sigs.k8s.io/controller-runtime from 0.25.2 to 0.25.3 in the k8s-dependencies group across 1 directory
+Bumps [ossf/scorecard-action](https://github.com/ossf/scorecard-action) from 2.5.0 to 2.6.0.
+- [Release notes](https://github.com/ossf/scorecard-action/releases)
+- [Changelog](https://github.com/ossf/scorecard-action/blob/main/RELEASE.md)
+- [Commits](https://github.com/ossf/scorecard-action/compare/fa7117db83c52d787ae5a89f350999701505d78e...23f22cd43608bae7a1f1fa2603d7314dee9538a5)
 
-**File**: `go.mod` (modified, +1/-1)
+---
+updated-dependencies:
+- dependency-name: ossf/scorecard-action
+  dependency-version: 2.6.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/scorecards.yml` (modified, +1/-1)
 ```diff
-@@ -54,7 +54,7 @@ require (
- 	k8s.io/cloud-provider v0.37.2
- 	k8s.io/utils v0.0.0-20261023123148-ca04ba58ecab
- 	sigs.k8s.io/container-object-storage-interface/client v0.2.2
--	sigs.k8s.io/controller-runtime v0.25.2
-+	sigs.k8s.io/controller-runtime v0.25.3
- 	sigs.k8s.io/mcs-api v0.5.2
- 	sigs.k8s.io/yaml v1.6.0
- )
+@@ -34,7 +34,7 @@ jobs:
+           persist-credentials: false
+ 
+       - name: "Run analysis"
+-        uses: ossf/scorecard-action@fa7117db83c52d787ae5a89f350999701505d78e # v2.5.0
++        uses: ossf/scorecard-action@23f22cd43608bae7a1f1fa2603d7314dee9538a5 # v2.6.0
+         with:
+           results_file: results.sarif
+           results_format: sarif
 ```
 
-**File**: `go.sum` (modified, +2/-2)
+---
+
+### Incident Patch 3: `59ef15d6` (2026-11-23)
+**Commit Message**: build(deps): bump the codeql-action group with 3 updates
+
+Bumps the codeql-action group with 3 updates: [github/codeql-action/init](https://github.com/github/codeql-action), [github/codeql-action/analyze](https://github.com/github/codeql-action) and [github/codeql-action/upload-sarif](https://github.com/github/codeql-action).
+
+
+Updates `github/codeql-action/init` from 4.39.3 to 4.39.4
+- [Release notes](https://github.com/github/codeql-action/releases)
+- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/github/codeql-action/compare/33d7b85da1a04171e211befe2c739303b9a4c066...1bd86f2fdb4b86187fa4059f16f31a3202acc9ea)
+
+Updates `github/codeql-action/analyze` from 4.39.3 to 4.39.4
+- [Release notes](https://github.com/github/codeql-action/releases)
+- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/github/codeql-action/compare/33d7b85da1a04171e211befe2c739303b9a4c066...1bd86f2fdb4b86187fa4059f16f31a3202acc9ea)
+
+Updates `github/codeql-action/upload-sarif` from 4.39.3 to 4.39.4
+- [Release notes](https://github.com/github/codeql-action/releases)
+- [Changelog](https://github.com/
+
+**File**: `.github/workflows/codeql.yaml` (modified, +2/-2)
 ```diff
-@@ -1729,8 +1729,8 @@ sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.0.14/go.mod h1:LEScyz
- sigs.k8s.io/container-object-storage-interface/client v0.2.2 h1:TARggRey9sQkDv94w3b+aBav0gCgM61sgWVWU8zKMDg=
- sigs.k8s.io/container-object-storage-interface/client v0.2.2/go.mod h1:RQSwGVkJ9vBo02N1tTWmqHqykln8K2d/dHgdXWie2I4=
- sigs.k8s.io/controller-runtime v0.2.2/go.mod h1:9dyohw3ZtoXQuV1e766PHUn+cmrRCIcBh6XIMFNMZ+I=
--sigs.k8s.io/controller-runtime v0.25.2 h1:bEkK3PVOIVK9X8QWLGVhJgmFc++47vfT6wakSzAOLsQ=
--sigs.k8s.io/controller-runtime v0.25.2/go.mod h1:4QqLdT6z/L6Olj8JJCtvztid4/fnIiYsfaTFScegctc=
-+sigs.k8s.io/controller-runtime v0.25.3 h1:b4OcZSY/aKHY8JG+rBlQmQ1xLs574+ZBEjv1dtfLd80=
-+sigs.k8s.io/controller-runtime v0.25.3/go.mod h1:4QqLdT6z/L6Olj8JJCtvztid4/fnIiYsfaTFScegctc=
- sigs.k8s.io/json v0.0.0-20211020170558-c049b76a60c6/go.mod h1:p4QtZmO4uMYipTQNzagwnNoseA6OxSUutVw05NhYDRs=
- sigs.k8s.io/json v0.0.0-20220713155537-f223a00ba0e2/go.mod h1:B8JuhiUyNFVKdsE8h686QcCxMaH6HrOAZj4vswFpcB0=
- sigs.k8s.io/json v0.0.0-20250730193827-2d320260d730 h1:IpInykpT6ceI+QxKBbEflcR5EXP7sU1kvOlxwZh5txg=
+@@ -50,7 +50,7 @@ jobs:
+           go-version: "1.26"
+ 
+       - name: Initialize CodeQL
+-        uses: github/codeql-action/init@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
++        uses: github/codeql-action/init@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea # v4.39.4
+         with:
+           languages: ${{ matrix.language }}
+           build-mode: ${{ matrix.build-mode }}
+@@ -69,7 +69,7 @@ jobs:
+       # GOFLAGS belongs here and not on init, which warns that passing it
+       # there is deprecated.
+       - name: Analyze
+-        uses: github/codeql-action/analyze@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
++        uses: github/codeql-action/analyze@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea # v4.39.4
+         env:
+           GOFLAGS: "-tags=ceph_preview"
+         with:
+```
+
+**File**: `.github/workflows/scorecards.yml` (modified, +1/-1)
+```diff
+@@ -65,6 +65,6 @@ jobs:
+       # Upload the results to GitHub's code scanning dashboard (optional).
+       # Commenting out will disable upload of results to your repo's Code Scanning dashboard
+       - name: "Upload to code-scanning"
+-        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
++        uses: github/codeql-action/upload-sarif@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea # v4.39.4
+         with:
+           sarif_file: results.sarif
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #18851** (2026-11-23): build(deps): bump the all-dependencies group across 1 directory with 26 updates (@dependabot[bot])
-- **PR #18850** (closed): build(deps): bump the all-dependencies group across 1 directory with 26 updates (@dependabot[bot])
-- **PR #18849** (2026-11-20): build(deps): bump the github-dependencies group across 1 directory with 8 updates (@dependabot[bot])
-- **PR #18848** (2026-11-20): csi: use annotated secret names in default client profile (backport #18831) (@mergify[bot])
-- **PR #18847** (2026-11-20): csi: use annotated secret names in default client profile (backport #18831) (@mergify[bot])
-- **PR #18846** (closed): build(deps): bump the all-dependencies group with 25 updates (@dependabot[bot])
+- **PR #18872** (2026-11-23): helm: pass mapOptions and unmapOptions to EC pool storage classes (backport #18854) (@mergify[bot])
+- **PR #18871** (2026-11-23): osd: optionally restrict parallel OSD updates to one failure domain (backport #18822) (@mergify[bot])
+- **PR #18870** (2026-11-23): core: keep the mon secret out of the cleanup job spec (backport #18853) (@mergify[bot])
+- **PR #18869** (2026-11-23): core: keep the mon secret out of the cleanup job spec (backport #18853) (@mergify[bot])
+- **PR #18868** (2026-11-23): helm: fix purge-osd ClusterRole Helm ownership conflict (@travisn)
+- **PR #18867** (2026-11-23): object: stop the gateways before deleting an object store (backport #18860) (@mergify[bot])
 
 ---
 
@@ -1576,42 +1721,36 @@ build(deps): bump sigs.k8s.io/controller-runtime from 0.25.2 to 0.25.3 in the k8
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in namespaced-root-pool.md
+## X. helm: fix purge-osd ClusterRole Helm ownership conflict
 
 **RULE**:
-When implementing operations in `design/ceph/object/namespaced-root-pool.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rook/rook. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `deploy/charts/library/templates/_cluster-clusterrolebinding.tpl`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rook/rook. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `40d33b11`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dc3975fd`: helm: fix purge-osd ClusterRole Helm ownership conflict. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `design/ceph/object/namespaced-root-pool.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `deploy/charts/library/templates/_cluster-clusterrolebinding.tpl`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
 ---
-title: namespaced-root-pool
-target-version: release-1.22
----
-
-# Namespaced RGW Topology Pool (`rootPoolNamespaceStrategy`)
-
-Store a realm's RGW topology records in a RADOS namespace of `.rgw.root` instead of using the raw `.rgw.root` pool.
-
-## Summary
-
-`sharedPools` collapses a store's data and metadata into shared pools partitioned by RADOS
-namespaces, which are named after the zone name. The **RGW topology records** — realm, zone group, zone, and
-period — are not covered by this feature. Instead every store in the cluster keeps the realm information together in a single, un-namespaced `.rgw.root` pool.
-
-To mitigate this we propose a new `rootPoolNamespaceStrategy` field.
-`rootPoolNamespaceStrategy: RealmName` should be an opt-in setting for storing a realm's topology records in a RADOS namespace of `.rgw.root`. A store using `sharedPools` together with `rootPoolNamespaceStrategy` would then have its entire RADOS footprint (data, metadata, and topology) stored with RADOS namespaces.
-
-### Motivation
-
-- **Enabling realm separation at the cephx level.** With `rootPoolNamespaceStrategy` and `sharedPools`
-  together, a realm's entire RADOS footprint (data, metadata, and topology) w
+# Allow the osd purge job to run and clean up cluster-wide resources
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: rook-ceph-purge-osd{{ include "library.suffix-cluster-namespace" . }}
+  labels:
+    {{- include "library.rook-ceph.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: rook-ceph-purge-osd
+subjects:
+  - kind: ServiceAccount
+    name: rook-ceph-purge-osd
+    namespace: {{ .Release.Namespace }} # namespace:cluster
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1621,7 +1760,7 @@ To mitigate this we propose a new `rootPoolNamespaceStrategy` field.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `40d33b11` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dc3975fd` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

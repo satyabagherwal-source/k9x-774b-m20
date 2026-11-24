@@ -5356,3 +5356,7 @@ https://huggingface.co/strata-engine/Inkling-2-Mini-Strata
 # --- Automatically Discovered by AI Scout Engine [2026-11-24T08:48:04.498Z] ---
 # [AI-AGENTS] XinaTian/MROffice (2015 score) - MR Office — the open-source editors of the AI office suite closest to Microsoft 
 https://github.com/XinaTian/MROffice
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-24T11:30:01.819Z] ---
+# [HUGGINGFACE-AI-MODELS] llamaindex/OCRia-nano-1 (880 score) - Verified Hugging Face Model: llamaindex/OCRia-nano-1 (88 likes, 0 downloads)
+https://huggingface.co/llamaindex/OCRia-nano-1

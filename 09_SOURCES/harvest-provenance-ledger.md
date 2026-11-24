@@ -12685,3 +12685,7 @@ Every entry in this ledger must capture:
 | `learn-github-typedb-typedb` | `https://github.com/typedb/typedb` | `5ec7db6d` | Multi-dimensional audit evidence | 2026-11-24T11:05:18.900Z |
 | `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `582f5637` | Multi-dimensional audit evidence | 2026-11-24T11:05:47.335Z |
 | `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `8ee0ca3e` | Multi-dimensional audit evidence | 2026-11-24T11:21:58.641Z |
+| `learn-huggingface-llamaindex-ocria-nano-1` | `https://huggingface.co/llamaindex/OCRia-nano-1` | `hf-llamain` | Multi-dimensional audit evidence | 2026-11-24T11:30:08.370Z |
+| `learn-github-rook-rook` | `https://github.com/rook/rook` | `d7d7a0e1` | Multi-dimensional audit evidence | 2026-11-24T11:30:22.710Z |
+| `learn-github-skyzh-mini-lsm` | `https://github.com/skyzh/mini-lsm` | `4c10ba4b` | Multi-dimensional audit evidence | 2026-11-24T11:30:26.423Z |
+| `learn-dom-d-4a125361` | `project://hf-llamaindex-ocria-nano-1` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-llamaindex-ocria-nano-1-learnings.md` | 2026-11-24T11:31:00.451Z |

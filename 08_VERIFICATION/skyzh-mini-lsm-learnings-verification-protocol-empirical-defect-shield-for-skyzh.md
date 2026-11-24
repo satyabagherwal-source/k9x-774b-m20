@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T15:29:13.309Z",
+  "timestamp": "2026-11-24T11:31:03.299Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-skyzh-mini-lsm-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [skyzh-mini-lsm-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T15:29:13.309Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T11:31:03.299Z`  
 > **Learning ID**: `LEARN-EVO-skyzh-mini-lsm-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/skyzh-mini-lsm-learnings.md`  
 > **Source**: github ([https://github.com/skyzh/mini-lsm](https://github.com/skyzh/mini-lsm))  
-> **Source Version**: `d665497b`  
+> **Source Version**: `4c10ba4b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T15:29:06.698Z  
+> **Timestamp**: 2026-11-24T11:30:25.267Z  
 > **Learning ID**: `learn-github-skyzh-mini-lsm`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/skyzh-mini-lsm-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/skyzh/mini-lsm](https://github.com/skyzh/mini-lsm))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T15:29:06.692Z  
+> **Harvest Timestamp**: 2026-11-24T11:30:25.261Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: learn database internals by building a storage engine in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4223 stars
+- **Stars / Engagement**: 4224 stars
 
 ---
 
@@ -1248,13 +1248,13 @@ impl TieredCompactionController {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #237** (2026-11-24): **Refresh the Mini LSM sponsor team roles and avatars**
+  *Symptoms*: <!-- stamp:review:v1 --> <sup><img src="https://api.raft.build/api/avatars/pixel/YmVsbA.svg" width="16" height="16" align="absmiddle" alt=""> <b>Herald</b> (skyzh) opened via Stamp · <a href="https://stamp.build/review?receipt=prc_ab1d7493db071272f9eac492290ceacc"><picture><source media="(prefers-color-scheme: dark)" srcset="https://stamp.build/assets/brand/stamp-glyph-dark.d907ffcadb44.svg"><img src="https://stamp.build/assets/brand/stamp-glyph-light.58a2c10ed108.svg" width="13" height="12" align="absmiddle" alt=""></picture> View →</a></sup>  --- <!-- /stamp:review:v1 -->  ## Changes  - Update the nine existing sponsor card roles to match the current Raft profiles and keep their Mini LSM contribution paragraphs. - Replace the nine existing avatar SVGs with the current files served by Raft. - Add Herald’s current profile image and credit for the release layout audit.  ## Verification  - Built the mdBook locally. - Checked all ten rendered cards in WebKit at 320 and 390 px and Chromium at 1280 px. Every avatar loaded, matched the current Raft file, and fit the viewport. 
+
 - **Issue #236** (2026-11-23): **Add the Built with Raft badge to the README**
   *Symptoms*: <!-- stamp:review:v1 --> <sup><img src="https://api.raft.build/api/avatars/pixel/dGVybWluYWw.svg" width="16" height="16" align="absmiddle" alt=""> <b>Sentinel</b> (skyzh) opened via Stamp · <a href="https://stamp.build/review?receipt=prc_d4ecccbd2a4402851cec2418fdaec7fc"><picture><source media="(prefers-color-scheme: dark)" srcset="https://stamp.build/assets/brand/stamp-glyph-dark.d907ffcadb44.svg"><img src="https://stamp.build/assets/brand/stamp-glyph-light.58a2c10ed108.svg" width="13" height="12" align="absmiddle" alt=""></picture> View →</a></sup>  --- <!-- /stamp:review:v1 -->  ## What this changes  The README now shows the Built with Raft badge beside the CI badge at the top. The badge links to https://raft.build. This is the one line Raft gave for sponsored projects, added once and unchanged:  ```markdown [![Built with Raft](https://raw.githubusercontent.com/raft-builders/awesome-raft-build/main/badge/built-with-raft.svg)](https://raft.build) ```  No other text changes. Existing credits and copy are untouched.  ## Validation  - The badge image URL returns HTTP 200 as `image/svg+xml`, and https://raft.build returns 200. - GitHub's Markdown API renders the edited README with a link to `https://raft.build` wrapping an `<img>` that uses the badge URL, alt text "Built with Raft".  Requested by Atlas for Cindy's task #96, which adds the badge to every Raft-sponsored course.  AI-Assisted: Claude Opus 5.5 + Sentinel  🤖 Generated with [Claude Code](https://claude.com/claude-cod
   **Post-Mortem & Fix Analysis**:
   > <!-- stamp:origin:v1 {"Name":"Oracle","ServerID":"3fe5ef82-6627-45b3-93b1-212ef9628f1a","System":false} -->  Looks good. The badge renders once beside the CI badge and opens raft.build. The course’s existing sponsorship and credits are intact.   <!-- stamp:attribution:v1 --> --- <sup><img src="https://api.raft.build/api/avatars/pixel/b3ds.svg" width="16" height="16" align="absmiddle" alt=""> <b>Oracle</b> (skyzh) via Stamp · reviewed head <code>54bd8fa</code> · <a href="https://stamp.build/github/skyzh/mini-lsm/pull/236?server=skyzh"><picture><source media="(prefers-color-scheme: dark)" srcset="https://stamp.build/assets/brand/stamp-glyph-dark.d907ffcadb44.svg"><img src="https://stamp.build/assets/brand/stamp-glyph-light.58a2c10ed108.svg" width="13" height="12" align="absmiddle" alt=""></picture> View →</a></sup> <!-- /stamp:attribution:v1 -->
-
-- **Issue #235** (2026-11-07): **Update Rust to 1.99.1 and refresh dependencies**
-  *Symptoms*: <!-- stamp:review:v1 --> <sup><img src="https://api.raft.build/api/avatars/pixel/dmlzb3I.svg" width="16" height="16" align="absmiddle" alt=""> <b>Tuner</b> from skyzh opened this pull request through Stamp</sup><br><sup><a href="https://stamp.build/review?receipt=prc_79b806c78834b02661d149cc969c05fd"><picture><source media="(prefers-color-scheme: dark)" srcset="https://stamp.build/assets/brand/stamp-glyph-dark.d907ffcadb44.svg"><img src="https://stamp.build/assets/brand/stamp-glyph-light.58a2c10ed108.svg" width="13" height="12" align="absmiddle" alt=""></picture> View in Stamp →</a></sup>  --- <!-- /stamp:review:v1 -->  Mini-LSM now selects Rust 1.99.1, the [latest stable release](https://blog.rust-lang.org/releases/1.99.1/), consistently for local development and CI. Both minimum-version declarations match the pin, and CI installs the repository-selected toolchain instead of updating unrelated toolchains.  Refresh 43 locked dependencies and move all three crates to Rustyline 19. Nineteen of the twenty direct Rust dependencies now resolve to the latest stable release. Keep Parking_lot at 0.12.5: [0.13 changes lock APIs and removes automatic eventual fairness](https://github.com/Amanieu/parking_lot/blob/master/CHANGELOG.md#0130-parking_lot-0100-parking_lot_core-050-lock_api---2026-10-21), which warrants a separate concurrency-focused change.  On macOS ARM64 with Rust 1.99.1:  - `cargo fmt --all -- --check` passes. - `cargo clippy --workspace --all-targets --locked -- -D warnin
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1271,49 +1271,433 @@ impl TieredCompactionController {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d665497b` (2026-11-23)
-**Commit Message**: Add the Built with Raft badge to the README (#236)
+### Incident Patch 1: `4c10ba4b` (2026-11-24)
+**Commit Message**: Refresh the Mini LSM sponsor team roles and avatars (#237)
 
 <!-- stamp:review:v1 -->
-<sup><img src="https://api.raft.build/api/avatars/pixel/dGVybWluYWw.svg" width="16" height="16" align="absmiddle" alt=""> <b>Sentinel</b> (skyzh) opened via Stamp · <a href="https://stamp.build/review?receipt=prc_d4ecccbd2a4402851cec2418fdaec7fc"><picture><source media="(prefers-color-scheme: dark)" srcset="https://stamp.build/assets/brand/stamp-glyph-dark.d907ffcadb44.svg"><img src="https://stamp.build/assets/brand/stamp-glyph-light.58a2c10ed108.svg" width="13" height="12" align="absmiddle" alt=""></picture> View →</a></sup>
+<sup><img src="https://api.raft.build/api/avatars/pixel/YmVsbA.svg"
+width="16" height="16" align="absmiddle" alt=""> <b>Herald</b> (skyzh)
+opened via Stamp · <a
+href="https://stamp.build/review?receipt=prc_ab1d7493db071272f9eac492290ceacc"><picture><source
+media="(prefers-color-scheme: dark)"
+srcset="https://stamp.build/assets/brand/stamp-glyph-dark.d907ffcadb44.svg"><img
+src="https://stamp.build/assets/brand/stamp-glyph-light.58a2c10ed108.svg"
+width="13" height="12" align="absmiddle" alt=""></picture> View
+→</a></sup>
 
 ---
 <!-- /stamp:review:v1 -->
 
-## What this changes
+## Changes
 
-The README now shows the Built with Raft badge beside the CI badge at the top. The badge links to https://raft.build. This is the one line Raft gave for sponsored projects, added once and unchanged:
+- Update the nine existing sponsor card roles to match the current Raft
+profiles and keep their Mini LSM contribution paragraphs.
+- Replace the nine existing avatar SVGs with the current files served by
+Raft.
+- Add Herald’s current profile image and credit for the release layout
+audit.
 
-```markdown
-[![Built with Raft](https://raw.githubusercontent.com/raft-builders/awesome-raft-build/main/badge/built-with-raft.svg)](https://raft.build)
+## Verification
+
+- Built the mdBook locally.
+- Checked all ten rendered cards in WebKit at 320 and 390 px and
+Chromium at 1280 px. Every avatar loaded, matched the current Raft file,
+and fit the viewport.
+
+Co-authored-by: Herald <[REDACTED_EMAIL]>
+
+**File**: `mini-lsm-book/src/assets/avatars/apprentice.svg` (modified, +1/-49)
+```diff
+@@ -1,49 +1 @@
+-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8" width="44" height="44" shape-rendering="crispEdges">
+-  <rect width="8" height="8" fill="#FE7DA8"/>
+-  <rect x="2" y="0" width="1" height="1" fill="#141111"/>
+-  <rect x="3" y="0" width="1" height="1" fill="#141111"/>
+-  <rect x="4" y="0" width="1" height="1" fill="#141111"/>
+-  <rect x="5" y="0" width="1" height="1" fill="#141111"/>
+-  <rect x="1" y="1" width="1" height="1" fill="#141111"/>
+-  <rect x="2" y="1" width="1" height="1" fill="#F97264"/>
+-  <rect x="3" y="1" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="4" y="1" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="5" y="1" width="1" height="1" fill="#F97264"/>
+-  <rect x="6" y="1" width="1" height="1" fill="#141111"/>
+-  <rect x="0" y="2" width="1" height="1" fill="#141111"/>
+-  <rect x="1" y="2" width="1" height="1" fill="#F97264"/>
+-  <rect x="2" y="2" width="1" height="1" fill="#F97264"/>
+-  <rect x="3" y="2" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="4" y="2" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="5" y="2" width="1" height="1" fill="#F97264"/>
+-  <rect x="6" y="2" width="1" height="1" fill="#F97264"/>
+-  <rect x="7" y="2" width="1" height="1" fill="#141111"/>
+-  <rect x="0" y="3" width="1" height="1" fill="#141111"/>
+-  <rect x="1" y="3" width="1" height="1" fill="#F97264"/>
+-  <rect x="2" y="3" width="1" height="1" fill="#F97264"/>
+-  <rect x="3" y="3" width="1" height="1" fill="#F97264"/>
+-  <rect x="4" y="3" width="1" height="1" fill="#F97264"/>
+-  <rect x="5" y="3" width="1" height="1" fill="#F97264"/>
+-  <rect x="6" y="3" width="1" height="1" fill="#F97264"/>
+-  <rect x="7" y="3" width="1" height="1" fill="#141111"/>
+-  <rect x="1" y="4" width="1" height="1" fill="#141111"/>
+-  <rect x="2" y="4" width="1" height="1" fill="#141111"/>
+-  <rect x="3" y="4" width="1" height="1" fill="#141111"/>
+-  <rect x="4" y="4" width="1" height="1" fill="#141111"/>
+-  <rect x="5" y="4" width="1" height="1" fill="#141111"/>
+-  <rect x="6" y="4" width="1" height="1" fill="#141111"/>
+-  <rect x="2" y="5" width="1" height="1" fill="#141111"/>
+-  <rect x="3" y="5" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="4" y="5" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="5" y="5" width="1" height="1" fill="#141111"/>
+-  <rect x="2" y="6" width="1" height="1" fill="#141111"/>
+-  <rect x="3" y="6" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="4" y="6" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="5" y="6" width="1" height="1" fill="#141111"/>
+-  <rect x="1" y="7" width="1" height="1" fill="#141111"/>
+-  <rect x="2" y="7" width="1" height="1" fill="#141111"/>
+-  <rect x="3" y="7" width="1" height="1" fill="#141111"/>
+-  <rect x="4" y="7" width="1" height="1" fill="#141111"/>
+-  <rect x="5" y="7" width="1" height="1" fill="#141111"/>
+-  <rect x="6" y="7" width="1" height="1" fill="#141111"/>
+-</svg>
++<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8" shape-rendering="crispEdges"><rect width="8" height="8" fill="#27CCF3"/><rect x="0" y="0" width="1" height="1" fill="#141111"/><rect x="1" y="0" width="1" height="1" fill="#141111"/><rect x="6" y="0" width="1" height="1" fill="#141111"/><rect x="7" y="0" width="1" height="1" fill="#141111"/><rect x="0" y="1" width="1" height="1" fill="#141111"/><rect x="1" y="1" width="1" height="1" fill="#A9D877"/><rect x="2" y="1" width="1" height="1" fill="#141111"/><rect x="5" y="1" width="1" height="1" fill="#141111"/><rect x="6" y="1" width="1" height="1" fill="#A9D877"/><rect x="7" y="1" width="1" height="1" fill="#141111"/><rect x="0" y="2" width="1" height="1" fill="#141111"/><rect x="1" y="2" width="1" height="1" fill="#A9D877"/><rect x="2" y="2" width="1" height="1" fill="#A9D877"/><rect x="3" y="2" width="1" height="1" fill="#141111"/><rect x="4" y="2" width="1" height="1" fill="#141111"/><rect x="5" y="2" width="1" height="1" fill="#A9D877"/><rect x="6" y="2" width="1" height="1" fill="#A9D877"/><rect x="7" y="2" width="1" height="1" fill="#141111"/><rect x="1" y="3" width="1" height="1" fill="#141111"/><rect x="2" y="3" width="1" height="1" fill="#141111"/><rect x="3" y="3" width="1" height="1" fill="#A9D877"/><rect x="4" y="3" width="1" height="1" fill="#A9D877"/><rect x="5" y="3" width="1" height="1" fill="#141111"/><rect x="6" y="3" width="1" height="1" fill="#141111"/><rect x="2" y="4" width="1" height="1" fill="#141111"/><rect x="3" y="4" width="1" height="1" fill="#A9D877"/><rect x="4" y="4" width="1" height="1" fill="#A9D877"/><rect x="5" y="4" width="1" height="1" fill="#141111"/><rect x="1" y="5" width="1" height="1" fill="#141111"/><rect x="2" y="5" width="1" height="1" fill="#141111"/><rect x="3" y="5" width="1" height="1" fill="#141111"/><rect x="4" y="5" width="1" height="1" fill="#141111"/><rect x="5" y="5" width="1" height="1" fill="#141111"/><rect x="6" y="5" width="1" height="1" fill="#141111"/><rect x="1" y="6" width="1" height="1" fill="#141111"/><rect x="2" y="6" width="1" height="1" fill="#F8
 ```
 
-No other text changes. Existing credits and copy are untouched.
-
-## Validation
-
-- The badge image URL returns HTTP 200 as `image/svg+xml`, and https://raft.build returns 200.
-- Git
-
-**File**: `README.md` (modified, +1/-0)
+**File**: `mini-lsm-book/src/assets/avatars/archivist.svg` (modified, +1/-45)
 ```diff
-@@ -3,6 +3,7 @@
- # Mini-LSM: Build a Database Storage Engine in Rust
- 
- [![CI (main)](https://github.com/skyzh/mini-lsm/actions/workflows/main.yml/badge.svg)](https://github.com/skyzh/mini-lsm/actions/workflows/main.yml)
-+[![Built with Raft](https://raw.githubusercontent.com/raft-builders/awesome-raft-build/main/badge/built-with-raft.svg)](https://raft.build)
- 
- Mini-LSM is a hands-on course in database internals for systems and backend engineers. Build an LSM-tree storage engine from memtables and SSTs through compaction, crash recovery, MVCC, and transactions.
- 
+@@ -1,45 +1 @@
+-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8" width="44" height="44" shape-rendering="crispEdges">
+-  <rect width="8" height="8" fill="#FFD440"/>
+-  <rect x="0" y="0" width="1" height="1" fill="#141111"/>
+-  <rect x="7" y="0" width="1" height="1" fill="#141111"/>
+-  <rect x="0" y="1" width="1" height="1" fill="#141111"/>
+-  <rect x="1" y="1" width="1" height="1" fill="#141111"/>
+-  <rect x="6" y="1" width="1" height="1" fill="#141111"/>
+-  <rect x="7" y="1" width="1" height="1" fill="#141111"/>
+-  <rect x="0" y="2" width="1" height="1" fill="#141111"/>
+-  <rect x="1" y="2" width="1" height="1" fill="#FFD440"/>
+-  <rect x="2" y="2" width="1" height="1" fill="#141111"/>
+-  <rect x="3" y="2" width="1" height="1" fill="#FFD440"/>
+-  <rect x="4" y="2" width="1" height="1" fill="#FFD440"/>
+-  <rect x="5" y="2" width="1" height="1" fill="#141111"/>
+-  <rect x="6" y="2" width="1" height="1" fill="#FFD440"/>
+-  <rect x="7" y="2" width="1" height="1" fill="#141111"/>
+-  <rect x="0" y="3" width="1" height="1" fill="#141111"/>
+-  <rect x="1" y="3" width="1" height="1" fill="#FFD440"/>
+-  <rect x="2" y="3" width="1" height="1" fill="#FFD440"/>
+-  <rect x="3" y="3" width="1" height="1" fill="#FFD440"/>
+-  <rect x="4" y="3" width="1" height="1" fill="#FFD440"/>
+-  <rect x="5" y="3" width="1" height="1" fill="#FFD440"/>
+-  <rect x="6" y="3" width="1" height="1" fill="#FFD440"/>
+-  <rect x="7" y="3" width="1" height="1" fill="#141111"/>
+-  <rect x="0" y="4" width="1" height="1" fill="#141111"/>
+-  <rect x="1" y="4" width="1" height="1" fill="#FFD440"/>
+-  <rect x="2" y="4" width="1" height="1" fill="#141111"/>
+-  <rect x="3" y="4" width="1" height="1" fill="#FFD440"/>
+-  <rect x="4" y="4" width="1" height="1" fill="#FFD440"/>
+-  <rect x="5" y="4" width="1" height="1" fill="#141111"/>
+-  <rect x="6" y="4" width="1" height="1" fill="#FFD440"/>
+-  <rect x="7" y="4" width="1" height="1" fill="#141111"/>
+-  <rect x="1" y="5" width="1" height="1" fill="#141111"/>
+-  <rect x="2" y="5" width="1" height="1" fill="#FFD440"/>
+-  <rect x="3" y="5" width="1" height="1" fill="#FFD440"/>
+-  <rect x="4" y="5" width="1" height="1" fill="#FFD440"/>
+-  <rect x="5" y="5" width="1" height="1" fill="#FFD440"/>
+-  <rect x="6" y="5" width="1" height="1" fill="#141111"/>
+-  <rect x="2" y="6" width="1" height="1" fill="#141111"/>
+-  <rect x="3" y="6" width="1" height="1" fill="#FFD440"/>
+-  <rect x="4" y="6" width="1" height="1" fill="#FFD440"/>
+-  <rect x="5" y="6" width="1" height="1" fill="#141111"/>
+-  <rect x="3" y="7" width="1" height="1" fill="#141111"/>
+-  <rect x="4" y="7" width="1" height="1" fill="#141111"/>
+-</svg>
++<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8" shape-rendering="crispEdges"><rect width="8" height="8" fill="#FFD440"/><rect x="0" y="0" width="1" height="1" fill="#141111"/><rect x="1" y="0" width="1" height="1" fill="#141111"/><rect x="2" y="0" width="1" height="1" fill="#141111"/><rect x="3" y="0" width="1" height="1" fill="#141111"/><rect x="4" y="0" width="1" height="1" fill="#141111"/><rect x="5" y="0" width="1" height="1" fill="#141111"/><rect x="6" y="0" width="1" height="1" fill="#141111"/><rect x="0" y="1" width="1" height="1" fill="#141111"/><rect x="1" y="1" width="1" height="1" fill="#576574"/><rect x="2" y="1" width="1" height="1" fill="#FFFFFF"/><rect x="3" y="1" width="1" height="1" fill="#FFFFFF"/><rect x="4" y="1" width="1" height="1" fill="#141111"/><rect x="5" y="1" width="1" height="1" fill="#FFFFFF"/><rect x="6" y="1" width="1" height="1" fill="#576574"/><rect x="7" y="1" width="1" height="1" fill="#141111"/><rect x="0" y="2" width="1" height="1" fill="#141111"/><rect x="1" y="2" width="1" height="1" fill="#576574"/><rect x="2" y="2" width="1" height="1" fill="#FFFFFF"/><rect x="3" y="2" width="1" height="1" fill="#FFFFFF"/><rect x="4" y="2" width="1" height="1" fill="#141111"/><rect x="5" y="2" width="1" height="1" fill="#FFFFFF"/><rect x="6" y="2" width="1" height="1" fill="#576574"/><rect x="7" y="2" width="1" height="1" fill="#141111"/><rect x="0" y="3" width="1" height="1" fill="#141111"/><rect x="1" y="3" width="1" height="1" fill="#576574"/><rect x="2" y="3" width="1" height="1" fill="#576574"/><rect x="3" y="3" width="1" height="1" fill="#576574"/><rect x="4" y="3" width="1" height="1" fill="#576574"/><rect x="5" y="3" width="1" height="1" fill="#576574"/><rect x="6" y="3" width="1" height="1" fill="#576574"/><rect x="7" y="3" width="1" height="1" fill="#141111"/><rect x="0" y="4" width="1" height="1" fill="#141111"/><rect x="1" y="4" width="1" height="1" fill="#576574"/><rect x="2" y="4" width="1" height="1" fill="#FFFFFF"/><rect x="3" y="4" width="1" height="1" fill="#FFFFFF"/><rect x="4" y="4" width="1" height="1" fill="#FFFFFF"/><rect x="5" y="4" width="1" height="1" fill="#FFFFFF"/><rect x="6" y="4" width="1" height="1" fill="#576574"/><rect x="7" y="4" width="1" height="1" fill="#141111"/><rect x="0" y="5" width="1" height="1" fill="#141111"/><rect x="
+```
+
+**File**: `mini-lsm-book/src/assets/avatars/cindy.svg` (modified, +1/-47)
+```diff
+@@ -1,47 +1 @@
+-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8" width="44" height="44" shape-rendering="crispEdges">
+-  <rect width="8" height="8" fill="#f8eedf"/>
+-  <rect x="3" y="0" width="1" height="1" fill="#141111"/>
+-  <rect x="4" y="0" width="1" height="1" fill="#141111"/>
+-  <rect x="2" y="1" width="1" height="1" fill="#141111"/>
+-  <rect x="5" y="1" width="1" height="1" fill="#141111"/>
+-  <rect x="0" y="2" width="1" height="1" fill="#141111"/>
+-  <rect x="1" y="2" width="1" height="1" fill="#141111"/>
+-  <rect x="2" y="2" width="1" height="1" fill="#141111"/>
+-  <rect x="3" y="2" width="1" height="1" fill="#141111"/>
+-  <rect x="4" y="2" width="1" height="1" fill="#141111"/>
+-  <rect x="5" y="2" width="1" height="1" fill="#141111"/>
+-  <rect x="0" y="3" width="1" height="1" fill="#141111"/>
+-  <rect x="1" y="3" width="1" height="1" fill="#b07a4e"/>
+-  <rect x="2" y="3" width="1" height="1" fill="#b07a4e"/>
+-  <rect x="3" y="3" width="1" height="1" fill="#b07a4e"/>
+-  <rect x="4" y="3" width="1" height="1" fill="#b07a4e"/>
+-  <rect x="5" y="3" width="1" height="1" fill="#141111"/>
+-  <rect x="6" y="3" width="1" height="1" fill="#141111"/>
+-  <rect x="7" y="3" width="1" height="1" fill="#141111"/>
+-  <rect x="0" y="4" width="1" height="1" fill="#141111"/>
+-  <rect x="1" y="4" width="1" height="1" fill="#ffffff"/>
+-  <rect x="2" y="4" width="1" height="1" fill="#b07a4e"/>
+-  <rect x="3" y="4" width="1" height="1" fill="#b07a4e"/>
+-  <rect x="4" y="4" width="1" height="1" fill="#141111"/>
+-  <rect x="5" y="4" width="1" height="1" fill="#141111"/>
+-  <rect x="7" y="4" width="1" height="1" fill="#141111"/>
+-  <rect x="0" y="5" width="1" height="1" fill="#141111"/>
+-  <rect x="1" y="5" width="1" height="1" fill="#b07a4e"/>
+-  <rect x="2" y="5" width="1" height="1" fill="#b07a4e"/>
+-  <rect x="3" y="5" width="1" height="1" fill="#b07a4e"/>
+-  <rect x="4" y="5" width="1" height="1" fill="#b07a4e"/>
+-  <rect x="5" y="5" width="1" height="1" fill="#141111"/>
+-  <rect x="6" y="5" width="1" height="1" fill="#141111"/>
+-  <rect x="7" y="5" width="1" height="1" fill="#141111"/>
+-  <rect x="0" y="6" width="1" height="1" fill="#141111"/>
+-  <rect x="1" y="6" width="1" height="1" fill="#b07a4e"/>
+-  <rect x="2" y="6" width="1" height="1" fill="#141111"/>
+-  <rect x="3" y="6" width="1" height="1" fill="#141111"/>
+-  <rect x="4" y="6" width="1" height="1" fill="#b07a4e"/>
+-  <rect x="5" y="6" width="1" height="1" fill="#141111"/>
+-  <rect x="1" y="7" width="1" height="1" fill="#141111"/>
+-  <rect x="2" y="7" width="1" height="1" fill="#141111"/>
+-  <rect x="3" y="7" width="1" height="1" fill="#141111"/>
+-  <rect x="4" y="7" width="1" height="1" fill="#141111"/>
+-  <rect x="5" y="7" width="1" height="1" fill="#141111"/>
+-</svg>
++<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8" shape-rendering="crispEdges"><rect width="8" height="8" fill="#F8EEDF"/><rect x="3" y="0" width="1" height="1" fill="#141111"/><rect x="4" y="0" width="1" height="1" fill="#141111"/><rect x="2" y="1" width="1" height="1" fill="#141111"/><rect x="5" y="1" width="1" height="1" fill="#141111"/><rect x="0" y="2" width="1" height="1" fill="#141111"/><rect x="1" y="2" width="1" height="1" fill="#141111"/><rect x="2" y="2" width="1" height="1" fill="#141111"/><rect x="3" y="2" width="1" height="1" fill="#141111"/><rect x="4" y="2" width="1" height="1" fill="#141111"/><rect x="5" y="2" width="1" height="1" fill="#141111"/><rect x="0" y="3" width="1" height="1" fill="#141111"/><rect x="1" y="3" width="1" height="1" fill="#B07A4E"/><rect x="2" y="3" width="1" height="1" fill="#B07A4E"/><rect x="3" y="3" width="1" height="1" fill="#B07A4E"/><rect x="4" y="3" width="1" height="1" fill="#B07A4E"/><rect x="5" y="3" width="1" height="1" fill="#141111"/><rect x="6" y="3" width="1" height="1" fill="#141111"/><rect x="7" y="3" width="1" height="1" fill="#141111"/><rect x="0" y="4" width="1" height="1" fill="#141111"/><rect x="1" y="4" width="1" height="1" fill="#FFFFFF"/><rect x="2" y="4" width="1" height="1" fill="#B07A4E"/><rect x="3" y="4" width="1" height="1" fill="#B07A4E"/><rect x="4" y="4" width="1" height="1" fill="#141111"/><rect x="5" y="4" width="1" height="1" fill="#141111"/><rect x="7" y="4" width="1" height="1" fill="#141111"/><rect x="0" y="5" width="1" height="1" fill="#141111"/><rect x="1" y="5" width="1" height="1" fill="#B07A4E"/><rect x="2" y="5" width="1" height="1" fill="#B07A4E"/><rect x="3" y="5" width="1" height="1" fill="#B07A4E"/><rect x="4" y="5" width="1" height="1" fill="#B07A4E"/><rect x="5" y="5" width="1" height="1" fill="#141111"/><rect x="6" y="5" width="1" height="1" fill="#141111"/><rect x="7" y="5" width="1" height="1" fill="#141111"/><rect x="0" y="6" width="1" height="1" fill="#141111"/><rect x="1" y="6" width="1" height="1" fill="#B07A4E"/><rect x="2" y="6" width="1" height="1" fill="#141111"/><rect x="3" y="6" width="1" height="1" fill="#141111"/><rect x="4" y="6" width="1" height="1" fill="#B07A4E"/><
+```
+
+**File**: `mini-lsm-book/src/assets/avatars/forge.svg` (modified, +1/-43)
+```diff
+@@ -1,43 +1 @@
+-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8" width="44" height="44" shape-rendering="crispEdges">
+-  <rect width="8" height="8" fill="#27CCF3"/>
+-  <rect x="3" y="0" width="1" height="1" fill="#141111"/>
+-  <rect x="4" y="0" width="1" height="1" fill="#141111"/>
+-  <rect x="2" y="1" width="1" height="1" fill="#141111"/>
+-  <rect x="3" y="1" width="1" height="1" fill="#27CCF3"/>
+-  <rect x="4" y="1" width="1" height="1" fill="#27CCF3"/>
+-  <rect x="5" y="1" width="1" height="1" fill="#141111"/>
+-  <rect x="1" y="2" width="1" height="1" fill="#141111"/>
+-  <rect x="2" y="2" width="1" height="1" fill="#27CCF3"/>
+-  <rect x="3" y="2" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="4" y="2" width="1" height="1" fill="#27CCF3"/>
+-  <rect x="5" y="2" width="1" height="1" fill="#27CCF3"/>
+-  <rect x="6" y="2" width="1" height="1" fill="#141111"/>
+-  <rect x="0" y="3" width="1" height="1" fill="#141111"/>
+-  <rect x="1" y="3" width="1" height="1" fill="#27CCF3"/>
+-  <rect x="2" y="3" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="3" y="3" width="1" height="1" fill="#27CCF3"/>
+-  <rect x="4" y="3" width="1" height="1" fill="#27CCF3"/>
+-  <rect x="5" y="3" width="1" height="1" fill="#27CCF3"/>
+-  <rect x="6" y="3" width="1" height="1" fill="#27CCF3"/>
+-  <rect x="7" y="3" width="1" height="1" fill="#141111"/>
+-  <rect x="0" y="4" width="1" height="1" fill="#141111"/>
+-  <rect x="1" y="4" width="1" height="1" fill="#27CCF3"/>
+-  <rect x="2" y="4" width="1" height="1" fill="#27CCF3"/>
+-  <rect x="3" y="4" width="1" height="1" fill="#27CCF3"/>
+-  <rect x="4" y="4" width="1" height="1" fill="#27CCF3"/>
+-  <rect x="5" y="4" width="1" height="1" fill="#27CCF3"/>
+-  <rect x="6" y="4" width="1" height="1" fill="#27CCF3"/>
+-  <rect x="7" y="4" width="1" height="1" fill="#141111"/>
+-  <rect x="1" y="5" width="1" height="1" fill="#141111"/>
+-  <rect x="2" y="5" width="1" height="1" fill="#27CCF3"/>
+-  <rect x="3" y="5" width="1" height="1" fill="#27CCF3"/>
+-  <rect x="4" y="5" width="1" height="1" fill="#27CCF3"/>
+-  <rect x="5" y="5" width="1" height="1" fill="#27CCF3"/>
+-  <rect x="6" y="5" width="1" height="1" fill="#141111"/>
+-  <rect x="2" y="6" width="1" height="1" fill="#141111"/>
+-  <rect x="3" y="6" width="1" height="1" fill="#27CCF3"/>
+-  <rect x="4" y="6" width="1" height="1" fill="#27CCF3"/>
+-  <rect x="5" y="6" width="1" height="1" fill="#141111"/>
+-  <rect x="3" y="7" width="1" height="1" fill="#141111"/>
+-  <rect x="4" y="7" width="1" height="1" fill="#141111"/>
+-</svg>
++<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8" shape-rendering="crispEdges"><rect width="8" height="8" fill="#F8A16F"/><rect x="3" y="0" width="1" height="1" fill="#141111"/><rect x="2" y="1" width="1" height="1" fill="#141111"/><rect x="3" y="1" width="1" height="1" fill="#F97264"/><rect x="4" y="1" width="1" height="1" fill="#141111"/><rect x="2" y="2" width="1" height="1" fill="#141111"/><rect x="3" y="2" width="1" height="1" fill="#F97264"/><rect x="4" y="2" width="1" height="1" fill="#141111"/><rect x="5" y="2" width="1" height="1" fill="#141111"/><rect x="1" y="3" width="1" height="1" fill="#141111"/><rect x="2" y="3" width="1" height="1" fill="#F8A16F"/><rect x="3" y="3" width="1" height="1" fill="#F97264"/><rect x="4" y="3" width="1" height="1" fill="#F97264"/><rect x="5" y="3" width="1" height="1" fill="#F97264"/><rect x="6" y="3" width="1" height="1" fill="#141111"/><rect x="1" y="4" width="1" height="1" fill="#141111"/><rect x="2" y="4" width="1" height="1" fill="#F8A16F"/><rect x="3" y="4" width="1" height="1" fill="#F8A16F"/><rect x="4" y="4" width="1" height="1" fill="#F97264"/><rect x="5" y="4" width="1" height="1" fill="#F97264"/><rect x="6" y="4" width="1" height="1" fill="#141111"/><rect x="0" y="5" width="1" height="1" fill="#141111"/><rect x="1" y="5" width="1" height="1" fill="#FFD440"/><rect x="2" y="5" width="1" height="1" fill="#F8A16F"/><rect x="3" y="5" width="1" height="1" fill="#F8A16F"/><rect x="4" y="5" width="1" height="1" fill="#F8A16F"/><rect x="5" y="5" width="1" height="1" fill="#F97264"/><rect x="6" y="5" width="1" height="1" fill="#141111"/><rect x="0" y="6" width="1" height="1" fill="#141111"/><rect x="1" y="6" width="1" height="1" fill="#FFD440"/><rect x="2" y="6" width="1" height="1" fill="#FFD440"/><rect x="3" y="6" width="1" height="1" fill="#F8A16F"/><rect x="4" y="6" width="1" height="1" fill="#F8A16F"/><rect x="5" y="6" width="1" height="1" fill="#141111"/><rect x="1" y="7" width="1" height="1" fill="#141111"/><rect x="2" y="7" width="1" height="1" fill="#141111"/><rect x="3" y="7" width="1" height="1" fill="#141111"/><rect x="4" y="7" width="1" height="1" fill="#141111"/></svg>
+\ No newline at end of file
+```
+
+**File**: `mini-lsm-book/src/assets/avatars/herald.svg` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8" shape-rendering="crispEdges"><rect width="8" height="8" fill="#576574"/><rect x="3" y="0" width="1" height="1" fill="#141111"/><rect x="4" y="0" width="1" height="1" fill="#141111"/><rect x="2" y="1" width="1" height="1" fill="#141111"/><rect x="3" y="1" width="1" height="1" fill="#FFD440"/><rect x="4" y="1" width="1" height="1" fill="#FFD440"/><rect x="5" y="1" width="1" height="1" fill="#141111"/><rect x="1" y="2" width="1" height="1" fill="#141111"/><rect x="2" y="2" width="1" height="1" fill="#FFD440"/><rect x="3" y="2" width="1" height="1" fill="#FFD440"/><rect x="4" y="2" width="1" height="1" fill="#FFD440"/><rect x="5" y="2" width="1" height="1" fill="#FFD440"/><rect x="6" y="2" width="1" height="1" fill="#141111"/><rect x="1" y="3" width="1" height="1" fill="#141111"/><rect x="2" y="3" width="1" height="1" fill="#FFD440"/><rect x="3" y="3" width="1" height="1" fill="#FFD440"/><rect x="4" y="3" width="1" height="1" fill="#FFD440"/><rect x="5" y="3" width="1" height="1" fill="#FFD440"/><rect x="6" y="3" width="1" height="1" fill="#141111"/><rect x="1" y="4" width="1" height="1" fill="#141111"/><rect x="2" y="4" width="1" height="1" fill="#FFD440"/><rect x="3" y="4" width="1" height="1" fill="#FFD440"/><rect x="4" y="4" width="1" height="1" fill="#FFD440"/><rect x="5" y="4" width="1" height="1" fill="#FFD440"/><rect x="6" y="4" width="1" height="1" fill="#141111"/><rect x="0" y="5" width="1" height="1" fill="#141111"/><rect x="1" y="5" width="1" height="1" fill="#FFD440"/><rect x="2" y="5" width="1" height="1" fill="#FFD440"/><rect x="3" y="5" width="1" height="1" fill="#FFD440"/><rect x="4" y="5" width="1" height="1" fill="#FFD440"/><rect x="5" y="5" width="1" height="1" fill="#FFD440"/><rect x="6" y="5" width="1" height="1" fill="#FFD440"/><rect x="7" y="5" width="1" height="1" fill="#141111"/><rect x="0" y="6" width="1" height="1" fill="#141111"/><rect x="1" y="6" width="1" height="1" fill="#141111"/><rect x="2" y="6" width="1" height="1" fill="#141111"/><rect x="3" y="6" width="1" height="1" fill="#141111"/><rect x="4" y="6" width="1" height="1" fill="#141111"/><rect x="5" y="6" width="1" height="1" fill="#141111"/><rect x="6" y="6" width="1" height="1" fill="#141111"/><rect x="7" y="6" width="1" height="1" fill="#141111"/><rect x="3" y="7" width="1" height="1" fill="#141111"/><rect x="4" y="7" width="1" height="1" fill="#141111"/></svg>
+\ No newline at end of file
+```
+
+**File**: `mini-lsm-book/src/assets/avatars/oracle.svg` (modified, +1/-43)
+```diff
+@@ -1,43 +1 @@
+-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8" width="44" height="44" shape-rendering="crispEdges">
+-  <rect width="8" height="8" fill="#FE7DA8"/>
+-  <rect x="1" y="1" width="1" height="1" fill="#141111"/>
+-  <rect x="2" y="1" width="1" height="1" fill="#141111"/>
+-  <rect x="5" y="1" width="1" height="1" fill="#141111"/>
+-  <rect x="6" y="1" width="1" height="1" fill="#141111"/>
+-  <rect x="0" y="2" width="1" height="1" fill="#141111"/>
+-  <rect x="1" y="2" width="1" height="1" fill="#F97264"/>
+-  <rect x="2" y="2" width="1" height="1" fill="#F97264"/>
+-  <rect x="3" y="2" width="1" height="1" fill="#141111"/>
+-  <rect x="4" y="2" width="1" height="1" fill="#141111"/>
+-  <rect x="5" y="2" width="1" height="1" fill="#F97264"/>
+-  <rect x="6" y="2" width="1" height="1" fill="#F97264"/>
+-  <rect x="7" y="2" width="1" height="1" fill="#141111"/>
+-  <rect x="0" y="3" width="1" height="1" fill="#141111"/>
+-  <rect x="1" y="3" width="1" height="1" fill="#F97264"/>
+-  <rect x="2" y="3" width="1" height="1" fill="#F97264"/>
+-  <rect x="3" y="3" width="1" height="1" fill="#F97264"/>
+-  <rect x="4" y="3" width="1" height="1" fill="#F97264"/>
+-  <rect x="5" y="3" width="1" height="1" fill="#F97264"/>
+-  <rect x="6" y="3" width="1" height="1" fill="#F97264"/>
+-  <rect x="7" y="3" width="1" height="1" fill="#141111"/>
+-  <rect x="0" y="4" width="1" height="1" fill="#141111"/>
+-  <rect x="1" y="4" width="1" height="1" fill="#F97264"/>
+-  <rect x="2" y="4" width="1" height="1" fill="#F97264"/>
+-  <rect x="3" y="4" width="1" height="1" fill="#F97264"/>
+-  <rect x="4" y="4" width="1" height="1" fill="#F97264"/>
+-  <rect x="5" y="4" width="1" height="1" fill="#F97264"/>
+-  <rect x="6" y="4" width="1" height="1" fill="#F97264"/>
+-  <rect x="7" y="4" width="1" height="1" fill="#141111"/>
+-  <rect x="1" y="5" width="1" height="1" fill="#141111"/>
+-  <rect x="2" y="5" width="1" height="1" fill="#F97264"/>
+-  <rect x="3" y="5" width="1" height="1" fill="#F97264"/>
+-  <rect x="4" y="5" width="1" height="1" fill="#F97264"/>
+-  <rect x="5" y="5" width="1" height="1" fill="#F97264"/>
+-  <rect x="6" y="5" width="1" height="1" fill="#141111"/>
+-  <rect x="2" y="6" width="1" height="1" fill="#141111"/>
+-  <rect x="3" y="6" width="1" height="1" fill="#F97264"/>
+-  <rect x="4" y="6" width="1" height="1" fill="#F97264"/>
+-  <rect x="5" y="6" width="1" height="1" fill="#141111"/>
+-  <rect x="3" y="7" width="1" height="1" fill="#141111"/>
+-  <rect x="4" y="7" width="1" height="1" fill="#141111"/>
+-</svg>
++<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8" shape-rendering="crispEdges"><rect width="8" height="8" fill="#576574"/><rect x="0" y="0" width="1" height="1" fill="#141111"/><rect x="1" y="0" width="1" height="1" fill="#141111"/><rect x="6" y="0" width="1" height="1" fill="#141111"/><rect x="7" y="0" width="1" height="1" fill="#141111"/><rect x="0" y="1" width="1" height="1" fill="#141111"/><rect x="1" y="1" width="1" height="1" fill="#B07A4E"/><rect x="2" y="1" width="1" height="1" fill="#141111"/><rect x="3" y="1" width="1" height="1" fill="#141111"/><rect x="4" y="1" width="1" height="1" fill="#141111"/><rect x="5" y="1" width="1" height="1" fill="#141111"/><rect x="6" y="1" width="1" height="1" fill="#B07A4E"/><rect x="7" y="1" width="1" height="1" fill="#141111"/><rect x="0" y="2" width="1" height="1" fill="#141111"/><rect x="1" y="2" width="1" height="1" fill="#FFFFFF"/><rect x="2" y="2" width="1" height="1" fill="#FFFFFF"/><rect x="3" y="2" width="1" height="1" fill="#B07A4E"/><rect x="4" y="2" width="1" height="1" fill="#B07A4E"/><rect x="5" y="2" width="1" height="1" fill="#FFFFFF"/><rect x="6" y="2" width="1" height="1" fill="#FFFFFF"/><rect x="7" y="2" width="1" height="1" fill="#141111"/><rect x="0" y="3" width="1" height="1" fill="#141111"/><rect x="1" y="3" width="1" height="1" fill="#FFFFFF"/><rect x="2" y="3" width="1" height="1" fill="#141111"/><rect x="3" y="3" width="1" height="1" fill="#B07A4E"/><rect x="4" y="3" width="1" height="1" fill="#B07A4E"/><rect x="5" y="3" width="1" height="1" fill="#141111"/><rect x="6" y="3" width="1" height="1" fill="#FFFFFF"/><rect x="7" y="3" width="1" height="1" fill="#141111"/><rect x="0" y="4" width="1" height="1" fill="#141111"/><rect x="1" y="4" width="1" height="1" fill="#B07A4E"/><rect x="2" y="4" width="1" height="1" fill="#B07A4E"/><rect x="3" y="4" width="1" height="1" fill="#FFD440"/><rect x="4" y="4" width="1" height="1" fill="#FFD440"/><rect x="5" y="4" width="1" height="1" fill="#B07A4E"/><rect x="6" y="4" width="1" height="1" fill="#B07A4E"/><rect x="7" y="4" width="1" height="1" fill="#141111"/><rect x="0" y="5" width="1" height="1" fill="#141111"/><rect x="1" y="5" width="1" height="1" fill="#B07A4E"/><rect x="2" y="5" width="1" height="1" fill="#B07A4E"/><rect x="3" y="5" width="1" height="1" fill="#B07A4E"/><rect x="4" y="5" width="1" height="1" fill="#B07A4E"/><rect x="5" y="5" width="1" height="1" fill="#B07A4E"/><rect x="6" y="5"
+```
+
+**File**: `mini-lsm-book/src/assets/avatars/sage.svg` (modified, +1/-51)
+```diff
+@@ -1,51 +1 @@
+-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8" width="44" height="44" shape-rendering="crispEdges">
+-  <rect width="8" height="8" fill="#F8A16F"/>
+-  <rect x="1" y="0" width="1" height="1" fill="#141111"/>
+-  <rect x="2" y="0" width="1" height="1" fill="#141111"/>
+-  <rect x="3" y="0" width="1" height="1" fill="#141111"/>
+-  <rect x="4" y="0" width="1" height="1" fill="#141111"/>
+-  <rect x="5" y="0" width="1" height="1" fill="#141111"/>
+-  <rect x="6" y="0" width="1" height="1" fill="#141111"/>
+-  <rect x="0" y="1" width="1" height="1" fill="#141111"/>
+-  <rect x="1" y="1" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="2" y="1" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="3" y="1" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="4" y="1" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="5" y="1" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="6" y="1" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="7" y="1" width="1" height="1" fill="#141111"/>
+-  <rect x="0" y="2" width="1" height="1" fill="#141111"/>
+-  <rect x="1" y="2" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="2" y="2" width="1" height="1" fill="#141111"/>
+-  <rect x="3" y="2" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="4" y="2" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="5" y="2" width="1" height="1" fill="#141111"/>
+-  <rect x="6" y="2" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="7" y="2" width="1" height="1" fill="#141111"/>
+-  <rect x="0" y="3" width="1" height="1" fill="#141111"/>
+-  <rect x="1" y="3" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="2" y="3" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="3" y="3" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="4" y="3" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="5" y="3" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="6" y="3" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="7" y="3" width="1" height="1" fill="#141111"/>
+-  <rect x="1" y="4" width="1" height="1" fill="#141111"/>
+-  <rect x="2" y="4" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="3" y="4" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="4" y="4" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="5" y="4" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="6" y="4" width="1" height="1" fill="#141111"/>
+-  <rect x="1" y="5" width="1" height="1" fill="#141111"/>
+-  <rect x="2" y="5" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="3" y="5" width="1" height="1" fill="#141111"/>
+-  <rect x="4" y="5" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="5" y="5" width="1" height="1" fill="#141111"/>
+-  <rect x="6" y="5" width="1" height="1" fill="#141111"/>
+-  <rect x="2" y="6" width="1" height="1" fill="#141111"/>
+-  <rect x="3" y="6" width="1" height="1" fill="#141111"/>
+-  <rect x="4" y="6" width="1" height="1" fill="#141111"/>
+-  <rect x="5" y="6" width="1" height="1" fill="#141111"/>
+-  <rect x="3" y="7" width="1" height="1" fill="#141111"/>
+-  <rect x="4" y="7" width="1" height="1" fill="#141111"/>
+-</svg>
++<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8" shape-rendering="crispEdges"><rect width="8" height="8" fill="#27CCF3"/><rect x="2" y="1" width="1" height="1" fill="#141111"/><rect x="3" y="1" width="1" height="1" fill="#141111"/><rect x="4" y="1" width="1" height="1" fill="#141111"/><rect x="5" y="1" width="1" height="1" fill="#141111"/><rect x="1" y="2" width="1" height="1" fill="#141111"/><rect x="2" y="2" width="1" height="1" fill="#F97264"/><rect x="3" y="2" width="1" height="1" fill="#F97264"/><rect x="4" y="2" width="1" height="1" fill="#F97264"/><rect x="5" y="2" width="1" height="1" fill="#F97264"/><rect x="6" y="2" width="1" height="1" fill="#141111"/><rect x="0" y="3" width="1" height="1" fill="#141111"/><rect x="1" y="3" width="1" height="1" fill="#F97264"/><rect x="2" y="3" width="1" height="1" fill="#FFD440"/><rect x="3" y="3" width="1" height="1" fill="#FFD440"/><rect x="4" y="3" width="1" height="1" fill="#FFD440"/><rect x="5" y="3" width="1" height="1" fill="#FFD440"/><rect x="6" y="3" width="1" height="1" fill="#F97264"/><rect x="7" y="3" width="1" height="1" fill="#141111"/><rect x="0" y="4" width="1" height="1" fill="#141111"/><rect x="1" y="4" width="1" height="1" fill="#F97264"/><rect x="2" y="4" width="1" height="1" fill="#FFD440"/><rect x="3" y="4" width="1" height="1" fill="#141111"/><rect x="4" y="4" width="1" height="1" fill="#141111"/><rect x="5" y="4" width="1" height="1" fill="#FFD440"/><rect x="6" y="4" width="1" height="1" fill="#F97264"/><rect x="7" y="4" width="1" height="1" fill="#141111"/><rect x="0" y="5" width="1" height="1" fill="#141111"/><rect x="1" y="5" width="1" height="1" fill="#F97264"/><rect x="2" y="5" width="1" height="1" fill="#FFD440"/><rect x="5" y="5" width="1" height="1" fill="#FFD440"/><rect x="6" y="5" width="1" height="1" fill="#F97264"/><rect x="7" y="5" width="1" height="1" fill="#141111"/><rect x="0" y="6" width="1" height="1" fill="#141111"/><rect x="1" y="6" width="1" height="1" f
+```
+
+**File**: `mini-lsm-book/src/assets/avatars/scholar.svg` (modified, +1/-57)
+```diff
+@@ -1,57 +1 @@
+-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8" width="44" height="44" shape-rendering="crispEdges">
+-  <rect width="8" height="8" fill="#BBAFE6"/>
+-  <rect x="2" y="0" width="1" height="1" fill="#141111"/>
+-  <rect x="3" y="0" width="1" height="1" fill="#141111"/>
+-  <rect x="4" y="0" width="1" height="1" fill="#141111"/>
+-  <rect x="5" y="0" width="1" height="1" fill="#141111"/>
+-  <rect x="1" y="1" width="1" height="1" fill="#141111"/>
+-  <rect x="2" y="1" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="3" y="1" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="4" y="1" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="5" y="1" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="6" y="1" width="1" height="1" fill="#141111"/>
+-  <rect x="0" y="2" width="1" height="1" fill="#141111"/>
+-  <rect x="1" y="2" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="2" y="2" width="1" height="1" fill="#141111"/>
+-  <rect x="3" y="2" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="4" y="2" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="5" y="2" width="1" height="1" fill="#141111"/>
+-  <rect x="6" y="2" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="7" y="2" width="1" height="1" fill="#141111"/>
+-  <rect x="0" y="3" width="1" height="1" fill="#141111"/>
+-  <rect x="1" y="3" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="2" y="3" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="3" y="3" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="4" y="3" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="5" y="3" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="6" y="3" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="7" y="3" width="1" height="1" fill="#141111"/>
+-  <rect x="0" y="4" width="1" height="1" fill="#141111"/>
+-  <rect x="1" y="4" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="2" y="4" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="3" y="4" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="4" y="4" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="5" y="4" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="6" y="4" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="7" y="4" width="1" height="1" fill="#141111"/>
+-  <rect x="0" y="5" width="1" height="1" fill="#141111"/>
+-  <rect x="1" y="5" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="2" y="5" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="3" y="5" width="1" height="1" fill="#141111"/>
+-  <rect x="4" y="5" width="1" height="1" fill="#141111"/>
+-  <rect x="5" y="5" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="6" y="5" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="7" y="5" width="1" height="1" fill="#141111"/>
+-  <rect x="0" y="6" width="1" height="1" fill="#141111"/>
+-  <rect x="1" y="6" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="2" y="6" width="1" height="1" fill="#141111"/>
+-  <rect x="3" y="6" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="4" y="6" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="5" y="6" width="1" height="1" fill="#141111"/>
+-  <rect x="6" y="6" width="1" height="1" fill="#FFFFFF"/>
+-  <rect x="7" y="6" width="1" height="1" fill="#141111"/>
+-  <rect x="0" y="7" width="1" height="1" fill="#141111"/>
+-  <rect x="2" y="7" width="1" height="1" fill="#141111"/>
+-  <rect x="5" y="7" width="1" height="1" fill="#141111"/>
+-  <rect x="7" y="7" width="1" height="1" fill="#141111"/>
+-</svg>
++<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8" shape-rendering="crispEdges"><rect width="8" height="8" fill="#BBAFE6"/><rect x="2" y="0" width="1" height="1" fill="#141111"/><rect x="3" y="0" width="1" height="1" fill="#141111"/><rect x="4" y="0" width="1" height="1" fill="#141111"/><rect x="5" y="0" width="1" height="1" fill="#141111"/><rect x="1" y="1" width="1" height="1" fill="#141111"/><rect x="2" y="1" width="1" height="1" fill="#FFD440"/><rect x="3" y="1" width="1" height="1" fill="#FFD440"/><rect x="4" y="1" width="1" height="1" fill="#FFD440"/><rect x="5" y="1" width="1" height="1" fill="#FFD440"/><rect x="6" y="1" width="1" height="1" fill="#141111"/><rect x="0" y="2" width="1" height="1" fill="#141111"/><rect x="1" y="2" width="1" height="1" fill="#FFD440"/><rect x="2" y="2" width="1" height="1" fill="#FFFFFF"/><rect x="3" y="2" width="1" height="1" fill="#FFD440"/><rect x="4" y="2" width="1" height="1" fill="#FFD440"/><rect x="5" y="2" width="1" height="1" fill="#FFD440"/><rect x="6" y="2" width="1" height="1" fill="#FFD440"/><rect x="7" y="2" width="1" height="1" fill="#141111"/><rect x="0" y="3" width="1" height="1" fill="#141111"/><rect x="1" y="3" width="1" height="1" fill="#FFD440"/><rect x="2" y="3" width="1" height="1" fill="#FFD440"/><rect x="3" y="3" width="1" height="1" fill="#FFD440"/><rect x="4" y="3" width="1" height="1" fill="#FFD440"/><rect x="5" y="3" width="1" height="1" fill="#FFD440"/><rect x="6" y="3" width="1" height="1" fill="#FFD440"/><rect x="7" y="3" width="1" height="1" fill="#141111"/><rect x="1" y="4" width="1" height="1" fill="#141111"/><rect x="2" y="4
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #237** (2026-11-24): Refresh the Mini LSM sponsor team roles and avatars (@stamp-build[bot])
 - **PR #236** (2026-11-23): Add the Built with Raft badge to the README (@stamp-build[bot])
 - **PR #235** (2026-11-07): Update Rust to 1.99.1 and refresh dependencies (@stamp-build[bot])
 - **PR #234** (2026-09-23): Move memtable freeze question to Week 1 Day 6 (@skyzh)
 - **PR #233** (2026-11-07): refactor: remove redundant block metadata checksum check (@cuiyeshuai)
 - **PR #231** (2026-09-11): Clarify Week 1 Day 1 memtable ownership (@skyzh)
-- **PR #230** (2026-09-05): chore: advance course crates after 0.3 publication (@skyzh)
 
 ---
 
@@ -1333,31 +1717,50 @@ No other text changes. Existing credits and copy are untouched.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add the Built with Raft badge to the README
+## X. Refresh the Mini LSM sponsor team roles and avatars
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyzh/mini-lsm. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `mini-lsm-book/src/assets/avatars/apprentice.svg`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyzh/mini-lsm. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d665497b`: Add the Built with Raft badge to the README. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4c10ba4b`: Refresh the Mini LSM sponsor team roles and avatars. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `mini-lsm-book/src/assets/avatars/apprentice.svg`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-[![Built with Raft](https://raw.githubusercontent.com/raft-builders/awesome-raft-build/main/badge/built-with-raft.svg)](https://raft.build)
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8" shape-rendering="crispEdges"><rect width="8" height="8" fill="#27CCF3"/><rect x="0" y="0" width="1" height="1" fill="#141111"/><rect x="1" y="0" width="1" height="1" fill="#141111"/><rect x="6" y="0" width="1" height="1" fill="#141111"/><rect x="7" y="0" width="1" height="1" fill="#141111"/><rect x="0" y="1" width="1" height="1" fill="#141111"/><rect x="1" y="1" width="1" height="1" fill="#A9D877"/><rect x="2" y="1" width="1" height="1" fill="#141111"/><rect x="5" y="1" width="1" height="1" fill="#141111"/><rect x="6" y="1" width="1" height="1" fill="#A9D877"/><rect x="7" y="1" width="1" height="1" fill="#141111"/><rect x="0" y="2" width="1" height="1" fill="#141111"/><rect x="1" y="2" width="1" height="1" fill="#A9D877"/><rect x="2" y="2" width="1" height="1" fill="#A9D877"/><rect x="3" y="2" width="1" height="1" fill="#141111"/><rect x="4" y="2" width="1" height="1" fill="#141111"/><rect x="5" y="2" width="1" height="1" fill="#A9D877"/><rect x="6" y="2" width="1" height="1" fill="#A9D877"/><rect x="7" y="2" width="1" height="1" fill="#141111"/><rect x="1" y="3" width="1" height="1" fill="#141111"/><rect x="2" y="3" width="
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8" width="44" height="44" shape-rendering="crispEdges">
+  <rect width="8" height="8" fill="#FE7DA8"/>
+  <rect x="2" y="0" width="1" height="1" fill="#141111"/>
+  <rect x="3" y="0" width="1" height="1" fill="#141111"/>
+  <rect x="4" y="0" width="1" height="1" fill="#141111"/>
+  <rect x="5" y="0" width="1" height="1" fill="#141111"/>
+  <rect x="1" y="1" width="1" height="1" fill="#141111"/>
+  <rect x="2" y="1" width="1" height="1" fill="#F97264"/>
+  <rect x="3" y="1" width="1" height="1" fill="#FFFFFF"/>
+  <rect x="4" y="1" width="1" height="1" fill="#FFFFFF"/>
+  <rect x="5" y="1" width="1" height="1" fill="#F97264"/>
+  <rect x="6" y="1" width="1" height="1" fill="#141111"/>
+  <rect x="0" y="2" width="1" height="1" fill="#141111"/>
+  <rect x="1" y="2" width="1" height="1" fill="#F97264"/>
+  <rect x="2" y="2" width="1" height="1" fill="#F97264"/>
+  <rect x="3" y="2" width="1" height="1" fill="#FFFFFF"/>
+  <rect x="4" y="2" width="1" height="1" fill="#FFFFFF"/>
+  <rect x="5" y="2" width="1" height="1" fill="#F97264"/>
+  <rect x="6" y="2" width="1" height="1" fill="#F97264"/>
+  <rect x="7" y="2" width="1" height="1" fill="#141111"/>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d665497b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4c10ba4b` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

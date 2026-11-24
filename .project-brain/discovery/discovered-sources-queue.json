@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T11:05:51.577Z",
+  "updated_at": "2026-11-24T11:31:02.813Z",
   "stats": {
-    "total_discovered": 8548,
-    "approved_pending_harvest": 8102,
+    "total_discovered": 8556,
+    "approved_pending_harvest": 8110,
     "harvested_count": 0,
     "rejected_count": 446,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8093,
+      "COMMUNITY_AND_EXPERT": 8101,
       "OFFICIAL_DOCUMENTATION": 268,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -184957,6 +184957,182 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/typedb-typedb-learnings.md",
         "fileName": "typedb-typedb-learnings.md"
+      }
+    },
+    "SRC-C4766E997CF5": {
+      "id": "SRC-C4766E997CF5",
+      "url": "https://huggingface.co/llamaindex/OCRia-nano-1",
+      "title": "https://huggingface.co/llamaindex/OCRia-nano-1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T11:31:00.492Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-llamaindex-ocria-nano-1-learnings.md",
+        "fileName": "hf-llamaindex-ocria-nano-1-learnings.md"
+      }
+    },
+    "SRC-AC19AD8C4CC3": {
+      "id": "SRC-AC19AD8C4CC3",
+      "url": "https://github.com/ossf/scorecard-action",
+      "title": "https://github.com/ossf/scorecard-action",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T11:31:01.200Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rook-rook-learnings.md",
+        "fileName": "rook-rook-learnings.md"
+      }
+    },
+    "SRC-240340210B25": {
+      "id": "SRC-240340210B25",
+      "url": "https://github.com/ossf/scorecard-action/releases",
+      "title": "https://github.com/ossf/scorecard-action/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T11:31:01.259Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rook-rook-learnings.md",
+        "fileName": "rook-rook-learnings.md"
+      }
+    },
+    "SRC-F8481EE15368": {
+      "id": "SRC-F8481EE15368",
+      "url": "https://github.com/ossf/scorecard-action/blob/main/RELEASE.md",
+      "title": "https://github.com/ossf/scorecard-action/blob/main/RELEASE.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T11:31:01.326Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rook-rook-learnings.md",
+        "fileName": "rook-rook-learnings.md"
+      }
+    },
+    "SRC-338337288741": {
+      "id": "SRC-338337288741",
+      "url": "https://github.com/ossf/scorecard-action/compare/fa7117db83c52d787ae5a89f350999701505d78e...23f22cd43608bae7a1f1fa2603d7314dee9538a5",
+      "title": "https://github.com/ossf/scorecard-action/compare/fa7117db83c52d787ae5a89f350999701505d78e...23f22cd43608bae7a1f1fa2603d7314dee9538a5",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T11:31:01.383Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rook-rook-learnings.md",
+        "fileName": "rook-rook-learnings.md"
+      }
+    },
+    "SRC-A331E51484A3": {
+      "id": "SRC-A331E51484A3",
+      "url": "https://github.com/github/codeql-action/compare/33d7b85da1a04171e211befe2c739303b9a4c066...1bd86f2fdb4b86187fa4059f16f31a3202acc9ea",
+      "title": "https://github.com/github/codeql-action/compare/33d7b85da1a04171e211befe2c739303b9a4c066...1bd86f2fdb4b86187fa4059f16f31a3202acc9ea",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T11:31:01.543Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rook-rook-learnings.md",
+        "fileName": "rook-rook-learnings.md"
+      }
+    },
+    "SRC-CE347F1027CF": {
+      "id": "SRC-CE347F1027CF",
+      "url": "https://api.raft.build/api/avatars/pixel/YmVsbA.svg",
+      "title": "https://api.raft.build/api/avatars/pixel/YmVsbA.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T11:31:02.744Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyzh-mini-lsm-learnings.md",
+        "fileName": "skyzh-mini-lsm-learnings.md"
+      }
+    },
+    "SRC-34F861CF45CF": {
+      "id": "SRC-34F861CF45CF",
+      "url": "https://stamp.build/review?receipt=prc_ab1d7493db071272f9eac492290ceacc",
+      "title": "https://stamp.build/review?receipt=prc_ab1d7493db071272f9eac492290ceacc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T11:31:02.813Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyzh-mini-lsm-learnings.md",
+        "fileName": "skyzh-mini-lsm-learnings.md"
       }
     }
   }

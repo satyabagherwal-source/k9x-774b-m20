@@ -12652,3 +12652,7 @@
 | `CYCLE-20261124-8XM9` | `2026-11-24T11:05:18.897Z` | `typedb/typedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10245` | Yes (`e16f12d3...`) |
 | `CYCLE-20261124-9JK3` | `2026-11-24T11:05:47.331Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10246` | Yes (`560d38d8...`) |
 | `CYCLE-20261124-UD0T` | `2026-11-24T11:21:58.637Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10247` | Yes (`01841782...`) |
+| `CYCLE-20261124-4UWE` | `2026-11-24T11:30:08.366Z` | `llamaindex/OCRia-nano-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-llamaindex-ocria-nano-1-learnings.md` | Yes (`0cd8fc7b...`) |
+| `CYCLE-20261124-55YP` | `2026-11-24T11:30:22.705Z` | `rook/rook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10248` | Yes (`a1527fa8...`) |
+| `CYCLE-20261124-58TV` | `2026-11-24T11:30:26.419Z` | `skyzh/mini-lsm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10249` | Yes (`8d17bff4...`) |
+| `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T11:31:00.451Z` | `hf-llamaindex-ocria-nano-1` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-4A125361` [Domain D] | Yes (`bd37b422...`) |

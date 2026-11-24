@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T11:22:04.223Z",
-  "total_records": 2511,
+  "last_updated": "2026-11-24T11:31:03.660Z",
+  "total_records": 2516,
   "domains": {
     "A": {
       "total": 22,
@@ -69,7 +69,7 @@
       ]
     },
     "D": {
-      "total": 949,
+      "total": 952,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1019,7 +1019,10 @@
         "DOM-D-7EDCAC07",
         "domain_intelligence-research-knowledge-intelligence-hf-strata-engine-inkling-2-mini-strata-learnings",
         "DOM-D-3B23634E",
-        "DOM-D-F29632A9"
+        "DOM-D-F29632A9",
+        "domain_intelligence-research-knowledge-intelligence-llamaindex-ocria-nano-1-core-invariants",
+        "DOM-D-4A125361",
+        "domain_intelligence-research-knowledge-intelligence-hf-llamaindex-ocria-nano-1-learnings-core-invari"
       ]
     },
     "E": {
@@ -1144,7 +1147,7 @@
       ]
     },
     "G": {
-      "total": 438,
+      "total": 440,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1583,7 +1586,9 @@
         "domain_intelligence-architecture-intelligence-yyjeqhc-webcodex-core-invariants",
         "domain_intelligence-architecture-intelligence-yyjeqhc-webcodex-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-liyupi-yu-ai-agent-core-invariants",
-        "domain_intelligence-architecture-intelligence-liyupi-yu-ai-agent-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-liyupi-yu-ai-agent-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-skyzh-mini-lsm-core-invariants",
+        "domain_intelligence-architecture-intelligence-skyzh-mini-lsm-learnings-core-invariants"
       ]
     },
     "H": {
@@ -10351,8 +10356,8 @@
       "title": "Architecture Intelligence: rook/rook Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rook-rook-architecture-intelligence-rook-rook-core-invariants.md",
       "repository": "rook/rook",
-      "content_hash": "2fe0cb900cf0298eccaea6cdcd1b4c07ab0ae7c10df50a41d290c1c084a33a8b",
-      "created_at": "2026-11-23T16:20:38.651Z"
+      "content_hash": "8f8d2151b0d104c5ea11185b40d27aafc9b8c092176ba8cf5269b66e35961dbe",
+      "created_at": "2026-11-24T11:30:23.133Z"
     },
     "domain_intelligence-technical-construction-intelligence-zama-ai-tfhe-rs-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zama-ai-tfhe-rs-core-invariants",
@@ -19932,8 +19937,8 @@
       "title": "Architecture Intelligence: rook-rook-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rook-rook-learnings-architecture-intelligence-rook-rook-learnings-core-invariant.md",
       "repository": "rook-rook-learnings",
-      "content_hash": "6c11a18a8944df26ea05008d7cf3656938b16364a7ea81a4bee46a0d95ec2f34",
-      "created_at": "2026-11-23T16:20:44.428Z"
+      "content_hash": "c9117da2fe61acee0f3c8df6cb25ef4f47444bd968e3a5a0ed26b25d6ca9151f",
+      "created_at": "2026-11-24T11:31:02.069Z"
     },
     "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-3-image-klein-comfy-core-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-3-image-klein-comfy-core-",
@@ -42124,6 +42129,84 @@
       "repository": "streetwriters-notesnook-learnings",
       "content_hash": "651b940964e769d92f8b2360f81895193798eded3f25ce9db5dba48e1f0e0107",
       "created_at": "2026-11-24T09:42:34.971Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-llamaindex-ocria-nano-1-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-llamaindex-ocria-nano-1-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: llamaindex/OCRia-nano-1 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-llamaindex-ocria-nano-1-research-knowledge-intelligence-llamaindex-ocria-nano.md",
+      "repository": "llamaindex/OCRia-nano-1",
+      "content_hash": "d038939f4001039e83f5b89963fa3042b3c13b7350c685bc1940ab49530ae444",
+      "created_at": "2026-11-24T11:30:08.605Z"
+    },
+    "domain_intelligence-architecture-intelligence-skyzh-mini-lsm-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-skyzh-mini-lsm-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: skyzh/mini-lsm Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-skyzh-mini-lsm-architecture-intelligence-skyzh-mini-lsm-core-invariants.md",
+      "repository": "skyzh/mini-lsm",
+      "content_hash": "04375519020289c0b9352e8b40f9e460eb89f06a7929b5cf195674e2a7ab60ed",
+      "created_at": "2026-11-24T11:30:26.856Z"
+    },
+    "DOM-D-4A125361": {
+      "record_id": "DOM-D-4A125361",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): llamaindex/OCRia-nano-1",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-llamaindex-ocria-nano-1-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/llamaindex/OCRia-nano-1](https://huggingface.co/llamaindex/OCRia-nano-1))  \n> **Source Version**: `hf-llamainde`  \n> **License**: Open-Source  \n> **Sy",
+      "content_hash": "bd37b422706950bd2fb14f9ca79c51336c52d9d5c880b2eda66cdde5c65b0eaa",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-llamaindex-ocria-nano-1-learnings.md`  \n> **Source**: huggingface ([https://huggi -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-llamaindex-ocria-nano-1-learnings.md`  \n> **Source**: huggingface ([https://huggi",
+      "provenance": {
+        "source_uri": "project://hf-llamaindex-ocria-nano-1/hf-llamaindex-ocria-nano-1-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-24T11:30:29.854Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-llamaindex-ocria-nano-1)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-llamaindex-ocria-nano-1"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-24T11:31:00.421Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-llamaindex-ocria-nano-1-learnings-core-invari": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-llamaindex-ocria-nano-1-learnings-core-invari",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-llamaindex-ocria-nano-1-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-llamaindex-ocria-nano-1-learnings-research-knowledge-intelligence-hf-llamaind.md",
+      "repository": "hf-llamaindex-ocria-nano-1-learnings",
+      "content_hash": "d2af2166347ddf7769615ee8036143710e25f4bc1f2eb4137f813924ae2290d7",
+      "created_at": "2026-11-24T11:31:00.765Z"
+    },
+    "domain_intelligence-architecture-intelligence-skyzh-mini-lsm-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-skyzh-mini-lsm-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: skyzh-mini-lsm-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-skyzh-mini-lsm-learnings-architecture-intelligence-skyzh-mini-lsm-learnings-core.md",
+      "repository": "skyzh-mini-lsm-learnings",
+      "content_hash": "c787ef1685ed622c979ec3fa69bdadf395cd946baf12e8d836177242ad5839b7",
+      "created_at": "2026-11-24T11:31:03.660Z"
     }
   }
 }

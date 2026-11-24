@@ -4363,10 +4363,10 @@
     "repository": "skyzh/mini-lsm",
     "platform": "github",
     "sourceUrl": "https://github.com/skyzh/mini-lsm",
-    "sourceVersion": "d665497b",
+    "sourceVersion": "4c10ba4b",
     "license": "Apache-2.0",
-    "contentHash": "36b424e64ee5c0db11eecfefef8467d80231781a7d35965d8706e8fe586949c8",
-    "lastHarvestedAt": "2026-11-23T15:29:07.762Z",
+    "contentHash": "8d17bff46710da1cf47f5701a93588e236891c2e022282ef6ae713fab8980458",
+    "lastHarvestedAt": "2026-11-24T11:30:26.423Z",
     "learningId": "learn-github-skyzh-mini-lsm"
   },
   "paullecam-react-leaflet": {
@@ -5963,10 +5963,10 @@
     "repository": "rook/rook",
     "platform": "github",
     "sourceUrl": "https://github.com/rook/rook",
-    "sourceVersion": "40d33b11",
+    "sourceVersion": "d7d7a0e1",
     "license": "Apache-2.0",
-    "contentHash": "8ed40e51eae586f89ee22136cdc431aa51ea5ef96f38e7d959f983c17644f625",
-    "lastHarvestedAt": "2026-11-23T16:20:38.048Z",
+    "contentHash": "a1527fa8e66316a0cd91d4dc2497de9876c4ba4ee1ee7af39cb0f8de1505e25a",
+    "lastHarvestedAt": "2026-11-24T11:30:22.710Z",
     "learningId": "learn-github-rook-rook"
   },
   "genkit-ai-genkit": {
@@ -13318,5 +13318,15 @@
     "contentHash": "9eac349f2ba877e771128f112f6c2fe00a4b78942582f938857eed6228f4fd30",
     "lastHarvestedAt": "2026-11-24T08:48:20.493Z",
     "learningId": "learn-github-xinatian-mroffice"
+  },
+  "hf-llamaindex-ocria-nano-1": {
+    "repository": "llamaindex/OCRia-nano-1",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/llamaindex/OCRia-nano-1",
+    "sourceVersion": "hf-llamaindex-ocria-nano-1",
+    "license": "Open-Source",
+    "contentHash": "0cd8fc7bccccf2639fb9fe3bc2b739d9398d53b08466d6112fb05e58a07ba1cb",
+    "lastHarvestedAt": "2026-11-24T11:30:08.370Z",
+    "learningId": "learn-huggingface-llamaindex-ocria-nano-1"
   }
 }

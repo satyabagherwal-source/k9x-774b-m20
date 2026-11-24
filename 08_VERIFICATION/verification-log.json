@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-Y1BM",
-    "timestamp": "2026-11-22T16:57:25.042Z",
-    "repository": "apache/arrow",
-    "learningId": "learn-github-apache-arrow",
-    "contentHash": "b08ca115fc52349a66cba80b853e2a7cf885e2fe9ea8e8dfbf81651a6fcae5e3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-Y4N0",
-    "timestamp": "2026-11-22T16:57:29.340Z",
-    "repository": "SimonSchubert/LinuxCommandLibrary",
-    "learningId": "learn-github-simonschubert-linuxcommandlibrary",
-    "contentHash": "5a359432599e69be33ca1c54bf3008630c63c5b81bc360e730461f4818f4ac39",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-YCTO",
-    "timestamp": "2026-11-22T16:57:39.948Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "d685cb4a70ab86429d5ec681987473339335b453e7f9b4c1c8674eb8e39f5a6b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-H538",
     "timestamp": "2026-11-22T17:12:16.388Z",
     "repository": "meta/folly",
@@ -7490,6 +7445,51 @@
     "repository": "juicedata/juicefs",
     "learningId": "learn-github-juicedata-juicefs",
     "contentHash": "018417823bff8370acf617960f4f09d0eea4c05f7d67a1149e6bbbf715410acd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-4UWE",
+    "timestamp": "2026-11-24T11:30:08.366Z",
+    "repository": "llamaindex/OCRia-nano-1",
+    "learningId": "learn-huggingface-llamaindex-ocria-nano-1",
+    "contentHash": "0cd8fc7bccccf2639fb9fe3bc2b739d9398d53b08466d6112fb05e58a07ba1cb",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-55YP",
+    "timestamp": "2026-11-24T11:30:22.705Z",
+    "repository": "rook/rook",
+    "learningId": "learn-github-rook-rook",
+    "contentHash": "a1527fa8e66316a0cd91d4dc2497de9876c4ba4ee1ee7af39cb0f8de1505e25a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-58TV",
+    "timestamp": "2026-11-24T11:30:26.419Z",
+    "repository": "skyzh/mini-lsm",
+    "learningId": "learn-github-skyzh-mini-lsm",
+    "contentHash": "8d17bff46710da1cf47f5701a93588e236891c2e022282ef6ae713fab8980458",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

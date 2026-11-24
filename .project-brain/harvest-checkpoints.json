@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T11:21:58.658Z",
+  "last_updated": "2026-11-24T11:30:26.440Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6666,14 +6666,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-skyzh-mini-lsm",
-      "content_hash": "36b424e64ee5c0db11eecfefef8467d80231781a7d35965d8706e8fe586949c8",
-      "verified_at": "2026-11-23T15:29:07.770Z",
+      "content_hash": "8d17bff46710da1cf47f5701a93588e236891c2e022282ef6ae713fab8980458",
+      "verified_at": "2026-11-24T11:30:26.439Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T15:29:07.770Z"
+      "last_updated": "2026-11-24T11:30:26.439Z"
     },
     "PaulLeCam/react-leaflet": {
       "repository": "PaulLeCam/react-leaflet",
@@ -9066,14 +9066,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rook-rook",
-      "content_hash": "8ed40e51eae586f89ee22136cdc431aa51ea5ef96f38e7d959f983c17644f625",
-      "verified_at": "2026-11-23T16:20:38.101Z",
+      "content_hash": "a1527fa8e66316a0cd91d4dc2497de9876c4ba4ee1ee7af39cb0f8de1505e25a",
+      "verified_at": "2026-11-24T11:30:22.726Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T16:20:38.101Z"
+      "last_updated": "2026-11-24T11:30:22.726Z"
     },
     "genkit-ai/genkit": {
       "repository": "genkit-ai/genkit",
@@ -20099,6 +20099,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-24T08:48:20.510Z"
+    },
+    "llamaindex/OCRia-nano-1": {
+      "repository": "llamaindex/OCRia-nano-1",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-llamaindex-ocria-nano-1",
+      "content_hash": "0cd8fc7bccccf2639fb9fe3bc2b739d9398d53b08466d6112fb05e58a07ba1cb",
+      "verified_at": "2026-11-24T11:30:08.387Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-24T11:30:08.387Z"
     }
   },
   "repos": {
