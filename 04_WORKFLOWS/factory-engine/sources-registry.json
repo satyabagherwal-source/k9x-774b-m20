@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T02:53:36.350Z",
-    "lastVerified": "2026-11-24T02:53:36.350Z",
+    "lastChecked": "2026-11-24T03:05:27.580Z",
+    "lastVerified": "2026-11-24T03:05:27.581Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -284,8 +284,8 @@
     "officialUrl": "https://github.com/herdrdev/herdr",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T19:18:28.584Z",
-    "lastVerified": "2026-11-22T19:18:28.584Z",
+    "lastChecked": "2026-11-24T03:05:12.598Z",
+    "lastVerified": "2026-11-24T03:05:12.598Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-herdrdev-herdr",
@@ -379,8 +379,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T02:12:48.243Z",
-    "lastVerified": "2026-11-24T02:12:48.243Z",
+    "lastChecked": "2026-11-24T03:05:27.572Z",
+    "lastVerified": "2026-11-24T03:05:27.572Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1525,9 +1525,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-23T22:14:51.798Z",
+    "lastChecked": "2026-11-24T03:05:22.642Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-23T22:14:51.798Z"
+    "lastVerified": "2026-11-24T03:05:22.642Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -2204,9 +2204,9 @@
   "oceanbase-oceanbase": {
     "name": "oceanbase",
     "officialUrl": "https://github.com/oceanbase/oceanbase",
-    "lastChecked": "2026-11-23T03:27:49.793Z",
+    "lastChecked": "2026-11-24T03:05:25.059Z",
     "revisionIdentifier": "d375c6d7",
-    "lastVerified": "2026-11-23T03:27:49.793Z"
+    "lastVerified": "2026-11-24T03:05:25.059Z"
   },
   "unhappychoice-gitlogue": {
     "name": "gitlogue",
@@ -4192,9 +4192,9 @@
   "apptainer-singularity": {
     "name": "singularity",
     "officialUrl": "https://github.com/apptainer/singularity",
-    "lastChecked": "2026-11-23T04:58:26.113Z",
+    "lastChecked": "2026-11-24T03:05:20.175Z",
     "revisionIdentifier": "9dceb424",
-    "lastVerified": "2026-11-23T04:58:26.113Z"
+    "lastVerified": "2026-11-24T03:05:20.175Z"
   },
   "spacejam-sled": {
     "name": "sled",
@@ -9336,9 +9336,9 @@
   "jeffli1993-seo-audit-skill": {
     "name": "seo-audit-skill",
     "officialUrl": "https://github.com/JeffLi1993/seo-audit-skill",
-    "lastChecked": "2026-11-19T22:51:51.524Z",
+    "lastChecked": "2026-11-24T03:05:15.048Z",
     "revisionIdentifier": "523bdfb2",
-    "lastVerified": "2026-11-19T22:51:51.524Z"
+    "lastVerified": "2026-11-24T03:05:15.048Z"
   },
   "gitliveapp-firebase-kotlin-sdk": {
     "name": "firebase-kotlin-sdk",
@@ -12200,9 +12200,9 @@
   "krishhgg-insomnia": {
     "name": "Insomnia",
     "officialUrl": "https://github.com/krishhgg/Insomnia",
-    "lastChecked": "2026-11-21T04:48:25.813Z",
+    "lastChecked": "2026-11-24T03:05:17.589Z",
     "revisionIdentifier": "3f474ff2",
-    "lastVerified": "2026-11-21T04:48:25.813Z"
+    "lastVerified": "2026-11-24T03:05:17.589Z"
   },
   "pallets-flask": {
     "name": "flask",

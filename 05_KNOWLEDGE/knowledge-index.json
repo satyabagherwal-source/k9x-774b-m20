@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T02:53:39.064Z",
+  "last_updated": "2026-11-24T03:05:30.546Z",
   "total_verified_learnings": 9089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "527bfefc3a90d9cee43c027d87288386e333e50a47c3d774f304c5513533aed6",
+      "content_hash": "3c74b7155c6a4f7d193145bb64bd20c660f1c4bc369f6cd9ca2a3a44820b9f3b",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T01:38:07.770Z"
+      "persisted_at": "2026-11-24T03:05:30.397Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "d2ec0c3ed90dc401faba3ac9b759c448a52fef79c5da67d10383b41e857e7468",
+      "content_hash": "ae495d5ddf92a2bca1ce3b8e7c3e44ecd99e963d5f0deeaab99624268cbcd751",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T01:38:07.921Z"
+      "persisted_at": "2026-11-24T03:05:30.546Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "4ad3d8a2f7dcd657f359a1b02fd4387672c642dab725a2f596d6e5f8f58d56d0",
+      "content_hash": "263fee8dda518b165724d42467b2c0d8e9abc96d8778261598cea54647165547",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T02:53:39.064Z"
+      "persisted_at": "2026-11-24T03:05:29.377Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "8421a45bcd243019771d6171cbcdb629824c03ddf210a60ba19455bb9e841064",
+      "content_hash": "213040ee37ebcbf45577238150907d517839dd2a66bf5f146048f37273975af1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T02:53:38.044Z"
+      "persisted_at": "2026-11-24T03:05:28.201Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "95ea9f97c60d2fc3abd4c59aa57ce753457a6ade2b505cfebba8aee78415701b",
+      "content_hash": "7494bdef650fc50848162b2ed3dfd7b08cbb3ee72ea18082cf3927f3054d07cd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T02:53:38.200Z"
+      "persisted_at": "2026-11-24T03:05:28.378Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -255845,9 +255845,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "0e217b011da0e0a812cb14b851b60f09acf1c20583a5971977a4f2b0cf6ddd89",
+      "content_hash": "e7ce87a3adf69b1d31900ee2f717928ba15d35c27d845b03af57535de2c54ad4",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T01:38:07.581Z"
+      "persisted_at": "2026-11-24T03:05:30.204Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
@@ -319628,13 +319628,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-OMHS-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-3UFQ-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "8cab10fcbeed3c129669fd0acf33ffa725fed6f44f508a259d742da462388f47",
+      "content_hash": "7ad5c21e4ac991ac594991cced265a5598ad0879932b64e5384b4a51c2ec609c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T02:53:37.895Z"
+      "persisted_at": "2026-11-24T03:05:28.026Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
@@ -329647,13 +329647,13 @@
       "item_id": "candidate_directive-rust-resolve-python-calls-through-annotated-parameters-and-self-members",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-ZIQM-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-3VZJ-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
       "title": "rust): resolve python calls through annotated parameters and self members",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "dd85277f908bf8793f734049222d454031983becf09de8e07865063ca766cf13",
+      "content_hash": "be27b18e8bd689000edfa2652b47e8e98cf2d746cc2d2bdd6b5cc7cc2a1b7353",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T01:38:07.393Z"
+      "persisted_at": "2026-11-24T03:05:30.034Z"
     },
     "learn-github-iziz-libphonenumber-ios": {
       "learning_id": "learn-github-iziz-libphonenumber-ios",
