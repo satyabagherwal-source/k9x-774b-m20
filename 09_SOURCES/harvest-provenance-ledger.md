@@ -12622,3 +12622,6 @@ Every entry in this ledger must capture:
 | `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `da75fa74` | Multi-dimensional audit evidence | 2026-11-24T04:20:31.452Z |
 | `learn-github-sharkdp-bat` | `https://github.com/sharkdp/bat` | `4bd5c5b6` | Multi-dimensional audit evidence | 2026-11-24T04:28:47.174Z |
 | `learn-github-metrolistgroup-metrolist` | `https://github.com/MetrolistGroup/Metrolist` | `af3d0533` | Multi-dimensional audit evidence | 2026-11-24T04:37:01.844Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `f7634e86` | Multi-dimensional audit evidence | 2026-11-24T04:45:10.518Z |
+| `learn-github-yazinsai-openoats` | `https://github.com/yazinsai/OpenOats` | `8e84f291` | Multi-dimensional audit evidence | 2026-11-24T04:45:14.067Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `2325502f` | Multi-dimensional audit evidence | 2026-11-24T04:45:18.886Z |

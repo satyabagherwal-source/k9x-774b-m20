@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T04:37:08.146Z",
+  "last_updated": "2026-11-24T04:45:24.354Z",
   "total_records": 2490,
   "domains": {
     "A": {
@@ -8596,8 +8596,8 @@
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "70f2be15ec963dabccfa6f4666e64fc4ff6ace25eb27ed0185593840598f7f1e",
-      "created_at": "2026-11-24T00:07:25.589Z"
+      "content_hash": "a31298dbc04ad23887f510729c710bf87f08788fbc786945b6193a888cac9073",
+      "created_at": "2026-11-24T04:45:19.274Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -16329,10 +16329,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: codewhale-hq/Codewhale Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-codewhale-hq-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hmbown-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-invariant.md",
       "repository": "codewhale-hq/Codewhale",
-      "content_hash": "1766f34983e0c2da4eb49bb12c45af06fee219272242c947f2e44aea2ea3fffa",
-      "created_at": "2026-11-23T22:42:50.441Z"
+      "content_hash": "b534d49e96dab207ad6bbf2b990e9bf1c0d871b839e208ce16a7c9dc7d999cff",
+      "created_at": "2026-11-24T04:45:10.925Z"
     },
     "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-learnings-core-invariants",
@@ -18822,8 +18822,8 @@
       "title": "Architecture Intelligence: hmbown-codewhale-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hmbown-codewhale-learnings-architecture-intelligence-hmbown-codewhale-learnings-.md",
       "repository": "hmbown-codewhale-learnings",
-      "content_hash": "c69423a2be6b3dbce1a567d750da38bd3b36883a7be179748408ba9cea288396",
-      "created_at": "2026-11-22T21:13:21.968Z"
+      "content_hash": "be57c52588a3e324fa7e0e0e0b1103dd5b6831f0bc6a85ed7f78541c3fc16d96",
+      "created_at": "2026-11-24T04:45:22.658Z"
     },
     "DOM-D-D6B073D5": {
       "record_id": "DOM-D-D6B073D5",
@@ -24012,8 +24012,8 @@
       "title": "Architecture Intelligence: aleo-labs-protocol-snarkos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-learnings-architecture-intelligence-aleo-labs-protoco.md",
       "repository": "aleo-labs-protocol-snarkos-learnings",
-      "content_hash": "317e050899d255eb4660d7effaa2914040308d1ddd71440a32f7fc79530db4c9",
-      "created_at": "2026-11-24T00:08:01.813Z"
+      "content_hash": "ce8fdc96cfba90459b6c3cb78b946bc08961448e7d9a147e550f5867d5c1c211",
+      "created_at": "2026-11-24T04:45:24.354Z"
     },
     "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants",
@@ -37778,8 +37778,8 @@
       "title": "Technical Construction Intelligence: yazinsai/OpenOats Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-yazinsai-openoats-technical-construction-intelligence-yazinsai-openoats-core-inv.md",
       "repository": "yazinsai/OpenOats",
-      "content_hash": "2294786587fbca432bafa27959e522b0fa8b0c442e20863ad284539f6074b555",
-      "created_at": "2026-11-21T08:24:47.957Z"
+      "content_hash": "3556cb15cd4124e83a25994c8c4bac1a8b8c57bb680262acb200b75084089163",
+      "created_at": "2026-11-24T04:45:14.439Z"
     },
     "domain_intelligence-technical-construction-intelligence-comfy-org-moss-image-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-comfy-org-moss-image-core-invariants",
@@ -37848,8 +37848,8 @@
       "title": "Technical Construction Intelligence: yazinsai-openoats-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-yazinsai-openoats-learnings-technical-construction-intelligence-yazinsai-openoat.md",
       "repository": "yazinsai-openoats-learnings",
-      "content_hash": "4b7e65716034153eba176894931dcb53c54f4b6fd2d3fd3dc53faab9a8538da4",
-      "created_at": "2026-11-21T08:25:42.177Z"
+      "content_hash": "43f13fc31fca06287448e7d4ce9e2453abd5c700f9b378cd47567f37f2c5b075",
+      "created_at": "2026-11-24T04:45:23.601Z"
     },
     "domain_intelligence-architecture-intelligence-etcd-io-etcd-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-etcd-io-etcd-core-invariants",

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T21:13:21.597Z",
+  "timestamp": "2026-11-24T04:45:22.365Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hmbown-codewhale-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hmbown-codewhale-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T21:13:21.597Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T04:45:22.365Z`  
 > **Learning ID**: `LEARN-EVO-hmbown-codewhale-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hmbown-codewhale-learnings.md`  
 > **Source**: github ([https://github.com/Hmbown/Codewhale](https://github.com/Hmbown/Codewhale))  
-> **Source Version**: `d5abe4bf`  
+> **Source Version**: `f7634e86`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T21:09:17.930Z  
+> **Timestamp**: 2026-11-24T04:45:09.438Z  
 > **Learning ID**: `learn-github-codewhale-hq-codewhale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hmbown-codewhale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Hmbown/Codewhale](https://github.com/Hmbown/Codewhale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T21:09:17.776Z  
+> **Harvest Timestamp**: 2026-11-24T04:45:09.224Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: An open-source coding agent for your terminal, written in Rust. It works with any model, can split one task across several agents, and every line of it is yours to read.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 41197 stars
+- **Stars / Engagement**: 41198 stars
 
 ---
 
@@ -1991,11 +1991,11 @@ pub use codewhale_protocol::request::*;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7452** (2026-11-22): **fix(tui): keep a streamed delta in the cell its own kind owns**
-  *Symptoms*: fix(tui): keep a streamed delta in the cell its own kind owns  ## What and why  A block's kind is decided by its start event alone. When a gateway opens a text block in the middle of a thinking stream and then keeps sending thinking deltas, block 0 stays marked text: `commit_streaming_display_tick` reads `block_is_thinking(0)`, gets false, and writes the reasoning into the assistant body. One reasoning sentence is then split across the thinking card and the prose that follows it.  This is the same visible defect as #7123, with the two block kinds swapped: the PR that fixed #7123 taught the display beat to route by the block's own kind, but the kind itself is only ever set by a start event, so a gateway that starts a block of the other kind mid-stream poisons it.  `StreamingState::set_block_kind` relabels one live block in place. Unlike `reset` it leaves every other block and both accumulated counters alone. `streaming_thinking::resync_block_kind` delivers the pending tail to the cell the old kind owned first, then relabels; a relabel away from thinking also finalizes the reasoning card and stashes its text, so the spinner stops and replay still has the words. Both delta handlers call it before pushing, so the normal Anthropic ordering returns after one comparison.  ## Issue  Refs #7123  ## How I tested it  - `cargo fmt --all -- --check` — clean. - `cargo check -p codewhale-tui --tests --lib -p codewhale-tui-kit` — clean. - `cargo test -p codewhale-tui-kit --lib` — `test resul
+- **Issue #7518** (2026-11-24): **fix(tui): a running background shell job no longer keeps the ambient scene drawing (#6728)**
+  *Symptoms*: ## Summary Lane 11 (0.10.5 small user bugs: #7344, #7347, #6728, #6184). Only #6728 still needed code.  **#6728:** the underwater ambient scene is supposed to settle 6 s after the shell goes idle. But `ambient_busy` counted every queued, running or waiting jobs-panel row, including `TaskPanelEntryKind::Shell`. So a backgrounded `sleep 900` kept the scene redrawing at ambient cadence for the job's whole life.  ```rust // before let durable_tasks_active = app.task_panel.iter()     .any(|t| matches!(t.status.as_str(), "queued" | "running" | "waiting")); // after: only Background (agent) tasks keep the scene awake let durable_tasks_active = has_live_durable_tasks(app); ``` The jobs panel's 1 Hz elapsed tick for a visible running shell is unchanged. This brings back what the superseded `boat/issue-6728` branch meant to do, rebuilt on the current `IdleClock` code.  Measured on Linux x86_64 with a dev build in tmux 160x45, default theme, after allowing a background `sleep 900`. Draws are counted as `/dev/tty` opens, which happen once per frame via crossterm `size()`:  | state | draws/s | CPU | |---|---|---| | main, job running | ~25 | 15.5% | | main, job killed | 0 | 0.43% | | this PR, job running | 1 | 1.02% |  On main, the idle composer (0.46%) and the approval wait (1.00%) were already quiet. The FreeBSD measurement is still the issue's acceptance step.  Tests: `RUST_MIN_STACK=16777216 cargo test -p codewhale-tui --lib --locked` with the new regression test plus the existing jobs
 
-- **Issue #7449** (2026-11-21): **fix(engine): compact diagnostic late-usage receipts at the ledger bound (#6842)**
-  *Symptoms*: ## What and why  The `.late-usage/<id>.json` ledger keeps a 1 MiB bound and refused the whole write when adding a record would cross it. Diagnostic-only receipts — the route-decision evidence written by `persist_late_decision_receipt` — carry no spend, but they count toward that bound and can fill it on their own.  This makes the write compact instead of refusing: when a candidate would exceed 1 MiB, drop the oldest diagnostic-only records until it fits, and keep every spend-bearing record (settled or unresolved) unchanged. Replay still dedupes by `source_fingerprint`, so no spend is forgotten or double-counted.  ## Where this came from  Refs #6842. This is the sidecar half of the issue; bounding the unordered replay index (`usage_source_fingerprints`) and the retained journal archive policy remain open there.  ## How I tested it  - `cargo test -p codewhale-engine --lib oversized_ledger_compacts_diagnostic_receipts_before_failing` — 1 passed (the new fixture builds a ledger over 1 MiB with diagnostic + spend records; after the write, all spend records survive, the diagnostic count shrinks, and the file is within the bound) - The existing bound tests still pass: a ledger made only of spend-bearing records still returns `InvalidData` rather than silently truncating a receipt. - `cargo fmt --all -- --check` — passed - The `Behaviour:` line is in the commit body; `scripts/check-behaviour-line.py` arrives with #7445 and is not on this branch yet.  ## Checklist  - [x] One focused c
+- **Issue #7515** (2026-11-24): **fix(tui): #6561 component pass — copy masks, osascript path, modal click targets**
+  *Symptoms*: ## Summary  This is a pass over the #6561 component-hardening backlog against `main` @ `642239fed`. It covers all 138 findings in 37 zones. Each finding was checked against current source and the commit that fixed it (`git log --grep=<ID>`, plus `merge-base --is-ancestor` for every cited commit).  | Result | Count | |---|---| | fixed on main | 123 | | fixed in this PR | 3 | | still open | 10 | | not a defect | 2 |  **Fixed here**  - **U07-12** — `is_copy_shortcut` now compares exact modifier masks, so Cmd+Alt+C and Ctrl+Shift+Alt+C no longer count as copy (`crates/tui/src/tui/key_shortcuts.rs`). - **U06-06** — the macOS notification banner runs `/usr/bin/osascript` instead of resolving `osascript` through `PATH` (`crates/tui/src/tui/notifications.rs`). - **U08-m1** — the user-input modal records option hitboxes when it renders. Left-clicking an option selects it, and Enter submits it. Test: `clicking_a_painted_option_submits_it` (`crates/tui/src/tui/user_input.rs`).  **Still open.** Each of these needs a design or release decision, or touches files an open PR owns:  - **R02-01 / O01-m3** — release signing. `TRUSTED_RELEASE_KEYS` is empty and there is no publisher attestation. This needs a signing-key decision. - **R06-10** — fail-fast `parallel()` / `Promise.all` does not cancel running sibling tasks. This needs per-task cancel on the workflow drive. - **T07-07** — the bounded read is fixed. The project-context capture still runs synchronously from `refresh_system_prompt_from
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2012,978 +2012,215 @@ pub use codewhale_protocol::request::*;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7b246b2d` (2026-11-22)
-**Commit Message**: fix(stream): retry a request once when no response headers arrive
+### Incident Patch 1: `61e073db` (2026-11-23)
+**Commit Message**: release: keep build-machine paths out of self-hosted macOS shipping binaries
 
-A provider held one request's response headers past the 180s
-`stream.open_timeout_secs` wait in the middle of a long turn (0.10.3,
-thinking high). The turn ended with `llm_network_error ... did not receive
-response headers after 180s`, nothing was sent again, and the person had to
-notice and resend. The phase log also said `bound_secs=690` for "waiting for
-the model's first response" while the request was cut at 180s. (CW-8323)
+Proof run 45138848324 (release-artifacts dispatched directly from
+ci/selfhosted-mac-release-proof) built both macOS legs on codewhale-mac:
+macos-x64 68.9 min (34.3 waiting for the machine build lock, cargo build
+33.8), then macos-arm64 29.3 min (cargo build 28.6), 98 min wall for both
+against 205/220 min on hosted Macs in RC 44908205009. Compared with that
+RC's hosted binaries: same architectures, minos 11.0 / 10.12, the same nine
+linked system frameworks and libraries, arm64 ad-hoc linker-signed and x64
+unsigned; SDK 26.2 (the runner's Xcode 26.2) against 26.5.
 
-Retry. The turn loop already owns re-sending a request whose stream never
-opened: `StreamRetryBudget` plus `PhaseResult::Retry` in the model step,
-until now only for proven pre-dispatch connection failures
-(`stream.max_resumes`). A header timeout goes through the same owner with a
-second budget, `stream.open_retries` (default 1, 0 disables, at most 3). It
-resets when a stream opens, so each request gets its own retry. No retry
-loop was added to the client: `open_sse_response` and the HTTP retry loop
-still send a header-stalled request once.
+But the self-hosted arm64 binary carried 1,069 strings under
+/Users/hunterbown/actions-runner/_work/_temp/release-home/.cargo/registry/src
+(panic locations of registry crates) and one OUT_DIR path under
+/Volumes/VIXinSSD/CW/.codewhale-ci/...; hosted binaries carry /Users/runner/
+paths in the same places. The self-hosted legs now build with
+CARGO_ENCODED_RUSTFLAGS = the workflow's RUSTFLAGS plus
+--remap-path-prefix for the fresh CARGO_HOME (logical and physical) to /cargo
+and the workspace (logical and physical) to /codewhale. Hosted legs are
+unch
 
-The turn loop has to know a header timeout by type, not by message text, so
-`open_sse_response` now returns `LlmError::HeaderTimeout { waited, http1,
-re
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `.github/scripts/release-workflows.test.js` (modified, +6/-1)
 ```diff
-@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ### Fixed
- 
-+- **A model request that gets no response is retried once:** when a provider sends no response headers within `stream.open_timeout_secs` (180 seconds by default), Codewhale sends the request again instead of ending the turn, and the transcript says so (`Retry attempt: stream-open-timeout 1/1; provider sent no response headers in 180s; sending the request again`). If the retry also times out, the turn fails with the same error, which now says a retry was already attempted. `stream.open_retries` sets the count (default `1`, `0` turns it off, at most `3`). The provider may have processed and billed the first request, so its usage stays recorded as unknown. Agents a session starts follow the configured `[stream]` retry counts too. In the turn log, `bound_secs` for "waiting for the model's first response" is now the timeout that request is under, and the watchdog ceiling is logged separately as `stall_after_secs`. (CW-8323)
- - **Narrow terminals keep the working clock:** at 80 and 60 columns the status row under the composer keeps `working 3s` / `using tool 12s` while a turn runs. The `Shift+Tab to change` hint, then `Esc to interrupt`, stand down first, and a connector notice shortens (`MCP · 1 failed · /mcp`) instead of taking the clock's place. (CW-8264)
- - The Resume confirmation no longer draws its border over the composer on a 60x20 terminal, and the Plugins panel footer always keeps `Esc close`, dropping the per-row hints first at 80 columns.
- 
-```
-
-**File**: `config.example.toml` (modified, +1/-0)
-```diff
-@@ -1194,6 +1194,7 @@ base_url = "https://api.deepseek.com/beta"
- # Legacy [tui] stream_* keys remain fallbacks when a canonical field is absent.
- [stream]
- open_timeout_secs = 180     # response headers, including connect (0 = env/default, 5-600)
-+open_retries = 1            # re-sends after no response headers arrived in time (0 = off, 0-3)
- chunk_timeout_secs = 900    # per-SSE-chunk idle bound (0 = default, 1-3600)
- max_resumes = 3             # proven pre-dispatch connection recovery (0 = off, 0-10)
- max_transparent_retries = 2 # compatibility value; interrupted streams never reissue
-```
-
-**File**: `crates/config/src/config_resolve.rs` (modified, +4/-1)
-```diff
-@@ -539,7 +539,10 @@ impl ConfigToml {
-                 // are u64. Reject invalid types before touching the document.
-                 let max = if matches!(
-                     field,
--                    "max_resumes" | "max_transparent_retries" | "max_stream_errors"
-+                    "open_retries"
-+                        | "max_resumes"
-+                        | "max_transparent_retries"
-+                        | "max_stream_errors"
-                 ) {
-                     i64::from(u32::MAX)
-                 } else {
-```
-
-**File**: `crates/config/src/settings_schema.rs` (modified, +1/-0)
-```diff
-@@ -1416,6 +1416,7 @@ pub const SETTINGS_SCHEMA: &[SettingDef] = &[
-     def("stream_chunk_timeout_secs", SettingKind::Int, "900", None),
-     // Canonical transport keys. Runtime resolution stays in TUI Config.
-     def("stream.open_timeout_secs", SettingKind::Int, "180", None),
-+    def("stream.open_retries", SettingKind::Int, "1", None),
-     def("stream.chunk_timeout_secs", SettingKind::Int, "900", None),
-     def("stream.max_resumes", SettingKind::Int, "3", None),
-     def(
-```
-
-**File**: `crates/config/src/tests.rs` (modified, +1/-0)
-```diff
-@@ -10955,6 +10955,7 @@ fn stream_settings_are_typed_nested_and_fail_without_mutation() {
-     for (key, value) in [
-         ("stream.max_resumes", "-1"),
-         ("stream.max_resumes", "4294967296"),
-+        ("stream.open_retries", "4294967296"),
-         ("stream.force_http1", "flase"),
-         ("stream.tcp_keepalive_secs", "1.5"),
-         ("stream.open_timout_secs", "45"),
-```
-
-**File**: `crates/engine/src/client.rs` (modified, +6/-4)
-```diff
-@@ -5412,7 +5412,10 @@ fn retry_reason_label_and_human(err: &LlmError) -> (&'static str, String) {
-     // The variant, never the payload. Every `LlmError` variant carries the raw
-     // provider HTTP body verbatim, and a 400 from a content filter routinely
-     // echoes the prompt.
--    if matches!(err, LlmError::NetworkError(_) | LlmError::Timeout(_)) {
-+    if matches!(
-+        err,
-+        LlmError::NetworkError(_) | LlmError::HeaderTimeout { .. } | LlmError::Timeout(_)
-+    ) {
-         codewhale_telemetry::session_counters()
-             .bump_error(codewhale_telemetry::ErrorCounter::NetworkError);
-     }
-@@ -5426,7 +5429,7 @@ fn retry_reason_label_and_human(err: &LlmError) -> (&'static str, String) {
-             ("rate_limited", human)
-         }
-         LlmError::ServerError { status, .. } => ("server_error", format!("upstream {status}")),
--        LlmError::NetworkError(_) => (
-+        LlmError::NetworkError(_) | LlmError::HeaderTimeout { .. } => (
-             "network_error",
-             "network error; request outcome unknown".to_string(),
-         ),
-@@ -7414,9 +7417,8 @@ pub fn stream_first_response_bound(open: Duration, idle: Duration) -> Duration {
-         .saturating_add(stream_entry::first_byte_timeout(idle))
- }
- 
--#[cfg(test)]
- pub use stream_entry::first_byte_timeout as stream_first_byte_timeout;
--pub use stream_entry::is_stream_open_transport_failure;
-+pub use stream_entry::{is_stream_open_transport_failure, stream_open_header_timeout};
- pub mod wire;
- 
- // Retain the crate-visible accounting helpers at the existing client seam.
-```
-
-**File**: `crates/engine/src/client/stream_entry.rs` (modified, +24/-16)
-```diff
-@@ -305,13 +305,14 @@ fn is_protocol_or_tls_failure(detail: &str) -> bool {
-             .any(|needle| lower.contains(needle))
- }
- 
--/// Added to a response-header timeout (#6889). A provider prefilling a large
--/// or high-thinking request or loading a cold model can hold headers back
--/// longer than this wait, and transport advice alone makes that read as a
--/// broken connection.
--const COLD_MODEL_HINT: &str = "The provider may still be prefilling a large or high-thinking \
--     request or loading a cold model: wait a moment and send the message again, or allow a \
--     longer wait with `codewhale config set stream.open_timeout_secs 300` (up to 600).";
-+#[must_use]
-+pub fn stream_open_header_timeout(err: &anyhow::Error) -> Option<Duration> {
-+    err.chain()
-+        .find_map(|cause| match cause.downcast_ref::<LlmError>() {
-+            Some(LlmError::HeaderTimeout { waited, .. }) => Some(*waited),
-+            _ => None,
-+        })
+@@ -1283,7 +1283,12 @@ assert.equal(
+   "only macOS release builds may use the self-hosted Mac, and only when pin chose it",
+ );
+ const releaseBuild = jobBlock(artifacts, "build");
+-assert.match(namedStep(releaseBuild, "Fresh rustup, Cargo home and temp for a self-hosted release build"), /rm -rf "\$\{fresh\}"/);
++const freshReleaseHome = namedStep(releaseBuild, "Fresh rustup, Cargo home and temp for a self-hosted release build");
++assert.match(freshReleaseHome, /rm -rf "\$\{fresh\}"/);
++for (const remap of [/"\$\{CARGO_HOME\}=\/cargo"/, /"\$\(cd "\$\{fresh\}" && pwd -P\)\/\.cargo=\/cargo"/, /"\$\{GITHUB_WORKSPACE\}=\/codewhale"/, /"\$\(cd "\$\{GITHUB_WORKSPACE\}" && pwd -P\)=\/codewhale"/]) {
++  assert.match(freshReleaseHome, remap, "self-hosted shipping binaries must not embed the build machine's home or workspace paths");
 +}
- 
- pub async fn open_sse_response<F, Fut>(
-     open_req: &StreamOpenRequest,
-@@ -334,10 +335,11 @@ where
-             }
-         }
-         Err(_) => {
--            return Err(anyhow::Error::new(LlmError::NetworkError(format!(
--                "SSE stream request did not receive response headers after {}s; request outcome unknown. {COLD_MODEL_HINT}",
--                open_req.open_timeout.as_secs()
--            ))));
-+            return Err(anyhow::Error::new(LlmError::HeaderTimeout {
-+                waited: open_req.open_timeout,
-+                http1: false,
-+                retried: 0,
-+            }));
-         }
-     }
-     let h1_req = open_req.clone().with_h1_only();
-@@ -347,10 +349,11 @@ where
-     {
-         Ok(Ok(response)) => Ok(response),
-         Ok(Err(err)) => Err(h1_fallback_error(err)),
--        Err(_) => Err(anyhow::Error::new(LlmError::NetworkError(format!(
--            "SSE stream request did not receive response headers after {}s on HTTP/1.1; request outcome unknown. {COLD_MODEL_HINT}",
--            h1_req.open_timeout.as_secs()
--        )))),
-+        Err(_) => Err(anyhow::Error::new(LlmError::HeaderTimeout {
-+            waited: h1_req.open_timeout,
-+            http1: true,
-+            retried: 0,
-+        })),
-     }
- }
- 
-@@ -578,7 +581,12 @@ force_http1 = {pinned}
-             .expect("header stall must be a typed LlmError");
-         assert!(
-             !classified.is_retryable(),
--            "header stall must not be replayable: {classified:?}"
-+            "the HTTP retry loop must not replay a header stall: {classified:?}"
-+        );
-+        assert_eq!(
-+            stream_open_header_timeout(&err.context("adapter context")),
-+            Some(Duration::from_millis(100)),
-+            "the turn loop recognizes the header timeout by type"
-         );
-         assert!(text.contains("outcome unknown"), "{text}");
-         assert!(
++assert.match(freshReleaseHome, /CARGO_ENCODED_RUSTFLAGS=/);
+ assert.match(namedStep(releaseBuild, "Start the self-hosted release build from an empty target"), /rm -rf target\n\s+test -z "\$\(git status --porcelain --ignored\)"/);
+ assert.match(releaseBuild, /uses: Swatinem\/rust-cache@[^\n]+\n        if: runner\.environment != 'self-hosted'\n/, "self-hosted shipping builds must not restore or save a shared cache");
+ assert.match(candidate, /^      macos_runner: \$\{\{ inputs\.macos_runner \}\}$/m);
 ```
 
-**File**: `crates/engine/src/client/system_one.rs` (modified, +1/-0)
+**File**: `.github/workflows/release-artifacts.yml` (modified, +6/-0)
 ```diff
-@@ -547,6 +547,7 @@ pub fn router_failure_from_error(error: &anyhow::Error) -> AutoRouterFailure {
-                 AutoRouterFailure::Http { status }
-             }),
-         LlmError::NetworkError(_)
-+        | LlmError::HeaderTimeout { .. }
-         | LlmError::ConnectError { .. }
-         | LlmError::Timeout(_)
-         | LlmError::ParseError(_) => AutoRouterFailure::Transport,
+@@ -203,13 +203,19 @@ jobs:
+           export HOME="${fresh}" CARGO_HOME="${fresh}/.cargo" RUSTUP_HOME="${fresh}/.rustup"
+           curl --proto '=https' --tlsv1.2 --retry 10 --retry-connrefused -sSf https://sh.rustup.rs \
+             | sh -s -- -y --no-modify-path --profile minimal --default-toolchain none
++          read -ra flags <<< "${RUSTFLAGS}"
++          for prefix in "${CARGO_HOME}=/cargo" "$(cd "${fresh}" && pwd -P)/.cargo=/cargo" \
++            "${GITHUB_WORKSPACE}=/codewhale" "$(cd "${GITHUB_WORKSPACE}" && pwd -P)=/codewhale"; do
++            flags+=("--remap-path-prefix=${prefix}")
++          done
+           {
+             echo "HOME=${HOME}"
+             echo "CARGO_HOME=${CARGO_HOME}"
+             echo "RUSTUP_HOME=${RUSTUP_HOME}"
+             echo "TMPDIR=${fresh}/tmp"
+             echo "CARGO_BUILD_JOBS=6"
+             echo "CW_RELEASE_HOME=${fresh}"
++            printf 'CARGO_ENCODED_RUSTFLAGS=%s\n' "$(IFS=$'\037'; echo "${flags[*]}")"
+           } >> "${GITHUB_ENV}"
+           echo "${CARGO_HOME}/bin" >> "${GITHUB_PATH}"
+       # No ref: — GITHUB_SHA only. CodeQL treats workflow_call checkout-with-ref
 ```
 
 ---
 
-### Incident Patch 2: `76af39a5` (2026-11-22)
-**Commit Message**: fix(tui): keep the working clock and dialog chrome whole on narrow terminals
+### Incident Patch 2: `2afc9092` (2026-11-23)
+**Commit Message**: test(config,windows): do not require WRITE_OWNER to be denied on every account
 
-Four narrow-terminal defects from the bc58781ba10c acceptance captures
-(CW/artifacts/tui-acceptance-bc58781-20261122).
+owner_with_modify_but_not_full_control_secures_its_private_directory
+asserted that opening the directory with WRITE_OWNER fails after the
+thread drops its privileges. That holds for a normal user (it failed
+this way before the fix and passes after it on a Windows 11 PC), but on
+the GitHub-hosted runner the runneradmin account is still granted
+WRITE_OWNER and the precondition itself panicked (run 45138761359,
+Windows shard 4/4). The test now checks the error code when the open is
+denied and otherwise notes that the fallback was not exercised, then
+requires PrivateDirectory::open and ::inspect to succeed either way.
 
-B-D1 / B-D2 (CW-8264, a working session looks dead). The posture bar's
-shed ladder dropped the turn clock first (#5914 kept the hint and counts
-over the stopwatch), and the right notice was sized against the
-permission chip alone. At 80 columns a failed-connector notice therefore
-took the row from `working Ns`, and at 60 columns `Shift+Tab to change`
-and `Esc to interrupt` did even with no notice. The kit ladder now sheds
-session clock, permission key, hint, counts, and only then the turn
-clock (cap warning and mode still outrank it; the compact preset still
-starts past everything live), and the right notice is clipped against
-permission plus the turn clock. The host budgets the notice the same
-way: while a turn runs it first takes the notice text or a fallback
-that fits whole beside clock and hint (`MCP · 1 failed · /mcp`), and
-otherwise fits it against what the clock alone leaves, so the hint
-stands down before the notice and the notice before the clock. The
-#6084 turn-only rung is gon
+Checks: rustfmt --check; the Windows compile and run are left to hosted
+CI on the wave.
 
-**File**: `CHANGELOG.md` (modified, +5/-0)
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+**File**: `crates/config/src/private_directory.rs` (modified, +5/-3)
 ```diff
-@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -1814,13 +1814,15 @@ mod windows_tests {
+             guard
+         };
  
- ## [Unreleased]
- 
-+### Fixed
-+
-+- **Narrow terminals keep the working clock:** at 80 and 60 columns the status row under the composer keeps `working 3s` / `using tool 12s` while a turn runs. The `Shift+Tab to change` hint, then `Esc to interrupt`, stand down first, and a connector notice shortens (`MCP · 1 failed · /mcp`) instead of taking the clock's place. (CW-8264)
-+- The Resume confirmation no longer draws its border over the composer on a 60x20 terminal, and the Plugins panel footer always keeps `Esc close`, dropping the per-row hints first at 80 columns.
-+
- ## [0.10.3] - 2026-11-21
- 
- Codewhale v0.10.3 brings a unified Plugins surface with Creator mode (`[features] plugin_creator`) and unmodified DeepSeek Harness (`@deepseek-ai/dsh-*`) plugin compatibility, an upgraded Auto-Review guardian with workspace boundaries, soft rules, sub-agent return review, and one-use retry approvals, and a single `Shift+Tab` permission dial defaulting to Accept Edits (`Ask → Accept Edits → Plan → Auto-Review → Full Access`). It moves the ACP server and external-agent sessions (including Qwen Code and GitHub Copilot CLI) onto the official Agent Client Protocol SDK, publishes native signed HarmonyOS ARM64 release assets, adds a verified signed model-and-provider registry channel alongside unified model-ID resolution and managed `/v1/models` pricing, updates design tokens to `5.4.0` with a docked single-line approval strip, folded turn activity, live working-row light sweeps and 13 hex-lattice dot-whale forms, adds `claude-org` billing auth, `show_data` transcript charts, `codewhale sessions migrate`, DeepSeek Chatbot web search and speech tools, receipted self-updates and `codewhale uninstall`, and lands reliability, CJK/Unicode, Windows, and sandbox security fixes.
-```
-
-**File**: `crates/tui/CHANGELOG.md` (modified, +5/-0)
-```diff
-@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ## [Unreleased]
- 
-+### Fixed
-+
-+- **Narrow terminals keep the working clock:** at 80 and 60 columns the status row under the composer keeps `working 3s` / `using tool 12s` while a turn runs. The `Shift+Tab to change` hint, then `Esc to interrupt`, stand down first, and a connector notice shortens (`MCP · 1 failed · /mcp`) instead of taking the clock's place. (CW-8264)
-+- The Resume confirmation no longer draws its border over the composer on a 60x20 terminal, and the Plugins panel footer always keeps `Esc close`, dropping the per-row hints first at 80 columns.
-+
- ## [0.10.3] - 2026-11-21
- 
- Codewhale v0.10.3 brings a unified Plugins surface with Creator mode (`[features] plugin_creator`) and unmodified DeepSeek Harness (`@deepseek-ai/dsh-*`) plugin compatibility, an upgraded Auto-Review guardian with workspace boundaries, soft rules, sub-agent return review, and one-use retry approvals, and a single `Shift+Tab` permission dial defaulting to Accept Edits (`Ask → Accept Edits → Plan → Auto-Review → Full Access`). It moves the ACP server and external-agent sessions (including Qwen Code and GitHub Copilot CLI) onto the official Agent Client Protocol SDK, publishes native signed HarmonyOS ARM64 release assets, adds a verified signed model-and-provider registry channel alongside unified model-ID resolution and managed `/v1/models` pricing, updates design tokens to `5.4.0` with a docked single-line approval strip, folded turn activity, live working-row light sweeps and 13 hex-lattice dot-whale forms, adds `claude-org` billing auth, `show_data` transcript charts, `codewhale sessions migrate`, DeepSeek Chatbot web search and speech tools, receipted self-updates and `codewhale uninstall`, and lands reliability, CJK/Unicode, Windows, and sandbox security fixes.
-```
-
-**File**: `crates/tui/src/tui/goldens/footer_80x24.txt` (modified, +1/-1)
-```diff
-@@ -21,4 +21,4 @@
-                                                                                 
-                                                                                 
-                                                                                 
-- ● ask  Shift+Tab to change   2 agents   worked 41m 12s   Esc to interrupt      
-+ ● ask  Shift+Tab to change   working 1m 15s   2 agents   Esc to interrupt      
-```
-
-**File**: `crates/tui/src/tui/launch_resume_confirm.rs` (modified, +41/-1)
-```diff
-@@ -19,6 +19,9 @@ use crate::tui::views::{ModalKind, ModalView, ViewAction, ViewEvent, centered_mo
- use codewhale_localization::{Locale, MessageId, tr};
- use codewhale_palette as palette;
- 
-+const MIN_HEIGHT: u16 = 7;
-+pub(crate) const MIN_CANVAS_HEIGHT: u16 = MIN_HEIGHT + 2;
-+
- pub struct LaunchResumeConfirmView {
-     session_id: String,
-     title: String,
-@@ -126,7 +129,7 @@ impl ModalView for LaunchResumeConfirmView {
-     }
- 
-     fn occupied_region(&self, area: Rect) -> Rect {
--        centered_modal_area(area, 64, 11, 32, 7)
-+        centered_modal_area(area, 64, 11, 32, MIN_HEIGHT)
-     }
- 
-     fn as_any_mut(&mut self) -> &mut dyn std::any::Any {
-@@ -337,6 +340,43 @@ mod tests {
-         }
-     }
- 
-+    #[test]
-+    fn the_popup_stays_above_the_composer_on_a_short_terminal() {
-+        let area = Rect::new(0, 0, 60, 20);
-+        let composer_top = 14;
-+        let mut stack = crate::tui::views::ViewStack::new();
-+        stack.push(view());
-+        assert_eq!(
-+            stack.top_occupied_region(area).map(|popup| popup.bottom()),
-+            Some(15),
-+            "centered in the whole frame, the popup's border lands on the composer's"
-+        );
-+        stack.set_composer_top(Some(composer_top));
-+        let popup = stack.top_occupied_region(area).expect("a popup is open");
-+        assert!(popup.bottom() <= composer_top, "{popup:?}");
-+        let mut buf = Buffer::empty(area);
-+        stack.render(area, &mut buf);
-+        for y in composer_top..area.height {
-+            let row: String = (0..area.width).map(|x| buf[(x, y)].symbol()).collect();
-+            assert!(row.trim().is_empty(), "row {y} is the composer's: {row:?}");
+-        let denied = fs::OpenOptions::new()
++        match fs::OpenOptions::new()
+             .access_mode(FILE_GENERIC_READ | WRITE_DAC | WRITE_OWNER)
+             .share_mode(FILE_SHARE_READ | FILE_SHARE_WRITE)
+             .custom_flags(FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OPEN_REPARSE_POINT)
+             .open(&state)
+-            .expect_err("Modify must not grant WRITE_OWNER");
+-        assert_eq!(denied.raw_os_error(), Some(5));
++        {
++            Err(denied) => assert_eq!(denied.raw_os_error(), Some(5)),
++            Ok(_) => eprintln!("this account is granted WRITE_OWNER here; fallback not exercised"),
 +        }
-+        let painted: String = (0..composer_top)
-+            .flat_map(|y| (0..area.width).map(move |x| (x, y)))
-+            .map(|at| buf[at].symbol())
-+            .collect();
-+        assert!(
-+            painted.contains("12 msgs") && painted.contains("Esc"),
-+            "{painted}"
-+        );
-+
-+        stack.set_composer_top(Some(MIN_CANVAS_HEIGHT - 1));
-+        assert_eq!(
-+            stack.top_occupied_region(area).map(|popup| popup.bottom()),
-+            Some(15),
-+            "too little room above the composer keeps the popup readable over it"
-+        );
-+    }
-+
-     #[test]
-     fn the_popup_names_the_session_it_is_asking_about() {
-         let confirm = view();
-```
-
-**File**: `crates/tui/src/tui/phase_strip.rs` (modified, +18/-3)
-```diff
-@@ -1146,10 +1146,18 @@ pub(crate) fn tideline_footer_from_app(app: &mut App, width: u16) -> TidelineFoo
-     // The right slot: the live status toast if one is owed, else the compact
-     // MCP or plugin boot chip, else the remote-control state when it is on.
-     // Clause-shed against half the row — the posture facts own the other
--    // half.
-+    // half — and, while a turn runs, against what the turn clock leaves.
-     let notice_budget = (usize::from(width) / 2)
-         .max(8)
-         .min(usize::from(width).saturating_sub(permission_chip.0.width() + 5));
-+    let (turn_clock, session_clock) = working_clock(app, phase, &phase_label);
-+    let beside_clock = turn_clock.as_ref().map(|(clock, _)| {
-+        usize::from(width).saturating_sub(permission_chip.0.width() + clock.width() + 8)
-+    });
-+    let beside_hint = beside_clock.zip(hint.as_ref()).map(|(budget, (hint, _))| {
-+        notice_budget.min(budget.saturating_sub(hint.width() + ITEM_SEPARATOR_WIDTH))
-+    });
-+    let notice_budget = beside_clock.map_or(notice_budget, |budget| notice_budget.min(budget));
-     let right = selected_notice(app.active_status_toast(phase), &phase_label)
-         .map(|(text, fallbacks, ink, urgent)| {
-             (
-@@ -1180,7 +1188,15 @@ pub(crate) fn tideline_footer_from_app(app: &mut App, width: u16) -> TidelineFoo
-                 .map(|chip| (chip.text, Vec::new(), boot_activity_ink(chip.level), false))
-         })
-         .and_then(|(text, fallbacks, ink, urgent)| {
--            fit_notice_candidates(&text, &fallbacks, notice_budget, urgent)
-+            beside_hint
-+                .and_then(|budget| {
-+                    std::iter::once(&text)
-+                        .chain(&fallbacks)
-+                        .map(|candidate| candidate.trim())
-+                        .find(|candidate| !candidate.is_empty() && candidate.width() <= budget)
-+                        .map(str::to_string)
-+                })
-+                .or_else(|| fit_notice_candidates(&text, &fallbacks, notice_budget, urgent))
-                 .map(|fitted| (fitted, ink))
-         })
-         .or_else(|| {
-@@ -1196,7 +1212,6 @@ pub(crate) fn tideline_footer_from_app(app: &mut App, width: u16) -> TidelineFoo
-             }
-         });
  
--    let (turn_clock, session_clock) = working_clock(app, phase, &phase_label);
-     let (counts, count_actions) = live_counts(app, tier);
-     TidelineFooterFacts {
-         permission_chip,
-```
-
-**File**: `crates/tui/src/tui/phase_strip/tideline_tests.rs` (modified, +55/-40)
-```diff
-@@ -172,14 +172,13 @@ fn posture_bar_pins_notice_or_remote_control_right() {
-     assert!(narrow.contains(" ask"), "{narrow}");
- }
- 
--/// Shed ladder, most expendable first: the turn clock, the session clock,
--/// the permission key (a binding reminder, and the widest optional item),
--/// the hint, the counts. The permission chip
--/// never sheds (#5796); the clock is what a glance wants and the hint and
--/// counts are what a keystroke wants, so on a row too narrow for both the
--/// clock goes (#5914).
-+/// Shed ladder, most expendable first: the session clock, the permission
-+/// key (a binding reminder, and the widest optional item), the hint, the
-+/// counts, the turn clock. The permission chip never sheds (#5796), and the
-+/// turn clock is the last live fact to go: a row that drops it for a static
-+/// hint leaves a working session looking dead (CW-8264).
- #[test]
--fn posture_bar_sheds_the_clocks_then_the_hint_and_counts() {
-+fn posture_bar_sheds_static_hints_before_the_turn_clock() {
-     let fixture = working();
-     let narrowest_showing = |needle: &str| -> u16 {
-         (8..=160u16)
-@@ -193,10 +192,10 @@ fn posture_bar_sheds_the_clocks_then_the_hint_and_counts() {
-     let counts = narrowest_showing("2 agents");
-     let permission_key = narrowest_showing("Shift+Tab to change");
-     assert!(
--        turn_clock > session_clock
--            && session_clock > permission_key
-+        session_clock > permission_key
-             && permission_key > hint
--            && hint > counts,
-+            && hint > counts
-+            && counts > turn_clock,
-         "turn_clock@{turn_clock} session_clock@{session_clock} hint@{hint} counts@{counts} permission_key@{permission_key}"
-     );
-     for w in 8..=160u16 {
-@@ -665,43 +664,16 @@ fn a_session_that_has_not_worked_states_no_clock() {
-     );
- }
- 
--/// #6084: when the session half will not paint, the shed ladder must not
--/// drop the turn clock at the turn-only rung — that would leave no clock
--/// at all. Find a width where both-clocks already sheds the turn half while
--/// keeping the session half; with only the turn clock, that width must keep
--/// it (shed at the session-clock rung instead).
--#[test]
--fn absent_session_clock_keeps_turn_past_the_turn_only_rung() {
--    let mut first_turn = working();
--    first_turn.session_clock = None;
--    let both = working();
--    let width = (8..=160u16)
--        .find(|&w| {
--            let text = draw(w, 3, &both.widget(&UI_THEME));
--            text.contains("worked 41m 12s") && !text.contains("working 1m 15s")
--        })
--        .expect("both-clocks fixture must shed turn before session at some width");
--    let text = draw(width, 3, &first_turn.widget(&UI_THEME));
--    assert!(
--        text.contains("working 1m 15s"),
--        "{width}: with no session half, the turn clock must survive the turn-only shed rung (#6084): {text}"
--    );
--}
--
--/// Narrow terminals shed both clock halves before the hint and the counts,
--/// the turn half before the session half, and neither reading is ever
-+/// Narrow terminals shed the session clock, then the hint, then the counts,
-+/// and the turn clock only after all of them; neither reading is ever
- /// painted half-truncated.
- #[test]
--fn narrow_widths_shed_the_clocks_before_the_hint_and_counts() {
-+fn narrow_widths_keep_the_turn_clock_past_the_hint_and_counts() {
-     let fixture = working();
-     for w in 8..=160u16 {
-         let text = draw(w, 3, &fixture.widget(&UI_THEME));
-         let turn = text.contains("working 1m 15s");
-         let session = text.contains("worked 41m 12s");
--        assert!(
--            !turn || session,
--            "{w} kept the turn clock and dropped the session clock: {text}"
--        );
-         assert!(
-             !session || text.contains("Esc to interrupt"),
-             "{w} kept the session clock and dropped the hint: {text}"
-@@ -710,6 +682,10 @@ fn narrow_widths_shed_the_clocks_before_the_hint_and_counts() {
-             !text.contains("Esc to interrupt") || text.contains("2 agents"),
-             "{w} kept the hint and dropped the counts: {text}"
-         );
-+        assert!(
-+            !text.contains("2 agents") || turn,
-+            "{w} kept the counts and dropped the turn clock: {text}"
-+        );
-         // Whole readings or none: a clipped duration is a lie.
-         assert!(
-             !text.contains("working 1m") || turn,
-@@ -722,6 +698,45 @@ fn narrow_widths_shed_the_clocks_before_the_hint_and_counts() {
-     }
- }
- 
-+#[test]
-+fn a_working_turn_keeps_its_clock_on_narrow_rows() {
-+    use crate::tui::app::{StatusToast, StatusToastLevel};
-+    let footer = |width: u16, notice: bool| {
-+        let mut app = session_app();
-+        app.ui_locale = codewhale_localization::Locale::En;
-+        app.approval_mode = codewhale_execpolicy::ApprovalMode::Bypass;
-+        app.is_loading = true;
-+        app.turn_started_at = Some(Instant::now() - Duration::from_secs(3));
-+        if notice {
-+            app.push_status_to
-```
-
-**File**: `crates/tui/src/tui/ui/frame.rs` (modified, +2/-0)
-```diff
-@@ -2123,6 +2123,8 @@ pub(crate) fn render(f: &mut Frame, app: &mut App, _config: &Config) -> Option<(
-     };
-     let cursor_pos = composer_plan.cursor.map(|pos| (pos.x, pos.y));
-     app.viewport.last_composer_area = Some(body_chunks[composer_slot]);
-+    app.view_stack
-+        .set_composer_top(Some(body_chunks[composer_slot].y));
-     app.viewport.last_composer_content = Some(composer_plan.geometry.inner);
-     app.viewport.last_composer_scroll_offset = composer_plan.scroll_offset;
-     app.viewport.last_composer_top_padding = composer_plan.top_padding;
-```
-
-**File**: `crates/tui/src/tui/ui/frame/one_owner_tests.rs` (modified, +20/-29)
-```diff
-@@ -173,12 +173,12 @@ fn composed_frame_paints_each_fact_in_exactly_one_row() {
-             ("permission chip", format!("● {permission}")),
-             ("model", model),
-             ("cost", super::session_cost_label(&app)),
--            ("agent count", "2 agents".to_string()),
-             ("ttft", "ttft 400ms".to_string()),
-         ];
-         facts.push(("context reading", format!("context {pct}%")));
-         facts.push(("output rate", "40 avg tok/s".to_string()));
-         if width >= 120 {
-+            facts.push(("agent count", "2 agents".to_string()));
-             facts.push((
-                 "help hint",
-                 crate::tui::shell_key_routing::info_help_hint(app.ui_locale),
-@@ -225,30 +225,25 @@ fn composed_frame_paints_each_fact_in_exactly_one_row() {
-         );
-         // The bar carries the working clock (#5914) — how long the current
-         // turn has been doing what it is doing, and how long the session has
--        // worked. Both halves shed before the hint and the counts, so a
--        // narrow row keeps the affordances and drops the stopwatch. When
--        // both would paint, the session half needs ~125 columns here (the
--        // running hint also names the agent arrows, `← for agents · ↓ to
--        // manage`) and the turn half ~200; each paints in exactly one row wherever it
--        // paints. The metrics line carries no repository, branch or provider.
-+        // worked. The turn half is the last live fact to shed (CW-8264), so
-+        // it paints at every width here; against this fixture's pinned scope
-+        // notice the counts need 120 columns beside it. The session half
-+        // sheds first and needs ~175 with the running hint, which also names
-+        // the agent arrows (`← for agents · ↓ to manage`). Each paints in
-+        // exactly one row wherever it paints. The metrics line carries no
-+        // repository, branch or provider.
-         // First turn: the turn half names the phase and stays; the session
-         // reading is the identical duration, so it is suppressed rather than
--        // stated twice (#6041). With no session half to paint, the turn
--        // clock sheds at the session rung (#6084) rather than first — but
--        // against this fixture's pinned scope notice, turn+counts+hint is
--        // still just over a 120-column budget, so the hint wins here and
--        // the turn half needs ~160. The shed-order contract itself lives
--        // in tideline_tests.
-+        // stated twice (#6041). The shed-order contract itself lives in
-+        // tideline_tests.
-         let turn_needle = "agents underway 1m 15s";
--        if width >= 160 {
--            assert!(rows[posture].contains(turn_needle), "{}", rows[posture]);
--            assert_eq!(
--                count_rows_containing(&rows, turn_needle),
--                1,
--                "{width}x{height}: {turn_needle:?} paints in exactly one row:\n{}",
--                rows.join("\n")
--            );
--        }
-+        assert!(rows[posture].contains(turn_needle), "{}", rows[posture]);
-+        assert_eq!(
-+            count_rows_containing(&rows, turn_needle),
-+            1,
-+            "{width}x{height}: {turn_needle:?} paints in exactly one row:\n{}",
-+            rows.join("\n")
-+        );
-         assert!(
-             !rows[posture].contains("worked 1m 15s"),
-             "{width}x{height}: the duplicate session reading must not be stated: {}",
-@@ -259,7 +254,7 @@ fn composed_frame_paints_each_fact_in_exactly_one_row() {
-         let mut worked = working_app();
-         worked.cumulative_turn_duration = Duration::from_secs(60);
-         let rows = draw(&mut worked, width, height);
--        if width >= 160 {
-+        if width >= 200 {
-             let worked_needle = "worked 2m 15s";
-             assert!(rows[posture].contains(worked_needle), "{}", rows[posture]);
-             assert_eq!(
-@@ -269,11 +264,7 @@ fn composed_frame_paints_each_fact_in_exactly_one_row() {
-                 rows.join("\n")
-             );
-         }
--        // With both clock halves and the running arrow hints, the turn half
--        // needs more than 160 columns.
--        if width >= 200 {
--            assert!(rows[posture].contains(turn_needle), "{}", rows[posture]);
--        }
-+        assert!(rows[posture].contains(turn_needle), "{}", rows[posture]);
-         assert!(!rows[metrics].contains('⑂'), "{}", rows[metrics]);
-         // No dead key hints anywhere in the frame.
-         for row in &rows {
-@@ -363,7 +354,7 @@ fn context_cap_warns_once_in_the_posture_bar() {
- fn double_tap_window_shows_the_send_now_hint() {
-     let mut app = working_app();
-     app.arm_double_tap_window();
--    let rows = draw(&mut app, 120, 32);
-+    let rows = draw(&mut app, 160, 32);
-     let composer = app.viewport.last_composer_area.unwrap().bottom() as usize;
-     assert!(
-         rows[composer].contains("Enter again to send now · Ctrl+Enter steers"),
+         drop(
+             PrivateDirectory::open(&state)
 ```
 
 ---
 
-### Incident Patch 3: `78675c59` (2026-11-21)
-**Commit Message**: fix(tui): keep a streamed delta in the cell its own kind owns
+### Incident Patch 3: `17896612` (2026-11-24)
+**Commit Message**: fix(tui): a running background shell job no longer keeps the ambient scene drawing (#6728)
 
-A block's kind is decided by its start event alone. When a gateway opens a
-text block in the middle of a thinking stream and then keeps sending
-thinking deltas, block 0 stays marked text: `commit_streaming_display_tick`
-reads `block_is_thinking(0)`, gets false, and writes the reasoning into the
-assistant body. One reasoning sentence is then split across the thinking
-card and the prose that follows it (#7123 with the opposite ordering).
+The underwater ambient scene settles 6 s after the shell goes idle, but
+ambient_busy counted every queued/running/waiting row in the jobs panel,
+including TaskPanelEntryKind::Shell. A backgrounded `sleep 900` therefore
+held the scene awake for the job's whole life, redrawing at the ambient
+cadence long after the turn ended. Only Background (agent) tasks keep it
+busy now, via has_live_durable_tasks; the jobs panel's 1 Hz elapsed tick
+for a visible running shell is unchanged. This revives the intent of the
+superseded boat/issue-6728 branch on top of the IdleClock work.
 
-`StreamingState::set_block_kind` relabels one live block in place; unlike
-`reset` it leaves every other block and both accumulated counters alone.
-`streaming_thinking::resync_block_kind` delivers the pending tail to the
-cell the old kind owned first, then relabels. A relabel away from thinking
-also finalizes the reasoning card and stashes its text, so the spinner stops
-and replay still has the words. Both delta handlers call it before pushing,
-so the normal Anthropic ordering returns after one comparison.
+Measured on Linux x86_64, dev build, tmux 160x45, default theme, DeepSeek
+provider, after allowing a background `sleep 900` (draws counted as
+/dev/tty opens, one per frame via crossterm size()):
+  main, job running:   ~25 draws/s, 15.5% CPU (40 s window)
+  main, job killed:    0 draws/s,   0.43% CPU
+  fix,  job running:   1 draw/s,    1.02% CPU (40 s window)
+Idle composer (0.46%) and approval wait (1.00%) were already quiet on main.
 
-The provider's own content-block index is still ignored: the TUI keeps one
-active block, and a gateway that interleaves two live blocks can still
-misattribute. This fixes the kind, not
+Refs #6728
 
-**File**: `crates/tui-kit/src/streaming/mod.rs` (modified, +62/-9)
+Regression test a_running_background_shell_job_does_not_hold_the_ambient_scene_awak
+
+**File**: `crates/tui/src/tui/ui/event_loop.rs` (modified, +1/-4)
 ```diff
-@@ -15,10 +15,12 @@
- //! What replaced it is not that policy: it takes a measured slice per beat
- //! instead of deciding between two gears.
- //!
--//! Buffering never changes what the model emitted. `accumulated_text` and
--//! `accumulated_thinking` always track the full raw stream, so anything
--//! building API messages or retrying sees the whole receipt regardless of how
--//! much of it is currently visible.
-+//! Buffering never changes what the model emitted: a delta reaches a cell only
-+//! when a commit beat takes it, but the bytes are never dropped. The
-+//! `accumulated_text` / `accumulated_thinking` counters on [`StreamingState`]
-+//! are diagnostic only — nothing in the product reads them — and
-+//! [`StreamingState::reset`] clears them at a block boundary, so they describe
-+//! the current block rather than the whole response.
- //!
- //! # Known limitations
- //!
-@@ -329,9 +331,13 @@ pub struct StreamingState {
-     blocks: Vec<Option<BlockState>>,
-     /// Whether any stream is currently active
-     pub is_active: bool,
--    /// Accumulated text for display
-+    /// Per-kind byte totals for the current block. Diagnostic only: replay
-+    /// reads `App::last_reasoning` and `current_streaming_text`, not these, and
-+    /// `reset` clears them at every block boundary. A relabel leaves the bytes
-+    /// already collected under the old kind, so after one they no longer match
-+    /// the block's current kind.
-     pub accumulated_text: String,
--    /// Accumulated thinking for display
-+    /// See [`StreamingState::accumulated_text`].
-     pub accumulated_thinking: String,
+@@ -5602,10 +5602,7 @@ pub(crate) async fn run_event_loop(
+         // browsing. After a short grace the aquarium stops requesting frames
+         // and the scene is genuinely still until real activity resumes
+         // (owner pain, captains-log #16).
+-        let durable_tasks_active = app
+-            .task_panel
+-            .iter()
+-            .any(|task| matches!(task.status.as_str(), "queued" | "running" | "waiting"));
++        let durable_tasks_active = has_live_durable_tasks(app);
+         let ambient_busy = shell_phase_working
+             || app.turn_started_at.is_some()
+             || has_running_agents
+```
+
+**File**: `crates/tui/src/tui/ui/terminal.rs` (modified, +35/-0)
+```diff
+@@ -862,6 +862,13 @@ pub(crate) struct IdleFacts {
+     pub(crate) pending_engine_op: bool,
  }
  
-@@ -366,9 +372,10 @@ impl StreamingState {
- 
-     /// Push content to a block.
-     ///
--    /// `accumulated_text` / `accumulated_thinking` always track the full raw
--    /// stream so callers building API messages or doing retries see exactly
--    /// what the model emitted, regardless of UI pacing.
-+    /// The bytes land in the display buffer and in the block's own accumulated
-+    /// counter, which follows the routed kind. The counters are diagnostic —
-+    /// replay reads `App::last_reasoning` and `current_streaming_text` — and
-+    /// [`StreamingState::reset`] clears them at every block boundary.
-     pub fn push_content(&mut self, index: usize, content: &str) {
-         if let Some(Some(block)) = self.blocks.get_mut(index) {
-             if block.is_thinking {
-@@ -390,6 +397,27 @@ impl StreamingState {
-         }
-     }
- 
-+    /// Re-label the block at `index` without disturbing anything else.
-+    ///
-+    /// A block's kind is normally decided by its start event, but a gateway
-+    /// can open a text block inside a thinking stream (or the reverse) and
-+    /// keep sending deltas of the first kind. `reset` clears every block and
-+    /// both accumulated counters; a relabel touches one block's routed kind and
-+    /// replaces its pending buffer. The caller must deliver that pending tail
-+    /// to the cell the old kind owned first: it is discarded here.
-+    pub fn set_block_kind(&mut self, index: usize, is_thinking: bool) {
-+        self.ensure_capacity(index);
-+        match self.blocks.get_mut(index) {
-+            Some(Some(block)) => {
-+                block.is_thinking = is_thinking;
-+                block.is_streaming = true;
-+                block.buffer = StreamBuffer::new();
-+                self.is_active = true;
-+            }
-+            _ => self.start_block(index, is_thinking),
-+        }
-+    }
++pub(crate) fn has_live_durable_tasks(app: &App) -> bool {
++    app.task_panel.iter().any(|task| {
++        task.kind == crate::tui::app::TaskPanelEntryKind::Background
++            && matches!(task.status.as_str(), "queued" | "running" | "waiting")
++    })
++}
 +
-     /// Whether the block at `index` carries reasoning text.
-     ///
-     /// Display beats must route a committed delta by the block's own kind.
-@@ -456,6 +484,31 @@ impl StreamingState {
- mod tests {
-     use super::*;
+ /// Whether the UI has nothing to do *right now*: no turn, no live work, no
+ /// animation, no pending redraw, no toast about to expire, no modal ticking.
+ /// Pure on purpose. A state that is not listed here keeps the 48 ms poll, so
+@@ -1012,6 +1019,34 @@ mod idle_poll_tests {
+     const FAST: Duration = Duration::from_millis(UI_IDLE_POLL_MS);
+     const SLOW: Duration = Duration::from_millis(UI_QUIESCENT_POLL_MS);
  
 +    #[test]
-+    fn set_block_kind_reroutes_the_next_delta() {
-+        let mut state = StreamingState::new();
-+        state.start_text(0);
-+        state.push_content(0, "prose ");
-+        assert!(!state.block_is_thinking(0));
++    fn a_running_background_shell_job_does_not_hold_the_ambient_scene_awake() {
++        let mut app = quiet_app();
++        let shell = crate::tui::app::TaskPanelEntry {
++            exit_code: None,
++            id: "shell-live".to_string(),
++            status: "running".to_string(),
++            prompt_summary: "shell: sleep 900".to_string(),
++            duration_ms: Some(60_000),
++            kind: crate::tui::app::TaskPanelEntryKind::Shell,
++            stale: false,
++            elapsed_since_output_ms: None,
++            owner_agent_id: None,
++            owner_agent_name: None,
++            current_tool: None,
++            role: None,
++            files_touched: 0,
++        };
++        app.task_panel.push(shell.clone());
++        assert!(!has_live_durable_tasks(&app));
 +
-+        // The caller delivers the pending tail to the cell the old kind owned
-+        // before relabeling; the relabel installs a fresh buffer and routes the
-+        // next delta to the other kind.
-+        assert_eq!(state.finalize_block_text(0), "prose ");
-+        state.set_block_kind(0, true);
-+        assert!(state.block_is_thinking(0));
-+
-+        state.push_content(0, "reasoning");
-+        assert_eq!(state.commit_text(0, usize::MAX), "reasoning");
-+
-+        // And back again: prose after an interposed thinking block.
-+        assert_eq!(state.finalize_block_text(0), "");
-+        state.set_block_kind(0, false);
-+        assert!(!state.block_is_thinking(0));
-+        state.push_content(0, "tail");
-+        assert_eq!(state.commit_text(0, usize::MAX), "tail");
++        app.task_panel.push(crate::tui::app::TaskPanelEntry {
++            kind: crate::tui::app::TaskPanelEntryKind::Background,
++            ..shell
++        });
++        assert!(has_live_durable_tasks(&app));
 +    }
 +
      #[test]
-     fn assistant_text_streams_before_newline() {
-         let mut state = StreamingState::new();
-```
-
-**File**: `crates/tui/src/tui/streaming_thinking.rs` (modified, +63/-0)
-```diff
-@@ -250,6 +250,69 @@ fn flush_pending_text_tail(app: &mut App) {
-     crate::tui::ui::frame::accrue_streaming_token_estimate(app, &remaining);
- }
- 
-+/// Re-establish the block kind the arriving delta actually carries.
-+///
-+/// A block's kind is set by its start event alone, so a gateway that opens a
-+/// text block inside a thinking stream leaves block 0 marked text. The
-+/// reasoning that follows would then be committed into the prose body, and one
-+/// sentence would be split across the thinking card and the answer that
-+/// follows it — the #7123 split with the opposite ordering. The pending tail
-+/// goes to the cell its old kind owned first, then the block takes the new
-+/// kind.
-+///
-+/// A flip closes the reasoning card and starts a fresh one on the way back, so
-+/// a gateway that flips twice renders one passage as two cards, the second
-+/// without a duration stamp. That is the honest reading of a stream that
-+/// really did interleave, not a display defect.
-+///
-+/// Returns whether the kind changed.
-+pub(super) fn resync_block_kind(app: &mut App, is_thinking: bool) -> bool {
-+    if app.streaming_state.block_is_thinking(0) == is_thinking {
-+        return false;
-+    }
-+    if is_thinking {
-+        flush_pending_text_tail(app);
-+    } else if !app.translation_enabled && app.streaming_thinking_active_entry.is_some() {
-+        // The prose that interrupted the reasoning closes its card. Leaving
-+        // the entry streaming would keep the spinner turning and stamp a
-+        // duration that grows until the next finalize; stashing the buffer
-+        // matches what `MessageStarted` does, so replay still has the text.
-+        //
-+        // Skipped under translation so this branch does not clear the entry or
-+        // the buffer before `ThinkingComplete` reads them. It cannot make the
-+        // card fill in: `MessageDelta` calls `flush_active_cell` immediately
-+        // after the resync, which takes the entry regardless. What the guard
-+        // buys is that the reasoning text stays in `reasoning_buffer` for
-+        // replay, and that fixing the index is left to `ThinkingComplete`.
-+        finalize_current(app);
-+        stash_reasoning_buffer_into_last_reasoning(app);
-+    } else {
-+        drain_thinking_tail_into_entry(app);
-+    }
-+    app.streaming_state.set_block_kind(0, is_thinking);
-+    true
-+}
-+
-+/// Deliver a live reasoning block's uncommitted tail into its own card.
-+///
-+/// The mirror of `flush_pending_text_tail`. Only reached when the entry was
-+/// already finalized, so there is usually nothing buffered; when there is, the
-+/// bytes also live in `reasoning_buffer` and `set_block_kind` discards this
-+/// copy on the next line.
-+fn drain_thinking_tail_into_entry(app: &mut App) {
-+    if app.translation_enabled
-+        || !app.streaming_state.block_is_thinking(0)
-+        || app.streaming_state.pending_len(0) == 0
-+    {
-+        return;
-+    }
-+    let entry_idx = ensure_active_entry(app);
-+    let tail = app.streaming_state.finalize_block_text(0);
-+    if !tail.is_empty() {
-+        append(app, entry_idx, &tail);
-+    }
-+}
-+
- /// Finalize the currently-streaming thinking entry: drain the pending
- /// state buffer, compute elapsed duration, stop the spinner.
- pub(super) fn finalize_current(app: &mut App) -> bool {
-```
-
-**File**: `crates/tui/src/tui/ui/event_loop.rs` (modified, +8/-0)
-```diff
-@@ -2940,6 +2940,10 @@ pub(crate) async fn run_event_loop(
-                         if sanitized.is_empty() {
-                             continue;
-                         }
-+                        // A gateway can open a text block inside a
-+                        // thinking stream; a live reasoning tail must reach
-+                        // its card before this block is relabeled text.
-+                        streaming_thinking::resync_block_kind(app, false);
-                         // First delta of a fresh stream has no streaming
-                         // cell yet; flush active so the tool group settles
-                         // before the assistant prose appears below it.
-@@ -3089,6 +3093,10 @@ pub(crate) async fn run_event_loop(
-                             app.reasoning_header = extract_reasoning_header(&app.reasoning_buffer);
-                         }
- 
-+                        // The kind comes from the start event alone, so a
-+                        // gateway that opened a text block mid-reasoning
-+                        // leaves block 0 marked text (#7123).
-+                        streaming_thinking::resync_block_kind(app, true);
-                         streaming_thinking::ensure_active_entry(app);
-                         app.streaming_state.push_content(0, &sanitized);
-                         stream_display_clock.note_delta(Instant::now());
-```
-
-**File**: `crates/tui/src/tui/ui/tests.rs` (modified, +232/-0)
-```diff
-@@ -37633,3 +37633,235 @@ async fn approval_prompt_docks_one_row_and_emits_settled_receipt() {
-     assert!(!rendered_line.contains('\u{202e}'), "{rendered_line:?}");
-     assert!(rendered_line.contains("RLO"), "{rendered_line:?}");
- }
-+
-+/// A gateway can open a text block inside a thinking stream. The reasoning
-+/// that arrives afterwards must return to a thinking card, not continue
-+/// inside the prose body (#7123, opposite ordering).
-+#[test]
-+fn reasoning_after_an_interposed_text_block_returns_to_a_thinking_card() {
-+    use crate::tui::ui::frame::{
-+        append_streaming_text, commit_streaming_display_tick,
-+        ensure_streaming_assistant_history_cell,
-+    };
-+    use codewhale_tui_kit::streaming::StreamDisplayClock;
-+
-+    let mut app = create_test_app();
-+    let mut clock = StreamDisplayClock::new(Duration::from_millis(33));
-+
-+    // 1. The first half of the sentence reaches its card the way a delta does:
-+    //    buffered, then taken by a display beat.
-+    app.streaming_state.reset();
-+    app.streaming_state.start_thinking(0);
-+    let first_entry = crate::tui::streaming_thinking::ensure_active_entry(&mut app);
-+    app.streaming_state.push_content(0, "first half. ");
-+    let now = Instant::now();
-+    clock.note_delta(now);
-+    let _ = commit_streaming_display_tick(&mut app, &mut clock, now + Duration::from_millis(50));
-+
-+    // 2. The gateway opens a text block mid-reasoning: MessageStarted
-+    //    finalizes the live entry and starts a text block.
-+    crate::tui::streaming_thinking::finalize_current(&mut app);
-+    app.streaming_state.reset();
-+    app.streaming_state.start_text(0);
-+
-+    // 3. The rest of the reasoning arrives. Without the resync it would be
-+    //    committed into the prose body, because block 0 is marked text.
-+    assert!(
-+        crate::tui::streaming_thinking::resync_block_kind(&mut app, true),
-+        "the block kind must be taken back"
-+    );
-+    let second_entry = crate::tui::streaming_thinking::ensure_active_entry(&mut app);
-+    app.streaming_state.push_content(0, "second half.");
-+    let now = Instant::now();
-+    clock.note_delta(now);
-+    let _ = commit_streaming_display_tick(&mut app, &mut clock, now + Duration::from_millis(50));
-+
-+    let first = match app
-+        .active_cell
-+        .as_ref()
-+        .and_then(|active| active.entries().get(first_entry))
-+    {
-+        Some(HistoryCell::Thinking { content, .. }) => content.clone(),
-+        other => panic!("expected a thinking entry at {first_entry}: {other:?}"),
-+    };
-+    let second = match app
-+        .active_cell
-+        .as_ref()
-+        .and_then(|active| active.entries().get(second_entry))
-+    {
-+        Some(HistoryCell::Thinking { content, .. }) => content.clone(),
-+        other => panic!("expected a thinking entry at {second_entry}: {other:?}"),
-+    };
-+    assert_eq!(first, "first half. ", "the first half keeps its card");
-+    assert_eq!(
-+        second, "second half.",
-+        "reasoning after an interposed text block must stay in a thinking cell"
-+    );
-+
-+    // 4. Commit the active cell to history and verify the split did not happen
-+    //    there: a real assistant cell exists, and it holds no reasoning.
-+    app.flush_active_cell();
-+    let message_index = ensure_streaming_assistant_history_cell(&mut app);
-+    append_streaming_text(&mut app, message_index, "answer");
-+    assert!(
-+        app.history.iter().any(|cell| {
-+            matches!(cell, HistoryCell::Assistant { content, .. } if content.contains("answer"))
-+        }),
-+        "the assistant cell must hold the answer"
-+    );
-+    let prose_has_reasoning = app.history.iter().any(|cell| {
-+        matches!(cell, HistoryCell::Assistant { content, .. } if content.contains("second half."))
-+    });
-+    assert!(
-+        !prose_has_reasoning,
-+        "the assistant cell must not absorb reasoning text"
-+    );
-+}
-+
-+/// A kind change inside one live block closes the reasoning card: the spinner
-+/// must not keep turning, and the reasoning must survive for replay.
-+#[test]
-+fn a_relabel_to_text_finishes_the_reasoning_card() {
-+    let mut app = create_test_app();
-+
-+    // `ThinkingDelta` records the text in `reasoning_buffer` and then buffers
-+    // it for display; both are needed for `last_reasoning` to be populated.
-+    app.streaming_state.reset();
-+    app.streaming_state.start_thinking(0);
-+    let entry = crate::tui::streaming_thinking::ensure_active_entry(&mut app);
-+    app.reasoning_buffer.push_str("reasoning");
-+    app.streaming_state.push_content(0, "reasoning");
-+
-+    // Prose arrives with no MessageStarted between: a gateway switching kinds
-+    // inside one block.
-+    assert!(
-+        crate::tui::streaming_thinking::resync_block_kind(&mut app, false),
-+        "the block kind must be taken back"
-+    );
-+
-+    assert_eq!(
-+        app.streaming_thinking_active_entry, None,
-+        "the reasoning entry must be finalized"
-+    );
-+    let streaming = match app
-+       
+     fn a_settled_ui_relaxes_only_after_the_quiet_period() {
+         let app = quiet_app();
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7456** (2026-11-22): chore(web): record v0.10.3 as the published release (@Hmbown)
-- **PR #7452** (2026-11-22): fix(tui): keep a streamed delta in the cell its own kind owns (@SparkofSpike)
-- **PR #7450** (2026-11-21): feat: add LLMTR as an OpenAI-compatible provider (@knowhycodata)
-- **PR #7449** (2026-11-21): fix(engine): compact diagnostic late-usage receipts at the ledger bound (#6842) (@donglovejava)
-- **PR #7448** (2026-11-21): Show request transmission on provider errors (@deosiree)
-- **PR #7444** (2026-11-21): test(tui): guard all four paste-burst chunk-flush sites (@donglovejava)
+- **PR #7518** (2026-11-24): fix(tui): a running background shell job no longer keeps the ambient scene drawing (#6728) (@Hmbown)
+- **PR #7515** (2026-11-24): fix(tui): #6561 component pass — copy masks, osascript path, modal click targets (@Hmbown)
+- **PR #7509** (2026-11-24): chore(web): record v0.10.4 as the published release (@Hmbown)
+- **PR #7508** (closed): build(engine): raise the engine crate recursion limit to 512 (@Hmbown)
+- **PR #7504** (2026-11-24): fix(acp): enforce Ask through the agent's mode, harden discovery, keep agent error detail (@Hmbown)
+- **PR #7498** (2026-11-24): fix(r21): bound VS Code buffers, gate workflow results, harden bridges (@Hmbown)
 
 ---
 
@@ -3003,31 +2240,36 @@ misattribute. This fixes the kind, not
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. stream): retry a request once when no response headers arrive
+## X. release: keep build-machine paths out of self-hosted macOS shipping binaries
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/scripts/release-workflows.test.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7b246b2d`: stream): retry a request once when no response headers arrive. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `61e073db`: release: keep build-machine paths out of self-hosted macOS shipping binaries. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/release-workflows.test.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **A model request that gets no response is retried once:** when a provider sends no response headers within `stream.open_timeout_secs` (180 seconds by default), Codewhale sends the request again instead of ending the turn, and the transcript says so (`Retry attempt: stream-open-timeout 1/1; provider sent no response headers in 180s; sending the request again`). If the retry also times out, the turn fails with the same error, which now says a retry was already attempted. `stream.open_retries` sets the count (default `1`, `0` turns it off, at most `3`). The provider may have processed and billed the first request, so its usage stays recorded as unknown. Agents a session starts follow the configured `[stream]` retry counts too. In the turn log, `bound_secs` for "waiting for the model's first response" is now the timeout that request is under, and the watchdog ceiling is logged separately as `stall_after_secs`. (CW-8323)
+const freshReleaseHome = namedStep(releaseBuild, "Fresh rustup, Cargo home and temp for a self-hosted release build");
+assert.match(freshReleaseHome, /rm -rf "\$\{fresh\}"/);
+for (const remap of [/"\$\{CARGO_HOME\}=\/cargo"/, /"\$\(cd "\$\{fresh\}" && pwd -P\)\/\.cargo=\/cargo"/, /"\$\{GITHUB_WORKSPACE\}=\/codewhale"/, /"\$\(cd "\$\{GITHUB_WORKSPACE\}" && pwd -P\)=\/codewhale"/]) {
+  assert.match(freshReleaseHome, remap, "self-hosted shipping binaries must not embed the build machine's home or workspace paths");
+}
+assert.match(freshReleaseHome, /CARGO_ENCODED_RUSTFLAGS=/);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+assert.match(namedStep(releaseBuild, "Fresh rustup, Cargo home and temp for a self-hosted release build"), /rm -rf "\$\{fresh\}"/);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7b246b2d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `61e073db` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

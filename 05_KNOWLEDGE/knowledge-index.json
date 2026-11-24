@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T04:37:08.146Z",
+  "last_updated": "2026-11-24T04:45:24.508Z",
   "total_verified_learnings": 9089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24429,
+  "total_items": 24436,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112821,10 +112821,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "ae6a5b06",
-      "content_hash": "70f2be15ec963dabccfa6f4666e64fc4ff6ace25eb27ed0185593840598f7f1e",
+      "source_version": "2325502f",
+      "content_hash": "a31298dbc04ad23887f510729c710bf87f08788fbc786945b6193a888cac9073",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T00:07:25.589Z"
+      "persisted_at": "2026-11-24T04:45:19.274Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos",
@@ -112833,10 +112833,10 @@
       "relative_path": "08_VERIFICATION/aleo-labs-protocol-snarkos-verification-protocol-empirical-defect-shield-for-ale.md",
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "ae6a5b06",
-      "content_hash": "0c44127663ac63fd8bf6e132f0def2db9b314a6cf62a2e0d54642d3b382f812e",
+      "source_version": "2325502f",
+      "content_hash": "731a30d9ef897b8dccc59cf5ab88c582efcd9d0f840521ffb1eace287115a238",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T00:07:25.772Z"
+      "persisted_at": "2026-11-24T04:45:19.435Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
@@ -215986,8 +215986,8 @@
       "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
       "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "ae6a5b06",
-      "content_hash": "c9da2ae1faa0e3e43438af0c4438143027d9cc533b418f5a14e331dd33d9506e",
+      "source_version": "2325502f",
+      "content_hash": "e33d75b68a368ccc3c2f9ca8e2c4c76d441ee52c2a5ce6d4b0ceee18b810e3bb",
       "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
@@ -216100,6 +216100,11 @@
           "number": 10129,
           "title": "Empirical Invariant Guard in lib.rs",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 10202,
+          "title": "Explain the capped tip state at the node height, and cover the quiet paths",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -216107,7 +216112,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T00:07:24.945Z",
+      "verified_at": "2026-11-24T04:45:18.695Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -232172,13 +232177,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "codewhale-hq-codewhale",
+      "slug": "hmbown-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/codewhale-hq/Codewhale",
-      "source_version": "48669ad1",
-      "content_hash": "ae502dd99e944324ef5a5a68c391b9828e510e31a138918a481ed4133d04a163",
-      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "source_url": "https://github.com/Hmbown/Codewhale",
+      "source_version": "f7634e86",
+      "content_hash": "4a356a2d400a771e3ef29690a44a06fffb4ac6762d13ad61ae38e25bf93d3c26",
+      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": 8492,
@@ -232249,6 +232254,11 @@
           "number": 10136,
           "title": "a Harness package.json inside a native plugin root is part of that bun",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10200,
+          "title": "keep build-machine paths out of self-hosted macOS shipping binaries",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -232256,7 +232266,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T22:42:49.616Z",
+      "verified_at": "2026-11-24T04:45:10.305Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -232295,37 +232305,37 @@
       "item_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-codewhale-hq-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hmbown-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-invariant.md",
       "title": "Architecture Intelligence: codewhale-hq/Codewhale Core Invariants",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "48669ad1",
-      "content_hash": "1766f34983e0c2da4eb49bb12c45af06fee219272242c947f2e44aea2ea3fffa",
+      "source_version": "f7634e86",
+      "content_hash": "b534d49e96dab207ad6bbf2b990e9bf1c0d871b839e208ce16a7c9dc7d999cff",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T22:42:50.441Z"
+      "persisted_at": "2026-11-24T04:45:10.925Z"
     },
     "agent_contract-agent-contract-codewhale-hq-codewhale-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-codewhale-hq-codewhale-autonomous-specialist-persona",
       "artifact_type": "agent_contract",
       "target_folder": "02_AGENT_INTELLIGENCE",
-      "relative_path": "02_AGENT_INTELLIGENCE/codewhale-hq-codewhale-agent-contract-codewhale-hq-codewhale-autonomous-speciali.md",
+      "relative_path": "02_AGENT_INTELLIGENCE/hmbown-codewhale-agent-contract-codewhale-hq-codewhale-autonomous-specialist-per.md",
       "title": "Agent Contract: codewhale-hq/Codewhale Autonomous Specialist Persona",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "48669ad1",
-      "content_hash": "45600976ba3eb4fd057127a73315c1006c1d9d319659dc4ce2f5406f4e95fc5c",
+      "source_version": "f7634e86",
+      "content_hash": "132a49285cf6abb741dfce3e638a225d753cb43277287cbba2dbbe5075fea42a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T22:42:50.680Z"
+      "persisted_at": "2026-11-24T04:45:11.096Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/codewhale-hq-codewhale-verification-protocol-empirical-defect-shield-for-codewha.md",
+      "relative_path": "08_VERIFICATION/hmbown-codewhale-verification-protocol-empirical-defect-shield-for-codewhale-hq-.md",
       "title": "Verification Protocol: Empirical Defect Shield for codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "48669ad1",
-      "content_hash": "908876e1aecb7eae219e343741b222b83801bc3fd15fa1a5ce186e55a94ef977",
+      "source_version": "f7634e86",
+      "content_hash": "499ba0445d226fd3b004d12d74b6c9eae9af8e573919b7c310b7f687018ae3ae",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T22:42:50.871Z"
+      "persisted_at": "2026-11-24T04:45:11.249Z"
     },
     "candidate_directive-extension-host-fill-the-dsh-broker-llm-arm-on-the-engine-s-own-auxiliary-model": {
       "item_id": "candidate_directive-extension-host-fill-the-dsh-broker-llm-arm-on-the-engine-s-own-auxiliary-model",
@@ -240800,9 +240810,9 @@
       "title": "Architecture Intelligence: hmbown-codewhale-learnings Core Invariants",
       "repository": "hmbown-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "c69423a2be6b3dbce1a567d750da38bd3b36883a7be179748408ba9cea288396",
+      "content_hash": "be57c52588a3e324fa7e0e0e0b1103dd5b6831f0bc6a85ed7f78541c3fc16d96",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T21:13:21.968Z"
+      "persisted_at": "2026-11-24T04:45:22.658Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-hmbown-codewhale-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-hmbown-codewhale-learnings",
@@ -240824,9 +240834,9 @@
       "title": "Agent Contract: hmbown-codewhale-learnings Autonomous Specialist Persona",
       "repository": "hmbown-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "005de00f78610c789780d4b941b9cebf5508e71d1c4e76ecf8ff58de9e5e1b38",
+      "content_hash": "e206a526288c2be9b3226eba4b509c5a9cb2432cdec04143e5afc942b6103737",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T21:13:22.193Z"
+      "persisted_at": "2026-11-24T04:45:22.818Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-hmbown-codewhale-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hmbown-codewhale-learnings",
@@ -240836,9 +240846,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for hmbown-codewhale-learnings",
       "repository": "hmbown-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "bbae5d6303d925002cd37f8a2a59b0c793670647be20d58947ceb6073d1305da",
+      "content_hash": "cc07d64aa7183b5361f376f7606a3ce46b96816bf271aabd5451e88de1651984",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T21:13:22.383Z"
+      "persisted_at": "2026-11-24T04:45:22.951Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-speridlabs-iris-3b-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-speridlabs-iris-3b-learnings-core-invariants",
@@ -257400,9 +257410,9 @@
       "title": "Architecture Intelligence: aleo-labs-protocol-snarkos-learnings Core Invariants",
       "repository": "aleo-labs-protocol-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "317e050899d255eb4660d7effaa2914040308d1ddd71440a32f7fc79530db4c9",
+      "content_hash": "ce8fdc96cfba90459b6c3cb78b946bc08961448e7d9a147e550f5867d5c1c211",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T00:08:01.813Z"
+      "persisted_at": "2026-11-24T04:45:24.354Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos-lea": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos-lea",
@@ -257412,9 +257422,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol-snarkos-learnings",
       "repository": "aleo-labs-protocol-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "473857cbd94ce5cbd054e64b48253c48ee8103ec717a37fa84b202cfd369e884",
+      "content_hash": "fa50aef83b679396de441bc7e54e6f3f8dcb5d32ff68ca3c6a4e78dd371da2d9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T00:08:02.025Z"
+      "persisted_at": "2026-11-24T04:45:24.508Z"
     },
     "candidate_directive-keep-what-a-step-installs-for-the-next-one-and-give-jobs-the-runner-s-rust-and": {
       "item_id": "candidate_directive-keep-what-a-step-installs-for-the-next-one-and-give-jobs-the-runner-s-rust-and",
@@ -261181,8 +261191,8 @@
       "slug": "yazinsai-openoats",
       "platform": "github",
       "source_url": "https://github.com/yazinsai/OpenOats",
-      "source_version": "2d6e6ce5",
-      "content_hash": "15cc519a3d8814afba7b1b4b78a55fb5d1c2e25f303cd9a16664aedb9450ed10",
+      "source_version": "8e84f291",
+      "content_hash": "cc308f542fe80639414308f371373575d4bc83d3bb27d0bdd2d2ef25f4997bf9",
       "dossier_path": "07_PROJECT_LEARNING/yazinsai-openoats-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yazinsai-openoats-learnings.md",
       "promoted_rules": [
@@ -261205,6 +261215,11 @@
           "number": 9757,
           "title": "Presigned Host Boundary Validation for Third-Party Ingestion",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10201,
+          "title": "Name Meetings after their calendar event, optionally: matched at Stop over the w",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -261212,7 +261227,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T08:24:47.091Z",
+      "verified_at": "2026-11-24T04:45:13.867Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -261266,10 +261281,10 @@
       "relative_path": "08_VERIFICATION/yazinsai-openoats-verification-protocol-empirical-defect-shield-for-yazinsai-ope.md",
       "title": "Verification Protocol: Empirical Defect Shield for yazinsai/OpenOats",
       "repository": "yazinsai/OpenOats",
-      "source_version": "2d6e6ce5",
-      "content_hash": "034d150da4ad6e432ae34dcdc44e0a29cad33da80b8aa0e03c874b4637138be7",
+      "source_version": "8e84f291",
+      "content_hash": "562fca52c668258ea63881cd0eb13b2fa9e913c2ee76167d3837c0c91c8e2fb3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T08:24:48.109Z"
+      "persisted_at": "2026-11-24T04:45:14.589Z"
     },
     "rule-8765": {
       "learning_id": "rule-8765",
@@ -261329,9 +261344,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for yazinsai-openoats-learnings",
       "repository": "yazinsai-openoats-learnings",
       "source_version": "HEAD",
-      "content_hash": "044c63e2f2fd8cbf9c4d2cc3c29f98c3076b0c398dd10993486cb61314c03278",
+      "content_hash": "89933af3385ff093431ea1a38f8200a805318c6d3539a51fb4440280502f88ab",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T08:25:42.346Z"
+      "persisted_at": "2026-11-24T04:45:23.757Z"
     },
     "rule-8766": {
       "learning_id": "rule-8766",
@@ -314771,10 +314786,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-yazinsai-openoats-technical-construction-intelligence-yazinsai-openoats-core-inv.md",
       "title": "Technical Construction Intelligence: yazinsai/OpenOats Core Invariants",
       "repository": "yazinsai/OpenOats",
-      "source_version": "2d6e6ce5",
-      "content_hash": "2294786587fbca432bafa27959e522b0fa8b0c442e20863ad284539f6074b555",
+      "source_version": "8e84f291",
+      "content_hash": "3556cb15cd4124e83a25994c8c4bac1a8b8c57bb680262acb200b75084089163",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T08:24:47.957Z"
+      "persisted_at": "2026-11-24T04:45:14.439Z"
     },
     "rule-9758": {
       "learning_id": "rule-9758",
@@ -314994,9 +315009,9 @@
       "title": "Technical Construction Intelligence: yazinsai-openoats-learnings Core Invariants",
       "repository": "yazinsai-openoats-learnings",
       "source_version": "HEAD",
-      "content_hash": "4b7e65716034153eba176894931dcb53c54f4b6fd2d3fd3dc53faab9a8538da4",
+      "content_hash": "43f13fc31fca06287448e7d4ce9e2453abd5c700f9b378cd47567f37f2c5b075",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T08:25:42.177Z"
+      "persisted_at": "2026-11-24T04:45:23.601Z"
     },
     "rule-9761": {
       "learning_id": "rule-9761",
@@ -333238,6 +333253,96 @@
       "content_hash": "b0a9d5e24f2184aa023a600627c69df937bbb8d899198e317152074b439adf9f",
       "domain_letter": "G",
       "persisted_at": "2026-11-24T04:37:06.055Z"
+    },
+    "rule-10200": {
+      "learning_id": "rule-10200",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10200,
+      "title": "keep build-machine paths out of self-hosted macOS shipping binaries",
+      "source_url": "https://github.com/Hmbown/Codewhale",
+      "source_version": "f7634e86",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T04:45:10.305Z"
+    },
+    "candidate_directive-keep-build-machine-paths-out-of-self-hosted-macos-shipping-binaries": {
+      "item_id": "candidate_directive-keep-build-machine-paths-out-of-self-hosted-macos-shipping-binaries",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-O2QM-keep-build-machine-paths-out-of-self-hosted-macos-shipping-binaries.md",
+      "title": "keep build-machine paths out of self-hosted macOS shipping binaries",
+      "repository": "codewhale-hq/Codewhale",
+      "source_version": "f7634e86",
+      "content_hash": "7371786dde3c875140e162a948d850c1e0a4427032fc3412660d66d787d6cb9e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T04:45:10.754Z"
+    },
+    "rule-10201": {
+      "learning_id": "rule-10201",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10201,
+      "title": "Name Meetings after their calendar event, optionally: matched at Stop over the w",
+      "source_url": "https://github.com/yazinsai/OpenOats",
+      "source_version": "8e84f291",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T04:45:13.867Z"
+    },
+    "candidate_directive-name-meetings-after-their-calendar-event-optionally-matched-at-stop-over-the-w": {
+      "item_id": "candidate_directive-name-meetings-after-their-calendar-event-optionally-matched-at-stop-over-the-w",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-OCJ5-name-meetings-after-their-calendar-event-optionally-matched-at-stop-over-the-w.md",
+      "title": "Name Meetings after their calendar event, optionally: matched at Stop over the w",
+      "repository": "yazinsai-openoats-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5c6c1d45a1a038e12d4e2c5bddc41d3cd30f5ad906ce1dc93a8f9451f677bb2c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T04:45:23.444Z"
+    },
+    "rule-10202": {
+      "learning_id": "rule-10202",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10202,
+      "title": "Explain the capped tip state at the node height, and cover the quiet paths",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "2325502f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T04:45:18.695Z"
+    },
+    "candidate_directive-explain-the-capped-tip-state-at-the-node-height-and-cover-the-quiet-paths": {
+      "item_id": "candidate_directive-explain-the-capped-tip-state-at-the-node-height-and-cover-the-quiet-paths",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-OD45-explain-the-capped-tip-state-at-the-node-height-and-cover-the-quiet-paths.md",
+      "title": "Explain the capped tip state at the node height, and cover the quiet paths",
+      "repository": "aleo-labs-protocol-snarkos-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8ab5710ba3f036a1528e2398c7db793e229e640f0abcefe7923a684814918aaf",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T04:45:24.200Z"
+    },
+    "candidate_directive-release-keep-build-machine-paths-out-of-self-hosted-macos-shipping-binaries": {
+      "item_id": "candidate_directive-release-keep-build-machine-paths-out-of-self-hosted-macos-shipping-binaries",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-OBSP-release-keep-build-machine-paths-out-of-self-hosted-macos-shipping-binaries.md",
+      "title": "release: keep build-machine paths out of self-hosted macOS shipping binaries",
+      "repository": "hmbown-codewhale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8465f4d63786f8c97d247a9fe0bdf93826c853a538bb5bec09dd22fac8036520",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T04:45:22.493Z"
     }
   },
   "ai-builder-brain": {

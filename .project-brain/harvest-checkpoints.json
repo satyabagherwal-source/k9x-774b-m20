@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T04:37:01.861Z",
+  "last_updated": "2026-11-24T04:45:18.900Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "c9da2ae1faa0e3e43438af0c4438143027d9cc533b418f5a14e331dd33d9506e",
-      "verified_at": "2026-11-24T00:07:25.166Z",
+      "content_hash": "e33d75b68a368ccc3c2f9ca8e2c4c76d441ee52c2a5ce6d4b0ceee18b810e3bb",
+      "verified_at": "2026-11-24T04:45:18.899Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T00:07:25.166Z"
+      "last_updated": "2026-11-24T04:45:18.899Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -4041,14 +4041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-codewhale-hq-codewhale",
-      "content_hash": "ae502dd99e944324ef5a5a68c391b9828e510e31a138918a481ed4133d04a163",
-      "verified_at": "2026-11-23T22:42:49.903Z",
+      "content_hash": "4a356a2d400a771e3ef29690a44a06fffb4ac6762d13ad61ae38e25bf93d3c26",
+      "verified_at": "2026-11-24T04:45:10.534Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T22:42:49.903Z"
+      "last_updated": "2026-11-24T04:45:10.534Z"
     },
     "zulip/zulip": {
       "repository": "zulip/zulip",
@@ -19176,14 +19176,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yazinsai-openoats",
-      "content_hash": "15cc519a3d8814afba7b1b4b78a55fb5d1c2e25f303cd9a16664aedb9450ed10",
-      "verified_at": "2026-11-21T08:24:47.303Z",
+      "content_hash": "cc308f542fe80639414308f371373575d4bc83d3bb27d0bdd2d2ef25f4997bf9",
+      "verified_at": "2026-11-24T04:45:14.081Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T08:24:47.303Z"
+      "last_updated": "2026-11-24T04:45:14.081Z"
     },
     "mdiri-ai/SoduWork": {
       "repository": "mdiri-ai/SoduWork",
