@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T16:19:58.129Z",
-    "lastVerified": "2026-11-24T16:19:58.129Z",
+    "lastChecked": "2026-11-24T16:28:25.360Z",
+    "lastVerified": "2026-11-24T16:28:25.360Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -182,12 +182,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T15:53:46.643Z",
-    "lastVerified": "2026-11-24T15:53:46.643Z",
+    "lastChecked": "2026-11-24T16:28:25.352Z",
+    "lastVerified": "2026-11-24T16:28:25.352Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -196,7 +196,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "dbec78ae"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -548,8 +549,8 @@
     "officialUrl": "https://github.com/nolabs-ai/nono",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T12:27:25.179Z",
-    "lastVerified": "2026-11-24T12:27:25.179Z",
+    "lastChecked": "2026-11-24T16:28:20.316Z",
+    "lastVerified": "2026-11-24T16:28:20.316Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nolabs-ai-nono",
@@ -1730,9 +1731,9 @@
   "kubesphere-kubesphere": {
     "name": "kubesphere",
     "officialUrl": "https://github.com/kubesphere/kubesphere",
-    "lastChecked": "2026-11-23T20:56:11.311Z",
+    "lastChecked": "2026-11-24T16:28:17.814Z",
     "revisionIdentifier": "04a29b5c",
-    "lastVerified": "2026-11-23T20:56:11.311Z"
+    "lastVerified": "2026-11-24T16:28:17.814Z"
   },
   "zama-ai-tfhe-rs": {
     "name": "zama-ai/tfhe-rs",
@@ -4508,9 +4509,9 @@
   "ptomasroos-react-native-scrollable-tab-view": {
     "name": "react-native-scrollable-tab-view",
     "officialUrl": "https://github.com/ptomasroos/react-native-scrollable-tab-view",
-    "lastChecked": "2026-11-22T01:07:28.363Z",
+    "lastChecked": "2026-11-24T16:28:15.431Z",
     "revisionIdentifier": "583a66f7",
-    "lastVerified": "2026-11-22T01:07:28.363Z"
+    "lastVerified": "2026-11-24T16:28:15.431Z"
   },
   "zarf-dev-zarf": {
     "name": "zarf-dev/zarf",
@@ -5391,9 +5392,9 @@
   "salvo-rs-salvo": {
     "name": "salvo",
     "officialUrl": "https://github.com/salvo-rs/salvo",
-    "lastChecked": "2026-11-23T15:20:42.181Z",
+    "lastChecked": "2026-11-24T16:28:10.393Z",
     "revisionIdentifier": "6e2ee81a",
-    "lastVerified": "2026-11-23T15:20:42.181Z"
+    "lastVerified": "2026-11-24T16:28:10.393Z"
   },
   "hf-aleph-alpha-kolibri-1": {
     "name": "Aleph-Alpha/Kolibri-1",
@@ -6717,9 +6718,9 @@
   "activeloopai-deeplake": {
     "name": "deeplake",
     "officialUrl": "https://github.com/activeloopai/deeplake",
-    "lastChecked": "2026-11-23T19:59:37.824Z",
+    "lastChecked": "2026-11-24T16:28:23.090Z",
     "revisionIdentifier": "f432041f",
-    "lastVerified": "2026-11-23T19:59:37.824Z"
+    "lastVerified": "2026-11-24T16:28:23.090Z"
   },
   "silasmarvin-lsp-ai": {
     "name": "lsp-ai",
@@ -10761,12 +10762,12 @@
     "officialUrl": "https://huggingface.co/AngelSlim/Hy4-flash-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-20T16:12:49.951Z",
-    "lastVerified": "2026-11-20T16:12:49.951Z",
+    "lastChecked": "2026-11-24T16:28:13.095Z",
+    "lastVerified": "2026-11-24T16:28:13.095Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-angelslim-hy4-flash-gguf",
-    "contentHash": "9605a5b4cc1edb37f43d288f8fe159c5f08c0d09d7b1ed2e5525a20fce37827e",
+    "contentHash": "e98d7b4d5aca2b6ea80a6360315824c0213c26e5929b304603dfc895f8d2029e",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

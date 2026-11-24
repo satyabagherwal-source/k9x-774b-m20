@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T16:19:54.840Z",
-  "total_cycles_completed": 12100,
-  "total_learnings_persisted": 12100,
+  "last_updated": "2026-11-24T16:28:13.738Z",
+  "total_cycles_completed": 12101,
+  "total_learnings_persisted": 12101,
   "total_rules_promoted": 11165,
   "history": [
-    {
-      "timestamp": "2026-11-23T23:39:46.267Z",
-      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
-      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T23:39:47.588Z",
       "repository": "tokio-rs/tokio",
@@ -1403,6 +1396,13 @@
       "repository": "nats-io/nats-server",
       "learningId": "learn-github-nats-io-nats-server",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T16:28:13.738Z",
+      "repository": "AngelSlim/Hy4-flash-GGUF",
+      "learningId": "learn-huggingface-angelslim-hy4-flash-gguf",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-2SEA",
-    "timestamp": "2026-11-22T21:41:02.914Z",
-    "repository": "milvus-io/milvus",
-    "learningId": "learn-github-milvus-io-milvus",
-    "contentHash": "b20e55d6dc6771b47b2ac207ee1e3a4bc4400894bc4670b0b08dd5656dcccd67",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-CVF9",
     "timestamp": "2026-11-22T21:48:53.397Z",
     "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
@@ -7492,6 +7477,21 @@
     "contentHash": "d3b07a59d3f9d079698b037e882ccdad6afd1379a6d36eeffc791e4d3c6b6c2b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-S7C0",
+    "timestamp": "2026-11-24T16:28:13.728Z",
+    "repository": "AngelSlim/Hy4-flash-GGUF",
+    "learningId": "learn-huggingface-angelslim-hy4-flash-gguf",
+    "contentHash": "e98d7b4d5aca2b6ea80a6360315824c0213c26e5929b304603dfc895f8d2029e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

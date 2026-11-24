@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T16:19:54.851Z",
+  "last_updated": "2026-11-24T16:28:13.747Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -19701,14 +19701,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-angelslim-hy4-flash-gguf",
-      "content_hash": "9605a5b4cc1edb37f43d288f8fe159c5f08c0d09d7b1ed2e5525a20fce37827e",
-      "verified_at": "2026-11-20T16:13:59.927Z",
+      "content_hash": "e98d7b4d5aca2b6ea80a6360315824c0213c26e5929b304603dfc895f8d2029e",
+      "verified_at": "2026-11-24T16:28:13.747Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T16:13:59.927Z"
+      "last_updated": "2026-11-24T16:28:13.747Z"
     },
     "apple/DepthPro2": {
       "repository": "apple/DepthPro2",

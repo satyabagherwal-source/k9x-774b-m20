@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T16:20:00.961Z",
+  "last_updated": "2026-11-24T16:28:27.273Z",
   "total_records": 2544,
   "domains": {
     "A": {
@@ -8359,8 +8359,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "85b098ea265532eabfa52f43b1fbfb053d8e71b6bd5cd56d5cb09c19cee471d4",
-      "created_at": "2026-11-24T16:20:00.961Z"
+      "content_hash": "c76bc3eb77e22261997f2ef16d37c2a35774dc6c7a27d88b236e47235e1a9cd7",
+      "created_at": "2026-11-24T16:28:26.403Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -23715,8 +23715,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "e4e6fe664e1ee0963d37877efe63d00eae14e5f4c391843420a5bb6ce1ebe694",
-      "created_at": "2026-11-24T16:10:45.159Z"
+      "content_hash": "2f720e26f2faee561c75a3dd8cf8a1323b9e53826bd671d3eafcb90fd68fce44",
+      "created_at": "2026-11-24T16:28:27.273Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",
@@ -36484,8 +36484,8 @@
       "title": "Research & Knowledge Intelligence: AngelSlim/Hy4-flash-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-angelslim-hy4-flash-gguf-research-knowledge-intelligence-angelslim-hy4-flash-.md",
       "repository": "AngelSlim/Hy4-flash-GGUF",
-      "content_hash": "0032a3fd2681ea4bb4a54ffd017301e9c14290a95e5f0db1a4f8c032f6f4e4c3",
-      "created_at": "2026-11-20T16:14:00.129Z"
+      "content_hash": "27ea39bd4dd88c53bb10849488f9afc3c0064828de7d1cd68cef81bdefac8a2e",
+      "created_at": "2026-11-24T16:28:13.950Z"
     },
     "DOM-D-981F2664": {
       "record_id": "DOM-D-981F2664",
@@ -36535,8 +36535,8 @@
       "title": "Research & Knowledge Intelligence: hf-angelslim-hy4-flash-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-angelslim-hy4-flash-gguf-learnings-research-knowledge-intelligence-hf-angelsl.md",
       "repository": "hf-angelslim-hy4-flash-gguf-learnings",
-      "content_hash": "42ee8dced43d9c69fd1b6f701c4f03f04581a8f5bc9edb33a6236d42e213b42c",
-      "created_at": "2026-11-20T16:14:33.540Z"
+      "content_hash": "10332ac06fd5438b34405aa95ddf04bdec4ff3c46a895703c6ece14a805226eb",
+      "created_at": "2026-11-24T16:28:25.695Z"
     },
     "domain_intelligence-research-knowledge-intelligence-lxml-lxml-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-lxml-lxml-core-invariants",

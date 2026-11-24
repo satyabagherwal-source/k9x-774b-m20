@@ -12766,3 +12766,4 @@ Every entry in this ledger must capture:
 | `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `3d402381` | Multi-dimensional audit evidence | 2026-11-24T16:01:45.760Z |
 | `learn-github-archivebox-archivebox` | `https://github.com/ArchiveBox/ArchiveBox` | `6e6064f9` | Multi-dimensional audit evidence | 2026-11-24T16:19:50.904Z |
 | `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `44f6fc4d` | Multi-dimensional audit evidence | 2026-11-24T16:19:54.834Z |
+| `learn-huggingface-angelslim-hy4-flash-gguf` | `https://huggingface.co/AngelSlim/Hy4-flash-GGUF` | `hf-angelsl` | Multi-dimensional audit evidence | 2026-11-24T16:28:13.732Z |
