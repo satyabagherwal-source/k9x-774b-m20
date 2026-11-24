@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T02:31:13.184Z",
+  "last_updated": "2026-11-24T02:53:32.439Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -17046,14 +17046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kirillzyusko-react-native-keyboard-controller",
-      "content_hash": "d9d9f8b41821ded9c4df6d854b50f8e8288c978b9d4dec3067700e729333d340",
-      "verified_at": "2026-11-21T04:39:06.631Z",
+      "content_hash": "183a3e1820374f7d0913bfaee0d6550adec3ec14731addeb81f0b7867cd56f03",
+      "verified_at": "2026-11-24T02:53:32.438Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T04:39:06.631Z"
+      "last_updated": "2026-11-24T02:53:32.438Z"
     },
     "margelo/react-native-blur": {
       "repository": "margelo/react-native-blur",

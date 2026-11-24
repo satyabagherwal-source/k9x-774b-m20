@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T02:31:16.703Z",
-    "lastVerified": "2026-11-24T02:31:16.703Z",
+    "lastChecked": "2026-11-24T02:53:36.350Z",
+    "lastVerified": "2026-11-24T02:53:36.350Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -199,12 +199,12 @@
     "revisionIdentifier": "24d967b5"
   },
   "sxyazi-yazi": {
-    "name": "sxyazi/yazi",
+    "name": "yazi",
     "officialUrl": "https://github.com/sxyazi/yazi",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T19:09:43.451Z",
-    "lastVerified": "2026-11-22T19:09:43.451Z",
+    "lastChecked": "2026-11-24T02:53:21.365Z",
+    "lastVerified": "2026-11-24T02:53:21.365Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sxyazi-yazi",
@@ -213,7 +213,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "af685064"
   },
   "hf-edge0-audio8-asr-infinite": {
     "name": "Edge0/Audio8-ASR-Infinite",
@@ -274,9 +275,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-24T02:04:17.900Z",
+    "lastChecked": "2026-11-24T02:53:36.341Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-24T02:04:17.900Z"
+    "lastVerified": "2026-11-24T02:53:36.341Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1422,8 +1423,8 @@
     "officialUrl": "https://github.com/RustCrypto/hashes",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T22:05:13.875Z",
-    "lastVerified": "2026-11-23T22:05:13.875Z",
+    "lastChecked": "2026-11-24T02:53:31.348Z",
+    "lastVerified": "2026-11-24T02:53:31.348Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustcrypto-hashes",
@@ -2121,9 +2122,9 @@
   "oramasearch-orama": {
     "name": "orama",
     "officialUrl": "https://github.com/oramasearch/orama",
-    "lastChecked": "2026-11-23T00:56:29.922Z",
+    "lastChecked": "2026-11-24T02:53:33.926Z",
     "revisionIdentifier": "b030e1bd",
-    "lastVerified": "2026-11-23T00:56:29.922Z"
+    "lastVerified": "2026-11-24T02:53:33.926Z"
   },
   "metalbear-co-mirrord": {
     "name": "metalbear-co/mirrord",
@@ -4127,8 +4128,8 @@
     "officialUrl": "https://github.com/krakend/krakend-ce",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-23T04:44:54.506Z",
-    "lastVerified": "2026-11-23T04:44:54.506Z",
+    "lastChecked": "2026-11-24T02:53:28.810Z",
+    "lastVerified": "2026-11-24T02:53:28.810Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-krakend-krakend-ce",
@@ -9311,9 +9312,9 @@
   "bourd-dev-seo-skills": {
     "name": "seo-skills",
     "officialUrl": "https://github.com/bourd-dev/seo-skills",
-    "lastChecked": "2026-11-19T22:36:00.719Z",
+    "lastChecked": "2026-11-24T02:53:23.800Z",
     "revisionIdentifier": "4b0005f6e6",
-    "lastVerified": "2026-11-19T22:36:00.719Z"
+    "lastVerified": "2026-11-24T02:53:23.800Z"
   },
   "vanniktech-gradle-maven-publish-plugin": {
     "name": "vanniktech/gradle-maven-publish-plugin",
@@ -12167,14 +12168,14 @@
     "officialUrl": "https://github.com/kirillzyusko/react-native-keyboard-controller",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-21T04:39:05.351Z",
-    "lastVerified": "2026-11-21T04:39:05.351Z",
+    "lastChecked": "2026-11-24T02:53:31.788Z",
+    "lastVerified": "2026-11-24T02:53:31.788Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kirillzyusko-react-native-keyboard-controller",
-    "contentHash": "d9d9f8b41821ded9c4df6d854b50f8e8288c978b9d4dec3067700e729333d340",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "contentHash": "183a3e1820374f7d0913bfaee0d6550adec3ec14731addeb81f0b7867cd56f03",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

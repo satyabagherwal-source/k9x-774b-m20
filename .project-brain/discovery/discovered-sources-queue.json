@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T02:31:18.204Z",
+  "updated_at": "2026-11-24T02:53:36.892Z",
   "stats": {
-    "total_discovered": 8279,
-    "approved_pending_harvest": 7843,
+    "total_discovered": 8286,
+    "approved_pending_harvest": 7850,
     "harvested_count": 0,
     "rejected_count": 436,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7827,
+      "COMMUNITY_AND_EXPERT": 7834,
       "OFFICIAL_DOCUMENTATION": 266,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -179109,6 +179109,160 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
         "fileName": "lancedb-lancedb-learnings.md"
+      }
+    },
+    "SRC-887D5CC4306C": {
+      "id": "SRC-887D5CC4306C",
+      "url": "https://github.com/user-attachments/assets/7e757e38-23bc-4a37-8379-18492a832b4e",
+      "title": "https://github.com/user-attachments/assets/7e757e38-23bc-4a37-8379-18492a832b4e",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T02:53:36.576Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
+        "fileName": "kirillzyusko-react-native-keyboard-controller-learnings.md"
+      }
+    },
+    "SRC-34628F1C89D4": {
+      "id": "SRC-34628F1C89D4",
+      "url": "https://github.com/user-attachments/assets/0b804374-b660-48f8-a3bc-68310a770c69",
+      "title": "https://github.com/user-attachments/assets/0b804374-b660-48f8-a3bc-68310a770c69",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T02:53:36.631Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
+        "fileName": "kirillzyusko-react-native-keyboard-controller-learnings.md"
+      }
+    },
+    "SRC-02989DC75741": {
+      "id": "SRC-02989DC75741",
+      "url": "https://github.com/user-attachments/assets/2fd2938f-2f1b-438f-a712-3fae42f50065",
+      "title": "https://github.com/user-attachments/assets/2fd2938f-2f1b-438f-a712-3fae42f50065",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T02:53:36.704Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
+        "fileName": "kirillzyusko-react-native-keyboard-controller-learnings.md"
+      }
+    },
+    "SRC-8F39DC2540FA": {
+      "id": "SRC-8F39DC2540FA",
+      "url": "https://github.com/user-attachments/assets/bab2214a-de9d-4d04-85ae-e54b4e627358",
+      "title": "https://github.com/user-attachments/assets/bab2214a-de9d-4d04-85ae-e54b4e627358",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T02:53:36.754Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
+        "fileName": "kirillzyusko-react-native-keyboard-controller-learnings.md"
+      }
+    },
+    "SRC-3C7099343F4A": {
+      "id": "SRC-3C7099343F4A",
+      "url": "https://github.com/rossjrw/pr-preview-action",
+      "title": "https://github.com/rossjrw/pr-preview-action",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T02:53:36.805Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
+        "fileName": "kirillzyusko-react-native-keyboard-controller-learnings.md"
+      }
+    },
+    "SRC-68B492146BD3": {
+      "id": "SRC-68B492146BD3",
+      "url": "https://argos-ci.com/docs/learn/review-workflow/pull-request-comments",
+      "title": "https://argos-ci.com/docs/learn/review-workflow/pull-request-comments",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T02:53:36.848Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
+        "fileName": "kirillzyusko-react-native-keyboard-controller-learnings.md"
+      }
+    },
+    "SRC-15E7E57AA9B1": {
+      "id": "SRC-15E7E57AA9B1",
+      "url": "https://app.argos-ci.com/kirillzyusko/react-native-keyboard-controller/builds/779",
+      "title": "https://app.argos-ci.com/kirillzyusko/react-native-keyboard-controller/builds/779",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T02:53:36.892Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
+        "fileName": "kirillzyusko-react-native-keyboard-controller-learnings.md"
       }
     }
   }

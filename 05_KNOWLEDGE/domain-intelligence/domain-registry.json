@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T02:31:19.850Z",
+  "last_updated": "2026-11-24T02:53:39.064Z",
   "total_records": 2485,
   "domains": {
     "A": {
@@ -8300,8 +8300,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "c2b53f97c36845e795c5991cefb27074d8e48b809e05aed707c74f3c6d12a82e",
-      "created_at": "2026-11-24T00:23:27.317Z"
+      "content_hash": "4ad3d8a2f7dcd657f359a1b02fd4387672c642dab725a2f596d6e5f8f58d56d0",
+      "created_at": "2026-11-24T02:53:39.064Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -9218,8 +9218,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "4b43d041fd12aa8cdbf12b64469bcc8cd71e7f0f86d854943b1978982a81e9a5",
-      "created_at": "2026-11-24T02:31:19.850Z"
+      "content_hash": "8421a45bcd243019771d6171cbcdb629824c03ddf210a60ba19455bb9e841064",
+      "created_at": "2026-11-24T02:53:38.044Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -9341,8 +9341,8 @@
       "title": "Technical Construction Intelligence: kirillzyusko-react-native-keyboard-controller-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kirillzyusko-react-native-keyboard-controller-learnings-technical-construction-i.md",
       "repository": "kirillzyusko-react-native-keyboard-controller-learnings",
-      "content_hash": "95b55ead05d967e11228c4d7f8c58b7b1a566aae0517f9a364c32c7fc0905fe1",
-      "created_at": "2026-11-21T04:39:20.020Z"
+      "content_hash": "ef40fbd8acb268939b25beab285f6c46f30e83e797702e336b883183a580d00b",
+      "created_at": "2026-11-24T02:53:37.267Z"
     },
     "domain_intelligence-product-intelligence-pimalaya-himalaya-learnings-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-pimalaya-himalaya-learnings-core-invariants",

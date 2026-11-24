@@ -11343,10 +11343,10 @@
     "repository": "kirillzyusko/react-native-keyboard-controller",
     "platform": "github",
     "sourceUrl": "https://github.com/kirillzyusko/react-native-keyboard-controller",
-    "sourceVersion": "67112625",
+    "sourceVersion": "dd4ffd54",
     "license": "MIT",
-    "contentHash": "d9d9f8b41821ded9c4df6d854b50f8e8288c978b9d4dec3067700e729333d340",
-    "lastHarvestedAt": "2026-11-21T04:39:06.622Z",
+    "contentHash": "183a3e1820374f7d0913bfaee0d6550adec3ec14731addeb81f0b7867cd56f03",
+    "lastHarvestedAt": "2026-11-24T02:53:32.401Z",
     "learningId": "learn-github-kirillzyusko-react-native-keyboard-controller"
   },
   "margelo-react-native-blur": {

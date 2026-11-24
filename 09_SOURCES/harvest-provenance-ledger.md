@@ -12600,3 +12600,4 @@ Every entry in this ledger must capture:
 | `learn-dom-d-7edcac07` | `project://hf-strata-engine-inkling-2-mini-strata` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-strata-engine-inkling-2-mini-strata-learnings.md` | 2026-11-24T02:21:42.667Z |
 | `learn-github-rtk-ai-rtk` | `https://github.com/rtk-ai/rtk` | `c43b5c44` | Multi-dimensional audit evidence | 2026-11-24T02:31:00.236Z |
 | `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `52209f10` | Multi-dimensional audit evidence | 2026-11-24T02:31:13.162Z |
+| `learn-github-kirillzyusko-react-native-keyboard-controller` | `https://github.com/kirillzyusko/react-native-keyboard-controller` | `dd4ffd54` | Multi-dimensional audit evidence | 2026-11-24T02:53:32.401Z |
