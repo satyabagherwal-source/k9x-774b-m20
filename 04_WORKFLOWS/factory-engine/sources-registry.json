@@ -46,8 +46,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-24T07:07:41.615Z",
-    "lastVerified": "2026-11-24T07:07:41.615Z",
+    "lastChecked": "2026-11-24T08:05:42.454Z",
+    "lastVerified": "2026-11-24T08:05:42.454Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T07:55:50.793Z",
-    "lastVerified": "2026-11-24T07:55:50.793Z",
+    "lastChecked": "2026-11-24T08:05:42.463Z",
+    "lastVerified": "2026-11-24T08:05:42.463Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1344,9 +1344,9 @@
   "cryfs-cryfs": {
     "name": "cryfs",
     "officialUrl": "https://github.com/cryfs/cryfs",
-    "lastChecked": "2026-11-24T02:31:04.528Z",
+    "lastChecked": "2026-11-24T08:05:37.465Z",
     "revisionIdentifier": "e2da97b1",
-    "lastVerified": "2026-11-24T02:31:04.528Z"
+    "lastVerified": "2026-11-24T08:05:37.465Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -1393,9 +1393,9 @@
   "maotoumao-musicfree": {
     "name": "MusicFree",
     "officialUrl": "https://github.com/maotoumao/MusicFree",
-    "lastChecked": "2026-11-21T14:27:40.351Z",
+    "lastChecked": "2026-11-24T08:05:32.445Z",
     "revisionIdentifier": "d118b18b",
-    "lastVerified": "2026-11-21T14:27:40.351Z"
+    "lastVerified": "2026-11-24T08:05:32.445Z"
   },
   "zeromicro-go-zero": {
     "name": "go-zero",
@@ -2713,9 +2713,9 @@
   "sharkdp-hyperfine": {
     "name": "hyperfine",
     "officialUrl": "https://github.com/sharkdp/hyperfine",
-    "lastChecked": "2026-11-22T23:41:11.699Z",
+    "lastChecked": "2026-11-24T08:05:27.465Z",
     "revisionIdentifier": "c5161524",
-    "lastVerified": "2026-11-22T23:41:11.699Z"
+    "lastVerified": "2026-11-24T08:05:27.465Z"
   },
   "hf-deepseek-ai-deepseek-v4.1-flash": {
     "name": "deepseek-ai/DeepSeek-V4.1-Flash",
@@ -3852,9 +3852,9 @@
   "parthsarthi03-raptor": {
     "name": "raptor",
     "officialUrl": "https://github.com/parthsarthi03/raptor",
-    "lastChecked": "2026-11-23T09:29:49.866Z",
+    "lastChecked": "2026-11-24T08:05:39.948Z",
     "revisionIdentifier": "7da1d48a",
-    "lastVerified": "2026-11-23T09:29:49.866Z"
+    "lastVerified": "2026-11-24T08:05:39.948Z"
   },
   "mfontanini-presenterm": {
     "name": "presenterm",
@@ -5723,9 +5723,9 @@
   "goss-org-goss": {
     "name": "goss",
     "officialUrl": "https://github.com/goss-org/goss",
-    "lastChecked": "2026-11-23T14:21:06.605Z",
+    "lastChecked": "2026-11-24T08:05:34.940Z",
     "revisionIdentifier": "dcd065d9",
-    "lastVerified": "2026-11-23T14:21:06.605Z"
+    "lastVerified": "2026-11-24T08:05:34.940Z"
   },
   "arangodb-arangodb": {
     "name": "arangodb/arangodb",
@@ -9791,9 +9791,9 @@
   "alfa546-crawler": {
     "name": "Crawler",
     "officialUrl": "https://github.com/alfa546/Crawler",
-    "lastChecked": "2026-11-20T04:14:13.356Z",
+    "lastChecked": "2026-11-24T08:05:29.976Z",
     "revisionIdentifier": "8d10a017",
-    "lastVerified": "2026-11-20T04:14:13.356Z"
+    "lastVerified": "2026-11-24T08:05:29.976Z"
   },
   "dimillian-redditos": {
     "name": "RedditOS",

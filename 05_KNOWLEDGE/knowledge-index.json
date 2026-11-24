@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T07:55:53.398Z",
+  "last_updated": "2026-11-24T08:05:45.306Z",
   "total_verified_learnings": 9092,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "33d7001307eca3c73f7b83d0a39e1c55001d6d52549250aab40a44dd6ea4f2e6",
+      "content_hash": "4639e8e7f8b6984b34b0bbbea9d1461b208caf780b62758792d94f811bf85dec",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T07:33:20.722Z"
+      "persisted_at": "2026-11-24T08:05:43.399Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "8bd394376974fa26414df896155ca13752fd6632074f8f8ea206b5498428efcb",
+      "content_hash": "f2c1484c35280af1915e07f2264df19d55ef42ae7eb0304056e6ea745a27f928",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T07:33:20.919Z"
+      "persisted_at": "2026-11-24T08:05:43.546Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -219156,13 +219156,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-QQQY-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-U0EJ-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "50c253fc8c02aaf080ccfb41976a5de6a33fa69401cb8ec05a52e57484b693db",
+      "content_hash": "ba8cba63067de4a188e33bbb1be3210743f78183e81947dbafeef52f052120aa",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T03:23:16.330Z"
+      "persisted_at": "2026-11-24T08:05:44.971Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -219172,9 +219172,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "d59fa9c61758cde8f8cfab48d31d24f4c88e21903e4fe2cc35ee80a406cc6f63",
+      "content_hash": "7358511a4117f37857a46f67eec3052ba1a264b5c10161a25c36eb66c813f5a9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T03:23:16.538Z"
+      "persisted_at": "2026-11-24T08:05:45.140Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -219184,9 +219184,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "085a41f5cc0949d9431de8db3ed6600a931e2d8cd511cdfcc04d1461c9bbe430",
+      "content_hash": "2d5d168fb284520fa49defbbab6bd707b0ea00bc24cb0e8f251528284ce38e91",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T03:23:16.743Z"
+      "persisted_at": "2026-11-24T08:05:45.306Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -229221,9 +229221,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "28f48e10adf41bdbc79ae8bd2a9e96267a78f01941163cb504415d423b93a1b7",
+      "content_hash": "89ce1b9366136c3aa78d43e4af98fa08af9ddbf1f4db03cd93f1926b01bbfa1a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T04:28:59.398Z"
+      "persisted_at": "2026-11-24T08:05:44.378Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -229233,9 +229233,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "996c673c2484d8aabf0545d874fc0cbb82444753bf6bf6a7f18ff56d8d830286",
+      "content_hash": "9e42ef2e1b469d64309fb34c85733311129de0beede1b5c707cadec0b73b3c79",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T04:28:59.565Z"
+      "persisted_at": "2026-11-24T08:05:44.548Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -256015,9 +256015,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "765f590c9202d82bf080b8d5bdb535da06ceed64289cb1a9b265f025612c646e",
+      "content_hash": "3a43c4faca6fa106cf2b3d58a3cfc5fa0811a145a2618038c83b667924aaef7c",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T07:33:20.473Z"
+      "persisted_at": "2026-11-24T08:05:43.225Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
@@ -304110,13 +304110,13 @@
       "item_id": "candidate_directive-dead-license-badge-link-in-readme",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-3942-dead-license-badge-link-in-readme.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-TZTD-dead-license-badge-link-in-readme.md",
       "title": "dead license badge link in README",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "c2ae38ef125cac851d7b80a556103cc15414c1db38d87f1487102b1814c0930d",
+      "content_hash": "9976482469142b2a167458bcdd031ae33ad5c0baafe0981846be3ac288a1c88a",
       "domain_letter": "I",
-      "persisted_at": "2026-11-24T04:28:59.235Z"
+      "persisted_at": "2026-11-24T08:05:44.209Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-core-invaria": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-core-invaria",
@@ -329877,13 +329877,13 @@
       "item_id": "candidate_directive-rust-resolve-python-calls-through-annotated-parameters-and-self-members",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-OBUB-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-TYX7-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
       "title": "rust): resolve python calls through annotated parameters and self members",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "f5925664136571f59cf598541926b79eff6359e0bb43a14b09b81b49663e7020",
+      "content_hash": "dcc9fe1443e432e87e2e1f43c37fe0893b8f0194b2f611efcf7ac8cc1b44fc84",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T07:33:20.249Z"
+      "persisted_at": "2026-11-24T08:05:43.054Z"
     },
     "learn-github-iziz-libphonenumber-ios": {
       "learning_id": "learn-github-iziz-libphonenumber-ios",
