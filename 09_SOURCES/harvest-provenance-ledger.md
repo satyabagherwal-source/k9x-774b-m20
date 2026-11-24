@@ -12557,3 +12557,6 @@ Every entry in this ledger must capture:
 | `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `d99121a2` | Multi-dimensional audit evidence | 2026-11-24T00:07:15.273Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `ae6a5b06` | Multi-dimensional audit evidence | 2026-11-24T00:07:25.157Z |
 | `learn-dom-d-06e3f5c1` | `project://astral-sh-uv` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-uv-learnings.md` | 2026-11-24T00:07:59.812Z |
+| `learn-github-microfeed-microfeed` | `https://github.com/microfeed/microfeed` | `4deb5fc8` | Multi-dimensional audit evidence | 2026-11-24T00:22:33.000Z |
+| `learn-huggingface-openmoss-team-moss-image-sft` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT` | `hf-openmos` | Multi-dimensional audit evidence | 2026-11-24T00:22:33.427Z |
+| `learn-dom-i-4b3595b4` | `project://microfeed-microfeed` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microfeed-microfeed-learnings.md` | 2026-11-24T00:23:21.751Z |

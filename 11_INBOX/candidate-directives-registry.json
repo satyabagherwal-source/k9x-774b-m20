@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T00:08:01.587Z",
+  "last_updated": "2026-11-24T00:23:26.073Z",
   "directives": [
     {
       "id": "CD-001",
@@ -51735,6 +51735,35 @@
       "source_repo": "aleo-labs-protocol-snarkos",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-B05EBD-empirical-invariant-guard-in-lib-rs.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-BFWL",
+      "directive_title": "tag layouts across built-in themes",
+      "source_repo": "microfeed-microfeed-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-BFWL-tag-layouts-across-built-in-themes.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-67CE6F",
+      "directive_title": "tag layouts across built-in themes",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "microfeed-microfeed",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-67CE6F-tag-layouts-across-built-in-themes.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-REV-7B2F22",
+      "directive_title": "Forensic Learning Record (Deep Inspection): zulip/zulip",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "A",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7B2F22-forensic-learning-record-deep-inspection.md",
       "staged_date": "2026-11-24"
     }
   ]

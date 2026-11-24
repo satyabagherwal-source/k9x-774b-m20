@@ -5344,3 +5344,7 @@ https://huggingface.co/TenStrip/10Eros-Max
 # --- Automatically Discovered by AI Scout Engine [2026-11-23T21:47:55.284Z] ---
 # [HUGGINGFACE-AI-MODELS] inclusionAI/Ling-3.2-air (870 score) - Verified Hugging Face Model: inclusionAI/Ling-3.2-air (87 likes, 0 downloads)
 https://huggingface.co/inclusionAI/Ling-3.2-air
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-24T00:22:24.377Z] ---
+# [AI-AGENTS] microfeed/microfeed (2839 score) - an agentic cms self-hosted on cloudflare, for podcasts, blogs, photos, videos, d
+https://github.com/microfeed/microfeed

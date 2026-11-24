@@ -12524,3 +12524,6 @@
 | `CYCLE-20261124-QNUS` | `2026-11-24T00:07:15.268Z` | `astral-sh/uv` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/astral-sh-uv-learnings.md` | Yes (`402548bf...`) |
 | `CYCLE-20261124-QVHD` | `2026-11-24T00:07:25.153Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10129` | Yes (`c9da2ae1...`) |
 | `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T00:07:59.812Z` | `astral-sh-uv` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-06E3F5C1` [Domain D] | Yes (`2fb918ae...`) |
+| `CYCLE-20261124-ABZ7` | `2026-11-24T00:22:32.995Z` | `microfeed/microfeed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10151` | Yes (`e391259d...`) |
+| `CYCLE-20261124-ACB2` | `2026-11-24T00:22:33.422Z` | `OpenMOSS-Team/MOSS-Image-SFT` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openmoss-team-moss-image-sft-learnings.md` | Yes (`4cc6d7c4...`) |
+| `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T00:23:21.751Z` | `microfeed-microfeed` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-I-4B3595B4` [Domain I] | Yes (`499edaf0...`) |

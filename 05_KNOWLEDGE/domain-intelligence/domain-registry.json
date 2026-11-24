@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T00:08:01.813Z",
-  "total_records": 2467,
+  "last_updated": "2026-11-24T00:23:27.317Z",
+  "total_records": 2470,
   "domains": {
     "A": {
       "total": 20,
@@ -2158,7 +2158,7 @@
       ]
     },
     "I": {
-      "total": 139,
+      "total": 142,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -2298,7 +2298,10 @@
         "DOM-I-981FC0DE",
         "DOM-I-B48272D1",
         "domain_intelligence-content-information-intelligence-biomejs-biome-core-invariants",
-        "domain_intelligence-content-information-intelligence-biomejs-biome-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-biomejs-biome-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-microfeed-microfeed-core-invariants",
+        "DOM-I-4B3595B4",
+        "domain_intelligence-content-information-intelligence-microfeed-microfeed-learnings-core-invariants"
       ]
     },
     "J": {
@@ -8282,8 +8285,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "8403aa86444e3dd87fecead0a14baa29fb64c364a634027d036b14680c4ebe9b",
-      "created_at": "2026-11-23T22:33:13.041Z"
+      "content_hash": "c2b53f97c36845e795c5991cefb27074d8e48b809e05aed707c74f3c6d12a82e",
+      "created_at": "2026-11-24T00:23:27.317Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -20218,8 +20221,8 @@
       "title": "Research & Knowledge Intelligence: OpenMOSS-Team/MOSS-Image-SFT Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openmoss-team-moss-image-sft-research-knowledge-intelligence-openmoss-team-mo.md",
       "repository": "OpenMOSS-Team/MOSS-Image-SFT",
-      "content_hash": "3943ed3abddb59b500f3acd5154038230e86c5d95bd08fecd8276c8a3cf5a490",
-      "created_at": "2026-11-19T18:32:56.175Z"
+      "content_hash": "24498ca615143e4f428198d7ac59cc98599cf27b725b10753fa3109d1fc414de",
+      "created_at": "2026-11-24T00:22:33.739Z"
     },
     "domain_intelligence-content-information-intelligence-1jehuang-jcode-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-1jehuang-jcode-learnings-core-invariants",
@@ -20278,8 +20281,8 @@
       "title": "Research & Knowledge Intelligence: hf-openmoss-team-moss-image-sft-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openmoss-team-moss-image-sft-learnings-research-knowledge-intelligence-hf-ope.md",
       "repository": "hf-openmoss-team-moss-image-sft-learnings",
-      "content_hash": "1a281b0d5a8fade8deffeb93af99ee7826a417f1d2b13890a0a7e91e0cd6372b",
-      "created_at": "2026-11-19T18:33:08.708Z"
+      "content_hash": "4937c5b3af48ee8c29279d7bf04c41b1125e131cdb2b5fe512cf10d8c525cf6e",
+      "created_at": "2026-11-24T00:23:25.798Z"
     },
     "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-v4-1-flash-1017-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-v4-1-flash-1017-core-invari",
@@ -41378,6 +41381,58 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-24T00:07:59.782Z"
+    },
+    "domain_intelligence-content-information-intelligence-microfeed-microfeed-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-microfeed-microfeed-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: microfeed/microfeed Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-microfeed-microfeed-content-information-intelligence-microfeed-microfeed-core-in.md",
+      "repository": "microfeed/microfeed",
+      "content_hash": "0bbcce050cc74e2f10e4b9b0c32d8dc1b48c637549c692d802b6a7e2eb04799f",
+      "created_at": "2026-11-24T00:22:33.602Z"
+    },
+    "DOM-I-4B3595B4": {
+      "record_id": "DOM-I-4B3595B4",
+      "domain_letter": "I",
+      "domain_id": "content_information",
+      "domain_name": "Content & Information Intelligence",
+      "secondary_domains": [],
+      "title": "Pull current content and create, update, or delete content.: A named least-privilege mf_ API key",
+      "content": "A named, least-privilege `mf_…` API key.",
+      "content_hash": "499edaf0a19cbde31e53a7a317d4178c451ba0cdc719a1e7bb23b5315695f34c",
+      "summary": "A named, least-privilege `mf_…` API key. -> A named, least-privilege `mf_…` API key.",
+      "provenance": {
+        "source_uri": "project://microfeed-microfeed/microfeed-microfeed-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "**API**",
+        "author_or_entity": "AI-Builder-Brain Project Learning (microfeed-microfeed)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of microfeed-microfeed"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-24T00:23:21.715Z"
+    },
+    "domain_intelligence-content-information-intelligence-microfeed-microfeed-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-microfeed-microfeed-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: microfeed-microfeed-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-microfeed-microfeed-learnings-content-information-intelligence-microfeed-microfe.md",
+      "repository": "microfeed-microfeed-learnings",
+      "content_hash": "7adf54e7bc6428bb8498cdd01e71078794684605d6680f921b2b6d8acf64d8a2",
+      "created_at": "2026-11-24T00:23:25.005Z"
     }
   }
 }

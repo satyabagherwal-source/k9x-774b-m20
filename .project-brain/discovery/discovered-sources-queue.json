@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T00:08:00.159Z",
+  "updated_at": "2026-11-24T00:23:24.400Z",
   "stats": {
-    "total_discovered": 8105,
-    "approved_pending_harvest": 7673,
+    "total_discovered": 8141,
+    "approved_pending_harvest": 7709,
     "harvested_count": 0,
     "rejected_count": 432,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7659,
-      "OFFICIAL_DOCUMENTATION": 260,
+      "COMMUNITY_AND_EXPERT": 7690,
+      "OFFICIAL_DOCUMENTATION": 265,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
       "SECURITY_ADVISORIES": 45,
@@ -175309,6 +175309,798 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
         "fileName": "astral-sh-uv-learnings.md"
+      }
+    },
+    "SRC-B41EC7877EB9": {
+      "id": "SRC-B41EC7877EB9",
+      "url": "https://github.com/microfeed/microfeed",
+      "title": "https://github.com/microfeed/microfeed",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:23:21.803Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microfeed-microfeed-learnings.md",
+        "fileName": "microfeed-microfeed-learnings.md"
+      }
+    },
+    "SRC-8FD1EDAA2616": {
+      "id": "SRC-8FD1EDAA2616",
+      "url": "https://example.test/tags/%E4%B8%96%E7%95%8C",
+      "title": "https://example.test/tags/%E4%B8%96%E7%95%8C",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:23:21.885Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microfeed-microfeed-learnings.md",
+        "fileName": "microfeed-microfeed-learnings.md"
+      }
+    },
+    "SRC-7E442539C40B": {
+      "id": "SRC-7E442539C40B",
+      "url": "https://example.test/tags/%E4%B8%96%E7%95%8C/rss",
+      "title": "https://example.test/tags/%E4%B8%96%E7%95%8C/rss",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:23:21.965Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microfeed-microfeed-learnings.md",
+        "fileName": "microfeed-microfeed-learnings.md"
+      }
+    },
+    "SRC-BF59D41773EF": {
+      "id": "SRC-BF59D41773EF",
+      "url": "https://example.test/tags/%E4%B8%96%E7%95%8C/json",
+      "title": "https://example.test/tags/%E4%B8%96%E7%95%8C/json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:23:22.033Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microfeed-microfeed-learnings.md",
+        "fileName": "microfeed-microfeed-learnings.md"
+      }
+    },
+    "SRC-9F238691F36F": {
+      "id": "SRC-9F238691F36F",
+      "url": "https://jsonfeed.org/version/1.1",
+      "title": "https://jsonfeed.org/version/1.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:23:22.112Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microfeed-microfeed-learnings.md",
+        "fileName": "microfeed-microfeed-learnings.md"
+      }
+    },
+    "SRC-F1ACE5B5F68B": {
+      "id": "SRC-F1ACE5B5F68B",
+      "url": "https://example.test/tags",
+      "title": "https://example.test/tags",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:23:22.181Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microfeed-microfeed-learnings.md",
+        "fileName": "microfeed-microfeed-learnings.md"
+      }
+    },
+    "SRC-4BA32A2370B9": {
+      "id": "SRC-4BA32A2370B9",
+      "url": "https://example.test/tags/?next_cursor=next",
+      "title": "https://example.test/tags/?next_cursor=next",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:23:22.261Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microfeed-microfeed-learnings.md",
+        "fileName": "microfeed-microfeed-learnings.md"
+      }
+    },
+    "SRC-D6240A4C50D2": {
+      "id": "SRC-D6240A4C50D2",
+      "url": "https://example.test/tags/topic",
+      "title": "https://example.test/tags/topic",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:23:22.330Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microfeed-microfeed-learnings.md",
+        "fileName": "microfeed-microfeed-learnings.md"
+      }
+    },
+    "SRC-4819E3EFFA34": {
+      "id": "SRC-4819E3EFFA34",
+      "url": "https://example.test/tags/topic/rss",
+      "title": "https://example.test/tags/topic/rss",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:23:22.414Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microfeed-microfeed-learnings.md",
+        "fileName": "microfeed-microfeed-learnings.md"
+      }
+    },
+    "SRC-D46A27994525": {
+      "id": "SRC-D46A27994525",
+      "url": "https://example.test/tags/topic/json",
+      "title": "https://example.test/tags/topic/json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:23:22.482Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microfeed-microfeed-learnings.md",
+        "fileName": "microfeed-microfeed-learnings.md"
+      }
+    },
+    "SRC-B9CE0866C86A": {
+      "id": "SRC-B9CE0866C86A",
+      "url": "https://example.test/tags/featured",
+      "title": "https://example.test/tags/featured",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:23:22.562Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microfeed-microfeed-learnings.md",
+        "fileName": "microfeed-microfeed-learnings.md"
+      }
+    },
+    "SRC-4A5276A4B5DA": {
+      "id": "SRC-4A5276A4B5DA",
+      "url": "https://www.microfeed.org/api",
+      "title": "https://www.microfeed.org/api",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:23:22.631Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microfeed-microfeed-learnings.md",
+        "fileName": "microfeed-microfeed-learnings.md"
+      }
+    },
+    "SRC-3BAE048CE236": {
+      "id": "SRC-3BAE048CE236",
+      "url": "https://docs.microfeed.org/automation/mcp",
+      "title": "https://docs.microfeed.org/automation/mcp",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:23:22.711Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microfeed-microfeed-learnings.md",
+        "fileName": "microfeed-microfeed-learnings.md"
+      }
+    },
+    "SRC-16D77724DDDB": {
+      "id": "SRC-16D77724DDDB",
+      "url": "https://www.npmjs.com/package/@microfeed/cli",
+      "title": "https://www.npmjs.com/package/@microfeed/cli",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:23:22.780Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microfeed-microfeed-learnings.md",
+        "fileName": "microfeed-microfeed-learnings.md"
+      }
+    },
+    "SRC-76944EE4C797": {
+      "id": "SRC-76944EE4C797",
+      "url": "https://github.com/microfeed/microfeed/issues/new?assignees=&labels=bug",
+      "title": "https://github.com/microfeed/microfeed/issues/new?assignees=&labels=bug",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:23:22.861Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microfeed-microfeed-learnings.md",
+        "fileName": "microfeed-microfeed-learnings.md"
+      }
+    },
+    "SRC-DFF25D99712A": {
+      "id": "SRC-DFF25D99712A",
+      "url": "https://docs.microfeed.org/dashboard",
+      "title": "https://docs.microfeed.org/dashboard",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:23:22.930Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microfeed-microfeed-learnings.md",
+        "fileName": "microfeed-microfeed-learnings.md"
+      }
+    },
+    "SRC-FFDAF63025CA": {
+      "id": "SRC-FFDAF63025CA",
+      "url": "https://docs.microfeed.org/content-management/webmcp",
+      "title": "https://docs.microfeed.org/content-management/webmcp",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:23:23.011Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microfeed-microfeed-learnings.md",
+        "fileName": "microfeed-microfeed-learnings.md"
+      }
+    },
+    "SRC-40EA4857CDAB": {
+      "id": "SRC-40EA4857CDAB",
+      "url": "https://www.listennotes.com/",
+      "title": "https://www.listennotes.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:23:23.080Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microfeed-microfeed-learnings.md",
+        "fileName": "microfeed-microfeed-learnings.md"
+      }
+    },
+    "SRC-CD760D0E343E": {
+      "id": "SRC-CD760D0E343E",
+      "url": "https://workers.cloudflare.com/",
+      "title": "https://workers.cloudflare.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:23:23.160Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microfeed-microfeed-learnings.md",
+        "fileName": "microfeed-microfeed-learnings.md"
+      }
+    },
+    "SRC-2BD69F0B4E23": {
+      "id": "SRC-2BD69F0B4E23",
+      "url": "https://www.cloudflare.com/products/r2",
+      "title": "https://www.cloudflare.com/products/r2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:23:23.229Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microfeed-microfeed-learnings.md",
+        "fileName": "microfeed-microfeed-learnings.md"
+      }
+    },
+    "SRC-0AF1A6F04E31": {
+      "id": "SRC-0AF1A6F04E31",
+      "url": "https://developers.cloudflare.com/d1",
+      "title": "https://developers.cloudflare.com/d1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:23:23.308Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microfeed-microfeed-learnings.md",
+        "fileName": "microfeed-microfeed-learnings.md"
+      }
+    },
+    "SRC-5A2299E9FDF7": {
+      "id": "SRC-5A2299E9FDF7",
+      "url": "https://www.microfeed.org/",
+      "title": "https://www.microfeed.org/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:23:23.376Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microfeed-microfeed-learnings.md",
+        "fileName": "microfeed-microfeed-learnings.md"
+      }
+    },
+    "SRC-4AB6A47F7D08": {
+      "id": "SRC-4AB6A47F7D08",
+      "url": "https://www.microfeed.org/api/v1",
+      "title": "https://www.microfeed.org/api/v1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:23:23.455Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microfeed-microfeed-learnings.md",
+        "fileName": "microfeed-microfeed-learnings.md"
+      }
+    },
+    "SRC-34F2DAB3DFED": {
+      "id": "SRC-34F2DAB3DFED",
+      "url": "https://www.microfeed.org/api/v1/openapi.json",
+      "title": "https://www.microfeed.org/api/v1/openapi.json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:23:23.523Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microfeed-microfeed-learnings.md",
+        "fileName": "microfeed-microfeed-learnings.md"
+      }
+    },
+    "SRC-C6163DA73D9F": {
+      "id": "SRC-C6163DA73D9F",
+      "url": "https://www.microfeed.org/api/v1/openapi.yaml",
+      "title": "https://www.microfeed.org/api/v1/openapi.yaml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:23:23.602Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microfeed-microfeed-learnings.md",
+        "fileName": "microfeed-microfeed-learnings.md"
+      }
+    },
+    "SRC-3FE5EADDF538": {
+      "id": "SRC-3FE5EADDF538",
+      "url": "https://www.microfeed.org/api/v1/llms.txt",
+      "title": "https://www.microfeed.org/api/v1/llms.txt",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:23:23.670Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microfeed-microfeed-learnings.md",
+        "fileName": "microfeed-microfeed-learnings.md"
+      }
+    },
+    "SRC-9FFA1A10EB11": {
+      "id": "SRC-9FFA1A10EB11",
+      "url": "https://www.microfeed.org/api/v1/llms-full.txt",
+      "title": "https://www.microfeed.org/api/v1/llms-full.txt",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:23:23.748Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microfeed-microfeed-learnings.md",
+        "fileName": "microfeed-microfeed-learnings.md"
+      }
+    },
+    "SRC-056F0015B404": {
+      "id": "SRC-056F0015B404",
+      "url": "https://www.npmjs.com/package/@microfeed/theme-kit",
+      "title": "https://www.npmjs.com/package/@microfeed/theme-kit",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:23:23.816Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microfeed-microfeed-learnings.md",
+        "fileName": "microfeed-microfeed-learnings.md"
+      }
+    },
+    "SRC-0315AD08C626": {
+      "id": "SRC-0315AD08C626",
+      "url": "https://www.listenhost.com/",
+      "title": "https://www.listenhost.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:23:23.894Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microfeed-microfeed-learnings.md",
+        "fileName": "microfeed-microfeed-learnings.md"
+      }
+    },
+    "SRC-1088EF1AC666": {
+      "id": "SRC-1088EF1AC666",
+      "url": "https://docs.microfee/",
+      "title": "https://docs.microfee/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:23:23.962Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microfeed-microfeed-learnings.md",
+        "fileName": "microfeed-microfeed-learnings.md"
+      }
+    },
+    "SRC-ED6853871632": {
+      "id": "SRC-ED6853871632",
+      "url": "https://github.com/user-attachments/assets/c09752ab-b59f-47ae-9fae-029895c2b6a4",
+      "title": "https://github.com/user-attachments/assets/c09752ab-b59f-47ae-9fae-029895c2b6a4",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:23:24.040Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microfeed-microfeed-learnings.md",
+        "fileName": "microfeed-microfeed-learnings.md"
+      }
+    },
+    "SRC-D7C7D732EF9B": {
+      "id": "SRC-D7C7D732EF9B",
+      "url": "https://github.com/user-attachments/assets/c3836bb9-a4db-4554-8007-c2fa42d3ee44",
+      "title": "https://github.com/user-attachments/assets/c3836bb9-a4db-4554-8007-c2fa42d3ee44",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:23:24.109Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microfeed-microfeed-learnings.md",
+        "fileName": "microfeed-microfeed-learnings.md"
+      }
+    },
+    "SRC-67B0E80EC7A3": {
+      "id": "SRC-67B0E80EC7A3",
+      "url": "https://webmachinelearning.github.io/webmcp",
+      "title": "https://webmachinelearning.github.io/webmcp",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:23:24.187Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microfeed-microfeed-learnings.md",
+        "fileName": "microfeed-microfeed-learnings.md"
+      }
+    },
+    "SRC-ACA25DA8902F": {
+      "id": "SRC-ACA25DA8902F",
+      "url": "https://feed.example.com`/",
+      "title": "https://feed.example.com`/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:23:24.254Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microfeed-microfeed-learnings.md",
+        "fileName": "microfeed-microfeed-learnings.md"
+      }
+    },
+    "SRC-70AFC84C803D": {
+      "id": "SRC-70AFC84C803D",
+      "url": "https://feed.example.com/mcp/%60",
+      "title": "https://feed.example.com/mcp/%60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:23:24.333Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microfeed-microfeed-learnings.md",
+        "fileName": "microfeed-microfeed-learnings.md"
+      }
+    },
+    "SRC-14357244F694": {
+      "id": "SRC-14357244F694",
+      "url": "https://docs.microfeed.org/manage-cli",
+      "title": "https://docs.microfeed.org/manage-cli",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T00:23:24.400Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microfeed-microfeed-learnings.md",
+        "fileName": "microfeed-microfeed-learnings.md"
       }
     }
   }

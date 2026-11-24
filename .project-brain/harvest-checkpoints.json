@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T00:07:25.167Z",
+  "last_updated": "2026-11-24T00:22:33.448Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2661,14 +2661,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openmoss-team-moss-image-sft",
-      "content_hash": "c489df5aa6cd2c1dd49ff1a324265c7a01b6456ee6621fa75b274bece76cf451",
-      "verified_at": "2026-11-19T18:32:55.942Z",
+      "content_hash": "4cc6d7c41e6bcb6e4af8490d015c6bcede5edc9e3d7811752201f86bf76bdf45",
+      "verified_at": "2026-11-24T00:22:33.438Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T18:32:55.942Z"
+      "last_updated": "2026-11-24T00:22:33.438Z"
     },
     "deepseek-ai/DeepSeek-V4.1-Flash-1017": {
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
@@ -20054,6 +20054,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-23T21:48:01.794Z"
+    },
+    "microfeed/microfeed": {
+      "repository": "microfeed/microfeed",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-microfeed-microfeed",
+      "content_hash": "e391259da168f4e2b54c5ba2eed331a7f39d5a2732831495992c967ebd65fd1b",
+      "verified_at": "2026-11-24T00:22:33.016Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-24T00:22:33.016Z"
     }
   },
   "repos": {

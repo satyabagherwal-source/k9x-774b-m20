@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-YO61",
-    "timestamp": "2026-11-22T03:54:05.401Z",
-    "repository": "baidu/ERNIE-5.5-Flash-Base",
-    "learningId": "learn-huggingface-baidu-ernie-5-5-flash-base",
-    "contentHash": "eb5085b738b0bb9de5ade32e96f66b98baa71b36f84bf37fee59069a55794911",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-CJP6",
-    "timestamp": "2026-11-22T04:04:52.794Z",
-    "repository": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
-    "learningId": "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic",
-    "contentHash": "5d396204dfe8b9debd3a85293b8f4a164895e061dce2346f8fd8626025413783",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-CQAD",
     "timestamp": "2026-11-22T04:05:01.333Z",
     "repository": "Agent-Field/agentfield",
@@ -7492,6 +7462,36 @@
     "contentHash": "c9da2ae1faa0e3e43438af0c4438143027d9cc533b418f5a14e331dd33d9506e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-ABZ7",
+    "timestamp": "2026-11-24T00:22:32.995Z",
+    "repository": "microfeed/microfeed",
+    "learningId": "learn-github-microfeed-microfeed",
+    "contentHash": "e391259da168f4e2b54c5ba2eed331a7f39d5a2732831495992c967ebd65fd1b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-ACB2",
+    "timestamp": "2026-11-24T00:22:33.422Z",
+    "repository": "OpenMOSS-Team/MOSS-Image-SFT",
+    "learningId": "learn-huggingface-openmoss-team-moss-image-sft",
+    "contentHash": "4cc6d7c41e6bcb6e4af8490d015c6bcede5edc9e3d7811752201f86bf76bdf45",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -20,9 +20,9 @@
   "gravitl-netmaker": {
     "name": "netmaker",
     "officialUrl": "https://github.com/gravitl/netmaker",
-    "lastChecked": "2026-11-23T19:51:19.104Z",
+    "lastChecked": "2026-11-24T00:22:40.106Z",
     "revisionIdentifier": "098d26a7",
-    "lastVerified": "2026-11-23T19:51:19.104Z"
+    "lastVerified": "2026-11-24T00:22:40.106Z"
   },
   "mintplex-labs-anything-llm": {
     "name": "Mintplex-Labs/anything-llm",
@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T00:07:28.476Z",
-    "lastVerified": "2026-11-24T00:07:28.476Z",
+    "lastChecked": "2026-11-24T00:22:45.053Z",
+    "lastVerified": "2026-11-24T00:22:45.053Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -378,8 +378,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T23:31:36.524Z",
-    "lastVerified": "2026-11-23T23:31:36.524Z",
+    "lastChecked": "2026-11-24T00:22:45.039Z",
+    "lastVerified": "2026-11-24T00:22:45.039Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -834,9 +834,9 @@
   "nirdiamant-rag_techniques": {
     "name": "RAG_Techniques",
     "officialUrl": "https://github.com/NirDiamant/RAG_Techniques",
-    "lastChecked": "2026-11-22T22:28:08.540Z",
+    "lastChecked": "2026-11-24T00:22:42.583Z",
     "revisionIdentifier": "2fd7bd0f",
-    "lastVerified": "2026-11-22T22:28:08.540Z"
+    "lastVerified": "2026-11-24T00:22:42.583Z"
   },
   "max-sixty-worktrunk": {
     "name": "max-sixty/worktrunk",
@@ -3185,9 +3185,9 @@
   "sorintlab-stolon": {
     "name": "stolon",
     "officialUrl": "https://github.com/sorintlab/stolon",
-    "lastChecked": "2026-11-22T23:25:02.054Z",
+    "lastChecked": "2026-11-24T00:22:37.553Z",
     "revisionIdentifier": "bcea7a75",
-    "lastVerified": "2026-11-22T23:25:02.054Z"
+    "lastVerified": "2026-11-24T00:22:37.553Z"
   },
   "lioensky-vcptoolbox": {
     "name": "lioensky/VCPToolBox",
@@ -8901,12 +8901,12 @@
     "officialUrl": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-19T18:32:55.172Z",
-    "lastVerified": "2026-11-19T18:32:55.172Z",
+    "lastChecked": "2026-11-24T00:22:32.704Z",
+    "lastVerified": "2026-11-24T00:22:32.704Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-openmoss-team-moss-image-sft",
-    "contentHash": "c489df5aa6cd2c1dd49ff1a324265c7a01b6456ee6621fa75b274bece76cf451",
+    "contentHash": "4cc6d7c41e6bcb6e4af8490d015c6bcede5edc9e3d7811752201f86bf76bdf45",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -11825,9 +11825,9 @@
   "signerlabs-klee": {
     "name": "Klee",
     "officialUrl": "https://github.com/signerlabs/Klee",
-    "lastChecked": "2026-11-21T01:16:20.507Z",
+    "lastChecked": "2026-11-24T00:22:35.199Z",
     "revisionIdentifier": "f39e0f96",
-    "lastVerified": "2026-11-21T01:16:20.507Z"
+    "lastVerified": "2026-11-24T00:22:35.199Z"
   },
   "devexpress-testcafe": {
     "name": "testcafe",
@@ -14779,6 +14779,23 @@
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "microfeed-microfeed": {
+    "name": "microfeed/microfeed",
+    "officialUrl": "https://github.com/microfeed/microfeed",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-24T00:22:28.587Z",
+    "lastVerified": "2026-11-24T00:22:28.587Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-microfeed-microfeed",
+    "contentHash": "e391259da168f4e2b54c5ba2eed331a7f39d5a2732831495992c967ebd65fd1b",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 8,
+    "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   }

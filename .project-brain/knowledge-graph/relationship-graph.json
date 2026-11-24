@@ -2,9 +2,9 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-24T00:07:59.809Z",
+  "updated_at": "2026-11-24T00:23:21.748Z",
   "statistics": {
-    "total_nodes": 491,
+    "total_nodes": 492,
     "total_edges": 205,
     "domain_distribution": {
       "D": 300,
@@ -17,7 +17,7 @@
       "F": 26,
       "B": 4,
       "E": 2,
-      "I": 11
+      "I": 12
     },
     "relation_distribution": {
       "CONSTRAINED_BY_ARCHITECTURE": 202,
@@ -10969,6 +10969,28 @@
       ],
       "created_at": "2026-11-24T00:07:59.809Z",
       "updated_at": "2026-11-24T00:07:59.809Z"
+    },
+    "DOM-I-4B3595B4": {
+      "id": "DOM-I-4B3595B4",
+      "domain": "I",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Pull current content and create, update, or delete content.: A named least-privilege mf_ API key",
+      "summary": "A named, least-privilege `mf_…` API key. -> A named, least-privilege `mf_…` API key.",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://microfeed-microfeed/microfeed-microfeed-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "**API**",
+        "author_or_entity": "AI-Builder-Brain Project Learning (microfeed-microfeed)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "I",
+        "Content & Information Intelligence"
+      ],
+      "created_at": "2026-11-24T00:23:21.748Z",
+      "updated_at": "2026-11-24T00:23:21.748Z"
     }
   },
   "edges": [

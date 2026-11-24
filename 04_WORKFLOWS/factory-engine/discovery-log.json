@@ -22069,5 +22069,20 @@
     "downloads": 0,
     "qualityScore": 870,
     "discoveredAt": "2026-11-23T21:45:47.038Z"
+  },
+  {
+    "name": "microfeed",
+    "fullName": "microfeed/microfeed",
+    "url": "https://github.com/microfeed/microfeed",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "an agentic cms self-hosted on cloudflare, for podcasts, blogs, photos, videos, documents, and curated urls.",
+    "stars": 4139,
+    "forks": 1432,
+    "openIssues": 45,
+    "language": "TypeScript",
+    "qualityScore": 2839,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-24T00:18:40.979Z"
   }
 ]
