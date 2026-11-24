@@ -46,8 +46,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-24T18:43:33.732Z",
-    "lastVerified": "2026-11-24T18:43:33.732Z",
+    "lastChecked": "2026-11-24T19:19:19.270Z",
+    "lastVerified": "2026-11-24T19:19:19.270Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T19:10:03.648Z",
-    "lastVerified": "2026-11-24T19:10:03.648Z",
+    "lastChecked": "2026-11-24T19:19:23.370Z",
+    "lastVerified": "2026-11-24T19:19:23.370Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -269,9 +269,9 @@
   "pathwaycom-llm-app": {
     "name": "llm-app",
     "officialUrl": "https://github.com/pathwaycom/llm-app",
-    "lastChecked": "2026-11-23T22:56:21.610Z",
+    "lastChecked": "2026-11-24T19:19:16.703Z",
     "revisionIdentifier": "53c6382b",
-    "lastVerified": "2026-11-23T22:56:21.610Z"
+    "lastVerified": "2026-11-24T19:19:16.703Z"
   },
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
@@ -2193,12 +2193,12 @@
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-24T15:17:24.501Z",
-    "lastVerified": "2026-11-24T15:17:24.501Z",
+    "lastChecked": "2026-11-24T19:19:19.041Z",
+    "lastVerified": "2026-11-24T19:19:19.041Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "1c06d402d67ef0412c0448b8c93533cb3ebffff519901e731a85e27d7e1046e0",
+    "contentHash": "ae281061719df3bfe40c3efc2961d21a70a8265a925fc08f18b16df079006597",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -3153,9 +3153,9 @@
   "taubyte-tau": {
     "name": "tau",
     "officialUrl": "https://github.com/taubyte/tau",
-    "lastChecked": "2026-11-24T00:07:15.930Z",
+    "lastChecked": "2026-11-24T19:19:11.890Z",
     "revisionIdentifier": "59816f6f",
-    "lastVerified": "2026-11-24T00:07:15.930Z"
+    "lastVerified": "2026-11-24T19:19:11.890Z"
   },
   "milvus-io-bootcamp": {
     "name": "bootcamp",
@@ -5742,9 +5742,9 @@
   "react-native-webrtc-react-native-webrtc": {
     "name": "react-native-webrtc",
     "officialUrl": "https://github.com/react-native-webrtc/react-native-webrtc",
-    "lastChecked": "2026-11-22T04:51:15.612Z",
+    "lastChecked": "2026-11-24T19:19:09.263Z",
     "revisionIdentifier": "7b9b451b",
-    "lastVerified": "2026-11-22T04:51:15.612Z"
+    "lastVerified": "2026-11-24T19:19:09.263Z"
   },
   "goss-org-goss": {
     "name": "goss",
@@ -6422,14 +6422,14 @@
     "officialUrl": "https://github.com/yvgude/lean-ctx",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T17:29:32.438Z",
-    "lastVerified": "2026-11-23T17:29:32.438Z",
+    "lastChecked": "2026-11-24T19:19:08.867Z",
+    "lastVerified": "2026-11-24T19:19:08.867Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-yvgude-lean-ctx",
-    "contentHash": "a9a72670c3e0499ffcd30bd30285e9aa46cd39c6394322c8b03202f309752e8c",
+    "contentHash": "8e3362aa5d5c54d8c04dd279e6a56897f73f160fba287948545db8742710c7a1",
     "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11171,9 +11171,9 @@
   "psf-requests": {
     "name": "requests",
     "officialUrl": "https://github.com/psf/requests",
-    "lastChecked": "2026-11-20T20:14:47.783Z",
+    "lastChecked": "2026-11-24T19:19:06.829Z",
     "revisionIdentifier": "3c7baaa0",
-    "lastVerified": "2026-11-20T20:14:47.783Z"
+    "lastVerified": "2026-11-24T19:19:06.829Z"
   },
   "sdwebimage-sdwebimageswiftui": {
     "name": "SDWebImageSwiftUI",

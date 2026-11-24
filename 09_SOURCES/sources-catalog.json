@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "6dce0b21",
+    "sourceVersion": "8bcc919d",
     "license": "BSD-3-Clause",
-    "contentHash": "1c06d402d67ef0412c0448b8c93533cb3ebffff519901e731a85e27d7e1046e0",
-    "lastHarvestedAt": "2026-11-24T15:17:25.621Z",
+    "contentHash": "ae281061719df3bfe40c3efc2961d21a70a8265a925fc08f18b16df079006597",
+    "lastHarvestedAt": "2026-11-24T19:19:20.136Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -6233,10 +6233,10 @@
     "repository": "yvgude/lean-ctx",
     "platform": "github",
     "sourceUrl": "https://github.com/yvgude/lean-ctx",
-    "sourceVersion": "8ff3aef4",
+    "sourceVersion": "e7a78554",
     "license": "Apache-2.0",
-    "contentHash": "a9a72670c3e0499ffcd30bd30285e9aa46cd39c6394322c8b03202f309752e8c",
-    "lastHarvestedAt": "2026-11-23T17:29:33.849Z",
+    "contentHash": "8e3362aa5d5c54d8c04dd279e6a56897f73f160fba287948545db8742710c7a1",
+    "lastHarvestedAt": "2026-11-24T19:19:10.144Z",
     "learningId": "learn-github-yvgude-lean-ctx"
   },
   "gkd-kit-gkd": {

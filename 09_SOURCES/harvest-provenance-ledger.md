@@ -12822,3 +12822,5 @@ Every entry in this ledger must capture:
 | `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `2921dcc5` | Multi-dimensional audit evidence | 2026-11-24T19:09:57.436Z |
 | `learn-github-meilisearch-meilisearch` | `https://github.com/meilisearch/meilisearch` | `9dbecfa0` | Multi-dimensional audit evidence | 2026-11-24T19:10:00.046Z |
 | `learn-dom-c-af8b1b7f` | `project://beclab-olares` | `9ecae93f` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/beclab-olares-learnings.md` | 2026-11-24T19:10:44.611Z |
+| `learn-github-yvgude-lean-ctx` | `https://github.com/yvgude/lean-ctx` | `e7a78554` | Multi-dimensional audit evidence | 2026-11-24T19:19:10.144Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `8bcc919d` | Multi-dimensional audit evidence | 2026-11-24T19:19:20.136Z |

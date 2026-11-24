@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T19:10:47.886Z",
+  "last_updated": "2026-11-24T19:19:26.217Z",
   "total_verified_learnings": 9100,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24868,
+  "total_items": 24873,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "959247c10b97dc037619c406a5f5c1bcbe16cd4bfa38bd7aca93b24572169d11",
+      "content_hash": "f128036bafdfb9c55dadb97b8990ec04036d3cbda8249d10417d747fdff91ff6",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T18:26:04.286Z"
+      "persisted_at": "2026-11-24T19:19:26.072Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "4b8f4e5fa04e3abd91006e74c84bd3aae4e1511242c48e36960bfdc2df6ed88f",
+      "content_hash": "f2d93f7308b62ea8f21db19b255349c1ea82ebada1bc719de2931b0f546b00f2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T18:26:04.429Z"
+      "persisted_at": "2026-11-24T19:19:26.217Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112425,10 +112425,10 @@
       "relative_path": "08_VERIFICATION/tailscale-tailscale-verification-protocol-empirical-defect-shield-for-tailscale-.md",
       "title": "Verification Protocol: Empirical Defect Shield for tailscale/tailscale",
       "repository": "tailscale/tailscale",
-      "source_version": "6dce0b21",
-      "content_hash": "3e13aaeaacdba2e079ef11ab81b2fd0544cde2e55ff23cd8612c875360828e7f",
+      "source_version": "8bcc919d",
+      "content_hash": "99641936ae7dc199dafb0d1a5418e01353b8cebb88e9f2d1516cb7e8d0486b8e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T15:17:26.227Z"
+      "persisted_at": "2026-11-24T19:19:20.699Z"
     },
     "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768": {
       "item_id": "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768",
@@ -220647,8 +220647,8 @@
       "slug": "yvgude-lean-ctx",
       "platform": "github",
       "source_url": "https://github.com/yvgude/lean-ctx",
-      "source_version": "8ff3aef4",
-      "content_hash": "a9a72670c3e0499ffcd30bd30285e9aa46cd39c6394322c8b03202f309752e8c",
+      "source_version": "e7a78554",
+      "content_hash": "8e3362aa5d5c54d8c04dd279e6a56897f73f160fba287948545db8742710c7a1",
       "dossier_path": "07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md",
       "promoted_rules": [
@@ -220661,6 +220661,11 @@
           "number": 10082,
           "title": "enforce the timeout when -c writes to a file",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10344,
+          "title": "link the public COMPANIONS_LATER in install_runtime_and_enable",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -220668,7 +220673,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T17:29:33.562Z",
+      "verified_at": "2026-11-24T19:19:09.932Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -220720,10 +220725,10 @@
       "relative_path": "08_VERIFICATION/yvgude-lean-ctx-verification-protocol-empirical-defect-shield-for-yvgude-lean-ct.md",
       "title": "Verification Protocol: Empirical Defect Shield for yvgude/lean-ctx",
       "repository": "yvgude/lean-ctx",
-      "source_version": "8ff3aef4",
-      "content_hash": "fbefaa023ff24dee6d5317f37ab4748c4a589fc2d8c9c65eefa16bb3949b66e0",
+      "source_version": "e7a78554",
+      "content_hash": "be4458aa8dcd30432706fd3e1cc0f02b38a3dc1ac7839a481f8f85b0948f0a21",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T17:29:34.660Z"
+      "persisted_at": "2026-11-24T19:19:10.737Z"
     },
     "learn-github-invertase-react-native-firebase": {
       "learning_id": "learn-github-invertase-react-native-firebase",
@@ -221054,9 +221059,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for yvgude-lean-ctx-learnings",
       "repository": "yvgude-lean-ctx-learnings",
       "source_version": "HEAD",
-      "content_hash": "167d527ef764a71f24390186d600ca2f1d6b76cc2f47f02a1d31893105955207",
+      "content_hash": "716d85ddf56022c7a943f5c5e27fcffa49770df8ade6d8fc3e04e2b262749bfe",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T17:29:45.608Z"
+      "persisted_at": "2026-11-24T19:19:24.158Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-ricursiveai-ripple-65b-preview-learnings-core": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-ricursiveai-ripple-65b-preview-learnings-core",
@@ -223925,8 +223930,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "6dce0b21",
-      "content_hash": "1c06d402d67ef0412c0448b8c93533cb3ebffff519901e731a85e27d7e1046e0",
+      "source_version": "8bcc919d",
+      "content_hash": "ae281061719df3bfe40c3efc2961d21a70a8265a925fc08f18b16df079006597",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -224064,6 +224069,11 @@
           "number": 10292,
           "title": "cmd/k8s-operator: publish HA Service VIPs for configured IP families",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10345,
+          "title": "cmd/testwrapper: ensure unfinished tests always trigger failure",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -224071,7 +224081,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T15:17:25.398Z",
+      "verified_at": "2026-11-24T19:19:19.924Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -224174,9 +224184,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tailscale-tailscale-learnings",
       "repository": "tailscale-tailscale-learnings",
       "source_version": "HEAD",
-      "content_hash": "b706934bf04123cc757ac3d87710df172d7a3175a6fb6584c2146ca3293c431e",
+      "content_hash": "b512044d2989e0bb82582ec07fb69961711f08c10f09669f778542bc90f48c67",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T15:17:35.364Z"
+      "persisted_at": "2026-11-24T19:19:25.083Z"
     },
     "learn-huggingface-stabilityai-stable-diffusion-3-medium": {
       "learning_id": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
@@ -256405,9 +256415,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "e047982c2e60490f40c1e9bbca5476787b62896a7407c5577ea1289ae5dd7de5",
+      "content_hash": "a87dac900345f6ff58bf83365f5a5b62468db2a9122ae6542ee285318b889c2f",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T18:26:04.108Z"
+      "persisted_at": "2026-11-24T19:19:25.881Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
@@ -319612,10 +319622,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-tailscale-tailscale-quality-verification-intelligence-tailscale-tailscale-core-i.md",
       "title": "Quality & Verification Intelligence: tailscale/tailscale Core Invariants",
       "repository": "tailscale/tailscale",
-      "source_version": "1db8e79a",
-      "content_hash": "84dd4a0d9b5ec3f9cbb524a94ef60a7242c8ea086529cb48b8641033e369d9a6",
+      "source_version": "8bcc919d",
+      "content_hash": "c18f1e26e360e5be97866cee985f76dc076839d0ceddc3ef4afef767e30d0124",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T23:26:47.616Z"
+      "persisted_at": "2026-11-24T19:19:20.533Z"
     },
     "rule-9863": {
       "learning_id": "rule-9863",
@@ -319841,9 +319851,9 @@
       "title": "Quality & Verification Intelligence: tailscale-tailscale-learnings Core Invariants",
       "repository": "tailscale-tailscale-learnings",
       "source_version": "HEAD",
-      "content_hash": "da2e3f330e1f7742731232adec5b6f6f9e618dadd88b3aa5568f0490cec4b5ff",
+      "content_hash": "31a2fdb7f0d9006ca92a77da75f53156cd5743e073b94452cf441b9655df9af8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T23:30:19.517Z"
+      "persisted_at": "2026-11-24T19:19:24.905Z"
     },
     "domain_intelligence-research-knowledge-intelligence-obliteratus-deepseek-v4-1-flash-1017-obliterated": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-obliteratus-deepseek-v4-1-flash-1017-obliterated",
@@ -329389,10 +329399,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-yvgude-lean-ctx-technical-construction-intelligence-yvgude-lean-ctx-core-invaria.md",
       "title": "Technical Construction Intelligence: yvgude/lean-ctx Core Invariants",
       "repository": "yvgude/lean-ctx",
-      "source_version": "8ff3aef4",
-      "content_hash": "afa6933b364f41ac00d1fce94e19d192161eeabd251f43c658058adea9d7bbcf",
+      "source_version": "e7a78554",
+      "content_hash": "a658a32b6c0b43fc81c49464e62dbb6b8b6bf0205aac4df8e567fd48c423d19c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T17:29:34.420Z"
+      "persisted_at": "2026-11-24T19:19:10.550Z"
     },
     "candidate_directive-release-prep-windows-and-linux-0-6-0-android-0-6-0": {
       "item_id": "candidate_directive-release-prep-windows-and-linux-0-6-0-android-0-6-0",
@@ -329452,9 +329462,9 @@
       "title": "Technical Construction Intelligence: yvgude-lean-ctx-learnings Core Invariants",
       "repository": "yvgude-lean-ctx-learnings",
       "source_version": "HEAD",
-      "content_hash": "a52aee9970c3b5fd2325ac8e9a2dcf9bdc8c4f075e0cf3a5d99456ce17f58c7e",
+      "content_hash": "6eea8b1b6c234a753d1b9c5c373963f90bcb8af716ca0bd61d507df322fe4d04",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T17:29:45.358Z"
+      "persisted_at": "2026-11-24T19:19:23.978Z"
     },
     "rule-10084": {
       "learning_id": "rule-10084",
@@ -330432,13 +330442,13 @@
       "item_id": "candidate_directive-rust-resolve-python-calls-through-annotated-parameters-and-self-members",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-ZQQL-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-WD8N-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
       "title": "rust): resolve python calls through annotated parameters and self members",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "e62a187d7709cc4abc8788ce7c40597a9da1284d188b074bbda37c296efa10ce",
+      "content_hash": "0bfcb3a41f02bd7ee983ab0f5165285d49803cad55ca379f7787fc98420ad899",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T18:26:03.936Z"
+      "persisted_at": "2026-11-24T19:19:25.706Z"
     },
     "learn-github-iziz-libphonenumber-ios": {
       "learning_id": "learn-github-iziz-libphonenumber-ios",
@@ -339691,6 +339701,70 @@
       "content_hash": "7c31120bd1c42f9f94fdd023d06c54d003d0034e05b48e165bc8e34229f67843",
       "domain_letter": "C",
       "persisted_at": "2026-11-24T19:10:45.095Z"
+    },
+    "rule-10344": {
+      "learning_id": "rule-10344",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10344,
+      "title": "link the public COMPANIONS_LATER in install_runtime_and_enable",
+      "source_url": "https://github.com/yvgude/lean-ctx",
+      "source_version": "e7a78554",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T19:19:09.932Z"
+    },
+    "candidate_directive-link-the-public-companions_later-in-install_runtime_and_enable": {
+      "item_id": "candidate_directive-link-the-public-companions_later-in-install_runtime_and_enable",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-W1ET-link-the-public-companions_later-in-install_runtime_and_enable.md",
+      "title": "link the public COMPANIONS_LATER in install_runtime_and_enable",
+      "repository": "yvgude/lean-ctx",
+      "source_version": "e7a78554",
+      "content_hash": "04583d64c7810bd6666faad67a3058f26352cd0bcaf9b109b8788b55162fa7c3",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T19:19:10.377Z"
+    },
+    "rule-10345": {
+      "learning_id": "rule-10345",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10345,
+      "title": "cmd/testwrapper: ensure unfinished tests always trigger failure",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "8bcc919d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T19:19:19.924Z"
+    },
+    "candidate_directive-cmd-testwrapper-ensure-unfinished-tests-always-trigger-failure": {
+      "item_id": "candidate_directive-cmd-testwrapper-ensure-unfinished-tests-always-trigger-failure",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WCHH-cmd-testwrapper-ensure-unfinished-tests-always-trigger-failure.md",
+      "title": "cmd/testwrapper: ensure unfinished tests always trigger failure",
+      "repository": "tailscale-tailscale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "169b730b9a691284627fb23e1834c12c5646b62688f62a9062ed94b7cff8108a",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-24T19:19:24.726Z"
+    },
+    "candidate_directive-docs-link-the-public-companions_later-in-install_runtime_and_enable": {
+      "item_id": "candidate_directive-docs-link-the-public-companions_later-in-install_runtime_and_enable",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WBRJ-docs-link-the-public-companions_later-in-install_runtime_and_enable.md",
+      "title": "docs): link the public COMPANIONS_LATER in install_runtime_and_enable",
+      "repository": "yvgude-lean-ctx-learnings",
+      "source_version": "HEAD",
+      "content_hash": "fb0e430f4c70160ce2f3644e7fcb2ae18c6eb26e137742e7e7457d849f336fc0",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T19:19:23.794Z"
     }
   },
   "ai-builder-brain": {

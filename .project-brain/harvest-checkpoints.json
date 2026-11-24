@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T19:10:00.069Z",
+  "last_updated": "2026-11-24T19:19:20.151Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "1c06d402d67ef0412c0448b8c93533cb3ebffff519901e731a85e27d7e1046e0",
-      "verified_at": "2026-11-24T15:17:25.637Z",
+      "content_hash": "ae281061719df3bfe40c3efc2961d21a70a8265a925fc08f18b16df079006597",
+      "verified_at": "2026-11-24T19:19:20.151Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T15:17:25.637Z"
+      "last_updated": "2026-11-24T19:19:20.151Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -9471,14 +9471,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yvgude-lean-ctx",
-      "content_hash": "a9a72670c3e0499ffcd30bd30285e9aa46cd39c6394322c8b03202f309752e8c",
-      "verified_at": "2026-11-23T17:29:33.861Z",
+      "content_hash": "8e3362aa5d5c54d8c04dd279e6a56897f73f160fba287948545db8742710c7a1",
+      "verified_at": "2026-11-24T19:19:10.158Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T17:29:33.861Z"
+      "last_updated": "2026-11-24T19:19:10.158Z"
     },
     "gkd-kit/gkd": {
       "repository": "gkd-kit/gkd",

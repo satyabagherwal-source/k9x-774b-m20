@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T19:10:47.616Z",
+  "last_updated": "2026-11-24T19:19:25.881Z",
   "total_records": 2566,
   "domains": {
     "A": {
@@ -23737,8 +23737,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "e047982c2e60490f40c1e9bbca5476787b62896a7407c5577ea1289ae5dd7de5",
-      "created_at": "2026-11-24T18:26:04.108Z"
+      "content_hash": "a87dac900345f6ff58bf83365f5a5b62468db2a9122ae6542ee285318b889c2f",
+      "created_at": "2026-11-24T19:19:25.881Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",
@@ -38860,8 +38860,8 @@
       "title": "Quality & Verification Intelligence: tailscale/tailscale Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-tailscale-tailscale-quality-verification-intelligence-tailscale-tailscale-core-i.md",
       "repository": "tailscale/tailscale",
-      "content_hash": "84dd4a0d9b5ec3f9cbb524a94ef60a7242c8ea086529cb48b8641033e369d9a6",
-      "created_at": "2026-11-21T23:26:47.616Z"
+      "content_hash": "c18f1e26e360e5be97866cee985f76dc076839d0ceddc3ef4afef767e30d0124",
+      "created_at": "2026-11-24T19:19:20.533Z"
     },
     "domain_intelligence-technical-construction-intelligence-edge0-audio8-tts-realistic-air-core-invarian": {
       "record_id": "domain_intelligence-technical-construction-intelligence-edge0-audio8-tts-realistic-air-core-invarian",
@@ -39039,8 +39039,8 @@
       "title": "Quality & Verification Intelligence: tailscale-tailscale-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-tailscale-tailscale-learnings-quality-verification-intelligence-tailscale-tailsc.md",
       "repository": "tailscale-tailscale-learnings",
-      "content_hash": "da2e3f330e1f7742731232adec5b6f6f9e618dadd88b3aa5568f0490cec4b5ff",
-      "created_at": "2026-11-21T23:30:19.517Z"
+      "content_hash": "31a2fdb7f0d9006ca92a77da75f53156cd5743e073b94452cf441b9655df9af8",
+      "created_at": "2026-11-24T19:19:24.905Z"
     },
     "domain_intelligence-research-knowledge-intelligence-obliteratus-deepseek-v4-1-flash-1017-obliterated": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-obliteratus-deepseek-v4-1-flash-1017-obliterated",
@@ -40996,8 +40996,8 @@
       "title": "Technical Construction Intelligence: yvgude/lean-ctx Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-yvgude-lean-ctx-technical-construction-intelligence-yvgude-lean-ctx-core-invaria.md",
       "repository": "yvgude/lean-ctx",
-      "content_hash": "afa6933b364f41ac00d1fce94e19d192161eeabd251f43c658058adea9d7bbcf",
-      "created_at": "2026-11-23T17:29:34.420Z"
+      "content_hash": "a658a32b6c0b43fc81c49464e62dbb6b8b6bf0205aac4df8e567fd48c423d19c",
+      "created_at": "2026-11-24T19:19:10.550Z"
     },
     "domain_intelligence-technical-construction-intelligence-yvgude-lean-ctx-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-yvgude-lean-ctx-learnings-core-invariants",
@@ -41005,8 +41005,8 @@
       "title": "Technical Construction Intelligence: yvgude-lean-ctx-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-yvgude-lean-ctx-learnings-technical-construction-intelligence-yvgude-lean-ctx-le.md",
       "repository": "yvgude-lean-ctx-learnings",
-      "content_hash": "a52aee9970c3b5fd2325ac8e9a2dcf9bdc8c4f075e0cf3a5d99456ce17f58c7e",
-      "created_at": "2026-11-23T17:29:45.358Z"
+      "content_hash": "6eea8b1b6c234a753d1b9c5c373963f90bcb8af716ca0bd61d507df322fe4d04",
+      "created_at": "2026-11-24T19:19:23.978Z"
     },
     "domain_intelligence-architecture-intelligence-prometheus-prometheus-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-prometheus-prometheus-core-invariants",
