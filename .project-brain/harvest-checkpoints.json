@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T06:30:13.728Z",
+  "last_updated": "2026-11-24T06:38:28.688Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3291,14 +3291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dkhamsing-open-source-ios-apps",
-      "content_hash": "62e99f7c7e9f06bccaaa327ba31ee4906a0eb93eafb519140f3d31f7eb4b6c33",
-      "verified_at": "2026-11-21T12:19:41.547Z",
+      "content_hash": "93bec2770c031591bcbc0d09ebbf5d1e187c2419b2f3922db06fef5e391e895b",
+      "verified_at": "2026-11-24T06:38:25.060Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T12:19:41.547Z"
+      "last_updated": "2026-11-24T06:38:25.060Z"
     },
     "moby/buildkit": {
       "repository": "moby/buildkit",
@@ -4731,14 +4731,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-unhappychoice-gitlogue",
-      "content_hash": "55c0a2a34d69eac2846ce19d56cefb8cd3fc48dd40e55add9fac74364365544f",
-      "verified_at": "2026-11-21T15:31:17.723Z",
+      "content_hash": "6df6245408101b4b49df8ed3ac4ff4cbb8dc3af02d0caf675ab5b179cbddfe5f",
+      "verified_at": "2026-11-24T06:38:20.225Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T15:31:17.723Z"
+      "last_updated": "2026-11-24T06:38:20.225Z"
     },
     "FaridSafi/react-native-gifted-chat": {
       "repository": "FaridSafi/react-native-gifted-chat",
@@ -7476,14 +7476,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-encoredev-encore",
-      "content_hash": "94bef1b67a807f849105d446a72cd91d4700fc23fe5aff4a66793e08787928d4",
-      "verified_at": "2026-11-13T15:18:34.054Z",
+      "content_hash": "32dc69d610fe7e06397ca2fbe7a805a4c3e76c4faa787f45aba2830e771fec43",
+      "verified_at": "2026-11-24T06:38:28.688Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T15:18:34.054Z"
+      "last_updated": "2026-11-24T06:38:28.688Z"
     },
     "rqlite/rqlite": {
       "repository": "rqlite/rqlite",

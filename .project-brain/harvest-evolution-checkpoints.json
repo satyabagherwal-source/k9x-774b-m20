@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T06:30:20.908Z",
+  "last_updated": "2026-11-24T06:38:37.001Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-24T04:37:07.379Z",
@@ -438,7 +438,7 @@
       "staged_for_review": 1
     },
     "unhappychoice-gitlogue-learnings.md": {
-      "processed_at": "2026-11-21T15:31:38.964Z",
+      "processed_at": "2026-11-24T06:38:32.197Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1033,7 +1033,7 @@
       "staged_for_review": 1
     },
     "encoredev-encore-learnings.md": {
-      "processed_at": "2026-11-13T15:19:17.090Z",
+      "processed_at": "2026-11-24T06:38:35.848Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3263,7 +3263,7 @@
       "staged_for_review": 1
     },
     "dkhamsing-open-source-ios-apps-learnings.md": {
-      "processed_at": "2026-11-21T12:19:50.958Z",
+      "processed_at": "2026-11-24T06:38:33.042Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3808,7 +3808,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3681,
+  "total_dossiers_evaluated": 3684,
   "total_canonical_promoted": 501,
-  "total_staged_for_review": 2771
+  "total_staged_for_review": 2774
 }

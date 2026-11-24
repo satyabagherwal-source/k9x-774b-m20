@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-NVT3",
-    "timestamp": "2026-11-22T12:37:34.791Z",
-    "repository": "MiniMaxAI/MiniMax-H3-Image-PE",
-    "learningId": "learn-huggingface-minimaxai-minimax-h3-image-pe",
-    "contentHash": "24c873ac57ad005c77023b404865fc55479795566ef2a3ce416723ba5829d466",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-CWQ0",
-    "timestamp": "2026-11-22T12:57:02.376Z",
-    "repository": "apache/shardingsphere",
-    "learningId": "learn-github-apache-shardingsphere",
-    "contentHash": "530b88ec981ac701b47bb9ce660642278811bcbe01d1bf40a797650a6a278294",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-CY2F",
-    "timestamp": "2026-11-22T12:57:04.119Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "bcaae78f64e3307243f92b0ccaaac5523a938395c5b836eb53b48fa3b386e202",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-J38W",
     "timestamp": "2026-11-22T13:01:50.768Z",
     "repository": "internlm/Sage-S2.1-Flash",
@@ -7490,6 +7445,51 @@
     "repository": "expo/expo",
     "learningId": "learn-github-expo-expo",
     "contentHash": "9b5fea2d363eff5ea37cfa556947151796c8af3394dbaeb69541942953f86dea",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-PLIN",
+    "timestamp": "2026-11-24T06:38:20.207Z",
+    "repository": "unhappychoice/gitlogue",
+    "learningId": "learn-github-unhappychoice-gitlogue",
+    "contentHash": "6df6245408101b4b49df8ed3ac4ff4cbb8dc3af02d0caf675ab5b179cbddfe5f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-PP8Y",
+    "timestamp": "2026-11-24T06:38:25.042Z",
+    "repository": "dkhamsing/open-source-ios-apps",
+    "learningId": "learn-github-dkhamsing-open-source-ios-apps",
+    "contentHash": "93bec2770c031591bcbc0d09ebbf5d1e187c2419b2f3922db06fef5e391e895b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-PS1Q",
+    "timestamp": "2026-11-24T06:38:28.670Z",
+    "repository": "encoredev/encore",
+    "learningId": "learn-github-encoredev-encore",
+    "contentHash": "32dc69d610fe7e06397ca2fbe7a805a4c3e76c4faa787f45aba2830e771fec43",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

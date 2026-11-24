@@ -12647,3 +12647,6 @@ Every entry in this ledger must capture:
 | `learn-dom-h-e1d0f50e` | `project://aws-aws-cdk` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md` | 2026-11-24T06:21:17.868Z |
 | `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `f3111f6b` | Multi-dimensional audit evidence | 2026-11-24T06:30:07.359Z |
 | `learn-github-expo-expo` | `https://github.com/expo/expo` | `b03773cb` | Multi-dimensional audit evidence | 2026-11-24T06:30:13.707Z |
+| `learn-github-unhappychoice-gitlogue` | `https://github.com/unhappychoice/gitlogue` | `c680657b` | Multi-dimensional audit evidence | 2026-11-24T06:38:20.211Z |
+| `learn-github-dkhamsing-open-source-ios-apps` | `https://github.com/dkhamsing/open-source-ios-apps` | `18d19e32` | Multi-dimensional audit evidence | 2026-11-24T06:38:25.045Z |
+| `learn-github-encoredev-encore` | `https://github.com/encoredev/encore` | `94e12a29` | Multi-dimensional audit evidence | 2026-11-24T06:38:28.674Z |

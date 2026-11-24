@@ -12614,3 +12614,6 @@
 | `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T06:21:17.868Z` | `aws-aws-cdk` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-E1D0F50E` [Domain H] | Yes (`4aa89f82...`) |
 | `CYCLE-20261124-F18A` | `2026-11-24T06:30:07.354Z` | `metalbear-co/mirrord` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10218` | Yes (`6ed05e4d...`) |
 | `CYCLE-20261124-F64M` | `2026-11-24T06:30:13.702Z` | `expo/expo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10219` | Yes (`9b5fea2d...`) |
+| `CYCLE-20261124-PLIN` | `2026-11-24T06:38:20.207Z` | `unhappychoice/gitlogue` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`6df62454...`) |
+| `CYCLE-20261124-PP8Y` | `2026-11-24T06:38:25.042Z` | `dkhamsing/open-source-ios-apps` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10220` | Yes (`93bec277...`) |
+| `CYCLE-20261124-PS1Q` | `2026-11-24T06:38:28.670Z` | `encoredev/encore` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10221` | Yes (`32dc69d6...`) |

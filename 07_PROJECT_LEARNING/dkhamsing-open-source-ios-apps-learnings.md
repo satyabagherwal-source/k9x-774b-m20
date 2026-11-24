@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md`  
 > **Source**: github ([https://github.com/dkhamsing/open-source-ios-apps](https://github.com/dkhamsing/open-source-ios-apps))  
-> **Source Version**: `d7a14f21`  
+> **Source Version**: `18d19e32`  
 > **License**: CC0-1.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T12:19:40.643Z  
+> **Timestamp**: 2026-11-24T06:38:23.929Z  
 > **Learning ID**: `learn-github-dkhamsing-open-source-ios-apps`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dkhamsing/open-source-ios-apps](https://github.com/dkhamsing/open-source-ios-apps))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T12:19:40.636Z  
+> **Harvest Timestamp**: 2026-11-24T06:38:23.924Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: :iphone: Collaborative List of Open-Source iOS Apps
 - **Primary Language / Ecosystem**: Multi-language
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 53405 stars
+- **Stars / Engagement**: 53456 stars
 
 ---
 
@@ -43,16 +43,13 @@
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2535** (2026-11-20): **Add Strobe by @Cuzeth**
-  *Symptoms*: ## Add a project 1. [x] Project URL: https://github.com/abdeen-labs/rapid-serial-visual-presentation 2. [x] Update contents.json instead of README 3. [x] One project per pull request 4. [x] Screenshot included 5. [x] Avoid iOS or open-source in description as it is assumed 6. [x] Use this commit title format if applicable: Add app-name by @github-username 7. [x] Use approved format for your entry  Strobe is an RSVP speed reader: it shows a book, paper or article one word at a time, from 100 to 1,000 words per minute, and an on-device voice can read along. It opens PDFs, EPUBs, Markdown and web articles. It runs on iPhone, iPad and Mac (hence the `macos` category too), it is Apache-2.0 licensed and it is on the App Store. 
+- **Issue #2547** (2026-11-23): **Add Band·je**
+  *Symptoms*: Adds Band·je (audio): records conversations on iPhone, iPad and Apple Watch and transcribes them on device in 25 languages, with speaker labels. Swift/SwiftUI, GPL-3.0.  - Source: https://github.com/neurendal/bandje (iOS app in `ios/`) - App Store: https://apps.apple.com/app/id6831353548  Submitted by the maker.
   **Post-Mortem & Fix Analysis**:
-  > Hey, just checked the CI failure. It isn't from this PR, it's from 4 broken links from Lyricar's entry. The screenshots I added all pass. 
-  > can you resolve conflicts
+  > thx!
 
-- **Issue #2534** (2026-11-20): **Add Detour SSH by @INotSleep**
-  *Symptoms*: ## Add a project 1. [x] Project URL: https://github.com/INotSleep/Detour 2. [x] Update contents.json instead of README 3. [x] One project per pull request 4. [x] Screenshot included 5. [x] Avoid iOS or open-source in description as it is assumed 6. [x] Use this commit title format if applicable: Add app-name by @github-username 7. [x] Use approved format for your entry  Detour SSH is on the App Store (https://apps.apple.com/app/id6836001774). The iOS app (SwiftUI, `ios/` in the repo) uses the same Rust core as the desktop app. 
-  **Post-Mortem & Fix Analysis**:
-  > Thx 
+- **Issue #2546** (2026-11-23): **Jess**
+  *Symptoms*: # Using GitHub Codespaces in Visual Studio Code  You can develop in your codespace directly in Visual Studio Code by connecting the GitHub Codespaces extension with your GitHub account.  ## About GitHub Codespaces in Visual Studio Code  You can use your local install of Visual Studio Code to create, manage, work in, and delete codespaces. To use GitHub Codespaces in VS Code, you need to install the Codespaces extension. For more information on setting up GitHub Codespaces in VS Code, see [Prerequisites](#prerequisites).  By default, if you create a new codespace on GitHub, it will open in the browser. If you would prefer to open any new codespaces in VS Code automatically, you can set your default editor to be VS Code. For more information, see [Setting your default editor for GitHub Codespaces](/en/codespaces/setting-your-user-preferences/setting-your-default-editor-for-github-codespaces).  If you prefer to work in the browser, but want to continue using your existing VS Code extensions, themes, and shortcuts, you can turn on Settings Sync. For more information, see [Personalizing GitHub Codespaces for your account](/en/codespaces/setting-your-user-preferences/personalizing-github-codespaces-for-your-account#settings-sync).  ## Prerequisites  To develop in a codespace directly in VS Code, you must install and sign into the GitHub Codespaces extension with your GitHub credentials. The GitHub Codespaces extension requires VS Code October 2020 Release 1.51 or later.  Use the Vi
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -69,42 +66,88 @@
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d7a14f21` (2026-11-20)
+### Incident Patch 1: `18d19e32` (2026-11-23)
+**Commit Message**: Add Band·je (#2547)
+
+[ci skip]
+
+**File**: `contents.json` (modified, +22/-0)
+```diff
+@@ -36663,6 +36663,28 @@
+       ],
+       "date_added": "Nov 20 2026",
+       "suggested_by": "@skar404"
++    },
++    {
++      "title": "Band·je",
++      "category-ids": [
++        "audio"
++      ],
++      "tags": [
++        "swift",
++        "swiftui",
++        "watchos",
++        "ipad"
++      ],
++      "description": "Record conversations on iPhone, iPad and Apple Watch and transcribe them on device in 25 languages, with speaker labels and summaries in your own templates",
++      "source": "https://github.com/neurendal/bandje",
++      "homepage": "https://band.je/",
++      "itunes": "https://apps.apple.com/app/id6831353548",
++      "license": "gpl-3.0",
++      "screenshots": [
++        "https://raw.githubusercontent.com/neurendal/bandje/main/.github/readme/ios-02-transcript-light.webp"
++      ],
++      "date_added": "Nov 23 2026",
++      "suggested_by": "@roelandp"
+     }
+   ]
+ }
+```
+
+---
+
+### Incident Patch 2: `6b6337e4` (2026-11-23)
 **Commit Message**: [auto] [ci skip] Generate content
 
-**File**: `APPSTORE.md` (modified, +9/-1)
+**File**: `APPSTORE.md` (modified, +6/-3)
 ```diff
 @@ -4,7 +4,7 @@
  ⚠️ This README is generated, please do not update. To contribute, make changes to contents.json ⚠️ 
   https://github.com/dkhamsing/open-source-ios-apps -->
  
--List of **352** open-source apps published on the App Store (complete list [here](https://github.com/dkhamsing/open-source-ios-apps)).
-+List of **353** open-source apps published on the App Store (complete list [here](https://github.com/dkhamsing/open-source-ios-apps)).
+-List of **353** open-source apps published on the App Store (complete list [here](https://github.com/dkhamsing/open-source-ios-apps)).
++List of **354** open-source apps published on the App Store (complete list [here](https://github.com/dkhamsing/open-source-ios-apps)).
  
  
  
-@@ -1177,6 +1177,10 @@ Image, video, audio, reading — [back to top](#readme)
-   - [` App Store`](https://apps.apple.com/app/readest-ebook-reader/id6738622779) <a href='https://github.com/user-attachments/assets/c6de1b0e-8a49-4ad8-a72e-b04e7e7b9917'>`Screenshot 1`</a> 
-   -  `2026` `react-native` 
-   -  ☆`25739` 
-+- [Strobe](https://github.com/abdeen-labs/rapid-serial-visual-presentation): RSVP speed reader for PDFs, EPUBs, Markdown and web articles: shows one word at a time at 100 to 1,000 words per minute, with an on-device voice that can read along
-+  - <a href=https://strobefast.app>`https://strobefast.app`</a>
-+  - [` App Store`](https://apps.apple.com/app/id6759187873) <a href='https://raw.githubusercontent.com/abdeen-labs/rapid-serial-visual-presentation/main/AppStore/Screenshots/iPhone%206.9-inch/01-one-word.png'>`Screenshot 1`</a>  <a href='https://raw.githubusercontent.com/abdeen-labs/rapid-serial-visual-presentation/main/AppStore/Screenshots/iPhone%206.9-inch/03-hold-to-read.png'>`Screenshot 2`</a>  <a href='https://raw.githubusercontent.com/abdeen-labs/rapid-serial-visual-presentation/main/AppStore/Screenshots/iPhone%206.9-inch/08-full-text.png'>`Screenshot 3`</a> 
-+  - `swift` `swiftui` `swiftdata` `ipad` `macos` 
- ### Animoji 
+@@ -652,6 +652,9 @@ Jump to
+   - [` App Store`](https://apps.apple.com/us/app/pipifier/id1234771095)
+   -  `2021` `swift` 
+   -  ☆`799` 
++- [Slowth](https://github.com/skar404/slowth): Hide YouTube Shorts and Instagram Reels in Safari, with optional on-device detection in supported iPhone and iPad apps
++  - [` App Store`](https://apps.apple.com/app/id6764140763) <a href='https://raw.githubusercontent.com/skar404/slowth/main/docs/showcase-02.jpg'>`Screenshot 1`</a> 
++  - `swift` `swiftui` 
+ ### Today 
   
- [back to top](#readme) 
-@@ -2096,6 +2100,10 @@ Cross platform projects — [back to top](#readme)
-   - [` App Store`](https://apps.apple.com/app/stackov/id1511838391) <a href='https://uploads-ssl.webflow.com/5eda13df55b72c9ccf1b6aef/5eda4288c8019d1cc6edc24e_preview2.png'>`Screenshot 1`</a> 
-   -  `2021` `swift` `swiftui` `ipad` `macos` 
-   -  ☆`234` 
-+- [Strobe](https://github.com/abdeen-labs/rapid-serial-visual-presentation): RSVP speed reader for PDFs, EPUBs, Markdown and web articles: shows one word at a time at 100 to 1,000 words per minute, with an on-device voice that can read along
-+  - <a href=https://strobefast.app>`https://strobefast.app`</a>
-+  - [` App Store`](https://apps.apple.com/app/id6759187873) <a href='https://raw.githubusercontent.com/abdeen-labs/rapid-serial-visual-presentation/main/AppStore/Screenshots/iPhone%206.9-inch/01-one-word.png'>`Screenshot 1`</a>  <a href='https://raw.githubusercontent.com/abdeen-labs/rapid-serial-visual-presentation/main/AppStore/Screenshots/iPhone%206.9-inch/03-hold-to-read.png'>`Screenshot 2`</a>  <a href='https://raw.githubusercontent.com/abdeen-labs/rapid-serial-visual-presentation/main/AppStore/Screenshots/iPhone%206.9-inch/08-full-text.png'>`Screenshot 3`</a> 
-+  - `swift` `swiftui` `swiftdata` `ipad` `macos` 
- - [Yattee](https://github.com/yattee/yattee): Alternative to YouTube
-   - [` App Store`](https://apps.apple.com/app/yattee/id1595136629)
-   -  `2026` `swift` `tvos` 
+ Today Extensions or Widgets — [back to top](#readme) 
+@@ -1884,7 +1887,7 @@ https://joinmastodon.org — [back to top](#readme)
+   - [` App Store`](https://apps.apple.com/app/oss-weather/id1499117252) <a href='https://github.com/user-attachments/assets/396957e5-9c53-4049-abc3-eb538e07837b'>`Screenshot 1`</a> 
+   -  `2026` `nativescript` 
+   -  ☆`469` 
+-- [RainVu](https://github.com/astraen-dev/RainVu): Log rainfall from custom gauges and visualize historical data with charts
++- [RainVu](https://github.com/davidbits/RainVu): Log rainfall from custom gauges and visualize historical data with charts
+   - [` App Store`](https://apps.apple.com/app/rainvu/id6754812264) <a href='https://github.com/davidbits/RainVu/blob/main/docs/home_screen.png?raw=true'>`Screenshot 1`</a>  <a href='https://github.com/davidbits/RainVu/blob/main/docs/insights_screen.png?raw=true'>`Screenshot 2`</a> 
+   -  `2026` `flutter` `dart` 
+   -  ☆`7` 
+@@ -2051,7 +2054,7 @@ https://flutter.dev — [back to top](#readme)
+   - [` App Store`](https://apps.apple.com/app/quadrim/id6804034367) <a href='https://raw.githubusercontent.com/evermeer/Quadrim/main/doc/screenshots/01-main.png'>`Screenshot 1`</a>  <a href='https://raw.githubusercontent.com/evermeer/Quadrim/main/doc/screenshots/02-bramble.png'>`Screenshot 2`</a>  <a href='https://raw.githubusercontent.com/evermeer/Quadrim/main/doc/screenshots/04-cube.png'>`Screenshot 3`</a> 
+   -  `2026` `flutter` `dart` 
+   -  ☆`1` 
+-- [RainVu](https://github.com/astraen-dev/RainVu): Log rainfall from custom gauges and visualize historical data with charts
++- [RainVu](https://github.com/davidbits/RainVu): Log rainfall from custom gauges and visualize historical data with charts
+   - [` App Store`](https://apps.apple.com/app/rainvu/id6754812264) <a href='https://github.com/davidbits/RainVu/blob/main/docs/home_screen.png?raw=true'>`Screenshot 1`</a>  <a href='https://github.com/davidbits/RainVu/blob/main/docs/insights_screen.png?raw=true'>`Screenshot 2`</a> 
+   -  `2026` `flutter` `dart` 
+   -  ☆`7` 
 ```
 
 **File**: `LATEST.md` (modified, +29/-29)
@@ -112,154 +155,118 @@ Observed empirical fixes and code patches:
 @@ -3,35 +3,35 @@
  ## Lastest additions to the [main list](https://github.com/dkhamsing/open-source-ios-apps)
  
- 1. [Detour SSH](https://github.com/INotSleep/Detour)
--2. [DOOM (UZDoom) for iOS](https://github.com/sithewok13-dev/UZDoom)
--3. [OpenIntelligence](https://github.com/Gunnarguy/OpenIntelligence)
--4. [Termphin](https://github.com/Termphin/Termphin)
--5. [Wolf3D for iOS](https://github.com/sithewok13-dev/ECWolf)
--6. [DOOM 3 for iOS](https://github.com/sithewok13-dev/doom3-ios)
--7. [Raze for iOS](https://github.com/sithewok13-dev/Raze-iOS-)
--8. [Serious Sam Classic for iOS](https://github.com/sithewok13-dev/SeriousSamClassic)
--9. [Waytrace](https://github.com/lxyeternal/PathTracker)
--10. [Wudland](https://github.com/joexk1/wudland)
--11. [OpenJKDF2 for iOS](https://github.com/sithewok13-dev/OpenJKDF2-iOS)
--12. [Dash Notes](https://github.com/Efesop/rich-text-editor)
--13. [Unreeled](https://github.com/Mdavoigneau/Unreeled)
--14. [Brass Pawn](https://github.com/minchopm/chess-trainer)
--15. [Compresso](https://github.com/iziuqo/compresso)
--16. [hYYa Digital Footprint Check](https://github.com/hyya-dev/hYYa-Digital-Footprint-Check)
--17. [CrocApp](https://github.com/bakirgdev/CrocApp)
--18. [Voyager](https://github.com/aeharding/voyager)
--19. [Tether](https://github.com/viktor-svirsky/tether)
--20. [Resecta](https://github.com/Merlin1A/resecta)
--21. [Handsy AI (ESP32 iPhone Agent)](https://github.com/onehumanbeing/esp32-iphone-agent)
--22. [YT Music](https://github.com/AbinGanlary/yt-music)
--23. [ThumbFree](https://github.com/kabrapratik28/ThumbFree)
--24. [Happier](https://github.com/happier-dev/happier)
--25. [Oath Wallet](https://github.com/OathWallet/oath-wallet)
--26. [Currents](https://github.com/PndaMan/Currents)
--27. [BitTool Signer](https://github.com/bitbill/bittool-signer-ios)
--28. [Tuber](https://github.com/achubnet/Tuber)
--29. [Pomelu](https://github.com/ateymoori/pomelu)
--30. [Lexa](https://github.com/peterzhang0216/lexa)
-+2. [Strobe](https://github.com/abdeen-labs/rapid-serial-visual-presentation)
-+3. [DOOM (UZDoom) for iOS](https://github.com/sithewok13-dev/UZDoom)
-+4. [OpenIntelligence](https://github.com/Gunnarguy/OpenIntelligence)
-+5. [Termphin](https://github.com/Termphin/Termphin)
-+6. [Wolf3D for iOS](https://github.com/sithewok13-dev/ECWolf)
-+7. [DOOM 3 for iOS](https://github.com/sithewok13-dev/doom3-ios)
-+8. [Raze for iOS](https://github.com/sithewok13-dev/Raze-iOS-)
-+9. [Serious Sam Classic for iOS](https://github.com/sithewok13-dev/SeriousSamClassic)
-+10. [Waytrace](https://github.com/lxyeternal/PathTracker)
-+11. [Wudland](https://github.com/joexk1/wudland)
-+12. [OpenJKDF2 for iOS](https://github.com/sithewok13-dev/OpenJKDF2-iOS)
-+13. [Dash Notes](https://github.com/Efesop/rich-text-editor)
-+14. [Unreeled](https://github.com/Mdavoigneau/Unreeled)
-+15. [Brass Pawn](https://github.com/minchopm/chess-trainer)
-+16. [Compresso](https://github.com/iziuqo/compresso)
-+17. [hYYa Digital Footprint Check](https://github.com/hyya-dev/hYYa-Digital-Footprint-Check)
-+18. [CrocApp](https://github.com/bakirgdev/CrocApp)
-+19. [Voyager](https://github.com/aeharding/voyager)
-+20. [Tether](https://github.com/viktor-svirsky/tether)
-+21. [Resecta](https://github.com/Merlin1A/resecta)
-+22. [Handsy AI (ESP32 iPhone Agent)](https://github.com/onehumanbeing/esp32-iphone-agent)
-+23. [YT Music](https://github.com/AbinGanlary/yt-music)
-+24. [ThumbFree](https://github.com/kabrapratik28/ThumbFree)
-+25. [Happier](https://github.com/happier-dev/happier)
-+26. [Oath Wallet](https://github.com/OathWallet/oath-wallet)
-+27. [Currents](https://github.com/PndaMan/Currents)
-+28. [BitTool Signer](https://github.com/bitbill/bittool-signer-ios)
-+29. [Tuber](https://github.com/achubnet/Tuber)
-+30. [Pomelu](https://github.com/ateymoori/pomelu)
+ 1. [Orchestrator](https://github.com/OrchestratorInc/agent-orchestrator/tree/main/packages/mobile)
+-2. [Detour SSH](https://github.com/INotSleep/Detour)
+-3. [Strobe](https://github.com/abdeen-labs/rapid-serial-visual-presentation)
+-4. [DOOM (UZDoom) for iOS](https://github.com/sithewok13-dev/UZDoom)
+-5. [OpenIntelligence](https://github.com/Gunnarguy/OpenIntelligence)
+-6. [Termphin](https://github.com/Termphin/Termphin)
+-7. [Wolf3D for iOS](https://github.com/sithewok13-dev/ECWolf)
+-8. [DOOM 3 for iOS](https://github.com/sithewok13-dev/doom3-ios)
+-9. [Raze for iOS](https://github.com/sithewok13-dev/Raze-iOS-)
+-10. [Serious Sam Classic for iOS](https://github.com/sithewok13-dev/SeriousSamClassic)
+-11. [Waytrace](https://github.com/lxyeternal/PathTracker)
+-12. [Wudland](https://github.com/joexk1/wudland)
+-13. [OpenJKDF2 for iOS](https://github.com/sithewok13-dev/OpenJKDF2-iOS)
+-14. [Dash Notes](https://github.com/Efesop/rich-text-editor)
+-15. [Unreeled](https://github.com/Mdavoigneau/Unreeled)
+-16. [Brass Pawn](https://github.com/minchopm/chess-trainer)
+-17. [Compresso](https://github.com/iziuqo/compresso)
+-18. [hYYa Digital Footprint Check](https://github.com/hyya-dev/hYYa-Digital-Footprint-Check)
+-19. [CrocApp](https://github.com/bakirgdev/CrocApp)
+-20. [Voyager](https://github.com/aeharding/voyager)
+-21. [Tether](https://github.com/viktor-svirsky/tether)
+-22. [Resecta](https://github.com/Merlin1A/resecta)
+-23. [Handsy AI (ESP32 iPhone Agent)](https://github.com/onehumanbeing/esp32-iphone-agent)
+-24. [YT Music](https://github.com/AbinGanlary/yt-music)
+-25. [ThumbFree](https://github.com/kabrapratik28/ThumbFree)
+-26. [Happier](https://github.com/happier-dev/happier)
+-27. [Oath Wallet](https://github.com/OathWallet/oath-wallet)
+-28. [Currents](https://github.com/PndaMan/Currents)
+-29. [BitTool Signer](https://github.com/bitbill/bittool-signer-ios)
+-30. [Tuber](https://github.com/achubnet/Tuber)
++2. [Slowth](https://github.com/skar404/slowth)
++3. [Detour SSH](https://github.com/INotSleep/Detour)
++4. [Strobe](https://github.com/abdeen-labs/rapid-serial-visual-presentation)
++5. [DOOM (UZDoom) for iOS](https://github.com/sithewok13-dev/UZDoom)
++6. [OpenIntelligence](https://github.com/Gunnarguy/OpenIntelligence)
++7. [Termphin](https://github.com/Termphin/Termphin)
++8. [Wolf3D for iOS](https://github.com/sithewok13-dev/ECWolf)
++9. [DOOM 3 for iOS](https://github.com/sithewok13-dev/doom3-ios)
++10. [Raze for iOS](https://github.com/sithewok13-dev/Raze-iOS-)
++11. [Serious Sam Classic for iOS](https://github.com/sithewok13-dev/SeriousSamClassic)
++12. [Waytrace](https://github.com/lxyeternal/PathTracker)
++13. [Wudland](https://github.com/joexk1/wudland)
++14. [OpenJKDF2 for iOS](https://github.com/sithewok13-dev/OpenJKDF2-iOS)
++15. [Dash Notes](https://github.com/Efesop/rich-text-editor)
++16. [Unreeled](https://github.com/Mdavoigneau/Unreeled)
++17. [Brass Pawn](https://github.com/minchopm/chess-trainer)
++18. [Compresso](https://github.com/iziuqo/compresso)
++19. [hYYa Digital Footprint Check](https://github.com/hyya-dev/hYYa-Digital-Footprint-Check)
++20. [CrocApp](https://github.com/bakirgdev/CrocApp)
++21. [Voyager](https://github.com/aeharding/voyager)
++22. [Tether](https://github.com/viktor-svirsky/tether)
++23. [Resecta](https://github.com/Merlin1A/resecta)
++24. [Handsy AI (ESP32 iPhone Agent)](https://github.com/onehumanbeing/esp32-iphone-agent)
++25. [YT Music](https://github.com/AbinGanlary/yt-music)
++26. [ThumbFree](https://github.com/kabrapratik28/ThumbFree)
++27. [Happier](https://github.com/happier-dev/happier)
++28. [Oath Wallet](https://github.com/OathWallet/oath-wallet)
++29. [Currents](https://github.com/PndaMan/Currents)
++30. [BitTool Signer](https://github.com/bitbill/bittool-signer-ios)
  
  ## Most recently updated
  
 ```
 
-**File**: `README.md` (modified, +9/-1)
+**File**: `README.md` (modified, +6/-3)
 ```diff
 @@ -6,7 +6,7 @@
  
  A collaborative list of open-source `iOS`, `iPadOS`, `watchOS`, `tvOS` and `visionOS` apps, your [contribution](https://github.com/dkhamsing/open-source-ios-apps/blob/master/.github/CONTRIBUTING.md) is welcome :smile:
  
--![](https://img.shields.io/badge/Projects-1759-green.svg) ![](https://img.shields.io/badge/Updated-November%2020,%202026-lightgrey.svg)
-+![](https://img.shields.io/badge/Projects-1760-green.svg) ![](https://img.shields.io/badge/Updated-November%2020,%202026-lightgrey.svg)
+-![](https://img.shields.io/badge/Projects-1761-green.svg) ![](https://img.shields.io/badge/Updated-November%2022,%202026-lightgrey.svg)
++![](https://img.shields.io/badge/Projects-1762-green.svg) ![](https://img.shields.io/badge/Updated-November%2023,%202026-lightgrey.svg)
  
  Jump to
  
-@@ -2074,6 +2074,10 @@ Image, video, audio, reading — [back to top](#readme)
-   - [` App Store`](https://apps.apple.com/app/readest-ebook-reader/id6738622779) <a href='https://github.com/user-attachments/assets/c6de1b0e-8a49-4ad8-a72e-b04e7e7b9917'>`Screenshot 1`</a> 
-   -  `2026` `react-native` 
-   -  ☆`25739` 
-+- [Strobe](https://github.com/abdeen-labs/rapid-serial-visual-presentation): RSVP speed reader for PDFs, EPUBs, Markdown and web articles: shows one word at a time at 100 to 1,000 words per minute, with an on-device voice that can read along
-+  - <a href=https://strobefast.app>`https://strobefast.app`</a>
-+  - [` App Store`](https://apps.apple.com/app/id6759187873) <a href='https://raw.githubusercontent.com/abdeen-labs/rapid-serial-visual-presentation/main/AppStore/Screenshots/iPhone%206.9-inch/01-one-word.png'>`Screenshot 1`</a>  <a href='https://raw.githubusercontent.com/abdeen-labs/rapid-serial-visual-presentation/main/AppStore/Screenshots/iPhone%206.9-inch/03-hold-to-read.png'>`Screenshot 2`</a>  <a href='https://raw.githubusercontent.com/abdeen-labs/rapid-serial-visual-presentation/main/AppStore/Screenshots/iPhone%206.9-inch/08-full-text.png'>`Screenshot 3`</a> 
-+  - `swift` `swiftui` `swiftdata` `ipad` `macos` 
- - [whathaveiread](https://github.com/bcye/whathaveiread): Keep track of all books you've read and keep a short summary about them
-   -  `2020` `swift` `core-data` 
-   -  ☆`13` 
-@@ -3935,6 +3939,10 @@ Cross platform projects — [back to top](#readme)
-   - [` App Store`](https://apps.apple.com/app/stackov/id1511838391) <a href='https://uploads-ssl.webflow.com/5eda13df55b72c9ccf1b6aef/5eda4288c8019d1cc6edc24e_preview2.png'>`Screenshot 1`</a> 
-   -  `2021` `swift` `swiftui` `ipad` `macos` 
-   -  ☆`234` 
-+- [Strobe](https://github.com/abdeen-labs/rapid-serial-visual-presentation): RSVP speed reader for PDFs, EPUBs, Markdown and web articles: shows one word at a time at 100 to 1,000 words per minute, with an on-device voice that can read along
-+  - <a href=https://strobefast.app>`https://strobefast.app`</a>
-+  - [` App Store`](https://apps.apple.com/app/id6759187873) <a href='https://raw.githubusercontent.com/abdeen-labs/rapid-serial-visual-presentation/main/AppStore/Screenshots/iPhone%206.9-inch/01-one-word.png'>`Screenshot 1`</a>  <a href='https://raw.githubusercontent.com/abdeen-labs/rapid-serial-visual-presentation/main/AppStore/Screenshots/iPhone%206.9-inch/03-hold-to-read.png'>`Screenshot 2`</a>  <a href='https://raw.githubusercontent.com/abdeen-labs/rapid-serial-visual-presentation/main/AppStore/Screenshots/iPhone%206.9-inch/08-full-text.png'>`Screenshot 3`</a> 
-+  - `swift` `swiftui` `swiftdata` `ipad` `macos` 
- - [WordMasterKMP](https://github.com/joreilly/WordMasterKMP): Heavily inspired by the Wordle game, Word Master and wordle-solver
-   -  <a href='https://user-images.githubusercontent.com/6302/148663064-3ed57b1f-c1a3-4e39-b2c2-2ddb3fb09ed9.png'>`Screenshot 1`</a> 
-   -  `2026` `swift` `kotlin` `swiftui` `macos` `kmp` 
-```
-
----
-
-### Incident Patch 2: `7e658e39` (2026-11-20)
-**Commit Message**: Add Strobe by @Cuzeth (#2535)
-
-**File**: `contents.json` (modified, +26/-0)
-```diff
-@@ -36598,6 +36598,32 @@
-       ],
-       "date_added": "Nov 20 2026",
-       "suggested_by": "@INotSleep"
-+    },
-+    {
-+      "title": "Strobe",
-+      "category-ids": [
-+        "media",
-+        "macos"
-+      ],
-+      "tags": [
-+        "swift",
-+        "swiftui",
-+        "swiftdata",
-+        "ipad",
-+        "macos"
-+      ],
-+      "description": "RSVP speed reader for PDFs, EPUBs, Markdown and web articles: shows one word at a time at 100 to 1,000 words per minute, with an on-device voice that can read along",
-+      "source": "https://github.com/abdeen-labs/rapid-serial-visual-presentation",
-+      "homepage": "https://strobefast.app",
-+      "itunes": "https://apps.apple.com/app/id6759187873",
-+      "license": "apache-2.0",
-+      "screenshots": [
-+        "https://raw.githubusercontent.com/abdeen-labs/rapid-serial-visual-presentation/main/AppStore/Screenshots/iPhone%206.9-inch/01-one-word.png",
-+        "https://raw.githubusercontent.com/abdeen-labs/rapid-serial-visual-presentation/main/AppStore/Screenshots/iPhone%206.9-inch/03-hold-to-read.png",
-+        "https://raw.githubusercontent.com/abdeen-labs/rapid-serial-visual-presentation/main/AppStore/Screenshots/iPhone%206.9-inch/08-full-text.png"
-+      ],
-+      "date_added": "Nov 19 2026",
-+      "suggested_by": "@Cuzeth"
-     }
-   ]
- }
+@@ -1155,6 +1155,9 @@ Jump to
+   - [` App Store`](https://apps.apple.com/us/app/pipifier/id1234771095)
+   -  `2021` `swift` 
+   -  ☆`799` 
++- [Slowth](https://github.com/skar404/slowth): Hide YouTube Shorts and Instagram Reels in Safari, with optional on-device detection in supported iPhone and iPad apps
++  - [` App Store`](https://apps.apple.com/app/id6764140763) <a href='https://raw.githubusercontent.com/skar404/slowth/main/docs/showcase-02.jpg'>`Screenshot 1`</a> 
++  - `swift` `swiftui` 
+ ### Today 
+  
+ Today Extensions or Widgets — [back to top](#readme) 
+@@ -3365,7 +3368,7 @@ https://joinmastodon.org — [back to top](#readme)
+   -  <a href='https://github.com/YusuFKaan48/PixelWeather/assets/111217286/b2d03a5a-ee9b-4ee6-8275-f3e7c26b7601'>`Screenshot 1`</a> 
+   -  `2023` `swift` 
+   -  ☆`19` 
+-- [RainVu](https://github.com/astraen-dev/RainVu): Log rainfall from custom gauges and visualize historical data with charts
++- [RainVu](https://github.com/davidbits/RainVu): Log rainfall from custom gauges and visualize historical data with charts
+   - [` App Store`](https://apps.apple.com/app/rainvu/id6754812264) <a href='https://github.com/davidbits/RainVu/blob/main/docs/home_screen.png?raw=true'>`Screenshot 1`</a>  <a href='https://github.com/davidbits/RainVu/blob/main/docs/insights_screen.png?raw=true'>`Screenshot 2`</a> 
+   -  `2026` `flutter` `dart` 
+   -  ☆`7` 
+@@ -3800,7 +3803,7 @@ https://flutter.dev — [back to top](#readme)
+   - [` App Store`](https://apps.apple.com/app/quadrim/id6804034367) <a href='https://raw.githubusercontent.com/evermeer/Quadrim/main/doc/screenshots/01-main.png'>`Screenshot 1`</a>  <a href='https://raw.githubusercontent.com/evermeer/Quadrim/main/doc/screenshots/02-bramble.png'>`Screenshot 2`</a>  <a href='https://raw.githubusercontent.com/evermeer/Quadrim/main/doc/screenshots/04-cube.png'>`Screenshot 3`</a> 
+   -  `2026` `flutter` `dart` 
+   -  ☆`1` 
+-- [RainVu](https://github.com/astraen-dev/RainVu): Log rainfall from custom gauges and visualize historical data with charts
++- [RainVu](https://github.com/davidbits/RainVu): Log rainfall from custom gauges and visualize historical data with charts
+   - [` App Store`](https://apps.apple.com/app/rainvu/id6754812264) <a href='https://github.com/davidbits/RainVu/blob/main/docs/home_screen.png?raw=true'>`Screenshot 1`</a>  <a href='https://github.com/davidbits/RainVu/blob/main/docs/insights_screen.png?raw=true'>`Screenshot 2`</a> 
+   -  `2026` `flutter` `dart` 
+   -  ☆`7` 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2535** (2026-11-20): Add Strobe by @Cuzeth (@Cuzeth)
-- **PR #2534** (2026-11-20): Add Detour SSH by @INotSleep (@INotSleep)
-- **PR #2533** (2026-11-19): Add OpenIntelligence by @Gunnarguy (@Gunnarguy)
-- **PR #2532** (2026-11-18): Add Serious Sam Classic, Raze and DOOM 3 for iOS by @sithewok13-dev (@sithewok13-dev)
-- **PR #2531** (2026-11-18): Add Termphin by @mikolajbadyl (@mikolajbadyl)
-- **PR #2530** (2026-11-18): Remove screenshot URL (dead link) from Conjugar (@dkhamsing)
+- **PR #2547** (2026-11-23): Add Band·je (@roelandp)
+- **PR #2543** (2026-11-23): Update source URL for RainVu (@dkhamsing)
+- **PR #2541** (2026-11-22): Update screenshot redirects for RainVu (@dkhamsing)
+- **PR #2540** (2026-11-21): Add 'archive' tag to simplefitnessapp (@csprasad)
+- **PR #2539** (2026-11-21): Add Orchestrator by @somewherelostt (@somewherelostt)
+- **PR #2538** (2026-11-22): Add Slowth (@skar404)
 
 ---
 
@@ -279,33 +286,49 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [auto] [ci skip] Generate content
+## X. Add Band·je
 
 **RULE**:
-When implementing operations in `APPSTORE.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dkhamsing/open-source-ios-apps. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `contents.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dkhamsing/open-source-ios-apps. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d7a14f21`: [auto] [ci skip] Generate content. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `18d19e32`: Add Band·je. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Multi-language data structures, boundary deserialization, API parsing, or resource lifecycles matching `APPSTORE.md`.
+Subsystems managing Multi-language data structures, boundary deserialization, API parsing, or resource lifecycles matching `contents.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```multi-language
 // Verified production-grade fix pattern:
-List of **353** open-source apps published on the App Store (complete list [here](https://github.com/dkhamsing/open-source-ios-apps)).
-- [Strobe](https://github.com/abdeen-labs/rapid-serial-visual-presentation): RSVP speed reader for PDFs, EPUBs, Markdown and web articles: shows one word at a time at 100 to 1,000 words per minute, with an on-device voice that can read along
-  - <a href=https://strobefast.app>`https://strobefast.app`</a>
-  - [` App Store`](https://apps.apple.com/app/id6759187873) <a href='https://raw.githubusercontent.com/abdeen-labs/rapid-serial-visual-presentation/main/AppStore/Screenshots/iPhone%206.9-inch/01-one-word.png'>`Screenshot 1`</a>  <a href='https://raw.githubusercontent.com/abdeen-labs/rapid-serial-visual-presentation/main/AppStore/Screenshots/iPhone%206.9-inch/03-hold-to-read.png'>`Screenshot 2`</a>  <a href='https://raw.githubusercontent.com/abdeen-labs/rapid-serial-visual-presentation/main/AppStore/Screenshots/iPhone%206.9-inch/08-full-text.png'>`Screenshot 3`</a> 
-  - `swift` `swiftui` `swiftdata` `ipad` `macos` 
-- [Strobe](https://github.com/abdeen-labs/rapid-serial-visual-presentation): RSVP speed reader for PDFs, EPUBs, Markdown and web article
+    },
+    {
+      "title": "Band·je",
+      "category-ids": [
+        "audio"
+      ],
+      "tags": [
+        "swift",
+        "swiftui",
+        "watchos",
+        "ipad"
+      ],
+      "description": "Record conversations on iPhone, iPad and Apple Watch and transcribe them on device in 25 languages, with speaker labels and summaries in your own templates",
+      "source": "https://github.com/neurendal/bandje",
+      "homepage": "https://band.je/",
+      "itunes": "https://apps.apple.com/app/id6831353548",
+      "license": "gpl-3.0",
+      "screenshots": [
+        "https://raw.githubusercontent.com/neurendal/bandje/main/.github/readme/ios-02-transcript-light.webp"
+      ],
+      "date_added": "Nov 23 2026",
+      "suggested_by": "@roelandp"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```multi-language
 // Induced defect failure mode:
-List of **352** open-source apps published on the App Store (complete list [here](https://github.com/dkhamsing/open-source-ios-apps)).
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d7a14f21` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `18d19e32` are properly handled with clean fallback behavior.

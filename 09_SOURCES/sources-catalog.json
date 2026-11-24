@@ -2103,10 +2103,10 @@
     "repository": "dkhamsing/open-source-ios-apps",
     "platform": "github",
     "sourceUrl": "https://github.com/dkhamsing/open-source-ios-apps",
-    "sourceVersion": "d7a14f21",
+    "sourceVersion": "18d19e32",
     "license": "CC0-1.0",
-    "contentHash": "62e99f7c7e9f06bccaaa327ba31ee4906a0eb93eafb519140f3d31f7eb4b6c33",
-    "lastHarvestedAt": "2026-11-21T12:19:41.536Z",
+    "contentHash": "93bec2770c031591bcbc0d09ebbf5d1e187c2419b2f3922db06fef5e391e895b",
+    "lastHarvestedAt": "2026-11-24T06:38:25.045Z",
     "learningId": "learn-github-dkhamsing-open-source-ios-apps"
   },
   "moby-buildkit": {
@@ -3073,10 +3073,10 @@
     "repository": "unhappychoice/gitlogue",
     "platform": "github",
     "sourceUrl": "https://github.com/unhappychoice/gitlogue",
-    "sourceVersion": "8d02655f",
+    "sourceVersion": "c680657b",
     "license": "ISC",
-    "contentHash": "55c0a2a34d69eac2846ce19d56cefb8cd3fc48dd40e55add9fac74364365544f",
-    "lastHarvestedAt": "2026-11-21T15:31:17.716Z",
+    "contentHash": "6df6245408101b4b49df8ed3ac4ff4cbb8dc3af02d0caf675ab5b179cbddfe5f",
+    "lastHarvestedAt": "2026-11-24T06:38:20.211Z",
     "learningId": "learn-github-unhappychoice-gitlogue"
   },
   "faridsafi-react-native-gifted-chat": {
@@ -4903,10 +4903,10 @@
     "repository": "encoredev/encore",
     "platform": "github",
     "sourceUrl": "https://github.com/encoredev/encore",
-    "sourceVersion": "8a7465a4",
+    "sourceVersion": "94e12a29",
     "license": "MPL-2.0",
-    "contentHash": "94bef1b67a807f849105d446a72cd91d4700fc23fe5aff4a66793e08787928d4",
-    "lastHarvestedAt": "2026-11-13T15:18:34.032Z",
+    "contentHash": "32dc69d610fe7e06397ca2fbe7a805a4c3e76c4faa787f45aba2830e771fec43",
+    "lastHarvestedAt": "2026-11-24T06:38:28.674Z",
     "learningId": "learn-github-encoredev-encore"
   },
   "rqlite-rqlite": {

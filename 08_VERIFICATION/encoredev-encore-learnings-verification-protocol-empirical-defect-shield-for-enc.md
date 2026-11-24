@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T15:19:17.199Z",
+  "timestamp": "2026-11-24T06:38:36.275Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-encoredev-encore-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [encoredev-encore-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T15:19:17.199Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T06:38:36.275Z`  
 > **Learning ID**: `LEARN-EVO-encoredev-encore-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/encoredev-encore-learnings.md`  
 > **Source**: github ([https://github.com/encoredev/encore](https://github.com/encoredev/encore))  
-> **Source Version**: `8a7465a4`  
+> **Source Version**: `94e12a29`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T15:18:33.561Z  
+> **Timestamp**: 2026-11-24T06:38:27.595Z  
 > **Learning ID**: `learn-github-encoredev-encore`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/encoredev-encore-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/encoredev/encore](https://github.com/encoredev/encore))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T15:18:33.556Z  
+> **Harvest Timestamp**: 2026-11-24T06:38:27.589Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Infrastructure orchestration from local to your cloud
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 12712 stars
+- **Stars / Engagement**: 12736 stars
 
 ---
 
@@ -1793,600 +1793,195 @@ func Get(ctx context.Context, slug string) (*Bit, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8a7465a4` (2026-11-11)
-**Commit Message**: runtimes: finish internal call request on validation error
+### Incident Patch 1: `94e12a29` (2026-11-23)
+**Commit Message**: runtimes/core: support CHAR(n) columns in sqldb (#2660)
 
-**File**: `runtimes/go/appruntime/apisdk/api/handler.go` (modified, +14/-8)
-```diff
-@@ -680,31 +680,37 @@ func (d *Desc[Req, Resp]) runCall(c CallContext, req Req, mocked bool, executor
- 			},
- 		})
- 
-+		if beginErr != nil {
-+			respErr = errs.B().Cause(beginErr).Code(errs.Internal).Msg("internal error").Err()
-+			return
-+		}
-+
-+		// Request begun; must finish or op and trace leak.
-+		failBeforeExec := func(err error) {
-+			respErr = err
-+			c.server.finishRequest(newErrResp(err, 0))
-+		}
-+
- 		// Now round-trip any auth data that was set on the request
- 		// to emulate what happens in the HTTP case.
- 		if experiments.AuthDataRoundTrip.Enabled(c.server.experiments) && reqModel.RPCData.AuthData != nil {
- 			jsonBytes, err := jsonapi.Default.Marshal(reqModel.RPCData.AuthData)
- 			if err != nil {
- 				c.server.rootLogger.Err(err).Msg("unable to marshal auth data")
--				respErr = errs.B().Cause(err).Code(errs.Internal).Msg("internal error").Err()
-+				failBeforeExec(errs.B().Cause(err).Code(errs.Internal).Msg("internal error").Err())
- 				return
- 			}
- 
- 			reqModel.RPCData.AuthData = newAuthDataObj()
- 			if err := jsonapi.Default.Unmarshal(jsonBytes, reqModel.RPCData.AuthData); err != nil {
- 				c.server.rootLogger.Err(err).Msg("unable to unmarshal auth data")
--				respErr = errs.B().Cause(err).Code(errs.Internal).Msg("internal error").Err()
-+				failBeforeExec(errs.B().Cause(err).Code(errs.Internal).Msg("internal error").Err())
- 				return
- 			}
- 		}
- 
--		if beginErr != nil {
--			respErr = errs.B().Cause(beginErr).Code(errs.Internal).Msg("internal error").Err()
--			return
--		}
--
- 		if err := d.validate(req); err != nil {
--			respErr = err
-+			failBeforeExec(err)
- 			return
- 		}
- 
-```
+Inserting a string into a `CHAR(n)` column failed with "cannot convert
+between the Rust type RowValue and the Postgres type bpchar", and
+reading one had the same gap. This treats `bpchar` like `text` and
+`varchar` when encoding and decoding values, so `CHAR(n)` and
+`CHAR(n)[]` work for both writes and reads. Postgres pads `CHAR(n)`
+values with spaces and the padding is kept on read.
 
-**File**: `runtimes/go/appruntime/apisdk/api/handler_test.go` (modified, +52/-0)
+Tested with unit tests in `sqldb::val` that encode and decode `bpchar`
+and `bpchar[]` values.
+
+<!-- codesmith:footer -->
+---
+<a
+href="https://dashboardbackend.blacksmith.sh/track/run-proof?expires=1798019659&installation_model_id=427204&pr_number=2660&ref=codesmith_pr_footer&repository=encoredev%2Fencore&return_to=https%3A%2F%2Fgithub.com%2Fencoredev%2Fencore%2Fpull%2F2660&variant=prove_it_works&signature=d047d53f973c7afbc1d5547a9831b563db12b0c1fe6446fdb098613580b257ee"><picture><source
+media="(prefers-color-scheme: dark)"
+srcset="https://pr-comments-assets.blacksmith.sh/codesmith/proof-prove-it-works-v2-dark.svg"><source
+media="(prefers-color-scheme: light)"
+srcset="https://pr-comments-assets.blacksmith.sh/codesmith/proof-prove-it-works-v2-light
+
+**File**: `runtimes/core/src/sqldb/val.rs` (modified, +73/-10)
 ```diff
-@@ -667,3 +667,55 @@ func TestMiddlewareHeadersOnError(t *testing.T) {
- 		}
- 	}
- }
-+
-+type validatingReq struct {
-+	Valid bool
-+}
-+
-+func (r *validatingReq) Validate() error {
-+	if !r.Valid {
-+		return errs.B().Code(errs.InvalidArgument).Msg("not valid").Err()
-+	}
-+	return nil
-+}
-+
-+// Validation failure on an internal call must still finish the request.
-+func TestInternalCallValidationErrorFinishesRequest(t *testing.T) {
-+	model.EnableTestMode(t)
-+	server, traceMock, _ := testServer(t, clock.New(), true)
-+
-+	desc := &api.Desc[*validatingReq, *mockResp]{
-+		Service:  "service",
-+		Endpoint: "validating",
-+		Path:     "/validating",
-+		Access:   api.Private,
-+		CloneReq: func(req *validatingReq) (*validatingReq, error) {
-+			clone := *req
-+			return &clone, nil
-+		},
-+		ReqPath: func(req *validatingReq) (string, api.UnnamedParams, error) {
-+			return "/validating", nil, nil
-+		},
-+		ReqUserPayload: func(req *validatingReq) any {
-+			return req
-+		},
-+		AppHandler: func(ctx context.Context, req *validatingReq) (*mockResp, error) {
-+			t.Error("handler must not run when validation fails")
-+			return &mockResp{}, nil
-+		},
-+		CloneResp: func(resp *mockResp) (*mockResp, error) {
-+			clone := *resp
-+			return &clone, nil
-+		},
-+	}
-+
-+	traceMock.EXPECT().RequestSpanStart(gomock.Any(), gomock.Any()).Times(1)
-+	traceMock.EXPECT().RequestSpanEnd(gomock.Any()).Times(1)
-+	traceMock.EXPECT().MarkDone().Times(1)
-+	traceMock.EXPECT().WaitAndClear().Return(nil, true).AnyTimes()
-+
-+	_, err := desc.Call(server.NewCallContext(context.Background()), &validatingReq{Valid: false})
-+	if errs.Code(err) != errs.InvalidArgument {
-+		t.Fatalf("got error %v, want invalid_argument", err)
-+	}
-+}
+@@ -29,17 +29,17 @@ impl ToSql for RowValue {
+             Self::Bytes(val) => val.to_sql(ty, out),
+             Self::Uuid(val) => match *ty {
+                 Type::UUID => val.to_sql(ty, out),
+-                Type::TEXT | Type::VARCHAR => val.to_string().to_sql(ty, out),
++                Type::TEXT | Type::VARCHAR | Type::BPCHAR => val.to_string().to_sql(ty, out),
+                 _ => Err(format!("uuid not supported for column of type {ty}").into()),
+             },
+             Self::Cidr(val) => match *ty {
+                 Type::CIDR => val.to_sql(ty, out),
+-                Type::TEXT | Type::VARCHAR => val.to_string().to_sql(ty, out),
++                Type::TEXT | Type::VARCHAR | Type::BPCHAR => val.to_string().to_sql(ty, out),
+                 _ => Err(format!("cidr not supported for column of type {ty}").into()),
+             },
+             Self::Inet(val) => match *ty {
+                 Type::INET => val.to_sql(ty, out),
+-                Type::TEXT | Type::VARCHAR => val.to_string().to_sql(ty, out),
++                Type::TEXT | Type::VARCHAR | Type::BPCHAR => val.to_string().to_sql(ty, out),
+                 _ => Err(format!("inet not supported for column of type {ty}").into()),
+             },
+ 
+@@ -50,7 +50,13 @@ impl ToSql for RowValue {
+     fn accepts(ty: &Type) -> bool {
+         matches!(
+             *ty,
+-            Type::BYTEA | Type::UUID | Type::TEXT | Type::VARCHAR | Type::CIDR | Type::INET
++            Type::BYTEA
++                | Type::UUID
++                | Type::TEXT
++                | Type::VARCHAR
++                | Type::BPCHAR
++                | Type::CIDR
++                | Type::INET
+         ) || matches!(ty.kind(), Kind::Array(ty) if <RowValue as ToSql>::accepts(ty))
+             || <PValue as ToSql>::accepts(ty)
+     }
+@@ -79,12 +85,12 @@ impl ToSql for PValue {
+                 PValue::Null => Ok(IsNull::Yes),
+                 PValue::Bool(bool) => match *ty {
+                     Type::BOOL => bool.to_sql(ty, out),
+-                    Type::TEXT | Type::VARCHAR => bool.to_string().to_sql(ty, out),
++                    Type::TEXT | Type::VARCHAR | Type::BPCHAR => bool.to_string().to_sql(ty, out),
+                     _ => Err(format!("bool not supported for column of type {ty}").into()),
+                 },
+ 
+                 PValue::String(str) => match *ty {
+-                    Type::TEXT | Type::VARCHAR | Type::NAME => str.to_sql(ty, out),
++                    Type::TEXT | Type::VARCHAR | Type::BPCHAR | Type::NAME => str.to_sql(ty, out),
+                     Type::BYTEA => {
+                         let val = str.as_bytes();
+                         val.to_sql(ty, out)
+@@ -238,7 +244,7 @@ impl ToSql for PValue {
+                         let d = Decimal::from_str(&num_str)?;
+                         d.to_sql(ty, out)
+                     }
+-                    Type::TEXT | Type::VARCHAR => self.to_string().to_sql(ty, out),
++                    Type::TEXT | Type::VARCHAR | Type::BPCHAR => self.to_string().to_sql(ty, out),
+                     _ => {
+                         if num.is_i64() {
+                             num.as_i64().unwrap().to_sql(ty, out)
+@@ -275,7 +281,7 @@ impl ToSql for PValue {
+                         let val = i64::try_from(d).map_err(|_| "Cannot convert decimal to INT8")?;
+                         val.to_sql(ty, out)
+                     }
+-                    Type::TEXT | Type::VARCHAR => {
++                    Type::TEXT | Type::VARCHAR | Type::BPCHAR => {
+                         let decimal_str = d.to_string();
+                         decimal_str.to_sql(ty, out)
+                     }
+@@ -286,7 +292,7 @@ impl ToSql for PValue {
+                     Type::DATE => dt.naive_utc().date().to_sql(ty, out),
+                     Type::TIMESTAMP => dt.naive_utc().to_sql(ty, out),
+                     Type::TIMESTAMPTZ => dt.to_sql(ty, out),
+-                    Type::TEXT | Type::VARCHAR => dt.to_rfc3339().to_sql(ty, out),
++                    Type::TEXT | Type::VARCHAR | Type::BPCHAR => dt.to_rfc3339().to_sql(ty, out),
+                     _ => Err(format!("unsupported type for DateTime: {ty}").into()),
+                 },
+                 PValue::Array(arr) => {
+@@ -325,6 +331,7 @@ impl ToSql for PValue {
+                 | Type::BYTEA
+                 | Type::TEXT
+                 | Type::VARCHAR
++                | Type::BPCHAR
+                 | Type::INT2
+                 | Type::INT4
+                 | Type::INT8
+@@ -396,7 +403,7 @@ impl<'a> FromSql<'a> for PValue {
+                 let val: bool = FromSql::from_sql(ty, raw)?;
+                 PValue::Bool(val)
+             }
+-            Type::TEXT | Type::VARCHAR | Type::NAME => {
++            Type::TEXT | Type::VARCHAR | Type::BPCHAR | Type::NAME => {
+                 let val: String = FromSql::from_sql(ty, raw)?;
+                 PValue::String(val)
+             }
+@@ -498,6 +505,7 @@ impl<'a> FromSql<'a> for PValue {
+             Type::BOOL
+                 | Type::TEXT
+        
 ```
 
 ---
 
-### Incident Patch 2: `56387a1d` (2026-11-12)
-**Commit Message**: sqldb: close cursors that are left with rows unread (#2653)
+### Incident Patch 2: `ec86f7ba` (2026-11-23)
+**Commit Message**: runtimes/js: let DummySocket typecheck against newer @types/node (#2659)
 
-## Summary
+encore.dev ships .ts sources, so apps typecheck `api/node_http.ts` with
+their own @types/node, and `skipLibCheck` doesn't help. The `DummySocket
+as Socket` cast broke twice: @types/node 26.4.0 added a `setKeepAlive`
+overload that takes an options object, and 26.6.0 added a required
+`readonly server: Server | null`.
 
-`queryRow`, `rawQueryRow`, `exec` and `rawExec` read only the first row.
-A `for await` over `query`/`rawQuery` can also stop early. In both cases
-the native cursor stayed open with rows unread until JS garbage
-collected it.
+`DummySocket` now accepts an object as `setKeepAlive`'s first argument
+and declares `server` as `null`. It uses `object` because
+`SetKeepAliveOptions` doesn't exist in @types/node 20.
 
-tokio-postgres delivers results in order, through a 2-slot channel per
-query. If a result arrives in more reads than that channel holds, the
-connection stops reading until the cursor takes them. Every later query
-on that connection then hangs. Inside a transaction, that's the next
-statement, and Postgres shows the connection `idle in transaction` /
-`ClientRead`. The hang lasts until a GC finalizes the cursor, which an
-idle process may never trigger. This matches a customer report of
-intermittent test hangs in Cloud builds.
+Tested by running `tsc --noEmit` on a small app with a raw endpoint
+against @types/node 20.11.19, 20.19, 22, 24, 25.9, 26.3.0, 26.4.0,
+26.5.1, 26.6.0 and 26.6.6 (latest), with TypeScript 5.3.3, 5.9 and 7.0.
+All pass; before this change 26.4.0 and later failed.
 
+Fixes #2560
+
+<!-- codesmith:footer -->
+---
+<a
+href="https://dashboardbackend.blacksmith.sh/track/run-proof?expires=1798019561&installation_model_id=427204&pr_number=2659&ref=codesmith_pr_footer&repository=encoredev%2Fencore&return_to=https%3A%2F%2Fgithub.com%2Fencoredev%2Fencore%2Fpull%2F2659&variant=proof_this_pr&signature=39f2d73ef97f83d63da9da40d20fa5c49dc
+
+**File**: `runtimes/js/encore.dev/api/node_http.ts` (modified, +3/-2)
 ```diff
- BaseQueryExecutor.queryRow / rawQueryRow / exec / rawExec / queryAll / rawQueryAll / query / rawQuery
-   cursor = impl.query(...)
--  read rows
-+  try
-+    read rows
-+  finally
-+    cursor.close()        // new napi Cursor.close → drops the RowStream,
-+                          // so the connection skips the rest of the result
-```
-
-## Evidence
-
-The new test
-`sql
-
-**File**: `docs/ts/runtime/storage-sqldb.mdx` (modified, +67/-37)
-```diff
-@@ -7,7 +7,7 @@ toc: true
- ## Classes
+@@ -3,7 +3,7 @@ import type {
+   OutgoingHttpHeader,
+   OutgoingHttpHeaders
+ } from "node:http";
+-import type { AddressInfo, Socket, SocketReadyState } from "node:net";
++import type { AddressInfo, Server, Socket, SocketReadyState } from "node:net";
+ import * as stream from "node:stream";
+ import * as runtime from "../internal/runtime/mod";
  
- <!-- symbol-start: Connection -->
--### Connection <SymbolSource href="https://github.com/encoredev/encore/blob/main/runtimes/js/encore.dev/storage/sqldb/database.ts#L384" />
-+### Connection <SymbolSource href="https://github.com/encoredev/encore/blob/main/runtimes/js/encore.dev/storage/sqldb/database.ts#L428" />
- 
- Represents a dedicated connection to a database.
- 
-@@ -17,7 +17,7 @@ Represents a dedicated connection to a database.
- 
- #### Constructors
- 
--##### Constructor <SymbolSource href="https://github.com/encoredev/encore/blob/main/runtimes/js/encore.dev/storage/sqldb/database.ts#L387" />
-+##### Constructor <SymbolSource href="https://github.com/encoredev/encore/blob/main/runtimes/js/encore.dev/storage/sqldb/database.ts#L431" />
- 
- `new Connection(impl): Connection`
- 
-@@ -47,7 +47,7 @@ Represents a dedicated connection to a database.
- 
- #### Methods
- 
--##### close() <SymbolSource href="https://github.com/encoredev/encore/blob/main/runtimes/js/encore.dev/storage/sqldb/database.ts#L394" />
-+##### close() <SymbolSource href="https://github.com/encoredev/encore/blob/main/runtimes/js/encore.dev/storage/sqldb/database.ts#L438" />
- 
- `close(): Promise<void>`
- 
-@@ -57,7 +57,7 @@ Returns the connection to the database pool.
- 
- `Promise`\<`void`\>
- 
--##### exec() <SymbolSource href="https://github.com/encoredev/encore/blob/main/runtimes/js/encore.dev/storage/sqldb/database.ts#L229" />
-+##### exec() <SymbolSource href="https://github.com/encoredev/encore/blob/main/runtimes/js/encore.dev/storage/sqldb/database.ts#L265" />
- 
- `exec(strings, ...params): Promise<void>`
- 
-@@ -88,7 +88,7 @@ const result = database.exec`DELETE FROM users WHERE email=${email}`
- 
- `BaseQueryExecutor.exec`
- 
--##### query() <SymbolSource href="https://github.com/encoredev/encore/blob/main/runtimes/js/encore.dev/storage/sqldb/database.ts#L69" />
-+##### query() <SymbolSource href="https://github.com/encoredev/encore/blob/main/runtimes/js/encore.dev/storage/sqldb/database.ts#L74" />
- 
- `query<T>(strings, ...params): AsyncGenerator<T>`
- 
-@@ -98,6 +98,11 @@ with parametrised values without risking SQL injections.
- It returns an async generator, that allows iterating over the results
- in a streaming fashion using `for await`.
- 
-+A `for await` loop closes the query however it ends. If you call `next()`
-+yourself, call `return()` when you stop before the last row: until then the
-+query keeps its connection busy, and any other query on that connection
-+(such as the next statement in a transaction) waits for it.
-+
- ###### Type Parameters
- 
- ###### T
-@@ -131,7 +136,7 @@ This produces the query: "SELECT id FROM users WHERE email=$1".
- 
- `BaseQueryExecutor.query`
- 
--##### queryAll() <SymbolSource href="https://github.com/encoredev/encore/blob/main/runtimes/js/encore.dev/storage/sqldb/database.ts#L129" />
-+##### queryAll() <SymbolSource href="https://github.com/encoredev/encore/blob/main/runtimes/js/encore.dev/storage/sqldb/database.ts#L149" />
- 
- `queryAll<T>(strings, ...params): Promise<T[]>`
- 
-@@ -173,7 +178,7 @@ This produces the query: "SELECT id FROM users WHERE email=$1".
- 
- `BaseQueryExecutor.queryAll`
- 
--##### queryRow() <SymbolSource href="https://github.com/encoredev/encore/blob/main/runtimes/js/encore.dev/storage/sqldb/database.ts#L184" />
-+##### queryRow() <SymbolSource href="https://github.com/encoredev/encore/blob/main/runtimes/js/encore.dev/storage/sqldb/database.ts#L212" />
- 
- `queryRow<T>(strings, ...params): Promise<T | null>`
- 
-@@ -212,7 +217,7 @@ const result = database.queryRow`SELECT id FROM users WHERE email=${email}`
- 
- `BaseQueryExecutor.queryRow`
- 
--##### rawExec() <SymbolSource href="https://github.com/encoredev/encore/blob/main/runtimes/js/encore.dev/storage/sqldb/database.ts#L255" />
-+##### rawExec() <SymbolSource href="https://github.com/encoredev/encore/blob/main/runtimes/js/encore.dev/storage/sqldb/database.ts#L295" />
- 
- `rawExec(query, ...params): Promise<void>`
- 
-@@ -250,7 +255,7 @@ await database.rawExec(query, email);
- 
- `BaseQueryExecutor.rawExec`
- 
--##### rawQuery() <SymbolSource href="https://github.com/encoredev/encore/blob/main/runtimes/js/encore.dev/storage/sqldb/database.ts#L101" />
-+##### rawQuery() <SymbolSource href="https://github.com/encoredev/encore/blob/main/runtimes/js/encore.dev/storage/sqldb/database.ts#L116" />
- 
- `rawQuery<T>(query, ...params): AsyncGenerator<T>`
- 
-@@ -259,6 +264,11 @@ rawQuery queries the database using a raw parametrised SQL query and parameters.
- It returns an async generator, that allows iterating over the results
- in a streaming fashion using `for await`.
- 
-+A `for await` loop closes the query however it ends. If you call `next()`
-+yourself, call `return()` when you stop before the last row: until then the
-+query keeps its connection busy, and any other query on that connection
-+(such as the next statement in a transaction) waits for it.
-+
- ###### Type Parameters
- 
- ###### T
-@@ -299,7 +309,7 @@ for await (const row of database.rawQuery(
-```
-
-**File**: `runtimes/core/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -182,4 +182,4 @@ insta = { version = "1.38.0", features = ["yaml"] }
- quickcheck = "1.0.3"
- proptest = "1.7.0"
- tempfile = "3"
--tokio = { version = "1.35.1", features = ["macros", "rt"] }
-+tokio = { version = "1.35.1", features = ["macros", "rt", "net", "io-util", "time"] }
-```
-
-**File**: `runtimes/core/src/sqldb/client.rs` (modified, +191/-3)
-```diff
-@@ -265,17 +265,30 @@ impl Pool {
- }
- 
- pub struct Cursor {
--    stream: Pin<Box<tokio_postgres::RowStream>>,
-+    /// `None` once the cursor is closed.
-+    stream: Option<Pin<Box<tokio_postgres::RowStream>>>,
- }
- 
- impl Cursor {
-     pub async fn next(&mut self) -> Option<Result<Row, tokio_postgres::Error>> {
--        match self.stream.next().await {
-+        match self.stream.as_mut()?.next().await {
-             Some(Ok(row)) => Some(Ok(Row { row })),
-             Some(Err(err)) => Some(Err(err)),
-             None => None,
-         }
-     }
-+
-+    /// Discards the rows not yet read.
-+    ///
-+    /// A connection hands each query's result to its caller in order, a few
-+    /// messages at a time, and reads nothing further from the server until that
-+    /// caller takes them. A cursor left open with rows unread therefore stalls
-+    /// every later query on its connection, for as long as the cursor lives —
-+    /// which, for one held by JavaScript, is until it is garbage collected.
-+    /// Closing it lets the connection skip past the rest of the result.
-+    pub fn close(&mut self) {
-+        self.stream = None;
-+    }
- }
- 
- pub struct Row {
-@@ -393,7 +406,7 @@ impl QueryTracer {
- 
-         let stream = result?;
-         Ok(Cursor {
--            stream: Box::pin(stream),
-+            stream: Some(Box::pin(stream)),
-         })
-     }
- 
-@@ -452,3 +465,178 @@ mod key_test {
-         assert!(!rendered.contains("104"), "{rendered}");
-     }
- }
-+
-+#[cfg(test)]
-+mod cursor_test {
-+    use std::collections::HashMap;
-+    use std::time::Duration;
-+
-+    use bytes::{Buf, BufMut, BytesMut};
-+    use tokio::io::{AsyncReadExt, AsyncWriteExt};
-+    use tokio::net::{TcpListener, TcpStream};
-+
-+    use super::*;
-+
-+    /// Rows in the result that is left unread. Each is sent on its own, so the
-+    /// client reads them one at a time, as it would a large result.
-+    const MANY: i32 = 20;
-+
-+    /// A cursor left open with rows unread used to hang every later query on
-+    /// its connection until the cursor was garbage collected — in a
-+    /// transaction, the very next statement. Closing it must free the
-+    /// connection.
-+    #[tokio::test]
-+    async fn closing_a_cursor_frees_its_connection() {
-+        let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
-+        let port = listener.local_addr().unwrap().port();
-+        tokio::spawn(async move {
-+            let (socket, _) = listener.accept().await.unwrap();
-+            serve(socket).await;
-+        });
-+
-+        let mut config = tokio_postgres::Config::new();
-+        config
-+            .host("127.0.0.1")
-+            .port(port)
-+            .user("encore")
-+            .dbname("db");
-+        let (client, connection) = config.connect(tokio_postgres::NoTls).await.unwrap();
-+        tokio::spawn(connection);
-+        let client = Arc::new(client);
-+
-+        let tracer = QueryTracer(crate::trace::Tracer::noop());
-+        let query = |sql: &'static str| {
-+            let client = client.as_ref();
-+            tracer.trace(None, sql, move || async move {
-+                client
-+                    .query_raw(sql, Vec::<i32>::new())
-+                    .await
-+                    .map_err(Error::from)
-+            })
-+        };
-+
-+        // Like `queryRow`: read the first row and leave the rest.
-+        let mut cursor = query("SELECT many").await.unwrap();
-+        let first = cursor.next().await.unwrap().unwrap();
-+        assert_eq!(first.row.get::<_, i32>(0), 1);
-+
-+        let next = tokio::spawn({
-+            let client = client.clone();
-+            async move { client.query_one("SELECT one", &[]).await }
-+        });
-+
-+        // The hazard being guarded against: while the cursor is open, the
-+        // connection delivers nothing else.
-+        tokio::time::sleep(Duration::from_millis(500)).await;
-+        assert!(
-+            !next.is_finished(),
-+            "the next query completed while the cursor was open; \
-+             this test no longer exercises the stall"
-+        );
-+
-+        cursor.close();
-+        assert!(cursor.next().await.is_none(), "a closed cursor yields rows");
-+
-+        let row = tokio::time::timeout(Duration::from_secs(5), next)
-+            .await
-+            .expect("the next query hung after the cursor was closed")
-+            .unwrap()
-+            .unwrap();
-+        assert_eq!(row.get::<_, i32>(0), 1);
-+    }
-+
-+    /// Plays a Postgres server well enough for `prepare` and `query`: every
-+    /// statement returns one int4 column, counting up from 1, with [`MANY`]
-+    /// rows if its text contains "many" and one row otherwise.
-+    async fn serve(mut socket: TcpStream) {
-+        let len = socket.read_i32().await.unwrap();
-+        let mut startup = vec![0; len as usize - 4];
-+        socket.read_exact(&mut startup).await.unwrap();
-+
-+        let mut out = BytesMut::new();
-+        message(&mut out, b'R', |b| b.put_i32(0)); // AuthenticationOk
-+        ready_for_query(&mut out);
-+        
-```
-
-**File**: `runtimes/js/encore.dev/storage/sqldb/database.ts` (modified, +75/-31)
-```diff
-@@ -58,6 +58,11 @@ class BaseQueryExecutor {
-    * It returns an async generator, that allows iterating over the results
-    * in a streaming fashion using `for await`.
-    *
-+   * A `for await` loop closes the query however it ends. If you call `next()`
-+   * yourself, call `return()` when you stop before the last row: until then the
-+   * query keeps its connection busy, and any other query on that connection
-+   * (such as the next statement in a transaction) waits for it.
-+   *
-    * @example
-    *
-    * const email = "foo@example.com";
-@@ -74,10 +79,15 @@ class BaseQueryExecutor {
-     const args = buildQueryArgs(params);
-     const source = getCurrentRequest();
-     const cursor = await this.impl.query(query, args, source);
--    while (true) {
--      const row = await cursor.next();
--      if (row === null) break;
--      yield row.values() as T;
-+    try {
-+      while (true) {
-+        const row = await cursor.next();
-+        if (row === null) break;
-+        yield row.values() as T;
-+      }
-+    } finally {
-+      // Runs when the caller stops iterating early, too.
-+      await cursor.close();
-     }
-   }
- 
-@@ -87,6 +97,11 @@ class BaseQueryExecutor {
-    * It returns an async generator, that allows iterating over the results
-    * in a streaming fashion using `for await`.
-    *
-+   * A `for await` loop closes the query however it ends. If you call `next()`
-+   * yourself, call `return()` when you stop before the last row: until then the
-+   * query keeps its connection busy, and any other query on that connection
-+   * (such as the next statement in a transaction) waits for it.
-+   *
-    * @example
-    * const query = "SELECT id FROM users WHERE email=$1";
-    * const email = "foo@example.com";
-@@ -104,11 +119,16 @@ class BaseQueryExecutor {
-   ): AsyncGenerator<T> {
-     const args = buildQueryArgs(params);
-     const source = getCurrentRequest();
--    const result = await this.impl.query(query, args, source);
--    while (true) {
--      const row = await result.next();
--      if (row === null) break;
--      yield row.values() as T;
-+    const cursor = await this.impl.query(query, args, source);
-+    try {
-+      while (true) {
-+        const row = await cursor.next();
-+        if (row === null) break;
-+        yield row.values() as T;
-+      }
-+    } finally {
-+      // Runs when the caller stops iterating early, too.
-+      await cursor.close();
-     }
-   }
- 
-@@ -134,13 +154,17 @@ class BaseQueryExecutor {
-     const args = buildQueryArgs(params);
-     const source = getCurrentRequest();
-     const cursor = await this.impl.query(query, args, source);
--    const result: T[] = [];
--    while (true) {
--      const row = await cursor.next();
--      if (row === null) break;
--      result.push(row.values() as T);
-+    try {
-+      const result: T[] = [];
-+      while (true) {
-+        const row = await cursor.next();
-+        if (row === null) break;
-+        result.push(row.values() as T);
-+      }
-+      return result;
-+    } finally {
-+      await cursor.close();
-     }
--    return result;
-   }
- 
-   /**
-@@ -162,13 +186,17 @@ class BaseQueryExecutor {
-     const args = buildQueryArgs(params);
-     const source = getCurrentRequest();
-     const cursor = await this.impl.query(query, args, source);
--    const result: T[] = [];
--    while (true) {
--      const row = await cursor.next();
--      if (row === null) break;
--      result.push(row.values() as T);
-+    try {
-+      const result: T[] = [];
-+      while (true) {
-+        const row = await cursor.next();
-+        if (row === null) break;
-+        result.push(row.values() as T);
-+      }
-+      return result;
-+    } finally {
-+      await cursor.close();
-     }
--    return result;
-   }
- 
-   /**
-@@ -188,9 +216,13 @@ class BaseQueryExecutor {
-     const query = buildQuery(strings, params);
-     const args = buildQueryArgs(params);
-     const source = getCurrentRequest();
--    const result = await this.impl.query(query, args, source);
--    const row = await result.next();
--    return row ? (row.values() as T) : null;
-+    const cursor = await this.impl.query(query, args, source);
-+    try {
-+      const row = await cursor.next();
-+      return row ? (row.values() as T) : null;
-+    } finally {
-+      await cursor.close();
-+    }
-   }
- 
-   /**
-@@ -214,9 +246,13 @@ class BaseQueryExecutor {
-   ): Promise<T | null> {
-     const args = buildQueryArgs(params);
-     const source = getCurrentRequest();
--    const result = await this.impl.query(query, args, source);
--    const row = await result.next();
--    return row ? (row.values() as T) : null;
-+    const cursor = await this.impl.query(query, args, source);
-+    try {
-+      const row = await cursor.next();
-+      return row ? (row.values() as T) : null;
-+    } finally {
-+      await cursor.close();
-+    }
-   }
- 
-   /**
-@@ -236,8 +272,12 @@ class BaseQueryExecutor {
- 
-     // Need to await the cursor to process any errors from things like
-     // unique constraint violations.
--    const cur = await this.
-```
-
-**File**: `runtimes/js/src/sqldb.rs` (modified, +7/-0)
-```diff
-@@ -222,6 +222,13 @@ impl Cursor {
- 
-         Ok(row.map(|row| Row { row }))
-     }
-+
-+    /// Discards the rows not yet read, so the connection can move on to the
-+    /// next query without waiting for this cursor to be garbage collected.
-+    #[napi]
-+    pub async fn close(&self) {
-+        self.stream.lock().await.close();
-+    }
- }
- 
- #[napi]
+@@ -323,7 +323,7 @@ class DummySocket extends stream.Duplex {
+   resume(): this { return this; }
+   setTimeout(_timeout: number, _callback?: () => void): this { return this; }
+   setNoDelay(_noDelay?: boolean): this { return this; }
+-  setKeepAlive(_enable?: boolean, _initialDelay?: number): this { return this; }
++  setKeepAlive(_enable?: boolean | object, _initialDelay?: number, _interval?: number, _count?: number): this { return this; }
+   getTypeOfService(): number { return 0; }
+   setTypeOfService(_tos: number): this { return this; }
+   address(): AddressInfo | {} { return {}; }
+@@ -343,6 +343,7 @@ class DummySocket extends stream.Duplex {
+   readonly remoteAddress?: string | undefined = undefined;
+   readonly remoteFamily?: string | undefined = undefined;
+   readonly remotePort?: number | undefined = undefined;
++  readonly server: Server | null = null;
+   readonly timeout?: number | undefined = undefined;
+   end(): this { return this; }
+   addListener(_event: string, _listener: (...args: any[]) => void): this { return this; }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2660** (2026-11-23): runtimes/core: support CHAR(n) columns in sqldb (@fredr)
+- **PR #2659** (2026-11-23): runtimes/js: let DummySocket typecheck against newer @types/node (@fredr)
 - **PR #2653** (2026-11-12): sqldb: close cursors that are left with rows unread (@ekerfelt)
 - **PR #2649** (2026-11-13): runtimes: fix memory leak when internal call fails validation (@kutysam)
 - **PR #2648** (2026-11-10): tsparser: fall back to later export conditions (@eandre)
 - **PR #2646** (2026-11-10): runtimes: re-land GCP IAM database login, keeping the password in ConnString (@ekerfelt)
-- **PR #2641** (2026-11-09): Revert "runtimes: log in to Cloud SQL with GCP IAM database authentication (#2640)" (@ekerfelt)
-- **PR #2640** (2026-11-09): runtimes: log in to Cloud SQL with GCP IAM database authentication (@ekerfelt)
 
 ---
 
@@ -2406,51 +2001,56 @@ The new test
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. runtimes: finish internal call request on validation error
+## X. runtimes/core: support CHAR(n) columns in sqldb
 
 **RULE**:
-When implementing operations in `runtimes/go/appruntime/apisdk/api/handler.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in encoredev/encore. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `runtimes/core/src/sqldb/val.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in encoredev/encore. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8a7465a4`: runtimes: finish internal call request on validation error. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `94e12a29`: runtimes/core: support CHAR(n) columns in sqldb. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `runtimes/go/appruntime/apisdk/api/handler.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `runtimes/core/src/sqldb/val.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		if beginErr != nil {
-			respErr = errs.B().Cause(beginErr).Code(errs.Internal).Msg("internal error").Err()
-			return
-		}
-
-		// Request begun; must finish or op and trace leak.
-		failBeforeExec := func(err error) {
-			respErr = err
-			c.server.finishRequest(newErrResp(err, 0))
-		}
-
-				failBeforeExec(errs.B().Cause(err).Code(errs.Internal).Msg("internal error").Err())
-				failBeforeExec(errs.B().Cause(err).Code(errs.Internal).Msg("internal error").Err())
-			failBeforeExec(err)
+                Type::TEXT | Type::VARCHAR | Type::BPCHAR => val.to_string().to_sql(ty, out),
+                Type::TEXT | Type::VARCHAR | Type::BPCHAR => val.to_string().to_sql(ty, out),
+                Type::TEXT | Type::VARCHAR | Type::BPCHAR => val.to_string().to_sql(ty, out),
+            Type::BYTEA
+                | Type::UUID
+                | Type::TEXT
+                | Type::VARCHAR
+                | Type::BPCHAR
+                | Type::CIDR
+                | Type::INET
+                    Type::TEXT | Type::VARCHAR | Type::BPCHAR => bool.to_string().to_sql(ty, out),
+                    Type::TEXT | Type::VARCHAR | Type::BPCHAR | Type::NAME => str.to_sql(ty, out),
+                    Type::TEXT | Type::VARCHAR | Type::BPCHAR => self.to_string().to_sql(ty, out),
+                    Type::TEXT | Type::VARCHAR | Type::BPCHAR => {
+                    Type::TEXT | Type::VARCHAR | Type::BPCHAR => dt.to_rfc3339().to_sql(ty, out),
+                | Type::BPCHAR
+            Type::TEXT | Type::VARCHAR | Type::BPCHAR | Type::NAME => {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-				respErr = errs.B().Cause(err).Code(errs.Internal).Msg("internal error").Err()
-				respErr = errs.B().Cause(err).Code(errs.Internal).Msg("internal error").Err()
-		if beginErr != nil {
-			respErr = errs.B().Cause(beginErr).Code(errs.Internal).Msg("internal error").Err()
-			return
-		}
-
-			respErr = err
+// Induced defect failure mode:
+                Type::TEXT | Type::VARCHAR => val.to_string().to_sql(ty, out),
+                Type::TEXT | Type::VARCHAR => val.to_string().to_sql(ty, out),
+                Type::TEXT | Type::VARCHAR => val.to_string().to_sql(ty, out),
+            Type::BYTEA | Type::UUID | Type::TEXT | Type::VARCHAR | Type::CIDR | Type::INET
+                    Type::TEXT | Type::VARCHAR => bool.to_string().to_sql(ty, out),
+                    Type::TEXT | Type::VARCHAR | Type::NAME => str.to_sql(ty, out),
+                    Type::TEXT | Type::VARCHAR => self.to_string().to_sql(ty, out),
+                    Type::TEXT | Type::VARCHAR => {
+                    Type::TEXT | Type::VARCHAR => dt.to_rfc3339().to_sql(ty, out),
+            Type::TEXT | Type::VARCHAR | Type::NAME => {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8a7465a4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `94e12a29` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T06:30:17.218Z",
-    "lastVerified": "2026-11-24T06:30:17.218Z",
+    "lastChecked": "2026-11-24T06:38:32.072Z",
+    "lastVerified": "2026-11-24T06:38:32.072Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -181,12 +181,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T05:42:41.834Z",
-    "lastVerified": "2026-11-24T05:42:41.834Z",
+    "lastChecked": "2026-11-24T06:38:29.801Z",
+    "lastVerified": "2026-11-24T06:38:29.801Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -195,7 +195,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "f0980efc"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -726,8 +727,8 @@
     "officialUrl": "https://github.com/DefGuard/defguard",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T01:28:55.545Z",
-    "lastVerified": "2026-11-24T01:28:55.545Z",
+    "lastChecked": "2026-11-24T06:38:24.605Z",
+    "lastVerified": "2026-11-24T06:38:24.605Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-defguard-defguard",
@@ -796,12 +797,12 @@
     "officialUrl": "https://github.com/dkhamsing/open-source-ios-apps",
     "sourceType": "github",
     "technology": "Multi-language",
-    "lastChecked": "2026-11-21T12:19:40.636Z",
-    "lastVerified": "2026-11-21T12:19:40.636Z",
+    "lastChecked": "2026-11-24T06:38:23.924Z",
+    "lastVerified": "2026-11-24T06:38:23.924Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dkhamsing-open-source-ios-apps",
-    "contentHash": "62e99f7c7e9f06bccaaa327ba31ee4906a0eb93eafb519140f3d31f7eb4b6c33",
+    "contentHash": "93bec2770c031591bcbc0d09ebbf5d1e187c2419b2f3922db06fef5e391e895b",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -2208,22 +2209,21 @@
     "lastVerified": "2026-11-24T03:05:25.059Z"
   },
   "unhappychoice-gitlogue": {
-    "name": "gitlogue",
+    "name": "unhappychoice/gitlogue",
     "officialUrl": "https://github.com/unhappychoice/gitlogue",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T22:37:14.272Z",
-    "lastVerified": "2026-11-22T22:37:14.272Z",
+    "lastChecked": "2026-11-24T06:38:19.278Z",
+    "lastVerified": "2026-11-24T06:38:19.278Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-unhappychoice-gitlogue",
-    "contentHash": "55c0a2a34d69eac2846ce19d56cefb8cd3fc48dd40e55add9fac74364365544f",
+    "contentHash": "6df6245408101b4b49df8ed3ac4ff4cbb8dc3af02d0caf675ab5b179cbddfe5f",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "8d02655f"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf": {
     "name": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -3387,9 +3387,9 @@
   "tensorchord-pgvecto.rs": {
     "name": "pgvecto.rs",
     "officialUrl": "https://github.com/tensorchord/pgvecto.rs",
-    "lastChecked": "2026-11-23T07:18:35.640Z",
+    "lastChecked": "2026-11-24T06:38:27.175Z",
     "revisionIdentifier": "2b290b34",
-    "lastVerified": "2026-11-23T07:18:35.640Z"
+    "lastVerified": "2026-11-24T06:38:27.175Z"
   },
   "hf-huggingfacetb-smolvlm2-256m-video-instruct": {
     "name": "HuggingFaceTB/SmolVLM2-256M-Video-Instruct",
@@ -5256,11 +5256,21 @@
     "lastVerified": "2026-11-22T03:24:54.776Z"
   },
   "encoredev-encore": {
-    "name": "encore",
+    "name": "encoredev/encore",
     "officialUrl": "https://github.com/encoredev/encore",
-    "lastChecked": "2026-11-23T09:05:52.495Z",
-    "revisionIdentifier": "8a7465a4",
-    "lastVerified": "2026-11-23T09:05:52.495Z"
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-11-24T06:38:27.589Z",
+    "lastVerified": "2026-11-24T06:38:27.589Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-encoredev-encore",
+    "contentHash": "32dc69d610fe7e06397ca2fbe7a805a4c3e76c4faa787f45aba2830e771fec43",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sfu-db-connector-x": {
     "name": "sfu-db/connector-x",
@@ -9655,9 +9665,9 @@
   "stangirard-seo-audits-toolkit": {
     "name": "seo-audits-toolkit",
     "officialUrl": "https://github.com/StanGirard/seo-audits-toolkit",
-    "lastChecked": "2026-11-20T02:38:47.748Z",
+    "lastChecked": "2026-11-24T06:38:17.068Z",
     "revisionIdentifier": "c3e95fc4bf",
-    "lastVerified": "2026-11-20T02:38:47.748Z"
+    "lastVerified": "2026-11-24T06:38:17.068Z"
   },
   "leetcode-mafia-cheetah": {
     "name": "cheetah",

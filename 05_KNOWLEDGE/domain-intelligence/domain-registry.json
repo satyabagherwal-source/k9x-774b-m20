@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T06:30:20.486Z",
-  "total_records": 2498,
+  "last_updated": "2026-11-24T06:38:36.555Z",
+  "total_records": 2502,
   "domains": {
     "A": {
       "total": 20,
@@ -1028,7 +1028,7 @@
       ]
     },
     "F": {
-      "total": 106,
+      "total": 108,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -1135,7 +1135,9 @@
         "domain_intelligence-design-intelligence-rafsoh-dimeapp-learnings-core-invariants",
         "DOM-F-0B02F7F4",
         "domain_intelligence-design-intelligence-saffsanity-sill-core-invariants",
-        "domain_intelligence-design-intelligence-saffsanity-sill-learnings-core-invariants"
+        "domain_intelligence-design-intelligence-saffsanity-sill-learnings-core-invariants",
+        "domain_intelligence-design-intelligence-encoredev-encore-core-invariants",
+        "domain_intelligence-design-intelligence-encoredev-encore-learnings-core-invariants"
       ]
     },
     "G": {
@@ -1582,7 +1584,7 @@
       ]
     },
     "H": {
-      "total": 591,
+      "total": 593,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2174,7 +2176,9 @@
         "DOM-H-F2861F87",
         "domain_intelligence-technical-construction-intelligence-crawlseo-crawlseo-core-invariants",
         "domain_intelligence-technical-construction-intelligence-crawlseo-crawlseo-learnings-core-invariants",
-        "DOM-H-E1D0F50E"
+        "DOM-H-E1D0F50E",
+        "domain_intelligence-technical-construction-intelligence-dkhamsing-open-source-ios-apps-core-invarian",
+        "domain_intelligence-technical-construction-intelligence-dkhamsing-open-source-ios-apps-learnings-cor"
       ]
     },
     "I": {
@@ -30195,8 +30199,8 @@
       "title": "Design Intelligence: unhappychoice/gitlogue Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-unhappychoice-gitlogue-design-intelligence-unhappychoice-gitlogue-core-invariant.md",
       "repository": "unhappychoice/gitlogue",
-      "content_hash": "aa33f66033b3c4884cf990e6c8f89d79ea163b5874755046fc1d1759347e1d94",
-      "created_at": "2026-11-21T15:31:18.058Z"
+      "content_hash": "1be9a2aa74f0525e1c43ccbfaa19daba6ccfdf578a65863ac525489a38f8ed54",
+      "created_at": "2026-11-24T06:38:20.609Z"
     },
     "domain_intelligence-design-intelligence-unhappychoice-gitlogue-learnings-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-unhappychoice-gitlogue-learnings-core-invariants",
@@ -30204,8 +30208,8 @@
       "title": "Design Intelligence: unhappychoice-gitlogue-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-unhappychoice-gitlogue-learnings-design-intelligence-unhappychoice-gitlogue-lear.md",
       "repository": "unhappychoice-gitlogue-learnings",
-      "content_hash": "26b5a6e4a3e5a3ad1744f08b141402aad37bbb80a0aef60563ca80f67d243378",
-      "created_at": "2026-11-21T15:31:39.605Z"
+      "content_hash": "685b7d00601a750f38a91530a40c4d948726677be75496f9b97bc6f3dda4ff2c",
+      "created_at": "2026-11-24T06:38:32.726Z"
     },
     "domain_intelligence-technical-construction-intelligence-spartan-ng-spartan-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-spartan-ng-spartan-core-invariants",
@@ -41928,6 +41932,42 @@
       "confidence": 1,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-24T06:21:17.838Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-dkhamsing-open-source-ios-apps-core-invarian": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-dkhamsing-open-source-ios-apps-core-invarian",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: dkhamsing/open-source-ios-apps Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dkhamsing-open-source-ios-apps-technical-construction-intelligence-dkhamsing-ope.md",
+      "repository": "dkhamsing/open-source-ios-apps",
+      "content_hash": "0d283b73cae9930eaa44e30f4092c4d5da96128ab23c041d48e36a975d1a8ca1",
+      "created_at": "2026-11-24T06:38:25.438Z"
+    },
+    "domain_intelligence-design-intelligence-encoredev-encore-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-encoredev-encore-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: encoredev/encore Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-encoredev-encore-design-intelligence-encoredev-encore-core-invariants.md",
+      "repository": "encoredev/encore",
+      "content_hash": "2717b9cfe24b12959506b97a1316f6f698c536b81192fd385607c15f894d86c7",
+      "created_at": "2026-11-24T06:38:29.081Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-dkhamsing-open-source-ios-apps-learnings-cor": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-dkhamsing-open-source-ios-apps-learnings-cor",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: dkhamsing-open-source-ios-apps-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dkhamsing-open-source-ios-apps-learnings-technical-construction-intelligence-dkh.md",
+      "repository": "dkhamsing-open-source-ios-apps-learnings",
+      "content_hash": "21b3c2e54d1a282968fb3bf9f723ac04b905539fd9af5641d88e0770dadd7988",
+      "created_at": "2026-11-24T06:38:35.521Z"
+    },
+    "domain_intelligence-design-intelligence-encoredev-encore-learnings-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-encoredev-encore-learnings-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: encoredev-encore-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-encoredev-encore-learnings-design-intelligence-encoredev-encore-learnings-core-i.md",
+      "repository": "encoredev-encore-learnings",
+      "content_hash": "2d23b8b640006cf8ec545795d95f386dcd96ea3dc15028a0284b424ce0fb8c63",
+      "created_at": "2026-11-24T06:38:36.555Z"
     }
   }
 }
