@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T03:33:37.659Z",
-  "total_records": 2486,
+  "last_updated": "2026-11-24T03:41:56.525Z",
+  "total_records": 2488,
   "domains": {
     "A": {
       "total": 20,
@@ -1579,7 +1579,7 @@
       ]
     },
     "H": {
-      "total": 585,
+      "total": 587,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2165,7 +2165,9 @@
         "DOM-H-F2F7DD53",
         "domain_intelligence-technical-construction-intelligence-karmada-io-karmada-core-invariants",
         "domain_intelligence-technical-construction-intelligence-karmada-io-karmada-learnings-core-invariants",
-        "DOM-H-AB1B4707"
+        "DOM-H-AB1B4707",
+        "domain_intelligence-technical-construction-intelligence-automattic-harper-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-automattic-harper-learnings-core-invariants"
       ]
     },
     "I": {
@@ -34207,8 +34209,8 @@
       "title": "Technical Construction Intelligence: infiniflow/infinity Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-infiniflow-infinity-technical-construction-intelligence-infiniflow-infinity-core.md",
       "repository": "infiniflow/infinity",
-      "content_hash": "d8b95671c7eb99490d5a72f2aa4d0035f80be74ed08e1c83c91bd935e1daffdb",
-      "created_at": "2026-11-23T04:24:03.998Z"
+      "content_hash": "ae0c3eaf557cdd8f22d7ad7c2e5c533b43cc5e1332ec5424f6174bc8bd91f4cd",
+      "created_at": "2026-11-24T03:41:51.182Z"
     },
     "DOM-D-2BF9F19D": {
       "record_id": "DOM-D-2BF9F19D",
@@ -39181,17 +39183,17 @@
       "title": "Technical Construction Intelligence: infiniflow-infinity-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-infiniflow-infinity-learnings-technical-construction-intelligence-infiniflow-inf.md",
       "repository": "infiniflow-infinity-learnings",
-      "content_hash": "7f9ce7db17f594503ba342c16482ad9b56db985efe0284da59ed1c5ba5bf24e4",
-      "created_at": "2026-11-23T04:24:07.703Z"
+      "content_hash": "cebb80e040b22f1e827cea79b029fc9c3ae4ee837bb1afe7fc08bc2c5e9ef98f",
+      "created_at": "2026-11-24T03:41:56.525Z"
     },
     "domain_intelligence-research-knowledge-intelligence-dosco-deeporg-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-dosco-deeporg-core-invariants",
       "domain_letter": "D",
       "title": "Research & Knowledge Intelligence: dosco/deeporg Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-graphjin-research-knowledge-intelligence-dosco-deeporg-core-invariants.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-deeporg-research-knowledge-intelligence-dosco-deeporg-core-invariants.md",
       "repository": "dosco/deeporg",
-      "content_hash": "3b58fe48e226145749e96add36956b4ffe52e2c30ec2fa87ec167c84c5a66812",
-      "created_at": "2026-11-24T01:46:56.150Z"
+      "content_hash": "ddcf0428260d76d3a95f75f1b868c1ef4d4b7534735f4a61a7ea16f9643e4551",
+      "created_at": "2026-11-24T03:41:45.481Z"
     },
     "domain_intelligence-technical-construction-intelligence-prunaai-p-image-oss-comfy-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prunaai-p-image-oss-comfy-core-invariants",
@@ -39416,8 +39418,8 @@
       "title": "Research & Knowledge Intelligence: dosco-deeporg-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-deeporg-learnings-research-knowledge-intelligence-dosco-deeporg-learnings-.md",
       "repository": "dosco-deeporg-learnings",
-      "content_hash": "85cc03c547e502662cee686ad570dc5bcc2cd8bc496efce4fcbdea6a00a7dc3c",
-      "created_at": "2026-11-23T05:51:55.228Z"
+      "content_hash": "4c6708e0cdfe5c1a3c6f26a238f524e64a1269a9525dc5c2f5467877fabbb45f",
+      "created_at": "2026-11-24T03:41:55.555Z"
     },
     "domain_intelligence-research-knowledge-intelligence-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensor": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensor",
@@ -41717,6 +41719,24 @@
       "confidence": 0.64,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-24T03:23:14.771Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-automattic-harper-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-automattic-harper-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: Automattic/harper Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-automattic-harper-technical-construction-intelligence-automattic-harper-core-inv.md",
+      "repository": "Automattic/harper",
+      "content_hash": "dfa8bdf6fec83b8c7dd9ba9f38786bac4e89a0fb877f8ce63ec4421678319f68",
+      "created_at": "2026-11-24T03:41:38.602Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-automattic-harper-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-automattic-harper-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: automattic-harper-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-automattic-harper-learnings-technical-construction-intelligence-automattic-harpe.md",
+      "repository": "automattic-harper-learnings",
+      "content_hash": "ea327cc11d1f4f291b129d7785c167daed998ab253bd36d7880a7afed3041bfd",
+      "created_at": "2026-11-24T03:41:54.722Z"
     }
   }
 }

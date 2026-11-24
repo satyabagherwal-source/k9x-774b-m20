@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T03:23:15.109Z",
+  "updated_at": "2026-11-24T03:41:54.293Z",
   "stats": {
-    "total_discovered": 8291,
+    "total_discovered": 8292,
     "approved_pending_harvest": 7855,
     "harvested_count": 0,
-    "rejected_count": 436,
+    "rejected_count": 437,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7839,
+      "COMMUNITY_AND_EXPERT": 7840,
       "OFFICIAL_DOCUMENTATION": 266,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -179373,6 +179373,21 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
         "fileName": "paradedb-paradedb-learnings.md"
+      }
+    },
+    "SRC-05ABB7170871": {
+      "id": "SRC-05ABB7170871",
+      "url": "http://localhost:8081/nested_editable.html",
+      "title": "http://localhost:8081/nested_editable.html",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-24T03:41:54.292Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/automattic-harper-learnings.md",
+        "fileName": "automattic-harper-learnings.md"
       }
     }
   }

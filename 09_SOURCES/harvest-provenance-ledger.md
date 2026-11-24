@@ -12608,3 +12608,6 @@ Every entry in this ledger must capture:
 | `learn-dom-k-aa8cd5c4` | `project://paradedb-paradedb` | `32ba4b5c` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/paradedb-paradedb-learnings.md` | 2026-11-24T03:23:14.802Z |
 | `learn-github-iii-hq-iii` | `https://github.com/iii-hq/iii` | `81dfce48` | Multi-dimensional audit evidence | 2026-11-24T03:33:24.204Z |
 | `learn-github-shifthackz-sdai-kmp` | `https://github.com/ShiftHackZ/SDAI-KMP` | `30461ed9` | Multi-dimensional audit evidence | 2026-11-24T03:33:30.273Z |
+| `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `eeaf0d20` | Multi-dimensional audit evidence | 2026-11-24T03:41:38.175Z |
+| `learn-github-dosco-deeporg` | `https://github.com/dosco/deeporg` | `4c697dc8` | Multi-dimensional audit evidence | 2026-11-24T03:41:45.036Z |
+| `learn-github-infiniflow-infinity` | `https://github.com/infiniflow/infinity` | `e7db7afb` | Multi-dimensional audit evidence | 2026-11-24T03:41:50.756Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source**: github ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
-> **Source Version**: `6cb8d82a`  
+> **Source Version**: `eeaf0d20`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T20:08:58.638Z  
+> **Timestamp**: 2026-11-24T03:41:37.033Z  
 > **Learning ID**: `learn-github-automattic-harper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T20:08:58.631Z  
+> **Harvest Timestamp**: 2026-11-24T03:41:36.911Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Offline, privacy-first grammar checker. Fast, open-source, Rust-powered
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 17902 stars
+- **Stars / Engagement**: 17923 stars
 
 ---
 
@@ -1429,178 +1429,222 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6cb8d82a` (2026-11-22)
-**Commit Message**: fix(core): add 'waiters', 'instinctually', and 'unholster' to dictionary (#4973) (#5040)
+### Incident Patch 1: `68017e72` (2026-11-23)
+**Commit Message**: fix(chrome-ext): lint editable blocks inside a non-editable wrapper (#5027)
 
-Signed-off-by: Abdul karim mia <[REDACTED_EMAIL]>
+The content script skipped any text with an ancestor marked
+contenteditable="false". The non-iframed WordPress block editor (as used
+on P2) puts each editable paragraph inside a wrapper marked
+contenteditable="false", so nothing in the editor was linted.
 
-**File**: `harper-core/dictionary.dict` (modified, +3/-2)
+Checking isContentEditable instead respects the nearest contenteditable
+setting, so editable blocks inside a non-editable wrapper are linted,
+while non-editable islands inside an editor are still skipped.
+
+**File**: `packages/chrome-plugin/src/contentScript/index.ts` (modified, +8/-1)
 ```diff
-@@ -30624,7 +30624,7 @@ instilled/Vj
- instilling/V6
- instinct/~NgSJv
- instinctive/JY
--instinctual/J
-+instinctual/JY
- institute/~NgSVGd>JXZn
- instituter/Ng
- institution/~Ng
-@@ -51474,6 +51474,7 @@ unhealthful/J
- unhealthy/~J^
- unhistorical/J
- unholy/~J^
-+unholster/VGdS
- unhurt/J
- # uni               # prefixes that are not also words in their own right don't belong in the dictionary
- unibody/NSg
-@@ -52668,7 +52669,7 @@ waistband/NgS
- waistcoat/NgS
- waistline/NgS
- wait/~VdGSNg
--waiter/~NgV
-+waiter/~NgSV
- waiting/~V6Ng
- waitperson/N0gS
- waitress/~NgSV
-```
-
-**File**: `harper-core/src/spell/mutable_dictionary.rs` (modified, +12/-0)
-```diff
-@@ -405,6 +405,18 @@ mod tests {
-         assert!(dict.contains_word_str("repo's"));
-     }
+@@ -217,7 +217,14 @@ function scan() {
+ 		const seenBlockContainers = new Set<Element>();
  
-+    #[test]
-+    fn curated_contains_waiters_instinctually_and_unholstered() {
-+        let dict = MutableDictionary::curated();
-+
-+        assert!(dict.contains_word_str("waiters"));
-+        assert!(dict.contains_word_str("instinctually"));
-+        assert!(dict.contains_word_str("unholster"));
-+        assert!(dict.contains_word_str("unholstered"));
-+        assert!(dict.contains_word_str("unholsters"));
-+        assert!(dict.contains_word_str("unholstering"));
-+    }
-+
-     #[test]
-     fn curated_contains_possessive_abandonment() {
-         assert!(
-```
-
----
-
-### Incident Patch 2: `5252d3d4` (2026-11-22)
-**Commit Message**: fix(core): add 'teardown' and remove stray verb flag from 'fallback' (#5006, #5008) (#5035)
-
-Signed-off-by: Abdul karim mia <[REDACTED_EMAIL]>
-
-**File**: `harper-core/dictionary.dict` (modified, +2/-1)
-```diff
-@@ -24614,7 +24614,7 @@ fall/~VbGSNwg
- fall back/V/
- fallacious/JY
- fallacy/~NSg
--fallback/NgSJV
-+fallback/NgSJ
- fallen/VTJ
- fallibility/Nmgi
- fallible/Jp
-@@ -49079,6 +49079,7 @@ teamwork/~Ng
- teapot/NgS
- tear/~VGdSNg
- tearaway/NS
-+teardown/~NSg
- teardrop/~NSg
- tearful/JY
- teargas/NwgSVb
-```
-
-**File**: `harper-core/src/linting/phrasal_verb_as_compound_noun.rs` (modified, +35/-0)
-```diff
-@@ -404,6 +404,41 @@ mod tests {
-         );
-     }
+ 		for (const leaf of leafs) {
+-			if (leaf.parentElement?.closest('[contenteditable="false"],[disabled],[readonly]') != null) {
++			// Use `isContentEditable` rather than `closest('[contenteditable="false"]')`: editors
++			// such as the non-iframed block editor put editable blocks inside a non-editable wrapper.
++			const leafElement = leaf instanceof Element ? leaf : leaf.parentElement;
++			if (
++				!(leafElement instanceof HTMLElement) ||
++				!leafElement.isContentEditable ||
++				leafElement.closest('[disabled],[readonly]') != null
++			) {
+ 				continue;
+ 			}
  
-+    #[test]
-+    fn flag_fallback_used_as_a_verb_issue_5006() {
-+        assert_suggestion_result(
-+            "We should fallback to the older version.",
-+            PhrasalVerbAsCompoundNoun::default(),
-+            "We should fall back to the older version.",
-+        );
-+    }
+```
+
+**File**: `packages/chrome-plugin/tests/nested_editable.spec.ts` (added, +10/-0)
+```diff
+@@ -0,0 +1,10 @@
++import { expect, test } from './fixtures';
++import { getHarperHighlights } from './testUtils';
 +
-+    #[test]
-+    fn flag_teardown_all_caps_issue_5008() {
-+        assert_suggestion_result(
-+            "I FINALLY TEARDOWN A VR6!",
-+            PhrasalVerbAsCompoundNoun::default(),
-+            "I FINALLY TEAR DOWN A VR6!",
-+        );
-+    }
++const TEST_PAGE_URL = 'http://localhost:8081/nested_editable.html';
 +
-+    #[test]
-+    fn flag_teardown_lowercase_issue_5008() {
-+        assert_suggestion_result(
-+            "We need to teardown the old server before tomorrow.",
-+            PhrasalVerbAsCompoundNoun::default(),
-+            "We need to tear down the old server before tomorrow.",
-+        );
-+    }
++test('Lints an editable block inside a non-editable wrapper.', async ({ page }) => {
++	await page.goto(TEST_PAGE_URL);
 +
-+    #[test]
-+    fn dont_flag_fallback_or_teardown_as_nouns() {
-+        assert_no_lints(
-+            "We have a fallback in place for the server. The teardown went smoothly.",
-+            PhrasalVerbAsCompoundNoun::default(),
-+        );
-+    }
-+
-     #[test]
-     fn dont_flag_random_words_that_happen_to_end_like_a_particle() {
-         assert_no_lints("I like bacon.", test_linter());
++	await expect(getHarperHighlights(page).first()).toBeVisible({ timeout: 24000 });
++});
+```
+
+**File**: `packages/chrome-plugin/tests/pages/nested_editable.html` (added, +15/-0)
+```diff
+@@ -0,0 +1,15 @@
++<!doctype html>
++<html lang="en">
++  <head>
++    <meta charset="utf-8" />
++    <title>Editable block inside a non-editable wrapper</title>
++  </head>
++  <body>
++    <!-- Mirrors the non-iframed WordPress block editor (e.g. P2). -->
++    <div class="editor-styles-wrapper" contenteditable="false">
++      <div class="is-root-container">
++        <p contenteditable="true">This is an test of the Harper grammar checker.</p>
++      </div>
++    </div>
++  </body>
++</html>
 ```
 
 ---
 
-### Incident Patch 3: `2954aa92` (2026-11-22)
-**Commit Message**: fix(core): avoid flagging "if need be" in MissingTo (#5002) (#5032)
+### Incident Patch 2: `622b568e` (2026-11-23)
+**Commit Message**: fix(core): ignore text inside inline HTML <code> in Markdown (#5028)
 
-Signed-off-by: Abdul karim mia <[REDACTED_EMAIL]>
+Markdown inline code in backticks was already unlintable, but the same
+code written as <code>…</code> was not: only the tags themselves were
+skipped, so the identifiers between them were spell-checked and flagged.
+This is common in GitHub descriptions and comments, where Harper flagged
+code references as misspellings.
 
-**File**: `harper-core/src/linting/missing_to.rs` (modified, +10/-0)
+The parser now tracks when it is inside an inline <code> element and
+marks that text as unlintable. An unclosed tag stops at the end of its
+paragraph, so it cannot hide the rest of the document.
+
+**File**: `harper-core/src/parsers/markdown.rs` (modified, +56/-1)
 ```diff
-@@ -459,6 +459,10 @@ impl ExprLinter for MissingTo {
- 
-         let next_text = next_token.get_str(source).to_lowercase();
- 
-+        if controller_text == "need" && next_text == "be" && previous_word == Some("if") {
-+            return None;
-+        }
-+
-         if controller_text.starts_with("try") && next_text == "and" {
-             return None;
-         }
-@@ -913,4 +917,10 @@ mod tests {
-             test_linter(),
-         );
+@@ -134,6 +134,14 @@ impl Markdown {
      }
-+
-+    #[test]
-+    fn no_lint_if_need_be() {
-+        assert_no_lints("We can improve it if need be.", test_linter());
-+        assert_no_lints("If need be, we can improve it.", test_linter());
-+    }
  }
+ 
++/// Whether `html` is an HTML tag starting with `prefix` (e.g. `<code` or `</code`),
++/// ignoring ASCII case. Attributes are allowed.
++fn is_html_tag(html: &str, prefix: &str) -> bool {
++    html.get(..prefix.len())
++        .is_some_and(|start| start.eq_ignore_ascii_case(prefix))
++        && html[prefix.len()..].starts_with(|c: char| c == '>' || c.is_ascii_whitespace())
++}
++
+ impl Parser for Markdown {
+     /// This implementation is quite gross to look at, but it works.
+     /// If any issues arise, it would likely help to refactor this out first.
+@@ -155,6 +163,9 @@ impl Parser for Markdown {
+ 
+         let mut stack = Vec::new();
+ 
++        // Depth of inline `<code>` HTML elements we are currently inside.
++        let mut html_code_depth = 0usize;
++
+         // NOTE: the range spits out __byte__ indices, not char indices.
+         // This is why we keep track above.
+         for (event, range) in md_parser.into_offset_iter() {
+@@ -206,6 +217,7 @@ impl Parser for Markdown {
+                         kind: TokenKind::ParagraphBreak,
+                     });
+                     stack.pop();
++                    html_code_depth = 0;
+                 }
+                 pulldown_cmark::Event::End(_) => {
+                     stack.pop();
+@@ -223,6 +235,14 @@ impl Parser for Markdown {
+                 pulldown_cmark::Event::Text(_text) => {
+                     let chunk_len = span_end - span_start;
+ 
++                    if html_code_depth > 0 {
++                        tokens.push(Token {
++                            span: Span::new_with_len(span_start, chunk_len),
++                            kind: TokenKind::Unlintable,
++                        });
++                        continue;
++                    }
++
+                     if let Some(tag) = stack.last() {
+                         use pulldown_cmark::Tag;
+ 
+@@ -263,7 +283,13 @@ impl Parser for Markdown {
+                     tokens.append(&mut new_tokens);
+                 }
+                 // TO-DO: Support via `harper-html`
+-                pulldown_cmark::Event::Html(_) | pulldown_cmark::Event::InlineHtml(_) => {
++                pulldown_cmark::Event::Html(html) | pulldown_cmark::Event::InlineHtml(html) => {
++                    if is_html_tag(&html, "<code") {
++                        html_code_depth += 1;
++                    } else if is_html_tag(&html, "</code") {
++                        html_code_depth = html_code_depth.saturating_sub(1);
++                    }
++
+                     let size = span_end - span_start;
+                     tokens.push(Token {
+                         span: Span::new_with_len(span_start, size),
+@@ -435,6 +461,35 @@ mod tests {
+         assert_eq!(tokens.iter_unlintables().count(), 1);
+     }
+ 
++    #[test]
++    fn html_code_contents_are_unlintable() {
++        let source = r"Call the <code>teh_functoin</code> helper.";
++        let tokens = Markdown::default().parse_str(source);
++        assert_eq!(tokens.iter_unlintables().count(), 3);
++        assert_eq!(tokens.iter_words().count(), 3);
++    }
++
++    #[test]
++    fn html_code_with_attributes_and_uppercase() {
++        let source = r#"Call <CODE class="x">recieve</CODE> now."#;
++        let tokens = Markdown::default().parse_str(source);
++        assert_eq!(tokens.iter_words().count(), 2);
++    }
++
++    #[test]
++    fn html_code_does_not_match_similar_tags() {
++        let source = r"Some <codex>words</codex> here.";
++        let tokens = Markdown::default().parse_str(source);
++        assert_eq!(tokens.iter_words().count(), 3);
++    }
++
++    #[test]
++    fn unclosed_html_code_ends_at_paragraph() {
++        let source = "Some <code>hidden\n\nVisible words.";
++        let tokens = Markdown::default().parse_str(source);
++        assert_eq!(tokens.iter_words().count(), 3);
++    }
++
+     #[test]
+     fn link_title_unlintable() {
+         let parser = Markdown::new(MarkdownOptions {
+```
+
+---
+
+### Incident Patch 3: `fbcbb655` (2026-11-23)
+**Commit Message**: fix(desktop): lead with privacy in onboarding (#5020)
+
+* fix(desktop): lead with privacy in onboarding
+
+* fix(desktop): refine the onboarding privacy message
+
+**File**: `harper-desktop/src/lib/settings/pages/GettingStartedPage.svelte` (modified, +2/-2)
+```diff
+@@ -27,8 +27,8 @@ const allSlides: OnboardingSlide[] = [
+ 	},
+ 	{
+ 		id: 'accessibility',
+-		title: 'Give Harper Permission',
+-		lede: 'Harper needs permission to check and correct your writing. Your text stays on your device.',
++		title: 'Nothing leaves your device',
++		lede: 'However, Harper needs Accessibility permission to check and correct your writing in other apps.',
+ 	},
+ 	{
+ 		id: 'integration',
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5051** (2026-11-23): feat: support HCL and Terraform (@bloveless)
+- **PR #5045** (2026-11-23): Move Mac CI to the xcode-27.2-v3 image (Ruby 3.4.13) (@mokagio)
+- **PR #5043** (2026-11-23): fix(core): add 'doorframe' to dictionary to avoid SplitWords false positive (#4794) (@abdul-karim-mia)
 - **PR #5040** (2026-11-22): fix(core): add 'waiters', 'instinctually', and 'unholster' to dictionary (#4973) (@abdul-karim-mia)
 - **PR #5035** (2026-11-22): fix(core): add 'teardown' and remove stray verb flag from 'fallback' (#5006, #5008) (@abdul-karim-mia)
 - **PR #5032** (2026-11-22): fix(core): avoid flagging 'if need be' in MissingTo (#5002) (@abdul-karim-mia)
-- **PR #5025** (2026-11-21): Many linters' `message` and `description` fields lacked a sentence-final punctuation (@hippietrail)
-- **PR #5023** (2026-11-21): feat: a same way→the same way / the similar way→a similar way (@hippietrail)
-- **PR #5019** (2026-11-20): feat(desktop): add Coffee as a default app (@PTthe13)
 
 ---
 
@@ -1620,31 +1664,35 @@ Signed-off-by: Abdul karim mia <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. core): add 'waiters', 'instinctually', and 'unholster' to dictionary
+## X. chrome-ext): lint editable blocks inside a non-editable wrapper
 
 **RULE**:
-When implementing operations in `harper-core/dictionary.dict`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/chrome-plugin/src/contentScript/index.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6cb8d82a`: core): add 'waiters', 'instinctually', and 'unholster' to dictionary. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `68017e72`: chrome-ext): lint editable blocks inside a non-editable wrapper. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `harper-core/dictionary.dict`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/chrome-plugin/src/contentScript/index.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-instinctual/JY
-unholster/VGdS
-waiter/~NgSV
+			// Use `isContentEditable` rather than `closest('[contenteditable="false"]')`: editors
+			// such as the non-iframed block editor put editable blocks inside a non-editable wrapper.
+			const leafElement = leaf instanceof Element ? leaf : leaf.parentElement;
+			if (
+				!(leafElement instanceof HTMLElement) ||
+				!leafElement.isContentEditable ||
+				leafElement.closest('[disabled],[readonly]') != null
+			) {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-instinctual/J
-waiter/~NgV
+			if (leaf.parentElement?.closest('[contenteditable="false"],[disabled],[readonly]') != null) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6cb8d82a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `68017e72` are properly handled with clean fallback behavior.

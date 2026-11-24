@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T03:33:37.436Z",
+  "last_updated": "2026-11-24T03:41:56.353Z",
   "directives": [
     {
       "id": "CD-001",
@@ -52192,11 +52192,11 @@
       "domain_letter": "D"
     },
     {
-      "id": "CD-AZPH",
+      "id": "CD-EQ7K",
       "directive_title": "docs(site): lead with the compiler and the loop, add recurring work to the rollo",
-      "source_repo": "dosco-graphjin-learnings",
+      "source_repo": "dosco-deeporg-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-AZPH-docs-site-lead-with-the-compiler-and-the-loop-add-recurring-work-to-the-rollo.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-EQ7K-docs-site-lead-with-the-compiler-and-the-loop-add-recurring-work-to-the-rollo.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-24",
@@ -52685,6 +52685,59 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-EF1AFD-test-collab-write-trust-fixtures-with-ex.md",
       "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-ED4F",
+      "directive_title": "lint editable blocks inside a non-editable wrapper",
+      "source_repo": "Automattic/harper",
+      "source_commit": "eeaf0d20",
+      "staged_file": "11_INBOX/candidate-directives/CD-ED4F-lint-editable-blocks-inside-a-non-editable-wrapper.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-EMU4",
+      "directive_title": "fix five concurrency defects the index-combination soak",
+      "source_repo": "infiniflow/infinity",
+      "source_commit": "e7db7afb",
+      "staged_file": "11_INBOX/candidate-directives/CD-EMU4-fix-five-concurrency-defects-the-index-combination-soak.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-EPKD",
+      "directive_title": "chrome-ext): lint editable blocks inside a non-editable wrapper",
+      "source_repo": "automattic-harper-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-EPKD-chrome-ext-lint-editable-blocks-inside-a-non-editable-wrapper.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-7DBD7F",
+      "directive_title": "docs(site): lead with the compiler and the loop, add recurring work to the rollo",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "dosco-deeporg",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7DBD7F-docs-site-lead-with-the-compiler-and-the.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-EQYM",
+      "directive_title": "rust_engine: fix five concurrency defects the index-combination soak",
+      "source_repo": "infiniflow-infinity-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-EQYM-rust_engine-fix-five-concurrency-defects-the-index-combination-soak.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "G"
     }
   ]
 }

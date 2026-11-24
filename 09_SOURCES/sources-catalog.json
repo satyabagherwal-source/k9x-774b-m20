@@ -2253,10 +2253,10 @@
     "repository": "Automattic/harper",
     "platform": "github",
     "sourceUrl": "https://github.com/Automattic/harper",
-    "sourceVersion": "6cb8d82a",
+    "sourceVersion": "eeaf0d20",
     "license": "Apache-2.0",
-    "contentHash": "5826b7270e26022c3e18c45f52f89bf3f1163db668e97513ed0c9cb8ca1f6696",
-    "lastHarvestedAt": "2026-11-22T20:08:59.943Z",
+    "contentHash": "28ebfa747aee04e5d9b93eccf04985ce36e233cc30e0986aa7bef289ce5e0bf1",
+    "lastHarvestedAt": "2026-11-24T03:41:38.175Z",
     "learningId": "learn-github-automattic-harper"
   },
   "sudheerj-reactjs-interview-questions": {
@@ -7613,10 +7613,10 @@
     "repository": "infiniflow/infinity",
     "platform": "github",
     "sourceUrl": "https://github.com/infiniflow/infinity",
-    "sourceVersion": "8c86bcb2",
+    "sourceVersion": "e7db7afb",
     "license": "Apache-2.0",
-    "contentHash": "6432b38abb2d9dc3716c85d01b6e15d41c1e069597a7700582d39514a7f4f693",
-    "lastHarvestedAt": "2026-11-23T04:24:03.652Z",
+    "contentHash": "442e238e7f28b152415aa2d42447be6382dc957367146ba0c649e8e77af53cd3",
+    "lastHarvestedAt": "2026-11-24T03:41:50.756Z",
     "learningId": "learn-github-infiniflow-infinity"
   },
   "astral-sh-ruff": {
@@ -13123,10 +13123,10 @@
     "repository": "dosco/deeporg",
     "platform": "github",
     "sourceUrl": "https://github.com/dosco/deeporg",
-    "sourceVersion": "bea1c714",
+    "sourceVersion": "4c697dc8",
     "license": "Apache-2.0",
-    "contentHash": "a439ce057b6e867e07015e7bc658e8d2ba40d1654df210c5c6a118931f454631",
-    "lastHarvestedAt": "2026-11-23T05:51:40.319Z",
+    "contentHash": "7c82de8a03af25225155b95a8b824c3d4ed8119f5fac7391ec8746257734257f",
+    "lastHarvestedAt": "2026-11-24T03:41:45.036Z",
     "learningId": "learn-github-dosco-deeporg"
   },
   "hf-openai-clip-vit-large-patch14": {

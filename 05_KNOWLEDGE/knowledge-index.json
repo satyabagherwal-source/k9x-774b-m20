@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T03:33:37.885Z",
+  "last_updated": "2026-11-24T03:41:56.710Z",
   "total_verified_learnings": 9089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24392,
+  "total_items": 24400,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -218665,8 +218665,8 @@
       "slug": "infiniflow-infinity",
       "platform": "github",
       "source_url": "https://github.com/infiniflow/infinity",
-      "source_version": "8c86bcb2",
-      "content_hash": "6432b38abb2d9dc3716c85d01b6e15d41c1e069597a7700582d39514a7f4f693",
+      "source_version": "e7db7afb",
+      "content_hash": "442e238e7f28b152415aa2d42447be6382dc957367146ba0c649e8e77af53cd3",
       "dossier_path": "07_PROJECT_LEARNING/infiniflow-infinity-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/infiniflow-infinity-learnings.md",
       "promoted_rules": [
@@ -218709,6 +218709,11 @@
           "number": 10019,
           "title": "Rust engine: express row visibility as bitmaps, and reclaim unsealed memory on a",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10189,
+          "title": "fix five concurrency defects the index-combination soak",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -218716,7 +218721,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T04:24:03.482Z",
+      "verified_at": "2026-11-24T03:41:50.536Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -218770,10 +218775,10 @@
       "relative_path": "08_VERIFICATION/infiniflow-infinity-verification-protocol-empirical-defect-shield-for-infiniflow.md",
       "title": "Verification Protocol: Empirical Defect Shield for infiniflow/infinity",
       "repository": "infiniflow/infinity",
-      "source_version": "8c86bcb2",
-      "content_hash": "4e88fa7752fc21923c4954ddb644721e7a4f846c06503325f0e5562e2445cbb7",
+      "source_version": "e7db7afb",
+      "content_hash": "53948353f3a55e8bbbd8665bd1bd44d2c19ec2329c2625171b8d2271b41a41ac",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T04:24:04.171Z"
+      "persisted_at": "2026-11-24T03:41:51.361Z"
     },
     "learn-github-bitterbot-ai-bitterbot-desktop": {
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -218918,9 +218923,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for infiniflow-infinity-learnings",
       "repository": "infiniflow-infinity-learnings",
       "source_version": "HEAD",
-      "content_hash": "4fc29e657b864ba5b8e0859b357c52565bdf55164acacc403e67712161352c3f",
+      "content_hash": "0f73bac93141c0cfc9f9d0a1a730ba51fa44c4716616fb0ddafea3933f71e6ac",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T04:24:07.887Z"
+      "persisted_at": "2026-11-24T03:41:56.710Z"
     },
     "candidate_directive-wallet-stop-coinbase-agentkit-sending-analytics-to-coinbase": {
       "item_id": "candidate_directive-wallet-stop-coinbase-agentkit-sending-analytics-to-coinbase",
@@ -238898,8 +238903,8 @@
       "slug": "automattic-harper",
       "platform": "github",
       "source_url": "https://github.com/Automattic/harper",
-      "source_version": "6cb8d82a",
-      "content_hash": "5826b7270e26022c3e18c45f52f89bf3f1163db668e97513ed0c9cb8ca1f6696",
+      "source_version": "eeaf0d20",
+      "content_hash": "28ebfa747aee04e5d9b93eccf04985ce36e233cc30e0986aa7bef289ce5e0bf1",
       "dossier_path": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "promoted_rules": [
@@ -238932,6 +238937,11 @@
           "number": 9984,
           "title": "add 'waiters', 'instinctually', and 'unholster' to dictionary",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10188,
+          "title": "lint editable blocks inside a non-editable wrapper",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -238939,7 +238949,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T20:08:59.687Z",
+      "verified_at": "2026-11-24T03:41:37.951Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -238993,10 +239003,10 @@
       "relative_path": "08_VERIFICATION/automattic-harper-verification-protocol-empirical-defect-shield-for-automattic-h.md",
       "title": "Verification Protocol: Empirical Defect Shield for Automattic/harper",
       "repository": "Automattic/harper",
-      "source_version": "6cb8d82a",
-      "content_hash": "adc3ffac15c2d75637d106972331d9142bc62285ff5586cc3fde285ac9b04b01",
+      "source_version": "eeaf0d20",
+      "content_hash": "241a2c27a136503ed47dd309c96695b377fe337c3a5e500320651495af747938",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T20:09:00.676Z"
+      "persisted_at": "2026-11-24T03:41:38.780Z"
     },
     "learn-github-kotest-kotest": {
       "learning_id": "learn-github-kotest-kotest",
@@ -239252,9 +239262,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for automattic-harper-learnings",
       "repository": "automattic-harper-learnings",
       "source_version": "HEAD",
-      "content_hash": "a507b3132b9aefd3a76e9d615d937c1259cdf06af8dc86f4135df43105e27bf7",
+      "content_hash": "4b9ed78360a4f5d053804f59208e3bcdaa948d3c280285d15d21f94885966f88",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T20:09:10.056Z"
+      "persisted_at": "2026-11-24T03:41:54.914Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-phocinae-phocinae-largha-150m-v1-learnings-co": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-phocinae-phocinae-largha-150m-v1-learnings-co",
@@ -299952,10 +299962,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-infiniflow-infinity-technical-construction-intelligence-infiniflow-infinity-core.md",
       "title": "Technical Construction Intelligence: infiniflow/infinity Core Invariants",
       "repository": "infiniflow/infinity",
-      "source_version": "8c86bcb2",
-      "content_hash": "d8b95671c7eb99490d5a72f2aa4d0035f80be74ed08e1c83c91bd935e1daffdb",
+      "source_version": "e7db7afb",
+      "content_hash": "ae0c3eaf557cdd8f22d7ad7c2e5c533b43cc5e1332ec5424f6174bc8bd91f4cd",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T04:24:03.998Z"
+      "persisted_at": "2026-11-24T03:41:51.182Z"
     },
     "rule-9426": {
       "learning_id": "rule-9426",
@@ -311979,13 +311989,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "dosco/deeporg",
       "repository": "dosco/deeporg",
-      "slug": "dosco-graphjin",
+      "slug": "dosco-deeporg",
       "platform": "github",
-      "source_url": "https://github.com/dosco/graphjin",
-      "source_version": "48344754",
-      "content_hash": "15aacb484185069b2572ab1ed4c769cf92264ca4fdf9738f0ce961c399b6ab43",
-      "dossier_path": "07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
+      "source_url": "https://github.com/dosco/deeporg",
+      "source_version": "4c697dc8",
+      "content_hash": "7c82de8a03af25225155b95a8b824c3d4ed8119f5fac7391ec8746257734257f",
+      "dossier_path": "07_PROJECT_LEARNING/dosco-deeporg-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/dosco-deeporg-learnings.md",
       "promoted_rules": [
         {
           "number": 8489,
@@ -312005,7 +312015,7 @@
         {
           "number": 10172,
           "title": "docs(site): lead with the compiler and the loop, add recurring work to the rollo",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -312013,7 +312023,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T01:46:55.330Z",
+      "verified_at": "2026-11-24T03:41:44.829Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -312038,13 +312048,13 @@
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dosco-deeporg",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/dosco-graphjin-verification-protocol-empirical-defect-shield-for-dosco-deeporg.md",
+      "relative_path": "08_VERIFICATION/dosco-deeporg-verification-protocol-empirical-defect-shield-for-dosco-deeporg.md",
       "title": "Verification Protocol: Empirical Defect Shield for dosco/deeporg",
       "repository": "dosco/deeporg",
-      "source_version": "48344754",
-      "content_hash": "9fecdcf75da9f4f7a127562a39ae807a103d7bd5356055c623c9d7d44383ea25",
+      "source_version": "4c697dc8",
+      "content_hash": "f939f61d7ebe3b0808d0df8821ad85004b800cbe5cccec60062db4db7285b82d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T01:46:56.598Z"
+      "persisted_at": "2026-11-24T03:41:45.829Z"
     },
     "rule-9688": {
       "learning_id": "rule-9688",
@@ -312118,9 +312128,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dosco-deeporg-learnings",
       "repository": "dosco-deeporg-learnings",
       "source_version": "HEAD",
-      "content_hash": "d13db1f86dbb6d29bc311ec9b397ff6072220d28bde0c1f6cbd90f14040fb0a9",
+      "content_hash": "9c212a62c7160e71007b57b12b6674967e7ac84bd91d3505ee94fd5310ffd404",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T05:51:55.631Z"
+      "persisted_at": "2026-11-24T03:41:55.888Z"
     },
     "candidate_directive-docs-devtools-describe-how-the-test-tree-shows-retries-and-failed-cucumber-hoo": {
       "item_id": "candidate_directive-docs-devtools-describe-how-the-test-tree-shows-retries-and-failed-cucumber-hoo",
@@ -319809,9 +319819,9 @@
       "title": "Technical Construction Intelligence: infiniflow-infinity-learnings Core Invariants",
       "repository": "infiniflow-infinity-learnings",
       "source_version": "HEAD",
-      "content_hash": "7f9ce7db17f594503ba342c16482ad9b56db985efe0284da59ed1c5ba5bf24e4",
+      "content_hash": "cebb80e040b22f1e827cea79b029fc9c3ae4ee837bb1afe7fc08bc2c5e9ef98f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T04:24:07.703Z"
+      "persisted_at": "2026-11-24T03:41:56.525Z"
     },
     "rule-9884": {
       "learning_id": "rule-9884",
@@ -319843,13 +319853,13 @@
       "item_id": "domain_intelligence-research-knowledge-intelligence-dosco-deeporg-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-graphjin-research-knowledge-intelligence-dosco-deeporg-core-invariants.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-deeporg-research-knowledge-intelligence-dosco-deeporg-core-invariants.md",
       "title": "Research & Knowledge Intelligence: dosco/deeporg Core Invariants",
       "repository": "dosco/deeporg",
-      "source_version": "48344754",
-      "content_hash": "3b58fe48e226145749e96add36956b4ffe52e2c30ec2fa87ec167c84c5a66812",
+      "source_version": "4c697dc8",
+      "content_hash": "ddcf0428260d76d3a95f75f1b868c1ef4d4b7534735f4a61a7ea16f9643e4551",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T01:46:56.150Z"
+      "persisted_at": "2026-11-24T03:41:45.481Z"
     },
     "rule-9885": {
       "learning_id": "rule-9885",
@@ -320593,9 +320603,9 @@
       "title": "Research & Knowledge Intelligence: dosco-deeporg-learnings Core Invariants",
       "repository": "dosco-deeporg-learnings",
       "source_version": "HEAD",
-      "content_hash": "85cc03c547e502662cee686ad570dc5bcc2cd8bc496efce4fcbdea6a00a7dc3c",
+      "content_hash": "4c6708e0cdfe5c1a3c6f26a238f524e64a1269a9525dc5c2f5467877fabbb45f",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T05:51:55.228Z"
+      "persisted_at": "2026-11-24T03:41:55.555Z"
     },
     "candidate_directive-resolve-670-regressions-and-clippy-lints-plus-652-665-669-skip-ci": {
       "item_id": "candidate_directive-resolve-670-regressions-and-clippy-lints-plus-652-665-669-skip-ci",
@@ -326053,13 +326063,13 @@
       "item_id": "skill_playbook-skill-operational-integration-playbook-for-dosco-deeporg",
       "artifact_type": "skill_playbook",
       "target_folder": "03_SKILLS",
-      "relative_path": "03_SKILLS/dosco-graphjin-skill-operational-integration-playbook-for-dosco-deeporg.md",
+      "relative_path": "03_SKILLS/dosco-deeporg-skill-operational-integration-playbook-for-dosco-deeporg.md",
       "title": "Skill: Operational & Integration Playbook for dosco/deeporg",
       "repository": "dosco/deeporg",
-      "source_version": "48344754",
-      "content_hash": "32605b334c0d3f4c61867f40b921af51c18cc659f6436bbcae504e863ca440d6",
+      "source_version": "4c697dc8",
+      "content_hash": "f9e89c1a9aa47f8a6b4a79102096c3879255ccf2e06ae52a2269105a4e1f9273",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T01:46:56.405Z"
+      "persisted_at": "2026-11-24T03:41:45.678Z"
     },
     "rule-10028": {
       "learning_id": "rule-10028",
@@ -326095,9 +326105,9 @@
       "title": "Skill: Operational & Integration Playbook for dosco-deeporg-learnings",
       "repository": "dosco-deeporg-learnings",
       "source_version": "HEAD",
-      "content_hash": "7d483f23f63d9c2e5131c42704e569df5454e28305437256164ecb7a8e1dba06",
+      "content_hash": "cc2048e7bf0bb3c1e3071aceac22498dcf97e82c9d1b4494261831687395aeeb",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T05:51:55.453Z"
+      "persisted_at": "2026-11-24T03:41:55.731Z"
     },
     "rule-10029": {
       "learning_id": "rule-10029",
@@ -332045,26 +332055,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 10172,
       "title": "docs(site): lead with the compiler and the loop, add recurring work to the rollo",
-      "source_url": "https://github.com/dosco/graphjin",
-      "source_version": "48344754",
+      "source_url": "https://github.com/dosco/deeporg",
+      "source_version": "4c697dc8",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-24T01:46:55.330Z"
+      "verified_at": "2026-11-24T03:41:44.829Z"
     },
     "candidate_directive-docs-site-lead-with-the-compiler-and-the-loop-add-recurring-work-to-the-rollo": {
       "item_id": "candidate_directive-docs-site-lead-with-the-compiler-and-the-loop-add-recurring-work-to-the-rollo",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-AZPH-docs-site-lead-with-the-compiler-and-the-loop-add-recurring-work-to-the-rollo.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-EQ7K-docs-site-lead-with-the-compiler-and-the-loop-add-recurring-work-to-the-rollo.md",
       "title": "docs(site): lead with the compiler and the loop, add recurring work to the rollo",
-      "repository": "dosco-graphjin-learnings",
+      "repository": "dosco-deeporg-learnings",
       "source_version": "HEAD",
-      "content_hash": "90c64a77cefd5af6b36b56d3929e8cd8b2f9db1f1f91a5a9d8359dccffa68924",
+      "content_hash": "b222b3e282bb47ee2cec1a39cc27011c6cd3e875fd7eb7fe0125f4f8c607b468",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T01:47:02.604Z"
+      "persisted_at": "2026-11-24T03:41:55.379Z"
     },
     "domain_intelligence-design-intelligence-saffsanity-sill-learnings-core-invariants": {
       "item_id": "domain_intelligence-design-intelligence-saffsanity-sill-learnings-core-invariants",
@@ -332710,6 +332720,106 @@
       "content_hash": "7517b9fe1efd8cbdaa8b9bfcb9807ec75e9462e0f39bbdd1889c14c4b759c4b0",
       "domain_letter": "H",
       "persisted_at": "2026-11-24T03:33:35.174Z"
+    },
+    "rule-10188": {
+      "learning_id": "rule-10188",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10188,
+      "title": "lint editable blocks inside a non-editable wrapper",
+      "source_url": "https://github.com/Automattic/harper",
+      "source_version": "eeaf0d20",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T03:41:37.951Z"
+    },
+    "candidate_directive-lint-editable-blocks-inside-a-non-editable-wrapper": {
+      "item_id": "candidate_directive-lint-editable-blocks-inside-a-non-editable-wrapper",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ED4F-lint-editable-blocks-inside-a-non-editable-wrapper.md",
+      "title": "lint editable blocks inside a non-editable wrapper",
+      "repository": "Automattic/harper",
+      "source_version": "eeaf0d20",
+      "content_hash": "78d2b8c330bff9ec91855df1e2efdc3cb01297c085b38462456c810edecf9eaa",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T03:41:38.416Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-automattic-harper-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-automattic-harper-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-automattic-harper-technical-construction-intelligence-automattic-harper-core-inv.md",
+      "title": "Technical Construction Intelligence: Automattic/harper Core Invariants",
+      "repository": "Automattic/harper",
+      "source_version": "eeaf0d20",
+      "content_hash": "dfa8bdf6fec83b8c7dd9ba9f38786bac4e89a0fb877f8ce63ec4421678319f68",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T03:41:38.602Z"
+    },
+    "rule-10189": {
+      "learning_id": "rule-10189",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10189,
+      "title": "fix five concurrency defects the index-combination soak",
+      "source_url": "https://github.com/infiniflow/infinity",
+      "source_version": "e7db7afb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T03:41:50.536Z"
+    },
+    "candidate_directive-fix-five-concurrency-defects-the-index-combination-soak": {
+      "item_id": "candidate_directive-fix-five-concurrency-defects-the-index-combination-soak",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EMU4-fix-five-concurrency-defects-the-index-combination-soak.md",
+      "title": "fix five concurrency defects the index-combination soak",
+      "repository": "infiniflow/infinity",
+      "source_version": "e7db7afb",
+      "content_hash": "7256367e4ba683fe8cc45131f986f37be96f6f9ce136f16bbe9c6b5975e5853b",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T03:41:51.008Z"
+    },
+    "candidate_directive-chrome-ext-lint-editable-blocks-inside-a-non-editable-wrapper": {
+      "item_id": "candidate_directive-chrome-ext-lint-editable-blocks-inside-a-non-editable-wrapper",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EPKD-chrome-ext-lint-editable-blocks-inside-a-non-editable-wrapper.md",
+      "title": "chrome-ext): lint editable blocks inside a non-editable wrapper",
+      "repository": "automattic-harper-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5adbf71ada5f6a0e0030df7c4081eacecb8eefe22904a70007123a804feb40bd",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T03:41:54.542Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-automattic-harper-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-automattic-harper-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-automattic-harper-learnings-technical-construction-intelligence-automattic-harpe.md",
+      "title": "Technical Construction Intelligence: automattic-harper-learnings Core Invariants",
+      "repository": "automattic-harper-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ea327cc11d1f4f291b129d7785c167daed998ab253bd36d7880a7afed3041bfd",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T03:41:54.722Z"
+    },
+    "candidate_directive-rust_engine-fix-five-concurrency-defects-the-index-combination-soak": {
+      "item_id": "candidate_directive-rust_engine-fix-five-concurrency-defects-the-index-combination-soak",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EQYM-rust_engine-fix-five-concurrency-defects-the-index-combination-soak.md",
+      "title": "rust_engine: fix five concurrency defects the index-combination soak",
+      "repository": "infiniflow-infinity-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1a5c824bcec9b106c23f3bc5d4ca2bdc87086d7c45725a25909413e4ad141834",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T03:41:56.353Z"
     }
   },
   "ai-builder-brain": {

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-C7ZW",
-    "timestamp": "2026-11-22T07:48:34.556Z",
-    "repository": "meituan-longcat/LongCat-2.5",
-    "learningId": "learn-huggingface-meituan-longcat-longcat-2-5",
-    "contentHash": "de5ad174984dc58f9690e13d47ab6e649a469805c0ab4f84ab6fec8309900709",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-MHIZ",
-    "timestamp": "2026-11-22T07:56:33.467Z",
-    "repository": "chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized",
-    "learningId": "learn-huggingface-chatrlabs-qwen-image-2-1-uncensored-omni-quantized",
-    "contentHash": "ddc37c57ebaf4d45a35b003d3c645576b185e44ffa739fad2ddc55123ffbc9ec",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-MIQM",
-    "timestamp": "2026-11-22T07:56:35.038Z",
-    "repository": "medialab/xan",
-    "learningId": "learn-github-medialab-xan",
-    "contentHash": "6e4f879ed8a0413f6e9395f2b74eb9e64f6d3e6ac99b745bc25346b189d68b86",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-MOWV",
     "timestamp": "2026-11-22T07:56:43.039Z",
     "repository": "gocd/gocd",
@@ -7490,6 +7445,51 @@
     "repository": "ShiftHackZ/SDAI-KMP",
     "learningId": "learn-github-shifthackz-sdai-kmp",
     "contentHash": "7d894040763e6a9c06b2deb56ecc4c6c10f8487791d46503c32c2fd117fe7bcf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-ECXM",
+    "timestamp": "2026-11-24T03:41:38.170Z",
+    "repository": "Automattic/harper",
+    "learningId": "learn-github-automattic-harper",
+    "contentHash": "28ebfa747aee04e5d9b93eccf04985ce36e233cc30e0986aa7bef289ce5e0bf1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-EI87",
+    "timestamp": "2026-11-24T03:41:45.031Z",
+    "repository": "dosco/deeporg",
+    "learningId": "learn-github-dosco-deeporg",
+    "contentHash": "7c82de8a03af25225155b95a8b824c3d4ed8119f5fac7391ec8746257734257f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-EMN4",
+    "timestamp": "2026-11-24T03:41:50.752Z",
+    "repository": "infiniflow/infinity",
+    "learningId": "learn-github-infiniflow-infinity",
+    "contentHash": "442e238e7f28b152415aa2d42447be6382dc957367146ba0c649e8e77af53cd3",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

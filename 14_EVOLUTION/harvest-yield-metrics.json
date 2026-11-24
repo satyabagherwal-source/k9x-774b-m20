@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T03:33:30.280Z",
-  "total_cycles_completed": 11955,
-  "total_learnings_persisted": 11955,
-  "total_rules_promoted": 11035,
+  "last_updated": "2026-11-24T03:41:50.762Z",
+  "total_cycles_completed": 11958,
+  "total_learnings_persisted": 11958,
+  "total_rules_promoted": 11038,
   "history": [
-    {
-      "timestamp": "2026-11-23T16:11:39.730Z",
-      "repository": "google/vit-base-patch16-224",
-      "learningId": "learn-huggingface-google-vit-base-patch16-224",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T16:11:49.539Z",
-      "repository": "juicedata/juicefs",
-      "learningId": "learn-github-juicedata-juicefs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T16:20:29.426Z",
-      "repository": "BAAI/bge-base-en-v1.5",
-      "learningId": "learn-huggingface-baai-bge-base-en-v1-5",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T16:20:31.172Z",
       "repository": "ntex-rs/ntex",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-24T03:33:30.280Z",
       "repository": "ShiftHackZ/SDAI-KMP",
       "learningId": "learn-github-shifthackz-sdai-kmp",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T03:41:38.180Z",
+      "repository": "Automattic/harper",
+      "learningId": "learn-github-automattic-harper",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T03:41:45.042Z",
+      "repository": "dosco/deeporg",
+      "learningId": "learn-github-dosco-deeporg",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T03:41:50.762Z",
+      "repository": "infiniflow/infinity",
+      "learningId": "learn-github-infiniflow-infinity",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

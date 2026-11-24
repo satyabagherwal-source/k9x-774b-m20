@@ -12575,3 +12575,6 @@
 | `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T03:23:14.802Z` | `paradedb-paradedb` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-AA8CD5C4` [Domain K] | Yes (`93cfe119...`) |
 | `CYCLE-20261124-3RS6` | `2026-11-24T03:33:24.198Z` | `iii-hq/iii` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10187` | Yes (`46f72e92...`) |
 | `CYCLE-20261124-3WGS` | `2026-11-24T03:33:30.268Z` | `ShiftHackZ/SDAI-KMP` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10034` | Yes (`7d894040...`) |
+| `CYCLE-20261124-ECXM` | `2026-11-24T03:41:38.170Z` | `Automattic/harper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10188` | Yes (`28ebfa74...`) |
+| `CYCLE-20261124-EI87` | `2026-11-24T03:41:45.031Z` | `dosco/deeporg` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10172` | Yes (`7c82de8a...`) |
+| `CYCLE-20261124-EMN4` | `2026-11-24T03:41:50.752Z` | `infiniflow/infinity` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10189` | Yes (`442e238e...`) |
