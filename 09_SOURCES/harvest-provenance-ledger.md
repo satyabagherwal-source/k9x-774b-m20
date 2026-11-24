@@ -12654,3 +12654,5 @@ Every entry in this ledger must capture:
 | `learn-github-react-hook-form-react-hook-form` | `https://github.com/react-hook-form/react-hook-form` | `074d1748` | Multi-dimensional audit evidence | 2026-11-24T06:46:18.051Z |
 | `learn-github-neuron-core-neuron-ai` | `https://github.com/neuron-core/neuron-ai` | `a6a82c3c` | Multi-dimensional audit evidence | 2026-11-24T06:46:25.662Z |
 | `learn-dom-h-8c352294` | `project://react-hook-form-react-hook-form` | `074d1748` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md` | 2026-11-24T06:46:56.407Z |
+| `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `2d7c3d0b` | Multi-dimensional audit evidence | 2026-11-24T06:55:13.391Z |
+| `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `8b1e884e` | Multi-dimensional audit evidence | 2026-11-24T06:55:18.852Z |

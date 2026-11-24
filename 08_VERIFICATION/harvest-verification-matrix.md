@@ -12621,3 +12621,5 @@
 | `CYCLE-20261124-ZU7Z` | `2026-11-24T06:46:18.047Z` | `react-hook-form/react-hook-form` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10222` | Yes (`a3961a0d...`) |
 | `CYCLE-20261124-003E` | `2026-11-24T06:46:25.658Z` | `neuron-core/neuron-ai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10223` | Yes (`e3c40bbd...`) |
 | `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T06:46:56.407Z` | `react-hook-form-react-hook-form` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-8C352294` [Domain H] | Yes (`6a3c9eb9...`) |
+| `CYCLE-20261124-BBAI` | `2026-11-24T06:55:13.386Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10224` | Yes (`4af012fe...`) |
+| `CYCLE-20261124-BFI8` | `2026-11-24T06:55:18.848Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10225` | Yes (`ba4faf96...`) |

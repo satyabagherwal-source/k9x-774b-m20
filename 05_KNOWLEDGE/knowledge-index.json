@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T06:47:00.100Z",
+  "last_updated": "2026-11-24T06:55:24.851Z",
   "total_verified_learnings": 9092,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24504,
+  "total_items": 24514,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112894,9 +112894,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for meshery-meshery-learnings",
       "repository": "meshery-meshery-learnings",
       "source_version": "HEAD",
-      "content_hash": "d302a9ce1cff79a9d35ac068b507d9f644cb95b0627d8a64beddc160f8596554",
+      "content_hash": "5295f79c58dbf0a3e511889178be00f6f505eae0d598d76a94d26fd6b4ed6836",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T09:49:08.467Z"
+      "persisted_at": "2026-11-24T06:55:23.247Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hemmingwayai-hemmingway-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hemmingwayai-hemmingway-1-core-invariants",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "f95cb1ed4333fe7a808728de7244a2dc941ba906643b9a385fb66ba8d74d928a",
+      "content_hash": "7a19abf3e2c998976cf71cad4d21a0f28ccb0ac09a90f6a0e20c887d2d323928",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T06:30:20.486Z"
+      "persisted_at": "2026-11-24T06:55:24.681Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "f0c3956b08f397104786c089e8176755ffc93a0ff84285cff7cff9e911957fa6",
+      "content_hash": "3d50cf172ff1ef7cf5047750a40de44832ffb9fb9f6bc3a966302f1da0c0be9d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T06:30:20.716Z"
+      "persisted_at": "2026-11-24T06:55:24.851Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -223204,8 +223204,8 @@
       "slug": "matrixorigin-matrixone",
       "platform": "github",
       "source_url": "https://github.com/matrixorigin/matrixone",
-      "source_version": "f86cc46c",
-      "content_hash": "341eb1c87c94d5a6e048d37e9d165cdfe64ae8eafd9334fcf11120b7ead9f640",
+      "source_version": "8b1e884e",
+      "content_hash": "ba4faf96015e632c3b360ed1c8c07370317a1b47e0cf1707abefba3f0e16fa82",
       "dossier_path": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "promoted_rules": [
@@ -223248,6 +223248,11 @@
           "number": 10036,
           "title": "reduce and balance race UT work",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10225,
+          "title": "never allocate for parameter binding after the first execution",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -223255,7 +223260,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T07:37:00.455Z",
+      "verified_at": "2026-11-24T06:55:18.637Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -223297,10 +223302,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-matrixorigin-matrixone-technical-construction-intelligence-matrixorigin-matrixon.md",
       "title": "Technical Construction Intelligence: matrixorigin/matrixone Core Invariants",
       "repository": "matrixorigin/matrixone",
-      "source_version": "f86cc46c",
-      "content_hash": "9a055fec32da2753c19570eee8c22e045542bbb6d046fb2c9e140f7050f7f6ea",
+      "source_version": "8b1e884e",
+      "content_hash": "f55660397d33912f119497a47b65ba2193c6bffd93c29b1da272d0477d097689",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T07:37:01.025Z"
+      "persisted_at": "2026-11-24T06:55:19.281Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-matrixorigin-matrixone": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-matrixorigin-matrixone",
@@ -223309,10 +223314,10 @@
       "relative_path": "08_VERIFICATION/matrixorigin-matrixone-verification-protocol-empirical-defect-shield-for-matrixo.md",
       "title": "Verification Protocol: Empirical Defect Shield for matrixorigin/matrixone",
       "repository": "matrixorigin/matrixone",
-      "source_version": "f86cc46c",
-      "content_hash": "8d08e7a6a5d293a088f0961d771d29444df71e289fe2933646420416c55518b1",
+      "source_version": "8b1e884e",
+      "content_hash": "9c897ff4fb6bb93ae52b9068ed09d47e6e072f2d6941bee2b2f878442a8e694f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T07:37:01.180Z"
+      "persisted_at": "2026-11-24T06:55:19.475Z"
     },
     "learn-huggingface-openai-gpt-oss-20b": {
       "learning_id": "learn-huggingface-openai-gpt-oss-20b",
@@ -238739,8 +238744,8 @@
       "slug": "meshery-meshery",
       "platform": "github",
       "source_url": "https://github.com/meshery/meshery",
-      "source_version": "76c6b3e2",
-      "content_hash": "54a3364ee5ab2a0839660386fd1005fb81e2590d6c0a544f1d3e11c77d09b9b9",
+      "source_version": "2d7c3d0b",
+      "content_hash": "4af012fe61212d8cc23b1438b92aad0514beaa8a4cd4910ebd305f8cef940111",
       "dossier_path": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "promoted_rules": [
@@ -238788,6 +238793,11 @@
           "number": 10041,
           "title": "guard filter and catalog handlers against nil pointer dereference on JS",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10224,
+          "title": "record import receipt errors only for the selected contexts",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -238795,7 +238805,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T09:48:36.890Z",
+      "verified_at": "2026-11-24T06:55:13.175Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -238849,10 +238859,10 @@
       "relative_path": "08_VERIFICATION/meshery-meshery-verification-protocol-empirical-defect-shield-for-meshery-mesher.md",
       "title": "Verification Protocol: Empirical Defect Shield for meshery/meshery",
       "repository": "meshery/meshery",
-      "source_version": "76c6b3e2",
-      "content_hash": "6b962ac8f5081ec4e9406586a5a16b4fe4886262d5b0aa796ad1093a7464b6c4",
+      "source_version": "2d7c3d0b",
+      "content_hash": "80e599789844aeec345f1a674be4fd2617e8c400c6245c9a4cfa00486151ee01",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T09:48:37.649Z"
+      "persisted_at": "2026-11-24T06:55:14.141Z"
     },
     "candidate_directive-compose-supervise-vm-workers-from-their-log-stream-instead-of-polling-worker": {
       "item_id": "candidate_directive-compose-supervise-vm-workers-from-their-log-stream-instead-of-polling-worker",
@@ -250404,9 +250414,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for matrixorigin-matrixone-learnings",
       "repository": "matrixorigin-matrixone-learnings",
       "source_version": "HEAD",
-      "content_hash": "30bbc7c8a8f0c71026b767125ef59d49350d87a739f805a4da36066804be8df8",
+      "content_hash": "480036c20b81019af812e97fab48ff1e5188887b1871d9bc642770e660e2066e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T07:37:04.913Z"
+      "persisted_at": "2026-11-24T06:55:24.065Z"
     },
     "learn-huggingface-mistralai-mistral-large-4-1t-a52b": {
       "learning_id": "learn-huggingface-mistralai-mistral-large-4-1t-a52b",
@@ -319818,13 +319828,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-FB6V-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-BJVK-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "28112e0148754def2b866cdd958b0997d542b31795d37586f5fe9d36e52aa4fe",
+      "content_hash": "d26cfdee1eec8827cdf73eef92e664b8d402579ca0099a94d6f2d799806c0c0c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T06:30:20.268Z"
+      "persisted_at": "2026-11-24T06:55:24.515Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
@@ -326681,9 +326691,9 @@
       "title": "Technical Construction Intelligence: matrixorigin-matrixone-learnings Core Invariants",
       "repository": "matrixorigin-matrixone-learnings",
       "source_version": "HEAD",
-      "content_hash": "a09dea650cee7ba716c61e96683c8d2d3ee4def5a4a478117d5de46010cbdb1a",
+      "content_hash": "357eb287d307a77be9657a58192965e0dbde0bd0e05a743b1c4167cdfe8c147e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T07:37:04.754Z"
+      "persisted_at": "2026-11-24T06:55:23.893Z"
     },
     "rule-10037": {
       "learning_id": "rule-10037",
@@ -334352,6 +334362,130 @@
       "content_hash": "c564767b871f2948e4a1673375bb79e1f04eb92bed25ed2f432b4156ea4d1859",
       "domain_letter": "H",
       "persisted_at": "2026-11-24T06:46:29.314Z"
+    },
+    "rule-10224": {
+      "learning_id": "rule-10224",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10224,
+      "title": "record import receipt errors only for the selected contexts",
+      "source_url": "https://github.com/meshery/meshery",
+      "source_version": "2d7c3d0b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T06:55:13.175Z"
+    },
+    "candidate_directive-record-import-receipt-errors-only-for-the-selected-contexts": {
+      "item_id": "candidate_directive-record-import-receipt-errors-only-for-the-selected-contexts",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BBHA-record-import-receipt-errors-only-for-the-selected-contexts.md",
+      "title": "record import receipt errors only for the selected contexts",
+      "repository": "meshery/meshery",
+      "source_version": "2d7c3d0b",
+      "content_hash": "44b4e285141f49e1b5e22ab76bd0979e597ff2349127de2c050af6dcd4f83011",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-24T06:55:13.633Z"
+    },
+    "domain_intelligence-human-need-intelligence-meshery-meshery-core-invariants": {
+      "item_id": "domain_intelligence-human-need-intelligence-meshery-meshery-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-meshery-meshery-human-need-intelligence-meshery-meshery-core-invariants.md",
+      "title": "Human & Need Intelligence: meshery/meshery Core Invariants",
+      "repository": "meshery/meshery",
+      "source_version": "2d7c3d0b",
+      "content_hash": "fc0379bc2466583767e8b289c46ff6a0880be892abdb1c64da8ab72bf103bd0a",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-24T06:55:13.805Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-meshery-meshery": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-meshery-meshery",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-meshery-meshery-adr-subsystem-boundary-modular-decoupling-in-meshery-meshery.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in meshery/meshery",
+      "repository": "meshery/meshery",
+      "source_version": "2d7c3d0b",
+      "content_hash": "71ee5399e0b731e34f83679e2e3a2683e79dcbcf26ab1a31b2e9915b17b18ca9",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-24T06:55:13.996Z"
+    },
+    "rule-10225": {
+      "learning_id": "rule-10225",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10225,
+      "title": "never allocate for parameter binding after the first execution",
+      "source_url": "https://github.com/matrixorigin/matrixone",
+      "source_version": "8b1e884e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T06:55:18.637Z"
+    },
+    "candidate_directive-never-allocate-for-parameter-binding-after-the-first-execution": {
+      "item_id": "candidate_directive-never-allocate-for-parameter-binding-after-the-first-execution",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BFPA-never-allocate-for-parameter-binding-after-the-first-execution.md",
+      "title": "never allocate for parameter binding after the first execution",
+      "repository": "matrixorigin/matrixone",
+      "source_version": "8b1e884e",
+      "content_hash": "90d696d1ed8aceaf338174b29e2f15906072d3acf80b650244f703649c36e6d9",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T06:55:19.107Z"
+    },
+    "candidate_directive-server-record-import-receipt-errors-only-for-the-selected-contexts": {
+      "item_id": "candidate_directive-server-record-import-receipt-errors-only-for-the-selected-contexts",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BIIW-server-record-import-receipt-errors-only-for-the-selected-contexts.md",
+      "title": "server): record import receipt errors only for the selected contexts",
+      "repository": "meshery-meshery-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d9400b2427a45e19471ec1c61e41d07e7880b089f05d1339cebab98f6e378969",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-24T06:55:22.764Z"
+    },
+    "domain_intelligence-human-need-intelligence-meshery-meshery-learnings-core-invariants": {
+      "item_id": "domain_intelligence-human-need-intelligence-meshery-meshery-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-meshery-meshery-learnings-human-need-intelligence-meshery-meshery-learnings-core.md",
+      "title": "Human & Need Intelligence: meshery-meshery-learnings Core Invariants",
+      "repository": "meshery-meshery-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f9655c16b489d26894ca788ce2426c8cf153922c73f3e4fed4faa0bbb81a77da",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-24T06:55:22.930Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-meshery-meshery-learnings": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-meshery-meshery-learnings",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-meshery-meshery-learnings-adr-subsystem-boundary-modular-decoupling-in-meshery-m.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in meshery-meshery-learnings",
+      "repository": "meshery-meshery-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7eb2b522f045a2afbfad761e15b702ce176eed83cca25f4bbf7aa2fcdef13b24",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-24T06:55:23.110Z"
+    },
+    "candidate_directive-prepare-never-allocate-for-parameter-binding-after-the-first-execution": {
+      "item_id": "candidate_directive-prepare-never-allocate-for-parameter-binding-after-the-first-execution",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BJ9M-prepare-never-allocate-for-parameter-binding-after-the-first-execution.md",
+      "title": "prepare): never allocate for parameter binding after the first execution",
+      "repository": "matrixorigin-matrixone-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d819e9b1f8ccc998cf0745c1bf2da490317ad75801ffd4ee0d7aa78a1f25b0a4",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T06:55:23.725Z"
     }
   },
   "ai-builder-brain": {

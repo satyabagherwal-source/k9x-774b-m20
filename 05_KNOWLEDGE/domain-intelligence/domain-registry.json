@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T06:46:58.709Z",
-  "total_records": 2503,
+  "last_updated": "2026-11-24T06:55:24.681Z",
+  "total_records": 2505,
   "domains": {
     "A": {
-      "total": 20,
+      "total": 22,
       "record_ids": [
         "DOM-A-DD59FA01",
         "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-core-invariants",
@@ -26,7 +26,9 @@
         "domain_intelligence-human-need-intelligence-koderover-zadig-learnings-core-invariants",
         "domain_intelligence-human-need-intelligence-tw93-mole-core-invariants",
         "domain_intelligence-human-need-intelligence-tw93-mole-learnings-core-invariants",
-        "domain_intelligence-human-need-intelligence-skyhook-io-radar-core-invariants"
+        "domain_intelligence-human-need-intelligence-skyhook-io-radar-core-invariants",
+        "domain_intelligence-human-need-intelligence-meshery-meshery-core-invariants",
+        "domain_intelligence-human-need-intelligence-meshery-meshery-learnings-core-invariants"
       ]
     },
     "B": {
@@ -9236,8 +9238,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "f95cb1ed4333fe7a808728de7244a2dc941ba906643b9a385fb66ba8d74d928a",
-      "created_at": "2026-11-24T06:30:20.486Z"
+      "content_hash": "7a19abf3e2c998976cf71cad4d21a0f28ccb0ac09a90f6a0e20c887d2d323928",
+      "created_at": "2026-11-24T06:55:24.681Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -13226,8 +13228,8 @@
       "title": "Technical Construction Intelligence: matrixorigin/matrixone Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-matrixorigin-matrixone-technical-construction-intelligence-matrixorigin-matrixon.md",
       "repository": "matrixorigin/matrixone",
-      "content_hash": "9a055fec32da2753c19570eee8c22e045542bbb6d046fb2c9e140f7050f7f6ea",
-      "created_at": "2026-11-23T07:37:01.025Z"
+      "content_hash": "f55660397d33912f119497a47b65ba2193c6bffd93c29b1da272d0477d097689",
+      "created_at": "2026-11-24T06:55:19.281Z"
     },
     "domain_intelligence-technical-construction-intelligence-openai-gpt-oss-20b-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-openai-gpt-oss-20b-core-invariants",
@@ -40438,8 +40440,8 @@
       "title": "Technical Construction Intelligence: matrixorigin-matrixone-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-matrixorigin-matrixone-learnings-technical-construction-intelligence-matrixorigi.md",
       "repository": "matrixorigin-matrixone-learnings",
-      "content_hash": "a09dea650cee7ba716c61e96683c8d2d3ee4def5a4a478117d5de46010cbdb1a",
-      "created_at": "2026-11-23T07:37:04.754Z"
+      "content_hash": "357eb287d307a77be9657a58192965e0dbde0bd0e05a743b1c4167cdfe8c147e",
+      "created_at": "2026-11-24T06:55:23.893Z"
     },
     "domain_intelligence-architecture-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-prof18-feed-flow-core-invariants",
@@ -42011,6 +42013,24 @@
       "confidence": 0.69,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-24T06:46:56.371Z"
+    },
+    "domain_intelligence-human-need-intelligence-meshery-meshery-core-invariants": {
+      "record_id": "domain_intelligence-human-need-intelligence-meshery-meshery-core-invariants",
+      "domain_letter": "A",
+      "title": "Human & Need Intelligence: meshery/meshery Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-meshery-meshery-human-need-intelligence-meshery-meshery-core-invariants.md",
+      "repository": "meshery/meshery",
+      "content_hash": "fc0379bc2466583767e8b289c46ff6a0880be892abdb1c64da8ab72bf103bd0a",
+      "created_at": "2026-11-24T06:55:13.805Z"
+    },
+    "domain_intelligence-human-need-intelligence-meshery-meshery-learnings-core-invariants": {
+      "record_id": "domain_intelligence-human-need-intelligence-meshery-meshery-learnings-core-invariants",
+      "domain_letter": "A",
+      "title": "Human & Need Intelligence: meshery-meshery-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-meshery-meshery-learnings-human-need-intelligence-meshery-meshery-learnings-core.md",
+      "repository": "meshery-meshery-learnings",
+      "content_hash": "f9655c16b489d26894ca788ce2426c8cf153922c73f3e4fed4faa0bbb81a77da",
+      "created_at": "2026-11-24T06:55:22.930Z"
     }
   }
 }

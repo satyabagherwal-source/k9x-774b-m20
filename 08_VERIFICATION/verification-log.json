@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-KRK2",
-    "timestamp": "2026-11-22T13:59:08.162Z",
-    "repository": "microsoft/react-native-windows",
-    "learningId": "learn-github-microsoft-react-native-windows",
-    "contentHash": "21204bd230a767f4dcc1854f04d5d5c3c7659078f5627bbbc87830e396b7f361",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-KWYV",
-    "timestamp": "2026-11-22T13:59:15.175Z",
-    "repository": "apple/foundationdb",
-    "learningId": "learn-github-apple-foundationdb",
-    "contentHash": "7c79b813caaf32ed7cf3fb86975eceb454b3ba8bdcdcbaa7fec7e38152f42212",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-83WF",
     "timestamp": "2026-11-22T14:17:17.247Z",
     "repository": "codewhale-hq/Codewhale",
@@ -7490,6 +7460,36 @@
     "repository": "neuron-core/neuron-ai",
     "learningId": "learn-github-neuron-core-neuron-ai",
     "contentHash": "e3c40bbd07175492e7052246a04e0a9f97cc5cf34d2753977a282b0f70e7a268",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-BBAI",
+    "timestamp": "2026-11-24T06:55:13.386Z",
+    "repository": "meshery/meshery",
+    "learningId": "learn-github-meshery-meshery",
+    "contentHash": "4af012fe61212d8cc23b1438b92aad0514beaa8a4cd4910ebd305f8cef940111",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-BFI8",
+    "timestamp": "2026-11-24T06:55:18.848Z",
+    "repository": "matrixorigin/matrixone",
+    "learningId": "learn-github-matrixorigin-matrixone",
+    "contentHash": "ba4faf96015e632c3b360ed1c8c07370317a1b47e0cf1707abefba3f0e16fa82",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

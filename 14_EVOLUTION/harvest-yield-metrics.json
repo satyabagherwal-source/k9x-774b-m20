@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T06:46:25.667Z",
-  "total_cycles_completed": 11997,
-  "total_learnings_persisted": 11997,
-  "total_rules_promoted": 11075,
+  "last_updated": "2026-11-24T06:55:18.857Z",
+  "total_cycles_completed": 11999,
+  "total_learnings_persisted": 11999,
+  "total_rules_promoted": 11077,
   "history": [
-    {
-      "timestamp": "2026-11-23T17:46:27.446Z",
-      "repository": "arangodb/arangodb",
-      "learningId": "learn-github-arangodb-arangodb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T17:53:59.356Z",
-      "repository": "Reson8/Rumble-2-Flash",
-      "learningId": "learn-huggingface-reson8-rumble-2-flash",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T17:54:15.207Z",
       "repository": "trinodb/trino",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-24T06:46:25.667Z",
       "repository": "neuron-core/neuron-ai",
       "learningId": "learn-github-neuron-core-neuron-ai",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T06:55:13.396Z",
+      "repository": "meshery/meshery",
+      "learningId": "learn-github-meshery-meshery",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T06:55:18.857Z",
+      "repository": "matrixorigin/matrixone",
+      "learningId": "learn-github-matrixorigin-matrixone",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

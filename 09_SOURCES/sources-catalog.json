@@ -3173,10 +3173,10 @@
     "repository": "matrixorigin/matrixone",
     "platform": "github",
     "sourceUrl": "https://github.com/matrixorigin/matrixone",
-    "sourceVersion": "f86cc46c",
+    "sourceVersion": "8b1e884e",
     "license": "Apache-2.0",
-    "contentHash": "341eb1c87c94d5a6e048d37e9d165cdfe64ae8eafd9334fcf11120b7ead9f640",
-    "lastHarvestedAt": "2026-11-23T07:37:00.645Z",
+    "contentHash": "ba4faf96015e632c3b360ed1c8c07370317a1b47e0cf1707abefba3f0e16fa82",
+    "lastHarvestedAt": "2026-11-24T06:55:18.852Z",
     "learningId": "learn-github-matrixorigin-matrixone"
   },
   "fallow-rs-fallow": {
@@ -5003,10 +5003,10 @@
     "repository": "meshery/meshery",
     "platform": "github",
     "sourceUrl": "https://github.com/meshery/meshery",
-    "sourceVersion": "76c6b3e2",
+    "sourceVersion": "2d7c3d0b",
     "license": "Apache-2.0",
-    "contentHash": "54a3364ee5ab2a0839660386fd1005fb81e2590d6c0a544f1d3e11c77d09b9b9",
-    "lastHarvestedAt": "2026-11-23T09:48:37.104Z",
+    "contentHash": "4af012fe61212d8cc23b1438b92aad0514beaa8a4cd4910ebd305f8cef940111",
+    "lastHarvestedAt": "2026-11-24T06:55:13.391Z",
     "learningId": "learn-github-meshery-meshery"
   },
   "arangodb-arangodb": {

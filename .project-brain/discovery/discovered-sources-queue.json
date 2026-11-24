@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T06:46:58.184Z",
+  "updated_at": "2026-11-24T06:55:23.485Z",
   "stats": {
-    "total_discovered": 8451,
-    "approved_pending_harvest": 8012,
+    "total_discovered": 8456,
+    "approved_pending_harvest": 8016,
     "harvested_count": 0,
-    "rejected_count": 439,
+    "rejected_count": 440,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7996,
+      "COMMUNITY_AND_EXPERT": 8001,
       "OFFICIAL_DOCUMENTATION": 268,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -182872,6 +182872,109 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md",
         "fileName": "neuron-core-neuron-ai-learnings.md"
+      }
+    },
+    "SRC-C8F00A48FA8A": {
+      "id": "SRC-C8F00A48FA8A",
+      "url": "https://127.0.0.1:1/",
+      "title": "https://127.0.0.1:1/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T06:55:22.341Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshery-meshery-learnings.md",
+        "fileName": "meshery-meshery-learnings.md"
+      }
+    },
+    "SRC-59FAA736378C": {
+      "id": "SRC-59FAA736378C",
+      "url": "https://k/",
+      "title": "https://k/",
+      "status": "REJECTED_ANONYMOUS_OR_MISSING_PUBLISHER",
+      "rejection_reasons": [
+        "ANONYMOUS_OR_MISSING_PUBLISHER"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-24T06:55:22.402Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshery-meshery-learnings.md",
+        "fileName": "meshery-meshery-learnings.md"
+      }
+    },
+    "SRC-D65B830F1BF8": {
+      "id": "SRC-D65B830F1BF8",
+      "url": "https://k8s/",
+      "title": "https://k8s/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T06:55:22.460Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshery-meshery-learnings.md",
+        "fileName": "meshery-meshery-learnings.md"
+      }
+    },
+    "SRC-E9D28302DC5A": {
+      "id": "SRC-E9D28302DC5A",
+      "url": "https://attacker/",
+      "title": "https://attacker/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T06:55:22.528Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshery-meshery-learnings.md",
+        "fileName": "meshery-meshery-learnings.md"
+      }
+    },
+    "SRC-0BC5FE88F862": {
+      "id": "SRC-0BC5FE88F862",
+      "url": "https://github.com/matrixorigin/matrixone/pull/33058",
+      "title": "https://github.com/matrixorigin/matrixone/pull/33058",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T06:55:23.485Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
+        "fileName": "matrixorigin-matrixone-learnings.md"
       }
     }
   }

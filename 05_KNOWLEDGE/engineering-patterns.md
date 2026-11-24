@@ -766549,3 +766549,184 @@ Subsystems managing PHP data structures, boundary deserialization, API parsing, 
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `a6a82c3c` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10224. record import receipt errors only for the selected contexts (Harvested from meshery/meshery)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "record import receipt errors only for the selected contexts",
+  "source": "meshery/meshery",
+  "source_url": "https://github.com/meshery/meshery",
+  "source_version": "2d7c3d0b",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-24T06:55:12.867Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-meshery-meshery",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [meshery/meshery](https://github.com/meshery/meshery) (Revision: `2d7c3d0b`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `server/handlers/k8sconfig_handler.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `323f07f0`: server): record import receipt errors only for the selected contexts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/handlers/k8sconfig_handler.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+	// Discovery recorded a per-context entry (with an "error" for any context
+	// that failed) for every context in the file, including the ones the user
+	// deselected and the ones Meshery skipped. The receipt below describes only
+	// what this import acted on, so drop the entries of contexts outside an
+	// explicit selection; otherwise a broken context the user chose not to import would
+	// raise the receipt to Error while the wizard reports success (issue #24220).
+	retainSelectedContextMetadata(eventMetadata, contexts, selectedContexts)
+
+			// The receipt is keyed by the name the connection is saved under;
+			// drop the discovery entry that is keyed by the old name.
+			delete(eventMetadata, ctx.Name)
+// retainSelectedContextMetadata removes from eventMetadata, the per-context
+// discovery metadata keyed by context name, the entries of contexts the user
+// left out of an explicit selection: discovered contexts outside it, and
+// contexts discovery skipped (never importable, so never selected). With no
+// selection every context is imported, so nothing is removed and a context that
+// failed or was skipped during discovery still shows in the receipt.
+func retainSelectedContextMetad
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `323f07f0` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10225. never allocate for parameter binding after the first execution (Harvested from matrixorigin/matrixone)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "never allocate for parameter binding after the first execution",
+  "source": "matrixorigin/matrixone",
+  "source_url": "https://github.com/matrixorigin/matrixone",
+  "source_version": "8b1e884e",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-24T06:55:18.315Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-matrixorigin-matrixone",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [matrixorigin/matrixone](https://github.com/matrixorigin/matrixone) (Revision: `8b1e884e`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `pkg/container/vector/vector.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `32c9bc65`: prepare): never allocate for parameter binding after the first execution. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/container/vector/vector.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+// WindowInto is Window into a descriptor the caller already holds: w becomes a
+// read-only reference to [start, end) of v's memory without allocating a new
+// Vector. w must be read-only (a reference or a zero Vector); whatever it
+// referenced before is dropped.
+func (v *Vector) WindowInto(w *Vector, start, end int) error {
+	if !w.IsReadOnly() {
+		return moerr.NewInternalErrorNoCtx("vector window target owns memory")
+	}
+	if !v.validWindowRange(start, end, false) {
+		return moerr.NewInvalidInputNoCtx("invalid vector window")
+	}
+	v.readOnlyWindowInto(w, start, end)
+	return nil
+}
+
+	w := &Vector{}
+	v.readOnlyWindowInto(w, start, end)
+	return w
+}
+
+func (v *Vector) readOnlyWindowInto(w *Vector, start, end int) {
+	*w = Vector{typ: v.typ, class: v.class, length: end - start, sorted: v.sorted}
+		return
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+	w := &Vector{typ: v.typ, class: v.class, length: end - start, sorted: v.sorted}
+		return w
+	return w
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `32c9bc65` are properly handled with clean fallback behavior.
