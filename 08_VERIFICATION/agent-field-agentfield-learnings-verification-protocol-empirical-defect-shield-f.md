@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T05:06:53.045Z",
+  "timestamp": "2026-11-24T03:14:31.887Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-agent-field-agentfield-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [agent-field-agentfield-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T05:06:53.045Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T03:14:31.887Z`  
 > **Learning ID**: `LEARN-EVO-agent-field-agentfield-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/agent-field-agentfield-learnings.md`  
 > **Source**: github ([https://github.com/Agent-Field/agentfield](https://github.com/Agent-Field/agentfield))  
-> **Source Version**: `198e6e89`  
+> **Source Version**: `1b3c68a3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T05:06:40.923Z  
+> **Timestamp**: 2026-11-24T03:14:21.690Z  
 > **Learning ID**: `learn-github-agent-field-agentfield`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/agent-field-agentfield-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Agent-Field/agentfield](https://github.com/Agent-Field/agentfield))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T05:06:40.919Z  
+> **Harvest Timestamp**: 2026-11-24T03:14:21.567Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Build, run and scale AI agents like API and microservices
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2666 stars
+- **Stars / Engagement**: 2667 stars
 
 ---
 
@@ -1443,167 +1443,879 @@ func (ds *DefaultDevService) GetDevStatus(path string) (*domain.DevStatus, error
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `198e6e89` (2026-11-22)
-**Commit Message**: docs(skills): add agentfield-sdk, a reference skill for coding agents (#1230)
+### Incident Patch 1: `dc802dcb` (2026-11-23)
+**Commit Message**: fix(sdk-python): record token usage for every tool-calling turn in ai(tools=...) (#1221)
 
-A short, factual SKILL.md for coding agents writing code against the
-Python and TypeScript SDKs: install, a minimal agent in each language
-(taken from examples/python_agent_nodes/hello_world and the af init
-TypeScript template), sync and async execution with polling and
-webhooks, cross-agent calls, human approval, and where identity,
-policy and audit are configured, with links to the docs.
+* fix(sdk-python): record token usage for every tool-calling turn in ai(tools=...)
 
-It follows the skills.sh layout (skills/<name>/SKILL.md with name and
-description frontmatter), so `npx skills add Agent-Field/agentfield`
-lists it next to the existing three. It describes how to use AgentField
-only and does not tell an agent to choose it over another framework.
+The tool-calling path of AgentAI.ai() returned before the cost-tracker
+recording used by the plain completion path, so ai(tools=...) never
+contributed tokens or cost to the tracker. Record usage per LLM turn
+inside the tool-loop completion callback.
 
-Assisted-by: CodeAF
+* test(sdk-python): cover cache tokens and missing usage in tool-loop turns
 
-Co-authored-by: CodeAF <[REDACTED_EMAIL]>
+Both rate-limit-retry and direct paths of the per-turn recorder are
+exercised, so every line added by the usage-recording fix is covered.
 
-**File**: `skills/agentfield-sdk/SKILL.md` (added, +298/-0)
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* fix(sdk-python): never fail a tool-loop turn on a usage-tracker error
+
+Recording is an observation side effect, like the stream path. Without the
+guard, a tracker error (for example a lock timeout) would turn a successful
+completion into an exception, which the tool loop never did before it
+recorded usage.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: Abir Abbas <[REDACTED_EMAIL]>
+Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+**File**: `sdk/python/agentfield/agent_ai.py` (modified, +58/-2)
 ```diff
-@@ -0,0 +1,298 @@
-+---
-+name: agentfield-sdk
-+description: "Reference for writing, running and deploying agents with the AgentField Python and TypeScript SDKs: install, a minimal agent in each language, calling it over REST (sync, async, polling, webhooks), cross-agent calls, human approval, and where identity, policy and audit live. Use when the user asks to build with AgentField, or the project already depends on `agentfield` (PyPI) or `@agentfield/sdk` (npm). If the user asked for a different framework, use that one; this skill only explains how AgentField works."
-+---
+@@ -987,8 +987,64 @@ async def _call_with_fallbacks():
+ 
+                 if final_config.enable_rate_limit_retry:
+                     rate_limiter = self._get_rate_limiter()
+-                    return await rate_limiter.execute_with_retry(_call_with_fallbacks)
+-                return await _call_with_fallbacks()
++                    turn_resp = await rate_limiter.execute_with_retry(
++                        _call_with_fallbacks
++                    )
++                else:
++                    turn_resp = await _call_with_fallbacks()
++                try:
++                    _record_tool_turn_usage(turn_resp, params)
++                except Exception as e:
++                    # Usage accounting is an observation side effect: it must
++                    # never fail a completion that already succeeded.
++                    log_debug(f"Tool loop: usage recording failed: {e}")
++                return turn_resp
 +
-+# Building agents with AgentField
++            def _record_tool_turn_usage(turn_resp, params):
++                """Record token usage for one LLM turn of the tool loop."""
++                from agentfield.cost_tracker import (
++                    derive_provider,
++                    get_current_cost_tracker,
++                )
++                from .multimodal_response import detect_multimodal_response
++                from .usage_routing import routing_provider
 +
-+AgentField is an open-source (Apache-2.0) framework for running AI agents as
-+backend services. You write agents as ordinary Python, TypeScript or Go
-+functions; a Go **control plane** routes every call between them, records each
-+run, and exposes each agent function as a REST endpoint. Durable async
-+execution, retries, human approval, shared memory, per-agent cryptographic
-+identity (W3C DIDs), tag-based access policies and verifiable-credential audit
-+trails are part of the framework, not add-ons.
++                tracker = get_current_cost_tracker() or getattr(
++                    self.agent, "cost_tracker", None
++                )
++                if tracker is None:
++                    return
++                requested_model = params.get("model", final_config.model)
++                provider = derive_provider(requested_model)
++                route = routing_provider(provider, params.get("api_base"))
++                usage = detect_multimodal_response(turn_resp)
++                if not usage.usage:
++                    tracker.record(
++                        model=requested_model,
++                        provider=provider,
++                        routing_provider=route,
++                        usage_status="missing",
++                    )
++                    return
++                from agentfield.execution_context import get_current_context
 +
-+Vocabulary used everywhere in the SDKs, CLI and API:
++                ctx = get_current_context()
++                tracker.record(
++                    model=getattr(turn_resp, "model", "") or requested_model,
++                    provider=provider,
++                    routing_provider=route,
++                    prompt_tokens=usage.usage.get("prompt_tokens", 0),
++                    completion_tokens=usage.usage.get("completion_tokens", 0),
++                    total_tokens=usage.usage.get("total_tokens", 0),
++                    cost_usd=usage.cost_usd,
++                    reasoner_name=ctx.reasoner_name if ctx else None,
++                    source="llm",
++                    cache_read_tokens=usage.usage.get("cache_read_tokens", 0),
++                    cache_creation_tokens=usage.usage.get(
++                        "cache_creation_tokens", 0
++                    ),
++                    cost_source=usage.cost_source,
++                )
+ 
+             resp, trace = await execute_tool_call_loop(
+                 agent=self.agent,
+```
+
+**File**: `sdk/python/tests/test_agent_ai_comprehensive.py` (modified, +174/-0)
+```diff
+@@ -529,3 +529,177 @@ async def test_ai_system_and_user_prompts(monkeypatch, agent_with_ai):
+     assert len(messages) >= 2
+     assert any(msg.get("role") == "system" for msg in messages)
+     assert any(msg.get("role") == "user" for msg in messages)
 +
-+| Term | Meaning |
-+|---|---|
-+| control plane | The `af server` process (default `http://localhost:8080`). Routes calls, stores runs, serves the dashboard. |
-+| agent / node | One process built with the SDK, identified by `node_id`. It registers with the control plane on start. |
-+| reasoner | An agent function that usually calls an LLM (`@app.reasoner()` / `agent.reasoner(...)`). |
-+| skill | A deterministic agent function, no LLM (`@app.skill()`). |
-+| execution | One call of a reasoner or skill. Has an `execution_id`; a tree of them shares a `run_id`. |
 +
-+Endpoint names are `<node_id>.<function>`. A function registered through a router
-+with `prefix="demo"` is exposed as `<node_id>.demo_<function>`.
++@pytest.mark.asyncio
++async def test_ai_tool_loop_records_usage_per_turn(monkeypatch, agent_with_ai):
++    """Every LLM turn of the tool-calling loop is recorded in the cost tracker."""
++    from agentfield.cost_tracker import CostTracker
 +
-+## Install
++    agent_with_ai.cost_tracker = CostTracker()
++    litellm_module = setup_litellm_stub(monkeypatch)
 +
-+```bash
-+curl -fsSL https://agentfield.ai/install.sh | bash   # the `af` CLI and control plane
-+pip install agentfield                               # Python SDK
-+npm install @agentfield/sdk                          # TypeScript SDK
-+```
++    def chat(content, tool_calls, usage):
++        return SimpleNamespace(
++            model="gpt-4",
++            usage=usage,
++            choices=[
++                SimpleNamespace(
++                    message=SimpleNamespace(
++                        content=content,
++                        audio=None,
++                        tool_calls=tool_calls,
++                        model_dump=lambda: {
++                            "role": "assistant",
++                            "content": content,
++                        },
++                    )
++                )
++            ],
++        )
 +
-+Scaffold a project instead of writing one by hand (from the repository README):
++    tool_call = SimpleNamespace(
++        id="call_1",
++        function=SimpleNamespace(name="lookup", arguments="{}"),
++    )
++    litellm_module.acompletion.side_effect = [
++        chat(
++            None,
++            [tool_call],
++            {"prompt_tokens": 10, "completion_tokens": 5, "total_tokens": 15},
++        ),
++        chat(
++            "done",
++            None,
++            {"prompt_tokens": 20, "completion_tokens": 7, "total_tokens": 27},
++        ),
++    ]
++    agent_with_ai.call = AsyncMock(return_value={"ok": True})
 +
-+```bash
-+af init my-agent --defaults                            # Scaffold agent
-+cd my-agent && pip install -r requirements.txt
-+af server          # Terminal 1 → Dashboard at http://localhost:8080
-+python main.py     # Terminal 2 → Agent auto-registers
-+```
++    ai = AgentAI(agent_with_ai)
++    tools = [
++        {
++            "type": "function",
++            "function": {
++                "name": "lookup",
++                "description": "d",
++                "parameters": {"type": "object", "properties": {}},
++            },
++        }
++    ]
++    await ai.ai("question", tools=tools)
 +
-+```bash
-+# Go
-+af init my-agent --defaults --language go && cd my-agent && go run .
++    summary = agent_with_ai.cost_tracker.serialize()
++    assert len(summary["entries"]) == 2
++    assert summary["total_tokens"] == 42
 +
-+# TypeScript
-+af init my-agent --defaults --language typescript && cd my-agent && npm install && npm run dev
-+```
 +
-+The agent needs a running control plane to register with. Start it with
-+`af server` locally, or `docker run -p 8080:8080 agentfield/control-plane:latest`.
++@pytest.mark.asyncio
++@pytest.mark.parametrize("rate_limit_retry", [True, False])
++async def test_ai_tool_loop_records_cache_tokens_and_missing_usage(
++    monkeypatch, agent_with_ai, rate_limit_retry
++):
++    """Tool-loop turns keep prompt-cache counts, and a turn whose provider
++    reported no usage is flagged as missing rather than silently dropped."""
++    from agentfield.cost_tracker import CostTracker
 +
-+## Minimal Python agent
++    agent_with_ai.cost_tracker = CostTracker()
++    agent_with_ai.ai_config.enable_rate_limit_retry = rate_limit_retry
++    litellm_module = setup_litellm_stub(monkeypatch)
 +
-+From `examples/python_agent_nodes/hello_world/main.py`, with its module docstring and
-+startup prints removed. Set an LLM
-+provider key (for example `OPENAI_API_KEY`, or `OPENROUTER_API_KEY` with an
-+`openrouter/...` model); model strings go through LiteLLM.
++    def chat(content, tool_calls, usage):
++        return SimpleNamespace(
++            model="gpt-4",
++            usage=usage,
++            choices=[
++                SimpleNamespace(
++                    message=SimpleNamespace(
++                        content=content,
++                        audio=None,
++                        tool_calls=tool_calls,
++                        model_dump=lambda: {"role": "assistant", "content": content},
++                    )
++                )
++            ],
++        )
 +
-+```python
-+from agentfield import Agent
-+from agentfield import AIConfig
-+from pydantic import BaseModel
-+import os
++    tool_call = SimpleNamespace(
++        id="call_1", function=SimpleNamespace(name="lookup", arguments="{}")
++    )
++    litellm_module.acompletion.side_effect = [
++        chat(
++            None,
++            [tool_call],
++            {
++                "prompt_tokens": 10,
++                "completion_tokens": 5,
++                "total_tokens": 15,
++                "cache_read_input_tokens": 4,
++                "cache_creation_input_tokens": 2,
++            },
++        ),
++        chat("done", None, None),
++    ]
++    agent_with_ai.call = AsyncMock(return_value={"ok": True})
 +
-+# Initialize agent
-+app = Agent(
-+    node_id="hello-world",
-+    agentfield_server=os.getenv("AGENTFIELD_URL", "http://localhost:8080"),
-+    ai_config=AIConfig(
-+        model=os.getenv("SMALL_MODEL", "openai/gpt-4o-mini"), temperature=0.7
-+    ),
++    tools = [
++        {
++            "type": "function",
++            "function": {
++                "name": "lookup",
++                "description": "d",
++                "parameters": {"type": "object", "properties": {}},
++            },
++        }
++    ]
++    await AgentAI(agent_with_ai).ai("question", tools=tools)
++
++    entries = agent_with_ai.cost_tracker.serialize()["entries"]
++    assert len(entries) == 2
++    assert entries[0]["cache_read_tokens"] == 4
++    assert entries[0]["cache_creation_tokens"] == 2
++    assert entries[1]["usage_status"] == "missing"
++
++
++@pytest.mark.asyncio
++async def test_ai_tool_loop_survives_usage_tracker_failure(monkeypatch, agent_with_ai):
++    """A broken cost tracker must not fail a tool-loop completion that succeeded."""
++
++    class _BrokenTracker:
++        def record(self, **kwargs):
++            raise RuntimeError("tracker down")
++
++    agent_with_ai.cost_tracker = _BrokenTracker()
++    litellm_module = setup_litellm_stub(monkeypatch)
++    usage = {"prompt_tokens": 1, "completion_tokens": 1, "total_tokens
+```
+
+---
+
+### Incident Patch 2: `961af5f1` (2026-11-23)
+**Commit Message**: fix(tray): reduce endpoint-security false positives on macOS (#1236)
+
+* Separate macOS tray setup from server startup
+
+* Sign and notarize standalone macOS tray binaries
+
+* fix(tray): remove the staged tray copy when the packaged app takes over
+
+Older Desktop builds and install.sh copied the tray helper to
+~/.agentfield/bin/af-tray. Once the tray runs from the signed Desktop app that
+copy is an unreferenced executable in a hidden folder, which is exactly what
+endpoint-security tools quarantine. Delete it when Desktop adopts or hides the
+tray, but never while a tray job still names it and never the running program.
+
+af service uninstall now also removes the session tray plist and the staged
+copy, so an uninstall leaves no launchd job or helper behind.
+
+Co-authored-by: ZeroPoint95 <[REDACTED_EMAIL]>
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* fix(install): stop stripping the macOS quarantine attribute
+
+curl never sets com.apple.quarantine on what it downloads, so the three
+xattr -d calls removed nothing, and a script that clears that attribute looks
+like Gatekeeper evasion to endpoint-security tools. The release binaries are
+Developer ID signed and notarized, so macOS acc
+
+**File**: `.github/workflows/control-plane.yml` (modified, +8/-0)
+```diff
+@@ -141,6 +141,14 @@ jobs:
+           go build ./cmd/af-tray/
+           go vet ./cmd/af-tray/
+ 
++      # The tray's install, upgrade and login-item paths are darwin-only code
++      # that the Linux jobs cannot execute. These tests drive them against a stub
++      # launchctl, and check that Service Management can see the bundled login
++      # agent from inside an app bundle.
++      - name: Test the macOS tray lifecycle
++        working-directory: control-plane
++        run: go test -count=1 ./cmd/af-tray/ ./internal/launchdsvc/
++
+   # Summary job that depends on all critical checks
+   required-checks:
+     name: All Required Checks Passed
+```
+
+**File**: `.github/workflows/desktop.yml` (modified, +34/-0)
+```diff
+@@ -64,11 +64,45 @@ jobs:
+           else
+             printf 'stub' > vendor/af
+           fi
++          if [ "$RUNNER_OS" = "macOS" ]; then
++            # af-tray lands in Contents/MacOS, where it is signed as code, so the
++            # stub has to be a real Mach-O binary rather than a text file.
++            printf 'int main(void) { return 0; }\n' > "$RUNNER_TEMP/af-tray-stub.c"
++            cc -o vendor/af-tray "$RUNNER_TEMP/af-tray-stub.c"
++          fi
+ 
+       - name: Package (unsigned, unpacked)
+         working-directory: desktop
+         run: npm run dist:dir
+ 
++      # The tray helper must ship inside the app, with the one bundled login
++      # agent that Service Management registers. Without them the app falls back
++      # to copying the helper into a second bundle, which is the install pattern
++      # endpoint-security tools flag as malware persistence.
++      - name: Check the packaged tray layout (macOS)
++        if: runner.os == 'macOS'
++        working-directory: desktop
++        run: |
++          set -euo pipefail
++          shopt -s nullglob
++          apps=(release/mac*/*.app)
++          if [ ${#apps[@]} -ne 1 ]; then
++            echo "expected one packed .app under desktop/release, found: ${apps[*]:-nothing}" >&2
++            exit 1
++          fi
++          app="${apps[0]}"
++          test -x "$app/Contents/MacOS/af-tray"
++          agents=("$app"/Contents/Library/LaunchAgents/*.plist)
++          if [ ${#agents[@]} -ne 1 ] || [ "$(basename "${agents[0]}")" != "ai.agentfield.tray.login.plist" ]; then
++            echo "expected exactly ai.agentfield.tray.login.plist, found: ${agents[*]:-nothing}" >&2
++            exit 1
++          fi
++          plutil -lint "${agents[0]}"
++          # BundleProgram is resolved against the app bundle, so it must name the helper.
++          test "$(plutil -extract BundleProgram raw -o - "${agents[0]}")" = "Contents/MacOS/af-tray"
++          # The ad-hoc signature must seal the helper and the plist like any other code.
++          codesign --verify --deep --strict --verbose=2 "$app"
++
+   # Manual-dispatch-only: prove the macOS signing/notarization secrets work
+   # without cutting a release. Imports the Developer ID cert into a keychain
+   # (the same thing electron-builder does with CSC_LINK) and authenticates
+```
+
+**File**: `.github/workflows/release.yml` (modified, +134/-0)
+```diff
+@@ -300,6 +300,118 @@ jobs:
+           echo "=== Flattened dist/ directory ==="
+           ls -lah dist/agentfield-* 2>/dev/null || echo "No binaries found"
+ 
++      # The standalone macOS binaries are signed with the same Developer ID as the
++      # Desktop app, with the hardened runtime and a secure timestamp, and are
++      # notarized. Both are launched by the user's login session (the tray, and the
++      # control plane under launchd), and an ad-hoc or unsigned executable that runs
++      # at login is what endpoint-security tools quarantine. This runs before the
++      # publish job computes checksums, so the published sums match what ships.
++      #
++      # Production releases refuse to ship unsigned binaries. Staging degrades to a
++      # warning like the Desktop installer step below.
++      - name: Sign and notarize standalone macOS binaries
++        if: matrix.label == 'darwin'
++        shell: bash
++        env:
++          CSC_LINK: ${{ secrets.CSC_LINK }}
++          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
++          APPLE_ID: ${{ secrets.APPLE_ID }}
++          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
++          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
++          RELEASE_ENVIRONMENT: ${{ needs.prepare.outputs.environment }}
++        run: |
++          set -euo pipefail
++
++          if [[ -z "$CSC_LINK" || -z "$CSC_KEY_PASSWORD" || -z "$APPLE_ID" || \
++                -z "$APPLE_APP_SPECIFIC_PASSWORD" || -z "$APPLE_TEAM_ID" ]]; then
++            if [[ "$RELEASE_ENVIRONMENT" == "production" ]]; then
++              echo "::error::Production macOS binaries require the Developer ID and Apple notarization secrets"
++              exit 1
++            fi
++            echo "::warning::signing/notarization secrets incomplete; the standalone macOS binaries stay unsigned"
++            exit 0
++          fi
++
++          # name:identifier pairs. The identifier is what macOS shows for the item
++          # in Login Items and in security prompts.
++          targets=(
++            "dist/agentfield-tray-darwin-amd64:ai.agentfield.tray"
++            "dist/agentfield-tray-darwin-arm64:ai.agentfield.tray"
++            "dist/agentfield-darwin-amd64:ai.agentfield.cli"
++            "dist/agentfield-darwin-arm64:ai.agentfield.cli"
++          )
++          binaries=()
++          for target in "${targets[@]}"; do
++            binary="${target%%:*}"
++            if [[ ! -f "$binary" ]]; then
++              echo "::error::Missing standalone macOS binary: $binary"
++              exit 1
++            fi
++            binaries+=("$binary")
++          done
++
++          signing_dir="$(mktemp -d "$RUNNER_TEMP/af-signing.XXXXXX")"
++          keychain="$signing_dir/signing.keychain-db"
++          trap 'security delete-keychain "$keychain" >/dev/null 2>&1 || true; rm -rf -- "$signing_dir"' EXIT
++          keychain_password="$(openssl rand -hex 32)"
++
++          printf '%s' "$CSC_LINK" | base64 --decode > "$signing_dir/cert.p12"
++          security create-keychain -p "$keychain_password" "$keychain"
++          security unlock-keychain -p "$keychain_password" "$keychain"
++          security import "$signing_dir/cert.p12" -k "$keychain" \
++            -P "$CSC_KEY_PASSWORD" -T /usr/bin/codesign
++          security set-key-partition-list -S apple-tool:,apple: -s -k "$keychain_password" "$keychain" >/dev/null
++
++          # Include the temporary keychain when codesign resolves the certificate chain.
++          # Deleting the keychain removes its entry from the search list.
++          existing_keychains="$(security list-keychains -d user | sed -E 's/^[[:space:]]*"//; s/"$//')"
++          keychains=("$keychain")
++          while IFS= read -r entry; do
++            if [[ -n "$entry" ]]; then keychains+=("$entry"); fi
++          done <<< "$existing_keychains"
++          security list-keychains -d user -s "${keychains[@]}"
++
++          requirement="=anchor apple generic and certificate leaf[field.1.2.840.113635.100.6.1.13] exists and certificate leaf[subject.OU] = \"$APPLE_TEAM_ID\""
++          for target in "${targets[@]}"; do
++            binary="${target%%:*}"
++            identifier="${target##*:}"
++            codesign --force --sign 'Developer ID Application:' --keychain "$keychain" \
++              --identifier "$identifier" --options runtime --timestamp "$binary"
++            codesign --verify --strict --test-requirement "$requirement" --verbose=2 "$binary"
++            # Notarization below rejects a binary without the hardened runtime or
++            # a secure timestamp, so those flags are enforced by Apple, not here.
++          done
++
++          # The ZIP is for Apple only. Raw Mach-O binaries get online tickets
++          # and keep their existing release asset names and download format.
++          archive="$signing_dir/af-binaries.zip"
++          zip -jq "$archive" "${binaries[@]}"
++          notary_auth=(--apple-id "$APPLE_ID" --password "$APPLE_APP_SPECIFIC_PASSWORD" --team-id "$APPLE_TEA
+```
+
+**File**: `README.md` (modified, +8/-4)
+```diff
+@@ -54,10 +54,14 @@ The provider name `aforge` remains an alias; set `AFORGE_BIN` and select
+ `$AGENTFIELD_HOME/codeaf`. See [harness providers](docs/harness-providers.md)
+ for binary overrides, mirror/skip switches, and telemetry controls.
+ 
+-On macOS the installer also registers the control plane to start at login (under
+-launchd) and adds a menu-bar icon. Stop it with `af service stop` or the menu-bar
+-icon — a plain `kill` looks like a crash and it restarts. `af service status`
+-shows health and in-flight work; install with `--no-tray` to skip this entirely.
++On macOS the installer does not register anything to run at login. Add the
++optional menu-bar icon with `--with-tray`; it registers one login job for the
++icon, and the icon's **Control plane → Start at login** switch decides whether
++the control plane starts at login as well. A machine that already has the icon
++keeps it and is updated in place (`--no-tray` skips that). When launchd
++supervises the control plane, stop it with `af service stop` or the menu-bar icon
++— a plain `kill` looks like a crash and it restarts. `af service status` shows
++health and in-flight work.
+ 
+ Then in your coding agent, paste any spec with /agentfield :
+ 
+```
+
+**File**: `control-plane/cmd/af-tray/assets_darwin.go` (modified, +0/-5)
+```diff
+@@ -12,8 +12,3 @@ var iconActive []byte
+ 
+ //go:embed assets/icon_inactive.png
+ var iconInactive []byte
+-
+-// appIconICNS is written into the generated .app bundle's Resources on macOS.
+-//
+-//go:embed assets/appicon.icns
+-var appIconICNS []byte
+```
+
+**File**: `control-plane/cmd/af-tray/claude_quota_darwin.go` (modified, +11/-0)
+```diff
+@@ -16,6 +16,12 @@ import (
+ // STRICT contract (see shared.go): read-only. We never write to the Keychain,
+ // and the token is only ever handed to fetchClaudeQuota, which sends it to
+ // api.anthropic.com and nowhere else. It is never logged or persisted.
++//
++// OPT-IN ONLY. This reads a credential that belongs to another application, so
++// the caller must have checked claudeUsageEnabled() first: the tray never runs
++// `security find-generic-password` until the user has turned "Show Claude usage
++// limits" on. Endpoint-security tools treat an unprompted Keychain read by a
++// background helper as credential theft, and they are right to.
+ 
+ // readClaudeCodeToken reads the OAuth access token that Claude Code stores in
+ // the macOS login Keychain under the "Claude Code-credentials" generic-password
+@@ -54,6 +60,11 @@ const claudeUsageURL = "https://api.anthropic.com/api/oauth/usage"
+ // It returns a zero (OK=false) claudeQuota whenever anything is unavailable, so
+ // the caller can render nothing without special-casing.
+ func fetchClaudeQuotaNow() claudeQuota {
++	// The one door to the Keychain read: without the user's opt-in this
++	// returns before any `security` process is spawned.
++	if !claudeUsageEnabled() {
++		return claudeQuota{}
++	}
+ 	token := readClaudeCodeToken()
+ 	if token == "" {
+ 		return claudeQuota{}
+```
+
+**File**: `control-plane/cmd/af-tray/claude_quota_darwin_test.go` (added, +47/-0)
+```diff
+@@ -0,0 +1,47 @@
++//go:build darwin
++
++package main
++
++import (
++	"os"
++	"path/filepath"
++	"testing"
 +)
 +
-+# ============= SKILL (DETERMINISTIC) =============
++// Contract: the tray reads the Claude Code login from the Keychain only after
++// the user has turned "Show Claude usage limits" on. Before that no `security`
++// process is started at all, because an unprompted Keychain read by a background
++// helper is what endpoint-security tools treat as credential theft.
++func TestKeychainIsNotReadUntilTheUserOptsIn(t *testing.T) {
++	root := t.TempDir()
++	t.Setenv("HOME", root)
++	bin := filepath.Join(root, "bin")
++	marker := filepath.Join(root, "security-ran")
++	mustWriteTrayFixture(t, filepath.Join(bin, "security"), "#!/bin/sh\necho \"$@\" >> \""+marker+"\"\nexit 1\n")
++	t.Setenv("PATH", bin+":/usr/bin:/bin")
 +
++	ran := func() bool {
++		_, err := os.Stat(marker)
++		return err == nil
++	}
 +
-+@app.skill()
-+def get_greeting(name: str) -> dict:
-+    """Returns a greeting template (deterministic - no AI)"""
-+    return {"message": f"Hello, {name}! Welcome to Agentfield."}
-+
-+
-+# ============= REASONERS (AI-POWERED) =============
-+
-+
-+class EmojiResult(BaseModel):
-+    """Simple schema for emoji addition"""
-+
-+    text: str
-+    emoji: str
-+
-+
-+@app.reasoner()
-+async def add_emoji(text: str) -> EmojiResult:
-+    """Uses AI to add an appropriate emoji to text"""
-+    return await app.ai(
-+        user=f"Add one appropriate emoji to this greeting: {text}", schema=EmojiResult
-+    )
-+
-+
-+@app.reasoner()
-+async def say_hello(name: str) -> dict:
-+    # Step 1: Get greeting from skill (deterministic)
-+    greeting = get_greeting(name)
-+
-+    # Step 2: Add emoji using AI (reasoner)
-+    result = await add_emoji(greeting["message"])
-+
-+    return {"greeting": result.text, "emoji": result.emoji, "name": name}
-+
-+
-+if __name__ == "__main__":
-+    # Universal entry point - auto-detects CLI vs server mode
-+    app.run(auto_port=True)
-+```
-+
-+Run `python main.py` with the control plane up, then call
-+`POST http://localhost:8080/api/v1/execute/hello-world.say_hello` with
-+`{"input": {"name": "Ada"}}`.
-+
-+`app.ai()` takes `system=`, `user=`, `schema=` (a Pydantic model, returned typed),
-+`model=` and `temperature=`. Function parameters become the JSON `input` fields.
-+
-+## Minimal TypeScript agent
++	if q := fetchClaudeQuotaNow(); q.OK || ran() {
++		t.Fatalf("default: quota=%+v, security ran=%v; want no Keychain read", q, ran())
++	}
++	if err := setClaudeUsageEnabled(true); err != nil {
++		t.Fatal(err)
++	}
++	fetchClaudeQuotaNow()
++	if !ran() {
++		t.Fatal("opted in: the Keychain was never consulted")
++	}
++	if err := setClaudeUsageEnabled(false); err != nil {
++		t.Fatal(err)
++	}
++	if err := os.Remove(marker); err != nil {
++		t.Fatal(err)
++	}
++	if q := fetchClaudeQuotaNow(); q.OK || ran() {
++		t.Fatalf("opted back out: quota=%+v, security ran=%v; want no Keychain read", q, ran())
++	}
++}
+```
 
+**File**: `control-plane/cmd/af-tray/desktop_install_darwin.go` (added, +350/-0)
+```diff
+@@ -0,0 +1,350 @@
++//go:build darwin
++
++package main
++
++import (
++	"bytes"
++	"errors"
++	"fmt"
++	"html"
++	"os"
++	"os/exec"
++	"path/filepath"
++	"strings"
++	"syscall"
++	"time"
++
++	"github.com/Agent-Field/agentfield/control-plane/internal/launchdsvc"
++)
++
++const desktopLoginLabel = "ai.agentfield.tray.login"
++
++func desktopMarkerPath() string { return filepath.Join(agentfieldDir(), "desktop-tray") }
++func traySessionPath() string   { return filepath.Join(agentfieldDir(), "tray-session.plist") }
++
++// Both installers manage the same per-user tray. Serialize the transition across
++// processes, including a CLI update that overlaps with Desktop startup.
++func withTrayLock(apply func() error) error {
++	if err := os.MkdirAll(logsDir(), 0o755); err != nil {
++		return err
++	}
++	lock, err := os.OpenFile(filepath.Join(agentfieldDir(), "tray.lock"), os.O_CREATE|os.O_RDWR, 0o600)
++	if err != nil {
++		return err
++	}
++	defer lock.Close()
++	if err := syscall.Flock(int(lock.Fd()), syscall.LOCK_EX); err != nil {
++		return err
++	}
++	return apply()
++}
++
++// stagedTrayPath is the copy of the helper that older Desktop builds and the
++// installer left in ~/.agentfield/bin. A tray that runs from the signed Desktop
++// app has no use for it, and an unreferenced executable in a hidden folder is
++// exactly what endpoint-security tools quarantine.
++func stagedTrayPath() string { return filepath.Join(binDir(), "af-tray") }
++
++// removeStagedTray deletes the staged copy once no tray job names it. It never
++// follows a link, never deletes the program that is running, and leaves the copy
++// alone while a job still points at it (the CLI-installed tray runs from it).
++func removeStagedTray(program string) error {
++	staged := stagedTrayPath()
++	if staged == program {
++		return nil
++	}
++	info, err := os.Lstat(staged)
++	if errors.Is(err, os.ErrNotExist) {
++		return nil
++	}
++	if err != nil || !info.Mode().IsRegular() {
++		return err
++	}
++	for _, job := range []string{trayPlistPath(), traySessionPath()} {
++		data, err := os.ReadFile(job)
++		if err != nil {
++			continue
++		}
++		if html.UnescapeString(launchdsvc.ParsePlistOwner(data).Program) == staged {
++			return nil
++		}
++	}
++	return removeIfPresent(staged)
++}
++
++func desktopOwnsTray() bool {
++	data, err := os.ReadFile(desktopMarkerPath())
++	if err != nil {
++		return false
++	}
++	program, _, _ := strings.Cut(string(data), "\n")
++	info, err := os.Stat(program)
++	return err == nil && info.Mode().IsRegular()
++}
++
++// A native login job can start while a session tray is still shutting down.
++func lockTrayProcess() (*os.File, error) {
++	if err := os.MkdirAll(agentfieldDir(), 0o755); err != nil {
++		return nil, err
++	}
++	lock, err := os.OpenFile(filepath.Join(agentfieldDir(), "tray-running.lock"), os.O_CREATE|os.O_RDWR, 0o600)
++	if err != nil {
++		return nil, err
++	}
++	if err := syscall.Flock(int(lock.Fd()), syscall.LOCK_EX|syscall.LOCK_NB); err != nil {
++		lock.Close()
++		if errors.Is(err, syscall.EWOULDBLOCK) {
++			return nil, nil
++		}
++		return nil, err
++	}
++	return lock, nil
++}
++
++func installDesktop() error {
++	return withTrayLock(func() error {
++		if desktopOwnsTray() {
++			fmt.Println("The tray is managed by AgentField Desktop.")
++			return nil
++		}
++		program, err := os.Executable()
++		if err != nil {
++			return err
++		}
++		if err := installTrayAgent(trayPlistPath(), program); err != nil {
++			return err
++		}
++		if err := launchdsvc.RemoveLegacyTrayBundle(home()); err != nil {
++			return err
++		}
++		fmt.Println("AgentField tray installed. Look for the icon in your menu bar.")
++		return nil
++	})
++}
++
++func uninstallDesktop() error {
++	return withTrayLock(func() error {
++		if desktopOwnsTray() {
++			return fmt.Errorf("hide the tray in AgentField Desktop settings")
++		}
++		if err := removeTrayAgent(trayPlistPath()); err != nil {
++			return err
++		}
++		return launchdsvc.RemoveLegacyTrayBundle(home())
++	})
++}
++
++func syncDesktopTray(visible bool, login string) error {
++	program, err := os.Executable()
++	if err != nil {
++		return err
++	}
++	return withTrayLock(func() error { return syncPackagedTray(program, visible, login) })
++}
++
++func syncPackagedTray(program string, visible bool, login string) error {
++	native := desktopLoginStatus()
++	legacy, err := readTrayAgent(trayPlistPath())
++	if err != nil {
++		return err
++	}
++	atLogin := login == "login" || login == "auto" && (native.registered() || len(legacy) > 0 && legacyTrayAtLogin())
++	digest, ok := launchdsvc.FileSHA256(program)
++	if !ok {
++		return fmt.Errorf("could not fingerprint the bundled tray at %s", program)
++	}
++	previous, _ := os.ReadFile(desktopMarkerPath())
++	marker := []byte(program + "\n" + digest + "\n")
++	if !visible {
++		if err := setDesktopLogin(native, false); err != nil {
++			return err
++		}
++		if err := removeTrayAgent(traySessionPath()); err != nil {
++			return err
++		}
++		if err := removeTrayAgent(trayPlistPath()); err != nil {
++			return err
++		}
++		if err := launchdsvc.RemoveLegacyTrayBundle(home()); err != nil {
++			return
+```
+
+---
+
+### Incident Patch 3: `cb7f77ee` (2026-11-23)
+**Commit Message**: fix(sdk-go): panic on nil skill in IncludeRouter and name the handler (#1233)
+
+**File**: `sdk/go/agent/agent_invariant_test.go` (modified, +2/-2)
+```diff
+@@ -231,9 +231,9 @@ func TestInvariant_Agent_LocalCallIsolation(t *testing.T) {
+ // registering a nil handler panics immediately rather than silently storing it.
+ func TestInvariant_Agent_NilHandlerPanics(t *testing.T) {
+ 	a := makeMinimalAgent(t)
+-	assert.Panics(t, func() {
++	assert.PanicsWithValue(t, `agentfield: reasoner "bad": nil handler`, func() {
+ 		a.RegisterReasoner("bad", nil)
+-	}, "registering nil handler must panic")
++	}, "registering nil handler must panic and name the reasoner")
+ }
+ 
+ // TestInvariant_Agent_ExecuteUnknownReasoner returns a non-nil error.
+```
+
+**File**: `sdk/go/agent/agent_register.go` (modified, +9/-3)
+```diff
+@@ -2,13 +2,19 @@ package agent
+ 
+ import (
+ 	"encoding/json"
+-	"errors"
++	"fmt"
+ )
+ 
++// nilHandlerError reports a nil handler for the reasoner or skill called name,
++// so the offender can be found in an agent with many routers.
++func nilHandlerError(kind, name string) error {
++	return fmt.Errorf("agentfield: %s %q: nil handler", kind, name)
++}
++
+ // RegisterReasoner makes a handler available at /reasoners/{name}.
+ func (a *Agent) RegisterReasoner(name string, handler HandlerFunc, opts ...ReasonerOption) {
+ 	if handler == nil {
+-		panic("nil handler supplied")
++		panic(nilHandlerError("reasoner", name).Error())
+ 	}
+ 
+ 	meta := &Reasoner{
+@@ -50,7 +56,7 @@ func (a *Agent) RegisterReasoner(name string, handler HandlerFunc, opts ...Reaso
+ // RegisterSkill makes a deterministic handler available at /skills/{name}.
+ func (a *Agent) RegisterSkill(name string, handler HandlerFunc, opts ...ReasonerOption) error {
+ 	if handler == nil {
+-		return errors.New("nil handler supplied")
++		return nilHandlerError("skill", name)
+ 	}
+ 
+ 	meta := &Reasoner{
+```
+
+**File**: `sdk/go/agent/router.go` (modified, +5/-1)
+```diff
+@@ -172,7 +172,11 @@ func (r *Router) flatten(prefix string, inheritedTags []string) []routerHandlerE
+ func (a *Agent) IncludeRouter(router *Router, opts RouterOptions) {
+ 	for _, e := range router.flatten(opts.Prefix, opts.Tags) {
+ 		if e.skill {
+-			a.RegisterSkill(e.name, e.handler, e.opts...)
++			// IncludeRouter has no error return, so a rejected skill panics like
++			// the reasoner branch below instead of silently going missing.
++			if err := a.RegisterSkill(e.name, e.handler, e.opts...); err != nil {
++				panic(err.Error())
++			}
+ 			continue
+ 		}
+ 		a.RegisterReasoner(e.name, e.handler, e.opts...)
+```
+
+**File**: `sdk/go/agent/router_test.go` (modified, +34/-0)
+```diff
+@@ -300,3 +300,37 @@ func TestRouter_IssueExample(t *testing.T) {
+ 	mustNotExecute(t, b, "users.get-profile")
+ 	mustNotExecute(t, b, "orders.create")
+ }
++
++// A nil handler on a router must fail loudly when the router is mounted, for
++// skills as well as reasoners, and the message must name the mounted handler.
++func TestRouter_NilHandlerPanicsOnMount(t *testing.T) {
++	tests := []struct {
++		name     string
++		register func(*agent.Router)
++		want     string
++	}{
++		{
++			name:     "skill",
++			register: func(r *agent.Router) { r.RegisterSkill("lookup", nil) },
++			want:     `agentfield: skill "orders.lookup": nil handler`,
++		},
++		{
++			name:     "reasoner",
++			register: func(r *agent.Router) { r.RegisterReasoner("lookup", nil) },
++			want:     `agentfield: reasoner "orders.lookup": nil handler`,
++		},
++	}
++	for _, tc := range tests {
++		t.Run(tc.name, func(t *testing.T) {
++			r := agent.NewRouter()
++			tc.register(r)
++
++			defer func() {
++				if got := recover(); got != tc.want {
++					t.Fatalf("IncludeRouter panic = %v, want %q", got, tc.want)
++				}
++			}()
++			newTestAgent(t).IncludeRouter(r, agent.RouterOptions{Prefix: "orders"})
++		})
++	}
++}
+```
+
+**File**: `sdk/go/agent/skill_registration_additional_test.go` (modified, +1/-1)
+```diff
+@@ -23,7 +23,7 @@ func TestRegisterSkill_HTTPDiscoveryAndLocalExecution(t *testing.T) {
+ 	})
+ 	require.NoError(t, err)
+ 
+-	require.Error(t, a.RegisterSkill("bad", nil))
++	require.EqualError(t, a.RegisterSkill("bad", nil), `agentfield: skill "bad": nil handler`)
+ 	require.NoError(t, a.RegisterSkill("add", func(ctx context.Context, input map[string]any) (any, error) {
+ 		return map[string]any{"ok": input["ok"]}, nil
+ 	}, WithReasonerTags("deterministic"), WithRequireRealtimeValidation()))
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1240** (2026-11-23): fix(desktop): extract deploy-engine zips with tar.exe so the Windows installer builds again (@AbirAbbas)
+- **PR #1238** (2026-11-23): feat: generic app link (owner proof, provider-agnostic live watch and steer, contract doc) (@AbirAbbas)
+- **PR #1236** (2026-11-23): fix(tray): reduce endpoint-security false positives on macOS (@AbirAbbas)
+- **PR #1233** (2026-11-23): fix(sdk-go): panic on nil skill in IncludeRouter and name the handler (@Aditya-Tripuraneni)
+- **PR #1232** (2026-11-23): docs: fix broken relative links in examples and SDK READMEs (@radasanuflorin)
 - **PR #1230** (2026-11-22): docs(skills): add agentfield-sdk, a reference skill for coding agents (@santoshkumarradha)
-- **PR #1220** (2026-11-21): docs: add a short comparison section to the README (@santoshkumarradha)
-- **PR #1217** (2026-11-19): fix(sdk-go): honor the Retry-After header on 429 responses (@pcbeingused333)
-- **PR #1215** (closed): fix(sdk-go): record watched CodeAF harness usage (#1183) (@ZeroPoint95)
-- **PR #1214** (closed): fix(go-sdk): keep a custom harness binary on the resolved provider, not legacy pin (@ZeroPoint95)
-- **PR #1213** (closed): fix(sdk/go/ai): bound MaxTokens and HTTP timeout for partial AI configs (@ZeroPoint95)
 
 ---
 
@@ -1623,50 +2335,58 @@ Co-authored-by: CodeAF <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(skills): add agentfield-sdk, a reference skill for coding agents
+## X. sdk-python): record token usage for every tool-calling turn in ai(tools=...)
 
 **RULE**:
-When implementing operations in `skills/agentfield-sdk/SKILL.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `sdk/python/agentfield/agent_ai.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `198e6e89`: docs(skills): add agentfield-sdk, a reference skill for coding agents. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dc802dcb`: sdk-python): record token usage for every tool-calling turn in ai(tools=...). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `skills/agentfield-sdk/SKILL.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdk/python/agentfield/agent_ai.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
----
-name: agentfield-sdk
-description: "Reference for writing, running and deploying agents with the AgentField Python and TypeScript SDKs: install, a minimal agent in each language, calling it over REST (sync, async, polling, webhooks), cross-agent calls, human approval, and where identity, policy and audit live. Use when the user asks to build with AgentField, or the project already depends on `agentfield` (PyPI) or `@agentfield/sdk` (npm). If the user asked for a different framework, use that one; this skill only explains how AgentField works."
----
+                    turn_resp = await rate_limiter.execute_with_retry(
+                        _call_with_fallbacks
+                    )
+                else:
+                    turn_resp = await _call_with_fallbacks()
+                try:
+                    _record_tool_turn_usage(turn_resp, params)
+                except Exception as e:
+                    # Usage accounting is an observation side effect: it must
+                    # never fail a completion that already succeeded.
+                    log_debug(f"Tool loop: usage recording failed: {e}")
+                return turn_resp
 
-# Building agents with AgentField
+            def _record_tool_turn_usage(turn_resp, params):
+                """Record token usage for one LLM turn of the tool loop."""
+                from agentfield.cost_tracker import (
+                    derive_provider,
+                    get_current_cost_tracker,
+                )
+                from .multimodal_response import detect_multimodal_response
+                from .usage_routing import routing_provider
 
-AgentField is an open-source (Apache-2.0) framework for running AI agents as
-backend services. You write agents as ordinary Python, TypeScript or Go
-functions; a Go **control plane** routes every call between them, records each
-run, and exposes each agent function as a REST endpoint. Durable async
-execution, retries, human approval, shared memory, per-agent cryptographic
-identity (W3C DIDs), tag-based access policies and verifiable-credential audit
-trails are part of the framework, not add-ons.
-
-Vocabulary used everywhere in the SDKs, CLI and API:
-
-| Term | Meaning |
-|---|---|
-| control plane | The `
+                tracker = get_current_cost_tracker() or getattr(
+                    self.agent, "cost_tracker", None
+                )
+                if tracker is None:
+ 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+                    return await rate_limiter.execute_with_retry(_call_with_fallbacks)
+                return await _call_with_fallbacks()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `198e6e89` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dc802dcb` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

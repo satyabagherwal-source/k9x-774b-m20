@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T03:05:30.204Z",
+  "last_updated": "2026-11-24T03:14:33.906Z",
   "total_records": 2485,
   "domains": {
     "A": {
@@ -9218,8 +9218,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "213040ee37ebcbf45577238150907d517839dd2a66bf5f146048f37273975af1",
-      "created_at": "2026-11-24T03:05:28.201Z"
+      "content_hash": "f0d2318ec9d807d6d87ac040b76e311848453948db0d349d0a525309ef0b43fd",
+      "created_at": "2026-11-24T03:14:33.906Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -11474,8 +11474,8 @@
       "title": "Technical Construction Intelligence: databendlabs/databend Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-databendlabs-databend-technical-construction-intelligence-databendlabs-databend-.md",
       "repository": "databendlabs/databend",
-      "content_hash": "bd272ca18e748299df521974e8d0760e5df543bbf409357f452c36971af78890",
-      "created_at": "2026-11-23T03:47:04.551Z"
+      "content_hash": "b442be8ee8141fd990842f89f412f4c671255227ddc4032ee814e34b7b74f6d7",
+      "created_at": "2026-11-24T03:14:28.610Z"
     },
     "domain_intelligence-research-knowledge-intelligence-google-t5-t5-small-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-google-t5-t5-small-core-invariants",
@@ -16734,8 +16734,8 @@
       "title": "Technical Construction Intelligence: Agent-Field/agentfield Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-agent-field-agentfield-technical-construction-intelligence-agent-field-agentfiel.md",
       "repository": "Agent-Field/agentfield",
-      "content_hash": "3654b27640a1d62d85b3f98350fb4ca6f889f2c9058fc51338d425e085b0d19e",
-      "created_at": "2026-11-23T05:06:42.301Z"
+      "content_hash": "83b2d49a20b35216b481f42c588030c9898b2fa6ab5b2e4351433dd67d36c9cb",
+      "created_at": "2026-11-24T03:14:23.241Z"
     },
     "domain_intelligence-architecture-intelligence-trinodb-trino-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-trinodb-trino-core-invariants",
@@ -16812,8 +16812,8 @@
       "title": "Technical Construction Intelligence: agent-field-agentfield-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-agent-field-agentfield-learnings-technical-construction-intelligence-agent-field.md",
       "repository": "agent-field-agentfield-learnings",
-      "content_hash": "4376acb8f4d4e05e4fa0d27d8f867bbf4389d487f4dcf59446eacc9e7b972f60",
-      "created_at": "2026-11-23T05:06:53.320Z"
+      "content_hash": "e0cb78ec70178fc98977d65a3c9b0b239da3f2edc2c2d8032d52ba12cee0bc45",
+      "created_at": "2026-11-24T03:14:32.208Z"
     },
     "domain_intelligence-research-knowledge-intelligence-mudler-locate-anything-cpp-gguf-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-mudler-locate-anything-cpp-gguf-core-invariants",
@@ -21265,8 +21265,8 @@
       "title": "Technical Construction Intelligence: databendlabs-databend-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-databendlabs-databend-learnings-technical-construction-intelligence-databendlabs.md",
       "repository": "databendlabs-databend-learnings",
-      "content_hash": "4badc754d413955cba0887c5e00dd7c463d90cc26348fc0a563dd3d6b9b0c3c1",
-      "created_at": "2026-11-23T03:47:09.240Z"
+      "content_hash": "b7d30f56cf3ced1929f1bf2308486605860dfe6a5fa0fbf04f6aaafb8367bc5d",
+      "created_at": "2026-11-24T03:14:33.081Z"
     },
     "domain_intelligence-research-knowledge-intelligence-abiray-minimax-h3-image-gguf-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-abiray-minimax-h3-image-gguf-core-invariants",

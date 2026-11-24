@@ -4313,10 +4313,10 @@
     "repository": "Agent-Field/agentfield",
     "platform": "github",
     "sourceUrl": "https://github.com/Agent-Field/agentfield",
-    "sourceVersion": "198e6e89",
+    "sourceVersion": "1b3c68a3",
     "license": "Apache-2.0",
-    "contentHash": "52beac9861b277a2605b6ea7d5e57fb74a5f4f9bff8c0b8087828b273217bae9",
-    "lastHarvestedAt": "2026-11-23T05:06:41.940Z",
+    "contentHash": "6d21f709a545b0e847de531baeafd76f49c68c2288f164906ed9d4fe5f1f9f20",
+    "lastHarvestedAt": "2026-11-24T03:14:22.818Z",
     "learningId": "learn-github-agent-field-agentfield"
   },
   "typedb-typedb": {
@@ -7493,10 +7493,10 @@
     "repository": "databendlabs/databend",
     "platform": "github",
     "sourceUrl": "https://github.com/databendlabs/databend",
-    "sourceVersion": "17bcab80",
+    "sourceVersion": "b5eb22e2",
     "license": "Apache-2.0",
-    "contentHash": "cbcf2a8727f31a858881659eafc8fed86c292a427bf69582a25f0ee0c6616419",
-    "lastHarvestedAt": "2026-11-23T03:47:04.141Z",
+    "contentHash": "a2ba92cf6feb719084e1b9a9019774344e13f907fc37d08c2ba6cd25f095d8be",
+    "lastHarvestedAt": "2026-11-24T03:14:28.192Z",
     "learningId": "learn-github-databendlabs-databend"
   },
   "atanunq-viu": {

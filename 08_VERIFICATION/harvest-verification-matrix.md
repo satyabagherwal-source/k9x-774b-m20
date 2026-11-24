@@ -12568,3 +12568,5 @@
 | `CYCLE-20261124-VIX3` | `2026-11-24T02:31:00.231Z` | `rtk-ai/rtk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10181` | Yes (`9b967511...`) |
 | `CYCLE-20261124-VSW4` | `2026-11-24T02:31:13.156Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10182` | Yes (`82575462...`) |
 | `CYCLE-20261124-OI99` | `2026-11-24T02:53:32.397Z` | `kirillzyusko/react-native-keyboard-controller` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md` | Yes (`183a3e18...`) |
+| `CYCLE-20261124-FB32` | `2026-11-24T03:14:22.814Z` | `Agent-Field/agentfield` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10183` | Yes (`6d21f709...`) |
+| `CYCLE-20261124-FF8C` | `2026-11-24T03:14:28.188Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10184` | Yes (`a2ba92cf...`) |

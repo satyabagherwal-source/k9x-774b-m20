@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T03:05:30.546Z",
+  "last_updated": "2026-11-24T03:14:34.082Z",
   "total_verified_learnings": 9089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24377,
+  "total_items": 24383,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "213040ee37ebcbf45577238150907d517839dd2a66bf5f146048f37273975af1",
+      "content_hash": "f0d2318ec9d807d6d87ac040b76e311848453948db0d349d0a525309ef0b43fd",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T03:05:28.201Z"
+      "persisted_at": "2026-11-24T03:14:33.906Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "7494bdef650fc50848162b2ed3dfd7b08cbb3ee72ea18082cf3927f3054d07cd",
+      "content_hash": "6721903578ffa89fa635d6604322ac1e7d482ab7b549f6c13ae3fcf27144eef4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T03:05:28.378Z"
+      "persisted_at": "2026-11-24T03:14:34.082Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -217675,8 +217675,8 @@
       "slug": "databendlabs-databend",
       "platform": "github",
       "source_url": "https://github.com/databendlabs/databend",
-      "source_version": "f469c616",
-      "content_hash": "c337eb061506532f3246b1da538da9acc41c5d201149ae05cd3b0ab32f478a25",
+      "source_version": "b5eb22e2",
+      "content_hash": "a2ba92cf6feb719084e1b9a9019774344e13f907fc37d08c2ba6cd25f095d8be",
       "dossier_path": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "promoted_rules": [
@@ -217719,6 +217719,11 @@
           "number": 9878,
           "title": "output in-memory final aggregate results a block at a time",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10184,
+          "title": "keep waiting when a table lock watch is refused",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -217726,7 +217731,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T01:58:55.244Z",
+      "verified_at": "2026-11-24T03:14:27.973Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217768,10 +217773,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-databendlabs-databend-technical-construction-intelligence-databendlabs-databend-.md",
       "title": "Technical Construction Intelligence: databendlabs/databend Core Invariants",
       "repository": "databendlabs/databend",
-      "source_version": "17bcab80",
-      "content_hash": "bd272ca18e748299df521974e8d0760e5df543bbf409357f452c36971af78890",
+      "source_version": "b5eb22e2",
+      "content_hash": "b442be8ee8141fd990842f89f412f4c671255227ddc4032ee814e34b7b74f6d7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T03:47:04.551Z"
+      "persisted_at": "2026-11-24T03:14:28.610Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-databendlabs-databend": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-databendlabs-databend",
@@ -217780,10 +217785,10 @@
       "relative_path": "08_VERIFICATION/databendlabs-databend-verification-protocol-empirical-defect-shield-for-databend.md",
       "title": "Verification Protocol: Empirical Defect Shield for databendlabs/databend",
       "repository": "databendlabs/databend",
-      "source_version": "17bcab80",
-      "content_hash": "16611ddc28fb94f1cc7358550b74bc79d313b202a4babb507af79393eb469f71",
+      "source_version": "b5eb22e2",
+      "content_hash": "e6777b5c25a27f8fb18ebd983f954b171841f301c0691cec847448d1f5c28942",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T03:47:04.723Z"
+      "persisted_at": "2026-11-24T03:14:28.785Z"
     },
     "learn-huggingface-google-t5-t5-small": {
       "learning_id": "learn-huggingface-google-t5-t5-small",
@@ -233563,8 +233568,8 @@
       "slug": "agent-field-agentfield",
       "platform": "github",
       "source_url": "https://github.com/Agent-Field/agentfield",
-      "source_version": "198e6e89",
-      "content_hash": "52beac9861b277a2605b6ea7d5e57fb74a5f4f9bff8c0b8087828b273217bae9",
+      "source_version": "1b3c68a3",
+      "content_hash": "6d21f709a545b0e847de531baeafd76f49c68c2288f164906ed9d4fe5f1f9f20",
       "dossier_path": "07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
       "promoted_rules": [
@@ -233607,6 +233612,11 @@
           "number": 10022,
           "title": "docs(skills): add agentfield-sdk, a reference skill for coding agents",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10183,
+          "title": "record token usage for every tool-calling turn in ai(tools=...)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -233614,7 +233624,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T05:06:41.746Z",
+      "verified_at": "2026-11-24T03:14:22.593Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233656,10 +233666,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-agent-field-agentfield-technical-construction-intelligence-agent-field-agentfiel.md",
       "title": "Technical Construction Intelligence: Agent-Field/agentfield Core Invariants",
       "repository": "Agent-Field/agentfield",
-      "source_version": "198e6e89",
-      "content_hash": "3654b27640a1d62d85b3f98350fb4ca6f889f2c9058fc51338d425e085b0d19e",
+      "source_version": "1b3c68a3",
+      "content_hash": "83b2d49a20b35216b481f42c588030c9898b2fa6ab5b2e4351433dd67d36c9cb",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T05:06:42.301Z"
+      "persisted_at": "2026-11-24T03:14:23.241Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-agent-field-agentfield": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-agent-field-agentfield",
@@ -233668,10 +233678,10 @@
       "relative_path": "08_VERIFICATION/agent-field-agentfield-verification-protocol-empirical-defect-shield-for-agent-f.md",
       "title": "Verification Protocol: Empirical Defect Shield for Agent-Field/agentfield",
       "repository": "Agent-Field/agentfield",
-      "source_version": "198e6e89",
-      "content_hash": "3f9f12f12ad8ded7a73b3d52ad8e982e83ae2adc93c0e825c203f5e2ee8ed53d",
+      "source_version": "1b3c68a3",
+      "content_hash": "ef7b4fb1aabc2cfd985ee2ea54d0b6deeeed69e2e2be97ef081a86aa7760f032",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T05:06:42.466Z"
+      "persisted_at": "2026-11-24T03:14:23.416Z"
     },
     "learn-github-trinodb-trino": {
       "learning_id": "learn-github-trinodb-trino",
@@ -233874,9 +233884,9 @@
       "title": "Technical Construction Intelligence: agent-field-agentfield-learnings Core Invariants",
       "repository": "agent-field-agentfield-learnings",
       "source_version": "HEAD",
-      "content_hash": "4376acb8f4d4e05e4fa0d27d8f867bbf4389d487f4dcf59446eacc9e7b972f60",
+      "content_hash": "e0cb78ec70178fc98977d65a3c9b0b239da3f2edc2c2d8032d52ba12cee0bc45",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T05:06:53.320Z"
+      "persisted_at": "2026-11-24T03:14:32.208Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-agent-field-agentfield-learnin": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-agent-field-agentfield-learnin",
@@ -233886,9 +233896,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for agent-field-agentfield-learnings",
       "repository": "agent-field-agentfield-learnings",
       "source_version": "HEAD",
-      "content_hash": "833edf8ad4a737efa0112e3b0efca00a9917b2c26bf93eaf7c54c719d2392bb5",
+      "content_hash": "74d852109a151d4793612264dd63f1e438f305447bab72d0a00454a2103ff9af",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T05:06:53.488Z"
+      "persisted_at": "2026-11-24T03:14:32.384Z"
     },
     "learn-huggingface-mudler-locate-anything-cpp-gguf": {
       "learning_id": "learn-huggingface-mudler-locate-anything-cpp-gguf",
@@ -247850,9 +247860,9 @@
       "title": "Technical Construction Intelligence: databendlabs-databend-learnings Core Invariants",
       "repository": "databendlabs-databend-learnings",
       "source_version": "HEAD",
-      "content_hash": "4badc754d413955cba0887c5e00dd7c463d90cc26348fc0a563dd3d6b9b0c3c1",
+      "content_hash": "b7d30f56cf3ced1929f1bf2308486605860dfe6a5fa0fbf04f6aaafb8367bc5d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T03:47:09.240Z"
+      "persisted_at": "2026-11-24T03:14:33.081Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-databendlabs-databend-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-databendlabs-databend-learning",
@@ -247862,9 +247872,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for databendlabs-databend-learnings",
       "repository": "databendlabs-databend-learnings",
       "source_version": "HEAD",
-      "content_hash": "0d1b8f79d0c1440cf5461e7837f25c9dc36b98c418f3425b5c8b1ae22ccddb10",
+      "content_hash": "f625b77fd221744f750d515b2d4be6607cb9bf1bc0cf55d006464c5e34e99440",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T03:47:09.418Z"
+      "persisted_at": "2026-11-24T03:14:33.254Z"
     },
     "learn-huggingface-abiray-minimax-h3-image-gguf": {
       "learning_id": "learn-huggingface-abiray-minimax-h3-image-gguf",
@@ -319628,13 +319638,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-3UFQ-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-FJIA-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "7ad5c21e4ac991ac594991cced265a5598ad0879932b64e5384b4a51c2ec609c",
+      "content_hash": "ddfcbc4ca17966cd5f63be97c29a812e66ab2a7815423edf37d0db70f268b402",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T03:05:28.026Z"
+      "persisted_at": "2026-11-24T03:14:33.734Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
@@ -332495,6 +332505,82 @@
       "content_hash": "4aad1549f10e4209f741f2620376410f78447cb053481763c86ed362833fc4f7",
       "domain_letter": "H",
       "persisted_at": "2026-11-24T02:53:37.116Z"
+    },
+    "rule-10183": {
+      "learning_id": "rule-10183",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10183,
+      "title": "record token usage for every tool-calling turn in ai(tools=...)",
+      "source_url": "https://github.com/Agent-Field/agentfield",
+      "source_version": "1b3c68a3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T03:14:22.593Z"
+    },
+    "candidate_directive-record-token-usage-for-every-tool-calling-turn-in-ai-tools": {
+      "item_id": "candidate_directive-record-token-usage-for-every-tool-calling-turn-in-ai-tools",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FBA0-record-token-usage-for-every-tool-calling-turn-in-ai-tools.md",
+      "title": "record token usage for every tool-calling turn in ai(tools=...)",
+      "repository": "Agent-Field/agentfield",
+      "source_version": "1b3c68a3",
+      "content_hash": "12cde977746cd3a2776fe1dc2f15437c029a57022ee911cc1fc22e7d086894f2",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T03:14:23.067Z"
+    },
+    "rule-10184": {
+      "learning_id": "rule-10184",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10184,
+      "title": "keep waiting when a table lock watch is refused",
+      "source_url": "https://github.com/databendlabs/databend",
+      "source_version": "b5eb22e2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T03:14:27.973Z"
+    },
+    "candidate_directive-keep-waiting-when-a-table-lock-watch-is-refused": {
+      "item_id": "candidate_directive-keep-waiting-when-a-table-lock-watch-is-refused",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FFF6-keep-waiting-when-a-table-lock-watch-is-refused.md",
+      "title": "keep waiting when a table lock watch is refused",
+      "repository": "databendlabs/databend",
+      "source_version": "b5eb22e2",
+      "content_hash": "7082a4c2989f4331044ef32feee35fdbf43ccf8848fa75facfb2ecb6c9ca3998",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T03:14:28.437Z"
+    },
+    "candidate_directive-sdk-python-record-token-usage-for-every-tool-calling-turn-in-ai-tools": {
+      "item_id": "candidate_directive-sdk-python-record-token-usage-for-every-tool-calling-turn-in-ai-tools",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FI6Y-sdk-python-record-token-usage-for-every-tool-calling-turn-in-ai-tools.md",
+      "title": "sdk-python): record token usage for every tool-calling turn in ai(tools=...)",
+      "repository": "agent-field-agentfield-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2aae6101925cc1391ef7ce18bef1ad9e5731d227851b89a2e4fc33c8879f74c6",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T03:14:32.031Z"
+    },
+    "candidate_directive-locks-keep-waiting-when-a-table-lock-watch-is-refused": {
+      "item_id": "candidate_directive-locks-keep-waiting-when-a-table-lock-watch-is-refused",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FIVD-locks-keep-waiting-when-a-table-lock-watch-is-refused.md",
+      "title": "locks: keep waiting when a table lock watch is refused",
+      "repository": "databendlabs-databend-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2106f89d25f817d8ca2edb6252ecb8613337e8e5dd22ce7f8765186606804c04",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T03:14:32.908Z"
     }
   },
   "ai-builder-brain": {

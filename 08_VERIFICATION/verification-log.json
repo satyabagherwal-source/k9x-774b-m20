@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-LH02",
-    "timestamp": "2026-11-22T07:27:46.514Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "9457b0dfecc7c5fddd268c3cc11c737f5566885c49e719d4aaa698571a0cea6a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-M9I6",
-    "timestamp": "2026-11-22T07:28:23.454Z",
-    "repository": "Lakonik/pi-H3",
-    "learningId": "learn-huggingface-lakonik-pi-h3",
-    "contentHash": "023d0227a5d2691c36f2ebe26a6d2c8e9e92b8e35cf820dd0b9cd8d1737070b9",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-XEO5",
     "timestamp": "2026-11-22T07:37:03.365Z",
     "repository": "thinkingmachines/Inkling-2-Small",
@@ -7492,6 +7462,36 @@
     "contentHash": "183a3e1820374f7d0913bfaee0d6550adec3ec14731addeb81f0b7867cd56f03",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-FB32",
+    "timestamp": "2026-11-24T03:14:22.814Z",
+    "repository": "Agent-Field/agentfield",
+    "learningId": "learn-github-agent-field-agentfield",
+    "contentHash": "6d21f709a545b0e847de531baeafd76f49c68c2288f164906ed9d4fe5f1f9f20",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-FF8C",
+    "timestamp": "2026-11-24T03:14:28.188Z",
+    "repository": "databendlabs/databend",
+    "learningId": "learn-github-databendlabs-databend",
+    "contentHash": "a2ba92cf6feb719084e1b9a9019774344e13f907fc37d08c2ba6cd25f095d8be",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

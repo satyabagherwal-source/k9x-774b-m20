@@ -12601,3 +12601,5 @@ Every entry in this ledger must capture:
 | `learn-github-rtk-ai-rtk` | `https://github.com/rtk-ai/rtk` | `c43b5c44` | Multi-dimensional audit evidence | 2026-11-24T02:31:00.236Z |
 | `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `52209f10` | Multi-dimensional audit evidence | 2026-11-24T02:31:13.162Z |
 | `learn-github-kirillzyusko-react-native-keyboard-controller` | `https://github.com/kirillzyusko/react-native-keyboard-controller` | `dd4ffd54` | Multi-dimensional audit evidence | 2026-11-24T02:53:32.401Z |
+| `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `1b3c68a3` | Multi-dimensional audit evidence | 2026-11-24T03:14:22.818Z |
+| `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `b5eb22e2` | Multi-dimensional audit evidence | 2026-11-24T03:14:28.192Z |
