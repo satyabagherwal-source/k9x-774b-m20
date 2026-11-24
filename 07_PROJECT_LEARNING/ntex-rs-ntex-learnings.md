@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md`  
 > **Source**: github ([https://github.com/ntex-rs/ntex](https://github.com/ntex-rs/ntex))  
-> **Source Version**: `0efc7829`  
+> **Source Version**: `53f7a3d9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T16:20:29.807Z  
+> **Timestamp**: 2026-11-24T18:00:21.265Z  
 > **Learning ID**: `learn-github-ntex-rs-ntex`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ntex-rs/ntex](https://github.com/ntex-rs/ntex))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T16:20:29.799Z  
+> **Harvest Timestamp**: 2026-11-24T18:00:21.004Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: framework for composable networking services 
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2556 stars
+- **Stars / Engagement**: 2557 stars
 
 ---
 
@@ -2423,8 +2423,13 @@ pub(crate) mod testing {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ca7552a3` (2026-11-22)
-**Commit Message**: io-uring: Post deferred completions when the submission queue is flushed during a busy turn, instead of collecting them until the loop waits for events
+### Incident Patch 1: `a736a716` (2026-11-23)
+**Commit Message**: Add fixes files support
+
+* io-uring: Register stream sockets in the ring's fixed file table, so reads
+  and writes skip the per-operation descriptor lookup. The default table size
+  is 16384, capped by the open file limit; set `NTEX_URING_FIXED_FILES` to
+  change it, or to `0` to disable it
 
 **File**: `Cargo.toml` (modified, +1/-1)
 ```diff
@@ -2432,26 +2437,47 @@ Observed empirical fixes and code patches:
  ntex-http = "2.2.1"
  ntex-io = "4.8.0"
  ntex-macros = "4.8.0"
--ntex-net = "4.12.3"
-+ntex-net = "4.12.4"
+-ntex-net = "4.12.4"
++ntex-net = "4.13.0"
  ntex-router = "2.3.0"
- ntex-rt = "4.10.0"
+ ntex-rt = "4.10.1"
  ntex-server = "4.6.2"
 ```
 
-**File**: `ntex-net/CHANGES.md` (modified, +5/-0)
+**File**: `docs/4-runtime.md` (modified, +8/-0)
 ```diff
-@@ -1,5 +1,10 @@
+@@ -42,6 +42,14 @@ Tokio and Compio are useful when your application uses libraries from those
+ ecosystems. The native backend uses the platform reactor directly, without
+ running a second general-purpose runtime.
+ 
++With io_uring, each runtime thread registers its sockets in the ring's fixed
++file table, so reads and writes skip the kernel's per-operation descriptor
++lookup. The table has 16384 slots by default, capped by the open file limit
++(`RLIMIT_NOFILE`). Each slot takes 8 to 16 bytes of kernel memory. Connections
++beyond the table size, and all connections on kernels older than 5.19, use
++plain descriptors. To change the size, set the `NTEX_URING_FIXED_FILES`
++environment variable before the first runtime starts; `0` disables the table.
++
+ Let `#[ntex::main]` own the process entry point unless you need another setup.
+ `SystemRunner::block_on` blocks the current thread. Do not call it inside an
+ async Tokio task to nest one runtime inside another.
+```
+
+**File**: `ntex-net/CHANGES.md` (modified, +7/-0)
+```diff
+@@ -1,5 +1,12 @@
  # Changes
  
-+## [4.12.4] - 2026-11-22
++## [4.13.0] - 2026-11-24
 +
-+* io-uring: Post deferred completions when the submission queue is flushed
-+  during a busy turn, instead of collecting them until the loop waits for events
++* io-uring: Register stream sockets in the ring's fixed file table, so reads
++  and writes skip the per-operation descriptor lookup. The default table size
++  is 16384, capped by the open file limit; set `NTEX_URING_FIXED_FILES` to
++  change it, or to `0` to disable it
 +
- ## [4.12.3] - 2026-11-17
+ ## [4.12.5] - 2026-11-23
  
- * io-uring: Fix use-after-free when a task or an io handler panics, the reactor
+ * io-uring: `Handle::write` submits the send directly, instead of waking the
 ```
 
 **File**: `ntex-net/Cargo.toml` (modified, +1/-1)
@@ -2459,87 +2485,202 @@ Observed empirical fixes and code patches:
 @@ -1,6 +1,6 @@
  [package]
  name = "ntex-net"
--version = "4.12.3"
-+version = "4.12.4"
+-version = "4.12.5"
++version = "4.13.0"
  authors = ["ntex contributors <team@ntex.rs>"]
  description = "ntexwork utils for ntex framework"
  keywords = ["network", "framework", "async", "futures"]
 ```
 
-**File**: `ntex-net/src/uring/reactor.rs` (modified, +23/-18)
+**File**: `ntex-net/src/uring/reactor.rs` (modified, +18/-0)
 ```diff
-@@ -592,6 +592,24 @@ impl Reactor {
+@@ -148,6 +148,24 @@ impl ReactorApi {
+     pub fn unregister_buf_ring(&self, bgid: u16) -> io::Result<()> {
+         self.inner.ring.submitter().unregister_buf_ring(bgid)
      }
++
++    /// Registers an empty file table with `nr` slots, kernel 5.19 or greater.
++    ///
++    /// The ring has one table, it is released with the ring.
++    pub fn register_files_sparse(&self, nr: u32) -> io::Result<()> {
++        self.inner.ring.submitter().register_files_sparse(nr)
++    }
++
++    /// Replaces slots of the file table starting at `offset`, `-1` clears a slot.
++    ///
++    /// Issued operations keep the file they resolved, a replaced or cleared
++    /// file is released once they complete.
++    pub fn register_files_update(&self, offset: u32, fds: &[RawFd]) -> io::Result<usize> {
++        self.inner
++            .ring
++            .submitter()
++            .register_files_update(offset, fds)
++    }
  }
  
-+/// Submit the queue and post deferred completions without waiting.
-+///
-+/// With deferred task running only an enter with `GETEVENTS` runs task work,
-+/// a plain submit never posts completions that arrived since the last wait.
-+fn submit_getevents(
-+    sq: SubmissionQueue<'_, SEntry>,
-+    submitter: &Submitter<'_>,
-+) -> io::Result<usize> {
-+    sq.sync();
-+    // SAFETY: Valid arguments for an enter without extra arguments.
-+    let res = unsafe {
-+        submitter.enter::<libc::sigset_t>(sq.len() as u32, 0, EnterFlags::GETEVENTS.bits(), None)
+ /// io-uring reactor.
+```
+
+**File**: `ntex-net/src/uring/stream.rs` (modified, +365/-33)
+```diff
+@@ -1,8 +1,9 @@
+-use std::{cell::Cell, fmt, io, mem, num::NonZeroU32, os::fd::AsRawFd, ptr, rc::Rc, task::Poll};
++use std::os::fd::{AsRawFd, RawFd};
++use std::{cell::Cell, fmt, io, mem, num::NonZeroU32, ptr, rc::Rc, sync::OnceLock, task::Poll};
+ 
+ use ntex_bytes::{BufMut, BytePage, BytePages, Bytes, BytesMut, info::PageKind};
+ use ntex_io::{IoContext, IoTaskStatus};
+-use ntex_io_uring::{cqueue, opcode, types::Fd};
++use ntex_io_uring::{cqueue, opcode, types::Fd, types::Fixed};
+ use ntex_rt::Arbiter;
+ use slab::Slab;
+ use socket2::Socket;
+@@ -141,10 +142,34 @@ const IORING_RECVSEND_POLL_FIRST: u16 = 1;
+ /// Ask the kernel to report in the notification whether data was copied
+ const IORING_SEND_ZC_REPORT_USAGE: u16 = 8;
+ const IORING_NOTIF_USAGE_ZC_COPIED: usize = 1 << 31;
++/// Default size of the registered file table of a ring
++const FIXED_FILES: u32 = 16 * 1024;
++/// Kernel limit of the registered file table, `IORING_MAX_FIXED_FILES`
++const FIXED_FILES_MAX: u64 = 1 << 20;
++const FIXED_FILES_VAR: &str = "NTEX_URING_FIXED_FILES";
++
++/// Expands `$op` with `$fd` set to the stream's slot in the registered file
++/// table, or to its descriptor if it has no slot.
++macro_rules! with_fd {
++    ($item:expr, $fd:ident => $op:expr) => {
++        match $item.slot {
++            Some(slot) => {
++                let $fd = Fixed(slot);
++                $op
++            }
++            None => {
++                let $fd = $item.fd();
++                $op
++            }
++        }
 +    };
-+    // the kernel consumes entries during the enter, even if it fails
-+    sq.sync();
-+    res
++}
+ 
+ #[derive(Debug)]
+ struct StreamItem {
+     io: Socket,
++    /// Slot in the registered file table, see `FixedFiles`
++    slot: Option<u32>,
+     /// Generation of the slot, see `StreamId`
+     generation: u32,
+     flags: Flags,
+@@ -175,9 +200,13 @@ enum Operation {
+         page: BytePage,
+         state: SendState,
+     },
++    /// Close of the stream's slot in the file table, or of its descriptor if
++    /// it has no slot
+     Close {
+         id: StreamId,
+     },
++    /// Close of the descriptor of a stream with a slot
++    CloseFd,
+     Nop,
+ }
+ 
+@@ -451,10 +480,130 @@ struct StreamOpsStorage {
+     streams: Streams,
+     /// Provided buffers for receives that wait for input
+     bufs: Option<BufRing>,
++    /// Registered file table of the ring
++    files: FixedFiles,
+     /// `IORING_SEND_ZC_REPORT_USAGE` is supported, cleared on first `EINVAL`
+     zc_report: bool,
+ }
+ 
++/// Slots of the ring's registered file table, one per stream.
++///
++/// Operations on a registered socket skip the descriptor lookup and the file
++/// reference count update the kernel does for every operation on a plain
++/// descriptor. Streams beyond the table size use their descriptor.
++///
++/// A slot holds its own reference to the socket, the stream closes both the
++/// slot and the descriptor. The slot is reused only after its `Close`
++/// completed, a pending close would otherwise remove the next stream's socket.
++#[derive(Debug)]
++struct FixedFiles {
++    /// Number of slots, zero if the table is not available
++    cap: u32,
++    /// Slots below `next` were handed out
++    next: u32,
++    free: Vec<u32>,
 +}
 +
- impl AsRawFd for Reactor {
-     fn as_raw_fd(&self) -> RawFd {
-         self.fd
-@@ -680,9 +698,10 @@ impl ntex_rt::Driver for Reactor {
- 
-                     if sq.len() >= 96 {
-                         // flush the full queue without ending the turn; consumed
--                        // entries are published first, the enter may post more
-+                        // entries are published first, the enter posts completions
-+                        // that arrived during the turn
-                         cq.sync();
--                        if submitter.submit().is_err() {
-+                        if submit_getevents(sq, &submitter).is_err() {
-                             // the end of the turn retries and reports the error
-                             break true;
-                         }
-@@ -711,22 +730,8 @@ impl ntex_rt::Driver for Reactor {
-                 // submit publishes the queue tail, and skips the syscall if
-                 // there is nothing to submit and no deferred completions to post.
-                 let result = if more_tasks {
--                    // Without the taskrun flag a plain submit never runs deferred
--                    // task work, so a task that keeps the runtime busy would starve
--                    // completions. GETEVENTS with no minimum posts them without waiting.
--                    sq.sync();
--                    // SAFETY: Valid arguments for an enter without extra arguments.
--                    let res = unsafe {
--                        submitter.enter::<libc::sigset_t>(
--                            sq.len() as u32,
--                            0,
--                            EnterFlags::GETEVENTS.bits(),
--                            None,
--                        )
--                    };
--                    // the kernel consumes entries during the enter, even if it fails
--                    sq.sync();
--                    res
-+                    // a task that keeps the runtime busy would starve completions
-+                    submit_getevents(sq, &submitter)
-                 } else if more_changes
-                     || more_cqes
-                     || !cqueue::CompletionQueue::<'_, _>::is_empty(&cq)
++impl FixedFiles {
++    fn new(api: &ReactorApi) -> Self {
++        let mut cap = fixed_files_cap();
++        if cap != 0
++            && let Err(e) = api.register_files_sparse(cap)
++        {
++            // kernel older than 5.19, or the table does not fit
++            log::debug!("Cannot register io-uring file table with {cap} slots: {e:?}");
++            cap = 0;
++        }
++        FixedFiles {
++            cap,
++            next: 0,
++            free: Vec::new(),
++        }
++    }
++
++    /// Registers `fd` in a free slot, `None` if the table is full or not available.
++    fn register(&mut self, api: &ReactorApi, fd: RawFd) -> Option<u32> {
++        if self.cap == 0 {
++            return None;
++        }
++        let slot = if let Some(slot) = self.free.pop() {
++            slot
++        } else if self.next < self.cap {
++            self.next += 1;
++            self.next - 1
++        } else {
++            return None;
++        };
++
++        match api.register_files_update(slot, &[fd]) {
++            Ok(1) => Some(slot),
++            res => {
++                log::warn!("Cannot register socket in io-uring file table, disable: {res:?}");
++                self.free.push(slot);
++                self.cap = 0;
++                None
++            }
++        }
++    }
++
++    /// Frees `slot`, its `Close` completed.
++    fn release(&mut self, slot: u32) {
++        self.free.push(slot);
++    }
++
++    /// Clears every slot, a socket still registered closes with its descriptor.
++    fn clear(&mut self, api: &ReactorApi) {
++        if self.next != 0 {
++            if let Err(e) = api.register_files_update(0, &vec![-1; self.next as usize]) {
++                log::error!("Cannot clear io-uring file table: {e:?}");
++            }
++            self.next = 0;
++            self.free.clear();
++        }
++    }
++}
++
++/// Size of the registered file table of a rin
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1245** (2026-11-23): Add fixes files support (@fafhrd91)
+- **PR #1244** (2026-11-23): Document that the native runtime cancels a detached pending task once… (@fafhrd91)
 - **PR #1243** (2026-11-23): io-uring:  submits the send directly, instead of waking the connectio… (@fafhrd91)
 - **PR #1242** (2026-11-22): Various optimizations (@fafhrd91)
 - **PR #1241** (2026-11-21): Optimize copy slice (@fafhrd91)
 - **PR #1240** (2026-11-19): Fix code typos (@fafhrd91)
-- **PR #1239** (2026-11-19): Add Request and Response Streaming guide (@fafhrd91)
-- **PR #1237** (2026-11-19): Prepare release (@fafhrd91)
 
 ---
 
@@ -2559,13 +2700,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. io-uring: Post deferred completions when the submission queue is flushed during 
+## X. Add fixes files support
 
 **RULE**:
 When implementing operations in `Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ntex-rs/ntex. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ca7552a3`: io-uring: Post deferred completions when the submission queue is flushed during a busy turn, instead of collecting them until the loop waits for events. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a736a716`: Add fixes files support. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.toml`.
@@ -2573,14 +2714,14 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-ntex-net = "4.12.4"
+ntex-net = "4.13.0"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-ntex-net = "4.12.3"
+ntex-net = "4.12.4"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ca7552a3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a736a716` are properly handled with clean fallback behavior.

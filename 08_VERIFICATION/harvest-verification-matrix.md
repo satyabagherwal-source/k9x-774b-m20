@@ -12765,3 +12765,6 @@
 | `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T17:43:21.556Z` | `hf-baidu-ernie-5.5-flash-preview` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-9FC91E58` [Domain D] | Yes (`1fda9eb0...`) |
 | `CYCLE-20261124-RV5Y` | `2026-11-24T17:51:56.806Z` | `cheeriojs/dom-serializer` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10268` | Yes (`09208315...`) |
 | `CYCLE-20261124-RYNS` | `2026-11-24T17:52:01.336Z` | `authzed/spicedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10323` | Yes (`c8550492...`) |
+| `CYCLE-20261124-2PE1` | `2026-11-24T18:00:22.537Z` | `ntex-rs/ntex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10324` | Yes (`9f1073fc...`) |
+| `CYCLE-20261124-2TDI` | `2026-11-24T18:00:27.702Z` | `react/metro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10325` | Yes (`8ca88d57...`) |
+| `CYCLE-20261124-31EY` | `2026-11-24T18:00:38.123Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10326` | Yes (`7f9bd676...`) |

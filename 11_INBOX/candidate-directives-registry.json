@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T17:52:08.017Z",
+  "last_updated": "2026-11-24T18:00:44.637Z",
   "directives": [
     {
       "id": "CD-001",
@@ -56255,6 +56255,66 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-514ECC-deps-bump-url-to-2-5-9-and-heapless-to-0.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-34IH",
+      "directive_title": "Add fixes files support",
+      "source_repo": "ntex-rs-ntex-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-34IH-add-fixes-files-support.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-35LZ",
+      "directive_title": "lookups through a directory whose name ends in a dot",
+      "source_repo": "react-metro-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-35LZ-lookups-through-a-directory-whose-name-ends-in-a-dot.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-36FR",
+      "directive_title": "Merge 'core: keep the program builder and the state of each statement in the sta",
+      "source_repo": "tursodatabase-limbo-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-36FR-merge-core-keep-the-program-builder-and-the-state-of-each-statement-in-the-sta.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-11AA36",
+      "directive_title": "Add fixes files support",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "ntex-rs-ntex",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-11AA36-add-fixes-files-support.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-REV-A28A54",
+      "directive_title": "lookups through a directory whose name ends in a dot",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "react-metro",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A28A54-lookups-through-a-directory-whose-name-e.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-REV-C3F0EE",
+      "directive_title": "Merge 'core: keep the program builder and the state of each statement in the sta",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "tursodatabase-limbo",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C3F0EE-merge-core-keep-the-program-builder-and-.md",
       "staged_date": "2026-11-24"
     }
   ]

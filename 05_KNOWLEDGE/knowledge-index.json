@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T17:52:08.348Z",
+  "last_updated": "2026-11-24T18:00:45.024Z",
   "total_verified_learnings": 9099,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24814,
+  "total_items": 24820,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113010,25 +113010,25 @@
       "item_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-technical-construction-intelligence-tursodatabase-turso-core.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-technical-construction-intelligence-tursodatabase-turso-core.md",
       "title": "Technical Construction Intelligence: tursodatabase/turso Core Invariants",
       "repository": "tursodatabase/turso",
-      "source_version": "84382d49",
-      "content_hash": "211ec2751b921c97a0a21711dd20a16220f13a5c3f62b61bdb97b53b65613dec",
+      "source_version": "bae03862",
+      "content_hash": "8ca050b3663447d42e336f196eee722a25df2742e69f2cc12624f9c4b3969e01",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T01:07:25.501Z"
+      "persisted_at": "2026-11-24T18:00:38.605Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/tursodatabase-turso-verification-protocol-empirical-defect-shield-for-tursodatab.md",
+      "relative_path": "08_VERIFICATION/tursodatabase-limbo-verification-protocol-empirical-defect-shield-for-tursodatab.md",
       "title": "Verification Protocol: Empirical Defect Shield for tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "source_version": "84382d49",
-      "content_hash": "b5dc88b4faa40210bd6e0109ddb043c2ff04c558a1513b6e884940fa67703bab",
+      "source_version": "bae03862",
+      "content_hash": "37796544fcb78362e81f1fa08cf9cb46fa8d5123604558eeec415e078722b243",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T01:07:25.732Z"
+      "persisted_at": "2026-11-24T18:00:38.801Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-altworld-hemmingway-1-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-altworld-hemmingway-1-learnings-core-invarian",
@@ -213661,13 +213661,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-turso",
+      "slug": "tursodatabase-limbo",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/turso",
-      "source_version": "84382d49",
-      "content_hash": "51e4d06653566a14378b0cde71d04ad3af1bc85b57a0b9fdc502971087c14552",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "bae03862",
+      "content_hash": "7f9bd676be3e28487a9628e6bee2c3eced07314d9297d3f6c52815cb86c994d5",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
       "promoted_rules": [
         {
           "number": 8367,
@@ -213733,6 +213733,11 @@
           "number": 10128,
           "title": "Merge 'build: link with the LLD of the Rust toolchain and optimize proc macros i",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 10326,
+          "title": "Merge 'core: keep the program builder and the state of each statement in the sta",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213740,7 +213745,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T01:07:24.684Z",
+      "verified_at": "2026-11-24T18:00:37.862Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217613,8 +217618,8 @@
       "slug": "ntex-rs-ntex",
       "platform": "github",
       "source_url": "https://github.com/ntex-rs/ntex",
-      "source_version": "0efc7829",
-      "content_hash": "bcf4ffa1a4b219bae9665074c9151dcc522e3654a0b16fc1ea36ad80010e17b6",
+      "source_version": "53f7a3d9",
+      "content_hash": "9f1073fc711637eaeb32a6a7e10a971dfb347ca824bb470f3b6e007215fe0d5f",
       "dossier_path": "07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
       "promoted_rules": [
@@ -217632,6 +217637,11 @@
           "number": 10065,
           "title": "Post deferred completions when the submission queue is flushed during",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10324,
+          "title": "Add fixes files support",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -217639,7 +217649,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T16:20:30.888Z",
+      "verified_at": "2026-11-24T18:00:22.230Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217681,10 +217691,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ntex-rs-ntex-architecture-intelligence-ntex-rs-ntex-core-invariants.md",
       "title": "Architecture Intelligence: ntex-rs/ntex Core Invariants",
       "repository": "ntex-rs/ntex",
-      "source_version": "0efc7829",
-      "content_hash": "720d022b89eb6a9421c1db08ccf71071eb82bfb8f11ac9da6dd529ea8725ee41",
+      "source_version": "53f7a3d9",
+      "content_hash": "bfcd02734c6c7e17224b1de79dae51484ee1fa32a78c0e1079f0d7ba27be1d90",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T16:20:31.699Z"
+      "persisted_at": "2026-11-24T18:00:23.074Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ntex-rs-ntex": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ntex-rs-ntex",
@@ -217693,10 +217703,10 @@
       "relative_path": "08_VERIFICATION/ntex-rs-ntex-verification-protocol-empirical-defect-shield-for-ntex-rs-ntex.md",
       "title": "Verification Protocol: Empirical Defect Shield for ntex-rs/ntex",
       "repository": "ntex-rs/ntex",
-      "source_version": "0efc7829",
-      "content_hash": "da2568df4f7825440d7784dce381d2487a28cea592007d956b4e681e7889dfb7",
+      "source_version": "53f7a3d9",
+      "content_hash": "5e51d923e41abd532d45ff1906f27b9086a3ee1fbc5d73e14a750d9c10c63c13",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T16:20:31.927Z"
+      "persisted_at": "2026-11-24T18:00:23.270Z"
     },
     "learn-github-callstack-react-native-paper": {
       "learning_id": "learn-github-callstack-react-native-paper",
@@ -217958,9 +217968,9 @@
       "title": "Architecture Intelligence: ntex-rs-ntex-learnings Core Invariants",
       "repository": "ntex-rs-ntex-learnings",
       "source_version": "HEAD",
-      "content_hash": "47a265b23757cf21db5147449bd7a7fc4ff37e744803654d331c2607fdc29247",
+      "content_hash": "9df7f7de59303878e198b147568ae55a72030f8ca4d5e201811f941683b9fcba",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T16:20:42.708Z"
+      "persisted_at": "2026-11-24T18:00:42.415Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ntex-rs-ntex-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ntex-rs-ntex-learnings",
@@ -217970,9 +217980,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for ntex-rs-ntex-learnings",
       "repository": "ntex-rs-ntex-learnings",
       "source_version": "HEAD",
-      "content_hash": "e70db68dbd38ae93c778d9e58ce41f2a6b7bb2985c7b8cdf3f38a379d155938d",
+      "content_hash": "9c38e6d05a64fdf4d50184621b71a1efa84f044be4c1b8f52361b9b079c6cf32",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T16:20:42.936Z"
+      "persisted_at": "2026-11-24T18:00:42.607Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-google-t5-t5-small-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-google-t5-t5-small-learnings-core-invariants",
@@ -232030,8 +232040,8 @@
       "slug": "react-metro",
       "platform": "github",
       "source_url": "https://github.com/react/metro",
-      "source_version": "136bb79d",
-      "content_hash": "244025917ff9a48e793188dedd3016d2064139875cee915ad27862dcb7e3a41f",
+      "source_version": "2ceb7043",
+      "content_hash": "8ca88d575a265575d5d5b5d6026dc27d8fd7c0338083d3cc5eaaa15a24725312",
       "dossier_path": "07_PROJECT_LEARNING/react-metro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-metro-learnings.md",
       "promoted_rules": [
@@ -232054,6 +232064,11 @@
           "number": 9887,
           "title": "Flow types that use `void` for a missing value",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10325,
+          "title": "lookups through a directory whose name ends in a dot",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -232061,7 +232076,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T03:03:18.479Z",
+      "verified_at": "2026-11-24T18:00:27.475Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -232103,10 +232118,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-metro-technical-construction-intelligence-react-metro-core-invariants.md",
       "title": "Technical Construction Intelligence: react/metro Core Invariants",
       "repository": "react/metro",
-      "source_version": "136bb79d",
-      "content_hash": "5bf0c1d260a3fbb514d5a0f660a0cd021bcb3a8766685b436f27332c70106677",
+      "source_version": "2ceb7043",
+      "content_hash": "e19597985eeb3487d7641c590f4cbe7b99d6447256a82580fd3ea62b9b29c3c1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T03:03:19.034Z"
+      "persisted_at": "2026-11-24T18:00:28.196Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-react-metro": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-react-metro",
@@ -232115,10 +232130,10 @@
       "relative_path": "08_VERIFICATION/react-metro-verification-protocol-empirical-defect-shield-for-react-metro.md",
       "title": "Verification Protocol: Empirical Defect Shield for react/metro",
       "repository": "react/metro",
-      "source_version": "136bb79d",
-      "content_hash": "e07fe0e792945e32085550eac0175ec31efaad71a72b50b89e06384844a1f1f6",
+      "source_version": "2ceb7043",
+      "content_hash": "bf843e0149266ac283345b7483d3f99c81d5029191b174d25235ad41dc27f16d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T03:03:19.190Z"
+      "persisted_at": "2026-11-24T18:00:28.385Z"
     },
     "learn-huggingface-google-vit-base-patch16-224": {
       "learning_id": "learn-huggingface-google-vit-base-patch16-224",
@@ -232217,9 +232232,9 @@
       "title": "Technical Construction Intelligence: react-metro-learnings Core Invariants",
       "repository": "react-metro-learnings",
       "source_version": "HEAD",
-      "content_hash": "78d7c94b8c6413a038684b6088e3418c1836ea356ef148bb75566f36c13a5c87",
+      "content_hash": "a944cd9cc71fbdffe73ebee1a83c4d01d18102687995daf6a83a3a5be9595b73",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T03:03:31.762Z"
+      "persisted_at": "2026-11-24T18:00:43.755Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-react-metro-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-react-metro-learnings",
@@ -232229,9 +232244,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for react-metro-learnings",
       "repository": "react-metro-learnings",
       "source_version": "HEAD",
-      "content_hash": "8a1c8aef65bc540346e4d223c7cbef8ec1da25d2563287c2d4fe6243caac98c1",
+      "content_hash": "99708a1890c615abbb726362844edc39c58fcf6fd6af2203bbd7517a54939c12",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T03:03:31.918Z"
+      "persisted_at": "2026-11-24T18:00:43.971Z"
     },
     "candidate_directive-clippy-unnecessary-to-owned": {
       "item_id": "candidate_directive-clippy-unnecessary-to-owned",
@@ -258597,9 +258612,9 @@
       "title": "Technical Construction Intelligence: tursodatabase-limbo-learnings Core Invariants",
       "repository": "tursodatabase-limbo-learnings",
       "source_version": "HEAD",
-      "content_hash": "8cb8874db57098a2c6e6259f32b3207c167723516f9d07d4040718f04d64f94f",
+      "content_hash": "7365a97c11ca8fa0917353903f92f67df4deb94b7de0272b3828c99c5ffba6ae",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T21:31:40.175Z"
+      "persisted_at": "2026-11-24T18:00:44.827Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-limbo-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-limbo-learnings",
@@ -258609,9 +258624,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tursodatabase-limbo-learnings",
       "repository": "tursodatabase-limbo-learnings",
       "source_version": "HEAD",
-      "content_hash": "d74ccbdf4d6f6fdd9f6e48705f338cbaedc6a45933d2399eb6018954292e54a6",
+      "content_hash": "ade975b12de360909d289050a16ef45dedae3cbd07fa67aa7be4f46fba57be58",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T21:31:40.343Z"
+      "persisted_at": "2026-11-24T18:00:45.024Z"
     },
     "rule-8724": {
       "learning_id": "rule-8724",
@@ -338888,6 +338903,84 @@
       "content_hash": "890bd4b39c0a81c45cbe42388929cece6055c3e602bcfd6696b094dff78c2c9d",
       "domain_letter": "H",
       "persisted_at": "2026-11-24T17:52:07.204Z"
+    },
+    "rule-10324": {
+      "learning_id": "rule-10324",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10324,
+      "title": "Add fixes files support",
+      "source_url": "https://github.com/ntex-rs/ntex",
+      "source_version": "53f7a3d9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T18:00:22.230Z"
+    },
+    "candidate_directive-add-fixes-files-support": {
+      "item_id": "candidate_directive-add-fixes-files-support",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-34IH-add-fixes-files-support.md",
+      "title": "Add fixes files support",
+      "repository": "ntex-rs-ntex-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8b4d270727a06095d030b4fd12b872b90353397f7ea595b2c296dc69bc4e00ea",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T18:00:42.143Z"
+    },
+    "rule-10325": {
+      "learning_id": "rule-10325",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10325,
+      "title": "lookups through a directory whose name ends in a dot",
+      "source_url": "https://github.com/react/metro",
+      "source_version": "2ceb7043",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T18:00:27.475Z"
+    },
+    "candidate_directive-lookups-through-a-directory-whose-name-ends-in-a-dot": {
+      "item_id": "candidate_directive-lookups-through-a-directory-whose-name-ends-in-a-dot",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-35LZ-lookups-through-a-directory-whose-name-ends-in-a-dot.md",
+      "title": "lookups through a directory whose name ends in a dot",
+      "repository": "react-metro-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ef879d91c3bebf891f763a03e336ea94a902426d06b9a894e29afcaa13f40b63",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T18:00:43.560Z"
+    },
+    "rule-10326": {
+      "learning_id": "rule-10326",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10326,
+      "title": "Merge 'core: keep the program builder and the state of each statement in the sta",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "bae03862",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T18:00:37.862Z"
+    },
+    "candidate_directive-merge-core-keep-the-program-builder-and-the-state-of-each-statement-in-the-sta": {
+      "item_id": "candidate_directive-merge-core-keep-the-program-builder-and-the-state-of-each-statement-in-the-sta",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-36FR-merge-core-keep-the-program-builder-and-the-state-of-each-statement-in-the-sta.md",
+      "title": "Merge 'core: keep the program builder and the state of each statement in the sta",
+      "repository": "tursodatabase-limbo-learnings",
+      "source_version": "HEAD",
+      "content_hash": "efa5fa058ab52067c3f1e66550d51873a1cbb3bfb0e285df5a3333f9bbd6f450",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T18:00:44.637Z"
     }
   },
   "ai-builder-brain": {

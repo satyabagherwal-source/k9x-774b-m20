@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T17:52:01.357Z",
+  "last_updated": "2026-11-24T18:00:38.144Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8361,14 +8361,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-react-metro",
-      "content_hash": "244025917ff9a48e793188dedd3016d2064139875cee915ad27862dcb7e3a41f",
-      "verified_at": "2026-11-22T03:03:18.684Z",
+      "content_hash": "8ca88d575a265575d5d5b5d6026dc27d8fd7c0338083d3cc5eaaa15a24725312",
+      "verified_at": "2026-11-24T18:00:27.723Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T03:03:18.684Z"
+      "last_updated": "2026-11-24T18:00:27.723Z"
     },
     "Checkmarx/kics": {
       "repository": "Checkmarx/kics",
@@ -8811,14 +8811,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ntex-rs-ntex",
-      "content_hash": "bcf4ffa1a4b219bae9665074c9151dcc522e3654a0b16fc1ea36ad80010e17b6",
-      "verified_at": "2026-11-23T16:20:31.176Z",
+      "content_hash": "9f1073fc711637eaeb32a6a7e10a971dfb347ca824bb470f3b6e007215fe0d5f",
+      "verified_at": "2026-11-24T18:00:22.559Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T16:20:31.176Z"
+      "last_updated": "2026-11-24T18:00:22.559Z"
     },
     "learnapollo/learnapollo": {
       "repository": "learnapollo/learnapollo",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "51e4d06653566a14378b0cde71d04ad3af1bc85b57a0b9fdc502971087c14552",
-      "verified_at": "2026-11-24T01:07:24.957Z",
+      "content_hash": "7f9bd676be3e28487a9628e6bee2c3eced07314d9297d3f6c52815cb86c994d5",
+      "verified_at": "2026-11-24T18:00:38.144Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T01:07:24.957Z"
+      "last_updated": "2026-11-24T18:00:38.144Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",

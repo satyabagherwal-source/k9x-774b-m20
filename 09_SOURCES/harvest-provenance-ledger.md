@@ -12798,3 +12798,6 @@ Every entry in this ledger must capture:
 | `learn-dom-d-9fc91e58` | `project://hf-baidu-ernie-5.5-flash-preview` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-baidu-ernie-5.5-flash-preview-learnings.md` | 2026-11-24T17:43:21.556Z |
 | `learn-github-cheeriojs-dom-serializer` | `https://github.com/cheeriojs/dom-serializer` | `dbc3d929` | Multi-dimensional audit evidence | 2026-11-24T17:51:56.810Z |
 | `learn-github-authzed-spicedb` | `https://github.com/authzed/spicedb` | `188b9411` | Multi-dimensional audit evidence | 2026-11-24T17:52:01.340Z |
+| `learn-github-ntex-rs-ntex` | `https://github.com/ntex-rs/ntex` | `53f7a3d9` | Multi-dimensional audit evidence | 2026-11-24T18:00:22.541Z |
+| `learn-github-react-metro` | `https://github.com/react/metro` | `2ceb7043` | Multi-dimensional audit evidence | 2026-11-24T18:00:27.706Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `bae03862` | Multi-dimensional audit evidence | 2026-11-24T18:00:38.127Z |

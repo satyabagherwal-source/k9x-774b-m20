@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T17:52:01.345Z",
-  "total_cycles_completed": 12129,
-  "total_learnings_persisted": 12129,
-  "total_rules_promoted": 11189,
+  "last_updated": "2026-11-24T18:00:38.133Z",
+  "total_cycles_completed": 12132,
+  "total_learnings_persisted": 12132,
+  "total_rules_promoted": 11192,
   "history": [
-    {
-      "timestamp": "2026-11-24T01:07:24.953Z",
-      "repository": "tursodatabase/turso",
-      "learningId": "learn-github-tursodatabase-turso",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T01:15:34.811Z",
-      "repository": "tw93/Pake",
-      "learningId": "learn-github-tw93-pake",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T01:15:41.966Z",
-      "repository": "electron/electron",
-      "learningId": "learn-github-electron-electron",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T01:28:57.469Z",
       "repository": "PeerDB-io/peerdb",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-24T17:52:01.345Z",
       "repository": "authzed/spicedb",
       "learningId": "learn-github-authzed-spicedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T18:00:22.547Z",
+      "repository": "ntex-rs/ntex",
+      "learningId": "learn-github-ntex-rs-ntex",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T18:00:27.712Z",
+      "repository": "react/metro",
+      "learningId": "learn-github-react-metro",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T18:00:38.133Z",
+      "repository": "tursodatabase/turso",
+      "learningId": "learn-github-tursodatabase-turso",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

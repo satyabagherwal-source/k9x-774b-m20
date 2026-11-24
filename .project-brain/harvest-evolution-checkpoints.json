@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T17:52:08.477Z",
+  "last_updated": "2026-11-24T18:00:45.207Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-24T16:36:54.164Z",
@@ -1028,7 +1028,7 @@
       "staged_for_review": 1
     },
     "ntex-rs-ntex-learnings.md": {
-      "processed_at": "2026-11-23T16:20:42.006Z",
+      "processed_at": "2026-11-24T18:00:41.712Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2598,7 +2598,7 @@
       "staged_for_review": 0
     },
     "react-metro-learnings.md": {
-      "processed_at": "2026-11-22T03:03:31.154Z",
+      "processed_at": "2026-11-24T18:00:42.798Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3158,7 +3158,7 @@
       "staged_for_review": 1
     },
     "tursodatabase-limbo-learnings.md": {
-      "processed_at": "2026-11-23T21:31:39.649Z",
+      "processed_at": "2026-11-24T18:00:44.170Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3848,7 +3848,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 3867,
+  "total_dossiers_evaluated": 3870,
   "total_canonical_promoted": 514,
-  "total_staged_for_review": 2935
+  "total_staged_for_review": 2938
 }

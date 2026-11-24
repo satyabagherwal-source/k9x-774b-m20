@@ -5493,10 +5493,10 @@
     "repository": "react/metro",
     "platform": "github",
     "sourceUrl": "https://github.com/react/metro",
-    "sourceVersion": "136bb79d",
+    "sourceVersion": "2ceb7043",
     "license": "MIT",
-    "contentHash": "244025917ff9a48e793188dedd3016d2064139875cee915ad27862dcb7e3a41f",
-    "lastHarvestedAt": "2026-11-22T03:03:18.677Z",
+    "contentHash": "8ca88d575a265575d5d5b5d6026dc27d8fd7c0338083d3cc5eaaa15a24725312",
+    "lastHarvestedAt": "2026-11-24T18:00:27.706Z",
     "learningId": "learn-github-react-metro"
   },
   "checkmarx-kics": {
@@ -5793,10 +5793,10 @@
     "repository": "ntex-rs/ntex",
     "platform": "github",
     "sourceUrl": "https://github.com/ntex-rs/ntex",
-    "sourceVersion": "0efc7829",
+    "sourceVersion": "53f7a3d9",
     "license": "Apache-2.0",
-    "contentHash": "bcf4ffa1a4b219bae9665074c9151dcc522e3654a0b16fc1ea36ad80010e17b6",
-    "lastHarvestedAt": "2026-11-23T16:20:31.165Z",
+    "contentHash": "9f1073fc711637eaeb32a6a7e10a971dfb347ca824bb470f3b6e007215fe0d5f",
+    "lastHarvestedAt": "2026-11-24T18:00:22.541Z",
     "learningId": "learn-github-ntex-rs-ntex"
   },
   "learnapollo-learnapollo": {
@@ -6263,10 +6263,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/limbo",
-    "sourceVersion": "401721aa",
+    "sourceVersion": "bae03862",
     "license": "MIT",
-    "contentHash": "ef0408ccb75b49e48598c214a993526a14e7c2d78ec25b2058f74ea23cae0e18",
-    "lastHarvestedAt": "2026-11-23T21:31:35.846Z",
+    "contentHash": "7f9bd676be3e28487a9628e6bee2c3eced07314d9297d3f6c52815cb86c994d5",
+    "lastHarvestedAt": "2026-11-24T18:00:38.127Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "carbon-design-system-carbon": {

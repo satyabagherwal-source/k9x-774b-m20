@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-DDFK",
-    "timestamp": "2026-11-22T23:41:15.200Z",
-    "repository": "HuggingFaceTB/SmolVLM2-256M-Video-Instruct",
-    "learningId": "learn-huggingface-huggingfacetb-smolvlm2-256m-video-instruct",
-    "contentHash": "4cf01de3e7652f3106b2a38fe8d2f99f6979d2f3f1d3be63afcd3f63864cd57b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-NN84",
-    "timestamp": "2026-11-22T23:49:14.452Z",
-    "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
-    "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
-    "contentHash": "0480b1a59483970fe456929c5be1984450ea7c0cf17d54384712875b2fb784a6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-NPBV",
-    "timestamp": "2026-11-22T23:49:17.179Z",
-    "repository": "ratatui/ratatui",
-    "learningId": "learn-github-ratatui-ratatui",
-    "contentHash": "452af68dcdefb3ace24dafaadb6c103a689201514e01efe766087c84e9e0efb9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-XYPQ",
     "timestamp": "2026-11-22T23:57:15.902Z",
     "repository": "Cloudflare/clef",
@@ -7490,6 +7445,51 @@
     "repository": "authzed/spicedb",
     "learningId": "learn-github-authzed-spicedb",
     "contentHash": "c8550492a4b852ffc0290296b18b683dc16f3d8933fd8809baaddccf586e1885",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-2PE1",
+    "timestamp": "2026-11-24T18:00:22.537Z",
+    "repository": "ntex-rs/ntex",
+    "learningId": "learn-github-ntex-rs-ntex",
+    "contentHash": "9f1073fc711637eaeb32a6a7e10a971dfb347ca824bb470f3b6e007215fe0d5f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-2TDI",
+    "timestamp": "2026-11-24T18:00:27.702Z",
+    "repository": "react/metro",
+    "learningId": "learn-github-react-metro",
+    "contentHash": "8ca88d575a265575d5d5b5d6026dc27d8fd7c0338083d3cc5eaaa15a24725312",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-31EY",
+    "timestamp": "2026-11-24T18:00:38.123Z",
+    "repository": "tursodatabase/turso",
+    "learningId": "learn-github-tursodatabase-turso",
+    "contentHash": "7f9bd676be3e28487a9628e6bee2c3eced07314d9297d3f6c52815cb86c994d5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
