@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T01:15:46.716Z",
+  "updated_at": "2026-11-24T01:47:01.175Z",
   "stats": {
-    "total_discovered": 8194,
-    "approved_pending_harvest": 7761,
+    "total_discovered": 8217,
+    "approved_pending_harvest": 7784,
     "harvested_count": 0,
     "rejected_count": 433,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7742,
+      "COMMUNITY_AND_EXPERT": 7765,
       "OFFICIAL_DOCUMENTATION": 266,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -177260,6 +177260,512 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/electron-electron-learnings.md",
         "fileName": "electron-electron-learnings.md"
+      }
+    },
+    "SRC-881AE435A40F": {
+      "id": "SRC-881AE435A40F",
+      "url": "https://github.com/cinminori",
+      "title": "https://github.com/cinminori",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:46:59.658Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/saffsanity-sill-learnings.md",
+        "fileName": "saffsanity-sill-learnings.md"
+      }
+    },
+    "SRC-4CE6C2BB5C90": {
+      "id": "SRC-4CE6C2BB5C90",
+      "url": "https://github.com/Saffsanity/sill/pull/147",
+      "title": "https://github.com/Saffsanity/sill/pull/147",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:46:59.730Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/saffsanity-sill-learnings.md",
+        "fileName": "saffsanity-sill-learnings.md"
+      }
+    },
+    "SRC-584DF5A03983": {
+      "id": "SRC-584DF5A03983",
+      "url": "https://github.com/andrewgribben",
+      "title": "https://github.com/andrewgribben",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:46:59.802Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/saffsanity-sill-learnings.md",
+        "fileName": "saffsanity-sill-learnings.md"
+      }
+    },
+    "SRC-CD915234C275": {
+      "id": "SRC-CD915234C275",
+      "url": "https://github.com/Saffsanity/sill/pull/217",
+      "title": "https://github.com/Saffsanity/sill/pull/217",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:46:59.871Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/saffsanity-sill-learnings.md",
+        "fileName": "saffsanity-sill-learnings.md"
+      }
+    },
+    "SRC-E819FAD722D4": {
+      "id": "SRC-E819FAD722D4",
+      "url": "https://github.com/acalatrava",
+      "title": "https://github.com/acalatrava",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:46:59.940Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/saffsanity-sill-learnings.md",
+        "fileName": "saffsanity-sill-learnings.md"
+      }
+    },
+    "SRC-E71997C269D4": {
+      "id": "SRC-E71997C269D4",
+      "url": "https://github.com/Saffsanity/sill/pull/151",
+      "title": "https://github.com/Saffsanity/sill/pull/151",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:47:00.007Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/saffsanity-sill-learnings.md",
+        "fileName": "saffsanity-sill-learnings.md"
+      }
+    },
+    "SRC-486792557789": {
+      "id": "SRC-486792557789",
+      "url": "https://github.com/HunterAhlquist",
+      "title": "https://github.com/HunterAhlquist",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:47:00.075Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/saffsanity-sill-learnings.md",
+        "fileName": "saffsanity-sill-learnings.md"
+      }
+    },
+    "SRC-E73450B7DB73": {
+      "id": "SRC-E73450B7DB73",
+      "url": "https://github.com/Saffsanity/sill/pull/335",
+      "title": "https://github.com/Saffsanity/sill/pull/335",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:47:00.143Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/saffsanity-sill-learnings.md",
+        "fileName": "saffsanity-sill-learnings.md"
+      }
+    },
+    "SRC-D8D0CA364F40": {
+      "id": "SRC-D8D0CA364F40",
+      "url": "https://github.com/scripsweave",
+      "title": "https://github.com/scripsweave",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:47:00.217Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/saffsanity-sill-learnings.md",
+        "fileName": "saffsanity-sill-learnings.md"
+      }
+    },
+    "SRC-00C2519035CB": {
+      "id": "SRC-00C2519035CB",
+      "url": "https://github.com/Saffsanity/sill/pull/157",
+      "title": "https://github.com/Saffsanity/sill/pull/157",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:47:00.285Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/saffsanity-sill-learnings.md",
+        "fileName": "saffsanity-sill-learnings.md"
+      }
+    },
+    "SRC-E29D878A205C": {
+      "id": "SRC-E29D878A205C",
+      "url": "https://github.com/grub-basket",
+      "title": "https://github.com/grub-basket",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:47:00.354Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/saffsanity-sill-learnings.md",
+        "fileName": "saffsanity-sill-learnings.md"
+      }
+    },
+    "SRC-D3407BDDDF79": {
+      "id": "SRC-D3407BDDDF79",
+      "url": "https://github.com/Saffsanity/sill/pull/110",
+      "title": "https://github.com/Saffsanity/sill/pull/110",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:47:00.423Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/saffsanity-sill-learnings.md",
+        "fileName": "saffsanity-sill-learnings.md"
+      }
+    },
+    "SRC-5BBE08A1C01E": {
+      "id": "SRC-5BBE08A1C01E",
+      "url": "https://github.com/eco-null",
+      "title": "https://github.com/eco-null",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:47:00.492Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/saffsanity-sill-learnings.md",
+        "fileName": "saffsanity-sill-learnings.md"
+      }
+    },
+    "SRC-1BC13755F5C9": {
+      "id": "SRC-1BC13755F5C9",
+      "url": "https://github.com/Saffsanity/sill/pull/142",
+      "title": "https://github.com/Saffsanity/sill/pull/142",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:47:00.561Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/saffsanity-sill-learnings.md",
+        "fileName": "saffsanity-sill-learnings.md"
+      }
+    },
+    "SRC-747AAD51071E": {
+      "id": "SRC-747AAD51071E",
+      "url": "https://github.com/K007-K",
+      "title": "https://github.com/K007-K",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:47:00.631Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/saffsanity-sill-learnings.md",
+        "fileName": "saffsanity-sill-learnings.md"
+      }
+    },
+    "SRC-67A29EB918CA": {
+      "id": "SRC-67A29EB918CA",
+      "url": "https://github.com/Saffsanity/sill/pull/153",
+      "title": "https://github.com/Saffsanity/sill/pull/153",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:47:00.700Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/saffsanity-sill-learnings.md",
+        "fileName": "saffsanity-sill-learnings.md"
+      }
+    },
+    "SRC-CDC1CBB3A14E": {
+      "id": "SRC-CDC1CBB3A14E",
+      "url": "https://github.com/kyleparisi",
+      "title": "https://github.com/kyleparisi",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:47:00.768Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/saffsanity-sill-learnings.md",
+        "fileName": "saffsanity-sill-learnings.md"
+      }
+    },
+    "SRC-BF9C2CEE3AC7": {
+      "id": "SRC-BF9C2CEE3AC7",
+      "url": "https://github.com/Saffsanity/sill/pull/87",
+      "title": "https://github.com/Saffsanity/sill/pull/87",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:47:00.836Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/saffsanity-sill-learnings.md",
+        "fileName": "saffsanity-sill-learnings.md"
+      }
+    },
+    "SRC-A7966EFB7354": {
+      "id": "SRC-A7966EFB7354",
+      "url": "https://github.com/ashleigh-hopkins",
+      "title": "https://github.com/ashleigh-hopkins",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:47:00.904Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/saffsanity-sill-learnings.md",
+        "fileName": "saffsanity-sill-learnings.md"
+      }
+    },
+    "SRC-19F4C830CCE4": {
+      "id": "SRC-19F4C830CCE4",
+      "url": "https://github.com/Saffsanity/sill/pull/66",
+      "title": "https://github.com/Saffsanity/sill/pull/66",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:47:00.971Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/saffsanity-sill-learnings.md",
+        "fileName": "saffsanity-sill-learnings.md"
+      }
+    },
+    "SRC-37E4FD32B0E3": {
+      "id": "SRC-37E4FD32B0E3",
+      "url": "https://github.com/omarei-omoto",
+      "title": "https://github.com/omarei-omoto",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:47:01.039Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/saffsanity-sill-learnings.md",
+        "fileName": "saffsanity-sill-learnings.md"
+      }
+    },
+    "SRC-FF2E01D86138": {
+      "id": "SRC-FF2E01D86138",
+      "url": "https://github.com/Saffsanity/sill/pull/89",
+      "title": "https://github.com/Saffsanity/sill/pull/89",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:47:01.107Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/saffsanity-sill-learnings.md",
+        "fileName": "saffsanity-sill-learnings.md"
+      }
+    },
+    "SRC-F90C24751DA3": {
+      "id": "SRC-F90C24751DA3",
+      "url": "https://github.com/Saffsanity/sill/issues?q=is%3Aissue",
+      "title": "https://github.com/Saffsanity/sill/issues?q=is%3Aissue",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T01:47:01.175Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/saffsanity-sill-learnings.md",
+        "fileName": "saffsanity-sill-learnings.md"
       }
     }
   }

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T01:38:08.907Z",
+  "last_updated": "2026-11-24T01:47:04.555Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-24T00:23:26.082Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-24T01:29:08.439Z",
+      "processed_at": "2026-11-24T01:47:03.490Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1948,7 +1948,7 @@
       "staged_for_review": 0
     },
     "saffsanity-sill-learnings.md": {
-      "processed_at": "2026-11-21T03:15:44.451Z",
+      "processed_at": "2026-11-24T01:46:59.500Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2588,7 +2588,7 @@
       "staged_for_review": 0
     },
     "dosco-graphjin-learnings.md": {
-      "processed_at": "2026-11-23T00:56:36.246Z",
+      "processed_at": "2026-11-24T01:47:02.191Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3793,7 +3793,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3606,
+  "total_dossiers_evaluated": 3609,
   "total_canonical_promoted": 496,
-  "total_staged_for_review": 2700
+  "total_staged_for_review": 2703
 }

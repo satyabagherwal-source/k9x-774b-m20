@@ -12586,3 +12586,5 @@ Every entry in this ledger must capture:
 | `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `73bf425f` | Multi-dimensional audit evidence | 2026-11-24T01:28:57.464Z |
 | `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `c9d50f21` | Multi-dimensional audit evidence | 2026-11-24T01:29:03.488Z |
 | `learn-github-vercel-labs-agent-desktop` | `https://github.com/vercel-labs/agent-desktop` | `ce2ddf07` | Multi-dimensional audit evidence | 2026-11-24T01:37:59.154Z |
+| `learn-github-saffsanity-sill` | `https://github.com/Saffsanity/sill` | `5d062a3c` | Multi-dimensional audit evidence | 2026-11-24T01:46:51.669Z |
+| `learn-github-dosco-deeporg` | `https://github.com/dosco/graphjin` | `48344754` | Multi-dimensional audit evidence | 2026-11-24T01:46:55.595Z |

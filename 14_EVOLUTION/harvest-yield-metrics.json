@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T01:37:59.160Z",
-  "total_cycles_completed": 11935,
-  "total_learnings_persisted": 11935,
-  "total_rules_promoted": 11017,
+  "last_updated": "2026-11-24T01:46:55.602Z",
+  "total_cycles_completed": 11937,
+  "total_learnings_persisted": 11937,
+  "total_rules_promoted": 11019,
   "history": [
-    {
-      "timestamp": "2026-11-23T14:55:19.399Z",
-      "repository": "FacebookAI/xlm-roberta-base",
-      "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T15:04:21.221Z",
-      "repository": "openai-community/gpt2",
-      "learningId": "learn-huggingface-openai-community-gpt2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T15:04:35.792Z",
       "repository": "cilium/cilium",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-24T01:37:59.160Z",
       "repository": "vercel-labs/agent-desktop",
       "learningId": "learn-github-vercel-labs-agent-desktop",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T01:46:51.676Z",
+      "repository": "Saffsanity/sill",
+      "learningId": "learn-github-saffsanity-sill",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T01:46:55.602Z",
+      "repository": "dosco/deeporg",
+      "learningId": "learn-github-dosco-deeporg",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

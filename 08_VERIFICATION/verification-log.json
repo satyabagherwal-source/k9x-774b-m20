@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-5HRK",
-    "timestamp": "2026-11-22T06:19:21.776Z",
-    "repository": "mradermacher/gemma-4-31B-it-ARA-heretic-GGUF",
-    "learningId": "learn-huggingface-mradermacher-gemma-4-31b-it-ara-heretic-gguf",
-    "contentHash": "7b048fea474a6d7750ef86947c6201c8a9fd037e8556352a56378ad1b0b3f8ba",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-FWNJ",
-    "timestamp": "2026-11-22T06:27:27.631Z",
-    "repository": "ConwayResearch/Underdog-Woof",
-    "learningId": "learn-huggingface-conwayresearch-underdog-woof",
-    "contentHash": "e09e6f57912a0b62d4a34c3c07551691269c085b41c7f413318e5937f59f18d5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-G1ZO",
     "timestamp": "2026-11-22T06:27:34.548Z",
     "repository": "pulumi/pulumi",
@@ -7490,6 +7460,36 @@
     "repository": "vercel-labs/agent-desktop",
     "learningId": "learn-github-vercel-labs-agent-desktop",
     "contentHash": "2788014381cb458329e1b417547d74e35ffc673bc1e9c5c6f249a67d47761761",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-AR9S",
+    "timestamp": "2026-11-24T01:46:51.665Z",
+    "repository": "Saffsanity/sill",
+    "learningId": "learn-github-saffsanity-sill",
+    "contentHash": "d599c6771403c0e35b9e2822390fbdd7982f62e3c891a3dea62b07505ce0bc51",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-AUAV",
+    "timestamp": "2026-11-24T01:46:55.591Z",
+    "repository": "dosco/deeporg",
+    "learningId": "learn-github-dosco-deeporg",
+    "contentHash": "15aacb484185069b2572ab1ed4c769cf92264ca4fdf9738f0ce961c399b6ab43",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

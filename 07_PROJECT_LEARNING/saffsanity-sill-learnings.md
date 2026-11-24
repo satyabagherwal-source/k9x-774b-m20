@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/saffsanity-sill-learnings.md`  
 > **Source**: github ([https://github.com/Saffsanity/sill](https://github.com/Saffsanity/sill))  
-> **Source Version**: `c33d1057`  
+> **Source Version**: `5d062a3c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T03:15:35.446Z  
+> **Timestamp**: 2026-11-24T01:46:50.283Z  
 > **Learning ID**: `learn-github-saffsanity-sill`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/saffsanity-sill-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Saffsanity/sill](https://github.com/Saffsanity/sill))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T03:15:35.438Z  
+> **Harvest Timestamp**: 2026-11-24T01:46:50.168Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Any window from your Mac, live on your iPhone or iPad. Touch, Apple Pencil, trackpad and keys. Free, open source, no servers.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 5003 stars
+- **Stars / Engagement**: 5076 stars
 
 ---
 
@@ -1542,73 +1542,333 @@ func took(_ header: StreamHeader, _ payload: Data) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3919e780` (2026-11-19)
-**Commit Message**: Steps: privacy-lock's close-out turn ran: the build, live.py 48 of 48, the previews, run-all, H2 as main's
+### Incident Patch 1: `5d062a3c` (2026-11-23)
+**Commit Message**: Merge pull request #418 from Saffsanity/keys-above-keyboard
 
-The local turn the step file said was still to run, at 34c899ed on 2026-11-18 22:37. H2 with a Desktop client
-differs from the lines recorded in the first round only in the statistics line of the second the client leaves,
-and main's own CLI (eb48ac9f) differs from its own recorded lines in the same way the same night.
+Keep the modifier keys above any keyboard on an iPhone held upright
 
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-**File**: `docs/steps/2026-11-18-privacy-lock.md` (modified, +8/-3)
+**File**: `Scripts/harness-photos/keys-above-keyboard.cases` (added, +18/-0)
 ```diff
-@@ -100,9 +100,14 @@
-   mutants (9 new); `lock-policy` 1,411 of 1,411. CI on the pull request (run 44313954856, at c3b5b96b): `swift build -c
-   release`, `Tests/checks/run-all.sh`, the iOS app for the simulator and the CLI's paths, all green. The review's own
-   heavy turn (08:35) built c3b5b96b (49 s) and passed live.py's off, wait and back before its session stopped; the
--  close-out's turn (`swift build -c release`, `Scripts/privacy-check/live.py OUT all` with the nosleep and away cases,
--  H2 again against main's recorded lines, the previews from the bare binary, run-all) waits in heavy.sh's queue, with
--  four other agents' jobs in it at 15:45: its results go in the pull request and here.
-+  close-out's turn ran at 22:37 at 34c899ed: `swift build -c release` passed; `Scripts/privacy-check/live.py OUT all`,
-+  48 of 48 verdicts hold, the nosleep and away cases among them; the previews drawn from the bare binary (326, the
-+  eight lock panes among them, SillMenuBar's lock keys in this Mac's defaults as they were); run-all, every check
-+  passed. H2 again (the CLI's stdout without the flag): idle, identical to main's recorded lines; with a Desktop
-+  client, five runs differ from the lines recorded in the first round only in the statistics line of the second the
-+  client leaves (which counters it holds, and whether it still counts the client), and main's own CLI (eb48ac9f), run
-+  twice the same night, differs from its own recorded lines in the same way, line for line as the branch's last two
-+  runs: the branch's stdout is main's.
- - **Defaults taken for Noah to confirm** (the plan's recommendations): the switch in Settings › Devices (open decision
-   1); a 30 s wait (4); after any session, home or away (5, now the switch Only after a device away from home, off: so
-   an iPad used as a second screen at the desk locks the Mac 30 s after it disconnects unless it is turned on); the
+@@ -0,0 +1,18 @@
++# The keys above any keyboard (PhoneKeyboardLift, docs/steps/2026-11-19-keys-above-keyboard.md) on the iPhone Duo's
++# cover, which draws an iPhone's arrangement upright: the real keyboard raised by -SillKeyboardToggle (the fake screen is
++# the cover's own 466x678), -SillHardwareKeyboard 0 so it is drawn, -SillTallKeyboard 60 standing in for a taller one.
++# The first case folds the Duo, so the keyboard cases launch on the cover already closed. Against main (eb48ac9f):
++#   Scripts/harness-photos.sh Scripts/harness-photos/keys-above-keyboard.cases --baseline eb48ac9f
++cover-no-keyboard         -SillLayout 466x678 -SillHinge closed --pose=closed-upright --wait=5
++cover-keyboard            -SillLayout 466x678 -SillHinge closed -SillHardwareKeyboard 0 -SillKeyboardToggle 2 --pose=closed-upright --wait=6
++cover-tall-keyboard       -SillLayout 466x678 -SillHinge closed -SillHardwareKeyboard 0 -SillKeyboardToggle 2 -SillTallKeyboard 60 --pose=closed-upright --wait=6
++cover-hide-keyboard       -SillLayout 466x678 -SillHinge closed -SillHardwareKeyboard 0 -SillKeyboardToggle 2 -Sill.hideThumbnailsWhileTyping 1 --pose=closed-upright --wait=6
++cover-hide-tall-keyboard  -SillLayout 466x678 -SillHinge closed -SillHardwareKeyboard 0 -SillKeyboardToggle 2 -SillTallKeyboard 60 -Sill.hideThumbnailsWhileTyping 1 --pose=closed-upright --wait=6
++cover-hide-no-keyboard    -SillLayout 466x678 -SillHinge closed -Sill.hideThumbnailsWhileTyping 1 --pose=closed-upright --wait=5
++cover-drawer-tall         -SillLayout 466x678 -SillHinge closed -SillHardwareKeyboard 0 -SillKeyboardToggle 2 -SillTallKeyboard 60 -SillDrawer 1 --pose=closed-upright --wait=6
++cover-settings            -SillLayout 466x678 -SillHinge closed -SillSettings 1 -SillSettingsScroll typing --pose=closed-upright --wait=5
++# Without -SillHinge the harness knows no hinge, so Larger Picture applies on the cover (above the 233 pt estimate).
++cover-larger-keyboard     -SillLayout 466x678 -Sill.largerPicture 1 -SillHardwareKeyboard 0 -SillKeyboardToggle 2 --pose=closed-upright --wait=6
++cover-larger-tall         -SillLayout 466x678 -Sill.largerPicture 1 -SillHardwareKeyboard 0 -SillKeyboardToggle 2 -SillTallKeyboard 60 --pose=closed-upright --wait=6
++# The inner display upright, open flat, keeps #215's row over the keyboard: as on main.
++inner-flat-keyboard       -SillLayout 669x951 -SillHinge flat -SillHardwareKeyboard 0 -SillKeyboardToggle 2 --wait=6
+```
+
+**File**: `Tests/checks/phone-keyboard-lift/README.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++# `phone-keyboard-lift`
++
++**Checks:** a phone held upright's rows placed from the software keyboard's real top, whatever its height (PhoneKeyboardLift, asked for by mail; docs/steps/2026-11-19-keys-above-keyboard.md): no keyboard, or one at or under the screen's foot, is the layout itself, every rect and frame; Apple's keyboards as measured move nothing but on the iPhone SE, whose key row its own 233 pt keyboard covered by 24 pt (there the rows lift 34 pt and the picture's frame keeps 16:10 in the room left, 304×190); taller keyboards (an input method's candidates, the harness's 60 pt stand-in, 100 pt more) lift row 1, the thumbnails and the key row together just enough, the key row 10 pt above the keyboard; the iPhone Duo's cover, whose key row any keyboard over 236 pt covered; Larger Picture over its estimate (nothing moves) and over taller keyboards (the room shorter, the frame at its shape, the drawer above row 1 shorter, the viewport unchanged); Hide Thumbnails While Typing (the thumbnails' row and the Menus button tucked away while a keyboard is up, the key row 16 pt under row 1's buttons, the trackpad from 10 under it: 118 pt of it above an 18 Pro's keyboard against 46; nothing in Larger Picture's arrangement); the lift's ceiling (the picture's height), fractions and the lift in whole points; the switch's key, its default (off), where it is offered and its words; the console's lines; and a grid of every width from 300 to 599 pt, heights from the width + 1 to 1,400 by 7, eighteen keyboard heights and one above the screen, with and without the switch, the standard arrangement and Larger Picture's over two keyboards: everything inside the screen, the key row's clearance, a minimal lift, what lifts together, the gaps, the tuck, the trackpad, the drawer and the dim, the room and the frame
++
++**Compiles:** `iOSClient/PhonePortraitLayout.swift`, `iOSClient/PhoneKeyboardLift.swift`
+```
+
+**File**: `Tests/checks/phone-keyboard-lift/main.swift` (added, +326/-0)
+```diff
+@@ -0,0 +1,326 @@
++// iOSClient/PhoneKeyboardLift.swift with iOSClient/PhonePortraitLayout.swift: a phone held upright's rows
++// placed from the software keyboard's real top (docs/steps/2026-11-19-keys-above-keyboard.md). The phones
++// with Apple's own keyboards as measured (nothing moves but on the SE, whose key row its own keyboard
++// covered by 24 pt), taller keyboards (an input method's candidates, a third-party keyboard's bar, the
++// harness's stand-in), the iPhone Duo's cover, Larger Picture over its estimate and over a taller keyboard,
++// Hide Thumbnails While Typing, the lift's ceiling, the frame and the viewport, the switch and its words;
++// then a grid of every width from 300 to 599 pt, heights to 1,400 and twenty keyboard heights, with and
++// without the switch, in both arrangements.
++//   swiftc -O iOSClient/PhonePortraitLayout.swift iOSClient/PhoneKeyboardLift.swift Tests/checks/phone-keyboard-lift/main.swift -o .build/checks/phone-keyboard-lift/check
++import CoreGraphics
++import Foundation
++
++typealias L = PhonePortraitLayout
++typealias K = PhoneKeyboardLift
++var fails = 0, passes = 0
++func check(_ name: String, _ ok: Bool) { if !ok { fails += 1; print("FAIL", name) } else { passes += 1; print("ok  ", name) } }
++func near(_ a: CGFloat, _ b: CGFloat, _ tolerance: CGFloat = 0.01) -> Bool { abs(a - b) <= tolerance }
++func str(_ r: CGRect) -> String { String(format: "(%.2f, %.2f, %.2f×%.2f)", r.minX, r.minY, r.width, r.height) }
++func shifted(_ r: CGRect, _ dy: CGFloat) -> CGRect { r.offsetBy(dx: 0, dy: dy) }
++
++/// Every rect of the lift equal to the layout's: nothing moved.
++func unmoved(_ k: K) -> Bool {
++    let l = k.layout
++    return k.lift == 0 && !k.tucked && !k.moved && k.row1 == l.row1 && k.buttons == l.buttons
++        && k.buttonsBesideMenus == l.buttonsBesideMenus && k.menus == l.menus && k.strip == l.strip
++        && k.stripBesideMenus == l.stripBesideMenus && k.keys == l.keys && k.caps == l.caps && k.trackpad == l.trackpad
++        && k.ruler == l.ruler && k.rulerBesideMenus == l.rulerBesideMenus && k.drawer == l.drawer && k.dim == l.dim
++        && k.room == l.picture
++}
++let videos = [CGSize.zero, CGSize(width: 3024, height: 1964), CGSize(width: 1512, height: 949), CGSize(width: 2560, height: 1080),
++              CGSize(width: 848, height: 844), CGSize(width: 1000, height: 1000), CGSize(width: 1000, height: 2000)]
++/// The frame the layout draws for each video: the picture, or Larger Picture's pane at the video's shape.
++func laid(_ l: L, _ v: CGSize) -> CGRect { l.largerPicture ? l.pane(video: v) : l.picture }
++
++// MARK: - The phones, as phone-portrait has them
++
++struct Phone {
++    let name: String
++    let screen: CGSize
++    let inset: CGFloat
++    /// Apple's keyboard as Sill's input view shows it, measured on the iOS 27 simulators (phone-portrait's).
++    let keyboard: CGFloat
++    var container: CGSize { CGSize(width: screen.width, height: screen.height - inset) }
++    /// The keyboard's top in the stream screen for a keyboard `k` tall: the screen's foot less it, less the inset.
++    func glass(_ k: CGFloat) -> CGFloat { container.height - k }
++}
++let proMax = Phone(name: "iPhone 18 Pro Max", screen: CGSize(width: 440, height: 956), inset: 62, keyboard: 320)
++let pro = Phone(name: "iPhone 18 Pro", screen: CGSize(width: 402, height: 874), inset: 62, keyboard: 301)
++let fifteenPro = Phone(name: "iPhone 15 Pro", screen: CGSize(width: 393, height: 852), inset: 59, keyboard: 301)
++let seventeenE = Phone(name: "iPhone 17e", screen: CGSize(width: 390, height: 844), inset: 47, keyboard: 301)
++let mini = Phone(name: "iPhone 13 mini", screen: CGSize(width: 375, height: 812), inset: 50, keyboard: 310)
++let se = Phone(name: "iPhone SE (3rd generation)", screen: CGSize(width: 375, height: 667), inset: 20, keyboard: 233)
++/// The iPhone Duo's cover upright (iOS 27.1, less its camera's strip): its keyboard was never measured; 233
++/// is the estimate's, the Home-button shape's.
++let duoCover = Phone(name: "the iPhone Duo's cover", screen: CGSize(width: 382, height: 678), inset: 0, keyboard: 233)
++let seZoom = Phone(name: "iPhone SE with Display Zoom", screen: CGSize(width: 320, height: 568), inset: 20, keyboard: 233)
++let phones = [proMax, pro, fifteenPro, seventeenE, mini, se]
++
++// Nothing up: every phone, both arrangements, the switch either way: the layout as it is.
++for p in phones + [duoCover, seZoom] {
++    for larger in [false, true] {
++        let l = L(size: p.container, keyboard: larger ? p.keyboard : nil)
++        for tuck in [false, true] {
++            let none = K(l, glass: nil, tuck: tuck)
++            let foot = K(l, glass: p.container.height, tuck: tuck)
++            let under = K(l, glass: p.container.height + 40, tuck: tuck)
++            check("\(p.name)\(larger ? ", Larger Picture" : ""), switch \(tuck ? "on" : "off"): no keyboard, or one at or under the screen's foot: the layout, every rect and frame",
++                  unmoved(none) && unmoved(foot) && 
+```
+
+**File**: `Tests/checks/phone-keyboard-lift/mutants.py` (added, +91/-0)
+```diff
+@@ -0,0 +1,91 @@
++"""Each mutant changes iOSClient/PhoneKeyboardLift.swift in one place and must fail the check (main.swift).
++usage: mutants.py"""
++import os, subprocess, sys
++SP = os.path.dirname(os.path.abspath(__file__))
++ROOT = os.path.abspath(os.path.join(SP, "..", "..", ".."))   # the repository
++OUT = os.path.join(ROOT, ".build", "checks", "phone-keyboard-lift")   # the mutants' sources and binaries
++os.makedirs(OUT, exist_ok=True)
++SRC = os.path.join(ROOT, "iOSClient/PhoneKeyboardLift.swift")
++LAYOUT = os.path.join(ROOT, "iOSClient/PhonePortraitLayout.swift")
++orig = open(SRC).read()
++MUTANTS = {
++    # The key row's clearance and the lift.
++    "K1 no clearance above the keyboard": ("keysTop + L.capHeight + L.keyboardClearance - $0", "keysTop + L.capHeight - $0"),
++    "K2 the lift not in whole points": ("max(0, needed.rounded(.up))", "max(0, needed)"),
++    "K3 the lift rounded down": ("needed.rounded(.up)", "needed.rounded(.down)"),
++    "K4 no ceiling (rows over the picture's top)": ("let lifted = min(layout.picture.height, max(0, needed.rounded(.up)))",
++                                                    "let lifted = max(0, needed.rounded(.up))"),
++    "K5 a negative lift (rows pushed down for a short keyboard)": ("min(layout.picture.height, max(0, needed.rounded(.up)))",
++                                                                   "min(layout.picture.height, needed.rounded(.up))"),
++    "K6 a keyboard at the screen's foot counted": ("glass.flatMap { $0 < height ? $0 : nil }", "glass.flatMap { $0 <= height ? $0 : nil }"),
++    "K7 any glass counted, under the foot too": ("let top: CGFloat? = glass.flatMap { $0 < height ? $0 : nil }", "let top: CGFloat? = glass"),
++    "K8 the keyboard ignored (main's fault)": ("let needed = top.map { keysTop", "let needed = top.map { _ in 0 } ?? top.map { keysTop"),
++    # Hide Thumbnails While Typing.
++    "T1 the switch ignored": ("tucked = tuck && top != nil && !layout.largerPicture", "tucked = false && tuck && top != nil && !layout.largerPicture"),
++    "T2 tucked whenever a keyboard is up": ("tucked = tuck && top != nil && !layout.largerPicture", "tucked = top != nil && !layout.largerPicture"),
++    "T3 tucked without a keyboard": ("tucked = tuck && top != nil && !layout.largerPicture", "tucked = tuck && !layout.largerPicture"),
++    "T4 tucked in Larger Picture": ("tucked = tuck && top != nil && !layout.largerPicture", "tucked = tuck && top != nil"),
++    "T5 the tucked key row at the thumbnails' foot": ("let keysTop = tucked ? layout.strip.minY : layout.keys.minY",
++                                                      "let keysTop = tucked ? layout.strip.maxY : layout.keys.minY"),
++    "T6 the tucked key row where it was": ("let keysTop = tucked ? layout.strip.minY : layout.keys.minY", "let keysTop = layout.keys.minY"),
++    "T7 moved without the tuck": ("var moved: Bool { tucked || lift > 0 }", "var moved: Bool { lift > 0 }"),
++    # What lifts.
++    "R1 row 1 left behind": ("row1 = layout.row1.offsetBy(dx: 0, dy: up)", "row1 = layout.row1"),
++    "R2 row 1's buttons left behind": ("buttons = layout.buttons.map { $0.offsetBy(dx: 0, dy: up) }", "buttons = layout.buttons"),
++    "R3 the six beside the menus left behind": ("buttonsBesideMenus = layout.buttonsBesideMenus.map { $0.offsetBy(dx: 0, dy: up) }",
++                                                "buttonsBesideMenus = layout.buttonsBesideMenus"),
++    "R4 Menus left behind": ("menus = layout.menus.offsetBy(dx: 0, dy: up)", "menus = layout.menus"),
++    "R5 the thumbnails left behind": ("strip = layout.strip.offsetBy(dx: 0, dy: up)", "strip = layout.strip"),
++    "R6 the thumbnails beside Menus left behind": ("stripBesideMenus = layout.stripBesideMenus.offsetBy(dx: 0, dy: up)",
++                                                   "stripBesideMenus = layout.stripBesideMenus"),
++    "R7 the ruler left behind": ("ruler = layout.ruler.offsetBy(dx: 0, dy: up)", "ruler = layout.ruler"),
++    "R8 the six's ruler left behind": ("rulerBesideMenus = layout.rulerBesideMenus.offsetBy(dx: 0, dy: up)", "rulerBesideMenus = layout.rulerBesideMenus"),
++    "R9 the key row lifted twice": ("let keysY = keysTop - lifted", "let keysY = keysTop - 2 * lifted"),
++    "R10 the caps where they were": ("caps = layout.caps.map { CGRect(x: $0.minX, y: keysY, width: $0.width, height: $0.height) }",
++                                     "caps = layout.caps"),
++    # The trackpad, the drawer, the dim.
++    "P1 the trackpad as laid out whatever moved": ("let padTop = tucked || lifted > 0 ? keys.maxY + L.rowGap : layout.trackpad.minY",
++                                                   "let padTop = layout.trackpad.minY"),
++    "P2 the trackpad not following the tucked key row": ("let padTop = tucked || lifted > 0 ?", "let padTop = lifted > 0 ?"),
++    "P3 the trackpad against the key row": ("? keys.maxY + L.rowGap : layout.trackpad.minY", "? keys.maxY : layout.trackpad.minY"),
++    "P4 the trackpad to the screen's foot":
+```
+
+**File**: `Tests/checks/phone-keyboard-lift/run.sh` (added, +12/-0)
+```diff
+@@ -0,0 +1,12 @@
++#!/bin/bash
++# PhoneKeyboardLift (iOSClient/PhoneKeyboardLift.swift) with PhonePortraitLayout: a phone held upright's rows
++# placed from the software keyboard's real top, whatever its height: the phones with Apple's keyboards,
++# taller ones, the iPhone Duo's cover, Larger Picture, Hide Thumbnails While Typing, the lift's ceiling, the
++# frame and the viewport, the switch and its words, and a grid of every width from 300 to 599 pt.
++#   Tests/checks/phone-keyboard-lift/run.sh             compile and run the check
++#   Tests/checks/phone-keyboard-lift/run.sh --mutants   one-line mutants of PhoneKeyboardLift.swift; each must fail it
++here="$(cd "$(dirname "$0")" && pwd)"
++source "$here/../common.sh"
++if [ "${1:-}" = "--mutants" ]; then run_mutants python3 "$here/mutants.py"; exit; fi
++swiftc -O iOSClient/PhonePortraitLayout.swift iOSClient/PhoneKeyboardLift.swift "$here/main.swift" -o "$out/check"
++"$out/check"
+```
+
+**File**: `docs/BUILD-AND-RUN.md` (modified, +12/-1)
+```diff
+@@ -502,7 +502,18 @@ the ruler's release does, whatever streams, so a synthetic host's `[1s]` lines
+ show `win.fitOff` for a scale then Off). The console
+ prints `viewport: 386×241 pt, scale off, 60 fps` for each viewport sent, and on
+ a phone upright `trackpad: …, vertical span …` and, once the keyboard has moved,
+-`keyboard: up, 301 pt tall, its top at …; the key row ends 10 pt above it`.
++`keyboard: up, 301 pt tall, its top at …; the key row ends 10 pt above it`, and
++`keys: …` each time the rows move over the person's keyboard (PhoneKeyboardLift:
++`keys: lifted 34 pt, the key row 10 pt above the keyboard at 414, …`, `keys: the
++thumbnails tucked away, …`, `keys: as laid out, …`, `keys: no keyboard`).
++`-SillTallKeyboard N` puts a band N pt tall over the software keyboard (the stream's
++input view's input accessory view, labelled a stand-in), so UIKit's keyboard is N pt
++taller and says so, as a third-party keyboard's would be (a simulator installs none);
++with `-SillKeyboardToggle 1 -SillHardwareKeyboard 0` on the iPhone Duo's cover
++(`-SillLayout 466x678 -SillHinge closed`, `--pose=closed-upright` in a cases file) the
++harness photographs the rows over it. `-Sill.hideThumbnailsWhileTyping 1` turns Hide
++Thumbnails While Typing on for one run (the normal app too), `-SillSettingsScroll
++typing` scrolls the Settings panel to it.
+ `-SillAXDump <s>` lists the stream screen's accessibility elements in the
+ tree's order (VoiceOver's), on a private simulator once `xcrun simctl spawn
+ UDID defaults write com.apple.Accessibility ApplicationAccessibilityEnabled
+```
+
+**File**: `docs/DEVELOPMENT.md` (modified, +13/-0)
+```diff
+@@ -512,6 +512,19 @@ trackpad counts a stroke down it as far as the same stroke across a 16:10
+ picture, however tall it is. On its side, and on an iPad (a narrow window
+ included), everything is as it was.
+ 
++The key row stays above the software keyboard too, whatever its height
++(`PhoneKeyboardLift`, from the keyboard's real top as UIKit reports it): a
++keyboard that would come within 10 pt of it (a third-party keyboard with a bar
++of its own, an input method's candidates, an iPhone SE's own, any keyboard on
++the iPhone Duo's cover) lifts row 1, the thumbnails and the key row together
++until it is 10 pt clear, and while it is up the picture's frame keeps its shape
++in the room left above them; the Mac's window is not resized. Apple's keyboard
++moves nothing on the other iPhones. With Larger Picture the room stays the
++estimate's below, and the same lift applies over a taller keyboard. Hide
++Thumbnails While Typing (Settings › This iPhone, off by default) tucks the
++thumbnails and the Menus button away whenever the keyboard is up, so the key
++row sits under the buttons and more of the trackpad shows above the keyboard.
++
+ Larger Picture (Settings › This iPhone, off by default; issue #58,
+ docs/larger-picture-plan.md) gives a phone held upright more picture while a
+ window streams: the thumbnails go, and the picture gets every point that keeps
+```
+
+**File**: `docs/LAYOUT.md` (modified, +12/-1)
+```diff
+@@ -784,7 +784,18 @@ Below, "this file" means CLAUDE.md, and "Build and run below" means docs/BUILD-A
+   `offersLargerPicture(screen:)`) no strip, the room over the keyboard, Menus in
+   row 1 (`buttonsBesideMenus`), the drawer above row 1, the pane at the
+   picture's shape (`pane(video:)`) and its span (`trackpadSpan(video:)`); pure,
+-  `Tests/checks/phone-portrait`), `DuoPosture`
++  `Tests/checks/phone-portrait`), `PhoneKeyboardLift` (a phone upright's rows
++  over the person's software keyboard, from its real top, whatever its height:
++  row 1, the thumbnails and the key row lifted together while the keyboard
++  would come within 10 pt of the key row (`lift`, whole points, at most the
++  picture's height), the picture's frame at its shape in the room left
++  (`frame(video:)`; the viewport stays the layout's), the trackpad from under
++  the moved key row, the drawer and the dim with row 1; Hide Thumbnails While
++  Typing (`switchKey`, off: the thumbnails' row and its Menus button tucked
++  away while a keyboard is up, the key row in their place, `tucked`), its
++  words and the console's `keys: …` line; pure,
++  `Tests/checks/phone-keyboard-lift`; pbxproj A0B0/F0B0; PortraitStreamScreen
++  places the phone's rows from it), `DuoPosture`
+   (the iPhone Duo's posture and the rules that follow from it, docs/iphone-duo-plan.md:
+   `FoldInfo`, inferred before iOS 27.1 or the fold's band; the laptop pose's
+   split at the real fold and open flat's at the picture's shape, the book
 ```
 
 ---
 
-### Incident Patch 2: `ae5ab086` (2026-11-18)
-**Commit Message**: docs/steps: pr368-ready's release build on this Mac, and the smoke run on it
+### Incident Patch 2: `e0f222a0` (2026-11-23)
+**Commit Message**: Merge pull request #389 from Saffsanity/promises-words
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Support page: the way back into a Mac that Sill cannot show (#316)
 
-**File**: `docs/steps/2026-11-18-pr368-ready.md` (modified, +6/-5)
+**File**: `docs/steps/2026-11-18-promises-words.md` (added, +20/-0)
 ```diff
-@@ -60,11 +60,12 @@ group's frame.
-   release` (only the CaptureProbe warning), `Tests/checks/run-all.sh` (74 of 74), the iOS app's build and the CLI's paths;
-   and again at c4a40b27, where another agent merged main's #388 in (the layout entries carried to docs/LAYOUT.md word for
-   word): the same, `repo-rules` 11 of 11.
--  On this Mac the release build with the review's changes and `run-all.sh` did not run: the build lock was busy for 2 h
--  25 min, and then the disk had 24 GB free, under the 25 GB floor. A synthetic host on loopback (software encoder, no
--  screen, under a minute; the build of #368 merged with main, before the review's changes), with a test client: the
--  Desktop's test pattern, a pick of a window it does not list (nothing streams), none, the Desktop again and a keyframe
--  request each answered, no line out of place. A test host lists no windows, so no tab can switch there.
-+  On this Mac the first try at the release build and `run-all.sh` waited 2 h 25 min for the build lock and stopped
-+  itself at 24 GB free, under the 25 GB floor; once the disk had 36 GB, `swift build -c release` of the head (f25f8e77)
-+  ran clean, and `run-all.sh` was left to CI. A synthetic host on loopback (software encoder, no screen, under a minute),
-+  on #368 merged with main and again on the head, with a test client: the Desktop's test pattern, a pick of a window it
-+  does not list (nothing streams), none, the Desktop again and a keyframe request each answered, the two hosts' lines
-+  identical with ports and the once-a-second lines masked. A test host lists no windows, so no tab can switch there.
- - Not verified: anything with a real window. A test host lists no windows (SILL_TEST_NO_SCREEN), so no tab can switch on
-   this Mac without Screen Recording for the agent's host and a window of Noah's moved; and no virtual display may be made.
- - **Untested, for Noah** (draft PR #399 has the steps): Virtual Display on (nobody has tried it); defect 1's flow (a tab
+@@ -0,0 +1,20 @@
++**Words Noah promised on the site: #316's way back in, and three contributors' credit (2026-11-18, branch `promises-words` from main at 8dbbb50).**
++Noah, 2026-11-18: "also work on anything I promised would come in 0.6.x or 0.7 that hasnt been finished yet". The
++promises that are words, not features, from the inventory in ~/Downloads/sill-handoff/next/promises/INVENTORY.md
++(rows 6 and 10).
++- `site/support.html`, "Your Mac is locked": a third paragraph, after the switch's, as Noah promised on #316
++  (2026-11-12: "I'll add the recovery route to the support page next to the switch's description"). Sill can't bring
++  your account back to the screen (macOS asks for the password at the login window, which nothing Sill sends
++  reaches, his reasoning on the issue); Screen Sharing from another Mac or a VNC app can, and has to be on
++  beforehand (System Settings › General › Sharing). Checked against `LockPolicy` (input from nobody off console),
++  `LockedMac`'s words, junkaiman's test of 2026-11-11 (the console back to his account, everything back with no
++  reconnect) and macOS 27.2.1's own Screen Sharing (`ScreenSharing.framework`'s session choice, "Curtain Mode is
++  unavailable at Login Window": it works at the login window).
++- `site/contribute.html`: Hunter Ahlquist among the contributors (his stale-hover fix, issue #81, landed through
++  #335 with his Co-authored-by and shipped in 0.6.1); a paragraph thanking Ash Hopkins (#66, Sill Viewer) and MAREI
++  (#89, Sill for Android), whose pull requests are open and not part of Sill. Noah promised all three
++  acknowledgement (#81, 2026-10-18 and 19; #90 and #66, 2026-10-18). How to credit unmerged work is his call.
++- Not here: the release notes' line for Hunter (a draft for 0.6.3's notes, in the handoff's promises/drafts), the
++  site's republish (sill-site, Noah's), the comments on #316 and #81 (drafts, his to post).
++- Verified: both pages parse with every tag closed; their new links are the pull requests and profiles named.
++  Untested for Noah: how the pages look once published.
+```
+
+**File**: `site/contribute.html` (modified, +2/-0)
+```diff
+@@ -56,6 +56,7 @@ <h2 id="contributors">Contributors</h2>
+     <li><a href="https://github.com/cinminori">MinoriKiriu</a>: <a href="https://github.com/Saffsanity/sill/pull/147">Chinese input and dictation reaching the Mac</a>.</li>
+     <li><a href="https://github.com/andrewgribben">Andrew Gribben</a>: <a href="https://github.com/Saffsanity/sill/pull/217">trackpad scrolling that sends each movement as it is</a>.</li>
+     <li><a href="https://github.com/acalatrava">Antonio Calatrava</a>: <a href="https://github.com/Saffsanity/sill/pull/151">waking the Mac’s display for a stream</a>.</li>
++    <li><a href="https://github.com/HunterAhlquist">Hunter Ahlquist</a>: <a href="https://github.com/Saffsanity/sill/pull/335">Apple Pencil strokes without a stray line back to where they began</a>.</li>
+     <li><a href="https://github.com/scripsweave">scripsweave</a>: <a href="https://github.com/Saffsanity/sill/pull/157">pairing codes on a remote desktop, as an opt-in</a>.</li>
+     <li><a href="https://github.com/grub-basket">grub-basket</a>: <a href="https://github.com/Saffsanity/sill/pull/110">Shift-Return and Shift-Tab reaching the Mac</a>.</li>
+     <li><a href="https://github.com/eco-null">Can</a>: <a href="https://github.com/Saffsanity/sill/pull/142">saved remote destinations kept</a>.</li>
+@@ -64,6 +65,7 @@ <h2 id="contributors">Contributors</h2>
+     <li><a href="https://github.com/K007-K">K Karthik</a>: <a href="https://github.com/Saffsanity/sill/pull/153">the checks’ build script with paths that have spaces</a>.</li>
+     <li><a href="https://github.com/kyleparisi">Kyle Parisi</a>: <a href="https://github.com/Saffsanity/sill/pull/87">a virtual display fix for Intel Macs</a>.</li>
+   </ul>
++  <p>Thank you also to the people who built on Sill in pull requests that aren’t part of it: <a href="https://github.com/ashleigh-hopkins">Ash Hopkins</a> for <a href="https://github.com/Saffsanity/sill/pull/66">Sill Viewer, a Mac that controls another Mac</a>, and <a href="https://github.com/omarei-omoto">MAREI</a> for <a href="https://github.com/Saffsanity/sill/pull/89">Sill for Android</a>.</p>
+   <p>And thank you to the more than fifty people who have opened an <a href="https://github.com/Saffsanity/sill/issues?q=is%3Aissue">issue</a> so far: bug reports, questions and ideas. Many of Sill’s features began as one.</p>
+ 
+   <h2 id="code">Contributing code</h2>
+```
+
+**File**: `site/support.html` (modified, +1/-0)
+```diff
+@@ -58,6 +58,7 @@ <h2 id="black-picture">The picture is black</h2>
+   <h2 id="locked">Your Mac is locked</h2>
+   <p>While your Mac is locked, Sill shows none of it on your iPhone or iPad: the picture is your Mac’s own lock screen, and the Apps list, your Mac’s menus, its sound and the clipboard wait. Unlock your Mac and its windows come back. While your Mac is at its login window or switched to another user, Sill shows “Another user started controlling this Mac. Log in to your account to reactivate screen sharing with Sill.” Nothing you tap or type on your iPhone or iPad reaches your Mac until you log in on it.</p>
+   <p>If your Mac starts with another account on its screen, or you switch to another user and still want to see your own, turn on Show this account while another user is on the screen in Sill’s Settings › Devices on your Mac. Your iPhone or iPad then shows your account’s own desktop and windows, with a note that it isn’t what your Mac’s screen shows. Taps and keys reach it only once your account is back on the screen; its sound and the clipboard wait too.</p>
++  <p>Sill can’t bring your account back to the screen: macOS asks for your password at the login window to switch to your account, and Sill runs inside your account, so nothing it sends reaches that window. To get your account back without being at your Mac, connect to your Mac with Screen Sharing from another Mac, or with a VNC app, switch to your account there as you would at your Mac, and enter your password. Your iPhone or iPad then shows your Mac again. Screen Sharing has to be on for this: turn it on before you need it, in System Settings › General › Sharing on your Mac.</p>
+ 
+   <h2 id="accessibility">Taps and typing don’t reach your Mac</h2>
+   <p>Sill needs Accessibility to click, scroll and type for you. On your Mac, open System Settings › Privacy &amp; Security › Accessibility and turn on Sill. It works right away.</p>
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #418** (2026-11-23): Keep the modifier keys above any keyboard on an iPhone held upright (@Saffsanity)
 - **PR #402** (2026-11-20): Privacy: lock this Mac when the last device leaves (part 1 of privacy mode, on #184) (@Saffsanity)
 - **PR #399** (2026-11-20): #368 ready: Host: follow macOS native tab switches in a streamed window (#366) (@Saffsanity)
 - **PR #396** (2026-11-20): #367 ready: Audio: capture a staged window's sound on Sill's display, and retry an ended capture by itself (#365) (@Saffsanity)
+- **PR #389** (2026-11-23): Support page: the way back into a Mac that Sill cannot show (#316) (@Saffsanity)
 - **PR #388** (2026-11-18): CLAUDE.md lean: the layout, the build and test notes and the compatibility floor move to docs (@Saffsanity)
-- **PR #387** (2026-11-18): Version 0.6.3 for both apps, after 0.6.2 (@Saffsanity)
-- **PR #378** (2026-11-16): Release 0.6.2: Sill for Mac and Sill for iPhone and iPad (@Saffsanity)
 
 ---
 
@@ -1628,37 +1888,37 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Steps: privacy-lock's close-out turn ran: the build, live.py 48 of 48, the previ
+## X. Empirical Invariant Guard in keys-above-keyboard.cases
 
 **RULE**:
-When implementing operations in `docs/steps/2026-11-18-privacy-lock.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Saffsanity/sill. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Scripts/harness-photos/keys-above-keyboard.cases`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Saffsanity/sill. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3919e780`: Steps: privacy-lock's close-out turn ran: the build, live.py 48 of 48, the previews, run-all, H2 as main's. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5d062a3c`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/steps/2026-11-18-privacy-lock.md`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Scripts/harness-photos/keys-above-keyboard.cases`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-  close-out's turn ran at 22:37 at 34c899ed: `swift build -c release` passed; `Scripts/privacy-check/live.py OUT all`,
-  48 of 48 verdicts hold, the nosleep and away cases among them; the previews drawn from the bare binary (326, the
-  eight lock panes among them, SillMenuBar's lock keys in this Mac's defaults as they were); run-all, every check
-  passed. H2 again (the CLI's stdout without the flag): idle, identical to main's recorded lines; with a Desktop
-  client, five runs differ from the lines recorded in the first round only in the statistics line of the second the
-  client leaves (which counters it holds, and whether it still counts the client), and main's own CLI (eb48ac9f), run
-  twice the same night, differs from its own recorded lines in the same way, line for line as the branch's last two
-  runs: the branch's stdout is main's.
+# The keys above any keyboard (PhoneKeyboardLift, docs/steps/2026-11-19-keys-above-keyboard.md) on the iPhone Duo's
+# cover, which draws an iPhone's arrangement upright: the real keyboard raised by -SillKeyboardToggle (the fake screen is
+# the cover's own 466x678), -SillHardwareKeyboard 0 so it is drawn, -SillTallKeyboard 60 standing in for a taller one.
+# The first case folds the Duo, so the keyboard cases launch on the cover already closed. Against main (eb48ac9f):
+#   Scripts/harness-photos.sh Scripts/harness-photos/keys-above-keyboard.cases --baseline eb48ac9f
+cover-no-keyboard         -SillLayout 466x678 -SillHinge closed --pose=closed-upright --wait=5
+cover-keyboard            -SillLayout 466x678 -SillHinge closed -SillHardwareKeyboard 0 -SillKeyboardToggle 2 --pose=closed-upright --wait=6
+cover-tall-keyboard       -SillLayout 466x678 -SillHinge closed -SillHardwareKeyboard 0 -SillKeyboardToggle 2 -SillTallKeyboard 60 --pose=closed-upright --wait=6
+cover-hide-keyboard       -SillLayout 466x678 -SillHinge closed -SillHardwareKeyboard 0 -SillKeyboardToggle 2 -Sill.hideThumbnailsWhileTyping 1 --pose=closed-upright --wait=6
+cover-hide-tall-keyboard  -SillLayout 466x678 -SillHinge
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-  close-out's turn (`swift build -c release`, `Scripts/privacy-check/live.py OUT all` with the nosleep and away cases,
-  H2 again against main's recorded lines, the previews from the bare binary, run-all) waits in heavy.sh's queue, with
-  four other agents' jobs in it at 15:45: its results go in the pull request and here.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3919e780` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5d062a3c` are properly handled with clean fallback behavior.

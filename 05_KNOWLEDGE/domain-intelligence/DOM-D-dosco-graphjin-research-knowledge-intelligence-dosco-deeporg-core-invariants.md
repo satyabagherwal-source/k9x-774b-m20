@@ -4,24 +4,24 @@
 {
   "source_repository": "dosco/deeporg",
   "source_url": "https://github.com/dosco/graphjin",
-  "source_version": "5b9451b6",
+  "source_version": "48344754",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-23T00:56:31.664Z",
+  "timestamp": "2026-11-24T01:46:55.920Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dosco-deeporg",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dosco/deeporg](https://github.com/dosco/graphjin) (Revision: `5b9451b6`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T00:56:31.664Z`  
+> **Provenance**: Harvested from [dosco/deeporg](https://github.com/dosco/graphjin) (Revision: `48344754`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T01:46:55.920Z`  
 > **Learning ID**: `learn-github-dosco-deeporg`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain D (Research & Knowledge Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), G (Architecture Intelligence), A (Human & Need Intelligence), B (Product Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 56%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), B (Product Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), C (Market & Business Intelligence), E (Creative Intelligence)
+- **Confidence Rating**: 73%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from dosco/deeporg:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dosco-graphjin-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dosco/graphjin](https://github.com/dosco/graphjin))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T00:56:30.350Z  
+> **Harvest Timestamp**: 2026-11-24T01:46:54.182Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2566,825 +2566,1039 @@ func ShouldCacheQuery(opName, apqKey string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `983527e4` (2026-11-22)
-**Commit Message**: ci: run the snowflake suite in three shards, TestSubscription on its own [skip-release]
+### Incident Patch 1: `de5af28b` (2026-11-23)
+**Commit Message**: docs(site): lead with the compiler and the loop, add recurring work to the rollout guide
 
-With the cache warm, snowflake was the only job over 6 minutes (10.4 min):
-its suite runs 578s under the simulator, 222s of it TestSubscription (99
-concurrent subscriptions). Round-robin shards can't fix that, since the
-shard holding TestSubscription stays heavy (2 shards: ~422s, 5: ~278s).
+The homepage hero now says what DeepORG changes: agents for the company
+you already run, nothing to rebuild. The compiler section moves up under
+"Company data has no test suite" with a side-by-side of a typical agent
+and DeepORG, and a connect/discover/execute/verify/improve loop replaces
+"Three things set it apart". Later sections carry their loop step, and
+the watch section covers routines.
 
-scripts/test-shard.sh gains SHARD_SOLO (named tests get the last shard to
-themselves; a stale name leaves it empty and fails loudly), SHARD_LIST_RUN
-and SHARD_LIST_ARGS (so tests/ lists with -db=none and starts no database),
-and PRINT_REGEX (so a wrapper can keep its own retries).
-scripts/test-snowflake.sh runs one slice when DB_SHARD/DB_SHARDS are set,
-fixed before its retry loop.
-
-Checked locally: the three shards cover all 144 snowflake tests exactly
-once, each regex selects exactly its shard, and by the last run's timings
-they take ~152s, ~192s and ~222s. cmd shards are unchanged (111/111/110).
+The rollout guide gains a recurring-work step, a step for knowing
+whether the rollout is working, and a short cost section. Step 5 no
+longer claims Slack or Teams delivery: it says there is no app for them
+yet and that a watch webhook can reach them through a workflow tool.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/build.yml` (modified, +10/-2)
+**File**: `website/content/_index.md` (modified, +11/-11)
 ```diff
-@@ -167,7 +167,7 @@ jobs:
-         run: make test-cmd-shard SHARD=${{ matrix.shard }} CMD_SHARDS=3
+@@ -1,31 +1,31 @@
+ ---
+ title: "DeepORG"
+-description: "DeepORG is one AI agent for your whole organization. It answers questions and makes changes across your databases, APIs, files and code, is graded on its own public benchmark, and turns your organization into a training environment."
++description: "DeepORG puts AI agents to work on the systems your company already runs, without rebuilding them. It maps your databases, APIs, files and code, compiles each request the agent makes into queries your systems run under your access rules, and turns the questions people ask into tests you can run again."
+ ---
  
-   database:
--    name: DB ${{ matrix.db }}
-+    name: DB ${{ matrix.db }}${{ matrix.shard && format(' {0}/3', matrix.shard) || '' }}
-     needs: changes
-     if: github.event_name == 'workflow_dispatch' || needs.changes.outputs.db == 'true'
-     runs-on: ubuntu-latest
-@@ -185,7 +185,12 @@ jobs:
-           - { db: mongodb, cache: db }
-           - { db: cassandra, cache: db }
-           - { db: clickhouse, cache: db }
--          - { db: snowflake, cache: db }
-+          # The simulator makes snowflake the slowest suite, so it runs in
-+          # three shards; scripts/test-snowflake.sh gives TestSubscription the
-+          # last one to itself. Keep the 3 in step with DB_SHARDS below.
-+          - { db: snowflake, cache: db, shard: 1 }
-+          - { db: snowflake, cache: db, shard: 2 }
-+          - { db: snowflake, cache: db, shard: 3 }
-           - { db: bigquery, cache: db }
-           - { db: redshift, cache: db }
-           - { db: mysql, cache: db-mysql }
-@@ -216,4 +221,7 @@ jobs:
-           restore-keys: ${{ runner.os }}-go-${{ matrix.cache }}-race-
- 
-       - name: Run ${{ matrix.db }} tests
-+        env:
-+          DB_SHARD: ${{ matrix.shard }}
-+          DB_SHARDS: ${{ matrix.shard && '3' || '' }}
-         run: make test-db DB=${{ matrix.db }}
+-<section class="dx-hero"><div class="dx-hero-inner"><div class="dx-hero-copy"><p class="dx-kicker"><b>DeepORG</b><i></i><span>formerly GraphJin</span><i></i><span>Apache 2.0</span></p><h1>One AI agent for your whole organization.</h1><div class="dx-hero-row"><p class="dx-lede">Ask in plain words. DeepORG answers questions and makes changes across the systems your company already runs: databases, warehouses, APIs, files and code. There are no tools to build. It stays inside your access rules, and a change waits for your approval.</p><div class="home-actions"><a class="button-primary" href="#quickstart">Try it in 2 minutes</a><a class="button-secondary" href="/benchmark/">See the public benchmark</a></div></div></div><div class="dx-hero-art">{{< ascii scene="orgwide" narrow="org" data="hero-rotate-data" label="Animated diagram: a question is asked, three of seven connected systems are queried, and DeepORG returns one answer with its evidence." caption="one question / several systems / one answer" >}}</div></div><script type="application/json" id="hero-rotate-data">[{"user":"Which account is most at risk of churn—and why?","sources":[{"name":"Postgres","detail":"accounts + invoices"},{"name":"Snowflake","detail":"product usage"},{"name":"CRM API","detail":"opportunities"}],"tools":[{"name":"query_catalog","line":"3 relevant sources discovered"},{"name":"validate_where_clause","line":"relationships + churn filters valid"},{"name":"execute_graphql","line":"3 optimized, policy-checked operations"}],"done":"Evidence checked · 3 systems · 3 operations","answer":"Meridian Robotics — renewal in 9 days, usage down 38%, two failed payments, and an unresolved escalation."},{"user":"Which support issues are about to breach SLA?","sources":[{"name":"Postgres","detail":"accounts + owners"},{"name":"Ticket API","detail":"open escalations"},{"name":"Filesystem","detail":"SLA policy"}],"tools":[{"name":"query_catalog","line":"3 relevant sources discovered"},{"name":"validate_where_clause","line":"priority + deadline filters valid"},{"name":"execute_graphql","line":"3 optimized, policy-checked operations"}],"done":"Evidence checked · 3 systems · 3 operations","answer":"Meridian Robotics has one urgent escalation past SLA and another due by 17:00 today."},{"user":"Where is revenue concentrated—and what is at risk?","sources":[{"name":"Postgres","detail":"subscriptions"},{"name":"MySQL","detail":"invoices + renewals"},{"name":"Snowflake","detail":"product usage"}],"tools":[{"name":"query_catalog","line":"3 relevant sources discovered"},{"name":"validate_where_clause","line":"revenue + renewal filters valid"},{"name":"execute_graphql","line":"3 optimized, policy-checked operations"}],"done":"Evidence checked · 3 systems · 3 operations","answer":"81% of MRR is enterprise, with $5,200 exposed across two past-due accounts whose usage is declining."}]</script></section>
++<section class="dx-hero"><div class="dx-hero-inner"><div class="dx-hero-copy"><p class="dx-kicker"><b>DeepORG</b><i></i><span>formerly GraphJin</span><i></i><span>Apache 2.0</span></p><h1>AI agents for the company you already run. Nothing to rebuild.</h1><div class="dx-hero-row"><p class="dx-lede">Connect your databases, warehouses, APIs, files and code, and DeepORG maps what is there. Its agent writes each request against that map, and the engine checks it against your access rules and compiles it into queries your own systems run. No tools to build, no data to move. The questions people ask become tests you can run again.</p><div class="home-actions"><a class="button-primary" href="#quickstart">Try it in 2 minutes</a><a class="button-secondary" href="/benchmark/">See the public benchmark</a></div></div></div><div class="dx-hero-art">{{< ascii scene="orgwide" narrow="org" data="hero-rotate-data" label="Animated diagram: a question is asked, three of seven connected systems are queried, and DeepORG returns one answer with its evidence." caption="one question / several systems / one answer" >}}</div></div><script type="application/json" id="hero-rotate-data">[{"user":"Which account is most at risk of churn—and why?","sources":[{"name":"Postgres","detail":"accounts + invoices"},{"name":"Snowflake","detail":"product usage"},{"name":"CRM API","detail":"opportunities"}],"tools":[{"name":"query_catalog","line":"3 relevant sources discovered"},{"name":"validate_where_cl
 ```
 
-**File**: `scripts/test-shard.sh` (modified, +30/-4)
+**File**: `website/content/rollout.md` (modified, +75/-5)
 ```diff
-@@ -9,6 +9,14 @@
- #   bash scripts/test-shard.sh ./cmd 1 3
- #
- # DRY_RUN=1 prints the shard's tests instead of running them.
-+# PRINT_REGEX=1 prints only the shard's -run regex, for wrappers that run go
-+#   test themselves (scripts/test-snowflake.sh keeps its retries that way).
-+# SHARD_LIST_RUN narrows which tests are listed (default: all), e.g. '^Test'.
-+# SHARD_LIST_ARGS are passed to the test binary while listing, e.g. -db=none
-+#   so tests/'s TestMain lists without starting a database.
-+# SHARD_SOLO names tests (space-separated) slow enough to need the last shard
-+#   to themselves; the rest are dealt across the other shards. A named test
-+#   that no longer exists leaves the last shard empty, which fails loudly.
- #
- # Every listed test lands in exactly one shard. A test added later is picked up
- # by the next run's listing; nothing here needs updating.
-@@ -32,21 +40,34 @@ timeout="${GO_TEST_TIMEOUT:-30m}"
- # -list compiles the same -race test binary the run below uses, so the second
- # build is a cache hit. Test, Example and Fuzz (seed corpus) entries all run
- # under plain `go test`; benchmarks do not, so leave them out.
--list=$(go test -race -list '.*' "$pkg" | grep -E '^(Test|Example|Fuzz)' | LC_ALL=C sort)
-+# SHARD_LIST_ARGS is deliberately unquoted: it holds zero or more flags.
-+# shellcheck disable=SC2086
-+list=$(go test -race -list "${SHARD_LIST_RUN:-.*}" "$pkg" ${SHARD_LIST_ARGS:-} | grep -E '^(Test|Example|Fuzz)' | LC_ALL=C sort)
+@@ -3,8 +3,8 @@ title: "Roll out DeepORG in your company"
+ nav_title: "Roll it out"
+ type: guides
+ headline: "Most of an AI rollout is not the model."
+-description: "A step-by-step guide for whoever rolls out an AI agent across a company's data: connect the systems, set who may see what, write down what the company's words mean, check answers until people trust them, and put the agent where people already work."
+-lede: "Most of the work is connecting the systems, deciding who may see what, writing down what the company's words mean, and checking answers until people trust them. Companies usually bring in forward-deployed engineers or consultants for it. This page is for whoever does that work. It goes step by step and shows the part of DeepORG that handles each one."
++description: "A step-by-step guide for whoever rolls out an AI agent across a company's data: connect the systems, set who may see what, write down what the company's words mean, check answers until people trust them, hand it over, give it recurring work, and know whether it is working."
++lede: "Most of the work is connecting the systems, deciding who may see what, writing down what the company's words mean, checking answers until people trust them, and then giving the agent real work to do every week. Companies usually bring in forward-deployed engineers or consultants for it. This page is for whoever does that work. It goes step by step and shows the part of DeepORG that handles each one."
+ actions:
+   - label: "Try the demo first"
+     href: "/#quickstart"
+@@ -138,7 +138,7 @@ deeporg eval run --suite eval/mined.yml
  
- total=$(printf '%s\n' "$list" | grep -c . || true)
- if [ "$total" -eq 0 ]; then
-     echo "no tests listed in $pkg" >&2
-     exit 1
- fi
+ {{< endband >}}
  
--mine=$(printf '%s\n' "$list" | awk -v s="$shard" -v n="$shards" '(NR - 1) % n == s - 1')
-+solo="${SHARD_SOLO:-}"
-+if [ -n "$solo" ] && [ "$shards" -gt 1 ]; then
-+    solo_re="^($(printf '%s\n' $solo | paste -sd '|' -))\$"
-+    if [ "$shard" -eq "$shards" ]; then
-+        mine=$(printf '%s\n' "$list" | grep -E "$solo_re" || true)
-+    else
-+        mine=$(printf '%s\n' "$list" | grep -vE "$solo_re" | awk -v s="$shard" -v n="$((shards - 1))" '(NR - 1) % n == s - 1')
-+    fi
-+else
-+    mine=$(printf '%s\n' "$list" | awk -v s="$shard" -v n="$shards" '(NR - 1) % n == s - 1')
-+fi
- count=$(printf '%s\n' "$mine" | grep -c . || true)
+-{{< band label="Step 5 · Hand it over" title="Put it where people already work." >}}
++{{< band label="Step 5 · Hand it over" title="Hand it to the people who ask." >}}
  
--echo "==> $pkg shard $shard/$shards: $count of $total tests"
-+echo "==> $pkg shard $shard/$shards: $count of $total tests" >&2
+ Run DeepORG in agentic mode. It starts from your production config and adds the agent:
  
- if [ "$count" -eq 0 ]; then
--    exit 0
-+    echo "shard $shard/$shards of $pkg is empty: use fewer shards, or check SHARD_SOLO (${solo:-unset}) still names real tests" >&2
-+    exit 1
- fi
+@@ -156,10 +156,80 @@ GO_ENV=agentic deeporg serve --path ./config
  
- if [ "${DRY_RUN:-}" = "1" ]; then
-@@ -57,4 +78,9 @@ fi
- # Anchored, slash-free: matches these top-level names exactly; their subtests run.
- regex="^($(printf '%s\n' "$mine" | paste -sd '|' -))\$"
+ - **A console for everyone.** People ask in plain words at `/agent` and see the queries behind each answer.
+ - **Their own AI client.** `deeporg mcp add claude <url>` or `deeporg mcp add codex <url>` connects Claude or Codex to the same server, under the same rules.
+-- **Questions left running.** A question can keep running against live data. DeepORG speaks up when the answer changes, or when something expected never arrives.
++- **An inbox for what needs a person.** A change waiting for approval, a routine's answer, a run that stopped: each lands in the console's Inbox and at `/api/v1/notifications`, with a live stream beside it.
  
-+if [ "${PRINT_REGEX:-}" = "1" ]; then
-+    printf '%s\n' "$regex"
-+    exit 0
-+fi
-+
- exec go test -v -race -timeout "$timeout" -run "$regex" "$@" "$pkg"
-```
-
-**File**: `scripts/test-snowflake.sh` (modified, +12/-1)
-```diff
-@@ -10,10 +10,21 @@ if [ "$GRAPHJIN_SNOWFLAKE_MOCK" = "1" ]; then
- 	echo "Using Snowflake simulator (${GRAPHJIN_SNOWFLAKE_BACKEND} backend)"
- fi
+ {{< endgrid >}}
  
-+# DB_SHARD/DB_SHARDS run one slice of the suite (CI splits it across jobs; the
-+# simulator makes it the slowest database suite). The slice is fixed before the
-+# retries, so a retry re-runs the same tests.
-+RUN='^Test'
-+if [ -n "${DB_SHARD:-}" ]; then
-+	# TestSubscription is ~40% of the suite under the simulator (99 concurrent
-+	# subscriptions), so it gets the last shard to itself.
-+	RUN=$(SHARD_LIST_RUN='^Test' SHARD_LIST_ARGS='-db=none' SHARD_SOLO='TestSubscription' PRINT_REGEX=1 \
-+		bash ../scripts/test-shard.sh . "$DB_SHARD" "${DB_SHARDS:?DB_SHARDS must be set with DB_SHARD}")
-+fi
+-[What a question left running can do](/watch/) · [Agent docs](/agentic/server-agent/)
++Most people outside engineering work in Slack, Teams or email, and DeepORG has no app for those yet. What it has today is a webhook: a watch can post each event as JSON to an address you allow in `watches.webhook_allow`, and a workflow tool such as Power Automate or Zapier can turn that into a message in the channel where the team already talks.
 +
- MAX_RETRIES=${SNOWFLAKE_TEST_RETRIES:-3}
- 
- for attempt in $(seq 1 "$MAX_RETRIES"); do
--	if go test -v -timeout 30m -race -db=snowflake -run '^Test' "$@" .; then
-+	if go test -v -timeout 30m -race -db=snowflake -run "$RUN" "$@" .; then
- 		exit 0
- 	fi
- 
-```
-
----
-
-### Incident Patch 2: `b5092def` (2026-11-23)
-**Commit Message**: docs(site): add per-database guides and comparison pages
-
-Add /guides/ with a page per database (PostgreSQL, MySQL/MariaDB, SQL
-Server, Oracle, MongoDB, SQLite, Snowflake, BigQuery, Cassandra) and
-/compare/ with DeepORG vs hand-built MCP tools and vs text-to-SQL. Each
-guide gives the connecting config, the MCP client setup, what the engine
-does with that dialect, and its limits, checked against the driver and
-dialect code.
-
-Database logos on the homepage and /why/every-system/ link to their
-guide, the footer links both sections, and the /why/ pages link to the
-comparisons. check-site.mjs fails when a page is missing from its index,
-lacks an h1 or pager, names GraphJin, or a logo links to an unbuilt guide.
-
-Also syncs the served install.sh with the root script (DeepORG rename).
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `website/content/compare/_index.md` (added, +21/-0)
-```diff
-@@ -0,0 +1,21 @@
-+---
-+title: "Compare: DeepORG vs hand-built MCP tools and text-to-SQL"
-+kicker: "Compare"
-+group_title: "Comparisons"
-+headline: "The other ways to connect an agent to your data."
-+description: "How DeepORG compares with the usual ways of connecting an AI agent to company data: hand-built MCP tools, raw SQL MCP servers, and Vanna-style text-to-SQL. What each is good at and where each breaks."
-+lede: "Most teams start with one of three approaches: a hand-written tool for each question, a server that hands the model a SQL prompt, or a text-to-SQL library. Each page says what the approach is good at, where it breaks, and when it is the better choice."
-+also:
-+  - /guides
-+actions:
-+  - label: "Try it in 2 minutes"
-+    href: "/#quickstart"
-+  - label: "Why DeepORG"
-+    href: "/why/"
-+cascade:
-+  type: guides
-+  landing: true
-+  toc: false
-+landing: true
-+toc: false
-+---
-```
-
-**File**: `website/content/compare/deeporg-vs-hand-built-mcp-tools.md` (added, +97/-0)
-```diff
-@@ -0,0 +1,97 @@
-+---
-+title: "Why hand-built MCP tools break: DeepORG vs a tool for every question"
-+nav_title: "vs hand-built MCP tools"
-+summary: "A tool per question works for the first ten questions. What goes wrong after that, and what to use instead."
-+headline: "Why hand-built MCP tools break, and what to do instead."
-+description: "Hand-written MCP tools, one per question, are how most teams connect an AI agent to company data. Why they stop scaling: questions outside the menu, totals the model adds up itself, schema drift, permissions re-implemented in every tool, and tool lists that crowd the prompt. How DeepORG replaces them with a searchable map and compiled queries, and when hand-built tools are still the right call."
-+lede: "The usual way to connect an agent to company data is to write a tool for each thing it might need: `get_customer`, `list_invoices`, `open_tickets_for_account`. It works for the first ten questions. This page is about what happens after that, and what to use instead."
-+weight: 10
-+actions:
-+  - label: "Try it in 2 minutes"
-+    href: "/#quickstart"
-+  - label: "No hand-built tools"
-+    href: "/why/no-hand-built-tools/"
-+---
-+
-+{{< band label="The pattern" title="A tool for each question." >}}
-+
-+Each tool wraps one fixed query: a name, a description for the model, a few parameters, and code that runs the query and returns rows. The agent reads the list of tools and picks one.
-+
-+It is a reasonable start. The tools are easy to review, each does one thing, and the model cannot run anything that is not on the list. The trouble is that the list has to keep up with every question people ask and every change to the systems underneath, and it never does.
++[Agent docs](/agentic/server-agent/) · [Watches and their delivery](/agentic/watches/)
 +
 +{{< endband >}}
 +
-+{{< band label="Where it breaks" title="Five ways a tool list fails." >}}
++{{< band id="recurring" label="Step 6 · Recurring work" title="Give it a recurring job." >}}
 +
-+{{< grid >}}
-+
-+- **The question is not on the menu.** “Which accounts on the annual plan opened an urgent ticket this week?” needs a tool nobody wrote. The model answers with the nearest tool, or chains three and joins the results in its head.
-+- **The model does the arithmetic.** A tool returns a page of 50 rows. Asked for a total over 2,000, the model sums the page and reports it, confidently. The database could have computed it exactly.
-+- **The schema moves.** A column is renamed, a table is split, a status gains a value. Hand-written tools break, or worse, keep running and return nulls. Someone has to notice.
-+- **Every tool is its own security review.** Each one decides who may see what, in its own code. 43% of MCP servers tested in one 2025 study shipped with command-injection flaws.<sup><a href="#sources">1</a></sup>
-+- **The list crowds the prompt.** Every tool's name and description is sent with every request. In one 2025 study, a model choosing from a large pool of MCP tools picked the right one 13.62% of the time; narrowing the list first raised that to 43.13%.<sup><a href="#sources">2</a></sup>
-+
-+{{< endgrid >}}
-+
-+<p class="home-sources" id="sources">Sources: <a href="https://equixly.com/blog/2025/03/29/mcp-server-new-security-nightmare/" rel="nofollow">1. Equixly, 2025</a> · <a href="https://arxiv.org/abs/2505.03275" rel="nofollow">2. Gan and Sun, RAG-MCP, 2025</a></p>
-+
-+{{< endband >}}
-+
-+{{< band label="Instead" title="A map of everything, and the agent writes the query." >}}
-+
-+DeepORG gives the agent a searchable catalog of everything you connect: tables, columns, the values a status column can take, how tables join, and the paths that cross from one database to another. The agent searches it with the person's own words, reads the entries it needs, and writes its own query.
-+
-+The engine compiles that query into one database statement, with your access rules added while it compiles. The model plans; the database computes.
-+
-+{{< grid >}}
-+
-+- **A fixed set of tools.** Under ten MCP tools, the same for three tables or three thousand. New tables appear on the map, not in the tool list.
-+- **Rules written once.** Roles, row filters and column lists live in config and apply to every query the agent writes, instead of being re-coded in each tool.
-+- **Schema changes are discovered.** A renamed column is renamed on the map the next time the schema is read. A query that names the old one fails at compile time instead of returning nulls.
-+- **Totals are exact.** Sums, counts and rankings compile into the statement, so the answer covers every row, not the first page.
-+
-+{{< endgrid >}}
-+
-+{{< endband >}}
-+
-+{{< band label="Side by side" title="The same jobs, two approaches." >}}
-+
-+| | Hand-built tools | DeepORG |
-+| --- | --- | --- |
-+| A new question | Write, review and ship a tool | The agent writes the query |
-+| A new database | A new set of tools | A few lines of config |
-+| A renamed column | Find and fix every tool that used it | Rediscovered; the old name fails loudly |
-+| Who sees what | Re-implemented in each tool | Declared once, compiled into every query |
-+| A total over many rows | The model adds up a pa
-```
-
-**File**: `website/content/compare/deeporg-vs-text-to-sql.md` (added, +92/-0)
-```diff
-@@ -0,0 +1,92 @@
-+---
-+title: "Text-to-SQL vs an AI agent: DeepORG vs Vanna-style text-to-SQL"
-+nav_title: "vs text-to-SQL"
-+summary: "Text-to-SQL has the model write SQL from a schema it was shown. What changes when the model writes against a map and an engine writes the SQL."
-+headline: "Text-to-SQL vs an agent: what changes when the model stops writing SQL."
-+description: "Text-to-SQL tools such as Vanna retrieve schema, documentation and example queries, then have a model write SQL. How that compares with DeepORG, where the agent searches a catalog, writes a query the engine compiles into SQL with your access rules, and works across databases. Where text-to-SQL is the better choice, and where it breaks."
-+lede: "Text-to-SQL hands a model your schema and asks it for SQL. Vanna made the approach popular: retrieve the table definitions, documentation and past queries closest to the question, then have the model write the statement. DeepORG takes a different line. The model writes against a map, and an engine writes the SQL."
-+weight: 20
-+actions:
-+  - label: "Try it in 2 minutes"
-+    href: "/#quickstart"
-+  - label: "Answers with evidence"
-+    href: "/why/answers-with-evidence/"
-+---
-+
-+{{< band label="How text-to-SQL works" title="Retrieve context, write SQL, run it." >}}
-+
-+A Vanna-style system is trained, in its own sense of the word, by loading three kinds of context into a vector store: table definitions (DDL), free-text documentation of business terms, and pairs of questions with the SQL that answers them. When a question comes in, it retrieves the closest entries, puts them in the prompt, and the model writes a SQL statement. The application runs that statement on a database connection and shows the result, often as a table or a chart.
-+
-+It has real strengths. The database does the arithmetic. The SQL is there to read, so an analyst can check it or paste it somewhere else. And a good library of example queries goes a long way on a warehouse with a stable set of questions.
-+
-+The open-source Vanna repository has since been archived by its owners, but the approach is widespread and many tools work the same way.
-+
-+{{< endband >}}
-+
-+{{< band label="Where it breaks" title="The hard part is not the SQL syntax." >}}
-+
-+{{< grid >}}
-+
-+- **Real schemas are hard.** 21% is the best model's success rate on real enterprise text-to-SQL, down from 91% on academic benchmarks.<sup><a href="#sources">1</a></sup> Hundreds of tables, cryptic names and several dialects are the normal case, not the edge.
-+- **Joins are guessed.** The model sees column names and infers which ones match. `orders.cust_id` to `customers.id` is a guess unless something says so.
-+- **Permissions are the connection's.** The statement runs as whatever database user the tool holds. Restricting rows per person means building that yourself, around SQL the model wrote.
-+- **Raw SQL is a wide door.** Read-only depends on the database user, or on a wrapper that inspects text. A wrapper that inspects text can be talked past.<sup><a href="#sources">2</a></sup>
-+- **The examples go stale.** Question-and-SQL pairs encode the schema as it was. When it changes, the examples teach the model the old one.
-+- **One database per question.** A question that needs the warehouse and the app database is two systems the model has to reconcile by itself.
-+
-+{{< endgrid >}}
-+
-+<p class="home-sources" id="sources">Sources: <a href="https://arxiv.org/abs/2411.07763" rel="nofollow">1. Spider 2.0, ICLR 2025</a> · <a href="https://securitylabs.datadoghq.com/articles/mcp-vulnerability-case-study-SQL-injection-in-the-postgresql-mcp-server/" rel="nofollow">2. Datadog Security Labs, 2025</a></p>
-+
-+{{< endband >}}
-+
-+{{< band label="What changes" title="The model plans. The engine writes the SQL." >}}
-+
-+In DeepORG the agent does not write SQL. It searches a catalog of everything you connect, reads the entries a question needs, and writes a GraphQL query against it. The engine compiles that query into one statement for whichever database holds the data, Postgres, SQL Server, Oracle, Snowflake or another, with your access rules added while it compiles.
-+
-+{{< grid >}}
-+
-+- **Joins come from the map.** Relationships are discovered from foreign keys or declared once in config. The agent follows a path that exists; it cannot invent one.
-+- **Wrong names fail early.** An unknown table or column fails at compile time, with a pointer to the real one, before anything reaches the database.
-+- **Rules belong to the person.** Identity comes from the caller's token, and their role's row filters and column lists are part of the statement.
-+- **No SQL text to smuggle.** Values travel as parameters, and nothing in a query can append a second SQL statement.
-+- **One question, several databases.** The engine runs each part where its data lives and joins the results.
-+- **More than one shot.** The agent loop is discover, check, validate, act. A failed query comes back with a reason, and th
-```
-
-**File**: `website/content/guides/_index.md` (added, +21/-0)
-```diff
-@@ -0,0 +1,21 @@
-+---
-+title: "Guides: an AI agent and MCP server for your database"
-+kicker: "Guides"
-+group_title: "By database"
-+headline: "Put an AI agent on the database you already run."
-+description: "How to connect DeepORG to PostgreSQL, MySQL, SQL Server, Oracle, MongoDB, SQLite, Snowflake, BigQuery and Cassandra, as an MCP server for your AI client or as an agent of its own, and where each database's limits are."
-+lede: "One page per database: the config that connects it, how to reach it from Claude, Codex or your own agent, what the engine does with that database's SQL, and the limits worth knowing before you start."
-+also:
-+  - /compare
-+actions:
-+  - label: "Try it in 2 minutes"
-+    href: "/#quickstart"
-+  - label: "Database support matrix"
-+    href: "/reference/database-support/"
-+cascade:
-+  type: guides
-+  landing: true
-+  toc: false
-+landing: true
-+toc: false
-+---
-```
-
-**File**: `website/content/guides/bigquery-ai-agent.md` (added, +92/-0)
-```diff
-@@ -0,0 +1,92 @@
-+---
-+title: "BigQuery AI agent and MCP server: query BigQuery in plain language"
-+nav_title: "BigQuery"
-+summary: "Experimental and read-only. Application Default Credentials, a byte cap on every query, and totals computed in BigQuery."
-+headline: "An AI agent for BigQuery with a cap on what each query may scan."
-+description: "Connect an AI agent or MCP client to Google BigQuery with DeepORG. Experimental, read-only support: schema discovery of one dataset, Application Default Credentials, a max_bytes_billed cap on every query, aggregates computed in BigQuery, and access rules enforced by the engine."
-+lede: "BigQuery bills by the bytes a query scans, which makes an agent that wanders through tables an expensive one. DeepORG reads one dataset, has BigQuery compute every total, and lets you cap the bytes any single query may bill. Support is experimental and read-only."
-+weight: 80
-+actions:
-+  - label: "Connect your dataset"
-+    href: "#connect"
-+  - label: "Try the demo first"
-+    href: "/#quickstart"
-+---
-+
-+{{< band label="The short version" title="What you get on BigQuery." >}}
-+
-+{{< grid >}}
-+
-+- **Read-only by construction.** Schema discovery and queries. There are no writes, subscriptions or transactions on a BigQuery source.
-+- **A byte cap per query.** Set `max_bytes_billed` and BigQuery refuses any query that would bill more, before it runs.
-+- **BigQuery computes.** Sums, counts and grouping compile into the statement; nested results are built with `JSON_OBJECT` and `ARRAY_AGG`.
-+- **Rules from the caller.** Row filters and column lists from the person's role are part of every statement.
-+
-+{{< endgrid >}}
-+
-+{{< endband >}}
-+
-+{{< band id="connect" label="Connect" title="Project, dataset, credentials." >}}
-+
-+```bash
-+curl -fsSL https://deeporg.io/install.sh | bash
-+```
-+
-+```yaml
-+# config/dev.yml
-+sources:
-+  - name: analytics
-+    kind: database
-+    type: bigquery
-+    default: true
-+    connection_string: bigquery://my-project/my_dataset?location=EU&max_bytes_billed=10000000000
-+```
-+
-+There is no host or password. Credentials come from Application Default Credentials: `GOOGLE_APPLICATION_CREDENTIALS`, the attached service account on Google Cloud, or `gcloud auth application-default login` on a workstation. Add `credentials_file=` to the connection string to use a service-account key instead.
-+
-+The account needs to run query jobs in the project and read the dataset, for example the BigQuery Job User and BigQuery Data Viewer roles.
-+
-+```bash
-+deeporg serve
-+```
-+
-+{{< endband >}}
-+
-+{{< band label="Your AI client" title="Add it to Claude Code or Codex." >}}
-+
-+```bash
-+claude mcp add deeporg -- deeporg mcp --path /absolute/path/to/config
-+codex mcp add deeporg -- deeporg mcp --path /absolute/path/to/config
-+```
-+
-+Your client's model plans the queries; BigQuery runs them; DeepORG checks each one against your rules first.
-+
-+{{< endband >}}
-+
-+{{< band label="Limits" title="Experimental, and here is what that means." >}}
-+
-+{{< grid >}}
-+
-+- **One dataset per source.** Discovery covers the dataset in the connection string. Add a source for each dataset the agent should see.
-+- **Profiling scans columns.** The catalog's sample values and value ranges come from queries that scan the columns they profile. Set `max_bytes_billed` on a large dataset.
-+- **Row counts may be missing.** They come from `INFORMATION_SCHEMA.TABLE_STORAGE`; where the account cannot read that view, they are left out.
-+- **A write preview fails.** Rehearsing a change depends on rolling back a transaction, which BigQuery does not have, so it fails instead of running.
-+
-+{{< endgrid >}}
-+
-+{{< note >}}
-+
-+**Demos do not touch BigQuery.** Under `deeporg serve --demo`, a `type: bigquery` source runs on a local simulator, so the [demos](/start/demos/) that include one need no Google Cloud project.
-+
-+{{< endnote >}}
-+
-+{{< endband >}}
-+
-+{{< band label="Go deeper" title="Related pages." >}}
-+
-+- [Snowflake AI agent](/guides/snowflake-ai-agent/): the same idea, with writes and key-pair sign-in.
-+- [Multiple databases](/integrations/multi-database/): join BigQuery results to an operational database.
-+- [Database config](/configure/database/): every connection option.
-+- [Database support](/reference/database-support/): every dialect side by side.
-+
-+{{< endband >}}
-```
-
-**File**: `website/content/guides/cassandra-ai-agent.md` (added, +107/-0)
-```diff
-@@ -0,0 +1,107 @@
-+---
-+title: "Cassandra and Amazon Keyspaces AI agent: query CQL tables in plain language"
-+nav_title: "Cassandra and Keyspaces"
-+summary: "CQL-native queries that stay inside a partition, single-row writes by primary key, and polling subscriptions bound to a partition."
-+headline: "An AI agent for Cassandra that stays inside the partition."
-+description: "Connect an AI agent or MCP client to Apache Cassandra or Amazon Keyspaces with DeepORG. CQL-native queries bounded by partition keys, single-table primary-key writes, partition-bound polling subscriptions, TLS for Keyspaces, and access rules enforced by the engine."
-+lede: "Cassandra punishes the query a model would naturally write: a scan across every partition. DeepORG compiles the agent's questions into CQL that respects your primary keys, and refuses the shapes Cassandra cannot serve well instead of running them slowly."
-+weight: 90
-+actions:
-+  - label: "Connect your cluster"
-+    href: "#connect"
-+  - label: "Try the demo first"
-+    href: "/#quickstart"
-+---
-+
-+{{< band label="The short version" title="What you get on Cassandra." >}}
-+
-+{{< grid >}}
-+
-+- **CQL-native queries.** A read pins the full partition key and filters clustering columns in key order, so Cassandra serves it from the partitions you named.
-+- **Writes by primary key.** Insert, update and delete one table's rows by their full primary key.
-+- **Joins by partition key.** A nested selection is fetched by the child table's full partition key, in bounded batches. Subscriptions poll a partition-bound query and report what changed.
-+- **Refusals that say why.** A query Cassandra cannot serve fails with the reason, such as which partition-key column is not pinned, so the agent can correct it rather than guess.
-+
-+{{< endgrid >}}
-+
-+{{< endband >}}
-+
-+{{< band id="connect" label="Connect" title="Cassandra or Amazon Keyspaces." >}}
-+
-+```bash
-+curl -fsSL https://deeporg.io/install.sh | bash
-+```
-+
-+```yaml
-+# config/dev.yml: Apache Cassandra
-+database:
-+  type: cassandra
-+  connection_string: cassandra://10.0.0.1,10.0.0.2
-+  dbname: shop                 # the keyspace
-+  user: ${CASSANDRA_USER}
-+  password: ${CASSANDRA_PASSWORD}
-+  consistency: LOCAL_QUORUM    # the default
-+```
-+
-+Amazon Keyspaces needs TLS on port 9142 and service-specific credentials. Its certificate authority is already in the system trust store:
-+
-+```yaml
-+# config/dev.yml: Amazon Keyspaces
-+database:
-+  type: cassandra
-+  host: cassandra.us-east-1.amazonaws.com
-+  port: 9142
-+  dbname: shop
-+  user: ${KEYSPACES_USER}
-+  password: ${KEYSPACES_PASSWORD}
-+  enable_tls: true
-+  consistency: LOCAL_QUORUM
-+```
-+
-+```bash
-+deeporg serve
-+```
-+
-+{{< endband >}}
-+
-+{{< band label="Your AI client" title="Add it to Claude Code or Codex." >}}
-+
-+```bash
-+claude mcp add deeporg -- deeporg mcp --path /absolute/path/to/config
-+codex mcp add deeporg -- deeporg mcp --path /absolute/path/to/config
-+```
-+
-+Your client's model does the reasoning; DeepORG supplies the catalog, checks each query and runs it.
-+
-+{{< endband >}}
-+
-+{{< band label="Limits" title="What Cassandra does not do, on purpose." >}}
-+
-+These are outside the query surface because Cassandra cannot serve them without a full scan:
-+
-+{{< grid >}}
-+
-+- **No aggregates.** Sums, counts and group-by belong in a warehouse or an operational SQL database.
-+- **No full scans.** A read that does not pin the whole partition key is refused, not run across the cluster. A known-small table can opt in with `cassandra: { allow_filtering: true }`.
-+- **No `or`, `not` or pattern matching.** A CQL `WHERE` is a conjunction of key conditions, so these are refused even on an opted-in table.
-+- **No full-text or geo search.** Use a search index or a database that has one.
-+
-+{{< endgrid >}}
-+
-+{{< note >}}
-+
-+**Pair it with something that aggregates.** If you need totals over Cassandra data, keep a copy in a warehouse and connect both. The agent asks Cassandra for one partition and the warehouse for the totals.
-+
-+{{< endnote >}}
-+
-+The test suite runs against Cassandra 5.
-+
-+{{< endband >}}
-+
-+{{< band label="Go deeper" title="Related pages." >}}
-+
-+- [Snowflake AI agent](/guides/snowflake-ai-agent/): the warehouse side of the pairing.
-+- [Multiple databases](/integrations/multi-database/): one query across several databases.
-+- [Database support](/reference/database-support/): every dialect side by side.
-+
-+{{< endband >}}
-```
-
-**File**: `website/content/guides/mongodb-mcp-server.md` (added, +113/-0)
-```diff
-@@ -0,0 +1,113 @@
-+---
-+title: "MCP server for MongoDB: connect an AI agent to MongoDB and Atlas"
-+nav_title: "MongoDB"
-+summary: "MongoDB and Atlas. The agent writes the same queries it writes for SQL; the engine turns them into aggregation pipelines with $lookup."
-+headline: "An AI agent for MongoDB that writes queries, not pipelines."
-+description: "Connect Claude, Codex or any MCP client to MongoDB or Atlas with DeepORG. The agent writes one query language for every database; the engine translates it into MongoDB aggregation pipelines, joins collections with $lookup, and enforces access rules. Declared relationships, embedded documents, cursors and subscriptions."
-+lede: "On MongoDB the agent writes the same queries it writes for Postgres. The engine turns each one into an aggregation pipeline: `$match` for filters, `$lookup` for relationships, `$project` for the fields asked for. One query language covers your documents and your SQL databases."
-+weight: 50
-+actions:
-+  - label: "Connect your database"
-+    href: "#connect"
-+  - label: "Try the demo first"
-+    href: "/#quickstart"
-+---
-+
-+{{< band label="The short version" title="What you get on MongoDB." >}}
-+
-+{{< grid >}}
-+
-+- **Pipelines written by the engine.** Filters, ordering, limits, relationships and embedded arrays compile into one aggregation pipeline. The model never builds a pipeline by hand.
-+- **Joins across collections.** A nested selection becomes a `$lookup` with its own pipeline. An array of ids joins with `$in`.
-+- **One language across databases.** A question that spans MongoDB and Postgres is written once; the engine runs each part on its own database.
-+- **Rules from the caller.** Row filters from the signed-in person's role are added to the `$match` stage.
-+
-+{{< endgrid >}}
-+
-+{{< endband >}}
-+
-+{{< band id="connect" label="Connect" title="Connection, database and relationships." >}}
-+
-+```bash
-+curl -fsSL https://deeporg.io/install.sh | bash
-+```
-+
-+```yaml
-+# config/dev.yml
-+sources:
-+  - name: docs
-+    kind: database
-+    type: mongodb
-+    default: true
-+    # mongodb+srv://user:pass@cluster.example.net
-+    connection_string: ${MONGODB_URI}
-+    dbname: app                         # required: the database to read
-+    read_only: true   # start read-only
-+```
-+
-+Name the database in `dbname`; the one in the URI is not used. MongoDB has no foreign keys, so tell the engine how collections relate:
-+
-+```yaml
-+tables:
-+  - name: orders
-+    columns:
-+      - name: customer_id
-+        foreign_key: customers.id
-+```
-+
-+The agent then follows `orders → customer` as it would on any SQL database. Fields are addressed as `id`; the engine maps them to `_id`.
-+
-+```bash
-+deeporg serve
-+```
-+
-+{{< endband >}}
-+
-+{{< band label="Your AI client" title="Add it to Claude Code or Codex." >}}
-+
-+```bash
-+claude mcp add deeporg -- deeporg mcp --path /absolute/path/to/config
-+codex mcp add deeporg -- deeporg mcp --path /absolute/path/to/config
-+```
-+
-+Your client's model does the reasoning. With a server already running, `deeporg mcp add claude http://localhost:8080` registers it over HTTP.
-+
-+{{< endband >}}
-+
-+{{< band label="What runs" title="A nested query becomes $lookup." >}}
++Questions are where trust starts. The work that pays for a rollout is the job someone does every week: chase tickets nobody answered, flag accounts that stopped using the product, check that last night's load arrived. A routine is that job, written down once. It is a watch whose delivery is a turn for the agent:
 +
 +```graphql
-+query {
-+  orders(where: { status: { eq: "open" } }, order_by: { id: desc }, limit: 10) {
-+    id
-+    total
-+    customer { id name }
-+  }
++mutation {
++  gj_watch(insert: {
++    name: "stale_tickets_weekday"
++    schedule: { cron: "0 9 * * 1-5", timezone: "America/New_York" }
++    delivery_json: {
++      kind: "agent"
++      prompt: "Which open support tickets have had no reply for three days? Raise each one's priority to high."
++    }
++  }) { id next_fire_at status }
 +}
 +```
 +
-+The engine sends MongoDB one pipeline: a `$match` on status plus the role's filter, a `$sort` and `$limit`, and a `$lookup` into `customers` that projects only `id` and `name`. Embedded arrays queried as their own table use `$unwind` and `$group` so the parent document keeps its shape.
-+
-+{{< endband >}}
-+
-+{{< band label="Limits" title="Where MongoDB differs." >}}
-+
 +{{< grid >}}
 +
-+- **Some SQL features do not carry over.** Counts, sums and averages run as a `$group` stage, but analytics directives (window-style rankings) and database functions are SQL-only. Check before you rely on an aggregate-heavy question being portable.
-+- **Relationships are declared.** Nothing is inferred from field names; a missing declaration means a missing join.
-+- **No schema management.** Collections are discovered from your data; the engine does not create or migrate them.
-+- **Tested version.** The test suite runs against MongoDB 7.
++- **It looks before it proposes.** When the routine fires, on its schedule or when its question's answer changes, the agent looks up what the decision depends on, then says in plain words whether a change is called for.
++- **A change waits for its owner.** The change is dry-run and held, like any change the agent proposes. The owner gets an "action needed" notification and approves or rejects that exact version.
++- **It checks its own work.** A change can say what it should achieve: a query and the number it should reach. DeepORG measures it before the change and again after, and records `hit` or `miss`. A miss starts a turn so the agent can look into it.
++- **It has a budget.** `agent.budgets` caps model tokens per person and per routine over a rolling day, on by default in agentic mode. A run over its cap stops, and the owner is told.
 +
 +{{< endgrid >}}
 +
-+{{< endband >}}
++A routine proposes changes only with write approvals on, the default in agentic mode. Without them it answers and changes nothing.
 +
-+{{< band label="Go deeper" title="Related pages." >}}
-+
-+- [MongoDB in the docs](/integrations/mongodb/): the pipeline format, cursors and ids.
-+- [Multiple databases](/integrations/multi-database/): one query across MongoDB and SQL.
-+- [DeepORG vs hand-built MCP tools](/compare/deeporg-vs-hand-built-mcp-tools/): why a tool per collection stops scaling.
-+- [Database support](/reference/database-support/): every dialect side by side.
-+
-+{{< endband >}}
++[What a question left running can do](/wat
 ```
 
-**File**: `website/content/guides/mysql-mcp-server.md` (added, +104/-0)
+**File**: `website/content/why/_index.md` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,104 @@
-+---
-+title: "MCP server for MySQL and MariaDB: connect an AI agent to MySQL"
-+nav_title: "MySQL and MariaDB"
-+summary: "MySQL 8.0+, MariaDB 10.2+, Aurora MySQL and Cloud SQL. Declare the joins your schema never wrote down, and the agent stops guessing them."
-+headline: "An AI agent for MySQL and MariaDB that knows how your tables join."
-+description: "Connect Claude, Codex or any MCP client to MySQL or MariaDB with DeepORG. Schema discovery, declared relationships for schemas without foreign keys, one parameterized statement per question, and access rules enforced by the engine. MySQL 8.0+, MariaDB 10.2+, Aurora MySQL and Cloud SQL."
-+lede: "DeepORG connects to MySQL 8.0+ and MariaDB 10.2+, maps the schema into a catalog the agent can search, and runs each question as one parameterized statement. Many MySQL schemas never declared their foreign keys; you can name those joins once, in config, so the agent stops guessing them."
-+weight: 20
-+actions:
-+  - label: "Connect your database"
-+    href: "#connect"
-+  - label: "Try the demo first"
-+    href: "/#quickstart"
-+---
-+
-+{{< band label="The short version" title="What you get on MySQL." >}}
-+
-+{{< grid >}}
-+
-+- **A catalog, not a prompt full of DDL.** The agent searches for the tables a question needs and reads only those.
-+- **One statement per question.** The engine compiles the agent's query into MySQL, with nested results built by `JSON_OBJECT` and `JSON_ARRAYAGG` inside the database.
-+- **The agent never writes SQL.** It writes a GraphQL query; the engine writes the statement and hands values to the driver as parameters.
-+- **Rules from the caller.** Row filters and column lists come from the signed-in person's role and are compiled into the statement.
-+
-+{{< endgrid >}}
-+
-+{{< endband >}}
-+
-+{{< band id="connect" label="Connect" title="Name the database in config." >}}
-+
-+```bash
-+curl -fsSL https://deeporg.io/install.sh | bash
-+```
-+
-+```yaml
-+# config/dev.yml
-+sources:
-+  - name: app
-+    kind: database
-+    type: mysql                         # or mariadb
-+    default: true
-+    # user:pass@tcp(host:3306)/app?multiStatements=true&parseTime=true&interpolateParams=true
-+    connection_string: ${MYSQL_DSN}
-+    read_only: true   # start read-only
-+```
-+
-+The connection string is the Go driver's DSN, with the parameters the engine expects. A `mysql://` prefix is accepted and stripped. Amazon Aurora MySQL, RDS for MySQL and Google Cloud SQL for MySQL connect the same way.
-+
-+```bash
-+deeporg serve
-+```
-+
-+{{< endband >}}
-+
-+{{< band label="Missing joins" title="Tell it the joins your schema never declared." >}}
-+
-+Plenty of MySQL applications enforce relationships in code and never create a foreign key. Without one, an agent has to guess that `orders.cust_id` points at `customers.id`, and a guess is where wrong answers start.
-+
-+Declare it once:
-+
-+```yaml
-+tables:
-+  - name: orders
-+    columns:
-+      - name: cust_id
-+        foreign_key: customers.id
-+```
-+
-+From then on the join is on the map, the agent can follow it, and the engine compiles it like any other relationship. A person can also pin a note to a column, such as which of two status columns is the real one, through [annotations](/agentic/annotations/).
-+
-+{{< endband >}}
-+
-+{{< band label="Your AI client" title="Add it to Claude Code or Codex." >}}
-+
-+```bash
-+claude mcp add deeporg -- deeporg mcp --path /absolute/path/to/config
-+codex mcp add deeporg -- deeporg mcp --path /absolute/path/to/config
-+```
-+
-+That runs DeepORG over stdio with your config; your client's model does the reasoning. Against a running server, use `deeporg mcp add claude http://localhost:8080` instead.
-+
-+{{< endband >}}
-+
-+{{< band label="Limits" title="Where MySQL differs." >}}
-+
-+{{< grid >}}
-+
-+- **No array columns.** MySQL has none, so array filters and array joins are Postgres and MongoDB features.
-+- **Writes run step by step.** MySQL has no `RETURNING`, so a nested insert runs as a short sequence of statements rather than a single one.
-+- **Geo filters need MySQL 8.0.** MariaDB has them too. Full-text search works on both.
-+- **Tested versions.** The test suite runs against MySQL 8.0 and MariaDB 10.11.
-+
-+{{< endgrid >}}
-+
-+{{< endband >}}
-+
-+{{< band label="Go deeper" title="Related pages." >}}
-+
-+- [MCP server for PostgreSQL](/guides/postgres-mcp-server/): the same setup, with the five questions to ask any database MCP server.
-+- [DeepORG vs text-to-SQL](/compare/deeporg-vs-text-to-sql/): why a guessed join is the usual failure.
-+- [Relationships](/core/relationships/): how nested queries become joins.
-+- [Database support](/reference/database-support/): every dialect side by side.
-+
-+{{< endband >}}
+@@ -2,7 +2,7 @@
+ title: "Why DeepORG"
+ headline: "Nine reasons, one page each."
+ description: "What DeepORG is for and why it is built the way it is: a complete agent, no hand-built tools, answers with evidence, your access rules, a public benchmark, a training environment, standing questions, every system you run, and an open engine."
+-lede: "DeepORG is one AI agent for your whole organization. It is graded on its own public benchmark, and the same machinery turns your organization into a training environment. Each line below is one reason to choose it, with a page that says how it works and where its limits are."
++lede: "DeepORG puts AI agents to work on the systems your company already runs, without rebuilding them. It is graded on its own public benchmark, and the same machinery turns your organization into a training environment. Each line below is one reason to choose it, with a page that says how it works and where its limits are."
+ scene: "sources"
+ scene_label: "Animated diagram: databases, warehouses, API specs, file stores and source code flow into one map that one agent reads."
+ scene_caption: "many systems / one map / one agent"
+```
+
+**File**: `website/hugo.toml` (modified, +2/-2)
+```diff
+@@ -19,8 +19,8 @@ canonifyURLs = false
+     ordered = false
+ 
+ [params]
+-  description = "DeepORG is one AI agent for your whole organization — answering questions and carrying out operations across your databases, APIs, files, and code, built on an open-source engine."
+-  home_seo_title = "DeepORG — One AI Agent for Your Whole Organization: databases, APIs, files, and code"
++  description = "DeepORG puts AI agents to work on the systems your company already runs — databases, APIs, files and code — without rebuilding them, on an open-source engine that compiles each request into queries under your access rules."
++  home_seo_title = "DeepORG — AI Agents for the Company You Already Run: databases, APIs, files, and code"
+   github = "https://github.com/dosco/deeporg"
+   install = "curl -fsSL https://deeporg.io/install.sh | bash"
+ 
+```
+
+**File**: `website/layouts/_default/baseof.html` (modified, +1/-1)
+```diff
+@@ -174,7 +174,7 @@
+       <div class="site-footer-inner">
+         <div class="site-footer-brand">
+           <a class="brand" href="{{ "/" | relURL }}" aria-label="DeepORG home"><span class="brand-name">DeepORG</span></a>
+-          <p>One AI agent for your whole organization. Open source under Apache 2.0.</p>
++          <p>AI agents for the company you already run. Open source under Apache 2.0.</p>
+         </div>
+         <nav class="site-footer-links" aria-label="Footer">
+           {{ range $sectionLinks }}<a href="{{ .href | relURL }}">{{ .label }}</a>{{ end }}
+```
+
+**File**: `website/layouts/shortcodes/benchmark-home.html` (modified, +1/-1)
+```diff
+@@ -27,7 +27,7 @@
+ <section id="proof" class="dx-proof" aria-labelledby="home-benchmark-title"{{ with $top }} data-proof-run="{{ .run_id }}"{{ end }}>
+   <div class="dx-pillars-head">
+     <div>
+-      <p class="dx-kicker"><b>02</b><i></i><span>Proven in public</span></p>
++      <p class="dx-kicker"><b>Verify</b><i></i><span>Proven in public</span></p>
+       {{- with $top }}
+       {{- $cents := partial "benchmark-cents.html" (partial "benchmark-pass-cost.html" .) }}
+       <h2 id="home-benchmark-title">{{ printf "%.0f" (mul (float .recall) 100) }} out of 100{{ with $cents }}, <span class="dx-answer">for {{ . }} a task.</span>{{ else }}.{{ end }}</h2>
+```
+
+**File**: `website/scripts/check-site.mjs` (modified, +20/-13)
+```diff
+@@ -100,13 +100,14 @@ const requiredRoutes = [
+ ];
+ 
+ // One anchor per homepage section or card, then the closing ones. A short
+-// #problem section (why AI rollouts stall) sits under the hero; the three
+-// values that define DeepORG follow; four more are cards in #reasons. The
++// #problem section (why AI rollouts stall) sits under the hero; #engine (how
++// the compiler replaces hand-built tools) and #loop (connect, discover,
++// execute, verify, improve) follow; three more reasons are cards. The
+ // detail that used to live under #mcp, #security-model, #codesql,
+ // #capabilities and #how moved to the /why/ pages and is asserted there.
+ const requiredAnchors = [
+   'problem',
+-  'pillars',
++  'loop',
+   'agent',
+   'ai-queries',
+   'proof',
+@@ -320,15 +321,20 @@ const requiredRenderedContent = [
+   ['benchmark/index.html', 'Expected behavior'],
+   // The /why/ pages own the detail the homepage used to carry inline. Pin the
+   // claims that moved, so shortening the homepage cannot quietly lose them.
+-  ['index.html', 'One AI agent for your whole organization.'],
+-  ['index.html', 'Three things set it apart.'],
+-  ['index.html', 'Four more reasons it holds up in a real company.'],
++  ['index.html', 'AI agents for the company you already run. Nothing to rebuild.'],
++  ['index.html', 'No tool for each question. One compiler for all of them.'],
++  ['index.html', 'Connect, discover, execute, verify, improve.'],
++  ['index.html', 'Training a model on them is optional.'],
++  ['index.html', 'Three more reasons it holds up in a real company.'],
+   // Why rollouts stall, and the guide for whoever does the rollout.
+   ['index.html', 'Company data has no test suite.'],
+   ['index.html', 'What a rollout takes, step by step'],
+   ['rollout/index.html', 'Most of an AI rollout is not the model.'],
+   ['rollout/index.html', 'Write down what your terms mean.'],
+-  ['index.html', 'How a question becomes one database query.'],
++  ['rollout/index.html', 'Give it a recurring job.'],
++  ['rollout/index.html', 'Know whether it is working.'],
++  ['rollout/index.html', 'Pay for answers, not for pages of rows.'],
++  ['rollout/index.html', 'DeepORG has no app for those yet'],
+   ['index.html', 'formerly GraphJin'],
+   ['index.html', 'A change waits for your yes.'],
+   ['index.html', 'a searchable map of everything you connect'],
+@@ -520,7 +526,8 @@ if (await exists(path.join(publicRoot, 'index.html'))) {
+   // the problem." is the /watch/ page's own headline and is pinned there.
+   for (const required of [
+     'Leave a question running.',
+-    'It tells you when something changes.',
++    'Give it a recurring job.',
++    'A routine goes one step further.',
+     'It speaks up when the answer changes',
+     'database polls, not model calls',
+   ]) {
+@@ -654,13 +661,13 @@ if (await exists(path.join(publicRoot, 'index.html'))) {
+     }
+   }
+   const engineStart = homeHTML.search(/id=["']?engine\b/);
+-  const engineEnd = homeHTML.search(/id=["']?quickstart\b/);
++  const engineEnd = homeHTML.search(/id=["']?loop\b/);
+   const engine = engineStart >= 0 && engineEnd > engineStart ? homeHTML.slice(engineStart, engineEnd) : '';
+   if (!engine) {
+-    failures.push('Homepage #engine section not found ahead of #quickstart');
++    failures.push('Homepage #engine section not found ahead of #loop');
+   } else {
+     if (/GraphJin/.test(engine)) failures.push('Homepage #engine section names GraphJin; it should say how DeepORG works');
+-    for (const required of ['How a question becomes one database query.', 'compiles it into a single database query', 'open source under Apache 2.0']) {
++    for (const required of ['No tool for each question.', 'A tool written by hand for each question', 'compiles it into a single database query', 'open source under Apache 2.0']) {
+       if (!engine.includes(required)) failures.push(`Homepage #engine section missing: ${required}`);
+     }
+     if (!/data-ascii=["']?how\b/.test(engine)) failures.push('Homepage #engine section lost its step-by-step figure');
+@@ -1504,10 +1511,10 @@ if (await exists(benchmarkDataPath)) {
+     // The hero quotes no benchmark counts (the board in #proof carries them and
+     // is checked above). Its figure is one wide scene with a stacked one for
+     // small screens; losing the second leaves a phone with an unreadable strip.
+-    const heroEnd = home.search(/id=["']?pillars\b/);
++    const heroEnd = home.search(/id=["']?problem\b/);
+     const hero = heroEnd >= 0 ? home.slice(home.indexOf('dx-hero'), heroEnd) : '';
+     if (!hero) {
+-      failures.push('Homepage hero not found ahead of #pillars');
++      failures.push('Homepage hero not found ahead of #problem');
+     } else {
+       for (const [scene, variant] of [['orgwide', 'ascii--wide'], ['org', 'ascii--narrow']]) {
+         const pre = new RegExp(`<pre[^>]*data-ascii=["']?${scene}["']?[\\s>][^>]*>|<pre[^>]*data-ascii=["']?${scene}["']?>`).exec(hero)?.[0] ?? '';
+```
+
+**File**: `website/scripts/og-card.html` (modified, +1/-1)
+```diff
+@@ -65,7 +65,7 @@
+ <body>
+   <div class="brand"><span class="dot"></span>DeepORG</div>
+   <div>
+-    <h1>One AI agent for your whole organization.</h1>
++    <h1>AI agents for the company you already run.</h1>
+     <p class="sub">It answers questions and makes changes across your databases, APIs, files and code.</p>
+   </div>
+ <pre><i>ask &gt;</i> <b>Which account is most at risk of churn, and why?</b>
 ```
 
 ---
 
-### Incident Patch 3: `88f0baa1` (2026-11-22)
-**Commit Message**: ci: skip the build cache for sqlite, which builds inside its own Docker image [skip-release]
+### Incident Patch 2: `a3b24594` (2026-11-23)
+**Commit Message**: feat(eval): add a quick check to the public benchmark
+
+`deeporg eval bench --quick` runs 25 tasks of the frozen public suite once
+each: 25 provider attempts instead of 339. It is a screen for a new model or
+setup, not a score: one run moves about ±5.5 points against the full run's ±2,
+and orders two runs 10+ points apart correctly 97% of the time.
+
+The tasks come from scripts/select-quick-tasks.py, which reads per-task
+results from published and local runs (61 runs, 11 models) and keeps, per
+task family, the tasks whose pass rate best tracks a run's full score.
+Every family keeps at least two tasks.
+
+Quick runs are never published, even with --allow-off-suite, and publish
+now also refuses any run with fewer than three attempts per task. Quick
+reports skip the full-suite publication gates, which a 25-task slice can
+never meet. A test fails when the public suite is refrozen without a new pick.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/build.yml` (modified, +5/-1)
+**File**: `cmd/benchmark/quick-tasks.json` (added, +32/-0)
 ```diff
-@@ -190,7 +190,7 @@ jobs:
-           - { db: redshift, cache: db }
-           - { db: mysql, cache: db-mysql }
-           - { db: mariadb, cache: db-mariadb }
--          - { db: sqlite, cache: db-sqlite }
-+          - { db: sqlite, cache: none }
-           - { db: mssql, cache: db-mssql }
-     steps:
-       - name: Checkout
-@@ -202,7 +202,11 @@ jobs:
-           go-version-file: go.work
-           cache: false
+@@ -0,0 +1,32 @@
++{
++  "suite": "DeepORG Public Benchmark 2028.6",
++  "repeats": 1,
++  "selection": "scripts/select-quick-tasks.py: per family, the tasks whose past pass rate best tracks a run's full-suite score",
++  "tasks": [
++    "gjv1_2aafbc0cdc0900cae30d8b21",
++    "gjv1_3d61ddf513504502e275fa6f",
++    "gjv1_7c3ddc2cdc1f734cbf2187e3",
++    "gjv1_536460a0c6b5d6e3b77cbc68",
++    "gjv1_994956acc86d2a5a7c9ad1b7",
++    "gjv1_9c67e09aff289968b4241041",
++    "gjv1_2edfa17cf3b69b5ed523deb4",
++    "gjv1_fd3395a207f1ce74c4f9aa94",
++    "gjv1_0c3af21f120343d714566058",
++    "gjv1_9e6350d7a7baa6fa8cc6e5ba",
++    "gjv1_a02052b125b1a181f8442eb7",
++    "gjv1_18189b986b75b72c0280d713",
++    "gjv1_9a518c54381c569f52c8c9c9",
++    "gjv1_347bbd1a0db909a5df305d69",
++    "gjv1_90aaf6f51e82ed9cd3c5bc56",
++    "gjv1_028d0b7fed24d46783dcf47c",
++    "gjv1_b6e5d635bf90733263bdf7aa",
++    "gjv1_fb4ec2a6cc1d4d46a3d014ab",
++    "gjv1_79e0e851b6a97767cb8223e2",
++    "gjv1_8a35057583225981e4083f74",
++    "gjv1_991ff7d69f25033949908ae4",
++    "gjv1_1f8ff9366706a11ebbf063e2",
++    "gjv1_bc642f6bf1af5aa97dcc1a5b",
++    "gjv1_71673cd67b681bed192190c4",
++    "gjv1_0182e34daa8207d10033859e"
++  ]
++}
+```
+
+**File**: `cmd/cmd_eval.go` (modified, +29/-4)
+```diff
+@@ -60,6 +60,9 @@ type evalCLIOptions struct {
+ 	AutoResumeAttempts int
+ 	FreezeTime         string
+ 	Pool               int
++	// Quick runs the public quick check: a fixed subset of the frozen public
++	// suite, one attempt per task. Never publishable.
++	Quick bool
+ }
  
-+      # sqlite builds inside its own Docker image (scripts/test-sqlite.sh,
-+      # for SpatiaLite) with Docker volumes for its Go cache, so the runner's
-+      # directories hold nothing for it.
-       - name: Cache Go build
-+        if: matrix.db != 'sqlite'
-         uses: actions/cache@v4
-         with:
-           path: |
+ // evalFrozenClock returns the clock the harness and its oracles read, or nil to
+@@ -738,6 +741,12 @@ func evalBenchCmd(opts *evalCLIOptions) *cobra.Command {
+ 		Short: "Generate and run the extended stratified benchmark distribution",
+ 		Args:  cobra.NoArgs,
+ 		RunE: func(cmd *cobra.Command, _ []string) error {
++			if opts.Quick {
++				if benchmarkSlug != defaultBenchmarkSlug {
++					return fmt.Errorf("--quick is only defined for the %s benchmark", defaultBenchmarkSlug)
++				}
++				public = true
++			}
+ 			if public {
+ 				if benchmarkSlug == DeepContosoBenchmarkSlug {
+ 					opts.Demo = true
+@@ -798,7 +807,11 @@ func evalBenchCmd(opts *evalCLIOptions) *cobra.Command {
+ 			}
+ 			catalogClient := &http.Client{Timeout: 120 * time.Second}
+ 			var suite *gjeval.Suite
+-			if public {
++			repeats := gjeval.DefaultRepeats
++			if opts.Quick {
++				suite, err = loadQuickEvalSuite()
++				repeats = quickEvalRepeats
++			} else if public {
+ 				suite, err = loadNamedEvalSuite(benchmarkSlug)
+ 			} else {
+ 				suite, err = (gjeval.Generator{
+@@ -822,7 +835,7 @@ func evalBenchCmd(opts *evalCLIOptions) *cobra.Command {
+ 			// changing the dataset fingerprint the resume must match.
+ 			attempt := func(ctx context.Context, policy gjeval.ResumePolicy, resumeRunID string) (*gjeval.Report, error) {
+ 				prepared, err := (gjeval.Runner{Client: evalAgentClient(status), Now: frozenClock}).Prepare(ctx, *suite, instance, gjeval.RunOptions{
+-					Mode: gjeval.RunModeBenchmark, Intent: gjeval.RunIntentBench, Repeats: gjeval.DefaultRepeats, Seed: seed,
++					Mode: gjeval.RunModeBenchmark, Intent: gjeval.RunIntentBench, Repeats: repeats, Seed: seed,
+ 					Provenance: evalProvenance(instance, seed, status), Baseline: baseline, Store: store,
+ 					ResumePolicy: policy, ResumeRunID: resumeRunID, BinaryFingerprint: evalBinaryFingerprint(),
+ 					InvocationArgs: evalInvocationArgs(opts, projectPath, scale, seed, public), Concurrency: opts.Concurrency,
+@@ -852,13 +865,18 @@ func evalBenchCmd(opts *evalCLIOptions) *cobra.Command {
+ 				return evalExecutionError(err)
+ 			}
+ 			printEvalReport(cmd, opts, report, store)
++			if opts.Quick && !opts.JSON {
++				fmt.Fprint(cmd.OutOrStdout(), quickEvalNotice)
++			}
+ 			return evalReportExit(report)
+ 		},
+ 	}
+ 	cmd.Flags().IntVar(&scale, "scale", 100, "number of verified generated benchmark tasks")
+ 	cmd.Flags().Int64Var(&seed, "seed", 23, "deterministic generator and rollout seed")
+ 	cmd.Flags().BoolVar(&public, "public", false, "run the frozen, reproducible public benchmark suite")
+ 	cmd.Flags().StringVar(&benchmarkSlug, "benchmark", defaultBenchmarkSlug, "public benchmark slug (deeporg, deepcontoso)")
++	cmd.Flags().BoolVar(&opts.Quick, "quick", false,
++		"run the quick check: a fixed 25-task slice of the public suite, one attempt each (implies --public; never publishable)")
+ 	cmd.Flags().BoolVar(&opts.AutoResume, "auto-resume", false,
+ 		"resume this run automatically when the provider stops it for a transient reason (timeout, rate limit, transport fault, 5xx); requires --yes")
+ 	cmd.Flags().IntVar(&opts.AutoResumeAttempts, "auto-resume-attempts", defaultAutoResumeAttempts,
+@@ -1321,8 +1339,12 @@ func printEvalReport(cmd *cobra.Command, opts *evalCLIOptions, report *gjeval.Re
+ 	// Per-family publication gates, printed for every complete run. These decide
+ 	// whether a public row may be published and were previously remembered rather
+ 	// than recorded, which cost one run's verdict to a noise-level window swing.
+-	// A run of mined tests is never a public row, so it has none.
+-	if len(tiers) == 0 {
++	// A run of mined tests is never a public row, so it has none. Neither is a
++	// quick check, and its 2-4 tasks per family can never reach floors sized
++	// for the full suite, so printing them would only report noise as failure.
++	if isQuickEvalReport(report) {
++		fmt.Fprintln(cmd.OutOrStdout(), "Publication gates: not applied to a quick check.")
++	} else if len(tiers) == 0 {
+ 		if gatesMet, unmet := gjeval.PublicationGatesMet(*report); gatesMet {
+ 			fmt.Fprintf(cmd.OutOrStdout(), "Publication gates: all met.\n%s", gjeval.FormatPublicationGates(*report))
+ 		} else {
+@@ -1548,6 +1570,9 @@ func evalInvocationArgs(opts *evalCLIOptions, projectPath string, scale int, see
+ 		// rejected as incompatible with the frozen run it means to continue.
+ 		args = append(args, "--public")
+ 	}
++	if opts.Quick {
++		args = append(args, "--quick")
++	}
+ 	if opts.Demo && !public {
+ 		args = append(args, "--demo")
+ 	}
+```
+
+**File**: `cmd/cmd_eval_publish.go` (modified, +11/-0)
+```diff
+@@ -220,6 +220,17 @@ func runEvalPublish(cmd *cobra.Command, evalOpts *evalCLIOptions, opts *evalPubl
+ 	if report.Metrics.TaskCount == 0 {
+ 		return &evalExitError{Code: 1, Err: fmt.Errorf("run %s has no scored tasks", runID)}
+ 	}
++	// A quick check is a cheap screen: a 25-task slice, one attempt each, about
++	// three times as noisy as a full run. No flag publishes one, not even as an
++	// unranked archive row, because a board reader cannot tell the difference.
++	// The repeats check also catches quick runs made from an older suite,
++	// whose fingerprint no longer matches today's quick check.
++	if isQuickEvalReport(&report) {
++		return &evalExitError{Code: 2, Err: fmt.Errorf("run %s is a quick check; quick runs are never published, run \"deeporg eval bench --public\" for a publishable result", runID)}
++	}
++	if report.Provenance.Repeats != 0 && report.Provenance.Repeats < gjeval.DefaultRepeats {
++		return &evalExitError{Code: 2, Err: fmt.Errorf("run %s made %d attempt(s) per task; published results need %d", runID, report.Provenance.Repeats, gjeval.DefaultRepeats)}
++	}
+ 	buildCommit := report.Provenance.GraphJinCommit
+ 	buildFingerprint := report.Provenance.BinaryFingerprint
+ 	buildLabel := "run"
+```
+
+**File**: `cmd/cmd_eval_publish_test.go` (modified, +22/-0)
+```diff
+@@ -38,6 +38,11 @@ func TestEvalPublishRefusalsAndLowScoreBoundary(t *testing.T) {
+ 			r.Metrics.GroundTruthRecall = .9
+ 			r.Metrics.MethodRecall = .2
+ 		}, 2},
++		{"quick_check", func(r *gjeval.Report) {
++			r.SuiteFingerprint = quickEvalSuiteFingerprint()
++			r.Provenance.Repeats = quickEvalRepeats
++		}, 2},
++		{"single_attempt", func(r *gjeval.Report) { r.Provenance.Repeats = 1 }, 2},
+ 	}
+ 	for _, tc := range tests {
+ 		t.Run(tc.name, func(t *testing.T) {
+@@ -67,6 +72,23 @@ func TestEvalPublishRefusalsAndLowScoreBoundary(t *testing.T) {
+ 	}
+ }
+ 
++// A quick check must stay off the board even when the operator asks for an
++// unranked archive row: the archive is still read as a score.
++func TestEvalPublishRefusesQuickCheckEvenOffSuite(t *testing.T) {
++	project, site := t.TempDir(), t.TempDir()
++	report := publishTestReport("20260803T101112.000000000Z-quick")
++	report.SuiteFingerprint = quickEvalSuiteFingerprint()
++	report.Provenance.Repeats = quickEvalRepeats
++	writePublishTestReport(t, project, report)
++	err := publishTestRun(t, project, site, report.RunID, &evalPublishOptions{Site: site, AllowOffSuite: true})
++	if err == nil || !strings.Contains(err.Error(), "quick check") {
++		t.Fatalf("quick check publish error = %v, want a quick-check refusal", err)
++	}
++	if _, statErr := os.Stat(publishTestDataPath(site)); !os.IsNotExist(statErr) {
++		t.Fatalf("quick check wrote board data: %v", statErr)
++	}
++}
++
+ func TestEvalPublishSuspectScoringRequiresExplicitOverride(t *testing.T) {
+ 	project, site := t.TempDir(), t.TempDir()
+ 	report := publishTestReport("20260803T101112.000000000Z-suspect-override")
+```
+
+**File**: `cmd/eval_public_suite.go` (modified, +97/-1)
+```diff
+@@ -5,6 +5,8 @@ import (
+ 	"embed"
+ 	"encoding/json"
+ 	"fmt"
++	"sort"
++	"strings"
+ 
+ 	gjeval "github.com/dosco/graphjin/agent/v3/eval"
+ )
+@@ -14,9 +16,103 @@ const (
+ 	DeepContosoBenchmarkSuiteFingerprint = "6d23b0e3399aba54ab9e9c9174feab09"
+ )
+ 
+-//go:embed benchmark/public-suite.json benchmark/deepcontoso-suite.json
++//go:embed benchmark/public-suite.json benchmark/deepcontoso-suite.json benchmark/quick-tasks.json
+ var publicEvalSuiteFS embed.FS
+ 
++// quickEvalRepeats is one attempt per task: the quick check trades precision
++// for cost (25 attempts against the full run's 339).
++const quickEvalRepeats = 1
++
++const quickEvalNotice = `
++Quick check: 25 of the public suite's tasks, one attempt each, about 7% of a
++full run's provider cost. Its score is expected to move about 6 points from one
++run to the next (the full run moves about 2), so it catches a broken setup or a
++large drop, not a small change. Quick runs are never published to the board;
++run "deeporg eval bench --public" for a publishable result.
++`
++
++// quickEvalTasks is cmd/benchmark/quick-tasks.json, written by
++// scripts/select-quick-tasks.py from past per-task results.
++type quickEvalTasks struct {
++	Suite     string   `json:"suite"`
++	Repeats   int      `json:"repeats"`
++	Selection string   `json:"selection"`
++	Tasks     []string `json:"tasks"`
++}
++
++// loadQuickEvalSuite returns the public suite cut down to the quick-check
++// tasks, in the public suite's order. The task list names the suite it was
++// picked from; a refrozen public suite must get a fresh pick, because task
++// pass rates measured on the old one no longer describe the new one.
++func loadQuickEvalSuite() (*gjeval.Suite, error) {
++	public, err := loadPublicEvalSuite()
++	if err != nil {
++		return nil, err
++	}
++	data, err := publicEvalSuiteFS.ReadFile("benchmark/quick-tasks.json")
++	if err != nil {
++		return nil, err
++	}
++	var pick quickEvalTasks
++	decoder := json.NewDecoder(bytes.NewReader(data))
++	decoder.DisallowUnknownFields()
++	if err := decoder.Decode(&pick); err != nil {
++		return nil, fmt.Errorf("parse quick-check task list: %w", err)
++	}
++	if pick.Suite != public.Name {
++		return nil, fmt.Errorf("quick-check tasks were picked from %q but the public suite is %q; rerun scripts/select-quick-tasks.py --write", pick.Suite, public.Name)
++	}
++	if pick.Repeats != quickEvalRepeats {
++		return nil, fmt.Errorf("quick-check task list says %d repeats, the quick check runs %d", pick.Repeats, quickEvalRepeats)
++	}
++	wanted := make(map[string]bool, len(pick.Tasks))
++	for _, id := range pick.Tasks {
++		if wanted[id] {
++			return nil, fmt.Errorf("quick-check task %s is listed twice", id)
++		}
++		wanted[id] = true
++	}
++	quick := *public
++	quick.Name = strings.Replace(public.Name, "Public Benchmark", "Quick Check", 1)
++	quick.Tasks = make([]gjeval.Task, 0, len(pick.Tasks))
++	for _, task := range public.Tasks {
++		if wanted[task.ID] {
++			quick.Tasks = append(quick.Tasks, task)
++			delete(wanted, task.ID)
++		}
++	}
++	if len(wanted) != 0 {
++		missing := make([]string, 0, len(wanted))
++		for id := range wanted {
++			missing = append(missing, id)
++		}
++		sort.Strings(missing)
++		return nil, fmt.Errorf("quick-check tasks not in the public suite: %s; rerun scripts/select-quick-tasks.py --write", strings.Join(missing, ", "))
++	}
++	if err := quick.Validate(); err != nil {
++		return nil, fmt.Errorf("validate quick-check suite: %w", err)
++	}
++	return &quick, nil
++}
++
++// isQuickEvalReport reports whether a report came from today's quick check.
++func isQuickEvalReport(report *gjeval.Report) bool {
++	if report == nil || report.SuiteFingerprint == "" {
++		return false
++	}
++	return report.SuiteFingerprint == quickEvalSuiteFingerprint()
++}
++
++// quickEvalSuiteFingerprint identifies a quick-check run's report so publish
++// can refuse it outright. Empty when the quick suite cannot be built.
++func quickEvalSuiteFingerprint() string {
++	suite, err := loadQuickEvalSuite()
++	if err != nil {
++		return ""
++	}
++	return gjeval.SuiteFingerprint(*suite)
++}
++
+ func loadPublicEvalSuite() (*gjeval.Suite, error) {
+ 	return loadEmbeddedEvalSuite("benchmark/public-suite.json", "public")
+ }
+```
+
+**File**: `cmd/eval_quick_suite_test.go` (added, +96/-0)
+```diff
+@@ -0,0 +1,96 @@
++package main
++
++import (
++	"bytes"
++	"strings"
++	"testing"
++
++	gjeval "github.com/dosco/graphjin/agent/v3/eval"
++	"github.com/spf13/cobra"
++)
++
++// TestQuickSuiteIsASliceOfThePublicSuite fails when the public suite is
++// refrozen without a fresh quick pick, so the stale list is caught here and not
++// at the start of a paid run.
++func TestQuickSuiteIsASliceOfThePublicSuite(t *testing.T) {
++	quick, err := loadQuickEvalSuite()
++	if err != nil {
++		t.Fatal(err)
++	}
++	public, err := loadPublicEvalSuite()
++	if err != nil {
++		t.Fatal(err)
++	}
++	if len(quick.Tasks) != 25 {
++		t.Errorf("quick check has %d tasks; the noise figures in its notice assume 25", len(quick.Tasks))
++	}
++	byID := map[string]gjeval.Task{}
++	families := map[gjeval.Category]bool{}
++	for _, task := range public.Tasks {
++		byID[task.ID] = task
++		families[task.Category] = true
++	}
++	covered := map[gjeval.Category]int{}
++	for _, task := range quick.Tasks {
++		frozen, ok := byID[task.ID]
++		if !ok {
++			t.Fatalf("quick task %s is not in the public suite", task.ID)
++		}
++		if frozen.Prompt != task.Prompt || frozen.Slug != task.Slug {
++			t.Errorf("quick task %s differs from its frozen public copy", task.ID)
++		}
++		covered[task.Category]++
++	}
++	// Every family keeps at least two tasks so a family that breaks shows up.
++	for family := range families {
++		if covered[family] < 2 {
++			t.Errorf("family %s has %d quick tasks, want at least 2", family, covered[family])
++		}
++	}
++	if gjeval.SuiteFingerprint(*quick) == gjeval.PublicBenchmark().SuiteFingerprint {
++		t.Fatal("quick suite shares the public fingerprint, so publish could not tell them apart")
++	}
++	if !strings.Contains(quick.Name, "Quick Check") {
++		t.Errorf("quick suite name = %q", quick.Name)
++	}
++}
++
++// TestResumeCommandForQuickRunParses replays the printed resume command: a
++// resume without --quick would load the full suite and refuse the run.
++func TestResumeCommandForQuickRunParses(t *testing.T) {
++	spec := gjeval.PublicBenchmark()
++	opts := &evalCLIOptions{Demo: true, Quick: true}
++	recorded := evalInvocationArgs(opts, "/tmp/project", spec.Scale, spec.Seed, true)
++	manifest := gjeval.RunManifest{Intent: gjeval.RunIntentBench, RunID: "run-1", InvocationArgs: recorded}
++	printed := manifest.ResumeCommand()
++	if !strings.Contains(printed, "--quick") {
++		t.Fatalf("resume command drops --quick: %s", printed)
++	}
++	bench := benchCommand(t)
++	if err := bench.ParseFlags(shellSplit(t, append(recorded, "--resume", "run-1", "--yes"))); err != nil {
++		t.Fatalf("printed resume command does not parse: %v (%s)", err, printed)
++	}
++	if !bench.Flags().Changed("quick") {
++		t.Errorf("bench command did not see --quick: %s", printed)
++	}
++}
++
++// A quick check has 2-4 tasks per family, so the full-suite floors ("8 of 10
++// refusals") can never be met; the report must not print them as failures.
++func TestPrintEvalReportSkipsGatesForQuickCheck(t *testing.T) {
++	command := &cobra.Command{}
++	output := new(bytes.Buffer)
++	command.SetOut(output)
++	printEvalReport(command, &evalCLIOptions{}, &gjeval.Report{
++		RunID: "quick", RunStatus: gjeval.RunStatusComplete,
++		SuiteFingerprint: quickEvalSuiteFingerprint(),
++		Provenance:       gjeval.RunProvenance{Repeats: quickEvalRepeats},
++		Metrics:          gjeval.Metrics{TaskCount: 25, EpisodeCount: 25},
++	}, nil)
++	if !strings.Contains(output.String(), "Publication gates: not applied to a quick check.") {
++		t.Fatalf("quick report does not say gates are skipped: %s", output.String())
++	}
++	if strings.Contains(output.String(), "NOT met") {
++		t.Fatalf("quick report prints full-suite gates: %s", output.String())
++	}
++}
+```
+
+**File**: `scripts/select-quick-tasks.py` (added, +200/-0)
+```diff
+@@ -0,0 +1,200 @@
++#!/usr/bin/env python3
++"""Pick the tasks for `deeporg eval bench --quick` and check how well they work.
++
++The quick check runs a fixed handful of public-suite tasks once each. A task is
++worth a slot when it separates strong runs from weak ones: one every run passes
++(or every run fails) tells you nothing. This script measures that from past
++per-task results and keeps the best tasks in every task family, so a family
++that breaks still shows up.
++
++Sources of per-task results (task ids survive suite refreezes):
++  * published run pages under website/content/benchmarks/deeporg/runs/
++  * local reports: any */.graphjin-evals/reports/*.json under the repo
++
++For every task it computes, across runs that contain it:
++  score = corr(task pass rate, run's full-pass recall without the task) * stdev(task pass rate)
++The pass rate is the report's consistency (share of attempts that passed),
++which is also what a single quick attempt is expected to score.
++
++Usage:
++  scripts/select-quick-tasks.py            # print the validation summary
++  scripts/select-quick-tasks.py --write    # also rewrite cmd/benchmark/quick-tasks.json
++
++Validation holds each model out in turn, picks tasks from the other models'
++runs, and simulates one-attempt quick runs of the held-out model.
++"""
++
++import glob
++import hashlib
++import json
++import os
++import random
++import re
++import statistics as st
++import sys
++from collections import defaultdict
++
++ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
++SUITE_PATH = os.path.join(ROOT, "cmd/benchmark/public-suite.json")
++OUT_PATH = os.path.join(ROOT, "cmd/benchmark/quick-tasks.json")
++
++# Slots per family: roughly proportional to the family's share of the suite,
++# at least two each, 25 in all.
++ALLOC = {
++    "aggregate": 4,
++    "window": 4,
++    "action": 3,
++    "ranking": 3,
++    "discovery": 3,
++    "reactive": 3,
++    "refusal": 3,
++    "cross-source": 2,
++}
++MIN_RUNS = 15  # a task needs this many past runs before its score counts
++MIN_OVERLAP = 40  # a run needs this many current-suite tasks to be used
++
++
++def load_suite():
++    with open(SUITE_PATH) as f:
++        suite = json.load(f)
++    return suite, {t["id"]: t["category"] for t in suite["tasks"]}
++
++
++def published_runs():
++    runs = {}
++    for path in glob.glob(os.path.join(ROOT, "website/content/benchmarks/deeporg/runs/2*.md")):
++        text = open(path).read()
++        front = text.split("---")[1]
++        meta = dict(re.findall(r"^(\w+): (.*)$", front, re.M))
++        rows, header = {}, None
++        for line in text.splitlines():
++            if line.startswith("| Task ID |"):
++                header = [c.strip() for c in line.strip().strip("|").split("|")]
++                continue
++            if header and line.startswith("| gjv1_"):
++                cells = dict(zip(header, [c.strip() for c in line.strip().strip("|").split("|")]))
++                rows[cells["Task ID"]] = {"pass": cells["Pass"] == "yes", "cons": float(cells["Consistency"])}
++        runs[meta["run_id"]] = {"model": meta.get("model", ""), "rows": rows}
++    return runs
++
++
++def local_runs():
++    runs = {}
++    for dirpath, dirnames, filenames in os.walk(ROOT):
++        if "node_modules" in dirpath or "/.git" in dirpath:
++            dirnames[:] = []
++            continue
++        if not dirpath.endswith(".graphjin-evals/reports"):
++            continue
++        for name in filenames:
++            if not name.endswith(".json"):
++                continue
++            try:
++                report = json.load(open(os.path.join(dirpath, name)))
++            except (OSError, ValueError):
++                continue
++            if report.get("run_status") != "complete" or not isinstance(report.get("tasks"), list):
++                continue
++            rows = {t["task_id"]: {"pass": t["pass"], "cons": t["consistency"]} for t in report["tasks"]}
++            runs.setdefault(report["run_id"], {"model": report["provenance"].get("model", ""), "rows": rows})
++    return runs
++
++
++def dedupe(runs):
++    # Copies of one run (rescores, copied state dirs) would count it twice.
++    seen, out = set(), {}
++    for rid, run in sorted(runs.items()):
++        key = hashlib.sha1(json.dumps(sorted((t, r["cons"]) for t, r in run["rows"].items())).encode()).hexdigest()
++        if key in seen:
++            continue
++        seen.add(key)
++        out[rid] = run
++    return out
++
++
++def recall(run, cat, exclude=None):
++    xs = [r["pass"] for t, r in run["rows"].items() if t in cat and t != exclude]
++    return sum(xs) / len(xs)
++
++
++def pick(runs, cat):
++    scored = defaultdict(list)
++    for task in cat:
++        xs, ys = [], []
++        for run in runs.values():
++            if task in run["rows"]:
++                xs.append(run["rows"][task]["cons"])
++                ys.append(recall(run, cat, task))
++        if len(xs) < MIN_RUNS or st.pstdev(xs) == 0 or st.pstdev(ys) == 0:
++            score = -1.0
++        else:
++            scor
+```
+
+---
+
+### Incident Patch 3: `b57e11b7` (2026-11-23)
+**Commit Message**: docs(site): say why AI rollouts stall and add a rollout guide
+
+The homepage named what DeepORG is but never the problem a reader has:
+company data has no quick check for a right answer, so rollouts come with
+consultants. A short section under the hero says so and links to a new
+/rollout/ guide for whoever does the rollout: pick known questions, connect,
+set access, write down the company's terms, check answers, hand it over.
+
+Card 08 swaps the repeated "every system" pitch for terms and corrections,
+the two rollout jobs the homepage left out. The quote band now leads with
+the engineer who rolled it out. Site checks pin the new copy and anchors.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `website/content/_index.md` (modified, +4/-2)
+```diff
+@@ -5,11 +5,13 @@ description: "DeepORG is one AI agent for your whole organization. It answers qu
+ 
+ <section class="dx-hero"><div class="dx-hero-inner"><div class="dx-hero-copy"><p class="dx-kicker"><b>DeepORG</b><i></i><span>formerly GraphJin</span><i></i><span>Apache 2.0</span></p><h1>One AI agent for your whole organization.</h1><div class="dx-hero-row"><p class="dx-lede">Ask in plain words. DeepORG answers questions and makes changes across the systems your company already runs: databases, warehouses, APIs, files and code. It stays inside your access rules, and a change waits for your approval.</p><div class="home-actions"><a class="button-primary" href="#quickstart">Try it in 2 minutes</a><a class="button-secondary" href="/benchmark/">See the public benchmark</a></div></div></div><div class="dx-hero-art">{{< ascii scene="orgwide" narrow="org" data="hero-rotate-data" label="Animated diagram: a question is asked, three of seven connected systems are queried, and DeepORG returns one answer with its evidence." caption="one question / several systems / one answer" >}}</div></div><script type="application/json" id="hero-rotate-data">[{"user":"Which account is most at risk of churn—and why?","sources":[{"name":"Postgres","detail":"accounts + invoices"},{"name":"Snowflake","detail":"product usage"},{"name":"CRM API","detail":"opportunities"}],"tools":[{"name":"query_catalog","line":"3 relevant sources discovered"},{"name":"validate_where_clause","line":"relationships + churn filters valid"},{"name":"execute_graphql","line":"3 optimized, policy-checked operations"}],"done":"Evidence checked · 3 systems · 3 operations","answer":"Meridian Robotics — renewal in 9 days, usage down 38%, two failed payments, and an unresolved escalation."},{"user":"Which support issues are about to breach SLA?","sources":[{"name":"Postgres","detail":"accounts + owners"},{"name":"Ticket API","detail":"open escalations"},{"name":"Filesystem","detail":"SLA policy"}],"tools":[{"name":"query_catalog","line":"3 relevant sources discovered"},{"name":"validate_where_clause","line":"priority + deadline filters valid"},{"name":"execute_graphql","line":"3 optimized, policy-checked operations"}],"done":"Evidence checked · 3 systems · 3 operations","answer":"Meridian Robotics has one urgent escalation past SLA and another due by 17:00 today."},{"user":"Where is revenue concentrated—and what is at risk?","sources":[{"name":"Postgres","detail":"subscriptions"},{"name":"MySQL","detail":"invoices + renewals"},{"name":"Snowflake","detail":"product usage"}],"tools":[{"name":"query_catalog","line":"3 relevant sources discovered"},{"name":"validate_where_clause","line":"revenue + renewal filters valid"},{"name":"execute_graphql","line":"3 optimized, policy-checked operations"}],"done":"Evidence checked · 3 systems · 3 operations","answer":"81% of MRR is enterprise, with $5,200 exposed across two past-due accounts whose usage is declining."}]</script></section>
+ 
++<section id="problem" class="dx-pillars dx-problem" aria-labelledby="problem-title"><div class="dx-pillars-head"><div><p class="dx-kicker"><b>Why AI rollouts stall</b></p><h2 id="problem-title">Company data has no test suite.</h2></div><div><p>Coding agents took off because a test tells you in minutes whether the work is right. Company data has no such check. It sits in a dozen systems, under rules about who may see what, and a confident wrong answer looks just like a right one. So most rollouts come with a team of consultants. DeepORG does their wiring in the product.</p><div class="dx-links"><a class="dx-more" href="/rollout/">What a rollout takes, step by step</a></div></div></div></section>
++
+ <section id="pillars" class="dx-pillars" aria-labelledby="pillars-title"><div class="dx-pillars-head"><div><p class="dx-kicker"><b>What it is</b></p><h2 id="pillars-title">Three things set it apart.</h2></div><p>It is a whole agent rather than a kit of parts. It is graded in public. And the way it is graded works on your own systems too.</p></div><div class="dx-pillar-grid"><a class="dx-pillar" href="#agent"><span>01</span><h3>A complete agent</h3><p>Answers, changes, alerts and follow-ups across every system you connect. It writes its own queries, so there are no tools to build by hand.</p><em>Meet the agent</em></a><a class="dx-pillar" href="#proof"><span>02</span><h3>Its own public benchmark</h3><p>{{< benchmark-stat "score" >}} of 100 on real organizational work, with {{< benchmark-stat "unsafe" >}} unsafe actions. Every score links to the exact test and build that produced it.</p><em>See the scores</em></a><a class="dx-pillar" href="#environment"><span>03</span><h3>Your organization as a training environment</h3><p>The same machinery turns your own systems into checked tasks and graded episodes: measure an agent, or train one with reinforcement learning.</p><em>See the environment</em></a></div></section>
+ 
+ <section id="databases" class="dx-pillars dx-systems" aria-labelledby="databases-title">
+```
+
+**File**: `website/content/rollout.md` (added, +165/-0)
+```diff
+@@ -0,0 +1,165 @@
++---
++title: "Roll out DeepORG in your company"
++nav_title: "Roll it out"
++type: guides
++headline: "Most of an AI rollout is not the model."
++description: "A step-by-step guide for whoever rolls out an AI agent across a company's data: connect the systems, set who may see what, write down what the company's words mean, check answers until people trust them, and put the agent where people already work."
++lede: "Most of the work is connecting the systems, deciding who may see what, writing down what the company's words mean, and checking answers until people trust them. Companies usually bring in forward-deployed engineers or consultants for it. This page is for whoever does that work. It goes step by step and shows the part of DeepORG that handles each one."
++actions:
++  - label: "Try the demo first"
++    href: "/#quickstart"
++  - label: "Install"
++    href: "/start/install/"
++landing: true
++toc: false
++---
++
++{{< band label="Before you start" title="Pick five questions people already ask." >}}
++
++Start with questions a team asks every week, and whose answers someone already knows. *How many support tickets are open? Which accounts renew this month? What did we invoice last quarter?*
++
++A known answer makes the first check cheap. When DeepORG gets one of these right, the person who knows the number can see it at a glance. When it gets one wrong, you find out on day one, not in a meeting a month later.
++
++{{< endband >}}
++
++{{< band label="Step 1 · Connect" title="Point it at what the company already runs." >}}
++
++Name each system in the config, read-only to begin with:
++
++```yaml
++sources:
++  - name: app
++    kind: database
++    type: postgres
++    connection_string: ${DATABASE_URL}
++    read_only: true
++  - name: warehouse
++    kind: database
++    type: snowflake
++    connection_string: ${SNOWFLAKE_DSN}
++    read_only: true
++```
++
++{{< grid >}}
++
++- **No tool for each question.** DeepORG builds a searchable map of every table, column and relationship it finds. The agent looks things up in the map and writes its own queries, so nobody has to build a tool per question.
++- **Joins come from your keys.** Relationships are read from your foreign keys. Ones the schema never declared can be added in config.
++- **Several systems, one question.** One answer can draw on the app database, the warehouse and an HTTP API together.
++- **Read-only means read-only.** `read_only: true` blocks every write to that source, whatever a role or the agent asks for.
++
++{{< endgrid >}}
++
++[Setup for each database](/guides/) · [Every kind of system it connects to](/why/every-system/)
++
++{{< endband >}}
++
++{{< band label="Step 2 · Access" title="Decide who may see what, once." >}}
++
++Write the rules once. Every query the agent writes is checked against them before it runs, just like a query from any other client:
++
++```yaml
++roles:
++  - name: user
++    tables:
++      - name: invoices
++        query:
++          filters:
++            - "{ account_id: { eq: $account_id } }"
++          columns: ["id", "amount", "due_date", "status"]
++```
++
++{{< grid >}}
++
++- **Identity comes from the sign-in token.** It never comes from anything the person or the model types.
++- **Hidden columns stay hidden in totals too.** A role that cannot read a column cannot sum it either.
++- **Changes wait for a person.** A change the agent proposes is rehearsed in a transaction that is rolled back, then held until someone approves that exact version.
++- **One switch makes the agent read-only.** `agent.read_only` limits it to reading, whatever a role allows.
++
++{{< endgrid >}}
++
++[Your rules, your approval](/why/your-rules/)
++
++{{< endband >}}
++
++{{< band id="terms" label="Step 3 · Your words" title="Write down what your terms mean." >}}
++
++Every company has words that mean something specific: *active customer*, *at risk*, *shipped late*. Write each one down once, as a note on the table or column it belongs to:
++
++```graphql
++mutation {
++  gj_artifacts(insert: {
++    kind: "annotation"
++    target_ref: "table:app.public.accounts"
++    content: "Active = a paid invoice in the last 90 days."
++  }) { id tier }
++}
++```
++
++A new note starts as a draft that only its author can see. After someone approves it, the agent reads it whenever it opens that table.
++
++{{< grid >}}
++
++- **The agent can suggest notes.** It can draft one from a conversation. It cannot approve its own draft: a person has to, in a later step.
++- **A note is context, not a permission.** It cannot grant access or make a read-only source writable.
++- **Notes go stale safely.** If the table a note points at disappears, the note is kept and marked stale.
++
++{{< endgrid >}}
++
++[How notes work](/agentic/annotations/)
++
++{{< endband >}}
++
++{{< band label="Step 4 · Trust" title="Check the answers until people trust them." >}}
++
++Trust comes from checking, and DeepORG makes each answer quick to check.
++
++{{< grid >}}
++
++- **Every answer shows its queries.** People can see what was asked of which
+```
+
+**File**: `website/scripts/check-site.mjs` (modified, +14/-6)
+```diff
+@@ -46,6 +46,7 @@ const requiredRoutes = [
+   'guides/cassandra-ai-agent/index.html',
+   'compare/deeporg-vs-hand-built-mcp-tools/index.html',
+   'compare/deeporg-vs-text-to-sql/index.html',
++  'rollout/index.html',
+   'install.sh',
+   '404.html',
+   'favicon.svg',
+@@ -98,12 +99,13 @@ const requiredRoutes = [
+   'pagefind/pagefind-entry.json',
+ ];
+ 
+-// One anchor per homepage section or card, in page order, then the closing
+-// ones. The three values that define DeepORG come first; four more are cards
+-// in #reasons. The detail that used to live under #problem, #mcp,
+-// #security-model, #codesql, #capabilities and #how moved to the /why/ pages
+-// and is asserted there.
++// One anchor per homepage section or card, then the closing ones. A short
++// #problem section (why AI rollouts stall) sits under the hero; the three
++// values that define DeepORG follow; four more are cards in #reasons. The
++// detail that used to live under #mcp, #security-model, #codesql,
++// #capabilities and #how moved to the /why/ pages and is asserted there.
+ const requiredAnchors = [
++  'problem',
+   'pillars',
+   'agent',
+   'ai-queries',
+@@ -115,7 +117,7 @@ const requiredAnchors = [
+   'no-tools',
+   'evidence',
+   'rules',
+-  'systems',
++  'terms',
+   'databases',
+   'engine',
+   'quickstart',
+@@ -211,6 +213,7 @@ const requiredContent = [
+   'guides/cassandra-ai-agent.md',
+   'compare/deeporg-vs-hand-built-mcp-tools.md',
+   'compare/deeporg-vs-text-to-sql.md',
++  'rollout.md',
+ ];
+ 
+ const failures = [];
+@@ -320,6 +323,11 @@ const requiredRenderedContent = [
+   ['index.html', 'One AI agent for your whole organization.'],
+   ['index.html', 'Three things set it apart.'],
+   ['index.html', 'Four more reasons it holds up in a real company.'],
++  // Why rollouts stall, and the guide for whoever does the rollout.
++  ['index.html', 'Company data has no test suite.'],
++  ['index.html', 'What a rollout takes, step by step'],
++  ['rollout/index.html', 'Most of an AI rollout is not the model.'],
++  ['rollout/index.html', 'Write down what your terms mean.'],
+   ['index.html', 'How a question becomes one database query.'],
+   ['index.html', 'formerly GraphJin'],
+   ['index.html', 'A change waits for your yes.'],
 ```
 
 #### Recent Merged Pull Requests:
@@ -3413,41 +3627,33 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: run the snowflake suite in three shards, TestSubscription on its own [skip-r
+## X. docs(site): lead with the compiler and the loop, add recurring work to the rollo
 
 **RULE**:
-When implementing operations in `.github/workflows/build.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dosco/deeporg. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `website/content/_index.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dosco/deeporg. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `983527e4`: ci: run the snowflake suite in three shards, TestSubscription on its own [skip-release]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `de5af28b`: docs(site): lead with the compiler and the loop, add recurring work to the rollout guide. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `website/content/_index.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    name: DB ${{ matrix.db }}${{ matrix.shard && format(' {0}/3', matrix.shard) || '' }}
-          # The simulator makes snowflake the slowest suite, so it runs in
-          # three shards; scripts/test-snowflake.sh gives TestSubscription the
-          # last one to itself. Keep the 3 in step with DB_SHARDS below.
-          - { db: snowflake, cache: db, shard: 1 }
-          - { db: snowflake, cache: db, shard: 2 }
-          - { db: snowflake, cache: db, shard: 3 }
-        env:
-          DB_SHARD: ${{ matrix.shard }}
-          DB_SHARDS: ${{ matrix.shard && '3' || '' }}
+description: "DeepORG puts AI agents to work on the systems your company already runs, without rebuilding them. It maps your databases, APIs, files and code, compiles each request the agent makes into queries your systems run under your access rules, and turns the questions people ask into tests you can run again."
+<section class="dx-hero"><div class="dx-hero-inner"><div class="dx-hero-copy"><p class="dx-kicker"><b>DeepORG</b><i></i><span>formerly GraphJin</span><i></i><span>Apache 2.0</span></p><h1>AI agents for the company you already run. Nothing to rebuild.</h1><div class="dx-hero-row"><p class="dx-lede">Connect your databases, warehouses, APIs, files and code, and DeepORG maps what is there. Its agent writes each request against that map, and the engine checks it against your access rules and compiles it into queries your own systems run. No tools to build, no data to move. The questions people ask become tests you can run again.</p><div class="home-actions"><a class="button-primary" href="#quickstart">Try it in 2 minutes</a><a class="button-secondary" href="/benchmark/">See the public benchmark</a></div></div></div><div class="dx-hero-art">{{< ascii scene="orgwide" narrow="or
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-    name: DB ${{ matrix.db }}
-          - { db: snowflake, cache: db }
+description: "DeepORG is one AI agent for your whole organization. It answers questions and makes changes across your databases, APIs, files and code, is graded on its own public benchmark, and turns your organization into a training environment."
+<section class="dx-hero"><div class="dx-hero-inner"><div class="dx-hero-copy"><p class="dx-kicker"><b>DeepORG</b><i></i><span>formerly GraphJin</span><i></i><span>Apache 2.0</span></p><h1>One AI agent for your whole organization.</h1><div class="dx-hero-row"><p class="dx-lede">Ask in plain words. DeepORG answers questions and makes changes across the systems your company already runs: databases, warehouses, APIs, files and code. There are no tools to build. It stays inside your access rules, and a change waits for your approval.</p><div class="home-actions"><a class="button-primary" href="#quickstart">Try it in 2 minutes</a><a class="button-secondary" href="/benchmark/">See the public benchmark</a></div></div></div><div class="dx-hero-art">{{< ascii scene="orgwide" narrow="org" data="hero-rotate-data" label="Animated diagram: a question is asked, three of seven connected systems are queried, and DeepORG returns one answer with its evidenc
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `983527e4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `de5af28b` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

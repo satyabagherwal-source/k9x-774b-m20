@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T01:38:08.755Z",
+  "last_updated": "2026-11-24T01:47:04.337Z",
   "total_verified_learnings": 9088,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24337,
+  "total_items": 24344,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112941,10 +112941,10 @@
       "relative_path": "08_VERIFICATION/saffsanity-sill-verification-protocol-empirical-defect-shield-for-saffsanity-sil.md",
       "title": "Verification Protocol: Empirical Defect Shield for Saffsanity/sill",
       "repository": "Saffsanity/sill",
-      "source_version": "c33d1057",
-      "content_hash": "4924441231c8ec3fcd40ee77520105024d04f906d3c7ec2ffa8643e3f8993b66",
+      "source_version": "5d062a3c",
+      "content_hash": "959eb1fa9991401c5737f51bc5961402bbafd4c281edaf91decbfec7078bc09d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T03:15:36.956Z"
+      "persisted_at": "2026-11-24T01:46:52.448Z"
     },
     "candidate_directive-general-harden-request-error-logging-7795": {
       "item_id": "candidate_directive-general-harden-request-error-logging-7795",
@@ -113062,9 +113062,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for saffsanity-sill-learnings",
       "repository": "saffsanity-sill-learnings",
       "source_version": "HEAD",
-      "content_hash": "b43e6faec420a4a0fe8cd1cb542b7414d21fc1f21aeb177412f829a275e5d693",
+      "content_hash": "8ac0733862e2d30a552ae0a8a96253ff83a9b50307e0f340a03b8a1ade1d258e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T03:15:44.976Z"
+      "persisted_at": "2026-11-24T01:47:01.976Z"
     },
     "domain_intelligence-technical-construction-intelligence-bridgecrewio-checkov-learnings-core-invarian": {
       "item_id": "domain_intelligence-technical-construction-intelligence-bridgecrewio-checkov-learnings-core-invarian",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "9be7d2a3a383000966957db24d56b97c8b648016d39aa1c0686a834ac8998aa1",
+      "content_hash": "467405c356d0a1a315b42a6c122c6e97ced801d151f44a49c7554cdbceba5544",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T01:29:08.889Z"
+      "persisted_at": "2026-11-24T01:47:04.108Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "134499c0f298fb727887cf66baddc8459196b30a91549d71eb074633b975df27",
+      "content_hash": "8b82eb0ce7b93a4f404fac247013bf45eaa65990e12f8594c71b28c2f85fb98e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T01:29:09.059Z"
+      "persisted_at": "2026-11-24T01:47:04.337Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -231691,9 +231691,9 @@
       "title": "Research & Knowledge Intelligence: dosco-graphjin-learnings Core Invariants",
       "repository": "dosco-graphjin-learnings",
       "source_version": "HEAD",
-      "content_hash": "0ee0544169d862ba054b4a65ec3f2412adc7013086f4a56ea332e81176576e80",
+      "content_hash": "4709d96de15d0f66e21d65edf6c88a2f76e630f7db4501320c9dd136ed871d41",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T00:56:36.893Z"
+      "persisted_at": "2026-11-24T01:47:02.827Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dosco-graphjin-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dosco-graphjin-learnings",
@@ -231703,9 +231703,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dosco-graphjin-learnings",
       "repository": "dosco-graphjin-learnings",
       "source_version": "HEAD",
-      "content_hash": "6c74ebf6a442ad47dc0958d07980136c29412254dd7d3493f31a70563b4d9a3e",
+      "content_hash": "9189a057bff731cad88965f7cdd22f0fd22bde3eaffb8284e939bf476f92bd50",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T00:56:37.056Z"
+      "persisted_at": "2026-11-24T01:47:03.262Z"
     },
     "learn-github-react-metro": {
       "learning_id": "learn-github-react-metro",
@@ -269421,8 +269421,8 @@
       "slug": "saffsanity-sill",
       "platform": "github",
       "source_url": "https://github.com/Saffsanity/sill",
-      "source_version": "c33d1057",
-      "content_hash": "9f4b2f41da6e67d3bf1e8a462453a3f137f2220a9450aeebdfa3195dd68eca84",
+      "source_version": "5d062a3c",
+      "content_hash": "d599c6771403c0e35b9e2822390fbdd7982f62e3c891a3dea62b07505ce0bc51",
       "dossier_path": "07_PROJECT_LEARNING/saffsanity-sill-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/saffsanity-sill-learnings.md",
       "promoted_rules": [
@@ -269435,6 +269435,11 @@
           "number": 9711,
           "title": "privacy-lock's close-out turn ran: the build, live.py 48 of 48, the previ",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10171,
+          "title": "Empirical Invariant Guard in keys-above-keyboard.cases",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -269442,7 +269447,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T03:15:36.269Z",
+      "verified_at": "2026-11-24T01:46:51.389Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -311899,13 +311904,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "dosco/deeporg",
       "repository": "dosco/deeporg",
-      "slug": "dosco-deeporg",
+      "slug": "dosco-graphjin",
       "platform": "github",
-      "source_url": "https://github.com/dosco/deeporg",
-      "source_version": "bea1c714",
-      "content_hash": "a439ce057b6e867e07015e7bc658e8d2ba40d1654df210c5c6a118931f454631",
-      "dossier_path": "07_PROJECT_LEARNING/dosco-deeporg-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/dosco-deeporg-learnings.md",
+      "source_url": "https://github.com/dosco/graphjin",
+      "source_version": "48344754",
+      "content_hash": "15aacb484185069b2572ab1ed4c769cf92264ca4fdf9738f0ce961c399b6ab43",
+      "dossier_path": "07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
       "promoted_rules": [
         {
           "number": 8489,
@@ -311921,6 +311926,11 @@
           "number": 10013,
           "title": "run the snowflake suite in three shards, TestSubscription on its own [skip-r",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 10172,
+          "title": "docs(site): lead with the compiler and the loop, add recurring work to the rollo",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -311928,7 +311938,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T05:51:40.033Z",
+      "verified_at": "2026-11-24T01:46:55.330Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -311953,13 +311963,13 @@
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dosco-deeporg",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/dosco-deeporg-verification-protocol-empirical-defect-shield-for-dosco-deeporg.md",
+      "relative_path": "08_VERIFICATION/dosco-graphjin-verification-protocol-empirical-defect-shield-for-dosco-deeporg.md",
       "title": "Verification Protocol: Empirical Defect Shield for dosco/deeporg",
       "repository": "dosco/deeporg",
-      "source_version": "bea1c714",
-      "content_hash": "d9760152fa744e48423754c0bef19b02cb71c71dcc9c2212fe91689eeb6fbd40",
+      "source_version": "48344754",
+      "content_hash": "9fecdcf75da9f4f7a127562a39ae807a103d7bd5356055c623c9d7d44383ea25",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T05:51:41.383Z"
+      "persisted_at": "2026-11-24T01:46:56.598Z"
     },
     "rule-9688": {
       "learning_id": "rule-9688",
@@ -319568,13 +319578,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-NZ3M-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-B0OX-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "06c78a6829177395b3c3e3d593e1e18d9e59a340eecde01b32ebc79b0ca70901",
+      "content_hash": "85485c1fdf1d60edd19ac9c5398709b5324992ebbe2481dbd3fb52ba36f8e6d6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T01:29:08.725Z"
+      "persisted_at": "2026-11-24T01:47:03.879Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
@@ -319758,13 +319768,13 @@
       "item_id": "domain_intelligence-research-knowledge-intelligence-dosco-deeporg-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-deeporg-research-knowledge-intelligence-dosco-deeporg-core-invariants.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-graphjin-research-knowledge-intelligence-dosco-deeporg-core-invariants.md",
       "title": "Research & Knowledge Intelligence: dosco/deeporg Core Invariants",
       "repository": "dosco/deeporg",
-      "source_version": "bea1c714",
-      "content_hash": "b19f1cc0a43797ee7c8671230ee545f3789e0914fe15c5c818a4d5c98bbbe2d6",
+      "source_version": "48344754",
+      "content_hash": "3b58fe48e226145749e96add36956b4ffe52e2c30ec2fa87ec167c84c5a66812",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T05:51:40.949Z"
+      "persisted_at": "2026-11-24T01:46:56.150Z"
     },
     "rule-9885": {
       "learning_id": "rule-9885",
@@ -325968,13 +325978,13 @@
       "item_id": "skill_playbook-skill-operational-integration-playbook-for-dosco-deeporg",
       "artifact_type": "skill_playbook",
       "target_folder": "03_SKILLS",
-      "relative_path": "03_SKILLS/dosco-deeporg-skill-operational-integration-playbook-for-dosco-deeporg.md",
+      "relative_path": "03_SKILLS/dosco-graphjin-skill-operational-integration-playbook-for-dosco-deeporg.md",
       "title": "Skill: Operational & Integration Playbook for dosco/deeporg",
       "repository": "dosco/deeporg",
-      "source_version": "bea1c714",
-      "content_hash": "fa689fbd9d78b2eda9ab54f79f252be5669644082ae2e77e6bf6cd1c0d552f4c",
+      "source_version": "48344754",
+      "content_hash": "32605b334c0d3f4c61867f40b921af51c18cc659f6436bbcae504e863ca440d6",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T05:51:41.184Z"
+      "persisted_at": "2026-11-24T01:46:56.405Z"
     },
     "rule-10028": {
       "learning_id": "rule-10028",
@@ -331916,6 +331926,94 @@
       "content_hash": "39b64bad97255412725bd2db5635e2b6480420c08cabc927313440473a0e70b4",
       "domain_letter": "L",
       "persisted_at": "2026-11-24T01:38:06.346Z"
+    },
+    "rule-10171": {
+      "learning_id": "rule-10171",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10171,
+      "title": "Empirical Invariant Guard in keys-above-keyboard.cases",
+      "source_url": "https://github.com/Saffsanity/sill",
+      "source_version": "5d062a3c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T01:46:51.389Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-keys-above-keyboard-cases": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-keys-above-keyboard-cases",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-AYV7-empirical-invariant-guard-in-keys-above-keyboard-cases.md",
+      "title": "Empirical Invariant Guard in keys-above-keyboard.cases",
+      "repository": "saffsanity-sill-learnings",
+      "source_version": "HEAD",
+      "content_hash": "14acedb76680f91bd435d6d6c4308ff50e4053503ccda8aff2d4e1a70407bf65",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-24T01:47:01.514Z"
+    },
+    "domain_intelligence-design-intelligence-saffsanity-sill-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-saffsanity-sill-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-saffsanity-sill-design-intelligence-saffsanity-sill-core-invariants.md",
+      "title": "Design Intelligence: Saffsanity/sill Core Invariants",
+      "repository": "Saffsanity/sill",
+      "source_version": "5d062a3c",
+      "content_hash": "599f0ece09bda30ad265b6847f4f12745256eacb8557943817189ed9e71a9ac6",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-24T01:46:52.225Z"
+    },
+    "rule-10172": {
+      "learning_id": "rule-10172",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10172,
+      "title": "docs(site): lead with the compiler and the loop, add recurring work to the rollo",
+      "source_url": "https://github.com/dosco/graphjin",
+      "source_version": "48344754",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T01:46:55.330Z"
+    },
+    "candidate_directive-docs-site-lead-with-the-compiler-and-the-loop-add-recurring-work-to-the-rollo": {
+      "item_id": "candidate_directive-docs-site-lead-with-the-compiler-and-the-loop-add-recurring-work-to-the-rollo",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-AZPH-docs-site-lead-with-the-compiler-and-the-loop-add-recurring-work-to-the-rollo.md",
+      "title": "docs(site): lead with the compiler and the loop, add recurring work to the rollo",
+      "repository": "dosco-graphjin-learnings",
+      "source_version": "HEAD",
+      "content_hash": "90c64a77cefd5af6b36b56d3929e8cd8b2f9db1f1f91a5a9d8359dccffa68924",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T01:47:02.604Z"
+    },
+    "domain_intelligence-design-intelligence-saffsanity-sill-learnings-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-saffsanity-sill-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-saffsanity-sill-learnings-design-intelligence-saffsanity-sill-learnings-core-inv.md",
+      "title": "Design Intelligence: saffsanity-sill-learnings Core Invariants",
+      "repository": "saffsanity-sill-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7224b777e55a47baefa3446adbaa03df23f2513e3d9efa96a8836e06e8b43a9b",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-24T01:47:01.735Z"
+    },
+    "skill_playbook-skill-operational-integration-playbook-for-dosco-graphjin-learnings": {
+      "item_id": "skill_playbook-skill-operational-integration-playbook-for-dosco-graphjin-learnings",
+      "artifact_type": "skill_playbook",
+      "target_folder": "03_SKILLS",
+      "relative_path": "03_SKILLS/dosco-graphjin-learnings-skill-operational-integration-playbook-for-dosco-graphj.md",
+      "title": "Skill: Operational & Integration Playbook for dosco-graphjin-learnings",
+      "repository": "dosco-graphjin-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9bd3f30a4e72edecab065836f2928b72ccc11b0e0e9ee0fba0272e6b0c8045cd",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-24T01:47:03.049Z"
     }
   },
   "ai-builder-brain": {

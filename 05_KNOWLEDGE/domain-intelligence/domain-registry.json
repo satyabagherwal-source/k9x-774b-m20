@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T01:38:08.574Z",
-  "total_records": 2476,
+  "last_updated": "2026-11-24T01:47:04.108Z",
+  "total_records": 2478,
   "domains": {
     "A": {
       "total": 20,
@@ -1024,7 +1024,7 @@
       ]
     },
     "F": {
-      "total": 104,
+      "total": 106,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -1129,7 +1129,9 @@
         "domain_intelligence-design-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
         "domain_intelligence-design-intelligence-rafsoh-dimeapp-core-invariants",
         "domain_intelligence-design-intelligence-rafsoh-dimeapp-learnings-core-invariants",
-        "DOM-F-0B02F7F4"
+        "DOM-F-0B02F7F4",
+        "domain_intelligence-design-intelligence-saffsanity-sill-core-invariants",
+        "domain_intelligence-design-intelligence-saffsanity-sill-learnings-core-invariants"
       ]
     },
     "G": {
@@ -9209,8 +9211,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "9be7d2a3a383000966957db24d56b97c8b648016d39aa1c0686a834ac8998aa1",
-      "created_at": "2026-11-24T01:29:08.889Z"
+      "content_hash": "467405c356d0a1a315b42a6c122c6e97ced801d151f44a49c7554cdbceba5544",
+      "created_at": "2026-11-24T01:47:04.108Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -16083,8 +16085,8 @@
       "title": "Research & Knowledge Intelligence: dosco-graphjin-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-graphjin-learnings-research-knowledge-intelligence-dosco-graphjin-learning.md",
       "repository": "dosco-graphjin-learnings",
-      "content_hash": "0ee0544169d862ba054b4a65ec3f2412adc7013086f4a56ea332e81176576e80",
-      "created_at": "2026-11-23T00:56:36.893Z"
+      "content_hash": "4709d96de15d0f66e21d65edf6c88a2f76e630f7db4501320c9dd136ed871d41",
+      "created_at": "2026-11-24T01:47:02.827Z"
     },
     "domain_intelligence-technical-construction-intelligence-react-metro-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-react-metro-core-invariants",
@@ -39178,10 +39180,10 @@
       "record_id": "domain_intelligence-research-knowledge-intelligence-dosco-deeporg-core-invariants",
       "domain_letter": "D",
       "title": "Research & Knowledge Intelligence: dosco/deeporg Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-deeporg-research-knowledge-intelligence-dosco-deeporg-core-invariants.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-graphjin-research-knowledge-intelligence-dosco-deeporg-core-invariants.md",
       "repository": "dosco/deeporg",
-      "content_hash": "b19f1cc0a43797ee7c8671230ee545f3789e0914fe15c5c818a4d5c98bbbe2d6",
-      "created_at": "2026-11-23T05:51:40.949Z"
+      "content_hash": "3b58fe48e226145749e96add36956b4ffe52e2c30ec2fa87ec167c84c5a66812",
+      "created_at": "2026-11-24T01:46:56.150Z"
     },
     "domain_intelligence-technical-construction-intelligence-prunaai-p-image-oss-comfy-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prunaai-p-image-oss-comfy-core-invariants",
@@ -41551,6 +41553,24 @@
       "confidence": 1,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-24T00:58:04.465Z"
+    },
+    "domain_intelligence-design-intelligence-saffsanity-sill-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-saffsanity-sill-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: Saffsanity/sill Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-saffsanity-sill-design-intelligence-saffsanity-sill-core-invariants.md",
+      "repository": "Saffsanity/sill",
+      "content_hash": "599f0ece09bda30ad265b6847f4f12745256eacb8557943817189ed9e71a9ac6",
+      "created_at": "2026-11-24T01:46:52.225Z"
+    },
+    "domain_intelligence-design-intelligence-saffsanity-sill-learnings-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-saffsanity-sill-learnings-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: saffsanity-sill-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-saffsanity-sill-learnings-design-intelligence-saffsanity-sill-learnings-core-inv.md",
+      "repository": "saffsanity-sill-learnings",
+      "content_hash": "7224b777e55a47baefa3446adbaa03df23f2513e3d9efa96a8836e06e8b43a9b",
+      "created_at": "2026-11-24T01:47:01.735Z"
     }
   }
 }

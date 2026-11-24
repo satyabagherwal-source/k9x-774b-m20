@@ -1613,10 +1613,10 @@
     "repository": "Saffsanity/sill",
     "platform": "github",
     "sourceUrl": "https://github.com/Saffsanity/sill",
-    "sourceVersion": "c33d1057",
+    "sourceVersion": "5d062a3c",
     "license": "Apache-2.0",
-    "contentHash": "9f4b2f41da6e67d3bf1e8a462453a3f137f2220a9450aeebdfa3195dd68eca84",
-    "lastHarvestedAt": "2026-11-21T03:15:36.453Z",
+    "contentHash": "d599c6771403c0e35b9e2822390fbdd7982f62e3c891a3dea62b07505ce0bc51",
+    "lastHarvestedAt": "2026-11-24T01:46:51.669Z",
     "learningId": "learn-github-saffsanity-sill"
   },
   "textbee-textbee": {
@@ -3693,10 +3693,10 @@
     "repository": "dosco/deeporg",
     "platform": "github",
     "sourceUrl": "https://github.com/dosco/graphjin",
-    "sourceVersion": "5b9451b6",
+    "sourceVersion": "48344754",
     "license": "Apache-2.0",
-    "contentHash": "12e165f285a1c4f2e6dd4a5047e61415af422c666be291b5e3618d75ad5f2890",
-    "lastHarvestedAt": "2026-11-23T00:56:31.435Z",
+    "contentHash": "15aacb484185069b2572ab1ed4c769cf92264ca4fdf9738f0ce961c399b6ab43",
+    "lastHarvestedAt": "2026-11-24T01:46:55.595Z",
     "learningId": "learn-github-dosco-deeporg"
   },
   "gravitl-netmaker": {
