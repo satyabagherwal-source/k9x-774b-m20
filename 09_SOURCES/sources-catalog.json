@@ -2123,10 +2123,10 @@
     "repository": "microsoft/agent-governance-toolkit",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/agent-governance-toolkit",
-    "sourceVersion": "f85abe1f",
+    "sourceVersion": "3233be23",
     "license": "MIT",
-    "contentHash": "511db8bdc28056b7e2b27b04a81580b1f4fcb1922ab35269287abaa6a6ea103b",
-    "lastHarvestedAt": "2026-11-19T00:58:18.767Z",
+    "contentHash": "9ec60e6babc8dbd7cb919282a34c4ec22ac1824277decb36abf3a790d5e498cd",
+    "lastHarvestedAt": "2026-11-24T11:44:33.553Z",
     "learningId": "learn-github-microsoft-agent-governance-toolkit"
   },
   "synalinks-synalinks-skills": {
@@ -12985,8 +12985,8 @@
     "sourceUrl": "https://huggingface.co/thejagstudio/tessera-small",
     "sourceVersion": "hf-thejagstudio-tessera-small",
     "license": "Open-Source",
-    "contentHash": "4c1244eafd21d11eed0c3ea3938ed9e0d9b13b35919f16881c0db516375a2e1f",
-    "lastHarvestedAt": "2026-11-20T06:45:04.517Z",
+    "contentHash": "a1688932d09c284902c58d99c17e9640aa258ba1837a056c63f0ca28727302a2",
+    "lastHarvestedAt": "2026-11-24T11:44:20.458Z",
     "learningId": "learn-huggingface-thejagstudio-tessera-small"
   },
   "rocketride-org-rocketride-server": {

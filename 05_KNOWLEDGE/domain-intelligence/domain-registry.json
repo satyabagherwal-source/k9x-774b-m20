@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T11:31:03.660Z",
+  "last_updated": "2026-11-24T11:44:39.237Z",
   "total_records": 2516,
   "domains": {
     "A": {
@@ -9006,8 +9006,8 @@
       "title": "Architecture Intelligence: microsoft/agent-governance-toolkit Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-microsoft-agent-governance-toolkit-architecture-intelligence-microsoft-agent-gov.md",
       "repository": "microsoft/agent-governance-toolkit",
-      "content_hash": "0c2b6cccca4f0f57f73cae7a564ad9f982fb999764164b892e2b594b03ef3c71",
-      "created_at": "2026-11-19T00:58:19.086Z"
+      "content_hash": "9ad59d5a961a388ba85dc69d1cdf4dec959630aea893a939fd5f2d209f0a2725",
+      "created_at": "2026-11-24T11:44:33.916Z"
     },
     "DOM-D-21095CB7": {
       "record_id": "DOM-D-21095CB7",
@@ -9066,8 +9066,8 @@
       "title": "Architecture Intelligence: microsoft-agent-governance-toolkit-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-microsoft-agent-governance-toolkit-learnings-architecture-intelligence-microsoft.md",
       "repository": "microsoft-agent-governance-toolkit-learnings",
-      "content_hash": "7d37f27fca99e837523a10ef02b744f42ea8d94230117cb43b464caad5e3a5c1",
-      "created_at": "2026-11-19T00:58:26.984Z"
+      "content_hash": "ed9dcfa92d6bd6ccb4519b6ec0acc7d5a03b46892a434880496a4be18d43c6b2",
+      "created_at": "2026-11-24T11:44:38.251Z"
     },
     "domain_intelligence-research-knowledge-intelligence-comfy-org-qwen-image-2-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-qwen-image-2-1-core-invariants",
@@ -23687,8 +23687,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "e6d358646155772116dcfb31d2955af77a0b032dc2b29b91e59951275a33d25c",
-      "created_at": "2026-11-24T10:26:53.281Z"
+      "content_hash": "3d69ae908b04860bd3aa97f67474422d62af1907868417885c61c4cb1da97fa1",
+      "created_at": "2026-11-24T11:44:39.237Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",
@@ -35646,8 +35646,8 @@
       "title": "Research & Knowledge Intelligence: thejagstudio/tessera-small Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-thejagstudio-tessera-small-research-knowledge-intelligence-thejagstudio-tesse.md",
       "repository": "thejagstudio/tessera-small",
-      "content_hash": "443d185b6d58917e810ba38ae244bce628bde649c36d4a4c20fa64c101a39fb0",
-      "created_at": "2026-11-20T06:45:04.721Z"
+      "content_hash": "21d90456a96494773249320d3bb90c8102cea0edb0447a929a6e15b863ed89df",
+      "created_at": "2026-11-24T11:44:20.664Z"
     },
     "domain_intelligence-deployment-operations-intelligence-yugabyte-yugabyte-db-core-invariants": {
       "record_id": "domain_intelligence-deployment-operations-intelligence-yugabyte-yugabyte-db-core-invariants",
@@ -35706,8 +35706,8 @@
       "title": "Research & Knowledge Intelligence: hf-thejagstudio-tessera-small-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-thejagstudio-tessera-small-learnings-research-knowledge-intelligence-hf-theja.md",
       "repository": "hf-thejagstudio-tessera-small-learnings",
-      "content_hash": "22eb51a2490bec5cc4bd4fe1afa641c1296e9a9233057ad2b589338e04a4d74e",
-      "created_at": "2026-11-20T06:46:03.244Z"
+      "content_hash": "f4eb424ea712610389046c2d1cc46b03c7caf20c4c3f6a6817beee011232dc4c",
+      "created_at": "2026-11-24T11:44:37.234Z"
     },
     "domain_intelligence-research-knowledge-intelligence-yshrsmz-buildkonfig-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-yshrsmz-buildkonfig-core-invariants",

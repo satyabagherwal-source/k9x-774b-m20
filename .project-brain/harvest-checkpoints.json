@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T11:30:26.440Z",
+  "last_updated": "2026-11-24T11:44:33.567Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3321,14 +3321,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-microsoft-agent-governance-toolkit",
-      "content_hash": "511db8bdc28056b7e2b27b04a81580b1f4fcb1922ab35269287abaa6a6ea103b",
-      "verified_at": "2026-11-19T00:58:18.775Z",
+      "content_hash": "9ec60e6babc8dbd7cb919282a34c4ec22ac1824277decb36abf3a790d5e498cd",
+      "verified_at": "2026-11-24T11:44:33.567Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T00:58:18.775Z"
+      "last_updated": "2026-11-24T11:44:33.567Z"
     },
     "SynaLinks/synalinks-skills": {
       "repository": "SynaLinks/synalinks-skills",
@@ -19566,14 +19566,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-thejagstudio-tessera-small",
-      "content_hash": "4c1244eafd21d11eed0c3ea3938ed9e0d9b13b35919f16881c0db516375a2e1f",
-      "verified_at": "2026-11-20T06:45:04.526Z",
+      "content_hash": "a1688932d09c284902c58d99c17e9640aa258ba1837a056c63f0ca28727302a2",
+      "verified_at": "2026-11-24T11:44:20.472Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T06:45:04.526Z"
+      "last_updated": "2026-11-24T11:44:20.472Z"
     },
     "rocketride-org/rocketride-server": {
       "repository": "rocketride-org/rocketride-server",

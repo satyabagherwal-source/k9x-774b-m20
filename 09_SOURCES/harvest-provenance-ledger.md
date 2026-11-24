@@ -12689,3 +12689,5 @@ Every entry in this ledger must capture:
 | `learn-github-rook-rook` | `https://github.com/rook/rook` | `d7d7a0e1` | Multi-dimensional audit evidence | 2026-11-24T11:30:22.710Z |
 | `learn-github-skyzh-mini-lsm` | `https://github.com/skyzh/mini-lsm` | `4c10ba4b` | Multi-dimensional audit evidence | 2026-11-24T11:30:26.423Z |
 | `learn-dom-d-4a125361` | `project://hf-llamaindex-ocria-nano-1` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-llamaindex-ocria-nano-1-learnings.md` | 2026-11-24T11:31:00.451Z |
+| `learn-huggingface-thejagstudio-tessera-small` | `https://huggingface.co/thejagstudio/tessera-small` | `hf-thejags` | Multi-dimensional audit evidence | 2026-11-24T11:44:20.458Z |
+| `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `3233be23` | Multi-dimensional audit evidence | 2026-11-24T11:44:33.553Z |

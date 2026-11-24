@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T11:31:04.040Z",
+  "last_updated": "2026-11-24T11:44:39.636Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-24T11:22:03.656Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-24T10:26:52.690Z",
+      "processed_at": "2026-11-24T11:44:38.673Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -203,7 +203,7 @@
       "staged_for_review": 1
     },
     "microsoft-agent-governance-toolkit-learnings.md": {
-      "processed_at": "2026-11-19T00:58:26.498Z",
+      "processed_at": "2026-11-24T11:44:37.420Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3543,8 +3543,8 @@
       "staged_for_review": 0
     },
     "hf-thejagstudio-tessera-small-learnings.md": {
-      "processed_at": "2026-11-20T06:46:02.979Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-24T11:44:37.009Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "rocketride-org-rocketride-server-learnings.md": {
@@ -3818,7 +3818,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 3747,
+  "total_dossiers_evaluated": 3750,
   "total_canonical_promoted": 504,
-  "total_staged_for_review": 2833
+  "total_staged_for_review": 2835
 }

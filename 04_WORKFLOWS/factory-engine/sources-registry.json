@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T11:30:29.720Z",
-    "lastVerified": "2026-11-24T11:30:29.720Z",
+    "lastChecked": "2026-11-24T11:44:36.861Z",
+    "lastVerified": "2026-11-24T11:44:36.861Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -248,22 +248,21 @@
     "lastVerified": "2026-11-23T18:23:51.937Z"
   },
   "microsoft-agent-governance-toolkit": {
-    "name": "agent-governance-toolkit",
+    "name": "microsoft/agent-governance-toolkit",
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-24T05:28:19.307Z",
-    "lastVerified": "2026-11-24T05:28:19.307Z",
+    "lastChecked": "2026-11-24T11:44:32.485Z",
+    "lastVerified": "2026-11-24T11:44:32.485Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
-    "contentHash": "511db8bdc28056b7e2b27b04a81580b1f4fcb1922ab35269287abaa6a6ea103b",
+    "contentHash": "9ec60e6babc8dbd7cb919282a34c4ec22ac1824277decb36abf3a790d5e498cd",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "f85abe1f"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "pathwaycom-llm-app": {
     "name": "llm-app",
@@ -379,8 +378,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T10:44:02.038Z",
-    "lastVerified": "2026-11-24T10:44:02.038Z",
+    "lastChecked": "2026-11-24T11:44:32.026Z",
+    "lastVerified": "2026-11-24T11:44:32.026Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -2631,9 +2630,9 @@
   "welldone-software-why-did-you-render": {
     "name": "why-did-you-render",
     "officialUrl": "https://github.com/welldone-software/why-did-you-render",
-    "lastChecked": "2026-11-21T18:44:19.373Z",
+    "lastChecked": "2026-11-24T11:44:22.127Z",
     "revisionIdentifier": "3ec3512d",
-    "lastVerified": "2026-11-21T18:44:19.373Z"
+    "lastVerified": "2026-11-24T11:44:22.127Z"
   },
   "goodrain-rainbond": {
     "name": "rainbond",
@@ -3687,9 +3686,9 @@
   "sigoden-aichat": {
     "name": "aichat",
     "officialUrl": "https://github.com/sigoden/aichat",
-    "lastChecked": "2026-11-23T04:44:47.006Z",
+    "lastChecked": "2026-11-24T11:44:17.029Z",
     "revisionIdentifier": "82976d34",
-    "lastVerified": "2026-11-23T04:44:47.006Z"
+    "lastVerified": "2026-11-24T11:44:17.029Z"
   },
   "hf-google-electra-base-discriminator": {
     "name": "google/electra-base-discriminator",
@@ -4770,9 +4769,9 @@
   "cozodb-cozo": {
     "name": "cozo",
     "officialUrl": "https://github.com/cozodb/cozo",
-    "lastChecked": "2026-11-23T15:37:23.054Z",
+    "lastChecked": "2026-11-24T11:44:29.539Z",
     "revisionIdentifier": "481af058",
-    "lastVerified": "2026-11-23T15:37:23.054Z"
+    "lastVerified": "2026-11-24T11:44:29.539Z"
   },
   "actix-actix-web": {
     "name": "actix-web",
@@ -6710,9 +6709,9 @@
   "databricks-click": {
     "name": "click",
     "officialUrl": "https://github.com/databricks/click",
-    "lastChecked": "2026-11-23T16:28:43.374Z",
+    "lastChecked": "2026-11-24T11:44:24.523Z",
     "revisionIdentifier": "47ff7d1b",
-    "lastVerified": "2026-11-23T16:28:43.374Z"
+    "lastVerified": "2026-11-24T11:44:24.523Z"
   },
   "activeloopai-deeplake": {
     "name": "deeplake",
@@ -10111,12 +10110,12 @@
     "officialUrl": "https://huggingface.co/thejagstudio/tessera-small",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-20T06:45:03.810Z",
-    "lastVerified": "2026-11-20T06:45:03.810Z",
+    "lastChecked": "2026-11-24T11:44:19.820Z",
+    "lastVerified": "2026-11-24T11:44:19.820Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-thejagstudio-tessera-small",
-    "contentHash": "4c1244eafd21d11eed0c3ea3938ed9e0d9b13b35919f16881c0db516375a2e1f",
+    "contentHash": "a1688932d09c284902c58d99c17e9640aa258ba1837a056c63f0ca28727302a2",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

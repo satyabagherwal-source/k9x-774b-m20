@@ -12656,3 +12656,5 @@
 | `CYCLE-20261124-55YP` | `2026-11-24T11:30:22.705Z` | `rook/rook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10248` | Yes (`a1527fa8...`) |
 | `CYCLE-20261124-58TV` | `2026-11-24T11:30:26.419Z` | `skyzh/mini-lsm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10249` | Yes (`8d17bff4...`) |
 | `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T11:31:00.451Z` | `hf-llamaindex-ocria-nano-1` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-4A125361` [Domain D] | Yes (`bd37b422...`) |
+| `CYCLE-20261124-N4DI` | `2026-11-24T11:44:20.454Z` | `thejagstudio/tessera-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-thejagstudio-tessera-small-learnings.md` | Yes (`a1688932...`) |
+| `CYCLE-20261124-NEH9` | `2026-11-24T11:44:33.549Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10250` | Yes (`9ec60e6b...`) |

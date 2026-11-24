@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T11:31:02.813Z",
+  "updated_at": "2026-11-24T11:44:37.875Z",
   "stats": {
-    "total_discovered": 8556,
-    "approved_pending_harvest": 8110,
+    "total_discovered": 8564,
+    "approved_pending_harvest": 8118,
     "harvested_count": 0,
     "rejected_count": 446,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8101,
+      "COMMUNITY_AND_EXPERT": 8109,
       "OFFICIAL_DOCUMENTATION": 268,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -185133,6 +185133,182 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyzh-mini-lsm-learnings.md",
         "fileName": "skyzh-mini-lsm-learnings.md"
+      }
+    },
+    "SRC-59F828ED3D49": {
+      "id": "SRC-59F828ED3D49",
+      "url": "https://github.com/pallets/click",
+      "title": "https://github.com/pallets/click",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T11:44:37.495Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
+        "fileName": "microsoft-agent-governance-toolkit-learnings.md"
+      }
+    },
+    "SRC-E792E635DA99": {
+      "id": "SRC-E792E635DA99",
+      "url": "https://github.com/pallets/click/releases",
+      "title": "https://github.com/pallets/click/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T11:44:37.551Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
+        "fileName": "microsoft-agent-governance-toolkit-learnings.md"
+      }
+    },
+    "SRC-A91AF92D98BE": {
+      "id": "SRC-A91AF92D98BE",
+      "url": "https://github.com/pallets/click/blob/main/CHANGES.md",
+      "title": "https://github.com/pallets/click/blob/main/CHANGES.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T11:44:37.601Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
+        "fileName": "microsoft-agent-governance-toolkit-learnings.md"
+      }
+    },
+    "SRC-F344D209355D": {
+      "id": "SRC-F344D209355D",
+      "url": "https://github.com/pallets/click/compare/8.5.0...8.5.1",
+      "title": "https://github.com/pallets/click/compare/8.5.0...8.5.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T11:44:37.655Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
+        "fileName": "microsoft-agent-governance-toolkit-learnings.md"
+      }
+    },
+    "SRC-592BA3E4E366": {
+      "id": "SRC-592BA3E4E366",
+      "url": "https://github.com/pallets/click/compare/8.0.0...8.5.1",
+      "title": "https://github.com/pallets/click/compare/8.0.0...8.5.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T11:44:37.709Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
+        "fileName": "microsoft-agent-governance-toolkit-learnings.md"
+      }
+    },
+    "SRC-F9ECC9A5597B": {
+      "id": "SRC-F9ECC9A5597B",
+      "url": "https://github.com/fastapi/fastapi",
+      "title": "https://github.com/fastapi/fastapi",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T11:44:37.760Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
+        "fileName": "microsoft-agent-governance-toolkit-learnings.md"
+      }
+    },
+    "SRC-BCD621D2B943": {
+      "id": "SRC-BCD621D2B943",
+      "url": "https://github.com/fastapi/fastapi/releases",
+      "title": "https://github.com/fastapi/fastapi/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T11:44:37.810Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
+        "fileName": "microsoft-agent-governance-toolkit-learnings.md"
+      }
+    },
+    "SRC-E9A9DE9097FD": {
+      "id": "SRC-E9A9DE9097FD",
+      "url": "https://github.com/fastapi/fastapi/compare/0.162.0...0.163.1",
+      "title": "https://github.com/fastapi/fastapi/compare/0.162.0...0.163.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T11:44:37.875Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
+        "fileName": "microsoft-agent-governance-toolkit-learnings.md"
       }
     }
   }
