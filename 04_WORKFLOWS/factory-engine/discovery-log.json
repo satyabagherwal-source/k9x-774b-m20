@@ -22084,5 +22084,17 @@
     "qualityScore": 2839,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-24T00:18:40.979Z"
+  },
+  {
+    "name": "strata-engine/Inkling-2-Mini-Strata",
+    "fullName": "strata-engine/Inkling-2-Mini-Strata",
+    "url": "https://huggingface.co/strata-engine/Inkling-2-Mini-Strata",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: strata-engine/Inkling-2-Mini-Strata (94 likes, 1064 downloads)",
+    "likes": 94,
+    "downloads": 1064,
+    "qualityScore": 2004,
+    "discoveredAt": "2026-11-24T02:18:44.254Z"
   }
 ]

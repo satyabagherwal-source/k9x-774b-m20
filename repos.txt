@@ -5348,3 +5348,7 @@ https://huggingface.co/inclusionAI/Ling-3.2-air
 # --- Automatically Discovered by AI Scout Engine [2026-11-24T00:22:24.377Z] ---
 # [AI-AGENTS] microfeed/microfeed (2839 score) - an agentic cms self-hosted on cloudflare, for podcasts, blogs, photos, videos, d
 https://github.com/microfeed/microfeed
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-24T02:20:52.192Z] ---
+# [HUGGINGFACE-AI-MODELS] strata-engine/Inkling-2-Mini-Strata (2004 score) - Verified Hugging Face Model: strata-engine/Inkling-2-Mini-Strata (94 likes, 1064
+https://huggingface.co/strata-engine/Inkling-2-Mini-Strata

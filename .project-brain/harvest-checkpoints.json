@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T02:12:50.675Z",
+  "last_updated": "2026-11-24T02:21:13.498Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "4f126908dab557f25caa07cbf4de91baa4f7d3de55354f86bd8e61b92bcf6541",
-      "verified_at": "2026-11-23T21:48:17.978Z",
+      "content_hash": "a776a4cc3166a9957372c6d574c88e966746719132c6209fce3cb9532358ac15",
+      "verified_at": "2026-11-24T02:21:13.497Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T21:48:17.978Z"
+      "last_updated": "2026-11-24T02:21:13.497Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -20069,6 +20069,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-24T00:22:33.016Z"
+    },
+    "strata-engine/Inkling-2-Mini-Strata": {
+      "repository": "strata-engine/Inkling-2-Mini-Strata",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-strata-engine-inkling-2-mini-strata",
+      "content_hash": "04352297cbf9bd3e98da2969e42ef28f2ae1f071e0a8dd36cbbcaa128f57faa6",
+      "verified_at": "2026-11-24T02:20:58.323Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-24T02:20:58.323Z"
     }
   },
   "repos": {

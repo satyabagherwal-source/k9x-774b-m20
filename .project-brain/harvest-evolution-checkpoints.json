@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T02:12:58.347Z",
+  "last_updated": "2026-11-24T02:21:44.865Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-24T00:23:26.082Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-24T02:04:27.060Z",
+      "processed_at": "2026-11-24T02:21:44.079Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -603,7 +603,7 @@
       "staged_for_review": 1
     },
     "freenet-freenet-core-learnings.md": {
-      "processed_at": "2026-11-23T21:48:47.469Z",
+      "processed_at": "2026-11-24T02:21:43.166Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3791,9 +3791,14 @@
       "processed_at": "2026-11-24T00:23:21.752Z",
       "promoted_canonical": 1,
       "staged_for_review": 1
+    },
+    "hf-strata-engine-inkling-2-mini-strata-learnings.md": {
+      "processed_at": "2026-11-24T02:21:42.667Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 3618,
-  "total_canonical_promoted": 496,
-  "total_staged_for_review": 2712
+  "total_dossiers_evaluated": 3621,
+  "total_canonical_promoted": 497,
+  "total_staged_for_review": 2714
 }

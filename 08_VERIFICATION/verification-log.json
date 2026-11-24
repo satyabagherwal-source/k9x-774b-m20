@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-TF3Q",
-    "timestamp": "2026-11-22T07:05:57.686Z",
-    "repository": "facebook/dinov3-vitl16-pretrain-lvd1689m",
-    "learningId": "learn-huggingface-facebook-dinov3-vitl16-pretrain-lvd1689m",
-    "contentHash": "c7bb55d03528a8754193ae9a8bbdf58d997ae3fb4157d6f976a4c59d9bbc1d2d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-TH8O",
-    "timestamp": "2026-11-22T07:06:00.456Z",
-    "repository": "apache/maka",
-    "learningId": "learn-github-apache-maka",
-    "contentHash": "1c9471c729359c0a65dd981063d7602780d76f3b93d7d0f2e9467d4d294862a7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-3JHO",
     "timestamp": "2026-11-22T07:13:49.932Z",
     "repository": "facebook/sam-3d-body-dinov3",
@@ -7490,6 +7460,36 @@
     "repository": "langchain4j/langchain4j",
     "learningId": "learn-github-langchain4j-langchain4j",
     "contentHash": "9e6e0756548d613ec2247dc7567cf10e39768fb007f3937746d8e310cb9d43fa",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-IMGX",
+    "timestamp": "2026-11-24T02:20:58.305Z",
+    "repository": "strata-engine/Inkling-2-Mini-Strata",
+    "learningId": "learn-huggingface-strata-engine-inkling-2-mini-strata",
+    "contentHash": "04352297cbf9bd3e98da2969e42ef28f2ae1f071e0a8dd36cbbcaa128f57faa6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-IY6G",
+    "timestamp": "2026-11-24T02:21:13.480Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "a776a4cc3166a9957372c6d574c88e966746719132c6209fce3cb9532358ac15",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -12595,3 +12595,6 @@ Every entry in this ledger must capture:
 | `learn-github-folkbench-folkbench` | `https://github.com/Folkbench/folkbench` | `3e93677d` | Multi-dimensional audit evidence | 2026-11-24T02:12:38.048Z |
 | `learn-github-makecindy-cindy` | `https://github.com/makecindy/cindy` | `cb3ac9aa` | Multi-dimensional audit evidence | 2026-11-24T02:12:44.379Z |
 | `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `911e4203` | Multi-dimensional audit evidence | 2026-11-24T02:12:50.658Z |
+| `learn-huggingface-strata-engine-inkling-2-mini-strata` | `https://huggingface.co/strata-engine/Inkling-2-Mini-Strata` | `hf-strata-` | Multi-dimensional audit evidence | 2026-11-24T02:20:58.310Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `a93b0a3b` | Multi-dimensional audit evidence | 2026-11-24T02:21:13.483Z |
+| `learn-dom-d-7edcac07` | `project://hf-strata-engine-inkling-2-mini-strata` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-strata-engine-inkling-2-mini-strata-learnings.md` | 2026-11-24T02:21:42.667Z |

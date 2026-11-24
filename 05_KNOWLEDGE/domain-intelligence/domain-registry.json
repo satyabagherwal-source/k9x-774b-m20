@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T02:12:58.021Z",
-  "total_records": 2482,
+  "last_updated": "2026-11-24T02:21:44.547Z",
+  "total_records": 2485,
   "domains": {
     "A": {
       "total": 20,
@@ -67,7 +67,7 @@
       ]
     },
     "D": {
-      "total": 944,
+      "total": 947,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1012,7 +1012,10 @@
         "DOM-D-7E47FE9B",
         "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ling-3-2-air-learnings-core-invar",
         "DOM-D-E322F459",
-        "DOM-D-06E3F5C1"
+        "DOM-D-06E3F5C1",
+        "domain_intelligence-research-knowledge-intelligence-strata-engine-inkling-2-mini-strata-core-invaria",
+        "DOM-D-7EDCAC07",
+        "domain_intelligence-research-knowledge-intelligence-hf-strata-engine-inkling-2-mini-strata-learnings"
       ]
     },
     "E": {
@@ -9215,8 +9218,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "8e48916c7aeb5aac0abff7d979e983111bf679f5a7b6efda21c6371e6ab5cdea",
-      "created_at": "2026-11-24T02:04:27.514Z"
+      "content_hash": "8ae2b460a3a1078803c6bbe093c2ddda63805b2d2f508401922b96b6f95f0c01",
+      "created_at": "2026-11-24T02:21:44.547Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -9848,8 +9851,8 @@
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "repository": "freenet/freenet-core",
-      "content_hash": "a43aa07304257ea6670709150f0ab6c2f06be9430a1bf22c4240014990020dfe",
-      "created_at": "2026-11-23T21:48:18.360Z"
+      "content_hash": "1a15ae413d158a5396ada25624f481563e52418b6cf3501194936b8c520b4ea2",
+      "created_at": "2026-11-24T02:21:13.863Z"
     },
     "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants",
@@ -9926,8 +9929,8 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-learnings-technical-construction-intelligence-freenet-freen.md",
       "repository": "freenet-freenet-core-learnings",
-      "content_hash": "32f720e3c759d4c6b40d8851c7c7534f9efb4d2d66fac16367da8b6afa562133",
-      "created_at": "2026-11-23T21:48:47.883Z"
+      "content_hash": "f6eafe7e33beea65f24b3b5d8befa4c25a7664040359ce451fd504a6ebb076a3",
+      "created_at": "2026-11-24T02:21:43.593Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -41611,6 +41614,66 @@
       "repository": "folkbench-folkbench-learnings",
       "content_hash": "b81a5969e69f3515298acf22d9343dcb2e6eac94fb4c663aa81f7a238e00e12d",
       "created_at": "2026-11-24T02:12:56.325Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-strata-engine-inkling-2-mini-strata-core-invaria": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-strata-engine-inkling-2-mini-strata-core-invaria",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: strata-engine/Inkling-2-Mini-Strata Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-strata-engine-inkling-2-mini-strata-research-knowledge-intelligence-strata-en.md",
+      "repository": "strata-engine/Inkling-2-Mini-Strata",
+      "content_hash": "db4b185071eb6a20a24e4471fc519e0cda3f96edd6757f2a7b5bc6f17050e906",
+      "created_at": "2026-11-24T02:20:58.530Z"
+    },
+    "DOM-D-7EDCAC07": {
+      "record_id": "DOM-D-7EDCAC07",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): strata-engine/Inkling-2-Mini-Strata",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-strata-engine-inkling-2-mini-strata-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/strata-engine/Inkling-2-Mini-Strata](https://huggingface.co/strata-engine/Inkling-2-Mini-Strata))  \n> **Source Version**: `hf-strata-en`",
+      "content_hash": "883359b1aabcb3f331324465d5e2861526379d545a74a867b9e2d8d1ff29be6c",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-strata-engine-inkling-2-mini-strata-learnings.md`  \n> **Source**: huggingface ([h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-strata-engine-inkling-2-mini-strata-learnings.md`  \n> **Source**: huggingface ([h",
+      "provenance": {
+        "source_uri": "project://hf-strata-engine-inkling-2-mini-strata/hf-strata-engine-inkling-2-mini-strata-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-24T02:21:16.919Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-strata-engine-inkling-2-mini-strata)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-strata-engine-inkling-2-mini-strata"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-24T02:21:42.637Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-strata-engine-inkling-2-mini-strata-learnings": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-strata-engine-inkling-2-mini-strata-learnings",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-strata-engine-inkling-2-mini-strata-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-strata-engine-inkling-2-mini-strata-learnings-research-knowledge-intelligence.md",
+      "repository": "hf-strata-engine-inkling-2-mini-strata-learnings",
+      "content_hash": "e6f398a020bb8d7ffd06f73509cbb05dc33e3af5ec006e1471bf5dd947ee6ff5",
+      "created_at": "2026-11-24T02:21:42.955Z"
     }
   }
 }

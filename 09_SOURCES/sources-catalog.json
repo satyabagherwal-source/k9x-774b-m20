@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "d0b2003d",
+    "sourceVersion": "a93b0a3b",
     "license": "NOASSERTION",
-    "contentHash": "4f126908dab557f25caa07cbf4de91baa4f7d3de55354f86bd8e61b92bcf6541",
-    "lastHarvestedAt": "2026-11-23T21:48:17.970Z",
+    "contentHash": "a776a4cc3166a9957372c6d574c88e966746719132c6209fce3cb9532358ac15",
+    "lastHarvestedAt": "2026-11-24T02:21:13.483Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -13298,5 +13298,15 @@
     "contentHash": "e391259da168f4e2b54c5ba2eed331a7f39d5a2732831495992c967ebd65fd1b",
     "lastHarvestedAt": "2026-11-24T00:22:33.000Z",
     "learningId": "learn-github-microfeed-microfeed"
+  },
+  "hf-strata-engine-inkling-2-mini-strata": {
+    "repository": "strata-engine/Inkling-2-Mini-Strata",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/strata-engine/Inkling-2-Mini-Strata",
+    "sourceVersion": "hf-strata-engine-inkling-2-mini-strata",
+    "license": "Open-Source",
+    "contentHash": "04352297cbf9bd3e98da2969e42ef28f2ae1f071e0a8dd36cbbcaa128f57faa6",
+    "lastHarvestedAt": "2026-11-24T02:20:58.310Z",
+    "learningId": "learn-huggingface-strata-engine-inkling-2-mini-strata"
   }
 }

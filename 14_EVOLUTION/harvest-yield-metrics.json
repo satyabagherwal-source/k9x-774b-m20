@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T02:12:50.664Z",
-  "total_cycles_completed": 11944,
-  "total_learnings_persisted": 11944,
-  "total_rules_promoted": 11026,
+  "last_updated": "2026-11-24T02:21:13.488Z",
+  "total_cycles_completed": 11946,
+  "total_learnings_persisted": 11946,
+  "total_rules_promoted": 11027,
   "history": [
-    {
-      "timestamp": "2026-11-23T15:29:07.767Z",
-      "repository": "skyzh/mini-lsm",
-      "learningId": "learn-github-skyzh-mini-lsm",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T15:37:14.160Z",
-      "repository": "google/gemma-4-26B-A4B-it",
-      "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T15:37:31.688Z",
       "repository": "mitmproxy/mitmproxy",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-24T02:12:50.664Z",
       "repository": "langchain4j/langchain4j",
       "learningId": "learn-github-langchain4j-langchain4j",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T02:20:58.316Z",
+      "repository": "strata-engine/Inkling-2-Mini-Strata",
+      "learningId": "learn-huggingface-strata-engine-inkling-2-mini-strata",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T02:21:13.488Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

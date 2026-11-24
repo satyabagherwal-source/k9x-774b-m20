@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-24T00:58:04.503Z",
+  "updated_at": "2026-11-24T02:21:42.664Z",
   "statistics": {
-    "total_nodes": 494,
+    "total_nodes": 495,
     "total_edges": 205,
     "domain_distribution": {
-      "D": 300,
+      "D": 301,
       "M": 1,
       "H": 88,
       "J": 22,
@@ -11035,6 +11035,28 @@
       ],
       "created_at": "2026-11-24T00:58:04.503Z",
       "updated_at": "2026-11-24T00:58:04.503Z"
+    },
+    "DOM-D-7EDCAC07": {
+      "id": "DOM-D-7EDCAC07",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): strata-engine/Inkling-2-Mini-Strata",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-strata-engine-inkling-2-mini-strata-learnings.md`  \n> **Source**: huggingface ([h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-strata-engine-inkling-2-mini-strata-learnings.md`  \n> **Source**: huggingface ([h",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-strata-engine-inkling-2-mini-strata/hf-strata-engine-inkling-2-mini-strata-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-24T02:21:16.919Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-strata-engine-inkling-2-mini-strata)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-24T02:21:42.664Z",
+      "updated_at": "2026-11-24T02:21:42.664Z"
     }
   },
   "edges": [

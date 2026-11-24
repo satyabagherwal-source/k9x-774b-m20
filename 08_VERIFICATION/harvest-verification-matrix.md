@@ -12562,3 +12562,6 @@
 | `CYCLE-20261124-7WGR` | `2026-11-24T02:12:38.043Z` | `Folkbench/folkbench` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10177` | Yes (`79ad3ec2...`) |
 | `CYCLE-20261124-81CN` | `2026-11-24T02:12:44.375Z` | `makecindy/cindy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10178` | Yes (`d463bbf1...`) |
 | `CYCLE-20261124-8671` | `2026-11-24T02:12:50.653Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10179` | Yes (`9e6e0756...`) |
+| `CYCLE-20261124-IMGX` | `2026-11-24T02:20:58.305Z` | `strata-engine/Inkling-2-Mini-Strata` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-strata-engine-inkling-2-mini-strata-learnings.md` | Yes (`04352297...`) |
+| `CYCLE-20261124-IY6G` | `2026-11-24T02:21:13.480Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10180` | Yes (`a776a4cc...`) |
+| `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T02:21:42.667Z` | `hf-strata-engine-inkling-2-mini-strata` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-7EDCAC07` [Domain D] | Yes (`883359b1...`) |
