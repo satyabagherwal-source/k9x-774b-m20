@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T20:53:14.516Z",
-  "total_records": 2575,
+  "last_updated": "2026-11-24T21:02:09.579Z",
+  "total_records": 2576,
   "domains": {
     "A": {
       "total": 22,
@@ -71,7 +71,7 @@
       ]
     },
     "D": {
-      "total": 973,
+      "total": 974,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1045,7 +1045,8 @@
         "domain_intelligence-research-knowledge-intelligence-hf-atomicchat-inkling-2-mini-gguf-learnings-core",
         "domain_intelligence-research-knowledge-intelligence-orcarouter-inkling-2-mini-abliterated-gguf-core-",
         "DOM-D-3B305647",
-        "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-inkling-2-mini-abliterated-gguf-le"
+        "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-inkling-2-mini-abliterated-gguf-le",
+        "DOM-D-BA194D6E"
       ]
     },
     "E": {
@@ -16182,8 +16183,8 @@
       "title": "Research & Knowledge Intelligence: dosco-graphjin-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-graphjin-learnings-research-knowledge-intelligence-dosco-graphjin-learning.md",
       "repository": "dosco-graphjin-learnings",
-      "content_hash": "4709d96de15d0f66e21d65edf6c88a2f76e630f7db4501320c9dd136ed871d41",
-      "created_at": "2026-11-24T01:47:02.827Z"
+      "content_hash": "666a64642294572667c329567ecc144876e650c72cf86f9e7ff836d09e9706e3",
+      "created_at": "2026-11-24T21:02:09.579Z"
     },
     "domain_intelligence-technical-construction-intelligence-react-metro-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-react-metro-core-invariants",
@@ -25700,8 +25701,8 @@
       "title": "Architecture Intelligence: digitalbazaar/pyld Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-digitalbazaar-pyld-architecture-intelligence-digitalbazaar-pyld-core-invariants.md",
       "repository": "digitalbazaar/pyld",
-      "content_hash": "84f08bb116ebc385caecd3922d86617ceab2fb23555d8e864bb3f0cc2f3caf25",
-      "created_at": "2026-11-20T21:55:06.980Z"
+      "content_hash": "897d97ad7ba0bed7703b0c142c6e8110de42cfc1188fd0acad8908aaa2cffc95",
+      "created_at": "2026-11-24T21:01:24.583Z"
     },
     "domain_intelligence-architecture-intelligence-digitalbazaar-pyld-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-digitalbazaar-pyld-learnings-core-invariants",
@@ -25709,8 +25710,8 @@
       "title": "Architecture Intelligence: digitalbazaar-pyld-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-digitalbazaar-pyld-learnings-architecture-intelligence-digitalbazaar-pyld-learni.md",
       "repository": "digitalbazaar-pyld-learnings",
-      "content_hash": "43799bb6fc0bddf32e6ca66b089d429a22a17861a918d070a36058a516db75d2",
-      "created_at": "2026-11-20T21:55:19.836Z"
+      "content_hash": "243a86da8eb5437baba66141c63e7001ce4d6b2f7ccee354f3ebf7353a24cf4d",
+      "created_at": "2026-11-24T21:02:08.790Z"
     },
     "domain_intelligence-research-knowledge-intelligence-oliviarossi-minimax-h3_singularity-x-10eros-max_": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-oliviarossi-minimax-h3_singularity-x-10eros-max_",
@@ -28384,8 +28385,8 @@
       "title": "Architecture Intelligence: dalance/procs Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dalance-procs-architecture-intelligence-dalance-procs-core-invariants.md",
       "repository": "dalance/procs",
-      "content_hash": "3e094f6d7c65ce562549c1b436916e363e317b443310b028982aeb3385102a93",
-      "created_at": "2026-11-20T21:25:48.916Z"
+      "content_hash": "e78d48271c90cdfb006fb664ec0aa2193d0bb85897a131eb7ca9fd389568e58c",
+      "created_at": "2026-11-24T21:01:23.107Z"
     },
     "domain_intelligence-technical-construction-intelligence-software-mansion-react-native-reanimated-cor": {
       "record_id": "domain_intelligence-technical-construction-intelligence-software-mansion-react-native-reanimated-cor",
@@ -28402,8 +28403,8 @@
       "title": "Architecture Intelligence: dalance-procs-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dalance-procs-learnings-architecture-intelligence-dalance-procs-learnings-core-i.md",
       "repository": "dalance-procs-learnings",
-      "content_hash": "c0b9b786b1fa87e0c349ce34d776cb8ea7181ce69719795fca6304b5ef34c6a4",
-      "created_at": "2026-11-20T21:25:53.627Z"
+      "content_hash": "4dad69c783796793da18454fc83e84e864e6b6255b58371a162de6bc343003c3",
+      "created_at": "2026-11-24T21:01:35.443Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-reflection-beam-1-0-501b-a23b-learnings-core-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-reflection-beam-1-0-501b-a23b-learnings-core-",
@@ -39277,10 +39278,10 @@
       "record_id": "domain_intelligence-research-knowledge-intelligence-dosco-deeporg-core-invariants",
       "domain_letter": "D",
       "title": "Research & Knowledge Intelligence: dosco/deeporg Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-deeporg-research-knowledge-intelligence-dosco-deeporg-core-invariants.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-graphjin-research-knowledge-intelligence-dosco-deeporg-core-invariants.md",
       "repository": "dosco/deeporg",
-      "content_hash": "ddcf0428260d76d3a95f75f1b868c1ef4d4b7534735f4a61a7ea16f9643e4551",
-      "created_at": "2026-11-24T03:41:45.481Z"
+      "content_hash": "762a3ad7bf32c330d8c803dfbe19b498f367d06f40fa2bfff855f32c3bd3dead",
+      "created_at": "2026-11-24T21:01:30.228Z"
     },
     "domain_intelligence-technical-construction-intelligence-prunaai-p-image-oss-comfy-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prunaai-p-image-oss-comfy-core-invariants",
@@ -43244,6 +43245,48 @@
       "repository": "rdflib-rdflib-learnings",
       "content_hash": "fd8d5411cbee1954989d700556cfc09fff56d8b774dfc3d997b14ab091a3e5fa",
       "created_at": "2026-11-24T20:30:09.283Z"
+    },
+    "DOM-D-BA194D6E": {
+      "record_id": "DOM-D-BA194D6E",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): digitalbazaar/pyld",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md`  \n> **Source**: github ([https://github.com/digitalbazaar/pyld](https://github.com/digitalbazaar/pyld))  \n> **Source Version**: `c9a68bc3`  \n> **License**: BSD-3-Clause  \n> **Synthesized By**: zero-clone-structu",
+      "content_hash": "305718a7d2287d5144c9ee7bba2c7515e01b01cb7a96c9f1ce27c86da90ea10c",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md`  \n> **Source**: github ([https://github.com/digital -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md`  \n> **Source**: github ([https://github.com/digital",
+      "provenance": {
+        "source_uri": "project://digitalbazaar-pyld/digitalbazaar-pyld-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-24T21:01:35.787Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (digitalbazaar-pyld)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of digitalbazaar-pyld"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-24T21:02:06.254Z"
     }
   }
 }

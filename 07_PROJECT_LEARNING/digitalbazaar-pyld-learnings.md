@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md`  
 > **Source**: github ([https://github.com/digitalbazaar/pyld](https://github.com/digitalbazaar/pyld))  
-> **Source Version**: `b87fa3e3`  
+> **Source Version**: `c9a68bc3`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T21:55:05.573Z  
+> **Timestamp**: 2026-11-24T21:01:23.798Z  
 > **Learning ID**: `learn-github-digitalbazaar-pyld`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/digitalbazaar/pyld](https://github.com/digitalbazaar/pyld))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T21:55:05.354Z  
+> **Harvest Timestamp**: 2026-11-24T21:01:23.793Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -993,74 +993,119 @@ def main(args: list[str] | None = None) -> None:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b87fa3e3` (2026-11-12)
-**Commit Message**: docs: note the remove_dot_segments() slash fix in the changelog
+### Incident Patch 1: `0647d36c` (2026-11-23)
+**Commit Message**: build(deps-dev): bump ruff from 0.17.4 to 0.17.5
 
-The fix now lives in remove_dot_segments(), so it applies to every
-reference, including absolute IRIs and network-path references.
+Bumps [ruff](https://github.com/astral-sh/ruff) from 0.17.4 to 0.17.5.
+- [Release notes](https://github.com/astral-sh/ruff/releases)
+- [Changelog](https://github.com/astral-sh/ruff/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/astral-sh/ruff/compare/0.17.4...0.17.5)
 
-Signed-off-by: jdsika <[REDACTED_EMAIL]>
+---
+updated-dependencies:
+- dependency-name: ruff
+  dependency-version: 0.17.5
+  dependency-type: direct:development
+  update-type: version-update:semver-patch
+...
 
-**File**: `CHANGELOG.md` (modified, +2/-1)
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+**File**: `uv.lock` (modified, +21/-21)
 ```diff
-@@ -34,7 +34,8 @@
- - Use a helper for generalized N-Quads normalization in the test runner, since rdflib cannot parse blank-node predicates. Fixes [toRdf#te075](https://w3c.github.io/json-ld-api/tests/toRdf-manifest#te075).
- - `jsonld.expand()`, `jsonld.to_rdf()` and the other operations no longer fail with an `OverflowError` for an integer too large for a double. `jsonld.to_rdf()` writes it as `INF` or `-INF`, the infinite `xsd:double` values, or, in `json-ld-1.0` mode and not typed as `xsd:double`, as an exact `xsd:integer`. Inside `@json` literals, `jsonld.to_rdf()` and `jsonld.normalize()` still raise `OverflowError` for such numbers, as RFC 8785 only allows numbers that fit in a double.
- - `jsonld.to_rdf()` writes the `xsd:double` NaN as `NaN`, its XSD canonical form, instead of `NAN`, so `jsonld.normalize()` output changes for documents with such a value.
--- `iri_resolver.resolve()` fixes references without a scheme or host against a base IRI with a host and no path (`/x` against `http://example.org` gave `http://example.org//x`) or with a query. For those references, it also no longer drops the `/` that a final `.` or `..` segment leaves before a query or fragment (`a/.?x`), or the dot of a first segment such as `.gh`.
-+- `iri_resolver.resolve()` fixes references without a scheme or host against a base IRI with a host and no path (`/x` against `http://example.org` gave `http://example.org//x`) or with a query, and keeps the dot of a first segment such as `.gh`.
-+- `iri_resolver.remove_dot_segments()`, and with it `iri_resolver.resolve()`, no longer drops the `/` that a final `.` or `..` segment leaves before a query or fragment (`/a/.?x` gave `/a?x`).
+@@ -2160,27 +2160,27 @@ wheels = [
  
- ### Changed
- - **BREAKING**: Developer install, command execution, documentation, and release artifact
+ [[package]]
+ name = "ruff"
+-version = "0.17.4"
+-source = { registry = "https://pypi.org/simple" }
+-sdist = { url = "https://files.pythonhosted.org/packages/84/0e/3d154514b5bad104f7e1c13169c2d09aa9959fccdc06eb47610ccdfa83ed/ruff-0.17.4.tar.gz", hash = "sha256:f32d178b50e826e00f6c6c1be3f56333068acb9b67fe167143527fa9b81e890d", size = 5357750, upload-time = "2026-11-05T18:52:17.638Z" }
+-wheels = [
+-    { url = "https://files.pythonhosted.org/packages/e0/61/c83c78bbb6108f6c6270a106cf12b54175f4f42da088b9bb880f18e31289/ruff-0.17.4-py3-none-linux_armv6l.whl", hash = "sha256:2b08c4ff98dc234f4a3871a3105353b922fa875ea1073ca31001eb8c06bb4d89", size = 10252195, upload-time = "2026-11-05T18:51:36.594Z" },
+-    { url = "https://files.pythonhosted.org/packages/0a/12/dd158708378866e8b53e145a465dbc51a7cccb9fa197a74d67eaedde7234/ruff-0.17.4-py3-none-macosx_10_12_x86_64.whl", hash = "sha256:13e781c3c5f663e7fba737eaaeb70dd943dd55171daf316afb25cd5268cfe0c7", size = 10266044, upload-time = "2026-11-05T18:51:39.502Z" },
+-    { url = "https://files.pythonhosted.org/packages/28/32/89a94a8eb11fd505a381ae6f04e190d038d9958695209dc1786ce5cfcda3/ruff-0.17.4-py3-none-macosx_11_0_arm64.whl", hash = "sha256:7ed2f416349944f908f9574215994602242b0836844eba48eec61473033afca0", size = 9432227, upload-time = "2026-11-05T18:51:41.968Z" },
+-    { url = "https://files.pythonhosted.org/packages/58/de/a392dc38b215798ae72e639d228b7f6c02d826a95d1c0ad7c4c0ee49ef5b/ruff-0.17.4-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:8ea6e0017c785f7282092b11e46338e4ebed1b9e575ebf2e55a8a1eda968241a", size = 10136900, upload-time = "2026-11-05T18:51:44.562Z" },
+-    { url = "https://files.pythonhosted.org/packages/b7/8f/a880f60f42005f6ffdf58f77af34c7ee327000b5607f48a2f6a69d8b242c/ruff-0.17.4-py3-none-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:7e061dcc0933c7031a616ac8d66ac540309b2aa21ab558101a8f53e9ac7a1185", size = 10051245, upload-time = "2026-11-05T18:51:46.7Z" },
+-    { url = "https://files.pythonhosted.org/packages/09/55/98844264108af7d5ec27ca3a9cd5a989094ca657a14599c4b69a537a0e9a/ruff-0.17.4-py3-none-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:f99e95a1515161138be3cbd1b06c06e739d8feb38ade35564556999fffc3686e", size = 10704341, upload-time = "2026-11-05T18:51:49.228Z" },
+-    { url = "https://files.pythonhosted.org/packages/28/a2/5edf97659c3ac7c73f978003bd314936f671037fdac6b978e9de3e4b2b65/ruff-0.17.4-py3-none-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:5f28cf0dd37cb172fa5a8d2e92e6ada3a9dbd0609f094ed24039929eef0b7524", size = 11394465, upload-time = "2026-11-05T18:51:51.534Z" },
+-    { url = "https://files.pythonhosted.org/packages/f2/8f/51371ae856b2bef4d15a044a574695fbc0f6ae63aafa42a2a22428070fb6/ruff-0.17.4-py3-none-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:6b21c771b296888e8a35c6f48555f4b44e4483f61675d6ed51810a5203469ce6", size = 10988262, upload-time = "2026-11-05T18:51:53.91Z" },
+-    { url = "https://files.pythonhosted.org/packages/af/1b/62874f14c7873f27c7887d2b1ea41de990e14ba9518801ffe8eacb5d51a6/ruff-0.17.4-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:2cd025509b2e15721b426fc70fd946d71f43b3db3b08e946dfec2d696d911690", size = 10572829, upload-time = "2026-11-05T18:51:56.129Z" },
+-    { url = "https://files.pythonhosted.org/packages/98/30/860b9dae67432b16b88558a9cb2d3194825fa62838f8b9cc49f5d9022095/ruff-0.17.4-py3-none-manylinux_2_31_riscv64.whl", hash = "sha256:49b77f7b3921669466882a4881168801bdb06ec2cd83fb936049016cf5fdece1", size = 10617545, upload-time = "2026-11-05T18:51:58.172Z" },
+-    { url = "https://files.pythonhosted.org/packages/0f/08/781a4b41a1c83fd6e30fea610d6502a6f94e49cf94693fd37bdcbc6bfe11/ruff-0.17.4-py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:e3b84eb74f260d1c2dbd236fd9d4c011d4fdd0a52bdf8aea57a10e3a1b71fca5", size = 10111955, upload-time = "2026-11-05T18:52:00.59Z" },
+-    { url = "https://files.pythonhosted.org/packages/3c/e9/94b1c7b677120f30839254518924f73a8157e9bcfa200edcd5796fecdb99/ruff-0.17.4-py3-none-musllinux_1_2_armv7l.whl", hash = "sha256:20e43d7a08e712e33067ba887e6574546c79bd4831596ce8f16803ac7ff9ad90", size = 10058355, upload-time = "2026-11-05T18:52:03.61Z" },
+-    { url = "https://files.pythonhosted.org/packages/27/5f/a825910b9f309336dc33cb8c0774126662c1d2f765699b3e0a1bd538d01f/ruff-0.17.4-py3-none-musllinux_1_2_i686.whl", hash = "sha256:0d1f4848fd2ec0499be4046db9b7dfcc952666885f00233cc7033515282556a8", size = 10415932, upload-time = "2026-11-05T18:52:06.264Z" },
+-    { url = "https://files.pythonhosted.org/packages/8b/b8/0796468423413ea4df1a6e2442ae26cf49b8f7dda0eecf246e0d5d0dde54/ruff-0.17.4-py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:6007e7f3a0e55b0fbdb947af69cf24c21b4928df6be8ef3e767c69b5ccccf496", size = 10826033, upload-time = "2026-11-05T18:52:08.675Z" },
+-    { url = "https://files.pythonhosted.org/packages/b9/ab/d8e407669ffe5014429baf78
 ```
 
 ---
 
-### Incident Patch 2: `8f85f59e` (2026-11-04)
-**Commit Message**: docs: describe the base query fix in the changelog
+### Incident Patch 2: `c10d600b` (2026-11-23)
+**Commit Message**: build(deps): bump cachetools from 7.3.0 to 7.3.2
+
+Bumps [cachetools](https://github.com/tkem/cachetools) from 7.3.0 to 7.3.2.
+- [Changelog](https://github.com/tkem/cachetools/blob/master/CHANGELOG.rst)
+- [Commits](https://github.com/tkem/cachetools/compare/v7.3.0...v7.3.2)
+
+---
+updated-dependencies:
+- dependency-name: cachetools
+  dependency-version: 7.3.2
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+**File**: `uv.lock` (modified, +3/-3)
+```diff
+@@ -281,11 +281,11 @@ wheels = [
+ 
+ [[package]]
+ name = "cachetools"
+-version = "7.3.0"
++version = "7.3.2"
+ source = { registry = "https://pypi.org/simple" }
+-sdist = { url = "https://files.pythonhosted.org/packages/5f/6b/6c1553e1e8f672f9423344a1915aad1537439ad3d14a3fbc1a02159cfd94/cachetools-7.3.0.tar.gz", hash = "sha256:3f63fc208410f0c3a3b37883c4903ecdacd6f0b259134e6d2e82debd5b2e01de", size = 48563, upload-time = "2026-11-05T20:38:46.434Z" }
++sdist = { url = "https://files.pythonhosted.org/packages/0a/d6/3b2743ae0662528e36b1002074909e4e73dc7407f1fc7da0d6a1b7401e72/cachetools-7.3.2.tar.gz", hash = "sha256:43e5db663b58c4337a9959069d93f54dd2e065fdd0438a504cd1100fbeb48beb", size = 50520, upload-time = "2026-11-14T21:19:07.523Z" }
+ wheels = [
+-    { url = "https://files.pythonhosted.org/packages/29/aa/e54a49d0927b2fa7b86bc94dbde57125e38e8cfca7a31b6764e8dbf35e9f/cachetools-7.3.0-py3-none-any.whl", hash = "sha256:2105787c94619bde7072624fec0fe7b8a08bb7bf6c757c318f8925573c6f07c9", size = 19575, upload-time = "2026-11-05T20:38:44.928Z" },
++    { url = "https://files.pythonhosted.org/packages/ed/8f/9d90e713bdaf06316184c7214a23177e0fe7b9a287932a5dcce643f6fd58/cachetools-7.3.2-py3-none-any.whl", hash = "sha256:afb4b563cb37e7a121a6ea45a0deec42916c64eed58875cc15d8cf9eaca89fb2", size = 19956, upload-time = "2026-11-14T21:19:05.777Z" },
+ ]
+ 
+ [[package]]
+```
+
+---
+
+### Incident Patch 3: `c9290d49` (2026-11-12)
+**Commit Message**: docs: say that the colon fix applies against a base IRI
+
+Without a base IRI, such a reference is still returned unchanged, as
+in relative-to-absolute-iri.js.
 
 Signed-off-by: jdsika <[REDACTED_EMAIL]>
 
 **File**: `CHANGELOG.md` (modified, +1/-1)
 ```diff
-@@ -34,7 +34,7 @@
- - Use a helper for generalized N-Quads normalization in the test runner, since rdflib cannot parse blank-node predicates. Fixes [toRdf#te075](https://w3c.github.io/json-ld-api/tests/toRdf-manifest#te075).
- - `jsonld.expand()`, `jsonld.to_rdf()` and the other operations no longer fail with an `OverflowError` for an integer too large for a double. `jsonld.to_rdf()` writes it as `INF` or `-INF`, the infinite `xsd:double` values, or, in `json-ld-1.0` mode and not typed as `xsd:double`, as an exact `xsd:integer`. Inside `@json` literals, `jsonld.to_rdf()` and `jsonld.normalize()` still raise `OverflowError` for such numbers, as RFC 8785 only allows numbers that fit in a double.
+@@ -36,7 +36,7 @@
  - `jsonld.to_rdf()` writes the `xsd:double` NaN as `NaN`, its XSD canonical form, instead of `NAN`, so `jsonld.normalize()` output changes for documents with such a value.
--- `iri_resolver.resolve()` resolves a reference against a base with an authority and an empty path, such as `http://example.org`, as RFC 3986 does: `/x` became `http://example.org//x`, dot segments were kept in a path and removed from a query, and a base query was kept before the path.
-+- `iri_resolver.resolve()` resolves a reference against a base with an authority and an empty path, such as `http://example.org`, as RFC 3986 does: `/x` became `http://example.org//x`, and dot segments were kept in a path and removed from a query. The query of the base IRI no longer stays in front of a path, or counts as part of the base path when it contains a `/`.
- 
- ### Changed
- - **BREAKING**: Developer install, command execution, documentation, and release artifact
-```
-
----
-
-### Incident Patch 3: `b51a50cb` (2026-11-04)
-**Commit Message**: docs: add the base without a path fix to the changelog
-
-Signed-off-by: jdsika <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -34,6 +34,7 @@
- - Use a helper for generalized N-Quads normalization in the test runner, since rdflib cannot parse blank-node predicates. Fixes [toRdf#te075](https://w3c.github.io/json-ld-api/tests/toRdf-manifest#te075).
- - `jsonld.expand()`, `jsonld.to_rdf()` and the other operations no longer fail with an `OverflowError` for an integer too large for a double. `jsonld.to_rdf()` writes it as `INF` or `-INF`, the infinite `xsd:double` values, or, in `json-ld-1.0` mode and not typed as `xsd:double`, as an exact `xsd:integer`. Inside `@json` literals, `jsonld.to_rdf()` and `jsonld.normalize()` still raise `OverflowError` for such numbers, as RFC 8785 only allows numbers that fit in a double.
- - `jsonld.to_rdf()` writes the `xsd:double` NaN as `NaN`, its XSD canonical form, instead of `NAN`, so `jsonld.normalize()` output changes for documents with such a value.
-+- `iri_resolver.resolve()` resolves a reference against a base with an authority and an empty path, such as `http://example.org`, as RFC 3986 does: `/x` became `http://example.org//x`, and dot segments in a path-relative reference were kept.
+ - `iri_resolver.resolve()` fixes references without a scheme or host against a base IRI with a host and no path (`/x` against `http://example.org` gave `http://example.org//x`) or with a query, and keeps the dot of a first segment such as `.gh`.
+ - `iri_resolver.remove_dot_segments()`, and with it `iri_resolver.resolve()`, no longer drops the `/` that a final `.` or `..` segment leaves before a query or fragment (`/a/.?x` gave `/a?x`).
+-- `iri_resolver.resolve()` treats a reference with a `/`, `?` or `#` before its first `:`, such as `/a:b`, `x/y:z` or `a?b:c`, as a relative IRI, as RFC 3986 does. It was returned unresolved, so `jsonld.to_rdf()` dropped it. Dot segments in the query or fragment of an IRI are no longer removed.
++- `iri_resolver.resolve()` treats a reference with a `/`, `?` or `#` before its first `:`, such as `/a:b`, `x/y:z` or `a?b:c`, as a relative IRI and resolves it against the base IRI, as RFC 3986 does. It was returned unresolved, so `jsonld.to_rdf()` dropped it. Dot segments in the query or fragment of an IRI are no longer removed.
  
  ### Changed
  - **BREAKING**: Developer install, command execution, documentation, and release artifact
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #388** (2026-11-24): build(deps): bump cachetools from 7.3.0 to 7.3.2 (@dependabot[bot])
+- **PR #387** (2026-11-24): build(deps-dev): bump ruff from 0.17.4 to 0.17.5 (@dependabot[bot])
+- **PR #385** (2026-11-24): build(deps): bump specifications/rdf-canon from `15619df` to `5ffaaa1` (@dependabot[bot])
+- **PR #384** (2026-11-24): build(deps): bump specifications/json-ld-api from `5551473` to `a1732db` (@dependabot[bot])
 - **PR #383** (2026-11-17): Bump ruff from 0.17.3 to 0.17.4 (@dependabot[bot])
 - **PR #382** (2026-11-17): Bump typer from 0.27.3 to 0.28.0 (@dependabot[bot])
-- **PR #381** (2026-11-17): Bump cachetools from 7.2.8 to 7.3.0 (@dependabot[bot])
-- **PR #380** (2026-11-17): Bump specifications/json-ld-api from `92f0770` to `5551473` (@dependabot[bot])
-- **PR #379** (2026-11-17): Fix misspelled 'embedded' state key in reverse framing (@afeefaa333)
-- **PR #377** (2026-11-10): Bump frozendict from 2.4.7 to 2.5.1 (@dependabot[bot])
 
 ---
 
@@ -1074,35 +1119,3 @@ Signed-off-by: jdsika <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. docs: note the remove_dot_segments() slash fix in the changelog
-
-**RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in digitalbazaar/pyld. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `b87fa3e3`: docs: note the remove_dot_segments() slash fix in the changelog. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-// Verified production-grade fix pattern:
-- `iri_resolver.resolve()` fixes references without a scheme or host against a base IRI with a host and no path (`/x` against `http://example.org` gave `http://example.org//x`) or with a query, and keeps the dot of a first segment such as `.gh`.
-- `iri_resolver.remove_dot_segments()`, and with it `iri_resolver.resolve()`, no longer drops the `/` that a final `.` or `..` segment leaves before a query or fragment (`/a/.?x` gave `/a?x`).
-```
-
-**NEGATIVE CONSTRAINT**:
-```python
-// Induced defect failure mode:
-- `iri_resolver.resolve()` fixes references without a scheme or host against a base IRI with a host and no path (`/x` against `http://example.org` gave `http://example.org//x`) or with a query. For those references, it also no longer drops the `/` that a final `.` or `..` segment leaves before a query or fragment (`a/.?x`), or the dot of a first segment such as `.gh`.
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b87fa3e3` are properly handled with clean fallback behavior.

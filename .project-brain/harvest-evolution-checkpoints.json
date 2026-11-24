@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T20:53:14.747Z",
+  "last_updated": "2026-11-24T21:02:11.155Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-24T20:53:10.264Z",
@@ -968,9 +968,9 @@
       "staged_for_review": 1
     },
     "digitalbazaar-pyld-learnings.md": {
-      "processed_at": "2026-11-20T21:55:18.945Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-24T21:02:06.295Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "openyurtio-openyurt-learnings.md": {
       "processed_at": "2026-11-12T08:35:03.911Z",
@@ -2588,7 +2588,7 @@
       "staged_for_review": 0
     },
     "dosco-graphjin-learnings.md": {
-      "processed_at": "2026-11-24T01:47:02.191Z",
+      "processed_at": "2026-11-24T21:02:09.031Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3328,7 +3328,7 @@
       "staged_for_review": 1
     },
     "dalance-procs-learnings.md": {
-      "processed_at": "2026-11-20T21:25:51.999Z",
+      "processed_at": "2026-11-24T21:01:33.388Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3863,7 +3863,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3924,
-  "total_canonical_promoted": 517,
-  "total_staged_for_review": 2988
+  "total_dossiers_evaluated": 3927,
+  "total_canonical_promoted": 518,
+  "total_staged_for_review": 2990
 }

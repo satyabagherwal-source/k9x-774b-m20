@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T21:25:53.304Z",
+  "timestamp": "2026-11-24T21:01:35.112Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-dalance-procs-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [dalance-procs-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T21:25:53.304Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T21:01:35.112Z`  
 > **Learning ID**: `LEARN-EVO-dalance-procs-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 78%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 72%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from dalance-procs-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dalance-procs-learnings.md`  
 > **Source**: github ([https://github.com/dalance/procs](https://github.com/dalance/procs))  
-> **Source Version**: `05000c71`  
+> **Source Version**: `9422dd6b`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T21:25:47.254Z  
+> **Timestamp**: 2026-11-24T21:01:21.499Z  
 > **Learning ID**: `learn-github-dalance-procs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dalance-procs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dalance/procs](https://github.com/dalance/procs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T21:25:37.074Z  
+> **Harvest Timestamp**: 2026-11-24T21:01:21.304Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A modern replacement for ps written in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6239 stars
+- **Stars / Engagement**: 6256 stars
 
 ---
 
@@ -1612,11 +1612,11 @@ impl Column for CpuTime {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1001** (2026-11-20): **build(deps): bump clap_mangen from 0.3.3 to 0.3.4**
-  *Symptoms*: Bumps [clap_mangen](https://github.com/clap-rs/clap) from 0.3.3 to 0.3.4. <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/clap-rs/clap/commit/db86ef6eccb2ed5ae16d3035982907692ecb10ef"><code>db86ef6</code></a> chore: Release</li> <li><a href="https://github.com/clap-rs/clap/commit/416d0b0e606841d7d5f23d9bd92fd5a83562961f"><code>416d0b0</code></a> docs: Update changelog</li> <li><a href="https://github.com/clap-rs/clap/commit/bebd2fdf6d3b826642e29d890695e370cfceb620"><code>bebd2fd</code></a> Merge pull request <a href="https://redirect.github.com/clap-rs/clap/issues/6569">#6569</a> from kpreid/derive-stack-usage</li> <li><a href="https://github.com/clap-rs/clap/commit/552461024b3d668dedda4087f8b67102f3ac6b46"><code>5524610</code></a> chore(deps): Update Rust Stable to v1.100 (<a href="https://redirect.github.com/clap-rs/clap/issues/6572">#6572</a>)</li> <li><a href="https://github.com/clap-rs/clap/commit/61d7b6f190f4dbb05dbda1c4dd8b2c9487795148"><code>61d7b6f</code></a> Merge pull request <a href="https://redirect.github.com/clap-rs/clap/issues/6574">#6574</a> from epage/lints</li> <li><a href="https://github.com/clap-rs/clap/commit/0a2145b2fd6e96f83e6366ebbc4462934572fd12"><code>0a2145b</code></a> style: Make linters happy</li> <li><a href="https://github.com/clap-rs/clap/commit/12a654c77aa675efe05e7c330cb0b72d269aff31"><code>12a654c</code></a> perf(derive): Reduce unoptimized stack usage</li> <li><a href="https://github.com/clap-rs/clap/commit/54605c
+- **Issue #1004** (2026-11-24): **build(deps): bump toml from 1.2.1+spec-1.1.0 to 1.2.2+spec-1.1.0**
+  *Symptoms*: Bumps [toml](https://github.com/toml-rs/toml) from 1.2.1+spec-1.1.0 to 1.2.2+spec-1.1.0. <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/toml-rs/toml/commit/9270d2e74b9530b039977d292aecec77dc81e3c9"><code>9270d2e</code></a> chore: Release</li> <li><a href="https://github.com/toml-rs/toml/commit/5d27901f021ba97ac69ebe94f12bfa8e65e89a87"><code>5d27901</code></a> docs: Update changelog</li> <li><a href="https://github.com/toml-rs/toml/commit/20b0c03bc1f3544ed42590b70e3192d4f746d890"><code>20b0c03</code></a> fix(parser): Handle a stack overflow on invalid TOML files (<a href="https://redirect.github.com/toml-rs/toml/issues/1265">#1265</a>)</li> <li><a href="https://github.com/toml-rs/toml/commit/d0f72c331ffba3d76845d94ec4ae614a063f7ded"><code>d0f72c3</code></a> fix(parser): Emit errors for closing delimiters of unexpected containers</li> <li><a href="https://github.com/toml-rs/toml/commit/afac8e5a4821c60719a5e8d9279a975fc4c0b8d7"><code>afac8e5</code></a> refactor(parser): Move close events to recovery callers</li> <li><a href="https://github.com/toml-rs/toml/commit/be5f194782c9c011c136a75d74542e13cf7bef06"><code>be5f194</code></a> test(parser): Cover RecursionGuard</li> <li><a href="https://github.com/toml-rs/toml/commit/02d4d8d00d8786aedb019f9ed71e855e262b0536"><code>02d4d8d</code></a> chore(deps): Update Rust Stable to v1.100 (<a href="https://redirect.github.com/toml-rs/toml/issues/1263">#1263</a>)</li> <li>See full diff in <a href="https://github.com
 
-- **Issue #1000** (2026-11-16): **build(deps): bump errno from 0.3.14 to 0.3.15**
-  *Symptoms*: Bumps [errno](https://github.com/lambda-fairy/rust-errno) from 0.3.14 to 0.3.15. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/lambda-fairy/rust-errno/releases">errno's releases</a>.</em></p> <blockquote> <h2>v0.3.15</h2> <ul> <li> <p>Support QNX 8 (target_os = &quot;qnx&quot;) <a href="https://redirect.github.com/lambda-fairy/rust-errno/pull/134">#134</a></p> </li> <li> <p>Add mlibc support <a href="https://redirect.github.com/lambda-fairy/rust-errno/pull/132">#132</a></p> </li> <li> <p>Add NuttX support <a href="https://redirect.github.com/lambda-fairy/rust-errno/pull/129">#129</a></p> </li> <li> <p>Fix link on Fuchsia <a href="https://redirect.github.com/lambda-fairy/rust-errno/pull/126">#126</a></p> </li> </ul> </blockquote> </details> <details> <summary>Changelog</summary> <p><em>Sourced from <a href="https://github.com/lambda-fairy/rust-errno/blob/main/CHANGELOG.md">errno's changelog</a>.</em></p> <blockquote> <h1>[0.3.15] - 2026-11-12</h1> <ul> <li> <p>Support QNX 8 (target_os = &quot;qnx&quot;) <a href="https://redirect.github.com/lambda-fairy/rust-errno/pull/134">#134</a></p> </li> <li> <p>Add mlibc support <a href="https://redirect.github.com/lambda-fairy/rust-errno/pull/132">#132</a></p> </li> <li> <p>Add NuttX support <a href="https://redirect.github.com/lambda-fairy/rust-errno/pull/129">#129</a></p> </li> <li> <p>Fix link on Fuchsia <a href="https://redirect.github.com/lambda-fairy/rust-errno/pull/126">#126</a></p> </l
+- **Issue #1003** (2026-11-23): **build(deps): bump regex from 1.13.1 to 1.13.2**
+  *Symptoms*: Bumps [regex](https://github.com/rust-lang/regex) from 1.13.1 to 1.13.2. <details> <summary>Changelog</summary> <p><em>Sourced from <a href="https://github.com/rust-lang/regex/blob/master/CHANGELOG.md">regex's changelog</a>.</em></p> <blockquote> <h1>1.13.2 (2026-11-17)</h1> <p>Bug fixes:</p> <ul> <li><a href="https://redirect.github.com/rust-lang/regex/issues/1333">#1333</a>: Fix a glob syntax error in <code>package.include</code>.</li> <li><a href="https://redirect.github.com/rust-lang/regex/issues/1388">#1388</a>, <a href="https://redirect.github.com/rust-lang/regex/issues/1344">#1344</a>: Panic in <code>BoundedBacktracker</code> when haystack length exceeds capacity.</li> <li><a href="https://redirect.github.com/rust-lang/regex/issues/1389">#1389</a>: Revert default pool capacity change.</li> <li><a href="https://redirect.github.com/rust-lang/regex/issues/1394">#1394</a>, <a href="https://redirect.github.com/rust-lang/regex/issues/1392">#1392</a>: Allow Parser to be reused in <code>regex-syntax</code>.</li> <li><a href="https://redirect.github.com/rust-lang/regex/issues/1395">#1395</a>, <a href="https://redirect.github.com/rust-lang/regex/issues/1393">#1393</a>: Make Position's Ord match Eq in <code>regex-syntax</code>.</li> <li><a href="https://redirect.github.com/rust-lang/regex/issues/1400">#1400</a>: Fix incorrect match offsets for alternations whose branches start with the same repetition.</li> <li><a href="https://redirect.github.com/rust-lang/regex/issues/1415">#14
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1633,56 +1633,117 @@ impl Column for CpuTime {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `491006fa` (2026-11-20)
-**Commit Message**: build(deps): bump clap_mangen from 0.3.3 to 0.3.4
+### Incident Patch 1: `bf04b3b8` (2026-11-23)
+**Commit Message**: build(deps): bump regex from 1.13.1 to 1.13.2
 
-Bumps [clap_mangen](https://github.com/clap-rs/clap) from 0.3.3 to 0.3.4.
-- [Release notes](https://github.com/clap-rs/clap/releases)
-- [Changelog](https://github.com/clap-rs/clap/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/clap-rs/clap/compare/clap_mangen-v0.3.3...clap_mangen-v0.3.4)
+Bumps [regex](https://github.com/rust-lang/regex) from 1.13.1 to 1.13.2.
+- [Release notes](https://github.com/rust-lang/regex/releases)
+- [Changelog](https://github.com/rust-lang/regex/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/rust-lang/regex/compare/1.13.1...1.13.2)
 
 ---
 updated-dependencies:
-- dependency-name: clap_mangen
-  dependency-version: 0.3.4
+- dependency-name: regex
+  dependency-version: 1.13.2
   dependency-type: direct:production
   update-type: version-update:semver-patch
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
-**File**: `Cargo.lock` (modified, +3/-3)
+**File**: `Cargo.lock` (modified, +6/-6)
 ```diff
-@@ -424,9 +424,9 @@ checksum = "c8d4a3bb8b1e0c1050499d1815f5ab16d04f0959b233085fb31653fbfc9d98f9"
+@@ -1704,9 +1704,9 @@ dependencies = [
  
  [[package]]
- name = "clap_mangen"
--version = "0.3.3"
-+version = "0.3.4"
+ name = "regex"
+-version = "1.13.1"
++version = "1.13.2"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "211d617eaa4b735c96c9e0228fcbdb5120ef623f2b8cb67ffb84c3e02dbc28a4"
-+checksum = "a3b6a8907b1723f211693e27b9af5899b86a9512ef5b08bd4a15b6bceb30da6d"
+-checksum = "f020237b6c8eed93db2e2cb53c00c60a8e1bc73da7d073199a1180401450218d"
++checksum = "9807af0e638c12e753aa1b4e601791bf2a8f71274023c8bbeec12fc149950857"
  dependencies = [
-  "clap",
-  "roff",
-@@ -1966,7 +1966,7 @@ version = "1.4.8"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "c4db69cba1110affc0e9f7bcd48bbf87b3f4fc7c61fc9155afd4c469eb3d6c1b"
- dependencies = [
-- "errno 0.2.8",
-+ "errno 0.3.15",
-  "libc",
- ]
+  "aho-corasick",
+  "memchr",
+@@ -1716,9 +1716,9 @@ dependencies = [
  
+ [[package]]
+ name = "regex-automata"
+-version = "0.4.16"
++version = "0.4.19"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "8fcfdb36bda0c880c5931cdc7a2bcdc8ba4556847b9d912bca70bc94708711ad"
++checksum = "41d60ef07df457506a0a1a2073112eb4aae5733dbd2813c3da77d1b0fd441158"
+ dependencies = [
+  "aho-corasick",
+  "memchr",
+@@ -1727,9 +1727,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "regex-syntax"
+-version = "0.8.11"
++version = "0.8.12"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
++checksum = "d902046e6a28a1e4c3cab97258a0ce11e994903f01c2d97a9447a0b3df85f4f6"
+ 
+ [[package]]
+ name = "rend"
+```
+
+---
+
+### Incident Patch 2: `22e0b631` (2026-11-24)
+**Commit Message**: build(deps): bump toml from 1.2.1+spec-1.1.0 to 1.2.2+spec-1.1.0
+
+Bumps [toml](https://github.com/toml-rs/toml) from 1.2.1+spec-1.1.0 to 1.2.2+spec-1.1.0.
+- [Commits](https://github.com/toml-rs/toml/compare/toml-v1.2.1...toml-v1.2.2)
+
+---
+updated-dependencies:
+- dependency-name: toml
+  dependency-version: 1.2.2+spec-1.1.0
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+**File**: `Cargo.lock` (modified, +4/-4)
+```diff
+@@ -2295,9 +2295,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "toml"
+-version = "1.2.1+spec-1.1.0"
++version = "1.2.2+spec-1.1.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d5755c51863cdac711f1956baf8eb9588e060755f7d3c4c979e70ea1e1f32cd7"
++checksum = "5426cb1b964690d913f6c5c1a1ae0b42f428ec506bb4d452876d7a209c9bca3b"
+ dependencies = [
+  "indexmap",
+  "serde_core",
+@@ -2331,9 +2331,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "toml_parser"
+-version = "1.1.5+spec-1.1.0"
++version = "1.1.6+spec-1.1.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "baa693a8032d7e1cada7d0041e96126df243179ff061456783ac7f12bda4744c"
++checksum = "e6769c452d71ba30696c6b37770c439a9cc9110f47f7d5cdbeda79840ef5ea31"
+ dependencies = [
+  "winnow",
+ ]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1004** (2026-11-24): build(deps): bump toml from 1.2.1+spec-1.1.0 to 1.2.2+spec-1.1.0 (@dependabot[bot])
+- **PR #1003** (2026-11-23): build(deps): bump regex from 1.13.1 to 1.13.2 (@dependabot[bot])
 - **PR #1001** (2026-11-20): build(deps): bump clap_mangen from 0.3.3 to 0.3.4 (@dependabot[bot])
 - **PR #1000** (2026-11-16): build(deps): bump errno from 0.3.14 to 0.3.15 (@dependabot[bot])
 - **PR #998** (closed): build(deps): bump fancy-regex from 0.19.2 to 0.20.1 (@dependabot[bot])
 - **PR #997** (2026-11-09): build(deps): bump toml from 1.1.8+spec-1.1.0 to 1.2.1+spec-1.1.0 (@dependabot[bot])
-- **PR #995** (2026-11-06): build(deps): bump toml from 1.1.6+spec-1.1.0 to 1.1.8+spec-1.1.0 (@dependabot[bot])
-- **PR #994** (2026-11-02): build(deps): bump unicode-width from 0.2.2 to 0.2.3 (@dependabot[bot])
 
 ---
 
@@ -1702,13 +1763,13 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump clap_mangen from 0.3.3 to 0.3.4
+## X. build(deps): bump regex from 1.13.1 to 1.13.2
 
 **RULE**:
 When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dalance/procs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `491006fa`: build(deps): bump clap_mangen from 0.3.3 to 0.3.4. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bf04b3b8`: build(deps): bump regex from 1.13.1 to 1.13.2. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
@@ -1716,21 +1777,27 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.3.4"
-checksum = "a3b6a8907b1723f211693e27b9af5899b86a9512ef5b08bd4a15b6bceb30da6d"
- "errno 0.3.15",
+version = "1.13.2"
+checksum = "9807af0e638c12e753aa1b4e601791bf2a8f71274023c8bbeec12fc149950857"
+version = "0.4.19"
+checksum = "41d60ef07df457506a0a1a2073112eb4aae5733dbd2813c3da77d1b0fd441158"
+version = "0.8.12"
+checksum = "d902046e6a28a1e4c3cab97258a0ce11e994903f01c2d97a9447a0b3df85f4f6"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "0.3.3"
-checksum = "211d617eaa4b735c96c9e0228fcbdb5120ef623f2b8cb67ffb84c3e02dbc28a4"
- "errno 0.2.8",
+version = "1.13.1"
+checksum = "f020237b6c8eed93db2e2cb53c00c60a8e1bc73da7d073199a1180401450218d"
+version = "0.4.16"
+checksum = "8fcfdb36bda0c880c5931cdc7a2bcdc8ba4556847b9d912bca70bc94708711ad"
+version = "0.8.11"
+checksum = "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `491006fa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bf04b3b8` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

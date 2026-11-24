@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T20:38:45.642Z",
+  "updated_at": "2026-11-24T21:02:08.404Z",
   "stats": {
-    "total_discovered": 8907,
-    "approved_pending_harvest": 8430,
+    "total_discovered": 8955,
+    "approved_pending_harvest": 8478,
     "harvested_count": 0,
     "rejected_count": 477,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8425,
+      "COMMUNITY_AND_EXPERT": 8473,
       "OFFICIAL_DOCUMENTATION": 271,
       "STANDARDS_AND_SPECIFICATIONS": 147,
       "ENGINEERING_BLOGS": 7,
@@ -192642,6 +192642,1062 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
         "fileName": "weaviate-weaviate-learnings.md"
+      }
+    },
+    "SRC-F742A0EBE831": {
+      "id": "SRC-F742A0EBE831",
+      "url": "https://github.com/toml-rs/toml/commit/9270d2e74b9530b039977d292aecec77dc81e3c9",
+      "title": "https://github.com/toml-rs/toml/commit/9270d2e74b9530b039977d292aecec77dc81e3c9",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:01:33.507Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-58314C65B013": {
+      "id": "SRC-58314C65B013",
+      "url": "https://github.com/toml-rs/toml/commit/5d27901f021ba97ac69ebe94f12bfa8e65e89a87",
+      "title": "https://github.com/toml-rs/toml/commit/5d27901f021ba97ac69ebe94f12bfa8e65e89a87",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:01:33.570Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-B40D1B0AD4DC": {
+      "id": "SRC-B40D1B0AD4DC",
+      "url": "https://github.com/toml-rs/toml/commit/20b0c03bc1f3544ed42590b70e3192d4f746d890",
+      "title": "https://github.com/toml-rs/toml/commit/20b0c03bc1f3544ed42590b70e3192d4f746d890",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:01:33.630Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-03AF534D6018": {
+      "id": "SRC-03AF534D6018",
+      "url": "https://redirect.github.com/toml-rs/toml/issues/1265",
+      "title": "https://redirect.github.com/toml-rs/toml/issues/1265",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:01:33.688Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-F6C73E72AB13": {
+      "id": "SRC-F6C73E72AB13",
+      "url": "https://github.com/toml-rs/toml/commit/d0f72c331ffba3d76845d94ec4ae614a063f7ded",
+      "title": "https://github.com/toml-rs/toml/commit/d0f72c331ffba3d76845d94ec4ae614a063f7ded",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:01:33.747Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-55705C0EDB04": {
+      "id": "SRC-55705C0EDB04",
+      "url": "https://github.com/toml-rs/toml/commit/afac8e5a4821c60719a5e8d9279a975fc4c0b8d7",
+      "title": "https://github.com/toml-rs/toml/commit/afac8e5a4821c60719a5e8d9279a975fc4c0b8d7",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:01:33.805Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-48133705A5EE": {
+      "id": "SRC-48133705A5EE",
+      "url": "https://github.com/toml-rs/toml/commit/be5f194782c9c011c136a75d74542e13cf7bef06",
+      "title": "https://github.com/toml-rs/toml/commit/be5f194782c9c011c136a75d74542e13cf7bef06",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:01:33.864Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-8A4A1ADADB0F": {
+      "id": "SRC-8A4A1ADADB0F",
+      "url": "https://github.com/toml-rs/toml/commit/02d4d8d00d8786aedb019f9ed71e855e262b0536",
+      "title": "https://github.com/toml-rs/toml/commit/02d4d8d00d8786aedb019f9ed71e855e262b0536",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:01:33.922Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-43A8D814B7C6": {
+      "id": "SRC-43A8D814B7C6",
+      "url": "https://redirect.github.com/toml-rs/toml/issues/1263",
+      "title": "https://redirect.github.com/toml-rs/toml/issues/1263",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:01:33.981Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-295284B341FF": {
+      "id": "SRC-295284B341FF",
+      "url": "https://github.com/rust-lang/regex",
+      "title": "https://github.com/rust-lang/regex",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:01:34.065Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-57EADFA6AAED": {
+      "id": "SRC-57EADFA6AAED",
+      "url": "https://github.com/rust-lang/regex/blob/master/CHANGELOG.md",
+      "title": "https://github.com/rust-lang/regex/blob/master/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:01:34.128Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-A136CC489CCC": {
+      "id": "SRC-A136CC489CCC",
+      "url": "https://redirect.github.com/rust-lang/regex/issues/1333",
+      "title": "https://redirect.github.com/rust-lang/regex/issues/1333",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:01:34.193Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-220F3CBD0C48": {
+      "id": "SRC-220F3CBD0C48",
+      "url": "https://redirect.github.com/rust-lang/regex/issues/1388",
+      "title": "https://redirect.github.com/rust-lang/regex/issues/1388",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:01:34.258Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-F805698BE341": {
+      "id": "SRC-F805698BE341",
+      "url": "https://redirect.github.com/rust-lang/regex/issues/1344",
+      "title": "https://redirect.github.com/rust-lang/regex/issues/1344",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:01:34.323Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-5A5DB58F0314": {
+      "id": "SRC-5A5DB58F0314",
+      "url": "https://redirect.github.com/rust-lang/regex/issues/1389",
+      "title": "https://redirect.github.com/rust-lang/regex/issues/1389",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:01:34.404Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-1549E79843DE": {
+      "id": "SRC-1549E79843DE",
+      "url": "https://redirect.github.com/rust-lang/regex/issues/1394",
+      "title": "https://redirect.github.com/rust-lang/regex/issues/1394",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:01:34.463Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-1EE718BD7165": {
+      "id": "SRC-1EE718BD7165",
+      "url": "https://redirect.github.com/rust-lang/regex/issues/1392",
+      "title": "https://redirect.github.com/rust-lang/regex/issues/1392",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:01:34.530Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-70554CD1F624": {
+      "id": "SRC-70554CD1F624",
+      "url": "https://redirect.github.com/rust-lang/regex/issues/1395",
+      "title": "https://redirect.github.com/rust-lang/regex/issues/1395",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:01:34.594Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-544844044471": {
+      "id": "SRC-544844044471",
+      "url": "https://redirect.github.com/rust-lang/regex/issues/1393",
+      "title": "https://redirect.github.com/rust-lang/regex/issues/1393",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:01:34.656Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-0283D45D708F": {
+      "id": "SRC-0283D45D708F",
+      "url": "https://redirect.github.com/rust-lang/regex/issues/1400",
+      "title": "https://redirect.github.com/rust-lang/regex/issues/1400",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:01:34.719Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-ED7499575D04": {
+      "id": "SRC-ED7499575D04",
+      "url": "https://redirect.github.com/rust-lang/regex/issues/1415",
+      "title": "https://redirect.github.com/rust-lang/regex/issues/1415",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:01:34.783Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-99C598F14759": {
+      "id": "SRC-99C598F14759",
+      "url": "https://github.com/rust-lang/regex/releases",
+      "title": "https://github.com/rust-lang/regex/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:01:34.845Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-E4907BE695B5": {
+      "id": "SRC-E4907BE695B5",
+      "url": "https://github.com/rust-lang/regex/compare/1.13.1...1.13.2",
+      "title": "https://github.com/rust-lang/regex/compare/1.13.1...1.13.2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:01:34.907Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-CE364A0C7F72": {
+      "id": "SRC-CE364A0C7F72",
+      "url": "https://github.com/toml-rs/toml/compare/toml-v1.2.1...toml-v1.2.2",
+      "title": "https://github.com/toml-rs/toml/compare/toml-v1.2.1...toml-v1.2.2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:01:35.000Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dalance-procs-learnings.md",
+        "fileName": "dalance-procs-learnings.md"
+      }
+    },
+    "SRC-9F401DF5D549": {
+      "id": "SRC-9F401DF5D549",
+      "url": "https://github.com/astral-sh/ruff/releases",
+      "title": "https://github.com/astral-sh/ruff/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:02:06.751Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-02F4CCFF6B8A": {
+      "id": "SRC-02F4CCFF6B8A",
+      "url": "https://github.com/astral-sh/ruff/blob/main/CHANGELOG.md",
+      "title": "https://github.com/astral-sh/ruff/blob/main/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:02:06.831Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-A35C31D9CB04": {
+      "id": "SRC-A35C31D9CB04",
+      "url": "https://github.com/astral-sh/ruff/compare/0.17.4...0.17.5",
+      "title": "https://github.com/astral-sh/ruff/compare/0.17.4...0.17.5",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:02:06.892Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-236ED306AE9F": {
+      "id": "SRC-236ED306AE9F",
+      "url": "https://files.pythonhosted.org/packages/84/0e/3d154514b5bad104f7e1c13169c2d09aa9959fccdc06eb47610ccdfa83ed/ruff-0.17.4.tar.gz",
+      "title": "https://files.pythonhosted.org/packages/84/0e/3d154514b5bad104f7e1c13169c2d09aa9959fccdc06eb47610ccdfa83ed/ruff-0.17.4.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:02:06.997Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-CFE84265B1F7": {
+      "id": "SRC-CFE84265B1F7",
+      "url": "https://files.pythonhosted.org/packages/e0/61/c83c78bbb6108f6c6270a106cf12b54175f4f42da088b9bb880f18e31289/ruff-0.17.4-py3-none-linux_armv6l.whl",
+      "title": "https://files.pythonhosted.org/packages/e0/61/c83c78bbb6108f6c6270a106cf12b54175f4f42da088b9bb880f18e31289/ruff-0.17.4-py3-none-linux_armv6l.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:02:07.069Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-58A40ABE2B86": {
+      "id": "SRC-58A40ABE2B86",
+      "url": "https://files.pythonhosted.org/packages/0a/12/dd158708378866e8b53e145a465dbc51a7cccb9fa197a74d67eaedde7234/ruff-0.17.4-py3-none-macosx_10_12_x86_64.whl",
+      "title": "https://files.pythonhosted.org/packages/0a/12/dd158708378866e8b53e145a465dbc51a7cccb9fa197a74d67eaedde7234/ruff-0.17.4-py3-none-macosx_10_12_x86_64.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:02:07.131Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-B4B7F783CF62": {
+      "id": "SRC-B4B7F783CF62",
+      "url": "https://files.pythonhosted.org/packages/28/32/89a94a8eb11fd505a381ae6f04e190d038d9958695209dc1786ce5cfcda3/ruff-0.17.4-py3-none-macosx_11_0_arm64.whl",
+      "title": "https://files.pythonhosted.org/packages/28/32/89a94a8eb11fd505a381ae6f04e190d038d9958695209dc1786ce5cfcda3/ruff-0.17.4-py3-none-macosx_11_0_arm64.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:02:07.204Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-2A505EAFAF77": {
+      "id": "SRC-2A505EAFAF77",
+      "url": "https://files.pythonhosted.org/packages/58/de/a392dc38b215798ae72e639d228b7f6c02d826a95d1c0ad7c4c0ee49ef5b/ruff-0.17.4-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
+      "title": "https://files.pythonhosted.org/packages/58/de/a392dc38b215798ae72e639d228b7f6c02d826a95d1c0ad7c4c0ee49ef5b/ruff-0.17.4-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:02:07.265Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-D629522EAB57": {
+      "id": "SRC-D629522EAB57",
+      "url": "https://files.pythonhosted.org/packages/b7/8f/a880f60f42005f6ffdf58f77af34c7ee327000b5607f48a2f6a69d8b242c/ruff-0.17.4-py3-none-manylinux_2_17_armv7l.manylinux2014_armv7l.whl",
+      "title": "https://files.pythonhosted.org/packages/b7/8f/a880f60f42005f6ffdf58f77af34c7ee327000b5607f48a2f6a69d8b242c/ruff-0.17.4-py3-none-manylinux_2_17_armv7l.manylinux2014_armv7l.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:02:07.338Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-2B619AE4AF9B": {
+      "id": "SRC-2B619AE4AF9B",
+      "url": "https://files.pythonhosted.org/packages/09/55/98844264108af7d5ec27ca3a9cd5a989094ca657a14599c4b69a537a0e9a/ruff-0.17.4-py3-none-manylinux_2_17_i686.manylinux2014_i686.whl",
+      "title": "https://files.pythonhosted.org/packages/09/55/98844264108af7d5ec27ca3a9cd5a989094ca657a14599c4b69a537a0e9a/ruff-0.17.4-py3-none-manylinux_2_17_i686.manylinux2014_i686.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:02:07.400Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-CF7EA2D10F9E": {
+      "id": "SRC-CF7EA2D10F9E",
+      "url": "https://files.pythonhosted.org/packages/28/a2/5edf97659c3ac7c73f978003bd314936f671037fdac6b978e9de3e4b2b65/ruff-0.17.4-py3-none-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl",
+      "title": "https://files.pythonhosted.org/packages/28/a2/5edf97659c3ac7c73f978003bd314936f671037fdac6b978e9de3e4b2b65/ruff-0.17.4-py3-none-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:02:07.473Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-3A3123BBF7B8": {
+      "id": "SRC-3A3123BBF7B8",
+      "url": "https://files.pythonhosted.org/packages/f2/8f/51371ae856b2bef4d15a044a574695fbc0f6ae63aafa42a2a22428070fb6/ruff-0.17.4-py3-none-manylinux_2_17_s390x.manylinux2014_s390x.whl",
+      "title": "https://files.pythonhosted.org/packages/f2/8f/51371ae856b2bef4d15a044a574695fbc0f6ae63aafa42a2a22428070fb6/ruff-0.17.4-py3-none-manylinux_2_17_s390x.manylinux2014_s390x.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:02:07.533Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-3B446638F4DD": {
+      "id": "SRC-3B446638F4DD",
+      "url": "https://files.pythonhosted.org/packages/af/1b/62874f14c7873f27c7887d2b1ea41de990e14ba9518801ffe8eacb5d51a6/ruff-0.17.4-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "title": "https://files.pythonhosted.org/packages/af/1b/62874f14c7873f27c7887d2b1ea41de990e14ba9518801ffe8eacb5d51a6/ruff-0.17.4-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:02:07.604Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-5818D6E6DE0D": {
+      "id": "SRC-5818D6E6DE0D",
+      "url": "https://files.pythonhosted.org/packages/98/30/860b9dae67432b16b88558a9cb2d3194825fa62838f8b9cc49f5d9022095/ruff-0.17.4-py3-none-manylinux_2_31_riscv64.whl",
+      "title": "https://files.pythonhosted.org/packages/98/30/860b9dae67432b16b88558a9cb2d3194825fa62838f8b9cc49f5d9022095/ruff-0.17.4-py3-none-manylinux_2_31_riscv64.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:02:07.665Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-164E64C7F789": {
+      "id": "SRC-164E64C7F789",
+      "url": "https://files.pythonhosted.org/packages/0f/08/781a4b41a1c83fd6e30fea610d6502a6f94e49cf94693fd37bdcbc6bfe11/ruff-0.17.4-py3-none-musllinux_1_2_aarch64.whl",
+      "title": "https://files.pythonhosted.org/packages/0f/08/781a4b41a1c83fd6e30fea610d6502a6f94e49cf94693fd37bdcbc6bfe11/ruff-0.17.4-py3-none-musllinux_1_2_aarch64.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:02:07.738Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-6862CEB941E1": {
+      "id": "SRC-6862CEB941E1",
+      "url": "https://files.pythonhosted.org/packages/3c/e9/94b1c7b677120f30839254518924f73a8157e9bcfa200edcd5796fecdb99/ruff-0.17.4-py3-none-musllinux_1_2_armv7l.whl",
+      "title": "https://files.pythonhosted.org/packages/3c/e9/94b1c7b677120f30839254518924f73a8157e9bcfa200edcd5796fecdb99/ruff-0.17.4-py3-none-musllinux_1_2_armv7l.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:02:07.799Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-5B946890AB8D": {
+      "id": "SRC-5B946890AB8D",
+      "url": "https://files.pythonhosted.org/packages/27/5f/a825910b9f309336dc33cb8c0774126662c1d2f765699b3e0a1bd538d01f/ruff-0.17.4-py3-none-musllinux_1_2_i686.whl",
+      "title": "https://files.pythonhosted.org/packages/27/5f/a825910b9f309336dc33cb8c0774126662c1d2f765699b3e0a1bd538d01f/ruff-0.17.4-py3-none-musllinux_1_2_i686.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:02:07.871Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-0867C20E092A": {
+      "id": "SRC-0867C20E092A",
+      "url": "https://files.pythonhosted.org/packages/8b/b8/0796468423413ea4df1a6e2442ae26cf49b8f7dda0eecf246e0d5d0dde54/ruff-0.17.4-py3-none-musllinux_1_2_x86_64.whl",
+      "title": "https://files.pythonhosted.org/packages/8b/b8/0796468423413ea4df1a6e2442ae26cf49b8f7dda0eecf246e0d5d0dde54/ruff-0.17.4-py3-none-musllinux_1_2_x86_64.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:02:07.933Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-0005CEF83646": {
+      "id": "SRC-0005CEF83646",
+      "url": "https://files.pythonhosted.org/packages/b9/ab/d8e407669ffe5014429baf78",
+      "title": "https://files.pythonhosted.org/packages/b9/ab/d8e407669ffe5014429baf78",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:02:08.006Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-B31721953465": {
+      "id": "SRC-B31721953465",
+      "url": "https://github.com/tkem/cachetools/compare/v7.3.0...v7.3.2",
+      "title": "https://github.com/tkem/cachetools/compare/v7.3.0...v7.3.2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:02:08.139Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-59CF5C9531D3": {
+      "id": "SRC-59CF5C9531D3",
+      "url": "https://files.pythonhosted.org/packages/5f/6b/6c1553e1e8f672f9423344a1915aad1537439ad3d14a3fbc1a02159cfd94/cachetools-7.3.0.tar.gz",
+      "title": "https://files.pythonhosted.org/packages/5f/6b/6c1553e1e8f672f9423344a1915aad1537439ad3d14a3fbc1a02159cfd94/cachetools-7.3.0.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:02:08.210Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-B09A081CA0CC": {
+      "id": "SRC-B09A081CA0CC",
+      "url": "https://files.pythonhosted.org/packages/0a/d6/3b2743ae0662528e36b1002074909e4e73dc7407f1fc7da0d6a1b7401e72/cachetools-7.3.2.tar.gz",
+      "title": "https://files.pythonhosted.org/packages/0a/d6/3b2743ae0662528e36b1002074909e4e73dc7407f1fc7da0d6a1b7401e72/cachetools-7.3.2.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:02:08.271Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-4625CB3EBAB5": {
+      "id": "SRC-4625CB3EBAB5",
+      "url": "https://files.pythonhosted.org/packages/29/aa/e54a49d0927b2fa7b86bc94dbde57125e38e8cfca7a31b6764e8dbf35e9f/cachetools-7.3.0-py3-none-any.whl",
+      "title": "https://files.pythonhosted.org/packages/29/aa/e54a49d0927b2fa7b86bc94dbde57125e38e8cfca7a31b6764e8dbf35e9f/cachetools-7.3.0-py3-none-any.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:02:08.344Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
+      }
+    },
+    "SRC-A9A0EC331D57": {
+      "id": "SRC-A9A0EC331D57",
+      "url": "https://files.pythonhosted.org/packages/ed/8f/9d90e713bdaf06316184c7214a23177e0fe7b9a287932a5dcce643f6fd58/cachetools-7.3.2-py3-none-any.whl",
+      "title": "https://files.pythonhosted.org/packages/ed/8f/9d90e713bdaf06316184c7214a23177e0fe7b9a287932a5dcce643f6fd58/cachetools-7.3.2-py3-none-any.whl",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T21:02:08.404Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
+        "fileName": "digitalbazaar-pyld-learnings.md"
       }
     }
   }

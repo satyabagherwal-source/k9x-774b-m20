@@ -12842,3 +12842,7 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `f2483549` | Multi-dimensional audit evidence | 2026-11-24T20:30:04.860Z |
 | `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `e8b30c7d` | Multi-dimensional audit evidence | 2026-11-24T20:38:36.475Z |
 | `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `49700341` | Multi-dimensional audit evidence | 2026-11-24T20:38:41.219Z |
+| `learn-github-dalance-procs` | `https://github.com/dalance/procs` | `9422dd6b` | Multi-dimensional audit evidence | 2026-11-24T21:01:22.671Z |
+| `learn-github-digitalbazaar-pyld` | `https://github.com/digitalbazaar/pyld` | `c9a68bc3` | Multi-dimensional audit evidence | 2026-11-24T21:01:24.329Z |
+| `learn-github-dosco-deeporg` | `https://github.com/dosco/graphjin` | `9d591e72` | Multi-dimensional audit evidence | 2026-11-24T21:01:29.789Z |
+| `learn-dom-d-ba194d6e` | `project://digitalbazaar-pyld` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md` | 2026-11-24T21:02:06.295Z |

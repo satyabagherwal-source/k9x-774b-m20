@@ -3693,10 +3693,10 @@
     "repository": "dosco/deeporg",
     "platform": "github",
     "sourceUrl": "https://github.com/dosco/graphjin",
-    "sourceVersion": "48344754",
+    "sourceVersion": "9d591e72",
     "license": "Apache-2.0",
-    "contentHash": "15aacb484185069b2572ab1ed4c769cf92264ca4fdf9738f0ce961c399b6ab43",
-    "lastHarvestedAt": "2026-11-24T01:46:55.595Z",
+    "contentHash": "11d9dfbc2397b090acec0341ad52061f7dce4fdb9bb026ee2358979efcf668e2",
+    "lastHarvestedAt": "2026-11-24T21:01:29.789Z",
     "learningId": "learn-github-dosco-deeporg"
   },
   "gravitl-netmaker": {
@@ -6633,10 +6633,10 @@
     "repository": "dalance/procs",
     "platform": "github",
     "sourceUrl": "https://github.com/dalance/procs",
-    "sourceVersion": "05000c71",
+    "sourceVersion": "9422dd6b",
     "license": "MIT",
-    "contentHash": "d01a5eef5292a4f0836798ff62e1e6578db0c95246f016bde3bada31b01d6964",
-    "lastHarvestedAt": "2026-11-20T21:25:48.457Z",
+    "contentHash": "2d09c4118cb7689c5f291dd2acb765952dd1069e3345b5d96617f3fe87ab157c",
+    "lastHarvestedAt": "2026-11-24T21:01:22.671Z",
     "learningId": "learn-github-dalance-procs"
   },
   "ionic-team-ionic-framework": {
@@ -9793,10 +9793,10 @@
     "repository": "digitalbazaar/pyld",
     "platform": "github",
     "sourceUrl": "https://github.com/digitalbazaar/pyld",
-    "sourceVersion": "b87fa3e3",
+    "sourceVersion": "c9a68bc3",
     "license": "BSD-3-Clause",
-    "contentHash": "4063d5f746474d0fff13598dd28051cdd27cd65762adeb5189b859a7e61e8c23",
-    "lastHarvestedAt": "2026-11-20T21:55:06.585Z",
+    "contentHash": "f66177b3b2c92419008804d11e94d467ca2bbed013fd640d86b6d835a46e6377",
+    "lastHarvestedAt": "2026-11-24T21:01:24.329Z",
     "learningId": "learn-github-digitalbazaar-pyld"
   },
   "aheze-popovers": {

@@ -12809,3 +12809,7 @@
 | `CYCLE-20261124-F86W` | `2026-11-24T20:30:04.856Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`f1543edc...`) |
 | `CYCLE-20261124-Q6YF` | `2026-11-24T20:38:36.471Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10357` | Yes (`9f667635...`) |
 | `CYCLE-20261124-QAM7` | `2026-11-24T20:38:41.215Z` | `weaviate/weaviate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10358` | Yes (`e88eb2de...`) |
+| `CYCLE-20261124-JH4A` | `2026-11-24T21:01:22.666Z` | `dalance/procs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10359` | Yes (`2d09c411...`) |
+| `CYCLE-20261124-JIEC` | `2026-11-24T21:01:24.324Z` | `digitalbazaar/pyld` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md` | Yes (`f66177b3...`) |
+| `CYCLE-20261124-JMM1` | `2026-11-24T21:01:29.785Z` | `dosco/deeporg` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10360` | Yes (`11d9dfbc...`) |
+| `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T21:02:06.295Z` | `digitalbazaar-pyld` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-BA194D6E` [Domain D] | Yes (`305718a7...`) |

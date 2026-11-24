@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T20:53:10.066Z",
-    "lastVerified": "2026-11-24T20:53:10.066Z",
+    "lastChecked": "2026-11-24T21:01:33.241Z",
+    "lastVerified": "2026-11-24T21:01:33.241Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -276,9 +276,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-24T20:12:55.061Z",
+    "lastChecked": "2026-11-24T21:01:30.512Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-24T20:12:55.061Z"
+    "lastVerified": "2026-11-24T21:01:30.512Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -721,12 +721,12 @@
     "revisionIdentifier": "1f2f7af9"
   },
   "defguard-defguard": {
-    "name": "DefGuard/defguard",
+    "name": "defguard",
     "officialUrl": "https://github.com/DefGuard/defguard",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T16:46:06.600Z",
-    "lastVerified": "2026-11-24T16:46:06.600Z",
+    "lastChecked": "2026-11-24T21:01:25.508Z",
+    "lastVerified": "2026-11-24T21:01:25.508Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-defguard-defguard",
@@ -735,7 +735,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "279cc5c3"
   },
   "topoteretes-cognee": {
     "name": "cognee",
@@ -1070,9 +1071,9 @@
   "chroma-core-chroma": {
     "name": "chroma",
     "officialUrl": "https://github.com/chroma-core/chroma",
-    "lastChecked": "2026-11-24T00:49:06.224Z",
+    "lastChecked": "2026-11-24T21:01:27.958Z",
     "revisionIdentifier": "1a3ac2c7",
-    "lastVerified": "2026-11-24T00:49:06.224Z"
+    "lastVerified": "2026-11-24T21:01:27.958Z"
   },
   "burntsushi-ripgrep": {
     "name": "BurntSushi/ripgrep",
@@ -3810,14 +3811,14 @@
     "officialUrl": "https://github.com/dosco/graphjin",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-24T01:46:54.182Z",
-    "lastVerified": "2026-11-24T01:46:54.182Z",
+    "lastChecked": "2026-11-24T21:01:28.614Z",
+    "lastVerified": "2026-11-24T21:01:28.614Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dosco-deeporg",
-    "contentHash": "15aacb484185069b2572ab1ed4c769cf92264ca4fdf9738f0ce961c399b6ab43",
+    "contentHash": "11d9dfbc2397b090acec0341ad52061f7dce4fdb9bb026ee2358979efcf668e2",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6397,9 +6398,9 @@
   "hungps-flutter_pokedex": {
     "name": "flutter_pokedex",
     "officialUrl": "https://github.com/hungps/flutter_pokedex",
-    "lastChecked": "2026-11-22T06:27:27.591Z",
+    "lastChecked": "2026-11-24T21:01:20.375Z",
     "revisionIdentifier": "7e2b6d49",
-    "lastVerified": "2026-11-22T06:27:27.591Z"
+    "lastVerified": "2026-11-24T21:01:20.375Z"
   },
   "someengineering-fixinventory": {
     "name": "fixinventory",
@@ -6995,22 +6996,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dalance-procs": {
-    "name": "procs",
+    "name": "dalance/procs",
     "officialUrl": "https://github.com/dalance/procs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T18:40:40.723Z",
-    "lastVerified": "2026-11-23T18:40:40.723Z",
+    "lastChecked": "2026-11-24T21:01:21.304Z",
+    "lastVerified": "2026-11-24T21:01:21.304Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dalance-procs",
-    "contentHash": "d01a5eef5292a4f0836798ff62e1e6578db0c95246f016bde3bada31b01d6964",
+    "contentHash": "2d09c4118cb7689c5f291dd2acb765952dd1069e3345b5d96617f3fe87ab157c",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "05000c71"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-zai-org-glm-5.3": {
     "name": "zai-org/GLM-5.3",
@@ -11364,14 +11364,14 @@
     "officialUrl": "https://github.com/digitalbazaar/pyld",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-20T21:55:05.354Z",
-    "lastVerified": "2026-11-20T21:55:05.354Z",
+    "lastChecked": "2026-11-24T21:01:23.793Z",
+    "lastVerified": "2026-11-24T21:01:23.793Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-digitalbazaar-pyld",
-    "contentHash": "4063d5f746474d0fff13598dd28051cdd27cd65762adeb5189b859a7e61e8c23",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 11,
+    "contentHash": "f66177b3b2c92419008804d11e94d467ca2bbed013fd640d86b6d835a46e6377",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 9,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

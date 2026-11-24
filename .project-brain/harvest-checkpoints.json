@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T20:38:41.234Z",
+  "last_updated": "2026-11-24T21:01:29.807Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10011,14 +10011,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dalance-procs",
-      "content_hash": "d01a5eef5292a4f0836798ff62e1e6578db0c95246f016bde3bada31b01d6964",
-      "verified_at": "2026-11-20T21:25:48.468Z",
+      "content_hash": "2d09c4118cb7689c5f291dd2acb765952dd1069e3345b5d96617f3fe87ab157c",
+      "verified_at": "2026-11-24T21:01:22.689Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T21:25:48.468Z"
+      "last_updated": "2026-11-24T21:01:22.689Z"
     },
     "ionic-team/ionic-framework": {
       "repository": "ionic-team/ionic-framework",
@@ -14736,14 +14736,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-digitalbazaar-pyld",
-      "content_hash": "4063d5f746474d0fff13598dd28051cdd27cd65762adeb5189b859a7e61e8c23",
-      "verified_at": "2026-11-20T21:55:06.593Z",
+      "content_hash": "f66177b3b2c92419008804d11e94d467ca2bbed013fd640d86b6d835a46e6377",
+      "verified_at": "2026-11-24T21:01:24.347Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T21:55:06.593Z"
+      "last_updated": "2026-11-24T21:01:24.347Z"
     },
     "aheze/Popovers": {
       "repository": "aheze/Popovers",
@@ -19776,14 +19776,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dosco-deeporg",
-      "content_hash": "7c82de8a03af25225155b95a8b824c3d4ed8119f5fac7391ec8746257734257f",
-      "verified_at": "2026-11-24T03:41:45.054Z",
+      "content_hash": "11d9dfbc2397b090acec0341ad52061f7dce4fdb9bb026ee2358979efcf668e2",
+      "verified_at": "2026-11-24T21:01:29.807Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T03:41:45.054Z"
+      "last_updated": "2026-11-24T21:01:29.807Z"
     },
     "openai/clip-vit-large-patch14": {
       "repository": "openai/clip-vit-large-patch14",

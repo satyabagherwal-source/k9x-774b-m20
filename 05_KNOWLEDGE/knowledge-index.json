@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T20:53:14.516Z",
+  "last_updated": "2026-11-24T21:02:10.331Z",
   "total_verified_learnings": 9102,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24917,
+  "total_items": 24921,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -232071,9 +232071,9 @@
       "title": "Research & Knowledge Intelligence: dosco-graphjin-learnings Core Invariants",
       "repository": "dosco-graphjin-learnings",
       "source_version": "HEAD",
-      "content_hash": "4709d96de15d0f66e21d65edf6c88a2f76e630f7db4501320c9dd136ed871d41",
+      "content_hash": "666a64642294572667c329567ecc144876e650c72cf86f9e7ff836d09e9706e3",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T01:47:02.827Z"
+      "persisted_at": "2026-11-24T21:02:09.579Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dosco-graphjin-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dosco-graphjin-learnings",
@@ -232083,9 +232083,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dosco-graphjin-learnings",
       "repository": "dosco-graphjin-learnings",
       "source_version": "HEAD",
-      "content_hash": "9189a057bff731cad88965f7cdd22f0fd22bde3eaffb8284e939bf476f92bd50",
+      "content_hash": "431088563a7af8a67d2902ea4a04659ac2e566a0b136b64a326697a193e6b58e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T01:47:03.262Z"
+      "persisted_at": "2026-11-24T21:02:10.331Z"
     },
     "learn-github-react-metro": {
       "learning_id": "learn-github-react-metro",
@@ -267139,8 +267139,8 @@
       "slug": "digitalbazaar-pyld",
       "platform": "github",
       "source_url": "https://github.com/digitalbazaar/pyld",
-      "source_version": "b87fa3e3",
-      "content_hash": "4063d5f746474d0fff13598dd28051cdd27cd65762adeb5189b859a7e61e8c23",
+      "source_version": "c9a68bc3",
+      "content_hash": "f66177b3b2c92419008804d11e94d467ca2bbed013fd640d86b6d835a46e6377",
       "dossier_path": "07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/digitalbazaar-pyld-learnings.md",
       "promoted_rules": [
@@ -267160,7 +267160,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T21:55:06.387Z",
+      "verified_at": "2026-11-24T21:01:24.106Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -267202,10 +267202,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-digitalbazaar-pyld-architecture-intelligence-digitalbazaar-pyld-core-invariants.md",
       "title": "Architecture Intelligence: digitalbazaar/pyld Core Invariants",
       "repository": "digitalbazaar/pyld",
-      "source_version": "b87fa3e3",
-      "content_hash": "84f08bb116ebc385caecd3922d86617ceab2fb23555d8e864bb3f0cc2f3caf25",
+      "source_version": "c9a68bc3",
+      "content_hash": "897d97ad7ba0bed7703b0c142c6e8110de42cfc1188fd0acad8908aaa2cffc95",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T21:55:06.980Z"
+      "persisted_at": "2026-11-24T21:01:24.583Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-digitalbazaar-pyld": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-digitalbazaar-pyld",
@@ -267265,9 +267265,9 @@
       "title": "Architecture Intelligence: digitalbazaar-pyld-learnings Core Invariants",
       "repository": "digitalbazaar-pyld-learnings",
       "source_version": "HEAD",
-      "content_hash": "43799bb6fc0bddf32e6ca66b089d429a22a17861a918d070a36058a516db75d2",
+      "content_hash": "243a86da8eb5437baba66141c63e7001ce4d6b2f7ccee354f3ebf7353a24cf4d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T21:55:19.836Z"
+      "persisted_at": "2026-11-24T21:02:08.790Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-digitalbazaar-pyld-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-digitalbazaar-pyld-learnings",
@@ -277942,8 +277942,8 @@
       "slug": "dalance-procs",
       "platform": "github",
       "source_url": "https://github.com/dalance/procs",
-      "source_version": "05000c71",
-      "content_hash": "d01a5eef5292a4f0836798ff62e1e6578db0c95246f016bde3bada31b01d6964",
+      "source_version": "9422dd6b",
+      "content_hash": "2d09c4118cb7689c5f291dd2acb765952dd1069e3345b5d96617f3fe87ab157c",
       "dossier_path": "07_PROJECT_LEARNING/dalance-procs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dalance-procs-learnings.md",
       "promoted_rules": [
@@ -277956,6 +277956,11 @@
           "number": 9642,
           "title": "build(deps): bump clap_mangen from 0.3.3 to 0.3.4",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10359,
+          "title": "build(deps): bump regex from 1.13.1 to 1.13.2",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -277963,7 +277968,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T21:25:48.218Z",
+      "verified_at": "2026-11-24T21:01:22.434Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -278005,10 +278010,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dalance-procs-architecture-intelligence-dalance-procs-core-invariants.md",
       "title": "Architecture Intelligence: dalance/procs Core Invariants",
       "repository": "dalance/procs",
-      "source_version": "05000c71",
-      "content_hash": "3e094f6d7c65ce562549c1b436916e363e317b443310b028982aeb3385102a93",
+      "source_version": "9422dd6b",
+      "content_hash": "e78d48271c90cdfb006fb664ec0aa2193d0bb85897a131eb7ca9fd389568e58c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T21:25:48.916Z"
+      "persisted_at": "2026-11-24T21:01:23.107Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dalance-procs": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dalance-procs",
@@ -278017,10 +278022,10 @@
       "relative_path": "08_VERIFICATION/dalance-procs-verification-protocol-empirical-defect-shield-for-dalance-procs.md",
       "title": "Verification Protocol: Empirical Defect Shield for dalance/procs",
       "repository": "dalance/procs",
-      "source_version": "05000c71",
-      "content_hash": "6fcf7c3b4c4c94af8c86f1ca100994995986079e5af029b04adebf2c6b8fcd6a",
+      "source_version": "9422dd6b",
+      "content_hash": "44b32c581ba267f97531c118587a81830c283517fbdfec691057711eee1d97f2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T21:25:49.109Z"
+      "persisted_at": "2026-11-24T21:01:23.304Z"
     },
     "rule-8989": {
       "learning_id": "rule-8989",
@@ -278094,9 +278099,9 @@
       "title": "Architecture Intelligence: dalance-procs-learnings Core Invariants",
       "repository": "dalance-procs-learnings",
       "source_version": "HEAD",
-      "content_hash": "c0b9b786b1fa87e0c349ce34d776cb8ea7181ce69719795fca6304b5ef34c6a4",
+      "content_hash": "4dad69c783796793da18454fc83e84e864e6b6255b58371a162de6bc343003c3",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T21:25:53.627Z"
+      "persisted_at": "2026-11-24T21:01:35.443Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dalance-procs-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dalance-procs-learnings",
@@ -278106,9 +278111,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dalance-procs-learnings",
       "repository": "dalance-procs-learnings",
       "source_version": "HEAD",
-      "content_hash": "a7a42f6055eaf9a822b00e652e12238e136beabfed44665392b23b3d4ed09dc4",
+      "content_hash": "123b7bf7b76c03363c0a3b44c3637026c2b7216c305444fe3f5766fd123f63ae",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T21:25:53.815Z"
+      "persisted_at": "2026-11-24T21:01:35.629Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-reflection-beam-1-0-501b-a23b-learnings-core-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-reflection-beam-1-0-501b-a23b-learnings-core-",
@@ -312780,13 +312785,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "dosco/deeporg",
       "repository": "dosco/deeporg",
-      "slug": "dosco-deeporg",
+      "slug": "dosco-graphjin",
       "platform": "github",
-      "source_url": "https://github.com/dosco/deeporg",
-      "source_version": "4c697dc8",
-      "content_hash": "7c82de8a03af25225155b95a8b824c3d4ed8119f5fac7391ec8746257734257f",
-      "dossier_path": "07_PROJECT_LEARNING/dosco-deeporg-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/dosco-deeporg-learnings.md",
+      "source_url": "https://github.com/dosco/graphjin",
+      "source_version": "9d591e72",
+      "content_hash": "11d9dfbc2397b090acec0341ad52061f7dce4fdb9bb026ee2358979efcf668e2",
+      "dossier_path": "07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
       "promoted_rules": [
         {
           "number": 8489,
@@ -312807,6 +312812,11 @@
           "number": 10172,
           "title": "docs(site): lead with the compiler and the loop, add recurring work to the rollo",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 10360,
+          "title": "docs(site): say the rollout guide in plain words",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -312814,7 +312824,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T03:41:44.829Z",
+      "verified_at": "2026-11-24T21:01:29.564Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -312839,13 +312849,13 @@
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dosco-deeporg",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/dosco-deeporg-verification-protocol-empirical-defect-shield-for-dosco-deeporg.md",
+      "relative_path": "08_VERIFICATION/dosco-graphjin-verification-protocol-empirical-defect-shield-for-dosco-deeporg.md",
       "title": "Verification Protocol: Empirical Defect Shield for dosco/deeporg",
       "repository": "dosco/deeporg",
-      "source_version": "4c697dc8",
-      "content_hash": "f939f61d7ebe3b0808d0df8821ad85004b800cbe5cccec60062db4db7285b82d",
+      "source_version": "9d591e72",
+      "content_hash": "ad657f4dc4c8f35f5ee442536c28151068b438a2c3c9c9564d1dc0c1bafb06ee",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T03:41:45.829Z"
+      "persisted_at": "2026-11-24T21:01:30.561Z"
     },
     "rule-9688": {
       "learning_id": "rule-9688",
@@ -320659,13 +320669,13 @@
       "item_id": "domain_intelligence-research-knowledge-intelligence-dosco-deeporg-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-deeporg-research-knowledge-intelligence-dosco-deeporg-core-invariants.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-graphjin-research-knowledge-intelligence-dosco-deeporg-core-invariants.md",
       "title": "Research & Knowledge Intelligence: dosco/deeporg Core Invariants",
       "repository": "dosco/deeporg",
-      "source_version": "4c697dc8",
-      "content_hash": "ddcf0428260d76d3a95f75f1b868c1ef4d4b7534735f4a61a7ea16f9643e4551",
+      "source_version": "9d591e72",
+      "content_hash": "762a3ad7bf32c330d8c803dfbe19b498f367d06f40fa2bfff855f32c3bd3dead",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T03:41:45.481Z"
+      "persisted_at": "2026-11-24T21:01:30.228Z"
     },
     "rule-9885": {
       "learning_id": "rule-9885",
@@ -326869,13 +326879,13 @@
       "item_id": "skill_playbook-skill-operational-integration-playbook-for-dosco-deeporg",
       "artifact_type": "skill_playbook",
       "target_folder": "03_SKILLS",
-      "relative_path": "03_SKILLS/dosco-deeporg-skill-operational-integration-playbook-for-dosco-deeporg.md",
+      "relative_path": "03_SKILLS/dosco-graphjin-skill-operational-integration-playbook-for-dosco-deeporg.md",
       "title": "Skill: Operational & Integration Playbook for dosco/deeporg",
       "repository": "dosco/deeporg",
-      "source_version": "4c697dc8",
-      "content_hash": "f9e89c1a9aa47f8a6b4a79102096c3879255ccf2e06ae52a2269105a4e1f9273",
+      "source_version": "9d591e72",
+      "content_hash": "d176efeded4fec1ec75e6278819139013f1f0d10b39c6ac130bd50fe715ea1c4",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T03:41:45.678Z"
+      "persisted_at": "2026-11-24T21:01:30.410Z"
     },
     "rule-10028": {
       "learning_id": "rule-10028",
@@ -332912,9 +332922,9 @@
       "title": "Skill: Operational & Integration Playbook for dosco-graphjin-learnings",
       "repository": "dosco-graphjin-learnings",
       "source_version": "HEAD",
-      "content_hash": "9bd3f30a4e72edecab065836f2928b72ccc11b0e0e9ee0fba0272e6b0c8045cd",
+      "content_hash": "0612a7d2b07816286c26f7452915f2dbdaa0c1026040b28d6f669e6be8aad1a0",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T01:47:03.049Z"
+      "persisted_at": "2026-11-24T21:02:09.787Z"
     },
     "rule-10173": {
       "learning_id": "rule-10173",
@@ -340409,6 +340419,58 @@
       "content_hash": "f08e76f8efb1c99b446c9416c0eeffebfc2798eec47ad24b960f124cff8fad3a",
       "domain_letter": "G",
       "persisted_at": "2026-11-24T20:38:44.920Z"
+    },
+    "rule-10359": {
+      "learning_id": "rule-10359",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10359,
+      "title": "build(deps): bump regex from 1.13.1 to 1.13.2",
+      "source_url": "https://github.com/dalance/procs",
+      "source_version": "9422dd6b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T21:01:22.434Z"
+    },
+    "candidate_directive-build-deps-bump-regex-from-1-13-1-to-1-13-2": {
+      "item_id": "candidate_directive-build-deps-bump-regex-from-1-13-1-to-1-13-2",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JQTS-build-deps-bump-regex-from-1-13-1-to-1-13-2.md",
+      "title": "build(deps): bump regex from 1.13.1 to 1.13.2",
+      "repository": "dalance-procs-learnings",
+      "source_version": "HEAD",
+      "content_hash": "55435051abccaf3ee97a6427adea6df93bcbe74c14e55f2c7b5ee5226f21d054",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T21:01:35.249Z"
+    },
+    "rule-10360": {
+      "learning_id": "rule-10360",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10360,
+      "title": "docs(site): say the rollout guide in plain words",
+      "source_url": "https://github.com/dosco/graphjin",
+      "source_version": "9d591e72",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T21:01:29.564Z"
+    },
+    "candidate_directive-docs-site-say-the-rollout-guide-in-plain-words": {
+      "item_id": "candidate_directive-docs-site-say-the-rollout-guide-in-plain-words",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-KH5C-docs-site-say-the-rollout-guide-in-plain-words.md",
+      "title": "docs(site): say the rollout guide in plain words",
+      "repository": "dosco-graphjin-learnings",
+      "source_version": "HEAD",
+      "content_hash": "eb0b795cee36b3982ddb222aa5efb98b156919a14792abc2b851ebe81d7d6f63",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-24T21:02:09.373Z"
     }
   },
   "ai-builder-brain": {
