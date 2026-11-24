@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/inikulin-parse5-learnings.md`  
 > **Source**: github ([https://github.com/inikulin/parse5](https://github.com/inikulin/parse5))  
-> **Source Version**: `62a198aa`  
+> **Source Version**: `2412bb99`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T17:21:11.672Z  
+> **Timestamp**: 2026-11-24T17:33:07.288Z  
 > **Learning ID**: `learn-github-inikulin-parse5`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/inikulin-parse5-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/inikulin/parse5](https://github.com/inikulin/parse5))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T17:20:49.950Z  
+> **Harvest Timestamp**: 2026-11-24T17:33:07.024Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1663,64 +1663,82 @@ export class ParserFeedbackSimulator implements TokenHandler {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `62a198aa` (2026-11-20)
-**Commit Message**: fix(parser): treat search as a special element (#1925)
+### Incident Patch 1: `2412bb99` (2026-11-24)
+**Commit Message**: fix(parser): parse a noscript fragment context as markup when scripting is disabled (#1943)
 
-* fix(parser): treat search as a special element
+* fix(parser): parse a noscript fragment context as markup when scripting is disabled
 
-The HTML Standard lists search in the special category, but it was missing
-from SPECIAL_ELEMENTS, so the adoption agency, the li/dd/dt start tag rules
-and the "any other end tag" steps walked past an open <search>.
+Fixes #1942.
 
-* chore: add todo
+* test(parser): build the noscript context per test and name the map argument
 
 ---------
 
-Co-authored-by: James Garbutt <[REDACTED_EMAIL]>
+Co-authored-by: goranai <[REDACTED_EMAIL]>
 
-**File**: `packages/parse5/lib/common/html.ts` (modified, +1/-0)
+**File**: `packages/parse5/lib/parser/index.test.ts` (modified, +22/-0)
 ```diff
-@@ -527,6 +527,7 @@ export const SPECIAL_ELEMENTS: Record<NS, Set<TAG_ID>> = {
-         $.PLAINTEXT,
-         $.PRE,
-         $.SCRIPT,
-+        $.SEARCH,
-         $.SECTION,
-         $.SELECT,
-         $.SOURCE,
-```
-
-**File**: `packages/parse5/lib/parser/index.test.ts` (modified, +13/-0)
-```diff
-@@ -210,6 +210,19 @@ describe('parser', () => {
-         assert.strictEqual(serialize(fragment), '<form><svg><option><g></g></option></svg></form>');
+@@ -295,6 +295,28 @@ describe('parser', () => {
+         });
      });
  
-+    // TODO: upstream to html5lib-tests
-+    it.each([
-+        // Adoption agency: `<search>` becomes the furthest block.
-+        ['<a><search>x</a>y', '<a></a><search><a>x</a>y</search>'],
-+        // `<li>`, `<dd>` and `<dt>` start tags stop at a special element.
-+        ['<li>a<search><li>b', '<li>a<search><li>b</li></search></li>'],
-+        ['<dd>a<search><dt>b', '<dd>a<search><dt>b</dt></search></dd>'],
-+        // "Any other end tag" does not close past a special element.
-+        ['<x><search></x>y', '<x><search>y</search></x>'],
-+    ])('treats <search> as a special element (GH-1924): %s', (input, expectedBody) => {
-+        expect(serialize(parse(input))).toBe(`<html><head></head><body>${expectedBody}</body></html>`);
++    describe('noscript fragment context', () => {
++        let noscript: Element;
++
++        beforeEach(() => {
++            noscript = (parseFragment('<noscript>') as { childNodes: Element[] }).childNodes[0];
++        });
++
++        it('parses its content as text when scripting is enabled', () => {
++            const fragment = parseFragment(noscript, '<p>a</p>', { scriptingEnabled: true });
++
++            expect(fragment.childNodes.map((child) => child.nodeName)).toEqual(['#text']);
++            expect(serialize(fragment)).toBe('&lt;p&gt;a&lt;/p&gt;');
++        });
++
++        it('parses its content as markup when scripting is disabled', () => {
++            const fragment = parseFragment(noscript, '<p>a</p><b>x</b>', { scriptingEnabled: false });
++
++            expect(fragment.childNodes.map((child) => child.nodeName)).toEqual(['p', 'b']);
++            expect(serialize(fragment)).toBe('<p>a</p><b>x</b>');
++        });
 +    });
 +
-     describe('Tree adapters', () => {
-         it('should provide element creation context', () => {
-             const contexts = new Map<string, ElementCreationContext<DefaultTreeAdapterMap>>();
+     describe('rawtext parsing', () => {
+         it.each([
+             ['iframe'],
+```
+
+**File**: `packages/parse5/lib/parser/index.ts` (modified, +7/-2)
+```diff
+@@ -393,11 +393,16 @@ export class Parser<T extends TreeAdapterTypeMap> implements TokenHandler, Stack
+             case $.XMP:
+             case $.IFRAME:
+             case $.NOEMBED:
+-            case $.NOFRAMES:
+-            case $.NOSCRIPT: {
++            case $.NOFRAMES: {
+                 this.tokenizer.state = TokenizerMode.RAWTEXT;
+                 break;
+             }
++            case $.NOSCRIPT: {
++                if (this.options.scriptingEnabled) {
++                    this.tokenizer.state = TokenizerMode.RAWTEXT;
++                }
++                break;
++            }
+             case $.SCRIPT: {
+                 this.tokenizer.state = TokenizerMode.SCRIPT_DATA;
+                 break;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1944** (2026-11-24): chore(deps): bump the codeql group with 2 updates (@dependabot[bot])
+- **PR #1943** (2026-11-24): fix(parser): parse a noscript fragment context as markup when scripting is disabled (@goranai)
+- **PR #1941** (2026-11-23): chore(deps-dev): bump @vitest/coverage-v8 from 5.1.0 to 5.1.1 (@dependabot[bot])
+- **PR #1940** (2026-11-23): chore(deps): bump tinybench from 6.2.3 to 6.2.4 (@dependabot[bot])
+- **PR #1939** (2026-11-23): chore(deps-dev): bump vitest from 5.1.0 to 5.1.1 (@dependabot[bot])
 - **PR #1936** (2026-11-20): chore(deps-dev): bump typescript-eslint from 8.72.2 to 8.73.0 (@dependabot[bot])
-- **PR #1934** (2026-11-17): chore(deps-dev): bump eslint from 10.14.0 to 10.15.0 (@dependabot[bot])
-- **PR #1933** (2026-11-16): chore(deps-dev): bump prettier from 3.9.10 to 3.10.1 (@dependabot[bot])
-- **PR #1932** (closed): fix(tokenizer): reset attribute-name cache when creating tags (@eemelipa)
-- **PR #1931** (2026-11-13): chore(deps-dev): bump typescript-eslint from 8.72.1 to 8.72.2 (@dependabot[bot])
-- **PR #1930** (2026-11-10): test: resolve data dirs with fileURLToPath so the suite runs on Windows (@goranai)
 
 ---
 
@@ -1740,21 +1758,42 @@ Co-authored-by: James Garbutt <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. parser): treat search as a special element
+## X. parser): parse a noscript fragment context as markup when scripting is disabled
 
 **RULE**:
-When implementing operations in `packages/parse5/lib/common/html.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in inikulin/parse5. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/parse5/lib/parser/index.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in inikulin/parse5. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `62a198aa`: parser): treat search as a special element. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2412bb99`: parser): parse a noscript fragment context as markup when scripting is disabled. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/parse5/lib/common/html.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/parse5/lib/parser/index.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-        $.SEARCH,
+    describe('noscript fragment context', () => {
+        let noscript: Element;
+
+        beforeEach(() => {
+            noscript = (parseFragment('<noscript>') as { childNodes: Element[] }).childNodes[0];
+        });
+
+        it('parses its content as text when scripting is enabled', () => {
+            const fragment = parseFragment(noscript, '<p>a</p>', { scriptingEnabled: true });
+
+            expect(fragment.childNodes.map((child) => child.nodeName)).toEqual(['#text']);
+            expect(serialize(fragment)).toBe('&lt;p&gt;a&lt;/p&gt;');
+        });
+
+        it('parses its content as markup when scripting is disabled', () => {
+            const fragment = parseFragment(noscript, '<p>a</p><b>x</b>', { scriptingEnabled: false });
+
+            expect(fragment.childNodes.map((child) => child.nodeName)).toEqual(['p', 'b']);
+            expect(serialize(fragment)).toBe('<p>a</p><b>x</b>');
+        });
+    });
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1764,4 +1803,4 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `62a198aa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2412bb99` are properly handled with clean fallback behavior.

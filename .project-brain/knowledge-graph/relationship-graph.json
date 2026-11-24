@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-24T17:14:28.108Z",
+  "updated_at": "2026-11-24T17:34:05.073Z",
   "statistics": {
-    "total_nodes": 511,
+    "total_nodes": 512,
     "total_edges": 214,
     "domain_distribution": {
       "D": 308,
       "M": 1,
-      "H": 94,
+      "H": 95,
       "J": 22,
       "K": 31,
       "L": 9,
@@ -11409,6 +11409,28 @@
       ],
       "created_at": "2026-11-24T17:14:28.107Z",
       "updated_at": "2026-11-24T17:14:28.107Z"
+    },
+    "DOM-H-7BF1A4EC": {
+      "id": "DOM-H-7BF1A4EC",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "parser): parse a noscript fragment context as markup when scripting is disabled",
+      "summary": "Prevents defects observed in production commit `2412bb99`: parser): parse a noscript fragment context as markup when scripting is disabled.  -> When implementing operations in `packages/parse5/lib/parser/index.test.ts`, engineers MUST enforce rigorous boundary validation, safe state ",
+      "confidence": 0.69,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://inikulin-parse5/inikulin-parse5-learnings.md",
+        "source_version": "2412bb99",
+        "observed_at": "2026-11-24T17:33:07.288Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (inikulin-parse5)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-24T17:34:05.073Z",
+      "updated_at": "2026-11-24T17:34:05.073Z"
     }
   },
   "edges": [

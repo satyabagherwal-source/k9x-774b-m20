@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T17:23:17.153Z",
-  "total_records": 2553,
+  "last_updated": "2026-11-24T17:34:08.743Z",
+  "total_records": 2556,
   "domains": {
     "A": {
       "total": 22,
@@ -1610,7 +1610,7 @@
       ]
     },
     "H": {
-      "total": 610,
+      "total": 611,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2221,7 +2221,8 @@
         "DOM-H-01E5EB37",
         "domain_intelligence-technical-construction-intelligence-kube-rs-kube-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-lxml-lxml-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-lxml-lxml-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-lxml-lxml-learnings-core-invariants",
+        "DOM-H-7BF1A4EC"
       ]
     },
     "I": {
@@ -2378,7 +2379,7 @@
       ]
     },
     "J": {
-      "total": 45,
+      "total": 47,
       "record_ids": [
         "DOM-J-C14FC2D6",
         "DOM-J-B305372A",
@@ -2424,7 +2425,9 @@
         "DOM-J-FBEC7580",
         "domain_intelligence-search-distribution-intelligence-open-source-legal-opencontracts-core-invariants",
         "domain_intelligence-search-distribution-intelligence-open-source-legal-opencontracts-learnings-core-",
-        "domain_intelligence-search-distribution-intelligence-xerj-org-xerj-core-invariants"
+        "domain_intelligence-search-distribution-intelligence-xerj-org-xerj-core-invariants",
+        "domain_intelligence-search-distribution-intelligence-kubeedge-kubeedge-core-invariants",
+        "domain_intelligence-search-distribution-intelligence-kubeedge-kubeedge-learnings-core-invariants"
       ]
     },
     "K": {
@@ -8449,8 +8452,8 @@
       "title": "Architecture Intelligence: duckdb/duckdb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-duckdb-duckdb-architecture-intelligence-duckdb-duckdb-core-invariants.md",
       "repository": "duckdb/duckdb",
-      "content_hash": "c62dadce21e36f7ec7a1a0d322334239a39967b69e22de1ec3c2e5c448a46f10",
-      "created_at": "2026-11-23T21:04:57.786Z"
+      "content_hash": "503001e4e60435d7077c6616020d199346cce8df9b043b7355da66beb57006fb",
+      "created_at": "2026-11-24T17:33:23.983Z"
     },
     "DOM-D-A827EB1D": {
       "record_id": "DOM-D-A827EB1D",
@@ -8657,10 +8660,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "967c4f3057eb0fc2b4e49121030a301f57a89c80c163191ed1379280624b9847",
-      "created_at": "2026-11-24T15:36:10.752Z"
+      "content_hash": "bf7a0e7d29ee6383471824ec4df67ec43f0d73794ad86f1c0550fff4b5de1e65",
+      "created_at": "2026-11-24T17:33:17.442Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -9892,8 +9895,8 @@
       "title": "Architecture Intelligence: provablehq-snarkos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-learnings-architecture-intelligence-provablehq-snarkos-learni.md",
       "repository": "provablehq-snarkos-learnings",
-      "content_hash": "ed107d3aade3f5e50c87955b6524056993e6bb088989140c760865d3a40cf01d",
-      "created_at": "2026-11-24T13:30:28.901Z"
+      "content_hash": "ef88ccc3ddd8a0752106e7f5608e8d9015e6854485a89a5456564d4bc3ac3cb8",
+      "created_at": "2026-11-24T17:34:08.743Z"
     },
     "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari",
@@ -24955,8 +24958,8 @@
       "title": "Technical Construction Intelligence: inikulin/parse5 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-inikulin-parse5-technical-construction-intelligence-inikulin-parse5-core-invaria.md",
       "repository": "inikulin/parse5",
-      "content_hash": "e80d639d6c6430b36807971704b65f517c577f13b1b0af380db2d3ea2335b186",
-      "created_at": "2026-11-20T17:21:12.967Z"
+      "content_hash": "f3f8bd1d784be7ec3edaa553f25ba217b9851bfdd3423990867a6c39ce6c3584",
+      "created_at": "2026-11-24T17:33:09.310Z"
     },
     "domain_intelligence-architecture-intelligence-wquguru-cicada-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-wquguru-cicada-core-invariants",
@@ -24973,8 +24976,8 @@
       "title": "Technical Construction Intelligence: inikulin-parse5-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-inikulin-parse5-learnings-technical-construction-intelligence-inikulin-parse5-le.md",
       "repository": "inikulin-parse5-learnings",
-      "content_hash": "4ab5d0434b0fe3a253496043c97a817bcf3af9c21b871e811555145ca54d3b27",
-      "created_at": "2026-11-20T17:21:16.422Z"
+      "content_hash": "4734bc5d5ce1a490e16831388b6844f954c707ed8cec689362795fc3823f120e",
+      "created_at": "2026-11-24T17:34:06.249Z"
     },
     "domain_intelligence-architecture-intelligence-wquguru-cicada-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-wquguru-cicada-learnings-core-invariants",
@@ -42859,6 +42862,66 @@
       "repository": "hf-aleph-alpha-kolibri-1.1-learnings",
       "content_hash": "db88095c1a902d64f456671051245a78cd538e46f43805954bf6fc62c778f12c",
       "created_at": "2026-11-24T17:14:28.508Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-kubeedge-kubeedge-core-invariants": {
+      "record_id": "domain_intelligence-search-distribution-intelligence-kubeedge-kubeedge-core-invariants",
+      "domain_letter": "J",
+      "title": "Search & Distribution Intelligence: kubeedge/kubeedge Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-kubeedge-kubeedge-search-distribution-intelligence-kubeedge-kubeedge-core-invari.md",
+      "repository": "kubeedge/kubeedge",
+      "content_hash": "a2fb465731666a044b065681567357a50b29f4105b57e662d31c32dde8237057",
+      "created_at": "2026-11-24T17:33:15.608Z"
+    },
+    "DOM-H-7BF1A4EC": {
+      "record_id": "DOM-H-7BF1A4EC",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        }
+      ],
+      "title": "parser): parse a noscript fragment context as markup when scripting is disabled",
+      "content": "When implementing operations in `packages/parse5/lib/parser/index.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in inikulin/parse5. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "d50c2ebcd131ddb506af6ba1eb7c34299914360726d20d638c109aea2a72105d",
+      "summary": "Prevents defects observed in production commit `2412bb99`: parser): parse a noscript fragment context as markup when scripting is disabled.  -> When implementing operations in `packages/parse5/lib/parser/index.test.ts`, engineers MUST enforce rigorous boundary validation, safe state ",
+      "provenance": {
+        "source_uri": "project://inikulin-parse5/inikulin-parse5-learnings.md",
+        "source_version": "2412bb99",
+        "observed_at": "2026-11-24T17:33:07.288Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (inikulin-parse5)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of inikulin-parse5"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.69,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-24T17:34:05.035Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-kubeedge-kubeedge-learnings-core-invariants": {
+      "record_id": "domain_intelligence-search-distribution-intelligence-kubeedge-kubeedge-learnings-core-invariants",
+      "domain_letter": "J",
+      "title": "Search & Distribution Intelligence: kubeedge-kubeedge-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-kubeedge-kubeedge-learnings-search-distribution-intelligence-kubeedge-kubeedge-l.md",
+      "repository": "kubeedge-kubeedge-learnings",
+      "content_hash": "36b45c6b7b8c2cf1bd14eba87eafd31fec04fb8e6249787fb2d0a86927d59fa6",
+      "created_at": "2026-11-24T17:34:07.383Z"
     }
   }
 }

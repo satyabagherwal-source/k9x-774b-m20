@@ -4,24 +4,24 @@
 {
   "source_repository": "aleo-labs-protocol/snarkOS",
   "source_url": "https://github.com/ProvableHQ/snarkOS",
-  "source_version": "045bb278",
+  "source_version": "04985e7d",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-24T13:30:20.016Z",
+  "timestamp": "2026-11-24T17:33:17.208Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-aleo-labs-protocol-snarkos",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [aleo-labs-protocol/snarkOS](https://github.com/ProvableHQ/snarkOS) (Revision: `045bb278`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T13:30:20.016Z`  
+> **Provenance**: Harvested from [aleo-labs-protocol/snarkOS](https://github.com/ProvableHQ/snarkOS) (Revision: `04985e7d`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T17:33:17.208Z`  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
 - **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 70%
+- **Confidence Rating**: 68%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from aleo-labs-protocol/snarkOS:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T13:30:18.705Z  
+> **Harvest Timestamp**: 2026-11-24T17:33:15.807Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1866,11 +1866,11 @@ if __name__ == "__main__":
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #4775** (2026-11-24): **Drop failed block requests above every advertised peer height**
+  *Symptoms*: ## Motivation  This PR fixes the pre-existing issue from the [review of #4755](https://github.com/aleo-labs-protocol/snarkOS/pull/4755#discussion_r4672382702).  A failed block request left the queue only when it was re-issued or when the ledger passed its height. When the only peer ahead disconnected, its requests stayed queued. A synced client then ran the request pass on every wake-up, because the "Nothing to sync" early return needs an empty queue.  Commit 1: "Drop failed block requests above every advertised peer height".  - [`prepare_block_requests`](https://github.com/aleo-labs-protocol/snarkOS/blob/160f24c21/node/sync/src/block_sync.rs#L1260-L1269) now drops the failed requests above the greatest height any peer advertises. Without peers, it drops all of them. - New locators bring those heights back as new requests: the new-request path starts at the first height above the ledger that is not requested. - A failed request stays queued when a peer advertises its height but does not serve it (a `NotYet` cap or a pruning floor). - The requests of a removed peer are not dropped as such. Other peers that advertise those heights still get them.  Commit 2: "Request a gap below buffered block responses past the total request cap". It fixes the [stall that Veria found](https://github.com/aleo-labs-protocol/snarkOS/pull/4775#discussion_r4675343288) in commit 1.  - New requests stop when the buffer holds 1000 entries. Only the failed-request path passed that cap. Commit 1 can drop
+
 - **Issue #4745** (2026-11-23): **Re-issue block requests that were never sent**
   *Symptoms*: ## Motivation  A syncing client stalled permanently after a peer disconnected while block requests to it were outstanding.  `prepare_block_requests` re-issues heights from `failed_requests`. It removes them from that map when `construct_requests` returns them, before they are sent. When `send_block_requests` returns `false`, these heights are then in neither `failed_requests` nor `requests`. This happens when:  - a send fails, for example to a peer that the router dropped but whose locators are still present; - a selected peer has disconnected, so the chunk is skipped; - `insert_block_request` fails partway through a chunk.  In each case, `try_issuing_block_requests` also stops the chunk loop, so the later chunks of the batch are not sent.  Usually `construct_requests` picks the lowest missing height again. But `prepare_block_requests` returns early when `num_total_block_requests()` is at its cap. If completed responses above the gap fill the requests map, they cannot be applied until the gap arrives, and they do not time out. Sync stalls.  Commits:  - When a send fails, put each height of the batch that is not in `requests` back into `failed_requests`, with its hash and previous hash.  This covers all of the failure paths above in one place. Heights from chunks that were sent stay in `requests`. New batches, not only re-issued ones, also go back to `failed_requests` when their send fails.  ## Test Plan  - New `test_reissue_unsent_block_requests`: the first chunk of a re-issu
-
-- **Issue #4715** (2026-11-20): **Release a connecting peer however its handshake ends**
-  *Symptoms*: ## Motivation  Under 50% or 70% packet loss, the chain halts. It does not recover after the loss stops: the validators' gateway connections never re-form.  The cause is a handshake that times out. The TCP layer runs each handshake under a 10 s timeout (`Handshake::TIMEOUT_MS`), and enforces it by dropping the handshake future. The handshake marks the peer as connecting in the peer pool, and returns it to the candidates only after the handshake returns. A dropped future never gets there, and nothing else clears the entry. From then on:  - `connect()` to the peer fails with `AlreadyConnecting`. The heartbeats skip that error without a log, so the node never dials the peer again. - Every inbound handshake from the peer fails the same way.  One stuck entry on either side breaks the pair for good. Under heavy loss, many handshakes take longer than 10 s, so many pairs get stuck. The router and the bootstrap client have the same pattern.  This PR makes `add_connecting_peer` return a `ConnectingPeerGuard`. Dropping the guard returns the peer to the candidates, unless the handshake has upgraded it to connected. This covers the timeout, every early error return, and task abort. The gateway, the router and the bootstrap client hold the guard until they upgrade the peer. The rollback after the handshake goes away, and so does the out-parameter that carried the listening address to it.  The router and the bootstrap client recorded the listening address before `add_connecting_peer`. A hand
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1887,93 +1887,115 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `045bb278` (2026-11-24)
-**Commit Message**: Merge pull request #4777 from aleo-labs-protocol/ci/advisories-on-schedule-only
+### Incident Patch 1: `04985e7d` (2026-11-24)
+**Commit Message**: Merge pull request #4775 from aleo-labs-protocol/fix/drop-unservable-failed-requests
 
-**File**: `.github/workflows/ci.yml` (modified, +7/-3)
+Drop failed block requests above every advertised peer height
+
+**File**: `node/sync/src/block_sync.rs` (modified, +160/-4)
 ```diff
-@@ -139,9 +139,13 @@ jobs:
-       - uses: taiki-e/install-action@75a7c0f87bd666af3cdb75c5b9e9d03ab6044e6f # v2.90.6
-         with: { tool: cargo-deny@0.20.2 }
-       - run: cargo deny --workspace check bans licenses sources
--      # staging's advisories are bumped nightly by bump-advisories.yml, which
--      # does not cover the release line.
--      - if: github.base_ref != 'staging' && github.ref_name != 'staging'
-+      # Only scheduled runs, and runs on or into a release branch, check
-+      # advisories. bump-advisories.yml updates staging's Cargo.lock past them
-+      # nightly.
-+      - if: >-
-+          github.event_name == 'schedule' ||
-+          startsWith(github.ref, 'refs/heads/release/') ||
-+          startsWith(github.base_ref, 'release/')
-         run: cargo deny --workspace check advisories
+@@ -311,6 +311,12 @@ pub struct BlockSync<N: Network> {
+ }
  
-   shellcheck:
-```
-
-**File**: `CI.md` (modified, +1/-1)
-```diff
-@@ -74,7 +74,7 @@ jobs run on every event.
- | `schedule-due` | hosted | schedule | 10 | decides whether `staging`'s head is due a check |
- | `check-shared-refs` | hosted | all | | checks that each `aleo-labs-protocol/gh-actions` ref is a release tag, and that each matrix `name` axis lists the same names as its `include` |
- | `fmt` | hosted | all | | `cargo fmt --check` on `FMT_TOOLCHAIN` |
--| `deny` | hosted | all | | `cargo deny --workspace check bans licenses sources`, plus `advisories` everywhere but `staging`, whose advisories and yanked crates [`bump-advisories.yml`](.github/workflows/bump-advisories.yml) bumps nightly. A yanked crate fails `advisories` |
-+| `deny` | hosted | all | | `cargo deny --workspace check bans licenses sources`, plus `advisories` on scheduled runs and on runs on or into a `release/**` branch (a push, a pull request into one, or a `workflow_dispatch` on one). [`bump-advisories.yml`](.github/workflows/bump-advisories.yml) bumps advisories and yanked crates on staging nightly. A yanked crate fails `advisories` |
- | `shellcheck` | hosted | all | | `.ci/*.sh`, `scripts/*.sh` |
- | `source-checks` | hosted | all | | `scripts/check_sources.py`: license headers in `.rs` files |
- | `lint` | `cpu` | all | 90 | clippy, default and `--all-features`; `cargo check --all-features` of `snarkos-node-metrics` and `snarkos-display` |
-```
-
----
-
-### Incident Patch 2: `1f86bfc7` (2026-11-24)
-**Commit Message**: Do not treat every workflow_dispatch as a release run for advisories
-
-A workflow_dispatch can run on any branch. One dispatched on a release
-branch already matches through github.ref, so drop the event check.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01UYfmmPQBrmJpfhVS2CtdQM
-
-**File**: `.github/workflows/ci.yml` (modified, +3/-3)
-```diff
-@@ -139,11 +139,11 @@ jobs:
-       - uses: taiki-e/install-action@75a7c0f87bd666af3cdb75c5b9e9d03ab6044e6f # v2.90.6
-         with: { tool: cargo-deny@0.20.2 }
-       - run: cargo deny --workspace check bans licenses sources
--      # Only scheduled and release runs check advisories. bump-advisories.yml
--      # updates staging's Cargo.lock past them nightly.
-+      # Only scheduled runs, and runs on or into a release branch, check
-+      # advisories. bump-advisories.yml updates staging's Cargo.lock past them
-+      # nightly.
-       - if: >-
-           github.event_name == 'schedule' ||
--          github.event_name == 'workflow_dispatch' ||
-           startsWith(github.ref, 'refs/heads/release/') ||
-           startsWith(github.base_ref, 'release/')
-         run: cargo deny --workspace check advisories
-```
-
-**File**: `CI.md` (modified, +1/-1)
-```diff
-@@ -74,7 +74,7 @@ jobs run on every event.
- | `schedule-due` | hosted | schedule | 10 | decides whether `staging`'s head is due a check |
- | `check-shared-refs` | hosted | all | | checks that each `aleo-labs-protocol/gh-actions` ref is a release tag, and that each matrix `name` axis lists the same names as its `include` |
- | `fmt` | hosted | all | | `cargo fmt --check` on `FMT_TOOLCHAIN` |
--| `deny` | hosted | all | | `cargo deny --workspace check bans licenses sources`, plus `advisories` on scheduled and release runs (a `workflow_dispatch`, a push to `release/**`, or a pull request into `release/**`). [`bump-advisories.yml`](.github/workflows/bump-advisories.yml) bumps advisories and yanked crates on staging nightly. A yanked crate fails `advisories` |
-+| `deny` | hosted | all | | `cargo deny --workspace check bans licenses sources`, plus `advisories` on scheduled runs and on runs on or into a `release/**` branch (a push, a pull request into one, or a `workflow_dispatch` on one). [`bump-advisories.yml`](.github/workflows/bump-advisories.yml) bumps advisories and yanked crates on staging nightly. A yanked crate fails `advisories` |
- | `shellcheck` | hosted | all | | `.ci/*.sh`, `scripts/*.sh` |
- | `source-checks` | hosted | all | | `scripts/check_sources.py`: license headers in `.rs` files |
- | `lint` | `cpu` | all | 90 | clippy, default and `--all-features`; `cargo check --all-features` of `snarkos-node-metrics` and `snarkos-display` |
+ impl<N: Network> BlockSync<N> {
++    /// The maximum number of block requests that await a response.
++    const MAX_OUTSTANDING_BLOCK_REQUESTS: u32 =
++        (MAX_BLOCK_REQUESTS as u32) * (DataBlocks::<N>::MAXIMUM_NUMBER_OF_BLOCKS as u32);
++    /// The maximum number of block requests, including the answered ones that are not processed yet.
++    const MAX_TOTAL_BLOCK_REQUESTS: u32 = 4 * Self::MAX_OUTSTANDING_BLOCK_REQUESTS;
++
+     /// Initializes a new block sync module.
+     pub fn new(ledger: Arc<dyn LedgerService<N>>, connection_mode: ConnectionMode) -> Self {
+         // Make sync state aware of the blocks that already exist on disk at startup.
+@@ -1257,6 +1263,10 @@ impl<N: Network> BlockSync<N> {
+         {
+             failed_requests.pop_first();
+         }
++        // Drop the failed requests above every height a peer advertises. A peer that advertises
++        // those heights brings them back as new requests.
++        let advertised_tip = tips.map_or(0, |(_, advertised_tip)| advertised_tip);
++        failed_requests.split_off(&advertised_tip.saturating_add(1));
+ 
+         // Re-issue the remaining failed requests.
+         if !failed_requests.is_empty() {
+@@ -1346,21 +1356,23 @@ impl<N: Network> BlockSync<N> {
+         }
+ 
+         // Ensure to not exceed the maximum number of outstanding block requests.
+-        let max_outstanding_block_requests =
+-            (MAX_BLOCK_REQUESTS as u32) * (DataBlocks::<N>::MAXIMUM_NUMBER_OF_BLOCKS as u32);
++        let max_outstanding_block_requests = Self::MAX_OUTSTANDING_BLOCK_REQUESTS;
+ 
+         // Ensure there is a finite bound on the number of block respnoses we receive, that have not been processed yet.
+-        let max_total_requests = 4 * max_outstanding_block_requests;
++        let max_total_requests = Self::MAX_TOTAL_BLOCK_REQUESTS;
+ 
+         let max_new_blocks_to_request =
+             max_outstanding_block_requests.saturating_sub(self.num_outstanding_block_requests() as u32);
+ 
+         // The first height to request: the next one this node needs, or the first above it not
+         // already requested.
+         let start_height = self.first_unrequested_height(current_height.saturating_add(1));
++        // The total request cap does not apply to a gap below a requested height: the answered
++        // requests above the gap leave the map only once the gap is filled.
++        let fills_gap = self.requests.read().last_key_value().is_some_and(|(height, _)| start_height < *height);
+ 
+         // Prepare the block requests and sync peers, or returns an empty result if there is nothing to request.
+-        if self.num_total_block_requests() >= max_total_requests as usize {
++        if !fills_gap && self.num_total_block_requests() >= max_total_requests as usize {
+             trace!(
+                 "We are already requested at least {max_total_requests} blocks that have not been fully processed yet. Will not issue more."
+             );
+@@ -3053,6 +3065,150 @@ mod tests {
+         assert!(service.sent.lock().unwrap().is_empty());
+     }
+ 
++    /// Tests that failed requests above every height a peer advertises are dropped, and that the
++    /// request pass then finds nothing to sync.
++    #[tokio::test]
++    #[tracing_test::traced_test]
++    async fn test_failed_requests_above_advertised_tip_are_dropped() {
++        let sync = sample_sync_at_height(1_000);
++        let peer_ahead = sample_peer_ip(1);
++        add_peers(&sync, 1, 1, 1_100, 0);
++        add_peers(&sync, 2, 1, 1_020, 0);
++        insert_requests_to(&sync, peer_ahead, 1_001..1_051);
++        sync.remove_peer(&peer_ahead);
++        assert_eq!(sync.failed_requests.lock().len(), 50);
++
++        // The remaining peer serves the failed requests up to its tip.
++        let (requests, _) = sync.prepare_block_requests().pop().unwrap();
++        assert_eq!(heights_of(&requests), (1_001..=1_020).collect::<Vec<_>>());
++        assert!(sync.failed_requests.lock().is_empty());
++
++        // Without a peer ahead, none of the failed requests remain.
++        let sync = sample_sync_at_height(1_000);
++        add_peers(&sync, 1, 1, 1_100, 0);
++        add_peers(&sync, 2, 1, 1_000, 0);
++        insert_requests_to(&sync, peer_ahead, 1_001..1_051);
++        sync.remove_peer(&peer_ahead);
++        assert_eq!(sync.failed_requests.lock().len(), 50);
++        let service = RecordingService::default();
++        assert!(sync.try_issuing_block_requests(&service).await.is_none());
++        assert!(sync.failed_requests.lock().is_empty());
++        assert!(!logs_contain("Nothing to sync"));
++        assert!(sync.try_issuing_block_requests(&service).await.is_none());
++        assert!(logs_contain("Nothing to sync"));
++        assert!(service.sent.lock().unwrap().is_empty());
++    }
++
++    /// Fills the response buffer to the total request cap with answered requests from `start`.
++    fn fill_response_buffer(sync: &BlockSync<CurrentNetwork>, start: u32) {
++
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #4777** (2026-11-24): Check advisories only on scheduled and release CI runs (@cbeck88)
+- **PR #4775** (2026-11-24): Drop failed block requests above every advertised peer height (@cbeck88)
 - **PR #4772** (2026-11-23): Bump snarkVM to aleo-labs-protocol/snarkVM@1a1c603dc (@cbeck88)
 - **PR #4771** (2026-11-23): Bump crates with security advisories (@aleo-labs-merge-bot[bot])
 - **PR #4770** (2026-11-23): Bump jsonwebtoken from 11.1.0 to 12.0.0 (@dependabot[bot])
 - **PR #4769** (2026-11-23): Bump nix from 0.31.3 to 0.32.0 (@dependabot[bot])
-- **PR #4768** (2026-11-23): Bump serde_with from 3.24.0 to 3.25.0 in the cargo-minor group (@dependabot[bot])
 
 ---
 
@@ -1993,39 +2015,49 @@ Claude-Session: https://claude.ai/code/session_01UYfmmPQBrmJpfhVS2CtdQM
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in ci.yml
+## X. Empirical Invariant Guard in block_sync.rs
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `node/sync/src/block_sync.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `045bb278`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `04985e7d`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `node/sync/src/block_sync.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      # Only scheduled runs, and runs on or into a release branch, check
-      # advisories. bump-advisories.yml updates staging's Cargo.lock past them
-      # nightly.
-      - if: >-
-          github.event_name == 'schedule' ||
-          startsWith(github.ref, 'refs/heads/release/') ||
-          startsWith(github.base_ref, 'release/')
+    /// The maximum number of block requests that await a response.
+    const MAX_OUTSTANDING_BLOCK_REQUESTS: u32 =
+        (MAX_BLOCK_REQUESTS as u32) * (DataBlocks::<N>::MAXIMUM_NUMBER_OF_BLOCKS as u32);
+    /// The maximum number of block requests, including the answered ones that are not processed yet.
+    const MAX_TOTAL_BLOCK_REQUESTS: u32 = 4 * Self::MAX_OUTSTANDING_BLOCK_REQUESTS;
+
+        // Drop the failed requests above every height a peer advertises. A peer that advertises
+        // those heights brings them back as new requests.
+        let advertised_tip = tips.map_or(0, |(_, advertised_tip)| advertised_tip);
+        failed_requests.split_off(&advertised_tip.saturating_add(1));
+        let max_outstanding_block_requests = Self::MAX_OUTSTANDING_BLOCK_REQUESTS;
+        let max_total_requests = Self::MAX_TOTAL_BLOCK_REQUESTS;
+        // The total request cap does not apply to a gap below a requested height: the answered
+        // requests above the gap leave the map only once the gap is filled.
+        let fills_gap = self.requests.read().last_key_value().is_some_and(|(height, _)| start_height < *height);
+        if !fills_gap && self.num_total_block_requests() >= max_
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-      # staging's advisories are bumped nightly by bump-advisories.yml, which
-      # does not cover the release line.
-      - if: github.base_ref != 'staging' && github.ref_name != 'staging'
+        let max_outstanding_block_requests =
+            (MAX_BLOCK_REQUESTS as u32) * (DataBlocks::<N>::MAXIMUM_NUMBER_OF_BLOCKS as u32);
+        let max_total_requests = 4 * max_outstanding_block_requests;
+        if self.num_total_block_requests() >= max_total_requests as usize {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `045bb278` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `04985e7d` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -12753,3 +12753,8 @@
 | `CYCLE-20261124-QMSJ` | `2026-11-24T17:22:59.683Z` | `fb55/htmlparser2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10315` | Yes (`ce39d9c9...`) |
 | `CYCLE-20261124-QPTM` | `2026-11-24T17:23:03.610Z` | `czy0729/Bangumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10316` | Yes (`32cffb56...`) |
 | `CYCLE-20261124-QV66` | `2026-11-24T17:23:10.542Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10317` | Yes (`2a068f8f...`) |
+| `CYCLE-20261124-3OR5` | `2026-11-24T17:33:08.753Z` | `inikulin/parse5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10318` | Yes (`67a00917...`) |
+| `CYCLE-20261124-3TMB` | `2026-11-24T17:33:15.059Z` | `kubeedge/kubeedge` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10319` | Yes (`40acbfce...`) |
+| `CYCLE-20261124-3V0C` | `2026-11-24T17:33:16.860Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9843` | Yes (`43a59aab...`) |
+| `CYCLE-20261124-402J` | `2026-11-24T17:33:23.419Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10320` | Yes (`0152358c...`) |
+| `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T17:34:05.077Z` | `inikulin-parse5` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-7BF1A4EC` [Domain H] | Yes (`d50c2ebc...`) |

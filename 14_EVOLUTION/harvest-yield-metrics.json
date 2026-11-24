@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T17:23:10.551Z",
-  "total_cycles_completed": 12119,
-  "total_learnings_persisted": 12119,
-  "total_rules_promoted": 11180,
+  "last_updated": "2026-11-24T17:33:23.430Z",
+  "total_cycles_completed": 12123,
+  "total_learnings_persisted": 12123,
+  "total_rules_promoted": 11184,
   "history": [
-    {
-      "timestamp": "2026-11-24T00:48:57.149Z",
-      "repository": "tencent/Hy-Memory-30B-A3B",
-      "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T00:49:00.387Z",
-      "repository": "meta/folly",
-      "learningId": "learn-github-meta-folly",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T00:49:08.206Z",
-      "repository": "kumahq/kuma",
-      "learningId": "learn-github-kumahq-kuma",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T00:57:16.028Z",
-      "repository": "google/tcmalloc",
-      "learningId": "learn-github-google-tcmalloc",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T00:57:20.330Z",
       "repository": "software-mansion/react-native-screens",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-24T17:23:10.551Z",
       "repository": "dragonflydb/dragonfly",
       "learningId": "learn-github-dragonflydb-dragonfly",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T17:33:08.765Z",
+      "repository": "inikulin/parse5",
+      "learningId": "learn-github-inikulin-parse5",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T17:33:15.072Z",
+      "repository": "kubeedge/kubeedge",
+      "learningId": "learn-github-kubeedge-kubeedge",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T17:33:16.872Z",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T17:33:23.430Z",
+      "repository": "duckdb/duckdb",
+      "learningId": "learn-github-duckdb-duckdb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

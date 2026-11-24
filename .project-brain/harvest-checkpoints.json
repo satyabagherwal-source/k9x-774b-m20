@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T17:23:10.563Z",
+  "last_updated": "2026-11-24T17:33:23.444Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "9e8a2fe30a49aa9ba5a59684a1ad61f9aea37beb3a3a755db085eb2f6cfa26cd",
-      "verified_at": "2026-11-24T15:36:10.386Z",
+      "content_hash": "43a59aab53ee179fc1cf095f161ef780d1122f89f2130d257d8419b19f5820b9",
+      "verified_at": "2026-11-24T17:33:16.885Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T15:36:10.386Z"
+      "last_updated": "2026-11-24T17:33:16.885Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -3741,14 +3741,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kubeedge-kubeedge",
-      "content_hash": "e72ba30d56a569c586436a01de42f75d74aad0546b224b16daa761f6e6f8e682",
-      "verified_at": "2026-11-20T19:06:52.506Z",
+      "content_hash": "40acbfce2db8d12db305c397d88416a0c67590f9db0b0f4f76604d26b84e576e",
+      "verified_at": "2026-11-24T17:33:15.085Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T19:06:52.506Z"
+      "last_updated": "2026-11-24T17:33:15.085Z"
     },
     "giancarloerra/SocratiCode": {
       "repository": "giancarloerra/SocratiCode",
@@ -9381,14 +9381,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-duckdb-duckdb",
-      "content_hash": "ffe21527844b42ff7b11de36f051171d80da703f7cab882b13e2b6877386e5c0",
-      "verified_at": "2026-11-23T21:04:57.328Z",
+      "content_hash": "0152358c444b841b7384feeba44c5a76953d96e20e503b6cf7c461036e0f08d7",
+      "verified_at": "2026-11-24T17:33:23.443Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T21:04:57.328Z"
+      "last_updated": "2026-11-24T17:33:23.443Z"
     },
     "megh-bari/pattern-craft": {
       "repository": "megh-bari/pattern-craft",
@@ -14106,14 +14106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-inikulin-parse5",
-      "content_hash": "e4acc127c0db7a876e0ceecef788cae032edb7cc98acb40a00ca9f4e0927dc0d",
-      "verified_at": "2026-11-20T17:21:12.640Z",
+      "content_hash": "67a00917a32a1bd2244a6f8dded3ae91410335da1120f8eab7596e0394d7afb6",
+      "verified_at": "2026-11-24T17:33:08.777Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T17:21:12.640Z"
+      "last_updated": "2026-11-24T17:33:08.777Z"
     },
     "kitlangton/Hex": {
       "repository": "kitlangton/Hex",

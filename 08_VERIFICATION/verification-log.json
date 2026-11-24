@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-4EGW",
-    "timestamp": "2026-11-22T23:06:17.024Z",
-    "repository": "modelcontextprotocol/kotlin-sdk",
-    "learningId": "learn-github-modelcontextprotocol-kotlin-sdk",
-    "contentHash": "c8fa450be9266d6745196e4382ed907569e8044ae9548dfa8db59c345dcdcb82",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-4HQR",
-    "timestamp": "2026-11-22T23:06:21.267Z",
-    "repository": "beclab/Olares",
-    "learningId": "learn-github-beclab-olares",
-    "contentHash": "216fd62523a0b44cc27b0110d492c875dd5a135a47afbe86d0aa05ae9c032295",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-4KP6",
-    "timestamp": "2026-11-22T23:06:25.098Z",
-    "repository": "clockworklabs/SpacetimeDB",
-    "learningId": "learn-github-clockworklabs-spacetimedb",
-    "contentHash": "7ca7d5bbaeba1157457b04fc0a7d7187d2012f5159639d08722b382671a52236",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-GBUN",
-    "timestamp": "2026-11-22T23:15:33.503Z",
-    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
-    "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
-    "contentHash": "4cc42b892be79f5b5ea60f7444ac0b98cbbc4f1d0aaa5ec19edb38cad6d6969d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-GMHS",
     "timestamp": "2026-11-22T23:15:47.296Z",
     "repository": "tursodatabase/turso",
@@ -7490,6 +7430,66 @@
     "repository": "dragonflydb/dragonfly",
     "learningId": "learn-github-dragonflydb-dragonfly",
     "contentHash": "2a068f8f8239bafb7d2d6b8f2228056c07ad4f370a3f4afdb8d04e5fc4c10698",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-3OR5",
+    "timestamp": "2026-11-24T17:33:08.753Z",
+    "repository": "inikulin/parse5",
+    "learningId": "learn-github-inikulin-parse5",
+    "contentHash": "67a00917a32a1bd2244a6f8dded3ae91410335da1120f8eab7596e0394d7afb6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-3TMB",
+    "timestamp": "2026-11-24T17:33:15.059Z",
+    "repository": "kubeedge/kubeedge",
+    "learningId": "learn-github-kubeedge-kubeedge",
+    "contentHash": "40acbfce2db8d12db305c397d88416a0c67590f9db0b0f4f76604d26b84e576e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-3V0C",
+    "timestamp": "2026-11-24T17:33:16.860Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "43a59aab53ee179fc1cf095f161ef780d1122f89f2130d257d8419b19f5820b9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-402J",
+    "timestamp": "2026-11-24T17:33:23.419Z",
+    "repository": "duckdb/duckdb",
+    "learningId": "learn-github-duckdb-duckdb",
+    "contentHash": "0152358c444b841b7384feeba44c5a76953d96e20e503b6cf7c461036e0f08d7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

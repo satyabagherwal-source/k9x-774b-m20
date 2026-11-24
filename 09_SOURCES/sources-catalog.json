@@ -2403,10 +2403,10 @@
     "repository": "kubeedge/kubeedge",
     "platform": "github",
     "sourceUrl": "https://github.com/kubeedge/kubeedge",
-    "sourceVersion": "8429622d",
+    "sourceVersion": "ddced73b",
     "license": "Apache-2.0",
-    "contentHash": "e72ba30d56a569c586436a01de42f75d74aad0546b224b16daa761f6e6f8e682",
-    "lastHarvestedAt": "2026-11-20T19:06:52.497Z",
+    "contentHash": "40acbfce2db8d12db305c397d88416a0c67590f9db0b0f4f76604d26b84e576e",
+    "lastHarvestedAt": "2026-11-24T17:33:15.064Z",
     "learningId": "learn-github-kubeedge-kubeedge"
   },
   "giancarloerra-socraticode": {
@@ -2923,10 +2923,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/ProvableHQ/snarkOS",
-    "sourceVersion": "045bb278",
+    "sourceVersion": "04985e7d",
     "license": "Apache-2.0",
-    "contentHash": "fe8b2450bcc188c892e162a418395618108a626d9223464b0a1b442ac589a2f4",
-    "lastHarvestedAt": "2026-11-24T13:30:19.675Z",
+    "contentHash": "43a59aab53ee179fc1cf095f161ef780d1122f89f2130d257d8419b19f5820b9",
+    "lastHarvestedAt": "2026-11-24T17:33:16.865Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "vasu-devs-justhireme": {
@@ -6173,10 +6173,10 @@
     "repository": "duckdb/duckdb",
     "platform": "github",
     "sourceUrl": "https://github.com/duckdb/duckdb",
-    "sourceVersion": "94a1663a",
+    "sourceVersion": "295f0daf",
     "license": "MIT",
-    "contentHash": "ffe21527844b42ff7b11de36f051171d80da703f7cab882b13e2b6877386e5c0",
-    "lastHarvestedAt": "2026-11-23T21:04:57.318Z",
+    "contentHash": "0152358c444b841b7384feeba44c5a76953d96e20e503b6cf7c461036e0f08d7",
+    "lastHarvestedAt": "2026-11-24T17:33:23.424Z",
     "learningId": "learn-github-duckdb-duckdb"
   },
   "megh-bari-pattern-craft": {
@@ -9373,10 +9373,10 @@
     "repository": "inikulin/parse5",
     "platform": "github",
     "sourceUrl": "https://github.com/inikulin/parse5",
-    "sourceVersion": "62a198aa",
+    "sourceVersion": "2412bb99",
     "license": "MIT",
-    "contentHash": "e4acc127c0db7a876e0ceecef788cae032edb7cc98acb40a00ca9f4e0927dc0d",
-    "lastHarvestedAt": "2026-11-20T17:21:12.633Z",
+    "contentHash": "67a00917a32a1bd2244a6f8dded3ae91410335da1120f8eab7596e0394d7afb6",
+    "lastHarvestedAt": "2026-11-24T17:33:08.758Z",
     "learningId": "learn-github-inikulin-parse5"
   },
   "kitlangton-hex": {

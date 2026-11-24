@@ -12786,3 +12786,8 @@ Every entry in this ledger must capture:
 | `learn-github-fb55-htmlparser2` | `https://github.com/fb55/htmlparser2` | `2134b2f1` | Multi-dimensional audit evidence | 2026-11-24T17:22:59.688Z |
 | `learn-github-czy0729-bangumi` | `https://github.com/czy0729/Bangumi` | `5fbbc77a` | Multi-dimensional audit evidence | 2026-11-24T17:23:03.614Z |
 | `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `c0b9d750` | Multi-dimensional audit evidence | 2026-11-24T17:23:10.546Z |
+| `learn-github-inikulin-parse5` | `https://github.com/inikulin/parse5` | `2412bb99` | Multi-dimensional audit evidence | 2026-11-24T17:33:08.758Z |
+| `learn-github-kubeedge-kubeedge` | `https://github.com/kubeedge/kubeedge` | `ddced73b` | Multi-dimensional audit evidence | 2026-11-24T17:33:15.064Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `04985e7d` | Multi-dimensional audit evidence | 2026-11-24T17:33:16.865Z |
+| `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `295f0daf` | Multi-dimensional audit evidence | 2026-11-24T17:33:23.424Z |
+| `learn-dom-h-7bf1a4ec` | `project://inikulin-parse5` | `2412bb99` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/inikulin-parse5-learnings.md` | 2026-11-24T17:34:05.077Z |
