@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T19:19:25.706Z",
+  "last_updated": "2026-11-24T19:27:49.983Z",
   "directives": [
     {
       "id": "CD-001",
@@ -5336,11 +5336,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-P0N2",
+      "id": "CD-75O4",
       "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "source_repo": "zoontek-react-native-permissions-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-P0N2-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-75O4-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-24",
@@ -36242,11 +36242,11 @@
       "staged_date": "2026-11-20"
     },
     {
-      "id": "CD-P00H",
+      "id": "CD-7510",
       "directive_title": "dead license badge link in README",
       "source_repo": "zoontek-react-native-bootsplash-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-P00H-dead-license-badge-link-in-readme.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-7510-dead-license-badge-link-in-readme.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-24",
@@ -56032,11 +56032,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-S3T7",
+      "id": "CD-76CB",
       "directive_title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-S3T7-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-76CB-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-24",
@@ -56774,6 +56774,33 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-442418-rust-resolve-python-calls-through-annota.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-REV-6A4DDE",
+      "directive_title": "dead license badge link in README",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-bootsplash",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-6A4DDE-dead-license-badge-link-in-readme.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-REV-FD47FE",
+      "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-permissions",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-FD47FE-android-skip-explicit-kotlin-plugin-when.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-REV-A04D3F",
+      "directive_title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A04D3F-deps-bump-url-to-2-5-9-and-heapless-to-0.md",
       "staged_date": "2026-11-24"
     }
   ]
