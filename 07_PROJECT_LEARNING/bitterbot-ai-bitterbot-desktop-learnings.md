@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `420cea3a`  
+> **Source Version**: `a0d01b11`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T19:52:26.500Z  
+> **Timestamp**: 2026-11-24T16:54:46.887Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T19:52:26.494Z  
+> **Harvest Timestamp**: 2026-11-24T16:54:46.881Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Bitterbot - a mesh of agents that turns shared experience into collective capability.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 2480 stars
+- **Stars / Engagement**: 2481 stars
 
 ---
 
@@ -1570,202 +1570,235 @@ def main():
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0ff923a7` (2026-11-22)
-**Commit Message**: fix(deps): ship tar 7.5.22 and undici 7.30.2 to pick up security fixes (#393)
+### Incident Patch 1: `aaebb1f6` (2026-11-24)
+**Commit Message**: fix(media): default OpenAI transcription to gpt-transcribe ahead of the model shutdown (#395)
 
-package.json has asked for tar 7.5.22 for some time, but the override in
-pnpm-workspace.yaml still pinned 7.5.9, so releases shipped 7.5.9. That
-version has known path traversal and denial of service advisories (fixed
-by 7.5.19), and tar unpacks downloaded skills, plugins and hooks.
+OpenAI retires whisper-1, gpt-4o-transcribe and gpt-4o-mini-transcribe on
+2027-02-26. gpt-transcribe is the documented replacement on
+/v1/audio/transcriptions and accepts the fields we already send (verified
+with real calls: model only, language, prompt, response_format=text).
 
-undici moves from 7.22.0 to 7.30.2 for three WebSocket client advisories
-fixed in 7.24.0.
+gpt-transcribe reports usage as audio seconds, not tokens, so those rows
+now store seconds and are priced at $0.0045 per minute. The bundled
+openai-whisper-api skill script defaults to the new model too.
+
+Refs #391
 
 Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
-**File**: `package.json` (modified, +1/-1)
+**File**: `docs/gateway/configuration-examples.md` (modified, +1/-1)
 ```diff
-@@ -223,7 +223,7 @@
-     "stripe": "^20.4.1",
-     "tar": "7.5.22",
-     "tslog": "^4.10.2",
--    "undici": "^7.22.0",
-+    "undici": "^7.24.0",
-     "viem": "^2.57.3",
-     "ws": "^8.22.0",
-     "yaml": "^2.9.1",
+@@ -136,7 +136,7 @@ Save to `~/.bitterbot/bitterbot.json` and you can DM the bot from that number.
+         enabled: true,
+         maxBytes: 20971520,
+         models: [
+-          { provider: "openai", model: "gpt-4o-mini-transcribe" },
++          { provider: "openai", model: "gpt-transcribe" },
+           // Optional CLI fallback (Whisper binary):
+           // { type: "cli", command: "whisper", args: ["--model", "base", "{{MediaPath}}"] }
+         ],
 ```
 
-**File**: `pnpm-lock.yaml` (modified, +17/-27)
+**File**: `docs/gateway/configuration-reference.md` (modified, +1/-1)
 ```diff
-@@ -9,7 +9,7 @@ overrides:
-   form-data: 2.5.4
-   qs: 6.14.2
-   '@sinclair/typebox': 0.34.48
--  tar: 7.5.9
-+  tar: 7.5.22
-   tough-cookie: 4.1.3
- 
- patchedDependencies:
-@@ -214,14 +214,14 @@ importers:
-         specifier: ^20.4.1
-         version: 20.4.1(@types/node@26.6.5)
-       tar:
--        specifier: 7.5.9
--        version: 7.5.9
-+        specifier: 7.5.22
-+        version: 7.5.22
-       tslog:
-         specifier: ^4.10.2
-         version: 4.10.2
-       undici:
--        specifier: ^7.22.0
--        version: 7.22.0
-+        specifier: ^7.24.0
-+        version: 7.30.2
-       viem:
-         specifier: ^2.57.3
-         version: 2.57.12(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.6.7)
-@@ -9251,8 +9251,8 @@ packages:
-     resolution: {integrity: sha512-uxc/zpqFg6x7C8vOE7lh6Lbda8eEL9zmVm/PLeTPBRhh1xCgdWaQ+J1CUieGpIfm2HdtsUpRv+HshiasBMcc6A==}
-     engines: {node: '>=6'}
- 
--  tar@7.5.9:
--    resolution: {integrity: sha512-BTLcK0xsDh2+PUe9F6c2TlRp4zOOBMTkoQHQIWSIzI0R7KG46uEwq4OPk2W7bZcprBMsuaeFsqwYr7pjh6CuHg==}
-+  tar@7.5.22:
-+    resolution: {integrity: sha512-MFO/QzvtAOmJbkhOaCTvbGcFN9L9b+JunIsDwaKljSOdcLMea3NJ1k9Usz/rjdfSXTq4dfzfeS7W4p4YOAAHeA==}
-     engines: {node: '>=18'}
- 
-   text-encoding-utf-8@1.0.2:
-@@ -9494,8 +9494,8 @@ packages:
-   undici-types@8.9.0:
-     resolution: {integrity: sha512-KTDyRTYX8sWmKXAikPHHSyc63CRPETMctyjKFupcC6OBLXT3xsN0e9aF7m+mIXutFWpUXuedtowG7iLOzp0kQg==}
- 
--  undici@7.22.0:
--    resolution: {integrity: sha512-RqslV2Us5BrllB+JeiZnK4peryVTndy9Dnqq62S3yYRRTj0tFQCwEniUy2167skdGOy3vqRzEvl1Dm4sV2ReDg==}
-+  undici@7.30.2:
-+    resolution: {integrity: sha512-mLyPQnHwUxaM/rideoK/+KL8DaAJLRl4aBCfmX444aCSLnIaomqPLtNRe2jdCYcsk5wZzXrDIQC8ZeYNRAYyIA==}
-     engines: {node: '>=20.18.1'}
- 
-   unified@11.0.5:
-@@ -11632,7 +11632,7 @@ snapshots:
-       partial-json: 0.1.7
-       proxy-agent: 6.5.0
-       typebox: 1.3.34
--      undici: 7.22.0
-+      undici: 7.30.2
-       zod-to-json-schema: 3.25.2(zod@4.6.7)
-     transitivePeerDependencies:
-       - '@modelcontextprotocol/sdk'
-@@ -11676,15 +11676,15 @@ snapshots:
-   '@metamask/json-rpc-engine@8.0.2':
-     dependencies:
-       '@metamask/rpc-errors': 6.4.0
--      '@metamask/safe-event-emitter': 3.1.2
-+      '@metamask/safe-event-emitter': 3.1.3
-       '@metamask/utils': 8.5.0
-     transitivePeerDependencies:
-       - supports-color
- 
-   '@metamask/json-rpc-middleware-stream@7.0.2':
-     dependencies:
-       '@metamask/json-rpc-engine': 8.0.2
--      '@metamask/safe-event-emitter': 3.1.2
-+      '@metamask/safe-event-emitter': 3.1.3
-       '@metamask/utils': 8.5.0
-       readable-stream: 3.6.2
-     transitivePeerDependencies:
-@@ -13887,7 +13887,7 @@ snapshots:
-       '@slack/types': 2.20.0
-       '@slack/web-api': 7.14.1
-       '@types/express': 5.0.6
--      axios: 1.13.5
-+      axios: 1.13.5(debug@4.4.3)
-       express: 5.3.0
-       path-to-regexp: 8.3.0
-       raw-body: 3.0.2
-@@ -13933,7 +13933,7 @@ snapshots:
-       '@slack/types': 2.20.0
-       '@types/node': 26.6.5
-       '@types/retry': 0.12.0
--      axios: 1.13.5
-+      axios: 1.13.5(debug@4.4.3)
-       eventemitter3: 5.0.4
-       form-data: 2.5.4
-       is-electron: 2.2.2
-@@ -16694,14 +16694,6 @@ snapshots:
-       axios: 1.21.0
-       is-retry-allowed: 2.2.0
- 
--  axios@1.13.5:
--    dependencies:
--      follow-redirects: 1.15.11
--      form-data: 2.5.4
--      proxy-from-env: 1.1.0
--    transitivePeerDependencies:
--      - debug
--
-   axios@1.13.5(debug@4.4.3):
-     dependencies:
-       follow-redirects: 1.15.11(debug@4.4.3)
-@@ -17023,7 +17015,7 @@ snapshots:
-       npmlog: 6.0.2
-       rc: 1.2.8
-       semver: 7.7.4
--      tar: 7.5.9
-+      tar: 7.5.22
-       url-join: 4.0.1
-       which: 2.0.2
-       yargs: 17.7.2
-@@ -17930,8 +17922,6 @@ snapshots:
-       locate-path: 5.0.0
-       path-exists: 4.0.0
- 
--  follow-redirects@1.15.11: {}
--
-   follow-redirects@1.15.11(debug@4.4.3):
-     optionalDependencies:
-       debug: 4.4.3
-@@ -20948,7 +20938,7 @@ snapshots:
- 
-   tapable@2.3.3: {}
- 
--  tar@7.5.9:
-+  tar@7.5.22:
-     dependencies:
-       '@isaacs/fs-minipass': 4.0.1
-       chownr: 3.0.0
-@@ -21144,7 +21134,7 @@ snapshots:
- 
-   undici-types@8.9.0: {}
- 
--  undici@7.22.0: {}
-+  undici@7.30.2: {}
- 
-   unified@11.0.5:
-     dependencies:
+@@ -1414,7 +1414,7 @@ Configures inbound media understanding (image/audio/video):
+           rules: [{ action: "allow", match: { chatType: "direct" } }],
+         },
+         models: [
+-          { provider: "openai", model: "gpt-4o-mini-transcribe" },
++          { provider: "openai", model: "gpt-transcribe" },
+           { type: "cli", command: "whisper", args: ["--model", "base", "{{MediaPath}}"] },
+         ],
+       },
 ```
 
-**File**: `pnpm-workspace.yaml` (modified, +1/-1)
+**File**: `skills/openai-whisper-api/SKILL.md` (modified, +2/-2)
 ```diff
-@@ -14,7 +14,7 @@ overrides:
-   form-data: 2.5.4
-   qs: 6.14.2
-   "@sinclair/typebox": 0.34.48
--  tar: 7.5.9
-+  tar: 7.5.22
-   tough-cookie: 4.1.3
+@@ -25,13 +25,13 @@ Transcribe an audio file via OpenAI’s `/v1/audio/transcriptions` endpoint.
  
- # @coinbase/agentkit posts the wallet address, network and every wallet action
+ Defaults:
+ 
+-- Model: `whisper-1`
++- Model: `gpt-transcribe` (OpenAI retires `whisper-1` on 2027-02-26)
+ - Output: `<input>.txt`
+ 
+ ## Useful flags
+ 
+ ```bash
+-{baseDir}/scripts/transcribe.sh /path/to/audio.ogg --model whisper-1 --out /tmp/transcript.txt
++{baseDir}/scripts/transcribe.sh /path/to/audio.ogg --model gpt-transcribe --out /tmp/transcript.txt
+ {baseDir}/scripts/transcribe.sh /path/to/audio.m4a --language en
+ {baseDir}/scripts/transcribe.sh /path/to/audio.m4a --prompt "Speaker names: Peter, Daniel"
+ {baseDir}/scripts/transcribe.sh /path/to/audio.m4a --json --out /tmp/transcript.json
+```
+
+**File**: `skills/openai-whisper-api/scripts/transcribe.sh` (modified, +2/-2)
+```diff
+@@ -4,7 +4,7 @@ set -euo pipefail
+ usage() {
+   cat >&2 <<'EOF'
+ Usage:
+-  transcribe.sh <audio-file> [--model whisper-1] [--out /path/to/out.txt] [--language en] [--prompt "hint"] [--json]
++  transcribe.sh <audio-file> [--model gpt-transcribe] [--out /path/to/out.txt] [--language en] [--prompt "hint"] [--json]
+ EOF
+   exit 2
+ }
+@@ -16,7 +16,7 @@ fi
+ in="${1:-}"
+ shift || true
+ 
+-model="whisper-1"
++model="gpt-transcribe"
+ out=""
+ language=""
+ prompt=""
+```
+
+**File**: `src/infra/model-pricing.ts` (modified, +25/-0)
+```diff
+@@ -80,6 +80,16 @@ export const TTS_PRICES_PER_MILLION_CHARS: Readonly<Record<string, number>> = {
+   "openai/tts-1-hd": 30,
+ };
+ 
++/**
++ * USD per 1M SECONDS of audio for duration-billed transcription (`kind: "audio"` rows whose
++ * provider reported `usage.type: "duration"` store seconds in `input`). Source:
++ * https://developers.openai.com/api/docs/pricing (gpt-transcribe $0.0045 / minute = $75 per 1M
++ * seconds). Token-billed transcription models are priced from the model catalog instead.
++ */
++export const AUDIO_PRICES_PER_MILLION_SECONDS: Readonly<Record<string, number>> = {
++  "openai/gpt-transcribe": 75,
++};
++
+ const ZERO_PRICE: ModelPrice = { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 };
+ const MEMO_TTL_MS = 5 * 60_000;
+ const memo = new Map<string, { at: number; value: ResolvedPricing }>();
+@@ -155,6 +165,15 @@ function lookupTtsCatalog(provider: string, model: string): ModelPrice | undefin
+   return { input: perMillion, output: 0, cacheRead: 0, cacheWrite: 0 };
+ }
+ 
++function lookupAudioDurationCatalog(provider: string, model: string): ModelPrice | undefined {
++  const key = `${provider.toLowerCase()}/${normalizeModelIdForPricing(provider, model)}`;
++  const perMillion = AUDIO_PRICES_PER_MILLION_SECONDS[key];
++  if (typeof perMillion !== "number") {
++    return undefined;
++  }
++  return { input: perMillion, output: 0, cacheRead: 0, cacheWrite: 0 };
++}
++
+ async function lookupCatalog(
+   provider: string,
+   model: string,
+@@ -216,6 +235,12 @@ export async function resolveModelPricing(params: {
+       value = { price: tts, source: "embedding-catalog" };
+     }
+   }
++  if (!value && kind === "audio") {
++    const audio = lookupAudioDurationCatalog(provider, model);
++    if (audio) {
++      value = { price: audio, source: "embedding-catalog" };
++    }
++  }
+   if (!value && isLocalModelProvider(provider)) {
+     value = { price: ZERO_PRICE, source: "local" };
+   }
+```
+
+**File**: `src/media-understanding/defaults.ts` (modified, +1/-1)
+```diff
+@@ -29,7 +29,7 @@ export const DEFAULT_PROMPT: Record<MediaUnderstandingCapability, string> = {
+ export const DEFAULT_VIDEO_MAX_BASE64_BYTES = 70 * MB;
+ export const DEFAULT_AUDIO_MODELS: Record<string, string> = {
+   groq: "whisper-large-v3-turbo",
+-  openai: "gpt-4o-mini-transcribe",
++  openai: "gpt-transcribe",
+   deepgram: "nova-3",
+ };
+ 
+```
+
+**File**: `src/media-understanding/providers/openai/audio.test.ts` (modified, +2/-2)
+```diff
+@@ -55,7 +55,7 @@ describe("transcribeOpenAiCompatibleAudio", () => {
+       fetchFn,
+     });
+ 
+-    expect(result.model).toBe("gpt-4o-mini-transcribe");
++    expect(result.model).toBe("gpt-transcribe");
+     expect(result.text).toBe("hello");
+     expect(seenUrl).toBe("https://api.example.com/v1/audio/transcriptions");
+     expect(seenInit?.method).toBe("POST");
+@@ -67,7 +67,7 @@ describe("transcribeOpenAiCompatibleAudio", () => {
+ 
+     const form = seenInit?.body as FormData;
+     expect(form).toBeInstanceOf(FormData);
+-    expect(form.get("model")).toBe("gpt-4o-mini-transcribe");
++    expect(form.get("model")).toBe("gpt-transcribe");
+     expect(form.get("language")).toBe("en");
+     expect(form.get("prompt")).toBe("hello");
+     const file = form.get("file") as Blob | { type?: string; name?: string } | null;
+```
+
+**File**: `src/media-understanding/providers/openai/audio.ts` (modified, +22/-8)
+```diff
+@@ -5,7 +5,9 @@ import type { AudioTranscriptionRequest, AudioTranscriptionResult } from "../../
+ import { assertOkOrThrowHttpError, fetchWithTimeoutGuarded, normalizeBaseUrl } from "../shared.js";
+ 
+ export const DEFAULT_OPENAI_AUDIO_BASE_URL = "https://api.openai.com/v1";
+-const DEFAULT_OPENAI_AUDIO_MODEL = "gpt-4o-mini-transcribe";
++// OpenAI retires whisper-1, gpt-4o-transcribe and gpt-4o-mini-transcribe on 2027-02-26;
++// gpt-transcribe is the documented replacement on this endpoint and takes the same fields.
++const DEFAULT_OPENAI_AUDIO_MODEL = "gpt-transcribe";
+ 
+ function resolveModel(model?: string): string {
+   const trimmed = model?.trim();
+@@ -71,18 +73,30 @@ export async function transcribeOpenAiCompatibleAudio(
+     if (!text) {
+       throw new Error("Audio transcription response missing text");
+     }
+-    // PLAN-50 Phase 5: gpt-4o-transcribe reports token usage; whisper reports nothing (or
+-    // seconds), in which case the call is recorded as one billable item and stays unpriced.
++    // PLAN-50 Phase 5: token-billed models report token usage. Duration-billed models
++    // (gpt-transcribe, whisper) report `{type: "duration", seconds}`; those rows store SECONDS
++    // in `input` and are priced per second (AUDIO_PRICES_PER_MILLION_SECONDS). No usage at all
++    // is recorded as one billable item and stays unpriced.
++    const seconds =
++      payload.usage?.type === "duration" &&
++      typeof payload.usage.seconds === "number" &&
++      Number.isFinite(payload.usage.seconds) &&
++      payload.usage.seconds >= 0
++        ? payload.usage.seconds
++        : undefined;
+     recordUsage({
+       kind: "audio",
+       feature: USAGE_FEATURES.mediaAudio,
+       provider: /groq/i.test(baseUrl) ? "groq" : "openai",
+       model,
+-      usage: {
+-        input: payload.usage?.input_tokens,
+-        output: payload.usage?.output_tokens,
+-        total: payload.usage?.total_tokens,
+-      },
++      usage:
++        seconds !== undefined
++          ? { input: seconds, total: seconds }
++          : {
++              input: payload.usage?.input_tokens,
++              output: payload.usage?.output_tokens,
++              total: payload.usage?.total_tokens,
++            },
+       items: 1,
+       durationMs: Date.now() - transcribeStartedAt,
+     });
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #396** (2026-11-24): feat(tts): speak through the OpenAI Realtime API ahead of the speech model shutdown (@VGIL77)
+- **PR #395** (2026-11-24): fix(media): default OpenAI transcription to gpt-transcribe ahead of the model shutdown (@VGIL77)
 - **PR #393** (2026-11-22): fix(deps): ship tar 7.5.22 and undici 7.30.2 to pick up security fixes (@VGIL77)
 - **PR #392** (2026-11-22): chore(main): release 1.14.3 (@github-actions[bot])
 - **PR #389** (2026-11-22): fix(agents): retry one-shot completions with thinking between_tools when a model rejects disabled (@VGIL77)
 - **PR #388** (2026-11-19): chore(main): release 1.14.2 (@github-actions[bot])
-- **PR #387** (2026-11-19): fix(security): run the deep_recall sandbox in a locked-down process and close vm escapes (@VGIL77)
-- **PR #386** (2026-11-22): chore(deps): bump the native group with 2 updates (@dependabot[bot])
 
 ---
 
@@ -1785,28 +1818,28 @@ Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): ship tar 7.5.22 and undici 7.30.2 to pick up security fixes
+## X. media): default OpenAI transcription to gpt-transcribe ahead of the model shutdo
 
 **RULE**:
-When implementing operations in `package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/gateway/configuration-examples.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0ff923a7`: deps): ship tar 7.5.22 and undici 7.30.2 to pick up security fixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `aaebb1f6`: media): default OpenAI transcription to gpt-transcribe ahead of the model shutdown. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/gateway/configuration-examples.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    "undici": "^7.24.0",
+          { provider: "openai", model: "gpt-transcribe" },
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-    "undici": "^7.22.0",
+          { provider: "openai", model: "gpt-4o-mini-transcribe" },
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0ff923a7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `aaebb1f6` are properly handled with clean fallback behavior.

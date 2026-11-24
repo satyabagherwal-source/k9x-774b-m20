@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T16:46:17.415Z",
+  "updated_at": "2026-11-24T16:54:52.533Z",
   "stats": {
-    "total_discovered": 8771,
-    "approved_pending_harvest": 8300,
+    "total_discovered": 8774,
+    "approved_pending_harvest": 8303,
     "harvested_count": 0,
     "rejected_count": 471,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8292,
+      "COMMUNITY_AND_EXPERT": 8295,
       "OFFICIAL_DOCUMENTATION": 269,
       "STANDARDS_AND_SPECIFICATIONS": 146,
       "ENGINEERING_BLOGS": 7,
@@ -189692,6 +189692,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
         "fileName": "siderolabs-talos-learnings.md"
+      }
+    },
+    "SRC-770D945C177C": {
+      "id": "SRC-770D945C177C",
+      "url": "https://github.com/indexable-inc/blaze",
+      "title": "https://github.com/indexable-inc/blaze",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T16:54:51.391Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/indexable-inc-blaze-learnings.md",
+        "fileName": "indexable-inc-blaze-learnings.md"
+      }
+    },
+    "SRC-00EAF917AB11": {
+      "id": "SRC-00EAF917AB11",
+      "url": "https://developers.openai.com/api/docs/pricing",
+      "title": "https://developers.openai.com/api/docs/pricing",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T16:54:52.474Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
+        "fileName": "bitterbot-ai-bitterbot-desktop-learnings.md"
+      }
+    },
+    "SRC-CBED33806603": {
+      "id": "SRC-CBED33806603",
+      "url": "https://api.example.com/v1/audio/transcriptions",
+      "title": "https://api.example.com/v1/audio/transcriptions",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T16:54:52.533Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
+        "fileName": "bitterbot-ai-bitterbot-desktop-learnings.md"
       }
     }
   }

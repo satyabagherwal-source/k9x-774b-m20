@@ -12772,3 +12772,5 @@ Every entry in this ledger must capture:
 | `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `87507e3e` | Multi-dimensional audit evidence | 2026-11-24T16:46:04.694Z |
 | `learn-github-defguard-defguard` | `https://github.com/DefGuard/defguard` | `279cc5c3` | Multi-dimensional audit evidence | 2026-11-24T16:46:07.523Z |
 | `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `0a698de7` | Multi-dimensional audit evidence | 2026-11-24T16:46:10.603Z |
+| `learn-github-indexable-inc-blaze` | `https://github.com/indexable-inc/blaze` | `06036d58` | Multi-dimensional audit evidence | 2026-11-24T16:54:33.873Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `a0d01b11` | Multi-dimensional audit evidence | 2026-11-24T16:54:47.959Z |

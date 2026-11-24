@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T16:46:10.623Z",
+  "last_updated": "2026-11-24T16:54:47.975Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "4dbbc6619ac97ea700a7eca9d19b6cd9af3bd6928653c16a4e2370e45291bc4f",
-      "verified_at": "2026-11-22T19:52:27.569Z",
+      "content_hash": "d16ec1131b66d5fb3f10fd542922236d39d2c88d07231a8adc8c9eeefbe20938",
+      "verified_at": "2026-11-24T16:54:47.974Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T19:52:27.569Z"
+      "last_updated": "2026-11-24T16:54:47.974Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -20144,6 +20144,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-24T14:33:18.048Z"
+    },
+    "indexable-inc/blaze": {
+      "repository": "indexable-inc/blaze",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-indexable-inc-blaze",
+      "content_hash": "0469ed4d1ad0b61bd916f1cf8682b312995c9c2f6c12bce1ac6d4cd973877ff0",
+      "verified_at": "2026-11-24T16:54:33.889Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-24T16:54:33.889Z"
     }
   },
   "repos": {

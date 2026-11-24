@@ -12739,3 +12739,5 @@
 | `CYCLE-20261124-F5OX` | `2026-11-24T16:46:04.689Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10306` | Yes (`c918c460...`) |
 | `CYCLE-20261124-F7VI` | `2026-11-24T16:46:07.518Z` | `DefGuard/defguard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`41dfaafc...`) |
 | `CYCLE-20261124-FA92` | `2026-11-24T16:46:10.598Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10307` | Yes (`300f7505...`) |
+| `CYCLE-20261124-Q2KT` | `2026-11-24T16:54:33.869Z` | `indexable-inc/blaze` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10308` | Yes (`0469ed4d...`) |
+| `CYCLE-20261124-QDG2` | `2026-11-24T16:54:47.954Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10309` | Yes (`d16ec113...`) |

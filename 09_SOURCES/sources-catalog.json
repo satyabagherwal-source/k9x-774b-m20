@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "420cea3a",
+    "sourceVersion": "a0d01b11",
     "license": "MIT",
-    "contentHash": "4dbbc6619ac97ea700a7eca9d19b6cd9af3bd6928653c16a4e2370e45291bc4f",
-    "lastHarvestedAt": "2026-11-22T19:52:27.561Z",
+    "contentHash": "d16ec1131b66d5fb3f10fd542922236d39d2c88d07231a8adc8c9eeefbe20938",
+    "lastHarvestedAt": "2026-11-24T16:54:47.959Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -13348,5 +13348,15 @@
     "contentHash": "38de43536602be5ac1c0d3ffbd64fd5037fba1e4a6a38052fe0a7f4e7e345f7f",
     "lastHarvestedAt": "2026-11-24T14:33:18.028Z",
     "learningId": "learn-github-nihildigit-piko"
+  },
+  "indexable-inc-blaze": {
+    "repository": "indexable-inc/blaze",
+    "platform": "github",
+    "sourceUrl": "https://github.com/indexable-inc/blaze",
+    "sourceVersion": "06036d58",
+    "license": "Apache-2.0",
+    "contentHash": "0469ed4d1ad0b61bd916f1cf8682b312995c9c2f6c12bce1ac6d4cd973877ff0",
+    "lastHarvestedAt": "2026-11-24T16:54:33.873Z",
+    "learningId": "learn-github-indexable-inc-blaze"
   }
 }

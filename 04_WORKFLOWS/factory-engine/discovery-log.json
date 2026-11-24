@@ -22150,5 +22150,20 @@
     "qualityScore": 783,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-24T14:31:15.723Z"
+  },
+  {
+    "name": "blaze",
+    "fullName": "indexable-inc/blaze",
+    "url": "https://github.com/indexable-inc/blaze",
+    "type": "github",
+    "domain": "high-perf-systems",
+    "description": "Incremental rust builds up to 92x faster than cargo/rustc. Backed by Y Combinator (F26).",
+    "stars": 2510,
+    "forks": 94,
+    "openIssues": 461,
+    "language": "Rust",
+    "qualityScore": 1733,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-24T16:51:42.000Z"
   }
 ]

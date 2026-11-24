@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T16:46:19.605Z",
+  "last_updated": "2026-11-24T16:54:54.065Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-24T16:36:54.164Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-24T16:36:53.321Z",
+      "processed_at": "2026-11-24T16:54:53.312Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2233,7 +2233,7 @@
       "staged_for_review": 1
     },
     "bitterbot-ai-bitterbot-desktop-learnings.md": {
-      "processed_at": "2026-11-22T19:52:31.369Z",
+      "processed_at": "2026-11-24T16:54:52.310Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3831,9 +3831,14 @@
       "processed_at": "2026-11-24T14:42:04.770Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "indexable-inc-blaze-learnings.md": {
+      "processed_at": "2026-11-24T16:54:51.360Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3846,
+  "total_dossiers_evaluated": 3849,
   "total_canonical_promoted": 511,
-  "total_staged_for_review": 2919
+  "total_staged_for_review": 2922
 }

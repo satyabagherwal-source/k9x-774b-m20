@@ -5368,3 +5368,7 @@ https://huggingface.co/nari-labs/Qwen3.8-27B-NariQ-GGUF
 # --- Automatically Discovered by AI Scout Engine [2026-11-24T14:33:05.454Z] ---
 # [MOBILE-CROSS-PLATFORM] NihilDigit/piko (783 score) - 优雅、易用、高性能的 PikPak 客户端 | An elegant, easy-to-use, high-performance PikPak client
 https://github.com/NihilDigit/piko
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-24T16:54:20.460Z] ---
+# [HIGH-PERF-SYSTEMS] indexable-inc/blaze (1733 score) - Incremental rust builds up to 92x faster than cargo/rustc. Backed by Y Combinato
+https://github.com/indexable-inc/blaze

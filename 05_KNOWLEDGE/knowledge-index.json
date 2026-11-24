@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T16:46:19.398Z",
-  "total_verified_learnings": 9096,
+  "last_updated": "2026-11-24T16:54:53.922Z",
+  "total_verified_learnings": 9097,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24758,
+  "total_items": 24770,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "53257bd3da05adf31bc4f35cf53f2f7c785eadc0e8e11b5b10872526a1e37bf0",
+      "content_hash": "d2cca78ae5a4defcf944896a59bc605cee46a63cb665b496a146a2af66574014",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T16:36:53.797Z"
+      "persisted_at": "2026-11-24T16:54:53.752Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "c41a33f61d98c1448033274111f04f50060c7fcb929b75d8864a54cef22d487d",
+      "content_hash": "1830deab5c6359ea6743695e5a59daaf817d68edbef752a1dc1f069a16c77131",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T16:36:53.975Z"
+      "persisted_at": "2026-11-24T16:54:53.922Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -218903,8 +218903,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "420cea3a",
-      "content_hash": "4dbbc6619ac97ea700a7eca9d19b6cd9af3bd6928653c16a4e2370e45291bc4f",
+      "source_version": "a0d01b11",
+      "content_hash": "d16ec1131b66d5fb3f10fd542922236d39d2c88d07231a8adc8c9eeefbe20938",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -218952,6 +218952,11 @@
           "number": 9982,
           "title": "ship tar 7.5.22 and undici 7.30.2 to pick up security fixes",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10309,
+          "title": "default OpenAI transcription to gpt-transcribe ahead of the model shutdo",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -218959,7 +218964,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T19:52:27.342Z",
+      "verified_at": "2026-11-24T16:54:47.757Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219014,9 +219019,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for bitterbot-ai-bitterbot-desktop-learnings",
       "repository": "bitterbot-ai-bitterbot-desktop-learnings",
       "source_version": "HEAD",
-      "content_hash": "a778ad5d1c8fe11f7225328e45097f10db111258e9247bba1a223045606f4ebe",
+      "content_hash": "8f8c3cbc1ad91ecc9f061058abba9c68bc50cb6b649f0d9802290ef662a4492f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T19:52:32.050Z"
+      "persisted_at": "2026-11-24T16:54:53.151Z"
     },
     "domain_intelligence-architecture-intelligence-infiniflow-infinity-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-infiniflow-infinity-learnings-core-invariants",
@@ -240834,10 +240839,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-bitterbot-ai-bitterbot-desktop-architecture-intelligence-bitterbot-ai-bitterbot-.md",
       "title": "Architecture Intelligence: Bitterbot-AI/bitterbot-desktop Core Invariants",
       "repository": "Bitterbot-AI/bitterbot-desktop",
-      "source_version": "420cea3a",
-      "content_hash": "21c52881b40b7c71842d35a29961f5b74f18762e41dddb1a3f345e70d876ffbc",
+      "source_version": "a0d01b11",
+      "content_hash": "8a109fb11039f07026da15d68a90daa098f2dc6ea5aa0d2782d0a9e8c10fb349",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T19:52:27.951Z"
+      "persisted_at": "2026-11-24T16:54:48.359Z"
     },
     "domain_intelligence-search-distribution-intelligence-sharkdp-fd-learnings-core-invariants": {
       "item_id": "domain_intelligence-search-distribution-intelligence-sharkdp-fd-learnings-core-invariants",
@@ -278195,9 +278200,9 @@
       "title": "Architecture Intelligence: bitterbot-ai-bitterbot-desktop-learnings Core Invariants",
       "repository": "bitterbot-ai-bitterbot-desktop-learnings",
       "source_version": "HEAD",
-      "content_hash": "d12e72439f80cbb9e3823a97310b1484fca71e4087fb56f6a76354f6e039b2d0",
+      "content_hash": "9696d0353802923374df1397dd92e79e0d7a6245b548b5cb084f8c3237ba455f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T19:52:31.866Z"
+      "persisted_at": "2026-11-24T16:54:52.965Z"
     },
     "learn-huggingface-lodestones-kromoss": {
       "learning_id": "learn-huggingface-lodestones-kromoss",
@@ -320218,13 +320223,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-3CHG-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-QHSF-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "bff8060471d24ee27f3653f47d7f0bb43cfea3a56fb7757314b380814cb25f8e",
+      "content_hash": "c1b2819bb3c36492d7da561dd0f5be65bb6b38e9f3145cc056e104ebeaac98a2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T16:36:53.624Z"
+      "persisted_at": "2026-11-24T16:54:53.586Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
@@ -338048,6 +338053,175 @@
       "content_hash": "45668803342ea4da3b79d255df0d54f7048e60a9a9dd4ef6566d2f6d43017b6e",
       "domain_letter": "H",
       "persisted_at": "2026-11-24T16:46:16.792Z"
+    },
+    "learn-github-indexable-inc-blaze": {
+      "learning_id": "learn-github-indexable-inc-blaze",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "indexable-inc/blaze",
+      "repository": "indexable-inc/blaze",
+      "slug": "indexable-inc-blaze",
+      "platform": "github",
+      "source_url": "https://github.com/indexable-inc/blaze",
+      "source_version": "06036d58",
+      "content_hash": "0469ed4d1ad0b61bd916f1cf8682b312995c9c2f6c12bce1ac6d4cd973877ff0",
+      "dossier_path": "07_PROJECT_LEARNING/indexable-inc-blaze-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/indexable-inc-blaze-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 10308,
+          "title": "sota,lir,build): canonicalize non-RPO blocks before SOTA regalloc and preserve u",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-24T16:54:33.654Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-10308": {
+      "learning_id": "rule-10308",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10308,
+      "title": "sota,lir,build): canonicalize non-RPO blocks before SOTA regalloc and preserve u",
+      "source_url": "https://github.com/indexable-inc/blaze",
+      "source_version": "06036d58",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T16:54:33.654Z"
+    },
+    "candidate_directive-sota-lir-build-canonicalize-non-rpo-blocks-before-sota-regalloc-and-preserve-u": {
+      "item_id": "candidate_directive-sota-lir-build-canonicalize-non-rpo-blocks-before-sota-regalloc-and-preserve-u",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QGAM-sota-lir-build-canonicalize-non-rpo-blocks-before-sota-regalloc-and-preserve-u.md",
+      "title": "sota,lir,build): canonicalize non-RPO blocks before SOTA regalloc and preserve u",
+      "repository": "indexable-inc-blaze-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7063a46f32972876e64faa6293b9f136b2dfd05e0b194ad65ff6c47a63fb83a5",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-24T16:54:51.651Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-indexable-inc-blaze-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-indexable-inc-blaze-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-indexable-inc-blaze-quality-verification-intelligence-indexable-inc-blaze-core-i.md",
+      "title": "Quality & Verification Intelligence: indexable-inc/blaze Core Invariants",
+      "repository": "indexable-inc/blaze",
+      "source_version": "06036d58",
+      "content_hash": "79ac49a45da1d0e7d7bc3ae9e0ed27ba5d43fb3cf6c635c421013fbc7962d6c5",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-24T16:54:34.301Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-indexable-inc-blaze": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-indexable-inc-blaze",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-indexable-inc-blaze-adr-subsystem-boundary-modular-decoupling-in-indexable-inc-b.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in indexable-inc/blaze",
+      "repository": "indexable-inc/blaze",
+      "source_version": "06036d58",
+      "content_hash": "82ab40f05f1095bdf8eb94561382fe3fd56f7a4106f6d0797a6b8ab236c6b2e9",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-24T16:54:34.474Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-indexable-inc-blaze": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-indexable-inc-blaze",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/indexable-inc-blaze-verification-protocol-empirical-defect-shield-for-indexable-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for indexable-inc/blaze",
+      "repository": "indexable-inc/blaze",
+      "source_version": "06036d58",
+      "content_hash": "3e327458afda204a99109737206d499d4893e76796ada4a9571455103e05d7e4",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-24T16:54:34.617Z"
+    },
+    "rule-10309": {
+      "learning_id": "rule-10309",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10309,
+      "title": "default OpenAI transcription to gpt-transcribe ahead of the model shutdo",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "a0d01b11",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T16:54:47.757Z"
+    },
+    "candidate_directive-default-openai-transcription-to-gpt-transcribe-ahead-of-the-model-shutdo": {
+      "item_id": "candidate_directive-default-openai-transcription-to-gpt-transcribe-ahead-of-the-model-shutdo",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QDMJ-default-openai-transcription-to-gpt-transcribe-ahead-of-the-model-shutdo.md",
+      "title": "default OpenAI transcription to gpt-transcribe ahead of the model shutdo",
+      "repository": "Bitterbot-AI/bitterbot-desktop",
+      "source_version": "a0d01b11",
+      "content_hash": "bf4dfa831e21183bee6bf7307ae9733cc848d846942231eb0f3ee74a8b251fa8",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T16:54:48.191Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-indexable-inc-blaze-learnings-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-indexable-inc-blaze-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-indexable-inc-blaze-learnings-quality-verification-intelligence-indexable-inc-bl.md",
+      "title": "Quality & Verification Intelligence: indexable-inc-blaze-learnings Core Invariants",
+      "repository": "indexable-inc-blaze-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2d152afdd995ed5b9383b501ad173315ff77b72d93bb24946bef45c7de9194a2",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-24T16:54:51.821Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-indexable-inc-blaze-learnings": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-indexable-inc-blaze-learnings",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-indexable-inc-blaze-learnings-adr-subsystem-boundary-modular-decoupling-in-index.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in indexable-inc-blaze-learnings",
+      "repository": "indexable-inc-blaze-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0d46a723eb74a69e2239126cc940055c997da4058f7507064deefcef11c1850e",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-24T16:54:52.008Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-indexable-inc-blaze-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-indexable-inc-blaze-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/indexable-inc-blaze-learnings-verification-protocol-empirical-defect-shield-for-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for indexable-inc-blaze-learnings",
+      "repository": "indexable-inc-blaze-learnings",
+      "source_version": "HEAD",
+      "content_hash": "aed03ccdc5fee04b281dd48fa3d5ceb6767e3b0f8aa0a0efe338d1a1f82c0f56",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-24T16:54:52.144Z"
+    },
+    "candidate_directive-media-default-openai-transcription-to-gpt-transcribe-ahead-of-the-model-shutdo": {
+      "item_id": "candidate_directive-media-default-openai-transcription-to-gpt-transcribe-ahead-of-the-model-shutdo",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QH6G-media-default-openai-transcription-to-gpt-transcribe-ahead-of-the-model-shutdo.md",
+      "title": "media): default OpenAI transcription to gpt-transcribe ahead of the model shutdo",
+      "repository": "bitterbot-ai-bitterbot-desktop-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4931195298f0f4a9b951251dd04b23e4bcb95b20c3753aafaf8f0a7965de5917",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T16:54:52.795Z"
     }
   },
   "ai-builder-brain": {
