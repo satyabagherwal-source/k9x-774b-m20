@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T18:00:44.637Z",
+  "last_updated": "2026-11-24T18:09:17.247Z",
   "directives": [
     {
       "id": "CD-001",
@@ -50870,11 +50870,11 @@
       "domain_letter": "D"
     },
     {
-      "id": "CD-SHNX",
+      "id": "CD-E5Z0",
       "directive_title": "rust): resolve python calls through annotated parameters and self members",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-SHNX-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-E5Z0-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-24",
@@ -53863,11 +53863,11 @@
       "staged_date": "2026-11-24"
     },
     {
-      "id": "CD-3D73",
+      "id": "CD-E55R",
       "directive_title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
       "source_repo": "zulip-zulip-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-3D73-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-E55R-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-24",
@@ -56315,6 +56315,44 @@
       "source_repo": "tursodatabase-limbo",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-C3F0EE-merge-core-keep-the-program-builder-and-.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-E4EM",
+      "directive_title": "align CNB defaults with the Noble security builder",
+      "source_repo": "goodrain-rainbond-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-E4EM-align-cnb-defaults-with-the-noble-security-builder.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-7A58BE",
+      "directive_title": "align CNB defaults with the Noble security builder",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "goodrain-rainbond",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7A58BE-align-cnb-defaults-with-the-noble-securi.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-REV-493F9F",
+      "directive_title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-493F9F-server-events-dispatch-rerender-dm-statu.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-REV-4EE870",
+      "directive_title": "rust): resolve python calls through annotated parameters and self members",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4EE870-rust-resolve-python-calls-through-annota.md",
       "staged_date": "2026-11-24"
     }
   ]

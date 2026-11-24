@@ -1,14 +1,14 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T18:00:45.207Z",
+  "last_updated": "2026-11-24T18:09:17.940Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-24T16:36:54.164Z",
+      "processed_at": "2026-11-24T18:09:15.773Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-24T16:28:26.716Z",
+      "processed_at": "2026-11-24T18:09:16.764Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3038,7 +3038,7 @@
       "staged_for_review": 0
     },
     "goodrain-rainbond-learnings.md": {
-      "processed_at": "2026-11-17T21:57:34.592Z",
+      "processed_at": "2026-11-24T18:09:14.807Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3848,7 +3848,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 3870,
+  "total_dossiers_evaluated": 3873,
   "total_canonical_promoted": 514,
-  "total_staged_for_review": 2938
+  "total_staged_for_review": 2941
 }

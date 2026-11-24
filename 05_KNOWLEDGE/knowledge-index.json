@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T18:00:45.024Z",
+  "last_updated": "2026-11-24T18:09:17.783Z",
   "total_verified_learnings": 9099,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24820,
+  "total_items": 24823,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "95ac2826261be5c822490e3693a562ae6709c8f33db05b74d1caac8bdaec6da6",
+      "content_hash": "dc47bc8585ef686cdda96bda3de1cb4f912e81ab3712707eb8800933cd3897dd",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T16:28:27.432Z"
+      "persisted_at": "2026-11-24T18:09:17.634Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "d631abba24c2452d36864ed81253c0ed4f03da9ed219031a9b858f84a732b2a4",
+      "content_hash": "c8d414c07be68ebaaaa5b6c2cb9f63c96f5679c8ec75c23bbcce83814307aca0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T16:28:27.558Z"
+      "persisted_at": "2026-11-24T18:09:17.783Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "bbfaa644f5da27aaa31397d3aee73fa81f578a5a89e502590a2181491b7bc4a5",
+      "content_hash": "cb7c3d239379e32f01ff1b7c868bf028c87a16ceda96737fe7e6fe3f25edb700",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T16:36:54.716Z"
+      "persisted_at": "2026-11-24T18:09:16.377Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "22c24e8313dff7819458b444f1fcc4b91154250193f6ae7dcc47d1d7bc181a84",
+      "content_hash": "61017808f9d5c879f1248f17bf4e00a5d6f25c8027dc358f2913c47e91c0c887",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T16:36:54.888Z"
+      "persisted_at": "2026-11-24T18:09:16.566Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -251123,8 +251123,8 @@
       "slug": "goodrain-rainbond",
       "platform": "github",
       "source_url": "https://github.com/goodrain/rainbond",
-      "source_version": "5508cd38",
-      "content_hash": "a0aa2f5d532930e9eb0d74ae180a73f98bf8385d8cee15f9fe1f0621c1bc3c6e",
+      "source_version": "99c65654",
+      "content_hash": "5bf09ff334fb90781f552b2b5719748e50e5ffcc7b6a702ec999862f98c0cb0a",
       "dossier_path": "07_PROJECT_LEARNING/goodrain-rainbond-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/goodrain-rainbond-learnings.md",
       "promoted_rules": [
@@ -251142,6 +251142,11 @@
           "number": 9074,
           "title": "ci(release): add a workflow to build the gateway controller image",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10327,
+          "title": "align CNB defaults with the Noble security builder",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -251149,7 +251154,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T21:56:48.960Z",
+      "verified_at": "2026-11-24T18:09:11.099Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -251203,10 +251208,10 @@
       "relative_path": "08_VERIFICATION/goodrain-rainbond-verification-protocol-empirical-defect-shield-for-goodrain-rai.md",
       "title": "Verification Protocol: Empirical Defect Shield for goodrain/rainbond",
       "repository": "goodrain/rainbond",
-      "source_version": "5508cd38",
-      "content_hash": "ed002df854c7fa278fa531a0a1621bc502d6b3310a34971e5ab17bb155846c4b",
+      "source_version": "99c65654",
+      "content_hash": "1def575261189dce659790869281861a6fdcb92700044e225a5797daec28aa9a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T21:56:49.780Z"
+      "persisted_at": "2026-11-24T18:09:11.965Z"
     },
     "learn-github-seekstorm-seekstorm": {
       "learning_id": "learn-github-seekstorm-seekstorm",
@@ -251303,9 +251308,9 @@
       "title": "Technical Construction Intelligence: goodrain-rainbond-learnings Core Invariants",
       "repository": "goodrain-rainbond-learnings",
       "source_version": "HEAD",
-      "content_hash": "c9aa1afc55cc11b362dceea5d17e4df88eea2e9d4c44c7c61c2134f745005428",
+      "content_hash": "37e47a9e006a271dffcb1bc5d1aa1d972e3525b3d18dbbc5bd132f98add8d071",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T21:57:35.159Z"
+      "persisted_at": "2026-11-24T18:09:15.403Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-goodrain-rainbond-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-goodrain-rainbond-learnings",
@@ -251315,9 +251320,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for goodrain-rainbond-learnings",
       "repository": "goodrain-rainbond-learnings",
       "source_version": "HEAD",
-      "content_hash": "24edf33b56b95d3bd084cb0aa104b30920c4e8df30b687bcbe293cc849078419",
+      "content_hash": "6a17168bef5c6bb19d1b293c248d7a6c154cf1eb47aa90cda3d5c62e550afb3a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T21:57:35.367Z"
+      "persisted_at": "2026-11-24T18:09:15.593Z"
     },
     "domain_intelligence-search-distribution-intelligence-seekstorm-seekstorm-learnings-core-invariants": {
       "item_id": "domain_intelligence-search-distribution-intelligence-seekstorm-seekstorm-learnings-core-invariants",
@@ -256355,9 +256360,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "2f720e26f2faee561c75a3dd8cf8a1323b9e53826bd671d3eafcb90fd68fce44",
+      "content_hash": "2e079f9627d797e60c4d361d966b4bca9935113b30348f4c2b1677b4ead9a036",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T16:28:27.273Z"
+      "persisted_at": "2026-11-24T18:09:17.434Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
@@ -330347,13 +330352,13 @@
       "item_id": "candidate_directive-rust-resolve-python-calls-through-annotated-parameters-and-self-members",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-SHNX-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-E5Z0-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
       "title": "rust): resolve python calls through annotated parameters and self members",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "4872df64d9244d7c10e37d13f41b9a0dd5ea780cd75dcde2617cdde4fc3ee489",
+      "content_hash": "5c4b1dba98fddfc80b07de14c948b32daa0ab5c3811cb99ecefc8d256b86bb0d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T16:28:27.120Z"
+      "persisted_at": "2026-11-24T18:09:17.247Z"
     },
     "learn-github-iziz-libphonenumber-ios": {
       "learning_id": "learn-github-iziz-libphonenumber-ios",
@@ -335307,13 +335312,13 @@
       "item_id": "candidate_directive-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-3D73-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-E55R-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
       "title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "f0c3d030708705c2adcae020da90249384548d14f52c24fc9a7294810cfa649e",
+      "content_hash": "00dc21d12d8e08ed882674d282d46dd80580fa484155e138d7ab4a00fb548ade",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T16:36:54.545Z"
+      "persisted_at": "2026-11-24T18:09:16.194Z"
     },
     "learn-github-xinatian-mroffice": {
       "learning_id": "learn-github-xinatian-mroffice",
@@ -338981,6 +338986,44 @@
       "content_hash": "efa5fa058ab52067c3f1e66550d51873a1cbb3bfb0e285df5a3333f9bbd6f450",
       "domain_letter": "G",
       "persisted_at": "2026-11-24T18:00:44.637Z"
+    },
+    "rule-10327": {
+      "learning_id": "rule-10327",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10327,
+      "title": "align CNB defaults with the Noble security builder",
+      "source_url": "https://github.com/goodrain/rainbond",
+      "source_version": "99c65654",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T18:09:11.099Z"
+    },
+    "candidate_directive-align-cnb-defaults-with-the-noble-security-builder": {
+      "item_id": "candidate_directive-align-cnb-defaults-with-the-noble-security-builder",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-E4EM-align-cnb-defaults-with-the-noble-security-builder.md",
+      "title": "align CNB defaults with the Noble security builder",
+      "repository": "goodrain-rainbond-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8d31746f7f37b8b8d85e9c1b1c40bbd001eb09e7381883ba8a1413c864716e67",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T18:09:15.215Z"
+    },
+    "domain_intelligence-product-intelligence-goodrain-rainbond-core-invariants": {
+      "item_id": "domain_intelligence-product-intelligence-goodrain-rainbond-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-goodrain-rainbond-product-intelligence-goodrain-rainbond-core-invariants.md",
+      "title": "Product Intelligence: goodrain/rainbond Core Invariants",
+      "repository": "goodrain/rainbond",
+      "source_version": "99c65654",
+      "content_hash": "fd69248d4a853f35917d5e8f1a6ced756c494d558072105a71395f872e033fb2",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-24T18:09:11.777Z"
     }
   },
   "ai-builder-brain": {

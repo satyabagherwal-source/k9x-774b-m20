@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T18:00:44.827Z",
-  "total_records": 2559,
+  "last_updated": "2026-11-24T18:09:17.434Z",
+  "total_records": 2560,
   "domains": {
     "A": {
       "total": 22,
@@ -32,7 +32,7 @@
       ]
     },
     "B": {
-      "total": 24,
+      "total": 25,
       "record_ids": [
         "DOM-B-44DC921B",
         "DOM-B-1CC83E41",
@@ -57,7 +57,8 @@
         "domain_intelligence-product-intelligence-meshtastic-meshtastic-android-core-invariants",
         "domain_intelligence-product-intelligence-meshtastic-meshtastic-android-learnings-core-invariants",
         "domain_intelligence-product-intelligence-kube-rs-kube-core-invariants",
-        "domain_intelligence-product-intelligence-kube-rs-kube-learnings-core-invariants"
+        "domain_intelligence-product-intelligence-kube-rs-kube-learnings-core-invariants",
+        "domain_intelligence-product-intelligence-goodrain-rainbond-core-invariants"
       ]
     },
     "C": {
@@ -8374,8 +8375,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "bbfaa644f5da27aaa31397d3aee73fa81f578a5a89e502590a2181491b7bc4a5",
-      "created_at": "2026-11-24T16:36:54.716Z"
+      "content_hash": "cb7c3d239379e32f01ff1b7c868bf028c87a16ceda96737fe7e6fe3f25edb700",
+      "created_at": "2026-11-24T18:09:16.377Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -22312,8 +22313,8 @@
       "title": "Technical Construction Intelligence: goodrain-rainbond-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-goodrain-rainbond-learnings-technical-construction-intelligence-goodrain-rainbon.md",
       "repository": "goodrain-rainbond-learnings",
-      "content_hash": "c9aa1afc55cc11b362dceea5d17e4df88eea2e9d4c44c7c61c2134f745005428",
-      "created_at": "2026-11-17T21:57:35.159Z"
+      "content_hash": "37e47a9e006a271dffcb1bc5d1aa1d972e3525b3d18dbbc5bd132f98add8d071",
+      "created_at": "2026-11-24T18:09:15.403Z"
     },
     "domain_intelligence-search-distribution-intelligence-seekstorm-seekstorm-learnings-core-invariants": {
       "record_id": "domain_intelligence-search-distribution-intelligence-seekstorm-seekstorm-learnings-core-invariants",
@@ -23730,8 +23731,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "2f720e26f2faee561c75a3dd8cf8a1323b9e53826bd671d3eafcb90fd68fce44",
-      "created_at": "2026-11-24T16:28:27.273Z"
+      "content_hash": "2e079f9627d797e60c4d361d966b4bca9935113b30348f4c2b1677b4ead9a036",
+      "created_at": "2026-11-24T18:09:17.434Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",
@@ -42985,6 +42986,15 @@
       "repository": "hf-baidu-ernie-5.5-flash-preview-learnings",
       "content_hash": "26de87c0677942e3aebb8da9dac7df6168e55e43dd2ded67e9bc1fce0a1b7e69",
       "created_at": "2026-11-24T17:43:21.818Z"
+    },
+    "domain_intelligence-product-intelligence-goodrain-rainbond-core-invariants": {
+      "record_id": "domain_intelligence-product-intelligence-goodrain-rainbond-core-invariants",
+      "domain_letter": "B",
+      "title": "Product Intelligence: goodrain/rainbond Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-goodrain-rainbond-product-intelligence-goodrain-rainbond-core-invariants.md",
+      "repository": "goodrain/rainbond",
+      "content_hash": "fd69248d4a853f35917d5e8f1a6ced756c494d558072105a71395f872e033fb2",
+      "created_at": "2026-11-24T18:09:11.777Z"
     }
   }
 }

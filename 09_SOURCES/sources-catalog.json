@@ -2623,10 +2623,10 @@
     "repository": "goodrain/rainbond",
     "platform": "github",
     "sourceUrl": "https://github.com/goodrain/rainbond",
-    "sourceVersion": "5508cd38",
+    "sourceVersion": "99c65654",
     "license": "NOASSERTION",
-    "contentHash": "a0aa2f5d532930e9eb0d74ae180a73f98bf8385d8cee15f9fe1f0621c1bc3c6e",
-    "lastHarvestedAt": "2026-11-17T21:56:49.191Z",
+    "contentHash": "5bf09ff334fb90781f552b2b5719748e50e5ffcc7b6a702ec999862f98c0cb0a",
+    "lastHarvestedAt": "2026-11-24T18:09:11.332Z",
     "learningId": "learn-github-goodrain-rainbond"
   },
   "bee-san-ciphey": {

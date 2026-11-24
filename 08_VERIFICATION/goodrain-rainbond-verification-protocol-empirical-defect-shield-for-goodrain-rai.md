@@ -4,22 +4,22 @@
 {
   "source_repository": "goodrain/rainbond",
   "source_url": "https://github.com/goodrain/rainbond",
-  "source_version": "5508cd38",
+  "source_version": "99c65654",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-17T21:56:49.429Z",
+  "timestamp": "2026-11-24T18:09:11.585Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-goodrain-rainbond",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [goodrain/rainbond](https://github.com/goodrain/rainbond) (Revision: `5508cd38`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-17T21:56:49.429Z`  
+> **Provenance**: Harvested from [goodrain/rainbond](https://github.com/goodrain/rainbond) (Revision: `99c65654`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-24T18:09:11.585Z`  
 > **Learning ID**: `learn-github-goodrain-rainbond`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `goodrain/rainbond` (Commit: `5508cd38`)
+- **Target Repository**: `goodrain/rainbond` (Commit: `99c65654`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/goodrain-rainbond-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/goodrain/rainbond](https://github.com/goodrain/rainbond))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T21:56:48.014Z  
+> **Harvest Timestamp**: 2026-11-24T18:09:10.008Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Rainbond is an open-source container platform that requires no Kubernetes expertise. Its core capabilities are 100% open source.  It abstracts away infrastructure complexity and provides a unified way to deploy and manage business applications, AI-generated projects, open-source AI software, and large language model services. AI helps teams deploy 
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 6305 stars
+- **Stars / Engagement**: 6307 stars
 
 ---
 
@@ -924,6 +924,188 @@ func (s *Server) Stop() {
 
 ```
 
+### Core Architecture Module: `api/handler/vm_snapshot_lifecycle.go`
+```
+package handler
+
+import (
+	"context"
+	"errors"
+
+	ctxutil "github.com/goodrain/rainbond/api/util/ctx"
+	"github.com/goodrain/rainbond/pkg/vmrestore"
+	"github.com/jinzhu/gorm"
+	kubevirtv1 "kubevirt.io/api/core/v1"
+)
+
+func (s *ServiceAction) snapshotService(ctx context.Context, serviceID string) (*vmrestore.SnapshotEngine, vmrestore.Scope, error) {
+	if serviceID == "" {
+		return nil, vmrestore.Scope{}, vmrestore.ErrInternalAttribute
+	}
+	if s.snapshotEngineFactory != nil {
+		engine, scope, err := s.snapshotEngineFactory(serviceID)
+		if err == nil {
+			err = snapshotContextScope(ctx, serviceID, scope)
+		}
+		if err == nil && engine == nil {
+			err = vmrestore.ErrReferenceUnavailable
+		}
+		return engine, scope, err
+	}
+	scope, err := s.snapshotScope(ctx, serviceID)
+	if err != nil {
+		return nil, scope, err
+	}
+	manager := s.getDBManager()
+	if s.kubevirtClient == nil || s.kubeClient == nil || manager.DB() == nil {
+		return nil, scope, vmrestore.ErrReferenceUnavailable
+	}
+	store := vmrestore.NewStore(manager.DB())
+	dynamicClient := s.kubevirtClient.DynamicClient()
+	resolver := vmrestore.NewResolver(store, s.kubeClient, dynamicClient)
+	backend := vmrestore.NewKubeSnapshotBackend(resolver, s.kubevirtClient)
+	engine := vmrestore.NewSnapshotEngine(store, backend)
+	engine.Identity = &vmrestore.SnapshotFirmwareMaterializer{Store: store, Dynamic: dynamicClient, ProveStartup: func(ctx context.Context, scope vmrestore.Scope, vm *kubevirtv1.VirtualMachine, firmware string) (vmrestore.RestoreStartupPolicy, error) {
+		selection, err := store.ReadRestoredRuntimeSelection(ctx, resolver, scope)
+		if err != nil {
+			return vmrestore.RestoreStartupPolicy{}, err
+		}
+		if selection != nil {
+			if selection.Startup.FirmwareUUID != firmware {
+				return vmrestore.RestoreStartupPolicy{}, vmrestore.ErrConflict
+			}
+			wanted, err := vmrestore.ProjectRestoredRuntime(ctx, s.kubeClient, vm, *selection)
+			if err != nil {
+				return vmrestore.RestoreStartupPolicy{}, err
+			}
+			if !vmrestore.RuntimeVMMatches(vm, wanted) {
+				return vmrestore.RestoreStartupPolicy{}, vmrestore.ErrConflict
+			}
+			return selection.Startup, nil
+		}
+		return store.ReadVMStartup(ctx, s.kubeClient, scope, vm)
+	}}
+	return engine, scope, nil
+}
+
+// snapshotScope resolves ownership without depending on the Kubernetes runtime.
+func (s *ServiceAction) snapshotScope(ctx context.Context, serviceID string) (vmrestore.Scope, error) {
+	scope := vmrestore.Scope{}
+	manager := s.getDBManager()
+	if manager == nil {
+		return scope, vmrestore.ErrReferenceUnavailable
+	}
+	service, err := manager.TenantServiceDao().GetServiceByID(serviceID)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			err = vmrestore.ErrNotFound
+		}
+		return scope, err
+	}
+	if service == nil || service.ServiceID != serviceID || !service.IsVM() {
+		return scope, vmrestore.ErrNotFound
+	}
+	if err := snapshotContextScope(ctx, serviceID, vmrestore.Scope{TenantID: service.TenantID, ServiceID: service.ServiceID}); err != nil {
+		return scope, err
+	}
+	tenant, err := manager.TenantDao().GetTenantByUUID(service.TenantID)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			err = vmrestore.ErrNotFound
+		}
+		return scope, err
+	}
+	if tenant == nil || tenant.UUID != service.TenantID || tenant.Namespace == "" {
+		return scope, vmrestore.ErrCorrupt
+	}
+	scope = vmrestore.Scope{TenantID: service.TenantID, ServiceID: service.ServiceID, Namespace: tenant.Namespace}
+	return scope, nil
+}
+
+// PrepareVMSnapshot reserves a bounded operation even when the VM is Running.
+func (s *ServiceAction) PrepareVMSnapshot(ctx context.Context, serviceID string, request *VMSnapshotRequest) (*VMSnapshotStatus, error) {
+	if request == nil {
+		return nil, vmrestore.ErrSnapshotInvalid
+	}
+	engine, scope, err := s.snapshotService(ctx, serviceID)
+	if err != nil {
+		return nil, err
+	}
+	status, err := engine.Prepare(ctx, scope, *request)
+	if err != nil {
+		return nil, err
+	}
+	return &VMSnapshotStatus{SnapshotName: status.SnapshotName, SnapshotOperationDTO: &status}, nil
+}
+
+// ListVMSnapshots returns only safe managed Region DTOs.
+func (s *ServiceAction) ListVMSnapshots(ctx context.Context, serviceID string, page, pageSize int) (vmrestore.SnapshotListDTO, error) {
+	engine, scope, err := s.snapshotService(ctx, serviceID)
+	if err != nil {
+		return vmrestore.SnapshotListDTO{}, err
+	}
+	return engine.List(ctx, scope, page, pageSize)
+}
+
+// GetVMSnapshot never ACKs, starts a VM, releases a lock or performs cleanup.
+func (s *ServiceAction) GetVMSnapshot(ctx context.Context, serviceID, name string) (vmrestore.SnapshotOperationDTO, error) {
+	engine, scope, err := s.snapshotService(ctx, serviceID)
+	if err != nil {
+		return vmrestore.SnapshotOperationDTO{}, err
+	}
+	return engine.ByName(ctx, scope, name)
+}
+
+// VMSnapshotAction dispatches only explicit bounded commands, not arbitrary patches.
+func (s *ServiceAction) VMSnapshotAction(ctx context.Context, serviceID, name, action string, request vmrestore.SnapshotActionRequest) (vmrestore.SnapshotOperationDTO, error) {
+	engine, scope, err := s.snapshotService(ctx, serviceID)
+	if err != nil {
+		return vmrestore.SnapshotOperationDTO{}, err
+	}
+	current, err := engine.ByName(ctx, scope, name)
+	if err != nil {
+		return vmrestore.SnapshotOperationDTO{}, err
+	}
+	if request.OperationID != "" && request.OperationID != current.OperationID || request.CoreHash != "" && request.CoreHash != current.CoreHash {
+		return vmrestore.SnapshotOperationDTO{}, vmrestore.ErrConflict
+	}
+	request.OperationID = current.OperationID
+	request.CoreHash = current.CoreHash
+	switch action {
+	case "halt":
+		return engine.Halt(ctx, scope, request)
+	case "create":
+		return engine.Create(ctx, scope, request)
+	case "resume":
+		return engine.Resume(ctx, scope, request)
+	case "finalize":
+		return engine.Finalize(ctx, scope, request)
+	case "cancel":
+		return engine.Cancel(ctx, scope, request)
+	case "delete":
+		return engine.Delete(ctx, scope, request)
+	default:
+		return vmrestore.SnapshotOperationDTO{}, vmrestore.ErrSnapshotInvalid
+	}
+}
+
+// snapshotContextScope rechecks the middleware tenant against DB-owned service identity.
+// Legacy internal callers supply no HTTP context and still resolve their scope from DB.
+func snapshotContextScope(ctx context.Context, serviceID string, scope vmrestore.Scope) error {
+	if scope.ServiceID != serviceID || scope.TenantID == "" {
+		return vmrestore.ErrInternalAttribute
+	}
+	if value := ctx.Value(ctxutil.ContextKey("tenant_id")); value != nil {
+		tenantID, ok := value.(string)
+		if !ok || tenantID == "" || tenantID != scope.TenantID {
+			return vmrestore.ErrInternalAttribute
+		}
+	}
+	return nil
+}
+
+```
+
 ### Core Architecture Module: `api/util/bcode/api_gateway.go`
 ```
 package bcode
@@ -1090,135 +1272,6 @@ var (
 
 ```
 
-### Core Architecture Module: `api/util/bcode/bcode.go`
-```
-package bcode
-
-import (
-	"fmt"
-	"strconv"
-	"strings"
-
-	"github.com/jinzhu/gorm"
-	"github.com/pkg/errors"
-)
-
-var (
-	// OK means everything si good.
-	OK = new(200, 200)
-	// StatusFound means the requested resource resides temporarily under a different URI.
-	StatusFound = new(302, 302)
-	// BadRequest means the request could not be understood by the server due to malformed syntax.
-	// The client SHOULD NOT repeat the request without modifications.
-	BadRequest = new(400, 400)
-	// NotFound means the server has not found anything matching the request.
-	NotFound = new(404, 404)
-	// ServerErr means  the server encountered an unexpected condition which prevented it from fulfilling the request.
-	ServerErr = new(500, 500)
-
-	// TokenInvalid -
-	TokenInvalid = new(400, 401)
-)
-
-// Coder has ability to get Code, msg or detail from error.
-type Coder interface {
-	// Status Code
-	GetStatus() int
-	// business Code
-	GetCode() int
-	Error() string
-	Equal(err error) bool
-}
-
-var (
-	codes = make(map[int]struct{})
-)
-
-func new(status, code int) Coder {
-	if _, ok := codes[code]; ok {
-		panic(fmt.Sprintf("bcode %d already exists", code))
-	}
-	codes[code] = struct{}{}
-	return newCode(status, code, "")
-}
-
-func newByMessage(status, code int, message string) Coder {
-	if _, ok := codes[code]; ok {
-		panic(fmt.Sprintf("bcode %d already exists", code))
-	}
-	codes[code] = struct{}{}
-	return newCode(status, code, message)
-}
-
-// Code business a bussiness Code
-type Code struct {
-	Status  int    `json:"status"`
-	Code    int    `json:"code"`
-	Message string `json:"msg"`
-}
-
-func newCode(status, code int, message string) Coder {
-	return &Code{Status: status, Code: code, Message: message}
-}
-
-// GetStatus returns the Status Code
-func (c *Code) GetStatus() int {
-	return c.Status
-}
-
-// GetCode returns the business Code
-func (c *Code) GetCode() int {
-	return c.Code
-}
-
-func (c *Code) Error() string {
-	if c.Message != "" {
-		return c.Message
-	}
-	return strconv.FormatInt(int64(c.Code), 10)
-}
-
-// Equal -
-func (c *Code) Equal(err error) bool {
-	obj := Err2Coder(err)
-	return c.Code == obj.GetCode()
-}
-
-// Err2Coder converts the given err to Coder.
-func Err2Coder(err error) Coder {
-	if err == nil {
-		return OK
-	}
-	coder, ok := errors.Cause(err).(Coder)
-	if ok {
-		return coder
-	}
-	if err == gorm.ErrRecordNotFound {
-		return NotFound
-	}
-	return Str2Coder(err.Error())
-}
-
-// Str2Coder converts the given str to Coder.
-func Str2Coder(str string) Coder {
-	str = strings.TrimSpace(str)
-	if str == "" {
-		return OK
-	}
-	i, err := strconv.Atoi(str)
-	if err != nil {
-		return ServerErr
-	}
-	return newCode(400, i, "")
-}
-
-// NewBadRequest -
-func NewBadRequest(msg string) Coder {
-	return newCode(400, 400, msg)
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1248,301 +1301,292 @@ func NewBadRequest(msg string) Coder {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cfba2cee` (2026-11-17)
-**Commit Message**: ci(release): add a workflow to build the gateway controller image (#2757)
+### Incident Patch 1: `dd66fcf3` (2026-11-24)
+**Commit Message**: fix: align CNB defaults with the Noble security builder (#2761)
 
-Signed-off-by: yangkaa <[REDACTED_EMAIL]>
+Signed-off-by: Qi Zhang <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/release-v6-gateway-controller.yml` (added, +138/-0)
+**File**: `builder/build/cnb/build_params.go` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,138 @@
-+name: "release-v6-gateway-controller"
-+
-+# 构建 rbd-gateway 使用的 apisix-ingress-controller 镜像（goodrain/apisix-ingress-controller 的发布分支），
-+# 推到阿里云 goodrain/apisix-ingress-controller:<tag> 和 <tag>-esgz。rainbond-chart 按 tag 引用它。
-+# 覆盖已有 tag 前，先把旧镜像复制到 <tag>-<backup_suffix> 和 <tag>-esgz-<backup_suffix>，备份失败就不构建。
-+on:
-+  workflow_dispatch:
-+    inputs:
-+      ref:
-+        description: 'goodrain/apisix-ingress-controller 的分支或 commit'
-+        required: true
-+        default: 'release/v1.8.4'
-+      tag:
-+        description: '要推送的镜像 tag（不带 -esgz）'
-+        required: true
-+        default: 'v1.8.4-upsert-e26e824'
-+      backup_suffix:
-+        description: '覆盖前旧镜像的备份后缀，例如 bak-20261117'
-+        required: true
-+
-+permissions:
-+  contents: read
-+
-+jobs:
-+  build:
-+    runs-on: ubuntu-latest
-+    environment: release-v6
-+    timeout-minutes: 60
-+    env:
-+      REPO: registry.cn-hangzhou.aliyuncs.com/goodrain/apisix-ingress-controller
-+      TAG: ${{ inputs.tag }}
-+      BACKUP_SUFFIX: ${{ inputs.backup_suffix }}
-+    steps:
-+      - name: Validate inputs
-+        run: |
-+          [[ "$TAG" =~ ^v[0-9A-Za-z._-]+$ && "$TAG" != *-esgz ]] || { echo "::error::invalid tag $TAG"; exit 1; }
-+          [[ "$BACKUP_SUFFIX" =~ ^[0-9A-Za-z._-]+$ ]] || { echo "::error::invalid backup suffix"; exit 1; }
-+
-+      - name: Checkout controller source
-+        uses: actions/checkout@v4
-+        with:
-+          repository: goodrain/apisix-ingress-controller
-+          ref: ${{ inputs.ref }}
-+          persist-credentials: false
-+
-+      - name: Read source revision
-+        id: source
-+        run: |
-+          sha=$(git rev-parse HEAD)
-+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
-+          echo "version=${TAG#v}-${sha:0:7}" >> "$GITHUB_OUTPUT"
-+
-+      - name: Set up QEMU
-+        uses: docker/setup-qemu-action@v3
-+
-+      - name: Set up Docker Buildx
-+        uses: docker/setup-buildx-action@v3
-+
-+      - name: Login to Aliyun Container Registry
-+        uses: docker/login-action@v3
-+        with:
-+          registry: registry.cn-hangzhou.aliyuncs.com
-+          username: ${{ secrets.DOMESTIC_DOCKER_USERNAME }}
-+          password: ${{ secrets.DOMESTIC_DOCKER_PASSWORD }}
-+
-+      - name: Back up the current images
-+        timeout-minutes: 10
-+        run: |
-+          set -euo pipefail
-+          digest() { docker buildx imagetools inspect "$1" --format '{{json .Manifest}}' | python3 -c 'import sys,json;print(json.load(sys.stdin)["digest"])'; }
-+          for t in "$TAG" "$TAG-esgz"; do
-+            if ! docker buildx imagetools inspect "$REPO:$t" >/dev/null 2>&1; then
-+              echo "$REPO:$t does not exist, nothing to back up"
-+              continue
-+            fi
-+            backup="$t-$BACKUP_SUFFIX"
-+            if docker buildx imagetools inspect "$REPO:$backup" >/dev/null 2>&1; then
-+              echo "::error::$REPO:$backup already exists; pick another backup_suffix"
-+              exit 1
-+            fi
-+            src=$(digest "$REPO:$t")
-+            docker buildx imagetools create -t "$REPO:$backup" "$REPO@$src"
-+            [[ "$(digest "$REPO:$backup")" == "$src" ]] || { echo "::error::backup digest mismatch for $t"; exit 1; }
-+            echo "backed up $REPO:$t ($src) -> $REPO:$backup" | tee -a "$GITHUB_STEP_SUMMARY"
-+          done
-+
-+      - name: Build and push
-+        uses: docker/build-push-action@v6
-+        with:
-+          context: .
-+          platforms: linux/amd64,linux/arm64
-+          push: true
-+          provenance: false
-+          tags: ${{ env.REPO }}:${{ inputs.tag }}
-+          build-args: |
-+            VERSION=${{ steps.source.outputs.version }}
-+            GIT_SHA=${{ steps.source.outputs.sha }}
-+
-+      - name: Convert to eStargz and push
-+        run: |
-+          echo "FROM $REPO:$TAG" > "$RUNNER_TEMP/Dockerfile.esgz"
-+          docker buildx build -f "$RUNNER_TEMP/Dockerfile.esgz" \
-+            --platform linux/amd64,linux/arm64 \
-+            --provenance=false \
-+            --output type=image,push=true,oci-mediatypes=true,compression=estargz,force-compression=true \
-+            -t "$REPO:$TAG-esgz" \
-+            "$RUNNER_TEMP"
-+
-+      - name: Verify revision and eStargz layers
-+        env:
-+          SHA: ${{ steps.source.outputs.sha }}
-+        run: |
-+          set -euo pipefail
-+          for t in "$TAG" "$TAG-esgz"; do
-+            docker buildx imagetools inspect "$REPO:$t" --format '{{json .Image}}' | python3 -c '
-+          import sys, json
-+          sha = sys.argv[1]
-+          images = json.load(sys.stdin)
-+          assert set(images) == {"linux/amd64", "linux/arm64"}, images.keys()
-+          for platform, image in images.items():
-+              rev = image["config"]["Labels"]["org.opencontainers.image.revision"]
-+              assert rev == sha, (platform, rev)
-+          print("revision ok", sorted(images))' "$SHA"
-+          done
-+          docker buildx imagetools inspect --raw "$REPO:$TAG-esgz" | python3 -c '
-+          import json
+@@ -12,7 +12,7 @@ import (
+ )
+ 
+ const (
+-	defaultCNBMavenVersion     = "3.9.14"
++	defaultCNBMavenVersion     = "3.10.0"
+ 	defaultCNBComposerVersion  = "2.7.9"
+ 	pythonPackageManagerPip    = "pip"
+ 	pythonPackageManagerPipenv = "pipenv"
+```
+
+**File**: `builder/build/cnb/build_params_test.go` (modified, +4/-4)
+```diff
+@@ -21,8 +21,8 @@ func TestValidateSupportedBuildParamsPinsJavaMavenVersion(t *testing.T) {
+ 	if err := validateSupportedBuildParams(re); err != nil {
+ 		t.Fatalf("validateSupportedBuildParams returned error: %v", err)
+ 	}
+-	if got := re.BuildEnvs["BUILD_RUNTIMES_MAVEN"]; got != "3.9.14" {
+-		t.Fatalf("expected BUILD_RUNTIMES_MAVEN to be pinned to 3.9.14, got %q", got)
++	if got := re.BuildEnvs["BUILD_RUNTIMES_MAVEN"]; got != "3.10.0" {
++		t.Fatalf("expected BUILD_RUNTIMES_MAVEN to be pinned to 3.10.0, got %q", got)
+ 	}
+ 	if got := re.BuildEnvs["BP_JAVA_APP_SERVER"]; got != "tomcat" {
+ 		t.Fatalf("expected BP_JAVA_APP_SERVER=tomcat, got %q", got)
+@@ -41,8 +41,8 @@ func TestValidateSupportedBuildParamsSetsDefaultJavaMavenVersion(t *testing.T) {
+ 	if err := validateSupportedBuildParams(re); err != nil {
+ 		t.Fatalf("validateSupportedBuildParams returned error: %v", err)
+ 	}
+-	if got := re.BuildEnvs["BUILD_RUNTIMES_MAVEN"]; got != "3.9.14" {
+-		t.Fatalf("expected default BUILD_RUNTIMES_MAVEN=3.9.14, got %q", got)
++	if got := re.BuildEnvs["BUILD_RUNTIMES_MAVEN"]; got != "3.10.0" {
++		t.Fatalf("expected default BUILD_RUNTIMES_MAVEN=3.10.0, got %q", got)
+ 	}
+ }
+ 
+```
+
+**File**: `builder/build/cnb/lang_java_test.go` (modified, +2/-2)
+```diff
+@@ -47,8 +47,8 @@ func TestJavaLanguageConfigAnnotationsAndProcfile(t *testing.T) {
+ 	if annotations["cnb-bp-maven-additional-build-arguments"] != "-DskipTests" {
+ 		t.Fatalf("expected maven additional build arguments, got %q", annotations["cnb-bp-maven-additional-build-arguments"])
+ 	}
+-	if annotations["cnb-bp-maven-version"] != "3.9.14" {
+-		t.Fatalf("expected fixed cnb-bp-maven-version=3.9.14, got %q", annotations["cnb-bp-maven-version"])
++	if annotations["cnb-bp-maven-version"] != "3.10.0" {
++		t.Fatalf("expected fixed cnb-bp-maven-version=3.10.0, got %q", annotations["cnb-bp-maven-version"])
+ 	}
+ 	if annotations["cnb-bp-maven-built-module"] != "service-a" {
+ 		t.Fatalf("expected cnb-bp-maven-built-module=service-a, got %q", annotations["cnb-bp-maven-built-module"])
+```
+
+**File**: `builder/build/cnb/lang_static.go` (modified, +1/-1)
+```diff
+@@ -48,7 +48,7 @@ func (s *staticConfig) InjectMirrorConfig(re *build.Request) error {
+ 
+ // CustomOrder returns nginx-only buildpack order for static projects.
+ func (s *staticConfig) CustomOrder(re *build.Request) []orderBuildpack {
+-	version := util.GetenvDefault("CNB_NGINX_BUILDPACK_VERSION", "1.0.12")
++	version := util.GetenvDefault("CNB_NGINX_BUILDPACK_VERSION", "1.3.8")
+ 	return []orderBuildpack{
+ 		{ID: "paketo-buildpacks/nginx", Version: version},
+ 	}
+```
+
+**File**: `pkg/cleanup/kubeidentity/platform_helper_references_test.go` (modified, +1/-1)
+```diff
+@@ -25,7 +25,7 @@ func TestPlatformDefaultsRemainReferencedWithoutActiveBuilds(t *testing.T) {
+ 		t.Fatal("default configuration incomplete")
+ 	}
+ 	joined := "\n" + strings.Join(result.Images, "\n") + "\n"
+-	for _, image := range []string{"goodrain.me/runner:latest-amd64", "goodrain.me/builder:latest-arm64", "goodrain.me/ubuntu-noble-builder:0.0.98", "goodrain.me/run-jammy-full:0.1.141"} {
++	for _, image := range []string{"goodrain.me/runner:latest-amd64", "goodrain.me/builder:latest-arm64", "goodrain.me/ubuntu-noble-builder:0.0.98-security.1", "goodrain.me/run-jammy-full:0.1.141"} {
+ 		if !strings.Contains(joined, "\n"+image+"\n") {
+ 			t.Fatal("required build image missing", image)
+ 		}
+```
+
+**File**: `util/constants/helper_images.go` (modified, +1/-1)
+```diff
+@@ -3,7 +3,7 @@ package constants
+ // Shared helper identities keep runtime defaults and reference protection aligned.
+ const (
+ 	// CNBBuilderImageName is the internal CNB builder image and version.
+-	CNBBuilderImageName = "ubuntu-noble-builder:0.0.98"
++	CNBBuilderImageName = "ubuntu-noble-builder:0.0.98-security.1"
+ 	// CNBRunImageName is the internal CNB run image and version.
+ 	CNBRunImageName = "ubuntu-noble-run:0.0.73"
+ 	// PHPCNBBuilderImageName is the PHP builder image and version.
 ```
 
 ---
 
-### Incident Patch 2: `5db94d70` (2026-11-17)
-**Commit Message**: ci(release): build standalone natively and sync to Aliyun with retries (#2755)
+### Incident Patch 2: `83de9436` (2026-11-24)
+**Commit Message**: fix(builder): 镜像推送重试时使用新的 tracker 并增加超时 (#2760)
+
+ImagePush 重试时复用同一个 InMemoryTracker。第一次推送失败后，未完成的层
+仍标记为上传中，重试时 containerd 返回 push is on-going，content.OpenWriter
+无限等待；推送又没有截止时间，分享任务会一直停在同步中。
+
+- 每次尝试创建新的 tracker 和 resolver
+- 整个推送设置截止时间（timeout 单位为分钟，保底 30 分钟）
+- 每次失败都把错误写入 chaos 日志和事件日志
+- 去掉重试前删除目标镜像标签的操作
 
 Signed-off-by: yangkaa <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/release-v6-standalone.yml` (modified, +156/-38)
+**File**: `builder/sources/image_containerd_client.go` (modified, +65/-44)
 ```diff
-@@ -33,68 +33,186 @@ on:
+@@ -40,6 +40,15 @@ import (
  
- env:
-   VERSION: ${{ inputs.version }}
--  
+ type containerdImageCliFactory struct{}
+ 
++const (
++	// imagePushAttempts 每种协议下的推送尝试次数
++	imagePushAttempts = 3
++	// imagePushRetryDelay 两次推送尝试之间的等待时间
++	imagePushRetryDelay = 5 * time.Second
++	// minImagePushTimeout 单次 ImagePush 的最短截止时间
++	minImagePushTimeout = 30 * time.Minute
++)
 +
-+# Each architecture builds on its own native runner (no QEMU) and pushes only to
-+# Docker Hub. Aliyun receives the image afterwards through hack/release/sync-image.sh,
-+# which bounds every registry call and retries it, so a stalled Aliyun upload can
-+# no longer hang the job for hours or force a rebuild.
- jobs:
--  standalone:
--    runs-on: ubuntu-latest
-+  build:
-+    runs-on: ${{ matrix.arch == 'amd64' && 'ubuntu-latest' || 'ubuntu-24.04-arm' }}
-     environment: release-v6
-+    timeout-minutes: 40
-+    strategy:
-+      matrix:
-+        arch: [amd64, arm64]
-+        exclude:
-+          - arch: ${{ inputs.platforms == 'linux/amd64' && 'arm64' || 'none' }}
-     steps:
-       - name: Checkout repository
--        uses: actions/checkout@v3
-+        uses: actions/checkout@v4
-         with:
-           repository: goodrain/rainbond-console
-           ref: ${{ inputs.branch }}
--      
--      # - name: Free Disk Space (Ubuntu)
--      #   uses: jlumbroso/free-disk-space@main
--      #   with:
--      #     tool-cache: false
--      #     android: true
--      #     dotnet: true
--      #     haskell: true
--      #     large-packages: true
--      #     docker-images: true
--      #     swap-storage: true
+ func (f containerdImageCliFactory) NewClient(endpoint string, timeout time.Duration) (ImageClient, error) {
+ 	var (
+ 		containerdCli *containerd.Client
+@@ -351,21 +360,31 @@ func (c *containerdImageCliImpl) ImagePush(image, user, pass string, logger even
+ 		}
+ 	}
+ 
+-	NewTracker := docker.NewInMemoryTracker()
+-	options := docker.ResolverOptions{
+-		Tracker: NewTracker,
++	// 整个推送设置截止时间。containerd 的推送在远端异常时可能无限等待，
++	// 没有截止时间会让分享任务永远停在“同步中”。timeout 单位为分钟，
++	// 与 docker 实现一致；部分调用方传入的值较小，这里保底 30 分钟，避免误伤慢速推送。
++	pushTimeout := time.Duration(timeout) * time.Minute
++	if pushTimeout < minImagePushTimeout {
++		pushTimeout = minImagePushTimeout
+ 	}
++	pushCtx, cancel := context.WithTimeout(ctx, pushTimeout)
++	defer cancel()
++	scope := fmt.Sprintf("repository:%s:%s", named.Name(), "push")
++
++	// pushOnce 每次调用都使用全新的 tracker 和 resolver。
++	// 共用 tracker 时，上一次失败会把未完成的层留在“上传中”状态，
++	// 重试时 containerd 会认为该层仍在被其他推送上传，从而无限等待。
++	pushOnce := func(scheme string) error {
++		tracker := docker.NewInMemoryTracker()
++		ongoing := newPushJobs(tracker)
++		opts := hostOptions
++		opts.DefaultScheme = scheme
++		resolver := docker.NewResolver(docker.ResolverOptions{
++			Tracker: tracker,
++			Hosts:   config.ConfigureHosts(pushCtx, opts),
++		})
+ 
+-	ongoing := newPushJobs(NewTracker)
 -
--      - name: Set up QEMU
--        uses: docker/setup-qemu-action@v3
- 
-       - name: Set up Docker Buildx
-         uses: docker/setup-buildx-action@v3
- 
--      - name: Pull Amd64 Docker image
--        run: |
--          ARCH=amd64 VERSION=${{ env.VERSION }} sh standalone/images-package.sh
-+      - name: Package k3s system images
-+        timeout-minutes: 15
-+        env:
-+          ARCH: ${{ matrix.arch }}
-+        run: sh standalone/images-package.sh
- 
--      - name: Pull Arm64 Docker image
--        run: |
--          if [[ "${{ inputs.platforms }}" == "linux/amd64,linux/arm64" ]]; then
--            ARCH=arm64 VERSION=${{ env.VERSION }} sh standalone/images-package.sh
--          fi
--      
-       - name: Login to Docker Hub
-         uses: docker/login-action@v3
-         with:
-           username: ${{ secrets.DOCKER_USERNAME }}
-           password: ${{ secrets.DOCKER_PASSWORD }}
- 
--      - name: Login to Aliyun Container Registry
--        uses: docker/login-action@v3
--        with:
--          registry: registry.cn-hangzhou.aliyuncs.com
--          username: ${{ secrets.DOMESTIC_DOCKER_USERNAME }}
--          password: ${{ secrets.DOMESTIC_DOCKER_PASSWORD }}
+-	var pushFunc = func(scheme string) error {
+-		// 配置指定协议
+-		hostOptions.DefaultScheme = scheme
+-		options.Hosts = config.ConfigureHosts(ctx, hostOptions)
+-		resolver := docker.NewResolver(options)
 -
--      - name: Build and push
-+      # Unchanged layers come from the registry cache with their original
-+      # digests, so Docker Hub and Aliyun already hold them and only changed
-+      # layers are uploaded. The base stage clones the latest chart and is
-+      # always rebuilt so a cached chart is never shipped.
-+      - name: Build and push to Docker Hub
-+        id: build
-         uses: docker/build-push-action@v6
-         with:
--          platforms: ${{ inputs.platforms }}
-+          platforms: linux/${{ matrix.arch }}
-           build-args: |
-             VERSION=${{ env.VERSION }}
-           context: .
-           file: standalone/Dockerfile
-           push: true
-           provenance: false
-+          no-cache-filters: base
-+          cache-from: type=registry,ref=rainbond/rainbond:buildcache-standalone-${{ matrix.arch }}-${{ hashFiles('standalone/**') }}
-+          cache-to: type=registry,ref=rainbond/rainbond:buildcache-standalone-${{ matrix.arch }}-${{ hashFiles('standalone/**') }},mode=max,image-manifest=true,oci-mediatypes=true,ignore-error=true
-           tags: |
--            rainbond/rainbond:${{ env.VERSION }}-k3s
--            registry.cn-hangzhou.aliyuncs.com/goodrain/rainbond:${{ env.VERSION }}-k3s
-+            rainbond/rainbond:${{ env.VERSION }}-k3s-${{ matrix.arch }}
+-		// 镜像推送任务
+-		eg, ctx := errgroup.WithContext(ctx)
++		eg, egCtx := errgroup.WithContext(docker.WithScope(pushCtx, scope))
+ 		doneCh := make(chan struct{})
+ 
+ 		eg.Go(func() error {
+@@ -374,32 +393,10 @@ func (c *containerdImageCliImpl) ImagePush(image, user, pass string, logger even
+ 				ongoing.add(remotes.MakeRefKey(ctx, desc))
+ 				return nil, nil
+ 			})
+-
+-			ropts := []containerd.RemoteOpt{
++			return c.client.Push(egCtx, reference, desc,
+ 				containerd.WithResolver(resolver),
+ 				containerd.WithImageHandler(jobHandler),
+-			}
+-
+-			// 尝试多次推送，确保清理缓存后重新拉取并推送
+-			for attempts := 0; attempts < 3; attempts++ {
+-				// 从 image 中提取仓库名称，使用 Name() 获取
+-				repository := named.Name() // 使用 .Name() 获取仓库路径
+-				// 使用 WithScope 设置作用域，采用 repository:镜像名称:操作类型 格式
+-				scope := fmt.Sprintf("repository:%s:%s", repository, "push") // 构造作用域
+-				ctx := namespaces.WithNamespace(context.Background(), Namespace)
+-				ctx = docker.WithScope(ctx, scope)
+-				if err := c.client.Push(ctx, reference, desc, ropts...); err != nil {
+-					if attempts < 2 {
+-						printLog(logger, "warn", fmt.Sprintf("推送失败，重试中... (%d/3)", attempts+1), map[string]string{"step": "pushimage"})
+-						_ = c.client.ImageService().Delete(ctx, reference) // 清理缓存镜像
+-						time.Sleep(5 * time.Second)
+-						continue
+-					}
+-					return errors.Wrap(err, "推送过程中发生错误")
+-				}
+-				break
+-			}
+-			return nil
++			)
+ 		})
+ 
+ 		// 进度显示任务
+@@ -408,7 +405,6 @@ func (c *containerdImageCliImpl) ImagePush(image, user, pass string, logger even
+ 			defer ticker.Stop()
+ 			start := time.Now()
+ 			done := false
+-
+ 			for {
+ 				select {
+ 				case <-ticker.C:
+@@ -418,25 +414,50 @@ func (c *containerdImageCliImpl) ImagePush(image, user, pass string, logger even
+ 					}
+ 				case <-doneCh:
+ 					done = true
+-				case <-ctx.Done():
++				case <-egCtx.Done():
+ 					done = true
+ 				}
+ 			}
+ 		})
+-
+-		// 等待所有 goroutine 完成
+ 		return eg.Wait()
+ 	}
+ 
++	pushWithRetry := func(scheme string) error {
++		var lastErr error
++		for attempt := 1; attempt <= imagePushAttempts; attempt++ {
++			lastErr = pushOnce(scheme)
++			if lastErr == nil {
++				return nil
++			}
++			logrus.Warnf("push image %s over %s failed (attempt %d/%d): %v", reference, scheme, attempt, imagePushAttempts, lastErr)
++			if pushCtx.Err() != nil {
++				return lastErr
++			}
++			if attempt < imagePushAttempts {
++				printLog(logger, "warn", fmt.Sprintf("推送失败，重试中... (%d/%d)：%s", attempt, imagePushAttempts, lastErr.Error()), map[string]string{"step": "pushimage"})
++				select {
++				case <-time.After(imagePushRetryDelay):
++				case <-pushCtx.Done():
++					return lastErr
++				}
++			}
++		}
++		return lastErr
++	}
 +
-+      - name: Save image digest
-+        env:
-+          IMAGE_DIGEST: ${{ steps.build.outputs.digest }}
-+        run: printf '%s\n' "$IMAGE_DIGEST" > "$RUNNER_TEMP/image-digest"
-+
-+      - name: Upload image digest
-+        uses: actions/upload-artifact@v4
-+        with:
-+          name: standalone-digest-${{ matrix.arch }}
-+          path: ${{ runner.temp }}/image-digest
-+          if-no-files-found: error
-+          overwrite: true
-+
-+  sync-aliyun:
-+    needs: build
-+    runs-on: ubuntu-latest
-+    environment: release-v6
-+    timeout-minutes: 60
-+    strategy:
-+      fail-fast: false
-+      matrix:
-+        arch: [amd64, arm64]
-+        exclude:
-+          - arch: ${{ inputs.platforms == 'linux/amd64' && 'arm64' || 'none' }}
-+    steps:
-+      - name: Checkout workflow tools
-+        uses: actions/checkout@v4
-+        with:
-+          persist-credentials: false
-+
-+      - name: Download image digest
-+        uses: actions/download-artifact@v4
-+        with:
-+          name: standalone-digest-${{ matrix.arch }}
-+          path: ${{ runner.temp }}/registry-sync
-+
-+      - name: Install Skopeo
-+        timeout-minutes: 5
-+        run: |
-+          sudo apt-get update
-+          sudo apt-get install -y --
+ 	// 先尝试 HTTPS
+-	err = pushFunc("https")
+-	if err != nil {
++	err = pushWithRetry("https")
++	if err != nil && pushCtx.Err() == nil {
+ 		// 如果是协议相关错误，尝试降级为 HTTP
+ 		printLog(logger, "warn", fmt.Sprintf("HTTPS 推送失败，尝试使用 HTTP：%s", err.Error()), map[string]string{"step": "pushimage"})
+-		err = pushFunc("http")
++		err = pushWithRetry("http")
+ 	}
+ 
+ 	if err != nil {
++		if pushCtx.Err() != nil {
++			err = errors.Wrapf(err, "推送超时（%s）", pushTimeout)
++		}
++		logrus.Errorf("push image %s failed: %v", reference, err)
+ 		return errors.Wrap(err, "推送失败")
+ 	}
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2763** (2026-11-24): V6.11.0 dev (@RainBondsongyg)
+- **PR #2762** (2026-11-24): V6.10.4 dev (@RainBondsongyg)
+- **PR #2761** (2026-11-24): fix: align CNB defaults with the Noble security builder (@zzzhangqi)
+- **PR #2760** (2026-11-24): fix(builder): 镜像推送重试时使用新的 tracker 并增加超时 (@yangkaa)
+- **PR #2759** (2026-11-22): Build/registry gc devs8 (@RainBondsongyg)
 - **PR #2757** (2026-11-17): ci(release): add a workflow to build the gateway controller image (@yangkaa)
-- **PR #2756** (2026-11-17): ci(release): run the standalone smoke test on Ubuntu 24.04 (@yangkaa)
-- **PR #2755** (2026-11-17): ci(release): build standalone natively and sync to Aliyun with retries (@yangkaa)
-- **PR #2754** (2026-11-17): ci: move large image caches to registry storage (@ZhangSetSail)
-- **PR #2753** (2026-11-16): ci: persist UI and console image caches across runners (@ZhangSetSail)
-- **PR #2752** (2026-11-16): fix: use GET authentication for Aliyun image synchronization (@ZhangSetSail)
 
 ---
 
@@ -1562,67 +1606,31 @@ Signed-off-by: yangkaa <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci(release): add a workflow to build the gateway controller image
+## X. align CNB defaults with the Noble security builder
 
 **RULE**:
-When implementing operations in `.github/workflows/release-v6-gateway-controller.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goodrain/rainbond. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `builder/build/cnb/build_params.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goodrain/rainbond. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cfba2cee`: ci(release): add a workflow to build the gateway controller image. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dd66fcf3`: align CNB defaults with the Noble security builder. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release-v6-gateway-controller.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `builder/build/cnb/build_params.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-name: "release-v6-gateway-controller"
-
-# 构建 rbd-gateway 使用的 apisix-ingress-controller 镜像（goodrain/apisix-ingress-controller 的发布分支），
-# 推到阿里云 goodrain/apisix-ingress-controller:<tag> 和 <tag>-esgz。rainbond-chart 按 tag 引用它。
-# 覆盖已有 tag 前，先把旧镜像复制到 <tag>-<backup_suffix> 和 <tag>-esgz-<backup_suffix>，备份失败就不构建。
-on:
-  workflow_dispatch:
-    inputs:
-      ref:
-        description: 'goodrain/apisix-ingress-controller 的分支或 commit'
-        required: true
-        default: 'release/v1.8.4'
-      tag:
-        description: '要推送的镜像 tag（不带 -esgz）'
-        required: true
-        default: 'v1.8.4-upsert-e26e824'
-      backup_suffix:
-        description: '覆盖前旧镜像的备份后缀，例如 bak-20261117'
-        required: true
-
-permissions:
-  contents: read
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    environment: release-v6
-    timeout-minutes: 60
-    env:
-      REPO: registry.cn-hangzhou.aliyuncs.com/goodrain/apisix-ingress-controller
-      TAG: ${{ inputs.tag }}
-      BACKUP_SUFFIX: ${{ inputs.backup_suffix }}
-    steps:
-      - name: Validate inputs
-        run: |
-          [[ "$TAG" =~ ^v[0-9A-Za-z._-]+$ && "$TAG" != *-esgz ]] || { echo "::error::invalid tag $TAG"; exit 1; }
-          [[ "$BACKUP_SUFFIX" =~ ^[0-9A-Za-z
+	defaultCNBMavenVersion     = "3.10.0"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+	defaultCNBMavenVersion     = "3.9.14"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cfba2cee` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dd66fcf3` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

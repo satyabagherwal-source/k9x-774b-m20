@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-XYPQ",
-    "timestamp": "2026-11-22T23:57:15.902Z",
-    "repository": "Cloudflare/clef",
-    "learningId": "learn-huggingface-cloudflare-clef",
-    "contentHash": "8b4f07cad2645d5d8a2e46b2fc0765002db63f5fcdb04f568d1c042a9c667d82",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-Y046",
     "timestamp": "2026-11-22T23:57:17.718Z",
     "repository": "1jehuang/jcode",
@@ -7490,6 +7475,21 @@
     "repository": "tursodatabase/turso",
     "learningId": "learn-github-tursodatabase-turso",
     "contentHash": "7f9bd676be3e28487a9628e6bee2c3eced07314d9297d3f6c52815cb86c994d5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-E1EO",
+    "timestamp": "2026-11-24T18:09:11.328Z",
+    "repository": "goodrain/rainbond",
+    "learningId": "learn-github-goodrain-rainbond",
+    "contentHash": "5bf09ff334fb90781f552b2b5719748e50e5ffcc7b6a702ec999862f98c0cb0a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
