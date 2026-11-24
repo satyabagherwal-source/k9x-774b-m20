@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T14:24:26.740Z",
-  "total_records": 2532,
+  "last_updated": "2026-11-24T14:33:34.055Z",
+  "total_records": 2534,
   "domains": {
     "A": {
       "total": 22,
@@ -1155,7 +1155,7 @@
       ]
     },
     "G": {
-      "total": 440,
+      "total": 442,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1596,7 +1596,9 @@
         "domain_intelligence-architecture-intelligence-liyupi-yu-ai-agent-core-invariants",
         "domain_intelligence-architecture-intelligence-liyupi-yu-ai-agent-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-skyzh-mini-lsm-core-invariants",
-        "domain_intelligence-architecture-intelligence-skyzh-mini-lsm-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-skyzh-mini-lsm-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-nihildigit-piko-core-invariants",
+        "domain_intelligence-architecture-intelligence-nihildigit-piko-learnings-core-invariants"
       ]
     },
     "H": {
@@ -10381,8 +10383,8 @@
       "title": "Technical Construction Intelligence: zama-ai/tfhe-rs Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-technical-construction-intelligence-zama-ai-tfhe-rs-core-invaria.md",
       "repository": "zama-ai/tfhe-rs",
-      "content_hash": "4162873fa10a814fe89454741947fd38fb5339496bd033239efb1391da49972b",
-      "created_at": "2026-11-23T14:46:36.791Z"
+      "content_hash": "8c7aa9f948d701b046ffed589a2a8fef09f292021ae9312f7112b4283227fd31",
+      "created_at": "2026-11-24T14:33:27.934Z"
     },
     "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants",
@@ -13903,8 +13905,8 @@
       "title": "Architecture Intelligence: keybase/client Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-keybase-client-architecture-intelligence-keybase-client-core-invariants.md",
       "repository": "keybase/client",
-      "content_hash": "8363809887eab595e3b62b1e26d8a18be00623043f52b623c9cc3ca6e77fa0fa",
-      "created_at": "2026-11-21T22:29:59.122Z"
+      "content_hash": "da69b484d0f6d1402a8b8f986ea59b52e54749f111b0aae18ef7eb0c510180fd",
+      "created_at": "2026-11-24T14:33:23.361Z"
     },
     "DOM-D-C791DEC9": {
       "record_id": "DOM-D-C791DEC9",
@@ -13963,8 +13965,8 @@
       "title": "Architecture Intelligence: keybase-client-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-keybase-client-learnings-architecture-intelligence-keybase-client-learnings-core.md",
       "repository": "keybase-client-learnings",
-      "content_hash": "103e796cfd3023e53a3fb7a435614e2aba9ee65142dc95536bb852641528a450",
-      "created_at": "2026-11-21T22:30:12.334Z"
+      "content_hash": "51e80f83f6133f6c960e2995fb734346aeabcec9d49c13062832de362d8b5dba",
+      "created_at": "2026-11-24T14:33:32.965Z"
     },
     "domain_intelligence-design-intelligence-edge0-audio8-tts-realistic-air-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-edge0-audio8-tts-realistic-air-core-invariants",
@@ -27528,8 +27530,8 @@
       "title": "Technical Construction Intelligence: zama-ai-tfhe-rs-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-learnings-technical-construction-intelligence-zama-ai-tfhe-rs-le.md",
       "repository": "zama-ai-tfhe-rs-learnings",
-      "content_hash": "cc681a305f3be2be380bde1e7d11dc9e8dc7a748cca62cfab10aa3d90a60a490",
-      "created_at": "2026-11-23T14:46:46.426Z"
+      "content_hash": "399daf1683614d13f40883277e7a7bf24866d08b9407ddec2242aa079a3585e8",
+      "created_at": "2026-11-24T14:33:34.055Z"
     },
     "domain_intelligence-research-knowledge-intelligence-meituan-longcat-longcat-video-avatar-1-6-core-in": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-meituan-longcat-longcat-video-avatar-1-6-core-in",
@@ -42550,6 +42552,24 @@
       "repository": "nucleoidai-nucleoid-learnings",
       "content_hash": "1d7930b54c40fd0ff02b361390c9ef551f9daa1c262310a10c1b9cf5f6e35874",
       "created_at": "2026-11-24T14:24:26.740Z"
+    },
+    "domain_intelligence-architecture-intelligence-nihildigit-piko-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-nihildigit-piko-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: NihilDigit/piko Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nihildigit-piko-architecture-intelligence-nihildigit-piko-core-invariants.md",
+      "repository": "NihilDigit/piko",
+      "content_hash": "14f21acffcb04e7b755d519514ae3a70ed315873cf78a733b051719946a9b6ed",
+      "created_at": "2026-11-24T14:33:18.629Z"
+    },
+    "domain_intelligence-architecture-intelligence-nihildigit-piko-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-nihildigit-piko-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: nihildigit-piko-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nihildigit-piko-learnings-architecture-intelligence-nihildigit-piko-learnings-co.md",
+      "repository": "nihildigit-piko-learnings",
+      "content_hash": "32ae1a4a98c9405951ebc6fdfac5693a5735fbe1afdcff59fecfc5820bcd949d",
+      "created_at": "2026-11-24T14:33:31.884Z"
     }
   }
 }

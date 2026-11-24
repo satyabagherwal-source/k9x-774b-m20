@@ -46,8 +46,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-24T13:56:40.260Z",
-    "lastVerified": "2026-11-24T13:56:40.260Z",
+    "lastChecked": "2026-11-24T14:33:26.319Z",
+    "lastVerified": "2026-11-24T14:33:26.319Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T14:24:23.641Z",
-    "lastVerified": "2026-11-24T14:24:23.641Z",
+    "lastChecked": "2026-11-24T14:33:30.927Z",
+    "lastVerified": "2026-11-24T14:33:30.927Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -623,8 +623,8 @@
     "officialUrl": "https://github.com/open-policy-agent/gatekeeper",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-23T19:00:48.297Z",
-    "lastVerified": "2026-11-23T19:00:48.297Z",
+    "lastChecked": "2026-11-24T14:33:18.846Z",
+    "lastVerified": "2026-11-24T14:33:18.846Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-open-policy-agent-gatekeeper",
@@ -1732,22 +1732,21 @@
     "lastVerified": "2026-11-23T20:56:11.311Z"
   },
   "zama-ai-tfhe-rs": {
-    "name": "tfhe-rs",
+    "name": "zama-ai/tfhe-rs",
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T09:18:26.769Z",
-    "lastVerified": "2026-11-24T09:18:26.769Z",
+    "lastChecked": "2026-11-24T14:33:25.948Z",
+    "lastVerified": "2026-11-24T14:33:25.948Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
-    "contentHash": "2dd6800817faf70bee92d574ae15377684075395315fe09b7d90cb7ec662d3a2",
+    "contentHash": "bd787176753c31c278b2f2e09e28956f60b57dea0924c6808a9869a48bacd9fa",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "0383d4d1"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "alibaba-zvec": {
     "name": "alibaba/zvec",
@@ -3709,14 +3708,14 @@
     "officialUrl": "https://github.com/keybase/client",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-21T22:29:57.433Z",
-    "lastVerified": "2026-11-21T22:29:57.433Z",
+    "lastChecked": "2026-11-24T14:33:21.399Z",
+    "lastVerified": "2026-11-24T14:33:21.399Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-keybase-client",
-    "contentHash": "e12b78cb036bef8156242dd74282a05690987e516ca0a485ec7444a679f6481b",
+    "contentHash": "f80a285d3298d31113cfe6e5bbf486f0abd360dc2a198b9294f5c77711c99317",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5865,12 +5864,12 @@
     "lastVerified": "2026-11-24T08:34:22.752Z"
   },
   "apache-zookeeper": {
-    "name": "apache/zookeeper",
+    "name": "zookeeper",
     "officialUrl": "https://github.com/apache/zookeeper",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-23T18:03:22.681Z",
-    "lastVerified": "2026-11-23T18:03:22.681Z",
+    "lastChecked": "2026-11-24T14:33:24.023Z",
+    "lastVerified": "2026-11-24T14:33:24.023Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-apache-zookeeper",
@@ -5879,7 +5878,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "9438aa66"
   },
   "xudong-huang-may": {
     "name": "may",
@@ -10485,9 +10485,9 @@
   "santifer-santifer-irepair": {
     "name": "santifer-irepair",
     "officialUrl": "https://github.com/santifer/santifer-irepair",
-    "lastChecked": "2026-11-20T12:15:12.850Z",
+    "lastChecked": "2026-11-24T14:33:13.867Z",
     "revisionIdentifier": "5c1ce0b2",
-    "lastVerified": "2026-11-20T12:15:12.850Z"
+    "lastVerified": "2026-11-24T14:33:13.867Z"
   },
   "damascenorafael-reminders-menubar": {
     "name": "reminders-menubar",
@@ -14930,6 +14930,23 @@
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "nihildigit-piko": {
+    "name": "NihilDigit/piko",
+    "officialUrl": "https://github.com/NihilDigit/piko",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-11-24T14:33:16.462Z",
+    "lastVerified": "2026-11-24T14:33:16.462Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-nihildigit-piko",
+    "contentHash": "38de43536602be5ac1c0d3ffbd64fd5037fba1e4a6a38052fe0a7f4e7e345f7f",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 17,
+    "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   }

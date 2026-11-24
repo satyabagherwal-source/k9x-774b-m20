@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T14:46:46.133Z",
+  "timestamp": "2026-11-24T14:33:33.653Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-zama-ai-tfhe-rs-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [zama-ai-tfhe-rs-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T14:46:46.133Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T14:33:33.653Z`  
 > **Learning ID**: `LEARN-EVO-zama-ai-tfhe-rs-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: B (Product Intelligence), G (Architecture Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 83%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), I (Content & Information Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 89%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from zama-ai-tfhe-rs-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source**: github ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
-> **Source Version**: `0383d4d1`  
+> **Source Version**: `1ade9d06`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T14:46:35.335Z  
+> **Timestamp**: 2026-11-24T14:33:25.959Z  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T14:46:35.329Z  
+> **Harvest Timestamp**: 2026-11-24T14:33:25.948Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1966,529 +1966,861 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2dddbbc4` (2026-11-23)
-**Commit Message**: fix(gpu): keep the CPU copy when moving a ciphertext back to the CPU (#4179)
+### Incident Patch 1: `b3ef09b4` (2026-11-24)
+**Commit Message**: fix(gpu): extend match_value results to the output block count in the high-level api (#4188)
 
-**File**: `tfhe/src/high_level_api/booleans/inner.rs` (modified, +33/-48)
+* fix(gpu): extend match_value results to the output block count in the high-level api
+
+* test(gpu): check match_value results have the output block count in the high-level api
+
+**File**: `tfhe/src/high_level_api/integers/unsigned/base.rs` (modified, +22/-2)
 ```diff
-@@ -1,13 +1,11 @@
+@@ -1267,7 +1267,17 @@ where
+                     streams,
+                 );
+                 let target_num_blocks = OutId::num_blocks(cuda_key.key.key.message_modulus);
+-                if target_num_blocks >= result.ciphertext.d_blocks.lwe_ciphertext_count().0 {
++                let current_num_blocks = result.ciphertext.d_blocks.lwe_ciphertext_count().0;
++                if target_num_blocks >= current_num_blocks {
++                    let result = if target_num_blocks > current_num_blocks {
++                        cuda_key.key.key.extend_radix_with_trivial_zero_blocks_msb(
++                            &result,
++                            target_num_blocks - current_num_blocks,
++                            streams,
++                        )
++                    } else {
++                        result
++                    };
+                     Ok((
+                         FheUint::new(
+                             result,
+@@ -1418,7 +1428,17 @@ where
+                     streams,
+                 );
+                 let target_num_blocks = OutId::num_blocks(cuda_key.key.key.message_modulus);
+-                if target_num_blocks >= result.ciphertext.d_blocks.lwe_ciphertext_count().0 {
++                let current_num_blocks = result.ciphertext.d_blocks.lwe_ciphertext_count().0;
++                if target_num_blocks >= current_num_blocks {
++                    let result = if target_num_blocks > current_num_blocks {
++                        cuda_key.key.key.extend_radix_with_trivial_zero_blocks_msb(
++                            &result,
++                            target_num_blocks - current_num_blocks,
++                            streams,
++                        )
++                    } else {
++                        result
++                    };
+                     Ok(FheUint::new(
+                         result,
+                         cuda_key.tag.clone(),
+```
+
+**File**: `tfhe/src/high_level_api/integers/unsigned/tests/gpu.rs` (modified, +17/-0)
+```diff
+@@ -511,6 +511,23 @@ fn test_match_value_gpu_multibit() {
+     super::test_case_match_value(&client_key);
+ }
+ 
++#[test]
++fn test_match_value_small_outputs_have_output_block_count_gpu() {
++    let client_key = setup_classical_gpu();
++    let ct = FheUint8::encrypt(17u8, &client_key);
++    let matches = MatchValues::new(vec![(17u8, 3u8), (0u8, 1u8)]).unwrap();
++
++    let (result, matched): (FheUint8, FheBool) = ct.match_value(&matches).unwrap();
++    let matched: bool = matched.decrypt(&client_key);
++    assert!(matched);
++    let doubled: u8 = (&result * 2u8).decrypt(&client_key);
++    assert_eq!(doubled, 6);
++
++    let result: FheUint8 = ct.match_value_or(&matches, 2u8).unwrap();
++    let doubled: u8 = (&result * 2u8).decrypt(&client_key);
++    assert_eq!(doubled, 6);
++}
++
+ #[test]
+ fn test_min_max_multibit() {
+     let client_key = setup_multibit_gpu();
+```
+
+---
+
+### Incident Patch 2: `1ade9d06` (2026-11-24)
+**Commit Message**: fix(gpu): expand compact lists with the computing key when there is no casting key (#4190)
+
+* fix(gpu): expand compact lists with the computing key when there is no casting key
+
+* test(gpu): check compact list expansion without a casting key
+
+**File**: `backends/tfhe-cuda-backend/cuda/include/zk/zk_utilities.h` (modified, +10/-8)
+```diff
+@@ -101,7 +101,7 @@ template <typename Torus> struct expand_job {
+ template <typename Torus> struct zk_expand_mem {
+   int_radix_params computing_params;
+   int_radix_params casting_params;
+-  bool casting_key_type;
++  KS_TYPE casting_key_type;
+   uint32_t num_lwes;
+   uint32_t num_compact_lists;
+ 
+@@ -312,13 +312,15 @@ template <typename Torus> struct zk_expand_mem {
+         free(h_lut_indexes);
+ 
+         // SANITY_CHECK panics on SMALL_TO_BIG, so this buffer is only needed
+-        // on the full casting path.
+-        tmp_ksed_small_to_big_expanded_lwes =
+-            (Torus *)cuda_malloc_with_size_tracking_async(
+-                safe_mul_sizeof<Torus>(num_lwes,
+-                                       casting_params.big_lwe_dimension + 1),
+-                streams.stream(0), streams.gpu_index(0), size_tracker,
+-                allocate_gpu_memory);
++        // on the full casting path with a SMALL_TO_BIG casting key.
++        if (casting_key_type == SMALL_TO_BIG) {
++          tmp_ksed_small_to_big_expanded_lwes =
++              (Torus *)cuda_malloc_with_size_tracking_async(
++                  safe_mul_sizeof<Torus>(num_lwes,
++                                         casting_params.big_lwe_dimension + 1),
++                  streams.stream(0), streams.gpu_index(0), size_tracker,
++                  allocate_gpu_memory);
++        }
+       }
+ 
+       // The expanded LWEs will always be on the casting key format
+```
+
+**File**: `tfhe/src/high_level_api/compact_list.rs` (modified, +133/-35)
+```diff
+@@ -374,9 +374,9 @@ impl CompactCiphertextList {
+                         cpu_inner, streams,
+                     )?;
+ 
+-                let ksk = cuda_key.cpk_key_switching_key();
+-                let expander =
+-                    gpu_inner.expand(&ksk, crate::integer::gpu::ZKType::Casting, streams)?;
++                let expander = cuda_key.with_compact_list_expansion_key(|key| {
++                    gpu_inner.expand_with_key(key, streams)
++                })?;
+ 
+                 Ok(CompactCiphertextListExpander {
+                     inner: InnerCompactCiphertextListExpander::Cuda(expander),
+@@ -408,21 +408,16 @@ impl CompactCiphertextList {
+                 }
+ 
+                 // CUDA data, CUDA key case
+-                assert!(
+-                    cuda_key.key.cpk_key_switching_key_material.is_some(),
+-                    "cpk_key_switching_key_material must not be None"
+-                );
+-
+-                let ksk = cuda_key.cpk_key_switching_key();
+                 let streams = &cuda_key.streams;
+                 // The list may be on another GPU than the key, e.g. if the key changed
+                 let gpu_inner = if streams.is_on_first_gpu(gpu_inner.gpu_indexes()) {
+                     MaybeCloned::Borrowed(gpu_inner)
+                 } else {
+                     MaybeCloned::Cloned(gpu_inner.duplicate(streams))
+                 };
+-                let expander =
+-                    gpu_inner.expand(&ksk, crate::integer::gpu::ZKType::Casting, streams)?;
++                let expander = cuda_key.with_compact_list_expansion_key(|key| {
++                    gpu_inner.expand_with_key(key, streams)
++                })?;
+ 
+                 Ok(CompactCiphertextListExpander {
+                     inner: InnerCompactCiphertextListExpander::Cuda(expander),
+@@ -843,30 +838,25 @@ pub(crate) mod zk {
+                         }
+                     };
+ 
+-                    let ksk = gpu_key.cpk_key_switching_key();
+-                    let expander = match (verification_materials, re_randomization_materials) {
+-                        (Some((crs, pk, metadata)), Some((_, seed))) => proven_ct
+-                            .verify_re_randomize_and_expand(
+-                                crs,
+-                                &pk.key.key,
+-                                metadata,
+-                                &ksk,
+-                                seed,
+-                                streams,
+-                            ),
+-                        (Some((crs, pk, metadata)), None) => {
+-                            proven_ct.verify_and_expand(crs, &pk.key.key, metadata, &ksk, streams)
+-                        }
+-
+-                        (None, Some((pk, seed))) => proven_ct
+-                            .re_randomize_and_expand_without_verification(
+-                                &ksk,
+-                                &pk.key.key,
+-                                seed,
+-                                streams,
+-                            ),
+-                        (None, None) => proven_ct.expand_without_verification(&ksk, streams),
+-                    }?;
++                    let verification = verification_materials
++                        .map(|(crs, pk, metadata)| (crs, &pk.key.key, metadata));
++                    // As on the CPU, the verification public key is also used for the
++                    // re-randomization when both are given
++                    let re_randomization =
++                        match (verification_materials, re_randomization_materials) {
++                            (Some((_, pk, _)), Some((_, seed))) | (None, Some((pk, seed))) => {
++                                Some((&pk.key.key, seed))
++                            }
++                            (_, None) => None,
++                        };
++                    let expander = gpu_key.with_compact_list_expansion_key(|key| {
++                        proven_ct.maybe_verify_maybe_re_randomize_and_expand(
++                            verification,
++                            re_randomization,
++                            key,
++                            streams,
++                        )
++                    })?;
+ 
+                     Ok(CompactCiphertextListExpander {
+                         inner: InnerCompactCiphertextListExpander::Cuda(expander),
+@@ -1539,6 +1529,114 @@ mod tests {
+         }
+     }
+ 
++    #[cfg(feature = "gpu")]
++    fn check_expander_without_casting_key(
++        expander: &CompactCiphertextListExpander,
++        ck: &crate::ClientKey,
++    ) {
++        let a: FheUint32 = expander.get(0).unwrap().unwrap();
++        let b: FheInt64 = expander.get(1).unwrap().unwrap();
++        let c: FheBool = expander.get(2).unwrap().unwrap();
++        let d: FheBool = expander.get(3).unwrap().unwrap();
++
++        let a: u32 = a.decrypt(ck);
++        assert_eq!(a, 17);
++        let b: i64 = b.decrypt(ck);
++        assert_eq!(b, -1);
++        assert!(c.decrypt(ck));
++        assert!(!d.decrypt(ck)
+```
+
+**File**: `tfhe/src/high_level_api/keys/server.rs` (modified, +22/-5)
+```diff
+@@ -619,11 +619,26 @@ impl CudaServerKey {
+         &self.key.key
+     }
+ 
+-    /// Returns the ksk needed to keyswitch from cpk to compute params
+-    pub(crate) fn cpk_key_switching_key(&self) -> CudaKeySwitchingKey<'_> {
+-        CudaKeySwitchingKey {
+-            key_switching_key_material: self.key.cpk_key_switching_key_material.as_ref().unwrap(),
+-            dest_server_key: &self.key.key,
++    /// Calls `f` with the key that expands compact lists: the casting key if the key has one,
++    /// otherwise the computing key, as the CPU does in
++    /// [ServerKey::integer_compact_ciphertext_list_expansion_mode]
++    pub(in crate::high_level_api) fn with_compact_list_expansion_key<R>(
++        &self,
++        f: impl FnOnce(&CudaCompactCiphertextListExpansionKey<'_>) -> R,
++    ) -> R {
++        match self.key.cpk_key_switching_key_material.as_ref() {
++            Some(key_switching_key_material) => {
++                let casting_key = CudaKeySwitchingKey {
++                    key_switching_key_material,
++                    dest_server_key: &self.key.key,
++                };
++                f(&CudaCompactCiphertextListExpansionKey::CastAndUnpack(
++                    &casting_key,
++                ))
++            }
++            None => f(&CudaCompactCiphertextListExpansionKey::UnpackAndSanitize(
++                &self.key.key,
++            )),
+         }
+     }
+ 
+@@ -833,6 +848,8 @@ mod hpu {
+ 
+ use crate::high_level_api::keys::inner::IntegerServerKeyConformanceParams;
+ 
++#[cfg(feature = "gpu")]
++use crate::integer::gpu::ciphertext::compact_list::CudaCompactCiphertextListExpansionKey;
  #[cfg(feature = "gpu")]
+ use crate::integer::gpu::key_switching_key::{CudaKeySwitchingKey, CudaKeySwitchingKeyMaterial};
+ #[cfg(feature = "gpu")]
+```
+
+**File**: `tfhe/src/integer/gpu/ciphertext/compact_list.rs` (modified, +171/-15)
+```diff
+@@ -1,6 +1,7 @@
+ use crate::core_crypto::commons::traits::contiguous_entity_container::ContiguousEntityContainer;
+ use crate::core_crypto::entities::LweCompactCiphertextList;
+ use crate::core_crypto::gpu::lwe_ciphertext_list::CudaLweCiphertextList;
++use crate::core_crypto::gpu::lwe_keyswitch_key::CudaLweKeyswitchKey;
  use crate::core_crypto::gpu::CudaStreams;
- use crate::high_level_api::backward_compatibility::booleans::SerializableInnerBooleanVersions;
--use crate::high_level_api::details::MaybeCloned;
-+use crate::high_level_api::details::{DeviceMovable, MaybeCloned};
- use crate::high_level_api::global_state;
- #[cfg(feature = "gpu")]
- use crate::high_level_api::global_state::cuda_clone;
- #[cfg(feature = "gpu")]
--use crate::high_level_api::global_state::with_cuda_internal_keys;
--#[cfg(feature = "gpu")]
- use crate::high_level_api::global_state::with_thread_local_cuda_streams_for_gpu_indexes;
- use crate::integer::BooleanBlock;
- use crate::Device;
-@@ -209,59 +207,46 @@ impl InnerBoolean {
-         CudaBooleanBlock::from_boolean_block(&cpu_bool, streams)
-     }
- 
--    #[allow(clippy::needless_pass_by_ref_mut)]
-     pub(crate) fn move_to_device(&mut self, target_device: Device) {
--        let current_device = self.current_device();
-+        crate::high_level_api::details::move_to_device(self, target_device);
-+    }
- 
--        if current_device == target_device {
--            #[cfg(feature = "gpu")]
--            // We may not be on the correct Cuda device
--            if let Self::Cuda(cuda_ct) = self {
--                with_cuda_internal_keys(|key| {
--                    let streams = &key.streams;
--                    if !streams.is_on_first_gpu(cuda_ct.gpu_indexes()) {
--                        *cuda_ct = cuda_ct.duplicate(streams);
--                    }
--                })
--            }
--            return;
-+    #[inline]
-+    pub(crate) fn move_to_device_of_server_key_if_set(&mut self) {
-+        if let Some(device) = global_state::device_of_internal_keys() {
-+            self.move_to_device(device);
-         }
-+    }
-+}
- 
--        // The logic is that the common device is the CPU, all other devices
--        // know how to transfer from and to CPU.
-+impl DeviceMovable for InnerBoolean {
-+    type CpuCiphertext = BooleanBlock;
- 
--        // So we first transfer to CPU
--        let cpu_ct = self.on_cpu();
-+    fn current_device(&self) -> Device {
-+        Self::current_device(self)
-+    }
- 
--        // Then we can transfer the desired device
--        match target_device {
--            Device::Cpu => {
--                let _ = cpu_ct;
--            }
--            #[cfg(feature = "gpu")]
--            Device::CudaGpu => {
--                let new_inner = with_cuda_internal_keys(|key| {
--                    let streams = &key.streams;
--                    crate::integer::gpu::ciphertext::boolean_value::CudaBooleanBlock::from_boolean_block(
--                        &cpu_ct, streams,
--                    )
--                });
--                *self = Self::Cuda(new_inner);
--            }
--            #[cfg(feature = "hpu")]
--            Device::Hpu => {
--                let hpu_ct = global_state::with_thread_local_hpu_device(|device| {
--                    HpuRadixCiphertext::from_boolean_ciphertext(&cpu_ct, &device.device, None)
--                });
--                *self = Self::Hpu(hpu_ct);
--            }
--        }
-+    fn on_cpu(&self) -> MaybeCloned<'_, Self::CpuCiphertext> {
-+        Self::on_cpu(self)
-     }
- 
--    #[inline]
--    pub(crate) fn move_to_device_of_server_key_if_set(&mut self) {
--        if let Some(device) = global_state::device_of_internal_keys() {
--            self.move_to_device(device);
-+    fn from_cpu(cpu_ct: Self::CpuCiphertext) -> Self {
-+        Self::Cpu(cpu_ct)
-+    }
-+
-+    #[cfg(feature = "gpu")]
-+    fn move_to_gpu(&mut self, streams: &CudaStreams) {
-+        self.as_gpu_mut(streams);
-+    }
-+
-+    #[cfg(feature = "hpu")]
-+    fn move_to_hpu(&mut self) {
-+        if !matches!(self, Self::Hpu(_)) {
-+            let cpu_ct = Self::on_cpu(self);
-+            let hpu_ct = global_state::with_thread_local_hpu_device(|device| {
-+                HpuRadixCiphertext::from_boolean_ciphertext(&cpu_ct, &device.device, None)
-+            });
-+            *self = Self::Hpu(hpu_ct);
-         }
+ use crate::core_crypto::prelude::{
+     lwe_compact_ciphertext_list_size, CiphertextModulus, LweCiphertext, LweCiphertextCount,
+@@ -11,10 +12,10 @@ use crate::integer::gpu::ciphertext::info::{CudaBlockInfo, CudaRadixCiphertextIn
+ use crate::integer::gpu::ciphertext::{CudaRadixCiphertext, CudaVec, KsType, LweDimension};
+ use crate::integer::gpu::cuda_backend_expand;
+ use crate::integer::gpu::key_switching_key::CudaKeySwitchingKey;
+-use crate::integer::gpu::server_key::CudaDynamicKeyswitchingKey;
++use crate::integer::gpu::server_key::{CudaDynamicKeyswitchingKey, CudaServerKey};
+ use crate::shortint::ciphertext::CompactCiphertextList;
+ use crate::shortint::parameters::{CompactCiphertextListExpansionKind, Degree, NoiseLevel};
+-use crate::shortint::{AtomicPatternKind, CarryModulus, Ciphertext, MessageModulus};
++use crate::shortint::{AtomicPatternKind, CarryModulus, Ciphertext, MessageModulus, PBSOrder};
+ use crate::GpuIndex;
+ use itertools::Itertools;
+ use std::ops::Range;
+@@ -36,6 +37,15 @@ impl CudaCompactCiphertextListInfo {
      }
  }
-```
-
-**File**: `tfhe/src/high_level_api/booleans/squashed_noise.rs` (modified, +6/-6)
-```diff
-@@ -131,10 +131,10 @@ impl InnerSquashedNoiseBoolean {
-         let cpu_ct = self.on_cpu();
  
-         // Then we can transfer the desired device
--        match target_device {
--            Device::Cpu => {
--                let _ = cpu_ct;
--            }
-+        // Each arm builds the new self, so a transfer cannot be forgotten
-+        *self = match target_device {
-+            // self is not on the CPU here, so cpu_ct is a fresh copy that has to replace it
-+            Device::Cpu => Self::Cpu(cpu_ct.into_owned()),
-             #[cfg(feature = "gpu")]
-             Device::CudaGpu => {
-                 let new_inner = with_cuda_internal_keys(|keys| {
-@@ -143,13 +143,13 @@ impl InnerSquashedNoiseBoolean {
-                         &cpu_ct, streams,
-                     )
-                 });
--                *self = Self::Cuda(new_inner);
-+                Self::Cuda(new_inner)
-             }
-             #[cfg(feature = "hpu")]
-             Device::Hpu => {
-                 panic!("HPU does not support compression");
-             }
--        }
-+        };
-     }
- 
-     #[inline]
-```
-
-**File**: `tfhe/src/high_level_api/compressed_ciphertext_list.rs` (modified, +6/-6)
-```diff
-@@ -423,23 +423,23 @@ impl InnerCompressedCiphertextList {
-         let cpu_ct = self.on_cpu()?;
- 
-         // Then we can transfer the desired device
--        match target_device {
--            Device::Cpu => {
--                let _ = cpu_ct;
--            }
-+        // Each arm builds the new self, so a transfer cannot be forgotten
-+        *self = match target_device {
-+            // self is not on the CPU here, so cpu_ct is a fresh copy that has to replace it
-+            Device::Cpu => Self::Cpu(cpu_ct.into_owned()),
-             #[cfg(feature = "gpu")]
-             Device::CudaGpu => {
-                 let new_inner = with_cuda_internal_keys(|keys| {
-                     let streams = &keys.streams;
-                     cpu_ct.to_cuda_compressed_ciphertext_list(streams)
-                 });
--                *self = Self::Cuda(new_inner);
-+                Self::Cuda(new_inner)
-             }
-             #[cfg(feature = "hpu")]
-             Device::Hpu => {
-                 panic!("HPU does not support compression");
-             }
--        }
-+        };
- 
-         Ok(())
-     }
-```
-
-**File**: `tfhe/src/high_level_api/compressed_noise_squashed_ciphertext_list.rs` (modified, +6/-6)
-```diff
-@@ -147,23 +147,23 @@ impl InnerCompressedSquashedNoiseCiphertextList {
-         let cpu_ct = self.on_cpu()?;
- 
-         // Then we can transfer the desired device
--        match target_device {
--            Device::Cpu => {
--                let _ = cpu_ct;
--            }
-+        // Each arm builds the new self, so a transfer cannot be forgotten
-+        *self = match target_device {
-+            // self is not on the CPU here, so cpu_ct is a fresh copy that has to replace it
-+            Device::Cpu => Self::Cpu(cpu_ct.into_owned()),
-             #[cfg(feature = "gpu")]
-             Device::CudaGpu => {
-                 let new_inner = with_cuda_internal_keys(|keys| {
-                     let streams = &keys.streams;
-                     CudaCompressedSquashedNoiseCiphertextList::from_compressed_squashed_noise_ciphertext_list(&cpu_ct, streams)
-                 })?;
--                *self = Self::Cuda(new_inner);
-+                Self::Cuda(new_inner)
-             }
-             #[cfg(feature = "hpu")]
-             Device::Hpu => {
-                 panic!("HPU does not support compression");
-             }
--        }
-+        };
- 
-         Ok(())
-     }
-```
-
-**File**: `tfhe/src/high_level_api/details.rs` (modified, +51/-0)
-```diff
-@@ -30,3 +30,54 @@ impl<T> Deref for MaybeCloned<'_, T> {
-         }
-     }
- }
-+
-+/// Inner ciphertext of a high level type, which lives on one device at a time.
-+///
-+/// The CPU is the hub. No device converts directly to another one, every transfer
-+/// goes through the CPU form. A type only describes its own transfers,
-+/// [move_to_device] owns the policy that is the same for all of them.
-+pub(in crate::high_level_api) trait DeviceMovable: Sized {
-+    type CpuCiphertext: Clone;
-+
-+    fn current_device(&self) -> crate::Device;
-+
-+    /// Borrows when self already is on the CPU, a copy is only paid for a real transfer
-+    fn on_cpu(&self) -> MaybeCloned<'_, Self::CpuCiphertext>;
-+
-+    fn from_cpu(cpu_ct: Self::CpuCiphertext) -> Self;
-+
-+    /// Also has to handle a ciphertext that sits on another GPU than the one of the streams
-+    #[cfg(feature = "gpu")]
-+    fn move_to_gpu(&mut self, streams: &crate::core_crypto::gpu::CudaStreams);
-+
-+    /// Takes no device so that a type without HPU support can refuse before one is looked up
-+    #[cfg(feature = "hpu")]
-+    fn move_to_hpu(&mut self);
++/// The key used to expand a compact ciphertext list, as `IntegerCompactCiphertextListExpansionMode`
++/// on the CPU
++pub(crate) enum CudaCompactCiphertextListExpansionKey<'key> {
++    /// The list is cast with a dedicated casting key, then unpacked
++    CastAndUnpack(&'key CudaKeySwitchingKey<'key>),
++    /// The list is encrypted under the computing parameters and is unpacked with the server key
++    UnpackAndSanitize(&'key CudaServerKey),
 +}
 +
-+/// Shared by the boolean, unsigned and signed inner ciphertexts.
-+#[allow(clippy::needless_pass_by_ref_mut)]
-+pub(in crate::high_level_api) fn move_to_device<T: DeviceMovable>(
-+    ct: &mut T,
-+    target_device: crate::Device,
-+) {
-+    match target_device {
-+        crate::Device::Cpu => {
-+            if ct.current_device() != crate::Device::Cpu {
-+                // as_cpu_mut calls itself again after this move, it only terminates if ct
-+                // really ends up on the CPU
-+                let cpu_ct = ct.on_cpu().into_owned();
-+                *ct = T::from_cpu(cpu_ct);
+ pub struct CudaCompactCiphertextListExpander {
+     pub(crate) expanded_blocks: CudaLweCiphertextList<u64>,
+     pub(crate) blocks_info: Vec<CudaCompactCiphertextListInfo>,
+@@ -254,6 +264,18 @@ fn check_data_info_is_supported_on_gpu(data_info: &[DataKind]) -> crate::Result<
+         })
+ }
+ 
++/// Returns the computing keyswitch key of `sks`, the GPU expansion only supports the standard
++/// atomic pattern
++fn standard_computing_ks_key(sks: &CudaServerKey) -> crate::Result<&CudaLweKeyswitchKey<u64>> {
++    match &sks.key_switching_key {
++        CudaDynamicKeyswitchingKey::Standard(computing_ks_key) => Ok(computing_ks_key),
++        CudaDynamicKeyswitchingKey::KeySwitch32(_) => Err(crate::error!(
++            "Only the standard atomic pattern is supported to expand compact ciphertext lists on \
++             GPU"
++        )),
++    }
++}
++
+ impl CudaFlattenedVecCompactCiphertextList {
+     /// Moves compact lists sharing the `data_info` metadata to the GPU.
+     ///
+@@ -490,6 +512,102 @@ impl CudaFlattenedVecCompactCiphertextList {
+         key: &CudaKeySwitchingKey,
+         zk_type: crate::integer::gpu::ZKType,
+         streams: &CudaStreams,
++    ) -> crate::Result<CudaCompactCiphertextListExpander> {
++        if matches!(zk_type, crate::integer::gpu::ZKType::Casting)
++            && !matches!(
++                self.expansion_kind,
++                CompactCiphertextListExpansionKind::RequiresCasting
++            )
++        {
++            return Err(crate::error!(
++                "Cannot cast a CompactCiphertextList that does not require casting"
++            ));
++        }
++
++        let casting_key = key.key_switching_key_material;
++        let computing_ks_key = standard_computing_ks_key(key.dest_server_key)?;
++        self.expand_with_casting_ksk(
++            &casting_key.lwe_keyswitch_key,
++            casting_key.destination_key.into(),
++            computing_ks_key,
++            key.dest_server_key,
++            zk_type,
++            streams,
++        )
++    }
++
++    /// Expands the list with the casting key or the computing key in `key`. See
++    /// `expand_without_casting` for the errors of the computing-key path.
++    pub(crate) fn expand_with_key(
++        &self,
++        key: &CudaCompactCiphertextListExpansionKey<'_>,
++        streams: &CudaStreams,
++    ) -> crate::Result<CudaCompactCiphertextListExpander> {
++        match key {
++            CudaCompactCiphertextListExpansionKey::CastAndUnpack(ksk) => {
++                self.expand(ksk, crate::integer::gpu::ZKType::Casting, streams)
++            }
++            CudaCompactCiphertextListExpansionKey::UnpackAndSanitize(sks) => {
++                self.expand_without_casting(sks, streams)
 +            }
 +        }
-+        #[cfg(feature = "gpu")]
-+        crate::Device::CudaGpu => {
-+            // No early return when ct already is on a GPU, it may be another one than the key's
-+            crate::high_level_api::global_state::with_cuda_internal_keys(|key| {
-+                ct.move_to_gpu(&key.streams);
-+            });
-+        }
-+        #[cfg(feature = "hpu")]
-+        crate::Device::Hpu => ct.move_to_hpu(),
 +    }
-+}
++
++    /// Expands a list encrypted under the big key of a KS-PBS server key: the computing keyswitch
++    /// key is given to the backend as a big to small casting key, so the expansion is the
++    /// keyswitch and PBS of the CPU `UnpackAndSanitizeIfNecessary` mode.
++    ///
++    /// # Errors
++    ///
++    /// - the list expansion kind is not `NoCasting` for the standard KS-PBS atomic pattern
++    
 ```
 
-**File**: `tfhe/src/high_level_api/integers/signed/inner.rs` (modified, +29/-45)
+**File**: `tfhe/src/integer/gpu/zk/mod.rs` (modified, +79/-56)
 ```diff
-@@ -1,13 +1,11 @@
- #[cfg(feature = "gpu")]
- use crate::core_crypto::gpu::CudaStreams;
- use crate::high_level_api::backward_compatibility::integers::SerializableSignedRadixCiphertextVersions;
--use crate::high_level_api::details::MaybeCloned;
-+use crate::high_level_api::details::{DeviceMovable, MaybeCloned};
- use crate::high_level_api::global_state;
- #[cfg(feature = "gpu")]
- use crate::high_level_api::global_state::cuda_clone;
- #[cfg(feature = "gpu")]
--use crate::high_level_api::global_state::with_cuda_internal_keys;
--#[cfg(feature = "gpu")]
- use crate::high_level_api::global_state::with_thread_local_cuda_streams_for_gpu_indexes;
- #[cfg(feature = "gpu")]
- use crate::integer::gpu::ciphertext::CudaIntegerRadixCiphertext;
-@@ -179,48 +177,8 @@ impl SignedRadixCiphertext {
-         }
-     }
- 
--    #[allow(clippy::needless_pass_by_ref_mut)]
--    pub(crate) fn move_to_device(&mut self, device: Device) {
--        match (&self, device) {
--            (Self::Cpu(_), Device::Cpu) => {
--                // Nothing to do, we already are on the correct device
--            }
--            #[cfg(feature = "gpu")]
--            (Self::Cuda(cuda_ct), Device::CudaGpu) => {
--                // We are on a GPU, but it may not be the correct one
--                let new = with_cuda_internal_keys(|key| {
--                    let streams = &key.streams;
--                    if streams.is_on_first_gpu(cuda_ct.gpu_indexes()) {
--                        None
--                    } else {
--                        Some(cuda_ct.duplicate(streams))
--                    }
--                });
--                if let Some(ct) = new {
--                    *self = Self::Cuda(ct);
--                }
--            }
--            #[cfg(feature = "gpu")]
--            (Self::Cpu(ct), Device::CudaGpu) => {
--                let new_inner = with_cuda_internal_keys(|key| {
--                    let streams = &key.streams;
--                    CudaSignedRadixCiphertext::from_signed_radix_ciphertext(ct, streams)
--                });
--                *self = Self::Cuda(new_inner);
--            }
--            #[cfg(feature = "gpu")]
--            (Self::Cuda(ct), Device::Cpu) => {
--                let new_inner =
--                    with_thread_local_cuda_streams_for_gpu_indexes(ct.gpu_indexes(), |streams| {
--                        ct.to_signed_radix_ciphertext(streams)
--                    });
--                *self = Self::Cpu(new_inner);
--            }
--            #[cfg(feature = "hpu")]
--            (_, Device::Hpu) => {
--                panic!("Hpu device do not support signed integer yet")
--            }
+@@ -3,7 +3,8 @@ use crate::core_crypto::gpu::CudaStreams;
+ use crate::core_crypto::prelude::{CiphertextModulus, LweCiphertextCount};
+ use crate::integer::ciphertext::ReRandomizationSeed;
+ use crate::integer::gpu::ciphertext::compact_list::{
+-    CudaCompactCiphertextListExpander, CudaFlattenedVecCompactCiphertextList,
++    CudaCompactCiphertextListExpander, CudaCompactCiphertextListExpansionKey,
++    CudaFlattenedVecCompactCiphertextList,
+ };
+ use crate::integer::gpu::key_switching_key::CudaKeySwitchingKey;
+ use crate::integer::parameters::LweDimension;
+@@ -38,31 +39,12 @@ impl CudaProvenCompactCiphertextList {
+         key: &CudaKeySwitchingKey,
+         streams: &CudaStreams,
+     ) -> crate::Result<CudaCompactCiphertextListExpander> {
+-        let (all_valid, r) = rayon::join(
+-            || {
+-                self.h_proved_lists
+-                    .ct_list
+-                    .proved_lists
+-                    .par_iter()
+-                    .all(|(ct_list, proof)| {
+-                        verify_lwe_compact_ciphertext_list(
+-                            &ct_list.ct_list,
+-                            &public_key.key.key,
+-                            proof,
+-                            crs,
+-                            metadata,
+-                        )
+-                        .is_valid()
+-                    })
+-            },
+-            || self.expand_without_verification(key, streams),
+-        );
+-
+-        if all_valid {
+-            return r;
 -        }
-+    pub(crate) fn move_to_device(&mut self, target_device: Device) {
-+        crate::high_level_api::details::move_to_device(self, target_device);
+-
+-        Err(crate::ErrorKind::InvalidZkProof.into())
++        self.maybe_verify_maybe_re_randomize_and_expand(
++            Some((crs, public_key, metadata)),
++            None,
++            &CudaCompactCiphertextListExpansionKey::CastAndUnpack(key),
++            streams,
++        )
      }
  
-     #[inline]
-@@ -230,3 +188,29 @@ impl SignedRadixCiphertext {
-         }
+     pub fn verify_re_randomize_and_expand(
+@@ -74,31 +56,12 @@ impl CudaProvenCompactCiphertextList {
+         seed: ReRandomizationSeed,
+         streams: &CudaStreams,
+     ) -> crate::Result<CudaCompactCiphertextListExpander> {
+-        let (all_valid, r) = rayon::join(
+-            || {
+-                self.h_proved_lists
+-                    .ct_list
+-                    .proved_lists
+-                    .par_iter()
+-                    .all(|(ct_list, proof)| {
+-                        verify_lwe_compact_ciphertext_list(
+-                            &ct_list.ct_list,
+-                            &public_key.key.key,
+-                            proof,
+-                            crs,
+-                            metadata,
+-                        )
+-                        .is_valid()
+-                    })
+-            },
+-            || self.re_randomize_and_expand_without_verification(key, public_key, seed, streams),
+-        );
+-
+-        if all_valid {
+-            return r;
+-        }
+-
+-        Err(crate::ErrorKind::InvalidZkProof.into())
++        self.maybe_verify_maybe_re_randomize_and_expand(
++            Some((crs, public_key, metadata)),
++            Some((public_key, seed)),
++            &CudaCompactCiphertextListExpansionKey::CastAndUnpack(key),
++            streams,
++        )
+     }
+ 
+     /// # Safety
+@@ -110,8 +73,12 @@ impl CudaProvenCompactCiphertextList {
+         key: &CudaKeySwitchingKey,
+         streams: &CudaStreams,
+     ) -> crate::Result<CudaCompactCiphertextListExpander> {
+-        self.d_flattened_compact_lists
+-            .expand(key, super::ZKType::Casting, streams)
++        self.maybe_verify_maybe_re_randomize_and_expand(
++            None,
++            None,
++            &CudaCompactCiphertextListExpansionKey::CastAndUnpack(key),
++            streams,
++        )
+     }
+ 
+     /// # Safety
+@@ -125,10 +92,66 @@ impl CudaProvenCompactCiphertextList {
+         seed: ReRandomizationSeed,
+         streams: &CudaStreams,
+     ) -> crate::Result<CudaCompactCiphertextListExpander> {
+-        let mut rerandomized = self.duplicate(streams);
+-        rerandomized.re_randomize(public_key, seed, streams)?;
++        self.maybe_verify_maybe_re_randomize_and_expand(
++            None,
++            Some((public_key, seed)),
++            &CudaCompactCiphertextListExpansionKey::CastAndUnpack(key),
++            streams,
++        )
++    }
+ 
+-        rerandomized.expand_without_verification(key, streams)
++    /// Verifies the proofs if `verification` is given, re-randomizes the lists if
++    /// `re_randomization` is given, and expands them with `key`.
++    ///
++    /// The verification runs in parallel with the expansion. The expansion result is only
++    /// returned if all the proofs are valid.
++    pub(crate) fn maybe_verify_maybe_re_randomize_and_expand(
++        &self,
++        verification: Option<(&CompactPkeCrs, &CompactPublicKey, &[u8])>,
++        re_randomization: Option<(&CompactPublicKey, ReRandomizationSeed)>,
++        key: &CudaCompactCiphertextListExpansionKey<'_>,
++        streams: &CudaStreams,
++    ) -> crate::Result<CudaCompactCiphertextListExpander> {
++        let expand = move || match re_randomization 
+```
+
+---
+
+### Incident Patch 3: `bdf7d13c` (2026-11-24)
+**Commit Message**: fix(zk): handle the identity point in bls12_446 Gt::pairing on the GPU (#4201)
+
+**File**: `tfhe-zk-pok/src/curve_api.rs` (modified, +0/-3)
+```diff
+@@ -449,9 +449,6 @@ impl PairingGroupOps<bls12_446::Zp, bls12_446::G1, bls12_446::G2> for bls12_446:
+     }
+ 
+     fn pairing(x: bls12_446::G1, y: bls12_446::G2) -> Self {
+-        if x == bls12_446::G1::ZERO || y == bls12_446::G2::ZERO {
+-            return Self::pairing(bls12_446::G1::ZERO, bls12_446::G2::GENERATOR);
+-        }
+         Self::pairing(x, y)
      }
  }
-+
-+impl DeviceMovable for SignedRadixCiphertext {
-+    type CpuCiphertext = crate::integer::SignedRadixCiphertext;
-+
-+    fn current_device(&self) -> Device {
-+        Self::current_device(self)
-+    }
-+
-+    fn on_cpu(&self) -> MaybeCloned<'_, Self::CpuCiphertext> {
-+        Self::on_cpu(self)
-+    }
-+
-+    fn from_cpu(cpu_ct: Self::CpuCiphertext) -> Self {
-+        Self::Cpu(cpu_ct)
-+    }
-+
-+    #[cfg(feature = "gpu")]
-+    fn move_to_gpu(&mut self, streams: &CudaStreams) {
-+        self.as_gpu_mut(streams);
-+    }
-+
-+    #[cfg(feature = "hpu")]
-+    fn move_to_hpu(&mut self) {
-+        panic!("Hpu device do not support signed integer yet")
-+    }
-+}
 ```
 
-**File**: `tfhe/src/high_level_api/integers/signed/squashed_noise.rs` (modified, +6/-6)
+**File**: `tfhe-zk-pok/src/curve_api/bls12_446.rs` (modified, +24/-0)
 ```diff
-@@ -139,23 +139,23 @@ impl InnerSquashedNoiseSignedRadixCiphertext {
-         let cpu_ct = self.on_cpu();
+@@ -903,6 +903,12 @@ mod gt {
  
-         // Then we can transfer the desired device
--        match target_device {
--            Device::Cpu => {
--                let _ = cpu_ct;
--            }
-+        // Each arm builds the new self, so a transfer cannot be forgotten
-+        *self = match target_device {
-+            // self is not on the CPU here, so cpu_ct is a fresh copy that has to replace it
-+            Device::Cpu => Self::Cpu(cpu_ct.into_owned()),
-             #[cfg(feature = "gpu")]
-             Device::CudaGpu => {
-                 let new_inner = with_cuda_internal_keys(|keys| {
-                     let streams = &keys.streams;
-                     CudaSquashedNoiseSignedRadixCiphertext::from_squashed_noise_signed_radix_ciphertext(&cpu_ct, streams)
-                 });
--                *self = Self::Cuda(new_inner);
-+                Self::Cuda(new_inner)
-             }
-             #[cfg(feature = "hpu")]
-             Device::Hpu => {
-                 panic!("HPU does not support noise squashing compression");
-             }
--        }
+     impl Gt {
+         pub fn pairing(g1: G1, g2: G2) -> Self {
++            // e(O, Q) = e(P, O) = 1, and `ate_pairing` does not accept the point at infinity.
++            if g1 == G1::ZERO || g2 == G2::ZERO {
++                return Self {
++                    inner: PairingOutput::zero(),
++                };
++            }
+             ate_pairing(g1, -g2)
+         }
+ 
+@@ -1402,6 +1408,24 @@ mod tests {
+         );
+     }
+ 
++    #[test]
++    fn test_pairing_with_identity_point() {
++        let identity = Gt {
++            inner: PairingOutput::zero(),
 +        };
-     }
- 
-     #[inline]
++        for (g1, g2) in [
++            (G1::GENERATOR, G2::ZERO),
++            (G1::ZERO, G2::GENERATOR),
++            (G1::ZERO, G2::ZERO),
++        ] {
++            assert_eq!(Gt::pairing(g1, g2), identity);
++            assert_eq!(
++                <Gt as PairingGroupOps<Zp, G1, G2>>::pairing(g1, g2),
++                identity
++            );
++        }
++    }
++
+     #[test]
+     fn test_distributivity() {
+         let a = Zp {
 ```
 
-**File**: `tfhe/src/high_level_api/integers/unsigned/inner.rs` (modified, +30/-49)
+**File**: `tfhe-zk-pok/src/gpu/tests/prove_verify_stress.rs` (modified, +100/-0)
 ```diff
-@@ -1,13 +1,11 @@
- #[cfg(feature = "gpu")]
- use crate::core_crypto::gpu::CudaStreams;
- use crate::high_level_api::backward_compatibility::integers::SerializableRadixCiphertextVersions;
--use crate::high_level_api::details::MaybeCloned;
-+use crate::high_level_api::details::{DeviceMovable, MaybeCloned};
- use crate::high_level_api::global_state;
- #[cfg(feature = "gpu")]
- use crate::high_level_api::global_state::cuda_clone;
- #[cfg(feature = "gpu")]
--use crate::high_level_api::global_state::with_cuda_internal_keys;
--#[cfg(feature = "gpu")]
- use crate::high_level_api::global_state::with_thread_local_cuda_streams_for_gpu_indexes;
- #[cfg(feature = "hpu")]
- use crate::high_level_api::keys::HpuTaggedDevice;
-@@ -253,53 +251,8 @@ impl RadixCiphertext {
-         }
-     }
+@@ -13,6 +13,7 @@
  
--    #[allow(clippy::needless_pass_by_ref_mut)]
-     pub(crate) fn move_to_device(&mut self, target_device: Device) {
--        let current_device = self.current_device();
--
--        if current_device == target_device {
--            #[cfg(feature = "gpu")]
--            // We may not be on the correct Cuda device
--            if let Self::Cuda(cuda_ct) = self {
--                with_cuda_internal_keys(|key| {
--                    let streams = &key.streams;
--                    if !streams.is_on_first_gpu(cuda_ct.gpu_indexes()) {
--                        *cuda_ct = cuda_ct.duplicate(streams);
--                    }
--                })
--            }
--            return;
--        }
--
--        // The logic is that the common device is the CPU, all other devices
--        // know how to transfer from and to CPU.
--
--        // So we first transfer to CPU
--        let cpu_ct = self.on_cpu();
--
--        // Then we can transfer the desired device
--        match target_device {
--            Device::Cpu => {
--                let _ = cpu_ct;
--            }
--            #[cfg(feature = "gpu")]
--            Device::CudaGpu => {
--                let new_inner = with_cuda_internal_keys(|key| {
--                    let streams = &key.streams;
--                    crate::integer::gpu::ciphertext::CudaUnsignedRadixCiphertext::from_radix_ciphertext(
--                        &cpu_ct, streams,
--                    )
--                });
--                *self = Self::Cuda(new_inner);
--            }
--            #[cfg(feature = "hpu")]
--            Device::Hpu => {
--                let hpu_ct = global_state::with_thread_local_hpu_device(|device| {
--                    HpuRadixCiphertext::from_radix_ciphertext(&cpu_ct, &device.device, None)
--                });
--                *self = Self::Hpu(hpu_ct);
--            }
--        }
-+        crate::high_level_api::details::move_to_device(self, target_device);
-     }
+ #![allow(non_snake_case)]
  
-     #[inline]
-@@ -309,3 +262,31 @@ impl RadixCiphertext {
-         }
++use crate::curve_api::bls12_446::{G1, G2};
+ use crate::curve_api::Bls12_446;
+ use crate::gpu::pke_v2 as gpu_pke_v2;
+ use crate::proofs::pke_v2::VerificationPairingMode;
+@@ -304,3 +305,102 @@ fn test_pke_v2_long_run() {
+         run_pke_v2_gpu_cpu_equivalence_round(round_seed);
      }
  }
 +
-+impl DeviceMovable for RadixCiphertext {
-+    type CpuCiphertext = crate::integer::RadixCiphertext;
++#[test]
++fn test_pke_v2_gpu_verify_rejects_identity_commitment() {
++    let params = crate::proofs::pke_v2::tests::PKEV2_TEST_PARAMS;
++    let PkeTestParameters {
++        d,
++        k,
++        B,
++        q,
++        t,
++        msbs_zero_padding_bit_count,
++    } = params;
 +
-+    fn current_device(&self) -> Device {
-+        Self::current_device(self)
-+    }
++    let seed: u64 = thread_rng().gen();
++    println!("test_pke_v2_gpu_verify_rejects_identity_commitment seed: {seed:#x}");
++    let rng = &mut StdRng::seed_from_u64(seed);
 +
-+    fn on_cpu(&self) -> MaybeCloned<'_, Self::CpuCiphertext> {
-+        Self::on_cpu(self)
-+    }
++    let testcase = PkeTestcase::gen(rng, params);
++    let ct = testcase.encrypt(params);
++    let public_param = pke_v2::crs_gen::<Curve>(d, k, B, q, t, msbs_zero_padding_bit_count, rng);
++    let (public_commit, private_commit) = pke_v2::commit(
++        testcase.a.clone(),
++        testcase.b.clone(),
++        ct.c1.clone(),
++        ct.c2.clone(),
++        testcase.r.clone(),
++        testcase.e1.clone(),
++        testcase.m.clone(),
++        testcase.e2.clone(),
++        &public_param,
++    );
 +
-+    fn from_cpu(cpu_ct: Self::CpuCiphertext) -> Self {
-+        Self::Cpu(cpu_ct)
-+    }
++    let set_identity: [fn(&mut pke_v2::Proof<Curve>); 11] = [
++        |proof| proof.C_hat_bin = G2::ZERO,
++        |proof| proof.C_hat_e = G2::ZERO,
++        |proof| proof.C_hat_t = G2::ZERO,
++        |proof| proof.C_R = G1::ZERO,
++        |proof| proof.C_r_tilde = G1::ZERO,
++        |proof| proof.C_e = G1::ZERO,
++        |proof| proof.C_y = G1::ZERO,
++        |proof| proof.C_h1 = G1::ZERO,
++        |proof| proof.C_h2 = G1::ZERO,
++        |proof| proof.pi = G1::ZERO,
++        |proof| proof.pi_kzg = G1::ZERO,
++    ];
++    let set_compute_load_identity: [fn(&mut pke_v2::ComputeLoadProofFields<Curve>); 2] = [
++        |fields| fields.C_hat_h3 = G2::ZERO,
++        |fields| fields.C_hat_w = G2::ZERO,
++    ];
 +
-+    #[cfg(feature = "gpu")]
-+    fn move_to_gpu(&mut self, streams: &CudaStreams) {
-+        self.as_gpu_mut(streams);
-+    }
++    for load in [ComputeLoad::Proof, ComputeLoad::Verify] {
++        let valid_proof = gpu_pke_v2::prove(
++            (&public_param, &public_commit),
++            &private_commit,
++            &testcase.metadata,
++            load,
++            &seed.to_le_bytes(),
++        );
 +
-+    #[cfg(feature = "hpu")]
-+    fn move_to_hpu(&mut self) {
-+        global_state::with_thread_local_hpu_device(|device| {
-+            self.as_hpu_mut(device);
-+        });
++        let assert_verify = |proof: &pke_v2::Proof<Curve>, should_fail: bool| {
++            for pairing_mode in [
++                VerificationPairingMode::TwoSteps,
++                VerificationPairingMode::Batched,
++            ] {
++                let public = (&public_param, &public_commit);
++                let cpu_result = pke_v2::verify(proof, public, &testcase.metadata, pairing_mode);
++                let gpu_result =
++                    gpu_pke_v2::verify(proof, public, &testcase.metadata, pairing_mode);
++                assert_eq!(
++                    cpu_result.is_err(),
++                    should_fail,
++                    "CPU verify: load={load}, mode={pairing_mode:?}"
++                );
++                assert_eq!(
++                    gpu_result.is_err(),
++                    should_fail,
++                    "GPU verify: load={load}, mode={pairing_mode:?}"
++                );
++            }
++        };
++
++        assert_verify(&valid_proof, false);
++
++        for set in set_identity {
++            let mut proof = valid_proof.clone();
++            set(&mut proof);
++            assert_verify(&proof, true);
++        }
++
++        for set in set_compute_load_identity {
++            let mut proof = valid_proof.clone();
++            // Only ComputeLoad::Proof proofs contain these fields.
++            if let Some(fields) = proof.compute_load_proof_fields.as_mut() {
++                set(fields);
++                assert_verify(&proof, true);
++            }
++        }
 +    }
 +}
+```
+
+**File**: `tfhe-zk-pok/src/proofs/pke_v2/mod.rs` (modified, +53/-0)
+```diff
+@@ -4314,12 +4314,33 @@ pub(crate) mod tests {
+                 inner: point_on_curve_wrong_subgroup(rng),
+             });
+ 
++            let verify_fails = |proof: &Proof<Curve>| {
++                [
++                    VerificationPairingMode::TwoSteps,
++                    VerificationPairingMode::Batched,
++                ]
++                .into_iter()
++                .all(|pairing_mode| {
++                    verify(
++                        proof,
++                        (&public_param, &public_commit),
++                        &testcase.metadata,
++                        pairing_mode,
++                    )
++                    .is_err()
++                })
++            };
++
++            assert!(!verify_fails(&valid_proof));
++
+             {
+                 let mut proof = valid_proof.clone();
+                 proof.C_hat_e = not_on_curve_g2;
+                 assert!(!proof.is_usable());
+                 proof.C_hat_e = not_in_group_g2;
+                 assert!(!proof.is_usable());
++                proof.C_hat_e = bls12_446::G2::ZERO;
++                assert!(verify_fails(&proof));
+             }
+ 
+             {
+@@ -4328,6 +4349,8 @@ pub(crate) mod tests {
+                 assert!(!proof.is_usable());
+                 proof.C_e = not_in_group_g1;
+                 assert!(!proof.is_usable());
++                proof.C_e = bls12_446::G1::ZERO;
++                assert!(verify_fails(&proof));
+             }
+ 
+             {
+@@ -4336,6 +4359,8 @@ pub(crate) mod tests {
+                 assert!(!proof.is_usable());
+                 proof.C_r_tilde = not_in_group_g1;
+                 assert!(!proof.is_usable());
++                proof.C_r_tilde = bls12_446::G1::ZERO;
++                assert!(verify_fails(&proof));
+             }
+ 
+             {
+@@ -4344,6 +4369,8 @@ pub(crate) mod tests {
+                 assert!(!proof.is_usable());
+                 proof.C_R = not_in_group_g1;
+                 assert!(!proof.is_usable());
++                proof.C_R = bls12_446::G1::ZERO;
++                assert!(verify_fails(&proof));
+             }
+ 
+             {
+@@ -4352,6 +4379,8 @@ pub(crate) mod tests {
+                 assert!(!proof.is_usable());
+                 proof.C_hat_bin = not_in_group_g2;
+                 assert!(!proof.is_usable());
++                proof.C_hat_bin = bls12_446::G2::ZERO;
++                assert!(verify_fails(&proof));
+             }
+ 
+             {
+@@ -4360,6 +4389,8 @@ pub(crate) mod tests {
+                 assert!(!proof.is_usable());
+                 proof.C_y = not_in_group_g1;
+                 assert!(!proof.is_usable());
++                proof.C_y = bls12_446::G1::ZERO;
++                assert!(verify_fails(&proof));
+             }
+ 
+             {
+@@ -4368,6 +4399,8 @@ pub(crate) mod tests {
+                 assert!(!proof.is_usable());
+                 proof.C_h1 = not_in_group_g1;
+                 assert!(!proof.is_usable());
++                proof.C_h1 = bls12_446::G1::ZERO;
++                assert!(verify_fails(&proof));
+             }
+ 
+             {
+@@ -4376,6 +4409,8 @@ pub(crate) mod tests {
+                 assert!(!proof.is_usable());
+                 proof.C_h2 = not_in_group_g1;
+                 assert!(!proof.is_usable());
++                proof.C_h2 = bls12_446::G1::ZERO;
++                assert!(verify_fails(&proof));
+             }
+ 
+             {
+@@ -4384,6 +4419,8 @@ pub(crate) mod tests {
+                 assert!(!proof.is_usable());
+                 proof.C_hat_t = not_in_group_g2;
+                 assert!(!proof.is_usable());
++                proof.C_hat_t = bls12_446::G2::ZERO;
++                assert!(verify_fails(&proof));
+             }
+ 
+             {
+@@ -4392,6 +4429,8 @@ pub(crate) mod tests {
+                 assert!(!proof.is_usable());
+                 proof.pi = not_in_group_g1;
+                 assert!(!proof.is_usable());
++                proof.pi = bls12_446::G1::ZERO;
++                assert!(verify_fails(&proof));
+             }
+ 
+             {
+@@ -4400,6 +4439,8 @@ pub(crate) mod tests {
+                 assert!(!proof.is_usable());
+                 proof.pi_kzg = not_in_group_g1;
+                 assert!(!proof.is_usable());
++                proof.pi_kzg = bls12_446::G1::ZERO;
++                assert!(verify_fails(&proof));
+             }
+ 
+             if let Some(ref valid_compute_proof_fields) = valid_proof.compute_load_proof_fields {
+@@ -4417,6 +4458,12 @@ pub(crate) mod tests {
+                     });
+ 
+                     assert!(!proof.is_usable());
++
++                    proof.compute_load_proof_fields = Some(ComputeLoadProofFields {
++                        C_hat_h3: bls12_446::G2::ZERO,
++                        C_hat_w: valid_compute_proof_fields.C_hat_w,
++                    });
++                    assert!(verify_fails(&proof));
+                 }
+ 
+                 {
+@@ -4434,6 +4481,12 @@ pub(crate) mod tests {
+                     });
+ 
+                     assert!(!proof.is_usable());
++
++                    pro
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #4214** (2026-11-23): chore: move gpu scripts to dedicated dir with gpu team as codewoners (@IceTDrinker)
 - **PR #4212** (2026-11-23): chore(data-extractor): bump url to 2.5.9 (@nsarlin-zama)
+- **PR #4201** (2026-11-24): fix(zk): handle the identity point in bls12_446 Gt::pairing on the GPU (@pdroalves)
 - **PR #4198** (2026-11-23): Ns/chore/transciphering 2 bits (@nsarlin-zama)
 - **PR #4197** (2026-11-19): fix(ci): use merge commit parent as backward compat base (@SouchonTheo)
 - **PR #4195** (2026-11-19): fix(gpu): do not return a 0 decompression size for single-block items (@agnesLeroy)
-- **PR #4194** (2026-11-19): chore: publish steps are put beyon a release environment (@IceTDrinker)
 
 ---
 
@@ -2508,91 +2840,53 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gpu): keep the CPU copy when moving a ciphertext back to the CPU
+## X. gpu): extend match_value results to the output block count in the high-level api
 
 **RULE**:
-When implementing operations in `tfhe/src/high_level_api/booleans/inner.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tfhe/src/high_level_api/integers/unsigned/base.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2dddbbc4`: gpu): keep the CPU copy when moving a ciphertext back to the CPU. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b3ef09b4`: gpu): extend match_value results to the output block count in the high-level api. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tfhe/src/high_level_api/booleans/inner.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tfhe/src/high_level_api/integers/unsigned/base.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use crate::high_level_api::details::{DeviceMovable, MaybeCloned};
-        crate::high_level_api::details::move_to_device(self, target_device);
-    }
-    #[inline]
-    pub(crate) fn move_to_device_of_server_key_if_set(&mut self) {
-        if let Some(device) = global_state::device_of_internal_keys() {
-            self.move_to_device(device);
-    }
-}
-impl DeviceMovable for InnerBoolean {
-    type CpuCiphertext = BooleanBlock;
-    fn current_device(&self) -> Device {
-        Self::current_device(self)
-    }
-    fn on_cpu(&self) -> MaybeCloned<'_, Self::CpuCiphertext> {
-        Self::on_cpu(self)
-    fn from_cpu(cpu_ct: Self::CpuCiphertext) -> Self {
-        Self::Cpu(cpu_ct)
-    }
-
-    #[cfg(feature = "gpu")]
-    fn move_to_gpu(&mut self, streams: &CudaStreams) {
-        self.as_gpu_mut(streams);
-    }
-
-    #[cfg(feature = "hpu")]
-    fn move_to_hpu(&mut self) {
-        if !matches!(self, Self::Hpu(_)) {
-            let cpu_ct = Self::on_cpu(self);
-            let hpu_ct = global_state::with_thread_local_hpu_device(|device| {
-                HpuRadixCiphertext::from_boolean_ciphertext(&cpu_ct, &device.device, None)
-            });
-            *self = Self::Hpu(hpu_ct);
+                let current_num_blocks = result.ciphertext.d_blocks.lwe_ciphertext_count().0;
+                if target_num_blocks >= current_num_blocks {
+                    let result = if target_num_blocks > current_num_blocks {
+                        cuda_key.key.key.extend_radix_with_trivial_zero_blocks_msb(
+                            &result,
+                            target_num_blocks - current_num_blocks,
+                            streams,
+                        )
+                    } else {
+                        result
+                    };
+                let current_num_blocks = result.ciphertext.d_blocks.lwe_ciphertext_count().0;
+                if target_num_blocks >= current_num_blocks {
+                    let result = if target_num_blocks > current_num_blocks {
+                        cuda_key.key.key.extend_radix_with_trivial_zero_blocks_msb(
+                            &result,
+                            target_num_blocks - current_num_blocks,
+                            streams,
+                        )
+                    } else {
+                        result
+                    };
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-use crate::high_level_api::details::MaybeCloned;
-use crate::high_level_api::global_state::with_cuda_internal_keys;
-#[cfg(feature = "gpu")]
-    #[allow(clippy::needless_pass_by_ref_mut)]
-        let current_device = self.current_device();
-        if current_device == target_device {
-            #[cfg(feature = "gpu")]
-            // We may not be on the correct Cuda device
-            if let Self::Cuda(cuda_ct) = self {
-                with_cuda_internal_keys(|key| {
-                    let streams = &key.streams;
-                    if !streams.is_on_first_gpu(cuda_ct.gpu_indexes()) {
-                        *cuda_ct = cuda_ct.duplicate(streams);
-                    }
-                })
-            }
-            return;
-        // The logic is that the common device is the CPU, all other devices
-        // know how to transfer from and to CPU.
-        // So we first transfer to CPU
-        let cpu_ct = self.on_cpu();
-        // Then we can transfer the desired device
-        match target_device {
-            Device::Cpu => {
-                let _ = cpu_ct;
-            }
-            #[cfg(feature = "gpu")]
-            Device::CudaGpu => {
-                let new_inner = with_cuda_in
+                if target_num_blocks >= result.ciphertext.d_blocks.lwe_ciphertext_count().0 {
+                if target_num_blocks >= result.ciphertext.d_blocks.lwe_ciphertext_count().0 {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2dddbbc4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b3ef09b4` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

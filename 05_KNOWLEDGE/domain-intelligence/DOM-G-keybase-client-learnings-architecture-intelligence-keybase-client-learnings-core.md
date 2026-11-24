@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T22:30:11.998Z",
+  "timestamp": "2026-11-24T14:33:32.578Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-keybase-client-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [keybase-client-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T22:30:11.998Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T14:33:32.578Z`  
 > **Learning ID**: `LEARN-EVO-keybase-client-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: F (Design Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 88%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), F (Design Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 53%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from keybase-client-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/keybase-client-learnings.md`  
 > **Source**: github ([https://github.com/keybase/client](https://github.com/keybase/client))  
-> **Source Version**: `1be7e8a0`  
+> **Source Version**: `87059b9d`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T22:29:57.441Z  
+> **Timestamp**: 2026-11-24T14:33:21.408Z  
 > **Learning ID**: `learn-github-keybase-client`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/keybase-client-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/keybase/client](https://github.com/keybase/client))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T22:29:57.433Z  
+> **Harvest Timestamp**: 2026-11-24T14:33:21.399Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Keybase Go Library, Client, Service, OS X, iOS, Android, Electron
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 9273 stars
+- **Stars / Engagement**: 9271 stars
 
 ---
 
@@ -1936,657 +1936,613 @@ func ClassifyDomain(domain string) chat1.UnfurlType {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1be7e8a0` (2026-11-20)
-**Commit Message**: improve errors for failed writes to disabled folders (#29914)
+### Incident Patch 1: `3030db83` (2026-11-23)
+**Commit Message**: deps: legend-list 3.9, reanimated 4.8, worklets 0.14, webview 17, RN CLI 21; drop desktop LegendList workarounds (#29923)
 
-**File**: `go/kbfs/kbfsblock/server_errors.go` (modified, +5/-0)
+* deps: legend-list 3.9.0, reanimated 4.8.0, worklets 0.14.0, keyboard-controller 1.24.0, picker 2.13.0, electron 45.4.1, storybook 10.6.8
+
+* deps: react-native-webview 17.1.0, react-native-community/cli 21.0.0
+
+* metro: keep inlineRequires on; worklets 0.14 bundle mode no longer forces it
+
+* chat: drop LegendList workarounds that 3.9.0 makes unnecessary on desktop
+
+- useSyncRowLayout: on desktop it imported @legendapp/list/react-native, whose
+  web build has its own container context, so inside the thread's
+  @legendapp/list/react rows it always got noop (confirmed in the running app).
+  The native thread is a FlatList, so it was a noop there too.
+- Inbox applyRef wrapper: 3.7.3 made the minimumViewTime dwell call the
+  current onViewableItemsChanged. A real-Chromium probe calls the stale
+  callback on 3.7.2 and the current one on 3.9.0.
+- Desktop inbox initial unbox: onViewableItemsChanged does fire on first show
+  without a scroll (also when mounted hidden). The first view that shows
+  conversations now unboxes them at once; later views stay debounced.
+
+* re
+
+**File**: `shared/chat/conversation/giphy/index.tsx` (modified, +2/-0)
 ```diff
-@@ -205,6 +205,11 @@ type ServerErrorNoPermission struct {
- 	Msg string
- }
- 
-+// PublicWritesDisabledMsg is the ServerErrorNoPermission message the
-+// bserver sends when it refuses a write because public folder writes are
-+// disabled.
-+const PublicWritesDisabledMsg = "public folder writes are disabled"
-+
- // ToStatus implements the ExportableError interface for ServerErrorBlockArchived
- func (e ServerErrorNoPermission) ToStatus() (s keybase1.Status) {
- 	s.Code = StatusCodeServerErrorNoPermission
+@@ -117,6 +117,8 @@ const NativeGiphySearch = () => {
+     <Kb.Box2 direction="horizontal" fullWidth={true} style={nativeStyles.container}>
+       {p.previews ? (
+         <WebView
++          // Only here because iOS adds injectedJavaScript just when messaging is on. Messages come
++          // from the loaded page, so this stays a no-op.
+           onMessage={noop}
+           injectedJavaScript={injectedJavaScript}
+           allowsInlineMediaPlayback={true}
 ```
 
-**File**: `go/kbfs/libkbfs/config_local.go` (modified, +2/-1)
+**File**: `shared/chat/conversation/messages/text/coinflip/index.tsx` (modified, +0/-6)
 ```diff
-@@ -1290,6 +1290,7 @@ func (c *ConfigLocal) EnableJournaling(
- 	log := c.MakeLogger("")
- 	branchListener := c.KBFSOps().(branchChangeListener)
- 	flushListener := c.KBFSOps().(mdFlushListener)
-+	refusalListener := c.KBFSOps().(writeRefusalListener)
+@@ -7,7 +7,6 @@ import {useOrdinal} from '@/chat/conversation/messages/ids-context'
+ import {pluralize} from '@/util/string'
+ import {useConversationThreadMessage, useConversationThreadSelector} from '../../../thread-context'
+ import {useConversationSendActions} from '../../../send-actions'
+-import {useSyncRowLayout} from '../../use-sync-row-layout'
+ import * as TestIDs from '@/tests/e2e/shared/test-ids'
  
- 	// Make sure the journal root exists.
- 	err := ioutil.MkdirAll(journalRoot, 0o700)
-@@ -1299,7 +1300,7 @@ func (c *ConfigLocal) EnableJournaling(
+ // The flip result arrives via a separate status notification, not with the thread, so on initial
+@@ -51,11 +50,6 @@ function CoinFlipContainer() {
+   const showParticipants = phase === T.RPCChat.UICoinFlipPhase.complete
+   const numParticipants = participants?.length ?? 0
  
- 	jManager := makeJournalManager(c, log, journalRoot, c.BlockCache(),
- 		c.DirtyBlockCache(), c.BlockServer(), c.MDOps(), branchListener,
--		flushListener, bws)
-+		flushListener, refusalListener, bws)
- 
- 	c.SetBlockServer(jManager.blockServer())
- 	c.SetMDOps(jManager.mdOps())
+-  // The flip result streams in after first paint and grows the card; flush the row measure so the
+-  // list re-pins to the newest message instead of parking above it. Keyed on the status signals
+-  // that change the card height (loaded yet, phase, participant count, result present).
+-  useSyncRowLayout(`${status === undefined ? 0 : 1}|${phase ?? -1}|${numParticipants}|${resultInfo ? 1 : 0}`)
+-
+   const revealed =
+     participants?.reduce((r, p) => {
+       return r + (p.reveal ? 1 : 0)
 ```
 
-**File**: `go/kbfs/libkbfs/errors.go` (modified, +15/-0)
+**File**: `shared/chat/conversation/messages/text/unfurl/unfurl-list/image/index.tsx` (modified, +0/-5)
 ```diff
-@@ -106,6 +106,21 @@ func (e WriteUnsupportedError) Error() string {
- 	return fmt.Sprintf("Writing to %s is unsupported", e.Filename)
- }
+@@ -4,7 +4,6 @@ import {clampImageSize} from '@/constants/chat/helpers'
+ import {maxWidth} from '@/chat/conversation/messages/attachment/shared'
+ import {Video} from './video'
+ import {openURL} from '@/util/misc'
+-import {useSyncRowLayout} from '@/chat/conversation/messages/use-sync-row-layout'
  
-+// WritesDiscardedError indicates that a folder's journaled writes were
-+// discarded because the server refused them.
-+type WritesDiscardedError struct {
-+	Err error
-+}
-+
-+// Error implements the error interface for WritesDiscardedError
-+func (e WritesDiscardedError) Error() string {
-+	return fmt.Sprintf("Discarded writes the server refused: %v", e.Err)
-+}
-+
-+func (e WritesDiscardedError) Unwrap() error {
-+	return e.Err
-+}
-+
- // WriteToReadonlyNodeError indicates an error when trying to write a
- // node that's marked as read-only.
- type WriteToReadonlyNodeError struct {
+ export type Props = {
+   autoplayVideo: boolean
+@@ -30,10 +29,6 @@ const UnfurlImage = (p: Props) => {
+   const maxSize = Math.min(maxWidth, 320) - (widthPadding || 0)
+   const {height, width} = clampImageSize(p.width, p.height, maxSize, 320)
+ 
+-  // Usually the metadata dimensions are known at first paint, but if they arrive in a later update
+-  // the image grows; flush the row measure so the list re-pins instead of parking above newest.
+-  useSyncRowLayout(`${width}x${height}`)
+-
+   return isVideo ? (
+     <Video
+       autoPlay={autoplayVideo}
 ```
 
-**File**: `go/kbfs/libkbfs/folder_branch_ops.go` (modified, +49/-4)
+**File**: `shared/chat/conversation/messages/use-sync-row-layout.tsx` (removed, +0/-27)
 ```diff
-@@ -7798,9 +7798,12 @@ func (fbo *folderBranchOps) UnstageForTesting(
- 	})
- }
- 
-+var errCancelUploadsBeforeHead = errors.New(
-+	"Can't cancel uploads before the folder's head is loaded")
-+
- func (fbo *folderBranchOps) cancelUploadsLocked(
- 	ctx context.Context, lState *kbfssync.LockState,
--) error {
-+) (err error) {
- 	fbo.mdWriterLock.AssertLocked(lState)
- 
- 	jManager, _ := GetJournalManager(fbo.config)
-@@ -7815,10 +7818,22 @@ func (fbo *folderBranchOps) cancelUploadsLocked(
- 		return errors.New("Can't cancel uploads while there's a conflict")
- 	}
- 
--	// Pause the uploads right away.
--	jManager.PauseBackgroundWork(ctx, fbo.id())
-+	// Undoing the MD updates below needs the head to undo from.
-+	if md, _ := fbo.getHead(ctx, lState, mdNoCommit); md == (ImmutableRootMetadata{}) {
-+		return errCancelUploadsBeforeHead
-+	}
-+
-+	// Pause the uploads right away. If this paused them, resume them if
-+	// cancelling fails.
-+	if jManager.PauseBackgroundWork(ctx, fbo.id()) {
-+		defer func() {
-+			if err != nil {
-+				jManager.ResumeBackgroundWork(ctx, fbo.id())
-+			}
-+		}()
-+	}
- 	// Wait until the pause takes effect.
--	err := jManager.Wait(ctx, fbo.id())
-+	err = jManager.Wait(ctx, fbo.id())
- 	if err != nil {
- 		return err
- 	}
-@@ -9148,6 +9163,36 @@ func (fbo *folderBranchOps) onMDFlush(
- 	})
- }
- 
-+// onTLFWriteRefused discards the journaled writes the server refused,
-+// since retrying them can't succeed, and then reports the refusal.
-+func (fbo *folderBranchOps) onTLFWriteRefused(
-+	tlfName tlf.CanonicalName, refusal error,
-+) {
-+	fbo.goTracked(func() {
-+		ctx, cancelFunc := fbo.newCtxWithFBOID()
-+		defer cancelFunc()
-+
-+		err := fbo.CancelUploads(ctx, fbo.folderBranch)
-+		switch {
-+		case err == nil:
-+			refusal = WritesDiscardedError{refusal}
-+		case errors.As(err, new(NotPermittedWhileDirtyError)) ||
-+			errors.Is(err, errCancelUploadsBeforeHead):
-+			// Once the writes are synced or the head is loaded, the
-+			// journal's next refused flush tries again.
-+			fbo.log.CDebugf(ctx, "Will retry discarding refused writes: %+v", err)
-+			if jManager, _ := GetJournalManager(fbo.config); jManager != nil {
-+				jManager.retryWriteRefusal(fbo.id())
-+			}
-+			return
-+		default:
-+			fbo.log.CDebugf(ctx, "Couldn't discard refused writes: %+v", err)
-+		}
-+		fbo.config.Reporter().ReportErr(
-+			ctx, tlfName, fbo.id().Type(), WriteMode, refusal)
-+	})
-+}
-+
- // TeamNameChanged implements the KBFSOps interface for folderBranchOps
- func (fbo *folderBranchOps) TeamNameChanged(
- 	ctx context.Context, tid keybase1.TeamID,
+@@ -1,27 +0,0 @@
+-import * as React from 'react'
+-import type * as T from '@/constants/types'
+-import {useSyncLayout} from '@legendapp/list/react-native'
+-import {useOrdinal} from './ids-context'
+-
+-// When a row's content settles to a new height after first paint (a flip result streams in,
+-// reactions appear, an unfurl loads), force LegendList to re-measure this row synchronously so its
+-// bottom-anchoring / re-pin uses the final height on the same frame instead of a frame late (which
+-// otherwise leaves the thread parked above the newest message). Pass a signature that changes when
+-// the height-affecting content changes. Flushes only when the signature changes for the SAME
+-// message: the initial mount and a recycled container switching to a new ordinal both get measured
+-// by LegendList's own onLayout, so flushing there is wasted sync layout work mid-scroll. Noops
+-// wherever the row is not inside a LegendList container, or on the old architecture.
+-export const useSyncRowLayout = (signature: string | number) => {
+-  const ordinal = useOrdinal()
+-  const syncLayout = useSyncLayout()
+-  const lastRef = React.useRef<{ordinal: T.Chat.Ordinal; signature: string | number} | undefined>(
+-    undefined
+-  )
+-  React.useLayoutEffect(() => {
+-    const last = lastRef.current
+-    lastRef.current = {ordinal, signature}
+-    if (last?.ordinal !== ordinal) return
+-    if (last.signature === signature) return
+-    syncLayout()
+-  }, [ordinal, signature, syncLayout])
+-}
 ```
 
-**File**: `go/kbfs/libkbfs/journal_manager.go` (modified, +29/-7)
+**File**: `shared/chat/conversation/messages/wrapper/wrapper.tsx` (modified, +0/-4)
 ```diff
-@@ -121,6 +121,15 @@ type mdFlushListener interface {
- 	onMDFlush(tlf.ID, kbfsmd.BranchID, kbfsmd.Revision)
- }
- 
-+// writeRefusalListener describes a caller that will get updates via
-+// the onTLFWriteRefused method when the server refuses a public TLF's
-+// journaled writes because public folder writes are disabled.  The
-+// implementer must access the journal from another goroutine to avoid
-+// deadlocks.
-+type writeRefusalListener interface {
-+	onTLFWriteRefused(tlf.ID, tlf.CanonicalName, error)
-+}
-+
- type clearedConflictKey struct {
- 	tlfID tlf.ID
- 	date  time.Time // the conflict time truncated to be just the date
-@@ -159,6 +168,7 @@ type JournalManager struct {
- 	delegateMDOps           MDOps
- 	onBranchChange          branchChangeListener
- 	onMDFlush               mdFlushListener
-+	onWriteRefused          writeRefusalListener
- 
- 	// Just protects lastQuotaError.
- 	lastQuotaErrorLock sync.Mutex
-@@ -185,7 +195,7 @@ func makeJournalManager(
- 	config Config, log logger.Logger, dir string,
- 	bcache data.BlockCache, dirtyBcache data.DirtyBlockCache,
- 	bserver BlockServer, mdOps MDOps, onBranchChange branchChangeListener,
--	onMDFlush mdFlushListener,
-+	onMDFlush mdFlushListener, onWriteRefused writeRefusalListener,
- 	bws TLFJournalBackgroundWorkStatus,
- ) *JournalManager {
- 	if len(dir) == 0 {
-@@ -203,6 +213,7 @@ func makeJournalManager(
- 		delegateMDOps:           mdOps,
- 		onBranchChange:          onBranchChange,
- 		onMDFlush:               onMDFlush,
-+		onWriteRefused:          onWriteRefused,
- 		tlfJournals:             make(map[tlf.ID]*tlfJournal),
- 		dirtyOps:                make(map[tlf.ID]uint),
- 		clearedConflictTlfs:     make(map[clearedConflictKey]clearedConflictVal),
-@@ -470,7 +481,8 @@ func (j *JournalManager) makeJournalForConflictTlfLocked(
- 		ctx, j.currentUID, j.currentVerifyingKey, dir,
- 		tlfID, chargedTo, tlfJournalConfigAdapter{j.config},
- 		j.delegateBlockServer, TLFJournalBackgroundWorkPaused, delegate,
--		j.onBranchChange, j.onMDFlush, j.config.DiskLimiter(), fakeTlfID)
-+		j.onBranchChange, j.onMDFlush, j.onWriteRefused, j.config.DiskLimiter(),
-+		fakeTlfID)
- 	if err != nil {
- 		return nil, tlf.ID{}, time.Time{}, err
- 	}
-@@ -841,7 +853,7 @@ func (j *JournalManager) enableLocked(
- 		ctx, j.currentUID, j.currentVerifyingKey, tlfDir,
- 		tlfID, chargedTo, tlfJournalConfigAdapter{j.config},
- 		j.delegateBlockServer, bws, delegate, j.onBranchChange, j.onMDFlush,
--		j.config.DiskLimiter(),
-+		j.onWriteRefused, j.config.DiskLimiter(),
- 		tlf.NullID)
- 	if err != nil {
- 		return nil, err
-@@ -941,17 +953,19 @@ func (j *JournalManager) dirtyOpEnd(tlfID tlf.ID) {
- }
- 
- // PauseBackgroundWork pauses the background work goroutine, if it's
--// not already paused.
--func (j *JournalManager) PauseBackgroundWork(ctx context.Context, tlfID tlf.ID) {
-+// not already paused, and returns whether this call paused it.
-+func (j *JournalManager) PauseBackgroundWork(
-+	ctx context.Context, tlfID tlf.ID,
-+) bool {
- 	j.log.CDebugf(ctx, "Signaling pause for %s", tlfID)
- 	if tlfJournal, ok := j.getTLFJournal(tlfID, nil); ok {
--		tlfJournal.pauseBackgroundWork()
--		return
-+		return tlfJournal.pauseBackgroundWork()
- 	}
- 
- 	j.log.CDebugf(ctx,
- 		"Could not find journal for %s; dropping pause signal",
- 		tlfID)
-+	return false
- }
- 
- // ResumeBackgroundWork resumes the background work goroutine, if it's
-@@ -968,6 +982,14 @@ func (j *JournalManager) ResumeBackgroundWork(ctx context.Context, tlfID tlf.ID)
- 		tlfID)
- }
- 
-+// retryWriteRefusal makes the given TLF's journal handle its next write
-+// refusal again.
-+func (j *JournalManager) retryWriteRefusal(tlfID tlf.ID) {
-+	if tlfJournal, ok := j.getTLFJournal(tlfID, nil); ok {
-+		tlfJournal.retryWriteRefusal()
-+	}
-+}
-+
- // Flush flushes the write journal for the given TLF.
- func (j *JournalManager) Flush(ctx context.Context, tlfID tlf.ID) (err error) {
- 	j.log.CDebugf(ctx, "Flushing journal for %s", tlfID)
+@@ -12,7 +12,6 @@ import ExplodingMeta from './exploding-meta'
+ import LongPressable from './long-pressable'
+ import {useMessagePopup} from '../message-popup'
+ import ReactionsRow from '../reactions-rows'
+-import {useSyncRowLayout} from '../use-sync-row-layout'
+ import SendIndicator from './send-indicator'
+ import * as T from '@/constants/types'
+ import capitalize from 'lodash/capitalize'
+@@ -582,9 +581,6 @@ function TextAndSiblings(p: TSProps) {
+   const {hasReactions, popupAnchor, reactions, sendIndicatorFailed, sendIndicatorID} = p
+   const {sendIndicatorSent, type, setShowingPicker, showCoinsIcon, shouldShowPopup} = p
+   const {showPopup, showExplodingCountdown, showRevoked, showSendIndicator, showingPicker, submitState} = p
+-  // Reactions appearing and an unfurl card loading both grow the row after first paint; flush the
+-  // measure so the list re-pins to the newest message instead of parking above it.
+-  useSyncRowLayout(`${reactions?.size ?? 0}|${hasUnfurlList ? 1 : 0}`)
+   const pressableProps = isMobile
+     ? {
+         onLongPress: decorate && shouldShowPopup ? showPopup : undefined,
 ```
 
-**File**: `go/kbfs/libkbfs/journal_manager_test.go` (modified, +5/-5)
+**File**: `shared/chat/inbox/index.tsx` (modified, +1/-18)
 ```diff
-@@ -427,7 +427,7 @@ func TestJournalManagerRestart(t *testing.T) {
- 	jManager = makeJournalManager(
- 		config, jManager.log, tempdir, jManager.delegateBlockCache,
- 		jManager.delegateDirtyBlockCache,
--		jManager.delegateBlockServer, jManager.delegateMDOps, nil, nil,
-+		jManager.delegateBlockServer, jManager.delegateMDOps, nil, nil, nil,
- 		TLFJournalBackgroundWorkPaused)
- 	err = jManager.EnableExistingJournals(
- 		ctx, session.UID, session.VerifyingKey, TLFJournalBackgroundWorkPaused)
-@@ -797,7 +797,7 @@ func TestJournalManagerEnableAuto(t *testing.T) {
- 	jManager = makeJournalManager(
- 		config, jManager.log, tempdir, jManager.delegateBlockCache,
- 		jManager.delegateDirtyBlockCache,
--		jManager.delegateBlockServer, jManager.delegateMDOps, nil, nil,
-+		jManager.delegateBlockServer, jManager.delegateMDOps, nil, nil, nil,
- 		TLFJournalBackgroundWorkPaused)
- 	session, err := config.KBPKI().GetCurrentSession(ctx)
- 	require.NoError(t, err)
-@@ -922,7 +922,7 @@ func TestJournalManagerNukeEmptyJournalsOnRestart(t *testing.T) {
- 	jManager = makeJournalManager(
- 		config, jManager.log, tempdir, jManager.delegateBlockCache,
- 		jManager.delegateDirtyBlockCache,
--		jManager.delegateBlockServer, jManager.delegateMDOps, nil, nil,
-+		jManager.delegateBlockServer, jManager.delegateMDOps, nil, nil, nil,
- 		TLFJournalBackgroundWorkPaused)
- 	session, err := config.KBPKI().GetCurrentSession(ctx)
- 	require.NoError(t, err)
-@@ -992,7 +992,7 @@ func TestJournalManagerTeamTLFWithRestart(t *testing.T) {
- 	jManager = makeJournalManager(
- 		config, jManager.log, tempdir, jManager.delegateBlockCache,
- 		jManager.delegateDirtyBlockCache,
--		jManager.delegateBlockServer, jManager.delegateMDOps, nil, nil,
-+		jManager.delegateBlockServer, jManager.delegateMDOps, nil, nil, nil,
- 		TLFJournalBackgroundWorkPaused)
- 	err = jManager.EnableExistingJournals(
- 		ctx, session.UID, session.VerifyingKey, TLFJournalBackgroundWorkPaused)
-@@ -1111,7 +1111,7 @@ func TestJournalManagerCorruptJournal(t *testing.T) {
- 	jManager = makeJournalManager(
- 		config, jManager.log, tempdir, jManager.delegateBlockCache,
- 		jManager.delegateDirtyBlockCache,
--		jManager.delegateBlockServer, jManager.delegateMDOps, nil, nil,
-+		jManager.delegateBlockServer, jManager.delegateMDOps, nil, nil, nil,
- 		TLFJournalBackgroundWorkPaused)
- 	session, err := config.KBPKI().GetCurrentSession(ctx)
- 	require.NoError(t, err)
+@@ -363,24 +363,7 @@ function DesktopInboxBody(props: ControlledInboxProps) {
+ 
+   const {showFloating, showUnread, unreadCount, scrollToUnread, applyUnreadAndFloating} =
+     useUnreadShortcut({listRef, rows, unreadIndices, unreadTotal, getSize})
+-  const onScrollUnbox = useScrollUnbox(onUntrustedInboxVisible, 200)
+-
+-  // onViewableItemsChanged doesn't fire on initial render, only on scroll.
+-  // Unbox the initially visible rows when rows first become available.
+-  const didInitialUnboxRef = React.useRef(false)
+-  React.useEffect(() => {
+-    if (didInitialUnboxRef.current || rows.length === 0) return
+-    didInitialUnboxRef.current = true
+-    const toUnbox = rows.reduce<Array<T.Chat.ConversationIDKey>>((arr, r) => {
+-      if ((r.type === 'small' || r.type === 'big') && r.conversationIDKey) {
+-        arr.push(r.conversationIDKey)
+-      }
+-      return arr
+-    }, [])
+-    if (toUnbox.length > 0) {
+-      onUntrustedInboxVisible(toUnbox)
+-    }
+-  }, [rows, onUntrustedInboxVisible])
++  const onScrollUnbox = useScrollUnbox(onUntrustedInboxVisible, 200, true)
+ 
+   const itemHeight = {getSize, type: 'perItem' as const}
+ 
 ```
 
-**File**: `go/kbfs/libkbfs/kbfs_ops.go` (modified, +8/-0)
+**File**: `shared/chat/inbox/list-helpers.test.tsx` (added, +56/-0)
 ```diff
-@@ -2208,6 +2208,14 @@ func (fs *KBFSOpsStandard) onMDFlush(tlfID tlf.ID, bid kbfsmd.BranchID,
- 	ops.onMDFlush(bid, rev) // folderBranchOps makes a goroutine
+@@ -0,0 +1,56 @@
++/** @jest-environment jsdom */
++/// <reference types="jest" />
++import {act, renderHook} from '@testing-library/react'
++import type * as T from '@/constants/types'
++import {useScrollUnbox, type ViewableItemsData} from './list-helpers'
++
++const conv = (id: string) => ({item: {conversationIDKey: id as T.Chat.ConversationIDKey, type: 'small'}})
++const viewable = (...items: Array<{item: unknown}>) =>
++  ({changed: [], viewableItems: items} as unknown as ViewableItemsData)
++const divider = {item: {type: 'divider'}}
++
++beforeEach(() => {
++  jest.useFakeTimers()
++})
++afterEach(() => {
++  jest.useRealTimers()
++})
++
++test('with unboxFirstViewNow, the first view of conversations unboxes at once and later ones are debounced', () => {
++  const onVisible = jest.fn()
++  const {result} = renderHook(() => useScrollUnbox(onVisible, 200, true))
++
++  act(() => result.current(viewable(conv('a'), conv('b'))))
++  expect(onVisible).toHaveBeenCalledTimes(1)
++  expect(onVisible).toHaveBeenLastCalledWith(['a', 'b'])
++
++  act(() => result.current(viewable(conv('c'))))
++  expect(onVisible).toHaveBeenCalledTimes(1)
++  act(() => jest.advanceTimersByTime(200))
++  expect(onVisible).toHaveBeenCalledTimes(2)
++  expect(onVisible).toHaveBeenLastCalledWith(['c'])
++})
++
++test('a first view with no conversations in it leaves the immediate unbox for the next one', () => {
++  const onVisible = jest.fn()
++  const {result} = renderHook(() => useScrollUnbox(onVisible, 200, true))
++
++  act(() => result.current(viewable(divider)))
++  act(() => result.current(viewable(divider, conv('a'))))
++  expect(onVisible).toHaveBeenCalledTimes(1)
++  expect(onVisible).toHaveBeenLastCalledWith(['a'])
++  // the empty view's debounced call was dropped
++  act(() => jest.advanceTimersByTime(200))
++  expect(onVisible).toHaveBeenCalledTimes(1)
++})
++
++test('without unboxFirstViewNow every view is debounced', () => {
++  const onVisible = jest.fn()
++  const {result} = renderHook(() => useScrollUnbox(onVisible, 1000))
++
++  act(() => result.current(viewable(conv('a'))))
++  expect(onVisible).not.toHaveBeenCalled()
++  act(() => jest.advanceTimersByTime(1000))
++  expect(onVisible).toHaveBeenCalledTimes(1)
++  expect(onVisible).toHaveBeenLastCalledWith(['a'])
++})
+```
+
+**File**: `shared/chat/inbox/list-helpers.tsx` (modified, +31/-19)
+```diff
+@@ -87,7 +87,6 @@ export function useUnreadShortcut(p: {
+   const [unreadCount, setUnreadCount] = React.useState(0)
+   const firstOffscreenIdxRef = React.useRef(-1)
+ 
+-  // Captures latest rows/getSize/etc. — recreated when deps change.
+   const applyImpl = React.useCallback(() => {
+     const state = listRef.current?.getState()
+     const lastVisibleIdx = state?.end ?? -1
+@@ -98,16 +97,13 @@ export function useUnreadShortcut(p: {
+     setShowFloating(shouldShowFloating(rows, getSize, listRef))
+   }, [listRef, unreadIndices, rows, getSize])
+ 
+-  // Always points to the latest applyImpl. Updated in a layout effect so it's
+-  // current before any post-paint callbacks (e.g. the 100ms minimumViewTime timeout
+-  // in LegendList's onViewableItemsChanged) fire.
++  // A stable callback for onViewableItemsChanged: a new one would make LegendList redo its
++  // viewability setup on every rows update, and it swaps callbacks in a passive effect, so a dwell
++  // timer could still reach the previous closure for a frame. The layout effect keeps it current.
+   const applyRef = React.useRef(applyImpl)
+   React.useLayoutEffect(() => {
+     applyRef.current = applyImpl
+   })
+-
+-  // Stable function safe to use in onViewChanged — avoids stale closure issue where
+-  // LegendList's minimumViewTime setTimeout fires with an old callback capturing old rows.
+   const applyUnreadAndFloating = React.useCallback(() => applyRef.current(), [])
+ 
+   const scrollToUnread = () => {
+@@ -125,21 +121,37 @@ export function useUnreadShortcut(p: {
+   return {applyUnreadAndFloating, scrollToUnread, showFloating, showUnread, unreadCount}
  }
  
-+func (fs *KBFSOpsStandard) onTLFWriteRefused(tlfID tlf.ID,
-+	tlfName tlf.CanonicalName, refusal error,
-+) {
-+	ops := fs.getOps(context.Background(),
-+		data.FolderBranch{Tlf: tlfID, Branch: data.MasterBranch}, FavoritesOpNoChange)
-+	ops.onTLFWriteRefused(tlfName, refusal) // folderBranchOps makes a goroutine
-+}
++const visibleConversationIDs = (data: ViewableItemsData) =>
++  data.viewableItems.reduce<Array<T.Chat.ConversationIDKey>>((arr, vi) => {
++    const r = vi.item
++    if ((r.type === 'small' || r.type === 'big') && r.conversationIDKey) {
++      arr.push(r.conversationIDKey)
++    }
++    return arr
++  }, [])
 +
- func (fs *KBFSOpsStandard) startInitEdit() (
- 	ctx context.Context, cancel context.CancelFunc,
- 	reqChan <-chan struct{}, doneChan chan<- struct{},
-```
-
-**File**: `go/kbfs/libkbfs/kbfs_ops_test.go` (modified, +223/-0)
-```diff
-@@ -4949,3 +4949,226 @@ func TestKBFSOpsCancelUploads(t *testing.T) {
- 	require.NoError(t, err)
- 	require.Empty(t, children)
++// unboxFirstViewNow: the first view that shows conversations unboxes them without waiting for the
++// debounce (and drops any debounced call still pending); later views are debounced.
+ export function useScrollUnbox(
+   onUntrustedInboxVisible: (ids: Array<T.Chat.ConversationIDKey>) => void,
+-  debounceMs: number
++  debounceMs: number,
++  unboxFirstViewNow = false
+ ) {
+-  return C.useDebouncedCallback(
+-    (data: ViewableItemsData) => {
+-      const toUnbox = data.viewableItems.reduce<Array<T.Chat.ConversationIDKey>>((arr, vi) => {
+-        const r = vi.item
+-        if ((r.type === 'small' || r.type === 'big') && r.conversationIDKey) {
+-          arr.push(r.conversationIDKey)
+-        }
+-        return arr
+-      }, [])
+-      onUntrustedInboxVisible(toUnbox)
+-    },
++  const debounced = C.useDebouncedCallback(
++    (data: ViewableItemsData) => onUntrustedInboxVisible(visibleConversationIDs(data)),
+     debounceMs
+   )
++  const firstViewPendingRef = React.useRef(true)
++  return (data: ViewableItemsData) => {
++    if (unboxFirstViewNow && firstViewPendingRef.current) {
++      const ids = visibleConversationIDs(data)
++      if (ids.length > 0) {
++        firstViewPendingRef.current = false
++        debounced.cancel()
++        onUntrustedInboxVisible(ids)
++        return
++      }
++    }
++    debounced(data)
++  }
  }
-+
-+type journaledFolderTest struct {
-+	config   *ConfigLocal
-+	ctx      context.Context
-+	kbfsOps  KBFSOps
-+	jManager *JournalManager
-+	fb       data.FolderBranch
-+	aNode    Node
-+}
-+
-+// setupJournaledFolderTest makes u1's folder of the given type with
-+// journaling on, holding a directory "a" that has been flushed.
-+func setupJournaledFolderTest(
-+	t *testing.T, tlfType tlf.Type,
-+) journaledFolderTest {
-+	var userName kbname.NormalizedUsername = "u1"
-+	config, _, ctx, cancel := kbfsOpsInitNoMocks(t, userName)
-+	tempdir, err := ioutil.TempDir(os.TempDir(), "kbfs_ops_test")
-+	require.NoError(t, err)
-+	t.Cleanup(func() {
-+		err := ioutil.RemoveAll(tempdir)
-+		require.NoError(t, err)
-+	})
-+	t.Cleanup(func() { kbfsTestShutdownNoMocks(ctx, t, config, cancel) })
-+
-+	err = config.EnableDiskLimiter(tempdir)
-+	require.NoError(t, err)
-+	err = config.EnableJournaling(ctx, tempdir, TLFJournalBackgroundWorkEnabled)
-+	require.NoError(t, err)
-+
-+	h, err := tlfhandle.ParseHandle(
-+		ctx, config.KBPKI(), config.MDOps(), nil, string(userName), tlfType)
-+	require.NoError(t, err)
-+	kbfsOps := config.KBFSOps()
-+	rootNode, _, err := kbfsOps.GetOrCreateRootNode(ctx, h, data.MasterBranch)
-+	require.NoError(t, err)
-+	fb := rootNode.GetFolderBranch()
-+	aNode, _, err := kbfsOps.CreateDir(ctx, rootNode, testPPS("a"))
-+	require.NoError(t, err)
-+	err = kbfsOps.SyncAll(ctx, fb)
-+	require.NoError(t, err)
-+	jManager, err := GetJournalManager(config)
-+	require.NoError(t, err)
-+	err = jManager.Wait(ctx, fb.Tlf)
-+	require.NoError(t, err)
-+	return journaledFolderTest{config, ctx, kbfsOps, jManager, fb, aNode}
-+}
-+
-+// refuseBlockWrites pauses the folder's journal and has the server refuse
-+// its block writes with msg. The returned function has the server accept
-+// them again.
-+func (ft journaledFolderTest) refuseBlockWrites(
-+	t *testing.T, msg string,
-+) (accept func()) {
-+	ft.jManager.PauseBackgroundWork(ft.ctx, ft.fb.Tlf)
-+	tj, ok := ft.jManager.getTLFJournal(ft.fb.Tlf, nil)
-+	require.True(t, ok)
-+	bserver := tj.delegateBlockServer
-+	tj.delegateBlockServer = refusingBlockServer{bserver, msg}
-+	return func() {
-+		ft.jManager.PauseBackgroundWork(ft.ctx, ft.fb.Tlf)
-+		err := ft.jManager.Wait(ft.ctx, ft.fb.Tlf)
-+		require.NoError(t, err)
-+		tj.delegateBlockServer = bserver
-+		ft.jManager.ResumeBackgroundWork(ft.ctx, ft.fb.Tlf)
-+		err = ft.jManager.Flush(ft.ctx, ft.fb.Tlf)
-+		require.NoError(t, err)
-+	}
-+}
-+
-+func (ft journaledFolderTest) writeFile(t *testing.T, name string) Node {
-+	n, _, err := ft.kbfsOps.CreateFile(
-+		ft.ctx, ft.aNode, testPPS(name), false, NoExcl)
-+	require.NoError(t, err)
-+	err = ft.kbfsOps.Write(ft.ctx, n, []byte(name+"data"), 0)
-+	require.NoError(t, err)
-+	return n
-+}
-+
-+func (ft journaledFolderTest) waitForReportedError(t *testing.T) error {
-+	reporter := ft.config.Reporter()
-+	require.Eventually(t, func() bool {
-+		return len(reporter.AllKnownErrors()) > 0
-+	}, individualTestTimeout, 10*time.Millisecond)
-+	errs := reporter.AllKnownErrors()
-+	require.Len(t, errs, 1)
-+	return errs[0].Error
-+}
-+
-+func (ft journaledFolderTest) requireDiscarded(t *testing.T) {
-+	children, err := ft.kbfsOps.GetDirChildren(ft.ctx, ft.aNode)
-+	require.NoError(t, err)
-+	require.Empty(t, children)
-+	status, err := ft.jManager.JournalStatus(ft.fb.Tlf)
-+	require.NoError(t, err)
-+	require.Zero(t, status.BlockOpCount)
-+	require.Equal(t, kbfsmd.RevisionUninitialized, status.RevisionStart)
-+}
-+
-+func TestKBFSOpsDiscardsRefusedPublicWrites(t *testing.T) {
-+	ft := setupJournaledFolderTest(t, tlf.Public)
-+	ft.refuseBlockWrites(t, kbfsblock.PublicWritesDisabledMsg)
-+
-+	t.Log("Write a file, and wait for it to be refused and discarded")
-+	ft.writeFile(t, "b")
-+	err := ft.kbfsOps.SyncAll(ft.ctx, ft.fb)
-+	require.NoError(t, err)
-+	ft.jManager.ResumeBackgroundWork(ft.ctx, ft.fb.Tlf)
-+
-+	reported := ft.waitForReportedError(t)
-+	require.ErrorAs(t, reported, new(WritesDiscardedError))
-+	require.ErrorAs(t, reported, new(kbfsblock.ServerErrorNoPermission))
-+	ft.requireDiscarded(t)
-+}
-+
-+func TestKBFSOpsKeepsOtherRefusedPublicWrites(t *testing.T) {
-+	ft := setupJournaledFolderTest(t, tlf.Public)
-+	// Not the refusal for disabled public writes, so it may go
-+	// through later.
-+	accept := ft.refuseBlockWrites(t, "")
-+
-+	ft.writeFile(t, "b")
-+	err := ft.kbfsOps.SyncAll(ft.ctx, ft.fb)
-+	require.NoError(t, err)
-+	ft.jManager.ResumeBackgroundWork(ft.ctx, ft.fb.Tlf)
-+
-+	reported := ft.waitForReportedError(t)
-+	require.NotErrorAs(t, reported, new(WritesDiscardedError))
-+	require.ErrorAs(t, reported, new(kbfsblock.ServerErrorNoPermission))
-+	children, err := ft.kbfsOps.GetDirChildren(ft.ctx, ft.aNode)
-+	require.NoError(t, err)
-+	require.Len(t, children, 1)
-+	status, err := ft.jManager.JournalStatus(ft.fb.Tlf)
-+	require.NoError(t, err)
-+	require.NotZero(t, status.BlockOpCount)
-+
-+	t.Log("The kept writes go through once the server accepts them")
 ```
 
 ---
 
-### Incident Patch 2: `4709ad55` (2026-11-20)
-**Commit Message**: osx: drop GHODictionary and unused leftovers from the installer (#29913)
+### Incident Patch 2: `00f69fd2` (2026-11-23)
+**Commit Message**: test: run unit tests on 2 workers with a 1GB idle memory limit (#29926)
 
-- KBComponentStatus info is an ordered list of "Key: value" lines instead
-  of a GHODictionary, which removes the pod from KBKit. Nil or empty values
-  are skipped and keys keep their order, as GHODictionary did, so
-  statusDescription: prints the same text.
-- Remove the now-unused KBIfBlank macro and a no-op second "Bundle Version"
-  assignment in KBHelperTool.
-- Delete Helper/uninstall_helper.sh (unreferenced; duplicates
-  Installer --uninstall-helper) and a commented-out line in Installer.m.
-- build.sh fails with a clear message when APP_NAME, SCHEME or PLIST is unset.
+In one --runInBand process the heap climbs to ~3.8GB over the suite before
+V8 reclaims what each test file left behind. Near CI's 4096MB cap every
+mark-compact frees ~10% and pauses for up to a second under load, long
+enough to time out whichever test is running (seen as a 5s timeout in
+crypto/encrypt.test.tsx). Workers recycled at 1GB keep the heap small, and
+the suite runs in ~46s instead of 84-122s.
 
-**File**: `osx/Helper/uninstall_helper.sh` (removed, +0/-5)
+**File**: `shared/jest.config.js` (modified, +6/-0)
 ```diff
-@@ -1,5 +0,0 @@
--#!/bin/sh
+@@ -74,4 +74,10 @@ module.exports = {
+   transformIgnorePatterns: [
+     'node_modules/(?!(react-native|@react-native|@react-native-community|@react-navigation|expo(-[a-z-]+)?|lottie-react-native|react-native-safe-area-context|react-native-screens|react-native-webview|react-native-keyboard-controller|react-native-kb|@gorhom|@legendapp|sf-symbols-typescript|emoji-regex|nanoid|use-latest-callback|query-string|decode-uri-component|split-on-first|filter-obj|escape-string-regexp)/)',
+   ],
++  // What each test file leaves behind isn't reclaimed until V8 nears its heap limit, so one long-lived
++  // process grows to ~3.8GB over the suite and spends up to a second per mark-compact even on a fast
++  // machine -- on a loaded CI box, long enough to time out whatever test is running. Recycle a worker
++  // once it passes this size.
++  // Has no effect under --runInBand, which keeps everything in a single process.
++  workerIdleMemoryLimit: '1GB',
+ }
+```
+
+**File**: `shared/package.json` (modified, +1/-1)
+```diff
+@@ -81,7 +81,7 @@
+     "test:e2e:ios:census": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tests/e2e/ios-appium/census.mts",
+     "test:e2e:ios:release": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tests/e2e/ios-appium/release.mts",
+     "test:e2e:ios:gate-report": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tests/e2e/ios-appium/report.mts && open tests/results/ios-report.html",
+-    "test:unit": "napi-postinstall unrs-resolver 1.11.1 check; jest --runInBand",
++    "test:unit": "napi-postinstall unrs-resolver 1.11.1 check; jest --maxWorkers=2",
+     "visual:unit": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/e2e/visual/ tests/e2e/shared/cli-read.test.mts tests/e2e/accounts/provisionee-script.test.mts tests/e2e/generate-report-shared.test.mts tests/e2e/ios-appium/census.test.mts tests/e2e/ios-appium/helpers/app.test.mts tests/e2e/ios-appium/helpers/form-factor.test.mts tests/e2e/ios-appium/helpers/sim-links.test.mts tests/e2e/ios-appium/helpers/split-view-lib.test.mts tests/e2e/ios-appium/helpers/split-view.test.mts tests/e2e/ios-appium/theme.test.mts tests/e2e/ios-appium/release-secrets.test.mts tests/e2e/ios-appium/gate/run-stop-mocha.test.mts tests/e2e/shared/gate/timing-report.test.mts tests/e2e/shared/gate/census-cli.test.mts tests/e2e/shared/gate/flow-report.test.mts tests/e2e/shared/gate/release-run.test.mts",
+     "visual:base": "node tests/e2e/visual/cli.mts base",
+     "visual:check": "node tests/e2e/visual/cli.mts check",
+```
+
+---
+
+### Incident Patch 3: `5457ebac` (2026-11-23)
+**Commit Message**: test(bind): failing tests for quick reply error handling (#29667)
+
+* test(bind): failing tests for quick reply error handling
+
+* fix tests
+
+---------
+
+Co-authored-by: Joshua Blum <[REDACTED_EMAIL]>
+
+**File**: `go/bind/notifications.go` (modified, +14/-13)
+```diff
+@@ -118,34 +118,35 @@ func HandlePostTextReply(strConvID, tlfName string, intMessageID int, body strin
+ 	ctx := context.Background()
+ 	defer kbCtx.CTrace(ctx, "HandlePostTextReply", &err)()
+ 	defer func() { err = flattenError(err) }()
+-	outboxID, err := storage.NewOutboxID()
++
++	gc := globals.NewContext(kbCtx, kbChatCtx)
++	uid, err := utils.AssertLoggedInUID(ctx, gc)
+ 	if err != nil {
+ 		return err
+ 	}
+-	convID, err := chat1.MakeConvID(strConvID)
++	if intMessageID <= 0 {
++		return fmt.Errorf("invalid message ID: %d", intMessageID)
++	}
++
++	outboxID, err := storage.NewOutboxID()
+ 	if err != nil {
+ 		return err
+ 	}
+-	_, err = kbCtx.ChatHelper.SendTextByIDNonblock(context.Background(), convID, tlfName, body, &outboxID, nil)
 -
--sudo /bin/launchctl unload /Library/LaunchDaemons/keybase.Helper.plist
--sudo /bin/rm /Library/LaunchDaemons/keybase.Helper.plist
--sudo /bin/rm /Library/PrivilegedHelperTools/keybase.Helper
-```
-
-**File**: `osx/Installer/Installer.m` (modified, +0/-1)
-```diff
-@@ -52,7 +52,6 @@ - (void)run {
-   GBSettings *settings = [GBSettings settingsWithName:@"Settings" parent:nil];
- #if DEBUG
-   [settings setObject:@"/Applications/Keybase.app" forKey:@"app-path"];
--  //  [self.settings setObject:@"/Volumes/Keybase/Keybase.app" forKey:@"app-path"];
-   [settings setObject:@"prod" forKey:@"run-mode"];
-   [settings setObject:@"10" forKey:@"timeout"];
- #endif
-```
-
-**File**: `osx/KBKit/KBKit.podspec` (modified, +0/-1)
-```diff
-@@ -15,7 +15,6 @@ Pod::Spec.new do |s|
-   s.dependency "CocoaLumberjack"
-   s.dependency "Mantle"
-   s.dependency "MPMessagePack"
--  s.dependency "GHODictionary"
+-	kbCtx.Log.CDebugf(ctx, "Marking as read from QuickReply: convID: %s", strConvID)
+-	gc := globals.NewContext(kbCtx, kbChatCtx)
+-	uid, err := utils.AssertLoggedInUID(ctx, gc)
++	convID, err := chat1.MakeConvID(strConvID)
+ 	if err != nil {
+ 		return err
+ 	}
+-
+-	if intMessageID < 0 {
+-		return fmt.Errorf("invalid message ID: %d", intMessageID)
++	if _, err = kbCtx.ChatHelper.SendTextByIDNonblock(ctx, convID, tlfName, body, &outboxID, nil); err != nil {
++		return err
+ 	}
  
-   s.platform = :osx, "13.5"
-   s.osx.source_files = "KBKit/**/*.{h,m}"
-```
-
-**File**: `osx/KBKit/KBKit/Component/KBComponentStatus.h` (modified, +3/-3)
-```diff
-@@ -8,7 +8,6 @@
- 
- #import <Foundation/Foundation.h>
- 
--#import <GHODictionary/GHODictionary.h>
- #import "KBDefines.h"
- #import "KBRModels.h"
- 
-@@ -19,9 +18,10 @@ NSString *NSStringFromKBRInstallStatus(KBRInstallStatus status);
- @property (readonly) NSError *error;
- @property (readonly) KBRInstallStatus installStatus;
- @property (readonly) KBRInstallAction installAction;
--@property (readonly) GHODictionary *info;
-+// "Key: value" lines, in display order.
-+@property (readonly, copy) NSArray<NSString *> *info;
- 
--+ (instancetype)componentStatusWithInstallStatus:(KBRInstallStatus)installStatus installAction:(KBRInstallAction)installAction info:(GHODictionary *)info error:(NSError *)error;
-++ (instancetype)componentStatusWithInstallStatus:(KBRInstallStatus)installStatus installAction:(KBRInstallAction)installAction info:(NSArray<NSString *> *)info error:(NSError *)error;
- 
- + (instancetype)componentStatusWithError:(NSError *)error;
- 
-```
-
-**File**: `osx/KBKit/KBKit/Component/KBComponentStatus.m` (modified, +3/-7)
-```diff
-@@ -14,12 +14,12 @@ @interface KBComponentStatus ()
- @property NSError *error;
- @property KBRInstallStatus installStatus;
- @property KBRInstallAction installAction;
--@property GHODictionary *info;
-+@property (copy) NSArray<NSString *> *info;
- @end
- 
- @implementation KBComponentStatus
- 
--+ (instancetype)componentStatusWithInstallStatus:(KBRInstallStatus)installStatus installAction:(KBRInstallAction)installAction info:(GHODictionary *)info error:(NSError *)error {
-++ (instancetype)componentStatusWithInstallStatus:(KBRInstallStatus)installStatus installAction:(KBRInstallAction)installAction info:(NSArray<NSString *> *)info error:(NSError *)error {
-   KBComponentStatus *componentStatus = [[KBComponentStatus alloc] init];
-   componentStatus.installStatus = installStatus;
-   componentStatus.installAction = installAction;
-@@ -46,11 +46,7 @@ - (NSString *)statusDescription:(NSString *)delimeter {
-   NSMutableArray *str = [NSMutableArray array];
-   [str addObject:NSStringFromKBRInstallStatus(_installStatus)];
-   
--  NSMutableArray *infos = [NSMutableArray array];
--  for (id key in _info) {
--    [infos addObject:NSStringWithFormat(@"%@: %@", key, _info[key])];
--  }
--  if ([infos count] > 0) [str addObject:[infos join:delimeter]];
-+  if ([_info count] > 0) [str addObject:[_info join:delimeter]];
- 
-   return [str join:@", "];
- }
-```
-
-**File**: `osx/KBKit/KBKit/Component/KBFuseComponent.m` (modified, +9/-6)
-```diff
-@@ -74,18 +74,21 @@ - (void)refreshFuseComponent:(void (^)(KBRFuseStatus *fuseStatus, KBComponentSta
-       self.componentStatus = [KBComponentStatus componentStatusWithError:error];
-     } else {
- 
--      GHODictionary *info = [GHODictionary dictionary];
--      info[@"Version"] = KBIfBlank(fuseStatus.version, nil);
-+      NSMutableArray<NSString *> *info = [NSMutableArray array];
-+      void (^addInfo)(NSString *, NSString *) = ^(NSString *key, NSString *value) {
-+        if ([value length] > 0) [info addObject:NSStringWithFormat(@"%@: %@", key, value)];
-+      };
-+      addInfo(@"Version", fuseStatus.version);
- 
-       if (![fuseStatus.version isEqualToString:fuseStatus.bundleVersion]) {
--        info[@"Bundle Version"] = KBIfBlank(fuseStatus.bundleVersion, nil);
-+        addInfo(@"Bundle Version", fuseStatus.bundleVersion);
-       }
- 
-       if (![NSString gh_isBlank:fuseStatus.kextID]) {
--        info[@"Kext ID"] = KBIfBlank(fuseStatus.kextID, nil);
--        info[@"Kext Loaded"] = fuseStatus.kextStarted ? @"Yes" : @"No";
-+        addInfo(@"Kext ID", fuseStatus.kextID);
-+        addInfo(@"Kext Loaded", fuseStatus.kextStarted ? @"Yes" : @"No");
-       }
--      info[@"Path"] = KBIfBlank(fuseStatus.path, nil);
-+      addInfo(@"Path", fuseStatus.path);
- 
-       if (fuseStatus.status.code > 0) {
-         error = KBMakeError(fuseStatus.status.code, @"%@", fuseStatus.status.desc);
-```
-
-**File**: `osx/KBKit/KBKit/Component/KBHelperTool.m` (modified, +3/-4)
-```diff
-@@ -74,9 +74,9 @@ - (BOOL)isCriticalUpdate:(KBSemVersion *)runningVersion {
++	kbCtx.Log.CDebugf(ctx, "Marking as read from QuickReply: convID: %s", strConvID)
+ 	msgID := chat1.MessageID(intMessageID)
+-	if err = kbChatCtx.InboxSource.MarkAsRead(context.Background(), convID, uid, &msgID, false /* forceUnread */); err != nil {
++	if err = kbChatCtx.InboxSource.MarkAsRead(ctx, convID, uid, &msgID, false /* forceUnread */); err != nil {
+ 		kbCtx.Log.CDebugf(ctx, "Failed to mark as read from QuickReply: convID: %s. Err: %s", strConvID, err)
+-		// We don't want to fail this method call just because we couldn't mark it as aread
++		// We don't want to fail this method call just because we couldn't mark it as read
+ 		err = nil
+ 	}
+-
+ 	return nil
  }
  
- - (void)refreshComponent:(KBRefreshComponentCompletion)completion {
--  GHODictionary *info = [GHODictionary dictionary];
-+  NSMutableArray<NSString *> *info = [NSMutableArray array];
-   KBSemVersion *bundleVersion = [self bundleVersion];
--  info[@"Bundle Version"] = [bundleVersion description];
-+  if (bundleVersion) [info addObject:NSStringWithFormat(@"Bundle Version: %@", bundleVersion)];
- 
-   if (![self exists]) {
-     self.componentStatus = [KBComponentStatus componentStatusWithInstallStatus:KBRInstallStatusNotInstalled installAction:KBRInstallActionInstall info:info error:nil];
-@@ -93,15 +93,14 @@ - (void)refreshComponent:(KBRefreshComponentCompletion)completion {
-     } else {
-       DDLogDebug(@"Helper version: %@", versions);
-       KBSemVersion *runningVersion = [KBSemVersion version:KBIfNull(versions[@"version"], @"")];
--      if (runningVersion) info[@"Version"] = [runningVersion description];
-+      if (runningVersion) [info addObject:NSStringWithFormat(@"Version: %@", runningVersion)];
-       DDLogInfo(@"Running Version: %@", runningVersion);
-       if ([bundleVersion isGreaterThan:runningVersion]) {
-         if ([self isCriticalUpdate:runningVersion]) {
-           DDLogInfo(@"Critical update found: bundle: %@ running: %@", bundleVersion, runningVersion);
-           self.componentStatus = [KBComponentStatus componentStatusWithInstallStatus:KBRInstallStatusError installAction:KBRInstallActionUpgrade info:info error:KBMakeError(KBErrorCodeFuseCriticalUpdate, @"FUSE critical update")];
-           completion(self.componentStatus);
-         } else {
--          if (bundleVersion) info[@"Bundle Version"] = [bundleVersion description];
-           self.componentStatus = [KBComponentStatus componentStatusWithInstallStatus:KBRInstallStatusInstalled installAction:KBRInstallActionUpgrade info:info error:nil];
-           // No alert when the running helper reported no version.
-           if ([runningVersion.version length] > 0) [self showHelperUpdateAlert];
 ```
 
-**File**: `osx/KBKit/KBKit/KBDefines.h` (modified, +0/-1)
+**File**: `go/bind/notifications_test.go` (added, +116/-0)
 ```diff
-@@ -37,5 +37,4 @@ typedef NS_ENUM (NSInteger, KBErrorCode) {
- #define KBIsWarning(ERR) ((ERR.code == KBErrorCodeWarning))
+@@ -0,0 +1,116 @@
++package keybase
++
++import (
++	"context"
++	"errors"
++	"testing"
++
++	"github.com/keybase/client/go/chat/globals"
++	"github.com/keybase/client/go/chat/types"
++	"github.com/keybase/client/go/libkb"
++	"github.com/keybase/client/go/protocol/chat1"
++	"github.com/keybase/client/go/protocol/gregor1"
++	"github.com/keybase/client/go/protocol/keybase1"
++	"github.com/stretchr/testify/require"
++)
++
++type replyChatHelper struct {
++	libkb.ChatHelper
++	sendErr error
++	sent    []string
++}
++
++func (h *replyChatHelper) SendTextByIDNonblock(_ context.Context, _ chat1.ConversationID, _ string, text string,
++	_ *chat1.OutboxID, _ *chat1.MessageID,
++) (chat1.OutboxID, error) {
++	if h.sendErr != nil {
++		return nil, h.sendErr
++	}
++	h.sent = append(h.sent, text)
++	return nil, nil
++}
++
++type replyInboxSource struct {
++	types.InboxSource
++	markErr error
++	marked  []chat1.MessageID
++}
++
++func (s *replyInboxSource) MarkAsRead(_ context.Context, _ chat1.ConversationID, _ gregor1.UID,
++	msgID *chat1.MessageID, _ bool,
++) error {
++	s.marked = append(s.marked, *msgID)
++	return s.markErr
++}
++
++// TestPostTextReply drives HandlePostTextReply, the Android quick-reply
++// entry point, through the package-level kbCtx/kbChatCtx globals it reads
++// directly (there is no context parameter to inject fakes through).
++func TestPostTextReply(t *testing.T) {
++	const convID = "0000bbbbccccddddeeeeffff0000aaaabbbbccccddddeeeeffff0000aaaabbbb"
++
++	setup := func(t *testing.T, loggedIn bool) (*replyChatHelper, *replyInboxSource) {
++		tc := libkb.SetupTest(t, "PostTextReply", 0)
++		t.Cleanup(tc.Cleanup)
++		helper := &replyChatHelper{}
++		inbox := &replyInboxSource{}
++		tc.G.ChatHelper = helper
++
++		prevCtx, prevChatCtx := kbCtx, kbChatCtx
++		kbCtx = tc.G
++		kbChatCtx = &globals.ChatContext{InboxSource: inbox}
++		t.Cleanup(func() {
++			kbCtx = prevCtx
++			kbChatCtx = prevChatCtx
++		})
++
++		if loggedIn {
++			uid := keybase1.MakeTestUID(1)
++			deviceID := keybase1.DeviceID("00000000000000000000000000000018")
++			sigKey, err := libkb.GenerateNaclSigningKeyPair()
++			require.NoError(t, err)
++			encKey, err := libkb.GenerateNaclDHKeyPair()
++			require.NoError(t, err)
++			require.NoError(t, tc.G.ActiveDevice.Set(libkb.NewMetaContextForTest(tc),
++				keybase1.UserVersion{Uid: uid, EldestSeqno: 1}, deviceID,
++				sigKey, encKey, "testuser-device", 0, libkb.KeychainModeNone))
++			require.NoError(t, tc.G.Env.GetConfigWriter().SetUserConfig(
++				libkb.NewUserConfig(uid, "testuser", nil, deviceID), true))
++			require.NoError(t, tc.G.Env.GetConfigWriter().SwitchUser("testuser"))
++		}
++		return helper, inbox
++	}
++
++	// Guards: the intended happy paths must keep working.
++	t.Run("sends and marks read", func(t *testing.T) {
++		helper, inbox := setup(t, true)
++		require.NoError(t, HandlePostTextReply(convID, "testuser", 5, "hi"))
++		require.Equal(t, []string{"hi"}, helper.sent)
++		require.Equal(t, []chat1.MessageID{5}, inbox.marked)
++	})
++	t.Run("mark read failure doesn't fail a sent reply", func(t *testing.T) {
++		helper, inbox := setup(t, true)
++		inbox.markErr = errors.New("offline")
++		require.NoError(t, HandlePostTextReply(convID, "testuser", 5, "hi"))
++		require.Equal(t, []string{"hi"}, helper.sent)
++	})
++
++	t.Run("send error is returned", func(t *testing.T) {
++		helper, inbox := setup(t, true)
++		helper.sendErr = errors.New("outbox full")
++		require.Error(t, HandlePostTextReply(convID, "testuser", 5, "hi"))
++		require.Empty(t, inbox.marked)
++	})
++	t.Run("logged out doesn't send", func(t *testing.T) {
++		helper, _ := setup(t, false)
++		require.Error(t, HandlePostTextReply(convID, "testuser", 5, "hi"))
++		require.Empty(t, helper.sent)
++	})
++	t.Run("invalid message ID doesn't send", func(t *testing.T) {
++		for _, msgID := range []int{-1, 0} {
++			helper, _ := setup(t, true)
++			require.Error(t, HandlePostTextReply(convID, "testuser", msgID, "hi"), "msgID=%d", msgID)
++			require.Empty(t, helper.sent, "msgID=%d", msgID)
++		}
++	})
++}
+```
+
+**File**: `shared/android/app/src/main/java/io/keybase/ossifrage/AppLifecycleReporter.kt` (modified, +4/-2)
+```diff
+@@ -85,7 +85,9 @@ internal fun sendQuickReply(
+         error("Quick reply couldn't read the current uid", e)
+         return QUICK_REPLY_FAILED
+     }
+-    // Go sends before it checks either, and swallows the send's error.
++    // Go also refuses logged-out / invalid-msgID replies and returns send
++    // errors; these checks keep a failed reply from looking like success in
++    // the notification UI before Go runs.
+     if (uid.isEmpty()) {
+         error("Quick reply while logged out", null)
+         return QUICK_REPLY_FAILED
+@@ -94,7 +96,7 @@ internal fun sendQuickReply(
+         error("Quick reply from another account's notification", null)
+         return QUICK_REPLY_FAILED
+     }
+-    if (msgId < 0) {
++    if (msgId <= 0) {
+         error("Quick reply to invalid message id $msgId", null)
+         return QUICK_REPLY_FAILED
+     }
+```
+
+**File**: `shared/android/app/src/test/java/io/keybase/ossifrage/AppLifecycleReporterTest.kt` (modified, +8/-5)
+```diff
+@@ -144,7 +144,6 @@ class SendQuickReplyTest {
+         assertEquals(listOf<Pair<String, Throwable?>>("Failed to send quick reply" to failure), errors.toList())
+     }
  
- #define KBIfNull(obj, val) ([obj isEqual:NSNull.null] ? val : obj)
--#define KBIfBlank(s, dv) ((!s || [s isEqualToString:@""]) ? dv : s)
+-    // Go sends before it checks either, and swallows the send's error.
+     @Test
+     fun loggedOutReplyIsNotSent() {
+         assertEquals(QUICK_REPLY_FAILED, send(currentUID = { "" }))
+@@ -160,7 +159,7 @@ class SendQuickReplyTest {
+         assertEquals(listOf<Throwable?>(failure), errors.map { it.second })
+     }
+ 
+-    // Go would post it as the current account.
++    // Go posts as the current account; refuse another account's notification here.
+     @Test
+     fun replyFromAnotherAccountsNotificationIsNotSent() {
+         assertEquals(QUICK_REPLY_FAILED, send(currentUID = { "uid" }, notificationUID = "other-uid"))
+@@ -176,9 +175,13 @@ class SendQuickReplyTest {
+ 
+     @Test
+     fun replyToAnInvalidMessageIsNotSent() {
+-        assertEquals(QUICK_REPLY_FAILED, send(msgId = -1))
+-        assertFalse(sent)
+-        assertEquals(1, errors.size)
++        for (msgId in listOf(-1L, 0L)) {
++            sent = false
++            errors.clear()
++            assertEquals(QUICK_REPLY_FAILED, send(msgId = msgId), "msgId=$msgId")
++            assertFalse(sent, "msgId=$msgId")
++            assertEquals(1, errors.size)
++        }
+     }
+ }
  
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #29914** (2026-11-20): improve errors for failed writes to disabled folders (@zoom-ua)
-- **PR #29913** (2026-11-20): osx: drop GHODictionary and unused installer leftovers (@chrisnojima)
-- **PR #29911** (2026-11-19): improve kbfs error handling (@zoom-ua)
-- **PR #29910** (2026-11-17): deps: expo 58.0.26, expo-file-system 58.0.14, typescript-eslint 8.73.0, minimatch 11.0.9 (@chrisnojima)
-- **PR #29909** (2026-11-20): osx: remove everything the Mac installer doesn't use (@chrisnojima)
-- **PR #29908** (2026-11-16): Files: header draws the right state from its first frame, and a real sync icon (@chrisnojima)
+- **PR #29926** (2026-11-23): test: run unit tests on 2 workers with a 1GB idle memory limit (@chrisnojima)
+- **PR #29925** (closed): ci stellar rm (@zoom-ua)
+- **PR #29923** (2026-11-23): deps: legend-list 3.9, reanimated 4.8, worklets 0.14, webview 17, RN CLI 21; drop desktop LegendList workarounds (@chrisnojima)
+- **PR #29921** (2026-11-23): leveldb fixes (@zoom-ua)
+- **PR #29918** (2026-11-23): fix kbfs background work (@zoom-ua)
+- **PR #29917** (2026-11-23): phase 2: stellar cleanup (@zoom-ua)
 
 ---
 
@@ -2606,25 +2562,22 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. improve errors for failed writes to disabled folders
+## X. deps: legend-list 3.9, reanimated 4.8, worklets 0.14, webview 17, RN CLI 21; dro
 
 **RULE**:
-When implementing operations in `go/kbfs/kbfsblock/server_errors.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in keybase/client. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `shared/chat/conversation/giphy/index.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in keybase/client. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1be7e8a0`: improve errors for failed writes to disabled folders. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3030db83`: deps: legend-list 3.9, reanimated 4.8, worklets 0.14, webview 17, RN CLI 21; drop desktop LegendList workarounds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go/kbfs/kbfsblock/server_errors.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `shared/chat/conversation/giphy/index.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// PublicWritesDisabledMsg is the ServerErrorNoPermission message the
-// bserver sends when it refuses a write because public folder writes are
-// disabled.
-const PublicWritesDisabledMsg = "public folder writes are disabled"
-
+          // Only here because iOS adds injectedJavaScript just when messaging is on. Messages come
+          // from the loaded page, so this stays a no-op.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2634,7 +2587,7 @@ const PublicWritesDisabledMsg = "public folder writes are disabled"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1be7e8a0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3030db83` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

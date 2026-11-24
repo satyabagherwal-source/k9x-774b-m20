@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T14:24:20.385Z",
+  "last_updated": "2026-11-24T14:33:27.381Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5046,14 +5046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zama-ai-tfhe-rs",
-      "content_hash": "2dd6800817faf70bee92d574ae15377684075395315fe09b7d90cb7ec662d3a2",
-      "verified_at": "2026-11-23T14:46:36.410Z",
+      "content_hash": "bd787176753c31c278b2f2e09e28956f60b57dea0924c6808a9869a48bacd9fa",
+      "verified_at": "2026-11-24T14:33:27.380Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T14:46:36.410Z"
+      "last_updated": "2026-11-24T14:33:27.380Z"
     },
     "doobidoo/mcp-memory-service": {
       "repository": "doobidoo/mcp-memory-service",
@@ -6726,14 +6726,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-keybase-client",
-      "content_hash": "e12b78cb036bef8156242dd74282a05690987e516ca0a485ec7444a679f6481b",
-      "verified_at": "2026-11-21T22:29:58.646Z",
+      "content_hash": "f80a285d3298d31113cfe6e5bbf486f0abd360dc2a198b9294f5c77711c99317",
+      "verified_at": "2026-11-24T14:33:22.820Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T22:29:58.646Z"
+      "last_updated": "2026-11-24T14:33:22.820Z"
     },
     "sealerio/sealer": {
       "repository": "sealerio/sealer",
@@ -20129,6 +20129,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-24T12:18:19.576Z"
+    },
+    "NihilDigit/piko": {
+      "repository": "NihilDigit/piko",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-nihildigit-piko",
+      "content_hash": "38de43536602be5ac1c0d3ffbd64fd5037fba1e4a6a38052fe0a7f4e7e345f7f",
+      "verified_at": "2026-11-24T14:33:18.048Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-24T14:33:18.048Z"
     }
   },
   "repos": {

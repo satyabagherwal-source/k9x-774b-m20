@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T14:24:26.566Z",
+  "last_updated": "2026-11-24T14:33:33.805Z",
   "directives": [
     {
       "id": "CD-001",
@@ -55143,6 +55143,72 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-FAA8F3-remove-comments-from-arc-datasets.md",
       "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-OEU8",
+      "directive_title": "add biometric app lock, recents privacy flag, and launcher icon disgui",
+      "source_repo": "NihilDigit/piko",
+      "source_commit": "638367bd",
+      "staged_file": "11_INBOX/candidate-directives/CD-OEU8-add-biometric-app-lock-recents-privacy-flag-and-launcher-icon-disgui.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "A"
+    },
+    {
+      "id": "CD-OIIA",
+      "directive_title": "legend-list 3.9, reanimated 4.8, worklets 0.14, webview 17, RN CLI 21; dro",
+      "source_repo": "keybase/client",
+      "source_commit": "87059b9d",
+      "staged_file": "11_INBOX/candidate-directives/CD-OIIA-legend-list-3-9-reanimated-4-8-worklets-0-14-webview-17-rn-cli-21-dro.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-OM1H",
+      "directive_title": "extend match_value results to the output block count in the high-level api",
+      "source_repo": "zama-ai/tfhe-rs",
+      "source_commit": "1ade9d06",
+      "staged_file": "11_INBOX/candidate-directives/CD-OM1H-extend-match_value-results-to-the-output-block-count-in-the-high-level-api.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-OP2L",
+      "directive_title": "android): add biometric app lock, recents privacy flag, and launcher icon disgui",
+      "source_repo": "nihildigit-piko-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-OP2L-android-add-biometric-app-lock-recents-privacy-flag-and-launcher-icon-disgui.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "A"
+    },
+    {
+      "id": "CD-OPX6",
+      "directive_title": "deps: legend-list 3.9, reanimated 4.8, worklets 0.14, webview 17, RN CLI 21; dro",
+      "source_repo": "keybase-client-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-OPX6-deps-legend-list-3-9-reanimated-4-8-worklets-0-14-webview-17-rn-cli-21-dro.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-OQR0",
+      "directive_title": "gpu): extend match_value results to the output block count in the high-level api",
+      "source_repo": "zama-ai-tfhe-rs-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-OQR0-gpu-extend-match_value-results-to-the-output-block-count-in-the-high-level-api.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
     }
   ]
 }

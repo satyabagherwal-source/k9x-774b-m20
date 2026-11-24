@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T14:24:27.066Z",
+  "last_updated": "2026-11-24T14:33:34.476Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-24T13:21:19.659Z",
@@ -73,7 +73,7 @@
       "staged_for_review": 1
     },
     "zama-ai-tfhe-rs-learnings.md": {
-      "processed_at": "2026-11-23T14:46:45.993Z",
+      "processed_at": "2026-11-24T14:33:33.419Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2413,7 +2413,7 @@
       "staged_for_review": 0
     },
     "keybase-client-learnings.md": {
-      "processed_at": "2026-11-21T22:30:11.805Z",
+      "processed_at": "2026-11-24T14:33:32.340Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3821,9 +3821,14 @@
       "processed_at": "2026-11-24T12:19:01.483Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "nihildigit-piko-learnings.md": {
+      "processed_at": "2026-11-24T14:33:31.123Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3798,
+  "total_dossiers_evaluated": 3801,
   "total_canonical_promoted": 509,
-  "total_staged_for_review": 2876
+  "total_staged_for_review": 2879
 }

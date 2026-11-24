@@ -22135,5 +22135,20 @@
     "downloads": 8795,
     "qualityScore": 2820,
     "discoveredAt": "2026-11-24T12:16:04.663Z"
+  },
+  {
+    "name": "piko",
+    "fullName": "NihilDigit/piko",
+    "url": "https://github.com/NihilDigit/piko",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "优雅、易用、高性能的 PikPak 客户端 | An elegant, easy-to-use, high-performance PikPak client",
+    "stars": 1001,
+    "forks": 41,
+    "openIssues": 10,
+    "language": "Kotlin",
+    "qualityScore": 783,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-24T14:31:15.723Z"
   }
 ]

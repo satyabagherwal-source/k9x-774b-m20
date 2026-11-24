@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "0383d4d1",
+    "sourceVersion": "1ade9d06",
     "license": "NOASSERTION",
-    "contentHash": "2dd6800817faf70bee92d574ae15377684075395315fe09b7d90cb7ec662d3a2",
-    "lastHarvestedAt": "2026-11-23T14:46:36.402Z",
+    "contentHash": "bd787176753c31c278b2f2e09e28956f60b57dea0924c6808a9869a48bacd9fa",
+    "lastHarvestedAt": "2026-11-24T14:33:27.360Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
@@ -4403,10 +4403,10 @@
     "repository": "keybase/client",
     "platform": "github",
     "sourceUrl": "https://github.com/keybase/client",
-    "sourceVersion": "1be7e8a0",
+    "sourceVersion": "87059b9d",
     "license": "BSD-3-Clause",
-    "contentHash": "e12b78cb036bef8156242dd74282a05690987e516ca0a485ec7444a679f6481b",
-    "lastHarvestedAt": "2026-11-21T22:29:58.637Z",
+    "contentHash": "f80a285d3298d31113cfe6e5bbf486f0abd360dc2a198b9294f5c77711c99317",
+    "lastHarvestedAt": "2026-11-24T14:33:22.800Z",
     "learningId": "learn-github-keybase-client"
   },
   "sealerio-sealer": {
@@ -13338,5 +13338,15 @@
     "contentHash": "07de09f4e6bcdbcf734eac474255d2452bedc92f19f26abbbdb60bf7db6387d3",
     "lastHarvestedAt": "2026-11-24T12:18:19.562Z",
     "learningId": "learn-huggingface-nari-labs-qwen3-8-27b-nariq-gguf"
+  },
+  "nihildigit-piko": {
+    "repository": "NihilDigit/piko",
+    "platform": "github",
+    "sourceUrl": "https://github.com/NihilDigit/piko",
+    "sourceVersion": "638367bd",
+    "license": "AGPL-3.0",
+    "contentHash": "38de43536602be5ac1c0d3ffbd64fd5037fba1e4a6a38052fe0a7f4e7e345f7f",
+    "lastHarvestedAt": "2026-11-24T14:33:18.028Z",
+    "learningId": "learn-github-nihildigit-piko"
   }
 }

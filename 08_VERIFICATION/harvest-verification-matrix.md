@@ -12699,3 +12699,6 @@
 | `CYCLE-20261124-CPSA` | `2026-11-24T14:24:12.682Z` | `kubernetes-sigs/aws-load-balancer-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10277` | Yes (`12615027...`) |
 | `CYCLE-20261124-CUAE` | `2026-11-24T14:24:18.518Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10278` | Yes (`f7ee3f63...`) |
 | `CYCLE-20261124-CVPP` | `2026-11-24T14:24:20.365Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9374` | Yes (`1ace596c...`) |
+| `CYCLE-20261124-OEKN` | `2026-11-24T14:33:18.023Z` | `NihilDigit/piko` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10279` | Yes (`38de4353...`) |
+| `CYCLE-20261124-OI97` | `2026-11-24T14:33:22.795Z` | `keybase/client` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10280` | Yes (`f80a285d...`) |
+| `CYCLE-20261124-OLRV` | `2026-11-24T14:33:27.355Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10281` | Yes (`bd787176...`) |

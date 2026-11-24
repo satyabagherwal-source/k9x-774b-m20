@@ -12732,3 +12732,6 @@ Every entry in this ledger must capture:
 | `learn-github-kubernetes-sigs-aws-load-balancer-controller` | `https://github.com/kubernetes-sigs/aws-load-balancer-controller` | `1c602959` | Multi-dimensional audit evidence | 2026-11-24T14:24:12.687Z |
 | `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `39a37d40` | Multi-dimensional audit evidence | 2026-11-24T14:24:18.522Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `449e97bb` | Multi-dimensional audit evidence | 2026-11-24T14:24:20.369Z |
+| `learn-github-nihildigit-piko` | `https://github.com/NihilDigit/piko` | `638367bd` | Multi-dimensional audit evidence | 2026-11-24T14:33:18.028Z |
+| `learn-github-keybase-client` | `https://github.com/keybase/client` | `87059b9d` | Multi-dimensional audit evidence | 2026-11-24T14:33:22.800Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `1ade9d06` | Multi-dimensional audit evidence | 2026-11-24T14:33:27.360Z |

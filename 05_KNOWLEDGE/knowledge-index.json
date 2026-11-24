@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T14:24:26.920Z",
-  "total_verified_learnings": 9095,
+  "last_updated": "2026-11-24T14:33:34.282Z",
+  "total_verified_learnings": 9096,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24672,
+  "total_items": 24686,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -213511,8 +213511,8 @@
       "slug": "zama-ai-tfhe-rs",
       "platform": "github",
       "source_url": "https://github.com/zama-ai/tfhe-rs",
-      "source_version": "0383d4d1",
-      "content_hash": "2dd6800817faf70bee92d574ae15377684075395315fe09b7d90cb7ec662d3a2",
+      "source_version": "1ade9d06",
+      "content_hash": "bd787176753c31c278b2f2e09e28956f60b57dea0924c6808a9869a48bacd9fa",
       "dossier_path": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "promoted_rules": [
@@ -213575,6 +213575,11 @@
           "number": 10054,
           "title": "keep the CPU copy when moving a ciphertext back to the CPU",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10281,
+          "title": "extend match_value results to the output block count in the high-level api",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213582,7 +213587,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T14:46:36.194Z",
+      "verified_at": "2026-11-24T14:33:27.094Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -213624,10 +213629,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-technical-construction-intelligence-zama-ai-tfhe-rs-core-invaria.md",
       "title": "Technical Construction Intelligence: zama-ai/tfhe-rs Core Invariants",
       "repository": "zama-ai/tfhe-rs",
-      "source_version": "0383d4d1",
-      "content_hash": "4162873fa10a814fe89454741947fd38fb5339496bd033239efb1391da49972b",
+      "source_version": "1ade9d06",
+      "content_hash": "8c7aa9f948d701b046ffed589a2a8fef09f292021ae9312f7112b4283227fd31",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T14:46:36.791Z"
+      "persisted_at": "2026-11-24T14:33:27.934Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs",
@@ -213636,10 +213641,10 @@
       "relative_path": "08_VERIFICATION/zama-ai-tfhe-rs-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-r.md",
       "title": "Verification Protocol: Empirical Defect Shield for zama-ai/tfhe-rs",
       "repository": "zama-ai/tfhe-rs",
-      "source_version": "0383d4d1",
-      "content_hash": "4713a38ffff41b83cdac717066604edeb77d7c8fa24134217b2f919f563dfa30",
+      "source_version": "1ade9d06",
+      "content_hash": "1a44029344fb2a4f53fc33afbe3959ca0df30b5f698d60b79b8758070a0da9d9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T14:46:36.958Z"
+      "persisted_at": "2026-11-24T14:33:28.164Z"
     },
     "learn-github-tursodatabase-turso": {
       "learning_id": "learn-github-tursodatabase-turso",
@@ -225375,8 +225380,8 @@
       "slug": "keybase-client",
       "platform": "github",
       "source_url": "https://github.com/keybase/client",
-      "source_version": "1be7e8a0",
-      "content_hash": "e12b78cb036bef8156242dd74282a05690987e516ca0a485ec7444a679f6481b",
+      "source_version": "87059b9d",
+      "content_hash": "f80a285d3298d31113cfe6e5bbf486f0abd360dc2a198b9294f5c77711c99317",
       "dossier_path": "07_PROJECT_LEARNING/keybase-client-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/keybase-client-learnings.md",
       "promoted_rules": [
@@ -225394,6 +225399,11 @@
           "number": 9855,
           "title": "improve errors for failed writes to disabled folders",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10280,
+          "title": "legend-list 3.9, reanimated 4.8, worklets 0.14, webview 17, RN CLI 21; dro",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -225401,7 +225411,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T22:29:58.393Z",
+      "verified_at": "2026-11-24T14:33:22.527Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -225443,10 +225453,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-keybase-client-architecture-intelligence-keybase-client-core-invariants.md",
       "title": "Architecture Intelligence: keybase/client Core Invariants",
       "repository": "keybase/client",
-      "source_version": "1be7e8a0",
-      "content_hash": "8363809887eab595e3b62b1e26d8a18be00623043f52b623c9cc3ca6e77fa0fa",
+      "source_version": "87059b9d",
+      "content_hash": "da69b484d0f6d1402a8b8f986ea59b52e54749f111b0aae18ef7eb0c510180fd",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T22:29:59.122Z"
+      "persisted_at": "2026-11-24T14:33:23.361Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-keybase-client": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-keybase-client",
@@ -225455,10 +225465,10 @@
       "relative_path": "08_VERIFICATION/keybase-client-verification-protocol-empirical-defect-shield-for-keybase-client.md",
       "title": "Verification Protocol: Empirical Defect Shield for keybase/client",
       "repository": "keybase/client",
-      "source_version": "1be7e8a0",
-      "content_hash": "da6b870266f84c9919ee90cac62bc879b541f747d3be87e878b80a5be62c29d8",
+      "source_version": "87059b9d",
+      "content_hash": "624dd9225ba7d038f0b9d76bc06ec484012ea2e06fa7dc875121c6d528b8cf57",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T22:29:59.340Z"
+      "persisted_at": "2026-11-24T14:33:23.642Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v3-learnings-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v3-learnings-core-invari",
@@ -225480,9 +225490,9 @@
       "title": "Architecture Intelligence: keybase-client-learnings Core Invariants",
       "repository": "keybase-client-learnings",
       "source_version": "HEAD",
-      "content_hash": "103e796cfd3023e53a3fb7a435614e2aba9ee65142dc95536bb852641528a450",
+      "content_hash": "51e80f83f6133f6c960e2995fb734346aeabcec9d49c13062832de362d8b5dba",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T22:30:12.334Z"
+      "persisted_at": "2026-11-24T14:33:32.965Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-keybase-client-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-keybase-client-learnings",
@@ -225492,9 +225502,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for keybase-client-learnings",
       "repository": "keybase-client-learnings",
       "source_version": "HEAD",
-      "content_hash": "de59f72bd47cdd75dfbf6bea73e1273abb6847f6b1ea09de59f2840346027770",
+      "content_hash": "7b0161334158e9f425b23a3f33538ecba77d2b952646bb8be6d5d98ec07269eb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T22:30:12.550Z"
+      "persisted_at": "2026-11-24T14:33:33.201Z"
     },
     "learn-huggingface-edge0-audio8-tts-realistic-0-6b": {
       "learning_id": "learn-huggingface-edge0-audio8-tts-realistic-0-6b",
@@ -275064,9 +275074,9 @@
       "title": "Technical Construction Intelligence: zama-ai-tfhe-rs-learnings Core Invariants",
       "repository": "zama-ai-tfhe-rs-learnings",
       "source_version": "HEAD",
-      "content_hash": "cc681a305f3be2be380bde1e7d11dc9e8dc7a748cca62cfab10aa3d90a60a490",
+      "content_hash": "399daf1683614d13f40883277e7a7bf24866d08b9407ddec2242aa079a3585e8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T14:46:46.426Z"
+      "persisted_at": "2026-11-24T14:33:34.055Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs-learnings",
@@ -275076,9 +275086,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zama-ai-tfhe-rs-learnings",
       "repository": "zama-ai-tfhe-rs-learnings",
       "source_version": "HEAD",
-      "content_hash": "49e2c2716fcd814663672ddf54beb44c1862dbde0ac0b042eab6490c481e2812",
+      "content_hash": "5666547cc08bb77a42ac6f4ff25042fcf6b112dd48b506449a8824efff01c29a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T14:46:46.599Z"
+      "persisted_at": "2026-11-24T14:33:34.282Z"
     },
     "learn-huggingface-meituan-longcat-longcat-video-avatar-1-6": {
       "learning_id": "learn-huggingface-meituan-longcat-longcat-video-avatar-1-6",
@@ -336792,6 +336802,201 @@
       "content_hash": "1d7930b54c40fd0ff02b361390c9ef551f9daa1c262310a10c1b9cf5f6e35874",
       "domain_letter": "F",
       "persisted_at": "2026-11-24T14:24:26.740Z"
+    },
+    "learn-github-nihildigit-piko": {
+      "learning_id": "learn-github-nihildigit-piko",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "NihilDigit/piko",
+      "repository": "NihilDigit/piko",
+      "slug": "nihildigit-piko",
+      "platform": "github",
+      "source_url": "https://github.com/NihilDigit/piko",
+      "source_version": "638367bd",
+      "content_hash": "38de43536602be5ac1c0d3ffbd64fd5037fba1e4a6a38052fe0a7f4e7e345f7f",
+      "dossier_path": "07_PROJECT_LEARNING/nihildigit-piko-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/nihildigit-piko-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 10279,
+          "title": "add biometric app lock, recents privacy flag, and launcher icon disgui",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-24T14:33:17.754Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-10279": {
+      "learning_id": "rule-10279",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10279,
+      "title": "add biometric app lock, recents privacy flag, and launcher icon disgui",
+      "source_url": "https://github.com/NihilDigit/piko",
+      "source_version": "638367bd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T14:33:17.754Z"
+    },
+    "candidate_directive-add-biometric-app-lock-recents-privacy-flag-and-launcher-icon-disgui": {
+      "item_id": "candidate_directive-add-biometric-app-lock-recents-privacy-flag-and-launcher-icon-disgui",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-OEU8-add-biometric-app-lock-recents-privacy-flag-and-launcher-icon-disgui.md",
+      "title": "add biometric app lock, recents privacy flag, and launcher icon disgui",
+      "repository": "NihilDigit/piko",
+      "source_version": "638367bd",
+      "content_hash": "fe2636ac9850434d33166c2b07f75c24bdfac001060660cca5daacb44df48575",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-24T14:33:18.375Z"
+    },
+    "domain_intelligence-architecture-intelligence-nihildigit-piko-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-nihildigit-piko-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nihildigit-piko-architecture-intelligence-nihildigit-piko-core-invariants.md",
+      "title": "Architecture Intelligence: NihilDigit/piko Core Invariants",
+      "repository": "NihilDigit/piko",
+      "source_version": "638367bd",
+      "content_hash": "14f21acffcb04e7b755d519514ae3a70ed315873cf78a733b051719946a9b6ed",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T14:33:18.629Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-nihildigit-piko": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nihildigit-piko",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/nihildigit-piko-verification-protocol-empirical-defect-shield-for-nihildigit-pik.md",
+      "title": "Verification Protocol: Empirical Defect Shield for NihilDigit/piko",
+      "repository": "NihilDigit/piko",
+      "source_version": "638367bd",
+      "content_hash": "db4195d8cef4bf4773b97da545e088dd016f225a81ee654bff7020a34fd1df03",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-24T14:33:18.868Z"
+    },
+    "rule-10280": {
+      "learning_id": "rule-10280",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10280,
+      "title": "legend-list 3.9, reanimated 4.8, worklets 0.14, webview 17, RN CLI 21; dro",
+      "source_url": "https://github.com/keybase/client",
+      "source_version": "87059b9d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T14:33:22.527Z"
+    },
+    "candidate_directive-legend-list-3-9-reanimated-4-8-worklets-0-14-webview-17-rn-cli-21-dro": {
+      "item_id": "candidate_directive-legend-list-3-9-reanimated-4-8-worklets-0-14-webview-17-rn-cli-21-dro",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-OIIA-legend-list-3-9-reanimated-4-8-worklets-0-14-webview-17-rn-cli-21-dro.md",
+      "title": "legend-list 3.9, reanimated 4.8, worklets 0.14, webview 17, RN CLI 21; dro",
+      "repository": "keybase/client",
+      "source_version": "87059b9d",
+      "content_hash": "f2f80929fe3331582cb5723085ef0f1e2fbf99b9240d6a2ef56b929e68633f65",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T14:33:23.129Z"
+    },
+    "rule-10281": {
+      "learning_id": "rule-10281",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10281,
+      "title": "extend match_value results to the output block count in the high-level api",
+      "source_url": "https://github.com/zama-ai/tfhe-rs",
+      "source_version": "1ade9d06",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T14:33:27.094Z"
+    },
+    "candidate_directive-extend-match_value-results-to-the-output-block-count-in-the-high-level-api": {
+      "item_id": "candidate_directive-extend-match_value-results-to-the-output-block-count-in-the-high-level-api",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-OM1H-extend-match_value-results-to-the-output-block-count-in-the-high-level-api.md",
+      "title": "extend match_value results to the output block count in the high-level api",
+      "repository": "zama-ai/tfhe-rs",
+      "source_version": "1ade9d06",
+      "content_hash": "df7ab4d011b784b6bdfe8709e1f7643fa6d3de5bf70f027c0a66baa57c3bd1a0",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T14:33:27.708Z"
+    },
+    "candidate_directive-android-add-biometric-app-lock-recents-privacy-flag-and-launcher-icon-disgui": {
+      "item_id": "candidate_directive-android-add-biometric-app-lock-recents-privacy-flag-and-launcher-icon-disgui",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-OP2L-android-add-biometric-app-lock-recents-privacy-flag-and-launcher-icon-disgui.md",
+      "title": "android): add biometric app lock, recents privacy flag, and launcher icon disgui",
+      "repository": "nihildigit-piko-learnings",
+      "source_version": "HEAD",
+      "content_hash": "fbd6388a3e08cdf4bc616cb4e29391520a99833114e2691a4f0be261b6a85245",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-24T14:33:31.636Z"
+    },
+    "domain_intelligence-architecture-intelligence-nihildigit-piko-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-nihildigit-piko-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nihildigit-piko-learnings-architecture-intelligence-nihildigit-piko-learnings-co.md",
+      "title": "Architecture Intelligence: nihildigit-piko-learnings Core Invariants",
+      "repository": "nihildigit-piko-learnings",
+      "source_version": "HEAD",
+      "content_hash": "32ae1a4a98c9405951ebc6fdfac5693a5735fbe1afdcff59fecfc5820bcd949d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T14:33:31.884Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-nihildigit-piko-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nihildigit-piko-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/nihildigit-piko-learnings-verification-protocol-empirical-defect-shield-for-nihi.md",
+      "title": "Verification Protocol: Empirical Defect Shield for nihildigit-piko-learnings",
+      "repository": "nihildigit-piko-learnings",
+      "source_version": "HEAD",
+      "content_hash": "625658a7b26751af347f88a5d864e32e1537d77965ca3d353f38762cef2efcc8",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-24T14:33:32.115Z"
+    },
+    "candidate_directive-deps-legend-list-3-9-reanimated-4-8-worklets-0-14-webview-17-rn-cli-21-dro": {
+      "item_id": "candidate_directive-deps-legend-list-3-9-reanimated-4-8-worklets-0-14-webview-17-rn-cli-21-dro",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-OPX6-deps-legend-list-3-9-reanimated-4-8-worklets-0-14-webview-17-rn-cli-21-dro.md",
+      "title": "deps: legend-list 3.9, reanimated 4.8, worklets 0.14, webview 17, RN CLI 21; dro",
+      "repository": "keybase-client-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9d02ff88284f4566d75a1b9d2c2bcff811b35cd683f756407b0b6338e0769d42",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T14:33:32.736Z"
+    },
+    "candidate_directive-gpu-extend-match_value-results-to-the-output-block-count-in-the-high-level-api": {
+      "item_id": "candidate_directive-gpu-extend-match_value-results-to-the-output-block-count-in-the-high-level-api",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-OQR0-gpu-extend-match_value-results-to-the-output-block-count-in-the-high-level-api.md",
+      "title": "gpu): extend match_value results to the output block count in the high-level api",
+      "repository": "zama-ai-tfhe-rs-learnings",
+      "source_version": "HEAD",
+      "content_hash": "aa63bae360534d10db4cb20d8510cc26bf7cc26e497f57f993c6602927510793",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T14:33:33.805Z"
     }
   },
   "ai-builder-brain": {
