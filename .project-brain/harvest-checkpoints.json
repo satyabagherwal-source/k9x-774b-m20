@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T13:21:13.442Z",
+  "last_updated": "2026-11-24T13:30:23.887Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "dc41417a1e31638ce0f42404dc4d3f879ea515e2ed8e97b1049257d963644809",
-      "verified_at": "2026-11-24T07:47:17.810Z",
+      "content_hash": "fe8b2450bcc188c892e162a418395618108a626d9223464b0a1b442ac589a2f4",
+      "verified_at": "2026-11-24T13:30:19.694Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T07:47:17.810Z"
+      "last_updated": "2026-11-24T13:30:19.694Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "7ef2064016667c6da19c1e0db78ba3c27c46b4f21d3040cb0afaed09e8e7c8e6",
-      "verified_at": "2026-11-24T05:42:43.211Z",
+      "content_hash": "07409b9f3d46d08323382958336ea563277304a03398c5bcaea6bae88021757e",
+      "verified_at": "2026-11-24T13:30:23.886Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T05:42:43.211Z"
+      "last_updated": "2026-11-24T13:30:23.886Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -7281,14 +7281,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-etcd-io-etcd",
-      "content_hash": "11caf0ea9d01fb784ee4636484f91f7c4b9feadff2cea6efe9a12563b061a299",
-      "verified_at": "2026-11-23T17:03:42.637Z",
+      "content_hash": "5bee2fab0737eaf5deeefb767bc873c9b84672d29f2fdd22ed440dab44ff5ec2",
+      "verified_at": "2026-11-24T13:30:21.727Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T17:03:42.637Z"
+      "last_updated": "2026-11-24T13:30:21.727Z"
     },
     "wasm-bindgen/wasm-pack": {
       "repository": "wasm-bindgen/wasm-pack",
@@ -19596,14 +19596,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-cloudflare-clairic",
-      "content_hash": "447506975d4a78d5923dc765d85f72a12ca3a00314f5d3961aad7562a405b030",
-      "verified_at": "2026-11-20T09:59:06.642Z",
+      "content_hash": "eda95deaeb4af932f1329306c7804fb721cee463ced8abdb3f372d72c6dfc622",
+      "verified_at": "2026-11-24T13:30:06.289Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T09:59:06.642Z"
+      "last_updated": "2026-11-24T13:30:06.289Z"
     },
     "Kianuni/Erosion-CN": {
       "repository": "Kianuni/Erosion-CN",

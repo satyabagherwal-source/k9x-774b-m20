@@ -4,22 +4,22 @@
 {
   "source_repository": "dathere/qsv",
   "source_url": "https://github.com/dathere/qsv",
-  "source_version": "f0980efc",
+  "source_version": "984b16cb",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-24T05:42:43.509Z",
+  "timestamp": "2026-11-24T13:30:24.184Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dathere-qsv",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `f0980efc`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-24T05:42:43.509Z`  
+> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `984b16cb`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-24T13:30:24.184Z`  
 > **Learning ID**: `learn-github-dathere-qsv`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `dathere/qsv` (Commit: `f0980efc`)
+- **Target Repository**: `dathere/qsv` (Commit: `984b16cb`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T05:42:41.834Z  
+> **Harvest Timestamp**: 2026-11-24T13:30:22.477Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3848 stars
+- **Stars / Engagement**: 3850 stars
 
 ---
 
@@ -2290,424 +2290,103 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f0980efc` (2026-11-24)
-**Commit Message**: fix(moarstats,pragmastat,scoresql): check a stats cache's parsing options before reusing it (#5105) (#5106)
+### Incident Patch 1: `a6ed78ab` (2026-11-24)
+**Commit Message**: build(deps): bump github/codeql-action from 4.39.3 to 4.39.4 (#5108)
 
-* fix(moarstats,pragmastat,scoresql): check a stats cache's parsing options before reusing it (#5105)
+Bumps [github/codeql-action](https://github.com/github/codeql-action) from 4.39.3 to 4.39.4.
+- [Release notes](https://github.com/github/codeql-action/releases)
+- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/github/codeql-action/compare/v4.39.3...v4.39.4)
 
-These three read the stats cache files directly and checked only their age,
-so a cache computed under other parsing options (delimiter, --no-headers,
---flexible, sniffed preamble, or stats --quote/--escape/--no-quoting) than
-they read the input with was trusted: moarstats and pragmastat's append
-mode extended such a baseline with statistics of another reading, and
-pragmastat --standalone skipped numeric columns it had typed as text.
+---
+updated-dependencies:
+- dependency-name: github/codeql-action
+  dependency-version: 4.39.4
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
 
-They now run stats_cache_parsing_opts_conflict, the check behind
-get_stats_records, and recompute the baseline (or, for --standalone,
-ignore the cache). A --flexible baseline still counts as compatible when
---stats-options asks for --flexible, so such runs don't recompute every time.
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* fix(pragmastat,scoresql): don't trust a JSONL older than its sidecar; match pragmastat's flexible rule (#5105)
-
-- A stats run without --stats-jsonl rewrites the sidecar but leaves the
-  JSONL, so the sidecar ca
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `.github/workflows/devskim.yml` (modified, +1/-1)
 ```diff
-@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - `sqlp`, `joinp --sql-filter`, `profile`, `scoresql`: new `QSV_SQL_DISABLE_FILE_WRITES` environment variable. When set, Polars SQL's `COPY ... TO` fails with "writing files is disabled by QSV_SQL_DISABLE_FILE_WRITES" and writes nothing; reading files and `--output` are unaffected. Without it, `COPY ... TO` can write any path the query names. The qsv MCP server sets it in plugin mode (Cowork and the Claude Code plugin). ([#5081](https://github.com/dathere/qsv/pull/5081))
+@@ -51,6 +51,6 @@ jobs:
+           ignore-globs: "**/.git/**,**/.claude/**,**/tests/resources/**,**/docs/describegpt/*.md,**/docs/describegpt/*.json,**/docs/describegpt/*.toon,**/src/cmd/assets/datatables.min.js,**/src/cmd/assets/datatables.min.css"
  
- ### Fixed
-+- `moarstats`, `pragmastat`, `scoresql`: a stats cache computed under other CSV parsing options than the command reads the input with (another `--delimiter`, `--no-headers`, `--flexible`, sniffed preamble, or `stats --quote`/`--escape`/`--no-quoting`) was reused anyway, since these commands read the cache files directly and checked only their age. `moarstats`, and `pragmastat` when it appends to the stats CSV, extended such a baseline with statistics of another reading, e.g. a column's `max` of 4 where the input as read holds a 9. `pragmastat --standalone` skipped numeric columns the cache had typed as text. All three now apply the parsing-options check the other cache readers use: they recompute the baseline, or `pragmastat --standalone` ignores the cache. Fixes [#5105](https://github.com/dathere/qsv/issues/5105) ([#5106](https://github.com/dathere/qsv/pull/5106)).
- - `writestat`: numbers very close to 0 were lost without a warning. A SAS transport (`.xpt`) file wrote a non-zero number closer to 0 than ±5.4e-79 (16^-65, the smallest IBM float) as missing, or as 0 below ±2.2e-308, and `writestat` checked only the ±7.2e75 end of the range. Such numbers are now refused like the large ones, and with `--lossy` the warning names them. An SPSS portable (`.por`) file can hold them, but its writer lost precision from about 1e-56 and wrote numbers below about 4e-73 as 0 (or -0). It now writes them as a mantissa and a negative power of 30, and its reader rebuilds values below about 1e-292 without losing digits. The `.por` writer and reader fixes are in our `polars-readstat-rs` fork, [dathere/polars_readstat@18551f9](https://github.com/dathere/polars_readstat/commit/18551f90697b23e677c5e17a0fe8f03ad710d90b), also offered upstream in [jrothbaum/polars_readstat#72](https://github.com/jrothbaum/polars_readstat/pull/72). Fixes [#5094](https://github.com/dathere/qsv/issues/5094). ([#5103](https://github.com/dathere/qsv/pull/5103))
- - `synthesize`: an `ordered` relationship read its source dates only as RFC 3339 or `YYYY-MM-DD`, so on columns `stats` types as dates in other forms (`04/18/2019 09:55:45 PM`, `2022-01-21 13:47:00`) it found no rows with both dates and was dropped with only a log warning, leaving the columns independent and out of order. Source dates are now read with the parser `stats` uses, honoring `--prefer-dmy`/`QSV_PREFER_DMY`, by `ordered` groups and by `--discover-relationships`. **Behavior change:** such groups now apply, so their output changes. ([#5085](https://github.com/dathere/qsv/pull/5085))
- - `synthesize`: input with non-UTF8 cells failed outright when it had any numeric or date column ("invalid UTF-8"), or when a column it enumerated held one ("Unable to parse output of qsv command frequency"). It also failed when a relationship was declared, and with `QSV_NO_HEADERS` when the first row held one. Every pass now reads raw bytes, and invalid bytes are written as U+FFFD (`�`), as `stats` already reports them, and `--report` keys source cells the same way, so a copied row still counts as an exact match. A non-UTF8 header is still refused by `stats`. ([#5084](https://github.com/dathere/qsv/pull/5084))
+       - name: Upload DevSkim scan results to GitHub Security tab
+-        uses: github/codeql-action/upload-sarif@v4.39.3
++        uses: github/codeql-action/upload-sarif@v4.39.4
+         with:
+           sarif_file: devskim-results.sarif
 ```
 
-**File**: `src/cmd/moarstats.rs` (modified, +29/-1)
+**File**: `.github/workflows/rust-clippy.yml` (modified, +1/-1)
 ```diff
-@@ -5215,6 +5215,22 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-         // so a CSV joined with another one would lose every statistic derived from them.
-         let separator_mismatch =
-             stats_current && util::stats_csv_separator_mismatch(&path, &stats_separator);
-+        // The input is read below with the default parsing options, so a baseline computed
-+        // under others (another delimiter or quoting, --no-headers, ...) describes other
-+        // columns (#5105). A --flexible baseline is what `--stats-options --flexible` asks for.
-+        let parsing_mismatch = stats_current
-+            && util::stats_cache_parsing_opts_conflict(
-+                input_path,
-+                &input_path
-+                    .canonicalize()
-+                    .unwrap_or_else(|_| input_path.to_path_buf()),
-+                false,
-+                None,
-+                None,
-+                args.flag_stats_options
-+                    .split_whitespace()
-+                    .any(|o| o == "--flexible"),
-+            );
-         // A current stats CSV can still be unusable for --use-percentiles: it
-         // may have been computed with a --percentile-list that lacks the
-         // requested --pct-thresholds (issue #4455). Treat that as stale so the
-@@ -5230,7 +5246,12 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-             } else {
-                 true
-             };
--        if !stats_current || version_mismatch || separator_mismatch || !covers_thresholds {
-+        if !stats_current
-+            || version_mismatch
-+            || separator_mismatch
-+            || parsing_mismatch
-+            || !covers_thresholds
-+        {
-             if args.flag_force {
-                 winfo!("Force flag set: recomputing stats...");
-             } else if !stats_current {
-@@ -5257,6 +5278,13 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-                      {}\nRecomputing baseline stats...",
-                     path.display()
-                 );
-+            } else if parsing_mismatch {
-+                wwarn!(
-+                    "Stats CSV file was computed with other CSV parsing options (e.g. delimiter \
-+                     or quoting) than moarstats reads the input with: {}\nRecomputing baseline \
-+                     stats...",
-+                    path.display()
-+                );
-             } else {
-                 wwarn!(
-                     "Stats CSV file was computed with a --percentile-list that does not include \
-```
-
-**File**: `src/cmd/pragmastat.rs` (modified, +49/-3)
-```diff
-@@ -389,6 +389,13 @@ fn append_to_filename(path: &std::path::Path, suffix: &str) -> std::path::PathBu
- }
+@@ -46,7 +46,7 @@ jobs:
+         continue-on-error: true
  
- /// Append pragmastat one-sample columns to the .stats.csv cache file.
-+/// Does `--stats-options` ask for a `--flexible` baseline?
-+fn stats_options_flexible(args: &Args) -> bool {
-+    args.flag_stats_options
-+        .split_whitespace()
-+        .any(|o| o == "--flexible")
-+}
-+
- fn run_cache_append(args: &Args) -> CliResult<()> {
-     use csv::{ReaderBuilder, WriterBuilder};
+       - name: Upload analysis results to GitHub
+-        uses: github/codeql-action/upload-sarif@v4.39.3
++        uses: github/codeql-action/upload-sarif@v4.39.4
+         with:
+           sarif_file: rust-clippy-results.sarif
+           wait-for-processing: true
+```
+
+---
+
+### Incident Patch 2: `01ddb1a1` (2026-11-24)
+**Commit Message**: build(deps): bump anthropics/claude-code-action from 1.0.284 to 1.0.286 (#5107)
+
+Bumps [anthropics/claude-code-action](https://github.com/anthropics/claude-code-action) from 1.0.284 to 1.0.286.
+- [Release notes](https://github.com/anthropics/claude-code-action/releases)
+- [Commits](https://github.com/anthropics/claude-code-action/compare/c84e279f859e2591391e95bd309286eb111c345f...acfe7992852970efb4fee683d63d628e3e52df67)
+
+---
+updated-dependencies:
+- dependency-name: anthropics/claude-code-action
+  dependency-version: 1.0.286
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `.github/workflows/claude-code-review.yml` (modified, +1/-1)
+```diff
+@@ -34,7 +34,7 @@ jobs:
  
-@@ -403,16 +410,37 @@ fn run_cache_append(args: &Args) -> CliResult<()> {
-     // A stats CSV written by another qsv version is stale too: existing ps_* columns are
-     // otherwise kept as-is, and that version's values survive an upgrade
-     let stats_current = util::stats_csv_is_current(&stats_csv_path, input_path);
-+    let version_mismatch = stats_current && util::stats_csv_version_mismatch(&stats_csv_path);
-+    // A baseline computed under other parsing options than this run reads the input with
-+    // (another delimiter or quoting, --no-headers, ...) describes other columns (#5105). A
-+    // --flexible baseline is what `--stats-options --flexible` asks for.
-+    let parsing_mismatch = stats_current
-+        && !version_mismatch
-+        && util::stats_cache_parsing_opts_conflict(
-+            input_path,
-+            &input_path
-+                .canonicalize()
-+                .unwrap_or_else(|_| input_path.to_path_buf()),
-+            args.flag_no_headers,
-+            args.flag_delimiter,
-+            None,
-+            stats_options_flexible(args),
-+        );
-     // a baseline computed here has a known selection, so its rows map to columns exactly
--    let baseline_computed_here =
--        !stats_current || util::stats_csv_version_mismatch(&stats_csv_path);
-+    let baseline_computed_here = !stats_current || version_mismatch || parsing_mismatch;
-     if baseline_computed_here {
--        if stats_current {
-+        if version_mismatch {
-             wwarn!(
-                 "Stats CSV file was generated by a different qsv version: {}\nRecomputing \
-                  baseline stats...",
-                 stats_csv_path.display()
-             );
-+        } else if parsing_mismatch {
-+            wwarn!(
-+                "Stats CSV file was computed with other CSV parsing options (e.g. delimiter or \
-+                 quoting) than pragmastat reads the input with: {}\nRecomputing baseline stats...",
-+                stats_csv_path.display()
-+            );
-         } else if stats_csv_path.exists() {
-             wwarn!(
-                 "Stats CSV file is older than the input: {}\nRecomputing baseline stats...",
-@@ -805,6 +833,24 @@ fn columns_from_cache(args: &Args, headers: &csv::ByteRecord) -> Option<Vec<(usi
-     if cache_mtime <= input_mtime {
-         return None;
-     }
-+    // nor one parsed otherwise than this run reads the input (#5105), judged by a sidecar that
-+    // describes this JSONL rather than a later stats run
-+    let given_path = std::path::Path::new(input_path);
-+    if util::stats_jsonl_predates_stats_cache(&cache_path, [given_path, &canonical])
-+        || util::stats_cache_parsing_opts_conflict(
-+            given_path,
-+            &canonical,
-+            args.flag_no_headers,
-+            args.flag_delimiter,
-+            // only the column types are used, which --prefer-dmy doesn't decide
-+            None,
-+            // as the append baseline: a --flexible one is what `--stats-options --flexible`
-+            // asks for
-+            !args.flag_standalone && stats_options_flexible(args),
-+        )
-+    {
-+        return None;
-+    }
+       - name: Run Claude Code Review
+         id: claude-review
+-        uses: anthropics/claude-code-action@c84e279f859e2591391e95bd309286eb111c345f # v1.0.284
++        uses: anthropics/claude-code-action@acfe7992852970efb4fee683d63d628e3e52df67 # v1.0.286
+         with:
+           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+           plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
+```
+
+**File**: `.github/workflows/claude.yml` (modified, +1/-1)
+```diff
+@@ -34,7 +34,7 @@ jobs:
  
-     // Read the JSONL cache directly — no routing through get_stats_records,
-     // so we truly never trigger a stats run.
-```
-
-**File**: `src/cmd/scoresql.rs` (modified, +13/-1)
-```diff
-@@ -928,7 +928,19 @@ fn load_or_generate_caches(
+       - name: Run Claude Code
+         id: claude
+-        uses: anthropics/claude-code-action@c84e279f859e2591391e95bd309286eb111c345f # v1.0.284
++        uses: anthropics/claude-code-action@acfe7992852970efb4fee683d63d628e3e52df67 # v1.0.286
+         with:
+           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
  
-     // Check for stats cache
-     let stats_path = canonical.with_extension("stats.csv.data.jsonl");
--    let stats = if stats_path.exists() && is_cache_fresh(&stats_path, &canonical) {
-+    // a fresh cache parsed otherwise than scoresql reads the input describes other columns (#5105)
-+    let stats = if stats_path.exists()
-+        && is_cache_fresh(&stats_path, &canonical)
-+        // a later stats run's sidecar doesn't describe this JSONL
-+        && !util::stats_jsonl_predates_stats_cache(&stats_path, [input_path, &canonical])
-+        && !util::stats_cache_parsing_opts_conflict(
-+            input_path,
-+            &canonical,
-+            false,
-+            Some(Delimiter(delim)),
-+            None,
-+            false,
-+        ) {
-         load_stats_cache(&stats_path)?
-     } else {
-         if !quiet {
-```
-
-**File**: `src/util/stats_cache.rs` (modified, +2/-2)
-```diff
-@@ -371,7 +371,7 @@ pub fn stats_csv_separator_mismatch(stats_csv_path: &Path, separator: &str) -> b
- ///
- /// Both locations are checked for the same reason `stats_cache_parsing_opts_conflict` checks
- /// both: for a symlinked input they differ.
--pub(super) fn stats_jsonl_predates_stats_cache(statsdata_path: &Path, bases: [&Path; 2]) -> bool {
-+pub(crate) fn stats_jsonl_predates_stats_cache(statsdata_path: &Path, bases: [&Path; 2]) -> bool {
-     let Ok(jsonl_meta) = std::fs::metadata(statsdata_path) else {
-         return false;
-     };
-@@ -396,7 +396,7 @@ pub(super) fn stats_jsonl_predates_stats_cache(statsdata_path: &Path, bases: [&P
- ///
- /// (`get_stats_records_readonly` still fails closed on missing metadata: it returns an `Option`
- /// its callers treat as a best-effort accelerator, so refusing costs nothing there.)
--pub(super) fn stats_cache_parsing_opts_conflict(
-+pub(crate) fn stats_cache_parsing_opts_conflict(
-     input_path: &Path,
-     canonical_input_path: &Path,
-     no_headers: bool,
-```
-
-**File**: `tests/test_moarstats.rs` (modified, +44/-0)
-```diff
-@@ -8304,3 +8304,47 @@ fn moarstats_derived_statistics_skip_nan_cells() {
-     );
-     assert_eq!(derived[0], derived[1]);
- }
-+
-+/// `stat` of `field` in the stats CSV at `path`
-+fn stats_csv_value(path: &std::path::Path, field: &str, stat: &str) -> String {
-+    let mut rdr = ReaderBuilder::new().from_path(path).unwrap();
-+    let headers = rdr.headers().unwrap().clone();
-+    let field_idx = get_column_index(&headers, "field").unwrap();
-+    let stat_idx = get_column_index(&headers, stat).unwrap();
-+    rdr.records()
-+        .map(Result::unwrap)
-+        .find(|r| r.get(field_idx) == Some(field))
-+        .and_then(|r| get_field_value(&r, stat_idx))
-+        .unwrap_or_else(|| panic!("no {stat} for {field}"))
-+}
-+
-+// moarstats reads the input with the default parsing options, so it must not extend a
-+// baseline `stats` computed under others (#5105). Read with `'`, `b` is 1,2,3,4; read with
-+// `"`, it is 9,1,2,3,4.
-+#[test]
-+fn moarstats_recomputes_a_baseline_parsed_otherwise() {
-+    let wrk = Workdir::new("moarstats_recomputes_a_baseline_parsed_otherwise");
-+    wrk.create_from_string("data.csv", "a,b\n'p,9\nq',1\nr,2\ns,3\nt,4\n");
-+    let mut stats = wrk.command("stats");
-+    stats.args(["--quote", "'", "--stats-jsonl", "data.csv"]);
-+    wrk.assert_success(&mut stats);
-+    assert_eq!(
-+        stats_csv_value(&wrk.path("data.stats.csv"), "b", "max"),
-+        "4"
-+    );
-+
-+    let mut cmd = wrk.command("moarstats");
-+    cmd.arg("data.csv");
-+    let got = wrk.stderr_on_success(&mut cmd);
-+    assert!(got.contains("other CSV parsing options"), "{got}");
-+    assert_eq!(
-+        stats_csv_value(&wrk.path("data.stats.csv"), "b", "max"),
-+        "9"
-+    );
-+
-+    // the recomputed baseline is the default reading's, so it is reused from now on
-+    let mut again = wrk.command("moarstats");
-+    again.arg("data.csv");
-+    let got = wrk.stderr_on_success(&mut again);
-+    assert!(!got.contains("Recomputing"), "{got}");
-+}
-```
-
-**File**: `tests/test_pragmastat.rs` (modified, +74/-0)
-```diff
-@@ -2006,3 +2006,77 @@ fn pragmastat_cache_append_no_headers_partial_cache_left_empty() {
-     assert_eq!(rows.len(), 1);
-     assert!(rows[0][1..].iter().all(String::is_empty), "{rows:?}");
- }
-+
-+// Read with `'`, the `"10"` cells keep their quotes, so a cache computed that way types `n`
-+// as String. pragmastat reads the input with the default quoting, so it must not trust such a
-+// cache to pick its columns, nor extend it as a baseline (#5105).
-+fn quote_cached_data(wrk: &Workdir) {
-+    wrk.create_from_string("data.csv", "id,n\n1,\"10\"\n2,\"20\"\n");
-+    let mut stats = wrk.command("stats");
-+    stats.args(["--quote", "'", "--stats-jsonl", "data.csv"]);
-+    wrk.assert_success(&mut stats);
-+}
-+
-+#[test]
-+fn pragmastat_standalone_ignores_a_cache_parsed_otherwise() {
-+    let wrk = Workdir::new("pragmastat_standalone_ignores_a_cache_parsed_otherwise");
-+    quote_cached_data(&wrk);
-+    let mut cmd = wrk.command("pragmastat");
-+    cmd.args(["--standalone", "data.csv"]);
-+    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+    let fields: Vec<&str> = got.iter().skip(1).map(|r| r[0].as_str()).collect();
-+    assert_eq!(fields, ["id", "n"]);
-+}
-+
-+#[test]
-+fn pragmastat_append_recomputes_a_baseline_parsed_otherwise() {
-+    let wrk = Workdir::new("pragmastat_append_recomputes_a_baseline_parsed_otherwise");
-+    quote_cached_data(&wrk);
-+    let mut cmd = wrk.command("pragmastat");
-+    cmd.arg("data.csv");
-+    let got = wrk.stderr_on_success(&mut cmd);
-+    assert!(got.contains("other CSV parsing options"), "{got}");
-+    // `n` is numeric again: ps_n, ps_center
-+    let rows = ps_rows(&wrk.path("data.stats.csv"));
-+    let n = rows.iter().find(|r| r[0] == "n").unwrap();
-+    assert_eq!(n[1..3], ["2", "15"], "{rows:?}");
-+}
-+
-+// A later stats run without --stats-jsonl rewrites the sidecar but leaves the JSONL, so the
-+// sidecar no longer describes it: the stale `'`-quoted JSONL must not be trusted either.
-+#[test]
-+fn pragmastat_standalone_ignores_a_jsonl_older_than_its_sidecar() {
-+    let wrk = Workdir::new("pragmastat_standalone_ignores_a_jsonl_older_than_its_sidecar");
-+    quote_cached_data(&wrk);
-+    let mut restats = wrk.command("stats");
-+    restats.args(["--cache-threshold", "1", "data.csv"]);
-+    wrk.assert_success(&mut restats);
-+
-+    let mut cmd = wrk.command("pragmastat");
-+    cmd.args(["--standalone", "data.csv"]);
-+    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+    let fields: Vec<&str> = got.iter().skip(1).map(|r| r[0].as_str()).collect();
-+    assert_eq!(fields, ["id", "n"]);
-+}
-+
-+// A --flexible baseline is accepted when --stats-options asks for one, so the column types
-+// must come from that same cache, or the date column is read as numbers.
-+#[test]
-+fn pragmastat_append_flexible_baseline_keeps_its_column_types() {
-+    let wrk = Workdir::new("pragmastat_append_flexible_baseline_keeps_its_column_types");
-+    wrk.create_from_string(
-+        "data.csv",
-+        "d,x\n2020-01-01,1\n2020-02-01,2\n2020-03-01,3\n",
-+    );
-+    let options = "--flexible --infer-dates --stats-jsonl";
-+    let mut stats = wrk.command("stats");
-+    stats.args(options.split(' ')).arg("data.csv");
-+    wrk.assert_success(&mut stats);
-+
-+    let mut cmd = wrk.command("pragmastat");
-+    cmd.args(["--stats-options", options, "data.csv"]);
-+    wrk.assert_success(&mut cmd);
-+    let rows = ps_rows(&wrk.path("data.stats.csv"));
-+    let d = rows.iter().find(|r| r[0] == "d").unwrap();
-+    assert_eq!(d[1], "3", "{rows:?}");
-+}
-```
-
-**File**: `tests/test_scoresql.rs` (modified, +47/-0)
-```diff
-@@ -1230,3 +1230,50 @@ fn scoresql_duckdb_bare_non_identifier_wildcard_qualifier() {
-         serde_json::from_str(&got).unwrap_or_else(|e| panic!("{e}: {got}"));
-     assert!(json["plan"].as_str().unwrap().contains("READ_CSV"), "{got}");
- }
-+
-+// scoresql reads the input with the default quoting, so a stats cache computed under another
-+// is regenerated rather than used (#5105): read with `'`, the `"10"` cells keep their quotes
-+#[test]
-+fn scoresql_regenerates_a_stats_cache_parsed_otherwise() {
-+    let wrk = Workdir::new("scoresql_regenerates_a_stats_cache_parsed_otherwise");
-+    wrk.create_from_string("data.csv", "id,n\n1,\"10\"\n2,\"20\"\n");
-+    let mut stats = wrk.command("stats");
-+    stats.args(["--quote", "'", "--stats-jsonl", "data.csv"]);
-+    wrk.assert_success(&mut stats);
-+
-+    let mut cmd = wrk.command("scoresql");
-+    cmd.args(["--json", "data.csv", "SELECT * FROM data WHERE n = 10"]);
-+    let got = wrk.output(&mut cmd);
-+    let parsed: serde_json::Value =
-+        serde_json::from_str(&String::from_utf8_lossy(&got.stdout)).unwrap();
-+    assert_eq!(
-+        parsed["cache_status"]["stats_available"],
-+        serde_json::json!(["data"]),
-+        "{parsed}"
-+    );
-+}
-+
-+// A later stats run without --stats-jsonl rewrites the sidecar but leaves the `'`-quoted JSONL,
-+// which that sidecar no longer describes
-+#[test]
-+fn scoresql_regenerates_a_jsonl_older_than_its_sidecar() {
-+    let wrk = Workdir::new("scoresql_regenerates_a_jsonl_older_than_its_sidecar");
-+    wrk.create_from_string("data.csv", "id,n\n1,\"10\"\n2,\"20\"\n");
-+    let mut stats = wrk.command("stats");
-+    stats.args(["--quote", "'", "--stats-jsonl", "data.csv"]);
-+    wrk.assert_success(&mut stats);
-+    let mut restats = wrk.command("stats");
-+    restats.args(["--cache-threshold", "1", "data.csv"]);
-+    wrk.assert_success(&mut restats);
-+
-+    let mut cmd = wrk.command("scoresql");
-+    cmd.args(["--json", "data.csv", "SELECT * FROM data WHERE n = 10"]);
-+    let got = wrk.output(&mut cmd);
-+    let parsed: serde_json::Value =
-+        serde_json::from_str(&String::from_utf8_lossy(&got.stdout)).unwrap();
-+    assert_eq!(
-+        parsed["cache_status"]["stats_available"],
-+        serde_json::json!(["data"]),
-+        "{parsed}"
-+    );
-+}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5108** (2026-11-24): build(deps): bump github/codeql-action from 4.39.3 to 4.39.4 (@dependabot[bot])
+- **PR #5107** (2026-11-24): build(deps): bump anthropics/claude-code-action from 1.0.284 to 1.0.286 (@dependabot[bot])
 - **PR #5106** (2026-11-24): fix(moarstats,pragmastat,scoresql): check a stats cache's parsing options before reusing it (#5105) (@jqnatividad)
 - **PR #5104** (2026-11-24): feat(validate,stats): add --quote, --escape and --no-quoting (#4610) (@jqnatividad)
 - **PR #5103** (2026-11-23): fix(writestat): refuse numbers too close to 0 for .xpt; keep them in .por (@jqnatividad)
 - **PR #5102** (2026-11-23): fix(mcp): protect credential/autostart paths on every input/output path; explicit QSV_MCP_ALLOWED_DIRS confines plugin mode (@jqnatividad)
-- **PR #5101** (2026-11-23): deps: bump mlua to 0.12.3 (Luau 0.748); drop the mlua git pin (@jqnatividad)
-- **PR #5100** (2026-11-23): deps: bump jsonschema to 0.63.1; validate suggests a known format for a typo'd one (@jqnatividad)
 
 ---
 
@@ -2727,31 +2406,31 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. moarstats,pragmastat,scoresql): check a stats cache's parsing options before reu
+## X. build(deps): bump github/codeql-action from 4.39.3 to 4.39.4
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/devskim.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f0980efc`: moarstats,pragmastat,scoresql): check a stats cache's parsing options before reusing it. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a6ed78ab`: build(deps): bump github/codeql-action from 4.39.3 to 4.39.4. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/devskim.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- `moarstats`, `pragmastat`, `scoresql`: a stats cache computed under other CSV parsing options than the command reads the input with (another `--delimiter`, `--no-headers`, `--flexible`, sniffed preamble, or `stats --quote`/`--escape`/`--no-quoting`) was reused anyway, since these commands read the cache files directly and checked only their age. `moarstats`, and `pragmastat` when it appends to the stats CSV, extended such a baseline with statistics of another reading, e.g. a column's `max` of 4 where the input as read holds a 9. `pragmastat --standalone` skipped numeric columns the cache had typed as text. All three now apply the parsing-options check the other cache readers use: they recompute the baseline, or `pragmastat --standalone` ignores the cache. Fixes [#5105](https://github.com/dathere/qsv/issues/5105) ([#5106](https://github.com/dathere/qsv/pull/5106)).
+        uses: github/codeql-action/upload-sarif@v4.39.4
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+        uses: github/codeql-action/upload-sarif@v4.39.3
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f0980efc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a6ed78ab` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

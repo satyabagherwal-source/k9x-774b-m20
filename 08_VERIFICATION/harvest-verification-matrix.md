@@ -12677,3 +12677,7 @@
 | `CYCLE-20261124-SPJV` | `2026-11-24T13:12:40.027Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10264` | Yes (`eb005ef6...`) |
 | `CYCLE-20261124-3LKI` | `2026-11-24T13:21:08.082Z` | `fabio-rovai/open-ontologies` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10265` | Yes (`2e71d1a2...`) |
 | `CYCLE-20261124-3POS` | `2026-11-24T13:21:13.420Z` | `sqlpage/SQLPage` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10266` | Yes (`4d4517e2...`) |
+| `CYCLE-20261124-F4U1` | `2026-11-24T13:30:06.265Z` | `Cloudflare/clairic` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cloudflare-clairic-learnings.md` | Yes (`eda95dea...`) |
+| `CYCLE-20261124-FF6E` | `2026-11-24T13:30:19.670Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8826` | Yes (`fe8b2450...`) |
+| `CYCLE-20261124-FGQT` | `2026-11-24T13:30:21.701Z` | `etcd-io/etcd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10267` | Yes (`5bee2fab...`) |
+| `CYCLE-20261124-FIEU` | `2026-11-24T13:30:23.862Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10268` | Yes (`07409b9f...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T13:21:20.220Z",
+  "last_updated": "2026-11-24T13:30:30.725Z",
   "total_records": 2525,
   "domains": {
     "A": {
@@ -8631,8 +8631,8 @@
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "e2a97b049f570ead77a7bb60aafb864aad61d37159620c8401a511d0a3a157bd",
-      "created_at": "2026-11-24T07:47:18.413Z"
+      "content_hash": "dcb0392cb4fc2e99686517d6b5f2557d79dbadc6b1bf4334f45381baee6b3e1d",
+      "created_at": "2026-11-24T13:30:20.257Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -9864,8 +9864,8 @@
       "title": "Architecture Intelligence: provablehq-snarkos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-learnings-architecture-intelligence-provablehq-snarkos-learni.md",
       "repository": "provablehq-snarkos-learnings",
-      "content_hash": "7508b6288d7002de8720319eee05ab79e038dfd59f5356a217be1f9f2696aa5f",
-      "created_at": "2026-11-24T07:47:24.245Z"
+      "content_hash": "ed107d3aade3f5e50c87955b6524056993e6bb088989140c760865d3a40cf01d",
+      "created_at": "2026-11-24T13:30:28.901Z"
     },
     "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari",
@@ -12582,8 +12582,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "02f2ed53730d44441bf9a8c2d0f03462676f2bbf8e37ad88f247949a81c306fe",
-      "created_at": "2026-11-24T05:42:43.769Z"
+      "content_hash": "bea6a1b2671cf937ef7f0ab04a95b8b06b14a0d2b90f1f92629d77c2d79f8d60",
+      "created_at": "2026-11-24T13:30:24.413Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -23159,8 +23159,8 @@
       "title": "Content & Information Intelligence: etcd-io/etcd Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-etcd-io-etcd-content-information-intelligence-etcd-io-etcd-core-invariants.md",
       "repository": "etcd-io/etcd",
-      "content_hash": "1b9c3d9979ae8a6a69eff31d5751e11a5e43bc283078c217d5fbc2704cb51e2e",
-      "created_at": "2026-11-23T17:03:43.150Z"
+      "content_hash": "fef756bca0727115b06f5d4bc8c4dc1d17e4fdcc69b84bf0c6b00e68eb5ccd4c",
+      "created_at": "2026-11-24T13:30:22.271Z"
     },
     "DOM-D-CB5F7DEE": {
       "record_id": "DOM-D-CB5F7DEE",
@@ -23261,8 +23261,8 @@
       "title": "Content & Information Intelligence: etcd-io-etcd-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-etcd-io-etcd-learnings-content-information-intelligence-etcd-io-etcd-learnings-c.md",
       "repository": "etcd-io-etcd-learnings",
-      "content_hash": "1543fa0062144b9615cecbdb41cbb646c3cbc0a88a17c266ba387e1ebe384e45",
-      "created_at": "2026-11-23T17:03:52.924Z"
+      "content_hash": "f3cb375ce6bcc6c4f50d5a81f1925f878da2ff1ed26ab985c46a24854fb763f9",
+      "created_at": "2026-11-24T13:30:30.725Z"
     },
     "domain_intelligence-architecture-intelligence-metrolistgroup-metrolist-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-metrolistgroup-metrolist-core-invariants",
@@ -35922,8 +35922,8 @@
       "title": "Research & Knowledge Intelligence: Cloudflare/clairic Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cloudflare-clairic-research-knowledge-intelligence-cloudflare-clairic-core-in.md",
       "repository": "Cloudflare/clairic",
-      "content_hash": "bad36edb8db22ae6eec4ec26b4a1ad7e8adad9b1f42fa6324f25b792330600e9",
-      "created_at": "2026-11-20T09:59:07.092Z"
+      "content_hash": "ec33f1663defb5115b2951b3f2c08bc404702d11083621f745a7b5163cb4324f",
+      "created_at": "2026-11-24T13:30:06.577Z"
     },
     "domain_intelligence-technical-construction-intelligence-rocketride-org-rocketride-server-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-rocketride-org-rocketride-server-core-invari",
@@ -35991,8 +35991,8 @@
       "title": "Research & Knowledge Intelligence: hf-cloudflare-clairic-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cloudflare-clairic-learnings-research-knowledge-intelligence-hf-cloudflare-cl.md",
       "repository": "hf-cloudflare-clairic-learnings",
-      "content_hash": "385aabbafec9707ca95fa17f05d95ecf760bd324c1e682b9c68e6b56033b790b",
-      "created_at": "2026-11-20T09:59:49.249Z"
+      "content_hash": "64241fe48c04bbf99cfc355c42454a778bf7b454698454da93f04c29b74afbbe",
+      "created_at": "2026-11-24T13:30:27.906Z"
     },
     "domain_intelligence-architecture-intelligence-kamgurgul-cpu-info-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-kamgurgul-cpu-info-core-invariants",

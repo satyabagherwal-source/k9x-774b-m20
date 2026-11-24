@@ -12710,3 +12710,7 @@ Every entry in this ledger must capture:
 | `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `ad8f26ee` | Multi-dimensional audit evidence | 2026-11-24T13:12:40.031Z |
 | `learn-github-fabio-rovai-open-ontologies` | `https://github.com/fabio-rovai/open-ontologies` | `ef583f5e` | Multi-dimensional audit evidence | 2026-11-24T13:21:08.086Z |
 | `learn-github-sqlpage-sqlpage` | `https://github.com/sqlpage/SQLPage` | `d69f54cf` | Multi-dimensional audit evidence | 2026-11-24T13:21:13.424Z |
+| `learn-huggingface-cloudflare-clairic` | `https://huggingface.co/Cloudflare/clairic` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-11-24T13:30:06.270Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `045bb278` | Multi-dimensional audit evidence | 2026-11-24T13:30:19.675Z |
+| `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `776d2ee8` | Multi-dimensional audit evidence | 2026-11-24T13:30:21.706Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `984b16cb` | Multi-dimensional audit evidence | 2026-11-24T13:30:23.866Z |

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T13:21:20.045Z",
+  "last_updated": "2026-11-24T13:30:30.475Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3601,14 +3601,14 @@
       "learning_id": "learn-github-nucleoidai-nucleoid"
     },
     {
-      "id": "CD-GN9T",
+      "id": "CD-FM4F",
       "directive_title": "Empirical Invariant Guard in ci.yml",
       "source_repo": "provablehq-snarkos-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-GN9T-empirical-invariant-guard-in-ci-yml.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-FM4F-empirical-invariant-guard-in-ci-yml.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-22",
+      "date_staged": "2026-11-24",
       "domain_letter": "D"
     },
     {
@@ -54849,6 +54849,46 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-100667-server-events-dispatch-rerender-dm-statu.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-FNII",
+      "directive_title": "build(deps): bump ossf/scorecard-action from 2.5.0 to 2.6.0",
+      "source_repo": "etcd-io-etcd-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-FNII-build-deps-bump-ossf-scorecard-action-from-2-5-0-to-2-6-0.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-FINM",
+      "directive_title": "build(deps): bump github/codeql-action from 4.39.3 to 4.39.4",
+      "source_repo": "dathere/qsv",
+      "source_commit": "984b16cb",
+      "staged_file": "11_INBOX/candidate-directives/CD-FINM-build-deps-bump-github-codeql-action-from-4-39-3-to-4-39-4.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-73D934",
+      "directive_title": "Empirical Invariant Guard in ci.yml",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "provablehq-snarkos",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-73D934-empirical-invariant-guard-in-ci-yml.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-REV-BB2DCF",
+      "directive_title": "build(deps): bump ossf/scorecard-action from 2.5.0 to 2.6.0",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "etcd-io-etcd",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BB2DCF-build-deps-bump-ossf-scorecard-action-fr.md",
       "staged_date": "2026-11-24"
     }
   ]

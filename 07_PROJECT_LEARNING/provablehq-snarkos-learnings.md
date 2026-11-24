@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
-> **Source Version**: `2325502f`  
+> **Source Version**: `045bb278`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T07:47:16.790Z  
+> **Timestamp**: 2026-11-24T13:30:18.713Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T07:47:16.783Z  
+> **Harvest Timestamp**: 2026-11-24T13:30:18.705Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1873,265 +1873,93 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `da73ee50` (2026-11-24)
-**Commit Message**: Explain the capped tip state at the node height, and cover the quiet paths
+### Incident Patch 1: `045bb278` (2026-11-24)
+**Commit Message**: Merge pull request #4777 from aleo-labs-protocol/ci/advisories-on-schedule-only
 
-Address review of #4755.
-
-- The advertised-tip trace now also prints when a `NotYet` cap equals the
-  node height. Before, that state logged only the generic "Not block synced
-  yet" debug.
-- That debug no longer prints while failed requests wait for a peer:
-  `prepare_block_requests` reports them.
-- The re-issue trace prints per batch, after the skip, so it prints only
-  when a batch is attempted.
-- New tests cover the `current_height < served_tip` clause, the request
-  pass through `try_issuing_block_requests`, and exact line counts in the
-  capped state.
-
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-**File**: `node/sync/src/block_sync.rs` (modified, +72/-22)
+**File**: `.github/workflows/ci.yml` (modified, +7/-3)
 ```diff
-@@ -750,7 +750,8 @@ impl<N: Network> BlockSync<N> {
-         let mut next_request_slot = None;
+@@ -139,9 +139,13 @@ jobs:
+       - uses: taiki-e/install-action@75a7c0f87bd666af3cdb75c5b9e9d03ab6044e6f # v2.90.6
+         with: { tool: cargo-deny@0.20.2 }
+       - run: cargo deny --workspace check bans licenses sources
+-      # staging's advisories are bumped nightly by bump-advisories.yml, which
+-      # does not cover the release line.
+-      - if: github.base_ref != 'staging' && github.ref_name != 'staging'
++      # Only scheduled runs, and runs on or into a release branch, check
++      # advisories. bump-advisories.yml updates staging's Cargo.lock past them
++      # nightly.
++      - if: >-
++          github.event_name == 'schedule' ||
++          startsWith(github.ref, 'refs/heads/release/') ||
++          startsWith(github.base_ref, 'release/')
+         run: cargo deny --workspace check advisories
  
-         if batches.is_empty() {
--            if self.num_total_block_requests() == 0 {
-+            // Failed requests that wait for a peer are reported by `prepare_block_requests`.
-+            if self.num_total_block_requests() == 0 && self.failed_requests.lock().is_empty() {
-                 debug!(
-                     "Not block synced yet, and there are no outstanding block requests or \
-                  new block requests to send"
-@@ -1259,8 +1260,6 @@ impl<N: Network> BlockSync<N> {
- 
-         // Re-issue the remaining failed requests.
-         if !failed_requests.is_empty() {
--            trace!("There are {} failed requests that need to be re-issued.", failed_requests.len());
--
-             // Convert the set of failed requests into one or multiple continuous ranges.
-             let iter = failed_requests.iter();
-             let mut batches: VecDeque<Vec<(u32, _, _)>> = VecDeque::new();
-@@ -1302,6 +1301,7 @@ impl<N: Network> BlockSync<N> {
-                 if tips.is_some_and(|(served_tip, _)| served_tip < start) {
-                     continue;
-                 }
-+                trace!("Trying to re-issue failed block requests {start}..{end_height}");
- 
-                 let Some((sync_peers, min_common_ancestor)) = self.find_sync_peers_inner(current_height, Some(start))
-                 else {
-@@ -1374,15 +1374,16 @@ impl<N: Network> BlockSync<N> {
- 
-             print_requests();
-             vec![]
--        } else if let Some((served_tip, advertised_tip)) =
--            tips.filter(|&(served_tip, _)| current_height < served_tip && served_tip < start_height)
--        {
--            // Every block a peer serves is in the ledger or requested, e.g. at the tip while the tip
--            // block is in flight. This check must precede `find_sync_peers_inner`: no peer serves
--            // `start_height`, so it finds no sync peers, and the final branch logs on every call.
-+        } else if let Some((served_tip, advertised_tip)) = tips.filter(|&(served_tip, advertised_tip)| {
-+            served_tip < start_height && (current_height < served_tip || served_tip < advertised_tip)
-+        }) {
-+            // Every block a peer serves is in the ledger or requested, and a peer is ahead of this
-+            // node, e.g. at the tip while the tip block is in flight. This check must precede
-+            // `find_sync_peers_inner`: no peer serves `start_height`, so it finds no sync peers, and
-+            // the final branch logs on every call.
-             if served_tip < advertised_tip {
-                 trace!(
--                    "Requested every block up to {served_tip}, the latest any peer serves, but peers advertise blocks up to {advertised_tip}"
-+                    "Every block up to {served_tip}, the latest any peer serves, is in the ledger or requested, but peers advertise blocks up to {advertised_tip}"
-                 );
-             }
-             vec![]
-@@ -2954,32 +2955,62 @@ mod tests {
-         assert!(sync_peers.contains_key(&sample_peer_ip(2)));
-     }
- 
--    /// Tests that block sync prepares no requests and logs nothing once it has requested every
--    /// block its peers serve.
--    #[test]
--    #[tracing_test::traced_test]
--    fn test_quiet_while_tip_block_in_flight() {
--        let num_lines = || {
-+    /// Returns the number of log lines the enclosing `traced_test` has captured.
-+    macro_rules! num_log_lines {
-+        () => {{
-             let count = std::cell::Cell::new(0);
-             logs_assert(|lines| {
-                 count.set(lines.len());
-                 Ok(())
-             });
-             count.get()
--        };
-+        }};
-+    }
-+
-+    /// Tests that block sync prepares no requests and logs nothing once it has requested every
-+    /// block its peers serve.
-+    #[test]
-+    #[tracing_test::traced_test]
-+    fn test_quiet_while_tip_block_in_flight() {
-         let sync = sample_sync_at_height(1_000);
-         add_peers(&sync, 1, 1, 1_001, 0);
-         insert_requests_to(&sync, sample_peer_ip(1), 1_001..1_002);
--        let before = num_lines();
-+        let before = num_log_lines!();
-         assert!(sync.prepare_block_requests().is_empty());
--        assert_eq!(num_lines(), before);
-+        assert_eq!(num_log_lines!(), before);
- 
-         // A peer ahead whose floor is above the next height to request.
-         add_peers(&sync, 2, 1, 1_100, 1_050);
-         assert!(sync.prepare_block_requests().is_empty());
-         assert!(logs_contain("No new blocks can be requested"));
-     }
- 
-+    /// Tests that block sync logs when requests are outstanding, but no peer is ahead.
-+    #[test]
-+    #[tracing_test::traced_test]
-+    fn test_not_quiet_without_peer_ahead() {
-+        let sync = sample_sync_at_height(1_000);
-+        add_peers(&sync, 1, 1, 1_000, 0);
-+        insert_requests_to(&sync, sample_peer_ip(1), 1_001..1_002);
-+        assert!(sync.prepare_block_reque
+   shellcheck:
+```
+
+**File**: `CI.md` (modified, +1/-1)
+```diff
+@@ -74,7 +74,7 @@ jobs run on every event.
+ | `schedule-due` | hosted | schedule | 10 | decides whether `staging`'s head is due a check |
+ | `check-shared-refs` | hosted | all | | checks that each `aleo-labs-protocol/gh-actions` ref is a release tag, and that each matrix `name` axis lists the same names as its `include` |
+ | `fmt` | hosted | all | | `cargo fmt --check` on `FMT_TOOLCHAIN` |
+-| `deny` | hosted | all | | `cargo deny --workspace check bans licenses sources`, plus `advisories` everywhere but `staging`, whose advisories and yanked crates [`bump-advisories.yml`](.github/workflows/bump-advisories.yml) bumps nightly. A yanked crate fails `advisories` |
++| `deny` | hosted | all | | `cargo deny --workspace check bans licenses sources`, plus `advisories` on scheduled runs and on runs on or into a `release/**` branch (a push, a pull request into one, or a `workflow_dispatch` on one). [`bump-advisories.yml`](.github/workflows/bump-advisories.yml) bumps advisories and yanked crates on staging nightly. A yanked crate fails `advisories` |
+ | `shellcheck` | hosted | all | | `.ci/*.sh`, `scripts/*.sh` |
+ | `source-checks` | hosted | all | | `scripts/check_sources.py`: license headers in `.rs` files |
+ | `lint` | `cpu` | all | 90 | clippy, default and `--all-features`; `cargo check --all-features` of `snarkos-node-metrics` and `snarkos-display` |
 ```
 
 ---
 
-### Incident Patch 2: `2325502f` (2026-11-24)
-**Commit Message**: Merge pull request #4755 from aleo-labs-protocol/fix/block-sync-quiet-tip-followup
+### Incident Patch 2: `1f86bfc7` (2026-11-24)
+**Commit Message**: Do not treat every workflow_dispatch as a release run for advisories
 
-Keep block sync quiet only at the true served tip
+A workflow_dispatch can run on any branch. One dispatched on a release
+branch already matches through github.ref, so drop the event check.
 
-**File**: `Cargo.lock` (modified, +1/-0)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01UYfmmPQBrmJpfhVS2CtdQM
+
+**File**: `.github/workflows/ci.yml` (modified, +3/-3)
 ```diff
-@@ -5806,6 +5806,7 @@ dependencies = [
-  "tokio",
-  "tracing",
-  "tracing-subscriber",
-+ "tracing-test",
- ]
- 
- [[package]]
+@@ -139,11 +139,11 @@ jobs:
+       - uses: taiki-e/install-action@75a7c0f87bd666af3cdb75c5b9e9d03ab6044e6f # v2.90.6
+         with: { tool: cargo-deny@0.20.2 }
+       - run: cargo deny --workspace check bans licenses sources
+-      # Only scheduled and release runs check advisories. bump-advisories.yml
+-      # updates staging's Cargo.lock past them nightly.
++      # Only scheduled runs, and runs on or into a release branch, check
++      # advisories. bump-advisories.yml updates staging's Cargo.lock past them
++      # nightly.
+       - if: >-
+           github.event_name == 'schedule' ||
+-          github.event_name == 'workflow_dispatch' ||
+           startsWith(github.ref, 'refs/heads/release/') ||
+           startsWith(github.base_ref, 'release/')
+         run: cargo deny --workspace check advisories
 ```
 
-**File**: `node/sync/Cargo.toml` (modified, +3/-0)
+**File**: `CI.md` (modified, +1/-1)
 ```diff
-@@ -101,3 +101,6 @@ features = [ "macros", "rt", "time" ]
- [dev-dependencies.tracing-subscriber]
- workspace = true
- features = [ "env-filter", "fmt" ]
-+
-+[dev-dependencies.tracing-test]
-+workspace = true
-```
-
-**File**: `node/sync/src/block_sync.rs` (modified, +115/-25)
-```diff
-@@ -750,17 +750,12 @@ impl<N: Network> BlockSync<N> {
-         let mut next_request_slot = None;
- 
-         if batches.is_empty() {
--            let total_requests = self.num_total_block_requests();
--            let num_outstanding = self.num_outstanding_block_requests();
--            if total_requests == 0 {
-+            // Failed requests that wait for a peer are reported by `prepare_block_requests`.
-+            if self.num_total_block_requests() == 0 && self.failed_requests.lock().is_empty() {
-                 debug!(
-                     "Not block synced yet, and there are no outstanding block requests or \
-                  new block requests to send"
-                 );
--            } else if !self.requested_all_served() {
--                trace!(
--                    "Not block synced yet, but there are still {total_requests} in-flight requests. {num_outstanding} are still awaiting responses."
--                );
-             }
-         } else {
-             let chunk_size = DataBlocks::<N>::MAXIMUM_NUMBER_OF_BLOCKS as usize;
-@@ -1249,6 +1244,7 @@ impl<N: Network> BlockSync<N> {
- 
-         // Do not hold lock here as, currently, `find_sync_peers_inner` can take a while.
-         let current_height = self.retention_height();
-+        let tips = self.peer_tips();
- 
-         // Determine if there are any failed requests that need to be re-issued.
-         //
-@@ -1264,8 +1260,6 @@ impl<N: Network> BlockSync<N> {
- 
-         // Re-issue the remaining failed requests.
-         if !failed_requests.is_empty() {
--            trace!("There are {} failed requests that need to be re-issued.", failed_requests.len());
--
-             // Convert the set of failed requests into one or multiple continuous ranges.
-             let iter = failed_requests.iter();
-             let mut batches: VecDeque<Vec<(u32, _, _)>> = VecDeque::new();
-@@ -1303,6 +1297,11 @@ impl<N: Network> BlockSync<N> {
-                 if max_new_blocks_to_request == 0 {
-                     continue;
-                 }
-+                // No peer serves `start`, so `find_sync_peers_inner` would find no sync peers.
-+                if tips.is_some_and(|(served_tip, _)| served_tip < start) {
-+                    continue;
-+                }
-+                trace!("Trying to re-issue failed block requests {start}..{end_height}");
- 
-                 let Some((sync_peers, min_common_ancestor)) = self.find_sync_peers_inner(current_height, Some(start))
-                 else {
-@@ -1375,9 +1374,18 @@ impl<N: Network> BlockSync<N> {
- 
-             print_requests();
-             vec![]
--        } else if self.requested_all_served() {
--            // Nothing to request until a peer serves more blocks, e.g. at the tip while the tip
--            // block is in flight.
-+        } else if let Some((served_tip, advertised_tip)) = tips.filter(|&(served_tip, advertised_tip)| {
-+            served_tip < start_height && (current_height < served_tip || served_tip < advertised_tip)
-+        }) {
-+            // Every block a peer serves is in the ledger or requested, and a peer is ahead of this
-+            // node, e.g. at the tip while the tip block is in flight. This check must precede
-+            // `find_sync_peers_inner`: no peer serves `start_height`, so it finds no sync peers, and
-+            // the final branch logs on every call.
-+            if served_tip < advertised_tip {
-+                trace!(
-+                    "Every block up to {served_tip}, the latest any peer serves, is in the ledger or requested, but peers advertise blocks up to {advertised_tip}"
-+                );
-+            }
-             vec![]
-         } else if let Some((sync_peers, min_common_ancestor)) =
-             self.find_sync_peers_inner(current_height, Some(start_height))
-@@ -1411,7 +1419,8 @@ impl<N: Network> BlockSync<N> {
- 
-             vec![]
-         } else {
--            // No sync peers serve the next height to request.
-+            // No sync peers were found for the next height to request: no peer ahead serves it, or
-+            // too few of them share a common ancestor above the ledger height.
-             trace!("No new blocks can be requested, but there are still outstanding requests.");
- 
-             print_requests();
-@@ -1943,13 +1952,15 @@ impl<N: Network> BlockSync<N> {
-         height
-     }
- 
--    /// Returns `true` if a peer is ahead of this node, and every block any peer serves is in the
--    /// ledger or requested.
--    fn requested_all_served(&self) -> bool {
--        let current_height = self.retention_height();
--        let start_height = self.first_unrequested_height(current_height.saturating_add(1));
--        let max_tip = self.locators.read().values().map(|peer| peer.serving_tip()).max();
--        max_tip.is_some_and(|tip| current_height < tip && tip < start_height)
-+    /// Returns the greatest height any peer serves and the greatest height any peer advertises, or
-+    /// `None` without peers. A `NotYet` reply caps the height a peer serves bel
+@@ -74,7 +74,7 @@ jobs run on every event.
+ | `schedule-due` | hosted | schedule | 10 | decides whether `staging`'s head is due a check |
+ | `check-shared-refs` | hosted | all | | checks that each `aleo-labs-protocol/gh-actions` ref is a release tag, and that each matrix `name` axis lists the same names as its `include` |
+ | `fmt` | hosted | all | | `cargo fmt --check` on `FMT_TOOLCHAIN` |
+-| `deny` | hosted | all | | `cargo deny --workspace check bans licenses sources`, plus `advisories` on scheduled and release runs (a `workflow_dispatch`, a push to `release/**`, or a pull request into `release/**`). [`bump-advisories.yml`](.github/workflows/bump-advisories.yml) bumps advisories and yanked crates on staging nightly. A yanked crate fails `advisories` |
++| `deny` | hosted | all | | `cargo deny --workspace check bans licenses sources`, plus `advisories` on scheduled runs and on runs on or into a `release/**` branch (a push, a pull request into one, or a `workflow_dispatch` on one). [`bump-advisories.yml`](.github/workflows/bump-advisories.yml) bumps advisories and yanked crates on staging nightly. A yanked crate fails `advisories` |
+ | `shellcheck` | hosted | all | | `.ci/*.sh`, `scripts/*.sh` |
+ | `source-checks` | hosted | all | | `scripts/check_sources.py`: license headers in `.rs` files |
+ | `lint` | `cpu` | all | 90 | clippy, default and `--all-features`; `cargo check --all-features` of `snarkos-node-metrics` and `snarkos-display` |
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4777** (2026-11-24): Check advisories only on scheduled and release CI runs (@cbeck88)
 - **PR #4772** (2026-11-23): Bump snarkVM to aleo-labs-protocol/snarkVM@1a1c603dc (@cbeck88)
 - **PR #4771** (2026-11-23): Bump crates with security advisories (@aleo-labs-merge-bot[bot])
 - **PR #4770** (2026-11-23): Bump jsonwebtoken from 11.1.0 to 12.0.0 (@dependabot[bot])
 - **PR #4769** (2026-11-23): Bump nix from 0.31.3 to 0.32.0 (@dependabot[bot])
 - **PR #4768** (2026-11-23): Bump serde_with from 3.24.0 to 3.25.0 in the cargo-minor group (@dependabot[bot])
-- **PR #4767** (2026-11-23): Bump the github-actions group with 2 updates (@dependabot[bot])
 
 ---
 
@@ -2151,63 +1979,36 @@ Keep block sync quiet only at the true served tip
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Explain the capped tip state at the node height, and cover the quiet paths
+## X. Empirical Invariant Guard in ci.yml
 
 **RULE**:
-When implementing operations in `node/sync/src/block_sync.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `da73ee50`: Explain the capped tip state at the node height, and cover the quiet paths. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `045bb278`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `node/sync/src/block_sync.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            // Failed requests that wait for a peer are reported by `prepare_block_requests`.
-            if self.num_total_block_requests() == 0 && self.failed_requests.lock().is_empty() {
-                trace!("Trying to re-issue failed block requests {start}..{end_height}");
-        } else if let Some((served_tip, advertised_tip)) = tips.filter(|&(served_tip, advertised_tip)| {
-            served_tip < start_height && (current_height < served_tip || served_tip < advertised_tip)
-        }) {
-            // Every block a peer serves is in the ledger or requested, and a peer is ahead of this
-            // node, e.g. at the tip while the tip block is in flight. This check must precede
-            // `find_sync_peers_inner`: no peer serves `start_height`, so it finds no sync peers, and
-            // the final branch logs on every call.
-                    "Every block up to {served_tip}, the latest any peer serves, is in the ledger or requested, but peers advertise blocks up to {advertised_tip}"
-    /// Returns the number of log lines the enclosing `traced_test` has captured.
-    macro_rules! num_log_lines {
-        () => {{
-        }};
-    }
-
-    /// Tests that block sync prepare
+      # Only scheduled runs, and runs on or into a release branch, check
+      # advisories. bump-advisories.yml updates staging's Cargo.lock past them
+      # nightly.
+      - if: >-
+          github.event_name == 'schedule' ||
+          startsWith(github.ref, 'refs/heads/release/') ||
+          startsWith(github.base_ref, 'release/')
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-            if self.num_total_block_requests() == 0 {
-            trace!("There are {} failed requests that need to be re-issued.", failed_requests.len());
-
-        } else if let Some((served_tip, advertised_tip)) =
-            tips.filter(|&(served_tip, _)| current_height < served_tip && served_tip < start_height)
-        {
-            // Every block a peer serves is in the ledger or requested, e.g. at the tip while the tip
-            // block is in flight. This check must precede `find_sync_peers_inner`: no peer serves
-            // `start_height`, so it finds no sync peers, and the final branch logs on every call.
-                    "Requested every block up to {served_tip}, the latest any peer serves, but peers advertise blocks up to {advertised_tip}"
-    /// Tests that block sync prepares no requests and logs nothing once it has requested every
-    /// block its peers serve.
-    #[test]
-    #[tracing_test::traced_test]
-    fn test_quiet_while_tip_block_in_flight() {
-        let num_lines = || {
-        };
-        let before = num_lines();
-        assert_eq!(num_lines(), before);
+      # staging's advisories are bumped nightly by bump-advisories.yml, which
+      # does not cover the release line.
+      - if: github.base_ref != 'staging' && github.ref_name != 'staging'
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `da73ee50` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `045bb278` are properly handled with clean fallback behavior.
