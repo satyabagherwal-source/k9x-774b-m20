@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T21:53:06.520Z",
-  "total_cycles_completed": 12179,
-  "total_learnings_persisted": 12179,
-  "total_rules_promoted": 11234,
+  "last_updated": "2026-11-24T22:07:32.101Z",
+  "total_cycles_completed": 12181,
+  "total_learnings_persisted": 12181,
+  "total_rules_promoted": 11236,
   "history": [
-    {
-      "timestamp": "2026-11-24T05:28:22.140Z",
-      "repository": "aquasecurity/trivy",
-      "learningId": "learn-github-aquasecurity-trivy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T05:28:26.811Z",
-      "repository": "xerj-org/xerj",
-      "learningId": "learn-github-xerj-org-xerj",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T05:42:36.636Z",
       "repository": "pulumi/pulumi",
@@ -1403,6 +1389,20 @@
       "repository": "t8y2/dbx",
       "learningId": "learn-github-t8y2-dbx",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T22:07:26.708Z",
+      "repository": "domcyrus/rustnet",
+      "learningId": "learn-github-domcyrus-rustnet",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T22:07:32.101Z",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

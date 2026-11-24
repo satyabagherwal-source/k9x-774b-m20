@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T21:15:56.020Z",
+  "updated_at": "2026-11-24T22:07:37.237Z",
   "stats": {
-    "total_discovered": 8956,
-    "approved_pending_harvest": 8479,
+    "total_discovered": 8960,
+    "approved_pending_harvest": 8483,
     "harvested_count": 0,
     "rejected_count": 477,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8474,
+      "COMMUNITY_AND_EXPERT": 8478,
       "OFFICIAL_DOCUMENTATION": 271,
       "STANDARDS_AND_SPECIFICATIONS": 147,
       "ENGINEERING_BLOGS": 7,
@@ -193720,6 +193720,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
         "fileName": "clockworklabs-spacetimedb-learnings.md"
+      }
+    },
+    "SRC-F37BE6A0027C": {
+      "id": "SRC-F37BE6A0027C",
+      "url": "https://github.com/aleo-labs-protocol/snarkVM.git?rev=1a1c603dc2db7245ccdc9554c2720dbee2dace2b",
+      "title": "https://github.com/aleo-labs-protocol/snarkVM.git?rev=1a1c603dc2db7245ccdc9554c2720dbee2dace2b",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T22:07:37.032Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+        "fileName": "provablehq-snarkos-learnings.md"
+      }
+    },
+    "SRC-4A699F0AFEE0": {
+      "id": "SRC-4A699F0AFEE0",
+      "url": "https://github.com/aleo-labs-protocol/snarkVM.git?rev=c91682f16e26819acdecd67b215aa6f12c153bef",
+      "title": "https://github.com/aleo-labs-protocol/snarkVM.git?rev=c91682f16e26819acdecd67b215aa6f12c153bef",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T22:07:37.105Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+        "fileName": "provablehq-snarkos-learnings.md"
+      }
+    },
+    "SRC-F5BAAEFFC8A4": {
+      "id": "SRC-F5BAAEFFC8A4",
+      "url": "https://github.com/aleo-labs-protocol/sna",
+      "title": "https://github.com/aleo-labs-protocol/sna",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T22:07:37.180Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+        "fileName": "provablehq-snarkos-learnings.md"
+      }
+    },
+    "SRC-BA5DE6D59387": {
+      "id": "SRC-BA5DE6D59387",
+      "url": "https://github.com/aleo-labs-protocol/snarkVM.git?rev=1a1c603dc2db7245ccdc9554c2720dbee2da",
+      "title": "https://github.com/aleo-labs-protocol/snarkVM.git?rev=1a1c603dc2db7245ccdc9554c2720dbee2da",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T22:07:37.237Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+        "fileName": "provablehq-snarkos-learnings.md"
       }
     }
   }

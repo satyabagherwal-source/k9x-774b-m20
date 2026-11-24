@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T21:53:10.513Z",
-    "lastVerified": "2026-11-24T21:53:10.513Z",
+    "lastChecked": "2026-11-24T22:07:35.393Z",
+    "lastVerified": "2026-11-24T22:07:35.393Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -375,12 +375,12 @@
     "lastVerified": "2026-11-24T19:27:45.062Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T21:15:50.542Z",
-    "lastVerified": "2026-11-24T21:15:50.542Z",
+    "lastChecked": "2026-11-24T22:07:30.528Z",
+    "lastVerified": "2026-11-24T22:07:30.528Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -389,7 +389,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "8f515043"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1150,14 +1151,14 @@
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T17:33:15.807Z",
-    "lastVerified": "2026-11-24T17:33:15.807Z",
+    "lastChecked": "2026-11-24T22:07:31.385Z",
+    "lastVerified": "2026-11-24T22:07:31.385Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "43a59aab53ee179fc1cf095f161ef780d1122f89f2130d257d8419b19f5820b9",
+    "contentHash": "fbb63a4bcd3af9a8cb3d53c6699e62e992ef7cfd5d642ec1f728234316945dfc",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1526,9 +1527,9 @@
   "valeriansaliou-sonic": {
     "name": "sonic",
     "officialUrl": "https://github.com/valeriansaliou/sonic",
-    "lastChecked": "2026-11-24T01:38:03.387Z",
+    "lastChecked": "2026-11-24T22:07:28.122Z",
     "revisionIdentifier": "f16560b6",
-    "lastVerified": "2026-11-24T01:38:03.387Z"
+    "lastVerified": "2026-11-24T22:07:28.122Z"
   },
   "hf-lightricks-ltx-2.5": {
     "name": "Lightricks/LTX-2.5",
@@ -4107,9 +4108,9 @@
   "argoproj-argo-events": {
     "name": "argo-events",
     "officialUrl": "https://github.com/argoproj/argo-events",
-    "lastChecked": "2026-11-24T02:31:02.180Z",
+    "lastChecked": "2026-11-24T22:07:23.074Z",
     "revisionIdentifier": "727b3155",
-    "lastVerified": "2026-11-24T02:31:02.180Z"
+    "lastVerified": "2026-11-24T22:07:23.074Z"
   },
   "pixeltable-pixeltable": {
     "name": "pixeltable/pixeltable",
@@ -6707,8 +6708,8 @@
     "officialUrl": "https://github.com/sqldelight/sqldelight",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-22T07:13:51.619Z",
-    "lastVerified": "2026-11-22T07:13:51.619Z",
+    "lastChecked": "2026-11-24T22:07:20.617Z",
+    "lastVerified": "2026-11-24T22:07:20.617Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sqldelight-sqldelight",
@@ -7346,14 +7347,14 @@
     "officialUrl": "https://github.com/domcyrus/rustnet",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T19:26:05.660Z",
-    "lastVerified": "2026-11-23T19:26:05.660Z",
+    "lastChecked": "2026-11-24T22:07:20.870Z",
+    "lastVerified": "2026-11-24T22:07:20.870Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-domcyrus-rustnet",
-    "contentHash": "b8d1c94b15a378f62a1dda6089967129f28d28be7e0fe0555cbd8e115bfd7fde",
+    "contentHash": "c072ec0b7a1379a2f8c9b67f57f0cc4616c5f308e0a3bb61a7f72bcf2f3b7ecf",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11456,9 +11457,9 @@
   "mozilla-readability": {
     "name": "readability",
     "officialUrl": "https://github.com/mozilla/readability",
-    "lastChecked": "2026-11-20T22:39:34.896Z",
+    "lastChecked": "2026-11-24T22:07:18.049Z",
     "revisionIdentifier": "ab4027a8",
-    "lastVerified": "2026-11-20T22:39:34.896Z"
+    "lastVerified": "2026-11-24T22:07:18.049Z"
   },
   "wzh4869-appports": {
     "name": "wzh4869/AppPorts",

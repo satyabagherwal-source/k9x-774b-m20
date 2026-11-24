@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T21:53:50.381Z",
+  "last_updated": "2026-11-24T22:07:38.675Z",
   "total_verified_learnings": 9102,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24936,
+  "total_items": 24941,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112821,10 +112821,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "04985e7d",
-      "content_hash": "bf7a0e7d29ee6383471824ec4df67ec43f0d73794ad86f1c0550fff4b5de1e65",
+      "source_version": "8856065f",
+      "content_hash": "b249da509a7ab7226afeac44162c20811b622117e44b3e02e366d3b432210ec7",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T17:33:17.442Z"
+      "persisted_at": "2026-11-24T22:07:32.533Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos",
@@ -112833,10 +112833,10 @@
       "relative_path": "08_VERIFICATION/provablehq-snarkos-verification-protocol-empirical-defect-shield-for-aleo-labs-p.md",
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "04985e7d",
-      "content_hash": "0fc004dbe800725c72dfcde60fa690ec1f4cef29f8a4df9086ec4ab3e76f7f93",
+      "source_version": "8856065f",
+      "content_hash": "e9bb777e7bc7a699690ce4bc2d703a997548396787e560defa6861e8208c8fa8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T17:33:17.675Z"
+      "persisted_at": "2026-11-24T22:07:32.703Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
@@ -114598,9 +114598,9 @@
       "title": "Architecture Intelligence: provablehq-snarkos-learnings Core Invariants",
       "repository": "provablehq-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "ef88ccc3ddd8a0752106e7f5608e8d9015e6854485a89a5456564d4bc3ac3cb8",
+      "content_hash": "508391b7111fdbedce004148c4d2a9fcab534b757d3963052598912277163a6b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T17:34:08.743Z"
+      "persisted_at": "2026-11-24T22:07:37.647Z"
     },
     "candidate_directive-server-security-check-the-token-on-the-account-confirmation-page-when-confirm_": {
       "item_id": "candidate_directive-server-security-check-the-token-on-the-account-confirmation-page-when-confirm_",
@@ -216091,8 +216091,8 @@
       "slug": "provablehq-snarkos",
       "platform": "github",
       "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "04985e7d",
-      "content_hash": "43a59aab53ee179fc1cf095f161ef780d1122f89f2130d257d8419b19f5820b9",
+      "source_version": "8856065f",
+      "content_hash": "fbb63a4bcd3af9a8cb3d53c6699e62e992ef7cfd5d642ec1f728234316945dfc",
       "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
@@ -216217,7 +216217,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T17:33:16.571Z",
+      "verified_at": "2026-11-24T22:07:31.896Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -216231,26 +216231,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 8012,
       "title": "Empirical Invariant Guard in Cargo.lock",
-      "source_url": "https://github.com/DefGuard/defguard",
-      "source_version": "279cc5c3",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "8856065f",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-24T16:46:07.261Z"
+      "verified_at": "2026-11-24T22:07:31.896Z"
     },
     "candidate_directive-empirical-invariant-guard-in-cargo-lock": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-cargo-lock",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-FGOZ-empirical-invariant-guard-in-cargo-lock.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-WO3Q-empirical-invariant-guard-in-cargo-lock.md",
       "title": "Empirical Invariant Guard in Cargo.lock",
-      "repository": "defguard-defguard-learnings",
+      "repository": "provablehq-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "bff944017c88b8310d5879f0cb4713ce6ec7ac19179c43734c9cd75bdb05cc11",
+      "content_hash": "a3ea6e5bf1807b40b6a8e85799d9104572658ae18565c0f7f5834a5d86173331",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T16:46:18.953Z"
+      "persisted_at": "2026-11-24T22:07:37.484Z"
     },
     "learn-github-langchain4j-langchain4j": {
       "learning_id": "learn-github-langchain4j-langchain4j",
@@ -219296,13 +219296,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-T9VW-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-WOPM-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "18aea5ff89a45197987cebb0ab2a09f6c343a8342696c5acc80527aaf812877d",
+      "content_hash": "d07ee5b4137def7a5b2857429f68a9a77495f69640e6cdcc416d096e73b58d01",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T20:13:00.623Z"
+      "persisted_at": "2026-11-24T22:07:38.267Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -219312,9 +219312,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "df8bd2f30bb75e61d7f14c516bcb5d6b44b2ffb294e56377985e8eff57c7847b",
+      "content_hash": "d88a6e081040cd0c0e58a19d2ad3840ec0a1afde6f22a0a0bfabba56a8162a75",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T20:13:00.794Z"
+      "persisted_at": "2026-11-24T22:07:38.515Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -219324,9 +219324,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "f0170f250eea4679c02d02842c404f010ca073c841a17a5658ecdf87fc7f7223",
+      "content_hash": "29e358eb2b5f52ad125d54a10539226c327bdd887ece3fff7b2fd6b4458dc5f7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T20:13:00.968Z"
+      "persisted_at": "2026-11-24T22:07:38.675Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -220592,9 +220592,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for provablehq-snarkos-learnings",
       "repository": "provablehq-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "040cf18a4b1e90c7b2589f0b727d8264a377fefbd0cfb07349d5cad1d019e592",
+      "content_hash": "e98be815e63c9a70ae11b3d05b08da6eb414412cdef973779b18165e83c965f6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T17:34:08.992Z"
+      "persisted_at": "2026-11-24T22:07:37.823Z"
     },
     "candidate_directive-viz-category-axis-tickvals-are-category-names-not-positions": {
       "item_id": "candidate_directive-viz-category-axis-tickvals-are-category-names-not-positions",
@@ -224890,8 +224890,8 @@
       "slug": "domcyrus-rustnet",
       "platform": "github",
       "source_url": "https://github.com/domcyrus/rustnet",
-      "source_version": "83404419",
-      "content_hash": "b8d1c94b15a378f62a1dda6089967129f28d28be7e0fe0555cbd8e115bfd7fde",
+      "source_version": "617d7976",
+      "content_hash": "c072ec0b7a1379a2f8c9b67f57f0cc4616c5f308e0a3bb61a7f72bcf2f3b7ecf",
       "dossier_path": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "promoted_rules": [
@@ -224924,6 +224924,11 @@
           "number": 10101,
           "title": "bump zip from 9.6.1 to 9.7.3 in the rust-dependencies group",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10367,
+          "title": "redesign Health & Host Findings accordion and enable t history toggle",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -224931,7 +224936,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T19:26:06.606Z",
+      "verified_at": "2026-11-24T22:07:26.432Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -224985,10 +224990,10 @@
       "relative_path": "08_VERIFICATION/domcyrus-rustnet-verification-protocol-empirical-defect-shield-for-domcyrus-rust.md",
       "title": "Verification Protocol: Empirical Defect Shield for domcyrus/rustnet",
       "repository": "domcyrus/rustnet",
-      "source_version": "83404419",
-      "content_hash": "8320bbfb6c6dcbf3f101b1002e8095c84a3429a00b718a1d49ff34f67adb207c",
+      "source_version": "617d7976",
+      "content_hash": "12e445a1cc5d4ae1cb0d42ed363f211c0b8c85f62e0c619b2ee98729929f0169",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T19:26:07.375Z"
+      "persisted_at": "2026-11-24T22:07:27.269Z"
     },
     "learn-github-aws-amplify-amplify-js": {
       "learning_id": "learn-github-aws-amplify-amplify-js",
@@ -225098,9 +225103,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for domcyrus-rustnet-learnings",
       "repository": "domcyrus-rustnet-learnings",
       "source_version": "HEAD",
-      "content_hash": "5ecd5276a4d5110063cdcc30c4cc9c372e7bc169a5831b0861973ee12eff0726",
+      "content_hash": "d477407f05ab4d7446132e2c8e34742d8af71e03c14f97f1bf2d69a14d64b9bb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T19:26:20.990Z"
+      "persisted_at": "2026-11-24T22:07:36.621Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-mistralai-mixtral-8x7b-instruct-v0-1-learning": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-mistralai-mixtral-8x7b-instruct-v0-1-learning",
@@ -340693,6 +340698,68 @@
       "content_hash": "aeec57b1b797fb4093df15ccdb7d0c19b5088f0b3f524bb58a092df7c178abcc",
       "domain_letter": "K",
       "persisted_at": "2026-11-24T21:53:47.179Z"
+    },
+    "rule-10367": {
+      "learning_id": "rule-10367",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10367,
+      "title": "redesign Health & Host Findings accordion and enable t history toggle",
+      "source_url": "https://github.com/domcyrus/rustnet",
+      "source_version": "617d7976",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T22:07:26.432Z"
+    },
+    "candidate_directive-redesign-health-host-findings-accordion-and-enable-t-history-toggle": {
+      "item_id": "candidate_directive-redesign-health-host-findings-accordion-and-enable-t-history-toggle",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WFYZ-redesign-health-host-findings-accordion-and-enable-t-history-toggle.md",
+      "title": "redesign Health & Host Findings accordion and enable t history toggle",
+      "repository": "domcyrus/rustnet",
+      "source_version": "617d7976",
+      "content_hash": "fb4e9a8848f053e0dbbe44eb4c24666bb8af86e6a343a32c324d385cb46281f1",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T22:07:26.946Z"
+    },
+    "domain_intelligence-architecture-intelligence-domcyrus-rustnet-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-domcyrus-rustnet-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-domcyrus-rustnet-architecture-intelligence-domcyrus-rustnet-core-invariants.md",
+      "title": "Architecture Intelligence: domcyrus/rustnet Core Invariants",
+      "repository": "domcyrus/rustnet",
+      "source_version": "617d7976",
+      "content_hash": "98839b4379fda4099f089e60aaba1cf232b7fd57473269c34288de583d91c6e0",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T22:07:27.103Z"
+    },
+    "candidate_directive-ui-redesign-health-host-findings-accordion-and-enable-t-history-toggle": {
+      "item_id": "candidate_directive-ui-redesign-health-host-findings-accordion-and-enable-t-history-toggle",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WN3Q-ui-redesign-health-host-findings-accordion-and-enable-t-history-toggle.md",
+      "title": "ui): redesign Health & Host Findings accordion and enable t history toggle",
+      "repository": "domcyrus-rustnet-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bbff13890dda96c20fe309af6c008246608dedc11bf3799bda308a2dc5884796",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T22:07:36.188Z"
+    },
+    "domain_intelligence-architecture-intelligence-domcyrus-rustnet-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-domcyrus-rustnet-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-domcyrus-rustnet-learnings-architecture-intelligence-domcyrus-rustnet-learnings-.md",
+      "title": "Architecture Intelligence: domcyrus-rustnet-learnings Core Invariants",
+      "repository": "domcyrus-rustnet-learnings",
+      "source_version": "HEAD",
+      "content_hash": "649e55452a60bf9a4c004045a63f842b5a9fa55962fe2138d8cf8293b8460855",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T22:07:36.422Z"
     }
   },
   "ai-builder-brain": {

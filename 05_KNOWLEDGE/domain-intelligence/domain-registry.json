@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T21:53:49.933Z",
-  "total_records": 2579,
+  "last_updated": "2026-11-24T22:07:38.515Z",
+  "total_records": 2581,
   "domains": {
     "A": {
       "total": 22,
@@ -1175,7 +1175,7 @@
       ]
     },
     "G": {
-      "total": 446,
+      "total": 448,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1622,7 +1622,9 @@
         "domain_intelligence-architecture-intelligence-yugabyte-yugabyte-db-core-invariants",
         "domain_intelligence-architecture-intelligence-yugabyte-yugabyte-db-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-kgateway-dev-kgateway-core-invariants",
-        "domain_intelligence-architecture-intelligence-kgateway-dev-kgateway-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-kgateway-dev-kgateway-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-domcyrus-rustnet-core-invariants",
+        "domain_intelligence-architecture-intelligence-domcyrus-rustnet-learnings-core-invariants"
       ]
     },
     "H": {
@@ -8685,8 +8687,8 @@
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "bf7a0e7d29ee6383471824ec4df67ec43f0d73794ad86f1c0550fff4b5de1e65",
-      "created_at": "2026-11-24T17:33:17.442Z"
+      "content_hash": "b249da509a7ab7226afeac44162c20811b622117e44b3e02e366d3b432210ec7",
+      "created_at": "2026-11-24T22:07:32.533Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -9918,8 +9920,8 @@
       "title": "Architecture Intelligence: provablehq-snarkos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-learnings-architecture-intelligence-provablehq-snarkos-learni.md",
       "repository": "provablehq-snarkos-learnings",
-      "content_hash": "ef88ccc3ddd8a0752106e7f5608e8d9015e6854485a89a5456564d4bc3ac3cb8",
-      "created_at": "2026-11-24T17:34:08.743Z"
+      "content_hash": "508391b7111fdbedce004148c4d2a9fcab534b757d3963052598912277163a6b",
+      "created_at": "2026-11-24T22:07:37.647Z"
     },
     "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari",
@@ -11970,8 +11972,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "df8bd2f30bb75e61d7f14c516bcb5d6b44b2ffb294e56377985e8eff57c7847b",
-      "created_at": "2026-11-24T20:13:00.794Z"
+      "content_hash": "d88a6e081040cd0c0e58a19d2ad3840ec0a1afde6f22a0a0bfabba56a8162a75",
+      "created_at": "2026-11-24T22:07:38.515Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -43342,6 +43344,24 @@
       "repository": "t8y2-dbx-learnings",
       "content_hash": "aeec57b1b797fb4093df15ccdb7d0c19b5088f0b3f524bb58a092df7c178abcc",
       "created_at": "2026-11-24T21:53:47.179Z"
+    },
+    "domain_intelligence-architecture-intelligence-domcyrus-rustnet-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-domcyrus-rustnet-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: domcyrus/rustnet Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-domcyrus-rustnet-architecture-intelligence-domcyrus-rustnet-core-invariants.md",
+      "repository": "domcyrus/rustnet",
+      "content_hash": "98839b4379fda4099f089e60aaba1cf232b7fd57473269c34288de583d91c6e0",
+      "created_at": "2026-11-24T22:07:27.103Z"
+    },
+    "domain_intelligence-architecture-intelligence-domcyrus-rustnet-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-domcyrus-rustnet-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: domcyrus-rustnet-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-domcyrus-rustnet-learnings-architecture-intelligence-domcyrus-rustnet-learnings-.md",
+      "repository": "domcyrus-rustnet-learnings",
+      "content_hash": "649e55452a60bf9a4c004045a63f842b5a9fa55962fe2138d8cf8293b8460855",
+      "created_at": "2026-11-24T22:07:36.422Z"
     }
   }
 }

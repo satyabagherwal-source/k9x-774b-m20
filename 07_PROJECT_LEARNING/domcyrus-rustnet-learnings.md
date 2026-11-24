@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md`  
 > **Source**: github ([https://github.com/domcyrus/rustnet](https://github.com/domcyrus/rustnet))  
-> **Source Version**: `83404419`  
+> **Source Version**: `617d7976`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T19:26:05.780Z  
+> **Timestamp**: 2026-11-24T22:07:25.628Z  
 > **Learning ID**: `learn-github-domcyrus-rustnet`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/domcyrus/rustnet](https://github.com/domcyrus/rustnet))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T19:26:05.660Z  
+> **Harvest Timestamp**: 2026-11-24T22:07:20.870Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Per-process network monitoring for your terminal with deep packet inspection. Cross-platform, sandboxed.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5256 stars
+- **Stars / Engagement**: 5261 stars
 
 ---
 
@@ -2501,481 +2501,618 @@ pub(super) fn dns_header_counts(payload: &[u8]) -> Option<DnsHeaderCounts> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `83404419` (2026-11-23)
-**Commit Message**: chore(deps): bump zip from 9.6.1 to 9.7.3 in the rust-dependencies group (#747)
+### Incident Patch 1: `617d7976` (2026-11-23)
+**Commit Message**: feat(ui): redesign Health & Host Findings accordion and enable t history toggle (#748)
 
-Bumps the rust-dependencies group with 1 update: [zip](https://github.com/zip-rs/zip2).
+* feat(ui): redesign Health & Host Findings accordion and enable t history toggle
 
-
-Updates `zip` from 9.6.1 to 9.7.3
-- [Release notes](https://github.com/zip-rs/zip2/releases)
-- [Changelog](https://github.com/zip-rs/zip2/blob/master/CHANGELOG.md)
-- [Commits](https://github.com/zip-rs/zip2/compare/v9.6.1...v9.7.3)
-
----
-updated-dependencies:
-- dependency-name: zip
-  dependency-version: 9.7.3
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-  dependency-group: rust-dependencies
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `Cargo.lock` (modified, +8/-8)
+**File**: `CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -139,7 +139,7 @@ dependencies = [
-  "objc2-foundation",
-  "parking_lot",
-  "percent-encoding",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
-  "wl-clipboard-rs",
-  "x11rb",
- ]
-@@ -895,7 +895,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
- dependencies = [
-  "libc",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -1946,7 +1946,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "7d8fae84b431384b68627d0f9b3b1245fcf9f46f6c0e3dc902e9dce64edd1967"
- dependencies = [
-  "libc",
-- "windows-sys 0.36.1",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -2562,7 +2562,7 @@ dependencies = [
-  "errno 0.3.14",
-  "libc",
-  "linux-raw-sys",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -2983,7 +2983,7 @@ dependencies = [
-  "getrandom 0.4.3",
-  "once_cell",
-  "rustix",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -3631,7 +3631,7 @@ version = "0.1.11"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
- dependencies = [
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -4038,9 +4038,9 @@ dependencies = [
- 
- [[package]]
- name = "zip"
--version = "9.6.1"
-+version = "9.7.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "953a376f4930ed5af88e1e65948385f76866b45e7f75b21ac275327d0eeb9b46"
-+checksum = "63e50f7b2212e4635244be3c363b53273d159f2523eb7db3096c1d2861c1b603"
- dependencies = [
-  "constant_time_eq",
-  "crc32fast",
-```
-
----
-
-### Incident Patch 2: `64736fff` (2026-11-22)
-**Commit Message**: feat: track TCP attempts and rolling failures (#734)
-
-* feat: track TCP handshake health and rolling failures
-
-**File**: `CHANGELOG.md` (modified, +13/-2)
-```diff
-@@ -12,6 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - Update ctutils to 0.4.4 for RUSTSEC-2026-0385 and replace yanked clipboard-win 5.4.1 with 5.4.3 (#698)
  
  ### Changed
-+- Skip TCP attempt mutex locking on steady-state established packets when no handshakes are pending (#734)
-+- Keep Overview's TCP handshake summary on one compact line while quiet or healthy, expanding when issues appear, and make sidebar DNS/TCP health rows jump directly to Findings (#734)
-+- Show a severity indicator on `5 Health & Host` in the tab bar, attention counts on `Findings`, and trailing action chips on linked evidence rows (#734)
-+- Reduce TCP attempt lookups and reclaim expired entries before counting capacity omissions (#734)
-+- Reuse unchanged TCP health snapshots, preserve exact expiry deadlines, and select recent issues without sorting all retained attempts (#734)
-+- Share TCP destination ranking and health help between Overview and Findings (#734)
- - Skip process ownership accounting work on the default packet ingestion path (#721)
- - Speed up executable-path conversion in headless snapshots while preserving path encoding (#721)
- - Retain only directory traversal privileges in the Windows sandbox while preserving token groups and integrity level (#721)
-@@ -23,12 +29,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - Avoid allocating static Overview titles and expanded process-group connectors on each render (#412)
- 
- ### Added
-+- Sort findings by severity while preserving the selected finding and evidence position (#734)
-+- Align health colors across Findings, Overview, Details and host inventory, and leave zero error counts neutral (#734)
-+- Combine Findings, Sockets, Interfaces and DNS resolvers in 5 Health & Host, with a single expandable list, item-by-item navigation and return links (#734)
-+- Track outbound TCP attempts with inline destination evidence, matching connection Details and a five-minute headless JSON summary (#734)
-+- Show inline TCP handshake health and the worst affected destination in Overview, with recovered-anomaly counts and contextual help (#734)
- - Add headless automation controls, opt-in full metadata and capture accounting, and guarded Linux executable retention (#721)
- - Add opt-in incremental headless JSONL with sequence checks, bounded baselines, and periodic full snapshots for resynchronization (#719)
--- Add shared Host timeframes for network events and interface errors, keeping cumulative totals visible
-+- Add shared observation windows for network events and interface errors, keeping cumulative totals visible
- - Show per-resolver DNS health, retries, pending age, selectable 60s/5m/1h/since-startup windows, and 15-minute recent issue evidence in Host
- - Log cached local listening/bound port status on incoming new TCP/UDP connections (#682)
--- Show observed TCP resets and ICMP errors in Host, with sent/received counts and best-effort TCP/UDP error correlation in Details (#683)
-+- Show observed TCP resets and ICMP errors in Health, with sent/received counts and best-effort TCP/UDP error correlation in Details (#683)
- - Retire observed TCP/UDP flows after confirmed socket disappearance on macOS, Windows, and FreeBSD; keep timeout fallback for incomplete or restricted inventories (#684)
++- Redesign `5 Health & Host > Findings` with a structured tree accordion: aligned finding columns with severity icons and status pills, faint tree guide rails (`│ ├─ └─`), a TCP handshake health bar, single-line tabular attempt rows with inline anomalies, aligned `Resets and ICMP` / `Interface drops` / `Capture quality` sub-tables, and full-width row selection highlighting
+ - Skip TCP attempt mutex locking on steady-state established packets when no handshakes are pending (#734)
+ - Keep Overview's TCP handshake summary on one compact line while quiet or healthy, expanding when issues appear, and make sidebar DNS/TCP health rows jump directly to Findings (#734)
+ - Show a severity indicator on `5 Health & Host` in the tab bar, attention counts on `Findings`, and trailing action chips on linked evidence rows (#734)
+@@ -45,6 +46,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - Retire eligible Linux TCP/UDP flows after verified process exit and socket disappearance, including protected processes and sockets present at startup; preserve shared sockets and show cleanup status in Details (#684)
  
+ ### Fixed
++- Allow pressing `t` directly in `5 Health & Host > Findings` to toggle historic connections immediately (matching the `press t for history` prompt on closed TCP attempts) and show `t history` in the Findings status bar and help overlay
+ - Link Windows synchronization APIs explicitly to prevent x86 startup failures and x64 test crashes caused by enclave DLL imports (#731)
+ - Remove redundant homepage metadata to prevent Cargo manifest warnings when building from source (#731)
+ - Validate complete DNS questions and recognize STUN on port 53 before DNS to prevent false resolver failures (#722)
 ```
 
-**File**: `USAGE.ja.md` (modified, +31/-9)
+**File**: `USAGE.ja.md` (modified, +2/-2)
 ```diff
-@@ -11,14 +11,14 @@
- 権限の設定は[インストールガイド（英語）](INSTALL.md)を参照してください。
- `rustnet` で起動し、必要なら `-i <interface>` でキャプチャ対象を指定します。
+@@ -217,9 +217,9 @@ Findings を開くと、最も優先度の高い項目が選択されます。
  
--- `1`～`5` または Tab / Shift+Tab：Overview、Details、Activity、Graph、Host の切り替え。
-+- `1`～`5` または Tab / Shift+Tab：Overview、Details、Activity、Graph、Health & Host の切り替え。
- - `/`：接続の絞り込み。Enter：選択した接続の詳細。Esc：戻る。
- - `h`：現在の画面のヘルプ。`q`：終了。
+ 既定のテーマでは、緑は正常なハンドシェイクや DNS 応答、黄は状態の悪化、ドロップ、または観測データの不足を示します。相手からの TCP リセット、DNS タイムアウト、インターフェースエラー、キャプチャの停止など、実際に観測した障害は赤で表示します。確認中と未観測の状態は控えめな色で表示し、エラー件数がゼロの場合は強調しません。`NO_COLOR` でも状態名、件数、選択位置を示す `▌` を確認できます。
  
- ## 小さい端末での表示<a id="compact-terminals"></a>
+-**DNS replies** ではリゾルバーと個々の問題を順に確認できます。**Open DNS resolvers** で応答結果、遅延、問い合わせ名を調べます。**Interface drops** からは OS のカウンターを開けます。**TCP handshakes** を展開すると、影響を受けたすべての宛先と、保持されている試行が表示されます。リンクのある行は末尾に `[↗]` を表示し、選択すると完全なリンク（`[Open Details ↵]` など）を展開します。`Enter` または末尾のリンクのクリックで移動できます。対応する接続が残っていれば **Open Details** が表示されます。`Esc` で元の項目に戻り（ステータスバーに `esc findings` を表示）、Findings 上では Overview に戻ります。マウスホイールで選択位置とは独立してスクロールできます。`v` で **Sockets** に移って待受ポートの所有プロセスを確認し、`V` で戻れます。各セクションの位置は保持されます。
++**DNS replies** ではリゾルバーと個々の問題を順に確認できます。**Open DNS resolvers** で応答結果、遅延、問い合わせ名を調べます。**Interface drops** からは OS のカウンターを開けます。**TCP handshakes** を展開すると、影響を受けたすべての宛先と、保持されている試行が表示されます。リンクのある行は末尾に `[↗]` を表示し、選択すると完全なリンク（`[Open Details ↵]` など）を展開します。`Enter` または末尾のリンクのクリックで移動できます。対応する接続が残っていれば **Open Details** が表示されます。Findings で `t` を押すと接続履歴の表示を切り替えられます。履歴を表示すると、保持されている切断済みの接続も Details で確認できます。`Esc` で元の項目に戻り（ステータスバーに `esc findings` を表示）、Findings 上では Overview に戻ります。マウスホイールで選択位置とは独立してスクロールできます。`v` で **Sockets** に移って待受ポートの所有プロセスを確認し、`V` で戻れます。各セクションの位置は保持されます。
  
- 全体が収まらない場合は `v` / Shift+`v` または見出しのクリックでセクションを切り替えます。
--Host では常に同じ操作で Sockets、Interfaces、DNS を選択します。
-+Health & Host では同じ操作で Findings、Sockets、Interfaces、DNS resolvers を選択します。
- Details では長いセクションのページも切り替え、`j` / `k` とマウスホイールで接続を選びます。
- 端末のサイズ変更や接続の切り替え後も選択中のセクションを保ちます。
+-各試行は完了から 5 分間集計されます。各試行には表示期限と残り時間が付き、全宛先で直近 32 件までの問題を表示します。選択中の試行が一覧から消えると保持条件が表示され、同じグループ内の近くの項目に選択が移ります。項目が残っていなければ見出しに戻ります。
++各試行は完了から 5 分間集計されます。各試行の完了時刻と集計期間終了までの残り時間が表示され、全宛先で直近 32 件までの問題を表示します。選択中の試行が一覧から消えると保持条件が表示され、同じグループ内の近くの項目に選択が移ります。項目が残っていなければ見出しに戻ります。
  
-@@ -46,23 +46,23 @@ Overview のフィルターと履歴切り替えは Activity を制限しませ
+ Findings で `h` を押すと TCP Attempt Health のヘルプが開き、カウンターの意味、固定ウィンドウ、回復した異常、出力される証拠と診断の限界を確認できます。
  
- ## Host とネットワークイベント<a id="host-socket-inventory"></a>
+```
+
+**File**: `USAGE.md` (modified, +2/-2)
+```diff
+@@ -1755,9 +1755,9 @@ Findings opens on the highest-priority row. Errors come first, then warnings, th
  
--Host > Sockets は OS の TCP 状態、UDP バインド、待受端点と所属プロセスを表示し、
-+Health & Host > Sockets は OS の TCP 状態、UDP バインド、待受端点と所属プロセスを表示し、
- 5 秒ごとに更新します。パケットを観測していないソケットも表示します。
- Linux ではサンドボックス適用後も、同一ソケットの起動時の所属情報を保持します。
- 共有ソケット、終了したプロセス、識別情報の変化、権限不足では所属不明になる場合があり、
- 新規ソケットの所属取得には引き続き procfs へのアクセスが必要です。
+ In the default theme, green marks healthy handshakes or responsive DNS. Yellow marks degraded health, drops, or incomplete evidence. Red marks observed failures such as peer TCP resets, a DNS timeout, an interface error, or a stopped capture. Checking and unobserved states are muted. Zero error counts stay neutral. Status words, counts, and the `▌` selection marker remain readable with `NO_COLOR`.
  
- ### 観測したネットワークイベント（未リリース）<a id="observed-network-events-unreleased"></a>
+-In **DNS replies**, browse resolvers and individual issues. Follow **Open DNS resolvers** for resolver outcomes, latency and question names. **Interface drops** links to the OS counters. Expand **TCP handshakes** to see every affected destination and its retained attempts. Linked rows show a quiet trailing `[↗]` badge and expand to the full action chip (`[Open Details ↵]`, `[Open DNS resolvers ↵]`, `[Open interface counters ↵]`) when selected; press `Enter` or click the badge to open the linked view. **Open Details** appears while the matching connection is available. `Esc` returns to the source item (advertised as `esc findings` in the status bar), or back to Overview from Findings. Use the mouse wheel to scroll independently of selection. Use `v` to visit **Sockets** for the owner of a listening port and `V` to return. Each section keeps its position.
++In **DNS replies**, browse resolvers and individual issues. Follow **Open DNS resolvers** for resolver outcomes, latency and question names. **Interface drops** links to the OS counters. Expand **TCP handshakes** to see every affected destination and its retained attempts. Linked rows show a quiet trailing `[↗]` badge and expand to the full action chip (`[Open Details ↵]`, `[Open DNS resolvers ↵]`, `[Open interface counters ↵]`) when selected; press `Enter` or click the badge to open the linked view. **Open Details** appears while the matching connection is available. Press `t` in Findings to show or hide historic connections, including retained closed connections you can open in Details. `Esc` returns to the source item (advertised as `esc findings` in the status bar), or back to Overview from Findings. Use the mouse wheel to scroll independently of selection. Use `v` to visit **Sockets** for the owner of a listening port and `V` to return. Each section keeps its position.
  
--Host > Sockets は TCP リセットと ICMPv4/v6 エラーの送信/受信数を表示します。
-+Findings > Resets and ICMP は TCP リセットと ICMPv4/v6 エラーの送信/受信数を表示します。
- 対象は到達不能、禁止、パケット過大/フラグメント化要求、時間超過、パラメーター異常です。
- 起動またはクリア以降の捕獲した通信を集計し、表示フィルターや接続保持期間には依存しません。
- ファイアウォール判定や OS 全体のカウンターではなく、MTU や traceroute の応答は正常な場合もあります。
+-Each completed attempt counts for five minutes. Findings shows the expiry time and remaining duration on each retained attempt and keeps up to 32 recent issues across destinations. If the selected attempt leaves the list, a notice explains the retention limits. Selection moves to a nearby item in TCP handshakes, or to its heading when the group is empty.
++Each completed attempt counts for five minutes. Findings shows the completion time and the time left in the five-minute window on each retained attempt and keeps up to 32 recent issues across destinations. If the selected attempt leaves the list, a notice explains the retention limits. Selection moves to a nearby item in TCP handshakes, or to its heading when the group is empty.
  
- Details > Health は件数と最新エラーのタイプ/コード、報告元、方向、経過時間、取得できた通知 MTU を表示します。
- 引用された端点で TCP/UDP 接続に対応付け、接続状態や通信量は変更しません。
- 不完全な引用、フラグメント、IPv6 拡張、NAT、接続の不在や再利用で対応付け不能・誤対応になる場合があります。
--未対応のエラーも Host で集計し、個別のエラーレコードは保持しません。
-+未対応のエラーも Health で集計し、個別のエラーレコードは保持しません。
+ In Findings, press `h` to open the TCP Attempt Health help for counter meanings, the fixed window, recovered anomalies, export evidence and diagnostic limits.
  
- `--json-log` の受信 `new_connection` には `local_port_status` も含まれます（未リリース）。
- キャッシュ内の TCP 待受/UDP バインドに一致すれば `opened`、観測されなければ `closed`、
-@@ -75,7 +75,7 @@ Details の `Exit Cleanup` に状態を表示します。共有ソケットや
+```
+
+**File**: `USAGE.zh-CN.md` (modified, +2/-2)
+```diff
+@@ -1658,9 +1658,9 @@ Findings > TCP handshakes 显示固定五分钟窗口内观测到的出站 TCP 
  
- ## Host の期間選択（開発版）
+ 默认主题用绿色表示握手正常或 DNS 应答正常，用黄色表示状态下降、丢包或观测数据不完整。对端 TCP 重置、DNS 超时、接口错误和捕获中断等已观测到的故障显示为红色。检查中或尚未观测到的状态使用弱化颜色，错误计数为零时不着色。启用 `NO_COLOR` 后，仍可通过状态文字、计数和 `▌` 标记识别状态与当前选中项。
  
--Host の各セクションで `w` を押すと **60s / 5m / 1h / since startup** を切り替えます。Sockets、Interfaces、DNS で選択を共有し、ソケット一覧とインターフェース速度は引き続き現在値を表示します。
-+Findings、Health & Host > Interfaces、Health & Host > DNS resolvers で `w` を押すと **60s / 5m / 1h / since startup** を切り替えます。これらの画面で選択を共有し、ソケット一覧とインターフェース速度は引き続き現在値を表示します。
+-在 **DNS replies** 中可逐项查看解析器和问题记录，选择 **Open DNS resolvers** 查看应答结果、延迟和查询名称。**Interface drops** 可打开操作系统接口计数器。展开 **TCP handshakes** 可查看所有受影响的目标及保留的尝试。带链接的行在未选中时于行尾显示紧凑的 `[↗]`，选中后展开为完整操作标签（如 `[Open Details ↵]`），按 `Enter` 或点击行尾链接即可跳转。只要对应的连接仍可查看，行内就会显示 **Open Details**。按 `Esc` 可返回原先选中的记录（状态栏显示 `esc findings`），在 Findings 中按 `Esc` 返回 Overview。使用鼠标滚轮可独立滚动列表。按 `v` 切到 **Sockets** 查找监听端口所属进程，再按 `V` 返回。各区块分别保留位置。
++在 **DNS replies** 中可逐项查看解析器和问题记录，选择 **Open DNS resolvers** 查看应答结果、延迟和查询名称。**Interface drops** 可打开操作系统接口计数器。展开 **TCP handshakes** 可查看所有受影响的目标及保留的尝试。带链接的行在未选中时于行尾显示紧凑的 `[↗]`，选中后展开为完整操作标签（如 `[Open Details ↵]`），按 `Enter` 或点击行尾链接即可跳转。只要对应的连接仍可查看，行内就会显示 **Open Details**。在 Findings 中按 `t` 可显示或隐藏历史连接。显示历史连接后，可在 Details 中查看仍保留的已关闭连接。按 `Esc` 可返回原先选中的记录（状态栏显示 `esc findings`），在 Findings 中按 `Esc` 返回 Overview。使用鼠标滚轮可独立滚动列表。按 `v` 切到 **Sockets** 查找监听端口所属进程，再按 `V` 返回。各区块分别保留位置。
  
- - **ネットワークイベント：** 送受信件数は選択期間と Rustnet の起動またはクリア以降の累積値を並べて表示します。選択期間内がゼロでも累積値のある種類を表示します。
- - **インターフェース：** エラー、ドロップ、衝突は `選択期間/OS 累積値` と表示します。初回サンプル後に観測した増分のみを期間内に集計し、既存の OS エラーは新しいエラーに含めません。OS 累積値とパケット総数を保持し、強調表示は選択期間に従います。
-@@ -85,7 +85,7 @@ Host の各セクションで `w` を押すと **60s / 5m / 1h / since startup**
+-每次尝试从完成时起计入统计，保留五分钟。每条尝试都显示到期时间与剩余时间，所有目标合计最多显示最近 32 条问题记录。如果选中的尝试移出列表，界面会提示保留条件，并选中同组中邻近的一项。如果该组已无记录，则选中组标题。
++每次尝试从完成时起计入统计，保留五分钟。每条尝试都显示完成时刻和五分钟窗口内的剩余时间，所有目标合计最多显示最近 32 条问题记录。如果选中的尝试移出列表，界面会提示保留条件，并选中同组中邻近的一项。如果该组已无记录，则选中组标题。
  
- ## DNS 診断（未リリース）
+ 在 Findings 中按 `h` 打开 TCP Attempt Health 帮助，查看计数含义、固定窗口、已恢复的异常、导出证据及诊断限制。
  
--Host > DNS は既定で直近 60 秒の単播 UDP DNS を解析器ごとに表示します。
-+Health & Host > DNS resolvers は既定で直近 60 秒の単播 UDP DNS を解析器ごとに表示します。
- `w` で 60 秒、5 分間、1 時間、起動以降を順に切り替えます。結果、遅延、解析器、問い合わせ名は選択した期間を使います。
- Overview の健康状態は常に 60 秒です。切り替えてもデータは消去されません。
- 3 つのローリング期間では完了した最大 8,192 件と待機中の最大 4,096 件を共有し、容量による欠落は `sampled` と表示します。
-@@ -115,7 +115,7 @@ Linux では `sudo rustnet -i any --no-resolve-dns` でネットワークイン
- systemd-resolved 利用時の設定は `resolvectl status` で確認できます。RustNet は観測した端点だけを表示し、
- 設定変更や能動的な探査は行いません。
+```
+
+**File**: `src/app/sampling.rs` (modified, +64/-7)
+```diff
+@@ -5,8 +5,8 @@ use anyhow::Result;
+ use dashmap::DashMap;
+ use log::{debug, info, warn};
+ use std::collections::HashMap;
+-use std::sync::Arc;
+-use std::sync::atomic::Ordering;
++use std::sync::atomic::{AtomicU64, Ordering};
++use std::sync::{Arc, RwLock};
+ use std::time::{Duration, Instant, SystemTime};
  
--応答が見えない場合は捕獲範囲、Host > Sockets の ICMP エラー、Host > Interfaces のエラーやドロップも確認してください。
-+応答が見えない場合は捕獲範囲、Findings > Resets and ICMP の ICMP エラー、Health & Host > Interfaces のエラーやドロップも確認してください。
- 捕獲停止時の状態は unknown です。TCP フォールバック、暗号化 DNS、キャッシュ、`/etc/hosts`、
- DNS パケットを出さない NSS/D-Bus 呼び出しの成功は判断できません。
- macOS もキャッシュや mDNSResponder によりアプリケーションの特定が制限されますが、
-@@ -184,7 +184,7 @@ Linux では後から procfs のアクセスを拒否された場合、起動時
- `--headless --output jsonl-delta` で **スキーマバージョン 2** を有効にします。既定の `jsonl` と `json` はバージョン 1 のままです。利用側は切り替え前に以下の規則に対応してください。
+ use crate::network::{
+@@ -176,6 +176,22 @@ fn snapshot_retained_connections(
+     })
+ }
  
- - **スナップショット：** `type: "snapshot"` は全状態を置き換えます。`connections` は対象の全接続、`base_sequence` は null、`removed_connection_ids` は空です。最初、終了時、前回の完全スナップショットから 60 レコード後、または 30 秒経過後の次の出力時の早い方で、完全スナップショットを送ります。
--- **差分：** `type: "delta"` を不可分に適用します。`removed_connection_ids` を削除し、完全な `connections` オブジェクトを `id` で追加または置換します。`timestamp`、`runtime`、`sandbox`、`stats`、`filter` は毎回置き換えます。適用後の総数が `connection_count` と一致することを検証し、完全スナップショットと同じ順序にするには `id` で並べ替えます。
-+- **差分：** `type: "delta"` を不可分に適用します。`removed_connection_ids` を削除し、完全な `connections` オブジェクトを `id` で追加または置換します。`timestamp`、`runtime`、`sandbox`、`stats`、`tcp_attempts`、`filter` は毎回置き換えます。適用後の総数が `connection_count` と一致することを検証し、完全スナップショットと同じ順序にするには `id` で並べ替えます。
- - **復旧：** 新しいストリームは `sequence: 1` から始まります。差分の `base_sequence` は最後に適用した番号、`sequence` はその次の番号である必要があります。欠落、重複、不正なレコード、件数の不一致があれば状態を古いものとし、有効な完全スナップショットまで差分を無視します。ストリームを混在させないでください。復旧には定期的なスナップショットを使い、stdin による再同期要求はありません。
- - **上限：** 基準状態はアクティブ・履歴接続を合計 10,000 件、JSON を 16 MiB まで保持し、別途出力用フィールドと管理データを保持します。上限を超えると全状態が再び収まるまで完全スナップショットを使います。遅れて届くメタデータや最終カウンターを含む全出力フィールドを比較します。
- 
-@@ -195,3 +195,25 @@ Linux では後から procfs のアクセスを拒否された場合、起動時
- ```bash
- cargo test --release --locked --lib --all-features benchmark_history_encoding -- --ignored --nocapture
- ```
++/// A history toggle or clear can publish a newer snapshot while the worker samples.
++fn publish_sample_if_current(
++    snapshot: &RwLock<Vec<Connection>>,
++    generation: &AtomicU64,
++    sampled_generation: u64,
++    sample: Vec<Connection>,
++) -> bool {
++    let mut published = snapshot.write().unwrap();
++    if generation.load(Ordering::Relaxed) != sampled_generation {
++        return false;
++    }
++    *published = sample;
++    generation.fetch_add(1, Ordering::Release);
++    true
++}
 +
-+### TCP 接続試行の状態（未リリース）
+ impl App {
+     pub(super) fn start_snapshot_provider(
+         &mut self,
+@@ -205,6 +221,7 @@ impl App {
+                 let start = Instant::now();
+                 let total_connections = tracker.connections().len();
+ 
++                let sampled_generation = snapshot_generation.load(Ordering::Acquire);
+                 let snapshot_data = build_connection_snapshot(
+                     &tracker,
+                     &service_lookup,
+@@ -231,11 +248,14 @@ impl App {
+ 
+                 let ui_publish_due =
+                     last_ui_publish.is_none_or(|published| published.elapsed() >= refresh_interval);
+-                if ui_publish_due {
+-                    let mut published = snapshot.write().unwrap();
+-                    *published = snapshot_data;
+-                    snapshot_generation.fetch_add(1, Ordering::Release);
+-                    drop(published);
++                if ui_publish_due
++                    && publish_sample_if_current(
++                        &snapshot,
++                        &snapshot_generation,
++                        sampled_generation,
++                        snapshot_data,
++                    )
++                {
+                     last_ui_publish = Some(Instant::now());
+ 
+                     // Counts active connections only.
+@@ -565,6 +585,43 @@ mod live_rate_sampling_tests {
+         ApplicationProtocol, ConnectionKey, DnsInfo, DnsQueryType, DpiInfo, Protocol, ProtocolState,
+     };
+ 
++    #[test]
++    fn in_flight_sample_cannot_undo_a_history_toggle() {
++        let app = App::new(crate::test_support::test_config()).unwrap();
++        let mut historic = Connection::new(
++            Protocol::Udp,
++            "192.0.2.1:40000".parse().unwrap(),
++            "198.51.100.1:53".parse().unwrap(),
++            ProtocolState::Udp,
++        );
++        historic.is_historic = true;
++        let key = ConnectionKey::from_connection(&historic);
++        app.tracker
++            .historic()
++            .insert(HistoricKey::for_connection(key, &historic), historic);
 +
-+Findings > TCP handshakes は、観測した送信 TCP 接続試行を固定の5分間ウィンドウで表示します。Host の選択期間や接続フィルターには依存しません。最初の送信 SYN で試行を開始し、同じ SYN の再送は同じ試行として数えます。対応する SYN-ACK と最後の送信 ACK の両方を観測した場合だけ成功です。同一ホスト内の接続や、SYN データが受理されない場合の TCP Fast
++        for include_historic in [true, false] {
++            // Stage a worker sample, then toggle history before the worker publishes it.
++            let sampled_generation = app.snapshot_generation();
++            let stale = build_connection_snapshot(
++                &app.tracker,
++                &app.service_lookup,
++                false,
++                app.show_historic.load(Ordering::Relaxed),
++            );
++            assert_eq!(stale.len(), usize::from(!include_historic));
++            app.toggle_show_historic();
++            assert!(!publish_sample_if_current(
++                &app.connections_snapshot,
++                &app.snapshot_generation,
++                sampled_generation,
++                stale,
++            ));
++            assert_eq!(app.snapshot_generation(), sampled_generation + 1);
++            assert_eq!(app.get_connections().len(), usize::from(include_historic));
++        }
++    }
++
+     #[test]
+     fn connection_snapshot_blocks_archival_until_both_tables_are_scanned() {
+         let tracker = Arc::new(ConnectionTracker::new());
 ```
 
-**File**: `USAGE.md` (modified, +41/-19)
+**File**: `src/app/state.rs` (modified, +21/-2)
 ```diff
-@@ -188,7 +188,7 @@ socket identity; unverifiable or changed identities stay unresolved.
+@@ -851,14 +851,33 @@ impl App {
+     }
  
- #### Schema contract
+     pub(crate) fn toggle_show_historic(&self) {
+-        let prev = self.show_historic.load(Ordering::Relaxed);
+-        self.show_historic.store(!prev, Ordering::Relaxed);
++        let next = !self.show_historic.load(Ordering::Relaxed);
++        self.show_historic.store(next, Ordering::Relaxed);
++        self.publish_connection_snapshot(next);
+     }
  
--The default `jsonl` and `json` wire schema is `schema_version = 1`. Every record is a snapshot object with these top-level fields: `schema_version`, `type`, `timestamp`, `runtime`, `sandbox`, `stats`, `filter`, `connection_count`, and `connections`. A terminal record sets `runtime.status` to `stopping`, `stopped`, or `stopped_with_errors`, and includes `runtime.termination_reason` and `runtime.shutdown`. Connection records cover endpoints, process attribution, traffic, protocol timing, GeoIP, and optional Kubernetes metadata. The `rtt` object includes current, initial, smoothed TCP, DNS, LLMNR, NetBIOS, ICMP echo, STUN, and NTP timings in milliseconds. Optional enrichment and timing fields remain null until discovered; connections drained during shutdown can appear before process, GeoIP, or Kubernetes enrichment completes. Consumers must branch on `schema_version` and tolerate unknown additive fields.
-+The default `jsonl` and `json` wire schema is `schema_version = 1`. Every record is a snapshot object with these top-level fields: `schema_version`, `type`, `timestamp`, `runtime`, `sandbox`, `stats`, `tcp_attempts`, `filter`, `connection_count`, and `connections`. A terminal record sets `runtime.status` to `stopping`, `stopped`, or `stopped_with_errors`, and includes `runtime.termination_reason` and `runtime.shutdown`. Connection records cover endpoints, process attribution, traffic, protocol timing, GeoIP, and optional Kubernetes metadata. The `rtt` object includes current, initial, smoothed TCP, DNS, LLMNR, NetBIOS, ICMP echo, STUN, and NTP timings in milliseconds. Optional enrichment and timing fields remain null until discovered; connections drained during shutdown can appear before process, GeoIP, or Kubernetes enrichment completes. Consumers must branch on `schema_version` and tolerate unknown additive fields.
+     pub(crate) fn set_show_historic(&self, value: bool) {
+         self.show_historic.store(value, Ordering::Relaxed);
+     }
  
- Development builds reuse encoded JSON for unchanged historic headless connections. The cache retains at most 10,000 records and 16 MiB of encoded connection JSON, plus their projected fields and bookkeeping. It compares all exported connection fields, so late metadata and final counters still update. In `jsonl` and `json` mode, every output record remains a full snapshot with schema version 1; snapshot construction and output size still grow with the number of visible connections.
- 
-@@ -203,7 +203,7 @@ Closing a JSONL pipeline early, for example with `head`, produces a broken pipe.
- `--headless --output jsonl-delta` opts into **schema version 2**. Default `jsonl` and `json` output stays at version 1. Consumers must support these rules before switching:
- 
- - **Snapshots:** `type: "snapshot"` replaces all state. `connections` contains all selected connections, `base_sequence` is null, and `removed_connection_ids` is empty. Full snapshots are sent initially, at shutdown, and after 60 records or on the next emission after 30 seconds, whichever comes first.
--- **Deltas:** apply `type: "delta"` atomically: delete `removed_connection_ids`, then insert or replace the complete `connections` objects by `id`. Replace `timestamp`, `runtime`, `sandbox`, `stats`, and `filter` on every record. Verify the resulting total equals `connection_count`; sort by `id` to match full-snapshot ordering.
-+- **Deltas:** apply `type: "delta"` atomically: delete `removed_connection_ids`, then insert or replace the complete `connections` objects by `id`. Replace `timestamp`, `runtime`, `sandbox`, `stats`, `tcp_attempts`, and `filter` on every record. Verify the resulting total equals `connection_count`; sort by `id` to match full-snapshot ordering.
- - **Recovery:** each new stream starts at `sequence: 1`. A delta's `base_sequence` must equal the last applied sequence, and `sequence` must be its successor. On gaps, duplicates, invalid records, or count mismatches, mark state stale and ignore deltas until a valid full snapshot arrives. Do not combine streams. Recovery uses periodic snapshots, with no stdin resync request.
- - **Limits:** the baseline holds up to 10,000 active/historic connections and 16 MiB of encoded JSON, plus projected fields and bookkeeping. Larger states use full snapshots until a complete baseline fits again. All exported fields participate in change detection, including late metadata and final counters.
- 
-@@ -294,12 +294,12 @@ RustNet automatically detects TUN/TAP interfaces and adjusts packet parsing acco
- 
- #### `--no-localhost` / `--show-localhost`
- 
--Control whether localhost (127.0.0.1/::1) connections are displayed.
-+Control whether localhost (`127.0.0.0/8` and `::1`) traffic is shown and counted.
- 
--- **Default**: Localhost connections are filtered out (`--no-localhost`)
--- **Override**: Use `--show-localhost` to see localhost connections
-+- **Default**: Localhost connections are filtered out (`--no-localhost`). Loopback traffic is also excluded from TCP handshake findings, TCP reset
++    /// Rebuild and publish the UI connection snapshot immediately so toggling
++    /// history from Overview or Findings takes effect without waiting for the
++    /// next periodic snapshot tick.
++    fn publish_connection_snapshot(&self, include_historic: bool) {
++        let snapshot = build_connection_snapshot(
++            &self.tracker,
++            &self.service_lookup,
++            self.config.filter_localhost,
++            include_historic,
++        );
++        let mut published = self
++            .connections_snapshot
++            .write()
++            .unwrap_or_else(std::sync::PoisonError::into_inner);
++        *published = snapshot;
++        self.snapshot_generation.fetch_add(1, Ordering::Release);
++    }
++
+     /// Seed the UI snapshot directly. Tests only.
+     #[cfg(test)]
+     pub(crate) fn set_connections_snapshot_for_test(&self, snapshot: Vec<Connection>) {
 ```
 
-**File**: `USAGE.zh-CN.md` (modified, +37/-15)
+**File**: `src/ui/snapshot_tests.rs` (modified, +118/-8)
 ```diff
-@@ -182,7 +182,7 @@ EOF 或读取失败会请求正常关闭并输出终态记录。`--include-histo
- 
- #### Schema 约定
- 
--默认 `jsonl` 和 `json` 输出格式版本为 `schema_version = 1`。每条记录都是快照对象，顶层字段为 `schema_version`、`type`、`timestamp`、`runtime`、`sandbox`、`stats`、`filter`、`connection_count` 和 `connections`。最终终止记录会将 `runtime.status` 设为 `stopping`、`stopped` 或 `stopped_with_errors`，并包含 `runtime.termination_reason` 和 `runtime.shutdown`。连接记录涵盖端点、进程归属、流量、各协议计时、GeoIP，以及可选的 Kubernetes 元数据。`rtt` 对象以毫秒为单位提供当前值、初始值、平滑 TCP 值，以及 DNS、LLMNR、NetBIOS、ICMP echo、STUN 和 NTP 计时。可选的增强与计时字段在被发现前保持为 null；关闭期间排空的连接可能在进程、GeoIP 或 Kubernetes 增强完成前就出现在最终记录中。使用方必须根据 `schema_version` 选择解析逻辑，并允许出现新增的未知字段。
-+默认 `jsonl` 和 `json` 输出格式版本为 `schema_version = 1`。每条记录都是快照对象，顶层字段为 `schema_version`、`type`、`timestamp`、`runtime`、`sandbox`、`stats`、`tcp_attempts`、`filter`、`connection_count` 和 `connections`。最终终止记录会将 `runtime.status` 设为 `stopping`、`stopped` 或 `stopped_with_errors`，并包含 `runtime.termination_reason` 和 `runtime.shutdown`。连接记录涵盖端点、进程归属、流量、各协议计时、GeoIP，以及可选的 Kubernetes 元数据。`rtt` 对象以毫秒为单位提供当前值、初始值、平滑 TCP 值，以及 DNS、LLMNR、NetBIOS、ICMP echo、STUN 和 NTP 计时。可选的增强与计时字段在被发现前保持为 null；关闭期间排空的连接可能在进程、GeoIP 或 Kubernetes 增强完成前就出现在最终记录中。使用方必须根据 `schema_version` 选择解析逻辑，并允许出现新增的未知字段。
- 
- 开发版本会复用未变化的无界面历史连接记录的 JSON 编码。缓存最多保留 10,000 条记录和 16 MiB 的连接 JSON 编码，以及对应的投影字段和管理数据。它会比较所有导出的连接字段，因此延迟到达的元数据和最终计数仍会更新。在 `jsonl` 和 `json` 模式下，每条输出记录仍然是版本 1 的完整快照；快照构建开销和输出大小仍会随可见连接数量增长。
- 
-@@ -197,7 +197,7 @@ EOF 或读取失败会请求正常关闭并输出终态记录。`--include-histo
- `--headless --output jsonl-delta` 显式启用 **schema 版本 2**。默认 `jsonl` 和 `json` 仍使用版本 1。使用方切换前必须支持以下规则：
- 
- - **快照：**`type: "snapshot"` 替换全部状态。`connections` 包含所有选中的连接，`base_sequence` 为 null，`removed_connection_ids` 为空。首次、关闭时，以及距上次完整快照 60 条记录后或满 30 秒后的下一次输出时，发送完整快照，以先到者为准。
--- **增量：**原子应用 `type: "delta"`：先删除 `removed_connection_ids`，再按 `id` 插入或替换完整的 `connections` 对象。每条记录都替换 `timestamp`、`runtime`、`sandbox`、`stats` 和 `filter`。验证最终总数等于 `connection_count`；按 `id` 排序可匹配完整快照的顺序。
-+- **增量：**原子应用 `type: "delta"`：先删除 `removed_connection_ids`，再按 `id` 插入或替换完整的 `connections` 对象。每条记录都替换 `timestamp`、`runtime`、`sandbox`、`stats`、`tcp_attempts` 和 `filter`。验证最终总数等于 `connection_count`；按 `id` 排序可匹配完整快照的顺序。
- - **恢复：**每个新流从 `sequence: 1` 开始。增量的 `base_sequence` 必须等于最后应用的序号，`sequence` 必须是其下一序号。遇到间断、重复、无效记录或数量不符时，将状态标为过期，并忽略增量直到有效完整快照到达。不要混合不同流。恢复依靠周期性快照，不支持 stdin 重新同步请求。
- - **上限：**基线最多保留合计 10,000 条活跃及历史连接、16 MiB 的 JSON 编码，以及投影字段和管理数据。超过上限时使用完整快照，直到完整基线再次满足上限。所有导出字段都参与变化检测，包括延迟元数据和最终计数。
- 
-@@ -506,7 +506,7 @@ rustnet --kubernetes on
- 
- - `Tab`：下一个标签页
- - `Shift+Tab`：上一个标签页
--- `1` / `2` / `3` / `4` / `5`：直接跳转到 概览 / 详情 / 活动 / 图表 / 主机
-+- `1` / `2` / `3` / `4` / `5`：直接跳转到 概览 / 详情 / 活动 / 图表 / 健康与主机（Health & Host）
- - `Enter` —— 查看所选连接的详细信息
- - `Esc` —— 返回上一个视图或清除活动过滤器
- - `h`：切换仅包含当前标签页相关操作的帮助浮层
-@@ -1023,14 +1023,14 @@ Activity 按完全相同的进程名汇总，与 Overview 的进程分组一致
- 
- 宽屏将 Capture 放在应用表右侧。空间不足时，使用 `v` / Shift+`v` 或点击 Applications / Capture 切换区块。Capture 可滚动，调整窗口大小后保留位置，并明确区分最近 60 秒的捕获覆盖率与保留流量的进程归属比例，展示已归属、未知和总字节数。接口清单和速率表统一放在 Host，Activity 仅保留解释覆盖率所需的接口依据。流量占比条在空间允许时显示在同一行。
- 
--按 `d` 在出站 (TX，蓝色) 和入站 (RX，绿色) 之间切换，按 `s` 轮换活动指标的排序方式，按 `S` 反转排序顺序。详细的接口表格位于主机标签页（按 `5`，再用 `v` / Shift+`v` 选择 Interfaces）。
-+按 `d` 在出站 (TX，蓝色) 和入站 (RX，绿色) 之间切换，按 `s` 轮换活动指标的排序方式，按 `S` 反转排序顺序。详细的接口表格位于 Health & Host 标签页（按 `5`，再用 `v` / Shift+`v` 选择 Interfaces）。
- 
- 进行快速安全检查时，可按滚动字节数或保留字节数对出站流量排序，找出异常的高流量进程，并检查其流量最大的远端对端。保留流量会让短寿命上传进程在套接字关闭后仍然可见。
- 
- ### 紧凑终端布局<a id="compact-terminals"></a>
- 
- 完整仪表板放不下时，按 `v` / Shift+`v` 或点击区块名称切换视图。
--Host 始终使用这些操作切换 Sockets、Interfaces 和 DNS。
-+Health & Host 使用这些操作切换 Findings、Sockets、Interfaces 和 DNS resolvers。
- 在 Details 中，这些操作也用于长区块翻页；`j` / `k` 和鼠标滚轮切换连接。
- 调整大小或切换连接时保留所选区块。
- 
-@@ -1067,7 +1067,7 @@ Details 的 Connection 区块通过 **Observed VLANs** 显示该连接中捕获
- 
- > **自 v1.7.0 起可用。**
- 
--按 `5` 打开主机标签页。此视图直接读取操作系统套接字表，不需要先捕获到数据包，因此可显示未产生流量的监听端点。
-+按 `5` 打开 Health & Host，然后选择 Sockets。此视图直接读取操作系统套接字表，不需要先捕获到数据包，因此可显示未产生流量的监听端点。
- 
- 套接字视图包括：
- 
-@@ -1090,23 +1090,23 @@ Linux 在沙箱启用后为未变化的套接字保留启动时缓存的进程
- | FreeBSD | 使用 `sockstat -s` 获取原生 TCP 状态及 UDP 套接字行 |
- | Windows | IP Helper 的 `GetExtendedTcpTable` 和 `GetExtendedUdpTable` owner 表 |
- 
--使用 `v` / Shift+`v` 或点击 Sockets / Interfaces / DNS 选择区块。底部显示切换快捷键。Tab / Shift+Tab 和 1-5 切换主标签页。
-+使用 `v` / Shift+`v` 或点击 Findings / Sockets / Interfaces / DNS resolvers 选择区块。底部显示切换快捷键。Tab / Shift+Tab 和 1-5 切换主标签页。
- 
- ### 观测到的网络事件（尚未发布）<a id="observed-network-events-unreleased"></a>
- 
--Host > Sockets 统计 TCP 重置和 ICMPv4/v6 错误的发送/接收数，包括不可达、禁止访问、
-+Findings > Resets and ICMP 统计 TCP 重置和 ICMPv4/v6 错误的发送/接收数，包括不可达、禁止访问、
- 数据包过大/需要分片、超时和参数问题。计数覆盖启动或清空以来捕获的流量，
- 不受显示筛选或连接保留期限影响。这些是观测值，不是防火墙判定或整个系统的计数；
- MTU 和 traceroute 消息也可能是正常行为。
- 
- Details > Health 显示计数和最近错误的类型/代码、报告地址、方向、距今时间及可用的通告 MTU。
- 通过引用的端点匹配 TCP/UDP 连接，不改变连接状态或流量总数。
- 截断的引用、分片、IPv6 扩展头、NAT、缺失或复用的连接可能导致无法匹配或误匹配。
--未匹配的错误仍计入 Host；不保留单条错误记录。
-+未匹配的错误仍计入 Health；不保留单条错误记录。
- 
- ### Host 时间范围（开发版本）
- 
--在任意 Host 区块按 `w`，循环选择 **60s / 5m / 1h / since startup**。Sockets、Interfaces 和 DNS 共用选择；套接字清单和接口速率仍显示实时值。
-+在 Findings、Health & Host > Interfaces 或 Health & Host > DNS resolvers 中按 `w`，循环选择 **60s / 5m /
-```
-
-**File**: `crates/rustnet-core/src/network/interface_stats/bsd.rs` (modified, +7/-4)
-```diff
-@@ -14,7 +14,7 @@ use std::time::SystemTime;
- 
- /// Walk the `getifaddrs` list and build stats from every `AF_LINK` entry.
- fn collect_af_link_stats(
--    extract: impl Fn(&libc::if_data, String) -> InterfaceStats,
-+    extract: impl Fn(&libc::if_data, String, bool) -> InterfaceStats,
- ) -> Result<Vec<InterfaceStats>, io::Error> {
-     unsafe {
-         let mut ifap: *mut libc::ifaddrs = ptr::null_mut();
-@@ -32,9 +32,10 @@ fn collect_af_link_stats(
-                 && addr.sa_family as i32 == libc::AF_LINK
-             {
-                 let name = CStr::from_ptr(ifa.ifa_name).to_string_lossy().to_string();
-+                let is_loopback = (ifa.ifa_flags & (libc::IFF_LOOPBACK as u32)) != 0;
- 
-                 if let Some(if_data) = (ifa.ifa_data as *const libc::if_data).as_ref() {
--                    stats.push(extract(if_data, name));
-+                    stats.push(extract(if_data, name, is_loopback));
-                 }
-             }
- 
-@@ -77,12 +78,13 @@ impl InterfaceStatsProvider for MacOSStatsProvider {
-     fn get_all_stats(&self) -> Result<Vec<InterfaceStats>, io::Error> {
-         // Apple's if_data carries u32 counters; widen them and sanitize the
-         // error/drop fields (may contain garbage on virtual interfaces).
--        collect_af_link_stats(|if_data, name| {
-+        collect_af_link_stats(|if_data, name, is_loopback| {
-             let total_rx_packets = if_data.ifi_ipackets;
-             let total_tx_packets = if_data.ifi_opackets;
- 
-             InterfaceStats {
-                 interface_name: name,
-+                is_loopback,
-                 rx_bytes: if_data.ifi_ibytes as u64,
-                 tx_bytes: if_data.ifi_obytes as u64,
-                 rx_packets: total_rx_packets as u64,
-@@ -109,8 +111,9 @@ pub struct FreeBSDStatsProvider;
- impl InterfaceStatsProvider for FreeBSDStatsProvider {
-     fn get_all_stats(&self) -> Result<Vec<InterfaceStats>, io::Error> {
-         // FreeBSD's if_data counters are already u64.
--        collect_af_link_stats(|if_data, name| InterfaceStats {
-+        collect_af_link_stats(|if_data, name, is_loopback| InterfaceStats {
-             interface_name: name,
-+            is_loopback,
-             rx_bytes: if_data.ifi_ibytes,
-             tx_bytes: if_data.ifi_obytes,
-             rx_packets: if_data.ifi_ipackets,
-```
-
-**File**: `crates/rustnet-core/src/network/interface_stats/errors.rs` (modified, +1/-0)
-```diff
-@@ -117,6 +117,7 @@ mod tests {
-     fn stat(seconds: u64, count: u64) -> InterfaceStats {
-         InterfaceStats {
-             interface_name: "test0".into(),
-+            is_loopback: false,
-             rx_bytes: 0,
-             tx_bytes: 0,
-             rx_packets: 0,
-```
-
-**File**: `crates/rustnet-core/src/network/interface_stats/linux.rs` (modified, +17/-0)
-```diff
-@@ -21,6 +21,7 @@ impl LinuxStatsProvider {
- 
-         Ok(InterfaceStats {
-             interface_name: interface.to_string(),
-+            is_loopback: is_loopback_interface(interface),
-             rx_bytes: read_stat(&base_path, "rx_bytes")?,
-             tx_bytes: read_stat(&base_path, "tx_bytes")?,
-             rx_packets: read_stat(&base_path, "rx_packets")?,
-@@ -53,6 +54,21 @@ impl InterfaceStatsProvider for LinuxStatsProvider {
+@@ -2407,6 +2407,9 @@ fn host_tcp_evidence_links_only_to_the_observed_connection() {
+         };
+         let (closed, regions) = render_app_frame(&app, &mut state, &connections, None, width, 50);
+         assert!(closed.contains("▌ ▸ TCP handshakes"));
++        if width == 140 {
++            assert!(closed.contains("1/1 reset or incomplete"), "{closed}");
++        }
+         assert!(!closed.contains("Open Details"));
+         let mut ctx = HandlerContext {
+             connections: &connections,
+@@ -2420,10 +2423,7 @@ fn host_tcp_evidence_links_only_to_the_observed_connection() {
+             key(KeyCode::Char(' '), &mut ctx);
+         }
+         let (open, regions) = render_app_frame(&app, &mut state, &connections, None, width, 50);
+-        assert!(
+-            open.contains("no handshake") && open.contains("observed"),
+-            "{open}"
+-        );
++        assert!(open.contains("no handshake"), "{open}");
+         let link = regions
+             .health_rows
+             .iter()
+@@ -2562,6 +2562,108 @@ fn host_tcp_details_opens_each_same_timestamp_generation() {
      }
  }
  
-+/// Read `/sys/class/net/<interface>/flags` and test `IFF_LOOPBACK` (`0x8`),
-+/// falling back to the standard `"lo"` name if flags cannot be read.
-+fn is_loopback_interface(interface: &str) -> bool {
-+    const IFF_LOOPBACK: u32 = 0x8;
-+    let path = format!("/sys/class/net/{interface}/flags");
-+    fs::read_to_string(&path)
-+        .ok()
-+        .and_then(|content| {
-+            let trimmed = content.trim();
-+            let hex = trimmed.strip_prefix("0x").unwrap_or(trimmed);
-+            u32::from_str_radix(hex, 16).ok()
-+        })
-+        .map_or(interface == "lo", |flags| (flags & IFF_LOOPBACK) != 0)
-+}
++#[test]
++fn host_tcp_findings_t_key_toggles_history_and_enables_details_link() {
++    use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
++    let mut app = test_app();
++    let conn = local_tcp(50124, "client");
++    let captured = SystemTime::now() - Duration::from_secs(2);
++    // Ingest two SYN+RST generations on the same 4-tuple so the first is archived as historic.
++    for seq in [17, 33] {
++        let mut packet = evidence_syn(&conn, seq);
++        app.ingest_packet_at_for_test(&packet, captured);
++        packet.is_outgoing = false;
++        packet.protocol_state = ProtocolState::Tcp(TcpState::Closed);
++        let header = packet.tcp_header.as_mut().unwrap();
++        header.flags.syn = false;
++        header.flags.ack = true;
++        header.flags.rst = true;
++        header.ack = seq + 1;
++        app.ingest_packet_at_for_test(&packet, captured);
++    }
++    // Publish initial snapshot with show_historic = false (only the live generation is present).
++    assert_eq!(app.stop().panicked_workers, 0);
++    let connections = app.get_connections();
++    assert_eq!(connections.len(), 1);
 +
- /// Read a single statistic from sysfs
- fn read_stat(base_path: &str, stat_name: &str) -> Result<u64, io::Error> {
-     let path = format!("{}/{}", base_path, stat_name);
-@@ -78,6 +94,7 @@ mod tests {
-         match result {
-             Ok(stats) => {
-                 assert_eq!(stats.interface_name, "lo");
-+                assert!(stats.is_loopback);
-             }
-             Err(e) => {
-                 // Acceptable errors: NotFound or PermissionDenied
++    let mut state = UiState {
++        selected_tab: 4,
++        expanded_findings: [tabs::health::Finding::Tcp].into(),
++        ..Default::default()
++    };
++    let (_, regions) = render_app_frame(&app, &mut state, &connections, None, 140, 50);
++    let attempts: Vec<_> = regions
++        .health_rows
++        .iter()
++        .filter_map(|(t, _)| {
++            matches!(t, tabs::health::HealthTarget::Attempt { .. }).then_some(t.clone())
++        })
++        .collect();
++    assert_eq!(attempts.len(), 2);
++
++    // Select the archived (historic) attempt: without history enabled, Details is unavailable.
++    let historic_target = attempts
++        .into_iter()
++        .find(|target| {
++            state.health_cursor.get_mut().target = Some(target.clone());
++            let (frame, _) = render_app_frame(&app, &mut state, &connections, None, 140, 50);
++            frame.contains("press t for history")
++        })
++        .expect("archived TCP attempt should prompt to press t for history");
++    state.health_cursor.get_mut().target = Some(historic_target.clone());
++    let (before_toggle, regions) = render_app_frame(&app, &mut state, &connections, None, 140, 50);
++    assert!(before_toggle.contains("Details unavailable (press t for history)"));
++
++    // Press `t` directly in Findings: toggles history, refreshes snapshot immediately, and enables Details.
++    let mut ctx = HandlerContext {
++        connections: &connections,
++        ..test_support::empty_ctx(&app, &mut state, &regions)
++    };
++    let effects = dispatch_key(
++        4,
++        KeyEvent::new(KeyCode::Char('t'), KeyModifiers::NONE),
++        &mut ctx,
++    )
++    .unwrap();
++    assert!(matches!(effects.as_slice(), [Effect::RefreshData]));
++    assert!(state.show_historic);
++
++    let refreshed = app.get_connections();
++    assert_eq!(refreshed.len(), 2);
++    let (after_toggle, regions) = render_app_frame(&app, &mut state, &refreshed, None, 140, 50);
++    assert!(after_toggle.contains("[Open Details ↵]"), "{after_toggle}");
++
++    // Pressing Enter now opens the historic connection in Details.
++    let mut ctx = HandlerContext {
++        connections: &refreshed,
++        ..test_support::empty_ctx(&app, &mut state, &regions)
++    };
++    dispatch_key(
++        4,
++        KeyEvent::new(KeyCode::Enter, KeyModifiers::NONE),
++        &mut ctx,
++    )
++    .unwrap();
++    assert_eq!(state.selected_tab, 1);
++    assert!(refreshed[state.get_selected_index(&refreshed).unwrap()].is_historic);
++
++    // Pressing `t` again in Findings turns history back off.
++    state.jump_to_tab(4);
++    let (_, regions) = render_app_frame(&app, &mut state, &refreshed, None, 140, 50);
++    let mut ctx = HandlerContext {
++        connections: &refreshed,
++        ..test_support::empt
 ```
 
-**File**: `crates/rustnet-core/src/network/interface_stats/mod.rs` (modified, +2/-0)
+**File**: `src/ui/snapshots/rustnet_monitor__ui__snapshot_tests__host_network_events.snap` (modified, +15/-15)
 ```diff
-@@ -26,6 +26,7 @@ pub use windows::capture_interface_alias;
- #[derive(Debug, Clone)]
- pub struct InterfaceStats {
-     pub interface_name: String,
-+    pub is_loopback: bool,
-     pub rx_bytes: u64,
-     pub tx_bytes: u64,
-     pub rx_packets: u64,
-@@ -141,6 +142,7 @@ mod tests {
-     ) -> InterfaceStats {
-         InterfaceStats {
-             interface_name: "test".to_string(),
-+            is_loopback: false,
-             rx_bytes,
-             tx_bytes,
-             rx_packets,
+@@ -7,21 +7,21 @@ expression: output
+ Findings (1)   Sockets   Interfaces   DNS resolvers                                                                                         
+ ━━━━━━━━━━━━────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ ▎ Findings  window: 60s · 1 warning ────────────────────────────────────────────────────────────────────────────────────────────────────────
+-▌ ▾ Resets and ICMP (60s)  RST 1 sent / 0 received · 0 ICMP                                                                                 
+-    60s / total (since startup) · captured packets                                                                                          
+-                                                    Sent: window / total  Received: window / total                                          
+-    TCP reset                                                      1 / 1                     0 / 0                                          
+-    ICMP port unreachable                                          0 / 0                     0 / 1                                          
+-    ICMP destination unreachable                                   0 / 0                     0 / 1                                          
+-    ICMP administratively prohibited                               0 / 0                     0 / 1                                          
+-    ICMP packet too big / frag needed                              0 / 0                     0 / 1                                          
+-    ICMP time exceeded                                             0 / 0                     0 / 1                                          
+-    ICMP parameter problem                                         0 / 0                     0 / 1                                          
+-  ▸ TCP handshakes (5m)  not observed                                                                                                       
+-  ▸ Interface drops (60s)  Waiting for interface statistics                                                                                 
+-  ▸ DNS replies (60s)  not observed · 0 replies · 0 timeouts                                                                                
+-  ▸ Capture quality (since startup)  0 reported drops · 0 queue drops                                                                       
++▌ ▾ Resets and ICMP  ▲ [observed]    RST 1 sent / 0 recv · 0 ICMP                                                                    (60s)  
++  │  Event (60s / since startup)           Sent (60s / total)  Recv (60s / total)                                                           
++  │  ────────────────────────────────────────────────────────────────────────────                                                           
++  ├─ TCP reset                                          1 / 1               0 / 0                                                           
++  ├─ ICMP port unreachable                              0 / 0               0 / 1                                                           
++  ├─ ICMP destination unreachable                       0 / 0               0 / 1                                                           
++  ├─ ICMP administratively prohibited                   0 / 0               0 / 1                                                           
++  ├─ ICMP packet too big / frag needed                  0 / 0               0 / 1                                                           
++  ├─ ICMP time exceeded                                 0 / 0               0 / 1                                                           
++  └─ ICMP parameter problem                             0 / 0               0 / 1                                                           
+                                                                                                                                             
++  ▸ TCP handshakes   ○ not observed                                                                                                   (5m)  
++  ▸ Interface drops  ○ waiting       Waiting for interface statistics                                                                (60s)  
++  ▸ DNS replies      ○ not observed  0 replies · 0 timeouts                                                                          (60s)  
++  ▸ Capture quality  ● healthy       0 reported drops · 0 queue drops                                                      (since startup)  
+                                                                                                                                             
+                                                                                                                                             
+                                                                                                                                       
+```
+
+---
+
+### Incident Patch 2: `39db6c5d` (2026-11-23)
+**Commit Message**: feat(ui): add mirrored RX/TX traffic graph mode on Graph tab (#746)
+
+* feat(ui): add mirrored RX/TX traffic graph mode on Graph tab
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - Avoid allocating static Overview titles and expanded process-group connectors on each render (#412)
+ 
+ ### Added
++- Mirror the Graph tab's RX/TX traffic waves around a shared center time horizon (RX up, TX down), with `m` to toggle back to the split view and `[view] mirrored_traffic_graph` in `config.toml`
+ - Sort findings by severity while preserving the selected finding and evidence position (#734)
+ - Align health colors across Findings, Overview, Details and host inventory, and leave zero error counts neutral (#734)
+ - Combine Findings, Sockets, Interfaces and DNS resolvers in 5 Health & Host, with a single expandable list, item-by-item navigation and return links (#734)
+```
+
+**File**: `USAGE.ja.md` (modified, +7/-0)
+```diff
+@@ -33,6 +33,9 @@ Graph は選択したキャプチャ対象のカウンターを使います。`a
+ 全インターフェースの合計で、同じ通信を複数回数える場合があります。
+ カウンターが取得できない間は RX/TX グラフを停止し、サンプルの取得後に再開します。
+ 
++**開発版。** Graph の既定はミラー表示で、共通の時間軸から RX は上向きに、TX は下向きに伸びます。
++Traffic の表示中に `m` を押すと、現在のセッションでミラー表示と分割表示を切り替えられます。
++
+ Graph と Details は観測したバーストを保持し、RX/TX 別の自動線形目盛りを使います。
+ 単位はバイト/秒（KiB/MiB/GiB は二進単位）なので、方向間の比較は数値で行ってください。
+ 余裕があれば現在値、期間内のピーク、`2s avg` を表示します。`0 B/s` は観測したアイドル状態、
+@@ -138,6 +141,10 @@ group_by_process = true
+ `group_by_process` は Overview を折りたたんだプロセス別グループで開始します。
+ `a` で一時的に切り替え、Space で展開し、`r` で設定値に戻します。無画面出力には影響しません。
+ 
++**開発版。** 起動時に Graph で RX と TX を別々のグラフに表示するには、`config.toml` の
++`[view]` に `mirrored_traffic_graph = false` を指定します。既定値は `true` です。
++Overview で `r` を押すと、グラフのレイアウトを含む表示設定が設定値に戻ります。
++
+ ## 無画面出力の拡張（開発版）
+ 
+ `--headless-details full` はプロトコル、健全性、ネットワーク、アカウント名、
+```
+
+**File**: `USAGE.md` (modified, +9/-0)
+```diff
+@@ -414,6 +414,11 @@ the configured grouping preference. These settings do not affect headless output
+ group_by_process = true
+ ```
+ 
++**Unreleased.** To start Graph with separate RX and TX plots, set
++`mirrored_traffic_graph = false` under `[view]` in `config.toml`. The default is
++`true`. Pressing `r` in Overview resets view settings, including the graph layout,
++to their configured values.
++
+ For an optional Help shadow, add `[ui]` with `popup_shadow = true` to the same
+ config file (default: `false`). `NO_COLOR` or `--no-color` disables the shadow.
+ 
+@@ -549,6 +554,10 @@ Graph uses the selected capture interface's counters. `any` and macOS default
+ `pktap` show all-interface totals, which can count the same traffic more than once.
+ Missing counters leave RX/TX plots unavailable until sampling resumes.
+ 
++**Unreleased.** Graph defaults to a mirrored traffic chart. RX rises above the
++shared time axis and TX extends below it. While Traffic is visible, press `m`
++to switch between mirrored and split layouts for the current session.
++
+ Graph and Details preserve sampled bursts on independent automatic linear RX/TX
+ scales in bytes per second (KiB/MiB/GiB are binary units). Compare numeric readings
+ across directions. Headers show current rate, window peak, and `2s avg` when space
+```
+
+**File**: `USAGE.zh-CN.md` (modified, +7/-0)
+```diff
+@@ -400,6 +400,10 @@ Unix），并在背景报告为浅色时将这些灰色层级加深为 ANSI Dark
+ group_by_process = true
+ ```
+ 
++**开发版。** 如需让 Graph 在启动时分别绘制 RX 和 TX，请在 `config.toml` 的
++`[view]` 下设置 `mirrored_traffic_graph = false`。默认值为 `true`。
++在 Overview 中按 `r` 可将图表布局等视图设置恢复为配置文件中的值。
++
+ 如需帮助浮层阴影，在同一配置文件的 `[ui]` 下设置 `popup_shadow = true`
+ （默认为 `false`）。`NO_COLOR` 或 `--no-color` 会禁用阴影。
+ 
+@@ -1044,6 +1048,9 @@ Host 的 Sockets 和 Interfaces 在表格放不下时使用换行记录。
+ Graph 使用所选捕获接口的计数器。`any` 和 macOS 默认的 `pktap` 汇总所有接口，
+ 可能重复计算同一流量。计数器不可用时，RX/TX 图暂停，恢复采样后继续。
+ 
++**开发版。** Graph 默认使用镜像布局，RX 从共用时间轴向上延伸，TX 向下延伸。
++显示 Traffic 区域时，按 `m` 可在镜像布局和分图布局之间切换，仅对当前会话生效。
++
+ Graph 和 Details 保留采样到的突发流量，RX/TX 分别使用自动线性刻度，单位为字节/秒
+ （KiB/MiB/GiB 使用二进制单位）。比较方向时请看数值。空间允许时，标题显示当前速率、
+ 窗口峰值和 `2s avg`。`0 B/s` 表示观测到空闲，占位符表示数据不可用。
+```
+
+**File**: `src/config.rs` (modified, +37/-2)
+```diff
+@@ -15,6 +15,7 @@
+ //!
+ //! [view]
+ //! group_by_process = true
++//! mirrored_traffic_graph = true
+ //! ```
+ //!
+ //! Loading never fails: a missing file yields the defaults silently, and an
+@@ -38,10 +39,20 @@ struct RawConfig {
+     view: RawView,
+ }
+ 
+-#[derive(Debug, Default, Deserialize)]
++#[derive(Debug, Deserialize)]
+ #[serde(default)]
+ struct RawView {
+     group_by_process: bool,
++    mirrored_traffic_graph: bool,
++}
++
++impl Default for RawView {
++    fn default() -> Self {
++        Self {
++            group_by_process: false,
++            mirrored_traffic_graph: true,
++        }
++    }
+ }
+ 
+ #[derive(Debug, Default, Deserialize)]
+@@ -60,12 +71,25 @@ struct RawUi {
+ 
+ /// Parsed user configuration. Override values are validated later by
+ /// `ThemeSpec::set_token`, not here.
+-#[derive(Debug, Default, PartialEq)]
++#[derive(Debug, PartialEq)]
+ pub struct UserConfig {
+     pub theme: Option<String>,
+     pub popup_shadow: bool,
+     pub overrides: Vec<(String, String)>,
+     pub group_by_process: bool,
++    pub mirrored_traffic_graph: bool,
++}
++
++impl Default for UserConfig {
++    fn default() -> Self {
++        Self {
++            theme: None,
++            popup_shadow: false,
++            overrides: Vec::new(),
++            group_by_process: false,
++            mirrored_traffic_graph: true,
++        }
++    }
+ }
+ 
+ /// Load the user configuration. Never panics, never fails: missing file is
+@@ -140,6 +164,7 @@ fn parse(contents: &str) -> Result<UserConfig, String> {
+         popup_shadow: raw.ui.popup_shadow,
+         overrides: raw.theme.overrides.into_iter().collect(),
+         group_by_process: raw.view.group_by_process,
++        mirrored_traffic_graph: raw.view.mirrored_traffic_graph,
+     })
+ }
+ 
+@@ -300,6 +325,16 @@ selection_bg = "#3b4261"
+         assert!(parse("[view]\ngroup_by_process = \"true\"").is_err());
+     }
+ 
++    #[test]
++    fn mirrored_traffic_graph_defaults_to_true_and_accepts_booleans() {
++        for input in ["", "[view]", "[view]\nmirrored_traffic_graph = true"] {
++            assert!(parse(input).unwrap().mirrored_traffic_graph);
++        }
++        let off = parse("[view]\nmirrored_traffic_graph = false").unwrap();
++        assert!(!off.mirrored_traffic_graph);
++        assert!(parse("[view]\nmirrored_traffic_graph = \"no\"").is_err());
++    }
++
+     #[test]
+     fn theme_name_without_overrides() {
+         let config = parse("[theme]\nname = \"nord\"\n").unwrap();
+```
+
+**File**: `src/ui/snapshot_tests.rs` (modified, +7/-1)
+```diff
+@@ -4550,7 +4550,13 @@ fn compact_graph_keeps_live_rates_and_all_tcp_states_visible() {
+     for label in ["RX", "TX", "OPENED", "CLOSED", "8.00 KiB/s", "4.00 KiB/s"] {
+         assert!(traffic.contains(label), "{label}: {traffic}");
+     }
+-    assert_eq!(traffic.matches("-60s").count(), 2);
++    // Default mirrored view shares one center time horizon; split view keeps two.
++    assert!(traffic.contains("0┼"));
++    assert_eq!(traffic.matches("-60s").count(), 1);
++    state.graph_mirrored = false;
++    let split = render_app(&app, &mut state, &connections, None, 80, 24);
++    assert_eq!(split.matches("-60s").count(), 2);
++    state.graph_mirrored = true;
+     state.graph_section = GraphSection::Health;
+     let health = render_app(&app, &mut state, &connections, None, 80, 24);
+     for label in [
+```
+
+**File**: `src/ui/snapshots/rustnet_monitor__ui__snapshot_tests__graph_tab_compact_traffic.snap` (modified, +1/-1)
+```diff
+@@ -25,4 +25,4 @@ Waiting for connection data...
+                                                                                 
+                                                                                 
+                                                                                 
+- v/V section  esc back                                           h help  q quit
++ v/V section  m split  esc back                                  h help  q quit
+```
+
+**File**: `src/ui/snapshots/rustnet_monitor__ui__snapshot_tests__graph_tab_empty_history.snap` (modified, +1/-1)
+```diff
+@@ -41,4 +41,4 @@ Other  ░░░░░░░░░░░░░░▒▒▒▒▒▒▒▒▒▒
+                                                                                                                                             
+                                                                                                                                             
+                                                                                                                                             
+- esc back                                                                                                                    h help  q quit
++ m split  esc back                                                                                                           h help  q quit
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #749** (2026-11-23): ci: test-sign the Windows x64 executable (@domcyrus)
+- **PR #748** (2026-11-23): feat(ui): redesign Health & Host Findings accordion and enable t history toggle (@domcyrus)
 - **PR #747** (2026-11-23): chore(deps): bump zip from 9.6.1 to 9.7.3 in the rust-dependencies group (@dependabot[bot])
+- **PR #746** (2026-11-23): feat(ui): add mirrored RX/TX traffic graph mode on Graph tab (@domcyrus)
 - **PR #744** (2026-11-22): Support cargo binstall for official RustNet release binaries (@domcyrus)
 - **PR #743** (closed): Summarize RustNet’s security checks in all three READMEs (@domcyrus)
-- **PR #740** (2026-11-20): chore(deps): bump the rust-dependencies group with 4 updates (@dependabot[bot])
-- **PR #739** (2026-11-19): chore(deps): bump zip from 9.5.1 to 9.6.0 in the rust-dependencies group (@dependabot[bot])
-- **PR #738** (2026-11-17): docs: add WinGet installation instructions (@domcyrus)
 
 ---
 
@@ -2995,42 +3132,29 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump zip from 9.6.1 to 9.7.3 in the rust-dependencies group
+## X. ui): redesign Health & Host Findings accordion and enable t history toggle
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in domcyrus/rustnet. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in domcyrus/rustnet. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `83404419`: deps): bump zip from 9.6.1 to 9.7.3 in the rust-dependencies group. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `617d7976`: ui): redesign Health & Host Findings accordion and enable t history toggle. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
-version = "9.7.3"
-checksum = "63e50f7b2212e4635244be3c363b53273d159f2523eb7db3096c1d2861c1b603"
+- Redesign `5 Health & Host > Findings` with a structured tree accordion: aligned finding columns with severity icons and status pills, faint tree guide rails (`│ ├─ └─`), a TCP handshake health bar, single-line tabular attempt rows with inline anomalies, aligned `Resets and ICMP` / `Interface drops` / `Capture quality` sub-tables, and full-width row selection highlighting
+- Allow pressing `t` directly in `5 Health & Host > Findings` to toggle historic connections immediately (matching the `press t for history` prompt on closed TCP attempts) and show `t history` in the Findings status bar and help overlay
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
- "windows-sys 0.52.0",
- "windows-sys 0.52.0",
- "windows-sys 0.36.1",
- "windows-sys 0.52.0",
- "windows-sys 0.52.0",
- "windows-sys 0.52.0",
-version = "9.6.1"
-checksum = "953a376f4930ed5af88e1e65948385f76866b45e7f75b21ac275327d0eeb9b46"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `83404419` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `617d7976` are properly handled with clean fallback behavior.

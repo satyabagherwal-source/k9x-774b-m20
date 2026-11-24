@@ -12853,3 +12853,5 @@ Every entry in this ledger must capture:
 | `learn-github-apache-maka` | `https://github.com/apache/maka` | `16e3a770` | Multi-dimensional audit evidence | 2026-11-24T21:38:36.315Z |
 | `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `cf1293f6` | Multi-dimensional audit evidence | 2026-11-24T21:53:06.514Z |
 | `learn-dom-i-2dda15b6` | `project://t8y2-dbx` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/t8y2-dbx-learnings.md` | 2026-11-24T21:53:46.061Z |
+| `learn-github-domcyrus-rustnet` | `https://github.com/domcyrus/rustnet` | `617d7976` | Multi-dimensional audit evidence | 2026-11-24T22:07:26.703Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `8856065f` | Multi-dimensional audit evidence | 2026-11-24T22:07:32.096Z |
