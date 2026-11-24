@@ -12850,3 +12850,4 @@ Every entry in this ledger must capture:
 | `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `01b14a89` | Multi-dimensional audit evidence | 2026-11-24T21:15:48.199Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `8f515043` | Multi-dimensional audit evidence | 2026-11-24T21:15:51.752Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `352c5882` | Multi-dimensional audit evidence | 2026-11-24T21:24:22.512Z |
+| `learn-github-apache-maka` | `https://github.com/apache/maka` | `16e3a770` | Multi-dimensional audit evidence | 2026-11-24T21:38:36.315Z |

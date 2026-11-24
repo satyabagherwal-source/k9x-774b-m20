@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T21:24:28.568Z",
+  "last_updated": "2026-11-24T21:38:48.866Z",
   "total_verified_learnings": 9102,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24925,
+  "total_items": 24928,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "da896b641ce0158db9c668a6d0e2e4e07f56448338e1f36c9ef21fd3a2d54be5",
+      "content_hash": "ea1487121996d00a9a6508f89c30853b34fa64149c0f6b0e3bbfe03341f4ff62",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T20:53:12.747Z"
+      "persisted_at": "2026-11-24T21:38:48.651Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "c7168b8bc32e811b74435898622e6915c29d9458880f61cb3f891b76424969f6",
+      "content_hash": "cd36b02cb43a1cd8280430e459ab9ec0792562c471bb3c1aa28ef6ae3499630a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T20:53:12.956Z"
+      "persisted_at": "2026-11-24T21:38:48.866Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "47fb68aa62a60787296ee9191386ce23c621ddbdeeecc1484fa182bed78e0d7d",
+      "content_hash": "4e486c576b234f75264c4417fc30bf1a92be2f64df263feedef8900a2668fa4d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T21:24:28.386Z"
+      "persisted_at": "2026-11-24T21:38:46.972Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "593a0a5b6be96e1195fc92acafd1367bebcafbcd881a84de73efebf1f1a338a3",
+      "content_hash": "b74ed163330d7796b14960224c72d8f8bd237b1100ba472a35407d0a300058fb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T21:24:28.568Z"
+      "persisted_at": "2026-11-24T21:38:47.237Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -256465,9 +256465,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "fd7deb93967de62830b9bb63ac1686ed136e591cbff9d4a8ef9624e4b1ecf9f4",
+      "content_hash": "ec9884fb8b65e519c256c3c164c70c991335fed294b34b0f1f724de3450395ab",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T20:53:12.488Z"
+      "persisted_at": "2026-11-24T21:38:48.389Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
@@ -321681,8 +321681,8 @@
       "slug": "apache-maka",
       "platform": "github",
       "source_url": "https://github.com/apache/maka",
-      "source_version": "26639d64",
-      "content_hash": "4a23b73423cca3ebdade764f8a46cad08fb19fdafa1dd3b5ad61a3e96fd06b6f",
+      "source_version": "16e3a770",
+      "content_hash": "5605576365e848167dba90eefb9aaee7ff426dc067d484c848720a6c3478b92c",
       "dossier_path": "07_PROJECT_LEARNING/apache-maka-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-maka-learnings.md",
       "promoted_rules": [
@@ -321695,6 +321695,11 @@
           "number": 10098,
           "title": "fix Windows V8 MAX_PATH and Linux zigbuild system library linking",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10363,
+          "title": "keep proactive summary model wait open until closure or interruption",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -321702,7 +321707,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T19:09:14.464Z",
+      "verified_at": "2026-11-24T21:38:36.001Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -321744,10 +321749,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apache-maka-technical-construction-intelligence-apache-maka-core-invariants.md",
       "title": "Technical Construction Intelligence: apache/maka Core Invariants",
       "repository": "apache/maka",
-      "source_version": "26639d64",
-      "content_hash": "9bd9aebc70151c4aed3e9d4a12e92a0cf827a48215079c69ae3766a10ee230e3",
+      "source_version": "16e3a770",
+      "content_hash": "12ff6074f9427046b8cb09a9ca2a2b5f7b2acbb363e89ce889980bcb54c8aa7d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T19:09:15.054Z"
+      "persisted_at": "2026-11-24T21:38:36.877Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apache-maka": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apache-maka",
@@ -321756,10 +321761,10 @@
       "relative_path": "08_VERIFICATION/apache-maka-verification-protocol-empirical-defect-shield-for-apache-maka.md",
       "title": "Verification Protocol: Empirical Defect Shield for apache/maka",
       "repository": "apache/maka",
-      "source_version": "26639d64",
-      "content_hash": "193af1232a594870a2499bd24720e5f34c8042af05870fde8f1e910ed2c0014a",
+      "source_version": "16e3a770",
+      "content_hash": "94e12905b19be01db6588b9c4b25b58f49788dd69b440437fd8e305ad532fd0c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T19:09:15.210Z"
+      "persisted_at": "2026-11-24T21:38:37.186Z"
     },
     "domain_intelligence-technical-construction-intelligence-apache-maka-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-apache-maka-learnings-core-invariants",
@@ -321769,9 +321774,9 @@
       "title": "Technical Construction Intelligence: apache-maka-learnings Core Invariants",
       "repository": "apache-maka-learnings",
       "source_version": "HEAD",
-      "content_hash": "b667acf8ff053627545a38881215242d80518a3143547fbe3b84d190abb4f4d6",
+      "content_hash": "18fc77b3babec93928b3c4c59cadae678e96f784cf236c181a059be33baae7e2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T19:09:25.050Z"
+      "persisted_at": "2026-11-24T21:38:45.587Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apache-maka-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apache-maka-learnings",
@@ -321781,9 +321786,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for apache-maka-learnings",
       "repository": "apache-maka-learnings",
       "source_version": "HEAD",
-      "content_hash": "63ac94779c4566f09b76157672d5cdc19a83402cc9376748d51d499ed94a3836",
+      "content_hash": "480ccea2538e7af18f9ba9da339aebf3780614e6a68358df601d571368e27668",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T19:09:25.212Z"
+      "persisted_at": "2026-11-24T21:38:45.854Z"
     },
     "rule-9904": {
       "learning_id": "rule-9904",
@@ -330518,13 +330523,13 @@
       "item_id": "candidate_directive-rust-resolve-python-calls-through-annotated-parameters-and-self-members",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-8YPO-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-VLQA-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
       "title": "rust): resolve python calls through annotated parameters and self members",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "a1d54ab936ed3696a9fe680fb60315d134e7a9d0449a9da1ef1a0077d7ac6081",
+      "content_hash": "8080481f5bb986e582e0149ee8cca993f507f58e1e6274441b70ea89cec00fd9",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T20:53:12.259Z"
+      "persisted_at": "2026-11-24T21:38:48.134Z"
     },
     "learn-github-iziz-libphonenumber-ios": {
       "learning_id": "learn-github-iziz-libphonenumber-ios",
@@ -335478,13 +335483,13 @@
       "item_id": "candidate_directive-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-D67F-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-VKMZ-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
       "title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "ea92f550baecf1ffc8e2cabc3f09f5cf1d10cb6714044a1497fc48c0baa07ea3",
+      "content_hash": "851d3b76dd7c9bfe3689d7175a1e2b328b93bde8ed5286c7bf584d962eab13ff",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T21:24:28.206Z"
+      "persisted_at": "2026-11-24T21:38:46.719Z"
     },
     "learn-github-xinatian-mroffice": {
       "learning_id": "learn-github-xinatian-mroffice",
@@ -340533,6 +340538,44 @@
       "content_hash": "ea3263ac913454d5fb968c53e61450f2c4fb01d8d01b87fec36608f25b97dbc4",
       "domain_letter": "G",
       "persisted_at": "2026-11-24T21:15:57.420Z"
+    },
+    "rule-10363": {
+      "learning_id": "rule-10363",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10363,
+      "title": "keep proactive summary model wait open until closure or interruption",
+      "source_url": "https://github.com/apache/maka",
+      "source_version": "16e3a770",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T21:38:36.001Z"
+    },
+    "candidate_directive-keep-proactive-summary-model-wait-open-until-closure-or-interruption": {
+      "item_id": "candidate_directive-keep-proactive-summary-model-wait-open-until-closure-or-interruption",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VCUU-keep-proactive-summary-model-wait-open-until-closure-or-interruption.md",
+      "title": "keep proactive summary model wait open until closure or interruption",
+      "repository": "apache/maka",
+      "source_version": "16e3a770",
+      "content_hash": "49e469f3d51c6604924645e3cb9b5a257caa51b7ee3d605d64c6fb5618844b53",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T21:38:36.634Z"
+    },
+    "candidate_directive-agent-keep-proactive-summary-model-wait-open-until-closure-or-interruption": {
+      "item_id": "candidate_directive-agent-keep-proactive-summary-model-wait-open-until-closure-or-interruption",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VJK2-agent-keep-proactive-summary-model-wait-open-until-closure-or-interruption.md",
+      "title": "agent): keep proactive summary model wait open until closure or interruption",
+      "repository": "apache-maka-learnings",
+      "source_version": "HEAD",
+      "content_hash": "36bddebaf00cef66e1f6be8557baf3e0ca0e0be1271e8c0e2f12cb74b3346ccf",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T21:38:45.319Z"
     }
   },
   "ai-builder-brain": {

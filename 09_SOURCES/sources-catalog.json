@@ -13163,10 +13163,10 @@
     "repository": "apache/maka",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/maka",
-    "sourceVersion": "26639d64",
+    "sourceVersion": "16e3a770",
     "license": "Apache-2.0",
-    "contentHash": "4a23b73423cca3ebdade764f8a46cad08fb19fdafa1dd3b5ad61a3e96fd06b6f",
-    "lastHarvestedAt": "2026-11-23T19:09:14.644Z",
+    "contentHash": "5605576365e848167dba90eefb9aaee7ff426dc067d484c848720a6c3478b92c",
+    "lastHarvestedAt": "2026-11-24T21:38:36.315Z",
     "learningId": "learn-github-apache-maka"
   },
   "hf-lakonik-pi-h3": {

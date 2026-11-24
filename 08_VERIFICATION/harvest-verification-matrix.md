@@ -12817,3 +12817,4 @@
 | `CYCLE-20261124-20YR` | `2026-11-24T21:15:48.195Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10361` | Yes (`041113dd...`) |
 | `CYCLE-20261124-23PG` | `2026-11-24T21:15:51.748Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10362` | Yes (`45c95862...`) |
 | `CYCLE-20261124-D1T8` | `2026-11-24T21:24:22.508Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10326` | Yes (`22a97ca1...`) |
+| `CYCLE-20261124-VCLX` | `2026-11-24T21:38:36.309Z` | `apache/maka` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10363` | Yes (`56055763...`) |

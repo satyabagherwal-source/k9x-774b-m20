@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T21:24:22.529Z",
+  "last_updated": "2026-11-24T21:38:36.335Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -19866,14 +19866,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-maka",
-      "content_hash": "4a23b73423cca3ebdade764f8a46cad08fb19fdafa1dd3b5ad61a3e96fd06b6f",
-      "verified_at": "2026-11-23T19:09:14.651Z",
+      "content_hash": "5605576365e848167dba90eefb9aaee7ff426dc067d484c848720a6c3478b92c",
+      "verified_at": "2026-11-24T21:38:36.335Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T19:09:14.651Z"
+      "last_updated": "2026-11-24T21:38:36.335Z"
     },
     "Lakonik/pi-H3": {
       "repository": "Lakonik/pi-H3",

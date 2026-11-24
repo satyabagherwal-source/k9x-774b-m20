@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T21:24:28.386Z",
+  "last_updated": "2026-11-24T21:38:48.389Z",
   "total_records": 2576,
   "domains": {
     "A": {
@@ -8391,8 +8391,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "47fb68aa62a60787296ee9191386ce23c621ddbdeeecc1484fa182bed78e0d7d",
-      "created_at": "2026-11-24T21:24:28.386Z"
+      "content_hash": "4e486c576b234f75264c4417fc30bf1a92be2f64df263feedef8900a2668fa4d",
+      "created_at": "2026-11-24T21:38:46.972Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -23747,8 +23747,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "fd7deb93967de62830b9bb63ac1686ed136e591cbff9d4a8ef9624e4b1ecf9f4",
-      "created_at": "2026-11-24T20:53:12.488Z"
+      "content_hash": "ec9884fb8b65e519c256c3c164c70c991335fed294b34b0f1f724de3450395ab",
+      "created_at": "2026-11-24T21:38:48.389Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",
@@ -39617,8 +39617,8 @@
       "title": "Technical Construction Intelligence: apache/maka Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apache-maka-technical-construction-intelligence-apache-maka-core-invariants.md",
       "repository": "apache/maka",
-      "content_hash": "9bd9aebc70151c4aed3e9d4a12e92a0cf827a48215079c69ae3766a10ee230e3",
-      "created_at": "2026-11-23T19:09:15.054Z"
+      "content_hash": "12ff6074f9427046b8cb09a9ca2a2b5f7b2acbb363e89ce889980bcb54c8aa7d",
+      "created_at": "2026-11-24T21:38:36.877Z"
     },
     "domain_intelligence-technical-construction-intelligence-apache-maka-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-apache-maka-learnings-core-invariants",
@@ -39626,8 +39626,8 @@
       "title": "Technical Construction Intelligence: apache-maka-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apache-maka-learnings-technical-construction-intelligence-apache-maka-learnings-.md",
       "repository": "apache-maka-learnings",
-      "content_hash": "b667acf8ff053627545a38881215242d80518a3143547fbe3b84d190abb4f4d6",
-      "created_at": "2026-11-23T19:09:25.050Z"
+      "content_hash": "18fc77b3babec93928b3c4c59cadae678e96f784cf236c181a059be33baae7e2",
+      "created_at": "2026-11-24T21:38:45.587Z"
     },
     "domain_intelligence-content-information-intelligence-meshery-meshery-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-meshery-meshery-core-invariants",
