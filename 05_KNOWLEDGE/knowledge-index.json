@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T06:55:24.851Z",
+  "last_updated": "2026-11-24T07:07:46.416Z",
   "total_verified_learnings": 9092,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24514,
+  "total_items": 24518,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112965,10 +112965,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-bridgecrewio-checkov-technical-construction-intelligence-bridgecrewio-checkov-co.md",
       "title": "Technical Construction Intelligence: bridgecrewio/checkov Core Invariants",
       "repository": "bridgecrewio/checkov",
-      "source_version": "28694608",
-      "content_hash": "b90ee328894c70f91c7d46cf59758610009235b925bf7bcedb6593ac874eb839",
+      "source_version": "2f107f86",
+      "content_hash": "59057bf38d0b9d5849d4f4286d32b66f7d439ef4c2568e556591d2257c54d64d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T04:02:34.423Z"
+      "persisted_at": "2026-11-24T07:07:39.321Z"
     },
     "skill_playbook-skill-operational-integration-playbook-for-bridgecrewio-checkov": {
       "item_id": "skill_playbook-skill-operational-integration-playbook-for-bridgecrewio-checkov",
@@ -112977,10 +112977,10 @@
       "relative_path": "03_SKILLS/bridgecrewio-checkov-skill-operational-integration-playbook-for-bridgecrewio-che.md",
       "title": "Skill: Operational & Integration Playbook for bridgecrewio/checkov",
       "repository": "bridgecrewio/checkov",
-      "source_version": "7da6ab8d",
-      "content_hash": "bbf3ff74d32135fc684bbd14acf371f0ffbab852e05070f2e4f80721e0105e9a",
-      "domain_letter": "G",
-      "persisted_at": "2026-11-23T13:06:56.010Z"
+      "source_version": "2f107f86",
+      "content_hash": "9a2b441b2d8c3cae337e45ed549e9fdef8d657fa77c31851591647e2dc0bd3f5",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T07:07:39.550Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-bridgecrewio-checkov": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-bridgecrewio-checkov",
@@ -112989,10 +112989,10 @@
       "relative_path": "08_VERIFICATION/bridgecrewio-checkov-verification-protocol-empirical-defect-shield-for-bridgecre.md",
       "title": "Verification Protocol: Empirical Defect Shield for bridgecrewio/checkov",
       "repository": "bridgecrewio/checkov",
-      "source_version": "7da6ab8d",
-      "content_hash": "4a8c478fc9e7c4ed86992a81d334469f8373e826d7e030a915ee7704a40422f0",
+      "source_version": "2f107f86",
+      "content_hash": "467b24b1b69e608822b1c21f23e1cfafa7cb56565f9cbad314d9f7853acbc133",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T13:06:56.195Z"
+      "persisted_at": "2026-11-24T07:07:39.741Z"
     },
     "candidate_directive-merge-core-parse-sql-only-in-the-engine-dialect-module-from-pekka-enberg": {
       "item_id": "candidate_directive-merge-core-parse-sql-only-in-the-engine-dialect-module-from-pekka-enberg",
@@ -113074,9 +113074,9 @@
       "title": "Technical Construction Intelligence: bridgecrewio-checkov-learnings Core Invariants",
       "repository": "bridgecrewio-checkov-learnings",
       "source_version": "HEAD",
-      "content_hash": "51673fb09165e06dabf98a8d4db244ed485d29f6d64c178ac0c9b79eeb2baa3b",
+      "content_hash": "a1619ff267c8e4a09239e53ae28022da790d7e4b2c1230f25767272e29ceb9c3",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T04:02:42.865Z"
+      "persisted_at": "2026-11-24T07:07:45.981Z"
     },
     "skill_playbook-skill-operational-integration-playbook-for-bridgecrewio-checkov-learnings": {
       "item_id": "skill_playbook-skill-operational-integration-playbook-for-bridgecrewio-checkov-learnings",
@@ -113086,9 +113086,9 @@
       "title": "Skill: Operational & Integration Playbook for bridgecrewio-checkov-learnings",
       "repository": "bridgecrewio-checkov-learnings",
       "source_version": "HEAD",
-      "content_hash": "22ab0db51d57a4f8cb68432beaa34cf169cca65cad7a978aa0028c1578a55a59",
-      "domain_letter": "G",
-      "persisted_at": "2026-11-23T13:07:05.452Z"
+      "content_hash": "4b91283689d40aa6295adefa192460c79ee392dab263cd2f1374fabbd8db2216",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T07:07:46.226Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-bridgecrewio-checkov-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-bridgecrewio-checkov-learnings",
@@ -113098,9 +113098,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for bridgecrewio-checkov-learnings",
       "repository": "bridgecrewio-checkov-learnings",
       "source_version": "HEAD",
-      "content_hash": "ca3f5ccef704a7bc6f9fdbb675a6b56e7e55f9b9f563dd04af7ff8963732f306",
+      "content_hash": "1362991e7a6a815db1a8bc97d96ecd5629d148e54f426971ad48a4a7c936e11e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T13:07:05.660Z"
+      "persisted_at": "2026-11-24T07:07:46.416Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-27b-gsq-rco-gguf-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-27b-gsq-rco-gguf-core-invari",
@@ -212784,10 +212784,10 @@
       "relative_path": "08_VERIFICATION/mattermost-mattermost-verification-protocol-empirical-defect-shield-for-mattermo.md",
       "title": "Verification Protocol: Empirical Defect Shield for mattermost/mattermost",
       "repository": "mattermost/mattermost",
-      "source_version": "2d6c2852",
-      "content_hash": "865c26a443a5afcd1f213cd5521e4fde9cba72265c9f2d6728c0f3c3afc51ad1",
+      "source_version": "d841da9f",
+      "content_hash": "ba4aeb1cdaa73e9584b8377f25cd8dfb024ef7548d17dd52ffc329bc3c8a52cd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T12:48:48.344Z"
+      "persisted_at": "2026-11-24T07:07:38.504Z"
     },
     "learn-github-juicedata-juicefs": {
       "learning_id": "learn-github-juicedata-juicefs",
@@ -213088,9 +213088,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for mattermost-mattermost-learnings",
       "repository": "mattermost-mattermost-learnings",
       "source_version": "HEAD",
-      "content_hash": "1d33498bb003b2cd37da3ede7f8e6b8003995e55a07b7f7a8de35c460249c964",
+      "content_hash": "8f944d85b7189347db1a8adaf4fcf9a91407210a817c805b6b5547056ab6616b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T12:48:57.680Z"
+      "persisted_at": "2026-11-24T07:07:44.905Z"
     },
     "learn-github-embassy-rs-embassy": {
       "learning_id": "learn-github-embassy-rs-embassy",
@@ -243792,8 +243792,8 @@
       "slug": "flox-flox",
       "platform": "github",
       "source_url": "https://github.com/flox/flox",
-      "source_version": "2130d6d7",
-      "content_hash": "c94233deb0f9b99515fb06ee03343fc2f1c227abf5b02b0879ac483fc1669bad",
+      "source_version": "0339f643",
+      "content_hash": "baa6a96aa9944a0a00bec8a343981699b3fdf2eb54340ff571c4ceba80125fc1",
       "dossier_path": "07_PROJECT_LEARNING/flox-flox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/flox-flox-learnings.md",
       "promoted_rules": [
@@ -243821,6 +243821,11 @@
           "number": 9802,
           "title": "Keep hello_unfree on the nixpkgs revision the CI machines have built",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10226,
+          "title": "List keys for untrusted packages",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -243828,7 +243833,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T16:18:44.784Z",
+      "verified_at": "2026-11-24T07:07:36.295Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -243870,10 +243875,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-flox-flox-architecture-intelligence-flox-flox-core-invariants.md",
       "title": "Architecture Intelligence: flox/flox Core Invariants",
       "repository": "flox/flox",
-      "source_version": "2130d6d7",
-      "content_hash": "4ee00613b4b340056a2a0955a056836e8d9cff5319a4d01c870e91d665931d7a",
+      "source_version": "0339f643",
+      "content_hash": "a50252699593a624b4838a5af8ebb194a951298f26ba2d6148c54c24aced7d79",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T16:18:45.433Z"
+      "persisted_at": "2026-11-24T07:07:37.281Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-flox-flox": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-flox-flox",
@@ -243882,10 +243887,10 @@
       "relative_path": "08_VERIFICATION/flox-flox-verification-protocol-empirical-defect-shield-for-flox-flox.md",
       "title": "Verification Protocol: Empirical Defect Shield for flox/flox",
       "repository": "flox/flox",
-      "source_version": "2130d6d7",
-      "content_hash": "4490ae5a09350862e52a05be77a8143ffb0ac2f57de0134bc2e7570e1effda5b",
+      "source_version": "0339f643",
+      "content_hash": "f9334eab76f7536180fd24bd77f36223b184b00aa1365b38032a6cffdfe48fd7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T16:18:45.598Z"
+      "persisted_at": "2026-11-24T07:07:37.521Z"
     },
     "rule-8572": {
       "learning_id": "rule-8572",
@@ -243933,9 +243938,9 @@
       "title": "Architecture Intelligence: flox-flox-learnings Core Invariants",
       "repository": "flox-flox-learnings",
       "source_version": "HEAD",
-      "content_hash": "97516840f4171a896469f3052db301f8ba74aec0c84e55ca84268063074cd9c3",
+      "content_hash": "0a233c1a81a63e72c4d4ca92a32c86f920c25db640c06cf739e9094973375c08",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T16:19:03.805Z"
+      "persisted_at": "2026-11-24T07:07:43.399Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-flox-flox-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-flox-flox-learnings",
@@ -243945,9 +243950,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for flox-flox-learnings",
       "repository": "flox-flox-learnings",
       "source_version": "HEAD",
-      "content_hash": "3bc294dfc217860e5f3b985e5cd41165aa9deda38a0605748177ee6606619263",
+      "content_hash": "795eee67aefdea3225dead4c08222c0ee7013424e2e0736cec4825216671f11b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T16:19:03.969Z"
+      "persisted_at": "2026-11-24T07:07:43.633Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-pyannote-speaker-diarization-community-1-lear": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-pyannote-speaker-diarization-community-1-lear",
@@ -290561,10 +290566,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mattermost-mattermost-architecture-intelligence-mattermost-mattermost-core-invar.md",
       "title": "Architecture Intelligence: mattermost/mattermost Core Invariants",
       "repository": "mattermost/mattermost",
-      "source_version": "f3624d99",
-      "content_hash": "f81134effe61ebe49164543f9e2635e78aecd35b366a92bda5eecd127d14e8b3",
+      "source_version": "d841da9f",
+      "content_hash": "44609d610f1ca50f2799012d8d54fcecfc1180891d3affe73d5716800412634d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T11:33:20.919Z"
+      "persisted_at": "2026-11-24T07:07:38.266Z"
     },
     "candidate_directive-filesystem-order-overlapping-opfs-file-accesses": {
       "item_id": "candidate_directive-filesystem-order-overlapping-opfs-file-accesses",
@@ -290622,9 +290627,9 @@
       "title": "Architecture Intelligence: mattermost-mattermost-learnings Core Invariants",
       "repository": "mattermost-mattermost-learnings",
       "source_version": "HEAD",
-      "content_hash": "06687b4771c3cc6777fe8929a1119cf9bc87ff68c0d079411c209c137e22bfac",
+      "content_hash": "34b9c1e3f21bcb655e90a650780b7eabfb2870802b2fce14a2461d0088ae7511",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T11:33:27.444Z"
+      "persisted_at": "2026-11-24T07:07:44.659Z"
     },
     "rule-9211": {
       "learning_id": "rule-9211",
@@ -327046,13 +327051,13 @@
       "item_id": "candidate_directive-support-cyclonedx-python-lib-up-to-11-x",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-5H3F-support-cyclonedx-python-lib-up-to-11-x.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-RAOI-support-cyclonedx-python-lib-up-to-11-x.md",
       "title": "support cyclonedx-python-lib up to 11.x",
       "repository": "bridgecrewio/checkov",
-      "source_version": "7da6ab8d",
-      "content_hash": "218c5695755f68c8b2d003b8a59a0daecdcfed51a4a903dc21030c442b2424c8",
-      "domain_letter": "G",
-      "persisted_at": "2026-11-23T13:06:55.565Z"
+      "source_version": "2f107f86",
+      "content_hash": "58185d5c91d6ab1d67a8a2f7ec2ece016d496ad8e763aa78ee9a0b321be2a47d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T07:07:39.091Z"
     },
     "domain_intelligence-architecture-intelligence-bridgecrewio-checkov-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-bridgecrewio-checkov-core-invariants",
@@ -327106,13 +327111,13 @@
       "item_id": "candidate_directive-general-support-cyclonedx-python-lib-up-to-11-x",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-5ODQ-general-support-cyclonedx-python-lib-up-to-11-x.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-RFTI-general-support-cyclonedx-python-lib-up-to-11-x.md",
       "title": "general): support cyclonedx-python-lib up to 11.x",
       "repository": "bridgecrewio-checkov-learnings",
       "source_version": "HEAD",
-      "content_hash": "59fe2de205c9a0f1f3878e2dd0c624dee4c0d3815557dc2f07cf4bfa65355c9e",
-      "domain_letter": "G",
-      "persisted_at": "2026-11-23T13:07:05.006Z"
+      "content_hash": "39c5098c9b9f1e684b4594d16c79ab08c5be67928e5dfdc44bf4daf658a25498",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T07:07:45.751Z"
     },
     "domain_intelligence-architecture-intelligence-bridgecrewio-checkov-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-bridgecrewio-checkov-learnings-core-invariants",
@@ -334486,6 +334491,56 @@
       "content_hash": "d819e9b1f8ccc998cf0745c1bf2da490317ad75801ffd4ee0d7aa78a1f25b0a4",
       "domain_letter": "H",
       "persisted_at": "2026-11-24T06:55:23.725Z"
+    },
+    "rule-10226": {
+      "learning_id": "rule-10226",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10226,
+      "title": "List keys for untrusted packages",
+      "source_url": "https://github.com/flox/flox",
+      "source_version": "0339f643",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T07:07:36.295Z"
+    },
+    "candidate_directive-list-keys-for-untrusted-packages": {
+      "item_id": "candidate_directive-list-keys-for-untrusted-packages",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-R93K-list-keys-for-untrusted-packages.md",
+      "title": "List keys for untrusted packages",
+      "repository": "flox/flox",
+      "source_version": "0339f643",
+      "content_hash": "2566c544d1812603f1b80a64fa0eadc937471c802c069f44596d967f8ca6e29e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T07:07:37.046Z"
+    },
+    "candidate_directive-ci-e2e-wait-for-late-fips-images-retry-rate-limited-lane-status-publication": {
+      "item_id": "candidate_directive-ci-e2e-wait-for-late-fips-images-retry-rate-limited-lane-status-publication",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RESO-ci-e2e-wait-for-late-fips-images-retry-rate-limited-lane-status-publication.md",
+      "title": "ci(e2e): wait for late FIPS images, retry rate-limited lane status publication,",
+      "repository": "mattermost-mattermost-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9b3ded3c3a5202ffa8e4e2af82d708549c5d260896fc3a4f425f820be7e4b093",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-24T07:07:44.430Z"
+    },
+    "candidate_directive-buildenv-list-keys-for-untrusted-packages": {
+      "item_id": "candidate_directive-buildenv-list-keys-for-untrusted-packages",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RDTP-buildenv-list-keys-for-untrusted-packages.md",
+      "title": "buildenv): List keys for untrusted packages",
+      "repository": "flox-flox-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3b30745f3339be1a52ad37f6626e03f99e69973a7cf72b2843e51e43601b454f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T07:07:43.171Z"
     }
   },
   "ai-builder-brain": {

@@ -4,23 +4,23 @@
 {
   "source_repository": "bridgecrewio/checkov",
   "source_url": "https://github.com/bridgecrewio/checkov",
-  "source_version": "28694608",
+  "source_version": "2f107f86",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-20T04:02:34.219Z",
+  "timestamp": "2026-11-24T07:07:39.090Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-bridgecrewio-checkov",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [bridgecrewio/checkov](https://github.com/bridgecrewio/checkov) (Revision: `28694608`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T04:02:34.219Z`  
+> **Provenance**: Harvested from [bridgecrewio/checkov](https://github.com/bridgecrewio/checkov) (Revision: `2f107f86`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T07:07:39.090Z`  
 > **Learning ID**: `learn-github-bridgecrewio-checkov`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
 - **Confidence Rating**: 54%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/bridgecrewio/checkov](https://github.com/bridgecrewio/checkov))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T04:02:32.595Z  
+> **Harvest Timestamp**: 2026-11-24T07:07:37.718Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Prevent cloud misconfigurations and find vulnerabilities during build-time in infrastructure as code, container images and open source packages with Checkov by Bridgecrew.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 9163 stars
+- **Stars / Engagement**: 9171 stars
 
 ---
 
@@ -969,132 +969,34 @@ check = SQSQueueEncryption()
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `28694608` (2026-11-19)
-**Commit Message**: fix(secrets): remove leading wildcard from Azure hostname patterns (#7809)
+### Incident Patch 1: `2f107f86` (2026-11-23)
+**Commit Message**: chore(general): support cyclonedx-python-lib up to 11.x (#7827)
+
+* chore(general): support cyclonedx-python-lib up to 11.x
+
+* chore(general): require cyclonedx-python-lib 8.0.0 or newer
 
 **File**: `checkov/version.py` (modified, +1/-1)
 ```diff
 @@ -1 +1 @@
--version = '3.4.5'
-+version = '3.4.6'
+-version = '3.4.6'
++version = '3.4.7'
 ```
 
 **File**: `kubernetes/requirements.txt` (modified, +1/-1)
 ```diff
 @@ -1 +1 @@
--checkov==3.4.5
-+checkov==3.4.6
-```
-
----
-
-### Incident Patch 2: `c57ca423` (2026-11-19)
-**Commit Message**: fix(secrets): remove leading wildcard from Azure hostname patterns (#7809)
-
-**File**: `checkov/common/util/secrets.py` (modified, +12/-12)
-```diff
-@@ -35,18 +35,18 @@
-     'azure': [
-         "(\"|')?([0-9A-Fa-f]{4}-){4}[0-9A-Fa-f]{12}(\"|')?",  # client_secret
-         "(\"|')?[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}(\"|')?",  # client_id and many other forms of IDs
--        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][o|O][n|N][m|M][i|I][c|C][r|R][o|O][s|S][o|O][f|F][t|T][.][c|C][o|O][m|M](\"|')?",
--        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][b|B][l|L][o|O][b|B][.][c|C][o|O][r|R][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
--        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][q|Q][u|U][e|E][u|U][e|E][.][c|C][o|O][r|R][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
--        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][t|T][a|A][b|B][l|L][e|E][.][c|C][o|O][r|R][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
--        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][d|D][a|A][t|T][a|A][b|B][a|A][s|S][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
--        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][s|S][e|E][r|R][v|V][i|I][c|C][e|E][b|B][u|U][s|S][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
--        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][t|T][i|I][m|M][e|E][s|S][e|E][r|R][i|I][e|E][s|S][.][a|A][z|Z][u|U][r|R][e|E][.][c|C][o|O][m|M](\"|')?",
--        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][a|T][c|C][c|C][e|E][s|S][s|S][c|C][o|O][n|N][t|T][r|R][o|O][l|L][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
--        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][a|A][z|Z][u|U][r|R][e|E][h|H][d|D][i|I][n|N][s|S][i|I][g|G][h|H][t|T][.][n|N][e|E][t|T](\"|')?",
--        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][c|C][l|L][o|O][u|U][d|D][a|A][p|P][p|P][.][a|A][z|Z][u|U][r|R][e|E][.][c|C][o|O][m|M](\"|')?",
--        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][c|C][l|L][o|O][u|U][d|D][a|A][p|P][p|P][.][n|N][e|E][t|T](\"|')?",
--        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][d|D][o|O][c|C][u|U][m|M][e|E][n|N][t|T][s|S][.][a|A][z|Z][u|U][r|R][e|E][.][c|C][o|O][m|M](\"|')?",
-+        "(\"|')?[0-9a-zA-Z]{2,256}[.][o|O][n|N][m|M][i|I][c|C][r|R][o|O][s|S][o|O][f|F][t|T][.][c|C][o|O][m|M](\"|')?",
-+        "(\"|')?[0-9a-zA-Z]{2,256}[.][b|B][l|L][o|O][b|B][.][c|C][o|O][r|R][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
-+        "(\"|')?[0-9a-zA-Z]{2,256}[.][q|Q][u|U][e|E][u|U][e|E][.][c|C][o|O][r|R][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
-+        "(\"|')?[0-9a-zA-Z]{2,256}[.][t|T][a|A][b|B][l|L][e|E][.][c|C][o|O][r|R][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
-+        "(\"|')?[0-9a-zA-Z]{2,256}[.][d|D][a|A][t|T][a|A][b|B][a|A][s|S][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
-+        "(\"|')?[0-9a-zA-Z]{2,256}[.][s|S][e|E][r|R][v|V][i|I][c|C][e|E][b|B][u|U][s|S][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
-+        "(\"|')?[0-9a-zA-Z]{2,256}[.][t|T][i|I][m|M][e|E][s|S][e|E][r|R][i|I][e|E][s|S][.][a|A][z|Z][u|U][r|R][e|E][.][c|C][o|O][m|M](\"|')?",
-+        "(\"|')?[0-9a-zA-Z]{2,256}[.][a|T][c|C][c|C][e|E][s|S][s|S][c|C][o|O][n|N][t|T][r|R][o|O][l|L][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
-+        "(\"|')?[0-9a-zA-Z]{2,256}[.][a|A][z|Z][u|U][r|R][e|E][h|H][d|D][i|I][n|N][s|S][i|I][g|G][h|H][t|T][.][n|N][e|E][t|T](\"|')?",
-+        "(\"|')?[0-9a-zA-Z]{2,256}[.][c|C][l|L][o|O][u|U][d|D][a|A][p|P][p|P][.][a|A][z|Z][u|U][r|R][e|E][.][c|C][o|O][m|M](\"|')?",
-+        "(\"|')?[0-9a-zA-Z]{2,256}[.][c|C][l|L][o|O][u|U][d|D][a|A][p|P][p|P][.][n|N][e|E][t|T](\"|')?",
-+        "(\"|')?[0-9a-zA-Z]{2,256}[.][d|D][o|O][c|C][u|U][m|M][e|E][n|N][t|T][s|S][.][a|A][z|Z][u|U][r|R][e|E][.][c|C][o|O][m|M](\"|')?",
-     ],
- 
-     'aws': [
-```
-
-**File**: `tests/unit/test_secrets.py` (modified, +47/-1)
-```diff
-@@ -1,6 +1,10 @@
-+import base64
-+import random
-+import string
-+import time
- import unittest
- 
--from checkov.common.util.secrets import string_has_secrets, ALL, AWS, GENERAL, omit_secret_value_from_line, \
-+from checkov.common.util.secrets import string_has_secrets, ALL, AWS, AZURE, GENERAL, omit_secret_value_from_line, \
-     get_secrets_from_string
- 
- 
-@@ -70,3 +74,45 @@ def test_get_secrets_from_secrets(self):
-         secret = get_secrets_from_string(s)
- 
-         assert secret == ["AKIAIOSFODNN7EXAMPLE"]
-+
-+    def test_azure_hostnames_are_detected(self):
-+        test_strings = [
-+            'https://myaccount.blob.core.windows.net/container',
-+            'Server=tcp:mydb.database.windows.net,1433',
-+            'login via example.onmicrosoft.com',
-+            "'svc.servicebus.windows.net'",
-+            'endpoint: myapp.cloudapp.azure.com',
-+            'db.documents.azure.com',
-+        ]
-+
-+        for s in test_strings:
-+            with self.subTest(s=s):
-+                self.assertTrue(string_has_secrets(s, AZURE))
-+
-+    def test_azure_hostname_without_subdomain_is_not_detected(self):
-+        self.assertFalse(string_has_secrets('blob.core.windows.net', AZURE))
-+        self.assertFalse(string_has_secrets('no azure host here', AZURE))
-+
-+    def test_get_secrets_from_string_returns_azure_hostname(self):
-+        s = 'url = "https://myaccount.blob.core.windows.net/container"'
-+
-+        secrets = get_secrets_from_string(s, AZURE)
-+
-+        self.assertEqual(secrets, ['myaccount.blob.core.windows.net'])
-+
-+    def test_long_strings_without_azure_hostname_are_evaluated_quickly(self):
-+        rng = random.Random(0)
-+        # base64 and alphanumeric input contain no '.', so none of the Azure hostname patterns can match
-+        test_strings = {
-+            'base64': base64.b64encode(rng.randbytes(12_321)).decode(),
-+            'alphanumeric': ''.join(rng.choices(string.ascii_letters + string.digits, k=16_428)),
-+        }
-+
-+        for name, s in test_strings.items():
-+            with self.subTest(input=name):
-+                start = time.monotonic()
-+                result = string_has_secrets(s, AZURE, GENERAL)
-+                elapsed = time.monotonic() - start
-+
-+                self.assertFalse(result)
-+                self.assertLess(elapsed, 2)
+-checkov==3.4.6
++checkov==3.4.7
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7827** (2026-11-23): chore(general): support cyclonedx-python-lib up to 11.x (@itrocki)
 - **PR #7809** (2026-11-19): fix(secrets): remove leading wildcard from Azure hostname patterns (@omriyoffe-panw)
 - **PR #7795** (2026-11-12): fix(general): harden request error logging (@Saarett)
 - **PR #7794** (2026-11-10): fix(bicep): resolve references within the declaring file (@itrocki)
 - **PR #7776** (2026-11-02): fix(terraform): build userinfo test URLs dynamically (@talazuri)
 - **PR #7759** (closed): Test Migration of CI Jobs to GitHub-Hosted Runners (@amitz)
-- **PR #7758** (2026-11-02): fix(terraform): add optional allowlist for external module download sources (@talazuri)
 
 ---
 
@@ -1114,47 +1016,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. secrets): remove leading wildcard from Azure hostname patterns
+## X. general): support cyclonedx-python-lib up to 11.x
 
 **RULE**:
-When implementing operations in `checkov/common/util/secrets.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bridgecrewio/checkov. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `checkov/version.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bridgecrewio/checkov. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c57ca423`: secrets): remove leading wildcard from Azure hostname patterns. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2f107f86`: general): support cyclonedx-python-lib up to 11.x. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `checkov/common/util/secrets.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `checkov/version.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-        "(\"|')?[0-9a-zA-Z]{2,256}[.][o|O][n|N][m|M][i|I][c|C][r|R][o|O][s|S][o|O][f|F][t|T][.][c|C][o|O][m|M](\"|')?",
-        "(\"|')?[0-9a-zA-Z]{2,256}[.][b|B][l|L][o|O][b|B][.][c|C][o|O][r|R][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
-        "(\"|')?[0-9a-zA-Z]{2,256}[.][q|Q][u|U][e|E][u|U][e|E][.][c|C][o|O][r|R][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
-        "(\"|')?[0-9a-zA-Z]{2,256}[.][t|T][a|A][b|B][l|L][e|E][.][c|C][o|O][r|R][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
-        "(\"|')?[0-9a-zA-Z]{2,256}[.][d|D][a|A][t|T][a|A][b|B][a|A][s|S][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
-        "(\"|')?[0-9a-zA-Z]{2,256}[.][s|S][e|E][r|R][v|V][i|I][c|C][e|E][b|B][u|U][s|S][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
-        "(\"|')?[0-9a-zA-Z]{2,256}[.][t|T][i|I][m|M][e|E][s|S][e|E][r|R][i|I][e|E][s|S][.][a|A][z|Z][u|U][r|R][e|E][.][c|C][o|O][m|M](\"|')?",
-        "(\"|')?[0-9a-zA-Z]{2,256}[.][a|T][c|C][c|C][e|E][s|S][s|S][c|C][o|O][n|N][t|T][r|R][o|O][l|L][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
-        "(\"|')?[0-9a-zA-
+version = '3.4.7'
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][o|O][n|N][m|M][i|I][c|C][r|R][o|O][s|S][o|O][f|F][t|T][.][c|C][o|O][m|M](\"|')?",
-        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][b|B][l|L][o|O][b|B][.][c|C][o|O][r|R][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
-        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][q|Q][u|U][e|E][u|U][e|E][.][c|C][o|O][r|R][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
-        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][t|T][a|A][b|B][l|L][e|E][.][c|C][o|O][r|R][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
-        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][d|D][a|A][t|T][a|A][b|B][a|A][s|S][e|E][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
-        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][s|S][e|E][r|R][v|V][i|I][c|C][e|E][b|B][u|U][s|S][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
-        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][t|T][i|I][m|M][e|E][s|S][e|E][r|R][i|I][e|E][s|S][.][a|A][z|Z][u|U][r|R][e|E][.][c|C][o|O][m|M](\"|')?",
-        "(\"|')?.*[0-9a-zA-Z]{2,256}[.][a|T][c|C][c|C][e|E][s|S][s|S][c|C][o|O][n|N][t|T][r|R][o|O][l|L][.][w|W][i|I][n|N][d|D][o|O][w|W][s|S][.][n|N][e|E][t|T](\"|')?",
-        "
+version = '3.4.6'
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c57ca423` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2f107f86` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T06:55:24.681Z",
+  "last_updated": "2026-11-24T07:07:45.981Z",
   "total_records": 2505,
   "domains": {
     "A": {
@@ -8707,8 +8707,8 @@
       "title": "Technical Construction Intelligence: bridgecrewio/checkov Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-bridgecrewio-checkov-technical-construction-intelligence-bridgecrewio-checkov-co.md",
       "repository": "bridgecrewio/checkov",
-      "content_hash": "b90ee328894c70f91c7d46cf59758610009235b925bf7bcedb6593ac874eb839",
-      "created_at": "2026-11-20T04:02:34.423Z"
+      "content_hash": "59057bf38d0b9d5849d4f4286d32b66f7d439ef4c2568e556591d2257c54d64d",
+      "created_at": "2026-11-24T07:07:39.321Z"
     },
     "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
@@ -8785,8 +8785,8 @@
       "title": "Technical Construction Intelligence: bridgecrewio-checkov-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-bridgecrewio-checkov-learnings-technical-construction-intelligence-bridgecrewio-.md",
       "repository": "bridgecrewio-checkov-learnings",
-      "content_hash": "51673fb09165e06dabf98a8d4db244ed485d29f6d64c178ac0c9b79eeb2baa3b",
-      "created_at": "2026-11-20T04:02:42.865Z"
+      "content_hash": "a1619ff267c8e4a09239e53ae28022da790d7e4b2c1230f25767272e29ceb9c3",
+      "created_at": "2026-11-24T07:07:45.981Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-27b-gsq-rco-gguf-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-27b-gsq-rco-gguf-core-invari",
@@ -19773,8 +19773,8 @@
       "title": "Architecture Intelligence: flox/flox Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-flox-flox-architecture-intelligence-flox-flox-core-invariants.md",
       "repository": "flox/flox",
-      "content_hash": "4ee00613b4b340056a2a0955a056836e8d9cff5319a4d01c870e91d665931d7a",
-      "created_at": "2026-11-21T16:18:45.433Z"
+      "content_hash": "a50252699593a624b4838a5af8ebb194a951298f26ba2d6148c54c24aced7d79",
+      "created_at": "2026-11-24T07:07:37.281Z"
     },
     "domain_intelligence-architecture-intelligence-flox-flox-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-flox-flox-learnings-core-invariants",
@@ -19782,8 +19782,8 @@
       "title": "Architecture Intelligence: flox-flox-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-flox-flox-learnings-architecture-intelligence-flox-flox-learnings-core-invariant.md",
       "repository": "flox-flox-learnings",
-      "content_hash": "97516840f4171a896469f3052db301f8ba74aec0c84e55ca84268063074cd9c3",
-      "created_at": "2026-11-21T16:19:03.805Z"
+      "content_hash": "0a233c1a81a63e72c4d4ca92a32c86f920c25db640c06cf739e9094973375c08",
+      "created_at": "2026-11-24T07:07:43.399Z"
     },
     "DOM-D-8240E8AC": {
       "record_id": "DOM-D-8240E8AC",
@@ -31424,8 +31424,8 @@
       "title": "Architecture Intelligence: mattermost/mattermost Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mattermost-mattermost-architecture-intelligence-mattermost-mattermost-core-invar.md",
       "repository": "mattermost/mattermost",
-      "content_hash": "f81134effe61ebe49164543f9e2635e78aecd35b366a92bda5eecd127d14e8b3",
-      "created_at": "2026-11-18T11:33:20.919Z"
+      "content_hash": "44609d610f1ca50f2799012d8d54fcecfc1180891d3affe73d5716800412634d",
+      "created_at": "2026-11-24T07:07:38.266Z"
     },
     "domain_intelligence-technical-construction-intelligence-eclipse-theia-theia-learnings-core-invariant": {
       "record_id": "domain_intelligence-technical-construction-intelligence-eclipse-theia-theia-learnings-core-invariant",
@@ -31451,8 +31451,8 @@
       "title": "Architecture Intelligence: mattermost-mattermost-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mattermost-mattermost-learnings-architecture-intelligence-mattermost-mattermost-.md",
       "repository": "mattermost-mattermost-learnings",
-      "content_hash": "06687b4771c3cc6777fe8929a1119cf9bc87ff68c0d079411c209c137e22bfac",
-      "created_at": "2026-11-18T11:33:27.444Z"
+      "content_hash": "34b9c1e3f21bcb655e90a650780b7eabfb2870802b2fce14a2461d0088ae7511",
+      "created_at": "2026-11-24T07:07:44.659Z"
     },
     "domain_intelligence-architecture-intelligence-nervjs-taro-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nervjs-taro-core-invariants",

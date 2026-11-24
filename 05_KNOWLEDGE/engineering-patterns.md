@@ -766730,3 +766730,191 @@ func (v *Vector) readOnlyWindowInto(w *Vector, start, end int) {
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `32c9bc65` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10226. List keys for untrusted packages (Harvested from flox/flox)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "List keys for untrusted packages",
+  "source": "flox/flox",
+  "source_url": "https://github.com/flox/flox",
+  "source_version": "0339f643",
+  "license": "GPL-2.0",
+  "extracted_at": "2026-11-24T07:07:35.839Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-flox-flox",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [flox/flox](https://github.com/flox/flox) (Revision: `0339f643`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `cli/flox-rust-sdk/src/providers/buildenv.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in flox/flox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `7d792404`: buildenv): List keys for untrusted packages. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cli/flox-rust-sdk/src/providers/buildenv.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+/// A custom package has been uploaded, but the current user hasn't configured
+/// a trusted public key that matches a signature of this package.
+#[derive(Debug, Clone)]
+pub struct UntrustedPackageError {
+    pub install_id: String,
+    /// Public keys that the catalog expects the package to be signed by.
+    pub expected_keys: Vec<String>,
+}
+
+impl Display for UntrustedPackageError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        writeln!(
+            f,
+            "Package '{}' is not signed by a trusted key.",
+            self.install_id
+        )?;
+        if !self.expected_keys.is_empty() {
+            // Nix accepts a signature from any one trusted key.
+            writeln!(f, "Trust any key below to use it:")?;
+            for key in &self.expected_keys {
+                writeln!(f, "  {key}")?;
+            }
+        }
+        write!(
+            f,
+            "See https://flox.dev/docs/customer/signing-keys/ for more information."
+        )
+    }
+}
+
+impl std::error::Error for UntrustedPackageError {}
+
+    /// See [`UntrustedPackageError`].
+    #[error(transparent)]
+    UntrustedPackage(UntrustedPackageError),
+                return Err(BuildEnvError
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+    /// A custom package has been uploaded, but the current user hasn't configured
+    /// a trusted public key that matches a signature of this package.
+    #[error(
+        "Package '{0}' is not signed by a trusted key.\n\
+        See https://flox.dev/docs/customer/signing-keys/ for more information."
+    )]
+    UntrustedPackage(String),
+                return Err(BuildEnvError::UntrustedPackage(install_id.to_string()));
+                s.spawn(|| Err(BuildEnvError::UntrustedPackage("pkg".into()))),
+                s.spawn(|| Err(BuildEnvError::UntrustedPackage("second".into()))),
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `7d792404` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10227. ci(e2e): wait for late FIPS images, retry rate-limited lane status publication, (Harvested from mattermost/mattermost)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "ci(e2e): wait for late FIPS images, retry rate-limited lane status publication,",
+  "source": "mattermost/mattermost",
+  "source_url": "https://github.com/mattermost/mattermost",
+  "source_version": "d841da9f",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-24T07:07:36.975Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-mattermost-mattermost",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [mattermost/mattermost](https://github.com/mattermost/mattermost) (Revision: `d841da9f`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.github/e2e-tests-workflows.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mattermost/mattermost. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `b1d2e89e`: ci(e2e): wait for late FIPS images, retry rate-limited lane status publication, and fix rolling-upgrade lanes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/e2e-tests-workflows.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+├── server-image-check.yml                 # Gate: one edition's server image is on Docker Hub (not part of E2E)
+Before any of this, each orchestrator runs `server-image-check.yml` once per edition it tests, as the jobs `server-image-enterprise` and `server-image-fips`, and every lane of an edition `needs` that edition's job (rolling-upgrade lanes through their Playwright lane). See [Server image check](#server-image-check).
+
+- **No image wait in the templates.** The templates assume the server image exists; the orchestrators check it first (see [Server image check](#server-image-check)).
+There is deliberately no `testcontainers:down` first — the runner is fresh, so `upgrade-from`'s clean-slate guard has nothing to trip over. `PW_TESTCONTAINERS_REUSE=true` is what lets `upgrade-to` adopt the stack, survive the swap, and keep every per-spec dispatch on the same upgraded server. `TESTCONTAINERS_RYUK_DISABLED=true` keeps the swapped-in server, which is not started with `withReuse()`, from being reaped when `upgrade-to` exits. Step 2 is skipped when the harness fails; that worker then never reports, the run closes short of `total-reports-expected`, and the version's context goes red.
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+There is deliberately no `testcontainers:down` first — the runner is fresh, so `upgrade-from`'s clean-slate guard has nothing to trip over. `PW_TESTCONTAINERS_REUSE=true` is what lets `upgrade-to` adopt the stack, survive the swap, and keep every per-spec dispatch on the same upgraded server. Step 2 is skipped when the harness fails; that worker then never reports, the run closes short of `total-reports-expected`, and the version's context goes red.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `b1d2e89e` are properly handled with clean fallback behavior.

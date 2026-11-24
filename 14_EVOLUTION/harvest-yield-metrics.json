@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T06:55:18.857Z",
-  "total_cycles_completed": 11999,
-  "total_learnings_persisted": 11999,
-  "total_rules_promoted": 11077,
+  "last_updated": "2026-11-24T07:07:38.701Z",
+  "total_cycles_completed": 12002,
+  "total_learnings_persisted": 12002,
+  "total_rules_promoted": 11080,
   "history": [
-    {
-      "timestamp": "2026-11-23T17:54:15.207Z",
-      "repository": "trinodb/trino",
-      "learningId": "learn-github-trinodb-trino",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T18:03:08.566Z",
-      "repository": "autotrust/GEV-26B-Decide",
-      "learningId": "learn-huggingface-autotrust-gev-26b-decide",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T18:03:23.982Z",
-      "repository": "apache/zookeeper",
-      "learningId": "learn-github-apache-zookeeper",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T18:15:55.627Z",
       "repository": "google/embeddinggemma-2",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-24T06:55:18.857Z",
       "repository": "matrixorigin/matrixone",
       "learningId": "learn-github-matrixorigin-matrixone",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T07:07:36.646Z",
+      "repository": "flox/flox",
+      "learningId": "learn-github-flox-flox",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T07:07:37.661Z",
+      "repository": "mattermost/mattermost",
+      "learningId": "learn-github-mattermost-mattermost",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T07:07:38.701Z",
+      "repository": "bridgecrewio/checkov",
+      "learningId": "learn-github-bridgecrewio-checkov",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

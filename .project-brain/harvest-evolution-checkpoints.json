@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T06:55:25.006Z",
+  "last_updated": "2026-11-24T07:07:46.608Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-24T04:37:07.379Z",
@@ -468,7 +468,7 @@
       "staged_for_review": 1
     },
     "flox-flox-learnings.md": {
-      "processed_at": "2026-11-21T16:19:03.072Z",
+      "processed_at": "2026-11-24T07:07:42.654Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1073,7 +1073,7 @@
       "staged_for_review": 1
     },
     "bridgecrewio-checkov-learnings.md": {
-      "processed_at": "2026-11-23T13:07:03.917Z",
+      "processed_at": "2026-11-24T07:07:45.117Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2093,7 +2093,7 @@
       "staged_for_review": 1
     },
     "mattermost-mattermost-learnings.md": {
-      "processed_at": "2026-11-21T12:48:56.558Z",
+      "processed_at": "2026-11-24T07:07:43.853Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3808,7 +3808,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3690,
+  "total_dossiers_evaluated": 3693,
   "total_canonical_promoted": 502,
-  "total_staged_for_review": 2779
+  "total_staged_for_review": 2782
 }

@@ -2333,10 +2333,10 @@
     "repository": "mattermost/mattermost",
     "platform": "github",
     "sourceUrl": "https://github.com/mattermost/mattermost",
-    "sourceVersion": "2d6c2852",
+    "sourceVersion": "d841da9f",
     "license": "NOASSERTION",
-    "contentHash": "0af3b89c358e9d88d8bd8b1920894604ae2709a3521c275a980b0d27af4427d7",
-    "lastHarvestedAt": "2026-11-21T12:48:47.663Z",
+    "contentHash": "9cc3c6b723ad65df83110eeb08d65a761c820c127342c3f9901efedcdee7cc77",
+    "lastHarvestedAt": "2026-11-24T07:07:37.654Z",
     "learningId": "learn-github-mattermost-mattermost"
   },
   "chaos-mesh-chaos-mesh": {
@@ -3253,10 +3253,10 @@
     "repository": "flox/flox",
     "platform": "github",
     "sourceUrl": "https://github.com/flox/flox",
-    "sourceVersion": "2130d6d7",
+    "sourceVersion": "0339f643",
     "license": "GPL-2.0",
-    "contentHash": "c94233deb0f9b99515fb06ee03343fc2f1c227abf5b02b0879ac483fc1669bad",
-    "lastHarvestedAt": "2026-11-21T16:18:44.991Z",
+    "contentHash": "baa6a96aa9944a0a00bec8a343981699b3fdf2eb54340ff571c4ceba80125fc1",
+    "lastHarvestedAt": "2026-11-24T07:07:36.635Z",
     "learningId": "learn-github-flox-flox"
   },
   "wix-react-native-navigation": {
@@ -5113,10 +5113,10 @@
     "repository": "bridgecrewio/checkov",
     "platform": "github",
     "sourceUrl": "https://github.com/bridgecrewio/checkov",
-    "sourceVersion": "7da6ab8d",
+    "sourceVersion": "2f107f86",
     "license": "Apache-2.0",
-    "contentHash": "6ba557375b0824ce42b2d5ef18d5cc919ae2afa0fbcaf2d06e513d7d4e9bfe18",
-    "lastHarvestedAt": "2026-11-23T13:06:55.266Z",
+    "contentHash": "7e85c9e34e49bd111c31b3cea7d30c3a5f3730a2fce4d4c5d4a8ba8b74afeb6e",
+    "lastHarvestedAt": "2026-11-24T07:07:38.693Z",
     "learningId": "learn-github-bridgecrewio-checkov"
   },
   "apache-zookeeper": {

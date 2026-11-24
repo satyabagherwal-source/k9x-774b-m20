@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-83WF",
-    "timestamp": "2026-11-22T14:17:17.247Z",
-    "repository": "codewhale-hq/Codewhale",
-    "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "fc3e2e777f9d8a0aac84d8f2df3d0c0d8d9fad2421a3fdae906164e2e1253424",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-8BTR",
-    "timestamp": "2026-11-22T14:17:27.519Z",
-    "repository": "MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored",
-    "learningId": "learn-huggingface-moonmath-ai-deepseek-v4-1-flash-1017-uncensored",
-    "contentHash": "066950ea53d8f62cddaa0059d4b4132bb13587485674501ed8faf5c30f6d0731",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-23YC",
-    "timestamp": "2026-11-22T14:40:36.996Z",
-    "repository": "biomejs/biome",
-    "learningId": "learn-github-biomejs-biome",
-    "contentHash": "0545489c9bc43bb69450e5de623503221afbe9baa0fe86ec3dbd9eace7248083",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-2ALF",
     "timestamp": "2026-11-22T14:40:45.603Z",
     "repository": "rustls/rustls",
@@ -7490,6 +7445,51 @@
     "repository": "matrixorigin/matrixone",
     "learningId": "learn-github-matrixorigin-matrixone",
     "contentHash": "ba4faf96015e632c3b360ed1c8c07370317a1b47e0cf1707abefba3f0e16fa82",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-R8S4",
+    "timestamp": "2026-11-24T07:07:36.628Z",
+    "repository": "flox/flox",
+    "learningId": "learn-github-flox-flox",
+    "contentHash": "baa6a96aa9944a0a00bec8a343981699b3fdf2eb54340ff571c4ceba80125fc1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-R9KH",
+    "timestamp": "2026-11-24T07:07:37.649Z",
+    "repository": "mattermost/mattermost",
+    "learningId": "learn-github-mattermost-mattermost",
+    "contentHash": "9cc3c6b723ad65df83110eeb08d65a761c820c127342c3f9901efedcdee7cc77",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-RADC",
+    "timestamp": "2026-11-24T07:07:38.688Z",
+    "repository": "bridgecrewio/checkov",
+    "learningId": "learn-github-bridgecrewio-checkov",
+    "contentHash": "7e85c9e34e49bd111c31b3cea7d30c3a5f3730a2fce4d4c5d4a8ba8b74afeb6e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

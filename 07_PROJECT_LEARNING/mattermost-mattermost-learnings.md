@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mattermost-mattermost-learnings.md`  
 > **Source**: github ([https://github.com/mattermost/mattermost](https://github.com/mattermost/mattermost))  
-> **Source Version**: `2d6c2852`  
+> **Source Version**: `d841da9f`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T12:48:46.644Z  
+> **Timestamp**: 2026-11-24T07:07:36.119Z  
 > **Learning ID**: `learn-github-mattermost-mattermost`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mattermost-mattermost-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mattermost/mattermost](https://github.com/mattermost/mattermost))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T12:48:46.638Z  
+> **Harvest Timestamp**: 2026-11-24T07:07:36.107Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Mattermost is an open source platform for secure collaboration across the entire software development lifecycle..
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 39683 stars
+- **Stars / Engagement**: 39692 stars
 
 ---
 
@@ -1874,1874 +1874,1416 @@ func (w *searchEngineWatcher) startIfInactive(ctx context.Context, timer *time.T
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8381b545` (2026-11-20)
-**Commit Message**: Product rail: pin and reorder items, Threads back in Channels, and Boards, badge and team sidebar fixes (#40251)
+### Incident Patch 1: `b1d2e89e` (2026-11-24)
+**Commit Message**: ci(e2e): wait for late FIPS images, retry rate-limited lane status publication, and fix rolling-upgrade lanes (#40106)
 
-* Let product rail items be hidden into a More menu, and open Boards from other products
+* ci(e2e): wait for the FIPS server image before a FIPS lane begins
 
-Clicking Boards on a product page (Agents, Playbooks) or in Threads did
-nothing when the team had no board to open: with no board, the item
-linked to the current page. It now opens the channel Channels would,
-with the sidebar on Boards so it can say there are none.
+The FIPS image has been pushed 17-22 minutes after master runs were
+dispatched (runs 43006851359, 43198912218, 43859891059), and never for
+two others (43044160576, 43820461799). Every worker then failed its own
+pull. dispatch-begin now polls Docker Hub for the manifest for up to 30
+minutes first: a late image is waited for, a missing one fails the lane
+once with a clear error. An unreachable registry warns and passes.
 
-Boards and products can be hidden from the rail by right-clicking them.
-Hidden ones are listed in a More menu at the end of the rail; one opened
-from there shows in the rail while it's open, and Always show in its
-right-click menu puts it back for good. Which items are hidden is saved
-as a user preference.
+* ci(e2e): retry a lane's status publication once when the GitHub API fails
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Run 44045317610 passed every test but its four lane-result jobs failed:
+the first statuses read hit the repository's GITHUB_TOKEN quota ("API
+rate limit exceeded for installation") and left 7b6b9c163 pending.
 
-* Open the first board once boards load when Boards is clicked from another product
+A failed ci/publish-result now waits for the quota to reset (read from
+the free GET /rate_limit, capped at 15 minutes; otherwise 60 s) and
+publishes once more with the same inputs. Publishing again is safe: a
+run may rewrite the status it owns. The retry's outcome decides the job,
+so a publication th
 
-A product page loaded directly doesn't have the team's boards yet, so
-Boards fell back to the last channel even when the team had boards.
-After landing there with the Boards sidebar, the rail now opens the first
-board as soon as the boards are known.
-
-Co-Authored-By: Claude Opus 5.5
-
-**File**: `webapp/channels/src/actions/views/product_rail.test.ts` (added, +149/-0)
+**File**: `.github/e2e-tests-workflows.md` (modified, +43/-1)
 ```diff
-@@ -0,0 +1,149 @@
-+// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
-+// See LICENSE.txt for license information.
+@@ -19,6 +19,7 @@ All pipelines follow the **smoke-then-full** pattern: smoke tests run first, ful
+ ├── e2e-tests-ci.yml                       # PR orchestrator
+ ├── e2e-tests-on-merge.yml                 # Merge orchestrator (master/release branches)
+ ├── e2e-tests-on-release.yml               # Release cut orchestrator
++├── server-image-check.yml                 # Gate: one edition's server image is on Docker Hub (not part of E2E)
+ ├── e2e-tests-cypress.yml                  # Shared wrapper: calls the cypress template
+ ├── e2e-tests-playwright.yml               # Shared wrapper: calls the playwright template
+ ├── e2e-tests-playwright-rolling-upgrades.yml           # resolves the from-version matrix, calls the template per version
+@@ -41,6 +42,8 @@ e2e-tests-on-release.yml ─────────┘    e2e-tests-playwright.
+ 
+ `e2e-tests-playwright-rolling-upgrades.yml` is also directly runnable from the Actions UI, so it has no caller in that case.
+ 
++Before any of this, each orchestrator runs `server-image-check.yml` once per edition it tests, as the jobs `server-image-enterprise` and `server-image-fips`, and every lane of an edition `needs` that edition's job (rolling-upgrade lanes through their Playwright lane). See [Server image check](#server-image-check).
 +
-+import {PreferenceTypes} from 'mattermost-redux/action_types';
-+import {Client4} from 'mattermost-redux/client';
-+
-+import configureStore from 'store';
-+
-+import {saveRailListPreference} from './product_rail';
-+
-+const HIDDEN_KEY = 'sidebar_settings--product_rail_hidden_items';
-+
-+// A save the test settles by hand.
-+type PendingSave = {value: string; resolve: () => void; reject: () => void};
-+
-+describe('saveRailListPreference', () => {
-+    let saves: PendingSave[];
-+
-+    beforeEach(() => {
-+        saves = [];
-+        jest.spyOn(Client4, 'savePreferences').mockImplementation((_userId, preferences) => new Promise((resolve, reject) => {
-+            saves.push({
-+                value: preferences[0].value!,
-+                resolve: () => resolve({status: 'OK'}),
-+                reject: () => reject(new Error('save failed')),
-+            });
-+        }));
-+    });
-+
-+    // Lets queued promise callbacks run.
-+    const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
-+
-+    // Saves are queued across the module, so settle any a test left open before the next one.
-+    afterEach(async () => {
-+        for (let i = 0; i < saves.length; i++) {
-+            saves[i].resolve();
-+            // eslint-disable-next-line no-await-in-loop
-+            await flush();
-+        }
-+        jest.restoreAllMocks();
-+    });
-+
-+    function setUp(initialValue?: string) {
-+        const store = configureStore();
-+        if (initialValue !== undefined) {
-+            store.dispatch({type: PreferenceTypes.RECEIVED_PREFERENCES, data: [{category: 'sidebar_settings', name: 'product_rail_hidden_items', user_id: '', value: initialValue}]});
-+        }
-+        const savedValue = () => store.getState().entities.preferences.myPreferences[HIDDEN_KEY]?.value;
-+        const save = (value: string) => store.dispatch(saveRailListPreference('product_rail_hidden_items', value));
-+        return {savedValue, save};
-+    }
-+
-+    test('should show the new list straight away', async () => {
-+        const {savedValue, save} = setUp('[]');
-+
-+        await save('["boards"]');
-+
-+        expect(savedValue()).toBe('["boards"]');
-+    });
-+
-+    test('should send saves one after another, in the order they were made', async () => {
-+        const {save} = setUp('[]');
-+
-+        await save('["boards"]');
-+        await save('["boards","playbooks"]');
-+        await flush();
-+
-+        // The second waits for the first to settle.
-+        expect(saves.map((s) => s.value)).toEqual(['["boards"]']);
-+
-+        saves[0].resolve();
-+        await flush();
-+
-+        expect(saves.map((s) => s.value)).toEqual(['["boards"]', '["boards","playbooks"]']);
-+    });
-+
-+    test('should put back the last list the server accepted when a save fails', async () => {
-+        const {savedValue, save} = setUp('["boards"]');
-+
-+        await save('["boards","playbooks"]');
-+        await flush();
-+        saves[0].reject();
-+        await flush();
-+
-+        expect(savedValue()).toBe('["boards"]');
-+    });
-+
-+    test('should not undo a newer change when an earlier save fails', async () => {
-+        const {savedValue, save} = setUp('[]');
-+
-+        await save('["boards"]');
-+        await save('["boards","playbooks"]');
-+        await flush();
-+        saves[0].reject();
-+        await flush();
-+
-+        expect(savedValue()).toBe('["boards","playbooks"]');
-+
-+        // The newer save then goes through as usual.
-+        saves[1].resolve();
-+        await flush();
-+        expect(savedValue()).toBe('["boards","playbooks"]');
-+    });
-+
-+    test('should not undo a newer change that returned to the same list when an earlier save fails', async () => {
-+        const {savedValue, save} = setUp('[]');
-+
-+        // Unpin, pin again and unpin again: the newest list matches the first.
-+        await save('["mattermost-ai"]');
-+        await save('[]');
-+        await save('["mattermost-ai"]');
-+        await flush();
-+        saves[0].reject();
-+        await flush();
-+
-+        expect(savedValue()).toBe('["mattermost-ai"]');
-+
-+        saves[1].resolve();
-+        await flush();
-+        saves[2].resolve();
-+        await flush();
-+        expect(savedValue()).toBe('["mattermost-ai"]');
-+    });
-+
-+    test('should fall back to the last accepted list when the newest of several saves fails', async () => {
-+        const {savedValue, save} = setUp('[]');
-+
-+        await save('["boards"]');
-+        await save('["boards","playbooks"]');
-+        await flush();
-+        saves[0].resolve();
-+        await flush();
-+        saves[1].reject();
-+        await flush();
-+
-+        expect(savedValue()).toBe('["boards"]');
-+    });
-+
-+    test('should remove a preference it created when that first save fails', async () => {
-+        const {savedValue, save} = setUp();
-+
-+        await save('["boards"]');
-+        await flush()
+ ---
+ 
+ ## Workflow Architecture
+@@ -121,6 +124,7 @@ The template splits into five jobs — `prepare-run`, `prep-deps`, `dispatch-beg
+ - **Spec-level vs. job-level parallelism.** The matrix sizes the runner pool; Test System IO does the spec assignment. Slow specs don't block a worker — fast workers keep pulling the next spec from the queue.
+ - **Cache-only workers.** `prep-deps` installs once per workflow run and saves to `actions/cache`. Every worker restores with `fail-on-cache-miss: true` and runs zero `npm ci`. Eliminates the 40-way `EEXIST/ENOENT` race in npm's shared cacache writer.
+ - **dispatch-begin runs late.** It depends on `prep-deps` so the gap between Test System IO run registration and the first worker calling `dispatch-run` is just per-worker setup (~3–5 min). Registering earlier risks the run timing out before any worker checks in, bulk-failing every spec.
++- **No image wait in the templates.** The templates assume the server image exists; the orchestrators check it first (see [Server image check](#server-image-check)).
+ - **Playwright slim slice.** Playwright only consumes `@mattermost/client` and `@mattermost/types` from webapp, so prep-deps caches just those two packages' built `lib/` and `node_modules` (~10–30 MB) instead of the full `webapp/node_modules` tree (~1–2 GB).
+ - **Browser/binary caches.** Cypress caches `~/.cache/Cypress` (cypress binary lives outside node_modules); playwright caches `~/.cache/ms-playwright` (chromium only). Both keyed on the framework's lockfile so they invalidate on version bumps.
+ - **No retry plumbing in the template.** Test System IO handles per-spec retries; the workflow only sees aggregated results.
+@@ -143,7 +147,7 @@ So the upgraded server does not stop at the harness — it goes on to run the no
+ 
+ Each worker upgrades its own server (a server cannot be shared across runners), so the harness runs `workers` times per from-version and the pipeline costs `matrix size × workers` runners. `workers` defaults to 20, matching the full suite, and is an input; workers get 60m (vs the full suite's 30m) to cover the harness's two image pulls and swap on top of their share of the suite.
+ 
+-There is deliberately no `testcontainers:down` first — the runner is fresh, so `upgrade-from`'s clean-slate guard has nothing to trip over. `PW_TESTCONTAINERS_REUSE=true` is what lets `upgrade-to` adopt the stack, survive the swap, and keep every per-spec dispatch on the same upgraded server. Step 2 is skipped when the harness fails; that worker then never reports, the run closes short of `total-reports-expected`, and the version's context goes red.
++There is deliberately no `testcontainers:down` first — the runner is fresh, so `upgrade-from`'s clean-slate guard has nothing to trip over. `PW_TESTCONTAINERS_REUSE=true` is what lets `upgrade-to` adopt the stack, survive the swap, and keep every per-spec dispatch on the same upgraded server. `TESTCONTAINERS_RYUK_DISABLED=true` keeps the swapped-in server, which is not started with `withReuse()`, from being reaped when `upgrade-to` exits. Step 2 is skipped when the harness fails; that worker then never reports, the run closes short of `total-reports-expected`, and the version's context goes red.
+ 
+ **Commit status description** — written by the Test System IO summary, same shape as the full suite (`image_tag:` is the target/to image). The from-version needs no description field of its own: it is already in the context name, one context per version.
+ 
+@@ -347,6 +351,26 @@ Where `<phase>` is `cypress-smoke`, `cypress-full`, `playwright-smoke`, or `play
+ 2. **Full test fails**: Full commit status shows failure with pass rate
+ 3. **Both pass**: Both smoke and full commit statuses show succes
 ```
 
-**File**: `webapp/channels/src/actions/views/product_rail.ts` (modified, +88/-0)
+**File**: `.github/scripts/test_e2e_status_workflows.py` (modified, +404/-12)
 ```diff
-@@ -1,8 +1,15 @@
- // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
- // See LICENSE.txt for license information.
+@@ -148,10 +148,6 @@ def test_cancellation_preserves_diagnostics_without_status_publication(self):
+             report = jobs['report']
+             self.assertEqual(report['if'], 'always()')
+             self.assertEqual(step(report, 'ci/run-summary')['if'], 'always()')
+-            caller = jobs['lane-result']['if']
+-            self.assertIn('!cancelled()', caller)
+-            self.assertIn("needs.workers.result != 'cancelled'", caller)
+-            self.assertIn("needs.dispatch-begin.result != 'cancelled'", caller)
+             uploads = [s for s in jobs['workers']['steps'] if 'actions/upload-artifact@' in s.get('uses', '')]
+             self.assertTrue(uploads)
+             self.assertTrue(all(s['if'] == 'always()' for s in uploads))
+@@ -161,6 +157,17 @@ def test_cancellation_preserves_diagnostics_without_status_publication(self):
+                 self.assertIn('!cancelled()', condition)
+                 self.assertNotIn('always()', condition)
  
-+import type {PreferenceType} from '@mattermost/types/preferences';
++    def test_a_worker_its_time_limit_cancels_still_gets_a_lane_result(self):
++        """A worker or dispatch its time limit cancels still gets a lane result; a cancelled run does not."""
++        # A job past its timeout ends "cancelled" without cancelling the run. Skipping lane-result on that left the
++        # lane and e2e-test/triage pending, with no marker for e2e-tests-rerun.yml (runs 42240760729, 44122660650).
++        for suite in ('cypress', 'playwright', 'playwright-rolling-upgrades'):
++            with self.subTest(suite=suite):
++                condition = workflow(f'{suite}-template')['jobs']['lane-result']['if']
++                self.assertEqual(condition, '${{ !cancelled() }}')
++                self.assertNotIn('needs.workers.result', condition)
++                self.assertNotIn('needs.dispatch-begin.result', condition)
 +
-+import {PreferenceTypes} from 'mattermost-redux/action_types';
- import {savePreferences} from 'mattermost-redux/actions/preferences';
-+import {Client4} from 'mattermost-redux/client';
- import {getCurrentUserId} from 'mattermost-redux/selectors/entities/users';
-+import {getPreferenceKey} from 'mattermost-redux/utils/preference_utils';
-+
-+import {getProductRailHiddenItems} from 'selectors/views/product_rail';
+     def test_lane_result_is_called_last_with_explicit_inputs_and_least_privilege(self):
+         """The lane result is called last, with explicit inputs and least privilege."""
+         for suite in ('cypress', 'playwright'):
+@@ -325,8 +332,7 @@ def test_upgrade_lanes_publish_through_the_lane_result(self):
+         self.assertEqual(caller['uses'], f'./.github/workflows/{LANE_RESULT}.yml')
+         self.assertEqual(caller['needs'], ['prepare-run', 'dispatch-begin', 'workers', 'report'])
+         self.assertEqual(caller['permissions'], PERMISSIONS)
+-        self.assertIn('!cancelled()', caller['if'])
+-        self.assertIn("needs.workers.result != 'cancelled'", caller['if'])
++        self.assertEqual(caller['if'], '${{ !cancelled() }}')
+         # No model key: upgrade lanes are triaged by rules only, as before.
+         self.assertEqual(set(caller['secrets']), {'REPORT_WEBHOOK_URL'})
+         self.assertEqual(caller['with']['execution_success'], "${{ needs.prepare-run.result == 'success' && needs.dispatch-begin.result == 'success' && needs.workers.result == 'success' }}")
+@@ -340,15 +346,397 @@ def test_lane_result_holds_the_lock_for_a_bounded_time(self):
  
- import {ActionTypes, Preferences} from 'utils/constants';
+     def test_a_slow_worker_fails_before_its_job_is_cancelled(self):
+         """A slow worker fails before its job is cancelled."""
+-        # A cancelled worker skips lane-result, so triage never runs and its check stays waiting.
++        # A step timeout fails the worker with its log and debug artifacts; a job timeout cancels it with neither.
+         for name in ('cypress-template', 'playwright-template'):
+             with self.subTest(workflow=name):
+                 workers = workflow(name)['jobs']['workers']
+                 self.assertLess(step(workers, 'ci/dispatch-run')['timeout-minutes'], workers['timeout-minutes'] - 5)
  
-@@ -58,3 +65,84 @@ export function setBoardsShownInChannels(shown: boolean): ActionFuncAsync {
-         }]));
-     };
- }
+ 
+-def build_context(suite, edition, deploy, report_type):
+-    """Runs the lane's own build step, so the context is the one the workflow would publish."""
++class TestcontainersWorkers(unittest.TestCase):
++    """Testcontainers settings that keep a worker's server alive across its separate Playwright processes."""
++    def test_ryuk_is_disabled_wherever_workers_reuse_the_stack(self):
++        """Ryuk would reap a server the next process needs; the upgrade swap's server is not even withReuse()."""
++        for name in ('playwright-template', 'playwright-rolling-upgrades-template'):
++            with self.subTest(workflow=name):
++                env = workflow(name)['jobs']['workers']['env']
++                self.assertEqual(env['PW_TESTCONTAINERS_REUSE'], 'true')
++                self.assertEqual(env['TESTCONTAINERS_RYUK_DISABLED'], 'true')
 +
-+// Unpins a rail item into the rail's More menu, or pins it back on the rail. Aliases are other
-+// names the preference may hold for the item: a product's bare plugin id, which earlier builds
-+// saved and which also names the plugin's other products (aliasPeers). An alias is replaced by
-+// those peers' own ids, so they keep their state.
-+export function setProductRailItemHidden(itemId: string, hidden: boolean, aliases: string[] = [], aliasPeers: string[] = []): ActionFuncAsync {
-+    return (dispatch, getState) => {
-+        const current = getProductRailHiddenItems(getState());
-+        const peersHiddenByAlias = aliases.some((alias) => current.includes(alias)) ? aliasPeers.filter((id) => !current.includes(id)) : [];
-+        const others = [...current, ...peersHiddenByAlias].filter((id) => id !== itemId && !aliases.includes(id));
-+        return dispatch(saveRailListPreference(Preferences.PRODUCT_RAIL_HIDDEN_ITEMS, JSON.stringify(hidden ? [...others, itemId] : others)));
-+    };
-+}
 +
-+// Saves the order the user has put the rail items in.
-+export function setProductRailOrder(order: string[]): ActionFuncAsync {
-+    return (dispatch) => dispatch(saveRailListPreference(Preferences.PRODUCT_RAIL_ORDER, JSON.stringify(order)));
-+}
++def fake_bin(tmp, **scripts):
++    """A PATH directory holding the given fake commands, for running a step's script offline."""
++    bin_dir = pathlib.Path(tmp) / 'bin'
++    bin_dir.mkdir()
++    for name, body in scripts.items():
++        path = bin_dir / name
++        path.write_text('#!/usr/bin/env bash\n' + body)
++        path.chmod(0o755)
++    return f"{bin_dir}{os.pathsep}{os.environ['PATH']}"
 +
-+// Each rail list preference's save in flight, and the value the server last accepted (undefined
-+// for none saved), from before the first save still in flight.
-+const pendingSaves = new Map<string, Promise<void>>();
-+const acceptedValues = new Map<string, PreferenceType | undefined>();
 +
-+// Each rail list preference's most recent save, by a number that goes up with every save made.
-+let lastSaveNumber = 0;
-+const latestSaves = new Map<string, number>();
-+
-+/**
-+ * Saves one of the rail's list preferences (the unpinned items, or the order). Each save holds the
-+ * whole list, built on the one before, so unlike savePreferences:
-+ * - saves go to the server one after another, so an older list can't land after a newer one; and
-+ * - a failed save puts back the last list the server accepted, rather than deleting the
-+ *   preference (which would pin, or reorder, everything), unless a newer save has been made since
-+ *   (even one back to the same list) or the list has changed otherwise, which then stands.
-+ */
-+export function saveRailListPreference(name: string, value: string): ActionFuncAsync {
-+    return async (dispatch, getState) => {
-+        const state = getState();
-+        const userId = getCurrentUserId(state);
-+        const category = Preferences.CATEGORY_SIDEBAR_SETTINGS;
-+        const key = getPreferenceKey(category, name);
-+        const preference: PreferenceType = {category, name, user_id: userId, value};
-+        const saveNumber = ++lastSaveNumber;
-+        latestSaves.set(name, saveNumber);
-+
-+        if (!pendingSaves.has(name)) {
-+            acceptedValues.set(name, state.entities.preferences.myPreferences[key]);
-+        }
-+
-+        // The list shows straight away; the server catches up.
-+        dispatch({type: PreferenceTypes.RECEIVED_PREFERENCES, data: [preference]});
-+
-+        const previousSave = pendingSaves.get(name) ?? Promise.resolve();
-+        const save = previousSave.then(async () => {
-+            try {
-+                await Client4.savePreferences(userId, [preference]);
-+                acceptedValues.set(name, preference);
-+            } catch {
-+                const isLatestSave = latestSaves.get(name) === saveNumber;
-+                if (!isLatestSave || getState().entities.preferences.myPreferences[key]?.value !== value) {
-+                    return;
-+                }
-+                const accepted = acceptedValues.get(name);
-+                if (accepted) {
-+                    dispatch({type: PreferenceTypes.RECEIVED_PREFERENCES, data: [accepted]});
-+                } else {
-+                    dispatch({type: PreferenceTypes.DELETED_PREFERENCES, data: [preference]});
-+                }
-+            }
-+        });
-+        pendingSaves.set(name, save);
-+        save.then(() => {
-+            if (pendingSaves.get(name) === save) {
-+                pendingSaves.delete(name);
-+            }
-+        });
-+
-+        return {data: true};
-+    };
++class InfrastructureRetries(unittest.TestCase):
++    """Waits and retries around infrastructure steps
 ```
 
-**File**: `webapp/channels/src/components/channel_layout/channel_controller.test.tsx` (modified, +2/-2)
+**File**: `.github/workflows/e2e-tests-check.yml` (modified, +1/-0)
 ```diff
-@@ -108,10 +108,10 @@ describe('ChannelController with the product rail', () => {
-         );
-     }
+@@ -8,6 +8,7 @@ on:
+       - "webapp/platform/eslint-plugin/**"
+       - "webapp/platform/types/**"
+       - ".github/workflows/e2e-*.yml"
++      - ".github/workflows/server-image-check.yml"
  
--    it('hides the channel sidebar in Threads', () => {
-+    it('shows the channel sidebar in Threads', () => {
-         renderAt('/team-one/threads', true);
- 
--        expect(screen.queryByTestId('sidebar')).not.toBeInTheDocument();
-+        expect(screen.getByTestId('sidebar')).toBeInTheDocument();
-     });
- 
-     it('shows the channel sidebar in a channel', () => {
+ permissions:
+   actions: write
 ```
 
-**File**: `webapp/channels/src/components/channel_layout/channel_controller.tsx` (modified, +1/-10)
+**File**: `.github/workflows/e2e-tests-ci.yml` (modified, +38/-1)
 ```diff
-@@ -4,11 +4,9 @@
- import classNames from 'classnames';
- import React, {lazy, useEffect} from 'react';
- import {useDispatch, useSelector} from 'react-redux';
--import {useRouteMatch} from 'react-router-dom';
+@@ -199,7 +199,7 @@ jobs:
+               SHOULD_RUN="true"
+             fi
  
- import {cleanUpStatusAndProfileFetchingPoll} from 'mattermost-redux/actions/status_profile_polling';
- import {getIsUserStatusesConfigEnabled} from 'mattermost-redux/selectors/entities/common';
--import {isProductRailEnabled} from 'mattermost-redux/selectors/entities/general';
+-            if echo "$CHANGED_FILES" | grep -qE '^\.github/workflows/e2e-.*\.yml$'; then
++            if echo "$CHANGED_FILES" | grep -qE '^\.github/workflows/(e2e-.*|server-image-check)\.yml$'; then
+               echo "Found E2E CI workflow file changes"
+               SHOULD_RUN="true"
+             fi
+@@ -267,10 +267,43 @@ jobs:
+           echo "should_run_subpath=${SHOULD_RUN_SUBPATH}" >> $GITHUB_OUTPUT
+           echo "Should run subpath E2E tests: ${SHOULD_RUN_SUBPATH}"
  
- import {addVisibleUsersInCurrentChannelAndSelfToStatusPoll} from 'actions/status_actions';
- import {getIsMobileView} from 'selectors/views/browser';
-@@ -25,7 +23,6 @@ import UnreadsStatusHandler from 'components/unreads_status_handler';
- 
- import Pluggable from 'plugins/pluggable';
- import {Constants} from 'utils/constants';
--import {TEAM_NAME_PATH_PATTERN} from 'utils/path';
- 
- const ProductNoticesModal = makeAsyncComponent('ProductNoticesModal', lazy(() => import('components/product_notices_modal')));
- const ResetStatusModal = makeAsyncComponent('ResetStatusModal', lazy(() => import('components/reset_status_modal')));
-@@ -44,12 +41,6 @@ export default function ChannelController(props: Props) {
-     const enableMarkAllReadShortcut = useGetFeatureFlagValue('EnableShiftEscapeToMarkAllRead') === 'true';
-     const dispatch = useDispatch();
- 
--    // The product rail gives Threads a place of its own, so the channel sidebar steps aside for it.
--    // Not on mobile, where the rail is hidden and the sidebar is the way back to channels.
--    const productRailEnabled = useSelector(isProductRailEnabled);
--    const inThreads = useRouteMatch(`/:team(${TEAM_NAME_PATH_PATTERN})/threads`) !== null;
--    const hideSidebar = productRailEnabled && inThreads && !isMobileView;
--
-     useEffect(() => {
-         const {navigator} = window;
-         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-@@ -85,7 +76,7 @@ export default function ChannelController(props: Props) {
-         <>
-             <CRTPostsChannelResetWatcher/>
-             <QueryParamActionController/>
--            {!hideSidebar && <Sidebar/>}
-+            <Sidebar/>
-             <div
-                 id='channel_view'
-                 className='channel-view'
++  # Each edition's lanes start only once its server image is on Docker Hub (server-image-check.yml).
++  # Skip-only PRs still run the enterprise lanes to post their skip status, so the check passes at
++  # once unless a lane will boot a server: the full suites, rolling upgrades or subpath.
++  server-image-enterprise:
++    needs:
++      - resolve-pr
++      - check-changes
++    if: needs.resolve-pr.outputs.PR_NUMBER != ''
++    permissions:
++      statuses: write
++    uses: ./.github/workflows/server-image-check.yml
++    with:
++      commit_sha: "${{ needs.resolve-pr.outputs.COMMIT_SHA }}"
++      server_edition: enterprise
++      server_image_tag: "${{ needs.resolve-pr.outputs.SERVER_IMAGE_TAG }}"
++      report_type: "PR"
++      should_run: "${{ (needs.check-changes.outputs.should_run != 'false' || needs.check-changes.outputs.should_run_rolling_upgrades == 'true' || needs.check-changes.outputs.should_run_subpath == 'true') && 'true' || 'false' }}"
++
++  server-image-fips:
++    needs:
++      - resolve-pr
++      - check-changes
++    if: needs.resolve-pr.outputs.PR_NUMBER != '' && needs.check-changes.outputs.should_run_fips == 'true'
++    permissions:
++      statuses: write
++    uses: ./.github/workflows/server-image-check.yml
++    with:
++      commit_sha: "${{ needs.resolve-pr.outputs.COMMIT_SHA }}"
++      server_edition: fips
++      server_image_tag: "${{ needs.resolve-pr.outputs.SERVER_IMAGE_TAG }}"
++      report_type: "PR"
++
+   e2e-cypress:
+     needs:
+       - resolve-pr
+       - check-changes
++      - server-image-enterprise
+     if: needs.resolve-pr.outputs.PR_NUMBER != ''
+     permissions:
+       actions: read
+@@ -301,6 +334,7 @@ jobs:
+     needs:
+       - resolve-pr
+       - check-changes
++      - server-image-enterprise
+     if: needs.resolve-pr.outputs.PR_NUMBER != ''
+     permissions:
+       actions: read
+@@ -329,6 +363,7 @@ jobs:
+     needs:
+       - resolve-pr
+       - check-changes
++      - server-image-enterprise
+     if: needs.resolve-pr.outputs.PR_NUMBER != '' && needs.check-changes.outputs.should_run_subpath == 'true'
+     permissions:
+       actions: read
+@@ -356,6 +391,7 @@ jobs:
+     needs:
+       - resolve-pr
+       - check-changes
++      - server-image-fips
+     if: needs.resolve-pr.outputs.PR_NUMBER != '' && needs.check-changes.outputs.should_run_fips == 'true'
+     permissions:
+       actions: read
+@@ -386,6 +422,7 @@ jobs:
+     needs:
+       - resolve-pr
+       - check-changes
++      - server-image-fips
+     if: needs.resolve-pr.outputs.PR_NUMBER != '' && needs.check-changes.outputs.should_run_fips == 'true'
+     permissions:
+       actions: read
 ```
 
-**File**: `webapp/channels/src/components/menu/menu.test.tsx` (modified, +120/-0)
+**File**: `.github/workflows/e2e-tests-cypress-template.yml` (modified, +6/-3)
 ```diff
-@@ -556,3 +556,123 @@ describe('Menu — isMenuOpen control transition matrix', () => {
-         });
-     });
- });
-+
-+describe('Menu with openOnHover', () => {
-+    // Only a menu opened by a click hides the rest of the page from assistive technology.
-+    const teamsButton = () => screen.getByRole('button', {name: 'Teams', hidden: true});
-+
-+    function renderHoverMenu() {
-+        const onItemClick = jest.fn();
-+        renderWithContext(
-+            <>
-+                <input aria-label='Message'/>
-+                <Menu
-+                    menuButton={{id: 'hover-menu-button', children: 'Teams'}}
-+                    menu={{id: 'hover-menu', 'aria-label': 'Teams menu', openOnHover: true}}
-+                >
-+                    <MenuItem
-+                        id='hover-menu-item'
-+                        labels={<span>{'Alpha'}</span>}
-+                        onClick={onItemClick}
-+                    />
-+                </Menu>
-+            </>,
-+        );
-+        return {onItemClick};
-+    }
-+
-+    test('should open on hover without taking focus, and close when the pointer leaves', async () => {
-+        renderHoverMenu();
-+        const message = screen.getByRole('textbox', {name: 'Message'});
-+        message.focus();
-+
-+        await userEvent.hover(teamsButton());
-+
-+        expect(await screen.findByRole('menuitem', {name: 'Alpha'})).toBeInTheDocument();
-+        expect(message).toHaveFocus();
-+
-+        // The page stays available to assistive technology under a menu opened by hovering.
-+        expect(screen.getByRole('textbox', {name: 'Message'})).toBeInTheDocument();
-+        expect(screen.getByRole('button', {name: 'Teams'})).toBeInTheDocument();
-+
-+        await userEvent.unhover(teamsButton());
-+
-+        await waitFor(() => expect(screen.queryByRole('menuitem', {name: 'Alpha'})).not.toBeInTheDocument());
-+    });
-+
-+    test('should stay open while the pointer moves onto the menu, and run its items', async () => {
-+        const {onItemClick} = renderHoverMenu();
-+
-+        await userEvent.hover(teamsButton());
-+        const item = await screen.findByRole('menuitem', {name: 'Alpha'});
-+        await userEvent.unhover(teamsButton());
-+        await userEvent.hover(item);
-+        await userEvent.click(item);
-+
-+        await waitFor(() => expect(onItemClick).toHaveBeenCalled());
-+    });
-+
-+    test('should stay open after the pointer leaves when opened by a click', async () => {
-+        renderHoverMenu();
-+
-+        await userEvent.click(teamsButton());
-+        expect(await screen.findByRole('menuitem', {name: 'Alpha'})).toBeInTheDocument();
-+
-+        await userEvent.unhover(teamsButton());
-+        await new Promise((resolve) => setTimeout(resolve, 400));
-+
-+        expect(screen.getByRole('menuitem', {name: 'Alpha'})).toBeInTheDocument();
-+    });
-+
-+    test('should close on Escape while focus stays outside it', async () => {
-+        renderHoverMenu();
-+        screen.getByRole('textbox', {name: 'Message'}).focus();
-+
-+        await userEvent.hover(teamsButton());
-+        expect(await screen.findByRole('menuitem', {name: 'Alpha'})).toBeInTheDocument();
-+
-+        await userEvent.keyboard('{Escape}');
-+
-+        await waitFor(() => expect(screen.queryByRole('menuitem', {name: 'Alpha'})).not.toBeInTheDocument());
-+        expect(screen.getByRole('textbox', {name: 'Message'})).toHaveFocus();
-+    });
-+
-+    test('should behave as a click-opened menu once a click takes over, and return focus to the trigger', async () => {
-+        renderHoverMenu();
-+
-+        await userEvent.hover(teamsButton());
-+        expect(await screen.findByRole('menuitem', {name: 'Alpha'})).toBeInTheDocument();
-+        await userEvent.click(teamsButton());
-+
-+        // Like a click-opened menu, it now hides the rest of the page from assistive technology.
-+        await waitFor(() => expect(screen.queryByRole('button', {name: 'Teams'})).not.toBeInTheDocument());
-+        expect(screen.getByRole('menuitem', {name: 'Alpha'})).toBeInTheDocument();
-+
-+        await userEvent.keyboard('{Escape}');
-+
-+        await waitFor(() => expect(screen.queryByRole('menuitem', {name: 'Alpha'})).not.toBeInTheDocument());
-+        expect(teamsButton()).toHaveFocus();
-+    });
-+
-+    test('should leave focus alone after a click took over, when the menu opts out of restoring it', async () => {
-+        renderWithContext(
-+            <Menu
-+                menuButton={{id: 'hover-menu-button', children: 'Teams'}}
-+                menu={{id: 'hover-menu', 'aria-label': 'Teams menu', openOnHover: true, disableRestoreFocus: true}}
-+            >
-+                <MenuItem
-+                    id='hover-menu-item'
-+                    labels={<span>{'Alpha'}</span>}
-+                />
-+            </Menu>,
-+        );
-+
-+        await userEvent.hover(teamsButton());
-+        expect(await screen.findByRole('menuitem', {name: 'Alpha'})).toBeInTheDocument();
-+        await userEvent.click(teamsButton());
-+        await userEve
+@@ -340,8 +340,8 @@ jobs:
+   workers:
+     name: dispatch-run-cypress-${{ inputs.server_edition }}-${{ matrix.worker_index }}
+     runs-on: ubuntu-24.04
+-    # The step below times out first: a slow worker then fails rather than being cancelled, so lane-result
+-    # still runs and triage reports the missing results instead of leaving its check waiting.
++    # The step below times out first, so a slow worker fails at its step and uploads what it ran. A worker
++    # this limit cancels (a runner that stopped answering) is still reported: see lane-result.
+     timeout-minutes: 35
+     # prep-deps is already an ancestor via dispatch-begin; naming it directly
+     # makes its cache-hit output readable here.
+@@ -488,7 +488,10 @@ jobs:
+   # Status, triage, webhook and the pass/fail gate: see e2e-tests-lane-result.yml.
+   lane-result:
+     needs: [prepare-run, dispatch-begin, workers, report]
+-    if: ${{ !cancelled() && needs.workers.result != 'cancelled' && needs.dispatch-begin.result != 'cancelled' }}
++    # cancelled() is true only when the run is cancelled (by a person, or by a newer run through concurrency),
++    # and then the lane leaves its pending status alone. A job its own time limit cancels does not cancel the
++    # run: the lane still publishes and triages what arrived, and triage can ask for a re-run.
++    if: ${{ !cancelled() }}
+     permissions:
+       actions: read
+       contents: read
 ```
 
-**File**: `webapp/channels/src/components/menu/menu.tsx` (modified, +128/-7)
+**File**: `.github/workflows/e2e-tests-lane-result.yml` (modified, +65/-2)
 ```diff
-@@ -9,6 +9,7 @@ import React, {
-     useState,
-     useEffect,
-     useCallback,
-+    useRef,
- } from 'react';
- import type {
-     ButtonHTMLAttributes,
-@@ -124,6 +125,14 @@ type MenuProps = {
-      */
-     disableRestoreFocus?: boolean;
- 
-+    /**
-+     * When true, hovering the trigger opens the menu, and moving the pointer off both the trigger
-+     * and the menu closes it again. A menu opened this way doesn't take focus or block the page,
-+     * so hovering past it doesn't interrupt the user. Clicking the trigger, or opening it from the
-+     * keyboard, still opens it as usual. Ignored in mobile view.
-+     */
-+    openOnHover?: boolean;
-+
-     /**
-      * When false, the menu will not auto-focus the first item on open.
-      * Focus stays on the trigger button; ArrowDown moves focus into the list.
-@@ -140,6 +149,24 @@ type MenuProps = {
- };
- 
- const defaultAnchorOrigin = {vertical: 'bottom', horizontal: 'left'} as PopoverOrigin;
-+
-+// How long the pointer rests on an openOnHover trigger before its menu opens, and how long it can be
-+// off both the trigger and the menu (crossing the gap between them, say) before the menu closes.
-+const HOVER_OPEN_DELAY = 100;
-+const HOVER_CLOSE_DELAY = 200;
-+
-+// Menus opened by hovering are mounted in a container of their own. The popover hides everything
-+// sharing its container from assistive technology, so this keeps the rest of the page available.
-+function getHoverMenuContainer() {
-+    const id = 'hoverMenuContainer';
-+    let container = document.getElementById(id);
-+    if (!container) {
-+        container = document.createElement('div');
-+        container.id = id;
-+        document.body.appendChild(container);
-+    }
-+    return container;
-+}
- const defaultTransformOrigin = {vertical: 'top', horizontal: 'left'} as PopoverOrigin;
- 
- interface Props {
-@@ -178,6 +205,20 @@ export function Menu(props: Props) {
-     // Initialize from prop so initial mount with isMenuOpen={true} opens.
-     const [isMenuOpen, setIsMenuOpen] = useState(props.menu.isMenuOpen === true);
- 
-+    // Whether the menu is open because the pointer is over it (openOnHover), rather than from a click
-+    // or the keyboard. Mirrored in a ref for the hover timers.
-+    const [openedByHover, setOpenedByHover] = useState(false);
-+    const openedByHoverRef = useRef(false);
-+
-+    // Set from a hover-open until the menu has closed, or a click takes it over. Mounting in the hover
-+    // container (see getHoverMenuContainer) is part of it, and switching that while the menu closes
-+    // would remount it and drop the chosen item's click handler. A click takeover does switch it, as a
-+    // fresh popover: the modal only hides the page, locks scrolling, takes focus and remembers what to
-+    // refocus when it opens, so the menu then behaves exactly as if the click had opened it.
-+    const [hoverSession, setHoverSession] = useState(false);
-+    const hoverTimer = useRef<number | undefined>(undefined);
-+    const hoverEnabled = Boolean(props.menu.openOnHover) && !isMobileView;
-+
-     // State (not ref) so MUI's anchorEl reacts when the button mounts.
-     const [menuButton, setMenuButton] = useState<HTMLElement | null>(null);
- 
-@@ -194,6 +235,61 @@ export function Menu(props: Props) {
-         }
-     }
- 
-+    function setHoverOpened(byHover: boolean) {
-+        openedByHoverRef.current = byHover;
-+        setOpenedByHover(byHover);
-+    }
-+
-+    function handleHoverEnter() {
-+        if (!hoverEnabled) {
-+            return;
-+        }
-+        window.clearTimeout(hoverTimer.current);
-+        if (!isMenuOpen) {
-+            hoverTimer.current = window.setTimeout(() => {
-+                setHoverOpened(true);
-+                setHoverSession(true);
-+                setIsMenuOpen(true);
-+            }, HOVER_OPEN_DELAY);
-+        }
-+    }
-+
-+    function handleHoverLeave() {
-+        if (!hoverEnabled) {
-+            return;
-+        }
-+        window.clearTimeout(hoverTimer.current);
-+
-+        // A menu opened by a click or the keyboard stays open until it's dismissed.
-+        hoverTimer.current = window.setTimeout(() => {
-+            if (openedByHoverRef.current) {
-+                setIsMenuOpen(false);
-+            }
-+        }, HOVER_CLOSE_DELAY);
-+    }
-+
-+    useEffect(() => {
-+        if (!isMenuOpen) {
-+            setHoverOpened(false);
-+        }
-+    }, [isMenuOpen]);
-+
-+    // Focus stays where it was under a hover-opened menu, so Escape there wouldn't reach the menu.
-+    useEffect(() => {
-+        if (!openedByHover) {
-+            return undefined;
-+        }
-+        const closeOnEscape = (event: globalThis.KeyboardEvent) => {
-+            if (event.key === 'Escape') {
-+                setIsMenuOpen(false);
-+            }
-+        };
-+        document.addEventListener('keydown', closeOnEscape);
-+        return () => document.removeEventListener('keydown', closeOnEscape);
-+    }, [openedByHover]);
-+
-+    useEffect(() => () => window.clearTimeout(hoverTimer.current), []);
-+
-   
+@@ -110,10 +110,12 @@ jobs:
+         with:
+           context-name: ${{ inputs.context_name }}
+       - name: ci/publish-result
+-        id: result
++        id: publish
+         # The diagnostic summary runs even on cancellation. A cancelled lane
+         # must leave its current pending status (or a newer owner's result) alone.
+         if: ${{ !cancelled() && inputs.composite_identity_json != '' }}
++        # A failed publication is tried once more below; the retry decides the job.
++        continue-on-error: true
+         uses: mattermost/mattermost-test-automation-toolkit/actions/e2e-test-status@main  # actions/e2e-test-status
+         with:
+           composite-identity: ${{ inputs.composite_identity_json }}
+@@ -130,6 +132,65 @@ jobs:
+           target-url: ${{ inputs.report_url }}
+           triage-status-context: ${{ steps.lanes.outputs.aggregate }}
+           triage-lanes: ${{ steps.lanes.outputs.lanes }}
++      # The GITHUB_TOKEN quota is shared by every workflow in the repository; a burst of merges has
++      # exhausted it and left a green lane red. Wait for the quota to reset when that is close, else
++      # back off briefly. The wait counts against this job's timeout, while it holds the SHA lock.
++      - name: ci/wait-for-github-api
++        if: ${{ !cancelled() && steps.publish.outcome == 'failure' }}
++        env:
++          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
++          MAX_WAIT_SECONDS: "900"
++          BACKOFF_SECONDS: "60"
++        run: |
++          WAIT="$BACKOFF_SECONDS"
++          # /rate_limit itself does not count against the quota.
++          if CORE=$(gh api rate_limit --jq '.resources.core | "\(.remaining) \(.reset)"'); then
++            read -r REMAINING RESET <<< "$CORE"
++            echo "GitHub API quota: ${REMAINING} requests left, resets at $(date -u -d "@${RESET}" +%H:%M:%SZ)"
++            if [ "$REMAINING" -eq 0 ]; then
++              UNTIL_RESET=$(( RESET - $(date +%s) + 5 ))
++              if [ "$UNTIL_RESET" -gt "$MAX_WAIT_SECONDS" ]; then
++                echo "::warning::The GitHub API quota resets in $(( UNTIL_RESET / 60 )) minutes, beyond the $(( MAX_WAIT_SECONDS / 60 )) this job may wait; retrying after the usual backoff."
++              elif [ "$UNTIL_RESET" -gt "$WAIT" ]; then
++                WAIT="$UNTIL_RESET"
++              fi
++            fi
++          fi
++          echo "Retrying the publication in ${WAIT}s"
++          sleep "$WAIT"
++      # Same inputs as ci/publish-result (the wiring test keeps them equal). Publishing again is safe: a run
++      # may rewrite the status it owns.
++      - name: ci/publish-result-retry
++        id: publish-retry
++        if: ${{ !cancelled() && steps.publish.outcome == 'failure' }}
++        uses: mattermost/mattermost-test-automation-toolkit/actions/e2e-test-status@main  # actions/e2e-test-status
++        with:
++          composite-identity: ${{ inputs.composite_identity_json }}
++          status-context: ${{ inputs.context_name }}
++          github-token: ${{ secrets.GITHUB_TOKEN }}
++          state: ${{ inputs.summary_ok && 'success' || 'failure' }}
++          verify-reports: "true"
++          execution-success: ${{ inputs.execution_success }}
++          report-wait-seconds: "60"
++          use-staging: ${{ vars.E2E_USE_STAGING_TEST_IO_URL != 'false' }}
++          description: ${{ inputs.description || 'E2E results unavailable or incomplete; triage is checking why' }}
++          target-url: ${{ inputs.report_url }}
++          triage-status-context: ${{ steps.lanes.outputs.aggregate }}
++          triage-lanes: ${{ steps.lanes.outputs.lanes }}
++      # The outputs of whichever attempt ran last. An attempt that failed wrote none.
++      - name: ci/publish-result-outputs
++        id: result
++        if: ${{ !cancelled() }}
++        env:
++          STATE: ${{ steps.publish.outputs.state || steps.publish-retry.outputs.state }}
++          REPORTS_COMPLETE: ${{ steps.publish.outputs.reports-complete || steps.publish-retry.outputs.reports-complete }}
++          PUBLISHED: ${{ steps.publish.outputs.published || steps.publish-retry.outputs.published }}
++        run: |
++          {
++            echo "state=${STATE}"
++            echo "reports-complete=${REPORTS_COMPLETE}"
++            echo "published=${PUBLISHED}"
++          } >> "$GITHUB_OUTPUT"
+       # Answers from earlier runs on the same PR (the same commit on master), so a
+       # re-run does not pay for the same question twice. The file also keeps this
+       # lane's AI spend on the PR, for the per-PR budget (pr-budget-usd, $2 by
+@@ -197,8 +258,10 @@ jobs:
+         with:
+           path: e2e-triage-answers.json
+           key: e2e-triage-answers-${{ inputs.context_name }}-${{ fromJSON(inputs.composite_identity_json).gh_pr_number && format('pr{0}', fromJSON(inputs.composite_identity_json).gh_pr_number) || fromJSON(inputs.composite_identity_json).commit_sha }}-${{ github.run_id }}-${{ github.run_attempt }}
++      # A green lane that published has already refreshed the summ
 ```
 
-**File**: `webapp/channels/src/components/product_rail/product_rail.scss` (modified, +177/-73)
+**File**: `.github/workflows/e2e-tests-on-merge.yml` (modified, +42/-3)
 ```diff
-@@ -4,14 +4,30 @@
+@@ -129,9 +129,42 @@ jobs:
+           echo "should_run_rolling_upgrades=${SHOULD_RUN_ROLLING_UPGRADES}" >> $GITHUB_OUTPUT
+           echo "Should run rolling upgrades: ${SHOULD_RUN_ROLLING_UPGRADES}"
  
-     z-index: 17;
-     display: flex;
--    overflow: auto;
-+    overflow: hidden;
-     width: 72px;
-     flex-direction: column;
-     align-items: center;
--    padding: 12px 0;
++  # Each edition's lanes start only once its server image is on Docker Hub (server-image-check.yml).
++  server-image-enterprise:
++    needs: generate-build-variables
++    permissions:
++      statuses: write
++    uses: ./.github/workflows/server-image-check.yml
++    with:
++      commit_sha: ${{ inputs.commit_sha }}
++      server_edition: enterprise
++      server_image_tag: ${{ inputs.server_image_tag }}
++      report_type: ${{ needs.generate-build-variables.outputs.report_type }}
++      ref_branch: ${{ needs.generate-build-variables.outputs.ref_branch }}
++    secrets:
++      REPORT_WEBHOOK_URL: "${{ secrets.MM_E2E_REPORT_WEBHOOK_URL }}"
 +
-+    // Half of the top padding sits inside the scrolling part, so the team's badge isn't clipped.
-+    padding: 6px 0 12px;
-     gap: 4px;
-     grid-area: product-rail;
--    scrollbar-width: none;
++  # FIPS builds were introduced in release-11.0; skip for older branches.
++  server-image-fips:
++    needs: generate-build-variables
++    if: needs.generate-build-variables.outputs.fips_supported == 'true'
++    permissions:
++      statuses: write
++    uses: ./.github/workflows/server-image-check.yml
++    with:
++      commit_sha: ${{ inputs.commit_sha }}
++      server_edition: fips
++      server_image_tag: ${{ inputs.server_image_tag }}
++      report_type: ${{ needs.generate-build-variables.outputs.report_type }}
++      ref_branch: ${{ needs.generate-build-variables.outputs.ref_branch }}
++    secrets:
++      REPORT_WEBHOOK_URL: "${{ secrets.MM_E2E_REPORT_WEBHOOK_URL }}"
 +
-+    // The team, the items and More scroll when the rail runs out of room; the bottom group (the team
-+    // sidebar's plugin icons and its show button) stays in view below them.
-+    &__scroll {
-+        display: flex;
-+        width: 100%;
-+        min-height: 0;
-+        flex: 1 1 auto;
-+        flex-direction: column;
-+        align-items: center;
-+        padding-top: 6px;
-+        gap: 4px;
-+        overflow-y: auto;
-+        scrollbar-width: none;
-+    }
- 
-     // Scoped under .app__body to win over the theme's link colors (.app__body a and its :hover).
-     .app__body &__item,
-@@ -159,6 +175,12 @@
-             top: -3px;
-             right: -3px;
-         }
-+
-+        .ProductRail__badge {
-+            z-index: 2;
-+            top: -6px;
-+            right: -8px;
-+        }
-     }
- 
-     &__teamStackCard {
-@@ -181,6 +203,97 @@
-         }
-     }
- 
-+    // The draggable items. Drag and drop measures margins, not gaps, so they're spaced with margins;
-+    // the list's negative margin keeps the rail's usual gap before the More item.
-+    &__items {
-+        display: flex;
-+        width: 100%;
-+        flex-direction: column;
-+        align-items: center;
-+        margin-bottom: -4px;
-+    }
-+
-+    // Each item sits in a wrapper that is dragged, and anchors its right-click menu beside it.
-+    &__itemWrapper {
-+        position: relative;
-+        display: flex;
-+        margin-bottom: 4px;
-+
-+        &:focus-visible {
-+            outline: none;
-+        }
-+
-+        &--dragging .ProductRail__icon {
-+            background: rgba(var(--sidebar-text-rgb), 0.16);
-+            box-shadow: var(--elevation-3);
-+        }
-+    }
-+
-+    &__itemMenuAnchor {
-+        position: absolute;
-+        inset: 0;
-+        pointer-events: none;
-+    }
-+
-+    // With the team sidebar hidden, the bottom of the rail takes over the bottom of the team sidebar:
-+    // its plugins' icons, above the button that brings it back.
-+    &__bottom {
-+        display: flex;
-+        width: 100%;
-+        flex: 0 0 auto;
-+        flex-direction: column;
-+        align-items: center;
-+        gap: 4px;
-+    }
-+
-+    &__plugins {
-+        width: 100%;
-+        padding: 16px 0 6px;
-+        text-align: center;
-+
-+        &:empty {
-+            display: none;
-+        }
-+
-+        .fa {
-+            color: var(--sidebar-header-text-color);
-+            opacity: 0.73;
-+            transition: all 0.15s ease;
-+
-+            &:hover {
-+                opacity: 1;
-+            }
-+        }
-+    }
-+
-+    &__showTeamSidebar {
-+        display: flex;
-+        width: 32px;
-+        height: 32px;
-+        flex: 0 0 auto;
-+        align-items: center;
-+        justify-content: center;
-+        padding: 0;
-+        border: none;
-+        border-radius: var(--radius-m);
-+        background: none;
-+        color: rgba(var(--sidebar-text-rgb), 0.56);
-+
-+        svg {
-+            fill: currentColor;
-+        }
-+
-+        &:hover,
-+        &:focus-visible {
-+            background: rgba(var(--sidebar-text-rgb), 0.08);
-+            color: var(--sidebar-text);
-+        }
-+
-+        &:focus-visible {
-+            box-shadow: inset 0 0 0 2px var(--sidebar-text-active-border);
-+            outline: none;
-+        }
-+    }
- 
-     @media screen and (max-width: 768px) {
-         display: none;
-@@ -200,8 +313,11 @@
-     height: 18px;
-     padding: 0 5px;
-     border-radius: 9px;
--    background: var(--mention-bg);
--    color: var(--mention-color);
-+
-+    // Menus sit on the center channel's colors, where the sidebar's mention colors can vanish (white
-+    // on white in dark sidebar themes), so their badges take the theme's primary button colors.
-+    background: var(--button-bg);
-+    color: var(--button-color);
-     font-size: 11px;
-     font-weight: 700;
-     line-height: 18px;
-@@ -213,11 +329,60 @@
-     }
- }
- 
-+.ProductRail__menuIcon {
-+    display: flex;
-+    color: rgba(var(--center-channel-color-rgb), 0.64);
-+
-+    svg {
-+        width: 18px;
-+        height: 18px;
-+        fill: currentColor;
-+    }
-+
-+    img {
-+        width: 18px;
-+        height: 18px;
-+    }
-+}
-+
-+.ProductRail__moreMenu .MuiMenuItem-root {
-+    min-height: 40px;
-+
-+    > .trailing-elements {
-+        display: flex;
-+        align-items: center;
-+        gap: 8px;
-+    }
-+}
-+
- .ProductRail__menuDot {
-     width: 8px;
-     height: 8px;
-     border-radius: 50%;
--    background: var(--center-channel-color);
-+    background: var(--button-bg);
-+}
-+
-+// A team's activity sits on its avatar's corner in the team menu, ringed in the menu's color.
-+.ProductRail__teamAvatar > .ProductRail__menuBadge,
-
+   # Enterprise Edition
+   e2e-cypress:
+-    needs: generate-build-variables
++    needs:
++      - generate-build-variables
++      - server-image-enterprise
+     permissions:
+       actions: read
+       contents: read
+@@ -159,6 +192,7 @@ jobs:
+     needs:
+       - generate-build-variables
+       - check-changes
++      - server-image-enterprise
+     permissions:
+       actions: read
+       contents: read
+@@ -181,7 +215,9 @@ jobs:
+   # Full Playwright suite against a server booted under a subpath (PW_SERVER_DEPLOY=subpath).
+   # Only when subpath-specific server code or test specs changed in this commit.
+   e2e-playwright-subpath:
+-    needs: generate-build-variables
++    needs:
++      - generate-build-variables
++      - server-image-enterprise
+     if: needs.generate-build-variables.outputs.should_run_subpath == 'true'
+     permissions:
+       actions: read
+@@ -206,7 +242,9 @@ jobs:
+   # Enterprise FIPS Edition
+   # FIPS builds were introduced in release-11.0; skip for older branches.
+   e2e-cypress-fips:
+-    needs: generate-build-variables
++    needs:
++      - generate-build-variables
++      - server-image-fips
+     if: needs.generate-build-variables.outputs.fips_supported == 'true'
+     permissions:
+       actions: read
+@@ -236,6 +274,7 @@ jobs:
+     needs:
+       - generate-build-variables
+       - check-changes
++      - server-image-fips
+     if: needs.generate-build-variables.outputs.fips_supported == 'true'
+     permissions:
+       actions: read
 ```
 
-**File**: `webapp/channels/src/components/product_rail/product_rail.test.tsx` (modified, +638/-32)
+**File**: `.github/workflows/e2e-tests-on-release.yml` (modified, +48/-5)
 ```diff
-@@ -7,23 +7,29 @@ import React from 'react';
- import {CollapsedThreads} from '@mattermost/types/config';
- import type {DeepPartial} from '@mattermost/types/utilities';
+@@ -63,9 +63,44 @@ jobs:
  
--import {PreferenceTypes} from 'mattermost-redux/action_types';
-+import {ChannelTypes, PreferenceTypes} from 'mattermost-redux/action_types';
-+import {Client4} from 'mattermost-redux/client';
+           echo "ref_branch=${BRANCH}" >> $GITHUB_OUTPUT
  
- import type {ChannelKindRegistration} from 'selectors/views/product_rail';
- 
--import {act, renderWithContext, screen} from 'tests/react_testing_utils';
-+import {act, fireEvent, renderWithContext, screen, userEvent, waitFor} from 'tests/react_testing_utils';
- import {TestHelper} from 'utils/test_helper';
- 
- import type {GlobalState} from 'types/store';
- import type {ProductComponent} from 'types/store/plugins';
- import type {ProductRailSection} from 'types/store/views';
- 
--import ProductRail from './product_rail';
-+import ProductRail, {moveRailItem} from './product_rail';
- 
- jest.mock('mattermost-redux/actions/threads', () => ({
-     getThreadCounts: () => ({type: 'MOCK_GET_THREAD_COUNTS'}),
- }));
- 
-+const mockSavePreferences = jest.fn((...args: unknown[]) => ({type: 'MOCK_SAVE_PREFERENCES', args}));
-+jest.mock('mattermost-redux/actions/preferences', () => ({
-+    savePreferences: (...args: unknown[]) => mockSavePreferences(...args),
-+}));
++  # Each edition's lanes start only once its server image is on Docker Hub (server-image-check.yml).
++  server-image-enterprise:
++    needs: validate
++    permissions:
++      statuses: write
++    uses: ./.github/workflows/server-image-check.yml
++    with:
++      commit_sha: ${{ inputs.commit_sha }}
++      server_edition: enterprise
++      server_image_repo: mattermost
++      server_image_tag: ${{ inputs.server_image_tag }}
++      report_type: RELEASE_CUT
++      ref_branch: ${{ needs.validate.outputs.ref_branch }}
++    secrets:
++      REPORT_WEBHOOK_URL: "${{ secrets.MM_E2E_REPORT_WEBHOOK_URL }}"
 +
- const team = TestHelper.getTeamMock({id: 'team1', name: 'team-one'});
- const user = TestHelper.getUserMock({id: 'user1'});
- 
-@@ -80,6 +86,10 @@ const boardKind: ChannelKindRegistration = {
-     matcher: (_state, channel) => channel.id === roadmap.id || channel.id === bugs.id,
- };
- 
-+const railProduct = (name: string, pluginId: string): ProductComponent => ({...TestHelper.makeProduct(name), pluginId, baseURL: `/${pluginId}`, switcherLinkURL: `/${pluginId}`});
-+const agents = railProduct('Agents', 'mattermost-ai');
-+const playbooks = railProduct('Playbooks', 'playbooks');
++  # FIPS builds were introduced in release-11.0; skip for older branches.
++  server-image-fips:
++    needs: validate
++    if: needs.validate.outputs.fips_supported == 'true'
++    permissions:
++      statuses: write
++    uses: ./.github/workflows/server-image-check.yml
++    with:
++      commit_sha: ${{ inputs.commit_sha }}
++      server_edition: fips
++      server_image_repo: mattermost
++      server_image_tag: ${{ inputs.server_image_tag }}
++      report_type: RELEASE_CUT
++      ref_branch: ${{ needs.validate.outputs.ref_branch }}
++    secrets:
++      REPORT_WEBHOOK_URL: "${{ secrets.MM_E2E_REPORT_WEBHOOK_URL }}"
 +
- function getBoardsState(currentChannelId: string, section: ProductRailSection = 'channels'): DeepPartial<GlobalState> {
-     const channels = [townSquare, roadmap, bugs];
-     const member = (channelId: string, mentions: number) => TestHelper.getChannelMembershipMock({
-@@ -123,14 +133,23 @@ function getBoardsState(currentChannelId: string, section: ProductRailSection =
-     };
- }
+   # Enterprise Edition
+   e2e-cypress:
+-    needs: validate
++    needs:
++      - validate
++      - server-image-enterprise
+     permissions:
+       actions: read
+       contents: read
+@@ -92,7 +127,9 @@ jobs:
+       CWS_EXTRA_HTTP_HEADERS: "${{ secrets.MM_E2E_CWS_EXTRA_HTTP_HEADERS }}"
  
-+// The store of the last render, for reading back the rail's preferences as saved.
-+let lastStore: ReturnType<typeof renderWithContext>['store'];
-+
- function renderAt(pathname: string, state: DeepPartial<GlobalState>) {
--    return renderWithContext(<ProductRail/>, state, {history: createMemoryHistory({initialEntries: [pathname]})});
-+    const result = renderWithContext(<ProductRail/>, state, {history: createMemoryHistory({initialEntries: [pathname]})});
-+    lastStore = result.store;
-+    return result;
- }
+   e2e-playwright:
+-    needs: validate
++    needs:
++      - validate
++      - server-image-enterprise
+     permissions:
+       actions: read
+       contents: read
+@@ -117,7 +154,9 @@ jobs:
+   # Full Playwright suite against a server booted under a subpath (PW_SERVER_DEPLOY=subpath).
+   # Release-cut only — not run on PR or master/release merges.
+   e2e-playwright-subpath:
+-    needs: validate
++    needs:
++      - validate
++      - server-image-enterprise
+     permissions:
+       actions: read
+       contents: read
+@@ -143,7 +182,9 @@ jobs:
+   # Enterprise FIPS Edition
+   # FIPS builds were introduced in release-11.0; skip for older branches.
+   e2e-cypress-fips:
+-    needs: validate
++    needs:
++      - validate
++      - server-image-fips
+     if: needs.validate.outputs.fips_supported == 'true'
+     permissions:
+       actions: read
+@@ -172,7 +213,9 @@ jobs:
+       CWS_EXTRA_HTTP_HEADERS: "${{ secrets.MM_E2E_CWS_EXTRA_HTTP_HEADERS }}"
  
-+const savedHiddenItems = () => lastStore.getState().entities.preferences.myPreferences['sidebar_settings--product_rail_hidden_items']?.value;
-+
- describe('ProductRail', () => {
-     // Where each item was is saved to localStorage, which would otherwise carry between tests.
-     beforeEach(() => {
-         localStorage.clear();
-+        mockSavePreferences.mockClear();
-+        jest.spyOn(Client4, 'savePreferences').mockResolvedValue({status: 'OK'});
-     });
- 
-     test('should render nothing when the feature flag is off', () => {
-@@ -147,36 +166,23 @@ describe('ProductRail', () => {
-         expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
-     });
- 
--    test('should link Channels and Threads to the current team', () => {
-+    test('should link Channels to the team\'s default channel, leaving Threads to the channel sidebar', () => {
-         renderAt('/team-one/channels/town-square', getState());
- 
--        expect(screen.getByRole('link', {name: /Channels/})).toHaveAttribute('href', '/team-one');
--        expect(screen.getByRole('link', {name: /Threads/})).toHaveAttribute('href', '/team-one/threads');
--    });
--
--    test('should hide Threads when collapsed reply threads are off', () => {
--        renderAt('/team-one/channels/town-square', getState({collapsedThreads: false}));
--
-+        // Not the team's root, which can redirect into Threads.
-+        expect(screen.getByRole('link', {name: /Channels/})).toHaveAttribute('href', '/team-one/channels/town-square');
-         expect(screen.queryByRole('link', {name: /Threads/})).not.toBeInTheDocument();
-     });
- 
--    test('should mark Channels active in a channel and Threads active in threads', () => {
-+    test('should mark Channels active in a channel and in Threads, which is part of it', () => {
-         const {unmount} = renderAt('/team-one/channels/town-square', getState());
- 
-         expect(screen.getByRole('link', {name: /Channels/})).toHaveAttribute('aria-current', 'page');
--        expect(screen.getByRole('link', {name: /Threads/})).not.toHaveAttribute('aria-current');
- 
-         unmount();
-         renderAt('/team-one/threads', getState());
- 
--        expect(screen.getByRole('link'
+   e2e-playwright-fips:
+-    needs: validate
++    needs:
++      - validate
++      - server-image-fips
+     if: needs.validate.outputs.fips_supported == 'true'
+     permissions:
+       actions: read
 ```
 
 ---
 
-### Incident Patch 2: `b05d2bdc` (2026-11-20)
-**Commit Message**: [MM-72037] Add shared health report with HTML and Markdown renderers (#40149)
+### Incident Patch 2: `a3f2632f` (2026-11-23)
+**Commit Message**: MM-71691 - Show channel admins when a channel is missing required attribute values (#39899)
 
-* MM-72037: Add shared health report with HTML and Markdown renderers
+* MM-70717 - Warn admins before required channel attributes and let them fix values from System Console
 
-Add platform/shared/healthcheck/report, which builds a report from a
-HealthFindingList: a header, a summary, and Critical, Warning, Info,
-Could not evaluate, Muted and Resolved sections, with each finding in
-exactly one section. Labels are translated through the server catalog.
-The report renders as a self-contained HTML file with a print
-stylesheet, or as Markdown for pasting into Mattermost or Jira.
+* Enhance channel attribute handling and notifications for required values
 
-Switch mmctl health check plain output to the report model, so it
-groups findings by severity like Site health, and drop the duplicated
-sorting and label code from health.go.
+* seed required fields past the create gate in tests, fill i18n descriptions, fix stylelint order
 
-* MM-72037: Revert docs changes
+* Enhance channel queries to handle missing team associations and improve test coverage for channels without teams
 
-* MM-72037: Show rule codes, System Console links and the licensee in the health report
+* Fix attribute naming, list paging, flag gating and focus issues found in QA of required channel attributes
 
-Each finding now shows its rule code, so a report attached to a ticket
-can refer to a finding by a stable identifier. Findings with a System
-Console path link to it when the report has a site URL; a report is a
-file, so a bare path would lead nowhere and is left out.
+* Add missing banner alignment and improve class handling for attention state
 
-Add Company to the header as "Licensed to", and drop Site name, which
-is usua
+* Document channel attribute compliance endpoints and fix channel attribute e2e locators
 
-**File**: `server/cmd/mmctl/commands/health.go` (modified, +64/-179)
+* Remove unused channel list endpoint for unsaved channel attributes
+
+* fix e2e tests
+
+* Address review feedback on required attribute compliance flow
+
+Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
+
+* Backfill default channels before the Required compliance check in e2e
+
+Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
+
+* Address review feedback: escape channel names in notification, use queued terminology, reconcile stal
+
+**File**: `e2e-tests/playwright/lib/src/ui/components/channels/center_view.ts` (modified, +3/-0)
 ```diff
-@@ -4,7 +4,6 @@
- package commands
+@@ -4,6 +4,7 @@
+ import type {Locator, Page} from '@playwright/test';
+ import {expect} from '@playwright/test';
  
- import (
--	"cmp"
- 	"context"
- 	"errors"
- 	"fmt"
-@@ -22,13 +21,11 @@ import (
- 	serveri18n "github.com/mattermost/mattermost/server/v8/i18n"
- 	"github.com/mattermost/mattermost/server/v8/platform/shared/healthcheck"
- 	"github.com/mattermost/mattermost/server/v8/platform/shared/healthcheck/packet"
-+	"github.com/mattermost/mattermost/server/v8/platform/shared/healthcheck/report"
- 	_ "github.com/mattermost/mattermost/server/v8/platform/shared/healthcheck/rules"
- 	"github.com/mattermost/mattermost/server/v8/platform/shared/releases"
- )
++import {MissingRequiredAttributes} from './channel_attributes';
+ import ChannelsHeader from './header';
+ import ChannelsPostCreate from './post_create';
+ import ChannelsPostEdit from './post_edit';
+@@ -30,6 +31,7 @@ export default class ChannelsCenterView {
+     readonly notificationSeparator;
+     readonly postViews;
+     readonly channelIntro;
++    readonly missingRequiredAttributes: MissingRequiredAttributes;
  
--// The server evaluates hourly, so results older than two intervals mean evaluation stopped.
--const healthEvaluationStaleAfter = 2 * time.Hour
--
- // healthRunPollInterval is how often health run checks on the run it started. A variable so tests
- // don't wait.
- var healthRunPollInterval = 2 * time.Second
-@@ -105,8 +102,7 @@ func healthCheckCmdF(c client.Client, cmd *cobra.Command, args []string) error {
- 		return fmt.Errorf("failed to get health findings: %w", err)
- 	}
+     constructor(container: Locator, page: Page) {
+         this.container = container;
+@@ -50,6 +52,7 @@ export default class ChannelsCenterView {
+         this.notificationSeparator = container.locator('.NotificationSeparator');
+         this.postViews = container.getByTestId('postView');
+         this.channelIntro = container.locator('#channelIntro');
++        this.missingRequiredAttributes = new MissingRequiredAttributes(container);
+     }
  
--	printHealthFindings(list, includeResolved, time.Now())
--	return nil
-+	return printHealthFindings(list, includeResolved, report.Options{GeneratedAt: time.Now()})
+     async toBeVisible() {
+```
+
+**File**: `e2e-tests/playwright/lib/src/ui/components/channels/channel_attributes.ts` (modified, +50/-0)
+```diff
+@@ -108,6 +108,11 @@ export class ChannelInfoAttributes {
+         return this.container.getByTestId(`channelInfoAttributeUnset-${name}`);
+     }
+ 
++    // The "Select a value" / "Enter a value" pill on a required row that has none.
++    missingValue(name: string) {
++        return this.row(name).getByTestId(`channelInfoAttributeMissing-${name}`);
++    }
++
+     get addButton() {
+         return this.container.getByTestId('channelInfoAddAttributeButton');
+     }
+@@ -190,3 +195,48 @@ export class ChannelInfoAttributes {
+         }
+     }
  }
- 
- func healthRunCmdF(c client.Client, cmd *cobra.Command, args []string) error {
-@@ -183,10 +179,14 @@ func healthCheckPacketCmdF(cmd *cobra.Command, args []string) error {
- 	}
- 	notes = append(notes, p.Warnings...)
- 
--	// Findings are stamped with when the packet was generated, not when mmctl ran.
-+	// Findings are stamped with when the packet was generated, not when mmctl ran. The report
-+	// shows an unknown collection time rather than claiming the data is from now.
- 	evaluatedAt := p.Snapshot.CollectedAt
-+	var collectedAt int64
- 	if evaluatedAt.IsZero() {
- 		evaluatedAt = time.Now()
-+	} else {
-+		collectedAt = evaluatedAt.UnixMilli()
- 	}
- 	now := func() time.Time { return evaluatedAt }
- 
-@@ -214,8 +214,11 @@ func healthCheckPacketCmdF(cmd *cobra.Command, args []string) error {
- 		}
- 	}
- 
--	printHealthFindings(&model.HealthFindingList{EvaluatedAt: evaluatedAt.UnixMilli(), Findings: findings}, includeResolved, evaluatedAt, notes...)
--	return nil
-+	return printHealthFindings(&model.HealthFindingList{EvaluatedAt: collectedAt, Findings: findings}, includeResolved, report.Options{
-+		GeneratedAt: time.Now(),
-+		PointInTime: true,
-+		Notes:       notes,
-+	})
- }
- 
- // fillLatestVersion fetches the latest release from GitHub when the snapshot doesn't record one.
-@@ -241,198 +244,80 @@ func fillLatestVersion(ctx context.Context, snapshot *healthcheck.Snapshot) stri
- // printHealthFindings prints already-rendered findings, leaving out resolved ones unless
- // includeResolved is set. Notes open the plain output; with --json they go to stderr so the
- // output stays valid JSON.
--func printHealthFindings(list *model.HealthFindingList, includeResolved bool, now time.Time, notes ...string) {
-+func printHealthFindings(list *model.HealthFindingList, includeResolved bool, opts report.Options) error {
- 	shown := make([]*model.HealthFinding, 0, len(list.Findings))
- 	for _, finding := range list.Findings {
- 		if includeResolved || finding.State != string(healthcheck.StateResolved) {
- 			shown = append(shown, finding)
- 		}
- 	}
-+	list = &model.HealthFindingList{EvaluatedAt: list.EvaluatedAt, Findings: shown}
- 
- 	if printer.GetFormat() == printer.FormatJSON {
--		for _, note := range notes {
-+		for _, note := range opts.Notes {
- 			printer.PrintError(note)
- 		}
- 		printer.SetSingle(true)
--		printer.PrintT("", &model.HealthFindingList{EvaluatedAt: list.EvaluatedAt, Findings: shown})
--		return
--	}
--
--	printer.Print(strings.Join(slices.Concat(notes, []string{formatHealthFindings(list.EvaluatedAt, shown, now)}), "\n\n"))
--}
--
--func formatHealthFindings(evaluatedAt int64, shown []*model.HealthFinding, now time.Time) string {
--	if evaluatedAt == 0 {
--		return "Not evaluated yet. The first check runs within an hour of enabling the feature."
-+		printer.PrintT("", list)
-+		return nil
- 	}
- 
--	slices.SortStableFunc(shown, compareHealthFindings)
--
--	var firing, unknown, resolved []*model.HealthFinding
--	for _, finding := range shown {
--		switch healthcheck.State(finding.State) {
--		case healthcheck.StateFiring:
--			firing = append(firing, finding)
--		case healthcheck.StateUnknown:
--			unknown = append(unknown, finding)
--		case healthcheck.StateResolved:
--			resolved = append(resolved, finding)
--		}
-+	if err := i18n.TranslationsPreInitFromFileBytes("en.json", serveri18n.English); err != nil {
-+		return fmt.Errorf("failed to load translations: %w", err)
- 	}
-+	opts.T = i18n.T
-+	opts.Location = time.Local
- 
--	blocks := []string{formatHealthEvaluationTime(evaluatedAt, now)}
-+	printer.Print(formatHealthReport(report.Build(list, opts)))
-+	return nil
-+}
- 
--	for i := 0; i < len(firing); {
--		area := firing[i].Area
--		lines := []string{healthAreaHeading(area)}
--		for ; i < len(firing) && firing[i].Area == area; i++ {
--			lines = append(lines, healthFindi
-```
-
-**File**: `server/cmd/mmctl/commands/health_test.go` (modified, +98/-53)
-```diff
-@@ -26,6 +26,7 @@ import (
- 	"github.com/mattermost/mattermost/server/public/model"
- 	"github.com/mattermost/mattermost/server/v8/cmd/mmctl/printer"
- 	"github.com/mattermost/mattermost/server/v8/platform/shared/healthcheck"
-+	"github.com/mattermost/mattermost/server/v8/platform/shared/healthcheck/report"
- )
- 
- func healthTestFindings(lastSeen time.Time) []*model.HealthFinding {
-@@ -190,8 +191,8 @@ func (s *MmctlUnitTestSuite) TestHealthCheckCmd() {
- 		s.Require().NoError(err)
- 
- 		output := s.printedHealthFindings()
--		s.True(strings.HasPrefix(output, "Last evaluated "), output)
--		s.True(strings.HasSuffix(output, "\n\nNo findings."), output)
-+		s.True(strings.HasPrefix(output, "Last evaluated: "), output)
-+		s.True(strings.HasSuffix(output, "\n\nNo open findings."), output)
- 	})
- 
- 	s.Run("client error", func() {
-@@ -241,7 +242,7 @@ func (s *MmctlUnitTestSuite) TestHealthRun() {
- 		s.Require().NoError(err)
- 
- 		output := s.printedHealthFindings()
--		s.True(strings.HasPrefix(output, "Last evaluated "), output)
-+		s.True(strings.HasPrefix(output, "Last evaluated: "), output)
- 		s.Contains(output, "Push notification server is not HTTPS")
- 	})
- 
-@@ -346,24 +347,25 @@ func (s *MmctlUnitTestSuite) TestHealthRun() {
- 
- func (s *MmctlUnitTestSuite) TestHealthPrintFindings() {
- 	lastSeen := time.Date(2026, time.September, 24, 14, 2, 0, 0, time.Local)
--	now := lastSeen.Add(38 * time.Minute)
-+	evaluated := "Last evaluated: " + lastSeen.Format("2006-01-02 15:04 MST") + " (38 minutes ago)"
-+	opts := report.Options{GeneratedAt: lastSeen.Add(38 * time.Minute)}
- 
- 	s.Run("plain output", func() {
- 		printer.Clean()
- 		printer.SetFormat(printer.FormatPlain)
- 
--		printHealthFindings(healthTestList(lastSeen), false, now)
-+		s.Require().NoError(printHealthFindings(healthTestList(lastSeen), false, opts))
- 
--		s.Equal(`Last evaluated 2026-09-24 14:02 (38 minutes ago)
-+		s.Equal(evaluated+`
- 
--Notifications
--  CRITICAL  Push notification server is not HTTPS
--            The push server is http://push.example.com, so notifications are sent unencrypted.
--            → Set Push Notification Server to an https:// URL.
-+Critical
-+  [Notifications] Push notification server is not HTTPS
-+      The push server is http://push.example.com, so notifications are sent unencrypted.
-+      → Set Push Notification Server to an https:// URL.
- 
- Could not evaluate
--  WARNING   Site URL is not HTTPS
--            Config section unavailable.
-+  Site URL is not HTTPS (Warning)
-+      Config section unavailable.
- 
- 1 critical, 1 could not be evaluated`, s.printedHealthFindings())
- 	})
-@@ -373,85 +375,128 @@ Could not evaluate
- 		printer.SetFormat(printer.FormatPlain)
- 		findings := healthTestFindings(lastSeen)
- 
--		printHealthFindings(&model.HealthFindingList{EvaluatedAt: lastSeen.UnixMilli(), Findings: findings}, true, now)
-+		s.Require().NoError(printHealthFindings(&model.HealthFindingList{EvaluatedAt: lastSeen.UnixMilli(), Findings: findings}, true, opts))
- 
- 		output := s.printedHealthFindings()
- 		for _, finding := range findings {
- 			s.NotContains(output, finding.Code)
- 			s.NotContains(output, finding.Fingerprint)
- 		}
--		for _, state := range []string{"firing", "unknown", "resolved"} {
-+		for _, state := range []string{"firing", "unknown"} {
- 			s.NotContains(output, state)
- 		}
- 	})
- 
--	s.Run("groups firing findings by area, sorted by severity then title", func() {
-+	s.Run("groups findings by severity, sorted by area then title", func() {
- 		printer.Clean()
- 		printer.SetFormat(printer.FormatPlain)
- 		findings := []*model.HealthFinding{
- 			{Severity: "warning", State: "firing", Area: model.AreaNotifications, Title: "B warning", LastSeenAt: lastSeen.UnixMilli()},
- 			{Severity: "critical", State: "firing", Area: model.AreaNotifications, Title: "Z critical", LastSeenAt: lastSeen.UnixMilli()},
- 			{Severity: "warning", State: "firing", Area: model.AreaNotifications, Title: "A warning", LastSeenAt: lastSeen.UnixMilli()},
-+			{Severity: "warning", State: "firing", Area: model.AreaCluster, Title: "C warning", LastSeenAt: lastSeen.UnixMilli()},
- 			{Severity: "info", State: "firing", Area: model.AreaCluster, Title: "Node info", Scope: "node-1", MutedAt: 1, LastSeenAt: lastSeen.UnixMilli()},
- 		}
- 
--		printHealthFindings(&model.HealthFindingList{EvaluatedAt: lastSeen.UnixMilli(), Findings: findings}, false, now)
-+		s.Require().NoError(printHealthFindings(&model.HealthFindingList{EvaluatedAt: lastSeen.UnixMilli(), Findings: findings}, false, opts))
- 
--		s.Equal(`Last evaluated 2026-09-24 14:02 (38 minutes ago)
-+		s.Equal(evaluated+`
- 
--Cluster
--  INFO      Node info on node-1 [muted]
-+Critical
-+  [Notifications] Z critical
- 
--Notifications
--  CRITICAL  Z critical
--  WARNING   A warning
--  WARNING   B warning
-+Warning
-+  [High availability] C warning
-+  [Notifications] A warning
-+  [Notifications] B warning
- 
--1 critical, 2 warnings, 1 info`, s.printedHealthFindings())
-+Muted
-+  Node info on node-1 (Info)
 +
-+1 critical, 3 warnings`, s.printedHealthFin
++/**
++ * The indicators a channel shows its admins while a required attribute has no
++ * value: the notice over the message list, the dot on the Info button and the
++ * "Set <attribute>" chips in the header.
++ */
++export class MissingRequiredAttributes {
++    readonly container: Locator;
++
++    constructor(container: Locator) {
++        this.container = container;
++    }
++
++    get notice() {
++        return this.container.getByTestId('missingRequiredAttributesNotice');
++    }
++
++    get addValuesButton() {
++        return this.container.getByTestId('missingRequiredAttributesNoticeAddValues');
++    }
++
++    get infoButtonMissingBadge() {
++        return this.container.locator(
++            '#channel-info-btn.channelInfoButton--missingValues [class*="icon-button__unread-badge"]',
++        );
++    }
++
++    headerChip(name: string) {
++        return this.container.getByTestId(`channelHeaderMissingAttributeChip-${name}`);
++    }
++
++    async toBeVisible(name: string) {
++        await expect(this.notice).toBeVisible();
++        await expect(this.notice).toContainText('Channel attribute values are missing');
++        await expect(this.addValuesButton).toHaveText('Add values');
++        await expect(this.infoButtonMissingBadge).toBeVisible();
++        await expect(this.headerChip(name)).toBeVisible();
++    }
++
++    async toBeHidden(name: string) {
++        await expect(this.notice).toHaveCount(0);
++        await expect(this.infoButtonMissingBadge).toHaveCount(0);
++        await expect(this.headerChip(name)).toHaveCount(0);
++    }
++}
 ```
 
-**File**: `server/i18n/en.json` (modified, +207/-0)
+**File**: `e2e-tests/playwright/specs/functional/channels/channel_attributes/channel_attribute_display.spec.ts` (modified, +1/-1)
 ```diff
-@@ -14717,6 +14717,213 @@
-     "translation": "Usage statistics unavailable.",
-     "description": "Health dashboard reason shown when a health check could not run because the usage statistics it inspects (for example user or post counts) were not collected, so the check's status is unknown."
-   },
-+  {
-+    "id": "health.report.area.auth",
-+    "translation": "Authentication",
-+    "description": "Label of the authentication area tag on a finding in the shareable health report (Site health export and mmctl health check output); matches the area names on the System Console Site health page."
-+  },
-+  {
-+    "id": "health.report.area.cluster",
-+    "translation": "High availability",
-+    "description": "Label of the high availability cluster area tag on a finding in the shareable health report (Site health export and mmctl health check output); matches the area names on the System Console Site health page."
-+  },
-+  {
-+    "id": "health.report.area.compliance",
-+    "translation": "Compliance",
-+    "description": "Label of the compliance area tag on a finding in the shareable health report (Site health export and mmctl health check output); matches the area names on the System Console Site health page."
-+  },
-+  {
-+    "id": "health.report.area.database",
-+    "translation": "Database",
-+    "description": "Label of the database area tag on a finding in the shareable health report (Site health export and mmctl health check output); matches the area names on the System Console Site health page."
-+  },
-+  {
-+    "id": "health.report.area.jobs",
-+    "translation": "Jobs",
-+    "description": "Label of the background jobs area tag on a finding in the shareable health report (Site health export and mmctl health check output); matches the area names on the System Console Site health page."
-+  },
-+  {
-+    "id": "health.report.area.license",
-+    "translation": "Licensing",
-+    "description": "Label of the licensing area tag on a finding in the shareable health report (Site health export and mmctl health check output); matches the area names on the System Console Site health page."
-+  },
-+  {
-+    "id": "health.report.area.notifications",
-+    "translation": "Notifications",
-+    "description": "Label of the notifications area tag on a finding in the shareable health report (Site health export and mmctl health check output); matches the area names on the System Console Site health page."
-+  },
-+  {
-+    "id": "health.report.area.platform",
-+    "translation": "Platform",
-+    "description": "Label of the platform (host and runtime) area tag on a finding in the shareable health report (Site health export and mmctl health check output); matches the area names on the System Console Site health page."
-+  },
-+  {
-+    "id": "health.report.area.search",
-+    "translation": "Search",
-+    "description": "Label of the search area tag on a finding in the shareable health report (Site health export and mmctl health check output); matches the area names on the System Console Site health page."
-+  },
-+  {
-+    "id": "health.report.area.version",
-+    "translation": "Updates",
-+    "description": "Label of the server version and updates area tag on a finding in the shareable health report (Site health export and mmctl health check output); matches the area names on the System Console Site health page."
-+  },
-+  {
-+    "id": "health.report.finding.title_on_node",
-+    "translation": "{{.Title}} on {{.Node}}",
-+    "description": "Title of a finding that applies to one server node in the shareable health report (Site health export and mmctl health check output); {{.Title}} is the finding title and {{.Node}} the node's hostname."
-+  },
-+  {
-+    "id": "health.report.header.collected_at",
-+    "translation": "Data collected",
-+    "description": "Header label in the shareable health report (Site health export and mmctl health check output) for a one-off evaluation such as a Support Packet; followed by the date and time the evaluated data was collected, which can be long before the report was made."
-+  },
-+  {
-+    "id": "health.report.header.collected_unknown",
-+    "translation": "Unknown",
-+    "description": "Shown after 'Data collected' in the shareable health report (Site health export and mmctl health check output) when a one-off evaluation, such as of a Support Packet, does not record when its data was collected."
-+  },
-+  {
-+    "id": "health.report.header.company",
-+    "translation": "Licensed to",
-+    "description": "Header label in the shareable health report (Site health export and mmctl health check output); followed by the name of the company the Mattermost license is issued to."
-+  },
-+  {
-+    "id": "health.report.header.evaluated_at",
-+    "translation": "Last evaluated",
-+    "description": "Header label in the shareable health report (Site health export and mmctl health check output); followed by the date and time the health checks last ran."
-+  },
-+  {
-+    "id": "health.report.header.generated_at",
-+    "
+@@ -329,7 +329,7 @@ test.describe('Channel attribute display and editing', {tag: ['@channel_attribut
+ 
+             // * But the row is there, saying the channel is incomplete, and it can be filled
+             const info = await channelsPage.openChannelInfo();
+-            await expect(info.attributes.unset(undesignated.name)).toBeVisible();
++            await expect(info.attributes.missingValue(undesignated.name)).toHaveText('Select a value');
+             await info.attributes.select(undesignated.name, 'FILLED');
+             await expect(info.attributes.chip(undesignated.name)).toHaveText('FILLED');
+ 
 ```
 
-**File**: `server/platform/shared/healthcheck/report/render.go` (added, +168/-0)
+**File**: `e2e-tests/playwright/specs/functional/channels/channel_attributes/channel_attribute_editing.spec.ts` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,168 @@
+@@ -331,8 +331,8 @@ test.describe('Channel attribute editing', {tag: ['@channel_attributes']}, () =>
+ 
+             const info = await channelsPage.openChannelInfo();
+ 
+-            // * A required attribute with no value shows as unset and is still editable
+-            await expect(info.attributes.unset(marking.name)).toBeVisible();
++            // * A required attribute with no value shows as missing and is still editable
++            await expect(info.attributes.missingValue(marking.name)).toHaveText('Select a value');
+             await expect(info.attributes.lock(marking.name)).toHaveCount(0);
+ 
+             // # Set it for the first time
+```
+
+**File**: `e2e-tests/playwright/specs/functional/channels/channel_attributes/channel_attribute_lifecycle.spec.ts` (modified, +1/-1)
+```diff
+@@ -177,7 +177,7 @@ test.describe('Channel attribute lifecycle', {tag: ['@channel_attributes']}, ()
+             // The empty row is both the signal and the retry path.
+             const row = page.getByTestId(`channelInfoAttributeRow-${required.name}`);
+             await expect(row).toBeVisible();
+-            await expect(row).toContainText('Not set');
++            await expect(row.getByTestId(`channelInfoAttributeMissing-${required.name}`)).toHaveText('Select a value');
+ 
+             // No chip while unset.
+             await expect(page.getByTestId('attributeChip')).toHaveCount(0);
+```
+
+**File**: `e2e-tests/playwright/specs/functional/channels/channel_attributes/channel_attribute_required_console.spec.ts` (added, +78/-0)
+```diff
+@@ -0,0 +1,78 @@
 +// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 +// See LICENSE.txt for license information.
 +
-+package report
++/**
++ * System Console - Channel Configuration page for a channel that lacks a value
++ * for a required attribute. The page refuses Save until the value is filled.
++ */
 +
-+import (
-+	_ "embed"
-+	"fmt"
-+	"html/template"
-+	"io"
-+	"net/url"
-+	"regexp"
-+	"slices"
-+	"strings"
-+)
++import type {PropertyField} from '@mattermost/types/properties';
 +
-+//go:embed report.html.tmpl
-+var htmlSource string
++import {expect, getAdminClient, test} from '@mattermost/playwright-lib';
 +
-+var htmlTemplate = template.Must(template.New("report").Parse(htmlSource))
++import {deleteAttributes, optionId, purgeAttributes, readChannelValues, valueFor} from './helpers';
++import {setUpTeamMissingRequiredValue} from './missing_required_helpers';
 +
-+// Header lists the generation and evaluation times, then the site facts.
-+func (r *Report) Header() []Field {
-+	return slices.Concat([]Field{r.GeneratedAt, r.EvaluatedAt}, r.Site)
-+}
++test.describe(
++    'System Console - required channel attribute on the channel page',
++    {tag: ['@channel_attributes', '@system_console']},
++    () => {
++        test.describe.configure({mode: 'serial'});
 +
-+// WriteHTML writes the report as one self-contained HTML file: inline CSS, no scripts and no
-+// external assets. Its print stylesheet makes "Print, then Save as PDF" in a browser the PDF export.
-+func (r *Report) WriteHTML(w io.Writer) error {
-+	return htmlTemplate.Execute(w, r)
-+}
++        /**
++         * @objective Verify the channel page flags an empty required attribute, keeps Save disabled with an
++         * explanation, enables Save once an option is chosen, and stores the value when saved.
++         */
++        test('requires the missing value before the page can be saved', async ({pw}) => {
++            await pw.ensureFeatureFlag({ChannelAttributes: true, ChannelAttributesRequired: true});
++            await pw.skipIfNoLicense();
 +
-+// WriteMarkdown writes the report as Markdown for pasting into Mattermost. Finding
-+// details are left out to keep it short.
-+func (r *Report) WriteMarkdown(w io.Writer) error {
-+	var b strings.Builder
++            const {adminUser, adminClient} = await getAdminClient();
++            if (!adminUser || !adminClient) {
++                throw new Error('Admin user/client not available');
++            }
++            const suffix = pw.random.id();
++            const created: PropertyField[] = [];
 +
-+	fmt.Fprintf(&b, "# %s\n\n", escapeMarkdown(r.Title))
-+	for _, note := range r.Notes {
-+		fmt.Fprintf(&b, "> %s\n\n", escapeMarkdown(note))
-+	}
-+	for _, field := range r.Header() {
-+		fmt.Fprintf(&b, "- **%s:** %s\n", escapeMarkdown(field.Label), escapeMarkdown(field.Value))
-+	}
-+	if r.Stale != "" {
-+		fmt.Fprintf(&b, "\n**%s**\n", escapeMarkdown(r.Stale))
-+	}
++            try {
++                await purgeAttributes(adminClient);
++                const {field, offTopic} = await setUpTeamMissingRequiredValue(pw, adminClient, suffix, created);
 +
-+	fmt.Fprintf(&b, "\n## %s\n\n%s\n", escapeMarkdown(r.Labels.Summary), escapeMarkdown(r.Summary))
++                const {page} = await pw.testBrowser.login(adminUser);
++                await page.goto(`/admin_console/user_management/channels/${offTopic.id}`);
 +
-+	for _, section := range r.Sections {
-+		fmt.Fprintf(&b, "\n## %s\n", escapeMarkdown(section.Title))
-+		switch section.Kind {
-+		case SectionUnknown, SectionMuted:
-+			b.WriteString("\n")
-+			for _, f := range section.Findings {
-+				tags := f.Severity
-+				if section.Kind == SectionMuted && f.Unknown {
-+					tags += ", " + r.Labels.Unknown
-+				}
-+				fmt.Fprintf(&b, "- **%s**%s (%s)", escapeMarkdown(f.Title), codeSuffix(f.Code), escapeMarkdown(tags))
-+				if f.Message != "" {
-+					fmt.Fprintf(&b, ": %s", escapeMarkdown(f.Message))
-+				}
-+				b.WriteString("\n")
-+				if f.Remediation != "" {
-+					fmt.Fprintf(&b, "  - **%s:** %s\n", escapeMarkdown(r.Labels.Remediation), escapeMarkdown(f.Remediation))
-+				}
-+			}
-+		case SectionResolved:
-+			b.WriteString("\n")
-+			for _, f := range section.Findings {
-+				fmt.Fprintf(&b, "- %s%s\n", escapeMarkdown(f.Title), codeSuffix(f.Code))
-+			}
-+		default:
-+			for _, f := range section.Findings {
-+				fmt.Fprintf(&b, "\n### \\[%s\\] %s%s\n", escapeMarkdown(f.Area), escapeMarkdown(f.Title), codeSuffix(f.Code))
-+				if f.Message != "" {
-+					fmt.Fprintf(&b, "\n%s\n", escapeMarkdown(f.Message))
-+				}
-+				if f.Remediation != "" {
-+					fmt.Fprintf(&b, "\n**%s:** %s\n", escapeMarkdown(r.Labels.Remediation), escapeMarkdown(f.Remediation))
-+				}
-+				if f.ConsoleURL != "" {
-+					fmt.Fprintf(&b, "\n%s\n", markdownLink(r.Labels.Console, f.ConsoleURL))
-+				}
-+				if f.DocsURL != "" {
-+					fmt.Fprintf(&b, "\n%s\n", markdownLink(r.Labels.Documentation, f.DocsURL))
-+				}
-+			}
-+		}
-+	}
++                const trigger = page.getByTestId(`channelAttributesSettings-${field.name}`);
++                await expect(trigger).toBeVisible();
 +
-+	_, err := io.WriteString(w, b.String())
-+	return err
-+}
++                // * The field is flagged and Save is disabled with the reason
++                await expect(page.getByTestId(`channelAttributeRequiredError-${field.name}`)).toHaveText(
++                    'This attribute is required. Set a value to save.',
++                );
++                const saveButton = page.getByTestId('saveSetting');
++                await expect(saveButton).toBeDisabled();
++                await expect(page.getByTestId('channelAttributesRequiredToSave')).toContainText(
++                    /Set a value for .+ before saving\. This attribute is required\./,
++                );
 +
-+var (
-+	newlineReplacer = strings.NewReplacer("\r\n", " ", "\n", " ", "\r", " ")
-+	markdownEscaper = strings.NewReplacer(
-+		`\`, `\\`, "`", "\\`", "*", `\*`, "_", `\_`, "[", `\[`, "]", `\]`, "<", `\<`, ">", `\>`,
-+		"#", `\#`, "|", `\|`, "~", `\~`, "!", `\!`, "&", `\&`,
-+	)
++                // # Choose an option
++                await trigger.click();
++                await page.getByText('AURORA', {exact: true}).click();
 +
-+	// markdownVerbatim matches bare URLs, which a backslash escape would break, and @mentions,
-+	// which a backslash escape would not stop from notifying when pasted into Mattermost. A mention
-+	// includes any underscores right before it, which Mattermost strips before looking for one,
-+	// and any mention run into it, such as @here in @all@here.
-+	// Neither can contain a character that starts a link, HTML or a code span.
-+	markdownVerbatim = regexp.MustCompile(`https?://[A-Za-z0-9\-._~:/?#!$&'+,;=%@]+|(?:\B|\b_+)@[A-Za-z0-9_](?:[A-Za-z0-9_.\-@]*[A-Za-z0-9_])?`)
-+)
++                // * The error clears and Save is enabled
++                await expect(page.getByTestId(`channelAttributeRequiredError-${field.name}`)).toHaveCount(0);
++                await expect(saveButton).toBeEnabled();
 +
-+// escapeMarkdown makes s render as the literal text it is, on one line, wherever it is placed,
-+// leaving bare URLs linkable and @mentions inert in a code span. Mattermost finds mentions inside
-+// a linked URL too, so a URL with an @ goes in a code span as well.
-+func escapeMarkdown(s string) string {
-+	s = strings.TrimSpace(newlineReplacer.Replace(s))
++                // # Save the page
++                await saveButton.click();
++                await expect(page).toHaveURL(/\/admin_console\/user_management\/channels$/);
 +
-+	var b strings.Builder
-+	last := 0
-+	for _, match := range markdownVerbatim.FindAllStringIndex(s, -1) {
-+		b.WriteString(markdownEscaper.Replace(s[last:match[0]]))
-+		if token := s[match[0]:match[1]]; strings.Contains(token, "@") {
-+			b.WriteString("`" + token + "`")
-+		} else {
-+			b.WriteString(token)
-+		}
-+		last = match[1]
-+	}
-+	b.WriteString(markdownEscaper.Replace(s[last:]))
-+
-+	s = b.String()
-+	if s == "" {
-+		return s
-+	}
-+
-+	// A leading "-" or "+" would start a list or a thematic break, and "1. " or "1) " an ordered list.
-+	if s[0] == '-' || s[0] == '+' {
-+		return `\` + s
-+	}
-+	digits := strings.IndexFunc(s, func(
++                // * The value is stored
++                await expect
++                    .poll(async () => valueFor(await readChannelValues(adminClient, offTopic.id), field))
++                    .toBe(optionId(field, 'AURORA'));
++            } finally {
++                await deleteAttributes(adminClient, created);
++            }
++        });
++    },
++);
 ```
 
-**File**: `server/platform/shared/healthcheck/report/report.go` (added, +372/-0)
+**File**: `e2e-tests/playwright/specs/functional/channels/channel_attributes/channel_attribute_system_console.spec.ts` (modified, +16/-9)
 ```diff
-@@ -0,0 +1,372 @@
+@@ -57,13 +57,20 @@ test.describe('System Console - Channel attributes section', {tag: ['@channel_at
+             const {page} = await pw.testBrowser.login(adminUser);
+             await page.goto(`/admin_console/user_management/channels/${channel.id}`);
+ 
+-            const trigger = page.getByTestId(`channelAttributesSettings-${program.name}`);
++            // The menu's first option carries the trigger's testid too, so scope to the row.
++            const trigger = page
++                .getByTestId(`channelAttributesSettingsRow-${program.name}`)
++                .getByTestId(`channelAttributesSettings-${program.name}`);
+             await expect(trigger).toBeVisible();
+ 
+             // # Pick a value, but do not save yet
+             await trigger.click();
+             await page.getByText('AURORA', {exact: true}).click();
+ 
++            // A Save click while the menu is still closing lands on its backdrop.
++            await expect(page.getByRole('menu')).toHaveCount(0);
++            await expect(trigger).toContainText('AURORA');
++
+             // * The pending edit has not reached the server
+             expect(valueFor(await readChannelValues(adminClient, channel.id), program)).toBeUndefined();
+ 
+@@ -123,7 +130,7 @@ test.describe('System Console - Channel attributes section', {tag: ['@channel_at
+ 
+     /**
+      * @objective Verify a select value can be cleared from its chip, and that
+-     * Save refuses to clear one that is required.
++     * Save stays disabled while a required one is cleared.
+      */
+     test('refuses to save a cleared required value', async ({pw}) => {
+         await pw.ensureFeatureFlag({ChannelAttributes: true, ChannelAttributesRequired: true});
+@@ -154,12 +161,12 @@ test.describe('System Console - Channel attributes section', {tag: ['@channel_at
+             await page.goto(`/admin_console/user_management/channels/${channel.id}`);
+             await expect(page.getByTestId(`channelAttributesSettings-${program.name}`)).toContainText('AURORA');
+ 
+-            // # Clear the value from its chip and save
++            // # Clear the value from its chip
+             await page.getByRole('button', {name: 'Remove AURORA'}).click();
+             await expect(page.getByTestId(`channelAttributesSettings-${program.name}`)).toContainText('Not set');
+-            await page.getByTestId('saveSetting').click();
+ 
+-            // * Save is refused with an error, and the value is still stored
++            // * Save is disabled with an error, and the value is still stored
++            await expect(page.getByTestId('saveSetting')).toBeDisabled();
+             await expect(page.getByText(/before saving\. This attribute is required\./)).toBeVisible();
+             await expect(page.getByText('This attribute is required. Set a value to save.')).toBeVisible();
+             expect(valueFor(await readChannelValues(adminClient, channel.id), program)).toBe(
+@@ -203,17 +210,17 @@ test.describe('System Console - Channel attributes section', {tag: ['@channel_at
+             const {page} = await pw.testBrowser.login(adminUser);
+             await page.goto(`/admin_console/user_management/channels/${channel.id}`);
+ 
+-            // # Unarchive without setting the value, then save
++            // # Unarchive without setting the value
+             await page.getByRole('button', {name: 'Unarchive Channel'}).click();
+             const trigger = page.getByTestId(`channelAttributesSettings-${program.name}`);
+             await expect(trigger).toContainText('Not set');
+-            await page.getByTestId('saveSetting').click();
+ 
+-            // * Save is refused and the channel stays archived
++            // * Save is disabled and the channel stays archived
++            await expect(page.getByTestId('saveSetting')).toBeDisabled();
+             await expect(page.getByText(/before saving\. This attribute is required\./)).toBeVisible();
+             expect((await adminClient.getChannel(channel.id)).delete_at).not.toBe(0);
+ 
+-            // # Set the value and save again
++            // # Set the value and save
+             await trigger.click();
+             await page.getByText('ZEPHYR', {exact: true}).click();
+             await page.getByTestId('saveSetting').click();
+```
+
+**File**: `e2e-tests/playwright/specs/functional/channels/channel_attributes/missing_required_attribute_bot_message.spec.ts` (added, +161/-0)
+```diff
+@@ -0,0 +1,161 @@
 +// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 +// See LICENSE.txt for license information.
 +
-+// Package report builds a shareable health report from rendered findings, and renders it as a
-+// self-contained HTML file or as Markdown. The server and mmctl, including mmctl offline with a
-+// Support Packet, build their reports here so they group, sort and label findings the same way.
-+package report
++import type {Client4} from '@mattermost/client';
++import type {PropertyField} from '@mattermost/types/properties';
++import type {UserProfile} from '@mattermost/types/users';
 +
-+import (
-+	"cmp"
-+	"maps"
-+	"net/url"
-+	"slices"
-+	"strings"
-+	"time"
++import {expect, getAdminClient, test} from '@mattermost/playwright-lib';
 +
-+	"github.com/mattermost/mattermost/server/public/model"
-+	"github.com/mattermost/mattermost/server/public/shared/i18n"
-+	"github.com/mattermost/mattermost/server/public/utils"
-+	"github.com/mattermost/mattermost/server/v8/platform/shared/healthcheck"
-+)
++import {deleteAttributes, optionId, purgeAttributes, setChannelValue} from './helpers';
++import {setUpTeamMissingRequiredValue} from './missing_required_helpers';
 +
-+// staleAfter is how old an evaluation can be before it appears to have stopped. The server
-+// evaluates hourly, so results older than two intervals mean evaluation stopped.
-+const staleAfter = 2 * time.Hour
++const SYSTEM_BOT_USERNAME = 'system-bot';
++const MESSAGE_LEAD = 'Channel attribute values are missing in';
 +
-+const timeLayout = "2006-01-02 15:04 MST"
-+
-+type Options struct {
-+	// T translates the report's labels. The findings must already be rendered.
-+	T i18n.TranslateFunc
-+	// Location is the time zone every time is shown in; nil means UTC.
-+	Location    *time.Location
-+	GeneratedAt time.Time
-+	// PointInTime marks findings from a one-off evaluation, such as of a Support Packet, whose age
-+	// says nothing about whether evaluation stopped. The list's EvaluatedAt is then when the data
-+	// was collected, or 0 if that is unknown.
-+	PointInTime bool
-+
-+	// SiteURL also turns each finding's System Console path into a link; without it there is none.
-+	SiteURL       string
-+	ServerVersion string
-+	License       string
-+	// Company is who the license is issued to. It also names the report's file.
-+	Company string
-+
-+	// Notes open the report, such as the Support Packet disclaimer.
-+	Notes []string
++// The System bot is created on first use, so a user's DM with it only exists once
++// something was sent. Opening it from the user's own session is harmless either way.
++async function systemBotPosts(userClient: Client4, user: UserProfile) {
++    const bot = await userClient.getUserByUsername(SYSTEM_BOT_USERNAME);
++    const dm = await userClient.createDirectChannel([user.id, bot.id]);
++    const list = await userClient.getPosts(dm.id);
++    return list.order.map((id) => list.posts[id]).filter((post) => post.message.includes(MESSAGE_LEAD));
 +}
 +
-+type Report struct {
-+	Title string
-+	// FileName is the name, without an extension, to save the report under, like the Support
-+	// Packet's: mm_site_health_<company>_<YYYY-MM-DDTHH-MM>, generated in Location. It also titles
-+	// the HTML report, so a browser suggests it when printing to PDF.
-+	FileName    string
-+	Notes       []string
-+	GeneratedAt Field
-+	EvaluatedAt Field
-+	// Site lists the site facts the caller set.
-+	Site []Field
-+	// Age is how old the evaluation was when the report was generated. It is zero for a
-+	// point-in-time evaluation, when nothing has been evaluated yet and when the server's clock
-+	// is ahead of the generating host's.
-+	Age time.Duration
-+	// Stale warns that evaluation appears to have stopped; it is empty otherwise.
-+	Stale string
++test.describe('Missing required channel attribute System bot message', {tag: ['@channel_attributes']}, () => {
++    test.describe.configure({mode: 'serial'});
 +
-+	// Summary counts the open findings, those in the severity and unknown sections, or says
-+	// when the first evaluation runs.
-+	Summary string
++    /**
++     * @objective Verify creating a team sends its creator one System bot message that names Off-Topic,
++     * Town Square and the attribute, and that it links to Off-Topic.
++     */
++    test('messages the team creator once about both default channels', async ({pw}) => {
++        await pw.ensureFeatureFlag({ChannelAttributes: true, ChannelAttributesRequired: true});
++        await pw.skipIfNoLicense();
 +
-+	// Sections holds only the non-empty sections, in display order.
-+	Sections []Section
-+	Labels   Labels
-+}
++        const {adminClient} = await getAdminClient();
++        if (!adminClient) {
++            throw new Error('Admin client not available');
++        }
++        const suffix = pw.random.id();
++        const created: PropertyField[] = [];
 +
-+type Field struct {
-+	Label string
-+	Value string
-+}
++        try {
++            await purgeAttributes(adminClient);
++            const {field, creator, team, offTopic} = await setUpTeamMissingRequiredValue(
++                pw,
++                adminClient,
++                suffix,
++                created,
++            );
 +
-+// Labels are the translated words the renderers put around findings.
-+type Labels struct {
-+	Summary       string
-+	Remediation   string
-+	Documentation string
-+	Console       string
-+	Details       string
-+	// Unknown tags a muted finding whose check could not run.
-+	Unknown string
-+}
++            const {channelsPage} = await pw.testBrowser.login(creator);
++            await channelsPage.goto(team.name, `@${SYSTEM_BOT_USERNAME}`);
 +
-+type SectionKind string
++            // * One message arrives, naming both channels and the attribute
++            const message = channelsPage.centerView.postViews.filter({hasText: MESSAGE_LEAD});
++            await expect(message).toHaveCount(1, {timeout: 15000});
++            await expect(message).toContainText('Off-Topic');
++            await expect(message).toContainText('Town Square');
++            await expect(message).toContainText(field.name);
 +
-+const (
-+	SectionCritical SectionKind = "critical"
-+	SectionWarning  SectionKind = "warning"
-+	SectionInfo     SectionKind = "info"
-+	SectionUnknown  SectionKind = "unknown"
-+	SectionMuted    SectionKind = "muted"
-+	SectionResolved SectionKind = "resolved"
-+)
++            // * The Off-Topic link points at the channel. It's built from the SiteURL, which in e2e isn't
++            // the browser's origin, so following it would leave the app.
++            await expect(message.getByRole('link', {name: 'Off-Topic'})).toHaveAttribute(
++                'href',
++                new RegExp(`/${team.name}/channels/${offTopic.name}$`),
++            );
++        } finally {
++            await deleteAttributes(adminClient, created);
++        }
++    });
 +
-+var sectionOrder = []SectionKind{SectionCritical, SectionWarning, SectionInfo, SectionUnknown, SectionMuted, SectionResolved}
++    /**
++     * @objective Verify promoting a member to channel admin of a channel that lacks the value sends that
++     * member the System bot message for it, and that the member now sees the indicators there.
++     */
++    test('messages a member promoted to channel admin of a channel missing the value', async ({pw}) => {
++        await pw.ensureFeatureFlag({ChannelAttributes: true, ChannelAttributesRequired: true});
++        await pw.skipIfNoLicense();
 +
-+type Section struct {
-+	Kind     SectionKind
-+	Title    string
-+	Findings []Finding
-+}
++        const {adminClient} = await getAdminClient();
++        if (!adminClient) {
++            throw new Error('Admin client not available');
++        }
++        const suffix = pw.random.id();
++        const created: PropertyField[] = [];
 +
-+type Finding struct {
-+	// Code is the rule's stable identifier, for referring to the finding in a ticket.
-+	Code     string
-+	Area     string
-+	Severity string
-+	// Title names the node too for a node-scoped finding.
-+	Title   string
-+	Message string
-+	// Unknown is set when the check could not run.
-+	Unknown bool
-+	// Remediation is empty when the check could not run, as the problem is not currently detected.
-+	Remediation string
-+	DocsURL     string
-+	// ConsoleURL opens the finding's setting in the System Console; it is empty unless the
-+	// report has a site URL.
-+	ConsoleURL string
-+	// Details is sorted by label.
-+	Details []Field
-+}
++        try {
++            await purgeAttributes(adminClient);
++            const {field, creator, member, team, townSquare} = await setUpTeamMissingRequiredValue(
++                pw,
++                adminClient,
++                suffix,
++                created,
++            );
 +
-+// Build places each finding in exactly one section: resolved findings go to Resolved even if
-+// muted, muted findings to Muted, and the rest by state and severity. MutedBy is never included.
-+func Build(list *model.HealthFindingList, opts Options) *Report {
-+	T := opts.T
-+	location := cmp.Or(opts.Location, time.UTC)
-+	formatTime := func(t time.Time) string { return t.In(location).Format(timeLayout) }
++            // # The creator promotes the plain member in Town Square
++            const {client: creatorClient} = await pw.makeClient(creator);
++            await creatorClient.updateChannelMemberSchemeRoles(townSquare.id, member.id, true, true);
 +
-+	r := &Report{
-+		Title:    T("health.report.title"),
-+		FileName: fileName(opts.Company, opts.GeneratedAt.In(location)),
-+		Notes:    opts.Notes,
-+	
++            // * The promoted member receives the message for Town Square
++            const {channelsPage} = await pw.testBrowser.login(member);
++            await channelsPage.goto(team.name, `@${SYSTEM_BOT_USERNAME}`);
++            const message = channelsPage.centerView.postViews.filter({hasText: MESSAGE_LEAD});
++            await expect(message).toHaveCoun
 ```
 
-**File**: `server/platform/shared/healthcheck/report/report.html.tmpl` (added, +186/-0)
-```diff
-@@ -0,0 +1,186 @@
-+<!DOCTYPE html>
-+<html>
-+<head>
-+<meta charset="utf-8">
-+<meta name="viewport" content="width=device-width, initial-scale=1">
-+<title>{{.FileName}}</title>
-+<style>
-+:root { --text: #3f4350; --text-72: rgba(63, 67, 80, 0.72); --text-64: rgba(63, 67, 80, 0.64); --border: rgba(63, 67, 80, 0.12); --button: #1c58d9; --critical: #d24b4e; --critical-bg: rgba(210, 75, 78, 0.1); --warning: #997113; --warning-bg: rgba(255, 188, 31, 0.16); --info: #1c58d9; --info-bg: rgba(28, 88, 217, 0.08); --resolved: #3db887; --resolved-bg: rgba(61, 184, 135, 0.12); --neutral: rgba(63, 67, 80, 0.64); --neutral-bg: rgba(63, 67, 80, 0.08); --elevation-1: 0 2px 3px 0 rgba(0, 0, 0, 0.08); }
-+* { box-sizing: border-box; }
-+body { margin: 0; font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 14px; line-height: 20px; color: var(--text); background: #f4f4f6; }
-+h1, h2 { font-family: Metropolis, "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-weight: 600; }
-+p { margin: 0; }
-+a { color: var(--button); text-decoration: none; }
-+a:hover { text-decoration: underline; }
-+code { font-family: Menlo, Consolas, "Liberation Mono", monospace; font-size: 12px; }
-+svg.icon { width: 18px; height: 18px; flex-shrink: 0; fill: currentColor; }
-+.banner { background: #1e325c; color: #fff; }
-+.banner-inner, main { max-width: 1000px; margin: 0 auto; padding: 0 24px; }
-+.banner-inner { display: flex; align-items: center; gap: 12px; padding-top: 20px; padding-bottom: 20px; }
-+.banner .logo { width: 32px; height: 32px; fill: #fff; }
-+.banner h1 { margin: 0; font-size: 22px; line-height: 28px; }
-+.banner .product { font-size: 12px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: rgba(255, 255, 255, 0.72); }
-+main { padding-top: 24px; padding-bottom: 40px; }
-+.card { margin: 0 0 12px; border: 1px solid rgba(63, 67, 80, 0.08); border-radius: 8px; background: #fff; box-shadow: var(--elevation-1); break-inside: avoid; }
-+.notice { display: flex; gap: 10px; margin: 0 0 16px; padding: 12px 16px; border: 1px solid rgba(28, 88, 217, 0.16); border-radius: 4px; background: var(--info-bg); }
-+.notice .icon { color: var(--info); }
-+.notice.stale { border-color: rgba(210, 75, 78, 0.16); background: var(--critical-bg); font-weight: 600; }
-+.notice.stale .icon { color: var(--critical); }
-+dl.header { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px 24px; margin: 0 0 12px; padding: 20px 24px; }
-+dl.header dt, .label { color: var(--text-64); font-size: 11px; font-weight: 600; letter-spacing: 0.6px; line-height: 16px; text-transform: uppercase; }
-+dl.header dd { margin: 2px 0 0; font-weight: 600; overflow-wrap: anywhere; }
-+.summary { padding: 20px 24px; }
-+.summary h2 { margin: 0 0 4px; font-size: 18px; line-height: 24px; }
-+.summary p + p { margin-top: 4px; color: var(--text-72); }
-+.counts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
-+.counts a { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px 4px 8px; border-radius: 16px; background: var(--tone-bg); color: var(--tone); font-size: 13px; font-weight: 600; }
-+.counts a:hover { text-decoration: none; filter: brightness(0.92); }
-+.counts .icon { width: 16px; height: 16px; }
-+.counts .count { padding: 0 6px; border-radius: 8px; background: rgba(255, 255, 255, 0.72); font-size: 11px; line-height: 16px; }
-+.critical { --tone: var(--critical); --tone-bg: var(--critical-bg); }
-+.warning { --tone: var(--warning); --tone-bg: var(--warning-bg); }
-+.info { --tone: var(--info); --tone-bg: var(--info-bg); }
-+.resolved { --tone: var(--resolved); --tone-bg: var(--resolved-bg); }
-+.unknown, .muted { --tone: var(--neutral); --tone-bg: var(--neutral-bg); }
-+section { margin-top: 28px; }
-+section > h2 { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; padding: 0 4px; font-size: 16px; line-height: 24px; break-after: avoid; }
-+section > h2 .icon { color: var(--tone); }
-+section > h2 .count { color: var(--text-64); font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; font-weight: 400; }
-+section > h2::after { content: ""; flex: 1; height: 1px; margin-left: 4px; background: var(--border); }
-+.finding { display: flex; gap: 14px; padding: 16px; border-left: 3px solid var(--tone); }
-+.tone-icon { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: var(--tone-bg); color: var(--tone); }
-+.body { display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1; }
-+.title { margin: 0; font-size: 15px; font-weight: 600; line-height: 20px; }
-+.message { color: var(--text-72); overflow-wrap: anywhere; }
-+.meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-top: 2px; color: var(--text-64); font-size: 12px; }
-+.tag { display: inline-block
-```
+---
 
-**File**: `server/platform/shared/healthcheck/report/report_test.go` (added, +377/-0)
+### Incident Patch 3: `cdf96172` (2026-11-24)
+**Commit Message**: [MM-72211] Collect load average, swap, and available memory in macOS Support Packets (#40280)
+
+* [MM-72211] Collect load average, swap, and available memory on macOS
+
+Add darwin implementations of getCPUStats and getMemoryDiagnostics that
+read vm.loadavg, vm.swapusage, and kern.memorystatus_level via sysctl,
+and keep the no-op stubs for other non-Linux platforms.
+
+Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
+
+* Make macOS memory diagnostics tests tolerate live value changes
+
+Retry the swap comparison against sysctl when swap moves between readings,
+and drop the strict positivity check on available memory.
+
+Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
+
+* Only compare macOS swap values with sysctl when swap held steady
+
+Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
+
+* Compute macOS available memory from free and reclaimable pages
+
+kern.memorystatus_level counts active and inactive pages as available, so
+it overstated free memory on loaded Macs and could keep the host memory
+low health check from firing. Sum free, file-backed and purgeable pages
+instead, in kernel page size units, which also drops the second
+hw.memsize read.
+
+Co-authored-by: mattermost-code <[REDACTED
+
+**File**: `server/channels/app/platform/container_limits_darwin.go` (added, +125/-0)
 ```diff
-@@ -0,0 +1,377 @@
+@@ -0,0 +1,125 @@
 +// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 +// See LICENSE.txt for license information.
 +
-+package report
++//go:build darwin
++
++package platform
 +
 +import (
 +	"bytes"
-+	"flag"
-+	"os"
-+	"path/filepath"
++	"encoding/binary"
++	"errors"
++	"fmt"
++
++	"golang.org/x/sys/unix"
++)
++
++// cgroupV2Info has no fields here: cgroups are only read on Linux.
++type cgroupV2Info struct{}
++
++func getCgroupV2Info() (cgroupV2Info, error) {
++	return cgroupV2Info{}, nil
++}
++
++// getContainerLimits returns zero values: container limit detection via cgroups is only supported on Linux.
++func getContainerLimits(cgroupV2Info) (ContainerLimits, error) {
++	return ContainerLimits{}, nil
++}
++
++// loadavg mirrors struct loadavg from <sys/resource.h>.
++type loadavg struct {
++	Ldavg  [3]uint32
++	_      uint32
++	Fscale int64
++}
++
++// xswUsage mirrors struct xsw_usage from <sys/sysctl.h>.
++type xswUsage struct {
++	Total     uint64
++	Avail     uint64
++	Used      uint64
++	Pagesize  uint32
++	Encrypted int32
++}
++
++func getCPUStats(cgroupV2Info) (cpuStats, error) {
++	var stats cpuStats
++
++	raw, err := unix.SysctlRaw("vm.loadavg")
++	if err != nil {
++		return stats, fmt.Errorf("failed to get vm.loadavg: %w", err)
++	}
++	loads, err := decodeLoadAvg(raw)
++	if err != nil {
++		return stats, err
++	}
++	stats.LoadAverage1m = &loads[0]
++	stats.LoadAverage5m = &loads[1]
++	stats.LoadAverage15m = &loads[2]
++
++	return stats, nil
++}
++
++func decodeLoadAvg(raw []byte) ([3]float64, error) {
++	var (
++		avg   loadavg
++		loads [3]float64
++	)
++	if err := binary.Read(bytes.NewReader(raw), binary.NativeEndian, &avg); err != nil {
++		return loads, fmt.Errorf("decode vm.loadavg: %w", err)
++	}
++	if avg.Fscale <= 0 {
++		return loads, errors.New("vm.loadavg has a non-positive fscale")
++	}
++	for i, load := range avg.Ldavg {
++		loads[i] = float64(load) / float64(avg.Fscale)
++	}
++	return loads, nil
++}
++
++var availablePageSysctls = []string{"vm.page_free_count", "vm.page_pageable_external_count", "vm.page_purgeable_count"}
++
++func getMemoryDiagnostics(cgroupV2Info) (memoryDiagnostics, error) {
++	var diagnostics memoryDiagnostics
++
++	raw, err := unix.SysctlRaw("vm.swapusage")
++	if err != nil {
++		return diagnostics, fmt.Errorf("failed to get vm.swapusage: %w", err)
++	}
++	swap, err := decodeSwapUsage(raw)
++	if err != nil {
++		return diagnostics, err
++	}
++	diagnostics.SwapTotalMB = new(swap.Total / (1024 * 1024))
++	diagnostics.SwapUsedMB = new(swap.Used / (1024 * 1024))
++
++	// Page counts are in kernel pages, which can differ from this process's page size under Rosetta.
++	pageSize, err := unix.SysctlUint32("vm.pagesize")
++	if err != nil {
++		return diagnostics, fmt.Errorf("failed to get vm.pagesize: %w", err)
++	}
++	// Free pages plus what Activity Monitor calls cached files: file-backed and purgeable pages,
++	// which the kernel can reclaim without swapping.
++	var availablePages uint64
++	for _, name := range availablePageSysctls {
++		pages, err := unix.SysctlUint32(name)
++		if err != nil {
++			return diagnostics, fmt.Errorf("failed to get %s: %w", name, err)
++		}
++		availablePages += uint64(pages)
++	}
++	diagnostics.AvailableMemoryMB = new(availablePages * uint64(pageSize) / (1024 * 1024))
++
++	return diagnostics, nil
++}
++
++func decodeSwapUsage(raw []byte) (xswUsage, error) {
++	var usage xswUsage
++	if err := binary.Read(bytes.NewReader(raw), binary.NativeEndian, &usage); err != nil {
++		return usage, fmt.Errorf("decode vm.swapusage: %w", err)
++	}
++	if usage.Used > usage.Total {
++		return usage, errors.New("vm.swapusage used exceeds total")
++	}
++	return usage, nil
++}
+```
+
+**File**: `server/channels/app/platform/container_limits_darwin_test.go` (added, +204/-0)
+```diff
+@@ -0,0 +1,204 @@
++// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
++// See LICENSE.txt for license information.
++
++//go:build darwin
++
++package platform
++
++import (
++	"encoding/binary"
++	"math"
++	"os/exec"
++	"regexp"
++	"strconv"
 +	"strings"
 +	"testing"
-+	"time"
 +
 +	"github.com/stretchr/testify/assert"
 +	"github.com/stretchr/testify/require"
-+
-+	"github.com/mattermost/mattermost/server/public/model"
-+	"github.com/mattermost/mattermost/server/public/shared/i18n"
-+	serveri18n "github.com/mattermost/mattermost/server/v8/i18n"
 +)
 +
-+var update = flag.Bool("update", false, "rewrite the golden files in testdata")
-+
-+var (
-+	evaluatedAt = time.Date(2026, time.November, 18, 9, 30, 0, 0, time.UTC)
-+	generatedAt = evaluatedAt.Add(20 * time.Minute)
-+)
-+
-+func TestMain(m *testing.M) {
-+	if err := i18n.TranslationsPreInitFromFileBytes("en.json", serveri18n.English); err != nil {
-+		panic(err)
++// rawLoadAvg lays out struct loadavg as the C ABI does: ldavg at offsets 0, 4, 8 and fscale at 16.
++func rawLoadAvg(ldavg [3]uint32, fscale int64) []byte {
++	raw := make([]byte, 24)
++	for i, load := range ldavg {
++		binary.NativeEndian.PutUint32(raw[i*4:], load)
 +	}
-+	os.Exit(m.Run())
++	binary.NativeEndian.PutUint64(raw[16:], uint64(fscale))
++	return raw
 +}
 +
-+func testOptions() Options {
-+	return Options{
-+		T:             i18n.T,
-+		Location:      time.UTC,
-+		GeneratedAt:   generatedAt,
-+		SiteURL:       "https://chat.example.com",
-+		ServerVersion: "12.3.0",
-+		License:       "Enterprise",
-+		Company:       "Example Corp",
++// rawSwapUsage lays out struct xsw_usage as the C ABI does: total, avail and used at offsets 0, 8 and 16.
++func rawSwapUsage(total, avail, used uint64) []byte {
++	raw := make([]byte, 32)
++	binary.NativeEndian.PutUint64(raw[0:], total)
++	binary.NativeEndian.PutUint64(raw[8:], avail)
++	binary.NativeEndian.PutUint64(raw[16:], used)
++	binary.NativeEndian.PutUint32(raw[24:], 16384)
++	return raw
++}
++
++func sysctlOutput(t *testing.T, names ...string) string {
++	t.Helper()
++	out, err := exec.Command("sysctl", append([]string{"-n"}, names...)...).Output()
++	require.NoError(t, err)
++	return strings.TrimSpace(string(out))
++}
++
++// sysctlLoadAvg parses output like "{ 1.23 1.45 1.67 }".
++func sysctlLoadAvg(t *testing.T) [3]float64 {
++	t.Helper()
++	fields := strings.Fields(strings.Trim(sysctlOutput(t, "vm.loadavg"), "{} "))
++	require.Len(t, fields, 3)
++	var loads [3]float64
++	for i, field := range fields {
++		var err error
++		loads[i], err = strconv.ParseFloat(field, 64)
++		require.NoError(t, err)
 +	}
++	return loads
 +}
 +
-+func finding(code, severity, state string, area model.HealthArea, title string) *model.HealthFinding {
-+	return &model.HealthFinding{
-+		Fingerprint: code,
-+		Code:        code,
-+		Severity:    severity,
-+		State:       state,
-+		Area:        area,
-+		Title:       title,
++var swapUsagePattern = regexp.MustCompile(`total = ([\d.]+)M\s+used = ([\d.]+)M`)
++
++// sysctlSwapUsageMB parses output like "total = 2048.00M  used = 1024.50M  free = 1023.50M  (encrypted)".
++func sysctlSwapUsageMB(t *testing.T) (total, used float64) {
++	t.Helper()
++	matches := swapUsagePattern.FindStringSubmatch(sysctlOutput(t, "vm.swapusage"))
++	require.Len(t, matches, 3)
++	total, err := strconv.ParseFloat(matches[1], 64)
++	require.NoError(t, err)
++	used, err = strconv.ParseFloat(matches[2], 64)
++	require.NoError(t, err)
++	return total, used
++}
++
++func sysctlAvailableMemoryMB(t *testing.T) float64 {
++	t.Helper()
++	values := strings.Fields(sysctlOutput(t, append([]string{"vm.pagesize"}, availablePageSysctls...)...))
++	require.Len(t, values, 1+len(availablePageSysctls))
++	pageSize, err := strconv.ParseUint(values[0], 10, 64)
++	require.NoError(t, err)
++	var pages uint64
++	for _, value := range values[1:] {
++		count, err := strconv.ParseUint(value, 10, 64)
++		require.NoError(t, err)
++		pages += count
 +	}
++	return float64(pages*pageSize) / (1024 * 1024)
 +}
 +
-+func everySectionFindings() []*model.HealthFinding {
-+	push := finding("PUSH_BAD_SCHEME", "critical", "firing", model.AreaNotifications, "PushNotificationServer does not use https://")
-+	push.Message = "PushNotificationServer http://push.example.com uses http://, so push notifications are sent in cleartext."
-+	push.Remediation = "Prefix PushNotificationServer with https:// and verify reachability from the app node."
-+	push.DocsURL = "https://docs.mattermost.com/configure/environment-configuration-settings.html#push-notification-server"
-+	push.ConsolePath = "/admin_console/environment/push_notification_server"
-+	push.Details = map[string]string{"push_server": "http://push.example.com", "config_key": "EmailSettings.PushNotificationServer"}
-+
-+	eol := finding("VERSION_EOL", "critical", "firing", model.AreaVersion, "Mattermost version is past end-of-life")
-+	eol.Message = "Running Mattermost 11.0.4. Support for this release line ended on 2026-01-15."
-+	eol.Remediation = "Plan a staged upgrade to a supported release."
-+
-+	disk := finding("FILESTORE_DISK_LOW", "warning", "firing", model.AreaPlatform, "File storage disk space is low")
-+	disk.Scope = "app-1.example.com"
-+	disk.Message = "The volume containing FileSettings.Directory has 9.0 GiB (9.00%) available of 100.0 GiB."
-+	disk.Remediation = "Expand the volume."
-+	disk.ConsolePath = "/admin_console/environment/file_storage"
-+
-+	ldap := finding("LDAP_SYNC_OLD", "warning", "firing", model.AreaAuth, "AD/LDAP synchronization has not run recently")
-+
-+	custom := finding("CUSTOM", "info", "firing", model.HealthArea("experimental"), "A rule in an area this build does not know")
-+	custom.Message = "Shown under its raw area name. Pasting @channel stays inert, and https://example.com/a_b stays linked."
-+
-+	load := finding("NODE_HOST_LOAD_HIGH", "info", "unknown", model.AreaPlatform, "Host load is high")
-+	load.Scope = "app-2.example.com"
-+	load.Message = "Server diagnostics unavailable."
-+
-+	muted := finding("SITE_URL_HTTP", "warning", "firing", model.AreaCluster, "Site URL is not HTTPS")
-+	muted.Message = "SiteURL http://chat.example.com does not use https://."
-+	muted.Remediation = "Serve Mattermost over HTTPS and update SiteURL."
-+	muted.MutedAt = evaluatedAt.UnixMilli()
-+	muted.MutedBy = "muting-admin-user-id"
-+
-+	mutedUnknown := finding("GOMAXPROCS", "warning", "unknown", model.AreaPlatform, "GOMAXPROCS exceeds the container CPU limit")
-+	mutedUnknown.Message = "GOMAXPROCS is 16 and the container CPU limit is 4."
-+	mutedUnknown.Remediation = "Unset GOMAXPROCS."
-+	mutedUnknown.MutedAt = evaluatedAt.UnixMilli()
-+	mutedUnknown.MutedBy = "muting-admin-user-id"
-+
-+	resolved := finding("SITE_URL_EMPTY", "critical", "resolved", model.AreaCluster, "Site URL is empty")
-+
-+	return []*model.HealthFinding{resolved, mutedUnknown, muted, load, custom, ldap, disk, eol, push}
++// assertBetweenReads checks got against values read before and after it, since live values can change in between.
++func assertBetweenReads(t *testing.T, before, after, got, tolerance float64, name string) {
++	t.Helper()
++	assert.GreaterOrEqual(t, got, min(before, after)-tolerance, name)
++	assert.LessOrEqual(t, got, max(before, after)+tolerance, name)
 +}
 +
-+func mutedAndResolvedFindings() []*model.HealthFinding {
-+	open := finding("PUSH_BAD_SCHEME", "critical", "firing", model.AreaNotifications, "PushNotificationServer does not use https://")
++func TestDecodeLoadAvg(t *testing.T) {
++	t.Run("divides each load by fscale", func(t *testing.T) {
++		loads, err := decodeLoadAvg(rawLoadAvg([3]uint32{4096, 1024, 512}, 2048))
++		require.NoError(t, err)
++		assert.Equal(t, [3]float64{2, 0.5, 0.25}, loads)
++	})
 +
-+	mutedResolved := finding("SITE_URL_HTTP", "warning", "resolved", model.AreaCluster, "Site URL is not HTTPS")
-+	mutedResolved.Message = "SiteURL http://chat.example.com does not use https://."
-+	mutedResolved.MutedAt = evaluatedAt.UnixMilli()
-+	mutedResolved.MutedBy = "muting-admin-user-id"
++	t.Run("rejects zero fscale", func(t *testing.T) {
++		_, err := decodeLoadAvg(rawLoadAvg([3]uint32{1, 2, 3}, 0))
++		require.Error(t, err)
++	})
 +
-+	muted := finding("AUDIT_LOG_OFF", "info", "firing", model.AreaCompliance, "Audit logging is off")
-+	muted.Message = "No audit log target is configured."
-+	muted.MutedAt = evaluatedAt.UnixMil
++	t.Run("rejects truncated input", func(t *testing.T) {
++		_, err := decodeLoadAvg(rawLoadAvg([3]uint32{1, 2, 3}, 2048)[:16])
++		require.Error(t, err)
++	})
++}
++
++func TestDecodeSwapUsage(t *testing.T) {
++	t.Run("decodes total and used", func(t *testing.T) {
++		usage, err := decodeSwapUsage(rawSwapUsage(3<<30, 2<<30, 1<<30))
++		require.NoError(t, err)
++		assert.Equal(t, uint64(3<<30), usage.Total)
++		assert.Equal(t, uint64(2<<30), usage.Avail)
++		assert.Equal(t, uint64(1<<30), usage.Used)
++	})
++
++	t.Run("rejects used greater than total", func(t *testing.T) {
++		_, err := decodeSwapUsage(rawSwapUsage(1, 0, 2))
++		require.Error(t, err)
++	})
++
++	t.Run("rejects truncated input", func(t *testing.T) {
++		_, err := decodeSwapUsage(rawSwapUsage(3, 2, 1)[:20])
++		require.Error(t, err)
++	})
++}
++
++func TestGetCPUStats(t *testing.T) {
++	before := sysctlLoadAvg(t)
++	stats, err := getCPUStats(cgroupV2Info{})
++	after := sysctlLoadAvg(t)
++	require.NoError(t, err)
++	require.NotNil(t, stats.LoadAverage1m)
++	require.NotNil(t, stats.LoadAverage5m)
++	require.NotNil(t, stats.LoadAverage15m)
++	assert.Nil(t, stats.ContainerCPUPeriods)
++	assert.Nil(t, stats.ContainerCPUThrottledPeriods)
++	assert.Nil(t, stats.ContainerCPUThrottledSeconds)
++
++	// sysctl prints two decimals.
++	for i, got := range []float64{*stats.LoadAverage1m, *stats.LoadAverage5m, *stats.LoadAverage15m} {
++		assertBetweenReads(t, before[i], after[i], got, 0.01, "lo
 ```
 
-**File**: `server/platform/shared/healthcheck/report/testdata/empty.html` (added, +126/-0)
+**File**: `server/channels/app/platform/container_limits_other.go` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,126 @@
-+<!DOCTYPE html>
-+<html>
-+<head>
-+<meta charset="utf-8">
-+<meta name="viewport" content="width=device-width, initial-scale=1">
-+<title>mm_site_health_mattermost_2026-11-18T09-50</title>
-+<style>
-+:root { --text: #3f4350; --text-72: rgba(63, 67, 80, 0.72); --text-64: rgba(63, 67, 80, 0.64); --border: rgba(63, 67, 80, 0.12); --button: #1c58d9; --critical: #d24b4e; --critical-bg: rgba(210, 75, 78, 0.1); --warning: #997113; --warning-bg: rgba(255, 188, 31, 0.16); --info: #1c58d9; --info-bg: rgba(28, 88, 217, 0.08); --resolved: #3db887; --resolved-bg: rgba(61, 184, 135, 0.12); --neutral: rgba(63, 67, 80, 0.64); --neutral-bg: rgba(63, 67, 80, 0.08); --elevation-1: 0 2px 3px 0 rgba(0, 0, 0, 0.08); }
-+* { box-sizing: border-box; }
-+body { margin: 0; font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 14px; line-height: 20px; color: var(--text); background: #f4f4f6; }
-+h1, h2 { font-family: Metropolis, "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-weight: 600; }
-+p { margin: 0; }
-+a { color: var(--button); text-decoration: none; }
-+a:hover { text-decoration: underline; }
-+code { font-family: Menlo, Consolas, "Liberation Mono", monospace; font-size: 12px; }
-+svg.icon { width: 18px; height: 18px; flex-shrink: 0; fill: currentColor; }
-+.banner { background: #1e325c; color: #fff; }
-+.banner-inner, main { max-width: 1000px; margin: 0 auto; padding: 0 24px; }
-+.banner-inner { display: flex; align-items: center; gap: 12px; padding-top: 20px; padding-bottom: 20px; }
-+.banner .logo { width: 32px; height: 32px; fill: #fff; }
-+.banner h1 { margin: 0; font-size: 22px; line-height: 28px; }
-+.banner .product { font-size: 12px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: rgba(255, 255, 255, 0.72); }
-+main { padding-top: 24px; padding-bottom: 40px; }
-+.card { margin: 0 0 12px; border: 1px solid rgba(63, 67, 80, 0.08); border-radius: 8px; background: #fff; box-shadow: var(--elevation-1); break-inside: avoid; }
-+.notice { display: flex; gap: 10px; margin: 0 0 16px; padding: 12px 16px; border: 1px solid rgba(28, 88, 217, 0.16); border-radius: 4px; background: var(--info-bg); }
-+.notice .icon { color: var(--info); }
-+.notice.stale { border-color: rgba(210, 75, 78, 0.16); background: var(--critical-bg); font-weight: 600; }
-+.notice.stale .icon { color: var(--critical); }
-+dl.header { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px 24px; margin: 0 0 12px; padding: 20px 24px; }
-+dl.header dt, .label { color: var(--text-64); font-size: 11px; font-weight: 600; letter-spacing: 0.6px; line-height: 16px; text-transform: uppercase; }
-+dl.header dd { margin: 2px 0 0; font-weight: 600; overflow-wrap: anywhere; }
-+.summary { padding: 20px 24px; }
-+.summary h2 { margin: 0 0 4px; font-size: 18px; line-height: 24px; }
-+.summary p + p { margin-top: 4px; color: var(--text-72); }
-+.counts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
-+.counts a { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px 4px 8px; border-radius: 16px; background: var(--tone-bg); color: var(--tone); font-size: 13px; font-weight: 600; }
-+.counts a:hover { text-decoration: none; filter: brightness(0.92); }
-+.counts .icon { width: 16px; height: 16px; }
-+.counts .count { padding: 0 6px; border-radius: 8px; background: rgba(255, 255, 255, 0.72); font-size: 11px; line-height: 16px; }
-+.critical { --tone: var(--critical); --tone-bg: var(--critical-bg); }
-+.warning { --tone: var(--warning); --tone-bg: var(--warning-bg); }
-+.info { --tone: var(--info); --tone-bg: var(--info-bg); }
-+.resolved { --tone: var(--resolved); --tone-bg: var(--resolved-bg); }
-+.unknown, .muted { --tone: var(--neutral); --tone-bg: var(--neutral-bg); }
-+section { margin-top: 28px; }
-+section > h2 { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; padding: 0 4px; font-size: 16px; line-height: 24px; break-after: avoid; }
-+section > h2 .icon { color: var(--tone); }
-+section > h2 .count { color: var(--text-64); font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; font-weight: 400; }
-+section > h2::after { content: ""; flex: 1; height: 1px; margin-left: 4px; background: var(--border); }
-+.finding { display: flex; gap: 14px; padding: 16px; border-left: 3px solid var(--tone); }
-+.tone-icon { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: var(--tone-bg); color: var(--tone); }
-+.body { display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1; }
-+.title { margin: 0; font-size: 15px; font-weight: 600; line-height: 20px; }
-+.message { color: var(--text-72); overflow-wrap: anywhere; }
-+.meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-top: 2px; color: var(--text-64); font-size: 12px; }
-
+@@ -1,7 +1,7 @@
+ // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
+ // See LICENSE.txt for license information.
+ 
+-//go:build !linux
++//go:build !linux && !darwin
+ 
+ package platform
+ 
 ```
 
----
-
-### Incident Patch 3: `6109a66e` (2026-11-20)
-**Commit Message**: Fix flaky TestCreateAccessControlPolicy (#40202)
-
-Three subtests under "team policy with a complex CEL expression" installed
-a bare AccessControlServiceInterface mock that was left in place for the
-following subtests. With channel permission enforcement active, publishing
-the websocket event for the channel created by the "accepted when both
-flags are on" subtest calls ActionHasPermissionPolicy on that leaked mock,
-which panics in the HTTP handler and surfaces as `Post .../api/v4/channels:
-EOF`. Use newMockAccessControlService, which stubs that call, as the
-sibling subtests already do.
-
-Tests-only change. Verified with `go test -run '^TestCreateAccessControlPolicy$'
--race -count=100` locally.
-
-Co-authored-by: Cursor Agent <[REDACTED_EMAIL]>
-Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
-Co-authored-by: Maria A Nunez <[REDACTED_EMAIL]>
-
-**File**: `server/channels/api4/access_control_test.go` (modified, +3/-3)
+**File**: `server/channels/app/platform/container_limits_other_test.go` (modified, +1/-1)
 ```diff
-@@ -504,7 +504,7 @@ func TestCreateAccessControlPolicy(t *testing.T) {
+@@ -1,7 +1,7 @@
+ // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
+ // See LICENSE.txt for license information.
  
- 		t.Run("system admin saves it", func(t *testing.T) {
- 			policy := newTeamPolicy()
--			mockACS := &mocks.AccessControlServiceInterface{}
-+			mockACS := newMockAccessControlService()
- 			th.App.Srv().Channels().AccessControl = mockACS
- 			mockACS.On("SavePolicy", mock.AnythingOfType("*request.Context"), mock.MatchedBy(func(p *model.AccessControlPolicy) bool {
- 				return p.Type == model.AccessControlPolicyTypeTeam &&
-@@ -521,7 +521,7 @@ func TestCreateAccessControlPolicy(t *testing.T) {
- 		})
+-//go:build !linux
++//go:build !linux && !darwin
  
- 		t.Run("PAP rejection is returned unchanged", func(t *testing.T) {
--			mockACS := &mocks.AccessControlServiceInterface{}
-+			mockACS := newMockAccessControlService()
- 			th.App.Srv().Channels().AccessControl = mockACS
- 			mockACS.On("SavePolicy", mock.AnythingOfType("*request.Context"), mock.AnythingOfType("*model.AccessControlPolicy")).
- 				Return(nil, model.NewAppError("SavePolicy", "app.pap.save_policy.team_resource_attributes", nil, "", http.StatusBadRequest)).Once()
-@@ -534,7 +534,7 @@ func TestCreateAccessControlPolicy(t *testing.T) {
+ package platform
  
- 		t.Run("regular user cannot save it", func(t *testing.T) {
- 			th.LoginBasic(t)
--			mockACS := &mocks.AccessControlServiceInterface{}
-+			mockACS := newMockAccessControlService()
- 			th.App.Srv().Channels().AccessControl = mockACS
- 
- 			_, resp, err := th.Client.CreateAccessControlPolicy(context.Background(), newTeamPolicy())
+```
+
+**File**: `server/channels/app/platform/support_packet.go` (modified, +6/-6)
+```diff
+@@ -46,17 +46,17 @@ var diagnosticsYAMLComments = yaml.CommentMap{
+ 	"$.server.os":                              {yaml.HeadComment(" Machine")},
+ 	"$.server.cpu_cores":                       {yaml.HeadComment(" Capacity (hardware → effective quota)"), yaml.LineComment(" logical CPUs visible to the OS")},
+ 	"$.server.total_memory_mb":                 {yaml.LineComment(" host/VM total RAM; may exceed container limit")},
+-	"$.server.available_memory_mb":             {yaml.LineComment(" host/VM MemAvailable from /proc/meminfo; Linux only")},
+-	"$.server.swap_total_mb":                   {yaml.LineComment(" host/VM total swap; Linux only")},
+-	"$.server.swap_used_mb":                    {yaml.LineComment(" host/VM used swap; Linux only")},
++	"$.server.available_memory_mb":             {yaml.LineComment(" host/VM MemAvailable from /proc/meminfo on Linux; free plus cached file and purgeable pages on macOS")},
++	"$.server.swap_total_mb":                   {yaml.LineComment(" host/VM total swap; Linux and macOS")},
++	"$.server.swap_used_mb":                    {yaml.LineComment(" host/VM used swap; Linux and macOS")},
+ 	"$.server.container_cpu_limit":             {yaml.LineComment(" cgroup v2 CPU quota in CPUs; Linux only, omitted if no limit set")},
+ 	"$.server.container_memory_limit_mb":       {yaml.LineComment(" cgroup v2 memory quota in MB; Linux only, omitted if no limit set")},
+ 	"$.server.container_memory_usage_mb":       {yaml.LineComment(" cgroup v2 memory.current in MB, including page cache; Linux only")},
+ 	"$.server.container_memory_working_set_mb": {yaml.LineComment(" cgroup v2 memory.current minus inactive file cache in MB; Linux only")},
+ 	"$.server.container_oom_kills":             {yaml.LineComment(" cgroup v2 OOM kills since the cgroup was created; Linux only")},
+-	"$.server.load_average_1m":                 {yaml.LineComment(" host-wide runnable and uninterruptible tasks averaged over 1 minute; Linux only")},
+-	"$.server.load_average_5m":                 {yaml.LineComment(" host-wide runnable and uninterruptible tasks averaged over 5 minutes; Linux only")},
+-	"$.server.load_average_15m":                {yaml.LineComment(" host-wide runnable and uninterruptible tasks averaged over 15 minutes; Linux only")},
++	"$.server.load_average_1m":                 {yaml.LineComment(" host-wide runnable (and on Linux, uninterruptible) tasks averaged over 1 minute; Linux and macOS")},
++	"$.server.load_average_5m":                 {yaml.LineComment(" host-wide runnable (and on Linux, uninterruptible) tasks averaged over 5 minutes; Linux and macOS")},
++	"$.server.load_average_15m":                {yaml.LineComment(" host-wide runnable (and on Linux, uninterruptible) tasks averaged over 15 minutes; Linux and macOS")},
+ 	"$.server.container_cpu_periods":           {yaml.LineComment(" cgroup v2 CPU scheduling periods since the cgroup was created; Linux only")},
+ 	"$.server.container_cpu_throttled_periods": {yaml.LineComment(" throttled periods divided by total periods is the CPU throttling ratio")},
+ 	"$.server.container_cpu_throttled_seconds": {yaml.LineComment(" total cgroup v2 CPU throttling time since the cgroup was created")},
+```
+
+**File**: `server/channels/app/platform/support_packet_test.go` (modified, +7/-1)
+```diff
+@@ -303,14 +303,20 @@ func TestGetSupportPacketDiagnostics(t *testing.T) {
+ 		require.NotNil(t, d.Server.GoMaxProcs)
+ 		assert.Positive(t, *d.Server.GoMaxProcs)
+ 		assert.Equal(t, d.Server.ContainerCPUPeriods == nil, d.Server.ContainerCPUThrottledPeriods == nil)
+-		if runtime.GOOS == "linux" {
++		if runtime.GOOS == "linux" || runtime.GOOS == "darwin" {
+ 			require.NotNil(t, d.Server.LoadAverage1m)
+ 			require.NotNil(t, d.Server.LoadAverage5m)
+ 			require.NotNil(t, d.Server.LoadAverage15m)
++			require.NotNil(t, d.Server.SwapTotalMB)
++			require.NotNil(t, d.Server.SwapUsedMB)
++			require.NotNil(t, d.Server.AvailableMemoryMB)
+ 		} else {
+ 			assert.Nil(t, d.Server.LoadAverage1m)
+ 			assert.Nil(t, d.Server.LoadAverage5m)
+ 			assert.Nil(t, d.Server.LoadAverage15m)
++			assert.Nil(t, d.Server.SwapTotalMB)
++			assert.Nil(t, d.Server.SwapUsedMB)
++			assert.Nil(t, d.Server.AvailableMemoryMB)
+ 		}
+ 		if runtime.GOOS == "linux" || runtime.GOOS == "darwin" {
+ 			require.NotNil(t, d.Server.TotalMemoryMB)
+```
+
+**File**: `server/channels/app/platform/testdata/support_packet/diagnostics.yaml` (modified, +6/-6)
+```diff
+@@ -18,17 +18,17 @@ server:
+   # Capacity (hardware → effective quota)
+   cpu_cores: 8 # logical CPUs visible to the OS
+   total_memory_mb: 32768 # host/VM total RAM; may exceed container limit
+-  available_memory_mb: 24576 # host/VM MemAvailable from /proc/meminfo; Linux only
+-  swap_total_mb: 4096 # host/VM total swap; Linux only
+-  swap_used_mb: 1024 # host/VM used swap; Linux only
++  available_memory_mb: 24576 # host/VM MemAvailable from /proc/meminfo on Linux; free plus cached file and purgeable pages on macOS
++  swap_total_mb: 4096 # host/VM total swap; Linux and macOS
++  swap_used_mb: 1024 # host/VM used swap; Linux and macOS
+   container_cpu_limit: 6.5 # cgroup v2 CPU quota in CPUs; Linux only, omitted if no limit set
+   container_memory_limit_mb: 16384 # cgroup v2 memory quota in MB; Linux only, omitted if no limit set
+   container_memory_usage_mb: 12288 # cgroup v2 memory.current in MB, including page cache; Linux only
+   container_memory_working_set_mb: 10240 # cgroup v2 memory.current minus inactive file cache in MB; Linux only
+   container_oom_kills: 2 # cgroup v2 OOM kills since the cgroup was created; Linux only
+-  load_average_1m: 1.25 # host-wide runnable and uninterruptible tasks averaged over 1 minute; Linux only
+-  load_average_5m: 1.5 # host-wide runnable and uninterruptible tasks averaged over 5 minutes; Linux only
+-  load_average_15m: 2.75 # host-wide runnable and uninterruptible tasks averaged over 15 minutes; Linux only
++  load_average_1m: 1.25 # host-wide runnable (and on Linux, uninterruptible) tasks averaged over 1 minute; Linux and macOS
++  load_average_5m: 1.5 # host-wide runnable (and on Linux, uninterruptible) tasks averaged over 5 minutes; Linux and macOS
++  load_average_15m: 2.75 # host-wide runnable (and on Linux, uninterruptible) tasks averaged over 15 minutes; Linux and macOS
+   container_cpu_periods: 10000 # cgroup v2 CPU scheduling periods since the cgroup was created; Linux only
+   container_cpu_throttled_periods: 1250 # throttled periods divided by total periods is the CPU throttling ratio
+   container_cpu_throttled_seconds: 42.5 # total cgroup v2 CPU throttling time since the cgroup was created
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #40267** (2026-11-21): [MM-71867] Audit whether onboarding saved the Site URL (@hanzei)
-- **PR #40266** (closed): Automated cherry pick of #40244 (@mattermost-code)
-- **PR #40265** (closed): Automated cherry pick of #40244 (@mattermost-code)
-- **PR #40264** (closed): Automated cherry pick of #40244 (@mattermost-code)
-- **PR #40263** (closed): Automated cherry pick of #40244 (@mattermost-code)
-- **PR #40262** (closed): Automated cherry pick of #40244 (@mattermost-code)
+- **PR #40307** (2026-11-24): Automated cherry pick of #40293 (@mattermost-build)
+- **PR #40306** (2026-11-24): Automated cherry pick of #39259 (@mattermost-code)
+- **PR #40305** (2026-11-24): E2E/Playwright: seed Department in edit_policies_rules on upgraded servers (@cursor[bot])
+- **PR #40298** (2026-11-24): Automated cherry pick of #40178 (@mattermost-build)
+- **PR #40293** (2026-11-24): [MM-71203] Update prepackaged Calls to v1.12.7 (@bgardner8008)
+- **PR #40290** (closed): Add GetPublicChannelsNotMemberForTeam plugin API (@jwilander)
 
 ---
 
@@ -3761,61 +3303,32 @@ Co-authored-by: Maria A Nunez <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Product rail: pin and reorder items, Threads back in Channels, and Boards, badge
+## X. ci(e2e): wait for late FIPS images, retry rate-limited lane status publication, 
 
 **RULE**:
-When implementing operations in `webapp/channels/src/actions/views/product_rail.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mattermost/mattermost. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/e2e-tests-workflows.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mattermost/mattermost. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8381b545`: Product rail: pin and reorder items, Threads back in Channels, and Boards, badge and team sidebar fixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b1d2e89e`: ci(e2e): wait for late FIPS images, retry rate-limited lane status publication, and fix rolling-upgrade lanes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `webapp/channels/src/actions/views/product_rail.test.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/e2e-tests-workflows.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
-// See LICENSE.txt for license information.
+├── server-image-check.yml                 # Gate: one edition's server image is on Docker Hub (not part of E2E)
+Before any of this, each orchestrator runs `server-image-check.yml` once per edition it tests, as the jobs `server-image-enterprise` and `server-image-fips`, and every lane of an edition `needs` that edition's job (rolling-upgrade lanes through their Playwright lane). See [Server image check](#server-image-check).
 
-import {PreferenceTypes} from 'mattermost-redux/action_types';
-import {Client4} from 'mattermost-redux/client';
-
-import configureStore from 'store';
-
-import {saveRailListPreference} from './product_rail';
-
-const HIDDEN_KEY = 'sidebar_settings--product_rail_hidden_items';
-
-// A save the test settles by hand.
-type PendingSave = {value: string; resolve: () => void; reject: () => void};
-
-describe('saveRailListPreference', () => {
-    let saves: PendingSave[];
-
-    beforeEach(() => {
-        saves = [];
-        jest.spyOn(Client4, 'savePreferences').mockImplementation((_userId, preferences) => new Promise((resolve, reject) => {
-            saves.push({
-                value: preferences[0].value!,
-                resolve: () => resolve({status: 'OK'}),
-                reject: () => reject(new Error('save failed')),
-            });
-        }));
-    });
-
-    // Lets queued promise callbacks run.
-    const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
-
-    // Saves are queued across the module, so settle any a test left open before the next one.
-    afterEach(a
+- **No image wait in the templates.** The templates assume the server image exists; the orchestrators check it first (see [Server image check](#server-image-check)).
+There is deliberately no `testcontainers:down` first — the runner is fresh, so `upgrade-from`'s clean-slate guard has nothing to trip over. `PW_TESTCONTAINERS_REUSE=true` is what lets `upgrade-to` adopt the stack, survive the swap, and keep every per-spec dispatch on the same upgraded server. `TESTCONTAINERS_RYUK_DISABLED=true` keeps the swapped-in server, which is not started with `withReuse()`, from being reaped when `upgrade-to` exits. Step 2 is skipped when the harness fails; that worker then never reports, the run closes short of `total-reports-expected`, and the version's context goes red.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+There is deliberately no `testcontainers:down` first — the runner is fresh, so `upgrade-from`'s clean-slate guard has nothing to trip over. `PW_TESTCONTAINERS_REUSE=true` is what lets `upgrade-to` adopt the stack, survive the swap, and keep every per-spec dispatch on the same upgraded server. Step 2 is skipped when the harness fails; that worker then never reports, the run closes short of `total-reports-expected`, and the version's context goes red.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8381b545` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b1d2e89e` are properly handled with clean fallback behavior.

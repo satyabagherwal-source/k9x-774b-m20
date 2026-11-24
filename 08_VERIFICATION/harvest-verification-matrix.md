@@ -12623,3 +12623,6 @@
 | `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T06:46:56.407Z` | `react-hook-form-react-hook-form` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-8C352294` [Domain H] | Yes (`6a3c9eb9...`) |
 | `CYCLE-20261124-BBAI` | `2026-11-24T06:55:13.386Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10224` | Yes (`4af012fe...`) |
 | `CYCLE-20261124-BFI8` | `2026-11-24T06:55:18.848Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10225` | Yes (`ba4faf96...`) |
+| `CYCLE-20261124-R8S4` | `2026-11-24T07:07:36.628Z` | `flox/flox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10226` | Yes (`baa6a96a...`) |
+| `CYCLE-20261124-R9KH` | `2026-11-24T07:07:37.649Z` | `mattermost/mattermost` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10227` | Yes (`9cc3c6b7...`) |
+| `CYCLE-20261124-RADC` | `2026-11-24T07:07:38.688Z` | `bridgecrewio/checkov` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10043` | Yes (`7e85c9e3...`) |
