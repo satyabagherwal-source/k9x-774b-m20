@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T11:44:39.516Z",
+  "last_updated": "2026-11-24T12:05:20.305Z",
   "total_verified_learnings": 9094,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24595,
+  "total_items": 24598,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "ea41d66f1299c8be2ac934aa17f0fd1b6564cfc8689bdb662d1ba3596ff22080",
+      "content_hash": "298e47948e80af7381dbaccda2f2f7fe8d026e9e4eb074e4a20125afe9faefaa",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T11:22:04.223Z"
+      "persisted_at": "2026-11-24T12:05:20.130Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "c600e8d78535c721f7b14d5843a0aaa5e378dc8610ae45df5c7561f1ed93da4b",
+      "content_hash": "a0c42c0e5c14560088fe21b01458fc525cc5a9b9963f154169284626b2d466c3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T11:22:04.401Z"
+      "persisted_at": "2026-11-24T12:05:20.305Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "1ebd139629df85b7bacfcc7467637413cf618b47ceb1b391f32965863c903674",
+      "content_hash": "cbf105e471d6fa32d317055174598a9ecbf096e13d740efe01ed79c7e968c245",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T11:22:03.323Z"
+      "persisted_at": "2026-11-24T12:05:19.206Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "46d875f88859a0bd828133a322c8243d875d9fd4b4bbeeff0a2a827ad8fb8403",
+      "content_hash": "142f3e6c1de169a9d31385f1a06d0ee5ff99549496ad2c76339759b259cecef8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T11:22:03.497Z"
+      "persisted_at": "2026-11-24T12:05:19.383Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -214194,8 +214194,8 @@
       "slug": "open-policy-agent-opa",
       "platform": "github",
       "source_url": "https://github.com/open-policy-agent/opa",
-      "source_version": "c24e1d8f",
-      "content_hash": "f799476265a6de793cbca2de9472c7dc0065786e9492dff0ab37688361585c85",
+      "source_version": "68244323",
+      "content_hash": "47bd3843da8976ccc97d7f9ce801b524af210169d690db67c26ebe319df512bb",
       "dossier_path": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "promoted_rules": [
@@ -214228,6 +214228,11 @@
           "number": 10067,
           "title": "Reuse pooled step continuation for bare terms",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10251,
+          "title": "release the checking compiler after a rego build",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -214235,7 +214240,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T16:37:07.107Z",
+      "verified_at": "2026-11-24T12:05:14.153Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -214277,10 +214282,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-open-policy-agent-opa-technical-construction-intelligence-open-policy-agent-opa-.md",
       "title": "Technical Construction Intelligence: open-policy-agent/opa Core Invariants",
       "repository": "open-policy-agent/opa",
-      "source_version": "c24e1d8f",
-      "content_hash": "215813a291e7e977ef51ec6919d0c5ed3bab2d89c5fb4f64b73a850c2d033cb8",
+      "source_version": "68244323",
+      "content_hash": "2f263ffe21e458f76f91fe8e18b0138e0533000994fc77ad4c384b342851a20e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T16:37:07.725Z"
+      "persisted_at": "2026-11-24T12:05:14.830Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-open-policy-agent-opa": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-open-policy-agent-opa",
@@ -214289,10 +214294,10 @@
       "relative_path": "08_VERIFICATION/open-policy-agent-opa-verification-protocol-empirical-defect-shield-for-open-pol.md",
       "title": "Verification Protocol: Empirical Defect Shield for open-policy-agent/opa",
       "repository": "open-policy-agent/opa",
-      "source_version": "c24e1d8f",
-      "content_hash": "89fda4dc53aa1d63f8357046af36afbccd6d4462a7b1299bd5968dca6ea4bb5a",
+      "source_version": "68244323",
+      "content_hash": "52131784e95a32cbe1db2291c3d15ccadf29adcf2534c4ca3abb4540ffb2e9c8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T16:37:07.912Z"
+      "persisted_at": "2026-11-24T12:05:15.017Z"
     },
     "learn-github-cilium-cilium": {
       "learning_id": "learn-github-cilium-cilium",
@@ -214628,9 +214633,9 @@
       "title": "Technical Construction Intelligence: open-policy-agent-opa-learnings Core Invariants",
       "repository": "open-policy-agent-opa-learnings",
       "source_version": "HEAD",
-      "content_hash": "603131b6cde20d86e4da2913d4a95992b8af57ab0fd54a683066c9487fb005d7",
+      "content_hash": "64cb87347d5909a4c5bebb56b7ae88759166a3251b4a337965f2cd39a64b6a52",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T16:37:14.650Z"
+      "persisted_at": "2026-11-24T12:05:18.371Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-open-policy-agent-opa-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-open-policy-agent-opa-learning",
@@ -214640,9 +214645,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for open-policy-agent-opa-learnings",
       "repository": "open-policy-agent-opa-learnings",
       "source_version": "HEAD",
-      "content_hash": "e933ecab4b26caedbb8447c1b8973107cc1e1bce72c29e6ea92acb4d4dc43020",
+      "content_hash": "8680df3f71086d29d2a594fa3978a8d039f94fcbecf33de1b6d642ace7c3dedd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T16:37:14.827Z"
+      "persisted_at": "2026-11-24T12:05:18.567Z"
     },
     "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf": {
       "learning_id": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
@@ -319938,13 +319943,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-UGI0-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-E3HY-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "adf2802e132b5d2cf6023867c4b0731e114e66e018be6358dfd2f4236eaa4645",
+      "content_hash": "b5eb3ea19c8764e7e2426c25136d5c1d3b8743cf6d4177741beed4bec5f0e141",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T11:22:03.147Z"
+      "persisted_at": "2026-11-24T12:05:19.033Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
@@ -334922,13 +334927,13 @@
       "item_id": "candidate_directive-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-UH76-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-E47N-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
       "title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "0c96b2b84fbf4feb54712eba3c29deebcee5da14203b4d58933d3c63a18490e8",
+      "content_hash": "14a9cfab04c3084257e6fda9be8b01e5ae10994b4f336032da31a477c3677172",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T11:22:04.053Z"
+      "persisted_at": "2026-11-24T12:05:19.958Z"
     },
     "learn-github-xinatian-mroffice": {
       "learning_id": "learn-github-xinatian-mroffice",
@@ -335657,6 +335662,44 @@
       "content_hash": "3cebfec2c3a5174affb72a89d9bc8177a0d9c7e8c6b6aa0e35f27f782010ab27",
       "domain_letter": "G",
       "persisted_at": "2026-11-24T11:44:38.098Z"
+    },
+    "rule-10251": {
+      "learning_id": "rule-10251",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10251,
+      "title": "release the checking compiler after a rego build",
+      "source_url": "https://github.com/open-policy-agent/opa",
+      "source_version": "68244323",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T12:05:14.153Z"
+    },
+    "candidate_directive-release-the-checking-compiler-after-a-rego-build": {
+      "item_id": "candidate_directive-release-the-checking-compiler-after-a-rego-build",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-E03S-release-the-checking-compiler-after-a-rego-build.md",
+      "title": "release the checking compiler after a rego build",
+      "repository": "open-policy-agent/opa",
+      "source_version": "68244323",
+      "content_hash": "a90b3c3d2744f00940ea9a1fcc159a8e83f6ae21c331d3b9d6230b5b670ca276",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T12:05:14.633Z"
+    },
+    "candidate_directive-compile-release-the-checking-compiler-after-a-rego-build": {
+      "item_id": "candidate_directive-compile-release-the-checking-compiler-after-a-rego-build",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-E2UO-compile-release-the-checking-compiler-after-a-rego-build.md",
+      "title": "compile: release the checking compiler after a rego build",
+      "repository": "open-policy-agent-opa-learnings",
+      "source_version": "HEAD",
+      "content_hash": "46e56b0c62c51425c5d6543bff1b77fdae2929a80d181ddb9a91b057dba035e2",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T12:05:18.193Z"
     }
   },
   "ai-builder-brain": {

@@ -6113,10 +6113,10 @@
     "repository": "open-policy-agent/opa",
     "platform": "github",
     "sourceUrl": "https://github.com/open-policy-agent/opa",
-    "sourceVersion": "c24e1d8f",
+    "sourceVersion": "68244323",
     "license": "Apache-2.0",
-    "contentHash": "f799476265a6de793cbca2de9472c7dc0065786e9492dff0ab37688361585c85",
-    "lastHarvestedAt": "2026-11-23T16:37:07.324Z",
+    "contentHash": "47bd3843da8976ccc97d7f9ce801b524af210169d690db67c26ebe319df512bb",
+    "lastHarvestedAt": "2026-11-24T12:05:14.390Z",
     "learningId": "learn-github-open-policy-agent-opa"
   },
   "dragonflydb-dragonfly": {

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T11:44:33.558Z",
-  "total_cycles_completed": 12032,
-  "total_learnings_persisted": 12032,
-  "total_rules_promoted": 11105,
+  "last_updated": "2026-11-24T12:05:14.395Z",
+  "total_cycles_completed": 12033,
+  "total_learnings_persisted": 12033,
+  "total_rules_promoted": 11106,
   "history": [
-    {
-      "timestamp": "2026-11-23T19:51:15.448Z",
-      "repository": "restatedev/restate",
-      "learningId": "learn-github-restatedev-restate",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T19:51:23.137Z",
       "repository": "flux-iac/tofu-controller",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-24T11:44:33.558Z",
       "repository": "microsoft/agent-governance-toolkit",
       "learningId": "learn-github-microsoft-agent-governance-toolkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T12:05:14.395Z",
+      "repository": "open-policy-agent/opa",
+      "learningId": "learn-github-open-policy-agent-opa",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

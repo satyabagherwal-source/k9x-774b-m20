@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T11:44:39.237Z",
+  "last_updated": "2026-11-24T12:05:20.130Z",
   "total_records": 2516,
   "domains": {
     "A": {
@@ -8331,8 +8331,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "ea41d66f1299c8be2ac934aa17f0fd1b6564cfc8689bdb662d1ba3596ff22080",
-      "created_at": "2026-11-24T11:22:04.223Z"
+      "content_hash": "298e47948e80af7381dbaccda2f2f7fe8d026e9e4eb074e4a20125afe9faefaa",
+      "created_at": "2026-11-24T12:05:20.130Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -9249,8 +9249,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "1ebd139629df85b7bacfcc7467637413cf618b47ceb1b391f32965863c903674",
-      "created_at": "2026-11-24T11:22:03.323Z"
+      "content_hash": "cbf105e471d6fa32d317055174598a9ecbf096e13d740efe01ed79c7e968c245",
+      "created_at": "2026-11-24T12:05:19.206Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -10548,8 +10548,8 @@
       "title": "Technical Construction Intelligence: open-policy-agent/opa Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-open-policy-agent-opa-technical-construction-intelligence-open-policy-agent-opa-.md",
       "repository": "open-policy-agent/opa",
-      "content_hash": "215813a291e7e977ef51ec6919d0c5ed3bab2d89c5fb4f64b73a850c2d033cb8",
-      "created_at": "2026-11-23T16:37:07.725Z"
+      "content_hash": "2f263ffe21e458f76f91fe8e18b0138e0533000994fc77ad4c384b342851a20e",
+      "created_at": "2026-11-24T12:05:14.830Z"
     },
     "domain_intelligence-technical-construction-intelligence-t8y2-dbx-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-t8y2-dbx-core-invariants",
@@ -10617,8 +10617,8 @@
       "title": "Technical Construction Intelligence: open-policy-agent-opa-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-open-policy-agent-opa-learnings-technical-construction-intelligence-open-policy-.md",
       "repository": "open-policy-agent-opa-learnings",
-      "content_hash": "603131b6cde20d86e4da2913d4a95992b8af57ab0fd54a683066c9487fb005d7",
-      "created_at": "2026-11-23T16:37:14.650Z"
+      "content_hash": "64cb87347d5909a4c5bebb56b7ae88759166a3251b4a337965f2cd39a64b6a52",
+      "created_at": "2026-11-24T12:05:18.371Z"
     },
     "domain_intelligence-research-knowledge-intelligence-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-",

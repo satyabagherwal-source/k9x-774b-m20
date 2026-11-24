@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T16:37:14.359Z",
+  "timestamp": "2026-11-24T12:05:18.065Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-open-policy-agent-opa-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [open-policy-agent-opa-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T16:37:14.359Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T12:05:18.065Z`  
 > **Learning ID**: `LEARN-EVO-open-policy-agent-opa-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 77%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 81%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from open-policy-agent-opa-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md`  
 > **Source**: github ([https://github.com/open-policy-agent/opa](https://github.com/open-policy-agent/opa))  
-> **Source Version**: `c24e1d8f`  
+> **Source Version**: `68244323`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T16:37:06.266Z  
+> **Timestamp**: 2026-11-24T12:05:13.215Z  
 > **Learning ID**: `learn-github-open-policy-agent-opa`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/open-policy-agent/opa](https://github.com/open-policy-agent/opa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T16:37:06.261Z  
+> **Harvest Timestamp**: 2026-11-24T12:05:12.729Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Open Policy Agent (OPA) is an open source, general-purpose policy engine.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 12510 stars
+- **Stars / Engagement**: 12514 stars
 
 ---
 
@@ -995,299 +995,38 @@ func BuildTLSConfig(scheme string, skipVerify bool, cert *tls.Certificate, pool 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c24e1d8f` (2026-11-23)
-**Commit Message**: topdown: Reuse pooled step continuation for bare terms
+### Incident Patch 1: `e9ffcc55` (2026-11-23)
+**Commit Message**: compile: release the checking compiler after a rego build (#9604)
 
-A bare term in a rule body, like `allow if input.foo`, built a new
-closure every time it ran. It now takes a stepCont from stepContPool
-and uses its runBare method as the continuation, as calls and
-equalities already do with run.
+For the rego target, the compiler that checked the policies is no longer
+read once they are checked: only planning for the plan and wasm targets
+reads it. Build now drops it, so it no longer stays in memory, beside
+the bundle, while the modules are formatted and for as long as the
+caller keeps the Compiler, for example while writing the bundle.
 
-runBare holds the bare-term checks. They stay out of run, which calls
-and equalities share, because adding them there slowed those steps.
+Signed-off-by: Stephan Renatus <[REDACTED_EMAIL]>
 
-BenchmarkPartialObjectRuleCrossModule/1000:
-
-27100 allocs/op // was
-25610 allocs/op // now
-
-Signed-off-by: Charlie Egan <[REDACTED_EMAIL]>
-
-**File**: `v1/topdown/eval.go` (modified, +25/-13)
+**File**: `v1/compile/compile.go` (modified, +2/-1)
 ```diff
-@@ -473,15 +473,30 @@ type stepCont struct {
- 	e       *eval
- 	iter    evalIterator
- 	fn      func() error
-+	bareFn  func() error
-+	rterm   *ast.Term // set for a bare term expression, which must not be false
- 	advance bool
- }
- 
- func (c *stepCont) run() error {
- 	return c.e.cont(c.iter, c.advance)
- }
- 
-+func (c *stepCont) runBare() error {
-+	e := c.e
-+	if e.saveSet != nil && e.saveSet.Contains(c.rterm, e.bindings) {
-+		return e.saveExpr(ast.NewExpr(c.rterm), e.bindings, func() error {
-+			return e.cont(c.iter, c.advance)
-+		})
-+	}
-+	if e.bindings.Plug(c.rterm).Equal(ast.InternedTerm(false)) {
-+		return nil
-+	}
-+	return e.cont(c.iter, c.advance)
-+}
-+
- func (c *stepCont) Reset() {
--	c.e, c.iter = nil, nil
-+	c.e, c.iter, c.rterm = nil, nil, nil
- }
- 
- // cont continues after a successful step: to the next expression if advance is
-@@ -532,18 +547,15 @@ func (e *eval) evalStep(iter evalIterator, advance bool) (err error) {
- 
- 		stepContPool.Put(c)
- 	case *ast.Term:
--		rterm := ast.VarTerm(e.fmtVar())
--		err = e.unify(terms, rterm, func() error {
--			if e.saveSet != nil && e.saveSet.Contains(rterm, e.bindings) {
--				return e.saveExpr(ast.NewExpr(rterm), e.bindings, func() error {
--					return e.cont(iter, advance)
--				})
--			}
--			if !e.bindings.Plug(rterm).Equal(ast.InternedTerm(false)) {
--				return e.cont(iter, advance)
--			}
--			return nil
--		})
-+		c := stepContPool.Get()
-+		c.e, c.iter, c.advance, c.rterm = e, iter, advance, ast.VarTerm(e.fmtVar())
-+		if c.bareFn == nil {
-+			c.bareFn = c.runBare
-+		}
-+
-+		err = e.unify(terms, c.rterm, c.bareFn)
-+
-+		stepContPool.Put(c)
- 	case *ast.Every:
- 		eval := evalEvery{
- 			e:     e,
-```
-
----
-
-### Incident Patch 2: `39059957` (2026-11-23)
-**Commit Message**: topdown: make the partial object collision check linear
-
-Building the full extent of a partial object rule checked each new path
-against every path written before it, so `p[k] := v` over n keys took
-O(n^2) prefix comparisons. A collision means writing below a value another
-rule produced, and only object values can be written into, so the object
-values rules wrote are now tracked by pointer and checked while descending
-into the result.
-
-`p` is `p[k] := v` and `objects` is `objects[k] := {"v": v}`, which
-records each value.
-
-                                  │   base.txt   │              new.txt               │
-                                  │    sec/op    │   sec/op     vs base               │
-PartialObjectRule/p_100-16           73.63µ ± 6%   47.23µ ± 9%  -35.86% (p=0.000 n=8)
-PartialObjectRule/p_1000-16         2675.8µ ± 7%   485.0µ ± 4%  -81.87% (p=0.000 n=8)
-PartialObjectRule/p_4000-16         42.291m ± 9%   2.181m ± 5%  -94.84% (p=0.000 n=8)
-PartialObjectRule/objects_100-16     80.54µ ± 6%   55.77µ ± 8%  -30.75% (p=0.000 n=8)
-PartialObjectRule/objects_1000-16   2851.9µ ± 9%   647.2µ ± 5%  -77.31% (p=0.000 n=8)
-PartialObjectRule/objects_4000-16   43.580m ± 7%   2.959m ± 5%  -
-
-**File**: `v1/topdown/eval.go` (modified, +23/-26)
-```diff
-@@ -3439,10 +3439,10 @@ func (e evalVirtualPartial) evalEachRule(iter unifyIterator, unknown bool) error
+@@ -458,7 +458,8 @@ func (c *Compiler) Build(ctx context.Context) error {
+ 			Raw:  bs,
+ 		}}
+ 	case TargetRego:
+-		// nop
++		// Only planning reads the compiler, so it needn't outlive the build.
++		c.compiler = nil
  	}
  
- 	result := e.empty
--	var visitedRefs []ast.Ref
-+	var leaves leafObjects
- 
- 	for _, rule := range e.ir.Rules {
--		result, err = e.evalOneRulePreUnify(iter, rule, result, unknown, &visitedRefs)
-+		result, err = e.evalOneRulePreUnify(iter, rule, result, unknown, &leaves)
- 		if err != nil {
- 			return err
- 		}
-@@ -3486,7 +3486,7 @@ func (e evalVirtualPartial) evalAllRules(iter unifyIterator, rules []*ast.Rule)
- func (e evalVirtualPartial) evalAllRulesNoCache(rules []*ast.Rule) (*ast.Term, error) {
- 	result := e.empty
- 
--	var visitedRefs []ast.Ref
-+	var leaves leafObjects
- 
- 	child := evalPool.Get()
- 	defer evalPool.Put(child)
-@@ -3498,7 +3498,7 @@ func (e evalVirtualPartial) evalAllRulesNoCache(rules []*ast.Rule) (*ast.Term, e
- 			child.traceExit(rule)
- 			e.e.evaluated.Record(rule)
- 
--			result, _, err = e.reduce(rule, child.bindings, result, &visitedRefs)
-+			result, _, err = e.reduce(rule, child.bindings, result, &leaves)
- 			if err == nil && child.traceEnabled {
- 				child.traceRedo(rule)
- 			}
-@@ -3529,7 +3529,7 @@ func (e evalVirtualPartial) evalOneRulePreUnify(
- 	rule *ast.Rule,
- 	result *ast.Term,
- 	unknown bool,
--	visitedRefs *[]ast.Ref,
-+	leaves *leafObjects,
- ) (*ast.Term, error) {
- 	child := evalPool.Get()
- 	defer evalPool.Put(child)
-@@ -3574,7 +3574,7 @@ func (e evalVirtualPartial) evalOneRulePreUnify(
- 				err = e.evalTerm(iter, e.pos+1, term, termbindings)
- 			} else {
- 				var dup bool
--				result, dup, err = e.reduce(rule, child.bindings, result, visitedRefs)
-+				result, dup, err = e.reduce(rule, child.bindings, result, leaves)
- 				if err == nil && !unknown && dup && child.traceEnabled {
- 					child.traceDuplicate(rule)
- 				}
-@@ -3974,16 +3974,16 @@ func (q vcKeyScope) empty() bool {
- 	return len(q.Ref) == 0
- }
- 
--func getNestedObject(ref ast.Ref, rootObj *ast.Object, b *bindings, l *ast.Location) (*ast.Object, error) {
-+func getNestedObject(ref ast.Ref, rootObj *ast.Object, b *bindings, leaves leafObjects, l *ast.Location) (*ast.Object, error) {
- 	current := rootObj
- 	for _, term := range ref {
- 		key := b.Plug(term)
- 		if child := (*current).Get(key); child != nil {
--			if val, ok := child.Value.(ast.Object); ok {
--				current = &val
--			} else {
-+			val, ok := child.Value.(ast.Object)
-+			if _, leaf := leaves[child]; !ok || leaf {
- 				return nil, objectDocKeyConflictErr(l)
- 			}
-+			current = &val
- 		} else {
- 			child := ast.NewObject()
- 			(*current).Insert(key, ast.NewTerm(child))
-@@ -3994,20 +3994,21 @@ func getNestedObject(ref ast.Ref, rootObj *ast.Object, b *bindings, l *ast.Locat
- 	return current, nil
- }
- 
--func hasCollisions(path ast.Ref, visitedRefs *[]ast.Ref, b *bindings) bool {
--	collisionPath := ast.Ref(b.plugNamespacedTerms(path, nil))
-+// leafObjects holds the object values rules which wrote into a partial object,
-+// so that a rule writing to a child path conflicts and prevents writes.
-+type leafObjects map[*ast.Term]struct{}
- 
--	for _, c := range *visitedRefs {
--		if collisionPath.HasPrefix(c) && !collisionPath.Equal(c) {
--			return true
--		}
-+func (l *leafObjects) add(t *ast.Term) {
-+	if _, ok := t.Value.(ast.Object); !ok {
-+		return
- 	}
--	*visitedRefs = append(*visitedRefs, collisionPath)
--
--	return false
-+	if *l == nil {
-+		*l = make(leafObjects)
-+	}
-+	(*l)[t] = struct{}{}
- }
- 
--func (e evalVirtualPartial) reduce(rule *ast.Rule, b *bindings, result *ast.Term, visitedRefs *[]ast.Ref) (*ast.Term, bool, error) {
-+func (e evalVirtualPartial) reduce(rule *ast.Rule, b *bindings, result *ast.Term, leaves *leafObjects) (*ast.Term, bool, error) {
- 	var exists bool
- 	head := rule.Head
- 
-@@ -4025,15 +4026,10 @@ func (e evalVirtualPartial) reduce(rule *ast.Rule, b *bindings, result *ast.Term
- 		//          objPath
- 		fullPath := rule.Ref()
- 
--		collisionPath := fullPath[e.pos+1:]
--		if hasCollisions(collisionPath, visitedRefs, b) {
--			return nil, false, objectDocKeyConflictErr(head.Location)
--		}
--
- 		objPath := fullPath[e.pos+1 : len(fullPath)-1] // the portion of the ref that generates nested objects
- 		leafKey := b.Plug(fullPath[len(fullPath)-1])   // the portion of the ref that is the deepest nested key for the value
- 
--		leafObj, err := getNestedObject(objPath, &v, b, head.Location)
-+		leafObj, err := getNestedObject(objPath, &v, b, *leaves, head.Location)
- 		if err != nil {
- 			return nil, false, err
- 		}
-@@ -4049,6 +4045,7 @@ func (e evalVirtualPartial) reduce(rule *ast.Rule, b *bindings, result *ast.Term
- 				exists = true
- 			} else {
- 				(*leafObj).Insert(leafKey, val)
-+				leaves.add(val)
- 			}
- 		} else {
- 			// We're inserting into a set
-```
-
-**File**: `v1/topdown/topdown_bench_test.go` (modified, +38/-0)
-```diff
-@@ -706,6 +706,44 @@ func BenchmarkComprehensionIndexing(b *testing.B) {
- 	}
- }
- 
-+func BenchmarkPartialObjectRule(b *testing.B) {
-+	ctx := b.Context()
-+	module := `package test
-+
-+	p[k] := v if { some k, v in data.items }
-+	objects[k] := {"v": v} if { some k, v in data.items }`
-+
-+	for _, rule := range []string{"p", "objects"} {
-+		for _, n := range []int{100, 1000, 4000} {
-+			b.Run(fmt.Sprintf("%s_%d", rule, n), func(b *testing.B) {
-+				items := make(map[string]any, n)
-+				for i := range n {
-+					items[fmt.Sprintf("k%d", i)] = i
-+				}
-+				store := inmem.NewFromObject(map[string]any{"items": items})
-+				compiler := ast.MustCompileModules(map[string]string{"test.rego": module})
-+				query, err := compiler.QueryCompiler().Compile(ast.MustParseBody("x = data.test." + rule))
-+				if err != nil {
-+					b.Fatal(err)
-+				}
-+				b.ReportAllocs()
-+				for b.Loop() {
-+					err = storage.Txn(ctx, store, storage.TransactionParams{}, func(txn storage.Transaction) error {
-+						rs, err := NewQuery(query).WithStore(store).WithCompiler(compiler).WithTransaction(txn).Run(ctx)
-+						if err != nil || len(rs) != 1 {
-+							b.Fatal("Unexpected result:", rs, "err:", err)
-+						}
-+						return nil
-+					})
-+					if err != nil {
-+						b.Fatal(err)
-+					}
-+				}
-+			})
-+		}
-+	}
-+}
-+
- func BenchmarkFunctionArgumentIndex(b *testing.B) {
- 	ctx := b.Context()
- 
+ 	if c.revision != nil {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #9620** (closed): plugins/rest: honor explicit header overrides (@FayezBast)
 - **PR #9614** (2026-11-23): topdown: Reuse pooled step continuation for bare terms (@charlieegan3)
 - **PR #9613** (2026-11-23): topdown: report key conflicts in indexed object comprehensions (@srenatus)
 - **PR #9612** (2026-11-23): topdown: make the partial object collision check linear (@srenatus)
+- **PR #9609** (closed): Backport x/net v0.62.0 to release-1.22 (@Zartharas)
 - **PR #9607** (2026-11-22): ast: Reduce size of `Head` struct from 128 to 96 bytes (@anderseknert)
-- **PR #9602** (2026-11-19): ast: Skip repeated rule names when resolving refs (@charlieegan3)
-- **PR #9594** (2026-11-18): docs: fix typos (@Adham-Kiwan)
 
 ---
 
@@ -1307,67 +1046,32 @@ PartialObjectRule/objects_4000-16   43.580m ± 7%   2.959m ± 5%  -
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. topdown: Reuse pooled step continuation for bare terms
+## X. compile: release the checking compiler after a rego build
 
 **RULE**:
-When implementing operations in `v1/topdown/eval.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/opa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `v1/compile/compile.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/opa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c24e1d8f`: topdown: Reuse pooled step continuation for bare terms. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e9ffcc55`: compile: release the checking compiler after a rego build. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `v1/topdown/eval.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `v1/compile/compile.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	bareFn  func() error
-	rterm   *ast.Term // set for a bare term expression, which must not be false
-func (c *stepCont) runBare() error {
-	e := c.e
-	if e.saveSet != nil && e.saveSet.Contains(c.rterm, e.bindings) {
-		return e.saveExpr(ast.NewExpr(c.rterm), e.bindings, func() error {
-			return e.cont(c.iter, c.advance)
-		})
-	}
-	if e.bindings.Plug(c.rterm).Equal(ast.InternedTerm(false)) {
-		return nil
-	}
-	return e.cont(c.iter, c.advance)
-}
-
-	c.e, c.iter, c.rterm = nil, nil, nil
-		c := stepContPool.Get()
-		c.e, c.iter, c.advance, c.rterm = e, iter, advance, ast.VarTerm(e.fmtVar())
-		if c.bareFn == nil {
-			c.bareFn = c.runBare
-		}
-
-		err = e.unify(terms, c.rterm, c.bareFn)
-
-		stepContPool.Put(c)
+		// Only planning reads the compiler, so it needn't outlive the build.
+		c.compiler = nil
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	c.e, c.iter = nil, nil
-		rterm := ast.VarTerm(e.fmtVar())
-		err = e.unify(terms, rterm, func() error {
-			if e.saveSet != nil && e.saveSet.Contains(rterm, e.bindings) {
-				return e.saveExpr(ast.NewExpr(rterm), e.bindings, func() error {
-					return e.cont(iter, advance)
-				})
-			}
-			if !e.bindings.Plug(rterm).Equal(ast.InternedTerm(false)) {
-				return e.cont(iter, advance)
-			}
-			return nil
-		})
+		// nop
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c24e1d8f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e9ffcc55` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

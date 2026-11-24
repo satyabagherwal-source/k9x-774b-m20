@@ -12691,3 +12691,4 @@ Every entry in this ledger must capture:
 | `learn-dom-d-4a125361` | `project://hf-llamaindex-ocria-nano-1` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-llamaindex-ocria-nano-1-learnings.md` | 2026-11-24T11:31:00.451Z |
 | `learn-huggingface-thejagstudio-tessera-small` | `https://huggingface.co/thejagstudio/tessera-small` | `hf-thejags` | Multi-dimensional audit evidence | 2026-11-24T11:44:20.458Z |
 | `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `3233be23` | Multi-dimensional audit evidence | 2026-11-24T11:44:33.553Z |
+| `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `68244323` | Multi-dimensional audit evidence | 2026-11-24T12:05:14.390Z |
