@@ -4,22 +4,22 @@
 {
   "source_repository": "PeerDB-io/peerdb",
   "source_url": "https://github.com/PeerDB-io/peerdb",
-  "source_version": "73bf425f",
+  "source_version": "e8b30c7d",
   "license": "AGPL-3.0",
-  "timestamp": "2026-11-24T01:28:57.696Z",
+  "timestamp": "2026-11-24T20:38:36.712Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-peerdb-io-peerdb",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb) (Revision: `73bf425f`).  
-> **License**: AGPL-3.0 | **Timestamp**: `2026-11-24T01:28:57.696Z`  
+> **Provenance**: Harvested from [PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb) (Revision: `e8b30c7d`).  
+> **License**: AGPL-3.0 | **Timestamp**: `2026-11-24T20:38:36.712Z`  
 > **Learning ID**: `learn-github-peerdb-io-peerdb`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `PeerDB-io/peerdb` (Commit: `73bf425f`)
+- **Target Repository**: `PeerDB-io/peerdb` (Commit: `e8b30c7d`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T01:28:56.234Z  
+> **Harvest Timestamp**: 2026-11-24T20:38:35.177Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Fast, Simple and a cost effective tool to replicate data from Postgres to Data Warehouses, Queues and Storage
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3322 stars
+- **Stars / Engagement**: 3324 stars
 
 ---
 
@@ -1890,302 +1890,335 @@ func getChainedRoleSessionName() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `73bf425f` (2026-11-23)
-**Commit Message**: fix(mysql): skip decoding rows of tables outside the pipe (#5102)
+### Incident Patch 1: `e8b30c7d` (2026-11-24)
+**Commit Message**: fix(pg-pg): unblock and skip and report on error for pgdump (#5120)
 
-go-mysql decodes every rows event before PeerDB filters events by table,
-so a row it can't decode in a table outside the pipe still fails the
-pipe, on every retry. We hit this with an invalid DECIMAL value (a
-9-digit group above 999999999), which makes go-mysql panic with `slice
-bounds out of range [:-1]`. The observed instance had the rest of binlog
-file corrupted too, but it'd be hard to classify from the generic out of
-bounds error, and this change allows to skip over to where a more
-legible error can be generated and mapped to the existing notify_user
-branch.
+Currently we block if pgdump runs into an error (like missing extension
+etc), but worth just letting it run while skipping those errors (they
+are already reported in the UI)
 
-`decodeRowsEvent` now skips `DecodeData` for tables outside the pipe.
-The decoder and `processEvent` share one `pipeTables` set, so they agree
-on which tables are in the pipe.
-
-Pipes that replicate a table with such a value still fail on it.
-
-Resolves DBI-1355
-
-**File**: `flow/connectors/mysql/cdc.go` (modified, +53/-20)
+**File**: `flow/activities/flowable.go` (modified, +10/-1)
 ```diff
-@@ -445,7 +445,7 @@ func (c *MySqlConnector) SetupReplConn(context.Context, map[string]string) error
- 	return nil
- }
+@@ -2377,11 +2377,20 @@ func (a *FlowableActivity) RunPgDumpSchema(
+ 		fmt.Sprintf("starting pg_dump schema migration from %s to %s", input.SourceName, input.DestinationName))
  
--func (c *MySqlConnector) startSyncer(ctx context.Context, env map[string]string) (*binlogSyncer, error) {
-+func (c *MySqlConnector) startSyncer(ctx context.Context, env map[string]string, tables pipeTables) (*binlogSyncer, error) {
- 	var tlsConfig *tls.Config
- 	if c.needToVerifyTls() {
- 		var err error
-@@ -517,7 +517,7 @@ func (c *MySqlConnector) startSyncer(ctx context.Context, env map[string]string)
- 		TLSConfig:             tlsConfig,
- 		HeartbeatPeriod:       c.binlogHeartbeatPeriod,
- 		EventCacheCount:       eventCacheCount,
--		RowsEventDecodeFunc:   decodeRowsEvent,
-+		RowsEventDecodeFunc:   tables.decodeRowsEvent,
- 	}, c.ssh.IsActive()), nil
- }
- 
-@@ -563,6 +563,7 @@ func (c *MySqlConnector) startStreaming(
- 	ctx context.Context,
- 	pos string,
- 	env map[string]string,
-+	tables pipeTables,
- ) (*binlogSyncer, *replication.BinlogStreamer, mysql.GTIDSet, mysql.Position, error) {
- 	parsedOffset, err := parseReplicationOffsetText(c.Flavor(), pos)
- 	if err != nil {
-@@ -571,7 +572,7 @@ func (c *MySqlConnector) startStreaming(
- 
- 	switch parsedOffset.mechanism {
- 	case protos.MySqlReplicationMechanism_MYSQL_FILEPOS.String():
--		return c.startCdcStreamingFilePos(ctx, parsedOffset.pos, env)
-+		return c.startCdcStreamingFilePos(ctx, parsedOffset.pos, env, tables)
- 	case protos.MySqlReplicationMechanism_MYSQL_GTID.String():
- 		skipGTIDs, err := internal.PeerDBMySQLSkipGTIDSet(ctx, env)
- 		if err != nil {
-@@ -586,7 +587,7 @@ func (c *MySqlConnector) startStreaming(
- 				slog.String("skipGTIDSet", skipGTIDs),
- 				slog.String("offset", parsedOffset.gset.String()))
- 		}
--		return c.startCdcStreamingGtid(ctx, parsedOffset.gset, env)
-+		return c.startCdcStreamingGtid(ctx, parsedOffset.gset, env, tables)
- 	default:
- 		return nil, nil, nil, mysql.Position{}, fmt.Errorf("empty mysql replication offset")
- 	}
-@@ -596,8 +597,9 @@ func (c *MySqlConnector) startCdcStreamingFilePos(
- 	ctx context.Context,
- 	pos mysql.Position,
- 	env map[string]string,
-+	tables pipeTables,
- ) (*binlogSyncer, *replication.BinlogStreamer, mysql.GTIDSet, mysql.Position, error) {
--	syncer, err := c.startSyncer(ctx, env)
-+	syncer, err := c.startSyncer(ctx, env, tables)
- 	if err != nil {
- 		return nil, nil, nil, mysql.Position{}, err
- 	}
-@@ -613,8 +615,9 @@ func (c *MySqlConnector) startCdcStreamingGtid(
- 	ctx context.Context,
- 	gset mysql.GTIDSet,
- 	env map[string]string,
-+	tables pipeTables,
- ) (*binlogSyncer, *replication.BinlogStreamer, mysql.GTIDSet, mysql.Position, error) {
--	syncer, err := c.startSyncer(ctx, env)
-+	syncer, err := c.startSyncer(ctx, env, tables)
- 	if err != nil {
- 		return nil, nil, nil, mysql.Position{}, err
- 	}
-@@ -687,7 +690,8 @@ func (c *MySqlConnector) PullRecords(
- 			slog.Any("error", err))
+ 	start := time.Now()
+-	if err := connpostgres.RunPgDumpSchema(ctx, srcPgConfig.PostgresConfig, dstPgConfig.PostgresConfig); err != nil {
++	ignoredErrors, err := connpostgres.RunPgDumpSchema(ctx, srcPgConfig.PostgresConfig, dstPgConfig.PostgresConfig)
++	if err != nil {
+ 		return false, a.Alerter.LogFlowError(ctx, input.FlowName, fmt.Errorf("pg_dump schema migration failed: %w", err))
  	}
  
--	syncer, mystream, gset, pos, err := c.startStreaming(ctx, req.LastOffset.Text, req.Env)
-+	tables := newPipeTables(req)
-+	syncer, mystream, gset, pos, err := c.startStreaming(ctx, req.LastOffset.Text, req.Env, tables)
- 	if err != nil {
- 		return err
- 	}
-@@ -864,7 +868,7 @@ func (c *MySqlConnector) PullRecords(
- 						slog.Uint64("eventType", uint64(mariadbPartialRowDataEvent)), slog.Bool("parsed", ok))
- 					return exceptions.NewMySQLUnsupportedPartialRowEventError(byte(mariadbPartialRowDataEvent), "", "")
- 				}
--				if req.TableNameSchemaMapping[req.TableNameMapping[sourceTableName].Name] == nil {
-+				if !tables.has(sourceTableName) {
- 					// table not in the pipe - ignore this fragment group and its continuation fragments
- 					if totalFragments > 1 {
- 						partialRowSkipFragments = totalFragments - 1
-@@ -933,17 +937,18 @@ func (c *MySqlConnector) PullRecords(
- 				}
- 			}
- 		case *replication.TableMapEvent:
--			tableIdToName[ev.TableID] = string(ev.Schema) + "." + string(ev.Table)
-+			tableIdToName[ev.TableID] = qualifiedTableName(ev)
- 		case *replication.RowsEvent:
--			sourceTableName := string(ev.Table.Schema) + "." + string(ev.Table.Table) // TODO this is fragile
--			destinationTableName := req.TableNameMapping[sourceTableName].Name
--			exclusion := req.TableNameMapping[sourceTableName].Exclude
--			columns := req.TableNameMapping[sourceTableName].Columns
--			shouldWrapJSON := func(fd *protos.FieldDescription) bool {
--				return shouldWrapNonObjectJSON(fd.Name, types.QValueKind(fd.Type), req.Flags, req.InternalVersion, nativeJSONEnabled, columns)
--			}
--			schema := req.TableNameSchemaMapping[destinationTableName]
--			if schema != nil {
-+			sourceTableName := qualifiedTableName(ev.Table)
-+			if tables.has(sourceTableName) {
-+				destinationTableName := req.TableNameMapping[sourceTableName].Name
-+				exclusion := req.TableNameMapping[sourceTableName].Exclude
-+				columns := req.TableNameMapping[sourceTableName].Columns
-+				shouldWrapJSON := func(fd *protos.FieldDescription) bool {
-+					return shouldWrapNonObjectJSON(
-+						fd.Name, types.QValueKind(fd.Type), req.Flags, req.InternalVersion, nativeJSON
+ 	elapsed := time.Since(start).Round(time.Millisecond)
++	if ignoredErrors != "" {
++		logger.Warn("pg_dump schema migration completed with skipped statements",
++			slog.Duration("elapsed", elapsed), slog.String("errors", ignoredErrors))
++		a.Alerter.LogFlowWarning(ctx, input.FlowName,
++			fmt.Errorf("pg_dump schema migration completed in %s, but some statements were skipped:\n%s", elapsed, ignoredErrors))
++		return true, nil
++	}
++
+ 	logger.Info("pg_dump schema migration completed successfully", slog.Duration("elapsed", elapsed))
+ 	a.Alerter.LogFlowInfo(ctx, input.FlowName,
+ 		fmt.Sprintf("pg_dump schema migration completed successfully in %s", elapsed))
 ```
 
-**File**: `flow/connectors/mysql/cdc_integration_test.go` (modified, +2/-2)
+**File**: `flow/connectors/postgres/pgdump_schema.go` (modified, +46/-18)
 ```diff
-@@ -33,12 +33,12 @@ func startBinlogStream(t *testing.T, ctx context.Context, c *MySqlConnector) *re
- 	if c.config.ReplicationMechanism == protos.MySqlReplicationMechanism_MYSQL_FILEPOS {
- 		pos, err := c.GetMasterPos(ctx)
- 		require.NoError(t, err)
--		syncer, stream, _, _, err = c.startCdcStreamingFilePos(ctx, pos, nil)
-+		syncer, stream, _, _, err = c.startCdcStreamingFilePos(ctx, pos, nil, nil)
- 		require.NoError(t, err)
- 	} else {
- 		gset, err := c.GetMasterGTIDSet(ctx)
- 		require.NoError(t, err)
--		syncer, stream, _, _, err = c.startCdcStreamingGtid(ctx, gset, nil)
-+		syncer, stream, _, _, err = c.startCdcStreamingGtid(ctx, gset, nil, nil)
- 		require.NoError(t, err)
+@@ -14,6 +14,7 @@ import (
+ 	"os/exec"
+ 	"regexp"
+ 	"strconv"
++	"strings"
+ 	"syscall"
+ 
+ 	"github.com/PeerDB-io/peerdb/flow/generated/protos"
+@@ -28,25 +29,34 @@ var incompatibleLineRE = regexp.MustCompile(`^SET\s+transaction_timeout\s*=`)
+ 
+ // RunPgDumpSchema streams a schema-only pg_dump from source directly into psql
+ // on the destination, piping stdout into stdin without intermediate files.
+-func RunPgDumpSchema(ctx context.Context, srcConfig *protos.PostgresConfig, dstConfig *protos.PostgresConfig) error {
++//
++// The dump is applied in a single transaction, but individual statement
++// failures are rolled back to a savepoint and skipped (ON_ERROR_ROLLBACK) so
++// the remaining statements still apply. The returned string reports any
++// skipped-statement errors psql emitted; it is empty when everything applied
++// cleanly.
++func RunPgDumpSchema(ctx context.Context, srcConfig *protos.PostgresConfig, dstConfig *protos.PostgresConfig) (string, error) {
+ 	srcAddr, err := resolvePgAddr(ctx, srcConfig)
+ 	if err != nil {
+-		return fmt.Errorf("source: %w", err)
++		return "", fmt.Errorf("source: %w", err)
  	}
- 	t.Cleanup(syncer.Close)
+ 	dstAddr, err := resolvePgAddr(ctx, dstConfig)
+ 	if err != nil {
+-		return fmt.Errorf("destination: %w", err)
++		return "", fmt.Errorf("destination: %w", err)
+ 	}
+ 
+-	if err := pipeCommand(ctx, srcConfig, dstConfig, srcAddr, dstAddr,
+-		"pg_dump", buildPgDumpArgs(srcConfig, srcAddr.host)); err != nil {
+-		return fmt.Errorf("pg_dump schema migration failed: %w", err)
++	ignoredErrors, err := pipeCommand(ctx, srcConfig, dstConfig, srcAddr, dstAddr,
++		"pg_dump", buildPgDumpArgs(srcConfig, srcAddr.host))
++	if err != nil {
++		return "", fmt.Errorf("pg_dump schema migration failed: %w", err)
+ 	}
+ 
+-	return nil
++	return ignoredErrors, nil
+ }
+ 
+-// pipeCommand runs srcBinary with the given args, piping its stdout into psql on the destination.
++// pipeCommand runs srcBinary with the given args, piping its stdout into psql
++// on the destination. On success it returns psql's stderr output, which with
++// ON_ERROR_ROLLBACK contains the errors of any statements that were skipped.
+ func pipeCommand(
+ 	ctx context.Context,
+ 	srcConfig *protos.PostgresConfig,
+@@ -55,12 +65,17 @@ func pipeCommand(
+ 	dstAddr pgAddr,
+ 	srcBinary string,
+ 	srcArgs []string,
+-) error {
++) (string, error) {
+ 	psqlArgs := buildPsqlArgs(dstConfig, dstAddr.host)
+ 
+ 	srcCmd := exec.CommandContext(ctx, srcBinary, srcArgs...)
+ 	psqlCmd := exec.CommandContext(ctx, "psql", psqlArgs...)
+ 
++	// Provide psql's stderr buffer ourselves so we can report skipped-statement
++	// errors even when the pipeline exits successfully.
++	var psqlStderr bytes.Buffer
++	psqlCmd.Stderr = &psqlStderr
++
+ 	// set PGPASSWORD for each command via separate env slices
+ 	srcCmd.Env = append(os.Environ(), "PGPASSWORD="+srcConfig.Password)
+ 	psqlCmd.Env = append(os.Environ(), "PGPASSWORD="+dstConfig.Password)
+@@ -76,7 +91,10 @@ func pipeCommand(
+ 	appendTLSEnv(ctx, srcCmd, srcConfig, srcAddr)
+ 	appendTLSEnv(ctx, psqlCmd, dstConfig, dstAddr)
+ 
+-	return runPipeline(ctx, srcCmd, psqlCmd, srcBinary, "psql", filterIncompatibleLines)
++	if err := runPipeline(ctx, srcCmd, psqlCmd, srcBinary, "psql", filterIncompatibleLines); err != nil {
++		return "", err
++	}
++	return strings.TrimSpace(psqlStderr.String()), nil
+ }
+ 
+ // filterIncompatibleLines copies r->w line by line, dropping statements that
+@@ -145,9 +163,15 @@ func runPipeline(
+ 		filterDone = make(chan error, 1)
+ 	}
+ 
+-	var srcStderr, dstStderr bytes.Buffer
++	var srcStderr bytes.Buffer
+ 	srcCmd.Stderr = &srcStderr
+-	dstCmd.Stderr = &dstStderr
++	// Keep a caller-provided stderr buffer (pipeCommand sets one so it can
++	// report skipped-statement errors on success); otherwise capture locally.
++	dstStderr, ok := dstCmd.Stderr.(*bytes.Buffer)
++	if !ok {
++		dstStderr = new(bytes.Buffer)
++		dstCmd.Stderr = dstStderr
++	}
+ 
+ 	// Start dst first so it's ready to read.
+ 	if err := dstCmd.Start(); err != nil {
+@@ -372,14 +396,18 @@ func buildPsqlArgs(config *protos.PostgresConfig, host string) []string {
+ 		"-h", host,
+ 		"-p", strconv.FormatUint(uint64(port), 10),
+ 		"-d", config.Database,
+-		// Wrap the entire dump in a single transaction so partial failures
+-		// roll back cleanly (makes the activity safely retryable) and avoid
++		// Wrap the entire dump in a single transaction so a pipeline failure
++		// rolls back cleanly (makes the activity safely retryable) and avoid
+ 		// per-statement autocommit overhead on high-latency links.
+ 		"--single-transaction",
+-		// Without this, psql logs errors to stderr but exits 0, so a half-
+-		// applied schema would be reported as success. ON_ERROR_STOP=1 makes
+-		// psql exit non-zero on the first failed statement.
+-		"-v", "ON_ERROR_STOP=1",
++		// Set a savepoint before each statement and roll back to it on error,
++		// so a failed statement (e.g. an object that already exists on the
++		// destination) is skipped while subsequent statements still apply.
++		// psql reports each skipped statement's e
 ```
 
-**File**: `flow/connectors/mysql/cdc_test.go` (modified, +92/-0)
+**File**: `flow/connectors/postgres/pgdump_schema_test.go` (modified, +21/-2)
 ```diff
-@@ -1,9 +1,13 @@
- package connmysql
- 
- import (
-+	"bytes"
- 	"context"
-+	"encoding/binary"
- 	"fmt"
- 	"log/slog"
-+	"math"
-+	"slices"
- 	"testing"
- 
- 	"github.com/go-mysql-org/go-mysql/mysql"
-@@ -704,3 +708,91 @@ func TestProcessRenameTableQueryMetric(t *testing.T) {
- 		})
+@@ -41,6 +41,25 @@ func TestRunPipeline_HappyPath(t *testing.T) {
  	}
  }
+ 
++// A caller-provided dst stderr buffer is kept (not replaced) so skipped-
++// statement errors can be reported even when the pipeline exits successfully.
++func TestRunPipeline_CallerProvidedDstStderrCapturedOnSuccess(t *testing.T) {
++	requireUnix(t)
++	ctx := t.Context()
 +
-+func TestPipeTablesDecodeRowsEvent(t *testing.T) {
-+	const tableID = 42
-+	tables := pipeTables{"db.in_pipe": {}}
++	src := exec.CommandContext(ctx, "sh", "-c", "printf 'payload'")
++	dst := exec.CommandContext(ctx, "sh", "-c", "cat >/dev/null; echo 'ERROR: relation exists' >&2")
++	var dstStderr bytes.Buffer
++	dst.Stderr = &dstStderr
 +
-+	binlogEvent := func(eventType replication.EventType, body []byte) []byte {
-+		event := make([]byte, replication.EventHeaderSize, replication.EventHeaderSize+len(body))
-+		event[4] = byte(eventType)
-+		binary.LittleEndian.PutUint32(event[9:], uint32(cap(event))) // event size
-+		return append(event, body...)
++	if err := runPipeline(ctx, src, dst, "src", "dst", nil); err != nil {
++		t.Fatalf("unexpected error: %v", err)
 +	}
-+
-+	// Encodes a positive DECIMAL(23,6) value the way MySQL stores it: the leading 8 integral digits,
-+	// the next 9 integral digits, and the 6 fractional digits, as big-endian groups of 4, 4 and 3 bytes.
-+	// A valid full 9-digit group never exceeds 999999999.
-+	decimal23x6 := func(leading uint32, full uint32, fraction uint32) []byte {
-+		b := binary.BigEndian.AppendUint32(nil, leading)
-+		b = binary.BigEndian.AppendUint32(b, full)
-+		b = append(b, byte(fraction>>16), byte(fraction>>8), byte(fraction))
-+		b[0] |= 0x80 // sign bit set means positive
-+		return b
++	if got := dstStderr.String(); !strings.Contains(got, "ERROR: relation exists") {
++		t.Fatalf("dst stderr = %q, want it to contain the reported error", got)
 +	}
-+
-+	// Parses a binlog with a DELETE of one row from db.<table>, a table with a single DECIMAL(23,6) column.
-+	parseDeleteRowsEvent := func(t *testing.T, table string, decimal []byte) (*replication.RowsEvent, error) {
-+		t.Helper()
-+		parser := replication.NewBinlogParser()
-+		parser.SetRowsEventDecodeFunc(tables.decodeRowsEvent)
-+
-+		serverVersion := make([]byte, 50)
-+		copy(serverVersion, "5.0.0") // predates binlog checksums
-+		_, err := parser.Parse(binlogEvent(replication.FORMAT_DESCRIPTION_EVENT, slices.Concat(
-+			[]byte{4, 0}, // binlog version
-+			serverVersion,
-+			[]byte{0, 0, 0, 0}, // created timestamp
-+			[]byte{replication.EventHeaderSize},
-+			bytes.Repeat([]byte{8}, 40), // post-header lengths, any other than 6 means 6-byte table ids
-+		)))
-+		require.NoError(t, err)
-+
-+		_, err = parser.Parse(binlogEvent(replication.TABLE_MAP_EVENT, slices.Concat(
-+			[]byte{tableID, 0, 0, 0, 0, 0},
-+			[]byte{0, 0}, // flags
-+			[]byte{2, 'd', 'b', 0},
-+			[]byte{byte(len(table))}, []byte(table), []byte{0},
-+			[]byte{1, mysql.MYSQL_TYPE_NEWDECIMAL}, // column count, types
-+			[]byte{2, 23, 6},                       // metadata length, precision, scale
-+			[]byte{0},                              // nullable columns bitmap
-+		)))
-+		require.NoError(t, err)
-+
-+		ev, err := parser.Parse(binlogEvent(replication.DELETE_ROWS_EVENTv2, slices.Concat(
-+			[]byte{tableID, 0, 0, 0, 0, 0},
-+			[]byte{0, 0},   // flags
-+			[]byte{2, 0},   // extra data length
-+			[]byte{1, 0b1}, // column count, present columns bitmap
-+			[]byte{0},      // row null bitmap
-+			decimal,
-+		)))
-+		if err != nil {
-+			return nil, err
-+		}
-+		return ev.Event.(*replication.RowsEvent), nil
-+	}
-+
-+	// go-mysql zero-pads the full group to 9 digits, so a value of 10 digits panics with a negative slice bound.
-+	// The padding only happens after a non-zero leading group.
-+	valid := decimal23x6(1, 2, 3)
-+	invalid := decimal23x6(1, math.MaxUint32, 3)
-+
-+	t.Run("decodes rows of tables in the pipe", func(t *testing.T) {
-+		ev, err := parseDeleteRowsEvent(t, "in_pipe", valid)
-+		require.NoError(t, err)
-+		require.Equal(t, [][]any{{"1000000002.000003"}}, ev.Rows)
-+	})
-+
-+	t.Run("reports undecodable rows of tables in the pipe", func(t *testing.T) {
-+		_, err := parseDeleteRowsEvent(t, "in_pipe", invalid)
-+		require.ErrorContains(t, err, "slice bounds out of range [:-1]")
-+	})
-+
-+	t.Run("skips rows of tables outside the pipe", func(t *testing.T) {
-+		ev, err := parseDeleteRowsEvent(t, "outside_pipe", invalid)
-+		require.NoError(t, err)
-+		require.Equal(t, "db.outside_pipe", qualifiedTableName(ev.Table))
-+		require.Empty(t, ev.Rows)
-+	})
 +}
++
+ func TestRunPipeline_SrcStartFails(t *testing.T) {
+ 	ctx := t.Context()
+ 
+@@ -340,7 +359,7 @@ func TestBuildPsqlArgs(t *testing.T) {
+ 			wantArgs: []string{
+ 				"-h", "dst-host", "-p", "5433", "-d", "target",
+ 				"--single-transaction",
+-				"-v", "ON_ERROR_STOP=1",
++				"-v", "ON_ERROR_ROLLBACK=on",
+ 				"--quiet",
+ 				"-U", "writer",
+ 			},
+@@ -355,7 +374,7 @@ func TestBuildPsqlArgs(t *testing.T) {
+ 			wantArgs: []string{
+ 				"-h", "localhost", "-p", "5432", "-d", "db",
+ 				"--single-transaction",
+-				"-v", "ON_ERROR_STOP=1",
++				"-v", "ON_ERROR_ROLLBACK=on",
+ 				"--quiet",
+ 			},
+ 		},
 ```
 
-**File**: `flow/connectors/mysql/ssh_keepalive_test.go` (modified, +1/-1)
+---
+
+### Incident Patch 2: `737f83e2` (2026-11-24)
+**Commit Message**: fix(pg-pg): casing on reset sequences (#5083)
+
+Casing was not handled correctly for the reset sequences endpoint for PG
+PG cutover. This PR fixes that.
+Adapts test.
+
+---------
+
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
+
+**File**: `flow/cmd/reset_sequences.go` (modified, +7/-1)
 ```diff
-@@ -368,7 +368,7 @@ func TestSyncerCloseWithStalledSSHDownstream(t *testing.T) {
+@@ -9,6 +9,7 @@ import (
+ 	"github.com/PeerDB-io/peerdb/flow/connectors"
+ 	connpostgres "github.com/PeerDB-io/peerdb/flow/connectors/postgres"
+ 	"github.com/PeerDB-io/peerdb/flow/generated/protos"
++	"github.com/PeerDB-io/peerdb/flow/pkg/common"
+ )
  
- 	pos, err := connector.GetMasterPos(ctx)
- 	require.NoError(t, err)
--	syncer, _, _, _, err := connector.startCdcStreamingFilePos(ctx, pos, nil) //nolint:dogsled
-+	syncer, _, _, _, err := connector.startCdcStreamingFilePos(ctx, pos, nil, nil) //nolint:dogsled
- 	require.NoError(t, err)
+ func (h *FlowRequestHandler) ResetMirrorSequences(
+@@ -45,7 +46,12 @@ func (h *FlowRequestHandler) ResetMirrorSequences(
  
- 	_, err = sshProxy.AddToxic("stall", "latency", "downstream", 1.0, toxiproxy.Attributes{"latency": 120000})
+ 	destTables := make([]string, 0, len(config.TableMappings))
+ 	for _, tm := range config.TableMappings {
+-		destTables = append(destTables, tm.DestinationTableIdentifier)
++		parsed, err := common.ParseTableIdentifier(tm.DestinationTableIdentifier)
++		if err != nil {
++			return nil, NewInternalApiError(fmt.Errorf("failed to parse destination table %s: %w",
++				tm.DestinationTableIdentifier, err))
++		}
++		destTables = append(destTables, parsed.String())
+ 	}
+ 
+ 	quotedTables := make([]string, 0, len(destTables))
 ```
 
-**File**: `flow/connectors/mysql/ssh_test.go` (modified, +1/-1)
+**File**: `flow/e2e/api_suite.go` (modified, +37/-2)
 ```diff
-@@ -56,7 +56,7 @@ func TestSyncerClose(t *testing.T) {
+@@ -4432,17 +4432,28 @@ func (s APITestSuite) TestResetMirrorSequences() {
  
- 	pos, err := connector.GetMasterPos(ctx)
- 	require.NoError(t, err)
--	syncer, _, _, _, err := connector.startCdcStreamingFilePos(ctx, pos, nil) //nolint:dogsled
-+	syncer, _, _, _, err := connector.startCdcStreamingFilePos(ctx, pos, nil, nil) //nolint:dogsled
- 	require.NoError(t, err)
+ 	srcTable := AttachSchema(s, "seq_src")
+ 	dstTable := AttachSchema(s, "seq_dst")
++	// mixed-case destination table and columns to exercise identifier quoting in the reset
++	mixedSrcTable := AttachSchema(s, "seq_src_mixed")
++	mixedDstTable := AttachSchema(s, "seq_Dst_MixedCase")
++	quotedMixedDstTable := fmt.Sprintf(`"e2e_test_%s"."seq_Dst_MixedCase"`, s.suffix)
  
- 	// Let CDC streaming establish before closing the syncer.
+-	// Create source table with a serial column and insert rows
++	// Create source tables with a serial column and insert rows
+ 	require.NoError(s.t, s.source.Exec(s.t.Context(),
+ 		fmt.Sprintf("CREATE TABLE %s(id SERIAL PRIMARY KEY, val TEXT)", srcTable)))
+ 	require.NoError(s.t, s.source.Exec(s.t.Context(),
+ 		fmt.Sprintf("INSERT INTO %s(val) VALUES ('a'),('b'),('c'),('d'),('e')", srcTable)))
++	require.NoError(s.t, s.source.Exec(s.t.Context(),
++		fmt.Sprintf(`CREATE TABLE %s("Id" SERIAL PRIMARY KEY, "Val" TEXT)`, mixedSrcTable)))
++	require.NoError(s.t, s.source.Exec(s.t.Context(),
++		fmt.Sprintf(`INSERT INTO %s("Val") VALUES ('x'),('y'),('z')`, mixedSrcTable)))
+ 
+-	// Create destination table with same structure (serial column)
++	// Create destination tables with same structure (serial column)
+ 	_, err := s.pg.Conn().Exec(s.t.Context(),
+ 		fmt.Sprintf("CREATE TABLE %s(id SERIAL PRIMARY KEY, val TEXT)", dstTable))
+ 	require.NoError(s.t, err)
++	_, err = s.pg.Conn().Exec(s.t.Context(),
++		fmt.Sprintf(`CREATE TABLE %s("Id" SERIAL PRIMARY KEY, "Val" TEXT)`, quotedMixedDstTable))
++	require.NoError(s.t, err)
+ 
+ 	// Create PG-to-PG mirror with initial snapshot only
+ 	flowJobName := "reset_seq_" + s.suffix
+@@ -4453,6 +4464,9 @@ func (s APITestSuite) TestResetMirrorSequences() {
+ 		TableMappings: []*protos.TableMapping{{
+ 			SourceTableIdentifier:      srcTable,
+ 			DestinationTableIdentifier: dstTable,
++		}, {
++			SourceTableIdentifier:      mixedSrcTable,
++			DestinationTableIdentifier: mixedDstTable,
+ 		}},
+ 		DoInitialSnapshot:   true,
+ 		InitialSnapshotOnly: true,
+@@ -4478,6 +4492,12 @@ func (s APITestSuite) TestResetMirrorSequences() {
+ 	require.NoError(s.t, err)
+ 	require.Equal(s.t, int64(5), rowCount)
+ 
++	var mixedRowCount int64
++	err = s.pg.Conn().QueryRow(s.t.Context(),
++		"SELECT COUNT(*) FROM "+quotedMixedDstTable).Scan(&mixedRowCount)
++	require.NoError(s.t, err)
++	require.Equal(s.t, int64(3), mixedRowCount)
++
+ 	// Before reset: destination sequence has not been advanced by the snapshot (ids were copied
+ 	// explicitly), so it is not yet at the max id. pg_sequence_last_value is NULL until the
+ 	// sequence is first used, so coalesce to 0.
+@@ -4507,6 +4527,21 @@ func (s APITestSuite) TestResetMirrorSequences() {
+ 		fmt.Sprintf("SELECT nextval(pg_get_serial_sequence('%s', 'id'))", dstTable)).Scan(&nextVal)
+ 	require.NoError(s.t, err)
+ 	require.Equal(s.t, int64(6), nextVal)
++
++	// Mixed-case table: sequence should be at 3 (max id), nextval should return 4
++	var mixedSeqValAfter int64
++	err = s.pg.Conn().QueryRow(s.t.Context(),
++		fmt.Sprintf("SELECT pg_sequence_last_value(pg_get_serial_sequence('%s', 'Id'))",
++			quotedMixedDstTable)).Scan(&mixedSeqValAfter)
++	require.NoError(s.t, err)
++	require.Equal(s.t, int64(3), mixedSeqValAfter)
++
++	var mixedNextVal int64
++	err = s.pg.Conn().QueryRow(s.t.Context(),
++		fmt.Sprintf("SELECT nextval(pg_get_serial_sequence('%s', 'Id'))",
++			quotedMixedDstTable)).Scan(&mixedNextVal)
++	require.NoError(s.t, err)
++	require.Equal(s.t, int64(4), mixedNextVal)
+ }
+ 
+ func (s APITestSuite) TestResetMirrorSequences_EmptyTable() {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5120** (2026-11-24): fix(pg-pg): unblock and skip and report on error for pgdump (@Amogh-Bharadwaj)
+- **PR #5115** (2026-11-24): Stop copying state table mappings into CDCFlowWorkflow cfg (@dtunikov)
+- **PR #5114** (closed): remove redundant copy-back logic (@jgao54)
+- **PR #5112** (2026-11-24): Update gomod dependencies (@renovate[bot])
+- **PR #5106** (closed): cdc: omit duplicate table mappings from CDCFlowWorkflow payloads (@dtunikov)
 - **PR #5105** (2026-11-20): improve claude review to remind author to check public documentations (@jgao54)
-- **PR #5103** (2026-11-23): Retry ClickHouse ping with backoff on connect (@dtunikov)
-- **PR #5102** (2026-11-23): fix(mysql): skip decoding rows of tables outside the pipe (@ilidemi)
-- **PR #5101** (2026-11-20): feat: upgrade `docker-compose.yml` stable image tags (@github-actions[bot])
-- **PR #5100** (2026-11-19): Default to lax nullable behavior (@ilidemi)
-- **PR #5098** (2026-11-20): clickhouse: treat lowercase JSON destination types as JSON (@gheorghepucea)
 
 ---
 
@@ -2205,68 +2238,40 @@ Resolves DBI-1355
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mysql): skip decoding rows of tables outside the pipe
+## X. pg-pg): unblock and skip and report on error for pgdump
 
 **RULE**:
-When implementing operations in `flow/connectors/mysql/cdc.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `flow/activities/flowable.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `73bf425f`: mysql): skip decoding rows of tables outside the pipe. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e8b30c7d`: pg-pg): unblock and skip and report on error for pgdump. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/connectors/mysql/cdc.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/activities/flowable.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-func (c *MySqlConnector) startSyncer(ctx context.Context, env map[string]string, tables pipeTables) (*binlogSyncer, error) {
-		RowsEventDecodeFunc:   tables.decodeRowsEvent,
-	tables pipeTables,
-		return c.startCdcStreamingFilePos(ctx, parsedOffset.pos, env, tables)
-		return c.startCdcStreamingGtid(ctx, parsedOffset.gset, env, tables)
-	tables pipeTables,
-	syncer, err := c.startSyncer(ctx, env, tables)
-	tables pipeTables,
-	syncer, err := c.startSyncer(ctx, env, tables)
-	tables := newPipeTables(req)
-	syncer, mystream, gset, pos, err := c.startStreaming(ctx, req.LastOffset.Text, req.Env, tables)
-				if !tables.has(sourceTableName) {
-			tableIdToName[ev.TableID] = qualifiedTableName(ev)
-			sourceTableName := qualifiedTableName(ev.Table)
-			if tables.has(sourceTableName) {
-				destinationTableName := req.TableNameMapping[sourceTableName].Name
-				exclusion := req.TableNameMapping[sourceTableName].Exclude
-				columns := req.TableNameMapping[sourceTableName].Columns
-				shouldWrapJSON := func(fd *protos.FieldDescription) bool {
-					return shouldWrapNonObjectJSON(
-						fd.Name, types.QValueKind(fd.Type), req.Flags, req.InternalVersion, nativeJSON
+	ignoredErrors, err := connpostgres.RunPgDumpSchema(ctx, srcPgConfig.PostgresConfig, dstPgConfig.PostgresConfig)
+	if err != nil {
+	if ignoredErrors != "" {
+		logger.Warn("pg_dump schema migration completed with skipped statements",
+			slog.Duration("elapsed", elapsed), slog.String("errors", ignoredErrors))
+		a.Alerter.LogFlowWarning(ctx, input.FlowName,
+			fmt.Errorf("pg_dump schema migration completed in %s, but some statements were skipped:\n%s", elapsed, ignoredErrors))
+		return true, nil
+	}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-func (c *MySqlConnector) startSyncer(ctx context.Context, env map[string]string) (*binlogSyncer, error) {
-		RowsEventDecodeFunc:   decodeRowsEvent,
-		return c.startCdcStreamingFilePos(ctx, parsedOffset.pos, env)
-		return c.startCdcStreamingGtid(ctx, parsedOffset.gset, env)
-	syncer, err := c.startSyncer(ctx, env)
-	syncer, err := c.startSyncer(ctx, env)
-	syncer, mystream, gset, pos, err := c.startStreaming(ctx, req.LastOffset.Text, req.Env)
-				if req.TableNameSchemaMapping[req.TableNameMapping[sourceTableName].Name] == nil {
-			tableIdToName[ev.TableID] = string(ev.Schema) + "." + string(ev.Table)
-			sourceTableName := string(ev.Table.Schema) + "." + string(ev.Table.Table) // TODO this is fragile
-			destinationTableName := req.TableNameMapping[sourceTableName].Name
-			exclusion := req.TableNameMapping[sourceTableName].Exclude
-			columns := req.TableNameMapping[sourceTableName].Columns
-			shouldWrapJSON := func(fd *protos.FieldDescription) bool {
-				return shouldWrapNonObjectJSON(fd.Name, types.QValueKind(fd.Type), req.Flags, req.InternalVersion, nativeJSONEnabled, columns)
-			}
-			schema := req.TableNameSchemaMapping[destinationTableName]
-			if schema != nil {
+	if err := connpostgres.RunPgDumpSchema(ctx, srcPgConfig.PostgresConfig, dstPgConfig.PostgresConfig); err != nil {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `73bf425f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e8b30c7d` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

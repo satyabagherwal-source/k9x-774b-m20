@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T20:30:04.925Z",
+  "last_updated": "2026-11-24T20:38:41.234Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5481,14 +5481,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-peerdb-io-peerdb",
-      "content_hash": "51b090846ac696fed0b93f27161cf841731bba10b8b397f2973768baed7e67a7",
-      "verified_at": "2026-11-24T01:28:57.480Z",
+      "content_hash": "9f66763509172d13ca34d17c861eaa43a9b872ae0e3292153eb10dcf74e843cf",
+      "verified_at": "2026-11-24T20:38:36.490Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T01:28:57.480Z"
+      "last_updated": "2026-11-24T20:38:36.490Z"
     },
     "tailscale/tailscale": {
       "repository": "tailscale/tailscale",
@@ -10341,14 +10341,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-weaviate-weaviate",
-      "content_hash": "70fcfd9c547d157fb98c10460bbae26dcd6a0d44462ed807b302c73f52fb6c50",
-      "verified_at": "2026-11-24T00:31:51.203Z",
+      "content_hash": "e88eb2de7a461a0c3170da1708669fc9af5f70684606d3fe7f514150d334dc36",
+      "verified_at": "2026-11-24T20:38:41.233Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T00:31:51.203Z"
+      "last_updated": "2026-11-24T20:38:41.233Z"
     },
     "topgrade-rs/topgrade": {
       "repository": "topgrade-rs/topgrade",

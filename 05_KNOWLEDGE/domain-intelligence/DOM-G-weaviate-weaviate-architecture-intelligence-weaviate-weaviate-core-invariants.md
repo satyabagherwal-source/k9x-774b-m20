@@ -4,23 +4,23 @@
 {
   "source_repository": "weaviate/weaviate",
   "source_url": "https://github.com/weaviate/weaviate",
-  "source_version": "5852883d",
+  "source_version": "49700341",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-24T00:31:51.425Z",
+  "timestamp": "2026-11-24T20:38:41.458Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-weaviate-weaviate",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [weaviate/weaviate](https://github.com/weaviate/weaviate) (Revision: `5852883d`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-24T00:31:51.425Z`  
+> **Provenance**: Harvested from [weaviate/weaviate](https://github.com/weaviate/weaviate) (Revision: `49700341`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-24T20:38:41.458Z`  
 > **Learning ID**: `learn-github-weaviate-weaviate`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
 - **Confidence Rating**: 79%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/weaviate-weaviate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/weaviate/weaviate](https://github.com/weaviate/weaviate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T00:31:50.100Z  
+> **Harvest Timestamp**: 2026-11-24T20:38:40.147Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Weaviate is an open-source vector database that stores both objects and vectors, allowing for the combination of vector search with structured filtering with the fault tolerance and scalability of a cloud-native database​.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: pyproject.toml, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 16958 stars
+- **Stars / Engagement**: 16959 stars
 
 ---
 
@@ -1748,1159 +1748,119 @@ func (s *State) SetGraphQLIfCurrent(gql graphql.GraphQL, gen uint64) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9132cef5` (2026-11-23)
-**Commit Message**: Merge pull request #13594 from weaviate/hfresh-zero-memory
+### Incident Patch 1: `49700341` (2026-11-24)
+**Commit Message**: Merge pull request #14001 from weaviate/change-main-version-to-v1.42.0-dev
 
-hfresh: zero-memory usage for low volume tenants
+chore: change Weaviate version to v1.42.0-dev
 
-**File**: `adapters/repos/db/vector/hfresh/config.go` (modified, +31/-4)
+**File**: `adapters/handlers/rest/doc.go` (modified, +1/-1)
 ```diff
-@@ -13,7 +13,9 @@ package hfresh
- 
- import (
- 	"math"
-+	"os"
- 
-+	"github.com/dustin/go-humanize"
- 	"github.com/pkg/errors"
- 	"github.com/sirupsen/logrus"
- 	"github.com/weaviate/weaviate/adapters/repos/db/lsmkv"
-@@ -33,6 +35,25 @@ const (
- 	minPostingSizeFloor uint32 = 3   // Minimum vectors for split threshold
- )
- 
-+const singlePostingMaxSizeEnv = "EXPERIMENTAL_HFRESH_SINGLE_POSTING_MAX_SIZE"
-+
-+// singlePostingMaxSizeFromEnv reads the size, such as 10MiB, up to which an
-+// index stays in one posting. Unset, zero or invalid leaves the feature off.
-+func singlePostingMaxSizeFromEnv(logger logrus.FieldLogger) uint64 {
-+	v := os.Getenv(singlePostingMaxSizeEnv)
-+	if v == "" {
-+		return 0
-+	}
-+
-+	size, err := humanize.ParseBytes(v)
-+	if err != nil {
-+		logger.WithField("value", v).Warnf("invalid %s, single-posting mode stays disabled: %v",
-+			singlePostingMaxSizeEnv, err)
-+		return 0
-+	}
-+	return size
-+}
-+
- type Config struct {
- 	Logger                       logrus.FieldLogger
- 	Scheduler                    *queue.Scheduler
-@@ -161,20 +182,25 @@ func validateImmutableField(u immutableParameter,
- // Dims is the number of dimensions of the vector, after compression
- // if applicable.
- func (h *HFresh) computeMaxPostingSize(dims int) uint32 {
-+	maxBytes := h.maxPostingSizeKB * 1024 // budget
-+
-+	return uint32(math.Ceil(float64(maxBytes) / postingEntryBytes(dims)))
-+}
-+
-+// postingEntryBytes is the size of one posting entry with dims dimensions.
-+func postingEntryBytes(dims int) float64 {
- 	bytesPerDim := 0.125                                  // RQ1
--	maxBytes := h.maxPostingSizeKB * 1024                 // budget
- 	metadata := 8 + 1 + compressionhelpers.RQMetadataSize // id + version + RQ metadata
- 
--	vBytes := float64(dims)*bytesPerDim + float64(metadata)
--
--	return uint32(math.Ceil(float64(maxBytes) / vBytes))
-+	return float64(dims)*bytesPerDim + float64(metadata)
- }
- 
- func (h *HFresh) setMaxPostingSize(dims uint32) error {
- 	if dims == 0 || h.maxPostingSizeKB < ent.MaxPostingSizeKBFloor {
- 		return errors.New("unable to set max posting size")
- 	}
- 	h.maxPostingSize = max(h.computeMaxPostingSize(int(dims)), maxPostingSizeFloor)
-+	h.bootstrapThreshold = uint32(min(float64(h.singlePostingMaxSize)/postingEntryBytes(int(dims)), math.MaxUint32))
- 	h.minPostingSize = max(h.maxPostingSize/3, minPostingSizeFloor)
- 
- 	if h.minPostingSize >= h.maxPostingSize {
-@@ -188,6 +214,7 @@ func (h *HFresh) setMaxPostingSize(dims uint32) error {
- 			"minPostingSize":   h.minPostingSize,
- 			"maxPostingSize":   h.maxPostingSize,
- 			"maxPostingSizeKB": h.maxPostingSizeKB,
-+			"singlePostingMax": h.bootstrapThreshold,
- 		},
- 	).Warn("hfresh posting sizes configured")
- 	return nil
+@@ -18,7 +18,7 @@
+ //	  https
+ //	Host: localhost
+ //	BasePath: /v1
+-//	Version: 1.41.0
++//	Version: 1.42.0-dev
+ //	Contact: Weaviate<hello@weaviate.io> https://github.com/weaviate
+ //
+ //	Consumes:
 ```
 
-**File**: `adapters/repos/db/vector/hfresh/config_test.go` (modified, +57/-0)
+**File**: `adapters/handlers/rest/embedded_spec.go` (modified, +2/-2)
 ```diff
-@@ -15,6 +15,7 @@ import (
- 	"testing"
- 
- 	"github.com/pkg/errors"
-+	"github.com/sirupsen/logrus"
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
- 	"github.com/weaviate/weaviate/entities/schema/config"
-@@ -133,3 +134,59 @@ func TestOutOfBoundsMuveraConfigStillLoads(t *testing.T) {
- 	tf := newTestIndex(t, uc, newMuveraTestStore())
- 	require.NotNil(t, tf.Index)
- }
-+
-+func TestSinglePostingThresholdFromSize(t *testing.T) {
-+	const tenMiB = 10 * 1024 * 1024
-+	tests := []struct {
-+		name     string
-+		size     uint64
-+		dims     uint32
-+		expected uint32
-+	}{
-+		// each entry takes dims/8 + 25 bytes
-+		{"8 dims", tenMiB, 8, 403_298},
-+		{"256 dims", tenMiB, 256, 183_960},
-+		{"1536 dims", tenMiB, 1536, 48_321},
-+		{"3072 dims", tenMiB, 3072, 25_637},
-+		{"disabled", 0, 1536, 0},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			h := HFresh{
-+				logger:               logrus.New(),
-+				singlePostingMaxSize: tt.size,
-+				maxPostingSizeKB:     ent.DefaultMaxPostingSizeKB,
-+			}
-+			require.NoError(t, h.setMaxPostingSize(tt.dims))
-+			require.Equal(t, tt.expected, h.bootstrapThreshold)
-+		})
-+	}
-+}
-+
-+func TestSinglePostingMaxSizeFromEnv(t *testing.T) {
-+	tests := []struct {
-+		name     string
-+		value    *string
-+		expected uint64
-+	}{
-+		{"unset disables", nil, 0},
-+		{"zero disables", ptr("0"), 0},
-+		{"bytes", ptr("1048576"), 1 << 20},
-+		{"binary unit", ptr("10MiB"), 10 * 1024 * 1024},
-+		{"decimal unit", ptr("10MB"), 10 * 1000 * 1000},
-+		{"invalid disables", ptr("ten megabytes"), 0},
-+		{"negative disables", ptr("-1"), 0},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			if tt.value != nil {
-+				t.Setenv("EXPERIMENTAL_HFRESH_SINGLE_POSTING_MAX_SIZE", *tt.value)
-+			}
-+			require.Equal(t, tt.expected, singlePostingMaxSizeFromEnv(logrus.New()))
-+		})
-+	}
-+}
-+
-+func ptr(s string) *string {
-+	return &s
-+}
+@@ -48,7 +48,7 @@ func init() {
+       "url": "https://github.com/weaviate",
+       "email": "hello@weaviate.io"
+     },
+-    "version": "1.41.0"
++    "version": "1.42.0-dev"
+   },
+   "basePath": "/v1",
+   "paths": {
+@@ -13350,7 +13350,7 @@ func init() {
+       "url": "https://github.com/weaviate",
+       "email": "hello@weaviate.io"
+     },
+-    "version": "1.41.0"
++    "version": "1.42.0-dev"
+   },
+   "basePath": "/v1",
+   "paths": {
 ```
 
-**File**: `adapters/repos/db/vector/hfresh/helper_for_test.go` (modified, +20/-0)
+**File**: `openapi-specs/schema.json` (modified, +1/-1)
 ```diff
-@@ -15,6 +15,7 @@ import (
- 	"context"
- 	"fmt"
- 	"math/rand"
-+	"strconv"
- 	"sync"
- 	"testing"
- 
-@@ -53,6 +54,13 @@ func (s *testVectorStore) put(id uint64, v []float32) {
- 	s.m[id] = v
- }
- 
-+// remove drops a vector as deleting its object does.
-+func (s *testVectorStore) remove(id uint64) {
-+	s.mu.Lock()
-+	defer s.mu.Unlock()
-+	delete(s.m, id)
-+}
-+
- func (s *testVectorStore) get(_ context.Context, id uint64) ([]float32, error) {
- 	s.mu.RLock()
- 	defer s.mu.RUnlock()
-@@ -128,6 +136,18 @@ func withDistanceProvider(provider distancer.Provider) testIndexOption {
- 	}
- }
- 
-+// setSinglePostingLimit keeps indexes created by the test in single-posting
-+// mode until their posting exceeds n vectors; 0 builds the graph up front.
-+func setSinglePostingLimit(t testing.TB, n uint32) {
-+	t.Setenv(singlePostingMaxSizeEnv, strconv.FormatUint(singlePostingSize(n), 10))
-+}
-+
-+// singlePostingSize is the byte budget that holds n vectors of
-+// singlePostingDims dimensions.
-+func singlePostingSize(n uint32) uint64 {
-+	return uint64(float64(n) * postingEntryBytes(singlePostingDims))
-+}
-+
- // newTestIndex is the single index constructor behind every test fixture in
- // this package: it wires an HFresh index on top of a dummy LSM store and a
- // noop-bucket centroid HNSW. Pass a non-nil mvStore to wire the
-```
-
-**File**: `adapters/repos/db/vector/hfresh/hfresh.go` (modified, +21/-7)
-```diff
-@@ -67,6 +67,13 @@ type HFresh struct {
- 	rescoreLimit     uint32
- 	store            *lsmkv.Store
- 
-+	// singlePostingMaxSize is the size in bytes up to which the index keeps a
-+	// single posting; 0 builds the centroid index up front.
-+	singlePostingMaxSize uint64
-+	// bootstrapThreshold is singlePostingMaxSize as a vector count, set once
-+	// the dimensions are known.
-+	bootstrapThreshold uint32
-+
- 	// needsNormalization is precomputed at construction from the configured
- 	// distance: cosine-dot only equals the cosine distance on unit vectors,
- 	// so inputs must be normalized on insert, query, and rescore. L2 (and
-@@ -170,6 +177,8 @@ func New(cfg *Config, uc ent.UserConfig, store *lsmkv.Store) (*HFresh, error) {
- 		rescoreLimit:       uint32(uc.RQ.RescoreLimit),
- 		rootPath:           cfg.RootPath,
- 		needsNormalization: cfg.DistanceProvider.Type() == "cosine-dot",
-+
-+		singlePostingMaxSize: singlePostingMaxSizeFromEnv(logger),
- 	}
- 
- 	h.muvera.Store(uc.Multivector.MuveraConfig.Enabled)
-@@ -193,7 +202,7 @@ func New(cfg *Config, uc ent.UserConfig, store *lsmkv.Store) (*HFresh, error) {
- 		}
- 	}
- 
--	h.Centroids, err = NewHNSWIndex(metrics, store, cfg, 1024*1024, 1024)
-+	h.Centroids, err = NewHNSWIndex(metrics, store, cfg, h.singlePostingMaxSize > 0)
- 	if err != nil {
- 		return nil, err
- 	}
-@@ -223,6 +232,11 @@ func New(cfg *Config, uc ent.UserConfig, store *lsmkv.Store) (*HFresh, error) {
- }
- 
- func (h *HFresh) setPostingVectorIDs(ctx context.Context, postingID uint64, posting Posting) error {
-+	// the single posting keeps no id list, which its appends would leave stale
-+	if postingID == singlePostingID && !h.Centroids.Built() {
-+		return h.PostingSizes.Set(ctx, postingID, len(posting))
-+	}
-+
- 	if err := h.PostingMap.SetVectorIDs(ctx, postingID, posting); err != nil {
- 		return err
- 	}
-@@ -318,7 +332,7 @@ func (h *HFresh) Shutdown(ctx context.Context) error {
- 		errs = append(errs, err)
- 	}
- 
--	err = h.Centroids.hnsw.Shutdown(ctx)
-+	err = h.Centroids.Shutdown(ctx)
- 	if err != nil {
- 		errs = append(errs, err)
- 	}
-@@ -330,7 +344,7 @@ func (h *HFresh) Flush() error {
- 	var errs []error
- 
- 	// flush the HNSW commit log
--	err := h.Centroids.hnsw.Flush()
-+	err := h.Centroids.Flush()
- 	if err != nil {
- 		errs = append(errs, err)
- 	}
-@@ -345,7 +359,7 @@ func (h *HFresh) Flush() error {
- }
- 
- func (h *HFresh) PrepareForBackup(ctx context.Context) error {
--	err := h.Centroids.hnsw.PrepareForBackup(ctx)
-+	err := h.Centroids.PrepareForBackup(ctx)
- 	if err != nil {
- 		return err
- 	}
-@@ -375,15 +389,15 @@ func (h *HFresh) ResumeAfterBackup(ctx context.Context) error {
- 		queue.DisableMaintenanceMode()
- 	}
- 
--	return h.Centroids.hnsw.ResumeAfterBackup(ctx)
-+	return h.Centroids.ResumeAfterBackup(ctx)
- }
- 
- func (h *HFresh) SnapshotMutableFiles(ctx context.Context, basePath string, dstFor func(relPath string) string) ([]string, error) {
- 	return nil, nil
- }
- 
- func (h *HFresh) ListFiles(ctx context.Context, basePath string) ([]string, error) {
--	hnswFiles, err := h.Centroids.hnsw.ListFiles(ctx, basePath)
-+	hnswFiles, err := h.Centroids.ListFiles(ctx, basePath)
- 	if err != nil {
- 		return nil, err
- 	}
-@@ -424,7 +438,7 @@ func (h *HFresh) PostStartup(ctx context.Context) {
- 	// Warm the version map in the background
- 	enterrors.GoWrapper(h.warmVersionMap, h.logger)
- 
--	h.Centroids.hnsw.PostStartup(ctx)
-+	h.Centroids.PostStartup(ctx)
- }
- 
- var (
-```
-
-**File**: `adapters/repos/db/vector/hfresh/hfresh_test.go` (modified, +253/-0)
-```diff
-@@ -16,11 +16,13 @@ import (
- 	"encoding/binary"
- 	"fmt"
- 	"log"
-+	"math/rand"
- 	"net/http"
- 	_ "net/http/pprof"
- 	"os"
- 	"path/filepath"
- 	"runtime"
-+	"strconv"
- 	"sync"
- 	"sync/atomic"
- 	"testing"
-@@ -41,6 +43,7 @@ import (
- 	"github.com/weaviate/weaviate/adapters/repos/db/vector/hnsw/distancer"
- 	"github.com/weaviate/weaviate/adapters/repos/db/vector/testinghelpers"
- 	"github.com/weaviate/weaviate/entities/cyclemanager"
-+	enterrors "github.com/weaviate/weaviate/entities/errors"
- 	ent "github.com/weaviate/weaviate/entities/vectorindex/hfresh"
- 	hnswent "github.com/weaviate/weaviate/entities/vectorindex/hnsw"
- 	"github.com/weaviate/weaviate/usecases/memwatch"
-@@ -65,6 +68,9 @@ func distanceWrapper(provider distancer.Provider) func(x, y []float32) float32 {
- // Uncomment to enable pprof and prometheus metrics when running tests
- 
- func TestMain(m *testing.M) {
-+	// tests opt into single-posting mode explicitly, whatever the shell exports
-+	_ = os.Unsetenv(singlePostingMaxSizeEnv)
-+
- 	runtime.SetMutexProfileFraction(1)
- 
- 	go func() {
-@@ -339,3 +345,250 @@ func TestCentroidPrefillNeverReadsObjectStorage(t *testing.T) {
- 			"centroid graph must never prefill from object storage, but doc id %d was found in its cache", docID)
- 	}
- }
-+
-+// singlePostingDims keeps the per-vector work small; at 8 dimensions and
-+// the smallest I/O budget a posting holds 315 vectors, so a threshold of
-+// 1000 forces a split cascade of two levels once the centroid index is built.
-+const (
-+	singlePostingDims      = 8
-+	singlePostingThreshold = 1000
-+)
-+
-+func singlePostingUserConfig() ent.UserConfig {
-+	uc := ent.NewDefaultUserConfig()
-+	uc.MaxPostingSizeKB = ent.MaxPostingSizeKBFloor
-+	return uc
-+}
-+
-+func TestSinglePostingMode(t *testing.T) {
-+	ctx := context.Background()
-+
-+	insert := func(t *testing.T, tf *TestHFresh, n int) [][]float32 {
-+		vectors, _ := testinghelpers.RandomVecsFixedSeed(n, 0, singlePostingDims)
-+		for i, v := range vectors {
-+			addVectorToIndex(t, tf, uint64(i), v)
-+		}
-+		return vectors
-+	}
-+
-+	assertSelfSearch := func(t *testing.T, tf *TestHFresh, vectors [][]float32) {
-+		for i, v := range vectors {
-+			ids, _, err := tf.Index.SearchByVector(ctx, v, 1, nil)
-+			require.NoError(t, err)
-+			require.Equal(t, []uint64{uint64(i)}, ids, "vector %d", i)
-+		}
-+	}
-+
-+	t.Run("threshold zero builds the centroid index eagerly", func(t *testing.T) {
-+		tf := newTestIndex(t, singlePostingUserConfig(), nil)
-+		require.True(t, tf.Index.Centroids.Built())
-+	})
-+
-+	t.Run("stays in one posting below the threshold", func(t *testing.T) {
-+		setSinglePostingLimit(t, singlePostingThreshold)
-+		tf := newTestIndex(t, singlePostingUserConfig(), nil)
-+		vectors := insert(t, &tf, singlePostingThreshold)
-+		tf.Index.waitForMaintenance(t)
-+
-+		require.False(t, tf.Index.Centroids.Built())
-+		require.EqualValues(t, 1, tf.Index.PostingSizes.Count())
-+		requireSinglePostingSize(t, tf.Index, singlePostingThreshold)
-+		require.EqualValues(t, 0, tf.Index.taskQueue.Size(), "no maintenance task may be queued in single-posting mode")
-+
-+		assertSelfSearch(t, &tf, vectors)
-+
-+		var sizeSlots int
-+		for range tf.Index.PostingSizes.data.IterAllocated() {
-+			sizeSlots++
-+		}
-+		require.LessOrEqual(t, sizeSlots, postingPageSize, "one posting must not reserve a 64k-entry size page")
-+
-+		// deletes are honoured by the scan
-+		require.NoError(t, tf.Index.Delete(3))
-+		ids, _, err := tf.Index.SearchByVector(ctx, vectors[3], 1, nil)
-+		require.NoError(t, err)
-+		require.NotEqual(t, []uint64{3}, ids)
-+
-+		// an allow list larger than the flat-search cutoff goes through the
-+		// posting scan and must still be applied
-+		allowed := make([]uint64, 0, flatSearchCutoff+1)
-+		for id := uint64(5); id < uint64(flatSearchCutoff+6); id++ {
-+			allowed = append(allowed, id)
-+		}
-+		ids, _, err = tf.Index.SearchByVector(ctx, vectors[0], 1, helpers.NewAllowList(allowed...))
-+		require.NoError(t, err)
-+		require.Len(t, ids, 1)
-+		require.GreaterOrEqual(t, ids[0], uint64(5))
-+
-+		require.NoError(t, tf.Index.Flush())
-+		require.NoError(t, tf.Index.Shutdown(ctx))
-+	})
-+
-+	t.Run("never splits the single posting inline", func(t *testing.T) {
-+		// far past the inline split of graph mode, still under the limit
-+		setSinglePostingLimit(t, 2000)
-+		tf := newTestIndex(t, singlePostingUserConfig(), nil)
-+		insert(t, &tf, 1600)
-+		require.Greater(t, uint32(1600), 5*tf.Index.maxPostingSize)
-+		require.False(t, tf.Index.Centroids.Built())
-+		require.EqualValues(t, 1, tf.Index.PostingSizes.Count())
-+	})
-+
-+	t.Run("splits the single posting inline far above its limit", func(t *testing.T) {
-+		// a limit under the max posting size leaves the latter as the limit
-+		setSinglePostingLimit(t, 100)
-+		tf := newTestIndex(t, singlePostingUserConfig(), nil)
-+		require.NoError(t, tf.Index.taskQueue.splitQueue.Pause(ctx))
-+		defer tf.Index.taskQueue.splitQueue.Resume()
-+
-+		vectors := insert(t, &tf, 1600)
-+		require.Greater(t, uint32(1600), 5*tf.Index.maxPostingSize)
-+		require.True(t, tf.
-```
-
-**File**: `adapters/repos/db/vector/hfresh/hnsw.go` (modified, +208/-17)
-```diff
-@@ -13,8 +13,11 @@ package hfresh
- 
- import (
- 	"context"
-+	"io/fs"
- 	"math"
-+	"os"
- 	"slices"
-+	"sync"
- 	"sync/atomic"
- 	"time"
- 
-@@ -60,21 +63,77 @@ func (c *Centroid) Distance(distancer *Distancer, v Vector) (float32, error) {
- 	return dist, nil
- }
- 
-+// singlePostingID is the posting that holds every vector before the centroid
-+// graph exists.
-+const singlePostingID = 1
-+
-+// HNSWIndex holds the centroids in an HNSW graph. A lazy index has no graph
-+// until its first split: posting 1 holds every vector and has no centroid.
- type HNSWIndex struct {
- 	metrics *Metrics
--	hnsw    *hnsw.HNSW
-+	store   *lsmkv.Store
-+	cfg     *Config
- 	counter atomic.Int32
-+
-+	state atomic.Pointer[centroidState]
-+	// pending receives the children of the first split, and becomes the
-+	// graph when the split deletes posting 1
-+	pending *hnsw.HNSW
-+	buildMu sync.Mutex
-+}
-+
-+// centroidState is replaced as a whole, so a reader never combines the graph
-+// of one moment with the single posting of another.
-+type centroidState struct {
-+	// nil in single-posting mode
-+	hnsw *hnsw.HNSW
-+	// single reports whether posting 1 exists, while there is no graph
-+	single bool
-+}
-+
-+// load returns the graph and, without one, whether posting 1 exists.
-+func (i *HNSWIndex) load() (*hnsw.HNSW, bool) {
-+	state := i.state.Load()
-+	return state.hnsw, state.single
- }
- 
--func NewHNSWIndex(metrics *Metrics, store *lsmkv.Store, cfg *Config, pages, pageSize uint64) (*HNSWIndex, error) {
-+// NewHNSWIndex creates the centroid graph, reloading it from its commit log.
-+// A lazy index only does so if the graph was created before, which left its
-+// commit log directory.
-+func NewHNSWIndex(metrics *Metrics, store *lsmkv.Store, cfg *Config, lazy bool) (*HNSWIndex, error) {
- 	index := HNSWIndex{
- 		metrics: metrics,
-+		store:   store,
-+		cfg:     cfg,
- 	}
-+	index.state.Store(&centroidState{})
- 
- 	cfg.Centroids.HNSWConfig.VectorForIDThunk = func(ctx context.Context, id uint64) ([]float32, error) {
- 		return nil, nil
- 	}
-+	cfg.Centroids.HNSWConfig.WaitForCachePrefill = true
-+	cfg.Centroids.HNSWConfig.AcornFilterRatio = math.MaxFloat64
-+
-+	if lazy {
-+		_, err := os.Stat(hnsw.CommitLogDirectory(cfg.Centroids.HNSWConfig.RootPath, cfg.Centroids.HNSWConfig.ID))
-+		if errors.Is(err, fs.ErrNotExist) {
-+			return &index, nil
-+		}
-+		if err != nil {
-+			return nil, errors.Wrap(err, "check the centroid graph's commit log")
-+		}
-+	}
-+
-+	h, err := index.newGraph()
-+	if err != nil {
-+		return nil, err
-+	}
-+	index.state.Store(&centroidState{hnsw: h})
-+
-+	return &index, nil
-+}
- 
-+func (i *HNSWIndex) newGraph() (*hnsw.HNSW, error) {
- 	var userConfig ent.UserConfig
- 	userConfig.SetDefaults()
- 	userConfig.EF = 64
-@@ -83,22 +142,39 @@ func NewHNSWIndex(metrics *Metrics, store *lsmkv.Store, cfg *Config, pages, page
- 	userConfig.RQ.Bits = 8
- 	userConfig.RQ.RescoreLimit = 0
- 	userConfig.FilterStrategy = ent.FilterStrategyAcorn
--	cfg.Centroids.HNSWConfig.WaitForCachePrefill = true
--	cfg.Centroids.HNSWConfig.AcornFilterRatio = math.MaxFloat64
- 
--	h, err := hnsw.New(*cfg.Centroids.HNSWConfig, userConfig, cfg.TombstoneCallbacks, store)
-+	h, err := hnsw.New(*i.cfg.Centroids.HNSWConfig, userConfig, i.cfg.TombstoneCallbacks, i.store)
- 	if err != nil {
- 		return nil, err
- 	}
- 	h.PostStartup(context.Background())
- 
--	index.hnsw = h
-+	return h, nil
-+}
- 
--	return &index, nil
-+// Built reports whether the centroid graph exists.
-+func (i *HNSWIndex) Built() bool {
-+	g, _ := i.load()
-+	return g != nil
-+}
-+
-+// restoreSingle reinstates the single posting found on disk at a restart.
-+func (i *HNSWIndex) restoreSingle() {
-+	i.state.Store(&centroidState{single: true})
-+	i.counter.Store(1)
- }
- 
- func (i *HNSWIndex) Get(id uint64) (*Centroid, error) {
--	vec, err := i.hnsw.Get(id)
-+	g, single := i.load()
-+	if g == nil {
-+		if id != singlePostingID || !single {
-+			return nil, errors.Wrapf(ErrPostingNotFound, "centroid %d", id)
-+		}
-+		// no vector: with a single candidate nothing compares it
-+		return &Centroid{}, nil
-+	}
-+
-+	vec, err := g.Get(id)
- 	if err != nil {
- 		return nil, err
- 	}
-@@ -118,7 +194,31 @@ func (i *HNSWIndex) Insert(id uint64, centroid *Centroid) error {
- 		return nil
- 	}
- 
--	err := i.hnsw.Add(context.Background(), id, centroid.Uncompressed)
-+	g, single := i.load()
-+	if g == nil {
-+		if id == singlePostingID {
-+			i.state.Store(&centroidState{single: true})
-+			i.counter.Add(1)
-+			return nil
-+		}
-+		if !single {
-+			return errors.Errorf("centroid graph not built: cannot add posting %d", id)
-+		}
-+
-+		// a child of the first split
-+		var err error
-+		i.buildMu.Lock()
-+		if i.pending == nil {
-+			i.pending, err = i.newGraph()
-+		}
-+		g = i.pending
-+		i.buildMu.Unlock()
-+		if err != nil {
-+			return errors.Wrap(err, "create the centroid graph")
-+		}
-+	}
-+
-+	err := g.Add(context.Background(), id, centroid.Uncompressed)
- 	if err != nil {
- 		return errors.Wrap(err, "add to hnsw")
- 	}
-@@ -128,21 +228,42 @@ func (i *HNSWIndex) Insert(id uint64, centroid *Centroid) error {
- }
- 
- func (i *HN
-```
-
-**File**: `adapters/repos/db/vector/hfresh/index_metadata.go` (modified, +30/-0)
-```diff
-@@ -15,6 +15,7 @@ import (
- 	"context"
- 	"encoding/binary"
- 	"fmt"
-+	"slices"
- 	"sync/atomic"
- 
- 	"github.com/weaviate/weaviate/adapters/repos/db/helpers"
-@@ -266,10 +267,34 @@ func (h *HFresh) restoreMetadata() error {
- 	if err := h.PostingSizes.Restore(h.ctx); err != nil {
- 		return err
- 	}
-+	if !h.Centroids.Built() {
-+		err = h.restoreSinglePosting()
-+		if err != nil {
-+			return err
-+		}
-+	}
- 
- 	return h.restoreMetrics()
- }
- 
-+// restoreSinglePosting finds posting 1 by its size, persisted on each append,
-+// without reading the posting.
-+func (h *HFresh) restoreSinglePosting() error {
-+	size, err := h.PostingSizes.Get(h.ctx, singlePostingID)
-+	if err != nil || size == 0 {
-+		return err
-+	}
-+
-+	h.Centroids.restoreSingle()
-+
-+	// a crash can lose the queued split, and a lowered limit applies without
-+	// waiting for an insert
-+	if size > h.splitLimit() {
-+		return h.taskQueue.EnqueueSplit(singlePostingID)
-+	}
-+	return nil
-+}
-+
- // restoreDimensions restores dimension-dependent components from persisted
- // metadata. If quantization data is missing (e.g. crash before it was
- // persisted), the quantizer is re-created from scratch.
-@@ -459,6 +484,11 @@ func (h *HFresh) repairOrphanPostings() {
- 			orphans = append(orphans, postingID)
- 		}
- 	}
-+	// a first split cut short after the graph existed leaves posting 1 full,
-+	// outside the graph and without a persisted map entry
-+	if h.Centroids.Built() && !h.Centroids.Exists(singlePostingID) && !slices.Contains(orphans, singlePostingID) {
-+		orphans = append(orphans, singlePostingID)
-+	}
- 
- 	for _, postingID := range orphans {
- 		queued, err := h.repairOrphanPosting(h.ctx, postingID)
-```
-
-**File**: `adapters/repos/db/vector/hfresh/index_metadata_test.go` (modified, +483/-1)
-```diff
-@@ -22,6 +22,7 @@ import (
- 	"github.com/stretchr/testify/require"
- 	"github.com/weaviate/weaviate/adapters/repos/db/helpers"
- 	"github.com/weaviate/weaviate/adapters/repos/db/lsmkv"
-+	"github.com/weaviate/weaviate/adapters/repos/db/vector/hnsw"
- 	"github.com/weaviate/weaviate/adapters/repos/db/vector/hnsw/compact"
- 	"github.com/weaviate/weaviate/adapters/repos/db/vector/testinghelpers"
- 	ent "github.com/weaviate/weaviate/entities/vectorindex/hfresh"
-@@ -159,6 +160,487 @@ func TestStartupDeletesLegacyReassignBucketKey(t *testing.T) {
- 	require.Equal(t, unrelatedValue, data)
- }
- 
-+// singlePostingRestartConfig wires a real centroid commit logger and a
-+// vector store, so the bootstrap split can run after a restart.
-+func singlePostingRestartConfig(t *testing.T, threshold uint32) (*Config, ent.UserConfig, *testVectorStore) {
-+	cfg, uc := makeHFreshConfig(t)
-+	setSinglePostingLimit(t, threshold)
-+	uc.MaxPostingSizeKB = ent.MaxPostingSizeKBFloor
-+	vectors := &testVectorStore{m: make(map[uint64][]float32)}
-+	cfg.VectorForIDThunk = vectors.get
-+	return cfg, uc, vectors
-+}
-+
-+func addRestartVectors(t *testing.T, index *HFresh, store *testVectorStore, from, to int) [][]float32 {
-+	t.Helper()
-+	all, _ := testinghelpers.RandomVecsFixedSeed(to, 0, singlePostingDims)
-+	for i := from; i < to; i++ {
-+		store.put(uint64(i), all[i])
-+		require.NoError(t, index.Add(t.Context(), uint64(i), all[i]))
-+	}
-+	return all
-+}
-+
-+func requireSelfSearchExcept(t *testing.T, index *HFresh, vectors [][]float32, skip int) {
-+	t.Helper()
-+	for i, v := range vectors {
-+		if i == skip {
-+			continue
-+		}
-+		ids, _, err := index.SearchByVector(t.Context(), v, 1, nil)
-+		require.NoError(t, err)
-+		require.Equal(t, []uint64{uint64(i)}, ids, "vector %d", i)
-+	}
-+}
-+
-+// inMemoryVersion reads a version without faulting it in from the store.
-+func inMemoryVersion(v *VersionMap, id uint64) VectorVersion {
-+	page, slot := v.data.GetPageFor(id)
-+	if page == nil {
-+		return 0
-+	}
-+	v.locks.RLock(id)
-+	defer v.locks.RUnlock(id)
-+	return page[slot]
-+}
-+
-+func TestSinglePostingSurvivesRestart(t *testing.T) {
-+	store := testinghelpers.NewDummyStore(t)
-+	cfg, uc, vectors := singlePostingRestartConfig(t, singlePostingThreshold)
-+
-+	index := makeHFreshWithConfig(t, store, cfg, uc)
-+	all := addRestartVectors(t, index, vectors, 0, 300)
-+	// persisted by the appends, without waiting for a shutdown
-+	requireSinglePostingSize(t, index, 300)
-+	requireNoSinglePostingIDs(t, index)
-+	require.NoError(t, index.Delete(7))
-+	require.NoError(t, index.Shutdown(t.Context()))
-+
-+	index = makeHFreshWithConfig(t, store, cfg, uc)
-+	require.False(t, index.Centroids.Built())
-+	requireSinglePostingSize(t, index, 300)
-+	requireNoSinglePostingIDs(t, index)
-+
-+	require.Eventually(t, func() bool {
-+		return inMemoryVersion(index.VersionMap, 7).Deleted()
-+	}, 10*time.Second, 10*time.Millisecond, "the version warmup must load the delete")
-+
-+	ids, _, err := index.SearchByVector(t.Context(), all[7], 1, nil)
-+	require.NoError(t, err)
-+	require.NotEqual(t, []uint64{7}, ids, "delete must survive the restart")
-+	requireSelfSearchExcept(t, index, all, 7)
-+
-+	// the restored posting keeps counting towards the threshold
-+	all = addRestartVectors(t, index, vectors, 300, singlePostingThreshold+1)
-+	index.waitForMaintenance(t)
-+	require.True(t, index.Centroids.Built())
-+	require.Greater(t, index.PostingSizes.Count(), uint64(2))
-+	requireSelfSearchExcept(t, index, all, 7)
-+}
-+
-+// requireSinglePostingSize checks posting 1's size, in memory and in the
-+// store, where each append persists it.
-+func requireSinglePostingSize(t *testing.T, index *HFresh, size uint32) {
-+	t.Helper()
-+	inMemory, err := index.PostingSizes.Get(t.Context(), 1)
-+	require.NoError(t, err)
-+	require.Equal(t, size, inMemory)
-+	persisted, err := index.PostingSizes.store.Get(t.Context(), 1)
-+	require.NoError(t, err)
-+	require.Equal(t, size, persisted)
-+}
-+
-+// requireNoSinglePostingIDs checks that posting 1 keeps no id list.
-+func requireNoSinglePostingIDs(t *testing.T, index *HFresh) {
-+	t.Helper()
-+	_, err := index.PostingMap.Get(t.Context(), 1)
-+	require.ErrorIs(t, err, ErrPostingNotFound)
-+}
-+
-+// A merge rewrites the single posting and persists its size, which later
-+// appends must keep current for the restart.
-+func TestSinglePostingRestartAfterMerge(t *testing.T) {
-+	store := testinghelpers.NewDummyStore(t)
-+	cfg, uc, vectors := singlePostingRestartConfig(t, singlePostingThreshold)
-+
-+	index := makeHFreshWithConfig(t, store, cfg, uc)
-+	addRestartVectors(t, index, vectors, 0, 300)
-+	for id := range uint64(10) {
-+		require.NoError(t, index.Delete(id))
-+		vectors.remove(id)
-+	}
-+	require.NoError(t, index.doMerge(t.Context(), 1))
-+	requireSinglePostingSize(t, index, 290)
-+	requireNoSinglePostingIDs(t, index)
-+
-+	all := addRestartVectors(t, index, vectors, 300, 400)
-+	requireSinglePostingSize(t, index, 390)
-+	require.NoError(t, index.Shutdown(t.Context()))
-+
-+	index = makeHFreshWithConfig(t, store, cfg, uc)
-+	require.False(t, 
+@@ -4784,7 +4784,7 @@
+     },
+     "description": "# Introduction<br/> Weaviate is an open source, AI-native vector database that helps developers create intuitive and reliable AI-powered applications. <br/> ### Base Path <br/>The base path for the Weaviate server is structured as `[YOUR-WEAVIATE-HOST]:[PORT]/v1`. As an example, if you wish to access the `schema` endpoint on a local instance, you would navigate to `http://localhost:8080/v1/schema`. Ensure you replace `[YOUR-WEAVIATE-HOST]` and `[PORT]` with your actual server host and port number respectively. <br/> ### Questions? <br/>If you have any comments or questions, please feel free to reach out to us at the community forum [https://forum.weaviate.io/](https://forum.weaviate.io/). <br/>### Issues? <br/>If you find a bug or want to file a feature request, please open an issue on our GitHub repository for [Weaviate](https://github.com/weaviate/weaviate). <br/>### Need more documentation? <br/>For a quickstart, code examples, concepts and more, please visit our [documentation page](https://docs.weaviate.io/weaviate).",
+     "title": "Weaviate REST API",
+-    "version": "1.41.0"
++    "version": "1.42.0-dev"
+   },
+   "parameters": {
+     "CommonAfterParameterQuery": {
 ```
 
 ---
 
-### Incident Patch 2: `6abe4346` (2026-11-23)
-**Commit Message**: Merge branch 'main' into hfresh-zero-memory
+### Incident Patch 2: `9024b062` (2026-11-23)
+**Commit Message**: chore: change Weaviate version to v1.42.0-dev
 
-**File**: `.github/workflows/pull_requests.yaml` (modified, +5/-0)
+**File**: `adapters/handlers/rest/doc.go` (modified, +1/-1)
 ```diff
-@@ -585,6 +585,10 @@ jobs:
-             test: "--only-module-text2vec-cohere"
-           - name: "reranker-cohere"
-             test: "--only-module-reranker-cohere"
-+          - name: "reranker-typesafeai"
-+            test: "--only-module-reranker-typesafeai"
-+          - name: "reranker-openai"
-+            test: "--only-module-reranker-openai"
-           - name: "text2vec-voyageai"
-             test: "--only-module-text2vec-voyageai"
-           - name: "multi2vec-voyageai"
-@@ -655,6 +659,7 @@ jobs:
-           JINAAI_APIKEY: ${{ secrets.JINAAI_APIKEY }}
-           DIGITALOCEAN_APIKEY: ${{ secrets.DIGITALOCEAN_APIKEY }}
-           META_APIKEY: ${{ secrets.META_APIKEY }}
-+          TYPESAFEAI_APIKEY: ${{ secrets.TYPESAFEAI_APIKEY }}
-         run: ./test/run.sh ${{ matrix.test }}
-   Acceptance-Tests:
-     name: acceptance (${{ matrix.name }})
+@@ -18,7 +18,7 @@
+ //	  https
+ //	Host: localhost
+ //	BasePath: /v1
+-//	Version: 1.41.0
++//	Version: 1.42.0-dev
+ //	Contact: Weaviate<hello@weaviate.io> https://github.com/weaviate
+ //
+ //	Consumes:
 ```
 
-**File**: `adapters/handlers/graphql/local/aggregate/resolver.go` (modified, +3/-3)
+**File**: `adapters/handlers/rest/embedded_spec.go` (modified, +2/-2)
 ```diff
-@@ -63,7 +63,7 @@ func makeResolveClass(authorizer authorization.Authorizer, modulesProvider Modul
- 
- func resolveAggregate(p graphql.ResolveParams, authorizer authorization.Authorizer, modulesProvider ModulesProvider, class *models.Class) (interface{}, error) {
- 	principal := restCtx.GetPrincipalFromContext(p.Context)
--	className := schema.ClassName(p.Info.FieldName)
-+	className := schema.ClassName(class.Class)
- 
- 	source, ok := p.Source.(map[string]interface{})
- 	if !ok {
-@@ -95,7 +95,7 @@ func resolveAggregate(p graphql.ResolveParams, authorizer authorization.Authoriz
- 		return nil, fmt.Errorf("could not extract properties for class '%s': %w", className, err)
- 	}
- 
--	groupBy, err := extractGroupBy(p.Args, p.Info.FieldName)
-+	groupBy, err := extractGroupBy(p.Args, className.String())
- 	if err != nil {
- 		return nil, fmt.Errorf("could not extract groupBy path: %w", err)
- 	}
-@@ -113,7 +113,7 @@ func resolveAggregate(p graphql.ResolveParams, authorizer authorization.Authoriz
- 		return nil, fmt.Errorf("could not extract objectLimit: %w", err)
- 	}
- 
--	filters, err := common_filters.ExtractFilters(p.Args, p.Info.FieldName)
-+	filters, err := common_filters.ExtractFilters(p.Args, className.String())
- 	if err != nil {
- 		return nil, fmt.Errorf("could not extract filters: %w", err)
- 	}
+@@ -48,7 +48,7 @@ func init() {
+       "url": "https://github.com/weaviate",
+       "email": "hello@weaviate.io"
+     },
+-    "version": "1.41.0"
++    "version": "1.42.0-dev"
+   },
+   "basePath": "/v1",
+   "paths": {
+@@ -13350,7 +13350,7 @@ func init() {
+       "url": "https://github.com/weaviate",
+       "email": "hello@weaviate.io"
+     },
+-    "version": "1.41.0"
++    "version": "1.42.0-dev"
+   },
+   "basePath": "/v1",
+   "paths": {
 ```
 
-**File**: `adapters/handlers/graphql/local/aggregate/resolver_test.go` (modified, +22/-0)
+**File**: `openapi-specs/schema.json` (modified, +1/-1)
 ```diff
-@@ -1042,3 +1042,25 @@ func TestAggregate_AdmissionShedMapsToRateLimit(t *testing.T) {
- 		"raw ErrOverloaded message must not leak to the client")
- 	resolver.AssertExpectations(t)
- }
-+
-+func TestAggregateWithAlias(t *testing.T) {
-+	t.Parallel()
-+	resolver := newMockResolver(config.Config{})
-+
-+	resolver.On("Aggregate", &aggregation.Params{
-+		ClassName:  "Car",
-+		Properties: []aggregation.ParamProperty{},
-+		GroupBy:    groupCarByMadeByManufacturerName(),
-+		Filters: &filters.LocalFilter{Root: &filters.Clause{
-+			Operator: filters.OperatorEqual,
-+			On:       &filters.Path{Class: "Car", Property: "modelName"},
-+			Value:    &filters.Value{Value: "Fast", Type: schema.DataTypeText},
-+		}},
-+		IncludeMetaCount: true,
-+	}).Return([]aggregation.Group{}, nil).Once()
-+
-+	resolver.AssertResolve(t, `{ Aggregate { CarAlias(
-+		where:{path:["modelName"] operator:Equal valueText:"Fast"}
-+		groupBy:["madeBy", "Manufacturer", "name"]
-+	) { meta { count } } } }`)
-+}
-```
-
-**File**: `adapters/handlers/graphql/local/get/class_builder_fields.go` (modified, +1/-1)
-```diff
-@@ -388,7 +388,7 @@ func (r *resolver) resolveGet(p graphql.ResolveParams, className string) (interf
- 		sort = filters.ExtractSortFromArgs(sortArg.([]interface{}))
- 	}
- 
--	filters, err := common_filters.ExtractFilters(p.Args, p.Info.FieldName)
-+	filters, err := common_filters.ExtractFilters(p.Args, className)
- 	if err != nil {
- 		return nil, fmt.Errorf("could not extract filters: %w", err)
- 	}
-```
-
-**File**: `adapters/handlers/graphql/local/get/get_test.go` (modified, +32/-7)
-```diff
-@@ -28,6 +28,7 @@ import (
- 	"github.com/weaviate/weaviate/entities/dto"
- 	"github.com/weaviate/weaviate/entities/filters"
- 	"github.com/weaviate/weaviate/entities/models"
-+	"github.com/weaviate/weaviate/entities/schema"
- 	"github.com/weaviate/weaviate/entities/search"
- 	"github.com/weaviate/weaviate/entities/searchparams"
- 	helper "github.com/weaviate/weaviate/test/helper"
-@@ -1917,16 +1918,40 @@ func TestGetRelation(t *testing.T) {
- 
- func TestGetWithAlias(t *testing.T) {
- 	t.Parallel()
--	resolver := newMockResolver()
--	expectedParams := dto.GetParams{
--		ClassName:  "SomeAction",
--		Properties: []search.SelectProperty{{Name: "intField", IsPrimitive: true}},
-+	tests := []struct {
-+		name    string
-+		query   string
-+		filters *filters.LocalFilter
-+	}{
-+		{
-+			name:  "without where",
-+			query: "{ Get { SomeActionAlias { intField } } }",
-+		},
-+		{
-+			name:  "with where",
-+			query: `{ Get { SomeActionAlias(where:{path:["intField"] operator:Equal valueInt:7}) { intField } } }`,
-+			filters: &filters.LocalFilter{Root: &filters.Clause{
-+				Operator: filters.OperatorEqual,
-+				On:       &filters.Path{Class: "SomeAction", Property: "intField"},
-+				Value:    &filters.Value{Value: 7, Type: schema.DataTypeInt},
-+			}},
-+		},
- 	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			resolver := newMockResolver()
-+			expectedParams := dto.GetParams{
-+				ClassName:  "SomeAction",
-+				Properties: []search.SelectProperty{{Name: "intField", IsPrimitive: true}},
-+				Filters:    tt.filters,
-+			}
- 
--	resolver.On("GetClass", expectedParams).
--		Return(test_helper.EmptyList(), nil).Once()
-+			resolver.On("GetClass", expectedParams).
-+				Return(test_helper.EmptyList(), nil).Once()
- 
--	resolver.AssertResolve(t, "{ Get { SomeActionAlias { intField } } }")
-+			resolver.AssertResolve(t, tt.query)
-+		})
-+	}
- }
- 
- func TestNearObject(t *testing.T) {
-```
-
-**File**: `adapters/handlers/graphql/test/helper/schema_fixtures.go` (modified, +1/-0)
-```diff
-@@ -91,6 +91,7 @@ func CreateSimpleSchema(vectorizer string) schema.SchemaWithAliases {
- 
- // CarSchema contains a car which has every primitive field and a ref field there is
- var CarSchema = schema.SchemaWithAliases{
-+	Aliases: map[string]string{"CarAlias": "Car"},
- 	Schema: schema.Schema{
- 		Objects: &models.Schema{
- 			Classes: []*models.Class{
-```
-
-**File**: `adapters/handlers/grpc/v1/parse_search_request.go` (modified, +5/-1)
-```diff
-@@ -381,10 +381,14 @@ func (p *Parser) Search(req *pb.SearchRequest, config *config.Config) (dto.GetPa
- 	}
- 
- 	if req.Rerank != nil {
-+		rerank := extractRerank(req)
-+		if err := rerank.Validate(class); err != nil {
-+			return dto.GetParams{}, err
-+		}
- 		if out.AdditionalProperties.ModuleParams == nil {
- 			out.AdditionalProperties.ModuleParams = make(map[string]interface{})
- 		}
--		out.AdditionalProperties.ModuleParams["rerank"] = extractRerank(req)
-+		out.AdditionalProperties.ModuleParams["rerank"] = rerank
- 	}
- 
- 	if req.Boost != nil {
-```
-
-**File**: `adapters/handlers/grpc/v1/parse_search_request_test.go` (modified, +93/-12)
-```diff
-@@ -298,6 +298,7 @@ func TestGRPCSearchRequest(t *testing.T) {
- 	defaultPagination := &filters.Pagination{Limit: 10}
- 	quorum := pb.ConsistencyLevel_CONSISTENCY_LEVEL_QUORUM
- 	someString1 := "a word"
-+	rerankProperty := "name"
- 	someString2 := "other"
- 
- 	tests := []struct {
-@@ -2314,33 +2315,42 @@ func TestGRPCSearchRequest(t *testing.T) {
- 			name: "Rerank without query",
- 			req: &pb.SearchRequest{
- 				Collection: classname,
--				Rerank:     &pb.Rerank{Property: someString1},
-+				Rerank:     &pb.Rerank{Property: rerankProperty},
-+			},
-+			error: true,
-+		},
-+		{
-+			name: "Rerank with query",
-+			req: &pb.SearchRequest{
-+				Collection: classname,
-+				Properties: &pb.PropertiesRequest{NonRefProperties: []string{"int"}},
-+				Rerank:     &pb.Rerank{Property: rerankProperty, Query: &someString2},
- 			},
- 			out: dto.GetParams{
- 				ClassName: classname, Pagination: defaultPagination,
--				Properties: append(defaultTestClassProps, search.SelectProperty{Name: someString1, IsPrimitive: true}),
-+				Properties: search.SelectProperties{{Name: "int", IsPrimitive: true}, {Name: rerankProperty, IsPrimitive: true}},
- 				AdditionalProperties: additional.Properties{
- 					NoProps:      false,
--					ModuleParams: map[string]interface{}{"rerank": &rank.Params{Property: &someString1}},
-+					ModuleParams: map[string]interface{}{"rerank": &rank.Params{Property: &rerankProperty, Query: &someString2}},
- 				},
- 			},
- 			error: false,
- 		},
- 		{
--			name: "Rerank with query",
-+			name: "Rerank on a property the class does not have",
- 			req: &pb.SearchRequest{
- 				Collection: classname,
- 				Rerank:     &pb.Rerank{Property: someString1, Query: &someString2},
- 			},
--			out: dto.GetParams{
--				ClassName: classname, Pagination: defaultPagination,
--				Properties: append(defaultTestClassProps, search.SelectProperty{Name: someString1, IsPrimitive: true}),
--				AdditionalProperties: additional.Properties{
--					NoProps:      false,
--					ModuleParams: map[string]interface{}{"rerank": &rank.Params{Property: &someString1, Query: &someString2}},
--				},
-+			error: true,
-+		},
-+		{
-+			name: "Rerank on an int property",
-+			req: &pb.SearchRequest{
-+				Collection: classname,
-+				Rerank:     &pb.Rerank{Property: "int", Query: &someString2},
- 			},
--			error: false,
-+			error: true,
- 		},
- 
- 		{
-@@ -3035,6 +3045,77 @@ func TestGRPCSearchRequestBoostPropertyTypeValidation(t *testing.T) {
- 	}
- }
- 
-+func TestGRPCSearchRequestRerank(t *testing.T) {
-+	class := &models.Class{
-+		Class: "RerankClass",
-+		Properties: []*models.Property{
-+			{Name: "text", DataType: schema.DataTypeText.PropString()},
-+			{Name: "photo", DataType: schema.DataTypeBlob.PropString()},
-+			{Name: "count", DataType: schema.DataTypeInt.PropString()},
-+		},
-+		VectorIndexConfig: hnsw.UserConfig{Distance: vectorIndex.DefaultDistanceMetric},
-+	}
-+	getClass := func(string) (*models.Class, error) { return class, nil }
-+	query := "any"
-+	blank := "  "
-+	selected := search.SelectProperty{Name: "count", IsPrimitive: true}
-+	tests := []struct {
-+		name           string
-+		rerank         *pb.Rerank
-+		wantProperties search.SelectProperties
-+		wantErr        string
-+	}{
-+		{
-+			name:           "a text property that is not selected is added to the selection",
-+			rerank:         &pb.Rerank{Property: "text", Query: &query},
-+			wantProperties: search.SelectProperties{selected, {Name: "text", IsPrimitive: true}},
-+		},
-+		{
-+			name:           "a blob property is added to the selection as not primitive",
-+			rerank:         &pb.Rerank{Property: "photo", Query: &query},
-+			wantProperties: search.SelectProperties{selected, {Name: "photo", IsPrimitive: false}},
-+		},
-+		{
-+			name:    "an int property",
-+			rerank:  &pb.Rerank{Property: "count", Query: &query},
-+			wantErr: `rerank: property "count" of collection "RerankClass" is of type int; a rerank reads a text or blob property`,
-+		},
-+		{
-+			name:    "no query",
-+			rerank:  &pb.Rerank{Property: "text"},
-+			wantErr: "rerank: query is required",
-+		},
-+		{
-+			name:    "a query of whitespace",
-+			rerank:  &pb.Rerank{Property: "text", Query: &blank},
-+			wantErr: "rerank: query is required",
-+		},
-+		{
-+			name:    "a property the class does not have",
-+			rerank:  &pb.Rerank{Property: "nope", Query: &query},
-+			wantErr: "rerank: no such prop with name 'nope' found in class 'RerankClass'",
-+		},
-+	}
-+	parser := NewParser(false, getClass, nil, namespacing.Disabled)
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			out, err := parser.Search(&pb.SearchRequest{
-+				Collection: class.Class,
-+				Properties: &pb.PropertiesRequest{NonRefProperties: []string{"count"}},
-+				Rerank:     tt.rerank,
-+			}, &config.Config{QueryDefaults: config.QueryDefaults{Limit: 10}})
-+
-+			if tt.wantErr != "" {
-+				require.ErrorContains(t, err, tt.wantErr)
-+				return
-+			}
-+			require.NoError(t, err)
-+			require.Equal(t, tt.wantProperties, out.Properties)
-+			require.Equal(t, tt.rerank.Property, out.AdditionalPropert
+@@ -4784,7 +4784,7 @@
+     },
+     "description": "# Introduction<br/> Weaviate is an open source, AI-native vector database that helps developers create intuitive and reliable AI-powered applications. <br/> ### Base Path <br/>The base path for the Weaviate server is structured as `[YOUR-WEAVIATE-HOST]:[PORT]/v1`. As an example, if you wish to access the `schema` endpoint on a local instance, you would navigate to `http://localhost:8080/v1/schema`. Ensure you replace `[YOUR-WEAVIATE-HOST]` and `[PORT]` with your actual server host and port number respectively. <br/> ### Questions? <br/>If you have any comments or questions, please feel free to reach out to us at the community forum [https://forum.weaviate.io/](https://forum.weaviate.io/). <br/>### Issues? <br/>If you find a bug or want to file a feature request, please open an issue on our GitHub repository for [Weaviate](https://github.com/weaviate/weaviate). <br/>### Need more documentation? <br/>For a quickstart, code examples, concepts and more, please visit our [documentation page](https://docs.weaviate.io/weaviate).",
+     "title": "Weaviate REST API",
+-    "version": "1.41.0"
++    "version": "1.42.0-dev"
+   },
+   "parameters": {
+     "CommonAfterParameterQuery": {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14008** (2026-11-24): fix(modules): remove unsupported models from generative-digitalocean e2e test list (@antas-marcin)
+- **PR #14005** (2026-11-24): fix: enhance operational mode checks for path segments (@amourao)
+- **PR #14001** (2026-11-24): chore: change Weaviate version to v1.42.0-dev (@antas-marcin)
+- **PR #13995** (2026-11-24): fix(rbac): require update_aliases on an alias's current target to repoint it (@antas-marcin)
+- **PR #13993** (2026-11-24): test(graphql): pin read_data on the target for Aggregate through an alias (@antas-marcin)
 - **PR #13991** (2026-11-23): prepare release v1.41.0 (@antas-marcin)
-- **PR #13990** (2026-11-23): fix(db): class-less exists lookup no longer names collections (@moogacs)
-- **PR #13989** (2026-11-23): Move `RebalancePlanner` into `wl/` directory to gate behind enterprise (@tsmith023)
-- **PR #13987** (2026-11-23): Merge stable/v1.40 into main (@antas-marcin)
-- **PR #13974** (2026-11-20): prepare release v1.41.0-rc.1 (@jfrancoa)
-- **PR #13973** (2026-11-20): Merge stable/v1.40 into main (@antas-marcin)
 
 ---
 
@@ -2920,64 +1880,31 @@ hfresh: zero-memory usage for low volume tenants
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in config.go
+## X. Empirical Invariant Guard in doc.go
 
 **RULE**:
-When implementing operations in `adapters/repos/db/vector/hfresh/config.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in weaviate/weaviate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `adapters/handlers/rest/doc.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in weaviate/weaviate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9132cef5`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `49700341`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `adapters/repos/db/vector/hfresh/config.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `adapters/handlers/rest/doc.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"os"
-	"github.com/dustin/go-humanize"
-const singlePostingMaxSizeEnv = "EXPERIMENTAL_HFRESH_SINGLE_POSTING_MAX_SIZE"
-
-// singlePostingMaxSizeFromEnv reads the size, such as 10MiB, up to which an
-// index stays in one posting. Unset, zero or invalid leaves the feature off.
-func singlePostingMaxSizeFromEnv(logger logrus.FieldLogger) uint64 {
-	v := os.Getenv(singlePostingMaxSizeEnv)
-	if v == "" {
-		return 0
-	}
-
-	size, err := humanize.ParseBytes(v)
-	if err != nil {
-		logger.WithField("value", v).Warnf("invalid %s, single-posting mode stays disabled: %v",
-			singlePostingMaxSizeEnv, err)
-		return 0
-	}
-	return size
-}
-
-	maxBytes := h.maxPostingSizeKB * 1024 // budget
-
-	return uint32(math.Ceil(float64(maxBytes) / postingEntryBytes(dims)))
-}
-
-// postingEntryBytes is the size of one posting entry with dims dimensions.
-func postingEntryBytes(dims int) float64 {
-	return float64(dims)*bytesPerDim + float64(metadata)
-	h.bootstrapThreshold = uint32(min(float64(h.singlePostingMaxSize)/postingEntryBytes(int(dims)), math.MaxUint32))
-			"singlePostingMax": h.bootstrapThreshold,
+//	Version: 1.42.0-dev
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	maxBytes := h.maxPostingSizeKB * 1024                 // budget
-	vBytes := float64(dims)*bytesPerDim + float64(metadata)
-
-	return uint32(math.Ceil(float64(maxBytes) / vBytes))
+//	Version: 1.41.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9132cef5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `49700341` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T20:30:11.111Z",
+  "last_updated": "2026-11-24T20:38:46.859Z",
   "total_records": 2575,
   "domains": {
     "A": {
@@ -9308,8 +9308,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "22d2f5fa64b536a6c29d7f7ea2834252e15a767b0443e7136fccae27adb93d63",
-      "created_at": "2026-11-24T20:04:30.156Z"
+      "content_hash": "2387ec6dd6509376747ec49dae05752d67575230241cc408fa269037d4ce8397",
+      "created_at": "2026-11-24T20:38:46.859Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -10109,8 +10109,8 @@
       "title": "Architecture Intelligence: weaviate/weaviate Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-weaviate-weaviate-architecture-intelligence-weaviate-weaviate-core-invariants.md",
       "repository": "weaviate/weaviate",
-      "content_hash": "e9226f6bb16a3c967daa4409200affd30a5f9417ba0f731dcaaed483750ee2ef",
-      "created_at": "2026-11-24T00:31:51.609Z"
+      "content_hash": "4c92ab97aadf26ed4d717e9006154ce8ada8594793b4ca0fb8443f1b19c1c758",
+      "created_at": "2026-11-24T20:38:41.630Z"
     },
     "DOM-K-199063A7": {
       "record_id": "DOM-K-199063A7",
@@ -28795,8 +28795,8 @@
       "title": "Architecture Intelligence: weaviate-weaviate-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-weaviate-weaviate-learnings-architecture-intelligence-weaviate-weaviate-learning.md",
       "repository": "weaviate-weaviate-learnings",
-      "content_hash": "4c1fa8bb4f27c3cd02b8d2f987e6216602fe996a9299efcfe2e2a015478db581",
-      "created_at": "2026-11-20T17:58:52.525Z"
+      "content_hash": "eb054e698746676ab34bb7d009e133ed1b5ca9ec6f1bdc619ace335ad2ad573a",
+      "created_at": "2026-11-24T20:38:46.048Z"
     },
     "domain_intelligence-research-knowledge-intelligence-comfy-org-fibo-2-0-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-fibo-2-0-core-invariants",
@@ -30113,8 +30113,8 @@
       "title": "Architecture Intelligence: PeerDB-io/peerdb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-peerdb-io-peerdb-architecture-intelligence-peerdb-io-peerdb-core-invariants.md",
       "repository": "PeerDB-io/peerdb",
-      "content_hash": "6ce2510ee68a112cfad0f45d9cd7000b58fcd6e53929149af48bfaddbba8037b",
-      "created_at": "2026-11-24T01:28:57.872Z"
+      "content_hash": "27741b2b21409461a4a634f92b8cb4247681d13115d8f12d6bfc2154a7219798",
+      "created_at": "2026-11-24T20:38:36.879Z"
     },
     "domain_intelligence-architecture-intelligence-peerdb-io-peerdb-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-peerdb-io-peerdb-learnings-core-invariants",
@@ -30122,8 +30122,8 @@
       "title": "Architecture Intelligence: peerdb-io-peerdb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-peerdb-io-peerdb-learnings-architecture-intelligence-peerdb-io-peerdb-learnings-.md",
       "repository": "peerdb-io-peerdb-learnings",
-      "content_hash": "5ad9fb83ee1d8dbc8b5a462774716a40e3156d452bee516a26f71b60eda04c40",
-      "created_at": "2026-11-24T01:29:07.351Z"
+      "content_hash": "b77652b69608b794589ca5e9c7d133662dcb91515e65ce86d5c3e5d957116111",
+      "created_at": "2026-11-24T20:38:45.090Z"
     },
     "domain_intelligence-architecture-intelligence-amir1376-ab-download-manager-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-amir1376-ab-download-manager-core-invariants",

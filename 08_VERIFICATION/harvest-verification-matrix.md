@@ -12807,3 +12807,5 @@
 | `CYCLE-20261124-F0DO` | `2026-11-24T20:29:54.732Z` | `open-ani/animeko` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10355` | Yes (`f9f9f3ba...`) |
 | `CYCLE-20261124-F25S` | `2026-11-24T20:29:57.040Z` | `dragonflyoss/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10356` | Yes (`a7d67cd7...`) |
 | `CYCLE-20261124-F86W` | `2026-11-24T20:30:04.856Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`f1543edc...`) |
+| `CYCLE-20261124-Q6YF` | `2026-11-24T20:38:36.471Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10357` | Yes (`9f667635...`) |
+| `CYCLE-20261124-QAM7` | `2026-11-24T20:38:41.215Z` | `weaviate/weaviate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10358` | Yes (`e88eb2de...`) |

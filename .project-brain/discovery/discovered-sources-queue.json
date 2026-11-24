@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T20:30:10.613Z",
+  "updated_at": "2026-11-24T20:38:45.642Z",
   "stats": {
-    "total_discovered": 8903,
-    "approved_pending_harvest": 8427,
+    "total_discovered": 8907,
+    "approved_pending_harvest": 8430,
     "harvested_count": 0,
-    "rejected_count": 476,
+    "rejected_count": 477,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8422,
-      "OFFICIAL_DOCUMENTATION": 270,
+      "COMMUNITY_AND_EXPERT": 8425,
+      "OFFICIAL_DOCUMENTATION": 271,
       "STANDARDS_AND_SPECIFICATIONS": 147,
       "ENGINEERING_BLOGS": 7,
       "SECURITY_ADVISORIES": 46,
@@ -192561,6 +192561,87 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md",
         "fileName": "dragonflyoss-dragonfly-learnings.md"
+      }
+    },
+    "SRC-AA7187A87E34": {
+      "id": "SRC-AA7187A87E34",
+      "url": "https://github.com/weaviate",
+      "title": "https://github.com/weaviate",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T20:38:45.470Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
+        "fileName": "weaviate-weaviate-learnings.md"
+      }
+    },
+    "SRC-B371F0CA655D": {
+      "id": "SRC-B371F0CA655D",
+      "url": "http://localhost:8080/v1/schema%60",
+      "title": "http://localhost:8080/v1/schema%60",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-24T20:38:45.526Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
+        "fileName": "weaviate-weaviate-learnings.md"
+      }
+    },
+    "SRC-4115411B877A": {
+      "id": "SRC-4115411B877A",
+      "url": "https://forum.weaviate.io/",
+      "title": "https://forum.weaviate.io/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T20:38:45.584Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
+        "fileName": "weaviate-weaviate-learnings.md"
+      }
+    },
+    "SRC-3899A165BB64": {
+      "id": "SRC-3899A165BB64",
+      "url": "https://docs.weaviate.io/weaviate",
+      "title": "https://docs.weaviate.io/weaviate",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T20:38:45.642Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
+        "fileName": "weaviate-weaviate-learnings.md"
       }
     }
   }

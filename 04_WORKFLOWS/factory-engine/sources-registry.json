@@ -46,8 +46,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-24T19:55:31.213Z",
-    "lastVerified": "2026-11-24T19:55:31.213Z",
+    "lastChecked": "2026-11-24T20:38:37.903Z",
+    "lastVerified": "2026-11-24T20:38:37.903Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T20:30:08.111Z",
-    "lastVerified": "2026-11-24T20:30:08.111Z",
+    "lastChecked": "2026-11-24T20:38:44.473Z",
+    "lastVerified": "2026-11-24T20:38:44.473Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -548,8 +548,8 @@
     "officialUrl": "https://github.com/nolabs-ai/nono",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T16:28:20.316Z",
-    "lastVerified": "2026-11-24T16:28:20.316Z",
+    "lastChecked": "2026-11-24T20:38:32.769Z",
+    "lastVerified": "2026-11-24T20:38:32.769Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nolabs-ai-nono",
@@ -917,14 +917,14 @@
     "officialUrl": "https://github.com/weaviate/weaviate",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-24T00:31:50.100Z",
-    "lastVerified": "2026-11-24T00:31:50.100Z",
+    "lastChecked": "2026-11-24T20:38:40.147Z",
+    "lastVerified": "2026-11-24T20:38:40.147Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-weaviate-weaviate",
-    "contentHash": "70fcfd9c547d157fb98c10460bbae26dcd6a0d44462ed807b302c73f52fb6c50",
+    "contentHash": "e88eb2de7a461a0c3170da1708669fc9af5f70684606d3fe7f514150d334dc36",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3657,14 +3657,14 @@
     "officialUrl": "https://github.com/PeerDB-io/peerdb",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-24T01:28:56.234Z",
-    "lastVerified": "2026-11-24T01:28:56.234Z",
+    "lastChecked": "2026-11-24T20:38:35.177Z",
+    "lastVerified": "2026-11-24T20:38:35.177Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-peerdb-io-peerdb",
-    "contentHash": "51b090846ac696fed0b93f27161cf841731bba10b8b397f2973768baed7e67a7",
+    "contentHash": "9f66763509172d13ca34d17c861eaa43a9b872ae0e3292153eb10dcf74e843cf",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6266,9 +6266,9 @@
   "komi-store-komi-store": {
     "name": "komi-store",
     "officialUrl": "https://github.com/komi-store/komi-store",
-    "lastChecked": "2026-11-22T06:11:16.910Z",
+    "lastChecked": "2026-11-24T20:38:27.737Z",
     "revisionIdentifier": "19eb7447",
-    "lastVerified": "2026-11-22T06:11:16.910Z"
+    "lastVerified": "2026-11-24T20:38:27.737Z"
   },
   "kcl-lang-kcl": {
     "name": "kcl-lang/kcl",
@@ -6876,9 +6876,9 @@
   "vercel-labs-opensrc": {
     "name": "opensrc",
     "officialUrl": "https://github.com/vercel-labs/opensrc",
-    "lastChecked": "2026-11-23T18:23:44.393Z",
+    "lastChecked": "2026-11-24T20:38:22.722Z",
     "revisionIdentifier": "b51de608",
-    "lastVerified": "2026-11-23T18:23:44.393Z"
+    "lastVerified": "2026-11-24T20:38:22.722Z"
   },
   "hf-lilylilith-qi_2.1_anyangle": {
     "name": "lilylilith/QI_2.1_AnyAngle",
@@ -11324,9 +11324,9 @@
   "rdflib-pyshacl": {
     "name": "pySHACL",
     "officialUrl": "https://github.com/RDFLib/pySHACL",
-    "lastChecked": "2026-11-20T21:38:45.205Z",
+    "lastChecked": "2026-11-24T20:38:25.706Z",
     "revisionIdentifier": "df57bd43",
-    "lastVerified": "2026-11-20T21:38:45.205Z"
+    "lastVerified": "2026-11-24T20:38:25.706Z"
   },
   "jtrivedi-wave": {
     "name": "Wave",

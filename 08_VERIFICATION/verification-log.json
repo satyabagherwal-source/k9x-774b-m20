@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-0RIN",
-    "timestamp": "2026-11-23T05:35:21.935Z",
-    "repository": "MiniMaxAI/MiniMax-H3",
-    "learningId": "learn-huggingface-minimaxai-minimax-h3",
-    "contentHash": "56a0e798f3fe9c5bcfe5f5ed5245b0cf1dd6d57a0c1896bde16b2c76f0104c5b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-11M0",
-    "timestamp": "2026-11-23T05:35:35.016Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "028d93bac339be44c2a30f4402485180f3c2a6f35f6b65e3107fa7eb3173aa7b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-LOJN",
     "timestamp": "2026-11-23T05:51:37.859Z",
     "repository": "rainbow-me/rainbow",
@@ -7492,6 +7462,36 @@
     "contentHash": "f1543edcc7bfa8bb5efb034ade28c9b1c2bd96039ebb5e8ace6518ab010e25d9",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-Q6YF",
+    "timestamp": "2026-11-24T20:38:36.471Z",
+    "repository": "PeerDB-io/peerdb",
+    "learningId": "learn-github-peerdb-io-peerdb",
+    "contentHash": "9f66763509172d13ca34d17c861eaa43a9b872ae0e3292153eb10dcf74e843cf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-QAM7",
+    "timestamp": "2026-11-24T20:38:41.215Z",
+    "repository": "weaviate/weaviate",
+    "learningId": "learn-github-weaviate-weaviate",
+    "contentHash": "e88eb2de7a461a0c3170da1708669fc9af5f70684606d3fe7f514150d334dc36",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

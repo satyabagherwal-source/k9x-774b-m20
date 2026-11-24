@@ -3573,10 +3573,10 @@
     "repository": "PeerDB-io/peerdb",
     "platform": "github",
     "sourceUrl": "https://github.com/PeerDB-io/peerdb",
-    "sourceVersion": "73bf425f",
+    "sourceVersion": "e8b30c7d",
     "license": "AGPL-3.0",
-    "contentHash": "51b090846ac696fed0b93f27161cf841731bba10b8b397f2973768baed7e67a7",
-    "lastHarvestedAt": "2026-11-24T01:28:57.464Z",
+    "contentHash": "9f66763509172d13ca34d17c861eaa43a9b872ae0e3292153eb10dcf74e843cf",
+    "lastHarvestedAt": "2026-11-24T20:38:36.475Z",
     "learningId": "learn-github-peerdb-io-peerdb"
   },
   "tailscale-tailscale": {
@@ -6853,10 +6853,10 @@
     "repository": "weaviate/weaviate",
     "platform": "github",
     "sourceUrl": "https://github.com/weaviate/weaviate",
-    "sourceVersion": "5852883d",
+    "sourceVersion": "49700341",
     "license": "NOASSERTION",
-    "contentHash": "70fcfd9c547d157fb98c10460bbae26dcd6a0d44462ed807b302c73f52fb6c50",
-    "lastHarvestedAt": "2026-11-24T00:31:51.194Z",
+    "contentHash": "e88eb2de7a461a0c3170da1708669fc9af5f70684606d3fe7f514150d334dc36",
+    "lastHarvestedAt": "2026-11-24T20:38:41.219Z",
     "learningId": "learn-github-weaviate-weaviate"
   },
   "topgrade-rs-topgrade": {

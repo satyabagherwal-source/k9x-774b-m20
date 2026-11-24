@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T20:30:04.922Z",
-  "total_cycles_completed": 12168,
-  "total_learnings_persisted": 12168,
-  "total_rules_promoted": 11223,
+  "last_updated": "2026-11-24T20:38:41.224Z",
+  "total_cycles_completed": 12170,
+  "total_learnings_persisted": 12170,
+  "total_rules_promoted": 11225,
   "history": [
-    {
-      "timestamp": "2026-11-24T04:37:01.849Z",
-      "repository": "MetrolistGroup/Metrolist",
-      "learningId": "learn-github-metrolistgroup-metrolist",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T04:45:10.524Z",
-      "repository": "codewhale-hq/Codewhale",
-      "learningId": "learn-github-codewhale-hq-codewhale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T04:45:14.072Z",
       "repository": "yazinsai/OpenOats",
@@ -1403,6 +1389,20 @@
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T20:38:36.480Z",
+      "repository": "PeerDB-io/peerdb",
+      "learningId": "learn-github-peerdb-io-peerdb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T20:38:41.224Z",
+      "repository": "weaviate/weaviate",
+      "learningId": "learn-github-weaviate-weaviate",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

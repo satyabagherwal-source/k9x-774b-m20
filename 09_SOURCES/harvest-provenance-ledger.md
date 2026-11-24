@@ -12840,3 +12840,5 @@ Every entry in this ledger must capture:
 | `learn-github-open-ani-animeko` | `https://github.com/open-ani/animeko` | `da675ddc` | Multi-dimensional audit evidence | 2026-11-24T20:29:54.738Z |
 | `learn-github-dragonflyoss-dragonfly` | `https://github.com/dragonflyoss/dragonfly` | `9e35a9ba` | Multi-dimensional audit evidence | 2026-11-24T20:29:57.043Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `f2483549` | Multi-dimensional audit evidence | 2026-11-24T20:30:04.860Z |
+| `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `e8b30c7d` | Multi-dimensional audit evidence | 2026-11-24T20:38:36.475Z |
+| `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `49700341` | Multi-dimensional audit evidence | 2026-11-24T20:38:41.219Z |
