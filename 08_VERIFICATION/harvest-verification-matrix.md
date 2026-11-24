@@ -12714,3 +12714,4 @@
 | `CYCLE-20261124-M7C5` | `2026-11-24T14:59:34.949Z` | `actix/actix-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10287` | Yes (`c8b2dc04...`) |
 | `CYCLE-20261124-MAT1` | `2026-11-24T14:59:39.445Z` | `BuilderIO/builder` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10288` | Yes (`d7c7da30...`) |
 | `CYCLE-20261124-MD57` | `2026-11-24T14:59:42.475Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10289` | Yes (`ee89560c...`) |
+| `CYCLE-20261124-YBNR` | `2026-11-24T15:09:00.423Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10290` | Yes (`d269ba33...`) |

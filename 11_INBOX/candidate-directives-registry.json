@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T14:59:49.263Z",
+  "last_updated": "2026-11-24T15:09:07.235Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4498,11 +4498,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-2FOB",
+      "id": "CD-YFYU",
       "directive_title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-2FOB-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-YFYU-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-24",
@@ -53863,11 +53863,11 @@
       "staged_date": "2026-11-24"
     },
     {
-      "id": "CD-3USQ",
+      "id": "CD-YGWU",
       "directive_title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
       "source_repo": "zulip-zulip-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-3USQ-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-YGWU-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-24",
@@ -55376,6 +55376,44 @@
       "source_repo": "builderio-builder",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-953EE7-fix-sdks-unflatten-block-prototype-pollu.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-YF4O",
+      "directive_title": "[#37251] DocDB: Fix lock leak in YbAdminSnapshotScheduleTest.PgsqlPitrDuringColo",
+      "source_repo": "yugabyte-yugabyte-db-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-YF4O-37251-docdb-fix-lock-leak-in-ybadminsnapshotscheduletest-pgsqlpitrduringcolo.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-3E294F",
+      "directive_title": "[#37251] DocDB: Fix lock leak in YbAdminSnapshotScheduleTest.PgsqlPitrDuringColo",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "yugabyte-yugabyte-db",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-3E294F--37251-docdb-fix-lock-leak-in-ybadminsna.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-REV-E888BD",
+      "directive_title": "test(collab): write trust fixtures with explicit 0644 permissions",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E888BD-test-collab-write-trust-fixtures-with-ex.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-REV-2F70AA",
+      "directive_title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2F70AA-server-events-dispatch-rerender-dm-statu.md",
       "staged_date": "2026-11-24"
     }
   ]

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source**: github ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
-> **Source Version**: `80c1ffc3`  
+> **Source Version**: `3f1fb89d`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T18:41:02.014Z  
+> **Timestamp**: 2026-11-24T15:08:59.089Z  
 > **Learning ID**: `learn-github-yugabyte-yugabyte-db`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T18:41:02.008Z  
+> **Harvest Timestamp**: 2026-11-24T15:08:58.946Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YugabyteDB - the cloud native distributed SQL database for mission-critical applications.
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10675 stars
+- **Stars / Engagement**: 10676 stars
 
 ---
 
@@ -2245,14 +2245,11 @@ class _SshRemoteShell(object):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #39005** (2026-11-23): **[PLAT-23681] YBA: Renumber the update_time migration to V481**
-  *Symptoms*: ## Summary  #38600 (PLAT-23681) and #38118 (PLAT-23570) each added a V480 migration, and neither PR showed a conflict, so master now fails Flyway validation with "Found more than one migration with version 480". YBA doesn't start, and tests that start the app (FakeDB) fail.  #38118 merged first, so this moves the `customer_config.update_time` migration to V481. The migration uses `ADD COLUMN IF NOT EXISTS`, so it applies cleanly whichever order a DB sees it in.  ## Test plan  - [x] `V480__Health_Check_And_Scheduler_Not_Running_AlertsTest`, `CustomerConfigTest`, `StorageConfigApiTest`, `EditStorageConfigTest` (FakeDB, so Flyway validates every migration) - [x] Local YBA on a fresh DB starts and applies both migrations (V480 alerts, then V481 update_time)  
-  **Post-Mortem & Fix Analysis**:
-  > [![CLA assistant check](https://cla-assistant.io/pull/badge/not_signed)](https://cla-assistant.io/yugabyte/yugabyte-db?pullRequest=39005) <br/>Thank you for your submission! We really appreciate it. Like many open source projects, we ask that you sign our [Contributor License Agreement](https://cla-assistant.io/yugabyte/yugabyte-db?pullRequest=39005) before we can accept your contribution.<br/><sub>You have signed the CLA already but the status is still pending? Let us [recheck](https://cla-assistant.io/check/yugabyte/yugabyte-db?pullRequest=39005) it.</sub>
-  >   <!-- Reviewable:start --> This change is [<img src="https://reviewable.io/review_button.svg" height="34" align="absmiddle" alt="Reviewable"/>](https://reviewable.io/reviews/yugabyte/yugabyte-db/39005) <!-- Reviewable:end --> 
+- **Issue #39119** (2026-11-24): **[BACKPORT 2024.2][PLAT-24054] YBA: Update the bundled Prometheus to 3.16.0 (#38988)**
+  *Symptoms*: ## Summary  Updates the Prometheus that YBA bundles outside its Helm chart from 3.15.1 to 3.16.0:  - `managed/support/thirdparty-dependencies.txt`, the tarball placed in `/opt/third-party` of the YBA image and in the third-party archive yba-installer ships. - `PROMETHEUS_VERSION` in `managed/yba-installer/Makefile`. yba-installer does not package its own Prometheus: this value is compiled in and used to find `prometheus-<version>.linux-amd64.tar.gz` in that third-party archive, so the two must change together or the install fails to find the file.  Prometheus 3.15.1 is built with `github.com/klauspost/compress` 1.20.0, which is affected by CVE-2026-116591. 3.16.0 depends on 1.20.3; the fix is in 1.20.2. The YBA Helm chart already runs 3.16.0 (yugabyte/charts#253), so this brings yba-installer installs to the same version.  Original commit: ba656f41e7b7cfb12106913ac9a9d20b8cdd07d0 / #38988  ## Test plan  - [x] The `prometheus-3.16.0.linux-amd64.tar.gz` release asset matches the sha256 in the release's `sha256sums.txt`, and has the same layout as 3.15.1 (`prometheus`, `promtool`, `prometheus.yml`). - [x] `govulncheck -mode=binary` on the 3.16.0 `prometheus` and `promtool` binaries no longer reports CVE-2026-116591. - [ ] Jenkins build and tests on this PR, including the yba-installer tests  🤖 Generated with [Claude Code](https://claude.com/claude-code)  Co-authored-by: Claude Mythos 5.2 <noreply@anthropic.com>
 
-- **Issue #38987** (2026-11-23): **[BACKPORT 2026.1][#36720] YSQL: Stop the notifications poller from polling the master (#38567)**
-  *Symptoms*: ## Summary  Notifications slots were created like any logical replication slot, with `detect_publication_changes_implicitly` set and the PG catalog tables in the stream. Every node's LISTEN/NOTIFY poller polled the sys catalog tablet on the master leader each round (~4-5 `GetChanges`/s per node when idle), so a master leader change terminated every listener (#36720).  A notifications slot streams only `pg_yb_notifications` through a fixed publication, so it needs none of what catalog polling detects. The master now creates notifications slots without `detect_publication_changes_implicitly` and without the catalog tables, so they use pub refresh (every `cdcsdk_publication_list_refresh_interval_secs`, default 15 min) instead. The poller still reads the catalog from the master once per pub refresh, and an error there is still fatal; that is tracked in #38556.  ## Upgrade/Rollback safety  Only notifications slots created after the master upgrade change; existing ones keep catalog polling until recreated. Old and new tservers both support pub refresh, so mixed versions and rollback are safe.  Original commit: 0ab1c892afbd16c325cc1b5784044e82a4a888e1 / #38567  ## Test plan  - [x] `./yb_build.sh debug --java-test org.yb.pgsql.TestPgListenNotify`: 37/37 pass (6 hit a local "insufficient disk space" setup error and passed on rerun). New tests: - `testPollerDoesNotPollMaster`: masters serve no `GetChanges` while a listener idles. - `testNotificationsAcrossPubRefreshes`: notifications k
+- **Issue #39097** (2026-11-24): **[BACKPORT 2026.2][PLAT-23839] YBA: Start the v2 vm-image upgrade from the universe's details (#38996)**
+  *Symptoms*: ## Summary  The v2 `vm-image` API (`POST /api/v2/customers/{cUUID}/universes/{uUUID}/vm-image`) still can't start an upgrade after #37860. The handler builds `VMImageUpgradeParams` with the no-arg constructor and copies in only the request, so the params have no universe UUID, clusters or nodes. #37860 let these params past `verifyParams`. Task submit then calls `VMImageUpgrade.validateParams`, which looks up the universe by the null UUID and throws a `NullPointerException`, and `TaskExecutor.submit` returns it as a 400 with no error message. The null UUID also skipped the base check that refuses a new task while a previous one has failed, which is why that case returned the same empty 400.  The handler now builds the params from the universe's details through `UniverseDefinitionTaskParamsMapper`, as the other v2 upgrade handlers do, and applies the request on top.  Original commit: 789d8bfd66f9c28f95fa82f4f895df0a6450095e / #38996  ## Test plan  - [x] Added `UniverseUpgradesManagementHandlerTest.testVmImageUpgradeStartsFromUniverseDetails`: the params the v2 handler passes on carry the universe UUID, clusters, nodes and creating user, plus the request's image bundles and force flag, and no `ybSoftwareVersion`. It fails without the fix (universe UUID is null). - [x] `sbt "testOnly com.yugabyte.yw.api.v2.UniverseUpgradesManagementHandlerTest com.yugabyte.yw.commissioner.tasks.upgrade.VMImageUpgradeTest"`: 18/18 pass.  Manual tests on YBA with an OCI provider, `VM.Standard.E5.F
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2269,607 +2266,831 @@ class _SshRemoteShell(object):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8c5ff0f2` (2026-11-23)
-**Commit Message**: [PLAT-24048] YBA: Retry SetFlagInMemory while the server restarts (#38827)
+### Incident Patch 1: `c2fe718c` (2026-11-24)
+**Commit Message**: [#37251] DocDB: Fix lock leak in YbAdminSnapshotScheduleTest.PgsqlPitrDuringColocatedTableCreateReleaseIgnored (#37252)
 
 ## Summary
 
-A K8s edit pushes the master addresses in memory (`SetFlagInMemory`) to
-every master and tserver after its non-restart helm upgrade, and
-PLAT-23585 added the same push in the middle of a master move.
-`SetFlagInMemory` made one `setFlag` RPC per flag with no retry. A pod
-can restart at any time, for example when the cluster autoscaler drains
-a node after a full move removes the old pods, so a push that hit a
-restarting pod failed with `ConnectionResetException` and failed the
-edit at its last step.
+The master ignores the tserver's release-all for the killed `CREATE TABLE t2` transaction. It records this only in memory, as `release_all_deferred` on the DDL verification entry. The PITR's sys catalog reload rebuilds `ysql_ddl_txn_verfication_state_map_` without that flag. `RemoveDdlTransactionStateUnlocked` then erases the entry without releasing the locks, because the transaction might still be running. The transaction does not resend its release-all, so its object locks on `t` are never released and `LOCK TABLE t IN ACCESS EXCLUSIVE MODE` times out.
 
-On K8s universes, `SetFlagInMemory` now retries an RPC failure every 5s
-until `yb.wait_for_server_timeout` (default 5 min, the timeout
-`WaitForServer` uses). The deadline is checked between attempts, so an
-attempt that hangs can run one admin operation timeout past it. A
-restarted pod reads its flags from the gflags Secret, which the helm
-upgrade before the push already rendered, so it only has to come back
-up.
+`RunLoaders` now carries the deferred release-alls across a reload in the same leader term, e.g. after a PITR. It collects the txns whose entry has `release_all_deferred` inside the same `ddl_txn_verifier_mutex_` hold that clears the map, so no release-all can be deferred into the old map after it was read. `VisitSysCatalog` sets `SysCatalogLoadingState::reload_in_loaded_term` only when the replaced catalog was loaded in the current term. A map from an earlier term may hold stale entries and is not u
 
-- VM universes are unchanged: one attempt. A VM server that is down
-usually does not come back on its own, and master failover pushes best
-effort without `ignoreErrors` and relies on the first
-
-**File**: `managed/src/main/java/com/yugabyte/yw/commissioner/tasks/subtasks/SetFlagInMemory.java` (modified, +45/-1)
+**File**: `src/yb/master/catalog_loading_state.h` (modified, +3/-0)
 ```diff
-@@ -22,6 +22,7 @@
- import com.yugabyte.yw.forms.UniverseDefinitionTaskParams.Cluster;
- import com.yugabyte.yw.models.Universe;
- import com.yugabyte.yw.models.helpers.NodeDetails;
-+import java.time.Duration;
- import java.util.HashMap;
- import java.util.Map;
- import java.util.Map.Entry;
-@@ -43,6 +44,12 @@ public class SetFlagInMemory extends ServerSubTaskBase {
-   // The gflag for master addresses.
-   private static final String MASTER_MASTER_ADDR_FLAG = "master_addresses";
+@@ -32,6 +32,9 @@ struct SysCatalogLoadingState {
  
-+  private static final Duration RETRY_DELAY = Duration.ofSeconds(5);
-+
-+  // Whether a failed setFlag RPC is retried, and until when.
-+  private boolean retryRpcFailures;
-+  private long retryDeadlineMs;
-+
-   @Inject
-   public SetFlagInMemory(BaseTaskDependencies baseTaskDependencies) {
-     super(baseTaskDependencies);
-@@ -84,6 +91,7 @@ protected Params taskParams() {
-   @Override
-   public void run() {
-     checkParams();
-+    retryDeadlineMs = System.currentTimeMillis() + retryTimeout().toMillis();
-     try {
-       setFlags();
-     } catch (RuntimeException e) {
-@@ -119,6 +127,11 @@ private void setFlags() {
-     }
-     try (YBClientApi client = getClient()) {
-       Universe universe = Universe.getOrBadRequest(taskParams().getUniverseUUID());
-+      // A K8s pod can restart at any time, e.g. when the cluster autoscaler moves it, and comes
-+      // back on its own; a VM server that is down usually does not. A best-effort push is often
-+      // to a server that is down for good. VM callers that push best effort without ignoreErrors
-+      // (master failover) rely on the first failure, so they must not wait either.
-+      retryRpcFailures = !taskParams().ignoreErrors && Util.isKubernetesBasedUniverse(universe);
+   const LeaderEpoch epoch;
  
-       if (!taskParams().updateMasterAddrs) {
-         String ysqlPgConfCsv =
-@@ -226,10 +239,41 @@ public static String getInMemoryYsqlPgConfCsv(
-     return GFlagsUtil.overrideWithTelemetryYsqlPgConfCsv(baseYsqlPgConfCsv, telemetryYsqlPgConfCsv);
-   }
++  // Whether the catalog being replaced was loaded in epoch.leader_term, e.g. on a PITR reload.
++  bool reload_in_loaded_term = false;
++
+   explicit SysCatalogLoadingState(LeaderEpoch leader_epoch = {});
  
-+  // Package-private so tests can stub the timeout and the wait.
-+  Duration retryTimeout() {
-+    return config.getDuration("yb.wait_for_server_timeout");
-+  }
-+
-+  void waitBeforeRetry(Duration delay) {
-+    waitFor(delay);
-+  }
-+
-   private void setFlag(YBClientApi client, String gflag, String value, HostAndPort hp)
-       throws Exception {
-     log.debug("Setting gflag {} on node {} via non-restart rpc", gflag, hp);
--    boolean setSuccess = client.setFlag(hp, gflag, value, taskParams().force);
-+    boolean setSuccess;
-+    while (true) {
-+      try {
-+        setSuccess = client.setFlag(hp, gflag, value, taskParams().force);
-+        break;
-+      } catch (Exception e) {
-+        // A server that answers and refuses the flag is not retried. The deadline is checked only
-+        // between attempts, so an attempt that hangs can run one admin operation timeout past it.
-+        if (!retryRpcFailures
-+            || ExceptionUtils.indexOfType(e, InterruptedException.class) >= 0
-+            || System.currentTimeMillis() + RETRY_DELAY.toMillis() >= retryDeadlineMs) {
-+          throw e;
-+        }
-+        log.warn(
-+            "Retrying gflag {} on {} {} in {}: {}",
-+            gflag,
-+            taskParams().serverType,
-+            taskParams().nodeName,
-+            RETRY_DELAY,
-+            e.getMessage());
-+        waitBeforeRetry(RETRY_DELAY);
-+      }
-+    }
-     if (!setSuccess) {
-       throw new RuntimeException(
-           "Could not set gflag "
+   void AddPostLoadTask(std::function<void()>&& func, std::string&& msg);
 ```
 
-**File**: `managed/src/test/java/com/yugabyte/yw/commissioner/tasks/subtasks/SetFlagInMemoryTest.java` (modified, +91/-20)
+**File**: `src/yb/master/catalog_manager.cc` (modified, +18/-0)
 ```diff
-@@ -8,7 +8,12 @@
- import static org.mockito.ArgumentMatchers.anyBoolean;
- import static org.mockito.ArgumentMatchers.anyString;
- import static org.mockito.ArgumentMatchers.eq;
-+import static org.mockito.Mockito.doNothing;
-+import static org.mockito.Mockito.doReturn;
- import static org.mockito.Mockito.mock;
-+import static org.mockito.Mockito.never;
-+import static org.mockito.Mockito.spy;
-+import static org.mockito.Mockito.times;
- import static org.mockito.Mockito.verify;
- import static org.mockito.Mockito.when;
- 
-@@ -24,6 +29,8 @@
- import com.yugabyte.yw.models.helpers.exporters.audit.AuditLogConfig;
- import com.yugabyte.yw.models.helpers.exporters.audit.YCQLAuditConfig;
- import com.yugabyte.yw.models.helpers.exporters.metrics.MetricsExportConfig;
-+import java.io.IOException;
-+import java.time.Duration;
- import java.util.Map;
- import org.junit.Before;
- import org.junit.Test;
-@@ -42,35 +49,51 @@ public void setUp() throws Exception {
-     mockClient = mock(YBClientApi.class);
-     when(mockYBClient.getClient(any(), any())).thenReturn(mockClient);
-     when(mockClient.setFlag(any(), anyString(), anyString(), anyBoolean())).thenReturn(true);
--    universe = createUniverse("k8s-universe", defaultCustomer.getId(), CloudType.kubernetes);
--    universe =
--        Universe.saveDetails(
--            universe.getUniverseUUID(),
--            u -> {
--              NodeDetails node = new NodeDetails();
--              node.nodeName = NODE_NAME;
--              node.isTserver = true;
--              node.isMaster = true;
--              node.state = NodeDetails.NodeState.Live;
--              node.tserverRpcPort = 9100;
--              node.masterRpcPort = 7100;
--              node.cloudInfo = new CloudSpecificInfo();
--              node.cloudInfo.private_ip = "10.0.0.1";
--              node.placementUuid = u.getUniverseDetails().getPrimaryCluster().uuid;
--              u.getUniverseDetails().nodeDetailsSet.add(node);
--            });
-+    universe = universeWithNode("k8s-universe", CloudType.kubernetes);
-+  }
-+
-+  private Universe universeWithNode(String name, CloudType cloudType) {
-+    Universe created = createUniverse(name, defaultCustomer.getId(), cloudType);
-+    return Universe.saveDetails(
-+        created.getUniverseUUID(),
-+        u -> {
-+          NodeDetails node = new NodeDetails();
-+          node.nodeName = NODE_NAME;
-+          node.isTserver = true;
-+          node.isMaster = true;
-+          node.state = NodeDetails.NodeState.Live;
-+          node.tserverRpcPort = 9100;
-+          node.masterRpcPort = 7100;
-+          node.cloudInfo = new CloudSpecificInfo();
-+          node.cloudInfo.private_ip = "10.0.0.1";
-+          node.placementUuid = u.getUniverseDetails().getPrimaryCluster().uuid;
-+          u.getUniverseDetails().nodeDetailsSet.add(node);
-+        });
+@@ -1539,6 +1539,7 @@ Status CatalogManager::VisitSysCatalog(SysCatalogLoadingState* state) {
    }
  
-   private void runSetFlagInMemory(ServerType serverType) {
-+    SetFlagInMemory task = app.injector().instanceOf(SetFlagInMemory.class);
-+    task.initialize(params(serverType));
-+    task.run();
-+  }
-+
-+  private SetFlagInMemory.Params params(ServerType serverType) {
-     SetFlagInMemory.Params params = new SetFlagInMemory.Params();
-     params.setUniverseUUID(universe.getUniverseUUID());
-     params.nodeName = NODE_NAME;
-     params.serverType = serverType;
-     params.force = true;
-     params.gflags = Map.of(GFlagsUtil.YSQL_PG_CONF_CSV, USER_PG_CONF_CSV);
--    SetFlagInMemory task = app.injector().instanceOf(SetFlagInMemory.class);
-+    return params;
-+  }
-+
-+  /** A task that does not wait between retries and retries for the given time. */
-+  private SetFlagInMemory retryingTask(SetFlagInMemory.Params params, Duration timeout) {
-+    SetFlagInMemory task = spy(app.injector().instanceOf(SetFlagInMemory.class));
-+    doReturn(timeout).when(task).retryTimeout();
-+    doNothing().when(task).waitBeforeRetry(any());
-     task.initialize(params);
--    task.run();
-+    return task;
-   }
+   // Before anything below clears in-memory state.
++  state->reload_in_loaded_term = catalog_loaded_term() == term;
+   catalog_loaded_term_.store(OpId::kUnknownTerm, std::memory_order_release);
+   TEST_SYNC_POINT("CatalogManager::VisitSysCatalog::CatalogLoadedTermReset");
  
-   private void persistTelemetryConfig(TelemetryConfig telemetryConfig) {
-@@ -132,6 +155,54 @@ public void testK8sKeepsRawValueWithMetricsOnlyRow() throws Exception {
-   @Test
-   public void testFailedRpcFailsTask() throws Exception {
-     when(mockClient.setFlag(any(), anyString(), anyString(), anyBoolean())).thenReturn(false);
--    assertThrows(RuntimeException.class, () -> runSetFlagInMemory(ServerType.TSERVER));
-+    SetFlagInMemory task = retryingTask(params(ServerType.TSERVER), Duration.ofMinutes(5));
-+    assertThrows(RuntimeException.class, task::run);
-+    // The server answered, so the refusal is not retried.
-+    verify(mockClient).setFlag(any(), anyString(), anyString(), anyBoolean());
-+    verify(task, never()).waitBeforeRetry(any());
-+  }
+@@ -1693,6 +1694,20 @@ Status CatalogManager::RunLoaders(SysCatalogLoadingState* state) {
+   // Clear Ddl transaction state.
+   {
+     LockGuard l(ddl_txn_verifier_mutex_);
++    ysql_ddl_txns_release_all_deferred_.clear();
++    // A map loaded in an earlier term may hold stale entries. Collect under the same lock hold as
++    // the clear, so that no release-all can be deferred into the map after it was read.
++    if (state->reload_in_loaded_term) {
++      for (const auto& [txn_id, verifier_state] : ysql_ddl_txn_verfication_state_map_) {
++        // The flag means the txn has finished: only a release with no subtxn id and no locks
++        // sets it, and tservers send that only at txn end. Mid-txn releases, including the
++        // phased-DDL session lock release_all, carry a subtxn id. A still running DDL txn keeps
++        // its locks and releases them itself when it finishes.
++        if (verifier_state.release_all_deferred) {
++          ysql_ddl_txns_release_all_deferred_.insert(txn_id);
++        }
++      }
++    }
+     ysql_ddl_txn_verfication_state_map_.clear();
+     ysql_ddl_txn_undergoing_subtransaction_rollback_map_.clear();
+   }
+@@ -1732,6 +1747,9 @@ Status CatalogManager::RunLoaders(SysCatalogLoadingState* state) {
+   RETURN_NOT_OK(master_->ts_manager()->RunLoader(
+       master_->MakeCloudInfoPB(), &master_->proxy_cache(), *state));
+   RETURN_NOT_OK(Load<ObjectLockLoader>("Object locks", state));
++  state->AddPostLoadTask(
++      std::bind(&CatalogManager::ReleaseObjectLocksOfDeferredTxnsPostLoad, this),
++      "Release object locks of DDL txns with deferred release and no verification state");
+   RETURN_NOT_OK(RefreshYsqlHistoryRetentionPin());
+ 
+   if (!transaction_tables_config_) {
+```
+
+**File**: `src/yb/master/catalog_manager.h` (modified, +13/-0)
+```diff
+@@ -3640,6 +3640,13 @@ class CatalogManager : public CatalogManagerIf, public SnapshotCoordinatorContex
+ 
+   void DoReleaseObjectLocksIfNecessary(const TransactionId& txn_id);
+ 
++  // Submits DoReleaseObjectLocksIfNecessary for txn_id to the background pool.
++  void ScheduleReleaseObjectLocks(const TransactionId& txn_id);
 +
-+  @Test
-+  public void testRetriesUntilRestartingServerIsBack() throws Exception {
-+    when(mockClient.setFlag(any(), anyString(), anyString(), anyBoolean()))
-+        .thenThrow(new IOException("Connection reset"))
-+        .thenThrow(new IOException("Connection reset"))
-+        .thenReturn(true);
-+    SetFlag
++  // Releases the object locks of txns in ysql_ddl_txns_release_all_deferred_, i.e. those whose
++  // deferred release-all was carried across a sys catalog reload but got no verification entry.
++  void ReleaseObjectLocksOfDeferredTxnsPostLoad() EXCLUDES(ddl_txn_verifier_mutex_);
++
+   Status RegisterFlagCallbacks();
+ 
+   // Should be bumped up when tablet locations are changed.
+@@ -3706,6 +3713,12 @@ class CatalogManager : public CatalogManagerIf, public SnapshotCoordinatorContex
+   std::unordered_map<TransactionId, YsqlDdlSubTransactionRollbackMetadata>
+       ysql_ddl_txn_undergoing_subtransaction_rollback_map_ GUARDED_BY(ddl_txn_verifier_mutex_);
+ 
++  // Txns whose release_all_deferred was set when a reload in the same term (e.g. after a PITR)
++  // cleared ysql_ddl_txn_verfication_state_map_. The flag lives only in memory and the finished
++  // txn will not resend its release-all, so it is reattached to the txn's reloaded entry.
++  std::unordered_set<TransactionId> ysql_ddl_txns_release_all_deferred_
++      GUARDED_BY(ddl_txn_verifier_mutex_);
++
+   ServerRegistrationPB server_registration_;
+ 
+   mutable MutexType delete_replica_task_throttler_per_ts_mutex_;
+```
+
+**File**: `src/yb/master/ysql_ddl_handler.cc` (modified, +30/-7)
+```diff
+@@ -150,7 +150,8 @@ bool CatalogManager::CreateOrUpdateDdlTxnVerificationState(
+       YsqlDdlTransactionState{TxnState::kUnknown,
+                               txn.status_tablet,
+                               YsqlDdlVerificationState::kDdlInProgress,
+-                              {table}, {} /* processed_tables */, {} /* nochange_tables */});
++                              {table}, {} /* processed_tables */, {} /* nochange_tables */,
++                              ysql_ddl_txns_release_all_deferred_.erase(txn.transaction_id) > 0});
+   return true;
+ }
+ 
+@@ -952,12 +953,8 @@ void CatalogManager::RemoveDdlTransactionStateUnlocked(
+       // 1. Either the alter waits inline successfully before issuing the commit,
+       // 2. or when the above times out, this branch is involed by the multi step
+       //    TableSchemaVerificationTask's callback post the schema changes have been applied.
+-      if (release_locks && !FLAGS_TEST_disable_release_object_locks_on_ddl_verification) {
+-        WARN_NOT_OK(
+-            background_tasks_thread_pool_->SubmitFunc([this, txn_id]() {
+-              DoReleaseObjectLocksIfNecessary(txn_id);
+-            }),
+-            Format("Failed to submit task for releasing exclusive object locks of txn $0", txn_id));
++      if (release_locks) {
++        ScheduleReleaseObjectLocks(txn_id);
+       }
+     } else {
+       VLOG(1) << "DDL Verification state for " << txn_id << " has "
+@@ -1186,6 +1183,32 @@ void CatalogManager::DoReleaseObjectLocksIfNecessary(const TransactionId& txn_id
+   object_lock_info_manager_->ReleaseLocksForTxn(txn_id);
+ }
+ 
++void CatalogManager::ScheduleReleaseObjectLocks(const TransactionId& txn_id) {
++  if (FLAGS_TEST_disable_release_object_locks_on_ddl_verification) {
++    return;
++  }
++  WARN_NOT_OK(
++      background_tasks_thread_pool_->SubmitFunc(
++          [this, txn_id]() { DoReleaseObjectLocksIfNecessary(txn_id); }),
++      Format("Failed to submit task for releasing object locks of txn $0", txn_id));
++}
++
++void CatalogManager::ReleaseObjectLocksOfDeferredTxnsPostLoad() {
++  std::unordered_set<TransactionId> txns;
++  {
++    LockGuard lock(ddl_txn_verifier_mutex_);
++    txns.swap(ysql_ddl_txns_release_all_deferred_);
++  }
++  if (FLAGS_TEST_disable_release_object_locks_on_ddl_verification) {
++    return;
++  }
++  for (const auto& txn_id : txns) {
++    LOG(INFO) << "No DDL verification state for " << txn_id
++              << " after sys catalog reload, releasing its deferred object locks";
++    DoReleaseObjectLocksIfNecessary(txn_id);
++  }
++}
++
+ Status CatalogManager::RollbackDocdbSchemaToSubtxn(
+   const RollbackDocdbSchemaToSubtxnRequestPB* req,
+   RollbackDocdbSchemaToSubtxnResponsePB* resp,
 ```
 
 ---
 
-### Incident Patch 2: `a61295c2` (2026-11-23)
-**Commit Message**: [#38925] DocDB: Fix PgVectorIndexSingleServerTest.FilteredSearchWithConcurrentUpdates/DistributedYbHnswHnswlib (#38926)
+### Incident Patch 2: `91289770` (2026-11-24)
+**Commit Message**: [#38973] DocDB: Fix ExternalObjectLockTestOneTS.ReleaseBlocksUntilBootstrap races with new tserver startup (#38974)
 
 ## Summary
 
-The writer thread's `UPDATE` in `TestSearchWithConcurrentUpdates` sometimes failed with `Restart read required` (40001). `WriteQuery::PickReadTimeIfNecessary` uses the tablet's safe time as the read time, and a pending operation can hold safe time back. As a result, the writer's next transaction can read at a time before the previous transaction's commit, so a later, non-first statement that touches a row the previous transaction wrote needs a read restart, which snapshot isolation does not allow. This is correct, retryable database behavior, so the writer now runs each transaction in a lambda that returns a `Status`, asserts that any failure is `IsRetryable`, and issues `ROLLBACK` instead of failing the test.
+CSI hit two test-only races; neither is a product bug. In the first, the test created the `LogWaiter` for `Waiting until object lock manager is bootstrapped` after sending the release, so it could miss the line. A release that lands while the new tserver is still starting (e.g. between RPC server start and `StartTSLocalLockManager()`, where it fails at once with `TSLocalLockManager not found`) never logs the line. In the second, the lease refresher starts only after initdb on the new tserver, and initdb can take longer than the release's 10s RPC timeout. The test now registers the `LogWaiter` first and resends the release in a `WaitFor` loop while it fails with a startup error (`NetworkError`, `ServiceUnavailable`, `TimedOut`, or `TSLocalLockManager not found`). It also raises the release timeout to `60s * kTimeMultiplier` and still asserts that the release blocks until the lease is acquired.
 
 ---
 _Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed the failure logs, wrote the change, and verified it locally._
 
 ## Test plan
 
-./yb_build.sh fastdebug --gcc15 --cxx-test pg_vector_index_single_server-test --gtest-filter PgVectorIndexSingleServerTest.FilteredSearchWithConcurrentUpdates/DistributedYbHnswHnswlib -n 180 YB
+./yb_build.
 
-**File**: `src/yb/yql/pgwrapper/pg_vector_index_single_server-test.cc` (modified, +17/-10)
+**File**: `src/yb/integration-tests/object_lock-test.cc` (modified, +30/-5)
 ```diff
-@@ -460,19 +460,26 @@ void PgVectorIndexSingleServerTest::TestSearchWithConcurrentUpdates(
-     std::iota(ids.begin(), ids.end(), 1);
-     while (!stop_flag.load(std::memory_order_acquire)) {
-       std::shuffle(ids.begin(), ids.end(), ThreadLocalRandom());
--      ASSERT_OK(write_conn.Execute("BEGIN"));
--      for (size_t i = 0; i != kRowsPerTransaction; ++i) {
--        auto id = ids[i];
--        auto vector = Vector(id);
--        if (RandomUniformBool()) {
--          for (auto& coordinate : vector) {
--            coordinate = -coordinate;
-+      auto status = [&]() -> Status {
-+        RETURN_NOT_OK(write_conn.Execute("BEGIN"));
-+        for (size_t i = 0; i != kRowsPerTransaction; ++i) {
-+          auto id = ids[i];
-+          auto vector = Vector(id);
-+          if (RandomUniformBool()) {
-+            for (auto& coordinate : vector) {
-+              coordinate = -coordinate;
-+            }
-           }
-+          RETURN_NOT_OK(write_conn.ExecuteFormat(
-+              "UPDATE test SET embedding = '$0' WHERE id = $1", AsString(vector), id));
-         }
--        ASSERT_OK(write_conn.ExecuteFormat(
--            "UPDATE test SET embedding = '$0' WHERE id = $1", AsString(vector), id));
-+        return write_conn.Execute("COMMIT");
-+      }();
-+      if (!status.ok()) {
-+        // A non-first statement of a snapshot isolation transaction cannot restart its read.
-+        ASSERT_TRUE(IsRetryable(status)) << status;
-+        ASSERT_OK(write_conn.Execute("ROLLBACK"));
-       }
--      ASSERT_OK(write_conn.Execute("COMMIT"));
-     }
-   });
+@@ -2491,11 +2491,36 @@ TEST_F(ExternalObjectLockTestOneTS, ReleaseBlocksUntilBootstrap) {
+ 
+   auto added_ts = cluster_->tablet_server(1);
+   auto added_ts_proxy = cluster_->GetTServerProxy<tserver::TabletServerServiceProxy>(1);
+-  auto future = ReleaseLockAtAsync(
+-      &added_ts_proxy, ts->uuid(), kTxn1, kLeaseEpoch, /* clock */ nullptr,
+-      /* apply_after */ std::nullopt, MonoDelta::FromSeconds(10));
+-  ASSERT_OK(LogWaiter(added_ts, "Waiting until object lock manager is bootstrapped")
+-                .WaitFor(MonoDelta::FromSeconds(2)));
++  // Register before sending the release, the tserver may log this right away.
++  LogWaiter log_waiter(added_ts, "Waiting until object lock manager is bootstrapped");
++  // The lease refresher starts only after initdb on the new tserver, so the release must outlive
++  // initdb.
++  std::future<Result<tserver::ReleaseObjectLockResponsePB>> future;
++  ASSERT_OK(WaitFor(
++      [&]() -> Result<bool> {
++        if (!future.valid()) {
++          future = ReleaseLockAtAsync(
++              &added_ts_proxy, ts->uuid(), kTxn1, kLeaseEpoch, /* clock */ nullptr,
++              /* apply_after */ std::nullopt, 60s * kTimeMultiplier);
++        }
++        if (log_waiter.IsEventOccurred()) {
++          return true;
++        }
++        if (future.wait_for(100ms) != std::future_status::ready) {
++          return false;
++        }
++        // The tserver may still be starting up (e.g. the RPC server comes up before the lock
++        // manager is created); resend on such errors.
++        auto result = future.get();
++        SCHECK(!result.ok(), IllegalState, "Release completed before lock manager bootstrap");
++        const auto& s = result.status();
++        if (s.IsNetworkError() || s.IsServiceUnavailable() || s.IsTimedOut() ||
++            (s.IsIllegalState() && s.message().Contains("TSLocalLockManager not found"))) {
++          return false;
++        }
++        return s;
++      },
++      30s * kTimeMultiplier, "Wait for release to block until bootstrap"));
+   ASSERT_EQ(future.wait_for(0s), std::future_status::timeout)
+       << "Expected release request to block at tserver that has not acquired a lease yet";
  
 ```
 
 ---
 
-### Incident Patch 3: `4010b626` (2026-11-22)
-**Commit Message**: [#38657] YSQL: Fix race between ALTER TABLE ALL IN TABLESPACE CASCADE and concurrent CREATE TABLE
+### Incident Patch 3: `0fdef463` (2026-11-13)
+**Commit Message**: [#34008,#25789] YSQL: Fix ExecuteBatchKeys pagination
 
 Summary:
-`ALTER TABLE ALL IN TABLESPACE <old> [COLOCATED WITH <table>] SET TABLESPACE <new> CASCADE` moves an implicit tablegroup of a colocated database to another tablespace. It takes none of the tablegroup locks that 290d6d08a120bdf4430f868b743784fb1afa5a62/D60169 added, so it is not serialized with a concurrent `CREATE TABLE` or `CREATE INDEX`:
+## Problem
+Historically we used custom pagination for our batched ybctids fetch requests. DocDB did not populate the paging state in the response, but wrote the number of processed ybctids into batch_arg_count, and PgGate popped the specified number of ybctids from the front of the batch.
+However, this approach did not work well with the target tablet splits. There was two independent problems:
+1. One batch might contain ybctids from multiple tablets, interleaved: at the time when PgGate plans an ordered batch, it allocates one batch per per base table's tablet, and populates each batch with ybctids belonging to that tablet in the same order as they come from the secondary index. If the target tablet splits afterwards, the ybctids in the batch may belong to any of the child tablets. So when DocDB scans one of the child tablets, ybctids from the siblings are not found and respective rows not fetched, but counted in batch_arg_count. So if request paginates, PgGate pops these ybctids from the batch. Unordered batches are immune to this problem, because PgGate internally orders batches by ybctids, and if target tablet spli
 
-- A relation created in the tablegroup while the statement runs is not moved with it. It stays in the moved tablegroup with its old tablespace in `pg_class`.
-- The first relation created in the target tablespace while the statement runs gets a tablegroup of its own. The database ends with two implicit tablegroups for one tablespace, and a clone of it fails with `Created table not found: <id>.colocation.parent.uuid`.
-
-This diff makes the statement take two locks before it moves anything, and look up the tablegroups again once it holds them:
-
-- `AccessExclusiveLock` on the tablegroup that moves. Creates and drops in that tablegroup wait for the statement, and the statement waits for them.
-- On the target tablespace, the lock that the first c
-
-**File**: `src/postgres/src/backend/commands/tablecmds.c` (modified, +42/-3)
+**File**: `src/yb/common/pgsql_protocol.proto` (modified, +6/-0)
 ```diff
-@@ -16500,10 +16500,23 @@ AlterTableMoveAll(AlterTableMoveAllStmt *stmt)
- 	/* Get the orig and new tablespace OIDs */
- 	orig_tablespaceoid = get_tablespace_oid(stmt->orig_tablespacename, false);
- 	new_tablespaceoid = get_tablespace_oid(stmt->new_tablespacename, false);
--	yb_orig_tablegroup_name = get_implicit_tablegroup_name(orig_tablespaceoid);
+@@ -417,6 +417,12 @@ message PgsqlPagingStatePB {
+   // To hint PgGate about upcoming tablet switch
+   // may be expected in cross tablet scan, or may indicate tablet split
+   optional bytes next_tablet_bound = 9;
 +
-+yb_lookup_tablegroups:
- 	yb_new_tablegroup_name = get_implicit_tablegroup_name(new_tablespaceoid);
--	yb_orig_tablegroup_oid = get_tablegroup_oid(yb_orig_tablegroup_name, true);
--	yb_new_tablegroup_oid = get_tablegroup_oid(yb_new_tablegroup_name, true);
-+	/* YB: Found by tablespace, since the name need not be colocation_<oid>. */
-+	if (MyDatabaseColocated)
-+	{
-+		/* Relations with no tablespace are in the default tablegroup. */
-+		if (orig_tablespaceoid == MyDatabaseTableSpace)
-+			yb_orig_tablegroup_oid =
-+				get_tablegroup_oid(DEFAULT_TABLEGROUP_NAME, true);
-+		else
-+			shdepFindImplicitTablegroup(orig_tablespaceoid,
-+										&yb_orig_tablegroup_oid);
-+		shdepFindImplicitTablegroup(new_tablespaceoid,
-+									&yb_new_tablegroup_oid);
-+	}
-+	yb_orig_tablegroup_name = get_tablegroup_name(yb_orig_tablegroup_oid);
- 	/*
- 	 * YB: If a relation name is passed with the ALTER TABLE ALL ... COLOCATED
- 	 * WITH ... SET TABLESPACE ... CASCADE command then we get the relation
-@@ -16532,6 +16545,22 @@ AlterTableMoveAll(AlterTableMoveAllStmt *stmt)
- 						" as it contains existing colocated relation",
- 						stmt->new_tablespacename)));
- 
-+	/* YB: A move renames the tablegroup, and the default is found by name. */
-+	if (MyDatabaseColocated && yb_orig_tablegroup_name != NULL &&
-+		strcmp(yb_orig_tablegroup_name, DEFAULT_TABLEGROUP_NAME) == 0)
-+		ereport(ERROR,
-+				(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
-+				 errmsg("cannot move the default tablegroup"
-+						" to another tablespace")));
++  // Requests to fetch a batch of keys return the number of keys processed so far to quickly
++  // position in the batch to read the next page.
++  optional uint64 batch_keys_processed = 10;
 +
-+	/* YB: The tablegroup would have to become or join the default one. */
-+	if (MyDatabaseColocated && OidIsValid(yb_orig_tablegroup_oid) &&
-+		new_tablespaceoid == MyDatabaseTableSpace)
-+		ereport(ERROR,
-+				(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
-+				 errmsg("cannot move colocated relations to the database"
-+						" default tablespace")));
-+
- 	/*
- 	 * YB: If CASCADE is not specified and the original tablespace contains
- 	 * colocated tables then we don't support moving it unless cascade is
-@@ -16583,6 +16612,16 @@ AlterTableMoveAll(AlterTableMoveAllStmt *stmt)
- 						   get_tablespace_name(new_tablespaceoid));
- 	}
- 
-+	/*
-+	 * YB: The checks passed, so lock the tablegroup that moves and the
-+	 * tablespace it moves to. If that took a lock, look up and check again.
-+	 */
-+	if (yb_cascade && MyDatabaseColocated &&
-+		OidIsValid(yb_orig_tablegroup_oid) &&
-+		YbLockImplicitTablegroupForMove(yb_orig_tablegroup_oid,
-+										new_tablespaceoid))
-+		goto yb_lookup_tablegroups;
-+
- 	/*
- 	 * Now that the checks are done, check if we should set either to
- 	 * InvalidOid because it is our database's default tablespace.
-```
-
-**File**: `src/postgres/src/backend/commands/yb_tablegroup.c` (modified, +79/-0)
-```diff
-@@ -42,6 +42,7 @@
- #include "catalog/indexing.h"
- #include "catalog/namespace.h"
- #include "catalog/objectaccess.h"
-+#include "catalog/pg_depend.h"
- #include "catalog/pg_namespace.h"
- #include "catalog/pg_tablespace.h"
- #include "catalog/pg_yb_tablegroup.h"
-@@ -443,6 +444,84 @@ YbLockImplicitTablegroupForDrop(Oid grp_oid)
- 	return !tablegroupHasDependents(grp_oid);
++  repeated uint64 batch_keys_missing = 11;
  }
  
-+/*
-+ * Whether the current user owns a relation that is stored in the tablegroup.
-+ */
-+static bool
-+owns_relation_in_tablegroup(Oid grp_oid)
-+{
-+	Relation	depRel;
-+	ScanKeyData key[2];
-+	SysScanDesc scan;
-+	HeapTuple	tup;
-+	bool		result = false;
-+
-+	depRel = table_open(DependRelationId, AccessShareLock);
-+	ScanKeyInit(&key[0],
-+				Anum_pg_depend_refclassid,
-+				BTEqualStrategyNumber, F_OIDEQ,
-+				ObjectIdGetDatum(YbTablegroupRelationId));
-+	ScanKeyInit(&key[1],
-+				Anum_pg_depend_refobjid,
-+				BTEqualStrategyNumber, F_OIDEQ,
-+				ObjectIdGetDatum(grp_oid));
-+	scan = systable_beginscan(depRel, DependReferenceIndexId, true,
-+							  NULL, 2, key);
-+	while (HeapTupleIsValid(tup = systable_getnext(scan)))
-+	{
-+		Form_pg_depend depform = (Form_pg_depend) GETSTRUCT(tup);
-+
-+		if (depform->classid == RelationRelationId &&
-+			SearchSysCacheExists1(RELOID, ObjectIdGetDatum(depform->objid)) &&
-+			pg_class_ownercheck(depform->objid, GetUserId()))
-+		{
-+			result = true;
-+			break;
-+		}
-+	}
-+	systable_endscan(scan);
-+	table_close(depRel, AccessShareLock);
-+
-+	return result;
-+}
-+
-+/*
-+ * Lock an implicit tablegroup that is being moved to another tablespace
-+ * against creates and drops in it, and lock that tablespace against the
-+ * creation of a tablegroup for it. Return whether a lock was taken, in which
-+ * case what the caller looked up before may be stale.
-+ */
-+bool
-+YbLockImplicitTablegroupForMove(Oid grp_oid, Oid new_tablespaceoid)
-+{
-+	LOCKTAG		grp_tag;
-+	LOCKTAG		tablespace_tag;
-+
-+	Assert(OidIsValid(grp_oid) && OidIsValid(new_tablespaceoid));
-+
-+	if (!YBCUsingObjectLocksGloballyForCurrentTxn())
-+		return false;
-+
-+	SET_LOCKTAG_OBJECT(grp_tag, MyDatabaseId, YbTablegroupRelationId,
-+					   grp_oid, 0);
-+	SET_LOCKTAG_OBJECT(tablespace_tag, MyDatabaseId, TableSpaceRelationId,
-+					   new_tablespaceoid, 0);
-+	if (LockHeldByMe(&grp_tag, AccessExclusiveLock) &&
-+		LockHeldByMe(&tablespace_tag, AccessExclusiveLock))
-+		return false;
-+
-+	/* Otherwise any user could block creates and drops in the tablegroup. */
-+	if (!owns_relation_in_tablegroup(grp_oid))
-+		return false;
-+
-+	LockDatabaseObject(YbTablegroupRelationId, grp_oid, 0,
-+					   AccessExclusiveLock);
-+	LockDatabaseObject(TableSpaceRelationId, new_tablespaceoid, 0,
-+					   AccessExclusiveLock);
-+	YbInvalidateCatalogSnapshot();
-+	return true;
-+}
-+
- /*
-  * RemoveTablegroupById - remove a tablegroup by its OID.
-  * If a tablegroup does not exist with the provided oid, then an error is raised.
+ // Given: master --chunk--> tserver --batch--> postgres --page--> tserver
 ```
 
-**File**: `src/postgres/src/include/commands/yb_tablegroup.h` (modified, +2/-0)
+**File**: `src/yb/docdb/CMakeLists.txt` (modified, +2/-0)
 ```diff
-@@ -36,6 +36,8 @@ extern Oid	get_tablegroup_oid(const char *tablegroupname, bool missing_ok);
- extern char *get_tablegroup_name(Oid grp_oid);
- extern Oid	YbLockImplicitTablegroup(Oid tablespaceoid);
- extern bool YbLockImplicitTablegroupForDrop(Oid grp_oid);
-+extern bool YbLockImplicitTablegroupForMove(Oid grp_oid,
-+											Oid new_tablespaceoid);
- 
- extern void RemoveTablegroupById(Oid grp_oid, bool remove_implicit);
- extern char *get_implicit_tablegroup_name(Oid oidSuffix);
+@@ -94,6 +94,7 @@ set(DOCDB_SRCS
+         object_lock_manager.cc
+         object_lock_shared_state_manager.cc
+         pgsql_operation.cc
++        pgsql_read_request_ybctid_provider.cc
+         ql_rocksdb_storage.cc
+         ql_rowwise_iterator_interface.cc
+         redis_operation.cc
+@@ -172,6 +173,7 @@ ADD_YB_TEST(docdb-ttl-test)
+ ADD_YB_TEST(docdb-test-wrapper)
+ ADD_YB_TEST(docrowwiseiterator-test)
+ ADD_YB_TEST(non_transactional_batch_writer-test)
++ADD_YB_TEST(pgsql_read_request_ybctid_provider-test)
+ ADD_YB_TEST(randomized_docdb-test)
+ ADD_YB_TEST(scan_choices-test)
+ ADD_YB_TEST(shared_lock_manager-test)
 ```
 
-**File**: `src/yb/yql/pgwrapper/pg_object_locks-test.cc` (modified, +188/-10)
+**File**: `src/yb/docdb/pgsql_operation.cc` (modified, +48/-100)
 ```diff
-@@ -401,6 +401,7 @@ class PgObjectLocksImplicitTablegroupTest : public PgObjectLocksTestRF1 {
-     PgObjectLocksTestRF1::SetUp();
-     auto conn = ASSERT_RESULT(Connect());
-     ASSERT_OK(conn.Execute("CREATE TABLESPACE ts LOCATION '/data'"));
-+    ASSERT_OK(conn.Execute("CREATE TABLESPACE ts2 LOCATION '/data'"));
-     ASSERT_OK(conn.ExecuteFormat("CREATE DATABASE $0 WITH COLOCATION = true", kDbName));
-   }
+@@ -50,6 +50,7 @@
+ #include "yb/docdb/docdb_rocksdb_util.h"
+ #include "yb/docdb/docdb_statistics.h"
+ #include "yb/docdb/intent_aware_iterator.h"
++#include "yb/docdb/pgsql_read_request_ybctid_provider.h"
+ #include "yb/docdb/ql_storage_interface.h"
  
-@@ -438,7 +439,32 @@ class PgObjectLocksImplicitTablegroupTest : public PgObjectLocksTestRF1 {
-     ASSERT_NO_FATALS(CheckUsableInSingleTablegroup(second, "t2"));
-   }
+ #include "yb/dockv/doc_path.h"
+@@ -148,6 +149,12 @@ DEFINE_RUNTIME_bool(vector_index_no_deletions_skip_filter_check, true,
+     "Whether to skip filter check during vector index search if table does not have "
+     "updates/deletions.");
  
-+  Result<std::string> TablegroupOf(PGConn& conn, const std::string& table) {
-+    return conn.FetchRow<std::string>(Format(
-+        "SELECT grpname FROM pg_yb_tablegroup WHERE oid = "
-+        "(SELECT tablegroup_oid FROM yb_table_properties('$0'::regclass))", table));
-+  }
++DEFINE_RUNTIME_AUTO_bool(legacy_ybctid_batch_pagination, kLocalVolatile, true, false,
++    "Whether ybctid batch returns batch_arg_count to paginate. "
++    "In legacy mode batch_arg_count is returned when it is tablet split safe: the scan bound is "
++    "before the current tablet bound. If legacy mode is off, ybctid batch populates "
++    "the batch_keys_processed field of the paging_state.");
 +
-+  Result<std::string> TablespaceOf(PGConn& conn, const std::string& table) {
-+    return conn.FetchRow<std::string>(Format(
-+        "SELECT COALESCE(s.spcname, 'pg_default') FROM pg_class c "
-+        "LEFT JOIN pg_tablespace s ON s.oid = c.reltablespace WHERE c.oid = '$0'::regclass",
-+        table));
-+  }
-+
-+  Status SetColocatedTablesWithTablespaces(PGConn& conn, bool enabled) {
-+    RETURN_NOT_OK(SET_FLAG(ysql_yb_enable_colocated_tables_with_tablespaces, enabled));
-+    return WaitFor([&]() -> Result<bool> {
-+      return VERIFY_RESULT(conn.FetchRow<std::string>(
-+          "SHOW yb_enable_colocated_tables_with_tablespaces")) == (enabled ? "on" : "off");
-+    }, 10s * kTimeMultiplier, "Timed out waiting for the setting to reach postgres");
-+  }
-+
-   static constexpr auto kDbName = "colo";
-+  static constexpr auto kMoveTablegroupStmt =
-+      "ALTER TABLE ALL IN TABLESPACE ts SET TABLESPACE ts2 CASCADE";
-+  static constexpr auto kCreateInTargetTablespaceStmt =
-+      "CREATE TABLE t2 (k INT PRIMARY KEY) TABLESPACE ts2";
+ DECLARE_uint64(rpc_max_message_size);
+ DECLARE_double(max_buffer_size_to_rpc_limit_ratio);
+ DECLARE_bool(vector_index_dump_stats);
+@@ -686,6 +693,11 @@ concept BoundsProvider = requires(T& key_provider) {
+     { key_provider.Bounds() } -> std::same_as<YbctidBounds>;
  };
  
- TEST_F(PgObjectLocksImplicitTablegroupTest, DropOfLastTableWaitsForCreate) {
-@@ -566,24 +592,176 @@ TEST_F(PgObjectLocksImplicitTablegroupTest, EmptyDefaultTablegroupIsKept) {
++template <typename T>
++concept PagingStateProvider = requires(T& key_provider) {
++    { key_provider.UpdatePagingState() } -> std::same_as<Status>;
++};
++
+ template <typename T>
+ YbctidBounds Bounds(const T& key_provider) {
+   if constexpr (BoundsProvider<T>) {
+@@ -923,7 +935,7 @@ class VectorIndexKeyProvider {
+         num_top_vectors_to_remove_(num_top_vectors_to_remove), max_results_(max_results),
+         result_buffer_(result_buffer) {}
  
- TEST_F(PgObjectLocksImplicitTablegroupTest, DefaultTablegroupInTablespaceIsKept) {
-   auto conn = ASSERT_RESULT(ConnectToDB(kDbName));
--  auto set_feature = [&](bool enabled) -> Status {
--    RETURN_NOT_OK(SET_FLAG(ysql_yb_enable_colocated_tables_with_tablespaces, enabled));
--    return WaitFor([&]() -> Result<bool> {
--      return VERIFY_RESULT(conn.FetchRow<std::string>(
--          "SHOW yb_enable_colocated_tables_with_tablespaces")) == (enabled ? "on" : "off");
--    }, 10s * kTimeMultiplier, "Timed out waiting for the setting to reach postgres");
--  };
--
-   // While the feature is off, the first table puts the default tablegroup in its tablespace.
--  ASSERT_OK(set_feature(false));
-+  ASSERT_OK(SetColocatedTablesWithTablespaces(conn, false));
-   ASSERT_OK(conn.Execute(CreateTableStmt("t1")));
--  ASSERT_OK(set_feature(true));
-+  ASSERT_OK(SetColocatedTablesWithTablespaces(conn, true));
-   ASSERT_OK(conn.Execute("DROP TABLE t1"));
-   ASSERT_EQ(ASSERT_RESULT(conn.FetchRow<PGUint64>(
-       "SELECT COUNT(*) FROM pg_yb_tablegroup "
-       "WHERE grpname = 'default' AND grptablespace != 0")), 1);
+-  Slice FetchKey() {
++  Result<Slice> FetchKey() {
+     if (index_ >= result_entries_.size()) {
+       VLOG_WITH_FUNC(4) << vector_index_.ToString()
+                         << ", returned: " << response_.vector_index_distances().size()
+@@ -2364,72 +2376,6 @@ Status PgsqlWriteOperation::FillRemovedVectorId(
+   return Status::OK();
  }
  
-+TEST_F(PgObjectLocksImplicitTablegroupTest, MoveOfTablegroupWaitsForCreate) {
-+  auto creator = ASSERT_RESULT(ConnectToDB(kDbName));
-+  auto mover = ASSERT_RESULT(ConnectToDB(kDbName));
-+  ASSERT_OK(mover.Execute(CreateTableStmt("t1")));
+-class PgsqlReadRequestYbctidProvider {
+- public:
+-  explicit PgsqlReadRequestYbctidProvider(
+-      const DocReadContext& doc_read_context, const PgsqlReadRequestMsg& request,
+-      PgsqlResponseMsg& response)
+-      : request_(request), response_(response) {
+-    const auto& batch_args = request_.batch_arguments();
+-
+-    VLOG_WITH_FUNC(3) << "batch_args.size(): " << batch_args.size();
+-
+-    Slice min_arg;
+-    Slice max_arg;
+-
+-    batch_arg_it_ = batch_args.begin();
+-
+-    if (!batch_args.empty()) {
+-      min_arg = batch_arg_it_->ybctid().value().binary_value();
+-      max_arg = min_arg;
+-    }
+-
+-    for (auto& batch_arg_it : batch_args) {
+-      const auto& val = batch_arg_it.ybctid().value().binary_value();
+-      if (min_arg > val) {
+-        min_arg = val;
+-      }
+-
+-      if (max_arg < val) {
+-        max_arg = val;
+-      }
+-    }
+-
+-    bounds_ = {min_arg, max_arg};
+-  }
+-
+-  YbctidBounds Bounds() const { return bounds_; }
+-
+-  Slice FetchKey() {
+-    if (!valid_ || batch_arg_it_ == request_.batch_arguments().end()) {
+-      valid_ = false;
+-      return Slice();
+-    }
+-
+-    Slice ret = batch_arg_it_->ybctid().value().binary_value();
+-    if (batch_arg_it_->has_order()) {
+-      current_order_ = batch_arg_it_->order();
+-    }
+-
+-    ++batch_arg_it_;
+-    return ret;
+-  }
+-
+-  void AddedKeyToResultSet() {
+-    if (current_order_.has_value()) {
+-      response_.add_batch_orders(*current_order_);
+-    }
+-  }
+-
+- private:
+-  bool valid_ = true;
+-  const PgsqlReadRequestMsg& request_;
+-  PgsqlResponseMsg& response_;
+-  PgsqlBatchArgumentMsgs::const_iterator batch_arg_it_;
+-  YbctidBounds bounds_;
+-  std::optional<int64> current_order_;
+-};
+-
+ Result<size_t> PgsqlReadOperation::Execute() {
+   // Verify that this request references no columns marked for deletion.
+   RETURN_NOT_OK(VerifyNoRefColsMarkedForDeletion(data_.doc_read_context.schema(), request_));
+@@ -2447,7 +2393,7 @@ Result<size_t> PgsqlReadOperation::Execute() {
+   bool has_paging_state = false;
+   if (request_.batch_arguments_size() > 0) {
+     PgsqlReadRequestYbctidProvider key_provider(data_.doc_read_context, request_, response_);
+-    fetched_rows = VERIFY_RESULT(ExecuteBatchKeys(key_provider));
++    std::tie(fetched_rows, has_paging_state) = VERIFY_RESULT(ExecuteBatchKeys(key_provider));
+   } else if (request_.has_sampling_state()) {
+     if (data_.doc_read_context.is_index) {
+       return STATUS_FORMAT(
+@@ -2968,7 +2914,7 @@ Result<size_t> PgsqlReadOperation::ExecuteVectorLSMSearch(const PgVectorReadOpti
+   VectorIndexKeyProvider key_provider(
+       result, response_, *data_.vector_index, vector_slice, intent_keys,
+       options.num_top_vectors_to_remove(), max_results, *result_buffer_);
+-  auto result_size = VERIFY_RESULT(ExecuteBatchKeys(key_provider));
++  auto [result_size, _] = VERIFY_RESULT(ExecuteBatchKeys(key_provider));
+   auto passed = MonoTime::Now() - key_provider.merge_done_time();
+   auto read_intents_time = key_provider.prefetch_done_time() - read_start_time;
+   auto merge_time = key_provider.merg
+```
+
+**File**: `src/yb/docdb/pgsql_operation.h` (modified, +1/-1)
+```diff
+@@ -208,7 +208,7 @@ class PgsqlReadOperation : public DocExprExecutor {
+ 
+   // Execute a READ operator for a given batch of keys.
+   template <class KeyProvider>
+-  Result<size_t> ExecuteBatchKeys(KeyProvider& key_provider);
++  Result<std::tuple<size_t, bool>> ExecuteBatchKeys(KeyProvider& key_provider);
+ 
+   Result<std::tuple<size_t, bool>> ExecuteSample();
+ 
+```
+
+**File**: `src/yb/docdb/pgsql_read_request_ybctid_provider-test.cc` (added, +1026/-0)
+```diff
+@@ -0,0 +1,1026 @@
++// Copyright (c) YugabyteDB, Inc.
++//
++// Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
++// in compliance with the License.  You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software distributed under the License
++// is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
++// or implied.  See the License for the specific language governing permissions and limitations
++// under the License.
++//
 +
-+  ASSERT_OK(creator.StartTransaction(IsolationLevel::SNAPSHOT_ISOLATION));
-+  ASSERT_OK(creator.Execute(CreateTableStmt("t2")));
-+  auto move_future = std::async(std::launch::async, [&]() {
-+    return mover.Execute(kMoveTablegroupStmt);
-+  });
-+  ASSERT_OK(WaitForLockWaiter());
-+  ASSERT_OK(creator.CommitTransaction());
-+  ASSERT_OK(move_future.get());
++#include <algorithm>
++#include <optional>
++#include <string>
++#include <vector>
++#include <random>
++#include <ranges>
 +
-+  ASSERT_EQ(ASSERT_RESULT(TablespaceOf(creator, "t2")), "ts2");
-+  ASSERT_NO_FATALS(CheckUsableInSingleTablegroup(creator, "t2"));
++#include <gtest/gtest.h>
++
++#include "yb/common/pgsql_protocol.messages.h"
++#include "yb/common/schema.h"
++
++#include "yb/docdb/doc_read_context.h"
++#include "yb/docdb/pgsql_read_request_ybctid_provider.h"
++
++#include "yb/gutil/stringprintf.h"
++
++#include "yb/util/flags.h"
++#include "yb/util/memory/arena.h"
++#include "yb/util/status_format.h"
++#include "yb/util/test_macros.h"
++#include "yb/util/test_util.h"
++
++DECLARE_bool(legacy_ybctid_batch_pagination);
++
++namespace yb::docdb {
++
++namespace {
++
++const std::string kPartitionKey = "partition_key";
++constexpr int64_t kOrderBase = 100;
++
++// Action to take on a key returned by FetchKey(). kAdd means the key exists and is added to the
++// result set. kNotFound means the key does not exist and is reported as missing. kPaginate means
++// the key is found but can't be added to the result set.
++enum class Action {
++  kAdd,
++  kNotFound,
++  kPaginate,
++};
++
++const Schema kSchema(
++    {ColumnSchema("r", DataType::INT32, ColumnKind::RANGE_ASC_NULL_FIRST)}, {10_ColId});
++
++struct PageResult {
++  std::vector<std::string> fetched;
++  std::vector<std::string> added;
++};
++
++struct ExpectedPagingState {
++  bool has_partition_key;
++  std::optional<uint64_t> keys_processed;
++  std::vector<uint64_t> keys_missing;
++};
++
++} // namespace
++
++class PgsqlReadRequestYbctidProviderBase : public YBTest {
++ protected:
++  // Zero padded, so the byte order of the keys matches their index order.
++  static std::string Key(size_t index) {
++    return Format("k$0", ZeroPadded(index, 2));
++  }
++
++  static std::vector<std::string> Keys(size_t count) {
++    std::vector<std::string> result;
++    for (size_t i = 0; i != count; ++i) {
++      result.push_back(Key(i));
++    }
++    return result;
++  }
++
++  std::vector<std::string> ShuffledKeys(size_t count) {
++    auto result = Keys(count);
++    std::shuffle(result.begin(), result.end(), rng);
++    return result;
++  }
++
++  std::vector<std::string> FilterKeys(
++      const std::vector<std::string>& keys, std::ranges::input_range auto&& indexes)
++      requires std::unsigned_integral<std::ranges::range_value_t<decltype(indexes)>> {
++    std::vector<std::string> result;
++    result.reserve(indexes.size());
++    for (auto index : indexes) {
++      result.push_back(keys[index]);
++    }
++    return result;
++  }
++
++  PgsqlReadRequestMsg& NewRequest(const std::vector<std::string>& keys, bool ordered = false) {
++    auto& request = *arena_.NewArenaObject<PgsqlReadRequestMsg>();
++    request.dup_partition_key(kPartitionKey);
++    for (size_t i = 0; i != keys.size(); ++i) {
++      auto& arg = *request.add_batch_arguments();
++      if (ordered) {
++        arg.set_order(kOrderBase + i);
++      }
++      arg.mutable_ybctid()->mutable_value()->dup_binary_value(keys[i]);
++    }
++    return request;
++  }
++
++  PgsqlResponseMsg& NewResponse() {
++    return *arena_.NewArenaObject<PgsqlResponseMsg>();
++  }
++
++  static void SetPagingState(
++      PgsqlReadRequestMsg& request, uint64_t keys_processed,
++      const std::vector<uint64_t>& keys_missing) {
++    auto& paging_state = *request.mutable_paging_state();
++    if (keys_processed > 0) {
++      paging_state.set_batch_keys_processed(keys_processed);
++    }
++    for (auto index : keys_missing) {
++      paging_state.add_batch_keys_missing(index);
++    }
++  }
++
++  DocReadContext doc_read_context_ = DocReadContext::TEST_Create(kSchema);
++ private:
++  ThreadSafeArena arena_;
++  std::mt19937 rng{42};
++};
++
++class PgsqlReadRequestYbctidProviderTest :
++    public PgsqlReadRequestYbctidProviderBase, public ::testing::WithParamInterface<bool> {
++ protected:
++  void SetUp() override {
++    PgsqlReadRequestYbctidProviderBase::SetUp();
++    ANNOTATE_UNPROTECTED_WRITE(FLAGS_legacy_ybctid_batch_pagination) = GetParam();
++  }
++
++  // Processes one request the way PgsqlReadOperation::ExecuteBatchKeys does. Keys not in existing
++  // are reported as not found. When max_rows is set, the provider is asked to paginate on the next
++  // found key after max_rows keys were added to the result set.
++  Result<PageResult> RunPage(
++      const PgsqlReadRequestMsg& request, PgsqlResponseMsg& response,
++      const std::vector<Action>& script) {
++    LOG(INFO) << "Request: " << request.ShortDebugString();
++    PgsqlReadRe
+```
+
+**File**: `src/yb/docdb/pgsql_read_request_ybctid_provider.cc` (added, +297/-0)
+```diff
+@@ -0,0 +1,297 @@
++// Copyright (c) YugabyteDB, Inc.
++//
++// Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
++// in compliance with the License.  You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software distributed under the License
++// is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
++// or implied.  See the License for the specific language governing permissions and limitations
++// under the License.
++//
++
++#include "yb/docdb/pgsql_read_request_ybctid_provider.h"
++
++#include <algorithm>
++#include <iterator>
++#include <optional>
++#include <span>
++
++#include "yb/util/flags.h"
++#include "yb/util/format.h"
++#include "yb/util/logging.h"
++#include "yb/util/status_format.h"
++
++DECLARE_bool(legacy_ybctid_batch_pagination);
++
++namespace yb::docdb {
++
++// Iterates over the batch elements.
++// Implements two modes of operations: first pass, iterates over full batch, with pagination
++// support by resuming iteration from the given position; subsequent passes, retry only the
++// keys failed on the previous passes. List of indexes to retry is provided, iteration is always
++// from the first index in the list, to paginate caller has to update the list of indexes.
++class BatchArgIterator {
++ public:
++  BatchArgIterator(const PgsqlBatchArgumentMsgs& batch, size_t start_position)
++      : batch_it_(batch.begin()), batch_size_(batch.size()), indexes_(std::nullopt) {
++    MoveTo(start_position);
++  }
++  BatchArgIterator(const PgsqlBatchArgumentMsgs& batch, std::span<const uint64_t> indexes)
++      : batch_it_(batch.begin()), batch_size_(batch.size()), indexes_(indexes) {
++    MoveTo(indexes_->front());
++  }
++
++  size_t CurrentPosition() const {
++    DCHECK(!Done());
++    return batch_position_;
++  }
++
++  const PgsqlBatchArgumentMsg& CurrentElement() const {
++    DCHECK(!Done());
++    return *batch_it_;
++  }
++
++  bool Advance() {
++    DCHECK(!Done());
++    if (!indexes_) {
++      MoveTo(batch_position_ + 1);
++      return !Done();
++    }
++    *indexes_ = indexes_->subspan(1);
++    if (indexes_->empty()) {
++      return false;
++    }
++    MoveTo(indexes_->front());
++    return true;
++  }
++
++  bool Done() const {
++    return indexes_ ? indexes_->empty() : batch_position_ == batch_size_;
++  }
++
++  bool Retrying() const {
++    return indexes_.has_value();
++  }
++
++  std::span<const uint64_t> RemainingRetries() const {
++    return indexes_ ? *indexes_ : std::span<const uint64_t>();
++  }
++
++ private:
++  void MoveTo(size_t position) {
++    if (position == batch_position_) {
++      return;
++    }
++    DCHECK(batch_position_ < position && position <= batch_size_)
++        << "Invalid batch position: " << position
++        << ", previous position: " << batch_position_
++        << ", batch size: " << batch_size_;
++    std::advance(batch_it_, position - batch_position_);
++    batch_position_ = position;
++  }
++
++  PgsqlBatchArgumentMsgs::const_iterator batch_it_;
++  size_t batch_position_ = 0;
++  size_t batch_size_;
++  // Remaining indexes, starting from the current one.
++  std::optional<std::span<const uint64_t>> indexes_;
++};
++
++PgsqlReadRequestYbctidProvider::PgsqlReadRequestYbctidProvider(
++    const DocReadContext& doc_read_context, const PgsqlReadRequestMsg& request,
++    PgsqlResponseMsg& response)
++    : request_(request), response_(response) {
++  const auto& batch_args = request_.batch_arguments();
++  VLOG_WITH_FUNC(3) << "Batch size: " << batch_args.size();
++
++  // There are two different cases when the paging state has missing keys:
++  // 1. The first pass over the batch arguments. In this case the position to restore
++  // (batch_keys_processed) is strictly greater than all the missing keys, or the last missing key,
++  // since they are sorted. In this case we restore the missing keys and continue iterating
++  // the batch normally, and continue populating the missing keys. The first pass can't span over
++  // multiple tablets, we continue to paginate to the first tablet in the range until the end of
++  // the batch is reached. Even if the first tablet splits, pagination will go to the new first
++  // tablet.
++  // 2. The subsequent passes retry the missing keys. They are only possible if there are multiple
++  // tablets in the range and pagination has happened to a subsequent batch. In this case
++  // the position to restore may be absent (first page of the tablet), so we retry all the missing
++  // keys. Keys may be missing on that tablet too, so we will collect them again, if there more
++  // tablets in the range. If the position to restore is specified, that means the pagination has
++  // happened in the middle of the tablet. The position to restore has to be one of the missing
++  // keys, the missing keys lower, if any, are accumulated missing keys from the current pass, and
++  // remaining missing keys are to be retrie
+```
+
+**File**: `src/yb/docdb/pgsql_read_request_ybctid_provider.h` (added, +62/-0)
+```diff
+@@ -0,0 +1,62 @@
++// Copyright (c) YugabyteDB, Inc.
++//
++// Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
++// in compliance with the License.  You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software distributed under the License
++// is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
++// or implied.  See the License for the specific language governing permissions and limitations
++// under the License.
++//
++
++#pragma once
++
++#include <optional>
++#include <vector>
++
++#include "yb/common/pgsql_protocol.messages.h"
++
++#include "yb/docdb/docdb_fwd.h"
++#include "yb/docdb/ql_storage_interface.h"
++
++#include "yb/util/result.h"
++#include "yb/util/slice.h"
++#include "yb/util/status.h"
++
++namespace yb::docdb {
++
++class BatchArgIterator;
++
++class PgsqlReadRequestYbctidProvider {
++ public:
++  PgsqlReadRequestYbctidProvider(
++      const DocReadContext& doc_read_context, const PgsqlReadRequestMsg& request,
++      PgsqlResponseMsg& response);
++  ~PgsqlReadRequestYbctidProvider();
++
++  YbctidBounds Bounds() const { return bounds_; }
++
++  Result<Slice> FetchKey();
++
++  void AddedKeyToResultSet();
++
++  void KeyNotFound();
++
++  Status UpdatePagingState();
++
++ private:
++  Status UpdateResponseForTheEndOfBatch();
++
++  bool valid_ = true;
++  const PgsqlReadRequestMsg& request_;
++  PgsqlResponseMsg& response_;
++  std::unique_ptr<BatchArgIterator> batch_arg_it_;
++  YbctidBounds bounds_;
++  std::optional<size_t> current_position_;
++  std::optional<int64> current_order_;
++  std::vector<size_t> retry_keys_;
++};
++
++}  // namespace yb::docdb
+```
+
+**File**: `src/yb/tablet/tablet.cc` (modified, +19/-2)
+```diff
+@@ -2838,6 +2838,16 @@ const std::string* Tablet::NextReadPartitionKey(
+   return &partition_key;
+ }
+ 
++bool Tablet::SwitchToNextTablet(
++    const PgsqlReadRequestMsg& pgsql_read_request, const PgsqlResponseMsg& response) const {
++  if (response.has_paging_state()) {
++    const auto& paging_state = response.paging_state();
++    VLOG_WITH_FUNC(3) << "Paging state: " << paging_state.ShortDebugString();
++    return !paging_state.has_next_partition_key();
++  }
++  return true;
 +}
 +
-+TEST_F(PgObjectLocksImplicitTablegroupTest, CreateWaitsForMoveOfTablegroup) {
-+  auto creator = ASSERT_RESULT(ConnectToDB(kDbName));
-+  auto mover = ASSERT_RESULT(ConnectToDB(kDbName));
-+  ASSERT_OK(mover.Execute(CreateTableStmt("t1")));
+ namespace {
+ 
+ void SetBackfillSpecForYsqlBackfill(
+@@ -2882,14 +2892,21 @@ Status Tablet::CreatePagingStateForRead(const PgsqlReadRequestMsg& pgsql_read_re
+   if (MayTargetMultipleTablets(pgsql_read_request, row_count)) {
+     const auto* next_partition_key = NextReadPartitionKey(pgsql_read_request);
+     if (next_partition_key) {
+-      if (!response->has_paging_state()) {
+-        // DocDB has done with the current tablet, time to switch to the next one
++      if (SwitchToNextTablet(pgsql_read_request, *response)) {
+         response->mutable_paging_state()->dup_next_partition_key(*next_partition_key);
+       }
+       response->mutable_paging_state()->dup_next_tablet_bound(*next_partition_key);
+     }
+   }
+ 
++  // Next partition/row key hasn't been added, neither by the DocDB nor by the above logic, remove
++  // the paging state to prevent further pagination.
++  if (response->has_paging_state() &&
++      !response->paging_state().has_next_partition_key() &&
++      !response->paging_state().has_next_row_key()) {
++    response->clear_paging_state();
++  }
 +
-+  ASSERT_OK(mover.StartTransaction(IsolationLevel::SNAPSHOT_ISOLATION));
-+  ASSERT_OK(mover.Execute(kMoveTablegroupStmt));
-+  auto create_future = std::async(std::launch::async, [&]() {
-+    return creator.Execute(CreateTableStmt("t2"));
-+  });
-+  ASSERT_OK(WaitForLockWaiter());
-+  ASSERT_OK(mover.CommitTransaction());
-+  ASSERT_OK(create_future.get());
-+
-+  // The tablegroup of t1 left ts, so t2 is in a new one.
-+  ASSERT_EQ(ASSERT_RESULT(TablespaceOf(creator, "t1")), "ts2");
-+  ASSERT_EQ(ASSERT_RESULT(TablespaceOf(creator, "t2")), "ts");
-+  ASSERT_EQ(ASSERT_RESULT(creator.FetchRow<PGUint64>("SELECT COUNT(*) FROM pg_yb_tablegroup")), 2);
-+  ASSERT_OK(creator.Execute("INSERT INTO t2 VALUES (1)"));
-+  ASSERT_EQ(ASSERT_RESULT(creator.FetchRow<PGUint64>("SELECT COUNT(*) FROM t2")), 1);
-+}
-+
-+TEST_F(PgObjectLo
+   // If there is a paging state, update the total number of rows read so far.
+   if (response->has_paging_state()) {
+     response->mutable_paging_state()->set_total_num_rows_read(
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #39005** (2026-11-23): [PLAT-23681] YBA: Renumber the update_time migration to V481 (@artem-mindrov)
-- **PR #38987** (2026-11-23): [BACKPORT 2026.1][#36720] YSQL: Stop the notifications poller from polling the master (#38567) (@arpang)
-- **PR #38986** (2026-11-23): [BACKPORT 2026.2][PLAT-24001,PLAT-24003] YBA: Redact stored LDAP secrets in configure responses and the state transition delta (@asc-073-yb)
-- **PR #38984** (2026-11-23): [BACKPORT 2026.2][#36720] YSQL: Stop the notifications poller from polling the master (#38567) (@arpang)
-- **PR #38965** (2026-11-23): [#38964] CDC: Wait for stream metadata in CDCSDKYsqlTest.TestStreamActiveOnNamespaceNoPKTable (@csi-fix)
-- **PR #38960** (2026-11-23): [BACKPORT 2026.1][PLAT-24048] YBA: Retry SetFlagInMemory while the server restarts (#38827) (@kv83821-yb)
+- **PR #39119** (2026-11-24): [BACKPORT 2024.2][PLAT-24054] YBA: Update the bundled Prometheus to 3.16.0 (#38988) (@proff4eg)
+- **PR #39097** (2026-11-24): [BACKPORT 2026.2][PLAT-23839] YBA: Start the v2 vm-image upgrade from the universe's details (#38996) (@asc-073-yb)
+- **PR #39096** (2026-11-24): [BACKPORT 2025.2][#38397] YSQL: Ignore SIGINT in the notifications poller (#39020) (@arpang)
+- **PR #39095** (2026-11-24): [BACKPORT 2026.1][#38397] YSQL: Ignore SIGINT in the notifications poller (#39020) (@arpang)
+- **PR #39094** (2026-11-24): [BACKPORT 2026.2][#38397] YSQL: Ignore SIGINT in the notifications poller (#39020) (@arpang)
+- **PR #39087** (2026-11-24): [BACKPORT 2026.2][#34944] YSQL: Fix flaky TestPgListenNotify#testListenNotifyWithDbClone on sanitizer builds (#39078) (@dhruva4869)
 
 ---
 
@@ -2889,56 +3110,30 @@ This diff makes the statement take two locks before it moves anything, and look 
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [PLAT-24048] YBA: Retry SetFlagInMemory while the server restarts
+## X. [#37251] DocDB: Fix lock leak in YbAdminSnapshotScheduleTest.PgsqlPitrDuringColo
 
 **RULE**:
-When implementing operations in `managed/src/main/java/com/yugabyte/yw/commissioner/tasks/subtasks/SetFlagInMemory.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/yb/master/catalog_loading_state.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8c5ff0f2`: [PLAT-24048] YBA: Retry SetFlagInMemory while the server restarts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c2fe718c`: [#37251] DocDB: Fix lock leak in YbAdminSnapshotScheduleTest.PgsqlPitrDuringColocatedTableCreateReleaseIgnored. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `managed/src/main/java/com/yugabyte/yw/commissioner/tasks/subtasks/SetFlagInMemory.java`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/yb/master/catalog_loading_state.h`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
-import java.time.Duration;
-  private static final Duration RETRY_DELAY = Duration.ofSeconds(5);
+  // Whether the catalog being replaced was loaded in epoch.leader_term, e.g. on a PITR reload.
+  bool reload_in_loaded_term = false;
 
-  // Whether a failed setFlag RPC is retried, and until when.
-  private boolean retryRpcFailures;
-  private long retryDeadlineMs;
-
-    retryDeadlineMs = System.currentTimeMillis() + retryTimeout().toMillis();
-      // A K8s pod can restart at any time, e.g. when the cluster autoscaler moves it, and comes
-      // back on its own; a VM server that is down usually does not. A best-effort push is often
-      // to a server that is down for good. VM callers that push best effort without ignoreErrors
-      // (master failover) rely on the first failure, so they must not wait either.
-      retryRpcFailures = !taskParams().ignoreErrors && Util.isKubernetesBasedUniverse(universe);
-  // Package-private so tests can stub the timeout and the wait.
-  Duration retryTimeout() {
-    return config.getDuration("yb.wait_for_server_timeout");
-  }
-
-  void waitBeforeRetry(Duration delay) {
-    waitFor(delay);
-  }
-
-    boolean setSuccess;
-    while (true) {
-      try {
-        setSuccess = client.setFlag(hp, gflag, value, taskParams().force);
-        break;
-      } catch (Exception e) {
-        // A server t
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c
 // Induced defect failure mode:
-    boolean setSuccess = client.setFlag(hp, gflag, value, taskParams().force);
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8c5ff0f2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c2fe718c` are properly handled with clean fallback behavior.

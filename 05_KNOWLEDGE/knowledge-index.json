@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T14:59:49.596Z",
+  "last_updated": "2026-11-24T15:09:07.679Z",
   "total_verified_learnings": 9096,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24710,
+  "total_items": 24714,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "c5f52f09ec87cc0b620fb02c61aea103adec6580578908fc42da14631ba31532",
+      "content_hash": "ef82d3984a8be8a43f135b43bd5e78ac9f479f5462cde6541f1c91adaf9e2310",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T13:21:20.220Z"
+      "persisted_at": "2026-11-24T15:09:07.457Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "e6fe8cbe965fdad073cab02eb1eeabe8d53922f06c35c86b55842c082dbca15f",
+      "content_hash": "692e9404ce6eb13db12fb43e30872091e8dd38430e82bc859fad6524ffc36425",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T13:21:20.399Z"
+      "persisted_at": "2026-11-24T15:09:07.679Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "d7b2f7fc8f14f12a37e14ab3fca901970ad3a023bb918a213f002293483bb215",
+      "content_hash": "9f5300536f28e3acf82be325d12b0a27b04d90f6c486e9ff025db2a3d18fb480",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T13:48:13.674Z"
+      "persisted_at": "2026-11-24T15:09:06.235Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "7db442284f481c58187eb4543ed19f1c739d9a078aeeccf31faaac2bf057d483",
+      "content_hash": "973b5bca9ed89b928cf8576bede96b0925f10dfc58223a7155daa0c994fa4975",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T13:48:13.916Z"
+      "persisted_at": "2026-11-24T15:09:06.460Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -235789,8 +235789,8 @@
       "slug": "yugabyte-yugabyte-db",
       "platform": "github",
       "source_url": "https://github.com/yugabyte/yugabyte-db",
-      "source_version": "80c1ffc3",
-      "content_hash": "a4ac71f41a3576909e2a38b33dc2cdf1f505b4f5ac5b5f8b4396ea2d7c82a167",
+      "source_version": "3f1fb89d",
+      "content_hash": "d269ba33a559f045604ea73396a85c88ba88c1a902cf38a1ca56002bed4b8ff9",
       "dossier_path": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "promoted_rules": [
@@ -235833,6 +235833,11 @@
           "number": 10094,
           "title": "[PLAT-24048] YBA: Retry SetFlagInMemory while the server restarts",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10290,
+          "title": "[#37251] DocDB: Fix lock leak in YbAdminSnapshotScheduleTest.PgsqlPitrDuringColo",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -235840,7 +235845,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T18:41:02.855Z",
+      "verified_at": "2026-11-24T15:09:00.163Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -235906,10 +235911,10 @@
       "relative_path": "08_VERIFICATION/yugabyte-yugabyte-db-verification-protocol-empirical-defect-shield-for-yugabyte-.md",
       "title": "Verification Protocol: Empirical Defect Shield for yugabyte/yugabyte-db",
       "repository": "yugabyte/yugabyte-db",
-      "source_version": "80c1ffc3",
-      "content_hash": "58803f0d2712d66f1370314c221a7d7b49e756b185fc377597e2eb1d6d41afe8",
+      "source_version": "3f1fb89d",
+      "content_hash": "3edf4efb972514fd52bf23ed9690d2b26205a42b642760c75e1769c459b5463e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T18:41:03.630Z"
+      "persisted_at": "2026-11-24T15:09:01.202Z"
     },
     "domain_intelligence-architecture-intelligence-pola-rs-polars-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-pola-rs-polars-learnings-core-invariants",
@@ -235979,9 +235984,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for yugabyte-yugabyte-db-learnings",
       "repository": "yugabyte-yugabyte-db-learnings",
       "source_version": "HEAD",
-      "content_hash": "1c2dc4eabc87451276347cf43dc23c74bd3e9e59d4389b27566d7ede2ae23188",
+      "content_hash": "0c06c7e4a4bbf3dbc818bb845180d0a87bd32224dfba035e3ded6a019454c018",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T18:41:39.739Z"
+      "persisted_at": "2026-11-24T15:09:05.385Z"
     },
     "learn-huggingface-unsloth-embeddinggemma-2-gguf": {
       "learning_id": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
@@ -320133,13 +320138,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-2FOB-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-YFYU-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "438f56b9fc42f8304af48f5d57599bc8912c5442daa0b5c408a39de3933c8b22",
+      "content_hash": "01ea1a9c74590e8c9ef9cf3a8f6ad81f4f1da76c028db81fcc051665d9d78d73",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T13:48:13.419Z"
+      "persisted_at": "2026-11-24T15:09:06.012Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
@@ -335117,13 +335122,13 @@
       "item_id": "candidate_directive-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-3USQ-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-YGWU-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
       "title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "4c2a55b88ecccb46f047d05a9129ac5d1d6f01370c6d4bbdf096cd36f1a227c8",
+      "content_hash": "08265742b0a3476786e7bfbc187905f26632dbc1d73d27ccec43a1fbca27c507",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T13:21:20.045Z"
+      "persisted_at": "2026-11-24T15:09:07.235Z"
     },
     "learn-github-xinatian-mroffice": {
       "learning_id": "learn-github-xinatian-mroffice",
@@ -337346,6 +337351,56 @@
       "content_hash": "d29d70f45f753ab9e8122484ea93150e6580c2817ea5caa34aee691c8c574858",
       "domain_letter": "H",
       "persisted_at": "2026-11-24T14:59:47.981Z"
+    },
+    "rule-10290": {
+      "learning_id": "rule-10290",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10290,
+      "title": "[#37251] DocDB: Fix lock leak in YbAdminSnapshotScheduleTest.PgsqlPitrDuringColo",
+      "source_url": "https://github.com/yugabyte/yugabyte-db",
+      "source_version": "3f1fb89d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T15:09:00.163Z"
+    },
+    "candidate_directive-37251-docdb-fix-lock-leak-in-ybadminsnapshotscheduletest-pgsqlpitrduringcolo": {
+      "item_id": "candidate_directive-37251-docdb-fix-lock-leak-in-ybadminsnapshotscheduletest-pgsqlpitrduringcolo",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YF4O-37251-docdb-fix-lock-leak-in-ybadminsnapshotscheduletest-pgsqlpitrduringcolo.md",
+      "title": "[#37251] DocDB: Fix lock leak in YbAdminSnapshotScheduleTest.PgsqlPitrDuringColo",
+      "repository": "yugabyte-yugabyte-db-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ea5c7387febe063b840461006e84b8ecb107c4a3fdb833c326a538f8811266b9",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T15:09:04.927Z"
+    },
+    "domain_intelligence-architecture-intelligence-yugabyte-yugabyte-db-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-yugabyte-yugabyte-db-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-yugabyte-yugabyte-db-architecture-intelligence-yugabyte-yugabyte-db-core-invaria.md",
+      "title": "Architecture Intelligence: yugabyte/yugabyte-db Core Invariants",
+      "repository": "yugabyte/yugabyte-db",
+      "source_version": "3f1fb89d",
+      "content_hash": "ab36d8c26704e2317819b3bab67845eaa3222086b7a010d75895e63bf41c0d45",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T15:09:00.976Z"
+    },
+    "domain_intelligence-architecture-intelligence-yugabyte-yugabyte-db-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-yugabyte-yugabyte-db-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-yugabyte-yugabyte-db-learnings-architecture-intelligence-yugabyte-yugabyte-db-le.md",
+      "title": "Architecture Intelligence: yugabyte-yugabyte-db-learnings Core Invariants",
+      "repository": "yugabyte-yugabyte-db-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b038f55a5b14360a822e20dabf0618c490a89c5de8886777ddbecfab2c99b35d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T15:09:05.159Z"
     }
   },
   "ai-builder-brain": {

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-2P25",
-    "timestamp": "2026-11-22T20:16:59.741Z",
-    "repository": "TableProApp/TablePro",
-    "learningId": "learn-github-tableproapp-tablepro",
-    "contentHash": "c9d24a114bf34c67a6d3133641afcf40a149dd091222807a276ae77c0a164f97",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-2U6W",
     "timestamp": "2026-11-22T20:17:06.392Z",
     "repository": "volcengine/OpenViking",
@@ -7490,6 +7475,21 @@
     "repository": "gardener/gardener",
     "learningId": "learn-github-gardener-gardener",
     "contentHash": "ee89560c474315d843a57fd9d57325f2fd626609cc50c7a1c12d408cd2e44501",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-YBNR",
+    "timestamp": "2026-11-24T15:09:00.423Z",
+    "repository": "yugabyte/yugabyte-db",
+    "learningId": "learn-github-yugabyte-yugabyte-db",
+    "contentHash": "d269ba33a559f045604ea73396a85c88ba88c1a902cf38a1ca56002bed4b8ff9",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

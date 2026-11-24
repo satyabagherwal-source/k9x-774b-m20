@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T14:59:49.429Z",
-  "total_records": 2539,
+  "last_updated": "2026-11-24T15:09:07.457Z",
+  "total_records": 2541,
   "domains": {
     "A": {
       "total": 22,
@@ -1155,7 +1155,7 @@
       ]
     },
     "G": {
-      "total": 442,
+      "total": 444,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1598,7 +1598,9 @@
         "domain_intelligence-architecture-intelligence-skyzh-mini-lsm-core-invariants",
         "domain_intelligence-architecture-intelligence-skyzh-mini-lsm-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-nihildigit-piko-core-invariants",
-        "domain_intelligence-architecture-intelligence-nihildigit-piko-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-nihildigit-piko-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-yugabyte-yugabyte-db-core-invariants",
+        "domain_intelligence-architecture-intelligence-yugabyte-yugabyte-db-learnings-core-invariants"
       ]
     },
     "H": {
@@ -8354,8 +8356,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "c5f52f09ec87cc0b620fb02c61aea103adec6580578908fc42da14631ba31532",
-      "created_at": "2026-11-24T13:21:20.220Z"
+      "content_hash": "ef82d3984a8be8a43f135b43bd5e78ac9f479f5462cde6541f1c91adaf9e2310",
+      "created_at": "2026-11-24T15:09:07.457Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -9272,8 +9274,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "d7b2f7fc8f14f12a37e14ab3fca901970ad3a023bb918a213f002293483bb215",
-      "created_at": "2026-11-24T13:48:13.674Z"
+      "content_hash": "9f5300536f28e3acf82be325d12b0a27b04d90f6c486e9ff025db2a3d18fb480",
+      "created_at": "2026-11-24T15:09:06.235Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -42653,6 +42655,24 @@
       "repository": "kube-rs-kube-learnings",
       "content_hash": "bf71ad07ce30c3b7150eb36b618a959c2081ad1e2b4238bff50c689b73e2435d",
       "created_at": "2026-11-24T14:51:15.504Z"
+    },
+    "domain_intelligence-architecture-intelligence-yugabyte-yugabyte-db-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-yugabyte-yugabyte-db-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: yugabyte/yugabyte-db Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-yugabyte-yugabyte-db-architecture-intelligence-yugabyte-yugabyte-db-core-invaria.md",
+      "repository": "yugabyte/yugabyte-db",
+      "content_hash": "ab36d8c26704e2317819b3bab67845eaa3222086b7a010d75895e63bf41c0d45",
+      "created_at": "2026-11-24T15:09:00.976Z"
+    },
+    "domain_intelligence-architecture-intelligence-yugabyte-yugabyte-db-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-yugabyte-yugabyte-db-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: yugabyte-yugabyte-db-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-yugabyte-yugabyte-db-learnings-architecture-intelligence-yugabyte-yugabyte-db-le.md",
+      "repository": "yugabyte-yugabyte-db-learnings",
+      "content_hash": "b038f55a5b14360a822e20dabf0618c490a89c5de8886777ddbecfab2c99b35d",
+      "created_at": "2026-11-24T15:09:05.159Z"
     }
   }
 }

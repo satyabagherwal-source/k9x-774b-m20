@@ -12747,3 +12747,4 @@ Every entry in this ledger must capture:
 | `learn-github-actix-actix-web` | `https://github.com/actix/actix-web` | `12df9de5` | Multi-dimensional audit evidence | 2026-11-24T14:59:34.953Z |
 | `learn-github-builderio-builder` | `https://github.com/BuilderIO/builder` | `0b87ae3c` | Multi-dimensional audit evidence | 2026-11-24T14:59:39.450Z |
 | `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `86782dd1` | Multi-dimensional audit evidence | 2026-11-24T14:59:42.480Z |
+| `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `3f1fb89d` | Multi-dimensional audit evidence | 2026-11-24T15:09:00.428Z |
