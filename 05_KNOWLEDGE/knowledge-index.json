@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T17:14:30.498Z",
+  "last_updated": "2026-11-24T17:23:17.328Z",
   "total_verified_learnings": 9098,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24788,
+  "total_items": 24795,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112245,10 +112245,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dragonflydb-dragonfly-technical-construction-intelligence-dragonflydb-dragonfly-.md",
       "title": "Technical Construction Intelligence: dragonflydb/dragonfly Core Invariants",
       "repository": "dragonflydb/dragonfly",
-      "source_version": "6cbd2241",
-      "content_hash": "058d26441d225142a3cb4e910b0b8052f89fff042dd6cd7fc192b5c7ff0cd886",
+      "source_version": "c0b9d750",
+      "content_hash": "c776c4058102642c4203f6309ab21ec5ef98fcd0273cd278a3fb892283b23d12",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T20:56:21.385Z"
+      "persisted_at": "2026-11-24T17:23:10.977Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflydb-dragonfly": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflydb-dragonfly",
@@ -112257,10 +112257,10 @@
       "relative_path": "08_VERIFICATION/dragonflydb-dragonfly-verification-protocol-empirical-defect-shield-for-dragonfl.md",
       "title": "Verification Protocol: Empirical Defect Shield for dragonflydb/dragonfly",
       "repository": "dragonflydb/dragonfly",
-      "source_version": "6cbd2241",
-      "content_hash": "8bce1ea4beb307115be4847f70018f71d1bed711f6dc820a28679a786e0a4174",
+      "source_version": "c0b9d750",
+      "content_hash": "5a8d937f2994dc063b74b218c32e41e2e32d73023422fdfd0670e7dbe616cecb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T20:56:21.540Z"
+      "persisted_at": "2026-11-24T17:23:11.153Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-supersoniclabs-julia-1-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-supersoniclabs-julia-1-learnings-core-invaria",
@@ -112282,9 +112282,9 @@
       "title": "Technical Construction Intelligence: dragonflydb-dragonfly-learnings Core Invariants",
       "repository": "dragonflydb-dragonfly-learnings",
       "source_version": "HEAD",
-      "content_hash": "b0236ca6b20cce4741d2844c6c4109ad8a4e8970fd4ffcc05a284fa2d5aeecb8",
+      "content_hash": "1863b67529c7bfd965947164402a21226dde3b23ba221f415c474e0c1d6e2d33",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T20:56:26.293Z"
+      "persisted_at": "2026-11-24T17:23:17.153Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflydb-dragonfly-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflydb-dragonfly-learning",
@@ -112294,9 +112294,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dragonflydb-dragonfly-learnings",
       "repository": "dragonflydb-dragonfly-learnings",
       "source_version": "HEAD",
-      "content_hash": "31d94316cb074d20ed54bb0b2c400b77d4982fc1a8fa25ee0be1c33cf5b690c1",
+      "content_hash": "9f0db5f98e6e4ef5e71e470a4983a7b3049602ff6893dc6ac4bec3f9365874c2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T20:56:26.453Z"
+      "persisted_at": "2026-11-24T17:23:17.328Z"
     },
     "domain_intelligence-research-knowledge-intelligence-comfy-org-wan-2-2-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-wan-2-2-core-invariants",
@@ -230949,8 +230949,8 @@
       "slug": "czy0729-bangumi",
       "platform": "github",
       "source_url": "https://github.com/czy0729/Bangumi",
-      "source_version": "81c1e12a",
-      "content_hash": "e278f9799d92a572e861c287d008b3be494cf07c77215bb1dbd9de730b9a5a26",
+      "source_version": "5fbbc77a",
+      "content_hash": "32cffb56a9d84ed878f637b229bb6fadc6dee7624fbe4dcef4a294074f83ef0c",
       "dossier_path": "07_PROJECT_LEARNING/czy0729-bangumi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/czy0729-bangumi-learnings.md",
       "promoted_rules": [
@@ -230963,6 +230963,11 @@
           "number": 9058,
           "title": "统一空状态展示并整理通用工具",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10316,
+          "title": "Merge branch 'master' of github.com:czy0729/Bangumi",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -230970,7 +230975,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T02:18:07.172Z",
+      "verified_at": "2026-11-24T17:23:03.382Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231012,10 +231017,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-czy0729-bangumi-technical-construction-intelligence-czy0729-bangumi-core-invaria.md",
       "title": "Technical Construction Intelligence: czy0729/Bangumi Core Invariants",
       "repository": "czy0729/Bangumi",
-      "source_version": "81c1e12a",
-      "content_hash": "a4e2b1a9fa254c280f323b30061f50539d563be54662a1cc246f965db3d64269",
+      "source_version": "5fbbc77a",
+      "content_hash": "4bca2fade3b6459e66d0fe9c96f2c281ffc9983712d503e6856d2263020b5a58",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T02:18:07.589Z"
+      "persisted_at": "2026-11-24T17:23:04.030Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-czy0729-bangumi": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-czy0729-bangumi",
@@ -231024,10 +231029,10 @@
       "relative_path": "08_VERIFICATION/czy0729-bangumi-verification-protocol-empirical-defect-shield-for-czy0729-bangum.md",
       "title": "Verification Protocol: Empirical Defect Shield for czy0729/Bangumi",
       "repository": "czy0729/Bangumi",
-      "source_version": "ad576e32",
-      "content_hash": "60b24ddd0b88958145933b2a4ca9ece33e884d49bccbea83419673367d7d6bc1",
+      "source_version": "5fbbc77a",
+      "content_hash": "11bc388df3b841cfe577fac152fae53f9e6b754627a5ad215353d57b3b020f89",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T20:25:33.479Z"
+      "persisted_at": "2026-11-24T17:23:04.209Z"
     },
     "learn-github-peerdb-io-peerdb": {
       "learning_id": "learn-github-peerdb-io-peerdb",
@@ -231198,9 +231203,9 @@
       "title": "Technical Construction Intelligence: czy0729-bangumi-learnings Core Invariants",
       "repository": "czy0729-bangumi-learnings",
       "source_version": "HEAD",
-      "content_hash": "feb318205afa5612c435ee708adb986f44b7c6fe395afd2c4ee598981a60631b",
+      "content_hash": "36246cf4cc89ef3f9ca9889fe544e1f2210e5b98e698d5f98a5181cec75c13fe",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T02:18:39.930Z"
+      "persisted_at": "2026-11-24T17:23:16.278Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-czy0729-bangumi-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-czy0729-bangumi-learnings",
@@ -231210,9 +231215,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for czy0729-bangumi-learnings",
       "repository": "czy0729-bangumi-learnings",
       "source_version": "HEAD",
-      "content_hash": "c0c09c58e31e109a9976fa796775ca65609a9b965d2775f90b86dc7e9f030ceb",
+      "content_hash": "d37f02def2b4230479577a9a3174287573a00e7bb575cba15c7d5460271f5832",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T20:25:43.261Z"
+      "persisted_at": "2026-11-24T17:23:16.455Z"
     },
     "learn-huggingface-intfloat-multilingual-e5-small": {
       "learning_id": "learn-huggingface-intfloat-multilingual-e5-small",
@@ -240003,8 +240008,8 @@
       "slug": "dragonflydb-dragonfly",
       "platform": "github",
       "source_url": "https://github.com/dragonflydb/dragonfly",
-      "source_version": "6cbd2241",
-      "content_hash": "ff25fc6955f73718eaad256a49cbad41c83dca184601487e7e8557eaf03ce172",
+      "source_version": "c0b9d750",
+      "content_hash": "2a068f8f8239bafb7d2d6b8f2228056c07ad4f370a3f4afdb8d04e5fc4c10698",
       "dossier_path": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "promoted_rules": [
@@ -240047,6 +240052,11 @@
           "number": 10120,
           "title": "port Valkey security fixes and lock the global environment",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10317,
+          "title": "bound RDB loader allocations by the source size",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -240054,7 +240064,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T20:56:20.810Z",
+      "verified_at": "2026-11-24T17:23:10.329Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -262507,8 +262517,8 @@
       "slug": "fb55-htmlparser2",
       "platform": "github",
       "source_url": "https://github.com/fb55/htmlparser2",
-      "source_version": "15801e74",
-      "content_hash": "afecf835e4df7f05c9fab40587fca10621ec0ea28472ae4e90117b1169e3c5ba",
+      "source_version": "2134b2f1",
+      "content_hash": "ce39d9c9429da77159f539a91ecd9025786e4d202699cad5466a07a5c0b2c597",
       "dossier_path": "07_PROJECT_LEARNING/fb55-htmlparser2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fb55-htmlparser2-learnings.md",
       "promoted_rules": [
@@ -262521,6 +262531,11 @@
           "number": 9603,
           "title": "build(deps-dev): Bump typescript-eslint from 8.72.2 to 8.73.0",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10315,
+          "title": "build(deps-dev): Bump vitest from 5.1.0 to 5.1.1",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -262528,7 +262543,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T17:12:10.364Z",
+      "verified_at": "2026-11-24T17:22:59.460Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -262582,10 +262597,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fb55-htmlparser2-technical-construction-intelligence-fb55-htmlparser2-core-invar.md",
       "title": "Technical Construction Intelligence: fb55/htmlparser2 Core Invariants",
       "repository": "fb55/htmlparser2",
-      "source_version": "15801e74",
-      "content_hash": "0dff6dc35ad5ddfefd463854b637717858ecbae8793b8613b54af1038aa28e05",
+      "source_version": "2134b2f1",
+      "content_hash": "1a6cc5b43032ce4fb0bddf9535827521c1cdb13f00dce0d2fd0957230df3fa62",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T17:12:10.918Z"
+      "persisted_at": "2026-11-24T17:23:00.114Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-fb55-htmlparser2": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-fb55-htmlparser2",
@@ -262594,10 +262609,10 @@
       "relative_path": "08_VERIFICATION/fb55-htmlparser2-verification-protocol-empirical-defect-shield-for-fb55-htmlpars.md",
       "title": "Verification Protocol: Empirical Defect Shield for fb55/htmlparser2",
       "repository": "fb55/htmlparser2",
-      "source_version": "15801e74",
-      "content_hash": "89d5096e14cb5fc22e7d19a432070b19f834d755284d527e27f29b145ae12dda",
+      "source_version": "2134b2f1",
+      "content_hash": "c2ec6cdd71659afca661d8eec3c95d8b1d40909e720284699831cd83f0efcd31",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T17:12:11.075Z"
+      "persisted_at": "2026-11-24T17:23:00.297Z"
     },
     "learn-github-openziti-zrok": {
       "learning_id": "learn-github-openziti-zrok",
@@ -262733,9 +262748,9 @@
       "title": "Technical Construction Intelligence: fb55-htmlparser2-learnings Core Invariants",
       "repository": "fb55-htmlparser2-learnings",
       "source_version": "HEAD",
-      "content_hash": "72d49ad7a5d5400394a68f5c644d6661f6131375ab0bcbbd6e67f05146999505",
+      "content_hash": "62719f153af184ff920e7e9d5cbf892d8b86ac6e571993622c5f4b087f8e1a55",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T17:12:28.002Z"
+      "persisted_at": "2026-11-24T17:23:15.160Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-fb55-htmlparser2-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-fb55-htmlparser2-learnings",
@@ -262745,9 +262760,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for fb55-htmlparser2-learnings",
       "repository": "fb55-htmlparser2-learnings",
       "source_version": "HEAD",
-      "content_hash": "574996368bd4ad75646e4934438873424aa5f232773f43422d5e0619023022ce",
+      "content_hash": "9ad7addd7b02d4f20e8ec9aca885b5ee0fdc7975210c666506112adc8af06d2e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T17:12:28.165Z"
+      "persisted_at": "2026-11-24T17:23:15.338Z"
     },
     "domain_intelligence-architecture-intelligence-openziti-zrok-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-openziti-zrok-learnings-core-invariants",
@@ -338488,6 +338503,96 @@
       "content_hash": "a6de9f69db07a5027a58b7e7103a8526d78a84903f19f61bd3009f74dd8aac7e",
       "domain_letter": "H",
       "persisted_at": "2026-11-24T17:14:29.996Z"
+    },
+    "rule-10315": {
+      "learning_id": "rule-10315",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10315,
+      "title": "build(deps-dev): Bump vitest from 5.1.0 to 5.1.1",
+      "source_url": "https://github.com/fb55/htmlparser2",
+      "source_version": "2134b2f1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T17:22:59.460Z"
+    },
+    "candidate_directive-build-deps-dev-bump-vitest-from-5-1-0-to-5-1-1": {
+      "item_id": "candidate_directive-build-deps-dev-bump-vitest-from-5-1-0-to-5-1-1",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QYLC-build-deps-dev-bump-vitest-from-5-1-0-to-5-1-1.md",
+      "title": "build(deps-dev): Bump vitest from 5.1.0 to 5.1.1",
+      "repository": "fb55-htmlparser2-learnings",
+      "source_version": "HEAD",
+      "content_hash": "dcfcfb0715b48a6c3d8036b8dfa02bd3ab3f61671e494aadf380de2f767b0f16",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T17:23:14.977Z"
+    },
+    "rule-10316": {
+      "learning_id": "rule-10316",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10316,
+      "title": "Merge branch 'master' of github.com:czy0729/Bangumi",
+      "source_url": "https://github.com/czy0729/Bangumi",
+      "source_version": "5fbbc77a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T17:23:03.382Z"
+    },
+    "candidate_directive-merge-branch-master-of-github-com-czy0729-bangumi": {
+      "item_id": "candidate_directive-merge-branch-master-of-github-com-czy0729-bangumi",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QZGL-merge-branch-master-of-github-com-czy0729-bangumi.md",
+      "title": "Merge branch 'master' of github.com:czy0729/Bangumi",
+      "repository": "czy0729-bangumi-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0549ca90beb3bcc0622e77ed0ea150fed336022fb21a97240e64f545b0750f1e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T17:23:16.101Z"
+    },
+    "rule-10317": {
+      "learning_id": "rule-10317",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10317,
+      "title": "bound RDB loader allocations by the source size",
+      "source_url": "https://github.com/dragonflydb/dragonfly",
+      "source_version": "c0b9d750",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T17:23:10.329Z"
+    },
+    "candidate_directive-bound-rdb-loader-allocations-by-the-source-size": {
+      "item_id": "candidate_directive-bound-rdb-loader-allocations-by-the-source-size",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QVDB-bound-rdb-loader-allocations-by-the-source-size.md",
+      "title": "bound RDB loader allocations by the source size",
+      "repository": "dragonflydb/dragonfly",
+      "source_version": "c0b9d750",
+      "content_hash": "465cb43056f29535ea91ab6bbf9c8a48c2f21926ff285cb29464f813a932c926",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-24T17:23:10.803Z"
+    },
+    "candidate_directive-server-bound-rdb-loader-allocations-by-the-source-size": {
+      "item_id": "candidate_directive-server-bound-rdb-loader-allocations-by-the-source-size",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-R04U-server-bound-rdb-loader-allocations-by-the-source-size.md",
+      "title": "server): bound RDB loader allocations by the source size",
+      "repository": "dragonflydb-dragonfly-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a97988d8a7799b5c7a3adcf9cd9ac8c704b41d811a6a07a07c48317311ff9f9d",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-24T17:23:16.977Z"
     }
   },
   "ai-builder-brain": {

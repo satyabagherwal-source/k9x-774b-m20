@@ -12750,3 +12750,6 @@
 | `CYCLE-20261124-ERKS` | `2026-11-24T17:13:46.012Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10313` | Yes (`d49c43ce...`) |
 | `CYCLE-20261124-EU27` | `2026-11-24T17:13:49.231Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10314` | Yes (`03ffe91e...`) |
 | `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T17:14:28.111Z` | `hf-aleph-alpha-kolibri-1.1` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-17A2D54E` [Domain D] | Yes (`398e3817...`) |
+| `CYCLE-20261124-QMSJ` | `2026-11-24T17:22:59.683Z` | `fb55/htmlparser2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10315` | Yes (`ce39d9c9...`) |
+| `CYCLE-20261124-QPTM` | `2026-11-24T17:23:03.610Z` | `czy0729/Bangumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10316` | Yes (`32cffb56...`) |
+| `CYCLE-20261124-QV66` | `2026-11-24T17:23:10.542Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10317` | Yes (`2a068f8f...`) |

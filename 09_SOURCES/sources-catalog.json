@@ -5303,10 +5303,10 @@
     "repository": "czy0729/Bangumi",
     "platform": "github",
     "sourceUrl": "https://github.com/czy0729/Bangumi",
-    "sourceVersion": "81c1e12a",
+    "sourceVersion": "5fbbc77a",
     "license": "MIT",
-    "contentHash": "e278f9799d92a572e861c287d008b3be494cf07c77215bb1dbd9de730b9a5a26",
-    "lastHarvestedAt": "2026-11-22T02:18:07.368Z",
+    "contentHash": "32cffb56a9d84ed878f637b229bb6fadc6dee7624fbe4dcef4a294074f83ef0c",
+    "lastHarvestedAt": "2026-11-24T17:23:03.614Z",
     "learningId": "learn-github-czy0729-bangumi"
   },
   "aquasecurity-tfsec": {
@@ -6123,10 +6123,10 @@
     "repository": "dragonflydb/dragonfly",
     "platform": "github",
     "sourceUrl": "https://github.com/dragonflydb/dragonfly",
-    "sourceVersion": "6cbd2241",
+    "sourceVersion": "c0b9d750",
     "license": "NOASSERTION",
-    "contentHash": "ff25fc6955f73718eaad256a49cbad41c83dca184601487e7e8557eaf03ce172",
-    "lastHarvestedAt": "2026-11-23T20:56:21.007Z",
+    "contentHash": "2a068f8f8239bafb7d2d6b8f2228056c07ad4f370a3f4afdb8d04e5fc4c10698",
+    "lastHarvestedAt": "2026-11-24T17:23:10.546Z",
     "learningId": "learn-github-dragonflydb-dragonfly"
   },
   "danielpetho-fancy": {
@@ -9363,10 +9363,10 @@
     "repository": "fb55/htmlparser2",
     "platform": "github",
     "sourceUrl": "https://github.com/fb55/htmlparser2",
-    "sourceVersion": "15801e74",
+    "sourceVersion": "2134b2f1",
     "license": "MIT",
-    "contentHash": "afecf835e4df7f05c9fab40587fca10621ec0ea28472ae4e90117b1169e3c5ba",
-    "lastHarvestedAt": "2026-11-20T17:12:10.570Z",
+    "contentHash": "ce39d9c9429da77159f539a91ecd9025786e4d202699cad5466a07a5c0b2c597",
+    "lastHarvestedAt": "2026-11-24T17:22:59.688Z",
     "learningId": "learn-github-fb55-htmlparser2"
   },
   "inikulin-parse5": {

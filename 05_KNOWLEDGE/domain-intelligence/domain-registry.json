@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T17:14:30.247Z",
+  "last_updated": "2026-11-24T17:23:17.153Z",
   "total_records": 2553,
   "domains": {
     "A": {
@@ -8386,8 +8386,8 @@
       "title": "Technical Construction Intelligence: dragonflydb/dragonfly Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dragonflydb-dragonfly-technical-construction-intelligence-dragonflydb-dragonfly-.md",
       "repository": "dragonflydb/dragonfly",
-      "content_hash": "058d26441d225142a3cb4e910b0b8052f89fff042dd6cd7fc192b5c7ff0cd886",
-      "created_at": "2026-11-23T20:56:21.385Z"
+      "content_hash": "c776c4058102642c4203f6309ab21ec5ef98fcd0273cd278a3fb892283b23d12",
+      "created_at": "2026-11-24T17:23:10.977Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-supersoniclabs-julia-1-learnings-core-invaria": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-supersoniclabs-julia-1-learnings-core-invaria",
@@ -8404,8 +8404,8 @@
       "title": "Technical Construction Intelligence: dragonflydb-dragonfly-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dragonflydb-dragonfly-learnings-technical-construction-intelligence-dragonflydb-.md",
       "repository": "dragonflydb-dragonfly-learnings",
-      "content_hash": "b0236ca6b20cce4741d2844c6c4109ad8a4e8970fd4ffcc05a284fa2d5aeecb8",
-      "created_at": "2026-11-23T20:56:26.293Z"
+      "content_hash": "1863b67529c7bfd965947164402a21226dde3b23ba221f415c474e0c1d6e2d33",
+      "created_at": "2026-11-24T17:23:17.153Z"
     },
     "domain_intelligence-research-knowledge-intelligence-comfy-org-wan-2-2-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-wan-2-2-core-invariants",
@@ -15788,8 +15788,8 @@
       "title": "Technical Construction Intelligence: czy0729/Bangumi Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-czy0729-bangumi-technical-construction-intelligence-czy0729-bangumi-core-invaria.md",
       "repository": "czy0729/Bangumi",
-      "content_hash": "a4e2b1a9fa254c280f323b30061f50539d563be54662a1cc246f965db3d64269",
-      "created_at": "2026-11-22T02:18:07.589Z"
+      "content_hash": "4bca2fade3b6459e66d0fe9c96f2c281ffc9983712d503e6856d2263020b5a58",
+      "created_at": "2026-11-24T17:23:04.030Z"
     },
     "domain_intelligence-content-information-intelligence-peerdb-io-peerdb-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-peerdb-io-peerdb-core-invariants",
@@ -15866,8 +15866,8 @@
       "title": "Technical Construction Intelligence: czy0729-bangumi-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-czy0729-bangumi-learnings-technical-construction-intelligence-czy0729-bangumi-le.md",
       "repository": "czy0729-bangumi-learnings",
-      "content_hash": "feb318205afa5612c435ee708adb986f44b7c6fe395afd2c4ee598981a60631b",
-      "created_at": "2026-11-22T02:18:39.930Z"
+      "content_hash": "36246cf4cc89ef3f9ca9889fe544e1f2210e5b98e698d5f98a5181cec75c13fe",
+      "created_at": "2026-11-24T17:23:16.278Z"
     },
     "domain_intelligence-research-knowledge-intelligence-intfloat-multilingual-e5-small-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-intfloat-multilingual-e5-small-core-invariants",
@@ -24910,8 +24910,8 @@
       "title": "Technical Construction Intelligence: fb55/htmlparser2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fb55-htmlparser2-technical-construction-intelligence-fb55-htmlparser2-core-invar.md",
       "repository": "fb55/htmlparser2",
-      "content_hash": "0dff6dc35ad5ddfefd463854b637717858ecbae8793b8613b54af1038aa28e05",
-      "created_at": "2026-11-20T17:12:10.918Z"
+      "content_hash": "1a6cc5b43032ce4fb0bddf9535827521c1cdb13f00dce0d2fd0957230df3fa62",
+      "created_at": "2026-11-24T17:23:00.114Z"
     },
     "domain_intelligence-architecture-intelligence-openziti-zrok-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-openziti-zrok-core-invariants",
@@ -24937,8 +24937,8 @@
       "title": "Technical Construction Intelligence: fb55-htmlparser2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fb55-htmlparser2-learnings-technical-construction-intelligence-fb55-htmlparser2-.md",
       "repository": "fb55-htmlparser2-learnings",
-      "content_hash": "72d49ad7a5d5400394a68f5c644d6661f6131375ab0bcbbd6e67f05146999505",
-      "created_at": "2026-11-20T17:12:28.002Z"
+      "content_hash": "62719f153af184ff920e7e9d5cbf892d8b86ac6e571993622c5f4b087f8e1a55",
+      "created_at": "2026-11-24T17:23:15.160Z"
     },
     "domain_intelligence-architecture-intelligence-openziti-zrok-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-openziti-zrok-learnings-core-invariants",

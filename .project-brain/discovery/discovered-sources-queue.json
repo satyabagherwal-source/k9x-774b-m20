@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T17:14:29.578Z",
+  "updated_at": "2026-11-24T17:23:15.868Z",
   "stats": {
-    "total_discovered": 8782,
-    "approved_pending_harvest": 8307,
+    "total_discovered": 8792,
+    "approved_pending_harvest": 8317,
     "harvested_count": 0,
     "rejected_count": 475,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8303,
+      "COMMUNITY_AND_EXPERT": 8313,
       "OFFICIAL_DOCUMENTATION": 269,
       "STANDARDS_AND_SPECIFICATIONS": 146,
       "ENGINEERING_BLOGS": 7,
@@ -189906,6 +189906,226 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md",
         "fileName": "zseven-w-openpencil-learnings.md"
+      }
+    },
+    "SRC-B43CACF4429D": {
+      "id": "SRC-B43CACF4429D",
+      "url": "https://github.com/vitest-dev/vitest/commits/v5.1.1/packages/vitest",
+      "title": "https://github.com/vitest-dev/vitest/commits/v5.1.1/packages/vitest",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T17:23:14.211Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-htmlparser2-learnings.md",
+        "fileName": "fb55-htmlparser2-learnings.md"
+      }
+    },
+    "SRC-4DCDE8AD1530": {
+      "id": "SRC-4DCDE8AD1530",
+      "url": "https://registry.npmjs.org/@es-joy/jsdoccomment/-/jsdoccomment-0.91.0.tgz",
+      "title": "https://registry.npmjs.org/@es-joy/jsdoccomment/-/jsdoccomment-0.91.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T17:23:14.345Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-htmlparser2-learnings.md",
+        "fileName": "fb55-htmlparser2-learnings.md"
+      }
+    },
+    "SRC-59AD53CB959F": {
+      "id": "SRC-59AD53CB959F",
+      "url": "https://registry.npmjs.org/@rolldown/binding-android-arm-eabi/-/binding-android-arm-eabi-1.2.16.tgz",
+      "title": "https://registry.npmjs.org/@rolldown/binding-android-arm-eabi/-/binding-android-arm-eabi-1.2.16.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T17:23:14.533Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-htmlparser2-learnings.md",
+        "fileName": "fb55-htmlparser2-learnings.md"
+      }
+    },
+    "SRC-CA735F887A89": {
+      "id": "SRC-CA735F887A89",
+      "url": "https://github.com/github/codeql-action/compare/v4.39.3...v4.39.4",
+      "title": "https://github.com/github/codeql-action/compare/v4.39.3...v4.39.4",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T17:23:14.686Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-htmlparser2-learnings.md",
+        "fileName": "fb55-htmlparser2-learnings.md"
+      }
+    },
+    "SRC-273C30EFF260": {
+      "id": "SRC-273C30EFF260",
+      "url": "https://registry/",
+      "title": "https://registry/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T17:23:14.740Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fb55-htmlparser2-learnings.md",
+        "fileName": "fb55-htmlparser2-learnings.md"
+      }
+    },
+    "SRC-AF7BBA239910": {
+      "id": "SRC-AF7BBA239910",
+      "url": "https://github.com/czy0729/Bangumi/pull/419",
+      "title": "https://github.com/czy0729/Bangumi/pull/419",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T17:23:15.642Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/czy0729-bangumi-learnings.md",
+        "fileName": "czy0729-bangumi-learnings.md"
+      }
+    },
+    "SRC-C11A4946C6FC": {
+      "id": "SRC-C11A4946C6FC",
+      "url": "https://github.com/czy0729/Bangumi/releases/download/8.42.2/bangumi_v8.42.2.ipa",
+      "title": "https://github.com/czy0729/Bangumi/releases/download/8.42.2/bangumi_v8.42.2.ipa",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T17:23:15.703Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/czy0729-bangumi-learnings.md",
+        "fileName": "czy0729-bangumi-learnings.md"
+      }
+    },
+    "SRC-371E41E2E3AD": {
+      "id": "SRC-371E41E2E3AD",
+      "url": "https://www.yuque.com/chenzhenyu-k0epm/znygb4/osqdpz?singleDoc=",
+      "title": "https://www.yuque.com/chenzhenyu-k0epm/znygb4/osqdpz?singleDoc=",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T17:23:15.758Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/czy0729-bangumi-learnings.md",
+        "fileName": "czy0729-bangumi-learnings.md"
+      }
+    },
+    "SRC-1877B2486617": {
+      "id": "SRC-1877B2486617",
+      "url": "https://czy0729.lanzoub.com/iWJJE4h1ickd",
+      "title": "https://czy0729.lanzoub.com/iWJJE4h1ickd",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T17:23:15.813Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/czy0729-bangumi-learnings.md",
+        "fileName": "czy0729-bangumi-learnings.md"
+      }
+    },
+    "SRC-11FBD01C54C4": {
+      "id": "SRC-11FBD01C54C4",
+      "url": "https://1819463884.share.123pan.cn/123pan/K0fQjv-13MH3",
+      "title": "https://1819463884.share.123pan.cn/123pan/K0fQjv-13MH3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T17:23:15.868Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/czy0729-bangumi-learnings.md",
+        "fileName": "czy0729-bangumi-learnings.md"
       }
     }
   }

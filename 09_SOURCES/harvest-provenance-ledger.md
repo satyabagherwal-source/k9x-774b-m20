@@ -12783,3 +12783,6 @@ Every entry in this ledger must capture:
 | `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `e11f9809` | Multi-dimensional audit evidence | 2026-11-24T17:13:46.016Z |
 | `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `3bfa11a6` | Multi-dimensional audit evidence | 2026-11-24T17:13:49.236Z |
 | `learn-dom-d-17a2d54e` | `project://hf-aleph-alpha-kolibri-1.1` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1.1-learnings.md` | 2026-11-24T17:14:28.111Z |
+| `learn-github-fb55-htmlparser2` | `https://github.com/fb55/htmlparser2` | `2134b2f1` | Multi-dimensional audit evidence | 2026-11-24T17:22:59.688Z |
+| `learn-github-czy0729-bangumi` | `https://github.com/czy0729/Bangumi` | `5fbbc77a` | Multi-dimensional audit evidence | 2026-11-24T17:23:03.614Z |
+| `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `c0b9d750` | Multi-dimensional audit evidence | 2026-11-24T17:23:10.546Z |

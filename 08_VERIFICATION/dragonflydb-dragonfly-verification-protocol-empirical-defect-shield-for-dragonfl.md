@@ -4,22 +4,22 @@
 {
   "source_repository": "dragonflydb/dragonfly",
   "source_url": "https://github.com/dragonflydb/dragonfly",
-  "source_version": "6cbd2241",
+  "source_version": "c0b9d750",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-23T20:56:21.230Z",
+  "timestamp": "2026-11-24T17:23:10.802Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dragonflydb-dragonfly",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly) (Revision: `6cbd2241`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-23T20:56:21.230Z`  
+> **Provenance**: Harvested from [dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly) (Revision: `c0b9d750`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-24T17:23:10.802Z`  
 > **Learning ID**: `learn-github-dragonflydb-dragonfly`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `dragonflydb/dragonfly` (Commit: `6cbd2241`)
+- **Target Repository**: `dragonflydb/dragonfly` (Commit: `c0b9d750`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T20:56:19.981Z  
+> **Harvest Timestamp**: 2026-11-24T17:23:09.409Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A modern replacement for Redis and Memcached
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 31921 stars
+- **Stars / Engagement**: 31920 stars
 
 ---
 
@@ -2332,1130 +2332,741 @@ class Segment {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e03772bd` (2026-11-23)
-**Commit Message**: fix(lua): port Valkey security fixes and lock the global environment (#8865)
+### Incident Patch 1: `9602dd5e` (2026-11-24)
+**Commit Message**: fix(server): bound RDB loader allocations by the source size (#8282)
 
-Port the cjson/strbuf/cmsgpack overflow fixes for CVE-2022-24834 and the
-cmsgpack Lua C API fix from Valkey, limit cmsgpack decode nesting to 50
-levels and fix the cjson integer conversion upper bound.
+* fix(server): bound RDB loader allocations by the source size
 
-Switch to the Dragonfly-5.4.9 Lua fork and use its read-only tables to make
-the global table, the library tables and the string metatable read-only, so
-scripts can not change state seen by later scripts. This replaces the
-protected rawset/setmetatable wrappers, which crashed on a non-table second
-argument. Script bodies are compiled as their own chunk in text mode, so no
-part of a body runs when it is loaded and bytecode is rejected.
+File-based loads never set source_limit_, so every RemainingBytes()
+guard was dead code: a crafted snapshot with a huge declared length
+caused an uncaught bad_alloc in the load fiber. Take the size from the
+opened file; cloud readers resolve it only during the first read and
+are sequential, so the loader pulls the limit in right after the RDB
+header instead of reading ahead.
 
-SCRIPT FLAGS now validates all flags before applying them, and script error
-replies use a fixed error type so error stats stay bounded.
+Add the missing bounds to FetchGenericString, FetchLzfStringObject
+(ratio-bounded, no absolute cap: legit snapshots carry LZF blobs
+beyond 512MB, see #5313) and the stream consumer group/PEL/consumer
+counts, sized by the minimum wire bytes per entry per RDB type, so
+valid files - including legacy streams - are never rejected. Also
+return rdb_file_corrupted instead of tripping a ReadAtLeast DCHECK
+when a bounded source ends mid-entry.
 
-Also update ServerFamilyTest.ExternalAuth to the bare user name ACL WHOAMI
-replies with since #8857.
+* fix(server): bound remaining RDB loader allocations
 
-Fixes #8864
+Address review: bound the zstd/LZ4 frame content size by the protocol's
+largest segment (kMaxCompressedBlobSize, rdb_extensions.h) before
+Reserve(), reject nested/stray compressed blob opcodes 
 
-Signed-off-by: Roman Gershman <[REDACTED_EMAIL]>
-
-**File**: `docs/differences.md` (modified, +6/-1)
+**File**: `src/server/detail/decompress.cc` (modified, +64/-39)
 ```diff
-@@ -30,9 +30,14 @@ the key has none, otherwise GT or LT alone decides. Redis rejects these combinat
- incompatible.
+@@ -19,6 +19,8 @@ using io::IoBuf;
+ using rdb::errc;
+ using namespace std;
  
- ## Lua
--We use lua 5.4.4 that has been released in 2022.
-+We use lua 5.4.9.
- That means we also support [lua integers](https://github.com/redis/redis/issues/5261).
- 
-+As in Valkey 7, the global environment is read-only: scripts can not create or change globals, or
-+change the library tables (`redis`, `string`, `cjson`, ...). Settings changed through library
-+functions, such as `cjson.encode_max_depth()`, still apply to later scripts.
-+`cjson.decode` and `cmsgpack.unpack` accept at most 50 levels of nested arrays and objects.
++constexpr size_t kInitialDecompressBuffer = 64 * 1024;
 +
- Script replies may nest tables at most 128 levels deep; a deeper table is replaced by the error
- `reached lua stack limit`. A table reached several times, such as a shared or cyclic one, is
- serialized once per reference, and a reply may expand to 2^20 elements beyond one per 16 bytes of
-```
-
-**File**: `src/core/interpreter.cc` (modified, +59/-110)
-```diff
-@@ -5,6 +5,7 @@
- #include "core/interpreter.h"
- 
- #include <absl/base/casts.h>
-+#include <absl/container/flat_hash_set.h>
- #include <absl/container/inlined_vector.h>
- #include <absl/strings/ascii.h>
- #include <absl/strings/str_cat.h>
-@@ -325,13 +326,61 @@ constexpr size_t kExtraReplyElements = 1 << 20;
- // Replaces a table whose elements do not fit in the reply's budget.
- constexpr string_view kReplySizeError = "ERR reached lua reply size limit";
- 
-+// Pops the value on top of the stack and assigns it to the global `name`. Bypasses the read-only
-+// protection of the global table (and its metamethods), so it must not be reachable from scripts.
-+void SetGlobalUnprotected(lua_State* lua, const char* name) {
-+  lua_pushglobaltable(lua);
-+  bool readonly = lua_isreadonlytable(lua, -1);
-+  lua_insert(lua, -2);  // Stack: _G value
-+  lua_pushstring(lua, name);
-+  lua_insert(lua, -2);  // Stack: _G name value
-+  lua_enablereadonlytable(lua, -3, 0);
-+  lua_rawset(lua, -3);
-+  lua_enablereadonlytable(lua, -1, readonly);
-+  lua_pop(lua, 1);
-+}
-+
-+// Marks the table on top of the stack, its metatable and all tables reachable from them read-only.
-+void ProtectTablesRecursively(lua_State* lua, absl::flat_hash_set<const void*>* visited) {
-+  if (!visited->insert(lua_topointer(lua, -1)).second)
-+    return;
-+
-+  CHECK(lua_checkstack(lua, 3));
-+  lua_enablereadonlytable(lua, -1, 1);
-+  if (lua_getmetatable(lua, -1)) {
-+    ProtectTablesRecursively(lua, visited);
-+    lua_pop(lua, 1);
-+  }
-+
-+  lua_pushnil(lua);
-+  while (lua_next(lua, -2) != 0) {
-+    if (lua_type(lua, -1) == LUA_TTABLE)
-+      ProtectTablesRecursively(lua, visited);
-+    lua_pop(lua, 1);
-+  }
-+}
-+
-+// Makes the global environment read-only, so a script can not change state seen by later scripts:
-+// the global table, every table reachable from it (the libraries) and the metatable of strings.
-+void ProtectGlobalState(lua_State* lua) {
-+  absl::flat_hash_set<const void*> visited;
-+  lua_pushglobaltable(lua);
-+  ProtectTablesRecursively(lua, &visited);
-+  lua_pop(lua, 1);
-+
-+  lua_pushliteral(lua, "");
-+  CHECK(lua_getmetatable(lua, -1));
-+  ProtectTablesRecursively(lua, &visited);
-+  lua_pop(lua, 2);
-+}
-+
- void SetGlobalArrayInternal(lua_State* lua, const char* name, Interpreter::SliceSpan args) {
-   lua_createtable(lua, args.size(), 0);
-   for (size_t j = 0; j < args.size(); j++) {
-     lua_pushlstring(lua, args[j].data(), args[j].size());
-     lua_rawseti(lua, -2, j + 1);
+ inline auto Unexpected(errc ev) {
+   return nonstd::make_unexpected(RdbError(ev));
+ }
+@@ -32,13 +34,13 @@ class ZstdDecompress : public DecompressImpl {
+     ZSTD_freeDCtx(dctx_);
    }
--  lua_setglobal(lua, name);
-+  SetGlobalUnprotected(lua, name);
+ 
+-  io::Result<io::IoBuf*> Decompress(std::string_view str);
++  io::Result<io::IoBuf*> Decompress(std::string_view str, size_t max_uncomp_size);
+ 
+  private:
+   ZSTD_DCtx* dctx_;
+ };
+ 
+-io::Result<io::IoBuf*> ZstdDecompress::Decompress(std::string_view str) {
++io::Result<io::IoBuf*> ZstdDecompress::Decompress(std::string_view str, size_t max_uncomp_size) {
+   // Prepare membuf memory to uncompressed string.
+   auto uncomp_size = ZSTD_getFrameContentSize(str.data(), str.size());
+   if (uncomp_size == ZSTD_CONTENTSIZE_UNKNOWN) {
+@@ -49,31 +51,52 @@ io::Result<io::IoBuf*> ZstdDecompress::Decompress(std::string_view str) {
+     LOG(ERROR) << "Invalid ZSTD compressed string";
+     return Unexpected(errc::invalid_encoding);
+   }
+-
+-  uncompressed_mem_buf_.Reserve(uncomp_size + 1);
+-
+-  // Uncompress string to membuf
+-  IoBuf::Bytes dest = uncompressed_mem_buf_.AppendBuffer();
+-  if (dest.size() < uncomp_size) {
+-    return Unexpected(errc::out_of_memory);
++  if (uncomp_size > max_uncomp_size) {
++    LOG(ERROR) << "Zstd frame content size " << uncomp_size << " exceeds the allowed maximum";
++    return Unexpected(errc::rdb_file_corrupted);
+   }
+-  size_t const d_size =
+-      ZSTD_decompressDCtx(dctx_, dest.data(), dest.size(), str.data(), str.size());
+-  if (d_size == 0 || d_size != uncomp_size) {
++  if (uncomp_size == 0) {
+     LOG(ERROR) << "Invalid ZSTD compressed string";
+     return Unexpected(errc::rdb_file_corrupted);
+   }
+-  uncompressed_mem_buf_.CommitWrite(d_size);
+ 
+-  // Add opcode of compressed blob end to membuf.
+-  dest = uncompressed_mem_buf_.AppendBuffer();
+-  if (dest.size() < 1) {
+-    return Unexpected(errc::out_of_memory);
++  uncompressed_mem_buf_.Reserve(std::min<size_t>(uncomp_size + 1, kInitialDecompressBuffer));
++
++  ZSTD_inBuffer in{str.data(), str.size(), 0};
++  while (true) {
++    IoBuf::Bytes dest = uncompressed_mem_buf_.AppendBuffer();
++    if (dest.empty()) {
++      if (!GrowBuffer(uncomp_size)) {
++        LOG(ERROR) << "Zstd frame decoded past the declared content size";
++        return Unexpected(errc::rdb_file_corrupted);
++      }
++      continue;
++    }
++
++    ZSTD_outBuffer out{dest.data(), dest.size(), 0};
++    size_t prev_in = in.pos;
++    size_t ret = ZSTD_decompressStream(dctx_, &out, &in);
++    if (ZSTD_isError(ret)) {
++      LOG(ERROR) << "Invalid ZSTD compressed string: " << ZSTD_getErrorName(ret);
++      return Unexpected(errc::rdb_file_corrupted);
++    }
++    uncompressed_mem_buf_.CommitWrite(out.pos);
++
++    if (out.pos == 0 && in.pos == prev_in) {
++      LOG(ERROR) << "Zstd decompression stalled";
++      return Unexpected(errc::rdb_file_corrupted);
++    }
++
++    if (ret == 0)
++      break;
++  }
++
++  if (in.pos != in.size || uncompressed_mem_buf_.InputLen() != uncomp_size) {
++    LOG(ERROR) << "Invalid ZSTD compressed string";
++    return Unexpected(errc::rdb_file_corrupted);
+   }
+-  dest[0] = RDB_OPCODE_COMPRESSED_BLOB_END;
+-  uncompressed_mem_buf_.CommitWrite(1);
+ 
+-  return &uncompressed_mem_buf_;
++  return AppendEndOpcode();
  }
  
- /* In case the error set into the Lua stack by PushError() was generated
-@@ -352,75 +401,6 @@ void LoadLibrary(lua_State* lua, const char* libname, lua_CFunction luafunc) {
-   lua_call(lua, 1, 0);
- }
+ class Lz4Decompress : public DecompressImpl {
+@@ -87,13 +110,13 @@ class Lz4Decompress : public DecompressImpl {
+     CHECK(!LZ4F_isError(result));
+   }
  
--// Returns true if the table at stack index idx is _G, its metatable, or any global table value.
--bool IsGlobalTableOrMetatable(lua_State* lua, int idx) {
--  lua_pushglobaltable(lua);
+-  io::Result<base::IoBuf*> Decompress(std::string_view str);
++  io::Result<base::IoBuf*> Decompress(std::string_view str, size_t max_uncomp_size);
+ 
+  private:
+   LZ4F_dctx* dctx_;
+ };
+ 
+-io::Result<base::IoBuf*> Lz4Decompress::Decompress(std::string_view data) {
++io::Result<base::IoBuf*> Lz4Decompress::Decompress(std::string_view data, size_t max_uncomp_size) {
+   LZ4F_frameInfo_t frame_info;
+   size_t frame_size = data.size();
+ 
+@@ -103,29 +126,35 @@ io::Result<base::IoBuf*> Lz4Decompress::Decompress(std::string_view data) {
+   if (LZ4F_isError(res)) {
+     LOG(ERROR) << "LZ4F_getFrameInfo failed with error " << LZ4F_getErrorName(res);
+     return Unexpected(errc::rdb_file_corrupted);
+-    ;
+   }
+ 
+   if (frame_info.contentSize == 0) {
+     LOG(ERROR) << "Missing frame content size";
+     return Unexpected(errc::rdb_file_corrupted);
+   }
 -
--  // Check if idx is _G itself.
--  if (lua_rawequal(lua, idx, -1)) {
--    lua_pop(lua, 1);
--    return true;
--  }
--
--  // Check if metatable of _G.
--  bool has_mt = lua_getmetatable(lua, -1);
--  if (has_mt) {
--    lua_remove(lua, -2);
--    bool eq = lua_rawequal(lua, idx, -1);
--    lua_pop(lua, 1);
--    if (eq) {
--      return true;
--    }
--  } else {
--    lua_pop(lua, 1);
--  }
--
--  // Check if idx is any table stored directly as a global value.
--  lua_pushglobaltable(lua);
--  lua_pushnil(lua);
--  while (lua_next(lua, -2) != 0) {
--    if (lua_type(lua, -1) == LUA_TTABLE && lua_rawequal(lua, idx, -1)) {
--      lua_pop(lua, 3);
--      return true;
--    }
--    lua_pop(lua, 1);
--  }
--
--  lua_pop(lua, 1);
--
--  return false;
--}
--
--// Protected replacement for rawset: blocks writes to _G or its metatable.
--int ProtectedRawset(lua_State* lua) {
--  int argc = lua_gettop(lua);
--  if (argc != 3 || lua_type(lua, 1) != LUA_TTABLE) {
--    lua_pushstring(lua, "rawset requires a table and two arguments");
--    return lua_error(lua);
--  }
--  if (IsGlobalTableOrMetatable(lua, 1)) {
--    lua_pushstring(lua, "Script attempted to access rawset with global environment");
--    return lua_error(lua);
--  }
--  lua_rawset(lua, 1);
--  return 1;
--}
--
--// Protected replacement for setmetatable: blocks replacing metatable of _G or its metatable.
--int ProtectedSetmetatable(lua_State* lua) {
--  int argc = lua_gettop(lua);
--  if (argc != 2 || lua_type(lua, 1) != LUA_TTABLE) {
--    lua_pushstring(lua, "setmetatable requires a table and one argument");
--    return lua_error(lua);
--  }
--  if (IsGlobalTableOrMetatable(lua, 1)) {
--    lua_pushstring(lua, "Script attempted to set metatable of global environment");
--    return lua_error(lua);
--  }
--  lua_setmetatable(lua, 1);
--  return 1;
--}
--
- void InitLua(lua_State* lua) {
-   Require(lua, "", luaopen_base);
-   Require(lua, LUA_TABLIBNAME, luaopen_table);
-@@ -458,17 +438,8 @@ void InitLua(lua_State* lua) {
-     const char code[] = R"(
- local dbg=debug
- local mt = {}
--local _orig_rawset=rawset
- setmetatable(_G, mt)
--mt._
+-  // reserve place for uncompressed data and end opcode
+-  size_t reserve = frame_info.contentSize + 1;
+-  uncompressed_mem_buf_.Reserve(reserve);
+-  IoBuf::Bytes dest = uncompressed_mem_buf_.AppendBuffer();
+-  if (dest.size() < reserve) {
+-    return Unexpected(errc::out_of_memory);
++  if (frame_info.contentSize > max_uncomp_size) {
++    LOG(ERROR) << "LZ4 frame content size " << frame_info.contentSize
++               << " exceeds the allowed maximum";
++    return Unexpected(errc::rdb_file_corrupted);
+   }
+ 
++  uncompressed_mem_buf_.Reserve(
++      std::min<size_t>(frame_info.contentSize + 1, kInitialDecompressBuffer));
++
+   // Un
 ```
 
-**File**: `src/core/interpreter_test.cc` (modified, +242/-59)
+**File**: `src/server/detail/decompress.h` (modified, +16/-1)
 ```diff
-@@ -29,6 +29,7 @@ ABSL_DECLARE_FLAG(uint64_t, lua_mem_gc_threshold);
+@@ -3,10 +3,12 @@
+ //
+ #pragma once
+ 
++#include <algorithm>
+ #include <memory>
+ 
+ #include "io/io.h"
+ #include "io/io_buf.h"
++#include "server/rdb_extensions.h"
  
  namespace dfly {
- using namespace std;
-+using testing::HasSubstr;
  
- class TestSerializer : public ObjectExplorer {
-  public:
-@@ -153,13 +154,12 @@ bool InterpreterTest::Execute(string_view script, size_t max_elements) {
+@@ -22,10 +24,23 @@ class DecompressImpl {
+   virtual ~DecompressImpl() {
+   }
  
- TEST_F(InterpreterTest, Basic) {
-   RunInline(R"(
--    function foo(n)
-+    return function(n)
-       return n,n+1
-     end)",
--            "code1");
-+            "code1", 1);
+-  virtual io::Result<io::IoBuf*> Decompress(std::string_view str) = 0;
++  virtual io::Result<io::IoBuf*> Decompress(std::string_view str, size_t max_uncomp_size) = 0;
  
--  int type = lua_getglobal(lua(), "foo");
--  ASSERT_EQ(LUA_TFUNCTION, type);
-+  ASSERT_EQ(LUA_TFUNCTION, lua_type(lua(), -1));
-   lua_pushnumber(lua(), 42);
-   lua_pcall(lua(), 1, 2, 0);
-   int val1 = lua_tointeger(lua(), -1);
-@@ -197,7 +197,7 @@ TEST_F(InterpreterTest, Basic) {
+  protected:
+   io::IoBuf uncompressed_mem_buf_;
++
++  bool GrowBuffer(size_t declared_size) {
++    if (uncompressed_mem_buf_.InputLen() >= declared_size)
++      return false;
++    uncompressed_mem_buf_.Reserve(uncompressed_mem_buf_.InputLen() + 1);
++    return !uncompressed_mem_buf_.AppendBuffer().empty();
++  }
++
++  io::IoBuf* AppendEndOpcode() {
++    uint8_t op = RDB_OPCODE_COMPRESSED_BLOB_END;
++    uncompressed_mem_buf_.WriteAndCommit(&op, 1);
++    return &uncompressed_mem_buf_;
++  }
+ };
  
- TEST_F(InterpreterTest, UnknownFunc) {
-   string_view code(R"(
--    function foo(n)
-+    local function foo(n)
-       return myunknownfunc(1, n)
-     end)");
+ }  // namespace detail
+```
+
+**File**: `src/server/rdb_extensions.h` (modified, +2/-0)
+```diff
+@@ -52,6 +52,8 @@ constexpr uint8_t RDB_OPCODE_COMPRESSED_ZSTD_BLOB_START = 201;
+ constexpr uint8_t RDB_OPCODE_COMPRESSED_LZ4_BLOB_START = 202;
+ constexpr uint8_t RDB_OPCODE_COMPRESSED_BLOB_END = 203;
  
-@@ -558,6 +558,117 @@ TEST_F(InterpreterTest, CjsonMaxDepth) {
-   EXPECT_EQ("bool(1)", ser_.res);
++constexpr size_t kMaxCompressedBlobSize = 2ULL << 30;
++
+ constexpr uint8_t RDB_OPCODE_JOURNAL_BLOB = 210;
+ 
+ // A full sync will continue to send information in journal blobs until the replica
+```
+
+**File**: `src/server/rdb_load.cc` (modified, +105/-11)
+```diff
+@@ -1255,6 +1255,9 @@ auto RdbLoaderBase::FetchBuf(size_t size, void* dest) -> Error {
+ 
+   next += to_copy;
+ 
++  if (mem_buf_ != &origin_mem_buf_)
++    return RdbError(errc::rdb_file_corrupted);
++
+   if (size + bytes_read_ > source_limit_) {
+     return Fail(errc::rdb_file_corrupted)
+            << "out of bound read " << size + bytes_read_ << " > " << source_limit_;
+@@ -1318,6 +1321,19 @@ size_t RdbLoaderBase::StrLen(const RdbVariant& tset) {
+   return 0;
  }
  
-+// Strings are encoded with growth checks, also when escapes make the output much longer.
-+TEST_F(InterpreterTest, CjsonEncodeEscapes) {
-+  ASSERT_TRUE(Execute(R"(
-+    for _, n in ipairs({1, 100, 10000, 100000}) do
-+      local s = string.rep('\0', n)
-+      local encoded = cjson.encode(s)
-+      assert(#encoded == n * 6 + 2, #encoded)
-+      assert(cjson.decode(encoded) == s)
-+      encoded = cjson.encode({string.rep('"\\/', n)})
-+      assert(#encoded == n * 6 + 4, #encoded)
-+    end
-+    local map = {s = string.rep('x', 70000), a = {'Some', 'String', 'Array'}, n = 100, b = true}
-+    local decoded = cjson.decode(cjson.encode(map))
-+    assert(decoded.s == map.s and decoded.a[3] == 'Array' and decoded.n == 100 and decoded.b)
-+    local ok, err = pcall(cjson.decode, '[1, 2')
-+    assert(not ok and err:find('at character 6', 1, true), err)
-+    return true
-+  )")) << error_;
-+  EXPECT_EQ("bool(1)", ser_.res);
++bool RdbLoaderBase::ExceedsRemainingInput(uint64_t n, std::string_view what,
++                                          size_t min_entry_bytes) {
++  DCHECK_GT(min_entry_bytes, 0u);
++  size_t remaining = RemainingBytes();
++  if (remaining == SIZE_MAX)
++    return false;
++  if (n > remaining / min_entry_bytes) {
++    LOG(ERROR) << "Bad " << what << " " << n << ", exceeds remaining input " << remaining;
++    return true;
++  }
++  return false;
 +}
 +
-+// Whole numbers become integers only when they fit into lua_Integer.
-+TEST_F(InterpreterTest, CjsonIntegerBounds) {
-+  EXPECT_TRUE(Execute(R"(
-+    local res = {}
-+    for _, s in ipairs({'9223372036854775808', '-9223372036854775808', '9223372036854774784',
-+                        '1e19', '-1e19', '42', '42.5'}) do
-+      table.insert(res, math.type(cjson.decode(s)))
-+    end
-+    return res
-+  )")) << error_;
-+  EXPECT_EQ("[str(float) str(integer) str(integer) str(float) str(float) str(integer) str(float)]",
-+            ser_.res);
-+}
-+
-+TEST_F(InterpreterTest, CmsgpackMaxDepth) {
-+  ASSERT_TRUE(Execute(R"(
-+    -- Arrays and maps with a single element, nested 'depth' times.
-+    local function nested_array(depth)
-+      return string.rep('\x91', depth) .. '\x01'
-+    end
-+    local function nested_map(depth)
-+      return string.rep('\x81\x01', depth) .. '\x01'
-+    end
-+    for _, nested in ipairs({nested_array, nested_map}) do
-+      local value = cmsgpack.unpack(nested(50))
-+      for i = 1, 50 do
-+        value = value[1]
-+      end
-+      assert(value == 1)
-+      for _, depth in ipairs({51, 1000, 100000}) do
-+        local ok, err = pcall(cmsgpack.unpack, nested(depth))
-+        assert(not ok and err:find('Too many nested data structures', 1, true), err)
-+      end
-+    end
-+
-+    -- The limit applies to each top level value, not to the sum of them.
-+    local offset, value = cmsgpack.unpack_one(nested_array(50) .. nested_array(50))
-+    assert(offset == 51 and type(value) == 'table')
-+    offset, value = cmsgpack.unpack_one(nested_array(50) .. nested_array(50), offset)
-+    assert(offset == -1 and type(value) == 'table')
-+    return true
-+  )")) << error_;
-+  EXPECT_EQ("bool(1)", ser_.res);
-+}
-+
-+TEST_F(InterpreterTest, CmsgpackRoundTrip) {
-+  ASSERT_TRUE(Execute(R"(
-+    local strs = {string.rep('x', 30), string.rep('x', 250), string.rep('x', 65530),
-+                  string.rep('x', 100000)}
-+    local big_array, big_map = {}, {}
-+    for i = 1, 100000 do
-+      big_array[i] = i
-+      big_map[tostring(i)] = i
-+    end
-+    local map = {s1 = strs[1], s2 = strs[2], s3 = strs[3], s4 = strs[4], d = 0.1, i1 = 1,
-+                 i2 = 2^40, i3 = -3147483648, a1 = {1, 2, 3}, a2 = big_array, m = big_map,
-+                 b = false}
-+    local decoded = cmsgpack.unpack(cmsgpack.pack(map))
-+    for k, v in pairs(map) do
-+      if type(v) ~= 'table' then
-+        assert(decoded[k] == v, k)
-+      end
-+    end
-+    assert(#decoded.a2 == 100000 and decoded.a2[100000] == 100000)
-+    assert(decoded.m['100000'] == 100000)
-+
-+    local packed = cmsgpack.pack(strs[1], strs[2], strs[3], strs[4])
-+    local offset, obj = 0
-+    for i = 1, 4 do
-+      offset, obj = cmsgpack.unpack_limit(packed, 1, offset)
-+      assert(obj == strs[i], i)
-+    end
-+    assert(offset == -1)
-+
-+    local ok, err = pcall(cmsgpack.unpack_limit, packed, -1, 0)
-+    assert(not ok and err:find('offset of 0 and limit of -1', 1, true), err)
-+    ok, err = pcall(cmsgpack.unpack_one, packed, #packed + 1)
-+    assert(not ok a
-```
-
-**File**: `src/external_libs.cmake` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- add_third_party(
-   lua
-   GIT_REPOSITORY https://github.com/dragonflydb/lua
--  GIT_TAG Dragonfly-5.4.6a
-+  GIT_TAG Dragonfly-5.4.9
-   CONFIGURE_COMMAND echo
-   BUILD_IN_SOURCE 1
-   BUILD_COMMAND ${DFLY_TOOLS_MAKE} all
-```
-
-**File**: `src/redis/lua/cjson/lua_cjson.c` (modified, +17/-17)
-```diff
-@@ -39,6 +39,7 @@
- #include <assert.h>
- #include <string.h>
- #include <math.h>
-+#include <stdint.h>
- #include <limits.h>
- #include <lua.h>
- #include <lauxlib.h>
-@@ -139,13 +140,13 @@ typedef struct {
- 
- typedef struct {
-     json_token_type_t type;
--    int index;
-+    size_t index;
-     union {
-         const char *string;
-         double number;
-         int boolean;
-     } value;
--    int string_len;
-+    size_t string_len;
- } json_token_t;
- 
- static const char *char2escape[256] = {
-@@ -466,27 +467,24 @@ static void json_encode_exception(lua_State *l, json_config_t *cfg, strbuf_t *js
- static void json_append_string(lua_State *l, strbuf_t *json, int lindex)
- {
-     const char *escstr;
--    int i;
-     const char *str;
--    size_t len;
-+    size_t i, len;
- 
-     str = lua_tolstring(l, lindex, &len);
- 
--    /* Worst case is len * 6 (all unicode escapes).
--     * This buffer is reused constantly for small strings
--     * If there are any excess pages, they won't be hit anyway.
--     * This gains ~5% speedup. */
--    strbuf_ensure_empty_length(json, len * 6 + 2);
-+    if (len > SIZE_MAX - 3)
-+        abort(); /* Overflow check */
-+    strbuf_ensure_empty_length(json, len + 2);
- 
-     strbuf_append_char_unsafe(json, '\"');
-     for (i = 0; i < len; i++) {
-         escstr = char2escape[(unsigned char)str[i]];
-         if (escstr)
-             strbuf_append_string(json, escstr);
-         else
--            strbuf_append_char_unsafe(json, str[i]);
-+            strbuf_append_char(json, str[i]);
+ auto RdbLoaderBase::FetchGenericString() -> io::Result<string> {
+   bool isencoded;
+   size_t len;
+@@ -1338,6 +1354,10 @@ auto RdbLoaderBase::FetchGenericString() -> io::Result<string> {
      }
--    strbuf_append_char_unsafe(json, '\"');
-+    strbuf_append_char(json, '\"');
- }
+   }
  
- /* Find the size of the array on the top of the Lua stack
-@@ -709,7 +707,7 @@ static int json_encode(lua_State *l)
-     strbuf_t local_encode_buf;
-     strbuf_t *encode_buf;
-     char *json;
--    int len;
-+    size_t len;
- 
-     luaL_argcheck(l, lua_gettop(l) == 1, 1, "expected 1 argument");
- 
-@@ -1112,8 +1110,8 @@ static void json_throw_parse_error(lua_State *l, json_parse_t *json,
-         found = json_token_type_name[token->type];
- 
-     /* Note: token->index is 0 based, display starting from 1 */
--    luaL_error(l, "Expected %s but found %s at character %d",
--               exp, found, token->index + 1);
-+    luaL_error(l, "Expected %s but found %s at character %I",
-+               exp, found, (lua_Integer)(token->index + 1));
- }
- 
- static inline void json_decode_ascend(json_parse_t *json)
-@@ -1234,9 +1232,11 @@ static void json_process_value(lua_State *l, json_parse_t *json,
-         double num = token->value.number;
-         double intpart;
-         /* Convert to integer when possible for Lua 5.1 compatibility.
--         * This ensures tostring(cjson.decode('{"id":42}').id) returns "42" not "42.0" */
--        if (modf(num, &intpart) == 0.0 &&
--            intpart >= LUA_MININTEGER && intpart <= LUA_MAXINTEGER) {
-+         * This ensures tostring(cjson.decode('{"id":42}').id) returns "42" not "42.0".
-+         * LUA_MAXINTEGER rounds up to 2^63 as a double, so the upper bound must be exclusive,
-+         * otherwise 2^63 passes the check and the cast below is undefined behavior. */
-+        if (modf(num, &intpart) == 0.0 && intpart >= (double)LUA_MININTEGER &&
-+            intpart < -(double)LUA_MININTEGER) {
-             lua_pushinteger(l, (lua_Integer)intpart);
-         } else {
-             lua_pushnumber(l, num);
-```
-
-**File**: `src/redis/lua/cjson/strbuf.c` (modified, +27/-81)
-```diff
-@@ -26,6 +26,7 @@
- #include <stdlib.h>
- #include <stdarg.h>
- #include <string.h>
-+#include <stdint.h>
- 
- #include "strbuf.h"
- 
-@@ -38,22 +39,22 @@ static void die(const char *fmt, ...)
-     va_end(arg);
-     fprintf(stderr, "\n");
- 
--    exit(-1);
-+    abort();
- }
- 
--void strbuf_init(strbuf_t *s, int len)
-+void strbuf_init(strbuf_t *s, size_t len)
- {
--    int size;
-+    size_t size;
- 
--    if (len <= 0)
-+    if (!len)
-         size = STRBUF_DEFAULT_SIZE;
-     else
--        size = len + 1;         /* \0 terminator */
--
-+        size = len + 1;
-+    if (size < len)
-+        die("Overflow, len: %zu", len);
-     s->buf = NULL;
-     s->size = size;
-     s->length = 0;
--    s->increment = STRBUF_DEFAULT_INCREMENT;
-     s->dynamic = 0;
-     s->reallocs = 0;
-     s->debug = 0;
-@@ -65,7 +66,7 @@ void strbuf_init(strbuf_t *s, int len)
-     strbuf_ensure_null(s);
- }
- 
--strbuf_t *strbuf_new(int len)
-+strbuf_t *strbuf_new(size_t len)
- {
-     strbuf_t *s;
- 
-@@ -81,20 +82,10 @@ strbuf_t *strbuf_new(int len)
-     return s;
- }
- 
--void strbuf_set_increment(strbuf_t *s, int increment)
--{
--    /* Increment > 0:  Linear buffer growth rate
--     * Increment < -1: Exponential buffer growth rate */
--    if (increment == 0 || increment == -1)
--        die("BUG: Invalid string increment");
--
--    s->increment = increment;
--}
--
- static inline void debug_stats(strbuf_t *s)
- {
-     if (s->debug) {
--        fprintf(stderr, "strbuf(%lx) reallocs: %d, length: %d, size: %d\n",
-+        fprintf(stderr, "strbuf(%lx) reallocs: %d, length: %zd, size: %zd\n",
-                 (long)s, s->reallocs, s->length, s->size);
-     }
- }
-@@ -113,7 +104,7 @@ void strbuf_free(strbuf_t *s)
-         free(s);
- }
- 
--char *strbuf_free_to_string(strbuf_t *s, int *len)
-+char *strbuf_free_to_string(strbuf_t *s, size_t *len)
- {
-     char *buf;
- 
-@@ -131,57 +122,61 @@ char *strbuf_free_to_string(strbuf_t *s, int *len)
-     return buf;
- }
- 
--static int calculate_new_size(strbuf_t *s, int len)
-+static size_t calculate_new_size(strbuf_t *s, size_t len)
- {
--    int reqsize, newsize;
-+    size_t reqsize, newsize;
- 
-     if (len <= 0)
-         die("BUG: Invalid strbuf length requested");
- 
-     /* Ensure there is room for optional NULL termination */
-     reqsize = len + 1;
-+    if (reqsize < len)
-+        die("Overflow, len: %zu", len);
- 
-     /* If the user has requested to shrink the buffer, do it exactly */
-     if (s->size > reqsize)
-         return reqsize;
- 
-     newsize = s->size;
--    if (s->increment < 0) {
-+    if (reqsize >= SIZE_MAX / 2) {
-+        newsize = reqsize;
-+    } else {
-         /* Exponential sizing */
-         while (newsize < reqsize)
--            newsize *= -s->increment;
--    } else {
--        /* Linear sizing */
--        newsize = ((newsize + s->increment - 1) / s->increment) * s->increment;
-+            newsize *= 2;
-     }
- 
-+    if (newsize < reqsize)
-+        die("BUG: strbuf length would overflow, len: %zu", len);
++  if (ExceedsRemainingInput(len, "string length")) {
++    return Unexpected(errc::rdb_file_corrupted);
++  }
 +
-     return newsize;
- }
+   string res;
  
+   if (len > 0) {
+@@ -1360,11 +1380,18 @@ auto RdbLoaderBase::FetchLzfStringObject() -> io::Result<string> {
+   SET_OR_UNEXPECT(LoadLen(NULL), clen);
+   SET_OR_UNEXPECT(LoadLen(NULL), len);
  
- /* Ensure strbuf can handle a string length bytes long (ignoring NULL
-  * optional termination). */
--void strbuf_resize(strbuf_t *s, int len)
-+void strbuf_resize(strbuf_t *s, size_t len)
- {
--    int newsize;
-+    size_t newsize;
+-  // TODO serialization and deserialization for data > 512 MB should be done via chunks
+   if (len <= clen || clen == 0) {
+     LOG(ERROR) << "Bad compressed string";
+     return Unexpected(rdb::rdb_file_corrupted);
+   }
++  constexpr uint64_t kMaxLzfExpansion = 128;
++  if (len / kMaxLzfExpansion > clen) {
++    LOG(ERROR) << "Bad uncompressed length " << len << " for compressed length " << clen;
++    return Unexpected(errc::rdb_file_corrupted);
++  }
++  if (ExceedsRemainingInput(clen, "compressed length")) {
++    return Unexpected(errc::rdb_file_corrupted);
++  }
  
-     newsize = calculate_new_size(s, len);
+   if (mem_buf_->InputLen() >= clen) {
+     cbuf = mem_buf_->InputBuffer().data();
+@@ -2042,8 +2069,16 @@ auto RdbLoaderBase::ReadStreams(int rdbtype) -> io::Result<OpaqueObj> {
+   }
  
-     if (s->debug > 1) {
--        fprintf(stderr, "strbuf(%lx) resize: %d => %d\n",
-+        fprintf(stderr, "strbuf(%lx) resize: %zd => %zd\n",
-                 (long)s, s->size, newsize);
-     }
- 
-     s->size = newsize;
-     s->buf = realloc(s->buf, s->size);
-     if (!s->buf)
--        die("Out of memory");
-+        die("Out of memory, len: %zu", len);
-     s->reallocs++;
- }
- 
- void strbuf_append_string(strbuf_t *s, const char *str)
- {
--    int space, i;
-+    size_t i, space;
- 
-     space = strbuf_empty_length(s);
- 
-@@ -197,55 +192,6 @@ void strbuf_append_string(strbuf_t *s, const char *str)
-     }
- }
- 
--/* strbuf_append_fmt() should only be used when an upper bound
-- * is known for the output string. */
--void strbuf_append_fmt(strbuf_t *s, int len, const char *fmt, ...)
--{
--    va_list arg;
--    int fmt_len;
--
--    strbuf_ensure_empty_length(s, len);
--
--    va_start(arg, fmt);
--    fmt_len = vsnprintf(s->buf + s->length, len, fmt, arg);
--    va_end(arg);
--
--    if (fmt_len < 0)
--        die("BUG: Unable to convert number");  /* This should never happen.. */
--
--    s->length += fmt_len;
--}
--
--/* strbuf_append_fmt_retry() can be used when the there is no known
-- * upper bound for the output string. */
--void strbuf_append_fmt_retry(strbuf_t *s, const char *fmt, ...)
--{
--    va_list arg;
--    int fmt_len, try;
--    int empty_len;
--
--    /* If the first attempt to append fails, resize the buffer appropriately
--     * and try again */
--    for (try = 0; ; try++) {
--        va_start(arg, fmt);
--        /* Append the new formatted string */
--        /* fmt_len is the length of the string required, excluding the
--         * trailing NULL */
--        empty_len = strbuf_empty_length(s);
--        /* Add 1 since there is also space to 
-```
-
-**File**: `src/redis/lua/cjson/strbuf.h` (modified, +19/-27)
-```diff
-@@ -27,15 +27,13 @@
- 
- /* Size: Total bytes allocated to *buf
-  * Length: String length, excluding optional NULL terminator.
-- * Increment: Allocation increments when resizing the string buffer.
-  * Dynamic: True if created via strbuf_new()
-  */
- 
- typedef struct {
-     char *buf;
--    int size;
--    int length;
--    int increment;
-+    size_t size;
-+    size_t length;
-     int dynamic;
-     int reallocs;
-     int debug;
-@@ -44,32 +42,26 @@ typedef struct {
- #ifndef STRBUF_DEFAULT_SIZE
- #define STRBUF_DEFAULT_SIZE 1023
- #endif
--#ifndef STRBUF_DEFAULT_INCREMENT
--#define STRBUF_DEFAULT_INCREMENT -2
--#endif
- 
- /* Initialise */
--extern strbuf_t *strbuf_new(int len);
--extern void strbuf_init(strbuf_t *s, int len);
--extern void strbuf_set_increment(strbuf_t *s, int increment);
-+extern strbuf_t *strbuf_new(size_t len);
-+extern void strbuf_init(strbuf_t *s, size_t len);
- 
- /* Release */
- extern void strbuf_free(strbuf_t *s);
--extern char *strbuf_free_to_string(strbuf_t *s, int *len);
-+extern char *strbuf_free_to_string(strbuf_t *s, size_t *len);
- 
- /* Management */
--extern void strbuf_resize(strbuf_t *s, int len);
--static int strbuf_empty_length(strbuf_t *s);
--static int strbuf_length(strbuf_t *s);
--static char *strbuf_string(strbuf_t *s, int *len);
--static void strbuf_ensure_empty_length(strbuf_t *s, int len);
-+extern void strbuf_resize(strbuf_t *s, size_t len);
-+static size_t strbuf_empty_length(strbuf_t *s);
-+static size_t strbuf_length(strbuf_t *s);
-+static char *strbuf_string(strbuf_t *s, size_t *len);
-+static void strbuf_ensure_empty_length(strbuf_t *s, size_t len);
- static char *strbuf_empty_ptr(strbuf_t *s);
--static void strbuf_extend_length(strbuf_t *s, int len);
-+static void strbuf_extend_length(strbuf_t *s, size_t len);
- 
- /* Update */
--extern void strbuf_append_fmt(strbuf_t *s, int len, const char *fmt, ...);
--extern void strbuf_append_fmt_retry(strbuf_t *s, const char *format, ...);
--static void strbuf_append_mem(strbuf_t *s, const char *c, int len);
-+static void strbuf_append_mem(strbuf_t *s, const char *c, size_t len);
- extern void strbuf_append_string(strbuf_t *s, const char *str);
- static void strbuf_append_char(strbuf_t *s, const char c);
- static void strbuf_ensure_null(strbuf_t *s);
-@@ -87,12 +79,12 @@ static inline int strbuf_allocated(strbuf_t *s)
- 
- /* Return bytes remaining in the string buffer
-  * Ensure there is space for a NULL terminator. */
--static inline int strbuf_empty_length(strbuf_t *s)
-+static inline size_t strbuf_empty_length(strbuf_t *s)
- {
-     return s->size - s->length - 1;
- }
- 
--static inline void strbuf_ensure_empty_length(strbuf_t *s, int len)
-+static inline void strbuf_ensure_empty_length(strbuf_t *s, size_t len)
- {
-     if (len > strbuf_empty_length(s))
-         strbuf_resize(s, s->length + len);
-@@ -103,12 +95,12 @@ static inline char *strbuf_empty_ptr(strbuf_t *s)
-     return s->buf + s->length;
- }
- 
--static inline void strbuf_extend_length(strbuf_t *s, int len)
-+static inline void strbuf_extend_length(strbuf_t *s, size_t len)
- {
-     s->length += len;
- }
- 
--static inline int strbuf_length(strbuf_t *s)
-+static inline size_t strbuf_length(strbuf_t *s)
- {
-     return s->length;
- }
-@@ -124,14 +116,14 @@ static inline void strbuf_append_char_unsafe(strbuf_t *s, const char c)
-     s->buf[s->length++] = c;
- }
- 
--static inline void strbuf_append_mem(strbuf_t *s, const char *c, int len)
-+static inline void strbuf_append_mem(strbuf_t *s, const char *c, size_t len)
- {
-     strbuf_ensure_empty_length(s, len);
-     memcpy(s->buf + s->length, c, len);
-     s->length += len;
- }
- 
--static inline void strbuf_append_mem_unsafe(strbuf_t *s, const char *c, int len)
-+static inline void strbuf_append_mem_unsafe(strbuf_t *s, const char *c, size_t len)
- {
-     memcpy(s->buf + s->length, c, len);
-     s->length += len;
-@@ -142,7 +134,7 @@ static inline void strbuf_ensure_null(strbuf_t *s)
-     s->buf[s->length] = 0;
- }
- 
--static inline char *strbuf_string(strbuf_t *s, int *len)
-+static inline char *strbuf_string(strbuf_t *s, size_t *len)
- {
-     if (len)
-         *len = s->length;
-```
-
-**File**: `src/redis/lua/cmsgpack/lua_cmsgpack.c` (modified, +43/-16)
-```diff
-@@ -18,6 +18,12 @@
-     #define LUACMSGPACK_MAX_NESTING  16 /* Max tables nesting. */
- #endif
- 
-+/* Max nesting of arrays and maps when decoding. Decoding recurses once per level, so the limit
-+ * bounds the stack use of the Dragonfly fiber running the script. Matches the cjson limit. */
-+#ifndef LUACMSGPACK_MAX_DECODE_NESTING
-+    #define LUACMSGPACK_MAX_DECODE_NESTING  50
-+#endif
+   /* Consumer groups loading */
++  constexpr size_t kMinCgroupWireBytes = 5;
++  constexpr size_t kMinPelWireBytes = 25;
++  constexpr size_t kMinConsumerWireBytes = 10;
++  constexpr size_t kMinNackWireBytes = 16;
 +
- /* Check if float or double can be an integer without loss of precision */
- #define IS_INT_TYPE_EQUIVALENT(x, T) (!isinf(x) && (T)(x) == (x))
+   uint64_t cgroups_count;
+   SET_OR_UNEXPECT(LoadLen(nullptr), cgroups_count);
++  if (ExceedsRemainingInput(cgroups_count, "stream cgroups count", kMinCgroupWireBytes)) {
++    return Unexpected(errc::rdb_file_corrupted);
++  }
+   load_trace->stream_trace->cgroup.resize(cgroups_count);
  
-@@ -117,7 +123,9 @@ mp_buf *mp_buf_new(lua_State *L) {
+   for (size_t i = 0; i < cgroups_count; ++i) {
+@@ -2075,6 +2110,9 @@ auto RdbLoaderBase::ReadStreams(int rdbtype) -> io::Result<OpaqueObj> {
+     uint64_t pel_size;
+     SET_OR_UNEXPECT(LoadLen(nullptr), pel_size);
  
- void mp_buf_append(lua_State *L, mp_buf *buf, const unsigned char *s, size_t len) {
-     if (buf->free < len) {
--        size_t newsize = (buf->len+len)*2;
-+        size_t newsize = buf->len+len;
-+        if (newsize < buf->len || newsize >= SIZE_MAX/2) abort();
-+        newsize *= 2;
- 
-         buf->b = (unsigned char*)mp_realloc(L, buf->b, buf->len + buf->free, newsize);
-         buf->free = newsize - buf->len;
-@@ -144,17 +152,20 @@ void mp_buf_free(lua_State *L, mp_buf *buf) {
- #define MP_CUR_ERROR_NONE   0
- #define MP_CUR_ERROR_EOF    1   /* Not enough data to complete operation. */
- #define MP_CUR_ERROR_BADFMT 2   /* Bad data format */
-+#define MP_CUR_ERROR_NESTING 3  /* Arrays and maps nested too deep */
- 
- typedef struct mp_cur {
-     const unsigned char *p;
-     size_t left;
-     int err;
-+    int depth;  /* Nesting level of the array or map being decoded. */
- } mp_cur;
- 
- void mp_cur_init(mp_cur *cursor, const unsigned char *s, size_t len) {
-     cursor->p = s;
-     cursor->left = len;
-     cursor->err = MP_CUR_ERROR_NONE;
-+    cursor->depth = 0;
- }
- 
- #define mp_cur_consume(_c,_len) do { _c->p += _len; _c->left -= _len; } while(0)
-@@ -173,7 +184,7 @@ void mp_cur_init(mp_cur *cursor, const unsigned char *s, size_t len) {
- 
- void mp_encode_bytes(lua_State *L, mp_buf *buf, const unsigned char *s, size_t len) {
-     unsigned char hdr[5];
--    int hdrlen;
-+    size_t hdrlen;
- 
-     if (len < 32) {
-         hdr[0] = 0xa0 | (len&0xff); /* fix raw */
-@@ -220,7 +231,7 @@ void mp_encode_double(lua_State *L, mp_buf *buf, double d) {
- 
- void mp_encode_int(lua_State *L, mp_buf *buf, int64_t n) {
-     unsigned char b[9];
--    int enclen;
-+    size_t enclen;
- 
-     if (n >= 0) {
-         if (n <= 127) {
-@@ -290,9 +301,9 @@ void mp_encode_int(lua_State *L, mp_buf *buf, int64_t n) {
-     mp_buf_append(L,buf,b,enclen);
- }
- 
--void mp_encode_array(lua_State *L, mp_buf *buf, int64_t n) {
-+void mp_encode_array(lua_State *L, mp_buf *buf, uint64_t n) {
-     unsigned char b[5];
--    int enclen;
-+    size_t enclen;
- 
-     if (n <= 15) {
-         b[0] = 0x90 | (n & 0xf);    /* fix array */
-@@ -313,7 +324,7 @@ void mp_encode_array(lua_State *L, mp_buf *buf, int64_t n) {
-     mp_buf_append(L,buf,b,enclen);
- }
- 
--void mp_encode_map(lua_State *L, mp_buf *buf, int64_t n) {
-+void mp_encode_map(lua_State *L, mp_buf *buf, uint64_t n) {
-     unsigned char b[5];
-     int enclen;
- 
-@@ -435,6 +446,7 @@ int table_is_an_array(lua_State *L) {
- 
-     stacktop = lua_gettop(L);
- 
-+    luaL_checkstack(L, 2, "in function table_is_an_array");
-     lua_pushnil(L);
-     while(lua_next(L,-2)) {
-         /* Stack: ... key value */
-@@ -552,6 +564,11 @@ void mp_decode_to_lua_array(lua_State *L, mp_cur *c, size_t len) {
-     assert(len <= UINT_MAX);
-     int index = 1;
- 
-+    if (c->depth >= LUACMSGPACK_MAX_DECODE_NESTING) {
-+        c->err = MP_CUR_ERROR_NESTING;
-+        return;
++    if (ExceedsRemainingInput(pel_size, "stream pel count", kMinPelWireBytes)) {
++      return Unexpected(errc::rdb_file_corrupted);
 +    }
-+    c->depth++;
-     lua_newtable(L);
-     luaL_checkstack(L, 1, "in function mp_decode_to_lua_array");
-     while(len--) {
-@@ -560,10 +577,16 @@ void mp_decode_to_lua_array(lua_State *L, mp_cur *c, size_t len) {
-         if (c->err) return;
-         lua_settable(L,-3);
-     }
-+    c->depth--;
- }
+     cgroup.pel_arr.resize(pel_size);
  
- void mp_decode_to_lua_hash(lua_State *L, mp_cur *c, size_t len) {
-     assert(len <= UINT_MAX);
-+    if (c->depth >= LUACMSGPACK_MAX_DECODE_NESTING) {
-+        c->err = MP_CUR_ERROR_NESTING;
-+        return;
+     for (size_t j = 0; j < pel_size; ++j) {
+@@ -2093,6 +2131,9 @@ auto RdbLoaderBase::ReadStreams(int rdbtype) -> io::Result<OpaqueObj> {
+      * consumers and their local PELs. */
+     uint64_t consumers_num;
+     SET_OR_UNEXPECT(LoadLen(nullptr), consumers_num);
++    if (ExceedsRemainingInput(consumers_num, "stream consumers count", kMinConsumerWireBytes)) {
++      return Unexpected(errc::rdb_file_corrupted);
 +    }
-+    c->depth++;
-     lua_newtable(L);
-     while(len--) {
-         mp_decode_to_lua_type(L,c); /* key */
-@@ -572,6 +595,7 @@ void mp_decode_to_lua_hash(lua_State *L, mp_cur *c, size_t len) {
-         if (c->err) return;
-         lua_settable(L,-3);
-     }
-+    c->depth--;
+     cgroup.cons_arr.resize(consumers_num);
+ 
+     for (size_t j = 0; j < consumers_num; ++j) {
+@@ -2113,6 +2154,9 @@ auto RdbLoaderBase::ReadStreams(int rdbtype) -> io::Result<OpaqueObj> {
+       /* Load the PEL about entries owned by this specific
+        * consumer. */
+       SET_OR_UNEXPECT(LoadLen(nullptr), pel_size);
++      if (ExceedsRemainingInput(pel_size, "stream consumer pel count", kMinNackWireBytes)) {
++        return Unexpected(errc::rdb_file_corrupted);
++      }
+       consumer.nack_arr.resize(pel_size);
+       for (size_t k = 0; k < pel_size; ++k) {
+         auto& nack = consumer.nack_arr[k];
+@@ -2286,6 +2330,9 @@ auto RdbLoaderBase::ReadSBFImpl(bool filter_is_chunked) -> io::Result<OpaqueObj>
+       SET_OR_UNEXPECT(LoadLen(nullptr), total_size);
+       if (total_size == 0)
+         return Unexpected(errc::rdb_file_corrupted);
++      if (ExceedsRemainingInput(total_size, "sbf filter size")) {
++        return Unexpected(errc::rdb_file_corrupted);
++      }
+ 
+       // This size is fixed and never changes. It acts as a limit of how much to read.
+       filter_data.resize(total_size);
+@@ -2361,6 +2408,8 @@ auto RdbLoaderBase::ReadTOPK() -> io::Result<OpaqueObj> {
+   // Validate heap size doesn't exceed k (max items we track)
+   if (heap_size > k)
+     return Unexpected(errc::rdb_file_corrupted);
++  if (ExceedsRemainingInput(heap_size, "topk heap size", 2))
++    return Unexpected(errc::rdb_file_corrupted);
+ 
+   res.heap_items.reserve(heap_size);
+
+```
+
+**File**: `src/server/rdb_load.h` (modified, +9/-1)
+```diff
+@@ -3,6 +3,7 @@
+ //
+ #pragma once
+ 
++#include <functional>
+ #include <source_location>
+ #include <system_error>
+ 
+@@ -286,7 +287,9 @@ class RdbLoaderBase {
+ 
+   Error EnsureReadInternal(size_t min_to_read);
+ 
+-  // Upper bound on bytes a bounded source can still supply; SIZE_MAX when unbounded (file load).
++  bool ExceedsRemainingInput(uint64_t n, std::string_view what, size_t min_entry_bytes = 1);
++
++  // Upper bound on bytes a bounded source can still supply; SIZE_MAX when no limit is set.
+   // Used to reject a declared length/count before allocating for it (a crafted RESTORE OOM).
+   size_t RemainingBytes() const {
+     if (source_limit_ == SIZE_MAX)
+@@ -325,6 +328,7 @@ class RdbLoaderBase {
+ 
+   size_t bytes_read_ = 0;
+   size_t source_limit_ = SIZE_MAX;
++  std::function<size_t()> size_provider_;
+   base::PODArray<uint8_t> compr_buf_;
+   std::unique_ptr<detail::DecompressImpl> decompress_impl_;
+   std::optional<uint64_t> journal_offset_ = std::nullopt;
+@@ -374,6 +378,10 @@ class RdbLoader : protected RdbLoaderBase {
+     source_limit_ = n;
+   }
+ 
++  void set_source_size_provider(std::function<size_t()> provider) {
++    size_provider_ = std::move(provider);
++  }
++
+   ::io::Bytes Leftover() const {
+     return mem_buf_->InputBuffer();
+   }
+```
+
+**File**: `src/server/rdb_test.cc` (modified, +484/-9)
+```diff
+@@ -11,15 +11,19 @@ extern "C" {
+ #include "redis/zmalloc.h"
  }
  
- /* Decode a Message Pack raw object pointed by the string cursor 'c' to
-@@ -790,7 +814,7 @@ void mp_decode_to_lua_type(lua_State *L, mp_cur *c) {
-     }
++#include <absl/cleanup/cleanup.h>
+ #include <absl/flags/reflection.h>
++#include <lz4frame.h>
+ #include <mimalloc.h>
+ #include <sys/resource.h>
++#include <zstd.h>
+ 
+ #include <filesystem>
+ #include <fstream>
+ 
+ #include "base/flags.h"
+ #include "base/gtest.h"
++#include "base/hash.h"
+ #include "base/logging.h"
+ #include "core/bloom.h"
+ #include "core/cuckoo.h"
+@@ -127,6 +131,16 @@ class RdbTest : public BaseFamilyTest {
+       return loader.Load(&src);
+     });
+   }
++
++  std::error_code LoadRdbBounded(const std::string& rdb) {
++    return pp_->at(0)->Await([&] {
++      io::BytesSource src{io::Buffer(rdb)};
++      RdbLoadContext load_context;
++      RdbLoader loader(service_.get(), &load_context);
++      loader.set_source_limit(rdb.size());
++      return loader.Load(&src);
++    });
++  }
+ };
+ 
+ void RdbTest::SetUp() {
+@@ -2207,6 +2221,476 @@ void AddKV(std::string* out, std::string_view key, std::string_view val) {
+   AppendString(out, val);
  }
  
--int mp_unpack_full(lua_State *L, int limit, int offset) {
-+int mp_unpack_full(lua_State *L, lua_Integer limit, lua_Integer offset) {
-     size_t len;
-     const char *s;
-     mp_cur c;
-@@ -801,11 +825,11 @@ int mp_unpack_full(lua_State *L, int limit, int offset) {
++void AppendDbHeader(std::string* body) {
++  body->push_back(static_cast<char>(RDB_OPCODE_SELECTDB));
++  AppendLen(body, 0);
++  body->push_back(static_cast<char>(RDB_OPCODE_RESIZEDB));
++  AppendLen(body, 0);
++  AppendLen(body, 0);
++}
++
++void AppendBinaryDouble(std::string* out, double val) {
++  uint64_t bits;
++  memcpy(&bits, &val, sizeof(bits));
++
++  uint8_t buf[8];
++  absl::little_endian::Store64(buf, bits);
++  out->append(reinterpret_cast<const char*>(buf), sizeof(buf));
++}
++
++TEST_F(RdbTest, LoadRejectsHugeDeclaredLength) {
++  string body;
++  AppendDbHeader(&body);
++  body.push_back(static_cast<char>(RDB_TYPE_STRING));
++  AppendLen(&body, 1ULL << 60);
++
++  const string rdb_file = absl::StrCat("rdb_sourcelimit_", getpid(), ".rdb");
++  io::WriteStringToFileOrDie(WrapInRdb(body), rdb_file);
++  auto cleanup = absl::MakeCleanup([&] { unlink(rdb_file.c_str()); });
++
++  auto fut = service_->server_family().Load(rdb_file, ServerFamily::LoadExistingKeys::kFail);
++  ASSERT_TRUE(fut.has_value());
++  auto err = static_cast<std::error_code>(fut->Get());
++
++  EXPECT_EQ(err, RdbError(rdb::errc::rdb_file_corrupted));
++}
++
++TEST_F(RdbTest, LoadRejectsTruncatedFile) {
++  string body;
++  body.push_back(static_cast<char>(RDB_OPCODE_SELECTDB));
++  AppendLen(&body, 0);
++  string rdb = WrapInRdb(body);
++  rdb.resize(rdb.size() - 9);
++
++  EXPECT_EQ(LoadRdbBounded(rdb), RdbError(rdb::errc::rdb_file_corrupted));
++}
++
++TEST_F(RdbTest, LoadRejectsHugeLzfKey) {
++  string body;
++  AppendDbHeader(&body);
++  body.push_back(static_cast<char>(RDB_TYPE_STRING));
++  body.push_back(static_cast<char>((RDB_ENCVAL << 6) | RDB_ENC_LZF));
++  AppendLen(&body, 1);
++  AppendLen(&body, 1ULL << 60);
++  body.push_back('\x00');
++
++  EXPECT_EQ(LoadRdbBounded(WrapInRdb(body)), RdbError(rdb::errc::rdb_file_corrupted));
++}
++
++TEST_F(RdbTest, LoadRejectsHugeLzfCompressedLength) {
++  string body;
++  AppendDbHeader(&body);
++  body.push_back(static_cast<char>(RDB_TYPE_STRING));
++  body.push_back(static_cast<char>((RDB_ENCVAL << 6) | RDB_ENC_LZF));
++  AppendLen(&body, 500);
++  AppendLen(&body, 1000);
++
++  EXPECT_EQ(LoadRdbBounded(WrapInRdb(body)), RdbError(rdb::errc::rdb_file_corrupted));
++}
++
++void AppendEmptyStreamValue(std::string* body) {
++  AppendLen(body, 0);
++  AppendLen(body, 0);
++  AppendLen(body, 0);
++  AppendLen(body, 0);
++  AppendLen(body, 0);
++  AppendLen(body, 0);
++  AppendLen(body, 0);
++  AppendLen(body, 0);
++  AppendLen(body, 0);
++}
++
++TEST_F(RdbTest, LoadRejectsHugeStreamCgroupsCount) {
++  string body;
++  AppendDbHeader(&body);
++  body.push_back(static_cast<char>(RDB_TYPE_STREAM_LISTPACKS_3));
++  AppendString(&body, "k");
++  AppendEmptyStreamValue(&body);
++  AppendLen(&body, 1ULL << 60);
++
++  EXPECT_EQ(LoadRdbBounded(WrapInRdb(body)), RdbError(rdb::errc::rdb_file_corrupted));
++}
++
++TEST_F(RdbTest, LoadRejectsHugeStreamPelCount) {
++  string body;
++  AppendDbHeader(&body);
++  body.push_back(static_cast<char>(RDB_TYPE_STREAM_LISTPACKS_3));
++  AppendString(&body, "k");
++  AppendEmptyStreamValue(&body);
++  AppendLen(&body, 1);
++  AppendString(&body, "");
++  AppendLen(&body, 0);
++  AppendLen(&body, 0);
++  AppendLen(&body, 0);
++  AppendLen(&body, 1ULL << 60);
++
++  EXPECT_EQ(LoadRdbBounded(WrapInRdb(body)), RdbError(rdb::errc::rdb_file_corrupted));
++}
++
++void AppendInt64(std::string* out, int64_t val) {
++  uint8_t buf[8];
++  absl::little_endian::Store64(buf, static_cast<uint64_t>(val));
++  out->append(reinterpret_cast<const char*>(buf), sizeof(buf));
++}
++
++TEST_F(RdbTest, LoadAcceptsLegacyStream) {
++  string body;
++  AppendDbHeader(&body);
++  body.push_back(static_cast<char>(RDB_TYPE_STREAM_LISTPACKS));
++  AppendString(&body, "k");
++  AppendLen(&body, 0);
++  AppendLen(&body, 0);
++  AppendLen(&body, 0);
++  AppendLen(&body, 0);
++  AppendLen(&body, 1);
++  AppendString(&body, "g");
++  AppendLen(&body, 0);
++  AppendLen(&body, 0);
++  AppendLen(&body, 0);
++  AppendLen(&body, 2);
++  AppendString(&body, "a");
++  AppendInt64(&body, 0);
++  AppendLen(&body, 0
+```
+
+**File**: `src/server/server_family.cc` (modified, +1/-0)
+```diff
+@@ -2188,6 +2188,7 @@ std::error_code ServerFamily::LoadRdb(const std::string& rdb_file, LoadExistingK
  
-     if (offset < 0 || limit < 0) /* requesting negative off or lim is invalid */
-         return luaL_error(L,
--            "Invalid request to unpack with offset of %d and limit of %d.",
--            offset, len);
--    else if (offset > len)
-+            "Invalid request to unpack with of
+     RdbLoader loader{&service_, load_context, filt_snapshot_id};
+     loader.SetShardCount(load_opts->shard_count);
++    loader.set_source_size_provider([file = res.value()] { return file->Size(); });
+     if (existing_keys == LoadExistingKeys::kOverride) {
+       loader.SetOverrideExistingKeys(true);
+     }
 ```
 
 ---
 
-### Incident Patch 2: `9d1a546a` (2026-11-23)
-**Commit Message**: fix(zset): handle lex sentinel bounds and unchanged scores in SortedMap (#8870)
+### Incident Patch 2: `a26b5651` (2026-11-24)
+**Commit Message**: fix: bump helio (#8873)
 
-GetLexRange and DeleteRangeByLex compared members against the "-" and "+" sentinels with
-sdscmp, so a range such as [x - matched every member that sorts below "minstring". On sorted
-sets above zset_max_listpack_entries, ZRANGEBYLEX key - - returned the whole set and
-ZREMRANGEBYLEX key - - deleted it. Share LexCount's empty-range check with both functions.
+Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
 
-AddElem reported ZADD_OUT_UPDATED when an existing member kept its score, so ZADD CH returned 1
-for an unchanged member. Leave the flags clear and skip the tree reinsert in that case, matching
-the listpack encoding and Redis.
-
-Signed-off-by: Roman Gershman <[REDACTED_EMAIL]>
-
-**File**: `src/core/sorted_map.cc` (modified, +20/-11)
+**File**: `helio` (modified, +1/-1)
 ```diff
-@@ -229,6 +229,13 @@ SortedMap::ScoredArray CollectByPath(BPTreePath<SortedMap::ScoreSds> path, const
-   return out;
- }
- 
-+// Ranges that will always be empty - (+inf, anything) or (anything, -inf).
-+// Must be checked before comparing members against range bounds, since sdscmp
-+// does not understand the sentinel strings.
-+bool IsEmptyLexRange(const zlexrangespec& range) {
-+  return range.min == cmaxstring || range.max == cminstring;
-+}
-+
- }  // namespace
- 
- double ZzlGetScore(const uint8_t* sptr) {
-@@ -696,28 +703,35 @@ int SortedMap::AddElem(double score, std::string_view ele, int in_flags, int* ou
-     return 1;
-   }
- 
-+  const double curscore = GetObjScore(obj);
-   if (in_flags & ZADD_IN_INCR) {
--    score += GetObjScore(obj);
-+    score += curscore;
-     if (isnan(score)) {
-       *out_flags = ZADD_OUT_NAN;
-       return 0;
-     }
-   }
- 
-   // GT/LT? Only update if score is greater/less than current.
--  double curscore = GetObjScore(obj);
-   if (((in_flags & ZADD_IN_LT) && score >= curscore) ||
-       ((in_flags & ZADD_IN_GT) && score <= curscore)) {
-     *out_flags = ZADD_OUT_NOP;
-     return 1;
-   }
- 
-+  *newscore = score;
-+
-+  // Like Redis, an unchanged score is neither a NOP nor an update.
-+  if (score == curscore) {
-+    *out_flags = 0;
-+    return 1;
-+  }
-+
-   // Update the score.
-   CHECK(score_tree->Delete(obj));
-   SetObjScore(obj, score);
-   CHECK(score_tree->Insert(obj));
-   *out_flags = ZADD_OUT_UPDATED;
--  *newscore = score;
-   return 1;
- }
- 
-@@ -799,7 +813,7 @@ SortedMap::ScoredArray SortedMap::GetRange(const zrangespec& range, unsigned off
- 
- SortedMap::ScoredArray SortedMap::GetLexRange(const zlexrangespec& range, unsigned offset,
-                                               unsigned limit, bool reverse) const {
--  if (score_tree->Size() <= offset || limit == 0)
-+  if (score_tree->Size() <= offset || limit == 0 || IsEmptyLexRange(range))
-     return {};
- 
-   detail::BPTreePath<ScoreSds> path;
-@@ -949,7 +963,7 @@ size_t SortedMap::DeleteRangeByScore(const zrangespec& range) {
- }
- 
- size_t SortedMap::DeleteRangeByLex(const zlexrangespec& range) {
--  if (score_tree->Size() == 0)
-+  if (score_tree->Size() == 0 || IsEmptyLexRange(range))
-     return 0;
- 
-   size_t deleted = 0;
-@@ -1078,14 +1092,9 @@ size_t SortedMap::Count(const zrangespec& range) const {
- }
- 
- size_t SortedMap::LexCount(const zlexrangespec& range) const {
--  if (score_tree->Size() == 0)
-+  if (score_tree->Size() == 0 || IsEmptyLexRange(range))
-     return 0;
- 
--  // Ranges that will always be zero - (+inf, anything) or (anything, -inf)
--  if (range.min == cmaxstring || range.max == cminstring) {
--    return 0;
--  }
--
-   uint32_t min_rank = 0;
-   detail::BPTreePath<ScoreSds> path;
- 
+@@ -1 +1 @@
+-Subproject commit 59a4e2562c6a616e46c09c3342faeba3eeea44b8
++Subproject commit 4a76e32aadc606344d37faa77f1b25bc0a593e0f
 ```
 
-**File**: `src/core/sorted_map_test.cc` (modified, +36/-0)
+---
+
+### Incident Patch 3: `101047d3` (2026-11-24)
+**Commit Message**: fix(lua): clear redis.call callback after EVAL and protect error handler (#8866)
+
+* fix(lua): clear redis.call callback after EVAL and protect error handler
+
+Clear the stale redis.call callback (which captures the request's
+CommandContext) when EVAL finishes, so __gc finalizers run later by
+SCRIPT FLUSH cannot reach a dead context. Move __redis__err__handler
+into the Lua registry so scripts can not replace it, and guard against
+a non-string error result in RunFunction.
+
+Signed-off-by: Vladislav Oleshko <[REDACTED_EMAIL]>
+
+**File**: `src/core/interpreter.cc` (modified, +11/-4)
 ```diff
-@@ -60,6 +60,42 @@ TEST_F(SortedMapTest, Add) {
-   sdsfree(ele);
+@@ -290,6 +290,8 @@ bool RedisTranslator::HasError() {
+   return has_error_;
  }
  
-+TEST_F(SortedMapTest, AddUnchangedScore) {
-+  ASSERT_TRUE(sm_.InsertNew(3, "a"));
++constexpr const char kErrHandlerKey[] = "__dfly_err_handler";
 +
-+  // An unchanged score is neither added nor updated.
-+  auto expect_unchanged = [&](double score, int in_flags) {
-+    SCOPED_TRACE(in_flags);
-+    int out_flags = -1;
-+    double new_score = 0;
-+    EXPECT_EQ(1, sm_.AddElem(score, "a", in_flags, &out_flags, &new_score));
-+    EXPECT_EQ(0, out_flags);
-+    EXPECT_EQ(3, new_score);
-+  };
-+
-+  expect_unchanged(3, ZADD_IN_NONE);
-+  expect_unchanged(3, ZADD_IN_XX);
-+  expect_unchanged(0, ZADD_IN_INCR);
-+}
-+
-+TEST_F(SortedMapTest, LexRangesWithSentinelBounds) {
-+  // Members sort both below and above the sentinels' internal representation.
-+  for (string_view member : {"a", "z"}) {
-+    for (sds sentinel : {cminstring, cmaxstring}) {
-+      SCOPED_TRACE(StrCat(member, " ", sentinel == cminstring ? "-" : "+"));
-+      SortedMap map;
-+      ASSERT_TRUE(map.InsertNew(1, member));
-+      zlexrangespec range{.min = sentinel, .max = sentinel, .minex = 0, .maxex = 0};
-+
-+      EXPECT_EQ(0, map.LexCount(range));
-+      EXPECT_THAT(map.GetLexRange(range, 0, 1, false), testing::IsEmpty());
-+      EXPECT_THAT(map.GetLexRange(range, 0, 1, true), testing::IsEmpty());
-+      EXPECT_EQ(0, map.DeleteRangeByLex(range));
-+      EXPECT_EQ(1, map.GetScore(member));
-+    }
-+  }
-+}
-+
- TEST_F(SortedMapTest, Scan) {
-   for (unsigned i = 0; i < 972; ++i) {
-     sm_.InsertNew(i, StrCat(i));
+ void RunSafe(lua_State* lua, string_view buf, const char* name) {
+   CHECK_EQ(0, luaL_loadbuffer(lua, buf.data(), buf.size(), name));
+   int err = lua_pcall(lua, 0, 0, 0);
+@@ -420,7 +422,7 @@ void InitLua(lua_State* lua) {
+   {
+     constexpr char errh_func[] =
+         "local dbg = debug\n"
+-        "function __redis__err__handler(err)\n"
++        "return function(err)\n"
+         "  local i = dbg.getinfo(2,'nSl')\n"
+         "  if i and i.what == 'C' then\n"
+         "    i = dbg.getinfo(3,'nSl')\n"
+@@ -431,7 +433,10 @@ void InitLua(lua_State* lua) {
+         "    return err\n"
+         "  end\n"
+         "end\n";
+-    RunSafe(lua, errh_func, "@err_handler_def");
++    // Keep the handler in the registry so scripts can not replace it.
++    CHECK_EQ(0, luaL_loadbuffer(lua, errh_func, sizeof(errh_func) - 1, "@err_handler_def"));
++    CHECK_EQ(0, lua_pcall(lua, 0, 1, 0));
++    lua_setfield(lua, LUA_REGISTRYINDEX, kErrHandlerKey);
+   }
+ 
+   {
+@@ -869,7 +874,7 @@ auto Interpreter::RunFunction(string_view sha, std::string* error) -> RunResult
+ 
+   DCHECK_EQ(40u, sha.size());
+ 
+-  lua_getglobal(lua_, "__redis__err__handler");
++  lua_getfield(lua_, LUA_REGISTRYINDEX, kErrHandlerKey);
+   char fname[43];
+   fname[0] = 'f';
+   fname[1] = '_';
+@@ -903,7 +908,8 @@ auto Interpreter::RunFunction(string_view sha, std::string* error) -> RunResult
+   }
+ 
+   if (err) {
+-    *error = lua_tostring(lua_, -1);
++    const char* msg = lua_isstring(lua_, -1) ? lua_tostring(lua_, -1) : nullptr;
++    *error = msg ? msg : "unknown script error";
+   }
+ 
+   return err == 0 ? RUN_OK : RUN_ERR;
+@@ -1324,6 +1330,7 @@ inline __attribute__((always_inline)) auto Interpreter::SerializeResultInternal(
+ 
+ void Interpreter::ResetStack() {
+   lua_settop(lua_, 0);
++  redis_func_ = nullptr;
+ }
+ 
+ int64_t Interpreter::RunGC() {
 ```
 
-**File**: `src/server/zset_family_test.cc` (modified, +32/-0)
+**File**: `src/core/interpreter.h` (modified, +2/-0)
 ```diff
-@@ -483,6 +483,38 @@ TEST_F(ZSetFamilyTest, ByLex) {
-   ASSERT_THAT(resp, RespElementsAre("foo"));
+@@ -155,6 +155,8 @@ class Interpreter {
+   // Same as above with a budget of max_elements.
+   void SerializeResult(ObjectExplorer* serializer, size_t max_elements);
+ 
++  // Resets the stack and drops the redis.call callback, which captures per-request state
++  // and must not outlive the script run (e.g. be invoked from __gc finalizers).
+   void ResetStack();
+ 
+   // run gc and returns size of freed memory in bytes
+```
+
+**File**: `src/core/interpreter_test.cc` (modified, +14/-1)
+```diff
+@@ -1266,6 +1266,19 @@ TEST_F(InterpreterTest, ResetRetiresOnlyBorrowed) {
+   EXPECT_EQ(InterpreterManager::tl_stats().interpreter_cnt, before);
  }
  
-+// Sorted sets above zset_max_listpack_entries use SortedMap.
-+TEST_F(ZSetFamilyTest, ByLexSentinelBoundsBig) {
-+  vector<string> args = {"zadd", "key"};
-+  for (unsigned i = 0; i < 200; ++i) {
-+    args.push_back("0");
-+    args.push_back(absl::StrCat("k", absl::Dec(i, absl::kZeroPad3)));
-+  }
-+  Run(args);
-+
-+  for (auto [min, max] : vector<pair<string, string>>{{"-", "-"}, {"[k005", "-"}, {"+", "+"}}) {
-+    SCOPED_TRACE(min + " " + max);
-+    EXPECT_THAT(Run({"zrangebylex", "key", min, max}), ArrLen(0));
-+    EXPECT_THAT(Run({"zrevrangebylex", "key", max, min}), ArrLen(0));
-+    EXPECT_EQ(0, CheckedInt({"zlexcount", "key", min, max}));
-+    EXPECT_EQ(0, CheckedInt({"zremrangebylex", "key", min, max}));
-+  }
-+  EXPECT_EQ(200, CheckedInt({"zcard", "key"}));
++TEST_F(InterpreterTest, ErrorHandlerNotReplaceable) {
++  EXPECT_FALSE(Execute("__redis__err__handler = function() return {} end return 1"));
++  EXPECT_FALSE(Execute("error('boom')"));
++  EXPECT_THAT(error_, testing::HasSubstr("boom"));
 +}
 +
-+TEST_F(ZSetFamilyTest, ZAddChUnchangedScoreBig) {
-+  vector<string> args = {"zadd", "key"};
-+  for (unsigned i = 0; i < 200; ++i) {
-+    args.push_back(absl::StrCat(i));
-+    args.push_back(absl::StrCat("m", i));
-+  }
-+  Run(args);
-+
-+  EXPECT_EQ(0, CheckedInt({"zadd", "key", "ch", "5", "m5"}));
-+  EXPECT_EQ(0, CheckedInt({"zadd", "key", "ch", "xx", "5", "m5"}));
-+  EXPECT_EQ(1, CheckedInt({"zadd", "key", "ch", "6", "m5", "7", "m7"}));
++TEST_F(InterpreterTest, ClearedRedisFunc) {
++  intptr_.SetRedisFunc([](auto ca) { ca.translator->OnStatus("OK"); });
++  intptr_.ResetStack();
++  EXPECT_FALSE(Execute("return redis.call('get', 'x')"));
++  EXPECT_THAT(error_, testing::HasSubstr("redis function not defined"));
 +}
 +
- TEST_F(ZSetFamilyTest, ZRevRangeByLex) {
-   Run({
-       "zadd", "key",      "0", "alpha", "0", "bar",   "0", "cool", "0", "down",
+ TEST_F(InterpreterTest, UsedBytesDropsWithInterpreter) {
+   const uint64_t before = InterpreterManager::tl_stats().used_bytes;
+   InterpreterManager im(2);
+@@ -1367,7 +1380,6 @@ static void BM_LuaXReadReply(benchmark::State& state) {
+   script += ")";
+ 
+   Interpreter intptr;
+-  intptr.SetRedisFunc([&](Interpreter::CallArgs ca) { emit_reply(ca.translator); });
+   auto sha_buf = Interpreter::FuncSha1(script);
+   string_view sha{sha_buf.data(), sha_buf.size()};
+   string error;
+@@ -1376,6 +1388,7 @@ static void BM_LuaXReadReply(benchmark::State& state) {
+   CountingSerializer reply_size, ser;
+   emit_reply(&reply_size);
+   for (auto _ : state) {
++    intptr.SetRedisFunc([&](Interpreter::CallArgs ca) { emit_reply(ca.translator); });
+     CHECK_EQ(Interpreter::RUN_OK, intptr.RunFunction(sha, &error)) << error;
+     intptr.SerializeResult(&ser);
+     intptr.ResetStack();  // RunFunction leaves the error handler on the stack
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8873** (2026-11-24): fix: bump helio (@vyavdoshenko)
 - **PR #8871** (2026-11-23): chore: update helio to abseil 20260817.0 (@vyavdoshenko)
 - **PR #8870** (2026-11-23): fix(zset): handle lex sentinel bounds and unchanged scores in SortedMap (@romange)
+- **PR #8866** (2026-11-24): fix(lua): clear redis.call callback after EVAL and protect error handler (@dranikpg)
 - **PR #8865** (2026-11-23): fix(lua): port Valkey security fixes and lock the global environment (@romange)
 - **PR #8862** (2026-11-22): fix(tests): expect the bare user name from ACL WHOAMI in ExternalAuth (@vyavdoshenko)
-- **PR #8860** (2026-11-23): refactor: drop ascii validation (@BorysTheDev)
-- **PR #8857** (2026-11-20): fix: correct connection replies and client tracking (@vyavdoshenko)
 
 ---
 
@@ -3475,36 +3086,87 @@ Signed-off-by: Roman Gershman <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. lua): port Valkey security fixes and lock the global environment
+## X. server): bound RDB loader allocations by the source size
 
 **RULE**:
-When implementing operations in `docs/differences.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/server/detail/decompress.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e03772bd`: lua): port Valkey security fixes and lock the global environment. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9602dd5e`: server): bound RDB loader allocations by the source size. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/differences.md`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/server/detail/decompress.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-We use lua 5.4.9.
-As in Valkey 7, the global environment is read-only: scripts can not create or change globals, or
-change the library tables (`redis`, `string`, `cjson`, ...). Settings changed through library
-functions, such as `cjson.encode_max_depth()`, still apply to later scripts.
-`cjson.decode` and `cmsgpack.unpack` accept at most 50 levels of nested arrays and objects.
+constexpr size_t kInitialDecompressBuffer = 64 * 1024;
 
+  io::Result<io::IoBuf*> Decompress(std::string_view str, size_t max_uncomp_size);
+io::Result<io::IoBuf*> ZstdDecompress::Decompress(std::string_view str, size_t max_uncomp_size) {
+  if (uncomp_size > max_uncomp_size) {
+    LOG(ERROR) << "Zstd frame content size " << uncomp_size << " exceeds the allowed maximum";
+    return Unexpected(errc::rdb_file_corrupted);
+  if (uncomp_size == 0) {
+  uncompressed_mem_buf_.Reserve(std::min<size_t>(uncomp_size + 1, kInitialDecompressBuffer));
+
+  ZSTD_inBuffer in{str.data(), str.size(), 0};
+  while (true) {
+    IoBuf::Bytes dest = uncompressed_mem_buf_.AppendBuffer();
+    if (dest.empty()) {
+      if (!GrowBuffer(uncomp_size)) {
+        LOG(ERROR) << "Zstd frame decoded past the declared content size";
+        return Unexpected(errc::rdb_file_corrupted);
+      }
+      continue;
+    }
+
+    ZSTD_outBuffer out{dest.data(), dest.size(), 0};
+    size_t prev_in = in.pos;
+    size_t ret = ZSTD_decompressStream(dctx_, &out, &in);
+    if (ZSTD_isError(ret)) {
+      LOG(ERROR) << "Invalid ZSTD compressed string: " << ZSTD_getErrorName(ret);
+      return Unexpected(errc::rdb_file_corrupted);
+    }
+    
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-We use lua 5.4.4 that has been released in 2022.
+  io::Result<io::IoBuf*> Decompress(std::string_view str);
+io::Result<io::IoBuf*> ZstdDecompress::Decompress(std::string_view str) {
+
+  uncompressed_mem_buf_.Reserve(uncomp_size + 1);
+
+  // Uncompress string to membuf
+  IoBuf::Bytes dest = uncompressed_mem_buf_.AppendBuffer();
+  if (dest.size() < uncomp_size) {
+    return Unexpected(errc::out_of_memory);
+  size_t const d_size =
+      ZSTD_decompressDCtx(dctx_, dest.data(), dest.size(), str.data(), str.size());
+  if (d_size == 0 || d_size != uncomp_size) {
+  uncompressed_mem_buf_.CommitWrite(d_size);
+  // Add opcode of compressed blob end to membuf.
+  dest = uncompressed_mem_buf_.AppendBuffer();
+  if (dest.size() < 1) {
+    return Unexpected(errc::out_of_memory);
+  dest[0] = RDB_OPCODE_COMPRESSED_BLOB_END;
+  uncompressed_mem_buf_.CommitWrite(1);
+  return &uncompressed_mem_buf_;
+  io::Result<base::IoBuf*> Decompress(std::string_view str);
+io::Result<base::IoBuf*> Lz4Decompress::Decompress(std::string_view data) {
+    ;
+
+  // reserve place for uncompressed data and end opcode
+  size_t reserve = frame_info.contentSize + 1;
+  uncompressed_mem_buf_.Reserve(reserve);
+  IoBuf::Bytes dest = uncompressed_mem_buf_.AppendBuffer();
+  if (dest.s
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e03772bd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9602dd5e` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

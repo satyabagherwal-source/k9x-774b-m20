@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T17:13:49.257Z",
+  "last_updated": "2026-11-24T17:23:10.563Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8076,14 +8076,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-czy0729-bangumi",
-      "content_hash": "e278f9799d92a572e861c287d008b3be494cf07c77215bb1dbd9de730b9a5a26",
-      "verified_at": "2026-11-22T02:18:07.376Z",
+      "content_hash": "32cffb56a9d84ed878f637b229bb6fadc6dee7624fbe4dcef4a294074f83ef0c",
+      "verified_at": "2026-11-24T17:23:03.630Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T02:18:07.376Z"
+      "last_updated": "2026-11-24T17:23:03.630Z"
     },
     "aquasecurity/tfsec": {
       "repository": "aquasecurity/tfsec",
@@ -9306,14 +9306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dragonflydb-dragonfly",
-      "content_hash": "ff25fc6955f73718eaad256a49cbad41c83dca184601487e7e8557eaf03ce172",
-      "verified_at": "2026-11-23T20:56:21.014Z",
+      "content_hash": "2a068f8f8239bafb7d2d6b8f2228056c07ad4f370a3f4afdb8d04e5fc4c10698",
+      "verified_at": "2026-11-24T17:23:10.562Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T20:56:21.014Z"
+      "last_updated": "2026-11-24T17:23:10.563Z"
     },
     "danielpetho/fancy": {
       "repository": "danielpetho/fancy",
@@ -14091,14 +14091,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fb55-htmlparser2",
-      "content_hash": "afecf835e4df7f05c9fab40587fca10621ec0ea28472ae4e90117b1169e3c5ba",
-      "verified_at": "2026-11-20T17:12:10.578Z",
+      "content_hash": "ce39d9c9429da77159f539a91ecd9025786e4d202699cad5466a07a5c0b2c597",
+      "verified_at": "2026-11-24T17:22:59.704Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T17:12:10.578Z"
+      "last_updated": "2026-11-24T17:22:59.704Z"
     },
     "inikulin/parse5": {
       "repository": "inikulin/parse5",

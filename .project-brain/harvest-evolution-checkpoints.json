@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T17:14:30.706Z",
+  "last_updated": "2026-11-24T17:23:17.489Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-24T16:36:54.164Z",
@@ -693,7 +693,7 @@
       "staged_for_review": 1
     },
     "fb55-htmlparser2-learnings.md": {
-      "processed_at": "2026-11-20T17:12:26.237Z",
+      "processed_at": "2026-11-24T17:23:13.982Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1903,7 +1903,7 @@
       "staged_for_review": 1
     },
     "dragonflydb-dragonfly-learnings.md": {
-      "processed_at": "2026-11-23T20:56:25.690Z",
+      "processed_at": "2026-11-24T17:23:16.636Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2568,9 +2568,9 @@
       "staged_for_review": 0
     },
     "czy0729-bangumi-learnings.md": {
-      "processed_at": "2026-11-22T02:18:39.549Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-24T17:23:15.513Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "hf-intfloat-multilingual-e5-small-learnings.md": {
       "processed_at": "2026-11-23T15:45:58.262Z",
@@ -3843,7 +3843,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 3855,
+  "total_dossiers_evaluated": 3858,
   "total_canonical_promoted": 512,
-  "total_staged_for_review": 2925
+  "total_staged_for_review": 2928
 }
