@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T07:47:25.747Z",
+  "last_updated": "2026-11-24T07:55:53.222Z",
   "total_records": 2506,
   "domains": {
     "A": {
@@ -9872,8 +9872,8 @@
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "repository": "freenet/freenet-core",
-      "content_hash": "1a15ae413d158a5396ada25624f481563e52418b6cf3501194936b8c520b4ea2",
-      "created_at": "2026-11-24T02:21:13.863Z"
+      "content_hash": "469728ffeec8bc72e6f6fdf9079373b7a87ab2dc6dd10b22278695bdeceff2b3",
+      "created_at": "2026-11-24T07:55:47.940Z"
     },
     "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants",
@@ -9950,8 +9950,8 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-learnings-technical-construction-intelligence-freenet-freen.md",
       "repository": "freenet-freenet-core-learnings",
-      "content_hash": "f6eafe7e33beea65f24b3b5d8befa4c25a7664040359ce451fd504a6ebb076a3",
-      "created_at": "2026-11-24T02:21:43.593Z"
+      "content_hash": "15a107e7627ebc3c41f385c99cf8792cb5b6cc6cf5afea137b5f8f490834c396",
+      "created_at": "2026-11-24T07:55:53.222Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -10625,8 +10625,8 @@
       "title": "Technical Construction Intelligence: karakeep-app/karakeep Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-karakeep-app-karakeep-technical-construction-intelligence-karakeep-app-karakeep-.md",
       "repository": "karakeep-app/karakeep",
-      "content_hash": "1c5e18dc111cdbc20e6cbab02ecd9b8bab2852064caa86b82531adc3a04dc8d2",
-      "created_at": "2026-11-21T13:53:36.945Z"
+      "content_hash": "ee2ac1a423df1db42e36b78db63da3af2844395b6216b5b4f9529700c6b8d63a",
+      "created_at": "2026-11-24T07:55:41.730Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-7": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-7",
@@ -10643,8 +10643,8 @@
       "title": "Technical Construction Intelligence: karakeep-app-karakeep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-karakeep-app-karakeep-learnings-technical-construction-intelligence-karakeep-app.md",
       "repository": "karakeep-app-karakeep-learnings",
-      "content_hash": "b6e5aadeb01aad184d012890cff01651e8b75ee790bb3fda5b42667344441082",
-      "created_at": "2026-11-21T13:53:50.417Z"
+      "content_hash": "1a79d04f948a5452ec8b79c76eb03fb0c34c5e752536b510d708e0cfeb93afa4",
+      "created_at": "2026-11-24T07:55:52.352Z"
     },
     "domain_intelligence-research-knowledge-intelligence-cloudflare-clef-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-cloudflare-clef-core-invariants",
@@ -20014,8 +20014,8 @@
       "title": "Architecture Intelligence: zeronsh/zeron Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zeronsh-zeron-architecture-intelligence-zeronsh-zeron-core-invariants.md",
       "repository": "zeronsh/zeron",
-      "content_hash": "e6ffa20b7d7a987fa3652c406ae694be17bc835eeb043be35faabbdb4164407f",
-      "created_at": "2026-11-18T06:15:22.987Z"
+      "content_hash": "8982917b435e813dedcc951e9d6a62e901a3504e1d66058d1f84573da1ce58f8",
+      "created_at": "2026-11-24T07:55:37.873Z"
     },
     "domain_intelligence-technical-construction-intelligence-openbmb-minicpm-v-4-7-35b-a3b-gguf-core-inva": {
       "record_id": "domain_intelligence-technical-construction-intelligence-openbmb-minicpm-v-4-7-35b-a3b-gguf-core-inva",
@@ -20032,8 +20032,8 @@
       "title": "Architecture Intelligence: zeronsh-zeron-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zeronsh-zeron-learnings-architecture-intelligence-zeronsh-zeron-learnings-core-i.md",
       "repository": "zeronsh-zeron-learnings",
-      "content_hash": "ae6f9482be40d273c1f09c61e232e702777a2fcffabdfa8ebaa7fe4eea04c5b1",
-      "created_at": "2026-11-18T06:15:33.500Z"
+      "content_hash": "6a33acc64facee9e6ff91d671352aa4639a1c147d6cedbebd55823c143535298",
+      "created_at": "2026-11-24T07:55:51.516Z"
     },
     "domain_intelligence-technical-construction-intelligence-hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-learni": {
       "record_id": "domain_intelligence-technical-construction-intelligence-hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-learni",

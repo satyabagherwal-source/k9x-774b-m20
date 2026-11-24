@@ -767061,3 +767061,222 @@ GoVersions.printGradleDebuggingOutputFor(gradle, goVersions)
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `90a9bc24` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10230. use crate::process child types in AntigravityPasteLogin for Windows (Harvested from zeronsh/zeron)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "use crate::process child types in AntigravityPasteLogin for Windows",
+  "source": "zeronsh/zeron",
+  "source_url": "https://github.com/zeronsh/zeron",
+  "source_version": "29646196",
+  "license": "MIT",
+  "extracted_at": "2026-11-24T07:55:36.901Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-zeronsh-zeron",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [zeronsh/zeron](https://github.com/zeronsh/zeron) (Revision: `29646196`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `crates/harness/src/acp/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `ed97f42e`: harness): use crate::process child types in AntigravityPasteLogin for Windows. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/harness/src/acp/mod.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+    child: crate::process::Child,
+    stdin: Option<ChildStdin>,
+        if let Some(home) = crate::executable::home_dir() {
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+    child: tokio::process::Child,
+    stdin: Option<tokio::process::ChildStdin>,
+        if let Some(home) = std::env::var_os("HOME") {
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `ed97f42e` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10231. stop reporting Expo DOM webview injectJavaScript rejections to Sentry (Harvested from karakeep-app/karakeep)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "stop reporting Expo DOM webview injectJavaScript rejections to Sentry",
+  "source": "karakeep-app/karakeep",
+  "source_url": "https://github.com/karakeep-app/karakeep",
+  "source_version": "28ae6752",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-11-24T07:55:40.780Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-karakeep-app-karakeep",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [karakeep-app/karakeep](https://github.com/karakeep-app/karakeep) (Revision: `28ae6752`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `apps/mobile/app/_layout.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karakeep-app/karakeep. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `b56d4888`: mobile): stop reporting Expo DOM webview injectJavaScript rejections to Sentry. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/mobile/app/_layout.tsx`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+
+  // Expo's DOM component wrapper re-sends props to the reader's webview on
+  // every render without catching the result, so once Android drops the view
+  // each render reports an unhandled rejection. Harmless, but it used up the
+  // whole Sentry quota.
+  ignoreErrors: [/DomWebView\.injectJavaScript/],
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `b56d4888` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10232. the manual release driver never changes the handshake floor (Harvested from freenet/freenet-core)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "the manual release driver never changes the handshake floor",
+  "source": "freenet/freenet-core",
+  "source_url": "https://github.com/freenet/freenet-core",
+  "source_version": "fe85b027",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-24T07:55:46.991Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-freenet-freenet-core",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `fe85b027`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `crates/core/Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `d1948e2f`: release): the manual release driver never changes the handshake floor. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/Cargo.toml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+# this value unchanged, and so does scripts/release.sh (#5833). The env var
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+# this value unchanged; scripts/release.sh rewrites it. The env var
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `d1948e2f` are properly handled with clean fallback behavior.

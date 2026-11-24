@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T07:47:22.069Z",
-    "lastVerified": "2026-11-24T07:47:22.069Z",
+    "lastChecked": "2026-11-24T07:55:50.793Z",
+    "lastVerified": "2026-11-24T07:55:50.793Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -379,8 +379,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T06:55:14.716Z",
-    "lastVerified": "2026-11-24T06:55:14.716Z",
+    "lastChecked": "2026-11-24T07:55:45.093Z",
+    "lastVerified": "2026-11-24T07:55:45.093Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1244,14 +1244,14 @@
     "officialUrl": "https://github.com/freenet/freenet-core",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T02:21:12.434Z",
-    "lastVerified": "2026-11-24T02:21:12.434Z",
+    "lastChecked": "2026-11-24T07:55:46.403Z",
+    "lastVerified": "2026-11-24T07:55:46.403Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "a776a4cc3166a9957372c6d574c88e966746719132c6209fce3cb9532358ac15",
+    "contentHash": "72ada69e6d1787e2641acd4c199a9240a381640dbab08904bb125e95d5df753a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 6,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1312,14 +1312,14 @@
     "officialUrl": "https://github.com/karakeep-app/karakeep",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-21T13:53:35.548Z",
-    "lastVerified": "2026-11-21T13:53:35.548Z",
+    "lastChecked": "2026-11-24T07:55:40.178Z",
+    "lastVerified": "2026-11-24T07:55:40.178Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-karakeep-app-karakeep",
-    "contentHash": "f49b5f4d83a9336061c760bb372d7353d9cc6e43ff4ccef6fd677e2a7f2092fb",
+    "contentHash": "9e81e0ff3ca243fa3b32e6e33e32003835abaaf1580c04d6249f24d76a1eafc8",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2650,14 +2650,14 @@
     "officialUrl": "https://github.com/zeronsh/zeron",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T23:33:12.731Z",
-    "lastVerified": "2026-11-22T23:33:12.731Z",
+    "lastChecked": "2026-11-24T07:55:36.117Z",
+    "lastVerified": "2026-11-24T07:55:36.117Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zeronsh-zeron",
-    "contentHash": "c6c74af33e80abef03196ec466a55eef78f7bd5a0a9218d39fd6a6c405126a43",
+    "contentHash": "0096ff04fa672ceb8d99461326bcbd34f31dcc8321554a189b139cf38b397fa5",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 9,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3807,9 +3807,9 @@
   "supervc-stack-vectorchord": {
     "name": "VectorChord",
     "officialUrl": "https://github.com/supervc-stack/VectorChord",
-    "lastChecked": "2026-11-23T09:05:57.195Z",
+    "lastChecked": "2026-11-24T07:55:42.717Z",
     "revisionIdentifier": "0768657e",
-    "lastVerified": "2026-11-23T09:05:57.195Z"
+    "lastVerified": "2026-11-24T07:55:42.717Z"
   },
   "nasiko-labs-nasiko": {
     "name": "nasiko",
@@ -5657,9 +5657,9 @@
   "aquasecurity-tfsec": {
     "name": "tfsec",
     "officialUrl": "https://github.com/aquasecurity/tfsec",
-    "lastChecked": "2026-11-23T14:12:42.689Z",
+    "lastChecked": "2026-11-24T07:55:37.594Z",
     "revisionIdentifier": "b692c20b",
-    "lastVerified": "2026-11-23T14:12:42.689Z"
+    "lastVerified": "2026-11-24T07:55:37.594Z"
   },
   "apple-foundationdb": {
     "name": "foundationdb",
@@ -9777,9 +9777,9 @@
   "melbahja-seo": {
     "name": "seo",
     "officialUrl": "https://github.com/melbahja/seo",
-    "lastChecked": "2026-11-20T04:02:23.834Z",
+    "lastChecked": "2026-11-24T07:55:32.539Z",
     "revisionIdentifier": "cd4e4122",
-    "lastVerified": "2026-11-20T04:02:23.834Z"
+    "lastVerified": "2026-11-24T07:55:32.539Z"
   },
   "touchlab-skie": {
     "name": "SKIE",

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T07:47:18.485Z",
-  "total_cycles_completed": 12006,
-  "total_learnings_persisted": 12006,
-  "total_rules_promoted": 11083,
+  "last_updated": "2026-11-24T07:55:47.534Z",
+  "total_cycles_completed": 12009,
+  "total_learnings_persisted": 12009,
+  "total_rules_promoted": 11086,
   "history": [
-    {
-      "timestamp": "2026-11-23T18:32:11.723Z",
-      "repository": "unsloth/embeddinggemma-2-GGUF",
-      "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T18:32:29.107Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T18:40:43.920Z",
-      "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
-      "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T18:40:53.973Z",
       "repository": "nginx/kubernetes-ingress",
@@ -1403,6 +1382,27 @@
       "repository": "SeekStorm/SeekStorm",
       "learningId": "learn-github-seekstorm-seekstorm",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T07:55:37.454Z",
+      "repository": "zeronsh/zeron",
+      "learningId": "learn-github-zeronsh-zeron",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T07:55:41.319Z",
+      "repository": "karakeep-app/karakeep",
+      "learningId": "learn-github-karakeep-app-karakeep",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T07:55:47.534Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

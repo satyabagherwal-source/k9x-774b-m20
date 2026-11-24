@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-SM8B",
-    "timestamp": "2026-11-22T15:01:13.739Z",
-    "repository": "apple/FastFrames-L",
-    "learningId": "learn-huggingface-apple-fastframes-l",
-    "contentHash": "6afa59671dbef263914e01b42be9846d2e7b17af747763cca85cd40373ecf66b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-2PQP",
-    "timestamp": "2026-11-22T15:09:04.849Z",
-    "repository": "tencent/Hy4-flash",
-    "learningId": "learn-huggingface-tencent-hy4-flash",
-    "contentHash": "2f2be2c1dfdfefb8f0c5681740be21f5e8a530d7031cbe2dd66fb4b6c6f053ff",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-2RP8",
-    "timestamp": "2026-11-22T15:09:07.388Z",
-    "repository": "zed-industries/zed",
-    "learningId": "learn-github-zed-industries-zed",
-    "contentHash": "52f32e94ae5e69a670b50c3db3014a5d167540483d06231e787c0d47b1cabf23",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-2XQW",
     "timestamp": "2026-11-22T15:09:15.224Z",
     "repository": "envoyproxy/envoy",
@@ -7492,6 +7447,51 @@
     "contentHash": "e3908cae3eb233c237782d5f9e73a5db608f2b8b1df77573f3f9d1f5eb2ae9c4",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-GZMT",
+    "timestamp": "2026-11-24T07:55:37.445Z",
+    "repository": "zeronsh/zeron",
+    "learningId": "learn-github-zeronsh-zeron",
+    "contentHash": "0096ff04fa672ceb8d99461326bcbd34f31dcc8321554a189b139cf38b397fa5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-H2M5",
+    "timestamp": "2026-11-24T07:55:41.309Z",
+    "repository": "karakeep-app/karakeep",
+    "learningId": "learn-github-karakeep-app-karakeep",
+    "contentHash": "9e81e0ff3ca243fa3b32e6e33e32003835abaaf1580c04d6249f24d76a1eafc8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-H7ES",
+    "timestamp": "2026-11-24T07:55:47.524Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "72ada69e6d1787e2641acd4c199a9240a381640dbab08904bb125e95d5df753a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

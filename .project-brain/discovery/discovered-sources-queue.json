@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T07:47:25.072Z",
+  "updated_at": "2026-11-24T07:55:52.807Z",
   "stats": {
-    "total_discovered": 8459,
-    "approved_pending_harvest": 8019,
+    "total_discovered": 8462,
+    "approved_pending_harvest": 8022,
     "harvested_count": 0,
     "rejected_count": 440,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8004,
+      "COMMUNITY_AND_EXPERT": 8007,
       "OFFICIAL_DOCUMENTATION": 268,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -183041,6 +183041,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md",
         "fileName": "seekstorm-seekstorm-learnings.md"
+      }
+    },
+    "SRC-53BC61B6D2B6": {
+      "id": "SRC-53BC61B6D2B6",
+      "url": "https://github.com/zeronsh/zgx?rev=e9055ac7d829b6d4a81ae0cd900879168e2b7f12",
+      "title": "https://github.com/zeronsh/zgx?rev=e9055ac7d829b6d4a81ae0cd900879168e2b7f12",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T07:55:51.059Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
+        "fileName": "zeronsh-zeron-learnings.md"
+      }
+    },
+    "SRC-12889E9462D6": {
+      "id": "SRC-12889E9462D6",
+      "url": "https://example.invalid/x/n",
+      "title": "https://example.invalid/x/n",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T07:55:52.746Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
+        "fileName": "freenet-freenet-core-learnings.md"
+      }
+    },
+    "SRC-6FE79E89D1AA": {
+      "id": "SRC-6FE79E89D1AA",
+      "url": "https://example.invalid/x",
+      "title": "https://example.invalid/x",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T07:55:52.807Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
+        "fileName": "freenet-freenet-core-learnings.md"
       }
     }
   }

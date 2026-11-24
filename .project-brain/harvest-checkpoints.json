@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T07:47:18.490Z",
+  "last_updated": "2026-11-24T07:55:47.546Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3876,14 +3876,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-karakeep-app-karakeep",
-      "content_hash": "f49b5f4d83a9336061c760bb372d7353d9cc6e43ff4ccef6fd677e2a7f2092fb",
-      "verified_at": "2026-11-21T13:53:36.596Z",
+      "content_hash": "9e81e0ff3ca243fa3b32e6e33e32003835abaaf1580c04d6249f24d76a1eafc8",
+      "verified_at": "2026-11-24T07:55:41.330Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T13:53:36.596Z"
+      "last_updated": "2026-11-24T07:55:41.330Z"
     },
     "authzed/spicedb": {
       "repository": "authzed/spicedb",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "a776a4cc3166a9957372c6d574c88e966746719132c6209fce3cb9532358ac15",
-      "verified_at": "2026-11-24T02:21:13.497Z",
+      "content_hash": "72ada69e6d1787e2641acd4c199a9240a381640dbab08904bb125e95d5df753a",
+      "verified_at": "2026-11-24T07:55:47.545Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T02:21:13.497Z"
+      "last_updated": "2026-11-24T07:55:47.546Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -5271,14 +5271,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zeronsh-zeron",
-      "content_hash": "c6c74af33e80abef03196ec466a55eef78f7bd5a0a9218d39fd6a6c405126a43",
-      "verified_at": "2026-11-22T23:33:13.733Z",
+      "content_hash": "0096ff04fa672ceb8d99461326bcbd34f31dcc8321554a189b139cf38b397fa5",
+      "verified_at": "2026-11-24T07:55:37.465Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T23:33:13.733Z"
+      "last_updated": "2026-11-24T07:55:37.465Z"
     },
     "welldone-software/why-did-you-render": {
       "repository": "welldone-software/why-did-you-render",

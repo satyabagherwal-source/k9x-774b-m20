@@ -4,24 +4,24 @@
 {
   "source_repository": "freenet/freenet-core",
   "source_url": "https://github.com/freenet/freenet-core",
-  "source_version": "a93b0a3b",
+  "source_version": "fe85b027",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-24T02:21:13.708Z",
+  "timestamp": "2026-11-24T07:55:47.769Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-freenet-freenet-core",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `a93b0a3b`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-24T02:21:13.708Z`  
+> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `fe85b027`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-24T07:55:47.769Z`  
 > **Learning ID**: `learn-github-freenet-freenet-core`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), G (Architecture Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 79%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 83%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from freenet/freenet-core:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T02:21:12.434Z  
+> **Harvest Timestamp**: 2026-11-24T07:55:46.403Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1752,11 +1752,11 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6357** (2026-11-24): **test(sim): keep peer-to-peer native connects off in the closed gateway-join sim**
-  *Symptoms*: ## Problem  `test_quic_native_gateway_join_dead_before_a_frame_goes_legacy_next` fails deterministically on main (0cbc9b7ae):  ``` no node ends holding a native link to or from a gateway: [(([::1]:55898, [::1]:59568), true), (([::1]:59568, [::1]:55898), true)] ```  Both addresses are the two gateways. The link formed through the ordinary connect op (tx `01FWS2PCRXSF15VT7N4AV385R0`, `transient: false`, origins `ConnectJoiner` / `ConnectAcceptor`, `transport: Native`), not through the gateway-join path that `with_gateway_closing_native_joins` closes.  The test came in with #6328 and passed there. #6330 then raised production `QUIC_NATIVE_PERCENT` from 0 to 25, and this test does not override it, so ordinary CONNECTs now draw native at 25%. At this seed the gateways' CONNECT to each other draws native. #6330 already added `with_native_connect(0)` to the upgrade sims for this reason; this test merged in parallel and missed it. The Simulation job does not run on merge-queue entries, so the combination was never run.  Bisect: original test with `QUIC_NATIVE_PERCENT = 0` on the same main passes.  No code bug: a gateway taking part in an ordinary native CONNECT is intended (`test_quic_native_at_the_shipped_percent_mixes_native_and_udp` covers it). The test's assertion is about closed gateway joins.  ## Approach  Call `sim.with_native_connect(0)` in this test, so every native link in the run is a gateway join and the existing assertion reads only those. The assertion itself is unchang
+- **Issue #6362** (2026-11-24): **ci(release): ship an exact soaked commit so main stays open during a cut**
+  *Symptoms*: This changes how every release works. The design was reviewed and approved for landing; #6361, which it was stacked on, has merged.  ## Problem  Today a release ships the version-bump PR's *merge commit*, which is current `main` plus anything that merged while the bump sat in the queue. The soak validates one SHA and the release ships another, so `main` has to be frozen from the start of the soak until the tag is pushed. The 0.2.164 freeze lasted about 4 hours across three lanes.  ## Approach  `release.yml` gains a `ship_sha` input (required for a live run) and releases exactly that commit plus a version bump:  1. **validate** (`scripts/resolve_release_ship.sh`) checks that `ship_sha` is on `main` and that it contains the previous release's ship commit, so a release can never drop a fix the last one shipped. It reads the versions from `ship_sha`'s tree. fdev is set to max(fdev at `ship_sha`, fdev at the latest published tag) + 1. The pre-flight from #6361 also refuses a version that is not above the latest published release. 2. **update_versions** checks out `ship_sha`, applies the bump (`scripts/apply_version_bump.sh`, now the single copy of the seds), and pushes `release/vX` at B = `ship_sha` + bump. There is no bump PR. 3. **ci.yml** now also runs its full suite on pushes to `release/v*`. **wait_for_ci** (`scripts/wait_for_release_ci.sh`) waits for that run on B and requires every gate job to have actually succeeded, not merely that the run is green. It also asserts that B
 
-- **Issue #6354** (2026-11-23): **ci: raise test_unit timeout from 30 to 45 minutes**
-  *Symptoms*: ## Problem  `Unit & Integration` (`test_unit`) is cancelled at its 30-minute limit even when every test passes, because the `Swatinem/rust-cache@v2` restore of its ~1.7 GiB entry downloads at 2-4 MB/s: 445-799 s on cache hits measured on 2026-11-23 (table and evidence in #6346). Tests take ~13-14 min and a cold build only ~2 min longer than a warm one, so a slow restore pushes the job over 30 min. It cancelled #6344 twice and #6351 once.  ## Approach  Stopgap only: raise `test_unit`'s `timeout-minutes` from 30 to 45, with a comment saying so. Worst measured case is restore + tests + build, about 28-30 min.  A 5-minute cap on the cache step with `continue-on-error` was considered and dropped in review: it would fire on almost every measured restore (all >300 s), silently disabling the cache that the warm-cache job (#6105) exists to provide, and a kill landing mid-extract could leave a partial `target/` and fail the job. The real fix (shrink or speed up the cache, or drop it and the warm job deliberately) stays tracked in #6346.  ## Testing  - `check_cache_warm_parity.py` passes (it compares action inputs/env; the job timeout is outside it). - No other job changed; the job id and check name are unchanged, so required-check and merge-queue behaviour are unaffected. - Review: two Claude lenses (skeptical, big-picture) plus codex on the earlier version; this version is a strict subset of it (the timeout line only). Two lenses rather than three was a usage-budget call, recorded her
+- **Issue #6361** (2026-11-24): **ci(release): close fail-open and half-done paths found in a release-tooling audit**
+  *Symptoms*: ## Problem  An audit of the release tooling (release.yml, cross-compile.yml, release-announce.yml, the legacy `scripts/release.sh` driver and the recovery docs) found several paths that fail open or stop a release half-done:  - **release.yml** fails *after* the bump PR has merged when the tag or crates.io version already exists, or when the version equals main's (empty bump commit). A second concurrent dispatch is not refused at all. Without `RELEASE_PAT` a live run only warns, then the tag push never starts cross-compile.yml. Release notes measure from the newest release *including drafts*, and a spent version is left as a draft on purpose. `create_release` cannot be re-run once its tag is pushed. - **cross-compile.yml** cancels an in-flight tag run when a second run for the same tag starts (the documented recovery dispatch), possibly between the crates.io publish and the un-draft. A recovery un-draft of an older tag takes GitHub's `latest` marker by default and nothing moves it back. A missing signing key publishes an unsigned release with a warning. A failed `tar` inside `cd X && tar && cd ../..` is invisible to errexit, and `sha256sum ... || true` hides a missing asset class. The Windows steps run in pwsh, which only checks the last command's exit code. - **release-announce.yml** announces any published release, including a recovery un-draft of an old one. - **scripts/release.sh** carries bugs release.yml already fixed: it tags local HEAD rather than the bump PR's merge c
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1773,472 +1773,517 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `447373c9` (2026-11-23)
-**Commit Message**: fix: create_delegate leaves an already-registered delegate's origin unchanged (#6351)
+### Incident Patch 1: `d1948e2f` (2026-11-24)
+**Commit Message**: fix(release): the manual release driver never changes the handshake floor (#6355)
 
-**File**: `crates/core/src/wasm_runtime/delegate_api.rs` (modified, +87/-0)
+**File**: `crates/core/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -748,6 +748,93 @@ mod tests {
-         // and the window before it did was the #4813 flake.
+@@ -12,7 +12,7 @@ readme = "README.md"
+ [package.metadata.freenet]
+ # Minimum compatible protocol version. Peers older than this are rejected at
+ # the handshake, in both directions. The release workflow (release.yml) ships
+-# this value unchanged; scripts/release.sh rewrites it. The env var
++# this value unchanged, and so does scripts/release.sh (#5833). The env var
+ # FREENET_MIN_COMPATIBLE_VERSION overrides this at build time.
+ #
+ # 0.2.122: 0.2.120 and 0.2.121 cannot detect updates themselves (they parse
+```
+
+**File**: `crates/core/build.rs` (modified, +2/-1)
+```diff
+@@ -45,7 +45,8 @@ fn main() {
+ 
+ fn emit_min_compatible_version() {
+     // Priority for min-compatible version:
+-    // 1. FREENET_MIN_COMPATIBLE_VERSION env var (set by release.sh)
++    // 1. FREENET_MIN_COMPATIBLE_VERSION env var (a manual override; the
++    //    release paths never set it, and release.sh clears it)
+     // 2. package.metadata.freenet.min-compatible-version in Cargo.toml
+     // 3. CARGO_PKG_VERSION (strict match — same as old behavior)
+     //
+```
+
+**File**: `docs/RELEASING.md` (modified, +6/-4)
+```diff
+@@ -1004,10 +1004,12 @@ above: it refuses the connection outright, rather than deciding which message
+ variants a peer can receive.
+ 
+ `release.yml` ships the committed value unchanged, so raising it is its own
+-reviewed PR, never a side effect of a release. (`scripts/release.sh` still
+-rewrites it; see #5833.) `build.rs` requires an `X.Y.Z` value no higher than
+-the package version. A floor in the same major.minor series is carried as a
+-patch number (wire format 1). A floor in a different series (for example a
++reviewed PR, never a side effect of a release. `scripts/release.sh` also
++ships it unchanged and refuses `--min-compatible` (#5833). To raise it, change
++`min-compatible-version` in `crates/core/Cargo.toml` in a PR that goes through
++the checklist below; the next release from `main` ships it. `build.rs` requires
++an `X.Y.Z` value no higher than the package version. A floor in the same
++major.minor series is carried as a patch number (wire format 1). A floor in a different series (for example a
+ 1.0.0 build keeping floor 0.2.N) uses wire format 2 and is accepted only if
+ its major is at most one below the package's, its minor is below 64 and its
+ patch is below 256; `build.rs` fails the build otherwise. Releases before the
+```
+
+**File**: `scripts/release.sh` (modified, +38/-18)
+```diff
+@@ -68,8 +68,9 @@ show_help() {
+     echo
+     echo "Options:"
+     echo "  --version X.Y.Z           Target version (required)"
+-    echo "  --min-compatible X.Y.Z    Minimum compatible version for range-based"
+-    echo "                            version checking (default: previous release)"
++    echo "  --min-compatible X.Y.Z    Refused. This script never changes the"
++    echo "                            handshake floor; raise it in its own reviewed"
++    echo "                            PR (docs/RELEASING.md)"
+     echo "  --skip-tests              Skip pre-release tests"
+     echo "  --dry-run                 Show what would be done without executing"
+     echo "  --help                    Show this help"
+@@ -99,9 +100,12 @@ while [[ $# -gt 0 ]]; do
+             echo "      Gateways are now updated automatically after binaries are available."
+             shift
+             ;;
+-        --min-compatible)
+-            MIN_COMPATIBLE="$2"
+-            shift 2
++        --min-compatible|--min-compatible=*)
++            # Refused on sight, in any spelling, with or without a value (#5833).
++            echo "Error: --min-compatible is no longer supported. This script never changes"
++            echo "       the handshake floor; raise min-compatible-version in"
++            echo "       crates/core/Cargo.toml in its own reviewed PR (docs/RELEASING.md)."
++            exit 1
+             ;;
+         --skip-tests)
+             SKIP_TESTS=true
+@@ -135,15 +139,34 @@ if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+     exit 1
+ fi
+ 
+-# Default min-compatible to the current version in Cargo.toml (the version before the bump).
+-# This means gateways running the new version will still accept peers on the previous version.
+-if [[ -z "$MIN_COMPATIBLE" ]]; then
+-    MIN_COMPATIBLE=$(grep "^version" "$PROJECT_ROOT/crates/core/Cargo.toml" 2>/dev/null | head -1 | cut -d'"' -f2)
+-    echo "Min-compatible version: $MIN_COMPATIBLE (defaulting to current version before bump)"
+-else
+-    echo "Min-compatible version: $MIN_COMPATIBLE (explicitly set)"
++# current_min_compatible <Cargo.toml> -- print the handshake floor committed in
++# `package.metadata.freenet.min-compatible-version`, or return 1 if it is
++# missing or not X.Y.Z.
++current_min_compatible() {
++    local value
++    value=$(grep -E '^min-compatible-version[[:space:]]*=' "$1" 2>/dev/null | head -1 | cut -d'"' -f2)
++    if [[ ! "$value" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
++        return 1
++    fi
++    printf '%s\n' "$value"
++}
++
++# The handshake floor ships exactly as committed, as it does from release.yml
++# (#5833). This script used to default it to the previous release and write
++# that into the bump, which would make every updated peer refuse every peer
++# that had not updated yet: a network split on an ordinary release. Raising the
++# floor is its own reviewed PR (docs/RELEASING.md), so --min-compatible is
++# refused during argument parsing rather than written into a release bump.
++#
++# A committed floor that cannot be read is refused too: build.rs would then
++# fall back to the package version, the same split. The env override is
++# cleared so a value left in the caller's shell cannot reach the builds.
++if ! MIN_COMPATIBLE=$(current_min_compatible "$PROJECT_ROOT/crates/core/Cargo.toml"); then
++    echo "Error: could not read an X.Y.Z min-compatible-version from crates/core/Cargo.toml."
++    exit 1
+ fi
+-export FREENET_MIN_COMPATIBLE_VERSION="$MIN_COMPATIBLE"
++echo "Handshake floor (min-compatible-version): $MIN_COMPATIBLE (unchanged, shipped as committed)"
++unset FREENET_MIN_COMPATIBLE_VERSION
+ 
+ # Get the most recently published version from crates.io (most authoritative source).
+ #
+@@ -803,11 +826,8 @@ update_versions() {
+     sed_inplace "s/^version = \".*\"/version = \"$VERSION\"/" "$PROJECT_ROOT/crates/core/Cargo.toml"
+     echo "✓"
+ 
+-    # Update min-compatible-version in Cargo.toml metadata so cross-compile CI
+-    # builds (which don't have the env var) get the correct min-compatible version.
+-    echo -n "  Setting min-compatible-version to $MIN_COMPATIBLE... "
+-    sed_inplace "s/^min-compatible-version = \".*\"/min-compatible-version = \"$MIN_COMPATIBLE\"/" "$PROJECT_ROOT/crates/core/Cargo.toml"
+-    echo "✓"
++    # min-compatible-version is deliberately left alone (#5833): the
++    # committed floor ships unchanged.
+ 
+     # Update fdev version and its freenet dependency
+     echo -n "  Updating fdev to $FDEV_VERSION... "
+```
+
+**File**: `scripts/release_driver_test.sh` (modified, +143/-1)
+```diff
+@@ -27,7 +27,7 @@
+ # fdev actually get published" and "does publishing happen after the tag", and
+ # the only way to assert a property is to run the thing.
+ #
+-# Both functions are extracted verbatim from release.sh (`eval "$(awk ...)"`),
++# Functions are extracted verbatim from release.sh (`eval "$(awk ...)"`),
+ # matching release_state_restore_test.sh's idiom, so these tests cannot drift
+ # from the implementation.
+ #
+@@ -556,6 +556,148 @@ else
+     fi
+ fi
+ 
++# ---------------------------------------------------------------------------
++# N. The handshake floor ships as committed (#5833)
++# ---------------------------------------------------------------------------
++# release.sh used to default --min-compatible to the version before the bump
++# and write it into the bump, which would make every updated peer refuse every
++# peer that had not updated yet: a network split on an ordinary release. Now it
++# never changes the floor, refuses --min-compatible, refuses a committed floor
++# it cannot read (build.rs would fall back to the package version), and clears
++# FREENET_MIN_COMPATIBLE_VERSION so a value in the caller's shell cannot reach
++# the builds.
++FLOOR_FN="$(awk '/^current_min_compatible\(\) \{/,/^\}/' "$RELEASE_SH")"
++if [[ "$FLOOR_FN" != *"min-compatible-version"* ]]; then
++    fail "could not extract current_min_compatible() from release.sh" \
++        "Every floor case below runs it, so an empty extraction would make them" \
++        "all pass vacuously."
++else
++    eval "$FLOOR_FN"
++    # floor_case <desc> <Cargo.toml body> <expected output or FAIL>
++    floor_case() {
++        local desc="$1" body="$2" want="$3" work got
++        work="$(mktemp -d)"
++        printf '%s\n' "$body" > "$work/Cargo.toml"
++        if got="$(current_min_compatible "$work/Cargo.toml")"; then :; else got="FAIL"; fi
++        rm -rf "$work"
++        if [[ "$got" == "$want" ]]; then
++            pass "$desc"
++        else
++            fail "$desc" "got '$got', expected '$want'"
++        fi
++    }
++    floor_case "the floor read is min-compatible-version, not the package version" \
++        $'[package]\nname = "freenet"\nversion = "0.2.200"\n\n[package.metadata.freenet]\nmin-compatible-version = "0.2.122"' \
++        "0.2.122"
++    floor_case "a floor written without spaces around '=' is read" \
++        $'[package]\nversion = "0.2.200"\n[package.metadata.freenet]\nmin-compatible-version="0.2.150"' "0.2.150"
++    floor_case "a missing min-compatible-version is refused" \
++        $'[package]\nname = "freenet"\nversion = "0.2.200"' "FAIL"
++    floor_case "a malformed min-compatible-version is refused" \
++        $'[package]\nversion = "0.2.200"\n[package.metadata.freenet]\nmin-compatible-version = "next"' "FAIL"
++
++    REAL_TOML="$SCRIPT_DIR/../crates/core/Cargo.toml"
++    if got="$(current_min_compatible "$REAL_TOML")"; then
++        pass "the real crates/core/Cargo.toml has a readable floor ($got)"
++    else
++        fail "the real crates/core/Cargo.toml has no readable min-compatible-version" \
++            "Every release.sh run would refuse."
++    fi
++fi
++
++# The call site, run for real: release.sh is copied into a throwaway repo with
++# a stub `cargo`. The first thing the driver does after the floor check is
++# `cargo search`, with stderr discarded, so the stub records that it was
++# reached, and what FREENET_MIN_COMPATIBLE_VERSION it saw, in a file.
++# floor_run_case <desc> <expect: refuse|proceed> <error text or ""> <Cargo.toml body> <args...>
++floor_run_case() {
++    local desc="$1" expect="$2" want_err="$3" toml_body="$4" out rc work reached seen
++    shift 4
++    work="$(mktemp -d)"
++    mkdir -p "$work/scripts" "$work/crates/core" "$work/bin"
++    cp "$RELEASE_SH" "$work/scripts/release.sh"
++    printf '%s\n' "$toml_body" > "$work/crates/core/Cargo.toml"
++    printf '#!/usr/bin/env bash\nprintf "%%s\\n" "${FREENET_MIN_COMPATIBLE_VERSION-<unset>}" > "%s/reached_cargo"\nexit 1\n' \
++        "$work" > "$work/bin/cargo"
++    chmod +x "$work/bin/cargo"
++    (cd "$work" && GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_NOSYSTEM=1 git init -q .)
++    rc=0
++    out="$(cd "$work" && PATH="$work/bin:$PATH" GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_NOSYSTEM=1 \
++        FREENET_MIN_COMPATIBLE_VERSION=0.0.1 bash scripts/release.sh "$@" 2>&1)" || rc=$?
++    reached=no
++    seen=""
++    if [[ -e "$work/reached_cargo" ]]; then
++        reached=yes
++        seen="$(cat "$work/reached_cargo")"
++    fi
++    rm -rf "$work"
++    case "$expect" in
++        refuse)
++            if [[ "$rc" -ne 0 ]] && [[ "$reached" == no ]] && [[ "$out" == *"$want_err"* ]]; then
++                pass "$desc"
++            else
++                fail "$desc" "exit=$rc, reached cargo=$reached, wanted '$want_err'" "$out"
++            fi
++            ;;
++        proceed)
++            # A shell value of the override must not reach the build steps.
++            if [[ "$reached" == yes ]] && [[ "$seen" == "<unset>" ]]; then
++                pass "$desc"
++            else
+
+```
+
+---
+
+### Incident Patch 2: `1ffa3f10` (2026-11-24)
+**Commit Message**: fix(shell): derive the notification consent key from the decoded contract key (#6359)
+
+**File**: `crates/core/src/server/path_handlers/assets/shell_bridge.js` (modified, +9/-1)
+```diff
+@@ -282,7 +282,15 @@ function freenetBridge(authToken, userToken, hostedMode) {
+     // match than CONTRACT_PREFIX_RE (which is anchored), which is fine because
+     // `location.pathname` is server-controlled and can't contain `?`/`#`.
+     var m = location.pathname.match(/\/v[12]\/contract\/web\/([^/?#]+)/);
+-    return m ? 'freenet_notify:' + m[1] : null;
++    if (!m) return null;
++    // Canonicalise: percent-encoded spellings of one key (`%41` vs `A`) must
++    // share one consent / rate / snooze entry. Fall back to the raw segment
++    // when it is not valid percent-encoding.
++    var seg = m[1];
++    try {
++      seg = decodeURIComponent(seg);
++    } catch (_) {}
++    return 'freenet_notify:' + seg;
+   }
+ 
+   function contractSnoozeKey() {
+```
+
+**File**: `crates/core/src/server/shell_bridge_notifications.test.mjs` (modified, +35/-0)
+```diff
+@@ -752,6 +752,41 @@ function check(name, cond) {
+   }
+ }
+ 
++// 8. contractConsentKey canonicalises percent-encoded spellings of one key.
++{
++  const kb = src.indexOf('function contractConsentKey(');
++  const ke = src.indexOf('function contractSnoozeKey(');
++  const keyFn = src.slice(kb, ke);
++  const keyFor = (pathname) =>
++    new Function('location', `${keyFn}\nreturn contractConsentKey();`)({
++      pathname,
++    });
++  const plain = keyFor('/v1/contract/web/AbC123/');
++  check('plain key derived', plain === 'freenet_notify:AbC123');
++  check(
++    'percent-encoded spelling shares the plain key',
++    keyFor('/v1/contract/web/%41bC123/') === plain,
++  );
++  check(
++    'mixed-case hex escape shares the plain key',
++    keyFor('/v2/contract/web/Ab%43123/') === plain,
++  );
++  check(
++    'invalid escape does not throw and is kept raw',
++    keyFor('/v1/contract/web/Ab%ZZ/') === 'freenet_notify:Ab%ZZ',
++  );
++  check(
++    'double-encoded spelling decodes once and stays distinct',
++    keyFor('/v1/contract/web/%2541bC123/') === 'freenet_notify:%41bC123' &&
++      keyFor('/v1/contract/web/%2541bC123/') !== plain,
++  );
++  check(
++    'invalid UTF-8 escape does not throw and is kept raw',
++    keyFor('/v1/contract/web/Ab%C3/') === 'freenet_notify:Ab%C3',
++  );
++  check('non-contract path -> null', keyFor('/other/') === null);
++}
++
+ if (failures > 0) {
+   console.error(`\nnotify-rate-limiter: ${failures} check(s) FAILED`);
+   process.exit(1);
+```
+
+---
+
+### Incident Patch 3: `5ffab250` (2026-11-24)
+**Commit Message**: fix(dashboard): only use a well-formed, bounded gateway version in mismatch hints (#6358)
+
+**File**: `crates/core/src/node/network_status.rs` (modified, +77/-8)
+```diff
+@@ -2643,13 +2643,7 @@ fn snapshot_at(now: Instant) -> Option<NetworkStatusSnapshot> {
+             address: f.address,
+             reason_html: match &f.reason {
+                 FailureReason::VersionMismatch { local, gateway } => {
+-                    let local = html_escape(local);
+-                    let gateway = html_escape(gateway);
+-                    format!(
+-                        "<strong>Version mismatch</strong>: Your version: <code>{local}</code> \
+-                         — Gateway requires: <code>{gateway}</code><br>\
+-                         Run: <code>cargo install --force freenet --version {gateway}</code>"
+-                    )
++                    version_mismatch_html(local, gateway)
+                 }
+                 FailureReason::NatTraversalFailed => {
+                     let has_peer_connections = s.connected_peers.iter().any(|p| !p.is_gateway);
+@@ -2784,6 +2778,33 @@ fn snapshot_at(now: Instant) -> Option<NetworkStatusSnapshot> {
+     })
+ }
+ 
++/// Longest peer-supplied version text that is logged or displayed.
++const MAX_PEER_VERSION_TEXT_LEN: usize = 64;
++
++/// True when `s` is a well-formed version string (pre-release and build
++/// suffixes allowed) of bounded length, the only kind that may be placed into
++/// a suggested install command.
++fn is_well_formed_version(s: &str) -> bool {
++    s.len() <= MAX_PEER_VERSION_TEXT_LEN && semver::Version::parse(s).is_ok()
++}
++
++/// Dashboard text for a version mismatch. The install command is only offered
++/// when both versions are well-formed.
++fn version_mismatch_html(local: &str, gateway: &str) -> String {
++    if !(is_well_formed_version(local) && is_well_formed_version(gateway)) {
++        return "<strong>Version mismatch</strong>: the gateway reported a version \
++                this node could not read. Update Freenet to the latest release."
++            .to_string();
++    }
++    let local = html_escape(local);
++    let gateway = html_escape(gateway);
++    format!(
++        "<strong>Version mismatch</strong>: Your version: <code>{local}</code> \
++         — Gateway requires: <code>{gateway}</code><br>\
++         Run: <code>cargo install --force freenet --version {gateway}</code>"
++    )
++}
++
+ /// Classify a ConnectionError::TransportError string into a FailureReason.
+ pub fn classify_transport_error(error_msg: &str) -> FailureReason {
+     if error_msg.contains("Version incompatibility") {
+@@ -2801,7 +2822,11 @@ pub fn classify_transport_error(error_msg: &str) -> FailureReason {
+             .and_then(|s| s.split('\n').next())
+             .map(|s| s.trim().to_string())
+             .unwrap_or_default();
+-        FailureReason::VersionMismatch { local, gateway }
++        if is_well_formed_version(&local) && is_well_formed_version(&gateway) {
++            FailureReason::VersionMismatch { local, gateway }
++        } else {
++            FailureReason::Other("version mismatch (version text not recognised)".to_string())
++        }
+     } else if error_msg.contains("max connection attempts reached") {
+         FailureReason::NatTraversalFailed
+     } else {
+@@ -2899,6 +2924,50 @@ mod tests {
+         }
      }
  
-+    /// Creating a delegate that is already registered returns the same key and
-+    /// leaves its inherited origins and creation count unchanged.
-+    #[tokio::test]
-+    async fn test_create_delegate_existing_keeps_origin() {
-+        let mut env_holder = TestEnv::new().await;
-+        let origins = env_holder.inherited_origins.clone();
-+        let counter = env_holder.created_delegates_count.clone();
-+        let first = ContractInstanceId::new([1u8; 32]);
-+        let second = ContractInstanceId::new([2u8; 32]);
-+        let wasm = minimal_delegate_wasm();
-+        let (cipher, nonce) = ([0u8; 32], [0u8; 24]);
-+
-+        // SAFETY: env_holder is alive for the duration of this test
-+        let key = unsafe { env_holder.make_env_with_attestations(vec![first]) }
-+            .create_delegate_sync(&wasm, &[1], cipher, nonce)
-+            .unwrap();
-+        assert_eq!(counter.count(), 1);
-+
-+        // SAFETY: as above
-+        let again = unsafe { env_holder.make_env_with_attestations(vec![second]) }
-+            .create_delegate_sync(&wasm, &[1], cipher, nonce)
-+            .unwrap();
-+        assert_eq!(again, key, "same key is returned");
-+        assert_eq!(origins.get(&key).unwrap().value().origins, vec![first]);
-+        assert_eq!(counter.count(), 1, "no second creation is counted");
++    #[test]
++    fn test_classify_version_mismatch_rejects_unrecognised_text() {
++        let msg = "Version incompatibility with gateway\n  Your client version: 0.1.133\n  Gateway version: 0.1.135 --git https://example.invalid/x\n  \n";
++        assert!(matches!(
++            classify_transport_error(msg),
++            FailureReason::Other(_)
++        ));
++        let msg = "Version incompatibility with gateway\n  Your client version: 0.1.133\n  Gateway version: \n";
++        assert!(matches!(
++            classify_transport_error(msg),
++            FailureReason::Other(_)
++        ));
 +    }
 +
-+    /// With no inherited-origins entry (after a restart or expiry), creating an
-+    /// already-registered delegate does not add one.
-+    #[tokio::test]
-+    async fn test_create_delegate_existing_without_entry_stays_without() {
-+        let mut env_holder = TestEnv::new().await;
-+        let origins = env_holder.inherited_origins.clone();
-+        let wasm = minimal_delegate_wasm();
-+        let (cipher, nonce) = ([0u8; 32], [0u8; 24]);
-+
-+        // SAFETY: env_holder is alive for the duration of this test
-+        let key = unsafe { env_holder.make_env() }
-+            .create_delegate_sync(&wasm, &[1], cipher, nonce)
-+            .unwrap();
-+        assert!(origins.get(&key).is_none());
-+
-+        // SAFETY: as above
-+        let again = unsafe {
-+            env_holder.make_env_with_attestations(vec![ContractInstanceId::new([2u8; 32])])
-+        }
-+        .create_delegate_sync(&wasm, &[1], cipher, nonce)
-+        .unwrap();
-+        assert_eq!(again, key);
-+        assert!(origins.get(&key).is_none(), "no entry may be added");
++    #[test]
++    fn test_version_mismatch_html_omits_command_for_unrecognised_text() {
++        let html = version_mismatch_html("0.1.133", "1.0.0 --git https://example.invalid/x");
++        assert!(!html.contains("cargo install"));
++        assert!(!html.contains("example.invalid"));
 +    }
 +
-+    /// Repeated creates of one key count toward the per-call limit but hold a
-+    /// single node-wide slot.
-+    #[tokio::test]
-+    async fn test_create_delegate_existing_counts_per_call_only() {
-+        let mut env_holder = TestEnv::new().await;
-+        let counter = env_holder.created_delegates_count.clone();
-+        let wasm = minimal_delegate_wasm();
-+        let (cipher, nonce) = ([0u8; 32], [0u8; 24]);
-+
-+        // SAFETY: env_holder is alive for the duration of this test
-+        let env = unsafe { env_holder.make_env() };
-+        env.create_delegate_sync(&wasm, &[1], cipher, nonce)
-+            .unwrap();
-+        env.create_delegate_sync(&wasm, &[1], cipher, nonce)
-+            .unwrap();
-+        assert_eq!(env.creations_this_call.get(), 2);
-+        assert_eq!(counter.count(), 1);
-+
-+        // Looping on the existing key succeeds until the per-call limit
-+        // (two creations are already counted), then is refused.
-+        let limit = crate::contract::MAX_DELEGATE_CREATIONS_PER_CALL;
-+        for i in 2..limit + 2 {
-+            let result = env.create_delegate_sync(&wasm, &[1], cipher, nonce);
-+            if i < limit {
-+                assert!(result.is_ok(), "call {i} is within the limit");
-+            } else {
-+                assert!(
-+                    matches!(result, Err(DelegateCreateError::CreationsExceeded)),
-+                    "call {i} is over the limit"
-+                );
-+            }
++    #[test]
++    fn test_classify_version_mismatch_accepts_prerelease_and_rejects_overlong() {
++        let msg = "Version incompatibility with gateway\n  Your client version: 0.1.133\n  Gateway version: 1.2.3-rc.1+b5\n  \n";
++        match classify_transport_error(msg) {
++            FailureReason::VersionMismatch { gateway, .. } => assert_eq!(gateway, "1.2.3-rc.1+b5"),
++            FailureReason::NatTraversalFailed
++            | FailureReason::Timeout
++            | FailureReason::Other(_) => panic!("expected VersionMismatch"),
 +        }
-+        assert_eq!(counter.count(), 1, "the node-wide count is unchanged");
-+    }
++        let html = version_mismatch_html("0.1.133", "1.2.3-rc.1+b5");
++        assert!(html.contains("cargo install --force freenet --version 1.2.3-rc.1+b5"));
 +
-     /// Child created by non-attested parent gets no attestation entry, but
-     /// still counts toward the per-node limit.
-     ///
++        let long = format!("1.2.3-{}", "a".repeat(100));
++        let msg = format!(
++            "Version incompatibility with gateway\n  Your client version: 0.1.133\n  Gateway version: {long}\n  \n"
++        );
++        assert!(mat
 ```
 
-**File**: `crates/core/src/wasm_runtime/native_api.rs` (modified, +29/-1)
+**File**: `crates/core/src/transport/connection_handler.rs` (modified, +47/-1)
 ```diff
-@@ -542,6 +542,9 @@ pub(crate) fn prune_expired_contexts(cache: &DelegateContextCache) {
- /// `created_at` cap drops the entry at a fixed age regardless, so an always-busy
- /// entry can't be refreshed forever.
- ///
-+/// An already-registered child is never given an entry by `create_delegate`,
-+/// so after a restart or expiry it stays without one.
-+///
- /// Dropping an entry never loses identity: secrets live in the SecretsStore
- /// keyed by delegate key (not here) and the DEK is re-derived from the node KEK.
- /// `tokio::time::Instant` mirrors [`DelegateContextEntry`].
-@@ -1492,7 +1495,8 @@ impl DelegateCallEnv {
-     /// Create a new delegate synchronously during process() execution.
-     ///
-     /// Validates resource limits, constructs a DelegateContainer from the raw WASM bytes,
--    /// registers it in the delegate store and secret store, and records creator attestation.
-+    /// registers it in the delegate store and secret store, and records creator
-+    /// attestation for a newly created delegate.
-     ///
-     /// Note: WASM bytes are stored as-is. Validation is deferred to execution time
-     /// (when the delegate is actually invoked). Depth tracking is per-call only — child
-@@ -1507,6 +1511,12 @@ impl DelegateCallEnv {
-     ///   value works. See `SecretsStore::register_delegate`.
-     /// * `nonce_bytes` - 24-byte field, discarded for the same reason.
-     ///
-+    /// If the delegate is already registered, its key is returned and its
-+    /// inherited origins are left unchanged, whether or not an entry exists.
-+    /// After a restart or TTL expiry an already-registered child therefore has
-+    /// no inherited origin, and tokenless callers resolve to no origin, as
-+    /// after the idle TTL. The call counts toward the per-call creation limit.
-+    ///
-     /// # Returns
-     /// The new delegate's `DelegateKey` on success, or a `DelegateCreateError`.
-     pub(super) fn create_delegate_sync(
-@@ -1582,6 +1592,24 @@ impl DelegateCallEnv {
- 
-         let child_key = container.key().clone();
- 
-+        // An already-registered delegate is left exactly as it is: return its
-+        // key without registering again or touching its inherited origins.
-+        // The call still counts toward the per-call creation limit, so a guest
-+        // cannot loop on existing keys, but not toward the node-wide count of
-+        // created delegates, which holds one slot per delegate.
-+        // Deliberately not insert-if-absent: a missing inherited-origins entry
-+        // (after a restart or TTL expiry) cannot be told apart from "never
-+        // created by this parent", so filling it in here would let any creator
-+        // set the attribution of a delegate it did not create.
-+        if self
-+            .delegate_store_mut()
-+            .fetch_delegate(&child_key, &params_owned)
-+            .is_some()
-+        {
-+            self.creations_this_call.set(current + 1);
-+            return Ok(child_key);
+@@ -4624,6 +4624,13 @@ fn ack_ok_parts(
+ fn handle_ack_connection_error(err: Cow<'static, str>) -> TransportError {
+     if let Some(expected) = err.split("expected version").nth(1) {
+         let remote_version_str = expected.trim();
++        // The version is echoed in logs and in a suggested install command,
++        // so only a well-formed version is ever carried forward.
++        if remote_version_str.len() > 64 || semver::Version::parse(remote_version_str).is_err() {
++            return TransportError::ConnectionEstablishmentFailure {
++                cause: Cow::Borrowed("remote reported an unrecognised protocol version"),
++            };
 +        }
-+
-         // Build cipher and nonce
-         let cipher = XChaCha20Poly1305::new((&cipher_bytes).into());
-         let nonce = XNonce::from(nonce_bytes);
-```
-
----
-
-### Incident Patch 2: `0a8b6b1d` (2026-11-23)
-**Commit Message**: ci: raise test_unit timeout from 30 to 45 minutes (#6354)
-
-**File**: `.github/workflows/ci.yml` (modified, +6/-1)
-```diff
-@@ -951,7 +951,12 @@ jobs:
-     # the one heavy gate kept on every merge_group entry (release or not), so the
-     # tiered model (#3973) doesn't apply here.
-     runs-on: ubicloud-standard-16
--    timeout-minutes: 30
-+    # 45, not 30: a stopgap (#6346). The rust-cache restore of the ~1.7 GiB
-+    # entry measured 445-799 s at 2-4 MB/s on 2026-11-23, and the worst case
-+    # is about restore plus ~14 min of tests plus build, which fits under 45.
-+    # The real fix (shrink or speed up the cache, or drop it and the warm job
-+    # deliberately) is tracked in #6346.
-+    timeout-minutes: 45
-     # Skip on push to main (PR already validated) and on release branches
-     # themselves (the release version-bump PR is gated by its merge_group entry,
-     # which runs the full suite). The release merge_group entry IS the
-```
-
----
-
-### Incident Patch 3: `0cbc9b7a` (2026-11-23)
-**Commit Message**: feat(connect): enable native QUIC connects at 25% (A+ step 1) (#6330)
-
-**File**: `.claude/rules/transport.md` (modified, +14/-7)
-```diff
-@@ -2271,9 +2271,11 @@ upgrades hub's
- `QuicUpgrades::setup_native` (A5b, below); the endpoint's native side
- (`native/endpoint.rs`: `allow_native_peer`, `dial_native`, `send_punch`)
- stays `pub(in crate::transport::quic::native)`, and registering a native
--waiter is private to `setup`. In production nothing asks for a setup: the
--connect op gates on `operations::connect::native::NATIVE_DIAL_READY` (pinned
--false) and `QUIC_NATIVE_PERCENT` (0).
-+waiter is private to `setup`. Since A+ step 1 the connect op asks for a
-+setup for ready pairs whose bucket is below `QUIC_NATIVE_PERCENT` (25), gated
-+on `operations::connect::native::NATIVE_DIAL_READY` (true). There is no
-+runtime kill switch: the acceptor decides on `min(offered, own)`, so a
-+reversal takes effect for a pair once either side has updated.
+         // Check if this old peer's rejection actually means we need to update.
+         // Old peers do strict exact-match. If they're compatible with our range
+         // but just don't support range-checking, we should NOT self-update.
+@@ -4647,7 +4654,13 @@ fn handle_ack_connection_error(err: Cow<'static, str>) -> TransportError {
+             actual: PCK_VERSION.to_string(),
+         }
+     } else {
+-        TransportError::ConnectionEstablishmentFailure { cause: err }
++        // Peer text is logged and displayed, so keep only a bounded prefix.
++        let cause = if err.chars().count() > 64 {
++            Cow::Owned(err.chars().take(64).collect::<String>())
++        } else {
++            err
++        };
++        TransportError::ConnectionEstablishmentFailure { cause }
+     }
+ }
  
- ```
- ALPN per attempt: an address allowed with allow_native_peer is accepted with
-@@ -2373,16 +2375,21 @@ The transient-send warn in peer_connection_listener is throttled per
+@@ -4939,6 +4952,39 @@ pub mod mock_transport {
+             }
+         }
  
- Native connect (`operations/connect/native.rs`, `quic/upgrade/driver/native.rs`,
- A5b): the connect op asks for a native connection when the acceptor decides
--`Native`. Off in production (gates above); a simulation turns it on per node
--with `SimNetwork::with_native_connect` / `with_node_native_connect`
--(`NodeConfig::native_connect_override`).
-+`Native`. On in production since A+ step 1 at `QUIC_NATIVE_PERCENT` (25), for
-+`transport-quic = prefer` nodes only (gates above); a simulation sets the
-+percent per node with `SimNetwork::with_native_connect` /
-+`with_node_native_connect` (`NodeConfig::native_connect_override`). Native
-+gateway joins stay off (`GATEWAY_NATIVE_JOIN_PERCENT` 0).
- 
- ```
- Readiness: NativeConnectState, one per node in the ConnectionManager. Ready
-   when dialling is on (NATIVE_DIAL_READY, or the override), this node's own
-   QUIC endpoint is up (its QuicAvailabilityWatch from TransportHandle, read
-   per node: the process-wide quic_endpoint metric is shared by simulated
--  nodes) and the node is not demoted. The joiner's offer reads
-+  nodes), the configured transport-quic mode is prefer (set_endpoint's
-+  `prefer`: a native connection carries application data, which shadow
-+  keeps on UDP, so a shadow or off node is never ready in any role,
-+  including gateway joins) and the node is not demoted. The joiner's offer reads
-   readiness() (joiner demotion only); the relay's decision reads
-   acceptor_readiness() (either role's demotion).
- Dial: NodeEvent::ConnectPeer and HandshakeCommand::Connect carry a
-```
-
-**File**: `crates/core/src/node.rs` (modified, +6/-4)
-```diff
-@@ -541,8 +541,8 @@ pub struct NodeConfig {
-     #[serde(skip)]
-     pub(crate) quic_native_floor_override: Option<(u8, u8, u16)>,
-     /// Simulation-only: QUIC-native connects on, at this release percent, in
--    /// place of `NATIVE_DIAL_READY` and `QUIC_NATIVE_PERCENT`, both off in
--    /// production until the A+ ramp (`SimNetwork::with_native_connect`). Read
-+    /// place of `NATIVE_DIAL_READY` and `QUIC_NATIVE_PERCENT`, in production
-+    /// they are true and 25 (A+ step 1; `SimNetwork::with_native_connect`). Read
-     /// into the node's `NativeConnectState`. `None` in production.
-     /// `#[serde(skip)]`.
-     #[serde(skip)]
-@@ -560,8 +560,10 @@ pub struct NodeConfig {
-     #[serde(skip)]
-     pub(crate) native_refuses_decisions: bool,
-     /// Simulation-only: native gateway joins on, at this percent, in place of
--    /// `NATIVE_DIAL_READY` and `GATEWAY_NATIVE_JOIN_PERCENT`, both off in
--    /// production until phase B (`SimNetwork::with_native_gateway_join`).
-+    /// `NATIVE_DIAL_READY` and `GATEWAY_NATIVE_JOIN_PERCENT`. In production
-+    /// `NATIVE_DIAL_READY` is true since A+ step 1, and only
-+    /// `GATEWAY_NATIVE_JOIN_PERCENT` (0) keeps gateway-native off until
-+    /// phase B (`SimNetwork::with_native_gateway_join`).
-     /// Read into the node's `NativeConnectState`. `None` in production.
-     /// `#[serde(skip)]`.
-     #[serde(skip)]
-```
-
-**File**: `crates/core/src/node/network_bridge/handshake.rs` (modified, +4/-2)
-```diff
-@@ -1954,7 +1954,7 @@ mod tests {
-         let (endpoint, watch) = QuicAvailabilityWatch::for_test(QuicAvailability::Up);
-         let native = crate::operations::connect::native::NativeConnectState::new(None)
-             .with_gateway_join_override(Some(100));
--        native.set_endpoint(watch);
-+        native.set_endpoint(watch, true);
-         native.set_native_gateways(marked.iter().copied());
-         let own = TransportKeypair::new().public().clone();
-         (
-@@ -2262,7 +2262,9 @@ mod tests {
-         node_config.native_gateway_join_override = Some(100);
-         let connection_manager = ConnectionManager::new(&node_config);
-         let (_endpoint, watch) = QuicAvailabilityWatch::for_test(QuicAvailability::Up);
--        connection_manager.native_connect().set_endpoint(watch);
-+        connection_manager
-+            .native_connect()
-+            .set_endpoint(watch, true);
- 
-         let connector = Arc::new(GatewayConnector::new(true, Handshake::Succeeds));
-         let (_conn_tx, conn_rx) = mpsc::channel(1);
-```
-
-**File**: `crates/core/src/node/network_bridge/p2p_protoc.rs` (modified, +5/-2)
-```diff
-@@ -1225,7 +1225,7 @@ use crate::operations::connect::native::NativeWire;
- /// starts the data ramp, and turning on the native connect offer in the same
- /// release would change two things at once. Raised to 0.2.160 for 0.2.159,
- /// which ships while the data ramp is still under watch. Raised to 0.2.161
--/// for 0.2.160: native connect is still off (`QUIC_NATIVE_PERCENT` is 0) and
-+/// for 0.2.160: native connect was still off (`QUIC_NATIVE_PERCENT` was 0) and
- /// its wire fields may change before it is enabled, so no release is frozen
- /// as the floor yet. Raised to 0.2.162 for 0.2.161 for the same reasons, and
- /// to 0.2.163 for 0.2.162. Frozen at 0.2.163: that release ships the variants
-@@ -1664,7 +1664,10 @@ impl P2pConnManager {
-             .ring
-             .connection_manager
-             .native_connect()
--            .set_endpoint(quic_availability);
-+            .set_endpoint(
-+                quic_availability,
-+                quic_policy.mode() == crate::transport::quic::QuicMode::Prefer,
++        // A refusal whose version is not a well-formed version is not carried
++        // into the mismatch error (which is rendered as an install command).
++        for bad in [
++            "expected version 1.2.3 --git https://example.invalid/x",
++            "expected version 1.2.3; echo hi",
++            "expected version <b>1.2.3</b>",
++            "expected version 1.2",
++            "expected version ",
++            "expected version 1.2.3-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
++        ] {
++            let err = handle_ack_connection_error(bad.to_string().into());
++            assert!(
++                matches!(
++                    &err,
++                    TransportError::ConnectionEstablishmentFailure { cause }
++                        if !cause.contains("example.invalid") && !cause.contains("echo")
++                ),
++                "expected generic failure for {bad:?}, got {err:?}"
 +            );
- 
-         tracing::info!(
-             listening_port,
-```
-
-**File**: `crates/core/src/node/testing_impl.rs` (modified, +2/-2)
-```diff
-@@ -2363,8 +2363,8 @@ impl SimNetwork {
- 
-     /// Turns QUIC-native connects on for every node, at `percent` (the share
-     /// of joins an acceptor decides native), in place of this release's
--    /// `NATIVE_DIAL_READY` and `QUIC_NATIVE_PERCENT`, which are off. Pair it
--    /// with [`Self::with_quic_native_floor`], since without the native wire
-+    /// `NATIVE_DIAL_READY` and `QUIC_NATIVE_PERCENT`, which are on (25) in
-+    /// production. Pair it with [`Self::with_quic_native_floor`], since without the native wire
-     /// variants no decision reaches a joiner, and with
-     /// [`Self::with_transport_quic`], since a node without a QUIC endpoint
-     /// cannot set one up. Call before the simulation starts.
-```
-
-**File**: `crates/core/src/operations/connect.rs` (modified, +2/-2)
-```diff
-@@ -4449,7 +4449,7 @@ mod tests {
-     }
- 
-     /// The acceptor answers a request that carried an offer with a decision
--    /// (`Udp` in this build), and one without an offer with none.
-+    /// (`Udp` here: the offer is at percent 0), and one without an offer with none.
-     #[test]
-     fn acceptor_decides_only_when_offered() {
-         let self_loc = make_peer(4000);
-@@ -4698,7 +4698,7 @@ mod tests {
- 
-     /// Every join request, including a bootstrap join through a gateway, is
-     /// built by `prepare_join_request` and carries an offer, at percent 0 in
--    /// this build, and each offer is counted.
-+    /// a bare test (no endpoint up), and each offer is counted.
-     #[test]
-     fn every_join_request_carries_an_offer() {
-         let offers =
-```
-
-**File**: `crates/core/src/operations/connect/native.rs` (modified, +121/-43)
-```diff
-@@ -9,9 +9,9 @@
- //!
- //! On `Native` the joiner and the acceptor each dial a native connection
- //! ([`DialTransport::Native`]), and a failed setup falls back to today's UDP
--//! dial. In production nothing changes yet: [`NATIVE_DIAL_READY`] is false,
--//! so every offer carries percent 0 and every decision is
--//! [`NativeDecision::Udp`]; a simulation turns it on per node
-+//! dial. In production [`NATIVE_DIAL_READY`] is true and
-+//! [`QUIC_NATIVE_PERCENT`] is 25 (A+ step 1), so a ready pair whose bucket is
-+//! below 25 decides `Native`; a simulation sets both per node
- //! ([`NativeConnectState`]). A `Native` the joiner cannot honour fails that
- //! attempt ([`joiner_response_action`]).
- //!
-@@ -36,22 +36,26 @@ use crate::transport::TransportPublicKey;
- use crate::transport::metrics::ConnectArm;
- use crate::transport::metrics::TRANSPORT_METRICS;
- 
--/// Whether this build can dial a native connection. False until the native
--/// connection exists and is wired into the connect op; while false, every offer
--/// this node sends carries percent 0 and it never decides `Native`.
--pub(crate) const NATIVE_DIAL_READY: bool = false;
-+/// Whether this build can dial a native connection. True since A+ step 1;
-+/// while false, every offer this node sends carries percent 0 and it never
-+/// decides `Native`.
-+pub(crate) const NATIVE_DIAL_READY: bool = true;
- 
- /// This release's share of pairs, 0 to 100, that set up a native connection
--/// when both sides are ready. Each step is its own release; the acceptor's
--/// release governs, since only the acceptor decides.
--pub(crate) const QUIC_NATIVE_PERCENT: u8 = 0;
-+/// when both sides are ready. Each step is its own release. Only the acceptor
-+/// decides, and it decides on `min(offered, own)`, so a pair goes native only
-+/// if both releases allow it: a reversal takes effect for any pair where either
-+/// the acceptor or the joiner has updated, as nodes update. There is no runtime
-+/// kill switch. 25 is A+ step 1.
-+pub(crate) const QUIC_NATIVE_PERCENT: u8 = 25;
- 
- /// This release's share, 0 to 100, of (joiner, gateway) pairs whose join
- /// tries a native connection to the gateway first (#5940, phase B), when the
- /// gateway is marked native in the gateway index and this node can dial
- /// native. Any failure falls back at once to today's join. The joiner alone
- /// decides (there is no connection to the gateway yet to ask it), so the
--/// joiner's release governs. At 0 no join tries native.
-+/// joiner's release governs. At 0 no join tries native. `NATIVE_DIAL_READY`
-+/// is true since A+ step 1, so this 0 alone keeps gateway-native off.
- pub(crate) const GATEWAY_NATIVE_JOIN_PERCENT: u8 = 0;
- 
- /// After a native join with a gateway fails, joins to that gateway go
-@@ -777,7 +781,7 @@ pub(crate) struct NativeConnectState {
-     /// and when it is not up, the node cannot dial native. Read per node, not
-     /// from the process-wide endpoint metric, which several simulated nodes
-     /// in one process share.
--    endpoint: std::sync::OnceLock<crate::transport::QuicAvailabilityWatch>,
-+    endpoint: std::sync::OnceLock<(crate::transport::QuicAvailabilityWatch, bool)>,
-     /// Simulation only: native gateway joins on, at this percent, in place of
-     /// [`NATIVE_DIAL_READY`] and [`GATEWAY_NATIVE_JOIN_PERCENT`]
-     /// (`NodeConfig::native_gateway_join_override`). `None` in production.
-@@ -964,13 +968,21 @@ impl NativeConnectState {
-     fn endpoint_up(&self) -> bool {
-         self.endpoint
-             .get()
--            .is_some_and(|e| e.get() == crate::transport::QuicAvailability::Up)
-+            .is_some_and(|(e, prefer)| *prefer && e.get() == crate::transport::QuicAvailability::Up)
-     }
- 
-     /// The node's transport opened with this QUIC endpoint. Only the first
--    /// call counts: a node opens one transport.
--    pub(crate) fn set_endpoint(&self, endpoint: crate::transport::QuicAvailabilityWatch) {
--        self.endpoint.get_or_init(|| endpoint);
-+    /// call counts: a node opens one transport. `prefer` is whether the
-+    /// configured `transport-quic` mode is `prefer`: a native connection
-+    /// carries application data, which `shadow` promises to keep on UDP, so a
-+    /// node in any other mode is never ready, as joiner, acceptor or gateway
-+    /// joiner, however up its endpoint is.
-+    pub(crate) fn set_endpoint(
-+        &self,
-+        endpoint: crate::transport::QuicAvailabilityWatch,
-+        prefer: bool,
-+    ) {
-+        self.endpoint.get_or_init(|| (endpoint, prefer));
-     }
- 
-     /// This node's readiness now, as joiner: the offer it sends and whether
-@@ -1532,23 +1544,35 @@ mod tests {
-         );
-     }
- 
--    /// This build cannot dial native, so it offers 0 and never decides
--    /// `Native`, whatever the endpoint state.
-+    /// A+ step 1: this build dials native and offers 25 once its endpoint is
-+    /// up. A node whose endpoint is down offers 0 and decides UDP; an up node
-+    /// decides `Native` exactly for bucket
-```
-
-**File**: `crates/core/src/operations/connect/op_ctx_task.rs` (modified, +1/-1)
-```diff
-@@ -4041,7 +4041,7 @@ mod driver_timing_tests {
-             crate::transport::QuicAvailability::Up,
-         );
-         let connect = op_manager.ring.connection_manager.native_connect();
--        connect.set_endpoint(watch);
-+        connect.set_endpoint(watch, true);
-         assert!(
-             connect.readiness().ready,
-             "premise: the joiner can dial native"
++        }
++
++        let ok = handle_ack_connection_error("expected version 1.2.3-rc.1+b5".to_string().into());
++        assert!(matches!(
++            &ok,
++            TransportError::ProtocolVersionMismatch { expected, .. } if expected == "1.2.3-rc.1+b5"
++        ));
++        let long_other = "x".repeat(500);
++        let err = handle_ack_connection_error(long_other.into());
++        assert!(matches!(
++            &err,
++            TransportError::ConnectionEstablishmentFailure { cause } if cause.chars().count() == 64
++        ));
++
+         let err_msg_no_version = "remote is using a different protocol version".to_string();
+         match handle_ack_connection_error(err_msg_no_version.clone().into()) {
+             TransportError::ConnectionEstablishmentFailure { cause } => {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6362** (2026-11-24): ci(release): ship an exact soaked commit so main stays open during a cut (@sanity)
+- **PR #6361** (2026-11-24): ci(release): close fail-open and half-done paths found in a release-tooling audit (@sanity)
+- **PR #6360** (2026-11-24): build: release 0.2.164 (@sanity)
+- **PR #6359** (2026-11-24): fix(shell): derive the notification consent key from the decoded contract key (@sanity)
+- **PR #6358** (2026-11-24): fix(dashboard): only use a well-formed, bounded gateway version in mismatch hints (@sanity)
 - **PR #6357** (2026-11-24): test(sim): keep peer-to-peer native connects off in the closed gateway-join sim (@sanity)
-- **PR #6354** (2026-11-23): ci: raise test_unit timeout from 30 to 45 minutes (@sanity)
-- **PR #6353** (2026-11-23): fix(connect): a joiner that cannot use a native decision dials the acceptor over UDP (@sanity)
-- **PR #6352** (closed): test: give each joiners-behind-one-address test its own network name (@sanity)
-- **PR #6351** (2026-11-23): fix: create_delegate leaves an already-registered delegate's origin unchanged (@sanity)
-- **PR #6350** (2026-11-23): fix(test): simulation test binaries keep node data dirs under a per-process temp root (@sanity)
 
 ---
 
@@ -2258,54 +2303,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. create_delegate leaves an already-registered delegate's origin unchanged
+## X. release): the manual release driver never changes the handshake floor
 
 **RULE**:
-When implementing operations in `crates/core/src/wasm_runtime/delegate_api.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/core/Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `447373c9`: create_delegate leaves an already-registered delegate's origin unchanged. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d1948e2f`: release): the manual release driver never changes the handshake floor. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/wasm_runtime/delegate_api.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/Cargo.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// Creating a delegate that is already registered returns the same key and
-    /// leaves its inherited origins and creation count unchanged.
-    #[tokio::test]
-    async fn test_create_delegate_existing_keeps_origin() {
-        let mut env_holder = TestEnv::new().await;
-        let origins = env_holder.inherited_origins.clone();
-        let counter = env_holder.created_delegates_count.clone();
-        let first = ContractInstanceId::new([1u8; 32]);
-        let second = ContractInstanceId::new([2u8; 32]);
-        let wasm = minimal_delegate_wasm();
-        let (cipher, nonce) = ([0u8; 32], [0u8; 24]);
-
-        // SAFETY: env_holder is alive for the duration of this test
-        let key = unsafe { env_holder.make_env_with_attestations(vec![first]) }
-            .create_delegate_sync(&wasm, &[1], cipher, nonce)
-            .unwrap();
-        assert_eq!(counter.count(), 1);
-
-        // SAFETY: as above
-        let again = unsafe { env_holder.make_env_with_attestations(vec![second]) }
-            .create_delegate_sync(&wasm, &[1], cipher, nonce)
-            .unwrap();
-        assert_eq!(again, key, "same key is returned");
-        assert_eq!(origins.get(&key).unwrap().value().orig
+# this value unchanged, and so does scripts/release.sh (#5833). The env var
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+# this value unchanged; scripts/release.sh rewrites it. The env var
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `447373c9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d1948e2f` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

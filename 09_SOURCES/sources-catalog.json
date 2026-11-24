@@ -2493,10 +2493,10 @@
     "repository": "karakeep-app/karakeep",
     "platform": "github",
     "sourceUrl": "https://github.com/karakeep-app/karakeep",
-    "sourceVersion": "337161a5",
+    "sourceVersion": "28ae6752",
     "license": "AGPL-3.0",
-    "contentHash": "f49b5f4d83a9336061c760bb372d7353d9cc6e43ff4ccef6fd677e2a7f2092fb",
-    "lastHarvestedAt": "2026-11-21T13:53:36.588Z",
+    "contentHash": "9e81e0ff3ca243fa3b32e6e33e32003835abaaf1580c04d6249f24d76a1eafc8",
+    "lastHarvestedAt": "2026-11-24T07:55:41.314Z",
     "learningId": "learn-github-karakeep-app-karakeep"
   },
   "authzed-spicedb": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "a93b0a3b",
+    "sourceVersion": "fe85b027",
     "license": "NOASSERTION",
-    "contentHash": "a776a4cc3166a9957372c6d574c88e966746719132c6209fce3cb9532358ac15",
-    "lastHarvestedAt": "2026-11-24T02:21:13.483Z",
+    "contentHash": "72ada69e6d1787e2641acd4c199a9240a381640dbab08904bb125e95d5df753a",
+    "lastHarvestedAt": "2026-11-24T07:55:47.529Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -3433,10 +3433,10 @@
     "repository": "zeronsh/zeron",
     "platform": "github",
     "sourceUrl": "https://github.com/zeronsh/zeron",
-    "sourceVersion": "b289003b",
+    "sourceVersion": "29646196",
     "license": "MIT",
-    "contentHash": "c6c74af33e80abef03196ec466a55eef78f7bd5a0a9218d39fd6a6c405126a43",
-    "lastHarvestedAt": "2026-11-22T23:33:13.724Z",
+    "contentHash": "0096ff04fa672ceb8d99461326bcbd34f31dcc8321554a189b139cf38b397fa5",
+    "lastHarvestedAt": "2026-11-24T07:55:37.449Z",
     "learningId": "learn-github-zeronsh-zeron"
   },
   "welldone-software-why-did-you-render": {

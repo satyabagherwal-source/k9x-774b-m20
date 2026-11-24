@@ -12663,3 +12663,6 @@ Every entry in this ledger must capture:
 | `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `90a9bc24` | Multi-dimensional audit evidence | 2026-11-24T07:47:13.945Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `2325502f` | Multi-dimensional audit evidence | 2026-11-24T07:47:17.783Z |
 | `learn-github-seekstorm-seekstorm` | `https://github.com/SeekStorm/SeekStorm` | `e807310b` | Multi-dimensional audit evidence | 2026-11-24T07:47:18.429Z |
+| `learn-github-zeronsh-zeron` | `https://github.com/zeronsh/zeron` | `29646196` | Multi-dimensional audit evidence | 2026-11-24T07:55:37.449Z |
+| `learn-github-karakeep-app-karakeep` | `https://github.com/karakeep-app/karakeep` | `28ae6752` | Multi-dimensional audit evidence | 2026-11-24T07:55:41.314Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `fe85b027` | Multi-dimensional audit evidence | 2026-11-24T07:55:47.529Z |

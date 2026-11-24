@@ -4,22 +4,22 @@
 {
   "source_repository": "karakeep-app/karakeep",
   "source_url": "https://github.com/karakeep-app/karakeep",
-  "source_version": "337161a5",
+  "source_version": "28ae6752",
   "license": "AGPL-3.0",
-  "timestamp": "2026-11-21T13:53:36.787Z",
+  "timestamp": "2026-11-24T07:55:41.552Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-karakeep-app-karakeep",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [karakeep-app/karakeep](https://github.com/karakeep-app/karakeep) (Revision: `337161a5`).  
-> **License**: AGPL-3.0 | **Timestamp**: `2026-11-21T13:53:36.787Z`  
+> **Provenance**: Harvested from [karakeep-app/karakeep](https://github.com/karakeep-app/karakeep) (Revision: `28ae6752`).  
+> **License**: AGPL-3.0 | **Timestamp**: `2026-11-24T07:55:41.552Z`  
 > **Learning ID**: `learn-github-karakeep-app-karakeep`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `karakeep-app/karakeep` (Commit: `337161a5`)
+- **Target Repository**: `karakeep-app/karakeep` (Commit: `28ae6752`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/karakeep-app-karakeep-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/karakeep-app/karakeep](https://github.com/karakeep-app/karakeep))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T13:53:35.548Z  
+> **Harvest Timestamp**: 2026-11-24T07:55:40.178Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A self-hostable bookmark-everything app (links, notes and images) with AI-based automatic tagging and full text search
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 30739 stars
+- **Stars / Engagement**: 30807 stars
 
 ---
 
@@ -764,234 +764,107 @@ export function cleanupApiClient() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `49dacceb` (2026-11-20)
-**Commit Message**: fix(mobile): stop saving a sheet from crashing the app
+### Incident Patch 1: `b56d4888` (2026-11-20)
+**Commit Message**: fix(mobile): stop reporting Expo DOM webview injectJavaScript rejections to Sentry
 
-Since the Expo 58 upgrade, expo-router ships a newer React Navigation whose
-usePreventRemove blocks an action re-dispatched from its own callback. The
-discard guard did exactly that after a successful save, so the action looped
-until React hit "Maximum update depth exceeded" and the app crashed. Every
-guarded sheet (new note, lists, tags, bookmark info, server address) crashed
-on Save.
+Expo's DOM component wrapper re-sends props to the reader's webview on every
+render and never catches the native call's result. Once Android drops the view,
+each render reports "Call to function 'DomWebView.injectJavaScript' has been
+rejected" as an unhandled rejection. It's harmless to users but sent ~18.7k
+events from ~1.5k users and used up the whole Sentry quota, so crashes from
+newer releases were being dropped.
 
-- Leave through the hook's returned disablePrevention after a save, and
-  through the callback's repeat() when the user picks Discard
-- Turn preventRemove off in the same step, as the hook asks
+- Ignore the error in Sentry.init, since the free plan can't filter it server-side
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `apps/mobile/components/ui/SheetHeader.tsx` (modified, +28/-23)
+**File**: `apps/mobile/app/_layout.tsx` (modified, +6/-0)
 ```diff
-@@ -1,7 +1,7 @@
--import { useRef } from "react";
-+import { useState } from "react";
- import { ActivityIndicator, Alert, Pressable } from "react-native";
- import { router, Stack } from "expo-router";
--import { useNavigation, usePreventRemove } from "expo-router/react-navigation";
-+import { usePreventRemove } from "expo-router/react-navigation";
- import { Text } from "@/components/ui/Text";
- import { useCommonActions, useTranslation } from "@/lib/i18n/hooks";
+@@ -31,6 +31,12 @@ Sentry.init({
  
-@@ -47,28 +47,33 @@ function HeaderTextButton({
-  */
- function useDiscardGuard(isDirty: boolean) {
-   const { t } = useTranslation();
--  const navigation = useNavigation();
--  const allowLeaveRef = useRef(false);
--  usePreventRemove(isDirty, ({ data }) => {
--    if (allowLeaveRef.current) {
--      navigation.dispatch(data.action);
--      return;
--    }
--    Alert.alert(
--      t("app.discard_changes_title"),
--      t("app.discard_changes_message"),
--      [
--        { text: t("actions.keep_editing"), style: "cancel" },
--        {
--          text: t("actions.discard"),
--          style: "destructive",
--          onPress: () => navigation.dispatch(data.action),
--        },
--      ],
--    );
--  });
-+  const [leaving, setLeaving] = useState(false);
-+  // Re-dispatching the blocked action gets blocked again (and loops until
-+  // React gives up and the app crashes). Leave through `repeat` or the
-+  // returned `disablePrevention` instead.
-+  const disablePrevention = usePreventRemove(
-+    isDirty && !leaving,
-+    ({ repeat }) => {
-+      Alert.alert(
-+        t("app.discard_changes_title"),
-+        t("app.discard_changes_message"),
-+        [
-+          { text: t("actions.keep_editing"), style: "cancel" },
-+          {
-+            text: t("actions.discard"),
-+            style: "destructive",
-+            onPress: () => {
-+              setLeaving(true);
-+              repeat();
-+            },
-+          },
-+        ],
-+      );
-+    },
-+  );
-   return () => {
--    allowLeaveRef.current = true;
-+    setLeaving(true);
-+    disablePrevention();
-   };
- }
+   // Enable Logs
+   enableLogs: false,
++
++  // Expo's DOM component wrapper re-sends props to the reader's webview on
++  // every render without catching the result, so once Android drops the view
++  // each render reports an unhandled rejection. Harmless, but it used up the
++  // whole Sentry quota.
++  ignoreErrors: [/DomWebView\.injectJavaScript/],
+ });
  
+ export default Sentry.wrap(function RootLayout() {
 ```
 
 ---
 
-### Incident Patch 2: `337161a5` (2026-11-20)
-**Commit Message**: chore(deps): bump next to 16.4.6 for security fixes
+### Incident Patch 2: `85695fa3` (2026-11-22)
+**Commit Message**: fix(web): sidebar labels clipped by Chrome's new line-clamp (#3398)
 
-Picks up the Nov 3 Next.js security release (16.4.5), which fixes seven
-advisories affecting 16.0.0-16.4.4, including GHSA-pc58-hwjq-p385
-(response injection behind pipelining proxies) and GHSA-7qx7-33qx-rqx2
-(SVG rejection bypass in image optimization).
+Sidebar labels used line-clamp-1 with break-all. With Chrome's
+CSSLineClampLineBreakingEllipsis (behind Experimental Web Platform
+features), some short labels wrap inside their own width and get clamped:
+"Search" shows as "Sear...", "Favourites" as "Favourit...".
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+The labels only ever need one line, so use truncate instead, and add
+min-w-0 to the link and its wrapper so long names still get an ellipsis.
 
-**File**: `apps/web/package.json` (modified, +2/-2)
+Co-authored-by: Thomas Emann <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `apps/web/components/shared/sidebar/SidebarItem.tsx` (modified, +3/-3)
 ```diff
-@@ -74,7 +74,7 @@
-     "lexical": "^0.20.2",
-     "lucide-react": "^0.501.0",
-     "modern-screenshot": "^4.6.7",
--    "next": "16.4.1",
-+    "next": "16.4.6",
-     "next-themes": "^0.4.6",
-     "nuqs": "^2.4.3",
-     "react": "19.3.0",
-@@ -103,7 +103,7 @@
-   "devDependencies": {
-     "@karakeep/tailwind-config": "workspace:^0.1.0",
-     "@karakeep/tsconfig": "workspace:^0.1.0",
--    "@next/bundle-analyzer": "16.4.1",
-+    "@next/bundle-analyzer": "16.4.6",
-     "@testing-library/react": "^16.3.2",
-     "@types/emoji-mart": "^3.0.14",
-     "@types/react": "19.3.0",
-```
-
-**File**: `pnpm-lock.yaml` (modified, +87/-53)
-```diff
-@@ -723,7 +723,7 @@ importers:
-         version: 11.9.0(@tanstack/react-query@5.90.2(react@19.3.0))(@trpc/client@11.9.0(@trpc/server@11.9.0(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.9.0(typescript@5.9.3))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(typescript@5.9.3)
-       better-auth:
-         specifier: 1.7.16
--        version: 1.7.16(@opentelemetry/api@1.9.0)(drizzle-kit@0.31.10)(drizzle-orm@0.45.4(@opentelemetry/api@1.9.0)(@types/better-sqlite3@7.6.13)(better-sqlite3@13.0.3)(kysely@0.29.6))(next@16.4.1(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.0)(@types/node@26.6.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.102.0))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vitest@4.1.11(@opentelemetry/api@1.9.0)(@types/node@26.6.1)(jsdom@24.1.3(supports-color@8.1.1))(vite@8.3.0(@types/node@24.10.3)(esbuild@0.28.2)(jiti@2.4.2)(sass@1.102.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.8.3)))
-+        version: 1.7.16(@opentelemetry/api@1.9.0)(drizzle-kit@0.31.10)(drizzle-orm@0.45.4(@opentelemetry/api@1.9.0)(@types/better-sqlite3@7.6.13)(better-sqlite3@13.0.3)(kysely@0.29.6))(next@16.4.6(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.0)(@types/node@24.10.3)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.102.0))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vitest@4.1.11(@opentelemetry/api@1.9.0)(@types/node@26.6.1)(jsdom@24.1.3(supports-color@8.1.1))(vite@8.3.0(@types/node@24.10.3)(esbuild@0.28.2)(jiti@2.4.2)(sass@1.102.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.8.3)))
-       better-sqlite3:
-         specifier: ^13.0.3
-         version: 13.0.3
-@@ -764,14 +764,14 @@ importers:
-         specifier: ^4.6.7
-         version: 4.6.7
-       next:
--        specifier: 16.4.1
--        version: 16.4.1(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.0)(@types/node@26.6.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.102.0)
-+        specifier: 16.4.6
-+        version: 16.4.6(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.0)(@types/node@24.10.3)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.102.0)
-       next-themes:
-         specifier: ^0.4.6
-         version: 0.4.6(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
-       nuqs:
-         specifier: ^2.4.3
--        version: 2.4.3(next@16.4.1(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.0)(@types/node@26.6.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.102.0))(react-router-dom@6.30.6(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react-router@6.30.6(react@19.3.0))(react@19.3.0)
-+        version: 2.4.3(next@16.4.6(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.0)(@types/node@24.10.3)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.102.0))(react-router-dom@6.30.6(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react-router@6.30.6(react@19.3.0))(react@19.3.0)
-       react:
-         specifier: 19.3.0
-         version: 19.3.0
-@@ -846,8 +846,8 @@ importers:
-         specifier: workspace:^0.1.0
-         version: link:../../tooling/typescript
-       '@next/bundle-analyzer':
--        specifier: 16.4.1
--        version: 16.4.1
-+        specifier: 16.4.6
-+        version: 16.4.6
-       '@testing-library/react':
-         specifier: ^16.3.2
-         version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
-@@ -5068,60 +5068,60 @@ packages:
-       '@emnapi/core': ^1.7.1 || ^2.0.0-alpha.4
-       '@emnapi/runtime': ^1.7.1 || ^2.0.0-alpha.4
- 
--  '@next/bundle-analyzer@16.4.1':
--    resolution: {integrity: sha512-d/Q9is3bTt9Qlf4yIPI1+0CqMJTPHKS6+XZeFVVL3QUAR3ppRhRbKU4Ce4AgFxOoA/oo3nSH8vqvJoezHSMJGA==}
-+  '@next/bundle-analyzer@16.4.6':
-+    resolution: {integrity: sha512-Evp2ETZoDcqpg5LZPeJNG51o1Bc5vH+LPSP+BmSkdjeykMCh1fMB/shs3bJVbTOxYp7wC3Ed3HLo0jgX1BdxNA==}
- 
--  '@next/env@16.4.1':
--    resolution: {integrity: sha512-5sUUrrSvs/2/2LnLoesybMGx12EtPB46fdZ6RhAw0XDGSPxU2LFyQBB7yuEiOFFJPKmBY6+q2jTr1/AMbnp0/g==}
-+  '@next/env@16.4.6':
-+    resolution: {integrity: sha512-SunBjJ6t+oBtecS3dTjdVuMhUogP5wD/vrGL5EVuQYM1iS4O5ilL51HkiJ3sPjMzRHiCChvr4dbaSJbR7F3lxA==}
- 
--  '@next/swc-darwin-arm64@16.4.1':
--    resolution: {integrity: sha512-U+hQ5Gj3fpzf4fveTIF3dpUFYhaSW8vHhdAnbiIomzXzg7boreYFgBqprepXFtW4sw+aTttiNmg0gew/iFNhbg==}
-+  '@next/swc-darwin-arm64@16.4.6':
-+    resolution: {integrity: sha512-kJ4VVZkley17xKaJx72QN2IBqjrj7zenCQZaUF0l9ShS/1Mt2kW4+Z5KGG6vgr3L/J562xTOizVyM1iA/u5nlg==}
-     engines: {node: '>= 10'}
-     cpu: [arm64]
-     os: [darwin]
- 
--  '@next/swc-darwin-x64@16.4.1':
--    resolution: {integrity: sha512-/hqC3V1XLUjhMASf/WridKdO9FXoEgN3HBWmtKbj00MPgnltutfraWJ3bYTpCRIgEIpbjJyOVLpYgAhh/BkdcQ==}
-+  '@next/swc-darwin-x64@16.4.6':
-+    resolution: {
+@@ -55,17 +55,17 @@ export default function SidebarItem({
+       onDragEnter={onDragEnter}
+       onDragLeave={onDragLeave}
+     >
+-      <div className="flex flex-1 items-center">
++      <div className="flex min-w-0 flex-1 items-center">
+         {collapseButton}
+         <Link
+           href={path}
+           className={cn(
+-            "flex flex-1 items-center gap-x-2 rounded-[inherit] px-3 py-2",
++            "flex min-w-0 flex-1 items-center gap-x-2 rounded-[inherit] px-3 py-2",
+             linkClassName,
+           )}
+         >
+           {logo}
+-          <span title={name} className="line-clamp-1 break-all">
++          <span title={name} className="min-w-0 truncate">
+             {name}
+           </span>
+         </Link>
 ```
 
 ---
 
-### Incident Patch 3: `f43cd27c` (2026-11-19)
-**Commit Message**: fix(mobile): keep the first card clear of the header on a home tab re-tap
+### Incident Patch 3: `537e4f01` (2026-11-22)
+**Commit Message**: docs: fix development compose commands (#3393)
 
-On iOS, native tabs already scroll to the inset-adjusted top when the tab
-is tapped again, and useScrollToTop then scrolled to offset 0, which sits
-under the transparent header. Only run the hook on Android, where the
-native re-tap doesn't find the list.
-
-**File**: `apps/mobile/components/bookmarks/BookmarkList.tsx` (modified, +5/-1)
+**File**: `docs/docs/08-development/01-setup.md` (modified, +2/-2)
 ```diff
-@@ -29,6 +29,7 @@ const HORIZONTAL_MARGIN = 16;
- const GAP = 10;
- // Leaves the last card's actions clear of the Android add button.
- const BOTTOM_PADDING = Platform.OS === "android" ? 96 : 24;
-+const NO_SCROLL_TARGET = { current: null };
+@@ -209,10 +209,10 @@ docker compose -f docker/docker-compose.dev.yml up
+ 3. Tail the dev logs when needed:
  
- export interface BookmarkListEmptyState {
-   icon?: LucideIcon;
-@@ -59,7 +60,10 @@ export default function BookmarkList({
- }) {
-   const flatListRef = useRef<FlatList<ZBookmark>>(null);
-   const { t } = useTranslation();
--  useScrollToTop(flatListRef);
-+  // On iOS, native tabs already scroll to the inset-adjusted top on re-tap, and
-+  // the hook would then scroll to 0, hiding the first card under the header. On
-+  // Android the native re-tap doesn't find this list, so the hook does it.
-+  useScrollToTop(Platform.OS === "android" ? flatListRef : NO_SCROLL_TARGET);
-   const { settings } = useAppSettings();
-   // A bookmark saved from this device lands at the top (re-saving an existing
-   // link bumps it there too), which may be out of sight, leaving people to
+ ```bash
+-docker compose logs -f web workers
++docker compose -f docker/docker-compose.dev.yml logs -f web workers
+ ```
+ 
+-4. Stop everything with `docker compose down`. Re-run with `--build` if you change Node dependencies or the Dockerfile.
++4. Stop everything with `docker compose -f docker/docker-compose.dev.yml down`. Re-run with `docker compose -f docker/docker-compose.dev.yml up --build` if you change Node dependencies or the Dockerfile.
+ 
+ This setup exposes:
+ - Web app: http://localhost:3000
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3403** (2026-11-24): chore(docker): bump karakeep-chrome to Google Chrome 158.0.8127.88 (@MohamedBassem)
+- **PR #3398** (2026-11-22): fix(web): sidebar labels clipped by Chrome's new line-clamp (@TommyDoesEverything)
+- **PR #3396** (2026-11-22): fix(docker): drop scanner-flagged binaries from the runtime image (@MohamedBassem)
+- **PR #3393** (2026-11-22): docs: fix development compose commands (@rosalll)
+- **PR #3392** (2026-11-22): docs: explain how to avoid exposing port 3000 behind a reverse proxy (@anupamck)
 - **PR #3376** (2026-11-15): fix(mobile): show loading skeletons on cards while crawling and tagging (@MohamedBassem)
-- **PR #3374** (2026-11-15): feat(workers): run video downloads and asset preprocessing in the remote sandbox (@MohamedBassem)
-- **PR #3373** (2026-11-15): fix: poll old bookmarks after a recrawl until it finishes (@MohamedBassem)
-- **PR #3372** (2026-11-15): fix(workers): stop image OCR and Ollama requests when the job is aborted (@MohamedBassem)
-- **PR #3371** (2026-11-15): feat(web): offer the immersive reader from the preview's view menu (@MohamedBassem)
-- **PR #3370** (2026-11-15): fix(sdk): make the published package loadable from Node again (@MohamedBassem)
 
 ---
 
@@ -1011,80 +884,36 @@ native re-tap doesn't find the list.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mobile): stop saving a sheet from crashing the app
+## X. mobile): stop reporting Expo DOM webview injectJavaScript rejections to Sentry
 
 **RULE**:
-When implementing operations in `apps/mobile/components/ui/SheetHeader.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karakeep-app/karakeep. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/mobile/app/_layout.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karakeep-app/karakeep. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `49dacceb`: mobile): stop saving a sheet from crashing the app. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b56d4888`: mobile): stop reporting Expo DOM webview injectJavaScript rejections to Sentry. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/mobile/components/ui/SheetHeader.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/mobile/app/_layout.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import { useState } from "react";
-import { usePreventRemove } from "expo-router/react-navigation";
-  const [leaving, setLeaving] = useState(false);
-  // Re-dispatching the blocked action gets blocked again (and loops until
-  // React gives up and the app crashes). Leave through `repeat` or the
-  // returned `disablePrevention` instead.
-  const disablePrevention = usePreventRemove(
-    isDirty && !leaving,
-    ({ repeat }) => {
-      Alert.alert(
-        t("app.discard_changes_title"),
-        t("app.discard_changes_message"),
-        [
-          { text: t("actions.keep_editing"), style: "cancel" },
-          {
-            text: t("actions.discard"),
-            style: "destructive",
-            onPress: () => {
-              setLeaving(true);
-              repeat();
-            },
-          },
-        ],
-      );
-    },
-  );
-    setLeaving(true);
-    disablePrevention();
+
+  // Expo's DOM component wrapper re-sends props to the reader's webview on
+  // every render without catching the result, so once Android drops the view
+  // each render reports an unhandled rejection. Harmless, but it used up the
+  // whole Sentry quota.
+  ignoreErrors: [/DomWebView\.injectJavaScript/],
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-import { useRef } from "react";
-import { useNavigation, usePreventRemove } from "expo-router/react-navigation";
-  const navigation = useNavigation();
-  const allowLeaveRef = useRef(false);
-  usePreventRemove(isDirty, ({ data }) => {
-    if (allowLeaveRef.current) {
-      navigation.dispatch(data.action);
-      return;
-    }
-    Alert.alert(
-      t("app.discard_changes_title"),
-      t("app.discard_changes_message"),
-      [
-        { text: t("actions.keep_editing"), style: "cancel" },
-        {
-          text: t("actions.discard"),
-          style: "destructive",
-          onPress: () => navigation.dispatch(data.action),
-        },
-      ],
-    );
-  });
-    allowLeaveRef.current = true;
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `49dacceb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b56d4888` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

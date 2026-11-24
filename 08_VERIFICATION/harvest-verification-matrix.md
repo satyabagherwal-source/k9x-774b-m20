@@ -12630,3 +12630,6 @@
 | `CYCLE-20261124-674K` | `2026-11-24T07:47:13.940Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10229` | Yes (`6ffb1a62...`) |
 | `CYCLE-20261124-6A36` | `2026-11-24T07:47:17.778Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10202` | Yes (`dc41417a...`) |
 | `CYCLE-20261124-6AL3` | `2026-11-24T07:47:18.423Z` | `SeekStorm/SeekStorm` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md` | Yes (`e3908cae...`) |
+| `CYCLE-20261124-GZMT` | `2026-11-24T07:55:37.445Z` | `zeronsh/zeron` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10230` | Yes (`0096ff04...`) |
+| `CYCLE-20261124-H2M5` | `2026-11-24T07:55:41.309Z` | `karakeep-app/karakeep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10231` | Yes (`9e81e0ff...`) |
+| `CYCLE-20261124-H7ES` | `2026-11-24T07:55:47.524Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10232` | Yes (`72ada69e...`) |
