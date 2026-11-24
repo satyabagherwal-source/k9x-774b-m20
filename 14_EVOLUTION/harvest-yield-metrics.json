@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T18:34:33.608Z",
-  "total_cycles_completed": 12137,
-  "total_learnings_persisted": 12137,
-  "total_rules_promoted": 11196,
+  "last_updated": "2026-11-24T18:43:37.972Z",
+  "total_cycles_completed": 12140,
+  "total_learnings_persisted": 12140,
+  "total_rules_promoted": 11199,
   "history": [
-    {
-      "timestamp": "2026-11-24T01:55:59.554Z",
-      "repository": "yyjeqhc/webcodex",
-      "learningId": "learn-github-yyjeqhc-webcodex",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T01:56:01.664Z",
-      "repository": "gauthierpiarrette/highball",
-      "learningId": "learn-github-gauthierpiarrette-highball",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T02:04:11.000Z",
-      "repository": "tuist/tuist",
-      "learningId": "learn-github-tuist-tuist",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T02:04:21.201Z",
       "repository": "alibaba/zvec",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-24T18:34:33.608Z",
       "repository": "volcengine/OpenViking",
       "learningId": "learn-github-volcengine-openviking",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T18:43:32.656Z",
+      "repository": "kgateway-dev/kgateway",
+      "learningId": "learn-github-kgateway-dev-kgateway",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T18:43:36.110Z",
+      "repository": "sigstore/cosign",
+      "learningId": "learn-github-sigstore-cosign",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T18:43:37.972Z",
+      "repository": "apache/pinot",
+      "learningId": "learn-github-apache-pinot",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

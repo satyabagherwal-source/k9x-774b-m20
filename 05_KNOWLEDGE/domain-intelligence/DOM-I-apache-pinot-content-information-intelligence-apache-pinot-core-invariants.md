@@ -4,24 +4,24 @@
 {
   "source_repository": "apache/pinot",
   "source_url": "https://github.com/apache/pinot",
-  "source_version": "1fa59ea0",
+  "source_version": "eec6794f",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-21T20:25:05.627Z",
+  "timestamp": "2026-11-24T18:43:38.206Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-apache-pinot",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [apache/pinot](https://github.com/apache/pinot) (Revision: `1fa59ea0`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T20:25:05.627Z`  
+> **Provenance**: Harvested from [apache/pinot](https://github.com/apache/pinot) (Revision: `eec6794f`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T18:43:38.206Z`  
 > **Learning ID**: `learn-github-apache-pinot`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), F (Design Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), E (Creative Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 63%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), G (Architecture Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), E (Creative Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 74%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from apache/pinot:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-pinot-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/pinot](https://github.com/apache/pinot))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T20:25:04.137Z  
+> **Harvest Timestamp**: 2026-11-24T18:43:36.841Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Apache Pinot: a real-time analytics database for low-latency SQL and vector search, serving user-facing and agent-facing applications
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 6178 stars
+- **Stars / Engagement**: 6177 stars
 
 ---
 
@@ -1986,11 +1986,11 @@ const syncTableSchemaData = (data, showFieldType) => {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #20297** (2026-11-19): **Upgrade Lucene from 9.12.0 to 9.12.3**
-  *Symptoms*: Upgrade Lucene from 9.12.0 to 9.12.3 through the shared Maven property and update the Lucene artifacts listed in `LICENSE-binary`.  The [9.12.1–9.12.3 releases](https://lucene.apache.org/core/9_12_3/changes/Changes.html) include fixes for vector-index compatibility, HNSW behavior, and an infinite loop during memory-mapped resource cleanup. This dependency update is separate from the startup deadlock workaround in #20296; Lucene 9.12.3 still contains the class-initialization cycle.  Validation:  - 187 existing tests across 15 Lucene text-index, realtime-index, HNSW, rollback-recovery, and core text-query classes passed on JDK 25. - Verified that all seven Lucene artifacts on the test runtime classpaths resolve to 9.12.3. - Scoped reactor compilation with compiler warnings and deprecation reporting enabled. - Root Spotless, Checkstyle, license formatting/checks, and diff whitespace checks passed.  No new tests were added. The full cluster upgrade/rollback compatibility suites remain for CI. 
+- **Issue #20364** (2026-11-24): **Fix minion test races during parallel execution and segment refresh**
+  *Symptoms*: Fix two test races observed in #20355:  - `SegmentGenerationAndPushTaskGeneratorTest` and `SegmentGenerationAndPushTaskExecutorTest` shared the classpath resource directory as their working directory. Parallel forks could collide on `input/dummyTable.json.tmp` and fail its rename. Give each executor invocation a unique temporary directory and clean it up in `finally`. - `RefreshSegmentMinionTest.testMetadataPushRefresh` dereferenced missing query-result fields while refreshed segments were still becoming available. Make the polling predicate return false until the selected column's type is exactly `FLOAT`, preserving the existing timeout.  Validation on JDK 25.0.5: all 13 targeted tests passed (7 unit tests and 6 integration tests), with three parallel forks enabled. Both affected modules also passed Spotless, Checkstyle, license formatting, and license checks. Compilation included deprecation and warning flags.  ```bash ./mvnw -B -ntp -Ppinot-fastdev -Ddevelocity.scan.disabled=true \   -pl pinot-plugins/pinot-minion-tasks/pinot-minion-builtin-tasks,pinot-integration-tests -am \   -Dtest=SegmentGenerationAndPushTaskGeneratorTest,SegmentGenerationAndPushTaskExecutorTest,RefreshSegmentMinionTest \   -Dsurefire.failIfNoSpecifiedTests=false -Dunit.test.fork.count=3 \   -Dmaven.compiler.showDeprecation=true -Dmaven.compiler.showWarnings=true test ``` 
 
-- **Issue #20296** (2026-11-18): **Prevent Lucene class initialization deadlock during server startup**
-  *Symptoms*: Server startup can deadlock when Helix concurrently opens existing text indexes and creates realtime text indexes. Lucene 9.12.0 has a class initialization cycle between `IndexWriter`, `TestSecrets`, and `ConcurrentMergeScheduler` ([Lucene #12419](https://github.com/apache/lucene/issues/12419)). The [compatibility failure during rollback to Pinot 1.5.0](https://github.com/apache/pinot/actions/runs/44070961025/job/133996755187) captured this cycle in its thread dump: segment transitions remain blocked and server readiness times out.  Initialize `IndexWriter` synchronously before the server starts parallel segment loading. The compatibility verifier also uses a Java 11 bootstrap to perform the initialization inside each tested server JVM, including older releases during initial startup and rollback. Its generated launcher preserves the distribution's dependencies, JVM options, arguments, and PID handling. Readiness checks and timeouts remain unchanged.  Validation:  - Scoped server reactor build and `BaseServerStarterTest`: 3 tests passed. - `python3 compatibility-verifier/test_server_readiness.py`: 7 tests passed. - Fresh-JVM Lucene 9.12.0 reproducer: deadlock observed without preinitialization; 20/20 processes completed concurrent index reads and writes with preinitialization. - Scoped Spotless, Checkstyle, license formatting/checks, shell syntax, and diff whitespace checks passed.  The full compatibility suite has not been rerun locally; CI will validate the complete upgrade
+- **Issue #20314** (2026-11-24): **[multistage] Resolve correlated UNNEST array reference by field index**
+  *Symptoms*: ### Problem  On the multi-stage engine, `CROSS JOIN UNNEST` over a column produced by an aggregate fails at plan time:  ```sql SELECT f.col1, u.v FROM (SELECT col1, ARRAY_AGG(col3, 'INT') AS r FROM a GROUP BY col1) f CROSS JOIN UNNEST(f.r) AS u(v) -- Error composing query plan ...: Unsupported RexNode type with SqlKind: FIELD_ACCESS ```  ### Root cause  After optimization, the correlate's left input is the aggregate itself, and its output fields carry generated names (`agg#0`, `$f1`, ...) instead of the alias `r`:  ```text LogicalCorrelate(correlation=[$cor0], requiredColumns=[{1}])   PinotLogicalAggregate(group=[{0}], agg#0=[ARRAY_AGG(...)])   Uncollect     LogicalProject(r=[$cor0.r]) ```  `RelToPlanNodeConverter.resolveInputRefFromCorrel` looked up `$cor0.r` by field name in the left input's row type. The lookup missed, and the fallback `RexExpressionUtils.fromRexNode(RexFieldAccess)` threw. Unnesting a column of a plain scan works only because there the left input keeps the alias.  ### Fix  Resolve the correlated reference by its field index, which is how Calcite defines it: the index into the correlation variable's row type, i.e. the left input's row type. `PlanNodeToRelConverter` already builds the reference this way. The index is used only when the correlation variable's row type still lines up with the left input (same field count, same type at that index, ignoring nullability); otherwise the existing name match is used as before.  ### Compatibility  This is a planner-
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2007,249 +2007,487 @@ const syncTableSchemaData = (data, showFieldType) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1fa59ea0` (2026-11-21)
-**Commit Message**: Render BOOLEAN keys as booleans when selecting a whole OPEN_STRUCT column (#20337)
+### Incident Patch 1: `4bd680a4` (2026-11-24)
+**Commit Message**: Fix ClassCastException in range filters on version 1 range indexes under null handling (#20331)
 
-* Render BOOLEAN keys as booleans when selecting a whole OPEN_STRUCT column
-
-A BOOLEAN key is stored as INT 0/1, and the reconstruction behind SELECT
-open_struct_col hands back the stored number, so the document read
-{"flag":1} where col['flag'] returns true.
-
-ProjectionBlock now reads the materialized keys declared BOOLEAN from the
-per-key data sources and renders their 0/1 as false/true. A boolean that lives
-in the sparse blob is already a JSON boolean and is unchanged. The
-reconstruction shared with the seal path is not touched.
-
-* Render declared OPEN_STRUCT booleans consistently across storage tiers
-
-Handle sparse numeric values and multi-value children using the logical BOOLEAN result conversion. Size the dictionary reader buffer for a materialized multi-value child.
-
-Reproduce by selecting the whole OPEN_STRUCT column in ProjectionBlockOpenStructTest.testBooleanKeysInWholeDocument, which seals dense and sparse boolean fields in one segment.
-
----------
-
-Co-authored-by: Xiang Fu <[REDACTED_EMAIL]>
-
-**File**: `pinot-core/src/main/java/org/apache/pinot/core/operator/blocks/ProjectionBlock.java` (modified, +36/-11)
+**File**: `pinot-core/src/main/java/org/apache/pinot/core/operator/filter/RangeIndexBasedFilterOperator.java` (modified, +4/-2)
 ```diff
-@@ -21,9 +21,11 @@
- import com.fasterxml.jackson.core.type.TypeReference;
- import java.io.IOException;
- import java.util.ArrayList;
-+import java.util.HashSet;
- import java.util.LinkedHashMap;
- import java.util.List;
- import java.util.Map;
-+import java.util.Set;
- import javax.annotation.Nullable;
- import org.apache.pinot.common.request.context.ExpressionContext;
- import org.apache.pinot.core.common.BlockValSet;
-@@ -35,7 +37,10 @@
- import org.apache.pinot.segment.spi.datasource.OpenStructDataSource;
- import org.apache.pinot.segment.spi.datasource.OpenStructDataSource.MapValueReader;
- import org.apache.pinot.spi.data.ComplexFieldSpec;
-+import org.apache.pinot.spi.data.FieldSpec;
-+import org.apache.pinot.spi.data.FieldSpec.DataType;
- import org.apache.pinot.spi.data.OpenStructKeyFlattener;
-+import org.apache.pinot.spi.utils.BooleanUtils;
- import org.apache.pinot.spi.utils.BytesUtils;
- import org.apache.pinot.spi.utils.JsonUtils;
- 
-@@ -93,10 +98,11 @@ private BlockValSet openStructDocuments(String column, OpenStructDataSource open
-     int numDocs = getNumDocs();
-     int[] docIds = getDocIds();
-     String[] documents = new String[numDocs];
-+    Set<String> booleanKeys = booleanKeys(openStructDataSource);
-     try (MapValueReader reader = openStructDataSource.openMapValueReader()) {
-       for (int i = 0; i < numDocs; i++) {
-         Map<String, Object> document = reader.getMapValue(docIds[i]);
--        documents[i] = document == null ? "{}" : JsonUtils.objectToString(renderDocument(document));
-+        documents[i] = document == null ? "{}" : JsonUtils.objectToString(renderDocument(document, booleanKeys));
-       }
-     } catch (IOException e) {
-       throw new RuntimeException("Failed to read OPEN_STRUCT column: " + column, e);
-@@ -111,16 +117,33 @@ private BlockValSet openStructDocuments(String column, OpenStructDataSource open
-   /// the shape the source had, so it wins and the paths into it are dropped. `.` is an ordinary key character with
-   /// no escape, and that is exactly what makes the container's own entry the thing that disambiguates: a dotted key
-   /// whose prefix is not itself a key was never a path, so it stays a key spelled with a dot.
--  private static Map<String, Object> renderDocument(Map<String, Object> document) {
-+  ///
-+  /// The top-level keys use the segment's declared types. Nested objects retain their original JSON types.
-+  private static Map<String, Object> renderDocument(Map<String, Object> document, Set<String> booleanKeys) {
-     Map<String, Object> rendered = new LinkedHashMap<>(document.size());
-     for (Map.Entry<String, Object> entry : document.entrySet()) {
--      if (!isPathIntoPresentObject(entry.getKey(), document)) {
--        rendered.put(entry.getKey(), renderValue(entry.getValue()));
-+      String key = entry.getKey();
-+      if (!isPathIntoPresentObject(key, document)) {
-+        rendered.put(key, renderValue(entry.getValue(), booleanKeys.contains(key)));
-       }
+@@ -101,10 +101,12 @@ private BlockDocIdSet evaluateLegacyRangeFilter() {
+     if (partialMatches == null) {
+       return matches != null ? BitmapDocIdSet.create(matches, _numDocs) : EmptyDocIdSet.unscanned();
      }
-     return rendered;
+-    // Need to scan the first and last range as they might be partially matched
++    // Need to scan the first and last range as they might be partially matched. Scan without null handling because
++    // BaseColumnFilterOperator applies the null semantics to the combined result, and doing it in the scan as well
++    // wraps the scan result into a doc id set whose iterator is not a ScanBasedDocIdIterator.
+     ScanBasedFilterOperator scanBasedFilterOperator =
+         new ScanBasedFilterOperator(_queryContext, _predicateEvaluator, _dataSource, _numDocs);
+-    BlockDocIdSet scanBasedDocIdSet = scanBasedFilterOperator.getTrues();
++    BlockDocIdSet scanBasedDocIdSet = scanBasedFilterOperator.getNextBlockWithoutNullHandling();
+     MutableRoaringBitmap docIds = ((ScanBasedDocIdIterator) scanBasedDocIdSet.iterator()).applyAnd(partialMatches);
+     if (matches != null) {
+       docIds.or(matches);
+```
+
+**File**: `pinot-core/src/test/java/org/apache/pinot/queries/NullHandlingEnabledQueriesTest.java` (modified, +67/-0)
+```diff
+@@ -82,6 +82,7 @@ public class NullHandlingEnabledQueriesTest extends BaseQueriesTest {
+           .setNoDictionaryColumns(List.of(COLUMN1))
+           .setRangeIndexColumns(List.of(COLUMN1))
+           .build();
++  private static final TableConfig TABLE_CONFIG_WITH_LEGACY_RANGE_INDEX_COLUMN = getTableConfigWithLegacyRangeIndex();
+   private static final int NUM_OF_SEGMENT_COPIES = 4;
+   private static final Map<String, String> QUERY_OPTIONS = Map.of("enableNullHandling", "true");
+ 
+@@ -382,6 +383,72 @@ public void testFastFilteredCountExcludesNullsOnMultiValueColumn()
+     assertEquals(getRows(String.format("SELECT COUNT(*) FROM testTable WHERE NOT (%s = 2)", COLUMN1)).get(0)[0], 0L);
    }
  
-+  /// Both dense children and the sparse JSON can contain stored integers for declared BOOLEAN keys. On older
-+  /// segments a dense child can still report INT, which is also the type returned by a direct key projection.
-+  private static Set<String> booleanKeys(OpenStructDataSource openStructDataSource) {
-+    Set<String> booleanKeys = new HashSet<>();
-+    for (Map.Entry<String, FieldSpec> entry : openStructDataSource.getFieldSpec().getChildFieldSpecs().entrySet()) {
-+      String key = entry.getKey();
-+      if (entry.getValue().getDataType() == DataType.BOOLEAN && (!openStructDataSource.isMaterialized(key)
-+          || openStructDataSource.getDataSourceMetadata(key).getDataType() == DataType.BOOLEAN)) {
-+        booleanKeys.add(key);
-+      }
++  /// A multi-value column always gets the legacy range index, which is not exact: the documents of a range that the
++  /// predicate covers only in part are found by a scan. The null row is left out once, from the combined result.
++  @Test
++  public void testRangeFilterOnMultiValueColumnWithLegacyRangeIndex()
++      throws Exception {
++    initializeRows();
++    for (int i = 0; i < 30; i++) {
++      insertRow(new Object[]{i, i + 1});
 +    }
-+    return booleanKeys;
++    insertRow(null);
++    Schema schema = schemaBuilder().addMultiValueDimension(COLUMN1, DataType.INT).build();
++    setUpSegments(TABLE_CONFIG_WITH_RANGE_INDEX_COLUMN, schema);
++
++    // Rows 4 to 29 hold a value above 4
++    assertEquals(getRows(String.format("SELECT COUNT(*) FROM testTable WHERE %s > 4", COLUMN1)).get(0)[0],
++        (long) 26 * NUM_OF_SEGMENT_COPIES);
++    // Rows 0 to 3 hold no value above 4, and the null row is UNKNOWN
++    assertEquals(getRows(String.format("SELECT COUNT(*) FROM testTable WHERE NOT (%s > 4)", COLUMN1)).get(0)[0],
++        (long) 4 * NUM_OF_SEGMENT_COPIES);
++    // Rows 4 to 20 hold a value from 5 to 20
++    assertEquals(
++        getRows(String.format("SELECT COUNT(*) FROM testTable WHERE %s BETWEEN 5 AND 20", COLUMN1)).get(0)[0],
++        (long) 17 * NUM_OF_SEGMENT_COPIES);
++    // Rows 0 to 4 hold a value below 5. The default value stored for the null row is below 5 as well, so this checks
++    // that the null row is left out of the combined result.
++    assertEquals(getRows(String.format("SELECT COUNT(*) FROM testTable WHERE %s < 5", COLUMN1)).get(0)[0],
++        (long) 5 * NUM_OF_SEGMENT_COPIES);
 +  }
 +
-   /// Whether `key` is a path into an object that the document also carries whole. `configApi.timeTaken` is, when
-   /// `configApi` is an object of the document holding `timeTaken`; a key the document literally spells with a dot
-   /// is not.
-@@ -175,7 +198,7 @@ private static Object unwrapJsonText(String text) {
-       return text;
-     }
-     try {
--      return renderValue(JsonUtils.stringToObject(text, OBJECT_TYPE_REFERENCE));
-+      return renderValue(JsonUtils.stringToObject(text, OBJECT_TYPE_REFERENCE), false);
-     } catch (IOException e) {
-       return text;
-     }
-@@ -190,16 +213,18 @@ private static Map<String, Object> asStringKeyedMap(Map<?, ?> map) {
-   }
- 
-   /// Values as JSON renders them, recursing so a nested object is cleaned up the same way the top level is.
--  /// Only BYTES needs a hand: Jackson would base64 it, while every other way of reading this value out of Pinot
--  /// -- `col['key']` included -- gives hex.
-+  /// Numeric BOOLEAN values use Pinot's stored representation. BYTES values use the same hex encoding as key reads.
-   @Nullable
--  private static Object renderValue(@Nullable Object value) {
-+  private static Object renderValue(@Nullable Object v
++  /// A single-value column gets the legacy range index when the table sets `rangeIndexVersion` to 1, and goes through
++  /// the same partial range scan as a multi-value column.
++  @Test
++  public void testRangeFilterOnSingleValueColumnWithLegacyRangeIndex()
++      throws Exception {
++    initializeRows();
++    for (int i = 0; i < 30; i++) {
++      insertRow(i);
++    }
++    insertRow(null);
++    Schema schema = schemaBuilder().addSingleValueDimension(COLUMN1, DataType.INT).build();
++    setUpSegments(TABLE_CONFIG_WITH_LEGACY_RANGE_INDEX_COLUMN, schema);
++
++    // Rows 5 to 29 hold a value above 4
++    assertEquals(getRows(String.format("SELECT COUNT(*) FROM testTable WHERE %s > 4", COLUMN1)).get(0)[0],
++        (long) 25 * NUM_OF_SEGMENT_COPIES);
++    // Rows 0 to 4 hold a value of at most 4, and the null row is UNKNOWN
++    assertEquals(getRows(String.format("SELECT COUNT(*) FROM testTable WHERE NOT (%s > 4)", COLUMN1)).get(0)[0],
++        (long) 5 * NUM_OF_SEGMENT_COPIES);
++    // Rows 5 to 20 hold a value from 5 to 20
++    assertEquals(
++        getRows(String.format("SELECT COUNT(*) FROM testTable WHERE %s BETWEEN 5 AND 20", COLUMN1)).get(0)[0],
++        (long) 16 * NUM_OF_SEGMENT_COPIES);
++    // Rows 0 to 4 hold a value below 5. The default value stored for the null row is below 5 as well, so this checks
++    // that the null row is left out of the combined result.
++    assertEquals(getRows(String.format("SELECT COUNT(*) FROM testTable WHERE %s < 5", COLUMN1)).get(0)[0],
++        (long) 5 * NUM_OF_SEGMENT_COPIES);
++  }
++
++  private static TableConfig getTableConfigWithLegacyRangeIndex() {
++    TableConfig tableConfig = new TableConfigBuilder(TableType.OFFLINE).setTableName(RAW_TABLE_NAME)
++        .setRangeIndexColumns(List.of(COLUMN1))
++        .build();
++    tableConfig.getIndexingConfig().setRangeIndexVersion(1);
++    return tableConfig;
++  }
++
+   /// A consuming segment reports its null rows through a vector that grows with ingestion and hands out a copy on each
+   /// read. The filter takes that copy once, and the index-based count has to leave those rows out as on a sealed
+   /// segment.
 ```
 
-**File**: `pinot-core/src/test/java/org/apache/pinot/core/operator/blocks/ProjectionBlockOpenStructTest.java` (modified, +65/-4)
+---
+
+### Incident Patch 2: `23311e4d` (2026-11-24)
+**Commit Message**: Fix minion test races during parallel execution and segment refresh (#20364)
+
+**File**: `pinot-integration-tests/src/test/java/org/apache/pinot/integration/tests/custom/RefreshSegmentMinionTest.java` (modified, +2/-1)
 ```diff
-@@ -18,18 +18,36 @@
-  */
- package org.apache.pinot.core.operator.blocks;
- 
-+import java.io.File;
+@@ -360,7 +360,8 @@ public void testMetadataPushRefresh()
+     waitForServerSegmentDownload(aVoid -> {
+       try {
+         JsonNode response = postQuery("SELECT " + LONG_COL + " FROM " + TABLE_NAME + " LIMIT 10");
+-        return response.get("resultTable").get("dataSchema").get("columnDataTypes").toString().contains("FLOAT");
++        // The result can be absent while the server is still loading refreshed segments.
++        return "FLOAT".equals(response.path("resultTable").path("dataSchema").path("columnDataTypes").path(0).asText());
+       } catch (Exception e) {
+         throw new RuntimeException(e);
+       }
+```
+
+**File**: `pinot-plugins/pinot-minion-tasks/pinot-minion-builtin-tasks/src/test/java/org/apache/pinot/plugin/minion/tasks/segmentgenerationandpush/SegmentGenerationAndPushTaskExecutorTest.java` (modified, +27/-21)
+```diff
+@@ -21,7 +21,7 @@
+ import java.io.File;
+ import java.net.URL;
+ import java.nio.charset.StandardCharsets;
+-import java.nio.file.Paths;
 +import java.nio.file.Files;
  import java.util.HashMap;
- import java.util.LinkedHashMap;
- import java.util.List;
  import java.util.Map;
-+import java.util.Set;
-+import org.apache.commons.io.FileUtils;
- import org.apache.pinot.core.common.BlockValSet;
- import org.apache.pinot.core.common.DataBlockCache;
- import org.apache.pinot.core.common.DataFetcher;
-+import org.apache.pinot.segment.local.indexsegment.immutable.ImmutableSegmentLoader;
-+import org.apache.pinot.segment.local.segment.readers.GenericRowRecordReader;
-+import org.apache.pinot.segment.local.segment.readers.PinotSegmentUtil;
-+import org.apache.pinot.segment.spi.ImmutableSegment;
- import org.apache.pinot.segment.spi.datasource.DataSource;
- import org.apache.pinot.segment.spi.datasource.DataSourceMetadata;
- import org.apache.pinot.segment.spi.datasource.OpenStructDataSource;
- import org.apache.pinot.segment.spi.index.reader.ForwardIndexReader;
--import org.apache.pinot.spi.data.FieldSpec;
-+import org.apache.pinot.spi.config.table.FieldConfig;
-+import org.apache.pinot.spi.config.table.TableConfig;
-+import org.apache.pinot.spi.config.table.TableType;
-+import org.apache.pinot.spi.data.ComplexFieldSpec;
-+import org.apache.pinot.spi.data.DimensionFieldSpec;
-+import org.apache.pinot.spi.data.FieldSpec.DataType;
-+import org.apache.pinot.spi.data.Schema;
-+import org.apache.pinot.spi.data.readers.GenericRow;
-+import org.apache.pinot.spi.utils.JsonUtils;
-+import org.apache.pinot.spi.utils.ReadMode;
-+import org.apache.pinot.spi.utils.builder.TableConfigBuilder;
- import org.testng.annotations.Test;
- 
- import static org.mockito.Mockito.doReturn;
-@@ -54,7 +72,10 @@ public class ProjectionBlockOpenStructTest {
- 
-   /// OPEN_STRUCT parent: an empty index container, so {@code getForwardIndex()} is null.
-   private static OpenStructDataSource mockOpenStructDataSource() {
--    return mock(OpenStructDataSource.class);
-+    OpenStructDataSource dataSource = mock(OpenStructDataSource.class);
-+    when(dataSource.getFieldSpec()).thenReturn(new ComplexFieldSpec(OPEN_STRUCT_COLUMN, DataType.OPEN_STRUCT, true,
-+        Map.of()));
-+    return dataSource;
-   }
- 
-   private static DataSource mockPlainDataSource() {
-@@ -64,7 +85,7 @@ private static DataSource mockPlainDataSource() {
-     doReturn(forwardIndex).when(dataSource).getForwardIndex();
-     DataSourceMetadata metadata = mock(DataSourceMetadata.class);
-     when(metadata.isSingleValue()).thenReturn(true);
--    when(metadata.getDataType()).thenReturn(FieldSpec.DataType.LONG);
-+    when(metadata.getDataType()).thenReturn(DataType.LONG);
-     when(dataSource.getDataSourceMetadata()).thenReturn(metadata);
-     return dataSource;
-   }
-@@ -128,7 +149,7 @@ public void testRegisteringSameColumnTwiceKeepsFirstReader() {
-   @Test
-   public void testSelectingOpenStructParentReadsTheWholeDocument() {
-     BlockValSet values = project(Map.of("errors", 3L));
--    assertEquals(values.getValueType(), FieldSpec.DataType.STRING);
-+    assertEquals(values.getValueType(), DataType.STRING);
-     assertTrue(values.isSingleValue());
-     assertEquals(values.getStringValuesSV()[0], "{\"errors\":3}");
-   }
-@@ -259,6 +280,46 @@ public void testListValuesAreRendered() {
-     assertEquals(project(Map.of("tags", List.of("a", "b"))).getStringValuesSV()[0], "{\"tags\":[\"a\",\"b\"]}");
-   }
- 
-+  @Test
-+  public void testBooleanKeysInWholeDocument()
-+      throws Exception {
-+    ComplexFieldSpec parent = new ComplexFieldSpec(OPEN_STRUCT_COLUMN, DataType.OPEN_STRUCT, true, Map.of(
-+        "flag", new DimensionFieldSpec("flag", DataType.BOOLEAN, true),
-+        "off", new DimensionFieldSpec("off", DataType.BOOLEAN, true),
-+        "noncanonical", new DimensionFieldSpec("noncanonical", DataType.BOOLEAN, true),
-+        "denseFlags", new DimensionFieldSpec("denseFlags", DataType.BOOLEAN, false),
-+        "sparseFlags", new DimensionFieldSpec("sparseFlags", DataType.BOOLEAN, false)));
-+    Schema schema = new Schema.SchemaBuilder().setSchemaName("bools").addField(parent).build();
-+    FieldConfig field = new FieldConfig.Builder(OPEN_STRUCT_COLUMN).withIndexes(JsonUtils.objectToJsonNode(
-+        Map.of("open_struct", Map.of("maxDenseKeys", 3, "denseKeys", List.of("flag", "noncanonical", "denseFlags")))))
-+        .build();
-+    TableConfig table = new TableConfigBuilder(TableType.OFFLINE).setTableName("bools")
-+        .setFieldConfigList(List.of(field)).build();
-+    GenericRow row = new GenericRow();
-+    row.putValue(OPEN_STRUCT_COLUMN, Map.of("flag", true, "off", false, "noncanonical", 2,
-+        "denseFlags", List.of(true, false), "sparseFlags", List.of(false, true), "count", 1,
-+        "nested", Map.of("flag", 0)));
-+
-+    File tempDir = Files.createTempDirectory("openStructBoolean").toFile();
+ import org.apache.commons.io.FileUtils;
+@@ -46,16 +46,14 @@ public class SegmentGenerationAndPushTaskExecutorTest {
+   public void testGenerateTaskSpec()
+       throws Exception {
+     ClassLoader classLoader = getClass().getClassLoader();
+-    URL resourcesLoc = classLoader.getResource(".");
+-    assertNotNull(resourcesLoc);
+     URL tableConfigUrl = classLoader.getResource("dummyTable.json");
+     assertNotNull(tableConfigUrl);
+     String tableConfig = FileUtils.readFileToString(new File(tableConfigUrl.getFile()), StandardCharsets.UTF_8);
+     SegmentGenerationAndPushTaskExecutor executor = new SegmentGenerationAndPushTaskExecutor();
+     Schema schema = new Schema.SchemaBuilder().build();
+     FieldUtils.writeField(executor, "_eventObserver", new DefaultMinionEventObserver(), true);
+     Map<String, String> configMap = new HashMap<>() {{
+-        put(BatchConfigProperties.INPUT_DATA_FILE_URI_KEY, resourcesLoc + "dummyTable.json");
++        put(BatchConfigProperties.INPUT_DATA_FILE_URI_KEY, tableConfigUrl.toString());
+         put(BatchConfigProperties.INPUT_FORMAT, "");
+         put(BatchConfigProperties.RECORD_READER_CLASS, "AReaderClass");
+         put(BatchConfigProperties.RECORD_READER_CONFIG_CLASS, "AReaderConfigClass");
+@@ -74,17 +72,22 @@ public void testGenerateTaskSpec()
+         put(BatchConfigProperties.SEGMENT_NAME_GENERATOR_PROP_PREFIX + ".propseg2", "valseg2");
+         put(BatchConfigProperties.APPEND_UUID_TO_SEGMENT_NAME, "true");
+       }};
+-    SegmentGenerationTaskSpec spec = executor.generateTaskSpec(configMap, Paths.get(resourcesLoc.toURI()).toFile());
+-    assertEquals(spec.getSequenceId(), 42);
+-    assertEquals("file:" + spec.getInputFilePath(), resourcesLoc + "input/dummyTable.json");
+-    assertEquals(spec.getRecordReaderSpec().getClassName(), "AReaderClass");
+-    assertEquals(spec.getRecordReaderSpec().getConfigClassName(), "AReaderConfigClass");
+-    assertEqualsDeep(spec.getRecordReaderSpec().getConfigs(), Map.of("prop1", "value1", "prop.2", "value2"));
+-    assertTrue(spec.isFailOnEmptySegment());
+-    assertEquals(spec.getSegmentNameGeneratorSpec().getType(), "inputtext");
+-    assertEqualsDeep(spec.getSegmentNameGeneratorSpec().getConfigs(),
+-        Map.of("prop.seg.1", "valseg1", "propseg2", "valseg2", SegmentGenerationTaskRunner.APPEND_UUID_TO_SEGMENT_NAME,
+-            "true"));
++    File tempDir = Files.createTempDirectory(getClass().getSimpleName()).toFile();
 +    try {
-+      File indexDir = PinotSegmentUtil.createSegment(table, schema, "bools", tempDir.getAbsolutePath(),
-+          new GenericRowRecordReader(List.of
++      SegmentGenerationTaskSpec spec = executor.generateTaskSpec(configMap, tempDir);
++      assertEquals(spec.getSequenceId(), 42);
++      assertEquals(spec.getInputFilePath(), new File(tempDir, "input/dummyTable.json").getAbsolutePath());
++      assertEquals(spec.getRecordReaderSpec().getClassName(), "AReaderClass");
++      assertEquals(spec.getRecordReaderSpec().getConfigClassName(), "AReaderConfigClass");
++      assertEqualsDeep(spec.getRecordReaderSpec().getConfigs(), Map.of("prop1", "value1", "prop.2", "value2"));
++      assertTrue(spec.isFailOnEmptySegment());
++      assertEquals(spec.getSegmentNameGeneratorSpec().getType(), "inputtext");
++      assertEqualsDeep(spec.getSegmentNameGeneratorSpec().getConfigs(),
++          Map.of("prop.seg.1", "valseg1", "propseg2", "valseg2",
++              SegmentGenerationTaskRunner.APPEND_UUID_TO_SEGMENT_NAME, "true"));
++    } finally {
++      FileUtils.deleteDirectory(tempDir);
++    }
+   }
+ 
+   @Test
+@@ -104,23 +107,26 @@ public void testGenerateTaskSpecAppendUuidPrecedence()
+   private void assertAppendUuid(Map<String, String> appendUuidConfigs, String expected)
+       throws Exception {
+     ClassLoader classLoader = getClass().getClassLoader();
+-    URL resourcesLoc = classLoader.getResource(".");
+-    assertNotNull(resourcesLoc);
+     URL tableConfigUrl = classLoader.getResource("dummyTable.json");
+     assertNotNull(tableConfigUrl);
+     SegmentGenerationAndPushTaskExecutor executor = new SegmentGenerationAndPushTaskExecutor();
+     FieldUtils.writeField(executor, "_eventObserver", new DefaultMinionEventObserver(), true);
+     Map<String, String> configMap = new HashMap<>(appendUuidConfigs);
+-    configMap.put(BatchConfigProperties.INPUT_DATA_FILE_URI_KEY, resourcesLoc + "dummyTable.json");
++    configMap.put(BatchConfigProperties.INPUT_DATA_FILE_URI_KEY, tableConfigUrl.toString());
+     configMap.put(BatchConfigProperties.RECORD_READER_CLASS, "AReaderClass");
+     configMap.put(BatchConfigProperties.RECORD_READER_CONFIG_CLASS, "AReaderConfigClass");
+     configMap.put(BatchConfigProperties.SCHEMA, new Schema.SchemaBuilder().build().toSingleLineJsonString());
+     configMap.put(BatchConfigProperties.TABLE_CONFIGS,
+         FileUtils.readFileToString(new File(tableConfigUrl.getFile()), StandardCharsets.UTF_8));
+     configMap.put(BatchConfig
 ```
 
-**File**: `pinot-segment-local/src/main/java/org/apache/pinot/segment/local/segment/index/openstruct/ImmutableOpenStructDataSource.java` (modified, +3/-1)
+**File**: `pinot-plugins/pinot-minion-tasks/pinot-minion-builtin-tasks/src/test/java/org/apache/pinot/plugin/minion/tasks/segmentgenerationandpush/SegmentGenerationAndPushTaskGeneratorTest.java` (modified, +9/-6)
 ```diff
-@@ -313,8 +313,10 @@ private PinotSegmentColumnReader createReader(String key, DataSource dataSource)
-       if (fwdReader == null) {
-         return null;
-       }
-+      int maxNumValues = !fwdReader.isSingleValue() && fwdReader.isDictionaryEncoded()
-+          ? dataSource.getDataSourceMetadata().getMaxNumValuesPerMVEntry() : 0;
-       return new PinotSegmentColumnReader(key, fwdReader, dataSource.getDictionary(),
--          dataSource.getNullValueVector(), 0);
-+          dataSource.getNullValueVector(), maxNumValues);
+@@ -22,7 +22,7 @@
+ import java.net.URI;
+ import java.net.URL;
+ import java.nio.charset.StandardCharsets;
+-import java.nio.file.Paths;
++import java.nio.file.Files;
+ import java.util.HashMap;
+ import java.util.Map;
+ import org.apache.commons.io.FileUtils;
+@@ -125,11 +125,9 @@ private void assertAppendUuidInExecutorSpec(Map<String, String> extraBatchConfig
+     Map<String, String> taskConfig =
+         new HashMap<>(invokeGetSingleFileGenerationTaskConfig(batchConfigMap(extraBatchConfigs)));
+     ClassLoader classLoader = getClass().getClassLoader();
+-    URL resourcesLoc = classLoader.getResource(".");
+-    assertNotNull(resourcesLoc);
+     URL tableConfigUrl = classLoader.getResource("dummyTable.json");
+     assertNotNull(tableConfigUrl);
+-    taskConfig.put(BatchConfigProperties.INPUT_DATA_FILE_URI_KEY, resourcesLoc + "dummyTable.json");
++    taskConfig.put(BatchConfigProperties.INPUT_DATA_FILE_URI_KEY, tableConfigUrl.toString());
+     taskConfig.put(BatchConfigProperties.RECORD_READER_CLASS, "AReaderClass");
+     taskConfig.put(BatchConfigProperties.RECORD_READER_CONFIG_CLASS, "AReaderConfigClass");
+     taskConfig.put(BatchConfigProperties.SCHEMA, new Schema.SchemaBuilder().build().toSingleLineJsonString());
+@@ -138,8 +136,13 @@ private void assertAppendUuidInExecutorSpec(Map<String, String> extraBatchConfig
+ 
+     SegmentGenerationAndPushTaskExecutor executor = new SegmentGenerationAndPushTaskExecutor();
+     FieldUtils.writeField(executor, "_eventObserver", new DefaultMinionEventObserver(), true);
+-    SegmentGenerationTaskSpec spec = executor.generateTaskSpec(taskConfig, Paths.get(resourcesLoc.toURI()).toFile());
+-    assertEquals(spec.getSegmentNameGeneratorSpec().getConfigs().get(APPEND_UUID_TO_SEGMENT_NAME_KEY), expected);
++    File tempDir = Files.createTempDirectory(getClass().getSimpleName()).toFile();
++    try {
++      SegmentGenerationTaskSpec spec = executor.generateTaskSpec(taskConfig, tempDir);
++      assertEquals(spec.getSegmentNameGeneratorSpec().getConfigs().get(APPEND_UUID_TO_SEGMENT_NAME_KEY), expected);
++    } finally {
++      FileUtils.deleteDirectory(tempDir);
++    }
+   }
+ 
+   @SuppressWarnings("unchecked")
+```
+
+---
+
+### Incident Patch 3: `76d6f280` (2026-11-24)
+**Commit Message**: fix(segment): reconcile stale FIXMEs around upsert validDocIds and aggr… (#20209)
+
+**File**: `pinot-segment-local/src/main/java/org/apache/pinot/segment/local/indexsegment/mutable/MutableSegmentImpl.java` (modified, +9/-14)
+```diff
+@@ -188,14 +188,10 @@ public class MutableSegmentImpl implements MutableSegment {
+   private final String _upsertOutOfOrderRecordColumn;
+   private final UpsertConfig.ConsistencyMode _upsertConsistencyMode;
+ 
+-  // The valid doc ids are maintained locally instead of in the upsert metadata manager because:
+-  // 1. There is only one consuming segment per partition, the committed segments do not need to modify the valid doc
+-  //    ids for the consuming segment.
+-  // 2. During the segment commitment, when loading the immutable version of this segment, in order to keep the result
+-  //    correct, the valid doc ids should not be changed, only the record location should be changed.
+-  // FIXME: There is a corner case for this approach which could cause inconsistency. When there is segment load during
+-  //        consumption with newer timestamp (late event in consuming segment), the record location will be updated, but
+-  //        the valid doc ids won't be updated.
++  // Maintained by the upsert metadata manager (via getValidDocIds() / getQueryableDocIds()) as records are indexed and
++  // as segments are loaded or replaced in the partition. During segment commitment (ConsistencyMode.NONE),
++  // replaceSegment() works on a snapshot copy of _validDocIds so the consuming segment's bitmap stays intact for
++  // concurrent queries until the immutable replacement is swapped in.
+   private final ThreadSafeMutableRoaringBitmap _validDocIds;
+   private final ThreadSafeMutableRoaringBitmap _queryableDocIds;
+   private boolean _indexCapacityThresholdBreached;
+@@ -298,7 +294,7 @@ public MultiColumnTextMetadata getMultiColumnTextMetadata() {
+     _logger =
+         LoggerFactory.getLogger(MutableSegmentImpl.class.getName() + "_" + _segmentName + "_" + config.getStreamName());
+ 
+-    // Metric aggregation can be enabled only if config is specified, and all dimensions have dictionary,
++    // Metric aggregation can be enabled only if config is specified, all dimensions and metrics are single-valued,
+     // and no metrics have dictionary. If not enabled, the map returned is null.
+     _recordIdMap = enableMetricsAggregationIfPossible(config);
+ 
+@@ -1601,12 +1597,11 @@ private int getOrCreateDocId() {
      }
  
-     @Override
+     int i = 0;
+-    // Dimension and time columns form the aggregation key. They are always dictionary encoded in the consuming
+-    // segment (isNoDictionaryColumn forces a dictionary on them when aggregation is enabled), so the _dictId read
+-    // below is always valid. Keep this set of columns in sync with the field types forced there.
++    // Dimension and time columns form the aggregation key. They are always single-valued (enforced in
++    // enableMetricsAggregationIfPossible; see https://github.com/apache/pinot/issues/3867) and dictionary encoded in
++    // the consuming segment (isNoDictionaryColumn forces a dictionary on them when aggregation is enabled), so the
++    // _dictId read below is always valid. Keep this set of columns in sync with the field types forced there.
+     int[] dictIds = new int[_numKeyColumns]; // dimensions + date time columns + time column.
+-
+-    // FIXME: this for loop breaks for multi value dimensions. https://github.com/apache/pinot/issues/3867
+     for (FieldSpec fieldSpec : _physicalDimensionFieldSpecs) {
+       dictIds[i++] = _indexContainerMap.get(fieldSpec.getName())._dictId;
+     }
+```
+
+**File**: `pinot-segment-local/src/test/java/org/apache/pinot/segment/local/indexsegment/mutable/MutableSegmentImplAggregateMetricsTest.java` (modified, +27/-8)
+```diff
+@@ -21,11 +21,13 @@
+ import java.util.Arrays;
+ import java.util.HashMap;
+ import java.util.HashSet;
++import java.util.List;
+ import java.util.Map;
+ import java.util.Random;
+ import java.util.Set;
+ import java.util.concurrent.TimeUnit;
+ import org.apache.commons.lang3.RandomStringUtils;
++import org.apache.pinot.spi.config.table.ingestion.AggregationConfig;
+ import org.apache.pinot.spi.data.DimensionFieldSpec;
+ import org.apache.pinot.spi.data.FieldSpec;
+ import org.apache.pinot.spi.data.MetricFieldSpec;
+@@ -37,6 +39,8 @@
+ import org.testng.annotations.Test;
+ 
+ import static org.mockito.Mockito.mock;
++import static org.testng.Assert.assertEquals;
++import static org.testng.Assert.assertNull;
+ 
+ 
+ public class MutableSegmentImplAggregateMetricsTest {
+@@ -125,9 +129,9 @@ public void testAggregateMetricsWithNoDictionaryKeyColumns()
+   @Test
+   public void testMultiValueDimensionDisablesAggregation()
+       throws Exception {
+-    // A multi-value dimension cannot be used as an aggregation key (issue #3867), so aggregation stays disabled and no
+-    // rollup happens even though aggregateMetrics is set. This guards against over-broadening the aggregation-enabling
+-    // and dictionary-forcing logic to columns that cannot support it.
++    // A multi-value dimension cannot be used as an aggregation key (issue #3867), so aggregation stays disabled and
++    // no rollup happens whether configured via aggregateMetrics or ingestionAggregationConfigs. This guards against
++    // over-broadening the aggregation-enabling and dictionary-forcing logic to columns that cannot support it.
+     Schema schema = new Schema.SchemaBuilder().setSchemaName("testSchema")
+         .addSingleValueDimension(DIMENSION_1, FieldSpec.DataType.INT)
+         .addMultiValueDimension(DIMENSION_2, FieldSpec.DataType.STRING)
+@@ -136,10 +140,24 @@ public void testMultiValueDimensionDisablesAggregation()
+         .addDateTime(TIME_COLUMN1, FieldSpec.DataType.INT, "1:DAYS:EPOCH", "1:DAYS")
+         .addDateTime(TIME_COLUMN2, FieldSpec.DataType.INT, "1:HOURS:EPOCH", "1:HOURS")
+         .build();
++    Set<String> noDictionaryColumns = Set.of(DIMENSION_1, METRIC, METRIC_2);
++
+     MutableSegmentImpl mutableSegmentImpl =
+-        MutableSegmentImplTestUtils.createMutableSegmentImpl(schema, Set.of(METRIC, METRIC_2), Set.of(), Set.of(),
+-            true);
++        MutableSegmentImplTestUtils.createMutableSegmentImpl(schema, noDictionaryColumns, Set.of(), Set.of(), true);
++    assertMultiValueDimensionDisablesAggregation(mutableSegmentImpl);
++    mutableSegmentImpl.destroy();
++
++    List<AggregationConfig> aggregationConfigs =
++        List.of(new AggregationConfig(METRIC, "SUM(metric)"), new AggregationConfig(METRIC_2, "SUM(metric2)"));
++    mutableSegmentImpl =
++        MutableSegmentImplTestUtils.createMutableSegmentImpl(schema, noDictionaryColumns, Set.of(), Set.of(),
++            aggregationConfigs);
++    assertMultiValueDimensionDisablesAggregation(mutableSegmentImpl);
++    mutableSegmentImpl.destroy();
++  }
+ 
++  private void assertMultiValueDimensionDisablesAggregation(MutableSegmentImpl mutableSegmentImpl)
++      throws Exception {
+     Random random = new Random();
+     for (int i = 0; i < NUM_ROWS; i++) {
+       GenericRow row = new GenericRow();
+@@ -152,9 +170,10 @@ public void testMultiValueDimensionDisablesAggregation()
+       mutableSegmentImpl.index(row, METADATA);
+     }
+ 
+-    // Aggregation is disabled, so every row is stored as its own document (no rollup).
+-    Assert.assertEquals(mutableSegmentImpl.getNumDocsIndexed(), NUM_ROWS);
+-    mutableSegmentImpl.destroy();
++    // Aggregation is disabled, so every row is stored as its own document (no rollup) and no-dictionary key columns
++    // stay no-dictionary.
++    assertEquals(mutableSegmentImpl.getNumDocsIndexed(), NUM_ROWS);
++    assertNull(mutableSegmentImpl.getDataSourceNullable(DIMENSION_1).getDictionary());
+   }
+ 
+   private void testAggregateMetrics(MutableSegmentImpl mutableSegmentImpl)
+```
+
+**File**: `pinot-segment-local/src/test/java/org/apache/pinot/segment/local/indexsegment/mutable/MutableSegmentImplUpsertTest.java` (modified, +114/-0)
+```diff
+@@ -21,22 +21,32 @@
+ import java.io.File;
+ import java.io.IOException;
+ import java.net.URL;
++import java.nio.file.Files;
+ import java.util.List;
++import org.apache.commons.io.FileUtils;
+ import org.apache.pinot.segment.local.data.manager.TableDataManager;
++import org.apache.pinot.segment.local.indexsegment.immutable.ImmutableSegmentImpl;
++import org.apache.pinot.segment.local.indexsegment.immutable.ImmutableSegmentLoader;
+ import org.apache.pinot.segment.local.segment.creator.TransformPipeline;
++import org.apache.pinot.segment.local.segment.creator.impl.SegmentIndexCreationDriverImpl;
++import org.apache.pinot.segment.local.segment.readers.GenericRowRecordReader;
+ import org.apache.pinot.segment.local.upsert.PartitionUpsertMetadataManager;
+ import org.apache.pinot.segment.local.upsert.TableUpsertMetadataManager;
+ import org.apache.pinot.segment.local.upsert.TableUpsertMetadataManagerFactory;
++import org.apache.pinot.segment.spi.creator.SegmentGeneratorConfig;
+ import org.apache.pinot.spi.config.table.HashFunction;
+ import org.apache.pinot.spi.config.table.TableConfig;
+ import org.apache.pinot.spi.config.table.TableType;
+ import org.apache.pinot.spi.config.table.UpsertConfig;
++import org.apache.pinot.spi.data.DimensionFieldSpec;
++import org.apache.pinot.spi.data.FieldSpec.DataType;
+ import org.apache.pinot.spi.data.Schema;
+ import org.apache.pinot.spi.data.readers.FileFormat;
+ import org.apache.pinot.spi.data.readers.GenericRow;
+ import org.apache.pinot.spi.data.readers.RecordReader;
+ import org.apache.pinot.spi.data.readers.RecordReaderFactory;
+ import org.apache.pinot.spi.env.PinotConfiguration;
++import org.apache.pinot.spi.utils.ReadMode;
+ import org.apache.pinot.spi.utils.builder.TableConfigBuilder;
+ import org.roaringbitmap.buffer.ImmutableRoaringBitmap;
+ import org.testng.annotations.Test;
+@@ -55,6 +65,7 @@ public class MutableSegmentImplUpsertTest {
+   private static final String TIME_COLUMN = "secondsSinceEpoch";
+   private static final String OTHER_COMPARISON_COLUMN = "otherComparisonColumn";
+   private static final String PRIMARY_KEY_COLUMN = "event_id";
++  private static final String DELETE_RECORD_COLUMN = "is_deleted";
+ 
+   private MutableSegmentImpl _mutableSegmentImpl;
+   private PartitionUpsertMetadataManager _partitionUpsertMetadataManager;
+@@ -183,6 +194,109 @@ private static GenericRow createRow(String eventId, long otherComparisonValue, l
+     return row;
+   }
+ 
++  /// Verifies that loading an immutable segment with a newer comparison value while a mutable segment is actively
++  /// consuming invalidates the late event's docId in the consuming segment's `_validDocIds` and `_queryableDocIds`,
++  /// and that subsequent consumption with an even newer comparison value invalidates the immutable segment's docId.
++  @Test
++  public void testSegmentLoadDuringConsumptionUpdatesValidDocIds()
++      throws Exception {
++    UpsertConfig upsertConfig = createFullUpsertConfig(HashFunction.NONE);
++    upsertConfig.setDeleteRecordColumn(DELETE_RECORD_COLUMN);
++    TableConfig tableConfig = new TableConfigBuilder(TableType.REALTIME).setTableName(RAW_TABLE_NAME)
++        .setTimeColumnName(TIME_COLUMN)
++        .setUpsertConfig(upsertConfig)
++        .setNullHandlingEnabled(true)
++        .build();
++    URL schemaResourceUrl = getClass().getClassLoader().getResource(SCHEMA_FILE_PATH);
++    assertNotNull(schemaResourceUrl);
++    Schema schema = Schema.fromFile(new File(schemaResourceUrl.getFile()));
++    schema.addField(new DimensionFieldSpec(DELETE_RECORD_COLUMN, DataType.BOOLEAN, true));
++
++    TableUpsertMetadataManager tableUpsertMetadataManager =
++        TableUpsertMetadataManagerFactory.create(new PinotConfiguration(), tableConfig, schema,
++            mock(TableDataManager.class), null);
++    PartitionUpsertMetadataManager partitionUpsertMetadataManager =
++        tableUpsertMetadataManager.getOrCreatePartitionManager(0);
++    MutableSegmentImpl mutableSegment =
++        MutableSegmentImplTestUtils.createMutableSegmentImpl(schema, true, TIME_COLUMN,
++            partitionUpsertMetadataManager, null);
++    File tempDir = Files.createTempDirectory("MutableSegmentImplUpsertTest").toFile();
++    ImmutableSegmentImpl immutableSegment = null;
++    try {
++      // Consuming segment indexes late events for "aa" (docId 0, ts=1567205394) and "cc" (docId 2, ts=1567205394),
++      // and a newer event for "bb" (docId 1, ts=1567205398).
++      mutableSegment.index(createRowWithDelete("aa", 1L, 1567205394L, false), null);
++      mutableSegment.index(createRowWithDelete("bb", 1L, 1567205398L, false), null);
++      mutableSegment.index(createRowWithDelete("cc", 1L, 1567205394L, false), null);
++      ImmutableRoaringBitmap mutableValidDocIds = mutableSegment.getValidDocIds().getMutableRoaringBitmap();
++      ImmutableRoaringBitmap mutableQueryableDocIds = mutableSegment.getQueryableDocIds().getMutableRoaringBitmap();
++      assertEquals(mutableValidDocIds.toArray(), new int[]{0, 1, 2});
++      assertEquals(mutableQu
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #20337** (2026-11-21): Render BOOLEAN keys as booleans when selecting a whole OPEN_STRUCT column (@raghavyadav01)
-- **PR #20336** (2026-11-21): Preserve sparse samples and errors in time-series responses (@xiangfu0)
-- **PR #20325** (2026-11-20): Bump io.github.hakky54:ayza-bom from 10.1.1 to 10.1.2 (@dependabot[bot])
-- **PR #20324** (2026-11-20): Bump at.yawk.lz4:lz4-java from 1.14.0 to 1.14.1 (@dependabot[bot])
-- **PR #20323** (2026-11-20): Bump software.amazon.awssdk:bom from 2.59.1 to 2.59.2 (@dependabot[bot])
-- **PR #20319** (2026-11-20): Extract SQL query options without parsing the executable statement (@xiangfu0)
+- **PR #20375** (2026-11-24): Bump software.amazon.awssdk:bom from 2.59.5 to 2.59.7 (@dependabot[bot])
+- **PR #20364** (2026-11-24): Fix minion test races during parallel execution and segment refresh (@Jackie-Jiang)
+- **PR #20358** (2026-11-23): Bump io.swagger:swagger-jersey2-jaxrs from 1.6.16 to 1.6.17 (@dependabot[bot])
+- **PR #20357** (2026-11-23): Bump io.projectreactor:reactor-core from 3.8.8 to 3.9.0 (@dependabot[bot])
+- **PR #20356** (2026-11-23): Bump org.apache.maven:maven-core from 3.10.1 to 3.10.2 (@dependabot[bot])
+- **PR #20355** (2026-11-24): Bump com.google.errorprone:error_prone_annotations from 2.52.0 to 2.53.0 (@dependabot[bot])
 
 ---
 
@@ -2269,55 +2507,35 @@ Co-authored-by: Xiang Fu <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Render BOOLEAN keys as booleans when selecting a whole OPEN_STRUCT column
+## X. ClassCastException in range filters on version 1 range indexes under null handli
 
 **RULE**:
-When implementing operations in `pinot-core/src/main/java/org/apache/pinot/core/operator/blocks/ProjectionBlock.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/pinot. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pinot-core/src/main/java/org/apache/pinot/core/operator/filter/RangeIndexBasedFilterOperator.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/pinot. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1fa59ea0`: Render BOOLEAN keys as booleans when selecting a whole OPEN_STRUCT column. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4bd680a4`: ClassCastException in range filters on version 1 range indexes under null handling. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `pinot-core/src/main/java/org/apache/pinot/core/operator/blocks/ProjectionBlock.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `pinot-core/src/main/java/org/apache/pinot/core/operator/filter/RangeIndexBasedFilterOperator.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-import java.util.HashSet;
-import java.util.Set;
-import org.apache.pinot.spi.data.FieldSpec;
-import org.apache.pinot.spi.data.FieldSpec.DataType;
-import org.apache.pinot.spi.utils.BooleanUtils;
-    Set<String> booleanKeys = booleanKeys(openStructDataSource);
-        documents[i] = document == null ? "{}" : JsonUtils.objectToString(renderDocument(document, booleanKeys));
-  ///
-  /// The top-level keys use the segment's declared types. Nested objects retain their original JSON types.
-  private static Map<String, Object> renderDocument(Map<String, Object> document, Set<String> booleanKeys) {
-      String key = entry.getKey();
-      if (!isPathIntoPresentObject(key, document)) {
-        rendered.put(key, renderValue(entry.getValue(), booleanKeys.contains(key)));
-  /// Both dense children and the sparse JSON can contain stored integers for declared BOOLEAN keys. On older
-  /// segments a dense child can still report INT, which is also the type returned by a direct key projection.
-  private static Set<String> booleanKeys(OpenStructDataSource openStructDataSource) {
-    Set<String> booleanKeys = new HashSet<>();
-    for (Map.Entry<String, FieldSpec> entry : openStructDataSource.getFieldSpe
+    // Need to scan the first and last range as they might be partially matched. Scan without null handling because
+    // BaseColumnFilterOperator applies the null semantics to the combined result, and doing it in the scan as well
+    // wraps the scan result into a doc id set whose iterator is not a ScanBasedDocIdIterator.
+    BlockDocIdSet scanBasedDocIdSet = scanBasedFilterOperator.getNextBlockWithoutNullHandling();
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-        documents[i] = document == null ? "{}" : JsonUtils.objectToString(renderDocument(document));
-  private static Map<String, Object> renderDocument(Map<String, Object> document) {
-      if (!isPathIntoPresentObject(entry.getKey(), document)) {
-        rendered.put(entry.getKey(), renderValue(entry.getValue()));
-      return renderValue(JsonUtils.stringToObject(text, OBJECT_TYPE_REFERENCE));
-  /// Only BYTES needs a hand: Jackson would base64 it, while every other way of reading this value out of Pinot
-  /// -- `col['key']` included -- gives hex.
-  private static Object renderValue(@Nullable Object value) {
+    // Need to scan the first and last range as they might be partially matched
+    BlockDocIdSet scanBasedDocIdSet = scanBasedFilterOperator.getTrues();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1fa59ea0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4bd680a4` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

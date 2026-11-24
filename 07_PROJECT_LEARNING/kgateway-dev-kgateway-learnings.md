@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md`  
 > **Source**: github ([https://github.com/kgateway-dev/kgateway](https://github.com/kgateway-dev/kgateway))  
-> **Source Version**: `1a44dc2c`  
+> **Source Version**: `34e314f5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T23:18:20.008Z  
+> **Timestamp**: 2026-11-24T18:43:31.525Z  
 > **Learning ID**: `learn-github-kgateway-dev-kgateway`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kgateway-dev/kgateway](https://github.com/kgateway-dev/kgateway))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T23:18:20.003Z  
+> **Harvest Timestamp**: 2026-11-24T18:43:31.332Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Cloud-Native API Gateway and AI Gateway
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 5751 stars
+- **Stars / Engagement**: 5752 stars
 
 ---
 
@@ -1120,11 +1120,11 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #15056** (2026-11-19): **backendconfigpolicy: require exactly one TLS trust source again**
-  *Symptoms*: # Description  **Motivation:** #14780 relaxed `BackendConfigPolicy.tls` from `ExactlyOneOf` to `AtMostOneOf` so a policy that names no trust source defaults to the system CA certificates. To keep that default from validating the chain only, it also required `sni` whenever no trust source is set. The default is only a shorthand for `wellKnownCACertificates: System`, and the `sni` rule it needs is hard to explain: `sni` is not needed for a TLS handshake, and dynamic forward proxy backends replace the policy's `sni` with each request's host anyway.  **What changed:** - **API:** the TLS rule is back to `ExactlyOneOf=secretRef;files;insecureSkipVerify;wellKnownCACertificates`, and the `sni`-required CEL rule is removed. To validate against the system CAs, set `wellKnownCACertificates: System`. - **Kept from #14780:** `insecureSkipVerify: false` and `wellKnownCACertificates` values other than `System` are still rejected by CEL, and validating against the system CAs with `sni` set and no `verifySubjectAltNames` still pins the certificate to the SNI. - **Translator:** unchanged. A policy stored without a trust source (for example `insecureSkipVerify: false` from an older release, or a policy created on a build that had #14780) is still validated against the system CAs rather than skipping verification. - **Tests:** CEL cases updated to the `ExactlyOneOf` message. The `tls-default-system-ca` translator golden is removed because its input is now rejected by CEL; the stored-policy defau
+- **Issue #15098** (2026-11-24): **fix(sslutils): format IPv4-compatible IPv6 SANs the way Envoy does**
+  *Symptoms*: # Description  `verifySubjectAltNames` (BackendConfigPolicy) and the `kgateway.dev/verify-subject-alt-names` listener TLS option build an exact `IP_ADDRESS` SAN matcher for each IP address entry (#14760, #15044). Envoy compares that matcher against the certificate's IP SAN as it prints it with `inet_ntop`. The matcher used `netip.Addr.String()`, which prints the same addresses except for IPv4-compatible IPv6 addresses (`::/96` with an IPv4 address in the last 32 bits): `::192.0.2.1` is printed by `inet_ntop` as `::192.0.2.1` and by Go as `::c000:201`. A certificate carrying only such an IP SAN never matched, and the DNS matcher kept alongside the IP matcher cannot match an IP SAN.  **What changed:** the IP matcher's value is now formatted like glibc's `inet_ntop`: an address whose first 96 bits are zero and whose next 16 bits are not is printed as `::` followed by its last 32 bits in dotted IPv4. All other addresses, including IPv4-mapped (`::ffff:192.0.2.1`), `::`, `::1` and NAT64 (`64:ff9b::192.0.2.1`), keep the `netip` form, which already matches `inet_ntop`.  Tests: a `TestVerifySanListToTypedMatchSanList` case for `::c000:201`, and `TestEnvoyIPString`, whose expected values were checked against glibc `inet_ntop` output.  Reported by review on #15096.  # Change Type  /kind fix  # Changelog  ```release-note Fixed BackendConfigPolicy verifySubjectAltNames and listener kgateway.dev/verify-subject-alt-names entries that are IPv4-compatible IPv6 addresses (such as ::192.0.2.1)
 
-- **Issue #15053** (2026-11-19): **fix(listener): match the listener hostname on TCPRoute filter chains**
-  *Symptoms*: # Description  **Motivation:** All listeners on a port share one Envoy listener, with one filter chain per route/hostname. For a TCPRoute attached to a TLS listener that has a `hostname`, the translator built the filter chain without an SNI match (the TLSRoute path sets one). That chain became the port's catch-all, so connections addressed to other listeners on the port (other hostnames, or no SNI) were routed to the TCPRoute's backend. With two such TCPRoutes on different hostnames, the port ended up with two match-less filter chains and Envoy rejected the listener.  **What changed:** The TCPRoute branch of `translateTcpFilterChain` now sets `Matcher.SniDomains` from the listener's SNI domains, the same way the TLSRoute branch does. For plain TCP listeners the list is empty, so nothing changes there.  Tests: the existing TLS-listener TCPRoute spec now asserts the SNI match, and two new specs cover (a) two TLS listeners with different hostnames on one port, each with a TCPRoute, getting one chain per hostname, and (b) TCPRoutes and a TLSRoute resolving to the same hostname sharing a single chain, with the oldest route accepted and the others reported `Conflicted`. Both new specs fail without the fix.  # Change Type  /kind fix  # Changelog  ```release-note A TCPRoute attached to a TLS listener with a hostname now only matches that hostname's SNI. Previously its filter chain accepted any connection on the port, including connections for other listeners' hostnames. Clients that 
+- **Issue #15095** (2026-11-24): **feat(trafficpolicy): add grpcWeb to enable gRPC-Web to gRPC conversion**
+  *Symptoms*: # Description  Adds `TrafficPolicy.grpcWeb`, which enables Envoy's `grpc_web` filter so browser gRPC-Web requests reach backends that only speak gRPC. This closes a feature gap with Gloo, which enabled gRPC-Web on every HTTP listener.  It is opt-in, as discussed on the issue:  ```yaml grpcWeb: {}                 # enable on the targeted Gateway / ListenerSet / route grpcWeb: { disable: {} }    # turn it off for routes covered by a broader policy that enables it ```  **What changed** - The filter is added to a filter chain, disabled, only when a policy on that chain enables gRPC-Web. Routes enable it through `typed_per_filter_config`, the same pattern as buffer and CSRF. - A disable-only policy emits an optional per-route disable (`isOptional: true`) and adds nothing to the chain. - The filter sits after CORS, so preflight requests are answered first. It also sits after the compression filters: a request is decompressed before it is converted, and a response is converted before it is compressed. It stays ahead of WAF and the auth filters, so they see the converted gRPC request. - It is configured only on TrafficPolicy, not ListenerPolicy, since a TrafficPolicy can already target a Gateway or listener for gateway-wide use. - `appProtocol: grpc-web` does not enable it. That value means the backend itself already speaks gRPC-Web.  Fixes #14412  # Change Type  /kind feature  # Changelog  ```release-note Added the `grpcWeb` field to TrafficPolicy to convert browser gRPC-Web request
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1141,1293 +1141,563 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1a44dc2c` (2026-11-23)
-**Commit Message**: fix(status): make the status syncer the only writer of Gateway Accepted (#15027)
+### Incident Patch 1: `4d8ec65e` (2026-11-24)
+**Commit Message**: fix(listener): match verify-subject-alt-names against the right SAN type (#15044)
 
 Signed-off-by: omar <[REDACTED_EMAIL]>
-Co-authored-by: David Jumani <[REDACTED_EMAIL]>
 
-**File**: `pkg/deployer/deployer.go` (modified, +14/-1)
+**File**: `api/annotations/gateway.go` (modified, +3/-0)
 ```diff
-@@ -23,6 +23,7 @@ import (
- 	"k8s.io/apimachinery/pkg/types"
- 	"k8s.io/apimachinery/pkg/util/yaml"
- 	"sigs.k8s.io/controller-runtime/pkg/client"
-+	"sigs.k8s.io/controller-runtime/pkg/client/apiutil"
- 
- 	"github.com/kgateway-dev/kgateway/v2/pkg/apiclient"
- 	"github.com/kgateway-dev/kgateway/v2/pkg/kgateway/wellknown"
-@@ -174,6 +175,18 @@ func (d *Deployer) RenderManifest(ns, name string, vals map[string]any) ([]byte,
- 	return []byte(release.Manifest), nil
- }
- 
-+// objectGVK returns obj's GVK from the scheme, falling back to its TypeMeta for a type the
-+// scheme does not know. TypeMeta alone is empty on some informer paths, and the GVK ends up in
-+// errors reported in status, which must not change from one attempt to the next.
-+func (d *Deployer) objectGVK(obj client.Object) schema.GroupVersionKind {
-+	if d.scheme != nil {
-+		if gvk, err := apiutil.GVKForObject(obj, d.scheme); err == nil {
-+			return gvk
-+		}
-+	}
-+	return obj.GetObjectKind().GroupVersionKind()
-+}
-+
- // GetObjsToDeploy does the following:
- //
- // * uses HelmValuesGenerator to perform lookup/merging etc to get a final set of helm values
-@@ -189,7 +202,7 @@ func (d *Deployer) RenderManifest(ns, name string, vals map[string]any) ([]byte,
- func (d *Deployer) GetObjsToDeploy(ctx context.Context, obj client.Object) ([]client.Object, error) {
- 	vals, err := d.helmValues.GetValues(ctx, obj)
- 	if err != nil {
--		return nil, fmt.Errorf("failed to get helm values for object %s %s/%s: %w", obj.GetObjectKind().GroupVersionKind().String(), obj.GetNamespace(), obj.GetName(), err)
-+		return nil, fmt.Errorf("failed to get helm values for object %s %s/%s: %w", d.objectGVK(obj).String(), obj.GetNamespace(), obj.GetName(), err)
- 	}
- 	if vals == nil {
- 		return nil, nil
+@@ -57,6 +57,9 @@ const (
+ 	// VerifySubjectAltNames is the annotation key used to set the verify subject alt names for a
+ 	// TLS listener or a BackendTLSPolicy.
+ 	// The value is a comma separated list of subject alt names, e.g "example.com,www.example.com".
++	// Each entry is matched against the SAN type its value implies: a value with a scheme (such as
++	// the SPIFFE ID "spiffe://example.org/ns/default/sa/client") as a URI SAN, a value with an "@"
++	// as an email SAN, an IP address as both an IP SAN and a DNS SAN, and anything else as a DNS SAN.
+ 	// Use in the TLS options field of a TLS listener, or the options field of a BackendTLSPolicy.
+ 	// Note: This annotation requires a trusted CA to be configured
+ 	VerifySubjectAltNames gwv1.AnnotationKey = "kgateway.dev/verify-subject-alt-names"
 ```
 
-**File**: `pkg/deployer/deployer_internal_test.go` (modified, +34/-0)
+**File**: `pkg/kgateway/extensions2/plugins/backendconfigpolicy/tls.go` (modified, +3/-47)
 ```diff
-@@ -3,6 +3,7 @@ package deployer
+@@ -3,12 +3,9 @@ package backendconfigpolicy
  import (
- 	"bytes"
- 	"context"
-+	"errors"
- 	"log/slog"
- 	"testing"
+ 	"errors"
+ 	"fmt"
+-	"net/netip"
+-	"strings"
  
-@@ -14,6 +15,8 @@ import (
- 	"k8s.io/client-go/tools/cache"
- 	"sigs.k8s.io/controller-runtime/pkg/client"
- 	gwv1 "sigs.k8s.io/gateway-api/apis/v1"
-+
-+	"github.com/kgateway-dev/kgateway/v2/pkg/kgateway/wellknown"
- )
- 
- // staticValues is a HelmValuesGenerator that always returns the same values.
-@@ -54,3 +57,34 @@ func TestGetObjsToDeployDoesNotLogValues(t *testing.T) {
- 	assert.Contains(t, logs.String(), "got deployer helm values", "the debug line should still be logged")
- 	assert.NotContains(t, logs.String(), secret)
- }
-+
-+// failingValues is a HelmValuesGenerator whose GetValues always fails.
-+type failingValues struct{}
-+
-+func (failingValues) GetValues(context.Context, client.Object) (map[string]any, error) {
-+	return nil, errors.New("invalid parameters")
-+}
-+
-+func (failingValues) GetCacheSyncHandlers() []cache.InformerSynced {
-+	return nil
-+}
-+
-+// TestGetObjsToDeployErrorNamesKindStably guards the helm values error, which the Gateway
-+// status reports: it must name the object's kind, and must not depend on whether the object
-+// came with its TypeMeta set, which differs between informer paths.
-+func TestGetObjsToDeployErrorNamesKindStably(t *testing.T) {
-+	scheme := runtime.NewScheme()
-+	require.NoError(t, gwv1.Install(scheme))
-+	d := NewDeployer("test", scheme, nil, nil, failingValues{},
-+		func(client.Object) (string, string) { return "test", "default" })
-+
-+	withoutTypeMeta := &gwv1.Gateway{ObjectMeta: metav1.ObjectMeta{Name: "gw", Namespace: "default"}}
-+	withTypeMeta := withoutTypeMeta.DeepCopy()
-+	withTypeMeta.SetGroupVersionKind(wellknown.GatewayGVK)
-+
-+	_, errWithout := d.GetObjsToDeploy(t.Context(), withoutTypeMeta)
-+	_, errWith := d.GetObjsToDeploy(t.Context(), withTypeMeta)
-+	require.EqualError(t, errWithout,
-+		"failed to get helm values for object gateway.networking.k8s.io/v1, Kind=Gateway default/gw: invalid parameters")
-+	require.EqualError(t, errWith, errWithout.Error(), "the message must not depend on TypeMeta")
-+}
-```
-
-**File**: `pkg/kgateway/controller/controller.go` (modified, +5/-0)
-```diff
-@@ -16,6 +16,7 @@ import (
- 	"github.com/kgateway-dev/kgateway/v2/pkg/kgateway/wellknown"
- 	"github.com/kgateway-dev/kgateway/v2/pkg/pluginsdk"
- 	"github.com/kgateway-dev/kgateway/v2/pkg/pluginsdk/collections"
-+	"github.com/kgateway-dev/kgateway/v2/pkg/reports"
- )
- 
- // rateLimiter uses token bucket for overall rate limiting and exponential backoff for per-item rate limiting
-@@ -50,6 +51,10 @@ type GatewayConfig struct {
- 	AdditionalGatewayClasses map[string]*deployer.GatewayClassInfo
- 	// CertWatcher is the shared certificate watcher for xDS TLS
- 	CertWatcher *certwatcher.CertWatcher
-+	// GatewayParametersStatus receives the deployer's verdict on each Gateway's parameters,
-+	// which the status syncer reports as the Gateway's Accepted=False/InvalidParameters.
-+	// Without it, invalid parameters are not reported.
-+	GatewayParametersStatus *reports.GatewayParametersStatus
- }
- 
- type HelmValuesGeneratorOverrideFunc func(inputs *deployer.Inputs) deployer.HelmValuesGenerator
-```
-
-**File**: `pkg/kgateway/controller/controller_test.go` (modified, +85/-8)
-```diff
-@@ -24,6 +24,7 @@ import (
- 	"k8s.io/client-go/rest"
- 	"k8s.io/client-go/tools/clientcmd"
- 	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
-+	"k8s.io/client-go/util/retry"
- 	ctrl "sigs.k8s.io/controller-runtime"
- 	"sigs.k8s.io/controller-runtime/pkg/client"
- 	"sigs.k8s.io/controller-runtime/pkg/config"
-@@ -79,6 +80,7 @@ type ControllerSuite struct {
- 	client          client.Client //nolint:forbidigo // can use client.Client in envtest
- 	kubeconfigPath  string
- 	managerErr      chan error
-+	paramsStatus    *reports.GatewayParametersStatus
- }
- 
- func TestControllerSuite(t *testing.T) {
-@@ -293,16 +295,89 @@ func (s *ControllerSuite) TestInvalidGatewayParameters() {
- 	err = s.client.Create(ctx, gw)
- 	s.Require().NoError(err)
- 
-+	// The status writer, which this suite does not run, reports the failed verdict as
-+	// Accepted=False/InvalidParameters.
- 	s.Require().EventuallyWithT(func(c *assert.CollectT) {
--		err := s.client.Get(ctx, types.NamespacedName{Name: gw.Name, Namespace: gw.Namespace}, gw)
--		require.NoError(c, err, "error getting Gateway")
-+		verdict := s.verdictFor(types.NamespacedName{Name: gw.Name, Namespace: gw.Namespace})
-+		require.NotNil(c, verdict, "the deployer should publish its verdict")
-+		require.Contains(c, verdict.Err(), "InvalidKindName")
-+		require.Equal(c, int64(1), verdict.ObservedGeneration())
-+	}, defaultPollTimeout, 500*time.Millisecond, "timed out waiting for the deployer's failed verdict")
-+}
- 
--		condition := meta.FindStatusCondition(gw.Status.Conditions, string(gwv1.GatewayConditionAccepted))
--		require.NotNil(c, condition)
--		require.Equal(c, metav1.ConditionFalse, condition.Status)
--		require.Equal(c, string(gwv1.GatewayReasonInvalidParameters), condition.Reason)
--		require.Equal(c, gw.Generation, condition.ObservedGeneration)
--	}, defaultPollTimeout, 500*time.Millisecond, "timed out waiting for Gateway to have GatewayReasonInvalidParameters")
-+// TestInvalidGatewayParametersClearedWithoutValidPorts tests that fixing the parametersRef
-+// removes the Gateway's parameters error even when the Gateway still has no valid ports.
-+func (s *ControllerSuite) TestInvalidGatewayParametersClearedWithoutValidPorts() {
-+	ctx := context.Background()
-+	gwp := &kgateway.GatewayParameters{
-+		ObjectMeta: metav1.ObjectMeta{
-+			Name:      "reserved-port-gwp",
-+			Namespace: "default",
-+		},
-+		Spec: kgateway.GatewayParametersSpec{
-+			Kube: &kgateway.KubernetesProxyConfig{},
-+		},
-+	}
-+	gw := &gwv1.Gateway{
-+		ObjectMeta: metav1.ObjectMeta{
-+			Name:      "reserved-port-gw",
-+			Namespace: "default",
-+		},
-+		Spec: gwv1.GatewaySpec{
-+			GatewayClassName: gwv1.ObjectName(gatewayClassName),
-+			Infrastructure: &gwv1.GatewayInfrastructure{
-+				ParametersRef: &gwv1.LocalParametersReference{
-+					Group: kgateway.GroupName,
-+					Kind:  "InvalidKindName",
-+					Name:  gwp.Name,
-+				},
-+			},
-+			Listeners: []gwv1.Listener{{
-+				Name:     "listener",
-+				Protocol: "HTTP",
-+				// A reserved port: once the parameters resolve, there are no valid ports to deploy.
-+				Port: 9091,
-+			}},
-+		},
-+	}
-+	s.Require().NoError(s.client.Create(ctx, gwp))
-+	s.Require().NoError(s.client.Create(ctx, gw))
-+	s.T().Cleanup(func() {
-+		s.NoError(s.client.Delete(ctx, gw))
-+		s.NoError(s.client.Delete(ctx, gwp))
-+	})
-+
-+	nn := types.NamespacedName{Name: gw.Name, Namespace: gw.Namespace}
-+	s.Require().EventuallyWithT(func(c *assert.CollectT) {
-+		verdict := s.verdictFor(nn)
-+		require.NotNil(c, verdict, "the deployer should publish its verdict")
-+		require.NotEmpty(c, verdict.Err(), "the verdict should be a failure")
-+	}, defaultPollTimeout, 500*time.Millisecond, "timed out waiting for the deployer's failed verdict")
-+
-+	s.Require().NoError(retry.RetryOnConflict(retry.DefaultRetry, func() error {
-+		if err := s.client.Get(ctx, nn, gw); err != nil {
-+			return err
-+		}
-+		gw.Spec.Infrastructure.ParametersRef.Kind = gwv1.Kind(wellknown.GatewayParametersGVK.Kind)
-+		return s.client.Update(ctx, gw)
-+	}))
-+
-+	s.Require().EventuallyWithT(func(c *assert.CollectT) {
-+		verdict := s.verdictFor(nn)
-+		require.NotNil(c, verdict, "the deployer should publish its verdict")
-+		require.Empty(c, verdict.Err(), "fixing the parametersRef should make the verdict a success")
-+		require.Equal(c, int64(2), verdict.ObservedGeneration(), "the verdict should be for the fixed generation")
-+	}, defaultPollTimeout, 500*time.Millisecond, "timed out waiting for the deployer's successful verdict")
-+}
-+
-+// verdictFor reads the deployer's verdict for gw from the status contributions it publishes.
-+func (s *ControllerSuite) verdictFor(gw types.NamespacedName) *reports.GatewayParametersReport {
-+	for _, contribution := range s.paramsStatus.Contributions().List() {
-+		if contribution.Target.NamespacedName == gw && contribution.GatewayParameters != nil {
-+			return contribution.GatewayParameters
-+		}
-+	}
-+	return nil
- }
- 
- // TestGatewayClassStatus tests the Status conditions on GatewayClass
-@@ -689,6 +764,7 @@ func (s *ControllerSuite) startContr
-```
-
-**File**: `pkg/kgateway/controller/gw_controller.go` (modified, +18/-45)
-```diff
-@@ -17,7 +17,6 @@ import (
+ 	envoycorev3 "github.com/envoyproxy/go-control-plane/envoy/config/core/v3"
+ 	envoytlsv3 "github.com/envoyproxy/go-control-plane/envoy/extensions/transport_sockets/tls/v3"
+-	envoymatcher "github.com/envoyproxy/go-control-plane/envoy/type/matcher/v3"
  	"istio.io/istio/pkg/kube/krt"
- 	appsv1 "k8s.io/api/apps/v1"
  	corev1 "k8s.io/api/core/v1"
--	"k8s.io/apimachinery/pkg/api/meta"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 	"k8s.io/apimachinery/pkg/labels"
- 	"k8s.io/apimachinery/pkg/runtime"
-@@ -67,6 +66,11 @@ type gatewayReconciler struct {
- 
- 	controllerExtension pluginsdk.GatewayControllerExtension
- 
-+	// paramsStatus is where Reconcile reports whether each Gateway's objects could be built
-+	// from its parameters. The Gateway status writer turns a failure into
-+	// Accepted=False/InvalidParameters; this controller never writes that condition itself.
-+	paramsStatus *reports.GatewayParametersStatus
-+
- 	queue controllers.Queue
+ 	"k8s.io/utils/ptr"
+@@ -17,6 +14,7 @@ import (
+ 	"github.com/kgateway-dev/kgateway/v2/api/v1alpha1/kgateway"
+ 	eiutils "github.com/kgateway-dev/kgateway/v2/internal/envoyinit/pkg/utils"
+ 	"github.com/kgateway-dev/kgateway/v2/pkg/kgateway/extensions2/pluginutils"
++	"github.com/kgateway-dev/kgateway/v2/pkg/kgateway/translator/sslutils"
+ 	"github.com/kgateway-dev/kgateway/v2/pkg/krtcollections"
+ 	"github.com/kgateway-dev/kgateway/v2/pkg/pluginsdk/ir"
+ )
+@@ -144,7 +142,7 @@ func buildCertificateContext(tlsData *tlsData, tlsContext *envoytlsv3.CommonTlsC
  }
  
-@@ -97,6 +101,7 @@ func NewGatewayReconciler(
- 	r.gwParamClient = gwParams.GetGatewayParametersClient()
+ func buildValidationContext(tlsData *tlsData, tlsConfig *kgateway.TLS, tlsContext *envoytlsv3.CommonTlsContext) error {
+-	sanMatchers := verifySanListToTypedMatchSanList(tlsConfig.VerifySubjectAltNames)
++	sanMatchers := sslutils.VerifySanListToTypedMatchSanList(tlsConfig.VerifySubjectAltNames)
  
- 	r.queue = controllers.NewQueue("GatewayController", controllers.WithReconciler(r.Reconcile), controllers.WithMaxAttempts(math.MaxInt), controllers.WithRateLimiter(rateLimiter))
-+	r.paramsStatus = cfg.GatewayParametersStatus
- 
- 	// Gateway event handler
- 	r.gwClient.AddEventHandler(
-@@ -275,6 +280,7 @@ func (r *gatewayReconciler) Reconcile(req types.NamespacedName) (rErr error) {
- 	if gw == nil || gw.GetDeletionTimestamp() != nil {
- 		// ignore the event if the Gateway is not found. A subsequent event should handle this if needed
- 		logger.Debug("gateway not found, skipping reconciliation", "ref", req)
-+		r.paramsStatus.Remove(req)
- 		return nil
+ 	// If the user opted to use the system CA bundle, or named no trust source at all,
+ 	// configure a CombinedValidationContext that references the SDS secret for the
+@@ -155,7 +153,7 @@ func buildValidationContext(tlsData *tlsData, tlsConfig *kgateway.TLS, tlsContex
+ 			// A public CA vouches for every hostname it has issued for, so without an
+ 			// explicit SAN list, pin the certificate to the SNI we are sending.
+ 			if len(sanMatchers) == 0 && tlsConfig.Sni != nil {
+-				sanMatchers = verifySanListToTypedMatchSanList([]string{*tlsConfig.Sni})
++				sanMatchers = sslutils.VerifySanListToTypedMatchSanList([]string{*tlsConfig.Sni})
+ 			}
+ 			combined := &envoytlsv3.CommonTlsContext_CombinedValidationContext{
+ 				CombinedValidationContext: &envoytlsv3.CommonTlsContext_CombinedCertificateValidationContext{
+@@ -297,45 +295,3 @@ func parseTLSVersion(tlsVersion *kgateway.TLSVersion) (envoytlsv3.TlsParameters_
+ 		return 0, fmt.Errorf("invalid TLS version: %s", *tlsVersion)
  	}
- 
-@@ -287,49 +293,31 @@ func (r *gatewayReconciler) Reconcile(req types.NamespacedName) (rErr error) {
- 	// Only reconcile Gateways for our controller
- 	if gwc.Spec.ControllerName != gwv1.GatewayController(r.controllerName) {
- 		// Not our GatewayClass at all
-+		r.paramsStatus.Remove(req)
- 		return nil
- 	}
- 	if wellknown.IsRetiredWaypointClass(gwc) {
- 		logger.Debug("ignoring Gateway of a retired waypoint GatewayClass", "ref", req, "gwclass", gwc.Name)
-+		r.paramsStatus.Remove(req)
- 		return nil
- 	}
- 
- 	logger.Info("reconciling Gateway", "ref", req)
- 	ctx := r.ctx
- 	objs, err := r.deployer.GetObjsToDeploy(ctx, gw)
--	if err != nil {
--		if errors.Is(err, internaldeployer.ErrNoValidPorts) {
--			// status is reported from translator, so return normally
--			return err
--		}
-+	// ErrNoValidPorts is only returned once the GatewayParameters resolve, so the parameters
-+	// are valid; the listener ports' own status is reported from the translator.
-+	noValidPorts := errors.Is(err, internaldeployer.ErrNoValidPorts)
-+	if err != nil && !noValidPorts {
- 		// if we fail to either reference a valid GatewayParameters or
- 		// the GatewayParameters configuration leads to issues building the
- 		// objects, we want to set the status to InvalidParameters.
--		condition := metav1.Condition{
--			Type:               string(gwv1.GatewayConditionAccepted),
--			Status:             metav1.ConditionFalse,
--			ObservedGeneration: gw.Generation,
--			Reason:             string(gwv1.GatewayReasonInvalidParameters),
--			Message:            err.Error(),
--		}
--		if statusErr := r.updateGatewayStatusWithRetry(ctx, gw, condition); statusErr != nil {
--			return fmt.Errorf("failed to update status for Gateway %s: %w", req, statusErr)
--		}
-+		r.paramsStatus.Set(req, gw.Generation, err)
-+		return err
-+	}
-+	r.paramsStatus.Set(req, gw.Generation, nil)
-+	if noValidPorts {
- 		return err
--	} else if existing := meta.FindStatusCondition(gw.Status.Conditions, string(gwv1.GatewayConditionAccepted)); existing != nil &&
--		existing.Status == metav1.ConditionFalse &&
--		existing.Reason == string(gwv1.GatewayReasonInvalidParameters) {
--		// set the status Accepted=true if it had been set to false due to InvalidParameters
--		condition := metav1.Condition{
--			Type:               string(gwv1.GatewayConditionAccepted),
--			Status:             metav1.ConditionTrue,
--			ObservedGeneration: gw.Generation,
--			Reason:             string(gwv1.GatewayReasonAccepted),
--			Message:            reports.GatewayAcceptedMessage,
--		}
--		if statusErr := r.updateGatewayStatusWithRetry(ctx, gw, condition); statusErr != nil {
--			return fmt.Errorf("failed to update status for Gateway %s: %w", req, statusErr)
--		}
- 	}
- 	objs = r.deployer.SetNamespaceAndOwnerWithGVK(gw, wellknown.GatewayGVK, objs)
- 	err = r.deployer.DeployObjsWithSource(ctx, objs, gw)
-@@ -492,21 +480,6 @@ func updateGatewayAddresses(
- 	)
  }
- 
--// updateGatewayStatusWithRetry attempts to update the Gateway status with retry logic
--// to handle transient failures when updating the status subresource
--func (r *gatewayReconciler) updateGatewayStatusWithRetry(ctx context.Context, gw *gwv1.Gateway, condition metav1.Condition) error {
--	return updateGatewayStatusWithRetryFunc(
--		ctx,
--		r.gwClient,
--		client.ObjectKeyFromObject(gw),
--		func(latest *gwv1.Gateway) (gwv1.GatewayStatus, bool) {
--			newStatus := latest.Status.DeepCopy()
--			meta.SetStatusCondition(&newStatus.Conditions, condition)
--			return *newStatus, true
--		},
--	)
+-
+-func verifySanListToTypedMatchSanList(sanList []string) []*envoytlsv3.SubjectAltNameMatcher {
+-	var matchSanList []*envoytlsv3.SubjectAltNameMatcher
+-	for _, san := range sanList {
+-		if ip, err := netip.ParseAddr(san); err == nil {
+-			// A certificate can carry an IP address as an IP SAN or as a DNS SAN. Match both, so
+-			// certificates that matched the DNS-only matcher before still match. The IP matcher
+-			// uses the canonical form of the address, which is the form Envoy compares IP SANs in.
+-			matchSanList = append(matchSanList,
+-				exactSanMatcher(envoytlsv3.SubjectAltNameMatcher_IP_ADDRESS, ip.String()),
+-				exactSanMatcher(envoytlsv3.SubjectAltNameMatcher_DNS, san),
+-			)
+-			continue
+-		}
+-		matchSanList = append(matchSanList, exactSanMatcher(sanTypeOf(san), san))
+-	}
+-	return matchSanList
 -}
 -
- // setupTLSCertificateWatch
+-func exactSanMatcher(sanType envoytlsv3.SubjectAltNameMatcher_SanType, san string) *envoytlsv3.SubjectAltNameMatcher {
+-	return &envoytlsv3.SubjectAltNameMatcher{
+-		SanType: sanType,
+-		Matcher: &envoymatcher.StringMatcher{
+-			MatchPattern: &envoymatcher.StringMatcher_Exact{Exact: san},
+-		},
+-	}
+-}
+-
+-// sanTypeOf picks the SAN type to match a verifySubjectAltNames entry that is not an IP address
+-// against. Typed matchers only compare against a single SAN type, so a DNS-only matcher never
+-// matches a certificate that carries its identity as a URI (such as a SPIFFE ID) or an email
+-// address.
+-func sanTypeOf(san string) envoytlsv3.SubjectAltNameMatcher_SanType {
+-	switch {
+-	case strings.Contains(san, ":"):
+-		return envoytlsv3.SubjectAltNameMatcher_URI
+-	case strings.Contains(san, "@"):
+-		return envoytlsv3.SubjectAltNameMatcher_EMAIL
+-	default:
+-		return envoytlsv3.SubjectAltNameMatcher_DNS
+-	}
+-}
 ```
 
-**File**: `pkg/kgateway/controller/start.go` (modified, +18/-9)
+**File**: `pkg/kgateway/extensions2/plugins/backendconfigpolicy/tls_test.go` (modified, +2/-154)
 ```diff
-@@ -5,6 +5,7 @@ import (
- 	"errors"
- 	"maps"
- 	"net/http"
-+	"slices"
- 	"strings"
- 	"sync/atomic"
+@@ -16,6 +16,7 @@ import (
  
-@@ -34,6 +35,7 @@ import (
- 	"github.com/kgateway-dev/kgateway/v2/pkg/pluginsdk/collections"
+ 	"github.com/kgateway-dev/kgateway/v2/api/v1alpha1/kgateway"
+ 	eiutils "github.com/kgateway-dev/kgateway/v2/internal/envoyinit/pkg/utils"
++	"github.com/kgateway-dev/kgateway/v2/pkg/kgateway/translator/sslutils"
  	"github.com/kgateway-dev/kgateway/v2/pkg/pluginsdk/ir"
- 	"github.com/kgateway-dev/kgateway/v2/pkg/pluginsdk/krtutil"
-+	"github.com/kgateway-dev/kgateway/v2/pkg/reports"
- 	"github.com/kgateway-dev/kgateway/v2/pkg/utils/kubeutils"
- 	"github.com/kgateway-dev/kgateway/v2/pkg/utils/namespaces"
- 	"github.com/kgateway-dev/kgateway/v2/pkg/validator"
-@@ -103,10 +105,11 @@ type StartConfig struct {
- // It is intended to be run in a goroutine as the function will block until the supplied
- // context is cancelled
- type ControllerBuilder struct {
--	proxySyncer *proxy_syncer.ProxySyncer
--	cfg         StartConfig
--	mgr         ctrl.Manager
--	commoncol   *collections.CommonCollections
-+	proxySyncer  *proxy_syncer.ProxySyncer
-+	cfg          StartConfig
-+	mgr          ctrl.Manager
-+	commoncol    *collections.CommonCollections
-+	paramsStatus *reports.GatewayParametersStatus
- 
- 	ready atomic.Bool
- }
-@@ -147,6 +150,10 @@ func NewControllerBuilder(ctx context.Context, cfg StartConfig) (*ControllerBuil
- 	// This only effects metrics in the resources subsystem and is not required for other metrics.
- 	metrics.StartResourceSyncMetricsProcessing(ctx)
- 
-+	// The deployer reports its verdict on each Gateway's parameters through the status
-+	// contribution pipeline, so only the status syncer writes the Gateway's Accepted condition.
-+	paramsStatus := reports.NewGatewayParametersStatus(cfg.KrtOptions.ToOptions("GatewayParametersStatus")...)
-+
- 	// Create the proxy syncer for the Gateway API resources
- 	setupLog.Info("initializing proxy syncer")
- 	proxySyncer := proxy_syncer.NewProxySyncer(
-@@ -159,7 +166,7 @@ func NewControllerBuilder(ctx context.Context, cfg StartConfig) (*ControllerBuil
- 		cfg.SetupOpts.Cache,
- 		cfg.Validator,
- 		cfg.XDSClientState,
--		cfg.StatusSyncerOptions...,
-+		append(slices.Clone(cfg.StatusSyncerOptions), proxy_syncer.WithStatusContributions(paramsStatus.Contributions()))...,
- 	)
- 	proxySyncer.Init(ctx, cfg.KrtOptions)
- 	if err := cfg.Manager.Add(proxySyncer); err != nil {
-@@ -189,10 +196,11 @@ func NewControllerBuilder(ctx context.Context, cfg StartConfig) (*ControllerBuil
- 
- 	setupLog.Info("starting controller builder")
- 	cb := &ControllerBuilder{
--		proxySyncer: proxySyncer,
--		cfg:         cfg,
--		mgr:         cfg.Manager,
--		commoncol:   cfg.CommonCollections,
-+		proxySyncer:  proxySyncer,
-+		cfg:          cfg,
-+		mgr:          cfg.Manager,
-+		commoncol:    cfg.CommonCollections,
-+		paramsStatus: paramsStatus,
- 	}
- 
- 	// wait for the ControllerBuilder to Start
-@@ -270,6 +278,7 @@ func (c *ControllerBuilder) Build(ctx context.Context) error {
- 		CommonCollections:        c.commoncol,
- 		GatewayClassName:         c.cfg.GatewayClassName,
- 		CertWatcher:              c.cfg.SetupOpts.CertWatcher,
-+		GatewayParametersStatus:  c.paramsStatus,
- 	}
- 
- 	setupLog.Info("creating base gateway controller")
-```
-
-**File**: `pkg/kgateway/proxy_syncer/option.go` (modified, +13/-0)
-```diff
-@@ -1,14 +1,17 @@
- package proxy_syncer
- 
- import (
-+	"istio.io/istio/pkg/kube/krt"
- 	"k8s.io/apimachinery/pkg/runtime/schema"
- 
- 	"github.com/kgateway-dev/kgateway/v2/pkg/pluginsdk/statussync"
-+	"github.com/kgateway-dev/kgateway/v2/pkg/reports"
  )
  
- type statusSyncerConfig struct {
- 	statusRegistrations   []StatusRegistration
- 	policyTargetResolvers policyTargetResolvers
-+	statusContributions   []krt.Collection[reports.StatusContribution]
- }
- 
- // StatusSyncerOption configures the status pipeline. The same options are passed to both
-@@ -45,6 +48,16 @@ func WithStatusRegistration(registration StatusRegistration) StatusSyncerOption
+@@ -562,163 +563,10 @@ func systemCAContext(sans ...string) *envoytlsv3.CommonTlsContext {
+ 		ValidationContextType: &envoytlsv3.CommonTlsContext_CombinedValidationContext{
+ 			CombinedValidationContext: &envoytlsv3.CommonTlsContext_CombinedCertificateValidationContext{
+ 				DefaultValidationContext: &envoytlsv3.CertificateValidationContext{
+-					MatchTypedSubjectAltNames: verifySanListToTypedMatchSanList(sans),
++					MatchTypedSubjectAltNames: sslutils.VerifySanListToTypedMatchSanList(sans),
+ 				},
+ 				ValidationContextSdsSecretConfig: &envoytlsv3.SdsSecretConfig{Name: eiutils.SystemCaSecretName},
+ 			},
+ 		},
  	}
  }
- 
-+// WithStatusContributions adds status contributions produced outside translation, such as
-+// the Gateway deployer's GatewayParametersStatus, to the ones the status syncer reduces.
-+func WithStatusContributions(contributions krt.Collection[reports.StatusContribution]) StatusSyncerOption {
-+	return func(cfg *statusSyncerConfig) {
-+		if contributions != nil {
-+			cfg.statusContributions = append(cfg.statusContributions, contributions)
-+		}
-+	}
-+}
-+
- // WithPolicyTargetResolver checks policy targetRefs of kind gk with resolver, so a ref naming
- // an object that does not exist is reported as TargetNotFound on the policy's StatusSummary
- // ancestor. kgateway already resolves the Gateway API kinds, Service, Backend, and the alias
+-
+-func TestVerifySanListToTypedMatchSanList(t *testing.T) {
+-	tests := []struct {
+-		name     string
+-		sanList  []string
+-		expected []*envoytlsv3.SubjectAltNameMatcher
+-	}{
+-		{
+-			name:     "empty SAN list",
+-			sanList:  []string{},
+-			expected: []*envoytlsv3.SubjectAltNameMatcher{},
+-		},
+-		{
+-			name:    "single SAN",
+-			sanList: []string{"example.com"},
+-			expected: []*envoytlsv3.SubjectAltNameMatcher{
+-				{
+-					SanType: envoytlsv3.SubjectAltNameMatcher_DNS,
+-					Matcher: &envoymatcher.StringMatcher{
+-						MatchPattern: &envoymatcher.StringMatcher_Exact{Exact: "example.com"},
+-					},
+-				},
+-			},
+-		},
+-		{
+-			name:    "multiple SANs",
+-			sanList: []string{"example.com", "api.example.com", "www.example.com"},
+-			expected: []*envoytlsv3.SubjectAltNameMatcher{
+-				{
+-					SanType: envoytlsv3.SubjectAltNameMatcher_DNS,
+-					Matcher: &envoymatcher.StringMatcher{
+-						MatchPattern: &envoymatcher.StringMatcher_Exact{Exact: "example.com"},
+-					},
+-				},
+-				{
+-					SanType: envoytlsv3.SubjectAltNameMatcher_DNS,
+-					Matcher: &envoymatcher.StringMatcher{
+-						MatchPattern: &envoymatcher.StringMatcher_Exact{Exact: "api.example.com"},
+-					},
+-				},
+-				{
+-					SanType: envoytlsv3.SubjectAltNameMatcher_DNS,
+-					Matcher: &envoymatcher.StringMatcher{
+-						MatchPattern: &envoymatcher.StringMatcher_Exact{Exact: "www.example.com"},
+-					},
+-				},
+-			},
+-		},
+-		{
+-			name:    "SPIFFE ID is matched as a URI SAN",
+-			sanList: []string{"spiffe://example.org/ns/default/sa/backend"},
+-			expected: []*envoytlsv3.SubjectAltNameMatcher{
+-				{
+-					SanType: envoytlsv3.SubjectAltNameMatcher_URI,
+-					Matcher: &envoymatcher.StringMatcher{
+-						MatchPattern: &envoymatcher.StringMatcher_Exact{Exact: "spiffe://example.org/ns/default/sa/backend"},
+-					},
+-				},
+-			},
+-		},
+-		{
+-			name:    "IPv4 address is matched as an IP SAN and as a DNS SAN",
+-			sanList: []string{"10.0.0.1"},
+-			expected: []*envoytlsv3.SubjectAltNameMatcher{
+-				{
+-					SanType: envoytlsv3.SubjectAltNameMatcher_IP_ADDRESS,
+-					Matcher: &envoymatcher.StringMatcher{
+-						MatchPattern: &envoymatcher.StringMatcher_Exact{Exact: "10.0.0.1"},
+-					},
+-				},
+-				{
+-					SanType: envoytlsv3.SubjectAltNameMatcher_DNS,
+-					Matcher: &envoymatcher.StringMatcher{
+-						MatchPattern: &envoymatcher.StringMatcher_Exact{Exact: "10.0.0.1"},
+-					},
+-				},
+-			},
+-		},
+-		{
+-			name:    "IPv6 address is matched as an IP SAN and as a DNS SAN",
+-			sanList: []string{"fd00::1"},
+-			expected: []*envoytlsv3.SubjectAltNameMatcher{
+-				{
+-					SanType: envoytlsv3.SubjectAltNameMatcher_IP_ADDRESS,
+-					Matcher: &envoymatcher.StringMatcher{
+-						MatchPattern: &envoymatcher.StringMatcher_Exact{Exact: "fd00::1"},
+-					},
+-				},
+-				{
+-					SanType: envoytlsv3.SubjectAltNameMatcher_DNS,
+-					Matcher: &envoymatcher.StringMatcher{
+-						MatchPattern: &envoymatcher.StringMatcher_Exact{Exact: "fd00::1"},
+-					},
+-				},
+-			},
+-		},
+-		{
+-			name:    "IPv6 address in long form is matched in canonical form as an IP SAN",
+-			sanList: []string{"fd00:0:0:0:0:0:0:1"},
+-			expected: []*envoytlsv3.SubjectAltNameMatcher{
+-				{
+-					SanType: envoytlsv3.SubjectAltNameMatcher_IP_ADDRESS,
+-					Matcher: &envoymatcher.StringMatcher{
+-						MatchPattern: &envoymatcher.StringMatcher_Exact{Exact: "fd00::1"},
+-					},
+-				},
+-				{
+-					SanType: envoytlsv3.SubjectAltNameMatcher_DNS,
+-					Matcher: &envoymatcher.StringMatcher{
+-						MatchPattern: &envoymatcher.StringMatcher_Exact{Exact: "fd00:0:0:0:0:0:0:1"},
+-					},
+-				},
+-			},
+-		},
+-		{
+-			name:    "email address is matched as an email SAN",
+-			sanList: []string{"svc@example.org"},
+-			expected: []*envoytlsv3.SubjectAltNameMatcher{
+-				{
+-					SanType: envoytlsv3.SubjectAltNameMatcher_EMAIL,
+-					Matcher: &envoymatcher.StringMatcher{
+-						MatchPattern: &envoymatcher.StringMatcher_Exact{Exact: "svc@example.org"},
+-					},
+-				},
+-			},
+-		},
+-		{
+-			name:    "wildcard hostname stays a DNS SAN",
+-			sanList: []string{"*.example.com"},
+-			expected: []*envoy
 ```
 
-**File**: `pkg/kgateway/proxy_syncer/proxy_syncer.go` (modified, +5/-2)
+**File**: `pkg/kgateway/translator/gateway/testutils/inputs/frontendtlsconfig/basic.yaml` (modified, +1/-1)
 ```diff
-@@ -74,6 +74,8 @@ type ProxySyncer struct {
- 
- 	// extraPolicyTargetResolvers are the resolvers registered with WithPolicyTargetResolver.
- 	extraPolicyTargetResolvers policyTargetResolvers
-+	// extraStatusContributions are the contributions registered with WithStatusContributions.
-+	extraStatusContributions []krt.Collection[reports.StatusContribution]
- 
- 	waitForSync []cache.InformerSynced
- 	ready       atomic.Bool
-@@ -231,6 +233,7 @@ func NewProxySyncer(
- 		translator:                 translator.NewCombinedTranslator(ctx, mergedPlugins, commonCols, validator),
- 		plugins:                    mergedPlugins,
- 		extraPolicyTargetResolvers: optCfg.policyTargetResolvers,
-+		extraStatusContributions:   optCfg.statusContributions,
- 	}
- }
- 
-@@ -432,12 +435,12 @@ func (s *ProxySyncer) Init(ctx context.Context, krtopts krtutil.KrtOptions) {
- 	// ancestors from Gateway translation, Backend translation, and targetRef
- 	// resolution naturally reduce under the same policy key without a competing
- 	// singleton writer.
--	s.statusContributions = krt.JoinCollection([]krt.Collection[reports.StatusContribution]{
-+	s.statusContributions = krt.JoinCollection(append([]krt.Collection[reports.StatusContribution]{
- 		gatewayStatusContributions(translationOutputs, krtopts),
- 		backendPolicyContributions,
- 		backendContributions,
- 		policyTargetContributions,
--	}, krtopts.ToOptions("StatusContributions")...)
-+	}, s.extraStatusContributions...), krtopts.ToOptions("StatusContributions")...)
- 
- 	s.waitForSync = []cache.InformerSynced{
- 		s.commonCols.HasSynced,
+@@ -52,7 +52,7 @@ spec:
+           kind: Secret
+       options:
+         kgateway.dev/verify-certificate-hash: "59:CF:81:16:72:71:C7:17:23:4E:CE:4F:F9:B9:68:B5:B0:40:2A:00:BB:14:64:E0:42:B9:AD:DA:61:C7:03:F0"
+-        kgateway.dev/verify-subject-alt-names: "alt.example.com, alt2.example.com"
++        kgateway.dev/verify-subject-alt-names: "alt.example.com, alt2.example.com, spiffe://example.org/ns/default/sa/client, 10.0.0.1"
+   - name: https-insecure-fallback
+     protocol: HTTPS
+     port: 9443
 ```
 
----
-
-### Incident Patch 2: `7e1298a7` (2026-11-23)
-**Commit Message**: fix(translator): accept TCP/TLS routes only on attached parentRefs (#15045)
-
-Signed-off-by: omar <[REDACTED_EMAIL]>
-
-**File**: `pkg/kgateway/translator/gateway/gateway_translator_test.go` (modified, +22/-0)
+**File**: `pkg/kgateway/translator/gateway/testutils/outputs/frontendtlsconfig/basic.yaml` (modified, +9/-0)
 ```diff
-@@ -1438,6 +1438,17 @@ func TestBasic(t *testing.T) {
- 		})
- 	})
- 
-+	t.Run("tcp route accepted only on the parentRefs attached to the listener", func(t *testing.T) {
-+		test(t, translatorTestCase{
-+			inputFiles: []string{"tcp-routing/unmatched-parentref.yaml"},
-+			outputFile: "tcp-routing/unmatched-parentref.yaml",
-+			gwNN: types.NamespacedName{
-+				Namespace: "default",
-+				Name:      "example-gateway",
-+			},
-+		})
-+	})
-+
- 	t.Run("tcp gateway with basic routing", func(t *testing.T) {
- 		test(t, translatorTestCase{
- 			inputFiles: []string{"tcp-routing/basic.yaml"},
-@@ -1526,6 +1537,17 @@ func TestBasic(t *testing.T) {
- 		})
- 	})
- 
-+	t.Run("tls route accepted only on the parentRefs attached to the listener", func(t *testing.T) {
-+		test(t, translatorTestCase{
-+			inputFiles: []string{"tls-routing/unmatched-parentref.yaml"},
-+			outputFile: "tls-routing/unmatched-parentref.yaml",
-+			gwNN: types.NamespacedName{
-+				Namespace: "default",
-+				Name:      "example-gateway",
-+			},
-+		})
-+	})
-+
- 	t.Run("tls gateway with basic routing", func(t *testing.T) {
- 		test(t, translatorTestCase{
- 			inputFiles: []string{"tls-routing/basic.yaml"},
+@@ -88,6 +88,15 @@ Listeners:
+             - matcher:
+                 exact: alt2.example.com
+               sanType: DNS
++            - matcher:
++                exact: spiffe://example.org/ns/default/sa/client
++              sanType: URI
++            - matcher:
++                exact: 10.0.0.1
++              sanType: IP_ADDRESS
++            - matcher:
++                exact: 10.0.0.1
++              sanType: DNS
+             trustedCa:
+               inlineBytes: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURLekNDQWhPZ0F3SUJBZ0lVVWU5UkFsSzNhUW02dUF3SzZFdmxISWVSU1RJd0RRWUpLb1pJaHZjTkFRRUwKQlFBd0pURVFNQTRHQTFVRUF3d0hWR1Z6ZENCRFFURVJNQThHQTFVRUNnd0lWR1Z6ZENCUGNtY3dIaGNOTWpVeApNakF6TVRreU1EQXdXaGNOTWpZeE1qQXpNVGt5TURBd1dqQWxNUkF3RGdZRFZRUUREQWRVWlhOMElFTkJNUkV3CkR3WURWUVFLREFoVVpYTjBJRTl5WnpDQ0FTSXdEUVlKS29aSWh2Y05BUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUIKQUxLZExjSGxXMXBxY3RmdTJQVk51dVVTZlgxOFFmbktzUFprNldIbHBScHpQaXVkVDkwc2xlSFl0L21JV3prMgorN0R4M0RyakNuTmo4YlVMa3JZQVJwNmM2ZE81cjRrOEJCdXp4RTB3ZTdSUG9SVmtCeklHa3pLMjJaMnl6L2NzCkxJT3FLZ1NWWGJuZXFZeUpCbFZZYUpZUFozdUpIMVFUY0c5Yk9zbGNrTlZZUER0WnVEMFBHRzhKemllTklUU1kKc21tNXB4NjhwL0VWSXIzT1A1ZWNVTWhDY0VnV0lvKzk5Mmg1dGVJbE9NcFhwWmIyV20xQUJwcjhqYUdKVmd0Twp2bjY3bXpSYzdQQmw1aVQ2Y2RVbkc5OUxVTUloajczY0t5MVcrOWkzZWxGOHc0U0VXLzd1TXZOSzBXd2tGYUZsCmw4SHppOHlmc1YzRUMwV1BSdXFwM2pjQ0F3RUFBYU5UTUZFd0hRWURWUjBPQkJZRUZOWnJveTNTaUZSK2wzSEkKdHcrbnBQUGw1TTVtTUI4R0ExVWRJd1FZTUJhQUZOWnJveTNTaUZSK2wzSEl0dytucFBQbDVNNW1NQThHQTFVZApFd0VCL3dRRk1BTUJBZjh3RFFZSktvWklodmNOQVFFTEJRQURnZ0VCQUlwbmV4MGlXOWp0YllKaGZ4ekU0V21tCmZORzNuMTN3WmFlL2JyT25qNjlWa0s2WkozNU9nanY5ZXliSklhaWNZQ3BrUWhhaUE1WDdCVTZjQWM5MElXZHYKYjd0dXJ5OHFUMXp3YlR4enhlR3B2Y3Q2ODc3T3RjQ2xrMUJOYjlPcWRCZFpuY0RnK1dlUzlaa1FtL2FxRWFwQQpRdUpjaTcwWW5rcmUwdWRRdGVuYXpGOG5qbHZuZ2F3M0dKZFE2b2daMW01VzBQUFZhQU1DL0llODhlb2xIMHg4CkVIaytXSTdPUEZSWXJqN21nbC9uM1pTRS9HVDNFci9pejZLU0JSaVIzTU84b1gwRXBCSW9Bb2xpcXpOM2NtWVgKWVZpWXhhWGVSMHAzZEloZ0hJOXRvTlhjMEF0NTc1WlBtakpjaExkV3pralBkVGh5N1ZZS2FLNnl4aWNZVkxJPQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+             verifyCertificateHash:
 ```
 
-**File**: `pkg/kgateway/translator/gateway/testutils/inputs/tcp-routing/unmatched-parentref.yaml` (added, +52/-0)
+**File**: `pkg/kgateway/translator/irtranslator/fc.go` (modified, +1/-9)
 ```diff
-@@ -0,0 +1,52 @@
-+# The TCPRoute is attached to the tcp listener through two parentRefs (by
-+# sectionName and by Gateway name); both are accepted. Its other parentRefs
-+# must keep the status of their own attachment and must not be reported as
-+# accepted by the tcp listener:
-+# - sectionName "missing" does not exist on the Gateway (NoMatchingParent).
-+# - sectionName "http" is an HTTP listener, which does not match a TCPRoute
-+#   (NoMatchingParent).
-+# - other-gateway is not translated here, so it gets no status entry.
-+apiVersion: gateway.networking.k8s.io/v1
-+kind: TCPRoute
-+metadata:
-+  name: example-tcp-route
-+spec:
-+  parentRefs:
-+  - name: example-gateway
-+    sectionName: tcp
-+  - name: example-gateway
-+  - name: example-gateway
-+    sectionName: missing
-+  - name: example-gateway
-+    sectionName: http
-+  - name: other-gateway
-+  rules:
-+  - backendRefs:
-+    - name: example-tcp-svc
-+      port: 8080
-+---
-+apiVersion: gateway.networking.k8s.io/v1
-+kind: Gateway
-+metadata:
-+  name: example-gateway
-+spec:
-+  gatewayClassName: example-gateway-class
-+  listeners:
-+  - name: tcp
-+    protocol: TCP
-+    port: 8080
-+  - name: http
-+    protocol: HTTP
-+    port: 8081
-+---
-+apiVersion: v1
-+kind: Service
-+metadata:
-+  name: example-tcp-svc
-+spec:
-+  selector:
-+    app: example
-+  ports:
-+    - protocol: TCP
-+      port: 8080
-+      targetPort: 80
-```
-
-**File**: `pkg/kgateway/translator/gateway/testutils/inputs/tls-routing/unmatched-parentref.yaml` (added, +57/-0)
-```diff
-@@ -0,0 +1,57 @@
-+# The TLSRoute is attached to the tls listener through two parentRefs (by
-+# sectionName and by Gateway name); both are accepted. Its other parentRefs
-+# must keep the status of their own attachment and must not be reported as
-+# accepted by the tls listener:
-+# - sectionName "missing" does not exist on the Gateway (NoMatchingParent).
-+# - sectionName "http" is an HTTP listener, which does not match a TLSRoute
-+#   (NoMatchingParent).
-+# - other-gateway is not translated here, so it gets no status entry.
-+apiVersion: gateway.networking.k8s.io/v1
-+kind: TLSRoute
-+metadata:
-+  name: example-tls-route
-+spec:
-+  parentRefs:
-+  - name: example-gateway
-+    sectionName: tls
-+  - name: example-gateway
-+  - name: example-gateway
-+    sectionName: missing
-+  - name: example-gateway
-+    sectionName: http
-+  - name: other-gateway
-+  hostnames:
-+  - "example.com"
-+  rules:
-+  - backendRefs:
-+    - name: example-tls-svc
-+      port: 443
-+---
-+apiVersion: gateway.networking.k8s.io/v1
-+kind: Gateway
-+metadata:
-+  name: example-gateway
-+spec:
-+  gatewayClassName: example-gateway-class
-+  listeners:
-+  - name: tls
-+    protocol: TLS
-+    hostname: "example.com"
-+    tls:
-+      mode: Passthrough
-+    port: 8443
-+  - name: http
-+    protocol: HTTP
-+    port: 8081
-+---
-+apiVersion: v1
-+kind: Service
-+metadata:
-+  name: example-tls-svc
-+spec:
-+  selector:
-+    app: example
-+  ports:
-+    - protocol: TCP
-+      port: 443
-+      targetPort: 8443
-```
-
-**File**: `pkg/kgateway/translator/gateway/testutils/outputs/tcp-routing/unmatched-parentref.yaml` (added, +218/-0)
-```diff
-@@ -0,0 +1,218 @@
-+Clusters:
-+- commonLbConfig:
-+    localityWeightedLbConfig: {}
-+  connectTimeout: 5s
-+  edsClusterConfig:
-+    edsConfig:
-+      ads: {}
-+      resourceApiVersion: V3
-+  ignoreHealthOnHostRemoval: true
-+  name: kube_default_example-tcp-svc_8080
-+  type: EDS
-+Listeners:
-+- address:
-+    socketAddress:
-+      address: '::'
-+      ipv4Compat: true
-+      portValue: 8080
-+  filterChains:
-+  - filters:
-+    - name: envoy.filters.network.tcp_proxy
-+      typedConfig:
-+        '@type': type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxy
-+        cluster: kube_default_example-tcp-svc_8080
-+        statPrefix: tcp_8080_default_example-tcp-route
-+    name: listener~8080-default.example-tcp-route-rule-0
-+  name: listener~8080
-+- address:
-+    socketAddress:
-+      address: '::'
-+      ipv4Compat: true
-+      portValue: 8081
-+  filterChains:
-+  - filters:
-+    - name: envoy.filters.network.http_connection_manager
-+      typedConfig:
-+        '@type': type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
-+        httpFilters:
-+        - name: envoy.filters.http.router
-+          typedConfig:
-+            '@type': type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
-+        mergeSlashes: true
-+        normalizePath: true
-+        rds:
-+          configSource:
-+            ads: {}
-+            resourceApiVersion: V3
-+          routeConfigName: listener~8081
-+        statPrefix: http_8081
-+        useRemoteAddress: true
-+    name: listener~8081
-+  name: listener~8081
-+Routes:
-+- ignorePortInHostMatching: true
-+  name: listener~8081
-+Statuses:
-+  gateways:
-+    default/example-gateway:
-+      conditions:
-+      - lastTransitionTime: null
-+        message: Successfully accepted Gateway
-+        reason: Accepted
-+        status: "True"
-+        type: Accepted
-+      - lastTransitionTime: null
-+        message: Successfully programmed Gateway
-+        reason: Programmed
-+        status: "True"
-+        type: Programmed
-+      - lastTransitionTime: null
-+        message: Successfully resolved all Gateway references
-+        reason: ResolvedRefs
-+        status: "True"
-+        type: ResolvedRefs
-+      listeners:
-+      - attachedRoutes: 2
-+        conditions:
-+        - lastTransitionTime: null
-+          message: Successfully accepted Listener
-+          reason: Accepted
-+          status: "True"
-+          type: Accepted
-+        - lastTransitionTime: null
-+          message: Successfully verified that Listener has no conflicts
-+          reason: NoConflicts
-+          status: "False"
-+          type: Conflicted
-+        - lastTransitionTime: null
-+          message: Successfully resolved all references
-+          reason: ResolvedRefs
-+          status: "True"
-+          type: ResolvedRefs
-+        - lastTransitionTime: null
-+          message: Successfully programmed Listener
-+          reason: Programmed
-+          status: "True"
-+          type: Programmed
-+        name: tcp
-+        supportedKinds:
-+        - group: gateway.networking.k8s.io
-+          kind: TCPRoute
-+      - attachedRoutes: 0
-+        conditions:
-+        - lastTransitionTime: null
-+          message: Successfully accepted Listener
-+          reason: Accepted
-+          status: "True"
-+          type: Accepted
-+        - lastTransitionTime: null
-+          message: Successfully verified that Listener has no conflicts
-+          reason: NoConflicts
-+          status: "False"
-+          type: Conflicted
-+        - lastTransitionTime: null
-+          message: Successfully resolved all references
-+          reason: ResolvedRefs
-+          status: "True"
-+          type: ResolvedRefs
-+        - lastTransitionTime: null
-+          message: Successfully programmed Listener
-+          reason: Programmed
-+          status: "True"
-+          type: Programmed
-+        name: http
-+        supportedKinds:
-+        - group: gateway.networking.k8s.io
-+          kind: HTTPRoute
-+        - group: gateway.networking.k8s.io
-+          kind: GRPCRoute
-+  tcpRoutes:
-+    default/example-tcp-route:
-+      parents:
-+      - conditions:
-+        - lastTransitionTime: null
-+          message: ""
-+          reason: Accepted
-+          status: "True"
-+          type: Accepted
-+        - lastTransitionTime: null
-+          message: Successfully resolved all references
-+          reason: ResolvedRefs
-+          status: "True"
-+          type: ResolvedRefs
-+        - lastTransitionTime: null
-+          message: Successfully programmed Route
-+          reason: Programmed
-+          status: "True"
-+          type: kgateway.dev/Programmed
-+        controllerName: kgateway
-+        parentRef:
-+          group: ""
-+          kind: ""
-+          name: example-gateway
-+      - conditions:
-+        - lastTransitionTime: null
-+          message: ""
-+          reason: NoMatchingParent
-+          status: "False"
-+          type: Accepted
-+        - lastTransitionTime: null
-+          messag
-```
-
-**File**: `pkg/kgateway/translator/gateway/testutils/outputs/tls-routing/unmatched-parentref.yaml` (added, +225/-0)
-```diff
-@@ -0,0 +1,225 @@
-+Clusters:
-+- commonLbConfig:
-+    localityWeightedLbConfig: {}
-+  connectTimeout: 5s
-+  edsClusterConfig:
-+    edsConfig:
-+      ads: {}
-+      resourceApiVersion: V3
-+  ignoreHealthOnHostRemoval: true
-+  name: kube_default_example-tls-svc_443
-+  type: EDS
-+Listeners:
-+- address:
-+    socketAddress:
-+      address: '::'
-+      ipv4Compat: true
-+      portValue: 8081
-+  filterChains:
-+  - filters:
-+    - name: envoy.filters.network.http_connection_manager
-+      typedConfig:
-+        '@type': type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
-+        httpFilters:
-+        - name: envoy.filters.http.router
-+          typedConfig:
-+            '@type': type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
-+        mergeSlashes: true
-+        normalizePath: true
-+        rds:
-+          configSource:
-+            ads: {}
-+            resourceApiVersion: V3
-+          routeConfigName: listener~8081
-+        statPrefix: http_8081
-+        useRemoteAddress: true
-+    name: listener~8081
-+  name: listener~8081
-+- address:
-+    socketAddress:
-+      address: '::'
-+      ipv4Compat: true
-+      portValue: 8443
-+  filterChains:
-+  - filterChainMatch:
-+      serverNames:
-+      - example.com
-+    filters:
-+    - name: envoy.filters.network.tcp_proxy
-+      typedConfig:
-+        '@type': type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxy
-+        cluster: kube_default_example-tls-svc_443
-+        statPrefix: tls_8443_default_example-tls-route
-+    name: listener~8443-default.example-tls-route-rule-0
-+  listenerFilters:
-+  - name: envoy.filters.listener.tls_inspector
-+    typedConfig:
-+      '@type': type.googleapis.com/envoy.extensions.filters.listener.tls_inspector.v3.TlsInspector
-+  name: listener~8443
-+Routes:
-+- ignorePortInHostMatching: true
-+  name: listener~8081
-+Statuses:
-+  gateways:
-+    default/example-gateway:
-+      conditions:
-+      - lastTransitionTime: null
-+        message: Successfully accepted Gateway
-+        reason: Accepted
-+        status: "True"
-+        type: Accepted
-+      - lastTransitionTime: null
-+        message: Successfully programmed Gateway
-+        reason: Programmed
-+        status: "True"
-+        type: Programmed
-+      - lastTransitionTime: null
-+        message: Successfully resolved all Gateway references
-+        reason: ResolvedRefs
-+        status: "True"
-+        type: ResolvedRefs
-+      listeners:
-+      - attachedRoutes: 2
-+        conditions:
-+        - lastTransitionTime: null
-+          message: Successfully accepted Listener
-+          reason: Accepted
-+          status: "True"
-+          type: Accepted
-+        - lastTransitionTime: null
-+          message: Successfully verified that Listener has no conflicts
-+          reason: NoConflicts
-+          status: "False"
-+          type: Conflicted
-+        - lastTransitionTime: null
-+          message: Successfully resolved all references
-+          reason: ResolvedRefs
-+          status: "True"
-+          type: ResolvedRefs
-+        - lastTransitionTime: null
-+          message: Successfully programmed Listener
-+          reason: Programmed
-+          status: "True"
-+          type: Programmed
-+        name: tls
-+        supportedKinds:
-+        - group: gateway.networking.k8s.io
-+          kind: TLSRoute
-+      - attachedRoutes: 0
-+        conditions:
-+        - lastTransitionTime: null
-+          message: Successfully accepted Listener
-+          reason: Accepted
-+          status: "True"
-+          type: Accepted
-+        - lastTransitionTime: null
-+          message: Successfully verified that Listener has no conflicts
-+          reason: NoConflicts
-+          status: "False"
-+          type: Conflicted
-+        - lastTransitionTime: null
-+          message: Successfully resolved all references
-+          reason: ResolvedRefs
-+          status: "True"
-+          type: ResolvedRefs
-+        - lastTransitionTime: null
-+          message: Successfully programmed Listener
-+          reason: Programmed
-+          status: "True"
-+          type: Programmed
-+        name: http
-+        supportedKinds:
-+        - group: gateway.networking.k8s.io
-+          kind: HTTPRoute
-+        - group: gateway.networking.k8s.io
-+          kind: GRPCRoute
-+  tlsRoutes:
-+    default/example-tls-route:
-+      parents:
-+      - conditions:
-+        - lastTransitionTime: null
-+          message: ""
-+          reason: Accepted
-+          status: "True"
-+          type: Accepted
-+        - lastTransitionTime: null
-+          message: Successfully resolved all references
-+          reason: ResolvedRefs
-+          status: "True"
-+          type: ResolvedRefs
-+        - lastTransitionTime: null
-+          message: Successfully programmed Route
-+          reason: Programmed
-+          status: "True"
-+          type: kgateway.dev/Programmed
-+        controllerName: kgateway
-+        parentRef:
-+          group: ""
-+          kind: ""
-+      
-```
-
-**File**: `pkg/kgateway/translator/listener/gateway_listener_translator.go` (modified, +39/-16)
-```diff
-@@ -266,6 +266,13 @@ func (ml *MergedListeners) AppendTlsListener(
- 	if len(routeInfos) == 0 {
- 		appendFilterChain(nil, listenerSNIDomains(listener))
- 	} else {
-+		// The same route can be attached through more than one parentRef; group
-+		// its entries, first entry first.
-+		attachments := make(map[routeKey][]*query.RouteInfo, len(routeInfos))
-+		for _, ri := range routeInfos {
-+			key := keyOfRoute(ri)
-+			attachments[key] = append(attachments[key], ri)
-+		}
- 		var conflicted []conflictedRoute
- 		for i, owned := range resolveTLSRouteSNIDomains(listener, routeInfos) {
- 			if len(owned.lost) > 0 {
-@@ -275,9 +282,10 @@ func (ml *MergedListeners) AppendTlsListener(
- 					partial:   owned.ok,
- 				})
- 			}
--			// A duplicate shares the filter chain of its first entry.
-+			// A duplicate shares the filter chain of its first entry, so it is
-+			// added to that chain's routes to have its parentRef reported.
- 			if owned.ok && !owned.duplicate {
--				appendFilterChain([]*query.RouteInfo{routeInfos[i]}, owned.sniDomains)
-+				appendFilterChain(attachments[keyOfRoute(routeInfos[i])], owned.sniDomains)
- 			}
+@@ -12,7 +12,6 @@ import (
+ 	envoyhttp "github.com/envoyproxy/go-control-plane/envoy/extensions/filters/network/http_connection_manager/v3"
+ 	envoytcp "github.com/envoyproxy/go-control-plane/envoy/extensions/filters/network/tcp_proxy/v3"
+ 	envoytlsv3 "github.com/envoyproxy/go-control-plane/envoy/extensions/transport_sockets/tls/v3"
+-	envoymatcher "github.com/envoyproxy/go-control-plane/envoy/type/matcher/v3"
+ 	"github.com/envoyproxy/go-control-plane/pkg/wellknown"
+ 	"google.golang.org/protobuf/proto"
+ 	"google.golang.org/protobuf/types/known/wrapperspb"
+@@ -639,14 +638,7 @@ func buildValidationContext(tlsConfig *ir.TLSConfig) *envoytlsv3.CertificateVali
+ 		if validationContext == nil {
+ 			validationContext = &envoytlsv3.CertificateValidationContext{}
  		}
- 		// Every lost SNI domain has a winning route, so there is at least one
-@@ -634,7 +642,8 @@ func (tc *tcpFilterChain) translateTcpFilterChain(
- 	// by CreationTimestamp wins; any others are rejected with Accepted=False.
- 	//
- 	// Note: after #13694, AppendTlsListener creates one filter chain per
--	// TLSRoute, so this path is only reached with len > 1 for TCPRoutes.
-+	// TLSRoute, so for TLSRoutes len > 1 only means the same route is attached
-+	// through more than one parentRef.
- 	r := slices.MinFunc(parent.routesWithHosts, func(a, b *query.RouteInfo) int {
- 		return a.Object.GetSourceObject().GetCreationTimestamp().Compare(b.Object.GetSourceObject().GetCreationTimestamp().Time)
- 	})
-@@ -674,13 +683,7 @@ func (tc *tcpFilterChain) translateTcpFilterChain(
- 			return nil
- 		}
- 
--		// Collect ParentRefReporters for the TCPRoute
--		parentRefReporters := make([]reports.ParentRefReporter, 0, len(tRoute.ParentRefs))
--		for _, parentRef := range tRoute.ParentRefs {
--			parentRefReporter := reporter.Route(tRoute.SourceObject).ParentRef(&parentRef)
--			parentRefReporter.SetCondition(condition)
--			parentRefReporters = append(parentRefReporters, parentRefReporter)
+-		for _, name := range tlsConfig.VerifySubjectAltNames {
+-			validationContext.MatchTypedSubjectAltNames = append(validationContext.MatchTypedSubjectAltNames, &envoytlsv3.SubjectAltNameMatcher{
+-				SanType: envoytlsv3.SubjectAltNameMatcher_DNS,
+-				Matcher: &envoymatcher.StringMatcher{
+-					MatchPattern: &envoymatcher.StringMatcher_Exact{Exact: name},
+-				},
+-			})
 -		}
-+		parentRefReporters := acceptAttachedParentRefs(r, parent.routesWithHosts, condition, reporter)
- 
- 		// Ensure unique names by appending the rule index to the TCPRoute name
- 		tcpHostName := fmt.Sprintf("%s-%s.%s-rule-%d", parentName, tRoute.Namespace, tRoute.Name, 0)
-@@ -755,12 +758,7 @@ func (tc *tcpFilterChain) translateTcpFilterChain(
- 			return nil
- 		}
- 
--		parentRefReporters := make([]reports.ParentRefReporter, 0, len(tRoute.ParentRefs))
--		for _, parentRef := range tRoute.ParentRefs {
--			parentRefReporter := reporter.Route(tRoute.SourceObject).ParentRef(&parentRef)
--			parentRefReporter.SetCondition(condition)
--			parentRefReporters = append(parentRefReporters, parentRefReporter)
--		}
-+		parentRefReporters := acceptAttachedParentRefs(r, parent.routesWithHosts, condition, reporter)
- 
- 		// Ensure unique names by appending the rule index to the TLSRoute name
- 		tcpHostName := fmt.Sprintf("%s-%s.%s-rule-%d", parentName, tRoute.Namespace, tRoute.Name, 0)
-@@ -818,6 +816,31 @@ func (tc *tcpFilterChain) translateTcpFilterChain(
++		validationContext.MatchTypedSubjectAltNames = sslutils.VerifySanListToTypedMatchSanList(tlsConfig.VerifySubjectAltNames)
  	}
- }
  
-+// acceptAttachedParentRefs sets the condition on each parentRef through which
-+// the winning route is attached to this listener, and returns their reporters.
-+// The route can reach the listener through more than one parentRef. Its other
-+// parentRefs (another listener, another Gateway, or no matching parent) carry
-+// the status of their own attachment and must not be touched here.
-+func acceptAttachedParentRefs(
-+	winner *query.RouteInfo,
-+	routesWithHosts []*query.RouteInfo,
-+	condition reports.RouteCondition,
-+	reporter reports.Reporter,
-+) []reports.ParentRefReporter {
-+	winnerKey := keyOfRoute(winner)
-+	routeReporter := reporter.Route(winner.Object.GetSourceObject())
-+	var parentRefReporters []reports.ParentRefReporter
-+	for _, ri := range routesWithHosts {
-+		if keyOfRoute(ri) != winnerKey {
-+			continue
-+		}
-+		parentRefReporter := routeReporter.ParentRef(&ri.ParentRef)
-+		parentRefReporter.SetCondition(condition)
-+		parentRefReporters = append(parentRefReporters, parentRefReporter)
-+	}
-+	return parentRefReporters
-+}
-+
- // rejectConflictingRoute sets Programmed=False on the specific listener
- // attachment of a route that lost to another route attached to the same
- // listener.
+ 	// Handle client certificate validation (mTLS) - merge with existing ValidationContext if present
 ```
 
----
-
-### Incident Patch 3: `a3b7117a` (2026-11-23)
-**Commit Message**: fix(metrics): keep kgateway metrics when builtin default metrics are enabled (#14862)
-
-Signed-off-by: omar <[REDACTED_EMAIL]>
-
-**File**: `pkg/metrics/metrics.go` (modified, +46/-4)
+**File**: `pkg/kgateway/translator/sslutils/san.go` (added, +55/-0)
 ```diff
-@@ -3,11 +3,13 @@ package metrics
- 
- import (
- 	"reflect"
-+	"slices"
- 	"sync"
- 	"sync/atomic"
- 
- 	"github.com/prometheus/client_golang/prometheus"
- 	"github.com/prometheus/client_golang/prometheus/collectors"
-+	dto "github.com/prometheus/client_model/go"
- 	"istio.io/istio/pkg/kube/krt"
- 	"sigs.k8s.io/controller-runtime/pkg/metrics"
- )
-@@ -22,6 +24,10 @@ var (
- 	registry     RegistererGatherer = prometheus.NewRegistry()
- 	registryLock                    = sync.RWMutex{}
- 
-+	// ctrlRegistry is controller-runtime's registry, which its packages
-+	// register their metrics into at init.
-+	ctrlRegistry = metrics.Registry
-+
- 	// DefaultBuckets defines the default buckets used for histograms.
- 	DefaultBuckets = prometheus.DefBuckets
- )
-@@ -379,17 +385,53 @@ func SetRegistry(useBuiltinRegistry bool, r RegistererGatherer) {
- 	registryLock.Lock()
- 	defer registryLock.Unlock()
- 
-+	if !isNil(r) {
-+		registry = r
-+	}
-+
- 	if !useBuiltinRegistry {
- 		metrics.Registry = registry
-+		return
- 	}
- 
--	if isNil(r) {
--		registry = metrics.Registry
--	} else {
--		registry = r
-+	// Keep controller-runtime's registry for its own registrations, and serve
-+	// its metrics alongside ours, which are already registered in registry.
-+	metrics.Registry = &builtinRegistry{
-+		RegistererGatherer: ctrlRegistry,
-+		kgateway:           registry,
- 	}
- }
- 
-+// builtinRegistry registers into controller-runtime's registry and gathers
-+// from both controller-runtime's registry and the kgateway registry.
-+type builtinRegistry struct {
-+	metrics.RegistererGatherer
-+	kgateway prometheus.Gatherer
-+}
-+
-+// Gather skips kgateway metric families that controller-runtime already
-+// gathers, such as the go and process collectors that both register.
-+func (b *builtinRegistry) Gather() ([]*dto.MetricFamily, error) {
-+	ctrlFamilies, ctrlErr := b.RegistererGatherer.Gather()
-+	ctrlNames := make(map[string]struct{}, len(ctrlFamilies))
-+	for _, f := range ctrlFamilies {
-+		ctrlNames[f.GetName()] = struct{}{}
-+	}
-+
-+	return prometheus.Gatherers{
-+		prometheus.GathererFunc(func() ([]*dto.MetricFamily, error) {
-+			return ctrlFamilies, ctrlErr
-+		}),
-+		prometheus.GathererFunc(func() ([]*dto.MetricFamily, error) {
-+			families, err := b.kgateway.Gather()
-+			return slices.DeleteFunc(families, func(f *dto.MetricFamily) bool {
-+				_, ok := ctrlNames[f.GetName()]
-+				return ok
-+			}), err
-+		}),
-+	}.Gather()
-+}
-+
- // isNil checks if the provided interface contains nil or a nil value.
- func isNil(arg any) bool {
- 	if v := reflect.ValueOf(arg); !v.IsValid() || ((v.Kind() == reflect.Pointer ||
-```
-
-**File**: `pkg/metrics/registry_internal_test.go` (added, +64/-0)
-```diff
-@@ -0,0 +1,64 @@
-+package metrics
+@@ -0,0 +1,55 @@
++package sslutils
 +
 +import (
-+	"context"
-+	"io"
-+	"net/http"
-+	"net/http/httptest"
-+	"testing"
++	"net/netip"
++	"strings"
 +
-+	"github.com/prometheus/client_golang/prometheus"
-+	"github.com/prometheus/client_golang/prometheus/collectors"
-+	"github.com/prometheus/client_golang/prometheus/promhttp"
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+	clientmetrics "k8s.io/client-go/tools/metrics"
-+	ctrlmetrics "sigs.k8s.io/controller-runtime/pkg/metrics"
-+
-+	// Registers controller-runtime's controller metrics, including its own go
-+	// and process collectors, as kgateway's manager does.
-+	_ "sigs.k8s.io/controller-runtime/pkg/controller"
++	envoytlsv3 "github.com/envoyproxy/go-control-plane/envoy/extensions/transport_sockets/tls/v3"
++	envoymatcher "github.com/envoyproxy/go-control-plane/envoy/type/matcher/v3"
 +)
 +
-+func TestSetRegistryBuiltinKeepsInitRegisteredMetrics(t *testing.T) {
-+	oldRegistry, oldCtrlRegistry := registry, ctrlmetrics.Registry
-+	t.Cleanup(func() {
-+		registry, ctrlmetrics.Registry = oldRegistry, oldCtrlRegistry
-+	})
++// VerifySanListToTypedMatchSanList builds exact SAN matchers for a list of subject alt names,
++// picking the SAN type to match each entry against from its value. It is used for both
++// upstream (BackendConfigPolicy verifySubjectAltNames) and downstream (the
++// kgateway.dev/verify-subject-alt-names listener TLS option) certificate verification.
++func VerifySanListToTypedMatchSanList(sanList []string) []*envoytlsv3.SubjectAltNameMatcher {
++	var matchSanList []*envoytlsv3.SubjectAltNameMatcher
++	for _, san := range sanList {
++		if ip, err := netip.ParseAddr(san); err == nil {
++			// A certificate can carry an IP address as an IP SAN or as a DNS SAN. Match both, so
++			// certificates that matched the DNS-only matcher before still match. The IP matcher
++			// uses the canonical form of the address, which is the form Envoy compares IP SANs in.
++			matchSanList = append(matchSanList,
++				exactSanMatcher(envoytlsv3.SubjectAltNameMatcher_IP_ADDRESS, ip.String()),
++				exactSanMatcher(envoytlsv3.SubjectAltNameMatcher_DNS, san),
++			)
++			continue
++		}
++		matchSanList = append(matchSanList, exactSanMatcher(sanTypeOf(san), san))
++	}
++	return matchSanList
++}
 +
-+	// Recreate the package init state, since other tests replace registry.
-+	local := prometheus.NewRegistry()
-+	local.MustRegister(collectors.NewProcessCollector(collectors.ProcessCollectorOpts{}))
-+	local.MustRegister(collectors.NewGoCollector())
-+	registry = local
-+	g := NewGauge(GaugeOpts{Name: "registry_test_info", Help: "test"}, []string{"label"})
-+	g.Set(1, Label{Name: "label", Value: "value"})
++func exactSanMatcher(sanType envoytlsv3.SubjectAltNameMatcher_SanType, san string) *envoytlsv3.SubjectAltNameMatcher {
++	return &envoytlsv3.SubjectAltNameMatcher{
++		SanType: sanType,
++		Matcher: &envoymatcher.StringMatcher{
++			MatchPattern: &envoymatcher.StringMatcher_Exact{Exact: san},
++		},
++	}
++}
 +
-+	// controller-runtime registers rest_client_requests_total at init.
-+	clientmetrics.RequestResult.Increment(context.Background(), "200", "GET", "example.com")
++// sanTypeOf picks the SAN type to match a verifySubjectAltNames entry that is not an IP address
++// against. Typed matchers only compare against a single SAN type, so a DNS-only matcher never
++// matches a certificate that carries its identity as a URI (such as a SPIFFE ID) or an email
++// address.
++func sanTypeOf(san string) envoytlsv3.SubjectAltNameMatcher_SanType {
++	switch {
++	case strings.Contains(san, ":"):
++		return envoytlsv3.SubjectAltNameMatcher_URI
++	case strings.Contains(san, "@"):
++		return envoytlsv3.SubjectAltNameMatcher_EMAIL
++	default:
++		return envoytlsv3.SubjectAltNameMatcher_DNS
++	}
++}
+```
+
+**File**: `pkg/kgateway/translator/sslutils/san_test.go` (added, +162/-0)
+```diff
+@@ -0,0 +1,162 @@
++package sslutils
 +
-+	SetRegistry(true, nil)
++import (
++	"testing"
 +
-+	assert.Same(t, local, Registry(), "kgateway metrics should keep using the local registry")
++	envoytlsv3 "github.com/envoyproxy/go-control-plane/envoy/extensions/transport_sockets/tls/v3"
++	envoymatcher "github.com/envoyproxy/go-control-plane/envoy/type/matcher/v3"
++	"github.com/stretchr/testify/assert"
++)
 +
-+	// Serve the registry the way controller-runtime's metrics server does.
-+	srv := httptest.NewServer(promhttp.HandlerFor(ctrlmetrics.Registry, promhttp.HandlerOpts{
-+		ErrorHandling: promhttp.HTTPErrorOnError,
-+	}))
-+	defer srv.Close()
-+	resp, err := http.Get(srv.URL)
-+	require.NoError(t, err)
-+	defer resp.Body.Close()
-+	body, err := io.ReadAll(resp.Body)
-+	require.NoError(t, err)
-+	require.Equal(t, http.StatusOK, resp.StatusCode, "metrics endpoint should not fail: %s", body)
++func TestVerifySanListToTypedMatchSanList(t *testing.T) {
++	tests := []struct {
++		name     string
++		sanList  []string
++		expected []*envoytlsv3.SubjectAltNameMatcher
++	}{
++		{
++			name:     "empty SAN list",
++			sanList:  []string{},
++			expected: []*envoytlsv3.SubjectAltNameMatcher{},
++		},
++		{
++			name:    "single SAN",
++			sanList: []string{"example.com"},
++			expected: []*envoytlsv3.SubjectAltNameMatcher{
++				{
++					SanType: envoytlsv3.SubjectAltNameMatcher_DNS,
++					Matcher: &envoymatcher.StringMatcher{
++						MatchPattern: &envoymatcher.StringMatcher_Exact{Exact: "example.com"},
++					},
++				},
++			},
++		},
++		{
++			name:    "multiple SANs",
++			sanList: []string{"example.com", "api.example.com", "www.example.com"},
++			expected: []*envoytlsv3.SubjectAltNameMatcher{
++				{
++					SanType: envoytlsv3.SubjectAltNameMatcher_DNS,
++					Matcher: &envoymatcher.StringMatcher{
++						MatchPattern: &envoymatcher.StringMatcher_Exact{Exact: "example.com"},
++					},
++				},
++				{
++					SanType: envoytlsv3.SubjectAltNameMatcher_DNS,
++					Matcher: &envoymatcher.StringMatcher{
++						MatchPattern: &envoymatcher.StringMatcher_Exact{Exact: "api.example.com"},
++					},
++				},
++				{
++					SanType: envoytlsv3.SubjectAltNameMatcher_DNS,
++					Matcher: &envoymatcher.StringMatcher{
++						MatchPattern: &envoymatcher.StringMatcher_Exact{Exact: "www.example.com"},
++					},
++				},
++			},
++		},
++		{
++			name:    "SPIFFE ID is matched as a URI SAN",
++			sanList: []string{"spiffe://example.org/ns/default/sa/backend"},
++			expected: []*envoytlsv3.SubjectAltNameMatcher{
++				{
++					SanType: envoytlsv3.SubjectAltNameMatcher_URI,
++					Matcher: &envoymatcher.StringMatcher{
++						MatchPattern: &envoymatcher.StringMatcher_Exact{Exact: "spiffe://example.org/ns/default/sa/backend"},
++					},
++				},
++			},
++		},
++		{
++			name:    "IPv4 address is matched as an IP SAN and as a DNS SAN",
++			sanList: []string{"10.0.0.1"},
++			expected: []*envoytlsv3.SubjectAltNameMatcher{
++				{
++					SanType: envoytlsv3.SubjectAltNameMatcher_IP_ADDRESS,
++					Matcher: &envoymatcher.StringMatcher{
++						MatchPattern: &envoymatcher.StringMatcher_Exact{Exact: "10.0.0.1"},
++					},
++				},
++				{
++					SanType: envoytlsv3.SubjectAltNameMatcher_DNS,
++					Matcher: &envoymatcher.StringMatcher{
++						MatchPattern: &envoymatcher.StringMatcher_Exact{Exact: "10.0.0.1"},
++					},
++				},
++			},
++		},
++		{
++			name:    "IPv6 address is matched as an IP SAN and as a DNS SAN",
++			sanList: []string{"fd00::1"},
++			expected: []*envoytlsv3.SubjectAltNameMatcher{
++				{
++					SanType: envoytlsv3.SubjectAltNameMatcher_IP_ADDRESS,
++					Matcher: &envoymatcher.StringMatcher{
++						MatchPattern: &envoymatcher.StringMatcher_Exact{Exact: "fd00::1"},
++					},
++				},
++				{
++					SanType: envoytlsv3.SubjectAltNameMatcher_DNS,
++					Matcher: &envoymatcher.StringMatcher{
++						MatchPattern: &envoymatcher.StringMatcher_Exact{Exact: "fd00::1"},
++					},
++				},
++			},
++		},
++		{
++			name:    "IPv6 address in long form is matched in canonical form as an IP SAN",
++			sanList: []string{"fd00:0:0:0:0:0:0:1"},
++			expected: []*envoytlsv3.SubjectAltNameMatcher{
++				{
++					SanType: envoytlsv3.SubjectAltNameMatcher_IP_ADDRESS,
++					Matcher: &envoymatcher.StringMatcher{
++						MatchPattern: &envoymatcher.StringMatcher_Exact{Exact: "fd00::1"},
++					},
++				},
++				{
++					SanType: envoytlsv3.SubjectAltNameMatcher_DNS,
++					Matcher: &envoymatcher.StringMatcher{
++						MatchPattern: &envoymatcher.StringMatcher_Exact{Exact: "fd00:0:0:0:0:0:0:1"},
++					},
++				},
++			},
++		},
++		{
++			name:    "email address is matched as an email SAN",
++			sanList: []string{"svc@example.org"},
++			expected: []*envoytlsv3.SubjectAltNameMatcher{
++				{
++					SanType: envoytlsv3.SubjectAltNameMatcher_EMAIL,
++					Matcher: &envoymatcher.StringMatcher{
++						MatchPattern: &envoymatcher.StringMatcher_Exact{Exact: "svc@example.org"},
++					},
++				},
++			},
++		},
++		{
++			name:    "wildcard hostname stays a DNS SAN",
++			sanList: []string{"*.example.com"},
++			expected: []*envoytlsv3.SubjectAltNameMatcher{
++				{
++					SanType: envoytlsv3.SubjectAltNameMatcher_DNS,
++					Matcher: &envoymatcher.StringMatcher{
++						MatchPattern: &envoymatcher.StringMatcher_Exact{Exact: "*.example.com"},
++					},
++				},
++			},
++		},
++	}
 +
-+	for _, name := range []string{
-+		"kgateway_registry_test_info",
-+		"rest_client_requests_total",
-+		"go_goroutines",
-+		"process_cpu_seconds_total",
-+	} {
-+		assert.Contains(t, string(body), "\n# TYPE "+name+" ", "%s should be served", name)
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			result := VerifySanListToTypedMatchSanList(tt.sanList)
++
++			assert.Len(t, result, len(tt.expected))
++
++			for i, expected := range tt.expected {
++				assert.Equal(t, expected.SanType, result[i].SanType)
++				assert.Equal(t, expected.Matcher.GetExact(), result[i].Matcher.GetExact())
++			}
++		})
 +	}
 +}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #15056** (2026-11-19): backendconfigpolicy: require exactly one TLS trust source again (@puertomontt)
-- **PR #15053** (2026-11-19): fix(listener): match the listener hostname on TCPRoute filter chains (@puertomontt)
-- **PR #15051** (2026-11-19): fix(trafficpolicy): prefer the parent on conflicts under DeepMergePreferParent (@puertomontt)
-- **PR #15050** (2026-11-19): fix(krtcollections): require selected labels to be present in apiKeyAuth secretSelector (@puertomontt)
-- **PR #15047** (2026-11-19): Warn when lacking controller memory limits (@chandler-solo)
-- **PR #15045** (2026-11-23): fix(translator): accept TCP/TLS routes only on attached parentRefs (@puertomontt)
+- **PR #15098** (closed): fix(sslutils): format IPv4-compatible IPv6 SANs the way Envoy does (@puertomontt)
+- **PR #15095** (2026-11-24): feat(trafficpolicy): add grpcWeb to enable gRPC-Web to gRPC conversion (@puertomontt)
+- **PR #15094** (2026-11-24): [2.4] fix(listener): accept a ListenerPolicy client CA for verify-subject-alt-names (#14916) (@puertomontt)
+- **PR #15093** (2026-11-24): [2.4] fix(delegation): scope delegated children to each backendRef (#14914) (@puertomontt)
+- **PR #15092** (2026-11-24): [2.4] fix(grpcroute): check mirror ReferenceGrants against GRPCRoute (#14915) (@puertomontt)
+- **PR #15091** (2026-11-24): [2.4] fix(krtcollections): require selected labels to be present in apiKeyAuth secretSelector (#15050) (@puertomontt)
 
 ---
 
@@ -2447,41 +1717,30 @@ Signed-off-by: omar <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. status): make the status syncer the only writer of Gateway Accepted
+## X. listener): match verify-subject-alt-names against the right SAN type
 
 **RULE**:
-When implementing operations in `pkg/deployer/deployer.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kgateway-dev/kgateway. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `api/annotations/gateway.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kgateway-dev/kgateway. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1a44dc2c`: status): make the status syncer the only writer of Gateway Accepted. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4d8ec65e`: listener): match verify-subject-alt-names against the right SAN type. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/deployer/deployer.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/annotations/gateway.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"sigs.k8s.io/controller-runtime/pkg/client/apiutil"
-// objectGVK returns obj's GVK from the scheme, falling back to its TypeMeta for a type the
-// scheme does not know. TypeMeta alone is empty on some informer paths, and the GVK ends up in
-// errors reported in status, which must not change from one attempt to the next.
-func (d *Deployer) objectGVK(obj client.Object) schema.GroupVersionKind {
-	if d.scheme != nil {
-		if gvk, err := apiutil.GVKForObject(obj, d.scheme); err == nil {
-			return gvk
-		}
-	}
-	return obj.GetObjectKind().GroupVersionKind()
-}
-
-		return nil, fmt.Errorf("failed to get helm values for object %s %s/%s: %w", d.objectGVK(obj).String(), obj.GetNamespace(), obj.GetName(), err)
+	// Each entry is matched against the SAN type its value implies: a value with a scheme (such as
+	// the SPIFFE ID "spiffe://example.org/ns/default/sa/client") as a URI SAN, a value with an "@"
+	// as an email SAN, an IP address as both an IP SAN and a DNS SAN, and anything else as a DNS SAN.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-		return nil, fmt.Errorf("failed to get helm values for object %s %s/%s: %w", obj.GetObjectKind().GroupVersionKind().String(), obj.GetNamespace(), obj.GetName(), err)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1a44dc2c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4d8ec65e` are properly handled with clean fallback behavior.

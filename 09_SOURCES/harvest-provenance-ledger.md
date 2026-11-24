@@ -12807,3 +12807,6 @@ Every entry in this ledger must capture:
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `51c20e76` | Multi-dimensional audit evidence | 2026-11-24T18:34:31.071Z |
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `e13f0441` | Multi-dimensional audit evidence | 2026-11-24T18:34:33.602Z |
 | `learn-dom-d-eba58f46` | `project://hf-atomicchat-inkling-2-mini-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-atomicchat-inkling-2-mini-gguf-learnings.md` | 2026-11-24T18:35:06.338Z |
+| `learn-github-kgateway-dev-kgateway` | `https://github.com/kgateway-dev/kgateway` | `34e314f5` | Multi-dimensional audit evidence | 2026-11-24T18:43:32.651Z |
+| `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `ab26c80d` | Multi-dimensional audit evidence | 2026-11-24T18:43:36.104Z |
+| `learn-github-apache-pinot` | `https://github.com/apache/pinot` | `eec6794f` | Multi-dimensional audit evidence | 2026-11-24T18:43:37.966Z |

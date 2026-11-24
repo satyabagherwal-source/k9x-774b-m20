@@ -12774,3 +12774,6 @@
 | `CYCLE-20261124-AM1N` | `2026-11-24T18:34:31.067Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10329` | Yes (`fa402ee3...`) |
 | `CYCLE-20261124-ANZY` | `2026-11-24T18:34:33.598Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10330` | Yes (`66670a95...`) |
 | `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T18:35:06.338Z` | `hf-atomicchat-inkling-2-mini-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-EBA58F46` [Domain D] | Yes (`37048ae2...`) |
+| `CYCLE-20261124-M7XI` | `2026-11-24T18:43:32.646Z` | `kgateway-dev/kgateway` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10331` | Yes (`cc651574...`) |
+| `CYCLE-20261124-MALG` | `2026-11-24T18:43:36.100Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10332` | Yes (`aef5e7cb...`) |
+| `CYCLE-20261124-MC16` | `2026-11-24T18:43:37.962Z` | `apache/pinot` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10333` | Yes (`485c2234...`) |

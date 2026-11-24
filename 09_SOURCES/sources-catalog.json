@@ -2843,10 +2843,10 @@
     "repository": "kgateway-dev/kgateway",
     "platform": "github",
     "sourceUrl": "https://github.com/kgateway-dev/kgateway",
-    "sourceVersion": "1a44dc2c",
+    "sourceVersion": "34e314f5",
     "license": "Apache-2.0",
-    "contentHash": "158ee86c963a0619ec864466166595d21a84804b6709292250cacdf7553df8b4",
-    "lastHarvestedAt": "2026-11-23T23:18:20.999Z",
+    "contentHash": "cc651574c505f20d41bd2897def891a9f8ef66b7ebf9359df6e619422df99d40",
+    "lastHarvestedAt": "2026-11-24T18:43:32.651Z",
     "learningId": "learn-github-kgateway-dev-kgateway"
   },
   "freenet-freenet-core": {
@@ -3523,10 +3523,10 @@
     "repository": "sigstore/cosign",
     "platform": "github",
     "sourceUrl": "https://github.com/sigstore/cosign",
-    "sourceVersion": "f69505a5",
+    "sourceVersion": "ab26c80d",
     "license": "Apache-2.0",
-    "contentHash": "2cca6be8668d8c2e38c6dc89401d085db9d4691f9d3251627783c84cf0c9b2e2",
-    "lastHarvestedAt": "2026-11-24T14:41:57.444Z",
+    "contentHash": "aef5e7cbf4050a75c2facd39ac844b336278ed9492ad19ec2493a77360b7a04c",
+    "lastHarvestedAt": "2026-11-24T18:43:36.104Z",
     "learningId": "learn-github-sigstore-cosign"
   },
   "llphant-llphant": {
@@ -11963,10 +11963,10 @@
     "repository": "apache/pinot",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/pinot",
-    "sourceVersion": "87886387",
+    "sourceVersion": "eec6794f",
     "license": "Apache-2.0",
-    "contentHash": "8d243876bcb32108e25b59986adf09893f820ff8edfd4ebafd3551c8a45867ac",
-    "lastHarvestedAt": "2026-11-23T22:15:01.086Z",
+    "contentHash": "485c2234a42bcc56ccc8a3cc81954fa20b2ff000c8ebbe81581f9e35fc07f928",
+    "lastHarvestedAt": "2026-11-24T18:43:37.966Z",
     "learningId": "learn-github-apache-pinot"
   },
   "n1neman-sapper-v2": {

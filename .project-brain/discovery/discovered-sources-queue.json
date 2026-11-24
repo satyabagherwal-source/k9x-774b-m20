@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T18:35:06.370Z",
+  "updated_at": "2026-11-24T18:43:43.395Z",
   "stats": {
-    "total_discovered": 8819,
-    "approved_pending_harvest": 8344,
+    "total_discovered": 8823,
+    "approved_pending_harvest": 8348,
     "harvested_count": 0,
     "rejected_count": 475,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8340,
+      "COMMUNITY_AND_EXPERT": 8344,
       "OFFICIAL_DOCUMENTATION": 269,
       "STANDARDS_AND_SPECIFICATIONS": 146,
       "ENGINEERING_BLOGS": 7,
@@ -190720,6 +190720,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-atomicchat-inkling-2-mini-gguf-learnings.md",
         "fileName": "hf-atomicchat-inkling-2-mini-gguf-learnings.md"
+      }
+    },
+    "SRC-74E4499F2507": {
+      "id": "SRC-74E4499F2507",
+      "url": "https://token.actions.githubusercontent.com/",
+      "title": "https://token.actions.githubusercontent.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T18:43:42.405Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+        "fileName": "sigstore-cosign-learnings.md"
+      }
+    },
+    "SRC-77DE7F3C3068": {
+      "id": "SRC-77DE7F3C3068",
+      "url": "https://github.com/gythialy/golang-cross/.github/workflows/builder.yml@refs/tags/v1.27.3-0",
+      "title": "https://github.com/gythialy/golang-cross/.github/workflows/builder.yml@refs/tags/v1.27.3-0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T18:43:42.464Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+        "fileName": "sigstore-cosign-learnings.md"
+      }
+    },
+    "SRC-4216B1BFCDBD": {
+      "id": "SRC-4216B1BFCDBD",
+      "url": "https://github.com/gythialy/golang-cross/.github/workflows/builder.yml@refs/tags/v1.27.4-0",
+      "title": "https://github.com/gythialy/golang-cross/.github/workflows/builder.yml@refs/tags/v1.27.4-0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T18:43:42.522Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+        "fileName": "sigstore-cosign-learnings.md"
+      }
+    },
+    "SRC-60A2FC9493CE": {
+      "id": "SRC-60A2FC9493CE",
+      "url": "https://github.com/apache/pinot/issues/3867",
+      "title": "https://github.com/apache/pinot/issues/3867",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T18:43:43.394Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-pinot-learnings.md",
+        "fileName": "apache-pinot-learnings.md"
       }
     }
   }

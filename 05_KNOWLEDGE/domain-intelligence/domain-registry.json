@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T18:35:08.517Z",
-  "total_records": 2563,
+  "last_updated": "2026-11-24T18:43:43.822Z",
+  "total_records": 2565,
   "domains": {
     "A": {
       "total": 22,
@@ -1168,7 +1168,7 @@
       ]
     },
     "G": {
-      "total": 444,
+      "total": 446,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1613,7 +1613,9 @@
         "domain_intelligence-architecture-intelligence-nihildigit-piko-core-invariants",
         "domain_intelligence-architecture-intelligence-nihildigit-piko-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-yugabyte-yugabyte-db-core-invariants",
-        "domain_intelligence-architecture-intelligence-yugabyte-yugabyte-db-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-yugabyte-yugabyte-db-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-kgateway-dev-kgateway-core-invariants",
+        "domain_intelligence-architecture-intelligence-kgateway-dev-kgateway-learnings-core-invariants"
       ]
     },
     "H": {
@@ -17358,8 +17360,8 @@
       "title": "Content & Information Intelligence: apache/pinot Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-apache-pinot-content-information-intelligence-apache-pinot-core-invariants.md",
       "repository": "apache/pinot",
-      "content_hash": "de6046d800944347d517ff8592eb4be79cf1c4451b222c3ac2c40f4964a59a87",
-      "created_at": "2026-11-21T20:25:05.832Z"
+      "content_hash": "07bfe73c7211a312bef956d028cc866440c8fc5ebce0e24311ac3a0146470f1f",
+      "created_at": "2026-11-24T18:43:38.385Z"
     },
     "domain_intelligence-architecture-intelligence-astral-sh-uv-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-astral-sh-uv-learnings-core-invariants",
@@ -25349,8 +25351,8 @@
       "title": "Content & Information Intelligence: sigstore/cosign Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-sigstore-cosign-content-information-intelligence-sigstore-cosign-core-invariants.md",
       "repository": "sigstore/cosign",
-      "content_hash": "732c29fc00a0cd88262ed50699833b29efa674abcdf7f3b0a1a40b4f9a2e23c5",
-      "created_at": "2026-11-24T14:41:57.869Z"
+      "content_hash": "61e3c146bcfe85e65425804bea8112c18f26ea069901b725678b55eb8c195a4c",
+      "created_at": "2026-11-24T18:43:36.531Z"
     },
     "domain_intelligence-technical-construction-intelligence-urllib3-urllib3-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-urllib3-urllib3-learnings-core-invariants",
@@ -25367,8 +25369,8 @@
       "title": "Content & Information Intelligence: sigstore-cosign-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-sigstore-cosign-learnings-content-information-intelligence-sigstore-cosign-learn.md",
       "repository": "sigstore-cosign-learnings",
-      "content_hash": "74a61cfc5c79b3724c07634e971c40f7e03634bb020ddc7d43b731a0a904de3f",
-      "created_at": "2026-11-24T14:42:04.443Z"
+      "content_hash": "579a309f8ecbe74403814a009eded534845e72a907eb11f24874f363caa136bc",
+      "created_at": "2026-11-24T18:43:42.962Z"
     },
     "domain_intelligence-content-information-intelligence-encode-httpx-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-encode-httpx-core-invariants",
@@ -27487,8 +27489,8 @@
       "title": "Content & Information Intelligence: apache-pinot-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-apache-pinot-learnings-content-information-intelligence-apache-pinot-learnings-c.md",
       "repository": "apache-pinot-learnings",
-      "content_hash": "b1b957940014df174889389762c829be7aba951ca22a795808d24915bd25b9ab",
-      "created_at": "2026-11-20T15:15:28.612Z"
+      "content_hash": "d0ebb7fccced7685ced05f0b3524de0d436951f29c6d13da88bd91de04b043c1",
+      "created_at": "2026-11-24T18:43:43.822Z"
     },
     "domain_intelligence-research-knowledge-intelligence-speridlabs-idol-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-speridlabs-idol-core-invariants",
@@ -43058,6 +43060,24 @@
       "repository": "hf-atomicchat-inkling-2-mini-gguf-learnings",
       "content_hash": "75081701b7dc87dc2e46d177fcd614fcde3b869a04da2eeb5b7d671281ff528d",
       "created_at": "2026-11-24T18:35:06.649Z"
+    },
+    "domain_intelligence-architecture-intelligence-kgateway-dev-kgateway-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-kgateway-dev-kgateway-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: kgateway-dev/kgateway Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kgateway-dev-kgateway-architecture-intelligence-kgateway-dev-kgateway-core-invar.md",
+      "repository": "kgateway-dev/kgateway",
+      "content_hash": "478c7a0f2431615dbcf7816250a0c025380699c4d2699a46527529b53468d131",
+      "created_at": "2026-11-24T18:43:33.105Z"
+    },
+    "domain_intelligence-architecture-intelligence-kgateway-dev-kgateway-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-kgateway-dev-kgateway-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: kgateway-dev-kgateway-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kgateway-dev-kgateway-learnings-architecture-intelligence-kgateway-dev-kgateway-.md",
+      "repository": "kgateway-dev-kgateway-learnings",
+      "content_hash": "da26f3647156f2d409bcd15e5a341c7f300535d2973df7bac6d1c22aa84d1539",
+      "created_at": "2026-11-24T18:43:41.866Z"
     }
   }
 }

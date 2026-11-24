@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T18:34:33.619Z",
+  "last_updated": "2026-11-24T18:43:37.983Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4401,14 +4401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kgateway-dev-kgateway",
-      "content_hash": "158ee86c963a0619ec864466166595d21a84804b6709292250cacdf7553df8b4",
-      "verified_at": "2026-11-23T23:18:21.007Z",
+      "content_hash": "cc651574c505f20d41bd2897def891a9f8ef66b7ebf9359df6e619422df99d40",
+      "verified_at": "2026-11-24T18:43:32.668Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T23:18:21.007Z"
+      "last_updated": "2026-11-24T18:43:32.668Z"
     },
     "freenet/freenet-core": {
       "repository": "freenet/freenet-core",
@@ -5406,14 +5406,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sigstore-cosign",
-      "content_hash": "2cca6be8668d8c2e38c6dc89401d085db9d4691f9d3251627783c84cf0c9b2e2",
-      "verified_at": "2026-11-24T14:41:57.459Z",
+      "content_hash": "aef5e7cbf4050a75c2facd39ac844b336278ed9492ad19ec2493a77360b7a04c",
+      "verified_at": "2026-11-24T18:43:36.120Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T14:41:57.459Z"
+      "last_updated": "2026-11-24T18:43:36.120Z"
     },
     "LLPhant/LLPhant": {
       "repository": "LLPhant/LLPhant",
@@ -18006,14 +18006,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-pinot",
-      "content_hash": "8d243876bcb32108e25b59986adf09893f820ff8edfd4ebafd3551c8a45867ac",
-      "verified_at": "2026-11-23T22:15:01.096Z",
+      "content_hash": "485c2234a42bcc56ccc8a3cc81954fa20b2ff000c8ebbe81581f9e35fc07f928",
+      "verified_at": "2026-11-24T18:43:37.983Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T22:15:01.096Z"
+      "last_updated": "2026-11-24T18:43:37.983Z"
     },
     "N1nEmAn/sapper-v2": {
       "repository": "N1nEmAn/sapper-v2",

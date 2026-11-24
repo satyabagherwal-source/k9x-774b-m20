@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T22:15:06.958Z",
+  "timestamp": "2026-11-24T18:43:43.515Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-apache-pinot-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [apache-pinot-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T22:15:06.958Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T18:43:43.515Z`  
 > **Learning ID**: `LEARN-EVO-apache-pinot-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-pinot-learnings.md`  
 > **Source**: github ([https://github.com/apache/pinot](https://github.com/apache/pinot))  
-> **Source Version**: `87886387`  
+> **Source Version**: `eec6794f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T22:15:00.001Z  
+> **Timestamp**: 2026-11-24T18:43:36.847Z  
 > **Learning ID**: `learn-github-apache-pinot`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-pinot-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/pinot](https://github.com/apache/pinot))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T22:14:59.869Z  
+> **Harvest Timestamp**: 2026-11-24T18:43:36.841Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Apache Pinot: a real-time analytics database for low-latency SQL and vector search, serving user-facing and agent-facing applications
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 6178 stars
+- **Stars / Engagement**: 6177 stars
 
 ---
 
@@ -1997,11 +1997,11 @@ const syncTableSchemaData = (data, showFieldType) => {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #20297** (2026-11-19): **Upgrade Lucene from 9.12.0 to 9.12.3**
-  *Symptoms*: Upgrade Lucene from 9.12.0 to 9.12.3 through the shared Maven property and update the Lucene artifacts listed in `LICENSE-binary`.  The [9.12.1–9.12.3 releases](https://lucene.apache.org/core/9_12_3/changes/Changes.html) include fixes for vector-index compatibility, HNSW behavior, and an infinite loop during memory-mapped resource cleanup. This dependency update is separate from the startup deadlock workaround in #20296; Lucene 9.12.3 still contains the class-initialization cycle.  Validation:  - 187 existing tests across 15 Lucene text-index, realtime-index, HNSW, rollback-recovery, and core text-query classes passed on JDK 25. - Verified that all seven Lucene artifacts on the test runtime classpaths resolve to 9.12.3. - Scoped reactor compilation with compiler warnings and deprecation reporting enabled. - Root Spotless, Checkstyle, license formatting/checks, and diff whitespace checks passed.  No new tests were added. The full cluster upgrade/rollback compatibility suites remain for CI. 
+- **Issue #20364** (2026-11-24): **Fix minion test races during parallel execution and segment refresh**
+  *Symptoms*: Fix two test races observed in #20355:  - `SegmentGenerationAndPushTaskGeneratorTest` and `SegmentGenerationAndPushTaskExecutorTest` shared the classpath resource directory as their working directory. Parallel forks could collide on `input/dummyTable.json.tmp` and fail its rename. Give each executor invocation a unique temporary directory and clean it up in `finally`. - `RefreshSegmentMinionTest.testMetadataPushRefresh` dereferenced missing query-result fields while refreshed segments were still becoming available. Make the polling predicate return false until the selected column's type is exactly `FLOAT`, preserving the existing timeout.  Validation on JDK 25.0.5: all 13 targeted tests passed (7 unit tests and 6 integration tests), with three parallel forks enabled. Both affected modules also passed Spotless, Checkstyle, license formatting, and license checks. Compilation included deprecation and warning flags.  ```bash ./mvnw -B -ntp -Ppinot-fastdev -Ddevelocity.scan.disabled=true \   -pl pinot-plugins/pinot-minion-tasks/pinot-minion-builtin-tasks,pinot-integration-tests -am \   -Dtest=SegmentGenerationAndPushTaskGeneratorTest,SegmentGenerationAndPushTaskExecutorTest,RefreshSegmentMinionTest \   -Dsurefire.failIfNoSpecifiedTests=false -Dunit.test.fork.count=3 \   -Dmaven.compiler.showDeprecation=true -Dmaven.compiler.showWarnings=true test ``` 
 
-- **Issue #20296** (2026-11-18): **Prevent Lucene class initialization deadlock during server startup**
-  *Symptoms*: Server startup can deadlock when Helix concurrently opens existing text indexes and creates realtime text indexes. Lucene 9.12.0 has a class initialization cycle between `IndexWriter`, `TestSecrets`, and `ConcurrentMergeScheduler` ([Lucene #12419](https://github.com/apache/lucene/issues/12419)). The [compatibility failure during rollback to Pinot 1.5.0](https://github.com/apache/pinot/actions/runs/44070961025/job/133996755187) captured this cycle in its thread dump: segment transitions remain blocked and server readiness times out.  Initialize `IndexWriter` synchronously before the server starts parallel segment loading. The compatibility verifier also uses a Java 11 bootstrap to perform the initialization inside each tested server JVM, including older releases during initial startup and rollback. Its generated launcher preserves the distribution's dependencies, JVM options, arguments, and PID handling. Readiness checks and timeouts remain unchanged.  Validation:  - Scoped server reactor build and `BaseServerStarterTest`: 3 tests passed. - `python3 compatibility-verifier/test_server_readiness.py`: 7 tests passed. - Fresh-JVM Lucene 9.12.0 reproducer: deadlock observed without preinitialization; 20/20 processes completed concurrent index reads and writes with preinitialization. - Scoped Spotless, Checkstyle, license formatting/checks, shell syntax, and diff whitespace checks passed.  The full compatibility suite has not been rerun locally; CI will validate the complete upgrade
+- **Issue #20314** (2026-11-24): **[multistage] Resolve correlated UNNEST array reference by field index**
+  *Symptoms*: ### Problem  On the multi-stage engine, `CROSS JOIN UNNEST` over a column produced by an aggregate fails at plan time:  ```sql SELECT f.col1, u.v FROM (SELECT col1, ARRAY_AGG(col3, 'INT') AS r FROM a GROUP BY col1) f CROSS JOIN UNNEST(f.r) AS u(v) -- Error composing query plan ...: Unsupported RexNode type with SqlKind: FIELD_ACCESS ```  ### Root cause  After optimization, the correlate's left input is the aggregate itself, and its output fields carry generated names (`agg#0`, `$f1`, ...) instead of the alias `r`:  ```text LogicalCorrelate(correlation=[$cor0], requiredColumns=[{1}])   PinotLogicalAggregate(group=[{0}], agg#0=[ARRAY_AGG(...)])   Uncollect     LogicalProject(r=[$cor0.r]) ```  `RelToPlanNodeConverter.resolveInputRefFromCorrel` looked up `$cor0.r` by field name in the left input's row type. The lookup missed, and the fallback `RexExpressionUtils.fromRexNode(RexFieldAccess)` threw. Unnesting a column of a plain scan works only because there the left input keeps the alias.  ### Fix  Resolve the correlated reference by its field index, which is how Calcite defines it: the index into the correlation variable's row type, i.e. the left input's row type. `PlanNodeToRelConverter` already builds the reference this way. The index is used only when the correlation variable's row type still lines up with the left input (same field count, same type at that index, ignoring nullability); otherwise the existing name match is used as before.  ### Compatibility  This is a planner-
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2018,702 +2018,487 @@ const syncTableSchemaData = (data, showFieldType) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2f3fca63` (2026-11-23)
-**Commit Message**: Add an auto spool mode guarded against deadlocks and make it the default (#19944)
+### Incident Patch 1: `4bd680a4` (2026-11-24)
+**Commit Message**: Fix ClassCastException in range filters on version 1 range indexes under null handling (#20331)
 
-**File**: `pinot-broker/src/main/java/org/apache/pinot/broker/requesthandler/MultiStageBrokerRequestHandler.java` (modified, +6/-3)
+**File**: `pinot-core/src/main/java/org/apache/pinot/core/operator/filter/RangeIndexBasedFilterOperator.java` (modified, +4/-2)
 ```diff
-@@ -86,6 +86,7 @@
- import org.apache.pinot.query.QueryEnvironment;
- import org.apache.pinot.query.mailbox.MailboxService;
- import org.apache.pinot.query.planner.explain.AskingServerStageExplainer;
-+import org.apache.pinot.query.planner.logical.SpoolMode;
- import org.apache.pinot.query.planner.physical.DispatchablePlanFragment;
- import org.apache.pinot.query.planner.physical.DispatchableSubPlan;
- import org.apache.pinot.query.planner.plannode.PlanNode;
-@@ -159,6 +160,8 @@ public class MultiStageBrokerRequestHandler extends BaseBrokerRequestHandler {
-   protected final String _defaultStreamingGroupByFlushThreshold;
-   @Nullable
-   protected final String _defaultStreamingDistinctFlushThreshold;
-+  /// Parsed once so that an invalid [CommonConstants.Broker#CONFIG_OF_SPOOLS] fails the broker start, not every query.
-+  private final SpoolMode _defaultSpoolMode;
- 
-   protected final PinotMeter _stagesStartedMeter = BrokerMeter.MSE_STAGES_STARTED.getGlobalMeter();
-   protected final PinotMeter _stagesFinishedMeter = BrokerMeter.MSE_STAGES_COMPLETED.getGlobalMeter();
-@@ -255,6 +258,8 @@ public MultiStageBrokerRequestHandler(PinotConfiguration config, String brokerId
-         CommonConstants.Broker.DEFAULT_MSE_STREAMING_DISTINCT_FLUSH_THRESHOLD);
-     _defaultStreamingDistinctFlushThreshold =
-         streamingDistinctFlushThreshold > 0 ? Integer.toString(streamingDistinctFlushThreshold) : null;
-+    _defaultSpoolMode = SpoolMode.fromString(_config.getProperty(CommonConstants.Broker.CONFIG_OF_SPOOLS,
-+        CommonConstants.Broker.DEFAULT_SPOOLS_MODE));
-   }
- 
-   /// Returns the planner rules disabled by default: the comma-separated list in
-@@ -556,8 +561,6 @@ private ImmutableQueryEnvironment.Config getQueryEnvConf(HttpHeaders httpHeaders
-     String database = DatabaseUtils.extractDatabaseFromQueryRequest(queryOptions, httpHeaders);
-     boolean inferPartitionHint = _config.getProperty(CommonConstants.Broker.CONFIG_OF_INFER_PARTITION_HINT,
-         CommonConstants.Broker.DEFAULT_INFER_PARTITION_HINT);
--    boolean defaultUseSpool = _config.getProperty(CommonConstants.Broker.CONFIG_OF_SPOOLS,
--        CommonConstants.Broker.DEFAULT_OF_SPOOLS);
-     boolean defaultUseLeafServerForIntermediateStage = _config.getProperty(
-         CommonConstants.Broker.CONFIG_OF_USE_LEAF_SERVER_FOR_INTERMEDIATE_STAGE,
-         CommonConstants.Broker.DEFAULT_USE_LEAF_SERVER_FOR_INTERMEDIATE_STAGE);
-@@ -625,7 +628,7 @@ private ImmutableQueryEnvironment.Config getQueryEnvConf(HttpHeaders httpHeaders
-         .isCaseSensitive(caseSensitive)
-         .isNullHandlingEnabled(QueryOptionsUtils.isNullHandlingEnabled(queryOptions))
-         .defaultInferPartitionHint(inferPartitionHint)
--        .defaultUseSpools(defaultUseSpool)
-+        .defaultSpoolMode(_defaultSpoolMode)
-         .defaultUnnestColumnPruning(defaultUnnestColumnPruning)
-         .defaultUseLeafServerForIntermediateStage(defaultUseLeafServerForIntermediateStage)
-         .defaultEnableGroupTrim(defaultEnableGroupTrim)
+@@ -101,10 +101,12 @@ private BlockDocIdSet evaluateLegacyRangeFilter() {
+     if (partialMatches == null) {
+       return matches != null ? BitmapDocIdSet.create(matches, _numDocs) : EmptyDocIdSet.unscanned();
+     }
+-    // Need to scan the first and last range as they might be partially matched
++    // Need to scan the first and last range as they might be partially matched. Scan without null handling because
++    // BaseColumnFilterOperator applies the null semantics to the combined result, and doing it in the scan as well
++    // wraps the scan result into a doc id set whose iterator is not a ScanBasedDocIdIterator.
+     ScanBasedFilterOperator scanBasedFilterOperator =
+         new ScanBasedFilterOperator(_queryContext, _predicateEvaluator, _dataSource, _numDocs);
+-    BlockDocIdSet scanBasedDocIdSet = scanBasedFilterOperator.getTrues();
++    BlockDocIdSet scanBasedDocIdSet = scanBasedFilterOperator.getNextBlockWithoutNullHandling();
+     MutableRoaringBitmap docIds = ((ScanBasedDocIdIterator) scanBasedDocIdSet.iterator()).applyAnd(partialMatches);
+     if (matches != null) {
+       docIds.or(matches);
 ```
 
-**File**: `pinot-common/src/main/java/org/apache/pinot/common/metrics/BrokerMeter.java` (modified, +4/-0)
+**File**: `pinot-core/src/test/java/org/apache/pinot/queries/NullHandlingEnabledQueriesTest.java` (modified, +67/-0)
 ```diff
-@@ -266,6 +266,10 @@ public class BrokerMeter implements AbstractMetrics.Meter {
-   ///
-   /// For each query with at least one join, this meter is increased as many times as joins in the query.
-   public static final BrokerMeter JOIN_COUNT = create("JOIN_COUNT", "queries", true);
-+  /// How many times the multi-stage planner made a stage feed one more consumer stage (a spool).
-+  public static final BrokerMeter SPOOLS_APPLIED = create("SPOOLS_APPLIED", "spools", true);
-+  /// How many spools the multi-stage planner refused because the shared stage could block the query.
-+  public static final BrokerMeter SPOOLS_REJECTED_BY_GUARD = create("SPOOLS_REJECTED_BY_GUARD", "spools", true);
-   /// How many queries with window functions have been executed.
-   ///
-   /// For each query with at least one window function, this meter is increased exactly once.
-```
-
-**File**: `pinot-common/src/main/java/org/apache/pinot/common/utils/config/QueryOptionsUtils.java` (modified, +8/-0)
-```diff
-@@ -1117,6 +1117,14 @@ public static Boolean getVectorUseBoundedQueue(Map<String, String> queryOptions)
-         queryOptions.get(QueryOptionKey.VECTOR_USE_BOUNDED_QUEUE));
+@@ -82,6 +82,7 @@ public class NullHandlingEnabledQueriesTest extends BaseQueriesTest {
+           .setNoDictionaryColumns(List.of(COLUMN1))
+           .setRangeIndexColumns(List.of(COLUMN1))
+           .build();
++  private static final TableConfig TABLE_CONFIG_WITH_LEGACY_RANGE_INDEX_COLUMN = getTableConfigWithLegacyRangeIndex();
+   private static final int NUM_OF_SEGMENT_COPIES = 4;
+   private static final Map<String, String> QUERY_OPTIONS = Map.of("enableNullHandling", "true");
+ 
+@@ -382,6 +383,72 @@ public void testFastFilteredCountExcludesNullsOnMultiValueColumn()
+     assertEquals(getRows(String.format("SELECT COUNT(*) FROM testTable WHERE NOT (%s = 2)", COLUMN1)).get(0)[0], 0L);
    }
  
-+  /// Returns whether the response must describe the spool decisions of the multi-stage planner. Defaults to `false`.
-+  ///
-+  /// @throws IllegalArgumentException if the option is set to a value other than `true` or `false`
-+  public static boolean isSpoolsFeedback(Map<String, String> queryOptions) {
-+    return Boolean.TRUE.equals(checkedParseBooleanNullable(QueryOptionKey.SPOOLS_FEEDBACK,
-+        queryOptions.get(QueryOptionKey.SPOOLS_FEEDBACK)));
-+  }
-+
-   @Nullable
-   private static Boolean checkedParseBooleanNullable(String optionName, @Nullable String optionValue) {
-     if (optionValue == null) {
-```
-
-**File**: `pinot-common/src/test/java/org/apache/pinot/common/utils/config/QueryOptionsUtilsTest.java` (modified, +12/-0)
-```diff
-@@ -330,6 +330,18 @@ public void testVectorNprobeValid() {
-     assertEquals(QueryOptionsUtils.getVectorNprobe(Map.of(VECTOR_NPROBE, "128")), Integer.valueOf(128));
-   }
- 
++  /// A multi-value column always gets the legacy range index, which is not exact: the documents of a range that the
++  /// predicate covers only in part are found by a scan. The null row is left out once, from the combined result.
 +  @Test
-+  public void testSpoolsFeedback() {
-+    assertFalse(QueryOptionsUtils.isSpoolsFeedback(Map.of()));
-+    assertTrue(QueryOptionsUtils.isSpoolsFeedback(Map.of(SPOOLS_FEEDBACK, "true")));
-+    assertTrue(QueryOptionsUtils.isSpoolsFeedback(Map.of(SPOOLS_FEEDBACK, " TRUE ")));
-+    assertFalse(QueryOptionsUtils.isSpoolsFeedback(Map.of(SPOOLS_FEEDBACK, "false")));
-+    expectThrows(IllegalArgumentException.class,
-+        () -> QueryOptionsUtils.isSpoolsFeedback(Map.of(SPOOLS_FEEDBACK, "1")));
-+    expectThrows(IllegalArgumentException.class,
-+        () -> QueryOptionsUtils.isSpoolsFeedback(Map.of(SPOOLS_FEEDBACK, "yes")));
-+  }
-+
-   @Test
-   public void testVectorNprobeNull() {
-     assertNull(QueryOptionsUtils.getVectorNprobe(Map.of()));
-```
-
-**File**: `pinot-integration-tests/src/test/java/org/apache/pinot/integration/tests/SpoolIntegrationTest.java` (modified, +74/-0)
-```diff
-@@ -127,6 +127,80 @@ public void intermediateSpool()
-     checkSpoolSame(parsed, 4, 3, 7);
-   }
- 
-+  /// The query of [#intermediateSpool()] spools stage 4 into the probe input of the join and, through an aggregate,
-+  /// into its build input. The join reads the probe input only after the build input finishes, so with a full probe
-+  /// mailbox the shared stage stops and the build input never finishes. `auto` must refuse that spool.
-+  @Test
-+  public void autoRejectsSpoolThatCanBlock()
++  public void testRangeFilterOnMultiValueColumnWithLegacyRangeIndex()
 +      throws Exception {
-+    JsonNode jsonNode = postQuery("SET useSpools = 'auto';\n"
-+        + "SET spoolsFeedback = true;\n"
-+        + "WITH group_and_sum AS (\n"
-+        + "  SELECT ArrTimeBlk, Dest, SUM(ArrTime) AS ArrTime\n"
-+        + "  FROM mytable\n"
-+        + "  GROUP BY ArrTimeBlk, Dest\n"
-+        + "  limit 1000\n"
-+        + "),\n"
-+        + "aggregated_data AS (\n"
-+        + "  SELECT Dest, SUM(ArrTime) AS ArrTime\n"
-+        + "  FROM group_and_sum\n"
-+        + "  GROUP BY Dest\n"
-+        + ")\n"
-+        + "SELECT s.Dest, s.ArrTime, o.ArrTime AS ArrTime2\n"
-+        + "FROM group_and_sum s\n"
-+        + "JOIN aggregated_data o\n"
-+        + "ON s.Dest = o.Dest\n"
-+        + "LIMIT 1");
-+    assertNoError(jsonNode);
-+    JsonNode spools = jsonNode.get("responseMetadata").get("spools");
-+    Assert.assertEquals(spools.get("mode").asText(), "auto", spools.toString());
-+    // The shared intermediate stage is refused. The leaf stage below it can still be shared, because both of its
-+    // consumers aggregate it, so this test does not assert that no spool is applied.
-+    Assert.assertTrue(hasOutcome(spools, "REJECTED_BY_GUARD"), spools.toString());
++    initializeRows();
++    for (int i = 0; i < 30; i++) {
++      insertRow(new Object[]{i, i + 1});
++    }
++    insertRow(null);
++    Schema schema = schemaBuilder().addMultiValueDimension(COLUMN1, DataType.INT).build();
++    setUpSegments(TABLE_CONFIG_WITH_RANGE_INDEX_COLUMN, schema);
++
++    // Rows 4 to 29 hold a value above 4
++    assertEquals(getRows(String.format("SELECT COUNT(*) FROM testTable WHERE %s > 4", COLUMN1)).get(0)[0],
++        (long) 26 * NUM_OF_SEGMENT_COPIES);
++    // Rows 0 to 3 hold no value above 4, and the null row is UNKNOWN
++    assertEquals(getRows(String.format("SELECT COUNT(*) FROM testTable WHERE NOT (%s > 4)", COLUMN1)).get(0)[0],
++        (long) 4 * NUM_OF_SEGMENT_COPIES);
++    // Rows 4 to 20 hold a value from 5 to 20
++    assertEquals(
++        getRows(String.format("SELECT COUNT(*) FROM testTable WHERE %s BETWEEN 5 AND 20", COLUMN1)).get(0)[0],
++        (long) 17 * NUM_OF_SEGMENT_COPIES);
++    // Rows 0 to 4 hold a value below 5. The default value stored for the null row is below 5 as well, so this checks
++    // that the null row is left out of the combined result.
++    assertEquals(getRows(String.format("SELECT COUNT(*) FROM testTable WHERE %s < 5", COLUMN1)).get(0)[0],
++        (long) 5 * NUM_OF_SEGMENT_COPIES);
 +  }
 +
-+  /// Both consumers of the shared stage aggregate it, so each consumer reads the whole shared stage before the join
-+  /// waits for any input. `auto` must apply that spool, and the result must not change.
++  /// A single-value column gets the legacy range index when the table sets `rangeIndexVersion` to 1, and goes through
++  /// the same partial range scan as a multi-value column.
 +  @Test
-+  public void autoAppliesSpoolWhenConsumersAggregate()
++  public void testRangeFilterOnSingleValueColumnWithLegacyRangeIndex()
 +      throws Exception {
-+    // The ORDER BY makes g deterministic. Without it, each copy of g can keep a different set of 1000 groups when
-+    // spools are off, so the results differ for a reason that has nothing to do with spools.
-+    String query = "WITH g AS (\n"
-+        + "  SELECT ArrTimeBlk, Dest, SUM(ArrTime) AS ArrTime\n"
-+        + "  FROM mytable\n"
-+        + "  GROUP BY ArrTimeBlk, Dest\n"
-+        + "  ORDER BY ArrTimeBlk, Dest\n"
-+        + "  LIMIT 1000\n"
-+        + ")\n"
-+        + "SELECT a.Dest, a.s, b.m\n"
-+        // Both consumers read the same columns of g. Otherwise the planner prunes each copy of g to different columns,
-+        // and the two copies are not equivalent.
-+        + "FROM (SELECT Dest, SUM(ArrTime) AS s FROM g GROUP BY Dest) a\n"
-+        + "JOIN (SELECT Dest, MAX(ArrTime) AS m FROM g GROUP BY Dest) b\n"
-+        + "ON a.Dest = b.Dest\n"
-+        + "ORDER BY a.Dest\n"
-+        + "LIMIT 10000";
-+    JsonNode withSpools = postQuery("SET useSpools = 'auto';\nSET spoolsFeedback = true;\n" + query);
-+    assertNoError(withSpools);
-+    JsonNode spools = withSpools.get("responseMetadata").get("spools");
-+    Assert.assertTrue(hasOutcome(spools, "APPLIED"), spools.toString());
-+    Assert.assertFalse(hasOutcome(spools, "REJECTED_BY_GUARD"), spools.toString());
-+
-+    JsonNode withoutSpools = postQuery("SET useSpools = 'off';\n" + query);
-+    assertNoError(withoutSpools);
-+    Assert.assertEquals(withSpools.get("resultTable").get("rows"), withoutSpools.get("resultTable").get("rows"));
-+  }
-+
-+  private static boolean hasOutcome(JsonNode spools, String outcome) {
-+    for (JsonNode substitution : spools.get("substitutions")) {
-+      if (substitution.get("outcome").asText().equals(outcome)) {
-+        return true;
-+      }
++    initializeRows();
++    for (int i = 0; i < 30; i++) {
++      insertRow(i);
 +    }
-+    return false;
++    insertRow(null);
++    Schema schema = schemaBuilder().addSingleValueDimension(COLUMN1, DataType.INT).build();
++    setUpSegments(TABLE_CONFIG_WITH_LEGACY_RANGE_INDEX_COLUMN, schema);
++
++    // Rows 5 to 29 hold a value above 4
++    assertEquals(getRows(String.format("SELECT COUNT(*) FROM testTable WHERE %s > 4", COLUMN1)).get(0)[0],
++        (long) 25 * NUM_OF_SEGMENT_COPIES);
++    // Rows 0 to 4 hold a value of at most 4, and the null row is UNKNOWN
++    assertEquals(getRows(String.format("SELECT COUNT(*) FROM testTable WHERE NOT (%s > 4)", COLUMN1)).get(0)[0],
++        (long) 5 * NUM_OF_SEGMENT_COPIES);
++    // Rows 5 to 20 hold a value from 5 to 20
++    assertEquals(
++        getRows(String.format("SELECT COUNT(*) FROM testTable WHERE %s BETWEEN 5 AND 20", COLUMN1)).get(0)[0],
++        (long) 16 * NUM_OF_SEGMENT_COPIES);
++    // Rows 0 to 4 hold a value below 5. The default value stored for the null row is below 5 as well, so this checks
++    // that the null row is left out of the combined result.
++    assertEquals(getRows(String.format("SELECT COUNT(*) FROM testTable WHERE %s < 5", COLUMN1)).get(0)[0],
++        (long) 5 * NUM_OF_SEGMENT_COPIES);
 +  }
 +
-   /// Test a complex with nested spools.
-   ///
-   /// Don't try to understand the query, just check that the spools are correct.
++  private static TableConfig getTableConfigWithLegacyRangeIndex() {
++    TableConfig tableConfig = new TableConfigBuilder(TableType.OFFLINE).setTableName(RAW_TABLE_NAME)
++        .setRangeIndexColumns(List.of(COLUMN1))
++        .build();
++    tableConfig.getIndexingConfig().setRangeIndexVersion(1);
++    return tableConfig;
++  }
++
+   /// A consuming segment reports its null rows through a vector that grows with ingestion and hands out a copy on each
+   /// read. The filter takes that copy once, and the index-based count has to leave those rows out as on a sealed
+   /// segment.
 ```
 
-**File**: `pinot-query-planner/src/main/java/org/apache/pinot/query/QueryEnvironment.java` (modified, +30/-8)
-```diff
-@@ -84,6 +84,7 @@
- import org.apache.pinot.query.planner.explain.PhysicalExplainPlanVisitor;
- import org.apache.pinot.query.planner.logical.PinotLogicalQueryPlanner;
- import org.apache.pinot.query.planner.logical.RelToPlanNodeConverter;
-+import org.apache.pinot.query.planner.logical.SpoolMode;
- import org.apache.pinot.query.planner.logical.TransformationTracker;
- import org.apache.pinot.query.planner.physical.DispatchableSubPlan;
- import org.apache.pinot.query.planner.physical.PinotDispatchPlanner;
-@@ -578,8 +579,9 @@ private DispatchableSubPlan toDispatchableSubPlan(RelRoot relRoot, PlannerContex
-           _envConfig.getWorkerManager(), requestId, _envConfig.getTableCache());
-       return pinotDispatchPlanner.createDispatchableSubPlanV2(plan.getLeft(), plan.getRight());
-     }
--    SubPlan plan = PinotLogicalQueryPlanner.makePlan(relRoot, tracker, useSpools(plannerContext.getOptions()),
--        _envConfig.defaultHashFunction(), pruneUnnestColumns(plannerContext.getOptions()));
-+    Map<String, String> options = plannerContext.getOptions();
-+    SubPlan plan = PinotLogicalQueryPlanner.makePlan(relRoot, tracker, getSpoolMode(options),
-+        isSpoolsFeedback(options), _envConfig.defaultHashFunction(), pruneUnnestColumns(options));
-     PinotDispatchPlanner pinotDispatchPlanner =
-         new PinotDispatchPlanner(plannerContext, _envConfig.getWorkerManager(), _envConfig.getRequestId(),
-             _envConfig.getTableCache());
-@@ -756,12 +758,32 @@ public static ImmutableQueryEnvironment.Config.Builder configBuilder() {
-     return ImmutableQueryEnvironment.Config.builder();
-   }
- 
--  public boolean useSpools(Map<String, String> options) {
-+  /// Returns the spool mode of the query: the [CommonConstants.Broker.Request.QueryOptionKey#USE_SPOOLS] query option
-+  /// when it is set, or [Config#defaultSpoolMode()] otherwise.
-+  ///
-+  /// @throws QueryException with [QueryErrorCode#QUERY_VALIDATION] if the query option is not a valid [SpoolMode].
-+  public SpoolMode getSpoolMode(Map<String, String> options) {
-     String optionValue = options.get(CommonConstants.Broker.Request.QueryOptionKey.USE_SPOOLS);
-     if (optionValue == null) {
--      return _envConfig.defaultUseSpools();
-+      return _envConfig.defaultSpoolMode();
-+    }
-+    try {
-+      return SpoolMode.fromString(optionValue);
-+    } catch (IllegalArgumentException e) {
-+      throw QueryErrorCode.QUERY_VALIDATION.asException(e.getMessage(), e);
-+    }
-+  }
-+
-+  /// Whether the response must describe the spool decisions of the planner. See
-+  /// [CommonConstants.Broker.Request.QueryOptionKey#SPOOLS_FEEDBACK].
-+  ///
-+  /// @throws QueryException with [QueryErrorCode#QUERY_VALIDATION] if the query option is not `true` or `false`.
-+  public static boolean isSpoolsFeedback(Map<String, String> options) {
-+    try {
-+      return QueryOptionsUtils.isSpoolsFeedback(options);
-+    } catch (IllegalArgumentException e) {
-+      throw QueryErrorCode.QUERY_VALIDATION.asException(e.getMessage(), e);
-     }
--    return Boolean.parseBoolean(optionValue);
-   }
- 
-   /// Whether to prune unused input (passthrough) columns from the UNNEST output. Defaults to the broker config
-@@ -821,15 +843,15 @@ default boolean defaultInferPartitionHint() {
-       return CommonConstants.Broker.DEFAULT_INFER_PARTITION_HINT;
-     }
- 
--    /// Whether to use spools or not.
-+    /// The spool mode.
-     ///
-     /// This is treated as the default value for the broker and it is expected to be obtained from a Pinot
-     /// configuration.
-     /// This default value can be always overridden at query level by the query option
-     /// [CommonConstants.Broker.Request.QueryOptionKey#USE_SPOOLS].
-     @Value.Default
--    default boolean defaultUseSpools() {
--      return CommonConstants.Broker.DEFAULT_OF_SPOOLS;
-+    default SpoolMode defaultSpoolMode() {
-+      return SpoolMode.fromString(CommonConstants.Broker.DEFAULT_SPOOLS_MODE);
-     }
- 
-     /// Whether to prune unused input (passthrough) columns from the UNNEST output by default.
-```
+---
 
-**File**: `pinot-query-planner/src/main/java/org/apache/pinot/query/planner/logical/EquivalentStagesFinder.java` (modified, +7/-0)
-```diff
-@@ -78,6 +78,13 @@ public Void visitMailboxSend(MailboxSendNode node, Void context) {
-       // from O(n^3) to O(n^2).
-       visitChildren(node, context);
- 
-+      // A stage that calls a volatile function must draw its own values, so it is never equivalent to another stage.
-+      // The stages above it are not equivalent either, because their receives read from different groups.
-+      if (VolatileFunctions.callsVolatileFunction(node)) {
-+        _equivalentStages.addNewGroup(node);
-+        return null;
-+      }
-+
-       // first try to find if the current node/stage is equivalent to an already equivalent stages.
-       for (MailboxSendNode uniqueStage : _equivalentStages.getLeaders()) {
-         if (_nodeEquivalence.areEquivalent(node, uniqueStage)) {
-```
+### Incident Patch 2: `23311e4d` (2026-11-24)
+**Commit Message**: Fix minion test races during parallel execution and segment refresh (#20364)
 
-**File**: `pinot-query-planner/src/main/java/org/apache/pinot/query/planner/logical/EquivalentStagesReplacer.java` (modified, +64/-17)
+**File**: `pinot-integration-tests/src/test/java/org/apache/pinot/integration/tests/custom/RefreshSegmentMinionTest.java` (modified, +2/-1)
 ```diff
-@@ -18,6 +18,11 @@
-  */
- package org.apache.pinot.query.planner.logical;
- 
-+import java.util.ArrayList;
-+import java.util.Collections;
-+import java.util.IdentityHashMap;
-+import java.util.List;
-+import java.util.Set;
- import org.apache.pinot.query.planner.plannode.MailboxReceiveNode;
- import org.apache.pinot.query.planner.plannode.MailboxSendNode;
- import org.apache.pinot.query.planner.plannode.PlanNode;
-@@ -32,6 +37,9 @@
- /// For each [MailboxReceiveNode] in the plan, if the sender is not the leader of the group,
- /// replaces the sender with the leader.
- /// The leader is also updated to include the receiver in its list of receivers.
-+///
-+/// When the replacement is guarded, each substitution is kept only if [SpoolDeadlockGuard] finds no risk in the
-+/// resulting plan. Otherwise the substitution is undone and the original sender stays.
- public class EquivalentStagesReplacer {
-   private EquivalentStagesReplacer() {
-   }
-@@ -40,12 +48,26 @@ public static void replaceEquivalentStages(PlanNode root, GroupedStages equivale
-     replaceEquivalentStages(root, equivalentStages, OnSubstitution.NO_OP);
-   }
- 
--  /// Replaces the equivalent stages in the query plan.
-+  /// Replaces the equivalent stages in the query plan, without [SpoolDeadlockGuard].
-   ///
-   /// @param root Root plan node
-   /// @param equivalentStages Equivalent stages
-   public static void replaceEquivalentStages(PlanNode root, GroupedStages equivalentStages, OnSubstitution listener) {
--    root.visit(new Replacer(listener), equivalentStages);
-+    replaceEquivalentStages(root, equivalentStages, listener, false);
-+  }
-+
-+  /// Replaces the equivalent stages in the query plan.
-+  ///
-+  /// @param root Root plan node
-+  /// @param equivalentStages Equivalent stages
-+  /// @param listener Called once for each applied substitution
-+  /// @param guarded Whether each substitution must pass [SpoolDeadlockGuard]
-+  /// @return One entry for each receive whose sender is not the leader of its group, in the order of the decisions
-+  public static List<SpoolSubstitution> replaceEquivalentStages(PlanNode root, GroupedStages equivalentStages,
-+      OnSubstitution listener, boolean guarded) {
-+    Replacer replacer = new Replacer(root, listener, guarded);
-+    root.visit(replacer, equivalentStages);
-+    return replacer._substitutions;
-   }
- 
-   public interface OnSubstitution {
-@@ -55,33 +77,58 @@ public interface OnSubstitution {
-   }
- 
-   private static class Replacer extends PlanNodeVisitor.DepthFirstVisitor<Void, GroupedStages> {
-+    private final PlanNode _root;
-     private final OnSubstitution _listener;
-+    private final boolean _guarded;
-+    private final List<SpoolSubstitution> _substitutions = new ArrayList<>();
-+    /// A stage can be visited more than once (for example the leader of a group), so a receive is decided only once.
-+    private final Set<MailboxReceiveNode> _visitedReceives = Collections.newSetFromMap(new IdentityHashMap<>());
- 
--    public Replacer(OnSubstitution listener) {
-+    public Replacer(PlanNode root, OnSubstitution listener, boolean guarded) {
-+      _root = root;
-       _listener = listener;
-+      _guarded = guarded;
-     }
- 
-     @Override
-     public Void visitMailboxReceive(MailboxReceiveNode node, GroupedStages equivalenceGroups) {
-+      if (!_visitedReceives.add(node)) {
-+        return null;
-+      }
-       MailboxSendNode sender = node.getSender();
-       MailboxSendNode leader = equivalenceGroups.getGroup(sender).first();
--      if (canSubstitute(sender, leader)) {
--        // we don't want to visit the children of the node given it is going to be pruned
--        node.setSender(leader);
--        leader.addReceiver(node);
--        _listener.onSubstitution(node.getStageId(), sender.getStageId(), leader.getStageId());
--      } else {
-+      if (sender == leader) {
-         visitMailboxSend(leader, equivalenceGroups);
-+        return null;
-+      }
-+      if (leader.sharesReceiverStages(sender)) {
-+        // The leader is already sending to this stage. Given we don't have the ability to send to multiple
-+        // receivers in the same stage, we cannot optimize this case right now.
-+        _substitutions.add(new SpoolSubstitution(node.getStageId(), sender.getStageId(), leader.getStageId(),
-+            SpoolSubstitution.Outcome.REJECTED_SAME_RECEIVER_STAGE, null));
-+        // The original sender stays in the plan, so the stages below it can still be shared.
-+        visitMailboxSend(sender, equivalenceGroups);
-+        return null;
+@@ -360,7 +360,8 @@ public void testMetadataPushRefresh()
+     waitForServerSegmentDownload(aVoid -> {
+       try {
+         JsonNode response = postQuery("SELECT " + LONG_COL + " FROM " + TABLE_NAME + " LIMIT 10");
+-        return response.get("resultTable").get("dataSchema").get("columnDataTypes").toString().contains("FLOAT");
++        // The result can be absent while the server is still loading refreshed segments.
++        return "FLOAT".equals(response.path("resultTable").path("dataSchema").path("columnDataTypes").path(0).asText());
+       } catch (Exception e) {
+         throw new RuntimeException(e);
        }
-+      node.setSender(leader);
-+      leader.addReceiver(node);
-+      if (_guarded) {
-+        SpoolDeadlockGuard.DeadlockRisk risk = SpoolDeadlockGuard.findRisk(_root);
-+        if (risk != null) {
-+          leader.removeReceiver(node);
-+          node.setSender(sender);
-+          _substitutions.add(new SpoolSubstitution(node.getStageId(), sender.getStageId(), leader.getStageId(),
-+              SpoolSubstitution.Outcome.REJECTED_BY_GUARD, risk.toString()));
-+    
+```
+
+**File**: `pinot-plugins/pinot-minion-tasks/pinot-minion-builtin-tasks/src/test/java/org/apache/pinot/plugin/minion/tasks/segmentgenerationandpush/SegmentGenerationAndPushTaskExecutorTest.java` (modified, +27/-21)
+```diff
+@@ -21,7 +21,7 @@
+ import java.io.File;
+ import java.net.URL;
+ import java.nio.charset.StandardCharsets;
+-import java.nio.file.Paths;
++import java.nio.file.Files;
+ import java.util.HashMap;
+ import java.util.Map;
+ import org.apache.commons.io.FileUtils;
+@@ -46,16 +46,14 @@ public class SegmentGenerationAndPushTaskExecutorTest {
+   public void testGenerateTaskSpec()
+       throws Exception {
+     ClassLoader classLoader = getClass().getClassLoader();
+-    URL resourcesLoc = classLoader.getResource(".");
+-    assertNotNull(resourcesLoc);
+     URL tableConfigUrl = classLoader.getResource("dummyTable.json");
+     assertNotNull(tableConfigUrl);
+     String tableConfig = FileUtils.readFileToString(new File(tableConfigUrl.getFile()), StandardCharsets.UTF_8);
+     SegmentGenerationAndPushTaskExecutor executor = new SegmentGenerationAndPushTaskExecutor();
+     Schema schema = new Schema.SchemaBuilder().build();
+     FieldUtils.writeField(executor, "_eventObserver", new DefaultMinionEventObserver(), true);
+     Map<String, String> configMap = new HashMap<>() {{
+-        put(BatchConfigProperties.INPUT_DATA_FILE_URI_KEY, resourcesLoc + "dummyTable.json");
++        put(BatchConfigProperties.INPUT_DATA_FILE_URI_KEY, tableConfigUrl.toString());
+         put(BatchConfigProperties.INPUT_FORMAT, "");
+         put(BatchConfigProperties.RECORD_READER_CLASS, "AReaderClass");
+         put(BatchConfigProperties.RECORD_READER_CONFIG_CLASS, "AReaderConfigClass");
+@@ -74,17 +72,22 @@ public void testGenerateTaskSpec()
+         put(BatchConfigProperties.SEGMENT_NAME_GENERATOR_PROP_PREFIX + ".propseg2", "valseg2");
+         put(BatchConfigProperties.APPEND_UUID_TO_SEGMENT_NAME, "true");
+       }};
+-    SegmentGenerationTaskSpec spec = executor.generateTaskSpec(configMap, Paths.get(resourcesLoc.toURI()).toFile());
+-    assertEquals(spec.getSequenceId(), 42);
+-    assertEquals("file:" + spec.getInputFilePath(), resourcesLoc + "input/dummyTable.json");
+-    assertEquals(spec.getRecordReaderSpec().getClassName(), "AReaderClass");
+-    assertEquals(spec.getRecordReaderSpec().getConfigClassName(), "AReaderConfigClass");
+-    assertEqualsDeep(spec.getRecordReaderSpec().getConfigs(), Map.of("prop1", "value1", "prop.2", "value2"));
+-    assertTrue(spec.isFailOnEmptySegment());
+-    assertEquals(spec.getSegmentNameGeneratorSpec().getType(), "inputtext");
+-    assertEqualsDeep(spec.getSegmentNameGeneratorSpec().getConfigs(),
+-        Map.of("prop.seg.1", "valseg1", "propseg2", "valseg2", SegmentGenerationTaskRunner.APPEND_UUID_TO_SEGMENT_NAME,
+-            "true"));
++    File tempDir = Files.createTempDirectory(getClass().getSimpleName()).toFile();
++    try {
++      SegmentGenerationTaskSpec spec = executor.generateTaskSpec(configMap, tempDir);
++      assertEquals(spec.getSequenceId(), 42);
++      assertEquals(spec.getInputFilePath(), new File(tempDir, "input/dummyTable.json").getAbsolutePath());
++      assertEquals(spec.getRecordReaderSpec().getClassName(), "AReaderClass");
++      assertEquals(spec.getRecordReaderSpec().getConfigClassName(), "AReaderConfigClass");
++      assertEqualsDeep(spec.getRecordReaderSpec().getConfigs(), Map.of("prop1", "value1", "prop.2", "value2"));
++      assertTrue(spec.isFailOnEmptySegment());
++      assertEquals(spec.getSegmentNameGeneratorSpec().getType(), "inputtext");
++      assertEqualsDeep(spec.getSegmentNameGeneratorSpec().getConfigs(),
++          Map.of("prop.seg.1", "valseg1", "propseg2", "valseg2",
++              SegmentGenerationTaskRunner.APPEND_UUID_TO_SEGMENT_NAME, "true"));
++    } finally {
++      FileUtils.deleteDirectory(tempDir);
++    }
+   }
+ 
+   @Test
+@@ -104,23 +107,26 @@ public void testGenerateTaskSpecAppendUuidPrecedence()
+   private void assertAppendUuid(Map<String, String> appendUuidConfigs, String expected)
+       throws Exception {
+     ClassLoader classLoader = getClass().getClassLoader();
+-    URL resourcesLoc = classLoader.getResource(".");
+-    assertNotNull(resourcesLoc);
+     URL tableConfigUrl = classLoader.getResource("dummyTable.json");
+     assertNotNull(tableConfigUrl);
+     SegmentGenerationAndPushTaskExecutor executor = new SegmentGenerationAndPushTaskExecutor();
+     FieldUtils.writeField(executor, "_eventObserver", new DefaultMinionEventObserver(), true);
+     Map<String, String> configMap = new HashMap<>(appendUuidConfigs);
+-    configMap.put(BatchConfigProperties.INPUT_DATA_FILE_URI_KEY, resourcesLoc + "dummyTable.json");
++    configMap.put(BatchConfigProperties.INPUT_DATA_FILE_URI_KEY, tableConfigUrl.toString());
+     configMap.put(BatchConfigProperties.RECORD_READER_CLASS, "AReaderClass");
+     configMap.put(BatchConfigProperties.RECORD_READER_CONFIG_CLASS, "AReaderConfigClass");
+     configMap.put(BatchConfigProperties.SCHEMA, new Schema.SchemaBuilder().build().toSingleLineJsonString());
+     configMap.put(BatchConfigProperties.TABLE_CONFIGS,
+         FileUtils.readFileToString(new File(tableConfigUrl.getFile()), StandardCharsets.UTF_8));
+     configMap.put(BatchConfig
+```
+
+**File**: `pinot-plugins/pinot-minion-tasks/pinot-minion-builtin-tasks/src/test/java/org/apache/pinot/plugin/minion/tasks/segmentgenerationandpush/SegmentGenerationAndPushTaskGeneratorTest.java` (modified, +9/-6)
+```diff
+@@ -22,7 +22,7 @@
+ import java.net.URI;
+ import java.net.URL;
+ import java.nio.charset.StandardCharsets;
+-import java.nio.file.Paths;
++import java.nio.file.Files;
+ import java.util.HashMap;
+ import java.util.Map;
+ import org.apache.commons.io.FileUtils;
+@@ -125,11 +125,9 @@ private void assertAppendUuidInExecutorSpec(Map<String, String> extraBatchConfig
+     Map<String, String> taskConfig =
+         new HashMap<>(invokeGetSingleFileGenerationTaskConfig(batchConfigMap(extraBatchConfigs)));
+     ClassLoader classLoader = getClass().getClassLoader();
+-    URL resourcesLoc = classLoader.getResource(".");
+-    assertNotNull(resourcesLoc);
+     URL tableConfigUrl = classLoader.getResource("dummyTable.json");
+     assertNotNull(tableConfigUrl);
+-    taskConfig.put(BatchConfigProperties.INPUT_DATA_FILE_URI_KEY, resourcesLoc + "dummyTable.json");
++    taskConfig.put(BatchConfigProperties.INPUT_DATA_FILE_URI_KEY, tableConfigUrl.toString());
+     taskConfig.put(BatchConfigProperties.RECORD_READER_CLASS, "AReaderClass");
+     taskConfig.put(BatchConfigProperties.RECORD_READER_CONFIG_CLASS, "AReaderConfigClass");
+     taskConfig.put(BatchConfigProperties.SCHEMA, new Schema.SchemaBuilder().build().toSingleLineJsonString());
+@@ -138,8 +136,13 @@ private void assertAppendUuidInExecutorSpec(Map<String, String> extraBatchConfig
+ 
+     SegmentGenerationAndPushTaskExecutor executor = new SegmentGenerationAndPushTaskExecutor();
+     FieldUtils.writeField(executor, "_eventObserver", new DefaultMinionEventObserver(), true);
+-    SegmentGenerationTaskSpec spec = executor.generateTaskSpec(taskConfig, Paths.get(resourcesLoc.toURI()).toFile());
+-    assertEquals(spec.getSegmentNameGeneratorSpec().getConfigs().get(APPEND_UUID_TO_SEGMENT_NAME_KEY), expected);
++    File tempDir = Files.createTempDirectory(getClass().getSimpleName()).toFile();
++    try {
++      SegmentGenerationTaskSpec spec = executor.generateTaskSpec(taskConfig, tempDir);
++      assertEquals(spec.getSegmentNameGeneratorSpec().getConfigs().get(APPEND_UUID_TO_SEGMENT_NAME_KEY), expected);
++    } finally {
++      FileUtils.deleteDirectory(tempDir);
++    }
+   }
+ 
+   @SuppressWarnings("unchecked")
 ```
 
 ---
 
-### Incident Patch 2: `078c814f` (2026-11-23)
-**Commit Message**: Rebalance PR CI workers without changing test fixtures (#20085)
+### Incident Patch 3: `76d6f280` (2026-11-24)
+**Commit Message**: fix(segment): reconcile stale FIXMEs around upsert validDocIds and aggr… (#20209)
 
-**File**: `.github/workflows/pinot_unit_tests.yml` (modified, +68/-5)
+**File**: `pinot-segment-local/src/main/java/org/apache/pinot/segment/local/indexsegment/mutable/MutableSegmentImpl.java` (modified, +9/-14)
 ```diff
-@@ -83,17 +83,28 @@ jobs:
-         timeout-minutes: 120
-         run: |
-           .github/workflows/scripts/.pinot_linter.sh
--  unit-test:
-+  unit-test-shards:
-     if: github.repository == 'apache/pinot'
-     runs-on: ubuntu-latest
-     strategy:
-       # Changed to false in order to improve coverage using unsafe buffers
-       fail-fast: false
-       matrix:
--        testset: [ 1, 2 ]
-+        testset: [ 1, 2, 3 ]
-         java: [ 25 ]
-         distribution: [ "temurin" ]
--    name: Pinot Unit Test Set ${{ matrix.testset }} (${{matrix.distribution}}-${{matrix.java}})
-+        include:
-+          - testset: 1
-+            legacy_testset: 1
-+          - testset: 2
-+            legacy_testset: 2
-+          - testset: 3
-+            legacy_testset: 1
-+    name: Pinot Unit Shard ${{ matrix.testset }} (${{matrix.distribution}}-${{matrix.java}})
-+    outputs:
-+      testset_1: ${{ steps.completed.outputs.testset_1 }}
-+      testset_2: ${{ steps.completed.outputs.testset_2 }}
-+      testset_3: ${{ steps.completed.outputs.testset_3 }}
-     steps:
-       - uses: actions/checkout@v7.0.1
-       - name: Set up JDK ${{ matrix.java }}-${{ matrix.distribution }}
-@@ -138,6 +149,7 @@ jobs:
-         run: |
-           .github/workflows/scripts/pr-tests/.pinot_tests_build.sh
-       - name: Unit Test
-+        id: run-tests
-         env:
-           RUN_INTEGRATION_TESTS: false
-           RUN_TEST_SET: ${{ matrix.testset }}
-@@ -163,13 +175,20 @@ jobs:
-         timeout-minutes: 120
-         run: |
-           .github/workflows/scripts/pr-tests/.pinot_tests_unit.sh
-+      - name: Record shard completion
-+        id: completed
-+        if: ${{ success() && steps.run-tests.outcome == 'success' }}
-+        env:
-+          TEST_SET: ${{ matrix.testset }}
-+        run: |
-+          echo "testset_${TEST_SET}=${GITHUB_SHA}:${GITHUB_RUN_ID}:${GITHUB_RUN_ATTEMPT}:${TEST_SET}" >> "$GITHUB_OUTPUT"
-       - name: Upload coverage to Codecov
-         uses: codecov/codecov-action@v7
-         continue-on-error: true
-         timeout-minutes: 5
-         with:
--          flags: unittests,unittests${{ matrix.testset }},${{matrix.distribution}},java-${{matrix.java}}
--          name: codecov-unit-tests
-+          flags: unittests,unittests${{ matrix.legacy_testset }},${{matrix.distribution}},java-${{matrix.java}}
-+          name: codecov-unit-tests-${{ matrix.testset }}
-           token: ${{ secrets.CODECOV_TOKEN }}
-           fail_ci_if_error: false
-           verbose: true
-@@ -188,3 +207,47 @@ jobs:
-             **/target/surefire-reports/
-             **/target/site/surefire-report.html
-           retention-days: 30
-+
-+  unit-test:
-+    # Retain both legacy required check names; each requires every actual unit worker.
-+    if: ${{ always() && github.repository == 'apache/pinot' }}
-+    needs: unit-test-shards
-+    runs-on: ubuntu-latest
-+    strategy:
-+      fail-fast: false
-+      matrix:
-+        testset: [ 1, 2 ]
-+        java: [ 25 ]
-+        distribution: [ "temurin" ]
-+    name: Pinot Unit Test Set ${{ matrix.testset }} (${{matrix.distribution}}-${{matrix.java}})
-+    steps:
-+      - name: Require all unit workers
-+        env:
-+          SHARD_RESULT: ${{ needs.unit-test-shards.result }}
-+          SET_1: ${{ needs.unit-test-shards.outputs.testset_1 }}
-+          SET_2: ${{ needs.unit-test-shards.outputs.testset_2 }}
-+          SET_3: ${{ needs.unit-test-shards.outputs.testset_3 }}
-+        run: |
-+          if [ "$SHARD_RESULT" != success ]; then
-+            echo "Required unit worker result: $SHARD_RESULT"
-+            exit 1
-+          fi
-+          for shard in 1 2 3; do
-+            output="SET_${shard}"
-+            IFS=: read -r sha run attempt recorded_shard extra <<< "${!output}"
-+            if [ "$sha" != "$GITHUB_SHA" ] || [ "$run" != "$GITHUB_RUN_ID" ] \
-+                || [ "$recorded_shard" != "$shard" ] || [ -n "$extra" ] \
-+                || [ "${!output}" != "${sha}:${run}:${attempt}:${recorded_shard}" ]; then
-+              echo "Unit worker $shard did not record successful completion for this run"
-+              exit 1
-+            fi
-+            case "$attempt" in
-+              ''|0*|*[!0-9]*) echo "Invalid completion attempt for unit worker $shard"; exit 1 ;;
-+            esac
-+            # A failed-jobs rerun retains successful workers from earlier attempts of this same run.
-+            if [ "${#attempt}" -gt "${#GITHUB_RUN_ATTEMPT}" ] \
-+                || [ "$attempt" -gt "$GITHUB_RUN_ATTEMPT" ]; then
-+              echo "Invalid completion attempt for unit worker $shard"
-+              exit 1
-+            fi
-+          done
+@@ -188,14 +188,10 @@ public class MutableSegmentImpl implements MutableSegment {
+   private final String _upsertOutOfOrderRecordColumn;
+   private final UpsertConfig.ConsistencyMode _upsertConsistencyMode;
+ 
+-  // The valid doc ids are maintained locally instead of in the upsert metadata manager because:
+-  // 1. There is only one consuming segment per partition, the committed segments do not need to modify the valid doc
+-  //    ids for the consuming segment.
+-  // 2. During the segment commitment, when loading the immutable version of this segment, in order to keep the result
+-  //    correct, the valid doc ids should not be changed, only the record location should be changed.
+-  // FIXME: There is a corner case for this approach which could cause inconsistency. When there is segment load during
+-  //        consumption with newer timestamp (late event in consuming segment), the record location will be updated, but
+-  //        the valid doc ids won't be updated.
++  // Maintained by the upsert metadata manager (via getValidDocIds() / getQueryableDocIds()) as records are indexed and
++  // as segments are loaded or replaced in the partition. During segment commitment (ConsistencyMode.NONE),
++  // replaceSegment() works on a snapshot copy of _validDocIds so the consuming segment's bitmap stays intact for
++  // concurrent queries until the immutable replacement is swapped in.
+   private final ThreadSafeMutableRoaringBitmap _validDocIds;
+   private final ThreadSafeMutableRoaringBitmap _queryableDocIds;
+   private boolean _indexCapacityThresholdBreached;
+@@ -298,7 +294,7 @@ public MultiColumnTextMetadata getMultiColumnTextMetadata() {
+     _logger =
+         LoggerFactory.getLogger(MutableSegmentImpl.class.getName() + "_" + _segmentName + "_" + config.getStreamName());
+ 
+-    // Metric aggregation can be enabled only if config is specified, and all dimensions have dictionary,
++    // Metric aggregation can be enabled only if config is specified, all dimensions and metrics are single-valued,
+     // and no metrics have dictionary. If not enabled, the map returned is null.
+     _recordIdMap = enableMetricsAggregationIfPossible(config);
+ 
+@@ -1601,12 +1597,11 @@ private int getOrCreateDocId() {
+     }
+ 
+     int i = 0;
+-    // Dimension and time columns form the aggregation key. They are always dictionary encoded in the consuming
+-    // segment (isNoDictionaryColumn forces a dictionary on them when aggregation is enabled), so the _dictId read
+-    // below is always valid. Keep this set of columns in sync with the field types forced there.
++    // Dimension and time columns form the aggregation key. They are always single-valued (enforced in
++    // enableMetricsAggregationIfPossible; see https://github.com/apache/pinot/issues/3867) and dictionary encoded in
++    // the consuming segment (isNoDictionaryColumn forces a dictionary on them when aggregation is enabled), so the
++    // _dictId read below is always valid. Keep this set of columns in sync with the field types forced there.
+     int[] dictIds = new int[_numKeyColumns]; // dimensions + date time columns + time column.
+-
+-    // FIXME: this for loop breaks for multi value dimensions. https://github.com/apache/pinot/issues/3867
+     for (FieldSpec fieldSpec : _physicalDimensionFieldSpecs) {
+       dictIds[i++] = _indexContainerMap.get(fieldSpec.getName())._dictId;
+     }
 ```
 
-**File**: `.github/workflows/scripts/pr-tests/.pinot_tests_build.sh` (modified, +16/-2)
+**File**: `pinot-segment-local/src/test/java/org/apache/pinot/segment/local/indexsegment/mutable/MutableSegmentImplAggregateMetricsTest.java` (modified, +27/-8)
 ```diff
-@@ -18,6 +18,13 @@
- # under the License.
- #
+@@ -21,11 +21,13 @@
+ import java.util.Arrays;
+ import java.util.HashMap;
+ import java.util.HashSet;
++import java.util.List;
+ import java.util.Map;
+ import java.util.Random;
+ import java.util.Set;
+ import java.util.concurrent.TimeUnit;
+ import org.apache.commons.lang3.RandomStringUtils;
++import org.apache.pinot.spi.config.table.ingestion.AggregationConfig;
+ import org.apache.pinot.spi.data.DimensionFieldSpec;
+ import org.apache.pinot.spi.data.FieldSpec;
+ import org.apache.pinot.spi.data.MetricFieldSpec;
+@@ -37,6 +39,8 @@
+ import org.testng.annotations.Test;
  
-+if [ "${RUN_INTEGRATION_TESTS:-}" == false ]; then
-+  case "${RUN_TEST_SET:-}" in
-+    1|2|3) ;;
-+    *) echo "Unsupported RUN_TEST_SET value: ${RUN_TEST_SET:-unset}" >&2; exit 1 ;;
-+  esac
-+fi
+ import static org.mockito.Mockito.mock;
++import static org.testng.Assert.assertEquals;
++import static org.testng.Assert.assertNull;
+ 
+ 
+ public class MutableSegmentImplAggregateMetricsTest {
+@@ -125,9 +129,9 @@ public void testAggregateMetricsWithNoDictionaryKeyColumns()
+   @Test
+   public void testMultiValueDimensionDisablesAggregation()
+       throws Exception {
+-    // A multi-value dimension cannot be used as an aggregation key (issue #3867), so aggregation stays disabled and no
+-    // rollup happens even though aggregateMetrics is set. This guards against over-broadening the aggregation-enabling
+-    // and dictionary-forcing logic to columns that cannot support it.
++    // A multi-value dimension cannot be used as an aggregation key (issue #3867), so aggregation stays disabled and
++    // no rollup happens whether configured via aggregateMetrics or ingestionAggregationConfigs. This guards against
++    // over-broadening the aggregation-enabling and dictionary-forcing logic to columns that cannot support it.
+     Schema schema = new Schema.SchemaBuilder().setSchemaName("testSchema")
+         .addSingleValueDimension(DIMENSION_1, FieldSpec.DataType.INT)
+         .addMultiValueDimension(DIMENSION_2, FieldSpec.DataType.STRING)
+@@ -136,10 +140,24 @@ public void testMultiValueDimensionDisablesAggregation()
+         .addDateTime(TIME_COLUMN1, FieldSpec.DataType.INT, "1:DAYS:EPOCH", "1:DAYS")
+         .addDateTime(TIME_COLUMN2, FieldSpec.DataType.INT, "1:HOURS:EPOCH", "1:HOURS")
+         .build();
++    Set<String> noDictionaryColumns = Set.of(DIMENSION_1, METRIC, METRIC_2);
 +
- # Java version
- java -version
+     MutableSegmentImpl mutableSegmentImpl =
+-        MutableSegmentImplTestUtils.createMutableSegmentImpl(schema, Set.of(METRIC, METRIC_2), Set.of(), Set.of(),
+-            true);
++        MutableSegmentImplTestUtils.createMutableSegmentImpl(schema, noDictionaryColumns, Set.of(), Set.of(), true);
++    assertMultiValueDimensionDisablesAggregation(mutableSegmentImpl);
++    mutableSegmentImpl.destroy();
++
++    List<AggregationConfig> aggregationConfigs =
++        List.of(new AggregationConfig(METRIC, "SUM(metric)"), new AggregationConfig(METRIC_2, "SUM(metric2)"));
++    mutableSegmentImpl =
++        MutableSegmentImplTestUtils.createMutableSegmentImpl(schema, noDictionaryColumns, Set.of(), Set.of(),
++            aggregationConfigs);
++    assertMultiValueDimensionDisablesAggregation(mutableSegmentImpl);
++    mutableSegmentImpl.destroy();
++  }
  
-@@ -36,8 +43,8 @@ if [ "$RUN_INTEGRATION_TESTS" != false ]; then
-     -pl 'pinot-bom,pinot-integration-tests' || exit 1
- else
-   # Unit Tests
--  #   - TEST_SET#1 runs install and test together so the module list must ensure no additional modules were tested
--  #     due to the -am flag (include dependency modules)
-+  # Every worker installs its required dependencies with tests skipped. The subsequent test
-+  # command selects only its assigned modules without -am, so dependency tests are not repeated.
-   if [ "$RUN_TEST_SET" == "1" ]; then
-     mvn clean install \
-       -DskipTests -Dcheckstyle.skip -Dspotless.skip -Denforcer.skip -Dlicense.skip -Dmaven.plugin.appassembler.skip=true \
-@@ -61,4 +68,11 @@ else
-       -pl '!pinot-perf' \
-       -pl '!pinot-distribution' || exit 1
-   fi
-+  if [ "$RUN_TEST_SET" == "3" ]; then
-+    mvn clean install \
-+      -DskipTests -Dcheckstyle.skip -Dspotless.skip -Denforcer.skip -Dlicense.skip -Dmaven.plugin.appassembler.skip=true \
-+      -am -B -T 16 -ntp \
-+      -P github-actions \
-+      -pl 'pinot-bom,pinot-core' || exit 1
-+  fi
- fi
++  private void assertMultiValueDimensionDisablesAggregation(MutableSegmentImpl mutableSegmentImpl)
++      throws Exception {
+     Random random = new Random();
+     for (int i = 0; i < NUM_ROWS; i++) {
+       GenericRow row = new GenericRow();
+@@ -152,9 +170,10 @@ public void testMultiValueDimensionDisablesAggregation()
+       mutableSegmentImpl.index(row, METADATA);
+     }
+ 
+-    // Aggregation is disabled, so every row is stored as its own document (no rollup).
+-    Assert.assertEquals(mutableSegmentImpl.getNumDocsIndexed(), NUM_ROWS);
+-    mutableSegmentImpl.destroy();
++    // Aggregation is disabled, so every row is stored as its own document (no rollup) and no-dictionary key columns
++    // stay no-dictionary.
++    assertEquals(mutableSegmentImpl.getNumDocsIndexed(), NUM_ROWS);
++    assertNull(mutableSegmentImpl.getDataSourceNullable(DIMENSION_1).getDictionary());
+   }
+ 
+   private void testAggregateMetrics(MutableSegmentImpl mutableSegmentImpl)
 ```
 
-**File**: `.github/workflows/scripts/pr-tests/.pinot_tests_unit.sh` (modified, +22/-7)
+**File**: `pinot-segment-local/src/test/java/org/apache/pinot/segment/local/indexsegment/mutable/MutableSegmentImplUpsertTest.java` (modified, +114/-0)
 ```diff
-@@ -18,6 +18,11 @@
- # under the License.
- #
+@@ -21,22 +21,32 @@
+ import java.io.File;
+ import java.io.IOException;
+ import java.net.URL;
++import java.nio.file.Files;
+ import java.util.List;
++import org.apache.commons.io.FileUtils;
+ import org.apache.pinot.segment.local.data.manager.TableDataManager;
++import org.apache.pinot.segment.local.indexsegment.immutable.ImmutableSegmentImpl;
++import org.apache.pinot.segment.local.indexsegment.immutable.ImmutableSegmentLoader;
+ import org.apache.pinot.segment.local.segment.creator.TransformPipeline;
++import org.apache.pinot.segment.local.segment.creator.impl.SegmentIndexCreationDriverImpl;
++import org.apache.pinot.segment.local.segment.readers.GenericRowRecordReader;
+ import org.apache.pinot.segment.local.upsert.PartitionUpsertMetadataManager;
+ import org.apache.pinot.segment.local.upsert.TableUpsertMetadataManager;
+ import org.apache.pinot.segment.local.upsert.TableUpsertMetadataManagerFactory;
++import org.apache.pinot.segment.spi.creator.SegmentGeneratorConfig;
+ import org.apache.pinot.spi.config.table.HashFunction;
+ import org.apache.pinot.spi.config.table.TableConfig;
+ import org.apache.pinot.spi.config.table.TableType;
+ import org.apache.pinot.spi.config.table.UpsertConfig;
++import org.apache.pinot.spi.data.DimensionFieldSpec;
++import org.apache.pinot.spi.data.FieldSpec.DataType;
+ import org.apache.pinot.spi.data.Schema;
+ import org.apache.pinot.spi.data.readers.FileFormat;
+ import org.apache.pinot.spi.data.readers.GenericRow;
+ import org.apache.pinot.spi.data.readers.RecordReader;
+ import org.apache.pinot.spi.data.readers.RecordReaderFactory;
+ import org.apache.pinot.spi.env.PinotConfiguration;
++import org.apache.pinot.spi.utils.ReadMode;
+ import org.apache.pinot.spi.utils.builder.TableConfigBuilder;
+ import org.roaringbitmap.buffer.ImmutableRoaringBitmap;
+ import org.testng.annotations.Test;
+@@ -55,6 +65,7 @@ public class MutableSegmentImplUpsertTest {
+   private static final String TIME_COLUMN = "secondsSinceEpoch";
+   private static final String OTHER_COMPARISON_COLUMN = "otherComparisonColumn";
+   private static final String PRIMARY_KEY_COLUMN = "event_id";
++  private static final String DELETE_RECORD_COLUMN = "is_deleted";
  
-+case "${RUN_TEST_SET:-}" in
-+  1|2|3) ;;
-+  *) echo "Unsupported RUN_TEST_SET value: ${RUN_TEST_SET:-unset}" >&2; exit 1 ;;
-+esac
+   private MutableSegmentImpl _mutableSegmentImpl;
+   private PartitionUpsertMetadataManager _partitionUpsertMetadataManager;
+@@ -183,6 +194,109 @@ private static GenericRow createRow(String eventId, long otherComparisonValue, l
+     return row;
+   }
+ 
++  /// Verifies that loading an immutable segment with a newer comparison value while a mutable segment is actively
++  /// consuming invalidates the late event's docId in the consuming segment's `_validDocIds` and `_queryableDocIds`,
++  /// and that subsequent consumption with an even newer comparison value invalidates the immutable segment's docId.
++  @Test
++  public void testSegmentLoadDuringConsumptionUpdatesValidDocIds()
++      throws Exception {
++    UpsertConfig upsertConfig = createFullUpsertConfig(HashFunction.NONE);
++    upsertConfig.setDeleteRecordColumn(DELETE_RECORD_COLUMN);
++    TableConfig tableConfig = new TableConfigBuilder(TableType.REALTIME).setTableName(RAW_TABLE_NAME)
++        .setTimeColumnName(TIME_COLUMN)
++        .setUpsertConfig(upsertConfig)
++        .setNullHandlingEnabled(true)
++        .build();
++    URL schemaResourceUrl = getClass().getClassLoader().getResource(SCHEMA_FILE_PATH);
++    assertNotNull(schemaResourceUrl);
++    Schema schema = Schema.fromFile(new File(schemaResourceUrl.getFile()));
++    schema.addField(new DimensionFieldSpec(DELETE_RECORD_COLUMN, DataType.BOOLEAN, true));
 +
- # Java version
- java -version
- 
-@@ -26,8 +31,14 @@ ifconfig
- netstat -i
- 
- # Unit Tests
--#   - Both test sets run plain `mvn test` (no install, no -am): the modules were already built
--#     and installed by .pinot_tests_build.sh, so only the modules listed here are tested.
-+#   - All three workers run `mvn test` (no install, no -am), so only the listed modules are tested.
-+#     .pinot_tests_build.sh has already built and installed their required reactor dependencies.
-+#   - The preceding clean install built the same sources with the same JDK/compiler settings.
-+#     Use Maven's source/class timestamp check on this second invocation: the default incremental
-+#     mode otherwise recompiles whole modules when reactor class directories become installed jars
-+#     on the classpath. Missing classes or newer sources still compile, including modules omitted
-+#     from the build step. Keep the test lifecycle so named Surefire suites, ScalaTest, resources,
-+#     and JaCoCo still run. Do not use this setting for ordinary builds after source/API changes.
- #
- # Parallelism / memory:
- #   - UNIT_TEST_FORK_COUNT (default 3) sets surefire forkCount so test *classes* run in
-@@ -64,21 +75,19 @@ else
-   COVERAGE_PROFILE=""
- fi
- if [ "$RUN_TEST_SET" == "1" ]; then
--  # pinot-segment-local's tests run in set #2 to balance pinot-core's longer test time in this
--  # shard against set #2's longer build. It remains built in set #1 as a pinot-core dependency.
-+  # Core tests run in worker #3. Its artifacts are still needed here by the query modules.
-   # No -am on this command, so only the listed modules test.
--  mvn test ${FORK_OPTS} \
-+  mvn test ${FORK_OPTS} -Dmaven.compiler.useIncrementalCompilation=false \
-       -pl 'pinot-spi' \
-       -pl 'pinot-segment-spi' \
-       -pl 'pinot-common' \
-       -pl ':pinot-yammer' \
--      -pl 'pinot-core' \
-       -pl 'pinot-query-planner' \
-       -pl 'pinot-query-runtime' \
-       -P github-actions,no-integration-tests${COVERAGE_PROFILE} || exit 1
- fi
- if [ "$RUN_TEST_SET" == "2" ]; then
--  mvn test ${FORK_OPTS} \
-+  mvn test ${FORK_OPTS} -Dmaven.compiler.useIncrementalCompilation=false \
-     -pl '!pinot-spi' \
-     -pl '!pinot-segment-spi' \
-     -pl '!pinot-common' \
-@@ -89,6 +98,12 @@ if [ "$RUN_TEST_SET" == "2" ]; then
-     -P github-actions,no-integration-tests${COVERAGE_PROFILE} || exit 1
- fi
- 
-+if [ "$RUN_TEST_SET" == "3" ]; then
-+  mvn test ${FORK_OPTS} -Dmaven.compiler.useIncrementalCompilation=false \
-+    -pl 'pinot-core' \
-+    -P github-actions,no-integration-tests${COVERAGE_PROFILE} || exit 1
-+fi
-+
- # Aggregate coverage across all per-fork exec files (jacoco-*.exec) written under forkCount>1,
- # while still matching the single-fork jacoco.exec produced by non-parallel runs. Skipped when
- # coverage is disabled.
-```
-
-**File**: `pinot-integration-tests/pom.xml` (modified, +2/-5)
-```diff
-@@ -223,6 +223,8 @@
-                 <include>org/apache/pinot/integration/tests/N*Test.java</include>
-                 <include>org/apache/pinot/integration/tests/GrpcBrokerClusterIntegrationTest.java</include>
-                 <include>org/apache/pinot/integration/tests/legacy/*Test.java</include>
-+                <!-- This class starts its own cluster and is excluded from LogicalTableSuite. -->
-+                <include>org/apache/pinot/integration/tests/logicaltable/KafkaPartitionSubsetChaosIntegrationTest.java</include>
-               </includes>
-               <excludes>
-                 <exclude>org/apache/pinot/integration/tests/IngestionConfigHybridIntegrationTest.java</exclude>
-@@ -291,11 +293,6 @@
-                 <include>org/apache/pinot/integration/tests/P*Test.java</include>
-                 <include>org/apache/pinot/integration/tests/Q*Test.java</include>
-                 <include>org/apache/pinot/integration/tests/R*Test.java</include>
--                <!--
--                  In the logicaltable package but not a BaseLogicalTableIntegrationTest subclass: it runs its own
--                  cluster, so LogicalTableSuite below excludes it and it runs here instead.
--                -->
--                <include>org/apache/pinot/integration/tests/logicaltable/KafkaPartitionSubsetChaosIntegrationTest.java</include>
-               </includes>
-               <excludes>
-                 <exclude>org/apache/pinot/integration/tests/OfflineClusterIntegrationTest.java</exclude>
-```
-
----
-
-### Incident Patch 3: `d6b909c6` (2026-11-23)
-**Commit Message**: Bump org.webjars:swagger-ui from 5.35.0 to 5.35.1 (#20346)
-
-Bumps [org.webjars:swagger-ui](https://github.com/swagger-api/swagger-ui) from 5.35.0 to 5.35.1.
-- [Release notes](https://github.com/swagger-api/swagger-ui/releases)
-- [Commits](https://github.com/swagger-api/swagger-ui/compare/v5.35.0...v5.35.1)
-
----
-updated-dependencies:
-- dependency-name: org.webjars:swagger-ui
-  dependency-version: 5.35.1
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `pom.xml` (modified, +1/-1)
-```diff
-@@ -198,7 +198,7 @@
-     <jersey.version>2.48</jersey.version>
-     <hk2.version>2.6.1</hk2.version>
-     <swagger.version>1.6.16</swagger.version>
--    <swagger-ui.version>5.35.0</swagger-ui.version>
-+    <swagger-ui.version>5.35.1</swagger-ui.version>
-     <hadoop.version>3.4.3</hadoop.version>
-     <jsonpath.version>2.10.0</jsonpath.version>
-     <jsonsmart.version>2.6.1</jsonsmart.version>
++    TableUpsertMetadataManager tableUpsertMetadataManager =
++        TableUpsertMetadataManagerFactory.create(new PinotConfiguration(), tableConfig, schema,
++            mock(TableDataManager.class), null);
++    PartitionUpsertMetadataManager partitionUpsertMetadataManager =
++        tableUpsertMetadataManager.getOrCreatePartitionManager(0);
++    MutableSegmentImpl mutableSegment =
++        MutableSegmentImplTestUtils.createMutableSegmentImpl(schema, true, TIME_COLUMN,
++            partitionUpsertMetadataManager, null);
++    File tempDir = Files.createTempDirectory("MutableSegmentImplUpsertTest").toFile();
++    ImmutableSegmentImpl immutableSegment = null;
++    try {
++      // Consuming segment indexes late events for "aa" (docId 0, ts=1567205394) and "cc" (docId 2, ts=1567205394),
++      // and a newer event for "bb" (docId 1, ts=1567205398).
++      mutableSegment.index(createRowWithDelete("aa", 1L, 1567205394L, false), null);
++      mutableSegment.index(createRowWithDelete("bb", 1L, 1567205398L, false), null);
++      mutableSegment.index(createRowWithDelete("cc", 1L, 1567205394L, false), null);
++      ImmutableRoaringBitmap mutableValidDocIds = mutableSegment.getValidDocIds().getMutableRoaringBitmap();
++      ImmutableRoaringBitmap mutableQueryableDocIds = mutableSegment.getQueryableDocIds().getMutableRoaringBitmap();
++      assertEquals(mutableValidDocIds.toArray(), new int[]{0, 1, 2});
++      assertEquals(mutableQu
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #20375** (2026-11-24): Bump software.amazon.awssdk:bom from 2.59.5 to 2.59.7 (@dependabot[bot])
+- **PR #20364** (2026-11-24): Fix minion test races during parallel execution and segment refresh (@Jackie-Jiang)
 - **PR #20358** (2026-11-23): Bump io.swagger:swagger-jersey2-jaxrs from 1.6.16 to 1.6.17 (@dependabot[bot])
 - **PR #20357** (2026-11-23): Bump io.projectreactor:reactor-core from 3.8.8 to 3.9.0 (@dependabot[bot])
 - **PR #20356** (2026-11-23): Bump org.apache.maven:maven-core from 3.10.1 to 3.10.2 (@dependabot[bot])
-- **PR #20354** (2026-11-23): Bump org.apache.maven:apache-maven from 3.10.1 to 3.10.2 (@dependabot[bot])
-- **PR #20353** (2026-11-23): Bump com.google.cloud:libraries-bom from 26.93.0 to 26.94.0 (@dependabot[bot])
-- **PR #20352** (2026-11-23): Bump software.amazon.awssdk:bom from 2.59.2 to 2.59.5 (@dependabot[bot])
+- **PR #20355** (2026-11-24): Bump com.google.errorprone:error_prone_annotations from 2.52.0 to 2.53.0 (@dependabot[bot])
 
 ---
 
@@ -2733,38 +2518,35 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add an auto spool mode guarded against deadlocks and make it the default
+## X. ClassCastException in range filters on version 1 range indexes under null handli
 
 **RULE**:
-When implementing operations in `pinot-broker/src/main/java/org/apache/pinot/broker/requesthandler/MultiStageBrokerRequestHandler.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/pinot. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pinot-core/src/main/java/org/apache/pinot/core/operator/filter/RangeIndexBasedFilterOperator.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/pinot. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2f3fca63`: Add an auto spool mode guarded against deadlocks and make it the default. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4bd680a4`: ClassCastException in range filters on version 1 range indexes under null handling. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `pinot-broker/src/main/java/org/apache/pinot/broker/requesthandler/MultiStageBrokerRequestHandler.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `pinot-core/src/main/java/org/apache/pinot/core/operator/filter/RangeIndexBasedFilterOperator.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-import org.apache.pinot.query.planner.logical.SpoolMode;
-  /// Parsed once so that an invalid [CommonConstants.Broker#CONFIG_OF_SPOOLS] fails the broker start, not every query.
-  private final SpoolMode _defaultSpoolMode;
-    _defaultSpoolMode = SpoolMode.fromString(_config.getProperty(CommonConstants.Broker.CONFIG_OF_SPOOLS,
-        CommonConstants.Broker.DEFAULT_SPOOLS_MODE));
-        .defaultSpoolMode(_defaultSpoolMode)
+    // Need to scan the first and last range as they might be partially matched. Scan without null handling because
+    // BaseColumnFilterOperator applies the null semantics to the combined result, and doing it in the scan as well
+    // wraps the scan result into a doc id set whose iterator is not a ScanBasedDocIdIterator.
+    BlockDocIdSet scanBasedDocIdSet = scanBasedFilterOperator.getNextBlockWithoutNullHandling();
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-    boolean defaultUseSpool = _config.getProperty(CommonConstants.Broker.CONFIG_OF_SPOOLS,
-        CommonConstants.Broker.DEFAULT_OF_SPOOLS);
-        .defaultUseSpools(defaultUseSpool)
+    // Need to scan the first and last range as they might be partially matched
+    BlockDocIdSet scanBasedDocIdSet = scanBasedFilterOperator.getTrues();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2f3fca63` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4bd680a4` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
