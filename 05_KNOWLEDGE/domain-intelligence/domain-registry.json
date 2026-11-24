@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T22:07:38.515Z",
-  "total_records": 2581,
+  "last_updated": "2026-11-24T22:16:06.528Z",
+  "total_records": 2583,
   "domains": {
     "A": {
       "total": 22,
@@ -1628,7 +1628,7 @@
       ]
     },
     "H": {
-      "total": 615,
+      "total": 617,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2244,7 +2244,9 @@
         "domain_intelligence-technical-construction-intelligence-ataraxy-labs-sem-core-invariants",
         "domain_intelligence-technical-construction-intelligence-ataraxy-labs-sem-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-rdflib-rdflib-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-rdflib-rdflib-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-rdflib-rdflib-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-miso-belica-justext-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-miso-belica-justext-learnings-core-invariant"
       ]
     },
     "I": {
@@ -9947,8 +9949,8 @@
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "repository": "freenet/freenet-core",
-      "content_hash": "82bd5b13379695c2eee82ce160938e8fea49ad960190b5684b31f583e6e91d76",
-      "created_at": "2026-11-24T17:42:47.492Z"
+      "content_hash": "652774d026251f65432248fd83d73636f41ca006f49500b19419d5a54a485d72",
+      "created_at": "2026-11-24T22:16:01.120Z"
     },
     "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants",
@@ -10025,8 +10027,8 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-learnings-technical-construction-intelligence-freenet-freen.md",
       "repository": "freenet-freenet-core-learnings",
-      "content_hash": "a1119e9f81580605bd2854417fcb2c7ba00359848fea5a37331aae76db14297e",
-      "created_at": "2026-11-24T17:43:24.010Z"
+      "content_hash": "ca6e62ee3317fb647830e6ec04506f611696f43b7c939dd642bfdf4ccd843044",
+      "created_at": "2026-11-24T22:16:06.528Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -23548,8 +23550,8 @@
       "title": "Architecture Intelligence: topgrade-rs/topgrade Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-topgrade-rs-topgrade-architecture-intelligence-topgrade-rs-topgrade-core-invaria.md",
       "repository": "topgrade-rs/topgrade",
-      "content_hash": "384c2a21669a5bd51378a94336d52a7947f9d3b5240905e05c8d6d94984954eb",
-      "created_at": "2026-11-23T19:34:27.635Z"
+      "content_hash": "1ab38794498f34c2bd1ce87b0ab79aba4f5332f1dbaf223ae2011010f3dd2d64",
+      "created_at": "2026-11-24T22:15:50.804Z"
     },
     "domain_intelligence-architecture-intelligence-topgrade-rs-topgrade-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-topgrade-rs-topgrade-learnings-core-invariants",
@@ -23557,8 +23559,8 @@
       "title": "Architecture Intelligence: topgrade-rs-topgrade-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-topgrade-rs-topgrade-learnings-architecture-intelligence-topgrade-rs-topgrade-le.md",
       "repository": "topgrade-rs-topgrade-learnings",
-      "content_hash": "94a1287932316305882c58085c4510400a47c653070b37de8465e36f96b6ef38",
-      "created_at": "2026-11-23T19:34:47.750Z"
+      "content_hash": "a6b2a869a7be6b64c5bb00077d8f3b44a0cd1785c0de035859a216a6d85d991b",
+      "created_at": "2026-11-24T22:16:04.721Z"
     },
     "domain_intelligence-research-knowledge-intelligence-comfy-org-relayvsr-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-relayvsr-core-invariants",
@@ -43362,6 +43364,24 @@
       "repository": "domcyrus-rustnet-learnings",
       "content_hash": "649e55452a60bf9a4c004045a63f842b5a9fa55962fe2138d8cf8293b8460855",
       "created_at": "2026-11-24T22:07:36.422Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-miso-belica-justext-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-miso-belica-justext-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: miso-belica/jusText Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-miso-belica-justext-technical-construction-intelligence-miso-belica-justext-core.md",
+      "repository": "miso-belica/jusText",
+      "content_hash": "5182434c7d33ec2caabe704e1df57a2facafeaa6533b41f8800f9d66383008f4",
+      "created_at": "2026-11-24T22:15:52.359Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-miso-belica-justext-learnings-core-invariant": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-miso-belica-justext-learnings-core-invariant",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: miso-belica-justext-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-miso-belica-justext-learnings-technical-construction-intelligence-miso-belica-ju.md",
+      "repository": "miso-belica-justext-learnings",
+      "content_hash": "1f4665253e3e1b115e9047abd67071fb5b2559e8330d76d6a569b9c415242f03",
+      "created_at": "2026-11-24T22:16:05.798Z"
     }
   }
 }

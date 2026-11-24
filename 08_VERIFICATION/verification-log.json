@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-PE1K",
-    "timestamp": "2026-11-23T06:22:30.488Z",
-    "repository": "xerj-org/xerj",
-    "learningId": "learn-github-xerj-org-xerj",
-    "contentHash": "d3bcd9d96de47ac07c10866e63789d21ef2d374d60bcd3d58d8c619b52fd78b1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-8P9L",
-    "timestamp": "2026-11-23T06:37:31.497Z",
-    "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
-    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
-    "contentHash": "91ec00fbff7364c506967b5b7db8f6824e8474985d1103d95c7d25437dfccdf6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-8Y29",
-    "timestamp": "2026-11-23T06:37:42.897Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "4c6db895658d70a194b2176c3fb1b5fbc4a574ad8abb56ae33d755887283fc74",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-J62L",
     "timestamp": "2026-11-23T06:45:39.837Z",
     "repository": "zai-org/GLM-5.2",
@@ -7490,6 +7445,51 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
     "contentHash": "fbb63a4bcd3af9a8cb3d53c6699e62e992ef7cfd5d642ec1f728234316945dfc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-78FH",
+    "timestamp": "2026-11-24T22:15:50.381Z",
+    "repository": "topgrade-rs/topgrade",
+    "learningId": "learn-github-topgrade-rs-topgrade",
+    "contentHash": "7b10871cdb9761f04b63215e9f66e5028964fe05ca94ad25ecacd4e9e75e7d2d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-79LS",
+    "timestamp": "2026-11-24T22:15:51.904Z",
+    "repository": "miso-belica/jusText",
+    "learningId": "learn-github-miso-belica-justext",
+    "contentHash": "eab67422a4233fb0ae7242ade3a136690a4f3d421688b4748e063c43bf3b156c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-7GE2",
+    "timestamp": "2026-11-24T22:16:00.698Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "22499c457cdb9dac5b72b788fab55dfadcca1542a76d84eb2a2b0ffcdf010eec",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for miso/belica/justext
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for miso-belica/jusText
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "miso/belica/justext",
-  "source_url": "https://github.com/miso/belica/justext",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "miso-belica/jusText",
+  "source_url": "https://github.com/miso-belica/justext",
+  "source_version": "68533528",
+  "license": "BSD-2-Clause",
+  "timestamp": "2026-11-24T22:15:52.184Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-miso-belica-justext",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [miso/belica/justext](https://github.com/miso/belica/justext) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [miso-belica/jusText](https://github.com/miso-belica/justext) (Revision: `68533528`).  
+> **License**: BSD-2-Clause | **Timestamp**: `2026-11-24T22:15:52.184Z`  
+> **Learning ID**: `learn-github-miso-belica-justext`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `miso/belica/justext` (Commit: `historical`)
+- **Target Repository**: `miso-belica/jusText` (Commit: `68533528`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/miso-belica-justext-learnings.md`  
-> **Source**: github ([https://github.com/miso-belica/justext](https://github.com/miso-belica/justext))  
-> **Source Version**: `5fadda90`  
-> **License**: BSD-2-Clause  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T01:46:08.205Z  
-> **Learning ID**: `learn-github-miso-belica-justext`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): miso-belica/jusText
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/miso-belica-justext-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/miso-belica/justext](https://github.com/miso-belica/justext))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T01:46:07.403Z  
+> **Harvest Timestamp**: 2026-11-24T22:15:51.375Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Heuristic based boilerplate removal tool
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: N/A
-- **Stars / Engagement**: 828 stars
+- **Stars / Engagement**: 832 stars
 
 ---
 
@@ -75,6 +61,7 @@ This software is licensed as described in the file LICENSE.rst.
 from __future__ import absolute_import
 from __future__ import division, print_function, unicode_literals
 
+import codecs
 import re
 import lxml.html
 import lxml.sax
@@ -143,13 +130,20 @@ def html_to_dom(html, default_encoding=DEFAULT_ENCODING, encoding=None, errors=D
 def decode_html(html, default_encoding=DEFAULT_ENCODING, encoding=None, errors=DEFAULT_ENC_ERRORS):
     """
     Converts a `html` containing an HTML page into Unicode.
-    Tries to guess character encoding from meta tag.
+    Tries to guess character encoding from byte order mark or meta tag.
     """
     if isinstance(html, unicode):
         return html
 
     if encoding:
         return html.decode(encoding, errors)
+
+    # byte order mark wins over the declared encoding
+    # https://encoding.spec.whatwg.org/#bom-sniff
+    if html.startswith(codecs.BOM_UTF8):
+        return html.decode("utf-8-sig", errors)
+    if html.startswith((codecs.BOM_UTF16_LE, codecs.BOM_UTF16_BE)):
+        return html.decode("utf-16", errors)
 
     match = CHARSET_META_TAG_PATTERN.search(html)
     if match:
@@ -372,19 +366,7 @@ def get_next_neighbour(i, paragraphs, ignore_neargood):
 
 def revise_paragraph_classification(paragraphs, max_heading_distance=MAX_HEADING_DISTANCE_DEFAULT):
     """
-    Context-sensitive paragraph classification. Assumes that classify_pragraphs
-    has already been called.
-    """
-
-    # good headings
-    for i, paragraph in enumerate(paragraphs):
-        # copy classes
-        paragraph.class_type = paragraph.cf_class
-        if not (paragraph.heading and paragraph.class_type == 'short'):
-            continue
-        j = i + 1
-        distance = 0
-       
+    Context-sensitive paragraph classification. Assumes t
 ```
 
 ### Core Architecture Module: `justext/utils.py`
@@ -1033,14 +1015,17 @@ function hide_paragraph_details(paragraph, pdid) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #55** (2026-11-24): **Respect byte order marks in decode_html**
+  *Symptoms*: `decode_html` ignores byte order marks. A UTF-8 BOM stays in the decoded text as U+FEFF, and a UTF-16 document with a BOM and no `<meta>` tag decodes to garbage, which `justext()` then returns as one 3-character bad paragraph.  ### Before / after  Real output from `decode_html` (first 60 characters), before this change and after:  ```                        before                              after utf-8 BOM, no meta     '﻿<html><head><title>x</title>...'  '<html><head><title>x</title>...' utf-16 BOM, no meta    '��<\x00h\x00t\x00m\x00l\x00>...'  '<html><head><title>x</title>...' ```  End to end through `justext.justext()` on a document with four repeated sentences, the UTF-16 BOM file went from `[('bad', 3)]` to `[('good', 343)]`. A UTF-8 BOM file gives the same paragraphs before and after, since lxml drops the leading U+FEFF itself, so that part only changes what `decode_html` returns. Of the 11 real home pages I checked, `jb51.net` starts with a UTF-8 BOM.  ### Change (`justext/core.py`)  After the explicit `encoding` argument and before the meta tag, check for a UTF-8 or UTF-16 BOM and decode with `utf-8-sig` or `utf-16`. The HTML spec's encoding sniffing algorithm puts the BOM first ([parsing.html](https://html.spec.whatwg.org/multipage/parsing.html)). The spec puts it before a user override as well, but I kept `encoding=` winning so `--enc-force` and `encoding=` behave as before.  Input without a BOM takes the same path as before. One difference: a UTF-8 BOM followed by
+  **Post-Mortem & Fix Analysis**:
+  > Hello, thank you for the PR. Do you have any real websites as examples for these cases? Or what was your motivation for fixing these?
+  > Thanks for looking at it. To answer honestly: I found these by comparing `decode_html` with the WHATWG encoding sniffing algorithm and label table, not from a bug report on a particular site. The before/after table in the description uses byte strings I built for each case, so it shows the behaviour but not how often it happens.  I then ran `decode_html` on main and on this branch over 11 real pages (home pages of apache.org, mit.edu, cs.cmu.edu, nikkei.com, zol.com.cn, chinaz.com, jb51.net, cnki.net, itmedia.co.jp, 2ch.sc, gnu.org). Nine decode identically. Two differ:  - `jb51.net` starts with a UTF-8 BOM (`EF BB BF`). On main `decode_html` returns the text starting with U+FEFF, with this change it does not. The paragraphs from `justext()` are the same either way, because lxml drops the U+FEFF. - `itmedia.co.jp` is Shift_JIS. The byte pair `81 60` in "7～9月" decodes to U+301C on main and to U+FF5E with this change (the `shift_jis` label is read as cp932). The text of the paragraph cha
+
 - **Issue #49** (2025-02-24): **check for urllib3 first, before using urllib2**
   *Symptoms*: I have another package that installs urllib2, and therefore the import below succeeds, and then proceeds to break in Python 3.12   ```py     import urllib2 as urllib     URLError = urllib.URLError  ```    If we can upgrade this to check for urllib3 before trying urllib2, then having urllib2 won't break.     ```py3tb |   File "/usr/local/lib/python3.12/site-packages/justext/_compat.py", line 22, in <module> |     import urllib2 as urllib |   File "/usr/local/lib/python3.12/site-packages/urllib2.py", line 220 |     raise AttributeError, attr ```
   **Post-Mortem & Fix Analysis**:
   > I am not sure I understand. urllib2 is builtin library so there is no need to install it. And urllib3 is 3rd party package so I don)t want to test it in my code. The code is there only for compatibility between Python v2 and v3. Maybe I am missing some context?  https://github.com/miso-belica/jusText/blob/7fae5d457613cc96cf9ccb070e4aa2e70455f0e2/justext/_compat.py#L21-L26
   > There seems to be a compatibility issue impacting more recent versions of python:  ```   File "/opt/homebrew/lib/python3.11/site-packages/justext/__init__.py", line 12, in <module>     from .core import justext   File "/opt/homebrew/lib/python3.11/site-packages/justext/core.py", line 24, in <module>     from ._compat import unicode, ignored   File "/opt/homebrew/lib/python3.11/site-packages/justext/_compat.py", line 22, in <module>     import urllib2 as urllib   File "/opt/homebrew/lib/python3.11/site-packages/urllib2.py", line 220     raise AttributeError, attr ```
-
-- **Issue #48** (2024-05-09): **Fix issue with new version of lxml**
-  *Symptoms*: Fixes #47
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1057,89 +1042,63 @@ function hide_paragraph_details(paragraph, pdid) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7732fad9` (2024-05-09)
-**Commit Message**: Fix issue with new version of lxml
+### Incident Patch 1: `1c66a426` (2026-11-24)
+**Commit Message**: Add TDD and CHANGELOG guidelines to AGENTS.md
 
-**File**: `.github/workflows/run-tests.yml` (modified, +2/-2)
+**File**: `AGENTS.md` (added, +22/-0)
 ```diff
-@@ -24,13 +24,13 @@ jobs:
-         run: |
-           python -m pip install --upgrade pip
-           # pytest 4.6.X works best for older Python versions
--          pip install -U lxml "pytest==4.6.9" codecov 'coverage==4.5.4' pytest-cov
-+          pip install -U "lxml[html_clean]" "pytest==4.6.9" codecov 'coverage==4.5.4' pytest-cov
-         if: ${{ matrix.python-version == '2.7' }}
- 
-       - name: "Install dependencies (up to date)"
-         run: |
-           python -m pip install --upgrade pip
--          pip install -U lxml pytest codecov coverage pytest-cov
-+          pip install -U "lxml[html_clean]" pytest codecov coverage pytest-cov
-         if: ${{ matrix.python-version != '2.7' }}
- 
-       - run: py.test tests
-```
-
-**File**: `setup.py` (modified, +1/-1)
-```diff
-@@ -31,7 +31,7 @@
-     url="https://github.com/miso-belica/jusText",
-     license="The BSD 2-Clause License",
-     install_requires=[
--        'lxml >= 4.4.2',
-+        'lxml[html_clean] >= 4.4.2',
-         'backports.functools-lru-cache; python_version < "3.2"'
-     ],
-     tests_require=[
+@@ -0,0 +1,22 @@
++## Always practice red/green TDD
++
++Every behavioral change starts with a test that fails for the right reason.
++
++1. **RED** — write one test that expresses the behaviour you want, or that reproduces the bug
++   through the public interface. Run it and read the failure. A test that passes on the first run,
++   or fails with an unrelated error such as `ImportError`, proves nothing yet.
++2. **GREEN** — write the smallest change that makes it pass, then run the tests again.
++3. **REFACTOR** — clean up only once the tests are green. Never refactor while red.
++
++Work in vertical slices: one test, then the code for it, then the next test. Do not write a batch
++of tests up front and implement them all afterwards. Ask and wait for review and commit after every
++minimal change.
++
++## Update the CHANGELOG for every change worth mentioning
++
++Add a line to the "Unreleased" section of the CHANGELOG file for anything an end user
++could notice: bug fixes, new features, new languages, dependency and support changes. Follow the
++existing style and prefixes.
++
++Purely internal work with no observable effect — a refactor, a typo in a comment, test-only
++changes — does not need an entry.
 ```
 
 ---
 
-### Incident Patch 2: `8faa7dd2` (2023-01-24)
-**Commit Message**: Fix deprecated CodeQ analyser
+### Incident Patch 2: `ae63fe53` (2026-11-24)
+**Commit Message**: Update CHANGELOG for unreleased bug fix
 
-**File**: `.github/workflows/codeql-analysis.yml` (modified, +2/-2)
+**File**: `CHANGELOG.rst` (modified, +4/-0)
 ```diff
-@@ -26,10 +26,10 @@ jobs:
-       
-     # Initializes the CodeQL tools for scanning.
-     - name: Initialize CodeQL
--      uses: github/codeql-action/init@v1
-+      uses: github/codeql-action/init@v2
-       # Override language selection by uncommenting this and choosing your languages
-       with:
-         languages: python
+@@ -3,6 +3,10 @@
+ Changelog for jusText
+ =====================
  
-     - name: Perform CodeQL Analysis
--      uses: github/codeql-action/analyze@v1
-+      uses: github/codeql-action/analyze@v2
-```
-
----
-
-### Incident Patch 3: `1444be00` (2021-10-14)
-**Commit Message**: Fix backslash in regex, thanks pytest :)
-
-**File**: `justext/__main__.py` (modified, +1/-1)
-```diff
-@@ -205,7 +205,7 @@ def main():
-                     elif a in get_stoplists():
-                         stoplist = get_stoplist(a)
-                     else:
--                        if re.match('^\w*$', a):
-+                        if re.match(r'^\w*$', a):
-                             # only alphabetical chars, probably misspelled or
-                             # unsupported language
-                             raise JustextInvalidOptions(
++Unreleased ()
++------------------
++- *BUG FIX:* Respect UTF-8 and UTF-16 byte order marks when decoding HTML `#55 <https://github.com/miso-belica/jusText/pull/55>`_.
++
+ 3.0.2 (2025-02-25)
+ ------------------
+ - *BUG FIX:* Handle urllib imports in Python 2 and 3 correctly `#51 <https://github.com/miso-belica/jusText/pull/51>`_.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #55** (2026-11-24): Respect byte order marks in decode_html (@OsamaAnsar)
 - **PR #51** (2025-02-24): Handle urllib imports in Python 2 and 3 correctly (@miso-belica)
+- **PR #50** (2026-11-24): Add Javascript port to Readme.rst (@acenturyandabit)
 - **PR #48** (2024-05-09): Fix issue with new version of lxml (@miso-belica)
 - **PR #44** (closed): Create Japanese.txt (@nittolese)
 - **PR #41** (2021-10-18): Shorter, possibly more efficient code (@adbar)
-- **PR #40** (2021-10-14): Try to fix CI tests for Python 3.10 (@miso-belica)
-- **PR #39** (2021-10-14): Speed improvements and support for Python 3.10 (@adbar)
 
 ---
 
@@ -1159,33 +1118,52 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. issue with new version of lxml
+## X. Add TDD and CHANGELOG guidelines to AGENTS.md
 
 **RULE**:
-When implementing operations in `.github/workflows/run-tests.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in miso-belica/jusText. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in miso-belica/jusText. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7732fad9`: issue with new version of lxml. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1c66a426`: Add TDD and CHANGELOG guidelines to AGENTS.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/run-tests.yml`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-          pip install -U "lxml[html_clean]" "pytest==4.6.9" codecov 'coverage==4.5.4' pytest-cov
-          pip install -U "lxml[html_clean]" pytest codecov coverage pytest-cov
+## Always practice red/green TDD
+
+Every behavioral change starts with a test that fails for the right reason.
+
+1. **RED** — write one test that expresses the behaviour you want, or that reproduces the bug
+   through the public interface. Run it and read the failure. A test that passes on the first run,
+   or fails with an unrelated error such as `ImportError`, proves nothing yet.
+2. **GREEN** — write the smallest change that makes it pass, then run the tests again.
+3. **REFACTOR** — clean up only once the tests are green. Never refactor while red.
+
+Work in vertical slices: one test, then the code for it, then the next test. Do not write a batch
+of tests up front and implement them all afterwards. Ask and wait for review and commit after every
+minimal change.
+
+## Update the CHANGELOG for every change worth mentioning
+
+Add a line to the "Unreleased" section of the CHANGELOG file for anything an end user
+could notice: bug fixes, new features, new languages, dependency and support changes. Follow the
+existing style and prefixes.
+
+Purely internal work with no observable effect — a refactor, a typo in a comment, test-only
+changes — does not need an entry.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-// Anti-pattern to NEVER write (induced failure mode):
-          pip install -U lxml "pytest==4.6.9" codecov 'coverage==4.5.4' pytest-cov
-          pip install -U lxml pytest codecov coverage pytest-cov
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7732fad9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1c66a426` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

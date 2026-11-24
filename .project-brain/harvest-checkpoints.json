@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T22:07:32.115Z",
+  "last_updated": "2026-11-24T22:16:00.720Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "b0700cbc695eb7f990d8f1eeaf45b3a909160724047f1203288221ab9e4046df",
-      "verified_at": "2026-11-24T17:42:47.117Z",
+      "content_hash": "22499c457cdb9dac5b72b788fab55dfadcca1542a76d84eb2a2b0ffcdf010eec",
+      "verified_at": "2026-11-24T22:16:00.719Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T17:42:47.117Z"
+      "last_updated": "2026-11-24T22:16:00.719Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -10356,14 +10356,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-topgrade-rs-topgrade",
-      "content_hash": "1fb22bcf9a4f0e0b505000663212e653825da4f26c95cfe487ee63ee02e87948",
-      "verified_at": "2026-11-23T19:34:27.148Z",
+      "content_hash": "7b10871cdb9761f04b63215e9f66e5028964fe05ca94ad25ecacd4e9e75e7d2d",
+      "verified_at": "2026-11-24T22:15:50.404Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T19:34:27.148Z"
+      "last_updated": "2026-11-24T22:15:50.404Z"
     },
     "lucide-icons/lucide": {
       "repository": "lucide-icons/lucide",
@@ -14886,14 +14886,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-miso-belica-justext",
-      "content_hash": "5b8638d09cb82ee80923f6d89b010ba80982c96d9965a5e5b26bf234f3f2f1a4",
-      "verified_at": "2026-10-20T01:46:08.472Z",
+      "content_hash": "eab67422a4233fb0ae7242ade3a136690a4f3d421688b4748e063c43bf3b156c",
+      "verified_at": "2026-11-24T22:15:51.954Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T01:46:08.472Z"
+      "last_updated": "2026-11-24T22:15:51.954Z"
     },
     "heckj/swiftui-notes": {
       "repository": "heckj/swiftui-notes",

@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "e9613f90",
+    "sourceVersion": "d245524c",
     "license": "NOASSERTION",
-    "contentHash": "b0700cbc695eb7f990d8f1eeaf45b3a909160724047f1203288221ab9e4046df",
-    "lastHarvestedAt": "2026-11-24T17:42:47.103Z",
+    "contentHash": "22499c457cdb9dac5b72b788fab55dfadcca1542a76d84eb2a2b0ffcdf010eec",
+    "lastHarvestedAt": "2026-11-24T22:16:00.703Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -6863,10 +6863,10 @@
     "repository": "topgrade-rs/topgrade",
     "platform": "github",
     "sourceUrl": "https://github.com/topgrade-rs/topgrade",
-    "sourceVersion": "22af9e12",
+    "sourceVersion": "d2e732b9",
     "license": "GPL-3.0",
-    "contentHash": "1fb22bcf9a4f0e0b505000663212e653825da4f26c95cfe487ee63ee02e87948",
-    "lastHarvestedAt": "2026-11-23T19:34:27.138Z",
+    "contentHash": "7b10871cdb9761f04b63215e9f66e5028964fe05ca94ad25ecacd4e9e75e7d2d",
+    "lastHarvestedAt": "2026-11-24T22:15:50.386Z",
     "learningId": "learn-github-topgrade-rs-topgrade"
   },
   "lucide-icons-lucide": {
@@ -9893,10 +9893,10 @@
     "repository": "miso-belica/jusText",
     "platform": "github",
     "sourceUrl": "https://github.com/miso-belica/justext",
-    "sourceVersion": "5fadda90",
+    "sourceVersion": "68533528",
     "license": "BSD-2-Clause",
-    "contentHash": "5b8638d09cb82ee80923f6d89b010ba80982c96d9965a5e5b26bf234f3f2f1a4",
-    "lastHarvestedAt": "2026-10-20T01:46:08.467Z",
+    "contentHash": "eab67422a4233fb0ae7242ade3a136690a4f3d421688b4748e063c43bf3b156c",
+    "lastHarvestedAt": "2026-11-24T22:15:51.908Z",
     "learningId": "learn-github-miso-belica-justext"
   },
   "heckj-swiftui-notes": {

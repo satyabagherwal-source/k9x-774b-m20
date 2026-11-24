@@ -12822,3 +12822,6 @@
 | `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T21:53:46.061Z` | `t8y2-dbx` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-I-2DDA15B6` [Domain I] | Yes (`d536e507...`) |
 | `CYCLE-20261124-WFSB` | `2026-11-24T22:07:26.699Z` | `domcyrus/rustnet` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10367` | Yes (`c072ec0b...`) |
 | `CYCLE-20261124-WJY4` | `2026-11-24T22:07:32.092Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`fbb63a4b...`) |
+| `CYCLE-20261124-78FH` | `2026-11-24T22:15:50.381Z` | `topgrade-rs/topgrade` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10368` | Yes (`7b10871c...`) |
+| `CYCLE-20261124-79LS` | `2026-11-24T22:15:51.904Z` | `miso-belica/jusText` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/miso-belica-justext-learnings.md` | Yes (`eab67422...`) |
+| `CYCLE-20261124-7GE2` | `2026-11-24T22:16:00.698Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10369` | Yes (`22499c45...`) |

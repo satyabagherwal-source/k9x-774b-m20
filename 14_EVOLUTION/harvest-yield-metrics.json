@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T22:07:32.101Z",
-  "total_cycles_completed": 12181,
-  "total_learnings_persisted": 12181,
-  "total_rules_promoted": 11236,
+  "last_updated": "2026-11-24T22:16:00.708Z",
+  "total_cycles_completed": 12184,
+  "total_learnings_persisted": 12184,
+  "total_rules_promoted": 11238,
   "history": [
-    {
-      "timestamp": "2026-11-24T05:42:36.636Z",
-      "repository": "pulumi/pulumi",
-      "learningId": "learn-github-pulumi-pulumi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T05:42:43.199Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T06:11:11.852Z",
-      "repository": "FalkorDB/FalkorDB",
-      "learningId": "learn-github-falkordb-falkordb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T06:11:17.523Z",
       "repository": "appwrite/appwrite",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-24T22:07:32.101Z",
       "repository": "aleo-labs-protocol/snarkOS",
       "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T22:15:50.391Z",
+      "repository": "topgrade-rs/topgrade",
+      "learningId": "learn-github-topgrade-rs-topgrade",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T22:15:51.951Z",
+      "repository": "miso-belica/jusText",
+      "learningId": "learn-github-miso-belica-justext",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T22:16:00.708Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
