@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T05:19:49.690Z",
+  "timestamp": "2026-11-24T03:22:46.569Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-a2ui-project-a2ui-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [a2ui-project-a2ui-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T05:19:49.690Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T03:22:46.569Z`  
 > **Learning ID**: `LEARN-EVO-a2ui-project-a2ui-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 51%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 58%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from a2ui-project-a2ui-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/a2ui-project-a2ui-learnings.md`  
 > **Source**: github ([https://github.com/a2ui-project/a2ui](https://github.com/a2ui-project/a2ui))  
-> **Source Version**: `1cbef31b`  
+> **Source Version**: `c26be2dd`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T05:19:45.007Z  
+> **Timestamp**: 2026-11-24T03:22:35.207Z  
 > **Learning ID**: `learn-github-a2ui-project-a2ui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/a2ui-project-a2ui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/a2ui-project/a2ui](https://github.com/a2ui-project/a2ui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T05:19:44.600Z  
+> **Harvest Timestamp**: 2026-11-24T03:22:35.003Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Open-source generative UI framework: agents stream layout data, and apps render it with native components in React, Angular, Lit, Flutter, SwiftUI and Jetpack Compose.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, pyproject.toml, README.md
-- **Stars / Engagement**: 17516 stars
+- **Stars / Engagement**: 18401 stars
 
 ---
 
@@ -2032,11 +2032,11 @@ class A2uiRendererCallsStore:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4249** (2026-11-17): **fix(web_core): recognize DataBinding and FunctionCall schemas in isDynamicDef**
-  *Symptoms*: # Description  In `@a2ui/web_core`, `GenericBinder.isDynamicDef(defName, typeName)` checks whether a schema definition represents a dynamic value (data binding or function call): ```typescript function isDynamicDef(defName: string, typeName?: string): boolean {   return (     (defName === 'DataBinding' || defName === 'FunctionCall' || defName.startsWith('Dynamic')) &&     typeName !== 'ZodObject' &&     typeName !== 'ZodArray'   ); } ```  However, `CommonSchemas.DataBinding` (`DataBindingSchema`) and `CommonSchemas.FunctionCall` (`FunctionCallSchema`) are defined as `z.object({...})`, meaning their `typeName` is `'ZodObject'`. When a component property schema directly uses `CommonSchemas.DataBinding` or `CommonSchemas.FunctionCall`, `typeName !== 'ZodObject'` evaluates to `false`. Consequently, `getFieldBehavior` treats the property as static `{type: 'OBJECT'}` instead of `{type: 'DYNAMIC'}`: 1. Snapshot values retain raw `{path: '...'}` objects instead of resolving against `surface.dataModel`. 2. Two-way setters (`setValue`) are not synthesized.  This PR fixes `isDynamicDef` to return `true` immediately when `defName === 'DataBinding' || defName === 'FunctionCall'`, reserving the `typeName !== 'ZodObject' && typeName !== 'ZodArray'` check for `Dynamic*` schemas.  Fixes #3809  ## Pre-launch Checklist  One time:  - [x] I signed the [CLA]. - [x] I read the [Contributors Guide]. - [x] I read the [Style Guide]. - [ ] I have built and run at least one [sample].  For this PR:  - [x
+- **Issue #4385** (2026-11-23): **Staleness pings: message each assignee directly.**
+  *Symptoms*: Staleness pings now reach each assignee by direct message in Google Chat, instead of a post in the team's chat space.  Based on #3981 (`triage-doc-2`).  ## Changes  - **Pinger** (`tools/internal/triage/pkgs/pinger`): after posting the GitHub comment, it writes a direct message to each assignee whose Google account `TRIAGE_CHAT_USERS` gives, to the file passed with `--messages <file>` (one JSON object per line: `login`, `to`, `text`). It has no Google credentials, so it doesn't send them itself. The webhook (`TRIAGE_CHAT_WEBHOOK_URL`, `WebhookTeamChat`) is gone. A dry run prints the direct messages too. - **Triage bot skill**: in each run, the bot:   1. finds whom it will ping with a dry run;   2. looks up those assignees' Google accounts in the go/github registry, keeping them in `~/.config/a2ui-triage/chat_users.json` for later runs;   3. runs the pinger with `TRIAGE_CHAT_USERS` built from that file;   4. sends each message with its Google Chat tool, from the triager's account.    Assignees it can't find get only the GitHub comment; it never guesses an account. Failed messages are reported, not retried. - **Blueprint**: "The Google Chat message" becomes "The direct message". README updated. Also fixes a garbled line in the skill's "Start the triage bot" step.  ## Testing  - `dart test` and `dart analyze` in `pkgs/pinger` (new tests for the direct messages, assignees without an account, the dry run, and `JsonLinesOutbox`). - Ran the pinger with `--dry-run` against the reposit
 
-- **Issue #4244** (2026-11-16): **fix(angular): prevent NG0205 destroyed-injector errors across multi-spec test runs**
-  *Symptoms*: > **Architecture & Contract Brief** > - Root cause: `initializeAngularReactivity` kept only the first `EnvironmentInjector` (`if (isAttached) return`), leaving `@a2ui/web_core` bound to a destroyed `TestBed` injector (`NG0205`). > - Contract impact: Public `@a2ui/angular` signatures are unchanged. Effects stay on the earliest live `EnvironmentInjector` and promote the next live injector upon destruction or `NG0205`. > - Regression test: Added `typescript/renderers/angular/src/core/reactivity.spec.ts` covering `TestBed` resets, overlapping and nested injectors, code-based and message-only `NG0205` eviction, and fallback behavior. > - Key judgment call: Kept earliest-live host selection rather than last-wins so transient route injectors cleaned up by Angular Router cannot destroy effects on root surfaces.  ## Summary  Track active `EnvironmentInjector` instances in `@a2ui/angular` so destroyed injectors are pruned and effects promote to the next live injector across multi-spec `TestBed` runs.  Fixes #3949  ## Changes  - Replace the single-shot `isAttached` early return in `typescript/renderers/angular/src/core/reactivity.ts` with an ordered set of live `EnvironmentInjector` instances pruned via `DestroyRef.onDestroy` hooks and `.destroyed` checks. - Keep effects hosted on the earliest live `EnvironmentInjector`, evicting any injector that throws `NG0205` during `angularEffect` registration. - Delegate effect creation to `@a2ui/web_core`'s default signal backend once no live `En
+- **Issue #4375** (2026-11-23): **chore(release): changelog for a2ui-core 0.7.1, a2ui-agent-sdk 0.12.1**
+  *Symptoms*: Moves the `## Unreleased` entries under `a2ui-core` `0.7.1` and `a2ui-agent-sdk` `0.12.1`.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2053,610 +2053,244 @@ class A2uiRendererCallsStore:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dd29fa27` (2026-11-16)
-**Commit Message**: docs(blueprints): sync dart/a2ui_agent codebase blueprint to 24d1bf9c (#4186)
+### Incident Patch 1: `9bac7366` (2026-11-23)
+**Commit Message**: fix(docs): pin Python dependencies in requirements-docs.txt (#4265)
+
+Fixes #4222
 
 ## Summary
 
-Synchronizes
-`blueprints/codebases/dart/a2ui_agent/codebase.blueprint.md` with the
-`a2ui_agent` module blueprint
-(`24d1bf9c830071f74c9c908433e73cc6cbe0aa33`) and the `agent_functions`
-feature blueprint (`87b945802660c507bc84f7f47a25199b4939efbe`),
-documenting the RPC layer, v1.0 `@`-prefixed component envelope
-handling, and local `PromptGenerator` and transport-adapter decisions.
+Pins the direct Python dependencies in `requirements-docs.txt` to exact
+versions verified in CI and `uv.lock`. This prevents documentation build
+or validation failures when upstream packages publish new releases:
 
-## Changes
+- Pin `ghp-import==2.1.0` and `jsonschema==4.26.0` in
+`requirements-docs.txt`.
+- Add `referencing==0.37.0` explicitly to `requirements-docs.txt`.
+`docs/scripts/validate_doc_examples.py` imports `referencing` directly,
+while `jsonschema` leaves `referencing` unbounded above `>=0.28.4`.
+- Add `test_requirements_docs_pins_all_dependencies` in
+`docs/scripts/test_validate_doc_examples.py` verifying exact `==` pins
+on every entry in `requirements-docs.txt`.
 
-- Advanced `module_blueprint_commit` in
-`blueprints/codebases/dart/a2ui_agent/codebase.blueprint.md` to
-`24d1bf9c830071f74c9c908433e73cc6cbe0aa33` and added `agent_functions:
-87b945802660c507bc84f7f47a25199b4939efbe` under `implemented_features`.
-- Added the `Bidirectional Function RPC` architecture entry
-(`RendererToAgentMessageProcessor` and `RendererFunctionCalls` in
-`lib/src/rpc/`) and removed the nonexistent `BlockLexer` reference from
-`Parser & Streaming Layer`.
-- Documented `Single-Method PromptGenerator (No skill_generator)`, `No
-Built-in Transport Adapters`, and `Component Envelope Keys` under `Local
-Technical Decisions & Overrides`.
-
-**File**: `blueprints/codebases/dart/a2ui_agent/codebase.blueprint.md` (modified, +7/-2)
+**File**: `docs/scripts/test_validate_doc_examples.py` (modified, +17/-0)
 ```diff
-@@ -1,8 +1,9 @@
- ---
- codebase_path: dart/a2ui_agent
- associated_module: a2ui_agent
--module_blueprint_commit: a641e84f2861d1ff068df7616e06d08bfd4d0a88
-+module_blueprint_commit: 24d1bf9c830071f74c9c908433e73cc6cbe0aa33
- implemented_features:
-+  agent_functions: 87b945802660c507bc84f7f47a25199b4939efbe
-   agent_renderer_app: 21e8df7f8e67619c30682ede25f17f0a9cfa96f8
- local_development:
-   test_command: 'dart test'
-@@ -17,14 +18,18 @@ local_development:
- The official Dart implementation of the A2UI Agent SDK (`a2ui_agent`), targeting A2UI protocols v0.9 and v1.0 across Direct JSON and Express inference formats.
+@@ -16,6 +16,7 @@
  
- - **Inference Formats & Prompt Generation**: Implements `InferenceFormat` and `PromptGenerator` (`lib/src/inference_format.dart`, `lib/src/prompt/generator.dart`) with concrete strategies for Direct JSON (`lib/src/inference_formats/direct_json/`) and Express (`lib/src/inference_formats/express/`).
--- **Parser & Streaming Layer**: `Parser`, `BlockLexer`, `ResponsePart`, and `ResponseStream` (`lib/src/parser/`) tokenize sentinel-wrapped model responses and support incremental Direct JSON streaming.
-+- **Parser & Streaming Layer**: `Parser`, `ResponsePart`, and `ResponseStream` (`lib/src/parser/`) tokenize sentinel-wrapped model responses and support incremental Direct JSON and Express streaming.
- - **Express Compiler & Decompiler**: `ExpressCompiler` and `ExpressDecompiler` (`lib/src/inference_formats/express/`) compile A2UI Express DSL scopes into protocol messages and decompile messages back into Express syntax using an ANTLR-generated parser (`generated/`).
- - **Processor Facades & Catalog Negotiation**: `A2uiGenerator`, `A2uiRequestProcessor`, `CatalogConfig`, `CatalogProvider`, `readRendererCapabilities` (with `a2uiClientCapabilitiesKey` and `a2uiRendererCapabilitiesKey` in `lib/src/utils/renderer_capabilities.dart`), `resolveCatalogs`, and `RendererState` (`lib/src/processor/`, `lib/src/utils/`) manage capability extraction and negotiation, pruning transformers (`lib/src/catalog_transformers/`), and multi-catalog surface validation against `a2ui_core`.
-+- **Bidirectional Function RPC**: `RendererToAgentMessageProcessor` and `RendererFunctionCalls` (`lib/src/rpc/`) dispatch `callAgentFunction` requests against registered catalog `AgentFunction` implementations and manage pending `callRendererFunction` invocations.
+ import os
+ import pathlib
++import re
+ import sys
+ from unittest import mock
  
- ## **Local Technical Decisions & Overrides**
+@@ -26,6 +27,7 @@
+ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
  
- - **Protocol Version Selection from Active Catalogs**: Emitted message envelopes take their protocol version from the active `Catalog` instances negotiated for the request rather than a hardcoded default.
- - **ANTLR-Generated Express Grammar**: The Express lexer and parser under `lib/src/inference_formats/express/generated/` are generated from the canonical `specification/inference_formats/express/Express.g4` grammar.
-+- **Single-Method `PromptGenerator` (No `skill_generator`)**: Because `dart/a2ui_agent` does not implement the optional `skill_generator` feature, `PromptGenerator` (`lib/src/prompt/generator.dart`) declares a single abstract `String generate()` method rather than splitting prompt construction into `generateBaseRules`, `generateCatalogInstructions`, `generateExamples`, and `assembleInstructions` hooks, and `lib/a2ui_agent.dart` exports `DirectJsonPromptGenerator` and `ExpressPromptGenerator` directly.
-+- **No Built-in Transport Adapters**: `dart/a2ui_agent` stays transport-agnostic and does not bundle A2A or ADK framework wrappers; callers pass decoded `RendererToAgentMessage` payloads to `RendererToAgentMessageProcessor` and read transport metadata through `readRendererCapabilities`.
-+- **Component Envelope Keys**: On v1.0 components, `ExpressCompiler` (`lib/src/inference_formats/express/compiler.dart`) emits `@catalogId`, `@metadata`, and `@checks`; `CatalogSchemaHelper` (`lib/src/inference_formats/express/schema_helper.dart`) strips `@catalogId`, `@metadata`, `@accessibility`, and `@checks` (plus standard bare mixins) from Express signatures while keeping custom bare properties; `ExpressDecompiler` (`lib/src/inference_formats/express/decompiler.dart`) dual-reads `@`-prefixed and undeclared legacy bare `catalogId`, `metadata`, and `checks`; and `MessageReader` (`lib/src/utils/message_reader.dart`) and `RendererState` (`lib/src/utils/renderer_state.dart`) accept `@catalogId` alongside legacy bare `catalogId` during validation and surface tracking.
- 
- ## **Validation & Execution Recipes**
- 
+ from validate_doc_examples import (
++    REPO_ROOT,
+     V0_9_1,
+     V1_0,
+     _errors_for,
+@@ -330,3 +332,18 @@ def test_untabbed_broken_message_json_and_action_envelopes() -> None:
+     assert validate(extract_examples_from_text(DOC, pseudo_json)[0]) == []
+     assert validate(extract_examples_from_text(DOC, missing_ver_action)[0]) != []
+     assert validate(extract_examples_from_text(DOC, jsonrpc_err)[0]) == []
++
++
++def test_requirements_docs_pins_all_dependencies() -> None:
++    text = (REPO_ROOT / "requirements-docs.txt").read_text(encoding="utf-8")
++    pinned: set[str] = set()
++    for raw_line in text.splitlines():
++        line = raw_line.split("#", 1)[0].strip()
++        if line:
++            match = re.fullmatch(
++                r"([A-Za-z0-9][A-Za-z0-9._-]*)==([A-Za-z0-9][A-Za-z0-9._+-]*)",
++                line,
++            )
++            assert match, f"Expected exact 'pkg==version' pin, got: {line!r}"
++            pinned.add(re.sub(r"[-_.]+", "-", match.group(1)).lower())
++    assert {"ghp-import", "jsonschema", "referencing"} <= pinned
+```
+
+**File**: `requirements-docs.txt` (modified, +4/-2)
+```diff
+@@ -1,2 +1,4 @@
+-ghp-import
+-jsonschema
++# Keep jsonschema and referencing aligned with uv.lock.
++ghp-import==2.1.0
++jsonschema==4.26.0
++referencing==0.37.0
 ```
 
 ---
 
-### Incident Patch 2: `fbed1176` (2026-11-13)
-**Commit Message**: fix(web_core): settle surface actions once group action listeners settle (#4205)
+### Incident Patch 2: `0d2ab716` (2026-11-23)
+**Commit Message**: test(a2ui_flutter): pin the live login form request to its golden layout (#4350)
 
-### Summary
+## Summary
 
-[`SurfaceGroupModel.addSurface`](https://github.com/a2ui-project/a2ui/blob/a3b0a06c0710701763f124a61324b5781468e327/typescript/core/web_core/src/state/surface-group-model.ts#L69-L72) returns the `this._onAction.emit(action)` promise from its surface `onAction` subscription, so [`SurfaceModel.dispatchAction`](https://github.com/a2ui-project/a2ui/blob/a3b0a06c0710701763f124a61324b5781468e327/typescript/core/web_core/src/state/surface-model.ts#L752) resolves only after group-level `onAction` listeners finish processing the action.
+Pins the request of the two live `a2ui_flutter` login form tests to the
+layout of their golden scenarios, so that the nightly E2E drift check
+stops failing on the model's layout choices.
 
-[#3579](https://github.com/a2ui-project/a2ui/pull/3579) discarded that promise with `void` when adding error propagation. That caused `SurfaceModel.dispatchAction` to settle immediately for hosts listening on `SurfaceGroupModel.onAction` or `MessageProcessor`'s `actionHandler`, ending pending action UI states before async listeners completed.
+Fixes #4262
 
-### Changes
+## Changes
 
-1. Return `this._onAction.emit(action)` from the `surface.onAction` subscription in [`typescript/core/web_core/src/state/surface-group-model.ts`](https://github.com/a2ui-project/a2ui/blob/a3b0a06c0710701763f124a
+- `dart/a2ui_flutter/e2e_test/test/chat_turn_test.dart` and
+`dart/a2ui_flutter/e2e_test_v0_9/test/chat_turn_test.dart`:
+`loginFormRequest` now names every component of both turns.
+- The form is one surface: a `Card` holding a `Column` of a heading
+`Text`, two `TextField`s, and a "Sign in" `Button` with one `Text`
+child, and nothing else.
+- The reply to the button updates that same surface to a `Card` holding
+a `Column` of two `Text`s, and creates or deletes no surface.
+- A doc comment on the constant says why the request is this specific
+and names the golden it has to match.
 
-**File**: `typescript/core/web_core/CHANGELOG.md` (modified, +1/-0)
+**File**: `dart/a2ui_flutter/e2e_test/test/chat_turn_test.dart` (modified, +17/-2)
 ```diff
-@@ -41,6 +41,7 @@
- - `extractRefFields`, `NodeResolver`, `GenericBinder`, `scrapeSchemaBehavior`, `scrapeComponentBehavior` (newly exported), and `Catalog.componentRefMap` now resolve child references and dynamic bindings across wrapped (`ZodCatch`, `ZodPipeline`), composite (`ZodIntersection`, `ZodUnion`, `ZodDiscriminatedUnion`), empty-shape (`z.object({})`), open (`.passthrough()`, `.catchall()`, `z.record()`, `z.any()`, `z.unknown()`), and unannotated `child` / `children` component schemas ([#3783](https://github.com/a2ui-project/a2ui/issues/3783), [#3938](https://github.com/a2ui-project/a2ui/pull/3938)).
- - Export `getMarkdownRenderer`, `markdown`, and `setMarkdownRenderer` from `@a2ui/web_core/universal`, make `Catalog<T, F>` covariant in `T` and `F`, and infer `T` from the `catalogs` argument of `new MessageProcessor(catalogs)` so `SurfaceModel` instances carry the component implementation type of their registered catalogs ([#3423](https://github.com/a2ui-project/a2ui/issues/3423), [#4181](https://github.com/a2ui-project/a2ui/pull/4181)).
- - `A2uiLitElement.adoptLightDomStyles` scopes styles per element class, so a subclass registered under another tag gets its own stylesheet instead of reusing its parent's. [#4129](https://github.com/a2ui-project/a2ui/pull/4129)
-+- Return the `onAction` emit promise from `SurfaceGroupModel` surface subscriptions so `SurfaceModel.dispatchAction` resolves only after group `onAction` listeners settle. [#4205](https://github.com/a2ui-project/a2ui/pull/4205)
+@@ -27,9 +27,24 @@ import 'test_infra/api_key.dart';
+ import 'test_infra/pump.dart';
+ import 'test_infra/recording_client.dart';
  
- ## 0.15.0
++/// The request for a login form and for the reply to its button, in the
++/// layout of the golden scenario.
++///
++/// The nightly drift check in `scripts/e2e_test.sh` compares the components
++/// the recorded replies render with `conformance/e2e/login_form_action.yaml`,
++/// type by type and in order. The request therefore names every component
++/// of both turns. Asked only for a login form, the model adds an icon or a
++/// second button, or answers the button with a new surface, and the check
++/// reports each of those as drift.
+ const String loginFormRequest =
+-    'Show a login form with email and password fields and a "Sign in" '
+-    'button.';
++    'Show a login form as one surface. Its root is a Card whose child is a '
++    'Column of exactly four components, in this order: a Text heading, a '
++    'TextField for the email, a TextField for the password, and a "Sign in" '
++    'Button whose child is one Text. Use no other components: no icons, '
++    'images, dividers, rows, links or other buttons. When I press the '
++    'button, answer by updating that same surface. Do not create or delete '
++    'a surface. Make its root a Card whose child is a Column of exactly two '
++    'Text components and nothing else: no icons, images or buttons.';
  
+ const String productCardRequest =
+     'Show a product card for a coffee grinder that costs 129.99 USD and was '
 ```
 
-**File**: `typescript/core/web_core/src/state/surface-group-model.test.ts` (modified, +26/-0)
+**File**: `dart/a2ui_flutter/e2e_test_v0_9/test/chat_turn_test.dart` (modified, +18/-2)
 ```diff
-@@ -88,6 +88,32 @@ describe('SurfaceGroupModel', () => {
-     assert.strictEqual(receivedAction.sourceComponentId, 'c1');
-   });
+@@ -27,9 +27,25 @@ import 'test_infra/api_key.dart';
+ import 'test_infra/pump.dart';
+ import 'test_infra/recording_client.dart';
  
-+  it('settles surface actions once the group action listeners settle', async () => {
-+    let completeAction!: () => void;
-+    model.onAction.subscribe(
-+      () =>
-+        new Promise<void>(resolve => {
-+          completeAction = resolve;
-+        }),
-+    );
-+    const surface = new SurfaceModel('s1', catalog, new Map(), {});
-+    model.addSurface(surface);
-+    let isSettled = false;
-+
-+    const dispatched = surface.dispatchAction({event: {name: 'test'}}, 'c1').then(() => {
-+      isSettled = true;
-+    });
-+    await Promise.resolve();
-+    await Promise.resolve();
-+
-+    assert.strictEqual(isSettled, false);
-+
-+    completeAction();
-+    await dispatched;
-+
-+    assert.strictEqual(isSettled, true);
-+  });
-+
-   it('stops propagating actions after deletion', async () => {
-     let callCount = 0;
-     model.onAction.subscribe(() => {
-```
-
-**File**: `typescript/core/web_core/src/state/surface-group-model.ts` (modified, +3/-3)
-```diff
-@@ -67,9 +67,9 @@ export class SurfaceGroupModel<T extends ComponentApi> {
-     this.surfaces.set(surface.id, surface);
++/// The request for a login form and for the reply to its button, in the
++/// layout of the golden scenario.
++///
++/// The nightly drift check in `scripts/e2e_test.sh` compares the components
++/// the recorded replies render with
++/// `conformance/e2e/v0_9_1/login_form_action.yaml`, type by type and in
++/// order. The request therefore names every component of both turns. Asked
++/// only for a login form, the model adds an icon or a second button, or
++/// answers the button with a new surface, and the check reports each of
++/// those as drift.
+ const String loginFormRequest =
+-    'Show a login form with email and password fields and a "Sign in" '
+-    'button.';
++    'Show a login form as one surface. Its root is a Card whose child is a '
++    'Column of exactly four components, in this order: a Text heading, a '
++    'TextField for the email, a TextField for the password, and a "Sign in" '
++    'Button whose child is one Text. Use no other components: no icons, '
++    'images, dividers, rows, links or other buttons. When I press the '
++    'button, answer by updating that same surface. Do not create or delete '
++    'a surface. Make its root a Card whose child is a Column of exactly two '
++    'Text components and nothing else: no icons, images or buttons.';
  
-     // Subscribe to surface actions and errors and propagate
--    const sub = surface.onAction.subscribe(action => {
--      void this._onAction.emit(action);
--    });
-+    // Return the emit promise so that `surface.dispatchAction` only settles
-+    // once the group's action listeners have settled.
-+    const sub = surface.onAction.subscribe(action => this._onAction.emit(action));
-     this.surfaceUnsubscribers.set(surface.id, sub);
-     const errSub = surface.onError.subscribe(err => {
-       void this._onError.emit(err);
+ const String productCardRequest =
+     'Show a product card for a coffee grinder that costs 129.99 USD and was '
 ```
 
 ---
 
-### Incident Patch 3: `8da65014` (2026-11-16)
-**Commit Message**: fix(core): enforce function catalog validation across TypeScript, Dart, Python, and Swift (#4173) (#4187)
+### Incident Patch 3: `8feedf89` (2026-11-23)
+**Commit Message**: style(dart/a2ui_core): apply dart format to processor.dart and its test (#4371)
 
 ## Summary
 
-Brings `@a2ui/web_core` (TypeScript), `a2ui_core` (Dart), `a2ui-core`
-(Python), and `A2UICore` / `BasicCatalog` (Swift) to full 43/43 parity
-on the v0.9
-`specification/v0_9/test/cases/function_catalog_validation.json` test
-suite, and executes that suite in CI across all four Core SDKs.
-
-Resolves #4173
+Applies `dart format` to two files in `dart/a2ui_core` so that the
+`format-check` and `dart_a2ui_core` formatting jobs pass on `main`
+again. They have failed on `main`, and on every PR based on it, since
+#4197 merged.
 
 ## Changes
 
-- **TypeScript (`typescript/core/web_core`)**:
-- Updated `scripts/generate-catalog-schemas.mjs` and
-`src/catalog/schema_loader.ts` to emit and enforce `anyOf`
-required-property disjunctions, array `minItems` / `maxItems`, and
-`format: 'uri'` checks, and regenerated the basic catalog schema
-modules.
-- Added pre-v1.0 `returnType` checking and recursive nested function
-argument validation in `src/validation/payload-validator.ts`.
-- Wired `specification/v0_9/test/cases/function_catalog_validation.json`
-into `src/validation/payload-validator.test.ts` and
-`src/v0_9/schema/schema_generators.test.ts`.
-- **Dart (`dart/a2ui_core`)**:
-- Updated `PayloadValidator._resolve` in
-`lib/src/validation/validator.dart` to enforce RFC 3986 URI syntax on
-`'format': 'uri'` subs
+- `dart/a2ui_core/lib/src/processing/processor.dart`: one statement is
+wrapped the way Dart 3.13 formatting wraps it.
+- `dart/a2ui_core/test/processor_test.dart`: one list literal is
+re-indented, and one call is wrapped with a trailing comma.
 
-**File**: `dart/a2ui_core/CHANGELOG.md` (modified, +1/-0)
+The diff is the formatter's output and nothing else. With whitespace and
+trailing commas removed, both files are identical before and after.
+
+**File**: `dart/a2ui_core/lib/src/processing/processor.dart` (modified, +4/-2)
 ```diff
-@@ -2,6 +2,7 @@
- 
- ## Unreleased
- 
-+- **Breaking:** `PayloadValidator` enforces RFC 3986 scheme-prefixed URI syntax (`^[A-Za-z][A-Za-z0-9+.-]*:\S*$`) on string subschemas with `"format": "uri"` (such as `openUrl.args.url`) without mutating `Catalog.toJson()`, rejecting strings lacking a scheme or containing whitespace ([#4173](https://github.com/a2ui-project/a2ui/issues/4173), [#4187](https://github.com/a2ui-project/a2ui/pull/4187)).
- - **Breaking:** (v1_0) Update `ComponentCommon` and `Checkable` schemas, `Catalog.toJson()`, `Catalog.validationSchema`, and `ComponentModel.toJson()` to emit `@catalogId`, `@metadata`, `@accessibility`, and `@checks` on v1.0 surfaces, while `PayloadValidator` and `MessageProcessor` gate component `metadata` and `catalogId` envelope handling to v1.0+ surfaces (so pre-1.0 surfaces treat them as ordinary component properties), dual-read legacy bare `catalogId`, `metadata`, `accessibility`, and `checks` when undeclared as custom properties by the component schema, validate `@metadata.extensions` keys as UAX #31 identifiers, reject `null` `@catalogId` / legacy `catalogId`, and reject components specifying both `@`-prefixed and bare forms of the same mixin ([#1376](https://github.com/a2ui-project/a2ui/issues/1376), [#3466](https://github.com/a2ui-project/a2ui/issues/3466), [#3511](https://github.com/a2ui-project/a2ui/issues/3511), [#4012](https://github.com/a2ui-project/a2ui/issues/4012), [#4037](https://github.com/a2ui-project/a2ui/pull/4037), [#4044](https://github.com/a2ui-project/a2ui/pull/4044)).
- - Add explicit type annotations to internal local and pattern variables to satisfy the `specify_nonobvious_local_variable_types` analyzer lint on Dart 3.15+ ([#4233](https://github.com/a2ui-project/a2ui/pull/4233)).
- 
+@@ -616,8 +616,10 @@ class MessageProcessor<T extends ComponentApi> {
+         pointer != null &&
+         pointer.startsWith('/') &&
+         !pointer.substring(1).contains('/')) {
+-      final String key =
+-          pointer.substring(1).replaceAll('~1', '/').replaceAll('~0', '~');
++      final String key = pointer
++          .substring(1)
++          .replaceAll('~1', '/')
++          .replaceAll('~0', '~');
+       if (item.containsKey(key)) {
+         return (
+           A2uiErrorDetail(
 ```
 
-**File**: `dart/a2ui_core/lib/src/validation/validator.dart` (modified, +27/-5)
+**File**: `dart/a2ui_core/test/processor_test.dart` (modified, +10/-9)
 ```diff
-@@ -1216,14 +1216,36 @@ class PayloadValidator<C extends ComponentApi, F extends FunctionApi> {
-   }();
- 
-   Schema _resolve(Map<String, Object?> schema) => Schema.fromMap(
--        resolveSchemaRefs(
--          schema,
--          _resolutionDocument,
--          commonTypes: commonTypesSchema,
--          fallbackCommonTypes: _fallbackCommonTypes,
-+        _enforceStrictUriFormat(
-+          resolveSchemaRefs(
-+            schema,
-+            _resolutionDocument,
-+            commonTypes: commonTypesSchema,
-+            fallbackCommonTypes: _fallbackCommonTypes,
-+          ),
+@@ -1472,18 +1472,19 @@ void main() {
+           isA<A2uiValidationError>()
+               .having((e) => e.path, 'path', '/components/0/id')
+               .having((e) => e.errors, 'details', [
+-            const A2uiErrorDetail(
+-              path: '/id',
+-              code: 'invalid_value',
+-              message: "Component missing an 'id'.",
+-              surfaceId: 's',
+-            ),
+-          ]),
++                const A2uiErrorDetail(
++                  path: '/id',
++                  code: 'invalid_value',
++                  message: "Component missing an 'id'.",
++                  surfaceId: 's',
++                ),
++              ]),
          ),
        );
  
-+  static const String _uriFormatPattern = r'^[A-Za-z][A-Za-z0-9+.-]*:\S*$';
-+
-+  static Map<String, Object?> _enforceStrictUriFormat(
-+    Map<String, Object?> schema,
-+  ) =>
-+      _enforceStrictUriValue(schema)! as Map<String, Object?>;
-+
-+  static Object? _enforceStrictUriValue(Object? value) => switch (value) {
-+        final Map<Object?, Object?> map => <String, Object?>{
-+            for (final MapEntry<Object?, Object?> entry in map.entries)
-+              '${entry.key}': _enforceStrictUriValue(entry.value),
-+            if (map['format'] == 'uri' && !map.containsKey('pattern'))
-+              'pattern': _uriFormatPattern,
-+          },
-+        final List<Object?> list => <Object?>[
-+            for (final Object? item in list) _enforceStrictUriValue(item),
-+          ],
-+        _ => value,
-+      };
-+
-   static const Map<String, Object?> _anyV1FunctionCall = {
-     'type': 'object',
-     'properties': {
-```
-
-**File**: `dart/a2ui_core/test/validator_test.dart` (modified, +46/-0)
-```diff
-@@ -12,6 +12,9 @@
- // See the License for the specific language governing permissions and
- // limitations under the License.
- 
-+import 'dart:convert';
-+import 'dart:io';
-+
- import 'package:a2ui_core/a2ui_core.dart';
- import 'package:a2ui_core/src/validation/component_graph.dart'
-     show maxFunctionCallArgs, maxFunctionCallDepth;
-@@ -1675,4 +1678,47 @@ void v1RulesTests() {
-       );
-     });
-   });
-+
-+  group('v0.9 function_catalog_validation.json specification suite', () {
-+    final suiteJson = jsonDecode(
-+      File(
-+        '../../specification/v0_9/test/cases/function_catalog_validation.json',
-+      ).readAsStringSync(),
-+    ) as Map<String, Object?>;
-+    final List<Map<String, Object?>> tests =
-+        (suiteJson['tests'] as List<Object?>).cast<Map<String, Object?>>();
-+
-+    for (final testCase in tests) {
-+      final description = testCase['description']! as String;
-+      final expectedValid = testCase['valid']! as bool;
-+      final data = testCase['data']! as Map<String, Object?>;
-+      final update = data['updateComponents']! as Map<String, Object?>;
-+      final List<Map<String, Object?>> components =
-+          (update['components'] as List<Object?>).cast<Map<String, Object?>>();
-+
-+      test(description, () {
-+        final validator = PayloadValidator<ComponentApi, FunctionApi>(
-+          catalog: BasicCatalog.v0_9(),
-+          config: ValidationConfig.strict,
-+        );
-+        if (expectedValid) {
-+          for (final component in components) {
-+            expect(
-+              () => validator.validateComponent(component),
-+              returnsNormally,
-+            );
-+          }
-+        } else {
-+          expect(
-+            () {
-+              for (final component in components) {
-+                validator.validateComponent(component);
-+              }
-+            },
-+            throwsA(isA<A2uiValidationError>()),
-+          );
-+        }
-+      });
-+    }
-+  });
- }
-```
-
-**File**: `python/a2ui_core/CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -1,5 +1,6 @@
- ## Unreleased
- 
-+- **BREAKING CHANGE**: Enforce basic catalog function argument and return-type validation across `StrictBaseModel`, `SchemaValidator`, and `PayloadValidator`: reject `str` and `bool` values on pure `int`/`float` fields (such as `length.min`, `length.max`, `numeric.min`, and `numeric.max`), enforce `anyOf` required-branch constraints (`SchemaKeywords.required_any_of`), enforce RFC 3986 scheme-prefixed URI syntax (`^[A-Za-z][A-Za-z0-9+.-]*:\S*$`) on `"format": "uri"` fields (such as `openUrl.args.url`), and validate declared `returnType` values on nested function calls against the catalog function definition on pre-1.0 surfaces. Recommended migration: pass numeric values to `min` and `max`, supply at least one bound on `length` and `numeric`, pass a scheme-prefixed URI to `openUrl.url`, and match or omit `returnType` on nested function calls ([#4173](https://github.com/a2ui-project/a2ui/issues/4173), [#4187](https://github.com/a2ui-project/a2ui/pull/4187)).
- - **BREAKING CHANGE**: (v1_0) Update `ComponentCommon` and `Checkable` schemas, `Catalog.validation_schema`, and `ComponentModel.component_tree` to emit `@catalogId`, `@metadata`, `@accessibility`, and `@checks` on v1.0 surfaces (`ComponentModel.component_tree` writes envelope metadata under `@metadata`), while `PayloadValidator` and `MessageProcessor` gate component `metadata` and `catalogId` envelope handling to v1.0+ surfaces (so pre-1.0 surfaces treat them as ordinary component properties), dual-read legacy bare `catalogId`, `metadata`, `accessibility`, and `checks` when undeclared as custom properties by the component schema, validate `@metadata.extensions` keys as UAX #31 identifiers, reject `null` `@catalogId` / legacy `catalogId`, and reject components specifying both `@`-prefixed and bare forms of the same mixin ([#1376](https://github.com/a2ui-project/a2ui/issues/1376), [#3466](https://github.com/a2ui-project/a2ui/issues/3466), [#3511](https://github.com/a2ui-project/a2ui/issues/3511), [#4012](https://github.com/a2ui-project/a2ui/issues/4012), [#4037](https://github.com/a2ui-project/a2ui/pull/4037), [#4044](https://github.com/a2ui-project/a2ui/pull/4044)).
- 
- ## 0.6.0 (2026-11-10)
-```
-
-**File**: `python/a2ui_core/src/a2ui/core/schema/_json_schema.py` (modified, +32/-0)
-```diff
-@@ -29,13 +29,16 @@
- from contextlib import contextmanager
- from contextvars import ContextVar
- import copy
-+import re
- import sys
- from typing import Annotated, Any, Final
- 
- from pydantic import GetCoreSchemaHandler, GetJsonSchemaHandler, TypeAdapter
- from pydantic.json_schema import JsonSchemaValue
- from pydantic_core import core_schema
- 
-+_URI_RE: Final[re.Pattern[str]] = re.compile(r"^[A-Za-z][A-Za-z0-9+.-]*:\S*\Z")
-+
- # Pydantic rejects `$ref`s it has not registered while it generates a schema,
- # so declared keywords reference other defs through these markers, which
- # `resolve_ref_markers` replaces afterwards: one for the catalog's function
-@@ -373,6 +376,21 @@ def required_one_of(self) -> list[list[str]] | None:
-             return None
-         return [list(branch["required"]) for branch in branches]
- 
-+    def required_any_of(self) -> list[list[str]] | None:
-+        """Returns the property groups of an `anyOf` of required properties.
-+
-+        For example `LengthArgs` and `NumericArgs` require at least one of
-+        `min` and `max`. Returns None if the keywords have no such `anyOf`.
-+        """
-+        branches = self.keywords.get("anyOf")
-+        if not (
-+            isinstance(branches, list)
-+            and branches
-+            and all(isinstance(b, dict) and set(b) == {"required"} for b in branches)
-+        ):
-+            return None
-+        return [list(branch["required"]) for branch in branches]
-+
-     def apply(self, schema: dict[str, Any]) -> None:
-         """Applies the keywords to `schema` in place."""
-         if self.spec_only and not is_spec_schema():
-@@ -392,6 +410,20 @@ def __call__(self, schema: dict[str, Any], cls: type[Any]) -> None:
-         if self.declared_by(cls):
-             self.apply(schema)
- 
-+    def __get_pydantic_core_schema__(
-+        self, source: Any, handler: GetCoreSchemaHandler
-+    ) -> core_schema.CoreSchema:
-+        inner = handler(source)
-+        if self.keywords.get("format") != "uri":
-+            return inner
-+        return core_schema.no_info_after_validator_function(self._validate_uri, inner)
-+
-+    @staticmethod
-+    def _validate_uri(value: Any) -> Any:
-+        if isinstance(value, str) and _URI_RE.match(value) is None:
-+            raise ValueError(f"Invalid URI '{value}'")
-+        return value
-+
-     def __get_pydantic_json_schema__(
-         self, schema: core_schema.CoreSchema, handler: GetJsonSchemaHandler
-     ) -> JsonSchemaValue:
-```
-
-**File**: `python/a2ui_core/src/a2ui/core/schema/common_types.py` (modified, +95/-1)
-```diff
-@@ -15,13 +15,14 @@
- from __future__ import annotations
- import functools
- import sys
-+import types
- import typing
- from typing import Any, Dict, List, Optional, Union
- from pydantic import BaseModel, ConfigDict, Field, GetCoreSchemaHandler, ValidationInfo, field_validator, model_validator, StrictBool, StrictFloat, StrictInt, StrictStr
- from pydantic_core import CoreSchema, PydanticUndefined
- from typing_extensions import Self, TypeAliasType
- 
--from ._json_schema import SchemaKeywords
-+from ._json_schema import _URI_RE, SchemaKeywords
- 
- 
- class ComponentReference:
-@@ -47,9 +48,102 @@ class ListReference(ComponentReference):
-     """Marker class indicating a field holds a list of component references."""
- 
- 
-+def _unwrap_leaf_types(annotation: Any) -> list[Any]:
-+    """Unwraps Union, UnionType, Annotated, and TypeAliasType into leaf types."""
-+    if isinstance(annotation, TypeAliasType):
-+        return _unwrap_leaf_types(annotation.__value__)
-+    origin = typing.get_origin(annotation)
-+    if origin is typing.Annotated:
-+        args = typing.get_args(annotation)
-+        return _unwrap_leaf_types(args[0]) if args else []
-+    if origin is Union or origin is types.UnionType:
-+        leaves: list[Any] = []
-+        for arg in typing.get_args(annotation):
-+            leaves.extend(_unwrap_leaf_types(arg))
-+        return leaves
-+    return [annotation]
-+
-+
-+def _is_strict_numeric_field(annotation: Any) -> bool:
-+    """Returns whether non-None leaf annotations are strictly int or float."""
-+    non_none = [t for t in _unwrap_leaf_types(annotation) if t is not type(None)]
-+    return bool(non_none) and all(t is int or t is float for t in non_none)
-+
-+
-+def _has_uri_format(extra: Any) -> bool:
-+    """Returns whether `json_schema_extra` declares `format: "uri"`."""
-+    if isinstance(extra, dict):
-+        return extra.get("format") == "uri"
-+    if isinstance(extra, SchemaKeywords):
-+        return extra.keywords.get("format") == "uri"
-+    return False
-+
-+
-+@functools.cache
-+def _strict_field_checks(
-+    cls: type[BaseModel],
-+) -> tuple[frozenset[str], frozenset[str]]:
-+    """Returns `(numeric_keys, uri_keys)` for `cls` (including aliases)."""
-+    numeric_keys: set[str] = set()
-+    uri_keys: set[str] = set()
-+    for name, field in cls.model_fields.items():
-+        keys = {name, field.alias or name}
-+        if isinstance(field.validation_alias, str):
-+            keys.add(field.validation_alias)
-+        if _is_strict_numeric_field(field.annotation):
-+            numeric_keys.update(keys)
-+        if _has_uri_format(field.json_schema_extra):
-+            uri_keys.update(keys)
-+    return frozenset(numeric_keys), frozenset(uri_keys)
-+
-+
- class StrictBaseModel(BaseModel):
-     model_config = ConfigDict(extra="forbid", populate_by_name=True)
- 
-+    @model_validator(mode="before")
-+    @classmethod
-+    def _validate_strict_fields(cls, data: Any) -> Any:
-+        if not isinstance(data, dict):
-+            return data
-+        numeric_keys, uri_keys = _strict_field_checks(cls)
-+        for key in numeric_keys.intersection(data):
-+            if isinstance(data[key], (str, bool)):
-+                raise ValueError(
-+                    f"Field '{key}' expected a numeric value, got"
-+                    f" {type(data[key]).__name__}"
-+                )
-+        for key in uri_keys.intersection(data):
-+            val = data[key]
-+            if isinstance(val, str) and _URI_RE.match(val) is None:
-+                raise ValueError(f"Field '{key}' must be a valid URI, got '{val}'")
-+        return data
-+
-+    @model_validator(mode="after")
-+    def _check_required_any_of(self) -> Self:
-+        keywords = type(self).model_config.get("json_schema_extra")
-+        branches = (
-+            keywords.required_any_of() if isinstance(keywords, SchemaKeywords) else None
-+        )
-+        if not branches:
-+            return self
-+        names = {
-+            field.alias or name: name for name, field in type(self).model_fields.items()
-+        }
-+        matched = any(
-+            all(
-+                names.get(prop, prop) in self.model_fields_set
-+                and getattr(self, names.get(prop, prop), None) is not None
-+                for prop in branch
-+            )
-+            for branch in branches
-+        )
-+        if not matched:
-+            choices = " | ".join(", ".join(branch) for branch in branches)
-+            raise ValueError(
-+                f"{type(self).__name__} must set at least one of: {choices}"
-+            )
-+        return self
-+
-     @field_validator("version", mode="after", check_fields=False)
-     @classmethod
-     def validate_version_field(cls, v: Any, info: ValidationInfo) -> Any:
-```
-
-**File**: `python/a2ui_core/src/a2ui/core/validation/payload_validator.py` (modified, +52/-0)
-```diff
-@@ -1150,6 +1150,58 @@ def _validate_nested_call(
-                 )
-             )
- 
-+        self._check_pre_v10_return_type(
-+            fn_name, call, call_path, at_least_v10, full_check, errors
-+        )
-+
-+    def _check_pre_v10_return_type(
-+        self,
-+        fn_name: str,
-+        call: dict[str, Any],
-+        call_path: str,
-+        at_least_v10: bool,
-+        full_check: bool,
-+        errors: list[A2uiErrorDetail],
-+    ) -> None:
-+        """Checks an explicit pre-v1.0 `returnType` against the catalog definition."""
-+        if at_least_v10 or not full_check or "returnType" not in call:
-+            return
-+        expected_rt = self._expected_function_return_type(fn_name)
-+        actual_rt = call["returnType"]
-+        if (
-+            expected_rt is not None
-+            and expected_rt != "any"
-+            and actual_rt != expected_rt
-+        ):
-+            errors.append(
-+                A2uiErrorDetail(
-+                    path=f"{call_path}.returnType",
-+                    code="invalid_function_call",
-+                    message=(
-+                        f"Function '{fn_name}' expects returnType"
-+                        f" '{expected_rt}', got '{actual_rt}'"
-+                    ),
-+                )
-+            )
-+
-+    def _expected_function_return_type(self, fn_name: str) -> str | None:
-+        """Returns the catalog function's declared returnType, or None."""
-+        fn_def, fn_schema, _ = self._find_function_definition(fn_name)
-+        return_type = getattr(fn_def, "return_type", None)
-+        if isinstance(return_type, str):
-+            return return_type
-+        if isinstance(fn_schema, dict):
-+            top = fn_schema.get("returnType")
-+            if isinstance(top, str):
-+                return top
-+            props = fn_schema.get("properties")
-+            if isinstance(props, dict):
-+                rt_prop = props.get("returnType")
-+                const_rt = rt_prop.get("const") if isinstance(rt_prop, dict) else None
-+                if isinstance(const_rt, str):
-+                    return const_rt
-+        return None
-+
-     def _validate_system_function(
-         self,
-         fn_name: str,
-```
-
-**File**: `python/a2ui_core/src/a2ui/core/validation/schema_validator.py` (modified, +22/-2)
-```diff
-@@ -136,13 +136,33 @@ def _refuse_retrieval(uri: str) -> referencing.Resource[Any]:
-     retrieve=_refuse_retrieval  # type: ignore[call-arg]
- )
- 
-+_URI_RE: Final[regex.Pattern[str]] = regex.compile(r"^[A-Za-z][A-Za-z0-9+.-]*:\S*\Z")
-+
-+_FORMAT_CHECKER: Final[jsonschema.FormatChecker] = jsonschema.FormatChecker()
-+
-+
-+@_FORMAT_CHECKER.checks("uri")
-+def _is_valid_uri(instance: object) -> bool:
-+    return not isinstance(instance, str) or _URI_RE.match(instance) is not None
-+
-+
- _orig_init = SchemaValidator.__init__
- 
- 
- def _init_schema_validator(
--    self: Any, *args: Any, registry: Any = _NO_RETRIEVAL_REGISTRY, **kwargs: Any
-+    self: Any,
-+    *args: Any,
-+    registry: Any = _NO_RETRIEVAL_REGISTRY,
-+    format_checker: Any = _FORMAT_CHECKER,
-+    **kwargs: Any,
- ) -> None:
--    _orig_init(self, *args, registry=registry, **kwargs)
-+    _orig_init(
-+        self,
-+        *args,
-+        registry=registry,
-+        format_checker=format_checker,
-+        **kwargs,
-+    )
- 
- 
- SchemaValidator.__init__ = _init_schema_validator
+-      final List<ErrorMessage> errors =
+-          processor.processMessagesWithErrors([update]);
++      final List<ErrorMessage> errors = processor.processMessagesWithErrors([
++        update,
++      ]);
+       expect(errors, hasLength(1));
+       expect(errors.single.error.code, 'VALIDATION_FAILED');
+       expect(errors.single.error.path, '/components/0/id');
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4249** (closed): fix(web_core): recognize DataBinding and FunctionCall schemas in isDynamicDef (@jihanurrahman33)
-- **PR #4244** (2026-11-16): fix(angular): prevent NG0205 destroyed-injector errors across multi-spec test runs (@gspencergoog)
-- **PR #4235** (2026-11-14): docs(site): update landing page closing CTA (@yjbanov)
-- **PR #4234** (2026-11-16): chore(github): add CODEOWNERS for /specification/ (@gspencergoog)
-- **PR #4233** (2026-11-13): fix(dart): add explicit types for specify_nonobvious_local_variable_types lint (@ditman)
-- **PR #4229** (closed): feat(web_core)!: migrate the TypeScript packages to zod 4 (@pomahtuk)
+- **PR #4385** (2026-11-23): Staleness pings: message each assignee directly. (@polina-c)
+- **PR #4375** (2026-11-23): chore(release): changelog for a2ui-core 0.7.1, a2ui-agent-sdk 0.12.1 (@gspencergoog)
+- **PR #4374** (2026-11-23): chore(release): prepare Dart 0.9.0/0.5.0 and Swift 0.12.0 releases (@gspencergoog)
+- **PR #4373** (2026-11-23): chore(release): bump npm package versions for release (@gspencergoog)
+- **PR #4371** (2026-11-23): style(dart/a2ui_core): apply dart format to processor.dart and its test (@gspencergoog)
+- **PR #4353** (2026-11-22): Host the triage UI, with GitHub sign-in. (@polina-c)
 
 ---
 
@@ -2676,37 +2310,47 @@ into `src/validation/payload-validator.test.ts` and
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(blueprints): sync dart/a2ui_agent codebase blueprint to 24d1bf9c
+## X. docs): pin Python dependencies in requirements-docs.txt
 
 **RULE**:
-When implementing operations in `blueprints/codebases/dart/a2ui_agent/codebase.blueprint.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in a2ui-project/a2ui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/scripts/test_validate_doc_examples.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in a2ui-project/a2ui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dd29fa27`: docs(blueprints): sync dart/a2ui_agent codebase blueprint to 24d1bf9c. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9bac7366`: docs): pin Python dependencies in requirements-docs.txt. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `blueprints/codebases/dart/a2ui_agent/codebase.blueprint.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/scripts/test_validate_doc_examples.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-module_blueprint_commit: 24d1bf9c830071f74c9c908433e73cc6cbe0aa33
-  agent_functions: 87b945802660c507bc84f7f47a25199b4939efbe
-- **Parser & Streaming Layer**: `Parser`, `ResponsePart`, and `ResponseStream` (`lib/src/parser/`) tokenize sentinel-wrapped model responses and support incremental Direct JSON and Express streaming.
-- **Bidirectional Function RPC**: `RendererToAgentMessageProcessor` and `RendererFunctionCalls` (`lib/src/rpc/`) dispatch `callAgentFunction` requests against registered catalog `AgentFunction` implementations and manage pending `callRendererFunction` invocations.
-- **Single-Method `PromptGenerator` (No `skill_generator`)**: Because `dart/a2ui_agent` does not implement the optional `skill_generator` feature, `PromptGenerator` (`lib/src/prompt/generator.dart`) declares a single abstract `String generate()` method rather than splitting prompt construction into `generateBaseRules`, `generateCatalogInstructions`, `generateExamples`, and `assembleInstructions` hooks, and `lib/a2ui_agent.dart` exports `DirectJsonPromptGenerator` and `ExpressPromptGenerator` directly.
-- **No Built-in Transport Adapters**: `dart/a2ui_agent` stays transport-agnostic and does not bundle A
+import re
+    REPO_ROOT,
+
+
+def test_requirements_docs_pins_all_dependencies() -> None:
+    text = (REPO_ROOT / "requirements-docs.txt").read_text(encoding="utf-8")
+    pinned: set[str] = set()
+    for raw_line in text.splitlines():
+        line = raw_line.split("#", 1)[0].strip()
+        if line:
+            match = re.fullmatch(
+                r"([A-Za-z0-9][A-Za-z0-9._-]*)==([A-Za-z0-9][A-Za-z0-9._+-]*)",
+                line,
+            )
+            assert match, f"Expected exact 'pkg==version' pin, got: {line!r}"
+            pinned.add(re.sub(r"[-_.]+", "-", match.group(1)).lower())
+    assert {"ghp-import", "jsonschema", "referencing"} <= pinned
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-module_blueprint_commit: a641e84f2861d1ff068df7616e06d08bfd4d0a88
-- **Parser & Streaming Layer**: `Parser`, `BlockLexer`, `ResponsePart`, and `ResponseStream` (`lib/src/parser/`) tokenize sentinel-wrapped model responses and support incremental Direct JSON streaming.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dd29fa27` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9bac7366` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

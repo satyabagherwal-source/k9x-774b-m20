@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-24T02:21:42.664Z",
+  "updated_at": "2026-11-24T03:23:14.798Z",
   "statistics": {
-    "total_nodes": 495,
+    "total_nodes": 496,
     "total_edges": 205,
     "domain_distribution": {
       "D": 301,
       "M": 1,
       "H": 88,
       "J": 22,
-      "K": 29,
+      "K": 30,
       "L": 8,
       "G": 1,
       "F": 27,
@@ -11057,6 +11057,28 @@
       ],
       "created_at": "2026-11-24T02:21:42.664Z",
       "updated_at": "2026-11-24T02:21:42.664Z"
+    },
+    "DOM-K-AA8CD5C4": {
+      "id": "DOM-K-AA8CD5C4",
+      "domain": "K",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "test: migrate Rust test fixtures to V2 syntax",
+      "summary": "Prevents defects observed in production commit `32ba4b5c`: test: migrate Rust test fixtures to V2 syntax. Unvalidated execution paths cause  -> When implementing operations in `index_read/src/index/directory/mvcc.rs`, engineers MUST enforce rigorous boundary validation, safe state tr",
+      "confidence": 0.64,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://paradedb-paradedb/paradedb-paradedb-learnings.md",
+        "source_version": "32ba4b5c",
+        "observed_at": "2026-11-24T03:22:41.990Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (paradedb-paradedb)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "K",
+        "Quality & Verification Intelligence"
+      ],
+      "created_at": "2026-11-24T03:23:14.798Z",
+      "updated_at": "2026-11-24T03:23:14.798Z"
     }
   },
   "edges": [

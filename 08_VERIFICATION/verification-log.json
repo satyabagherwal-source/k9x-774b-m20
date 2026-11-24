@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-XEO5",
-    "timestamp": "2026-11-22T07:37:03.365Z",
-    "repository": "thinkingmachines/Inkling-2-Small",
-    "learningId": "learn-huggingface-thinkingmachines-inkling-2-small",
-    "contentHash": "5928121396a8bb7d58664fde1fc62374840323a32de3cd2fc1d054b0411a87f5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-XFZ9",
-    "timestamp": "2026-11-22T07:37:05.061Z",
-    "repository": "domcyrus/rustnet",
-    "learningId": "learn-github-domcyrus-rustnet",
-    "contentHash": "eca52ec64be58abfb84cac843342f6df0ddcb3cd4340a4090cb00c87c2c59e0a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-XK7H",
     "timestamp": "2026-11-22T07:37:10.541Z",
     "repository": "kotest/kotest",
@@ -7490,6 +7460,36 @@
     "repository": "databendlabs/databend",
     "learningId": "learn-github-databendlabs-databend",
     "contentHash": "a2ba92cf6feb719084e1b9a9019774344e13f907fc37d08c2ba6cd25f095d8be",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-PVU9",
+    "timestamp": "2026-11-24T03:22:36.273Z",
+    "repository": "a2ui-project/a2ui",
+    "learningId": "learn-github-a2ui-project-a2ui",
+    "contentHash": "f8533d537f2d81a335674c9e3e0b2829cbb2f19d014e71461fd44145ebf2fe65",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-Q12M",
+    "timestamp": "2026-11-24T03:22:43.054Z",
+    "repository": "paradedb/paradedb",
+    "learningId": "learn-github-paradedb-paradedb",
+    "contentHash": "1ec9a7ba89efdabeb32f18f46e941be6201b4d1c64141f03ce570e3d247e4e81",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

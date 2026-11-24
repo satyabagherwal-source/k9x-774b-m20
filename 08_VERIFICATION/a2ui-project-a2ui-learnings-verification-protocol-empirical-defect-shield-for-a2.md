@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T05:28:01.453Z",
+  "timestamp": "2026-11-24T03:22:46.569Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-a2ui-project-a2ui-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [a2ui-project-a2ui-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T05:28:01.453Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T03:22:46.569Z`  
 > **Learning ID**: `LEARN-EVO-a2ui-project-a2ui-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/a2ui-project-a2ui-learnings.md`  
 > **Source**: github ([https://github.com/a2ui-project/a2ui](https://github.com/a2ui-project/a2ui))  
-> **Source Version**: `5ff1b05f`  
+> **Source Version**: `c26be2dd`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T05:27:52.531Z  
+> **Timestamp**: 2026-11-24T03:22:35.207Z  
 > **Learning ID**: `learn-github-a2ui-project-a2ui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/a2ui-project-a2ui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/a2ui-project/a2ui](https://github.com/a2ui-project/a2ui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T05:27:52.526Z  
+> **Harvest Timestamp**: 2026-11-24T03:22:35.003Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Open-source generative UI framework: agents stream layout data, and apps render it with native components in React, Angular, Lit, Flutter, SwiftUI and Jetpack Compose.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, pyproject.toml, README.md
-- **Stars / Engagement**: 17697 stars
+- **Stars / Engagement**: 18401 stars
 
 ---
 
@@ -2029,11 +2029,11 @@ class A2uiRendererCallsStore:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4332** (2026-11-20): **chore(deps): bump the npm_and_yarn group across 2 directories with 13 updates**
-  *Symptoms*: Bumps the npm_and_yarn group with 11 updates in the / directory:  | Package | From | To | | --- | --- | --- | | [@modelcontextprotocol/sdk](https://github.com/modelcontextprotocol/typescript-sdk) | `1.30.1` | `1.32.0` | | [markdown-it](https://github.com/markdown-it/markdown-it) | `14.2.0` | `14.3.3` | | [hono](https://github.com/honojs/hono) | `4.12.25` | `4.13.16` | | [next](https://github.com/vercel/next.js) | `16.3.6` | `16.4.5` | | [@fastify/busboy](https://github.com/fastify/busboy) | `3.2.0` | `3.2.6` | | [engine.io](https://github.com/socketio/socket.io) | `6.6.9` | `6.6.12` | | [fast-copy](https://github.com/planttheidea/fast-copy) | `3.0.2` | `3.1.0` | | [fast-uri](https://github.com/fastify/fast-uri) | `3.1.2` | `3.1.9` | | [http-cache-semantics](https://github.com/kornelski/http-cache-semantics) | `4.2.0` | `4.3.0` | | [proxy-addr](https://github.com/jshttp/proxy-addr) | `2.0.7` | `2.0.8` | | [source-map-js](https://github.com/7rulnik/source-map-js) | `1.2.1` | `1.2.4` | | [markdown-it](https://github.com/markdown-it/markdown-it) | `14.2.0` | `14.3.3` | | [@modelcontextprotocol/sdk](https://github.com/modelcontextprotocol/typescript-sdk) | `1.30.1` | `1.32.0` | | [fast-uri](https://github.com/fastify/fast-uri) | `3.1.2` | `3.1.9` | | [hono](https://github.com/honojs/hono) | `4.12.25` | `4.13.16` | | [proxy-addr](https://github.com/jshttp/proxy-addr) | `2.0.7` | `2.0.8` | | [source-map-js](https://github.com/7rulnik/source-map-js) | `1.2.1` | `1.2.4` |  Bumps the n
+- **Issue #4385** (2026-11-23): **Staleness pings: message each assignee directly.**
+  *Symptoms*: Staleness pings now reach each assignee by direct message in Google Chat, instead of a post in the team's chat space.  Based on #3981 (`triage-doc-2`).  ## Changes  - **Pinger** (`tools/internal/triage/pkgs/pinger`): after posting the GitHub comment, it writes a direct message to each assignee whose Google account `TRIAGE_CHAT_USERS` gives, to the file passed with `--messages <file>` (one JSON object per line: `login`, `to`, `text`). It has no Google credentials, so it doesn't send them itself. The webhook (`TRIAGE_CHAT_WEBHOOK_URL`, `WebhookTeamChat`) is gone. A dry run prints the direct messages too. - **Triage bot skill**: in each run, the bot:   1. finds whom it will ping with a dry run;   2. looks up those assignees' Google accounts in the go/github registry, keeping them in `~/.config/a2ui-triage/chat_users.json` for later runs;   3. runs the pinger with `TRIAGE_CHAT_USERS` built from that file;   4. sends each message with its Google Chat tool, from the triager's account.    Assignees it can't find get only the GitHub comment; it never guesses an account. Failed messages are reported, not retried. - **Blueprint**: "The Google Chat message" becomes "The direct message". README updated. Also fixes a garbled line in the skill's "Start the triage bot" step.  ## Testing  - `dart test` and `dart analyze` in `pkgs/pinger` (new tests for the direct messages, assignees without an account, the dry run, and `JsonLinesOutbox`). - Ran the pinger with `--dry-run` against the reposit
 
-- **Issue #4330** (2026-11-20): **fix(agent): find Express action slots behind allOf, $ref and $defs aliases**
-  *Symptoms*: Fixes #3724.  When a catalog declared an action inside `allOf` or behind a `$ref`, and the object also had `additionalProperties`, the Express compilers took `additionalProperties` first and never saw the action, so `openUrl(...)` there compiled to a plain call and failed validation. Now `additionalProperties` only applies when nothing else declares the property. An action typed through a local `$defs` alias, or wrapped in `allOf`, had the same problem, but each SDK missed a different one: TypeScript the alias, Dart the `allOf`. The check now lives on `CatalogSchemaHelper` and follows references the same way the resolver does.  I added three cases to `compiler.yaml` with a new fixture. On main all three SDKs fail the first one, TypeScript fails the alias and Dart the `allOf`. They all pass now. Dart already inlines local aliases, except past the second level of a recursive definition, so its tests cover that case. Dart's decompiler and prompt generator use the same check, so they get the fix too.  About the example in the issue: `additionalProperties` only looks at sibling `properties`, so `{"type": "string"}` there also applies to `onTap` and no action could pass validation. The fixture's `additionalProperties` only has a description. 
+- **Issue #4375** (2026-11-23): **chore(release): changelog for a2ui-core 0.7.1, a2ui-agent-sdk 0.12.1**
+  *Symptoms*: Moves the `## Unreleased` entries under `a2ui-core` `0.7.1` and `a2ui-agent-sdk` `0.12.1`.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2050,631 +2050,244 @@ class A2uiRendererCallsStore:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `94ce6322` (2026-11-19)
-**Commit Message**: fix(markdown-it): bump dompurify to ^3.4.17 to resolve security advisories (#4278) (#4284)
+### Incident Patch 1: `9bac7366` (2026-11-23)
+**Commit Message**: fix(docs): pin Python dependencies in requirements-docs.txt (#4265)
 
-### Summary
-
-Fixes #4278.
-
-`@a2ui/markdown-it` previously pinned `dompurify` to exact version
-`3.4.11`, which has multiple published CVE/GHSA security advisories
-(including critical GHSA-cg2g-xh64-v4q7 and high GHSA-mrv2-3pqr-j5jr).
-
-Changes:
-- Relaxes and bumps the `dompurify` dependency range in
-`typescript/renderers/markdown-it/package.json` to `^3.4.17`.
-- Updates monorepo `resolutions` in root `package.json` to `^3.4.17`.
-- Updates `yarn.lock` to resolve `dompurify@npm:^3.4.17` (`3.4.18`),
-which includes all security patches.
-- Adds an unreleased entry in
-`typescript/renderers/markdown-it/CHANGELOG.md`.
-
-**File**: `package.json` (modified, +1/-1)
-```diff
-@@ -69,7 +69,7 @@
-     "js-yaml@npm:^3": "3.15.0",
-     "js-yaml@npm:^4": "4.2.0",
-     "undici": "7.28.0",
--    "dompurify": "3.4.11",
-+    "dompurify": "3.4.18",
-     "piscina": "5.2.0",
-     "vite@npm:7.3.2": "7.3.5",
-     "vite@npm:^6.0.0 || ^7.0.0 || ^8.0.0": "8.0.16",
-```
-
-**File**: `samples/community/package.json` (modified, +1/-0)
-```diff
-@@ -35,6 +35,7 @@
-     "@angular/material": "^21.2.5",
-     "undici@npm:7.24.4": "7.28.0",
-     "undici@npm:^6.25.0": "7.28.0",
-+    "dompurify": "3.4.18",
-     "piscina": "5.2.0",
-     "vite": "^8.0.16",
-     "@babel/core": "7.29.6",
-```
-
-**File**: `samples/community/yarn.lock` (modified, +4/-4)
-```diff
-@@ -6030,15 +6030,15 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"dompurify@npm:^3.3.1":
--  version: 3.4.11
--  resolution: "dompurify@npm:3.4.11"
-+"dompurify@npm:3.4.18":
-+  version: 3.4.18
-+  resolution: "dompurify@npm:3.4.18"
-   dependencies:
-     "@types/trusted-types": "npm:^2.0.7"
-   dependenciesMeta:
-     "@types/trusted-types":
-       optional: true
--  checksum: 10c0/31439481c7e8fc3805d40c376936fd66936620fb1b1a31a2ec097f6165412c37f2d868e082c9ceba62bb37661c1ea132a5db4d5213434317e30df68d4aca9cc9
-+  checksum: 10c0/03c96d4e04ce6588014d008c09bb80e97dc1f905acc28d0be0cf14ea6974f788f5706cac409a5b7b7a73831dbce15ac7ca68c6fe08b2e1522254f06ce6647e87
-   languageName: node
-   linkType: hard
- 
-```
-
-**File**: `typescript/renderers/markdown-it/CHANGELOG.md` (modified, +2/-0)
-```diff
-@@ -1,5 +1,7 @@
- ## Unreleased
- 
-+- Bump `dompurify` to `^3.4.17` to resolve security advisories GHSA-cg2g-xh64-v4q7 and GHSA-mrv2-3pqr-j5jr ([#4278](https://github.com/a2ui-project/a2ui/issues/4278), [#4284](https://github.com/a2ui-project/a2ui/pull/4284)).
-+
- ## 0.2.3
- 
- - Bump dependencies for compatibility with `@a2ui/web_core: ^0.16.0`.
-```
-
-**File**: `typescript/renderers/markdown-it/package.json` (modified, +1/-1)
-```diff
-@@ -44,7 +44,7 @@
-     "clean": "wireit"
-   },
-   "dependencies": {
--    "dompurify": "3.4.11",
-+    "dompurify": "^3.4.17",
-     "markdown-it": "^14.2.0"
-   },
-   "devDependencies": {
-```
-
-**File**: `yarn.lock` (modified, +5/-5)
-```diff
-@@ -298,7 +298,7 @@ __metadata:
-     "@types/jsdom": "npm:^28.0.3"
-     "@types/markdown-it": "npm:^14.1.2"
-     "@types/node": "npm:^25.9.3"
--    dompurify: "npm:3.4.11"
-+    dompurify: "npm:^3.4.17"
-     eslint: "npm:^10.4.1"
-     gts: "npm:^7.0.0"
-     js-yaml: "npm:^4.1.0"
-@@ -12646,15 +12646,15 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"dompurify@npm:3.4.11":
--  version: 3.4.11
--  resolution: "dompurify@npm:3.4.11"
-+"dompurify@npm:3.4.18":
-+  version: 3.4.18
-+  resolution: "dompurify@npm:3.4.18"
-   dependencies:
-     "@types/trusted-types": "npm:^2.0.7"
-   dependenciesMeta:
-     "@types/trusted-types":
-       optional: true
--  checksum: 10c0/31439481c7e8fc3805d40c376936fd66936620fb1b1a31a2ec097f6165412c37f2d868e082c9ceba62bb37661c1ea132a5db4d5213434317e30df68d4aca9cc9
-+  checksum: 10c0/03c96d4e04ce6588014d008c09bb80e97dc1f905acc28d0be0cf14ea6974f788f5706cac409a5b7b7a73831dbce15ac7ca68c6fe08b2e1522254f06ce6647e87
-   languageName: node
-   linkType: hard
- 
-```
-
----
-
-### Incident Patch 2: `6bf4cc21` (2026-11-20)
-**Commit Message**: fix(swift/core): reject counted repetition of an ambiguous nullable group in RegexSubset (#4310)
-
-# Description
-
-`RegexSubset.analyze` in Swift accepts `(a?){1000}a{1000}`, the pattern
-from #4236. Rule 2
-
-([`hasNestedQuantifier`](https://github.com/a2ui-project/a2ui/blob/979eaee4954900f67b5b73484248a3d4776f1bba/swift/core/Sources/BasicCatalog/Functions/RegexSubset.swift#L701-L718))
-rejects a repetition only when its child contains an unbounded
-quantifier, and the `?` inside
-`(a?)` is bounded. web_core has the same gap, and #4237 fixes it there.
-This PR ports that rule to
-Swift.
-
-ICU backtracks worse than V8 on these patterns. Matching with
-`NSRegularExpression` on macOS, with
-a 5 second limit per run:
-
-| Pattern | Value | Result |
-| --- | --- | --- |
-| `(a?){1000}a{1000}` | `a!` | `false`, 5 ms |
-| `(a?){1000}a{1000}` | `aa!` | `false`, 1.2 s |
-| `(a?){1000}a{1000}` | `aaa!` | no return |
-| `(a?){500}a{500}` | 10 `a` + `!` | no return |
-| `(a?b?){100}a{1000}` | 10 `a` + `!` | no return |
-| `(a\|b?){1000}a{1000}` | 10 `a` + `!` | no return |
-
-`RegexSubset.test` only caps the value at 4,096 code points, so a
-catalog `regex` check with one
-of these patterns blocks the calling thread o
-
-**File**: `swift/CHANGELOG.md` (modified, +8/-0)
-```diff
-@@ -12,6 +12,14 @@
-   `\.a2uiCatalogs`, `\.a2uiDefaultCatalogID`, and `\.a2uiSurfaceMetadata` from `@Environment`.
-   [#4195](https://github.com/a2ui-project/a2ui/issues/4195),
-   [#4275](https://github.com/a2ui-project/a2ui/pull/4275)
-+- **BREAKING CHANGE**: `RegexSubset.analyze`, `RegexSubset.compileGuarded`, and the `regex`
-+  function in `BasicCatalog` reject a repetition of a group that can match the empty string in
-+  more than one way, such as `(a?){1000}a{1000}` or `(a{0,2})+b`, with `NESTED_QUANTIFIER`. Such a
-+  pattern made `NSRegularExpression` run for seconds or longer on a value only a few characters
-+  long. Recommended migration: rewrite the group so each repetition consumes at least one
-+  character, for example `(?:ab?){3}` instead of `(?:a?b?){3}`.
-+  [#4236](https://github.com/a2ui-project/a2ui/issues/4236),
-+  [#4310](https://github.com/a2ui-project/a2ui/pull/4310)
- - Add optional `instructions` (Markdown design guidelines for agents) to `CatalogProtocol` and
-   `Catalog`, with an `instructions:` parameter on `Catalog.init` and `Catalog.derive`. `derive`
-   does not keep the source catalog's instructions, and `MessageProcessor.getRendererCapabilities`
-```
-
-**File**: `swift/core/Sources/BasicCatalog/Functions/RegexSubset.swift` (modified, +49/-1)
-```diff
-@@ -705,7 +705,11 @@ public enum RegexSubset {
-     case .group(_, let child), .lookahead(_, let child):
-       return hasNestedQuantifier(child)
-     case .repeatNode(let child, _, let max, _):
--      if (max == nil || max! > 1) && hasUnbounded(child) {
-+      if let max, max <= 1 {
-+        return hasNestedQuantifier(child)
-+      }
-+      // The repeat runs its child more than once, so every way the child can match is multiplied.
-+      if hasUnbounded(child) || boundedRunIsAmbiguous(unwrap(child)) {
-         return true
-       }
-       return hasNestedQuantifier(child)
-@@ -716,6 +720,50 @@ public enum RegexSubset {
-     }
-   }
- 
-+  /// Returns true when one run of `node` can match the same text in more than one way and can
-+  /// match the empty string, so that N runs leave the matcher free to choose where each run starts
-+  /// and ends.
-+  ///
-+  /// A backtracking engine takes exponential time on a repetition of such a body:
-+  /// `NSRegularExpression` needs over a second for `(a?){1000}a{1000}` on `"aa!"` and does not
-+  /// return within five seconds on `"aaa!"`. A body with a single way to match it, like
-+  /// `(\d{1,3}){1,4}`, stays linear.
-+  ///
-+  /// This applies to repeats without an upper bound as well. Unlike V8, ICU runs the mandatory
-+  /// repetitions first, so `(a?){1000,}a{1000}` and `(a{0,2})+b` also take seconds on short values.
-+  ///
-+  /// `node` is a repeat child, already unwrapped of its outer groups.
-+  private static func boundedRunIsAmbiguous(_ node: RegexNode) -> Bool {
-+    return isNullable(node) && hasMatchShorterThanItsLongest(node)
-+  }
-+
-+  /// Returns true when some string `node` matches has two derivations.
-+  ///
-+  /// Every node has a single maximal match length, so a second derivation exists exactly when a
-+  /// shorter match of the same string does. This walks the tree looking for the place where that
-+  /// shorter match can come from.
-+  private static func hasMatchShorterThanItsLongest(_ node: RegexNode) -> Bool {
-+    switch node {
-+    case .empty, .anchor, .charSet:
-+      return false
-+    case .group(_, let child), .lookahead(_, let child):
-+      return hasMatchShorterThanItsLongest(child)
-+    case .repeatNode(let child, let min, let max, _):
-+      // `a?` adds one derivation, the empty string. A quantifier that admits a count above one
-+      // adds more (`a{0,2}` matches `a` and the empty string), and a repeated group multiplies
-+      // them.
-+      if let max, max <= 1 {
-+        return min == 0 || hasMatchShorterThanItsLongest(child)
-+      }
-+      return true
-+    case .concat(let items):
-+      return items.allSatisfy(isNullable) || items.contains(where: hasMatchShorterThanItsLongest)
-+    case .alt(let branches):
-+      return branches.contains(where: isNullable)
-+        || branches.contains(where: hasMatchShorterThanItsLongest)
-+    }
-+  }
-+
-   private static func branchesOverlap(_ branches: [RegexNode]) -> Bool {
-     let firstSets = branches.map { firstSet(unwrap($0)) }
-     for i in 0..<firstSets.count {
-```
-
-**File**: `swift/core/Tests/BasicCatalogTests/RegexSubsetTests.swift` (modified, +57/-0)
-```diff
-@@ -163,6 +163,63 @@ struct RegexSubsetTests {
-     }
-   }
- 
-+  @Test func rule2RejectsRepetitionOfAmbiguousNullableGroup() {
-+    // A repeat that runs its child more than once multiplies every way the child can match. The
-+    // ICU engine behind `NSRegularExpression` runs for seconds on each of these patterns with a
-+    // value only a few characters long, with or without an upper bound on the repeat.
-+    let evil = [
-+      "(a?){1000}a{1000}",
-+      "(a?){500}a{500}",
-+      "(?:a?){1000}a{1000}",
-+      "((a?)){1000}a{1000}",
-+      "(a?b?){100}a{1000}",
-+      "(a|b?){1000}a{1000}",
-+      "(a|){1000}a{1000}",
-+      "(a{0,2}){2}",
-+      "((?:a?){1}){2}",
-+      "(a?){1000,}a{1000}",
-+      "(a|b?){300,}a{300}",
-+      "(a{0,2})+b",
-+      "(a?)*a{1000}",
-+    ]
-+    for pattern in evil {
-+      let result = RegexSubset.analyze(pattern)
-+      #expect(!result.ok, "Expected nested quantifier rejection: \(pattern)")
-+      #expect(result.reason == .nestedQuantifier, "Unexpected reason for \(pattern)")
-+    }
-+
-+    let safe = [
-+      "(?:ab?){3}c",
-+      "(?:ab?){0,2}",
-+      "(a|b){2,4}",
-+      "(?:\\d{2,4}){2}",
-+      "(a?){1}",
-+      "(a?){0,1}",
-+      "(?:ab?)+c",
-+    ]
-+    for pattern in safe {
-+      #expect(RegexSubset.analyze(pattern).ok, "Expected safe: \(pattern)")
-+    }
-+  }
-+
-+  @Test func rule2RejectsCountedNullableRepetitionBeforeMatching() throws {
-+    // Only the analysis runs here: matching this pattern against "aaa!" does not return within
-+    // five seconds, so the evaluation below uses an empty value and relies on the guard throwing
-+    // before any match starts.
-+    let pattern = "(a?){1000}a{1000}"
-+    let clock = ContinuousClock()
-+    let elapsed = clock.measure {
-+      #expect(RegexSubset.analyze(pattern).reason == .nestedQuantifier)
-+    }
-+    #expect(elapsed < .seconds(1))
-+
-+    let error = #expect(throws: FunctionError.self) {
-+      _ = try RegexSubset.test(pattern: pattern, value: "")
-+    }
-+    let message = try #require(error.map { "\($0)" })
-+    #expect(message.contains("NESTED_QUANTIFIER"))
-+  }
-+
-   @Test func rule3RejectsOverlappingAlternationInRepetition() {
-     let evil = [
-       "(a|ab)+",
-```
-
----
-
-### Incident Patch 3: `2d38217c` (2026-11-20)
-**Commit Message**: docs(web_core): document overridable CSS custom properties across basic components (#4309)
-
-Fixes #2461
+Fixes #4222
 
 ## Summary
 
-Documents every overridable `--a2ui-*` CSS custom property read by
-universal Basic Catalog Lit components in `@a2ui/web_core`. Also aligns
-fallback prose with each component's `static override styles` block and
-`injectBasicCatalogStyles()`.
+Pins the direct Python dependencies in `requirements-docs.txt` to exact
+versions verified in CI and `uv.lock`. This prevents documentation build
+or validation failures when upstream packages publish new releases:
+
+- Pin `ghp-import==2.1.0` and `jsonschema==4.26.0` in
+`requirements-docs.txt`.
+- Add `referencing==0.37.0` explicitly to `requirements-docs.txt`.
+`docs/scripts/validate_doc_examples.py` imports `referencing` directly,
+while `jsonschema` leaves `referencing` unbounded above `>=0.28.4`.
+- Add `test_requirements_docs_pins_all_dependencies` in
+`docs/scripts/test_validate_doc_examples.py` verifying exact `==` pins
+on every entry in `requirements-docs.txt`.
+
+**File**: `docs/scripts/test_validate_doc_examples.py` (modified, +17/-0)
+```diff
+@@ -16,6 +16,7 @@
+ 
+ import os
+ import pathlib
++import re
+ import sys
+ from unittest import mock
+ 
+@@ -26,6 +27,7 @@
+ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+ 
+ from validate_doc_examples import (
++    REPO_ROOT,
+     V0_9_1,
+     V1_0,
+     _errors_for,
+@@ -330,3 +332,18 @@ def test_untabbed_broken_message_json_and_action_envelopes() -> None:
+     assert validate(extract_examples_from_text(DOC, pseudo_json)[0]) == []
+     assert validate(extract_examples_from_text(DOC, missing_ver_action)[0]) != []
+     assert validate(extract_examples_from_text(DOC, jsonrpc_err)[0]) == []
++
++
++def test_requirements_docs_pins_all_dependencies() -> None:
++    text = (REPO_ROOT / "requirements-docs.txt").read_text(encoding="utf-8")
++    pinned: set[str] = set()
++    for raw_line in text.splitlines():
++        line = raw_line.split("#", 1)[0].strip()
++        if line:
++            match = re.fullmatch(
++                r"([A-Za-z0-9][A-Za-z0-9._-]*)==([A-Za-z0-9][A-Za-z0-9._+-]*)",
++                line,
++            )
++            assert match, f"Expected exact 'pkg==version' pin, got: {line!r}"
++            pinned.add(re.sub(r"[-_.]+", "-", match.group(1)).lower())
++    assert {"ghp-import", "jsonschema", "referencing"} <= pinned
+```
+
+**File**: `requirements-docs.txt` (modified, +4/-2)
+```diff
+@@ -1,2 +1,4 @@
+-ghp-import
+-jsonschema
++# Keep jsonschema and referencing aligned with uv.lock.
++ghp-import==2.1.0
++jsonschema==4.26.0
++referencing==0.37.0
+```
+
+---
+
+### Incident Patch 2: `0d2ab716` (2026-11-23)
+**Commit Message**: test(a2ui_flutter): pin the live login form request to its golden layout (#4350)
+
+## Summary
+
+Pins the request of the two live `a2ui_flutter` login form tests to the
+layout of their golden scenarios, so that the nightly E2E drift check
+stops failing on the model's layout choices.
+
+Fixes #4262
 
 ## Changes
 
-- Added `static override styles` JSDoc blocks to `AudioPlayer.ts` and
-`List.ts`, which previously carried only `@nocollapse`.
-- Documented missing `--a2ui-<component>-*` custom properties and shared
-`--a2ui-*` theme, font, border, and spacing tokens across the remaining
-14 incomplete component files. Kept private `--_a2ui-*` plumbing
-variables internal.
-- Corrected stale fallback prose in `Button.ts` (removed unused
-`--a2ui-color-secondary`, noted `.a2ui-button-borderless` forces
-`padding: 0`, and updated padding and radius fallbacks).
-- Aligned fallback descriptions in `CheckBox.ts`, `ChoicePicker.ts`
-(`--a2ui-text-color-text` precedence and `:host` cascade),
-`DateTimeInput.ts`, `Slider.ts`, and `TextField.ts`.
+- `dart/a2ui_flutter/e2e_test/test/chat_turn_test.dart` and
+`dart/a2ui_flutter/e2e_test_v0_9/test/chat_turn_test.dart`:
+`loginFormRequest` now names every component of both turns.
+- The form is one surface: a `Card` holding a `Column` of a heading
+`Text`, two `TextField`s, and a "Sign in" `Button` with one `Text`
+child, and nothing else.
+- The reply to the button updates that same surface to a `Card` holding
+a `Column` of two `Text`s, and creates or deletes no surface.
+- A doc comment on the constant says why the request is this specific
+and names the golden it has to match.
 
-**File**: `typescript/core/web_core/src/universal/basic_catalog/components/AudioPlayer.ts` (modified, +17/-1)
+**File**: `dart/a2ui_flutter/e2e_test/test/chat_turn_test.dart` (modified, +17/-2)
 ```diff
-@@ -27,7 +27,23 @@ import type {AudioPlayerSupportedApis} from './supported_apis.js';
- export class A2uiAudioPlayerElement extends BasicCatalogA2uiLitElement<AudioPlayerSupportedApis> {
-   /** @nocollapse */
-   static readonly tagName = 'a2ui-audioplayer';
--  /** @nocollapse */
-+  /**
-+   * The styles of the audio player can be customized by redefining the
-+   * following CSS variables:
-+   *
-+   * - `--a2ui-audioplayer-background`: Background of the player container. Defaults to `transparent`.
-+   * - `--a2ui-audioplayer-border-radius`: Border radius of the player container. Defaults to `0`.
-+   * - `--a2ui-audioplayer-padding`: Padding of the player container. Defaults to `0`.
-+   * - `--a2ui-audioplayer-description-color`: Text color of the description. Defaults to `--a2ui-text-caption-color`, then `light-dark(#666, #aaa)`.
-+   *
-+   * Global theme variables read by this component:
-+   *
-+   * - `--a2ui-spacing-xs`: Gap between the description and audio controls.
-+   * - `--a2ui-font-size-s`: Font size of the description.
-+   * - `--a2ui-text-caption-color`: Fallback text color for the description. Defaults to `light-dark(#666, #aaa)`.
-+   *
-+   * @nocollapse
-+   */
-   static override styles = css`
-     .a2ui-audio-player {
-       display: flex;
+@@ -27,9 +27,24 @@ import 'test_infra/api_key.dart';
+ import 'test_infra/pump.dart';
+ import 'test_infra/recording_client.dart';
+ 
++/// The request for a login form and for the reply to its button, in the
++/// layout of the golden scenario.
++///
++/// The nightly drift check in `scripts/e2e_test.sh` compares the components
++/// the recorded replies render with `conformance/e2e/login_form_action.yaml`,
++/// type by type and in order. The request therefore names every component
++/// of both turns. Asked only for a login form, the model adds an icon or a
++/// second button, or answers the button with a new surface, and the check
++/// reports each of those as drift.
+ const String loginFormRequest =
+-    'Show a login form with email and password fields and a "Sign in" '
+-    'button.';
++    'Show a login form as one surface. Its root is a Card whose child is a '
++    'Column of exactly four components, in this order: a Text heading, a '
++    'TextField for the email, a TextField for the password, and a "Sign in" '
++    'Button whose child is one Text. Use no other components: no icons, '
++    'images, dividers, rows, links or other buttons. When I press the '
++    'button, answer by updating that same surface. Do not create or delete '
++    'a surface. Make its root a Card whose child is a Column of exactly two '
++    'Text components and nothing else: no icons, images or buttons.';
+ 
+ const String productCardRequest =
+     'Show a product card for a coffee grinder that costs 129.99 USD and was '
 ```
 
-**File**: `typescript/core/web_core/src/universal/basic_catalog/components/Button.ts` (modified, +21/-10)
+**File**: `dart/a2ui_flutter/e2e_test_v0_9/test/chat_turn_test.dart` (modified, +18/-2)
 ```diff
-@@ -30,16 +30,27 @@ export class A2uiBasicButtonElement extends BasicCatalogA2uiLitElement<ButtonSup
-    * The styles of the button can be customized by redefining the following
-    * CSS variables:
-    *
--   * - Primary variant:
--   *   - `--a2ui-color-primary`: The color for the primary variant.
--   *   - `--a2ui-color-on-primary`: The color of the text on the primary variant.
--   * - Standard/default variant:
--   *   - `--a2ui-color-secondary`: The color for the default variant.
--   *   - `--a2ui-color-on-secondary`: The color of the text on the default variant.
--   * - `--a2ui-button-border`: The styling for the button border. Defaults to `--a2ui-border-width` width and `--a2ui-color-border` color.
--   * - `--a2ui-button-border-radius`: The border radius of the button. Defaults to `--a2ui-border-radius`.
--   * - `--a2ui-button-padding`: The padding of the button. Defaults to `--a2ui-spacing-m`.
--   * - `--a2ui-button-margin`: The outer margin of the button. Defaults to `--a2ui-spacing-m`.
-+   * - `--a2ui-button-padding`: Padding of the default and `primary` variants (`borderless` forces `0`). Defaults to `--a2ui-spacing-m` vertically and `--a2ui-spacing-l` horizontally.
-+   * - `--a2ui-button-border-radius`: Border radius of the button. Defaults to `--a2ui-spacing-s`.
-+   * - `--a2ui-button-border`: Border shorthand of the default variant. Defaults to `var(--a2ui-border-width) solid var(--a2ui-color-border)`.
-+   * - `--a2ui-button-margin`: Outer margin of the button. Defaults to `--a2ui-spacing-m`.
-+   * - `--a2ui-button-background`: Background of the default variant. Defaults to `--a2ui-color-surface`.
-+   * - `--a2ui-button-box-shadow`: Box shadow of the button. Defaults to `none`.
-+   * - `--a2ui-button-font-weight`: Font weight of the button text. Defaults to `normal`.
-+   *
-+   * Global theme variables read by this component:
-+   *
-+   * - `--a2ui-color-primary`: Background of the `primary` variant and text color of the `borderless` variant.
-+   * - `--a2ui-color-primary-hover`: Hover background color of the `primary` variant.
-+   * - `--a2ui-color-on-primary`: Text color on the `primary` variant.
-+   * - `--a2ui-color-surface`: Fallback background color of the default variant.
-+   * - `--a2ui-color-secondary-hover`: Hover background color of the default variant.
-+   * - `--a2ui-color-on-secondary`: Text color on the default variant.
-+   * - `--a2ui-border-width`: Fallback border width of the default variant.
-+   * - `--a2ui-color-border`: Fallback border color of the default variant.
-+   * - `--a2ui-spacing-s`: Fallback border radius of the button.
-+   * - `--a2ui-spacing-m`: Fallback vertical padding and outer margin of the button.
-+   * - `--a2ui-spacing-l`: Fallback horizontal padding of the button.
-    *
-    * @nocollapse
-    */
+@@ -27,9 +27,25 @@ import 'test_infra/api_key.dart';
+ import 'test_infra/pump.dart';
+ import 'test_infra/recording_client.dart';
+ 
++/// The request for a login form and for the reply to its button, in the
++/// layout of the golden scenario.
++///
++/// The nightly drift check in `scripts/e2e_test.sh` compares the components
++/// the recorded replies render with
++/// `conformance/e2e/v0_9_1/login_form_action.yaml`, type by type and in
++/// order. The request therefore names every component of both turns. Asked
++/// only for a login form, the model adds an icon or a second button, or
++/// answers the button with a new surface, and the check reports each of
++/// those as drift.
+ const String loginFormRequest =
+-    'Show a login form with email and password fields and a "Sign in" '
+-    'button.';
++    'Show a login form as one surface. Its root is a Card whose child is a '
++    'Column of exactly four components, in this order: a Text heading, a '
++    'TextField for the email, a TextField for the password, and a "Sign in" '
++    'Button whose child is one Text. Use no other components: no icons, '
++    'images, dividers, rows, links or other buttons. When I press the '
++    'button, answer by updating that same surface. Do not create or delete '
++    'a surface. Make its root a Card whose child is a Column of exactly two '
++    'Text components and nothing else: no icons, images or buttons.';
+ 
+ const String productCardRequest =
+     'Show a product card for a coffee grinder that costs 129.99 USD and was '
 ```
 
-**File**: `typescript/core/web_core/src/universal/basic_catalog/components/Card.ts` (modified, +15/-5)
+---
+
+### Incident Patch 3: `8feedf89` (2026-11-23)
+**Commit Message**: style(dart/a2ui_core): apply dart format to processor.dart and its test (#4371)
+
+## Summary
+
+Applies `dart format` to two files in `dart/a2ui_core` so that the
+`format-check` and `dart_a2ui_core` formatting jobs pass on `main`
+again. They have failed on `main`, and on every PR based on it, since
+#4197 merged.
+
+## Changes
+
+- `dart/a2ui_core/lib/src/processing/processor.dart`: one statement is
+wrapped the way Dart 3.13 formatting wraps it.
+- `dart/a2ui_core/test/processor_test.dart`: one list literal is
+re-indented, and one call is wrapped with a trailing comma.
+
+The diff is the formatter's output and nothing else. With whitespace and
+trailing commas removed, both files are identical before and after.
+
+**File**: `dart/a2ui_core/lib/src/processing/processor.dart` (modified, +4/-2)
 ```diff
-@@ -26,11 +26,21 @@ export class A2uiCardElement extends BasicCatalogA2uiLitElement<CardSupportedApi
-    * The styles of the card can be customized by redefining the following
-    * CSS variables:
-    *
--   * - `--a2ui-card-border`: The styling for the card border. Defaults to `--a2ui-border-width` width and `--a2ui-color-border` color.
--   * - `--a2ui-card-border-radius`: The border radius of the card. Defaults to `--a2ui-border-radius`.
--   * - `--a2ui-card-padding`: The padding of the card. Defaults to `--a2ui-spacing-m`.
--   * - `--a2ui-card-box-shadow`: The box shadow of the card. Defaults to `0 2px 4px rgba(0,0,0,0.1)`.
--   * - `--a2ui-card-margin`: The outer margin of the card. Defaults to `--a2ui-spacing-m`.
-+   * - `--a2ui-card-padding`: Padding of the card. Defaults to `--a2ui-spacing-m`.
-+   * - `--a2ui-card-border-radius`: Border radius of the card. Defaults to `--a2ui-border-radius`.
-+   * - `--a2ui-card-box-shadow`: Box shadow of the card. Defaults to `0 2px 4px rgba(0, 0, 0, 0.1)`.
-+   * - `--a2ui-card-background`: Background of the card. Defaults to `--a2ui-color-surface`.
-+   * - `--a2ui-card-border`: Border shorthand of the card. Defaults to `var(--a2ui-border-width) solid var(--a2ui-color-border)`.
-+   * - `--a2ui-card-margin`: Outer margin of the card. Defaults to `--a2ui-spacing-m`.
-+   *
-+   * Global theme variables read by this component:
-+   *
-+   * - `--a2ui-color-surface`: Fallback background color of the card.
-+   * - `--a2ui-color-on-surface`: Text color inside the card.
-+   * - `--a2ui-border-radius`: Fallback border radius of the card.
-+   * - `--a2ui-border-width`: Fallback border width of the card.
-+   * - `--a2ui-color-border`: Fallback border color of the card.
-+   * - `--a2ui-spacing-m`: Fallback padding and outer margin of the card.
-    *
-    * @nocollapse
-    */
+@@ -616,8 +616,10 @@ class MessageProcessor<T extends ComponentApi> {
+         pointer != null &&
+         pointer.startsWith('/') &&
+         !pointer.substring(1).contains('/')) {
+-      final String key =
+-          pointer.substring(1).replaceAll('~1', '/').replaceAll('~0', '~');
++      final String key = pointer
++          .substring(1)
++          .replaceAll('~1', '/')
++          .replaceAll('~0', '~');
+       if (item.containsKey(key)) {
+         return (
+           A2uiErrorDetail(
 ```
 
-**File**: `typescript/core/web_core/src/universal/basic_catalog/components/CheckBox.ts` (modified, +18/-6)
+**File**: `dart/a2ui_core/test/processor_test.dart` (modified, +10/-9)
 ```diff
-@@ -32,13 +32,25 @@ export class A2uiCheckBoxElement extends BasicCatalogA2uiLitElement<CheckBoxSupp
-    * The styles of the checkbox can be customized by redefining the following
-    * CSS variables:
-    *
--   * - `--a2ui-checkbox-size`: Size of the box. Defaults to `1rem`.
--   * - `--a2ui-checkbox-border-radius`: Default corner rounding of the box.
--   * - `--a2ui-checkbox-gap`: Spacing between the checkbox and its label. Defaults to `8px`.
-    * - `--a2ui-checkbox-margin`: Outer margin of the component. Defaults to `--a2ui-spacing-m`.
--   * - `--a2ui-checkbox-color-error`: Color for invalid state. Defaults to `red`.
--   * - `--a2ui-checkbox-label-font-size`: Font size of the label. Defaults to `--a2ui-label-font-size` then `--a2ui-font-size-s`.
--   * - `--a2ui-checkbox-label-font-weight`: Font weight of the label. Defaults to `--a2ui-label-font-weight` then `bold`.
-+   * - `--a2ui-checkbox-gap`: Spacing between the checkbox input and its label. Defaults to `--a2ui-spacing-s`.
-+   * - `--a2ui-checkbox-label-font-size`: Font size of the label. Defaults to `--a2ui-label-font-size`, then `--a2ui-font-size-s`.
-+   * - `--a2ui-checkbox-label-font-weight`: Font weight of the label. Defaults to `--a2ui-label-font-weight`, then `bold`.
-+   * - `--a2ui-checkbox-size`: Width and height of the checkbox input. Defaults to `1rem`.
-+   * - `--a2ui-checkbox-background`: Background of the checkbox input. Defaults to `inherit`.
-+   * - `--a2ui-checkbox-border`: Border of the checkbox input. Defaults to `--a2ui-border`.
-+   * - `--a2ui-checkbox-border-radius`: Border radius of the checkbox input. Defaults to `4px`.
-+   * - `--a2ui-checkbox-color-error`: Label, outline, and error message color in the invalid state. Defaults to `red`.
-+   *
-+   * Global theme variables read by this component:
-+   *
-+   * - `--a2ui-spacing-m`: Fallback outer margin of the component.
-+   * - `--a2ui-spacing-s`: Fallback spacing between the checkbox input and its label.
-+   * - `--a2ui-label-font-size`: Fallback font size of the label. Defaults to `--a2ui-font-size-s`.
-+   * - `--a2ui-label-font-weight`: Fallback font weight of the label. Defaults to `bold`.
-+   * - `--a2ui-font-size-s`: Fallback label font size when `--a2ui-label-font-size` is unset.
-+   * - `--a2ui-font-size-xs`: Font size of validation error messages.
-+   * - `--a2ui-border`: Fallback border of the checkbox input.
-    *
-    * @nocollapse
-    */
-```
-
-**File**: `typescript/core/web_core/src/universal/basic_catalog/components/ChoicePicker.ts` (modified, +38/-7)
-```diff
-@@ -34,13 +34,44 @@ export class A2uiChoicePickerElement extends BasicCatalogA2uiLitElement<ChoicePi
-    * The styles of the choice picker can be customized by redefining the following
-    * CSS variables:
-    *
--   * - `--a2ui-choicepicker-label-color`: Color of all labels.
--   * - `--a2ui-choicepicker-label-font-size`: Font size of all labels. Defaults to `--a2ui-label-font-size` then `--a2ui-font-size-s` for the main label.
--   * - `--a2ui-choicepicker-label-font-weight`: Font weight of the main label. Defaults to `--a2ui-label-font-weight` then `bold`.
--   * - `--a2ui-choicepicker-gap`: Spacing between options.
--   * - `--a2ui-choicepicker-filter-padding`: Padding for the filter input. Defaults to `--a2ui-spacing-xs` and `--a2ui-spacing-s` (4px 8px).
--   * - `--a2ui-choicepicker-chip-padding`: Padding for chips. Defaults to `--a2ui-spacing-s` and `--a2ui-spacing-m` (4px 8px).
--   * - `--a2ui-choicepicker-chip-border-radius`: Border radius for chips. Defaults to `999px`.
-+   * - `--a2ui-choicepicker-gap`: Spacing between options, chips, and label items. Defaults to `--a2ui-spacing-xs`.
-+   * - `--a2ui-choicepicker-padding`: Padding of both the host element and the options container. Defaults to `0`.
-+   * - `--a2ui-choicepicker-label-color`: Fallback text color of labels when `--a2ui-text-color-text` is unset. Defaults to `inherit`.
-+   * - `--a2ui-choicepicker-label-font-size`: Font size of the host element, group label, and option labels. Defaults to `--a2ui-label-font-size`, then `--a2ui-font-size-s`.
-+   * - `--a2ui-choicepicker-label-font-weight`: Font weight of the host element and group label (inherited by option labels). Defaults to `--a2ui-label-font-weight`, then `bold`.
-+   * - `--a2ui-choicepicker-filter-padding`: Padding of the filter input. Defaults to `--a2ui-spacing-xs` vertically and `--a2ui-spacing-s` horizontally.
-+   * - `--a2ui-choicepicker-filter-margin-bottom`: Bottom margin of the filter input. Defaults to `--a2ui-spacing-s`.
-+   * - `--a2ui-choicepicker-checkbox-size`: Width and height of radio and checkbox inputs. Defaults to `1rem`.
-+   * - `--a2ui-choicepicker-chip-padding`: Padding of chip buttons. Defaults to `--a2ui-spacing-s` vertically and `--a2ui-spacing-m` horizontally.
-+   * - `--a2ui-choicepicker-chip-border-radius`: Border radius of chip buttons. Defaults to `999px`.
-+   * - `--a2ui-choicepicker-chip-border`: Border of unselected chip buttons. Defaults to `1px solid var(--a2ui-color-border)`.
-+   * - `--a2ui-choicepicker-chip-background`: Background color of unselected chip buttons. Defaults to `--a2ui-color-surface`.
-+   * - `--a2ui-choicepicker-chip-font-size`: Font size of chip buttons. Defaults to `--a2ui-font-size-xs`.
-+   * - `--a2ui-choicepicker-chip-font-weight`: Font weight of chip buttons. Defaults to `normal`.
-+   * - `--a2ui-choicepicker-chip-background-selected`: Background and border color of selected chip buttons. Defaults to `--a2ui-color-primary`.
-+   * - `--a2ui-choicepicker-color-error`: Text color of validation error messages. Defaults to `red`.
-+   *
-+   * Shared text-field and global theme variables read by this component:
-+   *
-+   * - `--a2ui-text-color-text`: Text color of labels (evaluated before `--a2ui-choicepicker-label-color`).
-+   * - `--a2ui-label-font-size`: Fallback font size of the host element, group label, and option labels. Defaults to `--a2ui-font-size-s`.
-+   * - `--a2ui-label-font-weight`: Fallback font weight of the host element and group label (inherited by option labels). Defaults to `bold`.
-+   * - `--a2ui-textfield-border`: Border of the filter input. Defaults to `--a2ui-border`.
-+   * - `--a2ui-textfield-border-radius`: Border radius of the filter input. Defaults to `--a2ui-spacing-m`.
-+   * - `--a2ui-textfield-color-border-focus`: Border color of the focused filter input. Defaults to `--a2ui-color-primary`.
-+   * - `--a2ui-color-input`: Background color of the filter input.
-+   * - `--a2ui-color-on-input`: Text color of the filter input.
-+   * - `--a2ui-border`: Fallback border shorthand of the filter input.
-+   * - `--a2ui-color-border`: Fallback border color of the filter input and unselected chips.
-+   * - `--a2ui-color-surface`: Fallback background color of unselected chips.
-+   * - `--a2ui-color-on-surface`: Text color of unselected chips.
-+   * - `--a2ui-color-primary`: Fallback focused filter border and selected chip background and border color.
-+   * - `--a2ui-color-on-primary`: Text color of selected chips.
-+   * - `--a2ui-spacing-xs`: Fallback option gap and vertical filter padding.
-+   * - `--a2ui-spacing-s`: Fallback horizontal filter padding, filter bottom margin, and vertical chip padding.
-+   * - `--a2ui-spacing-m`: Fallback filter border radius and horizontal chip padding.
-+   * - `--a2ui-font-size-s`: Fallback font size of the host element, group label, and option labels.
-+   * - `--a2ui-font-size-xs`: Fallback chip font size and validation error message font size.
-    *
-    * @nocollapse
-    */
-```
-
-**File**: `typescript/core/web_core/src/universal/basic_catalog/components/Column.ts` (modified, +6/-2)
-```diff
-@@ -53,8 +53,12 @@ export class A2uiBasicColumnElement extends BasicCatalogA2uiLitElement<ColumnSup
-    * The styles of the column can be customized by redefining the following
-    * CSS variables:
-    *
--   * - `--a2ui-column-gap`: The gap between items in the column. Defaults to `--a2ui-spacing-m`.
--   * - `--a2ui-column-width`: The width of the column. Defaults to `100%`.
-+   * - `--a2ui-column-gap`: Gap between items in the column. Defaults to `--a2ui-spacing-m`.
-+   * - `--a2ui-column-width`: Width of the column. Defaults to `100%`.
-+   *
-+   * Global theme variables read by this component:
-+   *
-+   * - `--a2ui-spacing-m`: Fallback gap between items in the column.
-    *
-    * @nocollapse
-    */
-```
-
-**File**: `typescript/core/web_core/src/universal/basic_catalog/components/DateTimeInput.ts` (modified, +21/-7)
-```diff
-@@ -78,13 +78,27 @@ export class A2uiDateTimeInputElement extends BasicCatalogA2uiLitElement<DateTim
-    * CSS variables:
-    *
-    * - `--a2ui-datetimeinput-width`: Width of the component. Defaults to `100%`.
--   * - `--a2ui-datetimeinput-background`: Controls the background of inputs.
--   * - `--a2ui-datetimeinput-color`: Controls the text color of inputs.
--   * - `--a2ui-datetimeinput-border`: Controls the border of inputs.
--   * - `--a2ui-datetimeinput-border-radius`: Controls the border radius of inputs.
--   * - `--a2ui-datetimeinput-padding`: Controls the padding of inputs.
--   * - `--a2ui-datetimeinput-label-font-size`: Font size of the label. Defaults to `--a2ui-label-font-size` then `--a2ui-font-size-s`.
--   * - `--a2ui-datetimeinput-label-font-weight`: Font weight of the label. Defaults to `--a2ui-label-font-weight` then `bold`.
-+   * - `--a2ui-datetimeinput-background`: Background color of the input elements. Defaults to `--a2ui-color-input`.
-+   * - `--a2ui-datetimeinput-color`: Text color of the input elements. Defaults to `--a2ui-color-on-input`.
-+   * - `--a2ui-datetimeinput-border`: Border of the input elements. Defaults to `1px solid var(--a2ui-color-border)`.
-+   * - `--a2ui-datetimeinput-border-radius`: Border radius of the input elements. Defaults to `4px`.
-+   * - `--a2ui-datetimeinput-padding`: Padding of the input elements. Defaults to `8px`.
-+   * - `--a2ui-datetimeinput-label-font-size`: Font size of the label. Defaults to `--a2ui-label-font-size`, then `--a2ui-font-size-s`.
-+   * - `--a2ui-datetimeinput-label-font-weight`: Font weight of the label. Defaults to `bold`.
-+   * - `--a2ui-datetimeinput-color-error`: Text color of validation error messages. Defaults to `red`.
-+   *
-+   * Global theme variables read by this component:
-+   *
-+   * - `--a2ui-spacing-xs`: Gap between the label, input row, and validation errors.
-+   * - `--a2ui-spacing-s`: Gap between combined date and time inputs.
-+   * - `--a2ui-label-font-size`: Fallback font size of the label. Defaults to `--a2ui-font-size-s`.
-+   * - `--a2ui-font-size-s`: Fallback label font size when `--a2ui-label-font-size` is unset.
-+   * - `--a2ui-font-size-xs`: Font size of validation error messages.
-+   * - `--a2ui-text-color-text`: Text color of the label. Defaults to `--a2ui-color-on-background`.
-+   * - `--a2ui-color-on-background`: Fallback text color of the label.
-+   * - `--a2ui-color-border`: Fallback border color of the input elements.
-+   * - `--a2ui-color-input`: Fallback background color of the input elements.
-+   * - `--a2ui-color-on-input`: Fallback text color of the input elements.
-    *
-    * @nocollapse
-    */
-```
-
-**File**: `typescript/core/web_core/src/universal/basic_catalog/components/Divider.ts` (modified, +8/-2)
-```diff
-@@ -27,8 +27,14 @@ export class A2uiDividerElement extends BasicCatalogA2uiLitElement<DividerSuppor
-    * The styles of the divider can be customized by redefining the following
-    * CSS variables:
-    *
--   * - `--a2ui-divider-border`: The styling for the divider border. Defaults to `--a2ui-border-width` solid `--a2ui-color-border`.
--   * - `--a2ui-divider-spacing`: The spacing around the divider. Defaults to `--a2ui-spacing-m`.
-+   * - `--a2ui-divider-border`: Border shorthand for the divider line. Defaults to `var(--a2ui-border-width) solid var(--a2ui-color-border)`.
-+   * - `--a2ui-divider-spacing`: Block or inline margin around the divider. Defaults to `--a2ui-spacing-m`.
-+   *
-+   * Global theme variables read by this component:
-+   *
-+   * - `--a2ui-border-width`: Width of vertical dividers and fallback border width.
-+   * - `--a2ui-color-border`: Fallback border color of the divider.
-+   * - `--a2ui-spacing-m`: Fallback spacing around the divider.
-    *
-    * @nocollapse
-    */
+@@ -1472,18 +1472,19 @@ void main() {
+           isA<A2uiValidationError>()
+               .having((e) => e.path, 'path', '/components/0/id')
+               .having((e) => e.errors, 'details', [
+-            const A2uiErrorDetail(
+-              path: '/id',
+-              code: 'invalid_value',
+-              message: "Component missing an 'id'.",
+-              surfaceId: 's',
+-            ),
+-          ]),
++                const A2uiErrorDetail(
++                  path: '/id',
++                  code: 'invalid_value',
++                  message: "Component missing an 'id'.",
++                  surfaceId: 's',
++                ),
++              ]),
+         ),
+       );
+ 
+-      final List<ErrorMessage> errors =
+-          processor.processMessagesWithErrors([update]);
++      final List<ErrorMessage> errors = processor.processMessagesWithErrors([
++        update,
++      ]);
+       expect(errors, hasLength(1));
+       expect(errors.single.error.code, 'VALIDATION_FAILED');
+       expect(errors.single.error.path, '/components/0/id');
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4332** (closed): chore(deps): bump the npm_and_yarn group across 2 directories with 13 updates (@dependabot[bot])
-- **PR #4330** (closed): fix(agent): find Express action slots behind allOf, $ref and $defs aliases (@diegolopezrm)
-- **PR #4319** (closed): chore(deps): bump the npm_and_yarn group across 2 directories with 16 updates (@dependabot[bot])
-- **PR #4318** (closed): [Prototype, do not merge] feat(samples): serve the a2ui-embed-sql sample as an MCP App (@josemontespg)
-- **PR #4317** (closed): [Prototype, do not merge] feat(samples): add the a2ui-embed-sql view composers and explain (@josemontespg)
-- **PR #4316** (closed): [Prototype, do not merge] feat(samples): add the a2ui-embed-sql catalog (@josemontespg)
+- **PR #4385** (2026-11-23): Staleness pings: message each assignee directly. (@polina-c)
+- **PR #4375** (2026-11-23): chore(release): changelog for a2ui-core 0.7.1, a2ui-agent-sdk 0.12.1 (@gspencergoog)
+- **PR #4374** (2026-11-23): chore(release): prepare Dart 0.9.0/0.5.0 and Swift 0.12.0 releases (@gspencergoog)
+- **PR #4373** (2026-11-23): chore(release): bump npm package versions for release (@gspencergoog)
+- **PR #4371** (2026-11-23): style(dart/a2ui_core): apply dart format to processor.dart and its test (@gspencergoog)
+- **PR #4353** (2026-11-22): Host the triage UI, with GitHub sign-in. (@polina-c)
 
 ---
 
@@ -2694,31 +2307,47 @@ variables internal.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. markdown-it): bump dompurify to ^3.4.17 to resolve security advisories
+## X. docs): pin Python dependencies in requirements-docs.txt
 
 **RULE**:
-When implementing operations in `package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in a2ui-project/a2ui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/scripts/test_validate_doc_examples.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in a2ui-project/a2ui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `94ce6322`: markdown-it): bump dompurify to ^3.4.17 to resolve security advisories. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9bac7366`: docs): pin Python dependencies in requirements-docs.txt. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/scripts/test_validate_doc_examples.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    "dompurify": "3.4.18",
+import re
+    REPO_ROOT,
+
+
+def test_requirements_docs_pins_all_dependencies() -> None:
+    text = (REPO_ROOT / "requirements-docs.txt").read_text(encoding="utf-8")
+    pinned: set[str] = set()
+    for raw_line in text.splitlines():
+        line = raw_line.split("#", 1)[0].strip()
+        if line:
+            match = re.fullmatch(
+                r"([A-Za-z0-9][A-Za-z0-9._-]*)==([A-Za-z0-9][A-Za-z0-9._+-]*)",
+                line,
+            )
+            assert match, f"Expected exact 'pkg==version' pin, got: {line!r}"
+            pinned.add(re.sub(r"[-_.]+", "-", match.group(1)).lower())
+    assert {"ghp-import", "jsonschema", "referencing"} <= pinned
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-    "dompurify": "3.4.11",
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `94ce6322` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9bac7366` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

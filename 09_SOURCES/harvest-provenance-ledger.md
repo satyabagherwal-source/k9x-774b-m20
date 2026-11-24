@@ -12603,3 +12603,6 @@ Every entry in this ledger must capture:
 | `learn-github-kirillzyusko-react-native-keyboard-controller` | `https://github.com/kirillzyusko/react-native-keyboard-controller` | `dd4ffd54` | Multi-dimensional audit evidence | 2026-11-24T02:53:32.401Z |
 | `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `1b3c68a3` | Multi-dimensional audit evidence | 2026-11-24T03:14:22.818Z |
 | `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `b5eb22e2` | Multi-dimensional audit evidence | 2026-11-24T03:14:28.192Z |
+| `learn-github-a2ui-project-a2ui` | `https://github.com/a2ui-project/a2ui` | `c26be2dd` | Multi-dimensional audit evidence | 2026-11-24T03:22:36.277Z |
+| `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `32ba4b5c` | Multi-dimensional audit evidence | 2026-11-24T03:22:43.059Z |
+| `learn-dom-k-aa8cd5c4` | `project://paradedb-paradedb` | `32ba4b5c` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/paradedb-paradedb-learnings.md` | 2026-11-24T03:23:14.802Z |

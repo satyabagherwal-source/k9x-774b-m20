@@ -12570,3 +12570,6 @@
 | `CYCLE-20261124-OI99` | `2026-11-24T02:53:32.397Z` | `kirillzyusko/react-native-keyboard-controller` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md` | Yes (`183a3e18...`) |
 | `CYCLE-20261124-FB32` | `2026-11-24T03:14:22.814Z` | `Agent-Field/agentfield` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10183` | Yes (`6d21f709...`) |
 | `CYCLE-20261124-FF8C` | `2026-11-24T03:14:28.188Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10184` | Yes (`a2ba92cf...`) |
+| `CYCLE-20261124-PVU9` | `2026-11-24T03:22:36.273Z` | `a2ui-project/a2ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10185` | Yes (`f8533d53...`) |
+| `CYCLE-20261124-Q12M` | `2026-11-24T03:22:43.054Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10186` | Yes (`1ec9a7ba...`) |
+| `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T03:23:14.802Z` | `paradedb-paradedb` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-AA8CD5C4` [Domain K] | Yes (`93cfe119...`) |

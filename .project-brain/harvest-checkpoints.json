@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T03:14:28.209Z",
+  "last_updated": "2026-11-24T03:22:43.074Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11361,14 +11361,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-paradedb-paradedb",
-      "content_hash": "6dd856ce8fff7d8f620dd2ee69d3c55116822ca87ed8b543b13f29b329203b9f",
-      "verified_at": "2026-11-23T04:00:17.266Z",
+      "content_hash": "1ec9a7ba89efdabeb32f18f46e941be6201b4d1c64141f03ce570e3d247e4e81",
+      "verified_at": "2026-11-24T03:22:43.073Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T04:00:17.266Z"
+      "last_updated": "2026-11-24T03:22:43.073Z"
     },
     "imsnif/diskonaut": {
       "repository": "imsnif/diskonaut",
@@ -18111,14 +18111,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-a2ui-project-a2ui",
-      "content_hash": "67459ac5f72b68fafcef639eb95376e2ac42f08ff61548a25ca185bd81078d60",
-      "verified_at": "2026-11-21T05:27:53.628Z",
+      "content_hash": "f8533d537f2d81a335674c9e3e0b2829cbb2f19d014e71461fd44145ebf2fe65",
+      "verified_at": "2026-11-24T03:22:36.294Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T05:27:53.628Z"
+      "last_updated": "2026-11-24T03:22:36.294Z"
     },
     "milind-soni/OpenMausBot": {
       "repository": "milind-soni/OpenMausBot",

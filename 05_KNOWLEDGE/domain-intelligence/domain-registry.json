@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T03:14:33.906Z",
-  "total_records": 2485,
+  "last_updated": "2026-11-24T03:23:16.538Z",
+  "total_records": 2486,
   "domains": {
     "A": {
       "total": 20,
@@ -2367,7 +2367,7 @@
       ]
     },
     "K": {
-      "total": 148,
+      "total": 149,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -2516,7 +2516,8 @@
         "domain_intelligence-quality-verification-intelligence-apache-pinot-core-invariants",
         "domain_intelligence-quality-verification-intelligence-apache-pinot-learnings-core-invariants",
         "domain_intelligence-quality-verification-intelligence-sweetpad-dev-sweetpad-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-sweetpad-dev-sweetpad-learnings-core-invariant"
+        "domain_intelligence-quality-verification-intelligence-sweetpad-dev-sweetpad-learnings-core-invariant",
+        "DOM-K-AA8CD5C4"
       ]
     },
     "L": {
@@ -8783,8 +8784,8 @@
       "title": "Architecture Intelligence: a2ui-project/a2ui Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-a2ui-project-a2ui-architecture-intelligence-a2ui-project-a2ui-core-invariants.md",
       "repository": "a2ui-project/a2ui",
-      "content_hash": "3bc182911858b8117495b629f783381f4da89181d5d6492231d0f0f71e0e7d77",
-      "created_at": "2026-11-17T05:19:46.112Z"
+      "content_hash": "b52cac66c1f89555effc5086fbf273eba9d54c21d30ce51617cf469de300f3f8",
+      "created_at": "2026-11-24T03:22:36.685Z"
     },
     "domain_intelligence-architecture-intelligence-open-source-legal-opencontracts-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-open-source-legal-opencontracts-core-invariants",
@@ -8852,8 +8853,8 @@
       "title": "Architecture Intelligence: a2ui-project-a2ui-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-a2ui-project-a2ui-learnings-architecture-intelligence-a2ui-project-a2ui-learning.md",
       "repository": "a2ui-project-a2ui-learnings",
-      "content_hash": "0f9afcdf666dd5f83a83ee188191a817cf75acdb471e06ed919c845f6b161368",
-      "created_at": "2026-11-17T05:19:49.899Z"
+      "content_hash": "d29b22219fd5696586b691ddd5f6672706c1c800ee84de2b49daf97e5fe1f57b",
+      "created_at": "2026-11-24T03:22:46.863Z"
     },
     "domain_intelligence-architecture-intelligence-open-source-legal-opencontracts-learnings-core-invaria": {
       "record_id": "domain_intelligence-architecture-intelligence-open-source-legal-opencontracts-learnings-core-invaria",
@@ -11876,8 +11877,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "c6b27328e5e37cd9c3e597b703d19630247811134b679e70984cc0b14cdf691f",
-      "created_at": "2026-11-24T01:56:08.496Z"
+      "content_hash": "d59fa9c61758cde8f8cfab48d31d24f4c88e21903e4fe2cc35ee80a406cc6f63",
+      "created_at": "2026-11-24T03:23:16.538Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -21301,8 +21302,8 @@
       "title": "Architecture Intelligence: paradedb/paradedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-paradedb-paradedb-architecture-intelligence-paradedb-paradedb-core-invariants.md",
       "repository": "paradedb/paradedb",
-      "content_hash": "2d4de0a5005d24d77974ce0620834671ebbd2e333c73dd88a369e47e0750d376",
-      "created_at": "2026-11-23T04:00:17.649Z"
+      "content_hash": "04676d01421970c142f4e28c9407c312731689bd9b2f5468b8204d968c5c592d",
+      "created_at": "2026-11-24T03:22:43.462Z"
     },
     "DOM-D-53AB726C": {
       "record_id": "DOM-D-53AB726C",
@@ -25073,8 +25074,8 @@
       "title": "Architecture Intelligence: paradedb-paradedb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-paradedb-paradedb-learnings-architecture-intelligence-paradedb-paradedb-learning.md",
       "repository": "paradedb-paradedb-learnings",
-      "content_hash": "481e3500d517c3583b13b72ec428604b5391b6fa5d99d40ceffaad77bbdb681c",
-      "created_at": "2026-11-23T04:00:24.841Z"
+      "content_hash": "be2cee84826d51027ceae740d9740b0fc659f8159385224d3d1acd0d0e9c3bb0",
+      "created_at": "2026-11-24T03:23:15.631Z"
     },
     "domain_intelligence-technical-construction-intelligence-cachix-devenv-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-cachix-devenv-core-invariants",
@@ -41674,6 +41675,48 @@
       "repository": "hf-strata-engine-inkling-2-mini-strata-learnings",
       "content_hash": "e6f398a020bb8d7ffd06f73509cbb05dc33e3af5ec006e1471bf5dd947ee6ff5",
       "created_at": "2026-11-24T02:21:42.955Z"
+    },
+    "DOM-K-AA8CD5C4": {
+      "record_id": "DOM-K-AA8CD5C4",
+      "domain_letter": "K",
+      "domain_id": "quality_verification",
+      "domain_name": "Quality & Verification Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "K",
+          "id": "quality_verification",
+          "name": "Quality & Verification Intelligence"
+        }
+      ],
+      "title": "test: migrate Rust test fixtures to V2 syntax",
+      "content": "When implementing operations in `index_read/src/index/directory/mvcc.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "93cfe119d85ff61bc23e439f71f8abb218b8bbb40a6c3b3953b28f63520b4ec9",
+      "summary": "Prevents defects observed in production commit `32ba4b5c`: test: migrate Rust test fixtures to V2 syntax. Unvalidated execution paths cause  -> When implementing operations in `index_read/src/index/directory/mvcc.rs`, engineers MUST enforce rigorous boundary validation, safe state tr",
+      "provenance": {
+        "source_uri": "project://paradedb-paradedb/paradedb-paradedb-learnings.md",
+        "source_version": "32ba4b5c",
+        "observed_at": "2026-11-24T03:22:41.990Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (paradedb-paradedb)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of paradedb-paradedb"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "K"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.64,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-24T03:23:14.771Z"
     }
   }
 }

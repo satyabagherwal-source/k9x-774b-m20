@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T03:14:34.082Z",
+  "last_updated": "2026-11-24T03:23:16.743Z",
   "total_verified_learnings": 9089,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24383,
+  "total_items": 24389,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113133,10 +113133,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-a2ui-project-a2ui-architecture-intelligence-a2ui-project-a2ui-core-invariants.md",
       "title": "Architecture Intelligence: a2ui-project/a2ui Core Invariants",
       "repository": "a2ui-project/a2ui",
-      "source_version": "1cbef31b",
-      "content_hash": "3bc182911858b8117495b629f783381f4da89181d5d6492231d0f0f71e0e7d77",
+      "source_version": "c26be2dd",
+      "content_hash": "b52cac66c1f89555effc5086fbf273eba9d54c21d30ce51617cf469de300f3f8",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T05:19:46.112Z"
+      "persisted_at": "2026-11-24T03:22:36.685Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-a2ui-project-a2ui": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-a2ui-project-a2ui",
@@ -113145,10 +113145,10 @@
       "relative_path": "08_VERIFICATION/a2ui-project-a2ui-verification-protocol-empirical-defect-shield-for-a2ui-project.md",
       "title": "Verification Protocol: Empirical Defect Shield for a2ui-project/a2ui",
       "repository": "a2ui-project/a2ui",
-      "source_version": "5ff1b05f",
-      "content_hash": "7bcca0b5d1d4ef5ecd44860b26a293d47dac13944f94d80f36487a9efd97b4d4",
+      "source_version": "c26be2dd",
+      "content_hash": "8d462ce78d9045660b5e9b12b9637cbb402d4207b48319193409e429aa66b2fa",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T05:27:54.208Z"
+      "persisted_at": "2026-11-24T03:22:36.894Z"
     },
     "candidate_directive-mcp-preserve-distinct-block-search-results-by-relationship-id-2414": {
       "item_id": "candidate_directive-mcp-preserve-distinct-block-search-results-by-relationship-id-2414",
@@ -113206,9 +113206,9 @@
       "title": "Architecture Intelligence: a2ui-project-a2ui-learnings Core Invariants",
       "repository": "a2ui-project-a2ui-learnings",
       "source_version": "HEAD",
-      "content_hash": "0f9afcdf666dd5f83a83ee188191a817cf75acdb471e06ed919c845f6b161368",
+      "content_hash": "d29b22219fd5696586b691ddd5f6672706c1c800ee84de2b49daf97e5fe1f57b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T05:19:49.899Z"
+      "persisted_at": "2026-11-24T03:22:46.863Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-a2ui-project-a2ui-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-a2ui-project-a2ui-learnings",
@@ -113218,9 +113218,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for a2ui-project-a2ui-learnings",
       "repository": "a2ui-project-a2ui-learnings",
       "source_version": "HEAD",
-      "content_hash": "5362b7feaae996d762e7430bad54360ea034301bddb59c9935991e4ea12cf12b",
+      "content_hash": "fdcf6c79434c2be70acdb1d48e63e1e3ad4b27e85a3bc10af158fdfa9879951c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T05:28:01.900Z"
+      "persisted_at": "2026-11-24T03:22:47.025Z"
     },
     "domain_intelligence-architecture-intelligence-open-source-legal-opencontracts-learnings-core-invaria": {
       "item_id": "domain_intelligence-architecture-intelligence-open-source-legal-opencontracts-learnings-core-invaria",
@@ -218075,8 +218075,8 @@
       "slug": "paradedb-paradedb",
       "platform": "github",
       "source_url": "https://github.com/paradedb/paradedb",
-      "source_version": "0b859805",
-      "content_hash": "6dd856ce8fff7d8f620dd2ee69d3c55116822ca87ed8b543b13f29b329203b9f",
+      "source_version": "32ba4b5c",
+      "content_hash": "1ec9a7ba89efdabeb32f18f46e941be6201b4d1c64141f03ce570e3d247e4e81",
       "dossier_path": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "promoted_rules": [
@@ -218119,6 +218119,11 @@
           "number": 10018,
           "title": "evaluate integer `+`, `-`, `*` natively in Join Scan with overflow checks",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10186,
+          "title": "migrate Rust test fixtures to V2 syntax",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -218126,7 +218131,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T04:00:17.061Z",
+      "verified_at": "2026-11-24T03:22:42.851Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -218180,10 +218185,10 @@
       "relative_path": "08_VERIFICATION/paradedb-paradedb-verification-protocol-empirical-defect-shield-for-paradedb-par.md",
       "title": "Verification Protocol: Empirical Defect Shield for paradedb/paradedb",
       "repository": "paradedb/paradedb",
-      "source_version": "0b859805",
-      "content_hash": "76e31f82457e3ff93e14281f9ff35cf8563335f44c1d829ac2f3a52a3a574190",
+      "source_version": "32ba4b5c",
+      "content_hash": "59e8286d8a79a616be80994c53bf3942f5bda18ff09429504632b05eb218762c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T04:00:17.811Z"
+      "persisted_at": "2026-11-24T03:22:43.643Z"
     },
     "learn-huggingface-amazon-chronos-2": {
       "learning_id": "learn-huggingface-amazon-chronos-2",
@@ -219126,13 +219131,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-MOS7-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-QQQY-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "8d3e406e8ea7e4800e7252692ba482e771a5e5e510dbf137e0f68ac662c65a2a",
+      "content_hash": "50c253fc8c02aaf080ccfb41976a5de6a33fa69401cb8ec05a52e57484b693db",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T01:56:08.312Z"
+      "persisted_at": "2026-11-24T03:23:16.330Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -219142,9 +219147,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "c6b27328e5e37cd9c3e597b703d19630247811134b679e70984cc0b14cdf691f",
+      "content_hash": "d59fa9c61758cde8f8cfab48d31d24f4c88e21903e4fe2cc35ee80a406cc6f63",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T01:56:08.496Z"
+      "persisted_at": "2026-11-24T03:23:16.538Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -219154,9 +219159,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "a0a3d7a43d379405d484769fb6fb85a2b500f6d95be1a6e53068daac59c02ea6",
+      "content_hash": "085a41f5cc0949d9431de8db3ed6600a931e2d8cd511cdfcc04d1461c9bbe430",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T01:56:08.678Z"
+      "persisted_at": "2026-11-24T03:23:16.743Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -248063,10 +248068,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-paradedb-paradedb-architecture-intelligence-paradedb-paradedb-core-invariants.md",
       "title": "Architecture Intelligence: paradedb/paradedb Core Invariants",
       "repository": "paradedb/paradedb",
-      "source_version": "0b859805",
-      "content_hash": "2d4de0a5005d24d77974ce0620834671ebbd2e333c73dd88a369e47e0750d376",
+      "source_version": "32ba4b5c",
+      "content_hash": "04676d01421970c142f4e28c9407c312731689bd9b2f5468b8204d968c5c592d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T04:00:17.649Z"
+      "persisted_at": "2026-11-24T03:22:43.462Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-abiray-minimax-h3-image-gguf-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-abiray-minimax-h3-image-gguf-learnings-core-i",
@@ -263425,9 +263430,9 @@
       "title": "Architecture Intelligence: paradedb-paradedb-learnings Core Invariants",
       "repository": "paradedb-paradedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "481e3500d517c3583b13b72ec428604b5391b6fa5d99d40ceffaad77bbdb681c",
+      "content_hash": "be2cee84826d51027ceae740d9740b0fc659f8159385224d3d1acd0d0e9c3bb0",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T04:00:24.841Z"
+      "persisted_at": "2026-11-24T03:23:15.631Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-paradedb-paradedb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-paradedb-paradedb-learnings",
@@ -263437,9 +263442,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for paradedb-paradedb-learnings",
       "repository": "paradedb-paradedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "c1a151f2179af5ec649f603b360d719ef420a0de8ee2a68818df417672d560a3",
+      "content_hash": "897cb40b4b07bde1080535a9c93a45b4d665558084e296f1d1d74cc090b0e575",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T04:00:25.012Z"
+      "persisted_at": "2026-11-24T03:23:15.830Z"
     },
     "rule-8794": {
       "learning_id": "rule-8794",
@@ -269566,8 +269571,8 @@
       "slug": "a2ui-project-a2ui",
       "platform": "github",
       "source_url": "https://github.com/a2ui-project/a2ui",
-      "source_version": "5ff1b05f",
-      "content_hash": "67459ac5f72b68fafcef639eb95376e2ac42f08ff61548a25ca185bd81078d60",
+      "source_version": "c26be2dd",
+      "content_hash": "f8533d537f2d81a335674c9e3e0b2829cbb2f19d014e71461fd44145ebf2fe65",
       "dossier_path": "07_PROJECT_LEARNING/a2ui-project-a2ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/a2ui-project-a2ui-learnings.md",
       "promoted_rules": [
@@ -269580,6 +269585,11 @@
           "number": 9732,
           "title": "bump dompurify to ^3.4.17 to resolve security advisories",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10185,
+          "title": "pin Python dependencies in requirements-docs.txt",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -269587,7 +269597,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T05:27:53.383Z",
+      "verified_at": "2026-11-24T03:22:36.062Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -332581,6 +332591,82 @@
       "content_hash": "2106f89d25f817d8ca2edb6252ecb8613337e8e5dd22ce7f8765186606804c04",
       "domain_letter": "H",
       "persisted_at": "2026-11-24T03:14:32.908Z"
+    },
+    "rule-10185": {
+      "learning_id": "rule-10185",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10185,
+      "title": "pin Python dependencies in requirements-docs.txt",
+      "source_url": "https://github.com/a2ui-project/a2ui",
+      "source_version": "c26be2dd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T03:22:36.062Z"
+    },
+    "candidate_directive-pin-python-dependencies-in-requirements-docs-txt": {
+      "item_id": "candidate_directive-pin-python-dependencies-in-requirements-docs-txt",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PW0Z-pin-python-dependencies-in-requirements-docs-txt.md",
+      "title": "pin Python dependencies in requirements-docs.txt",
+      "repository": "a2ui-project/a2ui",
+      "source_version": "c26be2dd",
+      "content_hash": "dfd8db9b4dfad75e8d4d6e324b00b9cdc53d8af38fe297d58be0545e024c09f6",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T03:22:36.519Z"
+    },
+    "rule-10186": {
+      "learning_id": "rule-10186",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10186,
+      "title": "migrate Rust test fixtures to V2 syntax",
+      "source_url": "https://github.com/paradedb/paradedb",
+      "source_version": "32ba4b5c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T03:22:42.851Z"
+    },
+    "candidate_directive-migrate-rust-test-fixtures-to-v2-syntax": {
+      "item_id": "candidate_directive-migrate-rust-test-fixtures-to-v2-syntax",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Q196-migrate-rust-test-fixtures-to-v2-syntax.md",
+      "title": "migrate Rust test fixtures to V2 syntax",
+      "repository": "paradedb/paradedb",
+      "source_version": "32ba4b5c",
+      "content_hash": "93d2c092227ef04f502b073e68397fcae5c9b313a277ec95d2476c2b8b34724c",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-24T03:22:43.294Z"
+    },
+    "candidate_directive-docs-pin-python-dependencies-in-requirements-docs-txt": {
+      "item_id": "candidate_directive-docs-pin-python-dependencies-in-requirements-docs-txt",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Q3VU-docs-pin-python-dependencies-in-requirements-docs-txt.md",
+      "title": "docs): pin Python dependencies in requirements-docs.txt",
+      "repository": "a2ui-project-a2ui-learnings",
+      "source_version": "HEAD",
+      "content_hash": "84dab78104253229fea4616431b518a509bb4a586617a6794ae9b58f2c37c52f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T03:22:46.699Z"
+    },
+    "candidate_directive-test-migrate-rust-test-fixtures-to-v2-syntax": {
+      "item_id": "candidate_directive-test-migrate-rust-test-fixtures-to-v2-syntax",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QQ1Q-test-migrate-rust-test-fixtures-to-v2-syntax.md",
+      "title": "test: migrate Rust test fixtures to V2 syntax",
+      "repository": "paradedb-paradedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bea0d1122b5c7f0336764c96a313bf6db61fdf103b40cf161ef766f24dbea7ed",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-24T03:23:15.435Z"
     }
   },
   "ai-builder-brain": {

@@ -7543,10 +7543,10 @@
     "repository": "paradedb/paradedb",
     "platform": "github",
     "sourceUrl": "https://github.com/paradedb/paradedb",
-    "sourceVersion": "0b859805",
+    "sourceVersion": "32ba4b5c",
     "license": "AGPL-3.0",
-    "contentHash": "6dd856ce8fff7d8f620dd2ee69d3c55116822ca87ed8b543b13f29b329203b9f",
-    "lastHarvestedAt": "2026-11-23T04:00:17.258Z",
+    "contentHash": "1ec9a7ba89efdabeb32f18f46e941be6201b4d1c64141f03ce570e3d247e4e81",
+    "lastHarvestedAt": "2026-11-24T03:22:43.059Z",
     "learningId": "learn-github-paradedb-paradedb"
   },
   "imsnif-diskonaut": {
@@ -12033,10 +12033,10 @@
     "repository": "a2ui-project/a2ui",
     "platform": "github",
     "sourceUrl": "https://github.com/a2ui-project/a2ui",
-    "sourceVersion": "5ff1b05f",
+    "sourceVersion": "c26be2dd",
     "license": "Apache-2.0",
-    "contentHash": "67459ac5f72b68fafcef639eb95376e2ac42f08ff61548a25ca185bd81078d60",
-    "lastHarvestedAt": "2026-11-21T05:27:53.619Z",
+    "contentHash": "f8533d537f2d81a335674c9e3e0b2829cbb2f19d014e71461fd44145ebf2fe65",
+    "lastHarvestedAt": "2026-11-24T03:22:36.277Z",
     "learningId": "learn-github-a2ui-project-a2ui"
   },
   "milind-soni-openmausbot": {

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T03:14:28.198Z",
-  "total_cycles_completed": 11951,
-  "total_learnings_persisted": 11951,
-  "total_rules_promoted": 11031,
+  "last_updated": "2026-11-24T03:22:43.064Z",
+  "total_cycles_completed": 11953,
+  "total_learnings_persisted": 11953,
+  "total_rules_promoted": 11033,
   "history": [
-    {
-      "timestamp": "2026-11-23T15:54:43.031Z",
-      "repository": "NVIDIA/cuda-rust",
-      "learningId": "learn-github-nvidia-cuda-rust",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T16:02:49.926Z",
-      "repository": "Qwen/Qwen3-8B",
-      "learningId": "learn-huggingface-qwen-qwen3-8b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T16:02:52.447Z",
       "repository": "mlua-rs/mlua",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-24T03:14:28.198Z",
       "repository": "databendlabs/databend",
       "learningId": "learn-github-databendlabs-databend",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T03:22:36.283Z",
+      "repository": "a2ui-project/a2ui",
+      "learningId": "learn-github-a2ui-project-a2ui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T03:22:43.064Z",
+      "repository": "paradedb/paradedb",
+      "learningId": "learn-github-paradedb-paradedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
