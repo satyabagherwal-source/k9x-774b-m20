@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T08:35:03.506Z",
-  "total_records": 2507,
+  "last_updated": "2026-11-24T08:48:28.702Z",
+  "total_records": 2509,
   "domains": {
     "A": {
       "total": 22,
@@ -1587,7 +1587,7 @@
       ]
     },
     "H": {
-      "total": 595,
+      "total": 597,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2183,7 +2183,9 @@
         "domain_intelligence-technical-construction-intelligence-dkhamsing-open-source-ios-apps-core-invarian",
         "domain_intelligence-technical-construction-intelligence-dkhamsing-open-source-ios-apps-learnings-cor",
         "DOM-H-8C352294",
-        "domain_intelligence-technical-construction-intelligence-seekstorm-seekstorm-learnings-core-invariant"
+        "domain_intelligence-technical-construction-intelligence-seekstorm-seekstorm-learnings-core-invariant",
+        "domain_intelligence-technical-construction-intelligence-xinatian-mroffice-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-xinatian-mroffice-learnings-core-invariants"
       ]
     },
     "I": {
@@ -8322,8 +8324,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "b03366b662b067ad2ba60333d91acd15e980452255e05544844197042c5b5281",
-      "created_at": "2026-11-24T08:35:03.506Z"
+      "content_hash": "ba48b15c072b8293799423e0ec022c8000013a885165c0fb60377b69cd7f836d",
+      "created_at": "2026-11-24T08:48:27.648Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -23678,8 +23680,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "3a43c4faca6fa106cf2b3d58a3cfc5fa0811a145a2618038c83b667924aaef7c",
-      "created_at": "2026-11-24T08:05:43.225Z"
+      "content_hash": "9747b04e230bbd0967619b8f2ccc31eee3d0751adb88fbd2fce2e74ce477b781",
+      "created_at": "2026-11-24T08:48:28.702Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",
@@ -42084,6 +42086,24 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-24T08:35:01.059Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-xinatian-mroffice-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-xinatian-mroffice-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: XinaTian/MROffice Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-xinatian-mroffice-technical-construction-intelligence-xinatian-mroffice-core-inv.md",
+      "repository": "XinaTian/MROffice",
+      "content_hash": "3b08380657b1c03fd5c2a7bcfc3c0457f1b88f47d06b6e0bfba4fbe129e47970",
+      "created_at": "2026-11-24T08:48:20.955Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-xinatian-mroffice-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-xinatian-mroffice-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: xinatian-mroffice-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-xinatian-mroffice-learnings-technical-construction-intelligence-xinatian-mroffic.md",
+      "repository": "xinatian-mroffice-learnings",
+      "content_hash": "fdd80cd7c169c1e39cc6edd65434b36de457f4c3d28e0b40d0536ebbbb44d942",
+      "created_at": "2026-11-24T08:48:26.665Z"
     }
   }
 }

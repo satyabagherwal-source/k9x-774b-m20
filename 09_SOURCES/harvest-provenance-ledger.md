@@ -12670,3 +12670,4 @@ Every entry in this ledger must capture:
 | `learn-github-zulip-zulip` | `https://github.com/zulip/zulip` | `eca8048b` | Multi-dimensional audit evidence | 2026-11-24T08:25:06.814Z |
 | `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `7ecaf212` | Multi-dimensional audit evidence | 2026-11-24T08:34:30.876Z |
 | `learn-dom-d-f29632a9` | `project://1jehuang-jcode` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/1jehuang-jcode-learnings.md` | 2026-11-24T08:35:01.096Z |
+| `learn-github-xinatian-mroffice` | `https://github.com/XinaTian/MROffice` | `93ed64ad` | Multi-dimensional audit evidence | 2026-11-24T08:48:20.493Z |

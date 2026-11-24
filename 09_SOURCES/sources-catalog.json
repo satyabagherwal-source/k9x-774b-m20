@@ -13308,5 +13308,15 @@
     "contentHash": "04352297cbf9bd3e98da2969e42ef28f2ae1f071e0a8dd36cbbcaa128f57faa6",
     "lastHarvestedAt": "2026-11-24T02:20:58.310Z",
     "learningId": "learn-huggingface-strata-engine-inkling-2-mini-strata"
+  },
+  "xinatian-mroffice": {
+    "repository": "XinaTian/MROffice",
+    "platform": "github",
+    "sourceUrl": "https://github.com/XinaTian/MROffice",
+    "sourceVersion": "93ed64ad",
+    "license": "AGPL-3.0",
+    "contentHash": "9eac349f2ba877e771128f112f6c2fe00a4b78942582f938857eed6228f4fd30",
+    "lastHarvestedAt": "2026-11-24T08:48:20.493Z",
+    "learningId": "learn-github-xinatian-mroffice"
   }
 }

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T08:25:12.082Z",
+  "updated_at": "2026-11-24T08:48:26.187Z",
   "stats": {
-    "total_discovered": 8496,
-    "approved_pending_harvest": 8056,
+    "total_discovered": 8511,
+    "approved_pending_harvest": 8071,
     "harvested_count": 0,
     "rejected_count": 440,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8041,
+      "COMMUNITY_AND_EXPERT": 8056,
       "OFFICIAL_DOCUMENTATION": 268,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -183855,6 +183855,336 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
         "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-1E185D3F2758": {
+      "id": "SRC-1E185D3F2758",
+      "url": "https://github.com/XinaTian/MROffice",
+      "title": "https://github.com/XinaTian/MROffice",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T08:48:25.289Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xinatian-mroffice-learnings.md",
+        "fileName": "xinatian-mroffice-learnings.md"
+      }
+    },
+    "SRC-B2B1C3839910": {
+      "id": "SRC-B2B1C3839910",
+      "url": "https://mroffice.ai/",
+      "title": "https://mroffice.ai/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T08:48:25.350Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xinatian-mroffice-learnings.md",
+        "fileName": "xinatian-mroffice-learnings.md"
+      }
+    },
+    "SRC-A75DCC450EE1": {
+      "id": "SRC-A75DCC450EE1",
+      "url": "https://mroffice.ai/en/developers/pricing",
+      "title": "https://mroffice.ai/en/developers/pricing",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T08:48:25.416Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xinatian-mroffice-learnings.md",
+        "fileName": "xinatian-mroffice-learnings.md"
+      }
+    },
+    "SRC-B8BB17FDF548": {
+      "id": "SRC-B8BB17FDF548",
+      "url": "https://github.com/XinaTian/MROffice/releases",
+      "title": "https://github.com/XinaTian/MROffice/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T08:48:25.495Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xinatian-mroffice-learnings.md",
+        "fileName": "xinatian-mroffice-learnings.md"
+      }
+    },
+    "SRC-9604111FAE6A": {
+      "id": "SRC-9604111FAE6A",
+      "url": "https://mroffice.ai/da/developers/pricing",
+      "title": "https://mroffice.ai/da/developers/pricing",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T08:48:25.565Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xinatian-mroffice-learnings.md",
+        "fileName": "xinatian-mroffice-learnings.md"
+      }
+    },
+    "SRC-E634DE40C7DD": {
+      "id": "SRC-E634DE40C7DD",
+      "url": "https://mroffice.ai/en",
+      "title": "https://mroffice.ai/en",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T08:48:25.628Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xinatian-mroffice-learnings.md",
+        "fileName": "xinatian-mroffice-learnings.md"
+      }
+    },
+    "SRC-398923728701": {
+      "id": "SRC-398923728701",
+      "url": "https://mroffice.ai/en/developers/open-source",
+      "title": "https://mroffice.ai/en/developers/open-source",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T08:48:25.690Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xinatian-mroffice-learnings.md",
+        "fileName": "xinatian-mroffice-learnings.md"
+      }
+    },
+    "SRC-C0E6E232DCF1": {
+      "id": "SRC-C0E6E232DCF1",
+      "url": "https://mroffice.ai/da/dev",
+      "title": "https://mroffice.ai/da/dev",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T08:48:25.751Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xinatian-mroffice-learnings.md",
+        "fileName": "xinatian-mroffice-learnings.md"
+      }
+    },
+    "SRC-7DBCD944076C": {
+      "id": "SRC-7DBCD944076C",
+      "url": "https://mroffice.ai/da/developers/open-source",
+      "title": "https://mroffice.ai/da/developers/open-source",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T08:48:25.814Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xinatian-mroffice-learnings.md",
+        "fileName": "xinatian-mroffice-learnings.md"
+      }
+    },
+    "SRC-BA56B6D7A47E": {
+      "id": "SRC-BA56B6D7A47E",
+      "url": "https://mroffice.a/",
+      "title": "https://mroffice.a/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T08:48:25.876Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xinatian-mroffice-learnings.md",
+        "fileName": "xinatian-mroffice-learnings.md"
+      }
+    },
+    "SRC-63F680A79D16": {
+      "id": "SRC-63F680A79D16",
+      "url": "https://mroffice.ai/de/developers/open-source",
+      "title": "https://mroffice.ai/de/developers/open-source",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T08:48:25.938Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xinatian-mroffice-learnings.md",
+        "fileName": "xinatian-mroffice-learnings.md"
+      }
+    },
+    "SRC-8C6CA6661A59": {
+      "id": "SRC-8C6CA6661A59",
+      "url": "https://mroffice.ai/en-",
+      "title": "https://mroffice.ai/en-",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T08:48:26.000Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xinatian-mroffice-learnings.md",
+        "fileName": "xinatian-mroffice-learnings.md"
+      }
+    },
+    "SRC-315F89376B06": {
+      "id": "SRC-315F89376B06",
+      "url": "https://mroffice.ai/en-GB/developers/open-source",
+      "title": "https://mroffice.ai/en-GB/developers/open-source",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T08:48:26.063Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xinatian-mroffice-learnings.md",
+        "fileName": "xinatian-mroffice-learnings.md"
+      }
+    },
+    "SRC-C969E367FA79": {
+      "id": "SRC-C969E367FA79",
+      "url": "https://mroffice.ai/es-419/developers/open-source",
+      "title": "https://mroffice.ai/es-419/developers/open-source",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T08:48:26.125Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xinatian-mroffice-learnings.md",
+        "fileName": "xinatian-mroffice-learnings.md"
+      }
+    },
+    "SRC-8C9D82BA5F64": {
+      "id": "SRC-8C9D82BA5F64",
+      "url": "https://mroffice.ai/es/developers/open-source",
+      "title": "https://mroffice.ai/es/developers/open-source",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T08:48:26.187Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xinatian-mroffice-learnings.md",
+        "fileName": "xinatian-mroffice-learnings.md"
       }
     }
   }

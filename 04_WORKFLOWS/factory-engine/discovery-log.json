@@ -22096,5 +22096,20 @@
     "downloads": 1064,
     "qualityScore": 2004,
     "discoveredAt": "2026-11-24T02:18:44.254Z"
+  },
+  {
+    "name": "MROffice",
+    "fullName": "XinaTian/MROffice",
+    "url": "https://github.com/XinaTian/MROffice",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "MR Office — the open-source editors of the AI office suite closest to Microsoft Office: documents, spreadsheets, presentations, PDF and code in the browser. Copilot in every editor edits real Word, Excel and PowerPoint files with you; an MCP server lets Claude, ChatGPT, Cursor and Codex create and edit them; embed it in your app with one line.",
+    "stars": 3303,
+    "forks": 378,
+    "openIssues": 0,
+    "language": "TypeScript",
+    "qualityScore": 2015,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-24T08:44:43.594Z"
   }
 ]

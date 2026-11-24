@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-8FMU",
-    "timestamp": "2026-11-22T15:41:31.302Z",
-    "repository": "Comfy-Org/MiniMax-H3",
-    "learningId": "learn-huggingface-comfy-org-minimax-h3",
-    "contentHash": "5c92e8cba428d6e871dbe88d72c09d1021d03929e251adb1ba4f56c858becf38",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-97CD",
     "timestamp": "2026-11-22T15:42:07.213Z",
     "repository": "astral-sh/ruff",
@@ -7492,6 +7477,21 @@
     "contentHash": "00249820330ee271192aa7333da1fbb148a3435a5bcd1da9e51a97565e68de8f",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-CS95",
+    "timestamp": "2026-11-24T08:48:20.489Z",
+    "repository": "XinaTian/MROffice",
+    "learningId": "learn-github-xinatian-mroffice",
+    "contentHash": "9eac349f2ba877e771128f112f6c2fe00a4b78942582f938857eed6228f4fd30",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

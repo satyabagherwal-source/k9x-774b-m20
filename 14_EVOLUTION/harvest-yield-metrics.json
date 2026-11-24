@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T08:34:30.881Z",
-  "total_cycles_completed": 12012,
-  "total_learnings_persisted": 12012,
-  "total_rules_promoted": 11088,
+  "last_updated": "2026-11-24T08:48:20.499Z",
+  "total_cycles_completed": 12013,
+  "total_learnings_persisted": 12013,
+  "total_rules_promoted": 11089,
   "history": [
-    {
-      "timestamp": "2026-11-23T18:50:49.777Z",
-      "repository": "GreptimeTeam/greptimedb",
-      "learningId": "learn-github-greptimeteam-greptimedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T19:00:45.201Z",
       "repository": "Cactus-Compute/whistle",
@@ -1403,6 +1396,13 @@
       "repository": "1jehuang/jcode",
       "learningId": "learn-github-1jehuang-jcode",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T08:48:20.499Z",
+      "repository": "XinaTian/MROffice",
+      "learningId": "learn-github-xinatian-mroffice",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T08:34:30.884Z",
+  "last_updated": "2026-11-24T08:48:20.511Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -20084,6 +20084,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-24T02:20:58.323Z"
+    },
+    "XinaTian/MROffice": {
+      "repository": "XinaTian/MROffice",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-xinatian-mroffice",
+      "content_hash": "9eac349f2ba877e771128f112f6c2fe00a4b78942582f938857eed6228f4fd30",
+      "verified_at": "2026-11-24T08:48:20.510Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-24T08:48:20.510Z"
     }
   },
   "repos": {

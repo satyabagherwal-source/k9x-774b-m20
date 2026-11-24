@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T08:35:03.699Z",
-  "total_verified_learnings": 9092,
+  "last_updated": "2026-11-24T08:48:29.063Z",
+  "total_verified_learnings": 9093,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24540,
+  "total_items": 24547,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "4639e8e7f8b6984b34b0bbbea9d1461b208caf780b62758792d94f811bf85dec",
+      "content_hash": "e274dee387f17fd91b2b32413f0b62f3ebc64b551546f4d8d85e64cbe277300d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T08:05:43.399Z"
+      "persisted_at": "2026-11-24T08:48:28.888Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "f2c1484c35280af1915e07f2264df19d55ef42ae7eb0304056e6ea745a27f928",
+      "content_hash": "bee471225f36d9842057c8318da1b65686948944d0842c5aaee0122355fe3ad3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T08:05:43.546Z"
+      "persisted_at": "2026-11-24T08:48:29.063Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "b03366b662b067ad2ba60333d91acd15e980452255e05544844197042c5b5281",
+      "content_hash": "ba48b15c072b8293799423e0ec022c8000013a885165c0fb60377b69cd7f836d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T08:35:03.506Z"
+      "persisted_at": "2026-11-24T08:48:27.648Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "b9f1b3c4830031b150e0ad6874a9e7934ac26144a9a2d3c6d82c8a8f2c15aa30",
+      "content_hash": "49ed5e5d6556cf9e2166d86f8d6bb46f09f6fd181845dcec982c9fcd00a6e76a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T08:35:03.699Z"
+      "persisted_at": "2026-11-24T08:48:27.846Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -256020,9 +256020,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "3a43c4faca6fa106cf2b3d58a3cfc5fa0811a145a2618038c83b667924aaef7c",
+      "content_hash": "9747b04e230bbd0967619b8f2ccc31eee3d0751adb88fbd2fce2e74ce477b781",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T08:05:43.225Z"
+      "persisted_at": "2026-11-24T08:48:28.702Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
@@ -329887,13 +329887,13 @@
       "item_id": "candidate_directive-rust-resolve-python-calls-through-annotated-parameters-and-self-members",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-TYX7-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-CYG3-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
       "title": "rust): resolve python calls through annotated parameters and self members",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "dcc9fe1443e432e87e2e1f43c37fe0893b8f0194b2f611efcf7ac8cc1b44fc84",
+      "content_hash": "990ce0ab28aee4776a69c79a2dc554eba8f7eeee6f484d90cc19342165010591",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T08:05:43.054Z"
+      "persisted_at": "2026-11-24T08:48:28.521Z"
     },
     "learn-github-iziz-libphonenumber-ios": {
       "learning_id": "learn-github-iziz-libphonenumber-ios",
@@ -334847,13 +334847,120 @@
       "item_id": "candidate_directive-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-VP52-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-CXMV-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
       "title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "95b7a35c2ffc127c6d005840871eaaca398b2ef3f0ee698d5ba69b2ea6c02a06",
+      "content_hash": "0ead932b947a4f18e50ffb7b483a3f1390ac5e25dfe6f22210d4369aef4bc834",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T08:35:03.315Z"
+      "persisted_at": "2026-11-24T08:48:27.468Z"
+    },
+    "learn-github-xinatian-mroffice": {
+      "learning_id": "learn-github-xinatian-mroffice",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "XinaTian/MROffice",
+      "repository": "XinaTian/MROffice",
+      "slug": "xinatian-mroffice",
+      "platform": "github",
+      "source_url": "https://github.com/XinaTian/MROffice",
+      "source_version": "93ed64ad",
+      "content_hash": "9eac349f2ba877e771128f112f6c2fe00a4b78942582f938857eed6228f4fd30",
+      "dossier_path": "07_PROJECT_LEARNING/xinatian-mroffice-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/xinatian-mroffice-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 10235,
+          "title": "Update the editors to 58464350ec",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-24T08:48:20.227Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-10235": {
+      "learning_id": "rule-10235",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10235,
+      "title": "Update the editors to 58464350ec",
+      "source_url": "https://github.com/XinaTian/MROffice",
+      "source_version": "93ed64ad",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T08:48:20.227Z"
+    },
+    "candidate_directive-update-the-editors-to-58464350ec": {
+      "item_id": "candidate_directive-update-the-editors-to-58464350ec",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CWVI-update-the-editors-to-58464350ec.md",
+      "title": "Update the editors to 58464350ec",
+      "repository": "xinatian-mroffice-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4f5b83b62387454f8f183318eaa27da5b937801639641f041168fbdb1ddf6fad",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T08:48:26.484Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-xinatian-mroffice-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-xinatian-mroffice-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-xinatian-mroffice-technical-construction-intelligence-xinatian-mroffice-core-inv.md",
+      "title": "Technical Construction Intelligence: XinaTian/MROffice Core Invariants",
+      "repository": "XinaTian/MROffice",
+      "source_version": "93ed64ad",
+      "content_hash": "3b08380657b1c03fd5c2a7bcfc3c0457f1b88f47d06b6e0bfba4fbe129e47970",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T08:48:20.955Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-xinatian-mroffice": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-xinatian-mroffice",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/xinatian-mroffice-verification-protocol-empirical-defect-shield-for-xinatian-mro.md",
+      "title": "Verification Protocol: Empirical Defect Shield for XinaTian/MROffice",
+      "repository": "XinaTian/MROffice",
+      "source_version": "93ed64ad",
+      "content_hash": "62c8c90e27fdf0be0500b6bd55594a284932286b6de003069363959875b934a9",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-24T08:48:21.190Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-xinatian-mroffice-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-xinatian-mroffice-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-xinatian-mroffice-learnings-technical-construction-intelligence-xinatian-mroffic.md",
+      "title": "Technical Construction Intelligence: xinatian-mroffice-learnings Core Invariants",
+      "repository": "xinatian-mroffice-learnings",
+      "source_version": "HEAD",
+      "content_hash": "fdd80cd7c169c1e39cc6edd65434b36de457f4c3d28e0b40d0536ebbbb44d942",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T08:48:26.665Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-xinatian-mroffice-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-xinatian-mroffice-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/xinatian-mroffice-learnings-verification-protocol-empirical-defect-shield-for-xi.md",
+      "title": "Verification Protocol: Empirical Defect Shield for xinatian-mroffice-learnings",
+      "repository": "xinatian-mroffice-learnings",
+      "source_version": "HEAD",
+      "content_hash": "739e76d88d7e7c1d00d576901b3468bd9a3be217efde09267c4c4304ed3bdf93",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-24T08:48:26.847Z"
     }
   },
   "ai-builder-brain": {
