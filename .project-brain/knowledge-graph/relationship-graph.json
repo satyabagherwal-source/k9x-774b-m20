@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-24T06:21:17.865Z",
+  "updated_at": "2026-11-24T06:46:56.405Z",
   "statistics": {
-    "total_nodes": 499,
+    "total_nodes": 500,
     "total_edges": 205,
     "domain_distribution": {
       "D": 302,
       "M": 1,
-      "H": 90,
+      "H": 91,
       "J": 22,
       "K": 30,
       "L": 8,
@@ -11145,6 +11145,28 @@
       ],
       "created_at": "2026-11-24T06:21:17.865Z",
       "updated_at": "2026-11-24T06:21:17.865Z"
+    },
+    "DOM-H-8C352294": {
+      "id": "DOM-H-8C352294",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "🐞 fix(trigger): await form validation before validating named fields- #14024",
+      "summary": "Prevents defects observed in production commit `074d1748`: 🐞 fix(trigger): await form validation before validating named fields- #14024. Un -> When implementing operations in `src/__tests__/logic/createFormControl.test.ts`, engineers MUST enforce rigorous boundary validation, safe s",
+      "confidence": 0.69,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://react-hook-form-react-hook-form/react-hook-form-react-hook-form-learnings.md",
+        "source_version": "074d1748",
+        "observed_at": "2026-11-24T06:46:17.105Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (react-hook-form-react-hook-form)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-24T06:46:56.405Z",
+      "updated_at": "2026-11-24T06:46:56.405Z"
     }
   },
   "edges": [

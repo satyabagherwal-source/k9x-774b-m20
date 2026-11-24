@@ -12617,3 +12617,7 @@
 | `CYCLE-20261124-PLIN` | `2026-11-24T06:38:20.207Z` | `unhappychoice/gitlogue` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`6df62454...`) |
 | `CYCLE-20261124-PP8Y` | `2026-11-24T06:38:25.042Z` | `dkhamsing/open-source-ios-apps` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10220` | Yes (`93bec277...`) |
 | `CYCLE-20261124-PS1Q` | `2026-11-24T06:38:28.670Z` | `encoredev/encore` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10221` | Yes (`32dc69d6...`) |
+| `CYCLE-20261124-ZQIZ` | `2026-11-24T06:46:13.259Z` | `fallow-rs/fallow` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md` | Yes (`f9669db3...`) |
+| `CYCLE-20261124-ZU7Z` | `2026-11-24T06:46:18.047Z` | `react-hook-form/react-hook-form` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10222` | Yes (`a3961a0d...`) |
+| `CYCLE-20261124-003E` | `2026-11-24T06:46:25.658Z` | `neuron-core/neuron-ai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10223` | Yes (`e3c40bbd...`) |
+| `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T06:46:56.407Z` | `react-hook-form-react-hook-form` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-8C352294` [Domain H] | Yes (`6a3c9eb9...`) |

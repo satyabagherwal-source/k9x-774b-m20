@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T06:38:32.072Z",
-    "lastVerified": "2026-11-24T06:38:32.072Z",
+    "lastChecked": "2026-11-24T06:46:28.954Z",
+    "lastVerified": "2026-11-24T06:46:28.954Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -275,9 +275,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-24T06:11:20.001Z",
+    "lastChecked": "2026-11-24T06:46:22.222Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-24T06:11:20.001Z"
+    "lastVerified": "2026-11-24T06:46:22.222Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -829,9 +829,9 @@
   "chrispybacon-dev-dockflare": {
     "name": "DockFlare",
     "officialUrl": "https://github.com/ChrispyBacon-dev/DockFlare",
-    "lastChecked": "2026-11-24T01:38:01.014Z",
+    "lastChecked": "2026-11-24T06:46:17.216Z",
     "revisionIdentifier": "9c7bed82",
-    "lastVerified": "2026-11-24T01:38:01.014Z"
+    "lastVerified": "2026-11-24T06:46:17.216Z"
   },
   "nirdiamant-rag_techniques": {
     "name": "RAG_Techniques",
@@ -879,14 +879,14 @@
     "officialUrl": "https://github.com/react-hook-form/react-hook-form",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-21T12:29:24.253Z",
-    "lastVerified": "2026-11-21T12:29:24.253Z",
+    "lastChecked": "2026-11-24T06:46:17.101Z",
+    "lastVerified": "2026-11-24T06:46:17.101Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-react-hook-form-react-hook-form",
-    "contentHash": "0894c96861b3f17d0a175f246d6b1b7ba37b113b489a9936651c3e7b5b32a860",
+    "contentHash": "a3961a0de6da642a68f797d9512fb5fa957e261f2470ebc075c3bbe3d218ff8d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 6,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2307,14 +2307,14 @@
     "officialUrl": "https://github.com/fallow-rs/fallow",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T22:49:26.778Z",
-    "lastVerified": "2026-11-22T22:49:26.778Z",
+    "lastChecked": "2026-11-24T06:46:12.628Z",
+    "lastVerified": "2026-11-24T06:46:12.628Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-fallow-rs-fallow",
-    "contentHash": "fd1618c791cee11374a4eca9ae6cc3e265d19970e13bbd75c32a0da52781ed09",
+    "contentHash": "f9669db37d7a81eb4fce5223021821b47fa468a76782eb240b5888915619e095",
     "promotedRulesCount": 0,
-    "recentFixesCount": 29,
+    "recentFixesCount": 28,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3450,22 +3450,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "neuron-core-neuron-ai": {
-    "name": "neuron-ai",
+    "name": "neuron-core/neuron-ai",
     "officialUrl": "https://github.com/neuron-core/neuron-ai",
     "sourceType": "github",
     "technology": "PHP",
-    "lastChecked": "2026-11-23T07:28:49.309Z",
-    "lastVerified": "2026-11-23T07:28:49.309Z",
+    "lastChecked": "2026-11-24T06:46:24.661Z",
+    "lastVerified": "2026-11-24T06:46:24.661Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-neuron-core-neuron-ai",
-    "contentHash": "0ae4e690f4228f10a2f42a45edd00d2f2f5808b3b6fbc46429276cc7bdf15775",
+    "contentHash": "e3c40bbd07175492e7052246a04e0a9f97cc5cf34d2753977a282b0f70e7a268",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "f6ba920a"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "gitoxidelabs-gitoxide": {
     "name": "GitoxideLabs/gitoxide",
@@ -5335,8 +5334,8 @@
     "officialUrl": "https://github.com/crossplane/crossplane",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-23T09:29:44.821Z",
-    "lastVerified": "2026-11-23T09:29:44.821Z",
+    "lastChecked": "2026-11-24T06:46:14.917Z",
+    "lastVerified": "2026-11-24T06:46:14.917Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-crossplane-crossplane",
@@ -9677,12 +9676,12 @@
     "lastVerified": "2026-11-23T00:56:22.529Z"
   },
   "searchsolved-search-solved-public-seo": {
-    "name": "searchsolved/search-solved-public-seo",
+    "name": "search-solved-public-seo",
     "officialUrl": "https://github.com/searchsolved/search-solved-public-seo",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-20T02:58:25.796Z",
-    "lastVerified": "2026-11-20T02:58:25.796Z",
+    "lastChecked": "2026-11-24T06:46:09.702Z",
+    "lastVerified": "2026-11-24T06:46:09.702Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-searchsolved-search-solved-public-seo",
@@ -9691,7 +9690,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "591fa023"
   },
   "jellyfin-swiftfin": {
     "name": "jellyfin/Swiftfin",

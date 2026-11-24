@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T06:38:36.874Z",
+  "last_updated": "2026-11-24T06:47:00.100Z",
   "total_verified_learnings": 9092,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24498,
+  "total_items": 24504,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -115089,10 +115089,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-hook-form-react-hook-form-technical-construction-intelligence-react-hook-f.md",
       "title": "Technical Construction Intelligence: react-hook-form/react-hook-form Core Invariants",
       "repository": "react-hook-form/react-hook-form",
-      "source_version": "0251cbae",
-      "content_hash": "242858d68d13ca498090e0034640fc4c46c84ff7ff77cacfe5f8d47d6133278d",
+      "source_version": "074d1748",
+      "content_hash": "ef033fb1026460f96129b751496a2869f36837be9372d357564adae49422eb2b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T12:29:25.620Z"
+      "persisted_at": "2026-11-24T06:46:18.426Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-react-hook-form-react-hook-for": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-react-hook-form-react-hook-for",
@@ -115102,9 +115102,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for react-hook-form-react-hook-form-learnings",
       "repository": "react-hook-form-react-hook-form-learnings",
       "source_version": "HEAD",
-      "content_hash": "9110f7014e24a4b5a2c5b3e1e0288126e4be2c1c9c4a9716229262ea399c3079",
+      "content_hash": "47585404a430f55869262257a3ca908d6be74d934a5da7584796dd4c23d25979",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T12:29:59.555Z"
+      "persisted_at": "2026-11-24T06:46:57.790Z"
     },
     "RULE-2": {
       "learning_id": "RULE-2",
@@ -222705,8 +222705,8 @@
       "slug": "neuron-core-neuron-ai",
       "platform": "github",
       "source_url": "https://github.com/neuron-core/neuron-ai",
-      "source_version": "f6ba920a",
-      "content_hash": "0ae4e690f4228f10a2f42a45edd00d2f2f5808b3b6fbc46429276cc7bdf15775",
+      "source_version": "a6a82c3c",
+      "content_hash": "e3c40bbd07175492e7052246a04e0a9f97cc5cf34d2753977a282b0f70e7a268",
       "dossier_path": "07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md",
       "promoted_rules": [
@@ -222729,6 +222729,11 @@
           "number": 9092,
           "title": "Empirical Invariant Guard in AGENTS.md",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10223,
+          "title": "support array of scalar in structured output",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -222736,7 +222741,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T00:43:55.324Z",
+      "verified_at": "2026-11-24T06:46:25.433Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222778,10 +222783,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-neuron-core-neuron-ai-technical-construction-intelligence-neuron-core-neuron-ai-.md",
       "title": "Technical Construction Intelligence: neuron-core/neuron-ai Core Invariants",
       "repository": "neuron-core/neuron-ai",
-      "source_version": "f6ba920a",
-      "content_hash": "ce590155115a2dff459e6e3a0a756dadba7870a84bc385971e0e1a2e2a492298",
+      "source_version": "a6a82c3c",
+      "content_hash": "6ac045d8040c43899a57a2bf4f28280905bd5a1e8ac527e7a67ef7ac617dd88c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T00:43:55.928Z"
+      "persisted_at": "2026-11-24T06:46:26.033Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-neuron-core-neuron-ai": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-neuron-core-neuron-ai",
@@ -222790,10 +222795,10 @@
       "relative_path": "08_VERIFICATION/neuron-core-neuron-ai-verification-protocol-empirical-defect-shield-for-neuron-c.md",
       "title": "Verification Protocol: Empirical Defect Shield for neuron-core/neuron-ai",
       "repository": "neuron-core/neuron-ai",
-      "source_version": "f6ba920a",
-      "content_hash": "940c79e8ce8697847b42607ec8dddf84d2752bcae73b1cfbf80159a2d2d6e976",
+      "source_version": "a6a82c3c",
+      "content_hash": "9a929897a56554d561a9f137c2313d2bc5d54b46331e00bffab204ef91a9fa40",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T00:43:56.080Z"
+      "persisted_at": "2026-11-24T06:46:26.202Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-zai-org-glm-5-2-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-zai-org-glm-5-2-learnings-core-invariants",
@@ -222851,9 +222856,9 @@
       "title": "Technical Construction Intelligence: neuron-core-neuron-ai-learnings Core Invariants",
       "repository": "neuron-core-neuron-ai-learnings",
       "source_version": "HEAD",
-      "content_hash": "03a158655ab0b269ff104630a3d3f155026492a8a319fec9553801d25f187f5b",
+      "content_hash": "9bd3eac34d76c644fb0d1d54dcd5a53be92a2941eff946de767263f82798d533",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T00:43:46.438Z"
+      "persisted_at": "2026-11-24T06:46:58.709Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-neuron-core-neuron-ai-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-neuron-core-neuron-ai-learning",
@@ -222863,9 +222868,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for neuron-core-neuron-ai-learnings",
       "repository": "neuron-core-neuron-ai-learnings",
       "source_version": "HEAD",
-      "content_hash": "de2f929490eacf04b4853b779c12d72a537be940e1612e1660ed8a18fb819560",
+      "content_hash": "0e90157f7279bbea04cd85027b1442d9ff784389459b967b6dcda1e29ee783c9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T00:43:46.577Z"
+      "persisted_at": "2026-11-24T06:47:00.100Z"
     },
     "learn-github-i18next-react-i18next": {
       "learning_id": "learn-github-i18next-react-i18next",
@@ -243110,8 +243115,8 @@
       "slug": "fallow-rs-fallow",
       "platform": "github",
       "source_url": "https://github.com/fallow-rs/fallow",
-      "source_version": "a01bf36e",
-      "content_hash": "fd1618c791cee11374a4eca9ae6cc3e265d19970e13bbd75c32a0da52781ed09",
+      "source_version": "40407499",
+      "content_hash": "f9669db37d7a81eb4fce5223021821b47fa468a76782eb240b5888915619e095",
       "dossier_path": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "promoted_rules": [
@@ -243156,7 +243161,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T22:49:27.073Z",
+      "verified_at": "2026-11-24T06:46:13.049Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -243184,10 +243189,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fallow-rs-fallow-technical-construction-intelligence-fallow-rs-fallow-core-invar.md",
       "title": "Technical Construction Intelligence: fallow-rs/fallow Core Invariants",
       "repository": "fallow-rs/fallow",
-      "source_version": "a01bf36e",
-      "content_hash": "ab9ee4a14e79e67a8ee8cb6587de20de3082b0d15cf2919ceb626825bdabc2b3",
+      "source_version": "40407499",
+      "content_hash": "bd013a43095736215b256924d1632890a80829e8ee6eefe0960c992bd8a33d36",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T22:49:27.781Z"
+      "persisted_at": "2026-11-24T06:46:13.698Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-fallow-rs-fallow": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-fallow-rs-fallow",
@@ -243196,10 +243201,10 @@
       "relative_path": "08_VERIFICATION/fallow-rs-fallow-verification-protocol-empirical-defect-shield-for-fallow-rs-fal.md",
       "title": "Verification Protocol: Empirical Defect Shield for fallow-rs/fallow",
       "repository": "fallow-rs/fallow",
-      "source_version": "a01bf36e",
-      "content_hash": "0464b39669a23f64ab42ff0e197a68fc7c2356ed85502e9288e4558e944a781b",
+      "source_version": "40407499",
+      "content_hash": "9685030907a6fa60ce922e140a6a09f5edc4bbc5f4a5dba5c4dd2582f4f56c4c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T22:49:27.964Z"
+      "persisted_at": "2026-11-24T06:46:13.857Z"
     },
     "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf": {
       "learning_id": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
@@ -243311,9 +243316,9 @@
       "title": "Technical Construction Intelligence: fallow-rs-fallow-learnings Core Invariants",
       "repository": "fallow-rs-fallow-learnings",
       "source_version": "HEAD",
-      "content_hash": "536456ab2553b228c173a6705783348117c832a663f350d0f5064f9f01f10679",
+      "content_hash": "78e148f3b26ae8bc9596888e87d9d2fec3f316ce30bdd7e52b61b1b836aaf742",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T22:49:37.681Z"
+      "persisted_at": "2026-11-24T06:46:29.492Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-fallow-rs-fallow-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-fallow-rs-fallow-learnings",
@@ -243323,9 +243328,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for fallow-rs-fallow-learnings",
       "repository": "fallow-rs-fallow-learnings",
       "source_version": "HEAD",
-      "content_hash": "4d99f054882f7bb183341c4cd5e98d72e87b07b1e14005c135736e42b26acb93",
+      "content_hash": "20a0a0caa5a8d9da7b8fd7d8ab80d37e6f3ecaa69611ac37b52ab8b09571b9a4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T22:49:37.902Z"
+      "persisted_at": "2026-11-24T06:46:29.648Z"
     },
     "candidate_directive-embedded-metadata-parameter-authority-gguf-sampling-self-containment": {
       "item_id": "candidate_directive-embedded-metadata-parameter-authority-gguf-sampling-self-containment",
@@ -273217,8 +273222,8 @@
       "slug": "react-hook-form-react-hook-form",
       "platform": "github",
       "source_url": "https://github.com/react-hook-form/react-hook-form",
-      "source_version": "0251cbae",
-      "content_hash": "0894c96861b3f17d0a175f246d6b1b7ba37b113b489a9936651c3e7b5b32a860",
+      "source_version": "074d1748",
+      "content_hash": "a3961a0de6da642a68f797d9512fb5fa957e261f2470ebc075c3bbe3d218ff8d",
       "dossier_path": "07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
       "promoted_rules": [
@@ -273241,6 +273246,11 @@
           "number": 9779,
           "title": "🐞 fix(useWatch): avoid recomputing values during cleanup",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10222,
+          "title": "🐞 fix(trigger): await form validation before validating named fields- #14024",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -273248,7 +273258,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T12:29:25.062Z",
+      "verified_at": "2026-11-24T06:46:17.872Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -273497,9 +273507,9 @@
       "title": "Technical Construction Intelligence: react-hook-form-react-hook-form-learnings Core Invariants",
       "repository": "react-hook-form-react-hook-form-learnings",
       "source_version": "HEAD",
-      "content_hash": "544e523e6f556d864eed4c5643ef5a48e5b5a38bf79d03aeed5c8c8eefd3fc78",
+      "content_hash": "496ff346e22de8dd4a2ea7ae3f92bfb9a88c3dc69524d57db91f8ef86086a156",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T12:29:59.371Z"
+      "persisted_at": "2026-11-24T06:46:57.611Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-react-hook-form-react-hook-form-lea": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-react-hook-form-react-hook-form-lea",
@@ -334266,6 +334276,82 @@
       "content_hash": "2d23b8b640006cf8ec545795d95f386dcd96ea3dc15028a0284b424ce0fb8c63",
       "domain_letter": "F",
       "persisted_at": "2026-11-24T06:38:36.555Z"
+    },
+    "candidate_directive-report-the-cache-and-ignore-rules-a-repair-affects": {
+      "item_id": "candidate_directive-report-the-cache-and-ignore-rules-a-repair-affects",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZQPO-report-the-cache-and-ignore-rules-a-repair-affects.md",
+      "title": "report the cache and ignore rules a repair affects",
+      "repository": "fallow-rs/fallow",
+      "source_version": "40407499",
+      "content_hash": "fb60a16031f36a3ff8072f9727469a392e760b7b63f8d216a567b2f19fce63cd",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T06:46:13.501Z"
+    },
+    "rule-10222": {
+      "learning_id": "rule-10222",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10222,
+      "title": "🐞 fix(trigger): await form validation before validating named fields- #14024",
+      "source_url": "https://github.com/react-hook-form/react-hook-form",
+      "source_version": "074d1748",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T06:46:17.872Z"
+    },
+    "candidate_directive-fix-trigger-await-form-validation-before-validating-named-fields-14024": {
+      "item_id": "candidate_directive-fix-trigger-await-form-validation-before-validating-named-fields-14024",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0OLY-fix-trigger-await-form-validation-before-validating-named-fields-14024.md",
+      "title": "🐞 fix(trigger): await form validation before validating named fields- #14024",
+      "repository": "react-hook-form-react-hook-form-learnings",
+      "source_version": "HEAD",
+      "content_hash": "48878c8fd0f4ae1b1cfe5bdbee515abff78325492564f42c10ad6580a60a7832",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T06:46:57.445Z"
+    },
+    "rule-10223": {
+      "learning_id": "rule-10223",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10223,
+      "title": "support array of scalar in structured output",
+      "source_url": "https://github.com/neuron-core/neuron-ai",
+      "source_version": "a6a82c3c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T06:46:25.433Z"
+    },
+    "candidate_directive-support-array-of-scalar-in-structured-output": {
+      "item_id": "candidate_directive-support-array-of-scalar-in-structured-output",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0PDR-support-array-of-scalar-in-structured-output.md",
+      "title": "support array of scalar in structured output",
+      "repository": "neuron-core-neuron-ai-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d2497df783f356a325e394c4ad75bb4ef6723ccbd2b4f7f8de6c27f0070eafd1",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T06:46:58.431Z"
+    },
+    "candidate_directive-config-report-the-cache-and-ignore-rules-a-repair-affects": {
+      "item_id": "candidate_directive-config-report-the-cache-and-ignore-rules-a-repair-affects",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-02WX-config-report-the-cache-and-ignore-rules-a-repair-affects.md",
+      "title": "config): report the cache and ignore rules a repair affects",
+      "repository": "fallow-rs-fallow-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c564767b871f2948e4a1673375bb79e1f04eb92bed25ed2f432b4156ea4d1859",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T06:46:29.314Z"
     }
   },
   "ai-builder-brain": {

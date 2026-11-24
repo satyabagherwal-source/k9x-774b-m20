@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T06:38:36.555Z",
-  "total_records": 2502,
+  "last_updated": "2026-11-24T06:46:58.709Z",
+  "total_records": 2503,
   "domains": {
     "A": {
       "total": 20,
@@ -1584,7 +1584,7 @@
       ]
     },
     "H": {
-      "total": 593,
+      "total": 594,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2178,7 +2178,8 @@
         "domain_intelligence-technical-construction-intelligence-crawlseo-crawlseo-learnings-core-invariants",
         "DOM-H-E1D0F50E",
         "domain_intelligence-technical-construction-intelligence-dkhamsing-open-source-ios-apps-core-invarian",
-        "domain_intelligence-technical-construction-intelligence-dkhamsing-open-source-ios-apps-learnings-cor"
+        "domain_intelligence-technical-construction-intelligence-dkhamsing-open-source-ios-apps-learnings-cor",
+        "DOM-H-8C352294"
       ]
     },
     "I": {
@@ -10105,8 +10106,8 @@
       "title": "Technical Construction Intelligence: react-hook-form/react-hook-form Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-hook-form-react-hook-form-technical-construction-intelligence-react-hook-f.md",
       "repository": "react-hook-form/react-hook-form",
-      "content_hash": "242858d68d13ca498090e0034640fc4c46c84ff7ff77cacfe5f8d47d6133278d",
-      "created_at": "2026-11-21T12:29:25.620Z"
+      "content_hash": "ef033fb1026460f96129b751496a2869f36837be9372d357564adae49422eb2b",
+      "created_at": "2026-11-24T06:46:18.426Z"
     },
     "DOM-D-D194A6F7": {
       "record_id": "DOM-D-D194A6F7",
@@ -13120,8 +13121,8 @@
       "title": "Technical Construction Intelligence: neuron-core/neuron-ai Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-neuron-core-neuron-ai-technical-construction-intelligence-neuron-core-neuron-ai-.md",
       "repository": "neuron-core/neuron-ai",
-      "content_hash": "ce590155115a2dff459e6e3a0a756dadba7870a84bc385971e0e1a2e2a492298",
-      "created_at": "2026-11-21T00:43:55.928Z"
+      "content_hash": "6ac045d8040c43899a57a2bf4f28280905bd5a1e8ac527e7a67ef7ac617dd88c",
+      "created_at": "2026-11-24T06:46:26.033Z"
     },
     "DOM-D-78E4F99B": {
       "record_id": "DOM-D-78E4F99B",
@@ -13189,8 +13190,8 @@
       "title": "Technical Construction Intelligence: neuron-core-neuron-ai-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-neuron-core-neuron-ai-learnings-technical-construction-intelligence-neuron-core-.md",
       "repository": "neuron-core-neuron-ai-learnings",
-      "content_hash": "03a158655ab0b269ff104630a3d3f155026492a8a319fec9553801d25f187f5b",
-      "created_at": "2026-11-18T00:43:46.438Z"
+      "content_hash": "9bd3eac34d76c644fb0d1d54dcd5a53be92a2941eff946de767263f82798d533",
+      "created_at": "2026-11-24T06:46:58.709Z"
     },
     "domain_intelligence-technical-construction-intelligence-i18next-react-i18next-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-i18next-react-i18next-core-invariants",
@@ -19638,8 +19639,8 @@
       "title": "Technical Construction Intelligence: fallow-rs/fallow Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fallow-rs-fallow-technical-construction-intelligence-fallow-rs-fallow-core-invar.md",
       "repository": "fallow-rs/fallow",
-      "content_hash": "ab9ee4a14e79e67a8ee8cb6587de20de3082b0d15cf2919ceb626825bdabc2b3",
-      "created_at": "2026-11-22T22:49:27.781Z"
+      "content_hash": "bd013a43095736215b256924d1632890a80829e8ee6eefe0960c992bd8a33d36",
+      "created_at": "2026-11-24T06:46:13.698Z"
     },
     "domain_intelligence-technical-construction-intelligence-liquidai-lfm2-5-24b-a2b-gguf-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-liquidai-lfm2-5-24b-a2b-gguf-core-invariants",
@@ -19656,8 +19657,8 @@
       "title": "Technical Construction Intelligence: fallow-rs-fallow-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fallow-rs-fallow-learnings-technical-construction-intelligence-fallow-rs-fallow-.md",
       "repository": "fallow-rs-fallow-learnings",
-      "content_hash": "536456ab2553b228c173a6705783348117c832a663f350d0f5064f9f01f10679",
-      "created_at": "2026-11-22T22:49:37.681Z"
+      "content_hash": "78e148f3b26ae8bc9596888e87d9d2fec3f316ce30bdd7e52b61b1b836aaf742",
+      "created_at": "2026-11-24T06:46:29.492Z"
     },
     "domain_intelligence-technical-construction-intelligence-hf-liquidai-lfm2-5-24b-a2b-gguf-learnings-co": {
       "record_id": "domain_intelligence-technical-construction-intelligence-hf-liquidai-lfm2-5-24b-a2b-gguf-learnings-co",
@@ -27106,8 +27107,8 @@
       "title": "Technical Construction Intelligence: react-hook-form-react-hook-form-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-hook-form-react-hook-form-learnings-technical-construction-intelligence-re.md",
       "repository": "react-hook-form-react-hook-form-learnings",
-      "content_hash": "544e523e6f556d864eed4c5643ef5a48e5b5a38bf79d03aeed5c8c8eefd3fc78",
-      "created_at": "2026-11-21T12:29:59.371Z"
+      "content_hash": "496ff346e22de8dd4a2ea7ae3f92bfb9a88c3dc69524d57db91f8ef86086a156",
+      "created_at": "2026-11-24T06:46:57.611Z"
     },
     "domain_intelligence-technical-construction-intelligence-dubzzz-fast-check-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-dubzzz-fast-check-core-invariants",
@@ -41968,6 +41969,48 @@
       "repository": "encoredev-encore-learnings",
       "content_hash": "2d23b8b640006cf8ec545795d95f386dcd96ea3dc15028a0284b424ce0fb8c63",
       "created_at": "2026-11-24T06:38:36.555Z"
+    },
+    "DOM-H-8C352294": {
+      "record_id": "DOM-H-8C352294",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        }
+      ],
+      "title": "🐞 fix(trigger): await form validation before validating named fields- #14024",
+      "content": "When implementing operations in `src/__tests__/logic/createFormControl.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-hook-form/react-hook-form. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "6a3c9eb9e9a49910e83b203535b58ed00019f00eb6663381fe7abf8eb0dd2a4c",
+      "summary": "Prevents defects observed in production commit `074d1748`: 🐞 fix(trigger): await form validation before validating named fields- #14024. Un -> When implementing operations in `src/__tests__/logic/createFormControl.test.ts`, engineers MUST enforce rigorous boundary validation, safe s",
+      "provenance": {
+        "source_uri": "project://react-hook-form-react-hook-form/react-hook-form-react-hook-form-learnings.md",
+        "source_version": "074d1748",
+        "observed_at": "2026-11-24T06:46:17.105Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (react-hook-form-react-hook-form)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of react-hook-form-react-hook-form"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.69,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-24T06:46:56.371Z"
     }
   }
 }

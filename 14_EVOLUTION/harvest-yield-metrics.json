@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T06:38:28.680Z",
-  "total_cycles_completed": 11994,
-  "total_learnings_persisted": 11994,
-  "total_rules_promoted": 11073,
+  "last_updated": "2026-11-24T06:46:25.667Z",
+  "total_cycles_completed": 11997,
+  "total_learnings_persisted": 11997,
+  "total_rules_promoted": 11075,
   "history": [
-    {
-      "timestamp": "2026-11-23T17:46:15.362Z",
-      "repository": "Ataraxy-Labs/sem",
-      "learningId": "learn-github-ataraxy-labs-sem",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T17:46:21.165Z",
-      "repository": "fabio-rovai/open-ontologies",
-      "learningId": "learn-github-fabio-rovai-open-ontologies",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T17:46:25.612Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T17:46:27.446Z",
       "repository": "arangodb/arangodb",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-24T06:38:28.680Z",
       "repository": "encoredev/encore",
       "learningId": "learn-github-encoredev-encore",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T06:46:13.287Z",
+      "repository": "fallow-rs/fallow",
+      "learningId": "learn-github-fallow-rs-fallow",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T06:46:18.056Z",
+      "repository": "react-hook-form/react-hook-form",
+      "learningId": "learn-github-react-hook-form-react-hook-form",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T06:46:25.667Z",
+      "repository": "neuron-core/neuron-ai",
+      "learningId": "learn-github-neuron-core-neuron-ai",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

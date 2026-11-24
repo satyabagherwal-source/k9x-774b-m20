@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T06:38:37.001Z",
+  "last_updated": "2026-11-24T06:47:00.232Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-24T04:37:07.379Z",
@@ -448,7 +448,7 @@
       "staged_for_review": 1
     },
     "fallow-rs-fallow-learnings.md": {
-      "processed_at": "2026-11-22T22:49:37.112Z",
+      "processed_at": "2026-11-24T06:46:29.084Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2348,7 +2348,7 @@
       "staged_for_review": 0
     },
     "neuron-core-neuron-ai-learnings.md": {
-      "processed_at": "2026-11-18T00:43:46.015Z",
+      "processed_at": "2026-11-24T06:46:57.961Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3268,7 +3268,7 @@
       "staged_for_review": 1
     },
     "react-hook-form-react-hook-form-learnings.md": {
-      "processed_at": "2026-11-21T12:29:58.937Z",
+      "processed_at": "2026-11-24T06:46:56.407Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
     },
@@ -3808,7 +3808,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3684,
-  "total_canonical_promoted": 501,
-  "total_staged_for_review": 2774
+  "total_dossiers_evaluated": 3687,
+  "total_canonical_promoted": 502,
+  "total_staged_for_review": 2776
 }

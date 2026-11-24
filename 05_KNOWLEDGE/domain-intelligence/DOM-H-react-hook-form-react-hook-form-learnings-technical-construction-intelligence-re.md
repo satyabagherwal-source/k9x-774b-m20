@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T12:29:59.088Z",
+  "timestamp": "2026-11-24T06:46:57.338Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-react-hook-form-react-hook-form-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [react-hook-form-react-hook-form-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T12:29:59.088Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T06:46:57.338Z`  
 > **Learning ID**: `LEARN-EVO-react-hook-form-react-hook-form-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 56%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 66%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from react-hook-form-react-hook-form-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md`  
 > **Source**: github ([https://github.com/react-hook-form/react-hook-form](https://github.com/react-hook-form/react-hook-form))  
-> **Source Version**: `0251cbae`  
+> **Source Version**: `074d1748`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T12:29:24.258Z  
+> **Timestamp**: 2026-11-24T06:46:17.105Z  
 > **Learning ID**: `learn-github-react-hook-form-react-hook-form`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/react-hook-form/react-hook-form](https://github.com/react-hook-form/react-hook-form))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T12:29:24.253Z  
+> **Harvest Timestamp**: 2026-11-24T06:46:17.101Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: 📋 React Hooks for form state management and validation (Web + React Native)
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 44924 stars
+- **Stars / Engagement**: 44926 stars
 
 ---
 
@@ -809,435 +809,340 @@ export default <T extends FieldValues, K extends ReadFormState>(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `03303481` (2026-11-21)
-**Commit Message**: 🐞 fix(useWatch): avoid recomputing values during cleanup (#14045)
+### Incident Patch 1: `074d1748` (2026-11-22)
+**Commit Message**: 🐞 fix(trigger): await form validation before validating named fields- #14024 (#14055)
 
-Co-authored-by: Bill <[REDACTED_EMAIL]>
-
-**File**: `src/__tests__/useWatch.test.tsx` (modified, +110/-0)
+**File**: `src/__tests__/logic/createFormControl.test.ts` (modified, +84/-0)
 ```diff
-@@ -2412,6 +2412,116 @@ describe('useWatch', () => {
-   });
+@@ -19,6 +19,90 @@ jest.mock('../../logic/getDirtyFields', () => {
+ });
  
-   describe('compute ', () => {
-+    it.each(['2026-01-01', ''])(
-+      'should not recompute a removed field-array value on unmount: %j',
-+      (date) => {
-+        type FormValues = { items: { date: string }[] };
-+
-+        const Row = ({ control }: { control: Control<FormValues> }) => {
-+          const length = useWatch({
-+            control,
-+            name: 'items.0.date',
-+            compute: (value) => value.length,
-+          });
-+
-+          return <p data-testid="length">{length}</p>;
-+        };
-+
-+        const Component = () => {
-+          const { control } = useForm<FormValues>({
-+            defaultValues: { items: [] },
-+          });
-+          const { fields, append, replace } = useFieldArray({
-+            control,
-+            name: 'items',
-+          });
-+
-+          return (
-+            <>
-+              <button onClick={() => append({ date })}>Add</button>
-+              <button onClick={() => replace([])}>Clear</button>
-+              {fields.length > 0 && <Row control={control} />}
-+            </>
-+          );
-+        };
-+
-+        render(<Component />);
-+        expect(screen.queryByTestId('length')).not.toBeInTheDocument();
-+
-+        fireEvent.click(screen.getByRole('button', { name: 'Add' }));
-+        expect(screen.getByTestId('length')).toHaveTextContent(
-+          String(date.length),
-+        );
-+
-+        fireEvent.click(screen.getByRole('button', { name: 'Clear' }));
-+        expect(screen.queryByTestId('length')).not.toBeInTheDocument();
-+
-+        fireEvent.click(screen.getByRole('button', { name: 'Add' }));
-+        expect(screen.getByTestId('length')).toHaveTextContent(
-+          String(date.length),
-+        );
-+      },
-+    );
-+
-+    it('should not call compute when unmounting a watcher', () => {
-+      const compute = jest.fn((value: string) => value.length);
-+      const { unmount } = renderHook(() => {
-+        const { control } = useForm({ defaultValues: { test: 'value' } });
-+
-+        return useWatch({ control, name: 'test', compute });
+ describe('createFormControl', () => {
++  describe('trigger with form-level validate', () => {
++    it('pass the trigger name to form-level validation', async () => {
++      const validate = jest.fn(({ name }: { name?: string | string[] }) =>
++        name === 'email' ? 'Email is required' : true,
++      );
++      const form = createFormControl({
++        defaultValues: { email: '' },
++        validate,
 +      });
++      form.register('email');
 +
-+      compute.mockClear();
-+      unmount();
-+
-+      expect(compute).not.toHaveBeenCalled();
++      expect(await form.trigger('email')).toBe(false);
++      expect(validate).toHaveBeenCalledTimes(1);
++      expect(form.getErrors().form?.message).toBe('Email is required');
 +    });
 +
-+    itWithActivity(
-+      'should resynchronize a computed value after an Activity reconnects',
-+      () => {
-+        type FormValues = { test: string };
-+        let setValue: UseFormReturn<FormValues>['setValue'];
-+        const Child = React.memo(function Child({
-+          control,
-+        }: {
-+          control: Control<FormValues>;
-+        }) {
-+          const length = useWatch({
-+            control,
-+            name: 'test',
-+            compute: (value) => value.length,
-+          });
++    it('run form-level validation once for multiple fields', async () => {
++      const validate = jest.fn(async () => 'Invalid account');
++      const validateEmail = jest.fn(() => true);
++      const validatePassword = jest.fn(() => true);
++      const form = createFormControl({
++        defaultValues: { email: '', password: '' },
++        validate,
++      });
++      form.register('email', { validate: validateEmail });
++      form.register('password', { validate: validatePassword });
 +
-+          return <p data-testid="length">{length}</p>;
++      expect(await form.trigger(['email', 'password'])).toBe(false);
++      expect(validate).toHaveBeenCalledTimes(1);
++      expect(validate).toHaveBeenCalledWith(
++        expect.objectContaining({ name: ['email', 'password'] }),
++      );
++      expect(validateEmail).toHaveBeenCalledTimes(1);
++      expect(validatePassword).toHaveBeenCalledTimes(1);
++    });
++
++    it.each([true, false])(
++      'wait for async form validation before validating fields: %s',
++      async (formValid) => {
++        let resolveForm!: (valid: boolean) => void;
++        const form = createFormControl({
++          defaultValues: { email: '' },
++          validate: () =>
++            new Promise<boolean>((resolve) => {
++              resolveForm = resolve;
++            }),
 +        });
-+        const Component = ({ mode }: { mode: 'hidden' | 'visible' }) => {
-+          const form = useForm<FormValues>({
-+            defaultValues: { test: 'initial' },
-+          });
-+          setValue = form.setValue;
++        const validateEmail = jest.fn(async () => true);
++        form.register('email', { validate: validateEmail });
 +
-+          return (
-+            <Activity mode={mode}>
-+              <Child control={form.control} />
-+            </Activity>
-+          );
-+        };
++        const result = form.trigger(['email']);
++        expect(validateEmail).not.toHaveBeenCalled();
 +
-+        const { rerender } = render(<Component mode="visible" />);
-+        expect(screen.getByTestId('length')).toHaveTextContent('7');
-+
-+        act(() => setValue('test', 'updated value'));
-+        expect(screen.getByTestId('length')).toHaveTextContent('13');
-+
-+        rerender(<Component mode="hidden" />);
-+        act(() => setValue('test', ''));
-+        rerender(<Component mode="visible" />);
-+
-+        expect(screen.getByTestId('length')).toHaveTextContent('0');
++        resolveForm(formValid);
++        expect(await result).toBe(formValid);
++        expect(validateEmail).toHaveBeenCalledTimes(1);
 +      },
 +    );
 +
-     it.each([
-       {
-         label: 'a string',
++    it.each(['reset', 'unregister'] as const)(
++      'not validate a field registered again after %s during pending form validation',
++      async (action) => {
++        let resolveForm!: (valid: boolean) => void;
++        const form = createFormControl({
++          defaultValues: { email: '' },
++          validate: () =>
++            new Promise<boolean>((resolve) => {
++              resolveForm = resolve;
++            }),
++        });
++        form.register('email');
++        const result = form.trigger('email');
++        action === 'reset' ? form.reset() : form.unregister('email');
++        const validateEmail = jest.fn(() => 'New field error');
++        form.register('email', { validate: validateEmail });
++
++        resolveForm(true);
++        await result;
++        expect(validateEmail).not.toHaveBeenCalled();
++        expect(form.getErrors()).toEqual({});
++      },
++    );
++  });
++
+   it.each([
+     { values: [] },
+     { values: [''] },
 ```
 
-**File**: `src/useWatch.ts` (modified, +5/-1)
+**File**: `src/logic/createFormControl.ts` (modified, +22/-11)
 ```diff
-@@ -237,7 +237,11 @@ export function useWatch<TFieldValues extends FieldValues>(
- 
-     return () => {
-       unsubscribe();
--      snapshot(!disabled, () => _getCurrentOutput.current());
-+      snapshot(!disabled, () =>
-+        _compute.current
-+          ? _computeFormValues.current
-+          : _getCurrentOutput.current(),
-+      );
-     };
-   }, [control, exact, name, disabled, resyncIfNeeded, snapshot]);
- 
-```
-
----
-
-### Incident Patch 2: `6ab55bd1` (2026-11-21)
-**Commit Message**: 🐞 fix(onChange): preserve reset state after pending form validation (#14042)
-
-Co-authored-by: Bill <[REDACTED_EMAIL]>
-
-**File**: `src/__tests__/async-root-ownership.test.tsx` (added, +156/-0)
-```diff
-@@ -0,0 +1,156 @@
-+import React from 'react';
-+import { act, fireEvent, render, screen } from '@testing-library/react';
-+
-+import { createFormControl } from '../logic/createFormControl';
-+import { useForm } from '../useForm';
-+
-+const deferred = <T,>() => {
-+  let resolve!: (value: T) => void;
-+  const promise = new Promise<T>((done) => {
-+    resolve = done;
-+  });
-+  return { promise, resolve };
-+};
-+
-+describe('async form validation ownership after reset', () => {
-+  it.each(['keepValues', 'keepFieldsRef'] as const)(
-+    'does not resume a pre-reset change after reset with %s',
-+    async (option) => {
-+      const validation = deferred<boolean>();
-+      const form = createFormControl<{ name: string }>({
-+        mode: 'onChange',
-+        defaultValues: { name: '' },
-+        validate: () => validation.promise,
+@@ -1626,17 +1626,28 @@ export function createFormControl<
+         ? !fieldNames.some((name) => get(errors, name))
+         : isValid;
+     } else if (name) {
+-      validationResult = (
+-        await Promise.all(
+-          fieldNames.map(async (fieldName) => {
+-            const field: FieldRefs = get(_fields, fieldName);
+-            return await executeBuiltInValidation({
+-              fields: field && field._f ? { [fieldName]: field } : field,
+-              eventType: EVENTS.TRIGGER,
+-            });
+-          }),
+-        )
+-      ).every(Boolean);
++      const fields = fieldNames.map((fieldName) => {
++        const field: FieldRefs = get(_fields, fieldName);
++        return field && field._f ? { [fieldName]: field } : field;
 +      });
-+      const field = form.register('name', {
-+        minLength: { value: 3, message: 'too short' },
-+      });
-+      const unsubscribe = form.subscribe({
-+        formState: { errors: true },
-+        callback: () => {},
-+      });
-+      const pending = field.onChange({
-+        target: { name: 'name', value: 'a' },
-+        type: 'change',
-+      });
-+      form.reset({ name: 'a' }, { [option]: true });
-+      expect(form.control._formState.errors).toEqual({});
-+      validation.resolve(true);
-+      await pending;
-+      expect(form.getValues('name')).toBe('a');
-+      expect(form.control._formState.errors).toEqual({});
-+      unsubscribe();
-+    },
-+  );
-+
-+  it('keeps reset errors cleared in a mounted form after async form validation', async () => {
-+    const validation = deferred<boolean>();
-+    const rootValidate = jest.fn(() => validation.promise);
-+    function App() {
-+      const {
-+        register,
-+        reset,
-+        formState: { errors },
-+      } = useForm<{ name: string }>({
-+        mode: 'onChange',
-+        defaultValues: { name: '' },
-+        validate: rootValidate,
-+      });
-+      return (
-+        <>
-+          <input
-+            aria-label="Name"
-+            {...register('name', {
-+              minLength: { value: 3, message: 'too short' },
-+            })}
-+          />
-+          <button onClick={() => reset(undefined, { keepValues: true })}>
-+            reset
-+          </button>
-+          <p data-testid="error">{errors.name?.message || 'none'}</p>
-+        </>
-+      );
-+    }
-+    render(<App />);
-+    fireEvent.change(screen.getByRole('textbox'), { target: { value: 'a' } });
-+    expect(rootValidate).toHaveBeenCalledTimes(1);
-+    fireEvent.click(screen.getByRole('button', { name: 'reset' }));
-+    expect(screen.getByTestId('error')).toHaveTextContent('none');
-+    await act(async () => {
-+      validation.resolve(true);
-+    });
-+    expect(screen.getByRole('textbox')).toHaveValue('a');
-+    expect(screen.getByTestId('error')).toHaveTextContent('none');
-+  });
-+
-+  it('still validates a normal change after form validation settles', async () => {
-+    const validation = deferred<boolean>();
-+    const form = createFormControl<{ name: string }>({
-+      mode: 'onChange',
-+      defaultValues: { name: '' },
-+      validate: () => validation.promise,
-+    });
-+    const field = form.register('name', {
-+      minLength: { value: 3, message: 'too short' },
-+    });
-+    const pending = field.onChange({
-+      target: { name: 'name', value: 'a' },
-+      type: 'change',
-+    });
-+    validation.resolve(true);
-+    await pending;
-+    expect(form.control._formState.errors.name?.message).toBe('too short');
-+  });
-+
-+  it('still applies a new change started after reset', async () => {
-+    const validation = deferred<boolean>();
-+    const rootValidate = jest
-+      .fn()
-+      .mockImplementationOnce(() => validation.promise)
-+      .mockResolvedValue(true);
-+    const form = createFormControl<{ name: string }>({
-+      mode: 'onChange',
-+      defaultValues: { name: '' },
-+      validate: rootValidate,
-+    });
-+    const field = form.register('name', {
-+      minLength: { value: 3, message: 'too short' },
-+    });
-+    const oldChange = field.onChange({
-+      target: { name: 'name', value: 'a' },
-+      type: 'change',
-+    });
-+    form.reset(undefined, { keepValues: true });
-+    const newChange = field.onChange({
-+      target: { name: 'name', value: 'ab' },
-+      type: 'change',
-+    });
-+    await newChange;
-+    expect(form.control._formState.errors.name?.message).toBe('too short');
-+    validation.resolve(true);
-+    await oldChange;
-+    expect(form.getValues('name')).toBe('ab');
-+    expect(form.control._formState.errors.name?.message).toBe('too short');
-+    expect(rootValidate).toHaveBeenCalledTimes(2);
-+  });
-+
-+  it('does not revive errors after reset drops the old registration', async () => {
-+    const validation = deferred<boolean>();
-+    const form = createFormControl<{ name: string }>({
-+      mode: 'onChange',
-+      defaultValues: { name: '' },
-+      validate: () => validation.promise,
-+    });
-+    const field = form.
-```
-
-**File**: `src/logic/createFormControl.ts` (modified, +4/-0)
-```diff
-@@ -1399,6 +1399,7 @@ export function createFormControl<
-     let isFieldValueUpdated = true;
-     const field: Field = get(_fields, name);
-     const registerCallId = _registerCallId;
-+    const changeResetCallId = _resetCallId;
-     const _updateIsFieldValueUpdated = (fieldValue: unknown) => {
-       isFieldValueUpdated =
-         !!get(_fields, name) &&
-@@ -1485,6 +1486,9 @@ export function createFormControl<
-           name: name as FieldPath<TFieldValues>,
-           eventType: event.type,
-         });
-+        if (changeResetCallId !== _resetCallId) {
-+          return;
-+        }
-       }
- 
-       !isBlurEvent && watched && _subjects.state.next({ ..._formState });
++      const formValid =
++        !_options.validate ||
++        (await validateForm({
++          name: name as FieldPath<TFieldValues>,
++          eventType: EVENTS.TRIGGER,
++        }));
++      validationResult =
++        (
++          await Promise.all(
++            fields.map((field) =>
++              executeBuiltInValidation({
++                fields: field,
++                context: { valid: true, runRootValidation: true },
++                eventType: EVENTS.TRIGGER,
++              }),
++            ),
++          )
++        ).every(Boolean) && formValid;
+       !(!validationResult && !_formState.isValid) && _setValid();
+     } else {
+       validationResult = isValid = await executeBuiltInValidation({
 ```
 
 ---
 
-### Incident Patch 3: `d043c013` (2026-11-21)
-**Commit Message**: 🐞 fix(reset): handle form controls named reset (#14037)
+### Incident Patch 2: `b2299175` (2026-11-22)
+**Commit Message**: 🐞 fix(useFieldArray): defer resolver row errors of untouched rows with mode onTouched- #14041 (#14054)
 
-Use the native prototype reset only when the form's reset property is not callable.
-Preserve callable overrides and add modeled named-property regressions.
-
-**File**: `src/__tests__/useForm/reset.test.tsx` (modified, +65/-0)
+**File**: `src/__tests__/useFieldArray.test.tsx` (modified, +71/-0)
 ```diff
-@@ -315,6 +315,71 @@ describe('reset', () => {
-     expect(mockReset).not.toHaveBeenCalled();
-   });
+@@ -1131,6 +1131,77 @@ describe('useFieldArray', () => {
+       );
+     });
  
-+  it.each([false, true])(
-+    'resets when a form control shadows the native reset method (iframe: %s)',
-+    (insideFrame) => {
++    it('should not publish resolver row errors after append until the field is touched when mode is onTouched', async () => {
++      type FormValues = {
++        test: { value: string }[];
++      };
++
 +      const App = () => {
-+        const { register, reset, watch } = useForm({
-+          defaultValues: { reset: 'initial' },
++        const {
++          register,
++          control,
++          formState: { errors },
++        } = useForm<FormValues>({
++          mode: 'onTouched',
++          resolver: async (data): Promise<ResolverResult<FormValues>> => {
++            const fieldErrors: { test?: any } = {};
++            for (const [index, item] of data.test.entries()) {
++              if (item.value === '') {
++                fieldErrors.test = fieldErrors.test || [];
++                fieldErrors.test[index] = {
++                  value: {
++                    type: 'required',
++                    message: `Item ${index} is required`,
++                  },
++                };
++              }
++            }
++
++            if (Object.keys(fieldErrors).length === 0) {
++              return { values: data, errors: {} };
++            }
++
++            return { values: {}, errors: fieldErrors };
++          },
++          defaultValues: {
++            test: [],
++          },
++        });
++        const { fields, append } = useFieldArray({
++          name: 'test',
++          control,
 +        });
 +
 +        return (
 +          <form>
-+            <input {...register('reset')} />
-+            <button type="button" onClick={() => reset()}>
-+              Reset
++            {fields.map((item, i) => (
++              <div key={item.id}>
++                <input {...register(`test.${i}.value` as const)} />
++                {errors.test?.[i]?.value && (
++                  <span>{errors.test[i]?.value?.message}</span>
++                )}
++              </div>
++            ))}
++            <button type="button" onClick={() => append({ value: '' })}>
++              append
 +            </button>
-+            <output>{watch('reset')}</output>
 +          </form>
 +        );
 +      };
-+      const iframe = document.createElement('iframe');
-+      if (insideFrame) {
-+        document.body.append(iframe);
-+      }
-+      const { container, getByRole, unmount } = render(<App />, {
-+        container: insideFrame ? iframe.contentDocument!.body : undefined,
-+      });
-+      const input = getByRole('textbox');
 +
-+      // jsdom does not implement named properties on forms.
-+      Object.defineProperty(container.querySelector('form'), 'reset', {
-+        value: input,
++      render(<App />);
++
++      await act(async () => {
++        fireEvent.click(screen.getByRole('button', { name: 'append' }));
 +      });
 +
-+      for (const value of ['edited', 'edited again']) {
-+        fireEvent.change(input, { target: { value } });
-+        expect(getByRole('status')).toHaveTextContent(value);
++      expect(screen.queryByText('Item 0 is required')).not.toBeInTheDocument();
 +
-+        fireEvent.click(getByRole('button', { name: 'Reset' }));
++      fireEvent.blur(screen.getByRole('textbox'));
 +
-+        expect(input).toHaveValue('initial');
-+        expect(getByRole('status')).toHaveTextContent('initial');
-+      }
-+
-+      unmount();
-+      iframe.remove();
-+    },
-+  );
-+
-+  it('preserves a callable reset method on the form', () => {
-+    const { register, reset } = createFormControl();
-+    const form = document.createElement('form');
-+    const input = document.createElement('input');
-+    form.append(input);
-+    register('test').ref(input);
-+    const nativeReset = form.reset;
-+    const resetMethod = jest.fn(function (this: HTMLFormElement) {
-+      nativeReset.call(this);
++      expect(await screen.findByText('Item 0 is required')).toBeVisible();
 +    });
-+    form.reset = resetMethod;
 +
-+    reset();
-+
-+    expect(resetMethod).toHaveBeenCalledTimes(1);
-+    expect(resetMethod.mock.contexts[0]).toBe(form);
-+  });
-+
-   it('set default value if values is specified to first argument', async () => {
-     const { result } = renderHook(() =>
-       useForm<{
+     describe('with an async resolver', () => {
+       type FormValues = { test: { value: string }[] };
+ 
 ```
 
-**File**: `src/logic/createFormControl.ts` (modified, +5/-1)
+**File**: `src/useFieldArray.ts` (modified, +9/-1)
 ```diff
-@@ -2347,7 +2347,11 @@ export function createFormControl<
-               if (isHTMLElement(fieldReference)) {
-                 const form = fieldReference.closest('form');
-                 if (form) {
--                  form.reset();
-+                  if (isFunction(form.reset)) {
-+                    form.reset();
-+                  } else {
-+                    HTMLFormElement.prototype.reset.call(form);
-+                  }
-                   break;
-                 }
-               }
+@@ -406,7 +406,15 @@ export function useFieldArray<
+             return;
+           }
+           const error: FieldError | undefined = get(result.errors, name);
+-          if (!deepEqual(get(control._formState.errors, name), error, true)) {
++          const isUntouchedRowError =
++            validationModes.isOnTouch &&
++            !control._formState.isSubmitted &&
++            error &&
++            Object.keys(error).some((key) => !Number.isNaN(+key));
++          if (
++            !isUntouchedRowError &&
++            !deepEqual(get(control._formState.errors, name), error, true)
++          ) {
+             if (error) {
+               isObject(error) &&
+               !Object.keys(error).some((key) => !Number.isNaN(+key))
+```
+
+---
+
+### Incident Patch 3: `8d7bd6c2` (2026-11-21)
+**Commit Message**: 📝 docs: fix dead package.json links (#14049)
+
+* docs: fix package.json links
+
+Signed-off-by: Chareonwit Kunna <[REDACTED_EMAIL]>
+
+* docs: fix package.json links
+
+Signed-off-by: Chareonwit Kunna <[REDACTED_EMAIL]>
+
+* docs: fix package.json links
+
+Signed-off-by: Chareonwit Kunna <[REDACTED_EMAIL]>
+
+* docs: fix package.json links
+
+Signed-off-by: Chareonwit Kunna <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Chareonwit Kunna <[REDACTED_EMAIL]>
+
+**File**: `docs/README.V7.ja-JP.md` (modified, +1/-1)
+```diff
+@@ -26,7 +26,7 @@ Version 7 | [Version 6(日本語)](/docs/README.ja-JP.md)
+ - パフォーマンスと UX/DX を念頭に構築
+ - 非制御フォームバリデーション
+ - [UIライブラリ](https://codesandbox.io/s/react-hook-form-v7-controller-5h1q5)と統合し、すぐに利用が可能
+-- [依存関係](./package.json)がなく、[小さいサイズ](https://bundlephobia.com/result?p=react-hook-form@latest)
++- [依存関係](../package.json)がなく、[小さいサイズ](https://bundlephobia.com/result?p=react-hook-form@latest)
+ - ブラウザのネイティブ[バリデーション](https://react-hook-form.com/get-started#Applyvalidation)をサポート
+ - [Yup](https://github.com/jquense/yup), [Zod](https://github.com/vriad/zod), [Superstruct](https://github.com/ianstormtaylor/superstruct), [Joi](https://github.com/hapijs/joi), [Vest](https://github.com/ealush/vest), [class-validator](https://github.com/typestack/class-validator), [io-ts](https://github.com/gcanti/io-ts), [nope](https://github.com/bvego/nope-validator) また custom をサポート
+ 
+```
+
+**File**: `docs/README.V7.zh-CN.md` (modified, +1/-1)
+```diff
+@@ -33,7 +33,7 @@
+ - 以性能和开发体验为基础构建
+ - 支持浏览器原生校验
+ - [UI库](https://codesandbox.io/s/react-hook-form-v7-controller-5h1q5)开箱即用
+-- [小巧](https://bundlephobia.com/result?p=react-hook-form@latest)无[依赖](./package.json)
++- [小巧](https://bundlephobia.com/result?p=react-hook-form@latest)无[依赖](../package.json)
+ - 遵循 HTML 标准进行[校验](https://react-hook-form.com/get-started#Applyvalidation)
+ - 支持[Yup](https://github.com/jquense/yup), [Zod](https://github.com/vriad/zod), [Superstruct](https://github.com/ianstormtaylor/superstruct), [Joi](https://github.com/hapijs/joi), [Vest](https://github.com/ealush/vest), [class-validator](https://github.com/typestack/class-validator), [io-ts](https://github.com/gcanti/io-ts), [nope](https://github.com/bvego/nope-validator)或自定义
+ 
+```
+
+**File**: `docs/README.ar-AR.md` (modified, +1/-1)
+```diff
+@@ -29,7 +29,7 @@ https://user-images.githubusercontent.com/10513364/152621466-59a41c65-52b4-4518-
+ - تم تصميمه مع مراعاة الأداء وتجربة المستخدم وسهولة التطوير
+ - يدعم التحقق من صحة استمارة الأساسي في HTML [validation](https://react-hook-form.com/get-started#Applyvalidation)
+ - اندماج مباشر مع مكتبات واجهة المستخدم [UI libraries](https://codesandbox.io/s/react-hook-form-v7-controller-5h1q5)
+-- [Small size] (https://bundlephobia.com/result?p=react-hook-form@latest) ولا [dependencies](./package.json)
++- [Small size] (https://bundlephobia.com/result?p=react-hook-form@latest) ولا [dependencies](../package.json)
+ - دعم [Yup](https://github.com/jquense/yup), [Zod](https://github.com/colinhacks/zod), [AJV](https://github.com/ajv-validator/ajv), [Superstruct](https://github.com/ianstormtaylor/superstruct), [Joi](https://github.com/hapijs/joi), [Vest](https://github.com/ealush/vest), [class-validator](https://github.com/typestack/class-validator), [io-ts](https://github.com/gcanti/io-ts), [nope](https://github.com/bvego/nope-validator) وبناء مخصص
+ 
+ ### التثبيت
+```
+
+**File**: `docs/Template.md` (modified, +1/-1)
+```diff
+@@ -29,7 +29,7 @@ https://user-images.githubusercontent.com/10513364/152621466-59a41c65-52b4-4518-
+ - Built with performance, UX and DX in mind
+ - Embraces native HTML form [validation](https://react-hook-form.com/get-started#Applyvalidation)
+ - Out of the box integration with [UI libraries](https://codesandbox.io/s/react-hook-form-v7-controller-5h1q5)
+-- [Small size](https://bundlephobia.com/result?p=react-hook-form@latest) and no [dependencies](./package.json)
++- [Small size](https://bundlephobia.com/result?p=react-hook-form@latest) and no [dependencies](../package.json)
+ - Supports [Yup](https://github.com/jquense/yup), [Zod](https://github.com/colinhacks/zod), [AJV](https://github.com/ajv-validator/ajv), [Superstruct](https://github.com/ianstormtaylor/superstruct), [Joi](https://github.com/hapijs/joi), [Vest](https://github.com/ealush/vest), [class-validator](https://github.com/typestack/class-validator), [io-ts](https://github.com/gcanti/io-ts), [nope](https://github.com/bvego/nope-validator) and custom builds
+ 
+ ### Install
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14048** (closed): 🐞 fix(validateField): apply min/max to time and week values without a ref type (@itisrmk)
-- **PR #14047** (2026-11-21): docs: fix dead CONTRIBUTING links (@CharoenwitKunna)
-- **PR #14046** (2026-11-21): 🐞 fix(useForm): keep options a formControl was created with (@h00ns)
-- **PR #14045** (2026-11-21): 🐞 fix(useWatch): avoid recomputing values during cleanup (@itisrmk)
-- **PR #14043** (2026-11-21): fix(isValid): stop at the first invalid nested field when checking validity (@dfedoryshchev)
-- **PR #14042** (2026-11-21): fix(onChange): preserve reset state after pending form validation (@charan-rathore)
+- **PR #14055** (2026-11-22): fix(trigger): await form validation before validating named fields- #14024 (@bluebill1049)
+- **PR #14054** (2026-11-22): 🐞 fix(useFieldArray): defer resolver row errors of untouched rows with mode onTouched- #14041 (@bluebill1049)
+- **PR #14053** (2026-11-22): 🩻 close #14035 ignore validation after nested value changes (@bluebill1049)
+- **PR #14052** (closed): 🐞 fix(formData): skip null values instead of stringifying them (@anubhavlal07)
+- **PR #14051** (2026-11-22): ⚡️ perf(cloneObject): iterate own keys with Object.keys (@g4lb)
+- **PR #14050** (closed): docs: validate the whole age value in the quickstart (@akzarma)
 
 ---
 
@@ -1257,58 +1162,50 @@ Preserve callable overrides and add modeled named-property regressions.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 🐞 fix(useWatch): avoid recomputing values during cleanup
+## X. 🐞 fix(trigger): await form validation before validating named fields- #14024
 
 **RULE**:
-When implementing operations in `src/__tests__/useWatch.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-hook-form/react-hook-form. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/__tests__/logic/createFormControl.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-hook-form/react-hook-form. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `03303481`: 🐞 fix(useWatch): avoid recomputing values during cleanup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `074d1748`: 🐞 fix(trigger): await form validation before validating named fields- #14024. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/__tests__/useWatch.test.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/__tests__/logic/createFormControl.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    it.each(['2026-01-01', ''])(
-      'should not recompute a removed field-array value on unmount: %j',
-      (date) => {
-        type FormValues = { items: { date: string }[] };
+  describe('trigger with form-level validate', () => {
+    it('pass the trigger name to form-level validation', async () => {
+      const validate = jest.fn(({ name }: { name?: string | string[] }) =>
+        name === 'email' ? 'Email is required' : true,
+      );
+      const form = createFormControl({
+        defaultValues: { email: '' },
+        validate,
+      });
+      form.register('email');
 
-        const Row = ({ control }: { control: Control<FormValues> }) => {
-          const length = useWatch({
-            control,
-            name: 'items.0.date',
-            compute: (value) => value.length,
-          });
+      expect(await form.trigger('email')).toBe(false);
+      expect(validate).toHaveBeenCalledTimes(1);
+      expect(form.getErrors().form?.message).toBe('Email is required');
+    });
 
-          return <p data-testid="length">{length}</p>;
-        };
+    it('run form-level validation once for multiple fields', async () => {
+      const validate = jest.fn(async () => 'Invalid account');
+      const validateEmail = jest.fn(() => true);
+      const validatePassword = jest.fn(() => true);
+      const form = createFormControl({
+        defaultValues: { email: '', password: '' },
+        validate,
+      });
+      form.register('email', { validate: validateEmail });
+      form.register('password', { validate: validatePassword });
 
-        const Component = () => {
-          const { control } = useForm<FormValues>({
-            defaultValues: { items: [] },
-          });
-          const { fields, append, replace } = useFieldArray({
-            control,
-            name: 'items',
-          });
-
-          return (
-            <>
-              <button onClick={() => append({ date })}>Add</button>
-              <button onClick={() => replace([])}>Clear</button>
-              {fields.length > 0 && <Row control={control} />}
-            </>
-          );
-        };
-
-        render(<Component />);
-        expect(screen.queryByTestId('length')).not.toBeInTheDocument();
-
-        fireEvent.click(screen.getByRole('button', { name: 'Add' }));
-        expect
+      expect(await form.trigger(['email', 'password'])).toBe(false);
+      expect(validate).toHaveBeenCalledTimes(1);
+      expect(
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1318,7 +1215,7 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `03303481` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `074d1748` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

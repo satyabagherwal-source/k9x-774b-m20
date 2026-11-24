@@ -2193,10 +2193,10 @@
     "repository": "react-hook-form/react-hook-form",
     "platform": "github",
     "sourceUrl": "https://github.com/react-hook-form/react-hook-form",
-    "sourceVersion": "0251cbae",
+    "sourceVersion": "074d1748",
     "license": "MIT",
-    "contentHash": "0894c96861b3f17d0a175f246d6b1b7ba37b113b489a9936651c3e7b5b32a860",
-    "lastHarvestedAt": "2026-11-21T12:29:25.264Z",
+    "contentHash": "a3961a0de6da642a68f797d9512fb5fa957e261f2470ebc075c3bbe3d218ff8d",
+    "lastHarvestedAt": "2026-11-24T06:46:18.051Z",
     "learningId": "learn-github-react-hook-form-react-hook-form"
   },
   "higress-group-higress": {
@@ -3113,10 +3113,10 @@
     "repository": "neuron-core/neuron-ai",
     "platform": "github",
     "sourceUrl": "https://github.com/neuron-core/neuron-ai",
-    "sourceVersion": "f6ba920a",
+    "sourceVersion": "a6a82c3c",
     "license": "MIT",
-    "contentHash": "0ae4e690f4228f10a2f42a45edd00d2f2f5808b3b6fbc46429276cc7bdf15775",
-    "lastHarvestedAt": "2026-11-21T00:43:55.538Z",
+    "contentHash": "e3c40bbd07175492e7052246a04e0a9f97cc5cf34d2753977a282b0f70e7a268",
+    "lastHarvestedAt": "2026-11-24T06:46:25.662Z",
     "learningId": "learn-github-neuron-core-neuron-ai"
   },
   "geekyants-nativebase": {
@@ -3183,10 +3183,10 @@
     "repository": "fallow-rs/fallow",
     "platform": "github",
     "sourceUrl": "https://github.com/fallow-rs/fallow",
-    "sourceVersion": "a01bf36e",
+    "sourceVersion": "40407499",
     "license": "MIT",
-    "contentHash": "fd1618c791cee11374a4eca9ae6cc3e265d19970e13bbd75c32a0da52781ed09",
-    "lastHarvestedAt": "2026-11-22T22:49:27.306Z",
+    "contentHash": "f9669db37d7a81eb4fce5223021821b47fa468a76782eb240b5888915619e095",
+    "lastHarvestedAt": "2026-11-24T06:46:13.262Z",
     "learningId": "learn-github-fallow-rs-fallow"
   },
   "expo-create-react-native-app": {

@@ -12650,3 +12650,7 @@ Every entry in this ledger must capture:
 | `learn-github-unhappychoice-gitlogue` | `https://github.com/unhappychoice/gitlogue` | `c680657b` | Multi-dimensional audit evidence | 2026-11-24T06:38:20.211Z |
 | `learn-github-dkhamsing-open-source-ios-apps` | `https://github.com/dkhamsing/open-source-ios-apps` | `18d19e32` | Multi-dimensional audit evidence | 2026-11-24T06:38:25.045Z |
 | `learn-github-encoredev-encore` | `https://github.com/encoredev/encore` | `94e12a29` | Multi-dimensional audit evidence | 2026-11-24T06:38:28.674Z |
+| `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `40407499` | Multi-dimensional audit evidence | 2026-11-24T06:46:13.262Z |
+| `learn-github-react-hook-form-react-hook-form` | `https://github.com/react-hook-form/react-hook-form` | `074d1748` | Multi-dimensional audit evidence | 2026-11-24T06:46:18.051Z |
+| `learn-github-neuron-core-neuron-ai` | `https://github.com/neuron-core/neuron-ai` | `a6a82c3c` | Multi-dimensional audit evidence | 2026-11-24T06:46:25.662Z |
+| `learn-dom-h-8c352294` | `project://react-hook-form-react-hook-form` | `074d1748` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md` | 2026-11-24T06:46:56.407Z |

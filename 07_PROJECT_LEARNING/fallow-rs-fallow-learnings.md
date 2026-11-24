@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md`  
 > **Source**: github ([https://github.com/fallow-rs/fallow](https://github.com/fallow-rs/fallow))  
-> **Source Version**: `a01bf36e`  
+> **Source Version**: `40407499`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T22:49:26.784Z  
+> **Timestamp**: 2026-11-24T06:46:12.814Z  
 > **Learning ID**: `learn-github-fallow-rs-fallow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fallow-rs/fallow](https://github.com/fallow-rs/fallow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T22:49:26.778Z  
+> **Harvest Timestamp**: 2026-11-24T06:46:12.628Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Codebase intelligence for TypeScript and JavaScript. Health, complexity hotspots, duplication, architecture boundaries, circular dependencies, design-system drift, and unused code, from one graph. CLI, GitHub Action, LSP, MCP, and VS Code. Rust, MIT licensed.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5392 stars
+- **Stars / Engagement**: 5398 stars
 
 ---
 
@@ -580,1309 +580,951 @@ export const serveOverlay = (overlayPath) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f614bba7` (2026-11-22)
-**Commit Message**: fix(vscode): keep a verified binary through a failed upgrade and confirm a fix before saving (#5051)
+### Incident Patch 1: `cfb765db` (2026-11-23)
+**Commit Message**: fix(config): report the cache and ignore rules a repair affects (#5118)
 
-* fix(vscode): keep a verified binary through a failed upgrade and confirm a fix before saving
-
-A managed upgrade that could not replace the binary, for example because a
-sibling window on Windows runs the old fallow-lsp, deleted the signature and
-target marker of the old binary. The next start then removed that binary as
-untrusted. The installer now moves the old sidecars aside and puts them back
-when the upgrade fails.
-
-The startup cleanup of crashed downloads removed the temp files of every other
-process, also of a window whose download still ran. It now removes only the
-temp files of a process that no longer runs.
-
-Fallow: Fix saved all editors before it asked for confirmation, ignored a
-failed save, and restarted the language server also after a No. The command
-now saves after the confirmation, stops when a file cannot be saved, and
-refreshes only after a fix run.
+* fix(config): report the cache and ignore rules a repair affects
 
 Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
 
-* fix(vscode): back up sidecars by copy and keep files of a running install
-
-The installer now copies each old sidecar before it publishes the new one.
-A process t
-
-**File**: `changelog.d/fix-vscode-upgrade-and-fix-command.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+### Fixed
-+
-+- **A failed upgrade of the VS Code managed binary keeps the installed binary usable.** On Windows, a sibling window that runs the old `fallow-lsp` locks the file, so the new binary cannot replace it. The extension then deleted the signature and target marker of the old binary, and the next start removed that binary as untrusted. The extension now puts the old signature and target marker back.
-+- **A second VS Code window no longer deletes the download of the first window.** Each window removes the temp files of crashed downloads when it starts. It removed the temp files of every other process, also of a window whose download still ran, and that download then failed its signature check. The extension now removes only the temp files of a process that no longer runs.
-+- **`Fallow: Fix` saves and refreshes only after you confirm.** The command saved all dirty editors before it asked for confirmation, and it restarted the language server and ran a new analysis also after you answered No. The command now saves after the confirmation, applies no fix when a file cannot be saved, and refreshes only after a fix run.
-```
-
-**File**: `editors/vscode/src/commands.ts` (modified, +37/-1)
-```diff
-@@ -643,6 +643,23 @@ const confirmApplyFixes = async (): Promise<boolean> => {
-   return confirm === "Yes";
- };
- 
-+/**
-+ * Ask for confirmation, then save all editors. The fix reads the files on
-+ * disk, so it must not run over unsaved edits.
-+ */
-+const confirmAndSaveForFix = async (): Promise<boolean> => {
-+  if (!(await confirmApplyFixes())) {
-+    return false;
-+  }
-+  if (await vscode.workspace.saveAll(false)) {
-+    return true;
-+  }
-+  void vscode.window.showWarningMessage(
-+    "Fallow: not all files could be saved. No fixes were applied.",
-+  );
-+  return false;
-+};
-+
- const openFixLocation = async (root: string, fix: FixAction | undefined): Promise<void> => {
-   if (!fix) {
-     return;
-@@ -1092,17 +1109,23 @@ export const runInspectActiveSymbol = async (
-   return runInspectActiveFile(context, outputChannel, symbol);
- };
- 
-+/**
-+ * Run `fallow fix`. An apply run asks for confirmation and saves all editors
-+ * first. `afterRun` runs once the CLI was started, also when it failed, since
-+ * a failed apply run can have changed files before it stopped.
-+ */
- export const runFix = async (
-   context: vscode.ExtensionContext,
-   dryRun: boolean,
-+  afterRun?: () => Promise<void>,
- ): Promise<FallowFixResult | null> => {
-   const root = getWorkspaceRoot();
-   if (!root) {
-     void vscode.window.showWarningMessage("Fallow: no workspace folder open.");
-     return null;
-   }
- 
--  if (!dryRun && !(await confirmApplyFixes())) {
-+  if (!dryRun && !(await confirmAndSaveForFix())) {
-     return null;
-   }
- 
-@@ -1141,9 +1164,22 @@ export const runFix = async (
-     const message = err instanceof Error ? err.message : String(err);
-     void vscode.window.showErrorMessage(`Fallow fix failed: ${message}`);
-     return null;
-+  } finally {
-+    await afterRun?.();
-   }
- };
- 
-+/**
-+ * Apply fixes, then call `refresh` when the CLI ran. A declined confirmation
-+ * or a failed save changes no file on disk, so it skips the refresh.
-+ */
-+export const applyFixes = async (
-+  context: vscode.ExtensionContext,
-+  refresh: () => Promise<void>,
-+): Promise<void> => {
-+  await runFix(context, false, refresh);
-+};
-+
- /**
-  * Whether the per-session "no workspace folder" warning has already been shown
-  * for the Health view. The Health view re-spawns on every reveal until it
-```
-
-**File**: `editors/vscode/src/download.ts` (modified, +101/-39)
-```diff
-@@ -244,16 +244,34 @@ export const httpsDownload = (url: string, dest: string, signal?: AbortSignal):
- // solely by the download path, so a match is never a valid installed binary.
- const ORPHAN_TEMP_RE = /^\..+\.(\d+)\.\d+\.tmp(?:\.sig|\.sha256|\.target)?$/;
- 
-+/**
-+ * Whether a process with this pid runs on this host. `kill(pid, 0)` sends no
-+ * signal: it fails with ESRCH for a pid that does not exist, and with EPERM for
-+ * a process of another user, which still runs. Pid 0 addresses the process
-+ * group, so it never names a download. The windows that share one global
-+ * storage folder run on one host, so their pids are comparable.
-+ */
-+const isProcessRunning = (pid: number): boolean => {
-+  if (pid <= 0) {
-+    return false;
-+  }
-+  try {
-+    process.kill(pid, 0);
-+    return true;
-+  } catch (err) {
-+    return (err as NodeJS.ErrnoException).code === "EPERM";
-+  }
-+};
-+
- /**
-  * Remove temp files left behind by a download that died (SIGKILL / crash /
-  * reboot) between writing the temp file and renaming it into place. The
-  * try/catch cleanup in `downloadAsset` only runs when the JS runtime reaches it,
-- * so a hard kill leaks the temp permanently. Skip temps tagged with the current
-- * pid: those may be a live in-flight download in this same process (sweeping
-- * runs outside the install lock), and a running pid is never a crash orphan.
-+ * so a hard kill leaks the temp permanently. The sweep runs outside the install
-+ * lock, so it spares each temp whose owner pid still runs: that temp can be a
-+ * live download of this window or of a sibling window.
-  */
- export const sweepOrphanTempFiles = (dir: string): void => {
--  const livePid = String(process.pid);
-   let entries: string[];
-   try {
-     entries = fs.readdirSync(dir);
-@@ -263,7 +281,7 @@ export const sweepOrphanTempFiles = (dir: string): void => {
-   }
-   for (const entry of entries) {
-     const match = ORPHAN_TEMP_RE.exec(entry);
--    if (!match || match[1] === livePid) {
-+    if (!match || isProcessRunning(Number(match[1]))) {
-       continue;
-     }
-     try {
-@@ -340,6 +358,12 @@ const isInstallLockStale = (lockPath: string): boolean => {
-   }
- };
- 
-+/** An install in this window or a sibling window holds a live lock on this folder. */
-+const isInstallInProgress = (dir: string): boolean => {
-+  const lockPath = getLockPath(dir);
-+  return fs.existsSync(lockPath) && !isInstallLockStale(lockPath);
-+};
-+
- /**
-  * Run `fn` while holding the cross-process install lock. Waits for a live sibling
-  * to finish, steals a stale or long-overdue lock to guarantee progress, and
-@@ -398,6 +422,39 @@ const publishSidecar = (tempPath: string, finalPath: string): void => {
-   fs.renameSync(tempPath, finalPath);
- };
- 
-+/**
-+ * Copy a published sidecar before an upgrade replaces it. A copy, not a move,
-+ * keeps the installed binary verifiable if the process dies before the publish.
-+ */
-+const backUpSidecar = (finalPath: string, backupPath: string): void => {
-+  if (fs.existsSync(finalPath)) {
-+    fs.copyFileSync(finalPath, backupPath);
-+  }
-+};
-+
-+const readBytes = (filePath: string): Buffer => Buffer.from(fs.readFileSync(filePath));
-+
-+/**
-+ * Undo the publish of one sidecar after the binary failed to land. Without a
-+ * backup, no sidecar existed before, so the new one describes a binary that
-+ * is not there. A sibling window that installs at the same time (after a
-+ * stolen lock) can have published its own sidecar since; that one stays.
-+ */
-+const restoreSidecar = (backupPath: string, finalPath: string, published: Buffer): void => {
-+  try {
-+    if (fs.existsSync(finalPath) && !readBytes(finalPath).equals(published)) {
-+      return;
-+    }
-+    if (fs.existsSync(backupPath)) {
-+      publishSidecar(backupPath, finalPath);
-+    } else if (fs.existsSync(finalPath)) {
-+      fs.unlinkSync(finalPath);
-+    }
-+  } catch {
-+    // Best-effort: an untrusted leftover only triggers a fresh download.
-+  }
-+};
-+
- /**
-  * Atomically move a verified temp binary onto its final path. If the rename fails
-  * because the target is locked (a sibling window's running LSP on Windows) but the
-@@ -426,23 +483,27 @@ const getDigestPath = (binaryPath: string): string => `${binaryPath}${SHA256_SUF
- 
- const getTargetPath = (binaryPath: string): string => `${binaryPath}${TARGET_SUFFIX}`;
- 
--const purgeManagedBinary = (binaryPath: string): void => {
--  for (const candidate of [
--    binaryPath,
--    getSignaturePath(binaryPath),
--    getDigestPath(binaryPath),
--    getTargetPath(binaryPath),
--  ]) {
-+const removeFiles = (paths: string[]): void => {
-+  for (const candidate of paths) {
-     try {
-       if (fs.existsSync(candidate)) {
-         fs.unlinkSync(candidate);
-       }
-     } catch {
--      // Best-effort cleanup.
-+      // Best-effort: a leftover temp file matches ORPHAN_TEMP_RE, so the next
-+      // orphan cleanup removes it.
-     }
-   }
- };
- 
-+const purgeManagedBinary = (binaryPath: string): void =>
-+  removeFiles([
-+    binaryPath,
-+    getSignaturePath(b
-```
-
-**File**: `editors/vscode/src/extension.ts` (modified, +9/-10)
-```diff
-@@ -34,6 +34,7 @@ import {
-   type ComplexityToggleTarget,
- } from "./complexityLens.js";
- import {
-+  applyFixes,
-   runAnalysis,
-   runAudit,
-   runFix,
-@@ -864,16 +865,14 @@ export const activate = async (context: vscode.ExtensionContext): Promise<Extens
-   });
- 
-   context.subscriptions.push(
--    vscode.commands.registerCommand("fallow.fix", async () => {
--      // Save dirty editors first so the fix works on up-to-date content
--      await vscode.workspace.saveAll(false);
--      await runFix(context, false);
--      // Restart LSP to force fresh analysis. The fix modified files on disk
--      // bypassing VS Code's editor, so did_save never fires for those files
--      await restartClient(context, outputChannel, diagnosticFilter, onAnalysisComplete);
--      // Re-run CLI analysis for tree views
--      cliAnalysisRan = await triggerCliAnalysis({ force: true });
--    }),
-+    vscode.commands.registerCommand("fallow.fix", () =>
-+      applyFixes(context, async () => {
-+        // Restart LSP to force fresh analysis. The fix modified files on disk
-+        // bypassing VS Code's editor, so did_save never fires for those files
-+        await restartClient(context, outputChannel, diagnosticFilter, onAnalysisComplete);
-+        cliAnalysisRan = await triggerCliAnalysis({ force: true });
-+      }),
-+    ),
-   );
- 
-   context.subscriptions.push(
-```
-
-**File**: `editors/vscode/test/commands.test.ts` (modified, +115/-0)
-```diff
-@@ -68,6 +68,7 @@ vi.mock("vscode", () => ({
-   },
-   workspace: {
-     workspaceFolders: undefined,
-+    saveAll: vi.fn(async () => true),
-     getWorkspaceFolder: vi.fn((uri: { readonly fsPath: string }) => {
-       const workspace = mockWorkspace as {
-         readonly workspaceFolders:
-@@ -160,6 +161,7 @@ import {
-   runAnalysis,
-   runAudit,
-   runFix,
-+  applyFixes,
-   runHealthAnalysis,
-   resetHealthNoWorkspaceWarning,
-   healthInputKey,
-@@ -1149,6 +1151,119 @@ describe("runAudit type-aware compatibility", () => {
-   });
- });
- 
-+describe("applyFixes", () => {
-+  const writeFixScript = async (dir: string, logPath: string): Promise<string> => {
-+    const script = join(dir, "fallow-cli.js");
-+    await writeFile(
-+      script,
-+      [
-+        "#!/usr/bin/env node",
-+        'const fs = require("node:fs");',
-+        `fs.appendFileSync(${JSON.stringify(logPath)}, JSON.stringify({ args: process.argv.slice(2) }) + "\\n");`,
-+        "process.stdout.write(JSON.stringify({ dry_run: false, fixes: [], total_fixed: 0 }));",
-+      ].join("\n"),
-+      "utf8",
-+    );
-+    await chmod(script, 0o755);
-+    return script;
-+  };
-+
-+  const withFixWorkspace = async (body: (logPath: string) => Promise<void>): Promise<void> => {
-+    const dir = await mkdtemp(join(tmpdir(), "fallow-vscode-apply-fix-"));
-+    const logPath = join(dir, "spawn.log");
-+    try {
-+      const script = await writeFixScript(dir, logPath);
-+      mockPathBinary = script;
-+      mockBinaryVersions = { [script]: "3.9.2" };
-+      setWorkspaceRoot(dir);
-+      await body(logPath);
-+    } finally {
-+      setWorkspaceRoot(null);
-+      await rm(dir, { recursive: true, force: true });
-+    }
-+  };
-+
-+  const spawnCount = async (logPath: string): Promise<number> =>
-+    (await readFile(logPath, "utf8").catch(() => "")).split("\n").filter(Boolean).length;
-+
-+  beforeEach(() => {
-+    mockLspPath = "";
-+    mockLocalBinary = null;
-+    mockPathBinary = null;
-+    mockInstalledCli = null;
-+    mockDownloadedCli = null;
-+    mockExtensionVersion = null;
-+    mockBinaryVersions = {};
-+    mockAutoDownload = false;
-+    resetBinarySkewToast();
-+    vi.clearAllMocks();
-+  });
-+
-+  it("saves nothing and refreshes nothing when the user declines", async () => {
-+    await withFixWorkspace(async (logPath) => {
-+      vi.mocked(mockWindow.showWarningMessage).mockResolvedValueOnce("No" as never);
-+      const refresh = vi.fn(async () => undefined);
-+
-+      await applyFixes(workspaceContext, refresh);
-+
-+      expect(mockWorkspace.saveAll).not.toHaveBeenCalled();
-+      expect(await spawnCount(logPath)).toBe(0);
-+      expect(refresh).not.toHaveBeenCalled();
-+    });
-+  });
-+
-+  it("applies no fix and refreshes nothing when a file cannot be saved", async () => {
-+    await withFixWorkspace(async (logPath) => {
-+      vi.mocked(mockWindow.showWarningMessage).mockResolvedValueOnce("Yes" as never);
-+      vi.mocked(mockWorkspace.saveAll).mockResolvedValueOnce(false);
-+      const refresh = vi.fn(async () => undefined);
-+
-+      await applyFixes(workspaceContext, refresh);
-+
-+      expect(await spawnCount(logPath)).toBe(0);
-+      expect(refresh).not.toHaveBeenCalled();
-+      expect(mockWindow.showWarningMessage).toHaveBeenLastCalledWith(
-+        "Fallow: not all files could be saved. No fixes were applied.",
-+      );
-+    });
-+  });
-+
-+  it("refreshes after a fix run that failed, since it can have changed files", async () => {
-+    const dir = await mkdtemp(join(tmpdir(), "fallow-vscode-apply-fix-fail-"));
-+    try {
-+      const script = join(dir, "fallow-cli.js");
-+      await writeFile(script, "#!/usr/bin/env node\nprocess.stdout.write('not json');\n", "utf8");
-+      await chmod(script, 0o755);
-+      mockPathBinary = script;
-+      mockBinaryVersions = { [script]: "3.9.2" };
-+      setWorkspaceRoot(dir);
-+      vi.mocked(mockWindow.showWarningMessage).mockResolvedValueOnce("Yes" as never);
-+      const refresh = vi.fn(async () => undefined);
-+
-+      await applyFixes(workspaceContext, refresh);
-+
-+      expect(mockWindow.showErrorMessage).toHaveBeenCalledOnce();
-+      expect(refresh).toHaveBeenCalledOnce();
-+    } finally {
-+      setWorkspaceRoot(null);
-+      await rm(dir, { recursive: true, force: true });
-+    }
-+  });
-+
-+  it("saves, applies the fix, and refreshes after the user confirms", async () => {
-+    await withFixWorkspace(async (logPath) => {
-+      vi.mocked(mockWindow.showWarningMessage).mockResolvedValueOnce("Yes" as never);
-+      const refresh = vi.fn(async () => undefined);
-+
-+      await applyFixes(workspaceContext, refresh);
-+
-+      expect(mockWorkspace.saveAll).toHaveBeenCalledWith(false);
-+      expect(await spawnCount(logPath)).toBe(1);
-+      expect(refresh).toHaveBeenCalledOnce();
-+    });
-+  });
-+});
-+
- describe("runFix type-aware integration", () => {
-   beforeEach(() => {
-     mockLspPath = "";
-```
-
-**File**: `editors/vscode/test/download-libc.test.ts` (modified, +3/-0)
-```diff
-@@ -32,6 +32,9 @@ vi.mock("node:fs", () => ({
-   unlinkSync: (p: string) => {
-     delete mockFiles[p];
-   },
-+  copyFileSync: (from: string, to: string) => {
-+    mockFiles[to] = mockFiles[from];
-+  },
-   renameSync: (from: string, to: string) => {
-     mockFiles[to] = mockFiles[from];
-     delete mockFiles[from];
-```
-
-**File**: `editors/vscode/test/download-release-gap.test.ts` (modified, +3/-0)
-```diff
-@@ -29,6 +29,9 @@ vi.mock("node:fs", () => ({
-   unlinkSync: (p: string) => {
-     delete mockFiles[p];
-   },
-+  copyFileSync: (from: string, to: string) => {
-+    mockFiles[to] = mockFiles[from];
-+  },
-   renameSync: (from: string, to: string) => {
-     mockFiles[to] = mockFiles[from];
-     delete mockFiles[from];
-```
-
-**File**: `editors/vscode/test/download-upgrade.test.ts` (added, +278/-0)
-```diff
-@@ -0,0 +1,278 @@
-+import { EventEmitter } from "node:events";
-+import * as path from "node:path";
-+import { beforeEach, describe, expect, it, vi } from "vitest";
-+
-+// A rename onto a locked path fails, as on Windows when a running process
-+// holds the binary open. An upgrade that cannot replace the binary must leave
-+// the installed binary and its verification data intact.
-+
-+let files: Record<string, string | Buffer> = {};
-+let lockedPaths = new Set<string>();
-+// Runs when a rename onto a locked path fails, to model a sibling window.
-+let onLockedRename: () => void = () => {};
-+let servedSignature = "";
-+
-+const errno = (code: string): NodeJS.ErrnoException =>
-+  Object.assign(new Error(code), { code }) as NodeJS.ErrnoException;
-+
-+vi.mock("node:os", async (importOriginal) => ({
-+  ...(await importOriginal<typeof import("node:os")>()),
-+  platform: () => "linux",
-+  arch: () => "x64",
-+}));
-+
-+vi.mock("../src/libc.js", () => ({ hostLinuxLibc: () => "gnu" }));
-+
-+vi.mock("node:fs", () => ({
-+  existsSync: (p: string) => p in files,
-+  readFileSync: (p: string) => {
-+    if (p in files) return files[p];
-+    throw errno("ENOENT");
-+  },
-+  writeFileSync: (p: string, content: string | Buffer) => {
-+    files[p] = content;
-+  },
-+  unlinkSync: (p: string) => {
-+    if (!(p in files)) throw errno("ENOENT");
-+    delete files[p];
-+  },
-+  copyFileSync: (from: string, to: string) => {
-+    files[to] = files[from];
-+  },
-+  renameSync: (from: string, to: string) => {
-+    if (!(from in files)) throw errno("ENOENT");
-+    if (lockedPaths.has(to)) {
-+      onLockedRename();
-+      throw errno("EPERM");
-+    }
-+    files[to] = files[from];
-+    delete files[from];
-+  },
-+  chmodSync: () => {},
-+  mkdirSync: () => {},
-+  openSync: () => 3,
-+  writeSync: () => {},
-+  closeSync: () => {},
-+  statSync: () => ({ mtimeMs: Date.now() }),
-+  readdirSync: () => [],
-+  createWriteStream: (p: string) => {
-+    const chunks: Buffer[] = [];
-+    const stream = new EventEmitter() as EventEmitter & {
-+      write: (chunk: Buffer) => boolean;
-+      end: () => void;
-+      close: (cb?: () => void) => void;
-+      destroy: () => void;
-+    };
-+    stream.write = (chunk: Buffer) => {
-+      chunks.push(chunk);
-+      return true;
-+    };
-+    stream.end = () => {
-+      files[p] = Buffer.concat(chunks);
-+      queueMicrotask(() => stream.emit("finish"));
-+    };
-+    stream.close = (cb?: () => void) => cb?.();
-+    stream.destroy = () => {};
-+    return stream;
-+  },
-+}));
-+
-+// The binary bytes carry their version, so the version probe reads them.
-+vi.mock("node:child_process", () => ({
-+  execFile: (...args: unknown[]) => {
-+    const cb = args[args.length - 1] as (
-+      err: Error | null,
-+      result?: { stdout: string; stderr: string },
-+    ) => void;
-+    const bytes = files[String(args[0])]?.toString() ?? "";
-+    cb(null, { stdout: `fallow ${bytes.split("@")[1] ?? "0.0.0"}\n`, stderr: "" });
-+  },
-+}));
-+
-+// A signature is valid only for the binary whose bytes it names.
-+vi.mock("node:crypto", () => ({
-+  createPublicKey: () => ({ type: "mock-public-key" }),
-+  createHash: () => {
-+    let input = "";
-+    return {
-+      update(data: string | Buffer) {
-+        input = data.toString();
-+        return this;
-+      },
-+      digest: () => Buffer.from(input).toString("hex").padEnd(64, "0").slice(0, 64),
-+    };
-+  },
-+  verify: (_algorithm: null, data: Buffer, _key: unknown, signature: Buffer) =>
-+    signature.toString() === `sig:${data.toString()}`,
-+}));
-+
-+const respond = (body: Buffer) => {
-+  const response = new EventEmitter() as EventEmitter & {
-+    statusCode: number;
-+    headers: Record<string, string>;
-+    complete: boolean;
-+    resume: () => void;
-+    destroy: () => void;
-+    pipe: (dest: { write: (c: Buffer) => boolean; end: () => void }) => void;
-+  };
-+  response.statusCode = 200;
-+  response.headers = {};
-+  response.complete = false;
-+  response.resume = () => {};
-+  response.destroy = () => {};
-+  response.pipe = (dest) => {
-+    dest.write(body);
-+    dest.end();
-+  };
-+  queueMicrotask(() => {
-+    response.emit("data", body);
-+    response.complete = true;
-+    response.emit("end");
-+  });
-+  return response;
-+};
-+
-+const NEW_BINARY = "fallow@2.26.0";
-+const ASSET = "fallow-linux-x64-gnu";
-+
-+vi.mock("node:https", () => ({
-+  get: (url: string, _options: unknown, cb: (response: unknown) => void) => {
-+    const request = new EventEmitter() as EventEmitter & {
-+      setTimeout: () => void;
-+      destroy: () => void;
-+    };
-+    request.setTimeout = () => {};
-+    request.destroy = () => {};
-+    queueMicrotask(() => {
-+      if (url.includes("/releases/")) {
-+        const release = {
-+          tag_name: "v2.26.0",
-+          assets: [ASSET, `${ASSET}.sig`].map((name) => ({
-+            name,
-+            browser_download_url: `https://example.invalid/${name}`,
-+          })),
-+        };
-+        cb(respond(Buffer.from(JSON.stringify(release))));
-+        return;
-+      }
-+      cb(respo
-```
-
----
-
-### Incident Patch 2: `d0430d37` (2026-11-22)
-**Commit Message**: fix(security): fail the new gate on an import added to a transitive leak hop (#5057)
-
-fallow security --gate new passed when a change added a .server import,
-or the import of a module that reads a secret, to an existing module that
-a route or a "use client" file imports. The client-server-leak candidate
-points at the client boundary, and the added import is the line of an
-intermediate trace hop. The gate did not check that hop.
-
-Each non-terminal hop of a client-server-leak trace is the import of the
-next module. The gate now keeps such a candidate when the line of an
-intermediate hop is on an added line. The intermediate hop of a taint
-trace stays a pass-through hop. The gate has no base graph, so an edit of
-an import line that already existed also keeps the candidate.
-
-No finding_id, stable_finding_id, JSON field, SARIF field or suppression
-position changes.
-
-Closes #5024
+* fix(config): identify ignore rules that block duplicate export fixes
 
 Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
 
-**File**: `changelog.d/fix-security-gate-new-transitive-hop.md` (added, +3/-0)
-```diff
-@@ -0,0 +1,3 @@
-+### Fixed
-+
-+- **`fallow security --gate new` fails when a change adds an import that makes client code reach a server-only module or a secret reader.** Before, the gate passed when a change added a `.server` import or the import of a module that reads a secret to an existing module that a route or a `"use client"` file imports. The gate now keeps a `client-server-leak` candidate when the import line of an `intermediate` trace hop is on an added line. An edit of such an import line, for example a new imported name, also keeps the candidate. The candidate still points at the client boundary. No `finding_id`, `stable_finding_id`, JSON field, SARIF field or suppression position changes. ([#5024](https://github.com/fallow-rs/fallow/issues/5024))
-```
-
-**File**: `crates/cli/src/check/filtering.rs` (modified, +18/-2)
-```diff
-@@ -40,8 +40,16 @@ pub use fallow_engine::diff_scope::filter_dead_code_by_diff as filter_results_by
- ///   an untouched sink the moment any env-config file is touched). The gate
- ///   keeps a `SecretSource` hop only when a secret read of the hop
- ///   (`secret_reads`, or the hop line) is on an added line, and
--/// - the `Intermediate` / `ClientBoundary` pass-through hop lines (editing an
--///   unrelated line in a transit module is not new exposure).
-+/// - the `Intermediate` / `ClientBoundary` pass-through hop lines of a taint
-+///   trace (editing an unrelated line in a transit module is not new exposure).
-+///
-+/// A `client-server-leak` trace is different: each non-terminal hop line is the
-+/// import of the next module. An added import on an `Intermediate` hop joins
-+/// the client cone to the secret reader or the server-only module, so the gate
-+/// keeps the candidate when that hop line is on an added line (issue #5024).
-+/// The gate has no base graph, so an edit of an import line that already
-+/// existed also keeps the candidate. The finding keeps its anchor on the
-+/// client boundary, so its `finding_id` and suppression position stay the same.
- ///
- /// It KEEPS the sink anchor on an added line (a genuinely new sink) AND an
- /// `UntrustedSource` / `ModuleSource` / `Sink` trace hop on an added line (a
-@@ -84,8 +92,16 @@ pub fn retain_gate_new(
-                     .any(|read| line_in_diff(&hop.path, read.line)))
-     };
- 
-+    let leak_edge_added = |f: &fallow_types::results::SecurityFinding| -> bool {
-+        f.kind == fallow_types::results::SecurityFindingKind::ClientServerLeak
-+            && f.trace.iter().any(|hop| {
-+                hop.role == TraceHopRole::Intermediate && line_in_diff(&hop.path, hop.line)
-+            })
-+    };
-+
-     results.security_findings.retain(|f| {
-         line_in_diff(&f.path, f.line)
-+            || leak_edge_added(f)
-             || f.trace
-                 .iter()
-                 .any(|hop| taint_hop_added(&hop.path, hop.line, hop.role) || secret_read_added(hop))
-```
-
-**File**: `crates/cli/src/check/filtering_gate_tests.rs` (modified, +155/-0)
-```diff
-@@ -283,3 +283,158 @@ fn gate_drops_intermediate_hop_pass_through() {
- 
-     assert!(results.security_findings.is_empty());
- }
-+
-+fn transitive_leak(category: &str, terminal: TraceHop) -> SecurityFinding {
-+    SecurityFinding {
-+        kind: SecurityFindingKind::ClientServerLeak,
-+        category: Some(category.into()),
-+        cwe: None,
-+        path: PathBuf::from("/project/app/routes/home.tsx"),
-+        line: 1,
-+        col: 9,
-+        trace: vec![
-+            TraceHop::new(
-+                PathBuf::from("/project/app/routes/home.tsx"),
-+                1,
-+                9,
-+                TraceHopRole::ClientBoundary,
-+            ),
-+            TraceHop::new(
-+                PathBuf::from("/project/app/components/banner.tsx"),
-+                1,
-+                9,
-+                TraceHopRole::Intermediate,
-+            ),
-+            terminal,
-+        ],
-+        ..sample_security_finding()
-+    }
-+}
-+
-+fn banner_diff(hunk: &str) -> crate::report::ci::diff_filter::DiffIndex {
-+    build_diff(&format!(
-+        "diff --git a/app/components/banner.tsx b/app/components/banner.tsx\n\
-+         --- a/app/components/banner.tsx\n\
-+         +++ b/app/components/banner.tsx\n\
-+         {hunk}"
-+    ))
-+}
-+
-+#[test]
-+fn gate_keeps_server_only_import_added_to_transitive_module() {
-+    let diff = banner_diff(
-+        "@@ -0,0 +1,2 @@\n\
-+         +import { getConfig } from '../utils/config.server'\n\
-+         +\n",
-+    );
-+    let mut results = AnalysisResults::default();
-+    results.security_findings.push(transitive_leak(
-+        "server-only-import",
-+        TraceHop::new(
-+            PathBuf::from("/project/app/utils/config.server.ts"),
-+            1,
-+            0,
-+            TraceHopRole::Sink,
-+        ),
-+    ));
-+
-+    retain_gate_new(&mut results, &diff, Path::new("/project"));
-+
-+    assert_eq!(results.security_findings.len(), 1);
-+}
-+
-+#[test]
-+fn gate_keeps_secret_reader_import_added_to_transitive_module() {
-+    let diff = banner_diff(
-+        "@@ -0,0 +1,1 @@\n\
-+         +import { key } from '../utils/keys'\n",
-+    );
-+    let mut results = AnalysisResults::default();
-+    results.security_findings.push(transitive_leak(
-+        "client-server-leak",
-+        TraceHop {
-+            path: PathBuf::from("/project/app/utils/keys.ts"),
-+            line: 1,
-+            col: 0,
-+            role: TraceHopRole::SecretSource,
-+            secret_reads: vec![TraceSecretRead {
-+                name: "process.env.API_SECRET_KEY".to_owned(),
-+                line: 1,
-+                col: 0,
-+            }],
-+        },
-+    ));
-+
-+    retain_gate_new(&mut results, &diff, Path::new("/project"));
-+
-+    assert_eq!(results.security_findings.len(), 1);
-+}
-+
-+#[test]
-+fn gate_drops_transitive_leak_when_another_line_of_the_transit_module_changes() {
-+    let diff = banner_diff(
-+        "@@ -4,1 +4,1 @@\n\
-+         +\treturn <p>Banner text</p>\n",
-+    );
-+    let mut results = AnalysisResults::default();
-+    results.security_findings.push(transitive_leak(
-+        "server-only-import",
-+        TraceHop::new(
-+            PathBuf::from("/project/app/utils/config.server.ts"),
-+            1,
-+            0,
-+            TraceHopRole::Sink,
-+        ),
-+    ));
-+
-+    retain_gate_new(&mut results, &diff, Path::new("/project"));
-+
-+    assert!(results.security_findings.is_empty());
-+}
-+
-+#[test]
-+fn gate_keeps_transitive_leak_when_an_existing_import_line_of_the_transit_module_changes() {
-+    // The gate has no base graph, so an edited import line counts as added.
-+    let diff = banner_diff(
-+        "@@ -1,1 +1,1 @@\n\
-+         +import { getConfig, getRegion } from '../utils/config.server'\n",
-+    );
-+    let mut results = AnalysisResults::default();
-+    results.security_findings.push(transitive_leak(
-+        "server-only-import",
-+        TraceHop::new(
-+            PathBuf::from("/project/app/utils/config.server.ts"),
-+            1,
-+            0,
-+            TraceHopRole::Sink,
-+        ),
-+    ));
-+
-+    retain_gate_new(&mut results, &diff, Path::new("/project"));
-+
-+    assert_eq!(results.security_findings.len(), 1);
-+}
-+
-+#[test]
-+fn gate_keeps_transitive_leak_whose_intermediate_hop_is_outside_root() {
-+    let diff = banner_diff(
-+        "@@ -4,1 +4,1 @@\n\
-+         +\treturn <p>Banner text</p>\n",
-+    );
-+    let mut finding = transitive_leak(
-+        "server-only-import",
-+        TraceHop::new(
-+            PathBuf::from("/project/app/utils/config.server.ts"),
-+            1,
-+            0,
-+            TraceHopRole::Sink,
-+        ),
-+    );
-+    finding.trace[1].path = PathBuf::from("/elsewhere/shared/banner.tsx");
-+    let mut results = AnalysisResults::default();
-+    results.security_findings.push(finding);
-+
-+    retain_gate_new(&mut results, &diff, Path::new("/project"));
-+
-+    assert_eq!(results.security_findings.len(), 1);
-+}
-```
-
-**File**: `crates/cli/tests/integration/security_env_read_location_tests.rs` (modified, +85/-0)
-```diff
-@@ -256,3 +256,88 @@ fn a_destructured_secret_read_in_client_code_points_at_the_key() {
-     assert_eq!(finding["line"], 2);
-     assert_eq!(finding["col"], 9);
- }
-+
-+/// A route that imports `app/components/banner.tsx`, and a change that makes
-+/// the banner import `target`. The issue #5024 reproduction.
-+fn transitive_import_repo(
-+    target_path: &'static str,
-+    target: &'static str,
-+    banner_import: &'static str,
-+) -> tempfile::TempDir {
-+    let mut base = react_router_base(
-+        "import { Banner } from '../components/banner'\n\n\
-+         export default function Home() {\n\treturn <Banner />\n}\n",
-+    );
-+    base.push((
-+        "app/components/banner.tsx",
-+        "export function Banner() {\n\treturn <p>Banner</p>\n}\n",
-+    ));
-+    base.push((target_path, target));
-+    repo(&base, &[("app/components/banner.tsx", banner_import)])
-+}
-+
-+#[test]
-+fn gate_fails_on_a_server_only_import_added_to_a_transitive_module() {
-+    let dir = transitive_import_repo(
-+        "app/utils/config.server.ts",
-+        "export function getConfig() {\n\treturn { region: 'nz' }\n}\n",
-+        "import { getConfig } from '../utils/config.server'\n\n\
-+         export function Banner() {\n\treturn <p>{getConfig().region}</p>\n}\n",
-+    );
-+
-+    let (code, json) = gate_new(dir.path());
-+    assert_eq!(code, 8, "{json:#}");
-+    let finding = only_finding(&json);
-+    assert_eq!(finding["category"], "server-only-import");
-+    assert_eq!(finding["path"], "app/routes/home.tsx");
-+    assert_eq!(finding["line"], 1);
-+    let hop = &finding["trace"][1];
-+    assert_eq!(hop["role"], "intermediate");
-+    assert_eq!(hop["path"], "app/components/banner.tsx");
-+    assert_eq!(hop["line"], 1);
-+}
-+
-+#[test]
-+fn gate_fails_on_a_secret_reader_import_added_to_a_transitive_module() {
-+    let dir = transitive_import_repo(
-+        "app/utils/keys.ts",
-+        "export const key = process.env.API_SECRET_KEY\n",
-+        "import { key } from '../utils/keys'\n\n\
-+         export function Banner() {\n\treturn <p>{key}</p>\n}\n",
-+    );
-+
-+    let (code, json) = gate_new(dir.path());
-+    assert_eq!(code, 8, "{json:#}");
-+    let finding = only_finding(&json);
-+    assert_eq!(finding["category"], "client-server-leak");
-+    assert_eq!(finding["trace"][2]["role"], "secret-source");
-+}
-+
-+#[test]
-+fn gate_passes_when_a_change_leaves_an_old_transitive_import_alone() {
-+    let mut base = react_router_base(
-+        "import { Banner } from '../components/banner'\n\n\
-+         export default function Home() {\n\treturn <Banner />\n}\n",
-+    );
-+    base.push((
-+        "app/utils/config.server.ts",
-+        "export function getConfig() {\n\treturn { region: 'nz' }\n}\n",
-+    ));
-+    base.push((
-+        "app/components/banner.tsx",
-+        "import { getConfig } from '../utils/config.server'\n\n\
-+         export function Banner() {\n\treturn <p>{getConfig().region}</p>\n}\n",
-+    ));
-+    let dir = repo(
-+        &base,
-+        &[(
-+            "app/components/banner.tsx",
-+            "import { getConfig } from '../utils/config.server'\n\n\
-+             export function Banner() {\n\treturn <p>Region {getConfig().region}</p>\n}\n",
-+        )],
-+    );
-+
-+    let (code, json) = gate_new(dir.path());
-+    assert_eq!(code, 0, "{json:#}");
-+    assert_eq!(json["gate"]["new_count"], 0);
-+}
-```
-
-**File**: `docs/reference/detection-internals.md` (modified, +8/-0)
-```diff
-@@ -513,6 +513,14 @@ error by suppressing a downstream detector.
-   module, or at its first server-only import. The `secret-source` trace hop
-   lists every read in `secret_reads`, and `fallow security --gate new` keeps
-   the finding when one of these lines is added.
-+- A non-terminal hop of a `client-server-leak` trace points at the import of
-+  the next hop. `fallow security --gate new` keeps the finding when the line
-+  of an `intermediate` hop is on an added line, because an added import there
-+  joins the client cone to the sink. The gate has no base graph, so an edit
-+  of an import line that already existed also keeps the finding. The finding
-+  stays on the client boundary, so its
-+  `finding_id` does not change. The `intermediate` hop of a taint trace stays
-+  a pass-through hop for the gate.
- - A route module is a file that the route config names, the root route, a
-   file directly in a route directory, a `route.*` file, or a deeper file
-   that exports a route module export and is not in a folder with a
-```
-
----
-
-### Incident Patch 3: `0da01aae` (2026-11-22)
-**Commit Message**: fix(sidecar): lock the model cache during setup and read wildcard exports as Node does (#5059)
-
-* fix(sidecar): lock the model cache during setup and read wildcard exports as Node does
-
-Two similar-code setup runs on one model cache wrote the same partial,
-manifest and backup files. One run removed the partial file of the other,
-and that run then failed to install its artifact. Setup now holds an
-exclusive file lock on the cache folder of the model revision. The second
-run waits, then finds the installed model and downloads nothing. The
-operating system releases the lock when a process exits, so a crashed run
-leaves no stale lock.
-
-The type-aware sidecar reads entry points from package.json when fallow
-sends none. Its wildcard pattern matched each star against one path segment
-on its own. A target such as `./src/*.ts` then missed `src/nested/deep.ts`,
-and `./src/*/*.ts` accepted two different values. Every star now stands for
-the same value, and that value can contain a slash, as in the core rule of
-`wildcard_entries.rs`. A target with its first star at the package root
-keeps a capture of one segment.
+* fix(doctor): normalize native config path separators
 
 Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
 
-* fix(sidecar): escape the w
+---------
 
-**File**: `changelog.d/fix-sidecar-wildcard-and-cache-lock.md` (added, +4/-0)
+Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+
+**File**: `changelog.d/fix-cli-config-repairs.md` (added, +4/-0)
 ```diff
 @@ -0,0 +1,4 @@
 +### Fixed
 +
-+- **Two `fallow similar-code setup --local` runs on one model cache no longer break each other.** Both runs wrote the same partial, manifest and backup files, so one run removed the download of the other, and that run failed. Setup now holds a lock on the cache folder of the model revision. The second run prints that it waits, then finds the installed model and downloads nothing. On a file system without file locks, setup runs without the lock, as before.
-+- **The type-aware sidecar reads wildcard package exports as Node does.** When fallow sent no entry points, the sidecar read the entry points from `package.json`. A target such as `./src/*.ts` then matched only files directly in `src`, and a target with two `*` accepted two different values. Each `*` of a target now stands for the same value, and that value can contain `/`. A build output target with a `*` in its first path segment, such as `./*.js`, still matches one path segment.
++- **Doctor includes the selected config in its cache repair command.** The command rebuilds the parse and graph caches that doctor inspected. Doctor JSON omits `remediation` and gives manual steps in `message` when the config path contains shell-unsafe characters, the config is outside the project root, or the run overrides the cache directory.
++- **Config fix reports list only the ignore rules that Fallow adds.** Dry-run and apply print a note on stderr when an existing `ignoreExports` rule prevents a write. The note names the affected file.
 ```
 
-**File**: `tools/similar-code-sidecar/src/setup.rs` (modified, +118/-1)
+**File**: `crates/api/src/doctor.rs` (modified, +111/-5)
 ```diff
-@@ -1,4 +1,4 @@
--use std::fs::{self, File};
-+use std::fs::{self, File, TryLockError};
- use std::io::{self, Read};
- use std::path::Path;
- use std::time::Duration;
-@@ -13,6 +13,7 @@ pub trait ArtifactDownloader {
-     fn open(&self, url: &str) -> Result<Box<dyn Read>, String>;
- }
+@@ -90,11 +90,22 @@ where
+     match resolve_doctor_run(&root, options.config_path, cache_dir) {
+         Ok(run) => {
+             let project = ReadyProject::of(&run);
++            let cache_repair = || {
++                if cache_dir.is_some_and(|path| !path.as_os_str().is_empty()) {
++                    return Err(
++                        "Set FALLOW_CACHE_DIR to the inspected cache directory and run fallow dead-code --quiet with the same --config value if one was selected.",
++                    );
++                }
++                let explicit = options.config_path.and(project.path.as_deref());
++                remediation_with_config("fallow dead-code --quiet", &root, explicit)
++                    .ok_or("Run fallow dead-code --quiet with the same --config value.")
++            };
+             push_ready_project_checks(
+                 &mut checks,
+                 &root,
+                 &project,
+                 &run.plugin_readiness(),
++                cache_repair,
+                 discover_companion,
+             );
+         }
+@@ -192,6 +203,7 @@ fn push_ready_project_checks<F>(
+     root: &Path,
+     project: &ReadyProject,
+     configured_plugin_diagnostics: &[fallow_config::ConfiguredPluginDiagnostic],
++    cache_repair: impl Fn() -> Result<DoctorRemediation, &'static str>,
+     discover_companion: &F,
+ ) where
+     F: Fn(&Path) -> Result<(), String>,
+@@ -265,8 +277,21 @@ fn push_ready_project_checks<F>(
+     ));
  
-+const INSTALL_LOCK_FILE: &str = ".install.lock";
- const DNS_TIMEOUT: Duration = Duration::from_secs(15);
- const CONNECT_TIMEOUT: Duration = Duration::from_secs(30);
- const RESPONSE_HEADER_TIMEOUT: Duration = Duration::from_secs(30);
-@@ -129,6 +130,12 @@ pub fn install_with(
- 
-     fs::create_dir_all(&paths.directory)
-         .map_err(|error| format!("failed to create the model cache: {error}"))?;
-+    let _lock = lock_install(paths)?;
-+    // Check again under the lock, so a setup that waited for another one
-+    // reuses its result instead of a second download.
-+    if artifacts == ARTIFACTS && inspect_cache(paths).ready {
-+        return Ok(SetupResult { downloaded: false });
-+    }
-     let mut network_used = false;
-     for artifact in artifacts {
-         network_used |= install_artifact(paths, *artifact, downloader)?;
-@@ -139,6 +146,31 @@ pub fn install_with(
-     })
- }
- 
-+/// Hold an exclusive lock on the revision directory for one install. The
-+/// partial, manifest and backup files have fixed names, so two setups on one
-+/// cache must not write them at the same time. The operating system releases
-+/// the lock when the process exits, so a crashed setup leaves no stale lock.
-+fn lock_install(paths: &ModelPaths) -> Result<Option<File>, String> {
-+    let file = File::options()
-+        .create(true)
-+        .truncate(false)
-+        .write(true)
-+        .open(paths.directory.join(INSTALL_LOCK_FILE))
-+        .map_err(|error| format!("failed to open the model cache lock: {error}"))?;
-+    let locked = match file.try_lock() {
-+        Ok(()) => Ok(()),
-+        Err(TryLockError::WouldBlock) => {
-+            eprintln!("Waiting for another model setup on this cache to finish.");
-+            file.lock()
+     checks.push(dependencies_check(root));
+-    checks.push(cache_check(&project.config));
+-    checks.push(graph_cache_check(&project.config));
++    for mut check in [
++        cache_check(&project.config),
++        graph_cache_check(&project.config),
++    ] {
++        if check.status == DoctorCheckStatus::Warn {
++            match cache_repair() {
++                Ok(repair) => check.remediation = Some(repair),
++                Err(hint) => {
++                    check.message.push(' ');
++                    check.message.push_str(hint);
++                }
++            }
 +        }
-+        Err(TryLockError::Error(error)) => Err(error),
-+    };
-+    // A file system without file locks (for example NFS without a lock
-+    // daemon) reports an error here. Setup still installs each verified
-+    // artifact with a rename, so it proceeds without the lock.
-+    Ok(locked.is_ok().then_some(file))
-+}
-+
- fn install_artifact(
-     paths: &ModelPaths,
-     artifact: ArtifactSpec,
-@@ -206,6 +238,7 @@ mod tests {
-     use std::collections::BTreeMap;
-     use std::io::{Cursor, Write};
-     use std::net::TcpListener;
-+    use std::sync::mpsc;
-     use std::thread;
++        checks.push(check);
++    }
+     checks.push(mutation_runner_check(root, project.config.mutation.runner));
+ }
  
-     use sha2::{Digest, Sha256};
-@@ -311,6 +344,90 @@ mod tests {
-         assert!(!paths.config.with_extension("download-partial").exists());
+@@ -337,7 +362,7 @@ fn cache_check(config: &fallow_config::ResolvedConfig) -> DoctorCheck {
+                 "Extraction cache{size} would not be reused: {}. The next run parses every file.",
+                 rejection.describe()
+             ),
+-            Some(remediation("fallow dead-code --quiet", false)),
++            None,
+         ),
+     }
+ }
+@@ -388,7 +413,7 @@ fn graph_cache_check(config: &fallow_config::ResolvedConfig) -> DoctorCheck {
+                  and rebuilds the graph.",
+                 rejection.describe()
+             ),
+-            Some(remediation("fallow dead-code --quiet", false)),
++            None,
+         ),
+     }
+ }
+@@ -914,7 +939,9 @@ fn build_output(checks: Vec<DoctorCheck>) -> DoctorOutput {
+ 
+ fn relative_path(root: &Path, path: &Path) -> Option<String> {
+     path.strip_prefix(root).ok().map(|path| {
+-        let relative = path.to_string_lossy().replace('\\', "/");
++        let relative = path
++            .to_string_lossy()
++            .replace(std::path::MAIN_SEPARATOR, "/");
+         if relative.is_empty() {
+             ".".to_string()
+         } else {
+@@ -1164,6 +1191,85 @@ mod tests {
+         assert_eq!(output.status, DoctorStatus::Pass);
      }
  
-+    /// Yields the first byte, then waits until `resume` fires or a second
-+    /// passes, so a test can start a second install while this one writes.
-+    struct PausedReader {
-+        bytes: Vec<u8>,
-+        position: usize,
-+        started: Option<mpsc::Sender<()>>,
-+        resume: mpsc::Receiver<()>,
-+    }
-+
-+    impl Read for PausedReader {
-+        fn read(&mut self, buffer: &mut [u8]) -> io::Result<usize> {
-+            if self.position == 1 {
-+                if let Some(started) = self.started.take() {
-+                    let _ = started.send(());
-+                }
-+                let _ = self.resume.recv_timeout(Duration::from_secs(1));
-+            }
-+            let end = if self.position == 0 {
-+                1
-+            } else {
-+                self.bytes.len()
-+            };
-+            let count = (end - self.position).min(buffer.len());
-+            buffer[..count].copy_from_slice(&self.bytes[self.position..self.position + count]);
-+            self.position += count;
-+            Ok(count)
-+        }
-+    }
-+
-+    struct PausedDownloader(std::sync::Mutex<Option<PausedReader>>);
-+
-+    impl ArtifactDownloader for PausedDownloader {
-+        fn open(&self, _url: &str) -> Result<Box<dyn Read>, String> {
-+            let reader = self
-+                .0
-+                .lock()
-+                .expect("downloader lock")
-+                .take()
-+                .ok_or_else(|| "the paused artifact was opened twice".to_string())?;
-+            Ok(Box::new(reader))
-+        }
-+    }
-+
 +    #[test]
-+    fn concurrent_setups_on_one_cache_both_succeed() {
-+        let directory = tempfile::tempdir().expect("tempdir");
-+        let paths = ModelPaths::from_cache_root(directory.path());
-+        let bytes = b"config-bytes".to_vec();
-+        let artifacts = [spec("config.json", &bytes)];
-+        let (started_tx, started_rx) = mpsc::channel();
-+        let (resume_tx, resume_rx) = mpsc::channel();
-+        let paused = PausedDownloader(std::sync::Mutex::new(Some(PausedReader {
-+            bytes: bytes.clone(),
-+            position: 0,
-+            started: Some(started_tx),
-+            resume: resume_rx,
-+        })));
++    fn cache_repairs_use_the_inspected_config() {
++        let temp = tempfile::tempdir().expect("create fixture");
++        let root = temp.path();
++        let path = root.join("ci.json");
++        std::fs::write(&path, r#"{"cache":{"dir":"cache-ci"}}"#).expect("write config");
++        let cache = root.join("cache-ci");
++        std::fs::create_dir(&cache).expect("create cache directory");
++        for blob in ["cache.bin", "graph-cache.bin"] {
++            std::fs::write(cache.join(blob), b"invalid cache").expect("write corrupt cache");
++        }
++        let output = run_doctor_with_discovery(
++            &DoctorOptions {
++                root,
++                config_path: Some(&path),
++            },
++            &|_| Err("missing companion".to_owned()),
++        );
++        for id in [DoctorCheckId::Cache, DoctorCheckId::GraphCache] {
++            let check = output
++                .checks
++                .iter()
++                .find(|check| check.id == id)
++                .expect("cache check");
++            assert_eq!(check.status, DoctorCheckStatus::Warn);
++            assert_eq!(
++                check
++                    .remediation
++                    .as_ref()
++                    .expect("cache repair command")
++                    .command,
++                "fallow dead-code --quiet --config=ci.json"
++            );
++        }
++    }
 +
-+        let first = thread::scope(|scope|
++    #[cfg(unix)]
++    #[test]
++    fn remediation_omits_a_config_with_a_literal_backslash() {
++        let temp = tempfile::tempdir().expect("temp root");
++        let config = temp.path().join(r"ci\settings.json"
 ```
 
-**File**: `tools/type-aware-sidecar/src/project-package.mjs` (modified, +26/-0)
+**File**: `crates/cli/src/fix/config.rs` (modified, +46/-61)
 ```diff
-@@ -35,3 +35,29 @@ export const packagePathTargets = (project, packageJson) => {
-   if (typeof packageName !== "string") return [];
-   return projectCompilerOptions(project).paths?.[packageName] ?? [];
+@@ -37,6 +37,7 @@ use std::path::{Component, Path, PathBuf};
+ use fallow_config::{
+     ConfigFixPlan as ResolvedConfigPlan, IgnoreExportRule, OutputFormat,
+     add_ignore_exports_rule_to_string, classify_config_fix_plan as classify_plan,
++    render_ignore_exports_edit,
  };
-+
-+// JavaScript output suffixes of a build, as in the core rule.
-+const OUTPUT_SUFFIX = /(?:\.d\.[cm]?ts|\.[cm]?js|\.jsx)$/u;
-+
-+/**
-+ * A regular expression for the source files of a wildcard package target.
-+ * Every `*` of a Node subpath pattern stands for the same substring, and that
-+ * substring can contain `/`: `./src/*.ts` matches `src/nested/deep.ts`. A
-+ * build output target with a `*` in its first path segment, such as `./*.js`,
-+ * keeps a capture of one path segment, so it does not make every test and
-+ * config file of the package an entry.
-+ */
-+export const wildcardPattern = (target) => {
-+  const relative = target.replace(/^\.\//u, "");
-+  const sourceTarget = relative
-+    .replace(/^dist\//u, "src/")
-+    .replace(/(?:\.d)?\.[cm]?[jt]sx?$/u, ".ts");
-+  const rootOutput = relative.split("/")[0].includes("*") && OUTPUT_SUFFIX.test(relative);
-+  const capture = rootOutput ? "([^/]+)" : "(.+)";
-+  const escaped = sourceTarget
-+    .split("*")
-+    .map((part) => part.replace(/[\\^$.*+?()[\]{}|]/gu, "\\$&"))
-+    .map((part, index) => (index === 0 ? part : `${index === 1 ? capture : "(?:\\1)"}${part}`))
-+    .join("");
-+  return new RegExp(`^${escaped}$`, "u");
-+};
-```
-
-**File**: `tools/type-aware-sidecar/src/semantic.mjs` (modified, +1/-11)
-```diff
-@@ -6,7 +6,7 @@ import { accessorPairExists, countsAsAccessorUse } from "./accessor-direction.mj
- import { ast, createApi as createBackendApi, heritageTypeName, sync } from "./backend.mjs";
+ use fallow_types::output_dead_code::DuplicateExportFinding;
+ use fallow_types::path_util::display_relative;
+@@ -119,16 +120,6 @@ fn apply_edit(
+     }
+     let config_file = display_relative(root, config_path);
  
- import { canonicalFileIdentity, resetFileIdentityCache } from "./file-identity.mjs";
--import { packagePathTargets, projectPackage } from "./project-package.mjs";
-+import { packagePathTargets, projectPackage, wildcardPattern } from "./project-package.mjs";
- import { projectResult, projectState } from "./project-state.mjs";
- import {
-   declarationName,
-@@ -1197,16 +1197,6 @@ const sourceCandidatesForTarget = (root, target) => {
-     .map((entry) => path.resolve(root, entry));
- };
- 
--const wildcardPattern = (target) => {
--  const normalized = target.replace(/^\.\//u, "").replace(/^dist\//u, "src/");
--  const sourceTarget = normalized.replace(/(?:\.d)?\.[cm]?[jt]sx?$/u, ".ts");
--  const escaped = sourceTarget
--    .split("*")
--    .map((part) => part.replace(/[\\^$.*+?()[\]{}|]/gu, "\\$&"))
--    .join("[^/]+");
--  return new RegExp(`^${escaped}$`, "u");
--};
+-    if write.dry_run {
+-        return apply_edit_dry_run(
+-            config_path,
+-            &config_file,
+-            &entries,
+-            write.output,
+-            write.fixes,
+-        );
+-    }
 -
- const ancestorRoots = (root, start) => {
-   const normalizedRoot = path.resolve(root);
-   const roots = [];
+     let current = match std::fs::read_to_string(config_path) {
+         Ok(content) => content,
+         Err(error) => {
+@@ -138,76 +129,70 @@ fn apply_edit(
+             return true;
+         }
+     };
+-    match add_ignore_exports_rule_to_string(config_path, &current, &entries) {
+-        Ok(proposed) => {
+-            write.plan.stage_existing(
+-                config_path.to_path_buf(),
+-                current.as_bytes(),
+-                proposed.into_bytes(),
+-            );
+-            write.fixes.push(serde_json::json!({
+-                "type": "add_ignore_exports",
+-                "config_key": "ignoreExports",
+-                "file": config_file,
+-                "entries": entries,
+-                "applied": true,
+-                "__target": config_path.display().to_string(),
+-            }));
+-            false
++    let (proposed, added) = match render_ignore_exports_edit(config_path, &current, entries.clone())
++    {
++        Ok(edit) => edit,
++        Err(error) => {
++            eprintln!("Error: failed to add ignoreExports rules to {config_file}: {error}");
++            return true;
+         }
+-        Err(e) => {
+-            eprintln!("Error: failed to add ignoreExports rules to {config_file}: {e}");
+-            true
++    };
++    let added_files: FxHashSet<&str> = added.iter().map(|entry| entry.file.as_str()).collect();
++    for entry in &entries {
++        if !added_files.contains(entry.file.as_str()) {
++            eprintln!(
++                "Note: {config_file} has an existing ignoreExports rule for {}. Add the duplicate export names to that rule to ignore them.",
++                entry.file
++            );
+         }
+     }
++    if added.is_empty() {
++        return false;
++    }
++    if write.dry_run {
++        preview_edit(&config_file, &current, &proposed, &added, write);
++    } else {
++        write.plan.stage_existing(
++            config_path.to_path_buf(),
++            current.as_bytes(),
++            proposed.into_bytes(),
++        );
++        write.fixes.push(serde_json::json!({
++            "type": "add_ignore_exports",
++            "config_key": "ignoreExports",
++            "file": config_file,
++            "entries": added,
++            "applied": true,
++            "__target": config_path.display().to_string(),
++        }));
++    }
++    false
+ }
+ 
+-/// Render the dry-run preview (diff + JSON entry) for the config-edit path.
+-/// Returns the orchestrator's `had_write_error` bool.
+-fn apply_edit_dry_run(
+-    config_path: &Path,
++fn preview_edit(
+     config_file: &str,
++    current: &str,
++    proposed: &str,
+     entries: &[IgnoreExportRule],
+-    output: OutputFormat,
+-    fixes: &mut Vec<serde_json::Value>,
+-) -> bool {
+-    let current = match std::fs::read_to_string(config_path) {
+-        Ok(content) => content,
+-        Err(e) => {
+-            eprintln!("Error: failed to read {config_file} for dry-run preview: {e}");
+-            return true;
+-        }
+-    };
+-    let proposed = match add_ignore_exports_rule_to_string(config_path, &current, entries) {
+-        Ok(content) => content,
+-        Err(e) => {
+-            eprintln!("Error: failed to compute proposed config edit for {config_file}: {e}");
+-            return true;
+-        }
+-    };
+-    if current == proposed {
+-        return false;
+-    }
+-    let diff = render_unified_diff(config_file, &current, &proposed);
+-    let mut entry = serde_json::json!({
++    write: &mut ConfigWriteContext<'_>,
++) {
++    let diff = render_unified_diff(config_file, current, proposed);
++    let entry = serde_json::json!({
+         "type": "add_ignore_exports",
+         "config_key": "ignoreExports",
+         "file": config_file,
+         "entries": entries,
+         "proposed_diff": diff,
++        "dry_run": true,
+     });
+-    if !matches!(output, OutputFormat::Json) {
++    if !matches!(write.output, OutputFormat::Json) {
+         eprintln!(
+             "Would append {} ignoreExports rule(s) to {config_file}:",
+             entries.len()
+         );
+         eprintln!("{diff}");
+     }
+-    if let Some(obj) = entry.as_object_mut() {
+-        obj.insert("dry_run".to_owned(), serde_json::Value::Bool(true));
+-    }
+-    fixes.push(entry);
+-    false
++    write.fixes.push(entry);
+ }
+ 
+ fn apply_create(
 ```
 
-**File**: `tools/type-aware-sidecar/test/sidecar.test.mjs` (modified, +89/-0)
+**File**: `crates/cli/tests/integration/fix_tests.rs` (modified, +74/-2)
 ```diff
-@@ -995,6 +995,95 @@ incremented.value++;
+@@ -317,7 +317,11 @@ fn fix_adds_ignore_exports_config_rules_for_duplicate_exports() {
+         r#"{"name":"dup-config","main":"src/index.ts"}"#,
+     )
+     .unwrap();
+-    std::fs::write(root.join(".fallowrc.json"), "{}\n").unwrap();
++    std::fs::write(
++        root.join(".fallowrc.json"),
++        r#"{"ignoreExports":[{"file":"src/one/index.ts","exports":["Other"]}]}"#,
++    )
++    .unwrap();
+     std::fs::write(
+         root.join("src/index.ts"),
+         "export { Button } from './one';\nexport { Button as Button2 } from './two';\nconsole.log(Button2);\n",
+@@ -326,6 +330,16 @@ fn fix_adds_ignore_exports_config_rules_for_duplicate_exports() {
+     std::fs::write(root.join("src/one/index.ts"), "export const Button = 1;\n").unwrap();
+     std::fs::write(root.join("src/two/index.ts"), "export const Button = 2;\n").unwrap();
+ 
++    let preview = run_fallow_in_root("fix", root, &["--dry-run", "--format", "json", "--quiet"]);
++    assert_eq!(preview.code, 0, "{}", preview.stderr);
++    let preview = parse_json(&preview);
++    let preview_edit = preview["fixes"]
++        .as_array()
++        .unwrap()
++        .iter()
++        .find(|fix| fix["type"] == "add_ignore_exports")
++        .unwrap();
++
+     let output = run_fallow_in_root("fix", root, &["--yes", "--format", "json", "--quiet"]);
+     assert_eq!(
+         output.code, 0,
+@@ -341,13 +355,18 @@ fn fix_adds_ignore_exports_config_rules_for_duplicate_exports() {
+         .expect("fix output should include an ignoreExports config edit");
+     assert_eq!(config_fix["applied"], true);
+     assert_eq!(config_fix["config_key"], "ignoreExports");
+-    assert_eq!(config_fix["entries"].as_array().unwrap().len(), 2);
++    assert_eq!(
++        config_fix["entries"],
++        serde_json::json!([{"file": "src/two/index.ts", "exports":["*"]}])
++    );
++    assert_eq!(preview_edit["entries"], config_fix["entries"]);
+ 
+     let config: serde_json::Value =
+         serde_json::from_str(&std::fs::read_to_string(root.join(".fallowrc.json")).unwrap())
+             .unwrap();
+     let ignore_exports = config["ignoreExports"].as_array().unwrap();
+     assert_eq!(ignore_exports[0]["file"], "src/one/index.ts");
++    assert_eq!(ignore_exports[0]["exports"], serde_json::json!(["Other"]));
+     assert_eq!(ignore_exports[1]["file"], "src/two/index.ts");
+ 
+     let output = run_fallow_in_root(
+@@ -364,6 +383,59 @@ fn fix_adds_ignore_exports_config_rules_for_duplicate_exports() {
+     assert_eq!(json["summary"]["duplicate_exports"].as_u64(), Some(0));
+ }
+ 
++#[test]
++fn fix_reports_narrow_ignore_exports_rules() {
++    let dir = tempfile::tempdir().unwrap();
++    let root = dir.path();
++    let config_path = root.join(".fallowrc.json");
++    let config = r#"{"ignoreExports":[{"file":"one.ts","exports":["Other"]},{"file":"two.ts","exports":["Other"]}]}"#;
++    std::fs::write(&config_path, config).unwrap();
++    std::fs::write(
++        root.join("package.json"),
++        r#"{"name":"dup-config","main":"index.ts"}"#,
++    )
++    .unwrap();
++    std::fs::write(
++        root.join("index.ts"),
++        "export { Button } from './one';\nexport { Button as Button2 } from './two';\n",
++    )
++    .unwrap();
++    for file in ["one.ts", "two.ts"] {
++        std::fs::write(root.join(file), "export const Button = 1;\n").unwrap();
++    }
++
++    let before = run_fallow_in_root(
++        "dead-code",
++        root,
++        &["--duplicate-exports", "--format", "json", "--quiet"],
++    );
++    assert_eq!(parse_json(&before)["summary"]["duplicate_exports"], 1);
++    for mode in ["--dry-run", "--yes"] {
++        let output = run_fallow_in_root("fix", root, &[mode, "--format", "json", "--quiet"]);
++        assert_eq!(output.code, 0, "{}", output.stderr);
++        for file in ["one.ts", "two.ts"] {
++            assert!(
++                output
++                    .stderr
++                    .lines()
++                    .any(|line| line.contains(file) && line.contains("ignoreExports")),
++                "{mode} should identify the ignoreExports rule for {file}: {}",
++                output.stderr
++            );
++        }
++        assert!(
++            parse_json(&output)["fixes"]
++                .as_array()
++                .unwrap()
++                .iter()
++                .all(|fix| fix["type"] != "add_ignore_exports"),
++            "{mode} should report no config edits: {}",
++            output.stdout
++        );
++        assert_eq!(std::fs::read_to_string(&config_path).unwrap(), config);
++    }
++}
++
+ /// A Windows-authored `.fallowrc.json` with a UTF-8 BOM must round-trip
+ /// through `fallow fix --yes` without breaking the parse on the next run.
+ /// The CST parser (jsonc-parser) rejects a leading BOM, so the writer must
+```
+
+**File**: `crates/config/src/config_writer.rs` (modified, +36/-29)
+```diff
+@@ -146,23 +146,33 @@ pub fn add_ignore_exports_rule_to_string(
+     content: &str,
+     entries: &[IgnoreExportRule],
+ ) -> ConfigWriteResult<String> {
++    render_ignore_exports_edit(path, content, entries.to_vec()).map(|(content, _)| content)
++}
++
++/// Render the config and return the rules that were appended, in input order.
++pub fn render_ignore_exports_edit(
++    path: &Path,
++    content: &str,
++    mut entries: Vec<IgnoreExportRule>,
++) -> ConfigWriteResult<(String, Vec<IgnoreExportRule>)> {
+     let had_bom = content.starts_with(BOM);
+     let body = content.strip_prefix(BOM).unwrap_or(content);
+     let config_dir = path.parent().unwrap_or_else(|| Path::new(""));
+     let rendered = if is_json_config(path) {
+-        append_json_ignore_exports(body, entries, config_dir)?
++        append_json_ignore_exports(body, &mut entries, config_dir)?
+     } else {
+-        append_toml_ignore_exports(body, entries, config_dir)?
++        append_toml_ignore_exports(body, &mut entries, config_dir)?
+     };
+     let with_endings = preserve_line_endings(&rendered, body);
+-    Ok(if had_bom {
++    let content = if had_bom {
+         let mut out = String::with_capacity(with_endings.len() + BOM.len_utf8());
+         out.push(BOM);
+         out.push_str(&with_endings);
+         out
+     } else {
+         with_endings
+-    })
++    };
++    Ok((content, entries))
+ }
+ 
+ #[expect(
+@@ -180,7 +190,7 @@ fn is_json_config(path: &Path) -> bool {
+ 
+ fn append_json_ignore_exports(
+     content: &str,
+-    entries: &[IgnoreExportRule],
++    entries: &mut Vec<IgnoreExportRule>,
+     config_dir: &Path,
+ ) -> ConfigWriteResult<String> {
+     let root = CstRootNode::parse(content, &crate::jsonc::parse_options())
+@@ -207,23 +217,22 @@ fn append_json_ignore_exports(
+         }
+     }
+ 
++    entries.retain(|entry| seen.insert(entry.file.clone()));
+     for entry in entries {
+-        if seen.insert(entry.file.clone()) {
+-            array.append(CstInputValue::Object(vec![
+-                ("file".to_owned(), CstInputValue::String(entry.file.clone())),
+-                (
+-                    "exports".to_owned(),
+-                    CstInputValue::Array(
+-                        entry
+-                            .exports
+-                            .iter()
+-                            .cloned()
+-                            .map(CstInputValue::String)
+-                            .collect(),
+-                    ),
++        array.append(CstInputValue::Object(vec![
++            ("file".to_owned(), CstInputValue::String(entry.file.clone())),
++            (
++                "exports".to_owned(),
++                CstInputValue::Array(
++                    entry
++                        .exports
++                        .iter()
++                        .cloned()
++                        .map(CstInputValue::String)
++                        .collect(),
+                 ),
+-            ]));
+-        }
++            ),
++        ]));
+     }
+     if inherit_trailing_commas {
+         array.set_trailing_commas(TrailingCommaMode::IfMultiline);
+@@ -272,7 +281,7 @@ pub(crate) fn parse_toml_document(content: &str) -> ConfigWriteResult<DocumentMu
+ 
+ fn append_toml_ignore_exports(
+     content: &str,
+-    entries: &[IgnoreExportRule],
++    entries: &mut Vec<IgnoreExportRule>,
+     config_dir: &Path,
+ ) -> ConfigWriteResult<String> {
+     let mut doc = parse_toml_document(content)?;
+@@ -340,13 +349,12 @@ fn files_from_array_of_tables(tables: &ArrayOfTables, config_dir: &Path) -> FxHa
+ 
+ fn append_to_array_of_tables(
+     tables: &mut ArrayOfTables,
+-    entries: &[IgnoreExportRule],
++    entries: &mut Vec<IgnoreExportRule>,
+     seen: &mut FxHashSet<String>,
+ ) {
++    entries.retain(|entry| seen.insert(entry.file.clone()));
+     for entry in entries {
+-        if seen.insert(entry.file.clone()) {
+-            tables.push(toml_ignore_export_table(entry));
+-        }
++        tables.push(toml_ignore_export_table(entry));
+     }
+ }
+ 
+@@ -394,13 +402,12 @@ fn record_existing_file(seen: &mut FxHashSet<String>, file: &str, config_dir: &P
+ 
+ fn append_to_inline_array(
+     array: &mut Array,
+-    entries: &[IgnoreExportRule],
++    entries: &mut Vec<IgnoreExportRule>,
+     seen: &mut FxHashSet<String>,
+ ) {
++    entries.retain(|entry| seen.insert(entry.file.clone()));
+     for entry in entries {
+-        if seen.insert(entry.file.clone()) {
+-            array.push(Value::InlineTable(toml_ignore_export_inline_table(entry)));
+-        }
++        array.push(Value::InlineTable(toml_ignore_export_inline_table(entry)));
+     }
+ }
+ 
+```
+
+---
+
+### Incident Patch 2: `6d1c1d54` (2026-11-23)
+**Commit Message**: fix(vscode): distinguish applied and skipped fixes (#5086)
+
+* fix(vscode): distinguish applied and skipped fixes
+
+Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+
+* fix(vscode): show the advice of the skip that failed the fix run
+
+Intentional skips also carry help text. The error message now takes the advice from a content_changed or mixed_line_endings skip, which are the skips that make the CLI exit with code 2.
+
+Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+
+**File**: `changelog.d/fix-vscode-fix-results.md` (added, +4/-0)
+```diff
+@@ -0,0 +1,4 @@
++### Fixed
++
++- **VS Code shows which fixes the CLI can apply.** The preview excludes skipped changes. After an apply run, the editor reports how many fixes the CLI applied and how many it skipped, including when a write fails.
++- **The fix confirmation describes file changes.** It now includes enum and class member removal, dependency catalogs, and Fallow configuration files.
+```
+
+**File**: `editors/vscode/src/commands.ts` (modified, +52/-10)
+```diff
+@@ -636,7 +636,7 @@ interface FixQuickPickItem extends vscode.QuickPickItem {
+ 
+ const confirmApplyFixes = async (): Promise<boolean> => {
+   const confirm = await vscode.window.showWarningMessage(
+-    "Fallow: This will unexport unused exports (keeps the code) and remove unused dependencies from package.json. Continue?",
++    "Fallow can remove export keywords, unused enums, individual enum and class members, dependencies, and catalog entries. It can also create or update Fallow config files. Apply these fixes?",
+     "Yes",
+     "No",
+   );
+@@ -676,14 +676,59 @@ const openFixLocation = async (root: string, fix: FixAction | undefined): Promis
+   });
+ };
+ 
++const fixCountLabel = (count: number): string => `${count} fix${count === 1 ? "" : "es"}`;
++
++const skippedFixLabel = (count: number): string => (count > 0 ? `, skipped ${count}` : "");
++
++const fixSummary = (result: FallowFixResult): string => {
++  const skipped = result.fixes.filter((fix) => fix.skipped).length;
++  const count = result.dry_run
++    ? `${fixCountLabel(result.fixes.length - skipped)} available`
++    : `applied ${fixCountLabel(result.total_fixed)}`;
++  return count + skippedFixLabel(skipped);
++};
++
++// Only these skips make the CLI exit with code 2. Intentional skips also carry help text.
++const RECOVERABLE_SKIP_REASONS: ReadonlySet<string> = new Set([
++  "content_changed",
++  "mixed_line_endings",
++]);
++
++const partialFixSummary = (error: unknown): string => {
++  if (!(error instanceof FallowExecError) || error.exitCode !== 2) return "";
++  try {
++    const result = JSON.parse(error.stdout) as FallowFixResult;
++    if (
++      typeof result.dry_run === "boolean" &&
++      Number.isInteger(result.total_fixed) &&
++      Array.isArray(result.fixes)
++    ) {
++      const recovery = result.fixes.find(
++        (fix) =>
++          fix.skipped &&
++          fix.help &&
++          fix.skip_reason !== undefined &&
++          RECOVERABLE_SKIP_REASONS.has(fix.skip_reason),
++      );
++      const advice = recovery?.help ? ` ${recovery.path ?? ""} ${recovery.help}`.trim() : "";
++      return ` (${fixSummary(result)})${advice ? `. ${advice}` : ""}`;
++    }
++  } catch {
++    // The CLI can fail before it emits a fix report.
++  }
++  return "";
++};
++
+ const showDryRunPreview = async (root: string, result: FallowFixResult): Promise<void> => {
+-  if (result.fixes.length === 0) {
+-    void vscode.window.showInformationMessage("Fallow: no fixes available.");
++  const available = result.fixes.filter((fix) => !fix.skipped);
++  const skipped = skippedFixLabel(result.fixes.length - available.length);
++  if (available.length === 0) {
++    void vscode.window.showInformationMessage(`Fallow: no fixes available${skipped}.`);
+     return;
    }
+ 
+   const quickPickItems: FixQuickPickItem[] = [];
+-  for (const item of createFixPreviewItems(result.fixes)) {
++  for (const item of createFixPreviewItems(available)) {
+     if (item.action === "apply-all") {
+       quickPickItems.push({
+         label: "",
+@@ -708,7 +753,7 @@ const showDryRunPreview = async (root: string, result: FallowFixResult): Promise
+   }
+ 
+   const picked = await vscode.window.showQuickPick(quickPickItems, {
+-    title: `Fallow: ${result.fixes.length} fix${result.fixes.length === 1 ? "" : "es"} available`,
++    title: `Fallow: ${fixCountLabel(available.length)} available${skipped}`,
+     placeHolder: "Review fixes. Select 'Apply all fixes' to apply, or click a fix to navigate",
+   });
+ 
+@@ -1154,16 +1199,13 @@ export const runFix = async (
+     if (dryRun) {
+       await showDryRunPreview(root, result);
+     } else {
+-      const fixCount = result.fixes.length;
+-      void vscode.window.showInformationMessage(
+-        `Fallow: applied ${fixCount} fix${fixCount === 1 ? "" : "es"}.`,
+-      );
++      void vscode.window.showInformationMessage(`Fallow: ${fixSummary(result)}.`);
+     }
+ 
+     return result;
+   } catch (err) {
+     const message = err instanceof Error ? err.message : String(err);
+-    void vscode.window.showErrorMessage(`Fallow fix failed: ${message}`);
++    void vscode.window.showErrorMessage(`Fallow fix failed: ${message}${partialFixSummary(err)}`);
+     return null;
+   } finally {
+     await afterRun?.();
+```
+
+**File**: `editors/vscode/src/fix-types.ts` (modified, +2/-0)
+```diff
+@@ -81,6 +81,8 @@ export interface FixAction {
+    * `content_changed` / `mixed_line_endings`).
+    */
+   readonly skip_reason?: string;
++  /** Recovery advice for a skipped fix. */
++  readonly help?: string;
+   /**
+    * Reachability caveat tokens copied from the finding, present on
+    * `skip_reason: "low_confidence_incomplete_analysis"` entries so a
+```
+
+**File**: `editors/vscode/test/commands.test.ts` (modified, +128/-4)
+```diff
+@@ -1153,27 +1153,37 @@ describe("runAudit type-aware compatibility", () => {
  });
  
-+const discoveredEntryNames = (root, exportsField, files) => {
-+  write(
-+    root,
-+    "tsconfig.json",
-+    JSON.stringify({ compilerOptions: { strict: true }, include: ["src/**/*.ts"] }),
-+  );
-+  write(root, "package.json", JSON.stringify({ exports: exportsField }));
-+  for (const [file, name] of Object.entries(files)) {
-+    write(root, file, `export interface ${name} { value: string }\n`);
-+  }
-+  const request = semanticRequest(root, [
-+    { id: 0, operation: "api-surface", entry_points: [], private_leak_candidates: [] },
-+  ]);
-+  return analyzeSemanticQueries(parseRequest(request))
-+    .results[0].data.entries.map((entry) => entry.exposed.exported_name)
-+    .toSorted();
-+};
+ describe("applyFixes", () => {
+-  const writeFixScript = async (dir: string, logPath: string): Promise<string> => {
++  const writeFixScript = async (
++    dir: string,
++    logPath: string,
++    result: object,
++    exitCode: number,
++  ): Promise<string> => {
+     const script = join(dir, "fallow-cli.js");
+     await writeFile(
+       script,
+       [
+         "#!/usr/bin/env node",
+         'const fs = require("node:fs");',
+         `fs.appendFileSync(${JSON.stringify(logPath)}, JSON.stringify({ args: process.argv.slice(2) }) + "\\n");`,
+-        "process.stdout.write(JSON.stringify({ dry_run: false, fixes: [], total_fixed: 0 }));",
++        `process.stdout.write(${JSON.stringify(JSON.stringify(result))});`,
++        `process.exitCode = ${exitCode};`,
+       ].join("\n"),
+       "utf8",
+     );
+     await chmod(script, 0o755);
+     return script;
+   };
+ 
+-  const withFixWorkspace = async (body: (logPath: string) => Promise<void>): Promise<void> => {
++  const withFixWorkspace = async (
++    body: (logPath: string) => Promise<void>,
++    result: object = { dry_run: false, fixes: [], total_fixed: 0 },
++    exitCode = 0,
++  ): Promise<void> => {
+     const dir = await mkdtemp(join(tmpdir(), "fallow-vscode-apply-fix-"));
+     const logPath = join(dir, "spawn.log");
+     try {
+-      const script = await writeFixScript(dir, logPath);
++      const script = await writeFixScript(dir, logPath, result, exitCode);
+       mockPathBinary = script;
+       mockBinaryVersions = { [script]: "3.9.2" };
+       setWorkspaceRoot(dir);
+@@ -1200,13 +1210,127 @@ describe("applyFixes", () => {
+     vi.clearAllMocks();
+   });
+ 
++  const skipped = {
++    type: "skipped",
++    path: "src/member.ts",
++    skipped: true,
++    skip_reason: "low_confidence_off_graph",
++  };
 +
-+test("package wildcard entries let one capture span directories, as Node does", () => {
-+  const root = makeProject();
-+  try {
-+    assert.deepEqual(
-+      discoveredEntryNames(
-+        root,
-+        { "./*": "./src/*.ts" },
-+        { "src/top.ts": "Top", "src/nested/deep.ts": "Deep" },
-+      ),
-+      ["Deep", "Top"],
++  it("shows the CLI applied count and the skipped entries", async () => {
++    await withFixWorkspace(
++      async () => {
++        vi.mocked(mockWindow.showWarningMessage).mockResolvedValueOnce("Yes" as never);
++        await applyFixes(workspaceContext, async () => {});
++        expect(mockWindow.showInformationMessage).toHaveBeenCalledWith(
++          "Fallow: applied 1 fix, skipped 1.",
++        );
++      },
++      {
++        dry_run: false,
++        total_fixed: 1,
++        fixes: [{ type: "remove_export", name: "unused", applied: true }, skipped],
++      },
 +    );
-+  } finally {
-+    rmSync(root, { recursive: true, force: true });
-+  }
-+});
++  });
 +
-+test("package wildcard entries accept a digit right after a repeated star", () => {
-+  const root = makeProject();
-+  try {
-+    assert.deepEqual(
-+      discoveredEntryNames(
-+        root,
-+        { "./*": "./src/*/*2x.ts" },
-+        { "src/icon/icon2x.ts": "Icon", "src/icon/other2x.ts": "Other" },
-+      ),
-+      ["Icon"],
++  it("reports partial fixes when the CLI exits with a write error", async () => {
++    await withFixWorkspace(
++      async () => {
++        vi.mocked(mockWindow.showWarningMessage).mockResolvedValueOnce("Yes" as never);
++        await applyFixes(workspaceContext, async () => {});
++        expect(mockWindow.showErrorMessage).toHaveBeenCalledWith(
++          expect.stringMatching(/applied 1 fix, skipped 1/),
++        );
++      },
++      {
++        dry_run: false,
++        total_fixed: 1,
++        fixes: [
++          { type: "remove_export", name: "unused", applied: true },
++          { ...skipped, skip_reason: "content_changed" },
++        ],
++      },
++      2,
 +    );
-+  } finally {
-+    rmSync(root, { recursive: true, force: true });
-+  }
-+});
++  });
 +
-+test("package wildcard entries keep a root output target to one segment", () => {
-+  const root = makeProject();
-+  try {
-+    write(
-+      root,
-+      "tsconfig.json",
-+      JSON.stringify({ compilerOptions: { strict: true }, include: ["**/*.ts"] }),
++  it("reports the recovery advice when a preview skips a file with mixed line endings", async () => {
++    const help = "Normalize this file to consistent LF or CRLF line endings.";
++    await withFixWorkspace(
++      async () => {
++        await runFix(workspaceContext, true);
++        expect(mockWindow.showErrorMessage).toHaveBeenCalledWith(
++          expect.stringContaining("skipped 2"),
++        );
++        expect(mockWindow.showErrorMessage).toHaveBeenCalledWith(expect.stringContaining(help));
++        expect(mockWindow.showErrorMessage).not.toHaveBeenCalledWith(
++          expect.stringContaining("Intentional skip."),
++        );
++        expect(mockWindow.showQuickPick).not.toHaveBeenCalled();
++      },
++      {
++        dry_run: true,
++        total_fixed: 0,
++        fixes: [
++          { ...skipped, skip_reason: "low_confidence_off_graph", help: "Intentional skip." },
++          { ...skipped, skip_reason: "mixed_line_endings", help },
++        ],
++      },
++      2,
 +    );
-+    write(root, "package.json", JSON.stringify({ exports: { "./*": "./part-*.js" } }));
-+    write(root, "part-top.ts", "export interface Top { value: string }\n");
-+    write(root, "part-nested/deep.ts", "export interface Deep { value: string }\n");
-+    const request = semanticRequest(root, [
-+      { id: 0, operation: "api-surface", entry_points: [], private_leak_candidates: [] },
-+    ]);
-+    const names = analyzeSemanticQueries(parseRequest(request))
-+      .results[0].data.entries.map((entry) => entry.exposed.exported_name)
-+      .toSorted();
-+    assert.deepEqual(names, ["Top"]);
-+  } finally {
-+    rmSync(root, { recursive: true, force: true });
-+  }
-+});
++  });
 +
-+test("package wildcard entries give every star of a target the same capture", () => {
-+  const root = makeProject();
-+  try {
-+    assert.deepEqual(
-+      discoveredEntryNames(
-+        root,
-+        { "./*": "./src/*/*.ts" },
-+        { "src/alpha/alpha.ts": "Same", "src/alpha/beta.ts": "Mismatched" },
-+      ),
-+      ["Same"],
++  it("offers no apply action for a preview that contains only skips", async () => {
++    await withFixWorkspace(
++      async () => {
++        await runFix(workspaceContext, true);
++        expect(mockWindow.showInformationMessage).toHaveBeenCalledWith(
++          "Fallow: no fixes available, skipped 1.",
++        );
++        expect(mockWindow.showQuickPick).not.toHaveBeenCalled();
++      },
++      { dry_run: true, total_fixed: 0, fixes: [skipped] },
 +    );
-+  } finally {
-+    rmSync(root, { recursive: true, force: true });
-+  }
-+});
++  });
 +
- test("protocol v7 maps public API leaks and project-local public-signature coupling", () => {
-   const root = makeProject();
-   try {
++  it("counts only available actions in a mixed preview", async () => {
++    await withFixWorkspace(
++      async () => {
++        await runFix(workspaceContext, true);
++        expect(mockWindow.showQuickPick).toHaveBeenCalledWith(
++          expect.arrayContaining([
++            expect.objectContaining({ action: "apply-all", description: "1 fix" }),
++          ]),
++        
+```
+
+---
+
+### Incident Patch 3: `769a0442` (2026-11-23)
+**Commit Message**: fix(engine): keep Git diff paths relative to the repository root (#5112)
+
+* fix(engine): keep Git diff paths relative to the repository root
+
+Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+
+* fix(engine): read changed paths with older Git versions
+
+Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+
+**File**: `changelog.d/git-diff-paths.md` (added, +3/-0)
+```diff
+@@ -0,0 +1,3 @@
++### Fixed
++
++- **`--changed-since` finds changed and renamed files when Git uses relative paths.** Runs from a repository subdirectory now use the correct file paths when `diff.relative` is set to `true`.
+```
+
+**File**: `crates/engine/src/changed_files.rs` (modified, +41/-1)
+```diff
+@@ -728,7 +728,8 @@ pub(crate) fn git_path_from_bytes(path: &[u8]) -> PathBuf {
+ 
+ fn git_command(cwd: &Path, args: &[&str]) -> Command {
+     let mut command = crate::git_env::git_command(cwd);
+-    command.args(args);
++    // Older Git versions ignore unknown config keys and reject unknown diff options.
++    command.args(["-c", "diff.relative=false"]).args(args);
+     command
+ }
+ 
+@@ -983,6 +984,14 @@ mod tests {
+         );
+     }
+ 
++    #[test]
++    fn git_diff_sets_relative_paths_through_config() {
++        let command = git_command(Path::new("."), &["diff", "--name-only"]);
++        let args: Vec<_> = command.get_args().filter_map(|arg| arg.to_str()).collect();
++        assert!(args.ends_with(&["-c", "diff.relative=false", "diff", "--name-only"]));
++        assert!(!args.contains(&"--no-relative"));
++    }
++
+     #[test]
+     fn git_command_clears_parent_git_environment() {
+         let command = git_command(Path::new("."), &["status"]);
+@@ -1038,6 +1047,37 @@ mod tests {
+         }
+     }
+ 
++    #[test]
++    fn relative_diff_config_preserves_repository_paths_from_a_subdirectory() {
++        let repo = tempfile::tempdir().unwrap();
++        let root = dunce::canonicalize(repo.path()).unwrap();
++        let sub = root.join("sub");
++        std::fs::create_dir(&sub).unwrap();
++        run_git(&root, &["init", "--quiet"]);
++        run_git(&root, &["config", "user.email", "test@example.com"]);
++        run_git(&root, &["config", "user.name", "Test User"]);
++        run_git(&root, &["config", "diff.relative", "true"]);
++        std::fs::write(sub.join("a.ts"), "export const a = 1;").unwrap();
++        run_git(&root, &["add", "."]);
++        run_git(&root, &["commit", "-qm", "base"]);
++        run_git(&root, &["branch", "base"]);
++        run_git(&sub, &["mv", "a.ts", "b.ts"]);
++        run_git(&root, &["commit", "-qm", "rename"]);
++        run_git(&sub, &["mv", "b.ts", "c.ts"]);
++
++        let changed = changed_files(&sub, "base").unwrap();
++        for name in ["b.ts", "c.ts"] {
++            assert!(changed.contains(&sub.join(name)), "{changed:?}");
++        }
++        assert_eq!(
++            try_get_renamed_files(&sub, "base").unwrap(),
++            vec![RenamedFile {
++                from: sub.join("a.ts"),
++                to: sub.join("c.ts")
++            }]
++        );
++    }
++
+     #[cfg(unix)]
+     #[test]
+     fn changed_files_preserve_special_filenames() {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5077** (2026-11-22): fix: keep route brackets in Windows JSON paths and retry a blocked run dir move (@BartWaardenburg)
-- **PR #5076** (2026-11-22): fix(extract): derive the Effect Schema members that give a schema (@BartWaardenburg)
-- **PR #5074** (2026-11-22): fix(fix): keep the module load of a re-export whose names all go (@BartWaardenburg)
-- **PR #5072** (2026-11-22): fix(agent): keep the root and the excluded steps in follow-up commands (@BartWaardenburg)
-- **PR #5071** (2026-11-22): fix(lsp): put a file suppression below the hashbang (@BartWaardenburg)
-- **PR #5070** (2026-11-22): fix(config): keep an ignoreFindings pattern that sets the mode out of the unmatched note (@BartWaardenburg)
+- **PR #5125** (2026-11-23): fix(sidecar): count signature endpoints in coupling concentration (@BartWaardenburg)
+- **PR #5124** (2026-11-23): fix(dupes): keep merged clone fragments aligned with source ranges (@BartWaardenburg)
+- **PR #5122** (2026-11-23): fix(extract): keep guarded flag reads and continued CSS utilities (@BartWaardenburg)
+- **PR #5121** (2026-11-23): fix(audit): compare coverage thresholds within their config scope (@BartWaardenburg)
+- **PR #5120** (2026-11-23): fix(audit): record walkthrough marks across output formats (@BartWaardenburg)
+- **PR #5119** (2026-11-23): fix(cli): resolve shared-state explanations and correct activation help (@BartWaardenburg)
 
 ---
 
@@ -1902,25 +1544,24 @@ Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. vscode): keep a verified binary through a failed upgrade and confirm a fix befor
+## X. config): report the cache and ignore rules a repair affects
 
 **RULE**:
-When implementing operations in `changelog.d/fix-vscode-upgrade-and-fix-command.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fallow-rs/fallow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/fix-cli-config-repairs.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fallow-rs/fallow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f614bba7`: vscode): keep a verified binary through a failed upgrade and confirm a fix before saving. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cfb765db`: config): report the cache and ignore rules a repair affects. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/fix-vscode-upgrade-and-fix-command.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/fix-cli-config-repairs.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
 ### Fixed
 
-- **A failed upgrade of the VS Code managed binary keeps the installed binary usable.** On Windows, a sibling window that runs the old `fallow-lsp` locks the file, so the new binary cannot replace it. The extension then deleted the signature and target marker of the old binary, and the next start removed that binary as untrusted. The extension now puts the old signature and target marker back.
-- **A second VS Code window no longer deletes the download of the first window.** Each window removes the temp files of crashed downloads when it starts. It removed the temp files of every other process, also of a window whose download still ran, and that download then failed its signature check. The extension now removes only the temp files of a process that no longer runs.
-- **`Fallow: Fix` saves and refreshes only after you confirm.** The command saved all dirty editors before it asked for confirmation, and it restarted the language server and ran a new analysis also after you answered No. The command now saves after the confirmation, applies no fix when a file cannot be saved, and refreshes only after a fix run.
+- **Doctor includes the selected config in its cache repair command.** The command rebuilds the parse and graph caches that doctor inspected. Doctor JSON omits `remediation` and gives manual steps in `message` when the config path contains shell-unsafe characters, the config is outside the project root, or the run overrides the cache directory.
+- **Config fix reports list only the ignore rules that Fallow adds.** Dry-run and apply print a note on stderr when an existing `ignoreExports` rule prevents a write. The note names the affected file.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1930,4 +1571,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f614bba7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cfb765db` are properly handled with clean fallback behavior.

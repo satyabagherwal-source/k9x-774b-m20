@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T06:38:36.170Z",
+  "updated_at": "2026-11-24T06:46:58.184Z",
   "stats": {
-    "total_discovered": 8435,
-    "approved_pending_harvest": 7996,
+    "total_discovered": 8451,
+    "approved_pending_harvest": 8012,
     "harvested_count": 0,
     "rejected_count": 439,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7980,
+      "COMMUNITY_AND_EXPERT": 7996,
       "OFFICIAL_DOCUMENTATION": 268,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -182520,6 +182520,358 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/encoredev-encore-learnings.md",
         "fileName": "encoredev-encore-learnings.md"
+      }
+    },
+    "SRC-37EBE0FC1887": {
+      "id": "SRC-37EBE0FC1887",
+      "url": "https://codesandbox.io/s/react-hook-form-v7-controller-5h1q5",
+      "title": "https://codesandbox.io/s/react-hook-form-v7-controller-5h1q5",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T06:46:56.525Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
+        "fileName": "react-hook-form-react-hook-form-learnings.md"
+      }
+    },
+    "SRC-0452D0F06195": {
+      "id": "SRC-0452D0F06195",
+      "url": "https://bundlephobia.com/result?p=react-hook-form%40latest",
+      "title": "https://bundlephobia.com/result?p=react-hook-form%40latest",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T06:46:56.579Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
+        "fileName": "react-hook-form-react-hook-form-learnings.md"
+      }
+    },
+    "SRC-730DDF0DB04A": {
+      "id": "SRC-730DDF0DB04A",
+      "url": "https://react-hook-form.com/get-started",
+      "title": "https://react-hook-form.com/get-started",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T06:46:56.649Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
+        "fileName": "react-hook-form-react-hook-form-learnings.md"
+      }
+    },
+    "SRC-8C9148AE1B58": {
+      "id": "SRC-8C9148AE1B58",
+      "url": "https://github.com/jquense/yup",
+      "title": "https://github.com/jquense/yup",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T06:46:56.692Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
+        "fileName": "react-hook-form-react-hook-form-learnings.md"
+      }
+    },
+    "SRC-F6A5B6099AD7": {
+      "id": "SRC-F6A5B6099AD7",
+      "url": "https://github.com/vriad/zod",
+      "title": "https://github.com/vriad/zod",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T06:46:56.749Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
+        "fileName": "react-hook-form-react-hook-form-learnings.md"
+      }
+    },
+    "SRC-A1DD43539AEA": {
+      "id": "SRC-A1DD43539AEA",
+      "url": "https://github.com/ianstormtaylor/superstruct",
+      "title": "https://github.com/ianstormtaylor/superstruct",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T06:46:56.793Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
+        "fileName": "react-hook-form-react-hook-form-learnings.md"
+      }
+    },
+    "SRC-B7F210338644": {
+      "id": "SRC-B7F210338644",
+      "url": "https://github.com/hapijs/joi",
+      "title": "https://github.com/hapijs/joi",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T06:46:56.850Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
+        "fileName": "react-hook-form-react-hook-form-learnings.md"
+      }
+    },
+    "SRC-58F5055E3008": {
+      "id": "SRC-58F5055E3008",
+      "url": "https://github.com/ealush/vest",
+      "title": "https://github.com/ealush/vest",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T06:46:56.893Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
+        "fileName": "react-hook-form-react-hook-form-learnings.md"
+      }
+    },
+    "SRC-2E15038AB7A4": {
+      "id": "SRC-2E15038AB7A4",
+      "url": "https://github.com/typestack/class-validator",
+      "title": "https://github.com/typestack/class-validator",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T06:46:56.951Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
+        "fileName": "react-hook-form-react-hook-form-learnings.md"
+      }
+    },
+    "SRC-903031C085A8": {
+      "id": "SRC-903031C085A8",
+      "url": "https://github.com/gcanti/io-ts",
+      "title": "https://github.com/gcanti/io-ts",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T06:46:56.994Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
+        "fileName": "react-hook-form-react-hook-form-learnings.md"
+      }
+    },
+    "SRC-05A6CAC2D135": {
+      "id": "SRC-05A6CAC2D135",
+      "url": "https://github.com/bvego/nope-validator",
+      "title": "https://github.com/bvego/nope-validator",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T06:46:57.052Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
+        "fileName": "react-hook-form-react-hook-form-learnings.md"
+      }
+    },
+    "SRC-7B39FCC0CA3D": {
+      "id": "SRC-7B39FCC0CA3D",
+      "url": "https://user-images.githubusercontent.com/10513364/152621466-59a41c65-52b4-4518-",
+      "title": "https://user-images.githubusercontent.com/10513364/152621466-59a41c65-52b4-4518-",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T06:46:57.096Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
+        "fileName": "react-hook-form-react-hook-form-learnings.md"
+      }
+    },
+    "SRC-843591BFF689": {
+      "id": "SRC-843591BFF689",
+      "url": "https://github.com/colinhacks/zod",
+      "title": "https://github.com/colinhacks/zod",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T06:46:57.153Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
+        "fileName": "react-hook-form-react-hook-form-learnings.md"
+      }
+    },
+    "SRC-AAF03E392647": {
+      "id": "SRC-AAF03E392647",
+      "url": "https://github.com/ajv-validator/ajv",
+      "title": "https://github.com/ajv-validator/ajv",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T06:46:57.196Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
+        "fileName": "react-hook-form-react-hook-form-learnings.md"
+      }
+    },
+    "SRC-5CA0DAA691CD": {
+      "id": "SRC-5CA0DAA691CD",
+      "url": "https://oauth2.googleapis.com/token",
+      "title": "https://oauth2.googleapis.com/token",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T06:46:58.139Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md",
+        "fileName": "neuron-core-neuron-ai-learnings.md"
+      }
+    },
+    "SRC-D1936C67384A": {
+      "id": "SRC-D1936C67384A",
+      "url": "https://europe-west8-aiplatform.googleapis.com/v1/projects/my-project/locations/europe-west8/publishers/google/models/gemini-2.5-pro:generateContent",
+      "title": "https://europe-west8-aiplatform.googleapis.com/v1/projects/my-project/locations/europe-west8/publishers/google/models/gemini-2.5-pro:generateContent",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T06:46:58.184Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md",
+        "fileName": "neuron-core-neuron-ai-learnings.md"
       }
     }
   }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T06:38:28.688Z",
+  "last_updated": "2026-11-24T06:46:25.678Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3426,14 +3426,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-react-hook-form-react-hook-form",
-      "content_hash": "0894c96861b3f17d0a175f246d6b1b7ba37b113b489a9936651c3e7b5b32a860",
-      "verified_at": "2026-11-21T12:29:25.272Z",
+      "content_hash": "a3961a0de6da642a68f797d9512fb5fa957e261f2470ebc075c3bbe3d218ff8d",
+      "verified_at": "2026-11-24T06:46:18.067Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T12:29:25.272Z"
+      "last_updated": "2026-11-24T06:46:18.067Z"
     },
     "higress-group/higress": {
       "repository": "higress-group/higress",
@@ -4791,14 +4791,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-neuron-core-neuron-ai",
-      "content_hash": "0ae4e690f4228f10a2f42a45edd00d2f2f5808b3b6fbc46429276cc7bdf15775",
-      "verified_at": "2026-11-21T00:43:55.545Z",
+      "content_hash": "e3c40bbd07175492e7052246a04e0a9f97cc5cf34d2753977a282b0f70e7a268",
+      "verified_at": "2026-11-24T06:46:25.677Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T00:43:55.545Z"
+      "last_updated": "2026-11-24T06:46:25.677Z"
     },
     "GeekyAnts/NativeBase": {
       "repository": "GeekyAnts/NativeBase",
@@ -4896,14 +4896,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fallow-rs-fallow",
-      "content_hash": "fd1618c791cee11374a4eca9ae6cc3e265d19970e13bbd75c32a0da52781ed09",
-      "verified_at": "2026-11-22T22:49:27.349Z",
+      "content_hash": "f9669db37d7a81eb4fce5223021821b47fa468a76782eb240b5888915619e095",
+      "verified_at": "2026-11-24T06:46:13.290Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T22:49:27.349Z"
+      "last_updated": "2026-11-24T06:46:13.290Z"
     },
     "expo/create-react-native-app": {
       "repository": "expo/create-react-native-app",

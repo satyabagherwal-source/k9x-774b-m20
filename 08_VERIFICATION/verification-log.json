@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-J38W",
-    "timestamp": "2026-11-22T13:01:50.768Z",
-    "repository": "internlm/Sage-S2.1-Flash",
-    "learningId": "learn-huggingface-internlm-sage-s2-1-flash",
-    "contentHash": "22a5bf26c0202a0ed659fd7cd290afad2791a19b17768ed602ca81a0ce1f9a62",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-6ZTA",
-    "timestamp": "2026-11-22T13:20:26.062Z",
-    "repository": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic",
-    "learningId": "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensored-heretic",
-    "contentHash": "c8d1872087756fdbc713843e308aa86a5e99e25960432ba31b11501c14131330",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-KLNV",
-    "timestamp": "2026-11-22T13:59:00.523Z",
-    "repository": "sensenova/SenseNova-Loop-9B",
-    "learningId": "learn-huggingface-sensenova-sensenova-loop-9b",
-    "contentHash": "a60b99ba0b8e6da729877a812e737911451263b4e16bf2201c90b2f2d7aef380",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-KRK2",
     "timestamp": "2026-11-22T13:59:08.162Z",
     "repository": "microsoft/react-native-windows",
@@ -7490,6 +7445,51 @@
     "repository": "encoredev/encore",
     "learningId": "learn-github-encoredev-encore",
     "contentHash": "32dc69d610fe7e06397ca2fbe7a805a4c3e76c4faa787f45aba2830e771fec43",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-ZQIZ",
+    "timestamp": "2026-11-24T06:46:13.259Z",
+    "repository": "fallow-rs/fallow",
+    "learningId": "learn-github-fallow-rs-fallow",
+    "contentHash": "f9669db37d7a81eb4fce5223021821b47fa468a76782eb240b5888915619e095",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-ZU7Z",
+    "timestamp": "2026-11-24T06:46:18.047Z",
+    "repository": "react-hook-form/react-hook-form",
+    "learningId": "learn-github-react-hook-form-react-hook-form",
+    "contentHash": "a3961a0de6da642a68f797d9512fb5fa957e261f2470ebc075c3bbe3d218ff8d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-003E",
+    "timestamp": "2026-11-24T06:46:25.658Z",
+    "repository": "neuron-core/neuron-ai",
+    "learningId": "learn-github-neuron-core-neuron-ai",
+    "contentHash": "e3c40bbd07175492e7052246a04e0a9f97cc5cf34d2753977a282b0f70e7a268",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
