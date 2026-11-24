@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-OJED",
-    "timestamp": "2026-11-22T19:09:59.989Z",
-    "repository": "Bitterbot-AI/bitterbot-desktop",
-    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "781dd525fb5bd6abce22a089c0435c4b68c51a12e93d5d7a19683acb163dcfb1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-ZISG",
-    "timestamp": "2026-11-22T19:18:32.416Z",
-    "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
-    "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
-    "contentHash": "973b3e4f0fee62b61f4996428b4bd3e0da509a1cf75821ef0bd76b5343d56d2a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-ZUPO",
-    "timestamp": "2026-11-22T19:18:47.868Z",
-    "repository": "ClickHouse/ClickHouse",
-    "learningId": "learn-github-clickhouse-clickhouse",
-    "contentHash": "efdc12aa23992a09445e6518907c5c419848754ce086b38e9de41b0cada3424d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-G49E",
     "timestamp": "2026-11-22T19:31:26.738Z",
     "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
@@ -7490,6 +7445,51 @@
     "repository": "arangodb/arangodb",
     "learningId": "learn-github-arangodb-arangodb",
     "contentHash": "37d0e49506f289e1d8ffdebe9e7b0424ec813d8f041d98034ff7459e0f32b0cf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-CPSA",
+    "timestamp": "2026-11-24T14:24:12.682Z",
+    "repository": "kubernetes-sigs/aws-load-balancer-controller",
+    "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
+    "contentHash": "12615027c7e7f80aba5bfb5d3459eedb03cc9df6faba7a450bf964c0d7656871",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-CUAE",
+    "timestamp": "2026-11-24T14:24:18.518Z",
+    "repository": "trinodb/trino",
+    "learningId": "learn-github-trinodb-trino",
+    "contentHash": "f7ee3f636a6350375a5451076041161aa36add6e53d46492396889a3b6578331",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-CVPP",
+    "timestamp": "2026-11-24T14:24:20.365Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "1ace596c2a6f355c17b207b443ab0f9ab1be242b6ade770efd95abb750bd93d1",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

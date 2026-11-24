@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T14:15:17.144Z",
-    "lastVerified": "2026-11-24T14:15:17.144Z",
+    "lastChecked": "2026-11-24T14:24:23.641Z",
+    "lastVerified": "2026-11-24T14:24:23.641Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -373,22 +373,21 @@
     "lastVerified": "2026-11-23T23:09:58.426Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T13:47:25.187Z",
-    "lastVerified": "2026-11-24T13:47:25.187Z",
+    "lastChecked": "2026-11-24T14:24:19.593Z",
+    "lastVerified": "2026-11-24T14:24:19.593Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "8dae7bf3e901cd82db9715e5459b41b226c4f25dcc1450bc8176e9bc1c96f919",
+    "contentHash": "1ace596c2a6f355c17b207b443ab0f9ab1be242b6ade770efd95abb750bd93d1",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "6c8cbc67"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -526,22 +525,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "kubernetes-sigs-aws-load-balancer-controller": {
-    "name": "aws-load-balancer-controller",
+    "name": "kubernetes-sigs/aws-load-balancer-controller",
     "officialUrl": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-23T18:50:33.542Z",
-    "lastVerified": "2026-11-23T18:50:33.542Z",
+    "lastChecked": "2026-11-24T14:24:11.404Z",
+    "lastVerified": "2026-11-24T14:24:11.404Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
-    "contentHash": "0c090dcd60d755535bd91b2c53cc6f6170012f3835da344ac4c5b0ba2b9bfc7a",
+    "contentHash": "12615027c7e7f80aba5bfb5d3459eedb03cc9df6faba7a450bf964c0d7656871",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "741e1637"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "nolabs-ai-nono": {
     "name": "nono",
@@ -1674,9 +1672,9 @@
   "nexus-xyz-nexus-zkvm": {
     "name": "nexus-zkvm",
     "officialUrl": "https://github.com/nexus-xyz/nexus-zkvm",
-    "lastChecked": "2026-11-24T08:59:48.497Z",
+    "lastChecked": "2026-11-24T14:24:09.751Z",
     "revisionIdentifier": "f2ad1265",
-    "lastVerified": "2026-11-24T08:59:48.497Z"
+    "lastVerified": "2026-11-24T14:24:09.751Z"
   },
   "memvid-memvid": {
     "name": "memvid",
@@ -3630,12 +3628,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "berty-berty": {
-    "name": "berty/berty",
+    "name": "berty",
     "officialUrl": "https://github.com/berty/berty",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-21T22:16:20.988Z",
-    "lastVerified": "2026-11-21T22:16:20.988Z",
+    "lastChecked": "2026-11-24T14:24:04.761Z",
+    "lastVerified": "2026-11-24T14:24:04.761Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-berty-berty",
@@ -3644,7 +3642,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "3d9720d4"
   },
   "peerdb-io-peerdb": {
     "name": "PeerDB-io/peerdb",
@@ -4618,9 +4617,9 @@
   "sharkdp-pastel": {
     "name": "pastel",
     "officialUrl": "https://github.com/sharkdp/pastel",
-    "lastChecked": "2026-11-23T07:44:55.593Z",
+    "lastChecked": "2026-11-24T14:23:59.742Z",
     "revisionIdentifier": "01d4252a",
-    "lastVerified": "2026-11-23T07:44:55.593Z"
+    "lastVerified": "2026-11-24T14:23:59.742Z"
   },
   "hf-tongyi-mai-z-image-turbo": {
     "name": "Tongyi-MAI/Z-Image-Turbo",
@@ -5805,14 +5804,14 @@
     "officialUrl": "https://github.com/trinodb/trino",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-23T17:54:14.271Z",
-    "lastVerified": "2026-11-23T17:54:14.271Z",
+    "lastChecked": "2026-11-24T14:24:17.390Z",
+    "lastVerified": "2026-11-24T14:24:17.390Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trinodb-trino",
-    "contentHash": "2c86ea0f37d9e4d4a40002ef4e6482f0a995e5b10fe0ab08736d08830609be9c",
+    "contentHash": "f7ee3f636a6350375a5451076041161aa36add6e53d46492396889a3b6578331",
     "promotedRulesCount": 1,
-    "recentFixesCount": 6,
+    "recentFixesCount": 9,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10472,9 +10471,9 @@
   "agamm-pseo-next": {
     "name": "pseo-next",
     "officialUrl": "https://github.com/agamm/pseo-next",
-    "lastChecked": "2026-11-20T12:07:10.480Z",
+    "lastChecked": "2026-11-24T14:24:02.309Z",
     "revisionIdentifier": "2f816d2c",
-    "lastVerified": "2026-11-20T12:07:10.480Z"
+    "lastVerified": "2026-11-24T14:24:02.309Z"
   },
   "aakira-napier": {
     "name": "Napier",

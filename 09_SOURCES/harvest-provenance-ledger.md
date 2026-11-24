@@ -12729,3 +12729,6 @@ Every entry in this ledger must capture:
 | `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `68c058a2` | Multi-dimensional audit evidence | 2026-11-24T14:15:09.586Z |
 | `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `3f2986a0` | Multi-dimensional audit evidence | 2026-11-24T14:15:13.893Z |
 | `learn-dom-k-3aee5d3a` | `project://nginx-kubernetes-ingress` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md` | 2026-11-24T14:15:45.715Z |
+| `learn-github-kubernetes-sigs-aws-load-balancer-controller` | `https://github.com/kubernetes-sigs/aws-load-balancer-controller` | `1c602959` | Multi-dimensional audit evidence | 2026-11-24T14:24:12.687Z |
+| `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `39a37d40` | Multi-dimensional audit evidence | 2026-11-24T14:24:18.522Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `449e97bb` | Multi-dimensional audit evidence | 2026-11-24T14:24:20.369Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T14:15:13.910Z",
+  "last_updated": "2026-11-24T14:24:20.385Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "8dae7bf3e901cd82db9715e5459b41b226c4f25dcc1450bc8176e9bc1c96f919",
-      "verified_at": "2026-11-23T18:32:29.110Z",
+      "content_hash": "1ace596c2a6f355c17b207b443ab0f9ab1be242b6ade770efd95abb750bd93d1",
+      "verified_at": "2026-11-24T14:24:20.385Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T18:32:29.110Z"
+      "last_updated": "2026-11-24T14:24:20.385Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -7731,14 +7731,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trinodb-trino",
-      "content_hash": "2c86ea0f37d9e4d4a40002ef4e6482f0a995e5b10fe0ab08736d08830609be9c",
-      "verified_at": "2026-11-23T17:54:15.210Z",
+      "content_hash": "f7ee3f636a6350375a5451076041161aa36add6e53d46492396889a3b6578331",
+      "verified_at": "2026-11-24T14:24:18.541Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T17:54:15.210Z"
+      "last_updated": "2026-11-24T14:24:18.541Z"
     },
     "pinterest/gestalt": {
       "repository": "pinterest/gestalt",
@@ -10116,14 +10116,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
-      "content_hash": "0c090dcd60d755535bd91b2c53cc6f6170012f3835da344ac4c5b0ba2b9bfc7a",
-      "verified_at": "2026-11-21T17:15:32.210Z",
+      "content_hash": "12615027c7e7f80aba5bfb5d3459eedb03cc9df6faba7a450bf964c0d7656871",
+      "verified_at": "2026-11-24T14:24:12.705Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T17:15:32.210Z"
+      "last_updated": "2026-11-24T14:24:12.705Z"
     },
     "qdrant/qdrant": {
       "repository": "qdrant/qdrant",

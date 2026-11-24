@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `6c8cbc67`  
+> **Source Version**: `449e97bb`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T18:32:28.038Z  
+> **Timestamp**: 2026-11-24T14:24:19.598Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T18:32:28.033Z  
+> **Harvest Timestamp**: 2026-11-24T14:24:19.593Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1581,513 +1581,528 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6c8cbc67` (2026-11-23)
-**Commit Message**: Draft NUC 139 Symmetric Difference Reasoning Selections
+### Incident Patch 1: `449e97bb` (2026-11-24)
+**Commit Message**: Resume NUC 139 Symmetric Difference Reasoning Selections
 
-Category: Reasoning enhancement, drawn uniformly at random (index 3 of
-the five eligible categories in NUC 1's registry, p = 1/5, no redraw,
-at 13:14:19) for a continuous /nuc-proposal cycle, so the token
-non-regression gate is required.
+Renews the claim on NUC 139, which this continuous /nuc-proposal cycle
+allocated in 6c8cbc67 (Draft NUC 139 Symmetric Difference Reasoning
+Selections, 23-Nov-2026 13:18:00 -05:00) and is still completing: the
+proposer's first phase stopped on a usage limit and resumes now. The
+allocation was 20 h 1 min old at this claim, past the 12-hour renewal
+point. The claim changes no file.
 
-Requested change: a reasoning pipeline gains the stage
-SELECTION |> xor(OTHER), the symmetric difference of two selections:
-the steps of SELECTION whose nodes OTHER does not select, in
-SELECTION's order, then the steps of OTHER whose nodes SELECTION does
-not select, in OTHER's order, each keeping the distance it has in its
-own selection, exactly SELECTION |> except(OTHER) |>
-union(OTHER |> except(SELECTION)). It completes NUC 106's intersect
-and except and NUC 120's union, which both left the symmetric
-difference out, keeps a selection for later stages, and follows the
-graph in a declaration. At the accepted revision |> xor(...) raises
-TypeError("xor is not an operation") while the program is parsed, and
-only those programs change; names, properties and keys called xor
-keep their readings. The name follows lodash's xor and the ^ of
-Python and Ruby sets.
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01AJtz8e8dqMwocimNqgffMq
 
-Co-Authored-By: Claude Opus 5.5 <[RED
 
-**File**: `docs/nuc-0000.md` (modified, +2/-0)
-```diff
-@@ -160,6 +160,7 @@ Created: 31-Jul-2026
- | [121](nuc-0121.md) | Held Values of Reasoning Selections | Accepted |
- | [128](nuc-0128.md) | Origins and Outcomes of Reasoning Selections | Accepted |
- | [133](nuc-0133.md) | Edge Lists of Reasoning Selections | Accepted |
-+| [139](nuc-0139.md) | Symmetric Difference Reasoning Selections | Draft |
- 
- ### Language compatibility
- 
-@@ -331,6 +332,7 @@ Created: 31-Jul-2026
- | [136](nuc-0136.md) | Unknown Constructor Arguments as Properties | Standards Track | Runtime features | Accepted |
- | [137](nuc-0137.md) | Floating-Point Absolute Value Alias | Standards Track | Language compatibility | Accepted |
- | [138](nuc-0138.md) | Reactive Secant | Standards Track | Utility enhancement | Draft |
-+| [139](nuc-0139.md) | Symmetric Difference Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
- 
- ## Copyright
- 
-```
-
-**File**: `docs/nuc-0139.md` (added, +78/-0)
-```diff
-@@ -0,0 +1,78 @@
-+# NUC 139 -- Symmetric Difference Reasoning Selections
-+
-+```
-+NUC: 139
-+Title: Symmetric Difference Reasoning Selections
-+Author: Can Mingir <canmingir@gmail.com>
-+Status: Draft
-+Type: Standards Track
-+Category: Reasoning enhancement
-+Created: 23-Nov-2026
-+Requires: 106, 120
-+```
-+
-+## Abstract
-+
-+- A reasoning pipeline gains the stage `SELECTION |> xor(OTHER)`, the
-+  symmetric difference of two selections. It keeps the steps of `SELECTION`
-+  whose nodes `OTHER` does not select, in `SELECTION`'s order, followed by
-+  the steps of `OTHER` whose nodes `SELECTION` does not select, in
-+  `OTHER`'s order. Each step keeps the distance it has in its own
-+  selection, as `union` keeps it, so the stage is exactly
-+  `SELECTION |> except(OTHER) |> union(OTHER |> except(SELECTION))`.
-+- After `price = 10`, `quantity = 3`, `rate = 0.2`,
-+  `subtotal = price * quantity`, `tax = subtotal * rate`,
-+  `shipping = quantity * 2`, `total = subtotal + tax` and
-+  `freight = shipping + rate`,
-+  `total |> why |> xor(freight |> why) |> nodes` gives
-+  `["total", "subtotal", "tax", "price", "freight", "shipping"]`: what one
-+  explanation rests on and the other does not, without the quantity and
-+  the rate that both share.
-+- It completes [NUC 106](nuc-0106.md)'s `intersect` and `except` and
-+  [NUC 120](nuc-0120.md)'s `union`, both of which left the symmetric
-+  difference out. It keeps a selection, so later stages apply to it, and a
-+  declaration that holds it follows the graph.
-+- At the accepted revision `|> xor(...)` raises
-+  `TypeError("xor is not an operation")` while the program is parsed, and
-+  only those programs change. Variables, functions, properties and keys
-+  named `xor` keep their readings.
-+
-+## Motivation
-+
-+- A world model that explains two conclusions often needs what tells them
-+  apart: the facts and rules behind one alarm but not the other, or the
-+  inputs that a price and a cost do not share. That is a contrastive
-+  question, and the symmetric difference of their explanations answers it
-+  in one selection.
-+- Accepted programs spell it as `S |> except(O) |> union(O |> except(S))`,
-+  which writes both selections twice:
-+  `why total |> except(why freight) |> union(why freight |> except(why total)) |> nodes`
-+  takes 22 lexer tokens, against 10 for
-+  `why total |> xor(why freight) |> nodes`. Writing each selection twice
-+  also walks it twice, and a standing declaration keeps the observations of
-+  every walk.
-+- The name follows lodash's `xor`, the symmetric difference of arrays, and
-+  the `^` that Python and Ruby use for the symmetric difference of sets.
-+
-+## Rationale
-+
-+- Pending: the proposer completes this section.
-+
-+## Specification
-+
-+- Pending: the proposer completes this section.
-+
-+## Errors
-+
-+- Pending: the proposer completes this section.
-+
-+## Reference Implementation
-+
-+- Pending: the proposer completes this section.
-+
-+## Copyright
-+
-+Copyright 2020 Nucleoid
-+
-+This document is licensed under the Apache License, Version 2.0. See
-+[LICENSE](../LICENSE) for the full text.
-```
 
 ---
 
-### Incident Patch 2: `fda179e7` (2026-11-23)
-**Commit Message**: NUC 135 Kotlin Negated Membership Operator
+### Incident Patch 2: `9dac162b` (2026-11-24)
+**Commit Message**: Remove comments from ARC datasets
 
-Accepted under the automatic acceptance rule in a continuous
-/nuc-proposal cycle: every hard criterion passes and every policy
-check passes; the token comparison is skipped, as NUC 1's matrix
-requires for Language compatibility. The cycle drew Language
-compatibility uniformly from the five eligible categories, allocated
-the NUC in d0894711 and renewed its claim in a2f46a48. A fresh
-proposer prepared it in two phases, the caller's Rust improvement pass
-changed only the new suite, and a fresh independent evaluator decided
-Accepted.
+Remove explanatory comments from class declarations, transformation rules, and object implementations across six ARC datasets.
 
-A membership test gains Kotlin's negated spelling A !in B, an exact
-alias of NUC 97's A not in B: the parser reads ! immediately followed
-by the keyword in as the same not in node. Only programs that were
-parse errors at the accepted revision change; interpolations, ! in
-with whitespace and every other ! keep their readings.
-
-Hard criteria, evaluated on the frozen candidate at d0894711:
-- no compile errors: fmt, build, both Clippy forms on 1.97.1 and
-  1.99.1, rustdoc and the diff checks pass without warnings;
-- every test passes: 3,933 passed, 0 failed, 25 ignored, against
-  3,908 at the pin; no accepted identi
-
-**File**: `README.md` (modified, +25/-0)
+**File**: `arc/src/dataset/dataset.017c7c7b.json` (modified, +9/-9)
 ```diff
-@@ -3049,6 +3049,31 @@ item.total
-   labels are unchanged. See the
-   [root contract](nucleoid.spec.md#unknown-constructor-arguments-as-properties).
- 
-+## Negated membership with !in
-+
-+**Kotlin's !in keeps an access rule live**
-+
-+```nuc
-+blocked = ["mallory"]
-+class User(name):
-+    this.name = name
-+$User.allowed = $User.name !in blocked
-+alice = User("alice")
-+mallory = User("mallory")
-+assert([alice.allowed, mallory.allowed], [true, false])
-+blocked.push("alice")
-+assert(alice.allowed, false)
-+alice.allowed
-+# return: false
-+```
-+
-+- [NUC 135](docs/nuc-0135.md) adds Kotlin's `item !in collection`, the same
-+  test as `item not in collection`: each user's `allowed` follows the
-+  `blocked` list, as it does with `not in`.
-+- `!` and `in` are written together, as Kotlin writes them; `! in` keeps its
-+  syntax error. Rules render the test as `not in`. See the
-+  [root contract](nucleoid.spec.md#negated-membership-with-in).
-+
- ## Benchmark
- 
- This is the comparation our sample order app in Nucleoid IDE against MySQL and Postgres with using Express.js and Sequelize libraries.
+@@ -1,10 +1,10 @@
+ {
+-  "class_declaration": "# Each object is the whole color-1 pattern, as tall as the grid, whose rows repeat every period rows. The output continues it down to 9 rows and draws it in color 2\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l9100', color: int, period: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag\n    this.color is color\n    this.period is period",
++  "class_declaration": "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l9100', color: int, period: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag\n    this.color is color\n    this.period is period",
+   "declarations": [
+-    "# Each pattern becomes l8384, a pattern repeating down\n$Obj.tag is l8384",
+-    "# It continues downward, below its last row\n$Obj.extension_direction is down",
+-    "# Its height grows to 1.5 times its input height, 6 rows to 9, the height of the output grid\n$Obj.height is $Obj.height@first * 3 / 2",
+-    "# The whole pattern is drawn in color 2\n$Obj.color is 2"
++    "$Obj.tag is l8384",
++    "$Obj.extension_direction is down",
++    "$Obj.height is $Obj.height@first * 3 / 2",
++    "$Obj.color is 2"
+   ],
+   "output_canvas": "EXACT",
+   "dataset": [
+@@ -50,7 +50,7 @@
+             [0, 2, 2],
+             [0, 2, 0]
+           ],
+-          "implementation": "# Color-1 pattern whose rows repeat every 4 rows: row 4 equals row 0\nobj7868bfbcdc17 is Obj(x=0, y=0, width=3, height=6, orientation=0, volume=9, color=1, period=4)",
++          "implementation": "obj7868bfbcdc17 is Obj(x=0, y=0, width=3, height=6, orientation=0, volume=9, color=1, period=4)",
+           "input_value": {"color":1,"height":6,"id":"obj7868bfbcdc17","orientation":0,"period":4,"tag":"l9100","volume":9,"width":3,"x":0,"y":0},
+           "output_value": {"color":2,"extension_direction":"down","height":9,"id":"obj7868bfbcdc17","orientation":0,"period":4,"tag":"l8384","volume":9,"width":3,"x":0,"y":0}
+         }
+@@ -98,7 +98,7 @@
+             [2, 0, 2],
+             [0, 2, 0]
+           ],
+-          "implementation": "# Color-1 pattern whose rows repeat every 2 rows: row 2 equals row 0\nobj251f7bd03919 is Obj(x=0, y=0, width=3, height=6, orientation=0, volume=9, color=1, period=2)",
++          "implementation": "obj251f7bd03919 is Obj(x=0, y=0, width=3, height=6, orientation=0, volume=9, color=1, period=2)",
+           "input_value": {"color":1,"height":6,"id":"obj251f7bd03919","orientation":0,"period":2,"tag":"l9100","volume":9,"width":3,"x":0,"y":0},
+           "output_value": {"color":2,"extension_direction":"down","height":9,"id":"obj251f7bd03919","orientation":0,"period":2,"tag":"l8384","volume":9,"width":3,"x":0,"y":0}
+         }
+@@ -146,7 +146,7 @@
+             [2, 2, 0],
+             [0, 2, 0]
+           ],
+-          "implementation": "# Color-1 pattern whose rows repeat every 3 rows: row 3 equals row 0\nobj69f9506dfd32 is Obj(x=0, y=0, width=2, height=6, orientation=0, volume=8, color=1, period=3)",
++          "implementation": "obj69f9506dfd32 is Obj(x=0, y=0, width=2, height=6, orientation=0, volume=8, color=1, period=3)",
+           "input_value": {"color":1,"height":6,"id":"obj69f9506dfd32","orientation":0,"period":3,"tag":"l9100","volume":8,"width":2,"x":0,"y":0},
+           "output_value": {"color":2,"extension_direction":"down","height":9,"id":"obj69f9506dfd32","orientation":0,"period":3,"tag":"l8384","volume":8,"width":2,"x":0,"y":0}
+         }
+@@ -194,7 +194,7 @@
+             [0, 2, 0],
+             [0, 2, 0]
+           ],
+-          "implementation": "# Color-1 pattern whose rows repeat every 3 rows: row 3 equals row 0\nobj93fb566cfca3 is Obj(x=0, y=0, width=3, height=6, orientation=0, volume=10, color=1, period=3)",
++          "implementation": "obj93fb566cfca3 is Obj(x=0, y=0, width=3, height=6, orientation=0, volume=10, color=1, period=3)",
+           "input_value": {"color":1,"height":6,"id":"obj93fb566cfca3","orientation":0,"period":3,"tag":"l9100","volume":10,"width":3,"x":0,"y":0},
+           "output_value": {"color":2,"extension_direction":"down","height":9,"id":"obj93fb566cfca3","orientation":0,"period":3,"tag":"l8384","volume":10,"width":3,"x":0,"y":0}
+         }
 ```
 
-**File**: `dataset/nucleoid.spec.jsonl` (modified, +3/-0)
+**File**: `arc/src/dataset/dataset.0ca9ddb6.json` (modified, +18/-18)
 ```diff
-@@ -867,3 +867,6 @@
- {"id":"spec-0867","description":"Nucleoid builds instances with unknown constructor arguments on every route","code":"class Tag(name):\n    this.name = name\nholder = {}\nfirst = new Tag(name=\"a\", color=\"RED\")\nholder.tag = Tag(name=\"b\", color=\"GREEN\")\nitems = [Tag(name=\"c\", color=\"BLUE\")]\nrecord = {tag: Tag(name=\"d\", color=\"GREY\")}\nassert([first.color, holder.tag.color, items[0].color, record.tag.color], [\"RED\", \"GREEN\", \"BLUE\", \"GREY\"])\nassert(Tag(name=\"e\", color=\"TEAL\").color, \"TEAL\")\nassert(Tag.length, 5)","return":null}
- {"id":"spec-0868","description":"Nucleoid keeps unknown constructor arguments as snapshots under class level rules","code":"class Rect\n$Rect.area = $Rect.width * $Rect.height\nwidth = 10\nrect = Rect(width=2, height=3)\nassert(rect.area, 6)\nassert(width, 10)\nheight = 5\nrect.width = 4\nassert(rect.area, 12)\nassert(rect.height, 3)\nrect.area","return":"12"}
- {"id":"spec-0869","description":"Nucleoid validates repeated unknown constructor arguments before any value","code":"class Shape(type):\n    this.type = type\nevents = {count: 0}\ntry:\n    Shape(color=(events.count=1), color=\"BLUE\")\ncatch error:\n    assert(error, TypeError(\"Duplicate constructor argument 'color' for Shape\"))\ntry:\n    Shape(color=(events.count=2), \"SQUARE\")\ncatch error:\n    assert(error, TypeError(\"Positional constructor argument after named arguments for Shape\"))\ntry:\n    Shape(type=\"SQUARE\", color=missing)\ncatch error:\n    assert(error, ReferenceError(\"missing is not defined\"))\nassert(events.count, 0)\nassert(Shape.length, 0)","return":null}
-+{"id":"spec-0870","description":"Nucleoid tests negated membership with Kotlin's !in","code":"xs = [1, 2, 3]\nassert([2 !in xs, 4 !in xs], [false, true])\nassert([2 !in xs, 4 !in xs], [2 not in xs, 4 not in xs])\nword = \"hello\"\nassert([\"z\" !in word, \"ell\" !in word], [true, false])\nclass Seat\nfront = Seat()\nassert([front !in Seat, 3 !in Seat], [false, true])\nassert([1 + 3 !in xs, 4 !in xs == true, 2 !in xs or 4 !in xs], [true, true, true])\nassert([!(4 in xs), 4 not in xs, 4 !in xs], [true, true, true])\nmissing = 4 !in xs\nxs.push(4)\nassert(missing, false)\nmissing","return":"false"}
-+{"id":"spec-0871","description":"Nucleoid keeps !in rules live over class populations","code":"class Order(status):\n    this.status = status\napproved = [\"paid\", \"shipped\"]\n$Order.pending = $Order.status !in approved\nfirst = Order(\"new\")\nsecond = Order(\"paid\")\nassert([first.pending, second.pending], [true, false])\napproved.push(\"new\")\nassert([first.pending, second.pending], [false, false])\nfirst.status = \"lost\"\nassert(first.pending, true)\nopen = Order.filter(order -> order.pending).map(order -> order.status)\nassert(open, [\"lost\"])\nsecond.status = \"held\"\nassert(open, [\"lost\", \"held\"])\nfailure = \"\"\ntry:\n    approved = 5\ncatch error:\n    failure = error\nassert(failure, TypeError(\"approved is not a collection\"))\nassert([approved, open], [[\"paid\", \"shipped\", \"new\"], [\"lost\", \"held\"]])\nopen","return":"[\"lost\",\"held\"]"}
-+{"id":"spec-0872","description":"Nucleoid rolls back failed updates through !in","code":"items = [\"a\"]\nabsent = \"b\" !in items\nassert(absent, true)\nfailure = \"\"\ntry:\n    items = {a: 1}\ncatch error:\n    failure = error\nassert(failure, TypeError(\"items is not a collection\"))\nassert([items, absent], [[\"a\"], true])\nitems.push(\"b\")\nassert(absent, false)\ntags = null\nuntagged = \"red\" !in tags\nassert(untagged, null)\ntags = [\"blue\"]\nassert(untagged, true)\nabsent","return":"false"}
+@@ -1,8 +1,8 @@
+ {
+-  "class_declaration": "# Each object is one single-cell point. A color-1 point grows an orthogonal cross of color 7, a color-2 point a diagonal cross of color 4, and points of other colors stay as they are\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l7544', vertex_color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag\n    this.vertex_color is vertex_color",
++  "class_declaration": "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l7544', vertex_color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag\n    this.vertex_color is vertex_color",
+   "declarations": [
+-    "# A color-1 point grows 4 orthogonal arms of color 7\nif $Obj.vertex_color is 1:\n    $Obj.tag is l1707\n    $Obj.marker_color is 7\n    $Obj.x is $Obj.x@first - 1\n    $Obj.y is $Obj.y@first - 1\n    $Obj.width is $Obj.width@first + 2\n    $Obj.height is $Obj.height@first + 2\n    $Obj.volume is $Obj.volume@first + 4",
+-    "# A color-2 point grows 4 diagonal arms of color 4\nif $Obj.vertex_color is 2:\n    $Obj.tag is l2404\n    $Obj.marker_color is 4\n    $Obj.x is $Obj.x@first - 1\n    $Obj.y is $Obj.y@first - 1\n    $Obj.width is $Obj.width@first + 2\n    $Obj.height is $Obj.height@first + 2\n    $Obj.volume is $Obj.volume@first + 4"
++    "if $Obj.vertex_color is 1:\n    $Obj.tag is l1707\n    $Obj.marker_color is 7\n    $Obj.x is $Obj.x@first - 1\n    $Obj.y is $Obj.y@first - 1\n    $Obj.width is $Obj.width@first + 2\n    $Obj.height is $Obj.height@first + 2\n    $Obj.volume is $Obj.volume@first + 4",
++    "if $Obj.vertex_color is 2:\n    $Obj.tag is l2404\n    $Obj.marker_color is 4\n    $Obj.x is $Obj.x@first - 1\n    $Obj.y is $Obj.y@first - 1\n    $Obj.width is $Obj.width@first + 2\n    $Obj.height is $Obj.height@first + 2\n    $Obj.volume is $Obj.volume@first + 4"
+   ],
+   "output_canvas": "EXACT",
+   "dataset": [
+@@ -54,7 +54,7 @@
+             [0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0]
+           ],
+-          "implementation": "# Single color-2 cell\nobj08c8feaa60ea is Obj(x=2, y=3, width=1, height=1, orientation=0, volume=1, vertex_color=2)",
++          "implementation": "obj08c8feaa60ea is Obj(x=2, y=3, width=1, height=1, orientation=0, volume=1, vertex_color=2)",
+           "input_value": {"height":1,"id":"obj08c8feaa60ea","orientation":0,"tag":"l7544","vertex_color":2,"volume":1,"width":1,"x":2,"y":3},
+           "output_value": {"height":3,"id":"obj08c8feaa60ea","marker_color":4,"orientation":0,"tag":"l2404","vertex_color":2,"volume":5,"width":3,"x":1,"y":2}
+         },
+@@ -82,7 +82,7 @@
+             [0, 0, 0, 0, 0, 0, 7, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0]
+           ],
+-          "implementation": "# Single color-1 cell\nobjfa5219213773 is Obj(x=6, y=6, width=1, height=1, orientation=0, volume=1, vertex_color=1)",
++          "implementation": "objfa5219213773 is Obj(x=6, y=6, width=1, height=1, orientation=0, volume=1, vertex_color=1)",
+           "input_value": {"height":1,"id":"objfa5219213773","orientation":0,"tag":"l7544","vertex_color":1,"volume":1,"width":1,"x":6,"y":6},
+           "output_value": {"height":3,"id":"objfa5219213773","marker_color":7,"orientation":0,"tag":"l1707","vertex_color":1,"volume":5,"width":3,"x":5,"y":5}
+         }
+@@ -136,7 +136,7 @@
+             [0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0]
+           ],
+-          "implementation": "# Single color-8 cell\nobja15258787f8e is Obj(x=3, y=0, width=1, height=1, orientation=0, volume=1, vertex_color=8)",
++          "implementation": "obja15258787f8e is Obj(x=3, y=0, width=1, height=1, orientation=0, volume=1, vertex_color=8)",
+           "input_value": {"height":1,"id":"obja15258787f8e","orientation":0,"tag":"l7544","vertex_color":8,"volume":1,"width":1,"x":3,"y":0},
+           "output_value": {"height":1,"id":"obja15258787f8e","orientation":0,"tag":"l7544","vertex_color":8,"volume":1,"width":1,"x":3,"y":0}
+         },
+@@ -164,7 +164,7 @@
+             [0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0]
+           ],
+-          "implementation": "# Single color-2 cell\nobj21a7f426034a is Obj(x=6, y=2, width=1, height=1, orientation=0, volume=1, vertex_color=2)",
++          "implementation": "obj21a7f426034a is Obj(x=6, y=2, width=1, height=1, orientation=0, volume=1, vertex_color=2)",
+           "input_value": {"height":1,"id":"obj21a7f426034a","orientation":0,"tag":"l7544","vertex_color":2,"volume":1,"width":1,"x":6,"y":2},
+           "output_value": {"height":3,"id":"obj21a7f426034a","marker_color":4,"orientation":0,"tag":"l2404","vertex_color":2,"volume":5,"width":3,"x":5,"y":1}
+         },
+@@ -192,7
 ```
 
-**File**: `dataset/nucleoid.synth.96.jsonl` (added, +12/-0)
+**File**: `arc/src/dataset/dataset.0d3d703e.json` (modified, +17/-17)
 ```diff
-@@ -0,0 +1,12 @@
-+{"id":"synth-96-0001","description":"Kotlin's !in tests that a list does not hold an item, as not in does","code":"xs = [1, 2, 3]\n[2 !in xs, 4 !in xs]","return":"[false,true]"}
-+{"id":"synth-96-0002","description":"!in tests that a string does not contain a piece of text","code":"word = \"hello\"\n[\"z\" !in word, \"ell\" !in word]","return":"[true,false]"}
-+{"id":"synth-96-0003","description":"!in over a class tests that none of its instances equals the item","code":"class Seat\nfront = Seat()\n[front !in Seat, 3 !in Seat]","return":"[false,true]"}
-+{"id":"synth-96-0004","description":"A declaration written with !in stays live as its list grows","code":"xs = [1, 2]\nmissing = 3 !in xs\nassert(missing, true)\nxs.push(3)\nmissing","return":"false"}
-+{"id":"synth-96-0005","description":"A class-level rule with !in marks every order whose status is not approved","code":"class Order(status):\n    this.status = status\napproved = [\"paid\"]\n$Order.pending = $Order.status !in approved\nfirst = Order(\"new\")\nsecond = Order(\"paid\")\nassert([first.pending, second.pending], [true, false])\napproved.push(\"new\")\n[first.pending, second.pending]","return":"[false,false]"}
-+{"id":"synth-96-0006","description":"An if condition written with !in guards its block until the name is blocked","code":"blocked = [\"eve\"]\nuser = \"bob\"\naccess = \"denied\"\nif user !in blocked:\n    access = \"granted\"\naccess","return":"\"granted\""}
-+{"id":"synth-96-0007","description":"A lambda written with !in filters out the banned items","code":"items = [1, 2, 3, 4]\nbanned = [2, 4]\nitems.filter(item -> item !in banned)","return":"[1,3]"}
-+{"id":"synth-96-0008","description":"!in binds as tightly as < so arithmetic comes first and == after","code":"xs = [1, 2, 3]\n[1 + 3 !in xs, 4 !in xs == true, 2 !in xs or 4 !in xs]","return":"[true,true,true]"}
-+{"id":"synth-96-0009","description":"!in over a null collection waits for it, as not in does","code":"tags = null\nuntagged = \"red\" !in tags\nassert(untagged, null)\ntags = [\"blue\"]\nuntagged","return":"true"}
-+{"id":"synth-96-0010","description":"!in over an object raises the TypeError of not in and rolls the update back","code":"items = [\"a\"]\nabsent = \"b\" !in items\nfailure = \"\"\ntry:\n    items = {a: 1}\ncatch error:\n    failure = error\n[failure, items, absent]","return":"[\"TypeError: items is not a collection\",[\"a\"],true]"}
-+{"id":"synth-96-0011","description":"A rule written with !in renders as not in when why explains it","code":"xs = [1, 2, 3]\nr = 4 !in xs\n(why r)[0].rule","return":"\"r = (4 not in xs)\""}
-+{"id":"synth-96-0012","description":"!in works in a comprehension filter and in a quantifier condition","code":"xs = [1, 2, 3, 4]\nbanned = [2]\n[[x for x in xs if x !in banned], all x in xs: x !in [9]]","return":"[[1,3,4],true]"}
+@@ -1,7 +1,7 @@
+ {
+-  "class_declaration": "# Each object is one full-height column of a single color. Every column swaps its color for its partner: 1 and 5, 2 and 6, 3 and 4, 8 and 9 swap\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l6953', color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag\n    this.color is color",
++  "class_declaration": "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l6953', color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag\n    this.color is color",
+   "declarations": [
+-    "# Each column takes the partner of its input color: find the pair holding the input color, then the other member of that pair\n$Obj.color is [[1, 5], [2, 6], [3, 4], [8, 9]].find(pair => pair.includes($Obj.color@first)).find(partner => partner is not $Obj.color@first)"
++    "$Obj.color is [[1, 5], [2, 6], [3, 4], [8, 9]].find(pair => pair.includes($Obj.color@first)).find(partner => partner is not $Obj.color@first)"
+   ],
+   "output_canvas": "EXACT",
+   "dataset": [
+@@ -29,7 +29,7 @@
+             [4, 0, 0],
+             [4, 0, 0]
+           ],
+-          "implementation": "# Full-height column of color 3\nobj4d683f973e7d is Obj(x=0, y=0, width=1, height=3, orientation=0, volume=3, color=3)",
++          "implementation": "obj4d683f973e7d is Obj(x=0, y=0, width=1, height=3, orientation=0, volume=3, color=3)",
+           "input_value": {"color":3,"height":3,"id":"obj4d683f973e7d","orientation":0,"tag":"l6953","volume":3,"width":1,"x":0,"y":0},
+           "output_value": {"color":4,"height":3,"id":"obj4d683f973e7d","orientation":0,"tag":"l6953","volume":3,"width":1,"x":0,"y":0}
+         },
+@@ -45,7 +45,7 @@
+             [0, 5, 0],
+             [0, 5, 0]
+           ],
+-          "implementation": "# Full-height column of color 1\nobj21e76bc9df63 is Obj(x=1, y=0, width=1, height=3, orientation=0, volume=3, color=1)",
++          "implementation": "obj21e76bc9df63 is Obj(x=1, y=0, width=1, height=3, orientation=0, volume=3, color=1)",
+           "input_value": {"color":1,"height":3,"id":"obj21e76bc9df63","orientation":0,"tag":"l6953","volume":3,"width":1,"x":1,"y":0},
+           "output_value": {"color":5,"height":3,"id":"obj21e76bc9df63","orientation":0,"tag":"l6953","volume":3,"width":1,"x":1,"y":0}
+         },
+@@ -61,7 +61,7 @@
+             [0, 0, 6],
+             [0, 0, 6]
+           ],
+-          "implementation": "# Full-height column of color 2\nobjfd9a9320bfe9 is Obj(x=2, y=0, width=1, height=3, orientation=0, volume=3, color=2)",
++          "implementation": "objfd9a9320bfe9 is Obj(x=2, y=0, width=1, height=3, orientation=0, volume=3, color=2)",
+           "input_value": {"color":2,"height":3,"id":"objfd9a9320bfe9","orientation":0,"tag":"l6953","volume":3,"width":1,"x":2,"y":0},
+           "output_value": {"color":6,"height":3,"id":"objfd9a9320bfe9","orientation":0,"tag":"l6953","volume":3,"width":1,"x":2,"y":0}
+         }
+@@ -91,7 +91,7 @@
+             [6, 0, 0],
+             [6, 0, 0]
+           ],
+-          "implementation": "# Full-height column of color 2\nobje305b9fc2bcb is Obj(x=0, y=0, width=1, height=3, orientation=0, volume=3, color=2)",
++          "implementation": "obje305b9fc2bcb is Obj(x=0, y=0, width=1, height=3, orientation=0, volume=3, color=2)",
+           "input_value": {"color":2,"height":3,"id":"obje305b9fc2bcb","orientation":0,"tag":"l6953","volume":3,"width":1,"x":0,"y":0},
+           "output_value": {"color":6,"height":3,"id":"obje305b9fc2bcb","orientation":0,"tag":"l6953","volume":3,"width":1,"x":0,"y":0}
+         },
+@@ -107,7 +107,7 @@
+             [0, 4, 0],
+             [0, 4, 0]
+           ],
+-          "implementation": "# Full-height column of color 3\nobjb8e066db3336 is Obj(x=1, y=0, width=1, height=3, orientation=0, volume=3, color=3)",
++          "implementation": "objb8e066db3336 is Obj(x=1, y=0, width=1, height=3, orientation=0, volume=3, color=3)",
+           "input_value": {"color":3,"height":3,"id":"objb8e066db3336","orientation":0,"tag":"l6953","volume":3,"width":1,"x":1,"y":0},
+           "output_value": {"color":4,"height":3,"id":"objb8e066db3336","orientation":0,"tag":"l6953","volume":3,"width":1,"x":1,"y":0}
+         },
+@@ -123,7 +123,7 @@
+             [0, 0, 9],
+             [0, 0, 9]
+           ],
+-          "implementation": "# Full-height column of color 8\nobj459cb43b4fc7 is Obj(x=2, y=0, width=1, height=3, orientation=0, volume=3, color=8)",
++          "implementation": "obj459cb43b4fc7 is Obj(x=2, y=0, width=1, height=3, orientation=0, volume=3, color=8)",
+           "input_value": {"color":8,"height":3,"id":"obj459cb43b4fc7","orientation":0,"tag":"l6953","volume":3,"width":1,"x":2,"y":0},
+           "out
 ```
 
-**File**: `docs/README.md` (modified, +46/-5)
+**File**: `arc/src/dataset/dataset.25d8a9c8.json` (modified, +18/-18)
 ```diff
-@@ -854,9 +854,10 @@ settings.size
- - Comparison: `==`, `!=`, `<`, `>`, `<=`, `>=`.
- - Comparison words: `is` and `is not`, spellings of `==` and `!=` with a bare
-   word rule; see [is and is not comparisons](#is-and-is-not-comparisons).
--- Membership: `item in collection` and `item not in collection` for lists,
--  classes and strings, at the level of `<`; see
--  [membership tests](#membership-tests).
-+- Membership: `item in collection` and `item not in collection`, also
-+  written `item !in collection` as in Kotlin, for lists, classes and
-+  strings, at the level of `<`; see [membership tests](#membership-tests)
-+  and [negated membership with `!in`](#negated-membership-with-in).
- - Logical: `and` / `&&`, `or` / `||`, `not` / `!`.
- - Conditional: `condition ? consequent : alternate` or
-   `consequent if condition else alternate`; see below.
-@@ -1088,7 +1089,8 @@ Full detail: [NUC 64](nuc-0064.md).
-   quantifier does, so `"a" in {a: 1}` is an error rather than `undefined`.
- - They stand at the level of `<` and `>`: `x + 1 in xs` adds first,
-   `x in xs and y in ys` tests both, and `not x in xs` is `(not x) in xs`, as
--  `not x < y` is; write `x not in xs` to negate the test.
-+  `not x < y` is; write `x not in xs`, or `x !in xs` as Kotlin does, to
-+  negate the test.
- - A declaration that uses one stays live: it follows the list, the string
-   or the class's population, and whatever `item` reads.
- 
-@@ -1120,6 +1122,44 @@ listed
- 
- Full detail: [NUC 97](nuc-0097.md).
- 
-+### Negated membership with !in
-+
-+```
-+palette = ["red", "green"]
-+color = "blue"
-+unlisted = color !in palette
-+assert(unlisted, true)
-+palette.push("blue")
-+assert(unlisted, false)
-+assert(["z" !in "green", "ee" !in "green"], [true, false])
-+class Tag
-+urgent = Tag()
-+assert([urgent !in Tag, "late" !in Tag], [false, true])
-+assert(color !in palette, color not in palette)
-+unlisted
-+```
-+
-+- This is the complete `Nucleoid negates membership tests with !in` program
-+  in `tests/reference.md`, without its title and expected-return metadata;
-+  it returns `false`.
-+- `item !in collection` is Kotlin's spelling of `item not in collection`:
-+  the same test, at the same level of `<`, over the same lists, classes and
-+  strings, with the same `null` waiting and `TypeError`. A declaration that
-+  uses it stays live, as `unlisted` follows `palette`.
-+- `!` and `in` are written together, on one line, as Kotlin writes them.
-+  `x ! in xs` and a `!` at the end of a line keep their syntax errors, and
-+  `!` before anything else keeps its prefix reading, so `!inx` negates
-+  `inx`.
-+- The test renders as `(item not in collection)` in rules, `why`, `affects`
-+  and `--graph`. At the top level of a template interpolation `!` stays an
-+  ignored token, as `not` does: `` `${x !in xs}` `` renders `x`, while
-+  `` `${(x !in xs)}` `` tests membership. Grammar, errors and edge cases are
-+  in the authoritative
-+  [negated membership with !in](../nucleoid.spec.md#negated-membership-with-in)
-+  section.
-+
-+Full detail: [NUC 135](nuc-0135.md).
-+
- ### Indexing, slicing, and length
- 
- - Lists and instance lists index with brackets; the index may be a variable.
-@@ -5590,7 +5630,7 @@ Messages are exact and are part of the observable behaviour of the language.
- | Missing or non-function `sortBy` selector, including `null`, even on an empty receiver | `sortBy expects a function` |
- | Missing or non-function `partition` predicate, including `null`, even on an empty receiver | `partition expects a function` |
- | An `all` or `any` quantifier over a value that is neither null nor a list or a declared class's instances | `<collection> is not a collection` |
--| An `in` or `not in` membership test over a value that is neither null nor a list, a string or a declared class's instances | `<collection> is not a collection` |
-+| An `in`, `not in` or `!in` membership test over a value that is neither null nor a list, a string or a declared class's instances | `<collection> is not a collection` |
- | A `depth` stage limit that is neither `null`, undefined nor a non-negative integer number | `<limit> is not a non-negative integer` |
- | A two-name `for key, value of source` loop over a value that is not an object | `<source> is not an object` |
- | A spread entry `...source` whose source is neither an object nor `null` or undefined | `<source> is not an object` |
-@@ -5767,6 +5807,7 @@ base ** exponent                       exactly Math.pow(base, exponent), right-a
- name **= exponent                      name = name ** (exponent) (NUC 64)
- item in collection                     list, class or string membership at the level of < (NUC 97)
- item not in collection                 its negation; not item in xs is (not item) in xs (NUC 97)
-+item !in collection                    Kotlin spelling: exactly item not in collection, ! and in adjacent (NUC 135)
- 
- for name of source:                    class/object-list/scalar-string iteration
- for name in source:                    equivalent explicit i
+@@ -1,8 +1,8 @@
+ {
+-  "class_declaration": "# Each object is one full-width row of 3 cells. A row whose cells share one color turns all 5, and any other row is cleared to the background\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l3058', parts: list):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag\n    this.parts is parts",
++  "class_declaration": "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l3058', parts: list):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag\n    this.parts is parts",
+   "declarations": [
+-    "# A row with one distinct color is filled with 5; any other row gets 0, the background\n$Obj.fill_color is 5 if $Obj.parts.distinct().length is 1 else 0",
+-    "# A cleared row keeps no cells; a filled row keeps its 3 input cells\n$Obj.volume is 0 if $Obj.fill_color is 0 else $Obj.volume@first"
++    "$Obj.fill_color is 5 if $Obj.parts.distinct().length is 1 else 0",
++    "$Obj.volume is 0 if $Obj.fill_color is 0 else $Obj.volume@first"
+   ],
+   "output_canvas": "EXACT",
+   "dataset": [
+@@ -30,7 +30,7 @@
+             [0, 0, 0],
+             [0, 0, 0]
+           ],
+-          "implementation": "# Row whose 3 cells are all color 4\nobj264fe4293acf is Obj(x=0, y=0, width=3, height=1, orientation=90, volume=3, parts=[4, 4, 4])",
++          "implementation": "obj264fe4293acf is Obj(x=0, y=0, width=3, height=1, orientation=90, volume=3, parts=[4, 4, 4])",
+           "input_value": {"height":1,"id":"obj264fe4293acf","orientation":90,"parts":[4,4,4],"tag":"l3058","volume":3,"width":3,"x":0,"y":0},
+           "output_value": {"fill_color":5,"height":1,"id":"obj264fe4293acf","orientation":90,"parts":[4,4,4],"tag":"l3058","volume":3,"width":3,"x":0,"y":0}
+         },
+@@ -46,7 +46,7 @@
+             [0, 0, 0],
+             [0, 0, 0]
+           ],
+-          "implementation": "# Row of mixed colors: 2 and 3, with no head\nobje69821b4eaf1 is Obj(x=0, y=1, width=3, height=1, orientation=90, volume=3, parts=[2, 3, 2])",
++          "implementation": "obje69821b4eaf1 is Obj(x=0, y=1, width=3, height=1, orientation=90, volume=3, parts=[2, 3, 2])",
+           "input_value": {"height":1,"id":"obje69821b4eaf1","orientation":90,"parts":[2,3,2],"tag":"l3058","volume":3,"width":3,"x":0,"y":1},
+           "output_value": {"fill_color":0,"height":1,"id":"obje69821b4eaf1","orientation":90,"parts":[2,3,2],"tag":"l3058","volume":0,"width":3,"x":0,"y":1}
+         },
+@@ -62,7 +62,7 @@
+             [0, 0, 0],
+             [0, 0, 0]
+           ],
+-          "implementation": "# Row of mixed colors: 2 and 3, its head 2 on the left\nobj1ece888d68bd is Obj(x=0, y=2, width=3, height=1, orientation=270, volume=3, parts=[2, 3, 3])",
++          "implementation": "obj1ece888d68bd is Obj(x=0, y=2, width=3, height=1, orientation=270, volume=3, parts=[2, 3, 3])",
+           "input_value": {"height":1,"id":"obj1ece888d68bd","orientation":270,"parts":[2,3,3],"tag":"l3058","volume":3,"width":3,"x":0,"y":2},
+           "output_value": {"fill_color":0,"height":1,"id":"obj1ece888d68bd","orientation":270,"parts":[2,3,3],"tag":"l3058","volume":0,"width":3,"x":0,"y":2}
+         }
+@@ -92,7 +92,7 @@
+             [0, 0, 0],
+             [0, 0, 0]
+           ],
+-          "implementation": "# Row of mixed colors: 3 and 7, its head 7 on the left\nobj95bc4ed42279 is Obj(x=0, y=0, width=3, height=1, orientation=270, volume=3, parts=[7, 3, 3])",
++          "implementation": "obj95bc4ed42279 is Obj(x=0, y=0, width=3, height=1, orientation=270, volume=3, parts=[7, 3, 3])",
+           "input_value": {"height":1,"id":"obj95bc4ed42279","orientation":270,"parts":[7,3,3],"tag":"l3058","volume":3,"width":3,"x":0,"y":0},
+           "output_value": {"fill_color":0,"height":1,"id":"obj95bc4ed42279","orientation":270,"parts":[7,3,3],"tag":"l3058","volume":0,"width":3,"x":0,"y":0}
+         },
+@@ -108,7 +108,7 @@
+             [5, 5, 5],
+             [0, 0, 0]
+           ],
+-          "implementation": "# Row whose 3 cells are all color 6\nobjde7e64595025 is Obj(x=0, y=1, width=3, height=1, orientation=90, volume=3, parts=[6, 6, 6])",
++          "implementation": "objde7e64595025 is Obj(x=0, y=1, width=3, height=1, orientation=90, volume=3, parts=[6, 6, 6])",
+           "input_value": {"height":1,"id":"objde7e64595025","orientation":90,"parts":[6,6,6],"tag":"l3058","volume":3,"width":3,"x":0,"y":1},
+           "output_value": {"fill_color":5,"height":1,"id":"objde7e64595025","orientation":90,"parts":[6,6,6],"tag":"l3058","volume":3,"width":3,"x":0,"y":1}
+         },
+@@ -124,7 +124,7 @@
+             [0, 0, 0],
+             [0, 0, 0]
+           ],
+-          "implementation": "# Row of mixed colors: 3 and 7, its head 3 on the left\nobj9
 ```
 
-**File**: `docs/examples.md` (modified, +28/-0)
+**File**: `arc/src/dataset/dataset.25ff71a9.json` (modified, +8/-8)
 ```diff
-@@ -4577,6 +4577,34 @@ heavy
-   [root contract](../nucleoid.spec.md#unknown-constructor-arguments-as-properties)
-   define. A vehicle built without a `color` label has none.
- 
-+## Negated membership with !in
-+
-+**Negated membership keeps a support queue's open tickets live**
-+
-+```nuc
-+class Ticket(status):
-+    this.status = status
-+closed = ["done", "spam"]
-+$Ticket.open = $Ticket.status !in closed
-+first = Ticket("new")
-+second = Ticket("done")
-+queue = Ticket.filter(ticket -> ticket.open).map(ticket -> ticket.status)
-+assert(queue, ["new"])
-+second.status = "reopened"
-+assert(queue, ["new", "reopened"])
-+closed.push("new")
-+assert(queue, ["reopened"])
-+queue
-+# return: ["reopened"]
-+```
-+
-+- `$Ticket.status !in closed` is Kotlin's spelling of
-+  `$Ticket.status not in closed`. Each ticket's `open` follows its status and
-+  the `closed` list, and the queue follows every ticket, so reopening a ticket
-+  and closing a status both reach it without an imperative walk.
-+- See [NUC 135](nuc-0135.md) and the
-+  [root contract](../nucleoid.spec.md#negated-membership-with-in).
-+
- ## Copyright
- 
- Copyright 2020 Nucleoid
+@@ -1,7 +1,7 @@
+ {
+-  "class_declaration": "# Each object is the one shape in the grid. Every shape moves down by one row\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l9100'):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag",
++  "class_declaration": "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l9100'):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag",
+   "declarations": [
+-    "# Each shape moves down one row from its input row; its cells and size stay the same\n$Obj.y is $Obj.y@first + 1"
++    "$Obj.y is $Obj.y@first + 1"
+   ],
+   "output_canvas": "EXACT",
+   "dataset": [
+@@ -29,7 +29,7 @@
+             [1, 1, 1],
+             [0, 0, 0]
+           ],
+-          "implementation": "# Color-1 horizontal bar of 3 cells\nobj56f6c04f44d8 is Obj(x=0, y=0, width=3, height=1, orientation=90, volume=3)",
++          "implementation": "obj56f6c04f44d8 is Obj(x=0, y=0, width=3, height=1, orientation=90, volume=3)",
+           "input_value": {"height":1,"id":"obj56f6c04f44d8","orientation":90,"tag":"l9100","volume":3,"width":3,"x":0,"y":0},
+           "output_value": {"height":1,"id":"obj56f6c04f44d8","orientation":90,"tag":"l9100","volume":3,"width":3,"x":0,"y":1}
+         }
+@@ -59,7 +59,7 @@
+             [0, 0, 0],
+             [1, 1, 1]
+           ],
+-          "implementation": "# Color-1 horizontal bar of 3 cells\nobjb2baa9b2270c is Obj(x=0, y=1, width=3, height=1, orientation=90, volume=3)",
++          "implementation": "objb2baa9b2270c is Obj(x=0, y=1, width=3, height=1, orientation=90, volume=3)",
+           "input_value": {"height":1,"id":"objb2baa9b2270c","orientation":90,"tag":"l9100","volume":3,"width":3,"x":0,"y":1},
+           "output_value": {"height":1,"id":"objb2baa9b2270c","orientation":90,"tag":"l9100","volume":3,"width":3,"x":0,"y":2}
+         }
+@@ -89,7 +89,7 @@
+             [0, 1, 0],
+             [1, 1, 0]
+           ],
+-          "implementation": "# Color-1 corner with its vertex at the bottom right\nobj470037f0334e is Obj(x=0, y=0, width=2, height=2, orientation=135, volume=3)",
++          "implementation": "obj470037f0334e is Obj(x=0, y=0, width=2, height=2, orientation=135, volume=3)",
+           "input_value": {"height":2,"id":"obj470037f0334e","orientation":135,"tag":"l9100","volume":3,"width":2,"x":0,"y":0},
+           "output_value": {"height":2,"id":"obj470037f0334e","orientation":135,"tag":"l9100","volume":3,"width":2,"x":0,"y":1}
+         }
+@@ -119,7 +119,7 @@
+             [0, 2, 2],
+             [0, 0, 2]
+           ],
+-          "implementation": "# Color-2 corner with its vertex at the top right\nobj2ad74ac3e6ef is Obj(x=1, y=0, width=2, height=2, orientation=45, volume=3)",
++          "implementation": "obj2ad74ac3e6ef is Obj(x=1, y=0, width=2, height=2, orientation=45, volume=3)",
+           "input_value": {"height":2,"id":"obj2ad74ac3e6ef","orientation":45,"tag":"l9100","volume":3,"width":2,"x":1,"y":0},
+           "output_value": {"height":2,"id":"obj2ad74ac3e6ef","orientation":45,"tag":"l9100","volume":3,"width":2,"x":1,"y":1}
+         }
+@@ -149,7 +149,7 @@
+             [2, 0, 0],
+             [2, 0, 0]
+           ],
+-          "implementation": "# Color-2 vertical bar of 2 cells\nobjb847b315216d is Obj(x=0, y=0, width=1, height=2, orientation=0, volume=2)",
++          "implementation": "objb847b315216d is Obj(x=0, y=0, width=1, height=2, orientation=0, volume=2)",
+           "input_value": {"height":2,"id":"objb847b315216d","orientation":0,"tag":"l9100","volume":2,"width":1,"x":0,"y":0},
+           "output_value": {"height":2,"id":"objb847b315216d","orientation":0,"tag":"l9100","volume":2,"width":1,"x":0,"y":1}
+         }
+@@ -179,7 +179,7 @@
+             [0, 0, 0],
+             [0, 1, 0]
+           ],
+-          "implementation": "# Single color-1 cell\nobjf247c9d3ab45 is Obj(x=1, y=1, width=1, height=1, orientation=0, volume=1)",
++          "implementation": "objf247c9d3ab45 is Obj(x=1, y=1, width=1, height=1, orientation=0, volume=1)",
+           "input_value": {"height":1,"id":"objf247c9d3ab45","orientation":0,"tag":"l9100","volume":1,"width":1,"x":1,"y":1},
+           "output_value": {"height":1,"id":"objf247c9d3ab45","orientation":0,"tag":"l9100","volume":1,"width":1,"x":1,"y":2}
+         }
 ```
 
-**File**: `docs/nuc-0000.md` (modified, +2/-2)
+**File**: `arc/src/dataset/dataset.27a28665.json` (modified, +16/-16)
 ```diff
-@@ -180,7 +180,7 @@ Created: 31-Jul-2026
- | [131](nuc-0131.md) | Reversal Method Aliases | Accepted |
- | [132](nuc-0132.md) | Rust String Boundary Method Aliases | Accepted |
- | [134](nuc-0134.md) | Ruby Collection Method Aliases | Accepted |
--| [135](nuc-0135.md) | Kotlin Negated Membership Operator | Draft |
-+| [135](nuc-0135.md) | Kotlin Negated Membership Operator | Accepted |
- | [137](nuc-0137.md) | Floating-Point Absolute Value Alias | Accepted |
- 
- ### Documentation
-@@ -327,7 +327,7 @@ Created: 31-Jul-2026
- | [132](nuc-0132.md) | Rust String Boundary Method Aliases | Standards Track | Language compatibility | Accepted |
- | [133](nuc-0133.md) | Edge Lists of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
- | [134](nuc-0134.md) | Ruby Collection Method Aliases | Standards Track | Language compatibility | Accepted |
--| [135](nuc-0135.md) | Kotlin Negated Membership Operator | Standards Track | Language compatibility | Draft |
-+| [135](nuc-0135.md) | Kotlin Negated Membership Operator | Standards Track | Language compatibility | Accepted |
- | [136](nuc-0136.md) | Unknown Constructor Arguments as Properties | Standards Track | Runtime features | Accepted |
- | [137](nuc-0137.md) | Floating-Point Absolute Value Alias | Standards Track | Language compatibility | Accepted |
- | [138](nuc-0138.md) | Reactive Secant | Standards Track | Utility enhancement | Draft |
+@@ -1,11 +1,11 @@
+ {
+-  "class_declaration": "# Each object is the whole 5-cell block of one color, in one of four shapes. The output is a single cell whose color codes the shape, whatever the block color\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l9100'):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag",
++  "class_declaration": "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l9100'):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag",
+   "declarations": [
+-    "# Each block becomes l7544, a single point\n$Obj.tag is l7544",
+-    "# The output cell is one column wide\n$Obj.width is 1",
+-    "# The output cell is one row tall\n$Obj.height is 1",
+-    "# Its color codes the input shape, read from its input tag: 1 hollow diamond, 2 diagonal cross, 3 square with a tail, 6 orthogonal cross\n$Obj.fill_color is {'l4262': 1, 'l2404': 2, 'l3743': 3, 'l1707': 6}[$Obj.tag@first]",
+-    "# The output has one cell\n$Obj.volume is $Obj.width * $Obj.height"
++    "$Obj.tag is l7544",
++    "$Obj.width is 1",
++    "$Obj.height is 1",
++    "$Obj.fill_color is {'l4262': 1, 'l2404': 2, 'l3743': 3, 'l1707': 6}[$Obj.tag@first]",
++    "$Obj.volume is $Obj.width * $Obj.height"
+   ],
+   "output_canvas": "FIT",
+   "dataset": [
+@@ -29,7 +29,7 @@
+           "output_instance_matrix": [
+             [1]
+           ],
+-          "implementation": "# Color-5 hollow diamond: the 4 edge cells around an empty center, plus its top-left corner\nobj3fc7d6382a47 is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, tag='l4262')",
++          "implementation": "obj3fc7d6382a47 is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, tag='l4262')",
+           "input_value": {"height":3,"id":"obj3fc7d6382a47","orientation":0,"tag":"l4262","volume":5,"width":3,"x":0,"y":0},
+           "output_value": {"fill_color":1,"height":1,"id":"obj3fc7d6382a47","orientation":0,"tag":"l7544","volume":1,"width":1,"x":0,"y":0}
+         }
+@@ -55,7 +55,7 @@
+           "output_instance_matrix": [
+             [2]
+           ],
+-          "implementation": "# Color-8 diagonal cross: the center and the 4 corners\nobj4eb5795d0cdd is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, tag='l2404')",
++          "implementation": "obj4eb5795d0cdd is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, tag='l2404')",
+           "input_value": {"height":3,"id":"obj4eb5795d0cdd","orientation":0,"tag":"l2404","volume":5,"width":3,"x":0,"y":0},
+           "output_value": {"fill_color":2,"height":1,"id":"obj4eb5795d0cdd","orientation":0,"tag":"l7544","volume":1,"width":1,"x":0,"y":0}
+         }
+@@ -81,7 +81,7 @@
+           "output_instance_matrix": [
+             [2]
+           ],
+-          "implementation": "# Color-5 diagonal cross: the center and the 4 corners\nobj6601704d7bf6 is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, tag='l2404')",
++          "implementation": "obj6601704d7bf6 is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, tag='l2404')",
+           "input_value": {"height":3,"id":"obj6601704d7bf6","orientation":0,"tag":"l2404","volume":5,"width":3,"x":0,"y":0},
+           "output_value": {"fill_color":2,"height":1,"id":"obj6601704d7bf6","orientation":0,"tag":"l7544","volume":1,"width":1,"x":0,"y":0}
+         }
+@@ -107,7 +107,7 @@
+           "output_instance_matrix": [
+             [3]
+           ],
+-          "implementation": "# Color-1 square with a diagonal tail: a 2x2 square at the top right and one cell touching its bottom-left corner\nobjae50fa19d8b4 is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, tag='l3743')",
++          "implementation": "objae50fa19d8b4 is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, tag='l3743')",
+           "input_value": {"height":3,"id":"objae50fa19d8b4","orientation":0,"tag":"l3743","volume":5,"width":3,"x":0,"y":0},
+           "output_value": {"fill_color":3,"height":1,"id":"objae50fa19d8b4","orientation":0,"tag":"l7544","volume":1,"width":1,"x":0,"y":0}
+         }
+@@ -133,7 +133,7 @@
+           "output_instance_matrix": [
+             [3]
+           ],
+-          "implementation": "# Color-8 square with a diagonal tail: a 2x2 square at the top right and one cell touching its bottom-left corner\nobj1f918c128ece is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, tag='l3743')",
++          "implementation": "obj1f918c128ece is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, tag='l3743')",
+           "input_value": {"height":3,"id":"obj1f918c128ece","orientation":0,"tag":"l3743","volume":5,"width":3,"x":0,"y":0},
+           "output_value": {"fill_color":3,"height":1,"id":"obj1f918c128ece","orientation":0,"tag":"
 ```
 
-**File**: `docs/nuc-0135.md` (modified, +1163/-11)
+**File**: `arc/src/dataset/dataset.28bf18c6.json` (modified, +12/-12)
 ```diff
-@@ -4,7 +4,7 @@
- NUC: 135
- Title: Kotlin Negated Membership Operator
- Author: Can Mingir <canmingir@gmail.com>
--Status: Draft
-+Status: Accepted
- Type: Standards Track
- Category: Language compatibility
- Created: 22-Nov-2026
-@@ -20,14 +20,26 @@ Requires: 97
-   evaluation, liveness, rendering and errors are the accepted ones. After
-   `xs = [1, 2, 3]`, `[2 !in xs, 4 !in xs]` gives `[false, true]`, as
-   `[2 not in xs, 4 not in xs]` does.
-+- Directly means on one line, with the `in` in the column right after the
-+  `!`, as Kotlin writes its single `!in` token. `! in` with whitespace, a
-+  comment or a line break between the two keeps its parse error, and `!`
-+  before any other token keeps its prefix reading, so `x !inx` is still the
-+  two statements `x` and `!inx`.
- - At the accepted revision, every program in which `!` directly precedes
-   `in` where a membership operator can stand fails to parse, with errors
-   such as `SyntaxError("Unexpected keyword 'in'")` and
-   `SyntaxError("Expected ']' but found '!'")`, and only those programs
-   change. Inside a template interpolation, which ends before `not in` as it
--  ends before `!in`, the accepted reading stays, and `! in` with whitespace
--  between the two keeps its parse error. No keyword, lexer token, error or
--  syntax-tree variant is added.
-+  ends before `!in`, the accepted reading stays: `` `a ${4 !in xs} b` ``
-+  still gives `"a 4 b"`. The public Rust `parse_expression` changes only
-+  where NUC 97 changed it for `not in`: a Python-style conditional whose
-+  condition holds the test.
-+- A program written with `!in` shows `not in` in its rules, `why`,
-+  `affects`, `--graph` and graph keys, as programs written with `and`, `or`
-+  and `not` show `&&`, `||` and `!`.
-+- No keyword, lexer token, `BinaryOp`, syntax-tree variant, error type or
-+  message is added, and no public item changes. The authoritative contract
-+  is [Negated membership with !in](../nucleoid.spec.md#negated-membership-with-in).
- 
- ## Motivation
- 
-@@ -39,26 +51,1166 @@ Requires: 97
-   populations. Today each `!in` fails to parse, so a model's otherwise valid
-   rule, such as `$Order.flagged = $Order.status !in approved`, stops the
-   whole program before any statement runs.
-+- World models state exclusions as often as memberships: a user who is not
-+  blocked, an order whose status is not approved, a ticket whose status is
-+  not closed. These rules are standing, so they must follow every push to
-+  the list and every change of the status, which `not in` already does and
-+  the alias inherits.
- - An alias keeps one membership operator in the runtime and one canonical
--  spelling in rendered rules, as the accepted `===`, `!==`, `elif` and
--  `->` aliases do, and advances the language-superset aspiration of NUC 1's
--  Language compatibility category without changing any accepted form.
-+  spelling in rendered rules, as the accepted `and`, `or`, `not` and the
-+  Python-style conditional render as `&&`, `||`, `!` and `?:`, and advances
-+  the language-superset aspiration of NUC 1's Language compatibility
-+  category without changing any accepted form.
- 
- ## Rationale
- 
--- Pending: the proposer completes this section.
-+- **Category and mode.** The allocating continuous cycle drew Language
-+  compatibility with one tool-backed uniform draw over the five categories
-+  that NUC 1's registry marks eligible for automatic selection, index 4
-+  with probability 1/5 and no redraw, at 14:41:26 on 22-Nov-2026, and
-+  recorded the requested change in the allocation commit `d0894711`, which
-+  this revision pins. Token comparison is therefore skipped as
-+  `language_compatibility`. The skip is categorical; it is neither a
-+  measured comparison nor a passing token gate. Runtime applicability does
-+  not apply to this category.
-+- **Selection.** Within the category, the cycle chose one bounded alias that
-+  no NUC proposes: Kotlin's `!in`, which the open candidates that
-+  [NUC 131](nuc-0131.md)'s cycle surveyed name. It set aside JavaScript's
-+  `!==`, which is already accepted; spread arguments and `??=`, which are
-+  parse errors with no accepted equivalent to alias; and `copy()`,
-+  `toList()`, `extend` and `count()`, which extend methods rather than
-+  alias an operator. [NUC 134](nuc-0134.md), another session's proposal,
-+  holds Ruby's `collect` and `select`.
-+- **No counterparts.** Because comparison is skipped, the new cases have no
-+  accepted-syntax counterparts. They execute their assertions and explicit
-+  returns with full coverage, each gives exactly what its `not in`
-+  spelling gives on the accepted revision, and every pre-existing case is
-+  unchanged.
-+- **Optional evidence.** No hint was supplied. Advisory usefulness is
-+  unscored (`missing_rubric`), not zero. Strategy learning is
-+  `not_configured`, so this revision is unattributed, with no policy,
-+  selection receipt, trial or reward.
-+- **One node.** `A !in B` builds the very `Expr::Binary` with
-+  `BinaryOp::NotIn` that `A not in
+@@ -1,13 +1,13 @@
+ {
+-  "class_declaration": "# Each object is the one shape in the grid, inside a 3x3 box. The output shows the shape twice side by side, cropped to the two copies\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l9100', color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag\n    this.color is color",
++  "class_declaration": "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l9100', color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag\n    this.color is color",
+   "declarations": [
+-    "# Each shape becomes l4305, a shape repeated side by side\n$Obj.tag is l4305",
+-    "# The output holds 2 copies\n$Obj.repeat_count is 2",
+-    "# The second copy sits right of the first\n$Obj.repeat_direction is right",
+-    "# The two copies together are twice its input width\n$Obj.width is $Obj.width@first * $Obj.repeat_count",
+-    "# The cropped output starts at the left edge of the copies\n$Obj.x is 0",
+-    "# The cropped output starts at the top edge of the copies\n$Obj.y is 0",
+-    "# Both copies count their cells: twice its input cells\n$Obj.volume is $Obj.volume@first * $Obj.repeat_count"
++    "$Obj.tag is l4305",
++    "$Obj.repeat_count is 2",
++    "$Obj.repeat_direction is right",
++    "$Obj.width is $Obj.width@first * $Obj.repeat_count",
++    "$Obj.x is 0",
++    "$Obj.y is 0",
++    "$Obj.volume is $Obj.volume@first * $Obj.repeat_count"
+   ],
+   "output_canvas": "FIT",
+   "dataset": [
+@@ -45,7 +45,7 @@
+             [0, 8, 0, 0, 8, 0],
+             [8, 8, 8, 8, 8, 8]
+           ],
+-          "implementation": "# Color-8 shape in a 3x3 box, the only object in the grid\nobj9b9fe2a02df1 is Obj(x=1, y=1, width=3, height=3, orientation=0, volume=6, color=8)",
++          "implementation": "obj9b9fe2a02df1 is Obj(x=1, y=1, width=3, height=3, orientation=0, volume=6, color=8)",
+           "input_value": {"color":8,"height":3,"id":"obj9b9fe2a02df1","orientation":0,"tag":"l9100","volume":6,"width":3,"x":1,"y":1},
+           "output_value": {"color":8,"height":3,"id":"obj9b9fe2a02df1","orientation":0,"repeat_count":2,"repeat_direction":"right","tag":"l4305","volume":12,"width":6,"x":0,"y":0}
+         }
+@@ -85,7 +85,7 @@
+             [2, 2, 2, 2, 2, 2],
+             [2, 2, 0, 2, 2, 0]
+           ],
+-          "implementation": "# Color-2 shape in a 3x3 box, the only object in the grid\nobje0404a753c87 is Obj(x=2, y=5, width=3, height=3, orientation=0, volume=6, color=2)",
++          "implementation": "obje0404a753c87 is Obj(x=2, y=5, width=3, height=3, orientation=0, volume=6, color=2)",
+           "input_value": {"color":2,"height":3,"id":"obje0404a753c87","orientation":0,"tag":"l9100","volume":6,"width":3,"x":2,"y":5},
+           "output_value": {"color":2,"height":3,"id":"obje0404a753c87","orientation":0,"repeat_count":2,"repeat_direction":"right","tag":"l4305","volume":12,"width":6,"x":0,"y":0}
+         }
+@@ -125,7 +125,7 @@
+             [1, 0, 0, 1, 0, 0],
+             [0, 1, 0, 0, 1, 0]
+           ],
+-          "implementation": "# Color-1 shape in a 3x3 box, the only object in the grid\nobjb063b1a80b04 is Obj(x=4, y=1, width=3, height=3, orientation=0, volume=4, color=1)",
++          "implementation": "objb063b1a80b04 is Obj(x=4, y=1, width=3, height=3, orientation=0, volume=4, color=1)",
+           "input_value": {"color":1,"height":3,"id":"objb063b1a80b04","orientation":0,"tag":"l9100","volume":4,"width":3,"x":4,"y":1},
+           "output_value": {"color":1,"height":3,"id":"objb063b1a80b04","orientation":0,"repeat_count":2,"repeat_direction":"right","tag":"l4305","volume":8,"width":6,"x":0,"y":0}
+         }
+@@ -165,7 +165,7 @@
+             [3, 3, 3, 3, 3, 3],
+             [3, 0, 0, 3, 0, 0]
+           ],
+-          "implementation": "# Color-3 shape in a 3x3 box, the only object in the grid\nobj4b7b41624747 is Obj(x=1, y=4, width=3, height=3, orientation=0, volume=5, color=3)",
++          "implementation": "obj4b7b41624747 is Obj(x=1, y=4, width=3, height=3, orientation=0, volume=5, color=3)",
+           "input_value": {"color":3,"height":3,"id":"obj4b7b41624747","orientation":0,"tag":"l9100","volume":5,"width":3,"x":1,"y":4},
+           "output_value": {"color":3,"height":3,"id":"obj4b7b41624747","orientation":0,"repeat_count":2,"repeat_direction":"right","tag":"l4305","volume":10,"width":6,"x":0,"y":0}
+         }
 ```
 
-**File**: `docs/nucleoid.ebnf` (modified, +16/-6)
+**File**: `arc/src/dataset/dataset.3aa6fb7a.json` (modified, +13/-13)
 ```diff
-@@ -594,19 +594,28 @@ equalityOperator
-       | IS NOT?
- 
- /*
-- * Membership contract (NUC 97):
-+ * Membership contract (NUC 97, NUC 135):
-  * - IN, and NOT directly followed by IN, after an additive operand build
-  *   BinaryOp::In and BinaryOp::NotIn on the left-associative level of
-  *   LESS, LESS_EQUAL, GREATER and GREATER_EQUAL, sharing its MAX_CHAIN
-  *   operand limit. NOT before an operand stays a prefix, so
-  *   'NOT a IN b' is '(NOT a) IN b'.
-+ * - BANG directly followed by IN builds BinaryOp::NotIn in the same place
-+ *   (NUC 135), with the tree of NOT IN, only when the IN token starts on
-+ *   the line of the BANG, in the column right after it: no whitespace,
-+ *   comment or line break lies between them. Otherwise BANG stays a prefix
-+ *   and IN keeps its accepted reading and error, so 'a ! in b' fails as
-+ *   before. BANG before an operand stays a prefix, so 'BANG a IN b' is
-+ *   '(BANG a) IN b'.
-  * - Not at the top level of an interpolation or of an expressionInput,
-- *   whose trailing tokens are ignored: IN stays their first ignored token.
-+ *   whose trailing tokens are ignored: IN, NOT or BANG stays their first
-+ *   ignored token.
-  * - Not when COLON directly follows the right operand outside a clause:
-- *   such a colon can only close a malformed quantifier, so IN keeps its
-- *   accepted reading and error, "Unexpected keyword 'in'" where it would
-- *   begin a statement and the enclosing construct's error elsewhere, such
-- *   as "Expected '}' but found keyword 'in'" in an object value.
-+ *   such a colon can only close a malformed quantifier, so IN, NOT and BANG
-+ *   keep their accepted readings and errors, "Unexpected keyword 'in'"
-+ *   where IN would begin a statement and the enclosing construct's error
-+ *   elsewhere, such as "Expected '}' but found keyword 'in'", or "Expected
-+ *   '}' but found '!'" for BANG IN, in an object value.
-  */
- relational
-     ::= additive (relationalOperator additive)*              /* Expr::Binary, left */
-@@ -618,6 +627,7 @@ relationalOperator
-       | GREATER_EQUAL
-       | IN                                                  /* BinaryOp::In */
-       | NOT IN                                              /* BinaryOp::NotIn */
-+      | BANG IN                                             /* BinaryOp::NotIn */
- 
- additive
-     ::= term ((PLUS | MINUS) term)*                          /* Expr::Binary, left */
+@@ -1,9 +1,9 @@
+ {
+-  "class_declaration": "# Each object is one color-8 corner: 3 cells of a 2x2 box that meet at its vertex cell. Every corner fills the open cell of its box with color 1, completing the square\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l6747', color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag\n    this.color is color",
++  "class_declaration": "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l6747', color: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag\n    this.color is color",
+   "declarations": [
+-    "# Each corner becomes l3337, a corner with its inside marker\n$Obj.tag is l3337",
+-    "# The open cell of its box, diagonally opposite its vertex, turns color 1\n$Obj.marker_color is 1",
+-    "# The marker adds one cell to its 3 input cells\n$Obj.volume is $Obj.volume@first + 1"
++    "$Obj.tag is l3337",
++    "$Obj.marker_color is 1",
++    "$Obj.volume is $Obj.volume@first + 1"
+   ],
+   "output_canvas": "EXACT",
+   "dataset": [
+@@ -53,7 +53,7 @@
+             [0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0]
+           ],
+-          "implementation": "# Color-8 corner with its vertex at the bottom left and its open cell at the top right\nobj06bbbdc98e71 is Obj(x=1, y=1, width=2, height=2, orientation=225, volume=3, color=8)",
++          "implementation": "obj06bbbdc98e71 is Obj(x=1, y=1, width=2, height=2, orientation=225, volume=3, color=8)",
+           "input_value": {"color":8,"height":2,"id":"obj06bbbdc98e71","orientation":225,"tag":"l6747","volume":3,"width":2,"x":1,"y":1},
+           "output_value": {"color":8,"height":2,"id":"obj06bbbdc98e71","marker_color":1,"orientation":225,"tag":"l3337","volume":4,"width":2,"x":1,"y":1}
+         },
+@@ -83,7 +83,7 @@
+             [0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0]
+           ],
+-          "implementation": "# Color-8 corner with its vertex at the top right and its open cell at the bottom left\nobj812b7881ec0e is Obj(x=4, y=3, width=2, height=2, orientation=45, volume=3, color=8)",
++          "implementation": "obj812b7881ec0e is Obj(x=4, y=3, width=2, height=2, orientation=45, volume=3, color=8)",
+           "input_value": {"color":8,"height":2,"id":"obj812b7881ec0e","orientation":45,"tag":"l6747","volume":3,"width":2,"x":4,"y":3},
+           "output_value": {"color":8,"height":2,"id":"obj812b7881ec0e","marker_color":1,"orientation":45,"tag":"l3337","volume":4,"width":2,"x":4,"y":3}
+         }
+@@ -135,7 +135,7 @@
+             [0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0]
+           ],
+-          "implementation": "# Color-8 corner with its vertex at the top right and its open cell at the bottom left\nobj3a91dc0b584b is Obj(x=4, y=0, width=2, height=2, orientation=45, volume=3, color=8)",
++          "implementation": "obj3a91dc0b584b is Obj(x=4, y=0, width=2, height=2, orientation=45, volume=3, color=8)",
+           "input_value": {"color":8,"height":2,"id":"obj3a91dc0b584b","orientation":45,"tag":"l6747","volume":3,"width":2,"x":4,"y":0},
+           "output_value": {"color":8,"height":2,"id":"obj3a91dc0b584b","marker_color":1,"orientation":45,"tag":"l3337","volume":4,"width":2,"x":4,"y":0}
+         },
+@@ -165,7 +165,7 @@
+             [0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0]
+           ],
+-          "implementation": "# Color-8 corner with its vertex at the bottom left and its open cell at the top right\nobj1d5b3380e76e is Obj(x=2, y=2, width=2, height=2, orientation=225, volume=3, color=8)",
++          "implementation": "obj1d5b3380e76e is Obj(x=2, y=2, width=2, height=2, orientation=225, volume=3, color=8)",
+           "input_value": {"color":8,"height":2,"id":"obj1d5b3380e76e","orientation":225,"tag":"l6747","volume":3,"width":2,"x":2,"y":2},
+           "output_value": {"color":8,"height":2,"id":"obj1d5b3380e76e","marker_color":1,"orientation":225,"tag":"l3337","volume":4,"width":2,"x":2,"y":2}
+         },
+@@ -195,7 +195,7 @@
+             [0, 0, 0, 1, 8, 0, 0],
+             [0, 0, 0, 8, 8, 0, 0]
+           ],
+-          "implementation": "# Color-8 corner with its vertex at the bottom right and its open cell at the top left\nobje29de8da7b6d is Obj(x=3, y=5, width=2, height=2, orientation=135, volume=3, color=8)",
++          "implementation": "obje29de8da7b6d is Obj(x=3, y=5, width=2, height=2, orientation=135, volume=3, color=8)",
+           "input_value": {"color":8,"height":2,"id":"obje29de8da7b6d","orientation":135,"tag":"l6747","volume":3,"width":2,"x":3,"y":5},
+           "output_value": {"color":8,"height":2,"id":"obje29de8da7b6d","marker_color":1,"orientation":135,"tag":"l3337","volume":4,"width":2,"x":3,"y":5}
+         }
+
 ```
 
 #### Recent Merged Pull Requests:
@@ -2116,29 +2131,42 @@ Hard criteria, evaluated on the frozen candidate at d0894711:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 139 Symmetric Difference Reasoning Selections
+## X. Remove comments from ARC datasets
 
 **RULE**:
-When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `arc/src/dataset/dataset.017c7c7b.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6c8cbc67`: Draft NUC 139 Symmetric Difference Reasoning Selections. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9dac162b`: Remove comments from ARC datasets. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/src/dataset/dataset.017c7c7b.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [139](nuc-0139.md) | Symmetric Difference Reasoning Selections | Draft |
-| [139](nuc-0139.md) | Symmetric Difference Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
+  "class_declaration": "class Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l9100', color: int, period: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag\n    this.color is color\n    this.period is period",
+    "$Obj.tag is l8384",
+    "$Obj.extension_direction is down",
+    "$Obj.height is $Obj.height@first * 3 / 2",
+    "$Obj.color is 2"
+          "implementation": "obj7868bfbcdc17 is Obj(x=0, y=0, width=3, height=6, orientation=0, volume=9, color=1, period=4)",
+          "implementation": "obj251f7bd03919 is Obj(x=0, y=0, width=3, height=6, orientation=0, volume=9, color=1, period=2)",
+          "implementation": "obj69f9506dfd32 is Obj(x=0, y=0, width=2, height=6, orientation=0, volume=8, color=1, period=3)",
+          "implementation": "obj93fb566cfca3 is Obj(x=0, y=0, width=3, height=6, orientation=0, volume=10, color=1, period=3)",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+  "class_declaration": "# Each object is the whole color-1 pattern, as tall as the grid, whose rows repeat every period rows. The output continues it down to 9 rows and draws it in color 2\nclass Obj(x: int, y: int, width: int, height: int, orientation: int, volume: int, tag: str = 'l9100', color: int, period: int):\n    this.x is x\n    this.y is y\n    this.width is width\n    this.height is height\n    this.orientation is orientation\n    this.volume is volume\n    this.tag is tag\n    this.color is color\n    this.period is period",
+    "# Each pattern becomes l8384, a pattern repeating down\n$Obj.tag is l8384",
+    "# It continues downward, below its last row\n$Obj.extension_direction is down",
+    "# Its height grows to 1.5 times its input height, 6 rows to 9, the height of the output grid\n$Obj.height is $Obj.height@first * 3 / 2",
+    "# The whole pattern is drawn in color 2\n$Obj.color is 2"
+          "implementation": "# Color-1 pattern whose rows repeat every 4 rows: row 4 equals row 0\nobj7868bfbcdc17 is Obj(x=0, y=0, width=3, height=6, orientation=0, volume=9, color=1, period=4)",
+          "implementation": "# Color-1 pattern whose rows repeat every 2 rows: row 2 equa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6c8cbc67` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9dac162b` are properly handled with clean fallback behavior.

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T14:15:48.427Z",
+  "last_updated": "2026-11-24T14:24:26.566Z",
   "directives": [
     {
       "id": "CD-001",
@@ -32835,15 +32835,15 @@
       "domain_letter": "H"
     },
     {
-      "id": "CD-OZXH",
+      "id": "CD-D0HV",
       "directive_title": "Remove comments from ARC datasets",
       "source_repo": "nucleoidai-nucleoid-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-OZXH-remove-comments-from-arc-datasets.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-D0HV-remove-comments-from-arc-datasets.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-19",
-      "domain_letter": "H"
+      "date_staged": "2026-11-24",
+      "domain_letter": "F"
     },
     {
       "id": "CD-REV-D7A0F8",
@@ -55093,6 +55093,55 @@
       "source_repo": "zoontek-react-native-permissions",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-E60B88-android-skip-explicit-kotlin-plugin-when.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-CYO3",
+      "directive_title": "Empirical Invariant Guard in endpoint_resolver.go",
+      "source_repo": "kubernetes-sigs-aws-load-balancer-controller-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-CYO3-empirical-invariant-guard-in-endpoint_resolver-go.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-CZP2",
+      "directive_title": "Speed up null position filtering on validity bitmaps",
+      "source_repo": "trinodb-trino-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-CZP2-speed-up-null-position-filtering-on-validity-bitmaps.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-REV-60E2B7",
+      "directive_title": "Empirical Invariant Guard in endpoint_resolver.go",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "kubernetes-sigs-aws-load-balancer-controller",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-60E2B7-empirical-invariant-guard-in-endpoint-re.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-REV-D9FC30",
+      "directive_title": "Speed up null position filtering on validity bitmaps",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "trinodb-trino",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D9FC30-speed-up-null-position-filtering-on-vali.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-REV-FAA8F3",
+      "directive_title": "Remove comments from ARC datasets",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nucleoidai-nucleoid",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-FAA8F3-remove-comments-from-arc-datasets.md",
       "staged_date": "2026-11-24"
     }
   ]

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T14:15:48.640Z",
-  "total_records": 2530,
+  "last_updated": "2026-11-24T14:24:26.740Z",
+  "total_records": 2532,
   "domains": {
     "A": {
       "total": 22,
@@ -1040,7 +1040,7 @@
       ]
     },
     "F": {
-      "total": 108,
+      "total": 110,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -1149,7 +1149,9 @@
         "domain_intelligence-design-intelligence-saffsanity-sill-core-invariants",
         "domain_intelligence-design-intelligence-saffsanity-sill-learnings-core-invariants",
         "domain_intelligence-design-intelligence-encoredev-encore-core-invariants",
-        "domain_intelligence-design-intelligence-encoredev-encore-learnings-core-invariants"
+        "domain_intelligence-design-intelligence-encoredev-encore-learnings-core-invariants",
+        "domain_intelligence-design-intelligence-nucleoidai-nucleoid-core-invariants",
+        "domain_intelligence-design-intelligence-nucleoidai-nucleoid-learnings-core-invariants"
       ]
     },
     "G": {
@@ -16788,8 +16790,8 @@
       "title": "Architecture Intelligence: trinodb/trino Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trinodb-trino-architecture-intelligence-trinodb-trino-core-invariants.md",
       "repository": "trinodb/trino",
-      "content_hash": "49328780532efa5f51b2c0779879b887a28bf4b260f759e6f430d69663cde145",
-      "created_at": "2026-11-23T17:54:15.580Z"
+      "content_hash": "ec853af4c100e33bcb5c5404df92c59ac76bd0b0de5ae4f8bc57f48de0af033f",
+      "created_at": "2026-11-24T14:24:18.962Z"
     },
     "domain_intelligence-architecture-intelligence-oxc-project-oxc-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-oxc-project-oxc-learnings-core-invariants",
@@ -23470,8 +23472,8 @@
       "title": "Architecture Intelligence: trinodb-trino-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trinodb-trino-learnings-architecture-intelligence-trinodb-trino-learnings-core-i.md",
       "repository": "trinodb-trino-learnings",
-      "content_hash": "adca525b30290d9828ac8037f764fe48649a5661300aa42f6152f670e897239d",
-      "created_at": "2026-11-23T17:54:19.517Z"
+      "content_hash": "4d61aab11d3417f0667d98b4ce5afa8591b4830958a4179531d013e96a1920be",
+      "created_at": "2026-11-24T14:24:25.700Z"
     },
     "domain_intelligence-content-information-intelligence-adobe-structured-data-validator-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-adobe-structured-data-validator-core-invariants",
@@ -31264,8 +31266,8 @@
       "title": "Architecture Intelligence: kubernetes-sigs/aws-load-balancer-controller Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kubernetes-sigs-aws-load-balancer-controller-architecture-intelligence-kubernete.md",
       "repository": "kubernetes-sigs/aws-load-balancer-controller",
-      "content_hash": "a30d9decb8e0a5bfd51283cfbc9aaa7c10f621eb764e7a2b91d38259554e2c32",
-      "created_at": "2026-11-21T17:15:32.717Z"
+      "content_hash": "37539351104cb52ab0cdedf0ffd5f12341ef47ea3048b3a264b8d4294cadb50f",
+      "created_at": "2026-11-24T14:24:13.130Z"
     },
     "domain_intelligence-quality-verification-intelligence-cross-encoder-ms-marco-minilm-l6-v2-core-invar": {
       "record_id": "domain_intelligence-quality-verification-intelligence-cross-encoder-ms-marco-minilm-l6-v2-core-invar",
@@ -31368,8 +31370,8 @@
       "title": "Architecture Intelligence: kubernetes-sigs-aws-load-balancer-controller-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kubernetes-sigs-aws-load-balancer-controller-learnings-architecture-intelligence.md",
       "repository": "kubernetes-sigs-aws-load-balancer-controller-learnings",
-      "content_hash": "cb0f2f81af6760f8355f6170e6f4f9c8411a0c71e7ea44310ba50219aafc3968",
-      "created_at": "2026-11-21T17:15:41.687Z"
+      "content_hash": "4fde6040a9e2ea693a4f4c9f04eb18dddafe6cfd962ba66de0e27a50a75eb206",
+      "created_at": "2026-11-24T14:24:24.386Z"
     },
     "domain_intelligence-content-information-intelligence-projectcontour-contour-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-projectcontour-contour-core-invariants",
@@ -42530,6 +42532,24 @@
       "confidence": 0.75,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-24T14:15:45.679Z"
+    },
+    "domain_intelligence-design-intelligence-nucleoidai-nucleoid-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-nucleoidai-nucleoid-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: NucleoidAI/Nucleoid Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-nucleoidai-nucleoid-design-intelligence-nucleoidai-nucleoid-core-invariants.md",
+      "repository": "NucleoidAI/Nucleoid",
+      "content_hash": "867a47f483beac0dbd9185afd7485e5ae2d69f2312ae3a89bdb799d93b47b1b1",
+      "created_at": "2026-11-24T14:24:20.792Z"
+    },
+    "domain_intelligence-design-intelligence-nucleoidai-nucleoid-learnings-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-nucleoidai-nucleoid-learnings-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-nucleoidai-nucleoid-learnings-design-intelligence-nucleoidai-nucleoid-learnings-.md",
+      "repository": "nucleoidai-nucleoid-learnings",
+      "content_hash": "1d7930b54c40fd0ff02b361390c9ef551f9daa1c262310a10c1b9cf5f6e35874",
+      "created_at": "2026-11-24T14:24:26.740Z"
     }
   }
 }

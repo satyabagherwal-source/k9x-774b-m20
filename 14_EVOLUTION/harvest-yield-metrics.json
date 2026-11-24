@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T14:15:13.899Z",
-  "total_cycles_completed": 12065,
-  "total_learnings_persisted": 12065,
-  "total_rules_promoted": 11133,
+  "last_updated": "2026-11-24T14:24:20.375Z",
+  "total_cycles_completed": 12068,
+  "total_learnings_persisted": 12068,
+  "total_rules_promoted": 11136,
   "history": [
-    {
-      "timestamp": "2026-11-23T21:31:35.852Z",
-      "repository": "tursodatabase/turso",
-      "learningId": "learn-github-tursodatabase-turso",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T21:39:47.921Z",
-      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
-      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T21:40:01.639Z",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "learningId": "learn-github-aleo-labs-protocol-snarkos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T21:48:01.792Z",
       "repository": "inclusionAI/Ling-3.2-air",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-24T14:15:13.899Z",
       "repository": "arangodb/arangodb",
       "learningId": "learn-github-arangodb-arangodb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T14:24:12.693Z",
+      "repository": "kubernetes-sigs/aws-load-balancer-controller",
+      "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T14:24:18.528Z",
+      "repository": "trinodb/trino",
+      "learningId": "learn-github-trinodb-trino",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T14:24:20.375Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

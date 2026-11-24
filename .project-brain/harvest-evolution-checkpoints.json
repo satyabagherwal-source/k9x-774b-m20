@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T14:15:49.008Z",
+  "last_updated": "2026-11-24T14:24:27.066Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-24T13:21:19.659Z",
@@ -758,7 +758,7 @@
       "staged_for_review": 1
     },
     "trinodb-trino-learnings.md": {
-      "processed_at": "2026-11-23T17:54:18.919Z",
+      "processed_at": "2026-11-24T14:24:24.737Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -773,7 +773,7 @@
       "staged_for_review": 1
     },
     "nucleoidai-nucleoid-learnings.md": {
-      "processed_at": "2026-11-23T18:32:32.939Z",
+      "processed_at": "2026-11-24T14:24:26.043Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1368,7 +1368,7 @@
       "staged_for_review": 1
     },
     "kubernetes-sigs-aws-load-balancer-controller-learnings.md": {
-      "processed_at": "2026-11-21T17:15:41.102Z",
+      "processed_at": "2026-11-24T14:24:23.810Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3823,7 +3823,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 3795,
+  "total_dossiers_evaluated": 3798,
   "total_canonical_promoted": 509,
-  "total_staged_for_review": 2873
+  "total_staged_for_review": 2876
 }

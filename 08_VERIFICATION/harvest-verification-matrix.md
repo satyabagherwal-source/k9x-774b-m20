@@ -12696,3 +12696,6 @@
 | `CYCLE-20261124-12Q5` | `2026-11-24T14:15:09.581Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10275` | Yes (`3771887a...`) |
 | `CYCLE-20261124-161T` | `2026-11-24T14:15:13.889Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10276` | Yes (`37d0e495...`) |
 | `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T14:15:45.715Z` | `nginx-kubernetes-ingress` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-3AEE5D3A` [Domain K] | Yes (`f1a5e7eb...`) |
+| `CYCLE-20261124-CPSA` | `2026-11-24T14:24:12.682Z` | `kubernetes-sigs/aws-load-balancer-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10277` | Yes (`12615027...`) |
+| `CYCLE-20261124-CUAE` | `2026-11-24T14:24:18.518Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10278` | Yes (`f7ee3f63...`) |
+| `CYCLE-20261124-CVPP` | `2026-11-24T14:24:20.365Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9374` | Yes (`1ace596c...`) |

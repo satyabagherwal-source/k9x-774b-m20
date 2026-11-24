@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "6c8cbc67",
+    "sourceVersion": "449e97bb",
     "license": "Apache-2.0",
-    "contentHash": "8dae7bf3e901cd82db9715e5459b41b226c4f25dcc1450bc8176e9bc1c96f919",
-    "lastHarvestedAt": "2026-11-23T18:32:29.102Z",
+    "contentHash": "1ace596c2a6f355c17b207b443ab0f9ab1be242b6ade770efd95abb750bd93d1",
+    "lastHarvestedAt": "2026-11-24T14:24:20.369Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -5073,10 +5073,10 @@
     "repository": "trinodb/trino",
     "platform": "github",
     "sourceUrl": "https://github.com/trinodb/trino",
-    "sourceVersion": "79e960f9",
+    "sourceVersion": "39a37d40",
     "license": "Apache-2.0",
-    "contentHash": "2c86ea0f37d9e4d4a40002ef4e6482f0a995e5b10fe0ab08736d08830609be9c",
-    "lastHarvestedAt": "2026-11-23T17:54:15.203Z",
+    "contentHash": "f7ee3f636a6350375a5451076041161aa36add6e53d46492396889a3b6578331",
+    "lastHarvestedAt": "2026-11-24T14:24:18.522Z",
     "learningId": "learn-github-trinodb-trino"
   },
   "pinterest-gestalt": {
@@ -6703,10 +6703,10 @@
     "repository": "kubernetes-sigs/aws-load-balancer-controller",
     "platform": "github",
     "sourceUrl": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
-    "sourceVersion": "741e1637",
+    "sourceVersion": "1c602959",
     "license": "Apache-2.0",
-    "contentHash": "0c090dcd60d755535bd91b2c53cc6f6170012f3835da344ac4c5b0ba2b9bfc7a",
-    "lastHarvestedAt": "2026-11-21T17:15:32.200Z",
+    "contentHash": "12615027c7e7f80aba5bfb5d3459eedb03cc9df6faba7a450bf964c0d7656871",
+    "lastHarvestedAt": "2026-11-24T14:24:12.687Z",
     "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller"
   },
   "qdrant-qdrant": {

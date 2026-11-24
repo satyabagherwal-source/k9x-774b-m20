@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T14:15:48.844Z",
+  "last_updated": "2026-11-24T14:24:26.920Z",
   "total_verified_learnings": 9095,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24666,
+  "total_items": 24672,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -230310,8 +230310,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "6c8cbc67",
-      "content_hash": "8dae7bf3e901cd82db9715e5459b41b226c4f25dcc1450bc8176e9bc1c96f919",
+      "source_version": "449e97bb",
+      "content_hash": "1ace596c2a6f355c17b207b443ab0f9ab1be242b6ade770efd95abb750bd93d1",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -230438,7 +230438,7 @@
         {
           "number": 9374,
           "title": "Remove comments from ARC datasets",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 9387,
@@ -230576,7 +230576,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T18:32:28.891Z",
+      "verified_at": "2026-11-24T14:24:20.163Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230630,10 +230630,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "6c8cbc67",
-      "content_hash": "869b911c9693b9af5d8eedafc5c29512c16d2303f7fbf21d065ad9ea3c6e6186",
+      "source_version": "449e97bb",
+      "content_hash": "fd7463d0ce468cb2de1ac9e851c1de6df22cc5a2c569ab9012955e1f580c0f3e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T18:32:29.674Z"
+      "persisted_at": "2026-11-24T14:24:20.968Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -231753,9 +231753,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nucleoidai-nucleoid-learnings",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "3d4f754b37632e2474c141e09629e07736c0c3a285ca8bd0836438a311f529e1",
+      "content_hash": "1cf08d3e9e33ef5498aeabfd60d8c91ccd21e1e5fc642633061793d01f913af3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T18:32:33.759Z"
+      "persisted_at": "2026-11-24T14:24:26.920Z"
     },
     "learn-huggingface-qwen-qwen3-8b": {
       "learning_id": "learn-huggingface-qwen-qwen3-8b",
@@ -233916,8 +233916,8 @@
       "slug": "trinodb-trino",
       "platform": "github",
       "source_url": "https://github.com/trinodb/trino",
-      "source_version": "79e960f9",
-      "content_hash": "2c86ea0f37d9e4d4a40002ef4e6482f0a995e5b10fe0ab08736d08830609be9c",
+      "source_version": "39a37d40",
+      "content_hash": "f7ee3f636a6350375a5451076041161aa36add6e53d46492396889a3b6578331",
       "dossier_path": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "promoted_rules": [
@@ -233975,6 +233975,11 @@
           "number": 10088,
           "title": "Elasticsearch table listing when an index is dropped",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10278,
+          "title": "Speed up null position filtering on validity bitmaps",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -233982,7 +233987,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T17:54:14.988Z",
+      "verified_at": "2026-11-24T14:24:18.299Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234024,10 +234029,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trinodb-trino-architecture-intelligence-trinodb-trino-core-invariants.md",
       "title": "Architecture Intelligence: trinodb/trino Core Invariants",
       "repository": "trinodb/trino",
-      "source_version": "79e960f9",
-      "content_hash": "49328780532efa5f51b2c0779879b887a28bf4b260f759e6f430d69663cde145",
+      "source_version": "39a37d40",
+      "content_hash": "ec853af4c100e33bcb5c5404df92c59ac76bd0b0de5ae4f8bc57f48de0af033f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T17:54:15.580Z"
+      "persisted_at": "2026-11-24T14:24:18.962Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-trinodb-trino": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-trinodb-trino",
@@ -234036,10 +234041,10 @@
       "relative_path": "08_VERIFICATION/trinodb-trino-verification-protocol-empirical-defect-shield-for-trinodb-trino.md",
       "title": "Verification Protocol: Empirical Defect Shield for trinodb/trino",
       "repository": "trinodb/trino",
-      "source_version": "79e960f9",
-      "content_hash": "594f15a881a78f481798478d706997fa3038c7d7ae3aeb5a1ab102e02f4a1b63",
+      "source_version": "39a37d40",
+      "content_hash": "29c3e4aa481563b330d253124447b3f70d1492edfd167de25284c7106faa828b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T17:54:15.759Z"
+      "persisted_at": "2026-11-24T14:24:19.161Z"
     },
     "candidate_directive-semantic-preserve-catch-and-var-binding-identities": {
       "item_id": "candidate_directive-semantic-preserve-catch-and-var-binding-identities",
@@ -255024,9 +255029,9 @@
       "title": "Architecture Intelligence: trinodb-trino-learnings Core Invariants",
       "repository": "trinodb-trino-learnings",
       "source_version": "HEAD",
-      "content_hash": "adca525b30290d9828ac8037f764fe48649a5661300aa42f6152f670e897239d",
+      "content_hash": "4d61aab11d3417f0667d98b4ce5afa8591b4830958a4179531d013e96a1920be",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T17:54:19.517Z"
+      "persisted_at": "2026-11-24T14:24:25.700Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-trinodb-trino-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-trinodb-trino-learnings",
@@ -255036,9 +255041,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for trinodb-trino-learnings",
       "repository": "trinodb-trino-learnings",
       "source_version": "HEAD",
-      "content_hash": "71ebdbc256d7d7a9c5cd836640dec9756263c0e50dcc017911dfc84ef7c88ab3",
+      "content_hash": "44a2c9dc7db4c45d7ffb2bd3310dfb1f0e2b4e3c50b75e2ea1ea202539296bdd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T17:54:19.688Z"
+      "persisted_at": "2026-11-24T14:24:25.878Z"
     },
     "learn-github-adobe-structured-data-validator": {
       "learning_id": "learn-github-adobe-structured-data-validator",
@@ -289951,8 +289956,8 @@
       "slug": "kubernetes-sigs-aws-load-balancer-controller",
       "platform": "github",
       "source_url": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
-      "source_version": "741e1637",
-      "content_hash": "0c090dcd60d755535bd91b2c53cc6f6170012f3835da344ac4c5b0ba2b9bfc7a",
+      "source_version": "1c602959",
+      "content_hash": "12615027c7e7f80aba5bfb5d3459eedb03cc9df6faba7a450bf964c0d7656871",
       "dossier_path": "07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md",
       "promoted_rules": [
@@ -289970,6 +289975,11 @@
           "number": 9808,
           "title": "Empirical Invariant Guard in annotations.md",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10277,
+          "title": "Empirical Invariant Guard in endpoint_resolver.go",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -289977,7 +289987,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T17:15:31.894Z",
+      "verified_at": "2026-11-24T14:24:12.459Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -290019,10 +290029,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kubernetes-sigs-aws-load-balancer-controller-architecture-intelligence-kubernete.md",
       "title": "Architecture Intelligence: kubernetes-sigs/aws-load-balancer-controller Core Invariants",
       "repository": "kubernetes-sigs/aws-load-balancer-controller",
-      "source_version": "741e1637",
-      "content_hash": "a30d9decb8e0a5bfd51283cfbc9aaa7c10f621eb764e7a2b91d38259554e2c32",
+      "source_version": "1c602959",
+      "content_hash": "37539351104cb52ab0cdedf0ffd5f12341ef47ea3048b3a264b8d4294cadb50f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T17:15:32.717Z"
+      "persisted_at": "2026-11-24T14:24:13.130Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-kubernetes-sigs-aws-load-balan": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kubernetes-sigs-aws-load-balan",
@@ -290032,9 +290042,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for kubernetes-sigs-aws-load-balancer-controller-learnings",
       "repository": "kubernetes-sigs-aws-load-balancer-controller-learnings",
       "source_version": "HEAD",
-      "content_hash": "159e07459764cbfa47aaf2927c1e1e7ce36c5f2b017805a220c2bd7041926e2e",
+      "content_hash": "74c4e957b914867e5f1cea07eedd03b12eaf6f00e74f179f21d50c882173c0cc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T17:15:41.953Z"
+      "persisted_at": "2026-11-24T14:24:24.564Z"
     },
     "rule-9194": {
       "learning_id": "rule-9194",
@@ -290208,9 +290218,9 @@
       "title": "Architecture Intelligence: kubernetes-sigs-aws-load-balancer-controller-learnings Core Invariants",
       "repository": "kubernetes-sigs-aws-load-balancer-controller-learnings",
       "source_version": "HEAD",
-      "content_hash": "cb0f2f81af6760f8355f6170e6f4f9c8411a0c71e7ea44310ba50219aafc3968",
+      "content_hash": "4fde6040a9e2ea693a4f4c9f04eb18dddafe6cfd962ba66de0e27a50a75eb206",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T17:15:41.687Z"
+      "persisted_at": "2026-11-24T14:24:24.386Z"
     },
     "rule-9198": {
       "learning_id": "rule-9198",
@@ -298351,25 +298361,25 @@
       "rule_number": 9374,
       "title": "Remove comments from ARC datasets",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "08c6985f",
+      "source_version": "449e97bb",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-19T11:50:44.364Z"
+      "verified_at": "2026-11-24T14:24:20.163Z"
     },
     "candidate_directive-remove-comments-from-arc-datasets": {
       "item_id": "candidate_directive-remove-comments-from-arc-datasets",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-OZXH-remove-comments-from-arc-datasets.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-D0HV-remove-comments-from-arc-datasets.md",
       "title": "Remove comments from ARC datasets",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "ac0d2b155d6793d98c792de531e0141d48c1c177a4f80d59d771444806e88548",
-      "domain_letter": "H",
-      "persisted_at": "2026-11-19T11:51:26.704Z"
+      "content_hash": "cc27bf67598668e92613375720c49bb39b27ccdce436acedf2c8446fe27bcf1a",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-24T14:24:26.566Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen-image-2-1-turbo-learnings-core-inva": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen-image-2-1-turbo-learnings-core-inva",
@@ -336706,6 +336716,82 @@
       "content_hash": "95ba11f7b5c3b9cb46815a6100cfb1482c096b927964a4121cda5cffd69c525e",
       "domain_letter": "H",
       "persisted_at": "2026-11-24T14:15:47.511Z"
+    },
+    "rule-10277": {
+      "learning_id": "rule-10277",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10277,
+      "title": "Empirical Invariant Guard in endpoint_resolver.go",
+      "source_url": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
+      "source_version": "1c602959",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T14:24:12.459Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-endpoint_resolver-go": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-endpoint_resolver-go",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CYO3-empirical-invariant-guard-in-endpoint_resolver-go.md",
+      "title": "Empirical Invariant Guard in endpoint_resolver.go",
+      "repository": "kubernetes-sigs-aws-load-balancer-controller-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4e16a6f4c760ea7fc5ec2859e173c322f6f35be8124c58f8108fb9c62e9bdd3d",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-24T14:24:24.199Z"
+    },
+    "rule-10278": {
+      "learning_id": "rule-10278",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10278,
+      "title": "Speed up null position filtering on validity bitmaps",
+      "source_url": "https://github.com/trinodb/trino",
+      "source_version": "39a37d40",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T14:24:18.299Z"
+    },
+    "candidate_directive-speed-up-null-position-filtering-on-validity-bitmaps": {
+      "item_id": "candidate_directive-speed-up-null-position-filtering-on-validity-bitmaps",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CZP2-speed-up-null-position-filtering-on-validity-bitmaps.md",
+      "title": "Speed up null position filtering on validity bitmaps",
+      "repository": "trinodb-trino-learnings",
+      "source_version": "HEAD",
+      "content_hash": "df01b8f0a2a8f8628bdf96df5d43cb04f5183eb22404952ba1c13c7f13c73862",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-24T14:24:25.529Z"
+    },
+    "domain_intelligence-design-intelligence-nucleoidai-nucleoid-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-nucleoidai-nucleoid-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-nucleoidai-nucleoid-design-intelligence-nucleoidai-nucleoid-core-invariants.md",
+      "title": "Design Intelligence: NucleoidAI/Nucleoid Core Invariants",
+      "repository": "NucleoidAI/Nucleoid",
+      "source_version": "449e97bb",
+      "content_hash": "867a47f483beac0dbd9185afd7485e5ae2d69f2312ae3a89bdb799d93b47b1b1",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-24T14:24:20.792Z"
+    },
+    "domain_intelligence-design-intelligence-nucleoidai-nucleoid-learnings-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-nucleoidai-nucleoid-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-nucleoidai-nucleoid-learnings-design-intelligence-nucleoidai-nucleoid-learnings-.md",
+      "title": "Design Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
+      "repository": "nucleoidai-nucleoid-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1d7930b54c40fd0ff02b361390c9ef551f9daa1c262310a10c1b9cf5f6e35874",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-24T14:24:26.740Z"
     }
   },
   "ai-builder-brain": {

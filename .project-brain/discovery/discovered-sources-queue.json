@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T14:15:47.242Z",
+  "updated_at": "2026-11-24T14:24:25.280Z",
   "stats": {
-    "total_discovered": 8656,
-    "approved_pending_harvest": 8202,
+    "total_discovered": 8664,
+    "approved_pending_harvest": 8204,
     "harvested_count": 0,
-    "rejected_count": 454,
+    "rejected_count": 460,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8198,
+      "COMMUNITY_AND_EXPERT": 8206,
       "OFFICIAL_DOCUMENTATION": 269,
       "STANDARDS_AND_SPECIFICATIONS": 125,
       "ENGINEERING_BLOGS": 7,
@@ -187277,6 +187277,140 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
         "fileName": "arangodb-arangodb-learnings.md"
+      }
+    },
+    "SRC-E64FE7C5DC51": {
+      "id": "SRC-E64FE7C5DC51",
+      "url": "https://aws.amazon.com/blogs/networking-and-content-delivery/introducing-mtls-for-network-load-balancer",
+      "title": "https://aws.amazon.com/blogs/networking-and-content-delivery/introducing-mtls-for-network-load-balancer",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T14:24:23.867Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md",
+        "fileName": "kubernetes-sigs-aws-load-balancer-controller-learnings.md"
+      }
+    },
+    "SRC-5259A05E5D43": {
+      "id": "SRC-5259A05E5D43",
+      "url": "https://aws.amazon.com/about-aws/whats-new/2026/11/network-load-balancer-mtls",
+      "title": "https://aws.amazon.com/about-aws/whats-new/2026/11/network-load-balancer-mtls",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T14:24:23.933Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md",
+        "fileName": "kubernetes-sigs-aws-load-balancer-controller-learnings.md"
+      }
+    },
+    "SRC-247509289682": {
+      "id": "SRC-247509289682",
+      "url": "http://xml.org/sax/features/external-general-entities",
+      "title": "http://xml.org/sax/features/external-general-entities",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-24T14:24:24.993Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trinodb-trino-learnings.md",
+        "fileName": "trinodb-trino-learnings.md"
+      }
+    },
+    "SRC-EC27F73183DB": {
+      "id": "SRC-EC27F73183DB",
+      "url": "http://xml.org/sax/features/external-parameter-entities",
+      "title": "http://xml.org/sax/features/external-parameter-entities",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-24T14:24:25.055Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trinodb-trino-learnings.md",
+        "fileName": "trinodb-trino-learnings.md"
+      }
+    },
+    "SRC-BCFA6D3B6873": {
+      "id": "SRC-BCFA6D3B6873",
+      "url": "http://javax.xml.xmlconstants/property/accessExternalDTD",
+      "title": "http://javax.xml.xmlconstants/property/accessExternalDTD",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-24T14:24:25.113Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trinodb-trino-learnings.md",
+        "fileName": "trinodb-trino-learnings.md"
+      }
+    },
+    "SRC-22AFF8D78C0C": {
+      "id": "SRC-22AFF8D78C0C",
+      "url": "http://javax.xml.xmlconstants/property/accessExternalSchema",
+      "title": "http://javax.xml.xmlconstants/property/accessExternalSchema",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-24T14:24:25.169Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trinodb-trino-learnings.md",
+        "fileName": "trinodb-trino-learnings.md"
+      }
+    },
+    "SRC-37A4CD19CD28": {
+      "id": "SRC-37A4CD19CD28",
+      "url": "http://javax.xml.xmlconstants/feature/secure-processing",
+      "title": "http://javax.xml.xmlconstants/feature/secure-processing",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-24T14:24:25.224Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trinodb-trino-learnings.md",
+        "fileName": "trinodb-trino-learnings.md"
+      }
+    },
+    "SRC-B68DA43FC1AC": {
+      "id": "SRC-B68DA43FC1AC",
+      "url": "http://apache.org/xml/features/nonvalidating/load-external-dtd",
+      "title": "http://apache.org/xml/features/nonvalidating/load-external-dtd",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-24T14:24:25.280Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trinodb-trino-learnings.md",
+        "fileName": "trinodb-trino-learnings.md"
       }
     }
   }

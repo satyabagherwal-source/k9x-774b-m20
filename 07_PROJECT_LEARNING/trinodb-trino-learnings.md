@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source**: github ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
-> **Source Version**: `79e960f9`  
+> **Source Version**: `39a37d40`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T17:54:14.276Z  
+> **Timestamp**: 2026-11-24T14:24:17.395Z  
 > **Learning ID**: `learn-github-trinodb-trino`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T17:54:14.271Z  
+> **Harvest Timestamp**: 2026-11-24T14:24:17.390Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Official repository of Trino, the distributed SQL query engine for big data, formerly known as PrestoSQL (https://trino.io)
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13540 stars
+- **Stars / Engagement**: 13542 stars
 
 ---
 
@@ -1854,267 +1854,494 @@ export const SqlBlock = ({ language, code }) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f6443d0c` (2026-11-20)
-**Commit Message**: Fix Elasticsearch table listing when an index is dropped
+### Incident Patch 1: `11a3933b` (2026-08-19)
+**Commit Message**: Speed up null position filtering on validity bitmaps
 
-With X-Pack security enabled, Elasticsearch fails the _cat/indices
-request with 404 index_not_found_exception when an index is deleted
-while the response is being built. Retry the request a few times on
-that error, so that SHOW TABLES and information_schema queries do not
-fail.
+BenchmarkNullablePositions, 8192 rows, median of 3 interleaved runs.
+Cases without nulls are left out because callers skip those blocks.
 
-**File**: `plugin/trino-elasticsearch/src/main/java/io/trino/plugin/elasticsearch/client/ElasticsearchClient.java` (modified, +33/-0)
+Blocks  Nulls  Kind        Before (ns)  After (ns)  Change
+1       0.01   DICTIONARY       11,794       8,283    -30%
+1       0.01   VALUE            10,080       7,735    -23%
+1       0.5    DICTIONARY       11,726       7,991    -32%
+1       0.5    VALUE            11,441       6,622    -42%
+4       0.01   DICTIONARY       37,813      31,285    -17%
+4       0.01   MIXED            33,478      21,444    -36%
+4       0.01   VALUE            30,101      11,238    -63%
+4       0.5    DICTIONARY       39,225      23,155    -41%
+4       0.5    MIXED            33,430      11,881    -64%
+4       0.5    VALUE            30,551       2,070    -93%
+
+**File**: `core/trino-main/src/main/java/io/trino/operator/join/NullablePositions.java` (modified, +95/-75)
 ```diff
-@@ -19,6 +19,8 @@
- import com.google.common.collect.ImmutableSet;
- import com.google.common.collect.Sets;
- import com.google.inject.Inject;
-+import dev.failsafe.Failsafe;
-+import dev.failsafe.RetryPolicy;
- import io.airlift.json.JsonCodec;
- import io.airlift.json.JsonMapperProvider;
- import io.airlift.log.Logger;
-@@ -102,6 +104,7 @@
- import static java.lang.StrictMath.toIntExact;
- import static java.lang.String.format;
- import static java.nio.charset.StandardCharsets.UTF_8;
-+import static java.time.temporal.ChronoUnit.MILLIS;
- import static java.util.concurrent.Executors.newSingleThreadScheduledExecutor;
- import static java.util.concurrent.TimeUnit.MILLISECONDS;
- import static java.util.stream.Collectors.joining;
-@@ -118,6 +121,13 @@ public class ElasticsearchClient
-     private static final Pattern ADDRESS_PATTERN = Pattern.compile("((?<cname>[^/]+)/)?(?<ip>.+):(?<port>\\d+)");
-     private static final Set<String> NODE_ROLES = ImmutableSet.of("data", "data_content", "data_hot", "data_warm", "data_cold", "data_frozen");
+@@ -22,6 +22,13 @@
+ import java.util.Arrays;
+ import java.util.Optional;
  
-+    // _cat/indices fails when an index is deleted while the response is being built
-+    private static final RetryPolicy<List<String>> INDEX_LISTING_RETRY_POLICY = RetryPolicy.<List<String>>builder()
-+            .withMaxAttempts(3)
-+            .withBackoff(10, 100, MILLIS)
-+            .handleIf(ElasticsearchClient::isIndexNotFound)
-+            .build();
++import static io.trino.spi.block.Bitmap.allocateWords;
++import static io.trino.spi.block.Bitmap.getBits;
++import static io.trino.spi.block.Bitmap.hasUnsetBit;
++import static io.trino.spi.block.Bitmap.isSet;
++import static io.trino.sql.gen.columnar.ColumnarFilterUtils.filterSetBitsRange;
++import static java.lang.Math.min;
 +
-     private final BackpressureRestClient client;
-     private final int scrollSize;
-     private final Duration scrollTimeout;
-@@ -384,6 +394,11 @@ public boolean indexExists(String index)
+ public final class NullablePositions
+ {
+     private NullablePositions() {}
+@@ -37,7 +44,7 @@ public static Optional<int[]> getNonNullPositions(Block[] nullableBlocks, int nu
+             return Optional.empty();
+         }
+         if (nullableBlocksCount == 1) {
+-            // Special case for a single nullable block to avoid the need for explicit `boolean[] isNull`
++            // Special case for a single nullable block to avoid the need for an explicit validity accumulator
+             int[] outputPositions = new int[positionCount];
+             int outputPositionsCount = getNonNullPositions(nullableBlocks[0], positionCount, outputPositions);
+             if (outputPositionsCount == positionCount) {
+@@ -46,15 +53,13 @@ public static Optional<int[]> getNonNullPositions(Block[] nullableBlocks, int nu
+             return Optional.of(Arrays.copyOf(outputPositions, outputPositionsCount));
+         }
+ 
+-        boolean[] isNull = new boolean[positionCount];
+-        for (int i = 0; i < nullableBlocksCount - 1; i++) {
+-            Block nullableBlock = nullableBlocks[i];
+-            getNonNullPositions(nullableBlock, isNull);
++        long[] valueIsValid = allocateWords(positionCount, true);
++        for (int i = 0; i < nullableBlocksCount; i++) {
++            retainNonNullPositions(nullableBlocks[i], valueIsValid, positionCount);
+         }
+ 
+         int[] outputPositions = new int[positionCount];
+-        // For the last nullable block, we need to fill outputPositions and count non-null positions
+-        int outputPositionsCount = getNonNullPositionsLast(nullableBlocks[nullableBlocksCount - 1], isNull, outputPositions);
++        int outputPositionsCount = filterSetBitsRange(valueIsValid, 0, 0, positionCount, outputPositions);
+         if (outputPositionsCount == positionCount) {
+             return Optional.empty();
+         }
+@@ -71,30 +76,38 @@ private static int getNonNullPositions(Block nullableBlock, int positionCount, i
+             }
+             case DictionaryBlock dictionaryBlock -> {
+                 ValueBlock dictionary = dictionaryBlock.getDictionary();
+-                Optional<Bitmap> dictionaryValidity = dictionary.getValidityBitmap();
+-                if (dictionaryValidity.isPresent()) {
++                if (hasNulls(dictionary)) {
+                     int outputPositionCount = 0;
+-                    long[] dictionaryIsValid = dictionaryValidity.get().getRawWords();
+-                    int validityOffset = dictionaryValidity.get().getRawBitOffset();
+-                    for (int position = 0; position < positionCount; position++) {
+-                        boolean isNull = !Bitmap.isSet(dictionaryIsValid, validityOffset, dictionaryBlock.getId(position));
+-                        outputPositions[outputPositionCount] = position;
+-                        outputPositionCount += isNull ? 0 : 1;
++                    if (positionCount >= dictionary.getPositionCount()) {
++                        // The page dominates the dictionary, so the decode amortizes and the
++                        // gather is an id lookup plus a byte load
++                        byte[] dictionaryIsValid = decodeValidity(dictionary);
++                        for (int position = 0; position < positionCount; position++) {
++                            outputPositions[outputPositionCount] = position;
++                            outputPositionCount += dictionaryIsValid[dictionaryBlock.getId(position)];
++                        }
++                    }
++                    else {
++                        // The dictionary dominates the page, so read the bits directly instead of
++                        // paying a decode proportional to the dictionary size
++                        Bitmap validityBitmap = dictionary.getValidityBitmap().orElseThrow();
++                        long[] words = validityBitmap.getRawWords();
++                        int offset = validityBitmap.getRawBitOffset();
++                        for (int position = 0; position < positionCount; position++) {
++                            int bit = offset + dictionaryBlock.getId(position);
++                            outputPositions[outputPositionCount] = position;
++                            // Branchless: the validity bit is extracted as 0 or 1 and added directly
++                            outputPositionCount += (int) ((words[bit >>> 6] >>> (bit & 63)) & 1);
++                        }
+                     }
+                     return outputPositionCount;
+                 }
+             }
+             case ValueBlock valueBlock -> {
+                 Optio
+```
+
+**File**: `core/trino-main/src/main/java/io/trino/sql/gen/columnar/ColumnarFilterUtils.java` (modified, +14/-6)
+```diff
+@@ -17,7 +17,7 @@
+ import static io.trino.spi.block.Bitmap.isSet;
+ import static java.lang.Math.min;
+ 
+-final class ColumnarFilterUtils
++public final class ColumnarFilterUtils
+ {
+     private ColumnarFilterUtils() {}
+ 
+@@ -26,18 +26,26 @@ static boolean isValid(long[] validity, int rawBitOffset, int position)
+         return isSet(validity, rawBitOffset, position);
      }
  
-     public List<String> getIndexes()
+-    static int filterSetBitsRange(long[] validity, int rawBitOffset, int offset, int size, int[] outputPositions)
++    public static int filterSetBitsRange(long[] validity, int rawBitOffset, int offset, int size, int[] outputPositions)
+     {
+         int outputCount = 0;
+         int end = offset + size;
+         int position = offset;
+         while (position < end) {
+             int bitsInWord = min(Long.SIZE, end - position);
+             long bits = getBits(validity, rawBitOffset, position, bitsInWord);
+-            while (bits != 0) {
+-                int bit = Long.numberOfTrailingZeros(bits);
+-                outputPositions[outputCount++] = position + bit;
+-                bits &= bits - 1;
++            if (Long.bitCount(bits) == bitsInWord) {
++                // Dense case: emitting sequentially beats walking bits one at a time
++                for (int bit = 0; bit < bitsInWord; bit++) {
++                    outputPositions[outputCount++] = position + bit;
++                }
++            }
++            else {
++                while (bits != 0) {
++                    int bit = Long.numberOfTrailingZeros(bits);
++                    outputPositions[outputCount++] = position + bit;
++                    bits &= bits - 1;
++                }
+             }
+             position += bitsInWord;
+         }
+```
+
+**File**: `core/trino-main/src/test/java/io/trino/operator/join/nonspilling/TestJoinProbe.java` (modified, +58/-0)
+```diff
+@@ -13,13 +13,17 @@
+  */
+ package io.trino.operator.join.nonspilling;
+ 
++import com.google.common.collect.ImmutableList;
+ import io.trino.spi.block.Block;
++import io.trino.spi.block.RunLengthEncodedBlock;
+ import io.trino.spi.block.ValueBlock;
+ import org.junit.jupiter.api.Test;
+ 
+ import java.util.Arrays;
++import java.util.List;
+ import java.util.Optional;
+ 
++import static io.trino.block.BlockAssertions.createLongsBlock;
+ import static io.trino.block.BlockAssertions.createRandomBlockForType;
+ import static io.trino.block.BlockAssertions.createRandomDictionaryBlock;
+ import static io.trino.block.BlockAssertions.createRandomRleBlock;
+@@ -77,6 +81,60 @@ void testGetNonNullPositionsReturnsEmptyWhenAllNonNull()
+         assertThat(getNonNullPositions(blocks, blocks.length, positionCount)).isEmpty();
+     }
+ 
++    @Test
++    void testGetNonNullPositionsBlockKinds()
 +    {
-+        return Failsafe.with(INDEX_LISTING_RETRY_POLICY).get(this::listIndexes);
++        for (int positionCount : new int[] {4, 63, 64, 65, 100, 8192}) {
++            List<Block> blocks = blockKinds(positionCount);
++            for (Block block : blocks) {
++                assertNonNullPositions(new Block[] {block}, positionCount);
++                for (Block other : blocks) {
++                    assertNonNullPositions(new Block[] {block, other}, positionCount);
++                }
++            }
++        }
 +    }
 +
-+    private List<String> listIndexes()
++    @Test
++    void testGetNonNullPositionsTinyPages()
++    {
++        Block empty = BIGINT.createBlockBuilder(null, 0).build();
++        assertThat(getNonNullPositions(new Block[] {empty}, 1, 0)).isEmpty();
++        assertThat(getNonNullPositions(new Block[] {empty, empty}, 2, 0)).isEmpty();
++
++        Block nullValue = createLongsBlock((Long) null);
++        Block value = createLongsBlock(7L);
++        assertNonNullPositions(new Block[] {nullValue}, 1);
++        assertNonNullPositions(new Block[] {value}, 1);
++        assertNonNullPositions(new Block[] {value, nullValue}, 1);
++        assertNonNullPositions(new Block[] {value, value}, 1);
++    }
++
++    private static List<Block> blockKinds(int positionCount)
++    {
++        return ImmutableList.of(
++                createRandomBlockForType(BIGINT, positionCount, 0.3f),
++                createRandomBlockForType(BIGINT, positionCount + 37, 0.3f).getRegion(37, positionCount),
++                RunLengthEncodedBlock.create(BIGINT, null, positionCount),
++                RunLengthEncodedBlock.create(BIGINT, 5L, positionCount),
++                createRandomDictionaryBlock(createLongsBlock(1L, null, 2L, null), positionCount),
++                createRandomDictionaryBlock(createRandomBlockForType(BIGINT, 10_000, 0.3f), positionCount),
++                createRandomDictionaryBlock(createRandomBlockForType(BIGINT, 10_037, 0.3f).getRegion(37, 10_000), positionCount),
++                createRandomDictionaryBlock(createRandomBlockForType(BIGINT, 16, 0f), positionCount));
++    }
++
++    private static void assertNonNullPositions(Block[] blocks, int positionCount)
++    {
++        int[] expected = getExpectedNonNullPositions(blocks, positionCount);
++        Optional<int[]> actual = getNonNullPositions(blocks, blocks.length, positionCount);
++        if (expected.length == positionCount) {
++            assertThat(actual).isEmpty();
++        }
++        else {
++            assertThat(actual).hasValueSatisfying(positions -> assertThat(positions).containsExactly(expected));
++        }
++    }
++
+     private static int[] getExpectedNonNullPositions(Block[] blocks, int positionCount)
      {
-         return doRequest("/_cat/indices?h=index,docs.count,docs.deleted&format=json&s=index:asc", body -> {
-             try {
-@@ -1121,6 +1136,24 @@ private <T> T doRequest(String path, ResponseHandler<T> handler)
+         int[] nonNullPositions = new int[positionCount];
+```
+
+---
+
+### Incident Patch 2: `dd9b23d6` (2026-08-19)
+**Commit Message**: Add benchmark for join null position filtering
+
+NullablePositions runs once per page per nullable join key
+(BigintPagesHash, DefaultPagesHash, JoinProbe) but had no benchmark.
+Measure it across block count, block kind, null rate and position count
+before changing its implementation, so the boolean[] baseline stays
+reproducible.
+
+**File**: `core/trino-main/src/test/java/io/trino/operator/join/BenchmarkNullablePositions.java` (added, +137/-0)
+```diff
+@@ -0,0 +1,137 @@
++/*
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++package io.trino.operator.join;
++
++import io.trino.spi.block.Block;
++import io.trino.spi.block.DictionaryBlock;
++import io.trino.spi.block.LongArrayBlockBuilder;
++import org.junit.jupiter.api.Test;
++import org.openjdk.jmh.annotations.Benchmark;
++import org.openjdk.jmh.annotations.BenchmarkMode;
++import org.openjdk.jmh.annotations.Fork;
++import org.openjdk.jmh.annotations.Measurement;
++import org.openjdk.jmh.annotations.Mode;
++import org.openjdk.jmh.annotations.OutputTimeUnit;
++import org.openjdk.jmh.annotations.Param;
++import org.openjdk.jmh.annotations.Scope;
++import org.openjdk.jmh.annotations.Setup;
++import org.openjdk.jmh.annotations.State;
++import org.openjdk.jmh.annotations.Warmup;
++
++import java.util.Optional;
++import java.util.Random;
++
++import static io.trino.jmh.Benchmarks.benchmark;
++import static java.util.concurrent.TimeUnit.MILLISECONDS;
++import static java.util.concurrent.TimeUnit.NANOSECONDS;
++
++/**
++ * Measures the join build/probe null filtering that runs once per page per nullable join key
++ * (BigintPagesHash, DefaultPagesHash, JoinProbe).
++ */
++@State(Scope.Thread)
++@OutputTimeUnit(NANOSECONDS)
++@Fork(1)
++@Warmup(iterations = 4, time = 500, timeUnit = MILLISECONDS)
++@Measurement(iterations = 5, time = 500, timeUnit = MILLISECONDS)
++@BenchmarkMode(Mode.AverageTime)
++public class BenchmarkNullablePositions
++{
++    @Benchmark
++    public Optional<int[]> getNonNullPositions(BlockData data)
++    {
++        return NullablePositions.getNonNullPositions(data.blocks, data.blocks.length, data.positionCount);
++    }
++
++    @State(Scope.Thread)
++    public static class BlockData
++    {
++        @Param({"1024", "8192"})
++        private int positionCount = 8192;
++
++        @Param({"1", "4"})
++        private int blockCount = 1;
++
++        @Param({"0", "0.01", "0.5"})
++        private double nullRate;
++
++        @Param({"VALUE", "DICTIONARY", "MIXED"})
++        private String blockKind = "VALUE";
++
++        private Block[] blocks;
++
++        @Setup
++        public void setup()
++        {
++            Random random = new Random(42);
++            blocks = new Block[blockCount];
++            for (int i = 0; i < blockCount; i++) {
++                blocks[i] = switch (blockKind) {
++                    case "VALUE" -> createLongBlock(random, positionCount, nullRate);
++                    case "DICTIONARY" -> createDictionaryBlock(random, positionCount, nullRate);
++                    // Alternates value and dictionary blocks within one page
++                    case "MIXED" -> i % 2 == 0
++                            ? createLongBlock(random, positionCount, nullRate)
++                            : createDictionaryBlock(random, positionCount, nullRate);
++                    default -> throw new IllegalArgumentException("Unknown blockKind: " + blockKind);
++                };
++            }
++        }
++
++        private static Block createLongBlock(Random random, int positionCount, double nullRate)
++        {
++            LongArrayBlockBuilder builder = new LongArrayBlockBuilder(null, positionCount);
++            for (int position = 0; position < positionCount; position++) {
++                if (nullRate > 0 && random.nextDouble() < nullRate) {
++                    builder.appendNull();
++                }
++                else {
++                    builder.writeLong(random.nextLong());
++                }
++            }
++            return builder.build();
++        }
++
++        private static Block createDictionaryBlock(Random random, int positionCount, double nullRate)
++        {
++            // Dictionaries are typically far smaller than the page they are referenced from
++            int dictionarySize = Math.max(8, positionCount / 32);
++            Block dictionary = createLongBlock(random, dictionarySize, nullRate);
++            int[] ids = new int[positionCount];
++            for (int position = 0; position < positionCount; position++) {
++                ids[position] = random.nextInt(dictionarySize);
++            }
++            return DictionaryBlock.create(positionCount, dictionary, ids);
++        }
++    }
++
++    @Test
++    public void test()
++    {
++        for (String blockKind : new String[] {"VALUE", "DICTIONARY", "MIXED"}) {
++            BlockData data = new BlockData();
++            data.blockKind = blockKind;
++            data.blockCount = 4;
++            data.nullRate = 0.5;
++            data.setup();
++          
+```
+
+---
+
+### Incident Patch 3: `39a37d40` (2026-11-24)
+**Commit Message**: Fix XXE vulnerability in SalesforceBasicAuthenticator
+
+Disallow DOCTYPE declarations and external entities, enable secure
+processing and disable XInclude when parsing the Salesforce login
+response, so a malicious response cannot read local files or trigger
+outbound requests.
+
+Co-authored-by: RinZ27 <[REDACTED_EMAIL]>
+
+**File**: `plugin/trino-password-authenticators/src/main/java/io/trino/plugin/password/salesforce/SalesforceBasicAuthenticator.java` (modified, +10/-0)
+```diff
+@@ -152,6 +152,16 @@ private Principal doLogin(Credential credential)
+         Document xmlResponse;
+         try {
+             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
++            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
++            // Defense in depth: without a DOCTYPE, the settings below have nothing to act on
++            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
++            factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
++            factory.setAttribute("http://javax.xml.XMLConstants/property/accessExternalDTD", "");
++            factory.setAttribute("http://javax.xml.XMLConstants/property/accessExternalSchema", "");
++            factory.setFeature("http://javax.xml.XMLConstants/feature/secure-processing", true);
++            factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
++            factory.setXIncludeAware(false);
++            factory.setExpandEntityReferences(false);
+             DocumentBuilder builder = factory.newDocumentBuilder();
+             xmlResponse = builder.parse(new InputSource(Reader.of(
+                     response.getBody())));
+```
+
+**File**: `plugin/trino-password-authenticators/src/test/java/io/trino/plugin/password/salesforce/TestSalesforceBasicAuthenticator.java` (modified, +36/-0)
+```diff
+@@ -13,17 +13,23 @@
+  */
+ package io.trino.plugin.password.salesforce;
+ 
++import com.google.common.util.concurrent.UncheckedExecutionException;
+ import io.airlift.http.client.HttpClient;
+ import io.airlift.http.client.HttpStatus;
+ import io.airlift.http.client.jetty.JettyHttpClient;
+ import io.airlift.http.client.testing.TestingHttpClient;
+ import io.airlift.units.Duration;
+ import io.trino.spi.security.AccessDeniedException;
+ import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.io.TempDir;
+ 
++import java.io.IOException;
++import java.nio.file.Files;
++import java.nio.file.Path;
+ import java.security.Principal;
+ import java.util.concurrent.TimeUnit;
+ 
++import static com.google.common.base.Preconditions.checkArgument;
+ import static com.google.common.net.MediaType.ANY_TEXT_TYPE;
+ import static io.airlift.http.client.HttpStatus.OK;
+ import static io.airlift.http.client.testing.TestingResponse.mockResponse;
+@@ -99,6 +105,29 @@ public void createAuthenticatedPrincipalWrongOrg()
+                 .hasMessageMatching("Access Denied:.*");
+     }
+ 
++    @Test
++    public void testRejectsExternalFileEntity(@TempDir Path tempDir)
++            throws IOException
++    {
++        String secret = "super-secret-shared-value";
++        Path secretFile = tempDir.resolve("config.properties");
++        Files.writeString(secretFile, secret);
++
++        SalesforceConfig config = new SalesforceConfig()
++                .setAllowedOrganizations("my18CharOrgId");
++
++        String xmlResponse = withDoctype(
++                format(successResponse, "&xxe;", "user@salesforce.com"),
++                "<!DOCTYPE r [<!ENTITY xxe SYSTEM \"" + secretFile.toUri() + "\">]>");
++
++        HttpClient testHttpClient = new TestingHttpClient(_ -> mockResponse(OK, ANY_TEXT_TYPE, xmlResponse));
++        SalesforceBasicAuthenticator authenticator = new SalesforceBasicAuthenticator(config, testHttpClient);
++        assertThatThrownBy(() -> authenticator.createAuthenticatedPrincipal("user@salesforce.com", "passtoken"))
++                .isInstanceOf(UncheckedExecutionException.class)
++                .hasMessageContaining("DOCTYPE is disallowed")
++                .hasMessageNotContaining(secret);
++    }
++
+     @Test
+     public void createAuthenticatedPrincipalBadPass()
+     {
+@@ -267,4 +296,11 @@ public void createAuthenticatedPrincipalRealBadPassword()
+                     .hasMessage("Test bad password for real, yo!");
          }
      }
- 
-+    private static boolean isIndexNotFound(Throwable throwable)
++
++    private static String withDoctype(String xml, String doctype)
 +    {
-+        if (!(throwable.getCause() instanceof ResponseException exception)) {
-+            return false;
-+        }
-+        HttpEntity entity = exception.getResponse().getEntity();
-+        if (exception.getResponse().getStatusLine().getStatusCode() != 404 || entity == null) {
-+            return false;
-+        }
-+        try {
-+            JsonNode type = JSON_MAPPER.readTree(EntityUtils.toByteArray(entity)).path("error").path("type");
-+            return type.isString() && type.asString().equals("index_not_found_exception");
-+        }
-+        catch (IOException | JacksonException e) {
-+            return false;
-+        }
++        String declaration = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
++        checkArgument(xml.startsWith(declaration));
++        return declaration + doctype + xml.substring(declaration.length());
 +    }
-+
-     private static TrinoException propagate(ResponseException exception)
-     {
-         HttpEntity entity = exception.getResponse().getEntity();
-```
-
----
-
-### Incident Patch 2: `2546efcb` (2026-11-23)
-**Commit Message**: Fix race in TestExternalAuthenticator interrupt test
-
-The test of an interrupted authentication with a memory-cached token
-used Thread.sleep(100) to order its threads: the interruptable request
-had to take the token's write lock before the other two requests
-started, and those had to be blocked on the lock before the
-interruptable one was interrupted. On a slow runner, one of the other
-requests could take the lock instead and sleep for a minute in the
-redirect handler, with nothing interrupting it. The test timed out, and
-because the token cache is a JVM-wide singleton, the lock stayed held
-and the other memory-cached tests in the class timed out as well.
-
-Wait for the redirect to start before submitting the other requests,
-and for those to be parked before interrupting.
-
-**File**: `client/trino-client/src/test/java/io/trino/client/auth/external/TestExternalAuthenticator.java` (modified, +27/-5)
-```diff
-@@ -37,9 +37,12 @@
- import java.util.Optional;
- import java.util.concurrent.Callable;
- import java.util.concurrent.CancellationException;
-+import java.util.concurrent.CopyOnWriteArrayList;
-+import java.util.concurrent.CountDownLatch;
- import java.util.concurrent.ExecutionException;
- import java.util.concurrent.ExecutorService;
- import java.util.concurrent.Future;
-+import java.util.concurrent.locks.LockSupport;
- import java.util.stream.Stream;
- 
- import static com.google.common.base.Preconditions.checkState;
-@@ -51,6 +54,7 @@
- import static io.trino.client.auth.external.ExternalAuthenticator.toAuthentication;
- import static io.trino.client.auth.external.MockTokenPoller.onPoll;
- import static io.trino.client.auth.external.TokenPollResult.successful;
-+import static java.lang.Thread.State.WAITING;
- import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
- import static java.net.URI.create;
- import static java.util.concurrent.Executors.newCachedThreadPool;
-@@ -293,18 +297,31 @@ public void testAuthenticationFromMultipleThreadsWithCachedTokenAfterAuthenticat
-         MockRedirectHandler redirectHandler = new MockRedirectHandler()
-                 .sleepOnRedirect(Duration.ofMinutes(1));
- 
--        ExternalAuthenticator authenticator = new ExternalAuthenticator(redirectHandler, onPoll(TokenPollResult::pending), KnownToken.memoryCached(), Duration.ofMillis(1));
-+        CountDownLatch redirectStarted = new CountDownLatch(1);
-+        RedirectHandler signalingRedirectHandler = uri -> {
-+            redirectStarted.countDown();
-+            redirectHandler.redirectTo(uri);
-+        };
-+
-+        ExternalAuthenticator authenticator = new ExternalAuthenticator(signalingRedirectHandler, onPoll(TokenPollResult::pending), KnownToken.memoryCached(), Duration.ofMillis(1));
-         Future<Request> interruptedAuthentication = interruptableThreadPool.submit(
-                 () -> authenticator.authenticate(null, getUnauthorizedResponse("Bearer x_token_server=\"http://token.uri\", x_redirect_server=\"http://redirect.uri\"")));
--        Thread.sleep(100); // It's here to make sure that authentication will start before the other threads.
-+        redirectStarted.await();
-+
-+        List<Thread> requestThreads = new CopyOnWriteArrayList<>();
-         List<Future<Request>> requests = times(
-                 2,
--                () -> new ExternalAuthenticator(redirectHandler, onPoll(TokenPollResult::pending), KnownToken.memoryCached(), Duration.ofMillis(1))
--                        .authenticate(null, getUnauthorizedResponse("Bearer x_token_server=\"http://token.uri\", x_redirect_server=\"http://redirect.uri\"")))
-+                () -> {
-+                    requestThreads.add(Thread.currentThread());
-+                    return new ExternalAuthenticator(redirectHandler, onPoll(TokenPollResult::pending), KnownToken.memoryCached(), Duration.ofMillis(1))
-+                            .authenticate(null, getUnauthorizedResponse("Bearer x_token_server=\"http://token.uri\", x_redirect_server=\"http://redirect.uri\""));
-+                })
-                 .map(executor::submit)
-                 .collect(toImmutableList());
- 
--        Thread.sleep(100);
-+        while (requestThreads.size() < 2 || !requestThreads.stream().allMatch(TestExternalAuthenticator::isParked)) {
-+            Thread.sleep(10);
-+        }
-         interruptableThreadPool.shutdownNow();
- 
-         ConcurrentRequestAssertion assertion = new ConcurrentRequestAssertion(ImmutableList.<Future<Request>>builder()
-@@ -317,6 +334,11 @@ public void testAuthenticationFromMultipleThreadsWithCachedTokenAfterAuthenticat
-         assertThat(redirectHandler.getRedirectionCount()).isEqualTo(1);
-     }
- 
-+    private static boolean isParked(Thread thread)
-+    {
-+        return thread.getState() == WAITING && LockSupport.getBlocker(thread) != null;
-+    }
-+
-     private static Stream<Callable<Request>> times(int times, Callable<Request> request)
-     {
-         return Stream.generate(() -> request)
-```
-
----
-
-### Incident Patch 3: `010fed1f` (2026-11-22)
-**Commit Message**: Use shorter timeouts for faster test jobs
-
-**File**: `.github/schedule-config.yml` (modified, +19/-19)
-```diff
-@@ -27,31 +27,31 @@
-     - plugin/trino-blob-cache-alluxio
-     - plugin/trino-blob-cache-memory
- - { modules: core/trino-main, timeout-minutes: 45 }
--- { modules: lib/trino-filesystem-azure, profile: cloud-tests, timeout-minutes: 45 }
--- { modules: lib/trino-filesystem-gcs, profile: cloud-tests, timeout-minutes: 45 }
--- { modules: lib/trino-filesystem-s3, profile: cloud-tests, timeout-minutes: 45 }
--- { modules: plugin/trino-bigquery, timeout-minutes: 60 }
-+- { modules: lib/trino-filesystem-azure, profile: cloud-tests }
-+- { modules: lib/trino-filesystem-gcs, profile: cloud-tests }
-+- { modules: lib/trino-filesystem-s3, profile: cloud-tests }
-+- { modules: plugin/trino-bigquery }
- # `when.impacted: false` means this profile isn't run just because trino-bigquery changed, so it only runs on its default triggers (nightly schedule, or manual dispatch), not the merge queue.
- # C07ABNN828M is the #core-dev Slack channel.
--- { modules: plugin/trino-bigquery, profile: cloud-tests-2, when: { impacted: false, scheduled: nightly }, notify-channels: [C07ABNN828M], timeout-minutes: 60 }
-+- { modules: plugin/trino-bigquery, profile: cloud-tests-2, when: { impacted: false, scheduled: nightly }, notify-channels: [C07ABNN828M] }
- - { modules: plugin/trino-cassandra }
- - { modules: plugin/trino-clickhouse }
--- { modules: plugin/trino-delta-lake, timeout-minutes: 45 }
--- { modules: plugin/trino-delta-lake, profile: cloud-tests, timeout-minutes: 45 }
-+- { modules: plugin/trino-delta-lake }
-+- { modules: plugin/trino-delta-lake, profile: cloud-tests }
- - { modules: plugin/trino-delta-lake, profile: fte-tests }
--- { modules: plugin/trino-druid, timeout-minutes: 45 }
-+- { modules: plugin/trino-druid }
- - { modules: plugin/trino-duckdb }
- - { modules: plugin/trino-elasticsearch }
--- { modules: plugin/trino-exchange-filesystem, profile: cloud-tests, timeout-minutes: 45 }
-+- { modules: plugin/trino-exchange-filesystem, profile: cloud-tests }
- - { modules: plugin/trino-exasol }
- - { modules: plugin/trino-google-sheets }
--- { modules: plugin/trino-google-sheets, profile: cloud-tests, timeout-minutes: 45 }
-+- { modules: plugin/trino-google-sheets, profile: cloud-tests }
- - { modules: plugin/trino-hive, timeout-minutes: 45 }
- - { modules: plugin/trino-hive, profile: fte-tests }
--- { modules: plugin/trino-hive, profile: test-parquet, timeout-minutes: 60 }
-+- { modules: plugin/trino-hive, profile: test-parquet, timeout-minutes: 45 }
- - { modules: plugin/trino-hudi }
--- { modules: plugin/trino-iceberg, timeout-minutes: 60 }
--- { modules: plugin/trino-iceberg, profile: cloud-tests, timeout-minutes: 45 }
-+- { modules: plugin/trino-iceberg, timeout-minutes: 45 }
-+- { modules: plugin/trino-iceberg, profile: cloud-tests }
- - { modules: plugin/trino-iceberg, profile: fte-tests }
- - { modules: plugin/trino-iceberg, profile: floci-and-avro, timeout-minutes: 60 }
- - { modules: plugin/trino-ignite }
-@@ -61,13 +61,13 @@
- - { modules: plugin/trino-mongodb }
- - { modules: plugin/trino-mysql }
- - { modules: plugin/trino-opensearch }
--- { modules: plugin/trino-oracle, timeout-minutes: 45 }
-+- { modules: plugin/trino-oracle }
- - { modules: plugin/trino-pinot }
- - { modules: plugin/trino-postgresql }
- - { modules: plugin/trino-redis }
--- { modules: plugin/trino-redshift, timeout-minutes: 60 }
--- { modules: plugin/trino-redshift, profile: cloud-tests, timeout-minutes: 60 }
--- { modules: plugin/trino-redshift, profile: fte-tests, timeout-minutes: 60 }
-+- { modules: plugin/trino-redshift }
-+- { modules: plugin/trino-redshift, profile: cloud-tests, timeout-minutes: 45 }
-+- { modules: plugin/trino-redshift, profile: fte-tests }
- - { modules: plugin/trino-resource-group-managers }
- - { modules: plugin/trino-singlestore }
- - { modules: plugin/trino-snowflake }
-@@ -76,6 +76,6 @@
- - { modules: plugin/trino-sqlserver }
- - { modules: testing/trino-faulttolerant-tests, profile: default }
- - { modules: testing/trino-faulttolerant-tests, profile: test-fault-tolerant-delta }
--- { modules: testing/trino-faulttolerant-tests, profile: test-fault-tolerant-hive, timeout-minutes: 60 }
-+- { modules: testing/trino-faulttolerant-tests, profile: test-fault-tolerant-hive }
- - { modules: testing/trino-faulttolerant-tests, profile: test-fault-tolerant-iceberg }
--- { modules: testing/trino-tests, timeout-minutes: 60 }
-+- { modules: testing/trino-tests, timeout-minutes: 45 }
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #32333** (2026-11-23): Properly manage dependencies instead of clobbering them with Enforcer (@ksobolew)
-- **PR #32327** (2026-11-23): Fix race in TestExternalAuthenticator interrupt test (@findepi)
-- **PR #32326** (2026-11-23): Stop downloading spark-avro in Spark containers (@findepi)
-- **PR #32324** (2026-11-23): Fix PlanOptimizers comment grammar (@findepi)
-- **PR #32320** (2026-11-23): Bump org.codehaus.plexus:plexus-xml from 4.2.0 to 4.2.1 (@dependabot[bot])
-- **PR #32319** (2026-11-23): Bump dep.clickhouse.version from 0.11.1 to 0.11.2 (@dependabot[bot])
+- **PR #32358** (closed): Fix null Iceberg manifest partition summaries (@HynekBlaha)
+- **PR #32357** (closed): Test: Re-enable Snowflake cloud-tests (@ebyhr)
+- **PR #32356** (2026-11-24): Fix XXE vulnerability in SalesforceBasicAuthenticator (@krvikash)
+- **PR #32355** (2026-11-24): Bump org.opensearch:opensearch-testcontainers from 4.1.0 to 4.1.1 (@dependabot[bot])
+- **PR #32354** (closed): Bump dep.lucene.version from 10.6.0 to 10.5.2 (@dependabot[bot])
+- **PR #32353** (2026-11-24): Bump org.checkerframework:checker-qual from 4.3.1 to 4.4.0 (@dependabot[bot])
 
 ---
 
@@ -2134,54 +2361,60 @@ and for those to be parked before interrupting.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Elasticsearch table listing when an index is dropped
+## X. Speed up null position filtering on validity bitmaps
 
 **RULE**:
-When implementing operations in `plugin/trino-elasticsearch/src/main/java/io/trino/plugin/elasticsearch/client/ElasticsearchClient.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/trino-main/src/main/java/io/trino/operator/join/NullablePositions.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f6443d0c`: Elasticsearch table listing when an index is dropped. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `11a3933b`: Speed up null position filtering on validity bitmaps. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugin/trino-elasticsearch/src/main/java/io/trino/plugin/elasticsearch/client/ElasticsearchClient.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/trino-main/src/main/java/io/trino/operator/join/NullablePositions.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-import dev.failsafe.Failsafe;
-import dev.failsafe.RetryPolicy;
-import static java.time.temporal.ChronoUnit.MILLIS;
-    // _cat/indices fails when an index is deleted while the response is being built
-    private static final RetryPolicy<List<String>> INDEX_LISTING_RETRY_POLICY = RetryPolicy.<List<String>>builder()
-            .withMaxAttempts(3)
-            .withBackoff(10, 100, MILLIS)
-            .handleIf(ElasticsearchClient::isIndexNotFound)
-            .build();
+import static io.trino.spi.block.Bitmap.allocateWords;
+import static io.trino.spi.block.Bitmap.getBits;
+import static io.trino.spi.block.Bitmap.hasUnsetBit;
+import static io.trino.spi.block.Bitmap.isSet;
+import static io.trino.sql.gen.columnar.ColumnarFilterUtils.filterSetBitsRange;
+import static java.lang.Math.min;
 
-    {
-        return Failsafe.with(INDEX_LISTING_RETRY_POLICY).get(this::listIndexes);
-    }
-
-    private List<String> listIndexes()
-    private static boolean isIndexNotFound(Throwable throwable)
-    {
-        if (!(throwable.getCause() instanceof ResponseException exception)) {
-            return false;
-        }
-        HttpEntity entity = exception.getResponse().getEntity();
-        if (exception.getResponse().getStatusLine().getStatusCode() != 404 || entity == null) {
-            return false;
-        }
-        try {
-            JsonNode type = JSON_MAPPER.readTree(EntityUtils.toByteArray(entity)).path("error").path("type");
-            return type.isString() && type.asString().equals("index_not_found_exception")
+            // Special case for a single nullable block to avoid the need for an explicit validity accumulator
+        long[] valueIsValid = allocateWords(positionCount, true);
+        for (int i = 0; i < nullableBlocksCount; i++) {
+            retainNonNullPositions(nullableBlocks[i], valueIsValid, positionCount);
+        int outputPositionsCount = filterSetBitsRange(valueIsValid, 0, 0, positionCount, outputPositions);
+                if (hasNulls(dictionary)) {
+                    if (positionCount >= dictionary.getPositionCount()) {
+                        // The page dominates the dictionary, so the decode amortizes and the
+                        // gather is an id lookup plus a byte load
+                        byte[] dictionaryIsValid = decodeValidity(dictionary);
+                        for (int position = 0; position < positionCount; position++) {
+            
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+            // Special case for a single nullable block to avoid the need for explicit `boolean[] isNull`
+        boolean[] isNull = new boolean[positionCount];
+        for (int i = 0; i < nullableBlocksCount - 1; i++) {
+            Block nullableBlock = nullableBlocks[i];
+            getNonNullPositions(nullableBlock, isNull);
+        // For the last nullable block, we need to fill outputPositions and count non-null positions
+        int outputPositionsCount = getNonNullPositionsLast(nullableBlocks[nullableBlocksCount - 1], isNull, outputPositions);
+                Optional<Bitmap> dictionaryValidity = dictionary.getValidityBitmap();
+                if (dictionaryValidity.isPresent()) {
+                    long[] dictionaryIsValid = dictionaryValidity.get().getRawWords();
+                    int validityOffset = dictionaryValidity.get().getRawBitOffset();
+                    for (int position = 0; position < positionCount; position++) {
+                        boolean isNull = !Bitmap.isSet(dictionaryIsValid, validityOffset, dictionaryBlock.getId(position));
+                        outputPositions[outputPositionCount] = position;
+                        outputPositionCount += isNu
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f6443d0c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `11a3933b` are properly handled with clean fallback behavior.

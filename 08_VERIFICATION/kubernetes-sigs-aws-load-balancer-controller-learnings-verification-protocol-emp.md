@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T17:15:41.286Z",
+  "timestamp": "2026-11-24T14:24:24.057Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-kubernetes-sigs-aws-load-balancer-controller-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [kubernetes-sigs-aws-load-balancer-controller-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T17:15:41.286Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T14:24:24.057Z`  
 > **Learning ID**: `LEARN-EVO-kubernetes-sigs-aws-load-balancer-controller-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md`  
 > **Source**: github ([https://github.com/kubernetes-sigs/aws-load-balancer-controller](https://github.com/kubernetes-sigs/aws-load-balancer-controller))  
-> **Source Version**: `741e1637`  
+> **Source Version**: `1c602959`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T17:15:30.837Z  
+> **Timestamp**: 2026-11-24T14:24:11.517Z  
 > **Learning ID**: `learn-github-kubernetes-sigs-aws-load-balancer-controller`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kubernetes-sigs/aws-load-balancer-controller](https://github.com/kubernetes-sigs/aws-load-balancer-controller))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T17:15:30.830Z  
+> **Harvest Timestamp**: 2026-11-24T14:24:11.404Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A Kubernetes controller for Elastic Load Balancers
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 4346 stars
+- **Stars / Engagement**: 4347 stars
 
 ---
 
@@ -1612,11 +1612,11 @@ func IsLBConfigInUseByGateway(ctx context.Context, lbConfig *elbv2gw.LoadBalance
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4965** (2026-11-19): **fix: add readinessProbe to controller deployment in static manifest**
-  *Symptoms*: Fixes #4964  ### Description The static YAML manifest published with each release is built from `config/controller/controller.yaml`, which only defines a `livenessProbe`. The Helm chart has a `readinessProbe` on `/readyz`, so the two install methods behave differently.  Without the readiness probe, the pod is marked Ready as soon as the container starts, before the webhook server is listening. The controller already registers a readyz check tied to the webhook server starting (`mgr.AddReadyzCheck("ready-webhook", mgr.GetWebhookServer().StartedChecker())` in `main.go`), but nothing was probing it. So on a fresh install, creating a Service or Ingress right after `kubectl rollout status` can fail with `connection refused` from `mservice.elbv2.k8s.aws`.  This adds the same readinessProbe the Helm chart uses by default (`/readyz` on port 61779, matching the default `--health-probe-bind-addr`), so the static manifest and Helm install behave the same.  ### Checklist - [ ] Added tests that cover your change (if possible) - [ ] Added/modified documentation as required (such as the `README.md`, or the `docs` directory) - [x] Manually tested - [x] Made sure the title of the PR is a good description that can go into the release notes  ```release-note Added the missing readinessProbe to the controller Deployment in the static installation manifest, so the pod only becomes Ready once the webhook server is serving. ```  <!-- This is an auto-generated comment: release notes by coderabbit.ai 
+- **Issue #4974** (2026-11-24): **fix(targetgroupbinding): requeue IP TGBs while gated pods are excluded on not-Ready nodes**
+  *Symptoms*: /kind bug  ### Issue  No existing issue.  ### Description  **Problem.** For an IP-target TargetGroupBinding with pod readiness gates, a pod whose node is `Unknown` or `NotReady` is left out of the resolved endpoints. If that reconcile also resets the pod's target-health gate to `False` (for example while it was still `RegistrationInProgress`), the pod is now held unready by our gate. When the node later turns `Ready`, nothing re-reconciles the TGB: the IP TGB is not requeued by node events, the EndpointSlice may not change because the pod itself is not ready, and the reconcile checkpoint is unchanged. The pod stays unregistered until it is deleted.  **Fix.** - `ResolvePodEndpoints` now also returns, as a second value, the containers-ready, non-terminating pods it excluded because their node is not Ready. Pods on an `Unknown` node that fail-open already includes are not reported as excluded. - In `reconcileWithIPTargetType`, if any of those pods has this TGB's readiness gate not `True`, the resource manager returns `RequeueNeeded`, so the TGB controller's exponential rate limiter drives the retries. This check runs before the checkpoint early-exit. - The full reconcile that starts the loop saves the checkpoint first, so the retries take the early-exit path and make no ELB or networking calls. Once the node is Ready, the endpoint set and hash change and a normal reconcile registers the pod. - Registered endpoints and fail-open behavior are unchanged. Terminating pods do not cau
 
-- **Issue #4964** (2026-11-19): **readiness probe missing from yaml manifest**
-  *Symptoms*: **Bug Description**  We install the AWS Load Balancer Controller via the yaml manifest in each GitHub release. What we are seeing is that upon creating our cluster from scratch, we get an error from the webhook invocation shortly after installing it, even though we are waiting for the deployment rollout to complete.  > Error from server (InternalError): error when creating "STDIN": Internal error occurred: failed calling webhook "mservice.elbv2.k8s.aws": failed to call webhook: Post "https://aws-load-balancer-webhook-service.kube-system.svc:443/mutate-v1-service?timeout=10s": dial tcp 10.0.236.4:9443: connect: connection refused  Upon further investigation, we discovered the latest release (v3.6.3) does not include a readiness probe in the pod spec for the Deployment, only a liveness probe.  Strangely, the Helm chart does include one, unconditionally, which means the two are out of sync.  https://github.com/kubernetes-sigs/aws-load-balancer-controller/blob/e8491dea5e67f678c13347d1a2b46a5afc6dc538/helm/aws-load-balancer-controller/templates/deployment.yaml#L259-L262  **Steps to Reproduce**  Install the ALB Controller. Wait for rollout. Immediately invoke the webhook.  **Expected Behavior**  It should work.  **Actual Behavior**  It fails.  **Regression**  Was the functionality working correctly in a previous version? No.  **Current Workarounds**  Re-run the build.  **Environment**  n/a  **Possible Solution (Optional)**  Please fix this discrepancy, and any others, between the H
+- **Issue #4969** (2026-11-24): **feat: Support NLB mutual authentication and client certificate identity filters**
+  *Symptoms*: ### Description  AWS Network Load Balancer (NLB) now supports mutual TLS (mTLS) authentication for clients that present X.509 certificates. See the [launch blog](https://aws.amazon.com/blogs/networking-and-content-delivery/introducing-mtls-for-network-load-balancer/) and [what's new post](https://aws.amazon.com/about-aws/whats-new/2026/11/network-load-balancer-mtls/) for details.  Now you can use mutual TLS (mTLS) to offload the authentication of clients directly to your Network Load Balancer. Use client certificate identity filtering for fine-grained control.  This PR adds support for mTLS to the service and gateway L4 controllers.  - Support new ClientCertificateIdentityFilter property with basic validation > To admit only specific clients, add client certificate filters that match the Common Name, Organizational Unit, or the DNS name or URI in the Subject Alternative Name, such as a SPIFFE ID. You can set up mTLS with the AWS Management Console, AWS Command Line Interface (AWS CLI), or APIs. - Update ingress2gateway to support new ClientCertificateIdentityFilters property - Add E2E tests for NLB mTLS in verify mode with and without ClientCertificateIdentityFilters  ### Checklist - [x] Added tests that cover your change (if possible) - [x] Added/modified documentation as required (such as the `README.md`, or the `docs` directory) - [x] Manually tested - service and gateway manual tests work - [x] Made sure the title of the PR is a good description that can go into the relea
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1633,250 +1633,891 @@ func IsLBConfigInUseByGateway(ctx context.Context, lbConfig *elbv2gw.LoadBalance
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `741e1637` (2026-11-20)
-**Commit Message**: Merge pull request #4936 from guydc/feat-ds-tg-listener-rules
+### Incident Patch 1: `e9e646aa` (2026-11-24)
+**Commit Message**: Merge pull request #4974 from shraddhabang/fix/node-not-ready-requeue
 
-Support dual stack routing for NLBs using source IP listener rules
+fix(targetgroupbinding): requeue IP TGBs while gated pods are excluded on not-Ready nodes
 
-**File**: `docs/guide/service/annotations.md` (modified, +24/-0)
+**File**: `pkg/backend/endpoint_resolver.go` (modified, +23/-8)
 ```diff
-@@ -30,6 +30,7 @@
- | [service.beta.kubernetes.io/aws-load-balancer-proxy-protocol](#proxy-protocol-v2)                                    | string                                        |                          | Set to `"*"` to enable                                                                                                                                                                                                                                                                                                                                                                                               |
- | [service.beta.kubernetes.io/aws-load-balancer-proxy-protocol-per-target-group](#proxy-protocol-v2)                   | string                                        |                          | If specified,configures proxy protocol for the target groups corresponding to the ports mentioned and disables for the rest. For example, if you have services deployed on ports `"80, 443 and 22"`, the annotation value `"80, 443"` will enable proxy protocol for ports 80 and 443 only, and disable for port 22. This annotation is overriden by `"service.beta.kubernetes.io/aws-load-balancer-proxy-protocol"` |
- | [service.beta.kubernetes.io/aws-load-balancer-ip-address-type](#ip-address-type)                                     | string                                        | ipv4                     | ipv4 \| dualstack                                                                                                                                                                                                                                                                                                                                                                                                    |
-+| [service.beta.kubernetes.io/aws-load-balancer-dual-stack-routing](#dual-stack-routing)                         | boolean                                       | false                    | dualstack lb only. Enables per-address-family listener rules to route IPv4 clients to an IPv4 target group and IPv6 clients to an IPv6 target group                                                                                                                                                                                                                                                                  |
- | [service.beta.kubernetes.io/aws-load-balancer-access-log-enabled](#deprecated-attributes)                            | boolean                                       | false                    | deprecated, in favor of [aws-load-balancer-attributes](#load-balancer-attributes)                                                                                                                                                                                                                                                                                                                                    |
- | [service.beta.kubernetes.io/aws-load-balancer-access-log-s3-bucket-name](#deprecated-attributes)                     | string                                        |                          | deprecated, in favor of [aws-load-balancer-attributes](#load-balancer-attributes)                                                                                                                                                                                                                                                                                                                                    |
- | [service.beta.kubernetes.io/aws-load-balancer-access-log-s3-bucket-prefix](#deprecated-attributes)                   | string                                        |                          | deprecated, in favor of [aws-load-balancer-attributes](#load-balancer-attributes)                                                                                                                                                                                                                                                                                                                                    |
-@@ -260,6 +261,29 @@ Traffic Listening can be controlled with following annotations:
-         service.beta.kubernetes.io/aws-load-balancer-ip-address-type: ipv4
-         ```
+@@ -23,9 +23,10 @@ var ErrNotFound = errors.New("backend not found")
+ type EndpointResolver interface {
+ 	// ResolvePodEndpoints will resolve endpoints backed by pods directly,
+ 	// returns resolved podEndpoints.
++	// The second value is the containers-ready, non-terminating pods excluded because their node is not Ready.
+ 	// addressType filters EndpointSlices by AddressType. Pass empty to disable filtering.
+ 	ResolvePodEndpoints(ctx context.Context, svcKey types.NamespacedName, port intstr.IntOrString,
+-		addressType discovery.AddressType) ([]PodEndpoint, error)
++		addressType discovery.AddressType) ([]PodEndpoint, []PodEndpoint, error)
  
-+- <a name="dual-stack-routing">`service.beta.kubernetes.io/aws-load-balancer-dual-stack-routing`</a> enables dual-stack routing for a dualstack NLB. When enabled, the controller creates two target groups per listener port — one IPv4 and one IPv6 — and adds a priority-1 listener rule to route IPv4 clients to the IPv4 target group. All other traffic (IPv6) falls through to the default action, which forwards to the IPv6 target group. This preserves the client's source IP address without requiring proxy protocol.
-+
-+    !!!note
-+        - Requires `service.beta.kubernetes.io/aws-l
-```
-
-**File**: `docs/guide/service/nlb.md` (modified, +3/-0)
-```diff
-@@ -157,6 +157,9 @@ service.beta.kubernetes.io/aws-load-balancer-proxy-protocol: "*"
- !!!note ""
-     If you enable proxy protocol v2, NLB health checks with HTTP/HTTPS only work if the health check port supports proxy protocol v2. Due to this behavior, you shouldn't configure proxy protocol v2 with NLB instance mode and `externalTrafficPolicy` set to `Local`.
- 
-+!!!tip ""
-+    For dual-stack NLBs, you can preserve client source IP for both IPv4 and IPv6 clients without enabling proxy protocol or changing `externalTrafficPolicy` to `Cluster` by using the [`aws-load-balancer-dual-stack-routing`](./annotations.md#dual-stack-routing) annotation.
-+
- ## Subnet tagging requirements
- See [Subnet Discovery](../../deploy/subnet_discovery.md) for details on configuring Elastic Load Balancing for public or private placement.
- 
-```
-
-**File**: `go.mod` (modified, +5/-5)
-```diff
-@@ -3,15 +3,15 @@ module sigs.k8s.io/aws-load-balancer-controller/v3
- go 1.26.5
- 
- require (
--	github.com/aws/aws-sdk-go-v2 v1.41.12
-+	github.com/aws/aws-sdk-go-v2 v1.47.1
- 	github.com/aws/aws-sdk-go-v2/config v1.32.23
- 	github.com/aws/aws-sdk-go-v2/credentials v1.19.22
- 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.28
- 	github.com/aws/aws-sdk-go-v2/service/acm v1.28.4
- 	github.com/aws/aws-sdk-go-v2/service/appmesh v1.27.7
- 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.173.0
- 	github.com/aws/aws-sdk-go-v2/service/ecr v1.30.0
--	github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2 v1.54.0
-+	github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2 v1.63.1
- 	github.com/aws/aws-sdk-go-v2/service/globalaccelerator v1.26.3
- 	github.com/aws/aws-sdk-go-v2/service/resourcegroupstaggingapi v1.23.3
- 	github.com/aws/aws-sdk-go-v2/service/route53 v1.62.1
-@@ -20,7 +20,7 @@ require (
- 	github.com/aws/aws-sdk-go-v2/service/sts v1.43.2
- 	github.com/aws/aws-sdk-go-v2/service/wafregional v1.23.3
- 	github.com/aws/aws-sdk-go-v2/service/wafv2 v1.51.4
--	github.com/aws/smithy-go v1.27.1
-+	github.com/aws/smithy-go v1.28.1
- 	github.com/evanphx/json-patch v5.9.11+incompatible
- 	github.com/gavv/httpexpect/v2 v2.9.0
- 	github.com/go-logr/logr v1.4.3
-@@ -67,8 +67,8 @@ require (
- 	github.com/ajg/form v1.5.1 // indirect
- 	github.com/andybalholm/brotli v1.2.7 // indirect
- 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
--	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.28 // indirect
--	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.28 // indirect
-+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.4 // indirect
-+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.4 // indirect
- 	github.com/aws/aws-sdk-go-v2/internal/v4a v1.4.29 // indirect
- 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.12 // indirect
- 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.28 // indirect
-```
-
-**File**: `go.sum` (modified, +10/-10)
-```diff
-@@ -30,18 +30,18 @@ github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5 h1:0CwZNZbxp69SHPd
- github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5/go.mod h1:wHh0iHkYZB8zMSxRWpUBQtwG5a7fFgvEO+odwuTv2gs=
- github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 h1:DklsrG3dyBCFEj5IhUbnKptjxatkF07cF2ak3yi77so=
- github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2/go.mod h1:WaHUgvxTVq04UNunO+XhnAqY/wQc+bxr74GqbsZ/Jqw=
--github.com/aws/aws-sdk-go-v2 v1.41.12 h1:DIKX2c31ekm9RA2D9FBj1EWXx++9AdAqRw+e78Tq2Ck=
--github.com/aws/aws-sdk-go-v2 v1.41.12/go.mod h1:27+ACypSLljLAEKsCYOmrjKh83vuTRkuAe9Uv/3A4bg=
-+github.com/aws/aws-sdk-go-v2 v1.47.1 h1:uOIZnp4PK3ZhKI0dNrJrhTEsLxbpXHTAJlwoS1pvAtw=
-+github.com/aws/aws-sdk-go-v2 v1.47.1/go.mod h1:bttEH6JqnUL8LepvDVfdrds/fZ5bCIxzpe3abyUrhDU=
- github.com/aws/aws-sdk-go-v2/config v1.32.23 h1:PYDobtcsJXK6bQe9I8RQk6s19Bz3xa3xRU08Hy1Em3Y=
- github.com/aws/aws-sdk-go-v2/config v1.32.23/go.mod h1:QID4dqUQVgEOYPKsPWd1sNWCCR2c5g7o3jeEtIXPOZU=
- github.com/aws/aws-sdk-go-v2/credentials v1.19.22 h1:SHfH6wyPsEgG7fVsi5rQxWEt7tuIcN2PGhb1mTFv6tE=
- github.com/aws/aws-sdk-go-v2/credentials v1.19.22/go.mod h1:54nO8lKD4aQPOntM/VTWjnR+DYzTwx0YkSMZMhAgewQ=
- github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.28 h1:b+kcDejJrXc30zU/w8Tc9klISwaO5wh+6T0sMBdDoHM=
- github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.28/go.mod h1:LnI62O9GnSv6GcuLXxOYqlq0C8EmxMcgnF6m7LdYuOY=
--github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.28 h1:Xf2j7NdVcUKomlZ4iihOP4AZ3Fzlr8h4yKpXeP+OFPg=
--github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.28/go.mod h1:O8cDo1dW63jU7ki//kRe1z+tLGcpnD1jrouitsQddDw=
--github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.28 h1:KqIfN9kpkKkcBqBbNpNGTIrXO6ExTUvFKvXkC+YAzVo=
--github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.28/go.mod h1:uxtQiKvLtNS4iXVsH2McVD/ls8FKN/uUhe1hGxPjrw0=
-+github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.4 h1:CLq4+8UHCI+ZZYl/EuJxXovaIVN2xeeT8JV+dsApQ5E=
-+github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.4/go.mod h1:Wv4q5sAM04xAMkoOedxLx2inVf6K5FdxYp+A61L+q/0=
-+github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.4 h1:dD4MR81I7YkpEBRk6UP9rocC2QnT3qVuXwzlYTtfGEs=
-+github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.4/go.mod h1:EcXV1kAFd5XwSkDHlj94gnF3q5CkJyYiIJfH8N0VmrE=
- github.com/aws/aws-sdk-go-v2/internal/v4a v1.4.29 h1:VkE9FuzTQVjBBrnj4+oCdxCLFIz7aqLYKUCjtvxVcOs=
- github.com/aws/aws-sdk-go-v2/internal/v4a v1.4.29/go.mod h1:H32Z2Qth9b+9LqjyBsCnozMQ8H2N7YBUDVXwbs0iggg=
- github.com/aws/aws-sdk-go-v2/service/acm v1.28.4 h1:wiW1Y6/1lysA0eJZRq0I53YYKuV9MNAzL15z2eZRlEE=
-@@ -52,8 +52,8 @@ github.com/aws/aws-sdk-go-v2/service/ec2 v1.173.0 h1:ta62lid9JkIpKZtZZXSj6rP2AqY
- github.com/aws/aws-sdk-go-v2/service/ec2 v1.173.0/go.mod h1:o6QDjdVKpP5EF0dp/VlvqckzuSDATr1rLdHt3A5m0YY=
- github.com/aws/aws-sdk-go-v2/service/ecr v1.30.0 h1:WsWG+jupMFNpMCF3g4y1jVWbXKBsG1DyTs2tM48yuJE=
- github.com/aws/aws-sdk-go-v2/service/ecr v1.30.0/go.mod h1:WadVIk+UrTvWuAsCp6BKGX4i2snurpz8mPWhJQnS7Dg=
--github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2 v1.54.0 h1:7Aa/utljEengXYcL+29baOrd6eRtP0JoX3UJwYNA83Y=
--github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2 v1.54.0/go.mod h1:DpGMmFhQwV/HH9zugLT5Ovf9HMKdQ+6ejfJybqEC9i4=
-+github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2 v1.63.1 h1:EEnFRsc58n3vgAM53KfNN8bKQedMWVYINZwZbtnnoMU=
-+github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2 v1.63.1/go.mod h1:6fHHZMaRnR4CQno5I1DlMBNk0uGJ5P95w3E2HXcoZDw=
- github.com/aws/aws-sdk-go-v2/service/globalaccelerator v1.26.3 h1:G8qcrur/MG4c7Wu+LMtpAPUSzmmaOa4ssHgYtefeJoo=
- github.com/aws/aws-sdk-go-v2/service/globalaccelerator v1.26.3/go.mod h1:SJbyMV7JHSdKF1V0femihek4k7t2u5quWKiHzG8pihc=
- github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.12 h1:ZD2+BSw9vFsNlKYIasSNt3uDbjqqXIBcM13UJv/Lx2k=
-@@ -80,8 +80,8 @@ github.com/aws/aws-sdk-go-v2/service/wafregional v1.23.3 h1:7dr6En0/6KRFoz8VmnYk
- github.com/aws/aws-sdk-go-v2/service/wafregional v1.23.3/go.mod h1:24TtlRsv4LKAE3VnRJQhpatr8cpX0yj8NSzg8/lxOCw=
- github.com/aws/aws-sdk-go-v2/service/wafv2 v1.51.4 h1:1khBA5uryBRJoCb4G2iR5RT06BkfPEjjDCHAiRb8P3Q=
- github.com/aws/aws-sdk-go-v2/service/wafv2 v1.51.4/go.mod h1:QpFImaPGKNwa+MiZ+oo6LbV1PVQBapc0CnrAMRScoxM=
--github.com/aws/smithy-go v1.27.1 h1:4T340VFndXtADGF52gYa1POyL7s9E4Z1OeZ1hCscIw8=
--github.com/aws/smithy-go v1.27.1/go.mod h1:YE2RhdIuDbA5E5bTdciG9KrW3+TiEONeUWCqxX9i1Fc=
-+github.com/aws/smithy-go v1.28.1 h1:R/nXH00c8qcfCzQVELtRw+eLQWtzv+VAIEFJ1/xxXlQ=
-+github.com/aws/smithy-go v1.28.1/go.mod h1:YE2RhdIuDbA5E5bTdciG9KrW3+TiEONeUWCqxX9i1Fc=
- github.com/beorn7/perks v1.0.1 h1:VlbKKnNfV8bJzeqoa4cOKqO6bYr3WgKZxO8Z16+hsOM=
- github.com/beorn7/perks v1.0.1/go.mod h1:G2ZrVWU2WbWT9wwq4/hrbKbnv/1ERSJQ0ibhJ6rlkpw=
- github.com/blang/semver/v4 v4.0.0 h1:1PFHFE6yCCTv8C1TeyNNarDzntLi7wMI5i/pzqYIsAM=
-```
-
-**File**: `pkg/annotations/constants.go` (modified, +1/-0)
-```diff
-@@ -133,6 +133,7 @@ const (
- 	SvcLBSuffixEnableTCPUDPListener                      = "aws-load-balancer-enable-tcp-udp-listener"
- 	SvcLBSuffixDisableNLBSG                              = "aws-load-balancer-disable-nlb-sg"
- 	SvcLBSuffixQUICEnabledPorts                          = "aws-load-balancer-quic-enabled-ports"
-+	SvcLBSuffixDualStackRouting                          = "aws-load-balancer-dual-stack-routing"
- )
- 
- const (
-```
-
-**File**: `pkg/deploy/elbv2/listener_utils.go` (modified, +5/-1)
-```diff
-@@ -251,9 +251,13 @@ func buildSDKQueryStringConditionConfig(modelCfg elbv2model.QueryStringCondition
+ 	// ResolveNodePortEndpoints will resolve endpoints backed by nodePort.
+ 	ResolveNodePortEndpoints(ctx context.Context, svcKey types.NamespacedName, port intstr.IntOrString,
+@@ -57,14 +58,14 @@ type defaultEndpointResolver struct {
+ 	logger               logr.Logger
  }
  
- func buildSDKSourceIpConditionConfig(modelCfg elbv2model.SourceIPConditionConfig) *elbv2types.SourceIpConditionConfig {
--	return &elbv2types.SourceIpConditionConfig{
-+	sdkObj := &elbv2types.SourceIpConditionConfig{
- 		Values: modelCfg.Values,
+-func (r *defaultEndpointResolver) ResolvePodEndpoints(ctx context.Context, svcKey types.NamespacedName, port intstr.IntOrString, addressType discovery.AddressType) ([]PodEndpoint, error) {
++func (r *defaultEndpointResolver) ResolvePodEndpoints(ctx context.Context, svcKey types.NamespacedName, port intstr.IntOrString, addressType discovery.AddressType) ([]PodEndpoint, []PodEndpoint, error) {
+ 	_, svcPort, err := r.findServiceAndServicePort(ctx, svcKey, port)
+ 	if err != nil {
+-		return nil, err
++		return nil, nil, err
  	}
-+	if modelCfg.IpAddressType != nil {
-+		sdkObj.IpAddressType = elbv2types.SourceIpAddressTypeEnum(string(*modelCfg.IpAddressType))
+ 	endpointsDataList, err := r.computeServiceEndpointsData(ctx, svcKey, addressType)
+ 	if err != nil {
+-		return nil, err
++		return nil, nil, err
+ 	}
+ 	return r.resolvePodEndpointsWithEndpointsData(ctx, svcKey, svcPort, endpointsDataList)
+ }
+@@ -134,9 +135,12 @@ func (r *defaultEndpointResolver) computeServiceEndpointsData(ctx context.Contex
+ 	return endpointsDataList, nil
+ }
+ 
+-func (r *defaultEndpointResolver) resolvePodEndpointsWithEndpointsData(ctx context.Context, svcKey types.NamespacedName, svcPort corev1.ServicePort, endpointsDataList []EndpointsData) ([]PodEndpoint, error) {
++func (r *defaultEndpointResolver) resolvePodEndpointsWithEndpointsData(ctx context.Context, svcKey types.NamespacedName, svcPort corev1.ServicePort, endpointsDataList []EndpointsData) ([]PodEndpoint, []PodEndpoint, error) {
+ 	var readyPodEndpoints []PodEndpoint
+ 	var unknownPodEndpoints []PodEndpoint
++	// unknownNonTerminating are the unknownPodEndpoints to report as excluded if fail-open does not include them.
++	var unknownNonTerminating []PodEndpoint
++	var notReadyNodePodEndpoints []PodEndpoint
+ 
+ 	for _, epsData := range endpointsDataList {
+ 		for _, port := range epsData.Ports {
+@@ -160,7 +164,7 @@ func (r *defaultEndpointResolver) resolvePodEndpointsWithEndpointsData(ctx conte
+ 				podKey := types.NamespacedName{Namespace: podNamespace, Name: ep.TargetRef.Name}
+ 				pod, exists, err := r.podInfoRepo.Get(ctx, podKey)
+ 				if err != nil {
+-					return nil, err
++					return nil, nil, err
+ 				}
+ 				if !exists {
+ 					r.logger.Info("the pod in endpoint is not found in pod cache yet", "podKey", podKey.String())
+@@ -194,25 +198,36 @@ func (r *defaultEndpointResolver) resolvePodEndpointsWithEndpointsData(ctx conte
+ 				if readyCond := k8s.GetNodeCondition(node, corev1.NodeReady); readyCond != nil {
+ 					nodeReadyCondStatus = readyCond.Status
+ 				}
++				isTerminating := ep.Conditions.Terminating != nil && *ep.Conditions.Terminating
+ 				switch nodeReadyCondStatus {
+ 				case corev1.ConditionTrue:
+ 					// start from 1.22+, terminating pods are included in endpointSlices,
+ 					// and we don't want to include these pods if the node is known to be healthy.
+-					if ep.Conditions.Terminating == nil || !*ep.Conditions.Terminating {
++					if !isTerminating {
+ 						podEndpoint.NodeReadyTime = nodeReadyTimeIfReady(node)
+ 						readyPodEndpoints = append(readyPodEndpoints, podEndpoint)
+ 					}
+ 				case corev1.ConditionUnknown:
+ 					unknownPodEndpoints = append(unknownPodEndpoints, podEndpoint)
++					if !isTerminating {
++						unknownNonTerminating = append(unknownNonTerminating, podEndpoint)
++					}
++				default:
++					if !isTerminating {
++						notReadyNodePodEndpoints = append(notReadyNodePodEndpoints, podEndpoint)
++					}
+ 				}
+ 			}
+ 		}
+ 	}
+ 	podEndpoints := readyPodEndpoints
++	excluded := notReadyNodePodEndpoints
+ 	if r.failOpenEnabled && len(podEndpoints) == 0 {
+ 		podEndpoints = unknownPodEndpoints
++	} else {
++		excluded = append(excluded, unknownNonTerminating...)
+ 	}
+-	return podEndpoints, nil
++	return podEndpoints, excluded, nil
+ }
+ 
+ func (r *defaultEndpointResolver) getNode(ctx context.Context, nodeName string) (*corev1.Node, error) {
+```
+
+**File**: `pkg/backend/endpoint_resolver_test.go` (modified, +163/-2)
+```diff
+@@ -1307,7 +1307,7 @@ func Test_defaultEndpointResolver_ResolvePodEndpoints(t *testing.T) {
+ 				endpointSliceEnabled: tt.fields.endpointSliceEnabled,
+ 				logger:               logr.New(&log.NullLogSink{}),
+ 			}
+-			got, err := r.ResolvePodEndpoints(ctx, tt.args.svcKey, tt.args.port, "")
++			got, _, err := r.ResolvePodEndpoints(ctx, tt.args.svcKey, tt.args.port, "")
+ 			if tt.wantErr != nil {
+ 				assert.EqualError(t, err, tt.wantErr.Error())
+ 			} else {
+@@ -3120,7 +3120,7 @@ func Test_defaultEndpointResolver_ResolvePodEndpoints_NodeReadyTime(t *testing.T
+ 				failOpenEnabled: tt.failOpenEnabled,
+ 				logger:          logr.New(&log.NullLogSink{}),
+ 			}
+-			got, err := r.ResolvePodEndpoints(ctx, k8s.NamespacedName(svc), intstr.FromString("http"), "")
++			got, _, err := r.ResolvePodEndpoints(ctx, k8s.NamespacedName(svc), intstr.FromString("http"), "")
+ 			assert.NoError(t, err)
+ 			// NodeReadyTime only annotates endpoints; it never changes which ones are returned.
+ 			assert.Len(t, got, 1)
+@@ -3130,3 +3130,164 @@ func Test_defaultEndpointResolver_ResolvePodEndpoints_NodeReadyTime(t *testing.T
+ 		})
+ 	}
+ }
++
++func Test_defaultEndpointResolver_ResolvePodEndpoints_NodeNotReadyExcluded(t *testing.T) {
++	testNS := "test-ns"
++	nodeWithReady := func(name string, status corev1.ConditionStatus) *corev1.Node {
++		return &corev1.Node{
++			ObjectMeta: metav1.ObjectMeta{Name: name},
++			Status:     corev1.NodeStatus{Conditions: []corev1.NodeCondition{{Type: corev1.NodeReady, Status: status}}},
++		}
 +	}
-+	return sdkObj
- }
- 
- func buildSDKTransforms(modelTransforms []elbv2model.Transform) []elbv2types.RuleTransform {
-```
-
-**File**: `pkg/deploy/elbv2/listener_utils_test.go` (modified, +35/-0)
-```diff
-@@ -50,6 +50,41 @@ func Test_isListenerNotFoundError(t *testing.T) {
- 	}
- }
- 
-+func Test_buildSDKSourceIpConditionConfig(t *testing.T) {
++	nodes := []*corev1.Node{
++		nodeWithReady("node-ready", corev1.ConditionTrue),
++		nodeWithReady("node-unknown", corev1.ConditionUnknown),
++		nodeWithReady("node-false", corev1.ConditionFalse),
++		{ObjectMeta: metav1.ObjectMeta{Name: "node-no-cond"}},
++	}
++	newPod := func(name, nodeName, ip string, containersReady corev1.ConditionStatus) k8s.PodInfo {
++		return k8s.PodInfo{
++			Key:        types.NamespacedName{Namespace: testNS, Name: name},
++			Conditions: []corev1.PodCondition{{Type: corev1.ContainersReady, Status: containersReady}},
++			NodeName:   nodeName,
++			PodIP:      ip,
++		}
++	}
++	type podEp struct {
++		pod         k8s.PodInfo
++		ready       bool
++		terminating bool
++	}
++	readyPod := podEp{pod: newPod("ready", "node-ready", "10.0.0.1", corev1.ConditionTrue), ready: true}
++	svc := &corev1.Service{
++		ObjectMeta: metav1.ObjectMeta{Namespace: testNS, Name: "svc-1"},
++		Spec:       corev1.ServiceSpec{Ports: []corev1.ServicePort{{Name: "http", Port: 80}}},
++	}
++
 +	tests := []struct {
-+		name     string
-+		modelCfg elbv2model.SourceIPConditionConfig
-+		want     *elbv2types.SourceIpConditionConfig
++		name            string
++		eps             []podEp
++		failOpenEnabled bool
++		wantEndpoints   []string
++		wantExcluded    []string
 +	}{
 +		{
-+			name:     "ALB CIDR values only",
-+			modelCfg: elbv2model.SourceIPConditionConfig{Values: []string{"10.0.0.0/8", "192.168.0.0/16"}},
-+			want:     &elbv2types.SourceIpConditionConfig{Values: []string{"10.0.0.0/8", "192.168.0.0/16"}},
++			name:          "node Unknown with another ready pod is reported",
++			eps:           []podEp{readyPod, {pod: newPod("p", "node-unknown", "10.0.0.2", corev1.ConditionTrue)}},
++			wantEndpoints: []string{"10.0.0.1"},
++			wantExcluded:  []string{"10.0.0.2"},
 +		},
 +		{
-+			name:     "NLB IpAddressType ipv4",
-+			modelCfg: elbv2model.SourceIPConditionConfig{IpAddressType: (*elbv2model.SourceIPAddressType)(awssdk.String("ipv4"))},
-+			want:     &elbv2types.SourceIpConditionConfig{IpAddressType: elbv2types.SourceIpAddressTypeEnum("ipv4")},
++			name:          "node Unknown without fail-open is reported",
++			eps:           []podEp{{pod: newPod("p", "node-unknown", "10.0.0.2", corev1.ConditionTrue)}},
++			wantExcluded:  []string{"10.0.0.2"},
++			wantEndpoints: nil,
 +		},
 +		{
-+			name:     "NLB IpAddressType ipv6",
-+			modelCfg: elbv2model.SourceIPConditionConfig{IpAddressType: (*elbv2model.SourceIPAddressType)(awssdk.String("ipv6"))},
-+			want:     &elbv2types.SourceIpConditionConfig{IpAddressType: elbv2types.SourceIpAddressTypeEnum("ipv6")},
++			name:            "node Unknown rescued by fail-open is not reported",
++			eps:             []podEp{{pod: newPod("p", "node-unknown", "10.0.0.2", corev1.ConditionTrue)}},
++			failOpenEnabled: true,
++			wantEndpoints:   []string{"10.0.0.2"},
 +		},
 +		{
-+			name:     "empty config",
-+			modelCfg: elbv2model.SourceIPConditionConfig{},
-+			want:     &elbv2types.SourceIpConditionConfig{},
++			name:            "node Ready=False is reported even with fail-open",
++			eps:             []podEp{{pod: newPod("p", "node-false", "10.0.0.3", corev1.ConditionTrue)}},
++			failOpenEnabled: true,
++			wantExcluded:    []string{"10.0.0.3"},
 +		},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			got := buildSDKSourceIpConditionConfig(tt.modelCfg)
-+			assert.Equal(t, tt.want, got)
-+		})
-+	}
-+}
-+
- func Test_buildSDKJwtValidationConfig(t *testing.T) {
- 	type args struct {
- 		jwtValidationConfig elbv2model.JwtValidationConfig
++		{
++			name:          "node without Ready condition is reported",
++			eps:           []podEp{readyPod, {pod: newPod("p", "node-no-cond", "10.0.0.4", corev1.ConditionTrue)}},
++			wantEndpoints: []string{"10.0.0.1"},
++			wantExcluded:  []string{"10.0.0.4"},
++		},
++		{
++			name:          "node Ready=True is included and not reported",
++			eps:           []podEp{{pod: newPod("p", "node-ready", "10.0.0.5", corev1.ConditionTrue)}},
++			wantEndpoints: []string{"10.0.0.5"},
++		},
++		{
++			name:          "containers not ready on Unknown node is not reported",
++			eps:           []podEp{readyPod, {pod: newPod("p", "node-unknown", "10.0.0.6", corev1.ConditionFalse)}},
++			wantEndpoints: []string{"10.0.0.1"},
++		},
++		{
++			name:          "ready endpoint on Unknown node is included and not reported",
++			eps:           []podEp{{pod: newPod("p", "node-unknown", "10.0.0.7", corev1.ConditionTrue), ready: true}},
++			wantEndpoints: []string{"10.0.0.7"},
++		},
++		{
++			name:          "terminating pod on not-Ready node is not reported",
++			eps:           []podEp{readyPod, {pod: newPod("p", "node-false", "10.0.0.8", corev1.ConditionTrue), terminating: true}},
++			wantEndpoints: []string{"10.0.0.1"},
++		},
++		{
++			name: "terminating pod on Unknown node without fail-open is not reported",
++			eps:  []podEp{{pod: newP
 ```
 
-**File**: `pkg/model/elbv2/listener_rule.go` (modified, +13/-2)
+**File**: `pkg/targetgroupbinding/resource_manager.go` (modified, +46/-1)
 ```diff
-@@ -107,10 +107,21 @@ type QueryStringConditionConfig struct {
- 	Values []QueryStringKeyValuePair `json:"values"`
+@@ -172,11 +172,12 @@ func (m *defaultResourceManager) reconcileWithIPTargetType(ctx context.Context,
+ 	targetHealthCondType := BuildTargetHealthPodConditionType(tgb)
+ 
+ 	var endpoints []backend.PodEndpoint
++	var nodeNotReadyExcluded []backend.PodEndpoint
+ 	var err error
+ 
+ 	oldCheckPoint := GetTGBReconcileCheckpoint(tgb)
+ 
+-	endpoints, err = m.endpointResolver.ResolvePodEndpoints(ctx, svcKey, tgb.Spec.ServiceRef.Port,
++	endpoints, nodeNotReadyExcluded, err = m.endpointResolver.ResolvePodEndpoints(ctx, svcKey, tgb.Spec.ServiceRef.Port,
+ 		endpointSliceAddressType(tgb))
+ 
+ 	if err != nil {
+@@ -193,10 +194,16 @@ func (m *defaultResourceManager) reconcileWithIPTargetType(ctx context.Context,
+ 		return "", "", false, ctrlerrors.NewErrorWithMetrics(controllerName, "calculate_tgb_reconcile_checkpoint_error", err, m.metricsCollector)
+ 	}
+ 
++	// Pods held unready by our gate on a not-Ready node get no event when the node recovers, so keep requeueing.
++	pendingPod, pendingCount := findPendingGatePods(nodeNotReadyExcluded, targetHealthCondType)
++
+ 	// Block the checkpoint early-exit if any pod has a pending readiness gate condition in cache.
+ 	// Only compute when checkpoints match — if they differ the early-exit won't fire anyway.
+ 	if oldCheckPoint == newCheckPoint {
+ 		if !needReadinessGateFlip(endpoints, targetHealthCondType) {
++			if pendingCount > 0 {
++				return "", "", false, m.requeueForNodeNotReadyPods(tgbScopedLogger, pendingPod, pendingCount, false)
++			}
+ 			tgbScopedLogger.Info("Skipping targetgroupbinding reconcile", "calculated hash", newCheckPoint)
+ 			return newCheckPoint, oldCheckPoint, true, nil
+ 		}
+@@ -295,10 +302,48 @@ func (m *defaultResourceManager) reconcileWithIPTargetType(ctx context.Context,
+ 		return "", "", false, ctrlerrors.NewRequeueNeededAfter("networking reconciliation", m.requeueDuration)
+ 	}
+ 
++	if pendingCount > 0 {
++		// Save the checkpoint so the retries take the early-exit path and make no ELB calls.
++		if err := m.updateTGBCheckPoint(ctx, tgb, newCheckPoint, oldCheckPoint); err != nil {
++			return "", "", false, ctrlerrors.NewErrorWithMetrics(controllerName, "update_tgb_checkpoint_error", err, m.metricsCollector)
++		}
++		return "", "", false, m.requeueForNodeNotReadyPods(tgbScopedLogger, pendingPod, pendingCount, true)
++	}
++
+ 	tgbScopedLogger.Info("Successful reconcile", "checkpoint", newCheckPoint)
+ 	return newCheckPoint, oldCheckPoint, false, nil
  }
  
-+type SourceIPAddressType string
++// Info when the loop starts (full reconcile), V(1) on early-exit retries.
++func (m *defaultResourceManager) requeueForNodeNotReadyPods(logger logr.Logger, pod backend.PodEndpoint, count int, loopStart bool) error {
++	if !loopStart {
++		logger = logger.V(1)
++	}
++	logger.Info("Requeue for pod excluded because node not ready", "pod", pod.Pod.Key, "node", pod.Pod.NodeName, "podCount", count)
++	// Backoff is the TGB controller's exponential rate limiter.
++	return ctrlerrors.NewRequeueNeeded("node not ready pod excluded")
++}
 +
-+const (
-+	SourceIPAddressTypeIPv4 SourceIPAddressType = "ipv4"
-+	SourceIPAddressTypeIPv6 SourceIPAddressType = "ipv6"
-+)
++// findPendingGatePods returns the first excluded pod whose readiness gate for this TGB is not True, and how many there are.
++// A multi-TGB pod whose gate here is already True gets no loop in this TGB; its recovery relies on the other TGB's loop.
++func findPendingGatePods(excluded []backend.PodEndpoint, targetHealthCondType corev1.PodConditionType) (backend.PodEndpoint, int) {
++	var first backend.PodEndpoint
++	count := 0
++	for _, ep := range excluded {
++		if !ep.Pod.HasAnyOfReadinessGates([]corev1.PodConditionType{targetHealthCondType}) {
++			continue
++		}
++		if cond, exists := ep.Pod.GetPodCondition(targetHealthCondType); exists && cond.Status == corev1.ConditionTrue {
++			continue
++		}
++		if count == 0 {
++			first = ep
++		}
++		count++
++	}
++	return first, count
++}
 +
- // Information about a source IP condition.
- type SourceIPConditionConfig struct {
--	// One or more source IP addresses, in CIDR format.
--	Values []string `json:"values"`
-+	// One or more source IP addresses, in CIDR format. Used for ALB.
-+	// +optional
-+	Values []string `json:"values,omitempty"`
-+	// The IP address type for NLB source-ip conditions.
-+	// +optional
-+	IpAddressType *SourceIPAddressType `json:"ipAddressType,omitempty"`
+ func (m *defaultResourceManager) reconcileWithInstanceTargetType(ctx context.Context, tgb *elbv2api.TargetGroupBinding) (string, string, bool, error) {
+ 	tgbScopedLogger := m.logger.WithValues("tgb", k8s.NamespacedName(tgb))
+ 	svcKey := buildServiceReferenceKey(tgb, tgb.Spec.ServiceRef)
+```
+
+**File**: `pkg/targetgroupbinding/resource_manager_test.go` (modified, +585/-0)
+```diff
+@@ -3,6 +3,7 @@ package targetgroupbinding
+ import (
+ 	"context"
+ 	"errors"
++	"fmt"
+ 	"net/netip"
+ 	"sync"
+ 	"testing"
+@@ -12,9 +13,14 @@ import (
+ 	elbv2types "github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2/types"
+ 	"github.com/aws/smithy-go"
+ 	"github.com/golang/mock/gomock"
++	discovery "k8s.io/api/discovery/v1"
++	apierrors "k8s.io/apimachinery/pkg/api/errors"
+ 	"k8s.io/apimachinery/pkg/util/cache"
++	"k8s.io/apimachinery/pkg/util/intstr"
++	"k8s.io/client-go/tools/record"
+ 	elbv2api "sigs.k8s.io/aws-load-balancer-controller/v3/apis/elbv2/v1beta1"
+ 	"sigs.k8s.io/aws-load-balancer-controller/v3/pkg/backend"
++	ctrlerrors "sigs.k8s.io/aws-load-balancer-controller/v3/pkg/error"
+ 	lbcmetrics "sigs.k8s.io/aws-load-balancer-controller/v3/pkg/metrics/lbc"
+ 	"sigs.k8s.io/aws-load-balancer-controller/v3/pkg/networking"
+ 
+@@ -30,6 +36,7 @@ import (
+ 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
+ 	"sigs.k8s.io/aws-load-balancer-controller/v3/pkg/equality"
+ 	"sigs.k8s.io/aws-load-balancer-controller/v3/pkg/k8s"
++	"sigs.k8s.io/controller-runtime/pkg/client"
+ 	testclient "sigs.k8s.io/controller-runtime/pkg/client/fake"
+ 	"sigs.k8s.io/controller-runtime/pkg/log"
+ )
+@@ -1523,3 +1530,581 @@ func Test_needReadinessGateFlip(t *testing.T) {
+ 		})
+ 	}
+ }
++
++type fakePodEndpointResolver struct {
++	endpoints []backend.PodEndpoint
++	excluded  []backend.PodEndpoint
++}
++
++func (f *fakePodEndpointResolver) ResolvePodEndpoints(_ context.Context, _ types.NamespacedName, _ intstr.IntOrString, _ discovery.AddressType) ([]backend.PodEndpoint, []backend.PodEndpoint, error) {
++	return f.endpoints, f.excluded, nil
++}
++
++func (f *fakePodEndpointResolver) ResolveNodePortEndpoints(_ context.Context, _ types.NamespacedName, _ intstr.IntOrString, _ ...backend.EndpointResolveOption) ([]backend.NodePortEndpoint, error) {
++	return nil, nil
++}
++
++type countingNetworkingManager struct {
++	podCalls int
++}
++
++func (n *countingNetworkingManager) ReconcileForPodEndpoints(_ context.Context, _ *elbv2api.TargetGroupBinding, _ []backend.PodEndpoint) error {
++	n.podCalls++
++	return nil
++}
++
++func (n *countingNetworkingManager) ReconcileForNodePortEndpoints(_ context.Context, _ *elbv2api.TargetGroupBinding, _ []backend.NodePortEndpoint) error {
++	return nil
++}
++
++func (n *countingNetworkingManager) Cleanup(_ context.Context, _ *elbv2api.TargetGroupBinding) error {
++	return nil
++}
++
++func (n *countingNetworkingManager) AttemptGarbageCollection(_ context.Context) error {
++	return nil
++}
++
++const nodeNotReadyRequeueReason = "node not ready pod excluded"
++
++func requeueReason(err error) string {
++	var requeue *ctrlerrors.RequeueNeeded
++	if errors.As(err, &requeue) {
++		return requeue.Reason()
++	}
++	return ""
++}
++
++func Test_defaultResourceManager_reconcileWithIPTargetType_nodeNotReadyRequeue(t *testing.T) {
++	tgbTemplate := &elbv2api.TargetGroupBinding{
++		ObjectMeta: metav1.ObjectMeta{Namespace: "default", Name: "tgb"},
++		Spec: elbv2api.TargetGroupBindingSpec{
++			TargetGroupARN: "arn:aws:elasticloadbalancing:us-east-1:123456789012:targetgroup/tg/1234567890abcdef",
++			TargetType:     &[]elbv2api.TargetType{elbv2api.TargetTypeIP}[0],
++			ServiceRef:     elbv2api.ServiceReference{Name: "svc", Port: intstr.FromInt32(80)},
++		},
++	}
++	condType := BuildTargetHealthPodConditionType(tgbTemplate)
++
++	readyEp := backend.PodEndpoint{
++		IP: "10.0.0.1", Port: 8080,
++		Pod: k8s.PodInfo{Key: types.NamespacedName{Namespace: "default", Name: "ready"}, NodeName: "node-ok"},
++	}
++	podWithGate := func(gateStatus *corev1.ConditionStatus) backend.PodEndpoint {
++		pod := k8s.PodInfo{
++			Key:            types.NamespacedName{Namespace: "default", Name: "stuck"},
++			NodeName:       "node-1",
++			PodIP:          "10.0.0.2",
++			ReadinessGates: []corev1.PodReadinessGate{{ConditionType: condType}},
++			Conditions:     []corev1.PodCondition{{Type: corev1.ContainersReady, Status: corev1.ConditionTrue}},
++		}
++		if gateStatus != nil {
++			pod.Conditions = append(pod.Conditions, corev1.PodCondition{Type: condType, Status: *gateStatus})
++		}
++		return backend.PodEndpoint{IP: "10.0.0.2", Port: 8080, Pod: pod}
++	}
++	gateFalse, gateTrue := corev1.ConditionFalse, corev1.ConditionTrue
++	stuckEp := podWithGate(&gateFalse)
++	readyTarget := TargetInfo{
++		Target:       elbv2types.TargetDescription{Id: awssdk.String("10.0.0.1"), Port: awssdk.Int32(8080)},
++		TargetHealth: &elbv2types.TargetHealth{State: elbv2types.TargetHealthStateEnumHealthy},
++	}
++
++	type env struct {
++		m        *defaultResourceManager
++		tgb      *elbv2api.TargetGroupBinding
++		resolver *fakePodEndpointResolver
++		targets  *MockTargetsManager
++		netMgr   *countingNetworkingManager
++	}
++	setup := func(t *testing.T, endpoints, excluded []backend.PodEndpoint, checkpointMatches bool) env {
++		ctrl := gomock.NewController(t)
++		k8sSchema := runtime.NewScheme()
++		clientgoscheme.AddToScheme(k8sSchema)
++		elbv2api.AddToScheme(k8sSchema)
++		tgb := tgbTemplate.DeepCopy()
++		if checkpointMatches {
++			checkpoint, err := 
+```
+
+---
+
+### Incident Patch 2: `04d6db88` (2026-11-23)
+**Commit Message**: fix(targetgroupbinding): requeue IP TGBs while gated pods are excluded on not-Ready nodes
+
+**File**: `pkg/backend/endpoint_resolver.go` (modified, +23/-8)
+```diff
+@@ -23,9 +23,10 @@ var ErrNotFound = errors.New("backend not found")
+ type EndpointResolver interface {
+ 	// ResolvePodEndpoints will resolve endpoints backed by pods directly,
+ 	// returns resolved podEndpoints.
++	// The second value is the containers-ready, non-terminating pods excluded because their node is not Ready.
+ 	// addressType filters EndpointSlices by AddressType. Pass empty to disable filtering.
+ 	ResolvePodEndpoints(ctx context.Context, svcKey types.NamespacedName, port intstr.IntOrString,
+-		addressType discovery.AddressType) ([]PodEndpoint, error)
++		addressType discovery.AddressType) ([]PodEndpoint, []PodEndpoint, error)
+ 
+ 	// ResolveNodePortEndpoints will resolve endpoints backed by nodePort.
+ 	ResolveNodePortEndpoints(ctx context.Context, svcKey types.NamespacedName, port intstr.IntOrString,
+@@ -57,14 +58,14 @@ type defaultEndpointResolver struct {
+ 	logger               logr.Logger
  }
  
- // Information about a condition for a rule.
+-func (r *defaultEndpointResolver) ResolvePodEndpoints(ctx context.Context, svcKey types.NamespacedName, port intstr.IntOrString, addressType discovery.AddressType) ([]PodEndpoint, error) {
++func (r *defaultEndpointResolver) ResolvePodEndpoints(ctx context.Context, svcKey types.NamespacedName, port intstr.IntOrString, addressType discovery.AddressType) ([]PodEndpoint, []PodEndpoint, error) {
+ 	_, svcPort, err := r.findServiceAndServicePort(ctx, svcKey, port)
+ 	if err != nil {
+-		return nil, err
++		return nil, nil, err
+ 	}
+ 	endpointsDataList, err := r.computeServiceEndpointsData(ctx, svcKey, addressType)
+ 	if err != nil {
+-		return nil, err
++		return nil, nil, err
+ 	}
+ 	return r.resolvePodEndpointsWithEndpointsData(ctx, svcKey, svcPort, endpointsDataList)
+ }
+@@ -134,9 +135,12 @@ func (r *defaultEndpointResolver) computeServiceEndpointsData(ctx context.Contex
+ 	return endpointsDataList, nil
+ }
+ 
+-func (r *defaultEndpointResolver) resolvePodEndpointsWithEndpointsData(ctx context.Context, svcKey types.NamespacedName, svcPort corev1.ServicePort, endpointsDataList []EndpointsData) ([]PodEndpoint, error) {
++func (r *defaultEndpointResolver) resolvePodEndpointsWithEndpointsData(ctx context.Context, svcKey types.NamespacedName, svcPort corev1.ServicePort, endpointsDataList []EndpointsData) ([]PodEndpoint, []PodEndpoint, error) {
+ 	var readyPodEndpoints []PodEndpoint
+ 	var unknownPodEndpoints []PodEndpoint
++	// unknownNonTerminating are the unknownPodEndpoints to report as excluded if fail-open does not include them.
++	var unknownNonTerminating []PodEndpoint
++	var notReadyNodePodEndpoints []PodEndpoint
+ 
+ 	for _, epsData := range endpointsDataList {
+ 		for _, port := range epsData.Ports {
+@@ -160,7 +164,7 @@ func (r *defaultEndpointResolver) resolvePodEndpointsWithEndpointsData(ctx conte
+ 				podKey := types.NamespacedName{Namespace: podNamespace, Name: ep.TargetRef.Name}
+ 				pod, exists, err := r.podInfoRepo.Get(ctx, podKey)
+ 				if err != nil {
+-					return nil, err
++					return nil, nil, err
+ 				}
+ 				if !exists {
+ 					r.logger.Info("the pod in endpoint is not found in pod cache yet", "podKey", podKey.String())
+@@ -194,25 +198,36 @@ func (r *defaultEndpointResolver) resolvePodEndpointsWithEndpointsData(ctx conte
+ 				if readyCond := k8s.GetNodeCondition(node, corev1.NodeReady); readyCond != nil {
+ 					nodeReadyCondStatus = readyCond.Status
+ 				}
++				isTerminating := ep.Conditions.Terminating != nil && *ep.Conditions.Terminating
+ 				switch nodeReadyCondStatus {
+ 				case corev1.ConditionTrue:
+ 					// start from 1.22+, terminating pods are included in endpointSlices,
+ 					// and we don't want to include these pods if the node is known to be healthy.
+-					if ep.Conditions.Terminating == nil || !*ep.Conditions.Terminating {
++					if !isTerminating {
+ 						podEndpoint.NodeReadyTime = nodeReadyTimeIfReady(node)
+ 						readyPodEndpoints = append(readyPodEndpoints, podEndpoint)
+ 					}
+ 				case corev1.ConditionUnknown:
+ 					unknownPodEndpoints = append(unknownPodEndpoints, podEndpoint)
++					if !isTerminating {
++						unknownNonTerminating = append(unknownNonTerminating, podEndpoint)
++					}
++				default:
++					if !isTerminating {
++						notReadyNodePodEndpoints = append(notReadyNodePodEndpoints, podEndpoint)
++					}
+ 				}
+ 			}
+ 		}
+ 	}
+ 	podEndpoints := readyPodEndpoints
++	excluded := notReadyNodePodEndpoints
+ 	if r.failOpenEnabled && len(podEndpoints) == 0 {
+ 		podEndpoints = unknownPodEndpoints
++	} else {
++		excluded = append(excluded, unknownNonTerminating...)
+ 	}
+-	return podEndpoints, nil
++	return podEndpoints, excluded, nil
+ }
+ 
+ func (r *defaultEndpointResolver) getNode(ctx context.Context, nodeName string) (*corev1.Node, error) {
+```
+
+**File**: `pkg/backend/endpoint_resolver_test.go` (modified, +163/-2)
+```diff
+@@ -1307,7 +1307,7 @@ func Test_defaultEndpointResolver_ResolvePodEndpoints(t *testing.T) {
+ 				endpointSliceEnabled: tt.fields.endpointSliceEnabled,
+ 				logger:               logr.New(&log.NullLogSink{}),
+ 			}
+-			got, err := r.ResolvePodEndpoints(ctx, tt.args.svcKey, tt.args.port, "")
++			got, _, err := r.ResolvePodEndpoints(ctx, tt.args.svcKey, tt.args.port, "")
+ 			if tt.wantErr != nil {
+ 				assert.EqualError(t, err, tt.wantErr.Error())
+ 			} else {
+@@ -3120,7 +3120,7 @@ func Test_defaultEndpointResolver_ResolvePodEndpoints_NodeReadyTime(t *testing.T
+ 				failOpenEnabled: tt.failOpenEnabled,
+ 				logger:          logr.New(&log.NullLogSink{}),
+ 			}
+-			got, err := r.ResolvePodEndpoints(ctx, k8s.NamespacedName(svc), intstr.FromString("http"), "")
++			got, _, err := r.ResolvePodEndpoints(ctx, k8s.NamespacedName(svc), intstr.FromString("http"), "")
+ 			assert.NoError(t, err)
+ 			// NodeReadyTime only annotates endpoints; it never changes which ones are returned.
+ 			assert.Len(t, got, 1)
+@@ -3130,3 +3130,164 @@ func Test_defaultEndpointResolver_ResolvePodEndpoints_NodeReadyTime(t *testing.T
+ 		})
+ 	}
+ }
++
++func Test_defaultEndpointResolver_ResolvePodEndpoints_NodeNotReadyExcluded(t *testing.T) {
++	testNS := "test-ns"
++	nodeWithReady := func(name string, status corev1.ConditionStatus) *corev1.Node {
++		return &corev1.Node{
++			ObjectMeta: metav1.ObjectMeta{Name: name},
++			Status:     corev1.NodeStatus{Conditions: []corev1.NodeCondition{{Type: corev1.NodeReady, Status: status}}},
++		}
++	}
++	nodes := []*corev1.Node{
++		nodeWithReady("node-ready", corev1.ConditionTrue),
++		nodeWithReady("node-unknown", corev1.ConditionUnknown),
++		nodeWithReady("node-false", corev1.ConditionFalse),
++		{ObjectMeta: metav1.ObjectMeta{Name: "node-no-cond"}},
++	}
++	newPod := func(name, nodeName, ip string, containersReady corev1.ConditionStatus) k8s.PodInfo {
++		return k8s.PodInfo{
++			Key:        types.NamespacedName{Namespace: testNS, Name: name},
++			Conditions: []corev1.PodCondition{{Type: corev1.ContainersReady, Status: containersReady}},
++			NodeName:   nodeName,
++			PodIP:      ip,
++		}
++	}
++	type podEp struct {
++		pod         k8s.PodInfo
++		ready       bool
++		terminating bool
++	}
++	readyPod := podEp{pod: newPod("ready", "node-ready", "10.0.0.1", corev1.ConditionTrue), ready: true}
++	svc := &corev1.Service{
++		ObjectMeta: metav1.ObjectMeta{Namespace: testNS, Name: "svc-1"},
++		Spec:       corev1.ServiceSpec{Ports: []corev1.ServicePort{{Name: "http", Port: 80}}},
++	}
++
++	tests := []struct {
++		name            string
++		eps             []podEp
++		failOpenEnabled bool
++		wantEndpoints   []string
++		wantExcluded    []string
++	}{
++		{
++			name:          "node Unknown with another ready pod is reported",
++			eps:           []podEp{readyPod, {pod: newPod("p", "node-unknown", "10.0.0.2", corev1.ConditionTrue)}},
++			wantEndpoints: []string{"10.0.0.1"},
++			wantExcluded:  []string{"10.0.0.2"},
++		},
++		{
++			name:          "node Unknown without fail-open is reported",
++			eps:           []podEp{{pod: newPod("p", "node-unknown", "10.0.0.2", corev1.ConditionTrue)}},
++			wantExcluded:  []string{"10.0.0.2"},
++			wantEndpoints: nil,
++		},
++		{
++			name:            "node Unknown rescued by fail-open is not reported",
++			eps:             []podEp{{pod: newPod("p", "node-unknown", "10.0.0.2", corev1.ConditionTrue)}},
++			failOpenEnabled: true,
++			wantEndpoints:   []string{"10.0.0.2"},
++		},
++		{
++			name:            "node Ready=False is reported even with fail-open",
++			eps:             []podEp{{pod: newPod("p", "node-false", "10.0.0.3", corev1.ConditionTrue)}},
++			failOpenEnabled: true,
++			wantExcluded:    []string{"10.0.0.3"},
++		},
++		{
++			name:          "node without Ready condition is reported",
++			eps:           []podEp{readyPod, {pod: newPod("p", "node-no-cond", "10.0.0.4", corev1.ConditionTrue)}},
++			wantEndpoints: []string{"10.0.0.1"},
++			wantExcluded:  []string{"10.0.0.4"},
++		},
++		{
++			name:          "node Ready=True is included and not reported",
++			eps:           []podEp{{pod: newPod("p", "node-ready", "10.0.0.5", corev1.ConditionTrue)}},
++			wantEndpoints: []string{"10.0.0.5"},
++		},
++		{
++			name:          "containers not ready on Unknown node is not reported",
++			eps:           []podEp{readyPod, {pod: newPod("p", "node-unknown", "10.0.0.6", corev1.ConditionFalse)}},
++			wantEndpoints: []string{"10.0.0.1"},
++		},
++		{
++			name:          "ready endpoint on Unknown node is included and not reported",
++			eps:           []podEp{{pod: newPod("p", "node-unknown", "10.0.0.7", corev1.ConditionTrue), ready: true}},
++			wantEndpoints: []string{"10.0.0.7"},
++		},
++		{
++			name:          "terminating pod on not-Ready node is not reported",
++			eps:           []podEp{readyPod, {pod: newPod("p", "node-false", "10.0.0.8", corev1.ConditionTrue), terminating: true}},
++			wantEndpoints: []string{"10.0.0.1"},
++		},
++		{
++			name: "terminating pod on Unknown node without fail-open is not reported",
++			eps:  []podEp{{pod: newP
+```
+
+**File**: `pkg/targetgroupbinding/resource_manager.go` (modified, +46/-1)
+```diff
+@@ -172,11 +172,12 @@ func (m *defaultResourceManager) reconcileWithIPTargetType(ctx context.Context,
+ 	targetHealthCondType := BuildTargetHealthPodConditionType(tgb)
+ 
+ 	var endpoints []backend.PodEndpoint
++	var nodeNotReadyExcluded []backend.PodEndpoint
+ 	var err error
+ 
+ 	oldCheckPoint := GetTGBReconcileCheckpoint(tgb)
+ 
+-	endpoints, err = m.endpointResolver.ResolvePodEndpoints(ctx, svcKey, tgb.Spec.ServiceRef.Port,
++	endpoints, nodeNotReadyExcluded, err = m.endpointResolver.ResolvePodEndpoints(ctx, svcKey, tgb.Spec.ServiceRef.Port,
+ 		endpointSliceAddressType(tgb))
+ 
+ 	if err != nil {
+@@ -193,10 +194,16 @@ func (m *defaultResourceManager) reconcileWithIPTargetType(ctx context.Context,
+ 		return "", "", false, ctrlerrors.NewErrorWithMetrics(controllerName, "calculate_tgb_reconcile_checkpoint_error", err, m.metricsCollector)
+ 	}
+ 
++	// Pods held unready by our gate on a not-Ready node get no event when the node recovers, so keep requeueing.
++	pendingPod, pendingCount := findPendingGatePods(nodeNotReadyExcluded, targetHealthCondType)
++
+ 	// Block the checkpoint early-exit if any pod has a pending readiness gate condition in cache.
+ 	// Only compute when checkpoints match — if they differ the early-exit won't fire anyway.
+ 	if oldCheckPoint == newCheckPoint {
+ 		if !needReadinessGateFlip(endpoints, targetHealthCondType) {
++			if pendingCount > 0 {
++				return "", "", false, m.requeueForNodeNotReadyPods(tgbScopedLogger, pendingPod, pendingCount, false)
++			}
+ 			tgbScopedLogger.Info("Skipping targetgroupbinding reconcile", "calculated hash", newCheckPoint)
+ 			return newCheckPoint, oldCheckPoint, true, nil
+ 		}
+@@ -295,10 +302,48 @@ func (m *defaultResourceManager) reconcileWithIPTargetType(ctx context.Context,
+ 		return "", "", false, ctrlerrors.NewRequeueNeededAfter("networking reconciliation", m.requeueDuration)
+ 	}
+ 
++	if pendingCount > 0 {
++		// Save the checkpoint so the retries take the early-exit path and make no ELB calls.
++		if err := m.updateTGBCheckPoint(ctx, tgb, newCheckPoint, oldCheckPoint); err != nil {
++			return "", "", false, ctrlerrors.NewErrorWithMetrics(controllerName, "update_tgb_checkpoint_error", err, m.metricsCollector)
++		}
++		return "", "", false, m.requeueForNodeNotReadyPods(tgbScopedLogger, pendingPod, pendingCount, true)
++	}
++
+ 	tgbScopedLogger.Info("Successful reconcile", "checkpoint", newCheckPoint)
+ 	return newCheckPoint, oldCheckPoint, false, nil
+ }
+ 
++// Info when the loop starts (full reconcile), V(1) on early-exit retries.
++func (m *defaultResourceManager) requeueForNodeNotReadyPods(logger logr.Logger, pod backend.PodEndpoint, count int, loopStart bool) error {
++	if !loopStart {
++		logger = logger.V(1)
++	}
++	logger.Info("Requeue for pod excluded because node not ready", "pod", pod.Pod.Key, "node", pod.Pod.NodeName, "podCount", count)
++	// Backoff is the TGB controller's exponential rate limiter.
++	return ctrlerrors.NewRequeueNeeded("node not ready pod excluded")
++}
++
++// findPendingGatePods returns the first excluded pod whose readiness gate for this TGB is not True, and how many there are.
++// A multi-TGB pod whose gate here is already True gets no loop in this TGB; its recovery relies on the other TGB's loop.
++func findPendingGatePods(excluded []backend.PodEndpoint, targetHealthCondType corev1.PodConditionType) (backend.PodEndpoint, int) {
++	var first backend.PodEndpoint
++	count := 0
++	for _, ep := range excluded {
++		if !ep.Pod.HasAnyOfReadinessGates([]corev1.PodConditionType{targetHealthCondType}) {
++			continue
++		}
++		if cond, exists := ep.Pod.GetPodCondition(targetHealthCondType); exists && cond.Status == corev1.ConditionTrue {
++			continue
++		}
++		if count == 0 {
++			first = ep
++		}
++		count++
++	}
++	return first, count
++}
++
+ func (m *defaultResourceManager) reconcileWithInstanceTargetType(ctx context.Context, tgb *elbv2api.TargetGroupBinding) (string, string, bool, error) {
+ 	tgbScopedLogger := m.logger.WithValues("tgb", k8s.NamespacedName(tgb))
+ 	svcKey := buildServiceReferenceKey(tgb, tgb.Spec.ServiceRef)
+```
+
+**File**: `pkg/targetgroupbinding/resource_manager_test.go` (modified, +585/-0)
+```diff
+@@ -3,6 +3,7 @@ package targetgroupbinding
+ import (
+ 	"context"
+ 	"errors"
++	"fmt"
+ 	"net/netip"
+ 	"sync"
+ 	"testing"
+@@ -12,9 +13,14 @@ import (
+ 	elbv2types "github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2/types"
+ 	"github.com/aws/smithy-go"
+ 	"github.com/golang/mock/gomock"
++	discovery "k8s.io/api/discovery/v1"
++	apierrors "k8s.io/apimachinery/pkg/api/errors"
+ 	"k8s.io/apimachinery/pkg/util/cache"
++	"k8s.io/apimachinery/pkg/util/intstr"
++	"k8s.io/client-go/tools/record"
+ 	elbv2api "sigs.k8s.io/aws-load-balancer-controller/v3/apis/elbv2/v1beta1"
+ 	"sigs.k8s.io/aws-load-balancer-controller/v3/pkg/backend"
++	ctrlerrors "sigs.k8s.io/aws-load-balancer-controller/v3/pkg/error"
+ 	lbcmetrics "sigs.k8s.io/aws-load-balancer-controller/v3/pkg/metrics/lbc"
+ 	"sigs.k8s.io/aws-load-balancer-controller/v3/pkg/networking"
+ 
+@@ -30,6 +36,7 @@ import (
+ 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
+ 	"sigs.k8s.io/aws-load-balancer-controller/v3/pkg/equality"
+ 	"sigs.k8s.io/aws-load-balancer-controller/v3/pkg/k8s"
++	"sigs.k8s.io/controller-runtime/pkg/client"
+ 	testclient "sigs.k8s.io/controller-runtime/pkg/client/fake"
+ 	"sigs.k8s.io/controller-runtime/pkg/log"
+ )
+@@ -1523,3 +1530,581 @@ func Test_needReadinessGateFlip(t *testing.T) {
+ 		})
+ 	}
+ }
++
++type fakePodEndpointResolver struct {
++	endpoints []backend.PodEndpoint
++	excluded  []backend.PodEndpoint
++}
++
++func (f *fakePodEndpointResolver) ResolvePodEndpoints(_ context.Context, _ types.NamespacedName, _ intstr.IntOrString, _ discovery.AddressType) ([]backend.PodEndpoint, []backend.PodEndpoint, error) {
++	return f.endpoints, f.excluded, nil
++}
++
++func (f *fakePodEndpointResolver) ResolveNodePortEndpoints(_ context.Context, _ types.NamespacedName, _ intstr.IntOrString, _ ...backend.EndpointResolveOption) ([]backend.NodePortEndpoint, error) {
++	return nil, nil
++}
++
++type countingNetworkingManager struct {
++	podCalls int
++}
++
++func (n *countingNetworkingManager) ReconcileForPodEndpoints(_ context.Context, _ *elbv2api.TargetGroupBinding, _ []backend.PodEndpoint) error {
++	n.podCalls++
++	return nil
++}
++
++func (n *countingNetworkingManager) ReconcileForNodePortEndpoints(_ context.Context, _ *elbv2api.TargetGroupBinding, _ []backend.NodePortEndpoint) error {
++	return nil
++}
++
++func (n *countingNetworkingManager) Cleanup(_ context.Context, _ *elbv2api.TargetGroupBinding) error {
++	return nil
++}
++
++func (n *countingNetworkingManager) AttemptGarbageCollection(_ context.Context) error {
++	return nil
++}
++
++const nodeNotReadyRequeueReason = "node not ready pod excluded"
++
++func requeueReason(err error) string {
++	var requeue *ctrlerrors.RequeueNeeded
++	if errors.As(err, &requeue) {
++		return requeue.Reason()
++	}
++	return ""
++}
++
++func Test_defaultResourceManager_reconcileWithIPTargetType_nodeNotReadyRequeue(t *testing.T) {
++	tgbTemplate := &elbv2api.TargetGroupBinding{
++		ObjectMeta: metav1.ObjectMeta{Namespace: "default", Name: "tgb"},
++		Spec: elbv2api.TargetGroupBindingSpec{
++			TargetGroupARN: "arn:aws:elasticloadbalancing:us-east-1:123456789012:targetgroup/tg/1234567890abcdef",
++			TargetType:     &[]elbv2api.TargetType{elbv2api.TargetTypeIP}[0],
++			ServiceRef:     elbv2api.ServiceReference{Name: "svc", Port: intstr.FromInt32(80)},
++		},
++	}
++	condType := BuildTargetHealthPodConditionType(tgbTemplate)
++
++	readyEp := backend.PodEndpoint{
++		IP: "10.0.0.1", Port: 8080,
++		Pod: k8s.PodInfo{Key: types.NamespacedName{Namespace: "default", Name: "ready"}, NodeName: "node-ok"},
++	}
++	podWithGate := func(gateStatus *corev1.ConditionStatus) backend.PodEndpoint {
++		pod := k8s.PodInfo{
++			Key:            types.NamespacedName{Namespace: "default", Name: "stuck"},
++			NodeName:       "node-1",
++			PodIP:          "10.0.0.2",
++			ReadinessGates: []corev1.PodReadinessGate{{ConditionType: condType}},
++			Conditions:     []corev1.PodCondition{{Type: corev1.ContainersReady, Status: corev1.ConditionTrue}},
++		}
++		if gateStatus != nil {
++			pod.Conditions = append(pod.Conditions, corev1.PodCondition{Type: condType, Status: *gateStatus})
++		}
++		return backend.PodEndpoint{IP: "10.0.0.2", Port: 8080, Pod: pod}
++	}
++	gateFalse, gateTrue := corev1.ConditionFalse, corev1.ConditionTrue
++	stuckEp := podWithGate(&gateFalse)
++	readyTarget := TargetInfo{
++		Target:       elbv2types.TargetDescription{Id: awssdk.String("10.0.0.1"), Port: awssdk.Int32(8080)},
++		TargetHealth: &elbv2types.TargetHealth{State: elbv2types.TargetHealthStateEnumHealthy},
++	}
++
++	type env struct {
++		m        *defaultResourceManager
++		tgb      *elbv2api.TargetGroupBinding
++		resolver *fakePodEndpointResolver
++		targets  *MockTargetsManager
++		netMgr   *countingNetworkingManager
++	}
++	setup := func(t *testing.T, endpoints, excluded []backend.PodEndpoint, checkpointMatches bool) env {
++		ctrl := gomock.NewController(t)
++		k8sSchema := runtime.NewScheme()
++		clientgoscheme.AddToScheme(k8sSchema)
++		elbv2api.AddToScheme(k8sSchema)
++		tgb := tgbTemplate.DeepCopy()
++		if checkpointMatches {
++			checkpoint, err := 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4974** (2026-11-24): fix(targetgroupbinding): requeue IP TGBs while gated pods are excluded on not-Ready nodes (@shraddhabang)
+- **PR #4969** (2026-11-24): feat: Support NLB mutual authentication and client certificate identity filters (@bobert-2)
 - **PR #4965** (2026-11-19): fix: add readinessProbe to controller deployment in static manifest (@ManvithaP-hub)
 - **PR #4961** (2026-11-19): feat(helm): add certManager.privateKey and configurable root CA commonName (@eliasericsson)
 - **PR #4957** (2026-11-18): fix(ingress): don't block an IngressGroup while a member's namespace is terminating (@yash97)
 - **PR #4955** (2026-11-12): cut v3.6.3 release (@shraddhabang)
-- **PR #4953** (2026-11-17): Add ec2:ValidateSecurityGroupQuotasForInterface (@wweiwei-li)
-- **PR #4952** (2026-11-11): Bump go version and base image (@shraddhabang)
 
 ---
 
@@ -1896,35 +2537,55 @@ Support dual stack routing for NLBs using source IP listener rules
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in annotations.md
+## X. Empirical Invariant Guard in endpoint_resolver.go
 
 **RULE**:
-When implementing operations in `docs/guide/service/annotations.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubernetes-sigs/aws-load-balancer-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/backend/endpoint_resolver.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubernetes-sigs/aws-load-balancer-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `741e1637`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e9e646aa`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/guide/service/annotations.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/backend/endpoint_resolver.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-| [service.beta.kubernetes.io/aws-load-balancer-dual-stack-routing](#dual-stack-routing)                         | boolean                                       | false                    | dualstack lb only. Enables per-address-family listener rules to route IPv4 clients to an IPv4 target group and IPv6 clients to an IPv6 target group                                                                                                                                                                                                                                                                  |
-- <a name="dual-stack-routing">`service.beta.kubernetes.io/aws-load-balancer-dual-stack-routing`</a> enables dual-stack routing for a dualstack NLB. When enabled, the controller creates two target groups per listener port — one IPv4 and one IPv6 — and adds a priority-1 listener rule to route IPv4 clients to the IPv4 target group. All other traffic (IPv6) falls through to the default action, which forwards to the IPv6 target group. This preserves the client's source IP address without requiring proxy protocol.
-
-    !!!note
-        - Requires `service.beta.kubernetes.io/aws-l
+	// The second value is the containers-ready, non-terminating pods excluded because their node is not Ready.
+		addressType discovery.AddressType) ([]PodEndpoint, []PodEndpoint, error)
+func (r *defaultEndpointResolver) ResolvePodEndpoints(ctx context.Context, svcKey types.NamespacedName, port intstr.IntOrString, addressType discovery.AddressType) ([]PodEndpoint, []PodEndpoint, error) {
+		return nil, nil, err
+		return nil, nil, err
+func (r *defaultEndpointResolver) resolvePodEndpointsWithEndpointsData(ctx context.Context, svcKey types.NamespacedName, svcPort corev1.ServicePort, endpointsDataList []EndpointsData) ([]PodEndpoint, []PodEndpoint, error) {
+	// unknownNonTerminating are the unknownPodEndpoints to report as excluded if fail-open does not include them.
+	var unknownNonTerminating []PodEndpoint
+	var notReadyNodePodEndpoints []PodEndpoint
+					return nil, nil, err
+				isTerminating := ep.Conditions.Terminating != nil && *ep.Conditions.Terminating
+					if !isTerminating {
+					if !isTerminating {
+						unknownNonTerminating = append(unknownNonTerminating, podEndpoint)
+					}
+				default:
+					if !isTerminating {
+						notReadyNodePodEndpoints = append(notReadyNodePodEndpoints, p
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+		addressType discovery.AddressType) ([]PodEndpoint, error)
+func (r *defaultEndpointResolver) ResolvePodEndpoints(ctx context.Context, svcKey types.NamespacedName, port intstr.IntOrString, addressType discovery.AddressType) ([]PodEndpoint, error) {
+		return nil, err
+		return nil, err
+func (r *defaultEndpointResolver) resolvePodEndpointsWithEndpointsData(ctx context.Context, svcKey types.NamespacedName, svcPort corev1.ServicePort, endpointsDataList []EndpointsData) ([]PodEndpoint, error) {
+					return nil, err
+					if ep.Conditions.Terminating == nil || !*ep.Conditions.Terminating {
+	return podEndpoints, nil
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `741e1637` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e9e646aa` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
