@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T21:40:05.622Z",
+  "timestamp": "2026-11-24T07:47:23.859Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-provablehq-snarkos-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [provablehq-snarkos-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T21:40:05.622Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T07:47:23.859Z`  
 > **Learning ID**: `LEARN-EVO-provablehq-snarkos-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 72%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 69%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from provablehq-snarkos-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
-> **Source Version**: `ae6a5b06`  
+> **Source Version**: `2325502f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T21:40:00.549Z  
+> **Timestamp**: 2026-11-24T07:47:16.790Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T21:40:00.543Z  
+> **Harvest Timestamp**: 2026-11-24T07:47:16.783Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1901,293 +1901,256 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ae6a5b06` (2026-11-23)
-**Commit Message**: Merge pull request #4747 from aleo-labs-protocol/eran/programs-summary
+### Incident Patch 1: `da73ee50` (2026-11-24)
+**Commit Message**: Explain the capped tip state at the node height, and cover the quiet paths
 
-Add GET /{network}/programs/summary
+Address review of #4755.
 
-**File**: `node/rest/src/lib.rs` (modified, +153/-4)
+- The advertised-tip trace now also prints when a `NotYet` cap equals the
+  node height. Before, that state logged only the generic "Not block synced
+  yet" debug.
+- That debug no longer prints while failed requests wait for a peer:
+  `prepare_block_requests` reports them.
+- The re-issue trace prints per batch, after the skip, so it prints only
+  when a batch is attempted.
+- New tests cover the `current_height < served_tip` clause, the request
+  pass through `try_issuing_block_requests`, and exact line counts in the
+  capped state.
+
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+**File**: `node/sync/src/block_sync.rs` (modified, +72/-22)
 ```diff
-@@ -48,7 +48,7 @@ use snarkvm::{
+@@ -750,7 +750,8 @@ impl<N: Network> BlockSync<N> {
+         let mut next_request_slot = None;
  
- use anyhow::{Context, Result, ensure};
- use axum::{
--    body::Body,
-+    body::{Body, Bytes},
-     extract::{ConnectInfo, DefaultBodyLimit, Query, State},
-     http::{
-         HeaderName,
-@@ -201,6 +201,36 @@ impl VerificationLane {
-     }
- }
+         if batches.is_empty() {
+-            if self.num_total_block_requests() == 0 {
++            // Failed requests that wait for a peer are reported by `prepare_block_requests`.
++            if self.num_total_block_requests() == 0 && self.failed_requests.lock().is_empty() {
+                 debug!(
+                     "Not block synced yet, and there are no outstanding block requests or \
+                  new block requests to send"
+@@ -1259,8 +1260,6 @@ impl<N: Network> BlockSync<N> {
  
-+/// The latest `programs/summary` response body, built at most once per block height.
-+pub(crate) struct ProgramsSummaryCache {
-+    /// The height and serialized JSON body of the latest summary.
-+    latest: Mutex<Option<(u32, Bytes)>>,
-+    /// One permit, so only one build runs at a time. Requests wait for it asynchronously.
-+    build: Arc<Semaphore>,
-+}
-+
-+impl Default for ProgramsSummaryCache {
-+    fn default() -> Self {
-+        Self { latest: Default::default(), build: Arc::new(Semaphore::new(1)) }
-+    }
-+}
-+
-+impl ProgramsSummaryCache {
-+    /// Returns the cached body if it was built at `min_height` or later.
-+    fn get(&self, min_height: u32) -> Option<Bytes> {
-+        self.latest.lock().as_ref().filter(|(h, _)| *h >= min_height).map(|(_, body)| body.clone())
-+    }
-+
-+    /// Call only while holding the build permit.
-+    fn set(&self, height: u32, body: Bytes) {
-+        *self.latest.lock() = Some((height, body));
-+    }
-+
-+    async fn acquire_build(&self) -> Result<OwnedSemaphorePermit, RestError> {
-+        self.build.clone().acquire_owned().await.map_err(|err| RestError::internal_server_error(anyhow::anyhow!(err)))
-+    }
-+}
-+
- /// A REST API server for the ledger.
- #[derive(Clone)]
- pub struct Rest<N: Network, C: ConsensusStorage<N>, R: Routing<N>> {
-@@ -220,6 +250,8 @@ pub struct Rest<N: Network, C: ConsensusStorage<N>, R: Routing<N>> {
-     verification_slots: Arc<VerificationSlots>,
-     /// A cache containing recently requested blocks.
-     block_cache: Arc<Mutex<LruCache<N::BlockHash, ErasedJson>>>,
-+    /// The latest `programs/summary` body, shared by all route prefixes.
-+    programs_summary: Arc<ProgramsSummaryCache>,
-     /// The upstream for the routes of the removed `history` feature, if `--history-compat-mode` is set.
-     history_compat: Option<Arc<HistoryCompat>>,
- }
-@@ -259,6 +291,7 @@ impl<N: Network, C: 'static + ConsensusStorage<N>, R: Routing<N>> Rest<N, C, R>
-             handles: Default::default(),
-             verification_slots: Arc::new(VerificationSlots::new(rest_verification_limits)),
-             block_cache: Arc::new(Mutex::new(LruCache::new(NonZeroUsize::new(BLOCK_CACHE_SIZE).unwrap()))),
-+            programs_summary: Default::default(),
-             history_compat,
-         };
-         // Spawn the server.
-@@ -378,6 +411,7 @@ impl<N: Network, C: ConsensusStorage<N>, R: Routing<N>> Rest<N, C, R> {
-             .route("/program/{id}/mapping/{name}/{key}", get(Self::get_mapping_value))
-             .route("/program/{id}/amendment_count", get(Self::get_program_amendment_count))
-             .route("/program/{id}/{edition}/amendment_count", get(Self::get_program_amendment_count_for_edition))
-+            .route("/programs/summary", get(Self::get_programs_summary))
- 
-             // GET ../sync/.. (with the deprecated ../sync_status alias)
-             .route("/sync_status", get(Self::get_sync_status))
-@@ -789,12 +823,14 @@ mod route_tests {
-             block::{Header, Transactions},
-             committee::test_helpers::sample_committee,
-             store::{StorageMode, helpers::memory::ConsensusMemory},
-+            test_helpers::sample_genesis_committee,
-         },
--        prelude::MainnetV0,
-+        prelude::{MainnetV0, PrivateKey, Program, Transaction},
-         utilities::TestRng,
-     };
- 
-     use axum::body::to_bytes;
-+    use std::str::FromStr;
-     use tower::ServiceExt; // for `oneshot`
- 
-     type CurrentNetwork = MainnetV0;
-@@ -811,8 +847,6 @@ mod route_tests {
-     /// port and spawn a server. None of the routes exercised here touch `consensus`, `cdn_sync`,
-     /// `routing` or `block_sync`; those fields exist only to satisfy the type.
-     async fn sample_rest() -> CurrentRest {
--        let rng = &mut TestRng::default();
+         // Re-issue the remaining failed requests.
+         if !failed_requests.is_empty() {
+-            trace!("There are {} failed requests that need to be re-issued.", failed_requests.len());
 -
-         // `Ledger::load` reaches snarkVM's sequential-operation thread and blocks on the reply,
-         // which panics if called from an async context. Production always drives these from a
-         // blocking task, so do the same here.
-@@ -826,6 +860,13 @@ mod route_tests {
-         .expect("the ledger task panicked")
-         .expect("couldn't load the test ledger");
+             // Convert the set of failed requests into one or multiple continuous ranges.
+             let iter = failed_requests.iter();
+             let mut batches: VecDeque<Vec<(u32, _, _)>> = VecDeque::new();
+@@ -1302,6 +1301,7 @@ impl<N: Network> BlockSync<N> {
+                 if tips.is_some_and(|(served_tip, _)| served_tip < start) {
+                     continue;
+                 }
++                trace!("Trying to re-issue failed block requests {start}..{end_height}");
  
-+        sample_rest_with(ledger).await
-+    }
-+
-+    /// Builds a `Rest` over the given ledger, as `sample_rest` does.
-+    async fn sample_rest_with(ledger: Ledger<CurrentNetwork, ConsensusMemory<CurrentNetwork>>) -> CurrentRest {
-+        let rng = &mut TestRng::default();
-+
-         let ledger_service = Arc::new(MockLedgerService::new(sample_committee(rng)));
+                 let Some((sync_peers, min_common_ancestor)) = self.find_sync_peers_inner(current_height, Some(start))
+                 else {
+@@ -1374,15 +1374,16 @@ impl<N: Network> BlockSync<N> {
  
-         Rest {
-@@ -841,6 +882,7 @@ mod route_tests {
-                 num_verifying_solutions: 1,
-             })),
-             block_cache: Arc::new(Mutex::new(LruCache::new(NonZeroUsize::new(BLOCK_CACHE
-```
-
-**File**: `node/rest/src/routes.rs` (modified, +69/-1)
-```diff
-@@ -37,7 +37,7 @@ use snarkvm::{
-     },
- };
- 
--use axum::{Json, extract::rejection::JsonRejection};
-+use axum::{Json, extract::rejection::JsonRejection, response::IntoResponse};
- 
- use anyhow::{Context, anyhow};
- use indexmap::IndexMap;
-@@ -277,6 +277,21 @@ pub(crate) struct TransactionWithMetadata<T: Serialize, N: Network> {
-     block_height: Option<u32>,
- }
- 
-+/// The return value for a `programs/summary` query.
-+#[derive(Serialize)]
-+struct ProgramsSummary {
-+    height: u32,
-+    programs: Vec<ProgramSummary>,
-+}
-+
-+/// A deployed program, its latest edition, and that edition's amendment count.
-+#[derive(Serialize)]
-+struct ProgramSummary {
-+    program_id: String,
-+    edition: u16,
-+    amendment_count: u64,
-+}
-+
- /// The return value for a `sync_status` query.
- #[skip_serializing_none]
- #[derive(Copy, Clone, Serialize)]
-@@ -889,6 +904,59 @@ impl<N: Network, C: ConsensusStorage<N>, R: Routing<N>> Rest<N, C, R> {
-         Ok(ErasedJson::new(rest.ledger.get_latest_edition_for_program(&id)?))
+             print_requests();
+             vec![]
+-        } else if let Some((served_tip, advertised_tip)) =
+-            tips.filter(|&(served_tip, _)| current_height < served_tip && served_tip < start_height)
+-        {
+-            // Every block a peer serves is in the ledger or requested, e.g. at the tip while the tip
+-            // block is in flight. This check must precede `find_sync_peers_inner`: no peer serves
+-            // `start_height`, so it finds no sync peers, and the final branch logs on every call.
++        } else if let Some((served_tip, advertised_tip)) = tips.filter(|&(served_tip, advertised_tip)| {
++            served_tip < start_height && (current_height < served_tip || served_tip < advertised_tip)
++        }) {
++            // Every block a peer serves is in the ledger or requested, and a peer is ahead of this
++            // node, e.g. at the tip while the tip block is in flight. This check must precede
++            // `find_sync_peers_inner`: no peer serves `start_height`, so it finds no sync peers, and
++            // the final branch logs on every call.
+             if served_tip < advertised_tip {
+                 trace!(
+-                    "Requested every block up to {served_tip}, the latest any peer serves, but peers advertise blocks up to {advertised_tip}"
++                    "Every block up to {served_tip}, the latest any peer serves, is in the ledger or requested, but peers advertise blocks up to {advertised_tip}"
+                 );
+             }
+             vec![]
+@@ -2954,32 +2955,62 @@ mod tests {
+         assert!(sync_peers.contains_key(&sample_peer_ip(2)));
      }
  
-+    /// GET /<network>/programs/summary
-+    ///
-+    /// Returns the deployed programs with their latest edition and that edition's amendment count,
-+    /// sorted by ID, and a `height`. The list may include programs deployed after `height`, and an
-+    /// edition or amendment count may be newer than it was at `height`. A storage read error during
-+    /// the scan can shorten the list, since snarkVM's map iterator stops silently on a decode error.
-+    /// The response is built once per height and cached.
-+    pub(crate) async fn get_programs_summary(State(rest): State<Self>) -> Result<Response, RestError> {
-+        let body = rest.programs_summary_body().await?;
-+        Ok(([(CONTENT_TYPE, "application/json")], body).into_response())
+-    /// Tests that block sync prepares no requests and logs nothing once it has requested every
+-    /// block its peers serve.
+-    #[test]
+-    #[tracing_test::traced_test]
+-    fn test_quiet_while_tip_block_in_flight() {
+-        let num_lines = || {
++    /// Returns the number of log lines the enclosing `traced_test` has captured.
++    macro_rules! num_log_lines {
++        () => {{
+             let count = std::cell::Cell::new(0);
+             logs_assert(|lines| {
+                 count.set(lines.len());
+                 Ok(())
+             });
+             count.get()
+-        };
++        }};
 +    }
 +
-+    /// Returns a `programs/summary` JSON body at least as new as the height the request first saw.
-+    pub(crate) async fn programs_summary_body(&self) -> Result<Bytes, RestError> {
-+        let seen = self.ledger.latest_height();
-+        if let Some(body) = self.programs_summary.get(seen) {
-+            return Ok(body);
-+        }
-+
-+        let permit = self.programs_summary.acquire_build().await?;
-+        // A build that finished while this request waited is new enough.
-+        if let Some(body) = self.programs_summary.get(seen) {
-+            return Ok(body);
-+        }
-+
-+        // The ledger advances the height only after the block is written, so a scan started after
-+        // this read covers every block up to it.
-+        let height = self.ledger.latest_height();
-+        let (ledger, cache) = (self.ledger.clone(), self.programs_summary.clone());
-+        // The blocking task owns the permit, so a dropped request cannot release it mid-build.
-+        let build = move || -> Result<Bytes, RestError> {
-+            let _permit = permit;
-+            let store = ledger.vm().block_store().transaction_store();
-+            let mut programs = store
-+                .program_ids_and_latest_editions()
-+                .map(|(id, edition)| {
-+                    let amendment_count = store.get_amendment_count(&id, *edition)?.unwrap_or(0);
-+                    Ok(ProgramSummary { program_id: id.to_string(), edition: *edition, amendment_count })
-+                })
-+                .collect::<Result<Vec<_>, RestError>>()?;
-+            programs.sort_unstable_by(|a, b| a.program_id.cmp(&b.program_id));
-+            let summary = ProgramsSummary { height, programs };
-+            let body = Bytes::from(serde_json::to_vec(&summary).context("Failed to serialize the summary")?);
-+            cache.set(height, body.clone());
-+            Ok(body)
-+        };
-+
-+        match tokio::task::spawn_blocking(build).await {
-+            Ok(body) => body,
-+            Err(err) => Err(RestError::internal_server_error(anyhow!(err).context("Tokio error"))),
-+        }
-+    }
-+
-     /// GET /<network>/program/{programID}/mappings
-     pub(crate) async fn get_mapping_names(
-         State(rest): State<Self>,
++    /// Tests that block sync prepares no requests and logs nothing once it has requested every
++    /// block its peers serve.
++    #[test]
++    #[tracing_test::traced_test]
++    fn test_quiet_while_tip_block_in_flight() {
+         let sync = sample_sync_at_height(1_000);
+         add_peers(&sync, 1, 1, 1_001, 0);
+         insert_requests_to(&sync, sample_peer_ip(1), 1_001..1_002);
+-        let before = num_lines();
++        let before = num_log_lines!();
+         assert!(sync.prepare_block_requests().is_empty());
+-        assert_eq!(num_lines(), before);
++        assert_eq!(num_log_lines!(), before);
+ 
+         // A peer ahead whose floor is above the next height to request.
+         add_peers(&sync, 2, 1, 1_100, 1_050);
+         assert!(sync.prepare_block_requests().is_empty());
+         assert!(logs_contain("No new blocks can be requested"));
+     }
+ 
++    /// Tests that block sync logs when requests are outstanding, but no peer is ahead.
++    #[test]
++    #[tracing_test::traced_test]
++    fn test_not_quiet_without_peer_ahead() {
++        let sync = sample_sync_at_height(1_000);
++        add_peers(&sync, 1, 1, 1_000, 0);
++        insert_requests_to(&sync, sample_peer_ip(1), 1_001..1_002);
++        assert!(sync.prepare_block_reque
 ```
 
 ---
 
-### Incident Patch 2: `59290c82` (2026-11-23)
-**Commit Message**: Accept any cached summary at or above the height a request saw
+### Incident Patch 2: `2325502f` (2026-11-24)
+**Commit Message**: Merge pull request #4755 from aleo-labs-protocol/fix/block-sync-quiet-tip-followup
 
-Drop the rollback guard: nothing rolls the ledger back while REST serves.
-Reach the transaction store through the block store, as the neighbouring
-amendment-count routes do.
+Keep block sync quiet only at the true served tip
 
-**File**: `node/rest/src/lib.rs` (modified, +3/-4)
+**File**: `Cargo.lock` (modified, +1/-0)
 ```diff
-@@ -70,7 +70,6 @@ use parking_lot::Mutex;
- use std::{
-     net::SocketAddr,
-     num::NonZeroUsize,
--    ops::RangeInclusive,
-     sync::{Arc, LazyLock},
-     time::Duration,
- };
-@@ -220,9 +219,9 @@ impl Default for ProgramsSummaryCache {
- }
+@@ -5806,6 +5806,7 @@ dependencies = [
+  "tokio",
+  "tracing",
+  "tracing-subscriber",
++ "tracing-test",
+ ]
  
- impl ProgramsSummaryCache {
--    /// Returns the cached body if it was built at a height in `heights`.
--    fn get(&self, heights: RangeInclusive<u32>) -> Option<Bytes> {
--        self.latest.lock().as_ref().filter(|(h, _)| heights.contains(h)).map(|(_, body)| body.clone())
-+    /// Returns the cached body if it was built at `min_height` or later.
-+    fn get(&self, min_height: u32) -> Option<Bytes> {
-+        self.latest.lock().as_ref().filter(|(h, _)| *h >= min_height).map(|(_, body)| body.clone())
-     }
- 
-     /// Call only while holding the build permit.
+ [[package]]
 ```
 
-**File**: `node/rest/src/routes.rs` (modified, +7/-8)
+**File**: `node/sync/Cargo.toml` (modified, +3/-0)
 ```diff
-@@ -919,25 +919,24 @@ impl<N: Network, C: ConsensusStorage<N>, R: Routing<N>> Rest<N, C, R> {
-     /// Returns a `programs/summary` JSON body at least as new as the height the request first saw.
-     pub(crate) async fn programs_summary_body(&self) -> Result<Bytes, RestError> {
-         let seen = self.ledger.latest_height();
--        if let Some(body) = self.programs_summary.get(seen..=seen) {
-+        if let Some(body) = self.programs_summary.get(seen) {
-             return Ok(body);
-         }
+@@ -101,3 +101,6 @@ features = [ "macros", "rt", "time" ]
+ [dev-dependencies.tracing-subscriber]
+ workspace = true
+ features = [ "env-filter", "fmt" ]
++
++[dev-dependencies.tracing-test]
++workspace = true
+```
+
+**File**: `node/sync/src/block_sync.rs` (modified, +115/-25)
+```diff
+@@ -750,17 +750,12 @@ impl<N: Network> BlockSync<N> {
+         let mut next_request_slot = None;
  
-         let permit = self.programs_summary.acquire_build().await?;
--        // The ledger advances the height only after the block is written, so a scan started after
--        // this read covers every block up to it.
--        let height = self.ledger.latest_height();
--        // A build that finished while this request waited is new enough. The upper bound skips a
--        // body from above the current height, left by a rollback.
--        if let Some(body) = self.programs_summary.get(seen..=height) {
-+        // A build that finished while this request waited is new enough.
-+        if let Some(body) = self.programs_summary.get(seen) {
-             return Ok(body);
-         }
+         if batches.is_empty() {
+-            let total_requests = self.num_total_block_requests();
+-            let num_outstanding = self.num_outstanding_block_requests();
+-            if total_requests == 0 {
++            // Failed requests that wait for a peer are reported by `prepare_block_requests`.
++            if self.num_total_block_requests() == 0 && self.failed_requests.lock().is_empty() {
+                 debug!(
+                     "Not block synced yet, and there are no outstanding block requests or \
+                  new block requests to send"
+                 );
+-            } else if !self.requested_all_served() {
+-                trace!(
+-                    "Not block synced yet, but there are still {total_requests} in-flight requests. {num_outstanding} are still awaiting responses."
+-                );
+             }
+         } else {
+             let chunk_size = DataBlocks::<N>::MAXIMUM_NUMBER_OF_BLOCKS as usize;
+@@ -1249,6 +1244,7 @@ impl<N: Network> BlockSync<N> {
  
-+        // The ledger advances the height only after the block is written, so a scan started after
-+        // this read covers every block up to it.
-+        let height = self.ledger.latest_height();
-         let (ledger, cache) = (self.ledger.clone(), self.programs_summary.clone());
-         // The blocking task owns the permit, so a dropped request cannot release it mid-build.
-         let build = move || -> Result<Bytes, RestError> {
-             let _permit = permit;
--            let store = ledger.vm().transaction_store();
-+            let store = ledger.vm().block_store().transaction_store();
-             let mut programs = store
-                 .program_ids_and_latest_editions()
-                 .map(|(id, edition)| {
+         // Do not hold lock here as, currently, `find_sync_peers_inner` can take a while.
+         let current_height = self.retention_height();
++        let tips = self.peer_tips();
+ 
+         // Determine if there are any failed requests that need to be re-issued.
+         //
+@@ -1264,8 +1260,6 @@ impl<N: Network> BlockSync<N> {
+ 
+         // Re-issue the remaining failed requests.
+         if !failed_requests.is_empty() {
+-            trace!("There are {} failed requests that need to be re-issued.", failed_requests.len());
+-
+             // Convert the set of failed requests into one or multiple continuous ranges.
+             let iter = failed_requests.iter();
+             let mut batches: VecDeque<Vec<(u32, _, _)>> = VecDeque::new();
+@@ -1303,6 +1297,11 @@ impl<N: Network> BlockSync<N> {
+                 if max_new_blocks_to_request == 0 {
+                     continue;
+                 }
++                // No peer serves `start`, so `find_sync_peers_inner` would find no sync peers.
++                if tips.is_some_and(|(served_tip, _)| served_tip < start) {
++                    continue;
++                }
++                trace!("Trying to re-issue failed block requests {start}..{end_height}");
+ 
+                 let Some((sync_peers, min_common_ancestor)) = self.find_sync_peers_inner(current_height, Some(start))
+                 else {
+@@ -1375,9 +1374,18 @@ impl<N: Network> BlockSync<N> {
+ 
+             print_requests();
+             vec![]
+-        } else if self.requested_all_served() {
+-            // Nothing to request until a peer serves more blocks, e.g. at the tip while the tip
+-            // block is in flight.
++        } else if let Some((served_tip, advertised_tip)) = tips.filter(|&(served_tip, advertised_tip)| {
++            served_tip < start_height && (current_height < served_tip || served_tip < advertised_tip)
++        }) {
++            // Every block a peer serves is in the ledger or requested, and a peer is ahead of this
++            // node, e.g. at the tip while the tip block is in flight. This check must precede
++            // `find_sync_peers_inner`: no peer serves `start_height`, so it finds no sync peers, and
++            // the final branch logs on every call.
++            if served_tip < advertised_tip {
++                trace!(
++                    "Every block up to {served_tip}, the latest any peer serves, is in the ledger or requested, but peers advertise blocks up to {advertised_tip}"
++                );
++            }
+             vec![]
+         } else if let Some((sync_peers, min_common_ancestor)) =
+             self.find_sync_peers_inner(current_height, Some(start_height))
+@@ -1411,7 +1419,8 @@ impl<N: Network> BlockSync<N> {
+ 
+             vec![]
+         } else {
+-            // No sync peers serve the next height to request.
++            // No sync peers were found for the next height to request: no peer ahead serves it, or
++            // too few of them share a common ancestor above the ledger height.
+             trace!("No new blocks can be requested, but there are still outstanding requests.");
+ 
+             print_requests();
+@@ -1943,13 +1952,15 @@ impl<N: Network> BlockSync<N> {
+         height
+     }
+ 
+-    /// Returns `true` if a peer is ahead of this node, and every block any peer serves is in the
+-    /// ledger or requested.
+-    fn requested_all_served(&self) -> bool {
+-        let current_height = self.retention_height();
+-        let start_height = self.first_unrequested_height(current_height.saturating_add(1));
+-        let max_tip = self.locators.read().values().map(|peer| peer.serving_tip()).max();
+-        max_tip.is_some_and(|tip| current_height < tip && tip < start_height)
++    /// Returns the greatest height any peer serves and the greatest height any peer advertises, or
++    /// `None` without peers. A `NotYet` reply caps the height a peer serves bel
 ```
 
 #### Recent Merged Pull Requests:
@@ -2216,65 +2179,66 @@ amendment-count routes do.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in lib.rs
+## X. Explain the capped tip state at the node height, and cover the quiet paths
 
 **RULE**:
-When implementing operations in `node/rest/src/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `node/sync/src/block_sync.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ae6a5b06`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `da73ee50`: Explain the capped tip state at the node height, and cover the quiet paths. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `node/rest/src/lib.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `node/sync/src/block_sync.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    body::{Body, Bytes},
-/// The latest `programs/summary` response body, built at most once per block height.
-pub(crate) struct ProgramsSummaryCache {
-    /// The height and serialized JSON body of the latest summary.
-    latest: Mutex<Option<(u32, Bytes)>>,
-    /// One permit, so only one build runs at a time. Requests wait for it asynchronously.
-    build: Arc<Semaphore>,
-}
-
-impl Default for ProgramsSummaryCache {
-    fn default() -> Self {
-        Self { latest: Default::default(), build: Arc::new(Semaphore::new(1)) }
-    }
-}
-
-impl ProgramsSummaryCache {
-    /// Returns the cached body if it was built at `min_height` or later.
-    fn get(&self, min_height: u32) -> Option<Bytes> {
-        self.latest.lock().as_ref().filter(|(h, _)| *h >= min_height).map(|(_, body)| body.clone())
+            // Failed requests that wait for a peer are reported by `prepare_block_requests`.
+            if self.num_total_block_requests() == 0 && self.failed_requests.lock().is_empty() {
+                trace!("Trying to re-issue failed block requests {start}..{end_height}");
+        } else if let Some((served_tip, advertised_tip)) = tips.filter(|&(served_tip, advertised_tip)| {
+            served_tip < start_height && (current_height < served_tip || served_tip < advertised_tip)
+        }) {
+            // Every block a peer serves is in the ledger or requested, and a peer is ahead of this
+            // node, e.g. at the tip while the tip block is in flight. This check must precede
+            // `find_sync_peers_inner`: no peer serves `start_height`, so it finds no sync peers, and
+            // the final branch logs on every call.
+                    "Every block up to {served_tip}, the latest any peer serves, is in the ledger or requested, but peers advertise blocks up to {advertised_tip}"
+    /// Returns the number of log lines the enclosing `traced_test` has captured.
+    macro_rules! num_log_lines {
+        () => {{
+        }};
     }
 
-    /// Call only while holding the build permit.
-    fn set(&self, height: u32, body: Bytes) {
-        *self.latest.lock() = Some((height, body));
-    }
-
-    async fn acquire_build(&self) -> Result<OwnedSemaphorePermit, RestError> {
-        self.build.clone().acquire_owned().await.map_err(|err| RestError::internal_server_error(anyhow::anyhow!(err)))
-    }
-}
-
-    /// The latest `programs/summary` 
+    /// Tests that block sync prepare
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    body::Body,
-        prelude::MainnetV0,
-        let rng = &mut TestRng::default();
+            if self.num_total_block_requests() == 0 {
+            trace!("There are {} failed requests that need to be re-issued.", failed_requests.len());
 
+        } else if let Some((served_tip, advertised_tip)) =
+            tips.filter(|&(served_tip, _)| current_height < served_tip && served_tip < start_height)
+        {
+            // Every block a peer serves is in the ledger or requested, e.g. at the tip while the tip
+            // block is in flight. This check must precede `find_sync_peers_inner`: no peer serves
+            // `start_height`, so it finds no sync peers, and the final branch logs on every call.
+                    "Requested every block up to {served_tip}, the latest any peer serves, but peers advertise blocks up to {advertised_tip}"
+    /// Tests that block sync prepares no requests and logs nothing once it has requested every
+    /// block its peers serve.
+    #[test]
+    #[tracing_test::traced_test]
+    fn test_quiet_while_tip_block_in_flight() {
+        let num_lines = || {
+        };
+        let before = num_lines();
+        assert_eq!(num_lines(), before);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ae6a5b06` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `da73ee50` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

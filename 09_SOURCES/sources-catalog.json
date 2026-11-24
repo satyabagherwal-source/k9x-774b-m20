@@ -2923,10 +2923,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/ProvableHQ/snarkOS",
-    "sourceVersion": "ae6a5b06",
+    "sourceVersion": "2325502f",
     "license": "Apache-2.0",
-    "contentHash": "e4cf951848685e0bd3b9db10b8ee634d858090bdf479b0b4408cef43e172d601",
-    "lastHarvestedAt": "2026-11-23T21:40:01.634Z",
+    "contentHash": "dc41417a1e31638ce0f42404dc4d3f879ea515e2ed8e97b1049257d963644809",
+    "lastHarvestedAt": "2026-11-24T07:47:17.783Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "vasu-devs-justhireme": {
@@ -3353,10 +3353,10 @@
     "repository": "SeekStorm/SeekStorm",
     "platform": "github",
     "sourceUrl": "https://github.com/SeekStorm/SeekStorm",
-    "sourceVersion": "c4888cbb",
+    "sourceVersion": "e807310b",
     "license": "Apache-2.0",
-    "contentHash": "388d54b5705baa38a53ba4388d3d6e29bf76e8539c245041b70782d4bea85b4c",
-    "lastHarvestedAt": "2026-11-17T02:02:22.967Z",
+    "contentHash": "e3908cae3eb233c237782d5f9e73a5db608f2b8b1df77573f3f9d1f5eb2ae9c4",
+    "lastHarvestedAt": "2026-11-24T07:47:18.429Z",
     "learningId": "learn-github-seekstorm-seekstorm"
   },
   "serafimcloud-21st": {
@@ -5163,10 +5163,10 @@
     "repository": "gocd/gocd",
     "platform": "github",
     "sourceUrl": "https://github.com/gocd/gocd",
-    "sourceVersion": "cb301ad6",
+    "sourceVersion": "90a9bc24",
     "license": "Apache-2.0",
-    "contentHash": "0812a5f9d949558a182c1c7446de41f492e2ecb05f019a92c27b9aa972038e1c",
-    "lastHarvestedAt": "2026-11-23T13:50:04.439Z",
+    "contentHash": "6ffb1a6248e25858529e1df13ae0440635a5e2c9105b379482697a7f46f6c9b6",
+    "lastHarvestedAt": "2026-11-24T07:47:13.945Z",
     "learningId": "learn-github-gocd-gocd"
   },
   "citusdata-citus": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gocd-gocd-learnings.md`  
 > **Source**: github ([https://github.com/gocd/gocd](https://github.com/gocd/gocd))  
-> **Source Version**: `cb301ad6`  
+> **Source Version**: `90a9bc24`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T13:50:03.375Z  
+> **Timestamp**: 2026-11-24T07:47:12.546Z  
 > **Learning ID**: `learn-github-gocd-gocd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gocd-gocd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gocd/gocd](https://github.com/gocd/gocd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T13:49:41.786Z  
+> **Harvest Timestamp**: 2026-11-24T07:47:12.288Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: GoCD - Continuous Delivery server main repository
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7439 stars
+- **Stars / Engagement**: 7438 stars
 
 ---
 
@@ -880,212 +880,523 @@ export class CommentRenderWidget extends MithrilViewComponent<Attrs> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `337cca9c` (2026-11-23)
-**Commit Message**: build(deps): bump minor dependency versions
+### Incident Patch 1: `90a9bc24` (2026-11-24)
+**Commit Message**: build: use Gradle providers to exec tools to determine versions
 
-**File**: `server/src/main/webapp/WEB-INF/rails/package.json` (modified, +4/-4)
+**File**: `build.gradle` (modified, +3/-2)
 ```diff
-@@ -39,7 +39,7 @@
-     "chartjs-plugin-zoom": "^2.2.0",
-     "classnames": "^2.5.1",
-     "core-js": "^3.51.0",
--    "filesize": "^11.0.34",
-+    "filesize": "^11.0.35",
-     "foundation-sites": "^6.9.0",
-     "hack-font": "^3.3.0",
-     "jquery": "^3.7.1",
-@@ -104,11 +104,11 @@
-     "mini-css-extract-plugin": "^2.10.2",
-     "mockdate": "^3.0.5",
-     "sass-embedded": "^1.108.2",
--    "sass-loader": "^17.1.0",
-+    "sass-loader": "^17.1.1",
-     "simulate-event": "^1.4.0",
-     "sourcemapped-stacktrace": "^1.1.11",
-     "style-loader": "^4.0.0",
--    "stylelint": "^18.0.0",
-+    "stylelint": "^18.1.0",
-     "stylelint-config-standard-scss": "^18.0.0",
-     "stylelint-webpack-plugin": "^5.1.0",
-     "thread-loader": "^4.0.4",
-@@ -118,7 +118,7 @@
-     "typescript": "^6.0.3",
-     "upath": "^3.0.8",
-     "url-loader": "^4.1.1",
--    "webpack": "^5.112.2",
-+    "webpack": "^5.113.0",
-     "webpack-assets-manifest": "^6.5.6",
-     "webpack-cli": "^7.3.1"
-   },
+@@ -47,6 +47,8 @@ def GO_VERSION_SEGMENTS = [year: 26, releaseInYear: 3, patch: 0]
+ def GO_VERSION_NEXT = '27.1.0'
+ 
+ def goVersions = new GoVersions(
++  providers: providers,
++
+   previousVersion: GO_VERSION_PREVIOUS,
+   goVersion: [GO_VERSION_SEGMENTS.year, GO_VERSION_SEGMENTS.releaseInYear, GO_VERSION_SEGMENTS.patch].join('.'),
+   nextVersion: GO_VERSION_NEXT,
+@@ -66,8 +68,7 @@ def goVersions = new GoVersions(
+     build:   2
+   ),
+ )
+-ext.goVersions = goVersions
+-GoVersions.printGradleDebuggingOutputFor(gradle, goVersions)
++ext.goVersions = goVersions.withGradleDebuggingOutput()
+ 
+ def libraries = [
+   // Dependabot will parse these dependencies.
 ```
 
-**File**: `server/src/main/webapp/WEB-INF/rails/yarn.lock` (modified, +22/-22)
+**File**: `buildSrc/src/main/groovy/com/thoughtworks/go/build/GoVersions.groovy` (modified, +35/-34)
 ```diff
-@@ -1256,7 +1256,7 @@ __metadata:
-   languageName: node
-   linkType: hard
+@@ -17,21 +17,26 @@
+ package com.thoughtworks.go.build
  
--"@csstools/css-syntax-patches-for-csstree@npm:^1.1.15":
-+"@csstools/css-syntax-patches-for-csstree@npm:^1.1.15, @csstools/css-syntax-patches-for-csstree@npm:^1.1.16":
-   version: 1.1.17
-   resolution: "@csstools/css-syntax-patches-for-csstree@npm:1.1.17"
-   peerDependencies:
-@@ -2912,7 +2912,7 @@ __metadata:
-   languageName: node
-   linkType: hard
+ import groovy.transform.Immutable
+-import org.gradle.api.invocation.Gradle
++import groovy.transform.ImmutableOptions
++import org.gradle.api.provider.ProviderFactory
++import org.gradle.util.GradleVersion
  
--"colord@npm:^2.10.0":
-+"colord@npm:^2.13.0":
-   version: 2.14.0
-   resolution: "colord@npm:2.14.0"
-   checksum: 10c0/e16b472899b8958881375a0cf4db259bae35e36f1de1ba00af908e5896fdc3d3f5d7d801baf54942a404c1de5275f9e7433daf4e86ca5bd703f9894570ef319e
-@@ -4019,7 +4019,7 @@ __metadata:
-   languageName: node
-   linkType: hard
+ import java.time.Duration
  
--"filesize@npm:^11.0.34":
-+"filesize@npm:^11.0.35":
-   version: 11.0.35
-   resolution: "filesize@npm:11.0.35"
-   checksum: 10c0/6fc60086c95eccfcf4d1ab1b70b9426e6fab2a5088be3ce5fb5320e72dba76b7a24d6edd4b2ffe7e461dee8db574ba10682da4d289d913b25f657e5b3c61ce32
-@@ -4426,7 +4426,7 @@ __metadata:
-     eslint-plugin-react: "npm:^7.37.5"
-     eslint-webpack-plugin: "npm:^6.0.0"
-     file-loader: "npm:^6.2.0"
--    filesize: "npm:^11.0.34"
-+    filesize: "npm:^11.0.35"
-     fork-ts-checker-webpack-plugin: "npm:^9.1.1"
-     foundation-sites: "npm:^6.9.0"
-     fs-extra: "npm:^11.4.1"
-@@ -4458,13 +4458,13 @@ __metadata:
-     opensans: "file:node-vendor/opensans#node-vendor/opensans::hash=930bae&locator=gocd-server-ui%40workspace%3A."
-     prismjs: "npm:^1.30.0"
-     sass-embedded: "npm:^1.108.2"
--    sass-loader: "npm:^17.1.0"
-+    sass-loader: "npm:^17.1.1"
-     shell-quote: "npm:^1.12.0"
-     shellwords-ts: "npm:^3.0.1"
-     simulate-event: "npm:^1.4.0"
-     sourcemapped-stacktrace: "npm:^1.1.11"
-     style-loader: "npm:^4.0.0"
--    stylelint: "npm:^18.0.0"
-+    stylelint: "npm:^18.1.0"
-     stylelint-config-standard-scss: "npm:^18.0.0"
-     stylelint-webpack-plugin: "npm:^5.1.0"
-     thread-loader: "npm:^4.0.4"
-@@ -4477,7 +4477,7 @@ __metadata:
-     url-loader: "npm:^4.1.1"
-     url-parse: "npm:^1.5.10"
-     uuid: "npm:^14.0.3"
--    webpack: "npm:^5.112.2"
-+    webpack: "npm:^5.113.0"
-     webpack-assets-manifest: "npm:^6.5.6"
-     webpack-cli: "npm:^7.3.1"
-   languageName: unknown
-@@ -6443,7 +6443,7 @@ __metadata:
-   languageName: node
-   linkType: hard
+ import static org.gradle.api.JavaVersion.*
  
--"postcss-selector-parser@npm:^7.0.0, postcss-selector-parser@npm:^7.1.6, postcss-selector-parser@npm:^7.1.7":
-+"postcss-selector-parser@npm:^7.0.0, postcss-selector-parser@npm:^7.1.6, postcss-selector-parser@npm:^7.2.1":
-   version: 7.2.1
-   resolution: "postcss-selector-parser@npm:7.2.1"
-   dependencies:
-@@ -6459,7 +6459,7 @@ __metadata:
-   languageName: node
-   linkType: hard
+ @Immutable
++@ImmutableOptions(knownImmutableClasses = [ProviderFactory])
+ class GoVersions implements Serializable {
++  transient ProviderFactory providers
++
+   String goVersion
+   String previousVersion
+   String nextVersion
  
--"postcss@npm:^8.4.40, postcss@npm:^8.5.31":
-+"postcss@npm:^8.4.40, postcss@npm:^8.5.33":
-   version: 8.5.33
-   resolution: "postcss@npm:8.5.33"
-   dependencies:
-@@ -7174,9 +7174,9 @@ __metadata:
-   languageName: node
-   linkType: hard
+-  String gitRevision = determineGitRevision()
+-  String gitShortRevision = determineGitShortRevision()
+-  String distVersion = determineReleaseRevision()
++  String gitRevision = git('rev-list', 'HEAD', '--max-count=1')
++  String gitShortRevision = git('rev-list', 'HEAD', '--max-count=1', '--abbrev-commit')
++  String distVersion = git('rev-list', 'HEAD', '--count')
  
--"sass-loader@npm:^17.1.0":
--  version: 17.1.0
--  resolution: "sass-loader@npm:17.1.0"
-+"sass-loader@npm:^17.1.1":
-+  version: 17.1.1
-+  resolution: "sass-loader@npm:17.1.1"
-   peerDependencies:
-     "@rspack/core": 0.x || ^1.0.0 || ^2.0.0-0
-     sass: ^1.3.0
-@@ -7191,7 +7191,7 @@ __metadata:
-       optional: true
-     webpack:
-       optional: true
--  checksum: 10c0/6eff347a98c3ff654430562d661f689a48079b16298dc4e59c49cf8730c7abea09cbdbe2493a3b68059d44bd89c0db2e3e5e93facc9ea83e332b0f8ba1b357e9
-+  checksum: 10c0/e78d215b8eb16e3e8a94a5c71f0513fdc1af5a547d389578d5ee9bae3fa8bed980b4bfe6ab0b1c74b0231c7ad0c8d4ae682412c376b7e2c51ab4c86fd3ff9639
-   languageName: node
-   linkType: hard
+   String getFullVersion() { distVersion ? "${goVersion}-${distVersion}" : goVersion }
  
-@@ -7885,32 +7885,32 @@ __metadata:
-   languageName: node
-   linkType: hard
+@@ -47,56 +52,52 @@ class GoVersions implements Serializable {
+       .collect { v -> v.majorVersion }
+   }
  
--"stylelint@npm:^18.0.0":
--  version: 18.0.0
--  resolution: "stylelint@npm:18.0.0"
-+"stylelint@npm:^18.1.0":
-+  version: 18.1.0
-+  resolution: "stylelint@npm:18.1.0"
-   dependencies:
-     "@csstools/css-calc": "npm:^3.4.3"
-     "@csstools/css-parser-algorithms": "npm:^4.0.2"
--    "@csstools/css-syntax-patches-for-csstree": "npm:^1.1.15"
-+    "@csstools/css-syntax-patches-for-csstree": "npm:^1.1.16"
-     "@csstools/css-tokenizer": "npm:^4.0.2"
-     "@csstools/media-query-list-parser": "npm:^5.0.2"
-     "@csstools/selector-resolve-nested": "npm:^4.0.2"
-     "@csstools/selector-specificity": "npm:^6.0.1"
--    colord: "npm:^2.10.0"
-+    colord: "npm:^2.13.0"
-     cosmiconfig: "npm:^10.0.1"
-     css-tree: "npm:^3.2.1"
-     ignore: "npm:^7.0.14"
-     import-meta-resolve: "npm:^4.2.0"
-     picomatch: "npm:^4.0.7"
--    postcss: "npm:^8.5.31"
-+    postcss: "npm:^8.5.33"
-     postcss-safe-parser: "npm:^7.1.0"
--    postcss-selector-parser: "npm:^7.1.7"
-+    postcss-selector-parser: "npm:^7.2.1"
-     postcss-value-parser: "npm:^4.2.0"
-     tinyglobby: "npm:^0.2.17"
-     write-file-atomic: "npm:^8.0.0"
-   bin:
-     stylelint: bin/stylelint.mjs
--  checksum: 10c0/e5465ea0db70c500c367dd55a5564a37639154c26f48f8ebb5b375a9f26c3cf27300fed4c919f876edd2e0dea73139eaf062c26a0786e63c8b23273a3
+-  private static String determineGitRevision() {
+-    outputFor("git rev-list HEAD --max-count=1")
+-  }
+-
+-  private static String determineGitShortRevision() {
+-    outputFor("git rev-list HEAD --max-count=1 --abbrev-commit")
+-  }
+-
+-  private static String determineReleaseRevision() {
+-    outputFor("git rev-list HEAD --count")
++  private String git(String... args) {
++    providers.exec { commandLine(['git', *args]); ignoreExitValue = true }.standardOutput.asText.get().trim()
+   }
+ 
+-  private static outputFor(String command) {
+-    def process = command.execute(null, null)
+-    process.waitFor()
+-    return process.text.stripIndent().trim()
++  private String toolVersion(String command) {
++    try {
++      def exec = providers.exec { commandLine(command.split(' ')); ignoreExitValue = true }
++      exec.result.get().exitValue == 0 ? exec.standardOutput.asText.get().trim() : "could not determine version!"
++    } catch (Exception e) {
++      "could not determine version! (${e.message})"
++    }
+   }
+ 
+-  static void printGradleDebuggingOutputFor(Gradle gradle, GoVersions goVersions) {
++  GoVersions withGradleDebuggingOutput() {
+     if (isCi()) {
+       def separator = "=".multiply(72)
+ 
+       println separator
+-      println "Gradle version:  ${gradle.gradleVersion}"
++      println "Gradle version:  ${GradleVersion.current().version}"
+       println "JVM:             ${System.getProperty('java.version')} (${System.getProperty('java.vm.vendor')} ${System.getProperty('java.vm.version')})"
+       println "OS:              ${System.getProperty('os.name')} ${System.getProperty('os.version')} ${System.getProperty('os.arch')}"
+       println("")
+ 
+       println("Tool Versions")
+       println(separator)
+-      println("node: ${getToolVersion("node --version")} (corepack: ${getToolVersion("corepack --version")})")
+-      println(" git: ${getToolVersion("git --version")}")
+-      println("  hg: ${getToolVersion("hg --quiet --version")}")
+-      println(" svn: ${getToolVersion("svn --quiet --version")}")
+-      println("  p4: ${getToolVersion("p4 -V").readLines().grep(~/Rev.*/).join("")}")
+-      println(" p4d: ${getToolVersion("p4d -V").readLines().grep(~/Rev.*/).join("")}")
+-      println(" ant: ${getToolVersion("ant -version")}")
++      println("node: ${toolVersion("node --version")} (corepack: ${toolVersion("corepack --version")})")
++      println(" git: ${toolVersion("git --version")}")
++      println("  hg: ${toolVersion("hg --quiet --version")}")
++      println(" svn: ${toolVersion("svn --quiet --version")}")
++      println("  p4: ${toolVersion("p4 -V").readLines().grep(~/Rev.*/).join("")}")
++      println(" p4d: ${toolVersion("p4d -V").readLines().grep(~/Rev.*/).join("")}")
++      println(" ant: ${toolVersion("ant -version")}")
+       println("")
+ 
+       println("GoCD Versions")
+       println(separator)
+-      println("        goVersion: ${goVersions.goVersion}")
+-      println("      distVersion: ${goVersions.distVersion}        (will be inaccurate on shallow clones!)")
+-      println("      fullVersion: ${goVersions.fullVersion}")
+-      println(" gitShortRevision: ${goVersions.gitShortRevision}")
+-      println("targetJavaVersion: ${goVersions.targetJavaVersion}")
+-      println(" buildJavaVersion: ${goVersions.buildJavaVersion}")
+-      println("   javaPreference: ${goVersions.preferredJavaVersions()}")
++      println("        goVersion: ${goVersion}")
++      println("      distVersion: ${distVersion}        (will be inaccurate on shallow clones!)")
++      println("      fullVersion: ${fullVersion}")
++      println(" gitShortRevision: ${gitShortRevision}")
++      println("targetJavaVersion: ${targetJavaVersion}")
++      println(" buildJavaVersion: ${buildJavaVersion}")
++      println("   javaPreference: ${preferredJavaVersions()}")
+       println("")
+     }
++    return this
+   }
+ 
+   sta
 ```
 
 ---
 
-### Incident Patch 2: `fd7bb3f3` (2026-11-23)
-**Commit Message**: build(deps): bump Yarn to 4.19.0
+### Incident Patch 2: `c0177809` (2026-11-24)
+**Commit Message**: build: report the mismatched jar versions before worrying about licenses
 
-**File**: `server/src/main/webapp/WEB-INF/rails/package.json` (modified, +1/-1)
+**File**: `buildSrc/src/main/groovy/com/thoughtworks/go/build/AbstractVerifyJarTask.groovy` (added, +65/-0)
 ```diff
-@@ -10,7 +10,7 @@
-     },
-     "packageManager": {
-       "name": "yarn",
--      "version": "4.18.1+sha256.a28ad591febb769f939c11f82f89bacad0b0fac0c884d3b78fa2aaaee970907e"
-+      "version": "4.19.0+sha256.070ffef2a2b6877cd871864c16e29e8dd64a1a69cb493aaf4836c9d53c143163"
-     }
-   },
-   "scripts": {
+@@ -0,0 +1,65 @@
++/*
++ * Copyright Thoughtworks, Inc.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++package com.thoughtworks.go.build
++
++import org.gradle.api.DefaultTask
++import org.gradle.api.tasks.Input
++import org.gradle.api.tasks.TaskAction
++
++/**
++ * Verifies that a set of jars (e.g. those packaged inside a jar/war, or a classpath destined to be packaged) exactly
++ * matches a set of expected jar names/regexes, grouped by location (e.g. a directory inside the jar).
++ */
++abstract class AbstractVerifyJarTask extends DefaultTask {
++
++  @Input Map<String, List<String>> expectedJars
++
++  /**
++   * @return the names of the actual jars for each location key in {@link #expectedJars}
++   */
++  protected abstract Collection<String> actualJarNames(String location)
++
++  protected abstract String describe(String location)
++
++  @TaskAction
++  void perform() {
++    def expectedMessages = []
++
++    expectedJars.each { location, expectedJarsInLocation ->
++      def allJars = actualJarNames(location).unique().sort()
++
++      def extra = allJars.findAll { actual -> !expectedJarsInLocation.any { expected -> actual =~ expected } }
++      if (!extra.empty) {
++        expectedMessages += ["Got some extra jars in ${describe(location)} that were not expected"]
++        extra.each { jar ->
++          expectedMessages += ["  - ${jar}"]
++        }
++      }
++
++      def missing = expectedJarsInLocation.findAll { expected -> !allJars.any { actual -> actual =~ expected } }
++      if (!missing.empty) {
++        expectedMessages += ["Some jars that were expected in ${describe(location)} were not present"]
++        missing.each { jar ->
++          expectedMessages += ["  - ${jar}"]
++        }
++      }
++    }
++
++    if (!expectedMessages.empty) {
++      throw new IllegalStateException(expectedMessages.join(System.lineSeparator()))
++    }
++  }
++}
+```
+
+**File**: `buildSrc/src/main/groovy/com/thoughtworks/go/build/VerifyClasspathJarsTask.groovy` (added, +39/-0)
+```diff
+@@ -0,0 +1,39 @@
++/*
++ * Copyright Thoughtworks, Inc.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++package com.thoughtworks.go.build
++
++import org.gradle.api.file.ConfigurableFileCollection
++import org.gradle.api.tasks.Classpath
++
++/**
++ * Verifies the jars on a classpath which is destined to be packaged into a single location (e.g. a war's WEB-INF/lib)
++ * <em>before</em> packaging. Useful when the packaging task itself has dependencies which rely on these expectations.
++ * {@link #expectedJars} should contain a single location key, used only for reporting.
++ */
++abstract class VerifyClasspathJarsTask extends AbstractVerifyJarTask {
++
++  @Classpath abstract ConfigurableFileCollection getClasspath()
++
++  @Override
++  protected Collection<String> actualJarNames(String location) {
++    classpath.files.findAll { it.name.endsWith('.jar') || it.name.endsWith('.zip') }.collect { it.name }
++  }
++
++  @Override
++  protected String describe(String location) {
++    "the classpath to be packaged into ${location}"
++  }
++}
+```
+
+**File**: `buildSrc/src/main/groovy/com/thoughtworks/go/build/VerifyJarTask.groovy` (modified, +14/-37)
+```diff
+@@ -13,25 +13,22 @@
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  */
+-
+ package com.thoughtworks.go.build
+ 
+-import org.gradle.api.DefaultTask
+ import org.gradle.api.file.ArchiveOperations
+-import org.gradle.api.file.FileTree
+ import org.gradle.api.file.RegularFileProperty
+-import org.gradle.api.tasks.Input
+ import org.gradle.api.tasks.Internal
+-import org.gradle.api.tasks.TaskAction
+ import org.gradle.api.tasks.TaskProvider
+ import org.gradle.api.tasks.bundling.Zip
+ 
+ import javax.inject.Inject
+ 
+-abstract class VerifyJarTask extends DefaultTask {
++/**
++ * Verifies the jars packaged within directories of an archive.
++ */
++abstract class VerifyJarTask extends AbstractVerifyJarTask {
+ 
+   @Internal TaskProvider<? extends Zip> jarTask
+-  @Input Map<String, List<String>> expectedJars
+ 
+   @Internal abstract RegularFileProperty getJar()
+   @Inject abstract ArchiveOperations getArchiveOps()
+@@ -42,36 +39,16 @@ abstract class VerifyJarTask extends DefaultTask {
+     this.jar.set(jarTask.flatMap { it.archiveFile })
+   }
+ 
+-  @TaskAction
+-  void perform() {
+-    def expectedMessages = []
+-
+-    expectedJars.each { directoryInJar, expectedJarsInDir ->
+-      FileTree tree = archiveOps.zipTree(jar).matching {
+-        include "${directoryInJar}/*.jar"
+-        include "${directoryInJar}/*.zip"
+-      }
+-      def allJars = tree.files.collect { it.name }.sort()
+-
+-      def extra = allJars.findAll {actual -> !expectedJarsInDir.any { expected -> actual =~ expected } }
+-      if (!extra.empty) {
+-        expectedMessages += ["Got some extra jars in ${jar.get()}!${directoryInJar} that were not expected"]
+-        extra.each { jar ->
+-          expectedMessages += ["  - ${jar}"]
+-        }
+-      }
+-
+-      def missing = expectedJarsInDir.findAll {expected -> !allJars.any { actual -> actual =~ expected } }
+-      if (!missing.empty) {
+-        expectedMessages += ["Some jars that were expected in ${jar.get()}!${directoryInJar} were not present"]
+-        missing.each { jar ->
+-          expectedMessages += ["  - ${jar}"]
+-        }
+-      }
+-    }
++  @Override
++  protected Collection<String> actualJarNames(String directoryInJar) {
++    archiveOps.zipTree(jar).matching {
++      include "${directoryInJar}/*.jar"
++      include "${directoryInJar}/*.zip"
++    }.files.collect { it.name }
++  }
+ 
+-    if (!expectedMessages.empty) {
+-      throw new IllegalStateException(expectedMessages.join(System.lineSeparator()))
+-    }
++  @Override
++  protected String describe(String directoryInJar) {
++    "${jar.get()}!${directoryInJar}"
+   }
+ }
+```
+
+**File**: `server/build.gradle` (modified, +64/-37)
+```diff
+@@ -18,6 +18,8 @@ import com.github.jk1.license.task.ReportTask
+ import com.thoughtworks.go.build.GoVersions
+ import com.thoughtworks.go.build.LicenseReport
+ import com.thoughtworks.go.build.TextUtils
++import com.thoughtworks.go.build.AbstractVerifyJarTask
++import com.thoughtworks.go.build.VerifyClasspathJarsTask
+ import com.thoughtworks.go.build.VerifyJarTask
+ import dev.yumi.gradle.licenser.task.ApplyLicenseTask
+ import dev.yumi.gradle.licenser.task.CheckLicenseTask
+@@ -505,40 +507,40 @@ def configureWar = tasks.register('configureWar') {
+   }
+ }
+ 
++// The jars to be packaged into the war's WEB-INF/lib
++def warLibs = files({
++  def appServerJarTask = project(':app-server').tasks.named('jar') as TaskProvider<Jar>
++
++  // Using a Set<String> is more reliable than Set<File> because File.equals() may be affected by other internal fields
++  // aside from `path` that aren't important to us; thus, Set<File> may allow duplicate paths and Set<String> will not.
++  Set<String> classpath = (
++    configurations.runtimeClasspath
++      + configurations.packagingOnly
++      + configurations.allApis
++      + configurations.spark
++      // Rely on logging libs from launcher parent classloader; JettyServer pins org.slf4j/org.apache.commons.logging as system classes
++      - configurations.runtimeClasspath.findAll { jar -> ['logback', 'slf4j-api', 'jcl-over-slf4j', 'jul-to-slf4j'].any { jar.name.startsWith(it) } }
++  )
++    .collect { f -> f.toString() }
++    .toSet()
++
++  // exclude app-server because it causes class cast exceptions (loaded by different classloaders)
++  classpath.removeAll([
++    appServerJarTask.get().archiveFile.get().toString(),
++    jar.archiveFile.get().toString()
++  ])
++
++  classpath
++}).builtBy(configurations.runtimeClasspath, configurations.packagingOnly, configurations.allApis, configurations.spark)
++
+ def war = tasks.register('war', Jar) {
+   dependsOn configureWar, ':server:jar'
+-  dependsOn configurations.runtimeClasspath, configurations.packagingOnly, configurations.allApis, configurations.spark
+ 
+   finalizedBy 'verifyWar'
+   archiveBaseName = 'cruise'
+   archiveExtension = 'war'
+ 
+-  def appServerJarTask = project(':app-server').tasks.named('jar') as TaskProvider<Jar>
+-
+-  def classpathResolver = {
+-    // Using a Set<String> is more reliable than Set<File> because File.equals() may be affected by other internal fields
+-    // aside from `path` that aren't important to us; thus, Set<File> may allow duplicate paths and Set<String> will not.
+-    Set<String> classpath = (
+-      configurations.runtimeClasspath
+-        + configurations.packagingOnly
+-        + configurations.allApis
+-        + configurations.spark
+-        // Rely on logging libs from launcher parent classloader; JettyServer pins org.slf4j/org.apache.commons.logging as system classes
+-        - configurations.runtimeClasspath.findAll { jar -> ['logback', 'slf4j-api', 'jcl-over-slf4j', 'jul-to-slf4j'].any { jar.name.startsWith(it) } }
+-    )
+-      .collect { f -> f.toString() }
+-      .toSet()
+-
+-    // exclude app-server because it causes class cast exceptions (loaded by different classloaders)
+-    classpath.removeAll([
+-      appServerJarTask.get().archiveFile.get().toString(),
+-      jar.archiveFile.get().toString()
+-    ])
+-
+-    classpath
+-  }
+-
+-  from(classpathResolver) {
++  from(warLibs) {
+     into 'WEB-INF/lib'
+   }
+ 
+@@ -568,9 +570,8 @@ def war = tasks.register('war', Jar) {
+   }
+ }
+ 
+-tasks.register('verifyWar', VerifyJarTask) {
+-  jarTask = war
+-  expectedJars = [
++def expectedWarJars = { ->
++  [
+     "WEB-INF/lib": (
+       ((project(':api').subprojects + project(':spark').subprojects).collect { eachProject -> eachProject.jar.archiveFile.get().asFile.name })
+         + [
+@@ -713,6 +714,18 @@ tasks.register('verifyWar', VerifyJarTask) {
+         "zt-exec-${rootProject.versions.ztExec}.jar",
+       ])
+   ] as Map<String, List<String>>
++}
++
++// Verifies the war's libraries prior to packaging, since the war depends on the license report, which relies on these
++// expectations being correct. This allows extra/missing jars to be reported before license report errors.
++def verifyWarLibs = tasks.register('verifyWarLibs', VerifyClasspathJarsTask) {
++  classpath.from(warLibs)
++  expectedJars = expectedWarJars()
++}
++
++tasks.register('verifyWar', VerifyJarTask) {
++  jarTask = war
++  expectedJars = expectedWarJars()
+ 
+   doLast {
+     def denylistedContents = [
+@@ -745,8 +758,10 @@ tasks.register('licenseReportAggregate') {
+   dependsOn compileAssetsWebpackProd
+   dependsOn generateRubygemsLicenseReport
+ 
+-  // try our best to run verifications first since logic here relies on the expectations here
+-  def verifyJarTasks = rootProject.subprojects.collectMany { eachProject -> eachProject.tasks.withType(VerifyJarTask) }
++  // try our best to run verifications first since logic here relies on the expectations here. verifyWar cannot be
++  // ordered first since the war bundles compiled assets, which depend on this task; so verif
+```
+
+---
+
+### Incident Patch 3: `2aa72df0` (2026-11-24)
+**Commit Message**: build(deps): bump jruby from 9.4.15.0 to 9.4.16.0
+
+**File**: `build.gradle` (modified, +1/-1)
+```diff
+@@ -115,7 +115,7 @@ def libraries = [
+   jetty               : 'org.eclipse.jetty:jetty-server:10.0.26',
+   jgit                : 'org.eclipse.jgit:org.eclipse.jgit:6.10.1.202505221210-r',
+   jolt                : 'com.bazaarvoice.jolt:jolt-core:0.1.8',
+-  jruby               : 'org.jruby:jruby:9.4.15.0',
++  jruby               : 'org.jruby:jruby:9.4.16.0',
+   jrubyRack           : 'com.github.gocd-contrib:jruby-rack:1.3.0.15',
+   liquibase           : 'org.liquibase:liquibase-core:5.0.4',
+   liquibaseSlf4j      : 'com.mattbertolini:liquibase-slf4j:5.1.0',
+```
+
+**File**: `server/build.gradle` (modified, +7/-7)
+```diff
+@@ -654,16 +654,16 @@ tasks.register('verifyWar', VerifyJarTask) {
+         "jaxen-${rootProject.versions.jaxen}.jar",
+         "jcodings-1.0.63.jar",
+         "jdom2-${rootProject.versions.jdom}.jar",
+-        "jffi-1.3.15.jar",
+-        "jffi-1.3.15-native.jar",
++        "jffi-1.4.7.jar",
++        "jffi-1.4.7-native.jar",
+         "jitescript-0.4.1.jar",
+         "jnr-a64asm-1.0.0.jar",
+-        "jnr-constants-0.10.4.jar",
+-        "jnr-enxio-0.32.20.jar",
+-        "jnr-ffi-2.2.19.jar",
++        "jnr-constants-0.11.4.jar",
++        "jnr-enxio-0.33.6.jar",
++        "jnr-ffi-2.3.7.jar",
+         "jnr-netdb-1.2.0.jar",
+-        "jnr-posix-3.1.22.jar",
+-        "jnr-unixsocket-0.38.25.jar",
++        "jnr-posix-3.2.8.jar",
++        "jnr-unixsocket-0.39.9.jar",
+         "jnr-x86asm-1.0.2.jar",
+         "joda-time-2.12.7.jar",
+         "jolt-core-${rootProject.versions.jolt}.jar",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14763** (2026-11-23): build(deps): bump ch.qos.logback:logback-classic from 1.6.7 to 1.6.8 (@dependabot[bot])
+- **PR #14760** (2026-11-23): build(deps): bump gradle-wrapper from 9.9.1 to 9.9.2 in the gradle-plugins group (@dependabot[bot])
 - **PR #14759** (2026-11-21): [post-release] Bump up GoCD Version to 26.3.0 (@gocd-ci-user)
 - **PR #14757** (closed): Show a not-found message for an unknown job name on the job detail page (@ARAYN7011)
 - **PR #14755** (2026-11-21): build(deps): bump org.dbunit:dbunit from 3.5.2 to 3.5.3 in the test group (@dependabot[bot])
 - **PR #14752** (2026-11-20): build(deps-ui-dev): bump regexp_parser from 2.13.1 to 2.13.4 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
-- **PR #14751** (2026-11-20): build(deps-ui): bump filesize from 11.0.33 to 11.0.34 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
-- **PR #14750** (2026-11-20): build(deps-ui-dev): bump fork-ts-checker-webpack-plugin from 9.1.1 to 9.2.0 in /server/src/main/webapp/WEB-INF/rails in the webpack group (@dependabot[bot])
 
 ---
 
@@ -1105,34 +1416,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump minor dependency versions
+## X. build: use Gradle providers to exec tools to determine versions
 
 **RULE**:
-When implementing operations in `server/src/main/webapp/WEB-INF/rails/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `build.gradle`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `337cca9c`: build(deps): bump minor dependency versions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `90a9bc24`: build: use Gradle providers to exec tools to determine versions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/src/main/webapp/WEB-INF/rails/package.json`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `build.gradle`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    "filesize": "^11.0.35",
-    "sass-loader": "^17.1.1",
-    "stylelint": "^18.1.0",
-    "webpack": "^5.113.0",
+  providers: providers,
+
+ext.goVersions = goVersions.withGradleDebuggingOutput()
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-    "filesize": "^11.0.34",
-    "sass-loader": "^17.1.0",
-    "stylelint": "^18.0.0",
-    "webpack": "^5.112.2",
+ext.goVersions = goVersions
+GoVersions.printGradleDebuggingOutputFor(gradle, goVersions)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `337cca9c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `90a9bc24` are properly handled with clean fallback behavior.

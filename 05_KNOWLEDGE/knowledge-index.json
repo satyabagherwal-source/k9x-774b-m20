@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T07:33:20.919Z",
+  "last_updated": "2026-11-24T07:47:25.986Z",
   "total_verified_learnings": 9092,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24521,
+  "total_items": 24526,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112818,13 +112818,13 @@
       "item_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "repository": "aleo-labs-protocol/snarkOS",
       "source_version": "2325502f",
-      "content_hash": "a31298dbc04ad23887f510729c710bf87f08788fbc786945b6193a888cac9073",
+      "content_hash": "e2a97b049f570ead77a7bb60aafb864aad61d37159620c8401a511d0a3a157bd",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T04:45:19.274Z"
+      "persisted_at": "2026-11-24T07:47:18.413Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos",
@@ -113289,10 +113289,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gocd-gocd-technical-construction-intelligence-gocd-gocd-core-invariants.md",
       "title": "Technical Construction Intelligence: gocd/gocd Core Invariants",
       "repository": "gocd/gocd",
-      "source_version": "cb301ad6",
-      "content_hash": "5cc3ee2bcc71dd3769f0428770d579b14295e546eaf2f0cc34950a273236cab8",
+      "source_version": "90a9bc24",
+      "content_hash": "d603f7d2007e6aa1b72ea5002df138bfd4ddec2ce614490d08c115126ecf6b9a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T13:50:04.820Z"
+      "persisted_at": "2026-11-24T07:47:14.515Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd",
@@ -113301,10 +113301,10 @@
       "relative_path": "08_VERIFICATION/gocd-gocd-verification-protocol-empirical-defect-shield-for-gocd-gocd.md",
       "title": "Verification Protocol: Empirical Defect Shield for gocd/gocd",
       "repository": "gocd/gocd",
-      "source_version": "cb301ad6",
-      "content_hash": "14944a93dee2c6cd3fa364269e83add1b2b5e7e4862cde283e5528b6c6f085c4",
+      "source_version": "90a9bc24",
+      "content_hash": "1b151c9f7399f1c7921705377508fa6b1a4f07d3baf0321ae4c5453bcf83c4ee",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T13:50:04.988Z"
+      "persisted_at": "2026-11-24T07:47:14.752Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants",
@@ -113362,9 +113362,9 @@
       "title": "Technical Construction Intelligence: gocd-gocd-learnings Core Invariants",
       "repository": "gocd-gocd-learnings",
       "source_version": "HEAD",
-      "content_hash": "05fc7bfdf6e6f3719e558846a9e54944e3cea1da585b3a34ee4e8ff039372322",
+      "content_hash": "daa92e7f4d4dead6444e903ae1778875831d69dc411b0923b7d55844f8281b89",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T13:54:39.580Z"
+      "persisted_at": "2026-11-24T07:47:23.099Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd-learnings",
@@ -113374,9 +113374,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for gocd-gocd-learnings",
       "repository": "gocd-gocd-learnings",
       "source_version": "HEAD",
-      "content_hash": "c8a93f3a7e6800490bc29d2610e97c8a4929dca7990a5b56c1a4ce76f42a6338",
+      "content_hash": "bcad165e3ef5b785cb7f3b1ee6f7d58f0fb0185b758f9ebb617b944300a65eaf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T13:54:39.749Z"
+      "persisted_at": "2026-11-24T07:47:23.335Z"
     },
     "domain_intelligence-research-knowledge-intelligence-taichuai-zdtaichu5-0-9b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-taichuai-zdtaichu5-0-9b-core-invariants",
@@ -114598,9 +114598,9 @@
       "title": "Architecture Intelligence: provablehq-snarkos-learnings Core Invariants",
       "repository": "provablehq-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "b15da36b6814c81d47f66aad49508e013448f3ffac45572cd24d79a75e81631d",
+      "content_hash": "7508b6288d7002de8720319eee05ab79e038dfd59f5356a217be1f9f2696aa5f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T21:40:05.913Z"
+      "persisted_at": "2026-11-24T07:47:24.245Z"
     },
     "candidate_directive-server-security-check-the-token-on-the-account-confirmation-page-when-confirm_": {
       "item_id": "candidate_directive-server-security-check-the-token-on-the-account-confirmation-page-when-confirm_",
@@ -215988,13 +215988,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
       "source_version": "2325502f",
-      "content_hash": "e33d75b68a368ccc3c2f9ca8e2c4c76d441ee52c2a5ce6d4b0ceee18b810e3bb",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "content_hash": "dc41417a1e31638ce0f42404dc4d3f879ea515e2ed8e97b1049257d963644809",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 3992,
@@ -216109,7 +216109,7 @@
         {
           "number": 10202,
           "title": "Explain the capped tip state at the node height, and cover the quiet paths",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -216117,7 +216117,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T04:45:18.695Z",
+      "verified_at": "2026-11-24T07:47:17.495Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -220427,9 +220427,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for provablehq-snarkos-learnings",
       "repository": "provablehq-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "5731f451c0a2f59276dfd0d707111ac5f472fe1ec4c931592bd2c3d0b7ffa5d1",
+      "content_hash": "3f582e112929aefa35e9fce1a7ba3f35b19de29ac21f19a8114f81a3af5a25dc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T21:40:06.086Z"
+      "persisted_at": "2026-11-24T07:47:24.494Z"
     },
     "candidate_directive-viz-category-axis-tickvals-are-category-names-not-positions": {
       "item_id": "candidate_directive-viz-category-axis-tickvals-are-category-names-not-positions",
@@ -239639,8 +239639,8 @@
       "slug": "gocd-gocd",
       "platform": "github",
       "source_url": "https://github.com/gocd/gocd",
-      "source_version": "cb301ad6",
-      "content_hash": "0812a5f9d949558a182c1c7446de41f492e2ecb05f019a92c27b9aa972038e1c",
+      "source_version": "90a9bc24",
+      "content_hash": "6ffb1a6248e25858529e1df13ae0440635a5e2c9105b379482697a7f46f6c9b6",
       "dossier_path": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "promoted_rules": [
@@ -239688,6 +239688,11 @@
           "number": 10047,
           "title": "build(deps): bump minor dependency versions",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10229,
+          "title": "use Gradle providers to exec tools to determine versions",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -239695,7 +239700,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T13:50:04.227Z",
+      "verified_at": "2026-11-24T07:47:13.666Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -250921,10 +250926,10 @@
       "relative_path": "08_VERIFICATION/seekstorm-seekstorm-verification-protocol-empirical-defect-shield-for-seekstorm-.md",
       "title": "Verification Protocol: Empirical Defect Shield for SeekStorm/SeekStorm",
       "repository": "SeekStorm/SeekStorm",
-      "source_version": "c4888cbb",
-      "content_hash": "8081359bf6b0a1123e1e7a5fea7c4b4db208a0663f22171f74448a1f66692a60",
+      "source_version": "e807310b",
+      "content_hash": "568d36dacfa195f98b602acd447360520da94c4b68ee13f013a53fa10ebf820b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T02:02:23.379Z"
+      "persisted_at": "2026-11-24T07:47:19.340Z"
     },
     "candidate_directive-ios-make-constantstoexport-return-type-non-optional": {
       "item_id": "candidate_directive-ios-make-constantstoexport-return-type-non-optional",
@@ -250994,9 +250999,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for seekstorm-seekstorm-learnings",
       "repository": "seekstorm-seekstorm-learnings",
       "source_version": "HEAD",
-      "content_hash": "4479588779441adc5cb701d59284c8695dd9d2803f2f5a51f7df2b2a3f244288",
+      "content_hash": "aab8dea4cb28a6b09314d1ad2447df8badab7d003093cecbb5cad1cf0c30a640",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T17:40:53.425Z"
+      "persisted_at": "2026-11-24T07:47:25.986Z"
     },
     "rule-8638": {
       "learning_id": "rule-8638",
@@ -266960,10 +266965,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-seekstorm-seekstorm-technical-construction-intelligence-seekstorm-seekstorm-core.md",
       "title": "Technical Construction Intelligence: SeekStorm/SeekStorm Core Invariants",
       "repository": "SeekStorm/SeekStorm",
-      "source_version": "c4888cbb",
-      "content_hash": "f677c41fda687e8275530fe18e5ad420b615a71251ad62d1759b95783ba11b93",
+      "source_version": "e807310b",
+      "content_hash": "c01dc78cd1e423236400514817d95f3c22e509a1e8612224bbb783b61cb41d50",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T02:02:23.266Z"
+      "persisted_at": "2026-11-24T07:47:19.084Z"
     },
     "domain_intelligence-architecture-intelligence-keyboardkit-keyboardkit-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-keyboardkit-keyboardkit-learnings-core-invariants",
@@ -333421,26 +333426,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 10202,
       "title": "Explain the capped tip state at the node height, and cover the quiet paths",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
       "source_version": "2325502f",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-24T04:45:18.695Z"
+      "verified_at": "2026-11-24T07:47:17.495Z"
     },
     "candidate_directive-explain-the-capped-tip-state-at-the-node-height-and-cover-the-quiet-paths": {
       "item_id": "candidate_directive-explain-the-capped-tip-state-at-the-node-height-and-cover-the-quiet-paths",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-OD45-explain-the-capped-tip-state-at-the-node-height-and-cover-the-quiet-paths.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-6EWA-explain-the-capped-tip-state-at-the-node-height-and-cover-the-quiet-paths.md",
       "title": "Explain the capped tip state at the node height, and cover the quiet paths",
-      "repository": "aleo-labs-protocol-snarkos-learnings",
+      "repository": "provablehq-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "8ab5710ba3f036a1528e2398c7db793e229e640f0abcefe7923a684814918aaf",
+      "content_hash": "3455637fb4d1308f7acfbce3a4971590fa467ded1f998c18168b9a1275aec845",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T04:45:24.200Z"
+      "persisted_at": "2026-11-24T07:47:24.016Z"
     },
     "candidate_directive-release-keep-build-machine-paths-out-of-self-hosted-macos-shipping-binaries": {
       "item_id": "candidate_directive-release-keep-build-machine-paths-out-of-self-hosted-macos-shipping-binaries",
@@ -334584,6 +334589,68 @@
       "content_hash": "19fee4d29c1814df113cecee45931f802f7ce6fd16fa583478984a30a45515bd",
       "domain_letter": "H",
       "persisted_at": "2026-11-24T07:33:17.540Z"
+    },
+    "rule-10229": {
+      "learning_id": "rule-10229",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10229,
+      "title": "use Gradle providers to exec tools to determine versions",
+      "source_url": "https://github.com/gocd/gocd",
+      "source_version": "90a9bc24",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T07:47:13.666Z"
+    },
+    "candidate_directive-use-gradle-providers-to-exec-tools-to-determine-versions": {
+      "item_id": "candidate_directive-use-gradle-providers-to-exec-tools-to-determine-versions",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-67DV-use-gradle-providers-to-exec-tools-to-determine-versions.md",
+      "title": "use Gradle providers to exec tools to determine versions",
+      "repository": "gocd/gocd",
+      "source_version": "90a9bc24",
+      "content_hash": "5158ae69d233bdea10e3e572b217af42ee097892accfc2c7fe0245545fe5f9d5",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T07:47:14.276Z"
+    },
+    "candidate_directive-chrono-crate-replaced-with-jiff": {
+      "item_id": "candidate_directive-chrono-crate-replaced-with-jiff",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6G1Z-chrono-crate-replaced-with-jiff.md",
+      "title": "chrono crate replaced with jiff",
+      "repository": "seekstorm-seekstorm-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7df910300f3f4fc765bcc60ebf9f3a8e0663339d05a37c18c1779a3954744a70",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T07:47:25.517Z"
+    },
+    "candidate_directive-build-use-gradle-providers-to-exec-tools-to-determine-versions": {
+      "item_id": "candidate_directive-build-use-gradle-providers-to-exec-tools-to-determine-versions",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6E01-build-use-gradle-providers-to-exec-tools-to-determine-versions.md",
+      "title": "build: use Gradle providers to exec tools to determine versions",
+      "repository": "gocd-gocd-learnings",
+      "source_version": "HEAD",
+      "content_hash": "58c1b10c2ad0939ca0cf1ccaa3c90d40258639a3f47cff159f85c73f88e0169d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T07:47:22.851Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-seekstorm-seekstorm-learnings-core-invariant": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-seekstorm-seekstorm-learnings-core-invariant",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-seekstorm-seekstorm-learnings-technical-construction-intelligence-seekstorm-seek.md",
+      "title": "Technical Construction Intelligence: seekstorm-seekstorm-learnings Core Invariants",
+      "repository": "seekstorm-seekstorm-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d6e72dc2b0f525fdd04f1c8f1a5dee1f13ca2c7c266756fca1bf515e399be27c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T07:47:25.747Z"
     }
   },
   "ai-builder-brain": {

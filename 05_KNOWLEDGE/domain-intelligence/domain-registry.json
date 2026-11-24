@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T07:33:20.473Z",
-  "total_records": 2505,
+  "last_updated": "2026-11-24T07:47:25.747Z",
+  "total_records": 2506,
   "domains": {
     "A": {
       "total": 22,
@@ -1586,7 +1586,7 @@
       ]
     },
     "H": {
-      "total": 594,
+      "total": 595,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2181,7 +2181,8 @@
         "DOM-H-E1D0F50E",
         "domain_intelligence-technical-construction-intelligence-dkhamsing-open-source-ios-apps-core-invarian",
         "domain_intelligence-technical-construction-intelligence-dkhamsing-open-source-ios-apps-learnings-cor",
-        "DOM-H-8C352294"
+        "DOM-H-8C352294",
+        "domain_intelligence-technical-construction-intelligence-seekstorm-seekstorm-learnings-core-invariant"
       ]
     },
     "I": {
@@ -8609,10 +8610,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "a31298dbc04ad23887f510729c710bf87f08788fbc786945b6193a888cac9073",
-      "created_at": "2026-11-24T04:45:19.274Z"
+      "content_hash": "e2a97b049f570ead77a7bb60aafb864aad61d37159620c8401a511d0a3a157bd",
+      "created_at": "2026-11-24T07:47:18.413Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -8899,8 +8900,8 @@
       "title": "Technical Construction Intelligence: gocd/gocd Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gocd-gocd-technical-construction-intelligence-gocd-gocd-core-invariants.md",
       "repository": "gocd/gocd",
-      "content_hash": "5cc3ee2bcc71dd3769f0428770d579b14295e546eaf2f0cc34950a273236cab8",
-      "created_at": "2026-11-23T13:50:04.820Z"
+      "content_hash": "d603f7d2007e6aa1b72ea5002df138bfd4ddec2ce614490d08c115126ecf6b9a",
+      "created_at": "2026-11-24T07:47:14.515Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants",
@@ -8977,8 +8978,8 @@
       "title": "Technical Construction Intelligence: gocd-gocd-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gocd-gocd-learnings-technical-construction-intelligence-gocd-gocd-learnings-core.md",
       "repository": "gocd-gocd-learnings",
-      "content_hash": "05fc7bfdf6e6f3719e558846a9e54944e3cea1da585b3a34ee4e8ff039372322",
-      "created_at": "2026-11-23T13:54:39.580Z"
+      "content_hash": "daa92e7f4d4dead6444e903ae1778875831d69dc411b0923b7d55844f8281b89",
+      "created_at": "2026-11-24T07:47:23.099Z"
     },
     "domain_intelligence-research-knowledge-intelligence-taichuai-zdtaichu5-0-9b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-taichuai-zdtaichu5-0-9b-core-invariants",
@@ -9844,8 +9845,8 @@
       "title": "Architecture Intelligence: provablehq-snarkos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-learnings-architecture-intelligence-provablehq-snarkos-learni.md",
       "repository": "provablehq-snarkos-learnings",
-      "content_hash": "b15da36b6814c81d47f66aad49508e013448f3ffac45572cd24d79a75e81631d",
-      "created_at": "2026-11-23T21:40:05.913Z"
+      "content_hash": "7508b6288d7002de8720319eee05ab79e038dfd59f5356a217be1f9f2696aa5f",
+      "created_at": "2026-11-24T07:47:24.245Z"
     },
     "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari",
@@ -25675,8 +25676,8 @@
       "title": "Technical Construction Intelligence: SeekStorm/SeekStorm Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-seekstorm-seekstorm-technical-construction-intelligence-seekstorm-seekstorm-core.md",
       "repository": "SeekStorm/SeekStorm",
-      "content_hash": "f677c41fda687e8275530fe18e5ad420b615a71251ad62d1759b95783ba11b93",
-      "created_at": "2026-11-17T02:02:23.266Z"
+      "content_hash": "c01dc78cd1e423236400514817d95f3c22e509a1e8612224bbb783b61cb41d50",
+      "created_at": "2026-11-24T07:47:19.084Z"
     },
     "DOM-D-BFBE4A28": {
       "record_id": "DOM-D-BFBE4A28",
@@ -42031,6 +42032,15 @@
       "repository": "meshery-meshery-learnings",
       "content_hash": "f9655c16b489d26894ca788ce2426c8cf153922c73f3e4fed4faa0bbb81a77da",
       "created_at": "2026-11-24T06:55:22.930Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-seekstorm-seekstorm-learnings-core-invariant": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-seekstorm-seekstorm-learnings-core-invariant",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: seekstorm-seekstorm-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-seekstorm-seekstorm-learnings-technical-construction-intelligence-seekstorm-seek.md",
+      "repository": "seekstorm-seekstorm-learnings",
+      "content_hash": "d6e72dc2b0f525fdd04f1c8f1a5dee1f13ca2c7c266756fca1bf515e399be27c",
+      "created_at": "2026-11-24T07:47:25.747Z"
     }
   }
 }

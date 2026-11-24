@@ -12627,3 +12627,6 @@
 | `CYCLE-20261124-R9KH` | `2026-11-24T07:07:37.649Z` | `mattermost/mattermost` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10227` | Yes (`9cc3c6b7...`) |
 | `CYCLE-20261124-RADC` | `2026-11-24T07:07:38.688Z` | `bridgecrewio/checkov` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10043` | Yes (`7e85c9e3...`) |
 | `CYCLE-20261124-O6LC` | `2026-11-24T07:33:13.440Z` | `NervJS/taro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10228` | Yes (`f1b6ed67...`) |
+| `CYCLE-20261124-674K` | `2026-11-24T07:47:13.940Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10229` | Yes (`6ffb1a62...`) |
+| `CYCLE-20261124-6A36` | `2026-11-24T07:47:17.778Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10202` | Yes (`dc41417a...`) |
+| `CYCLE-20261124-6AL3` | `2026-11-24T07:47:18.423Z` | `SeekStorm/SeekStorm` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md` | Yes (`e3908cae...`) |

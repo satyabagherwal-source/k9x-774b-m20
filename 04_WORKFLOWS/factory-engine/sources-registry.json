@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T07:33:16.965Z",
-    "lastVerified": "2026-11-24T07:33:16.965Z",
+    "lastChecked": "2026-11-24T07:47:22.069Z",
+    "lastVerified": "2026-11-24T07:47:22.069Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -275,9 +275,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-24T06:46:22.222Z",
+    "lastChecked": "2026-11-24T07:47:13.897Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-24T06:46:22.222Z"
+    "lastVerified": "2026-11-24T07:47:13.897Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1147,22 +1147,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "provablehq-snarkos": {
-    "name": "snarkOS",
+    "name": "aleo-labs-protocol/snarkOS",
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T02:12:43.276Z",
-    "lastVerified": "2026-11-24T02:12:43.276Z",
+    "lastChecked": "2026-11-24T07:47:16.783Z",
+    "lastVerified": "2026-11-24T07:47:16.783Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "e4cf951848685e0bd3b9db10b8ee634d858090bdf479b0b4408cef43e172d601",
+    "contentHash": "dc41417a1e31638ce0f42404dc4d3f879ea515e2ed8e97b1049257d963644809",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "ae6a5b06"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "clockworklabs-spacetimedb": {
     "name": "clockworklabs/SpacetimeDB",
@@ -1218,9 +1217,9 @@
   "jaredpalmer-formik": {
     "name": "formik",
     "officialUrl": "https://github.com/jaredpalmer/formik",
-    "lastChecked": "2026-11-21T13:30:28.453Z",
+    "lastChecked": "2026-11-24T07:47:03.914Z",
     "revisionIdentifier": "91475adb",
-    "lastVerified": "2026-11-21T13:30:28.453Z"
+    "lastVerified": "2026-11-24T07:47:03.914Z"
   },
   "emberstack-kubernetes-reflector": {
     "name": "kubernetes-reflector",
@@ -2585,8 +2584,8 @@
     "officialUrl": "https://github.com/Kuddev/pebrel",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T23:24:54.549Z",
-    "lastVerified": "2026-11-22T23:24:54.549Z",
+    "lastChecked": "2026-11-24T07:46:58.909Z",
+    "lastVerified": "2026-11-24T07:46:58.909Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kuddev-pebrel",
@@ -3731,11 +3730,21 @@
     "revisionIdentifier": "2076e082"
   },
   "seekstorm-seekstorm": {
-    "name": "SeekStorm",
+    "name": "SeekStorm/SeekStorm",
     "officialUrl": "https://github.com/SeekStorm/SeekStorm",
-    "lastChecked": "2026-11-23T08:33:13.395Z",
-    "revisionIdentifier": "c4888cbb",
-    "lastVerified": "2026-11-23T08:33:13.395Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-24T07:47:17.667Z",
+    "lastVerified": "2026-11-24T07:47:17.667Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-seekstorm-seekstorm",
+    "contentHash": "e3908cae3eb233c237782d5f9e73a5db608f2b8b1df77573f3f9d1f5eb2ae9c4",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "kuberwastaken-claurst": {
     "name": "Kuberwastaken/claurst",
@@ -5574,14 +5583,14 @@
     "officialUrl": "https://github.com/gocd/gocd",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-23T13:49:41.786Z",
-    "lastVerified": "2026-11-23T13:49:41.786Z",
+    "lastChecked": "2026-11-24T07:47:12.288Z",
+    "lastVerified": "2026-11-24T07:47:12.288Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gocd-gocd",
-    "contentHash": "0812a5f9d949558a182c1c7446de41f492e2ecb05f019a92c27b9aa972038e1c",
+    "contentHash": "6ffb1a6248e25858529e1df13ae0440635a5e2c9105b379482697a7f46f6c9b6",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9754,9 +9763,9 @@
   "pas7-studio-nextjs-sitemap-hreflang": {
     "name": "nextjs-sitemap-hreflang",
     "officialUrl": "https://github.com/pas7-studio/nextjs-sitemap-hreflang",
-    "lastChecked": "2026-11-20T03:43:53.767Z",
+    "lastChecked": "2026-11-24T07:47:01.486Z",
     "revisionIdentifier": "1faa101f3b",
-    "lastVerified": "2026-11-20T03:43:53.767Z"
+    "lastVerified": "2026-11-24T07:47:01.486Z"
   },
   "touchlab-xcode-kotlin": {
     "name": "xcode-kotlin",

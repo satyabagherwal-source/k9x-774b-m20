@@ -12660,3 +12660,6 @@ Every entry in this ledger must capture:
 | `learn-github-mattermost-mattermost` | `https://github.com/mattermost/mattermost` | `d841da9f` | Multi-dimensional audit evidence | 2026-11-24T07:07:37.654Z |
 | `learn-github-bridgecrewio-checkov` | `https://github.com/bridgecrewio/checkov` | `2f107f86` | Multi-dimensional audit evidence | 2026-11-24T07:07:38.693Z |
 | `learn-github-nervjs-taro` | `https://github.com/NervJS/taro` | `84cc57bc` | Multi-dimensional audit evidence | 2026-11-24T07:33:13.445Z |
+| `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `90a9bc24` | Multi-dimensional audit evidence | 2026-11-24T07:47:13.945Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `2325502f` | Multi-dimensional audit evidence | 2026-11-24T07:47:17.783Z |
+| `learn-github-seekstorm-seekstorm` | `https://github.com/SeekStorm/SeekStorm` | `e807310b` | Multi-dimensional audit evidence | 2026-11-24T07:47:18.429Z |
