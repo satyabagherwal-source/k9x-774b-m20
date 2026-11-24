@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T01:15:48.521Z",
+  "last_updated": "2026-11-24T01:29:09.217Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-24T00:23:26.082Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-23T21:40:06.249Z",
+      "processed_at": "2026-11-24T01:29:08.439Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -763,7 +763,7 @@
       "staged_for_review": 1
     },
     "peerdb-io-peerdb-learnings.md": {
-      "processed_at": "2026-11-22T02:18:40.136Z",
+      "processed_at": "2026-11-24T01:29:06.892Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1213,7 +1213,7 @@
       "staged_for_review": 0
     },
     "t8y2-dbx-learnings.md": {
-      "processed_at": "2026-11-21T23:47:52.276Z",
+      "processed_at": "2026-11-24T01:29:07.689Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3793,7 +3793,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3600,
+  "total_dossiers_evaluated": 3603,
   "total_canonical_promoted": 496,
-  "total_staged_for_review": 2694
+  "total_staged_for_review": 2697
 }

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T01:15:48.378Z",
+  "last_updated": "2026-11-24T01:29:09.059Z",
   "total_verified_learnings": 9088,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24329,
+  "total_items": 24335,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "58e3b704fb930b529b00fb44fa711f05aaa44f74d260184053b6cf4557658033",
+      "content_hash": "9be7d2a3a383000966957db24d56b97c8b648016d39aa1c0686a834ac8998aa1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T21:40:06.689Z"
+      "persisted_at": "2026-11-24T01:29:08.889Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "470806f8c324dbf2e4f6a8df9c344d795a3ddd6ff75953e9791615b372334983",
+      "content_hash": "134499c0f298fb727887cf66baddc8459196b30a91549d71eb074633b975df27",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T21:40:06.865Z"
+      "persisted_at": "2026-11-24T01:29:09.059Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -214446,8 +214446,8 @@
       "slug": "t8y2-dbx",
       "platform": "github",
       "source_url": "https://github.com/t8y2/dbx",
-      "source_version": "0c30c6ea",
-      "content_hash": "5ce3561cec9125fd809643d74560d6554a78a504db8350a479abd8f40b1c5876",
+      "source_version": "c9d50f21",
+      "content_hash": "ebe64be7e2ba5b1e53e6c4d5156749a20f69e5006ea48401b52cbdd61d510688",
       "dossier_path": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "promoted_rules": [
@@ -214495,6 +214495,11 @@
           "number": 10005,
           "title": "send the hardening headers on every response",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10169,
+          "title": "refuse MySQL change previews whose SET reads an earlier assignment",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -214502,7 +214507,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T23:33:26.605Z",
+      "verified_at": "2026-11-24T01:29:03.283Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -214544,10 +214549,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-t8y2-dbx-technical-construction-intelligence-t8y2-dbx-core-invariants.md",
       "title": "Technical Construction Intelligence: t8y2/dbx Core Invariants",
       "repository": "t8y2/dbx",
-      "source_version": "0c30c6ea",
-      "content_hash": "05bf649f9a210a00b7b36680d506b7fd5809fd4a89c5da22f317c5f5e8cbd636",
+      "source_version": "c9d50f21",
+      "content_hash": "82f542eab07a9c7d1055d5fb03eb1e4e56e1f0e05ed30612e205454fd7e485d5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T23:33:27.278Z"
+      "persisted_at": "2026-11-24T01:29:03.899Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-t8y2-dbx": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-t8y2-dbx",
@@ -214556,10 +214561,10 @@
       "relative_path": "08_VERIFICATION/t8y2-dbx-verification-protocol-empirical-defect-shield-for-t8y2-dbx.md",
       "title": "Verification Protocol: Empirical Defect Shield for t8y2/dbx",
       "repository": "t8y2/dbx",
-      "source_version": "0c30c6ea",
-      "content_hash": "df9050eaed32278f73cedc3aea5b32b36a208fd45cf08a48b8339f4f4a288278",
+      "source_version": "c9d50f21",
+      "content_hash": "39379f40ef95b5a5fa3be0ab2a8ca827fc35730b5f8a840c2d175957b72e8381",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T23:33:27.458Z"
+      "persisted_at": "2026-11-24T01:29:04.071Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen3-8-27b-gguf-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen3-8-27b-gguf-learnings-core-invar",
@@ -230727,8 +230732,8 @@
       "slug": "peerdb-io-peerdb",
       "platform": "github",
       "source_url": "https://github.com/PeerDB-io/peerdb",
-      "source_version": "78271fc2",
-      "content_hash": "2d77a7ba9a995acc16bbd34b97d33e2857dee7148b9d12e6284536b152f85ea8",
+      "source_version": "73bf425f",
+      "content_hash": "51b090846ac696fed0b93f27161cf841731bba10b8b397f2973768baed7e67a7",
       "dossier_path": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "promoted_rules": [
@@ -230761,6 +230766,11 @@
           "number": 9881,
           "title": "improve claude review to remind author to check public documentations",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10168,
+          "title": "skip decoding rows of tables outside the pipe",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -230768,7 +230778,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T02:18:08.761Z",
+      "verified_at": "2026-11-24T01:28:57.239Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230822,10 +230832,10 @@
       "relative_path": "08_VERIFICATION/peerdb-io-peerdb-verification-protocol-empirical-defect-shield-for-peerdb-io-pee.md",
       "title": "Verification Protocol: Empirical Defect Shield for PeerDB-io/peerdb",
       "repository": "PeerDB-io/peerdb",
-      "source_version": "78271fc2",
-      "content_hash": "54d6ca13bac52ff753acb15f93c4d623f5ab34b0e3aab52888e1fa34a9afcda0",
+      "source_version": "73bf425f",
+      "content_hash": "3020d6c19f171249b3b1ffb3a931dd3f457cc556ebfefbd76e0b9cef6a510448",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T02:18:09.548Z"
+      "persisted_at": "2026-11-24T01:28:58.056Z"
     },
     "domain_intelligence-deployment-operations-intelligence-bahdotsh-wrkflw-learnings-core-invariants": {
       "item_id": "domain_intelligence-deployment-operations-intelligence-bahdotsh-wrkflw-learnings-core-invariants",
@@ -245580,9 +245590,9 @@
       "title": "Technical Construction Intelligence: t8y2-dbx-learnings Core Invariants",
       "repository": "t8y2-dbx-learnings",
       "source_version": "HEAD",
-      "content_hash": "d1c8195cb0ae772f93db39ef569acba9b1388bfd95d74ea01cd57f9c88bea202",
+      "content_hash": "74452946e873d6c856fa41d792fa22c8ba24801ed7a6b09308afed984dd454ee",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T23:47:52.874Z"
+      "persisted_at": "2026-11-24T01:29:08.112Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-t8y2-dbx-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-t8y2-dbx-learnings",
@@ -245592,9 +245602,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for t8y2-dbx-learnings",
       "repository": "t8y2-dbx-learnings",
       "source_version": "HEAD",
-      "content_hash": "16a4f6c6df73aad1ea98ecec1c2149f637adc0ec88dd8b025a06f80f58fb6abf",
+      "content_hash": "520c6073ec3d620e2df1f1562a315828374e7d53ffdc4023308dd8ec90b8eefb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T23:47:53.046Z"
+      "persisted_at": "2026-11-24T01:29:08.284Z"
     },
     "learn-huggingface-tencent-hy-memory-30b-a3b": {
       "learning_id": "learn-huggingface-tencent-hy-memory-30b-a3b",
@@ -284901,10 +284911,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-peerdb-io-peerdb-architecture-intelligence-peerdb-io-peerdb-core-invariants.md",
       "title": "Architecture Intelligence: PeerDB-io/peerdb Core Invariants",
       "repository": "PeerDB-io/peerdb",
-      "source_version": "78271fc2",
-      "content_hash": "cbc420c54fe6d3af596c55927ef6667c44fb56c4f1dc60ed8ecb37011d469327",
+      "source_version": "73bf425f",
+      "content_hash": "6ce2510ee68a112cfad0f45d9cd7000b58fcd6e53929149af48bfaddbba8037b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T02:18:09.355Z"
+      "persisted_at": "2026-11-24T01:28:57.872Z"
     },
     "candidate_directive-postgres-keep-sql-null-elements-of-a-json-add-column-default-as-null-on-nulla": {
       "item_id": "candidate_directive-postgres-keep-sql-null-elements-of-a-json-add-column-default-as-null-on-nulla",
@@ -284926,9 +284936,9 @@
       "title": "Architecture Intelligence: peerdb-io-peerdb-learnings Core Invariants",
       "repository": "peerdb-io-peerdb-learnings",
       "source_version": "HEAD",
-      "content_hash": "0a9119a8226fd68d780c5d817511a4c3961cad31436282f2748fd1ff638f8fac",
+      "content_hash": "5ad9fb83ee1d8dbc8b5a462774716a40e3156d452bee516a26f71b60eda04c40",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T02:18:40.644Z"
+      "persisted_at": "2026-11-24T01:29:07.351Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-peerdb-io-peerdb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-peerdb-io-peerdb-learnings",
@@ -284938,9 +284948,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for peerdb-io-peerdb-learnings",
       "repository": "peerdb-io-peerdb-learnings",
       "source_version": "HEAD",
-      "content_hash": "a0a87f42db0f493440e14087782addb481e9044dbfeabe4ca0d8ba11aef5af33",
+      "content_hash": "c7ff0769aade73412fe15e62db4efa60da9f8d5d80ad52f7c49a783180a930e3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T02:18:40.842Z"
+      "persisted_at": "2026-11-24T01:29:07.525Z"
     },
     "learn-huggingface-comfy-org-wan-2-2": {
       "learning_id": "learn-huggingface-comfy-org-wan-2-2",
@@ -319553,13 +319563,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-HFJL-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-NZ3M-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "cd23e89d3a5c5fb822f065d946940858998db36ee349e6da5e987b2badad5a8e",
+      "content_hash": "06c78a6829177395b3c3e3d593e1e18d9e59a340eecde01b32ebc79b0ca70901",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T21:40:06.516Z"
+      "persisted_at": "2026-11-24T01:29:08.725Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
@@ -331799,6 +331809,82 @@
       "content_hash": "7a9653ca1ac8e5d8745887d2e6c2ef91f318a8356df6e688fca885f9f9f9f3fa",
       "domain_letter": "H",
       "persisted_at": "2026-11-24T01:15:45.841Z"
+    },
+    "rule-10168": {
+      "learning_id": "rule-10168",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10168,
+      "title": "skip decoding rows of tables outside the pipe",
+      "source_url": "https://github.com/PeerDB-io/peerdb",
+      "source_version": "73bf425f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T01:28:57.239Z"
+    },
+    "candidate_directive-skip-decoding-rows-of-tables-outside-the-pipe": {
+      "item_id": "candidate_directive-skip-decoding-rows-of-tables-outside-the-pipe",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NQL9-skip-decoding-rows-of-tables-outside-the-pipe.md",
+      "title": "skip decoding rows of tables outside the pipe",
+      "repository": "PeerDB-io/peerdb",
+      "source_version": "73bf425f",
+      "content_hash": "252bd4f8d40e92dc99fca67a3e7b6eb2b0febf8a23e0f12f4e5f26502c095c11",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T01:28:57.697Z"
+    },
+    "rule-10169": {
+      "learning_id": "rule-10169",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10169,
+      "title": "refuse MySQL change previews whose SET reads an earlier assignment",
+      "source_url": "https://github.com/t8y2/dbx",
+      "source_version": "c9d50f21",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T01:29:03.283Z"
+    },
+    "candidate_directive-refuse-mysql-change-previews-whose-set-reads-an-earlier-assignment": {
+      "item_id": "candidate_directive-refuse-mysql-change-previews-whose-set-reads-an-earlier-assignment",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NV8U-refuse-mysql-change-previews-whose-set-reads-an-earlier-assignment.md",
+      "title": "refuse MySQL change previews whose SET reads an earlier assignment",
+      "repository": "t8y2/dbx",
+      "source_version": "c9d50f21",
+      "content_hash": "84976a3b420a000f6a2f62765a9b10e337def455a191450af22d0bf709a48415",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T01:29:03.730Z"
+    },
+    "candidate_directive-mysql-skip-decoding-rows-of-tables-outside-the-pipe": {
+      "item_id": "candidate_directive-mysql-skip-decoding-rows-of-tables-outside-the-pipe",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NXWN-mysql-skip-decoding-rows-of-tables-outside-the-pipe.md",
+      "title": "mysql): skip decoding rows of tables outside the pipe",
+      "repository": "peerdb-io-peerdb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "db624f88a58cd04cb7ae5146c92cdebc1e3a8c28794ee17c985a4f80585a660e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T01:29:07.178Z"
+    },
+    "candidate_directive-sql-refuse-mysql-change-previews-whose-set-reads-an-earlier-assignment": {
+      "item_id": "candidate_directive-sql-refuse-mysql-change-previews-whose-set-reads-an-earlier-assignment",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NYHQ-sql-refuse-mysql-change-previews-whose-set-reads-an-earlier-assignment.md",
+      "title": "sql): refuse MySQL change previews whose SET reads an earlier assignment",
+      "repository": "t8y2-dbx-learnings",
+      "source_version": "HEAD",
+      "content_hash": "12c2b226d196aff21afd6b63e1745baff95961db25facb4c48b6c84cf560f7ca",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T01:29:07.937Z"
     }
   },
   "ai-builder-brain": {

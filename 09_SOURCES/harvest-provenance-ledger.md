@@ -12583,3 +12583,5 @@ Every entry in this ledger must capture:
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `84382d49` | Multi-dimensional audit evidence | 2026-11-24T01:07:24.946Z |
 | `learn-github-tw93-pake` | `https://github.com/tw93/Pake` | `705f738d` | Multi-dimensional audit evidence | 2026-11-24T01:15:34.806Z |
 | `learn-github-electron-electron` | `https://github.com/electron/electron` | `26919e55` | Multi-dimensional audit evidence | 2026-11-24T01:15:41.960Z |
+| `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `73bf425f` | Multi-dimensional audit evidence | 2026-11-24T01:28:57.464Z |
+| `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `c9d50f21` | Multi-dimensional audit evidence | 2026-11-24T01:29:03.488Z |

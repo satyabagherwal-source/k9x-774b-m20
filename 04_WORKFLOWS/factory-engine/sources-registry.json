@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T01:15:45.211Z",
-    "lastVerified": "2026-11-24T01:15:45.211Z",
+    "lastChecked": "2026-11-24T01:29:06.746Z",
+    "lastVerified": "2026-11-24T01:29:06.746Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -274,9 +274,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-24T00:49:08.733Z",
+    "lastChecked": "2026-11-24T01:29:00.637Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-24T00:49:08.733Z"
+    "lastVerified": "2026-11-24T01:29:00.637Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -726,8 +726,8 @@
     "officialUrl": "https://github.com/DefGuard/defguard",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T20:56:13.823Z",
-    "lastVerified": "2026-11-23T20:56:13.823Z",
+    "lastChecked": "2026-11-24T01:28:55.545Z",
+    "lastVerified": "2026-11-24T01:28:55.545Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-defguard-defguard",
@@ -1439,14 +1439,14 @@
     "officialUrl": "https://github.com/t8y2/dbx",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T23:33:25.744Z",
-    "lastVerified": "2026-11-22T23:33:25.744Z",
+    "lastChecked": "2026-11-24T01:29:02.398Z",
+    "lastVerified": "2026-11-24T01:29:02.398Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-t8y2-dbx",
-    "contentHash": "5ce3561cec9125fd809643d74560d6554a78a504db8350a479abd8f40b1c5876",
+    "contentHash": "ebe64be7e2ba5b1e53e6c4d5156749a20f69e5006ea48401b52cbdd61d510688",
     "promotedRulesCount": 1,
-    "recentFixesCount": 21,
+    "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3631,22 +3631,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "peerdb-io-peerdb": {
-    "name": "peerdb",
+    "name": "PeerDB-io/peerdb",
     "officialUrl": "https://github.com/PeerDB-io/peerdb",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-23T00:39:31.176Z",
-    "lastVerified": "2026-11-23T00:39:31.176Z",
+    "lastChecked": "2026-11-24T01:28:56.234Z",
+    "lastVerified": "2026-11-24T01:28:56.234Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-peerdb-io-peerdb",
-    "contentHash": "2d77a7ba9a995acc16bbd34b97d33e2857dee7148b9d12e6284536b152f85ea8",
+    "contentHash": "51b090846ac696fed0b93f27161cf841731bba10b8b397f2973768baed7e67a7",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "78271fc2"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "doobidoo-mcp-memory-service": {
     "name": "doobidoo/mcp-memory-service",
@@ -8921,9 +8920,9 @@
   "mrjackwills-oxker": {
     "name": "oxker",
     "officialUrl": "https://github.com/mrjackwills/oxker",
-    "lastChecked": "2026-11-22T17:53:01.728Z",
+    "lastChecked": "2026-11-24T01:28:45.541Z",
     "revisionIdentifier": "791342c0",
-    "lastVerified": "2026-11-22T17:53:01.728Z"
+    "lastVerified": "2026-11-24T01:28:45.541Z"
   },
   "hf-deepseek-ai-deepseek-v4.1-flash-1017": {
     "name": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
@@ -9159,9 +9158,9 @@
   "code-forge-io-seo-tools": {
     "name": "seo-tools",
     "officialUrl": "https://github.com/code-forge-io/seo-tools",
-    "lastChecked": "2026-11-19T20:24:12.458Z",
+    "lastChecked": "2026-11-24T01:28:48.081Z",
     "revisionIdentifier": "e1e672b3",
-    "lastVerified": "2026-11-19T20:24:12.458Z"
+    "lastVerified": "2026-11-24T01:28:48.081Z"
   },
   "tableproapp-tablepro": {
     "name": "TableProApp/TablePro",
@@ -11982,9 +11981,9 @@
   "maxrave-dev-kotlin-footguns": {
     "name": "kotlin-footguns",
     "officialUrl": "https://github.com/maxrave-dev/kotlin-footguns",
-    "lastChecked": "2026-11-21T02:26:46.227Z",
+    "lastChecked": "2026-11-24T01:28:50.517Z",
     "revisionIdentifier": "2c391bc9",
-    "lastVerified": "2026-11-21T02:26:46.227Z"
+    "lastVerified": "2026-11-24T01:28:50.517Z"
   },
   "dubzzz-fast-check": {
     "name": "dubzzz/fast-check",

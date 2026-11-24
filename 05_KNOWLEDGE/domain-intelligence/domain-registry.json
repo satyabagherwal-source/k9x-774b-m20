@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T01:15:48.059Z",
+  "last_updated": "2026-11-24T01:29:08.889Z",
   "total_records": 2476,
   "domains": {
     "A": {
@@ -9209,8 +9209,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "58e3b704fb930b529b00fb44fa711f05aaa44f74d260184053b6cf4557658033",
-      "created_at": "2026-11-23T21:40:06.689Z"
+      "content_hash": "9be7d2a3a383000966957db24d56b97c8b648016d39aa1c0686a834ac8998aa1",
+      "created_at": "2026-11-24T01:29:08.889Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -10517,8 +10517,8 @@
       "title": "Technical Construction Intelligence: t8y2/dbx Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-t8y2-dbx-technical-construction-intelligence-t8y2-dbx-core-invariants.md",
       "repository": "t8y2/dbx",
-      "content_hash": "05bf649f9a210a00b7b36680d506b7fd5809fd4a89c5da22f317c5f5e8cbd636",
-      "created_at": "2026-11-22T23:33:27.278Z"
+      "content_hash": "82f542eab07a9c7d1055d5fb03eb1e4e56e1f0e05ed30612e205454fd7e485d5",
+      "created_at": "2026-11-24T01:29:03.899Z"
     },
     "DOM-D-218A5260": {
       "record_id": "DOM-D-218A5260",
@@ -20563,8 +20563,8 @@
       "title": "Technical Construction Intelligence: t8y2-dbx-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-t8y2-dbx-learnings-technical-construction-intelligence-t8y2-dbx-learnings-core-i.md",
       "repository": "t8y2-dbx-learnings",
-      "content_hash": "d1c8195cb0ae772f93db39ef569acba9b1388bfd95d74ea01cd57f9c88bea202",
-      "created_at": "2026-11-21T23:47:52.874Z"
+      "content_hash": "74452946e873d6c856fa41d792fa22c8ba24801ed7a6b09308afed984dd454ee",
+      "created_at": "2026-11-24T01:29:08.112Z"
     },
     "domain_intelligence-research-knowledge-intelligence-tencent-hy-memory-30b-a3b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-tencent-hy-memory-30b-a3b-core-invariants",
@@ -30014,8 +30014,8 @@
       "title": "Architecture Intelligence: PeerDB-io/peerdb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-peerdb-io-peerdb-architecture-intelligence-peerdb-io-peerdb-core-invariants.md",
       "repository": "PeerDB-io/peerdb",
-      "content_hash": "cbc420c54fe6d3af596c55927ef6667c44fb56c4f1dc60ed8ecb37011d469327",
-      "created_at": "2026-11-22T02:18:09.355Z"
+      "content_hash": "6ce2510ee68a112cfad0f45d9cd7000b58fcd6e53929149af48bfaddbba8037b",
+      "created_at": "2026-11-24T01:28:57.872Z"
     },
     "domain_intelligence-architecture-intelligence-peerdb-io-peerdb-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-peerdb-io-peerdb-learnings-core-invariants",
@@ -30023,8 +30023,8 @@
       "title": "Architecture Intelligence: peerdb-io-peerdb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-peerdb-io-peerdb-learnings-architecture-intelligence-peerdb-io-peerdb-learnings-.md",
       "repository": "peerdb-io-peerdb-learnings",
-      "content_hash": "0a9119a8226fd68d780c5d817511a4c3961cad31436282f2748fd1ff638f8fac",
-      "created_at": "2026-11-22T02:18:40.644Z"
+      "content_hash": "5ad9fb83ee1d8dbc8b5a462774716a40e3156d452bee516a26f71b60eda04c40",
+      "created_at": "2026-11-24T01:29:07.351Z"
     },
     "domain_intelligence-architecture-intelligence-amir1376-ab-download-manager-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-amir1376-ab-download-manager-core-invariants",

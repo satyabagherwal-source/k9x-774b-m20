@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-L4XM",
-    "timestamp": "2026-11-22T06:03:32.026Z",
-    "repository": "MiniMaxAI/MiniMax-H3-Image",
-    "learningId": "learn-huggingface-minimaxai-minimax-h3-image",
-    "contentHash": "d3c4fc0f3bcbe921623fe840d02a87d6b9c247f72b5e47456938a4f32e868d12",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-V2F3",
-    "timestamp": "2026-11-22T06:11:15.327Z",
-    "repository": "Comfy-Org/MiniMax-H3-Image",
-    "learningId": "learn-huggingface-comfy-org-minimax-h3-image",
-    "contentHash": "caa0bf8ceffdcd350abc3c20bf3b96fe46553e630c1f640480c8f1dbe82a80ea",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-VFG8",
     "timestamp": "2026-11-22T06:11:32.216Z",
     "repository": "NucleoidAI/Nucleoid",
@@ -7490,6 +7460,36 @@
     "repository": "electron/electron",
     "learningId": "learn-github-electron-electron",
     "contentHash": "d60b6fdc416464aa7d2ba4272908be7c826b1c0873fc2f844dd1767185539408",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-NQER",
+    "timestamp": "2026-11-24T01:28:57.459Z",
+    "repository": "PeerDB-io/peerdb",
+    "learningId": "learn-github-peerdb-io-peerdb",
+    "contentHash": "51b090846ac696fed0b93f27161cf841731bba10b8b397f2973768baed7e67a7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-NV23",
+    "timestamp": "2026-11-24T01:29:03.483Z",
+    "repository": "t8y2/dbx",
+    "learningId": "learn-github-t8y2-dbx",
+    "contentHash": "ebe64be7e2ba5b1e53e6c4d5156749a20f69e5006ea48401b52cbdd61d510688",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

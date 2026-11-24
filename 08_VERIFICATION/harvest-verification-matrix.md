@@ -12550,3 +12550,5 @@
 | `CYCLE-20261124-W13I` | `2026-11-24T01:07:24.942Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10128` | Yes (`51e4d066...`) |
 | `CYCLE-20261124-6J2P` | `2026-11-24T01:15:34.801Z` | `tw93/Pake` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10166` | Yes (`5ce41970...`) |
 | `CYCLE-20261124-6OLG` | `2026-11-24T01:15:41.956Z` | `electron/electron` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10167` | Yes (`d60b6fdc...`) |
+| `CYCLE-20261124-NQER` | `2026-11-24T01:28:57.459Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10168` | Yes (`51b09084...`) |
+| `CYCLE-20261124-NV23` | `2026-11-24T01:29:03.483Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10169` | Yes (`ebe64be7...`) |

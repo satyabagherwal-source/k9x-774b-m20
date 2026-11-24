@@ -4,24 +4,24 @@
 {
   "source_repository": "t8y2/dbx",
   "source_url": "https://github.com/t8y2/dbx",
-  "source_version": "0c30c6ea",
+  "source_version": "c9d50f21",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-22T23:33:27.098Z",
+  "timestamp": "2026-11-24T01:29:03.726Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-t8y2-dbx",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [t8y2/dbx](https://github.com/t8y2/dbx) (Revision: `0c30c6ea`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T23:33:27.098Z`  
+> **Provenance**: Harvested from [t8y2/dbx](https://github.com/t8y2/dbx) (Revision: `c9d50f21`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T01:29:03.726Z`  
 > **Learning ID**: `learn-github-t8y2-dbx`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 74%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 76%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from t8y2/dbx:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T23:33:25.744Z  
+> **Harvest Timestamp**: 2026-11-24T01:29:02.398Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: 25 MB lightweight cross-platform database client for 100+ databases, including MySQL, PostgreSQL, SQLite, Redis, MongoDB, DuckDB, SQL Server, and Dameng. Built-in AI, MCP Server, CLI, desktop and Docker. | 轻量级跨平台数据库管理工具，支持 MySQL、PostgreSQL、SQLite、Redis、MongoDB、达梦等 100+ 数据库，提供桌面端、Docker、CLI、内置 AI 助手和 MCP。
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 31144 stars
+- **Stars / Engagement**: 31229 stars
 
 ---
 
@@ -2042,17 +2042,17 @@ func (b *Binary) GetValues() []byte {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #15391** (2026-11-22): **[Bug] vastbase G100 数据库 GB18030 字符集（server/client）显示乱码**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  vastbase G100  ### 问题描述 / Problem description  vastbase G100 数据库 GB18030 字符集（server/client）显示乱码  ### 支持信息 / Support information  dbx 0.6.72  ### 优先级（是否紧急） / Priority (urgency)  🔴 P0 紧急 · 下个版本必须修 / Urgent · Must fix next release  ### 补充信息 / Additional information  _No response_
+- **Issue #15528** (2026-11-24): **[Compatibility] Doris 3.1.1 元数据查询语句报错**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  Doris 3.1.1  ### 问题描述 / Description / Problem description  在使用DBX 0.6.72中链接Doris 3.1.1集群。 软件在用户键入语句、关键字、字段时，自行进行相关的元数据查询，我在Doris的内部审计日志表中查看到的。存在着大量的错误。比如SQL： SELECT     INDEX_NAME,     COLUMN_NAME,     EXPRESSION,     SEQ_IN_INDEX,     NON_UNIQUE,     INDEX_TYPE,     INDEX_COMMENT FROM     information_schema.STATISTICS WHERE     TABLE_SCHEMA = 'boyaa_eagle_10036'     AND TABLE_NAME = 'events' ORDER BY     INDEX_NAME,     SEQ_IN_INDEX  报错信息： errCode = 2, detailMessage = Unknown column 'EXPRESSION' in 'table list' in PROJECT clause  诸如此类的报错很多，都是Unkonwn ccolun 这种报错。    ### 错误信息 / Error message  ```shell 报错信息： errCode = 2, detailMessage = Unknown column 'EXPRESSION' in 'table list' in PROJECT clause ```  ### 支持信息 / Support information  DBX 版本：v0.6.72 运行环境：桌面端 操作系统：window 11 系统架构：x64   ### 补充信息 / Additional information  _No response_
   **Post-Mortem & Fix Analysis**:
-  > <img width="285" height="305" alt="image" src="https://github.com/user-attachments/assets/ccf8b99c-3d03-4e0d-b2ac-e637fa305c68" />  <img width="225" height="80" alt="image" src="https://github.com/user-attachments/assets/47314061-a5ea-4ee8-a2c7-986240c13397" />  <img width="228" height="122" alt="image" src="https://github.com/user-attachments/assets/221772e6-9e76-42a5-8fcd-61f34a8b4a82" />
+  > <!-- dbx-similar-issues --> 以下 Issue 可能与当前问题相关：  - #14428  这些结果由机器人自动检索，尚未确认重复。如属于同一问题，建议在已有 Issue 中补充信息。
   > /claim
 
-- **Issue #15376** (2026-11-21): **[Bug] 查询结果区纵向滚动条浮动且难以发现，建议改为固定宽度并可悬停加粗**
-  *Symptoms*: ### 问题描述 - 查询结果区的纵向滚动条设计不合理：查看结果后需要纵向拉动时，滚动条不易找到，或需要仔细观察才能发现。 - 截图1中，查询结果区的纵向滚动条呈现为浮动/叠加在数据上的样式，影响可发现性和可读性。 - 用户认为查询结果区宽度足够，不应为节省宽度而让滚动条浮动在数据上面或更不要隐藏起来。  ### 截图对照 - 截图1：查询结果区。纵向滚动条浮动在数据上，难以发现，必须先滚动一下。 - 截图2：编辑区。纵向滚动条占用固定宽度，鼠标悬停时加粗，目前宽度刚好；用户认为该方案可以。 - 截图3：转置视图。纵向滚动条为较标准的设计，用户认为也可以。 - 截图中未出现密码、Token 或连接串。  ### 期望行为 - 查询结果区的纵向滚动条应占用固定宽度，像编辑区那么宽。 - 鼠标悬停时滚动条应加粗。 - 不应像截图1那样浮动在数据上，也不应隐形而难以找到。 - 用户偏好方案排序：编辑区方案 优于 转置视图区方案 优于 查询结果区方案。  ### 环境信息 - DBX 版本：v0.6.73-beta.20261120.1 - 运行环境：桌面端 - 操作系统：Windows 11 (10.0.22000.2538) - 系统架构：x86_64 - 数据库类型：Oracle - 数据库版本：未提供  ### 补充信息 - 复现步骤：未提供。 - 日志/错误信息：未提供。 - 其他数据库连接信息：未提供。  ## 附件  ![DBX issue image 1](https://dl.dbxio.com/issue-feedback/2026/11/e69e0df4-3729-40c3-a1e3-4dc000dcc425/1-2f838c3f-867e-455d-a43b-8ec4a5962361.png)  ![DBX issue image 2](https://dl.dbxio.com/issue-feedback/2026/11/e69e0df4-3729-40c3-a1e3-4dc000dcc425/2-30665664-40a6-4cd4-b74e-d2439d539ebb.png)  ![DBX issue image 3](https://dl.dbxio.com/issue-feedback/2026/11/e69e0df4-3729-40c3-a1e3-4dc000dcc425/3-2bfec45f-b317-4af8-99a8-a56194907fad.png)  ---  _此 Issue 通过 DBX 官网匿名反馈入口提交，发布前已由提交者确认。_
+- **Issue #15517** (2026-11-24): **[Bug] 更新了最新版本的dbx,查询出来了结果集后，下面没有横向滚动条,导致后面的列看不到**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  mysql  ### 问题描述 / Problem description  更新了最新版本的dbx,查询出来了结果集后，下面没有横向滚动条,导致后面的列看不到。   ### 支持信息 / Support information  v0.6.72 桌面端 Windows 11 (10.0.26300.9974) x86_64  ### 优先级（是否紧急） / Priority (urgency)  🔴 P0 紧急 · 下个版本必须修 / Urgent · Must fix next release  ### 补充信息 / Additional information  更新了最新版本的dbx,查询出来了结果集后，下面没有横向滚动条,导致后面的列看不到。 
   **Post-Mortem & Fix Analysis**:
+  > 我看了下结果集的滚动条实现，先说结论：这个横向滚动条是我们自己画的（原生滚动条被 `scrollbar-width: none` 隐藏了），只有判定「内容比可视区宽」时才会渲染出来。所以「看不到滚动条」通常是两种情况之一：①没判定出溢出；②判定出来了但被遮挡/高度塌陷。  我对比了 0.6.71 和 0.6.72 这一段代码（`apps/desktop/src/components/grid/DataGrid.vue`）：溢出判定（`scrollWidth - clientWidth > 1`）和滚动条样式在这两个版本之间没有改动，所以我这边还没法只靠版本差异下结论，需要一次对照实验。  麻烦你做两个 30 秒的测试（不用改任何数据）：  1. **设置 → 结果集 → 渲染模式**，从 `Canvas` 切成 `DOM`，重新跑同一条查询，看底部横向滚动条是否出现。 2. 如果 DOM 下出现、Canvas 下不出现，再在 Canvas 模式下试试 `Shift + 滚轮` 或触控板横向滑动，看能不能滚到后面的列。  另外想确认几个信息，方便我定位：  - 结果集大概多少列？有没有冻结列（左侧固定列）？窗口是否最大化？ - 能不能补一张「结果集底部」的完整截图（要能看到列头右边界 + 底部一行）？ - 这条查询是新开的结果集，还是从「历史/已保存」恢复的标签？  如果确认只在 Canvas 渲染模式下出现，我会按 canvas 的溢出判定去修；如果两种模式都没有，那问题在样式被遮挡（方向不一样）。它和 #15519（列多时最后一列拖不全）很可能是同一个根因，修好后一起验证。 
   > /claim
-  > ✅ @ThugKd 已认领 #15376，开始处理吧！
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2069,631 +2069,494 @@ func (b *Binary) GetValues() []byte {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c7c57cd5` (2026-11-22)
-**Commit Message**: fix(web): send the hardening headers on every response (#15451)
+### Incident Patch 1: `6bd7e1de` (2026-11-23)
+**Commit Message**: fix(sql): refuse MySQL change previews whose SET reads an earlier assignment (#15545)
 
-The browser-static build failed a hardening scan because dbx-web answered
-without any of the headers it looks for (#15439). A middleware layered on
-outside every route, nested router and fallback now sets:
-
-  x-content-type-options: nosniff
-  x-frame-options: SAMEORIGIN
-  referrer-policy: strict-origin-when-cross-origin
-  x-xss-protection: 0
-  x-download-options: noopen
-  x-permitted-cross-domain-policies: none
-  strict-transport-security: max-age=31536000
-
-`Router::layer` wraps the path router, the fallback router and the
-catch-all fallback, so static assets, API and SSE responses, MCP routes
-and 404s all carry them. A comment marks the line so new routes stay
-above it.
-
-`x-xss-protection` is sent as `0` (the current recommendation — the
-legacy filter is off) rather than `1; mode=block`; if the customer's
-scanner insists on a non-zero value that is a one-line change.
-
-Refs: #15439
-
-**File**: `crates/dbx-web/src/main.rs` (modified, +85/-2)
+**File**: `crates/dbx-sql-core/src/dml_preview_sql.rs` (modified, +82/-2)
 ```diff
-@@ -257,6 +257,35 @@ async fn directory_static_cache_policy(request: Request<axum::body::Body>, next:
-     response
+@@ -7,12 +7,17 @@
+ //!     → SELECT *, 123 AS "a (new)" FROM t WHERE id = 1
+ //! `SELECT *` 展开受影响行全部当前值，新值列（别名后缀 ` (new)`）追加在末尾；
+ //! SET 表达式直接搬运（在行上下文中按旧值求值即得新值，`SET a = a + 1` 也能算对）。
++//! MySQL 单表 UPDATE 按从左到右赋值，后面的 SET 表达式引用前面已赋值的列时拒绝预览。
+ //! 注意：SET / VALUES 表达式会在预览 SELECT 中重新求值，带副作用的表达式
+ //! （推进序列、volatile 函数）在预览中同样生效，非确定性函数的预览值可能与实际执行不同。
+ //!
+ //! 无法安全改写的语句返回 Err（错误信息为英文，前端直接以 toast 展示，仍可正常执行原语句）。
+ 
+-use sqlparser::ast::{AssignmentTarget, Expr, Ident, ObjectNamePart, SetExpr, Statement, TableWithJoins};
++use std::ops::ControlFlow;
++
++use sqlparser::ast::{
++    visit_expressions, AssignmentTarget, Expr, Ident, ObjectNamePart, SetExpr, Statement, TableWithJoins,
++};
+ use sqlparser::dialect::{
+     ClickHouseDialect, DuckDbDialect, GenericDialect, MsSqlDialect, MySqlDialect, PostgreSqlDialect, SQLiteDialect,
+     SparkSqlDialect,
+@@ -109,6 +114,44 @@ fn unsupported(reason: &str) -> String {
+     format!("Preview is not supported: {reason}")
  }
  
-+/// Response headers a security scanner expects on the browser build (#15439).
-+///
-+/// The bundle is served over whatever TLS the operator terminates in front of
-+/// it, so the headers are unconditional: `Strict-Transport-Security` is ignored
-+/// by browsers on plain HTTP and takes effect as soon as the client sees HTTPS.
-+/// `X-XSS-Protection: 0` is the current recommendation (the legacy auditor is
-+/// itself an XSS vector) while still answering scanners that only look for the
-+/// header's presence.
-+const SECURITY_RESPONSE_HEADERS: [(&str, &str); 7] = [
-+    ("x-content-type-options", "nosniff"),
-+    ("x-frame-options", "SAMEORIGIN"),
-+    ("referrer-policy", "strict-origin-when-cross-origin"),
-+    ("x-xss-protection", "0"),
-+    ("x-download-options", "noopen"),
-+    ("x-permitted-cross-domain-policies", "none"),
-+    ("strict-transport-security", "max-age=31536000"),
-+];
-+
-+/// Applies [`SECURITY_RESPONSE_HEADERS`] to every response, API and assets alike.
-+async fn security_headers(request: Request<axum::body::Body>, next: middleware::Next) -> Response {
-+    use axum::http::header::{HeaderName, HeaderValue};
-+
-+    let mut response = next.run(request).await;
-+    for (name, value) in SECURITY_RESPONSE_HEADERS {
-+        response.headers_mut().insert(HeaderName::from_static(name), HeaderValue::from_static(value));
-+    }
-+    response
++/// 表达式是否引用了目标表的给定列之一（列名不区分大小写）。`a` 与 `t.a`（表名或别名限定）
++/// 都算；其他限定符（如子查询里的 `u.a`）不算。
++fn expr_references_any_column(expr: &Expr, columns: &[String], table_qualifiers: &[String]) -> bool {
++    visit_expressions(expr, |expr| {
++        let column = match expr {
++            Expr::Identifier(ident) => Some(ident),
++            Expr::CompoundIdentifier(parts) if parts.len() >= 2 => {
++                let qualifier = parts[parts.len() - 2].value.to_lowercase();
++                if table_qualifiers.contains(&qualifier) {
++                    parts.last()
++                } else {
++                    None
++                }
++            }
++            _ => None,
++        };
++        match column {
++            Some(ident) if columns.contains(&ident.value.to_lowercase()) => ControlFlow::Break(()),
++            _ => ControlFlow::Continue(()),
++        }
++    })
++    .is_break()
 +}
 +
- fn add_public_base_path_redirect<S>(app: Router<S>, public_base_path: &str) -> Router<S>
- where
-     S: Clone + Send + Sync + 'static,
-@@ -1636,6 +1665,11 @@ async fn serve() -> Result<(), String> {
-         }
-     };
-     app = mount_static_assets(app, &public_base_path, static_source);
-+    // Outermost layer so the scanner-visible headers land on API responses,
-+    // static assets and error pages alike (#15439). Keep every route, nested
-+    // router and fallback mounted above this line: anything added below would
-+    // silently escape the headers.
-+    app = app.layer(middleware::from_fn(security_headers));
++/// 单表 UPDATE 目标表可用的限定名（表名最后一段与别名，小写）。
++fn update_table_qualifiers(update: &sqlparser::ast::Update) -> Vec<String> {
++    let mut qualifiers = Vec::new();
++    if let sqlparser::ast::TableFactor::Table { name, alias, .. } = &update.table.relation {
++        if let Some(ident) = name.0.last().and_then(ObjectNamePart::as_ident) {
++            qualifiers.push(ident.value.to_lowercase());
++        }
++        if let Some(alias) = alias {
++            qualifiers.push(alias.name.value.to_lowercase());
++        }
++    }
++    qualifiers
++}
++
+ /// UPDATE → SELECT <列交错展开> FROM … WHERE …
+ ///
+ /// 提供目标表列清单且为单表时，按「原列, 原列 (new)」逐列交错展开，使新值列紧跟
+@@ -127,12 +170,20 @@ fn build_update_preview(
+     }
+     let mut set_items: Vec<SetItem> = Vec::new();
+     let mut set_order: Vec<String> = Vec::new(); // 小写列名 → 顺序
++    let single_table = update.table.joins.is_empty() && update.from.is_none();
++    let mysql_left_to_right = dialect_key == "mysql" && single_table;
++    let table_qualifiers = if mysql_left_to_right { update_table_qualifiers(update) } else { Vec::new() };
+     for assignment in &update.assignments {
+         let Some(column) = assignment_target_column(&assignment.target) else {
+             return Err(unsupported("UPDATE assignment target is not a single column"));
+         };
+         let column_name = column.value.clone();
+         let key = column_name.to_lowercase();
++        // MySQL 单表 UPDATE 按从左到右赋值：`SET a = a + 1, b = a` 中 b 取到的是新 a，
++        // 按旧行求值的预览会给出错误的新值，因此引用了前面已赋值列的语句拒绝预览。
++        if mysql_left_to_right && expr_references_any_column(&assignment.value, &set_order, &table_qualifiers) {
++            return Err(unsupported("MySQL applies SET assignments left to right"));
++        }
+         if let Some(position) = set_order.iter().position(|existing| *existing == key) {
+             set_order.remove(position);
+             set_items.remove(position);
+@@ -160,7 +211,6 @@ fn build_update_preview(
+     let append_items: Vec<String> = set_items.iter().map(render_new_value).collect();
  
-     // Bind address
-     let port: u16 = std::env::var("DBX_PORT").ok().and_then(|p| p.parse().ok()).unwrap_or(4224);
-@@ -1753,8 +1787,9 @@ async fn serve() -> Result<(), String> {
- #[cfg(test)]
- mod tests {
-     use super::{
--        mount_static_assets, normalize_public_base_path, password_viewer_enabled_from_env, web_agent_dir_from_env,
--        web_body_limit_bytes_from_value, web_compression_predicate, StaticSource, XLSX_CONTENT_TYPE,
-+        mount_static_assets, normalize_public_base_path, password_viewer_enabled_from_env, security_headers,
-+        web_agent_dir_from_env, web_body_limit_bytes_from_value, web_compression_predicate, StaticSource,
-+        SECURITY_RESPONSE_HEADERS, XLSX_CONTENT_TYPE,
-     };
-     use crate::routes::table_import;
-     use axum::body::Body;
-@@ -1809,6 +1844,54 @@ mod tests {
-         Response::builder().header(CONTENT_TYPE, content_type).body(Body::from(vec![b'x'; 64])).unwrap()
+     // 单表 + 提供了列清单 → 交错展开（新值列紧跟原值列）。
+-    let single_table = update.table.joins.is_empty() && update.from.is_none();
+     let select_items = if single_table {
+         match columns {
+             Some(column_list) if !column_list.is_empty() => {
+@@ -453,6 +503,36 @@ mod tests {
+         assert_eq!(result.sql, "SELECT *, 2 AS \"x (new)\" FROM t");
      }
  
-+    /// The header set the browser hardening scan looks for (#15439), kept
-+    /// literal so renaming or dropping one fails here instead of only in the
-+    /// scanner.
-+    const EXPECTED_SECURITY_RESPONSE_HEADERS: [(&str, &str); 7] = [
-+        ("x-content-type-options", "nosniff"),
-+        ("x-frame-options", "SAMEORIGIN"),
-+        ("referrer-policy", "strict-origin-when-cross-origin"),
-+        ("x-xss-protection", "0"),
-+        ("x-download-options", "noopen"),
-+        ("x-permitted-cross-domain-policies", "none"),
-+        ("strict-transport-security", "max-age=31536000"),
-+    ];
-+
 +    #[test]
-+    fn security_response_headers_cover_the_reported_set() {
-+        use axum::http::header::{HeaderName, HeaderValue};
++    fn update_mysql_rejects_set_that_reads_an_earlier_assignment() {
++        // MySQL single-table UPDATE assigns left to right, so `b = a` sees the new `a`
++        // and `a = a + 1, a = a + 1` adds 2; a SELECT over the old row cannot show that.
++        for (sql, database_type) in [
++            ("UPDATE t SET a = a + 1, b = a WHERE id = 1", "mysql"),
++            ("UPDATE t SET a = a + 1, a = a + 1 WHERE id = 1", "mysql"),
++            ("UPDATE t SET A = 1, b = t.a + 1", "mariadb"),
++            ("UPDATE t SET a = 1, b = COALESCE(`a`, 0)", "mysql"),
++            ("UPDATE db.t AS x SET a = 1, b = x.a", "mysql"),
++        ] {
++            let error = preview(sql, database_type).unwrap_err();
++            assert_eq!(error, "Preview is not s
+```
+
+---
+
+### Incident Patch 2: `1f8a69e1` (2026-11-24)
+**Commit Message**: fix(doris): avoid unsupported information_schema columns and cache My… (#15541)
+
+* fix(doris): avoid unsupported information_schema columns and cache MySQL metadata capabilities
+
+Pre-seed Doris/SelectDB MySQL pools with compatible metadata capabilities (ROUTINES.DTD_IDENTIFIER and STATISTICS without EXPRESSION), skip STATISTICS.EXPRESSION in list_indexes_with_ddl_fallback, recognize Doris 1105 HY000 missing-column errors in mysql::list_indexes, and cache discovered completion/index metadata fallbacks on MySqlPool so Doris audit logs are not flooded with repeated Unknown column errors.
+
+Close #15528
+
+* fix(mysql): scope index capability defaults to Doris profiles
+
+---------
+
+Co-authored-by: zipg <[REDACTED_EMAIL]>
+
+**File**: `crates/dbx-core/src/connection/mod.rs` (modified, +14/-6)
+```diff
+@@ -1707,7 +1707,7 @@ async fn connect_bare_mysql_pool_with_setup(
+     max_connections: usize,
+     extra_setup_queries: &[String],
+ ) -> Result<db::mysql::MySqlPool, String> {
+-    if db_config.bare_mysql_uses_tls() {
++    let pool = if db_config.bare_mysql_uses_tls() {
+         let idle_timeout_secs = Some(db_config.idle_timeout_secs);
+         db::mysql::connect_compatible_with_ca_cert_pool_limit_idle_and_setup(
+             url,
+@@ -1717,11 +1717,15 @@ async fn connect_bare_mysql_pool_with_setup(
+             idle_timeout_secs,
+             extra_setup_queries,
+         )
+-        .await
++        .await?
+     } else {
+         db::mysql::connect_bare_with_pool_limit_and_setup(url, connect_timeout, max_connections, extra_setup_queries)
+-            .await
++            .await?
++    };
++    if db::doris::is_config(db_config) {
++        pool.set_doris_metadata_defaults();
+     }
++    Ok(pool)
+ }
+ 
+ async fn connect_bare_mysql_pool_with_setup_database(
+@@ -1734,7 +1738,7 @@ async fn connect_bare_mysql_pool_with_setup_database(
+ ) -> Result<db::mysql::MySqlPool, String> {
+     // Some MySQL proxies reject the default database in the handshake; pass it
+     // separately so DB-layer setup keeps the normal charset/catalog/USE order.
+-    if db_config.bare_mysql_uses_tls() {
++    let pool = if db_config.bare_mysql_uses_tls() {
+         let idle_timeout_secs = Some(db_config.idle_timeout_secs);
+         db::mysql::connect_compatible_with_ca_cert_pool_limit_idle_and_setup_database(
+             url,
+@@ -1745,7 +1749,7 @@ async fn connect_bare_mysql_pool_with_setup_database(
+             Some(setup_database),
+             extra_setup_queries,
+         )
+-        .await
++        .await?
+     } else {
+         db::mysql::connect_bare_with_pool_limit_and_setup_database(
+             url,
+@@ -1754,8 +1758,12 @@ async fn connect_bare_mysql_pool_with_setup_database(
+             Some(setup_database),
+             extra_setup_queries,
+         )
+-        .await
++        .await?
++    };
++    if db::doris::is_config(db_config) {
++        pool.set_doris_metadata_defaults();
+     }
++    Ok(pool)
+ }
+ 
+ fn mysql_metadata_fallback_url(
+```
+
+**File**: `crates/dbx-core/src/schema/mod.rs` (modified, +4/-0)
+```diff
+@@ -8491,6 +8491,10 @@ pub async fn completion_assistant_search_core(
+                 PoolKind::Mysql(pool, mode) if *mode != MysqlMode::OceanBaseOracle => Some(pool.clone()),
+                 _ => None,
+             }) {
++                let db_config = connection_config(state, &request.connection_id).await;
++                if db_config.as_ref().is_some_and(db::doris::is_config) {
++                    pool.set_doris_metadata_defaults();
++                }
+                 return db::mysql::completion_assistant_search(&pool, &request).await;
+             }
+         }
+```
+
+**File**: `crates/dbx-driver-mysql/src/doris.rs` (modified, +9/-2)
+```diff
+@@ -1,11 +1,18 @@
+ use crate::models::connection::{ConnectionConfig, DatabaseType};
++use crate::mysql::MySqlPool;
++use crate::types::IndexInfo;
+ 
+ pub use super::mysql_compatible::{
+     get_columns_show_from as get_catalog_columns, list_catalog_indexes, list_catalogs,
+-    list_databases_show_from as list_catalog_databases, list_indexes_with_ddl_fallback as list_indexes,
+-    list_tables_show_from as list_catalog_tables, show_create_table_ddl_from as get_catalog_table_ddl,
++    list_databases_show_from as list_catalog_databases, list_tables_show_from as list_catalog_tables,
++    show_create_table_ddl_from as get_catalog_table_ddl,
+ };
+ 
++pub async fn list_indexes(pool: &MySqlPool, database: &str, table: &str) -> Result<Vec<IndexInfo>, String> {
++    pool.set_doris_metadata_defaults();
++    super::mysql_compatible::list_indexes_with_ddl_fallback(pool, database, table).await
++}
 +
-+        assert_eq!(SECURITY_RESPONSE_HEADERS, EXPECTED_SECURITY_RESPONSE_HEADERS);
-+        for (name, value) in EXPECTED_SECURITY_RESPONSE_HEADERS {
-+            HeaderName::from_static(name);
-+            HeaderValue::from_static(value);
+ pub fn is_config(config: &ConnectionConfig) -> bool {
+     is_profile(&config.db_type, config.driver_profile.as_deref())
+ }
+```
+
+**File**: `crates/dbx-driver-mysql/src/mysql.rs` (modified, +554/-27)
+```diff
+@@ -14,7 +14,7 @@ use std::future::Future;
+ use std::ops::ControlFlow;
+ use std::ops::Deref;
+ use std::path::PathBuf;
+-use std::sync::atomic::AtomicBool;
++use std::sync::atomic::{AtomicBool, AtomicU8, Ordering};
+ use std::time::Duration;
+ use std::time::Instant;
+ use tokio_util::sync::CancellationToken;
+@@ -42,6 +42,92 @@ pub use crate::mysql_data_charset::{
+ };
+ use crate::mysql_event_sql::MysqlEventInfo;
+ 
++#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
++#[repr(u8)]
++enum MySqlStatisticsColumns {
++    /// MySQL 8+: EXPRESSION + INDEX_COMMENT.
++    Full = 0,
++    /// MySQL 5.5–5.7, Doris, StarRocks v5: INDEX_COMMENT without EXPRESSION.
++    WithoutExpression = 1,
++    /// MySQL 5.0/5.1: neither EXPRESSION nor INDEX_COMMENT.
++    Minimal = 2,
++}
++
++impl MySqlStatisticsColumns {
++    fn from_u8(value: u8) -> Self {
++        match value {
++            0 => Self::Full,
++            1 => Self::WithoutExpression,
++            _ => Self::Minimal,
 +        }
 +    }
 +
-+    #[tokio::test]
-+    async fn security_headers_land_on_every_response() {
-+        let router =
-+            Router::new().route("/api/ok", get(|| async { "ok" })).layer(axum::middleware::from_fn(security_headers));
-+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
-+        let address = listener.local_addr().unwrap();
-+        let server = tokio::spawn(async move { axum::serve(listener, router).await.unwrap() });
-+        let client = reqwest::Client::new();
-+
-+        for (path, status) in [("/api/ok", StatusCode::OK), ("/missing", StatusCode::NOT_FOUND)] {
-+            let response = client.get(format!("http://{address}{path}")).send().await.unwrap();
-+            assert_eq!(response.status(), status, "{path}");
-+            for (name, expected) in EXPECTED_SECURITY_RESPONSE_HEADERS {
-+                assert_eq!(
-+                    response.headers().get(name).and_then(|value| v
-```
-
----
-
-### Incident Patch 2: `e4fc5dfb` (2026-11-22)
-**Commit Message**: fix(grid): append clipboard rows that overflow an existing result (#15440)
-
-* fix(grid): append clipboard rows that overflow an existing result (#15263)
-
-* chore(i18n): autofill new translations
-
----------
-
-Co-authored-by: dbx-i18n-bot <github-actions[bot]@users.noreply.github.com>
-Co-authored-by: zipg <[REDACTED_EMAIL]>
-
-**File**: `apps/desktop/src/components/grid/DataGrid.vue` (modified, +63/-6)
-```diff
-@@ -5015,6 +5015,7 @@ const {
-   availableInsertRows,
-   appendPastedRowsToNewRow,
-   appendPastedRowsToNewRowInBatches,
-+  appendPastedRowsAsNewRows,
-   appendPastedRowsAsNewRowsInBatches,
-   cloneRow: cloneEditorRow,
-   showDeleteRowConfirm,
-@@ -11103,10 +11104,10 @@ function applyParsedGridPaste(rows: readonly (readonly (string | null)[])[], col
-   }
-   const cellTarget = blankSelectionBatchAppendPasteTarget(rows.length);
-   if (cellTarget) return appendParsedRowsToBlankTarget(cellTarget.rowId, rows, cellTarget.columnIndexes, columnNames, preparation);
--  return pasteRowsIntoSelection(rows);
-+  return pasteRowsIntoSelection(rows, preparation);
- }
- 
--function pasteRowsIntoSelection(rows: readonly (readonly (string | null)[])[]): boolean {
-+function pasteRowsIntoSelection(rows: readonly (readonly (string | null)[])[], preparation?: DataGridRowPreparationOptions): boolean | Promise<boolean> {
-   const allowDraftSelectionValue = selectedRangeTargetsOnlyDraftRow();
- 
-   if (rows.length === 1 && rows[0]?.length === 1 && fillSelectionWithValue(rows[0][0], { preserveEmptyString: true })) {
-@@ -11119,10 +11120,38 @@ function pasteRowsIntoSelection(rows: readonly (readonly (string | null)[])[]):
-   const recordIndexes = isTransposeMode.value ? transposeScopeRecordIndexes.value : null;
-   const startPosition = recordIndexes ? recordIndexes.indexOf(start.rowIndex) : start.rowIndex;
-   if (startPosition < 0) return false;
-+
-+  // Split the clipboard into the part that overwrites existing cells and the
-+  // part that overflows past the end of the result. Previously the overflow
-+  // was silently dropped by planDataGridPaste (issue #15263).
-+  const rowSlots = Math.max(0, (recordIndexes?.length ?? displayRowCount.value) - startPosition);
-+  const overwriteRows = rows.slice(0, rowSlots);
-+  const overflowRows = rows.slice(rowSlots);
-+
-+  // Only append overflow rows for a plain cell paste onto already-saved rows.
-+  // Transpose scope, column selections, draft/new rows and read-only columns
-+  // keep their established bounded-overwrite behaviour.
-+  const startItem = displayItemAt(start.rowIndex);
-+  const insertColumnIndexes = visibleColumnIndexes.value.slice(start.colIndex);
-+  const canOverflow =
-+    overflowRows.length > 0 &&
-+    !recordIndexes &&
-+    !hasColumnSelection.value &&
-+    !!startItem &&
-+    !startItem.isNew &&
-+    !startItem.isDraft &&
-+    !startItem.isDeleted &&
-+    canInsertRows.value &&
-+    overflowRows.length <= availableInsertRows.value &&
-+    insertColumnIndexes.length > 0 &&
-+    insertColumnIndexes.every((col) => canEditColumn(col));
-+
-   let applied = false;
--  beginBatch();
-+  // When an append will follow, capture one undo snapshot up front so the
-+  // overwrite and the appended rows undo together as a single change.
-+  beginBatch({ captureUndo: canOverflow });
-   try {
--    for (const cell of planDataGridPaste(rows, (recordIndexes?.length ?? displayRowCount.value) - startPosition, visibleColumns.value.length - start.colIndex)) {
-+    for (const cell of planDataGridPaste(overwriteRows, rowSlots, visibleColumns.value.length - start.colIndex)) {
-       const rowIndex = recordIndexes ? recordIndexes[startPosition + cell.rowOffset] : start.rowIndex + cell.rowOffset;
-       const item = displayItemAt(rowIndex);
-       if (!item) continue;
-@@ -11134,8 +11163,36 @@ function pasteRowsIntoSelection(rows: readonly (readonly (string | null)[])[]):
-   } finally {
-     commitBatch();
-   }
--  if (applied) toast(t("grid.pasted"));
--  return applied;
-+
-+  const finish = (inserted: boolean) => {
-+    if (overflowRows.length > 0 && !inserted) {
-+      // Insert was not available; make the dropped rows explicit instead of
-+      // silently losing them, even though the in-bounds cells were overwritten.
-+      toast(t("grid.pasteRowsTruncated", { applied: overwriteRows.length, dropped: overflowRows.length }), 5000);
-+    } else if (applied || inserted) {
-+      toast(t("grid.pasted"));
++    fn flags(self) -> (bool, bool) {
++        match self {
++            Self::Full => (true, true),
++            Self::WithoutExpression => (false, true),
++            Self::Minimal => (false, false),
++        }
 +    }
-+    return applied || inserted;
-+  };
 +
-+  if (!canOverflow) return finish(false);
-+
-+  // Append the overflow as new rows, reusing the existing batch-aware
-+  // preparation (capacity checks, generated-column clearing, NULL fidelity)
-+  // while skipping its own undo snapshot — beginBatch already captured one.
-+  if (preparation) {
-+    // The overwrite segment's commitBatch() advanced pendingChangesVersion, so
-+    // the caller's isCurrent() (captured before the paste) would now report
-+    // stale. Rebuild a preparation that keeps cancellation/progress but relies
-+    // on the composable's fresh isCurrent() for state consistency.
-+    const appendPreparation: DataGridRowPreparationOptions = {
-+      signal: preparation.signal,
-+      onProgress: preparation.onProgress,
-+      isCurrent: () => !preparation.signal?.aborted && gridClipboardActive,
-+    };
-+    return appendPastedRowsAsNewRowsInBatches(overflowRows, insertColumnIndexes, undefined, appendPreparation, { skipUndoSnapshot: true }).then((result) 
-```
-
-**File**: `apps/desktop/src/components/grid/__tests__/DataGridBatchPasteFromCell.spec.ts` (modified, +70/-5)
-```diff
-@@ -649,17 +649,82 @@ describe("DataGrid multi-row paste from a blank cell", () => {
-     expect(visibleCellTexts(rows.at(-1)!)[2]).toBe("5");
-   });
- 
--  it("keeps existing rows on the ordinary bounded paste path", async () => {
--    const { host } = mountGrid();
-+  it("appends clipboard rows that overflow the existing result as new rows (#15263)", async () => {
-+    const save = vi.fn<CustomSaveHandler["save"]>().mockResolvedValue();
-+    const result = { ...defaultResult(), rows: Array.from({ length: 5 }, (_, i) => [i + 1, null, `seed-${i}`, "x"]) };
-+    const { host } = mountGrid({ result, customSaveHandler: { canInsert: true, save } });
-     await settle();
- 
-     const [row] = displayRows(host);
-     await selectCell(visibleCells(row!)[2]!);
--    await paste(host, "first\nsecond");
-+    await paste(host, Array.from({ length: 8 }, (_, i) => `v${i + 1}`).join("\n"));
- 
-     const rows = displayRows(host);
--    expect(rows).toHaveLength(1);
--    expect(visibleCellTexts(rows[0]!)[2]).toBe("first");
-+    expect(rows).toHaveLength(8);
-+    expect(visibleCellTexts(rows[0]!)[2]).toBe("v1");
-+    expect(visibleCellTexts(rows[4]!)[2]).toBe("v5");
-+    expect(visibleCellTexts(rows[5]!)[2]).toBe("v6");
-+    expect(visibleCellTexts(rows[7]!)[2]).toBe("v8");
-+
-+    host.querySelector<HTMLElement>("[data-toolbar-action='save']")!.click();
-+    await settle();
-+    expect(save).toHaveBeenCalledOnce();
-+    expect(save.mock.calls[0]![0].dirtyRows.size).toBe(5);
-+    expect(save.mock.calls[0]![0].newRows).toHaveLength(3);
-+    expect(save.mock.calls[0]![0].newRows[0]![2]).toBe("v6");
-+  });
-+
-+  it("undoes the overwrite and appended rows together in one step (#15263)", async () => {
-+    const result = { ...defaultResult(), rows: Array.from({ length: 5 }, (_, i) => [i + 1, null, `seed-${i}`, "x"]) };
-+    const { host } = mountGrid({ result, customSaveHandler: { canInsert: true, save: vi.fn<CustomSaveHandler["save"]>().mockResolvedValue() } });
-+    await settle();
-+
-+    await selectCell(visibleCells(displayRows(host)[0]!)[2]!);
-+    await paste(host, "v1\nv2\nv3\nv4\nv5\nv6\nv7\nv8");
-+    expect(displayRows(host)).toHaveLength(8);
-+    expect(visibleCellTexts(displayRows(host)[0]!)[2]).toBe("v1");
-+
-+    gridRoot(host).dispatchEvent(new KeyboardEvent("keydown", { bubbles: true, cancelable: true, ctrlKey: true, key: "z" }));
-+    await settle();
-+    expect(displayRows(host)).toHaveLength(5);
-+    expect(visibleCellTexts(displayRows(host)[0]!)[2]).toBe("seed-0");
-+
-+    gridRoot(host).dispatchEvent(new KeyboardEvent("keydown", { bubbles: true, cancelable: true, ctrlKey: true, shiftKey: true, key: "z" }));
-+    await settle();
-+    expect(displayRows(host)).toHaveLength(8);
-+    expect(visibleCellTexts(displayRows(host)[0]!)[2]).toBe("v1");
-+  });
-+
-+  it("appends overflow from a large async paste through preparation (#15263)", async () => {
-+    const save = vi.fn<CustomSaveHandler["save"]>().mockResolvedValue();
-+    const result = { ...defaultResult(), rows: Array.from({ length: 5 }, (_, i) => [i + 1, null, `seed-${i}`, "x"]) };
-+    const { host } = mountGrid({ result, customSaveHandler: { canInsert: true, save } });
-+    await settle();
-+
-+    await selectCell(visibleCells(displayRows(host)[0]!)[2]!);
-+    await paste(host, Array.from({ length: 5000 }, (_, i) => `row-${i}`).join("\n"));
-+    await vi.waitFor(() => expect(document.querySelector("[data-grid-row-preparation]")).toBeNull(), { timeout: 5000, interval: 10 });
-+
-+    const rows = displayRows(host);
-+    expect(rows).toHaveLength(5000);
-+    expect(visibleCellTexts(rows[0]!)[2]).toBe("row-0");
-+    expect(visibleCellTexts(rows[4]!)[2]).toBe("row-4");
-+    expect(visibleCellTexts(rows[5]!)[2]).toBe("row-5");
-+    expect(visibleCellTexts(rows[4999]!)[2]).toBe("row-4999");
-+  });
-+
-+  it("rejects overflow with an explicit toast when insert is not supported (#15263)", async () => {
-+    const result = { ...defaultResult(), rows: Array.from({ length: 5 }, (_, i) => [i + 1, null, `seed-${i}`, "x"]) };
-+    const customSaveHandler: CustomSaveHandler = { supportsInsert: false, save: vi.fn<CustomSaveHandler["save"]>().mockResolvedValue() };
-+    const { host } = mountGrid({ result, databaseType: "mongodb", customSaveHandler });
-+    await settle();
-+
-+    await selectCell(visibleCells(displayRows(host)[0]!)[2]!);
-+    await paste(host, "v1\nv2\nv3\nv4\nv5\nv6\nv7\nv8");
-+
-+    expect(displayRows(host)).toHaveLength(5);
-+    expect(visibleCellTexts(displayRows(host)[0]!)[2]).toBe("v1");
-+    expect(useToast().message.value).toBe(i18n.global.t("grid.pasteRowsTruncated", { applied: 5, dropped: 3 }));
-   });
- 
-   it("expands a multi-cell range on a blank new row without losing clipboard rows", async () => {
-```
-
-**File**: `apps/desktop/src/composables/useDataGridEditor.ts` (modified, +39/-10)
-```diff
-@@ -55,6 +55,13 @@ interface ConditionalUpdateExecution {
- 
- export type DataGridAppendPastedRowsResult = { ok: true; rowCount: number } | { ok: false; reason: "not-editable" | "invalid-target" | "target-not-empty" | "empty-paste" | "readonly-column" | "no-matching-columns" | "capacity-exceeded" | "cancelled" };
- 
-+// Options for appending pasted rows. `skipUndoSnapshot` lets a caller that has
-+// already captured an undo snapshot (e.g. a mixed overwrite + append paste)
-+// avoid pushing a second, separate undo entry.
-+export interface DataGridPasteAppendOptions {
-+  skipUndoSnapshot?: boolean;
++    fn downgrade(self) -> Option<Self> {
++        match self {
++            Self::Full => Some(Self::WithoutExpression),
++            Self::WithoutExpression => Some(Self::Minimal),
++            Self::Minimal => None,
++        }
++    }
 +}
 +
- type CommitEditResult =
-   | {
-       changed: false;
-@@ -956,10 +963,13 @@ export function useDataGridEditor(options: UseDataGridEditorOptions) {
-   let batchMutated = false;
-   let batchColumnInfoCache: Map<number, ColumnInfo | undefined> | null = null;
- 
--  function beginBatch() {
-+  function beginBatch(options: { captureUndo?: boolean } = {}) {
-     if (isBatching) return;
-     isBatching = true;
--    batchUndoSnapshotPushed = false;
-+    // A mixed overwrite + append paste captures one undo snapshot up front so
-+    // the subsequent INSERT does not add a second, separate undo entry.
-+    batchUndoSnapshotPushed = options.captureUndo === true;
-+    if (batchUndoSnapshotPushed) pushUndoSnapshot();
-     batchMutated = false;
-     batchColumnInfoCache = new Map();
-   }
-@@ -1533,30 +1543,49 @@ export function useDataGridEditor(options: UseDataGridEditorOptions) {
-     return row.every((value) => value === null || (typeof value === "string" && value.trim() === ""));
-   }
- 
--  function appendPastedRowsAsNewRows(pastedRows: readonly (readonly (string | null)[])[], columnIndexes: readonly number[], columnNames?: readonly string[] | null): DataGridAppendPastedRowsResult {
--    return finishDataGridRowPreparation(preparePastedRows(null, pastedRows, columnIndexes, columnNames));
-+  function appendPastedRowsAsNewRows(pastedRows: readonly (readonly (string | null)[])[], columnIndexes: readonly number[], columnNames?: readonly string[] | null, options: DataGridPasteAppendOptions = {}): DataGridAppendPastedRowsResult {
-+    return finishDataGridRowPreparation(preparePastedRows(null, pastedRows, columnIndexes, columnNames, options));
-   }
- 
-   function appendPastedRowsToNewRow(targetRowId: number, pastedRows: readonly (readonly (string | null)[])[], columnIndexes: readonly number[], columnNames?: readonly string[] | null): DataGridAppendPastedRowsResult {
-     return finishDataGridRowPreparation(preparePastedRows(targetRowId, pastedRows, columnIndexes, columnNames));
-   }
- 
--  function appendPastedRowsAsNewRowsInBatches(pastedRows: readonly (readonly (string | null)[])[], columnIndexes: readonly number[], columnNames?: readonly string[] | null, preparation: DataGridRowPreparationOptions = {}): Promise<DataGridAppendPastedRowsResult> {
--    return appendPastedRowsInBatches(null, pastedRows, columnIndexes, columnNames, preparation);
-+  function appendPastedRowsAsNewRowsInBatches(
-+    pastedRows: readonly (readonly (string | null)[])[],
-+    columnIndexes: readonly number[],
-+    columnNames?: readonly string[] | null,
-+    preparation: DataGridRowPreparationOptions = {},
-+    options: DataGridPasteAppendOptions = {},
-+  ): Promise<DataGridAppendPastedRowsResult> {
-+    return appendPastedRowsInBatches(null, pastedRows, columnIndexes, columnNames, preparation, options);
-   }
- 
-   function appendPastedRowsToNewRowInBatches(targetRowId: number, pastedRows: readonly (readonly (string | null)[])[], columnIndexes: readonly number[], columnNames?: readonly string[] | null, preparation: DataGridRowPreparationOptions = {}): Promise<DataGridAppendPastedRowsResult> {
-     return appendPastedRowsInBatches(targetRowId, pastedRows, columnIndexes, columnNames, preparation);
-   }
- 
--  function appendPastedRowsInBatches(targetRowId: number | null, pastedRows: readonly (readonly (string | null)[])[], columnIndexes: readonly number[], columnNames: readonly string[] | null | undefined, preparation: DataGridRowPreparationOptions): Promise<DataGridAppendPastedRowsResult> {
-+  function appendPastedRowsInBatches(
-+    targetRowId: number | null,
-+    pastedRows: readonly (readonly (string | null)[])[],
-+    columnIndexes: readonly number[],
-+    columnNames: readonly string[] | null | undefined,
-+    preparation: DataGridRowPreparationOptions,
-+    options: DataGridPasteAppendOptions = {},
-+  ): Promise<DataGridAppendPastedRowsResult> {
-     const isCurrent = rowPreparationIsCurrent();
--    return runDataGridRowPreparation(preparePastedRows(targetRowId, pastedRows, columnIndexes, columnNames), { ...preparation, isCurrent: () => isCurrent() && preparation.isCurrent?.() !== false }, { ok: false, reason: "cancelled" });
-+    return runDataGridRowPreparation(preparePastedRows(targetRowId, pastedRows, columnIndexes, columnNames, options), { ...preparation, isCurrent: () => isCurrent() && preparation.isCurrent?.() !== false }, { ok: false, reason: "can
-```
-
-**File**: `apps/desktop/src/i18n/locales/en.ts` (modified, +1/-0)
-```diff
-@@ -3733,6 +3733,7 @@ export default {
-     hideIdenticalColumnsCount: "Hide Columns with Identical Values ({count})",
-     showAllColumnsMenu: "Show All Columns",
-     pasted: "Pasted!",
-+    pasteRowsTruncated: "Pasted {applied} row(s); {dropped} row(s) were not pasted because new rows cannot be inserted here or the pending-row limit was reached.",
-     batchAppendPasteNotEditable: "This result cannot be edited.",
-     batchAppendPasteInvalidTarget: "Select the row number of an empty new row before pasting.",
-     batchAppendPasteTargetNotEmpty: "The selected new row already contains data.",
-```
-
-**File**: `apps/desktop/src/i18n/locales/es.ts` (modified, +1/-0)
-```diff
-@@ -3900,6 +3900,7 @@ export default withEnglishFallback({
-     foreignKeyPreviewEmpty: "No hay filas en «{table}» que coincidan con este valor.",
-     foreignKeyPreviewFailed: "No se pudieron cargar las filas de referencia: {message}",
-     sortOptions: "Opciones de ordenación",
-+    pasteRowsTruncated: "Se pegaron {applied} filas y {dropped} filas no se pegaron: el resultado actual no admite agregar filas o no hay suficientes filas disponibles para agregar.",
-     pasteCellText: "Pegar texto en esta celda",
-     pasteCellTextFailed: "No se puede pegar texto en la celda: {message}",
-   },
-```
-
-**File**: `apps/desktop/src/i18n/locales/it.ts` (modified, +1/-0)
-```diff
-@@ -3762,6 +3762,7 @@ export default withEnglishFallback({
-     foreignKeyPreviewEmpty: "Nessuna riga in «{table}» corrisponde a questo valore.",
-     foreignKeyPreviewFailed: "Impossibile caricare le righe di riferimento: {message}",
-     sortOptions: "Opzioni di ordinamento",
-+    pasteRowsTruncated: "Sono state incollate {applied} righe, mentre {dropped} righe non sono state incollate: il risultato corrente non supporta l'aggiunta di righe oppure il numero di righe aggiungibili non è sufficiente.",
-     pasteCellText: "Incolla il testo in questa cella",
-     pasteCellTextFailed: "Impossibile incollare il testo nella cella: {message}",
-   },
-```
-
-**File**: `apps/desktop/src/i18n/locales/ja.ts` (modified, +1/-0)
-```diff
-@@ -3784,6 +3784,7 @@ export default withEnglishFallback({
-     foreignKeyPreviewEmpty: "「{table}」にこの値と一致する行はありません。",
-     foreignKeyPreviewFailed: "参照行を読み込めませんでした：{message}",
-     sortOptions: "並べ替えオプション",
-+    pasteRowsTruncated: "{applied} 行を貼り付けました。残りの {dropped} 行は貼り付けられませんでした：現在の結果は行の追加をサポートしていないか、追加できる行数が不足しています。",
-     pasteCellText: "このセルにテキストを貼り付け",
-     pasteCellTextFailed: "セルにテキストを貼り付けできません：{message}",
-   },
-```
-
-**File**: `apps/desktop/src/i18n/locales/ko.ts` (modified, +1/-0)
-```diff
-@@ -3716,6 +3716,7 @@ export default withEnglishFallback({
-     foreignKeyPreviewEmpty: "{table}에 이 값과 일치하는 행이 없습니다.",
-     foreignKeyPreviewFailed: "참조 행을 불러올 수 없습니다: {message}",
-     sortOptions: "정렬 옵션",
-+    pasteRowsTruncated: "{applied}개 행을 붙여넣었고, {dropped}개 행은 붙여넣지 못했습니다: 현재 결과에서 행 추가를 지원하지 않거나 추가할 수 있는 행 수가 부족합니다.",
-     pasteCellText: "이 셀에 텍스트 붙여넣기",
-     pasteCellTextFailed: "셀에 텍스트를 붙여넣을 수 없습니다: {message}",
-   },
-```
-
----
-
-### Incident Patch 3: `65dc78b8` (2026-11-22)
-**Commit Message**: fix(desktop): hand the java launcher a path without the verbatim prefix (#15318) (#15468)
-
-* fix(agent): launch the agent through a plain jar path on Windows (#15318)
-
-The desktop app derives the driver directory from the data directory, and a
-portable profile canonicalizes that directory to a verbatim path
-(`\\?\D:\...`). The Java launcher cannot resolve a main class from a jar
-addressed that way: the bundled JRE 21 exits 1 with ClassNotFoundException
-and the agent never starts, so the connection fails before the handshake.
-
-Convert the jar path, and the working directory derived from it, to the plain
-spelling when Windows has one: drive and UNC paths within the legacy length
-limit. Volume GUID paths have no plain spelling and paths past the limit need
-the prefix, so both keep it.
-
-The ignored test launches the bundled JRE with a real driver jar end to end;
-run it with DBX_E2E_JAVA and DBX_E2E_AGENT_JAR set.
-
-* fix(agent): preserve Windows JAR path identity when simplifying launch paths
-
----------
-
-Co-authored-by: zipg <[REDACTED_EMAIL]>
-
-**File**: `crates/dbx-driver-agent/src/agent_driver.rs` (modified, +123/-1)
-```diff
-@@ -1281,6 +1281,60 @@ pub struct AgentLaunchSpec {
-     pub env: Vec<(String, String)>,
- }
- 
-+/// The Java launcher cannot open a jar through a verbatim path: `java -jar
-+/// \\?\D:\...\agent.jar` exits with "Could not find or load main class"
-+/// (#15318). A portable profile hits this because Windows `canonicalize`
-+/// answers with such a path and the agent directory is derived from it.
++/// Discovered or engine-known metadata query compatibility flags for a pool.
 +///
-+/// Return the plain spelling when the path has one. A `\\?\Volume{GUID}\...`
-+/// path has none, and a path past the legacy limit needs the prefix, so both
-+/// come back untouched.
-+#[cfg(target_os = "windows")]
-+fn java_compatible_path(path: &Path) -> PathBuf {
-+    use std::ffi::OsString;
-+    use std::os::windows::ffi::{OsStrExt, OsStringExt};
++/// Storing these beside the pool avoids repeating doomed `Unknown column` or
++/// `ESCAPE` probes on every completion keystroke or index lookup, keeping
++/// Doris/MySQL audit logs clean after discovery (or from the very first call
++/// when pre-seeded for Doris).
++#[derive(Debug, Default)]
++struct MySqlMetadataCapabilities {
++    omit_completion_escape: AtomicBool,
++    routine_use_dtd_identifier: AtomicBool,
++    statistics_columns: AtomicU8,
++}
 +
-+    /// Windows' legacy path limit, without the terminating NUL.
-+    const MAX_PLAIN_PATH_LEN: usize = 259;
-+    const VERBATIM_PREFIX: &[u16] = &[b'\\' as u16, b'\\' as u16, b'?' as u16, b'\\' as u16];
-+    const UNC_PREFIX: &[u16] = &[b'U' as u16, b'N' as u16, b'C' as u16, b'\\' as u16];
-+
-+    let wide: Vec<u16> = path.as_os_str().encode_wide().collect();
-+    let Some(rest) = wide.strip_prefix(VERBATIM_PREFIX) else {
-+        return path.to_path_buf();
-+    };
-+    let plain = if let Some(unc) = rest.strip_prefix(UNC_PREFIX) {
-+        // `\\?\UNC\server\share` is the verbatim spelling of `\\server\share`.
-+        let mut plain = vec![b'\\' as u16, b'\\' as u16];
-+        plain.extend_from_slice(unc);
-+        plain
-+    } else if is_drive_path(rest) {
-+        rest.to_vec()
-+    } else {
-+        return path.to_path_buf();
-+    };
-+    // A non-verbatim path can normalize trailing dots and spaces to a
-+    // different directory. Preserve the original spelling in that case.
-+    let has_ambiguous_component = plain
-+        .split(|unit| *unit == u16::from(b'\\'))
-+        .any(|component| matches!(component.last(), Some(0x0020 | 0x002e)));
-+    if plain.len() > MAX_PLAIN_PATH_LEN || has_ambiguous_component {
-+        return path.to_path_buf();
++impl MySqlMetadataCapabilities {
++    fn completion_compatibility(&self) -> MysqlCompletionCompatibility {
++        MysqlCompletionCompatibility {
++            omit_escape: self.omit_completion_escape.load(Ordering::Relaxed),
++            use_dtd_identifier: self.routine_use_dtd_identifier.load(Ordering::Relaxed),
++        }
 +    }
-+    PathBuf::from(OsString::from_wide(&plain))
++
++    fn record_completion_compatibility(&self, compatibility: MysqlCompletionCompatibility) {
++        if compatibility.omit_escape {
++            self.omit_completion_escape.store(true, Ordering::Relaxed);
++        }
++        if compatibility.use_dtd_identifier {
++            self.routine_use_dtd_identifier.store(true, Ordering::Relaxed);
++        }
++    }
++
++    fn statistics_columns(&self) -> MySqlStatisticsColumns {
++        MySqlStatisticsColumns::from_u8(self.statistics_columns.load(Ordering::Relaxed))
++    }
++
++    fn record_statistics_columns(&self, columns: MySqlStatisticsColumns) {
++        self.statistics_columns.fetch_max(columns as u8, Ordering::Relaxed);
++    }
++
++    fn set_doris_defaults(&self) {
++        // Apache Doris 2.x/3.x exposes DTD_IDENTIFIER (not DATA_TYPE) on
++        // information_schema.ROUTINES and omits EXPRESSION on
++        // information_schema.STATISTICS. Keep explicit LIKE ESCAPE enabled
++        // initially because Doris 3.x supports it and older engines that reject
++        // it still discover and cache omit_completion_escape on first use.
++        self.routine_use_dtd_identifier.store(true, Ordering::Relaxed);
++        self.statistics_columns.fetch_max(MySqlStatisticsColumns::WithoutExpression as u8, Ordering::Relaxed);
++    }
 +}
 +
-+/// `D:\...`: the only verbatim form besides UNC with a plain equivalent.
-+#[cfg(target_os = "windows")]
-+fn is_drive_path(wide: &[u16]) -> bool {
-+    wide.len() > 2 && matches!(wide[0], 0x41..=0x5A | 0x61..=0x7A) && wide[1] == b':' as u16 && wide[2] == b'\\' as u16
-+}
-+
-+#[cfg(not(target_os = "windows"))]
-+fn java_compatible_path(path: &Path) -> PathBuf {
-+    path.to_path_buf()
-+}
-+
- impl AgentLaunchSpec {
-     pub fn new(program: impl Into<PathBuf>) -> Self {
-         Self { program: program.into(), args: Vec::new(), working_dir: None, env: Vec::new() }
-@@ -1296,9 +1350,10 @@ impl AgentLaunchSpec {
-         extra_java_args: &[String],
-     ) -> Self {
-         let jar_path = jar_path.as_ref();
-+        let launch_jar_path = java_compatible_path(jar_path);
-         Self {
-             program: java_path.into(),
--            args: agent_java_args_with_extra_args(&jar_path.to_string_lossy(), extra_java_args),
-+            args: agent_java_args_with_extra_args(&launch_jar_path.to_string_lossy(), extra_java_args),
-             working_dir: jar_path.parent().map(Path::to_path_buf),
-             env: Vec::new(),
+ /// DBX-owned MySQL pool handle. The driver does not expose its configured
+ /// maximum, so retain that value beside the driver pool for checkout phase
+ /// classification instead of guessing it from aggregate metrics.
+@@ -51,6 +137,7 @@ pub struct MySqlPool {
+     max_connections: usize,
+     data_charset: Option<MySqlDataCharset>,
+     checkout_verifications: std::sync::Arc<MySqlCheckoutVerifications>,
++    metadata_capabilities: std::sync::Arc<MySqlMetadataCapabilities>,
+     /// Budget for checking a connection out of this pool.
+     ///
+     /// The connection-level "connect timeout" setting is threaded down to the
+@@ -81,11 +168,19 @@ impl MySqlPool {
+             max_connections: max_connections.max(1),
+             data_charset: None,
+             checkout_verifications: Default::default(),
++            metadata_capabilities: Default::default(),
+             checkout_timeout: checkout_timeout.max(Duration::from_secs(1)),
+             stateless_http_tunnel: false,
          }
-@@ -4409,6 +4464,8 @@ mod pl_debug_runtime_tests;
- 
- #[cfg(test)]
- mod tests {
-+    #[cfg(target_os = "windows")]
-+    use super::java_compatible_path;
-     use super::{
-         agent_close_query_session_params, agent_error_from_legacy, agent_handshake_params, agent_java_args,
-         agent_java_args_with_extra, agent_java_args_with_extra_opts, agent_object_source_params,
-@@ -4428,6 +4485,8 @@ mod tests {
-     use crate::agent_recovery::{RecoveryDecision, RecoveryPolicy, RecoveryScope};
-     use std::io::Cursor;
-     use std::io::Write;
-+    #[cfg(target_os = "windows")]
-+    use std::path::{Path, PathBuf};
-     use std::process::{Command, Stdio};
-     use std::sync::atomic::Ordering;
-     use std::sync::{Arc, Mutex};
-@@ -5072,6 +5131,69 @@ for line in sys.stdin:
-         assert!(args.iter().any(|arg| arg == "-Djavax.security.auth.useSubjectCredsOnly=false"));
      }
  
-+    /// A portable profile derives its agent directory from a canonicalized
-+    /// data directory, and Windows `canonicalize` answers with `\\?\D:\...`.
-+    /// The Java launcher cannot resolve a main class from such a jar (#15318),
-+    /// so the launch spec has to carry the plain spelling.
-+    #[cfg(target_os = "windows")]
-+    #[test]
-+    fn java_launch_uses_the_plain_spelling_of_a_verbatim_jar_path() {
-+        let spec = AgentLaunchSpec::java_jar("java", r"\\?\D:\DBX\data\agents\drivers\iris\agent.jar");
-+        let jar = spec.args.iter().position(|arg| arg == "-jar").expect("agent jar marker should be present");
-+
-+        assert_eq!(spec.args[jar + 1], r"D:\DBX\data\agents\drivers\iris\agent.jar");
-+        assert_eq!(spec.working_dir.as_deref(), Some(Path::new(r"\\?\D:\DBX\data\agents\drivers\iris")));
++    /// Pre-seed metadata query compatibility for Doris/SelectDB connections so
++    /// the pool avoids doomed `DATA_TYPE` / `EXPRESSION` column probes from the
++    /// very first metadata query.
++    pub fn set_doris_metadata_defaults(&self) {
++        self.metadata_capabilities.set_doris_defaults();
 +    }
 +
-+    #[cfg(target_os = "windows")]
-+    #[test]
-+    
+     /// How long a checkout may wait for a pooled (o
+```
+
+---
+
+### Incident Patch 3: `d1c15d41` (2026-11-23)
+**Commit Message**: fix(export): group SQL statements by table (#15521)
+
+Co-authored-by: zipg <[REDACTED_EMAIL]>
+
+**File**: `crates/dbx-core/src/data/database_export.rs` (modified, +53/-34)
+```diff
+@@ -32,6 +32,10 @@ static EXPORT_CANCELLED: std::sync::LazyLock<RwLock<HashSet<String>>> =
+ 
+ pub const EXPORT_CANCELLED_ERROR: &str = "Export cancelled";
+ const EXPORT_CANCEL_POLL_INTERVAL: Duration = Duration::from_millis(50);
++// This sentinel is written only to temporary PostgreSQL/openGauss schema files. The NUL
++// bytes keep it distinct from user SQL comments, literals, and DDL text that the phase
++// combiner must preserve.
++const DATABASE_EXPORT_TABLE_BOUNDARY_MARKER: &str = "\0DBX table export boundary\0";
+ 
+ /// MySQL scripts written by the exporter are always UTF-8: values are decoded off the
+ /// wire and reformatted into Rust strings before they are written, so the file encoding
+@@ -2434,7 +2438,6 @@ pub fn build_database_sql_export(options: BuildDatabaseSqlExportOptions) -> Resu
+             );
+             lines.push(format!("-- Structure for {}", table.display_name));
+             lines.push(ddl);
+-            lines.push(String::new());
+         }
+ 
+         lines.push(format!("-- Data for {}", table.display_name));
+@@ -3814,7 +3817,7 @@ fn write_database_export_rows_with_mode<W: Write>(
+         insert_dialect,
+     )?;
+     for statement in statements {
+-        writeln!(file, "{statement}\n").map_err(|error| format!("Failed to write file: {error}"))?;
++        writeln!(file, "{statement}").map_err(|error| format!("Failed to write file: {error}"))?;
+     }
+     Ok(())
+ }
+@@ -4923,6 +4926,10 @@ fn copy_postgres_export_phase<W: Write>(
+         if source.read_line(&mut chunk).map_err(|e| format!("Failed to read export phase: {e}"))? == 0 {
+             break;
+         }
++        if chunk.trim() == DATABASE_EXPORT_TABLE_BOUNDARY_MARKER {
++            destination.write_all(b"\n").map_err(|e| format!("Failed to write export phase: {e}"))?;
++            continue;
++        }
+         for statement in splitter.push_chunk(&chunk) {
+             if is_export_cancelled_now(export_id) {
+                 return Err(EXPORT_CANCELLED_ERROR.to_string());
+@@ -4964,6 +4971,10 @@ fn combine_schema_sql_export<W: Write>(source: &mut dyn BufRead, destination: &m
+         if bytes_read == 0 {
+             break;
+         }
++        if chunk.trim() == DATABASE_EXPORT_TABLE_BOUNDARY_MARKER {
++            destination.write_all(b"\n")?;
++            continue;
++        }
+         for statement in splitter.push_chunk(&chunk) {
+             destination.write_all(format!("{statement};\n").as_bytes())?;
+         }
+@@ -5046,6 +5057,7 @@ async fn export_postgres_all_schemas_sql_core(
+                 &schema_request,
+                 child_progress,
+                 phases.as_mut(),
++                true,
+             ))
+             .await?;
+             let terminal = terminal.lock().expect("export terminal mutex poisoned").clone();
+@@ -5236,14 +5248,15 @@ async fn export_database_sql_core_inner(
+     request: &DatabaseExportRequest,
+     on_progress: impl Fn(ExportProgress) + Sync,
+ ) -> Result<(), String> {
+-    Box::pin(export_database_sql_core_inner_with_phases(state, request, on_progress, None)).await
++    Box::pin(export_database_sql_core_inner_with_phases(state, request, on_progress, None, false)).await
+ }
+ 
+ async fn export_database_sql_core_inner_with_phases(
+     state: &Arc<crate::connection::AppState>,
+     request: &DatabaseExportRequest,
+     on_progress: impl Fn(ExportProgress) + Sync,
+     mut phases: Option<&mut PostgresSchemaExportPhases>,
++    preserve_table_boundaries: bool,
+ ) -> Result<(), String> {
+     let _snapshot_keep_alive = if let Some(snapshot_session_id) = request.snapshot_session_id.as_deref() {
+         Some(crate::query::keep_manual_transaction_alive(state, snapshot_session_id).await?)
+@@ -5862,6 +5875,14 @@ async fn export_database_sql_core_inner_with_phases(
+     }
+ 
+     for (table_index, table_info) in tables.iter().enumerate().filter(|_| exports_database_tables(request)) {
++        if table_index > 0 {
++            if preserve_table_boundaries {
++                writeln!(file, "{DATABASE_EXPORT_TABLE_BOUNDARY_MARKER}")
++                    .map_err(|e| format!("Failed to write file: {e}"))?;
++            }
++            writeln!(file).map_err(|e| format!("Failed to write file: {e}"))?;
++        }
++
+         // Check cancellation
+         if is_export_cancelled(&request.export_id).await {
+             emit_database_export_cancelled(
+@@ -5897,7 +5918,7 @@ async fn export_database_sql_core_inner_with_phases(
+         // Export structure
+         if request.include_structure {
+             if request.drop_table_if_exists {
+-                writeln!(file, "{}\n", drop_table_if_exists_sql(table_name, &request.schema, &db_type))
++                writeln!(file, "{}", drop_table_if_exists_sql(table_name, &request.schema, &db_type))
+                     .map_err(|e| format!("Failed to write file: {e}"))?;
+             }
+             for sequence in postgres_sequences.iter().filter(|sequence| {
+@@ -5917,7 +5938,7 @@ async fn export_database_sql_core_inner_with_phases(
+                     erro
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #15469** (2026-11-22): fix(vastbase): enforce UTF8 client_encoding for GB18030 databases (@Acd-kk)
-- **PR #15468** (2026-11-22): fix(desktop): hand the java launcher a path without the verbatim prefix (#15318) (@xiaou61)
-- **PR #15462** (2026-11-22): fix(sidebar): sync table comments on refresh (@imcman)
-- **PR #15461** (2026-11-22): fix(plugins): wrap plugin center tabs in narrow panes (@ThugKd)
-- **PR #15460** (2026-11-22): fix(mongodb): render structured cells as JSON in details (@ThugKd)
-- **PR #15459** (2026-11-22): fix(export): TDengine 导出 INSERT 转义反斜杠，保证回导字节一致 (@dienaso)
+- **PR #15553** (2026-11-23): feat(editor): Shift+Delete / Ctrl+X can cut the last line of the document (@AndreasK79)
+- **PR #15550** (2026-11-23): chore(deps): update dependency macos to v26 (@renovate[bot])
+- **PR #15549** (2026-11-23): fix(mcp): honor saved transport layers for plugin tool calls (@forthedreamhy)
+- **PR #15548** (2026-11-23): test: pin locale in vitest global setup (@saskuati-dev)
+- **PR #15547** (2026-11-23): Test multiple connections from the sidebar (@ThugKd)
+- **PR #15546** (2026-11-23): docs(cli): list dbml/docs commands and current direct-query types in the npm README (@thejesh23)
 
 ---
 
@@ -2713,55 +2576,64 @@ Co-authored-by: zipg <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. web): send the hardening headers on every response
+## X. sql): refuse MySQL change previews whose SET reads an earlier assignment
 
 **RULE**:
-When implementing operations in `crates/dbx-web/src/main.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/dbx-sql-core/src/dml_preview_sql.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c7c57cd5`: web): send the hardening headers on every response. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6bd7e1de`: sql): refuse MySQL change previews whose SET reads an earlier assignment. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/dbx-web/src/main.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/dbx-sql-core/src/dml_preview_sql.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// Response headers a security scanner expects on the browser build (#15439).
-///
-/// The bundle is served over whatever TLS the operator terminates in front of
-/// it, so the headers are unconditional: `Strict-Transport-Security` is ignored
-/// by browsers on plain HTTP and takes effect as soon as the client sees HTTPS.
-/// `X-XSS-Protection: 0` is the current recommendation (the legacy auditor is
-/// itself an XSS vector) while still answering scanners that only look for the
-/// header's presence.
-const SECURITY_RESPONSE_HEADERS: [(&str, &str); 7] = [
-    ("x-content-type-options", "nosniff"),
-    ("x-frame-options", "SAMEORIGIN"),
-    ("referrer-policy", "strict-origin-when-cross-origin"),
-    ("x-xss-protection", "0"),
-    ("x-download-options", "noopen"),
-    ("x-permitted-cross-domain-policies", "none"),
-    ("strict-transport-security", "max-age=31536000"),
-];
+//! MySQL 单表 UPDATE 按从左到右赋值，后面的 SET 表达式引用前面已赋值的列时拒绝预览。
+use std::ops::ControlFlow;
 
-/// Applies [`SECURITY_RESPONSE_HEADERS`] to every response, API and assets alike.
-async fn security_headers(request: Request<axum::body::Body>, next: middleware::Next) -> Response {
-    use axum::http::header::{HeaderName, HeaderValue};
+use sqlparser::ast::{
+    visit_expressions, AssignmentTarget, Expr, Ident, ObjectNamePart, SetExpr, Statement, TableWithJoins,
+};
+/// 表达式是否引用了目标表的给定列之一（列名不区分大小写）。`a` 与 `t.a`（表名或别名限定）
+/// 都算；其他限定符（如子查询里的 `u.a`）不算。
+fn expr_references_any_column(expr: &Expr, columns: &[String], table_qualifiers: &[String]) -> bool {
+    visit_expressions(expr, |expr| {
+        let column = match expr {
+            Expr::Identifier(ident) => Some(ident),
+            Expr::CompoundIdentifier(parts) if parts.len() >= 2 => {
+                let qualifier = parts[parts.len() - 2].value.to_lowercase();
+                if table_qualifiers.contains(&qualifier) {
+                    parts.last()
+                } else {
+                    None
+                }
+            }
+            _ => None,
+        };
+        match column {
+            Some(ident) if columns.contains(&ident.value.to_lowercase()) => ControlFlow::Break(()),
+            _ => ControlFlow::Continue(()),
+        }
+    })
+    .is_break()
+}
 
-    let mut response = next.run(request).await;
-    for (name, value) in SECURI
+/// 单表 UPDATE 目标表可用的限定名（表名最后一段与别名，小写）。
+fn update_table_qualifiers(update: &sqlparser::ast::Update) -> Vec<String> {
+    l
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        mount_static_assets, normalize_public_base_path, password_viewer_enabled_from_env, web_agent_dir_from_env,
-        web_body_limit_bytes_from_value, web_compression_predicate, StaticSource, XLSX_CONTENT_TYPE,
+use sqlparser::ast::{AssignmentTarget, Expr, Ident, ObjectNamePart, SetExpr, Statement, TableWithJoins};
+    let single_table = update.table.joins.is_empty() && update.from.is_none();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c7c57cd5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6bd7e1de` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

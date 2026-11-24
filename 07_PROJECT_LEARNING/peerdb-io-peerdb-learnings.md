@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source**: github ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
-> **Source Version**: `78271fc2`  
+> **Source Version**: `73bf425f`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T02:18:07.950Z  
+> **Timestamp**: 2026-11-24T01:28:56.349Z  
 > **Learning ID**: `learn-github-peerdb-io-peerdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T02:18:07.945Z  
+> **Harvest Timestamp**: 2026-11-24T01:28:56.234Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1879,52 +1879,302 @@ func getChainedRoleSessionName() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `78271fc2` (2026-11-20)
-**Commit Message**: improve claude review to remind author to check public documentations (#5105)
+### Incident Patch 1: `73bf425f` (2026-11-23)
+**Commit Message**: fix(mysql): skip decoding rows of tables outside the pipe (#5102)
 
-Instruct review bot to remind author to also check and update public
-documentations when there is a conflict.
+go-mysql decodes every rows event before PeerDB filters events by table,
+so a row it can't decode in a table outside the pipe still fails the
+pipe, on every retry. We hit this with an invalid DECIMAL value (a
+9-digit group above 999999999), which makes go-mysql panic with `slice
+bounds out of range [:-1]`. The observed instance had the rest of binlog
+file corrupted too, but it'd be hard to classify from the generic out of
+bounds error, and this change allows to skip over to where a more
+legible error can be generated and mapped to the existing notify_user
+branch.
 
-The code-review command allows only gh issue, gh search, and gh pr
-commands. Those commands cannot read a file from ClickHouse/ClickHouse.
-So do a sparse checkout of the relevant docs so review bot can verify
-code against it.
+`decodeRowsEvent` now skips `DecodeData` for tables outside the pipe.
+The decoder and `processEvent` share one `pipeTables` set, so they agree
+on which tables are in the pipe.
 
-**File**: `.claude/REVIEW.md` (modified, +1/-0)
+Pipes that replicate a table with such a value still fail on it.
+
+Resolves DBI-1355
+
+**File**: `flow/connectors/mysql/cdc.go` (modified, +53/-20)
 ```diff
-@@ -1,3 +1,4 @@
- - High severity: Changes should not include addition of outputs through stdout, stderr or logs that might contain PII or Secret information. Play special attention to printing passwords and access tokens.
- - High severity: When changes are bumping dependencies (this is often the case when the PR author is `app/renovate`), check whether the version bump brings regressions. For this: Read the upstream release notes and commit log for the bumped range in the library repository. Highlight your findings in the PR review.
- - High severity: For changed files under a path listed in `docs/tricky-areas.md`, read that area's section and check the change against its "What to watch for in a PR" points. Name the section in the finding. If the change fixes a trap or contradicts the section, ask for the section to be updated in the same PR.
-+- High severity: Catch changes that make the public ClickPipes docs stale, so that the author remembers to update them. The docs are checked out at `clickhouse-docs/docs/integrations/clickpipes/`. If the change makes a statement in them false (for example about a setting, a default, a limit, a supported type or version, or what can be edited after creation), post a reminder: quote the sentence, link it at `https://github.com/ClickHouse/ClickHouse/blob/master/docs/integrations/clickpipes/<path>`, and say what changed. This is a reminder, not a blocker. Do not flag missing docs for new behavior.
+@@ -445,7 +445,7 @@ func (c *MySqlConnector) SetupReplConn(context.Context, map[string]string) error
+ 	return nil
+ }
+ 
+-func (c *MySqlConnector) startSyncer(ctx context.Context, env map[string]string) (*binlogSyncer, error) {
++func (c *MySqlConnector) startSyncer(ctx context.Context, env map[string]string, tables pipeTables) (*binlogSyncer, error) {
+ 	var tlsConfig *tls.Config
+ 	if c.needToVerifyTls() {
+ 		var err error
+@@ -517,7 +517,7 @@ func (c *MySqlConnector) startSyncer(ctx context.Context, env map[string]string)
+ 		TLSConfig:             tlsConfig,
+ 		HeartbeatPeriod:       c.binlogHeartbeatPeriod,
+ 		EventCacheCount:       eventCacheCount,
+-		RowsEventDecodeFunc:   decodeRowsEvent,
++		RowsEventDecodeFunc:   tables.decodeRowsEvent,
+ 	}, c.ssh.IsActive()), nil
+ }
+ 
+@@ -563,6 +563,7 @@ func (c *MySqlConnector) startStreaming(
+ 	ctx context.Context,
+ 	pos string,
+ 	env map[string]string,
++	tables pipeTables,
+ ) (*binlogSyncer, *replication.BinlogStreamer, mysql.GTIDSet, mysql.Position, error) {
+ 	parsedOffset, err := parseReplicationOffsetText(c.Flavor(), pos)
+ 	if err != nil {
+@@ -571,7 +572,7 @@ func (c *MySqlConnector) startStreaming(
+ 
+ 	switch parsedOffset.mechanism {
+ 	case protos.MySqlReplicationMechanism_MYSQL_FILEPOS.String():
+-		return c.startCdcStreamingFilePos(ctx, parsedOffset.pos, env)
++		return c.startCdcStreamingFilePos(ctx, parsedOffset.pos, env, tables)
+ 	case protos.MySqlReplicationMechanism_MYSQL_GTID.String():
+ 		skipGTIDs, err := internal.PeerDBMySQLSkipGTIDSet(ctx, env)
+ 		if err != nil {
+@@ -586,7 +587,7 @@ func (c *MySqlConnector) startStreaming(
+ 				slog.String("skipGTIDSet", skipGTIDs),
+ 				slog.String("offset", parsedOffset.gset.String()))
+ 		}
+-		return c.startCdcStreamingGtid(ctx, parsedOffset.gset, env)
++		return c.startCdcStreamingGtid(ctx, parsedOffset.gset, env, tables)
+ 	default:
+ 		return nil, nil, nil, mysql.Position{}, fmt.Errorf("empty mysql replication offset")
+ 	}
+@@ -596,8 +597,9 @@ func (c *MySqlConnector) startCdcStreamingFilePos(
+ 	ctx context.Context,
+ 	pos mysql.Position,
+ 	env map[string]string,
++	tables pipeTables,
+ ) (*binlogSyncer, *replication.BinlogStreamer, mysql.GTIDSet, mysql.Position, error) {
+-	syncer, err := c.startSyncer(ctx, env)
++	syncer, err := c.startSyncer(ctx, env, tables)
+ 	if err != nil {
+ 		return nil, nil, nil, mysql.Position{}, err
+ 	}
+@@ -613,8 +615,9 @@ func (c *MySqlConnector) startCdcStreamingGtid(
+ 	ctx context.Context,
+ 	gset mysql.GTIDSet,
+ 	env map[string]string,
++	tables pipeTables,
+ ) (*binlogSyncer, *replication.BinlogStreamer, mysql.GTIDSet, mysql.Position, error) {
+-	syncer, err := c.startSyncer(ctx, env)
++	syncer, err := c.startSyncer(ctx, env, tables)
+ 	if err != nil {
+ 		return nil, nil, nil, mysql.Position{}, err
+ 	}
+@@ -687,7 +690,8 @@ func (c *MySqlConnector) PullRecords(
+ 			slog.Any("error", err))
+ 	}
+ 
+-	syncer, mystream, gset, pos, err := c.startStreaming(ctx, req.LastOffset.Text, req.Env)
++	tables := newPipeTables(req)
++	syncer, mystream, gset, pos, err := c.startStreaming(ctx, req.LastOffset.Text, req.Env, tables)
+ 	if err != nil {
+ 		return err
+ 	}
+@@ -864,7 +868,7 @@ func (c *MySqlConnector) PullRecords(
+ 						slog.Uint64("eventType", uint64(mariadbPartialRowDataEvent)), slog.Bool("parsed", ok))
+ 					return exceptions.NewMySQLUnsupportedPartialRowEventError(byte(mariadbPartialRowDataEvent), "", "")
+ 				}
+-				if req.TableNameSchemaMapping[req.TableNameMapping[sourceTableName].Name] == nil {
++				if !tables.has(sourceTableName) {
+ 					// table not in the pipe - ignore this fragment group and its continuation fragments
+ 					if totalFragments > 1 {
+ 						partialRowSkipFragments = totalFragments - 1
+@@ -933,17 +937,18 @@ func (c *MySqlConnector) PullRecords(
+ 				}
+ 			}
+ 		case *replication.TableMapEvent:
+-			tableIdToName[ev.TableID] = string(ev.Schema) + "." + string(ev.Table)
++			tableIdToName[ev.TableID] = qualifiedTableName(ev)
+ 		case *replication.RowsEvent:
+-			sourceTableName := string(ev.Table.Schema) + "." + string(ev.Table.Table) // TODO this is fragile
+-			destinationTableName := req.TableNameMapping[sourceTableName].Name
+-			exclusion := req.TableNameMapping[sourceTableName].Exclude
+-			columns := req.TableNameMapping[sourceTableName].Columns
+-			shouldWrapJSON := func(fd *protos.FieldDescription) bool {
+-				return shouldWrapNonObjectJSON(fd.Name, types.QValueKind(fd.Type), req.Flags, req.InternalVersion, nativeJSONEnabled, columns)
+-			}
+-			schema := req.TableNameSchemaMapping[destinationTableName]
+-			if schema != nil {
++			sourceTableName := qualifiedTableName(ev.Table)
++			if tables.has(sourceTableName) {
++				destinationTableName := req.TableNameMapping[sourceTableName].Name
++				exclusion := req.TableNameMapping[sourceTableName].Exclude
++				columns := req.TableNameMapping[sourceTableName].Columns
++				shouldWrapJSON := func(fd *protos.FieldDescription) bool {
++					return shouldWrapNonObjectJSON(
++						fd.Name, types.QValueKind(fd.Type), req.Flags, req.InternalVersion, nativeJSON
 ```
 
-**File**: `.github/workflows/claude-code-review.yml` (modified, +8/-0)
+**File**: `flow/connectors/mysql/cdc_integration_test.go` (modified, +2/-2)
 ```diff
-@@ -26,6 +26,14 @@ jobs:
-         with:
-           fetch-depth: 1
+@@ -33,12 +33,12 @@ func startBinlogStream(t *testing.T, ctx context.Context, c *MySqlConnector) *re
+ 	if c.config.ReplicationMechanism == protos.MySqlReplicationMechanism_MYSQL_FILEPOS {
+ 		pos, err := c.GetMasterPos(ctx)
+ 		require.NoError(t, err)
+-		syncer, stream, _, _, err = c.startCdcStreamingFilePos(ctx, pos, nil)
++		syncer, stream, _, _, err = c.startCdcStreamingFilePos(ctx, pos, nil, nil)
+ 		require.NoError(t, err)
+ 	} else {
+ 		gset, err := c.GetMasterGTIDSet(ctx)
+ 		require.NoError(t, err)
+-		syncer, stream, _, _, err = c.startCdcStreamingGtid(ctx, gset, nil)
++		syncer, stream, _, _, err = c.startCdcStreamingGtid(ctx, gset, nil, nil)
+ 		require.NoError(t, err)
+ 	}
+ 	t.Cleanup(syncer.Close)
+```
+
+**File**: `flow/connectors/mysql/cdc_test.go` (modified, +92/-0)
+```diff
+@@ -1,9 +1,13 @@
+ package connmysql
  
-+      - name: Checkout ClickPipes docs
-+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
-+        with:
-+          repository: ClickHouse/ClickHouse
-+          path: clickhouse-docs
-+          fetch-depth: 1
-+          sparse-checkout: docs/integrations/clickpipes
+ import (
++	"bytes"
+ 	"context"
++	"encoding/binary"
+ 	"fmt"
+ 	"log/slog"
++	"math"
++	"slices"
+ 	"testing"
+ 
+ 	"github.com/go-mysql-org/go-mysql/mysql"
+@@ -704,3 +708,91 @@ func TestProcessRenameTableQueryMetric(t *testing.T) {
+ 		})
+ 	}
+ }
 +
-       - name: Run Claude Code Review
-         id: claude-review
-         uses: anthropics/claude-code-action@be7b93b1907a4abad570368f3c74b6fe3807510b # v1
++func TestPipeTablesDecodeRowsEvent(t *testing.T) {
++	const tableID = 42
++	tables := pipeTables{"db.in_pipe": {}}
++
++	binlogEvent := func(eventType replication.EventType, body []byte) []byte {
++		event := make([]byte, replication.EventHeaderSize, replication.EventHeaderSize+len(body))
++		event[4] = byte(eventType)
++		binary.LittleEndian.PutUint32(event[9:], uint32(cap(event))) // event size
++		return append(event, body...)
++	}
++
++	// Encodes a positive DECIMAL(23,6) value the way MySQL stores it: the leading 8 integral digits,
++	// the next 9 integral digits, and the 6 fractional digits, as big-endian groups of 4, 4 and 3 bytes.
++	// A valid full 9-digit group never exceeds 999999999.
++	decimal23x6 := func(leading uint32, full uint32, fraction uint32) []byte {
++		b := binary.BigEndian.AppendUint32(nil, leading)
++		b = binary.BigEndian.AppendUint32(b, full)
++		b = append(b, byte(fraction>>16), byte(fraction>>8), byte(fraction))
++		b[0] |= 0x80 // sign bit set means positive
++		return b
++	}
++
++	// Parses a binlog with a DELETE of one row from db.<table>, a table with a single DECIMAL(23,6) column.
++	parseDeleteRowsEvent := func(t *testing.T, table string, decimal []byte) (*replication.RowsEvent, error) {
++		t.Helper()
++		parser := replication.NewBinlogParser()
++		parser.SetRowsEventDecodeFunc(tables.decodeRowsEvent)
++
++		serverVersion := make([]byte, 50)
++		copy(serverVersion, "5.0.0") // predates binlog checksums
++		_, err := parser.Parse(binlogEvent(replication.FORMAT_DESCRIPTION_EVENT, slices.Concat(
++			[]byte{4, 0}, // binlog version
++			serverVersion,
++			[]byte{0, 0, 0, 0}, // created timestamp
++			[]byte{replication.EventHeaderSize},
++			bytes.Repeat([]byte{8}, 40), // post-header lengths, any other than 6 means 6-byte table ids
++		)))
++		require.NoError(t, err)
++
++		_, err = parser.Parse(binlogEvent(replication.TABLE_MAP_EVENT, slices.Concat(
++			[]byte{tableID, 0, 0, 0, 0, 0},
++			[]byte{0, 0}, // flags
++			[]byte{2, 'd', 'b', 0},
++			[]byte{byte(len(table))}, []byte(table), []byte{0},
++			[]byte{1, mysql.MYSQL_TYPE_NEWDECIMAL}, // column count, types
++			[]byte{2, 23, 6},                       // metadata length, precision, scale
++			[]byte{0},                              // nullable columns bitmap
++		)))
++		require.NoError(t, err)
++
++		ev, err := parser.Parse(binlogEvent(replication.DELETE_ROWS_EVENTv2, slices.Concat(
++			[]byte{tableID, 0, 0, 0, 0, 0},
++			[]byte{0, 0},   // flags
++			[]byte{2, 0},   // extra data length
++			[]byte{1, 0b1}, // column count, present columns bitmap
++			[]byte{0},      // row null bitmap
++			decimal,
++		)))
++		if err != nil {
++			return nil, err
++		}
++		return ev.Event.(*replication.RowsEvent), nil
++	}
++
++	// go-mysql zero-pads the full group to 9 digits, so a value of 10 digits panics with a negative slice bound.
++	// The padding only happens after a non-zero leading group.
++	valid := decimal23x6(1, 2, 3)
++	invalid := decimal23x6(1, math.MaxUint32, 3)
++
++	t.Run("decodes rows of tables in the pipe", func(t *testing.T) {
++		ev, err := parseDeleteRowsEvent(t, "in_pipe", valid)
++		require.NoError(t, err)
++		require.Equal(t, [][]any{{"1000000002.000003"}}, ev.Rows)
++	})
++
++	t.Run("reports undecodable rows of tables in the pipe", func(t *testing.T) {
++		_, err := parseDeleteRowsEvent(t, "in_pipe", invalid)
++		require.ErrorContains(t, err, "slice bounds out of range [:-1]")
++	})
++
++	t.Run("skips rows of tables outside the pipe", func(t *testing.T) {
++		ev, err := parseDeleteRowsEvent(t, "outside_pipe", invalid)
++		require.NoError(t, err)
++		require.Equal(t, "db.outside_pipe", qualifiedTableName(ev.Table))
++		require.Empty(t, ev.Rows)
++	})
++}
+```
+
+**File**: `flow/connectors/mysql/ssh_keepalive_test.go` (modified, +1/-1)
+```diff
+@@ -368,7 +368,7 @@ func TestSyncerCloseWithStalledSSHDownstream(t *testing.T) {
+ 
+ 	pos, err := connector.GetMasterPos(ctx)
+ 	require.NoError(t, err)
+-	syncer, _, _, _, err := connector.startCdcStreamingFilePos(ctx, pos, nil) //nolint:dogsled
++	syncer, _, _, _, err := connector.startCdcStreamingFilePos(ctx, pos, nil, nil) //nolint:dogsled
+ 	require.NoError(t, err)
+ 
+ 	_, err = sshProxy.AddToxic("stall", "latency", "downstream", 1.0, toxiproxy.Attributes{"latency": 120000})
+```
+
+**File**: `flow/connectors/mysql/ssh_test.go` (modified, +1/-1)
+```diff
+@@ -56,7 +56,7 @@ func TestSyncerClose(t *testing.T) {
+ 
+ 	pos, err := connector.GetMasterPos(ctx)
+ 	require.NoError(t, err)
+-	syncer, _, _, _, err := connector.startCdcStreamingFilePos(ctx, pos, nil) //nolint:dogsled
++	syncer, _, _, _, err := connector.startCdcStreamingFilePos(ctx, pos, nil, nil) //nolint:dogsled
+ 	require.NoError(t, err)
+ 
+ 	// Let CDC streaming establish before closing the syncer.
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #5105** (2026-11-20): improve claude review to remind author to check public documentations (@jgao54)
+- **PR #5103** (2026-11-23): Retry ClickHouse ping with backoff on connect (@dtunikov)
+- **PR #5102** (2026-11-23): fix(mysql): skip decoding rows of tables outside the pipe (@ilidemi)
 - **PR #5101** (2026-11-20): feat: upgrade `docker-compose.yml` stable image tags (@github-actions[bot])
 - **PR #5100** (2026-11-19): Default to lax nullable behavior (@ilidemi)
 - **PR #5098** (2026-11-20): clickhouse: treat lowercase JSON destination types as JSON (@gheorghepucea)
-- **PR #5097** (closed): ci: build debug docker images for PRs via build-docker-image label (@masterashu)
-- **PR #5094** (2026-11-19): Optimize CI speed and reduce cost further (@ilidemi)
 
 ---
 
@@ -1944,28 +2194,65 @@ code against it.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. improve claude review to remind author to check public documentations
+## X. mysql): skip decoding rows of tables outside the pipe
 
 **RULE**:
-When implementing operations in `.claude/REVIEW.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `flow/connectors/mysql/cdc.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `78271fc2`: improve claude review to remind author to check public documentations. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `73bf425f`: mysql): skip decoding rows of tables outside the pipe. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/REVIEW.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/connectors/mysql/cdc.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- High severity: Catch changes that make the public ClickPipes docs stale, so that the author remembers to update them. The docs are checked out at `clickhouse-docs/docs/integrations/clickpipes/`. If the change makes a statement in them false (for example about a setting, a default, a limit, a supported type or version, or what can be edited after creation), post a reminder: quote the sentence, link it at `https://github.com/ClickHouse/ClickHouse/blob/master/docs/integrations/clickpipes/<path>`, and say what changed. This is a reminder, not a blocker. Do not flag missing docs for new behavior.
+func (c *MySqlConnector) startSyncer(ctx context.Context, env map[string]string, tables pipeTables) (*binlogSyncer, error) {
+		RowsEventDecodeFunc:   tables.decodeRowsEvent,
+	tables pipeTables,
+		return c.startCdcStreamingFilePos(ctx, parsedOffset.pos, env, tables)
+		return c.startCdcStreamingGtid(ctx, parsedOffset.gset, env, tables)
+	tables pipeTables,
+	syncer, err := c.startSyncer(ctx, env, tables)
+	tables pipeTables,
+	syncer, err := c.startSyncer(ctx, env, tables)
+	tables := newPipeTables(req)
+	syncer, mystream, gset, pos, err := c.startStreaming(ctx, req.LastOffset.Text, req.Env, tables)
+				if !tables.has(sourceTableName) {
+			tableIdToName[ev.TableID] = qualifiedTableName(ev)
+			sourceTableName := qualifiedTableName(ev.Table)
+			if tables.has(sourceTableName) {
+				destinationTableName := req.TableNameMapping[sourceTableName].Name
+				exclusion := req.TableNameMapping[sourceTableName].Exclude
+				columns := req.TableNameMapping[sourceTableName].Columns
+				shouldWrapJSON := func(fd *protos.FieldDescription) bool {
+					return shouldWrapNonObjectJSON(
+						fd.Name, types.QValueKind(fd.Type), req.Flags, req.InternalVersion, nativeJSON
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+func (c *MySqlConnector) startSyncer(ctx context.Context, env map[string]string) (*binlogSyncer, error) {
+		RowsEventDecodeFunc:   decodeRowsEvent,
+		return c.startCdcStreamingFilePos(ctx, parsedOffset.pos, env)
+		return c.startCdcStreamingGtid(ctx, parsedOffset.gset, env)
+	syncer, err := c.startSyncer(ctx, env)
+	syncer, err := c.startSyncer(ctx, env)
+	syncer, mystream, gset, pos, err := c.startStreaming(ctx, req.LastOffset.Text, req.Env)
+				if req.TableNameSchemaMapping[req.TableNameMapping[sourceTableName].Name] == nil {
+			tableIdToName[ev.TableID] = string(ev.Schema) + "." + string(ev.Table)
+			sourceTableName := string(ev.Table.Schema) + "." + string(ev.Table.Table) // TODO this is fragile
+			destinationTableName := req.TableNameMapping[sourceTableName].Name
+			exclusion := req.TableNameMapping[sourceTableName].Exclude
+			columns := req.TableNameMapping[sourceTableName].Columns
+			shouldWrapJSON := func(fd *protos.FieldDescription) bool {
+				return shouldWrapNonObjectJSON(fd.Name, types.QValueKind(fd.Type), req.Flags, req.InternalVersion, nativeJSONEnabled, columns)
+			}
+			schema := req.TableNameSchemaMapping[destinationTableName]
+			if schema != nil {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `78271fc2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `73bf425f` are properly handled with clean fallback behavior.

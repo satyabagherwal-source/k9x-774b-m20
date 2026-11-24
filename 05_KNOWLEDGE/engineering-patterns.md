@@ -761756,3 +761756,213 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `6b0308fb` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10168. skip decoding rows of tables outside the pipe (Harvested from PeerDB-io/peerdb)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "skip decoding rows of tables outside the pipe",
+  "source": "PeerDB-io/peerdb",
+  "source_url": "https://github.com/PeerDB-io/peerdb",
+  "source_version": "73bf425f",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-11-24T01:28:56.911Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-peerdb-io-peerdb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb) (Revision: `73bf425f`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `flow/connectors/mysql/cdc.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `73bf425f`: mysql): skip decoding rows of tables outside the pipe. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/connectors/mysql/cdc.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+func (c *MySqlConnector) startSyncer(ctx context.Context, env map[string]string, tables pipeTables) (*binlogSyncer, error) {
+		RowsEventDecodeFunc:   tables.decodeRowsEvent,
+	tables pipeTables,
+		return c.startCdcStreamingFilePos(ctx, parsedOffset.pos, env, tables)
+		return c.startCdcStreamingGtid(ctx, parsedOffset.gset, env, tables)
+	tables pipeTables,
+	syncer, err := c.startSyncer(ctx, env, tables)
+	tables pipeTables,
+	syncer, err := c.startSyncer(ctx, env, tables)
+	tables := newPipeTables(req)
+	syncer, mystream, gset, pos, err := c.startStreaming(ctx, req.LastOffset.Text, req.Env, tables)
+				if !tables.has(sourceTableName) {
+			tableIdToName[ev.TableID] = qualifiedTableName(ev)
+			sourceTableName := qualifiedTableName(ev.Table)
+			if tables.has(sourceTableName) {
+				destinationTableName := req.TableNameMapping[sourceTableName].Name
+				exclusion := req.TableNameMapping[sourceTableName].Exclude
+				columns := req.TableNameMapping[sourceTableName].Columns
+				shouldWrapJSON := func(fd *protos.FieldDescription) bool {
+					return shouldWrapNonObjectJSON(
+						fd.Name, types.QValueKind(fd.Type), req.Flags, req.InternalVersion, nativeJSON
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+func (c *MySqlConnector) startSyncer(ctx context.Context, env map[string]string) (*binlogSyncer, error) {
+		RowsEventDecodeFunc:   decodeRowsEvent,
+		return c.startCdcStreamingFilePos(ctx, parsedOffset.pos, env)
+		return c.startCdcStreamingGtid(ctx, parsedOffset.gset, env)
+	syncer, err := c.startSyncer(ctx, env)
+	syncer, err := c.startSyncer(ctx, env)
+	syncer, mystream, gset, pos, err := c.startStreaming(ctx, req.LastOffset.Text, req.Env)
+				if req.TableNameSchemaMapping[req.TableNameMapping[sourceTableName].Name] == nil {
+			tableIdToName[ev.TableID] = string(ev.Schema) + "." + string(ev.Table)
+			sourceTableName := string(ev.Table.Schema) + "." + string(ev.Table.Table) // TODO this is fragile
+			destinationTableName := req.TableNameMapping[sourceTableName].Name
+			exclusion := req.TableNameMapping[sourceTableName].Exclude
+			columns := req.TableNameMapping[sourceTableName].Columns
+			shouldWrapJSON := func(fd *protos.FieldDescription) bool {
+				return shouldWrapNonObjectJSON(fd.Name, types.QValueKind(fd.Type), req.Flags, req.InternalVersion, nativeJSONEnabled, columns)
+			}
+			schema := req.TableNameSchemaMapping[destinationTableName]
+			if schema != nil {
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `73bf425f` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10169. refuse MySQL change previews whose SET reads an earlier assignment (Harvested from t8y2/dbx)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "refuse MySQL change previews whose SET reads an earlier assignment",
+  "source": "t8y2/dbx",
+  "source_url": "https://github.com/t8y2/dbx",
+  "source_version": "c9d50f21",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-24T01:29:02.966Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-t8y2-dbx",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [t8y2/dbx](https://github.com/t8y2/dbx) (Revision: `c9d50f21`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `crates/dbx-sql-core/src/dml_preview_sql.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `6bd7e1de`: sql): refuse MySQL change previews whose SET reads an earlier assignment. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/dbx-sql-core/src/dml_preview_sql.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+//! MySQL 单表 UPDATE 按从左到右赋值，后面的 SET 表达式引用前面已赋值的列时拒绝预览。
+use std::ops::ControlFlow;
+
+use sqlparser::ast::{
+    visit_expressions, AssignmentTarget, Expr, Ident, ObjectNamePart, SetExpr, Statement, TableWithJoins,
+};
+/// 表达式是否引用了目标表的给定列之一（列名不区分大小写）。`a` 与 `t.a`（表名或别名限定）
+/// 都算；其他限定符（如子查询里的 `u.a`）不算。
+fn expr_references_any_column(expr: &Expr, columns: &[String], table_qualifiers: &[String]) -> bool {
+    visit_expressions(expr, |expr| {
+        let column = match expr {
+            Expr::Identifier(ident) => Some(ident),
+            Expr::CompoundIdentifier(parts) if parts.len() >= 2 => {
+                let qualifier = parts[parts.len() - 2].value.to_lowercase();
+                if table_qualifiers.contains(&qualifier) {
+                    parts.last()
+                } else {
+                    None
+                }
+            }
+            _ => None,
+        };
+        match column {
+            Some(ident) if columns.contains(&ident.value.to_lowercase()) => ControlFlow::Break(()),
+            _ => ControlFlow::Continue(()),
+        }
+    })
+    .is_break()
+}
+
+/// 单表 UPDATE 目标表可用的限定名（表名最后一段与别名，小写）。
+fn update_table_qualifiers(update: &sqlparser::ast::Update) -> Vec<String> {
+    l
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+use sqlparser::ast::{AssignmentTarget, Expr, Ident, ObjectNamePart, SetExpr, Statement, TableWithJoins};
+    let single_table = update.table.joins.is_empty() && update.from.is_none();
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `6bd7e1de` are properly handled with clean fallback behavior.

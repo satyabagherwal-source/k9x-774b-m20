@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T01:15:41.966Z",
-  "total_cycles_completed": 11932,
-  "total_learnings_persisted": 11932,
-  "total_rules_promoted": 11014,
+  "last_updated": "2026-11-24T01:29:03.493Z",
+  "total_cycles_completed": 11934,
+  "total_learnings_persisted": 11934,
+  "total_rules_promoted": 11016,
   "history": [
-    {
-      "timestamp": "2026-11-23T14:46:36.407Z",
-      "repository": "zama-ai/tfhe-rs",
-      "learningId": "learn-github-zama-ai-tfhe-rs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T14:46:40.525Z",
-      "repository": "HelixDB/helix-db",
-      "learningId": "learn-github-helixdb-helix-db",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T14:46:42.225Z",
       "repository": "dathere/qsv",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-24T01:15:41.966Z",
       "repository": "electron/electron",
       "learningId": "learn-github-electron-electron",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T01:28:57.469Z",
+      "repository": "PeerDB-io/peerdb",
+      "learningId": "learn-github-peerdb-io-peerdb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T01:29:03.493Z",
+      "repository": "t8y2/dbx",
+      "learningId": "learn-github-t8y2-dbx",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -3573,10 +3573,10 @@
     "repository": "PeerDB-io/peerdb",
     "platform": "github",
     "sourceUrl": "https://github.com/PeerDB-io/peerdb",
-    "sourceVersion": "78271fc2",
+    "sourceVersion": "73bf425f",
     "license": "AGPL-3.0",
-    "contentHash": "2d77a7ba9a995acc16bbd34b97d33e2857dee7148b9d12e6284536b152f85ea8",
-    "lastHarvestedAt": "2026-11-22T02:18:08.969Z",
+    "contentHash": "51b090846ac696fed0b93f27161cf841731bba10b8b397f2973768baed7e67a7",
+    "lastHarvestedAt": "2026-11-24T01:28:57.464Z",
     "learningId": "learn-github-peerdb-io-peerdb"
   },
   "tailscale-tailscale": {
@@ -7163,10 +7163,10 @@
     "repository": "t8y2/dbx",
     "platform": "github",
     "sourceUrl": "https://github.com/t8y2/dbx",
-    "sourceVersion": "0c30c6ea",
+    "sourceVersion": "c9d50f21",
     "license": "Apache-2.0",
-    "contentHash": "5ce3561cec9125fd809643d74560d6554a78a504db8350a479abd8f40b1c5876",
-    "lastHarvestedAt": "2026-11-22T23:33:26.856Z",
+    "contentHash": "ebe64be7e2ba5b1e53e6c4d5156749a20f69e5006ea48401b52cbdd61d510688",
+    "lastHarvestedAt": "2026-11-24T01:29:03.488Z",
     "learningId": "learn-github-t8y2-dbx"
   },
   "ouch-org-ouch": {
