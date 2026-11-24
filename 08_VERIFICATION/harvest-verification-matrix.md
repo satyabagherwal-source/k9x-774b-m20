@@ -12665,3 +12665,4 @@
 | `CYCLE-20261124-6G9S` | `2026-11-24T12:27:21.952Z` | `Nasiko-Labs/nasiko` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10253` | Yes (`1f48d9fe...`) |
 | `CYCLE-20261124-6LHR` | `2026-11-24T12:27:28.719Z` | `linkerd/linkerd2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10254` | Yes (`27a33864...`) |
 | `CYCLE-20261124-6PJZ` | `2026-11-24T12:27:33.983Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10255` | Yes (`543ef086...`) |
+| `CYCLE-20261124-HZML` | `2026-11-24T12:36:20.253Z` | `mfontanini/presenterm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10256` | Yes (`6c118578...`) |

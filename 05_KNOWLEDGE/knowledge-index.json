@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T12:27:40.974Z",
+  "last_updated": "2026-11-24T12:36:33.221Z",
   "total_verified_learnings": 9095,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24610,
+  "total_items": 24612,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "e7690e5a6542ccdb4d03b58380f8ed46c377aa6a492cd70d171d3ca3ae831f66",
+      "content_hash": "82569a8ef687660e55aa1c3e6334712a2e5fb91746c620a1f88afdfd299e574f",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T11:44:39.389Z"
+      "persisted_at": "2026-11-24T12:36:31.986Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "547f62533632dd837dcb78bfcda96c339fe147820f68a7a228318a0f3a5654f2",
+      "content_hash": "6185844b93614cdb9ce0479f53e1cd243743bca2ce335e62c40e8b900d769598",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T11:44:39.516Z"
+      "persisted_at": "2026-11-24T12:36:32.137Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -238170,9 +238170,9 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "repository": "zleap-ai-sag-learnings",
       "source_version": "HEAD",
-      "content_hash": "ffcfd726e80536ad653d0b82c3e3e38e00fd849b41c802910fdbc8dfbb410686",
+      "content_hash": "26bc1944062ecf042e2ea7ef522a2643e2cf50a22064f63d56042f2cd250535c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T08:41:06.457Z"
+      "persisted_at": "2026-11-24T12:36:33.221Z"
     },
     "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b": {
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
@@ -256115,9 +256115,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "3d69ae908b04860bd3aa97f67474422d62af1907868417885c61c4cb1da97fa1",
+      "content_hash": "879eb251ede9832c7ec1953759bd16cdb8fd90172a59db87c33b7ee4c4a54774",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T11:44:39.237Z"
+      "persisted_at": "2026-11-24T12:36:31.790Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
@@ -268429,14 +268429,19 @@
       "slug": "mfontanini-presenterm",
       "platform": "github",
       "source_url": "https://github.com/mfontanini/presenterm",
-      "source_version": "c6ae2eab",
-      "content_hash": "536dad1e71cd1e1f7f1e6252a00278c1d54db29bf0c4206fa58804359a000a36",
+      "source_version": "aa667f91",
+      "content_hash": "6c1185786d2442e9b7440bbf42555f981d38e8240fc9d4aad89369bf591fbf42",
       "dossier_path": "07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md",
       "promoted_rules": [
         {
           "number": 9266,
           "title": "fix clippies",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10256,
+          "title": "allow using `quiet` in executors",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -268445,7 +268450,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T17:36:30.818Z",
+      "verified_at": "2026-11-24T12:36:20.029Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -268473,10 +268478,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-C-mfontanini-presenterm-market-business-intelligence-mfontanini-presenterm-core-in.md",
       "title": "Market & Business Intelligence: mfontanini/presenterm Core Invariants",
       "repository": "mfontanini/presenterm",
-      "source_version": "c6ae2eab",
-      "content_hash": "093c5c23885336e22599a7f05f20284577454b5dc3c01e262d6b472503792bcd",
+      "source_version": "aa667f91",
+      "content_hash": "40cc3fea3792cc1ff66f1b2cf79ad369c1e3b129d5e77bc7304756cffde5a839",
       "domain_letter": "C",
-      "persisted_at": "2026-11-18T17:36:31.486Z"
+      "persisted_at": "2026-11-24T12:36:20.686Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-mfontanini-presenterm": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mfontanini-presenterm",
@@ -268485,10 +268490,10 @@
       "relative_path": "08_VERIFICATION/mfontanini-presenterm-verification-protocol-empirical-defect-shield-for-mfontani.md",
       "title": "Verification Protocol: Empirical Defect Shield for mfontanini/presenterm",
       "repository": "mfontanini/presenterm",
-      "source_version": "c6ae2eab",
-      "content_hash": "78fa837c343a1f53ec59c79b68a092d041130e31ba045d6fbed628de3de088af",
+      "source_version": "aa667f91",
+      "content_hash": "0089d2ad8684070057cd2287a501ac8ab55bb42ffacb6a8876cc6d24818e0854",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T17:36:31.704Z"
+      "persisted_at": "2026-11-24T12:36:20.862Z"
     },
     "learn-github-sveltejs-svelte": {
       "learning_id": "learn-github-sveltejs-svelte",
@@ -268636,9 +268641,9 @@
       "title": "Market & Business Intelligence: mfontanini-presenterm-learnings Core Invariants",
       "repository": "mfontanini-presenterm-learnings",
       "source_version": "HEAD",
-      "content_hash": "481f61a98a55a88c0c4a068262633e4f0ea1841625bcb8e83339bb846e2ce657",
+      "content_hash": "f4a71757b30dd09981a30c67086c8927a9a4334649b0054e965d94e3701ae724",
       "domain_letter": "C",
-      "persisted_at": "2026-11-18T17:41:32.365Z"
+      "persisted_at": "2026-11-24T12:36:30.792Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-mfontanini-presenterm-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mfontanini-presenterm-learning",
@@ -268648,9 +268653,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for mfontanini-presenterm-learnings",
       "repository": "mfontanini-presenterm-learnings",
       "source_version": "HEAD",
-      "content_hash": "12ed9cf46d0af7c6334afdaeda1c1cc39755a78f825ad6fc5b24f239d015175b",
+      "content_hash": "f3f512f0d8b725b2cfc143003d2e29a3a3a692ec90d336c2f1bbfb0ef36ed83c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T17:41:32.564Z"
+      "persisted_at": "2026-11-24T12:36:30.970Z"
     },
     "domain_intelligence-technical-construction-intelligence-sveltejs-svelte-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-sveltejs-svelte-learnings-core-invariants",
@@ -329987,13 +329992,13 @@
       "item_id": "candidate_directive-rust-resolve-python-calls-through-annotated-parameters-and-self-members",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-NIR0-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-I8E5-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
       "title": "rust): resolve python calls through annotated parameters and self members",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "8566b5e4645d45c31d0486f04a1cb969dac7e7b1aa42568c329779654553b173",
+      "content_hash": "2a7be8af118e421b1ba6122d6d2f4310ff3dd7e726fa5da4d5efb6bc85417b1c",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T11:44:39.087Z"
+      "persisted_at": "2026-11-24T12:36:31.616Z"
     },
     "learn-github-iziz-libphonenumber-ios": {
       "learning_id": "learn-github-iziz-libphonenumber-ios",
@@ -335887,6 +335892,32 @@
       "content_hash": "3d393165f52982e2e9f2f8ebefecacdde02edfbb3701331840fa627c9f5c9c79",
       "domain_letter": "G",
       "persisted_at": "2026-11-24T12:27:39.599Z"
+    },
+    "rule-10256": {
+      "learning_id": "rule-10256",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10256,
+      "title": "allow using `quiet` in executors",
+      "source_url": "https://github.com/mfontanini/presenterm",
+      "source_version": "aa667f91",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T12:36:20.029Z"
+    },
+    "candidate_directive-allow-using-quiet-in-executors": {
+      "item_id": "candidate_directive-allow-using-quiet-in-executors",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-I7LZ-allow-using-quiet-in-executors.md",
+      "title": "allow using `quiet` in executors",
+      "repository": "mfontanini-presenterm-learnings",
+      "source_version": "HEAD",
+      "content_hash": "be6c44d173765b982e455807ff536a8e8eabe0361f31ad39878b2a8eca8b3308",
+      "domain_letter": "C",
+      "persisted_at": "2026-11-24T12:36:30.603Z"
     }
   },
   "ai-builder-brain": {

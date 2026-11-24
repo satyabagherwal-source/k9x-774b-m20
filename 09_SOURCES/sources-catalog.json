@@ -4333,10 +4333,10 @@
     "repository": "mfontanini/presenterm",
     "platform": "github",
     "sourceUrl": "https://github.com/mfontanini/presenterm",
-    "sourceVersion": "c6ae2eab",
+    "sourceVersion": "aa667f91",
     "license": "BSD-2-Clause",
-    "contentHash": "536dad1e71cd1e1f7f1e6252a00278c1d54db29bf0c4206fa58804359a000a36",
-    "lastHarvestedAt": "2026-11-18T17:36:31.051Z",
+    "contentHash": "6c1185786d2442e9b7440bbf42555f981d38e8240fc9d4aad89369bf591fbf42",
+    "lastHarvestedAt": "2026-11-24T12:36:20.257Z",
     "learningId": "learn-github-mfontanini-presenterm"
   },
   "ritz078-transform": {

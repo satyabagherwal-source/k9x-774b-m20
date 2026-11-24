@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T12:27:34.006Z",
+  "last_updated": "2026-11-24T12:36:20.275Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6621,14 +6621,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mfontanini-presenterm",
-      "content_hash": "536dad1e71cd1e1f7f1e6252a00278c1d54db29bf0c4206fa58804359a000a36",
-      "verified_at": "2026-11-18T17:36:31.062Z",
+      "content_hash": "6c1185786d2442e9b7440bbf42555f981d38e8240fc9d4aad89369bf591fbf42",
+      "verified_at": "2026-11-24T12:36:20.274Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T17:36:31.062Z"
+      "last_updated": "2026-11-24T12:36:20.274Z"
     },
     "ritz078/transform": {
       "repository": "ritz078/transform",

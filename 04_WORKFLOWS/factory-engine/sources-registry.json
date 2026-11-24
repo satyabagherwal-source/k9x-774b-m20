@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T12:27:37.299Z",
-    "lastVerified": "2026-11-24T12:27:37.299Z",
+    "lastChecked": "2026-11-24T12:36:30.018Z",
+    "lastVerified": "2026-11-24T12:36:30.018Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -378,8 +378,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T11:44:32.026Z",
-    "lastVerified": "2026-11-24T11:44:32.026Z",
+    "lastChecked": "2026-11-24T12:36:30.009Z",
+    "lastVerified": "2026-11-24T12:36:30.009Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -642,9 +642,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-11-24T06:30:11.467Z",
+    "lastChecked": "2026-11-24T12:36:24.974Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-11-24T06:30:11.467Z"
+    "lastVerified": "2026-11-24T12:36:24.974Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -2891,9 +2891,9 @@
   "nozbe-watermelondb": {
     "name": "WatermelonDB",
     "officialUrl": "https://github.com/Nozbe/WatermelonDB",
-    "lastChecked": "2026-11-21T19:44:48.248Z",
+    "lastChecked": "2026-11-24T12:36:19.977Z",
     "revisionIdentifier": "5c463222",
-    "lastVerified": "2026-11-21T19:44:48.248Z"
+    "lastVerified": "2026-11-24T12:36:19.977Z"
   },
   "kgateway-dev-kgateway": {
     "name": "kgateway-dev/kgateway",
@@ -3881,22 +3881,21 @@
     "lastVerified": "2026-11-24T08:05:39.948Z"
   },
   "mfontanini-presenterm": {
-    "name": "presenterm",
+    "name": "mfontanini/presenterm",
     "officialUrl": "https://github.com/mfontanini/presenterm",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T05:23:47.204Z",
-    "lastVerified": "2026-11-23T05:23:47.204Z",
+    "lastChecked": "2026-11-24T12:36:18.956Z",
+    "lastVerified": "2026-11-24T12:36:18.956Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mfontanini-presenterm",
-    "contentHash": "536dad1e71cd1e1f7f1e6252a00278c1d54db29bf0c4206fa58804359a000a36",
+    "contentHash": "6c1185786d2442e9b7440bbf42555f981d38e8240fc9d4aad89369bf591fbf42",
     "promotedRulesCount": 1,
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "c6ae2eab"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-qwen-qwen3-0.6b": {
     "name": "Qwen/Qwen3-0.6B",
@@ -5053,9 +5052,9 @@
   "tako8ki-gobang": {
     "name": "gobang",
     "officialUrl": "https://github.com/TaKO8Ki/gobang",
-    "lastChecked": "2026-11-23T16:11:48.904Z",
+    "lastChecked": "2026-11-24T12:36:27.474Z",
     "revisionIdentifier": "7b1b5f7e",
-    "lastVerified": "2026-11-23T16:11:48.904Z"
+    "lastVerified": "2026-11-24T12:36:27.474Z"
   },
   "embassy-rs-embassy": {
     "name": "embassy-rs/embassy",
@@ -6948,12 +6947,12 @@
     "lastVerified": "2026-11-22T07:56:35.112Z"
   },
   "opentofu-opentofu": {
-    "name": "opentofu/opentofu",
+    "name": "opentofu",
     "officialUrl": "https://github.com/opentofu/opentofu",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-23T17:03:36.270Z",
-    "lastVerified": "2026-11-23T17:03:36.270Z",
+    "lastChecked": "2026-11-24T12:36:22.635Z",
+    "lastVerified": "2026-11-24T12:36:22.635Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-opentofu-opentofu",
@@ -6962,7 +6961,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "bfd092bc"
   },
   "genkit-ai-genkit": {
     "name": "genkit-ai/genkit",
@@ -10198,9 +10198,9 @@
   "nometria-sitemap-generator": {
     "name": "sitemap-generator",
     "officialUrl": "https://github.com/nometria/sitemap-generator",
-    "lastChecked": "2026-11-20T07:23:28.930Z",
+    "lastChecked": "2026-11-24T12:36:17.485Z",
     "revisionIdentifier": "6d8cae81",
-    "lastVerified": "2026-11-20T07:23:28.930Z"
+    "lastVerified": "2026-11-24T12:36:17.485Z"
   },
   "seabdulbasit-musicapp-kmp": {
     "name": "MusicApp-KMP",

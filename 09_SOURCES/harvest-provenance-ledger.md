@@ -12698,3 +12698,4 @@ Every entry in this ledger must capture:
 | `learn-github-nasiko-labs-nasiko` | `https://github.com/Nasiko-Labs/nasiko` | `6bf0ff78` | Multi-dimensional audit evidence | 2026-11-24T12:27:21.958Z |
 | `learn-github-linkerd-linkerd2` | `https://github.com/linkerd/linkerd2` | `8d6fcc5b` | Multi-dimensional audit evidence | 2026-11-24T12:27:28.724Z |
 | `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `d6933aea` | Multi-dimensional audit evidence | 2026-11-24T12:27:33.988Z |
+| `learn-github-mfontanini-presenterm` | `https://github.com/mfontanini/presenterm` | `aa667f91` | Multi-dimensional audit evidence | 2026-11-24T12:36:20.257Z |

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T12:27:40.347Z",
+  "updated_at": "2026-11-24T12:36:30.342Z",
   "stats": {
-    "total_discovered": 8584,
-    "approved_pending_harvest": 8138,
+    "total_discovered": 8587,
+    "approved_pending_harvest": 8141,
     "harvested_count": 0,
     "rejected_count": 446,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8129,
+      "COMMUNITY_AND_EXPERT": 8132,
       "OFFICIAL_DOCUMENTATION": 268,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -185749,6 +185749,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
         "fileName": "slatedb-slatedb-learnings.md"
+      }
+    },
+    "SRC-D143FE87A4E2": {
+      "id": "SRC-D143FE87A4E2",
+      "url": "https://typst.app/docs/guides/tables",
+      "title": "https://typst.app/docs/guides/tables",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T12:36:30.224Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md",
+        "fileName": "mfontanini-presenterm-learnings.md"
+      }
+    },
+    "SRC-235F32685481": {
+      "id": "SRC-235F32685481",
+      "url": "https://github.com/user-attachments/assets/24d6907b-7a79-4889-b463-4f559b8037c1",
+      "title": "https://github.com/user-attachments/assets/24d6907b-7a79-4889-b463-4f559b8037c1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T12:36:30.284Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md",
+        "fileName": "mfontanini-presenterm-learnings.md"
+      }
+    },
+    "SRC-83165ECA6B94": {
+      "id": "SRC-83165ECA6B94",
+      "url": "https://typst.app/play",
+      "title": "https://typst.app/play",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T12:36:30.342Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md",
+        "fileName": "mfontanini-presenterm-learnings.md"
       }
     }
   }

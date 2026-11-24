@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T17:41:32.059Z",
+  "timestamp": "2026-11-24T12:36:30.458Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-mfontanini-presenterm-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [mfontanini-presenterm-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T17:41:32.059Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T12:36:30.458Z`  
 > **Learning ID**: `LEARN-EVO-mfontanini-presenterm-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain C (Market & Business Intelligence)
 - **Secondary Corroborating Domains**: G (Architecture Intelligence), F (Design Intelligence), I (Content & Information Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 65%
+- **Confidence Rating**: 56%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from mfontanini-presenterm-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md`  
 > **Source**: github ([https://github.com/mfontanini/presenterm](https://github.com/mfontanini/presenterm))  
-> **Source Version**: `c6ae2eab`  
+> **Source Version**: `aa667f91`  
 > **License**: BSD-2-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T17:36:29.803Z  
+> **Timestamp**: 2026-11-24T12:36:19.087Z  
 > **Learning ID**: `learn-github-mfontanini-presenterm`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mfontanini/presenterm](https://github.com/mfontanini/presenterm))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T17:36:29.693Z  
+> **Harvest Timestamp**: 2026-11-24T12:36:18.956Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A markdown terminal slideshow tool
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 8991 stars
+- **Stars / Engagement**: 8997 stars
 
 ---
 
@@ -1644,6 +1644,7 @@ use std::{
     fmt::{self, Debug},
     fs::File,
     io::{self, BufRead, BufReader, Read, Write},
+    mem,
     path::{Path, PathBuf},
     process::{self, Child, Stdio},
     sync::{Arc, Mutex},
@@ -1775,14 +1776,9 @@ impl LanguageSnippetExecutor {
             SnippetExecution::Exec(args) if matches!(args.repr, SnippetRepr::Image) => OutputType::Binary,
             _ => OutputType::Lines,
         };
-        let reader_handle = CommandsRunner::spawn(
-            state.clone(),
-            script_dir,
-            self.config.commands.clone(),
-            self.env.clone(),
-            self.cwd.clone(),
-            output_type,
-        );
+        let commands = self.prepare_commands(script_dir.path());
+        let reader_handle =
+            CommandsRunner::spawn(state.clone(), script_dir, commands, self.env.clone(), self.cwd.clone(), output_type);
         let handle = ExecutionHandle { state, reader_handle };
         Ok(handle)
     }
@@ -1790,9 +1786,8 @@ impl LanguageSnippetExecutor {
     /// Executes a piece of code synchronously.
     pub(crate) fn execute_sync(&self, snippet: &Snippet) -> Result<(), CodeExecuteError> {
         let script_dir = self.write_snippet(snippet)?;
-        let script_dir_path = script_dir.path().to_string_lossy();
-        for commands in self.config.commands.clone() {
-            self.execute_command(commands, &script_dir_path)?;
+        for commands in self.prepare_commands(script_dir.path()) {
+            self.execute_command(&commands)?;
         }
         Ok(())
     }
@@ -1800,18 +1795,15 @@ impl LanguageSnippetExecutor {
     /// Creates the necessary context to run this snippet in a PTY.
     pub(crate) fn pty_execution_context(&self, snippet: &Snippet) -> Result<PtySnippetContext, CodeExecuteError> {
         let script_dir = self.write_snippet(snippet)?;
-        let script_dir_path = script_dir.path().to_string_lossy();
 
         // Run the first N-1 commands normally and assume the last one is the one that actually
         // invokes the thing (e.g. rust snippet compilation happens here, snippet execution in PTY)
-        for commands in self.config.commands.iter().take(self.config.commands.len() - 1).cloned() {
-            self.execute_command(commands, &script_dir_path)?;
+        let all_commands = self.prepare_commands(script_dir.path());
+        for commands in all_commands.iter().take(all_commands.len() - 1) {
+            self.execute_command(commands)?;
         }
-        let mut commands = self.config.commands.last().cloned().unwrap();
-        for command in &mut commands {
-            *command = command.replace("$pwd", &script_dir_path);
-        }
-        let (command, args) = commands.split_first().expect("no commands");
+        let commands = all_commands.last().unwrap();
+        let (command, args) = commands.components.split_first().expect("no commands");
         let mut command = portable_pty::CommandBuilder::new(command);
         command.args(args);
         command.cwd(&self.cwd);
@@ -1821,16 +1813,15 @@ impl LanguageSnippetExecutor {
         Ok(PtySnippetContext { command, _temp: script_dir })
     }
 
-    fn execute_command(&self, mut commands: Vec<String>, script_dir_path: &str) -> Result<(), CodeExecuteError> {
-        for command in &mut commands {
-            *command = command.replace("$pwd", script_dir_path);
-        }
-        let (command, args) = commands.split_first().expect("no commands");
+    fn execute_command(&self, command: &Command) -> Result<(), CodeExecuteError> {
+        let stdout = if command.quiet { Stdio::null() } else { Stdio::inherit() };
+        let (command, args) = command.components.split_first().expect("no commands");
         let child = process::Command::new(command)
             .args(args)
             .envs(&self.env)
             .current_dir(&self.cwd)
             .stderr(Stdio::piped())
+            .stdout(stdout)
             .spawn()
             .map_err(|e| CodeExecuteError::SpawnProcess(command.clone(), e))?;
 
@@ -1853,6 +1844,28 @@ impl LanguageSnippetExecutor {
         snippet_file.write_all(code.as_bytes()).map_err(CodeExecuteError::TempDir)?;
         Ok(script_dir)
     }
+
+    fn prepare_commands(&self, script_dir: &Path) -> Vec<Command> {
+        let mut commands: Vec<_> =
+            self.config.commands.iter().cloned().map(|components| Command { components, quiet: false }).collect();
+        if let Some(script_dir) = script_dir.to_str() {
+            let total = commands.len();
+            for (index, command) in commands.iter_mut().enumerate() {
+                command.quiet = self.config.quiet && index + 1 < total;
+                for component in &mut command.components {
+                    if component.contains("$pwd") {
+                        *component = component.replace("$pwd", script_dir);
+                    }
+                }
+            }
+        }
+        commands
+    }
+}
+
+struct Command {
+    components: Vec<String>,
+    quiet: bool,
 }
 
 pub(crate) struct PtySnippetContext {
@@ -1885,28 +1898,7 @@ pub(crate) enum CodeExecuteError {
     #[error("error waiting for process to run: {0}")]
     Waiting(io::Error),
 
-    #[error("error running process: {0}")]
-    Running(String),
-}
-
-/// A handle for the execution of a piece of code.
-#[derive(Debug)]
-pub(crate) struct ExecutionHandle {
-    pub(crate) state: Arc<Mutex<ExecutionState>>,
-    #[allow(dead_code)]
-    reader_handle: thread::JoinHandle<()>,
-}
-
-/// Consumes the output of a process and stores it in a shared state.
-struct CommandsRunner {
-    state: Arc<Mutex<ExecutionState>>,
-    script_directory: TempDir,
-}
-
-impl CommandsRunner {
-    fn spawn(
-        state: Arc<Mutex<ExecutionState>>,
-    
+    #[error("error runn
 ```
 
 
@@ -1915,11 +1907,14 @@ impl CommandsRunner {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #936** (2026-11-17): **chore: fix clippies**
-  *Symptoms*: Clippies that popped up after upgrading to rust 1.100 that I presume won't work in the CI because versions but let's see.
+- **Issue #940** (2026-11-24): **feat: allow using `quiet` in executors**
+  *Symptoms*: This adds a `quiet` property in executors that essentially means "do not show any output from any execution steps except the last one unless one fails". That is, if you set `quiet: true` and it all goes well, you'll only see the output of the last command. If a command fails, you'll see the output as before.  Closes #932 #926
 
-- **Issue #935** (2026-11-17): **docs: explain how to use any tool for mermaid-ing**
-  *Symptoms*: This explains how to use any script as a mermaid render given every day there's a new mermaid render.  Closes #906 #934
+- **Issue #937** (2026-11-23): **Typst table not rendering correctly**
+  *Symptoms*: Working on a presentation to show off various formatting tools and hit a snag when it came to tables on Typst.     It cannot handle the fractional units (fr) outlined here: https://typst.app/docs/guides/tables/#column-sizes  Presentation: v16.1  and c6ae2eabcb84614097d52b7dfcb9b879edb1eac7   Typst: v15.1  Code: ````typst <!-- column_layout: [1,  1] --> <!-- column: 0 --> ```typst #table(   columns: (2fr, 1fr),   align: (left, right),   table.header([*Format*], [*Score*]),   [Markdown], [8],   [LaTeX], [9],   [Typst], [9], ) ```  <!-- column: 1 --> ```typst +render #table(   columns: (2fr, 1fr),   align: (left, right),   table.header([*Format*], [*Score*]),   [Markdown], [8],   [LaTeX], [9 ],   [Typst], [9], ) ``` ````  Image:  <img width="1520" height="497" alt="image" src="https://github.com/user-attachments/assets/24d6907b-7a79-4889-b463-4f559b8037c1" />  
+  **Post-Mortem & Fix Analysis**:
+  > Unfortunately I don't think you can use `fr` here. For context, when rendering typst, presenterm prepends this at the top of the script (margin/fill may be different depending on your config):  ```typst #set page(width: auto, height: auto, margin: (x: 5pt, y: 7pt), fill: rgb("#292e42")) ```  `fr` doesn't play well with these `auto`s ^. The table has a column with a width of 2 fractional units, but the width of those units depends on the width of the page, and the width of the page is determined automatically based on its contents. You have a circular problem where the page size depends on the content but the content depends on the page size.  You can reproduce this yourself in [typst's editor](https://typst.app/play/) by using this as input:  ```typst #set page(width: auto, height: auto, margin: (x: 5pt, y: 7pt), fill: rgb("#292e42")) #set text(fill: rgb("#f0f0f0")) #table(   columns: (2fr, 1fr),   align: (left, right),   table.header([*Format*], [*Score*]),   [Markdown], [8],   [LaTeX
+  > Hi @mfontanini I didnt realise ye had replied so fast 😅    I ended up just not using ``fr`` for this use case.   I mostly submitted this issue in case I was doing something wrong.   If it is something out of both of our control then ill close it out (its not like its a major bug, more of a quirk).
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1936,230 +1931,351 @@ impl CommandsRunner {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c6ae2eab` (2026-11-17)
-**Commit Message**: chore: fix clippies (#936)
+### Incident Patch 1: `aa667f91` (2026-11-24)
+**Commit Message**: feat: allow using `quiet` in executors (#940)
 
-Clippies that popped up after upgrading to rust 1.100 that I presume
-won't work in the CI because versions but let's see.
+This adds a `quiet` property in executors that essentially means "do not
+show any output from any execution steps except the last one unless one
+fails". That is, if you set `quiet: true` and it all goes well, you'll
+only see the output of the last command. If a command fails, you'll see
+the output as before.
 
-**File**: `src/commands/keyboard.rs` (modified, +3/-8)
+Closes #932
+
+**File**: `config-file-schema.json` (modified, +10/-0)
 ```diff
-@@ -294,14 +294,9 @@ impl KeyMatcher {
-             };
- 
-             let next = number.unwrap_or(0u32).checked_mul(10).and_then(|number| number.checked_add(digit));
--            match next {
--                Some(n) => {
--                    number = Some(n);
--                    events = rest;
--                }
--                // if we overflow we're done
--                None => return None,
--            }
-+            let next = next?;
-+            number = Some(next);
-+            events = rest;
+@@ -433,6 +433,11 @@
+             "string",
+             "null"
+           ]
++        },
++        "quiet": {
++          "description": "Whether to ignore output in all commands but the last one.",
++          "type": "boolean",
++          "default": false
          }
-         number.map(|number| (MatchContext::Number(number), events))
+       },
+       "required": [
+@@ -784,6 +789,11 @@
+         "filename": {
+           "description": "The filename to use for the snippet input file.",
+           "type": "string"
++        },
++        "quiet": {
++          "description": "Whether to ignore output in all commands but the last one.",
++          "type": "boolean",
++          "default": false
+         }
+       },
+       "required": [
+```
+
+**File**: `src/code/execute.rs` (modified, +134/-35)
+```diff
+@@ -12,6 +12,7 @@ use std::{
+     fmt::{self, Debug},
+     fs::File,
+     io::{self, BufRead, BufReader, Read, Write},
++    mem,
+     path::{Path, PathBuf},
+     process::{self, Child, Stdio},
+     sync::{Arc, Mutex},
+@@ -143,43 +144,34 @@ impl LanguageSnippetExecutor {
+             SnippetExecution::Exec(args) if matches!(args.repr, SnippetRepr::Image) => OutputType::Binary,
+             _ => OutputType::Lines,
+         };
+-        let reader_handle = CommandsRunner::spawn(
+-            state.clone(),
+-            script_dir,
+-            self.config.commands.clone(),
+-            self.env.clone(),
+-            self.cwd.clone(),
+-            output_type,
+-        );
++        let commands = self.prepare_commands(script_dir.path());
++        let reader_handle =
++            CommandsRunner::spawn(state.clone(), script_dir, commands, self.env.clone(), self.cwd.clone(), output_type);
+         let handle = ExecutionHandle { state, reader_handle };
+         Ok(handle)
      }
-```
-
-**File**: `src/presentation/builder/mod.rs` (modified, +3/-5)
-```diff
-@@ -447,11 +447,9 @@ impl<'a, 'b> PresentationBuilder<'a, 'b> {
-         match element {
-             MarkdownElement::Comment { comment, source_position } => self.process_comment(comment, source_position)?,
-             MarkdownElement::SetexHeading { text } => self.push_slide_title(text)?,
--            MarkdownElement::ThematicBreak => {
--                if self.options.end_slide_shorthand {
--                    self.terminate_slide();
--                    self.slide_state.ignore_element_line_break = true;
--                }
-+            MarkdownElement::ThematicBreak if self.options.end_slide_shorthand => {
-+                self.terminate_slide();
-+                self.slide_state.ignore_element_line_break = true;
-             }
-             _ => {}
-         }
-```
-
-**File**: `src/presentation/builder/table.rs` (modified, +4/-4)
-```diff
-@@ -68,24 +68,24 @@ impl PresentationBuilder<'_, '_> {
-             let cell_width = widths[column];
-             let padding = cell_width.saturating_sub(text_length);
-             if padding == 0 {
--                flattened_row.0.extend(text.0.into_iter());
-+                flattened_row.0.extend(text.0);
-             } else {
-                 match alignment {
-                     TableColumnAlignment::Left => {
--                        flattened_row.0.extend(text.0.into_iter());
-+                        flattened_row.0.extend(text.0);
-                         flattened_row.0.push(Text::from(" ".repeat(padding)));
-                     }
-                     TableColumnAlignment::Center => {
-                         let padding_after = padding / 2;
-                         let padding_before = padding_after + (padding % 2);
-                         flattened_row.0.push(Text::from(" ".repeat(padding_before)));
--                        flattened_row.0.extend(text.0.into_iter());
-+                        flattened_row.0.extend(text.0);
-                         flattened_row.0.push(Text::from(" ".repeat(padding_after)));
-                     }
-                     TableColumnAlignment::Right => {
-                         let padding = " ".repeat(padding);
-                         flattened_row.0.push(Text::from(padding));
--                        flattened_row.0.extend(text.0.into_iter());
-+                        flattened_row.0.extend(text.0);
-                     }
-                 }
-             }
-```
-
-**File**: `src/terminal/ansi.rs` (modified, +1/-4)
-```diff
-@@ -73,10 +73,7 @@ impl AnsiColorParser {
  
-     pub(crate) fn parse(self, mut codes: ParamsIter) -> TextStyle {
-         let mut style = self.starting_style;
--        loop {
--            let Some(&[next]) = codes.next() else {
--                break;
--            };
-+        while let Some(&[next]) = codes.next() {
-             match next {
-                 0 => style = Default::default(),
-                 1 => style = style.bold(),
+     /// Executes a piece of code synchronously.
+     pub(crate) fn execute_sync(&self, snippet: &Snippet) -> Result<(), CodeExecuteError> {
+         let script_dir = self.write_snippet(snippet)?;
+-        let script_dir_path = script_dir.path().to_string_lossy();
+-        for commands in self.config.commands.clone() {
+-            self.execute_command(commands, &script_dir_path)?;
++        for commands in self.prepare_commands(script_dir.path()) {
++            self.execute_command(&commands)?;
+         }
+         Ok(())
+     }
+ 
+     /// Creates the necessary context to run this snippet in a PTY.
+     pub(crate) fn pty_execution_context(&self, snippet: &Snippet) -> Result<PtySnippetContext, CodeExecuteError> {
+         let script_dir = self.write_snippet(snippet)?;
+-        let script_dir_path = script_dir.path().to_string_lossy();
+ 
+         // Run the first N-1 commands normally and assume the last one is the one that actually
+         // invokes the thing (e.g. rust snippet compilation happens here, snippet execution in PTY)
+-        for commands in self.config.commands.iter().take(self.config.commands.len() - 1).cloned() {
+-            self.execute_command(commands, &script_dir_path)?;
+-        }
+-        let mut commands = self.config.commands.last().cloned().unwrap();
+-        for command in &mut commands {
+-            *command = command.replace("$pwd", &script_dir_path);
++        let all_commands = self.prepare_commands(script_dir.path());
++        for commands in all_commands.iter().take(all_commands.len() - 1) {
++            self.execute_command(commands)?;
+         }
+-        let (command, args) = commands.split_first().expect("no commands");
++        let commands = all_commands.last().unwrap();
++        let (command, args) = commands.components.split_first().expect("no commands");
+         let mut command = portable_pty::CommandBuilder::new(command);
+         command.args(args);
+         command.cwd(&self.cwd);
+@@ -189,16 +181,15 @@ impl LanguageSnippetExecutor {
+         Ok(PtySnippetContext { command, _temp: script_dir })
+     }
+ 
+-    fn execute_command(&self, mut commands: Vec<String>, script_dir_path: &str) -> Result<(), CodeExecuteError> {
+-        for command in &mut commands {
+-            *command = command.replace("$pwd", script_dir_path);
+-        }
+-        let (command, args) = commands.split_first().expect("no commands");
++    fn execute_command(&self, command: &Command) -> Result<(), CodeExecuteError> {
++        let stdout = if command.quiet { Stdio::null() } else { Stdio::inherit() };
++        let (command, args) = command.components.split_first().expect("no commands");
+         let child = process::Command::new(command)
+             .args(args)
+             .envs(&self.env)
+             .current_dir(&self.cwd)
+             .stderr(Stdio::piped())
++            .stdout(stdout)
+             .spawn()
+             .map_err(|e| CodeExecuteError::SpawnProcess(command.clone(), e))?;
+ 
+@@ -221,6 +212,28 @@ impl LanguageSnippetExecutor {
+         snippet_file.write_all(code.as_bytes()).map_err(CodeExecuteError::TempDir)?;
+         Ok(script_dir)
+     }
++
++    fn prepare_commands(&self, script_dir: &Path) -> Vec<Command> {
++        let mut commands: Vec<_> =
++            self.config.commands.iter().cloned().map(|components| Command { components, quiet: false }).collect();
++        if let Some(script_dir) = script_dir.to_str() {
++            let total = commands.len();
++            for (index, command) in commands.iter_mut().enumerate() {
++                command.quiet = self.config.quiet && index + 1 < total;
++                for component in &mut command.components {
++                    if component.contains("$pwd") {
++                        *component = component.replace("$pwd", script_dir);
++                    }
++                }
++            }
++        }
++        commands
++    }
++}
++
++struct Command {
++    components: Vec<String>,
++    quiet: bool,
+ }
+ 
+ pub(crate) struct PtySnippetContext {
+@@ -268,14 +281,16 @@ 
 ```
 
-**File**: `src/terminal/image/protocols/kitty.rs` (modified, +1/-1)
+**File**: `src/config.rs` (modified, +4/-0)
 ```diff
-@@ -489,7 +489,7 @@ impl<D: fmt::Display> fmt::Display for ControlCommand<'_, D> {
-             }
-             write!(f, "{option}")?;
-         }
--        write!(f, ";{}", &self.payload)?;
-+        write!(f, ";{}", self.payload)?;
-         if self.tmux {
-             write!(f, "\x1b\x1b\\\x1b\\")?;
-         } else {
+@@ -419,6 +419,10 @@ pub struct SnippetExecutorConfig {
+     /// The filename to use for the snippet input file.
+     pub filename: String,
+ 
++    /// Whether to ignore output in all commands but the last one.
++    #[serde(default)]
++    pub quiet: bool,
++
+     /// The environment variables to set before invoking every command.
+     #[serde(default)]
+     pub environment: HashMap<String, String>,
 ```
 
 ---
 
-### Incident Patch 2: `0cf41937` (2026-11-17)
-**Commit Message**: chore: fix clippies
+### Incident Patch 2: `cd1712bd` (2026-11-18)
+**Commit Message**: feat: allow using `quiet` in executors
 
-**File**: `src/commands/keyboard.rs` (modified, +3/-8)
+Co-authored-by: lyn1dev <[REDACTED_EMAIL]>
+
+**File**: `config-file-schema.json` (modified, +10/-0)
 ```diff
-@@ -294,14 +294,9 @@ impl KeyMatcher {
-             };
- 
-             let next = number.unwrap_or(0u32).checked_mul(10).and_then(|number| number.checked_add(digit));
--            match next {
--                Some(n) => {
--                    number = Some(n);
--                    events = rest;
--                }
--                // if we overflow we're done
--                None => return None,
--            }
-+            let next = next?;
-+            number = Some(next);
-+            events = rest;
+@@ -433,6 +433,11 @@
+             "string",
+             "null"
+           ]
++        },
++        "quiet": {
++          "description": "Whether to ignore output in all commands but the last one.",
++          "type": "boolean",
++          "default": false
          }
-         number.map(|number| (MatchContext::Number(number), events))
+       },
+       "required": [
+@@ -784,6 +789,11 @@
+         "filename": {
+           "description": "The filename to use for the snippet input file.",
+           "type": "string"
++        },
++        "quiet": {
++          "description": "Whether to ignore output in all commands but the last one.",
++          "type": "boolean",
++          "default": false
+         }
+       },
+       "required": [
+```
+
+**File**: `src/code/execute.rs` (modified, +134/-35)
+```diff
+@@ -12,6 +12,7 @@ use std::{
+     fmt::{self, Debug},
+     fs::File,
+     io::{self, BufRead, BufReader, Read, Write},
++    mem,
+     path::{Path, PathBuf},
+     process::{self, Child, Stdio},
+     sync::{Arc, Mutex},
+@@ -143,43 +144,34 @@ impl LanguageSnippetExecutor {
+             SnippetExecution::Exec(args) if matches!(args.repr, SnippetRepr::Image) => OutputType::Binary,
+             _ => OutputType::Lines,
+         };
+-        let reader_handle = CommandsRunner::spawn(
+-            state.clone(),
+-            script_dir,
+-            self.config.commands.clone(),
+-            self.env.clone(),
+-            self.cwd.clone(),
+-            output_type,
+-        );
++        let commands = self.prepare_commands(script_dir.path());
++        let reader_handle =
++            CommandsRunner::spawn(state.clone(), script_dir, commands, self.env.clone(), self.cwd.clone(), output_type);
+         let handle = ExecutionHandle { state, reader_handle };
+         Ok(handle)
      }
-```
-
-**File**: `src/presentation/builder/mod.rs` (modified, +3/-5)
-```diff
-@@ -447,11 +447,9 @@ impl<'a, 'b> PresentationBuilder<'a, 'b> {
-         match element {
-             MarkdownElement::Comment { comment, source_position } => self.process_comment(comment, source_position)?,
-             MarkdownElement::SetexHeading { text } => self.push_slide_title(text)?,
--            MarkdownElement::ThematicBreak => {
--                if self.options.end_slide_shorthand {
--                    self.terminate_slide();
--                    self.slide_state.ignore_element_line_break = true;
--                }
-+            MarkdownElement::ThematicBreak if self.options.end_slide_shorthand => {
-+                self.terminate_slide();
-+                self.slide_state.ignore_element_line_break = true;
-             }
-             _ => {}
-         }
-```
-
-**File**: `src/presentation/builder/table.rs` (modified, +4/-4)
-```diff
-@@ -68,24 +68,24 @@ impl PresentationBuilder<'_, '_> {
-             let cell_width = widths[column];
-             let padding = cell_width.saturating_sub(text_length);
-             if padding == 0 {
--                flattened_row.0.extend(text.0.into_iter());
-+                flattened_row.0.extend(text.0);
-             } else {
-                 match alignment {
-                     TableColumnAlignment::Left => {
--                        flattened_row.0.extend(text.0.into_iter());
-+                        flattened_row.0.extend(text.0);
-                         flattened_row.0.push(Text::from(" ".repeat(padding)));
-                     }
-                     TableColumnAlignment::Center => {
-                         let padding_after = padding / 2;
-                         let padding_before = padding_after + (padding % 2);
-                         flattened_row.0.push(Text::from(" ".repeat(padding_before)));
--                        flattened_row.0.extend(text.0.into_iter());
-+                        flattened_row.0.extend(text.0);
-                         flattened_row.0.push(Text::from(" ".repeat(padding_after)));
-                     }
-                     TableColumnAlignment::Right => {
-                         let padding = " ".repeat(padding);
-                         flattened_row.0.push(Text::from(padding));
--                        flattened_row.0.extend(text.0.into_iter());
-+                        flattened_row.0.extend(text.0);
-                     }
-                 }
-             }
-```
-
-**File**: `src/terminal/ansi.rs` (modified, +1/-4)
-```diff
-@@ -73,10 +73,7 @@ impl AnsiColorParser {
  
-     pub(crate) fn parse(self, mut codes: ParamsIter) -> TextStyle {
-         let mut style = self.starting_style;
--        loop {
--            let Some(&[next]) = codes.next() else {
--                break;
--            };
-+        while let Some(&[next]) = codes.next() {
-             match next {
-                 0 => style = Default::default(),
-                 1 => style = style.bold(),
+     /// Executes a piece of code synchronously.
+     pub(crate) fn execute_sync(&self, snippet: &Snippet) -> Result<(), CodeExecuteError> {
+         let script_dir = self.write_snippet(snippet)?;
+-        let script_dir_path = script_dir.path().to_string_lossy();
+-        for commands in self.config.commands.clone() {
+-            self.execute_command(commands, &script_dir_path)?;
++        for commands in self.prepare_commands(script_dir.path()) {
++            self.execute_command(&commands)?;
+         }
+         Ok(())
+     }
+ 
+     /// Creates the necessary context to run this snippet in a PTY.
+     pub(crate) fn pty_execution_context(&self, snippet: &Snippet) -> Result<PtySnippetContext, CodeExecuteError> {
+         let script_dir = self.write_snippet(snippet)?;
+-        let script_dir_path = script_dir.path().to_string_lossy();
+ 
+         // Run the first N-1 commands normally and assume the last one is the one that actually
+         // invokes the thing (e.g. rust snippet compilation happens here, snippet execution in PTY)
+-        for commands in self.config.commands.iter().take(self.config.commands.len() - 1).cloned() {
+-            self.execute_command(commands, &script_dir_path)?;
+-        }
+-        let mut commands = self.config.commands.last().cloned().unwrap();
+-        for command in &mut commands {
+-            *command = command.replace("$pwd", &script_dir_path);
++        let all_commands = self.prepare_commands(script_dir.path());
++        for commands in all_commands.iter().take(all_commands.len() - 1) {
++            self.execute_command(commands)?;
+         }
+-        let (command, args) = commands.split_first().expect("no commands");
++        let commands = all_commands.last().unwrap();
++        let (command, args) = commands.components.split_first().expect("no commands");
+         let mut command = portable_pty::CommandBuilder::new(command);
+         command.args(args);
+         command.cwd(&self.cwd);
+@@ -189,16 +181,15 @@ impl LanguageSnippetExecutor {
+         Ok(PtySnippetContext { command, _temp: script_dir })
+     }
+ 
+-    fn execute_command(&self, mut commands: Vec<String>, script_dir_path: &str) -> Result<(), CodeExecuteError> {
+-        for command in &mut commands {
+-            *command = command.replace("$pwd", script_dir_path);
+-        }
+-        let (command, args) = commands.split_first().expect("no commands");
++    fn execute_command(&self, command: &Command) -> Result<(), CodeExecuteError> {
++        let stdout = if command.quiet { Stdio::null() } else { Stdio::inherit() };
++        let (command, args) = command.components.split_first().expect("no commands");
+         let child = process::Command::new(command)
+             .args(args)
+             .envs(&self.env)
+             .current_dir(&self.cwd)
+             .stderr(Stdio::piped())
++            .stdout(stdout)
+             .spawn()
+             .map_err(|e| CodeExecuteError::SpawnProcess(command.clone(), e))?;
+ 
+@@ -221,6 +212,28 @@ impl LanguageSnippetExecutor {
+         snippet_file.write_all(code.as_bytes()).map_err(CodeExecuteError::TempDir)?;
+         Ok(script_dir)
+     }
++
++    fn prepare_commands(&self, script_dir: &Path) -> Vec<Command> {
++        let mut commands: Vec<_> =
++            self.config.commands.iter().cloned().map(|components| Command { components, quiet: false }).collect();
++        if let Some(script_dir) = script_dir.to_str() {
++            let total = commands.len();
++            for (index, command) in commands.iter_mut().enumerate() {
++                command.quiet = self.config.quiet && index + 1 < total;
++                for component in &mut command.components {
++                    if component.contains("$pwd") {
++                        *component = component.replace("$pwd", script_dir);
++                    }
++                }
++            }
++        }
++        commands
++    }
++}
++
++struct Command {
++    components: Vec<String>,
++    quiet: bool,
+ }
+ 
+ pub(crate) struct PtySnippetContext {
+@@ -268,14 +281,16 @@ 
 ```
 
-**File**: `src/terminal/image/protocols/kitty.rs` (modified, +1/-1)
+**File**: `src/config.rs` (modified, +4/-0)
 ```diff
-@@ -489,7 +489,7 @@ impl<D: fmt::Display> fmt::Display for ControlCommand<'_, D> {
-             }
-             write!(f, "{option}")?;
-         }
--        write!(f, ";{}", &self.payload)?;
-+        write!(f, ";{}", self.payload)?;
-         if self.tmux {
-             write!(f, "\x1b\x1b\\\x1b\\")?;
-         } else {
+@@ -419,6 +419,10 @@ pub struct SnippetExecutorConfig {
+     /// The filename to use for the snippet input file.
+     pub filename: String,
+ 
++    /// Whether to ignore output in all commands but the last one.
++    #[serde(default)]
++    pub quiet: bool,
++
+     /// The environment variables to set before invoking every command.
+     #[serde(default)]
+     pub environment: HashMap<String, String>,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #940** (2026-11-24): feat: allow using `quiet` in executors (@mfontanini)
 - **PR #936** (2026-11-17): chore: fix clippies (@mfontanini)
 - **PR #935** (2026-11-17): docs: explain how to use any tool for mermaid-ing (@mfontanini)
 - **PR #933** (2026-11-16): docs: document the use of merman for mermaid graphs (@mfontanini)
+- **PR #932** (closed): feat: allow snippet executors to only show the last command output (@lyn1dev)
 - **PR #931** (2026-11-07): feat: allow cycling through presentation (@mfontanini)
-- **PR #930** (2026-11-04): fix: support bg-image in non-first slides (@mfontanini)
-- **PR #928** (2026-11-03): chore: bump dependencies (@mfontanini)
 
 ---
 
@@ -2179,40 +2295,40 @@ won't work in the CI because versions but let's see.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. fix clippies
+## X. allow using `quiet` in executors
 
 **RULE**:
-When implementing operations in `src/commands/keyboard.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mfontanini/presenterm. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `config-file-schema.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mfontanini/presenterm. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c6ae2eab`: fix clippies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `aa667f91`: allow using `quiet` in executors. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/commands/keyboard.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `config-file-schema.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            let next = next?;
-            number = Some(next);
-            events = rest;
+        },
+        "quiet": {
+          "description": "Whether to ignore output in all commands but the last one.",
+          "type": "boolean",
+          "default": false
+        },
+        "quiet": {
+          "description": "Whether to ignore output in all commands but the last one.",
+          "type": "boolean",
+          "default": false
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-            match next {
-                Some(n) => {
-                    number = Some(n);
-                    events = rest;
-                }
-                // if we overflow we're done
-                None => return None,
-            }
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c6ae2eab` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `aa667f91` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

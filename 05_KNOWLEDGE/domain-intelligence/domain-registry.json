@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T12:27:40.785Z",
+  "last_updated": "2026-11-24T12:36:33.221Z",
   "total_records": 2519,
   "domains": {
     "A": {
@@ -18169,8 +18169,8 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zleap-ai-sag-learnings-technical-construction-intelligence-zleap-ai-sag-learning.md",
       "repository": "zleap-ai-sag-learnings",
-      "content_hash": "ffcfd726e80536ad653d0b82c3e3e38e00fd849b41c802910fdbc8dfbb410686",
-      "created_at": "2026-11-22T08:41:06.457Z"
+      "content_hash": "26bc1944062ecf042e2ea7ef522a2643e2cf50a22064f63d56042f2cd250535c",
+      "created_at": "2026-11-24T12:36:33.221Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co",
@@ -23690,8 +23690,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "3d69ae908b04860bd3aa97f67474422d62af1907868417885c61c4cb1da97fa1",
-      "created_at": "2026-11-24T11:44:39.237Z"
+      "content_hash": "879eb251ede9832c7ec1953759bd16cdb8fd90172a59db87c33b7ee4c4a54774",
+      "created_at": "2026-11-24T12:36:31.790Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",
@@ -26081,8 +26081,8 @@
       "title": "Market & Business Intelligence: mfontanini/presenterm Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-C-mfontanini-presenterm-market-business-intelligence-mfontanini-presenterm-core-in.md",
       "repository": "mfontanini/presenterm",
-      "content_hash": "093c5c23885336e22599a7f05f20284577454b5dc3c01e262d6b472503792bcd",
-      "created_at": "2026-11-18T17:36:31.486Z"
+      "content_hash": "40cc3fea3792cc1ff66f1b2cf79ad369c1e3b129d5e77bc7304756cffde5a839",
+      "created_at": "2026-11-24T12:36:20.686Z"
     },
     "domain_intelligence-technical-construction-intelligence-sveltejs-svelte-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-sveltejs-svelte-core-invariants",
@@ -26108,8 +26108,8 @@
       "title": "Market & Business Intelligence: mfontanini-presenterm-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-C-mfontanini-presenterm-learnings-market-business-intelligence-mfontanini-presente.md",
       "repository": "mfontanini-presenterm-learnings",
-      "content_hash": "481f61a98a55a88c0c4a068262633e4f0ea1841625bcb8e83339bb846e2ce657",
-      "created_at": "2026-11-18T17:41:32.365Z"
+      "content_hash": "f4a71757b30dd09981a30c67086c8927a9a4334649b0054e965d94e3701ae724",
+      "created_at": "2026-11-24T12:36:30.792Z"
     },
     "domain_intelligence-technical-construction-intelligence-sveltejs-svelte-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-sveltejs-svelte-learnings-core-invariants",

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-B3PI",
-    "timestamp": "2026-11-22T17:35:34.278Z",
-    "repository": "ytsaurus/ytsaurus",
-    "learningId": "learn-github-ytsaurus-ytsaurus",
-    "contentHash": "bd6fdaedc0c3c11fe18250d9fc8cefb0588b369becd5a11d33c855b77bfb80f1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-MKSI",
     "timestamp": "2026-11-22T17:44:29.634Z",
     "repository": "deepseek-ai/DeepSeek-R1",
@@ -7490,6 +7475,21 @@
     "repository": "slatedb/slatedb",
     "learningId": "learn-github-slatedb-slatedb",
     "contentHash": "543ef0868d61caffad97224c04b6e6505d89fc17a3919cc5399aaf242ad0f784",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-HZML",
+    "timestamp": "2026-11-24T12:36:20.253Z",
+    "repository": "mfontanini/presenterm",
+    "learningId": "learn-github-mfontanini-presenterm",
+    "contentHash": "6c1185786d2442e9b7440bbf42555f981d38e8240fc9d4aad89369bf591fbf42",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

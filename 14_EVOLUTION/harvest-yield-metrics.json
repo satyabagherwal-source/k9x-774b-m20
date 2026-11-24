@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T12:27:33.993Z",
-  "total_cycles_completed": 12038,
-  "total_learnings_persisted": 12038,
-  "total_rules_promoted": 11110,
+  "last_updated": "2026-11-24T12:36:20.263Z",
+  "total_cycles_completed": 12039,
+  "total_learnings_persisted": 12039,
+  "total_rules_promoted": 11111,
   "history": [
-    {
-      "timestamp": "2026-11-23T20:22:09.313Z",
-      "repository": "vespa-engine/vespa",
-      "learningId": "learn-github-vespa-engine-vespa",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T20:30:27.298Z",
       "repository": "microsoft/FrogNano-4B-2609",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-24T12:27:33.993Z",
       "repository": "slatedb/slatedb",
       "learningId": "learn-github-slatedb-slatedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T12:36:20.263Z",
+      "repository": "mfontanini/presenterm",
+      "learningId": "learn-github-mfontanini-presenterm",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
