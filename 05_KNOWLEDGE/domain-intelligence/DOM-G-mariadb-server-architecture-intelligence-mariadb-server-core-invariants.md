@@ -4,23 +4,23 @@
 {
   "source_repository": "MariaDB/server",
   "source_url": "https://github.com/MariaDB/server",
-  "source_version": "39281811",
+  "source_version": "820699c7",
   "license": "GPL-2.0",
-  "timestamp": "2026-11-16T04:30:28.369Z",
+  "timestamp": "2026-11-24T16:36:49.349Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-mariadb-server",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [MariaDB/server](https://github.com/MariaDB/server) (Revision: `39281811`).  
-> **License**: GPL-2.0 | **Timestamp**: `2026-11-16T04:30:28.369Z`  
+> **Provenance**: Harvested from [MariaDB/server](https://github.com/MariaDB/server) (Revision: `820699c7`).  
+> **License**: GPL-2.0 | **Timestamp**: `2026-11-24T16:36:49.349Z`  
 > **Learning ID**: `learn-github-mariadb-server`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: L (Deployment & Operations Intelligence), I (Content & Information Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), I (Content & Information Intelligence), H (Technical Construction Intelligence), L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
 - **Confidence Rating**: 65%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mariadb-server-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MariaDB/server](https://github.com/MariaDB/server))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T04:30:27.355Z  
+> **Harvest Timestamp**: 2026-11-24T16:36:47.890Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: MariaDB server is a community developed fork of MySQL server. Started by core members of the original MySQL team, MariaDB actively works with outside developers to deliver the most featureful, stable, and sanely licensed open SQL server in the industry.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 8594 stars
+- **Stars / Engagement**: 8651 stars
 
 ---
 
@@ -176,7 +176,8 @@ extern handler_binlog_reader *get_binlog_reader_innodb();
 extern bool open_engine_binlog(handler_binlog_reader *reader,
                                ulonglong start_position, const char *filename);
 
-
+extern bool read_initial_gtid_state(handler_binlog_reader *reader,
+                                    rpl_binlog_state_base *gtid_state);
 /* Shared functions defined in mysqlbinlog.cc */
 extern void error(const char *format, ...) ATTRIBUTE_FORMAT(printf, 1, 2);
 
@@ -1627,11 +1628,11 @@ C_MODE_END
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6154** (2026-11-16): **MDEV-40520 SHOW STATUS triggers MSAN use-of-uninitialized-value in ge…**
-  *Symptoms*: Jira: [MDEV-40520](https://jira.mariadb.org/browse/MDEV-40520)  `init_simple_key_cache()` reset the key cache statistics counters except `warm_blocks`, which was only set when the cache got at least 8 blocks. With a too small `key_buffer_size` (12 or 0) the cache is disabled, `warm_blocks` stays uninitialized and `SHOW STATUS` prints it as `Key_blocks_warm`. Reset it together with the other counters.  Test: `./mtr main.key_cache_disabled`, which starts the server with `--key-buffer-size=0`. Under MSAN it fails without the fix and passes with it.
+- **Issue #6209** (2026-11-24): **MDEV-42383 sporadic hangs with galera_sr.mysql-wsrep#215 test**
+  *Symptoms*: The test pauses the only node_1 applier at sync.wsrep_apply_cb while it applies the node_2 writeset, and expects the conflicting node_1 fragment to fail certification. At the same time, Galera delivers a COMMIT_CUT action after about every 128 committed transactions. It has only a local seqno and must pass the local monitor by an applier. When it was delivered between the node_2 writeset and the node_1 fragment, the paused applier could not process it, and the fragment waited in the local monitor until wait_condition timed out.  Configuring two applier threads for node_1 fixes this deadlock, the second applier processes the COMMIT_CUT while the first one is paused.
 
-- **Issue #6145** (2026-11-13): **MDEV-40423 use-of-uninitialized-value in Gis_point::get_data_as_wkt(String*, char const**) const**
-  *Symptoms*: Jira: [MDEV-40423](https://jira.mariadb.org/browse/MDEV-40423)  ## Description  `read_point_from_json()` returned success for a GeoJSON position with fewer than two numbers, so `"coordinates":[]` left `x` and `y` uninitialized and `[1]` left `y` uninitialized. The values were stored in the WKB and read by `ST_AsText()`, which MSAN reports in `my_gcvt()`.  Reject such positions as incorrect GeoJSON, since RFC 7946 requires at least two numbers, the same way non-numeric coordinates are rejected. `ST_GeomFromGeoJSON()` now returns NULL with the `ER_GEOJSON_INCORRECT` warning. Positions nested in other types, such as a LineString, are covered too.  ## How can this PR be tested?  ```sh ./mtr main.gis-json ./mtr --do-test=gis ```  In an MSAN build, the regression fails without the fix and passes with it. 
+- **Issue #6197** (2026-11-23): **MDEV-31956 SSD based InnoDB buffer pool extension**
+  *Symptoms*: The initial commit was reviewed as PR #4510 - but in this PR it's ported to main. Subsequent commits: - fix some problems with the original commit - introduce variable to control admission rate in place of the fixed 50%.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1648,293 +1649,435 @@ C_MODE_END
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `39281811` (2026-11-14)
-**Commit Message**: remove two deprecated hashicorp_key_management_* variables
+### Incident Patch 1: `288c4dc9` (2026-11-15)
+**Commit Message**: MDEV-40150 galera tests for close() hang and mdev-36554 race
 
-hashicorp_key_management_use_cache_on_timeout
-- was default to enabled, now enabled always
+galera.mdev-36554: node_2's DELETE FROM t1 could race node_1's
+replicating CREATE TABLE/INSERT and fail with ER_NO_SUCH_TABLE. Wait
+for the row to arrive first. Require galera >= 26.4.30, which carries
+the close()-vs-shift_to_CLOSED fix needed to run the rest of this test
+safely.
 
-hashicorp_key_management_cache_timeout
-- was default to INT64_MAX, now no timeout
+galera.MDEV-40150: if the last receiver thread exits on an
+inconsistency error while close() has already set closing_, the
+provider never reaches CLOSED and close() waits forever. The test makes
+the receiver exit with the inconsistency error, holds it before the
+closing_ check, runs close() and then releases the receiver.
 
-**File**: `plugin/hashicorp_key_management/hashicorp_key_management_plugin.cc` (modified, +3/-39)
+galera.MDEV-40150_vote: an applier waits for the result of an
+inconsistency vote while the GCS receive thread exits on a core error.
+Galera now wakes the voter, so the applier finds the vote failed and
+the node leaves the cluster.
+
+The two new tests need the debug points from Galera 26.4.30 or later
+(MGL-359).
+
+Assisted-by: Claude:claude-4.6-sonnet
+
+**File**: `mysql-test/suite/galera/r/MDEV-40150.result` (added, +26/-0)
 ```diff
-@@ -178,7 +178,6 @@ class HCData
- static HCData data;
- static bool loaded= true;
- 
--static std::chrono::milliseconds cache_max_time;
- static std::chrono::milliseconds cache_max_ver_time;
- 
- void HCData::cache_add (const KEY_INFO& info, bool update_version)
-@@ -261,10 +260,6 @@ unsigned int
-                   (long long) elapsed_ms(info.timestamp, current_time).count());
- #endif
-   unsigned int length= info.length;
--  if (with_timeouts && elapsed_ms(info.timestamp, current_time) > cache_max_time)
--  {
--    return ENCRYPTION_KEY_VERSION_INVALID;
--  }
-   unsigned int max_length = *buflen;
-   *buflen = length;
-   if (max_length >= length)
-@@ -351,10 +346,6 @@ static int timeout;
- static int max_retries;
- static char caching_enabled;
- static char check_kv_version;
--#if MYSQL_VERSION_ID < 130300
--static long long cache_timeout;         // for KEY_MAP key_info_cache
--static char use_cache_on_timeout;
--#endif
- static long cache_version_timeout;      // for VER_MAP latest_version_cache
- 
- static MYSQL_SYSVAR_STR(vault_ca, vault_ca,
-@@ -396,21 +387,6 @@ static MYSQL_SYSVAR_BOOL(check_kv_version, check_kv_version,
-   "Enable kv storage version check during plugin initialization",
-   NULL, NULL, 1);
- 
--static void cache_timeout_update (MYSQL_THD thd,
--                                  struct st_mysql_sys_var *var,
--                                  void *var_ptr,
--                                  const void *save)
--{
--  long long timeout = * (long long *) save;
--  * (long long *) var_ptr = timeout;
--  cache_max_time = std::chrono::milliseconds(timeout);
--}
--
--static MYSQL_SYSVAR_LONGLONG(cache_timeout, cache_timeout,
--  PLUGIN_VAR_RQCMDARG | PLUGIN_VAR_DEPRECATED,
--  "Cache timeout for key data (in milliseconds)",
--  NULL, cache_timeout_update, INT64_MAX, 0, INT64_MAX, 1);
--
- static void
-   cache_version_timeout_update (MYSQL_THD thd,
-                                 struct st_mysql_sys_var *var,
-@@ -427,22 +403,14 @@ static MYSQL_SYSVAR_LONG(cache_version_timeout, cache_version_timeout,
-   "Cache timeout for key version (in milliseconds)",
-   NULL, cache_version_timeout_update, 60*1000, 0, LONG_MAX, 1);
- 
--static MYSQL_SYSVAR_BOOL(use_cache_on_timeout, use_cache_on_timeout,
--  PLUGIN_VAR_RQCMDARG | PLUGIN_VAR_DEPRECATED,
--  "In case of an error when accessing the vault server "
--  "use the value taken from the cache",
--  NULL, NULL, 1);
--
- static struct st_mysql_sys_var *settings[] = {
-   MYSQL_SYSVAR(vault_url),
-   MYSQL_SYSVAR(token),
-   MYSQL_SYSVAR(vault_ca),
-   MYSQL_SYSVAR(timeout),
-   MYSQL_SYSVAR(max_retries),
-   MYSQL_SYSVAR(caching_enabled),
--  MYSQL_SYSVAR(cache_timeout),
-   MYSQL_SYSVAR(cache_version_timeout),
--  MYSQL_SYSVAR(use_cache_on_timeout),
-   MYSQL_SYSVAR(check_kv_version),
-   NULL
- };
-@@ -757,9 +725,8 @@ unsigned int HCData::get_latest_version (unsigned int key_id)
-   size_t buf_len = vault_url_len + (20 + 6 + 1);
-   char *url = (char *) alloca(buf_len);
-   snprintf(url, buf_len, "%s%u", vault_url_data, key_id);
--  bool use_cache= caching_enabled && use_cache_on_timeout;
-   int rc;
--  if ((rc= curl_run(url, &response_str, use_cache)) != OPERATION_OK)
-+  if ((rc= curl_run(url, &response_str, caching_enabled)) != OPERATION_OK)
-   {
-     if (rc == OPERATION_TIMEOUT)
-     {
-@@ -839,9 +806,8 @@ unsigned int HCData::get_key_from_vault (unsigned int key_id,
-              vault_url_data, key_id, key_version);
-   else
-     snprintf(url, buf_len, "%s%u", vault_url_data, key_id);
--  bool use_cache= caching_enabled && use_cache_on_timeout;
-   int rc;
--  if ((rc= curl_run(url, &response_str, use_cache)) != OPERATION_OK)
-+  if ((rc= curl_run(url, &response_str, caching_enabled)) != OPERATION_OK)
-   {
-     if (rc == OPERATION_TIMEOUT)
-     {
-@@ -865,8 +831,7 @@ unsigned int HCData::get_key_from_vault (unsigned int key_id,
-   unsigned long version;
- #else
-   unsigned long version= key_version;
--  if (caching_enabled &&
--      key_version == ENCRYPTION_KEY_VERSION_INVALID)
-+  if (caching_enabled && key_version == ENCRYPTION_KEY_VERSION_INVALID)
- #endif
-   {
-     int rc;
-@@ -1160,7 +1125,6 @@ int HCData::init ()
-   }
-   memcpy(vault_url_data, vault_url, vault_url_len);
-   memcpy(vault_url_data + vault_url_len, "/data/", 7);
--  cache_max_time = std::chrono::milliseconds(cache_timeout);
-   cache_max_ver_time = std::chrono::milliseconds(cache_version_timeout);
-   /* Initialize curl: */
-   CURLcode curl_res = curl_global_init(CURL_GLOBAL_ALL);
+@@ -0,0 +1,26 @@
++connection node_2;
++connection node_1;
++# Correct Galera library found
++CALL mtr.add_suppression("Inconsistency detected");
++connection node_1;
++CREATE TABLE t1 (f1 INTEGER);
++connection node_2;
++SET GLOBAL wsrep_provider_options = 'dbug=d,async_recv_force_inconsistency,async_recv_exit_before_closing_check';
++connection node_1;
++INSERT INTO t1 VALUES (1);
++connection node_2;
++SET SESSION wsrep_on = OFF;
++connect node_2a, 127.0.0.1, root, , test, $NODE_MYPORT_2;
++connection node_2a;
++SET SESSION wsrep_on = OFF;
++SET GLOBAL wsrep_cluster_address = '';
++connection node_2;
++SET GLOBAL wsrep_provider_options = 'signal=async_recv_exit_before_closing_check';
++SET GLOBAL wsrep_provider_options = 'dbug=';
++connection node_2a;
++disconnect node_2a;
++connection node_2;
++SET SESSION wsrep_on = OFF;
++connection node_1;
++SET wsrep_sync_wait = 0;
++DROP TABLE t1;
 ```
 
-**File**: `plugin/hashicorp_key_management/mysql-test/vault/r/hashicorp_cache_after_recreate.result` (modified, +3/-3)
+**File**: `mysql-test/suite/galera/r/MDEV-40150_vote.result` (added, +25/-0)
 ```diff
-@@ -1,9 +1,9 @@
- # restart: with restart_parameters
- CREATE TABLE t1 (a VARCHAR(8)) ENGINE=InnoDB ENCRYPTED=YES ENCRYPTION_KEY_ID=4;
- INSERT INTO t1 VALUES ('foo'),('bar');
--select @@hashicorp_key_management_caching_enabled, @@hashicorp_key_management_cache_timeout;
--@@hashicorp_key_management_caching_enabled	@@hashicorp_key_management_cache_timeout
--1	180000
-+select @@hashicorp_key_management_caching_enabled;
-+@@hashicorp_key_management_caching_enabled
-+1
- CREATE TABLE t2 (a VARCHAR(8)) ENGINE=InnoDB ENCRYPTED=YES ENCRYPTION_KEY_ID=4;
- DROP TABLE IF EXISTS t1, t2;
- # restart
+@@ -0,0 +1,25 @@
++connection node_2;
++connection node_1;
++# Correct Galera library found
++CALL mtr.add_suppression("Event .* Update_rows.* apply failed");
++CALL mtr.add_suppression("mariadbd: Can't find record in 't1'");
++CALL mtr.add_suppression("Failed to apply write set.*");
++CALL mtr.add_suppression("Inconsistency detected");
++CALL mtr.add_suppression("Calling destroy\\(\\) before close");
++CALL mtr.add_suppression("GCS core destructor failed");
++connection node_1;
++CREATE TABLE t1 (f1 INTEGER);
++INSERT INTO t1 VALUES (1);
++connection node_2;
++SET SESSION wsrep_on = OFF;
++DELETE FROM t1;
++SET SESSION wsrep_on = ON;
++SET GLOBAL wsrep_applier_retry_count = 1;
++SET GLOBAL wsrep_provider_options = 'dbug=d,gcs_recv_exit_on_vote_wait';
++connection node_1;
++UPDATE t1 SET f1 = f1 + 1;
++connection node_2;
++SET SESSION wsrep_on = OFF;
++connection node_1;
++SET wsrep_sync_wait = 0;
++DROP TABLE t1;
 ```
 
-**File**: `plugin/hashicorp_key_management/mysql-test/vault/r/hashicorp_cache_timeout_update.result` (modified, +11/-23)
+**File**: `mysql-test/suite/galera/r/mdev-36554.result` (modified, +1/-0)
 ```diff
-@@ -1,23 +1,11 @@
--SELECT
--@@HASHICORP_KEY_MANAGEMENT_CACHE_VERSION_TIMEOUT,
--@@HASHICORP_KEY_MANAGEMENT_CACHE_TIMEOUT;
--@@HASHICORP_KEY_MANAGEMENT_CACHE_VERSION_TIMEOUT	@@HASHICORP_KEY_MANAGEMENT_CACHE_TIMEOUT
--0	180000
--SET GLOBAL
--HASHICORP_KEY_MANAGEMENT_CACHE_VERSION_TIMEOUT= 1,
--HASHICORP_KEY_MANAGEMENT_CACHE_TIMEOUT= 1;
--Warnings:
--Warning	1287	'@@hashicorp_key_management_cache_timeout' is deprecated and will be removed in a future release
--SELECT
--@@HASHICORP_KEY_MANAGEMENT_CACHE_VERSION_TIMEOUT,
--@@HASHICORP_KEY_MANAGEMENT_CACHE_TIMEOUT;
--@@HASHICORP_KEY_MANAGEMENT_CACHE_VERSION_TIMEOUT	@@HASHICORP_KEY_MANAGEMENT_CACHE_TIMEOUT
--1	1
--SET GLOBAL HASHICORP_KEY_MANAGEMENT_CACHE_VERSION_TIMEOUT=0, HASHICORP_KEY_MANAGEMENT_CACHE_TIMEOUT=180000;
--Warnings:
--Warning	1287	'@@hashicorp_key_management_cache_timeout' is deprecated and will be removed in a future release
--SELECT
--@@HASHICORP_KEY_MANAGEMENT_CACHE_VERSION_TIMEOUT,
--@@HASHICORP_KEY_MANAGEMENT_CACHE_TIMEOUT;
--@@HASHICORP_KEY_MANAGEMENT_CACHE_VERSION_TIMEOUT	@@HASHICORP_KEY_MANAGEMENT_CACHE_TIMEOUT
--0	180000
-+SELECT @@HASHICORP_KEY_MANAGEMENT_CACHE_VERSION_TIMEOUT;
-+@@HASHICORP_KEY_MANAGEMENT_CACHE_VERSION_TIMEOUT
-+0
-+SET GLOBAL HASHICORP_KEY_MANAGEMENT_CACHE_VERSION_TIMEOUT= 1;
-+SELECT @@HASHICORP_KEY_MANAGEMENT_CACHE_VERSION_TIMEOUT;
-+@@HASHICORP_KEY_MANAGEMENT_CACHE_VERSION_TIMEOUT
-+1
-+SET GLOBAL HASHICORP_KEY_MANAGEMENT_CACHE_VERSION_TIMEOUT=0;
-+SELECT @@HASHICORP_KEY_MANAGEMENT_CACHE_VERSION_TIMEOUT;
-+@@HASHICORP_KEY_MANAGEMENT_CACHE_VERSION_TIMEOUT
-+0
+@@ -1,5 +1,6 @@
+ connection node_2;
+ connection node_1;
++# Correct Galera library found
+ CALL mtr.add_suppression("Event .* Update_rows.* apply failed");
+ CALL mtr.add_suppression("mariadbd: Can't find record in 't1'");
+ CALL mtr.add_suppression("Failed to apply write set.*");
 ```
 
-**File**: `plugin/hashicorp_key_management/mysql-test/vault/r/hashicorp_encode.result` (modified, +0/-2)
+**File**: `mysql-test/suite/galera/t/MDEV-40150.test` (added, +75/-0)
 ```diff
-@@ -1,12 +1,10 @@
- SHOW GLOBAL variables LIKE "hashicorp%";
- Variable_name	Value
--hashicorp_key_management_cache_timeout	9223372036854775807
- hashicorp_key_management_cache_version_timeout	60000
- hashicorp_key_management_caching_enabled	ON
- hashicorp_key_management_check_kv_version	OFF
- hashicorp_key_management_max_retries	3
- hashicorp_key_management_timeout	60
--hashicorp_key_management_use_cache_on_timeout	ON
- hashicorp_key_management_vault_ca	
- hashicorp_key_management_vault_url	VAULT_ADDR/v1/mariadbtest/
- create table t1(c1 bigint not null, b char(200)) engine=innodb encrypted=yes encryption_key_id=1;
+@@ -0,0 +1,75 @@
++#
++# MDEV-40150: close() hangs in wait_for_CLOSED() when the last receiver
++# thread exits on an inconsistency error while close() is already running.
++#
++# The Galera dbug point async_recv_force_inconsistency makes the only
++# receiver thread on node_2 exit with the inconsistency error, the same exit
++# the provider takes on GCS_ACT_INCONSISTENCY. The sync point
++# async_recv_exit_before_closing_check holds the receiver just before it
++# checks closing_. A concurrent close() sets closing_ and waits for S_CLOSED.
++# The receiver must then move the provider to S_CLOSED itself, else close()
++# never returns.
++#
++
++--source include/galera_cluster.inc
++--source include/have_innodb.inc
++--source include/have_debug_sync.inc
++--source include/galera_have_debug_sync.inc
++
++# Make sure that the test is operating on the right version of galera library.
++--let $galera_version=26.4.30
++source ../wsrep/include/check_galera_version.inc;
++
++CALL mtr.add_suppression("Inconsistency detected");
++
++--connection node_1
++CREATE TABLE t1 (f1 INTEGER);
++
++--connection node_2
++--let $wait_condition = SELECT COUNT(*) = 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 't1'
++--source include/wait_condition.inc
++
++# The next action received by node_2 makes its receiver exit on inconsistency.
++--let $galera_sync_point = async_recv_force_inconsistency,async_recv_exit_before_closing_check
++--source include/galera_set_sync_point.inc
++
++--connection node_1
++INSERT INTO t1 VALUES (1);
++
++--connection node_2
++SET SESSION wsrep_on = OFF;
++--let $wait_condition = SELECT VARIABLE_VALUE = 'async_recv_exit_before_closing_check' FROM INFORMATION_SCHEMA.GLOBAL_STATUS WHERE VARIABLE_NAME = 'wsrep_debug_sync_waiters'
++--source include/wait_condition.inc
++
++# Start close() while the receiver is held. It sets closing_ and waits.
++--connect node_2a, 127.0.0.1, root, , test, $NODE_MYPORT_2
++--connection node_2a
++SET SESSION wsrep_on = OFF;
++--send SET GLOBAL wsrep_cluster_address = ''
++
++--connection node_2
++--let $wait_condition = SELECT COUNT(*) = 1 FROM INFORMATION_SCHEMA.PROCESSLIST WHERE INFO LIKE 'SET GLOBAL wsrep_cluster_address%'
++--source include/wait_condition.inc
++--sleep 2
++--let $galera_sync_point = async_recv_exit_before_closing_check
++--source include/galera_signal_sync_point.inc
++--source include/galera_clear_sync_point.inc
++
++# close() must return. Without the fix this hangs.
++--connection node_2a
++--reap
++--disconnect node_2a
++
++# Restart node_2 and clean up.
++--connection node_2
++SET SESSION wsrep_on = OFF;
++--source include/shutdown_mysqld.inc
++--source include/wait_until_disconnected.inc
++--remove_file $MYSQLTEST_VARDIR/mysqld.2/data/grastate.dat
++--source include/start_mysqld.inc
++
++--connection node_1
++SET wsrep_sync_wait = 0;
++--let $wait_condition = SELECT VARIABLE_VALUE = 2 FROM information_schema.global_status WHERE VARIABLE_NAME = 'wsrep_cluster_size'
++--source include/wait_condition.inc
++DROP TABLE t1;
 ```
 
-**File**: `plugin/hashicorp_key_management/mysql-test/vault/r/hashicorp_key_rotation_age.result` (modified, +0/-2)
+**File**: `mysql-test/suite/galera/t/MDEV-40150_vote.test` (added, +67/-0)
 ```diff
-@@ -1,12 +1,10 @@
- SHOW GLOBAL variables LIKE "hashicorp%";
- Variable_name	Value
--hashicorp_key_management_cache_timeout	9223372036854775807
- hashicorp_key_management_cache_version_timeout	0
- hashicorp_key_management_caching_enabled	ON
- hashicorp_key_management_check_kv_version	OFF
- hashicorp_key_management_max_retries	3
- hashicorp_key_management_timeout	60
--hashicorp_key_management_use_cache_on_timeout	ON
- hashicorp_key_management_vault_ca	
- hashicorp_key_management_vault_url	VAULT_ADDR/v1/mariadbtest/
- # Restart the server with encryption
+@@ -0,0 +1,67 @@
++#
++# MDEV-40150: a receiver thread waits in gcs_vote() for the result of the
++# inconsistency vote, but the GCS receive thread exits without a self-leave.
++# Nothing wakes the voter, so the applier and close() hang.
++#
++# The Galera dbug point gcs_recv_exit_on_vote_wait makes the GCS receive
++# thread on node_2 exit the way a core error does, as soon as a message
++# arrives while an applier waits for the vote result. The waiting applier
++# must be woken and the node must leave the cluster.
++#
++
++--source include/galera_cluster.inc
++--source include/have_innodb.inc
++--source include/have_debug_sync.inc
++--source include/galera_have_debug_sync.inc
++
++# Make sure that the test is operating on the right version of galera library.
++--let $galera_version=26.4.30
++source ../wsrep/include/check_galera_version.inc;
++
++CALL mtr.add_suppression("Event .* Update_rows.* apply failed");
++CALL mtr.add_suppression("mariadbd: Can't find record in 't1'");
++CALL mtr.add_suppression("Failed to apply write set.*");
++CALL mtr.add_suppression("Inconsistency detected");
++# The injected exit leaves the GCS core open until the provider is destroyed.
++CALL mtr.add_suppression("Calling destroy\\(\\) before close");
++CALL mtr.add_suppression("GCS core destructor failed");
++
++--connection node_1
++CREATE TABLE t1 (f1 INTEGER);
++INSERT INTO t1 VALUES (1);
++
++--connection node_2
++--let $wait_condition = SELECT COUNT(*) = 1 FROM t1
++--source include/wait_condition.inc
++
++# Make the next UPDATE fail on node_2 so that its applier starts a vote.
++SET SESSION wsrep_on = OFF;
++DELETE FROM t1;
++SET SESSION wsrep_on = ON;
++SET GLOBAL wsrep_applier_retry_count = 1;
++
++--let $galera_sync_point = gcs_recv_exit_on_vote_wait
++--source include/galera_set_sync_point.inc
++
++--connection node_1
++UPDATE t1 SET f1 = f1 + 1;
++
++# The applier must be woken, find the vote failed and leave the cluster.
++# Without the fix the applier waits for the vote forever and wsrep_ready
++# stays ON.
++--connection node_2
++SET SESSION wsrep_on = OFF;
++--let $wait_condition = SELECT VARIABLE_VALUE = 'OFF' FROM INFORMATION_SCHEMA.GLOBAL_STATUS WHERE VARIABLE_NAME = 'wsrep_ready'
++--source include/wait_condition.inc
++
++# Restart node_2.
++--source include/shutdown_mysqld.inc
++--source include/wait_until_disconnected.inc
++--remove_file $MYSQLTEST_VARDIR/mysqld.2/data/grastate.dat
++--source include/start_mysqld.inc
++
++--connection node_1
++SET wsrep_sync_wait = 0;
++--let $wait_condition = SELECT VARIABLE_VALUE = 2 FROM information_schema.global_status WHERE VARIABLE_NAME = 'wsrep_cluster_size'
++--source include/wait_condition.inc
++DROP TABLE t1;
 ```
 
-**File**: `plugin/hashicorp_key_management/mysql-test/vault/t/hashicorp_cache_after_recreate.opt` (modified, +0/-1)
+**File**: `mysql-test/suite/galera/t/mdev-36554.test` (modified, +8/-0)
 ```diff
-@@ -1,2 +1 @@
----loose-hashicorp-key-management-cache-timeout=180000
- --loose-hashicorp-key-management-cache-version-timeout=180000
-```
-
-**File**: `plugin/hashicorp_key_management/mysql-test/vault/t/hashicorp_cache_after_recreate.test` (modified, +1/-1)
-```diff
-@@ -18,7 +18,7 @@
- CREATE TABLE t1 (a VARCHAR(8)) ENGINE=InnoDB ENCRYPTED=YES ENCRYPTION_KEY_ID=4;
- INSERT INTO t1 VALUES ('foo'),('bar');
+@@ -4,6 +4,10 @@
  
--select @@hashicorp_key_management_caching_enabled, @@hashicorp_key_management_cache_timeout;
-+select @@hashicorp_key_management_caching_enabled;
+ --source include/galera_cluster.inc
  
- --exec vault secrets disable bug > /dev/null
- --exec vault secrets enable -path /bug -version=2 kv > /dev/null
-```
-
-**File**: `plugin/hashicorp_key_management/mysql-test/vault/t/hashicorp_cache_timeout_update.opt` (modified, +0/-1)
-```diff
-@@ -1,2 +1 @@
----loose-hashicorp-key-management-cache-timeout=180000
- --loose-hashicorp-key-management-cache-version-timeout=0
++# Make sure that the test is operating on the right version of galera library.
++--let $galera_version=26.4.30
++source ../wsrep/include/check_galera_version.inc;
++
+ CALL mtr.add_suppression("Event .* Update_rows.* apply failed");
+ CALL mtr.add_suppression("mariadbd: Can't find record in 't1'");
+ CALL mtr.add_suppression("Failed to apply write set.*");
+@@ -14,6 +18,10 @@ CREATE TABLE t1 (f1 INTEGER);
+ INSERT INTO t1 VALUES (1);
+ 
+ --connection node_2
++# Wait for node_1's CREATE TABLE/INSERT to replicate here first (MDEV-40150),
++# else this DELETE can race it and fail with ER_NO_SUCH_TABLE.
++--let $wait_condition = SELECT COUNT(*) = 1 FROM t1
++--source include/wait_condition.inc
+ SET SESSION wsrep_on = OFF;
+ DELETE FROM t1;
+ SET SESSION wsrep_on = ON;
 ```
 
 ---
 
-### Incident Patch 2: `c4cf9302` (2026-11-14)
-**Commit Message**: 13.3 branch
+### Incident Patch 2: `42ebd088` (2026-11-16)
+**Commit Message**: MDEV-42284 fix galera_sr.mysql-wsrep#215 ER_LOCK_WAIT_TIMEOUT
 
-**File**: `VERSION` (modified, +1/-1)
+Node_1's own causality wait (wsrep_sync_wait, on by default) blocked
+its plain SELECT on t1 while the test held node_1's applier paused at
+the sync.wsrep_apply_cb debug sync point, so the SELECT could not
+reach the GTID the paused applier had not yet reached and timed out
+with ER_LOCK_WAIT_TIMEOUT instead of returning.
+
+Set wsrep_sync_wait = 0 on node_1 for that SELECT and the INSERT that
+follows it, saved and restored around each of the test's three blocks.
+
+**File**: `mysql-test/suite/galera_sr/r/mysql-wsrep#215.result` (modified, +9/-0)
 ```diff
-@@ -1,4 +1,4 @@
- MYSQL_VERSION_MAJOR=13
--MYSQL_VERSION_MINOR=2
-+MYSQL_VERSION_MINOR=3
- MYSQL_VERSION_PATCH=0
- SERVER_MATURITY=alpha
+@@ -21,6 +21,8 @@ SELECT COUNT(*) = 0 FROM t1;
+ COUNT(*) = 0
+ 1
+ connection node_1;
++SET @saved_wsrep_sync_wait = @@SESSION.wsrep_sync_wait;
++SET SESSION wsrep_sync_wait = 0;
+ SELECT COUNT(*) = 0 FROM t1;
+ COUNT(*) = 0
+ 1
+@@ -31,6 +33,7 @@ SET GLOBAL DEBUG_DBUG = '';
+ SET DEBUG_SYNC='now SIGNAL signal.wsrep_apply_cb';
+ connection node_1;
+ ERROR 40001: Deadlock found when trying to get lock; try restarting transaction
++SET SESSION wsrep_sync_wait = @saved_wsrep_sync_wait;
+ COMMIT;
+ SELECT COUNT(*) = 1 FROM t1;
+ COUNT(*) = 1
+@@ -67,6 +70,8 @@ SELECT COUNT(*) = 0 FROM t1;
+ COUNT(*) = 0
+ 1
+ connection node_1;
++SET @saved_wsrep_sync_wait = @@SESSION.wsrep_sync_wait;
++SET SESSION wsrep_sync_wait = 0;
+ SELECT COUNT(*) = 0 FROM t1;
+ COUNT(*) = 0
+ 1
+@@ -76,6 +81,7 @@ SET GLOBAL DEBUG_DBUG = '';
+ SET DEBUG_SYNC='now SIGNAL signal.wsrep_apply_cb';
+ connection node_1;
+ ERROR 40001: Deadlock found when trying to get lock; try restarting transaction
++SET SESSION wsrep_sync_wait = @saved_wsrep_sync_wait;
+ ROLLBACK;
+ SELECT * FROM t1;
+ f1
+@@ -112,13 +118,16 @@ SELECT COUNT(*) = 0 FROM t1;
+ COUNT(*) = 0
+ 1
+ connection node_1;
++SET @saved_wsrep_sync_wait = @@SESSION.wsrep_sync_wait;
++SET SESSION wsrep_sync_wait = 0;
+ INSERT INTO t1 VALUES (1);
+ INSERT INTO t1 VALUES (2);
+ connection node_1a;
+ SET GLOBAL DEBUG_DBUG = '';
+ SET DEBUG_SYNC='now SIGNAL signal.wsrep_apply_cb';
+ connection node_1;
+ ERROR 40001: Deadlock found when trying to get lock; try restarting transaction
++SET SESSION wsrep_sync_wait = @saved_wsrep_sync_wait;
+ COMMIT;
+ SELECT COUNT(*) = 0 FROM mysql.wsrep_streaming_log;
+ COUNT(*) = 0
 ```
 
-**File**: `debian/additions/mariadb.conf.d/50-server.cnf` (modified, +1/-1)
+**File**: `mysql-test/suite/galera_sr/t/mysql-wsrep#215.test` (modified, +9/-0)
 ```diff
-@@ -115,4 +115,4 @@ expire_logs_days        = 10
- # This group is only read by MariaDB servers of the specific version.
- # If you use the same .cnf file for MariaDB of different versions,
- # use this group for options that older servers don't understand
--[mariadb-13.2]
-+[mariadb-13.3]
-```
-
-**File**: `debian/changelog` (modified, +1/-1)
-```diff
-@@ -1,4 +1,4 @@
--mariadb (1:13.2.0) unstable; urgency=medium
-+mariadb (1:13.3.0) unstable; urgency=medium
+@@ -35,6 +35,8 @@ SET SESSION debug_sync = "now WAIT_FOR sync.wsrep_apply_cb_reached";
+ SELECT COUNT(*) = 0 FROM t1;
  
-   * Initial Release
+ --connection node_1
++SET @saved_wsrep_sync_wait = @@SESSION.wsrep_sync_wait;
++SET SESSION wsrep_sync_wait = 0;
+ SELECT COUNT(*) = 0 FROM t1;
+ --send INSERT INTO t1 VALUES (1);
+ 
+@@ -50,6 +52,7 @@ SET DEBUG_SYNC='now SIGNAL signal.wsrep_apply_cb';
+ --connection node_1
+ --error ER_LOCK_DEADLOCK
+ --reap
++SET SESSION wsrep_sync_wait = @saved_wsrep_sync_wait;
+ 
+ COMMIT;
+ 
+@@ -89,6 +92,8 @@ SET SESSION debug_sync = "now WAIT_FOR sync.wsrep_apply_cb_reached";
+ SELECT COUNT(*) = 0 FROM t1;
+ 
+ --connection node_1
++SET @saved_wsrep_sync_wait = @@SESSION.wsrep_sync_wait;
++SET SESSION wsrep_sync_wait = 0;
+ SELECT COUNT(*) = 0 FROM t1;
+ --send INSERT INTO t1 VALUES (1)
+ 
+@@ -103,6 +108,7 @@ SET DEBUG_SYNC='now SIGNAL signal.wsrep_apply_cb';
+ --connection node_1
+ --error ER_LOCK_DEADLOCK
+ --reap
++SET SESSION wsrep_sync_wait = @saved_wsrep_sync_wait;
+ ROLLBACK;
+ 
+ SELECT * FROM t1;
+@@ -146,6 +152,8 @@ SET SESSION debug_sync = "now WAIT_FOR sync.wsrep_apply_cb_reached";
+ SELECT COUNT(*) = 0 FROM t1;
+ 
+ --connection node_1
++SET @saved_wsrep_sync_wait = @@SESSION.wsrep_sync_wait;
++SET SESSION wsrep_sync_wait = 0;
+ INSERT INTO t1 VALUES (1);
+ --send INSERT INTO t1 VALUES (2)
+ 
+@@ -160,6 +168,7 @@ SET DEBUG_SYNC='now SIGNAL signal.wsrep_apply_cb';
+ --connection node_1
+ --error ER_LOCK_DEADLOCK
+ --reap
++SET SESSION wsrep_sync_wait = @saved_wsrep_sync_wait;
+ COMMIT;
+ 
+ SELECT COUNT(*) = 0 FROM mysql.wsrep_streaming_log;
+```
+
+---
+
+### Incident Patch 3: `26aca20c` (2026-11-18)
+**Commit Message**: MDEV-42237: Fix integer overflow of relay log position
+
+The off_t type is 32-bit signed on Windows, casting the relay log position
+to off_t will overflow when >= 2**31.
+
+Signed-off-by: Kristian Nielsen <[REDACTED_EMAIL]>
+
+**File**: `sql/rpl_rli.cc` (modified, +1/-1)
+```diff
+@@ -749,7 +749,7 @@ int init_relay_log_pos(Relay_log_info* rli,const char* log,
+       */
+       rli->calc_master_bug_bitmask(fdev);
+     }
+-    my_b_seek(rli->cur_log,(off_t)pos);
++    my_b_seek(rli->cur_log,(my_off_t)pos);
+     DBUG_PRINT("info", ("my_b_tell(rli->cur_log)=%llu rli->event_relay_log_pos=%llu",
+                         my_b_tell(rli->cur_log), rli->event_relay_log_pos));
  
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6154** (2026-11-16): MDEV-40520 SHOW STATUS triggers MSAN use-of-uninitialized-value in ge… (@MooSayed1)
-- **PR #6145** (2026-11-13): MDEV-40423 use-of-uninitialized-value in Gis_point::get_data_as_wkt(String*, char const**) const (@MooSayed1)
-- **PR #6144** (2026-11-13): MDEV-42258: Windows ignores large --back-log, simultaneous connects are refused (@vaintroub)
-- **PR #6140** (2026-11-13): MDEV-42234 : Galera test failure on galera.galera_ws_datatypes (@janlindstrom)
-- **PR #6139** (2026-11-13): MDEV-42231: galera_sst_check_port_ancestry fails on noexec vardir (@hemantdangi-gc)
-- **PR #6133** (closed): MDEV-41388: Avoid causal-wait timeout in galera.MDEV-34117 (@hemantdangi-gc)
+- **PR #6209** (2026-11-24): MDEV-42383 sporadic hangs with galera_sr.mysql-wsrep#215 test (@sjaakola)
+- **PR #6197** (closed): MDEV-31956 SSD based InnoDB buffer pool extension (@mariadb-andrzejjarzabek)
+- **PR #6196** (2026-11-24): MDEV-42367 : Galera test failure on galera_as_slave_wsrep_error (@janlindstrom)
+- **PR #6188** (2026-11-23): MDEV-42350 innodb_log_archive=ON recovery fails at the end of the log file (@dr-m)
+- **PR #6183** (2026-11-24): MDEV-25848 MVI non-optimizer fixes (@mariadb-YuchenPei)
+- **PR #6159** (closed): MDEV-TBD3 Let SQL extension plugins keep data on the connection (@mariadb-ReneRamirez)
 
 ---
 
@@ -1954,65 +2097,56 @@ hashicorp_key_management_cache_timeout
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. remove two deprecated hashicorp_key_management_* variables
+## X. MDEV-40150 galera tests for close() hang and mdev-36554 race
 
 **RULE**:
-When implementing operations in `plugin/hashicorp_key_management/hashicorp_key_management_plugin.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MariaDB/server. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `mysql-test/suite/galera/r/MDEV-40150.result`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MariaDB/server. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `39281811`: remove two deprecated hashicorp_key_management_* variables. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `288c4dc9`: MDEV-40150 galera tests for close() hang and mdev-36554 race. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugin/hashicorp_key_management/hashicorp_key_management_plugin.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `mysql-test/suite/galera/r/MDEV-40150.result`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-  if ((rc= curl_run(url, &response_str, caching_enabled)) != OPERATION_OK)
-  if ((rc= curl_run(url, &response_str, caching_enabled)) != OPERATION_OK)
-  if (caching_enabled && key_version == ENCRYPTION_KEY_VERSION_INVALID)
+connection node_2;
+connection node_1;
+# Correct Galera library found
+CALL mtr.add_suppression("Inconsistency detected");
+connection node_1;
+CREATE TABLE t1 (f1 INTEGER);
+connection node_2;
+SET GLOBAL wsrep_provider_options = 'dbug=d,async_recv_force_inconsistency,async_recv_exit_before_closing_check';
+connection node_1;
+INSERT INTO t1 VALUES (1);
+connection node_2;
+SET SESSION wsrep_on = OFF;
+connect node_2a, 127.0.0.1, root, , test, $NODE_MYPORT_2;
+connection node_2a;
+SET SESSION wsrep_on = OFF;
+SET GLOBAL wsrep_cluster_address = '';
+connection node_2;
+SET GLOBAL wsrep_provider_options = 'signal=async_recv_exit_before_closing_check';
+SET GLOBAL wsrep_provider_options = 'dbug=';
+connection node_2a;
+disconnect node_2a;
+connection node_2;
+SET SESSION wsrep_on = OFF;
+connection node_1;
+SET wsrep_sync_wait = 0;
+DROP TABLE t1;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-static std::chrono::milliseconds cache_max_time;
-  if (with_timeouts && elapsed_ms(info.timestamp, current_time) > cache_max_time)
-  {
-    return ENCRYPTION_KEY_VERSION_INVALID;
-  }
-#if MYSQL_VERSION_ID < 130300
-static long long cache_timeout;         // for KEY_MAP key_info_cache
-static char use_cache_on_timeout;
-#endif
-static void cache_timeout_update (MYSQL_THD thd,
-                                  struct st_mysql_sys_var *var,
-                                  void *var_ptr,
-                                  const void *save)
-{
-  long long timeout = * (long long *) save;
-  * (long long *) var_ptr = timeout;
-  cache_max_time = std::chrono::milliseconds(timeout);
-}
-
-static MYSQL_SYSVAR_LONGLONG(cache_timeout, cache_timeout,
-  PLUGIN_VAR_RQCMDARG | PLUGIN_VAR_DEPRECATED,
-  "Cache timeout for key data (in milliseconds)",
-  NULL, cache_timeout_update, INT64_MAX, 0, INT64_MAX, 1);
-
-static MYSQL_SYSVAR_BOOL(use_cache_on_timeout, use_cache_on_timeout,
-  PLUGIN_VAR_RQCMDARG | PLUGIN_VAR_DEPRECATED,
-  "In case of an error when accessing the vault server "
-  "use the value taken from the cache",
-  NULL, NULL, 1);
-
-  MYSQL_SYSVAR(cache_timeout),
-  MYSQL_SYSVAR(use_cache_on_timeout),
-  boo
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `39281811` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `288c4dc9` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

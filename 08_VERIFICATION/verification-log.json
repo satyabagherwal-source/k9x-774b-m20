@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-CVF9",
-    "timestamp": "2026-11-22T21:48:53.397Z",
-    "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
-    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
-    "contentHash": "bf3d2640ecf5256794b1d0f622e0d42697c3adfbb702b39650098987098e821b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-D0DT",
     "timestamp": "2026-11-22T21:48:59.825Z",
     "repository": "vanniktech/gradle-maven-publish-plugin",
@@ -7492,6 +7477,21 @@
     "contentHash": "e98d7b4d5aca2b6ea80a6360315824c0213c26e5929b304603dfc895f8d2029e",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-3904",
+    "timestamp": "2026-11-24T16:36:49.108Z",
+    "repository": "MariaDB/server",
+    "learningId": "learn-github-mariadb-server",
+    "contentHash": "ec7144540a2da3df250fef54bfab9be396d535095bb00af11283e0d98d4b86cb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -5823,10 +5823,10 @@
     "repository": "MariaDB/server",
     "platform": "github",
     "sourceUrl": "https://github.com/MariaDB/server",
-    "sourceVersion": "39281811",
+    "sourceVersion": "820699c7",
     "license": "GPL-2.0",
-    "contentHash": "355ee964bd3fb732d8cd29f168b4f4e4e0249c5e655a017cd4cb1a06d2d8453b",
-    "lastHarvestedAt": "2026-11-16T04:30:28.206Z",
+    "contentHash": "ec7144540a2da3df250fef54bfab9be396d535095bb00af11283e0d98d4b86cb",
+    "lastHarvestedAt": "2026-11-24T16:36:49.113Z",
     "learningId": "learn-github-mariadb-server"
   },
   "ng-zorro-ng-zorro-antd": {

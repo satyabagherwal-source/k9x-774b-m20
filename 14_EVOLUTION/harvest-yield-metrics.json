@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T16:28:13.738Z",
-  "total_cycles_completed": 12101,
-  "total_learnings_persisted": 12101,
-  "total_rules_promoted": 11165,
+  "last_updated": "2026-11-24T16:36:49.119Z",
+  "total_cycles_completed": 12102,
+  "total_learnings_persisted": 12102,
+  "total_rules_promoted": 11166,
   "history": [
-    {
-      "timestamp": "2026-11-23T23:39:47.588Z",
-      "repository": "tokio-rs/tokio",
-      "learningId": "learn-github-tokio-rs-tokio",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T23:39:56.843Z",
       "repository": "tailscale/tailscale",
@@ -1403,6 +1396,13 @@
       "repository": "AngelSlim/Hy4-flash-GGUF",
       "learningId": "learn-huggingface-angelslim-hy4-flash-gguf",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T16:36:49.119Z",
+      "repository": "MariaDB/server",
+      "learningId": "learn-github-mariadb-server",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

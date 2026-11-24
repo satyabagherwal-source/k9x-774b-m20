@@ -12734,3 +12734,4 @@
 | `CYCLE-20261124-HFCK` | `2026-11-24T16:19:50.900Z` | `ArchiveBox/ArchiveBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10302` | Yes (`44d6a4cb...`) |
 | `CYCLE-20261124-HIDQ` | `2026-11-24T16:19:54.830Z` | `nats-io/nats-server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10303` | Yes (`d3b07a59...`) |
 | `CYCLE-20261124-S7C0` | `2026-11-24T16:28:13.728Z` | `AngelSlim/Hy4-flash-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-angelslim-hy4-flash-gguf-learnings.md` | Yes (`e98d7b4d...`) |
+| `CYCLE-20261124-3904` | `2026-11-24T16:36:49.108Z` | `MariaDB/server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10304` | Yes (`ec714454...`) |
