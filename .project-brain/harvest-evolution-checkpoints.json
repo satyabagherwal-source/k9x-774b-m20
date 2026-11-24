@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T10:26:53.765Z",
+  "last_updated": "2026-11-24T10:44:04.690Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-24T10:26:51.791Z",
+      "processed_at": "2026-11-24T10:44:03.765Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-24T10:26:51.014Z",
+      "processed_at": "2026-11-24T10:44:02.964Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -643,7 +643,7 @@
       "staged_for_review": 1
     },
     "gitoxidelabs-gitoxide-learnings.md": {
-      "processed_at": "2026-11-23T04:00:22.580Z",
+      "processed_at": "2026-11-24T10:44:02.189Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3813,7 +3813,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3735,
+  "total_dossiers_evaluated": 3738,
   "total_canonical_promoted": 503,
-  "total_staged_for_review": 2822
+  "total_staged_for_review": 2825
 }

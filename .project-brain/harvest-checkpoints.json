@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T09:57:17.456Z",
+  "last_updated": "2026-11-24T10:43:53.700Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6186,14 +6186,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gitoxidelabs-gitoxide",
-      "content_hash": "e5820ba17fe38e3e0eea30eacb6666b7bcacfc72e24f6b9e506504e5e64a670e",
-      "verified_at": "2026-11-23T04:00:05.527Z",
+      "content_hash": "44e5afc4772d1d032a909be7bd15575f22a279f5132c4776ca5d096d09047a04",
+      "verified_at": "2026-11-24T10:43:53.699Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T04:00:05.527Z"
+      "last_updated": "2026-11-24T10:43:53.699Z"
     },
     "devhubapp/devhub": {
       "repository": "devhubapp/devhub",

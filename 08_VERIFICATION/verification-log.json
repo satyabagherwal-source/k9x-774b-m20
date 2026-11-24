@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-M312",
-    "timestamp": "2026-11-22T16:48:07.382Z",
-    "repository": "pola-rs/polars",
-    "learningId": "learn-github-pola-rs-polars",
-    "contentHash": "47824c59f914792b04338567c854e3fec244e58dbc546ab9ba226b268f6590f0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-M6CD",
     "timestamp": "2026-11-22T16:48:11.677Z",
     "repository": "mrkai77/Loop",
@@ -7492,6 +7477,21 @@
     "contentHash": "20d5cead4e0c1f2fc3d90f87199b542d9c2d0b607481b3a5285aecf0e7e61ebb",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-HDXQ",
+    "timestamp": "2026-11-24T10:43:53.678Z",
+    "repository": "GitoxideLabs/gitoxide",
+    "learningId": "learn-github-gitoxidelabs-gitoxide",
+    "contentHash": "44e5afc4772d1d032a909be7bd15575f22a279f5132c4776ca5d096d09047a04",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

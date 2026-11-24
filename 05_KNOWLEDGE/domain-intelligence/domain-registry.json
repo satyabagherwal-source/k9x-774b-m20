@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T10:26:53.281Z",
+  "last_updated": "2026-11-24T10:44:04.362Z",
   "total_records": 2511,
   "domains": {
     "A": {
@@ -8326,8 +8326,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "96532c72ad74c950751fcb40ce046a714b1de70827ab133414f10f9172f8ea17",
-      "created_at": "2026-11-24T10:26:52.349Z"
+      "content_hash": "b9ea1482f912470defffe23d4b0f8eb0826ac0f62f5e43f2dcbe1c029c59caa4",
+      "created_at": "2026-11-24T10:44:04.362Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -9244,8 +9244,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "f240431117cfdd3cf594f294bc41eee35aa365c46b94d64a3521d56f4730c620",
-      "created_at": "2026-11-24T10:26:51.458Z"
+      "content_hash": "022e3da8f6f86db39f57e87e6b48612ff9c9180672a8026b4d76c5af35c305ec",
+      "created_at": "2026-11-24T10:44:03.426Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -20901,8 +20901,8 @@
       "title": "Architecture Intelligence: GitoxideLabs/gitoxide Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gitoxidelabs-gitoxide-architecture-intelligence-gitoxidelabs-gitoxide-core-invar.md",
       "repository": "GitoxideLabs/gitoxide",
-      "content_hash": "c80c272736dd892ae703cb48fcbf4859f2e381436c6a755eb8f930dad0c615fc",
-      "created_at": "2026-11-23T04:00:05.921Z"
+      "content_hash": "c9f7d880ee2e7d24e31206f3825c68563279af8d1a05ac74a366fdfe9b8c2434",
+      "created_at": "2026-11-24T10:43:54.103Z"
     },
     "domain_intelligence-technical-construction-intelligence-melnixdev-seo-crawl-audit-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-melnixdev-seo-crawl-audit-core-invariants",
@@ -20919,8 +20919,8 @@
       "title": "Architecture Intelligence: gitoxidelabs-gitoxide-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gitoxidelabs-gitoxide-learnings-architecture-intelligence-gitoxidelabs-gitoxide-.md",
       "repository": "gitoxidelabs-gitoxide-learnings",
-      "content_hash": "f1bab2e7bece7c2a6fbf068de9e84cd350abbccb4dc706ec6359ba35ea31e5c9",
-      "created_at": "2026-11-23T04:00:23.678Z"
+      "content_hash": "998508461c0f9083f1a0b47deb82dc854d58b6d4e50cb4d540a44a5e00408af4",
+      "created_at": "2026-11-24T10:44:02.618Z"
     },
     "DOM-J-C5E210D6": {
       "record_id": "DOM-J-C5E210D6",

@@ -12681,3 +12681,4 @@ Every entry in this ledger must capture:
 | `learn-github-callstack-react-native-paper` | `https://github.com/callstack/react-native-paper` | `ce0ac9f8` | Multi-dimensional audit evidence | 2026-11-24T09:57:10.953Z |
 | `learn-github-kcl-lang-kcl` | `https://github.com/kcl-lang/kcl` | `05194abb` | Multi-dimensional audit evidence | 2026-11-24T09:57:13.332Z |
 | `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `0bb27e65` | Multi-dimensional audit evidence | 2026-11-24T09:57:17.412Z |
+| `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `9ca9eb57` | Multi-dimensional audit evidence | 2026-11-24T10:43:53.682Z |

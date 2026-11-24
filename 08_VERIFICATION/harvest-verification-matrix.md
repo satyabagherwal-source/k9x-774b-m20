@@ -12648,3 +12648,4 @@
 | `CYCLE-20261124-TBC4` | `2026-11-24T09:57:10.948Z` | `callstack/react-native-paper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10242` | Yes (`792454fa...`) |
 | `CYCLE-20261124-TD68` | `2026-11-24T09:57:13.328Z` | `kcl-lang/kcl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10243` | Yes (`49fb6c8d...`) |
 | `CYCLE-20261124-TGBJ` | `2026-11-24T09:57:17.407Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md` | Yes (`20d5cead...`) |
+| `CYCLE-20261124-HDXQ` | `2026-11-24T10:43:53.678Z` | `GitoxideLabs/gitoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10244` | Yes (`44e5afc4...`) |

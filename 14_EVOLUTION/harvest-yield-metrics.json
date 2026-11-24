@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T09:57:17.453Z",
-  "total_cycles_completed": 12023,
-  "total_learnings_persisted": 12023,
-  "total_rules_promoted": 11098,
+  "last_updated": "2026-11-24T10:43:53.688Z",
+  "total_cycles_completed": 12024,
+  "total_learnings_persisted": 12024,
+  "total_rules_promoted": 11099,
   "history": [
-    {
-      "timestamp": "2026-11-23T19:26:14.981Z",
-      "repository": "gardener/gardener",
-      "learningId": "learn-github-gardener-gardener",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T19:26:16.534Z",
       "repository": "tailscale/tailscale",
@@ -1403,6 +1396,13 @@
       "repository": "MaterializeInc/materialize",
       "learningId": "learn-github-materializeinc-materialize",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T10:43:53.688Z",
+      "repository": "GitoxideLabs/gitoxide",
+      "learningId": "learn-github-gitoxidelabs-gitoxide",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
