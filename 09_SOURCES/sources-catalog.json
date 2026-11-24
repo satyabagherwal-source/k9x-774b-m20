@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "b0a4509e",
+    "sourceVersion": "ae6a5b06",
     "license": "Apache-2.0",
-    "contentHash": "f72e9068f01b4c55c5d9f2b0c75d8bf6f77cf440da878d45225b22817e755a45",
-    "lastHarvestedAt": "2026-11-23T19:43:03.411Z",
+    "contentHash": "c9da2ae1faa0e3e43438af0c4438143027d9cc533b418f5a14e331dd33d9506e",
+    "lastHarvestedAt": "2026-11-24T00:07:25.157Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {
@@ -1675,8 +1675,8 @@
     "sourceUrl": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base",
     "sourceVersion": "hf-openmoss-team-moss-image-base",
     "license": "Open-Source",
-    "contentHash": "181733b38ce03a0f19f30b3172dc4ab3ff9ff3d40fa3a4de2d6196b2633574ce",
-    "lastHarvestedAt": "2026-11-19T18:19:49.352Z",
+    "contentHash": "bb56b63e660fb722ed65f25f71cca2f1b099f086b4d2c8f4d6176bbb5ef5e1c0",
+    "lastHarvestedAt": "2026-11-24T00:07:13.880Z",
     "learningId": "learn-huggingface-openmoss-team-moss-image-base"
   },
   "hf-openmoss-team-moss-image-sft": {
@@ -7823,10 +7823,10 @@
     "repository": "astral-sh/uv",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/uv",
-    "sourceVersion": "264d8b4a",
+    "sourceVersion": "d99121a2",
     "license": "Apache-2.0",
-    "contentHash": "76afbf48c90c1020b68d8897223f29e55f4b218a11c9ec30de689785f6cf38df",
-    "lastHarvestedAt": "2026-11-22T16:28:12.334Z",
+    "contentHash": "402548bff7636dfccbcbcaef3cf6cc80a7adb2cb43966656f9e5e343dce668a1",
+    "lastHarvestedAt": "2026-11-24T00:07:15.273Z",
     "learningId": "learn-github-astral-sh-uv"
   },
   "thaw-app-thaw": {

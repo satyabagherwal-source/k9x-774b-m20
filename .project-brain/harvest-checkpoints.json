@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-23T23:48:52.629Z",
+  "last_updated": "2026-11-24T00:07:25.167Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "e4cf951848685e0bd3b9db10b8ee634d858090bdf479b0b4408cef43e172d601",
-      "verified_at": "2026-11-23T21:40:01.642Z",
+      "content_hash": "c9da2ae1faa0e3e43438af0c4438143027d9cc533b418f5a14e331dd33d9506e",
+      "verified_at": "2026-11-24T00:07:25.166Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T21:40:01.642Z"
+      "last_updated": "2026-11-24T00:07:25.166Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -2646,14 +2646,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openmoss-team-moss-image-base",
-      "content_hash": "181733b38ce03a0f19f30b3172dc4ab3ff9ff3d40fa3a4de2d6196b2633574ce",
-      "verified_at": "2026-11-19T18:19:49.360Z",
+      "content_hash": "bb56b63e660fb722ed65f25f71cca2f1b099f086b4d2c8f4d6176bbb5ef5e1c0",
+      "verified_at": "2026-11-24T00:07:13.890Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T18:19:49.360Z"
+      "last_updated": "2026-11-24T00:07:13.890Z"
     },
     "OpenMOSS-Team/MOSS-Image-SFT": {
       "repository": "OpenMOSS-Team/MOSS-Image-SFT",
@@ -11766,14 +11766,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-astral-sh-uv",
-      "content_hash": "76afbf48c90c1020b68d8897223f29e55f4b218a11c9ec30de689785f6cf38df",
-      "verified_at": "2026-11-22T16:28:12.345Z",
+      "content_hash": "402548bff7636dfccbcbcaef3cf6cc80a7adb2cb43966656f9e5e343dce668a1",
+      "verified_at": "2026-11-24T00:07:15.282Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T16:28:12.345Z"
+      "last_updated": "2026-11-24T00:07:15.282Z"
     },
     "thaw-app/Thaw": {
       "repository": "thaw-app/Thaw",

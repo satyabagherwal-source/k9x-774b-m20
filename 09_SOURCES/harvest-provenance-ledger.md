@@ -12553,3 +12553,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local` | `https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-23T23:48:40.851Z |
 | `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `26f8a967` | Multi-dimensional audit evidence | 2026-11-23T23:48:43.975Z |
 | `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `504582d8` | Multi-dimensional audit evidence | 2026-11-23T23:48:52.621Z |
+| `learn-huggingface-openmoss-team-moss-image-base` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base` | `hf-openmos` | Multi-dimensional audit evidence | 2026-11-24T00:07:13.880Z |
+| `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `d99121a2` | Multi-dimensional audit evidence | 2026-11-24T00:07:15.273Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `ae6a5b06` | Multi-dimensional audit evidence | 2026-11-24T00:07:25.157Z |
+| `learn-dom-d-06e3f5c1` | `project://astral-sh-uv` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-uv-learnings.md` | 2026-11-24T00:07:59.812Z |

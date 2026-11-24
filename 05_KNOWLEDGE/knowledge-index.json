@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-23T23:48:58.084Z",
+  "last_updated": "2026-11-24T00:08:02.025Z",
   "total_verified_learnings": 9087,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112818,25 +112818,25 @@
       "item_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "repository": "aleo-labs-protocol/snarkOS",
       "source_version": "ae6a5b06",
-      "content_hash": "baf7b85a0cbcf55a1b2c486f8da9196b312336dfd78742cb4277cf32e200a3ee",
+      "content_hash": "70f2be15ec963dabccfa6f4666e64fc4ff6ace25eb27ed0185593840598f7f1e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T21:40:02.034Z"
+      "persisted_at": "2026-11-24T00:07:25.589Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/provablehq-snarkos-verification-protocol-empirical-defect-shield-for-aleo-labs-p.md",
+      "relative_path": "08_VERIFICATION/aleo-labs-protocol-snarkos-verification-protocol-empirical-defect-shield-for-ale.md",
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
       "source_version": "ae6a5b06",
-      "content_hash": "0e96a1cbc59404baddf15277f5ef4d46da9106ee00d02343e51b38a7dc4d5c28",
+      "content_hash": "0c44127663ac63fd8bf6e132f0def2db9b314a6cf62a2e0d54642d3b382f812e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T21:40:02.212Z"
+      "persisted_at": "2026-11-24T00:07:25.772Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
@@ -215963,13 +215963,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "provablehq-snarkos",
+      "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
       "source_version": "ae6a5b06",
-      "content_hash": "e4cf951848685e0bd3b9db10b8ee634d858090bdf479b0b4408cef43e172d601",
-      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "content_hash": "c9da2ae1faa0e3e43438af0c4438143027d9cc533b418f5a14e331dd33d9506e",
+      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 3992,
@@ -216079,7 +216079,7 @@
         {
           "number": 10129,
           "title": "Empirical Invariant Guard in lib.rs",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -216087,7 +216087,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T21:40:01.412Z",
+      "verified_at": "2026-11-24T00:07:24.945Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234892,8 +234892,8 @@
       "slug": "astral-sh-uv",
       "platform": "github",
       "source_url": "https://github.com/astral-sh/uv",
-      "source_version": "264d8b4a",
-      "content_hash": "76afbf48c90c1020b68d8897223f29e55f4b218a11c9ec30de689785f6cf38df",
+      "source_version": "d99121a2",
+      "content_hash": "402548bff7636dfccbcbcaef3cf6cc80a7adb2cb43966656f9e5e343dce668a1",
       "dossier_path": "07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
       "promoted_rules": [
@@ -234933,7 +234933,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T16:28:12.015Z",
+      "verified_at": "2026-11-24T00:07:15.054Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234975,10 +234975,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-astral-sh-uv-architecture-intelligence-astral-sh-uv-core-invariants.md",
       "title": "Architecture Intelligence: astral-sh/uv Core Invariants",
       "repository": "astral-sh/uv",
-      "source_version": "264d8b4a",
-      "content_hash": "2231644f4041875cdba35a8142069368f258205c2e409eefb1365d9e73f493c2",
+      "source_version": "d99121a2",
+      "content_hash": "db4662ab149ab909a18e442e0771e894e8f03f8dc621019b0ea4267b8a0387d9",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T16:28:12.906Z"
+      "persisted_at": "2026-11-24T00:07:15.557Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-astral-sh-uv": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-astral-sh-uv",
@@ -235228,9 +235228,9 @@
       "title": "Architecture Intelligence: astral-sh-uv-learnings Core Invariants",
       "repository": "astral-sh-uv-learnings",
       "source_version": "HEAD",
-      "content_hash": "685095743a49536d133a145762a705dc46690bd65cdbfef614dbb327bb023a51",
+      "content_hash": "a1fba4e6c3de4134294db18e88aa0261b29c6ce0feb0ebf86614da687d4902f4",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T16:29:05.273Z"
+      "persisted_at": "2026-11-24T00:08:00.462Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-astral-sh-uv-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-astral-sh-uv-learnings",
@@ -244632,7 +244632,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base",
       "source_version": "hf-openmoss-team-moss-image-base",
-      "content_hash": "181733b38ce03a0f19f30b3172dc4ab3ff9ff3d40fa3a4de2d6196b2633574ce",
+      "content_hash": "bb56b63e660fb722ed65f25f71cca2f1b099f086b4d2c8f4d6176bbb5ef5e1c0",
       "dossier_path": "07_PROJECT_LEARNING/hf-openmoss-team-moss-image-base-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openmoss-team-moss-image-base-learnings.md",
       "promoted_rules": [],
@@ -244641,7 +244641,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T18:19:49.142Z",
+      "verified_at": "2026-11-24T00:07:13.640Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -244658,9 +244658,9 @@
       "title": "Research & Knowledge Intelligence: OpenMOSS-Team/MOSS-Image-Base Core Invariants",
       "repository": "OpenMOSS-Team/MOSS-Image-Base",
       "source_version": "hf-openmoss-team-moss-image-base",
-      "content_hash": "4352518291df9bf3da2a8d3fe5561d6df6518189418750ae08237132b4bfed49",
+      "content_hash": "088da67f9fd7b9c9a01fe6b71f9e8a9413ac8947adf9c1f3776745ef3a5ec8d0",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T18:19:49.526Z"
+      "persisted_at": "2026-11-24T00:07:14.115Z"
     },
     "learn-github-crosspaste-crosspaste-desktop": {
       "learning_id": "learn-github-crosspaste-crosspaste-desktop",
@@ -244785,9 +244785,9 @@
       "title": "Research & Knowledge Intelligence: hf-openmoss-team-moss-image-base-learnings Core Invariants",
       "repository": "hf-openmoss-team-moss-image-base-learnings",
       "source_version": "HEAD",
-      "content_hash": "8a79b24994f570d1260fbac816b3821f2bac2116073bfa6485d04213150d89f2",
+      "content_hash": "0a4e6c34a1475d733a216e892864d187e8bdda0f71607ae97fe3fe6c86be334b",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T18:20:38.855Z"
+      "persisted_at": "2026-11-24T00:08:00.942Z"
     },
     "domain_intelligence-design-intelligence-crosspaste-crosspaste-desktop-learnings-core-invariants": {
       "item_id": "domain_intelligence-design-intelligence-crosspaste-crosspaste-desktop-learnings-core-invariants",
@@ -257230,9 +257230,9 @@
       "title": "Architecture Intelligence: aleo-labs-protocol-snarkos-learnings Core Invariants",
       "repository": "aleo-labs-protocol-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "c7298bd38e540b9f71091742c4ff1956e346e8d7ffde8ca01c18f25a8f75ac44",
+      "content_hash": "317e050899d255eb4660d7effaa2914040308d1ddd71440a32f7fc79530db4c9",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T19:43:08.503Z"
+      "persisted_at": "2026-11-24T00:08:01.813Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos-lea": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos-lea",
@@ -257242,9 +257242,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol-snarkos-learnings",
       "repository": "aleo-labs-protocol-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "580d4df092a7476f95decf7afc7841e4839b5a3376f2bad1daa4c5143a36ceca",
+      "content_hash": "473857cbd94ce5cbd054e64b48253c48ee8103ec717a37fa84b202cfd369e884",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T19:43:08.683Z"
+      "persisted_at": "2026-11-24T00:08:02.025Z"
     },
     "candidate_directive-keep-what-a-step-installs-for-the-next-one-and-give-jobs-the-runner-s-rust-and": {
       "item_id": "candidate_directive-keep-what-a-step-installs-for-the-next-one-and-give-jobs-the-runner-s-rust-and",
@@ -330231,26 +330231,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 10129,
       "title": "Empirical Invariant Guard in lib.rs",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
       "source_version": "ae6a5b06",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-23T21:40:01.412Z"
+      "verified_at": "2026-11-24T00:07:24.945Z"
     },
     "candidate_directive-empirical-invariant-guard-in-lib-rs": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-lib-rs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-HEY5-empirical-invariant-guard-in-lib-rs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-RNL2-empirical-invariant-guard-in-lib-rs.md",
       "title": "Empirical Invariant Guard in lib.rs",
-      "repository": "provablehq-snarkos-learnings",
+      "repository": "aleo-labs-protocol-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "80a254b9d127a50476929c7a2e7ddb61755f477fb053f4327a44c631197e0025",
+      "content_hash": "b4a557a3079c3e7c9d9ba24474bc748c2480add31990dbbd0c956c175ba164ed",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T21:40:05.744Z"
+      "persisted_at": "2026-11-24T00:08:01.587Z"
     },
     "learn-huggingface-inclusionai-ling-3-2-air": {
       "learning_id": "learn-huggingface-inclusionai-ling-3-2-air",

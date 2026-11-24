@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-23T23:48:57.926Z",
-  "total_records": 2466,
+  "last_updated": "2026-11-24T00:08:01.813Z",
+  "total_records": 2467,
   "domains": {
     "A": {
       "total": 20,
@@ -67,7 +67,7 @@
       ]
     },
     "D": {
-      "total": 943,
+      "total": 944,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1011,7 +1011,8 @@
         "domain_intelligence-research-knowledge-intelligence-inclusionai-ling-3-2-air-core-invariants",
         "DOM-D-7E47FE9B",
         "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ling-3-2-air-learnings-core-invar",
-        "DOM-D-E322F459"
+        "DOM-D-E322F459",
+        "DOM-D-06E3F5C1"
       ]
     },
     "E": {
@@ -8570,10 +8571,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "baf7b85a0cbcf55a1b2c486f8da9196b312336dfd78742cb4277cf32e200a3ee",
-      "created_at": "2026-11-23T21:40:02.034Z"
+      "content_hash": "70f2be15ec963dabccfa6f4666e64fc4ff6ace25eb27ed0185593840598f7f1e",
+      "created_at": "2026-11-24T00:07:25.589Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -17243,8 +17244,8 @@
       "title": "Architecture Intelligence: astral-sh/uv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-astral-sh-uv-architecture-intelligence-astral-sh-uv-core-invariants.md",
       "repository": "astral-sh/uv",
-      "content_hash": "2231644f4041875cdba35a8142069368f258205c2e409eefb1365d9e73f493c2",
-      "created_at": "2026-11-22T16:28:12.906Z"
+      "content_hash": "db4662ab149ab909a18e442e0771e894e8f03f8dc621019b0ea4267b8a0387d9",
+      "created_at": "2026-11-24T00:07:15.557Z"
     },
     "domain_intelligence-technical-construction-intelligence-callstack-agent-device-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-callstack-agent-device-core-invariants",
@@ -17270,8 +17271,8 @@
       "title": "Architecture Intelligence: astral-sh-uv-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-astral-sh-uv-learnings-architecture-intelligence-astral-sh-uv-learnings-core-inv.md",
       "repository": "astral-sh-uv-learnings",
-      "content_hash": "685095743a49536d133a145762a705dc46690bd65cdbfef614dbb327bb023a51",
-      "created_at": "2026-11-22T16:29:05.273Z"
+      "content_hash": "a1fba4e6c3de4134294db18e88aa0261b29c6ce0feb0ebf86614da687d4902f4",
+      "created_at": "2026-11-24T00:08:00.462Z"
     },
     "DOM-D-CCF89F8A": {
       "record_id": "DOM-D-CCF89F8A",
@@ -20130,8 +20131,8 @@
       "title": "Research & Knowledge Intelligence: OpenMOSS-Team/MOSS-Image-Base Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openmoss-team-moss-image-base-research-knowledge-intelligence-openmoss-team-m.md",
       "repository": "OpenMOSS-Team/MOSS-Image-Base",
-      "content_hash": "4352518291df9bf3da2a8d3fe5561d6df6518189418750ae08237132b4bfed49",
-      "created_at": "2026-11-19T18:19:49.526Z"
+      "content_hash": "088da67f9fd7b9c9a01fe6b71f9e8a9413ac8947adf9c1f3776745ef3a5ec8d0",
+      "created_at": "2026-11-24T00:07:14.115Z"
     },
     "domain_intelligence-design-intelligence-crosspaste-crosspaste-desktop-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-crosspaste-crosspaste-desktop-core-invariants",
@@ -20190,8 +20191,8 @@
       "title": "Research & Knowledge Intelligence: hf-openmoss-team-moss-image-base-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openmoss-team-moss-image-base-learnings-research-knowledge-intelligence-hf-op.md",
       "repository": "hf-openmoss-team-moss-image-base-learnings",
-      "content_hash": "8a79b24994f570d1260fbac816b3821f2bac2116073bfa6485d04213150d89f2",
-      "created_at": "2026-11-19T18:20:38.855Z"
+      "content_hash": "0a4e6c34a1475d733a216e892864d187e8bdda0f71607ae97fe3fe6c86be334b",
+      "created_at": "2026-11-24T00:08:00.942Z"
     },
     "domain_intelligence-design-intelligence-crosspaste-crosspaste-desktop-learnings-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-crosspaste-crosspaste-desktop-learnings-core-invariants",
@@ -23988,8 +23989,8 @@
       "title": "Architecture Intelligence: aleo-labs-protocol-snarkos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-learnings-architecture-intelligence-aleo-labs-protoco.md",
       "repository": "aleo-labs-protocol-snarkos-learnings",
-      "content_hash": "c7298bd38e540b9f71091742c4ff1956e346e8d7ffde8ca01c18f25a8f75ac44",
-      "created_at": "2026-11-23T19:43:08.503Z"
+      "content_hash": "317e050899d255eb4660d7effaa2914040308d1ddd71440a32f7fc79530db4c9",
+      "created_at": "2026-11-24T00:08:01.813Z"
     },
     "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants",
@@ -41335,6 +41336,48 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-23T23:40:26.539Z"
+    },
+    "DOM-D-06E3F5C1": {
+      "record_id": "DOM-D-06E3F5C1",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): astral-sh/uv",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-uv-learnings.md`  \n> **Source**: github ([https://github.com/astral-sh/uv](https://github.com/astral-sh/uv))  \n> **Source Version**: `d99121a2`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clone-structural-synthesizer  \n>",
+      "content_hash": "2fb918aedc80bbc390d37d7a9a1f2e84857fc184a86956a631b488322eeec659",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-uv-learnings.md`  \n> **Source**: github ([https://github.com/astral-sh/uv] -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-uv-learnings.md`  \n> **Source**: github ([https://github.com/astral-sh/uv]",
+      "provenance": {
+        "source_uri": "project://astral-sh-uv/astral-sh-uv-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-24T00:07:28.626Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (astral-sh-uv)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of astral-sh-uv"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-24T00:07:59.782Z"
     }
   }
 }

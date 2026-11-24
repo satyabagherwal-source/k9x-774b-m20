@@ -12520,3 +12520,7 @@
 | `CYCLE-20261123-2RYM` | `2026-11-23T23:48:40.846Z` | `nvidia/Qwen3.8-Flash-Next-FP4-Local` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md` | Yes (`f957a1b2...`) |
 | `CYCLE-20261123-2UDF` | `2026-11-23T23:48:43.971Z` | `oven-sh/bun` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10149` | Yes (`79f1776b...`) |
 | `CYCLE-20261123-311L` | `2026-11-23T23:48:52.617Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10150` | Yes (`590e5742...`) |
+| `CYCLE-20261124-QMS3` | `2026-11-24T00:07:13.875Z` | `OpenMOSS-Team/MOSS-Image-Base` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openmoss-team-moss-image-base-learnings.md` | Yes (`bb56b63e...`) |
+| `CYCLE-20261124-QNUS` | `2026-11-24T00:07:15.268Z` | `astral-sh/uv` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/astral-sh-uv-learnings.md` | Yes (`402548bf...`) |
+| `CYCLE-20261124-QVHD` | `2026-11-24T00:07:25.153Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10129` | Yes (`c9da2ae1...`) |
+| `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T00:07:59.812Z` | `astral-sh-uv` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-06E3F5C1` [Domain D] | Yes (`2fb918ae...`) |
