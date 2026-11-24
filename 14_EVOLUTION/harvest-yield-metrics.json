@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T06:20:48.080Z",
-  "total_cycles_completed": 11989,
-  "total_learnings_persisted": 11989,
-  "total_rules_promoted": 11068,
+  "last_updated": "2026-11-24T06:30:13.715Z",
+  "total_cycles_completed": 11991,
+  "total_learnings_persisted": 11991,
+  "total_rules_promoted": 11070,
   "history": [
-    {
-      "timestamp": "2026-11-23T17:29:41.021Z",
-      "repository": "k3s-io/k3s",
-      "learningId": "learn-github-k3s-io-k3s",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T17:37:46.148Z",
-      "repository": "jialinyyzz/humanizer",
-      "learningId": "learn-huggingface-jialinyyzz-humanizer",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T17:37:58.663Z",
       "repository": "prometheus/prometheus",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-24T06:20:48.080Z",
       "repository": "aws/aws-cdk",
       "learningId": "learn-github-aws-aws-cdk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T06:30:07.366Z",
+      "repository": "metalbear-co/mirrord",
+      "learningId": "learn-github-metalbear-co-mirrord",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T06:30:13.715Z",
+      "repository": "expo/expo",
+      "learningId": "learn-github-expo-expo",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

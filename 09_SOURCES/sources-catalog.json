@@ -3013,10 +3013,10 @@
     "repository": "metalbear-co/mirrord",
     "platform": "github",
     "sourceUrl": "https://github.com/metalbear-co/mirrord",
-    "sourceVersion": "a3009132",
+    "sourceVersion": "f3111f6b",
     "license": "MIT",
-    "contentHash": "eb60ad8c113b452d4de3b3d3c6f5cdedaacadfb22069ac6aaf762e10743439c2",
-    "lastHarvestedAt": "2026-11-22T22:28:01.860Z",
+    "contentHash": "6ed05e4d8608695a799ff06dbaa404adfeb3490dca08135efcd639cc28057361",
+    "lastHarvestedAt": "2026-11-24T06:30:07.359Z",
     "learningId": "learn-github-metalbear-co-mirrord"
   },
   "openkruise-kruise": {
@@ -10333,10 +10333,10 @@
     "repository": "expo/expo",
     "platform": "github",
     "sourceUrl": "https://github.com/expo/expo",
-    "sourceVersion": "aa82194f",
+    "sourceVersion": "b03773cb",
     "license": "MIT",
-    "contentHash": "e1b3aae315bfaa0d81c6a7c4669797fd32bea692a1026938e6684a400a35fc87",
-    "lastHarvestedAt": "2026-11-21T11:55:26.644Z",
+    "contentHash": "9b5fea2d363eff5ea37cfa556947151796c8af3394dbaeb69541942953f86dea",
+    "lastHarvestedAt": "2026-11-24T06:30:13.707Z",
     "learningId": "learn-github-expo-expo"
   },
   "vercel-swr": {

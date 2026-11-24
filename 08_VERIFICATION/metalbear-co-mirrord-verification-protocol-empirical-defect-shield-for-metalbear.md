@@ -4,22 +4,22 @@
 {
   "source_repository": "metalbear-co/mirrord",
   "source_url": "https://github.com/metalbear-co/mirrord",
-  "source_version": "a3009132",
+  "source_version": "f3111f6b",
   "license": "MIT",
-  "timestamp": "2026-11-22T22:28:02.086Z",
+  "timestamp": "2026-11-24T06:30:07.680Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-metalbear-co-mirrord",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [metalbear-co/mirrord](https://github.com/metalbear-co/mirrord) (Revision: `a3009132`).  
-> **License**: MIT | **Timestamp**: `2026-11-22T22:28:02.086Z`  
+> **Provenance**: Harvested from [metalbear-co/mirrord](https://github.com/metalbear-co/mirrord) (Revision: `f3111f6b`).  
+> **License**: MIT | **Timestamp**: `2026-11-24T06:30:07.680Z`  
 > **Learning ID**: `learn-github-metalbear-co-mirrord`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `metalbear-co/mirrord` (Commit: `a3009132`)
+- **Target Repository**: `metalbear-co/mirrord` (Commit: `f3111f6b`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/metalbear-co/mirrord](https://github.com/metalbear-co/mirrord))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T22:28:00.784Z  
+> **Harvest Timestamp**: 2026-11-24T06:30:05.514Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Run any process, on your machine or in an AI agent's environment, as if it were a pod in your Kubernetes cluster: real env vars, DNS, network, traffic.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 5426 stars
+- **Stars / Engagement**: 5428 stars
 
 ---
 
@@ -1540,153 +1540,167 @@ mod test {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a3009132` (2026-11-22)
-**Commit Message**: Say DynamoDB branches need `connection` (#5272)
+### Incident Patch 1: `2057b2a2` (2026-11-23)
+**Commit Message**: Publish docs and guides when a labeled pull request merges (#5291)
 
-The DynamoDB page and the field table said `connection` was optional
-for DynamoDB and that leaving it out used the regional AWS endpoint.
-The config has required it since DynamoDB branching shipped, so the
-page's basic example failed with "missing field `connection`".
-`connection` is also how the app reaches the branch: mirrord sets the
-env var it names to the branch's endpoint in the local process.
+* Publish docs and guides when a labeled pull request merges
 
-The pages now say `connection` names the env var that holds the
-DynamoDB endpoint, usually `AWS_ENDPOINT_URL_DYNAMODB`. The source
-tables are copied from the endpoint that variable holds on the target,
-or from the regional endpoint if the target doesn't set it. The basic
-example and the troubleshooting fragment in the DB branching skill now
-set `connection`.
+A docs fix reached the site only with the next release or through a
+manual run of publish-docs.yaml. A pull request from this repository
+with the `publish-docs` label now runs that workflow for `main` when it
+merges. A fork's pull request is skipped, because its `pull_request`
+run has a read-only token and no secrets, and GitHub blocks
+`pull_request_target` by default in public repositories from December
+2, 2026. A maintainer publishes such a change by hand.
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+The label publishes all of `docs/` and `guides/`, so it also ships
+unreleased pages merged earlier. A release cut before a labeled merge
+puts the site back on the released commit when it publishes, until the
+next publish.
 
-**File**: `docs/docs/sharing-the-cluster/db-branching.md` (modified, +1/-1)
+The job publishes `main` rather than the merge commit, and its runs
+share a concurrency group, so two close merges can't leave the site on
+the older one. The group is on the calling job so that releases stay
+outside it, because by default GitHub cancels a run waiting in a group
+when another joins.
+
+The workflow hasn't run on GitHub yet. A local evaluation of the job's
+`if` and gro
+
+**File**: `.github/workflows/publish-docs-on-merge.yaml` (added, +37/-0)
 ```diff
-@@ -115,7 +115,7 @@ MySQL `8.4` is the default from operator `3.232.0`. On an older operator, a bran
- | `namespace` | When `true`, the branch runs in its own namespace (`mirrord-<key>` by default), instead of the target's namespace. Branches started under the same session `key` and operator namespace pattern share it. Needs the operator Helm chart value `operator.dbBranchNamespaces`. See [A Namespace per Key](#a-namespace-per-key). Does not apply to branches created in your account with the provider. |
- | `name` | Remote database name to clone, the override URL uses `name` so the connection URL looks like .../dbname. If name is ommited, the override URL just points to the database server; the application must select the DB manually in that case. For Redis, `name` is the database **index** Redis uses to select a logical database rather than a name, so it must be a valid non-negative number. If omitted, it defaults to index `0`. Does not apply to branches created in your account with the provider. |
- | `ttl_secs` / `ttl_mins` | Override for branch time-to-live (TTL), expressed in seconds or minutes. The two fields are mutually exclusive — set whichever is more convenient. The default is 5 minutes. |
--| `connection` | Describes how to locate the source database connection details. Supports a full connection URL or individual connection parameters. See [Connection Modes](db-branching/connection.md) for details. For DynamoDB, `connection` is optional and, since there is no user or password, is only used to point the source client at a custom/VPC endpoint URL (for example `AWS_ENDPOINT_URL_DYNAMODB`); if omitted, the standard regional AWS endpoint is used. |
-+| `connection` | Describes how to locate the source database connection details. Supports a full connection URL or individual connection parameters. See [Connection Modes](db-branching/connection.md) for details. For DynamoDB, `connection` names the env var that holds the DynamoDB endpoint, usually `AWS_ENDPOINT_URL_DYNAMODB`. See [DynamoDB](db-branching/dynamodb.md#connection). |
- | `copy.mode` | Allows developers to control how the database is cloned when creating a branch. Available modes and filtering options differ per engine - see the Copy Modes section on your [database's page](#choose-your-database). |
- | `copy.dump_args` | (MySQL, MariaDB & PostgreSQL only) Customize the arguments passed to `mysqldump`, `mariadb-dump`, or `pg_dump`. See [MySQL](db-branching/mysql.md#custom-dump-arguments), [MariaDB](db-branching/mariadb.md#custom-dump-arguments), or [PostgreSQL](db-branching/postgresql.md#custom-dump-arguments) for details. |
- | `creation_timeout_secs` | Override for branch creation timeout, in seconds. If the branch isn't ready within this time, the mirrord session fails and returns a timeout error. Use this field to avoid hanging operations when branch creation takes too long or fails. The default is 60 seconds. Unrecoverable pod failures (for example a bad image reference stuck in `ImagePullBackOff`) fail the branch immediately with the underlying error instead of waiting for this timeout. |
+@@ -0,0 +1,37 @@
++name: Publish docs and guides on labeled merge
++
++# The `publish-docs` label publishes the docs and guides without needing a release. When a pull request with the label
++# merges into `main`, this workflow runs publish-docs.yaml for `main`. That publishes the whole `docs/` and `guides/`
++# trees, so it also ships anything merged earlier that hasn't been released yet.
++#
++# The trigger is `pull_request`, because GitHub blocks `pull_request_target` by default in public repositories from
++# December 2, 2026, and a `push` to `main` would have to look up the pull request of each commit to read its labels. A
++# `pull_request` run from a fork gets a read-only token and no secrets, so it can neither push the publish commits nor
++# post to #ci-alerts. The job skips a fork's pull request, because its run could only fail with nobody told, and a
++# maintainer publishes it with the manual steps in docs/AGENTS.md. Only a pull request from a branch of this repository
++# can publish, and creating such a branch takes write access.
++
++on:
++  pull_request:
++    types: [closed]
++    branches: [main]
++
++permissions: {}
++
++jobs:
++  # Publishes `main` rather than the merge commit, so that the last of several close merges publishes all of them. A
++  # release that publishes afterwards puts the site back on the released commit, as docs/AGENTS.md describes.
++  publish_docs:
++    if: ${{ github.event.pull_request.merged == true && github.event.pull_request.head.repo.full_name == github.repository && contains(github.event.pull_request.labels.*.name, 'publish-docs') }}
++    concurrency:
++      group: ${{ github.event.pull_request.merged == true && github.event.pull_request.head.repo.full_name == github.repository && contains(github.event.pull_request.labels.*.name, 'publish-docs') && 'publish docs on merge' || github.run_id }}
++      cancel-in-progress: false
++    permissions:
++      contents: write
++      statuses: read
++    uses: ./.github/workflows/publish-docs.yaml
++    with:
++      ref: main
++      dry_run: false
++    secrets:
++      SLACK_CI_ALERTS_WEBHOOK_URL: ${{ secrets.SLACK_CI_ALERTS_WEBHOOK_URL }}
 ```
 
-**File**: `docs/docs/sharing-the-cluster/db-branching/dynamodb.md` (modified, +4/-1)
+**File**: `.github/workflows/publish-docs.yaml` (modified, +3/-2)
 ```diff
-@@ -27,6 +27,9 @@ DynamoDB branching requires operator `3.179.0`, mirrord CLI `3.228.0`, and opera
-         "id": "users-dynamodb",
-         "type": "dynamodb",
-         "version": "latest",
-+        "connection": {
-+          "url": "AWS_ENDPOINT_URL_DYNAMODB"
-+        },
-         "iam_auth": { "type": "aws_rds" },
-         "copy": {
-           "mode": "all"
-@@ -39,7 +42,7 @@ DynamoDB branching requires operator `3.179.0`, mirrord CLI `3.228.0`, and opera
+@@ -2,8 +2,9 @@ name: Publish docs and guides
  
- ### Connection
- 
--Unlike the other engines, `connection` is optional for DynamoDB. Since there is no user or password, it is only used to point the source client at a custom/VPC endpoint URL (for example `AWS_ENDPOINT_URL_DYNAMODB`); if omitted, the standard regional AWS endpoint is used. See [Connection Modes](connection.md) for the supported source formats.
-+`connection` names the env var that holds your application's DynamoDB endpoint, usually `AWS_ENDPOINT_URL_DYNAMODB`, which the AWS SDKs read. mirrord sets it to the branch's endpoint in your local process. The source tables are copied from the endpoint this variable holds on the target, or from the standard regional AWS endpoint if the target doesn't set it. See [Connection Modes](connection.md) for the supported source formats.
- 
- ### IAM Authentication
- 
+ # GitBook's Documentation and Guides spaces sync the `docs-published` and `guides-published` branches, not `main`, so
+ # a page merged to `docs/` or `guides/` reaches the site only when this workflow publishes it. The release calls it for
+-# the released commit, so the site describes what users can install. A dispatch publishes a fix between releases: run
+-# it with `dry_run` first to list the files that differ from the published branches.
++# the released commit, so the site describes what users can install. publish-docs-on-merge.yaml calls it for `main`
++# when a pull request with the `publish-docs` label merges. A dispatch publishes a fix between releases: run it with
++# `dry_run` first to list the files that differ from the published branches.
+ #
+ # Each publish appends one commit whose tree is exactly `<ref>:docs` or `<ref>:guides`, on top of the branch tip. The
+ # branch is never force-pushed, because GitBook also pushes to it when a change request merges, and so can another run
 ```
 
-**File**: `skills/skills/mirrord-db-branching/references/troubleshooting.md` (modified, +1/-1)
+**File**: `AGENTS.md` (modified, +4/-2)
 ```diff
-@@ -116,7 +116,7 @@ DynamoDB has no password-based auth. `"copy": { "mode": "all" }` **requires** `i
- **Solution:**
- 
- ```json mirrord=feature.db_branches[]
--{ "type": "dynamodb", "iam_auth": { "type": "aws_rds" }, "copy": { "mode": "all" } }
-+{ "type": "dynamodb", "connection": { "url": "AWS_ENDPOINT_URL_DYNAMODB" }, "iam_auth": { "type": "aws_rds" }, "copy": { "mode": "all" } }
- ```
- 
- Also note: DynamoDB `filter` strings can't use `ExpressionAttributeValues`/`Names` placeholders; only self-contained expressions work. LSIs are not copied; branch tables use PayPerRequest billing.
+@@ -153,8 +153,10 @@ schedule. What's only on `main` hasn't shipped and needs no compatibility; what'
+   exception: it isn't in `docs/`, but is generated from `mirrord-config`'s doc comments (`mirrord/config/AGENTS.md`), so
+   a config change updates those instead. GitBook builds the site from the `docs-published` and `guides-published`
+   branches, which every mirrord release updates from the released commit (`publish-docs.yaml`), so an edit reaches the
+-  site with the next release. `mirrord mcp` embeds `docs/docs` when it's built, so an edit there also reaches it with
+-  the next release. `docs/AGENTS.md` says how to publish a fix between releases.
++  site with the next release. A pull request from this repository with the `publish-docs` label publishes sooner: when
++  it merges, `publish-docs-on-merge.yaml` publishes all of `docs/` and `guides/` from `main`. `mirrord mcp` embeds
++  `docs/docs` when it's built, so an edit there reaches it only with the next release, whatever the label.
++  `docs/AGENTS.md` says how to publish a fix between releases.
+ - `skills/` came from `metalbear-co/skills`, which keeps its earlier history. `mirrord mcp` embeds `skills/skills` when
+   it's built (`mirrord/mcp/AGENTS.md`), so an edit reaches it with the next mirrord release. Nothing copies `skills/` to
+   `metalbear-co/skills` yet, so an edit doesn't reach that repository.
 ```
 
----
-
-### Incident Patch 2: `52d27871` (2026-11-22)
-**Commit Message**: Point four broken links at pages and headings that exist (#5269)
-
-The bullet list in the feature matrix linked three pages without
-`../`, so GitBook turned them into GitHub links to pages under
-`reference/` that don't exist. Three anchors pointed at headings
-that were renamed: "Replacing a Whole Workload Using `scale_down`",
-"Setting a Filter for a mirrord Run", and, on the WSL page, a
-`#root-project-vscode` id that the page never had. That link now
-points at "Using mirrord in VS Code", the section after the one it
-skips.
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `docs/docs/installing-mirrord/wsl.md` (modified, +1/-1)
+**File**: `CONTRIBUTING.md` (modified, +4/-0)
 ```diff
-@@ -87,7 +87,7 @@ You can do this from the command line (from within Linux, the Windows file syste
- 
- ### Creating a playground project
- 
--* If you already have your own project, you may [skip this section](wsl.md#root-project-vscode).
-+* If you already have your own project, you may [skip this section](#using-mirrord-in-vs-code).
- 
- We’ll provide you with a small playground project here, if you don’t already have your own. Let's create a sample NodeJS project to use with mirrord, but bear in mind that mirrord is not limited to any programming languages or frameworks. In the Linux terminal, navigate to the `home` directory.
- 
+@@ -966,3 +966,7 @@ When the job warns or fails:
+     --urls "https://github.com/metalbear-co/mirrord/releases/download/<version>/mirrord.msi|x64" \
+     --skip-pr-check --submit
+   ```
++
++## Publishing docs between releases
++
++A merged pull request from this repository with the `publish-docs` label publishes `docs/` and `guides/` from `main`, including pages for changes that aren't released yet. [`docs/AGENTS.md`](/docs/AGENTS.md#publishing-a-fix-between-releases) says how to publish without those pages.
 ```
 
-**File**: `docs/docs/reference/feature-matrix.md` (modified, +3/-3)
+**File**: `changelog.d/+publish-docs-label.internal.md` (added, +1/-0)
 ```diff
-@@ -9,9 +9,9 @@ Some of mirrord's advanced features - DB Branching, Queue Splitting, Preview Env
- Support levels vary by platform. The table below shows the current status for each combination.
- 
- The columns reflect the different contexts in which a feature can be used:
--- Preview Env: using the feature inside a [preview environment](use-cases/preview-environments.md). Each developer or agent gets an isolated slice of the dependency - for example, their own queue partition or database branch — within a shared staging cluster, without affecting others.
--- Multi-cluster: using the feature across [multiple clusters](using-mirrord/multi-cluster.md). Traffic, queue messages, or database connections are routed across cluster boundaries, useful when your infrastructure spans more than one cluster.
--- mirrord up: using the feature when running multiple services together via [mirrord up](using-mirrord/multiple-concurrent-sessions.md). Similar to how `docker compose` orchestrates containers, mirrord up lets you define and launch several interdependent microservices in a single `mirrord-up` file, managing their lifecycle as a group.
-+- Preview Env: using the feature inside a [preview environment](../use-cases/preview-environments.md). Each developer or agent gets an isolated slice of the dependency - for example, their own queue partition or database branch — within a shared staging cluster, without affecting others.
-+- Multi-cluster: using the feature across [multiple clusters](../using-mirrord/multi-cluster.md). Traffic, queue messages, or database connections are routed across cluster boundaries, useful when your infrastructure spans more than one cluster.
-+- mirrord up: using the feature when running multiple services together via [mirrord up](../using-mirrord/multiple-concurrent-sessions.md). Similar to how `docker compose` orchestrates containers, mirrord up lets you define and launch several interdependent microservices in a single `mirrord-up` file, managing their lifecycle as a group.
- 
-  | Feature         | Platform          | Preview Env | Multi-cluster | mirrord up |
-   |-----------------|-------------------|-------------|---------------|------------|
+@@ -0,0 +1 @@
++A merged pull request with the `publish-docs` label now publishes the mirrord docs and guides without a release.
 ```
 
-**File**: `docs/docs/sharing-the-cluster/queue-splitting.md` (modified, +1/-1)
+**File**: `docs/AGENTS.md` (modified, +8/-4)
 ```diff
-@@ -9,7 +9,7 @@ tags:
- If your application consumes messages from a queue service, you should choose a configuration that matches your intention:
+@@ -2,7 +2,7 @@
  
- 1. Running your application with mirrord without any special configuration will result in your local application competing with the deployed application (and potentially other mirrord runs by teammates) for queue messages.
--2. Running your application with [`copy_target` + `scale_down`](../using-mirrord/copy-target.md#replacing-a-whole-deployment-using-scale_down) will result in the deployed application not consuming any messages, and your local application being the exclusive consumer of queue messages.
-+2. Running your application with [`copy_target` + `scale_down`](../using-mirrord/copy-target.md#replacing-a-whole-workload-using-scale_down) will result in the deployed application not consuming any messages, and your local application being the exclusive consumer of queue messages.
- 3. If you want to control which messages will be consumed by the deployed application, and which ones will reach your local application, set up queue splitting for the relevant target, and define a messages filter in the mirrord configuration. Messages that match the filter will reach your local application, and messages that do not, will reach either the deployed application, or another teammate's local application, if they match their filter.
+ ## Overview
  
- {% hint style="info" %}
-```
-
-**File**: `docs/docs/using-mirrord/multi-cluster.md` (modified, +1/-1)
-```diff
-@@ -133,7 +133,7 @@ If the Primary cluster is also the Default cluster, no synchronization is requir
- The flow is the same as single-cluster, applied in every cluster (or in [one cluster](#splitting-from-one-cluster), when the config names it):
+-Paths in this file are relative to this directory of the mirrord repository, which holds the Documentation tab of the [mirrord docs](https://metalbear.com/mirrord/docs), built by GitBook from the Markdown under `docs/`. GitBook builds the site from the `docs-published` branch, which every mirrord release updates to the `docs/` of the released commit, so a merged page reaches the site with the next mirrord release. `mirrord mcp` embeds the pages, so it gets them with the same release. Each publish replaces the branch's content, so a page change merged in the GitBook editor is lost at the next publish: make page changes here.
++Paths in this file are relative to this directory of the mirrord repository, which holds the Documentation tab of the [mirrord docs](https://metalbear.com/mirrord/docs), built by GitBook from the Markdown under `docs/`. GitBook builds the site from the `docs-published` branch, which every mirrord release updates to the `docs/` of the released commit, so a merged page reaches the site with the next mirrord release, or sooner if a publish runs between releases (see [Publishing a Fix Between Releases](#publishing-a-fix-between-releases)). `mirrord mcp` embeds the pages, so it gets them only with the next release. Each publish replaces the branch's content, so a page change merged in the GitBook editor is lost at the next publish: make page changes here.
  
- 1. **One config, synced everywhere.** You create your `MirrordSplitConfig` (and any `MirrordPropertyList` client configs) on the **Primary cluster** only. The operator automatically syncs them to all Workload clusters.
--2. **One filter, applied everywhere.** When you start a session with [`feature.split_queues`](../sharing-the-cluster/queue-splitting.md#setting-a-filter), the Primary pushes your message filter to every child session, so every cluster applies the exact same filter.
-+2. **One filter, applied everywhere.** When you start a session with [`feature.split_queues`](../sharing-the-cluster/queue-splitting.md#setting-a-filter-for-a-mirrord-run), the Primary pushes your message filter to every child session, so every cluster applies the exact same filter.
- 3. **Messages are filtered where they land.** In each cluster, that cluster's operator splits the queue locally, just like single-cluster: the deployed workload is patched to read from a temporary queue, and the operator evaluates your filter on every incoming message.
- 4. **Matches go to your session, the rest flows on.** Messages that match your filter are routed to the temporary session queue that your local application (or preview environment) reads from. Everything that doesn't match keeps flowing to the deployed consumers, untouched.
+ A page for an unreleased change names the versions expected to ship it. Every mirrord release publishes the merged pages and ships them in `mirrord mcp`, so a page for a CLI feature can merge with the feature. The operator ships on its own schedule, so a page for an unreleased operator feature merges only once the operator version that ships it is out. Otherwise a mirrord release would document a feature that users can't get yet.
  
+@@ -21,14 +21,18 @@ CI runs it in the `content_check` job of the root `.github/workflows/ci.yaml`. T
+ 
+ ## Publishing a Fix Between Releases
+ 
+-A fix that can't wait for the next release goes out through the `Publish docs and guides` workflow (`.github/workflows/publish-docs.yaml` at the repository root), which publishes `docs/` to `docs-published` and `guides/` to `guides-published`. To publish a fix:
++A fix that can't wait for the next release goes out through the `Publish docs and guides` workflow (`.github/workflows/publish-docs.yaml` at the repository root), which publishes `docs/` to `docs-published` and `guides/` to `guides-published`.
+ 
+-1. Merge the fix to `main` first, like any other change, so that the next release keeps it.
++The `publish-docs` label publishes all of `docs/` and `guides/` from `main` when its pull request merges (`.github/workflows/publish-docs-on-merge.yaml` at the repository root), including anything merged since the last publish. A failed publish posts to `#ci-alerts`, and re-running the failed job publishes the current `main`.
++
++Run the `Publish docs and guides` workflow by hand for a pull request from a fork, for a label added after the merge, to see what would go out first, or to leave out pages that must wait:
++
++1. If the fix hasn't merged, merge it to `main` without the `publish-docs` label. Another labeled merge would still publish it.
+ 2. From the Actions tab, with "Use workflow from" left on `main`, run the workflow with `ref` set to `main` and `dry_run` on. The step summary names the commit that `main` resolved to and lists the files that differ from the published branches. Everything merged to `docs/` or `guides/` since the last publish goes out with the fix, so check that the list holds only what is ready to publish. If both branches already match, there is nothing to publish.
+ 3. If the list holds pages that must wait, such as one for a CLI feature that merged but isn't released yet, create a branch from the latest release tag, cherry-pick the fix onto it, push it, and dry-run that branch instead. Any name works except one that starts with `docs/`, which git refuses because the repository has a `docs` branch.
+ 4. Run the workflow again with `ref` set to the commit SHA from the dry run's summary and `dry_run` off, so it publishes the commit that the dry run checked. The workflow pushes, waits for GitBook to import the commits, and posts to `#ci-alerts` if any of it fails. Delete the branch from step 3 afterwards.
+ 
+-A fix published while a release pull request is open disappears from the site when that release publishes, and comes back with the next release. The open release's branch was cut before the fix.
++A release publishes the head of its release branch, so a fix that merged to `main` after the branch was cut disappears from the site when that release publishes, whichever way the fix was published. The fix comes back with the next publish that contains it: the next labeled merge, the next release, or a run of steps 2 to 4.
+ 
+ The workflow waits up to five minutes in all for GitBook to import the commits that it pushed, and fails
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5294** (2026-11-24): ci: submit WinGet manifests from a workflow dispatched on main (@meowjesty)
+- **PR #5291** (2026-11-23): Publish docs and guides when a labeled pull request merges (@meowjesty)
+- **PR #5274** (2026-11-23): Update url and cookie for RUSTSEC-2026-0592 and RUSTSEC-2026-0594 (@DmitryDodzin)
 - **PR #5272** (2026-11-22): Say DynamoDB branches need `connection` (@trawler)
 - **PR #5270** (2026-11-22): Make three docs config examples load in mirrord (@trawler)
 - **PR #5269** (2026-11-22): Point four broken links at pages and headings that exist (@trawler)
-- **PR #5262** (2026-11-20): docs: add ECS demo video to the Amazon ECS guide (@RinkiyaKeDad)
-- **PR #5261** (2026-11-20): Publish the docs and guides on every release (@meowjesty)
-- **PR #5260** (2026-11-20): Tidy the docs and skills config imported from their old repositories (@meowjesty)
 
 ---
 
@@ -1706,31 +1720,52 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Say DynamoDB branches need `connection`
+## X. Publish docs and guides when a labeled pull request merges
 
 **RULE**:
-When implementing operations in `docs/docs/sharing-the-cluster/db-branching.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/publish-docs-on-merge.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a3009132`: Say DynamoDB branches need `connection`. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2057b2a2`: Publish docs and guides when a labeled pull request merges. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/docs/sharing-the-cluster/db-branching.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/publish-docs-on-merge.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| `connection` | Describes how to locate the source database connection details. Supports a full connection URL or individual connection parameters. See [Connection Modes](db-branching/connection.md) for details. For DynamoDB, `connection` names the env var that holds the DynamoDB endpoint, usually `AWS_ENDPOINT_URL_DYNAMODB`. See [DynamoDB](db-branching/dynamodb.md#connection). |
+name: Publish docs and guides on labeled merge
+
+# The `publish-docs` label publishes the docs and guides without needing a release. When a pull request with the label
+# merges into `main`, this workflow runs publish-docs.yaml for `main`. That publishes the whole `docs/` and `guides/`
+# trees, so it also ships anything merged earlier that hasn't been released yet.
+#
+# The trigger is `pull_request`, because GitHub blocks `pull_request_target` by default in public repositories from
+# December 2, 2026, and a `push` to `main` would have to look up the pull request of each commit to read its labels. A
+# `pull_request` run from a fork gets a read-only token and no secrets, so it can neither push the publish commits nor
+# post to #ci-alerts. The job skips a fork's pull request, because its run could only fail with nobody told, and a
+# maintainer publishes it with the manual steps in docs/AGENTS.md. Only a pull request from a branch of this repository
+# can publish, and creating such a branch takes write access.
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+permissions: {}
+
+jobs:
+  # Publishes `main` rather than the merge commit, so that the last of several close merges pub
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-| `connection` | Describes how to locate the source database connection details. Supports a full connection URL or individual connection parameters. See [Connection Modes](db-branching/connection.md) for details. For DynamoDB, `connection` is optional and, since there is no user or password, is only used to point the source client at a custom/VPC endpoint URL (for example `AWS_ENDPOINT_URL_DYNAMODB`); if omitted, the standard regional AWS endpoint is used. |
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a3009132` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2057b2a2` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

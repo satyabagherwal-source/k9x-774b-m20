@@ -12612,3 +12612,5 @@
 | `CYCLE-20261124-2ZM9` | `2026-11-24T06:20:45.393Z` | `laurent22/joplin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10216` | Yes (`dbc01eeb...`) |
 | `CYCLE-20261124-31ON` | `2026-11-24T06:20:48.071Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10217` | Yes (`15f14b38...`) |
 | `CYCLE-2026-11-24-PROJ-EVOLVE` | `2026-11-24T06:21:17.868Z` | `aws-aws-cdk` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-E1D0F50E` [Domain H] | Yes (`4aa89f82...`) |
+| `CYCLE-20261124-F18A` | `2026-11-24T06:30:07.354Z` | `metalbear-co/mirrord` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10218` | Yes (`6ed05e4d...`) |
+| `CYCLE-20261124-F64M` | `2026-11-24T06:30:13.702Z` | `expo/expo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10219` | Yes (`9b5fea2d...`) |

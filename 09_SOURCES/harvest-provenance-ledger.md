@@ -12645,3 +12645,5 @@ Every entry in this ledger must capture:
 | `learn-github-laurent22-joplin` | `https://github.com/laurent22/joplin` | `58fbd837` | Multi-dimensional audit evidence | 2026-11-24T06:20:45.398Z |
 | `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `b74b07e2` | Multi-dimensional audit evidence | 2026-11-24T06:20:48.075Z |
 | `learn-dom-h-e1d0f50e` | `project://aws-aws-cdk` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md` | 2026-11-24T06:21:17.868Z |
+| `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `f3111f6b` | Multi-dimensional audit evidence | 2026-11-24T06:30:07.359Z |
+| `learn-github-expo-expo` | `https://github.com/expo/expo` | `b03773cb` | Multi-dimensional audit evidence | 2026-11-24T06:30:13.707Z |

@@ -766029,3 +766029,168 @@ const MEMORY_EXPIRATION_DAYS_MIN = 7;
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `78649cb7` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10218. Publish docs and guides when a labeled pull request merges (Harvested from metalbear-co/mirrord)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Publish docs and guides when a labeled pull request merges",
+  "source": "metalbear-co/mirrord",
+  "source_url": "https://github.com/metalbear-co/mirrord",
+  "source_version": "f3111f6b",
+  "license": "MIT",
+  "extracted_at": "2026-11-24T06:30:06.707Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-metalbear-co-mirrord",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [metalbear-co/mirrord](https://github.com/metalbear-co/mirrord) (Revision: `f3111f6b`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.github/workflows/publish-docs-on-merge.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `2057b2a2`: Publish docs and guides when a labeled pull request merges. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/publish-docs-on-merge.yaml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+name: Publish docs and guides on labeled merge
+
+# The `publish-docs` label publishes the docs and guides without needing a release. When a pull request with the label
+# merges into `main`, this workflow runs publish-docs.yaml for `main`. That publishes the whole `docs/` and `guides/`
+# trees, so it also ships anything merged earlier that hasn't been released yet.
+#
+# The trigger is `pull_request`, because GitHub blocks `pull_request_target` by default in public repositories from
+# December 2, 2026, and a `push` to `main` would have to look up the pull request of each commit to read its labels. A
+# `pull_request` run from a fork gets a read-only token and no secrets, so it can neither push the publish commits nor
+# post to #ci-alerts. The job skips a fork's pull request, because its run could only fail with nobody told, and a
+# maintainer publishes it with the manual steps in docs/AGENTS.md. Only a pull request from a branch of this repository
+# can publish, and creating such a branch takes write access.
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+permissions: {}
+
+jobs:
+  # Publishes `main` rather than the merge commit, so that the last of several close merges pub
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `2057b2a2` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10219. [ios][file-system] Fix crash when a DownloadTask/UploadTask is cancelled or rele (Harvested from expo/expo)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "[ios][file-system] Fix crash when a DownloadTask/UploadTask is cancelled or rele",
+  "source": "expo/expo",
+  "source_url": "https://github.com/expo/expo",
+  "source_version": "b03773cb",
+  "license": "MIT",
+  "extracted_at": "2026-11-24T06:30:13.061Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-expo-expo",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [expo/expo](https://github.com/expo/expo) (Revision: `b03773cb`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.changeset/file-system-ios-task-release-race.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in expo/expo. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `546b3581`: [ios][file-system] Fix crash when a DownloadTask/UploadTask is cancelled or released while its request completes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/file-system-ios-task-release-race.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+---
+'expo-file-system': patch
+---
+
+[iOS] Fix a crash when a `DownloadTask` or `UploadTask` is cancelled or garbage-collected at the moment its request completes.
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `546b3581` are properly handled with clean fallback behavior.

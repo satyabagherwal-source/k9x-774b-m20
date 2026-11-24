@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T06:21:19.539Z",
+  "last_updated": "2026-11-24T06:30:20.716Z",
   "total_verified_learnings": 9091,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24485,
+  "total_items": 24489,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "34afe7a2e6e055a51f8c9bb2312fe7f3f6fad850110066158ba4c63d9554e07f",
+      "content_hash": "f95cb1ed4333fe7a808728de7244a2dc941ba906643b9a385fb66ba8d74d928a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T06:21:19.352Z"
+      "persisted_at": "2026-11-24T06:30:20.486Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "e7b42cb8b7bc820b757060f466477b4cfbc0052411ff55d0fe9713f8adbe03e1",
+      "content_hash": "f0c3956b08f397104786c089e8176755ffc93a0ff84285cff7cff9e911957fa6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T06:21:19.539Z"
+      "persisted_at": "2026-11-24T06:30:20.716Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -114837,10 +114837,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-expo-expo-technical-construction-intelligence-expo-expo-core-invariants.md",
       "title": "Technical Construction Intelligence: expo/expo Core Invariants",
       "repository": "expo/expo",
-      "source_version": "aa82194f",
-      "content_hash": "4fd4c8cd59ea2a0b06fcec26b9f50424d12e0e20e8c1f481ec1e7fc654be6a54",
+      "source_version": "b03773cb",
+      "content_hash": "a83be03b5999d7b1d2d9a4ae21f0d34e768718a1b4cf4eba040f73d2d61075e9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T11:55:26.988Z"
+      "persisted_at": "2026-11-24T06:30:14.279Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-expo-expo": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-expo-expo",
@@ -114849,10 +114849,10 @@
       "relative_path": "08_VERIFICATION/expo-expo-verification-protocol-empirical-defect-shield-for-expo-expo.md",
       "title": "Verification Protocol: Empirical Defect Shield for expo/expo",
       "repository": "expo/expo",
-      "source_version": "aa82194f",
-      "content_hash": "fb6450c3e2f1a61b0780f42448b525d96e561da49d4c7fa78e01ede2a058113e",
+      "source_version": "b03773cb",
+      "content_hash": "2f9494222fa57b16f6f4ddb58644c03464646842eef4e3a4c1c426133fa08d95",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T11:55:27.142Z"
+      "persisted_at": "2026-11-24T06:30:14.499Z"
     },
     "domain_intelligence-technical-construction-intelligence-kucherenko-jscpd-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-kucherenko-jscpd-learnings-core-invariants",
@@ -114898,9 +114898,9 @@
       "title": "Technical Construction Intelligence: expo-expo-learnings Core Invariants",
       "repository": "expo-expo-learnings",
       "source_version": "HEAD",
-      "content_hash": "3b22094f12e0eb7aafcc1959651abd6b8a805c156727c5fe176b0dc58da397b7",
+      "content_hash": "d0636f285a57cb16e6d33b72c37c01f10b2d74f24ec2cc4c37a9190dd2f72099",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T11:55:40.405Z"
+      "persisted_at": "2026-11-24T06:30:19.457Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-expo-expo-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-expo-expo-learnings",
@@ -114910,9 +114910,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for expo-expo-learnings",
       "repository": "expo-expo-learnings",
       "source_version": "HEAD",
-      "content_hash": "6e5c79f581c34dfdbf88c0b134eca3cb1dcb4a7325d7897e14b7935a5d8d195b",
+      "content_hash": "0bf2399dd887bdf42911ef30105b54e879e8652c720a04e6d4bafde537bd3c0b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T11:55:40.557Z"
+      "persisted_at": "2026-11-24T06:30:19.691Z"
     },
     "domain_intelligence-research-knowledge-intelligence-alissonerdx-bfs-best-face-swap-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-alissonerdx-bfs-best-face-swap-core-invariants",
@@ -242660,8 +242660,8 @@
       "slug": "metalbear-co-mirrord",
       "platform": "github",
       "source_url": "https://github.com/metalbear-co/mirrord",
-      "source_version": "a3009132",
-      "content_hash": "eb60ad8c113b452d4de3b3d3c6f5cdedaacadfb22069ac6aaf762e10743439c2",
+      "source_version": "f3111f6b",
+      "content_hash": "6ed05e4d8608695a799ff06dbaa404adfeb3490dca08135efcd639cc28057361",
       "dossier_path": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "promoted_rules": [
@@ -242699,6 +242699,11 @@
           "number": 10000,
           "title": "Say DynamoDB branches need `connection`",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10218,
+          "title": "Publish docs and guides when a labeled pull request merges",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -242706,7 +242711,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T22:28:01.642Z",
+      "verified_at": "2026-11-24T06:30:07.092Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -242748,10 +242753,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-metalbear-co-mirrord-technical-construction-intelligence-metalbear-co-mirrord-co.md",
       "title": "Technical Construction Intelligence: metalbear-co/mirrord Core Invariants",
       "repository": "metalbear-co/mirrord",
-      "source_version": "a3009132",
-      "content_hash": "d120af4079a7651a295e921122070229b0ba0e3af4742cfcc75c5f1bb40525f4",
+      "source_version": "f3111f6b",
+      "content_hash": "470d329abe98dcad75e1f012282dc8aa1afdcc3d9596571019b0581521df9dfc",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T22:28:02.255Z"
+      "persisted_at": "2026-11-24T06:30:07.901Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-metalbear-co-mirrord": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-metalbear-co-mirrord",
@@ -242760,10 +242765,10 @@
       "relative_path": "08_VERIFICATION/metalbear-co-mirrord-verification-protocol-empirical-defect-shield-for-metalbear.md",
       "title": "Verification Protocol: Empirical Defect Shield for metalbear-co/mirrord",
       "repository": "metalbear-co/mirrord",
-      "source_version": "a3009132",
-      "content_hash": "a4de238f4877c3fa9046c3ec06924ab58ddc222f726e1f3f5d8a22ad5c396d61",
+      "source_version": "f3111f6b",
+      "content_hash": "8a200f29291936c21f4870b9db991608e2975718ac84f8d8afee7e914d6bbaf7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T22:28:02.429Z"
+      "persisted_at": "2026-11-24T06:30:08.125Z"
     },
     "learn-github-run-llama-llama_index": {
       "learning_id": "learn-github-run-llama-llama_index",
@@ -242919,9 +242924,9 @@
       "title": "Technical Construction Intelligence: metalbear-co-mirrord-learnings Core Invariants",
       "repository": "metalbear-co-mirrord-learnings",
       "source_version": "HEAD",
-      "content_hash": "8b954bc7f6f9bf7d361cc6c6eb953dc62bba20345412a04e58dadcb5f6daf1ce",
+      "content_hash": "e3acea1ce5a350c7a03f524c14a5c8b344d10d4b7d0d3f9d1a1881f805203a87",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T22:28:20.226Z"
+      "persisted_at": "2026-11-24T06:30:18.301Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-metalbear-co-mirrord-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-metalbear-co-mirrord-learnings",
@@ -242931,9 +242936,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for metalbear-co-mirrord-learnings",
       "repository": "metalbear-co-mirrord-learnings",
       "source_version": "HEAD",
-      "content_hash": "5c766d7bc99b264edaaa3e251d53e057cd4d92ab0eed79253390dee686156daa",
+      "content_hash": "18eb7b69f3df432bfbf9863b5b650496f74c2442e7bceffbeed47d36b87e92bf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T22:28:20.404Z"
+      "persisted_at": "2026-11-24T06:30:18.535Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-",
@@ -272548,8 +272553,8 @@
       "slug": "expo-expo",
       "platform": "github",
       "source_url": "https://github.com/expo/expo",
-      "source_version": "aa82194f",
-      "content_hash": "e1b3aae315bfaa0d81c6a7c4669797fd32bea692a1026938e6684a400a35fc87",
+      "source_version": "b03773cb",
+      "content_hash": "9b5fea2d363eff5ea37cfa556947151796c8af3394dbaeb69541942953f86dea",
       "dossier_path": "07_PROJECT_LEARNING/expo-expo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/expo-expo-learnings.md",
       "promoted_rules": [
@@ -272567,6 +272572,11 @@
           "number": 9774,
           "title": "[docs] Add Using LiveKit guide",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10219,
+          "title": "[ios][file-system] Fix crash when a DownloadTask/UploadTask is cancelled or rele",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -272574,7 +272584,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T11:55:26.449Z",
+      "verified_at": "2026-11-24T06:30:13.435Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -319793,13 +319803,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-3PO0-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-FB6V-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "e42d3feea1850800e8d884059cbefad1d49ad59ca88eac068464d63e02ef27fd",
+      "content_hash": "28112e0148754def2b866cdd958b0997d542b31795d37586f5fe9d36e52aa4fe",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T06:21:19.162Z"
+      "persisted_at": "2026-11-24T06:30:20.268Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
@@ -334066,6 +334076,58 @@
       "content_hash": "3848afa643f05648d70fcdfe3cec40b4a07d960471b278f9f6f86988679cb833",
       "domain_letter": "H",
       "persisted_at": "2026-11-24T06:21:18.283Z"
+    },
+    "rule-10218": {
+      "learning_id": "rule-10218",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10218,
+      "title": "Publish docs and guides when a labeled pull request merges",
+      "source_url": "https://github.com/metalbear-co/mirrord",
+      "source_version": "f3111f6b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T06:30:07.092Z"
+    },
+    "candidate_directive-publish-docs-and-guides-when-a-labeled-pull-request-merges": {
+      "item_id": "candidate_directive-publish-docs-and-guides-when-a-labeled-pull-request-merges",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-F9IA-publish-docs-and-guides-when-a-labeled-pull-request-merges.md",
+      "title": "Publish docs and guides when a labeled pull request merges",
+      "repository": "metalbear-co-mirrord-learnings",
+      "source_version": "HEAD",
+      "content_hash": "eabe1d2b33d4a6c1c0ab571a08918a1e216b66ce1693d567f23478114013c3ee",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T06:30:18.084Z"
+    },
+    "rule-10219": {
+      "learning_id": "rule-10219",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10219,
+      "title": "[ios][file-system] Fix crash when a DownloadTask/UploadTask is cancelled or rele",
+      "source_url": "https://github.com/expo/expo",
+      "source_version": "b03773cb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T06:30:13.435Z"
+    },
+    "candidate_directive-ios-file-system-fix-crash-when-a-downloadtask-uploadtask-is-cancelled-or-rele": {
+      "item_id": "candidate_directive-ios-file-system-fix-crash-when-a-downloadtask-uploadtask-is-cancelled-or-rele",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FAEC-ios-file-system-fix-crash-when-a-downloadtask-uploadtask-is-cancelled-or-rele.md",
+      "title": "[ios][file-system] Fix crash when a DownloadTask/UploadTask is cancelled or rele",
+      "repository": "expo-expo-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a7e2ad7bd2ad722a3a751e0fff68f154def1ce39e112e399912eee247effdeaf",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T06:30:19.242Z"
     }
   },
   "ai-builder-brain": {

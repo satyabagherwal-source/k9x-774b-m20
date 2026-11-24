@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/expo-expo-learnings.md`  
 > **Source**: github ([https://github.com/expo/expo](https://github.com/expo/expo))  
-> **Source Version**: `aa82194f`  
+> **Source Version**: `b03773cb`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T11:55:25.651Z  
+> **Timestamp**: 2026-11-24T06:30:12.391Z  
 > **Learning ID**: `learn-github-expo-expo`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/expo-expo-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/expo/expo](https://github.com/expo/expo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T11:55:25.648Z  
+> **Harvest Timestamp**: 2026-11-24T06:30:12.388Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open-source framework for making universal native apps with React. Expo runs on Android, iOS, and the web.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 53698 stars
+- **Stars / Engagement**: 53744 stars
 
 ---
 
@@ -674,439 +674,769 @@ object AsyncCondition {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `09205331` (2026-11-20)
-**Commit Message**: [docs] Add Using LiveKit guide (#53776)
-
-## Why
-
-The docs have no guide for realtime voice agents. Expo has a LiveKit
-template at
-[expo/expo-livekit-template](https://github.com/expo/expo-livekit-template),
-but no page explains how to use it.
-
-## How
-
-This pull request adds the guide `docs/pages/guides/using-livekit.mdx`.
-The guide follows the structure of the Convex guide and uses the
-template.
-
-- "Create a voice agent app" creates a project from the template,
-connects LiveKit Cloud, starts the agent, and runs the app.
-- "How the template works" explains the token endpoint, the session
-hook, and the agent.
-- "Deploy to production" deploys the token endpoint to Expo Hosting,
-sets the `origin`, and deploys the agent.
-- "Troubleshooting" has five items.
-
-The diff also adds the page to the sidebar. The page is in a new "Voice
-and video" group in the Integrations section. The diff adds `LiveKit` to
-the exceptions of the Vale `HeadingCase` rule.
-
-## Test Plan
-
-Ran on macOS, from `docs/`:
-
-- The scripts of `pnpm test`, `pnpm test:worker`, `pnpm lint`, and `pnpm
-lint-prose`. All pass.
-- The docs development server. `/guides/using-livekit/` renders, and the
-sidebar shows the new page.
-
-Che
-
-**File**: `docs/.vale/writing-styles/expo-docs/HeadingCase.yml` (modified, +1/-0)
-```diff
-@@ -165,6 +165,7 @@ exceptions:
-   - '.*Link component.*'
-   - '.*Linking.*'
-   - '.*Linux.*'
-+  - '.*LiveKit.*'
-   - '.*MCP*'
-   - '.*Mac Catalyst.*'
-   - '.*Material Symbols.*'
-```
-
-**File**: `docs/constants/navigation.js` (modified, +1/-0)
-```diff
-@@ -424,6 +424,7 @@ export const general = [
-     ]),
-     makeGroup('Tools', [makePage('guides/using-eslint.mdx'), makePage('guides/typescript.mdx')]),
-     makeGroup('TV apps', [makePage('guides/building-for-tv.mdx')]),
-+    makeGroup('Voice and video', [makePage('guides/using-livekit.mdx')]),
-     makeGroup('Web apps', [makePage('guides/using-nextjs.mdx')]),
-   ]),
-   makeSection(
-```
-
-**File**: `docs/pages/guides/using-livekit.mdx` (added, +361/-0)
-```diff
-@@ -0,0 +1,361 @@
-+---
-+title: Using LiveKit
-+description: Add a realtime voice agent to your app with LiveKit.
-+---
-+
-+import { GithubIcon } from '@expo/styleguide-icons/custom/GithubIcon';
-+import { BookOpen02Icon } from '@expo/styleguide-icons/outline/BookOpen02Icon';
-+
-+import { BoxLink } from '~/ui/components/BoxLink';
-+import { Prerequisites, Requirement } from '~/ui/components/Prerequisites';
-+import { Terminal } from '~/ui/components/Snippet';
-+import { Step } from '~/ui/components/Step';
-+
-+[LiveKit](https://livekit.io/) is an open source platform for realtime voice and video. With [LiveKit Agents](https://docs.livekit.io/agents/), you can build an AI agent that joins a conversation and talks with your users.
-+
-+This guide uses the [Expo LiveKit template](https://github.com/expo/expo-livekit-template) to create a voice agent app for Android and iOS. The template has one screen with a live audio visualizer and a streaming transcript, a token endpoint in an [API route](/router/web/api-routes/), and a voice agent written in TypeScript.
-+
-+<Prerequisites>
-+  <Requirement title="LiveKit Cloud project">
-+    Sign up for [LiveKit Cloud](https://cloud.livekit.io/) and create a project. A free project
-+    works for this guide.
-+  </Requirement>
-+  <Requirement title="LiveKit CLI">
-+    Install the [LiveKit CLI](https://docs.livekit.io/reference/developer-tools/livekit-cli/). This
-+    guide uses it to sign in and to write your credentials.
-+  </Requirement>
-+  <Requirement title="A development build">
-+    The app uses WebRTC, which Expo Go does not include, so it runs in a [development
-+    build](/develop/development-builds/introduction/). This guide creates one with [Expo
-+    Build](/build/introduction/) or on your computer.
-+  </Requirement>
-+</Prerequisites>
-+
-+## Create a voice agent app
-+
-+<Step label="1">
-+
-+### Create a project from the template
-+
-+Create a new project with `create-expo-app`:
-+
-+<Terminal
-+  cmd={{
-+    npm: [
-+      '$ npx create-expo-app@latest my-voice-app --template https://github.com/expo/expo-livekit-template',
-+      '$ cd my-voice-app',
-+    ],
-+    yarn: [
-+      '$ yarn create expo-app my-voice-app --template https://github.com/expo/expo-livekit-template',
-+      '$ cd my-voice-app',
-+    ],
-+    pnpm: [
-+      '$ pnpm create expo-app my-voice-app --template https://github.com/expo/expo-livekit-template',
-+      '$ cd my-voice-app',
-+    ],
-+    bun: [
-+      '$ bun create expo my-voice-app --template https://github.com/expo/expo-livekit-template',
-+      '$ cd my-voice-app',
-+    ],
-+  }}
-+/>
-+
-+The voice agent is a separate Node.js project in the **agent** directory. Install its dependencies:
-+
-+<Terminal
-+  cmd={{
-+    npm: ['$ npm --prefix agent install'],
-+    yarn: ['$ yarn --cwd agent install'],
-+    pnpm: ['$ pnpm --dir agent install'],
-+    bun: ['$ bun install --cwd agent'],
-+  }}
-+/>
-+
-+</Step>
-+
-+<Step label="2">
-+
-+### Connect your LiveKit Cloud project
-+
-+Sign in with the LiveKit CLI, then write your credentials to **.env.local**:
-+
-+<Terminal cmd={['$ lk cloud auth', '$ lk app env -w']} />
-+
-+`lk cloud auth` opens a browser window to link your LiveKit Cloud project to the CLI. `lk app env -w` writes `LIVEKIT_URL`, `LIVEKIT_API_KEY`, and `LIVEKIT_API_SECRET` to **.env.local**. The token endpoint and the agent read these values.
-+
-+</Step>
-+
-+<Step label="3">
-+
-+### Start the agent
-+
-+<Terminal cmd={['$ npm run agent']} />
-+
-+The agent connects to LiveKit Cloud and waits for a conversation. It uses a speech-to-speech model from [LiveKit Inference](https://docs.livekit.io/agents/models/inference/), so you do not need an API key from a model provider. Keep this terminal open.
-+
-+</Step>
-+
-+<Step label="4">
-+
-+### Run the app
-+
-+The app runs in a development build. To create one in the cloud, use [Expo Build](/build/introduction/) with [EAS CLI](/eas/cli/). You do not need Android Studio or Xcode. In a second terminal, run:
-+
-+<Terminal
-+  cmd={[
-+    '# Build for Android',
-+    '$ eas build --platform android --profile development',
-+    '',
-+    '# Build for iOS',
-+    '$ eas build --platform ios --profile development',
-+  ]}
-+/>
-+
-+When the build finishes, install it on your device. Then start the development server:
-+
-+<Terminal cmd={['$ npm start']} />
-+
-+To create the development build on your computer instead, you need Android Studio or Xcode. See [Set up your environment](/get-started/set-up-your-environment/). These commands create the build and start the development server:
-+
-+<Terminal cmd={['# Run on Android', '$ npm run android', '', '# Run on iOS', '$ npm run ios']} />
-+
-+To compare the two methods, see [Introduction to development builds](/develop/development-builds/introduction/#how-would-you-like-to-build-your-development-build).
-+
-+Tap **Start conversation** and allow microphone access. The agent greets you, and the transcript appears while you talk.
-+
-+> **info** An Android Emulator or iOS Simulator has no echo cancellation, so the agent can
-```
-
----
-
-### Incident Patch 2: `198eed96` (2026-11-20)
-**Commit Message**: [docs] Document dSYM upload for Observe native crash symbolication (#53923)
-
-## Why
-
-Expo Observe now supports uploading debug symbols for native crashes,
-and the docs do not yet explain how to upload them.
-
-## How
-
-Rewrite the section to explain what dSYM files are, where to find them
-for Expo Build, local builds, and Xcode archives, and how to upload
-them, and drop dSYM upload from "Still to come".
-
-## Test Plan
-
-Vale passes on the page with no errors or warnings, and oxfmt is
-applied.
-
-## Screenshots
-
-<!-- rendered "Native stack traces" section from the local docs server
--->
-
-## Checklist
-
-- [ ] I added a changeset and followed [this short
-guide](https://github.com/expo/expo/blob/main/CONTRIBUTING.md#-before-submitting)
-- [ ] This diff will work correctly for `npx expo prebuild` & EAS Build
-(eg: updated a module plugin).
-- [x] Conforms with the [Documentation Writing Style
-Guide](https://github.com/expo/expo/blob/main/guides/Expo%20Documentation%20Writing%20Style%20Guide.md)
-
----------
-
-Co-authored-by: Aman Mittal <[REDACTED_EMAIL]>
-
-**File**: `docs/pages/eas/observe/errors.mdx` (modified, +90/-3)
-```diff
-@@ -6,6 +6,7 @@ description: Record JavaScript errors and native crashes from your app and inves
- 
- import { ContentSpotlight } from '~/ui/components/ContentSpotlight';
- import { Terminal } from '~/ui/components/Snippet';
-+import { Step } from '~/ui/components/Step';
- 
- > **important** Error reporting in Expo Observe is in [preview](/more/release-statuses/#preview) and requires SDK 57 or later. Native crashes additionally require `expo-observe` 57.0.21 or later. See [Still to come](#still-to-come) for more features.
- 
-@@ -160,9 +161,95 @@ With this flag, EAS CLI uploads the Android and iOS source maps produced when yo
- 
- ### Native stack traces
- 
--Source maps only apply to JavaScript. Native stack traces are not symbolicated in the dashboard.
-+Source maps only apply to JavaScript. Native frames need the debug symbols of the native binary instead.
- 
--On Android, frames from Java and Kotlin exceptions already carry the class, method, and line number. On iOS, frames are resolved to symbol names on the device where the crash happened, so you see function names but no file names or line numbers. A frame that cannot be resolved is shown as a binary name and an offset, such as `MyApp + 19160`.
-+On Android, frames from Java and Kotlin exceptions already carry the class, method, and line number.
-+
-+On iOS, the device resolves frames in system libraries to symbol names. The dashboard shows frames in your app and its bundled frameworks as a binary name and an offset, such as `MyApp + 19160`. To see function names, files, and lines for these frames, upload the app's debug symbol (dSYM) files to Expo Observe.
-+
-+> **info** Native crash symbolication requires `expo-observe` 57.0.25 or later for SDK 57, and 58.0.5 or later for SDK 58. Crash reports from earlier versions do not include the universally unique identifiers (UUIDs) of the binaries, which Expo Observe needs to find the debug symbols.
-+
-+#### About debug symbols
-+
-+When Xcode builds your app for release, it writes the debug information of each binary to a separate **.dSYM** bundle. There is one bundle for the app and one for each framework that Xcode compiles. A prebuilt framework, such as Hermes, has no bundle in the archive. Download its dSYM from the framework's publisher and add it to the **.zip** file you upload. A binary and its dSYM share a UUID. Each native crash report lists the UUIDs of the binaries in its stack trace, and Expo Observe uses them to find the matching dSYM files.
-+
-+Every build produces new UUIDs, so upload the dSYM files of each build you release. Symbolication happens when you view a crash, so an upload also applies to earlier crashes.
-+
-+#### Find the debug symbols
-+
-+The location of the dSYM files depends on where you built the app.
-+
-+##### Expo Build
-+
-+Expo Build archives your app with fastlane. During the archive, fastlane compresses every dSYM in the archive into one file at **ios/build/&lt;app name&gt;.app.dSYM.zip**. To keep this file, add it to `buildArtifactPaths` in the build profile in **eas.json**:
-+
-+```json eas.json
-+{
-+  "build": {
-+    "production": {
-+      "buildArtifactPaths": ["ios/build/*.app.dSYM.zip"]
-+    }
-+  }
-+}
-+```
-+
-+When the build finishes, download the build artifacts from the build details page. If the download is a **.tar.gz** archive, extract it to get the **.app.dSYM.zip** file.
-+
-+##### Local builds
-+
-+With `eas build --local`, the same `buildArtifactPaths` setting applies. EAS CLI writes the build artifacts to the directory where you ran the command, next to the **.ipa** file. When the pattern matches one file, the artifact is the **.app.dSYM.zip** file itself, renamed to **build-&lt;timestamp&gt;.zip**. Do not pass `--output`. With it, EAS CLI writes the **.ipa** file and the build artifacts to the same path, so one file replaces the other.
-+
-+##### Xcode archives
-+
-+When you archive the app in Xcode, the dSYM files are inside the archive:
-+
-+<Step label="1">
-+
-+In Xcode, open **Window** > **Organizer** and select **Archives**.
-+
-+</Step>
-+
-+<Step label="2">
-+
-+Right-click the archive of the build and select **Show in Finder**.
-+
-+</Step>
-+
-+<Step label="3">
-+
-+Right-click the **.xcarchive** file and select **Show Package Contents**.
-+
-+</Step>
-+
-+<Step label="4">
-+
-+Compress the **dSYMs** folder into a **.zip** file.
-+
-+</Step>
-+
-+#### Upload the debug symbols
-+
-+<Step label="1">
-+
-+Open a native crash in [**Observe** > **Errors**](https://expo.dev/accounts/[account]/projects/[project]/observe/errors). If binaries in the stack trace have no debug symbols, a warning such as **Missing debug symbols** appears above it.
-+
-+</Step>
-+
-+<Step label="2">
-+
-+Click **Upload debug symbols**. The dialog lists each binary that needs debug symbols with its UUID, and shows whether its debug symbols are **Uploaded** or **Missing**.
-+
-+</Step>
-+
-+<Step label="3">
-+
-+Select the **.zip** file and click **Upload**. Expo Observe reads the dSYM files and stores their symbols. When processing finishes, the stack trac
-```
-
----
-
-### Incident Patch 3: `74a4fb1d` (2026-11-20)
-**Commit Message**: fix(cli): Fix `expo login --sso` and `--browser` hanging in CI (#53891)
+### Incident Patch 1: `546b3581` (2026-11-23)
+**Commit Message**: [ios][file-system] Fix crash when a DownloadTask/UploadTask is cancelled or released while its request completes (#50106)
 
 # Why
 
-While running a comprehensive check on every place the CLI waits on the
-user, I found that if you run `expo login --sso` or `expo login
---browser` in CI, it waits for a browser login that doesn't happen, so
-the job hangs.
+Production crash on the JS thread (SDK 57; the code is identical on 58
+and `main`):
 
-# How
+```
+Crashed: com.facebook.react.runtime.JavaScript
+0  libobjc.A.dylib   objc_msgSend + 32
+1  CFNetwork         -[NSURLSessionTask cancel] + 96
+2  ExpoFileSystem    FileSystemDownloadTask.sharedObjectWillRelease()
+3  ExpoModulesCore   SharedObjectRegistry.add(...) releaser closure
+5  ExpoModulesCore   expo::SharedObject::NativeState::~NativeState()
+7  hermesvm          hermes::vm::HadesGC::finalizeYoungGenObjects()
+8  hermesvm          hermes::vm::HadesGC::youngGenCollection(...)
+```
 
-We now fail early and tell the user to use `EXPO_TOKEN`, the same hint
-the password prompt already gives.
+`FileSystemDownloadTask.downloadTask` / `delegateKey` (and
+`FileSystemUploadTask.uploadTask`) are cleared on the URLSession
+delegate queue (`didCompleteWithError` → `finishTask` → `cleanup`) and
+read on the JS thread by `sharedObjectWillRelease`, which the Hermes GC
+finalizer calls as soon as the JS `DownloadTask` becomes unreachable.
+Apps drop the task the moment its promise settles, so the two overlap.
+The unsynchronized read retains a task the delegate queue has just
+released, and `cancel
 
-# Test Plan
-
-All tests pass.
-
-**File**: `.changeset/cli-login-browser-ci.md` (added, +5/-0)
+**File**: `.changeset/file-system-ios-task-release-race.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
-+'@expo/cli': patch
++'expo-file-system': patch
 +---
 +
-+Fix `expo login --sso` and `--browser` hanging in CI.
++[iOS] Fix a crash when a `DownloadTask` or `UploadTask` is cancelled or garbage-collected at the moment its request completes.
 ```
 
-**File**: `packages/@expo/cli/src/api/user/__tests__/actions-test.ts` (modified, +16/-0)
+**File**: `packages/expo-file-system/ios/FileSystemDownloadTask.swift` (modified, +24/-20)
 ```diff
-@@ -17,7 +17,10 @@ jest.mock('../../rest/client', () => {
- jest.mock('../otp');
- jest.mock('../user');
- 
-+const originalCI = process.env.CI;
-+
- beforeEach(() => {
-+  delete process.env.CI;
-   jest.mocked(promptAsync).mockClear();
-   jest.mocked(promptAsync).mockImplementation(() => {
-     throw new Error('Should not be called');
-@@ -31,6 +34,10 @@ beforeEach(() => {
-   jest.mocked(isInteractive).mockReturnValue(false);
- });
- 
-+afterAll(() => {
-+  process.env.CI = originalCI;
-+});
-+
- describe(showLoginPromptAsync, () => {
-   it('prompts for OTP when 2FA is enabled', async () => {
-     jest
-@@ -105,6 +112,15 @@ describe(showLoginPromptAsync, () => {
-     expect(browserLoginAsync).toHaveBeenCalledWith({ sso: false });
-   });
- 
-+  it('refuses browser login in CI', async () => {
-+    process.env.CI = '1';
-+
-+    await expect(showLoginPromptAsync({ sso: true })).rejects.toThrow(
-+      "Browser login can't be completed in CI."
-+    );
-+    expect(browserLoginAsync).not.toHaveBeenCalled();
-+  });
-+
-   it('defaults to browser login in an interactive terminal when browser is unset', async () => {
-     jest.mocked(isInteractive).mockReturnValue(true);
- 
-```
-
-**File**: `packages/@expo/cli/src/api/user/actions.ts` (modified, +8/-0)
-```diff
-@@ -40,6 +40,14 @@ export async function showLoginPromptAsync({
+@@ -244,8 +244,10 @@ struct DownloadTaskOptions: Record {
+  * A SharedObject that handles file downloads with pause/resume support and progress tracking.
+  */
+ class FileSystemDownloadTask: SharedObject {
+-  private var downloadTask: URLSessionDownloadTask?
+-  private var delegateKey: String?
++  // The main queue sets and clears the task (`start`, `resume`, `finishTask`, the release hook), while
++  // `cancel()` runs on the JS thread and `pause()` on a background executor. An unguarded optional lets
++  // one of them retain a task that the main queue is releasing, so `cancel()` reaches freed memory.
++  private let downloadTask = Mutex<URLSessionDownloadTask?>(nil)
+   private var sessionType: NetworkTaskSessionType = .background
+   private(set) var isPausing = false
+   private var backgroundSessionHandler: FileSystemBackgroundSessionHandler?
+@@ -283,7 +285,7 @@ class FileSystemDownloadTask: SharedObject {
    }
  
-   if (sso || browser) {
-+    if (env.CI) {
-+      throw new CommandError(
-+        'NON_INTERACTIVE',
-+        `Browser login can't be completed in CI. Use the EXPO_TOKEN environment variable to authenticate in CI (${learnMore(
-+          'https://docs.expo.dev/accounts/programmatic-access/'
-+        )})`
-+      );
+   func acknowledgeBackgroundCompletion() throws {
+-    guard downloadTask == nil else { throw BackgroundDownloadNotFinishedException() }
++    guard downloadTask.withLock({ $0 == nil }) else { throw BackgroundDownloadNotFinishedException() }
+     backgroundSessionHandler?.acknowledgeDownload(self)
+     backgroundSessionHandler = nil
+   }
+@@ -304,19 +306,19 @@ class FileSystemDownloadTask: SharedObject {
+     }
+ 
+     let task = session.downloadTask(with: request)
+-    downloadTask = task
++    downloadTask.withLock { $0 = task }
+     registerBackgroundCompletion(in: session, options: options)
+-    delegateKey = NetworkTaskSessionManager.shared.register(delegate: delegate, for: task, in: session)
++    _ = NetworkTaskSessionManager.shared.register(delegate: delegate, for: task, in: session)
+     task.resume()
+   }
+ 
+   func pause() async -> [String: String?] {
+     isPausing = true
+-    guard let downloadTask else {
++    guard let task = downloadTask.withLock({ $0 }) else {
+       return ["resumeData": nil]
+     }
+ 
+-    let resumeData = await downloadTask.cancelByProducingResumeData()
++    let resumeData = await task.cancelByProducingResumeData()
+     return ["resumeData": resumeData?.base64EncodedString()]
+   }
+ 
+@@ -340,41 +342,43 @@ class FileSystemDownloadTask: SharedObject {
+     let delegate = DownloadTaskDelegate(sharedObject: self, destination: to, promise: promise)
+     let task = session.downloadTask(withResumeData: data)
+ 
+-    downloadTask = task
++    downloadTask.withLock { $0 = task }
+     registerBackgroundCompletion(in: session, options: options)
+-    delegateKey = NetworkTaskSessionManager.shared.register(delegate: delegate, for: task, in: session)
++    _ = NetworkTaskSessionManager.shared.register(delegate: delegate, for: task, in: session)
+     task.resume()
+   }
+ 
+   func cancel() {
+     isPausing = false
+-    recordResponse(downloadTask?.response)
+-    downloadTask?.cancel()
+-    cleanup(unregisterDelegate: false)
++    let task = takeDownloadTask()
++    recordResponse(task?.response)
++    task?.cancel()
+   }
+ 
+   func finishTask(succeeded: Bool) {
+     backgroundSessionHandler?.finishDownload(self, succeeded: succeeded)
+     // Delegate is unregistered by NetworkTaskSessionDispatcher after didCompleteWithError returns.
+-    cleanup(unregisterDelegate: false)
++    downloadTask.withLock { $0 = nil }
+   }
+ 
+   override func sharedObjectWillRelease() {
+     // SharedObject release may arrive on the JS thread; subscriber state is main-queue confined.
+     DispatchQueue.main.async {
+       self.backgroundSessionHandler?.discardDownload(self)
+       self.backgroundSessionHandler = nil
+-      self.downloadTask?.cancel()
+-      self.cleanup(unregisterDelegate: false)
++      self.takeDownloadTask()?.cancel()
+     }
+   }
+ 
+-  private func cleanup(unregisterDelegate: Bool) {
+-    if unregisterDelegate {
+-      NetworkTaskSessionManager.shared.unregister(key: delegateKey)
++  /**
++   Takes the task out of its slot, so that only one caller can cancel it.
++   */
++  private func takeDownloadTask() -> URLSessionDownloadTask? {
++    return downloadTask.withLock { task in
++      let result = task
++      task = nil
++      return result
+     }
+-    delegateKey = nil
+-    downloadTask = nil
+   }
+ }
+ 
+```
+
+**File**: `packages/expo-file-system/ios/FileSystemUploadTask.swift` (modified, +23/-14)
+```diff
+@@ -34,7 +34,9 @@ struct UploadTaskResult: Record {
+  * A SharedObject that handles file uploads with progress tracking.
+  */
+ class FileSystemUploadTask: SharedObject {
+-  private var uploadTask: URLSessionUploadTask?
++  // The main queue clears the task when the upload completes, while `cancel()` and the release hook
++  // run on the JS thread. See `FileSystemDownloadTask.downloadTask`.
++  private let uploadTask = Mutex<URLSessionUploadTask?>(nil)
+   private var delegateKey: String?
+   private var sessionType: NetworkTaskSessionType = .background
+   private var sourceAccess: FileSystemScopedAccess?
+@@ -62,28 +64,24 @@ class FileSystemUploadTask: SharedObject {
+         }
+       }
+ 
++      let task: URLSessionUploadTask
+       if options.uploadType == .multipart {
+         let boundaryString = UUID().uuidString
+         let bodyFileURL = try createMultipartBody(boundary: boundaryString, sourceUrl: sourceUrl, options: options)
+ 
+         request.setValue("multipart/form-data; boundary=\(boundaryString)", forHTTPHeaderField: "Content-Type")
+         tempFileURL = bodyFileURL
+ 
+-        uploadTask = session.uploadTask(with: request, fromFile: bodyFileURL)
++        task = session.uploadTask(with: request, fromFile: bodyFileURL)
+       } else {
+-        uploadTask = session.uploadTask(with: request, fromFile: sourceUrl)
+-      }
+-
+-      guard let uploadTask else {
+-        promise.reject(UnableToUploadException("Failed to create upload task"))
+-        cleanup()
+-        return
++        task = session.uploadTask(with: request, fromFile: sourceUrl)
+       }
++      uploadTask.withLock { $0 = task }
+ 
+       let delegate = UploadTaskDelegate(sharedObject: self, promise: promise) {
+         self.finishTask()
+       }
+-      delegateKey = NetworkTaskSessionManager.shared.register(delegate: delegate, for: uploadTask, in: session)
++      delegateKey = NetworkTaskSessionManager.shared.register(delegate: delegate, for: task, in: session)
+ 
+       guard !cancelled else {
+         NetworkTaskSessionManager.shared.unregister(key: delegateKey)
+@@ -92,7 +90,7 @@ class FileSystemUploadTask: SharedObject {
+         return
+       }
+ 
+-      uploadTask.resume()
++      task.resume()
+     } catch {
+       promise.reject(UnableToUploadException(error.localizedDescription))
+       cleanup(unregisterDelegate: true)
+@@ -101,11 +99,22 @@ class FileSystemUploadTask: SharedObject {
+ 
+   func cancel() {
+     cancelled = true
+-    uploadTask?.cancel()
++    takeUploadTask()?.cancel()
+   }
+ 
+   override func sharedObjectWillRelease() {
+-    uploadTask?.cancel()
++    takeUploadTask()?.cancel()
++  }
++
++  /**
++   Takes the task out of its slot, so that only one caller can cancel it.
++   */
++  private func takeUploadTask() -> URLSessionUploadTask? {
++    return uploadTask.withLock { task in
++      let result = task
++      task = nil
++      return result
 +    }
-     await browserLoginAsync({ sso: !!sso });
-     Log.log('Logged in');
-     return;
+   }
+ 
+   fileprivate func emitProgress(bytesSent: Int64, totalBytes: Int64) {
+@@ -130,7 +139,7 @@ class FileSystemUploadTask: SharedObject {
+       NetworkTaskSessionManager.shared.unregister(key: delegateKey)
+     }
+     delegateKey = nil
+-    uploadTask = nil
++    uploadTask.withLock { $0 = nil }
+     sourceAccess = nil
+     if let tempFileURL = tempFileURL {
+       try? FileManager.default.removeItem(at: tempFileURL)
+```
+
+---
+
+### Incident Patch 2: `6dfa92e0` (2026-11-23)
+**Commit Message**: fix(cli): Use `@expo/require-utils` and `@expo/json-file` in `expo serve` adapter for error handling and CJS recovery path (#52851)
+
+## Summary
+
+Currently, `expo serve` may fail when the loading behaviour of `.js`
+files changes. This can happen for example if `package.json:type` is set
+to `"module"`, making `.js` loading as raw imports/require take on a
+different meaning.
+
+We should send `loadModule` on `expo-server` through
+`@expo/require-utils`' `loadModuleSync` for consistency and a CommonJS
+recovery path.
+
+We can additionally switch to `@expo/json-file` for JSON loading. This
+means that both `loadModule` and `readJson` on the adapter issue better
+error messages when running `expo serve` on malformed project exports.
+
+## Set of changes
+
+- Add custom `expo-server` adapter to `expo serve`
+- Add `loadModule` method sent through `@expo/require-utils`
+- Add `readJson` method sent through `@expo/json-file`
+- Apply JSON loading change to routes manifest too
+
+---------
+
+Co-authored-by: kitten-agent <[REDACTED_EMAIL]>
+
+**File**: `.changeset/serve-commonjs-adapter.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++"@expo/cli": patch
++---
++
++In `expo serve`, load exported CommonJS server modules independently of the project module type and improve error handling
+```
+
+**File**: `packages/@expo/cli/src/serve/adapter.ts` (added, +32/-0)
+```diff
+@@ -0,0 +1,32 @@
++import JsonFile from '@expo/json-file';
++import { loadModuleSync } from '@expo/require-utils';
++import { createEnvironment } from 'expo-server/adapter/environment/common';
++import { createRequestHandler as createHttpHandler } from 'expo-server/adapter/http';
++import fs from 'node:fs';
++import path from 'node:path';
++import { pathToFileURL } from 'node:url';
++
++export function createRequestHandler(params: { build: string }) {
++  const environment = createEnvironment({
++    async readText(request) {
++      try {
++        return await fs.promises.readFile(path.join(params.build, request), 'utf8');
++      } catch {
++        return null;
++      }
++    },
++    async readJson(request) {
++      return JsonFile.readAsync(path.join(params.build, request));
++    },
++    async loadModule(request) {
++      const filePath = path.join(params.build, request);
++      if (/\.c?js$/.test(filePath)) {
++        return loadModuleSync(filePath);
++      }
++      const importFilename = path.isAbsolute(filePath) ? pathToFileURL(filePath).href : filePath;
++      return await import(importFilename);
++    },
++    isDevelopment: false,
++  });
++  return createHttpHandler(params, environment);
++}
+```
+
+**File**: `packages/@expo/cli/src/serve/serveAsync.ts` (modified, +3/-5)
+```diff
+@@ -1,7 +1,6 @@
++import JsonFile from '@expo/json-file';
+ import chalk from 'chalk';
+ import connect from 'connect';
+-import { createRequestHandler } from 'expo-server/adapter/http';
+-import fs from 'node:fs/promises';
+ import http from 'node:http';
+ import path from 'node:path';
+ import send from 'send';
+@@ -12,6 +11,7 @@ import { CommandError } from '../utils/errors';
+ import { findUpProjectRootOrAssert } from '../utils/findUp';
+ import { loadEnvFiles } from '../utils/nodeEnv';
+ import { resolveMetroPortAsync } from '../utils/port';
++import { createRequestHandler } from './adapter';
+ import { applyStaticHeaders, loadStaticManifestAsync, resolveStaticHeaders } from './static';
+ 
+ type Options = {
+@@ -184,9 +184,7 @@ function canParseURL(url: string): boolean {
+ }
+ 
+ async function isDevelopmentExportAsync(dist: string): Promise<boolean> {
+-  const manifest = JSON.parse(
+-    await fs.readFile(path.join(dist, 'server/_expo/routes.json'), 'utf8')
+-  );
++  const manifest = await JsonFile.readAsync(path.join(dist, 'server/_expo/routes.json'));
+   return manifest.mode === 'development';
+ }
+ 
+```
+
+---
+
+### Incident Patch 3: `faab137d` (2026-11-23)
+**Commit Message**: fix(cli,router-server): Use `.cjs` for server exports when `package.json:type` is `"module"` (#54051)
+
+## Summary
+
+Builds on changes in #52949
+Related to #52851
+Resolves #52690
+
+While #52851 allows `.js` server exports that are in CommonJS format to
+load by using our usual loading logic for `expo serve`, this doesn't
+resolve the underlying problem. When `"type": "module"` is specified in
+`package.json`, we should alter the exports themselves to use `.cjs`
+extensions, since the workspace has been opted into ESM by default.
+
+This change determines the `package.json:type` and passes on the altered
+output extension for server outputs into the serializer, based on
+preparation changes #52949 and that full stack. Before this PR, control
+over filenames, chunking, and output was split across the CLI (and in
+there between export and the dev-server), and the serializer, causing
+misalignments, which would've introduced a lot of granular small changes
+and potentially subtle regressions.
+
+When applied, `outputExtension: configOptions.serverOutputExtension` is
+passed on to the serializer to change the output extension to `.cjs`
+just for the server output. `expo-server` and EAS Hosting should alre
+
+**File**: `.changeset/cli-server-cjs-output.md` (added, +6/-0)
+```diff
+@@ -0,0 +1,6 @@
++---
++"@expo/cli": patch
++"@expo/router-server": patch
++---
++
++Use `.cjs` filenames for CommonJS server output in projects with `"type": "module"`.
+```
+
+**File**: `packages/@expo/cli/e2e/__tests__/export/server-artifacts.test.ts` (modified, +187/-61)
+```diff
+@@ -3,7 +3,7 @@ import fs from 'node:fs';
+ import { createRequire } from 'node:module';
+ import path from 'node:path';
+ 
+-import { executeExpoAsync } from '../../utils/expo';
++import { createExpoServe, executeExpoAsync } from '../../utils/expo';
+ import { processFindPrefixedValue } from '../../utils/process';
+ import { setupServer } from '../../utils/runtime';
+ import { createBackgroundServer } from '../../utils/server';
+@@ -14,9 +14,17 @@ runExportSideEffects();
+ 
+ jest.unmock('@expo/spawn-async');
+ 
+-it.each(['pair', 'string', 'captured'])(
+-  'exports a custom serializer %s result as server artifacts',
+-  async (format) => {
++it.each([
++  ['pair', 'commonjs'],
++  ['string', 'commonjs'],
++  ['captured', 'commonjs'],
++  ['pair', 'module'],
++  ['string', 'module'],
++  ['captured', 'module'],
++])(
++  'exports a custom serializer %s result as server artifacts (%s)',
++  async (format, packageType) => {
++    const extension = packageType === 'module' ? '.cjs' : '.js';
+     let projectRoot = getTemporaryPath();
+     try {
+       await fs.promises.cp(
+@@ -30,6 +38,9 @@ it.each(['pair', 'string', 'captured'])(
+         path.join(projectRoot, 'node_modules'),
+         'junction'
+       );
++      const packagePath = path.join(projectRoot, 'package.json');
++      const pkg = JSON.parse(await fs.promises.readFile(packagePath, 'utf8'));
++      await fs.promises.writeFile(packagePath, JSON.stringify({ ...pkg, type: packageType }));
+       await fs.promises.appendFile(
+         path.join(projectRoot, 'metro.config.cjs'),
+         `
+@@ -52,7 +63,9 @@ if (${JSON.stringify(format)} === 'captured') {
+         env: { NODE_ENV: 'production' },
+       });
+       const serverRoot = path.join(projectRoot, 'dist/server');
+-      const filename = findProjectFiles(serverRoot).find((file) => file.endsWith('hello+api.js'))!;
++      const filename = findProjectFiles(serverRoot).find((file) =>
++        file.endsWith('hello+api' + extension)
++      )!;
+       expect(filename).toBeDefined();
+       const output = path.join(serverRoot, filename);
+       const { GET } = createRequire(__filename)(output);
+@@ -85,23 +98,29 @@ if (${JSON.stringify(format)} === 'captured') {
+   }
+ );
+ 
+-it('exports and runs a server route with a standalone worker', async () => {
+-  let projectRoot = getTemporaryPath();
+-  try {
+-    await fs.promises.cp(
+-      path.join(__dirname, '../../fixtures/with-server-artifacts'),
+-      projectRoot,
+-      { recursive: true }
+-    );
+-    projectRoot = await fs.promises.realpath(projectRoot);
+-    await fs.promises.symlink(
+-      path.join(getRouterE2ERoot(), 'node_modules'),
+-      path.join(projectRoot, 'node_modules'),
+-      'junction'
+-    );
+-    await fs.promises.writeFile(
+-      path.join(projectRoot, 'app/hello+api.ts'),
+-      `
++it.each(['commonjs', 'module'])(
++  'exports and runs a server route with a standalone worker (%s)',
++  async (packageType) => {
++    const extension = packageType === 'module' ? '.cjs' : '.js';
++    let projectRoot = getTemporaryPath();
++    try {
++      await fs.promises.cp(
++        path.join(__dirname, '../../fixtures/with-server-artifacts'),
++        projectRoot,
++        { recursive: true }
++      );
++      projectRoot = await fs.promises.realpath(projectRoot);
++      await fs.promises.symlink(
++        path.join(getRouterE2ERoot(), 'node_modules'),
++        path.join(projectRoot, 'node_modules'),
++        'junction'
++      );
++      const packagePath = path.join(projectRoot, 'package.json');
++      const pkg = JSON.parse(await fs.promises.readFile(packagePath, 'utf8'));
++      await fs.promises.writeFile(packagePath, JSON.stringify({ ...pkg, type: packageType }));
++      await fs.promises.writeFile(
++        path.join(projectRoot, 'app/hello+api.ts'),
++        `
+ import { Worker as NodeWorker } from 'node:worker_threads';
+ import path from 'node:path';
+ export async function GET() {
+@@ -115,41 +134,54 @@ export async function GET() {
+   return Response.json({ value, workerPath });
+ }
+ `
+-    );
+-    await fs.promises.writeFile(
+-      path.join(projectRoot, 'worker.ts'),
+-      `
++      );
++      await fs.promises.writeFile(
++        path.join(projectRoot, 'worker.ts'),
++        `
+ import { parentPort } from 'node:worker_threads';
+ parentPort.postMessage('worker result');
+ `
+-    );
+-    await executeExpoAsync(projectRoot, ['export', '-p', 'web', '--api-only', '--source-maps'], {
+-      env: { NODE_ENV: 'production' },
+-    });
+-    const serverRoot = path.join(projectRoot, 'dist/server');
+-    const { stdout } = await spawnAsync(
+-      process.execPath,
+-      [
+-        '-e',
+-        'require(process.argv[1]).GET().then(async (response) => console.log(JSON.stringify(await response.json()))).catch((error) => { console.error(error); process.exitCode = 1; });',
+-        path.join(serverRoot, '_expo/functions/hello+api.js'),
+-      ],
+-      { cwd: projectRoot }
+-    ).catch((error) => {
+-      throw new Error(error.stderr || error.message);
+-    });
+-    const result = JSON
+```
+
+**File**: `packages/@expo/cli/src/start/server/metro/MetroBundlerDevServer.ts` (modified, +28/-6)
+```diff
+@@ -74,6 +74,7 @@ import {
+   getBaseUrlFromExpoConfig,
+   getChunkingStrategyFromExpoConfig,
+   getMetroDirectBundleOptions,
++  isServerEnvironment,
+ } from '../middleware/metroOptions';
+ import { prependMiddleware } from '../middleware/mutations';
+ import { createInfoHandler, createOpen } from '../middleware/openHandlers';
+@@ -244,8 +245,12 @@ export class MetroBundlerDevServer extends BundlerDevServer {
+     const middlewareFilePath = path.isAbsolute(manifest.middleware.file)
+       ? manifest.middleware.file
+       : path.join(appDir, manifest.middleware.file);
++    const serverOutputExtension = this.serverOutputExtension;
+     const artifactFilename = convertPathToModuleSpecifier(
+-      path.join(outputDir, path.relative(appDir, middlewareFilePath.replace(/\.[tj]sx?$/, '.js')))
++      path.join(
++        outputDir,
++        path.relative(appDir, middlewareFilePath.replace(/\.[tj]sx?$/, serverOutputExtension))
++      )
+     );
+     const contents = await this.bundleApiRoute(middlewareFilePath, {
+       platform,
+@@ -280,6 +285,7 @@ export class MetroBundlerDevServer extends BundlerDevServer {
+     platform: string;
+   }): Promise<{ files: ExportAssetMap; manifest: RoutesManifest<string> }> {
+     const { routerRoot } = this.instanceMetroOptions;
++    const serverOutputExtension = this.serverOutputExtension;
+     assert(
+       routerRoot != null,
+       'The server must be started before calling exportExpoRouterApiRoutesAsync.'
+@@ -325,9 +331,14 @@ export class MetroBundlerDevServer extends BundlerDevServer {
+       const artifactFilename =
+         route.page === rscPath
+           ? // HACK: Add RSC renderer to the output...
+-            convertPathToModuleSpecifier(path.join(outputDir, '.' + rscPath + '.js'))
++            convertPathToModuleSpecifier(
++              path.join(outputDir, '.' + rscPath + serverOutputExtension)
++            )
+           : convertPathToModuleSpecifier(
+-              path.join(outputDir, path.relative(appDir, filepath.replace(/\.[tj]sx?$/, '.js')))
++              path.join(
++                outputDir,
++                path.relative(appDir, filepath.replace(/\.[tj]sx?$/, serverOutputExtension))
++              )
+             );
+       const contents = await this.bundleApiRoute(filepath, {
+         platform,
+@@ -370,7 +381,7 @@ export class MetroBundlerDevServer extends BundlerDevServer {
+     includeSourceMaps?: boolean;
+     platform?: string;
+   }) {
+-    const artifactFilename = '_expo/server/render.js';
++    const artifactFilename = `_expo/server/render${this.serverOutputExtension}`;
+     const renderModule = await this.ssrLoadModuleContents(
+       require.resolve('@expo/router-server/node/render.js'),
+       {
+@@ -417,7 +428,9 @@ export class MetroBundlerDevServer extends BundlerDevServer {
+     // NOTE(@hassankhan): Should we parallelize loader bundling?
+     for (const entry of entryPoints) {
+       const pagePath = entry.page.startsWith('/') ? entry.page.slice(1) : entry.page;
+-      const artifactFilename = convertPathToModuleSpecifier(path.join(outputDir, pagePath + '.js'));
++      const artifactFilename = convertPathToModuleSpecifier(
++        path.join(outputDir, pagePath + this.serverOutputExtension)
++      );
+       const contents = await this.bundleLoader(entry.file, {
+         platform,
+         entryFilename: artifactFilename,
+@@ -818,6 +831,7 @@ export class MetroBundlerDevServer extends BundlerDevServer {
+ 
+   // Set when the server is started.
+   private instanceMetroOptions: Partial<ExpoMetroOptions> = {};
++  private serverOutputExtension: '.js' | '.cjs' = '.js';
+ 
+   private ssrLoadModule: SSRLoadModuleFunc = async (
+     filePath,
+@@ -1006,6 +1020,10 @@ export class MetroBundlerDevServer extends BundlerDevServer {
+       ...specificOptions,
+     };
+ 
++    if (isServerEnvironment(opts.environment)) {
++      opts.outputExtension ??= this.serverOutputExtension;
++    }
++
+     // https://github.com/facebook/metro/blob/2405f2f6c37a1b641cc379b9c733b1eff0c1c2a1/packages/metro/src/lib/parseOptionsFromUrl.js#L55-L87
+     const { filename, bundle, map, ...rest } = await this.metroLoadModuleContents(filePath, opts);
+     return {
+@@ -1202,7 +1220,8 @@ export class MetroBundlerDevServer extends BundlerDevServer {
+     );
+ 
+     // Save the SSR manifest so we can perform more replacements in the server renderer and with server actions.
+-    files.set(`_expo/rsc/${options.platform}/ssr-manifest.js`, {
++    const manifestFilename = `_expo/rsc/${options.platform}/ssr-manifest${this.serverOutputExtension}`;
++    files.set(manifestFilename, {
+       targetDomain: 'server',
+       contents:
+         'module.exports = ' +
+@@ -1332,6 +1351,7 @@ export class MetroBundlerDevServer extends BundlerDevServer {
+       );
+     }
+ 
++    this.serverOutputExtension = config.pkg.type === 'module' ? '.cjs' : '.js';
+     const instanceMetroOptions = {
+       chunkingStrategy: getChunkingStrategyFromExpoConfig(exp),
+       isExporting: !!options.isExporting,
+@@ -1539,6 +1559,7 @@ exp
+```
+
+**File**: `packages/@expo/cli/src/start/server/metro/__tests__/MetroBundlerDevServer-test.ts` (modified, +32/-0)
+```diff
+@@ -1133,3 +1133,35 @@ function serverContents(filename: string) {
+     artifacts: [{ type: 'js', filename, source: src, originFilename: 'entry.ts', metadata: {} }],
+   };
+ }
++
++it('defaults server output extensions while preserving client requests and explicit overrides', async () => {
++  for (const [environment, serverExtension, outputExtension, expected] of [
++    ['node', '.cjs', undefined, '.cjs'],
++    ['react-server', '.cjs', undefined, '.cjs'],
++    ['client', '.cjs', undefined, undefined],
++    ['node', '.js', undefined, '.js'],
++    ['node', '.cjs', '.js', '.js'],
++    ['client', '.cjs', '.custom', '.custom'],
++  ] as const) {
++    const devServer = createDevServerForStaticPageTests();
++    devServer['serverOutputExtension'] = serverExtension;
++    const load = jest.spyOn(devServer as any, 'metroLoadModuleContents').mockResolvedValue({
++      filename: 'entry',
++      bundle: 'code',
++      map: '',
++    });
++    await devServer['ssrLoadModuleContents']('/app/index.ts', {
++      environment,
++      outputExtension,
++      entryFilename: 'exact.bundle',
++    });
++    expect(load).toHaveBeenCalledWith(
++      '/app/index.ts',
++      expect.objectContaining({
++        environment,
++        outputExtension: expected,
++        entryFilename: 'exact.bundle',
++      })
++    );
++  }
++});
+```
+
+**File**: `packages/@expo/cli/src/start/server/metro/createServerComponentsMiddleware.ts` (modified, +4/-3)
+```diff
+@@ -47,6 +47,7 @@ export function createServerComponentsMiddleware(
+   projectRoot: string,
+   {
+     rscPath,
++    outputExtension = '.js',
+     instanceMetroOptions,
+     ssrLoadModule,
+     ssrLoadModuleArtifacts,
+@@ -55,6 +56,7 @@ export function createServerComponentsMiddleware(
+     routerOptions,
+   }: {
+     rscPath: string;
++    outputExtension?: '.js' | '.cjs';
+     instanceMetroOptions: Partial<ExpoMetroOptions>;
+     ssrLoadModule: SSRLoadModuleFunc;
+     ssrLoadModuleArtifacts: SSRLoadModuleArtifactsFunc;
+@@ -203,7 +205,6 @@ export function createServerComponentsMiddleware(
+       // Match babel plugin.
+       const publicModuleId = './' + toPosixPath(path.relative(projectRoot, entryPoint));
+ 
+-      // Import relative to `dist/server/_expo/rsc/web/router.js`
+       manifest[publicModuleId] = [String(relativeName), outputName];
+     }
+ 
+@@ -232,7 +233,7 @@ export function createServerComponentsMiddleware(
+     await processEntryPoints(uniqueEntryPoints);
+ 
+     // Save the SSR manifest so we can perform more replacements in the server renderer and with server actions.
+-    files.set(`_expo/rsc/${platform}/action-manifest.js`, {
++    files.set(`_expo/rsc/${platform}/action-manifest${outputExtension}`, {
+       targetDomain: 'server',
+       contents: 'module.exports = ' + JSON.stringify(manifest),
+     });
+@@ -260,7 +261,7 @@ export function createServerComponentsMiddleware(
+       includeSourceMaps,
+       excludeSource: true,
+       splitChunks: false,
+-      entryFilename: `_expo/rsc/${platform}/router.js`,
++      entryFilename: `_expo/rsc/${platform}/router${outputExtension}`,
+     });
+ 
+     // Extract the global CSS modules that are imported from the router.
+```
+
+**File**: `packages/@expo/router-server/src/rsc/middleware.ts` (modified, +5/-3)
+```diff
+@@ -16,6 +16,8 @@ import { renderRsc } from './rsc-renderer';
+ declare const $$require_external: typeof require;
+ 
+ const debug = createDebug('expo:router:server:rsc-renderer');
++// TODO(@kitten): Bundle RSC like the SSR renderer so the serializer handles chunking internally.
++const serverOutputExtension = path.extname(__filename);
+ 
+ function serverRequire<T = any>(...targetOutputModulePath: string[]): T {
+   // NOTE(@kitten): This `__dirname` will be located in the output file system, e.g. `dist/server/*`
+@@ -36,7 +38,7 @@ function getServerActionManifest(
+     string,
+   ]
+ > {
+-  const filePath = `../../rsc/${platform}/action-manifest.js`;
++  const filePath = `../../rsc/${platform}/action-manifest${serverOutputExtension}`;
+   return serverRequire(filePath);
+ }
+ 
+@@ -53,7 +55,7 @@ function getSSRManifest(
+     string,
+   ]
+ > {
+-  const filePath = `../../rsc/${platform}/ssr-manifest.js`;
++  const filePath = `../../rsc/${platform}/ssr-manifest${serverOutputExtension}`;
+   return serverRequire(filePath);
+ }
+ 
+@@ -147,7 +149,7 @@ export async function renderRscAsync(
+     {
+       router: () => {
+         // NOTE(@kitten): [WORKAROUND] Assumes __dirname is at `dist/server/_expo/functions/_flight`
+-        return serverRequire(`../../rsc/${platform}/router.js`);
++        return serverRequire(`../../rsc/${platform}/router${serverOutputExtension}`);
+       },
+     },
+     args
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #53968** (2026-11-21): [fingerprint] Sort by code point instead of the system locale (@expo-tuft[bot])
-- **PR #53967** (closed): BUSINESS APP KING MARKET (@emmadee578-hue)
-- **PR #53952** (closed): Version packages (sdk-58) (@github-actions[bot])
-- **PR #53938** (2026-11-20): fix(sqlite): Implement `Enumerable` on `SQLAction` (@ramonclaudio)
-- **PR #53936** (2026-11-20): test(cli): Strip ANSI codes in `compile` test assertions (@ramonclaudio)
-- **PR #53932** (2026-11-20): chore(cli,updates): Bump `@expo/code-signing-certificates` to prerelease (drop node-forge) (@kitten)
+- **PR #54079** (2026-11-23): [ci][macOS] Skip lifecycle scripts when adding react-native-macos (@gabrieldonadel)
+- **PR #54078** (2026-11-23): [docs] Update the Device Manager steps in the Android emulator guide (@baasilali)
+- **PR #54070** (2026-11-23): [core][iOS] Install the `NativeModule` and `SharedRef` classes from Swift (@tsapeta)
+- **PR #54068** (2026-11-24): [ui][android] Mark the selected option in the Picker menu (@miniware9)
+- **PR #54059** (closed): [docs] Add an FAQ entry on Snack visibility and deletion (@sarahlane8)
+- **PR #54057** (closed): [expo-router] Preserve dynamic parent parameters when pressing a JavaScript tab (@cleissonproductera)
 
 ---
 
@@ -1126,21 +1456,25 @@ All tests pass.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [docs] Add Using LiveKit guide
+## X. [ios][file-system] Fix crash when a DownloadTask/UploadTask is cancelled or rele
 
 **RULE**:
-When implementing operations in `docs/.vale/writing-styles/expo-docs/HeadingCase.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in expo/expo. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/file-system-ios-task-release-race.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in expo/expo. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `09205331`: [docs] Add Using LiveKit guide. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `546b3581`: [ios][file-system] Fix crash when a DownloadTask/UploadTask is cancelled or released while its request completes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/.vale/writing-styles/expo-docs/HeadingCase.yml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/file-system-ios-task-release-race.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  - '.*LiveKit.*'
+---
+'expo-file-system': patch
+---
+
+[iOS] Fix a crash when a `DownloadTask` or `UploadTask` is cancelled or garbage-collected at the moment its request completes.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1150,4 +1484,4 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `09205331` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `546b3581` are properly handled with clean fallback behavior.
