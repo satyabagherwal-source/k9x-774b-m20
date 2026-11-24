@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T13:12:43.531Z",
+  "updated_at": "2026-11-24T13:21:18.871Z",
   "stats": {
-    "total_discovered": 8607,
-    "approved_pending_harvest": 8161,
+    "total_discovered": 8622,
+    "approved_pending_harvest": 8169,
     "harvested_count": 0,
-    "rejected_count": 446,
+    "rejected_count": 453,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8151,
+      "COMMUNITY_AND_EXPERT": 8165,
       "OFFICIAL_DOCUMENTATION": 269,
-      "STANDARDS_AND_SPECIFICATIONS": 123,
+      "STANDARDS_AND_SPECIFICATIONS": 124,
       "ENGINEERING_BLOGS": 7,
       "SECURITY_ADVISORIES": 46,
       "LEGAL_AND_REGULATORY": 2,
@@ -186255,6 +186255,287 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/erkamyaman-rust-anything-learnings.md",
         "fileName": "erkamyaman-rust-anything-learnings.md"
+      }
+    },
+    "SRC-AEC37B6C4F3B": {
+      "id": "SRC-AEC37B6C4F3B",
+      "url": "http://example.org/onto",
+      "title": "http://example.org/onto",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-24T13:21:17.103Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
+        "fileName": "fabio-rovai-open-ontologies-learnings.md"
+      }
+    },
+    "SRC-3C1A101F3558": {
+      "id": "SRC-3C1A101F3558",
+      "url": "http://example.org/instances/s1",
+      "title": "http://example.org/instances/s1",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-24T13:21:17.169Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
+        "fileName": "fabio-rovai-open-ontologies-learnings.md"
+      }
+    },
+    "SRC-1CA055411BAE": {
+      "id": "SRC-1CA055411BAE",
+      "url": "http://example.org/instances/s2",
+      "title": "http://example.org/instances/s2",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-24T13:21:17.232Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
+        "fileName": "fabio-rovai-open-ontologies-learnings.md"
+      }
+    },
+    "SRC-8F26322F9377": {
+      "id": "SRC-8F26322F9377",
+      "url": "http://example.org/instances/x",
+      "title": "http://example.org/instances/x",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-24T13:21:17.305Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
+        "fileName": "fabio-rovai-open-ontologies-learnings.md"
+      }
+    },
+    "SRC-8E1A9D460AD5": {
+      "id": "SRC-8E1A9D460AD5",
+      "url": "http://example.org/instances/a",
+      "title": "http://example.org/instances/a",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-24T13:21:17.359Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
+        "fileName": "fabio-rovai-open-ontologies-learnings.md"
+      }
+    },
+    "SRC-A6043D2B9974": {
+      "id": "SRC-A6043D2B9974",
+      "url": "http://www.w3.org/2004/02/skos/core",
+      "title": "http://www.w3.org/2004/02/skos/core",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "discovered_at": "2026-11-24T13:21:17.417Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
+        "fileName": "fabio-rovai-open-ontologies-learnings.md"
+      }
+    },
+    "SRC-26C4378E72DB": {
+      "id": "SRC-26C4378E72DB",
+      "url": "http://example.org/instances/ada",
+      "title": "http://example.org/instances/ada",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-24T13:21:17.474Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
+        "fileName": "fabio-rovai-open-ontologies-learnings.md"
+      }
+    },
+    "SRC-57F71BB308B9": {
+      "id": "SRC-57F71BB308B9",
+      "url": "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/es",
+      "title": "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/es",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T13:21:18.436Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
+        "fileName": "sqlpage-sqlpage-learnings.md"
+      }
+    },
+    "SRC-39D1F63804E7": {
+      "id": "SRC-39D1F63804E7",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/f/fa/Globe.svg",
+      "title": "https://upload.wikimedia.org/wikipedia/commons/f/fa/Globe.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T13:21:18.545Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
+        "fileName": "sqlpage-sqlpage-learnings.md"
+      }
+    },
+    "SRC-FE96EE5DB1DD": {
+      "id": "SRC-FE96EE5DB1DD",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Lynx_lynx_-_05.jpg/330px-Lynx_lynx_-_05.jpg",
+      "title": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Lynx_lynx_-_05.jpg/330px-Lynx_lynx_-_05.jpg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T13:21:18.598Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
+        "fileName": "sqlpage-sqlpage-learnings.md"
+      }
+    },
+    "SRC-AD316341FE80": {
+      "id": "SRC-AD316341FE80",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/American_squirrel_eating_nut%2C_13_Jun_2013.JPG/330px-American_squirrel_eating_nut%2C_13_Jun_2013.JPG",
+      "title": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/American_squirrel_eating_nut%2C_13_Jun_2013.JPG/330px-American_squirrel_eating_nut%2C_13_Jun_2013.JPG",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T13:21:18.653Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
+        "fileName": "sqlpage-sqlpage-learnings.md"
+      }
+    },
+    "SRC-9D04A07C47E8": {
+      "id": "SRC-9D04A07C47E8",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Australian_orb_weaver_spinning_web.jpg/330px-Australian_orb_weaver_spinning_web.jpg",
+      "title": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Australian_orb_weaver_spinning_web.jpg/330px-Australian_orb_weaver_spinning_web.jpg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T13:21:18.706Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
+        "fileName": "sqlpage-sqlpage-learnings.md"
+      }
+    },
+    "SRC-F6E4A86A089A": {
+      "id": "SRC-F6E4A86A089A",
+      "url": "https://www.youtube.com/embed/mXdgmSdaXkg",
+      "title": "https://www.youtube.com/embed/mXdgmSdaXkg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T13:21:18.761Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
+        "fileName": "sqlpage-sqlpage-learnings.md"
+      }
+    },
+    "SRC-321D3A4A5208": {
+      "id": "SRC-321D3A4A5208",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Elefantes_africanos_de_sabana_%28Loxodonta_africana%29%2C_Elephant_Sands%2C_Botsuana%2C_2018-07-28%2C_DD_114-117_PAN.jpg/1280px-Elefantes_africanos_de_sabana_%28Loxodonta_africana%29%2C_Elephant_Sands%2C_Botsuana%2C_2018-07-28%2C_DD_114-117_PAN.jpg",
+      "title": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Elefantes_africanos_de_sabana_%28Loxodonta_africana%29%2C_Elephant_Sands%2C_Botsuana%2C_2018-07-28%2C_DD_114-117_PAN.jpg/1280px-Elefantes_africanos_de_sabana_%28Loxodonta_africana%29%2C_Elephant_Sands%2C_Botsuana%2C_2018-07-28%2C_DD_114-117_PAN.jpg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T13:21:18.815Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
+        "fileName": "sqlpage-sqlpage-learnings.md"
+      }
+    },
+    "SRC-562FDC031E35": {
+      "id": "SRC-562FDC031E35",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Penguin_Island_panorama_with_ferry_and_dolphins_in_foreground%2C_March_2023_06.jpg/1280px-Penguin_Island_panorama_with_ferry_and_dolphins_in_foreground%2C_March_2023_06.jpg",
+      "title": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Penguin_Island_panorama_with_ferry_and_dolphins_in_foreground%2C_March_2023_06.jpg/1280px-Penguin_Island_panorama_with_ferry_and_dolphins_in_foreground%2C_March_2023_06.jpg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T13:21:18.871Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
+        "fileName": "sqlpage-sqlpage-learnings.md"
       }
     }
   }

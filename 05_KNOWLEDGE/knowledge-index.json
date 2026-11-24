@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T13:12:45.787Z",
+  "last_updated": "2026-11-24T13:21:20.399Z",
   "total_verified_learnings": 9095,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24635,
+  "total_items": 24640,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "7d65bfc38ce50f84c1d5e2e7d1070fa35b6e8764f97bb4632d0bb6e84f2ca730",
+      "content_hash": "c5f52f09ec87cc0b620fb02c61aea103adec6580578908fc42da14631ba31532",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T13:04:21.581Z"
+      "persisted_at": "2026-11-24T13:21:20.220Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "02b87c4fcaea169f1cd42dbe2535539bae7cdbe355b17416c033d81e93fafdbc",
+      "content_hash": "e6fe8cbe965fdad073cab02eb1eeabe8d53922f06c35c86b55842c082dbca15f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T13:04:21.794Z"
+      "persisted_at": "2026-11-24T13:21:20.399Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -252770,8 +252770,8 @@
       "slug": "fabio-rovai-open-ontologies",
       "platform": "github",
       "source_url": "https://github.com/fabio-rovai/open-ontologies",
-      "source_version": "1ba7ecf8",
-      "content_hash": "fda432b09445dd883eb8096608b5809c7a206a933df752e5fd557a4bc1d8afd1",
+      "source_version": "ef583f5e",
+      "content_hash": "2e71d1a2d3e273170ab08bc9e3a7e6555a6141ef0764813898552721f34e4ad3",
       "dossier_path": "07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
       "promoted_rules": [
@@ -252799,6 +252799,11 @@
           "number": 9798,
           "title": "Merge fix/428-figure-real-forgery: the README figure's red edge is a forgery oo-",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10265,
+          "title": "Merge main into fix/432-vocab-check-wrong-role",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -252806,7 +252811,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T17:46:20.957Z",
+      "verified_at": "2026-11-24T13:21:07.862Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -252860,10 +252865,10 @@
       "relative_path": "08_VERIFICATION/fabio-rovai-open-ontologies-verification-protocol-empirical-defect-shield-for-fa.md",
       "title": "Verification Protocol: Empirical Defect Shield for fabio-rovai/open-ontologies",
       "repository": "fabio-rovai/open-ontologies",
-      "source_version": "1ba7ecf8",
-      "content_hash": "0cdda82344da04b3ce394e9ddbd8a9e3cf13cba4e17c41fdb739d9b9379d195d",
+      "source_version": "ef583f5e",
+      "content_hash": "8031b9429179dfebb44d03adb4f610518c62287f495deb2606890febaf33bf21",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T17:46:21.743Z"
+      "persisted_at": "2026-11-24T13:21:08.723Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-conwayresearch-underdog-woof-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-conwayresearch-underdog-woof-learnings-core-i",
@@ -252897,9 +252902,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for fabio-rovai-open-ontologies-learnings",
       "repository": "fabio-rovai-open-ontologies-learnings",
       "source_version": "HEAD",
-      "content_hash": "95cc129a02b2ec8b807687be6f838d156b1a4e3b7212488308a825534c0354c6",
+      "content_hash": "3a2a2a149ecf56e5f8a3a8600af3e5dc2c5c31af164ebb8f562570539b265376",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T17:46:33.063Z"
+      "persisted_at": "2026-11-24T13:21:18.094Z"
     },
     "learn-huggingface-cactus-compute-mirage": {
       "learning_id": "learn-huggingface-cactus-compute-mirage",
@@ -287623,8 +287628,8 @@
       "slug": "sqlpage-sqlpage",
       "platform": "github",
       "source_url": "https://github.com/sqlpage/SQLPage",
-      "source_version": "f0d8890e",
-      "content_hash": "c7cbc84c25050e2e33c89c926c0af882fcaac9825590cb2081d1765bf0ad6539",
+      "source_version": "d69f54cf",
+      "content_hash": "4d4517e2c5653b1792a0488e92d03e4f5f5ec771aeceaf94ca42de8998bef09d",
       "dossier_path": "07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
       "promoted_rules": [
@@ -287647,6 +287652,11 @@
           "number": 10073,
           "title": "Connect guides and reference pages in the official documentation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10266,
+          "title": "SQLPage component accessibility and audit the reference",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -287654,7 +287664,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T16:53:44.223Z",
+      "verified_at": "2026-11-24T13:21:13.205Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -287696,10 +287706,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-sqlpage-sqlpage-architecture-intelligence-sqlpage-sqlpage-core-invariants.md",
       "title": "Architecture Intelligence: sqlpage/SQLPage Core Invariants",
       "repository": "sqlpage/SQLPage",
-      "source_version": "d65bda49",
-      "content_hash": "d652f2c474d89108554d0a8249b973f484d30652a90a405e6e33f5553eda77af",
+      "source_version": "d69f54cf",
+      "content_hash": "a6218ea21a9d91ee1d7f52b71de4d3c3097613decbf41e81b2db3f21f77625bf",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T11:47:58.826Z"
+      "persisted_at": "2026-11-24T13:21:13.848Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-sqlpage-sqlpage": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sqlpage-sqlpage",
@@ -287708,10 +287718,10 @@
       "relative_path": "08_VERIFICATION/sqlpage-sqlpage-verification-protocol-empirical-defect-shield-for-sqlpage-sqlpag.md",
       "title": "Verification Protocol: Empirical Defect Shield for sqlpage/SQLPage",
       "repository": "sqlpage/SQLPage",
-      "source_version": "f0d8890e",
-      "content_hash": "f1b7670292c22013e732a0e529a46746615bf5023642cde567ff7e351e2d7bd5",
+      "source_version": "d69f54cf",
+      "content_hash": "9751145770f183cb2433cea0b9e36c667ae2ba113ff93f34786b5f04d4e3b7db",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T16:53:45.015Z"
+      "persisted_at": "2026-11-24T13:21:14.029Z"
     },
     "rule-9143": {
       "learning_id": "rule-9143",
@@ -287847,9 +287857,9 @@
       "title": "Architecture Intelligence: sqlpage-sqlpage-learnings Core Invariants",
       "repository": "sqlpage-sqlpage-learnings",
       "source_version": "HEAD",
-      "content_hash": "36945354f6e8dde55c337c0ceeb12203ec838acfea8b97d1f3c4014c6cde097b",
+      "content_hash": "174d676d67133b7e44bfd4063fe7ba12d6c8e137903bac69527becd923e8905e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T11:48:04.659Z"
+      "persisted_at": "2026-11-24T13:21:19.316Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-sqlpage-sqlpage-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sqlpage-sqlpage-learnings",
@@ -287859,9 +287869,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for sqlpage-sqlpage-learnings",
       "repository": "sqlpage-sqlpage-learnings",
       "source_version": "HEAD",
-      "content_hash": "18a2ac3b2e9f728e72eee9ee6e51577db8c199b3b14b9be4a3813a5e27f217c4",
+      "content_hash": "3db27c9ebddce8425b74743f5a589c3e0aaf324d46ae889133b2db14f694358e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T11:48:04.845Z"
+      "persisted_at": "2026-11-24T13:21:19.491Z"
     },
     "rule-9146": {
       "learning_id": "rule-9146",
@@ -306463,10 +306473,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-fabio-rovai-open-ontologies-quality-verification-intelligence-fabio-rovai-open-o.md",
       "title": "Quality & Verification Intelligence: fabio-rovai/open-ontologies Core Invariants",
       "repository": "fabio-rovai/open-ontologies",
-      "source_version": "17ef05b9",
-      "content_hash": "5406f6e5422af41f28aa84a6532846763e10afe73d75c7b5bbb5009806553bb6",
+      "source_version": "ef583f5e",
+      "content_hash": "0a7ce8323eba4412826cd0c9b4a40c90c4646f6557aa2d3fb6cac02e9a85ddf0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T11:30:49.527Z"
+      "persisted_at": "2026-11-24T13:21:08.519Z"
     },
     "rule-9561": {
       "learning_id": "rule-9561",
@@ -334992,13 +335002,13 @@
       "item_id": "candidate_directive-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-I0S1-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-3USQ-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
       "title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "3a4b9f672696ebe779daa846ed815e1c4bf3b2d43490117e564b33d69e8762c3",
+      "content_hash": "4c2a55b88ecccb46f047d05a9129ac5d1d6f01370c6d4bbdf096cd36f1a227c8",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T13:04:21.364Z"
+      "persisted_at": "2026-11-24T13:21:20.045Z"
     },
     "learn-github-xinatian-mroffice": {
       "learning_id": "learn-github-xinatian-mroffice",
@@ -336250,6 +336260,70 @@
       "content_hash": "f52fb1c3a3ad5c06311abd10be66e24afd222ae4c4392404cea7dc52619bcd2d",
       "domain_letter": "G",
       "persisted_at": "2026-11-24T13:12:43.787Z"
+    },
+    "rule-10265": {
+      "learning_id": "rule-10265",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10265,
+      "title": "Merge main into fix/432-vocab-check-wrong-role",
+      "source_url": "https://github.com/fabio-rovai/open-ontologies",
+      "source_version": "ef583f5e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T13:21:07.862Z"
+    },
+    "candidate_directive-merge-main-into-fix-432-vocab-check-wrong-role": {
+      "item_id": "candidate_directive-merge-main-into-fix-432-vocab-check-wrong-role",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3T0M-merge-main-into-fix-432-vocab-check-wrong-role.md",
+      "title": "Merge main into fix/432-vocab-check-wrong-role",
+      "repository": "fabio-rovai-open-ontologies-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8e5e49b3eef0fd40ff831046bd33873cfba9303352f07dd147eb51959b1de700",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-24T13:21:17.738Z"
+    },
+    "rule-10266": {
+      "learning_id": "rule-10266",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10266,
+      "title": "SQLPage component accessibility and audit the reference",
+      "source_url": "https://github.com/sqlpage/SQLPage",
+      "source_version": "d69f54cf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T13:21:13.205Z"
+    },
+    "candidate_directive-sqlpage-component-accessibility-and-audit-the-reference": {
+      "item_id": "candidate_directive-sqlpage-component-accessibility-and-audit-the-reference",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3U3P-sqlpage-component-accessibility-and-audit-the-reference.md",
+      "title": "SQLPage component accessibility and audit the reference",
+      "repository": "sqlpage-sqlpage-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7fbe418c000482f81f3ed8e7dfdacdb5d87f4f9cb9b83de922bfa74d03959bd4",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-24T13:21:19.142Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-fabio-rovai-open-ontologies-learnings-core-inv": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-fabio-rovai-open-ontologies-learnings-core-inv",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-fabio-rovai-open-ontologies-learnings-quality-verification-intelligence-fabio-ro.md",
+      "title": "Quality & Verification Intelligence: fabio-rovai-open-ontologies-learnings Core Invariants",
+      "repository": "fabio-rovai-open-ontologies-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f7e7fd93bbee313a5662cc6179b307a6a6128e9e25b1debc8a06e80f2376a14e",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-24T13:21:17.915Z"
     }
   },
   "ai-builder-brain": {

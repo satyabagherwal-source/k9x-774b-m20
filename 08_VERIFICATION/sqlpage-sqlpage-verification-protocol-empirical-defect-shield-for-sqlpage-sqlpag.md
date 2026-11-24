@@ -4,22 +4,22 @@
 {
   "source_repository": "sqlpage/SQLPage",
   "source_url": "https://github.com/sqlpage/SQLPage",
-  "source_version": "f0d8890e",
+  "source_version": "d69f54cf",
   "license": "MIT",
-  "timestamp": "2026-11-23T16:53:44.666Z",
+  "timestamp": "2026-11-24T13:21:13.667Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-sqlpage-sqlpage",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [sqlpage/SQLPage](https://github.com/sqlpage/SQLPage) (Revision: `f0d8890e`).  
-> **License**: MIT | **Timestamp**: `2026-11-23T16:53:44.666Z`  
+> **Provenance**: Harvested from [sqlpage/SQLPage](https://github.com/sqlpage/SQLPage) (Revision: `d69f54cf`).  
+> **License**: MIT | **Timestamp**: `2026-11-24T13:21:13.667Z`  
 > **Learning ID**: `learn-github-sqlpage-sqlpage`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `sqlpage/SQLPage` (Commit: `f0d8890e`)
+- **Target Repository**: `sqlpage/SQLPage` (Commit: `d69f54cf`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sqlpage/SQLPage](https://github.com/sqlpage/SQLPage))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T16:53:43.354Z  
+> **Harvest Timestamp**: 2026-11-24T13:21:12.287Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1093,830 +1093,211 @@ export function initExperience(root) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d7e1c35c` (2026-11-23)
-**Commit Message**: Connect guides and reference pages in the official documentation (#1617)
+### Incident Patch 1: `d69f54cf` (2026-11-23)
+**Commit Message**: Fix SQLPage component accessibility and audit the reference (#1635)
 
-* Connect guides and reference pages in the official documentation
+* Check component documentation accessibility in CI (#1634)
 
-* Show documentation examples beside their live results
+* Audit official-site component docs with axe in CI
 
-* Make the component and function catalogs easier to browse
+* Audit component examples in SQLPage stock themes
 
-* Polish documentation navigation and share reference rendering
+* Improve accessibility of navigation and tracking components
 
-* Publish the complete reference in the Markdown export
+* Enlarge big number title link targets
 
-* Keep login labels and keyboard focus with the intended form
+* Resolve the remaining component accessibility audit findings
 
-* Follow the search field shape on keyboard focus
+* Preserve accent hues when improving contrast
 
-* Use each chart’s surrounding theme for its export menu
+* Keep outlined orange buttons vivid
 
-* Keep chart labels readable on colored marks and in SVG exports
+* Keep accessibility fixes scoped to SQLPage
 
-* Give documentation search a compact query and results layout
+* Drop stylesheet wiring checks from the accessibility audit
 
-* Give wide charts room in phone documentation examples
+* Enhance accessibility and improve component functionality
 
-* Reuse Tabler layouts and theme tokens across the documentation
+Update accessibility features and component enhancements.
 
-* Fix alert contrast, missing component pages and sidebar branding
-
-* Give the first-website tutorial a compact installation chooser
-
-* Place the archive details beside the download action
-
-* Keep documentation header links readable on hover and focus
-
-* Link installation archives and fix map popup contrast
-
-* Restore padding around the docs search shortcut
-
-* Refine documentation card hove
-
-**File**: `CHANGELOG.md` (modified, +7/-0)
+**File**: `CHANGELOG.md` (modified, +6/-4)
 ```diff
-@@ -2,6 +2,13 @@
+@@ -2,14 +2,16 @@
  
  ## unreleased
  
-+- The first-website tutorial now lets you choose an installation target, copy a command, or download an archive for macOS, Windows, Linux, or AWS Lambda.
-+- Missing component pages on the official site return HTTP 404 and link to the catalog. Action buttons in colored alerts stay readable.
-+- The `shell` sidebar now uses `navbar_title` and preserves the colors of the supplied logo in dark mode.
-+- Chart export menus, tooltips, and series colors now follow the theme surrounding each chart, including in custom shells. Chart labels on colored marks have a contrasting outline that carries over to SVG downloads.
-+- Map marker popups follow the surrounding theme so their titles and links stay readable.
-+- Each `login` component’s labels target its own fields. Set `false AS autofocus` to keep the username field from taking focus when the page opens.
-+- The official documentation now connects tutorials, component examples, and the function reference through shared navigation. Browse by task, open search with Ctrl+K or ⌘K, and share a link to a specific parameter. Code blocks have copy controls. Wide examples show SQL beside the live result.
- - Improved contrast for text and controls across the official SQLPage site.
- - JSON `shell` menu items with a link are now links in the accessibility tree instead of being announced as buttons; only submenu toggles keep `role="button"`.
- - The new [`status_bar` component](https://sql-page.com/component.sql?component=status_bar) displays short status messages and links along the bottom of the screen or inline with page content.
-```
-
-**File**: `examples/official-site/404.sql` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- select 'status_code' as component, 404 as status;
- select 'http_header' as component, 'no-store, max-age=0' as "Cache-Control";
--select 'dynamic' as component, properties FROM example WHERE component = 'shell' LIMIT 1;
-+select 'shell-docs' as component, 'Page not found - SQLPage' as title;
- 
- select 'hero' as component,
-     'Not Found' as title,
-```
-
-**File**: `examples/official-site/assets/brand/brand.css` (modified, +6/-0)
-```diff
-@@ -160,6 +160,12 @@ body[data-bs-theme="dark"] {
-   --tblr-alert-color: var(--tblr-primary-fg);
- }
- 
-+/* Keep keyboard focus inside the alert's scrollable content. */
-+.alert .btn {
-+  --tblr-focus-ring-color: currentColor;
-+  --tblr-focus-ring-offset: calc(-1 * var(--tblr-focus-ring-width) - 1px);
-+}
-+
- /* The alert action is a separate, dark button within the filled alert. */
- .alert-important .alert-link {
-   --tblr-alert-link-color: var(--tblr-body-color);
-```
-
-**File**: `examples/official-site/assets/copy-code.js` (added, +15/-0)
-```diff
-@@ -0,0 +1,15 @@
-+/** Select the code for the browser's Copy command if clipboard access is unavailable. */
-+export async function copyCode(code, label) {
-+  try {
-+    await navigator.clipboard.writeText(code.textContent);
-+    return `${label} copied.`;
-+  } catch {
-+    code.closest("[tabindex]")?.focus({ preventScroll: true });
-+    const range = document.createRange();
-+    range.selectNodeContents(code);
-+    const selection = window.getSelection();
-+    selection.removeAllRanges();
-+    selection.addRange(range);
-+    return `${label} selected. Use Copy.`;
-+  }
-+}
-```
-
-**File**: `examples/official-site/assets/docs/catalog.css` (added, +70/-0)
-```diff
-@@ -0,0 +1,70 @@
-+.docs-main {
-+  max-width: 80rem;
-+}
-+
-+.catalog-selection {
-+  margin-inline-start: auto;
-+  color: var(--tblr-link-color);
-+  letter-spacing: normal;
-+  text-transform: none;
-+}
-+
-+details[open] .catalog-selection {
-+  display: none;
-+}
-+
-+.catalog-results {
-+  min-width: 0;
-+  container-type: inline-size;
-+}
-+
-+.catalog-results form[role="search"] {
-+  flex: 1 1 18rem;
-+}
-+
-+.catalog-entry {
-+  display: grid;
-+  grid-template-columns: auto minmax(0, 1fr) auto;
-+  gap: var(--tblr-spacer-2);
-+  align-items: center;
-+  overflow-wrap: anywhere;
-+}
-+
-+.catalog-entry > :last-child {
-+  grid-area: 1 / 3;
-+}
-+
-+.card.catalog-entry {
-+  grid-template-rows: auto 1fr auto;
-+}
-+
-+.card.catalog-entry > :is(p, small) {
-+  grid-column: 1 / -1;
-+  align-self: start;
-+}
-+
-+.list-group-item.catalog-entry p {
-+  grid-column: 2;
-+}
-+
-+@container (min-width: 44rem) {
-+  .list-group-item.catalog-entry {
-+    grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr) auto;
-+    gap: var(--tblr-spacer-3);
-+  }
-+
-+  .list-group-item.catalog-entry p,
-+  .list-group-item.catalog-entry > :last-child {
-+    grid-area: auto;
-+  }
-+}
-+
-+#evaluation,
-+#evaluation + .article-text {
-+  max-width: 51rem;
-+  margin-inline: auto;
-+}
-+
-+#evaluation {
-+  padding-top: var(--tblr-spacer-6);
-+}
-```
-
-**File**: `examples/official-site/assets/docs/examples.css` (added, +85/-0)
-```diff
-@@ -0,0 +1,85 @@
-+.docs-example {
-+  container: example / inline-size;
-+}
-+
-+.docs-example-source,
-+.docs-example-result {
-+  min-width: 0;
-+}
-+
-+.docs-example-result {
-+  border-top: var(--tblr-border-width) solid var(--tblr-border-color);
-+  border-radius: 0 0 var(--tblr-border-radius) var(--tblr-border-radius);
-+}
-+
-+.docs-example-output {
-+  display: flow-root;
-+  container-type: inline-size;
-+  padding: var(--tblr-spacer-3);
-+  --tblr-carousel-control-icon-filter: none;
-+  --tblr-carousel-indicator-active-bg: var(--tblr-heading-color);
-+}
-+/* Tabler sizes columns against the viewport. A card in a preview can have much less room. */
-+.docs-example-output > .row > * {
-+  flex-grow: 1;
-+  min-width: min(100%, 17rem);
-+}
-+.docs-example-output form .row > label {
-+  min-width: min(100%, 12rem);
-+}
-+.docs-example-output .card {
-+  max-width: 100%;
-+}
-+.docs-example-output .table-freeze-columns tr > :first-child {
-+  width: clamp(7rem, 32cqi, 11rem);
-+  min-width: min(9rem, 40cqi);
-+  white-space: normal;
-+}
-+.docs-example-output .pagination {
-+  flex-wrap: wrap;
-+}
-+.docs-example-output .markdown table {
-+  display: block;
-+  overflow-x: auto;
-+}
-+@media (max-width: 27rem) {
-+  .docs-example > .docs-example-source,
-+  .docs-example-layout {
-+    margin-inline: calc(var(--tblr-spacer-1) - var(--docs-gutter));
-+  }
-+  /* A chart card fills the preview. Keep its title inset and give the plot the full width. */
-+  .docs-example-output:has(> .card > .card-body > .chart) {
-+    padding-inline: 0;
-+  }
-+  .docs-example-output > .card > .card-body > .chart {
-+    margin-inline: calc(-1 * var(--tblr-card-spacer-x));
-+  }
-+}
-+@container example (min-width: 52rem) {
-+  .docs-example-layout {
-+    display: grid;
-+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
-+  }
-+  .docs-example-layout > .docs-example-source {
-+    position: sticky;
-+    top: var(--docs-header-height);
-+    align-self: start;
-+  }
-+  .docs-example-result {
-+    display: grid;
-+    grid-template-rows: auto 1fr;
-+    border-top: 0;
-+    border-inline-start: var(--tblr-border-width) solid var(--tblr-border-color);
-+    border-radius: 0 var(--tblr-border-radius) var(--tblr-border-radius) 0;
-+  }
-+  .docs-example-output {
-+    align-self: center;
-+  }
-+}
-+
-+.docs-example-source pre {
-+  max-height: min(24rem, 60svh);
-+  line-height: var(--tblr-line-height-base);
-+  white-space: pre-wrap;
-+  overflow-wrap: anywhere;
-+}
-```
-
-**File**: `examples/official-site/assets/docs/examples.js` (added, +50/-0)
-```diff
-@@ -0,0 +1,50 @@
-+import { copyCode } from "../copy-code.js";
-+
-+function enableCopy(button, code, kind) {
-+  const label = button.querySelector("[aria-live]") ?? button;
-+  const initialLabel = label.textContent;
-+  let reset;
-+  button.hidden = false;
-+  button.addEventListener("click", async () => {
-+    clearTimeout(reset);
-+    label.textContent = await copyCode(code, kind);
-+    reset = setTimeout(() => {
-+      label.textContent = initialLabel;
-+    }, 2500);
-+  });
-+}
-+
-+for (const source of document.querySelectorAll(".docs-example-source")) {
-+  enableCopy(
-+    source.querySelector("button"),
-+    source.querySelector("code"),
-+    "SQL",
-+  );
-+}
-+
-+for (const command of document.querySelectorAll(".install-command")) {
-+  enableCopy(
-+    command.querySelector("button"),
-+    command.querySelector("code"),
-+    "Command",
-+  );
-+}
-+
-+// Attach tools only to standalone snippets, leaving live previews and their source intact.
-+const toolbar = document.getElementById("docs-snippet-tools");
-+for (const code of document.querySelectorAll(
-+  ".docs-main pre > code:not(.docs-example-source *, .docs-example-output *)",
-+)) {
-+  const pre = code.parentElement;
-+  const tools = toolbar.content.cloneNode(true);
-+  const language = Array.from(code.classList).find((name) =>
-+    name.startsWith("language-"),
-+  );
-+  if (language)
-+    tools.querySelector("span").textContent = language.slice(
-+      "language-".length,
-+    );
-+  enableCopy(tools.querySelector("button"), code, "Code");
-+  pre.before(tools);
-+  pre.tabIndex = 0;
-+}
-```
-
-**File**: `examples/official-site/assets/docs/guides.css` (added, +56/-0)
-```diff
-@@ -0,0 +1,56 @@
-+.docs-intro {
-+  display: grid;
-+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-+  background: linear-gradient(
-+    115deg,
-+    var(--tblr-bg-surface-tertiary),
-+    var(--tblr-bg-surface)
-+  );
-+}
-+
-+.docs-intro > .card-body {
-+  padding: clamp(var(--tblr-spacer-4), 4vw, 3.25rem);
-+}
-+
-+.docs-intro p {
-+  max-width: 38ch;
-+}
-+
-+.docs-intro img {
-+  width: 100%;
-+  height: 100%;
-+  contain: size;
-+}
-+
-+.docs-intro-compact {
-+  grid-template-columns: minmax(0, 1fr) 7rem;
-+}
-+
-+.docs-intro-compact > .card-body {
-+  padding: var(--tblr-spacer-3) var(--tblr-spacer-4);
-+}
-+
-+.docs-intro-compact .docs-title {
-+  font-size: clamp(1.75rem, 3vw, 2.5rem);
-+}
-+
-+.docs-intro-compact p {
-+  max-width: 58ch;
-+  margin-bottom: 0;
-+}
-+
-+@media (max-width: 36rem) {
-+  .docs-intro {
-+    grid-template-columns: 1fr;
-+  }
-+
-+  .docs-intro .object-fit-contain,
-+  .docs-intro-compact img {
-+    display: none;
-+  }
-+
-+  .docs-intro .object-fit-cover {
-+    height: 10rem;
-+    object-position: center 25%;
-+  }
-+}
-```
-
----
-
-### Incident Patch 2: `ccd3cd5e` (2026-11-23)
-**Commit Message**: Fix contrast in the official site theme (#1610)
-
-* Fix contrast in the official site theme
-
-* Type the contrast test pixel values
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -2,6 +2,7 @@
- 
- ## unreleased
- 
-+- Improved contrast for text and controls across the official SQLPage site.
+-- The first-website tutorial now lets you choose an installation target, copy a command, or download an archive for macOS, Windows, Linux, or AWS Lambda.
+-- Missing component pages on the official site return HTTP 404 and link to the catalog. Action buttons in colored alerts stay readable.
++- Big number title links have a larger target for touch and pointer users.
++- Carousel slide indicators and pagination arrows now have accessible names. Keyboard users can activate carousel arrows and enabled pagination links. Screen readers announce the current page.
++- Button, card, carousel, and login images accept alternative text. Embedded card frames use their own title or the card title.
++- Inline links are underlined so they stand out without relying on color. The documentation search button has a clear accessible name separate from its shortcut hint.
++- Disabled buttons expose their state to assistive technology and cannot be activated.
++- Tracking blocks without links now expose their titles to screen readers.
+ - The `shell` sidebar now uses `navbar_title` and preserves the colors of the supplied logo in dark mode.
+ - Chart export menus, tooltips, and series colors now follow the theme surrounding each chart, including in custom shells. Chart labels on colored marks have a contrasting outline that carries over to SVG downloads.
+ - Map marker popups follow the surrounding theme so their titles and links stay readable.
+ - Each `login` component’s labels target its own fields. Set `false AS autofocus` to keep the username field from taking focus when the page opens.
+-- The official documentation now connects tutorials, component examples, and the function reference through shared navigation. Browse by task, open search with Ctrl+K or ⌘K, and share a link to a specific parameter. Code blocks have copy controls. Wide examples show SQL beside the live result.
+-- Improved contrast for text and controls across the official SQLPage site.
  - JSON `shell` menu items with a link are now links in the accessibility tree instead of being announced as buttons; only submenu toggles keep `role="button"`.
  - The new [`status_bar` component](https://sql-page.com/component.sql?component=status_bar) displays short status messages and links along the bottom of the screen or inline with page content.
  - A file input with `multiple` now keeps every selected file, instead of only the last one. The new [`sqlpage.persist_uploaded_files`](https://sql-page.com/functions.sql?function=persist_uploaded_files) function saves them all and returns a JSON array with the `path`, original `name`, `mime_type` and `size` of each file.
 ```
 
-**File**: `examples/official-site/assets/brand/brand.css` (modified, +85/-13)
+**File**: `CONTRIBUTING.md` (modified, +4/-0)
 ```diff
-@@ -8,7 +8,7 @@
- /* Official-site overrides use Tabler's existing theme properties directly.
-    Both the standalone landing page and documentation import this file. */
- :root,
--.layout-boxed[data-bs-theme="dark"] {
-+body[data-bs-theme="dark"] {
-   color-scheme: dark;
-   --tblr-font-sans-serif: Outfit, system-ui, sans-serif;
-   --tblr-font-monospace:
-@@ -20,12 +20,12 @@
-   --tblr-light: #f9fafb;
-   --tblr-dark: #1f2937;
-   --tblr-gray-300: #d1d5db;
--  --tblr-primary-fg: var(--tblr-white);
+@@ -67,6 +67,10 @@ built executable. Component suites use `fixtures/<suite>/{index.sql,test.ts}` an
+ import the shared `fixture.ts` harness; root-level `*.spec.ts` files cover the
+ official site.
  
--  /* Core colors refined for better contrast */
--  --tblr-body-color: hsl(225deg 35% 86%);
-+  --tblr-body-color-rgb: 207, 213, 232;
-+  --tblr-body-color: rgb(var(--tblr-body-color-rgb));
-   --tblr-secondary-color: hsl(225, 15%, 80%);
-   --tblr-muted-color: hsla(225, 15%, 75%, 0.8);
-+  --tblr-disabled-color: hsl(225 15% 63%);
- 
-   /* Background system */
-   --tblr-body-bg: hsl(225deg 44% 9%);
-@@ -57,25 +57,44 @@
-   --tblr-primary: rgb(var(--tblr-primary-rgb));
-   --tblr-secondary: hsla(247, 60%, 94%, 0.7); /* Nebula purple */
- 
--  /* Status + accent colors aligned with the brand palette */
--  --tblr-success-rgb: 16, 132, 86; /* Deep green for white text */
-+  /* These accents are also used as text on dark and tinted surfaces. */
-+  --tblr-success-rgb: 88, 186, 138;
-   --tblr-success: rgb(var(--tblr-success-rgb));
--  --tblr-warning-rgb: 197, 124, 0; /* Deep amber */
-+  --tblr-warning-rgb: 219, 153, 54;
-   --tblr-warning: rgb(var(--tblr-warning-rgb));
--  --tblr-danger-rgb: 196, 68, 68; /* Deep crimson */
-+  --tblr-danger-rgb: 238, 126, 126;
-   --tblr-danger: rgb(var(--tblr-danger-rgb));
--  --tblr-purple-rgb: 118, 82, 200; /* Deep violet */
-+  --tblr-purple-rgb: 170, 146, 238;
-   --tblr-purple: rgb(var(--tblr-purple-rgb));
--  --tblr-cyan-rgb: 0, 149, 168; /* Deep cyan */
-+  --tblr-cyan-rgb: 70, 177, 191;
-   --tblr-cyan: rgb(var(--tblr-cyan-rgb));
--  --tblr-indigo-rgb: 96, 113, 215; /* Deep indigo */
-+  --tblr-indigo-rgb: 132, 153, 240;
-   --tblr-indigo: rgb(var(--tblr-indigo-rgb));
--  --tblr-teal: #267d63;
--  --tblr-teal-fg: #20050b;
-+  --tblr-teal-rgb: 85, 177, 149;
-+  --tblr-teal: rgb(var(--tblr-teal-rgb));
++Run `npx playwright test --grep @accessibility` from `tests/end-to-end` to audit
++the official site's component documentation and its live examples in SQLPage's
++stock light and dark themes with axe-core. The normal Playwright suite also runs it.
 +
-+  /* Foregrounds for filled buttons, badges, progress bars and cards. */
-+  --tblr-primary-fg: var(--tblr-body-bg);
-+  --tblr-secondary-fg: var(--tblr-body-bg);
-+  --tblr-blue-fg: var(--tblr-body-bg);
-+  --tblr-info-fg: var(--tblr-body-bg);
-+  --tblr-success-fg: var(--tblr-body-bg);
-+  --tblr-warning-fg: var(--tblr-body-bg);
-+  --tblr-danger-fg: var(--tblr-body-bg);
-+  --tblr-purple-fg: var(--tblr-body-bg);
-+  --tblr-cyan-fg: var(--tblr-body-bg);
-+  --tblr-indigo-fg: var(--tblr-body-bg);
-+  --tblr-teal-fg: var(--tblr-body-bg);
+ To show that an issue exists before you fix it, put the reproduction in a fixture and run it against releases with one command, such as `nix run .#reproduce -- repro_721 postgres v0.35.0 v0.36.1 tree`. The second argument is `sqlite` or `postgres`, and `tree` is your working tree. It prints Playwright's output for each version, then a table you can paste into the issue or pull request. Releases run from their Docker images, from v0.29.0 onwards, and Postgres from `docker compose`. Without Nix, run `npm run reproduce --` in `tests/end-to-end` instead.
  
-   --tblr-green: var(--tblr-success);
-+  --tblr-green-rgb: var(--tblr-success-rgb);
-+  --tblr-green-fg: var(--tblr-success-fg);
-   --tblr-yellow: var(--tblr-warning);
-+  --tblr-yellow-rgb: var(--tblr-warning-rgb);
-+  --tblr-yellow-fg: var(--tblr-warning-fg);
-   --tblr-red: var(--tblr-danger);
-+  --tblr-red-rgb: var(--tblr-danger-rgb);
-+  --tblr-red-fg: var(--tblr-danger-fg);
+ To run a whole suite against a release instead, set `SQLPAGE_RELEASE` to its tag, such as `SQLPAGE_RELEASE=v0.47.0 npx playwright test fixtures/tracking`. Both servers then run that release's Docker image against the same fixtures, on ports 18080 and 18081, so the test fails on the release and passes on your working tree. Add `--ui` to watch the page in each step.
+```
+
+**File**: `examples/official-site/README.md` (modified, +4/-0)
+```diff
+@@ -22,6 +22,10 @@ Run SQLPage from that directory, or run
+ `docker compose -f examples/official-site/docker-compose.yml up --build` from
+ the repository root.
  
-   /* Luminous links */
-   --tblr-link-color: hsl(212, 70%, 75%); /* Star glow */
-@@ -102,3 +121,56 @@
-   --hljs-cosmic-operator: hsl(0, 0%, 95%); /* White dwarf */
-   --hljs-cosmic-keyword: hsl(210, 100%, 75%); /* Blue giant */
++Add `theme=light` or `theme=dark` to a component reference URL to preview its
++live examples using SQLPage's stock theme. For example, visit
++`/component.sql?component=form&theme=light`.
++
+ ## Landing page
+ 
+ The home page is rendered by `index.sql` and the `landing-page` custom template.
+```
+
+**File**: `examples/official-site/assets/docs/shell.css` (modified, +15/-0)
+```diff
+@@ -40,6 +40,11 @@
  }
-+
-+.pagination {
-+  --tblr-pagination-active-color: var(--tblr-primary-fg);
-+}
-+
-+.form-check-input,
-+.form-check-input[type="checkbox"]:indeterminate {
-+  --tblr-form-check-icon-color: var(--tblr-primary-fg);
-+}
-+
-+.form-switch {
-+  --tblr-form-switch-checked-color: var(--tblr-primary-fg);
-+}
-+
-+/* Tabler draws these markers with white SVGs. Use a darker fill behind them. */
-+.form-selectgroup-input:checked
-+  + .form-selectgroup-label
-+  .form-selectgroup-check,
-+.form-imagecheck-input:checked ~ .form-imagecheck-figure::before {
-+  background-color: color-mix(
-+    in srgb,
-+    var(--tblr-primary) 70%,
-+    var(--tblr-body-bg)
-+  );
-+}
-+
-+.steps-counter .step-item:not(.active ~ .step-item)::before {
-+  color: var(--tblr-primary-fg);
-+}
-+
-+.card[class*="-fg"],
-+.alert-important {
-+  --tblr-heading-color: currentColor;
-+}
-+
-+.alert-important:not(.alert-dark, .alert-muted) {
-+  --tblr-alert-color: var(--tblr-primary-fg);
-+}
-+
-+/* The alert action is a separate, dark button within the filled alert. */
-+.alert-important .alert-link {
-+  --tblr-alert-link-color: var(--tblr-body-color);
-+}
-+
-+@supports (color: contrast-color(white)) {
-+  .steps-counter .step-item:not(.active ~ .step-item)::before {
-+    color: contrast-color(var(--tblr-steps-color));
-+  }
-+
-+  .alert.alert-important {
-+    --tblr-alert-color: contrast-color(var(--tblr-alert-variant-color));
+ 
+ .docs-search kbd {
++  position: absolute;
++  z-index: 5;
++  inset-inline-end: 2.25rem;
++  align-self: center;
++  pointer-events: none;
+   font: var(--tblr-font-size-h5) var(--tblr-font-monospace);
+ }
+ 
+@@ -49,6 +54,12 @@
+   }
+ }
+ 
++@media (width >= 62rem) and (not (pointer: coarse)) {
++  .docs-search:has(kbd:not([hidden])) input {
++    padding-inline-end: 3rem;
 +  }
 +}
++
+ .docs-columns {
+   display: flex;
+   flex-direction: column;
+@@ -111,6 +122,10 @@
+ }
+ 
+ @media (min-width: 62rem) {
++  .docs-search:has(kbd:not([hidden])) input {
++    padding-inline-end: 3rem;
++  }
++
+   .docs-columns {
+     flex-direction: row;
+     align-items: flex-start;
 ```
 
-**File**: `examples/official-site/assets/highlightjs-and-tabler-theme.css` (modified, +3/-3)
+**File**: `examples/official-site/sqlpage/docs-shell.sql` (modified, +4/-0)
 ```diff
-@@ -4,11 +4,11 @@
- .btn-primary {
-   --tblr-btn-border-color: var(--tblr-secondary);
-   --tblr-btn-active-border-color: transparent;
--  --tblr-btn-color: var(--tblr-primary-fg, #ffffff);
-+  --tblr-btn-color: var(--tblr-white);
-   --tblr-btn-bg: transparent;
--  --tblr-btn-hover-color: var(--tblr-primary-fg);
-+  --tblr-btn-hover-color: var(--tblr-white);
-   --tblr-btn-hover-bg: transparent;
--  --tblr-btn-active-color: var(--tblr-primary-fg);
-+  --tblr-btn-active-color: var(--tblr-white);
-   --tblr-btn-active-bg: transparent;
-   --tblr-btn-disabled-bg: var(--tblr-primary);
-   --tblr-btn-disabled-color: var(--tblr-primary-fg);
+@@ -7,6 +7,10 @@ select 'shell-docs' as component,
+     $options->>'title' as title,
+     $options->>'description' as description,
+     $options->>'css' as css,
++    case sqlpage.variables('get')->>'theme'
++        when 'light' then 'light'
++        when 'dark' then 'dark'
++    end as stock_theme,
+     $section as section,
+     cast($catalog as integer) as catalog,
+     coalesce($kind || 's', 'guides') as topic_label,
 ```
 
-**File**: `examples/official-site/assets/landing/styles/base.css` (modified, +1/-1)
+**File**: `examples/official-site/sqlpage/migrations/18_button.sql` (modified, +3/-0)
 ```diff
-@@ -49,7 +49,7 @@ a {
- a:focus-visible,
- button:focus-visible,
- [tabindex]:focus-visible {
--  outline: 2px solid var(--tblr-primary);
-+  outline: 2px solid var(--landing-focus-color, var(--tblr-primary));
-   outline-offset: 6px;
- }
- ::selection {
+@@ -117,3 +117,6 @@ INSERT INTO example(component, description, properties) VALUES
+             "image":"https://upload.wikimedia.org/wikipedia/commons/f/fa/Globe.svg"
+         }]')
+     );
++
++INSERT INTO parameter(component, name, description, type, top_level, optional) VALUES
++    ('button', 'image_alt', 'Alternative text for an informative button image. Leave empty if decorative or repeated by the button title.', 'TEXT', FALSE, TRUE);
 ```
 
-**File**: `examples/official-site/assets/landing/styles/comparison.css` (modified, +18/-26)
+**File**: `examples/official-site/sqlpage/migrations/31_card_docs_update.sql` (modified, +7/-3)
 ```diff
-@@ -9,22 +9,11 @@
-   --section-color: var(--tblr-light);
-   --comparison-border: var(--tblr-body-color);
-   --comparison-copy: var(--tblr-dark);
--  --comparison-muted: color-mix(
--    in srgb,
--    var(--tblr-dark),
--    var(--tblr-white) 40%
--  );
-   background: var(--section-color);
-   color: var(--tblr-bg-surface);
-   color-scheme: light;
-   padding-bottom: calc(var(--wave-height) + 64px);
- }
--.comparison-section .eyebrow {
--  color: var(--tblr-blue);
--}
--.comparison-section h2 em {
--  color: var(--tblr-blue);
--}
- .comparison-section .section-heading {
-   grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.95fr) minmax(0, 0.27fr);
-   margin-bottom: 44px;
-@@ -72,7 +61,7 @@
- }
- .comparison-card-heading p {
-   margin: 5px 0 0;
--  color: var(--comparison-muted);
-+  color: var(--landing-light-muted);
-   font: 11px / 1.5 var(--tblr-font-monospace);
- }
- .comparison-versus {
-@@ -142,7 +131,10 @@
-   font: 11px / 1.4 var(--tblr-font-monospace);
- }
- .comparison-window-bar > span:last-child:not(:first-child) {
--  opacity: 0.55;
-+  color: var(--landing-light-muted);
-+}
-+.comparison-code .comparison-window-bar > span:last-child:not(:first-child) {
-+  color: var(--tblr-muted-color);
- }
- .comparison-code .comparison-window-bar {
-   background: var(--tblr-bg-surface-secondary);
-@@ -264,7 +256,7 @@
- }
- .comparison-card .comparison-aside {
-   margin: 10px 0 0;
--  color: var(--comparison-muted);
-+  color: var(--landing-light-muted);
-   font-size: 11px;
- }
- .comparison-sheet .comparison-window-body {
-@@ -277,7 +269,7 @@
- .comparison-sheet-labels {
-   padding: 12px 0 8px;
-   font: 10px var(--tblr-font-monospace);
--  color: var(--comparison-muted);
-+  color: var(--landing-light-muted);
- }
- .comparison-sheet-files {
-   list-style: none;
-@@ -298,12 +290,12 @@
-   height: 18px;
-   border-radius: 3px;
-   background: var(--tblr-success);
--  color: white;
-+  color: var(--tblr-success-fg);
-   font-size: 11px;
- }
- .comparison-sheet-files small {
-   font: 10px var(--tblr-font-monospace);
--  color: var(--comparison-muted);
-+  color: var(--landing-light-muted);
-   white-space: nowrap;
- }
- .comparison-lock {
-@@ -312,7 +304,7 @@
-   border: 1px solid var(--hljs-cosmic-punctuation);
-   border-radius: 7px;
-   background: color-mix(in srgb, var(--tblr-warning) 8%, var(--tblr-white));
--  color: var(--tblr-warning);
-+  color: color-mix(in srgb, var(--tblr-warning) 35%, var(--tblr-dark));
-   font-size: 12px;
- }
- .comparison-terminal {
-@@ -346,7 +338,7 @@
- .comparison-chat small {
-   display: block;
-   font-size: 13px;
--  color: var(--comparison-muted);
-+  color: var(--landing-light-muted);
-   margin-top: 4px;
- }
- .comparison-metric .comparison-view-only {
-@@ -355,7 +347,7 @@
-   border-radius: 5px;
-   align-self: start;
-   position: relative;
--  color: var(--tblr-muted-color);
-+  color: var(--landing-light-muted);
-   background: var(--tblr-light);
-   font-size: 12px;
- }
-@@ -417,7 +409,7 @@
-   height: 24px;
-   border-radius: 50%;
-   background: var(--tblr-link-color);
--  color: white;
-+  color: var(--tblr-primary-fg);
-   font-size: 12px;
- }
- .comparison-lowcode .comparison-window-body {
-@@ -428,7 +420,7 @@
-   border-collapse: collapse;
-   font-size: 12px;
-   width: 100%;
--  color: color-mix(in srgb, var(--tblr-dark), var(--tblr-white) 40%);
-+  color: var(--comparison-copy);
- }
- .comparison-lowcode th {
-   font: 10px var(--tblr-font-monospace);
-@@ -477,13 +469,13 @@
-   justify-content: end;
-   gap: 12px;
-   font-size: 12px;
--  color: var(--comparison-muted);
-+  color: var(--landing-light-muted);
- }
- .comparison-upgrade > div span:last-child {
-   border-radius: 6px;
-   padding: 8px 12px;
-   background: var(--tblr-purple);
--  color: white;
-+  color: var(--tblr-purple-fg);
- }
- .comparison-footer {
-   justify-content: space-between;
-@@ -492,7 +484,7 @@
- }
- .comparison-footer > p {
-   margin: 0;
--  color: var(--comparison-muted);
-+  color: var(--landing-light-muted);
-   font-size: 11px;
-   max-width: 720px;
- }
-@@ -509,7 +501,7 @@
- }
- .comparison-controls p {
-   margin: 0 10px 0 0;
--  color: var(--comparison-muted);
-+  color: var(--landing-light-muted);
-   font: 11px / 1.5 var(--tblr-font-monospace);
- }
- .comparison-controls button {
+@@ -70,9 +70,9 @@ INSERT INTO example(component, description, properties) VALUES
+     ('card', 'A gallery of images.',
+         json('[
+             {"component":"card", "title":"My favorite animals in pictures", "columns": 3},
+-            {"title": "Lynx", "description_md": "The **lynx** is a medium-sized **wild cat** native to Northern, Central and Eastern Europe to Central Asia and Siberia, the Tibetan Plateau and the Himalayas.", "top_image": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Lynx_lynx_-_05.jpg/330px-Lynx_lynx_-_05.jpg", "top_image_width": 330, "top_image_height": 495, "top_image_lazy": true, "icon":"star" },
+-            {"title": "Squirrel", "description_md": "The **chipmunk** is a small, striped rodent of the family Sciuridae. Chipmunks are found in North America, with the exception of the Siberian chipmunk which is found primarily in Asia.", "top_image": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/American_squirrel_eating_nut%2C_13_Jun_2013.JPG/330px-American_squirrel_eating_nut%2C_13_Jun_2013.JPG", "top_image_width": 330, "top_image_height": 495, "top_image_lazy": true },
+-            {"title": "Spider", "description_md": "The **jumping spider family** (_Salticidae_) contains more than 600 described genera and about *6000 described species*, making it the largest family of spiders with about 13% of all species.", "top_image": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Australian_orb_weaver_spinning_web.jpg/330px-Australian_orb_weaver_spinning_web.jpg", "top_image_width": 330, "top_image_height": 495, "top_image_lazy": true }
++            {"title": "Lynx", "description_md": "The **lynx** is a medium-sized **wild cat** native to Northern, Central and Eastern Europe to Central Asia and Siberia, the Tibetan Plateau and the Himalayas.", "top_image_alt": "A Eurasian lynx", "top_image": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Lynx_lynx_-_05.jpg/330px-Lynx_lynx_-_05.jpg", "top_image_width": 330, "top_image_height": 495, "top_image_lazy": true, "icon":"star" },
++            {"title": "Squirrel", "description_md": "The **chipmunk** is a small, striped rodent of the family Sciuridae. Chipmunks are found in North America, with the exception of the Siberian chipmunk which is found primarily in Asia.", "top_image_alt": "A squirrel eating a nut", "top_image": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/American_squirrel_eating_nut%2C_13_Jun_2013.JPG/330px-American_squirrel_eating_nut%2C_13_Jun_2013.JPG", "top_image_width": 330, "top_image_height": 495, "top_image_lazy": true },
++            {"title": "Spider", "description_md": "The **jumping spider family** (_Salticidae_) contains more than 600 described genera and about *6000 described species*, making it the largest family of spiders with about 13% of all species.", "top_image_alt": "An orb weaver spinning a web", "top_image": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Australian_orb_weaver_spinning_web.jpg/330px-Australian_orb_weaver_spinning_web.jpg", "top_image_width": 330, "top_image_height": 495, "top_image_lazy": true }
+         ]')),
+     ('card', 'Beautifully colored cards with variable width. The blue card (width 6) takes half the screen, whereas of the red and green cards have the default width of 3',
+         json('[
+@@ -87,3 +87,7 @@ INSERT INTO example(component, description, properties) VALUES
+             {"title": "Embedded Chart", "embed": "/examples/chart.sql?_sqlpage_embed" },
+             {"title": "Embedded Video", "embed": "https://www.youtube.com/embed/mXdgmSdaXkg", "allow": "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share", "embed_mode": "iframe", "height": "350" }
+         ]'));
++
++INSERT INTO parameter(component, name, description, type, top_level, optional) VALUES
++    ('card', 'top_image_alt', 'Alternative text for an informative card image. Leave empty if decorative.', 'TEXT', FALSE, TRUE),
++    ('card', 'embed_title', 'Accessible name of the iframe. Defaults to the card title, or Embedded content if no title is set.', 'TEXT', FALSE, TRUE);
 ```
 
-**File**: `examples/official-site/assets/landing/styles/component-demos.css` (modified, +3/-2)
+**File**: `examples/official-site/sqlpage/migrations/34_carousel.sql` (modified, +5/-2)
 ```diff
-@@ -4,6 +4,7 @@
-   margin-bottom: 20px;
- }
- .sql-editor {
-+  --landing-focus-color: var(--tblr-primary);
-   margin-top: 18px;
-   border: 1px solid var(--tblr-bg-surface-tertiary);
-   border-radius: 12px;
-@@ -153,7 +154,7 @@
-   top: -86px;
-   left: 48%;
-   margin: 0;
--  color: color-mix(in srgb, var(--tblr-dark), var(--tblr-white) 40%);
-+  color: var(--landing-light-muted);
-   font: italic 17px / 1.35 cursive;
-   transform: rotate(-6deg);
-   pointer-events: none;
-@@ -203,7 +204,7 @@
-   align-items: center;
-   gap: 6px;
-   font: 12px var(--tblr-font-monospace);
--  color: var(--tblr-blue);
-+  color: var(--landing-light-accent);
- }
- .demo-docs:hover {
-   text-decoration: underline;
-```
-
-**File**: `examples/official-site/assets/landing/styles/demo.css` (modified, +1/-1)
-```diff
-@@ -158,7 +158,7 @@ form.mt-3 {
-   box-shadow: 0 3px 14px color-mix(in srgb, var(--tblr-blue) 9.41%, transparent);
-   background: var(--tblr-blue);
-   border-color: var(--tblr-blue);
--  color: var(--tblr-dark);
-+  color: var(--tblr-blue-fg);
- }
- .apexcharts-tooltip {
-   color: var(--tblr-bg-surface);
-```
-
-**File**: `examples/official-site/assets/landing/styles/frontend.css` (modified, +3/-2)
-```diff
-@@ -1,6 +1,7 @@
- /* Four frontend views pair concise copy with diagrams and deployment links. */
- .deployment-section {
-   --section-color: var(--tblr-blue);
-+  --landing-focus-color: var(--tblr-primary-fg);
-   /* Match the solid wave at the edge, then retain the section's diagonal gradient. */
-   background:
-     linear-gradient(180deg, var(--section-color), transparent 180px),
-@@ -83,9 +84,9 @@
-   display: block;
-   margin-top: 5px;
-   font: 13px / 1.4 var(--tblr-font-monospace);
--  opacity: 0.75;
- }
- .frontend-panels {
-+  --landing-focus-color: var(--tblr-primary);
-   border-radius: 20px;
-   padding: 55px 45px;
-   background: var(--tblr-body-bg);
-@@ -204,7 +205,7 @@
-   background: color-mix(in srgb, var(--stage-color) 45%, var(--tblr-body-bg));
-   padding: 10px 0;
-   text-align: center;
--  color: var(--tblr-secondary-color);
-+  color: var(--tblr-light);
- }
- .render-timeline > span:nth-child(2) {
-   --stage-color: var(--tblr-blue);
+@@ -134,6 +134,9 @@ VALUES
+         FALSE,
+         TRUE
+     );
++INSERT INTO parameter(component, name, description, type, top_level, optional) VALUES
++    ('carousel', 'image_alt', 'Alternative text describing the slide image. Leave empty if the image is decorative or its caption already describes it.', 'TEXT', FALSE, TRUE);
++
+ -- Insert example(s) for the component
+ INSERT INTO example(component, description, properties)
+ VALUES (
+@@ -142,8 +145,8 @@ VALUES (
+         JSON(
+             '[
+                 {"component":"carousel","name":"cats1","title":"Famous Database Animals"},
+-                {"image":"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Elefantes_africanos_de_sabana_%28Loxodonta_africana%29%2C_Elephant_Sands%2C_Botsuana%2C_2018-07-28%2C_DD_114-117_PAN.jpg/1280px-Elefantes_africanos_de_sabana_%28Loxodonta_africana%29%2C_Elephant_Sands%2C_Botsuana%2C_2018-07-28%2C_DD_114-117_PAN.jpg"},
+-                {"image":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Penguin_Island_panorama_with_ferry_and_dolphins_in_foreground%2C_March_2023_06.jpg/1280px-Penguin_Island_panorama_with_ferry_and_dolphins_in_foreground%2C_March_2023_06.jpg"}
++                {"image_alt":"African elephants at a watering hole","image":"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Elefantes_africanos_de_sabana_%28Loxodonta_africana%29%2C_Elephant_Sands%2C_Botsuana%2C_2018-07-28%2C_DD_114-117_PAN.jpg/1280px-Elefantes_africanos_de_sabana_%28Loxodonta_africana%29%2C_Elephant_Sands%2C_Botsuana%2C_2018-07-28%2C_DD_114-117_PAN.jpg"},
++                {"image_alt":"A panoramic view of Penguin Island","image":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Penguin_Island_panorama_with_ferry_and_dolphins_in_foreground%2C_March_2023_06.jpg/1280px-Penguin_Island_panorama_with_ferry_and_dolphins_in_foreground%2C_March_2023_06.jpg"}
+                 ]'
+         )
+     ),
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1635** (2026-11-23): Fix SQLPage component accessibility and audit the reference (@lovasoa)
+- **PR #1634** (2026-11-23): Check component documentation accessibility in CI (@lovasoa)
 - **PR #1631** (2026-11-23): Use search_placeholder as the accessible name of the shell search field (@mkerz-masfg)
 - **PR #1630** (2026-11-23): Document create_new for single selects (@mkerz-masfg)
 - **PR #1625** (closed): Publish a searchable reference for SQLPage settings (@lovasoa)
-- **PR #1623** (closed): Keep live examples beside their component pages (@lovasoa)
-- **PR #1622** (closed): Give each component one page for its parameters (@lovasoa)
-- **PR #1621** (closed): Give each SQLPage function its own reference page (@lovasoa)
+- **PR #1624** (2026-11-23): Use the same prepared site for preview, tests, and deployment (@lovasoa)
 
 ---
 
@@ -1936,13 +1317,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Connect guides and reference pages in the official documentation
+## X. SQLPage component accessibility and audit the reference
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sqlpage/SQLPage. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d7e1c35c`: Connect guides and reference pages in the official documentation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d69f54cf`: SQLPage component accessibility and audit the reference. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -1950,23 +1331,25 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- The first-website tutorial now lets you choose an installation target, copy a command, or download an archive for macOS, Windows, Linux, or AWS Lambda.
-- Missing component pages on the official site return HTTP 404 and link to the catalog. Action buttons in colored alerts stay readable.
-- The `shell` sidebar now uses `navbar_title` and preserves the colors of the supplied logo in dark mode.
-- Chart export menus, tooltips, and series colors now follow the theme surrounding each chart, including in custom shells. Chart labels on colored marks have a contrasting outline that carries over to SVG downloads.
-- Map marker popups follow the surrounding theme so their titles and links stay readable.
-- Each `login` component’s labels target its own fields. Set `false AS autofocus` to keep the username field from taking focus when the page opens.
-- The official documentation now connects tutorials, component examples, and the function reference through shared navigation. Browse by task, open search with Ctrl+K or ⌘K, and share a link to a specific parameter. Code blocks have copy controls. Wide examples show SQL beside the live result.
+- Big number title links have a larger target for touch and pointer users.
+- Carousel slide indicators and pagination arrows now have accessible names. Keyboard users can activate carousel arrows and enabled pagination links. Screen readers announce the current page.
+- Button, card, carousel, and login images accept alternative text. Embedded card frames use their own title or the card title.
+- Inline links are underlined so they stand out without relying on color. The documentation search button has a clear accessible name separate from its shortcut hint.
+- Disabled buttons expose their state to assistive technology and cannot be activated.
+- Tracking blocks without links now expose their titles to screen readers.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+- The first-website tutorial now lets you choose an installation target, copy a command, or download an archive for macOS, Windows, Linux, or AWS Lambda.
+- Missing component pages on the official site return HTTP 404 and link to the catalog. Action buttons in colored alerts stay readable.
+- The official documentation now connects tutorials, component examples, and the function reference through shared navigation. Browse by task, open search with Ctrl+K or ⌘K, and share a link to a specific parameter. Code blocks have copy controls. Wide examples show SQL beside the live result.
+- Improved contrast for text and controls across the official SQLPage site.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d7e1c35c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d69f54cf` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -4723,10 +4723,10 @@
     "repository": "sqlpage/SQLPage",
     "platform": "github",
     "sourceUrl": "https://github.com/sqlpage/SQLPage",
-    "sourceVersion": "f0d8890e",
+    "sourceVersion": "d69f54cf",
     "license": "MIT",
-    "contentHash": "c7cbc84c25050e2e33c89c926c0af882fcaac9825590cb2081d1765bf0ad6539",
-    "lastHarvestedAt": "2026-11-23T16:53:44.439Z",
+    "contentHash": "4d4517e2c5653b1792a0488e92d03e4f5f5ec771aeceaf94ca42de8998bef09d",
+    "lastHarvestedAt": "2026-11-24T13:21:13.424Z",
     "learningId": "learn-github-sqlpage-sqlpage"
   },
   "douyinfe-semi-design": {
@@ -11443,10 +11443,10 @@
     "repository": "fabio-rovai/open-ontologies",
     "platform": "github",
     "sourceUrl": "https://github.com/fabio-rovai/open-ontologies",
-    "sourceVersion": "1ba7ecf8",
+    "sourceVersion": "ef583f5e",
     "license": "MIT",
-    "contentHash": "fda432b09445dd883eb8096608b5809c7a206a933df752e5fd557a4bc1d8afd1",
-    "lastHarvestedAt": "2026-11-23T17:46:21.159Z",
+    "contentHash": "2e71d1a2d3e273170ab08bc9e3a7e6555a6141ef0764813898552721f34e4ad3",
+    "lastHarvestedAt": "2026-11-24T13:21:08.086Z",
     "learningId": "learn-github-fabio-rovai-open-ontologies"
   },
   "hf-liquidai-lfm3-vl-2b": {

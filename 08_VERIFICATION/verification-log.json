@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-Y1MK",
-    "timestamp": "2026-11-22T18:21:24.284Z",
-    "repository": "KORMo-VL/KORMo-Web-11B",
-    "learningId": "learn-huggingface-kormo-vl-kormo-web-11b",
-    "contentHash": "63787e6ad3c22a6394a12518a3909c84a16548f2e4c16d976d17ccca6a239837",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-Y4HO",
-    "timestamp": "2026-11-22T18:21:27.996Z",
-    "repository": "matthart1983/netwatch",
-    "learningId": "learn-github-matthart1983-netwatch",
-    "contentHash": "b5282a21b43ea1af48c7817417bc271e0b4409d1c8c9b4d2254b3d6f243911ea",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-Y56T",
     "timestamp": "2026-11-22T18:21:28.901Z",
     "repository": "aleo-labs-protocol/snarkOS",
@@ -7490,6 +7460,36 @@
     "repository": "prometheus/prometheus",
     "learningId": "learn-github-prometheus-prometheus",
     "contentHash": "eb005ef67f1d2c79d6e65c27810f29acfe71b2198434350de331893ff8a22628",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-3LKI",
+    "timestamp": "2026-11-24T13:21:08.082Z",
+    "repository": "fabio-rovai/open-ontologies",
+    "learningId": "learn-github-fabio-rovai-open-ontologies",
+    "contentHash": "2e71d1a2d3e273170ab08bc9e3a7e6555a6141ef0764813898552721f34e4ad3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-3POS",
+    "timestamp": "2026-11-24T13:21:13.420Z",
+    "repository": "sqlpage/SQLPage",
+    "learningId": "learn-github-sqlpage-sqlpage",
+    "contentHash": "4d4517e2c5653b1792a0488e92d03e4f5f5ec771aeceaf94ca42de8998bef09d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

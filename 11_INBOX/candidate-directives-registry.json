@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T13:12:45.430Z",
+  "last_updated": "2026-11-24T13:21:20.045Z",
   "directives": [
     {
       "id": "CD-001",
@@ -53863,11 +53863,11 @@
       "staged_date": "2026-11-24"
     },
     {
-      "id": "CD-I0S1",
+      "id": "CD-3USQ",
       "directive_title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
       "source_repo": "zulip-zulip-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-I0S1-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-3USQ-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-24",
@@ -54800,6 +54800,55 @@
       "source_repo": "zoontek-react-native-permissions",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-5FDFA0-android-skip-explicit-kotlin-plugin-when.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-3T0M",
+      "directive_title": "Merge main into fix/432-vocab-check-wrong-role",
+      "source_repo": "fabio-rovai-open-ontologies-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-3T0M-merge-main-into-fix-432-vocab-check-wrong-role.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-3U3P",
+      "directive_title": "SQLPage component accessibility and audit the reference",
+      "source_repo": "sqlpage-sqlpage-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-3U3P-sqlpage-component-accessibility-and-audit-the-reference.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "A"
+    },
+    {
+      "id": "CD-REV-2157E1",
+      "directive_title": "Merge main into fix/432-vocab-check-wrong-role",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "fabio-rovai-open-ontologies",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2157E1-merge-main-into-fix-432-vocab-check-wron.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-REV-F408E3",
+      "directive_title": "SQLPage component accessibility and audit the reference",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "sqlpage-sqlpage",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-F408E3-sqlpage-component-accessibility-and-audi.md",
+      "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-REV-100667",
+      "directive_title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-100667-server-events-dispatch-rerender-dm-statu.md",
       "staged_date": "2026-11-24"
     }
   ]

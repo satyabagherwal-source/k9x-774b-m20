@@ -4,22 +4,22 @@
 {
   "source_repository": "fabio-rovai/open-ontologies",
   "source_url": "https://github.com/fabio-rovai/open-ontologies",
-  "source_version": "1ba7ecf8",
+  "source_version": "ef583f5e",
   "license": "MIT",
-  "timestamp": "2026-11-23T17:46:21.399Z",
+  "timestamp": "2026-11-24T13:21:08.338Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-fabio-rovai-open-ontologies",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [fabio-rovai/open-ontologies](https://github.com/fabio-rovai/open-ontologies) (Revision: `1ba7ecf8`).  
-> **License**: MIT | **Timestamp**: `2026-11-23T17:46:21.399Z`  
+> **Provenance**: Harvested from [fabio-rovai/open-ontologies](https://github.com/fabio-rovai/open-ontologies) (Revision: `ef583f5e`).  
+> **License**: MIT | **Timestamp**: `2026-11-24T13:21:08.338Z`  
 > **Learning ID**: `learn-github-fabio-rovai-open-ontologies`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `fabio-rovai/open-ontologies` (Commit: `1ba7ecf8`)
+- **Target Repository**: `fabio-rovai/open-ontologies` (Commit: `ef583f5e`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fabio-rovai/open-ontologies](https://github.com/fabio-rovai/open-ontologies))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T17:46:20.393Z  
+> **Harvest Timestamp**: 2026-11-24T13:21:06.748Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Plan, apply and roll back changes to a production ontology, with a blast radius report and a proof an auditor can re-check.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2950 stars
+- **Stars / Engagement**: 2954 stars
 
 ---
 
@@ -1758,17 +1758,43 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1ba7ecf8` (2026-11-23)
-**Commit Message**: Merge pull request #437 from fabio-rovai/fix/hero-svg-crowding
+### Incident Patch 1: `54f53903` (2026-11-24)
+**Commit Message**: Merge main into fix/432-vocab-check-wrong-role
 
-No label on the front-page figure sits on a node, an arrow or the panel border (#436)
+# Conflicts:
+#	CHANGELOG.md
+#	src/output.rs
+#	src/server.rs
+#	src/vocab_check.rs
 
-**File**: `CHANGELOG.md` (modified, +15/-0)
+**File**: `CHANGELOG.md` (modified, +40/-9)
 ```diff
-@@ -192,6 +192,21 @@ All notable changes to Open Ontologies are documented here.
+@@ -192,15 +192,46 @@ All notable changes to Open Ontologies are documented here.
  
  ### Fixed
  
+-- **`vocab-check` reports a declared term used in the wrong role** (#432).
+-  It checked that each term was declared, not that it was used as what it was
+-  declared as, so a class used as a predicate (`d:s2 ex:Sensor d:x`) and a
+-  property used as an `rdf:type` object (`d:s1 a ex:observes`) both passed
+-  with `conforms: true`. They are now listed under `wrong_role_terms` with the
+-  role they were used in and the role they were declared in, and make
+-  `conforms` false; `hallucinated_terms` still lists only terms the ontology
+-  does not declare at all. A term declared as both a class and a property (OWL
+-  2 punning) fits either role. The Python `vocab_check` reports the same field.
++- **`serve-http --port 0` reports the port it bound, and the HTTP tests no
++  longer race a sibling test's fork for their port.** The startup line printed
++  the port asked for, so with `--port 0` it said `:0`. It now prints the port
++  the OS picked. `api_error_json_test` and `query_human_output_test` reserved a
++  port by binding and dropping a listener, then polled with a TCP connect. A
++  sibling test that forked while the reservation was open passed the listening
++  socket to its child, the poll connected to that copy, and the first request
++  was refused or reset, or the server could not bind at all. Main failed this
++  way once on CI (1ba7ecf8) and 42 times in 2,000 runs on Linux. Both tests now
++  start `serve-http --port 0` through `tests/common::spawn_serve_http`, which
++  reads the address from the server's own startup line: 2,000 of 2,000 runs
++  pass.
++
 +- **No label on the front-page figure sits on a node, an arrow or the panel
 +  border** (#436). Labels in `docs/assets/knowledge-graph.py` were checked
 +  against other labels only, so the unasked-question badge ran through a row of
@@ -1784,9 +1810,21 @@ No label on the front-page figure sits on a node, an arrow or the panel border (
 +  `no_label_sits_on_a_node_an_arrow_or_the_panel_edge` checks both languages
 +  (30 violations on the old English figure, 0 now).
 +
- - **`vocab-check` checks that each term is used in the role it is declared in**
-   (#432). A class used as a predicate, or a property used as the object of
-   `rdf:type`, passed with `conforms: true` because the check only asked whether
++- **`vocab-check` checks that each term is used in the role it is declared in**
++  (#432). A class used as a predicate, or a property used as the object of
++  `rdf:type`, passed with `conforms: true` because the check only asked whether
++  the term was declared at all. Declared terms are now kept per role (typed
++  classes and subjects of `rdfs:subClassOf`; typed properties and subjects of
++  `rdfs:domain`, `rdfs:range` and `rdfs:subPropertyOf`), and a declared term used
++  in the other role is reported under a new `wrong_role_terms` field and fails
++  the check. Undeclared terms stay in `hallucinated_terms`, so the two cases
++  remain distinguishable. A term declared in both roles is accepted in both. The
++  Python `vocab_check` in `open-ontologies-lite` runs the same check and lists
++  each such term under `wrong_role_terms` with the role it was used in and the
++  role it was declared in.
+ 
+ - **`reason --certificate` writes the same `derivations.tsv` on every run over
+   the same store** (#427). The conclusions were always the same set, but the
 ```
 
 **File**: `docs/assets/knowledge-graph.py` (modified, +337/-210)
@@ -1883,173 +1921,46 @@ No label on the front-page figure sits on a node, an arrow or the panel border (
 +    # `no_label_sits_on_a_node_an_arrow_or_
 ```
 
-**File**: `tests/knowledge_graph_asset_test.rs` (modified, +208/-41)
+**File**: `src/main.rs` (modified, +5/-0)
 ```diff
-@@ -668,56 +668,223 @@ fn the_unasked_beat_comes_from_the_mu_run() {
- /// stricter rule is a few pixels of layout freedom.
- #[test]
- fn no_two_labels_sit_on_top_of_each_other() {
--    let s = svg();
--    let mut boxes: Vec<(f64, f64, f64, f64)> = Vec::new();
-+    for name in FIGURES {
-+        let s = figure(name);
-+        let boxes = label_boxes(&s);
-+        assert!(
-+            boxes.len() > 20,
-+            "{name}: only {} label boxes were found, so this test is not looking at the \
-+             labels and cannot fail",
-+            boxes.len()
-+        );
-+        let mut clashes = Vec::new();
-+        for (i, a) in boxes.iter().enumerate() {
-+            for b in &boxes[i + 1..] {
-+                let ix = a.2.min(b.2) - a.0.max(b.0);
-+                let iy = a.3.min(b.3) - a.1.max(b.1);
-+                if ix > 0.5 && iy > 0.5 {
-+                    clashes.push(format!(
-+                        "  {:?} and {:?} share {ix:.0}x{iy:.0} pixels",
-+                        a, b
-+                    ));
-+                }
-+            }
-+        }
-+        assert!(
-+            clashes.is_empty(),
-+            "{name}: {} pair(s) of labels overlap, so the drawing prints two sentences \
-+             through each other:\n{}\n\nEvery badge is placed by trying candidate positions \
-+             against `placed`; one that overlaps is one that was placed blind.",
-+            clashes.len(),
-+            clashes.join("\n")
-+        );
-+    }
-+}
-+
-+/// Both published figures. The Chinese one is laid out by the same code with
-+/// wider strings, so it is where a badge runs out of room first.
-+const FIGURES: [&str; 2] = ["knowledge-graph.svg", "knowledge-graph.zh-CN.svg"];
-+
-+fn figure(name: &str) -> String {
-+    std::fs::read_to_string(repo().join("docs/assets").join(name))
-+        .unwrap_or_else(|_| panic!("read docs/assets/{name}"))
-+}
-+
-+/// Every opening tag `<name ...>` in the document, attributes included.
-+fn open_tags<'a>(s: &'a str, name: &str) -> Vec<&'a str> {
-+    let pat = format!("<{name} ");
-+    let mut out = Vec::new();
-     let mut at = 0usize;
--    while let Some(i) = s[at..].find("<rect x=\"") {
-+    while let Some(i) = s[at..].find(&pat) {
-         let start = at + i;
--        let Some(end) = s[start..].find("/>") else { break };
--        let tag = &s[start..start + end + 2];
--        at = start + end + 2;
--        // Label chips and badges only: the legend panel and the colour swatches
--        // are neither rounded nor this colour.
--        if !tag.contains("fill=\"#020617\"") || !tag.contains("rx=\"") {
--            continue;
-+        let Some(end) = s[start..].find('>') else { break };
-+        out.push(&s[start..start + end + 1]);
-+        at = start + end + 1;
-+    }
-+    out
-+}
-+
-+/// A numeric attribute. Matched with the leading space, so `x` never reads the
-+/// `x` inside `rx` and `r` never reads the one inside `cx`.
-+fn num_attr(tag: &str, k: &str) -> Option<f64> {
-+    let key = format!(" {k}=\"");
-+    let i = tag.find(&key)? + key.len();
-+    tag[i..].split('"').next()?.parse().ok()
-+}
-+
-+/// The box of every label chip and badge: a rounded `#020617` rectangle with
-+/// text over it. The legend panel and the colour swatches are neither. Plus
-+/// the 無 of the sixth beat, which is writing without a box: one em wide, its
-+/// ink from 0.9 em above the baseline to 0.15 below.
-+fn label_boxes(s: &str) -> Vec<(f64, f64, f64, f64)> {
-+    let mut out: Vec<(f64, f64, f64, f64)> = open_tags(s, "rect")
-+        .into_iter()
-+        .filter(|t| t.contains("fill=\"#020617\"") && t.contains(" rx=\""))
-+        .filter_map(|t| {
-+            let (x, y) = (num_attr(t, "x")?, num_attr(t, "y")?);
-+            Some((x, y, x + num_attr(t, "width")?, y + num_attr(t, "height")?))
-+        })
-+        .collect();
-+    if let Some(end) = s.find("無</text>") {
-+        let start = s[..end].rfind("<text ").expect("the 無 is in a <text>");
-+        let tag = &s[start..start + s[start..].find('>').unwrap()];
-+        let (x, y, f) = (
-+            num_attr(tag, "x").expect("無 x"),
-+            num_attr(tag, "y").expect("無 y"),
-+            num_attr(tag, "font-size").expect("無 font-size"),
-+        );
-+        out.push((x - f * 0.6, y - f * 0.9, x + f * 0.6, y + f * 0.15));
-+    }
-+    out
-+}
-+
-+/// Points along every arrow of the pipeline, sampled every two units: the
-+/// straight `<line>`s and the dotted `Q` curves that run back from the provers
-+/// to the certificate. The pipeline is everything left of the ontology panel
-+/// and above its bottom edge; the step rail and the legend sit below that.
-+fn pipeline_points(s: &str, panel: (f64, f64, f64, f64)) -> Vec<(f64, f64)> {
-+    let (panel_x0, bottom) = (panel.0, panel.3);
-+    let mut pts = Vec::new();
-+    let mut run = |a: (f64, f64), b: (f64, f64), c: Option<(f64, f64)>| {
-+        let n = (((b.0 - a.0).hypot(b.1 - a.1)) / 2.0).ceil().max(1.0) as usize;
-+        for k in 0..=n {
-+            let t = k as f64 / n as f64;
-+            pts.pu
+@@ -2739,6 +2739,11 @@ async fn async_main() -> anyhow::Result<()> {
+             let router = router.layer(tower_http::cors::CorsLayer::permissive());
+             let addr = format!("{host}:{port}");
+             let listener = tokio::net::TcpListener::bind(&addr).await?;
++            // Print the port actually bound, not the one asked for: with
++            // `--port 0` the OS picks a free port, and this line is the only
++            // way the caller learns it. The integration tests start servers
++            // that way (tests/common/mod.rs, `spawn_serve_http`).
++            let addr = format!("{host}:{}", listener.local_addr()?.port());
+             eprintln!("Open Ontologies MCP server listening on http://{addr}/mcp");
+             if token.is_some() {
+                 eprintln!("  Authentication: bearer token required");
 ```
 
----
-
-### Incident Patch 2: `fc6215f2` (2026-11-23)
-**Commit Message**: Merge pull request #434 from fabio-rovai/fix/vocab-check-role-432
-
-vocab-check reports a declared term used in the wrong role (#432)
-
-**File**: `CHANGELOG.md` (modified, +10/-0)
+**File**: `src/output.rs` (modified, +31/-9)
 ```diff
-@@ -192,6 +192,16 @@ All notable changes to Open Ontologies are documented here.
- 
- ### Fixed
- 
-+- **`vocab-check` checks that each term is used in the role it is declared in**
-+  (#432). A class used as a predicate, or a property used as the object of
-+  `rdf:type`, passed with `conforms: true` because the check only asked whether
-+  the term was declared at all. Declared terms are now kept per role (typed
-+  classes and subjects of `rdfs:subClassOf`; typed properties and subjects of
-+  `rdfs:domain`, `rdfs:range` and `rdfs:subPropertyOf`), and a declared term used
-+  in the other role is reported under a new `wrong_role_terms` field and fails
-+  the check. Undeclared terms stay in `hallucinated_terms`, so the two cases
-+  remain distinguishable. A term declared in both roles is accepted in both.
-+
- - **`reason --certificate` writes the same `derivations.tsv` on every run over
-   the same store** (#427). The conclusions were always the same set, but the
-   premises a step recorded (which intermediate class justifies a transitive
-```
-
-**File**: `src/output.rs` (modified, +37/-0)
-```diff
-@@ -694,6 +694,15 @@ fn render_vocab_check(v: &Value) -> String {
-         ));
-         push_lines(&mut out, terms, text);
-     }
-+    let wrong_role = items(v, "wrong_role_terms");
-+    if !wrong_role.is_empty() {
-+        out.push_str(&format!(
+@@ -697,17 +697,11 @@ fn render_vocab_check(v: &Value) -> String {
+     let wrong_role = items(v, "wrong_role_terms");
+     if !wrong_role.is_empty() {
+         out.push_str(&format!(
+-            "\n{} declared term(s) used in a role the ontology does not give them:",
 +            "\n{} term(s) the ontology declares in the other role \
 +             (a class used as a predicate, or a property used as a type):",
-+            wrong_role.len()
-+        ));
+             wrong_role.len()
+         ));
+-        push_lines(&mut out, wrong_role, |x| {
+-            format!(
+-                "{} used as a {}, declared as a {}",
+-                text(&x["term"]),
+-                text(&x["used_as"]),
+-                text(&x["declared_as"])
+-            )
+-        });
 +        push_lines(&mut out, wrong_role, text);
-+    }
+     }
      out.push_str(&format!(
          "\nChecked {} predicate(s) and {} type(s) against {} ontology term(s); namespaces policed: {}.",
-         text(&v["predicates_checked"]),
-@@ -1469,6 +1478,34 @@ mod tests {
+@@ -1484,6 +1478,34 @@ mod tests {
          assert!(render("load", payload).contains("Loaded 3 triple(s)"));
      }
  
@@ -2092,14 +2003,14 @@ vocab-check reports a declared term used in the wrong role (#432)
              .unwrap_or_else(Self::err_json)
      }
  
--    #[tool(name = "onto_vocab_check", description = "Closed-world vocabulary check on a Turtle DATA graph: verify that every predicate and every rdf:type class used in the data is actually DECLARED in the loaded ontology. Catches hallucinated/undeclared terms — e.g. an LLM emitting `ies:hasDeparturePort` when the ontology only defines `ies:scheduledDeparturePort`. This is the gate open-world SHACL structurally CANNOT provide: SHACL silently ignores predicates it has no shape for, so a graph full of invented terms still reports conforms=true. Only IRIs whose namespace belongs to the ontology (plus any passed in `namespaces`) are policed; standard rdf/rdfs/owl/xsd/sh vocabulary and your instance-data IRIs are never flagged. Returns {conforms, hallucinated_terms, checked_namespaces}. Companion to `onto_shacl` (open-world structural validation of data) and `onto_shacl_check` (checks proposed SHACL shapes); run this on generated data to catch fabricated vocabulary before it enters the store.")]
+-    #[tool(name = "onto_vocab_check", description = "Closed-world vocabulary check on a Turtle DATA graph: verify that every predicate and every rdf:type class used in the data is actually DECLARED in the loaded ontology. Catches hallucinated/undeclared terms — e.g. an LLM emitting `ies:hasDeparturePort` when the ontology only defines `ies:scheduledDeparturePort`. This is the gate open-world SHACL structurally CANNOT provide: SHACL silently ignores predicates it has no shape for, so a graph full of invented terms still reports conforms=true. Only IRIs whose namespace belongs to the ontology (plus any passed in `namespaces`) are policed; standard rdf/rdfs/owl/xsd/sh vocabulary and your instance-data IRIs are never flagged. A declared term used in a role its declaration does not give it (a class as a predicate, a property as an rdf:type object) is reported in wrong_role_terms. Returns {conforms, hallucinated_terms, wrong_role_terms, checked_namespaces}. Companion to `onto_shacl` (open-world structural validation of data) and `onto_shacl_check` (checks proposed SHACL shapes); run this on generated data to catch fabricated vocabulary before it enters the store.")]
 +    #[tool(name = "onto_vocab_check", description = "Closed-world vocabulary check on a Turtle DATA graph: verify that every predicate and every rdf:type class used in the data is actually DECLARED in the loaded ontology, and declared in that role (a class used as a predicate, or a property used as rdf:type, is reported under wrong_role_terms). Catches hallucinated/undeclared terms — e.g. an LLM emitting `ies:hasDeparturePort` when the ontology only defines `ies:scheduledDeparturePort`. This is the gate open-world SHACL structurally CANNOT provide: SHACL silently ignores predicates it has no shape for, so a graph full of invented terms still reports conforms=true. Only IRIs whose namespace belongs to the ontology (plus any passed in `namespaces`) are policed; standard rdf/rdfs/owl/xsd/sh vocabulary and your instance-data IRIs are never flagged. Returns {conforms, hallucinated_terms, checked_namespaces}. Companion to `onto_shacl` (open-world structural validation of data) and `onto_shacl_check` (checks proposed SHACL shapes); run this on generated data to catch fabricated vocabulary before it enters the store.")]
      async fn onto_vocab_check(&self, Parameters(input): Parameters<OntoVocabCheckInput>) -> String {
          let data = if input.inline.unwrap_or(false) {
              input.data.clone()
 ```
 
-**File**: `src/vocab_check.rs` (modified, +219/-29)
+**File**: `src/vocab_check.rs` (modified, +180/-114)
 ```diff
 @@ -12,8 +12,12 @@
  //!
@@ -2116,7 +2027,7 @@ vocab-check reports a declared term used in the wrong role (#432)
  //!
  //! This mirrors `shacl::check_shapes` (which checks that proposed SHACL references
  //! real terms) but points the same idea at generated data instead of shapes.
-@@ -35,10 +39,13 @@ const STD_NS: &[&str] = &[
+@@ -35,13 +39,13 @@ const STD_NS: &[&str] = &[
  
  #[derive(Serialize)]
  pub struct VocabReport {
@@ -2125,100 +2036,716 @@ vocab-check reports a declared term used in the wrong role (#432)
      pub conforms: bool,
      /// Terms used in the data, in a policed namespace, but not declared in the ontology.
      pub hallucinated_terms: Vec<String>,
+-    /// Declared terms used in a role their declaration does not give them: a class used
+-    /// as a predicate, or a property used as the object of `rdf:type` (#432).
+-    pub wrong_role_terms: Vec<WrongRole>,
 +    /// Terms the ontology declares, used in the other role: a class used as a
 +    /// predicate, or a property used as the object of `rdf:type` (#432).
 +    pub wrong_role_terms: Vec<String>,
      /// The namespaces that were policed (ontology's own namespaces + any caller-supplied).
      pub checked_namespaces: Vec<String>,
      pub predicates_checked: usize,
-@@ -90,22 +97,49 @@ fn select_iris(graph: &Arc<GraphStore>, query: &str, var: &str) -> anyhow::Resul
+@@ -53,15 +57,6 @@ pub struct VocabReport {
+     pub warning: Option<String>,
+ }
+ 
+-/// A declared term used in a role its declaration does not give it.
+-#[derive(Serialize)]
+-pub struct WrongRole {
+-    pub term: String,
+-    /// `property` (used as a predicate) or `class` (used as the object of `rdf:type`).
+-    pub used_as: &'static str,
+-    pub declared_as: &'static str,
+-}
+-
+ /// Namespace of an IRI: everything up to and including the last `#` or `/`.
+ fn ns_of(iri: &str) -> String {
+     match iri.rfind(['#', '/']) {
+@@ -102,25 +97,10 @@ fn select_iris(graph: &Arc<GraphStore>, query: &str, var: &str) -> anyhow::Resul
      Ok(out)
  }
  
 -const CLASS_OR_PROP_FILTER: &str = r#"FILTER(
-+const CLASS_FILTER: &str = r#"FILTER(
-     ?k = <http://www.w3.org/2002/07/owl#Class>
+-    ?k = <http://www.w3.org/2002/07/owl#Class>
 - || ?k = <http://www.w3.org/2000/01/rdf-schema#Class>
 - || ?k = <http://www.w3.org/2002/07/owl#ObjectProperty>
-+ || ?k = <http://www.w3.org/2000/01/rdf-schema#Class>)"#;
-+
-+const PROPERTY_FILTER: &str = r#"FILTER(
-+    ?k = <http://www.w3.org/2002/07/owl#ObjectProperty>
+- || ?k = <http://www.w3.org/2002/07/owl#DatatypeProperty>
+- || ?k = <http://www.w3.org/2002/07/owl#AnnotationProperty>
+- || ?k = <http://www.w3.org/2002/07/owl#FunctionalProperty>
+- || ?k = <http://www.w3.org/2002/07/owl#InverseFunctionalProperty>
+- || ?k = <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property>)"#;
+-
+-// The same declarations as above, split by the role they give a term. A term with
+-// declarations of both kinds (OWL 2 punning) fits either role.
+ const CLASS_FILTER: &str = r#"FILTER(
+     ?k = <http://www.w3.org/2002/07/owl#Class>
+  || ?k = <http://www.w3.org/2000/01/rdf-schema#Class>)"#;
+ 
+-const CLASS_AXIOM_FILTER: &str =
+-    r#"FILTER(?p = <http://www.w3.org/2000/01/rdf-schema#subClassOf>)"#;
+-
+ const PROPERTY_FILTER: &str = r#"FILTER(
+     ?k = <http://www.w3.org/2002/07/owl#ObjectProperty>
   || ?k = <http://www.w3.org/2002/07/owl#DatatypeProperty>
-  || ?k = <http://www.w3.org/2002/07/owl#AnnotationProperty>
-  || ?k = <http://www.w3.org/2002/07/owl#FunctionalProperty>
+@@ -129,38 +109,37 @@ const PROPERTY_FILTER: &str = r#"FILTER(
   || ?k = <http://www.w3.org/2002/07/owl#InverseFunctionalProperty>
   || ?k = <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property>)"#;
  
--const DEFINED_BY_AXIOM_FILTER: &str = r#"FILTER(
 +/// A subject of `rdfs:subClassOf` is a class.
 +const CLASS_AXIOM_FILTER: &str =
 +    r#"FILTER(?p = <http://www.w3.org/2000/01/rdf-schema#subClassOf>)"#;
 +
 +/// A subject of `rdfs:domain`, `rdfs:range` or `rdfs:subPropertyOf` is a property.
-+const PROPERTY_AXIOM_FILTER: &str = r#"FILTER(
+ const PROPERTY_AXIOM_FILTER: &str = r#"FILTER(
      ?p = <http://www.w3.org/2000/01/rdf-schema#domain>
   || ?p = <http://www.w3.org/2000/01/rdf-schema#range>
-- || ?p = <http://www.w3.org/2000/01/rdf-schema#subClassOf>
   || ?p = <http://www.w3.org/2000/01/rdf-schema#subPropertyOf>)"#;
  
+-/// IRIs typed with a kind `kind_filter` accepts, or the subject of an axiom `axiom_filter` accepts.
+-fn declared_by(
+-    graph: &Arc<GraphStore>,
+-    kind_filter: &str,
 +/// Terms the ontology declares in one role: typed with one of `type_filter`'s
 +/// kinds, or the subject of one of `axiom_filter`'s axioms.
 +fn declared(
 +    onto: &Arc<GraphStore>,
 +    type_filter: &str,
-+    axiom_filter: &str,
-+) -> anyhow::Result<BTreeSet<String>> {
-+    let mut out: BTreeSet<String> = BTreeSet::new();
-+    out.extend(select_iris(
-+        onto,
-+        &format!("SELECT DISTINCT ?t WHERE {{ ?t a ?k . {type_filter} }}"),
-+        "t",
-+    )?);
-+    out.extend(select_iris(
-+        onto,
-+        &format!("SELECT DISTINCT ?t WHERE {{ ?t ?p ?o . {axiom_filter} }}"),
-+        "t",
-+    )?);
-+    Ok(out)
+     axiom_filter: &str,
+ ) -> anyhow::Result<BTreeSet<String>> {
+-    let mut out: BTreeSet<String> = select_iris(
+-        graph,
+-        &format!("SELECT DISTINCT ?t WHERE {{ ?t a ?k . {kind_filter} }}"),
++    l
+```
+
+**File**: `tests/api_error_json_test.rs` (modified, +9/-31)
+```diff
+@@ -11,11 +11,14 @@
+ //! answered `null` with HTTP 200; the CLI printed the broken text and, for the
+ //! commands that set their exit code from the `error` key, exited 0.
+ 
++mod common;
++
++use common::HttpServer;
+ use serde_json::{Value, json};
+ use std::io::{Read, Write};
+ use std::net::{SocketAddr, TcpStream};
+-use std::process::{Child, Command, Stdio};
+-use std::time::{Duration, Instant};
++use std::process::Command;
++use std::time::Duration;
+ 
+ /// A SPARQL query whose parse error quotes `"` and `\` back to the caller.
+ const BAD_QUERY: &str = r#"SELECT * WHERE { ?s ?p "\q" }"#;
+@@ -32,41 +35,16 @@ fn oo(dir: &tempfile::TempDir) -> Command {
+     cmd
+ }
+ 
+-struct Server(Child);
+-impl Drop for Server {
+-    fn drop(&mut self) {
+-        let _ = self.0.kill();
+-        let _ = self.0.wait();
+-    }
+-}
+-
+-fn start_server(dir: &tempfile::TempDir) -> (Server, SocketAddr) {
++fn start_server(dir: &tempfile::TempDir) -> (HttpServer, SocketAddr) {
+     let config = dir.path().join("config.toml");
+     std::fs::write(&config, "[storage]\nmode = 'memory'\n").unwrap();
+-    let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+-    let addr = listener.local_addr().unwrap();
+-    drop(listener);
+     let mut cmd = oo(dir);
+     cmd.env("OPEN_ONTOLOGIES_STORAGE_MODE", "memory")
+         .arg("serve-http")
+         .arg("--config")
+-        .arg(&config)
+-        .args(["--host", "127.0.0.1", "--port", &addr.port().to_string()])
+-        .stdout(Stdio::null())
+-        .stderr(Stdio::null());
+-    let mut server = Server(cmd.spawn().unwrap());
+-    let deadline = Instant::now() + Duration::from_secs(30);
+-    loop {
+-        assert!(
+-            server.0.try_wait().unwrap().is_none(),
+-            "HTTP server exited before binding"
+-        );
+-        if TcpStream::connect(addr).is_ok() {
+-            break;
+-        }
+-        assert!(Instant::now() < deadline, "HTTP server did not bind");
+-        std::thread::sleep(Duration::from_millis(20));
+-    }
++        .arg(&config);
++    let server = common::spawn_serve_http(cmd);
++    let addr = server.addr;
+     (server, addr)
+ }
+ 
+```
+
+**File**: `tests/common/mod.rs` (modified, +95/-0)
+```diff
+@@ -72,3 +72,98 @@ pub fn exec_gate() -> std::sync::MutexGuard<'static, ()> {
+     static GATE: std::sync::Mutex<()> = std::sync::Mutex::new(());
+     GATE.lock().unwrap_or_else(|e| e.into_inner())
+ }
++
++/// A `serve-http` child a test owns. Dropping it kills and reaps the process.
++#[allow(dead_code)]
++pub struct HttpServer {
++    pub child: std::process::Child,
++    pub addr: std::net::SocketAddr,
 +}
 +
- /// Closed-world vocabulary check of `data_ttl` against the loaded ontology `onto`.
- /// `extra_ns` adds namespaces to police beyond the ontology's own.
- /// Returns a JSON `VocabReport`.
-@@ -119,30 +153,20 @@ pub fn check_data_vocab(
-     data.load_turtle(data_ttl, None)
-         .map_err(|e| anyhow::anyhow!("data failed to parse as Turtle: {e}"))?;
++impl Drop for HttpServer {
++    fn drop(&mut self) {
++        let _ = self.child.kill();
++        let _ = self.child.wait();
++    }
++}
++
++/// Start `cmd`, an `open-ontologies serve-http` command without `--host` or
++/// `--port`, on a port the server picks itself, and return once the server
++/// has said which port it bound.
++///
++/// Confirmed from a CI log on 23 November 2026 (main, 1ba7ecf8). Two tests in
++/// `api_error_json_test` failed together with `ConnectionRefused` on their
++/// first request, right after the readiness check had connected to the same
++/// address.
++///
++/// The tests used to reserve a port by binding a listener to port 0, dropping
++/// it, passing the number to `serve-http`, and polling with
++/// `TcpStream::connect` until a connection succeeded. A successful connect only
++/// shows that *something* is listening there. If a sibling test forks while
++/// the reservation listener is open, the child inherits the listening socket
++/// and keeps it until its own exec. The poll connects to that copy, reports the
++/// server ready, and the first real request is refused: the copy has closed
++/// and the server has not bound yet, or could not bind because the copy still
++/// held the port. It is the fork-inheritance race behind `exec_gate` above,
++/// reached through a socket instead of a file.
++///
++/// Here no test process holds the port at any point, so no child can inherit
++/// it, and the address comes from the server's own startup line rather than
++/// from a probe that anything can answer.
++#[allow(dead_code)]
++pub fn spawn_serve_http(mut cmd: std::process::Command) -> HttpServer {
++    use std::io::BufRead;
++    use std::sync::mpsc::RecvTimeoutError;
++    use std::time::{Duration, Instant};
++
++    const READY: &str = "listening on http://";
++    cmd.args(["--host", "127.0.0.1", "--port", "0"])
++        .stdout(std::process::Stdio::null())
++        .stderr(std::process::Stdio::piped());
++    let mut child = cmd.spawn().unwrap();
++    let stderr = child.stderr.take().unwrap();
++    let mut server = HttpServer {
++        child,
++        addr: std::net::SocketAddr::from(([127, 0, 0, 1], 0)),
++    };
++    let (tx, rx) = std::sync::mpsc::channel();
++    std::thread::spawn(move || {
++        // Ok(address), or Err(everything printed) if stderr closes first.
++        let mut seen = Vec::new();
++        let mut tx = Some(tx);
++        // Keep draining after the address line: a server whose stderr pipe
++        // fills up blocks, and one whose pipe is closed panics on its next
++        // log line.
++        for line in std::io::BufReader::new(stderr).lines() {
++            let Ok(line) = line else { break };
++            if let Some(rest) = line.split(READY).nth(1)
++                && let Some(tx) = tx.take()
++            {
++                let _ = tx.send(Ok(rest.trim_end_matches("/mcp").to_string()));
++            } else if tx.is_some() {
++                seen.push(line);
++            }
++        }
++        if let Some(tx) = tx {
++            let _ = tx.send(Err(seen.join("\n")));
++        }
++    });
++    let deadline = Instant::now() + Duration::from_secs(30);
++    loop {
++        match rx.recv_timeout(Duration::from_millis(50)) {
++            Ok(Ok(addr)) => {
++                server.addr = addr.parse().unwrap_or_else(|e| {
++                    panic!("serve-http reported an address that does not parse ({e}): {addr}")
++                });
++                return server;
++            }
++            Ok(Err(stderr)) => panic!("serve-http exited before it bound:\n{stderr}"),
++            Err(RecvTimeoutError::Disconnected) => panic!("serve-http stderr reader died"),
++            Err(RecvTimeoutError::Timeout) => {}
++        }
++        assert!(
++            Instant::now() < deadline,
++            "serve-http did not report a bound address within 30 s"
++        );
++    }
++}
+```
+
+---
+
+### Incident Patch 2: `1ef576d1` (2026-11-24)
+**Commit Message**: Merge pull request #433 from AyhamJo7/fix/432-vocab-check-wrong-role
+
+fix(vocab-check): report declared terms used in the wrong role
+
+**File**: `CHANGELOG.md` (modified, +4/-1)
+```diff
+@@ -228,7 +228,10 @@ All notable changes to Open Ontologies are documented here.
+   `rdfs:domain`, `rdfs:range` and `rdfs:subPropertyOf`), and a declared term used
+   in the other role is reported under a new `wrong_role_terms` field and fails
+   the check. Undeclared terms stay in `hallucinated_terms`, so the two cases
+-  remain distinguishable. A term declared in both roles is accepted in both.
++  remain distinguishable. A term declared in both roles is accepted in both. The
++  Python `vocab_check` in `open-ontologies-lite` runs the same check and lists
++  each such term under `wrong_role_terms` with the role it was used in and the
++  role it was declared in.
  
--    // 2. The ontology's declared vocabulary (full IRIs): typed classes/properties
--    //    plus anything given a domain/range/subClassOf/subPropertyOf axiom.
--    let mut onto_terms: BTreeSet<String> = BTreeSet::new();
--    for t in select_iris(
--        onto,
--        &format!("SELECT DISTINCT ?t WHERE {{ ?t a ?k . {CLASS_OR_PROP_FILTER} }}"),
--        "t",
--    )? {
--        onto_terms.insert(t);
+ - **`reason --certificate` writes the same `derivations.tsv` on every run over
+   the same store** (#427). The conclusions were always the same set, but the
+```
+
+**File**: `python/src/open_ontologies_lite/vocab_check.py` (modified, +47/-1)
+```diff
+@@ -59,6 +59,26 @@
+  || ?p = <{RDFS}subPropertyOf>)"""
+ 
+ 
++# Which role a declaration gives a term. A class used as a predicate, or a property
++# used as the object of `rdf:type`, is declared but not in that role (#432). A term
++# declared as both (OWL 2 punning) fits either role.
++_CLASS_KINDS = (f"{OWL}Class", f"{RDFS}Class")
++_CLASS_AXIOMS = (f"{RDFS}subClassOf",)
++_PROPERTY_KINDS = (
++    f"{OWL}ObjectProperty",
++    f"{OWL}DatatypeProperty",
++    f"{OWL}AnnotationProperty",
++    f"{OWL}FunctionalProperty",
++    f"{OWL}InverseFunctionalProperty",
++    f"{RDF}Property",
++)
++_PROPERTY_AXIOMS = (f"{RDFS}domain", f"{RDFS}range", f"{RDFS}subPropertyOf")
++
++
++def _in(var: str, iris: tuple[str, ...]) -> str:
++    return "FILTER(" + " || ".join(f"?{var} = <{iri}>" for iri in iris) + ")"
++
++
+ def _namespace_of(iri: str) -> str:
+     """Everything up to and including the last `#` or `/`."""
+     cut = max(iri.rfind("#"), iri.rfind("/"))
+@@ -108,13 +128,25 @@ def vocab_check(
+         onto_store, f"SELECT DISTINCT ?t WHERE {{ ?t ?p ?o . {_DEFINING_AXIOM} }}", "t"
+     )
+ 
++    classes = _iris(
++        onto_store, f"SELECT DISTINCT ?t WHERE {{ ?t a ?k . {_in('k', _CLASS_KINDS)} }}", "t"
++    ) | _iris(
++        onto_store, f"SELECT DISTINCT ?t WHERE {{ ?t ?p ?o . {_in('p', _CLASS_AXIOMS)} }}", "t"
++    )
++    properties = _iris(
++        onto_store, f"SELECT DISTINCT ?t WHERE {{ ?t a ?k . {_in('k', _PROPERTY_KINDS)} }}", "t"
++    ) | _iris(
++        onto_store, f"SELECT DISTINCT ?t WHERE {{ ?t ?p ?o . {_in('p', _PROPERTY_AXIOMS)} }}", "t"
++    )
++
+     extra = list(extra_namespaces or [])
+ 
+     # A closed-world check with nothing to close over must never silently pass.
+     if not declared and not extra:
+         return {
+             "conforms": False,
+             "undeclared_terms": [],
++            "wrong_role_terms": [],
+             "checked_namespaces": [],
+             "predicates_checked": 0,
+             "types_checked": 0,
+@@ -138,9 +170,23 @@ def vocab_check(
+         if _namespace_of(iri) in policed and iri not in declared
+     )
+ 
++    wrong_role = sorted(
++        (
++            {"term": iri, "used_as": used_as, "declared_as": declared_as}
++            for used, used_as, fits, declared_as in (
++                (predicates, "property", properties, "class"),
++                (types, "class", classes, "property"),
++            )
++            for iri in used
++            if _namespace_of(iri) in policed and iri in declared and iri not in fits
++        ),
++        key=lambda entry: (entry["term"], entry["used_as"]),
++    )
++
+     return {
+-        "conforms": not undeclared,
++        "conforms": not undeclared and not wrong_role,
+         "undeclared_terms": undeclared,
++        "wrong_role_terms": wrong_role,
+         "checked_namespaces": sorted(policed),
+         "predicates_checked": len(predicates),
+         "types_checked": len(types),
+```
+
+**File**: `python/tests/test_vocab_check.py` (modified, +52/-0)
+```diff
+@@ -119,3 +119,55 @@ def test_a_term_carrying_only_a_domain_axiom_counts_as_declared():
+     report = vocab_check(ontology, data)
+ 
+     assert report["conforms"] is True
++
++
++def test_a_declared_term_in_the_wrong_role_is_flagged():
++    """#432: a class used as a predicate, or a property used as a type, is declared
++    but not in the role it is used in."""
++    data = """
++    @prefix ex: <http://example.org/onto#> .
++    <http://example.org/instances/s1> a ex:hasName .
++    <http://example.org/instances/s2> ex:Person <http://example.org/instances/x> .
++    """
++    report = vocab_check(ONTOLOGY, data)
++
++    assert report["conforms"] is False
++    assert report["undeclared_terms"] == []
++    assert report["wrong_role_terms"] == [
++        {"term": "http://example.org/onto#Person", "used_as": "property", "declared_as": "class"},
++        {"term": "http://example.org/onto#hasName", "used_as": "class", "declared_as": "property"},
++    ]
++
++
++def test_a_punned_term_may_be_used_in_either_role():
++    ontology = """
++    @prefix owl: <http://www.w3.org/2002/07/owl#> .
++    @prefix ex:  <http://example.org/onto#> .
++    ex:Tag a owl:Class , owl:AnnotationProperty .
++    """
++    data = """
++    @prefix ex: <http://example.org/onto#> .
++    <http://example.org/instances/a> a ex:Tag ; ex:Tag "x" .
++    """
++    report = vocab_check(ontology, data)
++
++    assert report["conforms"] is True, report["wrong_role_terms"]
++
++
++def test_a_standard_term_the_ontology_declares_is_not_policed_for_its_role():
++    """The standard vocabularies stay unpoliced in the role check too, as in the
++    Rust engine: declaring `skos:Concept` a class does not bring SKOS under the
++    closed world, so using it as a predicate is not reported."""
++    ontology = ONTOLOGY + """
++    @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
++    skos:Concept a owl:Class .
++    """
++    data = """
++    @prefix ex:   <http://example.org/onto#> .
++    @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
++    <http://example.org/instances/ada> a ex:Person ; skos:Concept "Ada" .
++    """
++    report = vocab_check(ontology, data)
++
++    assert report["wrong_role_terms"] == []
++    assert report["conforms"] is True
+```
+
+---
+
+### Incident Patch 3: `ec023280` (2026-11-24)
+**Commit Message**: Merge pull request #438 from fabio-rovai/fix/serve-http-test-port-race
+
+The HTTP tests let serve-http pick its own port, so a sibling's fork can no longer answer for it
+
+**File**: `CHANGELOG.md` (modified, +13/-0)
+```diff
+@@ -192,6 +192,19 @@ All notable changes to Open Ontologies are documented here.
+ 
+ ### Fixed
+ 
++- **`serve-http --port 0` reports the port it bound, and the HTTP tests no
++  longer race a sibling test's fork for their port.** The startup line printed
++  the port asked for, so with `--port 0` it said `:0`. It now prints the port
++  the OS picked. `api_error_json_test` and `query_human_output_test` reserved a
++  port by binding and dropping a listener, then polled with a TCP connect. A
++  sibling test that forked while the reservation was open passed the listening
++  socket to its child, the poll connected to that copy, and the first request
++  was refused or reset, or the server could not bind at all. Main failed this
++  way once on CI (1ba7ecf8) and 42 times in 2,000 runs on Linux. Both tests now
++  start `serve-http --port 0` through `tests/common::spawn_serve_http`, which
++  reads the address from the server's own startup line: 2,000 of 2,000 runs
++  pass.
++
+ - **No label on the front-page figure sits on a node, an arrow or the panel
+   border** (#436). Labels in `docs/assets/knowledge-graph.py` were checked
+   against other labels only, so the unasked-question badge ran through a row of
+```
+
+**File**: `src/main.rs` (modified, +5/-0)
+```diff
+@@ -2739,6 +2739,11 @@ async fn async_main() -> anyhow::Result<()> {
+             let router = router.layer(tower_http::cors::CorsLayer::permissive());
+             let addr = format!("{host}:{port}");
+             let listener = tokio::net::TcpListener::bind(&addr).await?;
++            // Print the port actually bound, not the one asked for: with
++            // `--port 0` the OS picks a free port, and this line is the only
++            // way the caller learns it. The integration tests start servers
++            // that way (tests/common/mod.rs, `spawn_serve_http`).
++            let addr = format!("{host}:{}", listener.local_addr()?.port());
+             eprintln!("Open Ontologies MCP server listening on http://{addr}/mcp");
+             if token.is_some() {
+                 eprintln!("  Authentication: bearer token required");
+```
+
+**File**: `tests/api_error_json_test.rs` (modified, +9/-31)
+```diff
+@@ -11,11 +11,14 @@
+ //! answered `null` with HTTP 200; the CLI printed the broken text and, for the
+ //! commands that set their exit code from the `error` key, exited 0.
+ 
++mod common;
++
++use common::HttpServer;
+ use serde_json::{Value, json};
+ use std::io::{Read, Write};
+ use std::net::{SocketAddr, TcpStream};
+-use std::process::{Child, Command, Stdio};
+-use std::time::{Duration, Instant};
++use std::process::Command;
++use std::time::Duration;
+ 
+ /// A SPARQL query whose parse error quotes `"` and `\` back to the caller.
+ const BAD_QUERY: &str = r#"SELECT * WHERE { ?s ?p "\q" }"#;
+@@ -32,41 +35,16 @@ fn oo(dir: &tempfile::TempDir) -> Command {
+     cmd
+ }
+ 
+-struct Server(Child);
+-impl Drop for Server {
+-    fn drop(&mut self) {
+-        let _ = self.0.kill();
+-        let _ = self.0.wait();
 -    }
--    for t in select_iris(
--        onto,
--        &format!("SELECT DISTINCT ?t WHERE {{ ?t ?p ?o . {DEFINED_BY_AXIOM_FILTER} }}"),
--        "t",
--    )? {
--        onto_terms.insert(t);
+-}
+-
+-fn start_server(dir: &tempfile::TempDir) -> (Server, SocketAddr) {
++fn start_server(dir: &tempfile::TempDir) -> (HttpServer, SocketAddr) {
+     let config = dir.path().join("config.toml");
+     std::fs::write(&config, "[storage]\nmode = 'memory'\n").unwrap();
+-    let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+-    let addr = listener.local_addr().unwrap();
+-    drop(listener);
+     let mut cmd = oo(dir);
+     cmd.env("OPEN_ONTOLOGIES_STORAGE_MODE", "memory")
+         .arg("serve-http")
+         .arg("--config")
+-        .arg(&config)
+-        .args(["--host", "127.0.0.1", "--port", &addr.port().to_string()])
+-        .stdout(Stdio::null())
+-        .stderr(Stdio::null());
+-    let mut server = Server(cmd.spawn().unwrap());
+-    let deadline = Instant::now() + Duration::from_secs(30);
+-    loop {
+-        assert!(
+-            server.0.try_wait().unwrap().is_none(),
+-            "HTTP server exited before binding"
+-        );
+-        if TcpStream::connect(addr).is_ok() {
+-            break;
+-        }
+-        assert!(Instant::now() < deadline, "HTTP server did not bind");
+-        std::thread::sleep(Duration::from_millis(20));
 -    }
-+    // 2. The ontology's declared vocabulary (full IRIs), kept per role: typed
-+    //    classes/properties plus anything given a subClassOf (class) or a
-+    //    domain/range/subPropertyOf (p
++        .arg(&config);
++    let server = common::spawn_serve_http(cmd);
++    let addr = server.addr;
+     (server, addr)
+ }
+ 
+```
+
+**File**: `tests/common/mod.rs` (modified, +95/-0)
+```diff
+@@ -72,3 +72,98 @@ pub fn exec_gate() -> std::sync::MutexGuard<'static, ()> {
+     static GATE: std::sync::Mutex<()> = std::sync::Mutex::new(());
+     GATE.lock().unwrap_or_else(|e| e.into_inner())
+ }
++
++/// A `serve-http` child a test owns. Dropping it kills and reaps the process.
++#[allow(dead_code)]
++pub struct HttpServer {
++    pub child: std::process::Child,
++    pub addr: std::net::SocketAddr,
++}
++
++impl Drop for HttpServer {
++    fn drop(&mut self) {
++        let _ = self.child.kill();
++        let _ = self.child.wait();
++    }
++}
++
++/// Start `cmd`, an `open-ontologies serve-http` command without `--host` or
++/// `--port`, on a port the server picks itself, and return once the server
++/// has said which port it bound.
++///
++/// Confirmed from a CI log on 23 November 2026 (main, 1ba7ecf8). Two tests in
++/// `api_error_json_test` failed together with `ConnectionRefused` on their
++/// first request, right after the readiness check had connected to the same
++/// address.
++///
++/// The tests used to reserve a port by binding a listener to port 0, dropping
++/// it, passing the number to `serve-http`, and polling with
++/// `TcpStream::connect` until a connection succeeded. A successful connect only
++/// shows that *something* is listening there. If a sibling test forks while
++/// the reservation listener is open, the child inherits the listening socket
++/// and keeps it until its own exec. The poll connects to that copy, reports the
++/// server ready, and the first real request is refused: the copy has closed
++/// and the server has not bound yet, or could not bind because the copy still
++/// held the port. It is the fork-inheritance race behind `exec_gate` above,
++/// reached through a socket instead of a file.
++///
++/// Here no test process holds the port at any point, so no child can inherit
++/// it, and the address comes from the server's own startup line rather than
++/// from a probe that anything can answer.
++#[allow(dead_code)]
++pub fn spawn_serve_http(mut cmd: std::process::Command) -> HttpServer {
++    use std::io::BufRead;
++    use std::sync::mpsc::RecvTimeoutError;
++    use std::time::{Duration, Instant};
++
++    const READY: &str = "listening on http://";
++    cmd.args(["--host", "127.0.0.1", "--port", "0"])
++        .stdout(std::process::Stdio::null())
++        .stderr(std::process::Stdio::piped());
++    let mut child = cmd.spawn().unwrap();
++    let stderr = child.stderr.take().unwrap();
++    let mut server = HttpServer {
++        child,
++        addr: std::net::SocketAddr::from(([127, 0, 0, 1], 0)),
++    };
++    let (tx, rx) = std::sync::mpsc::channel();
++    std::thread::spawn(move || {
++        // Ok(address), or Err(everything printed) if stderr closes first.
++        let mut seen = Vec::new();
++        let mut tx = Some(tx);
++        // Keep draining after the address line: a server whose stderr pipe
++        // fills up blocks, and one whose pipe is closed panics on its next
++        // log line.
++        for line in std::io::BufReader::new(stderr).lines() {
++            let Ok(line) = line else { break };
++            if let Some(rest) = line.split(READY).nth(1)
++                && let Some(tx) = tx.take()
++            {
++                let _ = tx.send(Ok(rest.trim_end_matches("/mcp").to_string()));
++            } else if tx.is_some() {
++                seen.push(line);
++            }
++        }
++        if let Some(tx) = tx {
++            let _ = tx.send(Err(seen.join("\n")));
++        }
++    });
++    let deadline = Instant::now() + Duration::from_secs(30);
++    loop {
++        match rx.recv_timeout(Duration::from_millis(50)) {
++            Ok(Ok(addr)) => {
++                server.addr = addr.parse().unwrap_or_else(|e| {
++                    panic!("serve-http reported an address that does not parse ({e}): {addr}")
++                });
++                return server;
++            }
++            Ok(Err(stderr)) => panic!("serve-http exited before it bound:\n{stderr}"),
++            Err(RecvTimeoutError::Disconnected) => panic!("serve-http stderr reader died"),
++            Err(RecvTimeoutError::Timeout) => {}
++        }
++        assert!(
++            Instant::now() < deadline,
++            "serve-http did not report a bound address within 30 s"
++        );
++    }
++}
+```
+
+**File**: `tests/query_human_output_test.rs` (modified, +7/-30)
+```diff
+@@ -3,9 +3,11 @@
+ 
+ //! Native SELECT rows must reach the human renderer on local and proxy paths.
+ 
++mod common;
++
+ use open_ontologies::{graph::GraphStore, output};
+ use serde_json::{Value, json};
+-use std::process::{Child, Command, Output, Stdio};
++use std::process::{Command, Output, Stdio};
+ use std::time::{Duration, Instant};
+ 
+ const DATA: &str = r#"
+@@ -209,47 +211,22 @@ fn built_cli_local_select_uses_human_table_and_preserves_json_precedence() {
+     check_cli_queries(&dir, "local", true);
+ }
+ 
+-struct Server(Child);
+-impl Drop for Server {
+-    fn drop(&mut self) {
+-        let _ = self.0.kill();
+-        let _ = self.0.wait();
+-    }
+-}
+-
+ #[test]
+ fn built_cli_proxy_select_uses_real_http_store_and_human_dispatch() {
+     let dir = tempfile::tempdir().unwrap();
+     let config = dir.path().join("config.toml");
+     std::fs::write(&config, "[storage]\nmode = 'memory'\n").unwrap();
+-    let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+-    let addr = listener.local_addr().unwrap();
+-    drop(listener);
+     let mut cmd = oo(&dir);
+     cmd.env("OPEN_ONTOLOGIES_STORAGE_MODE", "memory")
+         .arg("serve-http")
+         .arg("--config")
+-        .arg(&config)
+-        .args(["--host", "127.0.0.1", "--port", &addr.port().to_string()])
+-        .stdout(Stdio::null())
+-        .stderr(Stdio::null());
+-    let mut server = Server(cmd.spawn().unwrap());
+-    let deadline = Instant::now() + Duration::from_secs(10);
+-    loop {
+-        assert!(
+-            server.0.try_wait().unwrap().is_none(),
+-            "HTTP server exited before binding"
+-        );
+-        if std::net::TcpStream::connect(addr).is_ok() {
+-            break;
+-        }
+-        assert!(Instant::now() < deadline, "HTTP server did not bind");
+-        std::thread::sleep(Duration::from_millis(20));
+-    }
++        .arg(&config);
++    let server = common::spawn_serve_http(cmd);
++    let addr = server.addr;
+     // Advertise this owned, real serve-http child through the public daemon
+     // record. It remains attached to the test so every exit reaps it.
+     let info = open_ontologies::daemon::DaemonInfo {
+-        pid: server.0.id(),
++        pid: server.child.id(),
+         url: format!("http://{addr}"),
+         token: None,
+     };
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #438** (2026-11-24): The HTTP tests let serve-http pick its own port, so a sibling's fork can no longer answer for it (@fabio-rovai)
 - **PR #437** (2026-11-23): No label on the front-page figure sits on a node, an arrow or the panel border (#436) (@fabio-rovai)
+- **PR #435** (2026-11-24): reason: run oo-refute over the refutation the reasoner writes, and certify only the witnesses the checker can judge (@MatthewYe)
 - **PR #434** (2026-11-23): vocab-check reports a declared term used in the wrong role (#432) (@fabio-rovai)
+- **PR #433** (2026-11-24): fix(vocab-check): report declared terms used in the wrong role (@AyhamJo7)
 - **PR #431** (2026-11-20): README front page shows the dark knowledge-graph figure; the hand-drawn version is linked (@fabio-rovai)
-- **PR #430** (2026-11-20): Certificates are byte-stable across runs (#427); the README figure's red edge is a forgery oo-cert really refused (#428) (@fabio-rovai)
-- **PR #429** (2026-11-20): The replay's 3D legend is true of its graph: a certified ies-core run three checkers judged (#425) (@fabio-rovai)
-- **PR #426** (2026-11-20): Errors are valid JSON everywhere; Studio refresh, findings, auto-save and live 3D fixes (#420 to #424) (@fabio-rovai)
 
 ---
 
@@ -2238,13 +2765,13 @@ vocab-check reports a declared term used in the wrong role (#432)
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in CHANGELOG.md
+## X. Merge main into fix/432-vocab-check-wrong-role
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fabio-rovai/open-ontologies. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1ba7ecf8`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `54f53903`: Merge main into fix/432-vocab-check-wrong-role. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2252,31 +2779,42 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
+- **`serve-http --port 0` reports the port it bound, and the HTTP tests no
+  longer race a sibling test's fork for their port.** The startup line printed
+  the port asked for, so with `--port 0` it said `:0`. It now prints the port
+  the OS picked. `api_error_json_test` and `query_human_output_test` reserved a
+  port by binding and dropping a listener, then polled with a TCP connect. A
+  sibling test that forked while the reservation was open passed the listening
+  socket to its child, the poll connected to that copy, and the first request
+  was refused or reset, or the server could not bind at all. Main failed this
+  way once on CI (1ba7ecf8) and 42 times in 2,000 runs on Linux. Both tests now
+  start `serve-http --port 0` through `tests/common::spawn_serve_http`, which
+  reads the address from the server's own startup line: 2,000 of 2,000 runs
+  pass.
+
 - **No label on the front-page figure sits on a node, an arrow or the panel
   border** (#436). Labels in `docs/assets/knowledge-graph.py` were checked
   against other labels only, so the unasked-question badge ran through a row of
   classes, the forged-line badge and the 無 glyph sat on nodes, three labels
-  crossed the ontology panel's border and the provers' dotted curves cut through
-  `problem.tsv`, while every test passed. Placement now goes through one `fits`
-  check (labels, node discs, pipeline arrows, the forged and unasked lines, the
-  panel edge); a badge with no clear candidate searches outward (the two beat badges in
-  the panel then get a leader back to their line), and the generator refuses to
-  draw if nothing fits. The canvas is
-  1200 x 830 (was 1100 x 780) so the panel has room, the forged line is marked
-  with a capsule instead of a circle that took in its neighbours, and
-  `no_label_sits_on_a_node_an_arrow_or_the_panel_edge` checks both languages
-  (30 violations on the old English figure, 0 now).
-
+  crossed the ontology pan
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+- **`vocab-check` reports a declared term used in the wrong role** (#432).
+  It checked that each term was declared, not that it was used as what it was
+  declared as, so a class used as a predicate (`d:s2 ex:Sensor d:x`) and a
+  property used as an `rdf:type` object (`d:s1 a ex:observes`) both passed
+  with `conforms: true`. They are now listed under `wrong_role_terms` with the
+  role they were used in and the role they were declared in, and make
+  `conforms` false; `hallucinated_terms` still lists only terms the ontology
+  does not declare at all. A term declared as both a class and a property (OWL
+  2 punning) fits either role. The Python `vocab_check` reports the same field.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1ba7ecf8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `54f53903` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

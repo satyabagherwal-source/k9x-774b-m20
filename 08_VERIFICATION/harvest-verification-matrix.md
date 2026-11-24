@@ -12675,3 +12675,5 @@
 | `CYCLE-20261124-HV6B` | `2026-11-24T13:04:14.099Z` | `k3s-io/k3s` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10262` | Yes (`4f6bb903...`) |
 | `CYCLE-20261124-SKE8` | `2026-11-24T13:12:33.344Z` | `erkamyaman/rust-anything` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10263` | Yes (`cb4b782e...`) |
 | `CYCLE-20261124-SPJV` | `2026-11-24T13:12:40.027Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10264` | Yes (`eb005ef6...`) |
+| `CYCLE-20261124-3LKI` | `2026-11-24T13:21:08.082Z` | `fabio-rovai/open-ontologies` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10265` | Yes (`2e71d1a2...`) |
+| `CYCLE-20261124-3POS` | `2026-11-24T13:21:13.420Z` | `sqlpage/SQLPage` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10266` | Yes (`4d4517e2...`) |

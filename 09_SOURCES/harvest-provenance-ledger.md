@@ -12708,3 +12708,5 @@ Every entry in this ledger must capture:
 | `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `b9f8b6b0` | Multi-dimensional audit evidence | 2026-11-24T13:04:14.104Z |
 | `learn-github-erkamyaman-rust-anything` | `https://github.com/erkamyaman/rust-anything` | `ef7e9fc4` | Multi-dimensional audit evidence | 2026-11-24T13:12:33.349Z |
 | `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `ad8f26ee` | Multi-dimensional audit evidence | 2026-11-24T13:12:40.031Z |
+| `learn-github-fabio-rovai-open-ontologies` | `https://github.com/fabio-rovai/open-ontologies` | `ef583f5e` | Multi-dimensional audit evidence | 2026-11-24T13:21:08.086Z |
+| `learn-github-sqlpage-sqlpage` | `https://github.com/sqlpage/SQLPage` | `d69f54cf` | Multi-dimensional audit evidence | 2026-11-24T13:21:13.424Z |

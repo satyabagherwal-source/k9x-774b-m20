@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T13:12:45.605Z",
-  "total_records": 2524,
+  "last_updated": "2026-11-24T13:21:20.220Z",
+  "total_records": 2525,
   "domains": {
     "A": {
       "total": 22,
@@ -2405,7 +2405,7 @@
       ]
     },
     "K": {
-      "total": 149,
+      "total": 150,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -2555,7 +2555,8 @@
         "domain_intelligence-quality-verification-intelligence-apache-pinot-learnings-core-invariants",
         "domain_intelligence-quality-verification-intelligence-sweetpad-dev-sweetpad-core-invariants",
         "domain_intelligence-quality-verification-intelligence-sweetpad-dev-sweetpad-learnings-core-invariant",
-        "DOM-K-AA8CD5C4"
+        "DOM-K-AA8CD5C4",
+        "domain_intelligence-quality-verification-intelligence-fabio-rovai-open-ontologies-learnings-core-inv"
       ]
     },
     "L": {
@@ -8339,8 +8340,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "7d65bfc38ce50f84c1d5e2e7d1070fa35b6e8764f97bb4632d0bb6e84f2ca730",
-      "created_at": "2026-11-24T13:04:21.581Z"
+      "content_hash": "c5f52f09ec87cc0b620fb02c61aea103adec6580578908fc42da14631ba31532",
+      "created_at": "2026-11-24T13:21:20.220Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -30447,8 +30448,8 @@
       "title": "Architecture Intelligence: sqlpage/SQLPage Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-sqlpage-sqlpage-architecture-intelligence-sqlpage-sqlpage-core-invariants.md",
       "repository": "sqlpage/SQLPage",
-      "content_hash": "d652f2c474d89108554d0a8249b973f484d30652a90a405e6e33f5553eda77af",
-      "created_at": "2026-11-22T11:47:58.826Z"
+      "content_hash": "a6218ea21a9d91ee1d7f52b71de4d3c3097613decbf41e81b2db3f21f77625bf",
+      "created_at": "2026-11-24T13:21:13.848Z"
     },
     "domain_intelligence-technical-construction-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-": {
       "record_id": "domain_intelligence-technical-construction-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-",
@@ -30474,8 +30475,8 @@
       "title": "Architecture Intelligence: sqlpage-sqlpage-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-sqlpage-sqlpage-learnings-architecture-intelligence-sqlpage-sqlpage-learnings-co.md",
       "repository": "sqlpage-sqlpage-learnings",
-      "content_hash": "36945354f6e8dde55c337c0ceeb12203ec838acfea8b97d1f3c4014c6cde097b",
-      "created_at": "2026-11-22T11:48:04.659Z"
+      "content_hash": "174d676d67133b7e44bfd4063fe7ba12d6c8e137903bac69527becd923e8905e",
+      "created_at": "2026-11-24T13:21:19.316Z"
     },
     "domain_intelligence-architecture-intelligence-orange-opensource-hurl-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-orange-opensource-hurl-core-invariants",
@@ -36071,8 +36072,8 @@
       "title": "Quality & Verification Intelligence: fabio-rovai/open-ontologies Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-fabio-rovai-open-ontologies-quality-verification-intelligence-fabio-rovai-open-o.md",
       "repository": "fabio-rovai/open-ontologies",
-      "content_hash": "5406f6e5422af41f28aa84a6532846763e10afe73d75c7b5bbb5009806553bb6",
-      "created_at": "2026-11-20T11:30:49.527Z"
+      "content_hash": "0a7ce8323eba4412826cd0c9b4a40c90c4646f6557aa2d3fb6cac02e9a85ddf0",
+      "created_at": "2026-11-24T13:21:08.519Z"
     },
     "domain_intelligence-research-knowledge-intelligence-harness-hub-qwen3-8-27b-opencode-adapted-core-in": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-harness-hub-qwen3-8-27b-opencode-adapted-core-in",
@@ -42359,6 +42360,15 @@
       "repository": "k3s-io-k3s-learnings",
       "content_hash": "2f17dd3243ab364a7663d1d9d399d80da23bc6de73499bc4abf08d164140e021",
       "created_at": "2026-11-24T13:04:19.365Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-fabio-rovai-open-ontologies-learnings-core-inv": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-fabio-rovai-open-ontologies-learnings-core-inv",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: fabio-rovai-open-ontologies-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-fabio-rovai-open-ontologies-learnings-quality-verification-intelligence-fabio-ro.md",
+      "repository": "fabio-rovai-open-ontologies-learnings",
+      "content_hash": "f7e7fd93bbee313a5662cc6179b307a6a6128e9e25b1debc8a06e80f2376a14e",
+      "created_at": "2026-11-24T13:21:17.915Z"
     }
   }
 }

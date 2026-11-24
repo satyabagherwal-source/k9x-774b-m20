@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T11:48:04.369Z",
+  "timestamp": "2026-11-24T13:21:19.002Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-sqlpage-sqlpage-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [sqlpage-sqlpage-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T11:48:04.369Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T13:21:19.002Z`  
 > **Learning ID**: `LEARN-EVO-sqlpage-sqlpage-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 81%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 82%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from sqlpage-sqlpage-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md`  
 > **Source**: github ([https://github.com/sqlpage/SQLPage](https://github.com/sqlpage/SQLPage))  
-> **Source Version**: `d65bda49`  
+> **Source Version**: `d69f54cf`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T11:47:57.250Z  
+> **Timestamp**: 2026-11-24T13:21:12.293Z  
 > **Learning ID**: `learn-github-sqlpage-sqlpage`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sqlpage/SQLPage](https://github.com/sqlpage/SQLPage))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T11:47:57.244Z  
+> **Harvest Timestamp**: 2026-11-24T13:21:12.287Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Fast SQL-only data application builder. Automatically build a UI on top of SQL queries. 
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2585 stars
+- **Stars / Engagement**: 2586 stars
 
 ---
 
@@ -616,9 +616,51 @@ document.head.appendChild(loader_script);
 
 ```
 
+### Core Architecture Module: `examples/official-site/assets/copy-code.js`
+```
+/** Select the code for the browser's Copy command if clipboard access is unavailable. */
+export async function copyCode(code, label) {
+  try {
+    await navigator.clipboard.writeText(code.textContent);
+    return `${label} copied.`;
+  } catch {
+    code.closest("[tabindex]")?.focus({ preventScroll: true });
+    const range = document.createRange();
+    range.selectNodeContents(code);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    return `${label} selected. Use Copy.`;
+  }
+}
+
+```
+
 ### Core Architecture Module: `examples/official-site/assets/highlightjs-launch.js`
 ```
-hljs.highlightAll();
+// Code remains readable while the optional highlighter loads.
+if (document.querySelector("pre code")) {
+  highlightCode().catch(() => {
+    // The CDN may be unavailable.
+  });
+}
+
+async function highlightCode() {
+  const base =
+    "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/es";
+  const { default: engine } = await import(`${base}/highlight.min.js`);
+  await Promise.all(
+    ["sql", "json", "handlebars", "nginx"].map(async (language) => {
+      if (engine.getLanguage(language)) return;
+      if (!document.querySelector(`code.language-${language}`)) return;
+      const { default: grammar } = await import(
+        `${base}/languages/${language}.min.js`
+      );
+      engine.registerLanguage(language, grammar);
+    }),
+  );
+  engine.highlightAll();
+}
 
 ```
 
@@ -718,6 +760,7 @@ export function initComparison(root, signal) {
 
 ### Core Architecture Module: `examples/official-site/assets/landing/js/component-demos.js`
 ```
+import { copyCode } from "../../copy-code.js";
 import { initSqlHighlight } from "./sql-highlight.js";
 import { initTabs, selectTab } from "./tabs.js";
 
@@ -783,15 +826,12 @@ export function initComponentDemos(root, signal) {
   preview.addEventListener("load", fitPreview, { signal });
   fitPreview();
 
-  root.querySelector("[data-copy-sql]").addEventListener(
+  const copy = root.querySelector("[data-copy-sql]");
+  copy.hidden = false;
+  copy.addEventListener(
     "click",
     async () => {
-      try {
-        await navigator.clipboard.writeText(source.textContent);
-        status.textContent = "SQL copied.";
-      } catch {
-        status.textContent = "Copy unavailable. Select the SQL below.";
-      }
+      status.textContent = await copyCode(source, "SQL");
     },
     { signal },
   );
@@ -903,8 +943,12 @@ export function initComponentDemos(root, signal) {
         root.querySelector('[data-file="save"]').hidden = next !== "form";
         root.querySelector("#demo-filename").textContent = `${next}.sql`;
         const link = panel.querySelector(".demo-docs");
-        link.href = `/component.sql?component=${next}`;
-        link.firstChild.textContent = `Explore the ${next} component `;
+        link.href = files
+          ? `/component.sql?component=${next}`
+          : "/components.sql";
+        link.firstChild.textContent = files
+          ? `Explore the ${next} component `
+          : "Browse the component reference ";
         if (files) {
           sourceFiles = { main: files.source, save: files.save_source };
           // Avoid an intermediate one-line loading state or a nested resize.
@@ -1039,140 +1083,17 @@ export function initExperience(root) {
 
 ```
 
-### Core Architecture Module: `examples/official-site/assets/landing/js/instant-motion.js`
-```
-/** Synchronize the illustrative streaming timelines and suspend invisible animation. */
-// Both timelines share an illustrative clock; these are not benchmark timings.
-const DURATION = 7000;
-
-export function initInstantMotion(root) {
-  const diagram = root.querySelector(".instant-diagram");
-  const button = diagram?.querySelector(".timeline-toggle");
-  if (!button) return () => {};
-  const motion = matchMedia("(prefers-reduced-motion: reduce)");
-  const events = new AbortController();
-  const { signal } = events;
-  let visible = false;
-  let paused = false;
-  let animations = [];
-
-  function animate(element, keyframes) {
-    animations.push(
-      element.animate(keyframes, {
-        duration: DURATION,
-        iterations: Infinity,
-      }),
-    );
-  }
-
-  function fill(element, start, end) {
-    animate(element, [
-      { clipPath: "inset(0 100% 0 0)", offset: 0 },
-      { clipPath: "inset(0 100% 0 0)", offset: start },
-      { clipPath: "inset(0 0% 0 0)", offset: end },
-      { clipPath: "inset(0 0% 0 0)", opacity: 1, offset: 0.88 },
-      { clipPath: "inset(0 0% 0 0)", opacity: 0, offset: 0.96 },
-      { clipPath: "inset(0 100% 0 0)", opacity: 0, offset: 1 },
-    ]);
-  }
-
-  function reset() {
-    for (const animation of animations) animation.cancel();
-    animations = [];
-    delete diagram.dataset.streamMotion;
-  }
-
-  function update() {
-    button.hidden = motion.matches;
-    button.setAttribute(
-      "aria-label",
-      paused ? "Play streaming comparison" : "Pause streaming comparison",
-    );
-    button.dataset.paused = String(paused);
-    if (motion.matches || !visible) {
-      reset();
-      return;
-    }
-    if (!animations.length) {
-      diagram.dataset.streamMotion = "true";
-      const stages = diagram.querySelectorAll(
-        ".render-timeline .timeline-fill",
-      );
-      const stops = [0.025, 0.14, 0.36, 0.66, 0.78];
-      stages.forEach((stage, index) => {
-        fill(stage, stops[index], stops[index + 1]);
-      });
-      fill(diagram.querySelector(".stream-fill"), stops[0], stops[1]);
-      animate(diagram.querySelector(".stream-sheen"), [
-        { transform: "translateX(-300%)", opacity: 0, offset: 0 },
-        { transform: "translateX(-300%)", opacity: 0, offset: 0.14 },
-        { transform: "translateX(-100%)", opacity: 0.6, offset: 0.2 },
-        { transform: "translateX(400%)", opacity: 0.6, offset: 0.72 },
-        { transform: "translateX(400%)", opacity: 0, offset: 0.78 },
-        { transform: "translateX(400%)", opacity: 0, offset: 1 },
-      ]);
-      diagram
-        .querySelectorAll(".render-labels span")
-        .forEach((label, index) => {
-          const start = 0.12 + index * 0.04;
-          animate(label, [
-            { opacity: 0.35, offset: 0 },
-            { opacity: 0.35, offset: start },
-            { opacity: 1, offset: start + 0.04 },
-            { opacity: 1, offset: 0.88 },
-            { opacity: 0.35, offset: 0.96 },
-            { opacity: 0.35, offset: 1 },
-          ]);
-        });
-      // Synchronize all fills and labels to the same document timeline.
-      const startTime = document.timeline.currentTime;
-      for (const animation of animations) animation.startTime = startTime;
-    }
-    for (const animation of animations) {
-      if (paused || document.hidden) animation.pause();
-      else animation.play();
-    }
-  }
-
-  const observer = new IntersectionObserver(
-    ([entry]) => {
-      visible = entry.isIntersecting;
-      update();
-    },
-    { threshold: 0.25 },
-  );
-  observer.observe(diagram);
-  button.addEventListener(
-    "click",
-    () => {
-      paused = !paused;
-      update();
-    },
-    { signal },
-  );
-  motion.addEventListener("change", update, { signal });
-  document.addEventListener("visibilitychange", update, { signal });
-  return () => {
-    events.abort();
-    observer.disconnect();
-    reset();
-    button.hidden = true;
-  };
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1564** (2026-10-27): **OIDC: redirect_uri and oidc_logout_url() use http:// instead of https:// behind TLS-terminating reverse proxy (X-Forwarded-Proto ignored)**
-  *Symptoms*: ## Description  When SQLPage is served behind a reverse proxy that terminates TLS (Caddy in this case), SQLPage generates all URLs (OIDC `redirect_uri`, `sqlpage.oidc_logout_url()`, etc.) using `http://` instead of `https://`, even though the proxy correctly sends `X-Forwarded-Proto: https`.  ## Environment  | Component | Version / Detail | |-----------|-----------------| | SQLPage | 0.47.0 | | Reverse proxy | Caddy 2.6.2 | | OIDC provider | [Autentico](https://github.com/eugenioenko/autentico) | | TLS | Caddy `tls internal` (self-signed, IP in SAN) |  ## Architecture  ``` Browser ──HTTPS──▶ Caddy (192.168.56.20:8282) ──HTTP──▶ SQLPage (localhost:9191) ```  ### Caddyfile  ```caddyfile 192.168.56.20:8282 {     tls internal     reverse_proxy localhost:9191 } ```  Caddy sends `X-Forwarded-Proto: https` by default when the listener is HTTPS (verified with `curl -v`).  ### Certificate (confirmed correct)  ``` X509v3 Subject Alternative Name: critical     IP Address:192.168.56.20 ```  ## Expected behavior  SQLPage should respect `X-Forwarded-Proto` (and `X-Forwarded-Host` / `X-Forwarded-Port`) to build the public-facing URL:  ``` https://192.168.56.20:8282/sqlpage/oidc_callback ```  ## Actual behavior  SQLPage uses the scheme of its own incoming connection (HTTP) and generates:  ``` http://192.168.56.20:8282/sqlpage/oidc_callback ```  ### Impact on OIDC  The `redirect_uri` sent to Autentico in the authorization request is `http://...` while the registered URI is `https://...` → **r
+- **Issue #1629** (2026-11-23): **form docs: `create_new` also works in single selects, but the documentation only mentions multiselects**
+  *Symptoms*: ### SQL file that shows the bug  ```sql select 'form' as component, 'form.sql' as action; select 'color' as name, 'select' as type, TRUE as searchable, TRUE as create_new,     '[{"label": "Red", "value": "red"}, {"label": "Blue", "value": "blue"}]' as options; select 'text' as component, 'Submitted: ' || coalesce(:color, '(nothing)') as contents; ```  ### What happens  The documentation of the `form` component says:  > `create_new`: In a multiselect with a dropdown, this option allows the user to enter new values, that are not in the list of options.  But the option also works in a single select (no `multiple`): typing "Green" offers "Add Green…", and after choosing it and submitting, the page shows "Submitted: Green". The template sets `data-create_new` on every select, and `tomselect.ts` passes `create: !!s.dataset.create_new` to Tom Select whether or not the select is `multiple`.  ### What you expected  Either the documentation mentions single selects, or single selects are not meant to support it. We use `create_new` in single selects (for example an "official title" field in a staff form, where users may add a title that is not in the list yet), so it would be good to know whether we can rely on it.  If it is intended, here is a possible wording:  > `create_new`: In a select with a dropdown (`searchable`, `dropdown` or `options_source`), this option allows the user to enter new values, that are not in the list of options. Works for single selects and for multiselects.  #
 
-- **Issue #1551** (2026-10-15): **SQLPage does not work in nixpkgs**
-  *Symptoms*: ## What's wrong?  we recently upgraded our build to use typescript in https://github.com/sqlpage/SQLPage/issues/1464  this helped us improve our types and find a few bugs, but we cannot simply version bump SQLPage in nixpkgs :: https://github.com/NixOS/nixpkgs/blob/master/pkgs/by-name/sq/sqlpage/package.nix  ## Why?  many of the typescript changes are still in mainline, not yet released in an offical version. As such, I can only raise a PR to nixpkgs with an unstable version, which would likely not be approved :: https://github.com/NixOS/nixpkgs/pull/574594  ## How do we fix?  @lovasoa could you cut and publish a new offical release so that I can upgrade SQLPage in nixpkgs?
+- **Issue #1628** (2026-11-23): **shell: the search field keeps the English accessible name "Search" when `search_placeholder` is set**
+  *Symptoms*: ### SQL file that shows the bug  ```sql select 'shell' as component,     'Demo' as title,     'de' as language,     'search.sql' as search_target,     'Suchen' as search_placeholder,     'Los' as search_button; select 'text' as component, 'Search demo' as contents; ```  ### What happens  The placeholder and the button are translated, but the field keeps a fixed English `aria-label`:  ```html <input class="form-control me-2" type="search" placeholder="Suchen" aria-label="Search" name="search" value=""> ```  `aria-label` takes precedence over the placeholder, so the accessible name of the field is "Search". On a German page, screen readers announce the English word "Search", and speech input users who say the text they see ("Suchen") cannot reach the field (WCAG 2.5.3 Label in Name). Excerpt of the accessibility tree in Chromium:  ``` - search:   - searchbox "Search"   - button "Los" ```  #891 listed this `aria-label` together with the placeholder and the button. #893 made the placeholder and the button customizable, and the `aria-label` stayed hard-coded. The search field of the `table` component is fine: it has no `aria-label`, so its accessible name comes from its customizable placeholder.  ### What you expected  The accessible name follows `search_placeholder`, like the visible placeholder:  ``` - search:   - searchbox "Suchen"   - button "Los" ```  I checked this by overriding `shell.handlebars` locally with the one-line change below.  ### Database  SQLite  ### Database ve
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1189,347 +1110,211 @@ export function initInstantMotion(root) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d65bda49` (2026-11-21)
-**Commit Message**: Add a status_bar component (#1608)
+### Incident Patch 1: `d69f54cf` (2026-11-23)
+**Commit Message**: Fix SQLPage component accessibility and audit the reference (#1635)
 
-* Add a status_bar component
+* Check component documentation accessibility in CI (#1634)
 
-* Keep status bar styling in its own stylesheet
+* Audit official-site component docs with axe in CI
 
-* Position the status bar with CSS
+* Audit component examples in SQLPage stock themes
 
-* Keep status bar styles in the component template
+* Improve accessibility of navigation and tracking components
 
-**File**: `CHANGELOG.md` (modified, +1/-0)
+* Enlarge big number title link targets
+
+* Resolve the remaining component accessibility audit findings
+
+* Preserve accent hues when improving contrast
+
+* Keep outlined orange buttons vivid
+
+* Keep accessibility fixes scoped to SQLPage
+
+* Drop stylesheet wiring checks from the accessibility audit
+
+* Enhance accessibility and improve component functionality
+
+Update accessibility features and component enhancements.
+
+**File**: `CHANGELOG.md` (modified, +6/-4)
 ```diff
-@@ -2,6 +2,7 @@
+@@ -2,14 +2,16 @@
  
  ## unreleased
  
-+- The new [`status_bar` component](https://sql-page.com/component.sql?component=status_bar) displays short status messages and links along the bottom of the screen or inline with page content.
+-- The first-website tutorial now lets you choose an installation target, copy a command, or download an archive for macOS, Windows, Linux, or AWS Lambda.
+-- Missing component pages on the official site return HTTP 404 and link to the catalog. Action buttons in colored alerts stay readable.
++- Big number title links have a larger target for touch and pointer users.
++- Carousel slide indicators and pagination arrows now have accessible names. Keyboard users can activate carousel arrows and enabled pagination links. Screen readers announce the current page.
++- Button, card, carousel, and login images accept alternative text. Embedded card frames use their own title or the card title.
++- Inline links are underlined so they stand out without relying on color. The documentation search button has a clear accessible name separate from its shortcut hint.
++- Disabled buttons expose their state to assistive technology and cannot be activated.
++- Tracking blocks without links now expose their titles to screen readers.
+ - The `shell` sidebar now uses `navbar_title` and preserves the colors of the supplied logo in dark mode.
+ - Chart export menus, tooltips, and series colors now follow the theme surrounding each chart, including in custom shells. Chart labels on colored marks have a contrasting outline that carries over to SVG downloads.
+ - Map marker popups follow the surrounding theme so their titles and links stay readable.
+ - Each `login` component’s labels target its own fields. Set `false AS autofocus` to keep the username field from taking focus when the page opens.
+-- The official documentation now connects tutorials, component examples, and the function reference through shared navigation. Browse by task, open search with Ctrl+K or ⌘K, and share a link to a specific parameter. Code blocks have copy controls. Wide examples show SQL beside the live result.
+-- Improved contrast for text and controls across the official SQLPage site.
+ - JSON `shell` menu items with a link are now links in the accessibility tree instead of being announced as buttons; only submenu toggles keep `role="button"`.
+ - The new [`status_bar` component](https://sql-page.com/component.sql?component=status_bar) displays short status messages and links along the bottom of the screen or inline with page content.
  - A file input with `multiple` now keeps every selected file, instead of only the last one. The new [`sqlpage.persist_uploaded_files`](https://sql-page.com/functions.sql?function=persist_uploaded_files) function saves them all and returns a JSON array with the `path`, original `name`, `mime_type` and `size` of each file.
- - Set `wrap` on a `big_number` component to show long titles and descriptions across multiple lines.
- - Inline icons now align with their labels in components such as tabs and steps.
 ```
 
-**File**: `examples/official-site/sqlpage/migrations/80_status_bar.sql` (added, +23/-0)
+**File**: `CONTRIBUTING.md` (modified, +4/-0)
 ```diff
-@@ -0,0 +1,23 @@
-+INSERT INTO component(name, icon, description, introduced_in_version) VALUES
-+    ('status_bar', 'layout-bottombar',
-+     'Display short status messages and links in a single horizontal bar. Each row adds one segment. When there are several segments, the last one aligns to the far edge. If the segments do not all fit, scroll the bar horizontally to see the rest.',
-+     '0.49.0');
-+
-+INSERT INTO parameter(component, name, description, type, top_level, optional)
-+SELECT 'status_bar', * FROM (VALUES
-+    ('fixed', 'Keep the bar at the bottom of the screen while the page scrolls. Defaults to true. A fixed bar overlays page content, so leave space below your last item if needed. Set to false to place the bar in the page where the SQL appears.', 'BOOLEAN', TRUE, TRUE),
-+    ('label', 'Accessible name for the bar. Defaults to "Status bar".', 'TEXT', TRUE, TRUE),
-+    ('title', 'Text displayed in the segment.', 'TEXT', FALSE, TRUE),
-+    ('icon', 'Icon displayed before the text.', 'ICON', FALSE, TRUE),
-+    ('color', 'Color of the segment text and icon.', 'COLOR', FALSE, TRUE),
-+    ('tooltip', 'Text shown when hovering over the segment or focusing its link. For an icon without a title, supply a tooltip to give the segment an accessible name.', 'TEXT', FALSE, TRUE),
-+    ('link', 'URL to open when the segment is clicked.', 'URL', FALSE, TRUE)
-+) p;
-+
-+INSERT INTO example(component, description, properties) VALUES
-+    ('status_bar', 'A query workspace shows the database connection, row count, and a link to the function reference. Omit `fixed` to pin this bar to the bottom of the screen.', json('[
-+        {"component":"status_bar","label":"Query status","fixed":false},
-+        {"title":"Connected","icon":"database","color":"green","tooltip":"Connected to the reporting database"},
-+        {"title":"24 rows"},
-+        {"title":"SQL functions","icon":"book","link":"/functions.sql"}
-+    ]'));
-```
-
-**File**: `examples/official-site/sqlpage/migrations/99_shared_id_class_attributes.sql` (modified, +3/-0)
-```diff
-@@ -28,6 +28,7 @@ FROM (VALUES
-     ('list', TRUE),
-     ('list', FALSE),
-     ('map', TRUE),
-+    ('status_bar', TRUE),
-     ('tab', TRUE),
-     ('tab', FALSE),
-     ('table', TRUE),
-@@ -69,6 +70,8 @@ FROM (VALUES
-     ('list', TRUE),
-     ('list', FALSE),
-     ('map', TRUE),
-+    ('status_bar', TRUE),
-+    ('status_bar', FALSE),
-     ('tab', TRUE),
-     ('tab', FALSE),
-     ('table', TRUE),
-```
-
-**File**: `sqlpage/templates/status_bar.handlebars` (added, +29/-0)
-```diff
-@@ -0,0 +1,29 @@
-+<style nonce="{{@csp_nonce}}">
-+    /* Tabler's boxed page normally contains fixed elements. Let the bar use the viewport. */
-+    :is(.layout-boxed, html[data-bs-layout="boxed"] body) > .page:has(.status-bar.fixed-bottom) {
-+        contain: none;
-+
-+        /* Keep the boxed menu anchored to the page. */
-+        > #sqlpage_header > .fixed-top {
-+            position: absolute;
-+        }
-+    }
-+    .status-bar > * + :last-child {
-+        margin-inline-start: auto;
-+    }
-+    .status-bar > a:focus-visible {
-+        outline-offset: -2px;
-+    }
-+</style>
-+<div role="status" aria-label="{{default label 'Status bar'}}"
-+    {{#if id}}id="{{id}}"{{/if}}
-+    class="status-bar d-flex divide-x overflow-x-auto bg-surface fs-5 {{#if (default fixed true)}}fixed-bottom border-top{{else}}my-2 border rounded{{/if}} {{class}}">
-+    {{#each_row}}
-+        {{#if link}}<a href="{{link}}"{{else}}<span{{/if}}
-+            class="d-flex flex-shrink-0 align-items-center gap-1 text-nowrap px-3 py-1 {{#if color}}text-{{color}}{{/if}} {{class}}"
-+            {{#if tooltip}}data-bs-toggle="tooltip" title="{{tooltip}}"{{/if}}>
-+            {{#if icon}}<span aria-hidden="true">{{~icon_img icon 16~}}</span>{{/if}}
-+            {{#if title includeZero=true}}{{title}}{{else}}<span class="visually-hidden">{{tooltip}}</span>{{/if}}
-+        {{#if link}}</a>{{else}}</span>{{/if}}
-+    {{/each_row}}
-+</div>
-```
-
-**File**: `tests/end-to-end/fixtures/status-bar/fragment.sql` (added, +2/-0)
-```diff
-@@ -0,0 +1,2 @@
-+SELECT 'status_bar' AS component, 'Sync status' AS label;
-+SELECT 'Synced' AS title;
-```
-
-**File**: `tests/end-to-end/fixtures/status-bar/index.sql` (added, +20/-0)
-```diff
-@@ -0,0 +1,20 @@
-+SELECT 'shell' AS component, 'Builds' AS title, 'boxed' AS layout, TRUE AS fixed_top_menu
-+WHERE $boxed IS NOT NULL;
-+
-+SELECT 'status_bar' AS component, 'repository' AS id, 'project-status' AS class,
-+    'Repository status' AS label, FALSE AS fixed;
-+SELECT 'Build passed' AS title, 'circle-check' AS icon, 'green' AS color,
-+    'All checks passed' AS tooltip, '#activity' AS link, 'build-result' AS class;
-+SELECT 'Branch: feature/improve-search-index' AS title;
-+SELECT '12 pending changes' AS title;
-+SELECT 'View history' AS title, '#history' AS link;
-+
-+SELECT 'list' AS component, 'Recent activity' AS title, 'activity' AS id,
-+    'min-vh-100' AS class;
-+SELECT 'Search index updated' AS title;
-+
-+SELECT 'title' AS component, 'Build history' AS contents, 'history' AS id;
-+
-+SELECT 'status_bar' AS component;
-+SELECT 'Connected' AS title;
-+SELECT 'history' AS icon, 'Open build history' AS tooltip, '#history' AS link;
-```
-
-**File**: `tests/end-to-end/fixtures/status-bar/test.ts` (added, +94/-0)
-```diff
-@@ -0,0 +1,94 @@
-+import { expect, loadFragment, test } from "../../fixture.ts";
-+
-+test("rows render in order with icons, tooltips and links", async ({
-+  page,
-+}) => {
-+  const bar = page.getByRole("status", { name: "Repository status" });
-+  await expect(bar).toHaveAttribute("id", "repository");
-+  await expect(bar).toContainClass("project-status");
-+  await expect(bar).toHaveText(
-+    /Build passed\s*Branch: feature\/improve-search-index\s*12 pending changes\s*View history/,
-+  );
-+
-+  const build = bar.getByRole("link", { name: "Build passed", exact: true });
-+  const history = bar.getByRole("link", { name: "View history" });
-+  await expect(bar.locator(".build-result")).toContainClass("text-green");
-+  await expect(build.locator("svg")).toBeVisible();
-+  const barRight = await bar.evaluate((el) => el.getBoundingClientRect().right);
-+  const textRight = await history.evaluate((el) => {
-+    const text = document.createRange();
-+    text.selectNodeContents(el);
-+    return text.getBoundingClientRect().right;
-+  });
-+  expect(barRight - textRight).toBeLessThan(32);
-+  await build.hover();
-+  await expect(page.getByRole("tooltip")).toHaveText("All checks passed");
-+  await history.click();
-+  await expect(page).toHaveURL(/#history$/);
-+  await expect(
-+    page.getByRole("heading", { name: "Build history" }),
-+  ).toBeInViewport();
-+});
-+
-+test.describe("without JavaScript", () => {
-+  test.use({ javaScriptEnabled: false });
-+
-+  test("the status bar stays at the viewport bottom and the fixed menu fits the boxed shell", async ({
-+    page,
-+  }) => {
-+    await page.goto("/status-bar/?boxed=1");
-+    const fixed = page.getByRole("status", { name: "Status bar", exact: true });
-+    const inline = page.getByRole("status", { name: "Repository status" });
-+    const bottomGap = () =>
-+      fixed.evaluate((bar) => innerHeight - bar.getBoundingClientRect().bottom);
-+
-+    const header = await page.getByRole("banner").evaluate((el) => {
-+      const { x, width } = el.getBoundingClientRect();
-+      return { x, width };
-+    });
-+    expect(header.x).toBeGreaterThan(0);
-+    expect(await page.getByRole("navigation").boundingBox()).toMatchObject(
-+      header,
-+    );
-+    await expect(fixed.getByText("Connected", { exact: true })).toBeVisible();
-+    await expect(
-+      fixed.getByRole("link", { name: "Open build history" }),
-+    ).toBeVisible();
-+    await expect(inline).toBeInViewport();
-+    expect(await bottomGap()).toBeCloseTo(0);
-+    await page
-+      .getByRole("heading", { name: "Build history" })
-+      .scrollIntoViewIfNeeded();
-+    await expect(inline).not.toBeInViewport();
-+    expect(await bottomGap()).toBeCloseTo(0);
-+  });
-+});
-+
-+test("a narrow bar scrolls to the next focused link without widening the page", async ({
-+  page,
-+}) => {
-+  await page.setViewportSize({ width: 320, height: 640 });
-+  const bar = page.getByRole("status", { name: "Repository status" });
-+  const history = bar.getByRole("link", { name: "View history" });
-+  await expect(history).not.toBeInViewport();
-+  await bar.getByRole("link", { name: "Build passed" }).focus();
-+  await page.keyboard.press("Tab");
-+  await expect(history).toBeFocused();
-+  await expect(history).toBeInViewport({ ratio: 0.99 });
-+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(
-+    320,
-+  );
-+});
-+
-+test("a fixed bar disappears with its embedded fragment", async ({ page }) => {
-+  await loadFragment(
-+    page,
-+    "/status-bar/fragment.sql",
-+    "#activity",
-+    "#activity",
-+  );
-+  const bar = page.getByRole("status", { name: "Sync status" });
-+  await expect(bar).toHaveText("Synced");
-+  await page.locator("#activity").evaluate((el) => el.remove());
-+  await expect(bar).toHaveCount(0);
-+});
-```
-
----
-
-### Incident Patch 2: `a3168950` (2026-11-21)
-**Commit Message**: Align inline icons with their text labels (#1609)
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -4,6 +4,7 @@
+@@ -67,6 +67,10 @@ built executable. Component suites use `fixtures/<suite>/{index.sql,test.ts}` an
+ import the shared `fixture.ts` harness; root-level `*.spec.ts` files cover the
+ official site.
  
- - A file input with `multiple` now keeps every selected file, instead of only the last one. The new [`sqlpage.persist_uploaded_files`](https://sql-page.com/functions.sql?function=persist_uploaded_files) function saves them all and returns a JSON array with the `path`, original `name`, `mime_type` and `size` of each file.
- - Set `wrap` on a `big_number` component to show long titles and descriptions across multiple lines.
-+- Inline icons now align with their labels in components such as tabs and steps.
++Run `npx playwright test --grep @accessibility` from `tests/end-to-end` to audit
++the official site's component documentation and its live examples in SQLPage's
++stock light and dark themes with axe-core. The normal Playwright suite also runs it.
++
+ To show that an issue exists before you fix it, put the reproduction in a fixture and run it against releases with one command, such as `nix run .#reproduce -- repro_721 postgres v0.35.0 v0.36.1 tree`. The second argument is `sqlite` or `postgres`, and `tree` is your working tree. It prints Playwright's output for each version, then a table you can paste into the issue or pull request. Releases run from their Docker images, from v0.29.0 onwards, and Postgres from `docker compose`. Without Nix, run `npm run reproduce --` in `tests/end-to-end` instead.
  
- ## v0.48.0 (2026-11-12)
- 
+ To run a whole suite against a release instead, set `SQLPAGE_RELEASE` to its tag, such as `SQLPAGE_RELEASE=v0.47.0 npx playwright test fixtures/tracking`. Both servers then run that release's Docker image against the same fixtures, on ports 18080 and 18081, so the test fails on the release and passes on your working tree. Add `--ui` to watch the page in each step.
 ```
 
-**File**: `examples/official-site/custom_components.sql` (modified, +1/-1)
+**File**: `examples/official-site/README.md` (modified, +4/-0)
 ```diff
-@@ -131,7 +131,7 @@ and SQLPage adds a few more:
- - `array_contains`: returns true if a list contains a value
- - `static_path`: returns the path to one of the static files bundled with SQLPage. Accepts arguments like `sqlpage.js`, `sqlpage.css`, `apexcharts.js`, etc.
- - `app_config`: returns the value of a configuration parameter from sqlpage''s configuration file, such as `max_uploaded_file_size`, `site_prefix`, etc.
--- `icon_img`: generate an svg icon from a *tabler* icon name
-+- `icon_img`: render a Tabler SVG icon aligned with adjacent text. An optional second argument sets its size in pixels (default 24).
- - `markdown`: renders markdown text. Accepts an optional 2nd argument `''allow_unsafe''` that will render embedded html blocks: use only on trusted content. See the [Commonmark spec](https://spec.commonmark.org/0.31.2/#html-blocks) for more info.
- - `each_row`: iterates over the rows of a query result
- - `typeof`: returns the type of a value (`string`, `number`, `boolean`, `object`, `array`, `null`)
+@@ -22,6 +22,10 @@ Run SQLPage from that directory, or run
+ `docker compose -f examples/official-site/docker-compose.yml up --build` from
+ the repository root.
+ 
++Add `theme=light` or `theme=dark` to a component reference URL to preview its
++live examples using SQLPage's stock theme. For example, visit
++`/component.sql?component=form&theme=light`.
++
+ ## Landing page
+ 
+ The home page is rendered by `index.sql` and the `landing-page` custom template.
 ```
 
-**File**: `frontend/src/icons.css` (added, +4/-0)
+**File**: `examples/official-site/assets/docs/shell.css` (modified, +15/-0)
 ```diff
-@@ -0,0 +1,4 @@
-+.sqlpage-icon {
-+  /* An inline SVG's baseline is its bottom edge. Center it on capital letters. */
-+  vertical-align: calc((1cap - attr(height px)) / 2);
+@@ -40,6 +40,11 @@
+ }
+ 
+ .docs-search kbd {
++  position: absolute;
++  z-index: 5;
++  inset-inline-end: 2.25rem;
++  align-self: center;
++  pointer-events: none;
+   font: var(--tblr-font-size-h5) var(--tblr-font-monospace);
+ }
+ 
+@@ -49,6 +54,12 @@
+   }
+ }
+ 
++@media (width >= 62rem) and (not (pointer: coarse)) {
++  .docs-search:has(kbd:not([hidden])) input {
++    padding-inline-end: 3rem;
++  }
 +}
-```
-
-**File**: `scripts/build-frontend.mjs` (modified, +1/-0)
-```diff
-@@ -11,6 +11,7 @@ const STYLESHEET = [
-   "node_modules/@tabler/core/dist/css/tabler.min.css",
-   "node_modules/tom-select/dist/css/tom-select.bootstrap5.css",
-   "node_modules/@tabler/core/dist/css/tabler-vendors.min.css",
-+  "frontend/src/icons.css",
-   "frontend/src/sqlpage.css",
- ];
- 
-```
-
-**File**: `src/template_helpers.rs` (modified, +1/-1)
-```diff
-@@ -239,7 +239,7 @@ impl HelperDef for IconImgHelper {
- 
-         write!(
-             writer,
--            r#"<svg viewBox="0 0 24 24" width="{size}" height="{size}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">{inner_content}</svg>"#
-+            r#"<svg class="sqlpage-icon" viewBox="0 0 24 24" width="{size}" height="{size}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">{inner_content}</svg>"#
-         )?;
-         Ok(())
-     }
-```
-
-**File**: `tests/end-to-end/fixtures/steps/index.sql` (added, +2/-0)
-```diff
-@@ -0,0 +1,2 @@
-+SELECT 'steps' AS component;
-+SELECT 'Review' AS title, 'eye' AS icon, '#review' AS link;
-```
-
-**File**: `tests/end-to-end/fixtures/steps/test.ts` (added, +21/-0)
-```diff
-@@ -0,0 +1,21 @@
-+import { expect, test } from "../../fixture.ts";
 +
-+test("the step icon aligns with the capital letters of its title", async ({
-+  page,
-+}) => {
-+  const icon = page.getByRole("link", { name: "Review" }).locator("svg");
-+  const offset = await icon.evaluate((svg) => {
-+    // An empty inline-block sits on the text baseline. Its top is one cap height above it.
-+    const capital = document.createElement("span");
-+    capital.style.cssText = "display: inline-block; height: 1cap";
-+    svg.after(capital);
-+    const centerY = (element: Element) => {
-+      const { top, height } = element.getBoundingClientRect();
-+      return top + height / 2;
-+    };
-+    const delta = centerY(svg) - centerY(capital);
-+    capital.remove();
-+    return delta;
-+  });
-+  expect(Math.abs(offset)).toBeLessThanOrEqual(1);
-+});
+ .docs-columns {
+   display: flex;
+   flex-direction: column;
+@@ -111,6 +122,10 @@
+ }
+ 
+ @media (min-width: 62rem) {
++  .docs-search:has(kbd:not([hidden])) input {
++    padding-inline-end: 3rem;
++  }
++
+   .docs-columns {
+     flex-direction: row;
+     align-items: flex-start;
+```
+
+**File**: `examples/official-site/sqlpage/docs-shell.sql` (modified, +4/-0)
+```diff
+@@ -7,6 +7,10 @@ select 'shell-docs' as component,
+     $options->>'title' as title,
+     $options->>'description' as description,
+     $options->>'css' as css,
++    case sqlpage.variables('get')->>'theme'
++        when 'light' then 'light'
++        when 'dark' then 'dark'
++    end as stock_theme,
+     $section as section,
+     cast($catalog as integer) as catalog,
+     coalesce($kind || 's', 'guides') as topic_label,
+```
+
+**File**: `examples/official-site/sqlpage/migrations/18_button.sql` (modified, +3/-0)
+```diff
+@@ -117,3 +117,6 @@ INSERT INTO example(component, description, properties) VALUES
+             "image":"https://upload.wikimedia.org/wikipedia/commons/f/fa/Globe.svg"
+         }]')
+     );
++
++INSERT INTO parameter(component, name, description, type, top_level, optional) VALUES
++    ('button', 'image_alt', 'Alternative text for an informative button image. Leave empty if decorative or repeated by the button title.', 'TEXT', FALSE, TRUE);
+```
+
+**File**: `examples/official-site/sqlpage/migrations/31_card_docs_update.sql` (modified, +7/-3)
+```diff
+@@ -70,9 +70,9 @@ INSERT INTO example(component, description, properties) VALUES
+     ('card', 'A gallery of images.',
+         json('[
+             {"component":"card", "title":"My favorite animals in pictures", "columns": 3},
+-            {"title": "Lynx", "description_md": "The **lynx** is a medium-sized **wild cat** native to Northern, Central and Eastern Europe to Central Asia and Siberia, the Tibetan Plateau and the Himalayas.", "top_image": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Lynx_lynx_-_05.jpg/330px-Lynx_lynx_-_05.jpg", "top_image_width": 330, "top_image_height": 495, "top_image_lazy": true, "icon":"star" },
+-            {"title": "Squirrel", "description_md": "The **chipmunk** is a small, striped rodent of the family Sciuridae. Chipmunks are found in North America, with the exception of the Siberian chipmunk which is found primarily in Asia.", "top_image": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/American_squirrel_eating_nut%2C_13_Jun_2013.JPG/330px-American_squirrel_eating_nut%2C_13_Jun_2013.JPG", "top_image_width": 330, "top_image_height": 495, "top_image_lazy": true },
+-            {"title": "Spider", "description_md": "The **jumping spider family** (_Salticidae_) contains more than 600 described genera and about *6000 described species*, making it the largest family of spiders with about 13% of all species.", "top_image": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Australian_orb_weaver_spinning_web.jpg/330px-Australian_orb_weaver_spinning_web.jpg", "top_image_width": 330, "top_image_height": 495, "top_image_lazy": true }
++            {"title": "Lynx", "description_md": "The **lynx** is a medium-sized **wild cat** native to Northern, Central and Eastern Europe to Central Asia and Siberia, the Tibetan Plateau and the Himalayas.", "top_image_alt": "A Eurasian lynx", "top_image": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Lynx_lynx_-_05.jpg/330px-Lynx_lynx_-_05.jpg", "top_image_width": 330, "top_image_height": 495, "top_image_lazy": true, "icon":"star" },
++            {"title": "Squirrel", "description_md": "The **chipmunk** is a small, striped rodent of the family Sciuridae. Chipmunks are found in North America, with the exception of the Siberian chipmunk which is found primarily in Asia.", "top_image_alt": "A squirrel eating a nut", "top_image": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/American_squirrel_eating_nut%2C_13_Jun_2013.JPG/330px-American_squirrel_eating_nut%2C_13_Jun_2013.JPG", "top_image_width": 330, "top_image_height": 495, "top_image_lazy": true },
++            {"title": "Spider", "description_md": "The **jumping spider family** (_Salticidae_) contains more than 600 described genera and about *6000 described species*, making it the largest family of spiders with about 13% of all species.", "top_image_alt": "An orb weaver spinning a web", "top_image": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Australian_orb_weaver_spinning_web.jpg/330px-Australian_orb_weaver_spinning_web.jpg", "top_image_width": 330, "top_image_height": 495, "top_image_lazy": true }
+         ]')),
+     ('card', 'Beautifully colored cards with variable width. The blue card (width 6) takes half the screen, whereas of the red and green cards have the default width of 3',
+         json('[
+@@ -87,3 +87,7 @@ INSERT INTO example(component, description, properties) VALUES
+             {"title": "Embedded Chart", "embed": "/examples/chart.sql?_sqlpage_embed" },
+             {"title": "Embedded Video", "embed": "https://www.youtube.com/embed/mXdgmSdaXkg", "allow": "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share", "embed_mode": "iframe", "height": "350" }
+         ]'));
++
++INSERT INTO parameter(component, name, description, type, top_level, optional) VALUES
++    ('card', 'top_image_alt', 'Alternative text for an informative card image. Leave empty if decorative.', 'TEXT', FALSE, TRUE),
++    ('card', 'embed_title', 'Accessible name of the iframe. Defaults to the card title, or Embedded content if no title is set.', 'TEXT', FALSE, TRUE);
+```
+
+**File**: `examples/official-site/sqlpage/migrations/34_carousel.sql` (modified, +5/-2)
+```diff
+@@ -134,6 +134,9 @@ VALUES
+         FALSE,
+         TRUE
+     );
++INSERT INTO parameter(component, name, description, type, top_level, optional) VALUES
++    ('carousel', 'image_alt', 'Alternative text describing the slide image. Leave empty if the image is decorative or its caption already describes it.', 'TEXT', FALSE, TRUE);
++
+ -- Insert example(s) for the component
+ INSERT INTO example(component, description, properties)
+ VALUES (
+@@ -142,8 +145,8 @@ VALUES (
+         JSON(
+             '[
+                 {"component":"carousel","name":"cats1","title":"Famous Database Animals"},
+-                {"image":"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Elefantes_africanos_de_sabana_%28Loxodonta_africana%29%2C_Elephant_Sands%2C_Botsuana%2C_2018-07-28%2C_DD_114-117_PAN.jpg/1280px-Elefantes_africanos_de_sabana_%28Loxodonta_africana%29%2C_Elephant_Sands%2C_Botsuana%2C_2018-07-28%2C_DD_114-117_PAN.jpg"},
+-                {"image":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Penguin_Island_panorama_with_ferry_and_dolphins_in_foreground%2C_March_2023_06.jpg/1280px-Penguin_Island_panorama_with_ferry_and_dolphins_in_foreground%2C_March_2023_06.jpg"}
++                {"image_alt":"African elephants at a watering hole","image":"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Elefantes_africanos_de_sabana_%28Loxodonta_africana%29%2C_Elephant_Sands%2C_Botsuana%2C_2018-07-28%2C_DD_114-117_PAN.jpg/1280px-Elefantes_africanos_de_sabana_%28Loxodonta_africana%29%2C_Elephant_Sands%2C_Botsuana%2C_2018-07-28%2C_DD_114-117_PAN.jpg"},
++                {"image_alt":"A panoramic view of Penguin Island","image":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Penguin_Island_panorama_with_ferry_and_dolphins_in_foreground%2C_March_2023_06.jpg/1280px-Penguin_Island_panorama_with_ferry_and_dolphins_in_foreground%2C_March_2023_06.jpg"}
+                 ]'
+         )
+     ),
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1609** (2026-11-21): Align inline icons with their labels (@lovasoa)
-- **PR #1608** (2026-11-21): Add a status_bar component (@lovasoa)
-- **PR #1606** (2026-11-19): Exercise transactional user onboarding on SQL Server (@lovasoa)
-- **PR #1605** (2026-11-19): Explore monthly sales exports with DuckDB (@lovasoa)
-- **PR #1603** (2026-11-17): Let big number titles and descriptions wrap (@lovasoa)
-- **PR #1602** (2026-11-19): Keep every file of a `multiple` file input, and add `sqlpage.persist_uploaded_files` (@theochr72)
+- **PR #1635** (2026-11-23): Fix SQLPage component accessibility and audit the reference (@lovasoa)
+- **PR #1634** (2026-11-23): Check component documentation accessibility in CI (@lovasoa)
+- **PR #1631** (2026-11-23): Use search_placeholder as the accessible name of the shell search field (@mkerz-masfg)
+- **PR #1630** (2026-11-23): Document create_new for single selects (@mkerz-masfg)
+- **PR #1625** (closed): Publish a searchable reference for SQLPage settings (@lovasoa)
+- **PR #1624** (2026-11-23): Use the same prepared site for preview, tests, and deployment (@lovasoa)
 
 ---
 
@@ -1549,13 +1334,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add a status_bar component
+## X. SQLPage component accessibility and audit the reference
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sqlpage/SQLPage. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d65bda49`: Add a status_bar component. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d69f54cf`: SQLPage component accessibility and audit the reference. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -1563,17 +1348,25 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- The new [`status_bar` component](https://sql-page.com/component.sql?component=status_bar) displays short status messages and links along the bottom of the screen or inline with page content.
+- Big number title links have a larger target for touch and pointer users.
+- Carousel slide indicators and pagination arrows now have accessible names. Keyboard users can activate carousel arrows and enabled pagination links. Screen readers announce the current page.
+- Button, card, carousel, and login images accept alternative text. Embedded card frames use their own title or the card title.
+- Inline links are underlined so they stand out without relying on color. The documentation search button has a clear accessible name separate from its shortcut hint.
+- Disabled buttons expose their state to assistive technology and cannot be activated.
+- Tracking blocks without links now expose their titles to screen readers.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+- The first-website tutorial now lets you choose an installation target, copy a command, or download an archive for macOS, Windows, Linux, or AWS Lambda.
+- Missing component pages on the official site return HTTP 404 and link to the catalog. Action buttons in colored alerts stay readable.
+- The official documentation now connects tutorials, component examples, and the function reference through shared navigation. Browse by task, open search with Ctrl+K or ⌘K, and share a link to a specific parameter. Code blocks have copy controls. Wide examples show SQL beside the live result.
+- Improved contrast for text and controls across the official SQLPage site.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d65bda49` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d69f54cf` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

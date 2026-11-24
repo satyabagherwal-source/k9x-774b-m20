@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T13:12:40.049Z",
+  "last_updated": "2026-11-24T13:21:13.442Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7206,14 +7206,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sqlpage-sqlpage",
-      "content_hash": "c7cbc84c25050e2e33c89c926c0af882fcaac9825590cb2081d1765bf0ad6539",
-      "verified_at": "2026-11-23T16:53:44.447Z",
+      "content_hash": "4d4517e2c5653b1792a0488e92d03e4f5f5ec771aeceaf94ca42de8998bef09d",
+      "verified_at": "2026-11-24T13:21:13.441Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T16:53:44.447Z"
+      "last_updated": "2026-11-24T13:21:13.441Z"
     },
     "DouyinFE/semi-design": {
       "repository": "DouyinFE/semi-design",
@@ -17211,14 +17211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fabio-rovai-open-ontologies",
-      "content_hash": "fda432b09445dd883eb8096608b5809c7a206a933df752e5fd557a4bc1d8afd1",
-      "verified_at": "2026-11-23T17:46:21.168Z",
+      "content_hash": "2e71d1a2d3e273170ab08bc9e3a7e6555a6141ef0764813898552721f34e4ad3",
+      "verified_at": "2026-11-24T13:21:08.103Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T17:46:21.168Z"
+      "last_updated": "2026-11-24T13:21:08.103Z"
     },
     "LiquidAI/LFM3-VL-2B": {
       "repository": "LiquidAI/LFM3-VL-2B",

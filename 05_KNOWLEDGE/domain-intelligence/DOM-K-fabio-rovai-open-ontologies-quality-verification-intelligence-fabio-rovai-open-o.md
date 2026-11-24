@@ -4,24 +4,24 @@
 {
   "source_repository": "fabio-rovai/open-ontologies",
   "source_url": "https://github.com/fabio-rovai/open-ontologies",
-  "source_version": "17ef05b9",
+  "source_version": "ef583f5e",
   "license": "MIT",
-  "timestamp": "2026-11-20T11:30:49.372Z",
+  "timestamp": "2026-11-24T13:21:08.335Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-fabio-rovai-open-ontologies",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [fabio-rovai/open-ontologies](https://github.com/fabio-rovai/open-ontologies) (Revision: `17ef05b9`).  
-> **License**: MIT | **Timestamp**: `2026-11-20T11:30:49.372Z`  
+> **Provenance**: Harvested from [fabio-rovai/open-ontologies](https://github.com/fabio-rovai/open-ontologies) (Revision: `ef583f5e`).  
+> **License**: MIT | **Timestamp**: `2026-11-24T13:21:08.335Z`  
 > **Learning ID**: `learn-github-fabio-rovai-open-ontologies`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain K (Quality & Verification Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 56%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), E (Creative Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 59%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from fabio-rovai/open-ontologies:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fabio-rovai/open-ontologies](https://github.com/fabio-rovai/open-ontologies))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T11:30:48.136Z  
+> **Harvest Timestamp**: 2026-11-24T13:21:06.748Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Plan, apply and roll back changes to a production ontology, with a blast radius report and a proof an auditor can re-check.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2935 stars
+- **Stars / Engagement**: 2954 stars
 
 ---
 
@@ -1740,11 +1740,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #425** (2026-11-20): **Studio replay demo: 3D legend says 'ies-core.ttl · 1,083 triples' over a bundle of 28 DCAT-US classes with no warrants**
-  *Symptoms*: ## What happens  The replay (web) build of Studio draws `demo/precomputed/bundle.json`. Its graph is 28 classes (`Address`, `Agent`, `Attribution`, `Author`, `Catalog`, ...), 69 properties and 682 edges, and no edge carries a `warrant`. The 3D legend over it reads:  - "PROOF-CARRYING INFERENCE · ies-core.ttl · 1,083 triples" - ASSERTED: "read from ies-core.ttl. claimed by a person" - CERTIFIED 0 and REJECTED 0, plus the Lean 4 / Isabelle footer  None of that describes the bundle. The replay empty state also points to a "Documents panel" the replay tabs do not have.  #414 kept the replay text unchanged on the premise that replay is built from ies-core; the bundle shows it is not.  ## Where  `studio/src/lib/graph-legend.ts` (the `REPLAY` constant and `legendParts` for `kind: 'replay'`), `studio/src/lib/graph3d-model.ts` / `Graph3D.tsx` (empty-state text).  ## Expected  The replay legend describes the bundle it draws: the corpus it came from and counts taken from the bundle, and the proof-carrying rows and footer only when the bundle carries warrants (the rule live mode now follows). If the replay is meant to show proof-carrying inference, the bundle needs regenerating with warrants instead. 
+- **Issue #436** (2026-11-23): **Front-page knowledge-graph figure: labels sit on nodes, arrows and the panel border**
+  *Symptoms*: The front-page figure `docs/assets/knowledge-graph.svg` (and the zh-CN variant) is crowded, and several labels are printed on top of other things drawn:  - The amber `returned unasked · Accent is a Concept, never a class` badge runs through a row of graph nodes. - The 無 glyph lands on the nodes beside `Property`. - `this line is forged` and its red ring sit on nodes. - `exit 1, rdfs11 step refused`, `oo-resolution` and `FusionOfIntegralParts` cross the border of the ontology panel. - `problem.tsv` is crossed by the dotted curves that run back from the provers. - `Activity` covers the node beside it.  Every test passes, because `no_two_labels_sit_on_top_of_each_other` compares labels with labels only. The placement code in `docs/assets/knowledge-graph.py` checks a candidate against `placed` (other labels) and never against node circles, pipeline arrows or the panel edge. Badges rest at opacity 0.4, so whatever is under them shows through.  Expected: no label box intersects a node circle, a pipeline arrow, or the panel border, in either language, and a test fails when one does. 
 
-- **Issue #424** (2026-11-20): **Studio 3D in live mode still shows replay-only legend rows, footer and empty-state text, and tints classes named like tool nodes**
-  *Symptoms*: Follow-up to #414, which makes the legend name the loaded file and its triple count.  ## What happens  `studio/src/components/Graph3D.tsx` was written for the replay demo, and in live mode:  - the legend still lists CERTIFIED and REJECTED rows (always 0 in live mode, which carries no warrants) and the Lean 4 / Isabelle footer; - the empty state reads "Build the knowledge graph first (Documents panel)" (around line 248), but live mode has no Documents panel; - `TOOL_NODES` (around line 54) matches nodes by display name, so a live class whose label or local name is exactly `E`, `Z3`, `Vampire`, `certificate` and so on is pulled out of its component and tinted as a verification-layer tool node.  ## Expected  The proof-carrying parts of the legend render only when the graph carries warrant data, the empty-state text fits the mode, and tool nodes are recognised by something the replay bundle sets (a kind or a namespace) rather than by name. 
+- **Issue #432** (2026-11-23): **vocab-check accepts a declared class used as a predicate, and a declared property used as rdf:type**
+  *Symptoms*: `vocab-check` checks whether a term is declared in the loaded ontology, but not whether it is used in the role it was declared in. A declared class used as a predicate, or a declared property used as the object of `rdf:type`, passes with `conforms: true`.  Repro (`3fd98f50`):  ``` # ont.ttl @prefix ex: <http://example.org/o/> . @prefix owl: <http://www.w3.org/2002/07/owl#> . ex:Sensor a owl:Class . ex:observes a owl:ObjectProperty .  # data.ttl @prefix ex: <http://example.org/o/> . @prefix d: <http://example.org/d/> . d:s1 a ex:observes . d:s2 ex:Sensor d:x . ```  ``` printf 'load ont.ttl\nvocab-check data.ttl\n' | open-ontologies batch --no-connect ```  Result: `"conforms": true, "hallucinated_terms": []`.  Expected: both terms reported. `ex:observes` is not a class and `ex:Sensor` is not a property, so neither use is declared. Reporting them under a separate field (for example `wrong_role_terms`) would keep the "not declared at all" case distinguishable.  Related asymmetry seen in the same run: a term declared only as an individual (for example `ex:UAV a skos:Concept`) used as `rdf:type` is reported in `hallucinated_terms`, so individuals are already treated as "not a class". Classes used as predicates and properties used as classes should get the same treatment. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1761,1007 +1761,994 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b639a6c3` (2026-11-18)
-**Commit Message**: fix(reasoning): join newly derived edges during incremental transitivity
+### Incident Patch 1: `54f53903` (2026-11-24)
+**Commit Message**: Merge main into fix/432-vocab-check-wrong-role
 
-Fix #416 by joining the persisted closure with an in-memory index of
-transitive edges from the current incremental run. Index both directions
-and expose each round's inferred edges to subsequent joins, so subproperty
-and inverse consequences can compose before final materialisation.
+# Conflicts:
+#	CHANGELOG.md
+#	src/output.rs
+#	src/server.rs
+#	src/vocab_check.rs
 
-Keep targeted store queries, scan and iteration limits, dry-run behaviour,
-and the existing transactional publication and durable support capture.
-Deduplicate neighbours shared by the stored and in-memory graphs.
-
-Add nine regression tests covering tracked and untracked inference, inverse
-rules, multiple rounds, named graphs, batch-size invariance, dry runs,
-alternative supports and withdrawal of ungrounded cycles. Update CHANGELOG.
-All nine new tests fail against the previous implementation and pass after
-the fix.
-
-Validation on the existing Windows GNU toolchain:
-- cargo build --offline --locked
-- Five incremental unit tests and nine related integration suites: 110 tests
-  exercised successfully; one release-provenance test skipped without Git tags.
-- cargo clippy --offline --locked --all-targets -- -D warnings
-
-Linux CI and th
-
-**File**: `CHANGELOG.md` (modified, +9/-0)
+**File**: `CHANGELOG.md` (modified, +40/-9)
 ```diff
-@@ -165,6 +165,15 @@ All notable changes to Open Ontologies are documented here.
+@@ -192,15 +192,46 @@ All notable changes to Open Ontologies are documented here.
  
  ### Fixed
  
-+- **Incremental transitivity joins edges derived in the same run** (#416).
-+  Subproperty and inverse rules could produce two connected edges without
-+  their transitive consequence, while the response reported `complete: true`.
-+  Targeted joins now include an in-memory index of the current run's edges
-+  alongside the stored closure. Materialisation still happens after inference,
-+  and tracked runs retain alternative supports and dependency-based withdrawal.
-+  Regression tests cover tracked and untracked runs, multiple rounds, named
-+  graphs, dry runs, batching, and withdrawal of alternative or cyclic support.
+-- **`vocab-check` reports a declared term used in the wrong role** (#432).
+-  It checked that each term was declared, not that it was used as what it was
+-  declared as, so a class used as a predicate (`d:s2 ex:Sensor d:x`) and a
+-  property used as an `rdf:type` object (`d:s1 a ex:observes`) both passed
+-  with `conforms: true`. They are now listed under `wrong_role_terms` with the
+-  role they were used in and the role they were declared in, and make
+-  `conforms` false; `hallucinated_terms` still lists only terms the ontology
+-  does not declare at all. A term declared as both a class and a property (OWL
+-  2 punning) fits either role. The Python `vocab_check` reports the same field.
++- **`serve-http --port 0` reports the port it bound, and the HTTP tests no
++  longer race a sibling test's fork for their port.** The startup line printed
++  the port asked for, so with `--port 0` it said `:0`. It now prints the port
++  the OS picked. `api_error_json_test` and `query_human_output_test` reserved a
++  port by binding and dropping a listener, then polled with a TCP connect. A
++  sibling test that forked while the reservation was open passed the listening
++  socket to its child, the poll connected to that copy, and the first request
++  was refused or reset, or the server could not bind at all. Main failed this
++  way once on CI (1ba7ecf8) and 42 times in 2,000 runs on Linux. Both tests now
++  start `serve-http --port 0` through `tests/common::spawn_serve_http`, which
++  reads the address from the server's own startup line: 2,000 of 2,000 runs
++  pass.
 +
- - **Clinical validation and drift detection read a tagged label by its text**
-   (#406). Both stripped quotes from the N-Triples form of the literal, so
-   `"Dog"@en` became `Dog"@en`. Clinical validation searched the crosswalk for
++- **No label on the front-page figure sits on a node, an arrow or the panel
++  border** (#436). Labels in `docs/assets/knowledge-graph.py` were checked
++  against other labels only, so the unasked-question badge ran through a row of
++  classes, the forged-line badge and the 無 glyph sat on nodes, three labels
++  crossed the ontology panel's border and the provers' dotted curves cut through
++  `problem.tsv`, while every test passed. Placement now goes through one `fits`
++  check (labels, node discs, pipeline arrows, the forged and unasked lines, the
++  panel edge); a badge with no clear candidate searches outward (the two beat badges in
++  the panel then get a leader back to their line), and the generator refuses to
++  draw if nothing fits. The canvas is
++  1200 x 830 (was 1100 x 780) so the panel has room, the forged line is marked
++  with a capsule instead of a circle that took in its neighbours, and
++  `no_label_sits_on_a_node_an_arrow_or_the_panel_edge` checks both languages
++  (30 violations on the old English figure, 0 now).
++
++- **`vocab-check` checks that each term is used in the role it is declared in**
++  (#432). A class used as a predicate, or a property used as the object of
++  `rdf:type`, passed with `conforms: true` because the check only asked whether
++  the term was declared at all. Declared terms are now kept per role (typed
++  classes and subjects of `rdfs:subClassOf`; typed properties and subjects of
++  `rdfs:domain`, `rdfs:range` and `rdfs:subPropertyOf`), and a declared term used
++  in the other role is reported under a new `wrong_role_terms` field and fails
++  the check. Undeclared terms stay in `hallucinated_terms`, so the two cases
++  remain distinguishable. A term declared in both roles is accepted in both. The
++  Python `vocab_check` in `open-ontologies-lite` runs the same check and lists
++  each such term under `wrong_role_terms` with the role it was used in and the
++  role it was declared in.
+ 
+ - **`reason --certificate` writes the same `derivations.tsv` on every run over
+   the same store** (#427). The conclusions were always the same set, but the
 ```
 
-**File**: `src/reason_incremental.rs` (modified, +58/-5)
+**File**: `docs/assets/knowledge-graph.py` (modified, +337/-210)
 ```diff
-@@ -89,6 +89,36 @@ struct Schema {
-     truncated: bool,
+@@ -94,7 +94,13 @@
+ #   + rdf:type                      5
+ #   + rdfs:domain, rdfs:range       1, and the file's own header
+ LINKING = (SUBCLASS, TYPE, DOMAIN, RANGE)
+-W, H = 1100, 780
++# 1200 x 830, up from 1100 x 780 (#436). At 1100 the pipeline's right-hand
++# labels ran into the ontology panel and the panel was too short for its 233
++# terms, so badges had nowhere to land that was not on a node. The extra width
++# goes to the gap between the pipeline and the panel, the extra height to the
++# panel; the pipeline itself stays where it was, because hero.js scales it from
++# these coordinates.
++W, H = 1200, 830
+ SEED = 20260919
+ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+ OO_CERT = os.path.join(ROOT, "lean", ".lake", "build", "bin", "oo-cert")
+@@ -574,7 +580,9 @@ def lay(members):
+     # the rectangle the same way along its longer side, recurse. It fills the
+     # region with no leftover, which is the point — the earlier layout left the
+     # bottom-right of the canvas empty while fragments crowded the middle.
+-    OL, OR_, T, B = 470, W - 34, 138, H - 246
++    # The panel starts at 566 so its border (550) clears the widest label of
++    # the pipeline, `oo-resolution`, which ends near 533.
++    OL, OR_, T, B = 566, W - 34, 138, H - 246
+ 
+     def split(items, rect):
+         if len(items) == 1:
+@@ -784,7 +792,10 @@ def off_segment(k, i, j):
+         LEAN: (318, 168),
+         "Isabelle/HOL": (318, 250),
+         "Vampire": (318, 336),
+-        FORES: (420, 336),
++        # 444, not 420: the arrow from Vampire now starts after Vampire's name
++        # instead of running under it, and needs the length. hero.js pushes
++        # this node clear of that name on its own, so its layout is unchanged.
++        FORES: (444, 336),
+         "E": (318, 384),
+         "Z3": (318, 432),
+         "Mace4": (318, 480),
+@@ -926,6 +937,8 @@ def rad(i):
+     order = sorted(range(len(edges)), key=lambda e: (depth[edges[e][0]] + depth[edges[e][1]]) / 2)
+ 
+     layers = {"asserted": [], "certified": [], "rejected": []}
++    # Every pipeline arrow as drawn, tip included, so no label is placed on one.
++    pipe_segs = []
+     for e in order:
+         i, j, w = edges[e]
+         d = (depth[i] + depth[j]) / 2
+@@ -947,8 +960,14 @@ def rad(i):
+             vx, vy = bx - ax, by - ay
+             L = math.hypot(vx, vy) or 1.0
+             ux_, uy_ = vx / L, vy / L
+-            ax, ay = ax + ux_ * (rad(i) + 4.0), ay + uy_ * (rad(i) + 4.0)
++            lead_ = rad(i) + 4.0
++            if nodes[i] in PROGRAMS and nodes[j] in PROGRAMS and abs(ay - by) < 0.5:
++                # A judge feeding the judge beside it: the arrow leaves after the
++                # first one's name, which is drawn on that side, not under it.
++                lead_ = rad(i) + 1 + len(nodes[i]) * (10.5 * 0.55) + 8 + 4.0
++            ax, ay = ax + ux_ * lead_, ay + uy_ * lead_
+             bx, by = bx - ux_ * (rad(j) + 8.5), by - uy_ * (rad(j) + 8.5)
++            pipe_segs.append(((ax, ay), (bx + ux_ * 7.0, by + uy_ * 7.0)))
+         head = (f'<line x1="{ax:.1f}" y1="{ay:.1f}" x2="{bx:.1f}" y2="{by:.1f}" '
+                 f'stroke="{COLOR[w]}" stroke-width="{WIDTH[w] * (0.7 + 0.8 * d):.2f}" '
+                 f'opacity="{op:.2f}"')
+@@ -1051,67 +1070,164 @@ def rad(i):
+     # is to show who judged what. Ontology classes get a label only if they are
+     # busy and the chip lands clear, the way the component shows one on hover
+     # rather than all at once: a label per node is a grey wall.
+-    placed = []
+-
+-    def chip(i, label, color, size, weight, insist=False):
+-        """Place a label, trying a few positions before giving up.
+-
+-        `insist` is for the verification layer. An ontology class that cannot
+-        find room simply goes unlabelled, which is the right trade in a dense
+-        graph. A judge that goes unlabelled defeats the purpose of drawing the
+-        layer at all, so those get every candidate position and then take the
+-        last one regardless. Dropping `Isabelle/HOL` off the picture because a
+-        blue dot was in the way is not a tidier drawing, it is a wrong one."""
++    #
++    # WHERE A LABEL MAY GO (#436). Every label used to be checked against the
++    # other labels and against nothing else, and the figure passed every test
++    # while the amber badge ran through a row of nine classes, the forged-line
++    # badge sat on more, three labels straddled the panel's border and the
++    # dotted curves from the provers cut through `problem.tsv`. A badge rests at
++    # 0.4, so whatever it covers shows through it. Now `fits` refuses a box that
++    # touches another label, a node, an arrow of the pipeline, the forged line or
++    # the unasked question, or that crosses the panel's border. Nothing is placed
++    # blind: a label with no clear candidate searches outward from where it
++    # belongs, and if that fails too the figure is not drawn.
++    # `no_label_sits_on_a_node_an_arrow_or_
+```
+
+**File**: `src/main.rs` (modified, +5/-0)
+```diff
+@@ -2739,6 +2739,11 @@ async fn async_main() -> anyhow::Result<()> {
+             let router = router.layer(tower_http::cors::CorsLayer::permissive());
+             let addr = format!("{host}:{port}");
+             let listener = tokio::net::TcpListener::bind(&addr).await?;
++            // Print the port actually bound, not the one asked for: with
++            // `--port 0` the OS picks a free port, and this line is the only
++            // way the caller learns it. The integration tests start servers
++            // that way (tests/common/mod.rs, `spawn_serve_http`).
++            let addr = format!("{host}:{}", listener.local_addr()?.port());
+             eprintln!("Open Ontologies MCP server listening on http://{addr}/mcp");
+             if token.is_some() {
+                 eprintln!("  Authentication: bearer token required");
+```
+
+**File**: `src/output.rs` (modified, +31/-9)
+```diff
+@@ -697,17 +697,11 @@ fn render_vocab_check(v: &Value) -> String {
+     let wrong_role = items(v, "wrong_role_terms");
+     if !wrong_role.is_empty() {
+         out.push_str(&format!(
+-            "\n{} declared term(s) used in a role the ontology does not give them:",
++            "\n{} term(s) the ontology declares in the other role \
++             (a class used as a predicate, or a property used as a type):",
+             wrong_role.len()
+         ));
+-        push_lines(&mut out, wrong_role, |x| {
+-            format!(
+-                "{} used as a {}, declared as a {}",
+-                text(&x["term"]),
+-                text(&x["used_as"]),
+-                text(&x["declared_as"])
+-            )
+-        });
++        push_lines(&mut out, wrong_role, text);
+     }
+     out.push_str(&format!(
+         "\nChecked {} predicate(s) and {} type(s) against {} ontology term(s); namespaces policed: {}.",
+@@ -1484,6 +1478,34 @@ mod tests {
+         assert!(render("load", payload).contains("Loaded 3 triple(s)"));
+     }
+ 
++    #[test]
++    fn vocab_check_lists_wrong_role_terms_apart_from_undeclared_ones() {
++        let rendered = render(
++            "vocab-check",
++            json!({
++                "conforms": false,
++                "hallucinated_terms": ["http://example.org/o#Persn"],
++                "wrong_role_terms": ["http://example.org/o#worksFor"],
++                "checked_namespaces": ["http://example.org/o#"],
++                "predicates_checked": 1,
++                "types_checked": 2,
++                "ontology_terms": 4
++            }),
++        );
++        assert!(
++            rendered
++                .contains("1 term(s) the ontology does not declare:\n  http://example.org/o#Persn"),
++            "got: {rendered}"
++        );
++        assert!(
++            rendered.contains(
++                "1 term(s) the ontology declares in the other role \
++                 (a class used as a predicate, or a property used as a type):\n  http://example.org/o#worksFor"
++            ),
++            "got: {rendered}"
++        );
++    }
++
+     #[test]
+     fn both_spellings_of_a_batch_command_find_one_renderer() {
+         assert!(renderer_for("vocab_check").is_some());
+```
+
+**File**: `src/server.rs` (modified, +1/-1)
+```diff
+@@ -1554,7 +1554,7 @@ impl OpenOntologiesServer {
+             .unwrap_or_else(Self::err_json)
+     }
+ 
+-    #[tool(name = "onto_vocab_check", description = "Closed-world vocabulary check on a Turtle DATA graph: verify that every predicate and every rdf:type class used in the data is actually DECLARED in the loaded ontology. Catches hallucinated/undeclared terms — e.g. an LLM emitting `ies:hasDeparturePort` when the ontology only defines `ies:scheduledDeparturePort`. This is the gate open-world SHACL structurally CANNOT provide: SHACL silently ignores predicates it has no shape for, so a graph full of invented terms still reports conforms=true. Only IRIs whose namespace belongs to the ontology (plus any passed in `namespaces`) are policed; standard rdf/rdfs/owl/xsd/sh vocabulary and your instance-data IRIs are never flagged. A declared term used in a role its declaration does not give it (a class as a predicate, a property as an rdf:type object) is reported in wrong_role_terms. Returns {conforms, hallucinated_terms, wrong_role_terms, checked_namespaces}. Companion to `onto_shacl` (open-world structural validation of data) and `onto_shacl_check` (checks proposed SHACL shapes); run this on generated data to catch fabricated vocabulary before it enters the store.")]
++    #[tool(name = "onto_vocab_check", description = "Closed-world vocabulary check on a Turtle DATA graph: verify that every predicate and every rdf:type class used in the data is actually DECLARED in the loaded ontology, and declared in that role (a class used as a predicate, or a property used as rdf:type, is reported under wrong_role_terms). Catches hallucinated/undeclared terms — e.g. an LLM emitting `ies:hasDeparturePort` when the ontology only defines `ies:scheduledDeparturePort`. This is the gate open-world SHACL structurally CANNOT provide: SHACL silently ignores predicates it has no shape for, so a graph full of invented terms still reports conforms=true. Only IRIs whose namespace belongs to the ontology (plus any passed in `namespaces`) are policed; standard rdf/rdfs/owl/xsd/sh vocabulary and your instance-data IRIs are never flagged. Returns {conforms, hallucinated_terms, checked_namespaces}. Companion to `onto_shacl` (open-world structural validation of data) and `onto_shacl_check` (checks proposed SHACL shapes); run this on generated data to catch fabricated vocabulary before it enters the store.")]
+     async fn onto_vocab_check(&self, Parameters(input): Parameters<OntoVocabCheckInput>) -> String {
+         let data = if input.inline.unwrap_or(false) {
+             input.data.clone()
+```
+
+**File**: `src/vocab_check.rs` (modified, +180/-114)
+```diff
+@@ -12,8 +12,12 @@
+ //!
+ //! `check_data_vocab` runs the complementary CLOSED-WORLD gate: every predicate
+ //! and every `rdf:type` object in the data whose namespace belongs to the ontology
+-//! must be *declared* in the ontology. Standard `rdf`/`rdfs`/`owl`/`xsd`/`sh`
+-//! vocabulary and the caller's own instance-data IRIs are never policed.
++//! must be *declared* in the ontology, and declared in the role it is used in: a
++//! predicate must be declared as a property and an `rdf:type` object as a class.
++//! An undeclared term is reported in `hallucinated_terms`; a declared term used in
++//! the other role (a class as a predicate, a property as a type) in
++//! `wrong_role_terms` (#432). Standard `rdf`/`rdfs`/`owl`/`xsd`/`sh` vocabulary and
++//! the caller's own instance-data IRIs are never policed.
+ //!
+ //! This mirrors `shacl::check_shapes` (which checks that proposed SHACL references
+ //! real terms) but points the same idea at generated data instead of shapes.
+@@ -35,13 +39,13 @@ const STD_NS: &[&str] = &[
+ 
+ #[derive(Serialize)]
+ pub struct VocabReport {
+-    /// True iff an ontology was present AND no hallucinated terms were found.
++    /// True iff an ontology was present AND no hallucinated or wrong-role terms were found.
+     pub conforms: bool,
+     /// Terms used in the data, in a policed namespace, but not declared in the ontology.
+     pub hallucinated_terms: Vec<String>,
+-    /// Declared terms used in a role their declaration does not give them: a class used
+-    /// as a predicate, or a property used as the object of `rdf:type` (#432).
+-    pub wrong_role_terms: Vec<WrongRole>,
++    /// Terms the ontology declares, used in the other role: a class used as a
++    /// predicate, or a property used as the object of `rdf:type` (#432).
++    pub wrong_role_terms: Vec<String>,
+     /// The namespaces that were policed (ontology's own namespaces + any caller-supplied).
+     pub checked_namespaces: Vec<String>,
+     pub predicates_checked: usize,
+@@ -53,15 +57,6 @@ pub struct VocabReport {
+     pub warning: Option<String>,
  }
  
-+/// Transitive edges from this run, indexed before the next round joins them.
-+/// They are published only after inference finishes, with their recorded support.
-+#[derive(Default)]
-+struct TransitiveEdges {
-+    outgoing: HashMap<(String, String), HashSet<String>>,
-+    incoming: HashMap<(String, String), HashSet<String>>,
-+}
-+
-+impl TransitiveEdges {
-+    fn insert(&mut self, (s, p, o): &Triple) {
-+        self.outgoing
-+            .entry((p.clone(), s.clone()))
-+            .or_default()
-+            .insert(o.clone());
-+        self.incoming
-+            .entry((p.clone(), o.clone()))
-+            .or_default()
-+            .insert(s.clone());
-+    }
-+
-+    fn neighbours(&self, term: &str, pred: &str, forward: bool) -> Option<&HashSet<String>> {
-+        let index = if forward {
-+            &self.outgoing
-+        } else {
-+            &self.incoming
-+        };
-+        index.get(&(pred.to_owned(), term.to_owned()))
-+    }
-+}
-+
- /// The row cap on every internally-authored scan here. A scan that returns
- /// exactly this many rows is reported as possibly truncated rather than assumed
- /// complete.
-@@ -382,7 +412,11 @@ impl IncrementalReasoner {
-         // that lead into it. Only asked for transitive properties, and only
-         // about terms the delta actually mentions.
-         let neighbours_truncated = std::cell::Cell::new(false);
--        let neighbours = |term: &str, pred: &str, forward: bool| -> anyhow::Result<Vec<String>> {
-+        let neighbours = |term: &str,
-+                          pred: &str,
-+                          forward: bool,
-+                          local: &TransitiveEdges|
-+         -> anyhow::Result<HashSet<String>> {
-             let q = if forward {
-                 format!("SELECT ?x WHERE {{ {term} {pred} ?x }} LIMIT 10000")
-             } else {
-@@ -398,15 +432,26 @@ impl IncrementalReasoner {
-             if rows.len() >= 10000 {
-                 neighbours_truncated.set(true);
-             }
--            rows.iter()
-+            let mut found = rows
-+                .iter()
-                 .map(|row| {
-                     row["x"].as_str().map(str::to_owned).ok_or_else(|| {
-                         anyhow::anyhow!("incremental neighbour query returned an unbound term")
-                     })
-                 })
--                .collect()
-+                .collect::<anyhow::Result<HashSet<_>>>()?;
-+            if let Some(neighbours) = local.neighbours(term, pred, forward) {
-+                found.extend(neighbours.iter().cloned());
-+            }
-+            Ok(found)
-         };
+-/// A declared term used in a role its declaration does not give it.
+-#[derive(Serialize)]
+-pub struct WrongRole {
+-    pub term: String,
+-    /// `property` (used as a predicate) or `class` (used as the object of `rdf:type`).
+-    pub used_as: &'static str,
+-    pub declared_as: &'static str,
+-}
+-
+ /// Namespace of an IRI: everything up to and including the last `#` or `/`.
+ fn ns_of(iri: &str) -> String {
+     match iri.rfind(['#', '/']) {
+@@ -102,25 +97,10 @@ fn select_iris(graph: &Arc<GraphStore>, query: &str, var: &str) -> anyhow::Resul
+     Ok(out)
+ }
  
-+        let mut local_edges = TransitiveEdges::default();
-+        for triple in delta {
-+            if schema.transitive.contains(&triple.1) {
-+                local_edges.insert(triple);
+-const CLASS_OR_PROP_FILTER: &str = r#"FILTER(
+-    ?k = <http://www.w3.org/2002/07/owl#Class>
+- || ?k = <http://www.w3.org/2000/01/rdf-schema#Class>
+- || ?k = <http://www.w3.org/2002/07/owl#ObjectProperty>
+- || ?k = <http://www.w3.org/2002/07/owl#DatatypeProperty>
+- || ?k = <http://www.w3.org/2002/07/owl#AnnotationProperty>
+- || ?k = <http://www.w3.org/2002/07/owl#FunctionalProperty>
+- || ?k = <http://www.w3.org/2002/07/owl#InverseFunctionalProperty>
+- || ?k = <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property>)"#;
+-
+-// The same declarations as above, split by the role they give a term. A term with
+-// declarations of both kinds (OWL 2 punning) fits either role.
+ const CLASS_FILTER: &str = r#"FILTER(
+     ?k = <http://www.w3.org/2002/07/owl#Class>
+  || ?k = <http://www.w3.org/2000/01/rdf-schema#Class>)"#;
+ 
+-const CLASS_AXIOM_FILTER: &str =
+-    r#"FILTER(?p = <http://www.w3.org/2000/01/rdf-schema#subClassOf>)"#;
+-
+ const PROPERTY_FILTER: &str = r#"FILTER(
+     ?k = <http://www.w3.org/2002/07/owl#ObjectProperty>
+  || ?k = <http://www.w3.org/2002/07/owl#DatatypeProperty>
+@@ -129,38 +109,37 @@ const PROPERTY_FILTER: &str = r#"FILTER(
+  || ?k = <http://www.w3.org/2002/07/owl#InverseFunctionalProperty>
+  || ?k = <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property>)"#;
+ 
++/// A subject of `rdfs:subClassOf` is a class.
++const CLASS_AXIOM_FILTER: &str =
++    r#"FILTER(?p = <http://www.w3.org/2000/01/rdf-schema#subClassOf>)"#;
++
++/// A subject of `rdfs:domain`, `rdfs:range` or `rdfs:subPropertyOf` is a property.
+ const PROPERTY_AXIOM_FILTER: &str = r#"FILTER(
+     ?p = <http://www.w3.org/2000/01/rdf-schema#domain>
+  || ?p = <http://www.w3.org/2000/01/rdf-schema#range>
+  || ?p = <http://www.w3.org/2000/01/rdf-schema#subPropertyOf>)"#;
+ 
+-/// IRIs typed with a kind `kind_filter` accepts, or the subject of an axiom `axiom_filter` accepts.
+-fn declared_by(
+-    graph: &Arc<GraphStore>,
+-    kind_filter: &str,
++/// Terms the ontology declares in one role: typed with one of `type_filter`'s
++/// kinds, or the subject of one of `axiom_filter`'s axioms.
++fn declared(
++    onto: &Arc<GraphStore>,
++    type_filter: &str,
+     axiom_filter: &str,
+ ) -> anyhow::Result<BTreeSet<String>> {
+-    let mut out: BTreeSet<String> = select_iris(
+-        graph,
+-        &format!("SELECT DISTINCT ?t WHERE {{ ?t a ?k . {kind_filter} }}"),
++    l
+```
+
+**File**: `tests/api_error_json_test.rs` (modified, +9/-31)
+```diff
+@@ -11,11 +11,14 @@
+ //! answered `null` with HTTP 200; the CLI printed the broken text and, for the
+ //! commands that set their exit code from the `error` key, exited 0.
+ 
++mod common;
++
++use common::HttpServer;
+ use serde_json::{Value, json};
+ use std::io::{Read, Write};
+ use std::net::{SocketAddr, TcpStream};
+-use std::process::{Child, Command, Stdio};
+-use std::time::{Duration, Instant};
++use std::process::Command;
++use std::time::Duration;
+ 
+ /// A SPARQL query whose parse error quotes `"` and `\` back to the caller.
+ const BAD_QUERY: &str = r#"SELECT * WHERE { ?s ?p "\q" }"#;
+@@ -32,41 +35,16 @@ fn oo(dir: &tempfile::TempDir) -> Command {
+     cmd
+ }
+ 
+-struct Server(Child);
+-impl Drop for Server {
+-    fn drop(&mut self) {
+-        let _ = self.0.kill();
+-        let _ = self.0.wait();
+-    }
+-}
+-
+-fn start_server(dir: &tempfile::TempDir) -> (Server, SocketAddr) {
++fn start_server(dir: &tempfile::TempDir) -> (HttpServer, SocketAddr) {
+     let config = dir.path().join("config.toml");
+     std::fs::write(&config, "[storage]\nmode = 'memory'\n").unwrap();
+-    let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+-    let addr = listener.local_addr().unwrap();
+-    drop(listener);
+     let mut cmd = oo(dir);
+     cmd.env("OPEN_ONTOLOGIES_STORAGE_MODE", "memory")
+         .arg("serve-http")
+         .arg("--config")
+-        .arg(&config)
+-        .args(["--host", "127.0.0.1", "--port", &addr.port().to_string()])
+-        .stdout(Stdio::null())
+-        .stderr(Stdio::null());
+-    let mut server = Server(cmd.spawn().unwrap());
+-    let deadline = Instant::now() + Duration::from_secs(30);
+-    loop {
+-        assert!(
+-            server.0.try_wait().unwrap().is_none(),
+-            "HTTP server exited before binding"
+-        );
+-        if TcpStream::connect(addr).is_ok() {
+-            break;
+-        }
+-        assert!(Instant::now() < deadline, "HTTP server did not bind");
+-        std::thread::sleep(Duration::from_millis(20));
+-    }
++        .arg(&config);
++    let server = common::spawn_serve_http(cmd);
++    let addr = server.addr;
+     (server, addr)
+ }
+ 
+```
+
+**File**: `tests/common/mod.rs` (modified, +95/-0)
+```diff
+@@ -72,3 +72,98 @@ pub fn exec_gate() -> std::sync::MutexGuard<'static, ()> {
+     static GATE: std::sync::Mutex<()> = std::sync::Mutex::new(());
+     GATE.lock().unwrap_or_else(|e| e.into_inner())
+ }
++
++/// A `serve-http` child a test owns. Dropping it kills and reaps the process.
++#[allow(dead_code)]
++pub struct HttpServer {
++    pub child: std::process::Child,
++    pub addr: std::net::SocketAddr,
++}
++
++impl Drop for HttpServer {
++    fn drop(&mut self) {
++        let _ = self.child.kill();
++        let _ = self.child.wait();
++    }
++}
++
++/// Start `cmd`, an `open-ontologies serve-http` command without `--host` or
++/// `--port`, on a port the server picks itself, and return once the server
++/// has said which port it bound.
++///
++/// Confirmed from a CI log on 23 November 2026 (main, 1ba7ecf8). Two tests in
++/// `api_error_json_test` failed together with `ConnectionRefused` on their
++/// first request, right after the readiness check had connected to the same
++/// address.
++///
++/// The tests used to reserve a port by binding a listener to port 0, dropping
++/// it, passing the number to `serve-http`, and polling with
++/// `TcpStream::connect` until a connection succeeded. A successful connect only
++/// shows that *something* is listening there. If a sibling test forks while
++/// the reservation listener is open, the child inherits the listening socket
++/// and keeps it until its own exec. The poll connects to that copy, reports the
++/// server ready, and the first real request is refused: the copy has closed
++/// and the server has not bound yet, or could not bind because the copy still
++/// held the port. It is the fork-inheritance race behind `exec_gate` above,
++/// reached through a socket instead of a file.
++///
++/// Here no test process holds the port at any point, so no child can inherit
++/// it, and the address comes from the server's own startup line rather than
++/// from a probe that anything can answer.
++#[allow(dead_code)]
++pub fn spawn_serve_http(mut cmd: std::process::Command) -> HttpServer {
++    use std::io::BufRead;
++    use std::sync::mpsc::RecvTimeoutError;
++    use std::time::{Duration, Instant};
++
++    const READY: &str = "listening on http://";
++    cmd.args(["--host", "127.0.0.1", "--port", "0"])
++        .stdout(std::process::Stdio::null())
++        .stderr(std::process::Stdio::piped());
++    let mut child = cmd.spawn().unwrap();
++    let stderr = child.stderr.take().unwrap();
++    let mut server = HttpServer {
++        child,
++        addr: std::net::SocketAddr::from(([127, 0, 0, 1], 0)),
++    };
++    let (tx, rx) = std::sync::mpsc::channel();
++    std::thread::spawn(move || {
++        // Ok(address), or Err(everything printed) if stderr closes first.
++        let mut seen = Vec::new();
++        let mut tx = Some(tx);
++        // Keep draining after the address line: a server whose stderr pipe
++        // fills up blocks, and one whose pipe is closed panics on its next
++        // log line.
++        for line in std::io::BufReader::new(stderr).lines() {
++            let Ok(line) = line else { break };
++            if let Some(rest) = line.split(READY).nth(1)
++                && let Some(tx) = tx.take()
++            {
++                let _ = tx.send(Ok(rest.trim_end_matches("/mcp").to_string()));
++            } else if tx.is_some() {
++                seen.push(line);
 +            }
 +        }
-         let mut derived: HashSet<Triple> = HashSet::new();
-         let mut frontier: Vec<Triple> = delta.to_vec();
-         let mut rounds = 0usize;
-@@ -547,7 +592,7 @@ impl IncrementalReasoner {
-                         }
-                     }
-                     if schema.transitive.contains(p) {
--                        for far in neighbours(o, p, true)? {
-+                        for far in neighbours(o, p, true, &local_edges)? {
-                             emit(
-                                 (s.clone(), p.clone(), far.clone()),
-                                 "prp-trp",
-@@ -563,7 +608,7 @@ impl IncrementalReasoner {
-                                 &mut next,
-                             );
-                         }
--                        for near in neighbours(s, p, false)? {
-+                        for near in neighbours(s, p, false, &local_edges)? {
-                             emit(
-                                 (near.clone(), p.clone(), o.clone()),
-                                 "prp-trp",
-@@ -597,6 +642,14 @@ impl IncrementalReasoner {
-                     // forward chainer that only one of two entry points runs.
-                 }
-             }
-+            // Joins must also see edges derived in earlier rounds of THIS run.
-+            // Querying only the store misses new-new joins and can falsely
-+            // report a complete closure when the frontier becomes empty (#416).
-+            for triple in &next {
-+                if schema.transitive.contains(&triple.1) {
-+                    local_edges.insert(triple);
-+                }
-+            }
-             frontier = next;
-         }
- 
-```
-
-**File**: `tests/incremental_transitive_join_test.rs` (added, +246/-0)
-```diff
-@@ -0,0 +1,246 @@
-+// SPDX-FileCopyrightText: 2026 Gqqqqgg
-+// SPDX-License-Identifier: MIT
-+
-+//! Newly inferred edges must participate in the same incremental closure (#416).
-+
-+use open_ontologies::graph::GraphStore;
-+use open_ontologies::reason::{InferenceTarget, Reasoner, Spelled};
-+use open_ontologies::reason_incremental::IncrementalReasoner;
-+use open_ontologies::temporal::ScopeRequest;
-+use serde_json::Value;
-+use std::collections::BTreeSet;
-+use std::sync::Arc;
-+
-+const PREFIXES: &str = "@prefix : <http://example.org/> .
-+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-+@prefix owl: <http://www.w3.org/2002/07/owl#> .";
-+const SCHEMA: &str = ":q rdfs:subPropertyOf :p . :p a owl:TransitiveProperty .";
-+
-+fn edge(s: &str, p: &str, o: &str) -> Spelled {
-+    (
-+        format!("<http://example.org/{s}>"),
-+        format!("<http://example.org/{p}>"),
-+        format!("<http://example.org/{o}>"),
-+    )
-+}
-+
-+fn ntriples(edges: &[Spelled]) -> String {
-+    edges
-+        .iter()
-+        .map(|(s, p, o)| format!("{s} {p} {o} .\n"))
-+        .collect()
-+}
-+
-+fn prepared_graph(schema: &str, tracking: bool) -> Arc<GraphStore> {
-+    let graph = Arc::new(GraphStore::new());
-+    graph
-+        .load_turtle(&format!("{PREFIXES}\n{schema}"), None)
-+        .unwrap();
-+    Reasoner::run_scoped_with_tracking(
-+        &graph,
-+        "owl-rl",
-+        true,
-+        InferenceTarget::DefaultGraph,
-+        None,
-+        &ScopeRequest::Unscoped,
-+        tracking,
-+    )
-+    .unwrap();
-+    graph
-+}
-+
-+fn incremental(graph: &Arc<GraphStore>, delta: &[Spelled], tracking: bool) -> Value {
-+    graph.load_ntriples(&ntriples(delta)).unwrap();
-+    let report: Value = serde_json::from_str(
-+        &IncrementalReasoner::run_scoped_with_tracking(graph, delta, true, false, tracking)
-+            .unwrap(),
-+    )
-+    .unwrap();
-+    assert_eq!(report["ok"], true, "{report}");
-+    assert_eq!(report["complete"], true, "{report}");
-+    report
-+}
-+
-+fn triples(graph: &GraphStore) -> BTreeSet<Spelled> {
-+    graph.all_triples().unwrap().into_iter().collect()
-+}
-+
-+fn check_subproperty_join(tracking: bool) {
-+    let graph = prepared_graph(SCHEMA, tracking);
-+    let report = incremental(
-+        &graph,
-+        &[edge("a", "q", "b"), edge("b", "q", "c")],
-+        tracking,
-+    );
-+    assert!(
-+        triples(&graph).contains(&edge("a", "p", "c")),
-+        "a completed incremental run omitted the transitive consequence: {report}"
-+    );
-+    assert_eq!(report["inferred_count"], 3);
-+    if tracking {
-+        assert!(
-+            graph
-+                .ledger()
-+                .unwrap()
-+                .unwrap()
-+                .grounded()
-+                .contains(&edge("a", "p", "c"))
-+        );
-+    }
-+}
-+
-+#[test]
-+fn new_subproperty_edges_join_in_one_untracked_run() {
-+    check_subproperty_join(false);
-+}
-+
-+#[test]
-+fn new_subproperty_edges_join_in_one_tracked_run() {
-+    check_subproperty_join(true);
-+}
-+
-+#[test]
-+fn new_inverse_edges_join_in_one_run() {
-+    for tracking in [false, true] {
-+        let graph = prepared_graph(
-+            ":q owl:inverseOf :p . :p a owl:TransitiveProperty .",
-+            tracking,
-+        );
-+        incremental(
-+            &graph,
-+            &[edge("b", "q", "a"), edge("c", "q", "b")],
-+            tracking,
-+        );
-+        assert!(triples(&graph).contains(&edge("a", "p", "c")));
-+    }
-+}
-+
-+#[test]
-+fn several_rounds_join_new_edges_with_both_sides_of_the_stored_closure() {
-+    for tracking in [false, true] {
-+        let schema = format!("{SCHEMA} :left :p :a . :e :p :right .");
-+        let graph = prepared_graph(&schema, tracking);
-+        incremental(
-+            &graph,
-+            &[
-+                edge("a", "q", "b"),
-+                edge("b", "q", "c"),
-+                edge("c", "q", "d"),
-+                edge("d", "q", "e"),
-+                edge("right", "other", "unrelated"),
-+            ],
-+            tracking,
-+        );
-+        let actual = triples(&graph);
-+        assert!(actual.contains(&edge("left", "p", "right")));
-+        assert!(!actual.contains(&edge("left", "p", "unrelated")));
-+
-+        let expected = prepared_graph(&schema, tracking);
-+        expected
-+            .load_ntriples(&ntriples(&[
-+                edge("a", "q", "b"),
-+                edge("b", "q", "c"),
-+                edge("c", "q", "d"),
-+                edge("d", "q", "e"),
-+                edge("right", "other", "unrelated"),
-+            ]))
-+            .unwrap();
-+        Reasoner::run(&expected, "owl-rl", true).unwrap();
-+        assert_eq!(actual, triples(&expected));
-+    }
-+}
-+
-+#[test]
-+fn dry_run_reports_the_new_join_without_publishing_data_or_support() {
-+    let graph = prepared_graph(SCHEMA, false);
-+    let delta = [edge("a", "q", "b"), edge("b", "q", "c")];
-+    graph.load_ntriples(&ntriples(&delta)).unwrap();
-+    let before = graph.snapshot("nquads").unwrap();
-+    let report: Value = serde_json::from_str(
-+        
-```
-
----
-
-### Incident Patch 2: `8ce22770` (2026-11-20)
-**Commit Message**: An error is valid JSON whatever its message contains, so the REST routes no longer answer null (#420)
-
-The serve-http /api routes, several CLI commands and batch built
-{"error": ...} with format!, so a message carrying a double quote, a
-backslash or a newline came out as invalid JSON. The REST routes parsed their
-own output, failed, and answered null with HTTP 200. lint, diff, defects,
-drift and vocab-check printed the broken text and exited 0, because their exit
-code is read from an error key they could no longer parse. batch kept the text
-only under raw. /api/save did the same on success when the path needed
-escaping, which is every Windows path.
-
-open_ontologies::output::error_json now builds the object with serde_json, and
-all 36 sites (26 in main.rs, 10 in batch.rs) use it; /api/save's success body
-is built the same way. tests/api_error_json_test.rs drives a real serve-http
-child and the CLI with a SPARQL query and a Turtle file whose parse errors
-quote a quote and a backslash, a caller-supplied format containing each, and a
-save path that needs escaping. All five tests failed before the change (null
-bodies, unparseable CLI output, lint exit 0) and pass after it.
-
-Co-Authored-
-
-**File**: `CHANGELOG.md` (modified, +12/-0)
-```diff
-@@ -192,6 +192,18 @@ All notable changes to Open Ontologies are documented here.
- 
- ### Fixed
- 
-+- **An error is valid JSON whatever its message contains** (#420). The
-+  `serve-http` REST routes, several CLI commands and `batch` wrote
-+  `{"error": ...}` by string formatting, so a message carrying a double quote,
-+  a backslash or a newline (a SPARQL or Turtle parse error quoting the
-+  offending character, a format name the caller supplied, any Windows path)
-+  was invalid JSON. `/api/query`, `/api/save` and the other `/api` routes
-+  then answered `null` with HTTP 200; `lint`, `diff`, `defects`, `drift` and
-+  `vocab-check` printed the broken text and exited 0; `batch` kept it only
-+  under `raw`. `/api/save` also answered `null` on success when the saved path
-+  needed escaping, which is every Windows path. All 36 sites now build the
-+  object with `serde_json`.
-+
- - **Studio's 3D legend names the ontology live mode has loaded** (#414). The
-   legend read "ies-core.ttl · 1,083 triples", and its ASSERTED row "read from
-   ies-core.ttl", in both builds. That is true of the replay demo, which is
-```
-
-**File**: `src/batch.rs` (modified, +10/-10)
-```diff
-@@ -312,7 +312,7 @@ impl BatchRunner {
-         match crate::graph::GraphStore::read_as_turtle(input) {
-             Ok(content) => {
-                 let result = OntologyService::lint_with_feedback(&content, Some(&self.db))
--                    .unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e));
-+                    .unwrap_or_else(crate::output::error_json);
-                 serde_json::from_str(&result).unwrap_or(json!({"raw": result}))
-             }
-             Err(e) => json!({"error": e.to_string()}),
-@@ -1067,7 +1067,7 @@ impl BatchRunner {
-         match crate::graph::GraphStore::read_as_turtle(data_path) {
-             Ok(data) => {
-                 let result = crate::vocab_check::check_data_vocab(&self.graph, &data, &extra)
--                    .unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e));
-+                    .unwrap_or_else(crate::output::error_json);
-                 serde_json::from_str(&result).unwrap_or(json!({"raw": result}))
-             }
-             Err(e) => json!({"error": e.to_string()}),
-@@ -1088,7 +1088,7 @@ impl BatchRunner {
-             Err(e) => return json!({"error": format!("reading {}: {}", args[1], e)}),
-         };
-         let result = OntologyService::diff(&old, &new)
--            .unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e));
-+            .unwrap_or_else(crate::output::error_json);
-         serde_json::from_str(&result).unwrap_or(json!({"raw": result}))
-     }
- 
-@@ -1142,7 +1142,7 @@ impl BatchRunner {
-         let pack = args.first().map(|s| s.as_str()).unwrap_or("generic");
-         let enforcer = crate::enforce::Enforcer::new(self.db.clone(), self.graph.clone());
-         let result = enforcer.enforce_with_feedback(pack, Some(&self.db))
--            .unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e));
-+            .unwrap_or_else(crate::output::error_json);
-         serde_json::from_str(&result).unwrap_or(json!({"raw": result}))
-     }
- 
-@@ -1207,7 +1207,7 @@ impl BatchRunner {
-                     logic: !args.iter().any(|a| a == "--no-logic-check"),
-                 };
-                 let result = planner.plan_with(&turtle, checks)
--                    .unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e));
-+                    .unwrap_or_else(crate::output::error_json);
-                 serde_json::from_str(&result).unwrap_or(json!({"raw": result}))
-             }
-             Err(e) => json!({"error": e.to_string()}),
-@@ -1223,7 +1223,7 @@ impl BatchRunner {
-             .unwrap_or("safe");
-         let planner = crate::plan::Planner::new(self.db.clone(), self.graph.clone());
-         let result = planner.apply_plan(plan_id.as_deref(), mode)
--            .unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e));
-+            .unwrap_or_else(crate::output::error_json);
-         serde_json::from_str(&result).unwrap_or(json!({"raw": result}))
-     }
- 
-@@ -1234,14 +1234,14 @@ impl BatchRunner {
-             None => return json!({"error": "version requires a label"}),
-         };
-         let result = OntologyService::save_version(&self.db, &self.graph, label)
--            .unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e));
-+            .unwrap_or_else(crate::output::error_json);
-         serde_json::from_str(&result).unwrap_or(json!({"raw": result}))
-     }
- 
-     fn exec_history(&self) -> Value {
-         use crate::ontology::OntologyService;
-         let result = OntologyService::list_versions(&self.db)
--            .unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e));
-+            .unwrap_or_else(crate::output::error_json);
-         serde_json::from_str(&result).unwrap_or(json!({"raw": result}))
-     }
- 
-@@ -1252,7 +1252,7 @@ impl BatchRunner {
-             None => return json!({"error": "rollback requires a label"}),
-         };
-         let result = OntologyService::rollback_version(&self.db, &self.graph, label)
--            .unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e));
-+            .unwrap_or_else(crate::output::error_json);
-         serde_json::from_str(&result).unwrap_or(json!({"raw": result}))
-     }
- 
-@@ -1431,7 +1431,7 @@ impl BatchRunner {
-         };
-         let detector = crate::drift::DriftDetector::new(self.db.clone());
-         let result = detector.detect(&v1, &v2)
--            .unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e));
-+            .unwrap_or_else(crate::output::error_json);
-         serde_json::from_str(&result).unwrap_or(json!({"raw": result}))
-     }
- 
-```
-
-**File**: `src/main.rs` (modified, +27/-27)
-```diff
-@@ -2563,7 +2563,7 @@ async fn async_main() -> anyhow::Result<()> {
-                     let g = sg_stats.clone();
-                     async move {
-                         axum::Json(serde_json::from_str::<serde_json::Value>(
--                            &g.get_stats().unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e))
-+                            &g.get_stats().unwrap_or_else(open_ontologies::output::error_json)
-                         ).unwrap_or_default())
-                     }
-                 }))
-@@ -2572,7 +2572,7 @@ async fn async_main() -> anyhow::Result<()> {
-                     async move {
-                         let query = body.0["query"].as_str().unwrap_or("").to_string();
-                         axum::Json(serde_json::from_str::<serde_json::Value>(
--                            &g.sparql_select(&query).unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e))
-+                            &g.sparql_select(&query).unwrap_or_else(open_ontologies::output::error_json)
-                         ).unwrap_or_default())
-                     }
-                 }))
-@@ -2583,7 +2583,7 @@ async fn async_main() -> anyhow::Result<()> {
-                         axum::Json(serde_json::from_str::<serde_json::Value>(
-                             &match g.sparql_update_with_retraction(&query, body.0["retract_inferences"].as_bool().unwrap_or(false)) {
-                                 Ok(n)  => format!(r#"{{"ok":true,"affected":{}}}"#, n),
--                                Err(e) => format!(r#"{{"error":"{}"}}"#, e),
-+                                Err(e) => open_ontologies::output::error_json(e),
-                             }
-                         ).unwrap_or_default())
-                     }
-@@ -2596,7 +2596,7 @@ async fn async_main() -> anyhow::Result<()> {
-                         axum::Json(serde_json::from_str::<serde_json::Value>(
-                             &match g.load_file(&path) {
-                                 Ok(n)  => format!(r#"{{"ok":true,"triples_loaded":{}}}"#, n),
--                                Err(e) => format!(r#"{{"error":"{}"}}"#, e),
-+                                Err(e) => open_ontologies::output::error_json(e),
-                             }
-                         ).unwrap_or_default())
-                     }
-@@ -2609,7 +2609,7 @@ async fn async_main() -> anyhow::Result<()> {
-                         axum::Json(serde_json::from_str::<serde_json::Value>(
-                             &match g.load_turtle(&turtle, base.as_deref()) {
-                                 Ok(n)  => format!(r#"{{"ok":true,"triples_loaded":{}}}"#, n),
--                                Err(e) => format!(r#"{{"error":"{}"}}"#, e),
-+                                Err(e) => open_ontologies::output::error_json(e),
-                             }
-                         ).unwrap_or_default())
-                     }
-@@ -2622,8 +2622,8 @@ async fn async_main() -> anyhow::Result<()> {
-                         let path = open_ontologies::config::expand_tilde(&path);
-                         axum::Json(serde_json::from_str::<serde_json::Value>(
-                             &match g.save_file(&path, &format) {
--                                Ok(_)  => format!(r#"{{"ok":true,"path":"{}"}}"#, path),
--                                Err(e) => format!(r#"{{"error":"{}"}}"#, e),
-+                                Ok(_)  => serde_json::json!({ "ok": true, "path": path }).to_string(),
-+                                Err(e) => open_ontologies::output::error_json(e),
-                             }
-                         ).unwrap_or_default())
-                     }
-@@ -2989,7 +2989,7 @@ async fn async_main() -> anyhow::Result<()> {
-             let (_db, graph) = setup(&cli.data_dir)?;
-             let stats_json = graph
-                 .get_stats()
--                .unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e));
-+                .unwrap_or_else(open_ontologies::output::error_json);
-             output_result(&stats_json, cli.pretty);
-         }
-         Commands::Query { query } => {
-@@ -3003,7 +3003,7 @@ async fn async_main() -> anyhow::Result<()> {
-             };
-             let result = graph
-                 .sparql_select(&query_str)
--                .unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e));
-+                .unwrap_or_else(open_ontologies::output::error_json);
-             output_result(&result, cli.pretty);
-         }
-         Commands::Diff { old_path, new_path } => {
-@@ -3025,7 +3025,7 @@ async fn async_main() -> anyhow::Result<()> {
-             let old = read(&old_path);
-             let new = read(&new_path);
-             let result = OntologyService::diff(&old, &new)
--                .unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e));
-+                .unwrap_or_else(open_ontologies::output::error_json);
-             output_result_checked(&result, cli.pretty);
-         }
-         Commands::Defects { input, limit } => {
-@@ -3069,7 +3069,7 @@ async fn async_main() -> anyhow::Re
-```
-
-**File**: `src/output.rs` (modified, +13/-0)
-```diff
-@@ -21,6 +21,19 @@
- 
- use serde_json::Value;
- 
-+/// `{"error": "<message>"}` as JSON text, with the message escaped.
-+///
-+/// Call sites used to write `format!(r#"{{"error":"{}"}}"#, e)`, which is
-+/// invalid JSON whenever the message carries a double quote, a backslash or a
-+/// newline: a parse error quoting the offending character, a format name the
-+/// caller supplied, any Windows path. The REST routes then parsed their own
-+/// output, failed and answered `null`; the CLI printed the broken text and,
-+/// where the exit code is read from the `error` key, exited 0; batch kept it
-+/// only as `{"raw": ...}` (#420).
-+pub fn error_json(message: impl std::fmt::Display) -> String {
-+    serde_json::json!({ "error": message.to_string() }).to_string()
-+}
-+
- /// The whole human-readable text for one command's result.
- pub type Renderer = fn(&Value) -> String;
- 
-```
-
-**File**: `tests/api_error_json_test.rs` (added, +190/-0)
-```diff
-@@ -0,0 +1,190 @@
-+// SPDX-FileCopyrightText: 2026 Fabio Rovai
-+// SPDX-License-Identifier: MIT
-+
-+//! An error is valid JSON whatever its message contains (#420).
-+//!
-+//! The REST routes under `serve-http`'s `/api` and several CLI commands built
-+//! `{"error": ...}` by string formatting. A message carrying a double quote or
-+//! a backslash (a SPARQL or Turtle parse error quoting the offending
-+//! character, a format name the caller supplied, any Windows path) produced
-+//! invalid JSON. The REST routes then parsed their own output, failed, and
-+//! answered `null` with HTTP 200; the CLI printed the broken text and, for the
-+//! commands that set their exit code from the `error` key, exited 0.
-+
-+use serde_json::{Value, json};
-+use std::io::{Read, Write};
-+use std::net::{SocketAddr, TcpStream};
-+use std::process::{Child, Command, Stdio};
-+use std::time::{Duration, Instant};
-+
-+/// A SPARQL query whose parse error quotes `"` and `\` back to the caller.
-+const BAD_QUERY: &str = r#"SELECT * WHERE { ?s ?p "\q" }"#;
-+
-+fn oo(dir: &tempfile::TempDir) -> Command {
-+    let mut cmd = Command::new(env!("CARGO_BIN_EXE_open-ontologies"));
-+    cmd.arg("--data-dir").arg(dir.path());
-+    cmd.env_remove("OPEN_ONTOLOGIES_TOKEN")
-+        .env_remove("OPEN_ONTOLOGIES_STORAGE_MODE")
-+        .env_remove("GOVERNANCE_WEBHOOK")
-+        .env("NO_PROXY", "127.0.0.1,localhost")
-+        .env("no_proxy", "127.0.0.1,localhost")
-+        .env("RUST_LOG", "warn");
-+    cmd
-+}
-+
-+struct Server(Child);
-+impl Drop for Server {
-+    fn drop(&mut self) {
-+        let _ = self.0.kill();
-+        let _ = self.0.wait();
-+    }
-+}
-+
-+fn start_server(dir: &tempfile::TempDir) -> (Server, SocketAddr) {
-+    let config = dir.path().join("config.toml");
-+    std::fs::write(&config, "[storage]\nmode = 'memory'\n").unwrap();
-+    let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
-+    let addr = listener.local_addr().unwrap();
-+    drop(listener);
-+    let mut cmd = oo(dir);
-+    cmd.env("OPEN_ONTOLOGIES_STORAGE_MODE", "memory")
-+        .arg("serve-http")
-+        .arg("--config")
-+        .arg(&config)
-+        .args(["--host", "127.0.0.1", "--port", &addr.port().to_string()])
-+        .stdout(Stdio::null())
-+        .stderr(Stdio::null());
-+    let mut server = Server(cmd.spawn().unwrap());
++        if let Some(tx) = tx {
++            let _ = tx.send(Err(seen.join("\n")));
++        }
++    });
 +    let deadline = Instant::now() + Duration::from_secs(30);
 +    loop {
-+        assert!(
-+            server.0.try_wait().unwrap().is_none(),
-+            "HTTP server exited before binding"
-+        );
-+        if TcpStream::connect(addr).is_ok() {
-+            break;
++        match rx.recv_timeout(Duration::from_millis(50)) {
++            Ok(Ok(addr)) => {
++                server.addr = addr.parse().unwrap_or_else(|e| {
++                    panic!("serve-http reported an address that does not parse ({e}): {addr}")
++                });
++                return server;
++            }
++            Ok(Err(stderr)) => panic!("serve-http exited before it bound:\n{stderr}"),
++            Err(RecvTimeoutError::Disconnected) => panic!("serve-http stderr reader died"),
++            Err(RecvTimeoutError::Timeout) => {}
 +        }
-+        assert!(Instant::now() < deadline, "HTTP server did not bind");
-+        std::thread::sleep(Duration::from_millis(20));
-+    }
-+    (server, addr)
-+}
-+
-+/// One HTTP/1.1 POST over a plain socket, so the test needs no HTTP client.
-+fn post(addr: SocketAddr, path: &str, body: &Value) -> (u16, Value) {
-+    let body = body.to_string();
-+    let mut stream = TcpStream::connect(addr).unwrap();
-+    stream
-+        .set_read_timeout(Some(Duration::from_secs(60)))
-+        .unwrap();
-+    write!(
-+        stream,
-+        "POST {path} HTTP/1.1\r\nHost: 127.0.0.1\r\nContent-Type: application/json\r\n\
-+         Content-Length: {}\r\nConnection: close\r\n\r\n{body}",
-+        body.len()
-+    )
-+    .unwrap();
-+    let mut response = String::new();
-+    stream.read_to_string(&mut response).unwrap();
-+    let (head, payload) = response
-+        .split_once("\r\n\r\n")
-+        .expect("an HTTP response with a header block");
-+    let status = head
-+        .split_whitespace()
-+        .nth(1)
-+        .and_then(|s| s.parse().ok())
-+        .expect("a status code");
-+    let value = serde_json::from_str(payload)
-+        .unwrap_or_else(|e| panic!("response body is not JSON ({e}): {payload}"));
-+    (status, value)
-+}
-+
-+fn error_text(value: &Value) -> &str {
-+    value["error"]
-+        .as_str()
-+        .unwrap_or_else(|| panic!("expected an error object, got {value}"))
-+}
-+
-+#[test]
-+fn api_query_parse_error_quoting_a_quote_and_a_backslash_is_an_error_object() {
-+    let dir = tempfile::tempdir().unwrap();
-+    let (_server, addr) = start_server(&dir);
-+    let (status, body) = post(addr, "/api/query", &json!({ "query": BAD_QUERY }));
-+    assert_eq!(status, 200);
-+    let message = error_text(&body);
-+    assert!(message.contains('"') && message.contains('\\'), "{message}");
-+}
-+
-+#[test]
-+fn api_save_reports_a_caller_supplied_format_that_contains_a_quote_or_backslash() {
-+    let dir = tempfile::tempdir().unwrap();
-+    let (_server, addr) = start_server(&dir);
-+    let out = dir.path().join("out.ttl");
-+    for format in ["ya\"ml", "ya\\ml"] {
-+        let (_, body) = post(
-+            addr,
-+            "/api/save",
-+            &json!({ "path": out.to_str().unwrap(), "format": format }),
++        assert!(
++            Instant::now() < deadline,
++            "serve-http did not report a bound address within 30 s"
 +        );
-+        let message = error_text(&body);
-+        assert!(message.contains(format), "{message}");
 +    }
 +}
-+
-+#[test]
-+fn api_save_success_names_a_path_
 ```
 
 ---
 
-### Incident Patch 3: `3d0795c0` (2026-11-18)
-**Commit Message**: fix(shacl): expand SPARQL constraint message templates
+### Incident Patch 2: `1ef576d1` (2026-11-24)
+**Commit Message**: Merge pull request #433 from AyhamJo7/fix/432-vocab-check-wrong-role
 
-Expand {?name} and {$name} in fallback sh:message text using each SELECT
-solution. Render literals by lexical value and preserve RDF notation for
-IRIs and blank nodes. Leave unbound placeholders untouched and never
-rescan inserted values.
+fix(vocab-check): report declared terms used in the wrong role
 
-Write the expanded message to JSON, Turtle and N-Triples reports while
-preserving the template literal's language tag or datatype. Keep bound
-?message precedence, default messages, result values and query evaluation
-unchanged.
-
-Add regression coverage for the issue example, per-solution bindings,
-repeated placeholders, unbound variables, literal braces, escaping,
-blank-node focus nodes and existing override/default behavior. Record the
-user-facing fix in CHANGELOG.md.
-
-Fixes #411
-
-**File**: `CHANGELOG.md` (modified, +8/-0)
+**File**: `CHANGELOG.md` (modified, +4/-1)
 ```diff
-@@ -165,6 +165,14 @@ All notable changes to Open Ontologies are documented here.
+@@ -228,7 +228,10 @@ All notable changes to Open Ontologies are documented here.
+   `rdfs:domain`, `rdfs:range` and `rdfs:subPropertyOf`), and a declared term used
+   in the other role is reported under a new `wrong_role_terms` field and fails
+   the check. Undeclared terms stay in `hallucinated_terms`, so the two cases
+-  remain distinguishable. A term declared in both roles is accepted in both.
++  remain distinguishable. A term declared in both roles is accepted in both. The
++  Python `vocab_check` in `open-ontologies-lite` runs the same check and lists
++  each such term under `wrong_role_terms` with the role it was used in and the
++  role it was declared in.
+ 
+ - **`reason --certificate` writes the same `derivations.tsv` on every run over
+   the same store** (#427). The conclusions were always the same set, but the
+```
+
+**File**: `python/src/open_ontologies_lite/vocab_check.py` (modified, +47/-1)
+```diff
+@@ -59,6 +59,26 @@
+  || ?p = <{RDFS}subPropertyOf>)"""
+ 
+ 
++# Which role a declaration gives a term. A class used as a predicate, or a property
++# used as the object of `rdf:type`, is declared but not in that role (#432). A term
++# declared as both (OWL 2 punning) fits either role.
++_CLASS_KINDS = (f"{OWL}Class", f"{RDFS}Class")
++_CLASS_AXIOMS = (f"{RDFS}subClassOf",)
++_PROPERTY_KINDS = (
++    f"{OWL}ObjectProperty",
++    f"{OWL}DatatypeProperty",
++    f"{OWL}AnnotationProperty",
++    f"{OWL}FunctionalProperty",
++    f"{OWL}InverseFunctionalProperty",
++    f"{RDF}Property",
++)
++_PROPERTY_AXIOMS = (f"{RDFS}domain", f"{RDFS}range", f"{RDFS}subPropertyOf")
++
++
++def _in(var: str, iris: tuple[str, ...]) -> str:
++    return "FILTER(" + " || ".join(f"?{var} = <{iri}>" for iri in iris) + ")"
++
++
+ def _namespace_of(iri: str) -> str:
+     """Everything up to and including the last `#` or `/`."""
+     cut = max(iri.rfind("#"), iri.rfind("/"))
+@@ -108,13 +128,25 @@ def vocab_check(
+         onto_store, f"SELECT DISTINCT ?t WHERE {{ ?t ?p ?o . {_DEFINING_AXIOM} }}", "t"
+     )
+ 
++    classes = _iris(
++        onto_store, f"SELECT DISTINCT ?t WHERE {{ ?t a ?k . {_in('k', _CLASS_KINDS)} }}", "t"
++    ) | _iris(
++        onto_store, f"SELECT DISTINCT ?t WHERE {{ ?t ?p ?o . {_in('p', _CLASS_AXIOMS)} }}", "t"
++    )
++    properties = _iris(
++        onto_store, f"SELECT DISTINCT ?t WHERE {{ ?t a ?k . {_in('k', _PROPERTY_KINDS)} }}", "t"
++    ) | _iris(
++        onto_store, f"SELECT DISTINCT ?t WHERE {{ ?t ?p ?o . {_in('p', _PROPERTY_AXIOMS)} }}", "t"
++    )
++
+     extra = list(extra_namespaces or [])
+ 
+     # A closed-world check with nothing to close over must never silently pass.
+     if not declared and not extra:
+         return {
+             "conforms": False,
+             "undeclared_terms": [],
++            "wrong_role_terms": [],
+             "checked_namespaces": [],
+             "predicates_checked": 0,
+             "types_checked": 0,
+@@ -138,9 +170,23 @@ def vocab_check(
+         if _namespace_of(iri) in policed and iri not in declared
+     )
+ 
++    wrong_role = sorted(
++        (
++            {"term": iri, "used_as": used_as, "declared_as": declared_as}
++            for used, used_as, fits, declared_as in (
++                (predicates, "property", properties, "class"),
++                (types, "class", classes, "property"),
++            )
++            for iri in used
++            if _namespace_of(iri) in policed and iri in declared and iri not in fits
++        ),
++        key=lambda entry: (entry["term"], entry["used_as"]),
++    )
++
+     return {
+-        "conforms": not undeclared,
++        "conforms": not undeclared and not wrong_role,
+         "undeclared_terms": undeclared,
++        "wrong_role_terms": wrong_role,
+         "checked_namespaces": sorted(policed),
+         "predicates_checked": len(predicates),
+         "types_checked": len(types),
+```
+
+**File**: `python/tests/test_vocab_check.py` (modified, +52/-0)
+```diff
+@@ -119,3 +119,55 @@ def test_a_term_carrying_only_a_domain_axiom_counts_as_declared():
+     report = vocab_check(ontology, data)
+ 
+     assert report["conforms"] is True
++
++
++def test_a_declared_term_in_the_wrong_role_is_flagged():
++    """#432: a class used as a predicate, or a property used as a type, is declared
++    but not in the role it is used in."""
++    data = """
++    @prefix ex: <http://example.org/onto#> .
++    <http://example.org/instances/s1> a ex:hasName .
++    <http://example.org/instances/s2> ex:Person <http://example.org/instances/x> .
++    """
++    report = vocab_check(ONTOLOGY, data)
++
++    assert report["conforms"] is False
++    assert report["undeclared_terms"] == []
++    assert report["wrong_role_terms"] == [
++        {"term": "http://example.org/onto#Person", "used_as": "property", "declared_as": "class"},
++        {"term": "http://example.org/onto#hasName", "used_as": "class", "declared_as": "property"},
++    ]
++
++
++def test_a_punned_term_may_be_used_in_either_role():
++    ontology = """
++    @prefix owl: <http://www.w3.org/2002/07/owl#> .
++    @prefix ex:  <http://example.org/onto#> .
++    ex:Tag a owl:Class , owl:AnnotationProperty .
++    """
++    data = """
++    @prefix ex: <http://example.org/onto#> .
++    <http://example.org/instances/a> a ex:Tag ; ex:Tag "x" .
++    """
++    report = vocab_check(ontology, data)
++
++    assert report["conforms"] is True, report["wrong_role_terms"]
++
++
++def test_a_standard_term_the_ontology_declares_is_not_policed_for_its_role():
++    """The standard vocabularies stay unpoliced in the role check too, as in the
++    Rust engine: declaring `skos:Concept` a class does not bring SKOS under the
++    closed world, so using it as a predicate is not reported."""
++    ontology = ONTOLOGY + """
++    @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
++    skos:Concept a owl:Class .
++    """
++    data = """
++    @prefix ex:   <http://example.org/onto#> .
++    @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
++    <http://example.org/instances/ada> a ex:Person ; skos:Concept "Ada" .
++    """
++    report = vocab_check(ontology, data)
++
++    assert report["wrong_role_terms"] == []
++    assert report["conforms"] is True
+```
+
+---
+
+### Incident Patch 3: `ec023280` (2026-11-24)
+**Commit Message**: Merge pull request #438 from fabio-rovai/fix/serve-http-test-port-race
+
+The HTTP tests let serve-http pick its own port, so a sibling's fork can no longer answer for it
+
+**File**: `CHANGELOG.md` (modified, +13/-0)
+```diff
+@@ -192,6 +192,19 @@ All notable changes to Open Ontologies are documented here.
  
  ### Fixed
  
-+- **SHACL-SPARQL message templates substitute solution variables** (#411).
-+  Fallback `sh:message` text now expands `{?name}` and `{$name}` for each
-+  result, including the pre-bound focus node. Literals use their lexical
-+  values, while IRIs and blank nodes retain their RDF form. Unbound variables
-+  stay as written, and inserted values are not expanded again. JSON, Turtle
-+  and N-Triples reports carry the expanded message; RDF reports preserve its
-+  language tag or datatype. A bound `?message` keeps its existing precedence.
++- **`serve-http --port 0` reports the port it bound, and the HTTP tests no
++  longer race a sibling test's fork for their port.** The startup line printed
++  the port asked for, so with `--port 0` it said `:0`. It now prints the port
++  the OS picked. `api_error_json_test` and `query_human_output_test` reserved a
++  port by binding and dropping a listener, then polled with a TCP connect. A
++  sibling test that forked while the reservation was open passed the listening
++  socket to its child, the poll connected to that copy, and the first request
++  was refused or reset, or the server could not bind at all. Main failed this
++  way once on CI (1ba7ecf8) and 42 times in 2,000 runs on Linux. Both tests now
++  start `serve-http --port 0` through `tests/common::spawn_serve_http`, which
++  reads the address from the server's own startup line: 2,000 of 2,000 runs
++  pass.
 +
- - **Clinical validation and drift detection read a tagged label by its text**
-   (#406). Both stripped quotes from the N-Triples form of the literal, so
-   `"Dog"@en` became `Dog"@en`. Clinical validation searched the crosswalk for
+ - **No label on the front-page figure sits on a node, an arrow or the panel
+   border** (#436). Labels in `docs/assets/knowledge-graph.py` were checked
+   against other labels only, so the unasked-question badge ran through a row of
 ```
 
-**File**: `src/shacl.rs` (modified, +40/-4)
+**File**: `src/main.rs` (modified, +5/-0)
 ```diff
-@@ -4,7 +4,7 @@
- use crate::graph::{GraphStore, ReadScope};
- use crate::temporal::{ScopeManifest, ScopeRequest};
- use oxigraph::io::{RdfFormat, RdfParser};
--use oxigraph::model::{Term, Variable};
-+use oxigraph::model::{Literal, Term, Variable};
- use oxigraph::sparql::{QueryResults, SparqlEvaluator};
- use oxigraph::store::Store;
- use std::collections::{HashMap, HashSet};
-@@ -2118,13 +2118,16 @@ impl ShaclValidator {
-                                     if message.is_empty() {
-                                         "SPARQL constraint violated".to_string()
-                                     } else {
--                                        message.clone()
-+                                        expand_message_template(&message, &row)
-                                     }
-                                 });
-                                 let rdf = RdfTerms::new(
-                                     constraint.get("severity").cloned(),
-                                     bound_message.cloned().or_else(|| {
--                                        constraint.get("message").cloned().filter(|_| !message.is_empty())
-+                                        constraint
-+                                            .get("message")
-+                                            .filter(|_| !message.is_empty())
-+                                            .map(|raw| message_literal_with_text(raw, &msg))
-                                     }),
-                                 );
-                                 let mut v = serde_json::json!({
-@@ -3258,7 +3261,8 @@ fn attribute(
- /// `core/misc/message-001` declares `"Test message"@en`, and the language tag
- /// is gone. SHACL 3.6.2 makes `sh:resultSeverity` the shape's
- /// `sh:severity` and `sh:resultMessage` a copy of its `sh:message`, so the
--/// writer needs the terms as written. They travel inside each violation under
-+/// writer needs the terms as written (with SPARQL message templates expanded).
-+/// They travel inside each violation under
- /// [`crate::shacl_report::RDF_TERMS_KEY`] and the JSON renderer removes them.
- ///
- /// `message` is `None` whenever the result carries this engine's default text,
-@@ -3524,6 +3528,38 @@ fn strip_quotes(s: &str) -> String {
-     }
+@@ -2739,6 +2739,11 @@ async fn async_main() -> anyhow::Result<()> {
+             let router = router.layer(tower_http::cors::CorsLayer::permissive());
+             let addr = format!("{host}:{port}");
+             let listener = tokio::net::TcpListener::bind(&addr).await?;
++            // Print the port actually bound, not the one asked for: with
++            // `--port 0` the OS picks a free port, and this line is the only
++            // way the caller learns it. The integration tests start servers
++            // that way (tests/common/mod.rs, `spawn_serve_http`).
++            let addr = format!("{host}:{}", listener.local_addr()?.port());
+             eprintln!("Open Ontologies MCP server listening on http://{addr}/mcp");
+             if token.is_some() {
+                 eprintln!("  Authentication: bearer token required");
+```
+
+**File**: `tests/api_error_json_test.rs` (modified, +9/-31)
+```diff
+@@ -11,11 +11,14 @@
+ //! answered `null` with HTTP 200; the CLI printed the broken text and, for the
+ //! commands that set their exit code from the `error` key, exited 0.
+ 
++mod common;
++
++use common::HttpServer;
+ use serde_json::{Value, json};
+ use std::io::{Read, Write};
+ use std::net::{SocketAddr, TcpStream};
+-use std::process::{Child, Command, Stdio};
+-use std::time::{Duration, Instant};
++use std::process::Command;
++use std::time::Duration;
+ 
+ /// A SPARQL query whose parse error quotes `"` and `\` back to the caller.
+ const BAD_QUERY: &str = r#"SELECT * WHERE { ?s ?p "\q" }"#;
+@@ -32,41 +35,16 @@ fn oo(dir: &tempfile::TempDir) -> Command {
+     cmd
  }
  
-+/// SHACL 5.3.2: expand `{?name}` and `{$name}` in a fallback `sh:message`.
-+/// Literals use their lexical value; IRIs and blank nodes keep their RDF form.
-+/// Unbound names stay as written. Only the template is scanned, so braces in
-+/// an inserted value cannot trigger another substitution.
-+fn expand_message_template(template: &str, row: &HashMap<String, String>) -> String {
-+    let mut expanded = String::with_capacity(template.len());
-+    for part in template.split_inclusive('}') {
-+        if let Some((prefix, name)) = part.strip_suffix('}').and_then(|s| s.rsplit_once('{'))
-+            && let Some(name) = name.strip_prefix('?').or_else(|| name.strip_prefix('$'))
-+            && let Some(value) = row.get(name)
-+        {
-+            expanded.push_str(prefix);
-+            expanded.push_str(&strip_quotes(value));
-+        } else {
-+            expanded.push_str(part);
-+        }
-+    }
-+    expanded
-+}
-+
-+/// Keep the RDF message's language tag or datatype when its text is expanded.
-+fn message_literal_with_text(raw: &str, text: &str) -> String {
-+    let Ok(Term::Literal(lit)) = raw.parse::<Term>() else {
-+        return raw.to_string();
-+    };
-+    let expanded = match lit.language() {
-+        Some(lang) => Literal::new_language_tagged_literal_unchecked(text, lang),
-+        None => Literal::new_typed_literal(text, lit.datatype().into_owned()),
-+    };
-+    expanded.to_string()
-+}
-+
- /// Read a cardinality bound (`sh:minCount`, `sh:maxCount` and the qualified
- /// pair), or record it in `skipped` and return None.
- ///
+-struct Server(Child);
+-impl Drop for Server {
+-    fn drop(&mut self) {
+-        let _ = self.0.kill();
+-        let _ = self.0.wait();
+-    }
+-}
+-
+-fn start_server(dir: &tempfile::TempDir) -> (Server, SocketAddr) {
++fn start_server(dir: &tempfile::TempDir) -> (HttpServer, SocketAddr) {
+     let config = dir.path().join("config.toml");
+     std::fs::write(&config, "[storage]\nmode = 'memory'\n").unwrap();
+-    let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+-    let addr = listener.local_addr().unwrap();
+-    drop(listener);
+     let mut cmd = oo(dir);
+     cmd.env("OPEN_ONTOLOGIES_STORAGE_MODE", "memory")
+         .arg("serve-http")
+         .arg("--config")
+-        .arg(&config)
+-        .args(["--host", "127.0.0.1", "--port", &addr.port().to_string()])
+-        .stdout(Stdio::null())
+-        .stderr(Stdio::null());
+-    let mut server = Server(cmd.spawn().unwrap());
+-    let deadline = Instant::now() + Duration::from_secs(30);
+-    loop {
+-        assert!(
+-            server.0.try_wait().unwrap().is_none(),
+-            "HTTP server exited before binding"
+-        );
+-        if TcpStream::connect(addr).is_ok() {
+-            break;
+-        }
+-        assert!(Instant::now() < deadline, "HTTP server did not bind");
+-        std::thread::sleep(Duration::from_millis(20));
+-    }
++        .arg(&config);
++    let server = common::spawn_serve_http(cmd);
++    let addr = server.addr;
+     (server, addr)
+ }
+ 
 ```
 
-**File**: `tests/shacl_sparql_message_template_test.rs` (added, +205/-0)
+**File**: `tests/common/mod.rs` (modified, +95/-0)
 ```diff
-@@ -0,0 +1,205 @@
-+// SPDX-FileCopyrightText: 2026 Fabio Rovai
-+// SPDX-License-Identifier: MIT
+@@ -72,3 +72,98 @@ pub fn exec_gate() -> std::sync::MutexGuard<'static, ()> {
+     static GATE: std::sync::Mutex<()> = std::sync::Mutex::new(());
+     GATE.lock().unwrap_or_else(|e| e.into_inner())
+ }
 +
-+//! SHACL 5.3.2 message templates are expanded for each solution (#411).
-+
-+use open_ontologies::graph::GraphStore;
-+use open_ontologies::shacl::{ShaclReport, ShaclValidator};
-+use open_ontologies::shacl_report::ReportFormat;
-+use open_ontologies::temporal::ScopeRequest;
-+use oxigraph::io::{RdfFormat, RdfParser};
-+use oxigraph::model::{Literal, Term};
-+use serde_json::Value;
-+use std::io::Cursor;
-+use std::sync::Arc;
-+
-+fn report(data: &str, message: &str, select: &str) -> ShaclReport {
-+    let graph = Arc::new(GraphStore::new());
-+    graph.load_turtle(data, None).unwrap();
-+    let shapes = format!(
-+        r#"
-+        @prefix ex: <http://example.org/> .
-+        @prefix sh: <http://www.w3.org/ns/shacl#> .
-+        ex:S a sh:NodeShape ; sh:targetClass ex:Item ;
-+            sh:sparql [ {message} sh:select """{select}""" ] .
-+        "#
-+    );
-+    ShaclValidator::report_scoped(&graph, &shapes, &ScopeRequest::Unscoped).unwrap()
++/// A `serve-http` child a test owns. Dropping it kills and reaps the process.
++#[allow(dead_code)]
++pub struct HttpServer {
++    pub child: std::process::Child,
++    pub addr: std::net::SocketAddr,
 +}
 +
-+fn messages(report: &ShaclReport) -> Vec<String> {
-+    let json: Value = serde_json::from_str(&report.to_json_string()).unwrap();
-+    assert_eq!(json["conforms"], false, "{json}");
-+    assert!(json["skipped_constraints"].is_null(), "{json}");
-+    let mut messages: Vec<_> = json["violations"]
-+        .as_array()
-+        .unwrap()
-+        .iter()
-+        .map(|v| v["message"].as_str().unwrap().to_string())
-+        .collect();
-+    messages.sort();
-+    messages
-+}
-+
-+const DATA: &str = r#"
-+    @prefix ex: <http://example.org/> .
-+    ex:a a ex:Item ; ex:v 5 .
-+"#;
-+
-+const SELECT_VALUE: &str =
-+    "SELECT $this ?value WHERE { $this <http://example.org/v> ?value . FILTER(?value > 3) }";
-+
-+fn assert_rdf_message(report: &ShaclReport, expected: Literal) {
-+    for (format, parser_format) in [
-+        (ReportFormat::Turtle, RdfFormat::Turtle),
-+        (ReportFormat::NTriples, RdfFormat::NTriples),
-+    ] {
-+        let rendered = report.render(format).unwrap();
-+        let found: Vec<_> = RdfParser::from_format(parser_format)
-+            .for_reader(Cursor::new(rendered.as_bytes()))
-+            .map(Result::unwrap)
-+            .filter(|q| q.predicate.as_str() == "http://www.w3.org/ns/shacl#resultMessage")
-+            .map(|q| q.object)
-+            .collect();
-+        assert_eq!(found, vec![Term::Literal(expected.clone())], "{rendered}");
++impl Drop for HttpServer {
++    fn drop(&mut self) {
++        let _ = self.child.kill();
++        let _ = self.child.wait();
 +    }
 +}
 +
-+#[test]
-+fn the_issue_example_expands_value_and_focus_without_changing_the_result_value() {
-+    let r = report(
-+        DATA,
-+        r#"sh:message "value too big: {?value} (focus {$this})" ;"#,
-+        SELECT_VALUE,
-+    );
-+    assert_eq!(
-+        messages(&r),
-+        ["value too big: 5 (focus <http://example.org/a>)"]
-+    );
-+    let json: Value = serde_json::from_str(&r.to_json_string()).unwrap();
-+    assert_eq!(json["violation_count"], 1);
-+    assert_eq!(
-+        json["violations"][0]["value"],
-+        "\"5\"^^<http://www.w3.org/2001/XMLSchema#integer>"
-+    );
-+    assert_rdf_message(
-+        &r,
-+        Literal::new_simple_literal("value too big: 5 (focus <http://example.org/a>)"),
-+    );
-+}
++/// Start `cmd`, an `open-ontologies serve-http` command without `--host` or
++/// `--port`, on a port the server picks itself, and return once the server
++/// has said which port it bound.
++///
++/// Confirmed from a CI log on 23 November 2026 (main, 1ba7ecf8). Two tests in
++/// `api_error_json_test` failed together with `ConnectionRefused` on their
++/// first request, right after the readiness check had connected to the same
++/// address.
++///
++/// The tests used to reserve a port by binding a listener to port 0, dropping
++/// it, passing the number to `serve-http`, and polling with
++/// `TcpStream::connect` until a connection succeeded. A successful connect only
++/// shows that *something* is listening there. If a sibling test forks while
++/// the reservation listener is open, the child inherits the listening socket
++/// and keeps it until its own exec. The poll connects to that copy, reports the
++/// server ready, and the first real request is refused: the copy has closed
++/// and the server has not bound yet, or could not bind because the copy still
++/// held the port. It is the fork-inheritance race behind `exec_gate` above,
++/// reached through a socket instead of a file.
++///
++/// Here no test process holds the port at any point, so no child can inherit
++/// it, and the address comes from the server's own startup line rather than
++/// from a probe that anything can answer.
++#[allow(dead_code)]
++pub fn spawn_serve_http(mut cmd: std::process::Command) -> HttpServer {
++    use std::io::BufRead;
++    use std::sync::mpsc::RecvTimeoutError;
++    use std::time::{Duration, Instant};
 +
-+#[test]
-+fn each_solution_expands_both_variable_markers_and_repeated_names() {
-+    let data = r#"
-+        @prefix ex: <http://example.org/> .
-+        ex:a a ex:Item ; ex:v 5, 9 .
-+        ex:b a ex:Item ; ex:v 7 .
-+    "#;
-+    let r = report(
-+        data,
-+        r#"sh:message "{?this}: {?value}/{$value}/{?value}; {$label}" ;"#,
-+        r#"SELECT $this ?value ("large" AS ?label) WHERE { $this <http://example.org/v> ?value }"#,
-+    );
-+    assert_eq!(
-+        messages(&r),
-+        [
-+            "<http://example.org/a>: 5/5/5; large",
-+            "<http://example.org/a>: 9/9/9; large",
-+            "<http://example.org/b>: 7/7/7; large",
-+        ]
-+    );
++    const READY: &str = "listening on http://";
++    cmd.args(["--host", "127.0.0.1", "--port", "0"])
++        .stdout(std::process::Stdio::null())
++        .stderr(std::process::Stdio::piped());
++    let mut child = cmd.spawn().unwrap();
++    let stderr = child.stderr.take().unwrap();
++    let mut server = HttpServer {
++        child,
++        addr: std::net::SocketAddr::from(([127, 0, 0, 1], 0)),
++    };
++    let (tx, rx) = std::sync::mpsc::channel();
++    std::thread::spawn(move || {
++        // Ok(address), or Err(everything printed) if stderr closes first.
++        let mut seen = Vec::new();
++        let mut tx = Some(tx);
++        // Keep draining after the address line: a server whose stderr pipe
++        // fills up blocks, and one whose pipe is closed panics on its next
++        // log line.
++        for line in std::io::BufReader::new(stderr).lines() {
++            let Ok(line) = line else { break };
++            if let Some(rest) = line.split(READY).nth(1)
++                && let Some(tx) = tx.take()
++            {
++                let _ = tx.send(Ok(rest.trim_end_matches("/mcp").to_string()));
++            } else if tx.is_some() {
++                seen.push(line);
++            }
++        }
++        if let Some(tx) = tx {
++            let _ = tx.send(Err(seen.join("\n")));
++        }
++    });
++    let deadline = Instant::now() + Duration::from_secs(30);
++    loop {
++        match rx.recv_timeout(Duration::from_millis(50)) {
++            Ok(Ok(addr)) => {
++                server.addr = addr.parse().unwrap_or_else(|e| {
++                    panic!("serve-http reported an address that does not parse ({e}): {addr}")
++                });
++                return server;
++            }
++            Ok(Err(stderr)) => panic!("serve-http exited before it bound:\n{stderr}"),
++            Err(RecvTimeoutError::Disconnected) => panic!("serve-http stderr reader died"),
++            Err(RecvTimeoutError::Timeout) => {}
++        }
++        assert!(
++            Instant::now() < deadline,
++            "serve-http did not report a bound address within 30 s"
++        );
++    }
 +}
+```
+
+**File**: `tests/query_human_output_test.rs` (modified, +7/-30)
+```diff
+@@ -3,9 +3,11 @@
+ 
+ //! Native SELECT rows must reach the human renderer on local and proxy paths.
+ 
++mod common;
 +
-+#[test]
-+fn unbound_variables_and_ordinary_braces_remain_literal_text() {
-+    let r = report(
-+        DATA,
-+        r#"sh:message "{?missing} {$missing} {value} {?} { ?value} {?value!} {ordinary {?value}} {?value" ;"#,
-+        "SELECT $this ?value ?missing WHERE { $this <http://example.org/v> ?value }",
-+    );
-+    assert_eq!(
-+        messages(&r),
-+        ["{?missing} {$missing} {value} {?} { ?value} {?value!} {ordinary 5} {?value"]
-+    );
-+}
-+
-+#[test]
-+fn inserted_literal_values_are_not_expanded_again() {
-+    let data = r#"
-+        @prefix ex: <http://example.org/> .
-+        ex:a a ex:Item ; ex:v "{$this} and {?other}" .
-+    "#;
-+    let r = report(
-+        data,
-+        r#"sh:message "{?value} / {$other}" ;"#,
-+        r#"SELECT $this ?value ("done" AS ?other) WHERE { $this <http://example.org/v> ?value }"#,
-+    );
-+    assert_eq!(messages(&r), ["{$this} and {?other} / done"]);
-+}
-+
-+#[test]
-+fn blank_node_focus_and_iri_values_keep_their_rdf_form() {
-+    let data = r#"
-+        @prefix ex: <http://example.org/> .
-+        _:item a ex:Item ; ex:v ex:value .
-+    "#;
-+    let r = report(
-+        data,
-+        r#"sh:
+ use open_ontologies::{graph::GraphStore, output};
+ use serde_json::{Value, json};
+-use std::process::{Child, Command, Output, Stdio};
++use std::process::{Command, Output, Stdio};
+ use std::time::{Duration, Instant};
+ 
+ const DATA: &str = r#"
+@@ -209,47 +211,22 @@ fn built_cli_local_select_uses_human_table_and_preserves_json_precedence() {
+     check_cli_queries(&dir, "local", true);
+ }
+ 
+-struct Server(Child);
+-impl Drop for Server {
+-    fn drop(&mut self) {
+-        let _ = self.0.kill();
+-        let _ = self.0.wait();
+-    }
+-}
+-
+ #[test]
+ fn built_cli_proxy_select_uses_real_http_store_and_human_dispatch() {
+     let dir = tempfile::tempdir().unwrap();
+     let config = dir.path().join("config.toml");
+     std::fs::write(&config, "[storage]\nmode = 'memory'\n").unwrap();
+-    let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+-    let addr = listener.local_addr().unwrap();
+-    drop(listener);
+     let mut cmd = oo(&dir);
+     cmd.env("OPEN_ONTOLOGIES_STORAGE_MODE", "memory")
+         .arg("serve-http")
+         .arg("--config")
+-        .arg(&config)
+-        .args(["--host", "127.0.0.1", "--port", &addr.port().to_string()])
+-        .stdout(Stdio::null())
+-        .stderr(Stdio::null());
+-    let mut server = Server(cmd.spawn().unwrap());
+-    let deadline = Instant::now() + Duration::from_secs(10);
+-    loop {
+-        assert!(
+-            server.0.try_wait().unwrap().is_none(),
+-            "HTTP server exited before binding"
+-        );
+-        if std::net::TcpStream::connect(addr).is_ok() {
+-            break;
+-        }
+-        assert!(Instant::now() < deadline, "HTTP server did not bind");
+-        std::thread::sleep(Duration::from_millis(20));
+-    }
++        .arg(&config);
++    let server = common::spawn_serve_http(cmd);
++    let addr = server.addr;
+     // Advertise this owned, real serve-http child through the public daemon
+     // record. It remains attached to the test so every exit reaps it.
+     let info = open_ontologies::daemon::DaemonInfo {
+-        pid: server.0.id(),
++        pid: server.child.id(),
+         url: format!("http://{addr}"),
+         token: None,
+     };
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #429** (2026-11-20): The replay's 3D legend is true of its graph: a certified ies-core run three checkers judged (#425) (@fabio-rovai)
-- **PR #426** (2026-11-20): Errors are valid JSON everywhere; Studio refresh, findings, auto-save and live 3D fixes (#420 to #424) (@fabio-rovai)
-- **PR #419** (2026-11-20): Land #410, #412, #415, #417, #418 and the Studio fixes for #413 and #414 (@fabio-rovai)
-- **PR #418** (2026-11-20): Execute every SHACL 2.3.1 property path form (@MatthewYe)
-- **PR #417** (2026-11-20): fix(reasoning): join newly derived edges during incremental transitivity (@Gqqqqgg)
-- **PR #415** (2026-11-20): Studio: 2D Graph view (schema and instance neighbourhood) (@fabio-rovai)
+- **PR #438** (2026-11-24): The HTTP tests let serve-http pick its own port, so a sibling's fork can no longer answer for it (@fabio-rovai)
+- **PR #437** (2026-11-23): No label on the front-page figure sits on a node, an arrow or the panel border (#436) (@fabio-rovai)
+- **PR #435** (2026-11-24): reason: run oo-refute over the refutation the reasoner writes, and certify only the witnesses the checker can judge (@MatthewYe)
+- **PR #434** (2026-11-23): vocab-check reports a declared term used in the wrong role (#432) (@fabio-rovai)
+- **PR #433** (2026-11-24): fix(vocab-check): report declared terms used in the wrong role (@AyhamJo7)
+- **PR #431** (2026-11-20): README front page shows the dark knowledge-graph figure; the hand-drawn version is linked (@fabio-rovai)
 
 ---
 
@@ -2781,13 +2768,13 @@ Fixes #411
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. reasoning): join newly derived edges during incremental transitivity
+## X. Merge main into fix/432-vocab-check-wrong-role
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fabio-rovai/open-ontologies. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b639a6c3`: reasoning): join newly derived edges during incremental transitivity. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `54f53903`: Merge main into fix/432-vocab-check-wrong-role. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2795,25 +2782,42 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **Incremental transitivity joins edges derived in the same run** (#416).
-  Subproperty and inverse rules could produce two connected edges without
-  their transitive consequence, while the response reported `complete: true`.
-  Targeted joins now include an in-memory index of the current run's edges
-  alongside the stored closure. Materialisation still happens after inference,
-  and tracked runs retain alternative supports and dependency-based withdrawal.
-  Regression tests cover tracked and untracked runs, multiple rounds, named
-  graphs, dry runs, batching, and withdrawal of alternative or cyclic support.
+- **`serve-http --port 0` reports the port it bound, and the HTTP tests no
+  longer race a sibling test's fork for their port.** The startup line printed
+  the port asked for, so with `--port 0` it said `:0`. It now prints the port
+  the OS picked. `api_error_json_test` and `query_human_output_test` reserved a
+  port by binding and dropping a listener, then polled with a TCP connect. A
+  sibling test that forked while the reservation was open passed the listening
+  socket to its child, the poll connected to that copy, and the first request
+  was refused or reset, or the server could not bind at all. Main failed this
+  way once on CI (1ba7ecf8) and 42 times in 2,000 runs on Linux. Both tests now
+  start `serve-http --port 0` through `tests/common::spawn_serve_http`, which
+  reads the address from the server's own startup line: 2,000 of 2,000 runs
+  pass.
 
+- **No label on the front-page figure sits on a node, an arrow or the panel
+  border** (#436). Labels in `docs/assets/knowledge-graph.py` were checked
+  against other labels only, so the unasked-question badge ran through a row of
+  classes, the forged-line badge and the 無 glyph sat on nodes, three labels
+  crossed the ontology pan
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+- **`vocab-check` reports a declared term used in the wrong role** (#432).
+  It checked that each term was declared, not that it was used as what it was
+  declared as, so a class used as a predicate (`d:s2 ex:Sensor d:x`) and a
+  property used as an `rdf:type` object (`d:s1 a ex:observes`) both passed
+  with `conforms: true`. They are now listed under `wrong_role_terms` with the
+  role they were used in and the role they were declared in, and make
+  `conforms` false; `hallucinated_terms` still lists only terms the ontology
+  does not declare at all. A term declared as both a class and a property (OWL
+  2 punning) fits either role. The Python `vocab_check` reports the same field.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b639a6c3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `54f53903` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

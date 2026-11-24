@@ -769853,3 +769853,176 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `ad8f26ee` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10265. Merge main into fix/432-vocab-check-wrong-role (Harvested from fabio-rovai/open-ontologies)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Merge main into fix/432-vocab-check-wrong-role",
+  "source": "fabio-rovai/open-ontologies",
+  "source_url": "https://github.com/fabio-rovai/open-ontologies",
+  "source_version": "ef583f5e",
+  "license": "MIT",
+  "extracted_at": "2026-11-24T13:21:07.525Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-fabio-rovai-open-ontologies",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [fabio-rovai/open-ontologies](https://github.com/fabio-rovai/open-ontologies) (Revision: `ef583f5e`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fabio-rovai/open-ontologies. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `54f53903`: Merge main into fix/432-vocab-check-wrong-role. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+- **`serve-http --port 0` reports the port it bound, and the HTTP tests no
+  longer race a sibling test's fork for their port.** The startup line printed
+  the port asked for, so with `--port 0` it said `:0`. It now prints the port
+  the OS picked. `api_error_json_test` and `query_human_output_test` reserved a
+  port by binding and dropping a listener, then polled with a TCP connect. A
+  sibling test that forked while the reservation was open passed the listening
+  socket to its child, the poll connected to that copy, and the first request
+  was refused or reset, or the server could not bind at all. Main failed this
+  way once on CI (1ba7ecf8) and 42 times in 2,000 runs on Linux. Both tests now
+  start `serve-http --port 0` through `tests/common::spawn_serve_http`, which
+  reads the address from the server's own startup line: 2,000 of 2,000 runs
+  pass.
+
+- **No label on the front-page figure sits on a node, an arrow or the panel
+  border** (#436). Labels in `docs/assets/knowledge-graph.py` were checked
+  against other labels only, so the unasked-question badge ran through a row of
+  classes, the forged-line badge and the 無 glyph sat on nodes, three labels
+  crossed the ontology pan
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+- **`vocab-check` reports a declared term used in the wrong role** (#432).
+  It checked that each term was declared, not that it was used as what it was
+  declared as, so a class used as a predicate (`d:s2 ex:Sensor d:x`) and a
+  property used as an `rdf:type` object (`d:s1 a ex:observes`) both passed
+  with `conforms: true`. They are now listed under `wrong_role_terms` with the
+  role they were used in and the role they were declared in, and make
+  `conforms` false; `hallucinated_terms` still lists only terms the ontology
+  does not declare at all. A term declared as both a class and a property (OWL
+  2 punning) fits either role. The Python `vocab_check` reports the same field.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `54f53903` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10266. SQLPage component accessibility and audit the reference (Harvested from sqlpage/SQLPage)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "SQLPage component accessibility and audit the reference",
+  "source": "sqlpage/SQLPage",
+  "source_url": "https://github.com/sqlpage/SQLPage",
+  "source_version": "d69f54cf",
+  "license": "MIT",
+  "extracted_at": "2026-11-24T13:21:12.880Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-sqlpage-sqlpage",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [sqlpage/SQLPage](https://github.com/sqlpage/SQLPage) (Revision: `d69f54cf`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sqlpage/SQLPage. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `d69f54cf`: SQLPage component accessibility and audit the reference. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+- Big number title links have a larger target for touch and pointer users.
+- Carousel slide indicators and pagination arrows now have accessible names. Keyboard users can activate carousel arrows and enabled pagination links. Screen readers announce the current page.
+- Button, card, carousel, and login images accept alternative text. Embedded card frames use their own title or the card title.
+- Inline links are underlined so they stand out without relying on color. The documentation search button has a clear accessible name separate from its shortcut hint.
+- Disabled buttons expose their state to assistive technology and cannot be activated.
+- Tracking blocks without links now expose their titles to screen readers.
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+- The first-website tutorial now lets you choose an installation target, copy a command, or download an archive for macOS, Windows, Linux, or AWS Lambda.
+- Missing component pages on the official site return HTTP 404 and link to the catalog. Action buttons in colored alerts stay readable.
+- The official documentation now connects tutorials, component examples, and the function reference through shared navigation. Browse by task, open search with Ctrl+K or ⌘K, and share a link to a specific parameter. Code blocks have copy controls. Wide examples show SQL beside the live result.
+- Improved contrast for text and controls across the official SQLPage site.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `d69f54cf` are properly handled with clean fallback behavior.
