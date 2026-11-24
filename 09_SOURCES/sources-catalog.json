@@ -3033,10 +3033,10 @@
     "repository": "callstack/react-native-paper",
     "platform": "github",
     "sourceUrl": "https://github.com/callstack/react-native-paper",
-    "sourceVersion": "7ab2640c",
+    "sourceVersion": "ce0ac9f8",
     "license": "MIT",
-    "contentHash": "2b73aac0bd992a0eed27ee74445bacf89adefa0a02b62fae7dac8ea4bd997b49",
-    "lastHarvestedAt": "2026-11-21T16:40:10.537Z",
+    "contentHash": "792454fa15ee7aa8b502b170c2bc1fc7290cb7715822621220f6ea4c3e5015be",
+    "lastHarvestedAt": "2026-11-24T09:57:10.953Z",
     "learningId": "learn-github-callstack-react-native-paper"
   },
   "tensorchord-pgvecto.rs": {
@@ -3893,10 +3893,10 @@
     "repository": "ClementTsang/bottom",
     "platform": "github",
     "sourceUrl": "https://github.com/ClementTsang/bottom",
-    "sourceVersion": "a3552b0d",
+    "sourceVersion": "87cb33dc",
     "license": "MIT",
-    "contentHash": "2a92260ae0660503edf10432cf6174606874708ada762911e7be6952094ac525",
-    "lastHarvestedAt": "2026-11-23T00:56:22.588Z",
+    "contentHash": "3668c226b36384d22d5779a98ce5a31a45bfee78d123566bde1b1acbd82312a0",
+    "lastHarvestedAt": "2026-11-24T09:57:09.626Z",
     "learningId": "learn-github-clementtsang-bottom"
   },
   "jhen0409-react-native-debugger": {
@@ -3923,10 +3923,10 @@
     "repository": "MaterializeInc/materialize",
     "platform": "github",
     "sourceUrl": "https://github.com/MaterializeInc/materialize",
-    "sourceVersion": "d9c983d5",
+    "sourceVersion": "0bb27e65",
     "license": "NOASSERTION",
-    "contentHash": "ec4bf6fa9cf512c18f376c0c82396ba398976870cdc12329231582c4ec2ad959",
-    "lastHarvestedAt": "2026-11-23T14:38:18.010Z",
+    "contentHash": "20d5cead4e0c1f2fc3d90f87199b542d9c2d0b607481b3a5285aecf0e7e61ebb",
+    "lastHarvestedAt": "2026-11-24T09:57:17.412Z",
     "learningId": "learn-github-materializeinc-materialize"
   },
   "react-bootstrap-react-bootstrap": {
@@ -5713,10 +5713,10 @@
     "repository": "kcl-lang/kcl",
     "platform": "github",
     "sourceUrl": "https://github.com/kcl-lang/kcl",
-    "sourceVersion": "4e4df138",
+    "sourceVersion": "05194abb",
     "license": "Apache-2.0",
-    "contentHash": "6be3e1b5459262382295c000f471a1a2880f8fc7dd91957bd27ea6f9189af26f",
-    "lastHarvestedAt": "2026-11-20T06:02:32.410Z",
+    "contentHash": "49fb6c8daa594de70b9c17e722656a78e53445d5178da462e3a2b3583e4786f0",
+    "lastHarvestedAt": "2026-11-24T09:57:13.332Z",
     "learningId": "learn-github-kcl-lang-kcl"
   },
   "apache-incubator-pegasus": {

@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T09:42:29.297Z",
-  "total_cycles_completed": 12019,
-  "total_learnings_persisted": 12019,
-  "total_rules_promoted": 11095,
+  "last_updated": "2026-11-24T09:57:17.453Z",
+  "total_cycles_completed": 12023,
+  "total_learnings_persisted": 12023,
+  "total_rules_promoted": 11098,
   "history": [
-    {
-      "timestamp": "2026-11-23T19:17:47.101Z",
-      "repository": "autotrust/GEV-26B-Decide-NVFP4",
-      "learningId": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T19:17:57.739Z",
-      "repository": "kube-rs/kube",
-      "learningId": "learn-github-kube-rs-kube",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T19:26:06.820Z",
-      "repository": "domcyrus/rustnet",
-      "learningId": "learn-github-domcyrus-rustnet",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T19:26:07.944Z",
-      "repository": "RadixArk/DaisyRose-27B",
-      "learningId": "learn-huggingface-radixark-daisyrose-27b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T19:26:14.981Z",
       "repository": "gardener/gardener",
@@ -1403,6 +1375,34 @@
       "repository": "cilium/cilium",
       "learningId": "learn-github-cilium-cilium",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T09:57:09.632Z",
+      "repository": "ClementTsang/bottom",
+      "learningId": "learn-github-clementtsang-bottom",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T09:57:10.959Z",
+      "repository": "callstack/react-native-paper",
+      "learningId": "learn-github-callstack-react-native-paper",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T09:57:13.338Z",
+      "repository": "kcl-lang/kcl",
+      "learningId": "learn-github-kcl-lang-kcl",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T09:57:17.453Z",
+      "repository": "MaterializeInc/materialize",
+      "learningId": "learn-github-materializeinc-materialize",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

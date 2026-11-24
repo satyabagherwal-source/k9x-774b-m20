@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T09:42:37.715Z",
+  "last_updated": "2026-11-24T09:57:23.691Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-24T09:42:36.550Z",
@@ -593,7 +593,7 @@
       "staged_for_review": 1
     },
     "clementtsang-bottom-learnings.md": {
-      "processed_at": "2026-11-23T00:56:34.811Z",
+      "processed_at": "2026-11-24T09:57:21.004Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1198,7 +1198,7 @@
       "staged_for_review": 1
     },
     "kcl-lang-kcl-learnings.md": {
-      "processed_at": "2026-11-20T06:03:03.952Z",
+      "processed_at": "2026-11-24T09:57:22.952Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2208,7 +2208,7 @@
       "staged_for_review": 0
     },
     "callstack-react-native-paper-learnings.md": {
-      "processed_at": "2026-11-21T16:40:22.568Z",
+      "processed_at": "2026-11-24T09:57:22.116Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3813,7 +3813,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3726,
+  "total_dossiers_evaluated": 3729,
   "total_canonical_promoted": 503,
-  "total_staged_for_review": 2813
+  "total_staged_for_review": 2816
 }

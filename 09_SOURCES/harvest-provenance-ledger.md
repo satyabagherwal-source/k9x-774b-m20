@@ -12677,3 +12677,7 @@ Every entry in this ledger must capture:
 | `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `78d02432` | Multi-dimensional audit evidence | 2026-11-24T09:18:40.855Z |
 | `learn-github-streetwriters-notesnook` | `https://github.com/streetwriters/notesnook` | `18c27502` | Multi-dimensional audit evidence | 2026-11-24T09:41:19.498Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `1fec0cd4` | Multi-dimensional audit evidence | 2026-11-24T09:42:29.291Z |
+| `learn-github-clementtsang-bottom` | `https://github.com/ClementTsang/bottom` | `87cb33dc` | Multi-dimensional audit evidence | 2026-11-24T09:57:09.626Z |
+| `learn-github-callstack-react-native-paper` | `https://github.com/callstack/react-native-paper` | `ce0ac9f8` | Multi-dimensional audit evidence | 2026-11-24T09:57:10.953Z |
+| `learn-github-kcl-lang-kcl` | `https://github.com/kcl-lang/kcl` | `05194abb` | Multi-dimensional audit evidence | 2026-11-24T09:57:13.332Z |
+| `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `0bb27e65` | Multi-dimensional audit evidence | 2026-11-24T09:57:17.412Z |

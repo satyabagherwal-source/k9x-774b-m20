@@ -12644,3 +12644,7 @@
 | `CYCLE-20261124-FSUQ` | `2026-11-24T09:18:40.850Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10238` | Yes (`b76e663d...`) |
 | `CYCLE-20261124-8X6U` | `2026-11-24T09:41:19.494Z` | `streetwriters/notesnook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10239` | Yes (`a72d3287...`) |
 | `CYCLE-20261124-AF1I` | `2026-11-24T09:42:29.286Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10240` | Yes (`b5d82a1c...`) |
+| `CYCLE-20261124-TABA` | `2026-11-24T09:57:09.622Z` | `ClementTsang/bottom` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10241` | Yes (`3668c226...`) |
+| `CYCLE-20261124-TBC4` | `2026-11-24T09:57:10.948Z` | `callstack/react-native-paper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10242` | Yes (`792454fa...`) |
+| `CYCLE-20261124-TD68` | `2026-11-24T09:57:13.328Z` | `kcl-lang/kcl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10243` | Yes (`49fb6c8d...`) |
+| `CYCLE-20261124-TGBJ` | `2026-11-24T09:57:17.407Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md` | Yes (`20d5cead...`) |

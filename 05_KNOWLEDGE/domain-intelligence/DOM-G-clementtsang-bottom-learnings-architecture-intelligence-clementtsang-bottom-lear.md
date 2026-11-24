@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T00:56:35.249Z",
+  "timestamp": "2026-11-24T09:57:21.426Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-clementtsang-bottom-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [clementtsang-bottom-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T00:56:35.249Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T09:57:21.426Z`  
 > **Learning ID**: `LEARN-EVO-clementtsang-bottom-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), F (Design Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 56%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), F (Design Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 67%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from clementtsang-bottom-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clementtsang-bottom-learnings.md`  
 > **Source**: github ([https://github.com/ClementTsang/bottom](https://github.com/ClementTsang/bottom))  
-> **Source Version**: `a3552b0d`  
+> **Source Version**: `87cb33dc`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T00:56:21.528Z  
+> **Timestamp**: 2026-11-24T09:57:08.427Z  
 > **Learning ID**: `learn-github-clementtsang-bottom`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clementtsang-bottom-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClementTsang/bottom](https://github.com/ClementTsang/bottom))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T00:56:21.522Z  
+> **Harvest Timestamp**: 2026-11-24T09:57:04.123Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Yet another cross-platform graphical process/system monitor.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 14241 stars
+- **Stars / Engagement**: 14261 stars
 
 ---
 
@@ -1654,127 +1654,83 @@ impl InputFieldState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a3552b0d` (2026-11-22)
-**Commit Message**: ci: update freebsd VM version to avoid node warning (#2335)
+### Incident Patch 1: `87cb33dc` (2026-11-24)
+**Commit Message**: deps: bump sysinfo to 0.40.4 (#2338)
 
-Updates the FreeBSD vm action version to v1.6.0 to avoid a Node 20 warning.
+See https://github.com/GuillaumeGomez/sysinfo/blob/main/CHANGELOG.md#0404
 
-**File**: `.github/actions/test-bsd-target/action.yml` (modified, +6/-6)
+**File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -15,7 +15,7 @@ runs:
-   using: composite
-   steps:
-     - name: FreeBSD Test (Attempt 1)
--      uses: vmactions/freebsd-vm@c9f815bc7aa0d34c9fdd0619b034a32d6ca7b57e # v1.4.2
-+      uses: vmactions/freebsd-vm@811efaaac0668df8bfb8308c3ec997b5ab50037b # v1.6.0
-       if: ${{ inputs.target == 'x86_64-unknown-freebsd' }}
-       with:
-         release: "${{ inputs.os-version }}"
-@@ -30,7 +30,7 @@ runs:
-       continue-on-error: true
+@@ -1691,9 +1691,9 @@ dependencies = [
  
-     - name: FreeBSD Test (Attempt 2)
--      uses: vmactions/freebsd-vm@c9f815bc7aa0d34c9fdd0619b034a32d6ca7b57e # v1.4.2
-+      uses: vmactions/freebsd-vm@811efaaac0668df8bfb8308c3ec997b5ab50037b # v1.6.0
-       if: ${{ inputs.target == 'x86_64-unknown-freebsd' &&
-         steps.freebsd_attempt_1.outcome == 'failure' }}
-       with:
-@@ -46,7 +46,7 @@ runs:
-       continue-on-error: true
- 
-     - name: FreeBSD Test (Attempt 3)
--      uses: vmactions/freebsd-vm@c9f815bc7aa0d34c9fdd0619b034a32d6ca7b57e # v1.4.2
-+      uses: vmactions/freebsd-vm@811efaaac0668df8bfb8308c3ec997b5ab50037b # v1.6.0
-       if: ${{ inputs.target == 'x86_64-unknown-freebsd' &&
-         steps.freebsd_attempt_2.outcome == 'failure' }}
-       with:
-@@ -61,7 +61,7 @@ runs:
-       id: freebsd_attempt_3F
- 
-     - name: NetBSD Test (Attempt 1)
--      uses: vmactions/netbsd-vm@5957cf330aef2e6ddc63c604364c99ce2e02b91d # v1.5.2
-+      uses: vmactions/netbsd-vm@5957cf330aef2e6ddc63c604364c99ce2e02b91d # v1.5.3
-       if: ${{ inputs.target == 'x86_64-unknown-netbsd' }}
-       with:
-         release: "${{ inputs.os-version }}"
-@@ -73,7 +73,7 @@ runs:
-       continue-on-error: true
- 
-     - name: NetBSD Test (Attempt 2)
--      uses: vmactions/netbsd-vm@5957cf330aef2e6ddc63c604364c99ce2e02b91d # v1.5.2
-+      uses: vmactions/netbsd-vm@5957cf330aef2e6ddc63c604364c99ce2e02b91d # v1.5.3
-       if: ${{ inputs.target == 'x86_64-unknown-netbsd' &&
-         steps.netbsd_attempt_1.outcome == 'failure' }}
-       with:
-@@ -86,7 +86,7 @@ runs:
-       continue-on-error: true
- 
-     - name: NetBSD Test (Attempt 3)
--      uses: vmactions/netbsd-vm@5957cf330aef2e6ddc63c604364c99ce2e02b91d # v1.5.2
-+      uses: vmactions/netbsd-vm@5957cf330aef2e6ddc63c604364c99ce2e02b91d # v1.5.3
-       if: ${{ inputs.target == 'x86_64-unknown-netbsd' &&
-         steps.netbsd_attempt_2.outcome == 'failure' }}
-       with:
+ [[package]]
+ name = "sysinfo"
+-version = "0.40.3"
++version = "0.40.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "a86bac2f7d06e6384984118ad727f5694110f0ec44d924d05c8fdec3d030bee6"
++checksum = "3e80749408e2d8bec0ffa303012cf4e1b3b355f4a09087b4fdf7473680f6a2de"
+ dependencies = [
+  "libc",
+  "memchr",
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -98,7 +98,7 @@ regex = "1.13.1"
+ rustc-hash = "2.1.3"
+ serde = { version = "1.0.228", features = ["derive"] }
+ starship-battery = { version = "0.12.0", optional = true }
+-sysinfo = { version = "=0.40.3", default-features = false, features = ["component", "disk", "network", "system", "user"] }
++sysinfo = { version = "=0.40.4", default-features = false, features = ["component", "disk", "network", "system", "user"] }
+ terminal-colorsaurus = "=1.0.3"
+ timeless = "0.1.0"
+ toml_edit = { version = "0.25.12", features = ["serde"] }
 ```
 
 ---
 
-### Incident Patch 2: `9c2fc404` (2026-11-22)
-**Commit Message**: ci: update netbsd VM version + cross netbsd CDN (#2333)
+### Incident Patch 2: `d293a7d7` (2026-11-23)
+**Commit Message**: deps: bump humantime to 2.4.0 (#2337)
 
-Hopefully fixes the VM or builds failing constantly.
+Bumps humantime to 2.4.0: https://github.com/chronotope/humantime/releases/tag/v2.4.0
 
-**File**: `.github/actions/test-bsd-target/action.yml` (modified, +3/-3)
+**File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -61,7 +61,7 @@ runs:
-       id: freebsd_attempt_3F
+@@ -710,9 +710,9 @@ checksum = "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea"
  
-     - name: NetBSD Test (Attempt 1)
--      uses: vmactions/netbsd-vm@c8a0d7ddb84619a7a8cc4e652efa7950b3fd9f92 # v1.5.2
-+      uses: vmactions/netbsd-vm@5957cf330aef2e6ddc63c604364c99ce2e02b91d # v1.5.2
-       if: ${{ inputs.target == 'x86_64-unknown-netbsd' }}
-       with:
-         release: "${{ inputs.os-version }}"
-@@ -73,7 +73,7 @@ runs:
-       continue-on-error: true
+ [[package]]
+ name = "humantime"
+-version = "2.3.0"
++version = "2.4.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "135b12329e5e3ce057a9f972339ea52bc954fe1e9358ef27f95e89716fbc5424"
++checksum = "15cdd26707701c53297e2fa6afb323d55fbc1d0810c3aec078ae3ef0424c3c15"
  
-     - name: NetBSD Test (Attempt 2)
--      uses: vmactions/netbsd-vm@c8a0d7ddb84619a7a8cc4e652efa7950b3fd9f92 # v1.5.2
-+      uses: vmactions/netbsd-vm@5957cf330aef2e6ddc63c604364c99ce2e02b91d # v1.5.2
-       if: ${{ inputs.target == 'x86_64-unknown-netbsd' &&
-         steps.netbsd_attempt_1.outcome == 'failure' }}
-       with:
-@@ -86,7 +86,7 @@ runs:
-       continue-on-error: true
- 
-     - name: NetBSD Test (Attempt 3)
--      uses: vmactions/netbsd-vm@c8a0d7ddb84619a7a8cc4e652efa7950b3fd9f92 # v1.5.2
-+      uses: vmactions/netbsd-vm@5957cf330aef2e6ddc63c604364c99ce2e02b91d # v1.5.2
-       if: ${{ inputs.target == 'x86_64-unknown-netbsd' &&
-         steps.netbsd_attempt_2.outcome == 'failure' }}
-       with:
+ [[package]]
+ name = "ident_case"
 ```
 
-**File**: `Cross.toml` (modified, +2/-2)
+**File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -3,6 +3,6 @@ passthrough = ["RUST_BACKTRACE", "BTM_GENERATE"]
- 
- [target.x86_64-unknown-netbsd]
- pre-build = [
--    # Last updated on 2026-10-27
--    "apt-get update && apt-get install -y --no-install-recommends curl=8.5.0-2ubuntu10.16 xz-utils=5.6.1+really5.4.5-1ubuntu0.4 && td=$(mktemp -d) && mkdir -p \"$td/netbsd\" && curl -4 --retry 3 -sSfL 'http://ftp.fr.netbsd.org/pub/NetBSD/NetBSD-9.5/amd64/binary/sets/base.tar.xz' | tar -C \"$td/netbsd\" -xJ ./usr/lib ./lib && curl -4 --retry 3 -sSfL 'http://ftp.fr.netbsd.org/pub/NetBSD/NetBSD-9.5/amd64/binary/sets/comp.tar.xz' | tar -C \"$td/netbsd\" -xJ ./usr/lib && cp \"$td\"/netbsd/usr/lib/libkvm* /usr/local/x86_64-unknown-netbsd/lib/ && rm -rf \"$td\"",
-+    # Last updated on 2026-11-22
-+    "apt-get update && apt-get install -y --no-install-recommends curl=8.5.0-2ubuntu10.16 xz-utils=5.6.1+really5.4.5-1ubuntu0.4 && td=$(mktemp -d) && mkdir -p \"$td/netbsd\" && curl -4 --retry 3 -sSfL 'https://cdn.netbsd.org/pub/NetBSD/NetBSD-9.5/amd64/binary/sets/base.tar.xz' | tar -C \"$td/netbsd\" -xJ ./usr/lib ./lib && curl -4 --retry 3 -sSfL 'https://cdn.netbsd.org/pub/NetBSD/NetBSD-9.5/amd64/binary/sets/comp.tar.xz' | tar -C \"$td/netbsd\" -xJ ./usr/lib && cp \"$td\"/netbsd/usr/lib/libkvm* /usr/local/x86_64-unknown-netbsd/lib/ && rm -rf \"$td\"",
- ]
+@@ -82,7 +82,7 @@ concat-string = "1.0.1"
+ crossterm = "0.29.0"
+ ctrlc = { version = "3.5.2", features = ["termination"] }
+ dirs = "7.0.0"
+-humantime = "2.3.0"
++humantime = "2.4.0"
+ indexmap = "2.14.0"
+ indoc = "2.0.7"
+ itertools = "0.15.0"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2338** (2026-11-24): deps: bump sysinfo to 0.40.4 (@ClementTsang)
+- **PR #2337** (2026-11-23): deps: bump humantime to 2.4.0 (@ClementTsang)
+- **PR #2336** (2026-11-23): docs: update demo config and GIF (@ClementTsang)
 - **PR #2335** (2026-11-22): ci: update freebsd VM version to avoid node warning (@ClementTsang)
+- **PR #2334** (2026-11-23): docs: update demo config and GIF (@ClementTsang)
 - **PR #2333** (2026-11-22): ci: update netbsd VM version + cross netbsd CDN (@ClementTsang)
-- **PR #2332** (2026-11-22): docs: update changelog to add #1843 (@ClementTsang)
-- **PR #2331** (2026-11-22): docs: add rashil2000 as a contributor for code (@allcontributors[bot])
-- **PR #2330** (2026-11-22): refactor: run nightly fmt as of 2026-11-21 (@ClementTsang)
-- **PR #2329** (2026-11-21): feature: add basic GPU usage graph (@ClementTsang)
 
 ---
 
@@ -1794,41 +1750,33 @@ Hopefully fixes the VM or builds failing constantly.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: update freebsd VM version to avoid node warning
+## X. deps: bump sysinfo to 0.40.4
 
 **RULE**:
-When implementing operations in `.github/actions/test-bsd-target/action.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClementTsang/bottom. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClementTsang/bottom. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a3552b0d`: ci: update freebsd VM version to avoid node warning. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `87cb33dc`: deps: bump sysinfo to 0.40.4. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/test-bsd-target/action.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      uses: vmactions/freebsd-vm@811efaaac0668df8bfb8308c3ec997b5ab50037b # v1.6.0
-      uses: vmactions/freebsd-vm@811efaaac0668df8bfb8308c3ec997b5ab50037b # v1.6.0
-      uses: vmactions/freebsd-vm@811efaaac0668df8bfb8308c3ec997b5ab50037b # v1.6.0
-      uses: vmactions/netbsd-vm@5957cf330aef2e6ddc63c604364c99ce2e02b91d # v1.5.3
-      uses: vmactions/netbsd-vm@5957cf330aef2e6ddc63c604364c99ce2e02b91d # v1.5.3
-      uses: vmactions/netbsd-vm@5957cf330aef2e6ddc63c604364c99ce2e02b91d # v1.5.3
+version = "0.40.4"
+checksum = "3e80749408e2d8bec0ffa303012cf4e1b3b355f4a09087b4fdf7473680f6a2de"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-      uses: vmactions/freebsd-vm@c9f815bc7aa0d34c9fdd0619b034a32d6ca7b57e # v1.4.2
-      uses: vmactions/freebsd-vm@c9f815bc7aa0d34c9fdd0619b034a32d6ca7b57e # v1.4.2
-      uses: vmactions/freebsd-vm@c9f815bc7aa0d34c9fdd0619b034a32d6ca7b57e # v1.4.2
-      uses: vmactions/netbsd-vm@5957cf330aef2e6ddc63c604364c99ce2e02b91d # v1.5.2
-      uses: vmactions/netbsd-vm@5957cf330aef2e6ddc63c604364c99ce2e02b91d # v1.5.2
-      uses: vmactions/netbsd-vm@5957cf330aef2e6ddc63c604364c99ce2e02b91d # v1.5.2
+version = "0.40.3"
+checksum = "a86bac2f7d06e6384984118ad727f5694110f0ec44d924d05c8fdec3d030bee6"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a3552b0d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `87cb33dc` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

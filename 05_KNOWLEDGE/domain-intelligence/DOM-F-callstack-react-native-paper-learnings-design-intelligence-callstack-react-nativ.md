@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T16:40:22.782Z",
+  "timestamp": "2026-11-24T09:57:22.271Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-callstack-react-native-paper-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [callstack-react-native-paper-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T16:40:22.782Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T09:57:22.271Z`  
 > **Learning ID**: `LEARN-EVO-callstack-react-native-paper-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain F (Design Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 82%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), L (Deployment & Operations Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 90%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from callstack-react-native-paper-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md`  
 > **Source**: github ([https://github.com/callstack/react-native-paper](https://github.com/callstack/react-native-paper))  
-> **Source Version**: `7ab2640c`  
+> **Source Version**: `ce0ac9f8`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T16:40:09.259Z  
+> **Timestamp**: 2026-11-24T09:57:09.718Z  
 > **Learning ID**: `learn-github-callstack-react-native-paper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/callstack/react-native-paper](https://github.com/callstack/react-native-paper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T16:40:09.252Z  
+> **Harvest Timestamp**: 2026-11-24T09:57:09.712Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Material Design for React Native (Android & iOS)
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 14505 stars
+- **Stars / Engagement**: 14502 stars
 
 ---
 
@@ -565,8 +565,6 @@ export const getLabelColor = ({
 ```
 import type { ColorValue, Insets } from 'react-native';
 
-import color from 'color';
-
 import { Tokens } from './tokens';
 import type { ButtonToggleMode } from './tokens';
 import { black, white } from '../../theme/colors';
@@ -714,28 +712,6 @@ export const getButtonTransitionDuration = ({
   }
 
   return theme.motion.duration[pressed ? 'short4' : 'short3'];
-};
-
-/**
- * Caps the spring curve so the corner can't overshoot below 0 on its way to
- * `radius`, from any start up to `largestRadius`.
- */
-export const getButtonShapeCurvePoints = ({
-  points,
-  radius,
-  largestRadius,
-}: {
-  points: number[];
-  radius: number;
-  largestRadius: number;
-}): number[] => {
-  if (largestRadius <= radius) {
-    return points;
-  }
-
-  const maxProgress = largestRadius / (largestRadius - radius);
-
-  return points.map((point) => Math.min(point, maxProgress));
 };
 
 /** Corner the container morphs to while pressed. */
@@ -1008,7 +984,13 @@ export const getButtonColors = ({
   return {
     backgroundColor,
     borderColor,
-    labelC
+    labelColor,
+    labelOpacity,
+    borderWidth,
+    backgroundOpacity,
+  };
+};
+
 ```
 
 ### Core Architecture Module: `src/components/Card/utils.tsx`
@@ -1576,940 +1558,902 @@ export const getDimensions = ({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c8c3a394` (2026-11-19)
-**Commit Message**: fix(text-input): place accessories and label correctly in RTL (#5219)
+### Incident Patch 1: `ce0ac9f8` (2026-11-24)
+**Commit Message**: fix(switch): render aria-readonly on web only when read-only
 
-In RTL, startAccessory now renders on the right and endAccessory on the left on iOS, Android and web. The label sits next to the start accessory on every platform and makes room only for it, and the error icon shows when only a startAccessory is set.
+Follow-up to #5222's review.
 
-Fixes #5214
+An operable Switch on web no longer renders aria-readonly="false". The attribute is set only when the switch is read-only.
 
-**File**: `docs/6.x/docs/guides/migration.md` (modified, +2/-0)
+The test "does not warn when readOnly is set without onValueChange" now checks only for the Switch warning. It failed when it ran on its own, because the first Switch render in a Jest worker also logs Reanimated's one-time warnings.
+
+The example app's read-only switch gets aria-label="Read-only", and the TertiarySwitch snippet in the migration guide types its props, so it compiles under strict.
+
+Co-authored-by: Luke Walczak <[REDACTED_EMAIL]>
+
+**File**: `docs/6.x/docs/guides/migration.md` (modified, +7/-1)
 ```diff
-@@ -838,6 +838,8 @@ import { TextInput, type TextInputProps } from 'react-native-paper';
- - **`left` / `right`** → **`startAccessory` / `endAccessory`**
- - **`TextInput.Affix`** → **`prefix` / `suffix`**, or **`TextInput.Icon`**, or **`startAccessory` / `endAccessory`**
- 
-+`startAccessory` and `endAccessory` follow the writing direction. In RTL, `startAccessory` sits on the right on every platform, while v5's `left` stayed on the left on web.
-+
+@@ -1896,7 +1896,13 @@ When selected, an icon set with `checkedIcon` uses `onPrimaryContainer`. If you
  ```tsx
- // Before (v5)
- <TextInput
+ import { Switch, useTheme } from 'react-native-paper';
+ 
+-const TertiarySwitch = ({ value, onValueChange }) => {
++const TertiarySwitch = ({
++  value,
++  onValueChange,
++}: {
++  value: boolean;
++  onValueChange: (value: boolean) => void;
++}) => {
+   const theme = useTheme();
+   const switchTheme = {
+     colors: {
 ```
 
-**File**: `src/components/TextInput/hooks.ts` (modified, +3/-7)
+**File**: `example/src/Examples/SwitchExample.tsx` (modified, +1/-1)
 ```diff
-@@ -332,7 +332,7 @@ export const useTextInput = (props: TextInputProps): TextInputHookReturn => {
+@@ -90,7 +90,7 @@ const SwitchExample = () => {
+       </Row>
  
-   const isControlled = props.value !== undefined;
-   const isRTL = direction === 'rtl';
--  const hasAccessory = isRTL ? !!props.endAccessory : !!props.startAccessory;
-+  const hasAccessory = !!props.startAccessory;
+       <Row label="Read-only">
+-        <Switch value={defaultOn} readOnly />
++        <Switch value={defaultOn} readOnly aria-label="Read-only" />
+       </Row>
  
-   const { hasValue, inputLength, getHasText, onChangeText } =
-     useTextInputInput(props);
-@@ -430,12 +430,8 @@ export const useTextInput = (props: TextInputProps): TextInputHookReturn => {
- 
-   const counterText = `${inputLength}/${props.maxLength}`;
- 
--  const renderLeadingAccessory = flags.isRTL
--    ? props.endAccessory
--    : props.startAccessory;
--  const renderTrailingAccessory = flags.isRTL
--    ? props.startAccessory
--    : props.endAccessory;
-+  const renderLeadingAccessory = props.startAccessory;
-+  const renderTrailingAccessory = props.endAccessory;
- 
-   // https://github.com/facebook/react-native/issues/31573
-   const placeholder =
+       <View
 ```
 
-**File**: `src/components/TextInput/utils.ts` (modified, +14/-8)
+**File**: `src/components/Switch/Switch.tsx` (modified, +1/-1)
 ```diff
-@@ -353,15 +353,17 @@ export const getFilledTextInputData = (
-    * Variant-specific styles
-    */
+@@ -476,7 +476,7 @@ const Switch = ({
+           disabled={Platform.OS === 'web' ? isDisabled : !isInteractive}
+           tabIndex={isInteractive ? 0 : -1}
+           aria-readonly={
+-            Platform.OS === 'web' ? isAnnouncedReadOnly : undefined
++            Platform.OS === 'web' && isAnnouncedReadOnly ? true : undefined
+           }
+           onFocus={(e) => {
+             // Not the ring - it's real CSS on web now. This drives the
+```
+
+**File**: `src/components/__tests__/Switch.test.tsx` (modified, +11/-2)
+```diff
+@@ -312,7 +312,9 @@ describe('Switch operability', () => {
  
-+  const filledLabelOffset = hasAccessory
-+    ? FILLED_LABEL_START_OFFSET_WITH_ACCESSORY
-+    : LABEL_START_OFFSET_WITHOUT_ACCESSORY;
+       await render(<Switch value {...{ [prop]: true }} />);
+ 
+-      expect(console.warn).not.toHaveBeenCalled();
++      expect(console.warn).not.toHaveBeenCalledWith(
++        expect.stringContaining('Switch:')
++      );
+     }
+   );
+ 
+@@ -393,7 +395,7 @@ describe('Switch operability', () => {
+       await render(<Switch value disabled readOnly />);
+ 
+       expect(screen.getByRole('switch')).toBeDisabled();
+-      expect(screen.getByRole('switch')).not.toHaveProp('aria-readonly', true);
++      expect(screen.getByRole('switch')).not.toHaveProp('aria-readonly');
+     });
+   });
+ 
+@@ -422,6 +424,13 @@ describe('Switch operability', () => {
+     expect(screen.getByRole('switch')).toBeEnabled();
+   });
+ 
++  it('does not expose aria-readonly on an operable switch on web', async () => {
++    jest.replaceProperty(Platform, 'OS', 'web');
++    await render(<Switch value onValueChange={() => {}} />);
 +
-   const animatedLabelWrapperStyles: StyleProp<
-     AnimatedStyle<StyleProp<ViewStyle>>
-   > = [
-     filledStyles.labelWrapper,
--    {
--      left: hasAccessory
--        ? FILLED_LABEL_START_OFFSET_WITH_ACCESSORY
--        : LABEL_START_OFFSET_WITHOUT_ACCESSORY,
--    },
-+    Platform.OS === 'web' && shared.isRTL
-+      ? { right: filledLabelOffset }
-+      : { start: filledLabelOffset },
-     animatedLabelWrapperStyle,
-   ];
- 
-@@ -518,14 +520,18 @@ export const getOutlinedTextInputData = (
-     isDisabled && { opacity: OUTLINED_DISABLED_OUTLINE_OPACITY },
-   ];
- 
-+  const outlinedLabelOffset = hasAccessory
-+    ? OUTLINED_LABEL_START_OFFSET_WITH_ACCESSORY
-+    : LABEL_START_OFFSET_WITHOUT_ACCESSORY;
++    expect(screen.getByRole('switch')).not.toHaveProp('aria-readonly');
++  });
 +
-   const animatedLabelWrapperStyles: StyleProp<
-     AnimatedStyle<StyleProp<ViewStyle>>
-   > = [
-     outlinedStyles.labelWrapper,
-     {
--      left: hasAccessory
--        ? OUTLINED_LABEL_START_OFFSET_WITH_ACCESSORY
--        : LABEL_START_OFFSET_WITHOUT_ACCESSORY,
-+      ...(Platform.OS === 'web' && shared.isRTL
-+        ? { right: outlinedLabelOffset }
-+        : { start: outlinedLabelOffset }),
-       backgroundColor: labelBackgroundColor,
-     },
-     animatedLabelWrapperStyle,
+   it('exposes a missing-handler fallback as read-only on web', async () => {
+     jest.replaceProperty(Platform, 'OS', 'web');
+     jest.spyOn(console, 'warn').mockImplementation(() => {});
 ```
 
-**File**: `src/components/__tests__/TextInput.test.tsx` (modified, +126/-6)
+---
+
+### Incident Patch 2: `9c7e834f` (2026-11-23)
+**Commit Message**: revert(button): undo the shape morph refactor merged early (#5279)
+
+This reverts commit 343f2cf52725e25caa9d4a55f881642f1e0dacb2.
+
+That commit is #5264, "refactor(button): share the shape morph between Button and IconButton". It was merged by mistake, and its squash message took the title and body meant for #5278, a docs change that is still open: the commit changes no docs. The refactor waits until after 6.0.0-alpha.4, so the release matches the code it was tested on. It will come back in a new pull request with its own title.
+
+**File**: `src/components/Button/Button.tsx` (modified, +38/-20)
 ```diff
-@@ -1,6 +1,7 @@
- import * as React from 'react';
+@@ -11,14 +11,16 @@ import type {
+   ViewStyle,
+ } from 'react-native';
+ 
+-import Reanimated from 'react-native-reanimated';
++import Reanimated, { linear } from 'react-native-reanimated';
+ 
  import {
-   I18nManager,
-+  Platform,
-   StyleSheet,
-   TextInput as NativeTextInput,
-   View,
-@@ -11,6 +12,8 @@ import {
-   afterAll,
-   afterEach,
-   beforeAll,
-+  beforeEach,
-+  describe,
-   expect,
-   it,
-   jest,
-@@ -21,6 +24,11 @@ import { act, fireEvent, render, screen, userEvent } from '../../test-utils';
+   createIsMode,
+   getButtonColors,
+   getButtonContentBoxStyle,
+   getButtonHitSlop,
+   getButtonPressedRadius,
++  getButtonRippleColor,
++  getButtonShapeCurvePoints,
+   getButtonShapeRadius,
+   getButtonSizeStyle,
+   getButtonTransitionDuration,
+@@ -27,18 +29,17 @@ import {
+ import { getDefaultDirection, useLocale } from '../../core/locale';
+ import { useInternalTheme } from '../../core/theming';
+ import { useReduceMotion } from '../../theme/accessibility/ReduceMotionContext';
++import { toSpringCurve } from '../../theme/tokens/sys/motion';
+ import type { ThemeProp } from '../../theme/types';
+ import hasTouchHandler from '../../utils/hasTouchHandler';
+ import { useFocusRing } from '../../utils/useFocusRing';
+-import { useShapeMorph } from '../../utils/useShapeMorph';
+ import ActivityIndicator from '../ActivityIndicator';
+ import Icon from '../Icon';
+ import type { IconSource } from '../Icon';
+ import Surface from '../Surface';
+ import type { SurfaceStyle } from '../Surface';
+ import TouchableRipple from '../TouchableRipple/TouchableRipple';
+ import type { Props as TouchableRippleProps } from '../TouchableRipple/TouchableRipple';
+-import { getRippleColorFromContent } from '../TouchableRipple/utils';
+ import Text from '../Typography/Text';
+ 
+ // Elevation levels (MD3) used by the `elevated` mode: level 1 at rest,
+@@ -345,6 +346,12 @@ const Button = ({
+     animatesShape && pressed
+       ? getButtonPressedRadius({ size, theme })
+       : restingRadius;
++  const shapeSpring = React.useMemo(
++    () => toSpringCurve(theme.motion.spring.fast.spatial),
++    [theme.motion.spring.fast.spatial]
++  );
++  const shapeTransitionDuration = animatesShape ? shapeSpring.duration : 0;
++
+   const tracksPress = animatesShape || isElevationEntitled;
+ 
+   const handlePressIn = React.useCallback(
+@@ -398,7 +405,7 @@ const Button = ({
+   );
+ 
+   const rippleColor = React.useMemo(
+-    () => getRippleColorFromContent({ contentColor: labelColor }),
++    () => getButtonRippleColor({ labelColor }),
+     [labelColor]
+   );
+ 
+@@ -420,22 +427,23 @@ const Button = ({
+     previousContainerColor: committedContainerColor,
+   });
+ 
+-  const {
+-    duration: shapeTransitionDuration,
+-    timingFunction: shapeTimingFunction,
+-    outerStyle: clipStyle,
+-    innerStyle: innerClipStyle,
+-  } = useShapeMorph({
+-    theme,
+-    radius,
+-    largestRadius: Math.max(
+-      sizeStyle.minHeight / 2,
+-      getButtonShapeRadius({ size, shape: 'square', theme }),
+-      getButtonPressedRadius({ size, theme })
+-    ),
+-    borderWidth,
+-    animate: animatesShape,
+-  });
++  const innerRadius = Math.max(0, radius - borderWidth);
++  const largestRadius = Math.max(
++    sizeStyle.minHeight / 2,
++    getButtonShapeRadius({ size, shape: 'square', theme }),
++    getButtonPressedRadius({ size, theme })
++  );
++  const shapeTimingFunction = React.useMemo(
++    () =>
++      linear(
++        ...getButtonShapeCurvePoints({
++          points: shapeSpring.points,
++          radius: innerRadius,
++          largestRadius: Math.max(0, largestRadius - borderWidth),
++        })
++      ),
++    [shapeSpring.points, innerRadius, largestRadius, borderWidth]
++  );
+ 
+   // The clip carries the same radius transition as the `Surface`, so the
+   // ripple and the disabled overlay follow the morph.
+@@ -452,6 +460,16 @@ const Button = ({
+     'outward',
+     'within'
+   );
++  const shapeTransitionStyle = {
++    transitionProperty: 'borderRadius',
++    transitionDuration: shapeTransitionDuration,
++    transitionTimingFunction: shapeTimingFunction,
++  } as const;
++
++  const clipStyle = { ...shapeTransitionStyle, borderRadius: radius };
++
++  const innerClipStyle = { ...shapeTransitionStyle, borderRadius: innerRadius };
++
+   const outlineStyle = React.useMemo(
+     () => ({ borderColor, borderWidth }),
+     [borderColor, borderWidth]
+```
+
+**File**: `src/components/Button/utils.tsx` (modified, +49/-0)
+```diff
+@@ -1,5 +1,7 @@
+ import type { ColorValue, Insets } from 'react-native';
+ 
++import color from 'color';
++
+ import { Tokens } from './tokens';
+ import type { ButtonToggleMode } from './tokens';
+ import { black, white } from '../../theme/colors';
+@@ -149,6 +151,28 @@ export const getButtonTransitionDuration = ({
+   return theme.motion.duration[pressed ? 'short4' : 'short3'];
+ };
+ 
++/**
++ * Caps the spring curve so the corner can't overshoot below 0 on its way to
++ * `radius`, from any start up to `largestRadius`.
++ */
++export const getButtonShapeCurvePoints = ({
++  points,
++  radius,
++  largestRadius,
++}: {
++  points: number[];
++  radius: number;
++  largestRadius: number;
++}): number[] => {
++  if (largestRadius <= radius) {
++    return points;
++  }
++
++  const maxProgress = largestRadius / (largestRadius - radius);
++
++  return points.map((point) => Math.min(point, maxProgress));
++};
++
+ /** Corner the container morphs to while pressed. */
+ export const getButtonPressedRadius = ({
+   size,
+@@ -425,3 +449,28 @@ export const getButtonColors = ({
+     backgroundOpacity,
+   };
+ };
++
++/**
++ * Returns the color used for the button's ripple / state layer: the label
++ * color at the pressed-state opacity (per Material Design 3).
++ *
++ * When the label color is not a plain string (e.g. an Android Material You
++ * `PlatformColor`), or is a string `color` can't parse (e.g. `var(--x)` or
++ * `currentColor` on web), `undefined` is returned so `TouchableRipple` falls
++ * back to its own default state-layer color.
++ */
++export const getButtonRippleColor = ({
++  labelColor,
++}: {
++  labelColor: ColorValue;
++}): ColorValue | undefined => {
++  if (typeof labelColor !== 'string') {
++    return undefined;
++  }
++
++  try {
++    return color(labelColor).alpha(stateOpacity.pressed).rgb().string();
++  } catch {
++    return undefined;
++  }
++};
+```
+
+**File**: `src/components/IconButton/IconButton.tsx` (modified, +49/-17)
+```diff
+@@ -9,26 +9,33 @@ import type {
+   ViewStyle,
+ } from 'react-native';
+ 
+-import Animated, { type AnimatedStyle } from 'react-native-reanimated';
++import Animated, {
++  type AnimatedStyle,
++  linear,
++  type CSSStyle,
++} from 'react-native-reanimated';
+ 
+ import type { Mode, Shape, Size, Width } from './tokens';
+ import { getDimensions, getIconButtonColor } from './utils';
+ import { useInternalTheme } from '../../core/theming';
+ import { useReduceMotion } from '../../theme/accessibility/ReduceMotionContext';
++import { toSpringCurve } from '../../theme/tokens/sys/motion';
+ import type { ThemeProp } from '../../theme/types';
+ import getMinInteractiveSizeHitSlop from '../../utils/getMinInteractiveSizeHitSlop';
+ import hasTouchHandler, {
+   carriesToggleState,
+ } from '../../utils/hasTouchHandler';
+ import { useFocusRing } from '../../utils/useFocusRing';
+-import { useShapeMorph } from '../../utils/useShapeMorph';
+ import ActivityIndicator from '../ActivityIndicator';
++import {
++  getButtonRippleColor,
++  getButtonShapeCurvePoints,
++} from '../Button/utils';
+ import CrossFadeIcon from '../CrossFadeIcon';
+ import Icon from '../Icon';
+ import type { IconSource } from '../Icon';
+ import TouchableRipple from '../TouchableRipple/TouchableRipple';
+ import type { Props as TouchableRippleProps } from '../TouchableRipple/TouchableRipple';
+-import { getRippleColorFromContent } from '../TouchableRipple/utils';
+ 
+ const AnimatedTouchableRipple =
+   Animated.createAnimatedComponent(TouchableRipple);
+@@ -235,21 +242,38 @@ const IconButton = ({
+   const borderRadius = isPressed
+     ? dimensions.pressedRadius
+     : dimensions.restingRadius;
+-  const { outerStyle: radiusStyle, innerStyle: innerRadiusStyle } =
+-    useShapeMorph({
+-      theme,
+-      radius: borderRadius,
+-      largestRadius: Math.max(
+-        dimensions.height / 2,
+-        dimensions.restingRadius,
+-        dimensions.pressedRadius
++  // The morph follows the MD3 fast spatial spring, as on Button. The curve is
++  // capped so a bouncy spring can't push the corner below 0 on its way back
++  // from the largest radius (the round one).
++  const shapeSpring = React.useMemo(
++    () => toSpringCurve(theme.motion.spring.fast.spatial),
++    [theme.motion.spring.fast.spatial]
++  );
++  const largestRadius = Math.max(
++    dimensions.height / 2,
++    dimensions.restingRadius,
++    dimensions.pressedRadius
++  );
++  const shapeTimingFunction = React.useMemo(
++    () =>
++      linear(
++        ...getButtonShapeCurvePoints({
++          points: shapeSpring.points,
++          radius: borderRadius,
++          largestRadius,
++        })
+       ),
+-      borderWidth,
+-      animate: !reduceMotion,
+-    });
++    [shapeSpring.points, borderRadius, largestRadius]
++  );
++  const radiusStyle: CSSStyle<ViewStyle> = {
++    borderRadius,
++    transitionProperty: ['borderRadius'],
++    transitionDuration: reduceMotion ? 0 : shapeSpring.duration,
++    transitionTimingFunction: shapeTimingFunction,
++  };
+ 
+   // The state layer takes the icon color, as Button's takes its label color.
+-  const rippleColor = getRippleColorFromContent({ contentColor: iconColor });
++  const rippleColor = getButtonRippleColor({ labelColor: iconColor });
+ 
+   const handlePressIn = (e: GestureResponderEvent) => {
+     setPressed(true);
+@@ -321,6 +345,16 @@ const IconButton = ({
+     !hasPassedTouchHandler &&
+     !carriesToggleState({ ...rest, ...toggleStateProps });
+ 
++  // The touchable and the disabled layer sit inside the outline, so their
++  // corner is the container's less the outline, and they morph with it. The
++  // touchable clips its own ripple to it, though not on web, where
++  // `overflow: 'hidden'` would also clip the hit slop target; there the ripple
++  // container follows the touchable's corner.
++  const innerRadiusStyle: CSSStyle<ViewStyle> = {
++    ...radiusStyle,
++    borderRadius: Math.max(0, borderRadius - borderWidth),
++  };
++
+   return (
+     <Animated.View
+       ref={ref}
+@@ -373,8 +407,6 @@ const IconButton = ({
+           style={[
+             styles.touchable,
+             innerRadiusStyle,
+-            // Not on web, where `overflow: 'hidden'` would also clip the hit
+-            // slop target; there the ripple container follows the corner.
+             Platform.OS !== 'web' && styles.clipToShape,
+             contentStyle,
+           ]}
+```
+
+**File**: `src/components/TouchableRipple/utils.ts` (modified, +0/-30)
+```diff
+@@ -1,13 +1,8 @@
+ import type { ColorValue } from 'react-native';
+ 
+-import color from 'color';
+-
+ import type { PressableProps, PressableStateCallbackType } from './Pressable';
+-import { tokens } from '../../theme/tokens';
+ import type { InternalTheme } from '../../theme/types';
+ 
+-const stateOpacity = tokens.md.sys.state.opacity;
+-
+ const getUnderlayColor = ({
+   calculatedRippleColor,
+   underlayColor,
+@@ -71,28 +66,3 @@ export const resolveChildren = (
+   children: PressableProps['children'],
+   state: PressableStateCallbackType
+ ) => (typeof children === 'function' ? children(state) : children);
+-
+-/**
+- * Returns the ripple / state layer color for a component's content: the
+- * content color at the pressed-state opacity (per Material Design 3).
+- *
+- * When the content color is not a plain string (e.g. an Android Material You
+- * `PlatformColor`), or is a string `color` can't parse (e.g. `var(--x)` or
+- * `currentColor` on web), `undefined` is returned so `TouchableRipple` falls
+- * back to its own default state-layer color.
+- */
+-export const getRippleColorFromContent = ({
+-  contentColor,
+-}: {
+-  contentColor: ColorValue;
+-}): ColorValue | undefined => {
+-  if (typeof contentColor !== 'string') {
+-    return undefined;
+-  }
+-
+-  try {
+-    return color(contentColor).alpha(stateOpacity.pressed).rgb().string();
+-  } catch {
+-    return undefined;
+-  }
+-};
+```
+
+**File**: `src/components/__tests__/Button.test.tsx` (modified, +51/-45)
+```diff
+@@ -2,10 +2,11 @@ import { Platform, PlatformColor, StyleSheet } from 'react-native';
+ 
+ import { afterEach, describe, expect, it, jest } from '@jest/globals';
+ import { fireEvent } from '@testing-library/react-native';
++import color from 'color';
+ 
+ import { LocaleProvider } from '../../core/locale';
+ import PaperProvider from '../../core/PaperProvider';
+-import { render, screen, transitionOf } from '../../test-utils';
++import { render, screen } from '../../test-utils';
+ import { ReduceMotionContext } from '../../theme/accessibility/ReduceMotionContext';
+ import { pink500, white } from '../../theme/colors';
+ import { LightTheme } from '../../theme/schemes';
+@@ -19,6 +20,8 @@ import {
+   getButtonContentBoxStyle,
+   getButtonHitSlop,
+   getButtonPressedRadius,
++  getButtonRippleColor,
++  getButtonShapeCurvePoints,
+   getButtonShapeRadius,
+   getButtonSizeStyle,
+   getButtonTransitionDuration,
+@@ -627,6 +630,20 @@ describe('getButtonColors - border width', () => {
+   );
+ });
+ 
++describe('getButtonRippleColor', () => {
++  it('defaults to the label color at the pressed-state opacity', () => {
++    expect(getButtonRippleColor({ labelColor: '#123456' })).toBe(
++      color('#123456').alpha(stateOpacity.pressed).rgb().string()
++    );
++  });
++
++  it('returns undefined when the label color is not a plain string', () => {
++    expect(
++      getButtonRippleColor({ labelColor: PlatformColor('?attr/colorPrimary') })
++    ).toBeUndefined();
++  });
++});
++
+ it('renders with a label color the ripple cannot parse', async () => {
+   await render(
+     <Button textColor="var(--label)" onPress={() => {}}>
+@@ -765,6 +782,33 @@ describe('getButtonPressedRadius', () => {
+   );
+ });
+ 
++describe('getButtonShapeCurvePoints', () => {
++  const { points } = toSpringCurve(LightTheme.motion.spring.fast.spatial);
++  const cornersOnTheWay = (curve: number[], from: number, to: number) =>
++    curve.map((progress) => from + (to - from) * progress);
++
++  it('keeps the corner at 0 or above on its way to a 0 corner', () => {
++    const curve = getButtonShapeCurvePoints({
++      points,
++      radius: 0,
++      largestRadius: 20,
++    });
++
++    expect(Math.min(...cornersOnTheWay(curve, 20, 0))).toBe(0);
++  });
++
++  it('keeps the overshoot when the corner has room for it', () => {
++    const curve = getButtonShapeCurvePoints({
++      points,
++      radius: 8,
++      largestRadius: 20,
++    });
++
++    expect(curve).toEqual(points);
++    expect(Math.min(...cornersOnTheWay(curve, 20, 8))).toBeLessThan(8);
++  });
++});
++
+ describe('getButtonTransitionDuration', () => {
+   const theme = LightTheme;
+   const opaque = theme.colors.primary;
+@@ -1374,47 +1418,6 @@ describe('shape morph animation', () => {
+     expect(screen.getByTestId('button')).toHaveStyle({ borderRadius: 20 });
+   });
+ 
+-  it('morphs the ripple inside the outline in step with the outline', async () => {
+-    await render(
+-      <Button mode="outlined" size="large" onPress={() => {}} testID="button">
+-        {null}
+-      </Button>
+-    );
+-    const touchable = screen.getByTestId('button');
+-    const clip = parentOf(touchable, 'the touchable');
+-
+-    expect(transitionOf(touchable)).toEqual(transitionOf(clip));
+-
+-    await fireEvent(touchable, 'onPressIn');
+-
+-    expect(transitionOf(touchable)).toEqual(transitionOf(clip));
+-    expect(clip).toHaveStyle({ borderRadius: LightTheme.shapes.corner.large });
+-    expect(touchable).toHaveStyle({
+-      borderRadius:
+-        LightTheme.shapes.corner.large -
+-        Tokens.sizes.large.outlinedOutlineWidth,
+-    });
+-  });
+-
+-  it('snaps the corner when animateShape is false', async () => {
+-    await render(
+-      <Button
+-        mode="outlined"
+-        animateShape={false}
+-        onPress={() => {}}
+-        testID="button"
+-      >
+-        {null}
+-      </Button>
+-    );
+-    const touchable = screen.getByTestId('button');
+-
+-    expect(transitionOf(touchable).transitionDuration).toBe(0);
+-    expect(
+-      transitionOf(parentOf(touchable, 'the touchable')).transitionDuration
+-    ).toBe(0);
+-  });
+-
+   it('still changes the shape when animateShape is false and selected flips', async () => {
+     await render(
+       <Button shape="square" size="large" animateShape={false} testID="button">
+@@ -1450,10 +1453,13 @@ describe('with reduce motion', () => {
+       'the clip'
+     );
+ 
+-  // The container transitions its background and three shadow properties,
+-  // then its corner.
++  // Reanimated's Jest setup keeps CSS transitions out of `style`, and
++  // `getAnimatedStyle` can't read the container's nested style arrays. The
++  // container transitions its background and three shadow properties, then
++  // its corner.
+   const containerTransitionDuration = () =>
+-    transitionOf(containerOf()).transitionDuration;
++    // eslint-disable-next-line no-restricted-syntax -- see the comment above.
++    StyleSheet.flatten(containerOf().props.jestInlineStyle).transitionDuration;
+ 
+   const renderButton = (reduceMotion: 'on' | 'off') =>
+ 
+```
+
+**File**: `src/components/__tests__/Chip.test.tsx` (modified, +7/-4)
+```diff
+@@ -1,12 +1,12 @@
+-import { Pressable } from 'react-native';
++import { Pressable, StyleSheet } from 'react-native';
+ import type { GestureResponderEvent } from 'react-native';
+ 
+ import { describe, expect, it, jest } from '@jest/globals';
+ import { fireEvent, userEvent } from '@testing-library/react-native';
+ import color from 'color';
+ 
+ import PaperProvider from '../../core/PaperProvider';
+-import { render, screen, transitionOf } from '../../test-utils';
++import { render, screen } from '../../test-utils';
+ import { DarkTheme, LightTheme } from '../../theme/schemes';
+ import { tokens } from '../../theme/tokens';
+ import Chip from '../Chip/Chip';
+@@ -403,13 +403,16 @@ describe('hitSlop', () => {
+ });
+ 
+ describe('with reduce motion', () => {
+-  // The chip's container is the touchable's parent.
++  // Reanimated's Jest setup keeps CSS transitions out of `style`, and
++  // `getAnimatedStyle` can't read the chip's nested style arrays. The chip's
++  // container is the touchable's parent.
+   const elevationTransitionDuration = () => {
+     const { parent } = screen.getByTestId('chip');
+     if (!parent) {
+       throw new Error('Expected the touchable to be inside the container.');
+     }
+-    return transitionOf(parent).transitionDuration;
++    // eslint-disable-next-line no-restricted-syntax -- see the comment above.
++    return StyleSheet.flatten(parent.props.jestInlineStyle).transitionDuration;
+   };
+ 
+   it.each([
+```
+
+**File**: `src/components/__tests__/IconButton.test.tsx` (modified, +4/-58)
+```diff
+@@ -12,13 +12,7 @@ import {
+ import color from 'color';
+ 
+ import PaperProvider from '../../core/PaperProvider';
+-import {
+-  fireEvent,
+-  render,
+-  screen,
+-  transitionOf,
+-  userEvent,
+-} from '../../test-utils';
++import { fireEvent, render, screen, userEvent } from '../../test-utils';
+ import { pink500 } from '../../theme/colors';
  import { LightTheme } from '../../theme/schemes';
  import { tokens } from '../../theme/tokens';
- import TextInput from '../TextInput';
-+import {
-+  FILLED_LABEL_START_OFFSET_WITH_ACCESSORY,
-+  LABEL_START_OFFSET_WITHOUT_ACCESSORY,
-+  OUTLINED_LABEL_START_OFFSET_WITH_ACCESSORY,
-+} from '../TextInput/constants';
- import type {
-   TextInputRenderProps,
-   TextInputHandles,
-@@ -987,7 +995,7 @@ it('applies RTL writing direction to supporting text', async () => {
+@@ -852,7 +846,9 @@ describe('shape morph', () => {
+       throw new Error('Expected the touchable to be wrapped in the clip view.');
+     }
+ 
+-    return transitionOf(clip).transitionDuration;
++    // Reanimated's Jest setup keeps CSS transitions out of `style`.
++    // eslint-disable-next-line no-restricted-syntax
++    return StyleSheet.flatten(clip.props.jestInlineStyle).transitionDuration;
+   };
+ 
+   it('runs on the fast spatial spring', async () => {
+@@ -872,56 +868,6 @@ describe('shape morph', () => {
+ 
+     expect(transitionDuration()).toBe(0);
    });
+-
+-  it('morphs the touchable inside the outline in step with the outline', async () => {
+-    const { pressedRadius, outlineWidth } = getDimensions({
+-      theme,
+-      size: 'extra-large',
+-    });
+-
+-    await render(
+-      <IconButton
+-        icon="camera"
+-        mode="outlined"
+-        size="extra-large"
+-        testID="icon-button"
+-        onPress={() => {}}
+-      />
+-    );
+-    const touchable = screen.getByTestId('icon-button');
+-    const clip = touchable.parent;
+-
+-    if (!clip) {
+-      throw new Error('Expected the touchable to be wrapped in the clip view.');
+-    }
+-
+-    expect(transitionOf(touchable)).toEqual(transitionOf(clip));
+-
+-    await fireEvent(touchable, 'pressIn');
+-
+-    expect(transitionOf(touchable)).toEqual(transitionOf(clip));
+-    expect(clip).toHaveStyle({ borderRadius: pressedRadius });
+-    expect(touchable).toHaveStyle({
+-      borderRadius: pressedRadius - outlineWidth,
+-    });
+-  });
+-
+-  it('snaps the touchable corner too under reduce motion', async () => {
+-    await render(
+-      <PaperProvider reduceMotion="on">
+-        <IconButton
+-          icon="camera"
+-          mode="outlined"
+-          testID="icon-button"
+-          onPress={() => {}}
+-        />
+-      </PaperProvider>
+-    );
+-
+-    expect(
+-      transitionOf(screen.getByTestId('icon-button')).transitionDuration
+-    ).toBe(0);
+-  });
  });
  
--it('places EndAccessory before StartAccessory in the tree when RTL', async () => {
-+it('renders StartAccessory before EndAccessory in RTL', async () => {
-   I18nManager.isRTL = true;
+ describe('inner corner', () => {
+```
+
+**File**: `src/components/__tests__/TouchableRippleUtils.test.tsx` (removed, +0/-25)
+```diff
+@@ -1,25 +0,0 @@
+-import { PlatformColor } from 'react-native';
+-
+-import { describe, expect, it } from '@jest/globals';
+-import color from 'color';
+-
+-import { tokens } from '../../theme/tokens';
+-import { getRippleColorFromContent } from '../TouchableRipple/utils';
+-
+-const stateOpacity = tokens.md.sys.state.opacity;
+-
+-describe('getRippleColorFromContent', () => {
+-  it('defaults to the content color at the pressed-state opacity', () => {
+-    expect(getRippleColorFromContent({ contentColor: '#123456' })).toBe(
+-      color('#123456').alpha(stateOpacity.pressed).rgb().string()
+-    );
+-  });
+-
+-  it('returns undefined when the content color is not a plain string', () => {
+-    expect(
+-      getRippleColorFromContent({
+-        contentColor: PlatformColor('?attr/colorPrimary'),
+-      })
+-    ).toBeUndefined();
+-  });
+-});
+```
+
+---
+
+### Incident Patch 3: `fbf9006f` (2026-11-23)
+**Commit Message**: fix(text-input): keep the hidden placeholder empty (#5199)
+
+An empty labelled TextInput hid its placeholder as a single space, and screen readers took that blank as the field's text: TalkBack on Android read "Space" instead of the label, and iOS reported a blank value. The hidden placeholder is now empty. iOS multiline fields keep the space, which their placeholder needs in order to update (facebook/react-native#31573).
+
+Follows #5111 (#5197).
+
+**File**: `src/components/TextInput/hooks.ts` (modified, +8/-3)
+```diff
+@@ -510,9 +510,14 @@ export const useTextInput = (props: TextInputProps): TextInputHookReturn => {
+   const renderLeadingAccessory = props.startAccessory;
+   const renderTrailingAccessory = props.endAccessory;
  
-   function StartAccessory() {
-@@ -1010,9 +1018,9 @@ it('places EndAccessory before StartAccessory in the tree when RTL', async () =>
+-  // A space keeps the iOS multiline placeholder updating:
+-  // https://github.com/facebook/react-native/issues/31573
+-  const placeholder = isPlaceholderShown ? props.placeholder : ' ';
++  // The hidden placeholder is empty: a blank is read as the field's text
++  // (TalkBack says "Space, edit box" instead of the label, iOS reports it as
++  // the value). Only iOS multiline fields keep a space, which keeps their
++  // placeholder updating: https://github.com/facebook/react-native/issues/31573
++  const hiddenPlaceholder = Platform.OS === 'ios' && props.multiline ? ' ' : '';
++  const placeholder = isPlaceholderShown
++    ? props.placeholder
++    : hiddenPlaceholder;
+ 
+   return {
+     input,
+```
+
+**File**: `src/components/__tests__/TextInput.test.tsx` (modified, +39/-4)
+```diff
+@@ -1119,9 +1119,9 @@ it('does not expose the placeholder string when the TextInput is not focused', a
+     />
    );
  
-   const tree = toJSON();
--  expect(firstIndexOfTestIdInTree(tree, 'rtl-acc-from-end-prop')).toBeLessThan(
-+  expect(
-     firstIndexOfTestIdInTree(tree, 'rtl-acc-from-start-prop')
--  );
-+  ).toBeLessThan(firstIndexOfTestIdInTree(tree, 'rtl-acc-from-end-prop'));
+-  /* Sentinel space avoids iOS multiline UITextView not updating placeholder from nil (react-native#31573). */
++  /* Empty, not a blank: a blank is read as the field's text. */
+   // eslint-disable-next-line no-restricted-syntax -- TODO: replace TestInstance props access with a user-visible assertion.
+-  expect(screen.getByTestId('tf-input').props.placeholder).toBe(' ');
++  expect(screen.getByTestId('tf-input').props.placeholder).toBe('');
  });
  
- it('places StartAccessory before EndAccessory in the tree when LTR', async () => {
-@@ -1164,7 +1172,7 @@ it('does not expose the placeholder string again after the TextInput loses focus
-   expect(screen.getByTestId('tf-input').props.placeholder).toBe(' ');
- });
+ it('shows placeholder when unfocused and no label is given', async () => {
+@@ -1155,7 +1155,7 @@ it('shows placeholder when the TextInput is focused, once the label floats away'
  
--it('maps a lone StartAccessory to leading in LTR and trailing in RTL (tree order)', async () => {
-+it('keeps a lone StartAccessory before the input in both LTR and RTL (tree order)', async () => {
-   function LoneStartAccessory() {
-     return <View testID="lone-start-acc" />;
-   }
-@@ -1199,9 +1207,121 @@ it('maps a lone StartAccessory to leading in LTR and trailing in RTL (tree order
+   // The label still rests over the input when the field takes focus.
+   // eslint-disable-next-line no-restricted-syntax -- TODO: replace TestInstance props access with a user-visible assertion.
+-  expect(screen.getByTestId('tf-input').props.placeholder).toBe(' ');
++  expect(screen.getByTestId('tf-input').props.placeholder).toBe('');
+ 
+   await act(() => jest.advanceTimersByTimeAsync(1000));
+ 
+@@ -1177,6 +1177,7 @@ it('shows placeholder on multiline TextInput when focused, once the label floats
+     />
    );
  
-   const rtlTree = toJsonRtl();
--  expect(firstIndexOfTestIdInTree(rtlTree, 'tf-lone-rtl')).toBeLessThan(
--    firstIndexOfTestIdInTree(rtlTree, 'lone-start-acc')
-+  expect(firstIndexOfTestIdInTree(rtlTree, 'lone-start-acc')).toBeLessThan(
-+    firstIndexOfTestIdInTree(rtlTree, 'tf-lone-rtl')
-+  );
-+});
++  // iOS multiline fields keep a blank (react-native#31573).
+   // eslint-disable-next-line no-restricted-syntax -- TODO: replace TestInstance props access with a user-visible assertion.
+   expect(screen.getByTestId('tf-multiline').props.placeholder).toBe(' ');
+ 
+@@ -1193,6 +1194,40 @@ it('shows placeholder on multiline TextInput when focused, once the label floats
+   );
+ });
+ 
++// TalkBack reads an empty field's text, even ' ', in place of its label.
++it.each([false, true])(
++  'keeps the hidden placeholder empty on Android (multiline: %s)',
++  async (multiline) => {
++    const platformOS = jest.replaceProperty(Platform, 'OS', 'android');
 +
-+it('shows the error icon in RTL when only a StartAccessory is set', async () => {
-+  I18nManager.isRTL = true;
-+
-+  function StartAccessory() {
-+    return <View testID="rtl-error-start-acc" />;
-+  }
-+
-+  await render(
-+    <TextInput
-+      label="Email"
-+      value=""
-+      error
-+      onChangeText={() => {}}
-+      startAccessory={StartAccessory}
-+    />
-+  );
-+
-+  expect(
-+    screen.getByText('alert-circle', includeHiddenElements)
-+  ).toBeOnTheScreen();
-+});
-+
-+it('keeps the label at the field edge in RTL when only an EndAccessory is set', async () => {
-+  I18nManager.isRTL = true;
-+
-+  function EndAccessory() {
-+    return <View testID="rtl-lone-end-acc" />;
-+  }
-+
-+  await render(
-+    <TextInput
-+      label="Email"
-+      value=""
-+      onChangeText={() => {}}
-+      endAccessory={EndAccessory}
-+    />
-+  );
-+
-+  expect(screen.getByText('Email', includeHiddenElements).parent).toHaveStyle({
-+    start: LABEL_START_OFFSET_WITHOUT_ACCESSORY,
-+  });
-+});
-+
-+// React Native Web resolves `start` from a `dir` prop on its own Views, not
-+// from `<html dir>`, so on web the label takes its side from Paper's direction.
-+describe('on web in RTL', () => {
-+  let platformOS: { restore(): void } | undefined;
-+
-+  beforeEach(() => {
-+    platformOS = jest.replaceProperty(Platform, 'OS', 'web');
-+    I18nManager.isRTL = true;
-+  });
-+
-+  afterEach(() => {
-+    platformOS?.restore();
-+  });
-+
-+  it.each([
-+    {
-+      variant: 'filled' as const,
-+      offset: FILLED_LABEL_START_OFFSET_WITH_ACCESSORY,
-+    },
-+    {
-+      variant: 'outlined' as const,
-+      offset: OUTLINED_LABEL_START_OFFSET_WITH_ACCESSORY,
-+    },
-+  ])(
-+    'places the $variant label next to the StartAccessory on the right',
-+    async ({ variant, offset }) => {
-+      function StartAccessory() {
-+        return <View testID="web-rtl-start-acc" />;
-+      }
-+
++    try {
 +      await render(
 +        <TextInput
-+          variant={variant}
 +          label="Email"
 +          value=""
 +          onChangeText={() => {}}
-+          startAccessory={StartAccessory}
++          placeholder="e.g. user@example.com"
++          multiline={multiline}
++          testID="tf-input"
 +        />
 +      );
 +
-+      const labelWrapper = screen.getByText(
-+        'Email',
-+        includeHiddenElements
-+      ).parent;
-+      expect(labelWrapper).toHaveStyle({ right: offset });
-+      expect(labelWrapper).not.toHaveStyle({ start: offset });
++      // eslint-disable-next-line no-restricted-syntax -- TODO: replace TestInstance props access with a user-visible assertion.
++      expect(screen.getByTestId('tf-input').props.placeholder).toBe('');
++
++      await fireEvent(screen.getByTestId('tf-input'), 'focus');
++      await act(() => jest.advanceTimersByTimeAsync(1000));
++
++      // eslint-disable-next-line no-restricted-syntax -- TODO: replace TestInstance props access with a user-visible assertion.
++      expect(screen.getByTestId('tf-input').props.placeholder).toBe(
++        'e.g. user@example.com'
++      );
++    } finally {
++      platformOS.restore();
 +    }
-   );
-+
-+  it('keeps the label on the right, clear of a lone EndAccessory', async () => {
-+    function EndAccessory() {
-+      return <View testID="web-rtl-end-acc" />;
-+    }
-+
-+    await render(
-+      <TextInput
-+        label="Email"
-+        value=""
-+        on
-```
-
-**File**: `src/components/__tests__/__snapshots__/TextInput.test.tsx.snap` (modified, +7/-7)
-```diff
-@@ -127,7 +127,7 @@ exports[`dims a disabled TextInput with TextInput.Icon accessories exactly once
-             "position": "absolute",
-           },
-           {
--            "left": 52,
-+            "start": 52,
-           },
-           {
-             "top": 16,
-@@ -584,7 +584,7 @@ exports[`renders filled TextInput with TextInput.Icon accessories 1`] = `
-             "position": "absolute",
-           },
-           {
--            "left": 52,
-+            "start": 52,
-           },
-           {
-             "top": 16,
-@@ -1000,7 +1000,7 @@ exports[`renders filled TextInput with TextInput.Icon accessories when error is
-             "position": "absolute",
-           },
-           {
--            "left": 52,
-+            "start": 52,
-           },
-           {
-             "top": 16,
-@@ -1452,7 +1452,7 @@ exports[`renders filled TextInput with label and value 1`] = `
-             "position": "absolute",
-           },
-           {
--            "left": 16,
-+            "start": 16,
-           },
-           {
-             "top": 16,
-@@ -1625,7 +1625,7 @@ exports[`renders outlined TextInput with TextInput.Icon accessories 1`] = `
-           },
-           {
-             "backgroundColor": "rgba(254, 247, 255, 1)",
--            "left": 48,
-+            "start": 48,
-           },
-           {
-             "top": -12,
-@@ -2021,7 +2021,7 @@ exports[`renders outlined TextInput with TextInput.Icon accessories when error i
-           },
-           {
-             "backgroundColor": "rgba(254, 247, 255, 1)",
--            "left": 48,
-+            "start": 48,
-           },
-           {
-             "top": -12,
-@@ -2453,7 +2453,7 @@ exports[`renders outlined TextInput with label and value 1`] = `
-           },
-           {
-             "backgroundColor": "rgba(254, 247, 255, 1)",
--            "left": 16,
-+            "start": 16,
-           },
-           {
-             "top": -12,
-```
-
----
-
-### Incident Patch 2: `7ab2640c` (2026-11-20)
-**Commit Message**: fix(locale): lay out a LocaleProvider subtree in its direction on web (#5255)
-
-On web, LocaleProvider only passed the direction to Paper's components. In a `<LocaleProvider direction="rtl">` subtree, Switch and the TextInput label went right to left while Button, Chip, List.Item and TextInput accessories stayed left to right, and a lone `endAccessory` overlapped the label.
-
-On web, LocaleProvider now wraps its children in a `display: contents` View with `dir`, and Portal carries the direction to menus, dialogs and other portaled content. PaperProvider and native are unchanged. The RTL guide describes the web behavior.
-
-Follow-up to #5219.
-
-**File**: `docs/6.x/docs/guides/rtl.md` (modified, +6/-2)
-```diff
-@@ -23,7 +23,7 @@ On the Web, the RTL value is not set globally, unlike native platforms. `I18nMan
- Then, let `react-native-paper` know about it by using the `direction` prop on `PaperProvider` or the `LocaleProvider` component to match the writing direction in your app.
- 
- :::note
--The `direction` prop informs React Native Paper about the text direction in the app i.e. it doesn't change the text direction by itself. If you intend to support RTL languages, it's important to set this prop to the correct value that's configured in the app. If it doesn't match the actual text direction, the layout might be incorrect.
-+The `direction` prop of `PaperProvider` informs React Native Paper about the text direction in the app i.e. it doesn't change the text direction by itself. If you intend to support RTL languages, it's important to set this prop to the correct value that's configured in the app. If it doesn't match the actual text direction, the layout might be incorrect.
- :::
- 
- On the web, `Text` aligns to the start of the writing direction, so it aligns right when `direction` is `rtl`. On Android and iOS, React Native already aligns `left` text to the right in a right-to-left layout. A `textAlign` in `style` still wins.
-@@ -62,13 +62,17 @@ import { LocaleProvider } from 'react-native-paper';
- export default function ArabicSection({ children }) {
-   return (
-     <LocaleProvider direction="rtl">
--      {/* Components here will use RTL layout */}
-+      {/* Paper's components here use the RTL direction */}
-       {children}
-     </LocaleProvider>
-   );
- }
- ```
- 
-+On the Web, `LocaleProvider` also lays out its part of the tree in that direction, including menus, dialogs and other content it opens in a `Portal`. It renders a wrapper with the `dir` attribute that doesn't take part in the layout, so you don't need to set `dir` yourself.
-+
-+On Android and iOS, `I18nManager` sets the layout direction for the whole app, and `LocaleProvider` doesn't change it. It only changes the direction that Paper's components read, so rows and `start`/`end` styles in the subtree keep the app's direction.
-+
- ## Reading the current direction
- 
- The direction is available in your own components via the `useLocale` hook:
-```
-
-**File**: `src/components/Portal/Portal.tsx` (modified, +8/-3)
-```diff
-@@ -2,7 +2,11 @@ import * as React from 'react';
- 
- import PortalConsumer from './PortalConsumer';
- import PortalHost, { PortalContext } from './PortalHost';
--import { LocaleProvider, useLocale } from '../../core/locale';
-+import {
-+  DirectionProvider,
-+  SubtreeDirectionContext,
-+  useLocale,
-+} from '../../core/locale';
- import {
-   SettingsContext,
-   Provider as SettingsProvider,
-@@ -51,6 +55,7 @@ export type Props = {
- const Portal = ({ children, modal, theme: themeOverrides }: Props) => {
-   const theme = useInternalTheme(themeOverrides);
-   const { direction } = useLocale();
-+  const setsLayout = React.useContext(SubtreeDirectionContext);
-   const settings = React.useContext(SettingsContext);
-   const manager = React.useContext(PortalContext);
-   const reduceMotion = React.useContext(ReduceMotionContext);
-@@ -59,11 +64,11 @@ const Portal = ({ children, modal, theme: themeOverrides }: Props) => {
-     <PortalConsumer manager={manager} modal={modal}>
-       <SettingsProvider value={settings}>
-         <ReduceMotionContext.Provider value={reduceMotion}>
--          <LocaleProvider direction={direction}>
-+          <DirectionProvider direction={direction} setsLayout={setsLayout}>
-             <InternalThemeProvider theme={theme}>
-               {children}
-             </InternalThemeProvider>
--          </LocaleProvider>
-+          </DirectionProvider>
-         </ReduceMotionContext.Provider>
-       </SettingsProvider>
-     </PortalConsumer>
-```
-
-**File**: `src/core/PaperProvider.tsx` (modified, +7/-3)
-```diff
-@@ -1,6 +1,10 @@
- import * as React from 'react';
- 
--import { getDefaultDirection, LocaleProvider, type Direction } from './locale';
-+import {
-+  DirectionProvider,
-+  getDefaultDirection,
-+  type Direction,
-+} from './locale';
- import SafeAreaProviderCompat from './SafeAreaProviderCompat';
- import { Provider as SettingsProvider } from './settings';
- import type { Settings } from './settings';
-@@ -68,11 +72,11 @@ const PaperProvider = (props: Props) => {
-       <PortalHost>
-         <SettingsProvider value={settingsValue}>
-           <ReduceMotionContext.Provider value={resolvedReduceMotion}>
--            <LocaleProvider direction={direction}>
-+            <DirectionProvider direction={direction}>
-               <InternalThemeProvider theme={theme}>
-                 {children}
-               </InternalThemeProvider>
--            </LocaleProvider>
-+            </DirectionProvider>
-           </ReduceMotionContext.Provider>
-         </SettingsProvider>
-       </PortalHost>
-```
-
-**File**: `src/core/__tests__/LocaleProvider.test.tsx` (added, +76/-0)
-```diff
-@@ -0,0 +1,76 @@
-+import { Platform, View } from 'react-native';
-+
-+import {
-+  afterEach,
-+  beforeEach,
-+  describe,
-+  expect,
-+  it,
-+  jest,
-+} from '@jest/globals';
-+import { render, screen } from '@testing-library/react-native';
-+
-+import Portal from '../../components/Portal/Portal';
-+import { LocaleProvider } from '../locale';
-+import PaperProvider from '../PaperProvider';
-+
-+// react-native-web renders `dir` as the attribute that lays out the element's
-+// children in that direction.
-+const parentOf = (testID: string) => screen.getByTestId(testID).parent;
-+
-+const renderSubtree = () =>
-+  render(
-+    <PaperProvider>
-+      <LocaleProvider direction="rtl">
-+        <View testID="content" />
-+        <Portal>
-+          <View testID="portal-content" />
-+        </Portal>
-+      </LocaleProvider>
-+    </PaperProvider>
-+  );
-+
-+describe.each(['web', 'ios', 'android'] as const)('on %s', (os) => {
-+  let platformOS: { restore(): void } | undefined;
-+
-+  beforeEach(() => {
-+    platformOS = jest.replaceProperty(Platform, 'OS', os);
-+  });
-+
-+  afterEach(() => {
-+    platformOS?.restore();
-+  });
-+
-+  if (os === 'web') {
-+    it('lays out a LocaleProvider subtree and its portal content in its direction', async () => {
-+      await renderSubtree();
-+      await screen.findByTestId('portal-content');
-+
-+      expect(parentOf('content')).toHaveProp('dir', 'rtl');
-+      expect(parentOf('portal-content')).toHaveProp('dir', 'rtl');
-+    });
-+  } else {
-+    it('leaves the layout direction of a LocaleProvider subtree to the app', async () => {
-+      await renderSubtree();
-+      await screen.findByTestId('portal-content');
-+
-+      expect(parentOf('content')).not.toHaveProp('dir');
-+      expect(parentOf('portal-content')).not.toHaveProp('dir');
-+    });
 +  }
++);
 +
-+  it('leaves the layout direction to the app with PaperProvider alone', async () => {
-+    await render(
-+      <PaperProvider direction="rtl">
-+        <View testID="content" />
-+        <Portal>
-+          <View testID="portal-content" />
-+        </Portal>
-+      </PaperProvider>
-+    );
-+    await screen.findByTestId('portal-content');
-+
-+    expect(parentOf('content')).not.toHaveProp('dir');
-+    expect(parentOf('portal-content')).not.toHaveProp('dir');
-+  });
-+});
-```
-
-**File**: `src/core/locale.tsx` (modified, +58/-4)
-```diff
-@@ -1,5 +1,5 @@
- import * as React from 'react';
--import { I18nManager } from 'react-native';
-+import { I18nManager, Platform, StyleSheet, View } from 'react-native';
+ it('shows placeholder at once when a focused TextInput with a floated label is cleared', async () => {
+   const { rerender } = await render(
+     <TextInput
+@@ -1268,7 +1303,7 @@ it('does not expose the placeholder string again after the TextInput loses focus
+   await fireEvent(screen.getByTestId('tf-input'), 'blur');
  
- /**
-  * Writing direction of the app.
-@@ -15,18 +15,66 @@ export const LocaleContext = React.createContext<LocaleContextValue | null>(
-   null
- );
- 
-+/**
-+ * Whether the nearest direction comes from a `LocaleProvider`, which also sets
-+ * the layout direction of its subtree on web. `Portal` reads it to carry that
-+ * layout direction to the portal host.
-+ */
-+export const SubtreeDirectionContext = React.createContext(false);
-+
- export type LocaleProviderProps = {
-   direction: Direction;
-   children: React.ReactNode;
- };
- 
-+type DirectionProviderProps = LocaleProviderProps & {
-+  /**
-+   * Whether to lay the children out in `direction` on web. `PaperProvider`
-+   * leaves the layout direction of the whole app to the page (`<html dir>`).
-+   */
-+  setsLayout?: boolean;
-+};
-+
- /**
-- * Provider component for locale configuration.
-+ * Provides the direction to Paper's components.
-  */
--export function LocaleProvider({ direction, children }: LocaleProviderProps) {
-+export function DirectionProvider({
-+  direction,
-+  setsLayout = false,
-+  children,
-+}: DirectionProviderProps) {
-   const value = React.useMemo(() => ({ direction }), [direction]);
-   return (
--    <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>
-+    <LocaleContext.Provider value={value}>
-+      <SubtreeDirectionContext.Provider value={setsLayout}>
-+        {Platform.OS === 'web' && setsLayout ? (
-+          // react-native-web reads `dir` for `start` and `end` styles, and the
-+          // browser for rows and text. `display: contents` keeps the wrapper
-+          // out of the layout.
-+          <View
-+            // @ts-expect-error: `ViewProps` doesn't expose the web-specific `dir` prop.
-+            dir={direction}
-+            style={styles.contents}
-+          >
-+            {children}
-+          </View>
-+        ) : (
-+          children
-+        )}
-+      </SubtreeDirectionContext.Provider>
-+    </LocaleContext.Provider>
-+  );
-+}
-+
-+/**
-+ * Overrides the direction for a part of the tree. On web it also lays that
-+ * part out in the direction, including content it opens in a `Portal`.
-+ */
-+export function LocaleProvider({ direction, children }: LocaleProviderProps) {
-+  return (
-+    <DirectionProvider direction={direction} setsLayout>
-+      {children}
-+    </DirectionProvider>
-   );
- }
- 
-@@ -43,3 +91,9 @@ export function useLocale(): LocaleContextValue {
- 
- export const getDefaultDirection = (): Direction =>
-   I18nManager.getConstants?.().isRTL ? 'rtl' : 'ltr';
-+
-+const styles = StyleSheet.create({
-+  contents: {
-+    display: 'contents',
-+  },
-+});
-```
-
-**File**: `src/test-utils.tsx` (modified, +3/-3)
-```diff
-@@ -3,7 +3,7 @@ import * as React from 'react';
- import { render, type RenderOptions } from '@testing-library/react-native';
- 
- import MaterialCommunityIcon from './components/MaterialCommunityIcon';
--import { getDefaultDirection, LocaleProvider } from './core/locale';
-+import { DirectionProvider, getDefaultDirection } from './core/locale';
- import { Provider as SettingsProvider } from './core/settings';
- import { ThemeProvider } from './core/theming';
- import { LightTheme } from './theme/schemes';
-@@ -12,9 +12,9 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
-   <SettingsProvider
-     value={{ icon: MaterialCommunityIcon, rippleEffectEnabled: true }}
-   >
--    <LocaleProvider direction={getDefaultDirection()}>
-+    <DirectionProvider direction={getDefaultDirection()}>
-       <ThemeProvider theme={LightTheme}>{children}</ThemeProvider>
--    </LocaleProvider>
-+    </DirectionProvider>
-   </SettingsProvider>
- );
- 
-```
-
----
-
-### Incident Patch 3: `add03a12` (2026-11-20)
-**Commit Message**: fix(text): align right-to-left text to the right on web (#5265)
-
-On web, Text and AnimatedText now align right when Paper's direction is
-rtl, as Android and iOS already do. Native, left-to-right text and a
-textAlign set in style are unchanged. Both components take the
-alignment from a shared getTextAlignStyle helper, and rtl.md and the
-migration guide's Text section describe the web behavior.
-
-**File**: `docs/6.x/docs/guides/migration.md` (modified, +2/-0)
-```diff
-@@ -1395,6 +1395,8 @@ A `Text` nested in another `Text` now inherits the parent's font and color, as R
- 
- On iOS and Android, nesting follows React Native: a `Text` inside React Native's own `Text` inherits from it as well, and a `Text` inside a `View` isn't nested, so it renders like a top-level `Text`.
- 
-+On the web, a `Text` under `direction="rtl"` (on `PaperProvider` or `LocaleProvider`) now aligns right by default. In 5.x it stayed left. A `textAlign` in `style` still wins.
-+
- ### ToggleButton
- 
- `ToggleButton`, `ToggleButton.Group` and `ToggleButton.Row` were removed. For an
-```
-
-**File**: `docs/6.x/docs/guides/rtl.md` (modified, +2/-0)
-```diff
-@@ -26,6 +26,8 @@ Then, let `react-native-paper` know about it by using the `direction` prop on `P
- The `direction` prop informs React Native Paper about the text direction in the app i.e. it doesn't change the text direction by itself. If you intend to support RTL languages, it's important to set this prop to the correct value that's configured in the app. If it doesn't match the actual text direction, the layout might be incorrect.
- :::
- 
-+On the web, `Text` aligns to the start of the writing direction, so it aligns right when `direction` is `rtl`. On Android and iOS, React Native already aligns `left` text to the right in a right-to-left layout. A `textAlign` in `style` still wins.
-+
- ## Setting direction for the whole app
- 
- Pass the `direction` prop to `PaperProvider`. Defaults to `'rtl'` when `I18nManager.getConstants().isRTL` returns `true`, otherwise `'ltr'`.
-```
-
-**File**: `src/components/Typography/AnimatedText.tsx` (modified, +4/-9)
-```diff
-@@ -1,11 +1,11 @@
- import * as React from 'react';
- import type { ReactNode } from 'react';
--import { StyleSheet } from 'react-native';
- 
- import Animated from 'react-native-reanimated';
- 
- import { useIsNestedText, markChildrenAsNested } from './NestedTextContext';
- import type { VariantProp } from './types';
-+import { getTextAlignStyle } from './utils';
- import { useLocale } from '../../core/locale';
- import { useInternalTheme } from '../../core/theming';
- import type { ThemeProp } from '../../theme/types';
-@@ -49,6 +49,7 @@ function AnimatedText({
-   const theme = useInternalTheme(themeOverrides);
- 
-   const { direction: writingDirection } = useLocale();
-+  const alignStyle = getTextAlignStyle(writingDirection);
-   // Nested text inherits the parent's style unless it has its own theme
-   const inheritsStyle = useIsNestedText() && !themeOverrides;
- 
-@@ -73,7 +74,7 @@ function AnimatedText({
-             ? [font, style]
-             : [
-                 font,
--                styles.text,
-+                alignStyle,
-                 { writingDirection, color: theme.colors.onSurface },
-                 style,
-               ]
-@@ -93,7 +94,7 @@ function AnimatedText({
-         ref={ref}
-         {...rest}
-         style={[
--          styles.text,
-+          alignStyle,
-           textStyle,
-           {
-             writingDirection,
-@@ -107,12 +108,6 @@ function AnimatedText({
-   return markChildrenAsNested(element, rest.children);
- }
- 
--const styles = StyleSheet.create({
--  text: {
--    textAlign: 'left',
--  },
--});
--
- export const customAnimatedText = <T,>() =>
-   // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
-   AnimatedText as (props: Props<T>) => ReactNode;
-```
-
-**File**: `src/components/Typography/Text.tsx` (modified, +5/-9)
-```diff
-@@ -1,11 +1,12 @@
- import * as React from 'react';
- import type { ReactNode } from 'react';
--import { StyleSheet, Text as NativeText } from 'react-native';
-+import { Text as NativeText } from 'react-native';
- import type { StyleProp, TextStyle } from 'react-native';
- 
- import AnimatedText from './AnimatedText';
- import { useIsNestedText, markChildrenAsNested } from './NestedTextContext';
- import type { VariantProp } from './types';
-+import { getTextAlignStyle } from './utils';
- import { useLocale } from '../../core/locale';
- import { useInternalTheme } from '../../core/theming';
- import type { ThemeProp } from '../../theme/types';
-@@ -90,6 +91,7 @@ const Text = ({
-   const root = React.useRef<React.ComponentRef<typeof NativeText> | null>(null);
-   const theme = useInternalTheme(initialTheme);
-   const { direction: writingDirection } = useLocale();
-+  const alignStyle = getTextAlignStyle(writingDirection);
-   // Nested text inherits the parent's style unless it has its own theme
-   const inheritsStyle = useIsNestedText() && !initialTheme;
- 
-@@ -157,7 +159,7 @@ const Text = ({
-           inheritsStyle
-             ? textStyle
-             : [
--                styles.text,
-+                alignStyle,
-                 { writingDirection, color: theme.colors.onSurface },
-                 textStyle,
-               ]
-@@ -177,20 +179,14 @@ const Text = ({
-       <NativeText
-         {...rest}
-         ref={root}
--        style={[styles.text, textStyle, { writingDirection }, style]}
-+        style={[alignStyle, textStyle, { writingDirection }, style]}
-       />
-     );
-   }
- 
-   return markChildrenAsNested(element, rest.children);
- };
- 
--const styles = StyleSheet.create({
--  text: {
--    textAlign: 'left',
--  },
--});
--
- type TextComponent<T> = (props: Props<T>) => ReactNode;
- 
- const Component = Text as TextComponent<never>;
-```
-
-**File**: `src/components/Typography/utils.ts` (added, +13/-0)
-```diff
-@@ -0,0 +1,13 @@
-+import { Platform, StyleSheet } from 'react-native';
-+
-+import type { Direction } from '../../core/locale';
-+
-+// A `left` alignment follows the layout direction on Android and iOS, but
-+// stays physical on web, so right-to-left text aligns right there.
-+export const getTextAlignStyle = (direction: Direction) =>
-+  Platform.OS === 'web' && direction === 'rtl' ? styles.rtlWeb : styles.start;
-+
-+const styles = StyleSheet.create({
-+  start: { textAlign: 'left' },
-+  rtlWeb: { textAlign: 'right' },
-+});
-```
-
-**File**: `src/components/__tests__/Typography/Text.test.tsx` (modified, +90/-3)
-```diff
-@@ -1,8 +1,9 @@
--import { View } from 'react-native';
--import type { Text as NativeText } from 'react-native';
-+import { Platform, View } from 'react-native';
-+import type { Text as NativeText, TextStyle } from 'react-native';
- 
--import { expect, it, jest } from '@jest/globals';
-+import { afterEach, describe, expect, it, jest } from '@jest/globals';
- 
-+import { LocaleProvider, type Direction } from '../../../core/locale';
- import PaperProvider from '../../../core/PaperProvider';
- import { render, screen } from '../../../test-utils';
- import configureFonts from '../../../theme/fonts';
-@@ -328,6 +329,92 @@ it("detects nesting like React Native's own Text and View", async () => {
-   });
+   // eslint-disable-next-line no-restricted-syntax -- TODO: replace TestInstance props access with a user-visible assertion.
+-  expect(screen.getByTestId('tf-input').props.placeholder).toBe(' ');
++  expect(screen.getByTestId('tf-input').props.placeholder).toBe('');
  });
  
-+describe('text alignment', () => {
-+  let platformOS: { restore(): void } | undefined;
-+
-+  afterEach(() => {
-+    platformOS?.restore();
-+    platformOS = undefined;
-+  });
-+
-+  const textIDs = [
-+    'text',
-+    'variant-text',
-+    'animated-text',
-+    'animated-variant-text',
-+  ];
-+
-+  const renderTexts = (direction: Direction, style?: TextStyle) =>
-+    render(
-+      <LocaleProvider direction={direction}>
-+        <Text testID="text" style={style}>
-+          {content}
-+        </Text>
-+        <Text testID="variant-text" variant="bodyLarge" style={style}>
-+          {content}
-+        </Text>
-+        <AnimatedText testID="animated-text" style={style}>
-+          {content}
-+        </AnimatedText>
-+        <AnimatedText
-+          testID="animated-variant-text"
-+          variant="bodyLarge"
-+          style={style}
-+        >
-+          {content}
-+        </AnimatedText>
-+      </LocaleProvider>
-+    );
-+
-+  it('aligns right-to-left text to the right on web', async () => {
-+    platformOS = jest.replaceProperty(Platform, 'OS', 'web');
-+
-+    await renderTexts('rtl');
-+
-+    textIDs.forEach((testID) => {
-+      expect(screen.getByTestId(testID)).toHaveStyle({
-+        textAlign: 'right',
-+        writingDirection: 'rtl',
-+      });
-+    });
-+  });
-+
-+  it('aligns left-to-right text to the left on web', async () => {
-+    platformOS = jest.replaceProperty(Platform, 'OS', 'web');
-+
-+    await renderTexts('ltr');
-+
-+    textIDs.forEach((testID) => {
-+      expect(screen.getByTestId(testID)).toHaveStyle({ textAlign: 'left' });
-+    });
-+  });
-+
-+  // React Native aligns `left` text to the right when the layout is
-+  // right-to-left, so Android and iOS keep it.
-+  it.each(['android', 'ios'] as const)(
-+    'keeps the left alignment for right-to-left text on %s',
-+    async (os) => {
-+      platformOS = jest.replaceProperty(Platform, 'OS', os);
-+
-+      await renderTexts('rtl');
-+
-+      textIDs.forEach((testID) => {
-+        expect(screen.getByTestId(testID)).toHaveStyle({ textAlign: 'left' });
-+      });
-+    }
-+  );
-+
-+  it('keeps an alignment set in style for right-to-left text on web', async () => {
-+    platformOS = jest.replaceProperty(Platform, 'OS', 'web');
-+
-+    await renderTexts('rtl', { textAlign: 'center' });
-+
-+    textIDs.forEach((testID) => {
-+      expect(screen.getByTestId(testID)).toHaveStyle({ textAlign: 'center' });
-+    });
-+  });
-+});
-+
- it('throws when custom variant not provided', async () => {
-   jest.spyOn(console, 'error').mockImplementation(() => {});
+ it('keeps a lone StartAccessory before the input in both LTR and RTL (tree order)', async () => {
+```
+
+**File**: `src/components/__tests__/TextInputAccessibility.test.tsx` (modified, +1/-1)
+```diff
+@@ -279,7 +279,7 @@ it('describes an empty labelled field with its placeholder on web until the inpu
+     renderInput.mock.lastCall?.[0]['aria-describedby']?.split(' ') ?? [];
+   const ids = getDescriptionIds();
  
+-  expect(input).toHaveProp('placeholder', ' ');
++  expect(input).toHaveProp('placeholder', '');
+   expect(ids).toHaveLength(2);
+   expect(screen.queryByText('name@example.com')).toBeNull();
+   expect(
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5292** (2026-11-23): refactor(button): share the shape morph between Button and IconButton (@Doberjohn)
+- **PR #5279** (2026-11-23): revert(button): undo the shape morph refactor merged early (@Doberjohn)
+- **PR #5278** (2026-11-23): docs(migration): explain IconButton's footprint when moving to iconSize (@Doberjohn)
+- **PR #5276** (2026-11-21): docs(migration): add a 6.0 alpha line for the renamed FAB variants (@Doberjohn)
 - **PR #5274** (2026-11-20): docs(migration): add the missing Dialog, FAB and TextInput notes (@Doberjohn)
 - **PR #5268** (2026-11-20): fix(touchable-ripple): clear a ripple left by a disabling press (@Doberjohn)
-- **PR #5265** (2026-11-20): fix(text): align right-to-left text to the right on web (@Doberjohn)
-- **PR #5262** (2026-11-20): feat(text-input)!: rename TextInput.Icon size to iconSize (@lukewalczak)
-- **PR #5261** (2026-11-20): fix(TextInput): start-align input text when suffix is active (@EnesKartal)
-- **PR #5255** (2026-11-20): fix(locale): lay out a LocaleProvider subtree in its direction on web (@Doberjohn)
 
 ---
 
@@ -2529,13 +2473,13 @@ migration guide's Text section describe the web behavior.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. text-input): place accessories and label correctly in RTL
+## X. switch): render aria-readonly on web only when read-only
 
 **RULE**:
 When implementing operations in `docs/6.x/docs/guides/migration.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in callstack/react-native-paper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c8c3a394`: text-input): place accessories and label correctly in RTL. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ce0ac9f8`: switch): render aria-readonly on web only when read-only. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/6.x/docs/guides/migration.md`.
@@ -2543,18 +2487,23 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-`startAccessory` and `endAccessory` follow the writing direction. In RTL, `startAccessory` sits on the right on every platform, while v5's `left` stayed on the left on web.
-
+const TertiarySwitch = ({
+  value,
+  onValueChange,
+}: {
+  value: boolean;
+  onValueChange: (value: boolean) => void;
+}) => {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+const TertiarySwitch = ({ value, onValueChange }) => {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c8c3a394` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ce0ac9f8` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

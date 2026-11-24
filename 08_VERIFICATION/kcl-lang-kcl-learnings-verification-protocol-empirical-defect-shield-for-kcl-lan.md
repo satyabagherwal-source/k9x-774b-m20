@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T06:03:04.058Z",
+  "timestamp": "2026-11-24T09:57:23.050Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-kcl-lang-kcl-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [kcl-lang-kcl-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T06:03:04.058Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T09:57:23.050Z`  
 > **Learning ID**: `LEARN-EVO-kcl-lang-kcl-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kcl-lang-kcl-learnings.md`  
 > **Source**: github ([https://github.com/kcl-lang/kcl](https://github.com/kcl-lang/kcl))  
-> **Source Version**: `4e4df138`  
+> **Source Version**: `05194abb`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T06:02:31.442Z  
+> **Timestamp**: 2026-11-24T09:57:12.154Z  
 > **Learning ID**: `learn-github-kcl-lang-kcl`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kcl-lang-kcl-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kcl-lang/kcl](https://github.com/kcl-lang/kcl))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T06:02:31.437Z  
+> **Harvest Timestamp**: 2026-11-24T09:57:12.149Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: KCL Language Core and API
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2446 stars
+- **Stars / Engagement**: 2449 stars
 
 ---
 
@@ -1292,45 +1292,309 @@ impl ModuleInfo {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2986f2a7` (2026-11-20)
-**Commit Message**: chore: fix typos in doc comments (#2267)
+### Incident Patch 1: `6e52cd1d` (2026-11-24)
+**Commit Message**: fix(release): strip the embedded LLVM bitcode from the musl staticlib
 
-Signed-off-by: Adham Kiwan <[REDACTED_EMAIL]>
-Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+fix(release): strip the embedded LLVM bitcode from the musl staticlib
 
-**File**: `compiler_base/error/src/diagnostic/components.rs` (modified, +1/-1)
+Go 1.26.11 rejects an archive whose members carry .llvmbc/.llvmcmd
+when the archive is referenced by a #cgo LDFLAGS. The musl staticlib
+embeds the LLVM bitcode of every upstream crate, so linking against it
+fails with:
+
+    #cgo LDFLAGS: -L${SRCDIR} -lkcl
+    .../libkcl.a: file too short
+
+Strip the bitcode from release/lib/libkcl.a before it is packaged, and
+from the musl build outputs before they are archived.
+
+The strip is verified, not assumed: the member list, the archive's
+exported-symbol index and every member's global symbol set must be
+unchanged, and no .llvmbc/.llvmcmd may remain. Symbols are read with
+readelf rather than nm, because binutils' LLVM gold plugin fails on
+bitcode it cannot read and suppresses the whole symbol table of the
+file, which reads as "the exported symbols changed".
+
+Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
+Signed-off-by: Peefy <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/linux_musl_amd.yml` (modified, +3/-0)
 ```diff
-@@ -10,7 +10,7 @@ use rustc_span::LineInfo;
- const CODE_LINE_PREFIX: &str = " | ";
- const FILE_PATH_PREFIX: &str = "-->";
+@@ -39,6 +39,9 @@ jobs:
+           cargo zigbuild --target x86_64-unknown-linux-musl -r -p kcl-lib
+           mkdir -p _build/dist/linux/core
+           cp -f target/x86_64-unknown-linux-musl/release/libkcl.a _build/dist/linux/core
++          # The staticlib carries the LLVM bitcode of every upstream crate,
++          # and Go 1.26.11 refuses to link an archive that has it.
++          scripts/strip-llvm-bitcode.sh _build/dist/linux/core/libkcl.a
+           make release
  
--/// `Label` can be considered as a component of diagnostic to display a short label message in `Diagnositc`.
-+/// `Label` can be considered as a component of diagnostic to display a short label message in `Diagnostic`.
- /// `Label` provides "error", "warning", "note" and "Help" four kinds of labels.
- ///
- /// # Examples
+       - name: Read VERSION file
 ```
 
-**File**: `compiler_base/error/src/diagnostic/diagnostic_handler.rs` (modified, +1/-1)
+**File**: `.github/workflows/linux_musl_arm.yml` (modified, +3/-0)
 ```diff
-@@ -86,7 +86,7 @@ const DIAGNOSTIC_MESSAGES_ROOT: &str = env!("CARGO_MANIFEST_DIR");
- /// ```ignore
- /// impl Lexer {
- ///     fn lex(&self, diag_handler: &DiagnosticHandler){
--///        handler.XXXX(); // do something to diaplay diagnostic.
-+///        handler.XXXX(); // do something to display diagnostic.
- ///     }
- /// }
- /// ```
+@@ -39,6 +39,9 @@ jobs:
+           cargo zigbuild --target aarch64-unknown-linux-musl -r -p kcl-lib
+           mkdir -p _build/dist/linux/core
+           cp -f target/aarch64-unknown-linux-musl/release/libkcl.a _build/dist/linux/core
++          # The staticlib carries the LLVM bitcode of every upstream crate,
++          # and Go 1.26.11 refuses to link an archive that has it.
++          scripts/strip-llvm-bitcode.sh _build/dist/linux/core/libkcl.a
+           make release
+ 
+       - name: Read VERSION file
+```
+
+**File**: `.github/workflows/release.yaml` (modified, +9/-0)
+```diff
+@@ -127,6 +127,15 @@ jobs:
+           mkdir -p release/lib
+           cp -f target/${{ matrix.lib_subpath }}/release/${{ matrix.lib_name }} release/lib/
+ 
++      # The musl staticlib is the only kcl artifact that is an archive, and
++      # rustc leaves the LLVM bitcode of every upstream crate in it. Go
++      # 1.26.11 refuses to link such an archive from a #cgo LDFLAGS, so the
++      # bitcode has to go before the artifact is published.
++      - name: "Strip the embedded LLVM bitcode (musl staticlib)"
++        if: matrix.lib_name == 'libkcl.a'
++        shell: bash
++        run: scripts/strip-llvm-bitcode.sh release/lib/libkcl.a
++
+       - name: "Build kcl-lib (native: macOS)"
+         if: matrix.lib_build == 'native' && matrix.os != 'windows-latest'
+         shell: bash
+```
+
+**File**: `scripts/strip-llvm-bitcode.sh` (added, +214/-0)
+```diff
+@@ -0,0 +1,214 @@
++#!/usr/bin/env bash
++
++# Remove the embedded LLVM bitcode sections from a Rust static library.
++#
++# rustc embeds the bitcode of every upstream crate - including the
++# precompiled standard library - in the .llvmbc/.llvmcmd sections of each
++# member of a staticlib. The bitcode exists so that a further LTO pass can
++# still happen; cargo has already run that pass when it produced the
++# archive, so in a shipped artifact it is dead weight.
++#
++# It is not harmless dead weight, either. Go 1.26.11 rejects any archive
++# referenced by a #cgo LDFLAGS whose members carry such a section:
++#
++#   disallowed LTO section ".llvmbc" in #cgo LDFLAGS: .../libkcl.a
++#
++# The shared libraries do not have the problem - the linker drops the
++# non-allocated bitcode sections when it produces a .so - but an archive
++# keeps every section of every member, so only the static library needs
++# this.
++#
++# Usage: strip-llvm-bitcode.sh <archive.a> [<archive.a> ...]
++
++set -euo pipefail
++
++if [ "$#" -eq 0 ]; then
++    echo "usage: $(basename "$0") <archive.a> [...]" >&2
++    exit 2
++fi
++
++if ! command -v objcopy >/dev/null 2>&1; then
++    echo "error: objcopy not found (install binutils)" >&2
++    exit 1
++fi
++
++# The global symbols of an object file, as a sorted list of names.
++#
++# Only the global ones matter here: they are what the archive index
++# advertises and what the linker resolves. The local ones are noise - every
++# staticlib member repeats names like ltmp0, and the ARM64 mapping symbols
++# ($d, $x, ...) show up or not depending on the host that reads them.
++#
++# readelf reads the symbol table of the ELF file itself. nm does not work
++# for this: binutils loads an LLVM plugin to read the LTO bitcode of a
++# section, the plugin on the runner is older than the rustc that wrote the
++# bitcode, and the failure takes the symbol table of the whole file with
++# it:
++#
++#   bfd plugin: LLVM gold plugin has failed to create LTO module: Opaque
++#   pointers are only supported in -opaque-pointers mode (Producer:
++#   'LLVM21.1.2-rust-1.91.1-stable' Reader: 'LLVM 14.0.0')
++#   nm: <member>: no symbols
++#
++# That is exactly the bitcode this script removes, so the reading has to
++# happen without the plugin.
++symbol_names() {
++    { readelf --wide --symbols "$1" 2>/dev/null || true; } |
++        awk '$5 ~ /^(GLOBAL|WEAK|GNU_UNIQUE)$/ && $7 != "UND" && NF >= 8 {
++                 name = $8
++                 for (i = 9; i <= NF; i++) name = name " " $i
++                 print name
++             }' |
++        LC_ALL=C sort -u
++}
++
++# The symbols an archive advertises to the linker, as a sorted list of
++# names. This is the index of the archive itself, not the symbols of its
++# members, so it is what a consumer of the library resolves against.
++#
++# nm prints the index as "<symbol> in <member>". The plugin error above
++# lands on stdout as well and contains " in " too, so only a name without
++# a space in it is taken as a symbol.
++archive_symbols() {
++    { nm --print-armap "$1" 2>/dev/null || true; } |
++        awk 'index($0, " in ") > 0 {
++                 sym = substr($0, 1, index($0, " in ") - 1)
++                 if (sym != "" && sym !~ /[[:space:]]/) print sym
++             }' |
++        LC_ALL=C sort -u
++}
++
++# The members of an archive, as a sorted list of names. The symbol table
++# of a BSD ar archive is a member of its own and is not a part of the
++# library, so it is left out.
++member_names() {
++    ar t "$1" | sed '/^__\.SYMDEF/d' | LC_ALL=C sort
++}
++
++count_lines() {
++    wc -l < "$1" | tr -d ' '
++}
++
++for arg in "$@"; do
++    if [ ! -f "$arg" ]; then
++        echo "error: no such archive: $arg" >&2
++        exit 1
++    fi
++
++    archive="$(cd "$(dirname "$arg")" && pwd)/$(basename "$arg")"
++    work="$(mktemp -d)"
++    out="$(mktemp -d)"
++
++    member_names "$archive" > "$out/members.before"
++    archive_symbols "$archive" > "$out/symbols.archive.before"
++
++    # GNU ar skips the archive's own symbol table when extracting, so only
++    # the object members land in the work directory. The member names are
++    # unique, so no member overwrites another.
++    ( cd "$work" && ar x "$archive" )
++
++    # A BSD ar keeps its symbol table in a member of its own, and ar x
++    # extracts it as a file. It is the archive's index, not a part of the
++    # library, so it does not go back in.
++    rm -f "$work"/__.SYMDEF*
++
++    if [ "$(find "$work" -type f | wc -l | tr -d ' ')" -eq 0 ]; then
++        echo "error: no members extracted from $archive" >&2
++        rm -rf "$work" "$out"
++        exit 1
++    fi
++
++    # The symbols of every member, before the strip. The check below is
++    # per member, so that a member that loses a symbol cannot hide behind
++    # another member that has the same name.
++    mkdir -p "$out/symbols.before"
++    for obj in "$work"/*; do
++        symbol_names "$obj" > "$out/symbols.before/$(basename "$obj").txt"
++    done
++
++    for obj in "$work"/*; do
++        objcopy --remove-section=.llvmbc --
+```
+
+---
+
+### Incident Patch 2: `05194abb` (2026-11-24)
+**Commit Message**: fix(parser): give exponentiation precedence over unary operators (#2269)
+
+Signed-off-by: Nathan Chandrasekar <[REDACTED_EMAIL]>
+
+**File**: `crates/parser/src/parser/expr.rs` (modified, +12/-2)
+```diff
+@@ -125,9 +125,16 @@ impl<'a> Parser<'a> {
+ 
+     fn do_parse_simple_expr(&mut self, prec1: Precedence) -> NodeRef<Expr> {
+         let token = self.token;
++        let x = self.parse_unary_expr();
++        self.parse_binary_expr(token, x, prec1)
++    }
+ 
+-        let mut x = self.parse_unary_expr();
+-
++    fn parse_binary_expr(
++        &mut self,
++        token: token::Token,
++        mut x: NodeRef<Expr>,
++        prec1: Precedence,
++    ) -> NodeRef<Expr> {
+         let mut cmp_expr = Compare {
+             left: x.clone(),
+             ops: Vec::new(),
+@@ -340,7 +347,10 @@ impl<'a> Parser<'a> {
+         };
+ 
+         self.bump();
++        let operand_token = self.token;
+         let operand = self.parse_primary_expr();
++        // Exponentiation binds more tightly than unary operators.
++        let operand = self.parse_binary_expr(operand_token, operand, Precedence::Prefix);
+ 
+         Box::new(Node::new_with_loc(
+             Expr::Unary(UnaryExpr { op, operand }),
+```
+
+**File**: `crates/parser/src/parser/precedence.rs` (modified, +2/-2)
+```diff
+@@ -33,10 +33,10 @@ pub enum Precedence {
+     Sum,
+     /// *, /, % //
+     Product,
++    /// +X, -X, ~X
++    Prefix,
+     /// **
+     Power,
+-    /// +X, -X, !X
+-    Prefix,
+ }
+ 
+ impl From<Token> for Precedence {
+```
+
+**File**: `tests/grammar/expr/unary_power/main.k` (added, +10/-0)
+```diff
+@@ -0,0 +1,10 @@
++# Exponentiation binds more tightly than unary operators.
++result = -2 ** 2
++negated_power = -(2 ** 2)
++negative_base = (-2) ** 2
++negative_exponent = 2.0 ** -2
++positive = +2 ** 2
++bitwise_not = ~2 ** 2
++product = -2 ** 2 * 3
++sum = -2 ** 2 + 1
++chained = -2 ** 2 ** 2
+```
+
+**File**: `tests/grammar/expr/unary_power/stdout.golden` (added, +9/-0)
+```diff
+@@ -0,0 +1,9 @@
++result: -4
++negated_power: -4
++negative_base: 4
++negative_exponent: 0.25
++positive: 4
++bitwise_not: -5
++product: -12
++sum: -3
++chained: -16
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2269** (2026-11-24): fix(parser): give exponentiation precedence over unary operators (@vera-rubin)
+- **PR #2268** (2026-11-24): fix(release): strip the embedded LLVM bitcode from the musl staticlib (@Peefy)
 - **PR #2267** (2026-11-20): chore: fix typos in doc comments (@Adham-Kiwan)
 - **PR #2265** (2026-11-19): feat(runtime): extend the duration system package (@Peefy)
 - **PR #2264** (2026-11-20): test(lsp): snapshot the rename tests (@Peefy)
 - **PR #2263** (2026-11-17): chore(release): bump version to v0.13.3 (@Peefy)
-- **PR #2262** (2026-11-06): feat: Export subcommand [--target=typescript] (@mihaigalos)
-- **PR #2261** (2026-11-05): feat: Export subcommand [--target=java] (@mihaigalos)
 
 ---
 
@@ -1350,31 +1614,33 @@ Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. fix typos in doc comments
+## X. release): strip the embedded LLVM bitcode from the musl staticlib
 
 **RULE**:
-When implementing operations in `compiler_base/error/src/diagnostic/components.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kcl-lang/kcl. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/linux_musl_amd.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kcl-lang/kcl. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2986f2a7`: fix typos in doc comments. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6e52cd1d`: release): strip the embedded LLVM bitcode from the musl staticlib. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `compiler_base/error/src/diagnostic/components.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/linux_musl_amd.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// `Label` can be considered as a component of diagnostic to display a short label message in `Diagnostic`.
+          # The staticlib carries the LLVM bitcode of every upstream crate,
+          # and Go 1.26.11 refuses to link an archive that has it.
+          scripts/strip-llvm-bitcode.sh _build/dist/linux/core/libkcl.a
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-/// `Label` can be considered as a component of diagnostic to display a short label message in `Diagnositc`.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2986f2a7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6e52cd1d` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

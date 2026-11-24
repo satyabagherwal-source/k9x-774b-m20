@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T09:42:37.065Z",
+  "last_updated": "2026-11-24T09:57:23.183Z",
   "directives": [
     {
       "id": "CD-001",
@@ -54095,6 +54095,83 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-56DFCD-server-events-dispatch-rerender-dm-statu.md",
       "staged_date": "2026-11-24"
+    },
+    {
+      "id": "CD-TAIH",
+      "directive_title": "bump sysinfo to 0.40.4",
+      "source_repo": "ClementTsang/bottom",
+      "source_commit": "87cb33dc",
+      "staged_file": "11_INBOX/candidate-directives/CD-TAIH-bump-sysinfo-to-0-40-4.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-TBJA",
+      "directive_title": "render aria-readonly on web only when read-only",
+      "source_repo": "callstack/react-native-paper",
+      "source_commit": "ce0ac9f8",
+      "staged_file": "11_INBOX/candidate-directives/CD-TBJA-render-aria-readonly-on-web-only-when-read-only.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "F"
+    },
+    {
+      "id": "CD-TDCZ",
+      "directive_title": "strip the embedded LLVM bitcode from the musl staticlib",
+      "source_repo": "kcl-lang/kcl",
+      "source_commit": "05194abb",
+      "staged_file": "11_INBOX/candidate-directives/CD-TDCZ-strip-the-embedded-llvm-bitcode-from-the-musl-staticlib.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "B"
+    },
+    {
+      "id": "CD-TGJH",
+      "directive_title": "end streams and bound the batcher's memory",
+      "source_repo": "MaterializeInc/materialize",
+      "source_commit": "0bb27e65",
+      "staged_file": "11_INBOX/candidate-directives/CD-TGJH-end-streams-and-bound-the-batcher-s-memory.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-24",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-TJIY",
+      "directive_title": "deps: bump sysinfo to 0.40.4",
+      "source_repo": "clementtsang-bottom-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-TJIY-deps-bump-sysinfo-to-0-40-4.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-TK6F",
+      "directive_title": "switch): render aria-readonly on web only when read-only",
+      "source_repo": "callstack-react-native-paper-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-TK6F-switch-render-aria-readonly-on-web-only-when-read-only.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "F"
+    },
+    {
+      "id": "CD-TKRY",
+      "directive_title": "release): strip the embedded LLVM bitcode from the musl staticlib",
+      "source_repo": "kcl-lang-kcl-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-TKRY-release-strip-the-embedded-llvm-bitcode-from-the-musl-staticlib.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-24",
+      "domain_letter": "B"
     }
   ]
 }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T09:42:37.288Z",
+  "last_updated": "2026-11-24T09:57:23.363Z",
   "total_records": 2511,
   "domains": {
     "A": {
@@ -11491,8 +11491,8 @@
       "title": "Design Intelligence: callstack/react-native-paper Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-callstack-react-native-paper-design-intelligence-callstack-react-native-paper-co.md",
       "repository": "callstack/react-native-paper",
-      "content_hash": "e22ee6c43258463c40814eb8f6273fc6c1c69bf549531bcb137427d520b92dcd",
-      "created_at": "2026-11-21T16:40:11.069Z"
+      "content_hash": "e998e62cf6a55af06fc12d4b1122557a8cd05b0c4be816bc606f9687d86dd002",
+      "created_at": "2026-11-24T09:57:11.391Z"
     },
     "domain_intelligence-technical-construction-intelligence-databendlabs-databend-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-databendlabs-databend-core-invariants",
@@ -11578,8 +11578,8 @@
       "title": "Design Intelligence: callstack-react-native-paper-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-callstack-react-native-paper-learnings-design-intelligence-callstack-react-nativ.md",
       "repository": "callstack-react-native-paper-learnings",
-      "content_hash": "6353de9d0d8e54b10ddaadadc4173a31872cb86e223fb9096164d4d073969af3",
-      "created_at": "2026-11-21T16:40:23.167Z"
+      "content_hash": "ff9ee1827154807efd21ed5652914c12d64a7e10761828879f43459a0e69656e",
+      "created_at": "2026-11-24T09:57:22.587Z"
     },
     "domain_intelligence-architecture-intelligence-xudong-huang-may-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-xudong-huang-may-core-invariants",
@@ -20673,8 +20673,8 @@
       "title": "Architecture Intelligence: ClementTsang/bottom Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-clementtsang-bottom-architecture-intelligence-clementtsang-bottom-core-invariant.md",
       "repository": "ClementTsang/bottom",
-      "content_hash": "43d1a7a9b0e4518169d54c153eaf7ccb29171d440884e90096f0511f6d0cc04f",
-      "created_at": "2026-11-23T00:56:22.971Z"
+      "content_hash": "d4b5c1808b4f953477e78d780392d8adc0e6eba80018a750767a19d7b16ca30c",
+      "created_at": "2026-11-24T09:57:10.077Z"
     },
     "domain_intelligence-architecture-intelligence-clementtsang-bottom-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-clementtsang-bottom-learnings-core-invariants",
@@ -20682,8 +20682,8 @@
       "title": "Architecture Intelligence: clementtsang-bottom-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-clementtsang-bottom-learnings-architecture-intelligence-clementtsang-bottom-lear.md",
       "repository": "clementtsang-bottom-learnings",
-      "content_hash": "fdf8ca83a73a07f99f0500517054f85eefe6e25a43e43eb7454f0024b95223ed",
-      "created_at": "2026-11-23T00:56:35.533Z"
+      "content_hash": "7f29de99656d31052ea46641e8ec4c4efb5eed9eb70abaed3b398030dee647b7",
+      "created_at": "2026-11-24T09:57:21.745Z"
     },
     "domain_intelligence-research-knowledge-intelligence-burner22-numbat-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-burner22-numbat-core-invariants",
@@ -28053,8 +28053,8 @@
       "title": "Product Intelligence: kcl-lang/kcl Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-kcl-lang-kcl-product-intelligence-kcl-lang-kcl-core-invariants.md",
       "repository": "kcl-lang/kcl",
-      "content_hash": "5c30ffa31472073fb5d118179ef5a98772b6ceeabf33ddb8cb515b701f4e9125",
-      "created_at": "2026-11-20T06:02:32.746Z"
+      "content_hash": "6c3f445784df837f2997313c60bab01e9b25bcaba03c8606f384a9cd054961bb",
+      "created_at": "2026-11-24T09:57:13.758Z"
     },
     "domain_intelligence-architecture-intelligence-redisearch-redisearch-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-redisearch-redisearch-core-invariants",
@@ -35545,8 +35545,8 @@
       "title": "Product Intelligence: kcl-lang-kcl-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-kcl-lang-kcl-learnings-product-intelligence-kcl-lang-kcl-learnings-core-invarian.md",
       "repository": "kcl-lang-kcl-learnings",
-      "content_hash": "3d56922409d29d593bf9f0cad029160ed779ff0f5cd01f0d333c124cacd41725",
-      "created_at": "2026-11-20T06:03:04.321Z"
+      "content_hash": "2ae6b6c2e2d7445777eceb4ecefc730a2d2cfeefed6002905095f32faa8a775e",
+      "created_at": "2026-11-24T09:57:23.363Z"
     },
     "DOM-D-AF6D9DEB": {
       "record_id": "DOM-D-AF6D9DEB",
@@ -37623,8 +37623,8 @@
       "title": "Technical Construction Intelligence: MaterializeInc/materialize Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-materializeinc-materialize-technical-construction-intelligence-materializeinc-ma.md",
       "repository": "MaterializeInc/materialize",
-      "content_hash": "64fe41915efeb89ba247a637dff56d9f56a1958c2a10cdfa643056f9e9dc0576",
-      "created_at": "2026-11-21T03:28:50.934Z"
+      "content_hash": "e47a25766deddca24c995230520a3275728337a7e40ee22f8352963c17a8550b",
+      "created_at": "2026-11-24T09:57:17.868Z"
     },
     "domain_intelligence-technical-construction-intelligence-materializeinc-materialize-learnings-core-in": {
       "record_id": "domain_intelligence-technical-construction-intelligence-materializeinc-materialize-learnings-core-in",

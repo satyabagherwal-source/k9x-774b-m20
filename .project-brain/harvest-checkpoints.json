@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T09:42:29.311Z",
+  "last_updated": "2026-11-24T09:57:17.456Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4671,14 +4671,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-callstack-react-native-paper",
-      "content_hash": "2b73aac0bd992a0eed27ee74445bacf89adefa0a02b62fae7dac8ea4bd997b49",
-      "verified_at": "2026-11-21T16:40:10.548Z",
+      "content_hash": "792454fa15ee7aa8b502b170c2bc1fc7290cb7715822621220f6ea4c3e5015be",
+      "verified_at": "2026-11-24T09:57:10.968Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T16:40:10.548Z"
+      "last_updated": "2026-11-24T09:57:10.968Z"
     },
     "tensorchord/pgvecto.rs": {
       "repository": "tensorchord/pgvecto.rs",
@@ -5961,14 +5961,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clementtsang-bottom",
-      "content_hash": "2a92260ae0660503edf10432cf6174606874708ada762911e7be6952094ac525",
-      "verified_at": "2026-11-23T00:56:22.596Z",
+      "content_hash": "3668c226b36384d22d5779a98ce5a31a45bfee78d123566bde1b1acbd82312a0",
+      "verified_at": "2026-11-24T09:57:09.644Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T00:56:22.596Z"
+      "last_updated": "2026-11-24T09:57:09.644Z"
     },
     "jhen0409/react-native-debugger": {
       "repository": "jhen0409/react-native-debugger",
@@ -6006,14 +6006,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-materializeinc-materialize",
-      "content_hash": "ec4bf6fa9cf512c18f376c0c82396ba398976870cdc12329231582c4ec2ad959",
-      "verified_at": "2026-11-23T14:38:18.020Z",
+      "content_hash": "20d5cead4e0c1f2fc3d90f87199b542d9c2d0b607481b3a5285aecf0e7e61ebb",
+      "verified_at": "2026-11-24T09:57:17.456Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T14:38:18.020Z"
+      "last_updated": "2026-11-24T09:57:17.456Z"
     },
     "react-bootstrap/react-bootstrap": {
       "repository": "react-bootstrap/react-bootstrap",
@@ -8691,14 +8691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kcl-lang-kcl",
-      "content_hash": "6be3e1b5459262382295c000f471a1a2880f8fc7dd91957bd27ea6f9189af26f",
-      "verified_at": "2026-11-20T06:02:32.417Z",
+      "content_hash": "49fb6c8daa594de70b9c17e722656a78e53445d5178da462e3a2b3583e4786f0",
+      "verified_at": "2026-11-24T09:57:13.349Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T06:02:32.417Z"
+      "last_updated": "2026-11-24T09:57:13.349Z"
     },
     "apache/incubator-pegasus": {
       "repository": "apache/incubator-pegasus",

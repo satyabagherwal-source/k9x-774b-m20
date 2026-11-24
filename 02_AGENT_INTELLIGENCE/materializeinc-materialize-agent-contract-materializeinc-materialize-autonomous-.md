@@ -4,17 +4,17 @@
 {
   "source_repository": "MaterializeInc/materialize",
   "source_url": "https://github.com/MaterializeInc/materialize",
-  "source_version": "d9c983d5",
+  "source_version": "0bb27e65",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-23T14:38:18.303Z",
+  "timestamp": "2026-11-24T09:57:17.693Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-materializeinc-materialize",
   "canonical_classification": "agent_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [MaterializeInc/materialize](https://github.com/MaterializeInc/materialize) (Revision: `d9c983d5`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-23T14:38:18.303Z`  
+> **Provenance**: Harvested from [MaterializeInc/materialize](https://github.com/MaterializeInc/materialize) (Revision: `0bb27e65`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-24T09:57:17.693Z`  
 > **Learning ID**: `learn-github-materializeinc-materialize`
 
 
@@ -29,7 +29,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T14:38:16.727Z  
+> **Harvest Timestamp**: 2026-11-24T09:57:16.878Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -39,7 +39,7 @@ PROVENANCE_END -->
 - **Description**: The live data layer for apps and AI agents. Create up-to-the-second views into your business, just using SQL
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 6411 stars
+- **Stars / Engagement**: 6412 stars
 
 ---
 
@@ -1093,11 +1093,11 @@ export function splitWorkerCpuRows(rows: WorkerCpuRow[]) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #41015** (2026-11-23): **skills: scope mz-commit checklist to pre-push, drop clippy**
-  *Symptoms*: The `mz-commit` skill told agents to run `bin/fmt`, `bin/lint`, and workspace clippy before every commit, including local commits that only checkpoint work in progress.  Scope the checklist to pushing a branch for review, and drop clippy, which CI already runs. `AGENTS.md` and the skills README are updated to match. No tests, docs only.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
+- **Issue #41033** (2026-11-24): **chore(deps): update dependency vitest to v5.1.1**
+  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [vitest](https://vitest.dev) ([source](https://redirect.github.com/vitest-dev/vitest/tree/HEAD/packages/vitest)) | [`5.1.0` → `5.1.1`](https://renovatebot.com/diffs/npm/vitest/5.1.0/5.1.1) | ![age](https://developer.mend.io/api/mc/badges/age/npm/vitest/5.1.1?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/vitest/5.1.0/5.1.1?slim=true) |  ---  ### Release Notes  <details> <summary>vitest-dev/vitest (vitest)</summary>  ### [`v5.1.1`](https://redirect.github.com/vitest-dev/vitest/releases/tag/v5.1.1)  [Compare Source](https://redirect.github.com/vitest-dev/vitest/compare/v5.1.0...v5.1.1)  #####    🚀 Features  - **cache**: Add fs module cache env variables  -  by [@&#8203;sheremet-va](https://redirect.github.com/sheremet-va) in [#&#8203;11859](https://redirect.github.com/vitest-dev/vitest/issues/11859) [<samp>(708c0)</samp>](https://redirect.github.com/vitest-dev/vitest/commit/708c05da0)  #####    🐞 Bug Fixes  - Rerun on file changes after a config restart  -  by [@&#8203;magurotuna](https://redirect.github.com/magurotuna) in [#&#8203;11772](https://redirect.github.com/vitest-dev/vitest/issues/11772) and [#&#8203;11829](https://redirect.github.com/vitest-dev/vitest/issues/11829) [<samp>(289ca)</samp>](https://redirect.github.com/vitest-dev/vitest/
 
-- **Issue #41014** (2026-11-23): **renovate: Fix digest lookups and WASM lockfile updates**
-  *Symptoms*: Based on Mend logs of 5 most recent runs.
+- **Issue #41023** (2026-11-23): **persist: Allow staging to lead on finalized rollups**
+  *Symptoms*: Turning on `persist_gc_remove_finalized_rollups` in staging, so the flag's served value differs between the two LaunchDarkly environments during the rollout.  Add it to KNOWN_CROSS_ENV_DIVERGENCES  See: PER-141-143 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1114,379 +1114,587 @@ export function splitWorkerCpuRows(rows: WorkerCpuRow[]) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `328c9ab3` (2026-11-23)
-**Commit Message**: chore(deps): update rust crate url to v2.5.9 [security] (#40995)
+### Incident Patch 1: `f456618e` (2026-11-23)
+**Commit Message**: materialize-sdk: end streams and bound the batcher's memory (#40807)
 
-This PR contains the following updates:
+Ends a stream with `finish`, which releases what remains once the server
+reports the end, including an `UP TO` stream that ends without a final
+progress row
+([SQL-528](https://linear.app/materializeinc/issue/SQL-528)). Adds two
+memory limits to the batcher: a soft one that releases complete
+timestamps early and the snapshot in chunks, and a hard one on the bytes
+of one timestamp, which fails the stream with `TimestampTooLarge`. Also
+adds the latest change per key of a batch, for targets that keep only
+the current state of each key. Part of
+[DEX-178](https://linear.app/materializeinc/issue/DEX-178).
 
-| Package | Type | Update | Change |
-|---|---|---|---|
-| [url](https://redirect.github.com/servo/rust-url) |
-workspace.dependencies | patch | `2.5.8` → `2.5.9` |
+Tests: unit tests, batch vectors, and latest-by-key vectors.
 
----
-
-> [!WARNING]
-> Some dependencies could not be looked up. Check the Dependency
-Dashboard for more information.
-
----
-
-### Stack overflow in `Url::origin()` on nested `blob:` URLs
-
-[GHSA-hrj5-67jp-wqp9](https://redirect.github.com/advisories/GHSA-hrj5-67jp-wqp9)
-/
-[RUSTSEC-2026-0592](https://rustsec.org/advisories/RUSTSEC-2026-0592.html)
-
-<details>
-<summary>More information</summary>
-
-#### Details
-In `url` 2.5.8 and earlier, `Url::origin()` handled a `blob:` URL by
-parsing its path as another URL and calling itself on the result. It did
-so regardless of the inner URL's scheme, `blob` included. Each `blob:`
-prefix cost one stack frame, with no limit on nesting depth.
-`Url::parse()` accepts a URL with 10,000 `blob:` prefixes followed by
-`https://example.com/` (50,020 bytes in total); calling `Url::origin()`
-on it overflowed the default 2 MiB stack of a spawned thread.
-
-A stack overflow aborts the whole process, and `
-
-**File**: `Cargo.lock` (modified, +4/-4)
+**File**: `misc/materialize-sdk/conformance/README.md` (modified, +11/-4)
 ```diff
-@@ -3721,9 +3721,9 @@ checksum = "00b0228411908ca8685dba7fc2cdd70ec9990a6e753e89b6ac91a84c40fbaf4b"
+@@ -45,7 +45,14 @@ row: the decoded message, or `{"error": "protocol"}`.
  
- [[package]]
- name = "form_urlencoded"
--version = "1.2.2"
-+version = "1.2.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
-+checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
- dependencies = [
-  "percent-encoding",
- ]
-@@ -14562,9 +14562,9 @@ dependencies = [
+ ### `batch.json`
  
- [[package]]
- name = "url"
--version = "2.5.8"
-+version = "2.5.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
-+checksum = "f00cd2407bb42c0ef17be88d4cf020f5cceffd121665bac9b8b9493a369b3b1a"
- dependencies = [
-  "form_urlencoded",
-  "idna",
+-Input: `start`, optional `up_to`, and `steps`. Build a batcher, then push each
+-step, a message. The output is `{"outputs": [...], "finished": bool}`, with
+-one entry per step: the list of events it released, or `{"error": "protocol"}`.
+-After an error the batcher fails every later step.
++Input: `start`, optional `up_to`, `max_pending_bytes`, and
++`max_timestamp_bytes`, and `steps`. Build a batcher, then run each step: a
++message is pushed, and `"finish"` reports the end of the stream. The output is
++`{"outputs": [...], "finished": bool}`, with one entry per step: the list of
++events it released, or `{"error": kind}` with kind `protocol` or
++`timestamp_too_large`. After an error the batcher fails every later step.
++
++### `latest_by_key.json`
++
++Input: `updates`, in timestamp order at timestamps of one or more. Release them
++as one batch and return the latest change per key, as a list of updates.
 ```
 
----
-
-### Incident Patch 2: `be6d706d` (2026-11-23)
-**Commit Message**: renovate: Fix digest lookups and WASM lockfile updates (#41014)
-
-Based on Mend logs of 5 most recent runs.
-
-**File**: `.github/renovate.json5` (modified, +20/-3)
+**File**: `misc/materialize-sdk/conformance/batch.json` (modified, +678/-1)
 ```diff
-@@ -20,8 +20,8 @@
-   "constraints": {"rust": "1.98.1"},
-   "customDatasources": {
-     "gcloud": {
--      "defaultRegistryUrlTemplate": "https://dl.google.com/dl/cloudsdk/channels/rapid/components-2.json",
--      "transformTemplates": ["{\"releases\": [{\"version\": version}]}"]
-+      "defaultRegistryUrlTemplate": "https://storage.googleapis.com/storage/v1/b/cloud-sdk-release/o?matchGlob=google-cloud-cli-%5B0-9%5D*-linux-x86_64.tar.gz&fields=items(name,timeCreated)&maxResults=1000",
-+      "transformTemplates": ["{\"releases\": [items.{\"version\": $split(name, '-')[3], \"releaseTimestamp\": timeCreated}]}"]
+@@ -265,12 +265,58 @@
+       }
      },
-     "inspector-sbomgen": {
-       "defaultRegistryUrlTemplate": "https://docs.aws.amazon.com/inspector/latest/user/sbom-generator-versions.html",
-@@ -39,7 +39,7 @@
-         "/\\.(sh|bash|py)$/"
-       ],
-       "matchStrings": [
--        "#[ \\t]*renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)(?: packageName=(?<packageName>\\S+))?(?: versioning=(?<versioning>\\S+))?(?: extractVersion=(?<extractVersion>\\S+))?[ \\t]*\\n(?:[^\\n=]*?=|[^\\n:]*?:)[ \\t]*[\"']?(?:[^\\s\"'@]+:)?(?<currentValue>[^\\s\"'@,]+)(?:@(?<currentDigest>(?:sha256:)?[a-f0-9]+))?",
-+        "#[ \\t]*renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)(?: packageName=(?<packageName>\\S+))?(?: versioning=(?<versioning>\\S+))?(?: extractVersion=(?<extractVersion>\\S+))?[ \\t]*\\n(?:[^\\n=]*?=|[^\\n:]*?:)[ \\t]*(?:\\([ \\t]*\\n[ \\t]*)?[\"']?(?:[^\\s\"'@]+:)?(?<currentValue>[^\\s\"'@,]+)(?:@(?<currentDigest>(?:sha256:)?[a-f0-9]+))?",
-         "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)[ \\t]*\\nprintf [\"'](?<currentValue>[^\"']+)"
-       ],
-       // Regex managers need a template to append a previously absent digest.
-@@ -190,6 +190,14 @@
-       "matchFileNames": ["misc/wasm/**/Cargo.toml"],
-       "additionalBranchPrefix": "cargo-wasm-"
-     },
-+    {
-+      // js-sys requires an exact wasm-bindgen version. Bumping the manifest
-+      // lets Cargo resolve both crates together when updating the lock file.
-+      "matchManagers": ["cargo"],
-+      "matchFileNames": ["misc/wasm/**/Cargo.toml"],
-+      "matchPackageNames": ["wasm-bindgen"],
-+      "rangeStrategy": "bump"
-+    },
      {
-       "matchManagers": ["cargo"],
-       "matchFileNames": ["misc/materialize-sdk/**/Cargo.toml"],
-@@ -241,6 +249,15 @@
-       "matchDatasources": ["docker"],
-       "pinDigests": true
-     },
-+    {
-+      // Renovate checks the tag's age during lookup, then omits the timestamp
-+      // from digest updates. Skip the duplicate branch check once lookup has
-+      // returned a digest and cleared its pending checks.
-+      "matchDatasources": ["docker"],
-+      "matchUpdateTypes": ["digest", "pinDigest"],
-+      "matchJsonata": ["$exists(newDigest) and $not(pendingChecks = true) and $not($exists(releaseTimestamp)) and minimumReleaseAgeBehaviour = 'timestamp-optional'"],
-+      "minimumReleaseAge": null
+-      "name": "nothing follows the end of the stream",
++      "name": "more progress past UP TO, as several workers send, changes nothing",
++      "input": {
++        "start": {"kind": "snapshot"},
++        "steps": [
++          {"message": "progress", "frontier": "10"},
++          {"message": "update", "timestamp": "10", "op": "diff", "row": ["a"], "diff": "1"},
++          {"message": "update", "timestamp": "12", "op": "diff", "row": ["b"], "diff": "1"},
++          {"message": "progress", "frontier": "25"},
++          {"message": "progress", "frontier": "27"}
++        ],
++        "up_to": "15"
++      },
++      "expect": {
++        "outputs": [
++          [],
++          [],
++          [],
++          [{"event": "batch", "lower": null, "upper": "15", "snapshot": true, "updates": [{"timestamp": "10", "op": "diff", "row": ["a"], "diff": "1"}, {"timestamp": "12", "op": "diff", "row": ["b"], "diff": "1"}]}],
++          []
++        ],
++        "finished": true
++      }
 +    },
-     {
-       // This tag also selects ZooKeeper and Schema Registry images, whose
-       // digests differ from Kafka's.
++    {
++      "name": "no update follows the end of the stream at UP TO",
+       "input": {
+         "start": {"kind": "snapshot"},
+         "steps": [
+           {"message": "progress", "frontier": "10"},
+           {"message": "progress", "frontier": "15"},
++          {"message": "progress", "frontier": "16"},
++          {"message": "update", "timestamp": "12", "op": "diff", "row": ["a"], "diff": "1"}
++        ],
++        "up_to": "15"
++      },
++      "expect": {
++        "outputs": [
++          [],
++          [{"event": "batch", "lower": null, "upper": "15", "snapshot": true, "updates": []}],
++          [],
++          {"error": "protocol"}
++        ],
++        "finished": true
++      }
++    },
++    {
++      "name": "progress past UP TO still cannot go back",
++      "input": {
++        "start": {"kind": "snapshot"},
++        "steps": [
++          {"message": "progress", "frontier": "10"},
++          {"message": "progress", "frontier": "17"},
+           {"message": "progress", "frontier": "16"}
+         ],
+         "up_to": "15"
+@@ -295,6 +341,637 @@
+         "up_to": "15"
+       },
+       "expect": {"outputs": [[], {"error": "protocol"}], "finished": false}
++    },
++    {
++      "name": "the end of a bounded stream releases up to UP TO without a final progress row (SQL-528)",
++      "input": {
++        "start": {"kind": "resume", "frontier": "10"},
++        "steps": [
++          {"message": "progress", "frontier": "9"},
++          {"message": "update", "timestamp": "15", "op": "diff", "row": ["a"], "diff": "1"},
++          {"message": "progress", "frontier": "16"},
++          {"message": "update", "timestamp": "19", "op": "diff", "row": ["b"], "diff": "1"},
++          "finish"
++        ],
++        "up_to": "20"
++      },
++      "expect": {
++        "outputs": [
++          [],
++          [],
++          [
++            {
++              "event": "batch",
++              "lower": "10",
++              "upper": "16",
++              "snapshot": false,
++              "updates": [{"timestamp": "15", "op": "diff", "row": ["a"], "diff": "1"}]
++            }
++          ],
++          [],
++          [
++            {
++              "event": "batch",
++              "lower": "16",
++              "upper": "20",
++              "snapshot": false,
++              "updates": [{"timestamp": "19", "op": "diff", "row": ["b"], "diff": "1"}]
++            }
++          ]
++        ],
++        "finished": true
++      }
++    },
++    {
++      "name": "the end of an unbounded stream releases every update",
++      "input": {
++        "start": {"kind": "snapshot"},
++        "steps": [
++          {"message": "progress", "frontier": "10"},
++          {"message": "update", "timestamp": "10", "op": "diff", "row": ["a"], "diff": "1"},
++          {"message": "update", "timestamp": "13", "op": "diff", "row": ["b"], "diff": "1"},
++          "finish"
++        ]
++      },
++      "expect": {
++        "outputs": [
++          [],
++          [],
++          [],
++          [
++            {
++              "event": "batch",
++              "lower": null,
++              "upper": "14",
++              "snapshot": true,
++              "updates": [
++                {"timestamp": "10", "op": "diff", "row": ["a"], "diff": "1"},
++                {"timestamp": "13", "op": "diff", "row": ["b"], "diff": "1"}
++              ]
++            }
++          ]
++        ],
++        "finished": true
++      }
++    },
++    {
++      "name": "the end of an unbounded stream closes the latest progress row's timestamp too",
++      "input": {
++        "start": {"kind": "resume", "frontier": "10"},
++        "steps": [{"message": "progress", "frontier": "9"}, {"message": "progress", "frontier": "12"}, "finish"]
++      },
++      "expect": {
++        "outputs": [
++          [],
++          [{"event": "batch", "lower": "10", "upper": "12", "snapshot": false, "updates": []}],
++          [{"event": "batch", "lower": "12", "upper": "13", "snapshot": false, "updates": []}]
++        ],
++ 
 ```
 
-**File**: `ci/builder/Dockerfile` (modified, +12/-5)
+**File**: `misc/materialize-sdk/conformance/latest_by_key.json` (added, +68/-0)
 ```diff
-@@ -356,16 +356,17 @@ RUN arch_gcloud=$(echo "$ARCH_GCC" | sed -e "s/aarch64/arm/" -e "s/amd64/x86_64/
-     && rm -rf /root/.cache/pip
- 
- # Install docs site dependencies. These are towards the end for the same reason
--# as the Python dependencies. These are only supported on x86_64 at the moment.
--# See: https://discourse.gohugo.io/t/how-to-install-hugo-extended-on-linux-arm/28098/4
-+# as the Python dependencies. The docs build runs on x86_64.
- #
- # On every Hugo version bump, compare doc/user/layouts/sitemap.xml with the new
- # version's built-in sitemap template, which it copies, and port any changes.
- 
- # renovate: datasource=github-release-attachments depName=wjdp/htmltest
- ARG HTMLTEST_AMD64=v0.17.0@775c597ee74899d6002cd2d93076f897f4ba68686bceabe2e5d72e84c57bc0fb
- # renovate: datasource=github-release-attachments depName=gohugoio/hugo
--ARG HUGO_AMD64=v0.152.2@08200e4d82f086c94c301e8ba08102f9e23f38774ad949bb3251cac76283684a
-+ARG HUGO_AMD64=v0.170.1@a1c81c53a8bc789f1af9494a6b6be1a9b1aa7782e22a1398f919d5df50558433
-+# renovate: datasource=github-release-attachments depName=sass/dart-sass
-+ARG DART_SASS_AMD64=1.108.2@32d2eb5b83cbc180fce9657ff3c57401a9006c59eccfe0bfdde0aa755a66d42f
- 
- RUN if [ $ARCH_GCC = x86_64 ]; then \
-     HTMLTEST_VERSION=${HTMLTEST_AMD64%@*} \
-@@ -374,10 +375,16 @@ RUN if [ $ARCH_GCC = x86_64 ]; then \
-     && tar -xzf htmltest.tar.gz -C /usr/local/bin htmltest \
-     && rm htmltest.tar.gz \
-     && HUGO_VERSION=${HUGO_AMD64%@*} \
--    && curl -fsSL https://github.com/gohugoio/hugo/releases/download/${HUGO_VERSION}/hugo_extended_withdeploy_${HUGO_VERSION#v}_Linux-64bit.tar.gz > hugo.tar.gz \
-+    && curl -fsSL https://github.com/gohugoio/hugo/releases/download/${HUGO_VERSION}/hugo_withdeploy_${HUGO_VERSION#v}_linux-amd64.tar.gz > hugo.tar.gz \
-     && echo "${HUGO_AMD64#*@} hugo.tar.gz" | sha256sum --check \
-     && tar -xzf hugo.tar.gz -C /usr/local/bin hugo \
--    && rm hugo.tar.gz; \
-+    && rm hugo.tar.gz \
-+    && DART_SASS_VERSION=${DART_SASS_AMD64%@*} \
-+    && curl -fsSL https://github.com/sass/dart-sass/releases/download/${DART_SASS_VERSION}/dart-sass-${DART_SASS_VERSION}-linux-x64.tar.gz > dart-sass.tar.gz \
-+    && echo "${DART_SASS_AMD64#*@} dart-sass.tar.gz" | sha256sum --check \
-+    && tar -xzf dart-sass.tar.gz -C /opt \
-+    && ln -s /opt/dart-sass/sass /usr/local/bin/sass \
-+    && rm dart-sass.tar.gz; \
-     fi
- 
- # Install KinD, kubectl, helm & helm-docs
+@@ -0,0 +1,68 @@
++{
++  "function": "latest_by_key",
++  "cases": [
++    {
++      "name": "the latest change per key wins, ordered by key, with its timestamp",
++      "input": {
++        "updates": [
++          {"timestamp": "1", "op": "upsert", "key": ["k2"], "value": ["x"]},
++          {"timestamp": "1", "op": "upsert", "key": ["k1"], "value": ["a"]},
++          {"timestamp": "2", "op": "upsert", "key": ["k1"], "value": ["b"]},
++          {"timestamp": "3", "op": "delete", "key": ["k2"]}
++        ]
++      },
++      "expect": [
++        {"timestamp": "2", "op": "upsert", "key": ["k1"], "value": ["b"]},
++        {"timestamp": "3", "op": "delete", "key": ["k2"]}
++      ]
++    },
++    {
++      "name": "a later change replaces a key violation",
++      "input": {
++        "updates": [
++          {"timestamp": "1", "op": "key_violation", "key": ["k"]},
++          {"timestamp": "2", "op": "upsert", "key": ["k"], "value": ["v"]}
++        ]
++      },
++      "expect": [{"timestamp": "2", "op": "upsert", "key": ["k"], "value": ["v"]}]
++    },
++    {
++      "name": "a key violation replaces an earlier change",
++      "input": {
++        "updates": [
++          {"timestamp": "1", "op": "upsert", "key": ["k"], "value": ["v"]},
++          {"timestamp": "2", "op": "key_violation", "key": ["k"]}
++        ]
++      },
++      "expect": [{"timestamp": "2", "op": "key_violation", "key": ["k"]}]
++    },
++    {
++      "name": "keys order as text, with NULL first",
++      "input": {
++        "updates": [
++          {"timestamp": "1", "op": "upsert", "key": ["9"], "value": ["a"]},
++          {"timestamp": "1", "op": "upsert", "key": ["10"], "value": ["b"]},
++          {"timestamp": "1", "op": "upsert", "key": [null], "value": ["c"]}
++        ]
++      },
++      "expect": [
++        {"timestamp": "1", "op": "upsert", "key": [null], "value": ["c"]},
++        {"timestamp": "1", "op": "upsert", "key": ["10"], "value": ["b"]},
++        {"timestamp": "1", "op": "upsert", "key": ["9"], "value": ["a"]}
++      ]
++    },
++    {
++      "name": "diff updates have no key and pass through",
++      "input": {
++        "updates": [
++          {"timestamp": "1", "op": "diff", "row": ["a"], "diff": "1"},
++          {"timestamp": "2", "op": "diff", "row": ["a"], "diff": "1"}
++        ]
++      },
++      "expect": [
++        {"timestamp": "1", "op": "diff", "row": ["a"], "diff": "1"},
++        {"timestamp": "2", "op": "diff", "row": ["a"], "diff": "1"}
++      ]
++    }
++  ]
++}
 ```
 
-**File**: `ci/deploy_website/website.sh` (modified, +0/-3)
+**File**: `misc/materialize-sdk/core/src/batch.rs` (modified, +452/-32)
 ```diff
-@@ -46,9 +46,6 @@ declare -A external_redirects=(
-     [docs/self-managed/v25.2/support/index.html]="https://materialize.com/support/"
- )
- 
--# Works around a Hugo data race, see ci/test/preview-docs.sh.
--export HUGO_NUMWORKERMULTIPLIER=1
+@@ -22,18 +22,21 @@
+ //! order. It checks both, along with every other bound it relies on, and fails
+ //! with a [`ProtocolError`] instead of releasing a frontier it cannot prove.
+ //!
+-//! The server sends all updates of a time range together, sorted by time and
+-//! consolidated per timestamp (`ActiveSubscribe::process_response` in
+-//! `src/adapter/src/active_compute_sink.rs`). The batcher releases updates when
+-//! a progress row passes their timestamps, and passes them on as they arrive
+-//! without consolidating.
 -
- cd doc/user
- if [[ "$BUILDKITE_ORGANIZATION_SLUG" == "materialize" ]] && [[ "$BUILDKITE_BRANCH" == self-managed-docs/* ]]; then
-     VERSION=${BUILDKITE_BRANCH#self-managed-docs/}
++//! A timestamp closes when a progress row passes it, or when an update at a
++//! later timestamp arrives, because the server sends all updates of a time
++//! range together, sorted by time and consolidated per timestamp
++//! (`ActiveSubscribe::process_response` in
++//! `src/adapter/src/active_compute_sink.rs`). The batcher releases at progress
++//! rows, and at a later update only when its memory limit forces it to. It
++//! passes updates on as they arrive and does not consolidate.
++
++use std::collections::BTreeMap;
+ use std::mem;
+ 
+ use serde::{Deserialize, Serialize};
+ 
+-use crate::decode::{Message, Update};
+-use crate::error::ProtocolError;
++use crate::decode::{Change, Message, Row, Update};
++use crate::error::{ProtocolError, TimestampTooLarge};
+ use crate::frontier::Frontier;
+ use crate::wire;
+ 
+@@ -63,6 +66,16 @@ pub enum Start {
+ #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+ #[serde(tag = "event", rename_all = "snake_case")]
+ pub enum Event {
++    /// Part of the initial snapshot, released early to bound memory. The
++    /// snapshot completes with the next [`Batch`], which has
++    /// [`Batch::is_snapshot`] set. A chunk carries no frontier, so nothing can
++    /// be committed until that batch arrives, and a restart before it delivers
++    /// the whole snapshot again. A target therefore writes chunks where the
++    /// next snapshot can replace them.
++    SnapshotChunk {
++        /// The updates, all at the snapshot timestamp.
++        updates: Vec<Update>,
++    },
+     /// A closed batch.
+     Batch(Batch),
+ }
+@@ -90,8 +103,9 @@ impl Batch {
+     }
+ 
+     /// Whether this batch completes the initial snapshot. Such a batch holds
+-    /// the snapshot updates, at the `AS OF`, and may also hold updates at later
+-    /// timestamps.
++    /// the snapshot updates, at the `AS OF`, after any
++    /// [`Event::SnapshotChunk`] that preceded it, and may also hold updates at
++    /// later timestamps.
+     pub fn is_snapshot(&self) -> bool {
+         self.snapshot
+     }
+@@ -111,13 +125,55 @@ impl Batch {
+     pub fn into_updates(self) -> Vec<Update> {
+         self.updates
+     }
++
++    /// The latest change to each key, for targets that keep only the current
++    /// state of each key. Keys are ordered by their cells as text, with `NULL`
++    /// first.
++    ///
++    /// Each change keeps its timestamp, and a [`Change::KeyViolation`] counts
++    /// as a change like any other, so the target ends in the same state however
++    /// the updates were split into batches. The diff envelope has no key, so its
++    /// updates are returned unchanged.
++    ///
++    /// NOTE: after a violation, later changes to that key can be wrong: the
++    /// upsert envelope reads each timestamp on its own, so a delete can arrive
++    /// while other rows with the key remain.
++    pub fn into_latest_by_key(self) -> Vec<Update> {
++        let mut latest: BTreeMap<Row, Update> = BTreeMap::new();
++        let mut unkeyed = Vec::new();
++        for update in self.updates {
++            match &update.change {
++                Change::Upsert { key, .. }
++                | Change::Delete { key }
++                | Change::KeyViolation { key } => {
++                    latest.insert(key.clone(), update);
++                }
++                Change::Diff { .. } => unkeyed.push(update),
++            }
++        }
++        unkeyed.extend(latest.into_values());
++        unkeyed
++    }
++}
++
++/// Why the batcher failed. After either error, every later call fails with it.
++#[derive(Clone, Debug, PartialEq, Eq, thiserror::Error)]
++pub enum BatchError {
++    /// The server broke the subscribe protocol.
++    #[error(transparent)]
++    Protocol(#[from] ProtocolError),
++    /// One timestamp exceeded [`Batcher::with_max_timestamp_bytes`].
++    #[error(transparent)]
++    TimestampTooLarge(#[from] TimestampTooLarge),
+ }
+ 
+ /// Turns the messages of one cursor into [`Event`]s.
+ #[derive(Clone, Debug)]
+ pub struct Batcher {
+     start: Start,
+     up_to: Option<u64>,
++    max_pending_bytes: Option<usize>,
++    max_timestamp_bytes: Option<usize>,
+     /// The first progress row's frontier, which is the `AS OF`.
+     as_of: Option<u64>,
+     /// The latest progress row's frontier.
+@@ -127,11 +183,18 @@ pub struct Batcher {
+     released: Option<Frontier>,
+     /// Updates not yet released, in timestamp order.
+     pending: Vec<Update>,
++    pending_bytes: usize,
++    /// The bytes of the pending updates at `last_update`. A snapshot 
 ```
 
-**File**: `ci/test/lint-docs.sh` (modified, +0/-3)
+**File**: `misc/materialize-sdk/core/src/decode.rs` (modified, +25/-0)
 ```diff
-@@ -15,9 +15,6 @@ set -euo pipefail
+@@ -128,6 +128,31 @@ pub struct Update {
+     pub change: Change,
+ }
  
- . misc/shlib/shlib.bash
- 
--# Works around a Hugo data race, see ci/test/preview-docs.sh.
--export HUGO_NUMWORKERMULTIPLIER=1
--
- git clean -ffdX ci/www/public ci/www/preview
- try hugo --gc --baseURL https://ci.materialize.com/docs --source doc/user --destination ../../ci/www/public/docs
- try hugo --gc --baseURL https://ci.materialize.com/docs --source doc/user --config config.toml,config.skill.toml --disableKinds 404,sitemap,robotsTXT,taxonomy --destination ../../ci/www/public/docs/markdown-docs
++/// The bytes [`Update::approx_bytes`] charges for an update and for a cell,
++/// on top of the cells' text. They estimate a 64-bit build's allocations, and
++/// stay fixed so a memory limit behaves the same on every platform, including
++/// a 32-bit WebAssembly build.
++const UPDATE_BYTES: usize = 64;
++const CELL_BYTES: usize = 24;
++
++impl Update {
++    /// An estimate of the memory the update holds, the unit of the batcher's
++    /// memory limit.
++    pub(crate) fn approx_bytes(&self) -> usize {
++        let row_bytes = |row: &Row| -> usize {
++            row.iter()
++                .map(|cell| CELL_BYTES.saturating_add(cell.as_ref().map_or(0, String::len)))
++                .fold(0, usize::saturating_add)
++        };
++        let cells = match &self.change {
++            Change::Diff { row, .. } => row_bytes(row),
++            Change::Upsert { key, value } => row_bytes(key).saturating_add(row_bytes(value)),
++            Change::Delete { key } | Change::KeyViolation { key } => row_bytes(key),
++        };
++        UPDATE_BYTES.saturating_add(cells)
++    }
++}
++
+ /// A decoded row: an update, or a progress row.
+ #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+ #[serde(tag = "message", rename_all = "snake_case")]
 ```
 
-**File**: `ci/test/preview-docs.sh` (modified, +0/-7)
+**File**: `misc/materialize-sdk/core/src/error.rs` (modified, +15/-0)
 ```diff
-@@ -18,13 +18,6 @@ if [[ "$BUILDKITE_PULL_REQUEST" = false ]]; then
-     exit 0
- fi
- 
--# Hugo 0.152.2 has a data race between pages that include the same headless
--# page, which aborts a build with "concurrent map iteration and map write"
--# (QAR-260). Rendering pages on one worker avoids it.
--# TODO: Remove this once ci/builder/Dockerfile installs Hugo 0.153.0 or later,
--# which fixed the race.
--export HUGO_NUMWORKERMULTIPLIER=1
--
- cd doc/user
- 
- # Build main docs to public/
+@@ -29,3 +29,18 @@ impl ProtocolError {
+         ProtocolError(message.into())
+     }
+ }
++
++/// One timestamp held more update bytes than the limit set with
++/// [`crate::Batcher::with_max_timestamp_bytes`]. The timestamp is the same on
++/// every retry, so retrying cannot help.
++#[derive(Clone, Debug, PartialEq, Eq, thiserror::Error)]
++#[error(
++    "the updates at timestamp {timestamp} exceed the limit of {limit} bytes. Raise the limit, \
++     or subscribe to a smaller materialized view"
++)]
++pub struct TimestampTooLarge {
++    /// The timestamp.
++    pub timestamp: u64,
++    /// The limit.
++    pub limit: usize,
++}
 ```
 
-**File**: `doc/user/CONTRIBUTING.md` (modified, +2/-1)
+**File**: `misc/materialize-sdk/core/src/lib.rs` (modified, +2/-2)
 ```diff
-@@ -34,7 +34,8 @@ to `git pull` the latest version of Materialize.
+@@ -40,7 +40,7 @@ pub mod error;
+ pub mod frontier;
+ mod wire;
  
- # View the docs locally
- 
--1. [Install Hugo](https://gohugo.io/getting-started/installing/).
-+1. Install [Hugo](https://gohugo.io/getting-started/installing/) and
-+   [Dart Sass](https://gohugo.io/functions/css/sass/#dart-sass) to compile the site's stylesheets.
- 
- 1. Launch the site by running:
- 
+-pub use batch::{Batch, Batcher, Event, Start};
++pub use batch::{Batch, BatchError, Batcher, Event, Start};
+ pub use decode::{Change, Datum, Decoder, Envelope, Message, Row, Update};
+-pub use error::ProtocolError;
++pub use error::{ProtocolError, TimestampTooLarge};
+ pub use frontier::Frontier;
 ```
 
-**File**: `doc/user/config.skill.toml` (modified, +1/-1)
+**File**: `misc/materialize-sdk/core/tests/conformance.rs` (modified, +56/-8)
 ```diff
-@@ -28,7 +28,7 @@ disable = true
- [[module.mounts]]
-   source = "static"
-   target = "static"
--  excludeFiles = ["**", "*"]
-+  files = ["! **", "! *"]
+@@ -20,8 +20,9 @@
+ use std::fs;
+ use std::path::Path;
  
- # Skill-specific parameters
- [params]
-```
-
-**File**: `doc/user/layouts/sitemap.xml` (modified, +4/-9)
-```diff
-@@ -9,7 +9,7 @@
-   by the Apache License, Version 2.0.
- */ -}}
- {{- /*
--  Hugo's built-in sitemap template, from v0.152.2, with absolute URLs. The
-+  Hugo's built-in sitemap template, from v0.170.1, with absolute URLs. The
-   sitemap protocol requires a full URL in every <loc>, and the built-in
-   template emits .Permalink, which has no host under a bare-path baseURL such
-   as "/docs".
-@@ -23,17 +23,12 @@
-     <loc>{{ partial "absolute-permalink.html" . }}</loc>{{ if not .Lastmod.IsZero }}
-     <lastmod>{{ safeHTML ( .Lastmod.Format "2006-01-02T15:04:05-07:00" ) }}</lastmod>{{ end }}{{ with .Sitemap.ChangeFreq }}
-     <changefreq>{{ . }}</changefreq>{{ end }}{{ if ge .Sitemap.Priority 0.0 }}
--    <priority>{{ .Sitemap.Priority }}</priority>{{ end }}{{ if .IsTranslated }}{{ range .Translations }}
-+    <priority>{{ .Sitemap.Priority }}</priority>{{ end }}{{ if .IsTranslated }}{{ range .AllTranslations }}
-     <xhtml:link
-                 rel="alternate"
--                hreflang="{{ .Language.LanguageCode }}"
-+                hreflang="{{ .Language.Locale }}"
-                 href="{{ partial "absolute-permalink.html" . }}"
--                />{{ end }}
--    <xhtml:link
--                rel="alternate"
--                hreflang="{{ .Language.LanguageCode }}"
--                href="{{ partial "absolute-permalink.html" . }}"
--                />{{ end }}
-+                />{{ end }}{{ end }}
-   </url>
-     {{- end -}}
-   {{ end }}
-```
-
----
-
-### Incident Patch 3: `730cd6dc` (2026-11-23)
-**Commit Message**: chore(deps): update dependency docker/buildx to v0.39.1 (#40997)
-
-This PR contains the following updates:
-
-| Package | Update | Change |
-|---|---|---|
-| [docker/buildx](https://redirect.github.com/docker/buildx) | patch |
-`v0.39.0` → `v0.39.1` |
-
----
-
-> [!WARNING]
-> Some dependencies could not be looked up. Check the Dependency
-Dashboard for more information.
-
----
-
-### Release Notes
-
-<details>
-<summary>docker/buildx</summary>
-
-###
-[`v0.39.1`](https://redirect.github.com/docker/buildx/releases/tag/v0.39.1)
-
-[Compare
-Source](https://redirect.github.com/docker/buildx/compare/v0.39.0...v0.39.1)
-
-buildx 0.39.1
-
-Welcome to the v0.39.1 release of buildx!
-
-Please try out the release binaries and report any issues at
-<https://github.com/docker/buildx/issues>.
-
-##### Contributors
-
-- Tõnis Tiigi
-
-##### Notable Changes
-
-- Fix regression in v0.39.0 where build could error if .dockerignore
-contained lots of entries
-
-##### Dependency Changes
-
-- **github.com/moby/buildkit**  v0.35.0 -> v0.35.1
-
-Previous release can be found at
-[v0.39.0](https://redirect.github.com/docker/buildx/releases/tag/v0.39.0)
-
-</details>
-
----
-
-### Configuration
-
-📅 **Schedule**: (in timezone Etc/UTC)
-
-- Branch creation
-  - 
-
-**File**: `ci/builder/Dockerfile` (modified, +2/-2)
-```diff
-@@ -106,7 +106,7 @@ ARG DOCKER_COMPOSE_VERSION=v5.8.0
- # renovate: datasource=github-releases depName=christian-korneck/docker-pushrm
- ARG DOCKER_PUSHRM_VERSION=v1.9.0
- # renovate: datasource=github-releases depName=docker/buildx
--ARG DOCKER_BUILDX_VERSION=v0.39.0
-+ARG DOCKER_BUILDX_VERSION=v0.39.1
+-use materialize_sdk_core::batch::{Batcher, Start};
+-use materialize_sdk_core::decode::{Decoder, Envelope, Message, Row};
++use materialize_sdk_core::Frontier;
++use materialize_sdk_core::batch::{BatchError, Batcher, Event, Start};
++use materialize_sdk_core::decode::{Decoder, Envelope, Message, Row, Update};
+ use serde::Deserialize;
+ use serde::de::DeserializeOwned;
+ use serde_json::{Value, json};
+@@ -83,6 +84,7 @@ fn run(function: &str, input: Value) -> Value {
+     match function {
+         "decode" => decode(input),
+         "batch" => batch(input),
++        "latest_by_key" => latest_by_key(input),
+         other => panic!("unknown function {other:?}"),
+     }
+ }
+@@ -136,33 +138,79 @@ fn decode(value: Value) -> Value {
+     json!({ "messages": results })
+ }
  
- RUN \
-     # 1. autouseradd
-@@ -622,7 +622,7 @@ RUN curl -fsSL https://github.com/MaterializeInc/autouseradd/releases/download/$
- # renovate: datasource=github-releases depName=docker/compose
- ARG DOCKER_COMPOSE_VERSION=v5.8.0
- # renovate: datasource=github-releases depName=docker/buildx
--ARG DOCKER_BUILDX_VERSION=v0.39.0
-+ARG DOCKER_BUILDX_VERSION=v0.39.1
- 
- RUN mkdir -p /usr/local/lib/docker/cli-plugins \
-     && curl -fsSL https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-linux-$ARCH_GCC > /usr/local/lib/docker/cli-plugins/docker-compose \
+-/// Feeds messages to a batcher.
++/// Feeds steps to a batcher. A step is a message, or `"finish"`.
+ fn batch(value: Value) -> Value {
+     #[derive(Deserialize)]
+     #[serde(deny_unknown_fields)]
+     struct Input {
+         start: Start,
+         up_to: Option<String>,
++        max_pending_bytes: Option<String>,
++        max_timestamp_bytes: Option<String>,
+         steps: Vec<Value>,
+     }
+     let Input {
+         start,
+         up_to,
++        max_pending_bytes,
++        max_timestamp_bytes,
+         steps,
+     } = input(value);
+     let mut batcher = Batcher::new(start, up_to.as_deref().map(canonical));
++    if let Some(limit) = max_pending_bytes {
++        batcher = batcher.with_max_pending_bytes(canonical(&limit));
++    }
++    if let Some(limit) = max_timestamp_bytes {
++        batcher = batcher.with_max_timestamp_bytes(canonical(&limit));
++    }
+     let outputs: Vec<Value> = steps
+         .into_iter()
+         .map(|step| {
+-            let message: Message = serde_json::from_value(step.clone()).unwrap();
+-            // Reading the step back refuses unknown keys and other spellings.
+-            assert_eq!(json!(message), step, "a step in the core's JSON form");
+-            let result = batcher.push(message);
++            let result = if step == "finish" {
++                batcher.finish().map(|batch| batch.map(Event::Batch))
++            } else {
++                let message: Message = serde_json::from_value(step.clone()).unwrap();
++                // Reading the step back refuses unknown keys and other spellings.
++                assert_eq!(json!(message), step, "a step in the core's JSON form");
++                batcher.push(message)
++            };
+             match result {
+                 Ok(event) => json!(event.into_iter().collect::<Vec<_>>()),
+-                Err(_) => error("protocol"),
++                Err(BatchError::Protocol(_)) => error("protocol"),
++                Err(BatchError::TimestampTooLarge(_)) => error("timestamp_too_large"),
+             }
+         })
+         .collect();
+     json!({ "outputs": outputs, "finished": batcher.is_finished() })
+ }
++
++/// Releases `updates`, at timestamps of one or more and in order, as one batch
++/// and keeps the latest change per key.
++fn latest_by_key(value: Value) -> Value {
++    #[derive(Deserialize)]
++    #[serde(deny_unknown_fields)]
++    struct Input {
++        updates: Vec<Value>,
++    }
++    let Input { updates } = input(value);
++    let updates: Vec<Update> = updates
++        .into_iter()
++        .map(|value| {
++            let update: Update = serde_json::from_value(value.clone()).unwrap();
++            assert_eq!(json!(update), value, "an update in the core's JSON form");
++            update
++        })
++        .collect();
++    let mut batcher = Batcher::new(
++        Start::Resume {
++            frontier: Frontier::new(1).unwrap(),
++        },
++        None,
++    );
++    batcher.push(Message::Progress { frontier: 0 }).unwrap();
++    for update in updates {
++        batcher.push(Message::Update(update)).unwrap();
++    }
++    let batch = batcher.finish().unwrap().unwrap();
++    json!(batch.into_latest_by_key())
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #41033** (2026-11-24): chore(deps): update dependency vitest to v5.1.1 (@renovate[bot])
+- **PR #41023** (2026-11-23): persist: Allow staging to lead on finalized rollups (@mtabebe)
+- **PR #41020** (2026-11-23): avro: Remove dead derive-era decoder helpers (@def-)
+- **PR #41019** (2026-11-23): cloud-resources: Remove the unused cert-manager Issuer CRD module (@def-)
 - **PR #41015** (2026-11-23): skills: scope mz-commit checklist to pre-push, drop clippy (@alex-hunt-materialize)
 - **PR #41014** (2026-11-23): renovate: Fix digest lookups and WASM lockfile updates (@def-)
-- **PR #41010** (2026-11-23): repr: Preserve the sign when retrying wide decimal decoding (@def-)
-- **PR #41005** (2026-11-23): chore(deps): update dependency terraform-docs/terraform-docs to v0.25.1 (@renovate[bot])
-- **PR #41004** (closed): chore(deps): update dependency simple-scrollspy to v2.5.3 (@renovate[bot])
-- **PR #41003** (2026-11-23): chore(deps): update dependency mikefarah/yq to v4.54.3 (@renovate[bot])
 
 ---
 
@@ -1506,37 +1714,44 @@ Previous release can be found at
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update rust crate url to v2.5.9 [security]
+## X. materialize-sdk: end streams and bound the batcher's memory
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `misc/materialize-sdk/conformance/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `328c9ab3`: deps): update rust crate url to v2.5.9 [security]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f456618e`: materialize-sdk: end streams and bound the batcher's memory. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `misc/materialize-sdk/conformance/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "1.2.3"
-checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
-version = "2.5.9"
-checksum = "f00cd2407bb42c0ef17be88d4cf020f5cceffd121665bac9b8b9493a369b3b1a"
+Input: `start`, optional `up_to`, `max_pending_bytes`, and
+`max_timestamp_bytes`, and `steps`. Build a batcher, then run each step: a
+message is pushed, and `"finish"` reports the end of the stream. The output is
+`{"outputs": [...], "finished": bool}`, with one entry per step: the list of
+events it released, or `{"error": kind}` with kind `protocol` or
+`timestamp_too_large`. After an error the batcher fails every later step.
+
+### `latest_by_key.json`
+
+Input: `updates`, in timestamp order at timestamps of one or more. Release them
+as one batch and return the latest change per key, as a list of updates.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "1.2.2"
-checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
-version = "2.5.8"
-checksum = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
+Input: `start`, optional `up_to`, and `steps`. Build a batcher, then push each
+step, a message. The output is `{"outputs": [...], "finished": bool}`, with
+one entry per step: the list of events it released, or `{"error": "protocol"}`.
+After an error the batcher fails every later step.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `328c9ab3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f456618e` are properly handled with clean fallback behavior.
 
 
 ## 3. Decision Protocol & Boundary Restrictions

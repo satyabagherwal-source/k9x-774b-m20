@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T09:42:37.509Z",
+  "last_updated": "2026-11-24T09:57:23.540Z",
   "total_verified_learnings": 9093,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24561,
+  "total_items": 24571,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -217641,8 +217641,8 @@
       "slug": "callstack-react-native-paper",
       "platform": "github",
       "source_url": "https://github.com/callstack/react-native-paper",
-      "source_version": "7ab2640c",
-      "content_hash": "2b73aac0bd992a0eed27ee74445bacf89adefa0a02b62fae7dac8ea4bd997b49",
+      "source_version": "ce0ac9f8",
+      "content_hash": "792454fa15ee7aa8b502b170c2bc1fc7290cb7715822621220f6ea4c3e5015be",
       "dossier_path": "07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md",
       "promoted_rules": [
@@ -217655,6 +217655,11 @@
           "number": 9804,
           "title": "place accessories and label correctly in RTL",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10242,
+          "title": "render aria-readonly on web only when read-only",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -217662,7 +217667,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T16:40:10.265Z",
+      "verified_at": "2026-11-24T09:57:10.725Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217690,10 +217695,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-callstack-react-native-paper-design-intelligence-callstack-react-native-paper-co.md",
       "title": "Design Intelligence: callstack/react-native-paper Core Invariants",
       "repository": "callstack/react-native-paper",
-      "source_version": "7ab2640c",
-      "content_hash": "e22ee6c43258463c40814eb8f6273fc6c1c69bf549531bcb137427d520b92dcd",
+      "source_version": "ce0ac9f8",
+      "content_hash": "e998e62cf6a55af06fc12d4b1122557a8cd05b0c4be816bc606f9687d86dd002",
       "domain_letter": "F",
-      "persisted_at": "2026-11-21T16:40:11.069Z"
+      "persisted_at": "2026-11-24T09:57:11.391Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-callstack-react-native-paper": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-callstack-react-native-paper",
@@ -217702,10 +217707,10 @@
       "relative_path": "08_VERIFICATION/callstack-react-native-paper-verification-protocol-empirical-defect-shield-for-c.md",
       "title": "Verification Protocol: Empirical Defect Shield for callstack/react-native-paper",
       "repository": "callstack/react-native-paper",
-      "source_version": "7ab2640c",
-      "content_hash": "515b8d6930c3c2aa7238356916e8e6d5423c83181a0560d8da97025be854881f",
+      "source_version": "ce0ac9f8",
+      "content_hash": "c3ea6e006191754bbc31d16a1e5950eb4604c47089b3b970eb83a4364227e517",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T16:40:11.309Z"
+      "persisted_at": "2026-11-24T09:57:11.577Z"
     },
     "learn-github-databendlabs-databend": {
       "learning_id": "learn-github-databendlabs-databend",
@@ -217924,9 +217929,9 @@
       "title": "Design Intelligence: callstack-react-native-paper-learnings Core Invariants",
       "repository": "callstack-react-native-paper-learnings",
       "source_version": "HEAD",
-      "content_hash": "6353de9d0d8e54b10ddaadadc4173a31872cb86e223fb9096164d4d073969af3",
+      "content_hash": "ff9ee1827154807efd21ed5652914c12d64a7e10761828879f43459a0e69656e",
       "domain_letter": "F",
-      "persisted_at": "2026-11-21T16:40:23.167Z"
+      "persisted_at": "2026-11-24T09:57:22.587Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-callstack-react-native-paper-l": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-callstack-react-native-paper-l",
@@ -217936,9 +217941,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for callstack-react-native-paper-learnings",
       "repository": "callstack-react-native-paper-learnings",
       "source_version": "HEAD",
-      "content_hash": "d399e8168d7c0089c75467ef4372db1f652abffff29396f5475b229490ce9a3e",
+      "content_hash": "ff5f439c2e1f167e76c50dbf4936caf89d7f650f1181124d956be6cdb0d12477",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T16:40:23.388Z"
+      "persisted_at": "2026-11-24T09:57:22.769Z"
     },
     "learn-github-xudong-huang-may": {
       "learning_id": "learn-github-xudong-huang-may",
@@ -227524,8 +227529,8 @@
       "slug": "materializeinc-materialize",
       "platform": "github",
       "source_url": "https://github.com/MaterializeInc/materialize",
-      "source_version": "d9c983d5",
-      "content_hash": "ec4bf6fa9cf512c18f376c0c82396ba398976870cdc12329231582c4ec2ad959",
+      "source_version": "0bb27e65",
+      "content_hash": "20d5cead4e0c1f2fc3d90f87199b542d9c2d0b607481b3a5285aecf0e7e61ebb",
       "dossier_path": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "promoted_rules": [
@@ -227580,7 +227585,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T14:38:17.746Z",
+      "verified_at": "2026-11-24T09:57:17.199Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -227634,10 +227639,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/materializeinc-materialize-agent-contract-materializeinc-materialize-autonomous-.md",
       "title": "Agent Contract: MaterializeInc/materialize Autonomous Specialist Persona",
       "repository": "MaterializeInc/materialize",
-      "source_version": "d9c983d5",
-      "content_hash": "c06a8c520c866fe7512ee36a1236e72d3ea4077979ff3965fb7014c9f53f083a",
-      "domain_letter": "G",
-      "persisted_at": "2026-11-23T14:38:18.794Z"
+      "source_version": "0bb27e65",
+      "content_hash": "310b46a2b0ce22780ba3272f649ba30f33ac7a5f98f148ddd469b21fdf29d230",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T09:57:18.043Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-materializeinc-materialize": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-materializeinc-materialize",
@@ -227646,10 +227651,10 @@
       "relative_path": "08_VERIFICATION/materializeinc-materialize-verification-protocol-empirical-defect-shield-for-mat.md",
       "title": "Verification Protocol: Empirical Defect Shield for MaterializeInc/materialize",
       "repository": "MaterializeInc/materialize",
-      "source_version": "d9c983d5",
-      "content_hash": "340d4e86fad9181beab5f66555f38740275e951537d3b98b68e0909ab2aaad83",
+      "source_version": "0bb27e65",
+      "content_hash": "1cc4a018b0b7b69be16f904f60888a343c2192b01126ceda110b29951b7f0c56",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T14:38:18.973Z"
+      "persisted_at": "2026-11-24T09:57:18.190Z"
     },
     "candidate_directive-windows-fix-the-unit-test-binary-crashing-at-startup-on-rust-1-100": {
       "item_id": "candidate_directive-windows-fix-the-unit-test-binary-crashing-at-startup-on-rust-1-100",
@@ -242584,8 +242589,8 @@
       "slug": "kcl-lang-kcl",
       "platform": "github",
       "source_url": "https://github.com/kcl-lang/kcl",
-      "source_version": "4e4df138",
-      "content_hash": "6be3e1b5459262382295c000f471a1a2880f8fc7dd91957bd27ea6f9189af26f",
+      "source_version": "05194abb",
+      "content_hash": "49fb6c8daa594de70b9c17e722656a78e53445d5178da462e3a2b3583e4786f0",
       "dossier_path": "07_PROJECT_LEARNING/kcl-lang-kcl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kcl-lang-kcl-learnings.md",
       "promoted_rules": [
@@ -242603,6 +242608,11 @@
           "number": 9524,
           "title": "fix typos in doc comments",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10243,
+          "title": "strip the embedded LLVM bitcode from the musl staticlib",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -242610,7 +242620,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T06:02:32.228Z",
+      "verified_at": "2026-11-24T09:57:13.083Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -242664,10 +242674,10 @@
       "relative_path": "08_VERIFICATION/kcl-lang-kcl-verification-protocol-empirical-defect-shield-for-kcl-lang-kcl.md",
       "title": "Verification Protocol: Empirical Defect Shield for kcl-lang/kcl",
       "repository": "kcl-lang/kcl",
-      "source_version": "4e4df138",
-      "content_hash": "d0861a9cad32eb0d5c73645fadda8ac9e10400f5a85c6ffd063d43a31e925553",
+      "source_version": "05194abb",
+      "content_hash": "9f90cd9d1726c351bd0a55178614ecf0b346cd8222b15fd34e6e138cfb54dd5d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T06:02:32.885Z"
+      "persisted_at": "2026-11-24T09:57:13.938Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fishaudio-drama-3-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fishaudio-drama-3-learnings-core-invariants",
@@ -242713,9 +242723,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for kcl-lang-kcl-learnings",
       "repository": "kcl-lang-kcl-learnings",
       "source_version": "HEAD",
-      "content_hash": "551e07b973e6da6ba287c5d80cc89f1c357c74984bdc3be2debb6ae0f13e6695",
+      "content_hash": "aababcf76d6214a916e0399603729d7397b396b06d93cdf2b240c7ce79587a0f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T06:03:04.473Z"
+      "persisted_at": "2026-11-24T09:57:23.540Z"
     },
     "learn-github-metalbear-co-mirrord": {
       "learning_id": "learn-github-metalbear-co-mirrord",
@@ -245906,8 +245916,8 @@
       "slug": "clementtsang-bottom",
       "platform": "github",
       "source_url": "https://github.com/ClementTsang/bottom",
-      "source_version": "a3552b0d",
-      "content_hash": "2a92260ae0660503edf10432cf6174606874708ada762911e7be6952094ac525",
+      "source_version": "87cb33dc",
+      "content_hash": "3668c226b36384d22d5779a98ce5a31a45bfee78d123566bde1b1acbd82312a0",
       "dossier_path": "07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
       "promoted_rules": [
@@ -245935,6 +245945,11 @@
           "number": 10012,
           "title": "update freebsd VM version to avoid node warning",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10241,
+          "title": "bump sysinfo to 0.40.4",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -245942,7 +245957,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T00:56:22.380Z",
+      "verified_at": "2026-11-24T09:57:09.397Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -245984,10 +245999,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-clementtsang-bottom-architecture-intelligence-clementtsang-bottom-core-invariant.md",
       "title": "Architecture Intelligence: ClementTsang/bottom Core Invariants",
       "repository": "ClementTsang/bottom",
-      "source_version": "a3552b0d",
-      "content_hash": "43d1a7a9b0e4518169d54c153eaf7ccb29171d440884e90096f0511f6d0cc04f",
+      "source_version": "87cb33dc",
+      "content_hash": "d4b5c1808b4f953477e78d780392d8adc0e6eba80018a750767a19d7b16ca30c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T00:56:22.971Z"
+      "persisted_at": "2026-11-24T09:57:10.077Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-clementtsang-bottom": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-clementtsang-bottom",
@@ -245996,10 +246011,10 @@
       "relative_path": "08_VERIFICATION/clementtsang-bottom-verification-protocol-empirical-defect-shield-for-clementtsa.md",
       "title": "Verification Protocol: Empirical Defect Shield for ClementTsang/bottom",
       "repository": "ClementTsang/bottom",
-      "source_version": "a3552b0d",
-      "content_hash": "5d392c5dfced58fde573c2e9fae03d059ce8b4c2db4531137e1243b0a8a21da6",
+      "source_version": "87cb33dc",
+      "content_hash": "2fbbea482b885920ef8983d5cfb88738eae24fbec32c1ad86bf4adbc0130379a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T00:56:23.146Z"
+      "persisted_at": "2026-11-24T09:57:10.315Z"
     },
     "candidate_directive-other-set-unused_dependencies-lint-to-deny": {
       "item_id": "candidate_directive-other-set-unused_dependencies-lint-to-deny",
@@ -246021,9 +246036,9 @@
       "title": "Architecture Intelligence: clementtsang-bottom-learnings Core Invariants",
       "repository": "clementtsang-bottom-learnings",
       "source_version": "HEAD",
-      "content_hash": "fdf8ca83a73a07f99f0500517054f85eefe6e25a43e43eb7454f0024b95223ed",
+      "content_hash": "7f29de99656d31052ea46641e8ec4c4efb5eed9eb70abaed3b398030dee647b7",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T00:56:35.533Z"
+      "persisted_at": "2026-11-24T09:57:21.745Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-clementtsang-bottom-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-clementtsang-bottom-learnings",
@@ -246033,9 +246048,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for clementtsang-bottom-learnings",
       "repository": "clementtsang-bottom-learnings",
       "source_version": "HEAD",
-      "content_hash": "a7b43466f2ebb9a76a44def503b7b28e472234cf7de064e74f92700e9fbe5ff5",
+      "content_hash": "819dbc5c7ec8275c05ed6af0f56c27d159fb92752c0068c049531cd980b8b613",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T00:56:35.697Z"
+      "persisted_at": "2026-11-24T09:57:21.942Z"
     },
     "learn-huggingface-burner22-numbat": {
       "learning_id": "learn-huggingface-burner22-numbat",
@@ -276358,10 +276373,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-kcl-lang-kcl-product-intelligence-kcl-lang-kcl-core-invariants.md",
       "title": "Product Intelligence: kcl-lang/kcl Core Invariants",
       "repository": "kcl-lang/kcl",
-      "source_version": "4e4df138",
-      "content_hash": "5c30ffa31472073fb5d118179ef5a98772b6ceeabf33ddb8cb515b701f4e9125",
+      "source_version": "05194abb",
+      "content_hash": "6c3f445784df837f2997313c60bab01e9b25bcaba03c8606f384a9cd054961bb",
       "domain_letter": "B",
-      "persisted_at": "2026-11-20T06:02:32.746Z"
+      "persisted_at": "2026-11-24T09:57:13.758Z"
     },
     "rule-8976": {
       "learning_id": "rule-8976",
@@ -304451,9 +304466,9 @@
       "title": "Product Intelligence: kcl-lang-kcl-learnings Core Invariants",
       "repository": "kcl-lang-kcl-learnings",
       "source_version": "HEAD",
-      "content_hash": "3d56922409d29d593bf9f0cad029160ed779ff0f5cd01f0d333c124cacd41725",
+      "content_hash": "2ae6b6c2e2d7445777eceb4ecefc730a2d2cfeefed6002905095f32faa8a775e",
       "domain_letter": "B",
-      "persisted_at": "2026-11-20T06:03:04.321Z"
+      "persisted_at": "2026-11-24T09:57:23.363Z"
     },
     "rule-9525": {
       "learning_id": "rule-9525",
@@ -313426,10 +313441,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-materializeinc-materialize-technical-construction-intelligence-materializeinc-ma.md",
       "title": "Technical Construction Intelligence: MaterializeInc/materialize Core Invariants",
       "repository": "MaterializeInc/materialize",
-      "source_version": "5c494ac8",
-      "content_hash": "64fe41915efeb89ba247a637dff56d9f56a1958c2a10cdfa643056f9e9dc0576",
+      "source_version": "0bb27e65",
+      "content_hash": "e47a25766deddca24c995230520a3275728337a7e40ee22f8352963c17a8550b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T03:28:50.934Z"
+      "persisted_at": "2026-11-24T09:57:17.868Z"
     },
     "candidate_directive-deps-update-dependency-faker-js-faker-to-v10-security": {
       "item_id": "candidate_directive-deps-update-dependency-faker-js-faker-to-v10-security",
@@ -335164,6 +335179,132 @@
       "content_hash": "7980958d0559c37ee8021d007ad4bf5da38f0ee96b76e86b0c6c4b730bc6b6fc",
       "domain_letter": "H",
       "persisted_at": "2026-11-24T09:42:35.868Z"
+    },
+    "rule-10241": {
+      "learning_id": "rule-10241",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10241,
+      "title": "bump sysinfo to 0.40.4",
+      "source_url": "https://github.com/ClementTsang/bottom",
+      "source_version": "87cb33dc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T09:57:09.397Z"
+    },
+    "candidate_directive-bump-sysinfo-to-0-40-4": {
+      "item_id": "candidate_directive-bump-sysinfo-to-0-40-4",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TAIH-bump-sysinfo-to-0-40-4.md",
+      "title": "bump sysinfo to 0.40.4",
+      "repository": "ClementTsang/bottom",
+      "source_version": "87cb33dc",
+      "content_hash": "a35ba441dd8dd794fc66ef6affce7401e72c370f8d1d7bff79b3c31e06e0ef4b",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T09:57:09.882Z"
+    },
+    "rule-10242": {
+      "learning_id": "rule-10242",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10242,
+      "title": "render aria-readonly on web only when read-only",
+      "source_url": "https://github.com/callstack/react-native-paper",
+      "source_version": "ce0ac9f8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T09:57:10.725Z"
+    },
+    "candidate_directive-render-aria-readonly-on-web-only-when-read-only": {
+      "item_id": "candidate_directive-render-aria-readonly-on-web-only-when-read-only",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TBJA-render-aria-readonly-on-web-only-when-read-only.md",
+      "title": "render aria-readonly on web only when read-only",
+      "repository": "callstack/react-native-paper",
+      "source_version": "ce0ac9f8",
+      "content_hash": "77c9b12a0ae1e85aff10c712a4ec59c31e8e448ce69987482ac23626c805ac54",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-24T09:57:11.210Z"
+    },
+    "rule-10243": {
+      "learning_id": "rule-10243",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10243,
+      "title": "strip the embedded LLVM bitcode from the musl staticlib",
+      "source_url": "https://github.com/kcl-lang/kcl",
+      "source_version": "05194abb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T09:57:13.083Z"
+    },
+    "candidate_directive-strip-the-embedded-llvm-bitcode-from-the-musl-staticlib": {
+      "item_id": "candidate_directive-strip-the-embedded-llvm-bitcode-from-the-musl-staticlib",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TDCZ-strip-the-embedded-llvm-bitcode-from-the-musl-staticlib.md",
+      "title": "strip the embedded LLVM bitcode from the musl staticlib",
+      "repository": "kcl-lang/kcl",
+      "source_version": "05194abb",
+      "content_hash": "7b356538bd1a23014219ad5b2bc414d191d9d2273308be9388271f20c5cd1483",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-24T09:57:13.572Z"
+    },
+    "candidate_directive-end-streams-and-bound-the-batcher-s-memory": {
+      "item_id": "candidate_directive-end-streams-and-bound-the-batcher-s-memory",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TGJH-end-streams-and-bound-the-batcher-s-memory.md",
+      "title": "end streams and bound the batcher's memory",
+      "repository": "MaterializeInc/materialize",
+      "source_version": "0bb27e65",
+      "content_hash": "35c449d383b740f3ba6a1d9fde6c21e4deafe11185bf29561ad4dbbd2157ee29",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-24T09:57:17.694Z"
+    },
+    "candidate_directive-deps-bump-sysinfo-to-0-40-4": {
+      "item_id": "candidate_directive-deps-bump-sysinfo-to-0-40-4",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TJIY-deps-bump-sysinfo-to-0-40-4.md",
+      "title": "deps: bump sysinfo to 0.40.4",
+      "repository": "clementtsang-bottom-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ba5979322c8f37ac5879e7f825061166cb39942c2bdb3aa9c6b5c75584293dbe",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T09:57:21.563Z"
+    },
+    "candidate_directive-switch-render-aria-readonly-on-web-only-when-read-only": {
+      "item_id": "candidate_directive-switch-render-aria-readonly-on-web-only-when-read-only",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TK6F-switch-render-aria-readonly-on-web-only-when-read-only.md",
+      "title": "switch): render aria-readonly on web only when read-only",
+      "repository": "callstack-react-native-paper-learnings",
+      "source_version": "HEAD",
+      "content_hash": "23eb378aac893e712a072e9fa1018bc50fc7a539c01a0359dea94ea328c7d3d1",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-24T09:57:22.410Z"
+    },
+    "candidate_directive-release-strip-the-embedded-llvm-bitcode-from-the-musl-staticlib": {
+      "item_id": "candidate_directive-release-strip-the-embedded-llvm-bitcode-from-the-musl-staticlib",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TKRY-release-strip-the-embedded-llvm-bitcode-from-the-musl-staticlib.md",
+      "title": "release): strip the embedded LLVM bitcode from the musl staticlib",
+      "repository": "kcl-lang-kcl-learnings",
+      "source_version": "HEAD",
+      "content_hash": "baa2e5e9ab8e5bf1ae49d39d095c6a397d6febf8b82ba7d4743903dd39e05dbc",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-24T09:57:23.183Z"
     }
   },
   "ai-builder-brain": {

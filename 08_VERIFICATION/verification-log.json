@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-WGX5",
-    "timestamp": "2026-11-22T16:28:12.329Z",
-    "repository": "astral-sh/uv",
-    "learningId": "learn-github-astral-sh-uv",
-    "contentHash": "76afbf48c90c1020b68d8897223f29e55f4b218a11c9ec30de689785f6cf38df",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-WSAX",
-    "timestamp": "2026-11-22T16:28:27.081Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "702c971e8c21b1a184f127131d7ed4e44d3d94f8b9530ff406c519a135a399a2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-XIUE",
-    "timestamp": "2026-11-22T16:29:01.478Z",
-    "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
-    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
-    "contentHash": "6b3ff9c82f2b218919a9b7bd7b0e20fce3b1bdb974a3a53bc882811ec4fa61e6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261122-M2MN",
-    "timestamp": "2026-11-22T16:48:06.863Z",
-    "repository": "sentence-transformers/all-MiniLM-L6-v2",
-    "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
-    "contentHash": "06fa42f092d2c4156d71359ceb716c0d0e8174231564b7cfeb1a6036cb458252",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-M312",
     "timestamp": "2026-11-22T16:48:07.382Z",
     "repository": "pola-rs/polars",
@@ -7492,6 +7432,66 @@
     "contentHash": "b5d82a1cc09467908a1c32ea3da12fd83a6ab82accf15d16a9c09d92a6e3aab5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-TABA",
+    "timestamp": "2026-11-24T09:57:09.622Z",
+    "repository": "ClementTsang/bottom",
+    "learningId": "learn-github-clementtsang-bottom",
+    "contentHash": "3668c226b36384d22d5779a98ce5a31a45bfee78d123566bde1b1acbd82312a0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-TBC4",
+    "timestamp": "2026-11-24T09:57:10.948Z",
+    "repository": "callstack/react-native-paper",
+    "learningId": "learn-github-callstack-react-native-paper",
+    "contentHash": "792454fa15ee7aa8b502b170c2bc1fc7290cb7715822621220f6ea4c3e5015be",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-TD68",
+    "timestamp": "2026-11-24T09:57:13.328Z",
+    "repository": "kcl-lang/kcl",
+    "learningId": "learn-github-kcl-lang-kcl",
+    "contentHash": "49fb6c8daa594de70b9c17e722656a78e53445d5178da462e3a2b3583e4786f0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-TGBJ",
+    "timestamp": "2026-11-24T09:57:17.407Z",
+    "repository": "MaterializeInc/materialize",
+    "learningId": "learn-github-materializeinc-materialize",
+    "contentHash": "20d5cead4e0c1f2fc3d90f87199b542d9c2d0b607481b3a5285aecf0e7e61ebb",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
