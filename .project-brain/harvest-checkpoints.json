@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T12:36:20.275Z",
+  "last_updated": "2026-11-24T12:45:45.771Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3801,14 +3801,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-defguard-defguard",
-      "content_hash": "0d643bae80dd38273269e7174131befe813cfb9d51b5b38e8d35c13d0b23dd82",
-      "verified_at": "2026-11-23T16:53:42.341Z",
+      "content_hash": "fb75b76334b598dc848e895a4b723c01233fd28e6714a4f54c676a92acabdacd",
+      "verified_at": "2026-11-24T12:45:44.087Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T16:53:42.341Z"
+      "last_updated": "2026-11-24T12:45:44.087Z"
     },
     "tamagui/tamagui": {
       "repository": "tamagui/tamagui",
@@ -6306,14 +6306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gluesql-gluesql",
-      "content_hash": "83ebdd273de2c04e81a107320703c798b22f9bf5f9d5c18d2b229b186bea93c7",
-      "verified_at": "2026-11-22T10:29:59.122Z",
+      "content_hash": "0330b74993315df91f73f4382d46a5a622518f9dcd130f49049ac155e8f495b3",
+      "verified_at": "2026-11-24T12:45:45.770Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T10:29:59.122Z"
+      "last_updated": "2026-11-24T12:45:45.770Z"
     },
     "mui/base-ui": {
       "repository": "mui/base-ui",
@@ -9786,14 +9786,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-temporalio-temporal",
-      "content_hash": "59b7ef61df3677fad35c590dcb61859efab9c257197e0fcda18cb0d326b34938",
-      "verified_at": "2026-11-23T17:11:55.729Z",
+      "content_hash": "430caead01ee490cd7ca08a4c30ad092a9623028d8eb9fa0a855c86a4ce857d4",
+      "verified_at": "2026-11-24T12:45:42.430Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T17:11:55.729Z"
+      "last_updated": "2026-11-24T12:45:42.430Z"
     },
     "Mintplex-Labs/anything-llm": {
       "repository": "Mintplex-Labs/anything-llm",

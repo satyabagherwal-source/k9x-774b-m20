@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-24T12:36:33.221Z",
-  "total_records": 2519,
+  "last_updated": "2026-11-24T12:45:52.963Z",
+  "total_records": 2521,
   "domains": {
     "A": {
       "total": 22,
@@ -69,7 +69,7 @@
       ]
     },
     "D": {
-      "total": 955,
+      "total": 957,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1025,7 +1025,9 @@
         "domain_intelligence-research-knowledge-intelligence-hf-llamaindex-ocria-nano-1-learnings-core-invari",
         "domain_intelligence-research-knowledge-intelligence-nari-labs-qwen3-8-27b-nariq-gguf-core-invariants",
         "DOM-D-07A2BC67",
-        "domain_intelligence-research-knowledge-intelligence-hf-nari-labs-qwen3-8-27b-nariq-gguf-learnings-co"
+        "domain_intelligence-research-knowledge-intelligence-hf-nari-labs-qwen3-8-27b-nariq-gguf-learnings-co",
+        "domain_intelligence-research-knowledge-intelligence-gluesql-gluesql-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-gluesql-gluesql-learnings-core-invariants"
       ]
     },
     "E": {
@@ -20348,8 +20350,8 @@
       "title": "Architecture Intelligence: temporalio/temporal Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-temporalio-temporal-architecture-intelligence-temporalio-temporal-core-invariant.md",
       "repository": "temporalio/temporal",
-      "content_hash": "51b1272d13fbd1521a5c1ef06689d06fb5666eafc83dff01e8341479b1c0fa58",
-      "created_at": "2026-11-23T17:11:56.133Z"
+      "content_hash": "9718635278f12497e86f32aebea480db5ec071ea161315cc9191d6b441aef160",
+      "created_at": "2026-11-24T12:45:43.013Z"
     },
     "DOM-D-3FA9CA89": {
       "record_id": "DOM-D-3FA9CA89",
@@ -20408,8 +20410,8 @@
       "title": "Architecture Intelligence: temporalio-temporal-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-temporalio-temporal-learnings-architecture-intelligence-temporalio-temporal-lear.md",
       "repository": "temporalio-temporal-learnings",
-      "content_hash": "643f9f3da2053a3ec8e2d7465ad0483f4807a3f3f2fcb4171343f90defcb9858",
-      "created_at": "2026-11-23T17:12:00.034Z"
+      "content_hash": "d76fe3b4894fdc071ba744a5a2fe36906b536beb10ce2ac31dc584df2a9957ca",
+      "created_at": "2026-11-24T12:45:50.241Z"
     },
     "domain_intelligence-architecture-intelligence-projectdiscovery-nuclei-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-projectdiscovery-nuclei-learnings-core-invariants",
@@ -25062,8 +25064,8 @@
       "title": "Human & Need Intelligence: DefGuard/defguard Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-defguard-defguard-human-need-intelligence-defguard-defguard-core-invariants.md",
       "repository": "DefGuard/defguard",
-      "content_hash": "eda4e9d5708fb82a3b4ecec776e58314d86ec94b20571a5a1fd081796548e164",
-      "created_at": "2026-11-23T16:53:42.727Z"
+      "content_hash": "189cb0816788a892e734a1495dd2e26d5296cf306e2467c3ace33767fbe51c00",
+      "created_at": "2026-11-24T12:45:44.676Z"
     },
     "domain_intelligence-design-intelligence-sharkdp-bat-learnings-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-sharkdp-bat-learnings-core-invariants",
@@ -25080,8 +25082,8 @@
       "title": "Human & Need Intelligence: defguard-defguard-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-defguard-defguard-learnings-human-need-intelligence-defguard-defguard-learnings-.md",
       "repository": "defguard-defguard-learnings",
-      "content_hash": "e3d230c6ec7508ab2c763c239b78bbf17c6153f29561bca106b5653d27ca0b1e",
-      "created_at": "2026-11-16T20:21:13.221Z"
+      "content_hash": "4de4e8594a369829b709255432c184faab9b4cac0eb8f022a8d4a366dcb1b908",
+      "created_at": "2026-11-24T12:45:51.892Z"
     },
     "domain_intelligence-architecture-intelligence-databendlabs-databend-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-databendlabs-databend-core-invariants",
@@ -42270,6 +42272,24 @@
       "repository": "hf-nari-labs-qwen3.8-27b-nariq-gguf-learnings",
       "content_hash": "5dac5dbc4dc186bfefe7651d9d62234ba81c9c85e0e9b161aa38384e1a761e12",
       "created_at": "2026-11-24T12:19:01.781Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-gluesql-gluesql-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-gluesql-gluesql-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: gluesql/gluesql Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-gluesql-gluesql-research-knowledge-intelligence-gluesql-gluesql-core-invariants.md",
+      "repository": "gluesql/gluesql",
+      "content_hash": "10924cd73177c5176551a40573b842ae7076b903bb67a0956ed9eb4b0623d0f1",
+      "created_at": "2026-11-24T12:45:46.322Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-gluesql-gluesql-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-gluesql-gluesql-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: gluesql-gluesql-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-gluesql-gluesql-learnings-research-knowledge-intelligence-gluesql-gluesql-learni.md",
+      "repository": "gluesql-gluesql-learnings",
+      "content_hash": "4cbe08efa105db07c5ec565ae197edeae9a2830d0c51b8c6cf86273fcff07270",
+      "created_at": "2026-11-24T12:45:52.963Z"
     }
   }
 }

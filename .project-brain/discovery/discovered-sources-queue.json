@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-24T12:36:30.342Z",
+  "updated_at": "2026-11-24T12:45:51.326Z",
   "stats": {
-    "total_discovered": 8587,
-    "approved_pending_harvest": 8141,
+    "total_discovered": 8592,
+    "approved_pending_harvest": 8146,
     "harvested_count": 0,
     "rejected_count": 446,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8132,
+      "COMMUNITY_AND_EXPERT": 8137,
       "OFFICIAL_DOCUMENTATION": 268,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 7,
@@ -185815,6 +185815,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md",
         "fileName": "mfontanini-presenterm-learnings.md"
+      }
+    },
+    "SRC-FFA37A7395BD": {
+      "id": "SRC-FFA37A7395BD",
+      "url": "https://aur.archlinux.org/packages/defguard-client",
+      "title": "https://aur.archlinux.org/packages/defguard-client",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T12:45:51.027Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/defguard-defguard-learnings.md",
+        "fileName": "defguard-defguard-learnings.md"
+      }
+    },
+    "SRC-C7D455254028": {
+      "id": "SRC-C7D455254028",
+      "url": "https://apps.apple.com/us/app/defguard-desktop-client/id6754601166?mt=12",
+      "title": "https://apps.apple.com/us/app/defguard-desktop-client/id6754601166?mt=12",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T12:45:51.103Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/defguard-defguard-learnings.md",
+        "fileName": "defguard-defguard-learnings.md"
+      }
+    },
+    "SRC-BF32B743F5A1": {
+      "id": "SRC-BF32B743F5A1",
+      "url": "https://apps.apple.com/us/app/defguard-vpn-client/id6748068630",
+      "title": "https://apps.apple.com/us/app/defguard-vpn-client/id6748068630",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T12:45:51.179Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/defguard-defguard-learnings.md",
+        "fileName": "defguard-defguard-learnings.md"
+      }
+    },
+    "SRC-FEC855B181D9": {
+      "id": "SRC-FEC855B181D9",
+      "url": "https://example.com/client_arm64.msi",
+      "title": "https://example.com/client_arm64.msi",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T12:45:51.251Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/defguard-defguard-learnings.md",
+        "fileName": "defguard-defguard-learnings.md"
+      }
+    },
+    "SRC-82B08D9A14E4": {
+      "id": "SRC-82B08D9A14E4",
+      "url": "https://defguard.net/download",
+      "title": "https://defguard.net/download",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-24T12:45:51.326Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/defguard-defguard-learnings.md",
+        "fileName": "defguard-defguard-learnings.md"
       }
     }
   }

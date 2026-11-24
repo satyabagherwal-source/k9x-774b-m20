@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T20:21:12.997Z",
+  "timestamp": "2026-11-24T12:45:51.494Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-defguard-defguard-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [defguard-defguard-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T20:21:12.997Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T12:45:51.494Z`  
 > **Learning ID**: `LEARN-EVO-defguard-defguard-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain A (Human & Need Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), C (Market & Business Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 60%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 50%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from defguard-defguard-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/defguard-defguard-learnings.md`  
 > **Source**: github ([https://github.com/DefGuard/defguard](https://github.com/DefGuard/defguard))  
-> **Source Version**: `a0570118`  
+> **Source Version**: `7d232424`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T20:21:06.652Z  
+> **Timestamp**: 2026-11-24T12:45:42.585Z  
 > **Learning ID**: `learn-github-defguard-defguard`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/defguard-defguard-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DefGuard/defguard](https://github.com/DefGuard/defguard))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T20:21:06.647Z  
+> **Harvest Timestamp**: 2026-11-24T12:45:42.578Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Zero-Trust access management with true WireGuard® 2FA/MFA
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2917 stars
+- **Stars / Engagement**: 2922 stars
 
 ---
 
@@ -70,7 +70,7 @@ The following architectural invariants have been empirically discovered and reco
 use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 
 use ipnetwork::IpNetwork;
-use serde::Serialize;
+use serde::{Deserialize, Deserializer, Serialize};
 use url::Url;
 
 /// Strip any `http://` or `https://` scheme prefix a user may have accidentally
@@ -221,6 +221,16 @@ pub fn split_ip(ip: &IpAddr, network: &IpNetwork) -> SplitIp {
         modifiable_part,
         network_prefix: network_prefix.to_string(),
     }
+}
+
+/// Wraps the value in Some so a patch can tell an explicit null (clear the field) from a
+/// missing key (keep it). See <https://github.com/serde-rs/serde/issues/1042>
+pub fn deserialize_optional_field<'de, T, D>(deserializer: D) -> Result<Option<Option<T>>, D::Error>
+where
+    D: Deserializer<'de>,
+    T: Deserialize<'de>,
+{
+    Ok(Some(Option::deserialize(deserializer)?))
 }
 
 #[cfg(test)]
@@ -892,7 +902,10 @@ pub enum CertSettingsError {
 }
 
 /// Parses an uploaded certificate, validates its key pair, and rejects invalid validity windows.
-async fn parse_cert(cert_pem: &str, key_pem: &str) -> Result<CertificateInfo, CertSettingsError> {
+pub(crate) async fn parse_cert(
+    cert_pem: &str,
+    key_pem: &str,
+) -> Result<CertificateInfo, CertSettingsError> {
     let _ = rustls::crypto::ring::default_provider().install_default();
 
     RustlsConfig::from_pem(cert_pem.as_bytes().to_vec(), key_pem.as_bytes().to_vec())
@@ -1118,7 +1131,7 @@ pub async fn apply_external_url_settings(
     };
     update_current_settings(&mut *transaction, settings).await?;
 
-    let hostname = match config.ssl_type {
+    let hostname = m
 ```
 
 ### Core Architecture Module: `crates/defguard_core/src/db/mod.rs`
@@ -1243,6 +1256,7 @@ pub struct NetworkDeviceModifiedMetadata {
     pub location: WireguardNetwork<Id>,
     pub before: Device<Id>,
     pub after: Device<Id>,
+    pub preshared_key: SecretFieldChange,
 }
 
 #[derive(Serialize)]
@@ -1511,8 +1525,7 @@ impl SettingsUpdateMetadata {
         let protected_fields = Settings::secret_changes(&before, &after);
 
         Self {
-            before: before.into(),
-       
+
 ```
 
 ### Core Architecture Module: `crates/defguard_core/src/db/models/activity_log/mod.rs`
@@ -2027,16 +2040,11 @@ impl Token {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4036** (2026-11-16): **2.2.0 regression: mobile biometric MFA unavailable for devices enrolled after upgrade**
-  *Symptoms*: Environment - Core / Edge / Gateway 2.2.0 (Open Source, docker), upgraded from 2.1.1/2.1.0/2.1.1 - Location MFA: "Default Internal MFA" flow (auto-created on upgrade), single step:   Authenticator App, Email, Mobile Biometric Authentication, Mobile App Approval - Mobile apps: iOS 2.2.0 (iPhone 13), iOS 2.0.0 (iPhone 11), Android latest Play Store (Xiaomi)  Observed - Devices enrolled BEFORE the upgrade (iPhone 12, Xiaomi): biometric works. - Devices enrolled AFTER the upgrade: "Biometric — Not configured" on connect,   on iOS and Android. Re-enrolling the previously working Xiaomi broke it too. - Core logs registration successfully each time:   "User test(14) registered mobile auth for device iPhone(26)" - Device appears under "Mobile App Approval Devices" in the user profile. - TOTP enabled before enrollment; TOTP works.  Expected: newly enrolled mobile devices can use biometric MFA as before.
-  **Post-Mortem & Fix Analysis**:
-  >    Additional data: rolled back production (no users yet) to Core 2.1.1 / Edge 2.1.0 / Gateway 2.1.1    by restoring the pre-upgrade DB dump. A mobile device (Android, Xiaomi) enrolled on 2.1.1 can use    biometric immediately ("Desktop client login finished ... with method BIOMETRIC").    Same device enrolled on 2.2.0 -> "Biometric — Not configured".
-  >    Confirmed: after rolling back both staging and production to Core 2.1.1 / Edge 2.1.0 /    Gateway 2.1.1 (restore of pre-upgrade DB), newly enrolled mobile devices can use biometric    again (Android Xiaomi re-enrolled on 2.1.1 -> connect with BIOMETRIC works).
+- **Issue #4053** (2026-11-20): **Pasted comma-separated addresses aren’t split into chips**
+  *Symptoms*: Pasting a comma-separated list into "IPv4/IPv6 CIDR ranges or addresses" in Add new alias creates one long chip that overflows the form. After saving, the values are split correctly (Edit alias shows separate chips).  Steps 1. Firewall → Aliases → Add new alias 2. Paste `1.0.0.0-9.255.255.255,11.0.0.0-100.63.255.255,100.128.0.0-126.255.255.255,128.0.0.0-169.253.255.255,169.255.0.0-172.15.255.255,172.32.0.0-192.167.255.255,192.169.0.0-223.255.255.255,2000::/3` into the addresses field 3. Click outside the field  https://github.com/user-attachments/assets/9cb2dd70-3f2b-4b9d-a88b-270fb293514a   Fix this in:  - [x] Rules - [x] Destination - [x] Alias - [x] Location -> AllowedIPs
 
-- **Issue #4001** (2026-11-13): **The network is too small to accomodate all existing devices**
-  *Symptoms*: **Describe the bug** We have multiple locations. When editing an existing location, I cannot save the changes when there are more devices than the defined VPN CIDR on a location allows. But it doesn't only check the devices that apply for that location, it checks the total devices in defguard.  Error: ```The network is too small to accomodate all existing devices (network capacity: 253, total devices: 259)```  **Expected behavior** I would expect that I cannot save the location change(s), when the total devices that use this location exceed the configured CIDR. Otherwise we would need to set a large CIDR on all locations, even when only a small amount of the users/devices have access to it.  **Version information** - Defguard Core version: v2.1.1 
-  **Post-Mortem & Fix Analysis**:
-  > Test scenario:  1. Create group `small`. 2. Add 3 devices to the admin user. 3. Create a user in group `small` and add 2 devices to them. 4. Create a user with no groups and add 2 devices to them. 5. Create a location with address `10.10.10.1/24`, restricted to group `small`. 6. Edit the location, change the address to `10.10.10.1/29` (capacity 5), and save.  Expected behaviour: Saving succeeds. Only 5 devices have access to the location: 2 from `small` and 3 from admin. admin groups always have access.
+- **Issue #4051** (2026-11-17): **Edge/proxy stops accepting new connections: idle client connections are never closed and exhaust the file descriptor limit**
+  *Symptoms*: **Describe the bug** The edge (process `defguard-proxy`) accumulates established client connections on port 443 that are never closed. With roughly 50 active users it reached 1012 established connections within about three days, hit the container's default soft limit of 1024 open files and stopped accepting new connections.  Existing connections kept working, so the service looked healthy, but every new connection attempt timed out. For users this shows up as: - After entering the MFA code, the desktop client spins indefinitely and the tunnel is never established. - Occasionally the client reports that it cannot connect to the edge.  Nothing matching `too many open files` or `accept` appears in the edge container log at the configured log level.  **To Reproduce** Steps to reproduce the behavior: 1. Run the edge as a Docker container with the default `nofile` soft limit of 1024, published directly on 443/tcp (no reverse proxy in front). 2. Let about 50 users work normally with the desktop client for a few days. 3. Watch the number of established connections on port 443 inside the container: `ss -Htn state established 'sport = :443' | wc -l`. It grows continuously and far exceeds the number of clients. 4. Once the process holds 1024 file descriptors, new connections are no longer accepted: SYNs reach the container but get no SYN-ACK, and MFA / tunnel setup hangs in the client.  **Expected behavior** - Idle or dead client connections are closed by the edge (idle timeout and/or T
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2053,82 +2061,593 @@ impl Token {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a0570118` (2026-11-16)
-**Commit Message**: update to README core capabilities (#4011)
+### Incident Patch 1: `7d232424` (2026-11-24)
+**Commit Message**: Make Client download page consistent with landing page (#4099)
 
-2.1 and 2.2 features added
+* make download page consistent
 
-**File**: `README.md` (modified, +33/-8)
+* consistent download page 2
+
+**File**: `web/src/shared/api/update-service.ts` (modified, +3/-0)
 ```diff
-@@ -21,12 +21,37 @@ For detailed security information see the [secure-by-design documentation](https
+@@ -18,6 +18,7 @@ export const updateServiceClient = axios.create({
  
- ## Core Capabilities
+ export type ClientVersionCheck = {
+   windows_amd64?: string;
++  windows_arm64?: string;
+   deb_amd64?: string;
+   deb_arm64?: string;
+   deb_legacy_arm64?: string;
+@@ -49,6 +50,7 @@ const updateServiceApi = {
+           rpm_amd64: data.rpm_amd64 ?? clientDownloadFallback,
+           rpm_arm64: data.rpm_arm64 ?? clientDownloadFallback,
+           windows_amd64: data.windows_amd64 ?? clientDownloadFallback,
++          windows_arm64: data.windows_arm64 ?? clientDownloadFallback,
+         };
+         return res;
+       })
+@@ -64,6 +66,7 @@ const updateServiceApi = {
+           rpm_amd64: clientDownloadFallback,
+           rpm_arm64: clientDownloadFallback,
+           windows_amd64: clientDownloadFallback,
++          windows_arm64: clientDownloadFallback,
+         };
+         return fallback;
+       }),
+```
+
+**File**: `web/src/shared/components/modals/AddUserDeviceModal/steps/AddDeviceModalClientConfigStep/AddDeviceModalClientConfigStep.tsx` (modified, +44/-27)
+```diff
+@@ -12,7 +12,6 @@ import { CopyField } from '../../../../../defguard-ui/components/CopyField/CopyF
+ import { Divider } from '../../../../../defguard-ui/components/Divider/Divider';
+ import { Fold } from '../../../../../defguard-ui/components/Fold/Fold';
+ import { FoldButton } from '../../../../../defguard-ui/components/FoldButton/FoldButton';
+-import { IconButton } from '../../../../../defguard-ui/components/IconButton/IconButton';
+ import { IconButtonMenu } from '../../../../../defguard-ui/components/IconButtonMenu/IconButtonMenu';
+ import type { MenuItemsGroup } from '../../../../../defguard-ui/components/Menu/types';
+ import { QrCard } from '../../../../../defguard-ui/components/QrCard/QrCard';
+@@ -41,21 +40,45 @@ export const AddDeviceModalClientConfigStep = () => {
+     );
+   }, [enrollment]);
  
--- 🌐 **WireGuard VPN** — multiple locations with per-location access control, MFA per connection, self-service device setup, kernel and userspace support
--- 👥 **Identity & Access Management** — internal OIDC provider for SSO, external OIDC (Google, Microsoft, custom), LDAP/AD sync, remote enrollment, user self-service
--- 🔑 **Multi-Factor Authentication** — TOTP, WebAuthn/FIDO2, email tokens, biometric via mobile app
--- 🛡️ **Firewall** — allow/deny rules per VPN location by user or group, applied in real time
--- 📋 **Activity Log** — audit log with filtering and search; real-time SIEM streaming (Enterprise)
--- 🔗 **Integrations** — webhooks and REST API
-+- 🌐 **WireGuard VPN**
-+  - **Locations**: multiple locations with per-location access control, MFA per connection, self-service device setup, kernel and userspace support
-+  - **Multi-location DNS**: each connected location applies its own resolvers and domains side by side
-+  - **Custom MTU**: an MTU set by the admin that the client apps apply
-+  - **Gateway on VyOS**: Defguard Gateway runs as a container on VyOS
-+- 🔑 **Multi-Factor Authentication**
-+  - **FIDO2 Hardware Keys** (Enterprise): hardware security keys such as YubiKey as an MFA factor for the VPN connection, registered in the desktop client and used on desktop and over NFC on mobile
-+  - **MFA Flows** (Business): ordered MFA steps, each accepting a choice of factors, with the tunnel established only after the last step succeeds; one flow can be reused across locations
-+  - **Group-level MFA Overrides** (Enterprise): different MFA flows for specific groups on the same VPN location, on top of the location's default flow
-+  - **Factors**: TOTP, email tokens, biometric via the mobile app, external SSO (Business)
-+  - **MFA Setup in the Desktop Client**: users without MFA set it up when they first connect to a protected location, without re-enrolling
-+- 👥 **Identity & Access Management**
-+  - **SSO & Directories**: internal OIDC provider for SSO, external OIDC (Google, Microsoft, custom), LDAP/AD sync, remote enrollment, user self-service
-+  - **Windows Auto-provisioning**: a bulk action writes each user's enrollment token to an Active Directory field
-+- 🛡️ **Access Control**
-+  - **Firewall**: group-based firewall policies with support for OPNsense, pfSense, Linux and MikroTik
-+  - **Device Posture** (Enterprise): checks a device must pass before it connects, set per location: client and OS version, security updates, Active Directory membership, antivirus, disk encryption
-+  - **Allowed IPs from Firewall Rules** (Enterprise): each user's WireGuard config lists only the subnets their firewall rules allow
-+  - **Firewall Bulk Actions**: manage rules, destinations and aliases in bulk
-+- 💻 **Clients**
-+  - **Desktop Client**: Windows, macOS and Linux app with multiple instances and locations, a tray mode and live configuration sync (Business)
-+  - **Mobile Client**: redesigned iOS and Android app that works in MFA flows both as a factor and as a connecting client
-+  - **Always-on & Pre-logon VPN** (Enterprise): Always-on VPN on Windows and Linux, connected at boot by a background service, and pre-logon VPN on Windows
-+  - **Command-line Client**: connect, disconnect and check status from the terminal, with MFA and JSON output, for headless machines and scripts
-+  - **Group Traffic Policies** (Enterprise): no limitations, disable all traffic or force all traffic, set per group instead of only globally
-+- 📋 **Audit & Integrations**
-+  - **Activity Log**: audit log with filtering and search; real-time SIEM streaming (Enterprise)
-+  - **Integrations**: webhooks and REST API
++  const windowsMenu = useMemo(
++    (): MenuItemsGroup[] => [
++      {
++        header: {
++          text: `${titleCase(m.misc_for())} Windows`,
++        },
++        items: [
++          {
++            icon: 'windows',
++            text: 'Windows 11 (x64)',
++            onClick: () => openClientLink(clientLinks?.windows_amd64),
++          },
++          {
++            icon: 'windows',
++            text: 'Windows 11 (ARM)',
++            onClick: () => openClientLink(clientLinks?.windows_arm64),
++          },
++        ],
++      },
++    ],
++    [clientLinks],
++  );
 +
+   const appleMenu = useMemo(
+     (): MenuItemsGroup[] => [
+       {
+         header: {
+-          text: 'Apple Hardware',
++          text: `${titleCase(m.misc_for())} macOS`,
+         },
+         items: [
+           {
+-            icon: 'apple',
+-            text: 'Intel',
+-            onClick: () => openClientLink(clientLinks?.macos_amd64),
++            icon: 'app-store',
++            text: 'App Store',
++            onClick: () => openClientLink(externalLink.client.desktop.macos.appStore),
+           },
+           {
+             icon: 'apple',
+-            text: 'ARM',
++            text: 'Universal DMG',
++            // The update service returns the universal DMG for both macOS keys.
+             onClick: () => openClientLink(clientLinks?.macos_arm64),
+           },
+         ],
+@@ -72,42 +95,42 @@ export const AddDeviceModalClientConfigStep = () => {
+         },
+         items: [
+           {
+-            icon: 'ubuntu',
+-            text: 'Ubuntu 24.04 ARM',
+-            onClick: () => openClientLink(clientLinks?.deb_arm64),
++            icon: 'debian',
++            text: 'Debian 13 (x86)',
++            onClick: () => openClientLink(clientLinks?.deb_amd64),
+           },
+           {
+-            icon: 'ubuntu',
+-            text: 'Ubuntu 24.04 AMD64',
+-            onClick: () => openClientLink(clientLinks?.deb_amd64),
++            icon: 'debian',
++            text: 'Debian 13 (ARM)',
++            onClick: () => openClientLink(clientLinks?.deb_arm64),
+           },
+         ],
+       },
+       {
+         items: [
+           {
+             icon: 'debian',
+-            text: 'Ubuntu 22.04 / Debian 12&13 ARM',
+-            onClick: () => openClientLink(clientLinks?.deb_legacy_arm64),
++            text: 'Debian 12 | Ubuntu 22 (x86)',
++            onClick: () => openClientLink(clientLinks?.deb_legacy_amd64),
+           },
+           {
+             icon: 'debian',
+-            text: 'Ubuntu 22.04 / Debian 12&13 AMD64',
+-            onClick: () => openClientLink(clientLinks?.deb_legacy_amd64),
++            text: 'Debian 12 | Ubuntu 22 (ARM)',
++            onClick: () => openClientLink(clientLinks?.deb_legacy_arm64),
+           },
+         ],
+       },
+       {
+         items: [
+           {
+             icon: 'linux',
+-            text: 'RPM ARM',
+-            onClick: () => openClientLink(clientLinks?.rpm_arm64),
++            text: 'Fedora 40 (x86)',
++            onClick: () => openClientLink(clientLinks?.rpm_amd64),
+           },
+           {
+             icon: 'linux',
+-            text: 'RPM AMD64',
+-            onClick: () => openClientLink(clientLinks?.rpm_amd64),
++            text: 'Fedora 40 (ARM)',
++            onClick: () => openClientLink(clientLinks?.rpm_arm64),
+           },
+         ],
+       },
+@@ -152,13 +175,7 @@ export const AddDeviceModalClientConfigStep = () => {
+           </a>
+           <div className="download">
+             <p>{m.modal_add_user_device_client_desktop_download()}</p>
+-            <a
+-              href={clientLinks?.windows_amd64 ?? externalLink.defguard.download}
+-              target="_blank"
+-              rel="noopener noreferrer"
+-            >
+-              <IconButton icon="windows" />
+-            </a>
++            <IconButtonMenu icon="windows" menuItems={windowsMenu} />
+             <IconButtonMenu icon="apple" menuItems={appleMenu} />
+             <IconButtonMenu icon="linux" menuItems={linuxMenu} />
+           </div>
+```
+
+**File**: `web/src/shared/constants.ts` (modified, +4/-0)
+```diff
+@@ -22,6 +22,10 @@ export const externalLink = {
+       linux: {
+         arch: 'https://aur.archlinux.org/packages/defguard-client',
+       },
++      macos: {
++        appStore:
++          'https://apps.apple.com/us/app/defguard-desktop-client/id6754601166?mt=12',
++      },
+     },
+     mobile: {
+       apple: 'https://apps.apple.com/us/app/defguard-vpn-client/id6748068630',
+```
+
+**File**: `web/tests/client-artifacts.test.ts` (added, +24/-0)
+```diff
+@@ -0,0 +1,24 @@
++import { afterEach, expect, it, vi } from 'vitest';
++import { updateServiceApi, updateServiceClient } from '../src/shared/api/update-service';
 +
-+Explore all features in the [Product overview](https://defguard.net/enterprise-wireguard-vpn/).
- 
- ## Clients
- 
-@@ -64,7 +89,7 @@ Comprehensive documentation is available at: https://docs.defguard.net
- 
- ## Video guides
- 
--Visit out YouTube channel to see our [video guides](https://www.youtube.com/playlist?list=PLVR33X0CUHUcoyLshs9S8VbsGgggouCAW).
-+Visit out YouTube channel to see our [video guides](https://www.youtube.com/@defguard
- 
- ## Community
- 
-@@ -84,4 +109,4 @@ The code in this repository is available under a dual licensing model:
- - Enterprise License: All code in this repository (including within the "crates/defguard_core/src/enterprise" directory) is licensed under a separate Enterprise License (see file crates/defguard_core/src/enterprise/LICENSE.md).
- 
- ## Legal
--WireGuard® is [registered trademarks](https://www.wireguard.com/trademark-policy/) of Jason A. Donenfeld.
-\ No newline at end of file
-+WireGuard® is [registered trademarks](https://www.wireguard.com/trademark-policy/) of Jason A. Donenfeld.
++type GetResponse = Awaited<ReturnType<typeof updateServiceClient.get>>;
++
++afterEach(() => {
++  vi.restoreAllMocks();
++});
++
++it('getClientArtifacts returns windows_arm64 from the update service and falls back to the download page when the key is missing', async () => {
++  const get = vi.spyOn(updateServiceClient, 'get');
++
++  get.mockResolvedValueOnce({
++    data: { windows_arm64: 'https://example.com/client_arm64.msi' },
++  } as GetResponse);
++  await expect(updateServiceApi.getClientArtifacts()).resolves.toMatchObject({
++    windows_arm64: 'https://example.com/client_arm64.msi',
++  });
++
++  get.mockResolvedValueOnce({ data: {} } as GetResponse);
++  await expect(updateServiceApi.getClientArtifacts()).resolves.toMatchObject({
++    windows_arm64: 'https://defguard.net/download',
++  });
++});
+```
+
+---
+
+### Incident Patch 2: `814398e0` (2026-11-24)
+**Commit Message**: Entra certificate authentication (#4037)
+
+* backend
+
+* frontend
+
+**File**: `.sqlx/query-9d462e0a204bdf7744cb22cbf644a8b5535e7a69e9d10cecb4b05d20f3e82d5f.json` (renamed, +26/-2)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "db_name": "PostgreSQL",
+-  "query": "SELECT id, name, base_url, kind \"kind: OpenIdProviderKind\", client_id, client_secret, display_name, google_service_account_key \"google_service_account_key?: _\", google_service_account_email, admin_email, directory_sync_enabled,\n            directory_sync_interval, directory_sync_user_behavior  \"directory_sync_user_behavior: DirectorySyncUserBehavior\", directory_sync_admin_behavior  \"directory_sync_admin_behavior: DirectorySyncUserBehavior\", directory_sync_target  \"directory_sync_target: DirectorySyncTarget\", okta_private_jwk \"okta_private_jwk?: _\", okta_dirsync_client_id, directory_sync_group_match, jumpcloud_api_key \"jumpcloud_api_key?: _\", prefetch_users, disable_password_management, directory_sync_user_groups FROM openidprovider WHERE name = $1",
++  "query": "SELECT id, name, base_url, kind \"kind: OpenIdProviderKind\", client_id, client_secret, display_name, google_service_account_key \"google_service_account_key?: _\", google_service_account_email, admin_email, directory_sync_enabled,\n            directory_sync_interval, directory_sync_user_behavior  \"directory_sync_user_behavior: DirectorySyncUserBehavior\", directory_sync_admin_behavior  \"directory_sync_admin_behavior: DirectorySyncUserBehavior\", directory_sync_target  \"directory_sync_target: DirectorySyncTarget\", okta_private_jwk \"okta_private_jwk?: _\", okta_dirsync_client_id, directory_sync_group_match, jumpcloud_api_key \"jumpcloud_api_key?: _\", prefetch_users, disable_password_management, directory_sync_user_groups, client_certificate, client_private_key \"client_private_key?: _\" FROM openidprovider WHERE name = $1",
+   "describe": {
+     "columns": [
+       {
+@@ -291,6 +291,28 @@
+             "name": "directory_sync_user_groups"
+           }
+         }
++      },
++      {
++        "ordinal": 22,
++        "name": "client_certificate",
++        "type_info": "Text",
++        "origin": {
++          "Table": {
++            "table": "openidprovider",
++            "name": "client_certificate"
++          }
++        }
++      },
++      {
++        "ordinal": 23,
++        "name": "client_private_key?: _",
++        "type_info": "Text",
++        "origin": {
++          "Table": {
++            "table": "openidprovider",
++            "name": "client_private_key"
++          }
++        }
+       }
+     ],
+     "parameters": {
+@@ -320,8 +342,10 @@
+       true,
+       false,
+       false,
++      true,
++      true,
+       true
+     ]
+   },
+-  "hash": "947e582ac133cd33281dc9c31f5fa8bb1bc31b4e4b500d561e0708caa51fa118"
++  "hash": "9d462e0a204bdf7744cb22cbf644a8b5535e7a69e9d10cecb4b05d20f3e82d5f"
+ }
+```
+
+**File**: `.sqlx/query-a60dd48d374245df4029f0454de2d0b03484f28729e07bbb482ba2cd906c9287.json` (renamed, +5/-3)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "db_name": "PostgreSQL",
+-  "query": "UPDATE \"openidprovider\" SET \"name\" = $2,\"base_url\" = $3,\"kind\" = $4,\"client_id\" = $5,\"client_secret\" = $6,\"display_name\" = $7,\"google_service_account_key\" = $8,\"google_service_account_email\" = $9,\"admin_email\" = $10,\"directory_sync_enabled\" = $11,\"directory_sync_interval\" = $12,\"directory_sync_user_behavior\" = $13,\"directory_sync_admin_behavior\" = $14,\"directory_sync_target\" = $15,\"okta_private_jwk\" = $16,\"okta_dirsync_client_id\" = $17,\"directory_sync_group_match\" = $18,\"jumpcloud_api_key\" = $19,\"prefetch_users\" = $20,\"disable_password_management\" = $21,\"directory_sync_user_groups\" = $22 WHERE id = $1",
++  "query": "UPDATE \"openidprovider\" SET \"name\" = $2,\"base_url\" = $3,\"kind\" = $4,\"client_id\" = $5,\"client_secret\" = $6,\"display_name\" = $7,\"google_service_account_key\" = $8,\"google_service_account_email\" = $9,\"admin_email\" = $10,\"directory_sync_enabled\" = $11,\"directory_sync_interval\" = $12,\"directory_sync_user_behavior\" = $13,\"directory_sync_admin_behavior\" = $14,\"directory_sync_target\" = $15,\"okta_private_jwk\" = $16,\"okta_dirsync_client_id\" = $17,\"directory_sync_group_match\" = $18,\"jumpcloud_api_key\" = $19,\"prefetch_users\" = $20,\"disable_password_management\" = $21,\"directory_sync_user_groups\" = $22,\"client_certificate\" = $23,\"client_private_key\" = $24 WHERE id = $1",
+   "describe": {
+     "columns": [],
+     "parameters": {
+@@ -73,10 +73,12 @@
+         "Text",
+         "Bool",
+         "Bool",
+-        "TextArray"
++        "TextArray",
++        "Text",
++        "Text"
+       ]
+     },
+     "nullable": []
+   },
+-  "hash": "de48ed494f4fd4ddc4d621282f8a91629ce6a744cea019bc79963a0bb9b7f6cf"
++  "hash": "a60dd48d374245df4029f0454de2d0b03484f28729e07bbb482ba2cd906c9287"
+ }
+```
+
+**File**: `.sqlx/query-a8111fe6fd9923e1dcff5fed5c38c85bcc42134246c7258f52bf13d8adeecdcc.json` (renamed, +26/-3)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "db_name": "PostgreSQL",
+-  "query": "SELECT id, \"name\",\"base_url\",\"kind\" \"kind: _\",\"client_id\",\"client_secret\" \"client_secret: _\",\"display_name\",\"google_service_account_key\" \"google_service_account_key?: _\",\"google_service_account_email\",\"admin_email\",\"directory_sync_enabled\",\"directory_sync_interval\",\"directory_sync_user_behavior\" \"directory_sync_user_behavior: _\",\"directory_sync_admin_behavior\" \"directory_sync_admin_behavior: _\",\"directory_sync_target\" \"directory_sync_target: _\",\"okta_private_jwk\" \"okta_private_jwk?: _\",\"okta_dirsync_client_id\",\"directory_sync_group_match\" \"directory_sync_group_match: _\",\"jumpcloud_api_key\" \"jumpcloud_api_key?: _\",\"prefetch_users\",\"disable_password_management\",\"directory_sync_user_groups\" \"directory_sync_user_groups?: _\" FROM \"openidprovider\" LIMIT $1 OFFSET $2",
++  "query": "SELECT id, \"name\",\"base_url\",\"kind\" \"kind: _\",\"client_id\",\"client_secret\" \"client_secret: _\",\"display_name\",\"google_service_account_key\" \"google_service_account_key?: _\",\"google_service_account_email\",\"admin_email\",\"directory_sync_enabled\",\"directory_sync_interval\",\"directory_sync_user_behavior\" \"directory_sync_user_behavior: _\",\"directory_sync_admin_behavior\" \"directory_sync_admin_behavior: _\",\"directory_sync_target\" \"directory_sync_target: _\",\"okta_private_jwk\" \"okta_private_jwk?: _\",\"okta_dirsync_client_id\",\"directory_sync_group_match\" \"directory_sync_group_match: _\",\"jumpcloud_api_key\" \"jumpcloud_api_key?: _\",\"prefetch_users\",\"disable_password_management\",\"directory_sync_user_groups\" \"directory_sync_user_groups?: _\",\"client_certificate\",\"client_private_key\" \"client_private_key?: _\" FROM \"openidprovider\" WHERE id = $1",
+   "describe": {
+     "columns": [
+       {
+@@ -291,11 +291,32 @@
+             "name": "directory_sync_user_groups"
+           }
+         }
++      },
++      {
++        "ordinal": 22,
++        "name": "client_certificate",
++        "type_info": "Text",
++        "origin": {
++          "Table": {
++            "table": "openidprovider",
++            "name": "client_certificate"
++          }
++        }
++      },
++      {
++        "ordinal": 23,
++        "name": "client_private_key?: _",
++        "type_info": "Text",
++        "origin": {
++          "Table": {
++            "table": "openidprovider",
++            "name": "client_private_key"
++          }
++        }
+       }
+     ],
+     "parameters": {
+       "Left": [
+-        "Int8",
+         "Int8"
+       ]
+     },
+@@ -321,8 +342,10 @@
+       true,
+       false,
+       false,
++      true,
++      true,
+       true
+     ]
+   },
+-  "hash": "8fc78584c0f8b0c1f66af6b3dbca4d84d45461db80b690213381f9dabe5d29af"
++  "hash": "a8111fe6fd9923e1dcff5fed5c38c85bcc42134246c7258f52bf13d8adeecdcc"
+ }
+```
+
+**File**: `.sqlx/query-b131a91159cbb7a8ceac0e295f3edf70218688b08446d01c176435073b77c04d.json` (renamed, +26/-2)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "db_name": "PostgreSQL",
+-  "query": "SELECT id, \"name\",\"base_url\",\"kind\" \"kind: _\",\"client_id\",\"client_secret\" \"client_secret: _\",\"display_name\",\"google_service_account_key\" \"google_service_account_key?: _\",\"google_service_account_email\",\"admin_email\",\"directory_sync_enabled\",\"directory_sync_interval\",\"directory_sync_user_behavior\" \"directory_sync_user_behavior: _\",\"directory_sync_admin_behavior\" \"directory_sync_admin_behavior: _\",\"directory_sync_target\" \"directory_sync_target: _\",\"okta_private_jwk\" \"okta_private_jwk?: _\",\"okta_dirsync_client_id\",\"directory_sync_group_match\" \"directory_sync_group_match: _\",\"jumpcloud_api_key\" \"jumpcloud_api_key?: _\",\"prefetch_users\",\"disable_password_management\",\"directory_sync_user_groups\" \"directory_sync_user_groups?: _\" FROM \"openidprovider\"",
++  "query": "SELECT id, \"name\",\"base_url\",\"kind\" \"kind: _\",\"client_id\",\"client_secret\" \"client_secret: _\",\"display_name\",\"google_service_account_key\" \"google_service_account_key?: _\",\"google_service_account_email\",\"admin_email\",\"directory_sync_enabled\",\"directory_sync_interval\",\"directory_sync_user_behavior\" \"directory_sync_user_behavior: _\",\"directory_sync_admin_behavior\" \"directory_sync_admin_behavior: _\",\"directory_sync_target\" \"directory_sync_target: _\",\"okta_private_jwk\" \"okta_private_jwk?: _\",\"okta_dirsync_client_id\",\"directory_sync_group_match\" \"directory_sync_group_match: _\",\"jumpcloud_api_key\" \"jumpcloud_api_key?: _\",\"prefetch_users\",\"disable_password_management\",\"directory_sync_user_groups\" \"directory_sync_user_groups?: _\",\"client_certificate\",\"client_private_key\" \"client_private_key?: _\" FROM \"openidprovider\"",
+   "describe": {
+     "columns": [
+       {
+@@ -291,6 +291,28 @@
+             "name": "directory_sync_user_groups"
+           }
+         }
++      },
++      {
++        "ordinal": 22,
++        "name": "client_certificate",
++        "type_info": "Text",
++        "origin": {
++          "Table": {
++            "table": "openidprovider",
++            "name": "client_certificate"
++          }
++        }
++      },
++      {
++        "ordinal": 23,
++        "name": "client_private_key?: _",
++        "type_info": "Text",
++        "origin": {
++          "Table": {
++            "table": "openidprovider",
++            "name": "client_private_key"
++          }
++        }
+       }
+     ],
+     "parameters": {
+@@ -318,8 +340,10 @@
+       true,
+       false,
+       false,
++      true,
++      true,
+       true
+     ]
+   },
+-  "hash": "167ce8254fc45970778500697df780cd51703b3512952117567bf21255827d63"
++  "hash": "b131a91159cbb7a8ceac0e295f3edf70218688b08446d01c176435073b77c04d"
+ }
+```
+
+**File**: `.sqlx/query-ca5bcef694302c34b82be74d031d7b40254c0a31c4f2ee327478c13d95d7c41a.json` (renamed, +27/-2)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "db_name": "PostgreSQL",
+-  "query": "SELECT id, \"name\",\"base_url\",\"kind\" \"kind: _\",\"client_id\",\"client_secret\" \"client_secret: _\",\"display_name\",\"google_service_account_key\" \"google_service_account_key?: _\",\"google_service_account_email\",\"admin_email\",\"directory_sync_enabled\",\"directory_sync_interval\",\"directory_sync_user_behavior\" \"directory_sync_user_behavior: _\",\"directory_sync_admin_behavior\" \"directory_sync_admin_behavior: _\",\"directory_sync_target\" \"directory_sync_target: _\",\"okta_private_jwk\" \"okta_private_jwk?: _\",\"okta_dirsync_client_id\",\"directory_sync_group_match\" \"directory_sync_group_match: _\",\"jumpcloud_api_key\" \"jumpcloud_api_key?: _\",\"prefetch_users\",\"disable_password_management\",\"directory_sync_user_groups\" \"directory_sync_user_groups?: _\" FROM \"openidprovider\" WHERE id = $1",
++  "query": "SELECT id, \"name\",\"base_url\",\"kind\" \"kind: _\",\"client_id\",\"client_secret\" \"client_secret: _\",\"display_name\",\"google_service_account_key\" \"google_service_account_key?: _\",\"google_service_account_email\",\"admin_email\",\"directory_sync_enabled\",\"directory_sync_interval\",\"directory_sync_user_behavior\" \"directory_sync_user_behavior: _\",\"directory_sync_admin_behavior\" \"directory_sync_admin_behavior: _\",\"directory_sync_target\" \"directory_sync_target: _\",\"okta_private_jwk\" \"okta_private_jwk?: _\",\"okta_dirsync_client_id\",\"directory_sync_group_match\" \"directory_sync_group_match: _\",\"jumpcloud_api_key\" \"jumpcloud_api_key?: _\",\"prefetch_users\",\"disable_password_management\",\"directory_sync_user_groups\" \"directory_sync_user_groups?: _\",\"client_certificate\",\"client_private_key\" \"client_private_key?: _\" FROM \"openidprovider\" LIMIT $1 OFFSET $2",
+   "describe": {
+     "columns": [
+       {
+@@ -291,10 +291,33 @@
+             "name": "directory_sync_user_groups"
+           }
+         }
++      },
++      {
++        "ordinal": 22,
++        "name": "client_certificate",
++        "type_info": "Text",
++        "origin": {
++          "Table": {
++            "table": "openidprovider",
++            "name": "client_certificate"
++          }
++        }
++      },
++      {
++        "ordinal": 23,
++        "name": "client_private_key?: _",
++        "type_info": "Text",
++        "origin": {
++          "Table": {
++            "table": "openidprovider",
++            "name": "client_private_key"
++          }
++        }
+       }
+     ],
+     "parameters": {
+       "Left": [
++        "Int8",
+         "Int8"
+       ]
+     },
+@@ -320,8 +343,10 @@
+       true,
+       false,
+       false,
++      true,
++      true,
+       true
+     ]
+   },
+-  "hash": "337b36a7bf600c63eabfc6183fdcbeb20f2a9dc72d544292b4443840a54a8bd8"
++  "hash": "ca5bcef694302c34b82be74d031d7b40254c0a31c4f2ee327478c13d95d7c41a"
+ }
+```
+
+**File**: `.sqlx/query-e379558e436bccff637e4e74f297f8a019c6a0be66ee86f11dcc7601316dbd33.json` (renamed, +4/-2)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "db_name": "PostgreSQL",
+-  "query": "UPDATE openidprovider SET name = $1, base_url = $2, kind = $3, client_id = $4, client_secret = $5, display_name = $6, google_service_account_key = $7, google_service_account_email = $8, admin_email = $9, directory_sync_enabled = $10, directory_sync_interval = $11, directory_sync_user_behavior = $12, directory_sync_admin_behavior = $13, directory_sync_target = $14, okta_private_jwk = $15, okta_dirsync_client_id = $16, directory_sync_group_match = $17, jumpcloud_api_key = $18, prefetch_users = $19, disable_password_management = $20, directory_sync_user_groups = $21 WHERE id = $22",
++  "query": "UPDATE openidprovider SET name = $1, base_url = $2, kind = $3, client_id = $4, client_secret = $5, display_name = $6, google_service_account_key = $7, google_service_account_email = $8, admin_email = $9, directory_sync_enabled = $10, directory_sync_interval = $11, directory_sync_user_behavior = $12, directory_sync_admin_behavior = $13, directory_sync_target = $14, okta_private_jwk = $15, okta_dirsync_client_id = $16, directory_sync_group_match = $17, jumpcloud_api_key = $18, prefetch_users = $19, disable_password_management = $20, directory_sync_user_groups = $21, client_certificate = $22, client_private_key = $23 WHERE id = $24",
+   "describe": {
+     "columns": [],
+     "parameters": {
+@@ -73,10 +73,12 @@
+         "Bool",
+         "Bool",
+         "TextArray",
++        "Text",
++        "Text",
+         "Int8"
+       ]
+     },
+     "nullable": []
+   },
+-  "hash": "66af8c4b14478a93354ff37b32e28cc9523b2b51aeea58fa82b0335f0b1c7769"
++  "hash": "e379558e436bccff637e4e74f297f8a019c6a0be66ee86f11dcc7601316dbd33"
+ }
+```
+
+**File**: `.sqlx/query-e8a956f3e8f704a4397311d7b24d5078af1346c484c15045d739934b2345d806.json` (renamed, +5/-3)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "db_name": "PostgreSQL",
+-  "query": "INSERT INTO \"openidprovider\" (\"name\",\"base_url\",\"kind\",\"client_id\",\"client_secret\",\"display_name\",\"google_service_account_key\",\"google_service_account_email\",\"admin_email\",\"directory_sync_enabled\",\"directory_sync_interval\",\"directory_sync_user_behavior\",\"directory_sync_admin_behavior\",\"directory_sync_target\",\"okta_private_jwk\",\"okta_dirsync_client_id\",\"directory_sync_group_match\",\"jumpcloud_api_key\",\"prefetch_users\",\"disable_password_management\",\"directory_sync_user_groups\") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21) RETURNING id",
++  "query": "INSERT INTO \"openidprovider\" (\"name\",\"base_url\",\"kind\",\"client_id\",\"client_secret\",\"display_name\",\"google_service_account_key\",\"google_service_account_email\",\"admin_email\",\"directory_sync_enabled\",\"directory_sync_interval\",\"directory_sync_user_behavior\",\"directory_sync_admin_behavior\",\"directory_sync_target\",\"okta_private_jwk\",\"okta_dirsync_client_id\",\"directory_sync_group_match\",\"jumpcloud_api_key\",\"prefetch_users\",\"disable_password_management\",\"directory_sync_user_groups\",\"client_certificate\",\"client_private_key\") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23) RETURNING id",
+   "describe": {
+     "columns": [
+       {
+@@ -84,12 +84,14 @@
+         "Text",
+         "Bool",
+         "Bool",
+-        "TextArray"
++        "TextArray",
++        "Text",
++        "Text"
+       ]
+     },
+     "nullable": [
+       false
+     ]
+   },
+-  "hash": "00f9407fb5af87aa5cc8ae83b0216b1cdd6e8cfb7b01690229602f2544af4a73"
++  "hash": "e8a956f3e8f704a4397311d7b24d5078af1346c484c15045d739934b2345d806"
+ }
+```
+
+**File**: `.sqlx/query-e96f44aa76a790bb2afc41947c87b3fde5413a5a214a69f3e676484f2eaccfa0.json` (renamed, +26/-2)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "db_name": "PostgreSQL",
+-  "query": "SELECT id, name, base_url, kind \"kind: OpenIdProviderKind\", client_id, client_secret, display_name, google_service_account_key \"google_service_account_key?: _\", google_service_account_email, admin_email, directory_sync_enabled, directory_sync_interval, directory_sync_user_behavior \"directory_sync_user_behavior: DirectorySyncUserBehavior\", directory_sync_admin_behavior  \"directory_sync_admin_behavior: DirectorySyncUserBehavior\", directory_sync_target  \"directory_sync_target: DirectorySyncTarget\", okta_private_jwk \"okta_private_jwk?: _\", okta_dirsync_client_id, directory_sync_group_match, jumpcloud_api_key \"jumpcloud_api_key?: _\", prefetch_users, disable_password_management, directory_sync_user_groups FROM openidprovider LIMIT 1",
++  "query": "SELECT id, name, base_url, kind \"kind: OpenIdProviderKind\", client_id, client_secret, display_name, google_service_account_key \"google_service_account_key?: _\", google_service_account_email, admin_email, directory_sync_enabled, directory_sync_interval, directory_sync_user_behavior \"directory_sync_user_behavior: DirectorySyncUserBehavior\", directory_sync_admin_behavior  \"directory_sync_admin_behavior: DirectorySyncUserBehavior\", directory_sync_target  \"directory_sync_target: DirectorySyncTarget\", okta_private_jwk \"okta_private_jwk?: _\", okta_dirsync_client_id, directory_sync_group_match, jumpcloud_api_key \"jumpcloud_api_key?: _\", prefetch_users, disable_password_management, directory_sync_user_groups, client_certificate, client_private_key \"client_private_key?: _\" FROM openidprovider LIMIT 1",
+   "describe": {
+     "columns": [
+       {
+@@ -291,6 +291,28 @@
+             "name": "directory_sync_user_groups"
+           }
+         }
++      },
++      {
++        "ordinal": 22,
++        "name": "client_certificate",
++        "type_info": "Text",
++        "origin": {
++          "Table": {
++            "table": "openidprovider",
++            "name": "client_certificate"
++          }
++        }
++      },
++      {
++        "ordinal": 23,
++        "name": "client_private_key?: _",
++        "type_info": "Text",
++        "origin": {
++          "Table": {
++            "table": "openidprovider",
++            "name": "client_private_key"
++          }
++        }
+       }
+     ],
+     "parameters": {
+@@ -318,8 +340,10 @@
+       true,
+       false,
+       false,
++      true,
++      true,
+       true
+     ]
+   },
+-  "hash": "1da314b8ea0aec1a6b0ab9a7c083dff6b876ababda9ea3da021a2e2c76a45b31"
++  "hash": "e96f44aa76a790bb2afc41947c87b3fde5413a5a214a69f3e676484f2eaccfa0"
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4055** (2026-11-16): Re-enable E2E tests (@jakub-tldr)
-- **PR #4042** (2026-11-16): Devices page (@filipslezaklab)
-- **PR #4039** (2026-11-12): Validate network size aganist allowed devices only (@jakub-tldr)
-- **PR #4038** (2026-11-12): Validate network size aganist allowed devices only (@jakub-tldr)
-- **PR #4025** (2026-11-09): Posture device attestation (@filipslezaklab)
-- **PR #4011** (2026-11-16): update to README core capabilities (@mike767)
+- **PR #4099** (2026-11-24): Make Client download page consistent with landing page (@t-aleksander)
+- **PR #4093** (2026-11-23): apply new design for network devices modals (@filipslezaklab)
+- **PR #4090** (2026-11-23): consistent UX around copy/download actions (@filipslezaklab)
+- **PR #4089** (2026-11-23): fix lint (@filipslezaklab)
+- **PR #4083** (2026-11-20): Fix menu devices table action (@filipslezaklab)
+- **PR #4078** (2026-11-20): Display correct rule ID in traffic log (@moubctez)
 
 ---
 
@@ -2148,48 +2667,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. update to README core capabilities
+## X. Make Client download page consistent with landing page
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DefGuard/defguard. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `web/src/shared/api/update-service.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DefGuard/defguard. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a0570118`: update to README core capabilities. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7d232424`: Make Client download page consistent with landing page. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `web/src/shared/api/update-service.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- 🌐 **WireGuard VPN**
-  - **Locations**: multiple locations with per-location access control, MFA per connection, self-service device setup, kernel and userspace support
-  - **Multi-location DNS**: each connected location applies its own resolvers and domains side by side
-  - **Custom MTU**: an MTU set by the admin that the client apps apply
-  - **Gateway on VyOS**: Defguard Gateway runs as a container on VyOS
-- 🔑 **Multi-Factor Authentication**
-  - **FIDO2 Hardware Keys** (Enterprise): hardware security keys such as YubiKey as an MFA factor for the VPN connection, registered in the desktop client and used on desktop and over NFC on mobile
-  - **MFA Flows** (Business): ordered MFA steps, each accepting a choice of factors, with the tunnel established only after the last step succeeds; one flow can be reused across locations
-  - **Group-level MFA Overrides** (Enterprise): different MFA flows for specific groups on the same VPN location, on top of the location's default flow
-  - **Factors**: TOTP, email tokens, biometric via the mobile app, external SSO (Business)
-  - **MFA Setup in the Desktop Client**: users without MFA set it up when they first connect to a protected location, w
+  windows_arm64?: string;
+          windows_arm64: data.windows_arm64 ?? clientDownloadFallback,
+          windows_arm64: clientDownloadFallback,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-- 🌐 **WireGuard VPN** — multiple locations with per-location access control, MFA per connection, self-service device setup, kernel and userspace support
-- 👥 **Identity & Access Management** — internal OIDC provider for SSO, external OIDC (Google, Microsoft, custom), LDAP/AD sync, remote enrollment, user self-service
-- 🔑 **Multi-Factor Authentication** — TOTP, WebAuthn/FIDO2, email tokens, biometric via mobile app
-- 🛡️ **Firewall** — allow/deny rules per VPN location by user or group, applied in real time
-- 📋 **Activity Log** — audit log with filtering and search; real-time SIEM streaming (Enterprise)
-- 🔗 **Integrations** — webhooks and REST API
-Visit out YouTube channel to see our [video guides](https://www.youtube.com/playlist?list=PLVR33X0CUHUcoyLshs9S8VbsGgggouCAW).
-WireGuard® is [registered trademarks](https://www.wireguard.com/trademark-policy/) of Jason A. Donenfeld.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a0570118` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7d232424` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

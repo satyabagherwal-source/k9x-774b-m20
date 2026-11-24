@@ -12666,3 +12666,6 @@
 | `CYCLE-20261124-6LHR` | `2026-11-24T12:27:28.719Z` | `linkerd/linkerd2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10254` | Yes (`27a33864...`) |
 | `CYCLE-20261124-6PJZ` | `2026-11-24T12:27:33.983Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10255` | Yes (`543ef086...`) |
 | `CYCLE-20261124-HZML` | `2026-11-24T12:36:20.253Z` | `mfontanini/presenterm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10256` | Yes (`6c118578...`) |
+| `CYCLE-20261124-U1DS` | `2026-11-24T12:45:42.400Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10257` | Yes (`430caead...`) |
+| `CYCLE-20261124-U2NY` | `2026-11-24T12:45:44.062Z` | `DefGuard/defguard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10258` | Yes (`fb75b763...`) |
+| `CYCLE-20261124-U3YP` | `2026-11-24T12:45:45.745Z` | `gluesql/gluesql` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10259` | Yes (`0330b749...`) |

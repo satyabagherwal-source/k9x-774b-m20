@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T12:36:20.263Z",
-  "total_cycles_completed": 12039,
-  "total_learnings_persisted": 12039,
-  "total_rules_promoted": 11111,
+  "last_updated": "2026-11-24T12:45:45.757Z",
+  "total_cycles_completed": 12042,
+  "total_learnings_persisted": 12042,
+  "total_rules_promoted": 11114,
   "history": [
-    {
-      "timestamp": "2026-11-23T20:30:27.298Z",
-      "repository": "microsoft/FrogNano-4B-2609",
-      "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T20:30:33.205Z",
-      "repository": "zvec-ai/zvec-grep",
-      "learningId": "learn-github-zvec-ai-zvec-grep",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-23T20:30:43.925Z",
-      "repository": "smallstep/cli",
-      "learningId": "learn-github-smallstep-cli",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T20:38:45.235Z",
       "repository": "FrancisRing/Prism",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-24T12:36:20.263Z",
       "repository": "mfontanini/presenterm",
       "learningId": "learn-github-mfontanini-presenterm",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T12:45:42.416Z",
+      "repository": "temporalio/temporal",
+      "learningId": "learn-github-temporalio-temporal",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T12:45:44.074Z",
+      "repository": "DefGuard/defguard",
+      "learningId": "learn-github-defguard-defguard",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T12:45:45.757Z",
+      "repository": "gluesql/gluesql",
+      "learningId": "learn-github-gluesql-gluesql",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

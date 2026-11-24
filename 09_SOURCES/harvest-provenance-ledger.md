@@ -12699,3 +12699,6 @@ Every entry in this ledger must capture:
 | `learn-github-linkerd-linkerd2` | `https://github.com/linkerd/linkerd2` | `8d6fcc5b` | Multi-dimensional audit evidence | 2026-11-24T12:27:28.724Z |
 | `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `d6933aea` | Multi-dimensional audit evidence | 2026-11-24T12:27:33.988Z |
 | `learn-github-mfontanini-presenterm` | `https://github.com/mfontanini/presenterm` | `aa667f91` | Multi-dimensional audit evidence | 2026-11-24T12:36:20.257Z |
+| `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `4197dfdd` | Multi-dimensional audit evidence | 2026-11-24T12:45:42.405Z |
+| `learn-github-defguard-defguard` | `https://github.com/DefGuard/defguard` | `7d232424` | Multi-dimensional audit evidence | 2026-11-24T12:45:44.067Z |
+| `learn-github-gluesql-gluesql` | `https://github.com/gluesql/gluesql` | `c91cbdd6` | Multi-dimensional audit evidence | 2026-11-24T12:45:45.750Z |

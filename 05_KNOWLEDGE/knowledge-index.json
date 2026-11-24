@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T12:36:33.221Z",
+  "last_updated": "2026-11-24T12:45:53.197Z",
   "total_verified_learnings": 9095,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24612,
+  "total_items": 24620,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -215493,8 +215493,8 @@
       "slug": "temporalio-temporal",
       "platform": "github",
       "source_url": "https://github.com/temporalio/temporal",
-      "source_version": "5208234b",
-      "content_hash": "59b7ef61df3677fad35c590dcb61859efab9c257197e0fcda18cb0d326b34938",
+      "source_version": "4197dfdd",
+      "content_hash": "430caead01ee490cd7ca08a4c30ad092a9623028d8eb9fa0a855c86a4ce857d4",
       "dossier_path": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "promoted_rules": [
@@ -215532,6 +215532,11 @@
           "number": 10078,
           "title": "WHN impl 2: store worker control queue when workflow task starts",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10257,
+          "title": "Add keepalive dial option to local frontend gRPC connection",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -215539,7 +215544,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T17:11:55.503Z",
+      "verified_at": "2026-11-24T12:45:42.128Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215593,10 +215598,10 @@
       "relative_path": "08_VERIFICATION/temporalio-temporal-verification-protocol-empirical-defect-shield-for-temporalio.md",
       "title": "Verification Protocol: Empirical Defect Shield for temporalio/temporal",
       "repository": "temporalio/temporal",
-      "source_version": "5208234b",
-      "content_hash": "c0bfe28170e28f51e0644a9efee5c44d476437bfb1f7a27cb7b9014072f696c3",
+      "source_version": "4197dfdd",
+      "content_hash": "b7dbdf69c55e885d6a66e61769559402eb57ea0ede5d76f79d915fa9a991eb99",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T17:11:56.336Z"
+      "persisted_at": "2026-11-24T12:45:43.263Z"
     },
     "learn-github-alibaba-zvec": {
       "learning_id": "learn-github-alibaba-zvec",
@@ -215733,9 +215738,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for temporalio-temporal-learnings",
       "repository": "temporalio-temporal-learnings",
       "source_version": "HEAD",
-      "content_hash": "e0764257c6f3bb0a17f7c77070f24d23273eaaca7ff1f2a091ef3deae721d650",
+      "content_hash": "29de2731917e2c16d0d872cee807a587509858e2fc198b7699c2fc5884b7bb85",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T17:12:00.212Z"
+      "persisted_at": "2026-11-24T12:45:50.470Z"
     },
     "candidate_directive-turbo-constrain-record-int8-kernels-to-dispatched-isa": {
       "item_id": "candidate_directive-turbo-constrain-record-int8-kernels-to-dispatched-isa",
@@ -245475,10 +245480,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-temporalio-temporal-architecture-intelligence-temporalio-temporal-core-invariant.md",
       "title": "Architecture Intelligence: temporalio/temporal Core Invariants",
       "repository": "temporalio/temporal",
-      "source_version": "5208234b",
-      "content_hash": "51b1272d13fbd1521a5c1ef06689d06fb5666eafc83dff01e8341479b1c0fa58",
+      "source_version": "4197dfdd",
+      "content_hash": "9718635278f12497e86f32aebea480db5ec071ea161315cc9191d6b441aef160",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T17:11:56.133Z"
+      "persisted_at": "2026-11-24T12:45:43.013Z"
     },
     "rule-7277": {
       "learning_id": "rule-7277",
@@ -245526,9 +245531,9 @@
       "title": "Architecture Intelligence: temporalio-temporal-learnings Core Invariants",
       "repository": "temporalio-temporal-learnings",
       "source_version": "HEAD",
-      "content_hash": "643f9f3da2053a3ec8e2d7465ad0483f4807a3f3f2fcb4171343f90defcb9858",
+      "content_hash": "d76fe3b4894fdc071ba744a5a2fe36906b536beb10ce2ac31dc584df2a9957ca",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T17:12:00.034Z"
+      "persisted_at": "2026-11-24T12:45:50.241Z"
     },
     "domain_intelligence-architecture-intelligence-projectdiscovery-nuclei-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-projectdiscovery-nuclei-learnings-core-invariants",
@@ -263337,8 +263342,8 @@
       "slug": "defguard-defguard",
       "platform": "github",
       "source_url": "https://github.com/DefGuard/defguard",
-      "source_version": "0eb2f794",
-      "content_hash": "0d643bae80dd38273269e7174131befe813cfb9d51b5b38e8d35c13d0b23dd82",
+      "source_version": "7d232424",
+      "content_hash": "fb75b76334b598dc848e895a4b723c01233fd28e6714a4f54c676a92acabdacd",
       "dossier_path": "07_PROJECT_LEARNING/defguard-defguard-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/defguard-defguard-learnings.md",
       "promoted_rules": [
@@ -263366,6 +263371,11 @@
           "number": 10072,
           "title": "consistent UX around copy/download actions",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10258,
+          "title": "Make Client download page consistent with landing page",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -263373,7 +263383,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T16:53:42.127Z",
+      "verified_at": "2026-11-24T12:45:43.794Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -263415,10 +263425,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-defguard-defguard-human-need-intelligence-defguard-defguard-core-invariants.md",
       "title": "Human & Need Intelligence: DefGuard/defguard Core Invariants",
       "repository": "DefGuard/defguard",
-      "source_version": "0eb2f794",
-      "content_hash": "eda4e9d5708fb82a3b4ecec776e58314d86ec94b20571a5a1fd081796548e164",
+      "source_version": "7d232424",
+      "content_hash": "189cb0816788a892e734a1495dd2e26d5296cf306e2467c3ace33767fbe51c00",
       "domain_letter": "A",
-      "persisted_at": "2026-11-23T16:53:42.727Z"
+      "persisted_at": "2026-11-24T12:45:44.676Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-defguard-defguard": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-defguard-defguard",
@@ -263427,10 +263437,10 @@
       "relative_path": "08_VERIFICATION/defguard-defguard-verification-protocol-empirical-defect-shield-for-defguard-def.md",
       "title": "Verification Protocol: Empirical Defect Shield for DefGuard/defguard",
       "repository": "DefGuard/defguard",
-      "source_version": "0eb2f794",
-      "content_hash": "c67f9802b4a05d1d116928e0c7a308ac10d652cad5b7e90535df4b947900d4cf",
+      "source_version": "7d232424",
+      "content_hash": "37e23acb6d85bd39b7cf2f6bef154e28ebbd8853b3bbb56253c8d8018b3e0c2b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T16:53:42.902Z"
+      "persisted_at": "2026-11-24T12:45:44.947Z"
     },
     "domain_intelligence-design-intelligence-sharkdp-bat-learnings-core-invariants": {
       "item_id": "domain_intelligence-design-intelligence-sharkdp-bat-learnings-core-invariants",
@@ -263464,9 +263474,9 @@
       "title": "Human & Need Intelligence: defguard-defguard-learnings Core Invariants",
       "repository": "defguard-defguard-learnings",
       "source_version": "HEAD",
-      "content_hash": "e3d230c6ec7508ab2c763c239b78bbf17c6153f29561bca106b5653d27ca0b1e",
+      "content_hash": "4de4e8594a369829b709255432c184faab9b4cac0eb8f022a8d4a366dcb1b908",
       "domain_letter": "A",
-      "persisted_at": "2026-11-16T20:21:13.221Z"
+      "persisted_at": "2026-11-24T12:45:51.892Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-defguard-defguard-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-defguard-defguard-learnings",
@@ -263476,9 +263486,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for defguard-defguard-learnings",
       "repository": "defguard-defguard-learnings",
       "source_version": "HEAD",
-      "content_hash": "a692b0654021644b1f1e468a90ff117d681f839a186c9ac29958652214f3fe70",
+      "content_hash": "1a1d3305ab42aedcfc38651e45cd8f0c2c8d6b3a691ef85c3495ea5ee1f2e489",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T08:12:02.027Z"
+      "persisted_at": "2026-11-24T12:45:52.128Z"
     },
     "rule-8789": {
       "learning_id": "rule-8789",
@@ -271072,8 +271082,8 @@
       "slug": "gluesql-gluesql",
       "platform": "github",
       "source_url": "https://github.com/gluesql/gluesql",
-      "source_version": "3635d34e",
-      "content_hash": "83ebdd273de2c04e81a107320703c798b22f9bf5f9d5c18d2b229b186bea93c7",
+      "source_version": "c91cbdd6",
+      "content_hash": "0330b74993315df91f73f4382d46a5a622518f9dcd130f49049ac155e8f495b3",
       "dossier_path": "07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
       "promoted_rules": [
@@ -271096,6 +271106,11 @@
           "number": 9921,
           "title": "Reject multiple DELETE targets before FROM in the SQL translator",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10259,
+          "title": "Push down IFNULL, COALESCE, and NULLIF in SQLite filters",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -271103,7 +271118,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T10:29:58.907Z",
+      "verified_at": "2026-11-24T12:45:45.475Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -271157,10 +271172,10 @@
       "relative_path": "08_VERIFICATION/gluesql-gluesql-verification-protocol-empirical-defect-shield-for-gluesql-gluesq.md",
       "title": "Verification Protocol: Empirical Defect Shield for gluesql/gluesql",
       "repository": "gluesql/gluesql",
-      "source_version": "3635d34e",
-      "content_hash": "a25bb774dfbf42f58670c6919aa77292b7e512e78325f3d9b78012ff88c42021",
+      "source_version": "c91cbdd6",
+      "content_hash": "a5c473ecf443adc291efe8e37e128cf3bf86feced892c937a0e66de0a98851b2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T10:29:59.662Z"
+      "persisted_at": "2026-11-24T12:45:46.555Z"
     },
     "candidate_directive-deps-update-dependency-rollup-to-v4-59-0-security": {
       "item_id": "candidate_directive-deps-update-dependency-rollup-to-v4-59-0-security",
@@ -271218,9 +271233,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for gluesql-gluesql-learnings",
       "repository": "gluesql-gluesql-learnings",
       "source_version": "HEAD",
-      "content_hash": "1fc12fb2c07a70eb42fbbdb3093186fe0c7c001e42c274613db97dab1349083a",
+      "content_hash": "9be6db765089863780493a045b9b40fd4e689884a20eb77e8875859b6d37b022",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T10:30:04.199Z"
+      "persisted_at": "2026-11-24T12:45:53.197Z"
     },
     "learn-github-webdriverio-webdriverio": {
       "learning_id": "learn-github-webdriverio-webdriverio",
@@ -335918,6 +335933,108 @@
       "content_hash": "be6c44d173765b982e455807ff536a8e8eabe0361f31ad39878b2a8eca8b3308",
       "domain_letter": "C",
       "persisted_at": "2026-11-24T12:36:30.603Z"
+    },
+    "rule-10257": {
+      "learning_id": "rule-10257",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10257,
+      "title": "Add keepalive dial option to local frontend gRPC connection",
+      "source_url": "https://github.com/temporalio/temporal",
+      "source_version": "4197dfdd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T12:45:42.128Z"
+    },
+    "candidate_directive-add-keepalive-dial-option-to-local-frontend-grpc-connection": {
+      "item_id": "candidate_directive-add-keepalive-dial-option-to-local-frontend-grpc-connection",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-U78V-add-keepalive-dial-option-to-local-frontend-grpc-connection.md",
+      "title": "Add keepalive dial option to local frontend gRPC connection",
+      "repository": "temporalio-temporal-learnings",
+      "source_version": "HEAD",
+      "content_hash": "23b21f0ac521b159b68da830acedec8a9b9cbc4f23dd3fded575a8561182ea40",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-24T12:45:50.006Z"
+    },
+    "rule-10258": {
+      "learning_id": "rule-10258",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10258,
+      "title": "Make Client download page consistent with landing page",
+      "source_url": "https://github.com/DefGuard/defguard",
+      "source_version": "7d232424",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T12:45:43.794Z"
+    },
+    "candidate_directive-make-client-download-page-consistent-with-landing-page": {
+      "item_id": "candidate_directive-make-client-download-page-consistent-with-landing-page",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-U8IY-make-client-download-page-consistent-with-landing-page.md",
+      "title": "Make Client download page consistent with landing page",
+      "repository": "defguard-defguard-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0f6c0bf0a94e286a4c480775710561b208bf44b7d9e8c2b917b5b0266cedbf65",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-24T12:45:51.664Z"
+    },
+    "rule-10259": {
+      "learning_id": "rule-10259",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10259,
+      "title": "Push down IFNULL, COALESCE, and NULLIF in SQLite filters",
+      "source_url": "https://github.com/gluesql/gluesql",
+      "source_version": "c91cbdd6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T12:45:45.475Z"
+    },
+    "candidate_directive-push-down-ifnull-coalesce-and-nullif-in-sqlite-filters": {
+      "item_id": "candidate_directive-push-down-ifnull-coalesce-and-nullif-in-sqlite-filters",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-U9CP-push-down-ifnull-coalesce-and-nullif-in-sqlite-filters.md",
+      "title": "Push down IFNULL, COALESCE, and NULLIF in SQLite filters",
+      "repository": "gluesql-gluesql-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ef472780dd31ca50690b2062754b89aab12d452c4e9337b5a044a03873c4557e",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-24T12:45:52.736Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-gluesql-gluesql-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-gluesql-gluesql-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-gluesql-gluesql-research-knowledge-intelligence-gluesql-gluesql-core-invariants.md",
+      "title": "Research & Knowledge Intelligence: gluesql/gluesql Core Invariants",
+      "repository": "gluesql/gluesql",
+      "source_version": "c91cbdd6",
+      "content_hash": "10924cd73177c5176551a40573b842ae7076b903bb67a0956ed9eb4b0623d0f1",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-24T12:45:46.322Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-gluesql-gluesql-learnings-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-gluesql-gluesql-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-gluesql-gluesql-learnings-research-knowledge-intelligence-gluesql-gluesql-learni.md",
+      "title": "Research & Knowledge Intelligence: gluesql-gluesql-learnings Core Invariants",
+      "repository": "gluesql-gluesql-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4cbe08efa105db07c5ec565ae197edeae9a2830d0c51b8c6cf86273fcff07270",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-24T12:45:52.963Z"
     }
   },
   "ai-builder-brain": {

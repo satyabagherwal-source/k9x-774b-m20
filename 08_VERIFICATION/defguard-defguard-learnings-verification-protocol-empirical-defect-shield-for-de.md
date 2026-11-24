@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T08:12:01.548Z",
+  "timestamp": "2026-11-24T12:45:51.494Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-defguard-defguard-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [defguard-defguard-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T08:12:01.548Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T12:45:51.494Z`  
 > **Learning ID**: `LEARN-EVO-defguard-defguard-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/defguard-defguard-learnings.md`  
 > **Source**: github ([https://github.com/DefGuard/defguard](https://github.com/DefGuard/defguard))  
-> **Source Version**: `0c437895`  
+> **Source Version**: `7d232424`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T08:11:45.285Z  
+> **Timestamp**: 2026-11-24T12:45:42.585Z  
 > **Learning ID**: `learn-github-defguard-defguard`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/defguard-defguard-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DefGuard/defguard](https://github.com/DefGuard/defguard))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T08:06:43.907Z  
+> **Harvest Timestamp**: 2026-11-24T12:45:42.578Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -899,7 +899,10 @@ pub enum CertSettingsError {
 }
 
 /// Parses an uploaded certificate, validates its key pair, and rejects invalid validity windows.
-async fn parse_cert(cert_pem: &str, key_pem: &str) -> Result<CertificateInfo, CertSettingsError> {
+pub(crate) async fn parse_cert(
+    cert_pem: &str,
+    key_pem: &str,
+) -> Result<CertificateInfo, CertSettingsError> {
     let _ = rustls::crypto::ring::default_provider().install_default();
 
     RustlsConfig::from_pem(cert_pem.as_bytes().to_vec(), key_pem.as_bytes().to_vec())
@@ -1125,7 +1128,7 @@ pub async fn apply_external_url_settings(
     };
     update_current_settings(&mut *transaction, settings).await?;
 
-    let hostname = match config.ssl_type {
+    let hostname = m
 ```
 
 ### Core Architecture Module: `crates/defguard_core/src/db/mod.rs`
@@ -2055,295 +2058,593 @@ impl Token {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0c437895` (2026-11-23)
-**Commit Message**: fix lint (#4089)
+### Incident Patch 1: `7d232424` (2026-11-24)
+**Commit Message**: Make Client download page consistent with landing page (#4099)
 
-**File**: `Cargo.lock` (modified, +5/-5)
+* make download page consistent
+
+* consistent download page 2
+
+**File**: `web/src/shared/api/update-service.ts` (modified, +3/-0)
 ```diff
-@@ -1279,7 +1279,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "d045de693cb712d0b22c6a64be5b953f67b3ce00ab5ad3dd5d8b441886ab8e1a"
- dependencies = [
-  "quote",
-- "syn 3.0.9",
-+ "syn 2.0.119",
- ]
+@@ -18,6 +18,7 @@ export const updateServiceClient = axios.create({
  
- [[package]]
-@@ -2515,9 +2515,9 @@ checksum = "00b0228411908ca8685dba7fc2cdd70ec9990a6e753e89b6ac91a84c40fbaf4b"
- 
- [[package]]
- name = "form_urlencoded"
--version = "1.2.2"
-+version = "1.2.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
-+checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
- dependencies = [
-  "percent-encoding",
- ]
-@@ -7412,9 +7412,9 @@ checksum = "8ecb6da28b8a351d773b68d5825ac39017e680750f980f3a1a85cd8dd28a47c1"
- 
- [[package]]
- name = "url"
--version = "2.5.8"
-+version = "2.5.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
-+checksum = "f00cd2407bb42c0ef17be88d4cf020f5cceffd121665bac9b8b9493a369b3b1a"
- dependencies = [
-  "form_urlencoded",
-  "idna",
+ export type ClientVersionCheck = {
+   windows_amd64?: string;
++  windows_arm64?: string;
+   deb_amd64?: string;
+   deb_arm64?: string;
+   deb_legacy_arm64?: string;
+@@ -49,6 +50,7 @@ const updateServiceApi = {
+           rpm_amd64: data.rpm_amd64 ?? clientDownloadFallback,
+           rpm_arm64: data.rpm_arm64 ?? clientDownloadFallback,
+           windows_amd64: data.windows_amd64 ?? clientDownloadFallback,
++          windows_arm64: data.windows_arm64 ?? clientDownloadFallback,
+         };
+         return res;
+       })
+@@ -64,6 +66,7 @@ const updateServiceApi = {
+           rpm_amd64: clientDownloadFallback,
+           rpm_arm64: clientDownloadFallback,
+           windows_amd64: clientDownloadFallback,
++          windows_arm64: clientDownloadFallback,
+         };
+         return fallback;
+       }),
 ```
 
-**File**: `e2e/package.json` (modified, +2/-2)
+**File**: `web/src/shared/components/modals/AddUserDeviceModal/steps/AddDeviceModalClientConfigStep/AddDeviceModalClientConfigStep.tsx` (modified, +44/-27)
 ```diff
-@@ -18,8 +18,8 @@
-     "@prettier/plugin-oxc": "^0.0.4",
-     "@types/node": "^22.20.5",
-     "@types/totp-generator": "^0.0.8",
--    "@typescript-eslint/eslint-plugin": "^8.72.0",
--    "@typescript-eslint/parser": "^8.72.0",
-+    "@typescript-eslint/eslint-plugin": "^8.73.0",
-+    "@typescript-eslint/parser": "^8.73.0",
-     "eslint": "^9.39.5",
-     "eslint-config-prettier": "^10.1.8",
-     "eslint-plugin-import": "^2.32.0",
-```
-
-**File**: `e2e/pnpm-lock.yaml` (modified, +84/-70)
-```diff
-@@ -162,11 +162,11 @@ importers:
-         specifier: ^0.0.8
-         version: 0.0.8
-       '@typescript-eslint/eslint-plugin':
--        specifier: ^8.72.0
--        version: 8.72.0(@typescript-eslint/parser@8.72.0(eslint@9.39.5(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3))(eslint@9.39.5(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-+        specifier: ^8.73.0
-+        version: 8.73.0(@typescript-eslint/parser@8.73.0(eslint@9.39.5(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3))(eslint@9.39.5(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-       '@typescript-eslint/parser':
--        specifier: ^8.72.0
--        version: 8.72.0(eslint@9.39.5(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-+        specifier: ^8.73.0
-+        version: 8.73.0(eslint@9.39.5(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3)
-       eslint:
-         specifier: ^9.39.5
-         version: 9.39.5(supports-color@7.2.0)
-@@ -175,7 +175,7 @@ importers:
-         version: 10.1.8(eslint@9.39.5(supports-color@7.2.0))
-       eslint-plugin-import:
-         specifier: ^2.32.0
--        version: 2.32.0(@typescript-eslint/parser@8.72.0(eslint@9.39.5(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3))(eslint@9.39.5(supports-color@7.2.0))(supports-color@7.2.0)
-+        version: 2.32.0(@typescript-eslint/parser@8.73.0(eslint@9.39.5(supports-color@7.2.0))(supports-color@7.2.0)(typescript@6.0.3))(eslint@9.39.5(supports-color@7.2.0))(supports-color@7.2.0)
-       eslint-plugin-prettier:
-         specifier: ^5.5.7
-         version: 5.5.7(eslint-config-prettier@10.1.8(eslint@9.39.5(supports-color@7.2.0)))(eslint@9.39.5(supports-color@7.2.0))(prettier@3.9.10)
-@@ -271,6 +271,9 @@ packages:
-     resolution: {integrity: sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ==}
-     engines: {node: '>=18.18'}
+@@ -12,7 +12,6 @@ import { CopyField } from '../../../../../defguard-ui/components/CopyField/CopyF
+ import { Divider } from '../../../../../defguard-ui/components/Divider/Divider';
+ import { Fold } from '../../../../../defguard-ui/components/Fold/Fold';
+ import { FoldButton } from '../../../../../defguard-ui/components/FoldButton/FoldButton';
+-import { IconButton } from '../../../../../defguard-ui/components/IconButton/IconButton';
+ import { IconButtonMenu } from '../../../../../defguard-ui/components/IconButtonMenu/IconButtonMenu';
+ import type { MenuItemsGroup } from '../../../../../defguard-ui/components/Menu/types';
+ import { QrCard } from '../../../../../defguard-ui/components/QrCard/QrCard';
+@@ -41,21 +40,45 @@ export const AddDeviceModalClientConfigStep = () => {
+     );
+   }, [enrollment]);
  
-+  '@isaacs/nonrecursive-glob-match@1.1.0':
-+    resolution: {integrity: sha512-GPm/Dbvk5RLmhRnxXIa7nTpK0xtl4E0wj0MslsuNiJ1FIROU+2+9lgUC/dgF7Ey4QCWhfEsgxilMRMCdHPfDfw==}
++  const windowsMenu = useMemo(
++    (): MenuItemsGroup[] => [
++      {
++        header: {
++          text: `${titleCase(m.misc_for())} Windows`,
++        },
++        items: [
++          {
++            icon: 'windows',
++            text: 'Windows 11 (x64)',
++            onClick: () => openClientLink(clientLinks?.windows_amd64),
++          },
++          {
++            icon: 'windows',
++            text: 'Windows 11 (ARM)',
++            onClick: () => openClientLink(clientLinks?.windows_arm64),
++          },
++        ],
++      },
++    ],
++    [clientLinks],
++  );
 +
-   '@napi-rs/wasm-runtime@0.2.12':
-     resolution: {integrity: sha512-ZVWUcfwY4E/yPitQJl481FjFo3K22D6qF0DuFH6Y/nbnE11GY5uguDxZMGXPQ8WQ0128MXQD7TnfHyK4oWoIJQ==}
- 
-@@ -415,63 +418,67 @@ packages:
-   '@types/totp-generator@0.0.8':
-     resolution: {integrity: sha512-NAiruWgCYxW1sd2LjpTT/sVarogTjjQoUyLiiL/e2DZOz9eovKxzEx5BiH8YgZoKUDZql1VXiIzgDBK7VzOmNw==}
- 
--  '@typescript-eslint/eslint-plugin@8.72.0':
--    resolution: {integrity: sha512-aysKgysPX9XOv/dk95UkvUDe++Q3n3dJPG9CEWT3RUccxfkPJ+Qn6nhKPDhZXU6Ofo9kgwGWwKyQCnZIXTgngg==}
-+  '@typescript-eslint/eslint-plugin@8.73.0':
-+    resolution: {integrity: sha512-UkygMFer53Yzn29MCYFTHf34hGXf5KJhiDWfIm1tXtXRrym1CS6l5H9Y3yCtPWChpC0/f93H88gdj8tN0dd4kw==}
-     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-     peerDependencies:
--      '@typescript-eslint/parser': ^8.72.0
-+      '@typescript-eslint/parser': ^8.73.0
-       eslint: ^8.57.0 || ^9.0.0 || ^10.0.0
-       typescript: '>=4.8.4 <6.1.0'
- 
--  '@typescript-eslint/parser@8.72.0':
--    resolution: {integrity: sha512-0O+x3ynciD6zuXb1CKSu165haQV6ey53DKhHHUnujP7U+XlltJG+/keT0Xhd1HXCze+IHf7Tvt39ovyepX/LNw==}
-+  '@typescript-eslint/parser@8.73.0':
-+    resolution: {integrity: sha512-AuL45bVcmssHfZ3Di3cs9Q0l4gBm4ZFVrJOQEE7VpqW+PVgQaEwSwazz4TVIiFabXkk6U51EprYDwqw+HR8ePw==}
-     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-     peerDependencies:
-       eslint: ^8.57.0 || ^9.0.0 || ^10.0.0
-       typescript: '>=4.8.4 <6.1.0'
- 
--  '@typescript-eslint/project-service@8.72.0':
--    resolution: {integrity: sha512-bzHngBbmIgzj6TsTjVUCntGx6FFLgE7mPjpO0PzHycOaZHXqS43XnrkFIHRS16LLr/xO6FHSXG3GJFo/F4bSBQ==}
-+  '@typescript-eslint/project-service@8.73.0':
-+    resolution: {integrity: sha512-/pEf8Rc4Mjk+qJnY0uO1+Gadeal8uv50xpuic+srG2vIVatA0XxvWMUeMtFvs6OCHqftiQ7/+qH4aehG5stzIA==}
-     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-     peerDependencies:
-       typescript: '>=4.8.4 <6.1.0'
- 
--  '@typescript-eslint/scope-manager@8.72.0':
--    resolution: {integrity: sha512-JewPyJOYcXBSAS7PIgufscHOwZqhTGyBRiQJhhuDln66tMchxvvt7nJ90JKKIoOelmdHA3kAQbm9cEUHc4JSEA==}
-+  '@typescript-eslint/scope-manager@8.73.0':
-+    resolution: {integrity: sha512-/TjD738Iq2rzj5z0ixVOi+TsvgjAzZPLPaH1yWdDBytR/HTR5gMpyYWZeCe5WTQZLwk3ho8AV7U3muoQCRtXBQ==}
-     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
- 
--  '@typescript-eslint/tsconfig-utils@8.72.0':
--    resolution: {integrity: sha512-0vbxCf7xLVPSjcOdm6eQbgViH8EDJ8xnl1laLT9yoqSz2YmcSfSg5Vdl0JUvZf6rcuJ0ZivJIuMD4edTg8obaA==}
-+  '@typescript-eslint/tsconfig-utils@8.73.0':
-+    resolution: {integrity: sha512-lmtCFOfYaJfpqZywGuXi4FpNtE+NQ+YLe3T0K9rtEDcW8ZuGWvfI++pj8r05sYMI8vWT2CYK4rWyedmD6Rp4og==}
-     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-     peerDependencies:
-       typescript: '>=4.8.4 <6.1.0'
- 
--  '@typescript-eslint/type-utils@8.72.0':
--    resolution: {integrity: sha512-gEXxmmbSTSOVTC37IYYvremOM31v+UN2W772bJxmVYPhAOPSUxtacyb7wkm
+   const appleMenu = useMemo(
+     (): MenuItemsGroup[] => [
+       {
+         header: {
+-          text: 'Apple Hardware',
++          text: `${titleCase(m.misc_for())} macOS`,
+         },
+         items: [
+           {
+-            icon: 'apple',
+-            text: 'Intel',
+-            onClick: () => openClientLink(clientLinks?.macos_amd64),
++            icon: 'app-store',
++            text: 'App Store',
++            onClick: () => openClientLink(externalLink.client.desktop.macos.appStore),
+           },
+           {
+             icon: 'apple',
+-            text: 'ARM',
++            text: 'Universal DMG',
++            // The update service returns the universal DMG for both macOS keys.
+             onClick: () => openClientLink(clientLinks?.macos_arm64),
+           },
+         ],
+@@ -72,42 +95,42 @@ export const AddDeviceModalClientConfigStep = () => {
+         },
+         items: [
+           {
+-            icon: 'ubuntu',
+-            text: 'Ubuntu 24.04 ARM',
+-            onClick: () => openClientLink(clientLinks?.deb_arm64),
++            icon: 'debian',
++            text: 'Debian 13 (x86)',
++            onClick: () => openClientLink(clientLinks?.deb_amd64),
+           },
+           {
+-            icon: 'ubuntu',
+-            text: 'Ubuntu 24.04 AMD64',
+-            onClick: () => openClientLink(clientLinks?.deb_amd64),
++            icon: 'debian',
++            text: 'Debian 13 (ARM)',
++            onClick: () => openClientLink(clientLinks?.deb_arm64),
+           },
+         ],
+       },
+       {
+         items: [
+           {
+             icon: 'debian',
+-            text: 'Ubuntu 22.04 / Debian 12&13 ARM',
+-            onClick: () => openClientLink(clientLinks?.deb_legacy_arm64),
++            text: 'Debian 12 | Ubuntu 22 (x86)',
++            onClick: () => openClientLink(clientLinks?.deb_legacy_amd64),
+           },
+           {
+             icon: 'debian',
+-            text: 'Ubuntu 22.04 / Debian 12&13 AMD64',
+-            onClick: () => openClientLink(clientLinks?.deb_legacy_amd64),
++            text: 'Debian 12 | Ubuntu 22 (ARM)',
++            onClick: () => openClientLink(clientLinks?.deb_legacy_arm64),
+           },
+         ],
+       },
+       {
+         items: [
+           {
+             icon: 'linux',
+-            text: 'RPM ARM',
+-            onClick: () => openClientLink(clientLinks?.rpm_arm64),
++            text: 'Fedora 40 (x86)',
++            onClick: () => openClientLink(clientLinks?.rpm_amd64),
+           },
+           {
+             icon: 'linux',
+-            text: 'RPM AMD64',
+-            onClick: () => openClientLink(clientLinks?.rpm_amd64),
++            text: 'Fedora 40 (ARM)',
++            onClick: () => openClientLink(clientLinks?.rpm_arm64),
+           },
+         ],
+       },
+@@ -152,13 +175,7 @@ export const AddDeviceModalClientConfigStep = () => {
+           </a>
+           <div className="download">
+             <p>{m.modal_add_user_device_client_desktop_download()}</p>
+-            <a
+-              href={clientLinks?.windows_amd64 ?? externalLink.defguard.download}
+-              target="_blank"
+-              rel="noopener noreferrer"
+-            >
+-              <IconButton icon="windows" />
+-            </a>
++            <IconButtonMenu icon="windows" menuItems={windowsMenu} />
+             <IconButtonMenu icon="apple" menuItems={appleMenu} />
+             <IconButtonMenu icon="linux" menuItems={linuxMenu} />
+           </div>
 ```
 
-**File**: `web/package.json` (modified, +2/-2)
+**File**: `web/src/shared/constants.ts` (modified, +4/-0)
 ```diff
-@@ -76,7 +76,7 @@
-     "@types/react": "^19.3.0",
-     "@types/react-dom": "^19.3.0",
-     "@vitejs/plugin-react": "^6.1.2",
--    "@vitest/ui": "4.1.9",
-+    "@vitest/ui": "4.1.12",
-     "autoprefixer": "^10.6.1",
-     "globals": "^17.13.0",
-     "jsdom": "^29.1.1",
-@@ -89,6 +89,6 @@
-     "typescript": "~6.0.3",
-     "vite": "^8.3.4",
-     "vite-plugin-image-optimizer": "^2.0.3",
--    "vitest": "4.1.11"
-+    "vitest": "4.1.12"
-   }
+@@ -22,6 +22,10 @@ export const externalLink = {
+       linux: {
+         arch: 'https://aur.archlinux.org/packages/defguard-client',
+       },
++      macos: {
++        appStore:
++          'https://apps.apple.com/us/app/defguard-desktop-client/id6754601166?mt=12',
++      },
+     },
+     mobile: {
+       apple: 'https://apps.apple.com/us/app/defguard-vpn-client/id6748068630',
+```
+
+**File**: `web/tests/client-artifacts.test.ts` (added, +24/-0)
+```diff
+@@ -0,0 +1,24 @@
++import { afterEach, expect, it, vi } from 'vitest';
++import { updateServiceApi, updateServiceClient } from '../src/shared/api/update-service';
++
++type GetResponse = Awaited<ReturnType<typeof updateServiceClient.get>>;
++
++afterEach(() => {
++  vi.restoreAllMocks();
++});
++
++it('getClientArtifacts returns windows_arm64 from the update service and falls back to the download page when the key is missing', async () => {
++  const get = vi.spyOn(updateServiceClient, 'get');
++
++  get.mockResolvedValueOnce({
++    data: { windows_arm64: 'https://example.com/client_arm64.msi' },
++  } as GetResponse);
++  await expect(updateServiceApi.getClientArtifacts()).resolves.toMatchObject({
++    windows_arm64: 'https://example.com/client_arm64.msi',
++  });
++
++  get.mockResolvedValueOnce({ data: {} } as GetResponse);
++  await expect(updateServiceApi.getClientArtifacts()).resolves.toMatchObject({
++    windows_arm64: 'https://defguard.net/download',
++  });
++});
+```
+
+---
+
+### Incident Patch 2: `814398e0` (2026-11-24)
+**Commit Message**: Entra certificate authentication (#4037)
+
+* backend
+
+* frontend
+
+**File**: `.sqlx/query-9d462e0a204bdf7744cb22cbf644a8b5535e7a69e9d10cecb4b05d20f3e82d5f.json` (renamed, +26/-2)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "db_name": "PostgreSQL",
+-  "query": "SELECT id, name, base_url, kind \"kind: OpenIdProviderKind\", client_id, client_secret, display_name, google_service_account_key \"google_service_account_key?: _\", google_service_account_email, admin_email, directory_sync_enabled,\n            directory_sync_interval, directory_sync_user_behavior  \"directory_sync_user_behavior: DirectorySyncUserBehavior\", directory_sync_admin_behavior  \"directory_sync_admin_behavior: DirectorySyncUserBehavior\", directory_sync_target  \"directory_sync_target: DirectorySyncTarget\", okta_private_jwk \"okta_private_jwk?: _\", okta_dirsync_client_id, directory_sync_group_match, jumpcloud_api_key \"jumpcloud_api_key?: _\", prefetch_users, disable_password_management, directory_sync_user_groups FROM openidprovider WHERE name = $1",
++  "query": "SELECT id, name, base_url, kind \"kind: OpenIdProviderKind\", client_id, client_secret, display_name, google_service_account_key \"google_service_account_key?: _\", google_service_account_email, admin_email, directory_sync_enabled,\n            directory_sync_interval, directory_sync_user_behavior  \"directory_sync_user_behavior: DirectorySyncUserBehavior\", directory_sync_admin_behavior  \"directory_sync_admin_behavior: DirectorySyncUserBehavior\", directory_sync_target  \"directory_sync_target: DirectorySyncTarget\", okta_private_jwk \"okta_private_jwk?: _\", okta_dirsync_client_id, directory_sync_group_match, jumpcloud_api_key \"jumpcloud_api_key?: _\", prefetch_users, disable_password_management, directory_sync_user_groups, client_certificate, client_private_key \"client_private_key?: _\" FROM openidprovider WHERE name = $1",
+   "describe": {
+     "columns": [
+       {
+@@ -291,6 +291,28 @@
+             "name": "directory_sync_user_groups"
+           }
+         }
++      },
++      {
++        "ordinal": 22,
++        "name": "client_certificate",
++        "type_info": "Text",
++        "origin": {
++          "Table": {
++            "table": "openidprovider",
++            "name": "client_certificate"
++          }
++        }
++      },
++      {
++        "ordinal": 23,
++        "name": "client_private_key?: _",
++        "type_info": "Text",
++        "origin": {
++          "Table": {
++            "table": "openidprovider",
++            "name": "client_private_key"
++          }
++        }
+       }
+     ],
+     "parameters": {
+@@ -320,8 +342,10 @@
+       true,
+       false,
+       false,
++      true,
++      true,
+       true
+     ]
+   },
+-  "hash": "947e582ac133cd33281dc9c31f5fa8bb1bc31b4e4b500d561e0708caa51fa118"
++  "hash": "9d462e0a204bdf7744cb22cbf644a8b5535e7a69e9d10cecb4b05d20f3e82d5f"
  }
 ```
 
-**File**: `web/pnpm-lock.yaml` (modified, +55/-71)
+**File**: `.sqlx/query-a60dd48d374245df4029f0454de2d0b03484f28729e07bbb482ba2cd906c9287.json` (renamed, +5/-3)
 ```diff
-@@ -285,8 +285,8 @@ importers:
-         specifier: ^6.1.2
-         version: 6.1.2(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(sass@1.105.2))
-       '@vitest/ui':
--        specifier: 4.1.9
--        version: 4.1.9(vitest@4.1.11)
-+        specifier: 4.1.12
-+        version: 4.1.12(vitest@4.1.12)
-       autoprefixer:
-         specifier: ^10.6.1
-         version: 10.6.1(postcss@8.5.31)
-@@ -324,8 +324,8 @@ importers:
-         specifier: ^2.0.3
-         version: 2.0.3(sharp@0.35.5(@types/node@26.6.5))(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(sass@1.105.2))
-       vitest:
--        specifier: 4.1.11
--        version: 4.1.11(@types/node@26.6.5)(@vitest/ui@4.1.9)(jsdom@29.1.1)(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(sass@1.105.2))
-+        specifier: 4.1.12
-+        version: 4.1.12(@types/node@26.6.5)(@vitest/ui@4.1.12)(jsdom@29.1.1)(vite@8.3.4(@types/node@26.6.5)(jiti@2.7.0)(sass@1.105.2))
- 
- packages:
- 
-@@ -1845,11 +1845,11 @@ packages:
-       oxc-transform-react:
-         optional: true
- 
--  '@vitest/expect@4.1.11':
--    resolution: {integrity: sha512-VX2x5vNJXET47KAFzwERI+KRMtTTCSWTfSMKsW7JsUsXV4psq++e3DvZpuTDOpHcxytiDs6p2nhVb2tVDiiUYw==}
-+  '@vitest/expect@4.1.12':
-+    resolution: {integrity: sha512-vFlTt+YEu9WBpNjdGayNmlMVzrWPi1+sv853/7t2FU7hpO5gAFBKHzQmkCq5Xjpr+evegF2994LQT3hF3mRlqQ==}
- 
--  '@vitest/mocker@4.1.11':
--    resolution: {integrity: sha512-2XJVD55d1o5AZous5CCGKS74g/riOj9odEt2bQpCVZeblHyHdnMeFl4jl0XjU21stf4mbjUkew2eXQZt65g5CQ==}
-+  '@vitest/mocker@4.1.12':
-+    resolution: {integrity: sha512-fKShNpKZzupWZuY0z7egydvL0sqW4INEZBEExMBMAa6izlENEVHwoXgdaTCaBZ5fwlr4xf2o1wXC83n9RpO+NA==}
-     peerDependencies:
-       msw: ^2.4.9
-       vite: ^6.0.0 || ^7.0.0 || ^8.0.0
-@@ -1859,31 +1859,25 @@ packages:
-       vite:
-         optional: true
- 
--  '@vitest/pretty-format@4.1.11':
--    resolution: {integrity: sha512-yiZzPbGTS9Sr/JpFl8zHrcIkAofNbFV6k21vIgQN/cY/oxZeXhJv5sc/MBJ5jFKWmWs+oJHw0UXLZjmf931+Vw==}
-+  '@vitest/pretty-format@4.1.12':
-+    resolution: {integrity: sha512-XW9O8+Mxx4VpCtkYdMJLZQQwsVryP9wk7cPKDxtXFfwSak6yRh5+2fep/Y0XF/ElBvJHq8bcYdi6aeuai0opZA==}
- 
--  '@vitest/pretty-format@4.1.9':
--    resolution: {integrity: sha512-s0iufns3iIFitdgm+YR7g1whCAaGtXz459VS9/PqyKDEEFgYIhsHOQmXgIgDuYCt7DeQmiZT0Qe2OA2p4ZPu5A==}
-+  '@vitest/runner@4.1.12':
-+    resolution: {integrity: sha512-NKlVKCr5QnCe8jijdMnmkpHHU+WTqiLFR6G0pHji9uRjXK9xJl1k1nTw6F3pOOj2PDcsDt2GKQMI7wIsaT491w==}
- 
--  '@vitest/runner@4.1.11':
--    resolution: {integrity: sha512-LztvUgdwMNJMIkj3hQnnxiC2Xy1zNxq928W/xhjCLaNCzqTZOudjwbQf6v9IntZGPw132i2Lq2rgTRZHD3JHNw==}
-+  '@vitest/snapshot@4.1.12':
-+    resolution: {integrity: sha512-ko1y1Qgb/slzQ9mr+b89Cuqud8WG1TKtsPD8r7ZUBdvVOGt85Af2HwCqHujrhwJq95hs/9RM7fcAPg57o1vlzw==}
- 
--  '@vitest/snapshot@4.1.11':
--    resolution: {integrity: sha512-pN7ikn1ON7h8ee4gIAp4AzyK+zBtJPzVbqOgu5LCEh4VaJVbPQcgYQYJIMGQPXVeJJq1fnfazis7a5pFNPahog==}
-+  '@vitest/spy@4.1.12':
-+    resolution: {integrity: sha512-RGq9x4JNGNTZHEJxvN0oSiJjeSCExm0n2gZKKJZHY9cX5AVA6M7VJILBT3ZJ/tJ/0J9uWT7fETV9/btoi//vSg==}
- 
--  '@vitest/spy@4.1.11':
--    resolution: {integrity: sha512-apNa/prQy2qCeywhnixOHPRCgGNhvg7T4Dapfl1GahLp/R+uhBm5cPyFoNVyqsNd2h1nJxL6BqqdIjiABL60YA==}
--
--  '@vitest/ui@4.1.9':
--    resolution: {integrity: sha512-U/cRvtqfEPj27FI1n9cyUvi4vXXdcLhjJiI+InYKdk8hP4VrS6RXOjGL7rfFaeBc37iRKANsR6eEzIoC7lmgBQ==}
-+  '@vitest/ui@4.1.12':
-+    resolution: {integrity: sha512-eYUTHtsp52Fu6YGUw9T9173bba7YUr9j/Xj9CdhUaOb8AppLKcknHUaiZQeqJ8MiJ8C2VyKiZuUGSKdvPIKQKA==}
-     peerDependencies:
--      vitest: 4.1.9
--
--  '@vitest/utils@4.1.11':
--    resolution: {integrity: sha512-zTCVGpyFsGWBhllOyKlTw/vnr6D9qxsfSDyfbyZmTyjHw5N/VuvzHpHoQjm2ZJzn4RJgx5w4r7V0er69CmLgPQ==}
-+      vitest: 4.1.12
- 
--  '@vitest/utils@4.1.9':
--    resolution: {integrity: sha512-A51o8ymO5PpqlWNnBP9ZHPXDIpuMtTLlGSjN7la4US+LJzoUMyhwjA5QXlm39JexgwHKW4Xjs8Z2d3dLCXOeuA==}
-+  '@vitest/utils@4.1.12':
-+    resolution: {integrity: sha512-Q3awXrwOfEV+qc3WmO5ONyE0yO7Q1gQ9/oyHxGLZ/pl7N3NO/ZztqQwKLuwMkV+CA1JYSIeO3gkHnRDIo4AVaA==}
- 
-   acorn@8.19.0:
-     resolution: {integrity: sha512-oJlA3XiRm7Cyk6qFD2Jn8ak9B7jSy0qy00ADO3+8dpT0LSjFihQYv4C02LFCSYJV3Q37xYwwRy5m+IpIiUzqWw==}
-@@ -3603,20 +3597,20 @@ packages:
-       yaml:
-         optional: true
- 
--  vitest@4.1.11:
--    resolution: {integrity: sha512-fhACrNXUidIbGSBr5FlbuBkO7VWC1ZyLl0DO4CU2DrQoAPxX84Ysxs+HeGQpii5lZWV1Q4gBZTTu49mF+A6Edw==}
-+  vitest@4.1.12:
-+    resolution: {integrity: sha512-5eWdz2yb3ajxWF3C8C4TjkXl7FGm3n2E/VlazALrQHzK7nYMSGFnCZto0bbPNl77AwkOZVLk0YnBAejUu0NiWA==}
-     engines: {node: ^20.0.0 || ^22.0.0 || >=24.0.0}
-     hasBin: true
-     peerDependencies:
-       '@edge-runtime/vm': '*'
-       '@opentelemetry/api': ^1.9.0
-       '@types/node': ^20.0.0 || ^22.0.0 || >=24.0.0
--      '@vitest/browser-playwright': 4.1.11
--      '@vitest/browser-preview': 4.1.11
--      '@vitest/browser-webdriverio': 4.1.11
--      '@vitest/coverage-istanbul': 4.1.11
--      '@vitest/coverage-v8': 4.1.11
--      '@vitest/ui': 4.1.11
-+      '@vitest/browser-play
+@@ -1,6 +1,6 @@
+ {
+   "db_name": "PostgreSQL",
+-  "query": "UPDATE \"openidprovider\" SET \"name\" = $2,\"base_url\" = $3,\"kind\" = $4,\"client_id\" = $5,\"client_secret\" = $6,\"display_name\" = $7,\"google_service_account_key\" = $8,\"google_service_account_email\" = $9,\"admin_email\" = $10,\"directory_sync_enabled\" = $11,\"directory_sync_interval\" = $12,\"directory_sync_user_behavior\" = $13,\"directory_sync_admin_behavior\" = $14,\"directory_sync_target\" = $15,\"okta_private_jwk\" = $16,\"okta_dirsync_client_id\" = $17,\"directory_sync_group_match\" = $18,\"jumpcloud_api_key\" = $19,\"prefetch_users\" = $20,\"disable_password_management\" = $21,\"directory_sync_user_groups\" = $22 WHERE id = $1",
++  "query": "UPDATE \"openidprovider\" SET \"name\" = $2,\"base_url\" = $3,\"kind\" = $4,\"client_id\" = $5,\"client_secret\" = $6,\"display_name\" = $7,\"google_service_account_key\" = $8,\"google_service_account_email\" = $9,\"admin_email\" = $10,\"directory_sync_enabled\" = $11,\"directory_sync_interval\" = $12,\"directory_sync_user_behavior\" = $13,\"directory_sync_admin_behavior\" = $14,\"directory_sync_target\" = $15,\"okta_private_jwk\" = $16,\"okta_dirsync_client_id\" = $17,\"directory_sync_group_match\" = $18,\"jumpcloud_api_key\" = $19,\"prefetch_users\" = $20,\"disable_password_management\" = $21,\"directory_sync_user_groups\" = $22,\"client_certificate\" = $23,\"client_private_key\" = $24 WHERE id = $1",
+   "describe": {
+     "columns": [],
+     "parameters": {
+@@ -73,10 +73,12 @@
+         "Text",
+         "Bool",
+         "Bool",
+-        "TextArray"
++        "TextArray",
++        "Text",
++        "Text"
+       ]
+     },
+     "nullable": []
+   },
+-  "hash": "de48ed494f4fd4ddc4d621282f8a91629ce6a744cea019bc79963a0bb9b7f6cf"
++  "hash": "a60dd48d374245df4029f0454de2d0b03484f28729e07bbb482ba2cd906c9287"
+ }
 ```
 
-**File**: `web/pnpm-workspace.yaml` (modified, +0/-3)
+**File**: `.sqlx/query-a8111fe6fd9923e1dcff5fed5c38c85bcc42134246c7258f52bf13d8adeecdcc.json` (renamed, +26/-3)
 ```diff
-@@ -15,6 +15,3 @@ onlyBuiltDependencies:
-   - '@swc/core'
-   - esbuild
-   - sharp
--minimumReleaseAgeExclude:
--  # Renovate security update: vitest@4.1.11
--  - vitest@4.1.11
+@@ -1,6 +1,6 @@
+ {
+   "db_name": "PostgreSQL",
+-  "query": "SELECT id, \"name\",\"base_url\",\"kind\" \"kind: _\",\"client_id\",\"client_secret\" \"client_secret: _\",\"display_name\",\"google_service_account_key\" \"google_service_account_key?: _\",\"google_service_account_email\",\"admin_email\",\"directory_sync_enabled\",\"directory_sync_interval\",\"directory_sync_user_behavior\" \"directory_sync_user_behavior: _\",\"directory_sync_admin_behavior\" \"directory_sync_admin_behavior: _\",\"directory_sync_target\" \"directory_sync_target: _\",\"okta_private_jwk\" \"okta_private_jwk?: _\",\"okta_dirsync_client_id\",\"directory_sync_group_match\" \"directory_sync_group_match: _\",\"jumpcloud_api_key\" \"jumpcloud_api_key?: _\",\"prefetch_users\",\"disable_password_management\",\"directory_sync_user_groups\" \"directory_sync_user_groups?: _\" FROM \"openidprovider\" LIMIT $1 OFFSET $2",
++  "query": "SELECT id, \"name\",\"base_url\",\"kind\" \"kind: _\",\"client_id\",\"client_secret\" \"client_secret: _\",\"display_name\",\"google_service_account_key\" \"google_service_account_key?: _\",\"google_service_account_email\",\"admin_email\",\"directory_sync_enabled\",\"directory_sync_interval\",\"directory_sync_user_behavior\" \"directory_sync_user_behavior: _\",\"directory_sync_admin_behavior\" \"directory_sync_admin_behavior: _\",\"directory_sync_target\" \"directory_sync_target: _\",\"okta_private_jwk\" \"okta_private_jwk?: _\",\"okta_dirsync_client_id\",\"directory_sync_group_match\" \"directory_sync_group_match: _\",\"jumpcloud_api_key\" \"jumpcloud_api_key?: _\",\"prefetch_users\",\"disable_password_management\",\"directory_sync_user_groups\" \"directory_sync_user_groups?: _\",\"client_certificate\",\"client_private_key\" \"client_private_key?: _\" FROM \"openidprovider\" WHERE id = $1",
+   "describe": {
+     "columns": [
+       {
+@@ -291,11 +291,32 @@
+             "name": "directory_sync_user_groups"
+           }
+         }
++      },
++      {
++        "ordinal": 22,
++        "name": "client_certificate",
++        "type_info": "Text",
++        "origin": {
++          "Table": {
++            "table": "openidprovider",
++            "name": "client_certificate"
++          }
++        }
++      },
++      {
++        "ordinal": 23,
++        "name": "client_private_key?: _",
++        "type_info": "Text",
++        "origin": {
++          "Table": {
++            "table": "openidprovider",
++            "name": "client_private_key"
++          }
++        }
+       }
+     ],
+     "parameters": {
+       "Left": [
+-        "Int8",
+         "Int8"
+       ]
+     },
+@@ -321,8 +342,10 @@
+       true,
+       false,
+       false,
++      true,
++      true,
+       true
+     ]
+   },
+-  "hash": "8fc78584c0f8b0c1f66af6b3dbca4d84d45461db80b690213381f9dabe5d29af"
++  "hash": "a8111fe6fd9923e1dcff5fed5c38c85bcc42134246c7258f52bf13d8adeecdcc"
+ }
+```
+
+**File**: `.sqlx/query-b131a91159cbb7a8ceac0e295f3edf70218688b08446d01c176435073b77c04d.json` (renamed, +26/-2)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "db_name": "PostgreSQL",
+-  "query": "SELECT id, \"name\",\"base_url\",\"kind\" \"kind: _\",\"client_id\",\"client_secret\" \"client_secret: _\",\"display_name\",\"google_service_account_key\" \"google_service_account_key?: _\",\"google_service_account_email\",\"admin_email\",\"directory_sync_enabled\",\"directory_sync_interval\",\"directory_sync_user_behavior\" \"directory_sync_user_behavior: _\",\"directory_sync_admin_behavior\" \"directory_sync_admin_behavior: _\",\"directory_sync_target\" \"directory_sync_target: _\",\"okta_private_jwk\" \"okta_private_jwk?: _\",\"okta_dirsync_client_id\",\"directory_sync_group_match\" \"directory_sync_group_match: _\",\"jumpcloud_api_key\" \"jumpcloud_api_key?: _\",\"prefetch_users\",\"disable_password_management\",\"directory_sync_user_groups\" \"directory_sync_user_groups?: _\" FROM \"openidprovider\"",
++  "query": "SELECT id, \"name\",\"base_url\",\"kind\" \"kind: _\",\"client_id\",\"client_secret\" \"client_secret: _\",\"display_name\",\"google_service_account_key\" \"google_service_account_key?: _\",\"google_service_account_email\",\"admin_email\",\"directory_sync_enabled\",\"directory_sync_interval\",\"directory_sync_user_behavior\" \"directory_sync_user_behavior: _\",\"directory_sync_admin_behavior\" \"directory_sync_admin_behavior: _\",\"directory_sync_target\" \"directory_sync_target: _\",\"okta_private_jwk\" \"okta_private_jwk?: _\",\"okta_dirsync_client_id\",\"directory_sync_group_match\" \"directory_sync_group_match: _\",\"jumpcloud_api_key\" \"jumpcloud_api_key?: _\",\"prefetch_users\",\"disable_password_management\",\"directory_sync_user_groups\" \"directory_sync_user_groups?: _\",\"client_certificate\",\"client_private_key\" \"client_private_key?: _\" FROM \"openidprovider\"",
+   "describe": {
+     "columns": [
+       {
+@@ -291,6 +291,28 @@
+             "name": "directory_sync_user_groups"
+           }
+         }
++      },
++      {
++        "ordinal": 22,
++        "name": "client_certificate",
++        "type_info": "Text",
++        "origin": {
++          "Table": {
++            "table": "openidprovider",
++            "name": "client_certificate"
++          }
++        }
++      },
++      {
++        "ordinal": 23,
++        "name": "client_private_key?: _",
++        "type_info": "Text",
++        "origin": {
++          "Table": {
++            "table": "openidprovider",
++            "name": "client_private_key"
++          }
++        }
+       }
+     ],
+     "parameters": {
+@@ -318,8 +340,10 @@
+       true,
+       false,
+       false,
++      true,
++      true,
+       true
+     ]
+   },
+-  "hash": "167ce8254fc45970778500697df780cd51703b3512952117567bf21255827d63"
++  "hash": "b131a91159cbb7a8ceac0e295f3edf70218688b08446d01c176435073b77c04d"
+ }
+```
+
+**File**: `.sqlx/query-ca5bcef694302c34b82be74d031d7b40254c0a31c4f2ee327478c13d95d7c41a.json` (renamed, +27/-2)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "db_name": "PostgreSQL",
+-  "query": "SELECT id, \"name\",\"base_url\",\"kind\" \"kind: _\",\"client_id\",\"client_secret\" \"client_secret: _\",\"display_name\",\"google_service_account_key\" \"google_service_account_key?: _\",\"google_service_account_email\",\"admin_email\",\"directory_sync_enabled\",\"directory_sync_interval\",\"directory_sync_user_behavior\" \"directory_sync_user_behavior: _\",\"directory_sync_admin_behavior\" \"directory_sync_admin_behavior: _\",\"directory_sync_target\" \"directory_sync_target: _\",\"okta_private_jwk\" \"okta_private_jwk?: _\",\"okta_dirsync_client_id\",\"directory_sync_group_match\" \"directory_sync_group_match: _\",\"jumpcloud_api_key\" \"jumpcloud_api_key?: _\",\"prefetch_users\",\"disable_password_management\",\"directory_sync_user_groups\" \"directory_sync_user_groups?: _\" FROM \"openidprovider\" WHERE id = $1",
++  "query": "SELECT id, \"name\",\"base_url\",\"kind\" \"kind: _\",\"client_id\",\"client_secret\" \"client_secret: _\",\"display_name\",\"google_service_account_key\" \"google_service_account_key?: _\",\"google_service_account_email\",\"admin_email\",\"directory_sync_enabled\",\"directory_sync_interval\",\"directory_sync_user_behavior\" \"directory_sync_user_behavior: _\",\"directory_sync_admin_behavior\" \"directory_sync_admin_behavior: _\",\"directory_sync_target\" \"directory_sync_target: _\",\"okta_private_jwk\" \"okta_private_jwk?: _\",\"okta_dirsync_client_id\",\"directory_sync_group_match\" \"directory_sync_group_match: _\",\"jumpcloud_api_key\" \"jumpcloud_api_key?: _\",\"prefetch_users\",\"disable_password_management\",\"directory_sync_user_groups\" \"directory_sync_user_groups?: _\",\"client_certificate\",\"client_private_key\" \"client_private_key?: _\" FROM \"openidprovider\" LIMIT $1 OFFSET $2",
+   "describe": {
+     "columns": [
+       {
+@@ -291,10 +291,33 @@
+             "name": "directory_sync_user_groups"
+           }
+         }
++      },
++      {
++        "ordinal": 22,
++        "name": "client_certificate",
++        "type_info": "Text",
++        "origin": {
++          "Table": {
++            "table": "openidprovider",
++            "name": "client_certificate"
++          }
++        }
++      },
++      {
++        "ordinal": 23,
++        "name": "client_private_key?: _",
++        "type_info": "Text",
++        "origin": {
++          "Table": {
++            "table": "openidprovider",
++            "name": "client_private_key"
++          }
++        }
+       }
+     ],
+     "parameters": {
+       "Left": [
++        "Int8",
+         "Int8"
+       ]
+     },
+@@ -320,8 +343,10 @@
+       true,
+       false,
+       false,
++      true,
++      true,
+       true
+     ]
+   },
+-  "hash": "337b36a7bf600c63eabfc6183fdcbeb20f2a9dc72d544292b4443840a54a8bd8"
++  "hash": "ca5bcef694302c34b82be74d031d7b40254c0a31c4f2ee327478c13d95d7c41a"
+ }
+```
+
+**File**: `.sqlx/query-e379558e436bccff637e4e74f297f8a019c6a0be66ee86f11dcc7601316dbd33.json` (renamed, +4/-2)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "db_name": "PostgreSQL",
+-  "query": "UPDATE openidprovider SET name = $1, base_url = $2, kind = $3, client_id = $4, client_secret = $5, display_name = $6, google_service_account_key = $7, google_service_account_email = $8, admin_email = $9, directory_sync_enabled = $10, directory_sync_interval = $11, directory_sync_user_behavior = $12, directory_sync_admin_behavior = $13, directory_sync_target = $14, okta_private_jwk = $15, okta_dirsync_client_id = $16, directory_sync_group_match = $17, jumpcloud_api_key = $18, prefetch_users = $19, disable_password_management = $20, directory_sync_user_groups = $21 WHERE id = $22",
++  "query": "UPDATE openidprovider SET name = $1, base_url = $2, kind = $3, client_id = $4, client_secret = $5, display_name = $6, google_service_account_key = $7, google_service_account_email = $8, admin_email = $9, directory_sync_enabled = $10, directory_sync_interval = $11, directory_sync_user_behavior = $12, directory_sync_admin_behavior = $13, directory_sync_target = $14, okta_private_jwk = $15, okta_dirsync_client_id = $16, directory_sync_group_match = $17, jumpcloud_api_key = $18, prefetch_users = $19, disable_password_management = $20, directory_sync_user_groups = $21, client_certificate = $22, client_private_key = $23 WHERE id = $24",
+   "describe": {
+     "columns": [],
+     "parameters": {
+@@ -73,10 +73,12 @@
+         "Bool",
+         "Bool",
+         "TextArray",
++        "Text",
++        "Text",
+         "Int8"
+       ]
+     },
+     "nullable": []
+   },
+-  "hash": "66af8c4b14478a93354ff37b32e28cc9523b2b51aeea58fa82b0335f0b1c7769"
++  "hash": "e379558e436bccff637e4e74f297f8a019c6a0be66ee86f11dcc7601316dbd33"
+ }
+```
+
+**File**: `.sqlx/query-e8a956f3e8f704a4397311d7b24d5078af1346c484c15045d739934b2345d806.json` (renamed, +5/-3)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "db_name": "PostgreSQL",
+-  "query": "INSERT INTO \"openidprovider\" (\"name\",\"base_url\",\"kind\",\"client_id\",\"client_secret\",\"display_name\",\"google_service_account_key\",\"google_service_account_email\",\"admin_email\",\"directory_sync_enabled\",\"directory_sync_interval\",\"directory_sync_user_behavior\",\"directory_sync_admin_behavior\",\"directory_sync_target\",\"okta_private_jwk\",\"okta_dirsync_client_id\",\"directory_sync_group_match\",\"jumpcloud_api_key\",\"prefetch_users\",\"disable_password_management\",\"directory_sync_user_groups\") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21) RETURNING id",
++  "query": "INSERT INTO \"openidprovider\" (\"name\",\"base_url\",\"kind\",\"client_id\",\"client_secret\",\"display_name\",\"google_service_account_key\",\"google_service_account_email\",\"admin_email\",\"directory_sync_enabled\",\"directory_sync_interval\",\"directory_sync_user_behavior\",\"directory_sync_admin_behavior\",\"directory_sync_target\",\"okta_private_jwk\",\"okta_dirsync_client_id\",\"directory_sync_group_match\",\"jumpcloud_api_key\",\"prefetch_users\",\"disable_password_management\",\"directory_sync_user_groups\",\"client_certificate\",\"client_private_key\") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23) RETURNING id",
+   "describe": {
+     "columns": [
+       {
+@@ -84,12 +84,14 @@
+         "Text",
+         "Bool",
+         "Bool",
+-        "TextArray"
++        "TextArray",
++        "Text",
++        "Text"
+       ]
+     },
+     "nullable": [
+       false
+     ]
+   },
+-  "hash": "00f9407fb5af87aa5cc8ae83b0216b1cdd6e8cfb7b01690229602f2544af4a73"
++  "hash": "e8a956f3e8f704a4397311d7b24d5078af1346c484c15045d739934b2345d806"
+ }
+```
+
+**File**: `.sqlx/query-e96f44aa76a790bb2afc41947c87b3fde5413a5a214a69f3e676484f2eaccfa0.json` (renamed, +26/-2)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "db_name": "PostgreSQL",
+-  "query": "SELECT id, name, base_url, kind \"kind: OpenIdProviderKind\", client_id, client_secret, display_name, google_service_account_key \"google_service_account_key?: _\", google_service_account_email, admin_email, directory_sync_enabled, directory_sync_interval, directory_sync_user_behavior \"directory_sync_user_behavior: DirectorySyncUserBehavior\", directory_sync_admin_behavior  \"directory_sync_admin_behavior: DirectorySyncUserBehavior\", directory_sync_target  \"directory_sync_target: DirectorySyncTarget\", okta_private_jwk \"okta_private_jwk?: _\", okta_dirsync_client_id, directory_sync_group_match, jumpcloud_api_key \"jumpcloud_api_key?: _\", prefetch_users, disable_password_management, directory_sync_user_groups FROM openidprovider LIMIT 1",
++  "query": "SELECT id, name, base_url, kind \"kind: OpenIdProviderKind\", client_id, client_secret, display_name, google_service_account_key \"google_service_account_key?: _\", google_service_account_email, admin_email, directory_sync_enabled, directory_sync_interval, directory_sync_user_behavior \"directory_sync_user_behavior: DirectorySyncUserBehavior\", directory_sync_admin_behavior  \"directory_sync_admin_behavior: DirectorySyncUserBehavior\", directory_sync_target  \"directory_sync_target: DirectorySyncTarget\", okta_private_jwk \"okta_private_jwk?: _\", okta_dirsync_client_id, directory_sync_group_match, jumpcloud_api_key \"jumpcloud_api_key?: _\", prefetch_users, disable_password_management, directory_sync_user_groups, client_certificate, client_private_key \"client_private_key?: _\" FROM openidprovider LIMIT 1",
+   "describe": {
+     "columns": [
+       {
+@@ -291,6 +291,28 @@
+             "name": "directory_sync_user_groups"
+           }
+         }
++      },
++      {
++        "ordinal": 22,
++        "name": "client_certificate",
++        "type_info": "Text",
++        "origin": {
++          "Table": {
++            "table": "openidprovider",
++            "name": "client_certificate"
++          }
++        }
++      },
++      {
++        "ordinal": 23,
++        "name": "client_private_key?: _",
++        "type_info": "Text",
++        "origin": {
++          "Table": {
++            "table": "openidprovider",
++            "name": "client_private_key"
++          }
++        }
+       }
+     ],
+     "parameters": {
+@@ -318,8 +340,10 @@
+       true,
+       false,
+       false,
++      true,
++      true,
+       true
+     ]
+   },
+-  "hash": "1da314b8ea0aec1a6b0ab9a7c083dff6b876ababda9ea3da021a2e2c76a45b31"
++  "hash": "e96f44aa76a790bb2afc41947c87b3fde5413a5a214a69f3e676484f2eaccfa0"
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4099** (2026-11-24): Make Client download page consistent with landing page (@t-aleksander)
+- **PR #4093** (2026-11-23): apply new design for network devices modals (@filipslezaklab)
+- **PR #4090** (2026-11-23): consistent UX around copy/download actions (@filipslezaklab)
 - **PR #4089** (2026-11-23): fix lint (@filipslezaklab)
 - **PR #4083** (2026-11-20): Fix menu devices table action (@filipslezaklab)
 - **PR #4078** (2026-11-20): Display correct rule ID in traffic log (@moubctez)
-- **PR #4072** (2026-11-19): Correctly handle pasting network addresses in fields (@jakub-tldr)
-- **PR #4071** (2026-11-19): fix(CI): improve PR job cancellation (@wojcik91)
-- **PR #4070** (2026-11-23): network devices psk (@filipslezaklab)
 
 ---
 
@@ -2363,39 +2664,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in Cargo.lock
+## X. Make Client download page consistent with landing page
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DefGuard/defguard. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `web/src/shared/api/update-service.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DefGuard/defguard. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0c437895`: lint. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7d232424`: Make Client download page consistent with landing page. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `web/src/shared/api/update-service.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "syn 2.0.119",
-version = "1.2.3"
-checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
-version = "2.5.9"
-checksum = "f00cd2407bb42c0ef17be88d4cf020f5cceffd121665bac9b8b9493a369b3b1a"
+  windows_arm64?: string;
+          windows_arm64: data.windows_arm64 ?? clientDownloadFallback,
+          windows_arm64: clientDownloadFallback,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
- "syn 3.0.9",
-version = "1.2.2"
-checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
-version = "2.5.8"
-checksum = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0c437895` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7d232424` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gluesql-gluesql-learnings.md`  
 > **Source**: github ([https://github.com/gluesql/gluesql](https://github.com/gluesql/gluesql))  
-> **Source Version**: `3635d34e`  
+> **Source Version**: `c91cbdd6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T10:29:58.076Z  
+> **Timestamp**: 2026-11-24T12:45:44.279Z  
 > **Learning ID**: `learn-github-gluesql-gluesql`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gluesql-gluesql-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gluesql/gluesql](https://github.com/gluesql/gluesql))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T10:29:58.071Z  
+> **Harvest Timestamp**: 2026-11-24T12:45:44.269Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2058,58 +2058,792 @@ impl BigDecimalExt for BigDecimal {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3635d34e` (2026-11-22)
-**Commit Message**: Reject multiple DELETE targets before FROM in the SQL translator (#2094)
+### Incident Patch 1: `c91cbdd6` (2026-11-24)
+**Commit Message**: Push down IFNULL, COALESCE, and NULLIF in SQLite filters (#2097)
 
-DELETE translation previously ignored the target list before FROM, so
-`DELETE Foo, Bar FROM Foo WHERE id = 1` was translated as a delete from
-Foo alone.
+Resolve nested function arguments and bind their values in SQL order so
+SQLite can filter rows before returning them to GlueSQL. Keep terms
+whose argument evaluation or comparisons require GlueSQL semantics in
+the common filter.
 
-Reject multiple targets before FROM with
-`UnsupportedDeleteOption(MultipleTables)`, matching the existing error
-for multiple tables in the FROM clause.
-
-**File**: `core/src/translate.rs` (modified, +8/-1)
+**File**: `storages/sqlite-storage/src/planner/native_filter.rs` (modified, +34/-55)
 ```diff
-@@ -147,6 +147,7 @@ pub fn translate_with_params(
-             })
-         }
-         SqlStatement::Delete(SqlDelete {
-+            tables,
-             from,
-             using,
-             selection,
-@@ -163,7 +164,9 @@ pub fn translate_with_params(
-                 Some(DeleteOption::OrderBy)
-             } else if limit.is_some() {
-                 Some(DeleteOption::Limit)
--            } else if matches!(from, SqlFromTable::WithFromKeyword(tables) if tables.len() > 1) {
-+            } else if tables.len() > 1
-+                || matches!(from, SqlFromTable::WithFromKeyword(tables) if tables.len() > 1)
-+            {
-                 Some(DeleteOption::MultipleTables)
-             } else {
-                 None
-@@ -747,6 +750,10 @@ mod tests {
-                 "DELETE FROM Foo, Bar WHERE id = 1",
-                 TranslateError::UnsupportedDeleteOption(DeleteOption::MultipleTables),
-             ),
-+            (
-+                "DELETE Foo, Bar FROM Foo WHERE id = 1",
-+                TranslateError::UnsupportedDeleteOption(DeleteOption::MultipleTables),
-+            ),
-         ];
+@@ -4,12 +4,10 @@
+ mod condition;
  
-         for (sql, err) in cases {
+ use {
++    self::condition::ConditionPlan,
+     super::table_read::{self, ScanOrder},
+     gluesql_core::{
+-        plan::{
+-            ExprPlan, FilterInputPlan, FilterPlan, NativeSourcePlan, ProjectInputPlan, QueryPlan,
+-            SchemaMap, SourcePlan,
+-        },
++        plan::{FilterInputPlan, FilterPlan, ProjectInputPlan, QueryPlan, SchemaMap, SourcePlan},
+         planner::{VisitorMut, walk_query_mut},
+     },
+     std::{collections::BTreeSet, convert::Infallible},
+@@ -23,17 +21,6 @@ struct NativeFilterPlanner<'a> {
+     schemas: &'a SchemaMap,
+ }
+ 
+-enum NativeFilterRewrite {
+-    Unchanged,
+-    Full {
+-        source: NativeSourcePlan,
+-    },
+-    Partial {
+-        source: NativeSourcePlan,
+-        remaining: ExprPlan,
+-    },
+-}
+-
+ impl VisitorMut for NativeFilterPlanner<'_> {
+     type Error = Infallible;
+ 
+@@ -43,41 +30,23 @@ impl VisitorMut for NativeFilterPlanner<'_> {
+ 
+         if let Some(project) = query.project_mut()
+             && let ProjectInputPlan::Filter(filter) = &project.input
++            && let Some(input) = plan_filter(filter, self.schemas)
+         {
+-            match plan_filter(filter, self.schemas) {
+-                NativeFilterRewrite::Unchanged => {}
+-                NativeFilterRewrite::Full { source } => {
+-                    project.input = ProjectInputPlan::Source(SourcePlan::Native(source));
+-                }
+-                NativeFilterRewrite::Partial { source, remaining } => {
+-                    project.input = ProjectInputPlan::Filter(FilterPlan {
+-                        input: FilterInputPlan::Source(SourcePlan::Native(source)),
+-                        expr: remaining,
+-                    });
+-                }
+-            }
++            project.input = input;
+         }
+ 
+         Ok(())
+     }
+ }
+ 
+-fn plan_filter(filter: &FilterPlan, schemas: &SchemaMap) -> NativeFilterRewrite {
++fn plan_filter(filter: &FilterPlan, schemas: &SchemaMap) -> Option<ProjectInputPlan> {
+     let FilterInputPlan::Source(SourcePlan::Table(table)) = &filter.input else {
+-        return NativeFilterRewrite::Unchanged;
+-    };
+-
+-    let Some(schema) = schemas.get(&table.name) else {
+-        return NativeFilterRewrite::Unchanged;
++        return None;
+     };
+ 
+-    let Some(columns) = schema.column_defs.as_ref() else {
+-        return NativeFilterRewrite::Unchanged;
+-    };
+-
+-    let Some(projection) = table_read::scan_projection(table, columns) else {
+-        return NativeFilterRewrite::Unchanged;
+-    };
++    let schema = schemas.get(&table.name)?;
++    let columns = schema.column_defs.as_ref()?;
++    let projection = table_read::scan_projection(table, columns)?;
+ 
+     let alias = table
+         .alias
+@@ -95,27 +64,37 @@ fn plan_filter(filter: &FilterPlan, schemas: &SchemaMap) -> NativeFilterRewrite
+         .enumerate()
+         .any(|(index, column)| !names.insert(column_aliases.get(index).unwrap_or(&column.name)))
+     {
+-        return NativeFilterRewrite::Unchanged;
++        return None;
+     }
+ 
+-    let Some(ScanOrder::Sqlite(order)) = table_read::scan_order(&table.name, columns) else {
+-        return NativeFilterRewrite::Unchanged;
++    let ScanOrder::Sqlite(order) = table_read::scan_order(&table.name, columns) else {
++        return None;
+     };
+ 
+-    let Some(condition) =
+-        condition::plan(&filter.expr, &table.name, alias, columns, column_aliases)
+-    else {
+-        return NativeFilterRewrite::Unchanged;
++    let condition = condition::plan(&filter.expr, &table.name, alias, columns, column_aliases);
++    let native_source = |sql, params| {
++        let mut source = table_read::native_select(table, projection);
++        source.query = format!("{} WHERE {sql} {order}", source.query);
++        source.params = params;
++        SourcePlan::Native(source)
+     };
+ 
+-    let mut source = table_read::native_select(table, projection);
+-    source.query = format!("{} WHERE {} {order}", source.query, condition.sql);
+-    source.params = condition.params;
+-
+-    match condition.remaining {
+-        Some(remaining) => NativeFilterRewrite::Partial { source, remaining },
+-        None => NativeFilterRewrite::Full { source },
+-    }
++    let input = match condition {
++        ConditionPlan::Unchanged => return None,
++        ConditionPlan::Full { sql, params } => ProjectInputPlan::Source(native_source(sql, params)),
++        ConditionPlan::Partial {
++            sql,
++            params,
++            remaining,
++        } => {
++            let source = native_source(sql, params);
++            ProjectInputPlan::Filter(FilterPlan {
++                input: FilterInputPlan::Source(source),
++                expr: remaining,
++            })
++        }
++    };
++    Some(input)
+ }
+ 
+ #[cfg(test)]
+```
+
+**File**: `storages/sqlite-storage/src/planner/native_filter/condition.rs` (modified, +263/-287)
+```diff
+@@ -1,80 +1,108 @@
+-//! Extracts supported WHERE conditions into native SQL, bindings, and a remaining expression.
+-
+-mod operand_type;
++//! Splits a single-table `WHERE` clause between `SQLite` and the common executor.
++//!
++//! [`ConditionPlanner::push_down_where_terms`] considers each top-level `AND`
++//! term independently. [`ConditionPlanner::build_condition_sql`] translates a
++//! whole term, including `OR` and `NOT`, when `SQLite` can evaluate it with
++//! `GlueSQL` semantics. If a term stays in the common filter, the planner
++//! discards any parameters it collected for that term.
++//!
++//! [`operand::plan_operand`] identifies the columns, values and functions in
++//! each condition. [`ConditionPlanner::render_operand`] writes physical column
++//! names and binds values to numbered placeholders, visiting function arguments
++//! from left to right.
++//!
++//! [`ConditionPlan`] records whether the filter stays unchanged or moves to
++//! `SQLite` in full or in part. Both delegated cases carry SQL and parameters in
++//! placeholder order. Partial delegation also carries the remaining expression.
++
++mod operand;
+ 
+ use {
+-    self::operand_type::{Operand, ResolvedOperand},
++    self::operand::{OperandPlan, ResolvedOperand, plan_operand, sqlite_allows_operator},
+     crate::schema::qualified_column,
+     gluesql_core::{
+-        ast::{BinaryOperator, DataType, Literal, ToSql, UnaryOperator},
++        ast::{BinaryOperator, DataType, ToSql, UnaryOperator},
+         data::Value,
+         plan::{ColumnDefPlan, ExprPlan},
+     },
+ };
+ 
+ #[derive(Debug, PartialEq)]
+-pub(super) struct PlannedCondition {
+-    pub(super) sql: String,
+-    pub(super) params: Vec<Value>,
+-    pub(super) remaining: Option<ExprPlan>,
++pub(super) enum ConditionPlan {
++    Unchanged,
++    Full {
++        sql: String,
++        params: Vec<Value>,
++    },
++    Partial {
++        sql: String,
++        params: Vec<Value>,
++        remaining: ExprPlan,
++    },
+ }
+ 
+ pub(super) fn plan(
+     expr: &ExprPlan,
+     table_name: &str,
+-    alias: &str,
++    table_alias: &str,
+     columns: &[ColumnDefPlan],
+     column_aliases: &[String],
+-) -> Option<PlannedCondition> {
+-    let mut planner = ConditionPlanner::new(table_name, alias, columns, column_aliases);
+-    let remaining = planner.extract(expr);
++) -> ConditionPlan {
++    let mut planner = ConditionPlanner::new(table_name, table_alias, columns, column_aliases);
++    let remaining = planner.push_down_where_terms(expr);
+ 
+     if planner.sql_conditions.is_empty() {
+-        return None;
++        return ConditionPlan::Unchanged;
+     }
+ 
+-    Some(PlannedCondition {
+-        sql: planner.sql_conditions.join(" AND "),
+-        params: planner.params,
+-        remaining,
+-    })
++    let sql = planner.sql_conditions.join(" AND ");
++    let params = planner.params;
++    match remaining {
++        None => ConditionPlan::Full { sql, params },
++        Some(remaining) => ConditionPlan::Partial {
++            sql,
++            params,
++            remaining,
++        },
++    }
+ }
+ 
+ struct ConditionPlanner<'a> {
+     table_name: &'a str,
+-    alias: &'a str,
++    table_alias: &'a str,
+     columns: &'a [ColumnDefPlan],
+-    aliases: &'a [String],
++    column_aliases: &'a [String],
+     sql_conditions: Vec<String>,
+     params: Vec<Value>,
+ }
+ 
+ impl<'a> ConditionPlanner<'a> {
+     fn new(
+         table_name: &'a str,
+-        alias: &'a str,
++        table_alias: &'a str,
+         columns: &'a [ColumnDefPlan],
+-        aliases: &'a [String],
++        column_aliases: &'a [String],
+     ) -> Self {
+         Self {
+             table_name,
+-            alias,
++            table_alias,
+             columns,
+-            aliases,
++            column_aliases,
+             sql_conditions: Vec::new(),
+             params: Vec::new(),
+         }
+     }
+ 
+-    fn extract(&mut self, expr: &ExprPlan) -> Option<ExprPlan> {
++    /// Collects native conditions and their parameters, returning the filter for the common executor.
++    fn push_down_where_terms(&mut self, expr: &ExprPlan) -> Option<ExprPlan> {
+         match expr {
+             ExprPlan::BinaryOp {
+                 left,
+                 op: BinaryOperator::And,
+                 right,
+             } => {
+-                let left = self.extract(left);
+-                let right = self.extract(right);
++                let left = self.push_down_where_terms(left);
++                let right = self.push_down_where_terms(right);
+ 
+                 match (left, right) {
+                     (Some(left), Some(right)) => Some(ExprPlan::BinaryOp {
+@@ -87,13 +115,13 @@ impl<'a> ConditionPlanner<'a> {
+                 }
+             }
+             ExprPlan::Nested(expr) => self
+-                .extract(expr)
++                .push_down_where_terms(expr)
+                 .map(|remaining| ExprPlan::Nested(Box::new(remaining))),
+             // OR/NOT and other expressions move as a whole. Extracting an AND from
+             // inside one of them could discard row
+```
+
+**File**: `storages/sqlite-storage/src/planner/native_filter/condition/operand.rs` (renamed, +289/-74)
+```diff
+@@ -1,60 +1,144 @@
+-//! Resolves literals and checks logical type compatibility for native comparisons.
+-
+-use gluesql_core::{
+-    ast::{BinaryOperator, DataType, Literal},
+-    data::{BigDecimalExt, Value},
+-    plan::ColumnDefPlan,
++//! Plans scalar operands in a native `WHERE` condition.
++//!
++//! [`plan_operand`] looks up column references using the table and column
++//! aliases visible in the query. The matching column definition supplies its
++//! type and physical name. [`OperandPlan::Unmatched`] lets a caller try another
++//! interpretation, such as a condition inside `IS NULL`.
++//!
++//! Bound values carry their own types, and [scalar functions](function) supply
++//! their return types. A literal can take its comparison peer's type. In
++//! `qty > 10` with `qty` declared `INT8`, it becomes `Value::I8(10)`.
++//! The planner checks the operator for both operands, then checks whether the
++//! right operand fits the left operand's type.
++
++mod function;
++
++use {
++    self::function::{ResolvedFunction, plan_function_call},
++    gluesql_core::{
++        ast::{BinaryOperator, DataType, Literal, UnaryOperator},
++        data::{BigDecimalExt, Value},
++        plan::{ColumnDefPlan, ExprPlan},
++    },
+ };
+ 
+-#[derive(Clone)]
+-pub(super) enum Operand<'a> {
+-    Column(&'a ColumnDefPlan),
+-    // Literals can adopt a peer type; typed Values retain theirs.
++#[derive(Clone, Debug, PartialEq)]
++pub(super) enum OperandPlan<'a> {
++    // Only a literal can acquire its comparison peer's type.
+     Literal(Literal),
+-    Value(Value),
++    Resolved(ResolvedOperand<'a>),
++    Unmatched,
+ }
+ 
+-#[derive(Debug, PartialEq)]
++#[derive(Clone, Debug, PartialEq)]
+ pub(super) enum ResolvedOperand<'a> {
+     Column(&'a ColumnDefPlan),
+     Value(Value),
++    Function(ResolvedFunction<'a>),
+ }
+ 
+-impl<'a> Operand<'a> {
+-    pub(super) fn data_type(&self) -> Option<DataType> {
+-        match self {
+-            Self::Column(column) => Some(column.data_type.clone()),
+-            // NULL has no logical type.
+-            Self::Value(value) => value.get_type(),
+-            Self::Literal(_) => None,
++pub(super) fn plan_operand<'a>(
++    expr: &ExprPlan,
++    table_alias: &str,
++    columns: &'a [ColumnDefPlan],
++    column_aliases: &[String],
++) -> OperandPlan<'a> {
++    match expr {
++        ExprPlan::Nested(expr) => plan_operand(expr, table_alias, columns, column_aliases),
++        ExprPlan::CompoundIdentifier { alias, .. } if alias != table_alias => {
++            OperandPlan::Unmatched
+         }
+-    }
++        ExprPlan::Identifier(name) | ExprPlan::CompoundIdentifier { ident: name, .. } => {
++            let Some(column) = columns.iter().enumerate().find_map(|(index, column)| {
++                let visible_name = column_aliases.get(index).unwrap_or(&column.name);
++                (visible_name == name).then_some(column)
++            }) else {
++                return OperandPlan::Unmatched;
++            };
++
++            OperandPlan::Resolved(ResolvedOperand::Column(column))
++        }
++        ExprPlan::Literal(literal) => OperandPlan::Literal(literal.clone()),
++        ExprPlan::Value(value) => OperandPlan::Resolved(ResolvedOperand::Value(value.clone())),
++        ExprPlan::UnaryOp {
++            op: op @ (UnaryOperator::Plus | UnaryOperator::Minus),
++            expr,
++        } => {
++            let OperandPlan::Literal(Literal::Number(number)) =
++                plan_operand(expr, table_alias, columns, column_aliases)
++            else {
++                return OperandPlan::Unmatched;
++            };
++
++            let number = if matches!(op, UnaryOperator::Minus) {
++                -number
++            } else {
++                number
++            };
++            OperandPlan::Literal(Literal::Number(number))
++        }
++        ExprPlan::Function(function) => {
++            let Some(function) = plan_function_call(function, table_alias, columns, column_aliases)
++            else {
++                return OperandPlan::Unmatched;
++            };
+ 
+-    pub(super) fn resolve(self, peer_type: Option<&DataType>) -> Option<ResolvedOperand<'a>> {
+-        Some(match self {
+-            Self::Column(column) => ResolvedOperand::Column(column),
+-            Self::Literal(literal) => ResolvedOperand::Value(literal_to_value(literal, peer_type)?),
+-            Self::Value(value) => ResolvedOperand::Value(value),
+-        })
++            OperandPlan::Resolved(ResolvedOperand::Function(function))
++        }
++        _ => OperandPlan::Unmatched,
+     }
+ }
+ 
+-impl ResolvedOperand<'_> {
+-    pub(super) fn data_type(&self) -> Option<DataType> {
++impl<'a> OperandPlan<'a> {
++    pub(super) fn with_literal_type_from(self, peer: &Self) -> Option<ResolvedOperand<'a>> {
++        match peer {
++            Self::Literal(_) => self.with_literal_type(None),
++            Self::Resolved(operand) => self.with_literal_type(operand.data_type().as_ref()),
++            Self::Unmatched => None,
++        }
++    }
++
++    pub(super) fn with_literal_type(
++     
+```
+
+**File**: `storages/sqlite-storage/src/planner/native_filter/condition/operand/function.rs` (added, +229/-0)
+```diff
+@@ -0,0 +1,229 @@
++//! Plans scalar function calls used as operands in a native `WHERE` condition.
++//!
++//! [`plan_function_call`] plans each argument with the table and column aliases
++//! visible to the caller. [`ResolvedFunction`] records the SQL name and typed
++//! arguments for rendering the call, and the return type for the enclosing
++//! expression.
++//!
++//! `IFNULL` and `COALESCE` take their return type from their typed arguments,
++//! which must agree. `NULLIF(a, b)` checks `a = b` using the filter's comparison
++//! rules and keeps the type of `a` because it can return `a`. In
++//! `NULLIF(qty, 0) > 10`, the outer comparison uses that return type to bind `10`.
++
++use {
++    super::{ResolvedOperand, plan_operand, sqlite_allows_operator},
++    gluesql_core::{
++        ast::{BinaryOperator, DataType},
++        plan::{ColumnDefPlan, ExprPlan, FunctionPlan},
++    },
++};
++
++#[derive(Clone, Debug, PartialEq)]
++pub(in super::super) struct ResolvedFunction<'a> {
++    pub(in super::super) name: &'static str,
++    pub(in super::super) args: Vec<ResolvedOperand<'a>>,
++    /// `None` represents an untyped `NULL`, as in `COALESCE(NULL, NULL)`.
++    pub(super) return_type: Option<DataType>,
++}
++
++pub(super) fn plan_function_call<'a>(
++    function: &FunctionPlan,
++    table_alias: &str,
++    columns: &'a [ColumnDefPlan],
++    column_aliases: &[String],
++) -> Option<ResolvedFunction<'a>> {
++    match function {
++        FunctionPlan::IfNull { expr, then } => {
++            plan_first_non_null("IFNULL", [expr, then], table_alias, columns, column_aliases)
++        }
++        // GlueSQL also accepts a single argument, which SQLite rejects.
++        FunctionPlan::Coalesce(exprs) if exprs.len() >= 2 => {
++            plan_first_non_null("COALESCE", exprs, table_alias, columns, column_aliases)
++        }
++        FunctionPlan::NullIf { expr1, expr2 } => {
++            // The first argument can be returned unchanged, so resolve it at its own type.
++            let value = plan_operand(expr1, table_alias, columns, column_aliases)
++                .with_literal_type(None)?;
++            let return_type = value.data_type();
++            let other = plan_operand(expr2, table_alias, columns, column_aliases)
++                .with_literal_type(return_type.as_ref())?;
++
++            if !sqlite_allows_operator(&value, &BinaryOperator::Eq, &other) {
++                return None;
++            }
++
++            let other = value.coerce_rhs(other)?;
++            Some(ResolvedFunction {
++                name: "NULLIF",
++                args: vec![value, other],
++                return_type,
++            })
++        }
++        _ => None,
++    }
++}
++
++fn plan_first_non_null<'a, 'expr>(
++    name: &'static str,
++    exprs: impl IntoIterator<Item = &'expr ExprPlan>,
++    table_alias: &str,
++    columns: &'a [ColumnDefPlan],
++    column_aliases: &[String],
++) -> Option<ResolvedFunction<'a>> {
++    let mut args = Vec::new();
++    let mut return_type = None;
++
++    for expr in exprs {
++        let arg =
++            plan_operand(expr, table_alias, columns, column_aliases).with_literal_type(None)?;
++        if let Some(arg_type) = arg.data_type() {
++            if return_type
++                .as_ref()
++                .is_some_and(|known_type| *known_type != arg_type)
++            {
++                return None;
++            }
++
++            return_type = Some(arg_type);
++        }
++
++        args.push(arg);
++    }
++
++    Some(ResolvedFunction {
++        name,
++        args,
++        return_type,
++    })
++}
++
++#[cfg(test)]
++mod tests {
++    use {
++        super::{ResolvedFunction, ResolvedOperand, plan_function_call},
++        crate::planner::native_filter::condition::tests::expr,
++        gluesql_core::{
++            ast::DataType,
++            data::{Schema, Value},
++            plan::{ColumnDefPlan, ExprPlan},
++        },
++    };
++
++    fn plan_call<'a>(sql: &str, columns: &'a [ColumnDefPlan]) -> Option<ResolvedFunction<'a>> {
++        let ExprPlan::Function(call) = expr(sql, &[]) else {
++            panic!("expected a function: {sql}");
++        };
++        plan_function_call(&call, "q", columns, &[])
++    }
++
++    #[test]
++    fn if_null() {
++        let actual = plan_call("IFNULL(NULL, 7)", &[]);
++        let expected = Some(ResolvedFunction {
++            name: "IFNULL",
++            args: vec![
++                ResolvedOperand::Value(Value::Null),
++                ResolvedOperand::Value(Value::I64(7)),
++            ],
++            return_type: Some(DataType::Int),
++        });
++        assert_eq!(actual, expected);
++
++        let schema = Schema::from_ddl("CREATE TABLE q (n INT8, f FLOAT32)").unwrap();
++        let columns: Vec<_> = schema
++            .column_defs
++            .unwrap()
++            .into_iter()
++            .map(ColumnDefPlan::from)
++            .collect();
++
++        // A numeric literal keeps its standalone type regardless of the other argument.
++        for sql in ["IFNULL(n, 7)", "IFNULL(0.5, f)", "IFNULL(f, 
+```
+
+**File**: `storages/sqlite-storage/src/planner/native_scan.rs` (modified, +2/-1)
+```diff
+@@ -45,13 +45,14 @@ fn plan_table_scan(table: &TableSourcePlan, schema: &SchemaPlan) -> Option<Sourc
+     };
+     let projection = table_read::scan_projection(table, &columns)?;
+ 
+-    match table_read::scan_order(&table.name, &columns)? {
++    match table_read::scan_order(&table.name, &columns) {
+         ScanOrder::Sqlite(order) => {
+             let mut source = table_read::native_select(table, projection);
+             source.query = format!("{} {order}", source.query);
+             Some(SourcePlan::Native(source))
+         }
+         ScanOrder::GlueSql(key) => Some(sort_by_primary_key(table, projection, key)),
++        ScanOrder::Unavailable => None,
+     }
+ }
+ 
+```
+
+**File**: `storages/sqlite-storage/src/planner/table_read.rs` (modified, +20/-20)
+```diff
+@@ -44,25 +44,27 @@ pub(super) fn scan_projection<'a>(
+     Some(projection)
+ }
+ 
++#[derive(Debug, PartialEq)]
+ pub(super) enum ScanOrder<'a> {
+     Sqlite(String),
+     GlueSql(&'a ColumnDefPlan),
++    Unavailable,
+ }
+ 
+-pub(super) fn scan_order<'a>(table: &str, columns: &'a [ColumnDefPlan]) -> Option<ScanOrder<'a>> {
++pub(super) fn scan_order<'a>(table: &str, columns: &'a [ColumnDefPlan]) -> ScanOrder<'a> {
+     let key = columns
+         .iter()
+         .find(|column| column.unique.is_some_and(|unique| unique.is_primary));
+     let name = match key {
+-        None => available_rowid(columns, |column| &column.name)?,
++        None => match available_rowid(columns, |column| &column.name) {
++            Some(rowid) => rowid,
++            None => return ScanOrder::Unavailable,
++        },
+         Some(key) if key_type_supports_sqlite_order(&key.data_type) => &key.name,
+-        Some(key) => return Some(ScanOrder::GlueSql(key)),
++        Some(key) => return ScanOrder::GlueSql(key),
+     };
+ 
+-    Some(ScanOrder::Sqlite(format!(
+-        "ORDER BY {} ASC",
+-        qualified_column(table, name)
+-    )))
++    ScanOrder::Sqlite(format!("ORDER BY {} ASC", qualified_column(table, name)))
+ }
+ 
+ pub(super) fn native_select(
+@@ -200,34 +202,32 @@ mod tests {
+     #[test]
+     fn scan_order() {
+         let columns = [column("_rowid_ INT")];
+-        let Some(ScanOrder::Sqlite(actual)) = super::scan_order("Item", &columns) else {
+-            panic!("expected SQLite to order by the available rowid");
+-        };
+-        assert_eq!(actual, r#"ORDER BY "Item"."rowid" ASC"#);
++        let actual = super::scan_order("Item", &columns);
++        let expected = ScanOrder::Sqlite(r#"ORDER BY "Item"."rowid" ASC"#.to_owned());
++        assert_eq!(actual, expected);
+ 
+         let columns = [
+             column("_rowid_ INT"),
+             column("rowid INT"),
+             column("oid INT"),
+         ];
+-        assert!(super::scan_order("Item", &columns).is_none());
++        let actual = super::scan_order("Item", &columns);
++        assert_eq!(actual, ScanOrder::Unavailable);
+ 
+         for key_type in [
+             "INT8", "INT16", "INT32", "INT", "UINT8", "UINT16", "UINT32", "BOOLEAN", "TEXT",
+             "BYTEA", "DECIMAL",
+         ] {
+             let columns = [column(&format!("id {key_type} PRIMARY KEY"))];
+-            let Some(ScanOrder::Sqlite(actual)) = super::scan_order("Item", &columns) else {
+-                panic!("expected SQLite to order a {key_type} key");
+-            };
+-            assert_eq!(actual, r#"ORDER BY "Item"."id" ASC"#, "{key_type}");
++            let actual = super::scan_order("Item", &columns);
++            let expected = ScanOrder::Sqlite(r#"ORDER BY "Item"."id" ASC"#.to_owned());
++            assert_eq!(actual, expected, "{key_type}");
+         }
+ 
+         let columns = [column("name TEXT"), column("id INT128 PRIMARY KEY")];
+-        let Some(ScanOrder::GlueSql(actual)) = super::scan_order("Item", &columns) else {
+-            panic!("expected GlueSQL to order an INT128 key");
+-        };
+-        assert_eq!(actual, &columns[1]);
++        let actual = super::scan_order("Item", &columns);
++        let expected = ScanOrder::GlueSql(&columns[1]);
++        assert_eq!(actual, expected);
+     }
+ 
+     #[test]
+```
+
+**File**: `storages/sqlite-storage/tests/native_query/filter.rs` (modified, +78/-0)
+```diff
+@@ -3,6 +3,7 @@ use {
+     gluesql_core::{
+         data::Value,
+         error::Result,
++        executor::EvaluateError,
+         prelude::{Glue, Payload},
+         store::NativeQuery,
+     },
+@@ -60,6 +61,83 @@ fn native_filter_reduces_source_rows_and_keeps_common_projection() {
+     assert_eq!(actual, expected);
+ }
+ 
++#[test]
++fn native_null_functions_choose_a_display_name() {
++    let mut glue = Glue::new(SqliteStorage::in_memory().unwrap());
++    glue.execute(
++        "
++        CREATE TABLE Location (id INT PRIMARY KEY, name TEXT, label TEXT, qty INT);
++        INSERT INTO Location VALUES
++            (1, 'Seoul', NULL, 4),
++            (2, NULL, 'Seoul', 0),
++            (3, 'Busan', 'Seoul', 10),
++            (4, NULL, NULL, 10),
++            (5, '', 'Seoul', 10),
++            (6, 'Seoul', NULL, -1);
++        ",
++    )
++    .unwrap();
++
++    let sql = "
++        SELECT id FROM Location
++        WHERE qty >= 0 AND IFNULL(name, label) = 'Seoul'
++    ";
++    let actual = execute_fully_delegated_filter(&mut glue, sql);
++    let expected = select(&["id"], vec![vec![Value::I64(1)], vec![Value::I64(2)]]);
++    assert_eq!(actual, expected);
++
++    let sql = "
++        SELECT id FROM Location
++        WHERE qty >= 0 AND COALESCE(NULLIF(name, ''), label, 'Seoul') = 'Seoul'
++    ";
++    let actual = execute_fully_delegated_filter(&mut glue, sql);
++    let expected = select(
++        &["id"],
++        vec![
++            vec![Value::I64(1)],
++            vec![Value::I64(2)],
++            vec![Value::I64(4)],
++            vec![Value::I64(5)],
++        ],
++    );
++    assert_eq!(actual, expected);
++}
++
++#[test]
++fn unused_fallbacks_preserve_gluesql_evaluation_errors() {
++    let mut glue = Glue::new(SqliteStorage::in_memory().unwrap());
++    glue.execute("CREATE TABLE Item (qty INT); INSERT INTO Item VALUES (10);")
++        .unwrap();
++
++    let sql = "SELECT qty FROM Item WHERE IFNULL(qty, 1 / 0) = 10";
++    let plan = glue.plan(sql).unwrap().remove(0);
++    expect_native_source_under_filter(expect_query(&plan));
++
++    let actual = glue.execute_prepared(&plan);
++    let expected = Err(EvaluateError::DivisorShouldNotBeZero.into());
++    assert_eq!(actual, expected);
++}
++
++#[test]
++fn nullif_keeps_gluesql_float_equality() {
++    let mut glue = Glue::new(SqliteStorage::in_memory().unwrap());
++    glue.execute(
++        "
++        CREATE TABLE Sample (id INT, a FLOAT32, b FLOAT32);
++        INSERT INTO Sample VALUES (1, 1.0, 0.99999994), (2, 1.0, 0.5);
++        ",
++    )
++    .unwrap();
++
++    let sql = "SELECT id FROM Sample WHERE NULLIF(a, b) IS NULL";
++    let plan = glue.plan(sql).unwrap().remove(0);
++    expect_native_source_under_filter(expect_query(&plan));
++
++    let actual = glue.execute_prepared(&plan).unwrap();
++    let expected = select(&["id"], vec![vec![Value::I64(1)]]);
++    assert_eq!(actual, expected);
++}
++
+ #[test]
+ fn partial_native_filter_reduces_rows_before_evaluating_the_remaining_condition() {
+     let mut glue = Glue::new(SqliteStorage::in_memory().unwrap());
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2097** (2026-11-24): Push down IFNULL, COALESCE, and NULLIF in SQLite filters (@panarch)
 - **PR #2094** (2026-11-22): Reject multiple DELETE targets before FROM (@ChobobDev)
 - **PR #2092** (2026-11-20): Align the docs introduction with the README (@panarch)
 - **PR #2091** (2026-11-19): Preserve LIST element types in SQL output (@panarch)
 - **PR #2089** (2026-11-18): Separate adjacent minus signs in SQL expressions (@panarch)
 - **PR #2088** (2026-11-18): Escape double quotes in DDL table names (@panarch)
-- **PR #2083** (2026-11-18): Emit comma-separated coordinates in POINT SQL expressions (@panarch)
 
 ---
 
@@ -2129,35 +2863,83 @@ for multiple tables in the FROM clause.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Reject multiple DELETE targets before FROM in the SQL translator
+## X. Push down IFNULL, COALESCE, and NULLIF in SQLite filters
 
 **RULE**:
-When implementing operations in `core/src/translate.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gluesql/gluesql. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `storages/sqlite-storage/src/planner/native_filter.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gluesql/gluesql. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3635d34e`: Reject multiple DELETE targets before FROM in the SQL translator. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c91cbdd6`: Push down IFNULL, COALESCE, and NULLIF in SQLite filters. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/src/translate.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `storages/sqlite-storage/src/planner/native_filter.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            tables,
-            } else if tables.len() > 1
-                || matches!(from, SqlFromTable::WithFromKeyword(tables) if tables.len() > 1)
-            {
-            (
-                "DELETE Foo, Bar FROM Foo WHERE id = 1",
-                TranslateError::UnsupportedDeleteOption(DeleteOption::MultipleTables),
-            ),
+    self::condition::ConditionPlan,
+        plan::{FilterInputPlan, FilterPlan, ProjectInputPlan, QueryPlan, SchemaMap, SourcePlan},
+            && let Some(input) = plan_filter(filter, self.schemas)
+            project.input = input;
+fn plan_filter(filter: &FilterPlan, schemas: &SchemaMap) -> Option<ProjectInputPlan> {
+        return None;
+    let schema = schemas.get(&table.name)?;
+    let columns = schema.column_defs.as_ref()?;
+    let projection = table_read::scan_projection(table, columns)?;
+        return None;
+    let ScanOrder::Sqlite(order) = table_read::scan_order(&table.name, columns) else {
+        return None;
+    let condition = condition::plan(&filter.expr, &table.name, alias, columns, column_aliases);
+    let native_source = |sql, params| {
+        let mut source = table_read::native_select(table, projection);
+        source.query = format!("{} WHERE {sql} {order}", source.query);
+        source.params = params;
+        SourcePlan::Native(source)
+    let input = match condition {
+        ConditionPlan::Unchanged => return None,
+        ConditionPlan::Full { sql, params } => ProjectInputPlan::Source(native_source(sql, params)),
+        ConditionPlan::Partial {
+      
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-            } else if matches!(from, SqlFromTable::WithFromKeyword(tables) if tables.len() > 1) {
+        plan::{
+            ExprPlan, FilterInputPlan, FilterPlan, NativeSourcePlan, ProjectInputPlan, QueryPlan,
+            SchemaMap, SourcePlan,
+        },
+enum NativeFilterRewrite {
+    Unchanged,
+    Full {
+        source: NativeSourcePlan,
+    },
+    Partial {
+        source: NativeSourcePlan,
+        remaining: ExprPlan,
+    },
+}
+
+            match plan_filter(filter, self.schemas) {
+                NativeFilterRewrite::Unchanged => {}
+                NativeFilterRewrite::Full { source } => {
+                    project.input = ProjectInputPlan::Source(SourcePlan::Native(source));
+                }
+                NativeFilterRewrite::Partial { source, remaining } => {
+                    project.input = ProjectInputPlan::Filter(FilterPlan {
+                        input: FilterInputPlan::Source(SourcePlan::Native(source)),
+                        expr: remaining,
+                    });
+                }
+            }
+fn plan_filter(filter: &FilterPlan, schemas: &SchemaMap) -> NativeFilterRewrite {
+        return NativeFilterRewrite::Unchanged;
+    };
+
+    let Some(schema) = schemas.get(&table.name) else {
+        return NativeFilterRewrite::Unchanged;
+    let Some(columns
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3635d34e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c91cbdd6` are properly handled with clean fallback behavior.

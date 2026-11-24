@@ -2443,10 +2443,10 @@
     "repository": "DefGuard/defguard",
     "platform": "github",
     "sourceUrl": "https://github.com/DefGuard/defguard",
-    "sourceVersion": "0eb2f794",
+    "sourceVersion": "7d232424",
     "license": "NOASSERTION",
-    "contentHash": "0d643bae80dd38273269e7174131befe813cfb9d51b5b38e8d35c13d0b23dd82",
-    "lastHarvestedAt": "2026-11-23T16:53:42.333Z",
+    "contentHash": "fb75b76334b598dc848e895a4b723c01233fd28e6714a4f54c676a92acabdacd",
+    "lastHarvestedAt": "2026-11-24T12:45:44.067Z",
     "learningId": "learn-github-defguard-defguard"
   },
   "tamagui-tamagui": {
@@ -4123,10 +4123,10 @@
     "repository": "gluesql/gluesql",
     "platform": "github",
     "sourceUrl": "https://github.com/gluesql/gluesql",
-    "sourceVersion": "3635d34e",
+    "sourceVersion": "c91cbdd6",
     "license": "Apache-2.0",
-    "contentHash": "83ebdd273de2c04e81a107320703c798b22f9bf5f9d5c18d2b229b186bea93c7",
-    "lastHarvestedAt": "2026-11-22T10:29:59.114Z",
+    "contentHash": "0330b74993315df91f73f4382d46a5a622518f9dcd130f49049ac155e8f495b3",
+    "lastHarvestedAt": "2026-11-24T12:45:45.750Z",
     "learningId": "learn-github-gluesql-gluesql"
   },
   "mui-base-ui": {
@@ -6463,10 +6463,10 @@
     "repository": "temporalio/temporal",
     "platform": "github",
     "sourceUrl": "https://github.com/temporalio/temporal",
-    "sourceVersion": "5208234b",
+    "sourceVersion": "4197dfdd",
     "license": "MIT",
-    "contentHash": "59b7ef61df3677fad35c590dcb61859efab9c257197e0fcda18cb0d326b34938",
-    "lastHarvestedAt": "2026-11-23T17:11:55.720Z",
+    "contentHash": "430caead01ee490cd7ca08a4c30ad092a9623028d8eb9fa0a855c86a4ce857d4",
+    "lastHarvestedAt": "2026-11-24T12:45:42.405Z",
     "learningId": "learn-github-temporalio-temporal"
   },
   "mintplex-labs-anything-llm": {

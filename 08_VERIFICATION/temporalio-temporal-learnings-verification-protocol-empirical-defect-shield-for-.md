@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T17:11:59.730Z",
+  "timestamp": "2026-11-24T12:45:49.832Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-temporalio-temporal-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [temporalio-temporal-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T17:11:59.730Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-24T12:45:49.832Z`  
 > **Learning ID**: `LEARN-EVO-temporalio-temporal-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source**: github ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
-> **Source Version**: `5208234b`  
+> **Source Version**: `4197dfdd`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T17:11:54.642Z  
+> **Timestamp**: 2026-11-24T12:45:40.954Z  
 > **Learning ID**: `learn-github-temporalio-temporal`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T17:11:54.636Z  
+> **Harvest Timestamp**: 2026-11-24T12:45:39.920Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Temporal service
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 24571 stars
+- **Stars / Engagement**: 24580 stars
 
 ---
 
@@ -2146,699 +2146,597 @@ func (x *WorkflowMutableStateMutation) ProtoReflect() protoreflect.Message {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5208234b` (2026-11-23)
-**Commit Message**: WHN impl 2: store worker control queue when workflow task starts (#12992)
+### Incident Patch 1: `4197dfdd` (2026-11-23)
+**Commit Message**: Add keepalive dial option to local frontend gRPC connection (#12819)
 
 ## What changed?
-- tracks the WHN-capable worker’s control queue for the current task,
-including normal and eager starts.
+Added keepalive dial options to `createLocalFrontendGRPCConnection()` in
+`common/rpc/rpc.go` via
+`d.getClientKeepAliveConfig(primitives.InternalFrontendService)`.
 
 ## Why?
-- need to know which worker control queue to send the WHN
+Resolves #12676.
+When dialing `frontendURL`, `createLocalFrontendGRPCConnection()` only
+passed `perServiceDialOptions[InternalFrontendService]`, omitting
+keepalive options configured for the internal frontend service. If a
+frontend host fails abruptly without sending TCP FIN/RST, callers of the
+shared local frontend connection (such as schedules executing
+`GetWorkflowExecutionHistory`) remain blocked waiting for TCP
+retransmission timeouts (approx. 15 minutes) before the failure is
+detected.
 
 ## How did you test it?
-
-- [ ] built
-- [ ] run locally and tested manually
+- [x] built
 - [x] covered by existing tests
-- [x] added new unit test(s) for metadata persistence and cleanup
-- [ ] added new functional test(s)
+- [x] added new unit test(s)
 
-**File**: `api/persistence/v1/executions.pb.go` (modified, +11/-2)
+Added unit tests in `common/rpc/rpc_test.go`:
+- `TestCreateLocalFrontendGRPCConnection_DefaultKeepAliveOptions`
+- `TestCreateLocalFrontendGRPCConnection_ConfiguredKeepAliveOptions`
+
+## Potential risks
+None. Default parameters maintain existing inactivity thresholds unless
+keepalive client parameters are explicitly configured or internode
+clien
+
+**File**: `common/rpc/rpc.go` (modified, +10/-3)
 ```diff
-@@ -160,6 +160,7 @@ type WorkflowExecutionInfo struct {
- 	WorkflowTaskTimeout                     *durationpb.Duration             `protobuf:"bytes,25,opt,name=workflow_task_timeout,json=workflowTaskTimeout,proto3" json:"workflow_task_timeout,omitempty"`
- 	WorkflowTaskAttempt                     int32                            `protobuf:"varint,26,opt,name=workflow_task_attempt,json=workflowTaskAttempt,proto3" json:"workflow_task_attempt,omitempty"`
- 	WorkflowTaskStartedTime                 *timestamppb.Timestamp           `protobuf:"bytes,27,opt,name=workflow_task_started_time,json=workflowTaskStartedTime,proto3" json:"workflow_task_started_time,omitempty"`
-+	WorkflowTaskWorkerControlQueue          string                           `protobuf:"bytes,119,opt,name=workflow_task_worker_control_queue,json=workflowTaskWorkerControlQueue,proto3" json:"workflow_task_worker_control_queue,omitempty"`
- 	WorkflowTaskScheduledTime               *timestamppb.Timestamp           `protobuf:"bytes,28,opt,name=workflow_task_scheduled_time,json=workflowTaskScheduledTime,proto3" json:"workflow_task_scheduled_time,omitempty"`
- 	WorkflowTaskOriginalScheduledTime       *timestamppb.Timestamp           `protobuf:"bytes,30,opt,name=workflow_task_original_scheduled_time,json=workflowTaskOriginalScheduledTime,proto3" json:"workflow_task_original_scheduled_time,omitempty"`
- 	WorkflowTaskRequestId                   string                           `protobuf:"bytes,31,opt,name=workflow_task_request_id,json=workflowTaskRequestId,proto3" json:"workflow_task_request_id,omitempty"`
-@@ -572,6 +573,13 @@ func (x *WorkflowExecutionInfo) GetWorkflowTaskStartedTime() *timestamppb.Timest
- 	return nil
+@@ -320,9 +320,16 @@ func (d *RPCFactory) CreateLocalFrontendGRPCConnection() *grpc.ClientConn {
  }
  
-+func (x *WorkflowExecutionInfo) GetWorkflowTaskWorkerControlQueue() string {
-+	if x != nil {
-+		return x.WorkflowTaskWorkerControlQueue
+ func (d *RPCFactory) createLocalFrontendGRPCConnection() *grpc.ClientConn {
+-	additionalDialOptions := append([]grpc.DialOption{}, d.perServiceDialOptions[primitives.InternalFrontendService]...)
++	serviceName := primitives.FrontendService
++	if d.config != nil {
++		if _, ok := d.config.Services[string(primitives.InternalFrontendService)]; ok {
++			serviceName = primitives.InternalFrontendService
++		}
 +	}
-+	return ""
++
++	additionalDialOptions := append([]grpc.DialOption{}, d.perServiceDialOptions[serviceName]...)
+ 
+-	return d.dial(d.frontendURL, d.frontendTLSConfig, additionalDialOptions...)
++	return d.dial(d.frontendURL, d.frontendTLSConfig, append(additionalDialOptions, d.getClientKeepAliveConfig(serviceName))...)
+ }
+ 
+ // createInternodeGRPCConnection creates connection for gRPC calls
+@@ -433,7 +440,7 @@ func (d *RPCFactory) getClientKeepAliveConfig(serviceName primitives.ServiceName
+ 		Timeout:             20 * time.Second,
+ 		PermitWithoutStream: false,
+ 	}
+-	if d.EnableInternodeClientKeepalive {
++	if d.EnableInternodeClientKeepalive && d.config != nil {
+ 		serviceConfig := d.config.Services[string(serviceName)]
+ 		params = serviceConfig.RPC.ClientConnectionConfig.GetKeepAliveClientParameters()
+ 	}
+```
+
+**File**: `common/rpc/rpc_test.go` (modified, +155/-0)
+```diff
+@@ -4,14 +4,18 @@ import (
+ 	"context"
+ 	"crypto/tls"
+ 	"errors"
++	"math"
++	"reflect"
+ 	"sync"
+ 	"testing"
+ 	"time"
++	"unsafe"
+ 
+ 	"github.com/stretchr/testify/require"
+ 	enumspb "go.temporal.io/api/enums/v1"
+ 	errordetailspb "go.temporal.io/api/errordetails/v1"
+ 	"go.temporal.io/api/serviceerror"
++	"go.temporal.io/server/common/config"
+ 	"go.temporal.io/server/common/log"
+ 	"go.temporal.io/server/common/metrics"
+ 	"go.temporal.io/server/common/primitives"
+@@ -21,6 +25,7 @@ import (
+ 	"google.golang.org/grpc"
+ 	"google.golang.org/grpc/codes"
+ 	"google.golang.org/grpc/connectivity"
++	"google.golang.org/grpc/keepalive"
+ 	"google.golang.org/grpc/status"
+ 	"google.golang.org/protobuf/types/known/durationpb"
+ )
+@@ -70,6 +75,156 @@ func TestCreateLocalFrontendGRPCConnectionIsCached(t *testing.T) {
+ 	t.Cleanup(func() { _ = first.Close() })
+ }
+ 
++func TestCreateLocalFrontendGRPCConnection_DefaultKeepAliveOptions(t *testing.T) {
++	t.Parallel()
++
++	f := NewFactory(nil, primitives.FrontendService, log.NewNoopLogger(),
++		metrics.NoopMetricsHandler, nil, "localhost:7233", "", 0, nil, nil, nil, nil, nil, nil)
++	conn := f.CreateLocalFrontendGRPCConnection()
++	require.NotNil(t, conn)
++	t.Cleanup(func() { _ = conn.Close() })
++
++	params, ok := getClientConnKeepaliveParams(conn)
++	require.True(t, ok, "expected keepalive parameters to be present on ClientConn")
++	require.Equal(t, time.Duration(math.MaxInt64), params.Time)
++	require.Equal(t, 20*time.Second, params.Timeout)
++	require.False(t, params.PermitWithoutStream)
 +}
 +
- func (x *WorkflowExecutionInfo) GetWorkflowTaskScheduledTime() *timestamppb.Timestamp {
- 	if x != nil {
- 		return x.WorkflowTaskScheduledTime
-@@ -5153,7 +5161,7 @@ const file_temporal_server_api_persistence_v1_executions_proto_rawDesc = "" +
- 	"\x03key\x18\x01 \x01(\x05R\x03key\x12D\n" +
- 	"\x05value\x18\x02 \x01(\v2..temporal.server.api.persistence.v1.QueueStateR\x05value:\x028\x01J\x04\b\x04\x10\x05J\x04\b\x05\x10\x06J\x04\b\b\x10\tJ\x04\b\t\x10\n" +
- 	"J\x04\b\n" +
--	"\x10\vJ\x04\b\v\x10\fJ\x04\b\f\x10\rJ\x04\b\x0e\x10\x0fJ\x04\b\x0f\x10\x10J\x04\b\x10\x10\x11\"\xecD\n" +
-+	"\x10\vJ\x04\b\v\x10\fJ\x04\b\f\x10\rJ\x04\b\x0e\x10\x0fJ\x04\b\x0f\x10\x10J\x04\b\x10\x10\x11\"\xb8E\n" +
- 	"\x15WorkflowExecutionInfo\x12!\n" +
- 	"\fnamespace_id\x18\x01 \x01(\tR\vnamespaceId\x12\x1f\n" +
- 	"\vworkflow_id\x18\x02 \x01(\tR\n" +
-@@ -5181,7 +5189,8 @@ const file_temporal_server_api_persistence_v1_executions_proto_rawDesc = "" +
- 	"\x1eworkflow_task_started_event_id\x18\x18 \x01(\x03R\x1aworkflowTaskStartedEventId\x12M\n" +
- 	"\x15workflow_task_timeout\x18\x19 \x01(\v2\x19.google.protobuf.DurationR\x13workflowTaskTimeout\x122\n" +
- 	"\x15workflow_task_attempt\x18\x1a \x01(\x05R\x13workflowTaskAttempt\x12W\n" +
--	"\x1aworkflow_task_started_time\x18\x1b \x01(\v2\x1a.google.protobuf.TimestampR\x17workflowTaskStartedTime\x12[\n" +
-+	"\x1aworkflow_task_started_time\x18\x1b \x01(\v2\x1a.google.protobuf.TimestampR\x17workflowTaskStartedTime\x12J\n" +
-+	"\"workflow_task_worker_control_queue\x18w \x01(\tR\x1eworkflowTaskWorkerControlQueue\x12[\n" +
- 	"\x1cworkflow_task_scheduled_time\x18\x1c \x01(\v2\x1a.google.protobuf.TimestampR\x19workflowTaskScheduledTime\x12l\n" +
- 	"%workflow_task_original_scheduled_time\x18\x1e \x01(\v2\x1a.google.protobuf.TimestampR!workflowTaskOriginalScheduledTime\x127\n" +
- 	"\x18workflow_task_request_id\x18\x1f \x01(\tR\x15workflowTaskRequestId\x12\\\n" +
-```
-
-**File**: `client/matching/client_gen.go` (modified, +1/-0)
-```diff
-@@ -840,6 +840,7 @@ func (c *clientImpl) doPollWorkflowTaskQueue(
- 				Identity:                  request.PollRequest.Identity,
- 				WorkerInstanceKey:         request.PollRequest.WorkerInstanceKey,
- 				WorkerControlTaskQueue:    request.PollRequest.WorkerControlTaskQueue,
-+				Capabilities:              request.PollRequest.Capabilities,
- 				BinaryChecksum:            request.PollRequest.BinaryChecksum,
- 				WorkerVersionCapabilities: request.PollRequest.WorkerVersionCapabilities,
- 				DeploymentOptions:         request.PollRequest.DeploymentOptions,
-```
-
-**File**: `go.mod` (modified, +1/-1)
-```diff
-@@ -71,7 +71,7 @@ require (
- 	go.opentelemetry.io/otel/sdk/metric v1.45.0
- 	go.opentelemetry.io/otel/trace v1.45.0
- 	go.opentelemetry.io/proto/otlp v1.11.0
--	go.temporal.io/api v1.64.3
-+	go.temporal.io/api v1.64.4-0.20261118022421-2ae2c7e65b2b
- 	go.temporal.io/auto-scaled-workers v0.0.0-20261113173819-782664acf475
- 	go.temporal.io/sdk v1.49.0
- 	go.temporal.io/testx v0.0.0-20261119195350-4d3f3f0b973d
-```
-
-**File**: `go.sum` (modified, +2/-2)
-```diff
-@@ -481,8 +481,8 @@ go.opentelemetry.io/proto/slim/otlp/collector/profiles/v1development v0.3.0 h1:R
- go.opentelemetry.io/proto/slim/otlp/collector/profiles/v1development v0.3.0/go.mod h1:I89cynRj8y+383o7tEQVg2SVA6SRgDVIouWPUVXjx0U=
- go.opentelemetry.io/proto/slim/otlp/profiles/v1development v0.3.0 h1:CQvJSldHRUN6Z8jsUeYv8J0lXRvygALXIzsmAeCcZE0=
- go.opentelemetry.io/proto/slim/otlp/profiles/v1development v0.3.0/go.mod h1:xSQ+mEfJe/GjK1LXEyVOoSI1N9JV9ZI923X5kup43W4=
--go.temporal.io/api v1.64.3 h1:Q2oP9jVB5pSputb2j3BLAEjJsi8A2tSzMojqcSGyga0=
--go.temporal.io/api v1.64.3/go.mod h1:acM0I9WPuYg8W3Pd9jOZvEgi7mRUttUQ4+e7fowKVnM=
-+go.temporal.io/api v1.64.4-0.20261118022421-2ae2c7e65b2b h1:IrGdkXMX7qiAhcj9fQ1czZoA2YEgqxRt8yJb/r13it4=
-+go.temporal.io/api v1.64.4-0.20261118022421-2ae2c7e65b2b/go.mod h1:acM0I9WPuYg8W3Pd9jOZvEgi7mRUttUQ4+e7fowKVnM=
- go.temporal.io/auto-scaled-workers v0.0.0-20261113173819-782664acf475 h1:/AcD6Z+ekc2y3BDYI+enFUNWAjDix4JGoh7LDVwvjbk=
- go.temporal.io/auto-scaled-workers v0.0.0-20261113173819-782664acf475/go.mod h1:Wcxj1DAGbC/tQwcfX8VjGhVKM9+/idGDQIvYx/gf13Y=
- go.temporal.io/sdk v1.49.0 h1:CtGI0BUe/SCo3eoqTwuWWtXKueii9GBVus7KrKKH1Vo=
-```
-
-**File**: `proto/internal/temporal/server/api/persistence/v1/executions.proto` (modified, +1/-0)
-```diff
-@@ -86,6 +86,7 @@ message WorkflowExecutionInfo {
-   google.protobuf.Duration workflow_task_timeout = 25;
-   int32 workflow_task_attempt = 26;
-   google.protobuf.Timestamp workflow_task_started_time = 27;
-+  string workflow_task_worker_control_queue = 119;
-   google.protobuf.Timestamp workflow_task_scheduled_time = 28;
-   google.protobuf.Timestamp workflow_task_original_scheduled_time = 30;
-   string workflow_task_request_id = 31;
-```
-
-**File**: `service/history/api/create_workflow_util.go` (modified, +5/-0)
-```diff
-@@ -117,6 +117,10 @@ func NewWorkflowWithSignal(
- 
- 	// If first workflow task should back off (e.g. cron or workflow retry) a workflow task will not be scheduled.
- 	if requestEagerExecution && newMutableState.HasPendingWorkflowTask() {
-+		var workerControlQueue string
-+		if startRequest.StartRequest.GetEagerWorkerCapabilities().GetSupportsWorkflowHeartbeatNotification() {
-+			workerControlQueue = startRequest.StartRequest.GetEagerWorkerControlTaskQueue()
-+		}
- 		// TODO: get build ID from Starter so eager workflows can be versioned
- 		_, _, err = newMutableState.AddWorkflowTaskStartedEvent(
- 			scheduledEventID,
-@@ -129,6 +133,7 @@ func NewWorkflowWithSignal(
- 			false,
- 			nil,
- 			-1, // sentinel: eager-exec path didn't consult matching, has no routing revision
-+			workerControlQueue,
- 		)
- 		if err != nil {
- 			// Unable to add WorkflowTaskStarted event to history
-```
-
-**File**: `service/history/api/recordworkflowtaskstarted/api.go` (modified, +5/-0)
-```diff
-@@ -160,6 +160,10 @@ func Invoke(
- 				return nil, err
- 			}
- 
-+			var workerControlQueue string
-+			if req.PollRequest.GetCapabilities().GetSupportsWorkflowHeartbeatNotification() {
-+				workerControlQueue = req.PollRequest.GetWorkerControlTaskQueue()
-+			}
- 			_, workflowTask, err = mutableState.AddWorkflowTaskStartedEvent(
- 				scheduledEventID,
- 				requestID,
-@@ -171,6 +175,7 @@ func Invoke(
- 				false,
- 				req.TargetDeploymentVersion,
- 				req.TaskDispatchRevisionNumber,
-+				workerControlQueue,
- 			)
- 			if err != nil {
- 				// Unable to add WorkflowTaskStarted event to history
-```
-
-**File**: `service/history/api/respondworkflowtaskcompleted/api.go` (modified, +2/-0)
-```diff
-@@ -660,6 +660,7 @@ func (handler *WorkflowTaskCompletedHandler) Invoke(
- 				false,
- 				nil,
- 				-1, // sentinel: inline path didn't consult matching, has no routing revision
-+				currentWorkflowTask.WorkerControlQueue,
- 			)
- 			if err != nil {
- 				return nil, err
-@@ -790,6 +791,7 @@ func (handler *WorkflowTaskCompletedHandler) Invoke(
- 			false,
- 			nil,
- 			-1, // sentinel: inline path didn't consult matching, has no routing revision
-+			currentWorkflowTask.WorkerControlQueue,
- 		)
- 		if err != nil {
- 			return nil, err
++func TestCreateLocalFrontendGRPCConnection_ConfiguredKeepAliveOptions(t *testing.T) {
++	t.Parallel()
++
++	keepAliveTime := 45 * time.Second
++	keepAliveTimeout := 15 * time.Second
++	permitWithoutStream := true
++
++	cfg := &config.Config{
++		Services: map[string]config.Service{
++			string(primitives.InternalFrontendService): {
++				RPC: config.RPC{
++					ClientConnectionConfig: config.ClientConnectionConfig{
++						KeepAliveClientConfig: &config.KeepAliveClientParameters{
++							Time:                &keepAliveTime,
++							Timeout:             &keepAliveTimeout,
++							PermitWithoutStream: &permitWithoutStream,
++						},
++					},
++				},
++			},
++		},
++	}
++
++	f := NewFactory(cfg, primitives.FrontendService, log.NewNoopLogger(),
++		metrics.NoopMetricsHandler, nil, "localhost:7233", "", 0, nil, nil, nil, nil, nil, nil)
++	f.EnableInternodeClientKeepalive = true
++
++	conn := f.CreateLocalFrontendGRPCConnection()
++	require.NotNil(t, conn)
++	t.Cleanup(func() { _ = conn.Close() })
++
++	params, ok := getClientConnKeepaliveParams(conn)
++	require.True(t, ok, "expected keepalive parameters to be present on ClientConn")
++	require.Equal(t, keepAliveTime, params.Time)
++	require.Equal(t, keepAliveTimeout, params.Timeout)
++	require.True(t, params.PermitWithoutStream)
++}
++
++func TestCreateLocalFrontendGRPCConnection_FallbackToFrontendService(t *testing.T) {
++	t.Parallel()
++
++	keepAliveTime := 30 * time.Second
++	keepAliveTimeout := 10 * time.Second
++	permitWithoutStream := true
++
++	cfg := &config.Config{
++		Services: map[string]config.Service{
++			string(primitives.FrontendService): {
++				RPC: config.RPC{
++					ClientConnectionConfig: config.ClientConnectionConfig{
++						KeepAliveClientConfig: &config.KeepAliveClientParameters{
++							Time:                &keepAliveTime,
++							Timeout:             &keepAliveTimeout,
++							PermitWithoutStream: &permitWithoutStream,
++						},
++					},
++				},
++			},
++		},
++	}
++
++	f := NewFactory(cfg, primitives.FrontendService, log.NewNoopLogger(),
++		metrics.NoopMetricsHandler, nil, "localhost:7233", "", 0, nil, nil, nil, nil, nil, nil)
++	f.EnableInternodeClientKeepalive = true
++
++	conn := f.CreateLocalFrontendGRPCConnection()
++	require.NotNil(t, conn)
++	t.Cleanup(func() { _ = conn.Close() })
++
++	params, ok := getClientConnKeepaliveParams(conn)
++	require.True(t, ok, "expected keepalive parameters to be present on ClientConn")
++	require.Equal(t, keepAliveTime, params.Time)
++	require.Equal(t, keepAliveTimeout, params.Timeout)
++	require.True(t, params.PermitWithoutStream)
++}
++
++func TestCreateLocalFrontendGRPCConnection_PrefersInternalFrontendService(t *testing.T) {
++	t.Parallel()
++
++	ifeKeepAliveTime := 50 * time.Second
++	ifeKeepAliveTimeout := 25 * time.Second
++	feKeepAliveTime := 10 * time.Second
++	feKeepAliveTimeout := 5 * time.Second
++
++	cfg := &config.Config{
++		Services: map[string]config.Service{
++			string(primitives.InternalFrontendService): {
++				RPC: config.RPC{
++					ClientConnectionConfig: config.ClientConnectionConfig{
++						KeepAliveClientConfig: &config.KeepAliveClientParameters{
++							Time:    &ifeKeepAliveTime,
++							Timeout: &ifeKeepAliveTimeout,
++						},
++					},
++				},
++			},
++			string(primitives.FrontendService): {
++				RPC: config.RPC{
++					ClientConnectionConfig: config.ClientConnectionConfig{
++						KeepAliveClientConfig: &config.KeepAliveClientParameters{
++							Time:    &feKeepAliveTime,
++							Timeout: &feKeepAliveTimeout,
++						},
++					},
++				},
++	
 ```
 
 ---
 
-### Incident Patch 2: `10f3a667` (2026-11-23)
-**Commit Message**: Decide legacy namespace replication from resolver membership (#13218)
+### Incident Patch 2: `170953cf` (2026-11-23)
+**Commit Message**: Defer V1->V2 schedule auto-migration while a backfill is in progress (#13242)
 
 ## What changed?
-
-The legacy namespace replication queue now decides whether to publish a
-namespace registration or update from the replication resolver's cluster
-list, instead of `ReplicationConfig.Clusters`.
-
-- `nsreplication.Replicator.HandleTransmissionTask` takes a
-`replicationClusters` argument. The publish decision
-(`ShouldReplicateNamespace`) uses it; the published task still carries
-`ReplicationConfig` as stored.
-- The frontend namespace handler gets the `ReplicationResolverFactory`
-(already provided by `common/resource`) and passes:
-  - on register, the resolver's clusters for the new namespace;
-- on update, the resolver's clusters after the update, and whether they
-differ from the clusters before it (or the request changed the cluster
-list).
+- `MigrateScheduleToChasm` returns a non-retryable
+`migration_deferred_backfill` error, without calling
+`CreateFromMigrationState`, when the schedule is selected by the
+auto-migration rollout and has backfillers in flight.
+- The activity logs the deferral and emits a new
+`schedule_migration_deferred` counter. The V1 workflow retries on its
+next iteration through its existing failure path.
+- `workflow.go` is unchanged. Rollout selection is factored into
+`workerComponent.autoMigrationSelected` (byte-identical key and
+evaluation), shared by the workflow's tweakable and the activity.
 
 ## Why?
+Converting an in-flight V1 backfill to CHASM can duplicate or drop
+slots: V1's `OngoingBackfills` start is an exclusive cursor (MIG-03).
+Waiting for backfills to drain avoids the conversion entirely.
 
-`ReplicationResolverFactory` lets a deployment derive replica membership
-from namespace state other than `ReplicationConfig.Clusters`. The legacy
-publish decision ignored it: a namespace whose
-`ReplicationConfig.Clusters` held a single cluster never published
-registrations or updates, even when the resolver reported other members.
-Those members never rec
+Related: #11878 fixes the same hazard by preserving the cursor across
+migration. These are complementary, but if #11878 lands this becomes
+defence-in-depth; worth deciding whether we want both.
 
-**File**: `common/namespace/nsreplication/transmission_task_handler.go` (modified, +8/-1)
+## How did you test it?
+- [x] built
+- [ ] run locally and tested manually
+- [ ] covered by existing tests
+- [x] 
+
+**File**: `common/metrics/metric_defs.go` (modified, +4/-0)
 ```diff
-@@ -22,12 +22,18 @@ import (
- type (
- 	// Replicator is the interface which can replicate the namespace
- 	Replicator interface {
-+		// HandleTransmissionTask publishes a namespace replication task.
-+		// replicationClusters are the clusters that hold a replica, as the
-+		// replication resolver reports them, and replicationClusterListUpdated
-+		// reports whether that list changed. They decide whether the task is
-+		// published; the task carries replicationConfig as given.
- 		HandleTransmissionTask(
- 			ctx context.Context,
- 			namespaceOperation enumsspb.NamespaceOperation,
- 			info *persistencespb.NamespaceInfo,
- 			config *persistencespb.NamespaceConfig,
- 			replicationConfig *persistencespb.NamespaceReplicationConfig,
-+			replicationClusters []string,
- 			replicationClusterListUpdated bool,
- 			configVersion int64,
- 			failoverVersion int64,
-@@ -70,6 +76,7 @@ func (r *replicator) HandleTransmissionTask(
- 	info *persistencespb.NamespaceInfo,
- 	config *persistencespb.NamespaceConfig,
- 	replicationConfig *persistencespb.NamespaceReplicationConfig,
-+	replicationClusters []string,
- 	replicationClusterListUpdated bool,
- 	configVersion int64,
- 	failoverVersion int64,
-@@ -81,7 +88,7 @@ func (r *replicator) HandleTransmissionTask(
- 	if !ShouldReplicateNamespace(
- 		forceReplicate,
- 		isGlobalNamespace,
--		replicationConfig.Clusters,
-+		replicationClusters,
- 		replicationClusterListUpdated,
- 		info.State,
- 	) {
-```
-
-**File**: `common/namespace/nsreplication/transmission_task_handler_test.go` (modified, +85/-0)
-```diff
-@@ -174,6 +174,7 @@ func (s *transmissionTaskSuite) TestHandleTransmissionTask_RegisterNamespaceTask
- 		info,
- 		config,
- 		replicationConfig,
-+		replicationConfig.Clusters,
- 		true,
- 		configVersion,
- 		failoverVersion,
-@@ -209,6 +210,7 @@ func (s *transmissionTaskSuite) TestHandleTransmissionTask_RegisterNamespaceTask
- 		info,
- 		config,
- 		replicationConfig,
-+		replicationConfig.Clusters,
- 		true,
- 		configVersion,
- 		failoverVersion,
-@@ -266,6 +268,7 @@ func (s *transmissionTaskSuite) TestHandleTransmissionTask_RegisterNamespaceTask
- 		info,
- 		config,
- 		replicationConfig,
-+		replicationConfig.Clusters,
- 		true,
- 		configVersion,
- 		failoverVersion,
-@@ -355,6 +358,7 @@ func (s *transmissionTaskSuite) TestHandleTransmissionTask_UpdateNamespaceTask_I
- 		info,
- 		config,
- 		replicationConfig,
-+		replicationConfig.Clusters,
- 		true,
- 		configVersion,
- 		failoverVersion,
-@@ -446,6 +450,7 @@ func (s *transmissionTaskSuite) TestHandleTransmissionTask_UpdateNamespaceTask_N
- 		info,
- 		config,
- 		replicationConfig,
-+		replicationConfig.Clusters,
- 		true,
- 		configVersion,
- 		failoverVersion,
-@@ -537,6 +542,7 @@ func (s *transmissionTaskSuite) TestHandleTransmissionTask_UpdateNamespaceTask_H
- 		info,
- 		config,
- 		replicationConfig,
-+		replicationConfig.Clusters,
- 		true,
- 		configVersion,
- 		failoverVersion,
-@@ -592,6 +598,7 @@ func (s *transmissionTaskSuite) TestHandleTransmissionTask_UpdateNamespaceTask_N
- 		info,
- 		config,
- 		replicationConfig,
-+		replicationConfig.Clusters,
- 		true,
- 		configVersion,
- 		failoverVersion,
-@@ -681,6 +688,7 @@ func (s *transmissionTaskSuite) TestHandleTransmissionTask_UpdateNamespaceTask_R
- 		info,
- 		config,
- 		replicationConfig,
-+		replicationConfig.Clusters,
- 		true,
- 		configVersion,
- 		failoverVersion,
-@@ -696,6 +704,7 @@ func (s *transmissionTaskSuite) TestHandleTransmissionTask_UpdateNamespaceTask_R
- 		info,
- 		config,
- 		replicationConfig,
-+		replicationConfig.Clusters,
- 		false,
- 		configVersion,
- 		failoverVersion,
-@@ -738,6 +747,7 @@ func (s *transmissionTaskSuite) TestHandleTransmissionTask_ForceReplicate_Bypass
- 		info,
- 		config,
- 		replicationConfig,
-+		replicationConfig.Clusters,
- 		false, // replicationClusterListUpdated
- 		int64(0),
- 		int64(1),
-@@ -748,6 +758,78 @@ func (s *transmissionTaskSuite) TestHandleTransmissionTask_ForceReplicate_Bypass
- 	s.Require().NoError(err)
- }
- 
-+// TestHandleTransmissionTask_ReplicationClustersDecidePublish: the publish
-+// decision follows the replication clusters the caller resolved, not
-+// ReplicationConfig.Clusters, and the task carries ReplicationConfig as given.
-+func (s *transmissionTaskSuite) TestHandleTransmissionTask_ReplicationClustersDecidePublish() {
-+	info := &persistencespb.NamespaceInfo{
-+		Id:    primitives.NewUUID().String(),
-+		Name:  "resolved-ns",
-+		State: enumspb.NAMESPACE_STATE_REGISTERED,
-+	}
-+	config := &persistencespb.NamespaceConfig{Retention: durationpb.New(24 * time.Hour)}
-+	replicationConfig := &persistencespb.NamespaceReplicationConfig{
-+		ActiveClusterName: "cluster-a",
-+		Clusters:          []string{"cluster-a"},
-+	}
-+
-+	s.namespaceReplicationQueue.EXPECT().Publish(gomock.Any(), gomock.Any()).DoAndReturn(
-+		func(_ context.Context, task *replicationspb.ReplicationTask) error {
-+			clusters := task.GetNamespaceTaskAttributes().GetReplicationConfig().GetClusters()
-+			s.Require().Len(clusters, 1)
-+			s.Equal("cluster-a", clusters[0].GetClusterName())
-+			return nil
-+		}).Times(1)
-+
-+	err := s.namespaceReplicator.HandleTransmissionTask(
-+		context.Background(),
-+		enumsspb.NAMESPACE_OPERATION_UPDATE,
-+		info,
-+		config,
-+		replicationConfig,
-+		[]string{"cluster-a", "cluster-b"},
-+		false, // replicationClusterListUpdated
-+		int64(0),
-+		int64(1),
-+		true, // isGlobalNamespace
-+		nil,
-+		false, // forceReplicate
-+	)
-+	s.Require().NoError(err)
-+}
-+
-+// TestHandleTransmissionTask_SingleReplicationClusterNotReplicated: a single
-+// replication cluster skips publishing even when ReplicationConfig.Clusters
-+// lists more. No Publish expectation is set.
-+func (s *transmissionTaskSuite) TestHandleTransmissionTask_SingleReplicationClusterNotReplicated() {
-+	info := &persistencespb.NamespaceInfo{
-+		Id:    primitives.NewUUID().String(),
-+		Name:  "resolved-ns",
-+		State: enumspb.NAMESPACE_STATE_REGISTERED,
-+	}
-+	config := &persistencespb.NamespaceConfig{Retention: durationpb.New(24 * time.Hour)}
-+	replicationConfig := &persistencespb.NamespaceReplicationConfig{
-+		ActiveClusterName: "cluster-a",
-+		Clusters:          []string{"cluster-a", "cluster-b"},
-+	}
-+
-+	err := s.namespaceReplicator.HandleTransmissionTask(
-+		context.Background(),
-+		enumsspb.NAMESPACE_OPERATION_UPDATE,
-+		info,
-+		config,
-+		replicationConfig,
-+		[]string{"cluster-a"},
-+		false, // replicationClusterListUpdated
-+		int64(0),
-+		int64(1),
-+		true, // isGlobalNamespace
-+		nil,
-+		false, // forceReplicate
-+	)
-+	s.Require().NoError(err)
-+}
-+
- // TestHandleTransmissionTask_ForceReplicate_DeletedNotReplicated: a DELETED
- // namespace mus
-```
-
-**File**: `service/frontend/fx.go` (modified, +2/-0)
-```diff
-@@ -1069,6 +1069,7 @@ func HandlerProvider(
- 	registry *chasm.Registry,
- 	frontendServiceResolver membership.ServiceResolver,
- 	chasmNsReplClient namespacereplicationpb.NamespaceReplicationServiceClient,
-+	replicationResolverFactory namespace.ReplicationResolverFactory,
- ) Handler {
- 	workerDeploymentReadRateLimiter := configs.NewGlobalNamespaceRateLimiter(
- 		frontendServiceResolver,
-@@ -1119,6 +1120,7 @@ func HandlerProvider(
- 		),
- 		chasmNsReplClient,
- 		metricsHandler,
-+		replicationResolverFactory,
+@@ -1858,6 +1858,10 @@ var (
+ 		"schedule_migration_failed",
+ 		WithDescription("The number of times a schedule migration fails"),
  	)
- 	return wfHandler
- }
++	ScheduleMigrationDeferred = NewCounterDef(
++		"schedule_migration_deferred",
++		WithDescription("The number of times a schedule migration is deferred until a precondition (e.g. an in-progress backfill) clears"),
++	)
+ 	ScheduleOverlapSkipped = NewCounterDef(
+ 		"schedule_overlap_skipped",
+ 		WithDescription("The number of schedule actions skipped due to overlap policy"),
 ```
 
-**File**: `service/frontend/namespace_handler.go` (modified, +19/-1)
+**File**: `service/worker/scheduler/activities.go` (modified, +16/-0)
 ```diff
-@@ -59,6 +59,9 @@ type (
- 		config                 *Config
- 		chasmNsReplClient      namespacereplicationpb.NamespaceReplicationServiceClient
- 		metricsHandler         metrics.Handler
-+		// replicationResolverFactory resolves replica membership. Deployments can
-+		// derive membership from namespace state other than ReplicationConfig.Clusters.
-+		replicationResolverFactory namespace.ReplicationResolverFactory
+@@ -28,6 +28,8 @@ import (
+ 	"google.golang.org/protobuf/types/known/timestamppb"
+ )
+ 
++const errTypeMigrationDeferredBackfill = "migration_deferred_backfill"
++
+ type (
+ 	activities struct {
+ 		activityDeps
+@@ -39,6 +41,9 @@ type (
+ 		maxBlobSize              dynamicconfig.IntPropertyFn
+ 		localActivitySleepLimit  dynamicconfig.DurationPropertyFn
+ 		migrationEnabled         dynamicconfig.BoolPropertyFn
++		// autoMigrationSelected reports whether the CHASM auto-migration rollout currently
++		// selects the given schedule ID.
++		autoMigrationSelected func(scheduleID string) bool
  	}
  
- 	namespaceReplicationTransportMode int
-@@ -99,6 +102,7 @@ func newNamespaceHandler(
- 	config *Config,
- 	chasmNsReplClient namespacereplicationpb.NamespaceReplicationServiceClient,
- 	metricsHandler metrics.Handler,
-+	replicationResolverFactory namespace.ReplicationResolverFactory,
- ) *namespaceHandler {
- 	return &namespaceHandler{
- 		logger:                 logger,
-@@ -114,9 +118,16 @@ func newNamespaceHandler(
- 		config:                 config,
- 		chasmNsReplClient:      chasmNsReplClient,
- 		metricsHandler:         metricsHandler,
-+
-+		replicationResolverFactory: replicationResolverFactory,
+ 	errFollow string
+@@ -404,6 +409,17 @@ func (a *activities) MigrateScheduleToChasm(ctx context.Context, req *schedulerp
+ 		// like any other failure and keeps retrying at its normal cadence.
+ 		return errors.New("MigrateScheduleToChasm: migration is currently disabled")
  	}
- }
- 
-+// replicationClusters returns the cells that hold a replica of the namespace.
-+func (d *namespaceHandler) replicationClusters(detail *persistencespb.NamespaceDetail) []string {
-+	return d.replicationResolverFactory(detail).ClusterNames(namespace.EmptyBusinessID)
-+}
-+
- // RegisterNamespace register a new namespace
- //
- //nolint:revive // cognitive complexity grandfathered
-@@ -282,6 +293,7 @@ func (d *namespaceHandler) RegisterNamespace(
- 			namespaceRequest.Namespace.Info,
- 			namespaceRequest.Namespace.Config,
- 			namespaceRequest.Namespace.ReplicationConfig,
-+			d.replicationClusters(namespaceRequest.Namespace),
- 			false,
- 			namespaceRequest.Namespace.ConfigVersion,
- 			namespaceRequest.Namespace.FailoverVersion,
-@@ -467,6 +479,7 @@ func (d *namespaceHandler) UpdateNamespace(
- 	if err != nil {
- 		return nil, err
- 	}
-+	previousReplicationClusters := d.replicationClusters(common.CloneProto(getResponse.Namespace))
- 	info := getResponse.Namespace.Info
- 	config := getResponse.Namespace.Config
- 	replicationConfig := getResponse.Namespace.ReplicationConfig
-@@ -721,6 +734,10 @@ func (d *namespaceHandler) UpdateNamespace(
- 		}
- 	}
- 
-+	replicationClusters := d.replicationClusters(detail)
-+	replicationClustersChanged := clusterListChanged ||
-+		!slices.Equal(slices.Sorted(slices.Values(previousReplicationClusters)), slices.Sorted(slices.Values(replicationClusters)))
-+
- 	applyLegacy := func() error {
- 		if updateReq != nil {
- 			if err := d.metadataMgr.UpdateNamespace(ctx, updateReq); err != nil {
-@@ -741,7 +758,8 @@ func (d *namespaceHandler) UpdateNamespace(
- 			info,
- 			config,
- 			replicationConfig,
--			clusterListChanged,
-+			replicationClusters,
-+			replicationClustersChanged,
- 			configVersion,
- 			failoverVersion,
- 			isGlobalNamespace,
-```
-
-**File**: `service/frontend/namespace_handler_chasm_test.go` (modified, +2/-1)
-```diff
-@@ -25,6 +25,7 @@ import (
- 	"go.temporal.io/server/common/dynamicconfig"
- 	"go.temporal.io/server/common/headers"
- 	"go.temporal.io/server/common/log"
-+	"go.temporal.io/server/common/namespace"
- 	"go.temporal.io/server/common/namespace/nsreplication"
- 	"go.temporal.io/server/common/persistence"
- 	"go.temporal.io/server/common/primitives"
-@@ -78,7 +79,7 @@ func TestNamespaceMutationTransportRouting(t *testing.T) {
- 				handler := newNamespaceHandler(logger, wideevents.NoopLogger(), metadata, nil, clusters,
- 					nsreplication.NewReplicator(queue, logger, nil, dynamicconfig.GetBoolPropertyFn(false), "cell-a"),
- 					archiver.NewArchivalMetadata(dc, "", false, "", false, &config.ArchivalNamespaceDefaults{}),
--					nil, clock.NewEventTimeSource(), cfg, client, nil)
-+					nil, clock.NewEventTimeSource(), cfg, client, nil, namespace.NewDefaultReplicationResolverFactory())
- 				clusters.EXPECT().IsGlobalNamespaceEnabled().Return(true).AnyTimes()
- 				clusters.EXPECT().IsMasterCluster().Return(true).AnyTimes()
- 				clusters.EXPECT().GetCurrentClusterName().Return("cell-a").AnyTimes()
-```
-
-**File**: `service/frontend/namespace_handler_failover_version_test.go` (modified, +1/-0)
-```diff
-@@ -137,6 +137,7 @@ func TestUpdateNamespace_PassiveClusterFailoverVersionBump(t *testing.T) {
- 				NewConfig(dc.NewNoopCollection(), 1024),
- 				nil,
- 				metrics.NoopMetricsHandler,
-+				namespace.NewDefaultReplicationResolverFactory(),
- 			)
- 
- 			metadataMgr.EXPECT().GetMetadata(gomock.Any()).Return(&persistence.GetMetadataResponse{
-```
-
-**File**: `service/frontend/namespace_handler_legacy_publish_test.go` (added, +195/-0)
-```diff
-@@ -0,0 +1,195 @@
-+package frontend
-+
-+import (
-+	"context"
-+	"slices"
-+	"strings"
-+	"testing"
-+	"time"
-+
-+	"github.com/stretchr/testify/require"
-+	enumspb "go.temporal.io/api/enums/v1"
-+	namespacepb "go.temporal.io/api/namespace/v1"
-+	replicationpb "go.temporal.io/api/replication/v1"
-+	"go.temporal.io/api/serviceerror"
-+	"go.temporal.io/api/workflowservice/v1"
-+	persistencespb "go.temporal.io/server/api/persistence/v1"
-+	replicationspb "go.temporal.io/server/api/replication/v1"
-+	"go.temporal.io/server/common/archiver"
-+	"go.temporal.io/server/common/clock"
-+	"go.temporal.io/server/common/cluster"
-+	"go.temporal.io/server/common/config"
-+	"go.temporal.io/server/common/dynamicconfig"
-+	"go.temporal.io/server/common/log"
-+	"go.temporal.io/server/common/metrics"
-+	"go.temporal.io/server/common/namespace"
-+	"go.temporal.io/server/common/namespace/nsreplication"
-+	"go.temporal.io/server/common/persistence"
-+	"go.temporal.io/server/common/wideevents"
-+	"go.uber.org/mock/gomock"
-+	"google.golang.org/protobuf/types/known/durationpb"
-+)
-+
-+// membersResolver models a deployment whose replica membership lives in
-+// namespace data rather than ReplicationConfig.Clusters.
-+type membersResolver struct {
-+	namespace.ReplicationResolver
-+	members []string
-+}
-+
-+func (r membersResolver) ClusterNames(string) []string { return slices.Clone(r.members) }
-+
-+func membersResolverFactory() namespace.ReplicationResolverFactory {
-+	defaultFactory := namespace.NewDefaultReplicationResolverFactory()
-+	return func(detail *persistencespb.NamespaceDetail) namespace.ReplicationResolver {
-+		resolver := defaultFactory(detail)
-+		if members, ok := detail.GetInfo().GetData()["members"]; ok {
-+			return membersResolver{ReplicationResolver: resolver, members: strings.Split(members, ",")}
-+		}
-+		return resolver
++	// Converting an in-flight backfill can duplicate or drop slots (V1's backfill start is an
++	// exclusive cursor), so auto-migration waits for backfills to drain. The caller retries
++	// on its next iteration.
++	if len(req.GetState().GetBackfillers()) > 0 && a.autoMigrationSelected != nil &&
++		a.autoMigrationSelected(req.GetState().GetSchedulerState().GetScheduleId()) {
++		return temporal.NewNonRetryableApplicationError(
++			"MigrateScheduleToChasm: deferred while a backfill is in progress",
++			errTypeMigrationDeferredBackfill,
++			nil,
++		)
 +	}
-+}
+ 	_, err := a.SchedulerClient.CreateFromMigrationState(ctx, req)
+ 	if err != nil {
+ 		// Treat "already exists" as success (idempotency).
+```
+
+**File**: `service/worker/scheduler/activities_test.go` (modified, +47/-0)
+```diff
+@@ -7,6 +7,7 @@ import (
+ 
+ 	"github.com/stretchr/testify/require"
+ 	"go.temporal.io/api/serviceerror"
++	"go.temporal.io/sdk/temporal"
+ 	schedulerpb "go.temporal.io/server/chasm/lib/scheduler/gen/schedulerpb/v1"
+ 	"go.temporal.io/server/common/log"
+ 	"go.temporal.io/server/common/metrics"
+@@ -164,3 +165,49 @@ func TestMigrateScheduleToChasm_MigrationEnabledUnwired(t *testing.T) {
+ 	require.NoError(t, err)
+ 	require.Equal(t, 1, client.createCalls, "unwired migrationEnabled currently fails open")
+ }
 +
-+func newLegacyPublishTestHandler(
-+	ctrl *gomock.Controller,
-+	metadataMgr persistence.MetadataManager,
-+	queue persistence.NamespaceReplicationQueue,
-+	factory namespace.ReplicationResolverFactory,
-+) *namespaceHandler {
-+	logger := log.NewNoopLogger()
-+	dc := dynamicconfig.NewNoopCollection()
-+	cfg := NewConfig(dc, 32)
-+	cfg.NamespaceReplicationTransportMode = dynamicconfig.GetStringPropertyFn(dynamicconfig.NamespaceReplicationTransportModeLegacy)
-+	clusterMetadata := cluster.NewMetadata(
-+		true,
-+		10,
-+		"cell-a",
-+		"cell-a",
-+		map[string]cluster.ClusterInformation{
-+			"cell-a": {Enabled: true, InitialFailoverVersion: 1, RPCAddress: "cell-a:7233"},
-+			"cell-b": {Enabled: true, InitialFailoverVersion: 2, RPCAddress: "cell-b:7233"},
-+			"cell-c": {Enabled: true, InitialFailoverVersion: 3, RPCAddress: "cell-c:7233"},
-+		},
-+		nil,
-+		nil,
-+		logger,
-+	)
-+	return newNamespaceHandler(
-+		logger,
-+		wideevents.NoopLogger(),
-+		metadataMgr,
-+		namespace.NewMockRegistry(ctrl),
-+		clusterMetadata,
-+		nsreplication.NewReplicator(queue, logger, nil, dynamicconfig.GetBoolPropertyFn(false), "cell-a"),
-+		archiver.NewArchivalMetadata(dc, "", false, "", false, &config.ArchivalNamespaceDefaults{}),
-+		nil,
-+		clock.NewEventTimeSource(),
-+		cfg,
-+		nil,
-+		metrics.NoopMetricsHandler,
-+		factory,
-+	)
-+}
-+
-+// The legacy queue publishes a namespace update when the replication resolver
-+// reports a peer, even when ReplicationConfig.Clusters lists only the source.
-+// The published task still carries ReplicationConfig.Clusters as stored.
-+func TestUpdateNamespace_LegacyPublishFollowsResolverMembership(t *testing.T) {
-+	t.Parallel()
++func TestMigrateScheduleToChasm_DeferredWhileBackfilling(t *testing.T) {
++	withBackfill := &schedulerpb.SchedulerMigrationState{
++		SchedulerState: &schedulerpb.SchedulerState{ScheduleId: "sched"},
++		Backfillers:    map[string]*schedulerpb.BackfillerState{"bf": {}},
++	}
++	noBackfill := &schedulerpb.SchedulerMigrationState{
++		SchedulerState: &schedulerpb.SchedulerState{ScheduleId: "sched"},
++	}
 +	for _, tc := range []struct {
-+		name        string
-+		factory     namespace.ReplicationResolverFactory
-+		clusters    []string
-+		members     string
-+		newMembers  string
-+		wantPublish bool
++		name     string
++		selected func(string) bool
++		state    *schedulerpb.SchedulerMigrationState
++		deferred bool
 +	}{
-+		{name: "default factory ignores members", factory: namespace.NewDefaultReplicationResolverFactory(),
-+			clusters: []string{"cell-a"}, members: "cell-a,cell-b,cell-c"},
-+		{name: "default factory follows the cluster list", factory: namespace.NewDefaultReplicationResolverFactory(),
-+			clusters: []string{"cell-a", "cell-b"}, members: "cell-a", wantPublish: true},
-+		{name: "members beyond the cluster list", factory: membersResolverFactory(),
-+			clusters: []string{"cell-a"}, members: "cell-a,cell-b,cell-c", wantPublish: true},
-+		{name: "members narrower than the cluster list", factory: membersResolverFactory(),
-+			clusters: []string{"cell-a", "cell-b"}, members: "cell-a"},
-+		{name: "members shrink to the source", factory: membersResolverFactory(),
-+			clusters: []string{"cell-a"}, members: "cell-a,cell-b", newMembers: "cell-a", wantPublish: true},
++		{name: "auto-selected with backfill", selected: func(string) bool { return true }, state: withBackfill, deferred: true},
++		{name: "auto-selected without backfill", selected: func(string) bool { return true }, state: noBackfill},
++		{name: "not auto-selected with backfill", selected: func(string) bool { return false }, state: withBackfill},
++		{name: "nil selector with backfill", state: withBackfill},
 +	} {
 +		t.Run(tc.name, func(t *testing.T) {
-+			t.Parallel()
-+			ctrl := gomock.NewController(t)
-+			metadataMgr := persistence.NewMockMetadataManager(ctrl)
-+			queue := persistence.NewMockNamespaceReplicationQueue(ctrl)
-+			handler := newLegacyPublishTestHandler(ctrl, metadataMgr, queue, tc.factory)
++			client := &mockSchedulerClient{}
++			a := newTestActivities(client, testNamespaceID)
++			var gotID string
++			if tc.selected != nil {
++				a.autoMigrationSelected = func(id string) bool { gotID = id; return tc.selected(id) }
++			}
 +
-+			metadataMgr.EXPECT().GetMetadata(gomock.Any()).Return(&persistence.GetMetadataResponse{NotificationVersion: 7}, nil)
-+			metadataMgr.EXPECT().GetNamespace(gomoc
++			err := a.MigrateScheduleToChasm(context.Background(), &schedulerpb.CreateFromMigrationStateRequest{
++				NamespaceId: testNamespaceID,
++				State:       tc.state,
++			})
++			if !tc.deferred {
++				require.NoError(t, err)
++				require.Equal(t, 1, client.createCalls)
++				return
++			}
++			var appErr *temporal.ApplicationError
++			require.ErrorAs(t, err, &appErr)
++			require.Equal(t, errTypeMigrationDeferredBackfill, appErr.Type())
++			require.True(t, appErr.NonRetryable())
++			require.Equal(t, "sched", gotID)
++			require.Zero(t, client.createCalls, "must not create the V2 schedule while deferred")
++		})
++	}
++}
 ```
 
-**File**: `service/frontend/namespace_handler_test.go` (modified, +1/-0)
+**File**: `service/worker/scheduler/fx.go` (modified, +12/-3)
 ```diff
-@@ -125,6 +125,7 @@ func (s *namespaceHandlerCommonSuite) SetupTest() {
- 		s.config,
- 		nil,
- 		metrics.NoopMetricsHandler,
-+		namespace.NewDefaultReplicationResolverFactory(),
- 	)
+@@ -113,10 +113,8 @@ func (s *workerComponent) DedicatedWorkerOptions(ns *namespace.Namespace) *worke
+ func (s *workerComponent) Register(registry sdkworker.Registry, ns *namespace.Namespace, details workercommon.RegistrationDetails) func() {
+ 	nsName := ns.Name().String()
+ 	wfFunc := func(ctx workflow.Context, args *schedulespb.StartScheduleArgs) error {
+-		key := fmt.Appendf(nil, "%s\x00%s", nsName, args.State.ScheduleId)
+ 		enableMigration := func() bool {
+-			return s.enableCHASMMigration(nsName) &&
+-				dynamicconfig.RolloutAccepts(key, s.chasmMigrationRolloutPercent(nsName))
++			return s.autoMigrationSelected(nsName, args.State.ScheduleId)
+ 		}
+ 		migrateWithRunningWorkflows := func() bool {
+ 			return s.migrateWithRunningWorkflows(nsName)
+@@ -161,5 +159,16 @@ func (s *workerComponent) newActivities(name namespace.Name, id namespace.ID, de
+ 		maxBlobSize:              func() int { return s.maxBlobSize(name.String()) },
+ 		localActivitySleepLimit:  func() time.Duration { return s.localActivitySleepLimit(name.String()) },
+ 		migrationEnabled:         func() bool { return s.enableCHASMMigration(name.String()) },
++		autoMigrationSelected: func(scheduleID string) bool {
++			return s.autoMigrationSelected(name.String(), scheduleID)
++		},
+ 	}, cancel
+ }
++
++// autoMigrationSelected is the single source of truth for whether the CHASM auto-migration
++// rollout selects a schedule; the workflow and the migration activity must agree on it.
++func (s *workerComponent) autoMigrationSelected(nsName, scheduleID string) bool {
++	key := fmt.Appendf(nil, "%s\x00%s", nsName, scheduleID)
++	return s.enableCHASMMigration(nsName) &&
++		dynamicconfig.RolloutAccepts(key, s.chasmMigrationRolloutPercent(nsName))
++}
+```
+
+**File**: `service/worker/scheduler/workflow.go` (modified, +20/-8)
+```diff
+@@ -428,14 +428,26 @@ func (s *scheduler) run() error {
+ 				}).Counter(metrics.ScheduleMigrationCompleted.Name()).Inc(1)
+ 				return nil
+ 			}
+-			s.logger.Error("schedule migration to CHASM failed",
+-				"namespace", s.State.Namespace,
+-				"schedule-id", s.State.ScheduleId,
+-				"error", err,
+-			)
+-			s.metrics.WithTags(map[string]string{
+-				metrics.ScheduleMigrationDirectionTag: metrics.ScheduleMigrationDirectionToChasm,
+-			}).Counter(metrics.ScheduleMigrationFailed.Name()).Inc(1)
++			// Log/metric-only branch: no commands or state differ, so it is replay- and rollback-safe
++			// without a version bump.
++			if appErr, ok := errors.AsType[*temporal.ApplicationError](err); ok && appErr.Type() == errTypeMigrationDeferredBackfill {
++				s.logger.Info("schedule migration to CHASM deferred: backfill in progress",
++					"namespace", s.State.Namespace,
++					"schedule-id", s.State.ScheduleId,
++				)
++				s.metrics.WithTags(map[string]string{
++					metrics.ScheduleMigrationDirectionTag: metrics.ScheduleMigrationDirectionToChasm,
++				}).Counter(metrics.ScheduleMigrationDeferred.Name()).Inc(1)
++			} else {
++				s.logger.Error("schedule migration to CHASM failed",
++					"namespace", s.State.Namespace,
++					"schedule-id", s.State.ScheduleId,
++					"error", err,
++				)
++				s.metrics.WithTags(map[string]string{
++					metrics.ScheduleMigrationDirectionTag: metrics.ScheduleMigrationDirectionToChasm,
++				}).Counter(metrics.ScheduleMigrationFailed.Name()).Inc(1)
++			}
+ 		}
+ 
+ 		// process backfills if we have any too
+```
+
+**File**: `service/worker/scheduler/workflow_test.go` (modified, +96/-4)
+```diff
+@@ -4,6 +4,7 @@ import (
+ 	"context"
+ 	"errors"
+ 	"math/rand"
++	"sync"
+ 	"testing"
+ 	"time"
+ 
+@@ -44,14 +45,20 @@ type (
+ 
+ 	capturingMetricsHandler struct {
+ 		timers []capturedTimer
++		// The SDK increments counters from local-activity goroutines.
++		countersMu sync.Mutex
++		counters   map[string]int64
+ 	}
+ 
+ 	capturedTimer struct {
+ 		name  string
+ 		value time.Duration
+ 	}
+ 
+-	noopMetricsCounter    struct{}
++	capturingMetricsCounter struct {
++		handler *capturingMetricsHandler
++		name    string
++	}
+ 	noopMetricsGauge      struct{}
+ 	capturingMetricsTimer struct {
+ 		handler *capturingMetricsHandler
+@@ -77,8 +84,8 @@ func (h *capturingMetricsHandler) WithTags(map[string]string) sdkclient.MetricsH
+ 	return h
  }
  
+-func (h *capturingMetricsHandler) Counter(string) sdkclient.MetricsCounter {
+-	return noopMetricsCounter{}
++func (h *capturingMetricsHandler) Counter(name string) sdkclient.MetricsCounter {
++	return capturingMetricsCounter{handler: h, name: name}
+ }
+ 
+ func (h *capturingMetricsHandler) Gauge(string) sdkclient.MetricsGauge {
+@@ -89,6 +96,12 @@ func (h *capturingMetricsHandler) Timer(name string) sdkclient.MetricsTimer {
+ 	return capturingMetricsTimer{handler: h, name: name}
+ }
+ 
++func (h *capturingMetricsHandler) counter(name string) int64 {
++	h.countersMu.Lock()
++	defer h.countersMu.Unlock()
++	return h.counters[name]
++}
++
+ func (h *capturingMetricsHandler) timerValues(name string) []time.Duration {
+ 	var values []time.Duration
+ 	for _, timer := range h.timers {
+@@ -99,7 +112,14 @@ func (h *capturingMetricsHandler) timerValues(name string) []time.Duration {
+ 	return values
+ }
+ 
+-func (noopMetricsCounter) Inc(int64) {}
++func (c capturingMetricsCounter) Inc(delta int64) {
++	c.handler.countersMu.Lock()
++	defer c.handler.countersMu.Unlock()
++	if c.handler.counters == nil {
++		c.handler.counters = make(map[string]int64)
++	}
++	c.handler.counters[c.name] += delta
++}
+ 
+ func (noopMetricsGauge) Update(float64) {}
+ 
+@@ -3639,3 +3659,75 @@ func (s *workflowSuite) TestOperatorMigrateSignalSurvivesRolloutPercentZero() {
+ 	s.Equal(1, migrateCalls, "an operator-requested migration must not be discarded by the rollback reset")
+ 	s.Require().NoError(s.env.GetWorkflowError(), "workflow should complete after a successful migration")
+ }
++
++// An auto-selected schedule with an in-progress backfill must not migrate until the backfill
++// has drained, since converting an in-flight backfill can duplicate or drop slots.
++func (s *workflowSuite) TestAutoMigrateDeferredUntilBackfillCompletes() {
++	backfillStart := time.Date(2022, 5, 30, 0, 0, 0, 0, time.UTC)
++	backfillEnd := time.Date(2022, 5, 31, 0, 0, 0, 0, time.UTC)
++
++	var starts []time.Time
++	s.env.OnActivity(new(activities).StartWorkflow, mock.Anything, mock.Anything).Return(
++		func(_ context.Context, req *schedulespb.StartWorkflowRequest) (*schedulespb.StartWorkflowResponse, error) {
++			starts = append(starts, s.now())
++			return &schedulespb.StartWorkflowResponse{RunId: uuid.NewString(), RealStartTime: timestamppb.New(s.now())}, nil
++		})
++
++	// Run the real gate against the request the workflow actually builds.
++	gate := newTestActivities(&mockSchedulerClient{}, "mynsid")
++	gate.autoMigrationSelected = func(string) bool { return true }
++	deferrals := 0
++	var migratedAt time.Time
++	var startsAtMigration int
++	s.env.OnActivity(new(activities).MigrateScheduleToChasm, mock.Anything, mock.Anything).Return(
++		func(ctx context.Context, req *schedulerpb.CreateFromMigrationStateRequest) error {
++			err := gate.MigrateScheduleToChasm(ctx, req)
++			if err != nil {
++				deferrals++
++				return err
++			}
++			migratedAt = s.now()
++			startsAtMigration = len(starts)
++			return nil
++		})
++
++	CurrentTweakablePolicies.IterationsBeforeContinueAsNew = 100
++	s.env.SetStartTime(baseStartTime)
++	s.env.ExecuteWorkflow(func(ctx workflow.Context, args *schedulespb.StartScheduleArgs) error {
++		return schedulerWorkflowWithSpecBuilder(ctx, args, newSpecBuilderForTest(0, 0),
++			schedulerDynamicConfig{enableCHASMMigration: func() bool { return true }, migrateWithRunningWorkflows: func() bool { return true }})
++	}, &schedulespb.StartScheduleArgs{
++		Schedule: &schedulepb.Schedule{
++			Spec: &schedulepb.ScheduleSpec{
++				Interval: []*schedulepb.IntervalSpec{{Interval: durationpb.New(time.Hour)}},
++			},
++			Action: s.defaultAction("myid"),
++		},
++		State: &schedulespb.InternalState{
++			Namespace:         "myns",
++			NamespaceId:       "mynsid",
++			ScheduleId:        "myschedule",
++			ConflictToken:     InitialConflictToken,
++			LastProcessedTime: timestamppb.New(baseStartTime),
++			OngoingBackfills: []*schedulepb.BackfillRequest{{
++				StartTime:     timestamppb.New(backfillStart),
++				EndTime:       timestamppb.New(backfillEnd),
++				OverlapPolicy: enumspb.SCHEDULE_OVERLAP_POLICY_ALLOW_ALL,
++			}},
++		},
++	})
++
++	s.Require().True(s.env.IsWorkflowCompleted())
++	s.Require().NoError(s.env.GetWorkflowError())
++	s.Require().False(migratedAt.IsZero(), "schedule should eventually migrate")
++	s
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #13260** (2026-11-24): 1.33.0: Prepare release branch (@temporal-cicd[bot])
+- **PR #13257** (closed): Fix getproto for new server proto imports (@stephanos)
+- **PR #13242** (2026-11-23): Defer V1->V2 schedule auto-migration while a backfill is in progress (@davidporter-id-au)
+- **PR #13239** (2026-11-23): Check eager namespace refresh membership with the namespace's replication resolver (@michaely520)
 - **PR #13238** (2026-11-23): 1.33.0: Prepare release branch (@temporal-cicd[bot])
 - **PR #13236** (2026-11-22): 1.33.0: Prepare release branch (@temporal-cicd[bot])
-- **PR #13230** (closed): Add time-skipping search attributes (@feiyang3cat)
-- **PR #13226** (2026-11-21): 1.33.0: Prepare release branch (@temporal-cicd[bot])
-- **PR #13219** (2026-11-21): Optionally enforce JWT audience on Nexus HTTP handlers (@chrsmith)
-- **PR #13218** (2026-11-23): Decide legacy namespace replication from resolver membership (@qyc5937)
 
 ---
 
@@ -2858,42 +2756,42 @@ Those members never rec
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. WHN impl 2: store worker control queue when workflow task starts
+## X. Add keepalive dial option to local frontend gRPC connection
 
 **RULE**:
-When implementing operations in `api/persistence/v1/executions.pb.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `common/rpc/rpc.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5208234b`: WHN impl 2: store worker control queue when workflow task starts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4197dfdd`: Add keepalive dial option to local frontend gRPC connection. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/persistence/v1/executions.pb.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `common/rpc/rpc.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	WorkflowTaskWorkerControlQueue          string                           `protobuf:"bytes,119,opt,name=workflow_task_worker_control_queue,json=workflowTaskWorkerControlQueue,proto3" json:"workflow_task_worker_control_queue,omitempty"`
-func (x *WorkflowExecutionInfo) GetWorkflowTaskWorkerControlQueue() string {
-	if x != nil {
-		return x.WorkflowTaskWorkerControlQueue
+	serviceName := primitives.FrontendService
+	if d.config != nil {
+		if _, ok := d.config.Services[string(primitives.InternalFrontendService)]; ok {
+			serviceName = primitives.InternalFrontendService
+		}
 	}
-	return ""
-}
 
-	"\x10\vJ\x04\b\v\x10\fJ\x04\b\f\x10\rJ\x04\b\x0e\x10\x0fJ\x04\b\x0f\x10\x10J\x04\b\x10\x10\x11\"\xb8E\n" +
-	"\x1aworkflow_task_started_time\x18\x1b \x01(\v2\x1a.google.protobuf.TimestampR\x17workflowTaskStartedTime\x12J\n" +
-	"\"workflow_task_worker_control_queue\x18w \x01(\tR\x1eworkflowTaskWorkerControlQueue\x12[\n" +
+	additionalDialOptions := append([]grpc.DialOption{}, d.perServiceDialOptions[serviceName]...)
+	return d.dial(d.frontendURL, d.frontendTLSConfig, append(additionalDialOptions, d.getClientKeepAliveConfig(serviceName))...)
+	if d.EnableInternodeClientKeepalive && d.config != nil {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	"\x10\vJ\x04\b\v\x10\fJ\x04\b\f\x10\rJ\x04\b\x0e\x10\x0fJ\x04\b\x0f\x10\x10J\x04\b\x10\x10\x11\"\xecD\n" +
-	"\x1aworkflow_task_started_time\x18\x1b \x01(\v2\x1a.google.protobuf.TimestampR\x17workflowTaskStartedTime\x12[\n" +
+	additionalDialOptions := append([]grpc.DialOption{}, d.perServiceDialOptions[primitives.InternalFrontendService]...)
+	return d.dial(d.frontendURL, d.frontendTLSConfig, additionalDialOptions...)
+	if d.EnableInternodeClientKeepalive {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5208234b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4197dfdd` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
