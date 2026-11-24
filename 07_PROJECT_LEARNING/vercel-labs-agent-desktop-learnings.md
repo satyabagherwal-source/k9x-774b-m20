@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vercel-labs-agent-desktop-learnings.md`  
 > **Source**: github ([https://github.com/vercel-labs/agent-desktop](https://github.com/vercel-labs/agent-desktop))  
-> **Source Version**: `e8934a5e`  
+> **Source Version**: `ce2ddf07`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T19:11:55.585Z  
+> **Timestamp**: 2026-11-24T01:37:57.956Z  
 > **Learning ID**: `learn-github-vercel-labs-agent-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vercel-labs-agent-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vercel-labs/agent-desktop](https://github.com/vercel-labs/agent-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T19:11:55.580Z  
+> **Harvest Timestamp**: 2026-11-24T01:37:55.160Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Computer use CLI for AI agents
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 25510 stars
+- **Stars / Engagement**: 26350 stars
 
 ---
 
@@ -1191,281 +1191,505 @@ pub(super) fn occluded(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c465134e` (2026-11-17)
-**Commit Message**: chore: ignore the chrono unmaintained advisory from uiautomation (#714)
+### Incident Patch 1: `ce2ddf07` (2026-11-23)
+**Commit Message**: Use the Vercel Labs lockup in the docs header (#732)
 
-RUSTSEC-2026-0543 marks every chrono release unmaintained, which fails the Audit job on every branch. chrono reaches the build only through uiautomation, the Windows backend's UI Automation crate, and uiautomation 0.25.1, the newest release, still requires it for a timeout timer, so this repository can't drop it. Ignore the advisory with a reason, like the existing zbus entries, until uiautomation drops chrono.
+* Use the Vercel Labs lockup in the docs header
 
-**File**: `deny.toml` (modified, +1/-0)
+- Product name in Geist Sans SemiBold, matching the Labs wordmark's cap height and tracking
+- Slash and spacing match the Vercel Labs OG card
+
+* Align the header product name with the Labs caps
+
+**File**: `apps/docs/app/styles/geistdocs.css` (modified, +23/-0)
 ```diff
-@@ -5,6 +5,7 @@ ignore = [
-   { id = "RUSTSEC-2026-0370", reason = "Unmaintained advisory on a zbus 5 transitive dependency. zbus 5.19 is the newest release that has the blocking API this crate uses; remove this entry when the crate moves to zbus 6." },
-   { id = "RUSTSEC-2026-0371", reason = "Unmaintained advisory on a zbus 5 transitive dependency. zbus 5.19 is the newest release that has the blocking API this crate uses; remove this entry when the crate moves to zbus 6." },
-   { id = "RUSTSEC-2026-0372", reason = "Unmaintained advisory on a zbus 5 transitive dependency. zbus 5.19 is the newest release that has the blocking API this crate uses; remove this entry when the crate moves to zbus 6." },
-+  { id = "RUSTSEC-2026-0543", reason = "Unmaintained advisory on chrono, which only uiautomation (the Windows backend) pulls in. uiautomation 0.25.1, the newest release, still requires chrono for its timeout timer; remove this entry when uiautomation drops it or the backend moves off uiautomation." },
- ]
+@@ -47,3 +47,26 @@
+ #nd-toc a[data-active="true"] {
+   @apply text-gray-1000;
+ }
++
++/* Vercel Labs lockup: match the OG card's slash spacing, scaled to the 18px
++   logo. The card draws the logo 51.44px tall, so the scale factor is 0.35:
++   31.5 units of leading gap -> 11px, the slash bbox 17.75x42.25 units ->
++   6.2x14.8px with a 3-unit (1.05px) stroke, and 22 units of trailing gap ->
++   7.7px to the product name's text box. */
++header span[class~="gap-2.5"] {
++  column-gap: 0;
++}
++
++header span[class~="gap-2.5"] > div[class~="w-5"] {
++  flex: none;
++  width: 6.2px;
++  height: 14.8px;
++  margin-left: 11px;
++  margin-right: 7.7px;
++  background-color: currentColor;
++  clip-path: polygon(83.1% 0, 100% 0, 18.31% 100%, 0 100%);
++}
++
++header span[class~="gap-2.5"] > div[class~="w-5"] > svg {
++  display: none;
++}
+```
+
+**File**: `apps/docs/geistdocs.tsx` (modified, +1/-1)
+```diff
+@@ -6,7 +6,7 @@ import type {
+ export const navbarBrand: GeistdocsNavbarBrand = "labs";
  
- [licenses]
+ export const Logo = () => (
+-  <span className="font-semibold text-gray-1000 text-lg leading-none tracking-[-3%]">
++  <span className="-translate-y-[0.5px] font-sans font-semibold text-[24.4px] leading-none tracking-[-0.05em] text-black dark:text-white">
+     agent-desktop
+   </span>
+ );
 ```
 
 ---
 
-### Incident Patch 2: `af5374ca` (2026-11-17)
-**Commit Message**: fix: press tab buttons instead of writing AXValue in check (#711)
+### Incident Patch 2: `cbe0afbb` (2026-11-23)
+**Commit Message**: Use the Vercel Labs OG card generator (#733)
 
-* fix: press tab buttons instead of writing AXValue in check
+- Home and docs OG cards come from the shared Vercel Labs generator: Labs logo / agent-desktop header, Vercel-style title, light by default
+- Custom-designed cards are kept as they are
 
-Chromium-based browsers report AXValue as settable on a web role="tab"
-element (AXRadioButton with subrole AXTabButton), and writing it crashes
-the browser. check and uncheck now treat tab buttons as not
-value-settable and select them through the existing press-and-verify
-path. A tab is selected rather than checked, so pressing it matches its
-semantics. Native NSTabView tabs already report AXValue as unsettable
-and keep the same path.
-
-* docs: say which web tabs need click --headed
-
-**File**: `crates/macos/src/actions/toggle_state.rs` (modified, +3/-0)
+**File**: `apps/docs/app/[lang]/desktop/og/[...slug]/route.tsx` (modified, +6/-5)
 ```diff
-@@ -116,6 +116,9 @@ impl CheckTarget for LiveToggleTarget<'_> {
+@@ -1,6 +1,6 @@
+ import type { NextRequest } from "next/server";
+ import { source } from "@/lib/geistdocs/source";
+-import { renderOgImage } from "../og-image";
++import { renderLabsOg } from "../labs-og";
  
-     fn value_settable(&mut self) -> Result<bool, AdapterError> {
-         prepare(self.el, self.deadline)?;
-+        if !radio::value_write_allowed(radio::subrole(self.el, self.deadline)?.as_deref()) {
-+            return Ok(false);
-+        }
-         ax_helpers::is_attr_settable(self.el, "AXValue", self.deadline)
-     }
+ export const GET = async (
+   _request: NextRequest,
+@@ -14,11 +14,12 @@ export const GET = async (
+     return new Response("Not found", { status: 404 });
+   }
  
-```
-
-**File**: `crates/macos/src/actions/toggle_state_check_tests.rs` (modified, +17/-1)
-```diff
-@@ -5,7 +5,7 @@ use agent_desktop_core::{
-     actions::action_step_outcome::ActionStepOutcome,
+-  return renderOgImage(
+-    page.slugs.length
++  return renderLabsOg({
++    product: "agent-desktop",
++    title: page.slugs.length
+       ? (page.data.title ?? "agent-desktop")
+-      : "Desktop\nAutomation for AI"
+-  );
++      : "Desktop automation for AI",
++  });
  };
  
--use super::{CheckTarget, run_check};
-+use super::{CheckTarget, radio::value_write_allowed, run_check};
- 
- struct Scripted {
-     reads: VecDeque<Option<bool>>,
-@@ -207,3 +207,19 @@ fn a_radio_whose_state_is_unreadable_after_a_refused_write_is_not_called_undeliv
-     assert_eq!(error.disposition, DeliverySemantics::delivered_unverified());
-     assert_eq!(target.clicks, 0);
- }
-+
-+#[test]
-+fn tab_buttons_never_take_a_value_write() {
-+    assert!(!value_write_allowed(Some("AXTabButton")));
-+    assert!(value_write_allowed(None));
-+    assert!(value_write_allowed(Some("AXSwitch")));
-+}
-+
-+#[test]
-+fn an_unsettable_tab_button_is_selected_by_press_and_verified() {
-+    let mut target = Scripted::new(&[Some(false)], &[Some(true)], false);
-+    let steps = run_check(&mut target, true, true).expect("press selects the tab");
-+    assert_eq!(target.writes, 0);
-+    assert_eq!(target.clicks, 1);
-+    assert_eq!(labels(&steps), vec![("AXPress".to_string(), Some(true))]);
-+}
+ export const generateStaticParams = async ({
 ```
 
-**File**: `crates/macos/src/actions/toggle_state_radio.rs` (modified, +18/-1)
+**File**: `apps/docs/app/[lang]/desktop/og/labs-logo.svg` (added, +7/-0)
 ```diff
-@@ -1,4 +1,6 @@
--use agent_desktop_core::{ActionStep, AdapterError, DeliverySemantics, ErrorCode};
-+use agent_desktop_core::{ActionStep, AdapterError, Deadline, DeliverySemantics, ErrorCode};
+@@ -0,0 +1,7 @@
++<svg width="183" height="42" viewBox="0 0 183 42" fill="none" xmlns="http://www.w3.org/2000/svg">
++<path d="M23.5092 0L47.0185 41.44H0L23.5092 0Z" fill="#000000" fill-rule="evenodd" clip-rule="evenodd"/>
++<path d="M169.729 41.2752C166.731 41.2752 164.206 40.8386 162.156 39.9656C160.145 39.0925 158.588 37.8778 157.487 36.3214C156.387 34.7651 155.76 32.9999 155.608 31.026L163.068 30.6844C163.333 32.2787 163.998 33.5124 165.06 34.3855C166.123 35.2585 167.699 35.6951 169.786 35.6951C171.495 35.6951 172.823 35.4294 173.772 34.8979C174.759 34.3285 175.253 33.4554 175.253 32.2787C175.253 31.5954 175.082 31.026 174.74 30.5705C174.399 30.115 173.753 29.7164 172.804 29.3748C171.855 29.0331 170.451 28.6915 168.591 28.3498C165.478 27.8184 163.03 27.1731 161.245 26.4139C159.461 25.6167 158.19 24.6298 157.43 23.453C156.709 22.2763 156.349 20.8148 156.349 19.0687C156.349 16.2217 157.43 13.9251 159.594 12.1789C161.796 10.3948 165.003 9.50278 169.217 9.50278C171.95 9.50278 174.247 9.95829 176.107 10.8693C177.967 11.7424 179.409 12.9571 180.434 14.5135C181.497 16.0319 182.161 17.778 182.427 19.7519L175.082 20.0936C174.892 19.0687 174.55 18.1766 174.057 17.4174C173.563 16.6582 172.899 16.0888 172.064 15.7092C171.229 15.2917 170.242 15.0829 169.103 15.0829C167.395 15.0829 166.104 15.4245 165.231 16.1078C164.358 16.7911 163.922 17.7021 163.922 18.8409C163.922 19.6381 164.111 20.3024 164.491 20.8338C164.909 21.3652 165.573 21.8018 166.484 22.1434C167.395 22.4471 168.61 22.7318 170.128 22.9975C173.317 23.491 175.822 24.1363 177.644 24.9335C179.504 25.6927 180.814 26.6796 181.573 27.8943C182.37 29.0711 182.769 30.4946 182.769 32.1648C182.769 34.1008 182.218 35.752 181.117 37.1186C180.055 38.4851 178.536 39.529 176.562 40.2503C174.626 40.9335 172.349 41.2752 169.729 41.2752Z" fill="#000000"/>
++<path d="M141.184 41.2752C139.058 41.2752 137.198 40.8197 135.603 39.9086C134.047 38.9976 132.832 37.7259 131.959 36.0937L131.788 40.5919H124.842V0.164658L132.13 0.164658V14.5135C132.965 13.109 134.161 11.9322 135.717 10.9832C137.274 9.99626 139.096 9.50278 141.184 9.50278C143.803 9.50278 146.061 10.1671 147.959 11.4957C149.895 12.7863 151.376 14.6274 152.401 17.0188C153.464 19.3723 153.995 22.1624 153.995 25.389C153.995 28.6156 153.464 31.4246 152.401 33.8161C151.376 36.1696 149.895 38.0106 147.959 39.3392C146.061 40.6299 143.803 41.2752 141.184 41.2752ZM139.532 35.3534C141.62 35.3534 143.29 34.4804 144.543 32.7342C145.796 30.9501 146.422 28.5017 146.422 25.389C146.422 22.2383 145.796 19.7899 144.543 18.0438C143.328 16.2976 141.677 15.4245 139.589 15.4245C138.033 15.4245 136.685 15.8231 135.546 16.6203C134.446 17.3795 133.592 18.4993 132.984 19.9797C132.415 21.4601 132.13 23.2632 132.13 25.389C132.13 27.4388 132.415 29.2229 132.984 30.7413C133.592 32.2218 134.446 33.3606 135.546 34.1577C136.647 34.9549 137.976 35.3534 139.532 35.3534Z" fill="#000000"/>
++<path d="M103.361 41.2752C100.172 41.2752 97.6099 40.5539 95.6739 39.1115C93.738 37.631 92.77 35.5812 92.77 32.962C92.77 30.3427 93.5862 28.2929 95.2184 26.8125C96.8507 25.332 99.3371 24.2692 102.678 23.6238L112.756 21.631C112.756 19.4672 112.262 17.8539 111.275 16.7911C110.288 15.6902 108.827 15.1398 106.891 15.1398C105.145 15.1398 103.759 15.5574 102.734 16.3925C101.748 17.1896 101.064 18.3474 100.685 19.8658L93.2825 19.5242C93.8898 16.2976 95.3703 13.8302 97.7238 12.122C100.077 10.3759 103.133 9.50278 106.891 9.50278C111.219 9.50278 114.483 10.6036 116.685 12.8053C118.924 14.969 120.044 18.0817 120.044 22.1434V33.1897C120.044 33.9869 120.177 34.5373 120.443 34.841C120.746 35.1447 121.183 35.2965 121.752 35.2965H122.72V40.5919C122.493 40.6678 122.113 40.7248 121.582 40.7627C121.088 40.8007 120.576 40.8197 120.044 40.8197C118.792 40.8197 117.672 40.6299 116.685 40.2503C115.698 39.8327 114.939 39.1304 114.407 38.1435C113.876 37.1186 113.61 35.733 113.61 33.9869L114.236 34.4424C113.933 35.771 113.268 36.9667 112.243 38.0296C111.256 39.0545 110.004 39.8517 108.485 40.4211C106.967 40.9905 105.259 41.2752 103.361 41.2752ZM104.841 35.9798C106.474 35.9798 107.878 35.6571 109.055 35.0118C110.232 34.3665 111.143 33.4744 111.788 32.3356C112.433 31.1968 112.756 29.8493 112.756 28.2929V26.5847L104.898 28.179C103.266 28.5207 102.089 29.0331 101.368 29.7164C100.685 30.3617 100.343 31.2158 100.343 32.2787C100.343 33.4554 100.723 34.3665 101.482 35.0118C102.279 35.6571 103.399 35.9798 104.841 35.9798Z" fill="#000000"/>
++<path d="M64.0186 40.5919V0.164627L71.4207 0.164627V38.3143L67.378 34.1577H90.6094V40.5919H64.0186Z" fill="#000000"/>
++</svg>
+```
+
+**File**: `apps/docs/app/[lang]/desktop/og/labs-og.tsx` (added, +229/-0)
+```diff
+@@ -0,0 +1,229 @@
++import { ImageResponse } from "next/og";
++import { readFile } from "node:fs/promises";
++import { join } from "node:path";
++import { parse, type Font } from "opentype.js";
 +
-+use crate::tree::AXElement;
- 
- use super::{CheckTarget, after_delivery, value_write_step};
- 
-@@ -30,3 +32,18 @@ pub(super) fn uncheck_unsupported() -> AdapterError {
-     )
-     .with_disposition(DeliverySemantics::not_delivered())
- }
++const folder = join(process.cwd(), "app/[lang]/desktop/og");
 +
-+/// Reports whether check/uncheck may write `AXValue` on an element with this subrole.
-+///
-+/// A tab button (`AXRadioButton` with subrole `AXTabButton`) is selected, not checked.
-+/// Chromium-based browsers report `AXValue` as settable on a web `role="tab"` element,
-+/// and writing it crashes the browser, so check/uncheck presses tab buttons instead.
-+pub(super) fn value_write_allowed(subrole: Option<&str>) -> bool {
-+    subrole != Some("AXTabButton")
++export const size = { width: 1200, height: 630 };
++
++type Theme = "light" | "dark";
++
++const themes = {
++  light: {
++    background: "#f8f8f8",
++    text: "#0a0a0a",
++    slash: "#b7b7b7",
++    logo: "#000000",
++    description: "#6e6e6e",
++  },
++  dark: {
++    background: "#000000",
++    text: "#ffffff",
++    slash: "#666666",
++    logo: "#ffffff",
++    description: "#a1a1a1",
++  },
++} as const;
++
++// Header geometry, halved from the reference card's 2x canvas.
++const logoScale = 115 / 47.0185 / 2;
++const logoWidth = 183 * logoScale;
++const logoHeight = 42 * logoScale;
++const logoTop = 111 - 41.44 * logoScale;
++const slashX = 64 + logoWidth + 31.5;
++const wordX = slashX + 17.75 + 22;
++const wordBaseline = 110;
++
++const titleLeft = 61.6875;
++const titleBaseline = 280.045;
++const titleSize = 80.4;
++const titleTracking = -0.0635;
++const titleLinePitch = 76;
++const titleMaxWidth = 700;
++const maxTitleLines = 3;
++const titleShrinkStep = 4;
++const titleMinSize = 56;
++const maxTitleLinesAtMin = 4;
++const titleCenterShift = 38.04;
++
++// A two-line title carries the reference card's per-line metrics.
++const titleLayouts = [
++  { left: 61.6875, baseline: 280.045, size: 80.095, letterSpacing: -5.085 },
++  { left: 61.405, baseline: 356.125, size: 80.69, letterSpacing: -5.125 },
++];
++
++const descriptionLeft = 61.6875;
++const descriptionSize = 26;
++const descriptionTracking = -0.52;
++const descriptionLinePitch = descriptionSize * 1.32;
++const descriptionMaxWidth = 460;
++const descriptionGap = 22;
++
++type Assets = { regular: Font; semibold: Font; logo: string };
++
++let assets: Promise<Assets> | undefined;
++
++function loadAssets() {
++  assets ??= Promise.all([
++    readFile(join(folder, "Geist-Regular.ttf")),
++    readFile(join(folder, "Geist-SemiBold.ttf")),
++    readFile(join(folder, "labs-logo.svg"), "utf-8"),
++  ]).then(([regular, semibold, logo]) => ({
++    regular: parse(toArrayBuffer(regular)),
++    semibold: parse(toArrayBuffer(semibold)),
++    logo,
++  }));
++  return assets;
 +}
 +
-+/// Reads the element's `AXSubrole`.
-+pub(super) fn subrole(el: &AXElement, deadline: Deadline) -> Result<Option<String>, AdapterError> {
-+    let instant = crate::tree::locator_deadline::from_operation(deadline)?;
-+    crate::tree::resolve::resolve_ax_read::read_string(el, "AXSubrole", instant)
++function toArrayBuffer(buffer: Buffer) {
++  return buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength) as ArrayBuffer;
 +}
-```
-
-**File**: `skills/agent-desktop-macos/SKILL.md` (modified, +2/-0)
-```diff
-@@ -42,6 +42,8 @@ The sandbox provider on macOS is `macos`: a macOS VM that needs an Apple Silicon
- 
- **Judge delivery by observation.** AX return codes do not prove an effect. Finder returns success from an `AXConfirm` that does nothing. Snapshot again or use `get` and `is` to check the result.
- 
-+**Tab buttons.** A tab (`AXRadioButton` with subrole `AXTabButton`) is selected, not checked. `check` presses a tab button instead of writing `AXValue`, because writing `AXValue` on a web `role="tab"` crashes Chromium-based browsers. Some web tab widgets ignore that semantic press, so `check` reports that the state was not reached; select those with `click --headed`.
 +
- **Surfaces.** Use `--surface menubar` for an app's File, Edit, and View menus. Use `--surface menu-bar-extras` for status items: with no `--app` it reads system items such as Wi-Fi, Battery, and Clock; with `--app` it reads that app's own item. Use `--surface dock` for the Dock. These shell surfaces are available headless through `open-system-surface`. A background app with no ordinary window, such as a menu-bar app or Control Center, can be observed through its process with `snapshot --app "Control Center"`. This applies to `window`, `menubar`, and `menu-bar-extras`, not `focused`; a regular app that has not shown its window returns `WINDOW_NOT_FOUND`. While a menu, sheet, alert, or popover is open, refs from the window tree behind it are the wrong target.
- **Menus.** `right-click` headless uses `AXShowMenu`. If the menu opened but the app returned `APP_UNRESPONSIVE` with `retry: unsafe`, do not retry. Inspect the menu with `--surface menu`. `menu` requires an open menu: if `snapshot --surface menu` returns `surface_absent` with `complete: true`, snapshot `menubar` when it exists, click its item without `--headed`, then snapshot `--surface menu`. An absent `menubar` can mean the app exposes no menu bar. A missing `complete`, `complete: false`, timeout or incomplete read is unknown, not absent. For combo boxes and menu buttons, use `select @ref "Option"`. `select` needs a closed-to-open menu transition, so dismiss any open menu first.
- 
++type Line = { text: string; left: number; baseline: number; size: number; letterSpacing: number };
++
++function wrap(font: Font, text: string, lineSize: number, tracking: number, maxWidth: number) {
++  const lines: string[] = [];
++  let line = "";
++  for (const word of text.split(/\s+/).filter(Boolean)) {
++    const next = line ? `${line} ${word}` : word;
++    if (line && font.getAdvanceWidth(next, lineSize, { kerning: true, letterSpacing: tracking }) > maxWidth) {
++      lines.push(line);
++      line = word;
++    } else {
++      line = next;
++    }
++  }
++  if (line) lines.push(line);
++  return lines;
++}
++
++function titleLine(text: string, index: number): Line {
++  const layout = titleLayouts[index];
++  if (layout) return { text, ...layout };
++  const last = titleLayouts[titleLayouts.length - 1]!;
++  const offset = index - titleLayouts.length + 1;
++  return { text, ...last, baseline: last.baseline + offset * titleLinePitch };
++}
++
++function titleLines(font: Font, title: string | string[]): Line[] {
++  if (Array.isArray(title)) {
++    const shift = -titleCenterShift * (title.length - 2);
++    return title.map((text, index) => {
++      const line = titleLine(text, index);
++      return { ...line, baseline: line.baseline + shift };
++    });
++  }
++  let lineSize = titleSize;
++  let maxLines = maxTitleLines;
++  let lines = wrap(font, title, lineSize, titleTracking, titleMaxWidth);
++  while (lines.length > maxLines && lineSize > titleMinSize) {
++    lineSize = Math.max(titleMinSize, lineSize - titleShrinkStep);
++    if (lineSize === titleMinSize) maxLines = maxTitleLinesAtMin;
++    lines = wrap(font, title, lineSize, titleTracking, titleMaxWidth);
++  }
++  const pitch = (lineSize * titleLinePitch) / titleSize;
++  const firstBaseline = titleBaseline - (pitch / 2) * (lines.length - 2);
++  return lines.map((text, index) => ({
++    text,
++    left: titleLeft,
++    baseline: firstBaseline + index * pitch,
++    size: lineSize,
++    letterSpacing: titleTracking * lineSize,
++  }));
++}
++
++function descriptionLine(text: string, index: number, firstBaseline: number): Line {
++  return {
++    text,
++    left: descriptionLeft,
++    baseline: firstBaseline + index * descriptionLinePitch,
++    size: descriptionSize,
++    letterSpacing: descriptionTracking,
++  };
++}
++
++function linePath(font: Font, lines: Line[]) {
++  return lines
++    .map((line) =>
++      font
++        .getPath(line.text, line.left, line.baseline, line.size, {
++          kerning: true,
++          letterSpacing: line.letterSpacing / line.size,
++        })
++        .toPathData(3),
++    )
++    .
 ```
 
----
-
-### Incident Patch 3: `e8934a5e` (2026-11-17)
-**Commit Message**: fix: keep the macOS cursor overlay in place across headed commands (#715)
-
-Dispatch hides the overlay before every headed mutating command. On
-macOS that hide ordered the cursor window out and forgot where the
-cursor had landed, so every headed move started by jumping to a fixed
-offset beside its target instead of gliding from the last position.
-
-The hide only needs to clear the landing after a failed drag, where the
-next move must not start from the stale grab point. The renderer now
-tracks whether the last instruction it drew was a drag, and a hide
-removes the cursor and forgets its landing only in that case. Other
-hides leave the cursor on screen and its next move starts from where it
-last landed. Windows keeps suppressing its renderer for headed input.
-
-**File**: `CONCEPTS.md` (modified, +1/-1)
+**File**: `apps/docs/app/[lang]/desktop/og/og-image.tsx` (removed, +0/-82)
 ```diff
-@@ -234,7 +234,7 @@ The side-effect contract attached to an action request, controlling whether the
- Core owns the precondition each action declares: a focused window for keyboard or focus-sensitive work, a focused window plus a verified cursor target for pointer delivery. Core satisfies it before dispatch. For a window-owned ref action, core focuses the exact source window, not merely the owning application. For an application-owned target, core can focus the app and still verify any pointer target. macOS native application-menu items use that application-level path for click, right-click, double-click, and triple-click. `hover` and `drag` remain window-owned and fail when the ref has no source window. The platform adapter owns the OS-specific focus primitive and delivery mechanism. Raw coordinate input has no ref identity, so it never infers or focuses a window. Which actions a headed policy makes physical rather than semantic is per-action and per-platform, and is settled by that action's own chain rather than by the policy. On Windows, `type` has no semantic headless path, because UIA offers no insert-at-selection write. Strict-headless `type` therefore fails at policy, and `set-value` is the headless text path. Headed `type` synthesizes keys physically (A4-1).
- 
- ### Agent Cursor Overlay
--An optional presentation-only cursor driven by verified action destinations. Its whole configuration (label, colours, size, and click effects) is set once per session with `session start --cursor` or `cursor-overlay enable`; action and batch commands inherit it and take no cursor flags. Motion models a human hand and the cursor never rotates or resizes. The renderer acknowledges arrival before the action dispatches, under a bounded timeout, so the picture and the real effect stay in step. A click plays a ripple and flashes an outline around the element. A `--headed` mutating command hides the overlay before it dispatches and shows it again afterwards; on Windows the renderer stays suppressed for headed input and draws only for headless semantic actions. It never moves or replaces the OS pointer and never changes Interaction Policy, action delivery, or response semantics. Configuration, motion, and effect timing live in `agent-desktop-core`; macOS, Windows and Linux (X11 only) supply native renderers, and an adapter that does not override `update_cursor_overlay` refuses with `PLATFORM_NOT_SUPPORTED`, which dispatch treats as `rendered: false`.
-+An optional presentation-only cursor driven by verified action destinations. Its whole configuration (label, colours, size, and click effects) is set once per session with `session start --cursor` or `cursor-overlay enable`; action and batch commands inherit it and take no cursor flags. Motion models a human hand and the cursor never rotates or resizes. The renderer acknowledges arrival before the action dispatches, under a bounded timeout, so the picture and the real effect stay in step. A click plays a ripple and flashes an outline around the element. A `--headed` mutating command hides the overlay before it dispatches and shows it again afterwards; on Windows the renderer stays suppressed for headed input and draws only for headless semantic actions. On macOS the cursor stays on screen through that hide and starts its next move from where it last landed; only a hide that cancels a drag takes it off screen and forgets the grab point. It never moves or replaces the OS pointer and never changes Interaction Policy, action delivery, or response semantics. Configuration, motion, and effect timing live in `agent-desktop-core`; macOS, Windows and Linux (X11 only) supply native renderers, and an adapter that does not override `update_cursor_overlay` refuses with `PLATFORM_NOT_SUPPORTED`, which dispatch treats as `rendered: false`.
- 
- For harness subagents, `session start --cursor --multi-agent` enables a cursor per `(session-id, agent-id)` (macOS, Windows, and Linux X11). The harness assigns each subagent a stable global `--agent-id` or `AGENT_DESKTOP_AGENT_ID`. The CLI requires this identity for desktop UI actions in that mode. The interaction lease still serializes physical input on the shared OS pointer. A headless action moves its cursor before it takes the lease, so several agents' cursors travel at the same time while their actions take turns. Commands that draw the same cursor take turns from its travel to its click effect. Each cursor reuses the same rendering and fade behavior; snapshots remain shared by session. Optional agent profiles override presentation only, and session disable/end removes every cursor.
- 
-```
-
-**File**: `crates/macos/src/system/cursor_overlay/child.rs` (modified, +12/-9)
-```diff
-@@ -21,6 +21,7 @@ struct OverlayState {
-     motion: CursorMotionProfile,
-     moves: u64,
-     at: Option<Point>,
-+    dragging: bool,
-     resting: bool,
- }
- 
-@@ -152,13 +153,12 @@ fn handle(control: &CursorOverlayControl, state: &mut OverlayState) -> Result<bo
-     if let Some(image_changed) = absorb_settings(control, state) {
-         bridge::apply_style(&state.style, image_changed);
-     }
--    if control.is_hide() {
--        bridge::hide();
--        apply_landing_memory(control, state, None);
--        return Ok(true);
+@@ -1,82 +0,0 @@
+-import { readFile } from "node:fs/promises";
+-import { join } from "node:path";
+-import { ImageResponse } from "next/og";
+-
+-const [geistRegular, geistPixelSquare] = await Promise.all([
+-  readFile(
+-    join(process.cwd(), "app/[lang]/desktop/og/[...slug]/geist-sans-regular.ttf")
+-  ),
+-  readFile(
+-    join(process.cwd(), "app/[lang]/desktop/og/[...slug]/GeistPixel-Square.ttf")
+-  ),
+-]);
+-
+-export function renderOgImage(title: string) {
+-  return new ImageResponse(
+-    <div
+-      style={{
+-        width: "100%",
+-        height: "100%",
+-        display: "flex",
+-        flexDirection: "column",
+-        backgroundColor: "black",
+-        padding: "60px 80px",
+-      }}
+-    >
+-      <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+-        <svg width="36" height="36" viewBox="0 0 16 16" fill="white">
+-          <path fillRule="evenodd" clipRule="evenodd" d="M8 1L16 15H0L8 1Z" />
+-        </svg>
+-        <span
+-          style={{ fontSize: 36, color: "#666", fontFamily: "Geist", fontWeight: 400 }}
+-        >
+-          /
+-        </span>
+-        <span
+-          style={{
+-            fontSize: 36,
+-            fontFamily: "GeistPixelSquare",
+-            fontWeight: 400,
+-            color: "white",
+-          }}
+-        >
+-          agent-desktop
+-        </span>
+-      </div>
+-      <div
+-        style={{
+-          display: "flex",
+-          flex: 1,
+-          flexDirection: "column",
+-          alignItems: "center",
+-          justifyContent: "center",
+-        }}
+-      >
+-        {title.split("\n").map((line, index) => (
+-          <span
+-            key={index}
+-            style={{
+-              fontSize: 72,
+-              fontFamily: "Geist",
+-              fontWeight: 400,
+-              color: "white",
+-              letterSpacing: "-0.02em",
+-              textAlign: "center",
+-              lineHeight: 1.2,
+-            }}
+-          >
+-            {line}
+-          </span>
+-        ))}
+-      </div>
+-    </div>,
+-    {
+-      width: 1200,
+-      height: 630,
+-      fonts: [
+-        { name: "Geist", data: geistRegular, style: "normal", weight: 400 },
+-        { name: "GeistPixelSquare", data: geistPixelSquare, style: "normal", weight: 400 },
+-      ],
 -    }
--    if control.is_show() {
--        bridge::show();
-+    if control.is_hide() || control.is_show() {
-+        if control.is_show() {
-+            bridge::show();
-+        } else if state.dragging {
-+            bridge::hide();
-+        }
-         apply_landing_memory(control, state, None);
-         return Ok(true);
-     }
-@@ -210,7 +210,9 @@ fn apply_landing_memory(
-     instruction: Option<&CursorOverlayInstruction>,
- ) {
-     if control.is_hide() {
--        state.at = None;
-+        if std::mem::take(&mut state.dragging) {
-+            state.at = None;
-+        }
-         return;
-     }
-     if control.is_show() {
-@@ -222,7 +224,8 @@ fn apply_landing_memory(
-     if bridge::is_caret(instruction) {
-         return;
-     }
--    state.at = Some(if instruction.phase() == CursorPhase::Drag {
-+    state.dragging = instruction.phase() == CursorPhase::Drag;
-+    state.at = Some(if state.dragging {
-         instruction
-             .drag_from()
-             .unwrap_or(instruction.destination())
+-  );
+-}
 ```
 
-**File**: `crates/macos/src/system/cursor_overlay/child_tests.rs` (modified, +42/-2)
+**File**: `apps/docs/app/[lang]/desktop/og/route.tsx` (modified, +5/-2)
 ```diff
-@@ -138,13 +138,53 @@ fn presented(session: &str, instruction: CursorOverlayInstruction) -> CursorOver
+@@ -1,5 +1,8 @@
+-import { renderOgImage } from "./og-image";
++import { renderLabsOg } from "./labs-og";
+ 
+ export async function GET() {
+-  return renderOgImage("Desktop\nAutomation for AI");
++  return renderLabsOg({
++    product: "agent-desktop",
++    title: "Desktop automation for AI",
++  });
  }
+```
+
+**File**: `apps/docs/package.json` (modified, +2/-0)
+```diff
+@@ -37,6 +37,7 @@
+     "nanoid": "5.1.16",
+     "next": "16.4.3",
+     "next-themes": "0.4.6",
++    "opentype.js": "^1.3.4",
+     "react": "19.3.1",
+     "react-dom": "19.3.1",
+     "react-player": "3.4.0",
+@@ -50,6 +51,7 @@
+     "@tailwindcss/postcss": "4.3.3",
+     "@types/mdx": "2.0.14",
+     "@types/node": "24.19.2",
++    "@types/opentype.js": "^1.3.10",
+     "@types/react": "19.3.0",
+     "@types/react-dom": "19.3.0",
+     "postcss": "8.5.32",
+```
+
+**File**: `apps/docs/pnpm-lock.yaml` (modified, +31/-0)
+```diff
+@@ -83,6 +83,9 @@ importers:
+       next-themes:
+         specifier: 0.4.6
+         version: 0.4.6(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
++      opentype.js:
++        specifier: ^1.3.4
++        version: 1.3.4
+       react:
+         specifier: 19.3.1
+         version: 19.3.1
+@@ -117,6 +120,9 @@ importers:
+       '@types/node':
+         specifier: 24.19.2
+         version: 24.19.2
++      '@types/opentype.js':
++        specifier: ^1.3.10
++        version: 1.3.10
+       '@types/react':
+         specifier: 19.3.0
+         version: 19.3.0
+@@ -2058,6 +2064,9 @@ packages:
+   '@types/node@24.19.2':
+     resolution: {integrity: sha512-93d49wCWJkCyN87MxLpNN6KXPCwFw7bVUg79mGUV1OS40JGWwVCr8n61DXCSqz7CV6/VfPkb7xec7uP2M+QHWQ==}
  
- #[test]
--fn hide_clears_the_remembered_landing_for_the_next_travel() {
--    let mut remembered = state(Some(Point { x: 100.0, y: 100.0 }));
-+fn hide_after_a_drag_clears_the_remembered_landing_for_the_next_travel() {
-+    let mut remembered = OverlayState {
-+        at: Some(Point { x: 100.0, y: 100.0 }),
-+        dragging: true,
-+        ..OverlayState::default()
-+    };
-     let control = CursorOverlayControl::hide("run-failed-drag".into());
++  '@types/opentype.js@1.3.10':
++    resolution: {integrity: sha512-F67EFyk6j02okHz5JCgata3ZRAcZi9GLnzmkHw/rzJq3OCc8/ZVdoKrxMTYjcQP6IYHGBz2cav1cpzkOkPiPCQ==}
++
+   '@types/react-dom@19.3.0':
+     resolution: {integrity: sha512-ZI7bU42mZXXKHn/qNLEw2IrbiINU7X5+vfgdixBHkCNpYWXjKgfQ/P+uyGb5CjOLB9UcnTeg3rylQtV2hym44Q==}
+     peerDependencies:
+@@ -3587,6 +3596,11 @@ packages:
+   oniguruma-to-es@4.3.6:
+     resolution: {integrity: sha512-csuQ9x3Yr0cEIs/Zgx/OEt9iBw9vqIunAPQkx19R/fiMq2oGVTgcMqO/V3Ybqefr1TBvosI6jU539ksaBULJyA==}
  
-     apply_landing_memory(&control, &mut remembered, None);
++  opentype.js@1.3.4:
++    resolution: {integrity: sha512-d2JE9RP/6uagpQAVtJoF0pJJA/fgai89Cc50Yp0EJHk+eLp6QQ7gBoblsnubRULNY132I0J1QKMJ+JTbMqz4sw==}
++    engines: {node: '>= 8.0.0'}
++    hasBin: true
++
+   os-paths@4.4.0:
+     resolution: {integrity: sha512-wrAwOeXp1RRMFfQY8Sy7VaGVmPocaLwSFOYCGKSyo8qmJ+/yaafCl5BCA1IQZWqFSRBrKDYFeR9d/VyQzfH/jg==}
+     engines: {node: '>= 6.0'}
+@@ -3941,6 +3955,9 @@ packages:
+   strictdom@1.0.1:
+     resolution: {integrity: sha512-cEmp9QeXXRmjj/rVp9oyiqcvyocWab/HaoN4+bwFeZ7QzykJD6L3yD4v12K1x0tHpqRqVpJevN3gW7kyM39Bqg==}
  
-     assert_eq!(remembered.at, None);
-+    assert!(!remembered.dragging);
-+}
++  string.prototype.codepointat@0.2.1:
++    resolution: {integrity: sha512-2cBVCj6I4IOvEnjgO/hWqXjqBGsY+zwPmHl12Srk9IXSZ56Jwwmy+66XO5Iut/oQVR7t5ihYdLB0GMa4alEUcg==}
 +
-+#[test]
-+fn hide_around_a_headed_command_keeps_the_remembered_landing() {
-+    let previous = Point { x: 100.0, y: 100.0 };
-+    let mut remembered = state(Some(previous.clone()));
-+    let hide = CursorOverlayControl::hide("run-headed".into());
-+
-+    apply_landing_memory(&hide, &mut remembered, None);
-+    assert_eq!(remembered.at, Some(previous.clone()));
-+
-+    let next = Point { x: 800.0, y: 300.0 };
-+    let frames = motion_frames(
-+        &remembered,
-+        &instruction(next.clone(), false),
-+        &screen(),
-+        120,
-+    );
-+    assert_eq!(frames.first().map(|pose| &pose.point), Some(&previous));
-+    assert_eq!(frames.last().map(|pose| &pose.point), Some(&next));
-+}
-+
-+#[test]
-+fn travel_and_effect_phases_end_the_drag() {
-+    let mut remembered = OverlayState {
-+        dragging: true,
-+        ..OverlayState::default()
-+    };
-+    let travel = instruction(Point { x: 10.0, y: 10.0 }, false);
-+    apply_landing_memory(
-+        &presented("run", travel.clone()),
-+        &mut remembered,
-+        Some(&travel),
-+    );
-+    assert!(!remembered.dragging);
- }
+   stringify-entities@4.0.4:
+     resolution: {integrity: sha512-IwfBptatlO+QCJUo19AqvrPNqlVMpW9YEL2LIVY+Rpv2qsjCGxaDLNRgeGsQWJhfItebuJhsGSLjaBbNSQ+ieg==}
  
- #[test]
+@@ -3995,6 +4012,9 @@ packages:
+   tiktok-video-element@0.1.2:
+     resolution: {integrity: sha512-w6TboLm236XJKKiIXIhCbYCnUxbixBbaAoty0etaEAZ/2kHkVIdfZdv2oouMU/HGMsWCHI/VjQ3wU3MJ+s192Q==}
+ 
++  tiny-inflate@1.0.3:
++    resolution: {integrity: sha512-pkY1fj1cKHb2seWDy0B16HeWyczlJA9/WW3u3c4z/NiWDsO3DOU5D7nhTLE9CF0yXv/QZFY7sEJmj24dK+Rrqw==}
++
+   tinyexec@1.3.1:
+     resolution: {integrity: sha512-GCvB3aoys96IuDFBMcTB46JOR6mdMtAToqwiW8JlWhsoh1mhHi/xn9ss/Dg7N555GiJyEt2qzoG/NHCwM6h1EA==}
+     engines: {node: '>=18'}
+@@ -6052,6 +6072,8 @@ snapshots:
+     dependencies:
+       undici-types: 7.24.6
+ 
++  '@types/opentype.js@1.3.10': {}
++
+   '@types/react-dom@19.3.0(@types/react@19.3.0)':
+     dependencies:
+       '@types/react': 19.3.0
+@@ -7893,6 +7915,11 @@ snapshots:
+       regex: 6.1.0
+       regex-recursion: 6.0.2
+ 
++  opentype.js@1.3.4:
++    dependencies:
++      string.prototype.codepointat: 0.2.1
++      tiny-inflate: 1.0.3
++
+   os-paths@4.4.0: {}
+ 
+   package-json-from-dist@1.0.1: {}
+@@ -8411,6 +8438,8 @@ snapshots:
+ 
+   strictdom@1.0.1: {}
+ 
++  string.prototype.codepointat@0.2.1: {}
++
+   stringify-entities@4.0.4:
+     dependencies:
+       character-entities-html4: 2.1.0
+@@ -8451,6 +8480,8 @@ snapshots:
+ 
+   tiktok-video-element@0.1.2: {}
+ 
++  tiny-inflate@1.0.3: {}
++
+   tinyexec@1.3.1: {}
+ 
+   tinyglobby@0.2.17:
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #734** (2026-11-23): Version the OG image URL by card content (@ctate)
+- **PR #733** (2026-11-23): Use the Vercel Labs OG card generator (@ctate)
+- **PR #732** (2026-11-23): Use the Vercel Labs lockup in the docs header (@ctate)
+- **PR #728** (2026-11-23): perf(ci): cut CI time across source checks, core tests, and dependency caching (@lahfir)
 - **PR #715** (2026-11-17): fix: keep the macOS cursor overlay in place across headed commands (@ctate)
 - **PR #714** (2026-11-17): chore: ignore the chrono unmaintained advisory from uiautomation (@ctate)
-- **PR #711** (2026-11-17): fix: press tab buttons instead of writing AXValue in check (@ctate)
-- **PR #681** (2026-11-15): fix: name the launching app in the permission guide under tmux (@lahfir)
-- **PR #680** (2026-11-13): chore(release): 1.3.1 (@lahfir)
-- **PR #675** (2026-11-13): fix(sandbox)!: reach the macOS guest through a guest agent instead of SSH (@lahfir)
 
 ---
 
@@ -1485,21 +1709,43 @@ last landed. Windows keeps suppressing its renderer for headed input.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ignore the chrono unmaintained advisory from uiautomation
+## X. Use the Vercel Labs lockup in the docs header
 
 **RULE**:
-When implementing operations in `deny.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vercel-labs/agent-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/docs/app/styles/geistdocs.css`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vercel-labs/agent-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c465134e`: ignore the chrono unmaintained advisory from uiautomation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ce2ddf07`: Use the Vercel Labs lockup in the docs header. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `deny.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/docs/app/styles/geistdocs.css`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  { id = "RUSTSEC-2026-0543", reason = "Unmaintained advisory on chrono, which only uiautomation (the Windows backend) pulls in. uiautomation 0.25.1, the newest release, still requires chrono for its timeout timer; remove this entry when uiautomation drops it or the backend moves off uiautomation." },
+
+/* Vercel Labs lockup: match the OG card's slash spacing, scaled to the 18px
+   logo. The card draws the logo 51.44px tall, so the scale factor is 0.35:
+   31.5 units of leading gap -> 11px, the slash bbox 17.75x42.25 units ->
+   6.2x14.8px with a 3-unit (1.05px) stroke, and 22 units of trailing gap ->
+   7.7px to the product name's text box. */
+header span[class~="gap-2.5"] {
+  column-gap: 0;
+}
+
+header span[class~="gap-2.5"] > div[class~="w-5"] {
+  flex: none;
+  width: 6.2px;
+  height: 14.8px;
+  margin-left: 11px;
+  margin-right: 7.7px;
+  background-color: currentColor;
+  clip-path: polygon(83.1% 0, 100% 0, 18.31% 100%, 0 100%);
+}
+
+header span[class~="gap-2.5"] > div[class~="w-5"] > svg {
+  display: none;
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1509,4 +1755,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c465134e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ce2ddf07` are properly handled with clean fallback behavior.

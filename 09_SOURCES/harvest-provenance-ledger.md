@@ -12585,3 +12585,4 @@ Every entry in this ledger must capture:
 | `learn-github-electron-electron` | `https://github.com/electron/electron` | `26919e55` | Multi-dimensional audit evidence | 2026-11-24T01:15:41.960Z |
 | `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `73bf425f` | Multi-dimensional audit evidence | 2026-11-24T01:28:57.464Z |
 | `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `c9d50f21` | Multi-dimensional audit evidence | 2026-11-24T01:29:03.488Z |
+| `learn-github-vercel-labs-agent-desktop` | `https://github.com/vercel-labs/agent-desktop` | `ce2ddf07` | Multi-dimensional audit evidence | 2026-11-24T01:37:59.154Z |

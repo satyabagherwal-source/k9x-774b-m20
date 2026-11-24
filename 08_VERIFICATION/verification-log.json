@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261122-VFG8",
-    "timestamp": "2026-11-22T06:11:32.216Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "a7c0633a94f1ce7546515fd93a9630429b0ded2949859f8bfb34377c413987e7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261122-5HRK",
     "timestamp": "2026-11-22T06:19:21.776Z",
     "repository": "mradermacher/gemma-4-31B-it-ARA-heretic-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "t8y2/dbx",
     "learningId": "learn-github-t8y2-dbx",
     "contentHash": "ebe64be7e2ba5b1e53e6c4d5156749a20f69e5006ea48401b52cbdd61d510688",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261124-ZCDQ",
+    "timestamp": "2026-11-24T01:37:59.150Z",
+    "repository": "vercel-labs/agent-desktop",
+    "learningId": "learn-github-vercel-labs-agent-desktop",
+    "contentHash": "2788014381cb458329e1b417547d74e35ffc673bc1e9c5c6f249a67d47761761",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

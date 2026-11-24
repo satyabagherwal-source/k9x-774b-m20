@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-24T01:29:03.493Z",
-  "total_cycles_completed": 11934,
-  "total_learnings_persisted": 11934,
-  "total_rules_promoted": 11016,
+  "last_updated": "2026-11-24T01:37:59.160Z",
+  "total_cycles_completed": 11935,
+  "total_learnings_persisted": 11935,
+  "total_rules_promoted": 11017,
   "history": [
-    {
-      "timestamp": "2026-11-23T14:46:42.225Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-23T14:55:19.399Z",
       "repository": "FacebookAI/xlm-roberta-base",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-24T01:29:03.493Z",
       "repository": "t8y2/dbx",
       "learningId": "learn-github-t8y2-dbx",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-24T01:37:59.160Z",
+      "repository": "vercel-labs/agent-desktop",
+      "learningId": "learn-github-vercel-labs-agent-desktop",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

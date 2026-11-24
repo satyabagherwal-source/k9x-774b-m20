@@ -12552,3 +12552,4 @@
 | `CYCLE-20261124-6OLG` | `2026-11-24T01:15:41.956Z` | `electron/electron` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10167` | Yes (`d60b6fdc...`) |
 | `CYCLE-20261124-NQER` | `2026-11-24T01:28:57.459Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10168` | Yes (`51b09084...`) |
 | `CYCLE-20261124-NV23` | `2026-11-24T01:29:03.483Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10169` | Yes (`ebe64be7...`) |
+| `CYCLE-20261124-ZCDQ` | `2026-11-24T01:37:59.150Z` | `vercel-labs/agent-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10170` | Yes (`27880143...`) |

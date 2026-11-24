@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-24T01:29:06.746Z",
-    "lastVerified": "2026-11-24T01:29:06.746Z",
+    "lastChecked": "2026-11-24T01:38:05.884Z",
+    "lastVerified": "2026-11-24T01:38:05.884Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -378,8 +378,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T00:57:23.916Z",
-    "lastVerified": "2026-11-24T00:57:23.916Z",
+    "lastChecked": "2026-11-24T01:38:05.874Z",
+    "lastVerified": "2026-11-24T01:38:05.874Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -828,9 +828,9 @@
   "chrispybacon-dev-dockflare": {
     "name": "DockFlare",
     "officialUrl": "https://github.com/ChrispyBacon-dev/DockFlare",
-    "lastChecked": "2026-11-23T21:04:44.909Z",
+    "lastChecked": "2026-11-24T01:38:01.014Z",
     "revisionIdentifier": "9c7bed82",
-    "lastVerified": "2026-11-23T21:04:44.909Z"
+    "lastVerified": "2026-11-24T01:38:01.014Z"
   },
   "nirdiamant-rag_techniques": {
     "name": "RAG_Techniques",
@@ -1530,9 +1530,9 @@
   "valeriansaliou-sonic": {
     "name": "sonic",
     "officialUrl": "https://github.com/valeriansaliou/sonic",
-    "lastChecked": "2026-11-22T23:41:24.176Z",
+    "lastChecked": "2026-11-24T01:38:03.387Z",
     "revisionIdentifier": "f16560b6",
-    "lastVerified": "2026-11-22T23:41:24.176Z"
+    "lastVerified": "2026-11-24T01:38:03.387Z"
   },
   "hf-lightricks-ltx-2.5": {
     "name": "Lightricks/LTX-2.5",
@@ -3710,8 +3710,8 @@
     "officialUrl": "https://github.com/koderover/zadig",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-23T00:48:24.042Z",
-    "lastVerified": "2026-11-23T00:48:24.042Z",
+    "lastChecked": "2026-11-24T01:37:58.510Z",
+    "lastVerified": "2026-11-24T01:37:58.510Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-koderover-zadig",
@@ -8949,22 +8949,21 @@
     "lastVerified": "2026-11-22T19:18:33.776Z"
   },
   "vercel-labs-agent-desktop": {
-    "name": "agent-desktop",
+    "name": "vercel-labs/agent-desktop",
     "officialUrl": "https://github.com/vercel-labs/agent-desktop",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T18:12:18.794Z",
-    "lastVerified": "2026-11-22T18:12:18.794Z",
+    "lastChecked": "2026-11-24T01:37:55.160Z",
+    "lastVerified": "2026-11-24T01:37:55.160Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vercel-labs-agent-desktop",
-    "contentHash": "d94c6c7da69e72f9d7b61e81f01edcd9f9dc838c3b0b623f1082e1c7cda49adc",
+    "contentHash": "2788014381cb458329e1b417547d74e35ffc673bc1e9c5c6f249a67d47761761",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 0,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "e8934a5e"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-datalab-to-indra-ocr": {
     "name": "datalab-to/indra-ocr",
@@ -9182,9 +9181,9 @@
   "hartemyaakoub-seo-toolkit": {
     "name": "seo-toolkit",
     "officialUrl": "https://github.com/hartemyaakoub/seo-toolkit",
-    "lastChecked": "2026-11-19T20:55:38.521Z",
+    "lastChecked": "2026-11-24T01:37:53.399Z",
     "revisionIdentifier": "e1126c75",
-    "lastVerified": "2026-11-19T20:55:38.521Z"
+    "lastVerified": "2026-11-24T01:37:53.399Z"
   },
   "twostraws-controlroom": {
     "name": "twostraws/ControlRoom",
@@ -12003,12 +12002,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "iliyami-macsai": {
-    "name": "iliyami/MacSai",
+    "name": "MacSai",
     "officialUrl": "https://github.com/iliyami/MacSai",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-21T02:57:45.049Z",
-    "lastVerified": "2026-11-21T02:57:45.049Z",
+    "lastChecked": "2026-11-24T01:37:55.862Z",
+    "lastVerified": "2026-11-24T01:37:55.862Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-iliyami-macsai",
@@ -12017,7 +12016,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "5891a8ce"
   },
   "faker-js-faker": {
     "name": "faker-js/faker",

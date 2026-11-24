@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-24T01:29:03.496Z",
+  "last_updated": "2026-11-24T01:37:59.171Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -17511,14 +17511,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vercel-labs-agent-desktop",
-      "content_hash": "d94c6c7da69e72f9d7b61e81f01edcd9f9dc838c3b0b623f1082e1c7cda49adc",
-      "verified_at": "2026-11-19T19:11:56.539Z",
+      "content_hash": "2788014381cb458329e1b417547d74e35ffc673bc1e9c5c6f249a67d47761761",
+      "verified_at": "2026-11-24T01:37:59.163Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T19:11:56.539Z"
+      "last_updated": "2026-11-24T01:37:59.163Z"
     },
     "Efficient-Large-Model/Open-H3-Regenerate-2K": {
       "repository": "Efficient-Large-Model/Open-H3-Regenerate-2K",

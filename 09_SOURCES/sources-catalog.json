@@ -11633,10 +11633,10 @@
     "repository": "vercel-labs/agent-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/vercel-labs/agent-desktop",
-    "sourceVersion": "e8934a5e",
+    "sourceVersion": "ce2ddf07",
     "license": "Apache-2.0",
-    "contentHash": "d94c6c7da69e72f9d7b61e81f01edcd9f9dc838c3b0b623f1082e1c7cda49adc",
-    "lastHarvestedAt": "2026-11-19T19:11:56.531Z",
+    "contentHash": "2788014381cb458329e1b417547d74e35ffc673bc1e9c5c6f249a67d47761761",
+    "lastHarvestedAt": "2026-11-24T01:37:59.154Z",
     "learningId": "learn-github-vercel-labs-agent-desktop"
   },
   "hf-efficient-large-model-open-h3-regenerate-2k": {

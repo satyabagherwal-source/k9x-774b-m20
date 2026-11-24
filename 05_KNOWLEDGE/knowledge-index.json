@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-24T01:29:09.059Z",
+  "last_updated": "2026-11-24T01:38:08.755Z",
   "total_verified_learnings": 9088,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 24335,
+  "total_items": 24337,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "8ce55320d9e1995f2e9fcce904cef4178cdaab698539869099951df6f6ba56cc",
+      "content_hash": "527bfefc3a90d9cee43c027d87288386e333e50a47c3d774f304c5513533aed6",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T01:15:48.240Z"
+      "persisted_at": "2026-11-24T01:38:07.770Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "fcb519fc3c5a728122e3f3317d6e19148076b0d5d5d720ae447756b5632b820e",
+      "content_hash": "d2ec0c3ed90dc401faba3ac9b759c448a52fef79c5da67d10383b41e857e7468",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T01:15:48.378Z"
+      "persisted_at": "2026-11-24T01:38:07.921Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -218315,8 +218315,8 @@
       "slug": "vercel-labs-agent-desktop",
       "platform": "github",
       "source_url": "https://github.com/vercel-labs/agent-desktop",
-      "source_version": "e8934a5e",
-      "content_hash": "d94c6c7da69e72f9d7b61e81f01edcd9f9dc838c3b0b623f1082e1c7cda49adc",
+      "source_version": "ce2ddf07",
+      "content_hash": "2788014381cb458329e1b417547d74e35ffc673bc1e9c5c6f249a67d47761761",
       "dossier_path": "07_PROJECT_LEARNING/vercel-labs-agent-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vercel-labs-agent-desktop-learnings.md",
       "promoted_rules": [
@@ -218344,6 +218344,11 @@
           "number": 9429,
           "title": "ignore the chrono unmaintained advisory from uiautomation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10170,
+          "title": "Use the Vercel Labs lockup in the docs header",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -218351,7 +218356,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T19:11:56.340Z",
+      "verified_at": "2026-11-24T01:37:58.920Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -218405,10 +218410,10 @@
       "relative_path": "08_VERIFICATION/vercel-labs-agent-desktop-verification-protocol-empirical-defect-shield-for-verc.md",
       "title": "Verification Protocol: Empirical Defect Shield for vercel-labs/agent-desktop",
       "repository": "vercel-labs/agent-desktop",
-      "source_version": "e8934a5e",
-      "content_hash": "7d2b66777e24cc9a962fb8bc71df4bd3a887dc6b6c2f0a7e0fc9df7c9028b4e7",
+      "source_version": "ce2ddf07",
+      "content_hash": "0a3c95e31a1f74e5978f18b0a53496c034f89e2d373fae29e80db6a2256fe7d1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T19:11:57.146Z"
+      "persisted_at": "2026-11-24T01:37:59.801Z"
     },
     "learn-github-nginx-kubernetes-ingress": {
       "learning_id": "learn-github-nginx-kubernetes-ingress",
@@ -218548,9 +218553,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for vercel-labs-agent-desktop-learnings",
       "repository": "vercel-labs-agent-desktop-learnings",
       "source_version": "HEAD",
-      "content_hash": "5a5b0fe049596ca10953eb5e3234e6dbedded1e90ca0b21c227b5138096808b0",
+      "content_hash": "69cb0e317003452f33f04cc2aa8027ab726baf1805af1f254363f7582c735615",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T19:12:12.949Z"
+      "persisted_at": "2026-11-24T01:38:06.739Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-minimax-h3-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-minimax-h3-learnings-core-invariant",
@@ -219101,13 +219106,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-3DYL-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZJIF-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "4233f8a99a12bff27b00c6046bb1e6a71efb6575fb72f1f15e3edf4ffdb640a2",
+      "content_hash": "d12f83ab736f080801628e57d8856a410ad0a3ce38e9be92ce4cf952ffb736b2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T21:57:10.894Z"
+      "persisted_at": "2026-11-24T01:38:08.391Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -219117,9 +219122,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "ff614fe5c844b31c81598f096c53da2ae5748a25a813200a49a1b10489c2a775",
+      "content_hash": "415052f36b47664005eab7beb7fc542461f05c262c8fe59d04c2dd28414a43d7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T21:57:11.069Z"
+      "persisted_at": "2026-11-24T01:38:08.574Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -219129,9 +219134,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "ab1ce9297a0605bee98ccc58a2f1a800c7b81085638efd83c5c830f94797b18b",
+      "content_hash": "e0eb731ddd5b0ca5c8558aabb0b3d6f8bbabe6f1f49fbc55735ea20bfd47888e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T21:57:11.247Z"
+      "persisted_at": "2026-11-24T01:38:08.755Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -252355,10 +252360,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-vercel-labs-agent-desktop-technical-construction-intelligence-vercel-labs-agent-.md",
       "title": "Technical Construction Intelligence: vercel-labs/agent-desktop Core Invariants",
       "repository": "vercel-labs/agent-desktop",
-      "source_version": "8ffecc1d",
-      "content_hash": "2fdef57d98df93670367a816e4565e35fd74ab805c0d21ba8e9278f2d03292af",
+      "source_version": "ce2ddf07",
+      "content_hash": "f8537f47a7c76f408961b4576c271945b948908fcce8813b4a1e5557b92a171c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T21:44:17.294Z"
+      "persisted_at": "2026-11-24T01:37:59.616Z"
     },
     "agent_contract-agent-contract-vercel-labs-agent-desktop-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-vercel-labs-agent-desktop-autonomous-specialist-persona",
@@ -252380,9 +252385,9 @@
       "title": "Technical Construction Intelligence: vercel-labs-agent-desktop-learnings Core Invariants",
       "repository": "vercel-labs-agent-desktop-learnings",
       "source_version": "HEAD",
-      "content_hash": "148a53dcaff60fc86ebbfbf08d9ddfbeee6bec9370c13cec691eb571e90a02cf",
+      "content_hash": "53ffcc4280f13252fce9a943054613aba6c201743632708e9131e4e3957684fd",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T21:44:45.847Z"
+      "persisted_at": "2026-11-24T01:38:06.548Z"
     },
     "agent_contract-agent-contract-vercel-labs-agent-desktop-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-vercel-labs-agent-desktop-learnings-autonomous-specialist-persona",
@@ -255815,9 +255820,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "de8a008c5d388e58ce04f13ecae5e2c802c99fff7935cabff82727cf77b7a0e2",
+      "content_hash": "0e217b011da0e0a812cb14b851b60f09acf1c20583a5971977a4f2b0cf6ddd89",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T01:15:48.059Z"
+      "persisted_at": "2026-11-24T01:38:07.581Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
@@ -329582,13 +329587,13 @@
       "item_id": "candidate_directive-rust-resolve-python-calls-through-annotated-parameters-and-self-members",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-6T6A-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZIQM-rust-resolve-python-calls-through-annotated-parameters-and-self-members.md",
       "title": "rust): resolve python calls through annotated parameters and self members",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "c691f3da880cb38687664a48b9191b78bce0fbf39ab02e3bd95420ac951146c9",
+      "content_hash": "dd85277f908bf8793f734049222d454031983becf09de8e07865063ca766cf13",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T01:15:47.893Z"
+      "persisted_at": "2026-11-24T01:38:07.393Z"
     },
     "learn-github-iziz-libphonenumber-ios": {
       "learning_id": "learn-github-iziz-libphonenumber-ios",
@@ -331885,6 +331890,32 @@
       "content_hash": "12c2b226d196aff21afd6b63e1745baff95961db25facb4c48b6c84cf560f7ca",
       "domain_letter": "H",
       "persisted_at": "2026-11-24T01:29:07.937Z"
+    },
+    "rule-10170": {
+      "learning_id": "rule-10170",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10170,
+      "title": "Use the Vercel Labs lockup in the docs header",
+      "source_url": "https://github.com/vercel-labs/agent-desktop",
+      "source_version": "ce2ddf07",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-24T01:37:58.920Z"
+    },
+    "candidate_directive-use-the-vercel-labs-lockup-in-the-docs-header": {
+      "item_id": "candidate_directive-use-the-vercel-labs-lockup-in-the-docs-header",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZHXL-use-the-vercel-labs-lockup-in-the-docs-header.md",
+      "title": "Use the Vercel Labs lockup in the docs header",
+      "repository": "vercel-labs-agent-desktop-learnings",
+      "source_version": "HEAD",
+      "content_hash": "39b64bad97255412725bd2db5635e2b6480420c08cabc927313440473a0e70b4",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-24T01:38:06.346Z"
     }
   },
   "ai-builder-brain": {
