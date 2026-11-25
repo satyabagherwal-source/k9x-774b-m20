@@ -12991,3 +12991,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-reflection-beam-1-0-501b-a23b` | `https://huggingface.co/reflection/Beam-1.0-501B-A23B` | `hf-reflect` | Multi-dimensional audit evidence | 2026-11-25T05:54:33.486Z |
 | `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `1f3e2b34` | Multi-dimensional audit evidence | 2026-11-25T05:54:35.108Z |
 | `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `a5327bed` | Multi-dimensional audit evidence | 2026-11-25T05:54:42.824Z |
+| `learn-huggingface-lodestones-moss-image-sft-8-steps-dmd` | `https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd` | `hf-lodesto` | Multi-dimensional audit evidence | 2026-11-25T06:02:58.083Z |
+| `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `5666a698` | Multi-dimensional audit evidence | 2026-11-25T06:02:59.836Z |
+| `learn-github-momenbasel-puremac` | `https://github.com/momenbasel/PureMac` | `878316e2` | Multi-dimensional audit evidence | 2026-11-25T06:03:04.752Z |
+| `learn-dom-d-c25ea6d9` | `project://momenbasel-puremac` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/momenbasel-puremac-learnings.md` | 2026-11-25T06:03:41.295Z |

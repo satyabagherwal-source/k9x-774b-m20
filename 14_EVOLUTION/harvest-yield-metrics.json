@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T05:54:42.831Z",
-  "total_cycles_completed": 12306,
-  "total_learnings_persisted": 12306,
-  "total_rules_promoted": 11342,
+  "last_updated": "2026-11-25T06:03:04.757Z",
+  "total_cycles_completed": 12309,
+  "total_learnings_persisted": 12309,
+  "total_rules_promoted": 11343,
   "history": [
-    {
-      "timestamp": "2026-11-24T16:54:33.879Z",
-      "repository": "indexable-inc/blaze",
-      "learningId": "learn-github-indexable-inc-blaze",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T16:54:47.964Z",
-      "repository": "Bitterbot-AI/bitterbot-desktop",
-      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T17:03:03.019Z",
-      "repository": "apple/DepthPro2",
-      "learningId": "learn-huggingface-apple-depthpro2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T17:03:12.692Z",
       "repository": "higress-group/higress",
@@ -1403,6 +1382,27 @@
       "repository": "k3s-io/k3s",
       "learningId": "learn-github-k3s-io-k3s",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T06:02:58.089Z",
+      "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
+      "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T06:02:59.842Z",
+      "repository": "max-sixty/worktrunk",
+      "learningId": "learn-github-max-sixty-worktrunk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T06:03:04.757Z",
+      "repository": "momenbasel/PureMac",
+      "learningId": "learn-github-momenbasel-puremac",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T05:54:49.706Z",
+  "last_updated": "2026-11-25T06:03:41.857Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-25T04:07:45.064Z",
@@ -293,7 +293,7 @@
       "staged_for_review": 1
     },
     "max-sixty-worktrunk-learnings.md": {
-      "processed_at": "2026-11-24T03:50:08.088Z",
+      "processed_at": "2026-11-25T06:03:09.781Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -733,7 +733,7 @@
       "staged_for_review": 1
     },
     "momenbasel-puremac-learnings.md": {
-      "processed_at": "2026-11-22T19:44:11.727Z",
+      "processed_at": "2026-11-25T06:03:41.295Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
     },
@@ -1493,7 +1493,7 @@
       "staged_for_review": 0
     },
     "hf-lodestones-moss-image-sft-8-steps-dmd-learnings.md": {
-      "processed_at": "2026-11-21T11:38:50.267Z",
+      "processed_at": "2026-11-25T06:03:10.698Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3908,7 +3908,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 4089,
-  "total_canonical_promoted": 530,
-  "total_staged_for_review": 3131
+  "total_dossiers_evaluated": 4092,
+  "total_canonical_promoted": 531,
+  "total_staged_for_review": 3132
 }

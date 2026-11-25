@@ -2323,10 +2323,10 @@
     "repository": "max-sixty/worktrunk",
     "platform": "github",
     "sourceUrl": "https://github.com/max-sixty/worktrunk",
-    "sourceVersion": "c6cc8601",
+    "sourceVersion": "5666a698",
     "license": "Apache-2.0",
-    "contentHash": "ebfaba4f8dcafdc270021d6b84cd784e74ef06704fdf96dc318ac921557031a1",
-    "lastHarvestedAt": "2026-11-24T03:49:53.501Z",
+    "contentHash": "3bf43c4fd8af50c2a8fa04c27e4132cedb6bb6bd06d3b6f9a6316255f92c6e95",
+    "lastHarvestedAt": "2026-11-25T06:02:59.836Z",
     "learningId": "learn-github-max-sixty-worktrunk"
   },
   "mattermost-mattermost": {
@@ -8003,10 +8003,10 @@
     "repository": "momenbasel/PureMac",
     "platform": "github",
     "sourceUrl": "https://github.com/momenbasel/PureMac",
-    "sourceVersion": "2ad5f1a9",
+    "sourceVersion": "878316e2",
     "license": "MIT",
-    "contentHash": "81177f1a5d371d1a765f7bca1d9b2be63c6357acdf2487643cd25e29836d045f",
-    "lastHarvestedAt": "2026-11-22T19:43:16.148Z",
+    "contentHash": "4fe2baacea4332a6439f704e50d7f93460b98a474aaf907ec279e3cc34689bc7",
+    "lastHarvestedAt": "2026-11-25T06:03:04.752Z",
     "learningId": "learn-github-momenbasel-puremac"
   },
   "nalexn-clean-architecture-swiftui": {
@@ -10385,8 +10385,8 @@
     "sourceUrl": "https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd",
     "sourceVersion": "hf-lodestones-moss-image-sft-8-steps-dmd",
     "license": "Open-Source",
-    "contentHash": "8b666adc88ea44ff87e8818360145996ad8b4508bd7253fe66a6b8d478bb9b73",
-    "lastHarvestedAt": "2026-11-21T11:38:34.254Z",
+    "contentHash": "c5b0da236f6d5e9d969356d80b52751f4f665e282fa74e42045a6a2c8ba72190",
+    "lastHarvestedAt": "2026-11-25T06:02:58.083Z",
     "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd"
   },
   "ahmadhassan-bted-autoswarm-shadow-adapter": {

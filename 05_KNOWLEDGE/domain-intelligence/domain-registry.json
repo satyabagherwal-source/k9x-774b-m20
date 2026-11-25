@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T05:54:49.264Z",
-  "total_records": 2637,
+  "last_updated": "2026-11-25T06:03:41.641Z",
+  "total_records": 2638,
   "domains": {
     "A": {
       "total": 22,
@@ -71,7 +71,7 @@
       ]
     },
     "D": {
-      "total": 992,
+      "total": 993,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1064,7 +1064,8 @@
         "DOM-D-9DE8D876",
         "domain_intelligence-research-knowledge-intelligence-hf-openai-clip-vit-large-patch14-learnings-core-",
         "DOM-D-AC435FD0",
-        "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-z_image_turbo-learnings-core-invari"
+        "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-z_image_turbo-learnings-core-invari",
+        "DOM-D-C25EA6D9"
       ]
     },
     "E": {
@@ -18594,8 +18595,8 @@
       "title": "Research & Knowledge Intelligence: max-sixty/worktrunk Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-max-sixty-worktrunk-research-knowledge-intelligence-max-sixty-worktrunk-core-inv.md",
       "repository": "max-sixty/worktrunk",
-      "content_hash": "7db1a42bddde9a700bf5e55c1a6172af43c6b8f0b2c966014c36cdd21d2c839a",
-      "created_at": "2026-11-24T03:49:53.904Z"
+      "content_hash": "cbb27bd5f750c95b56de329cb103944b0da122e80827b53f629ef1f66527c91c",
+      "created_at": "2026-11-25T06:03:00.271Z"
     },
     "domain_intelligence-research-knowledge-intelligence-max-sixty-worktrunk-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-max-sixty-worktrunk-learnings-core-invariants",
@@ -18603,8 +18604,8 @@
       "title": "Research & Knowledge Intelligence: max-sixty-worktrunk-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-max-sixty-worktrunk-learnings-research-knowledge-intelligence-max-sixty-worktrun.md",
       "repository": "max-sixty-worktrunk-learnings",
-      "content_hash": "5a573232450dc7e66a6a670e2f07399562777e0159a35c39470e52f34093b51d",
-      "created_at": "2026-11-24T03:50:08.598Z"
+      "content_hash": "75a30a05d05214a1ab5a20d4f1aa4feb8ae8d6f6ca161c2d0d422748688e8238",
+      "created_at": "2026-11-25T06:03:10.338Z"
     },
     "DOM-D-88E5B240": {
       "record_id": "DOM-D-88E5B240",
@@ -21885,8 +21886,8 @@
       "title": "Architecture Intelligence: momenbasel/PureMac Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-momenbasel-puremac-architecture-intelligence-momenbasel-puremac-core-invariants.md",
       "repository": "momenbasel/PureMac",
-      "content_hash": "07a12aeaf83c727b8cbe82705481f173e53923f9cbac92fde00ca7594a4c1dfa",
-      "created_at": "2026-11-22T19:43:16.451Z"
+      "content_hash": "fdba8036a1833badaf81b9d47eb3403bd43cdf94b5a36a16be4e7d4bbfbe47b5",
+      "created_at": "2026-11-25T06:03:05.011Z"
     },
     "DOM-D-E86C357A": {
       "record_id": "DOM-D-E86C357A",
@@ -21936,8 +21937,8 @@
       "title": "Architecture Intelligence: momenbasel-puremac-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-momenbasel-puremac-learnings-architecture-intelligence-momenbasel-puremac-learni.md",
       "repository": "momenbasel-puremac-learnings",
-      "content_hash": "60e47d9b3f456cbcebf562e21e85783ccbecd27fb0649474099e31df13066413",
-      "created_at": "2026-11-22T19:44:12.117Z"
+      "content_hash": "327161275ace75da56b6f45718c2e42a27f647a4856e3578b1c253dcaa83971d",
+      "created_at": "2026-11-25T06:03:41.641Z"
     },
     "domain_intelligence-quality-verification-intelligence-seo-skills-seo-audit-skill-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-seo-skills-seo-audit-skill-core-invariants",
@@ -28491,8 +28492,8 @@
       "title": "Research & Knowledge Intelligence: lodestones/MOSS-Image-SFT-8-steps-dmd Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-lodestones-moss-image-sft-8-steps-dmd-research-knowledge-intelligence-lodesto.md",
       "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
-      "content_hash": "2fe6a1e4a61b932646dda69591567096596205f1c4e089c84bb0fab0841de50e",
-      "created_at": "2026-11-21T11:38:34.517Z"
+      "content_hash": "bc9513567d2e335ee51e9bf4c92d4976431b403c90a497045d81fcf653aff9b1",
+      "created_at": "2026-11-25T06:02:58.322Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-lodestones-moss-image-sft-8-steps-dmd-learnin": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-lodestones-moss-image-sft-8-steps-dmd-learnin",
@@ -28500,8 +28501,8 @@
       "title": "Research & Knowledge Intelligence: hf-lodestones-moss-image-sft-8-steps-dmd-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-lodestones-moss-image-sft-8-steps-dmd-learnings-research-knowledge-intelligen.md",
       "repository": "hf-lodestones-moss-image-sft-8-steps-dmd-learnings",
-      "content_hash": "3bb8e96c00cfd18fb60f747b4802c5470ef1f96e3c672fbdbd915e5efef90472",
-      "created_at": "2026-11-21T11:38:50.539Z"
+      "content_hash": "a6358e050f2d2011bfe83a18647645e84dbf5d4645979b5fbaa42ef00716de72",
+      "created_at": "2026-11-25T06:03:10.932Z"
     },
     "domain_intelligence-research-knowledge-intelligence-dealignai-deepseek-v4-1-flash-1017-uncensored-fp": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-dealignai-deepseek-v4-1-flash-1017-uncensored-fp",
@@ -44285,6 +44286,48 @@
       "repository": "hf-comfy-org-z_image_turbo-learnings",
       "content_hash": "af7de360778cf9013aacf771733b45f8eca0550b4b38e511e864948f4e50efc8",
       "created_at": "2026-11-25T05:20:33.473Z"
+    },
+    "DOM-D-C25EA6D9": {
+      "record_id": "DOM-D-C25EA6D9",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): momenbasel/PureMac",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/momenbasel-puremac-learnings.md`  \n> **Source**: github ([https://github.com/momenbasel/PureMac](https://github.com/momenbasel/PureMac))  \n> **Source Version**: `878316e2`  \n> **License**: MIT  \n> **Synthesized By**: zero-clone-structural-synth",
+      "content_hash": "eec2dba72dc64856cef92160e4b6b0d60b0c42c0a100a006c124e0b3940fad21",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/momenbasel-puremac-learnings.md`  \n> **Source**: github ([https://github.com/momenba -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/momenbasel-puremac-learnings.md`  \n> **Source**: github ([https://github.com/momenba",
+      "provenance": {
+        "source_uri": "project://momenbasel-puremac/momenbasel-puremac-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-25T06:03:11.116Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (momenbasel-puremac)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of momenbasel-puremac"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-25T06:03:41.264Z"
     }
   }
 }

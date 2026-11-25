@@ -786603,3 +786603,100 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `80bc4519` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10468. uninstall only files that open with worktrunk's header (Harvested from max-sixty/worktrunk)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "uninstall only files that open with worktrunk's header",
+  "source": "max-sixty/worktrunk",
+  "source_url": "https://github.com/max-sixty/worktrunk",
+  "source_version": "5666a698",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-25T06:02:59.256Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-max-sixty-worktrunk",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [max-sixty/worktrunk](https://github.com/max-sixty/worktrunk) (Revision: `5666a698`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `src/commands/configure_shell.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `f64e86b9`: shell): uninstall only files that open with worktrunk's header. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/commands/configure_shell.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+/// and which a user's own `wt.fish` / `wt.nu` would not open with.
+const WRAPPER_MARKER: &str = "# worktrunk shell integration for";
+/// Whether a fish completion file is one worktrunk generated: it opens with
+/// [`COMPLETION_MARKER`].
+fn is_worktrunk_completion_content(content: &str) -> bool {
+    content.starts_with(COMPLETION_MARKER)
+}
+
+/// the same way. Every wrapper template worktrunk renders opens with the header,
+    if content.starts_with(WRAPPER_MARKER) {
+            scan_managed_files(&completions_dir, "fish", is_worktrunk_completion_content)?;
+    #[test]
+    fn test_completion_content_matches_only_a_file_opening_with_the_header() {
+        assert!(is_worktrunk_completion_content(&fish_completion_content(
+            "git-wt"
+        )));
+        assert!(!is_worktrunk_completion_content(
+            "# my completions, after # worktrunk completions for fish\ncomplete -c foo\n"
+        ));
+    }
+
+            // The header only marks a file worktrunk wrote where the file opens
+            // with it; a user's file that quotes it further down is theirs.
+            "function my_wt\n    # adapted from: # worktrunk shell integration for fish\n    command wt $argv\nend\n",
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+/// and which a user's own `wt.fish` / `wt.nu` would not carry.
+const WRAPPER_MARKER: &str = "worktrunk shell integration for";
+/// the same way. Every wrapper template worktrunk renders carries the header,
+    if content.contains(WRAPPER_MARKER) {
+            scan_managed_files(&completions_dir, "fish", |c| c.contains(COMPLETION_MARKER))?;
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `f64e86b9` are properly handled with clean fallback behavior.

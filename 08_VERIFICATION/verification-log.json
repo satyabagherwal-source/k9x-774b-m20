@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-RRUP",
-    "timestamp": "2026-11-23T18:32:11.713Z",
-    "repository": "unsloth/embeddinggemma-2-GGUF",
-    "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
-    "contentHash": "8834d8093e5fdd4d3c81cacce058191b0922d23b224cb1850c0fe244dda6ef83",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-S59M",
-    "timestamp": "2026-11-23T18:32:29.098Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "8dae7bf3e901cd82db9715e5459b41b226c4f25dcc1450bc8176e9bc1c96f919",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-2R2E",
-    "timestamp": "2026-11-23T18:40:43.910Z",
-    "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
-    "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
-    "contentHash": "2bf8d7b58a29c8980467b44673412d53d16c387027ddaa55625bc90ff77bf9ff",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-2YTN",
     "timestamp": "2026-11-23T18:40:53.963Z",
     "repository": "nginx/kubernetes-ingress",
@@ -7492,6 +7447,51 @@
     "contentHash": "c4f32f734bf98abbbcf0769dbbe7fcff46eef00843f991f6d0ce99c756fbaa87",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-VYQN",
+    "timestamp": "2026-11-25T06:02:58.079Z",
+    "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
+    "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
+    "contentHash": "c5b0da236f6d5e9d969356d80b52751f4f665e282fa74e42045a6a2c8ba72190",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-W03B",
+    "timestamp": "2026-11-25T06:02:59.831Z",
+    "repository": "max-sixty/worktrunk",
+    "learningId": "learn-github-max-sixty-worktrunk",
+    "contentHash": "3bf43c4fd8af50c2a8fa04c27e4132cedb6bb6bd06d3b6f9a6316255f92c6e95",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-W3VV",
+    "timestamp": "2026-11-25T06:03:04.747Z",
+    "repository": "momenbasel/PureMac",
+    "learningId": "learn-github-momenbasel-puremac",
+    "contentHash": "4fe2baacea4332a6439f704e50d7f93460b98a474aaf907ec279e3cc34689bc7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

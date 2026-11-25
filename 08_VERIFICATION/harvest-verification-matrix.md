@@ -12958,3 +12958,7 @@
 | `CYCLE-20261125-L5E1` | `2026-11-25T05:54:33.481Z` | `reflection/Beam-1.0-501B-A23B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-reflection-beam-1.0-501b-a23b-learnings.md` | Yes (`e5594b0a...`) |
 | `CYCLE-20261125-L6N4` | `2026-11-25T05:54:35.104Z` | `Automattic/harper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10466` | Yes (`bba99e9d...`) |
 | `CYCLE-20261125-LCLF` | `2026-11-25T05:54:42.819Z` | `k3s-io/k3s` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10467` | Yes (`c4f32f73...`) |
+| `CYCLE-20261125-VYQN` | `2026-11-25T06:02:58.079Z` | `lodestones/MOSS-Image-SFT-8-steps-dmd` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lodestones-moss-image-sft-8-steps-dmd-learnings.md` | Yes (`c5b0da23...`) |
+| `CYCLE-20261125-W03B` | `2026-11-25T06:02:59.831Z` | `max-sixty/worktrunk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10468` | Yes (`3bf43c4f...`) |
+| `CYCLE-20261125-W3VV` | `2026-11-25T06:03:04.747Z` | `momenbasel/PureMac` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/momenbasel-puremac-learnings.md` | Yes (`4fe2baac...`) |
+| `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T06:03:41.295Z` | `momenbasel-puremac` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-C25EA6D9` [Domain D] | Yes (`eec2dba7...`) |

@@ -4,22 +4,22 @@
 {
   "source_repository": "max-sixty/worktrunk",
   "source_url": "https://github.com/max-sixty/worktrunk",
-  "source_version": "c6cc8601",
+  "source_version": "5666a698",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-24T03:49:53.739Z",
+  "timestamp": "2026-11-25T06:03:00.086Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-max-sixty-worktrunk",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [max-sixty/worktrunk](https://github.com/max-sixty/worktrunk) (Revision: `c6cc8601`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T03:49:53.739Z`  
+> **Provenance**: Harvested from [max-sixty/worktrunk](https://github.com/max-sixty/worktrunk) (Revision: `5666a698`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T06:03:00.086Z`  
 > **Learning ID**: `learn-github-max-sixty-worktrunk`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `max-sixty/worktrunk` (Commit: `c6cc8601`)
+- **Target Repository**: `max-sixty/worktrunk` (Commit: `5666a698`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/max-sixty/worktrunk](https://github.com/max-sixty/worktrunk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T03:49:52.179Z  
+> **Harvest Timestamp**: 2026-11-25T06:02:58.643Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Worktrunk is a CLI for Git worktree management, designed for parallel AI agent workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 12717 stars
+- **Stars / Engagement**: 12740 stars
 
 ---
 
@@ -2028,939 +2028,116 @@ fn no_matching_commands_error(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `85f5b5bb` (2026-11-24)
-**Commit Message**: refactor(shell_exec): build raw spawns through Cmd::into_command (#4905)
+### Incident Patch 1: `f64e86b9` (2026-11-24)
+**Commit Message**: fix(shell): uninstall only files that open with worktrunk's header (#4909)
 
-Adds `Cmd::into_command()`, which returns the prepared
-`std::process::Command`, and moves every production spawn that owns its
-own stdio, process group or wait onto it. Each child now gets `Cmd`'s
-program resolution and environment setup from one place: the Windows
-batch-launcher lookup, absolutized inherited `GIT_*` paths, the hermetic
-test floor, env ops, the directive scrub and the CD passthrough. `run`,
-`stream` and the other runners build through the same private `prepare`.
+`wt config shell uninstall` now treats a fish or nushell file as
+worktrunk's only when the file opens with worktrunk's header. Before,
+the header text anywhere in the file was enough, so a user's own
+`functions/*.fish`, `completions/*.fish` or nushell autoload file that
+quoted `# worktrunk shell integration for fish` (or `# worktrunk
+completions for`) in a comment was listed for deletion as a whole. The
+prompt still lists the files, but `--yes` skips it.
 
-The helpers sites used to re-apply by hand become private
-(`scrub_directive_env_vars`, `apply_cd_directive_env`,
-`apply_hermetic_test_env`, `ShellConfig::command`).
-`scrub_git_discovery_env_vars` is deleted, and its site classification
-now documents `Cmd::scrub_git_discovery_env`; AGENTS.md points there.
-`priority::command` returns a `Cmd`, and `Cmd::new` takes `impl
-AsRef<OsStr>`, so callers pass paths without a lossy conversion.
+Uninstall has to read ownership from file contents because it takes no
+`--cmd` and scans directories the user owns. Every wrapper template
+(`templates/*`) and `fish_completion_content` puts its header on line 1,
+and the constants' docs already describe it as the header those files
+open with, so matching at the start of the file keeps every file
+worktrunk wrote and drops only mentions elsewhere. The legacy headerless
+`conf.d/{cmd}.fish` fallback is unchanged.
 
-Behavior changes, each from a site that had skipped part of the setup:
+The completion check moves from an inline closure to
+`is_worktrunk_completion_content` so it can be unit-tested. New cases in
+`test_managed_content_matches_wrappers_not_mentions` and
+`test_completion_
 
-- Concurrent alias steps absolutize an inherited relative `GIT_DIR`, as
-serial steps already did. Run from `sub/` with `GIT_DIR=../.g
-
-**File**: `AGENTS.md` (modified, +2/-2)
+**File**: `src/commands/configure_shell.rs` (modified, +24/-5)
 ```diff
-@@ -48,11 +48,11 @@ Git itself may overwrite an ignored destination file when a tracked file arrives
- 
- ### All Commands Through shell_exec::Cmd
- 
--External commands use shell_exec::Cmd for logging and timing; Git generally uses Repository::run_command or WorkingTree::run_command. Use run for capture, stream for live output, delayed_stream for slow setup, and pipe_into for pipelines. In-process spawns outside Cmd use a CommandTrace guard; its contract is in src/trace/emit.rs. Detached background children and interactive helpers are deliberately untraced.
-+External commands use shell_exec::Cmd for program resolution, environment, logging and timing; Git generally uses Repository::run_command or WorkingTree::run_command. Use run for capture, stream for live output, delayed_stream for slow setup, and pipe_into for pipelines. A spawn that owns its stdio, process group or wait builds its Command with Cmd::into_command and traces it with a CommandTrace guard, whose contract is in src/trace/emit.rs. Detached background children and interactive helpers are deliberately untraced.
- 
- ### Git-Discovery Env Vars Follow Who Chose the Cwd
- 
--A child whose cwd is a Worktrunk-chosen worktree must scrub inherited Git discovery variables before running, including hooks and worktree-local plumbing. Repo-level commands and commands in the user's own context keep inherited values. The site classification is in scrub_git_discovery_env_vars in src/shell_exec.rs.
-+A child whose cwd is a Worktrunk-chosen worktree must scrub inherited Git discovery variables before running, including hooks and worktree-local plumbing. Repo-level commands and commands in the user's own context keep inherited values. The site classification is in Cmd::scrub_git_discovery_env in src/shell_exec.rs.
- 
- ### Real-time Output Streaming
- 
-```
-
-**File**: `src/commands/command_executor.rs` (modified, +1/-1)
-```diff
-@@ -941,7 +941,7 @@ mod tests {
-             .path()
-             .join("missing-cwd");
-         let shell = worktrunk::shell_exec::ShellConfig::get().unwrap();
--        let error = worktrunk::shell_exec::Cmd::new(shell.executable.to_string_lossy())
-+        let error = worktrunk::shell_exec::Cmd::new(&shell.executable)
-             .current_dir(&missing)
-             .run()
-             .unwrap_err();
-```
-
-**File**: `src/commands/custom.rs` (modified, +11/-10)
-```diff
-@@ -29,16 +29,15 @@
- 
- use std::ffi::OsString;
- use std::path::{Path, PathBuf};
--use std::process::Command;
- use std::sync::Arc;
- 
- use anyhow::{Context, Result};
- use worktrunk::git::WorktrunkError;
-+use worktrunk::shell_exec::Cmd;
- #[cfg(unix)]
- use worktrunk::shell_exec::TerminalInterrupt;
- #[cfg(not(unix))]
- use worktrunk::shell_exec::wait_shared_child;
--use worktrunk::shell_exec::{DIRECTIVE_EXEC_FILE_ENV_VAR, RETIRED_DIRECTIVE_FILE_ENV_VAR};
- #[cfg(unix)]
- use worktrunk::signal_forwarder::ForegroundSignals;
- use worktrunk::trace::CommandTrace;
-@@ -48,6 +47,7 @@ use crate::commands::{
-     alias_names_for_suggestions, build_invalid_subcommand_error, similar_subcommands, try_alias,
- };
- use crate::enhance_clap_error;
-+use crate::output::DirectivePassthrough;
- 
- /// Handle a `Commands::Custom` invocation.
- ///
-@@ -134,15 +134,16 @@ fn unrecognized_subcommand_error(name: &str) -> clap::Error {
- 
- /// Run the custom binary in the native foreground job, preserving handled signals.
- fn run_custom(path: &Path, args: &[OsString], working_dir: Option<&Path>) -> Result<()> {
--    let mut cmd = Command::new(path);
--    cmd.args(args);
--    // Preserve the raw CD directive, but never expose a file that an older
--    // parent wrapper will source as shell code after this process exits.
--    cmd.env_remove(DIRECTIVE_EXEC_FILE_ENV_VAR);
--    cmd.env_remove(RETIRED_DIRECTIVE_FILE_ENV_VAR);
-+    let mut cmd = Cmd::new(path).args(args);
-     if let Some(dir) = working_dir {
--        cmd.current_dir(dir);
-+        cmd = cmd.current_dir(dir);
-     }
-+    // The CD directive passes through, like an alias's: a custom subcommand
-+    // is the user's own top-level command.
-+    if let Some(cd_file) = DirectivePassthrough::inherit_from_env().cd_file {
-+        cmd = cmd.directive_cd_file(cd_file);
-+    }
-+    let mut cmd = cmd.into_command()?;
- 
-     #[cfg(unix)]
-     let signals = ForegroundSignals::install(TerminalInterrupt::ChildInput)?;
-@@ -302,7 +303,7 @@ mod tests {
-             // A SIGTERM child exit cancels every live foreground scope in the
-             // process, so a concurrent test's spawn would see it as an
-             // interruption. Run this test alone in its own process.
--            let mut command = Command::new(std::env::current_exe().unwrap());
-+            let mut command = std::process::Command::new(std::env::current_exe().unwrap());
-             command
-                 .args([
-                     "--exact",
-```
-
-**File**: `src/commands/for_each.rs` (modified, +1/-1)
-```diff
-@@ -208,7 +208,7 @@ pub fn step_for_each(args: Vec<String>, format: crate::cli::SwitchFormat) -> any
- /// Git-discovery vars are scrubbed too: for-each relocates the user's
- /// command into each worktree, so its `git` calls must discover that
- /// worktree from the cwd, not resolve an inherited `GIT_DIR` pinned to
--/// wherever `wt` was invoked (see `scrub_git_discovery_env_vars`).
-+/// wherever `wt` was invoked (see `Cmd::scrub_git_discovery_env`).
- ///
- /// Child stdout is merged onto stderr so it interleaves cleanly with
- /// for-each's decorated per-worktree headers and footers; the structured
-```
-
-**File**: `src/commands/picker/pager.rs` (modified, +13/-16)
-```diff
-@@ -7,14 +7,15 @@
- //! and kills/reaps only the owned pager; preview falls back to the original text.
- 
- use std::io::Read;
--use std::process::{Command, Stdio};
-+use std::process::Stdio;
- use std::sync::OnceLock;
- use std::time::{Duration, Instant};
- 
- use shared_child::SharedChild;
- 
- use worktrunk::git::Repository;
- use worktrunk::shell::extract_filename_from_path;
-+use worktrunk::shell_exec::Cmd;
- 
- use crate::pager::git_pager;
- 
-@@ -84,22 +85,18 @@ pub(super) fn pipe_through_pager(text: &str, pager_cmd: &str, width: usize) -> S
-     tracing::debug!(pager_cmd = %pager_cmd, "Piping through pager: {}", pager_cmd);
- 
-     let mut trace = worktrunk::trace::CommandTrace::new(None, pager_cmd).reads_stdin(true);
--    let input = match worktrunk::shell_exec::buffered_stdin(text.as_bytes()) {
--        Ok(input) => input,
--        Err(error) => {
--            trace.fail(&error);
--            return text.to_string();
--        }
--    };
--    let mut cmd = Command::new("sh");
--    cmd.arg("-c")
-+    let spawned = Cmd::new("sh")
-+        .arg("-c")
-         .arg(pager_cmd)
--        .stdin(input)
--        .stdout(Stdio::piped())
--        .stderr(Stdio::null())
--        .env("COLUMNS", width.to_string());
--    worktrunk::shell_exec::scrub_directive_env_vars(&mut cmd);
--    let child = match worktrunk::shell_exec::spawn_shared_child(&mut cmd) {
-+        .env("COLUMNS", width.to_string())
-+        .into_command()
-+        .and_then(|mut cmd| {
-+            cmd.stdin(worktrunk::shell_exec::buffered_stdin(text.as_bytes())?)
-+                .stdout(Stdio::piped())
-+                .stderr(Stdio::null());
-+            worktrunk::shell_exec::spawn_shared_child(&mut cmd)
-+        });
-+    let child = match spawned {
-         Ok(child) => child,
-         Err(e) => {
-             trace.fail(&e);
-```
-
-**File**: `src/commands/process.rs` (modified, +31/-96)
-```diff
-@@ -2,8 +2,6 @@ use anyhow::Context;
- use std::ffi::{OsStr, OsString};
- use std::fs;
- use std::path::{Path, PathBuf};
--#[cfg(windows)]
--use std::process::Command;
- use std::process::Stdio;
- use worktrunk::git::{HookType, Repository};
- use worktrunk::path::{format_path_for_display, sanitize_for_filename};
-@@ -198,117 +196,54 @@ pub fn spawn_detached_exec(
-         log_path.file_name().unwrap_or_default().to_string_lossy()
-     );
- 
--    let is_background_hook = matches!(hook_log, HookLog::Hook { .. });
--
--    #[cfg(unix)]
--    {
--        let low_priority = matches!(hook_log, HookLog::Internal(_) | HookLog::Shared(_));
--        spawn_detached_exec_unix(
--            worktree_path,
--            program,
--            args,
--            log_file,
--            stdin_bytes,
--            low_priority,
--            is_background_hook,
--        )?;
--    }
--
--    #[cfg(windows)]
--    {
--        spawn_detached_exec_windows(
--            worktree_path,
--            program,
--            args,
--            log_file,
--            stdin_bytes,
--            is_background_hook,
--        )?;
--    }
--
--    Ok(log_path)
--}
--
--/// Apply [`worktrunk::priority::FOREGROUND_ENV_VAR`] to a
--/// [`std::process::Command`] when spawning a background hook pipeline.
--fn set_background_hook_env(cmd: &mut std::process::Command, is_background_hook: bool) {
--    if is_background_hook {
--        cmd.env(
-+    // See [`worktrunk::priority`] for the priority-lowering rationale.
-+    let low_priority = matches!(hook_log, HookLog::Internal(_) | HookLog::Shared(_));
-+    // Detached children run in a `wt`-chosen directory and outlive this
-+    // process, so they never keep an inherited `GIT_DIR`.
-+    let mut cmd = worktrunk::priority::command(program, low_priority)
-+        .args(args)
-+        .current_dir(worktree_path)
-+        .scrub_git_discovery_env();
-+    if matches!(hook_log, HookLog::Hook { .. }) {
-+        cmd = cmd.env(
-             worktrunk::priority::FOREGROUND_ENV_VAR,
-             worktrunk::priority::BACKGROUND_HOOK_VALUE,
-         );
-     }
-+    let mut cmd = cmd.into_command()?;
-+    cmd.stdin(
-+        worktrunk::shell_exec::buffered_stdin(stdin_bytes)
-+            .context("Failed to prepare detached input")?,
-+    )
-+    .stdout(Stdio::from(
-+        log_file
-+            .try_clone()
-+            .context("Failed to clone log file handle")?,
-+    ))
-+    .stderr(Stdio::from(log_file));
-+    detach(&mut cmd);
-+    worktrunk::shell_exec::spawn(&mut cmd).context("Failed to spawn detached process")?;
-+
-+    Ok(log_path)
+@@ -167,12 +167,18 @@ impl ConfigAction {
  }
  
-+/// A new process group, so the child survives the terminal closing.
- #[cfg(unix)]
--fn spawn_detached_exec_unix(
--    worktree_path: &Path,
--    program: &Path,
--    args: &[impl AsRef<OsStr>],
--    log_file: fs::File,
--    stdin_bytes: &[u8],
--    low_priority: bool,
--    is_background_hook: bool,
--) -> anyhow::Result<()> {
-+fn detach(cmd: &mut std::process::Command) {
-     use std::os::unix::process::CommandExt;
+ /// The header comment every wrapper template worktrunk has shipped opens with,
+-/// and which a user's own `wt.fish` / `wt.nu` would not carry.
+-const WRAPPER_MARKER: &str = "worktrunk shell integration for";
++/// and which a user's own `wt.fish` / `wt.nu` would not open with.
++const WRAPPER_MARKER: &str = "# worktrunk shell integration for";
  
--    // See [`worktrunk::priority`] for the priority-lowering rationale.
--    let mut cmd = worktrunk::priority::command(program, low_priority);
--    cmd.args(args)
--        .current_dir(worktree_path)
--        .stdin(
--            worktrunk::shell_exec::buffered_stdin(stdin_bytes)
--                .context("Failed to prepare detached input")?,
--        )
--        .stdout(Stdio::from(
--            log_file
--                .try_clone()
--                .context("Failed to clone log file handle")?,
--        ))
--        .stderr(Stdio::from(log_file))
--        .process_group(0);
--    worktrunk::shell_exec::scrub_directive_env_vars(&mut cmd);
--    worktrunk::shell_exec::scrub_git_discovery_env_vars(&mut cmd);
--    set_background_hook_env(&mut cmd, is_background_hook);
--    worktrunk::shell_exec::spawn(&mut cmd).context("Failed to spawn detached process")?;
--
--    Ok(())
-+    cmd.process_group(0);
- }
+ /// The header every fish completion file worktrunk has shipped opens with.
+ const COMPLETION_MARKER: &str = "# worktrunk completions for";
  
-+/// A new process group with no console window, detached from this one.
- #[cfg(windows)]
--fn spawn_detached_exec_windows(
--    worktree_path: &Path,
--    program: &Path,
--    args: &[impl AsRef<OsStr>],
--    log_file: fs::File,
--    stdin_bytes: &[u8],
--    is_background_hook: bool,
--) -> anyhow::Result<()> {
-+fn detach(cmd: &mut std::process::Command) {
-     use std::os::windows::process::CommandExt;
- 
-     const CREATE_NEW_PROCESS_GROUP: u32 = 0x00000200;
-     const CREATE_NO_WINDOW: u32 = 0x08000000;
- 
--    let mut cmd = Command::new(program);
--    cmd.args(args)
--        .current_dir(worktree_path)
--        .stdin(
--            worktrunk::shell_exec::buffered_stdin(stdin_bytes)
--                .context("Failed to prepare detached input")?,
--        )
--        .stdout(Stdio::from(
--            log_file
--                .try_clone()
--                .context("Failed to clone log file handle")?,
--        ))
--        .stderr(Stdio::from(log_file))
--        .creation_flags(CREATE_NEW_PROCESS_GROUP | CREATE_NO_WINDOW);
--    worktrunk::shell_exec::scrub_directive_env_vars(&mut cmd);
--    worktrunk::sh
-```
-
-**File**: `src/commands/run_pipeline.rs` (modified, +15/-16)
-```diff
-@@ -17,7 +17,7 @@
- //! ## Execution model
- //!
- //! Each command — whether serial or concurrent — gets its own shell process
--//! via [`ShellConfig`] (`sh` on Unix, Git Bash on Windows). Shell state
-+//! via [`Cmd::shell`] (`sh` on Unix, Git Bash on Windows). Shell state
- //! (`cd`, `export`, environment) does not carry across steps.
- //!
- //! **Serial steps** run one at a time. If a step exits non-zero, the
-@@ -69,7 +69,7 @@ use serde::{Deserialize, Serialize};
- 
- use worktrunk::HookType;
- use worktrunk::git::{Repository, WorktrunkError};
--use worktrunk::shell_exec::{ShellConfig, scrub_git_discovery_env_vars};
-+use worktrunk::shell_exec::Cmd;
- use worktrunk::trace::CommandTrace;
- 
- use super::command_executor::{
-@@ -150,10 +150,9 @@ pub fn run_pipeline() -> anyhow::Result<()> {
- 
- /// Spawn a shell command with its output redirected to a log file.
- ///
--/// Uses `ShellConfig` for portable shell detection (Git Bash on Windows,
--/// `sh` on Unix). stdout/stderr are redirected to `log_file` so each
--/// command gets its own log. Returns the `Child` so the caller controls
--/// when to wait.
-+/// Runs through [`Cmd::shell`] (Git Bash on Windows, `sh` on Unix).
-+/// stdout/stderr are redirected to `log_file` so each command gets its own
-+/// log. Returns the `Child` so the caller controls when to wait.
- ///
- /// Stdin is closed: a detached step has no terminal, so a read returns EOF
- /// rather than blocking on one that isn't there.
-@@ -162,23 +161,23 @@ fn spawn_shell_command(
-     worktree_path: &Path,
-     log_file: fs::File,
- ) -> anyhow::Result<(Child, CommandTrace)> {
--    let shell = ShellConfig::get()?;
-     let log_err = log_file
-         .try_clone()
-         .context("failed to clone log file handle")?;
--    // Start the trace just before spawning; the caller resolves it once the
--    // child is waited on (see `wait_resolving`).
--    let mut trace = CommandTrace::new(None, expanded);
--    let mut command = shell.command(expanded);
--    command
-+    // Background hooks, like foreground ones, discover their repo from the
-+    // worktree cwd, not an inherited GIT_DIR/GIT_WORK_TREE (issue #3373). This
-+    // runner only ever executes hook pipelines, so the scrub is unconditional.
-+    let mut command = Cmd::shell(expanded)
-         .current_dir(worktree_path)
-+        .scrub_git_discovery_env()
-+        .into_command()?;
-+    command
-         .stdin(Stdio::null())
-         .stdout(Stdio::from(log_file))
-         .stderr(Stdio::from(log_err));
--    // Background hooks, like foreground ones, discover their repo from the
--    // worktree cwd, not an inherited GIT_DIR/GIT_WORK_TREE (issue #3373). This
--    // runner only ever executes hook pipelines, so the scrub is unconditional.
--    scrub_git_discovery_env_vars(&mut command);
-+    // Start the trace just before spawning; the caller resolves it once the
-+    // child is waited on (see `wait_resolving`).
-+    let mut trace = CommandTrace::new(None, expanded);
-     let child = match worktrunk::shell_exec::spawn(&mut command) {
-         Ok(child) => child,
-         Err(e) => {
-```
-
-**File**: `src/commands/step/tether.rs` (modified, +14/-12)
-```diff
-@@ -32,6 +32,7 @@ use std::sync::atomic::{AtomicBool, Ordering};
- use std::time::Duration;
- 
- use anyhow::{Context, Result};
-+use worktrunk::shell_exec::Cmd;
- use worktrunk::trace::CommandTrace;
- 
- /// How often the reaper re-checks whether the worktree still exists. Teardown
-@@ -57,15 +58,12 @@ pub(crate) fn step_tether(command: &[String], working_dir: Option<&Path>) -> Res
-     // subdirectory.
-     let worktree = std::env::current_dir().ok();
- 
--    let mut cmd = std::process::Command::new(&command[0]);
--    cmd.args(&command[1..]);
-+    // Direct exec, no implicit shell, same as `wt step for-each`.
-+    let mut cmd = Cmd::new(&command[0]).args(&command[1..]);
-     if let Some(dir) = working_dir {
--        cmd.current_dir(dir);
-+        cmd = cmd.current_dir(dir);
-     }
--    // Direct exec, no implicit shell, same as `wt step for-each`; scrub the
--    // directive env vars so a long-lived child can't redirect the parent
--    // shell's directory.
--    worktrunk::shell_exec::scrub_directive_env_vars(&mut cmd);
-+    let mut cmd = cmd.into_command()?;
-     set_new_process_group(&mut cmd);
-     // The supervised command is in a different process group, so terminal
-     // Ctrl-C reaches this supervisor alone. Hold a foreground signal lease
-@@ -201,12 +199,16 @@ fn kill_process_tree(pid: u32) {
-     // No killable process group on Windows; `taskkill /T` terminates the
-     // process and its child tree, `/F` forces. Best-effort: the pid may
-     // already be gone (self-exit) or have left detached children.
--    let mut command = std::process::Command::new("taskkill");
--    command
-+    let _ = Cmd::new("taskkill")
-         .args(["/T", "/F", "/PID", &pid.to_string()])
--        .stdout(std::process::Stdio::null())
--        .stderr(std::process::Stdio::null());
--    let _ = worktrunk::shell_exec::spawn(&mut command).and_then(|mut child| child.wait());
-+        .into_command()
-+        .and_then(|mut command| {
-+            command
-+                .stdout(std::process::Stdio::null())
-+                .stderr(std::process::Stdio::null());
-+            worktrunk::shell_exec::spawn(&mut command)
-+        })
-+        .and_then(|mut child| child.wait());
- }
- 
- #[cfg(test)]
-```
-
----
-
-### Incident Patch 2: `057ad569` (2026-11-23)
-**Commit Message**: test: make the COW independence test require a copy, and skip TUI demo tapes by name (#4896)
-
-Two tests checked less than they claimed. Both fixes are test-only.
-
-- **`test_copy_ignored_cow_independence`** ran `wt step copy-ignored`
-with `.output().expect(...)`, which catches only a failure to spawn, not
-a non-zero exit. It then wrote `feature/.env` itself and checked that
-the source was unchanged, which holds whether or not anything was
-copied. It now runs through `run_copy_ignored`, which asserts success,
-and checks that the copy reads `original` before modifying it.
-- **`docs/demos/tests/test_recording.py`** skips command extraction for
-TUI demos with `if tape_file not in build["TUI_DEMOS"]`. `tape_file` is
-`wt-switch.tape`, but `TUI_DEMOS` in `docs/demos/build` holds demo names
-such as `wt-switch`, so the skip never applied. All four TUI tapes went
-through the command-extraction asserts and passed only because their
-current contents happen to satisfy them. The check now strips `.tape`
-before comparing, so it skips `wt-statusline`, `wt-switch`,
-`wt-switch-picker` and `wt-zellij-omnibus` as intended.
-
-Both tests pass locally. I found these in the nightly survey.
-
-Co-authored-by: 
-
-**File**: `docs/demos/tests/test_recording.py` (modified, +1/-1)
-```diff
-@@ -99,7 +99,7 @@ def test_docs_demos_open_on_a_complete_command_before_execution() -> None:
-         assert lines[show - 1] == f'Type "{expected_command}"', tape_file
-         assert lines[show + 1 : show + 3] == ["Sleep 300ms", "Enter"], tape_file
- 
--        if tape_file not in build["TUI_DEMOS"]:
-+        if tape_file.removesuffix(".tape") not in build["TUI_DEMOS"]:
-             commands = extract_commands_from_tape(tape, REPO_ROOT)
-             assert commands[0] == expected_command, tape_file
-             assert "wt switch b" not in commands, tape_file
-```
-
-**File**: `tests/integration_tests/step_copy_ignored.rs` (modified, +5/-5)
-```diff
-@@ -769,11 +769,11 @@ fn test_copy_ignored_cow_independence(mut repo: TestRepo) {
-     fs::write(repo.root_path().join(".worktreeinclude"), ".env\n").unwrap();
- 
-     // Copy to feature
--    repo.wt_command()
--        .args(["step", "copy-ignored"])
--        .current_dir(&feature_path)
--        .output()
--        .expect("copy-ignored should succeed");
-+    run_copy_ignored(&repo, &feature_path);
-+    assert_eq!(
-+        fs::read_to_string(feature_path.join(".env")).unwrap(),
-+        "original"
-+    );
- 
-     // Modify the copy in feature
-     fs::write(feature_path.join(".env"), "modified").unwrap();
-```
-
----
-
-### Incident Patch 3: `c6cc8601` (2026-11-24)
-**Commit Message**: refactor: move PreApprovedGuidance and agent checks to their owners (#4904)
-
-Moves two pieces of code into the modules that own them, removing two
-module cycles. No behavior changes.
-
-- `PreApprovedGuidance` moves from `step/squash.rs` to `commit.rs`,
-beside `CommitOptions`, which holds it. `commit.rs` had reached into
-`step` for it while `step::squash` uses `commit.rs`.
-- The Claude, Pi and oh-my-pi availability checks move out of
-`config/show.rs`: `is_claude_available` and `is_statusline_configured`
-to `plugins.rs`, `is_pi_available` to `pi.rs`, `is_omp_available` to
-`omp.rs`. Those modules had called back into `show.rs`, which uses them.
-
-`is_codex_available` stays in `show.rs` and `codex.rs` still imports it
-from there; that edge is one-way, so it forms no cycle, and moving it
-would be for symmetry only.
-
-Max asked for these after the deslop-please architecture linter flagged
-the cycles on worktrunk; a patched run on this branch reports 10 module
-cycles instead of 12, the two above gone and none added. `cargo run --
-hook pre-merge --yes` passed apart from one load-related timeout in
-`test_detached_fallback_native_arguments_and_fresh_checkout`, which
-passes alone.
-
-> _This was w
-
-**File**: `src/commands/commit.rs` (modified, +21/-5)
-```diff
-@@ -60,6 +60,22 @@ impl HookGate {
-     }
- }
- 
-+/// Caller's stance on project commit-message guidance approval.
-+///
-+/// `wt step squash` runs its own gate (the user invokes squash directly, so
-+/// there's no upstream decision to attach to). `wt merge` resolves the append
-+/// through its own `approve_commit_template_append` gate up front and passes
-+/// the result here so `handle_squash` doesn't gate it a second time.
-+#[derive(Debug, Clone)]
-+pub enum PreApprovedGuidance {
-+    /// No pre-approval — `handle_squash` runs its own gate via
-+    /// `approve_commit_template_append` (only if the LLM is configured).
-+    RunOwnGate,
-+    /// Caller already resolved the guidance through an upstream batch.
-+    /// `None` means "guidance not configured or user declined".
-+    Resolved(Option<String>),
++/// Whether a fish completion file is one worktrunk generated: it opens with
++/// [`COMPLETION_MARKER`].
++fn is_worktrunk_completion_content(content: &str) -> bool {
++    content.starts_with(COMPLETION_MARKER)
 +}
 +
- /// Options for committing current changes.
- pub struct CommitOptions<'a> {
-     pub ctx: &'a CommandContext<'a>,
-@@ -70,7 +86,7 @@ pub struct CommitOptions<'a> {
-     /// Whether `commit()` runs its own guidance approval gate or trusts a
-     /// value supplied by the caller (`wt merge` resolves the guidance via
-     /// `approve_commit_template_append` up front and passes it through).
--    pub guidance: super::step::PreApprovedGuidance,
-+    pub guidance: PreApprovedGuidance,
- }
- 
- impl<'a> CommitOptions<'a> {
-@@ -81,7 +97,7 @@ impl<'a> CommitOptions<'a> {
-             hooks: HookGate::Run,
-             stage_mode: StageMode::All,
-             show_no_squash_note: false,
--            guidance: super::step::PreApprovedGuidance::RunOwnGate,
-+            guidance: PreApprovedGuidance::RunOwnGate,
+ /// Whether a whole file is one worktrunk generated, and so is `uninstall`'s to
+ /// delete.
+ ///
+@@ -185,7 +191,7 @@ const COMPLETION_MARKER: &str = "# worktrunk completions for";
+ ///
+ /// The answer is independent of the binary name embedded in the file, so a
+ /// wrapper installed as `wt.fish`, `git-wt.fish`, or `git-wt.nu` is recognized
+-/// the same way. Every wrapper template worktrunk renders carries the header,
++/// the same way. Every wrapper template worktrunk renders opens with the header,
+ /// so that answers first. The fallback covers the legacy `conf.d/{cmd}.fish`,
+ /// which predates the templates and holds nothing but the init line: a file
+ /// qualifies only when every non-blank, non-comment line is an integration line
+@@ -197,7 +203,7 @@ const COMPLETION_MARKER: &str = "# worktrunk completions for";
+ /// `wt config shell init` amid other code — or merely mentions it in a comment
+ /// — survives; a whole-file substring test would delete it.
+ fn is_worktrunk_managed_content(content: &str) -> bool {
+-    if content.contains(WRAPPER_MARKER) {
++    if content.starts_with(WRAPPER_MARKER) {
+         return true;
+     }
+     let code_lines = fish_code_lines(content);
+@@ -1487,7 +1493,7 @@ fn scan_for_uninstall(
+     if shells.contains(&Shell::Fish) {
+         let completions_dir = shell::fish_config_dir(&home).join("completions");
+         let completions =
+-            scan_managed_files(&completions_dir, "fish", |c| c.contains(COMPLETION_MARKER))?;
++            scan_managed_files(&completions_dir, "fish", is_worktrunk_completion_content)?;
+         if completions.is_empty() {
+             completion_not_found.push((Shell::Fish, completions_dir));
          }
+@@ -1926,6 +1932,16 @@ mod tests {
+         assert_eq!(fish_code_lines(old), fish_code_lines(new));
      }
- }
-@@ -274,11 +290,11 @@ impl CommitOptions<'_> {
-         // message generator doesn't render the prompt template, so guidance
-         // would never reach an LLM anyway.
-         let project_append = match self.guidance {
--            super::step::PreApprovedGuidance::Resolved(value) => value,
--            super::step::PreApprovedGuidance::RunOwnGate if effective_config.is_configured() => {
-+            PreApprovedGuidance::Resolved(value) => value,
-+            PreApprovedGuidance::RunOwnGate if effective_config.is_configured() => {
-                 super::command_approval::approve_commit_template_append(self.ctx)?
-             }
--            super::step::PreApprovedGuidance::RunOwnGate => None,
-+            PreApprovedGuidance::RunOwnGate => None,
-         };
-         let outcome = CommitGenerator::new(&effective_config, project_append.as_deref())
-             .commit_staged_changes(
-```
-
-**File**: `src/commands/config/omp.rs` (modified, +8/-0)
-```diff
-@@ -71,3 +71,11 @@ pub fn handle_omp_uninstall(yes: bool) -> Result<()> {
-     let target = plugin_path()?;
-     super::uninstall_file_plugin("oh-my-pi", &target, yes)
- }
-+
-+/// Check if the oh-my-pi coding agent CLI is available.
-+pub(super) fn is_omp_available() -> bool {
-+    if let Ok(val) = std::env::var("WORKTRUNK_TEST_OMP_INSTALLED") {
-+        return val == "1";
+ 
++    #[test]
++    fn test_completion_content_matches_only_a_file_opening_with_the_header() {
++        assert!(is_worktrunk_completion_content(&fish_completion_content(
++            "git-wt"
++        )));
++        assert!(!is_worktrunk_completion_content(
++            "# my completions, after # worktrunk completions for fish\ncomplete -c foo\n"
++        ));
 +    }
-+    which::which("omp").is_ok()
-+}
-```
-
-**File**: `src/commands/config/pi.rs` (modified, +9/-1)
-```diff
-@@ -54,7 +54,7 @@ pub fn handle_pi_install(yes: bool) -> Result<()> {
-     // and no Pi has most likely reached the wrong one. Say so here because
-     // nothing downstream will: `wt config show` gates its PI section on
-     // `which pi`, so the extension this writes stays invisible to them.
--    if super::show::is_omp_available() && !super::show::is_pi_available() {
-+    if super::omp::is_omp_available() && !is_pi_available() {
-         eprintln!(
-             "{}",
-             warning_message(cformat!(
-@@ -88,3 +88,11 @@ pub fn handle_pi_uninstall(yes: bool) -> Result<()> {
-     }
-     Ok(())
- }
 +
-+/// Check if the Pi coding agent CLI is available.
-+pub(super) fn is_pi_available() -> bool {
-+    if let Ok(val) = std::env::var("WORKTRUNK_TEST_PI_INSTALLED") {
-+        return val == "1";
-+    }
-+    which::which("pi").is_ok()
-+}
-```
-
-**File**: `src/commands/config/plugins.rs` (modified, +69/-1)
-```diff
-@@ -10,7 +10,6 @@ use worktrunk::path::paths_match;
- use worktrunk::shell_exec::Cmd;
- use worktrunk::styling::{eprintln, info_message, println, progress_message, success_message};
- 
--use super::show::{claude_config_dir, is_claude_available, is_statusline_configured};
- use crate::commands::is_worktree_at_expected_path;
- use crate::output::print_json;
- use crate::output::prompt::{PromptResponse, prompt_yes_no_preview};
-@@ -22,6 +21,75 @@ const PLUGIN_NAME: &str = "worktrunk";
- /// `id` Claude Code lists the plugin under.
- const PLUGIN_SELECTOR: &str = "worktrunk@worktrunk";
- 
-+/// Check if Claude Code CLI is available
-+pub(super) fn is_claude_available() -> bool {
-+    // Allow tests to override detection
-+    if let Ok(val) = std::env::var("WORKTRUNK_TEST_CLAUDE_INSTALLED") {
-+        return val == "1";
-+    }
-+    which::which("claude").is_ok()
-+}
-+
-+/// Get the Claude Code config directory.
-+///
-+/// This locates `settings.json`, the one Claude Code file wt reads. It reads
-+/// that file because it writes it: `install-statusline` merges the
-+/// `statusLine` key in, and Claude Code has no command that reports the
-+/// setting back. Everything else wt wants to know about a harness it asks the
-+/// harness (see [`super::harness_listing`]).
-+///
-+/// Honors `CLAUDE_CONFIG_DIR`, which Claude Code uses to relocate its config
-+/// away from the default `~/.claude`. A leading `~` in the value is expanded
-+/// against the home directory; the shell normally expands it before the
-+/// variable is set, so a literal `~` only reaches us when the variable is set
-+/// in a non-shell context.
-+fn claude_config_dir() -> Option<PathBuf> {
-+    if let Ok(dir) = std::env::var("CLAUDE_CONFIG_DIR")
-+        && !dir.is_empty()
-+    {
-+        if dir == "~" {
-+            return worktrunk::path::home_dir();
-+        }
-+        if let Ok(rest) = Path::new(&dir).strip_prefix("~") {
-+            return worktrunk::path::home_dir().map(|home| home.join(rest));
-+        }
-+        return Some(PathBuf::from(dir));
-+    }
-+    // Claude Code defaults to os.homedir(): USERPROFILE on Windows, not HOME.
-+    worktrunk::path::home_dir().map(|home| home.join(".claude"))
-+}
-+
-+/// Whether Claude Code's statusline runs worktrunk's.
-+///
-+/// The question is which subcommand the configured command invokes, so it's
-+/// asked of the adjacent tokens `list statusline` — the binary answers the
-+/// same whether it's `wt`, `git-wt`, or an absolute path. Matching on the
-+/// binary alone accepted any command that merely spelled `wt ` somewhere
-+/// (`newt status`), which reported a foreign statusline as worktrunk's and
-+/// left `install-statusline` refusing to install.
-+pub(super) fn is_statusline_configured() -> bool {
-+    let Some(config_dir) = claude_config_dir() else {
-+        return false;
-+    };
-+
-+    let settings_file = config_dir.join("settings.json");
-+    let Ok(content) = std::fs::read_to_string(&settings_file) else {
-+        return false;
-+    };
-+
-+    let Ok(json) = serde_json::from_str::<serde_json::Value>(&content) else {
-+        return false;
-+    };
-+
-+    json.get("statusLine")
-+        .and_then(|s| s.get("command"))
-+        .and_then(|c| c.as_str())
-+        .is_some_and(|cmd| {
-+            let tokens: Vec<&str> = cmd.split_whitespace().collect();
-+            tokens.windows(2).any(|pair| pair == ["list", "statusline"])
-+        })
-+}
-+
- /// Handle `wt config plugins claude install`
- pub fn handle_claude_install(yes: bool) -> anyhow::Result<()> {
-     require_claude_cli()?;
-```
-
-**File**: `src/commands/config/show.rs` (modified, +5/-90)
-```diff
-@@ -5,7 +5,7 @@
- 
- use std::collections::HashSet;
- use std::fmt::Write as _;
--use std::path::{Path, PathBuf};
-+use std::path::Path;
- 
- use anyhow::Context;
- use color_print::cformat;
-@@ -73,7 +73,7 @@ pub fn handle_config_show(full: bool, format: SwitchFormat) -> anyhow::Result<()
-     render_shell_status(&mut show_output)?;
- 
-     // Render Claude Code status (only when claude CLI is available)
--    if is_claude_available() {
-+    if super::plugins::is_claude_available() {
-         show_output.push('\n');
-         render_claude_code_status(&mut show_output)?;
-     }
-@@ -96,7 +96,7 @@ pub fn handle_config_show(full: bool, format: SwitchFormat) -> anyhow::Result<()
-     }
- 
-     // Render oh-my-pi status (only when the oh-my-pi CLI is available)
--    if is_omp_available() {
-+    if super::omp::is_omp_available() {
-         show_output.push('\n');
-         show_output.push_str(&file_plugin_status(
-             "OH-MY-PI",
-@@ -107,7 +107,7 @@ pub fn handle_config_show(full: bool, format: SwitchFormat) -> anyhow::Result<()
-     }
- 
-     // Render Pi status (only when the Pi CLI is available)
--    if is_pi_available() {
-+    if super::pi::is_pi_available() {
-         show_output.push('\n');
-         show_output.push_str(&file_plugin_status(
-             "PI",
-@@ -318,15 +318,6 @@ fn parse_project_config_json(
- 
- // ==================== Helper Functions ====================
- 
--/// Check if Claude Code CLI is available
--pub(super) fn is_claude_available() -> bool {
--    // Allow tests to override detection
--    if let Ok(val) = std::env::var("WORKTRUNK_TEST_CLAUDE_INSTALLED") {
--        return val == "1";
--    }
--    which::which("claude").is_ok()
--}
--
- /// Check if Codex CLI is available
- pub(super) fn is_codex_available() -> bool {
-     // Allow tests to override detection
-@@ -336,66 +327,6 @@ pub(super) fn is_codex_available() -> bool {
-     which::which("codex").is_ok()
- }
- 
--/// Get the Claude Code config directory.
--///
--/// This locates `settings.json`, the one Claude Code file wt reads. It reads
--/// that file because it writes it: `install-statusline` merges the
--/// `statusLine` key in, and Claude Code has no command that reports the
--/// setting back. Everything else wt wants to know about a harness it asks the
--/// harness (see [`super::harness_listing`]).
--///
--/// Honors `CLAUDE_CONFIG_DIR`, which Claude Code uses to relocate its config
--/// away from the default `~/.claude`. A leading `~` in the value is expanded
--/// against the home directory; the shell normally expands it before the
--/// variable is set, so a literal `~` only reaches us when the variable is set
--/// in a non-shell context.
--pub(super) fn claude_config_dir() -> Option<PathBuf> {
--    if let Ok(dir) = std::env::var("CLAUDE_CONFIG_DIR")
--        && !dir.is_empty()
--    {
--        if dir == "~" {
--            return worktrunk::path::home_dir();
--        }
--        if let Ok(rest) = Path::new(&dir).strip_prefix("~") {
--            return worktrunk::path::home_dir().map(|home| home.join(rest));
--        }
--        return Some(PathBuf::from(dir));
--    }
--    // Claude Code defaults to os.homedir(): USERPROFILE on Windows, not HOME.
--    worktrunk::path::home_dir().map(|home| home.join(".claude"))
--}
--
--/// Whether Claude Code's statusline runs worktrunk's.
--///
--/// The question is which subcommand the configured command invokes, so it's
--/// asked of the adjacent tokens `list statusline` — the binary answers the
--/// same whether it's `wt`, `git-wt`, or an absolute path. Matching on the
--/// binary alone accepted any command that merely spelled `wt ` somewhere
--/// (`newt status`), which reported a foreign statusline as worktrunk's and
--/// left `install-statusline` refusing to install.
--pub(super) fn is_statusline_configured() -> bool {
--    let Some(config_dir) = claude_config_dir() else {
--        return false;
--    };
--
--    let settings_file = config_dir.join("settings.json");
--    let Ok(content) = std::fs::read_to_string(&settings_file) else {
--        return false;
--    };
--
--    let Ok(json) = serde_json::from_str::<serde_json::Value>(&content) else {
--        return false;
--    };
--
--    json.get("statusLine")
--        .and_then(|s| s.get("command"))
--        .and_then(|c| c.as_str())
--        .is_some_and(|cmd| {
--            let tokens: Vec<&str> = cmd.split_whitespace().collect();
--            tokens.windows(2).any(|pair| pair == ["list", "statusline"])
--        })
--}
--
- // ==================== Render Functions ====================
- 
- /// Existing state is neutral; an action the reader can take belongs on its own row.
-@@ -432,7 +363,7 @@ fn render_claude_code_status(out: &mut String) -> anyhow::Result<()> {
-     }
- 
-     // Statusline status
--    let statusline_configured = is_statusline_configured();
-+    let statusline_configured = super::plugins::is_statusline_configured();
-     if statusline_configured {
-         writeln!(out, "{}", info_message("Statusline configured"))?;
-     } else {
-@@ -476,22 +407,6 @@ fn is_open
-```
-
-**File**: `src/commands/merge.rs` (modified, +2/-2)
-```diff
-@@ -16,7 +16,7 @@ use crate::output::print_json;
- 
- use super::command_approval::approve_commit_template_append;
- use super::command_executor::FailureStrategy;
--use super::commit::{CommitOptions, HookGate};
-+use super::commit::{CommitOptions, HookGate, PreApprovedGuidance};
- use super::context::CommandEnv;
- use super::flag_pair;
- use super::hook_plan::{ApprovedHookPlan, HookPlanBuilder, execute_planned_hook};
-@@ -393,7 +393,7 @@ fn merge_in(
-     } else {
-         None
-     };
--    let guidance = super::step::PreApprovedGuidance::Resolved(project_append);
-+    let guidance = PreApprovedGuidance::Resolved(project_append);
- 
-     // Only confirmed stages are reported on failure. In particular cleanup
-     // stays unknown until finish_after_merge records its removal decision.
-```
-
-**File**: `src/commands/mod.rs` (modified, +3/-3)
-```diff
-@@ -62,9 +62,9 @@ pub(crate) use remove::handle_remove_command;
- pub(crate) use repository_ext::RemoveTarget;
- pub(crate) use run_pipeline::run_pipeline;
- pub(crate) use step::{
--    PreApprovedGuidance, PromoteResult, RebaseResult, SquashResult, handle_promote, handle_rebase,
--    handle_squash, step_commit, step_copy_ignored, step_diff, step_dry_run_squash, step_prune,
--    step_relocate, step_show_squash_prompt, step_tether,
-+    PromoteResult, RebaseResult, SquashResult, handle_promote, handle_rebase, handle_squash,
-+    step_commit, step_copy_ignored, step_diff, step_dry_run_squash, step_prune, step_relocate,
-+    step_show_squash_prompt, step_tether,
- };
- pub(crate) use worktree::{
-     handle_switch_command, is_worktree_at_expected_path, worktree_display_name,
-```
-
-**File**: `src/commands/step/mod.rs` (modified, +1/-1)
-```diff
-@@ -34,6 +34,6 @@ pub(crate) use prune::step_prune;
- pub(crate) use rebase::{RebaseResult, handle_rebase};
- pub(crate) use relocate::step_relocate;
- pub(crate) use squash::{
--    PreApprovedGuidance, SquashResult, handle_squash, step_dry_run_squash, step_show_squash_prompt,
-+    SquashResult, handle_squash, step_dry_run_squash, step_show_squash_prompt,
- };
- pub(crate) use tether::step_tether;
+     #[test]
+     fn test_managed_content_matches_wrappers_not_mentions() {
+         // Ours: the header every wrapper template carries, under any binary
+@@ -1950,6 +1966,9 @@ mod tests {
+             "function notes\n    echo run wt config shell init fish to set up\nend\n",
+             "# reminder: wt config shell init fish\nfunction helpers\n    cat ~/.aliases | source\nend\n",
+             "function helper\n    command wt config shell init fish | source\nend\n",
++            // The header only marks a file worktrunk wrote where the file opens
++            // with it; a user's file that quotes it further down is theirs.
++            "function my_wt\n    # adapted from: # worktrunk shell integration for fish\n    command wt $argv\nend\n",
+             "",
+         ] {
+             assert!(!is_worktrunk_managed_content(content), "{content}");
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4912** (2026-11-25): chore: bump taiki-e/install-action from 2.90.6 to 2.90.8 (@dependabot[bot])
+- **PR #4910** (2026-11-24): chore: drop a dead stdout allowlist entry and correct two stale docs (@worktrunk-bot)
+- **PR #4909** (2026-11-24): fix(shell): uninstall only files that open with worktrunk's header (@worktrunk-bot)
+- **PR #4907** (2026-11-24): chore: bump cachix/install-nix-action from 31 to 32 (@dependabot[bot])
 - **PR #4905** (2026-11-24): refactor(shell_exec): build raw spawns through Cmd::into_command (@max-sixty)
 - **PR #4904** (2026-11-24): refactor: move PreApprovedGuidance and agent checks to their owners (@max-sixty)
-- **PR #4903** (2026-11-24): fix(fsmonitor): scrub inherited git discovery vars when starting the daemon (@max-sixty)
-- **PR #4902** (2026-11-24): fix(picker): read GitLab MR status the way wt list does (@max-sixty)
-- **PR #4901** (2026-11-24): fix(merge): offer LLM setup only when the merge will commit (@max-sixty)
-- **PR #4900** (2026-11-23): fix(git): skip remotes with an empty url when choosing the primary remote (@worktrunk-bot)
 
 ---
 
@@ -2980,33 +2157,58 @@ passes alone.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. shell_exec): build raw spawns through Cmd::into_command
+## X. shell): uninstall only files that open with worktrunk's header
 
 **RULE**:
-When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/commands/configure_shell.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `85f5b5bb`: shell_exec): build raw spawns through Cmd::into_command. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f64e86b9`: shell): uninstall only files that open with worktrunk's header. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/commands/configure_shell.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-External commands use shell_exec::Cmd for program resolution, environment, logging and timing; Git generally uses Repository::run_command or WorkingTree::run_command. Use run for capture, stream for live output, delayed_stream for slow setup, and pipe_into for pipelines. A spawn that owns its stdio, process group or wait builds its Command with Cmd::into_command and traces it with a CommandTrace guard, whose contract is in src/trace/emit.rs. Detached background children and interactive helpers are deliberately untraced.
-A child whose cwd is a Worktrunk-chosen worktree must scrub inherited Git discovery variables before running, including hooks and worktree-local plumbing. Repo-level commands and commands in the user's own context keep inherited values. The site classification is in Cmd::scrub_git_discovery_env in src/shell_exec.rs.
+/// and which a user's own `wt.fish` / `wt.nu` would not open with.
+const WRAPPER_MARKER: &str = "# worktrunk shell integration for";
+/// Whether a fish completion file is one worktrunk generated: it opens with
+/// [`COMPLETION_MARKER`].
+fn is_worktrunk_completion_content(content: &str) -> bool {
+    content.starts_with(COMPLETION_MARKER)
+}
+
+/// the same way. Every wrapper template worktrunk renders opens with the header,
+    if content.starts_with(WRAPPER_MARKER) {
+            scan_managed_files(&completions_dir, "fish", is_worktrunk_completion_content)?;
+    #[test]
+    fn test_completion_content_matches_only_a_file_opening_with_the_header() {
+        assert!(is_worktrunk_completion_content(&fish_completion_content(
+            "git-wt"
+        )));
+        assert!(!is_worktrunk_completion_content(
+            "# my completions, after # worktrunk completions for fish\ncomplete -c foo\n"
+        ));
+    }
+
+            // The header only marks a file worktrunk wrote where the file opens
+            // with it; a user's file that quotes it further down is theirs.
+            "function my_wt\n    # adapted from: # worktrunk shell integration for fish\n    command wt $argv\nend\n",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-External commands use shell_exec::Cmd for logging and timing; Git generally uses Repository::run_command or WorkingTree::run_command. Use run for capture, stream for live output, delayed_stream for slow setup, and pipe_into for pipelines. In-process spawns outside Cmd use a CommandTrace guard; its contract is in src/trace/emit.rs. Detached background children and interactive helpers are deliberately untraced.
-A child whose cwd is a Worktrunk-chosen worktree must scrub inherited Git discovery variables before running, including hooks and worktree-local plumbing. Repo-level commands and commands in the user's own context keep inherited values. The site classification is in scrub_git_discovery_env_vars in src/shell_exec.rs.
+/// and which a user's own `wt.fish` / `wt.nu` would not carry.
+const WRAPPER_MARKER: &str = "worktrunk shell integration for";
+/// the same way. Every wrapper template worktrunk renders carries the header,
+    if content.contains(WRAPPER_MARKER) {
+            scan_managed_files(&completions_dir, "fish", |c| c.contains(COMPLETION_MARKER))?;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `85f5b5bb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f64e86b9` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T05:54:49.504Z",
+  "last_updated": "2026-11-25T06:03:41.641Z",
   "total_verified_learnings": 9112,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25263,
+  "total_items": 25266,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -240089,8 +240089,8 @@
       "slug": "max-sixty-worktrunk",
       "platform": "github",
       "source_url": "https://github.com/max-sixty/worktrunk",
-      "source_version": "c6cc8601",
-      "content_hash": "ebfaba4f8dcafdc270021d6b84cd784e74ef06704fdf96dc318ac921557031a1",
+      "source_version": "5666a698",
+      "content_hash": "3bf43c4fd8af50c2a8fa04c27e4132cedb6bb6bd06d3b6f9a6316255f92c6e95",
       "dossier_path": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "promoted_rules": [
@@ -240133,6 +240133,11 @@
           "number": 10190,
           "title": "build raw spawns through Cmd::into_command",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10468,
+          "title": "uninstall only files that open with worktrunk's header",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -240140,7 +240145,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T03:49:53.300Z",
+      "verified_at": "2026-11-25T06:02:59.600Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -240182,10 +240187,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-max-sixty-worktrunk-research-knowledge-intelligence-max-sixty-worktrunk-core-inv.md",
       "title": "Research & Knowledge Intelligence: max-sixty/worktrunk Core Invariants",
       "repository": "max-sixty/worktrunk",
-      "source_version": "c6cc8601",
-      "content_hash": "7db1a42bddde9a700bf5e55c1a6172af43c6b8f0b2c966014c36cdd21d2c839a",
+      "source_version": "5666a698",
+      "content_hash": "cbb27bd5f750c95b56de329cb103944b0da122e80827b53f629ef1f66527c91c",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T03:49:53.904Z"
+      "persisted_at": "2026-11-25T06:03:00.271Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-max-sixty-worktrunk": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-max-sixty-worktrunk",
@@ -240194,10 +240199,10 @@
       "relative_path": "08_VERIFICATION/max-sixty-worktrunk-verification-protocol-empirical-defect-shield-for-max-sixty-.md",
       "title": "Verification Protocol: Empirical Defect Shield for max-sixty/worktrunk",
       "repository": "max-sixty/worktrunk",
-      "source_version": "c6cc8601",
-      "content_hash": "2785af657cd906061baf24f74a458cb3b6487cfcdfb2b2bc2b8511de5380cf6b",
+      "source_version": "5666a698",
+      "content_hash": "e61d4a2c93ad9edc973a02ebb83ba9b55da303f43fc8cb8e030fea5d4b309380",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T03:49:54.080Z"
+      "persisted_at": "2026-11-25T06:03:00.460Z"
     },
     "candidate_directive-state-stop-a-branch-s-vars-from-including-a-dotted-branch-s-vars": {
       "item_id": "candidate_directive-state-stop-a-branch-s-vars-from-including-a-dotted-branch-s-vars",
@@ -240219,9 +240224,9 @@
       "title": "Research & Knowledge Intelligence: max-sixty-worktrunk-learnings Core Invariants",
       "repository": "max-sixty-worktrunk-learnings",
       "source_version": "HEAD",
-      "content_hash": "5a573232450dc7e66a6a670e2f07399562777e0159a35c39470e52f34093b51d",
+      "content_hash": "75a30a05d05214a1ab5a20d4f1aa4feb8ae8d6f6ca161c2d0d422748688e8238",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T03:50:08.598Z"
+      "persisted_at": "2026-11-25T06:03:10.338Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-max-sixty-worktrunk-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-max-sixty-worktrunk-learnings",
@@ -240231,9 +240236,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for max-sixty-worktrunk-learnings",
       "repository": "max-sixty-worktrunk-learnings",
       "source_version": "HEAD",
-      "content_hash": "2654754f11077c173c6037adf996e99bdfe4afbcd97dea46a25fa88c47b68c79",
+      "content_hash": "f9cc1c2acf04379703800fa9d57e4b8daca780d316e034fce1256810ceeae609",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T03:50:08.768Z"
+      "persisted_at": "2026-11-25T06:03:10.533Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-microsoft-frognano-4b-2609-learnings-core-inv": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-microsoft-frognano-4b-2609-learnings-core-inv",
@@ -249913,8 +249918,8 @@
       "slug": "momenbasel-puremac",
       "platform": "github",
       "source_url": "https://github.com/momenbasel/PureMac",
-      "source_version": "2ad5f1a9",
-      "content_hash": "81177f1a5d371d1a765f7bca1d9b2be63c6357acdf2487643cd25e29836d045f",
+      "source_version": "878316e2",
+      "content_hash": "4fe2baacea4332a6439f704e50d7f93460b98a474aaf907ec279e3cc34689bc7",
       "dossier_path": "07_PROJECT_LEARNING/momenbasel-puremac-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/momenbasel-puremac-learnings.md",
       "promoted_rules": [
@@ -249929,7 +249934,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T19:43:15.896Z",
+      "verified_at": "2026-11-25T06:03:04.531Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -249945,10 +249950,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-momenbasel-puremac-architecture-intelligence-momenbasel-puremac-core-invariants.md",
       "title": "Architecture Intelligence: momenbasel/PureMac Core Invariants",
       "repository": "momenbasel/PureMac",
-      "source_version": "2ad5f1a9",
-      "content_hash": "07a12aeaf83c727b8cbe82705481f173e53923f9cbac92fde00ca7594a4c1dfa",
+      "source_version": "878316e2",
+      "content_hash": "fdba8036a1833badaf81b9d47eb3403bd43cdf94b5a36a16be4e7d4bbfbe47b5",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T19:43:16.451Z"
+      "persisted_at": "2026-11-25T06:03:05.011Z"
     },
     "rule-8621": {
       "learning_id": "rule-8621",
@@ -249984,9 +249989,9 @@
       "title": "Architecture Intelligence: momenbasel-puremac-learnings Core Invariants",
       "repository": "momenbasel-puremac-learnings",
       "source_version": "HEAD",
-      "content_hash": "60e47d9b3f456cbcebf562e21e85783ccbecd27fb0649474099e31df13066413",
+      "content_hash": "327161275ace75da56b6f45718c2e42a27f647a4856e3578b1c253dcaa83971d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T19:44:12.117Z"
+      "persisted_at": "2026-11-25T06:03:41.641Z"
     },
     "learn-github-pimalaya-himalaya": {
       "learning_id": "learn-github-pimalaya-himalaya",
@@ -278631,7 +278636,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/lodestones/MOSS-Image-SFT-8-steps-dmd",
       "source_version": "hf-lodestones-moss-image-sft-8-steps-dmd",
-      "content_hash": "8b666adc88ea44ff87e8818360145996ad8b4508bd7253fe66a6b8d478bb9b73",
+      "content_hash": "c5b0da236f6d5e9d969356d80b52751f4f665e282fa74e42045a6a2c8ba72190",
       "dossier_path": "07_PROJECT_LEARNING/hf-lodestones-moss-image-sft-8-steps-dmd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-lodestones-moss-image-sft-8-steps-dmd-learnings.md",
       "promoted_rules": [],
@@ -278640,7 +278645,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T11:38:33.992Z",
+      "verified_at": "2026-11-25T06:02:57.831Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -278657,9 +278662,9 @@
       "title": "Research & Knowledge Intelligence: lodestones/MOSS-Image-SFT-8-steps-dmd Core Invariants",
       "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
       "source_version": "hf-lodestones-moss-image-sft-8-steps-dmd",
-      "content_hash": "2fe6a1e4a61b932646dda69591567096596205f1c4e089c84bb0fab0841de50e",
+      "content_hash": "bc9513567d2e335ee51e9bf4c92d4976431b403c90a497045d81fcf653aff9b1",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T11:38:34.517Z"
+      "persisted_at": "2026-11-25T06:02:58.322Z"
     },
     "rule-8991": {
       "learning_id": "rule-8991",
@@ -278745,9 +278750,9 @@
       "title": "Research & Knowledge Intelligence: hf-lodestones-moss-image-sft-8-steps-dmd-learnings Core Invariants",
       "repository": "hf-lodestones-moss-image-sft-8-steps-dmd-learnings",
       "source_version": "HEAD",
-      "content_hash": "3bb8e96c00cfd18fb60f747b4802c5470ef1f96e3c672fbdbd915e5efef90472",
+      "content_hash": "a6358e050f2d2011bfe83a18647645e84dbf5d4645979b5fbaa42ef00716de72",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T11:38:50.539Z"
+      "persisted_at": "2026-11-25T06:03:10.932Z"
     },
     "agent_contract-agent-contract-freenet-freenet-core-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-freenet-freenet-core-learnings-autonomous-specialist-persona",
@@ -345484,6 +345489,44 @@
       "content_hash": "6279adda0f7fcd2580409078d1f438cb1cc4caf88a8e6f7cbf0ef66d8ee58a8b",
       "domain_letter": "G",
       "persisted_at": "2026-11-25T05:54:49.025Z"
+    },
+    "rule-10468": {
+      "learning_id": "rule-10468",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10468,
+      "title": "uninstall only files that open with worktrunk's header",
+      "source_url": "https://github.com/max-sixty/worktrunk",
+      "source_version": "5666a698",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T06:02:59.600Z"
+    },
+    "candidate_directive-uninstall-only-files-that-open-with-worktrunk-s-header": {
+      "item_id": "candidate_directive-uninstall-only-files-that-open-with-worktrunk-s-header",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-W0AB-uninstall-only-files-that-open-with-worktrunk-s-header.md",
+      "title": "uninstall only files that open with worktrunk's header",
+      "repository": "max-sixty/worktrunk",
+      "source_version": "5666a698",
+      "content_hash": "87c037638643b225df628cd77d44bf8c73a4a5a582fdce3b1dfc640e3113c736",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-25T06:03:00.086Z"
+    },
+    "candidate_directive-shell-uninstall-only-files-that-open-with-worktrunk-s-header": {
+      "item_id": "candidate_directive-shell-uninstall-only-files-that-open-with-worktrunk-s-header",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-W81Z-shell-uninstall-only-files-that-open-with-worktrunk-s-header.md",
+      "title": "shell): uninstall only files that open with worktrunk's header",
+      "repository": "max-sixty-worktrunk-learnings",
+      "source_version": "HEAD",
+      "content_hash": "76f32c09301df5eda0b361e92a5f7d392a9fb63a10191aae5fd87991f3bc5e1b",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-25T06:03:10.155Z"
     }
   },
   "ai-builder-brain": {
