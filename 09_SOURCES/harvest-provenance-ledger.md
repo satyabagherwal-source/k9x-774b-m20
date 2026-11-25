@@ -12973,3 +12973,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-autogluon-chronos-2` | `https://huggingface.co/autogluon/chronos-2` | `hf-autoglu` | Multi-dimensional audit evidence | 2026-11-25T04:51:56.116Z |
 | `learn-github-folkbench-folkbench` | `https://github.com/Folkbench/folkbench` | `43425e50` | Multi-dimensional audit evidence | 2026-11-25T04:51:57.080Z |
 | `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `f9a1fd2d` | Multi-dimensional audit evidence | 2026-11-25T04:52:10.619Z |
+| `learn-huggingface-openai-clip-vit-large-patch14` | `https://huggingface.co/openai/clip-vit-large-patch14` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-25T05:00:30.752Z |
+| `learn-github-rtk-ai-rtk` | `https://github.com/rtk-ai/rtk` | `97e68d53` | Multi-dimensional audit evidence | 2026-11-25T05:00:34.719Z |
+| `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `84e3d378` | Multi-dimensional audit evidence | 2026-11-25T05:00:50.358Z |
+| `learn-dom-d-9de8d876` | `project://hf-openai-clip-vit-large-patch14` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openai-clip-vit-large-patch14-learnings.md` | 2026-11-25T05:01:26.265Z |

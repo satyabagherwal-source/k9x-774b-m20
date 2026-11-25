@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T04:52:18.440Z",
-  "total_records": 2632,
+  "last_updated": "2026-11-25T05:01:27.425Z",
+  "total_records": 2635,
   "domains": {
     "A": {
       "total": 22,
@@ -71,7 +71,7 @@
       ]
     },
     "D": {
-      "total": 987,
+      "total": 990,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1059,7 +1059,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-memtensor-memt-1-0-pro-learnings-core-invaria",
         "DOM-D-615F4579",
         "domain_intelligence-research-knowledge-intelligence-checkmarx-kics-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-checkmarx-kics-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-checkmarx-kics-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-openai-clip-vit-large-patch14-core-invariants",
+        "DOM-D-9DE8D876",
+        "domain_intelligence-research-knowledge-intelligence-hf-openai-clip-vit-large-patch14-learnings-core-"
       ]
     },
     "E": {
@@ -14868,8 +14871,8 @@
       "title": "Architecture Intelligence: HelixDB/helix-db Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-helixdb-helix-db-architecture-intelligence-helixdb-helix-db-core-invariants.md",
       "repository": "HelixDB/helix-db",
-      "content_hash": "c30044e020cf725e8977df98fbf5f00cd5bd240ebc12ef3874b53c578c7cc3bb",
-      "created_at": "2026-11-23T14:46:40.916Z"
+      "content_hash": "ec0e3167cc24b93c8f5650ff7cd30858c8bf4767016632e7251226a492bdee55",
+      "created_at": "2026-11-25T05:00:50.863Z"
     },
     "DOM-D-C8957CC0": {
       "record_id": "DOM-D-C8957CC0",
@@ -14928,8 +14931,8 @@
       "title": "Architecture Intelligence: helixdb-helix-db-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-helixdb-helix-db-learnings-architecture-intelligence-helixdb-helix-db-learnings-.md",
       "repository": "helixdb-helix-db-learnings",
-      "content_hash": "c42173e3f47c6fba346e1a1328c8675c5841c1b8580af0b50e34c17ce69e45f7",
-      "created_at": "2026-11-23T14:46:47.166Z"
+      "content_hash": "5cba436a3f4ac7f4158cd488f447981a2beb0ecf29446e45dee89b0bab96c7dc",
+      "created_at": "2026-11-25T05:01:27.425Z"
     },
     "domain_intelligence-technical-construction-intelligence-lingyired-status-trio-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-lingyired-status-trio-core-invariants",
@@ -24749,8 +24752,8 @@
       "title": "Quality & Verification Intelligence: rtk-ai/rtk Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-rtk-ai-rtk-quality-verification-intelligence-rtk-ai-rtk-core-invariants.md",
       "repository": "rtk-ai/rtk",
-      "content_hash": "448461ea5a333129f19bf4e048671986fda3417649dc97b4cc0647d06b07be6a",
-      "created_at": "2026-11-24T02:31:00.822Z"
+      "content_hash": "547db8f3599ac6f699c8b280be79d03fd5b359e3429c7246d5a3edab6c9e11f1",
+      "created_at": "2026-11-25T05:00:35.259Z"
     },
     "domain_intelligence-quality-verification-intelligence-rtk-ai-rtk-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-rtk-ai-rtk-learnings-core-invariants",
@@ -24758,8 +24761,8 @@
       "title": "Quality & Verification Intelligence: rtk-ai-rtk-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-rtk-ai-rtk-learnings-quality-verification-intelligence-rtk-ai-rtk-learnings-core.md",
       "repository": "rtk-ai-rtk-learnings",
-      "content_hash": "25612c08769e33dea3e276071ece4d8874a8ea561036aff7606212c8045bf19f",
-      "created_at": "2026-11-24T02:31:17.548Z"
+      "content_hash": "e2613e7deb1312f78d0f0609ee4bc7f0da100e8af9ff7baf8f958a58bd489cc1",
+      "created_at": "2026-11-25T05:00:55.267Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-audio-2b-learnings-core-invaria": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-audio-2b-learnings-core-invaria",
@@ -44169,6 +44172,66 @@
       "repository": "xcodesorg-xcodesapp-learnings",
       "content_hash": "bea861d7ec942a575f4f86b055ffdc1a0179c0a3931a5a87b1d32bf05051b8fd",
       "created_at": "2026-11-25T04:39:41.942Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-openai-clip-vit-large-patch14-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-openai-clip-vit-large-patch14-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: openai/clip-vit-large-patch14 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openai-clip-vit-large-patch14-research-knowledge-intelligence-openai-clip-vit.md",
+      "repository": "openai/clip-vit-large-patch14",
+      "content_hash": "d7f1ae9cf462db414841eda41ba8263b368ac835b26642bd98fcf2662c6810b4",
+      "created_at": "2026-11-25T05:00:31.022Z"
+    },
+    "DOM-D-9DE8D876": {
+      "record_id": "DOM-D-9DE8D876",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): openai/clip-vit-large-patch14",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openai-clip-vit-large-patch14-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/openai/clip-vit-large-patch14](https://huggingface.co/openai/clip-vit-large-patch14))  \n> **Source Version**: `hf-openai-cl`  \n> **License**: Op",
+      "content_hash": "6a51a66ddfd36ba6adf456dc13a17ca59f9feea28fb90873b01e7b259b5e6269",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openai-clip-vit-large-patch14-learnings.md`  \n> **Source**: huggingface ([https:/ -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openai-clip-vit-large-patch14-learnings.md`  \n> **Source**: huggingface ([https:/",
+      "provenance": {
+        "source_uri": "project://hf-openai-clip-vit-large-patch14/hf-openai-clip-vit-large-patch14-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-25T05:00:55.636Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-openai-clip-vit-large-patch14)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-openai-clip-vit-large-patch14"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-25T05:01:26.231Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-openai-clip-vit-large-patch14-learnings-core-": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-openai-clip-vit-large-patch14-learnings-core-",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-openai-clip-vit-large-patch14-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openai-clip-vit-large-patch14-learnings-research-knowledge-intelligence-hf-op.md",
+      "repository": "hf-openai-clip-vit-large-patch14-learnings",
+      "content_hash": "3237e6d66fc15561dcaf6db9ad58600f326a40fee77b2eee796122aced78fcf6",
+      "created_at": "2026-11-25T05:01:26.573Z"
     }
   }
 }

@@ -12940,3 +12940,7 @@
 | `CYCLE-20261125-CM6N` | `2026-11-25T04:51:56.111Z` | `autogluon/chronos-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autogluon-chronos-2-learnings.md` | Yes (`586bcbee...`) |
 | `CYCLE-20261125-CMXF` | `2026-11-25T04:51:57.075Z` | `Folkbench/folkbench` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10457` | Yes (`a53790fa...`) |
 | `CYCLE-20261125-CXDI` | `2026-11-25T04:52:10.614Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10458` | Yes (`4288a469...`) |
+| `CYCLE-20261125-NNA4` | `2026-11-25T05:00:30.748Z` | `openai/clip-vit-large-patch14` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-clip-vit-large-patch14-learnings.md` | Yes (`46e0d6af...`) |
+| `CYCLE-20261125-NQCB` | `2026-11-25T05:00:34.715Z` | `rtk-ai/rtk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10459` | Yes (`c1ae45a5...`) |
+| `CYCLE-20261125-O2EQ` | `2026-11-25T05:00:50.354Z` | `HelixDB/helix-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10460` | Yes (`177066ac...`) |
+| `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T05:01:26.265Z` | `hf-openai-clip-vit-large-patch14` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-9DE8D876` [Domain D] | Yes (`6a51a66d...`) |

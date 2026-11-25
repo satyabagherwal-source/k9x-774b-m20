@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-25T04:52:14.418Z",
-    "lastVerified": "2026-11-25T04:52:14.418Z",
+    "lastChecked": "2026-11-25T05:00:53.783Z",
+    "lastVerified": "2026-11-25T05:00:53.783Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -93,14 +93,14 @@
     "officialUrl": "https://github.com/rtk-ai/rtk",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T02:30:58.616Z",
-    "lastVerified": "2026-11-24T02:30:58.616Z",
+    "lastChecked": "2026-11-25T05:00:33.471Z",
+    "lastVerified": "2026-11-25T05:00:33.471Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rtk-ai-rtk",
-    "contentHash": "9b96751146a7c5d461c67f307dfec4808038862928992fdf314dedd715eca955",
+    "contentHash": "c1ae45a550bfe7cf4b18fef481dfdf9142a9713b516758ea02e6bd69834386ff",
     "promotedRulesCount": 1,
-    "recentFixesCount": 6,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -160,9 +160,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-11-25T00:43:32.164Z",
+    "lastChecked": "2026-11-25T05:00:37.191Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-11-25T00:43:32.164Z"
+    "lastVerified": "2026-11-25T05:00:37.191Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch/meilisearch",
@@ -276,9 +276,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-25T04:15:59.122Z",
+    "lastChecked": "2026-11-25T05:00:42.103Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-25T04:15:59.122Z"
+    "lastVerified": "2026-11-25T05:00:42.103Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -4430,22 +4430,21 @@
     "lastVerified": "2026-11-24T23:04:27.361Z"
   },
   "helixdb-helix-db": {
-    "name": "helix-db",
+    "name": "HelixDB/helix-db",
     "officialUrl": "https://github.com/HelixDB/helix-db",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T10:13:19.497Z",
-    "lastVerified": "2026-11-24T10:13:19.497Z",
+    "lastChecked": "2026-11-25T05:00:49.086Z",
+    "lastVerified": "2026-11-25T05:00:49.086Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-helixdb-helix-db",
-    "contentHash": "d097f1a1e57cfcc5b7e510d0d4eeb0aa0240075bcbe59a1ae1060eee256663d5",
+    "contentHash": "177066ac3f1a96ba6216c929786356bdfeeec62564c2fdc70088ee855108ff60",
     "promotedRulesCount": 1,
-    "recentFixesCount": 8,
+    "recentFixesCount": 9,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "8947fa71"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "pimalaya-himalaya": {
     "name": "pimalaya/himalaya",
@@ -6808,12 +6807,12 @@
     "lastVerified": "2026-11-24T22:15:49.054Z"
   },
   "open-policy-agent-opa": {
-    "name": "open-policy-agent/opa",
+    "name": "opa",
     "officialUrl": "https://github.com/open-policy-agent/opa",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-24T12:05:12.729Z",
-    "lastVerified": "2026-11-24T12:05:12.729Z",
+    "lastChecked": "2026-11-25T05:00:34.820Z",
+    "lastVerified": "2026-11-25T05:00:34.820Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-open-policy-agent-opa",
@@ -6822,7 +6821,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "68244323"
   },
   "mariadb-server": {
     "name": "MariaDB/server",
@@ -8897,9 +8897,9 @@
   "swiftuix-swiftuix": {
     "name": "SwiftUIX",
     "officialUrl": "https://github.com/SwiftUIX/SwiftUIX",
-    "lastChecked": "2026-11-22T18:35:19.123Z",
+    "lastChecked": "2026-11-25T05:00:32.266Z",
     "revisionIdentifier": "3a99044b",
-    "lastVerified": "2026-11-22T18:35:19.123Z"
+    "lastVerified": "2026-11-25T05:00:32.266Z"
   },
   "facebook-folly": {
     "name": "meta/folly",
@@ -12702,13 +12702,13 @@
     "officialUrl": "https://huggingface.co/openai/clip-vit-large-patch14",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-21T08:20:27.478Z",
-    "lastVerified": "2026-11-21T08:20:27.478Z",
+    "lastChecked": "2026-11-25T05:00:29.931Z",
+    "lastVerified": "2026-11-25T05:00:29.931Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-openai-clip-vit-large-patch14",
-    "contentHash": "e0b2004c5167f5656e3508cbd18535e183eff7bb1dffda1efa41955885209764",
-    "promotedRulesCount": 3,
+    "contentHash": "46e0d6afe0f62f0c1dabddb549f6f0e3393d45a36280a104413bb8930a17d690",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

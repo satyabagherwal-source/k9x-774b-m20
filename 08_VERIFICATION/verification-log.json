@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-TS4B",
-    "timestamp": "2026-11-23T17:37:46.139Z",
-    "repository": "jialinyyzz/humanizer",
-    "learningId": "learn-huggingface-jialinyyzz-humanizer",
-    "contentHash": "92b519089d0765c4a9d92141343583f968ae2ddb6b1c8a09fb4095714236de90",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-U1RX",
-    "timestamp": "2026-11-23T17:37:58.653Z",
-    "repository": "prometheus/prometheus",
-    "learningId": "learn-github-prometheus-prometheus",
-    "contentHash": "345d797a2d38a7f061df65aa6beb908233a75dea55186089e1ed45b66c88a466",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-U2Z6",
-    "timestamp": "2026-11-23T17:38:00.210Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "c61f317cd54780d63a787c7772270b3c8936017cf1a8ce45668a3998d1a45c61",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-4M5H",
     "timestamp": "2026-11-23T17:46:11.621Z",
     "repository": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
@@ -7490,6 +7445,51 @@
     "repository": "MaterializeInc/materialize",
     "learningId": "learn-github-materializeinc-materialize",
     "contentHash": "4288a4696eea12412caad65d715b7773c661ff484f3088d3e30962b4070a588c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-NNA4",
+    "timestamp": "2026-11-25T05:00:30.748Z",
+    "repository": "openai/clip-vit-large-patch14",
+    "learningId": "learn-huggingface-openai-clip-vit-large-patch14",
+    "contentHash": "46e0d6afe0f62f0c1dabddb549f6f0e3393d45a36280a104413bb8930a17d690",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-NQCB",
+    "timestamp": "2026-11-25T05:00:34.715Z",
+    "repository": "rtk-ai/rtk",
+    "learningId": "learn-github-rtk-ai-rtk",
+    "contentHash": "c1ae45a550bfe7cf4b18fef481dfdf9142a9713b516758ea02e6bd69834386ff",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-O2EQ",
+    "timestamp": "2026-11-25T05:00:50.354Z",
+    "repository": "HelixDB/helix-db",
+    "learningId": "learn-github-helixdb-helix-db",
+    "contentHash": "177066ac3f1a96ba6216c929786356bdfeeec62564c2fdc70088ee855108ff60",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

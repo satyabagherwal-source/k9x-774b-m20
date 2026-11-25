@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T02:31:17.152Z",
+  "timestamp": "2026-11-25T05:00:54.933Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-rtk-ai-rtk-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [rtk-ai-rtk-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T02:31:17.152Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T05:00:54.933Z`  
 > **Learning ID**: `LEARN-EVO-rtk-ai-rtk-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain K (Quality & Verification Intelligence)
-- **Secondary Corroborating Domains**: A (Human & Need Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), G (Architecture Intelligence), H (Technical Construction Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence)
-- **Confidence Rating**: 55%
+- **Secondary Corroborating Domains**: A (Human & Need Intelligence), H (Technical Construction Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), I (Content & Information Intelligence), G (Architecture Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), C (Market & Business Intelligence)
+- **Confidence Rating**: 75%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from rtk-ai-rtk-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md`  
 > **Source**: github ([https://github.com/rtk-ai/rtk](https://github.com/rtk-ai/rtk))  
-> **Source Version**: `c43b5c44`  
+> **Source Version**: `97e68d53`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T02:30:58.777Z  
+> **Timestamp**: 2026-11-25T05:00:33.478Z  
 > **Learning ID**: `learn-github-rtk-ai-rtk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rtk-ai/rtk](https://github.com/rtk-ai/rtk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T02:30:58.616Z  
+> **Harvest Timestamp**: 2026-11-25T05:00:33.471Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: CLI proxy that reduces LLM token consumption by 60-90% on common dev commands. Single Rust binary, zero dependencies
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 87617 stars
+- **Stars / Engagement**: 87739 stars
 
 ---
 
@@ -1771,167 +1771,1314 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c52bc886` (2026-11-23)
-**Commit Message**: fix(gain): mark the console-mode unsafe block for semgrep
+### Incident Patch 1: `2ee0e396` (2026-11-25)
+**Commit Message**: Merge pull request #4865 from ferr079/fix/pnpm-failure-stdout
 
-#5186 added an `unsafe` GetConsoleMode call in gain.rs without the
-`nosemgrep: unsafe-block` marker the other audited unsafe blocks carry,
-so the semgrep security scan has failed on develop since that merge.
+fix(pnpm): keep the failure reason when pnpm reports it on stdout
+
+**File**: `src/cmds/js/pnpm_cmd.rs` (modified, +273/-3)
+```diff
+@@ -1,7 +1,7 @@
+ //! Filters pnpm output — dependency trees, install logs, outdated packages.
+ 
+ use crate::core::guard::never_worse;
+-use crate::core::stream::exec_capture;
++use crate::core::stream::{CaptureResult, exec_capture};
+ use crate::core::tracking;
+ use crate::core::truncate::CAP_LIST;
+ use crate::core::utils::resolved_command;
+@@ -393,7 +393,9 @@ fn run_list(depth: usize, args: &[String], verbose: u8) -> Result<i32> {
+     let result = exec_capture(&mut cmd).context("Failed to run pnpm list")?;
+ 
+     if !result.success() {
+-        eprint!("{}", result.stderr);
++        // pnpm itself reports list errors on stderr; stdout only carries the
++        // reason when a wrapper in front of pnpm refuses the command (#4858).
++        print_failure(&result, None);
+         return Ok(result.exit_code);
+     }
+ 
+@@ -547,7 +549,7 @@ fn run_install(args: &[String], verbose: u8) -> Result<i32> {
+     let result = exec_capture(&mut cmd).context("Failed to run pnpm install")?;
+ 
+     if !result.success() {
+-        eprint!("{}", result.stderr);
++        print_failure(&result, Some(filter_pnpm_failure));
+         return Ok(result.exit_code);
+     }
+ 
+@@ -562,6 +564,89 @@ fn run_install(args: &[String], verbose: u8) -> Result<i32> {
+     Ok(0)
+ }
+ 
++/// Print the output of a failed pnpm run.
++///
++/// stderr alone is enough when pnpm wrote there. When it is empty, the reason
++/// is on stdout (pnpm 9/10 install errors, or a wrapper that refuses the
++/// command), so show stdout, filtered when a filter is given. A filter that
++/// keeps nothing must not hide the failure, so fall back to the raw stdout.
++/// The filter only removes lines, so it cannot make the output longer.
++fn print_failure(result: &CaptureResult, filter: Option<fn(&str) -> String>) {
++    if !result.stderr.trim().is_empty() {
++        eprint!("{}", result.stderr);
++        return;
++    }
++    let shown = match filter {
++        Some(filter) => match filter(&result.stdout) {
++            filtered if filtered.trim().is_empty() => result.stdout.clone(),
++            filtered => filtered,
++        },
++        None => result.stdout.clone(),
++    };
++    print!("{}", shown);
++    if !shown.ends_with('\n') && !shown.is_empty() {
++        println!();
++    }
++}
++
++/// Filter the stdout of a failed pnpm install.
++///
++/// Unlike `filter_pnpm_install`, which keeps a few summary lines of a green
++/// install, this drops only what is known to be noise (progress lines, the
++/// `+++` / `---` bar, pnpm's update notifier) and keeps every other line as
++/// is: failure reasons come in shapes no keyword list covers (`%2F` in a
++/// scoped 404, `ELIFECYCLE`, an indented lockfile mismatch, a script's own
++/// output, `│`-prefixed peer-dependency trees and build logs).
++fn filter_pnpm_failure(output: &str) -> String {
++    let mut result: Vec<&str> = Vec::new();
++    // A `╭ … ╰` frame is held until it closes: it is dropped only when it is
++    // pnpm's update notifier, any other frame is kept as is.
++    let mut frame: Option<Vec<&str>> = None;
++
++    for line in output.lines() {
++        let trimmed = line.trim();
++        if let Some(rows) = frame.as_mut() {
++            rows.push(line);
++            if trimmed.starts_with('╰') {
++                let rows = frame.take().unwrap_or_default();
++                if !rows.iter().any(|row| row.contains("Update available")) {
++                    rows.into_iter().for_each(|row| keep_line(&mut result, row));
++                }
++            }
++            continue;
++        }
++        if trimmed.starts_with('╭') {
++            frame = Some(vec![line]);
++            continue;
++        }
++        // "Progress: …", or "../.. | Progress: …" in a workspace
++        let is_progress = trimmed.starts_with("Progress:") || trimmed.contains("| Progress:");
++        let is_bar = !trimmed.is_empty() && trimmed.chars().all(|c| c == '+' || c == '-');
++        if is_progress || is_bar {
++            continue;
++        }
++        keep_line(&mut result, line);
++    }
++    // A frame that never closed is not a notifier we recognise: keep it.
++    frame
++        .into_iter()
++        .flatten()
++        .for_each(|row| keep_line(&mut result, row));
++
++    while result.last().is_some_and(|l| l.trim().is_empty()) {
++        result.pop();
++    }
++    result.join("\n")
++}
++
++/// Push a kept line, collapsing the blank lines left around dropped ones.
++fn keep_line<'a>(result: &mut Vec<&'a str>, line: &'a str) {
++    if line.trim().is_empty() && result.last().is_none_or(|l| l.trim().is_empty()) {
++        return;
++    }
++    result.push(line);
++}
++
+ /// Filter pnpm install output - remove progress bars, keep summary
+ fn filter_pnpm_install(output: &str) -> String {
+     let mut result = Vec::new();
+@@ -749,6 +834,191 @@ mod tests {
+         assert!(eslint.dev_dependency, "eslint should be dev");
+     }
+ 
++    // Fixtures: real pnpm 10.34.9 stdout (stderr was empty), paths replaced by /project.
++
++    #[test]
++    fn test_failure_filter_keeps_scoped
+```
+
+**File**: `tests/fixtures/pnpm_install_boxed_script_error_raw.txt` (added, +10/-0)
+```diff
+@@ -0,0 +1,10 @@
++Already up to date
++
++> boxed-case@1.0.0 postinstall /project
++> node -e "console.log('┌───────────────────────────┐'); console.log('│ Error: Python 3 not found │'); console.log('└───────────────────────────┘'); process.exit(1)"
++
++┌───────────────────────────┐
++│ Error: Python 3 not found │
++└───────────────────────────┘
++ ELIFECYCLE  Command failed with exit code 1.
++ WARN   Local package.json exists, but node_modules missing, did you mean to install?
+```
+
+**File**: `tests/fixtures/pnpm_install_dep_build_failed_raw.txt` (added, +12/-0)
+```diff
+@@ -0,0 +1,12 @@
++Progress: resolved 1, reused 0, downloaded 0, added 0
++[1APackages: +1[0K
+++
++Progress: resolved 1, reused 0, downloaded 0, added 0
++[1AProgress: resolved 1, reused 1, downloaded 0, added 1, done
++node_modules/.pnpm/dep@file+dep/node_modules/dep: Running postinstall script...
++[1Anode_modules/.pnpm/dep@file+dep/node_modules/dep: Running postinstall script, failed in 38ms
++.../.pnpm/dep@file+dep/node_modules/dep postinstall$ node fail.js
++│ dep stdout line
++│ gyp ERR! dep native build failed
++└─ Failed in 38ms at /project/node_modules/.pnpm/dep@file+dep/node_modules/dep
++ ELIFECYCLE  Command failed with exit code 1.
+```
+
+**File**: `tests/fixtures/pnpm_install_fetch_404_scoped_raw.txt` (added, +17/-0)
+```diff
+@@ -0,0 +1,17 @@
++Progress: resolved 1, reused 0, downloaded 0, added 0
++ ERR_PNPM_FETCH_404  GET https://registry.npmjs.org/@ferr079-nope%2Fpkg-zz: Not Found - 404
++
++This error happened while installing a direct dependency of /project
++
++@ferr079-nope/pkg-zz is not in the npm registry, or you have no permission to fetch it.
++
++No authorization header was set for the request.
++
++   ╭──────────────────────────────────────────────────────────────────────╮
++   │                                                                      │
++   │                 Update available! 10.34.9 → 12.16.1.                 │
++   │                 Changelog: https://pnpm.io/v/12.16.1                 │
++   │   To update, run: curl -fsSL https://get.pnpm.io/install.sh | sh -   │
++   │                                                                      │
++   ╰──────────────────────────────────────────────────────────────────────╯
++
+```
+
+**File**: `tests/fixtures/pnpm_install_frozen_lockfile_raw.txt` (added, +9/-0)
+```diff
+@@ -0,0 +1,9 @@
++ ERR_PNPM_OUTDATED_LOCKFILE  Cannot install with "frozen-lockfile" because pnpm-lock.yaml is not up to date with <ROOT>/package.json
++
++Note that in CI environments this setting is true by default. If you still need to run install in such cases, use "pnpm install --no-frozen-lockfile"
++
++  Failure reason:
++  specifiers in the lockfile don't match specifiers in package.json:
++* 1 dependencies are mismatched:
++  - is-number (lockfile: 7.0.0, manifest: ^6.0.0)
++
+```
+
+**File**: `tests/fixtures/pnpm_install_peer_deps_unmet_raw.txt` (added, +29/-0)
+```diff
+@@ -0,0 +1,29 @@
++Progress: resolved 1, reused 0, downloaded 0, added 0
++
++   ╭───────────────────────────────────────────────────────────────────╮
++   │                                                                   │
++   │                Update available! 9.15.9 → 12.23.0.                │
++   │   Changelog: https://github.com/pnpm/pnpm/releases/tag/v12.23.0   │
++   │                 Run "pnpm add -g pnpm" to update.                 │
++   │                                                                   │
++   ╰───────────────────────────────────────────────────────────────────╯
++
++Packages: +9
+++++++++++
++Progress: resolved 9, reused 0, downloaded 9, added 9, done
++
++dependencies:
+++ react 17.0.2 (19.3.1 is available)
+++ react-dom 18.2.0 (19.3.1 is available)
+++ react-redux 9.1.0 (9.3.1 is available)
++
++ ERR_PNPM_PEER_DEP_ISSUES  Unmet peer dependencies
++
++.
++├─┬ react-dom 18.2.0
++│ └── ✕ unmet peer react@^18.2.0: found 17.0.2
++└─┬ react-redux 9.1.0
++  └── ✕ unmet peer react@^18.0: found 17.0.2
++
++hint: If you don't want pnpm to fail on peer dependency issues, add "strict-peer-dependencies=false" to an .npmrc file at the root of your project.
++
+```
+
+**File**: `tests/fixtures/pnpm_install_postinstall_failed_raw.txt` (added, +19/-0)
+```diff
+@@ -0,0 +1,19 @@
++Progress: resolved 1, reused 0, downloaded 0, added 0
++Packages: +1
+++
++Progress: resolved 1, reused 1, downloaded 0, added 1, done
++
++> t@1.0.0 postinstall /project
++> echo 'native build failed: missing libfoo'; exit 7
++
++native build failed: missing libfoo
++ ELIFECYCLE  Command failed with exit code 7.
++
++   ╭──────────────────────────────────────────────────────────────────────╮
++   │                                                                      │
++   │                 Update available! 10.34.9 → 12.16.1.                 │
++   │                 Changelog: https://pnpm.io/v/12.16.1                 │
++   │   To update, run: curl -fsSL https://get.pnpm.io/install.sh | sh -   │
++   │                                                                      │
++   ╰──────────────────────────────────────────────────────────────────────╯
++
+```
+
+**File**: `tests/fixtures/pnpm_install_removed_dep_failed_raw.txt` (added, +8/-0)
+```diff
+@@ -0,0 +1,8 @@
++Packages: -1
++-
++
++> minus-case@1.0.0 postinstall /project
++> node -e "console.log('postinstall: config check failed'); process.exit(5)"
++
++postinstall: config check failed
++ ELIFECYCLE  Command failed with exit code 5.
+```
+
+---
+
+### Incident Patch 2: `03ef3b18` (2026-11-25)
+**Commit Message**: Merge branch 'develop' into fix/pnpm-failure-stdout
+
+Both sides add tests at the end of pnpm_cmd.rs's test module; keep both.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `src/analytics/gain.rs` (modified, +1/-0)
+**File**: `.github/assets/src/before-after.html` (added, +104/-0)
 ```diff
-@@ -32,6 +32,7 @@ pub(crate) fn configure_console_color() {
-     let mut mode = 0;
-     // SAFETY: stdout owns the handle for this call and mode is writable.
-     #[allow(unsafe_code)]
-+    // nosemgrep: unsafe-block
-     let has_mode = unsafe { GetConsoleMode(stdout.as_raw_handle(), &mut mode) } != 0;
-     if requires_plain_console_output(has_mode.then_some(mode))
-         && crate::core::user_env::var("CLICOLOR_FORCE").is_none_or(|value| value == "0")
+@@ -0,0 +1,104 @@
++<!doctype html>
++<html><head><meta charset="utf-8">
++<!-- Real output. Captured with `rtk bypass cargo test` (left) and `rtk cargo test` (right)
++     on a 48-test crate with one failing assertion, rtk core 1.0.1. Only the lines marked
++     "⋯ N more lines" are elided; the counts are exact. -->
++<link rel="preconnect" href="https://fonts.googleapis.com">
++<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=block" rel="stylesheet">
++<style>
++:root{--bg:#060b18;--bg-card:#0f1629;--text:#e2e8f0;--text-bright:#f8fafc;--text-muted:#94a3b8;--text-dim:#7e8ca6;--accent:#00e599;--accent-dim:rgba(0,229,153,.10);--accent-glow:rgba(0,229,153,.25);--red:#f87171;--scene:rgba(0,229,153,.09);--tint:rgba(0,229,153,.045);--vignette:rgba(0,0,0,.42);--grid:rgba(148,163,184,.05);--line:rgba(148,163,184,.14)}
++*{margin:0;padding:0;box-sizing:border-box}
++html,body{width:1280px;height:560px;background:transparent}
++.card{position:relative;width:1280px;height:560px;border-radius:20px;overflow:hidden;background:var(--bg);border:1px solid var(--line);isolation:isolate;font-family:'Geist','Inter',sans-serif;color:var(--text)}
++.atmo{position:absolute;inset:0;z-index:-1;background-image:
++ radial-gradient(ellipse 34% 80% at 50% 50%,var(--scene),transparent 62%),
++ linear-gradient(180deg,transparent 4%,var(--tint) 42%,transparent 84%),
++ radial-gradient(ellipse 120% 105% at 50% 48%,transparent 56%,var(--vignette) 100%)}
++.grid{position:absolute;inset:0;z-index:-1;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:40px 40px;-webkit-mask-image:radial-gradient(ellipse 30% 70% at 50% 50%,#000 20%,transparent 75%)}
++.eyebrow{position:absolute;left:56px;top:34px;font-family:'JetBrains Mono',monospace;font-weight:500;font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim)}
++.eyebrow b{color:var(--text-muted);font-weight:500}
++.cmd{position:absolute;right:56px;top:30px;font-family:'JetBrains Mono',monospace;font-size:15px;color:var(--text-muted)}
++.cmd span{color:var(--accent)}
++.panel{position:absolute;top:84px;width:470px;height:440px;border:1px solid var(--line);border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,.025),transparent 30%),var(--bg-card);overflow:hidden}
++.panel.left{left:56px}.panel.right{right:56px}
++.ph{display:flex;align-items:center;gap:10px;height:42px;padding:0 18px;border-bottom:1px solid var(--line);font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim)}
++.ph i{width:9px;height:9px;border-radius:50%;display:inline-block}
++.left .ph i{background:var(--red);opacity:.8}.right .ph i{background:var(--accent);box-shadow:0 0 10px var(--accent-glow)}
++.ph .n{margin-left:auto;letter-spacing:.04em;text-transform:none}
++.left .ph .n{color:var(--red);opacity:.85}.right .ph .n{color:var(--accent)}
++pre{font-family:'JetBrains Mono',monospace}
++.left pre{white-space:pre;padding:10px 18px;font-size:11.5px;line-height:13.5px;color:rgba(148,163,184,.55)}
++.left pre .f{color:var(--red);opacity:.9}
++.left pre .m{color:rgba(148,163,184,.38);font-style:italic}
++.right pre{white-space:pre-wrap;padding:18px 20px;font-size:13.5px;line-height:22px;color:var(--text)}
++.right pre .f{color:var(--red)}
++.right pre .ok{color:var(--accent)}
++.right pre .p{color:var(--text-muted)}
++.right pre .r{color:var(--accent);opacity:.85}
++.gate{position:absolute;left:526px;top:84px;width:228px;height:440px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
++.gate::before{content:'';position:absolute;left:50%;top:0;width:1px;height:100%;transform:translateX(-50%);background:linear-gradient(to bottom,transparent,var(--accent-glow) 30%,var(--accent-glow) 70%,transparent)}
++.gate::after{content:'';position:absolute;left:50%;top:50%;width:260px;height:260px;transform:translate(-50%,-50%);background:radial-gradient(circle,var(--accent-glow) 0%,transparent 62%);opacity:.7}
++.gate img{position:relative;z-index:1;width:124px;height:124px;filter:drop-shadow(0 0 10px var(--accent-glow)) drop-shadow(0 0 32px var(--accent-glow))}
++.gate .lbl{position:relative;z-index:1;font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.26em;color:var(--text-muted)}
++.strand{position:absolute;left:526px;top:84px;width:228px;height:440px;z-index:0}
++</style></head>
++<body><div class="card"><div class="atmo"></div><div class="grid"></div>
++<p class="eyebrow">01 / Install &amp; forget · <b>what your agent reads</b></p>
++<p class="cmd"><span>$</span> cargo test</p>
++
++<div class="panel left">
++ <div class="ph"><i></i>without rtk<span class="n">71 lines</span></div>
++<pre>   Compiling authkit v0.4.2 (/private/tmp/claude-501/-Users-aeppling--superconductor-worktrees-rtk-sc-flux-phonon-4e98/d36bac6a-c158-4776-8c24-adbe62511c7f/scratchpad/demo)
++    Finished `test` 
+```
+
+**File**: `.github/assets/src/companies.html` (added, +22/-0)
+```diff
+@@ -0,0 +1,22 @@
++<!doctype html>
++<html><head><meta charset="utf-8">
++<!-- The 18 logos of rtk-ai.app's "Starred by developers at" strip (rtk-ldp Companies.astro) plus a third
++     row of the largest companies found in the stargazers' public profiles. Transparent background and one
++     flat grey so it reads on GitHub's light and dark themes alike. -->
++<link rel="preconnect" href="https://fonts.googleapis.com">
++<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@500&display=block" rel="stylesheet">
++<style>
++*{margin:0;padding:0;box-sizing:border-box}
++html,body{width:1280px;height:300px;background:transparent}
++.wrap{width:1280px;height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;font-family:'Inter',sans-serif}
++.eyebrow{font-family:'JetBrains Mono',monospace;font-weight:500;font-size:17px;letter-spacing:.16em;text-transform:uppercase;color:#8b95a7}
++.rows{display:flex;flex-direction:column;gap:26px}
++.row{display:flex;align-items:center;justify-content:center;gap:26px}
++.row img{display:block;width:auto;height:calc(var(--h) * 1.4);filter:brightness(0) invert(.6);opacity:.95}
++.more{font-size:18px;color:#8b95a7;white-space:nowrap}
++</style></head>
++<body><div class="wrap">
++ <p class="eyebrow">Starred by developers at</p>
++ <div class="rows"><div class="row"><img src="companies/microsoft.svg" alt="Microsoft" style="--h:20px"><img src="companies/google.svg" alt="Google" style="--h:22px"><img src="companies/amazon.svg" alt="Amazon" style="--h:22px"><img src="companies/meta.svg" alt="Meta" style="--h:20px"><img src="companies/apple.svg" alt="Apple" style="--h:29px"><img src="companies/nvidia.svg" alt="NVIDIA" style="--h:19px"><img src="companies/ibm.svg" alt="IBM" style="--h:24px"><img src="companies/tencent.svg" alt="Tencent" style="--h:17px"><img src="companies/bytedance.svg" alt="ByteDance" style="--h:19px"></div><div class="row"><img src="companies/alibaba.svg" alt="Alibaba" style="--h:18px"><img src="companies/shopify.svg" alt="Shopify" style="--h:21px"><img src="companies/datadog.svg" alt="Datadog" style="--h:22px"><img src="companies/sap.svg" alt="SAP" style="--h:26px"><img src="companies/adobe.svg" alt="Adobe" style="--h:21px"><img src="companies/intel.svg" alt="Intel" style="--h:24px"><img src="companies/samsung.svg" alt="Samsung" style="--h:18px"><img src="companies/bosch.svg" alt="Bosch" style="--h:20px"><img src="companies/cisco.svg" alt="Cisco" style="--h:26px"></div><div class="row"><img src="companies/jpmorgan-chase.svg" alt="JPMorgan Chase" style="--h:14px"><img src="companies/oracle.svg" alt="Oracle" style="--h:13px"><img src="companies/netflix.svg" alt="Netflix" style="--h:18px"><img src="companies/toyota.svg" alt="Toyota" style="--h:14px"><img src="companies/salesforce.svg" alt="Salesforce" style="--h:26px"><img src="companies/siemens.svg" alt="Siemens" style="--h:16px"><img src="companies/accenture.svg" alt="Accenture" style="--h:21px"><img src="companies/uber.svg" alt="Uber" style="--h:19px"><img src="companies/spotify.svg" alt="Spotify" style="--h:19px"></div></div>
++ <p class="more">and 1,100+ more companies</p>
++</div></body></html>
+```
+
+**File**: `.github/assets/src/companies/accenture.svg` (added, +410/-0)
+```diff
+@@ -0,0 +1,410 @@
++<?xml version="1.0" encoding="UTF-8" standalone="no"?>
++<!-- Created with Inkscape (http://www.inkscape.org/) -->
++<svg
++   xmlns:svg="http://www.w3.org/2000/svg"
++   xmlns="http://www.w3.org/2000/svg"
++   version="1.0"
++   width="1133.8583"
++   height="374.88187"
++   id="svg2">
++  <defs
++     id="defs4">
++    <clipPath
++       id="clipPath2349">
++      <path
++         d="M -85.5,-19 L -85.5,19 L 85.5,19 L 85.5,-19 L -85.5,-19 z"
++         id="path2351" />
++    </clipPath>
++    <clipPath
++       id="clipPath2341">
++      <path
++         d="M 0,0 L 603.7795,0 L 603.7795,841.8898 L 0,841.8898 L 0,0 z"
++         id="path2343" />
++    </clipPath>
++    <clipPath
++       id="clipPath2926">
++      <path
++         d="M 0.015,840.99 L 595.005,840.99 L 595.005,0 L 0.015,0 L 0.015,840.99 z"
++         id="path2928" />
++    </clipPath>
++    <clipPath
++       id="clipPath2918">
++      <path
++         d="M 0,841 L 595,841 L 595,0 L 0,0 L 0,841 z"
++         id="path2920" />
++    </clipPath>
++    <clipPath
++       id="clipPath2694">
++      <path
++         d="M 0.015,840.99 L 595.005,840.99 L 595.005,0 L 0.015,0 L 0.015,840.99 z"
++         id="path2696" />
++    </clipPath>
++    <clipPath
++       id="clipPath2686">
++      <path
++         d="M 0,841 L 595,841 L 595,0 L 0,0 L 0,841 z"
++         id="path2688" />
++    </clipPath>
++    <clipPath
++       id="clipPath2678">
++      <path
++         d="M 405.35,120.15 L 510.24,120.15 L 510.24,91.8 L 405.35,91.8 L 405.35,120.15 z"
++         id="path2680" />
++    </clipPath>
++    <clipPath
++       id="clipPath2498">
++      <path
++         d="M 0.015,840.99 L 595.005,840.99 L 595.005,0 L 0.015,0 L 0.015,840.99 z"
++         id="path2500" />
++    </clipPath>
++    <clipPath
++       id="clipPath2490">
++      <path
++         d="M 0,841 L 595,841 L 595,0 L 0,0 L 0,841 z"
++         id="path2492" />
++    </clipPath>
++    <clipPath
++       id="clipPath2482">
++      <path
++         d="M 51.02,680.71 L 595.28,680.71 L 595.28,126.67 L 51.02,126.67 L 51.02,680.71 z"
++         id="path2484" />
++    </clipPath>
++    <clipPath
++       id="clipPath2464">
++      <path
++         d="M 0.015,840.99 L 595.005,840.99 L 595.005,0 L 0.015,0 L 0.015,840.99 z"
++         id="path2466" />
++    </clipPath>
++    <clipPath
++       id="clipPath2456">
++      <path
++         d="M 0,841 L 595,841 L 595,0 L 0,0 L 0,841 z"
++         id="path2458" />
++    </clipPath>
++    <clipPath
++       id="clipPath5050">
++      <path
++         d="M -610.389,657.405 L -56.916,657.405 L -56.916,664.488 L -610.389,664.488 L -610.389,657.405 z"
++         id="path5052" />
++    </clipPath>
++    <clipPath
++       id="clipPath5036">
++      <path
++         d="M 303.624,657.405 L 362.034,657.405 L 362.034,664.488 L 303.624,664.488 L 303.624,657.405 z"
++         id="path5038" />
++    </clipPath>
++    <clipPath
++       id="clipPath5028">
++      <path
++         d="M 303.624,657.405 L 362.034,657.405 L 362.034,664.488 L 303.624,664.488 L 303.624,657.405 z"
++         id="path5030" />
++    </clipPath>
++    <clipPath
++       id="clipPath5016">
++      <path
++         d="M 271.575,657.405 L 329.985,657.405 L 329.985,664.488 L 271.575,664.488 L 271.575,657.405 z"
++         id="path5018" />
++    </clipPath>
++    <clipPath
++       id="clipPath5008">
++      <path
++         d="M 271.575,657.405 L 329.985,657.405 L 329.985,664.488 L 271.575,664.488 L 271.575,657.405 z"
++         id="path5010" />
++    </clipPath>
++    <clipPath
++       id="clipPath4996">
++      <path
++         d="M 204.345,657.405 L 262.755,657.405 L 262.755,664.488 L 204.345,664.488 L 204.345,657.405 z"
++         id="path4998" />
++    </clipPath>
++    <clipPath
++       id="clipPath4988">
++      <path
++         d="M 204.345,657.405 L 262.755,657.405 L 262.755,664.488 L 204.345,664.488 L 204.345,657.405 z"
++         id="path4990" />
++    </clipPath>
++    <clipPath
++       id="clipPath4972">
++      <path
++         d="M 375.417,657.405 L 433.827,657.405 L 433.827,664.488 L 375.417,664.488 L 375.417,657.405 z"
++         id="path4974" />
++    </clipPath>
++    <clipPath
++       id="clipPath4964">
++      <path
++         d="M 375.417,657.405 L 433.827,657.405 L 433.827,664.488 L 375.417,664.488 L 375.417,657.405 z"
++         id="path4966" />
++    </clipPath>
++    <clipPath
++       id="clipPath4950">
++      <path
++         d="M 88.236,657.405 L 146.646,657.405 L 146.646,664.488 L 88.236,664.488 L 88.236,657.405 z"
++         id="path4952" />
++    </clipPath>
++    <clipPath
++       id="clipPath4942">
++      <path
++         d="M 88.236,657.405 L 146.646,657.405 L 146.646,664.488 L 88.236,664.488 L 88.236,657.405 z"
++         id="path4944" />
++    </clipPath>
++    <clipPath
++       id="clipPath4928">
++      <path
++         d="M 40.806,657.405 L 99.216,657.405 L 99.216,664.488 L 40.806,664.488 L 40.806,657.405 z"
++         id="path4930" />
++    </clipPath>
++    <clipPath
++       id="clipPath4920">
++      <path
++         d="M 40.806,657.405 L 99.216,657.405 L 99.216,664.488 L 40.806,664.488 L 4
+```
+
+**File**: `.github/assets/src/companies/adobe.svg` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++<svg xmlns="http://www.w3.org/2000/svg" fill="#fa0c00" viewBox="-0.27 -0.27 54.97 14.88"><path d="M5.996 0H0v14.34zm4.219 0h5.988v14.34zm-2.11 5.285 3.817 9.055H9.418l-1.14-2.883H5.483Zm17.88 3.835.707 2.027c.024.05.059.074.121.074h1.36c.074 0 .086-.035.074-.11l-2.809-7.8c-.011-.063-.023-.075-.086-.075h-1.687c-.047 0-.074.036-.074.086-.024.41-.059.536-.11.657l-2.504 7.12c-.011.087.016.122.086.122h1.215c.074 0 .11-.024.137-.098l.668-2.004ZM23.47 7.794c.367-1.11.851-2.531 1.047-3.344h.011c.242.852.813 2.54 1.07 3.344zm8.388 3.548a5.8 5.8 0 0 0 2.297-.473c.062-.023.074-.05.074-.11a8 8 0 0 1-.051-.776V2.639c0-.047 0-.07-.059-.07h-1.324c-.05 0-.074.023-.074.085v2.489a4 4 0 0 0-.523-.035c-2.137 0-3.45 1.41-3.45 3.171 0 2.043 1.348 3.063 3.11 3.063m.863-1.36c-.219.07-.461.098-.707.098-.969 0-1.762-.547-1.762-1.875 0-1.176.817-1.87 1.899-1.87.218 0 .41.023.57.085zm5.732-4.874c-1.824 0-2.953 1.398-2.953 3.125 0 1.542.899 3.109 2.926 3.109 1.715 0 2.918-1.262 2.918-3.149 0-1.664-1.02-3.085-2.89-3.085m-.074 1.226c1.031 0 1.469.887 1.469 1.899 0 1.25-.645 1.87-1.395 1.87-.925 0-1.472-.777-1.472-1.898 0-1.152.582-1.87 1.398-1.87m4.333-3.767c-.05 0-.086.024-.086.086v8.313c0 .035.035.098.086.11q.875.267 1.82.265c1.801 0 3.551-1.117 3.551-3.367 0-1.63-1.117-2.867-2.867-2.867a3.5 3.5 0 0 0-1.106.171l-.015-2.613c0-.086-.024-.098-.11-.098zm3.875 5.555c0 1.348-.922 1.98-1.918 1.98-.207 0-.39-.011-.559-.062V6.494c.192-.074.422-.136.848-.136.961 0 1.629.609 1.629 1.765m6.438.437c.594 0 1.082-.011 1.25-.05.063-.012.086-.035.098-.086.035-.133.05-.41.05-.75 0-1.156-.695-2.566-2.492-2.566-1.836 0-2.855 1.496-2.855 3.183 0 1.496.789 3.05 3 3.05.828 0 1.363-.132 1.824-.35.047-.024.07-.063.07-.133V9.846c0-.059-.035-.07-.07-.047q-.688.293-1.508.293c-1.238 0-1.8-.684-1.836-1.531zm-2.469-1.046c.098-.594.473-1.239 1.313-1.239.926 0 1.168.778 1.168 1.13v.097c-.051.012-.207.012-.668.012zm0 0"/></svg>
+\ No newline at end of file
+```
+
+**File**: `.github/assets/src/companies/alibaba.svg` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++<svg viewBox="-3.87 -3.87 781.00 129.73" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="none"/><g class="currentLayer"><path d="M487.347 82.828c0 12.332-6.25 18.498-18.741 18.498-8.006 0-12.006-2.926-12.006-8.798 0-5.323 4.217-8.716 12.62-10.185 3.105-.544 9.143-.818 18.127-.818zm35.239-16.99c0-21.399-16.204-31.45-47.942-32.108-33.079-.683-47.053 7.93-49.832 26.019h34.3c1.654-5.891 5.616-9.188 13.826-8.9 8.07.287 14.077 4.382 14.377 15.104-18.46.275-32.057 1.348-41.392 3.585-18.013 4.32-26.964 14.14-26.964 27.5 0 9.004 3.987 15.579 11.935 19.706 5.988 3.093 13.757 4.978 23.303 4.646 15.642-.544 26.914-5.003 33.897-14.23v12.357h34.504zm215.44 16.99c0 12.332-6.255 18.498-18.74 18.498-8.007 0-12.007-2.926-12.007-8.798 0-5.323 4.211-8.716 12.62-10.185 3.105-.544 9.137-.818 18.127-.818zm35.239-16.99c0-21.399-16.21-31.45-47.941-32.108-33.086-.683-47.06 7.93-49.833 26.019h34.3c1.654-5.891 5.616-9.188 13.827-8.9 8.063.287 14.07 4.382 14.37 15.104-18.453.275-32.057 1.348-41.392 3.585-18.006 4.32-26.958 14.14-26.958 27.5 0 9.004 3.98 15.579 11.93 19.706 5.993 3.093 13.763 4.978 23.302 4.646 15.649-.544 26.92-5.003 33.897-14.23v12.357h34.504zM59.577 72.005 79.148 28.44l18.537 43.565zM59.717 0 0 119.652h38.772l9.476-21.565h59.718l8.817 21.565h43.028L102.848 0zm111.197 119.648h37.577V.003h-37.577zM232.338.003v23.762h37.576V.003zm0 36.69v82.955h37.576V36.693zM364.89 91.505c-6.895 9.489-15.495 11.591-25.789 6.326a26 26 0 0 1-1.565-1.125c-3.24-3.01-5.304-6.702-6.186-11.086q-1.984-9.66.614-19.13c1.233-4.281 3.623-7.655 7.182-10.102 4.09-2.358 8.44-3.208 13.035-2.556 6.428 1.016 10.958 4.613 13.61 10.792 1.635 4.051 2.421 8.294 2.357 12.71q.096 7.502-3.258 14.171m-71.085 28.185h36.69v-15.086c9.718 12.402 21.999 17.603 36.918 17.067 8.313-.422 15.962-3.304 22.888-8.14 9.386-7.496 14.46-17.368 15.214-29.63 1.067-12.625-1.987-24.07-9.17-34.344-6.99-8.658-15.897-13.635-26.727-14.907-15.06-1.993-28.306 2.972-38.83 14.396V.114h-36.945zm321.671-28.185c-6.894 9.489-15.495 11.591-25.788 6.326a26 26 0 0 1-1.566-1.125c-3.24-3.01-5.303-6.702-6.185-11.086q-1.984-9.66.613-19.13c1.234-4.281 3.623-7.655 7.182-10.102 4.09-2.358 8.441-3.208 13.035-2.556 6.428 1.016 10.958 4.613 13.604 10.792 1.642 4.051 2.428 8.294 2.364 12.71q.096 7.502-3.259 14.171m-71.084 28.185h36.689v-15.086c9.718 12.402 22 17.603 36.92 17.067 8.312-.422 15.96-3.304 22.887-8.14 9.386-7.496 14.46-17.368 15.213-29.63 1.068-12.625-1.987-24.07-9.169-34.344-6.99-8.658-15.897-13.635-26.727-14.907-15.06-1.993-28.307 2.972-38.83 14.396V.114H544.43z" class="selected" style="fill:#ff5a00;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:6.38963"/></g></svg>
+\ No newline at end of file
+```
+
+**File**: `.github/assets/src/companies/amazon.svg` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++<svg viewBox="-2.65 -2.77 608.30 187.52" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="fill:#221f1f"><path d="M374.006 142.184c-35 25.797-85.729 39.561-129.406 39.561-61.242 0-116.376-22.651-158.087-60.325-3.278-2.962-.341-7 3.591-4.693 45.015 26.191 100.673 41.947 158.166 41.947 38.775 0 81.43-8.022 120.65-24.67 5.925-2.516 10.88 3.88 5.086 8.18" style="fill:#f90"/><path d="M388.557 125.536c-4.457-5.715-29.573-2.7-40.846-1.363-3.434.42-3.959-2.57-.865-4.719 20.003-14.078 52.827-10.015 56.654-5.296 3.828 4.745-.996 37.648-19.793 53.352-2.884 2.411-5.637 1.127-4.352-2.072 4.22-10.539 13.685-34.16 9.202-39.902" style="fill:#f90"/><path d="M348.497 20.066V6.381c0-2.071 1.573-3.46 3.461-3.46h61.269c1.966 0 3.54 1.415 3.54 3.46V18.1c-.027 1.966-1.679 4.535-4.615 8.599l-31.749 45.329c11.798-.289 24.25 1.468 34.947 7.498 2.412 1.363 3.068 3.356 3.251 5.322V99.45c0 1.992-2.202 4.325-4.509 3.12-18.85-9.884-43.887-10.96-64.73.104-2.123 1.154-4.351-1.153-4.351-3.146V85.661c0-2.229.026-6.03 2.254-9.412L384.047 23.5h-32.01c-1.967 0-3.54-1.39-3.54-3.434m-223.498 85.388h-18.64c-1.783-.13-3.199-1.468-3.33-3.172V6.617c0-1.914 1.6-3.435 3.592-3.435h17.382c1.809.079 3.25 1.468 3.382 3.199v12.505h.34c4.536-12.086 13.056-17.722 24.54-17.722 11.666 0 18.954 5.636 24.198 17.722 4.509-12.086 14.76-17.722 25.744-17.722 7.813 0 16.36 3.224 21.577 10.46 5.899 8.049 4.693 19.741 4.693 29.992l-.026 60.378c0 1.913-1.6 3.46-3.592 3.46h-18.614c-1.862-.13-3.356-1.625-3.356-3.46V51.29c0-4.037.367-14.104-.524-17.932-1.39-6.423-5.558-8.232-10.959-8.232-4.51 0-9.228 3.015-11.142 7.839s-1.73 12.898-1.73 18.325v50.704c0 1.913-1.6 3.46-3.592 3.46h-18.614c-1.888-.13-3.356-1.625-3.356-3.46l-.026-50.704c0-10.67 1.757-26.374-11.483-26.374-13.397 0-12.872 15.31-12.872 26.374v50.704c0 1.913-1.6 3.46-3.592 3.46M469.514 1.164c27.66 0 42.629 23.752 42.629 53.954 0 29.18-16.543 52.329-42.629 52.329-27.16 0-41.947-23.753-41.947-53.352 0-29.782 14.97-52.931 41.947-52.931m.158 19.531c-13.738 0-14.603 18.719-14.603 30.386 0 11.692-.184 36.65 14.445 36.65 14.446 0 15.128-20.134 15.128-32.403 0-8.075-.341-17.723-2.78-25.378-2.097-6.66-6.265-9.255-12.19-9.255m78.336 84.759h-18.562c-1.861-.13-3.356-1.625-3.356-3.46l-.026-95.692c.157-1.756 1.704-3.12 3.592-3.12h17.277c1.625.079 2.962 1.18 3.33 2.674v14.63h.34c5.217-13.083 12.532-19.322 25.404-19.322 8.363 0 16.517 3.015 21.76 11.273 4.877 7.655 4.877 20.528 4.877 29.782v60.22c-.21 1.678-1.757 3.015-3.592 3.015h-18.693c-1.704-.13-3.12-1.39-3.303-3.015V50.478c0-10.461 1.206-25.772-11.667-25.772-4.535 0-8.704 3.042-10.775 7.656-2.621 5.846-2.962 11.666-2.962 18.116v51.516c-.026 1.913-1.652 3.46-3.644 3.46"/><use xlink:href="#a" transform="translate(244.367)"/><path id="a" d="M55.288 59.758v-4.037c-13.475 0-27.71 2.884-27.71 18.771 0 8.049 4.168 13.502 11.325 13.502 5.243 0 9.936-3.225 12.898-8.468 3.67-6.45 3.487-12.506 3.487-19.768m18.798 45.434c-1.232 1.101-3.015 1.18-4.405.446-6.187-5.139-7.288-7.524-10.696-12.427-10.225 10.434-17.46 13.554-30.726 13.554-15.678 0-27.895-9.674-27.895-29.048 0-15.127 8.206-25.43 19.872-30.464 10.12-4.457 24.25-5.244 35.052-6.476v-2.412c0-4.43.341-9.674-2.254-13.501-2.281-3.435-6.633-4.85-10.46-4.85-7.106 0-13.45 3.644-14.997 11.194-.315 1.678-1.547 3.33-3.225 3.408l-18.09-1.94c-1.52-.34-3.198-1.573-2.778-3.906C7.652 6.853 27.446.246 45.169.246c9.07 0 20.92 2.412 28.078 9.28 9.07 8.469 8.206 19.768 8.206 32.064v29.048c0 8.73 3.618 12.558 7.026 17.277 1.206 1.678 1.468 3.697-.053 4.955-3.801 3.172-10.565 9.071-14.288 12.375z"/></svg>
+\ No newline at end of file
+```
+
+**File**: `.github/assets/src/companies/apple.svg` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++<svg viewBox="-5.00 -5.00 824.10 1009.90" xmlns="http://www.w3.org/2000/svg"><path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76.5 0-103.7 40.8-165.9 40.8s-105.6-57-155.5-127C46.7 790.7 0 663 0 541.8c0-194.4 126.4-297.5 250.8-297.5 66.1 0 121.2 43.4 162.7 43.4 39.5 0 101.1-46 176.3-46 28.5 0 130.9 2.6 198.3 99.2m-234-181.5c31.1-36.9 53.1-88.1 53.1-139.3 0-7.1-.6-14.3-1.9-20.1-50.6 1.9-110.8 33.7-147.1 75.8-28.5 32.4-55.1 83.6-55.1 135.5 0 7.8 1.3 15.6 1.9 18.1 3.2.6 8.4 1.3 13.6 1.3 45.4 0 102.5-30.4 135.5-71.3"/></svg>
+\ No newline at end of file
+```
+
+**File**: `.github/assets/src/companies/bosch.svg` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++<svg xmlns="http://www.w3.org/2000/svg" viewBox="-2.17 -1.98 437.33 100.73"><path d="M185.2 46.88a13.77 13.77 0 0 0 8.8-13c0-11.7-8.3-17.5-19.7-17.5h-29.9V80h32.5c10 0 19.8-7 19.8-17.7 0-12.72-11.5-15.3-11.5-15.42M160 29.58h11.6a5.66 5.66 0 0 1 6 5.31v.69a5.93 5.93 0 0 1-6 5.81h-11.7Zm11.7 37.1h-11.6v-12.5h11.3c5.7 0 8.4 2.5 8.4 6.2 0 4.62-3.4 6.3-8.1 6.3m59.4-51.9c-18.4 0-29.2 14.7-29.2 33.3s10.8 33.3 29.2 33.3 29.2-14.6 29.2-33.3-10.7-33.3-29.2-33.3m0 51.4c-9 0-13.5-8.1-13.5-18.1s4.5-18 13.5-18 13.6 8.1 13.6 18c0 10.1-4.6 18.1-13.6 18.1m63.1-24.8-2.2-.5c-5.4-1.1-9.7-2.5-9.7-6.4 0-4.2 4.1-5.9 7.7-5.9a17.86 17.86 0 0 1 13 5.9l9.9-9.8c-4.5-5.1-11.8-10-23.2-10-13.4 0-23.6 7.5-23.6 20 0 11.4 8.2 17 18.2 19.1l2.2.5c8.3 1.7 11.4 3 11.4 7 0 3.8-3.4 6.3-8.6 6.3-6.2 0-11.8-2.7-16.1-8.2l-10.1 10c5.6 6.7 12.7 11.9 26.4 11.9 11.9 0 24.6-6.8 24.6-20.7.2-14.5-10.8-17.3-19.9-19.2m55.5 24.8c-7 0-14.3-5.8-14.3-18.5 0-11.3 6.8-17.6 13.9-17.6 5.6 0 8.9 2.6 11.5 7.1l12.8-8.5c-6.4-9.7-14-13.8-24.5-13.8-19.2 0-29.6 14.9-29.6 32.9 0 18.9 11.5 33.7 29.4 33.7 12.6 0 18.6-4.4 25.1-13.8L361.1 59c-2.6 4.18-5.4 7.18-11.4 7.18m66.6-49.8v23.4H397v-23.4h-16.7v63.6H397v-25.1h19.3v25.1H433v-63.6z" style="fill:#ed0007;fill-rule:evenodd"/><path d="M48.2.18a48.2 48.2 0 1 0 48.2 48.2A48.2 48.2 0 0 0 48.2.18m0 91.9a43.7 43.7 0 1 1 43.7-43.7 43.71 43.71 0 0 1-43.7 43.7"/><path d="M68.1 18.28h-3.3v16.5H31.7v-16.5h-3.4a36.06 36.06 0 0 0 0 60.2h3.4V62h33.1v16.5h3.3a36.05 36.05 0 0 0 0-60.2ZM27.1 72a31.59 31.59 0 0 1-2.63-44.6 33 33 0 0 1 2.63-2.62Zm37.7-14.6H31.7V39.28h33.1Zm4.5 14.5V24.78a31.65 31.65 0 0 1 2.39 44.71 34 34 0 0 1-2.39 2.39Z"/></svg>
+\ No newline at end of file
 ```
 
 ---
 
-### Incident Patch 2: `c43b5c44` (2026-11-23)
-**Commit Message**: Merge pull request #5230 from rtk-ai/fix/semgrep-gain-console-mode
+### Incident Patch 3: `e87da19b` (2026-11-25)
+**Commit Message**: Merge pull request #3344 from SomSamantray/fix/passthrough-tracking-and-tee-path
 
-fix(gain): mark the console-mode unsafe block for semgrep
+fix: parse-failure tracking, Windows tee path, passthrough output loss (#3339)
 
-**File**: `src/analytics/gain.rs` (modified, +1/-0)
+**File**: `src/cmds/js/playwright_cmd.rs` (modified, +90/-3)
 ```diff
-@@ -32,6 +32,7 @@ pub(crate) fn configure_console_color() {
-     let mut mode = 0;
-     // SAFETY: stdout owns the handle for this call and mode is writable.
-     #[allow(unsafe_code)]
-+    // nosemgrep: unsafe-block
-     let has_mode = unsafe { GetConsoleMode(stdout.as_raw_handle(), &mut mode) } != 0;
-     if requires_plain_console_output(has_mode.then_some(mode))
-         && crate::core::user_env::var("CLICOLOR_FORCE").is_none_or(|value| value == "0")
+@@ -289,6 +289,7 @@ pub fn run(args: &[String], verbose: u8) -> Result<i32> {
+     // Parse output using PlaywrightParser
+     let parse_result = PlaywrightParser::parse(&result.stdout);
+     let mode = FormatMode::from_verbosity(verbose);
++    let tier = parse_result.tier();
+ 
+     let filtered = match parse_result {
+         ParseResult::Full(data) => {
+@@ -303,17 +304,32 @@ pub fn run(args: &[String], verbose: u8) -> Result<i32> {
+             }
+             data.format(mode)
+         }
+-        ParseResult::Passthrough(raw) => {
++        ParseResult::Passthrough(_) => {
+             emit_passthrough_warning("playwright", "All parsing tiers failed");
+-            raw
++            // Truncate the combined stdout+stderr (`raw`), not the parser's
++            // stdout-only truncated output — otherwise a stderr-only failure
++            // (empty stdout) shows nothing, and the guard has no way to
++            // recover content that was never in `filtered` to begin with.
++            truncate_passthrough(&raw)
+         }
+     };
+ 
+     let hint = crate::core::tee::tee_and_hint(&raw, "playwright", result.exit_code);
+     let shown = crate::core::runner::emit_guarded(&filtered, hint.as_deref(), &raw);
+ 
+     let tracked = with_args("playwright", &display_args(args));
+-    timer.track(&tracked, &format!("rtk {tracked}"), &raw, &shown);
++    if tier == 3 {
++        // Tier 3 is a genuine parse failure, not token savings — record it
++        // as such instead of feeding it into the savings timer.
++        tracking::record_parse_failure_silent(
++            &tracked,
++            "All parsing tiers failed",
++            !shown.trim().is_empty(),
++        );
++        timer.track_passthrough(&tracked, &tracking::passthrough_label(&tracked));
++    } else {
++        timer.track(&tracked, &format!("rtk {tracked}"), &raw, &shown);
++    }
+ 
+     // Preserve exit code for CI/CD
+     if !result.success() {
+@@ -468,4 +484,75 @@ mod tests {
+         assert_eq!(result.tier(), 3); // Passthrough
+         assert!(!result.is_ok());
+     }
++
++    // --- Tier 3 (Passthrough) content-loss regression tests ---
++    //
++    // `run()` shells out to a real `playwright` binary and writes to a real
++    // SQLite tracking DB, so it isn't practically unit-testable here. Instead
++    // these tests exercise `truncate_passthrough` directly against the
++    // function that mirrors exactly what the `ParseResult::Passthrough` arm
++    // in `run()` does — plus the (already-pure) `emit_guarded` call that
++    // follows it, so the content-loss fix is verified end-to-end without
++    // needing a process or a database.
++
++    #[test]
++    fn test_passthrough_shown_includes_stdout_when_stderr_empty() {
++        let stdout = "some captured stdout output that failed all parse tiers";
++        let stderr = "";
++        let raw = format!("{}\n{}", stdout, stderr);
++
++        let filtered = truncate_passthrough(&raw);
++        let shown = crate::core::runner::emit_guarded(&filtered, None, &raw);
++
++        assert!(shown.contains(stdout));
++    }
++
++    #[test]
++    fn test_passthrough_shown_includes_stderr_when_stdout_empty() {
++        // Regression: the old code truncated `result.stdout` alone inside
++        // PlaywrightParser::parse, so an empty stdout with a real failure
++        // reported only on stderr produced NO visible output at all.
++        let stdout = "";
++        let stderr = "Error: browser launch failed with exit code 1";
++        let raw = format!("{}\n{}", stdout, stderr);
++
++        let filtered = truncate_passthrough(&raw);
++        let shown = crate::core::runner::emit_guarded(&filtered, None, &raw);
++
++        assert!(shown.contains(stderr));
++    }
++
++    #[test]
++    fn test_passthrough_shown_empty_when_both_streams_empty() {
++        let stdout = "";
++        let stderr = "";
++        let raw = format!("{}\n{}", stdout, stderr);
++
++        let filtered = truncate_passthrough(&raw);
++        let shown = crate::core::runner::emit_guarded(&filtered, None, &raw);
++
++        // Nothing to show — don't force fake non-empty content.
++        assert!(shown.trim().is_empty());
++    }
++
++    #[test]
++    fn test_passthrough_shown_truncated_but_keeps_tee_hint() {
++        let max_chars = crate::core::config::limits().passthrough_max_chars;
++        let stdout = "x".repeat(max_chars + 500);
++        let stderr = String::new();
++        let raw = format!("{}\n{}", stdout, stderr);
++
++        let filtered = truncate_passthrough(&raw);
++        let hint = Some("[RTK:TEE] full output saved to /tmp/playwright-abc.log");
++        let shown = crate::core::runner::emit_guarded(&filtered, hint, &raw);
++
++        assert!(
++            shown.len() < raw.len(),
++            "expected truncation to shrink output"
++        );
++        assert!(
++            shown.contains("[RTK:TEE]"),
++            "tee hint must survive the guard"
++        );
++    }
+ }
 ```
 
----
-
-### Incident Patch 3: `e5e7c55a` (2026-11-23)
-**Commit Message**: Merge pull request #3700 from bdngeorge/fix/install-support-windows-git-bash
-
-fix(install): fix install script crashing when run on Windows with Git Bash
-
-**File**: `.github/workflows/ci.yml` (modified, +14/-0)
+**File**: `src/cmds/js/pnpm_cmd.rs` (modified, +150/-14)
 ```diff
-@@ -151,6 +151,20 @@ jobs:
-         # `--all` is `--workspace`: `rtk` + `engine`. `proxy/` is tested in
-         # its own job, since it is not a member.
-       - run: cargo test --all
-+      # install.sh end to end against a fake release. On Windows this runs under
-+      # Git Bash and installs the rtk.exe the step above built.
-+      - name: install.sh tests
-+        shell: bash
-+        run: |
-+          if [ "$RUNNER_OS" = Windows ]; then
-+            target=$CARGO_BUILD_TARGET
-+            [ "$target" = host-tuple ] && target=$(rustc -vV | sed -n 's/^host: //p')
-+            export RTK_TEST_EXE="$PWD/target/$target/debug/rtk.exe"
-+          fi
-+          sh scripts/test-install.sh | tee "$RUNNER_TEMP/test-install.log"
-+          # A skip here means the runner lost unzip, python or a sha256 tool;
-+          # fail rather than pass with no install exercised.
-+          ! grep -F 'SKIP: end-to-end' "$RUNNER_TEMP/test-install.log"
+@@ -397,11 +397,14 @@ fn run_list(depth: usize, args: &[String], verbose: u8) -> Result<i32> {
+         return Ok(result.exit_code);
+     }
  
-   security:
-     name: Security Scan
++    let combined = result.combined();
++
+     let is_filtered = args
+         .iter()
+         .any(|a| matches!(a.as_str(), "--prod" | "-P" | "--dev" | "-D"));
+ 
+     let parse_result = PnpmListParser::parse(&result.stdout);
++    let tier = parse_result.tier();
+ 
+     let filtered = match parse_result {
+         ParseResult::Full(data) => {
+@@ -416,21 +419,44 @@ fn run_list(depth: usize, args: &[String], verbose: u8) -> Result<i32> {
+             }
+             format_dependency_listing(&data, !is_filtered)
+         }
+-        ParseResult::Passthrough(raw) => {
++        ParseResult::Passthrough(_) => {
+             emit_passthrough_warning("pnpm list", "All parsing tiers failed");
+-            raw
++            // Build from the combined stdout+stderr, not the parser's
++            // stdout-only truncated output — otherwise a stderr-only warning
++            // (e.g. a registry notice) on an otherwise-empty stdout produces
++            // no visible output at all.
++            truncate_passthrough(&combined)
+         }
+     };
+ 
+-    let shown = never_worse(&result.stdout, &filtered);
+-    println!("{}", shown);
+-
+-    timer.track(
+-        &format!("pnpm list --depth={}", depth),
+-        &format!("rtk pnpm list --depth={}", depth),
+-        &result.stdout,
+-        shown,
+-    );
++    let cmd_label = format!("pnpm list --depth={}", depth);
++    if tier == 3 {
++        // Tier 3 is a genuine parse failure: guard/display against the
++        // combined stdout+stderr this arm recovered from, and record it as
++        // a failure — not token savings — instead of feeding it into the
++        // savings timer.
++        let shown = never_worse(&combined, &filtered);
++        println!("{}", shown);
++        tracking::record_parse_failure_silent(
++            &cmd_label,
++            "All parsing tiers failed",
++            !shown.trim().is_empty(),
++        );
++        timer.track_passthrough(&cmd_label, &tracking::passthrough_label(&cmd_label));
++    } else {
++        // Tiers 1/2 are unaffected by the passthrough fix: keep guarding
++        // and tracking against stdout alone, as before, so a stderr-only
++        // warning alongside a successful parse doesn't inflate the
++        // reported savings ratio.
++        let shown = never_worse(&result.stdout, &filtered);
++        println!("{}", shown);
++        timer.track(
++            &cmd_label,
++            &format!("rtk pnpm list --depth={}", depth),
++            &result.stdout,
++            shown,
++        );
++    }
+ 
+     Ok(0)
+ }
+@@ -452,6 +478,7 @@ fn run_outdated(args: &[String], verbose: u8) -> Result<i32> {
+ 
+     // Parse output using PnpmOutdatedParser
+     let parse_result = PnpmOutdatedParser::parse(&result.stdout);
++    let tier = parse_result.tier();
+     let mode = FormatMode::from_verbosity(verbose);
+ 
+     let filtered = match parse_result {
+@@ -467,9 +494,12 @@ fn run_outdated(args: &[String], verbose: u8) -> Result<i32> {
+             }
+             data.format(mode)
+         }
+-        ParseResult::Passthrough(raw) => {
++        ParseResult::Passthrough(_) => {
+             emit_passthrough_warning("pnpm outdated", "All parsing tiers failed");
+-            raw
++            // Build from the combined stdout+stderr, not the parser's
++            // stdout-only truncated output — otherwise a real error reported
++            // only on stderr (with malformed/empty JSON on stdout) is lost.
++            truncate_passthrough(&combined)
+         }
+     };
+ 
+@@ -481,7 +511,21 @@ fn run_outdated(args: &[String], verbose: u8) -> Result<i32> {
+     let shown = never_worse(&combined, &display);
+     println!("{}", shown);
+ 
+-    timer.track("pnpm outdated", "rtk pnpm outdated", &combined, shown);
++    if tier == 3 {
++        // Tier 3 is a genuine parse failure, not token savings — record it
++        // as such instead of feeding it into the savings timer.
++        tracking::record_parse_failure_silent(
++            "pnpm outdated",
++            "All parsing tiers failed",
++            !shown.trim().is_empty(),
++        );
++        timer.track_passthrough(
++            "pnpm outdated",
++            &tracking::passthrough_label("pnpm outdated"),
++        );
++    } else {
++        timer.track("pnpm outdated", "rtk pnpm outdated", &combined, shown);
++    }
+ 
+     Ok(0)
+ }
+@@ -704,4 +748,96 @@ mod tests {
+         assert!(!react.dev_dependency, "react should be prod");
+         assert!(eslint.dev_dependency, "eslint should be dev");
+     }
++
++    // --- Tier 3 (Passthrough) content-loss regression tests ---
++    //
++    // `run_list`/`run_outdated` shell out to a real `pnpm` binary and write
++    // to a real SQLite tracking DB, so they aren't practically unit-testable
++    // here. Instead these tests exercise `truncate_passthrough` directly
++    // against the combined stdout+stderr, mirroring exactly what each
++
 ```
 
-**File**: `INSTALL.md` (modified, +1/-1)
+**File**: `src/cmds/js/vitest_cmd.rs` (modified, +103/-7)
 ```diff
-@@ -41,7 +41,7 @@ If you accidentally installed Rust Type Kit:
- cargo uninstall rtk
- ```
+@@ -283,12 +283,24 @@ fn run_framework_test(invocation: TestInvocation, verbose: u8) -> Result<i32> {
+     let rendered = render_test_output(&filtered, &combined, &tee_label, result.exit_code);
+     let shown = crate::core::runner::emit_guarded(&rendered, None, &combined);
  
--### Quick Install (Linux/macOS)
-+### Quick Install (Linux/macOS/Git for Windows)
+-    timer.track(
+-        format!("{} run", framework).as_str(),
+-        format!("rtk {} run", framework).as_str(),
+-        &combined,
+-        &shown,
+-    );
++    let cmd_label = format!("{} run", framework);
++    if filtered.is_parse_failure {
++        // Genuine Tier-3 parse failure — not token savings — record it as
++        // such instead of feeding it into the savings timer.
++        tracking::record_parse_failure_silent(
++            &cmd_label,
++            "All parsing tiers failed",
++            !shown.trim().is_empty(),
++        );
++        timer.track_passthrough(&cmd_label, &tracking::passthrough_label(&cmd_label));
++    } else {
++        timer.track(
++            cmd_label.as_str(),
++            format!("rtk {} run", framework).as_str(),
++            &combined,
++            &shown,
++        );
++    }
  
- ```bash
- curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/master/install.sh | sh
+     if !result.success() {
+         return Ok(result.exit_code);
+@@ -299,22 +311,33 @@ fn run_framework_test(invocation: TestInvocation, verbose: u8) -> Result<i32> {
+ struct FormattedTestOutput {
+     text: String,
+     truncated: bool,
++    is_parse_failure: bool,
+ }
+ 
+ impl FormattedTestOutput {
+     fn new(text: String) -> Self {
+         Self {
+             text,
+             truncated: false,
++            is_parse_failure: false,
+         }
+     }
+ 
+     fn truncated(text: String) -> Self {
+         Self {
+             text,
+             truncated: true,
++            is_parse_failure: false,
+         }
+     }
++
++    /// Marks this output as originating from a genuine Tier-3 parse failure
++    /// (all parsing tiers failed), as opposed to an explicit user-requested
++    /// passthrough (e.g. `--reporter=verbose`) which is not a failure.
++    fn parse_failure(mut self) -> Self {
++        self.is_parse_failure = true;
++        self
++    }
+ }
+ 
+ fn has_explicit_vitest_reporter(args: &[String]) -> bool {
+@@ -354,7 +377,10 @@ fn format_test_output(
+         }
+         ParseResult::Passthrough(_) => {
+             emit_passthrough_warning(framework, "All parsing tiers failed");
+-            format_passthrough_output(stdout)
++            // Build from the combined stdout+stderr, not stdout alone —
++            // otherwise a stderr-only failure (empty/near-empty stdout)
++            // produces no visible output at all.
++            format_passthrough_output(combined).parse_failure()
+         }
+     }
+ }
+@@ -645,6 +671,76 @@ Scope: all 6 workspace projects
+         assert!(!rendered.contains("wrong-path.log"));
+     }
+ 
++    // --- Tier 3 (Passthrough) content-loss + tracking regression tests ---
++
++    #[test]
++    fn test_genuine_parse_failure_with_stdout_marks_parse_failure_and_keeps_content() {
++        let stdout = "random output with no structure that fails all parse tiers";
++        let combined = stdout.to_string();
++
++        let filtered = format_test_output("vitest", stdout, &combined, false, 0);
++
++        assert!(filtered.is_parse_failure);
++        assert!(filtered.text.contains("random output with no structure"));
++    }
++
++    #[test]
++    fn test_genuine_parse_failure_empty_stdout_uses_combined_stderr() {
++        // Regression: previously format_passthrough_output(stdout) was called
++        // with an empty stdout, producing empty/near-empty output even though
++        // stderr (part of `combined`) had real failure content.
++        let stdout = "";
++        let combined = "Error: could not resolve entry module 'src/index.ts'".to_string();
++
++        let filtered = format_test_output("vitest", stdout, &combined, false, 0);
++
++        assert!(filtered.is_parse_failure);
++        assert!(
++            filtered
++                .text
++                .contains("Error: could not resolve entry module")
++        );
++    }
++
++    #[test]
++    fn test_explicit_passthrough_requested_is_not_a_parse_failure() {
++        let output = " ✓ some.test.ts > case\n Tests  1 passed (1)\n";
++
++        let filtered = format_test_output("vitest", output, output, true, 0);
++
++        assert!(!filtered.is_parse_failure);
++        assert!(filtered.text.contains("Tests  1 passed"));
++    }
++
++    #[test]
++    fn test_full_json_parse_is_not_a_parse_failure() {
++        let json = r#"{
++            "numTotalTests": 1,
++            "numPassedTests": 1,
++            "numFailedTests": 0,
++            "numPendingTests": 0,
++            "testResults": [],
++            "startTime": 1000
++        }"#;
++
++        let filtered = format_test_output("vitest", json, json, false, 0);
++
++        assert!(!filtered.is_parse_failure);
++    }
++
++    #[test]
++    fn test_degraded_regex_fallback_is_not_a_parse_failure() {
++        let text = r#"
++ Test Files  1 passed (1)
++      Tests  5 passed (5)
++   Duration  10ms
++        "#;
++
++        let fil
 ```
 
-**File**: `README.md` (modified, +1/-1)
+**File**: `src/core/tee_file.rs` (modified, +119/-2)
 ```diff
-@@ -80,7 +80,7 @@ brew install rtk
- winget install rtk-ai.rtk
- ```
+@@ -189,11 +189,70 @@ pub(crate) fn write_named_tee_file(
+     Some(filepath)
+ }
  
--**Linux, macOS or WSL, with the install script**
-+**Linux, macOS, WSL, or Git Bash on Windows, with the install script**
- 
- ```bash
- curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh
++/// Convert an MSYS/Git-Bash-style home path (e.g. `/c/Users/name`) to a
++/// native Windows path (`C:\Users\name`) so it can be compared against
++/// native paths via `strip_prefix`. Git Bash sets `HOME` in this POSIX-like
++/// form by default; passed through unconverted, it would never match a
++/// native path and would silently defeat the `~/` shorthand entirely.
++/// Returns `None` for anything that isn't in this exact shape (already-native
++/// paths, e.g. a corporate `HOME` override, are left to the caller as-is).
++#[cfg(windows)]
++fn msys_home_to_native(raw: &str) -> Option<PathBuf> {
++    let rest = raw.strip_prefix('/')?;
++    let mut chars = rest.chars();
++    let drive = chars.next()?;
++    if !drive.is_ascii_alphabetic() {
++        return None;
++    }
++    match chars.next() {
++        None => Some(PathBuf::from(format!("{}:\\", drive.to_ascii_uppercase()))),
++        Some('/') => {
++            let tail: String = chars.collect();
++            Some(PathBuf::from(format!(
++                "{}:\\{}",
++                drive.to_ascii_uppercase(),
++                tail.replace('/', "\\")
++            )))
++        }
++        _ => None,
++    }
++}
++
++/// The home the hint's `~/` and `$HOME/` are expanded against: the invoking
++/// shell's `$HOME`, which Git Bash/MSYS set themselves and which can differ
++/// from the OS profile folder on redirected/roaming Windows profiles. Falls
++/// back to `user_dirs::home` when `HOME` is unset.
++fn hint_home() -> Option<PathBuf> {
++    // An empty (but set) HOME would otherwise become an empty PathBuf, and
++    // `Path::strip_prefix("")` trivially succeeds for any path — every teed
++    // file would then read as "home-relative" and get a bogus `~/` prefix.
++    let raw = user_dirs::env_path("HOME")
++        .and_then(|s| s.into_string().ok())
++        .filter(|s| !s.is_empty());
++    let from_env = raw.map(|raw| {
++        #[cfg(windows)]
++        {
++            msys_home_to_native(&raw).unwrap_or_else(|| PathBuf::from(raw))
++        }
++        #[cfg(not(windows))]
++        {
++            PathBuf::from(raw)
++        }
++    });
++    from_env.or_else(user_dirs::home)
++}
++
+ fn display_path(path: &Path) -> String {
+-    if let Some(home) = user_dirs::home()
++    if let Some(home) = hint_home()
+         && let Ok(relative) = path.strip_prefix(&home)
+     {
+-        return format!("~/{}", relative.display());
++        // Normalize to forward slashes so the hint never mixes `~/` with
++        // native (backslash) separators on Windows.
++        let relative = relative
++            .display()
++            .to_string()
++            .replace(std::path::MAIN_SEPARATOR, "/");
++        return format!("~/{}", relative);
+     }
+     path.display().to_string()
+ }
+@@ -464,4 +523,62 @@ mod tests {
+             "\"$HOME/Library/Application Support/rtk/tee/123_go_test.log\""
+         );
+     }
++
++    #[cfg(windows)]
++    #[test]
++    fn test_msys_home_to_native_converts_drive_letter_path() {
++        assert_eq!(
++            msys_home_to_native("/c/Users/name"),
++            Some(PathBuf::from(r"C:\Users\name"))
++        );
++    }
++
++    #[cfg(windows)]
++    #[test]
++    fn test_msys_home_to_native_converts_bare_drive_root() {
++        assert_eq!(msys_home_to_native("/c"), Some(PathBuf::from(r"C:\")));
++    }
++
++    #[cfg(windows)]
++    #[test]
++    fn test_msys_home_to_native_rejects_non_msys_paths() {
++        // A corporate/explicit HOME override already in native-ish form
++        // (drive letter, not MSYS's bare "/c/..." shape) isn't MSYS-style;
++        // the caller falls back to using it as-is rather than mangling it.
++        assert_eq!(msys_home_to_native("C:/SPB_Data/Users/name"), None);
++        // Not Windows-shaped at all (e.g. a plain Linux/macOS HOME).
++        assert_eq!(msys_home_to_native("/home/name"), None);
++    }
++
++    #[test]
++    fn test_display_path_resolves_against_home_var() {
++        // The shell expands `~` and `$HOME` against its own HOME, so the
++        // hint must be relative to that, not to the OS profile folder.
++        let home = user_dirs::home().expect("test home").join("shell-home");
++        let path = home.join("rtk").join("tee").join("123_test.log");
++        user_env::with_path("HOME", Some(&home), || {
++            assert_eq!(display_path(&path), "~/rtk/tee/123_test.log");
++        });
++    }
++
++    #[test]
++    fn test_display_path_ignores_empty_home_var() {
++        let path = PathBuf::from("/opt/rtk/tee/123_test.log");
++        user_env::with_vars(&[("HOME", Some(""))], || {
++            assert_eq!(display_path(&path), path.display().to_string());
++        });
++    }
++
++    #[cfg(windows)]
++    #[test]
++    fn test_display_path_accepts_msys_home_var() {
++        let path = PathBuf::from(r"C:\Users\name\AppData\Local\rtk\tee\123_test.log");
++        user_env::with_vars(&[("HOME", Some("/c/Users/name"))], || {
++            assert_eq!(display_path(&pat
 ```
 
-**File**: `README_es.md` (modified, +1/-1)
+**File**: `tests/fixtures/playwright_test_missing_config_stderr.txt` (added, +6/-0)
 ```diff
-@@ -80,7 +80,7 @@ La forma mas facil de instalar en Windows — un solo comando, sin configuracion
- winget install rtk-ai.rtk
- ```
- 
--### Instalacion rapida (Linux/macOS)
-+### Instalacion rapida (Linux/macOS/Git for Windows)
- 
- ```bash
- curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh
+@@ -0,0 +1,6 @@
++Error: /app/nope.config.js does not exist
++    at resolveConfigFile (/app/node_modules/.pnpm/playwright@1.56.1/node_modules/playwright/lib/common/configLoader.js:321:11)
++    at resolveConfigLocation (/app/node_modules/.pnpm/playwright@1.56.1/node_modules/playwright/lib/common/configLoader.js:302:30)
++    at loadConfigFromFile (/app/node_modules/.pnpm/playwright@1.56.1/node_modules/playwright/lib/common/configLoader.js:331:27)
++    at runTests (/app/node_modules/.pnpm/playwright@1.56.1/node_modules/playwright/lib/program.js:206:67)
++    at async i.<anonymous> (/app/node_modules/.pnpm/playwright@1.56.1/node_modules/playwright/lib/program.js:71:7)
 ```
 
-**File**: `README_fr.md` (modified, +1/-1)
+**File**: `tests/fixtures/playwright_test_reporter_json_raw.json` (added, +163/-0)
 ```diff
-@@ -80,7 +80,7 @@ La manière la plus simple d'installer sur Windows — une seule commande, aucun
- winget install rtk-ai.rtk
- ```
- 
--### Installation rapide (Linux/macOS)
-+### Installation rapide (Linux/macOS/Git for Windows)
- 
- ```bash
- curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh
+@@ -0,0 +1,163 @@
++{
++  "config": {
++    "configFile": "/app/playwright.config.js",
++    "rootDir": "/app/e2e",
++    "forbidOnly": false,
++    "fullyParallel": false,
++    "globalSetup": null,
++    "globalTeardown": null,
++    "globalTimeout": 0,
++    "grep": {},
++    "grepInvert": null,
++    "maxFailures": 0,
++    "metadata": {
++      "actualWorkers": 1
++    },
++    "preserveOutput": "always",
++    "reporter": [
++      [
++        "json"
++      ]
++    ],
++    "reportSlowTests": {
++      "max": 5,
++      "threshold": 300000
++    },
++    "quiet": false,
++    "projects": [
++      {
++        "outputDir": "/app/test-results",
++        "repeatEach": 1,
++        "retries": 0,
++        "metadata": {
++          "actualWorkers": 1
++        },
++        "id": "",
++        "name": "",
++        "testDir": "/app/e2e",
++        "testIgnore": [],
++        "testMatch": [
++          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
++        ],
++        "timeout": 30000
++      }
++    ],
++    "shard": null,
++    "updateSnapshots": "missing",
++    "updateSourceMethod": "patch",
++    "version": "1.56.1",
++    "workers": 12,
++    "webServer": null
++  },
++  "suites": [
++    {
++      "title": "c.spec.js",
++      "file": "c.spec.js",
++      "column": 0,
++      "line": 0,
++      "specs": [
++        {
++          "title": "adds",
++          "ok": true,
++          "tags": [],
++          "tests": [
++            {
++              "timeout": 30000,
++              "annotations": [],
++              "expectedStatus": "passed",
++              "projectId": "",
++              "projectName": "",
++              "results": [
++                {
++                  "workerIndex": 0,
++                  "parallelIndex": 0,
++                  "status": "passed",
++                  "duration": 5,
++                  "errors": [],
++                  "stdout": [],
++                  "stderr": [],
++                  "retry": 0,
++                  "startTime": "2026-11-25T00:36:57.015Z",
++                  "annotations": [],
++                  "attachments": []
++                }
++              ],
++              "status": "expected"
++            }
++          ],
++          "id": "dc0ff087a96da41e84eb-e5b6bfe3dd7de843f3cf",
++          "file": "c.spec.js",
++          "line": 2,
++          "column": 1
++        },
++        {
++          "title": "fails",
++          "ok": false,
++          "tags": [],
++          "tests": [
++            {
++              "timeout": 30000,
++              "annotations": [],
++              "expectedStatus": "passed",
++              "projectId": "",
++              "projectName": "",
++              "results": [
++                {
++                  "workerIndex": 0,
++                  "parallelIndex": 0,
++                  "status": "failed",
++                  "duration": 2,
++                  "error": {
++                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m3\u001b[39m\nReceived: \u001b[31m2\u001b[39m",
++                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m3\u001b[39m\nReceived: \u001b[31m2\u001b[39m\n    at /app/e2e/c.spec.js:3:35",
++                    "location": {
++                      "file": "/app/e2e/c.spec.js",
++                      "column": 35,
++                      "line": 3
++                    },
++                    "snippet": "\u001b[0m \u001b[90m 1 |\u001b[39m \u001b[36mconst\u001b[39m { test\u001b[33m,\u001b[39m expect } \u001b[33m=\u001b[39m require(\u001b[32m'@playwright/test'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 2 |\u001b[39m test(\u001b[32m'adds'\u001b[39m\u001b[33m,\u001b[39m () \u001b[33m=>\u001b[39m expect(\u001b[35m1\u001b[39m \u001b[33m+\u001b[39m \u001b[35m1\u001b[39m)\u001b[33m.\u001b[39mtoBe(\u001b[35m2\u001b[39m))\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 3 |\u001b[39m test(\u001b[32m'fails'\u001b[39m\u001b[33m,\u001b[39m () \u001b[33m=>\u001b[39m expect(\u001b[35m1\u001b[39m \u001b[33m+\u001b[39m \u001b[35m1\u001b[39m)\u001b[33m.\u001b[39mtoBe(\u001b[35m3\u001b[39m))\u001b[33m;\u001b[39m\n \u001b[90m   |\u001b[39m                                   \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 4 |\u001b[39m\u001b[0m"
++                  },
++                  "errors": [
++                    {
++                      "location": {
++                        "file": "/app/e2e/c.spec.js",
++                        "column": 35,
++                        "line": 3
++                      },
++                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m3\u001b[39m\nRece
 ```
 
-**File**: `README_ja.md` (modified, +1/-1)
+**File**: `tests/fixtures/pnpm_list_depth0_raw.json` (added, +36/-0)
 ```diff
-@@ -80,7 +80,7 @@ Windowsで最も簡単なインストール方法 — コマンド1つ、PATHの
- winget install rtk-ai.rtk
- ```
- 
--### クイックインストール（Linux/macOS）
-+### クイックインストール（Linux/macOS/Git for Windows）
- 
- ```bash
- curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh
+@@ -0,0 +1,36 @@
++[
++  {
++    "name": "p3344",
++    "version": "1.0.0",
++    "path": "/app",
++    "private": true,
++    "dependencies": {
++      "lodash": {
++        "from": "lodash",
++        "version": "4.17.0",
++        "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.17.0.tgz",
++        "path": "/app/node_modules/.pnpm/lodash@4.17.0/node_modules/lodash"
++      }
++    },
++    "devDependencies": {
++      "@playwright/test": {
++        "from": "@playwright/test",
++        "version": "1.56.1",
++        "resolved": "https://registry.npmjs.org/@playwright/test/-/test-1.56.1.tgz",
++        "path": "/app/node_modules/.pnpm/@playwright+test@1.56.1/node_modules/@playwright/test"
++      },
++      "jest": {
++        "from": "jest",
++        "version": "29.7.0",
++        "resolved": "https://registry.npmjs.org/jest/-/jest-29.7.0.tgz",
++        "path": "/app/node_modules/.pnpm/jest@29.7.0_@types+node@26.6.6_supports-color@8.1.1/node_modules/jest"
++      },
++      "vitest": {
++        "from": "vitest",
++        "version": "3.2.4",
++        "resolved": "https://registry.npmjs.org/vitest/-/vitest-3.2.4.tgz",
++        "path": "/app/node_modules/.pnpm/vitest@3.2.4_@types+node@26.6.6_supports-color@8.1.1/node_modules/vitest"
++      }
++    }
++  }
++]
 ```
 
-**File**: `README_ko.md` (modified, +1/-1)
+**File**: `tests/fixtures/pnpm_list_no_dependencies_raw.json` (added, +6/-0)
 ```diff
-@@ -80,7 +80,7 @@ Windows에서 가장 쉬운 설치 방법 — 명령어 하나로 끝, PATH 설
- winget install rtk-ai.rtk
- ```
- 
--### 빠른 설치 (Linux/macOS)
-+### 빠른 설치 (Linux/macOS/Git for Windows)
- 
- ```bash
- curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh
-```
-
-**File**: `README_pt.md` (modified, +1/-1)
-```diff
-@@ -81,7 +81,7 @@ A forma mais simples de instalar no Windows — um único comando, sem configura
- winget install rtk-ai.rtk
- ```
- 
--### Instalação rápida (Linux/macOS)
-+### Instalação rápida (Linux/macOS/Git for Windows)
- 
- ```bash
- curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh
+@@ -0,0 +1,6 @@
++[
++  {
++    "path": "/app2",
++    "private": false
++  }
++]
 ```
 
 #### Recent Merged Pull Requests:
@@ -1960,31 +3107,58 @@ fix(install): fix install script crashing when run on Windows with Git Bash
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gain): mark the console-mode unsafe block for semgrep
+## X. Empirical Invariant Guard in pnpm_cmd.rs
 
 **RULE**:
-When implementing operations in `src/analytics/gain.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rtk-ai/rtk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/cmds/js/pnpm_cmd.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rtk-ai/rtk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c52bc886`: gain): mark the console-mode unsafe block for semgrep. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2ee0e396`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/analytics/gain.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/cmds/js/pnpm_cmd.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    // nosemgrep: unsafe-block
+use crate::core::stream::{CaptureResult, exec_capture};
+        // pnpm itself reports list errors on stderr; stdout only carries the
+        // reason when a wrapper in front of pnpm refuses the command (#4858).
+        print_failure(&result, None);
+        print_failure(&result, Some(filter_pnpm_failure));
+/// Print the output of a failed pnpm run.
+///
+/// stderr alone is enough when pnpm wrote there. When it is empty, the reason
+/// is on stdout (pnpm 9/10 install errors, or a wrapper that refuses the
+/// command), so show stdout, filtered when a filter is given. A filter that
+/// keeps nothing must not hide the failure, so fall back to the raw stdout.
+/// The filter only removes lines, so it cannot make the output longer.
+fn print_failure(result: &CaptureResult, filter: Option<fn(&str) -> String>) {
+    if !result.stderr.trim().is_empty() {
+        eprint!("{}", result.stderr);
+        return;
+    }
+    let shown = match filter {
+        Some(filter) => match filter(&result.stdout) {
+            filtered if filtered.trim().is_empty() => result.stdout.clone(),
+            filtered => filtered,
+        },
+        None => result.stdout.clone(),
+    };
+    print!("{}", shown);
+    
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+use crate::core::stream::exec_capture;
+        eprint!("{}", result.stderr);
+        eprint!("{}", result.stderr);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c52bc886` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2ee0e396` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

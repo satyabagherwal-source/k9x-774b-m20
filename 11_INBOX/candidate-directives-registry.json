@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T04:52:18.196Z",
+  "last_updated": "2026-11-25T05:01:27.205Z",
   "directives": [
     {
       "id": "CD-001",
@@ -59595,6 +59595,46 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-25",
       "domain_letter": "D"
+    },
+    {
+      "id": "CD-O61R",
+      "directive_title": "Empirical Invariant Guard in pnpm_cmd.rs",
+      "source_repo": "rtk-ai-rtk-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-O61R-empirical-invariant-guard-in-pnpm_cmd-rs.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-OUTZ",
+      "directive_title": "Build unpartitioned vector indexes in memory, in bulk",
+      "source_repo": "helixdb-helix-db-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-OUTZ-build-unpartitioned-vector-indexes-in-memory-in-bulk.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-EB70F6",
+      "directive_title": "Empirical Invariant Guard in pnpm_cmd.rs",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "rtk-ai-rtk",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-EB70F6-empirical-invariant-guard-in-pnpm-cmd-rs.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-REV-5F0E8A",
+      "directive_title": "Build unpartitioned vector indexes in memory, in bulk",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "helixdb-helix-db",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5F0E8A-build-unpartitioned-vector-indexes-in-me.md",
+      "staged_date": "2026-11-25"
     }
   ]
 }

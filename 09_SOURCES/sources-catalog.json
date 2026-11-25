@@ -3973,10 +3973,10 @@
     "repository": "HelixDB/helix-db",
     "platform": "github",
     "sourceUrl": "https://github.com/HelixDB/helix-db",
-    "sourceVersion": "8947fa71",
+    "sourceVersion": "84e3d378",
     "license": "Apache-2.0",
-    "contentHash": "d097f1a1e57cfcc5b7e510d0d4eeb0aa0240075bcbe59a1ae1060eee256663d5",
-    "lastHarvestedAt": "2026-11-23T14:46:40.520Z",
+    "contentHash": "177066ac3f1a96ba6216c929786356bdfeeec62564c2fdc70088ee855108ff60",
+    "lastHarvestedAt": "2026-11-25T05:00:50.358Z",
     "learningId": "learn-github-helixdb-helix-db"
   },
   "microsoft-fluentui": {
@@ -7843,10 +7843,10 @@
     "repository": "rtk-ai/rtk",
     "platform": "github",
     "sourceUrl": "https://github.com/rtk-ai/rtk",
-    "sourceVersion": "c43b5c44",
+    "sourceVersion": "97e68d53",
     "license": "Apache-2.0",
-    "contentHash": "9b96751146a7c5d461c67f307dfec4808038862928992fdf314dedd715eca955",
-    "lastHarvestedAt": "2026-11-24T02:31:00.236Z",
+    "contentHash": "c1ae45a550bfe7cf4b18fef481dfdf9142a9713b516758ea02e6bd69834386ff",
+    "lastHarvestedAt": "2026-11-25T05:00:34.719Z",
     "learningId": "learn-github-rtk-ai-rtk"
   },
   "gao-sun-eul": {
@@ -13135,8 +13135,8 @@
     "sourceUrl": "https://huggingface.co/openai/clip-vit-large-patch14",
     "sourceVersion": "hf-openai-clip-vit-large-patch14",
     "license": "Open-Source",
-    "contentHash": "e0b2004c5167f5656e3508cbd18535e183eff7bb1dffda1efa41955885209764",
-    "lastHarvestedAt": "2026-11-21T08:24:26.530Z",
+    "contentHash": "46e0d6afe0f62f0c1dabddb549f6f0e3393d45a36280a104413bb8930a17d690",
+    "lastHarvestedAt": "2026-11-25T05:00:30.752Z",
     "learningId": "learn-huggingface-openai-clip-vit-large-patch14"
   },
   "hf-atomicchat-inkling-2-mini-uncensored-gguf": {

@@ -4,24 +4,24 @@
 {
   "source_repository": "HelixDB/helix-db",
   "source_url": "https://github.com/HelixDB/helix-db",
-  "source_version": "8947fa71",
+  "source_version": "84e3d378",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-23T14:46:40.744Z",
+  "timestamp": "2026-11-25T05:00:50.637Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-helixdb-helix-db",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [HelixDB/helix-db](https://github.com/HelixDB/helix-db) (Revision: `8947fa71`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T14:46:40.744Z`  
+> **Provenance**: Harvested from [HelixDB/helix-db](https://github.com/HelixDB/helix-db) (Revision: `84e3d378`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T05:00:50.637Z`  
 > **Learning ID**: `learn-github-helixdb-helix-db`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 69%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 51%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from HelixDB/helix-db:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/helixdb-helix-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/HelixDB/helix-db](https://github.com/HelixDB/helix-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T14:46:39.484Z  
+> **Harvest Timestamp**: 2026-11-25T05:00:49.086Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: HelixDB is an OLTP graph database with native vector and full-text search built in Rust on Object Storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 6310 stars
+- **Stars / Engagement**: 6313 stars
 
 ---
 
@@ -844,27 +844,36 @@ async fn check_graph(db: &HelixDB, state: &BTreeMap<u64, Doc>, failures: &mut Ve
 ```
 //! Runtime-only throughput policy for index lifecycle work.
 //!
-//! This policy controls source-scan prefetching and worker concurrency. It is
-//! never serialized into lifecycle records or physical index rows.
+//! This policy controls source-scan prefetching, worker concurrency and the
+//! in-memory bulk build of vector indexes. It is never serialized into
+//! lifecycle records or physical index rows.
 //!
 //! # Usage
 //!
 //! ```
+//! use std::num::NonZeroU64;
+//!
 //! use db::config::{
 //!     DbConfig, IndexLifecycleConcurrency, IndexLifecycleScanTuning,
-//!     IndexLifecycleThroughputTuning,
+//!     IndexLifecycleThroughputTuning, VectorBulkBuildMemory, VectorBulkBuildTuning,
 //! };
 //!
 //! let scan = IndexLifecycleScanTuning::try_new(64 * 1024, 2)?;
 //! let concurrency = IndexLifecycleConcurrency::try_new(2, 2, 1, 1)?;
-//! let tuning = IndexLifecycleThroughputTuning::new(scan, concurrency);
+//! // Build vector indexes of 10,000 vectors or more in memory, on eight
+//! // threads, while they fit 4 GiB.
+//! let four_gib = VectorBulkBuildMemory::Bytes(NonZeroU64::new(4 << 30).unwrap());
+//! let bulk = VectorBulkBuildTuning::try_new(8, four_gib, 10_000)?;
+//! let tuning = IndexLifecycleThroughputTuning::new(scan, concurrency)
+//!     .with_vector_bulk_build(bulk);
 //! let config = DbConfig::new().with_index_lifecycle_throughput_tuning(tuning);
 //!
 //! assert_eq!(config.index_lifecycle_throughput(), tuning);
+//! assert_eq!(tuning.vector_bulk_build().memory(), four_gib);
 //! # Ok::<(), db::config::IndexLifecycleThroughputTuningError>(())
 //! ```
 
-use std::num::NonZeroUsize;
+use std::num::{NonZeroU64, NonZeroUsize};
 
 const DEFAULT_SCAN_READ_AHEAD_BYTES: usize = 256 * 1024;
 const DEFAULT_SCAN_FETCH_TASKS: usize = 4;
@@ -879,6 +888,16 @@ const DEFAULT_VECTOR_TASKS: usize = 1;
 const DEFAULT_TEXT_TASKS: usize = 1;
 const DEFAULT_TOTAL_OPERATION_TASKS: usize =
     DEFAULT_SECONDARY_TASKS + 2 * (DEFAULT_VECTOR_TASKS + DEFAULT_TEXT_TASKS);
+// Share of the memory ceiling an automatic bulk-build budget leaves free, for
+// what no configured limit bounds: request buffers, thread stacks, and memory
+// the allocator holds for the rest of the process. Serial vector builds in
+// 3.3 and 6.7 GiB containers peaked at 2.8 and 3.0 GiB of anonymous memory, a
+// few hundred MiB above the caches and write buffer their configuration
+// allows.
+const AUTOMATIC_BUDGET_HEADROOM_DIVISOR: u64 = 8;
+// Below a few thousand vectors a serial build takes seconds, less than the
+// extra source scan a bulk build starts with.
+const DEFAULT_VECTOR_BULK_BUILD_MIN_VECTORS: u64 = 4096;
 
 /// Invalid runtime throughput policy rejected before lifecycle work starts.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -1048,88 +1067,41 @@ impl Default for IndexLifecycleConcurrency {
     }
 }
 
-/// Complete runtime-only lifecycle throughput policy.
+/// Memory the bulk vector builds of one process may hold together.
+///
+/// # Examples
+///
+/// ```
+/// use std::num::NonZeroU64;
+///
+/// use db::config::VectorBulkBuildMemory;
+///
+/// const GIB: u64 = 1 << 30;
+/// // An 8 GiB container whose caches and write buffers may grow to 3 GiB
+/// // keeps an eighth of the ceiling free and leaves bulk builds the rest.
+/// let automatic = VectorBulkBuildMemory::Automatic;
+/// assert_eq!(automatic.budget_bytes(Some(8 * GIB), 3 * GIB, None), 4 * GIB);
+/// // A process that already holds more than its configuration bounds leaves
+/// // less, and one at its ceiling leaves nothing.
+/// assert_eq!(automatic.budget_bytes(Some(8 * GIB), 3 * GIB, Some(5 * GIB)), 2 * GIB);
+/// assert_eq!(automatic.budget_bytes(Some(8 * GIB), 3 * GIB, Some(9 * GIB)), 0);
+/// // Without a readable ceiling nothing is known to be free.
+/// assert_eq!(automatic.budget_bytes(None, 3 * GIB, None), 0);
+/// // An explicit budget is taken as given, and `Off` is no budget.
+/// let explicit = VectorBulkBuildMemory::Bytes(NonZeroU64::new(GIB).unwrap());
+/// assert_eq!(explicit.budget_bytes(None, 3 * GIB, Some(9 * GIB)), GIB);
+/// assert_eq!(VectorBulkBuildMemory::Off.budget_bytes(Some(8 * GIB), 0, None), 0);
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
-pub struct IndexLifecycleThroughputTuning {
-    scan: IndexLifecycleScanTuning,
-    concurrency: IndexLifecycleConcurrency,
-}
-
-impl IndexLifecycleThroughputTuning {
-    pub const fn new(
-        scan: IndexLifecycleScanTuning,
-        concurrency: IndexLifecycleConcurrency,
-    ) -> Self {
-        Self { scan, concurrency }
-    }
-
-    pub const fn scan(self) -> IndexLifecycleScanTuning {
-        self.scan
-    }
-
-    pub const fn concurrency(self) -> IndexLifecycleConcurrency {
-        self.concurrency
-    }
-}
-
-fn positive(
-    setting: &'static str,
-    value: usize,
-) -> Result<NonZeroUsize, IndexLifecycleThroughputTuningError> {
-    NonZeroUsize::new(value).ok_or(IndexLifecycleThroughputTuningError::Zero { setting })
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn defaults_match_the_runtime_throughput_contract() {
-        let tuning = IndexLifecycleThroughputTuning::default();
-        assert_eq!(tuning.scan().read_ahead_bytes().get(), 256 * 1024);
-        assert_eq!(tuning.scan().max_fetch_tasks().get(), 4);
-        assert!(!tuning.scan().cache_admission_enabled());
-        assert_eq!(tuning.concurrency().total_operation_tasks().get(), 12);
-        assert_eq!(tuning.concurrency().secondary_tasks().get(), 8);
-        assert_eq!(tuning.concurrency().vector_tasks().get(), 1);
-        assert_eq!(tuning.concurrency().text_tasks().get(), 1);
-    }
-
-    #[test]
-    fn legacy_equivalent_scan_and_serial_concurrency_remain_explicit() {
-        let scan = IndexLifecycleScanTuning::try_new(1, 1).unwrap();
-        let concurrency = IndexLifecycleConcurrency::try_new(1, 1, 1, 1).unwrap();
-        let options = scan.scan_options();
-        assert_eq!(options.read_ahead_bytes, 1);
-        assert_eq!(options.max_fetch_tasks, 1);
-        assert!(!options.cache_blocks);
-        assert_eq!(concurrency.total_operation_tasks().get(), 1);
-    }
-
-    #[test]
-    fn zero_and_family_limits_above_global_are_rejected() {
-        assert!(matches!(
-            IndexLifecycleScanTuning::try_new(0, 1),
-            Err(IndexLifecycleThroughputTuningError::Zero { .. })
-        ));
-        assert!(matches!(
-            IndexLifecycleConcurrency::try_new(2, 2, 1, 3),
-            Err(IndexLifecycleThroughputTuningError::ExceedsGlobal {
-                setting: "text tasks",
-                ..
-            })
-        ));
-        for zero_position in 0..4 {
-            let mut limits = [1; 4];
-            limits[zero_position] = 0;
-            assert!(matches!(
-                IndexLifecycleConcurrency::try_new(limits[0], limits[1], limits[2], limits[3]),
-                Err(IndexLifecycleThroughputTuningError::Zero { .. })
-            ));
-        }
-    }
-}
-
+pub enum VectorBulkBuildMemory {
+    /// No bulk builds: every vector build inserts serially. The default,
+    /// because a release from before bulk builds cannot open a database, as
+    /// its writer, while a bulk build is in progress: turn bulk builds on
+    /// only once every process that can become the writer runs a release
+    /// that has them.
+    #[default]
+    Off,
+    /// What the process's memory ceiling leav
 ```
 
 ### Core Architecture Module: `crates/db/src/config/index_operation_queue.rs`
@@ -2099,287 +2071,738 @@ pub(super) fn validate_body(family: QueueFamily, body: &[u8]) -> Result<(), Enco
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ce6bcc9c` (2026-11-22)
-**Commit Message**: fix(go): convert time.Time to millis without UnixNano overflow (#1292)
+### Incident Patch 1: `632e9097` (2026-11-24)
+**Commit Message**: Build unpartitioned vector indexes in memory, in bulk (#1325)
 
-dateTimeFromTime computed t.UnixNano() / int64(time.Millisecond).
-UnixNano is undefined outside 1677-09-21..2262-04-11, so any time.Time
-outside that window (ParamDateTime, PropertyValueOf,
-ParseDateTimeRFC3339) was silently stored as a different instant:
-year 2300 became 1715-06-13T00:25:26.291Z and year 1 became 1754.
-The division also truncated toward zero, so 1969-12-31T23:59:59.9995Z
-rounded up to the epoch instead of down to ...59.999Z.
+This adds an in-memory "bulk" path for building an unpartitioned vector
+index. On real S3 it builds a 1M x 128-dim index in 143 s against 1,775
+s for the serial build on main, with the same recall.
 
-Use t.UnixMilli(), which is defined for the full range and floors
-sub-millisecond precision, matching the Python SDK since #1126.
+**It is off by default.** One stored byte is new (below), and an older
+image refuses a store that holds it, so this release only teaches every
+image to read it. Turn it on with
+`HELIX_VECTOR_BULK_BUILD_MEMORY_BYTES=auto` (or a byte count) once every
+node that can become writer runs an image with this change.
 
-Signed-off-by: anant <[REDACTED_EMAIL]>
-Co-authored-by: anant <[REDACTED_EMAIL]>
+## How it works
 
-**File**: `sdks/go/dsl.go` (modified, +1/-1)
-```diff
-@@ -159,7 +159,7 @@ func (d DateTime) RFC3339() (string, error) {
- }
- 
- func dateTimeFromTime(t time.Time) DateTime {
--	return DateTime{millis: t.UTC().UnixNano() / int64(time.Millisecond)}
-+	return DateTime{millis: t.UnixMilli()}
- }
- 
- type PropertyValue struct {
+```text
+serial build (today)                    bulk build
+  for each source row                     pass 1  read the label's rows into memory, run by run
+    read the stored graph                 pass 2  link the whole HNSW graph on a thread pool
+    insert one node                       pass 3  write every node once, rechecking each row
+    commit
 ```
 
-**File**: `sdks/go/dsl_test.go` (modified, +60/-0)
+- **Pass 1** takes the label's members from one snapshot, then reads
+them in runs of 65,536 ids or 64 MiB, each under its own short snapshot.
+No transaction is held across runs.
+- **Pass 3** rereads each source row and stores a node only if the row
+stil
+
+**File**: `crates/db/fuzz/corpus/current_index_v2_records/valid-vector-bulk-build-operation-record` (added, +1/-0)
 ```diff
-@@ -1501,6 +1501,66 @@ func TestIndexLifecycleResponseDecoders(t *testing.T) {
- 	}
+@@ -0,0 +1 @@
++hex:0101021111111111111111111111111111111100000000000000010301000000014c0000000170000000000000000200000000000000030000000000000004010201070000000575707065720100000006637572736f72000000000000000500000000000000060000000000000007000000000000000803000000090101
+```
+
+**File**: `crates/db/fuzz/corpus/current_index_v2_records/vector-bulk-build-unknown-stage` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++hex:0101021111111111111111111111111111111100000000000000010301000000014c0000000170000000000000000200000000000000030000000000000004010201080000000575707065720100000006637572736f72000000000000000500000000000000060000000000000007000000000000000803000000090101
+```
+
+**File**: `crates/db/fuzz/corpus/current_index_v2_records/vector-bulk-build-without-attempts` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++hex:0101021111111111111111111111111111111100000000000000010301000000014c0000000170000000000000000200000000000000030000000000000004010201070000000575707065720100000006637572736f720000000000000005000000000000000600000000000000070000000000000008000000090101
+```
+
+**File**: `crates/db/fuzz/corpus/current_index_v2_records/vector-bulk-build-zero-attempts` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++hex:0101021111111111111111111111111111111100000000000000010301000000014c0000000170000000000000000200000000000000030000000000000004010201070000000575707065720100000006637572736f72000000000000000500000000000000060000000000000007000000000000000800000000090101
+```
+
+**File**: `crates/db/src/config/db.rs` (modified, +48/-0)
+```diff
+@@ -389,6 +389,54 @@ impl DbConfig {
+         self.index_lifecycle_throughput
+     }
+ 
++    /// Bytes this configuration lets the process hold in memory beside what
++    /// requests and index builds allocate: the SlateDB block and metadata
++    /// caches (the memory tier of a hybrid cache), the full-text split cache,
++    /// the vector memory stores, the vector build planning cache, and the
++    /// writes SlateDB buffers before it stalls writers
++    /// (`max_unflushed_bytes`).
++    ///
++    /// Each term is the limit its owner enforces, not what it holds now. The
++    /// write buffer is counted at its encoded size; the memtables of rows a
++    /// few bytes long hold up to three times that.
++    ///
++    /// ```
++    /// use db::DbConfig;
++    ///
++    /// let config = DbConfig::new();
++    /// let build_cache = config.search_index_backfill().vector_build_cache_bytes().get();
++    /// // 512 MiB of blocks, 128 MiB of metadata, 64 MiB of full-text splits,
++    /// // 256 MiB of vector stores and 1 GiB of unflushed writes.
++    /// assert_eq!(
++    ///     config.configured_memory_bytes(),
++    ///     ((512 + 128 + 64 + 256 + 1024) << 20) + build_cache
++    /// );
++    /// ```
++    pub fn configured_memory_bytes(&self) -> u64 {
++        let slate_cache = match self.cache.mode() {
++            CacheMode::VectorMemoryOnly => 0,
++            CacheMode::Memory { slate_db, .. } => slate_db
++                .block_bytes()
++                .saturating_add(slate_db.metadata_bytes()),
++            CacheMode::Hybrid { slate_db, .. } => slate_db.memory_bytes() as u64,
++        };
++        slate_cache
++            .saturating_add(self.cache.fts_memory_bytes())
++            .saturating_add(self.cache.vector_memory().budget().bytes().unwrap_or(0))
++            .saturating_add(self.search_index_backfill.vector_build_cache_bytes().get())
++            .saturating_add(self.write_buffer_bytes())
++    }
++
++    /// Encoded bytes of writes SlateDB buffers, in its WAL and memtables,
++    /// before it stalls writers (`max_unflushed_bytes`).
++    ///
++    /// ```
++    /// assert_eq!(db::DbConfig::new().write_buffer_bytes(), 1 << 30);
++    /// ```
++    pub fn write_buffer_bytes(&self) -> u64 {
++        self.slate.to_writer_settings(None).max_unflushed_bytes as u64
++    }
++
+     /// Durable graph and catalog migration policy.
+     pub const fn migrations(&self) -> MigrationTuning {
+         self.migrations
+```
+
+**File**: `crates/db/src/config/host_memory.rs` (modified, +52/-0)
+```diff
+@@ -36,6 +36,39 @@ pub fn memory_ceiling_bytes() -> Option<u64> {
+     })
  }
  
-+func TestDateTimeFromTimeOutsideUnixNanoRange(t *testing.T) {
-+	// time.Time.UnixNano is undefined outside 1677-09-21..2262-04-11, and
-+	// integer division truncates toward zero. Both used to corrupt the stored
-+	// instant silently; conversion must keep the exact (floored) millisecond.
-+	cases := []struct {
-+		input string
-+		want  string
-+	}{
-+		{"0001-01-01T00:00:00.000Z", "0001-01-01T00:00:00.000Z"},
-+		{"1677-01-01T00:00:00.000Z", "1677-01-01T00:00:00.000Z"},
-+		{"2262-12-31T23:59:59.999Z", "2262-12-31T23:59:59.999Z"},
-+		{"2300-01-01T00:00:00.000Z", "2300-01-01T00:00:00.000Z"},
-+		{"9999-12-31T23:59:59.999Z", "9999-12-31T23:59:59.999Z"},
-+		{"1969-12-31T23:59:59.9995Z", "1969-12-31T23:59:59.999Z"},
-+	}
-+	for _, tc := range cases {
-+		parsed, err := ParseDateTimeRFC3339(tc.input)
-+		if err != nil {
-+			t.Fatalf("%s: %v", tc.input, err)
-+		}
-+		got, err := parsed.RFC3339()
-+		if err != nil {
-+			t.Fatalf("%s: %v", tc.input, err)
-+		}
-+		if got != tc.want {
-+			t.Fatalf("%s: got %s want %s", tc.input, got, tc.want)
-+		}
-+	}
-+
-+	instant := time.Date(2300, time.January, 1, 0, 0, 0, 0, time.UTC)
-+	gotValue, err := PropertyValueOf(instant)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	wantValue, err := PropertyValueOf(DateTimeFromMillis(instant.Unix() * 1000))
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	gotProperty, err := json.Marshal(gotValue)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	wantProperty, err := json.Marshal(wantValue)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	if string(gotProperty) != string(wantProperty) {
-+		t.Fatalf("time.Time property value: got %s want %s", gotProperty, wantProperty)
-+	}
-+	request := NewReadQueryRequest(Read())
-+	request.ParamDateTime("t", instant)
-+	body, err := MarshalRequest(request)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	if !strings.Contains(string(body), `"t":"2300-01-01T00:00:00.000Z"`) {
-+		t.Fatalf("time.Time parameter serialized to the wrong instant: %s", body)
-+	}
++/// Returns the anonymous memory this process holds now, in bytes: its heap,
++/// stacks and other private pages, without file-backed pages the OS can drop.
++///
++/// It is what counts against [`memory_ceiling_bytes`] and cannot be
++/// reclaimed. Returns `None` where the platform does not report it; Linux
++/// does, through `/proc/self/status`.
++///
++/// # Examples
++///
++/// ```
++/// let resident = db::config::resident_anonymous_bytes();
++/// if cfg!(target_os = "linux") {
++///     assert!(resident.is_some_and(|bytes| bytes > 0));
++/// }
++/// ```
++pub fn resident_anonymous_bytes() -> Option<u64> {
++    rss_anon_bytes(&std::fs::read_to_string("/proc/self/status").ok()?)
 +}
 +
- func TestDateTimeAndPropertyValueConversions(t *testing.T) {
- 	parsed, err := ParseDateTimeRFC3339("2025-02-03T04:05:06.123456789Z")
- 	if err != nil {
++/// Reads `RssAnon` from `status`, the content of `/proc/self/status`, whose
++/// lines are `Name:<whitespace>value kB`.
++fn rss_anon_bytes(status: &str) -> Option<u64> {
++    status
++        .lines()
++        .find_map(|line| line.strip_prefix("RssAnon:"))?
++        .trim()
++        .strip_suffix("kB")?
++        .trim()
++        .parse::<u64>()
++        .ok()?
++        .checked_mul(1024)
++}
++
+ /// Mount points of the cgroup hierarchies that expose memory limits.
+ #[derive(Debug, PartialEq, Eq)]
+ struct CgroupMounts {
+@@ -166,6 +199,25 @@ mod tests {
+         }
+     }
+ 
++    #[test]
++    fn resident_anonymous_memory_is_read_from_the_status_file() {
++        let status = "Name:\tserver\nVmRSS:\t  900 kB\nRssAnon:\t     512 kB\nRssFile:\t 388 kB\n";
++        assert_eq!(rss_anon_bytes(status), Some(512 * 1024));
++        assert_eq!(rss_anon_bytes("Name:\tserver\nVmRSS:\t900 kB\n"), None);
++        assert_eq!(
++            rss_anon_bytes("RssAnon:\t512\n"),
++            None,
++            "a unit is required"
++        );
++        assert_eq!(rss_anon_bytes("RssAnon:\tmany kB\n"), None);
++        assert_eq!(
++            rss_anon_bytes(&format!("RssAnon:\t{} kB\n", u64::MAX)),
++            None,
++            "a value past u64 bytes is not a size"
++        );
++        assert_eq!(rss_anon_bytes(""), None);
++    }
++
+     #[test]
+     fn cgroup_v2_limit_is_the_tightest_ancestor() {
+         let root = tempfile::tempdir().unwrap();
+```
+
+**File**: `crates/db/src/config/index_lifecycle_throughput.rs` (modified, +267/-9)
+```diff
+@@ -1,26 +1,35 @@
+ //! Runtime-only throughput policy for index lifecycle work.
+ //!
+-//! This policy controls source-scan prefetching and worker concurrency. It is
+-//! never serialized into lifecycle records or physical index rows.
++//! This policy controls source-scan prefetching, worker concurrency and the
++//! in-memory bulk build of vector indexes. It is never serialized into
++//! lifecycle records or physical index rows.
+ //!
+ //! # Usage
+ //!
+ //! ```
++//! use std::num::NonZeroU64;
++//!
+ //! use db::config::{
+ //!     DbConfig, IndexLifecycleConcurrency, IndexLifecycleScanTuning,
+-//!     IndexLifecycleThroughputTuning,
++//!     IndexLifecycleThroughputTuning, VectorBulkBuildMemory, VectorBulkBuildTuning,
+ //! };
+ //!
+ //! let scan = IndexLifecycleScanTuning::try_new(64 * 1024, 2)?;
+ //! let concurrency = IndexLifecycleConcurrency::try_new(2, 2, 1, 1)?;
+-//! let tuning = IndexLifecycleThroughputTuning::new(scan, concurrency);
++//! // Build vector indexes of 10,000 vectors or more in memory, on eight
++//! // threads, while they fit 4 GiB.
++//! let four_gib = VectorBulkBuildMemory::Bytes(NonZeroU64::new(4 << 30).unwrap());
++//! let bulk = VectorBulkBuildTuning::try_new(8, four_gib, 10_000)?;
++//! let tuning = IndexLifecycleThroughputTuning::new(scan, concurrency)
++//!     .with_vector_bulk_build(bulk);
+ //! let config = DbConfig::new().with_index_lifecycle_throughput_tuning(tuning);
+ //!
+ //! assert_eq!(config.index_lifecycle_throughput(), tuning);
++//! assert_eq!(tuning.vector_bulk_build().memory(), four_gib);
+ //! # Ok::<(), db::config::IndexLifecycleThroughputTuningError>(())
+ //! ```
+ 
+-use std::num::NonZeroUsize;
++use std::num::{NonZeroU64, NonZeroUsize};
+ 
+ const DEFAULT_SCAN_READ_AHEAD_BYTES: usize = 256 * 1024;
+ const DEFAULT_SCAN_FETCH_TASKS: usize = 4;
+@@ -35,6 +44,16 @@ const DEFAULT_VECTOR_TASKS: usize = 1;
+ const DEFAULT_TEXT_TASKS: usize = 1;
+ const DEFAULT_TOTAL_OPERATION_TASKS: usize =
+     DEFAULT_SECONDARY_TASKS + 2 * (DEFAULT_VECTOR_TASKS + DEFAULT_TEXT_TASKS);
++// Share of the memory ceiling an automatic bulk-build budget leaves free, for
++// what no configured limit bounds: request buffers, thread stacks, and memory
++// the allocator holds for the rest of the process. Serial vector builds in
++// 3.3 and 6.7 GiB containers peaked at 2.8 and 3.0 GiB of anonymous memory, a
++// few hundred MiB above the caches and write buffer their configuration
++// allows.
++const AUTOMATIC_BUDGET_HEADROOM_DIVISOR: u64 = 8;
++// Below a few thousand vectors a serial build takes seconds, less than the
++// extra source scan a bulk build starts with.
++const DEFAULT_VECTOR_BULK_BUILD_MIN_VECTORS: u64 = 4096;
+ 
+ /// Invalid runtime throughput policy rejected before lifecycle work starts.
+ #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+@@ -204,19 +223,185 @@ impl Default for IndexLifecycleConcurrency {
+     }
+ }
+ 
++/// Memory the bulk vector builds of one process may hold together.
++///
++/// # Examples
++///
++/// ```
++/// use std::num::NonZeroU64;
++///
++/// use db::config::VectorBulkBuildMemory;
++///
++/// const GIB: u64 = 1 << 30;
++/// // An 8 GiB container whose caches and write buffers may grow to 3 GiB
++/// // keeps an eighth of the ceiling free and leaves bulk builds the rest.
++/// let automatic = VectorBulkBuildMemory::Automatic;
++/// assert_eq!(automatic.budget_bytes(Some(8 * GIB), 3 * GIB, None), 4 * GIB);
++/// // A process that already holds more than its configuration bounds leaves
++/// // less, and one at its ceiling leaves nothing.
++/// assert_eq!(automatic.budget_bytes(Some(8 * GIB), 3 * GIB, Some(5 * GIB)), 2 * GIB);
++/// assert_eq!(automatic.budget_bytes(Some(8 * GIB), 3 * GIB, Some(9 * GIB)), 0);
++/// // Without a readable ceiling nothing is known to be free.
++/// assert_eq!(automatic.budget_bytes(None, 3 * GIB, None), 0);
++/// // An explicit budget is taken as given, and `Off` is no budget.
++/// let explicit = VectorBulkBuildMemory::Bytes(NonZeroU64::new(GIB).unwrap());
++/// assert_eq!(explicit.budget_bytes(None, 3 * GIB, Some(9 * GIB)), GIB);
++/// assert_eq!(VectorBulkBuildMemory::Off.budget_bytes(Some(8 * GIB), 0, None), 0);
++/// ```
++#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
++pub enum VectorBulkBuildMemory {
++    /// No bulk builds: every vector build inserts serially. The default,
++    /// because a release from before bulk builds cannot open a database, as
++    /// its writer, while a bulk build is in progress: turn bulk builds on
++    /// only once every process that can become the writer runs a release
++    /// that has them.
++    #[default]
++    Off,
++    /// What the process's memory ceiling leaves beside the rest of the
++    /// process; see [`Self::budget_bytes`].
++    Automatic,
++    /// Exactly this much, whatever else the process holds. The operator
++    /// answers for the sum fitting the machine.
++    Bytes(NonZeroU64),
++}
++
++impl VectorBulkBuildMemory {
++    /// Bytes bulk builds may hold together right now.
++    ///
++    /// `ceiling` is the process's memory 
+```
+
+**File**: `crates/db/src/config/mod.rs` (modified, +2/-2)
+```diff
+@@ -25,10 +25,10 @@ pub use db::{
+     DbConfig, EdgeEncoding, EdgeUpdatePolicy, HelixConfig, OpenAttribution, QueryTelemetry,
+ };
+ pub use definition_differences::{DefinitionDifference, NonEmptyDefinitionDifferences};
+-pub use host_memory::memory_ceiling_bytes;
++pub use host_memory::{memory_ceiling_bytes, resident_anonymous_bytes};
+ pub use index_lifecycle_throughput::{
+     IndexLifecycleConcurrency, IndexLifecycleScanTuning, IndexLifecycleThroughputTuning,
+-    IndexLifecycleThroughputTuningError,
++    IndexLifecycleThroughputTuningError, VectorBulkBuildMemory, VectorBulkBuildTuning,
+ };
+ pub use index_operation_queue::{
+     IndexOperationQueueTuning, IndexOperationQueueTuningError, QueueLayout,
 ```
 
 ---
 
-### Incident Patch 2: `13345cd6` (2026-11-22)
-**Commit Message**: fix(go): accept every integer width in datetime parameters (#1293)
+### Incident Patch 2: `7d6807d6` (2026-11-22)
+**Commit Message**: Fold where the retirer looped, and count a fenced writer's rows after its poll
 
-ParamDateTime and WithTypedParameter(ParamTypeDateTime()) treated an
-integer as epoch milliseconds only when it was int or int64, so
-ParamDateTime("t", int32(5)) failed with "invalid datetime parameter"
-even though ParamI64 and ParamF64 accept every integer width since #1032.
+Three loops of the last commits become folds: the tables a compaction
+would discard rows from, the blocks an entry's prefixes share, and the
+ranges that overlap. No behaviour changes.
 
-Route all integer kinds through queryI64, the same conversion ParamI64
-uses. uint values above math.MaxInt64 still fail with
-ErrInvalidDateTimeParameter, and booleans and floats are still rejected.
+The helper of the superseded-writer contract counted the rows left
+behind through a writer that had not yet polled its manifest, so on
+object storage it could count rows the compaction had already discarded.
+It now reads until the count has stopped falling.
 
-Signed-off-by: anant <[REDACTED_EMAIL]>
-Co-authored-by: anant <[REDACTED_EMAIL]>
-
-**File**: `sdks/go/dsl.go` (modified, +6/-4)
+**File**: `crates/db/src/index_lifecycle/dropped/mod.rs` (modified, +16/-18)
 ```diff
-@@ -3176,10 +3176,12 @@ func queryDateTime(value any) (string, error) {
- 			return "", ErrInvalidDateTimeParameter
- 		}
- 		return dt.RFC3339()
--	case int64:
--		return DateTimeFromMillis(v).RFC3339()
--	case int:
--		return DateTimeFromMillis(int64(v)).RFC3339()
-+	case int, int8, int16, int32, int64, uint, uint8, uint16, uint32, uint64:
-+		millis, err := queryI64(v)
-+		if err != nil {
-+			return "", ErrInvalidDateTimeParameter
-+		}
-+		return DateTimeFromMillis(millis).RFC3339()
- 	default:
- 		return "", ErrInvalidDateTimeParameter
- 	}
+@@ -1226,25 +1226,23 @@ impl Registry {
+     /// for the entries whose gate is at or below `retention`: the rows a
+     /// compaction planned now would discard.
+     pub(crate) fn discardable_tracked(&self, retention: u64) -> HashMap<TableId, u64> {
+-        let state = self.state.lock();
+-        let mut tracked = HashMap::new();
+-        for state in state.entries.values() {
+-            let Entry::Armed(Armed {
+-                gate,
+-                proof: Proof::Tracking { tables },
+-                ..
+-            }) = state
+-            else {
+-                continue;
+-            };
+-            if *gate > retention {
+-                continue;
+-            }
+-            for (table, bytes) in tables.tables() {
++        self.state
++            .lock()
++            .entries
++            .values()
++            .filter_map(|state| match state {
++                Entry::Armed(Armed {
++                    gate,
++                    proof: Proof::Tracking { tables },
++                    ..
++                }) if *gate <= retention => Some(tables),
++                Entry::Armed(_) | Entry::Quarantined(_) => None,
++            })
++            .flat_map(|tables| tables.tables())
++            .fold(HashMap::new(), |mut tracked, (table, bytes)| {
+                 *tracked.entry(*table).or_default() += bytes;
+-            }
+-        }
+-        tracked
++                tracked
++            })
+     }
+ 
+     /// Whether a table some armed entry's proof tracks is missing from
 ```
 
-**File**: `sdks/go/dsl_test.go` (modified, +34/-0)
+**File**: `crates/db/src/index_lifecycle/dropped/reclaim.rs` (modified, +4/-3)
 ```diff
-@@ -1561,6 +1561,40 @@ func TestDateTimeFromTimeOutsideUnixNanoRange(t *testing.T) {
- 	}
+@@ -39,7 +39,7 @@
+ //! says so:
+ //!
+ //! - the run is at most a gibibyte, which one compaction slot rewrites in
+-//!   seconds; or
++//!   about a quarter of a minute; or
+ //! - the dropped rows are at least an eighth of it.
+ //!
+ //! Dropped rows in any other run are *left in place*
+@@ -113,8 +113,9 @@ pub(crate) struct Worth {
+ impl Worth {
+     /// The rule a writer follows by itself. Contracts make smaller ones.
+     ///
+-    /// One compaction slot rewrites a gibibyte in a few seconds, so for a
+-    /// run that small retiring the entry is worth it by itself.
++    /// One compaction slot rewrites a gibibyte in about a quarter of a
++    /// minute against object storage, so for a run that small retiring the
++    /// entry is worth it by itself.
+     ///
+     /// For a larger run: a rewritten byte costs its read and its write, and
+     /// a second copy in object storage until the old tables are collected,
+```
+
+**File**: `crates/db/src/index_lifecycle/dropped/retire.rs` (modified, +25/-21)
+```diff
+@@ -270,14 +270,15 @@ fn blocks_under(from: usize, to: usize) -> std::ops::Range<usize> {
+ /// `ranges`, which are in the order of their starts, with those that
+ /// overlap joined: every block they cover, once.
+ fn disjoint(ranges: Vec<std::ops::Range<usize>>) -> Vec<std::ops::Range<usize>> {
+-    let mut joined = Vec::<std::ops::Range<usize>>::with_capacity(ranges.len());
+-    for range in ranges {
+-        match joined.last_mut() {
+-            Some(last) if range.start <= last.end => last.end = last.end.max(range.end),
+-            Some(_) | None => joined.push(range),
+-        }
+-    }
+-    joined
++    ranges
++        .into_iter()
++        .fold(Vec::<std::ops::Range<usize>>::new(), |mut joined, range| {
++            match joined.last_mut() {
++                Some(last) if range.start <= last.end => last.end = last.end.max(range.end),
++                Some(_) | None => joined.push(range),
++            }
++            joined
++        })
  }
  
-+func TestDateTimeParameterAcceptsEveryIntegerWidth(t *testing.T) {
-+	// ParamI64 and ParamF64 accept every Go integer width (#1032); epoch-millis
-+	// datetime parameters must too, through both insertion paths.
-+	const want = "1970-01-01T00:00:00.005Z"
-+	values := []any{int(5), int8(5), int16(5), int32(5), int64(5), uint(5), uint8(5), uint16(5), uint32(5), uint64(5)}
-+	for _, value := range values {
-+		convenience := NewReadQueryRequest(Read())
-+		convenience.ParamDateTime("t", value)
-+		typed := NewReadQueryRequest(Read())
-+		typed.WithTypedParameter("t", ParamTypeDateTime(), value)
-+		for _, request := range []*QueryRequest{convenience, typed} {
-+			body, err := MarshalRequest(request)
-+			if err != nil {
-+				t.Fatalf("%T: %v", value, err)
-+			}
-+			if !strings.Contains(string(body), `"t":"`+want+`"`) {
-+				t.Fatalf("%T: unexpected body %s", value, body)
-+			}
-+		}
-+	}
-+
-+	for _, value := range []any{uint64(math.MaxUint64), true, 1.5} {
-+		convenience := NewReadQueryRequest(Read())
-+		convenience.ParamDateTime("t", value)
-+		typed := NewReadQueryRequest(Read())
-+		typed.WithTypedParameter("t", ParamTypeDateTime(), value)
-+		for _, request := range []*QueryRequest{convenience, typed} {
-+			if err := request.Validate(); !errors.Is(err, ErrInvalidDateTimeParameter) {
-+				t.Fatalf("%T(%v): expected ErrInvalidDateTimeParameter, got %v", value, value, err)
-+			}
-+		}
-+	}
-+}
-+
- func TestDateTimeAndPropertyValueConversions(t *testing.T) {
- 	parsed, err := ParseDateTimeRFC3339("2025-02-03T04:05:06.123456789Z")
- 	if err != nil {
+ /// Decides [`Held`] from a table's block index: `before` blocks have an
+@@ -639,19 +640,22 @@ impl Retirer {
+         let offset = |block| index.get(block).map_or(data_end, |(offset, _)| offset);
+         // The blocks of each held entry, in key order. Two prefixes of one
+         // entry can share a block, which counts once.
+-        let mut blocks = HashMap::<_, Vec<std::ops::Range<usize>>>::new();
+-        for (prefix, entry) in overlapping(prefixes, first, last) {
+-            if !held.contains(&entry) {
+-                continue;
+-            }
+-            let from = index.partition_point(|start| start < &prefix[..]);
+-            let to = index
+-                .partition_point(|start| start < &prefix[..] || start.starts_with(&prefix[..]));
+-            blocks
+-                .entry(entry)
+-                .or_default()
+-                .push(blocks_under(from, to));
+-        }
++        let blocks = overlapping(prefixes, first, last)
++            .filter(|(_, entry)| held.contains(entry))
++            .fold(
++                HashMap::<_, Vec<std::ops::Range<usize>>>::new(),
++                |mut blocks, (prefix, entry)| {
++                    let from = index.partition_point(|start| start < &prefix[..]);
++                    let to = index.partition_point(|start| {
++                        start < &prefix[..] || start.starts_with(&prefix[..])
++                    });
++                    blocks
++                        .entry(entry)
++                        .or_default()
++                        .push(blocks_under(from, to));
++                    blocks
++                },
++            );
+         Ok(blocks
+             .into_iter()
+             .map(|(entry, blocks)| {
+```
+
+**File**: `crates/db/tests/unit/dropped_storage_reclaim.rs` (modified, +16/-5)
+```diff
+@@ -3683,11 +3683,22 @@ async fn supersede(
+     compact_every_table(&db).await;
+     assert_eq!(pass(&db).await, DroppedIndexStorage::default());
+     assert_eq!(stored_entries(&db).await, vec![]);
+-    let rows_left_behind = rows(writer(&db).db())
+-        .await
+-        .into_keys()
+-        .filter(|key| prefixes.iter().any(|prefix| key.starts_with(prefix)))
+-        .count();
++    let owned = || async {
++        rows(writer(&db).db())
++            .await
++            .into_keys()
++            .filter(|key| prefixes.iter().any(|prefix| key.starts_with(prefix)))
++            .count()
++    };
++    // A writer applies the result of its compactor's job at its next
++    // manifest poll, so rows a job discarded stay readable for a moment:
++    // rows are left behind only if they are still there well after it.
++    let mut rows_left_behind = owned().await;
++    let read = Instant::now();
++    while rows_left_behind > 0 && read.elapsed() < WAIT / 4 {
++        tokio::time::sleep(SETTLE).await;
++        rows_left_behind = owned().await;
++    }
+     db.close().await.expect("the writer closes");
+     Superseded {
+         ran_under_the_superseded_writer,
 ```
 
 ---
 
-### Incident Patch 3: `e0ebb886` (2026-11-22)
-**Commit Message**: fix(go): reject non-finite floats in float slices during Validate (#1296)
+### Incident Patch 3: `fb9ce75d` (2026-11-23)
+**Commit Message**: Weigh every prefix a table can hold rows under, whoever the table starts under
 
-F64/F32 reject NaN and +/-Inf when the value is built, so
-ParamValue("v", math.NaN()).Validate() returns "v: helix: non-finite float".
-F64Array/F32Array (and PropertyValueOf for []float64 / []float32) did no such
-check, so ParamValue("v", []float64{1, math.NaN()}) passed Validate and
-only failed later inside encoding/json with "json: unsupported value: NaN",
-without the parameter path.
+The byte estimate skipped the prefixes of an entry that sort strictly
+inside a table once the table started or ended under another prefix of
+the same entry. A partitioned vector generation, whose physical indexes
+lie side by side, was counted about half its rows on a 68 GiB run, and
+the idle reclaim left a run that was worth rewriting.
 
-Check every element in F64Array/F32Array the same way propertyFloat does.
+Every prefix the table can hold a row under is weighed now. One with an
+index key under it counts those blocks; the one the table starts under
+counts from the first block, whose shortened index key says nothing; one
+without rows adds nothing; and one whose rows all lie inside a block that
+begins with another owner's row is read only to decide whether its entry
+is held, so the estimate is short by less than a block there and never
+long. Contracts pin each case on a table built row by row.
 
-Signed-off-by: anant <[REDACTED_EMAIL]>
-Co-authored-by: anant <[REDACTED_EMAIL]>
-
-**File**: `sdks/go/dsl.go` (modified, +11/-2)
+**File**: `crates/db/src/index_lifecycle/dropped/retire.rs` (modified, +30/-34)
 ```diff
-@@ -182,10 +182,10 @@ func I64Array(v ...int64) PropertyValue {
- 	return PropertyValue{kind: "I64Array", value: append([]int64(nil), v...)}
- }
- func F64Array(v ...float64) PropertyValue {
--	return PropertyValue{kind: "F64Array", value: append([]float64(nil), v...)}
-+	return propertyFloatArray("F64Array", append([]float64(nil), v...))
- }
- func F32Array(v ...float32) PropertyValue {
--	return PropertyValue{kind: "F32Array", value: append([]float32(nil), v...)}
-+	return propertyFloatArray("F32Array", append([]float32(nil), v...))
- }
- func StringArray(v ...string) PropertyValue {
- 	return PropertyValue{kind: "StringArray", value: append([]string(nil), v...)}
-@@ -226,6 +226,15 @@ func propertyFloat[T ~float32 | ~float64](kind string, v T) PropertyValue {
- 	return PropertyValue{kind: kind, value: v}
- }
+@@ -597,71 +597,67 @@ impl Retirer {
+         match whole {
+             // Every row of the table is the entry's.
+             Some((_, entry)) => Ok(HashMap::from([(entry, sst.estimate_size())])),
+-            None => self.held_in_part(sst, prefixes, ends, inside).await,
++            None => self.held_in_part(sst, prefixes, ends).await,
+         }
+     }
  
-+func propertyFloatArray[T ~float32 | ~float64](kind string, v []T) PropertyValue {
-+	for _, f := range v {
-+		if math.IsNaN(float64(f)) || math.IsInf(float64(f), 0) {
-+			return PropertyValue{kind: kind, err: errors.New("helix: non-finite float")}
-+		}
-+	}
-+	return PropertyValue{kind: kind, value: v}
-+}
-+
- func MustPropertyValue(value any) PropertyValue {
- 	v, err := PropertyValueOf(value)
- 	if err != nil {
+     /// [`Self::held`] for a table that reaches a prefix without lying wholly
+-    /// under one: `ends` own a prefix the table starts or ends under, and
+-    /// `inside` are the prefixes of other entries that sort strictly inside
+-    /// it.
++    /// under one: `ends` own a prefix the table starts or ends under.
+     ///
+     /// The estimate counts, for each prefix found to have rows in the table,
+-    /// the blocks those rows are in: exact to one block at each end. A
+-    /// prefix with no row in the table adds nothing; neither does one whose
+-    /// only rows are inside a block this had no need to read, because its
+-    /// entry was already known to be held.
++    /// the blocks those rows are in: exact to one block at each end. Every
++    /// prefix the table can hold a row under is weighed, those of an entry
++    /// in `ends` included. A prefix with no row in the table adds nothing.
++    /// Neither does one whose rows all lie inside a block that begins with
++    /// another owner's row, when its entry is known to be held without it:
++    /// that block is not read, so the estimate is short by less than a block
++    /// for each such prefix, and never long.
+     async fn held_in_part(
+         &self,
+         sst: &SsTableHandle,
+         prefixes: &BTreeMap<Bytes, DroppedGeneration>,
+         ends: HashSet<DroppedGeneration>,
+-        inside: Vec<(&Bytes, DroppedGeneration)>,
+     ) -> Result<HashMap<DroppedGeneration, u64>> {
+         let first = sst.info.first_entry.as_deref();
+         let last = sst.info.last_entry.as_deref();
+         let file = self.tables.open_with_handle(sst.clone())?;
+         let index = file.index().await?;
+-        // Blocks `from..to` have an index key under the prefix.
+-        let under = |prefix: &[u8]| {
+-            (
+-                index.partition_point(|start| start < prefix),
+-                index.partition_point(|start| start < prefix || start.starts_with(prefix)),
+-            )
+-        };
+         // The blocks each entry is known to have rows in, one range for
+         // each of its prefixes found there.
+         let mut blocks = HashMap::<DroppedGeneration, Vec<std::ops::Range<usize>>>::new();
+-        // A prefix the table starts or ends under has rows in it.
+-        for (prefix, entry) in overlapping(prefixes, first, last).filter(|(prefix, _)| {
+-            first.is_some_and(|first| first.starts_with(prefix))
+-                || last.is_some_and(|last| last.starts_with(prefix))
+-        }) {
+-            let (from, to) = under(prefix);
+-            blocks
+-                .entry(entry)
+-                .or_default()
+-                .push(blocks_under(from, to));
+-        }
++        // The blocks only a read can decide, with the prefixes it decides.
+         let mut in_blocks = BTreeMap::<usize, Vec<(&Bytes, DroppedGeneration)>>::new();
+-        for (prefix, entry) in inside {
+-            let (from, to) = under(prefix);
+-            match held_by_index(prefix, from, index.get(from).map(|(_, start)| start)) {
++        for (prefix, entry) in overlapping(prefixes, first, last) {
++            // Blocks `from..to` have an index key under the prefix.
++            let from = index.partition_point(|start| start < &prefix[..]);
++            let to = index
++                .partition_point(|start| start < &prefix[..] || start.starts_with(&prefix[..]));
++            // A prefix the table starts or ends under has rows in it; of any
++            // other the block index says.
++            let starts_under = first.is_some_and(|first| first.starts_with(prefix));
++            let ends_under = last.is_some_and(|last| last.starts_with(prefix));
++            let rows = match starts_under || ends_under {
++                true => Held::Yes,
++                false => held_by_index(prefix, from, index.get(from).map(|(_, start)| start)),
++            };
++            match rows {
++                // The table's first row is in its first block, whatever
++                // shortened key indexes that block.
++                Held::Yes if starts_under => blocks.entry(entry).or_default().push(0..to.max(1)),
+                 Held::Yes => blocks
+                     .entry(entry)
+                     .or_default()
+                     .push(blocks_under(from, to)),
+                 Held::No => {}
++                // Held whatever the block has: it is not read for this.
++                Held::InBlock(_) if ends.contains(&entry) => {}
+                 Held::InBlock(block) => in_blocks.entry(block).or_default().push((prefix, entry)),
+             }
+         }
+         // Imperative: each block is read only while one of it
 ```
 
-**File**: `sdks/go/dsl_test.go` (modified, +29/-0)
+**File**: `crates/db/tests/unit/dropped_storage_reclaim.rs` (modified, +92/-40)
 ```diff
-@@ -1656,6 +1656,35 @@ func TestDateTimeAndPropertyValueConversions(t *testing.T) {
- 	}
+@@ -1314,44 +1314,32 @@ async fn a_table_wholly_under_a_prefix_counts_in_full_and_one_that_starts_under_
+     db.close().await.expect("the writer closes");
  }
  
-+func TestNonFiniteFloatArraysFailLikeScalars(t *testing.T) {
-+	// A NaN or ±Inf inside a float slice must be rejected the same way a scalar
-+	// one is: at Validate() with the parameter path, not later inside
-+	// encoding/json with "json: unsupported value".
-+	values := []any{
-+		[]float64{1, math.NaN()},
-+		[]float64{math.Inf(-1)},
-+		[]float32{1, float32(math.Inf(1))},
-+		F64Array(math.NaN()),
-+		F32Array(float32(math.NaN())),
-+	}
-+	for _, value := range values {
-+		request := NewReadQueryRequest(Read())
-+		request.ParamValue("v", value)
-+		err := request.Validate()
-+		var pathErr *PathError
-+		if !errors.As(err, &pathErr) || !strings.Contains(err.Error(), "non-finite float") {
-+			t.Fatalf("%#v: expected a non-finite float PathError from Validate, got %v", value, err)
-+		}
-+		if _, err := json.Marshal(MustPropertyValue(value)); err == nil {
-+			t.Fatalf("%#v: expected property serialization to fail", value)
-+		}
-+	}
-+
-+	if _, err := json.Marshal(F64Array(1, 2.5)); err != nil {
-+		t.Fatalf("finite float slice failed: %v", err)
-+	}
+-/// Proves a prefix of a held entry that has no row in a table adds nothing
+-/// to the entry's bytes in it: an entry of one generation owns a prefix for
+-/// each of the eleven record kinds, and a table that holds a row of it under
+-/// one kind alone, among rows of other generations under every kind, is
+-/// counted that row's block and not a block of someone else's for each of
+-/// the other ten.
+-#[tokio::test]
+-async fn a_prefix_without_rows_adds_no_block_to_an_entrys_bytes() {
+-    let db = open("dropped-retire-empty-prefixes").await;
++/// The bytes [`Retirer::held`] counts for the one entry that owns every
++/// prefix in `owned`, in a table of one flush that holds `rows` rows under
++/// each given prefix and nothing else. Every row fills a block of its own,
++/// of [`BLOCK_ROW`] bytes and a little framing.
++async fn held_bytes_of_one_table(name: &str, rows: &[(&Bytes, usize)], owned: &[&Bytes]) -> u64 {
++    let db = open(name).await;
+     let HelixStorage::Writer(shared) = db.storage() else {
+         panic!("the contract opens a writer");
+     };
+-    let owner = |generation| OwnerKey::Generation {
+-        scope: DataScope::LegacyUnscoped,
+-        index_id: 7,
+-        generation,
+-    };
+-    let dropped = owner(5).prefixes();
+-    assert_eq!(dropped.len(), 11);
+     let store: Arc<dyn ObjectStore> = Arc::new(slatedb::object_store::memory::InMemory::new());
+-    let path = "dropped-retire-empty-prefixes-rows".to_string();
+-    let rows = slatedb::Db::builder(path.clone(), Arc::clone(&store))
++    let path = format!("{name}-rows");
++    let raw = slatedb::Db::builder(path.clone(), Arc::clone(&store))
+         .build()
+         .await
+         .expect("the row store opens");
+-    // Each row fills a block of its own. Generations 4 and 6 have one under
+-    // every kind, either side of where generation 5 would be.
+-    const ROW: usize = 6000;
+-    for prefix in owner(4).prefixes().into_iter().chain(owner(6).prefixes()) {
+-        rows.put([&prefix[..], b"a"].concat(), vec![7u8; ROW])
++    for (prefix, count) in rows {
++        for row in 0..*count {
++            raw.put(
++                [&prefix[..], format!("{row:04}").as_bytes()].concat(),
++                vec![7u8; BLOCK_ROW as usize],
++            )
+             .await
+             .expect("the row writes");
++        }
+     }
+-    // Generation 5 has one row, under one kind.
+-    rows.put([&dropped[4][..], b"a"].concat(), vec![7u8; ROW])
+-        .await
+-        .expect("the row writes");
+-    rows.flush_with_options(FlushOptions {
++    raw.flush_with_options(FlushOptions {
+         flush_type: FlushType::MemTable,
+     })
+     .await
+@@ -1369,28 +1357,92 @@ async fn a_prefix_without_rows_adds_no_block_to_an_entrys_bytes() {
+     let [table] = &tables[..] else {
+         panic!("one flush leaves one table: {}", tables.len());
+     };
+-    assert!(table.estimate_size() > 23 * ROW as u64);
+-    let retirer = Retirer::new(Arc::clone(shared), &path, store, SLOTS);
+-    let prefixes = dropped
+-        .into_iter()
+-        .map(|prefix| (prefix, generation_entry(1)))
++    let written = rows.iter().map(|(_, count)| *count as u64).sum::<u64>();
++    assert!(table.estimate_size() > written * BLOCK_ROW);
++    let prefixes = owned
++        .iter()
++        .map(|prefix| ((*prefix).clone(), generation_entry(1)))
+         .collect::<BTreeMap<_, _>>();
+-    let held = retirer
++    let held = Retirer::new(Arc::clone(shared), &path, store, SLOTS)
+         .held(table, &prefixes)
+         .await
+         .expect("the table is looked into");
+     let [(entry, bytes)] = held.into_iter().collect::<Vec<_>>()[..] else {
+         panic!("the table holds rows of the one entry");
+     };
+     assert_eq!(entry, generation_entry(1));
+-    // The one block of the one row, to a few bytes of framing.
++    raw.close().await.expect("the row store closes");
++    db.close().await.expect("the writer closes");
++    bytes
 +}
 +
- func TestExpressionReferenceAndPredicateConversions(t *testing.T) {
- 	marshaled := []any{
- 		ExprInput(ExprID()),
++/// A row larger than a block, so that it is stored in a block of its own.
++const BLOCK_ROW: u64 = 6000;
++
++/// The prefix of generation `generation` of one index under one record kind:
++/// those of consecutive generations sort next to each other.
++fn sibling_prefix(generation: u64) -> Bytes {
++    OwnerKey::Generation {
++        scope: DataScope::LegacyUnscoped,
++        index_id: 7,
++        generation,
++    }
++    .prefixes()
++    .swap_remove(4)
++}
++
++/// Proves a prefix of a held entry that has no row in a table adds nothing
++/// to the entry's bytes in it, whether or not the table starts and ends
++/// under the entry: the block before where its rows would be belongs to
++/// someone else.
++#[tokio::test]
++async fn a_prefix_without_rows_adds_no_block_to_an_entrys_bytes() {
++    let [g2, g3, g4, g5, g6, g7, g8] = [2, 3, 4, 5, 6, 7, 8].map(sibling_prefix);
++    // The entry has rows under on
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1326** (2026-11-24): Drop indexes through a compaction filter (@xav-db)
+- **PR #1325** (2026-11-24): Build unpartitioned vector indexes in memory, in bulk (@xav-db)
 - **PR #1322** (2026-11-23): Default the CLI to Docker v0.0.18 (@xav-db)
 - **PR #1321** (2026-11-23): Datetime string migration: leave text- and vector-indexed properties as stored (@xav-db)
 - **PR #1320** (2026-11-23): docs: Helix Foundry first, Cloud inside HelixDB, Foundry pages brought up to date with prod (@xav-db)
 - **PR #1319** (2026-11-23): Default the CLI to Docker v0.0.17 (@xav-db)
-- **PR #1318** (2026-11-22): docs: Helix Foundry agent memory with helix_foundry_recall (@xav-db)
-- **PR #1317** (2026-11-22): Point the README to Helix Foundry (@xav-db)
 
 ---
 
@@ -2399,31 +2822,31 @@ Co-authored-by: anant <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. go): convert time.Time to millis without UnixNano overflow
+## X. Build unpartitioned vector indexes in memory, in bulk
 
 **RULE**:
-When implementing operations in `sdks/go/dsl.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in HelixDB/helix-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/db/fuzz/corpus/current_index_v2_records/valid-vector-bulk-build-operation-record`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in HelixDB/helix-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ce6bcc9c`: go): convert time.Time to millis without UnixNano overflow. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `632e9097`: Build unpartitioned vector indexes in memory, in bulk. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdks/go/dsl.go`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/db/fuzz/corpus/current_index_v2_records/valid-vector-bulk-build-operation-record`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-	return DateTime{millis: t.UnixMilli()}
+hex:0101021111111111111111111111111111111100000000000000010301000000014c0000000170000000000000000200000000000000030000000000000004010201070000000575707065720100000006637572736f72000000000000000500000000000000060000000000000007000000000000000803000000090101
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-	return DateTime{millis: t.UTC().UnixNano() / int64(time.Millisecond)}
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ce6bcc9c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `632e9097` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

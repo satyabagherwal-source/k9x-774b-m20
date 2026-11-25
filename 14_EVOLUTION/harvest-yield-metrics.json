@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T04:52:10.626Z",
-  "total_cycles_completed": 12290,
-  "total_learnings_persisted": 12290,
-  "total_rules_promoted": 11333,
+  "last_updated": "2026-11-25T05:00:50.364Z",
+  "total_cycles_completed": 12293,
+  "total_learnings_persisted": 12293,
+  "total_rules_promoted": 11335,
   "history": [
-    {
-      "timestamp": "2026-11-24T15:36:06.624Z",
-      "repository": "emberstack/kubernetes-reflector",
-      "learningId": "learn-github-emberstack-kubernetes-reflector",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T15:36:10.376Z",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "learningId": "learn-github-aleo-labs-protocol-snarkos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T15:44:30.192Z",
-      "repository": "embassy-rs/embassy",
-      "learningId": "learn-github-embassy-rs-embassy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T15:44:35.586Z",
       "repository": "pingcap/tidb",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-25T04:52:10.626Z",
       "repository": "MaterializeInc/materialize",
       "learningId": "learn-github-materializeinc-materialize",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T05:00:30.759Z",
+      "repository": "openai/clip-vit-large-patch14",
+      "learningId": "learn-huggingface-openai-clip-vit-large-patch14",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T05:00:34.725Z",
+      "repository": "rtk-ai/rtk",
+      "learningId": "learn-github-rtk-ai-rtk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T05:00:50.364Z",
+      "repository": "HelixDB/helix-db",
+      "learningId": "learn-github-helixdb-helix-db",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T04:52:17.852Z",
+  "updated_at": "2026-11-25T05:00:54.764Z",
   "stats": {
-    "total_discovered": 9239,
-    "approved_pending_harvest": 8749,
+    "total_discovered": 9247,
+    "approved_pending_harvest": 8756,
     "harvested_count": 0,
-    "rejected_count": 490,
+    "rejected_count": 491,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8745,
+      "COMMUNITY_AND_EXPERT": 8753,
       "OFFICIAL_DOCUMENTATION": 275,
       "STANDARDS_AND_SPECIFICATIONS": 149,
       "ENGINEERING_BLOGS": 7,
@@ -199855,6 +199855,175 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
         "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-1A44AC97BB6C": {
+      "id": "SRC-1A44AC97BB6C",
+      "url": "https://registry.npmjs.org/@ferr079-nope%2Fpkg-zz",
+      "title": "https://registry.npmjs.org/@ferr079-nope%2Fpkg-zz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T05:00:54.057Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
+        "fileName": "rtk-ai-rtk-learnings.md"
+      }
+    },
+    "SRC-B927EFC607B9": {
+      "id": "SRC-B927EFC607B9",
+      "url": "https://pnpm.io/v/12.16.1",
+      "title": "https://pnpm.io/v/12.16.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T05:00:54.131Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
+        "fileName": "rtk-ai-rtk-learnings.md"
+      }
+    },
+    "SRC-6D4A3E1575A2": {
+      "id": "SRC-6D4A3E1575A2",
+      "url": "https://get.pnpm.io/install.sh",
+      "title": "https://get.pnpm.io/install.sh",
+      "status": "REJECTED_BINARY_EXECUTABLE_REJECTED",
+      "rejection_reasons": [
+        "BINARY_EXECUTABLE_REJECTED"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-25T05:00:54.213Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
+        "fileName": "rtk-ai-rtk-learnings.md"
+      }
+    },
+    "SRC-D66CAAF6B9CA": {
+      "id": "SRC-D66CAAF6B9CA",
+      "url": "https://github.com/pnpm/pnpm/releases/tag/v12.23.0",
+      "title": "https://github.com/pnpm/pnpm/releases/tag/v12.23.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T05:00:54.278Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
+        "fileName": "rtk-ai-rtk-learnings.md"
+      }
+    },
+    "SRC-BC31E65B708B": {
+      "id": "SRC-BC31E65B708B",
+      "url": "https://registry.npmjs.org/lodash/-/lodash-4.17.0.tgz",
+      "title": "https://registry.npmjs.org/lodash/-/lodash-4.17.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T05:00:54.537Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
+        "fileName": "rtk-ai-rtk-learnings.md"
+      }
+    },
+    "SRC-073A139595D5": {
+      "id": "SRC-073A139595D5",
+      "url": "https://registry.npmjs.org/@playwright/test/-/test-1.56.1.tgz",
+      "title": "https://registry.npmjs.org/@playwright/test/-/test-1.56.1.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T05:00:54.606Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
+        "fileName": "rtk-ai-rtk-learnings.md"
+      }
+    },
+    "SRC-1D10E4F1E64A": {
+      "id": "SRC-1D10E4F1E64A",
+      "url": "https://registry.npmjs.org/jest/-/jest-29.7.0.tgz",
+      "title": "https://registry.npmjs.org/jest/-/jest-29.7.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T05:00:54.674Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
+        "fileName": "rtk-ai-rtk-learnings.md"
+      }
+    },
+    "SRC-9BED2E4F3841": {
+      "id": "SRC-9BED2E4F3841",
+      "url": "https://registry.npmjs.org/vitest/-/vitest-3.2.4.tgz",
+      "title": "https://registry.npmjs.org/vitest/-/vitest-3.2.4.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T05:00:54.764Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
+        "fileName": "rtk-ai-rtk-learnings.md"
       }
     }
   }
