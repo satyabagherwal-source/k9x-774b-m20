@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T09:08:06.902Z",
-  "total_cycles_completed": 12362,
-  "total_learnings_persisted": 12362,
-  "total_rules_promoted": 11373,
+  "last_updated": "2026-11-25T09:25:00.844Z",
+  "total_cycles_completed": 12364,
+  "total_learnings_persisted": 12364,
+  "total_rules_promoted": 11374,
   "history": [
-    {
-      "timestamp": "2026-11-24T20:12:47.990Z",
-      "repository": "rdfjs/N3.js",
-      "learningId": "learn-github-rdfjs-n3-js",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T20:12:53.809Z",
-      "repository": "okteto/okteto",
-      "learningId": "learn-github-okteto-okteto",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T20:29:52.660Z",
       "repository": "RDFLib/rdflib",
@@ -1403,6 +1389,20 @@
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T09:24:56.262Z",
+      "repository": "briaai/Fibo-2.0-dev",
+      "learningId": "learn-huggingface-briaai-fibo-2-0-dev",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T09:25:00.844Z",
+      "repository": "goharbor/harbor",
+      "learningId": "learn-github-goharbor-harbor",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

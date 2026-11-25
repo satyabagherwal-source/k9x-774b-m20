@@ -7183,10 +7183,10 @@
     "repository": "goharbor/harbor",
     "platform": "github",
     "sourceUrl": "https://github.com/goharbor/harbor",
-    "sourceVersion": "e864be67",
+    "sourceVersion": "7ceeba65",
     "license": "Apache-2.0",
-    "contentHash": "7e7bb60c2ef463633115a4e7ade8c13da8511f3da856265b10929f0384f300b8",
-    "lastHarvestedAt": "2026-11-24T16:01:38.267Z",
+    "contentHash": "525933856b8125c59ef8d717fe85bb315470d460ca4acfb03109fc775bbf8215",
+    "lastHarvestedAt": "2026-11-25T09:25:00.839Z",
     "learningId": "learn-github-goharbor-harbor"
   },
   "joreilly-peopleinspace": {
@@ -10765,8 +10765,8 @@
     "sourceUrl": "https://huggingface.co/briaai/Fibo-2.0-dev",
     "sourceVersion": "hf-briaai-fibo-2.0-dev",
     "license": "Open-Source",
-    "contentHash": "0549b3c818c4821c796ca3c668bb4f9dea6875530d53e63c1adaf76d3ff30569",
-    "lastHarvestedAt": "2026-11-21T17:15:22.780Z",
+    "contentHash": "b4261bcfbd4dca53734bbacc1b6c83af77265e044a9b71b660afc1c8bd2fd920",
+    "lastHarvestedAt": "2026-11-25T09:24:56.257Z",
     "learningId": "learn-huggingface-briaai-fibo-2-0-dev"
   },
   "vincentwei1021-video-shotcraft": {

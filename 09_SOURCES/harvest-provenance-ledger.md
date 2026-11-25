@@ -13051,3 +13051,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-nanbeige-nanbeige4-3-33b` | `https://huggingface.co/Nanbeige/Nanbeige4.3-33B` | `hf-nanbeig` | Multi-dimensional audit evidence | 2026-11-25T09:08:01.665Z |
 | `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `921d5c4b` | Multi-dimensional audit evidence | 2026-11-25T09:08:06.207Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `88b0d49b` | Multi-dimensional audit evidence | 2026-11-25T09:08:06.895Z |
+| `learn-huggingface-briaai-fibo-2-0-dev` | `https://huggingface.co/briaai/Fibo-2.0-dev` | `hf-briaai-` | Multi-dimensional audit evidence | 2026-11-25T09:24:56.257Z |
+| `learn-github-goharbor-harbor` | `https://github.com/goharbor/harbor` | `7ceeba65` | Multi-dimensional audit evidence | 2026-11-25T09:25:00.839Z |

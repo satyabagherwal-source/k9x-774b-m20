@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T08:56:48.911Z",
+  "updated_at": "2026-11-25T09:25:05.206Z",
   "stats": {
-    "total_discovered": 9391,
-    "approved_pending_harvest": 8900,
+    "total_discovered": 9395,
+    "approved_pending_harvest": 8904,
     "harvested_count": 0,
     "rejected_count": 491,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8890,
+      "COMMUNITY_AND_EXPERT": 8894,
       "OFFICIAL_DOCUMENTATION": 280,
       "STANDARDS_AND_SPECIFICATIONS": 150,
       "ENGINEERING_BLOGS": 7,
@@ -203192,6 +203192,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-inclusionai-lingsante-3.1-air-vl-learnings.md",
         "fileName": "hf-inclusionai-lingsante-3.1-air-vl-learnings.md"
+      }
+    },
+    "SRC-B5C775668190": {
+      "id": "SRC-B5C775668190",
+      "url": "https://app.codecov.io/gh/goharbor/harbor/pull/24480?dropdown=coverage&src=pr&el=h1",
+      "title": "https://app.codecov.io/gh/goharbor/harbor/pull/24480?dropdown=coverage&src=pr&el=h1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T09:25:05.015Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
+        "fileName": "goharbor-harbor-learnings.md"
+      }
+    },
+    "SRC-F3BE16AA58DE": {
+      "id": "SRC-F3BE16AA58DE",
+      "url": "https://app.codecov.io/gh/goharbor/harbor/commit/e864be67819d2c56e0127dfaebd9172963e8d459?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/goharbor/harbor/commit/e864be67819d2c56e0127dfaebd9172963e8d459?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T09:25:05.075Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
+        "fileName": "goharbor-harbor-learnings.md"
+      }
+    },
+    "SRC-021D194EAF2F": {
+      "id": "SRC-021D194EAF2F",
+      "url": "https://app.codecov.io/gh/goharbor/harbor/commit/c763f90965558a11cbe7d4c908f1954b4d16023e?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/goharbor/harbor/commit/c763f90965558a11cbe7d4c908f1954b4d16023e?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T09:25:05.141Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
+        "fileName": "goharbor-harbor-learnings.md"
+      }
+    },
+    "SRC-E16EA2C319D8": {
+      "id": "SRC-E16EA2C319D8",
+      "url": "https://app.codecov.io/gh/goharbor/harbor/pull/24480?dropdown=coverage&src=pr&el=",
+      "title": "https://app.codecov.io/gh/goharbor/harbor/pull/24480?dropdown=coverage&src=pr&el=",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T09:25:05.206Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
+        "fileName": "goharbor-harbor-learnings.md"
       }
     }
   }

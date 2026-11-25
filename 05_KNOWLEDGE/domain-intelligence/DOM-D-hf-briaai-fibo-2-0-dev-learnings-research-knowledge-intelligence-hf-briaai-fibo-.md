@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T17:15:40.715Z",
+  "timestamp": "2026-11-25T09:25:04.380Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-briaai-fibo-2.0-dev-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-briaai-fibo-2.0-dev-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T17:15:40.715Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T09:25:04.380Z`  
 > **Learning ID**: `LEARN-EVO-hf-briaai-fibo-2.0-dev-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-briaai-fi`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T17:15:22.090Z  
+> **Timestamp**: 2026-11-25T09:24:55.722Z  
 > **Learning ID**: `learn-huggingface-briaai-fibo-2-0-dev`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-briaai-fibo-2.0-dev-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/briaai/Fibo-2.0-dev](https://huggingface.co/briaai/Fibo-2.0-dev))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T17:15:21.956Z  
+> **Harvest Timestamp**: 2026-11-25T09:24:48.646Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 1913 downloads | 221 likes
+- **Stars / Engagement**: 1663 downloads | 229 likes
 
 ---
 

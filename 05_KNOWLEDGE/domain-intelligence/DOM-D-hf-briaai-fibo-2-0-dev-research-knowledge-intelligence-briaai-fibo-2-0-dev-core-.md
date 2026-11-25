@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/briaai/Fibo-2.0-dev",
   "source_version": "hf-briaai-fibo-2.0-dev",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T17:15:23.026Z",
+  "timestamp": "2026-11-25T09:24:56.483Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-briaai-fibo-2-0-dev",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [briaai/Fibo-2.0-dev](https://huggingface.co/briaai/Fibo-2.0-dev) (Revision: `hf-briaai-`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T17:15:23.026Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T09:24:56.483Z`  
 > **Learning ID**: `learn-huggingface-briaai-fibo-2-0-dev`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-briaai-fibo-2.0-dev-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/briaai/Fibo-2.0-dev](https://huggingface.co/briaai/Fibo-2.0-dev))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T17:15:21.956Z  
+> **Harvest Timestamp**: 2026-11-25T09:24:48.646Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 1913 downloads | 221 likes
+- **Stars / Engagement**: 1663 downloads | 229 likes
 
 ---
 

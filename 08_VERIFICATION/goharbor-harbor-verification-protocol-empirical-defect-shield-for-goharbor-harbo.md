@@ -4,22 +4,22 @@
 {
   "source_repository": "goharbor/harbor",
   "source_url": "https://github.com/goharbor/harbor",
-  "source_version": "e864be67",
+  "source_version": "7ceeba65",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-24T16:01:38.487Z",
+  "timestamp": "2026-11-25T09:25:01.088Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-goharbor-harbor",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [goharbor/harbor](https://github.com/goharbor/harbor) (Revision: `e864be67`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T16:01:38.487Z`  
+> **Provenance**: Harvested from [goharbor/harbor](https://github.com/goharbor/harbor) (Revision: `7ceeba65`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T09:25:01.088Z`  
 > **Learning ID**: `learn-github-goharbor-harbor`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `goharbor/harbor` (Commit: `e864be67`)
+- **Target Repository**: `goharbor/harbor` (Commit: `7ceeba65`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/goharbor-harbor-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/goharbor/harbor](https://github.com/goharbor/harbor))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T16:01:37.062Z  
+> **Harvest Timestamp**: 2026-11-25T09:24:57.735Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Harbor is a CNCF graduated open-source container registry to manage container images and other OCI artifacts securely with policies, role-based access control, vulnerability scans and signing.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 29793 stars
+- **Stars / Engagement**: 29796 stars
 
 ---
 
@@ -666,11 +666,13 @@ def prepare_job_service(config_dict):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #24478** (2026-11-24): **fix: allow tag events to be disabled and purged in audit log**
-  *Symptoms*: Thank you for contributing to Harbor!  # Comprehensive Summary of your change  Tag create and delete are written to the audit log (resource type `tag`), but `create_tag` and `delete_tag` were missing from `EventTypes` in `src/pkg/auditext/model/model.go`. Because of that:  - `GET /api/v2.0/auditlog-exts/events` did not return them, so the audit log settings page had no checkbox to turn them off. - The purge job's `permitEventTypes` filter dropped them, and "Other events" (`EventTypes[3:]`) did not include them either, so tag rows were never purged.  This adds both to the end of the list, as the comment there asks. The settings page and the purge dialog build their lists from the API, so no portal change is needed. Tag events show up as their own checkboxes in the settings page and are covered by "Other events" in the purge dialog.  How tested: - Reproduced on a stock v2.16.0 install (full output in the issue). - Added a `TestPermitEventTypes` case. `go test ./pkg/auditext/dao/ -run TestPermitEventTypes` passes; without the change it fails.  # Issue being fixed Fixes #24477  Please indicate you've done the following: - [x] Well Written Title and Summary of the PR - [ ] Label the PR as needed. "release-note/ignore-for-release, release-note/new-feature, release-note/update, release-note/enhancement, release-note/community, release-note/breaking-change, release-note/docs, release-note/infra, release-note/deprecation" - [x] Accepted the DCO. Commits without the DCO will delay acce
+- **Issue #24482** (2026-11-25): **fix(i18n): fix broken placeholders in Korean translation**
+  *Symptoms*: Thank you for contributing to Harbor!  # Comprehensive Summary of your change  Two Korean strings don't match the placeholders the portal passes:  - `REPLICATION.UNREACHABLE_SOURCE_REGISTRY` used `{{오류}}` instead of `{{error}}`. When the source registry of a replication rule can't be reached, the Korean UI shows the text `{{오류}}` and not the actual error. - `REPLICATION.BANDWIDTH_TOOLTIP` was missing `{{max_job_workers}}`, so the Korean tooltip doesn't show the maximum number of concurrent executions. I also changed "each execution" to "each replication worker" to match the English text.  Output of `TranslateDefaultParser` from `@ngx-translate/core` 17.0.0 (the version in `src/portal/package.json`):  | String | Before | After | |---|---|---| | `UNREACHABLE_SOURCE_REGISTRY` with `error: "Bad Gateway"` | …사용할 수 있는지 확인하세요. {{오류}} | …사용할 수 있는지 확인하세요: Bad Gateway | | `BANDWIDTH_TOOLTIP` with `max_job_workers: 10` | …동시 실행 횟수에 주의하시기 바랍니다… | …동시 실행 횟수(최대 10개)에 주의하시기 바랍니다… |  Comparing the placeholders of every language with English also finds `ru-ru` (`REPLICATION.BANDWIDTH_TOOLTIP`, `VULNERABILITY.CHART.TOOLTIPS_TITLE`, `VULNERABILITY.CHART.TOOLTIPS_TITLE_SINGULAR`) and `tr-tr` (`QUOTA.SET_QUOTAS`). I left those to people who speak the languages.  # Issue being fixed N/A (small i18n fix; no issue created)  Please indicate you've done the following: - [x] Well Written Title and Summary of the PR - [ ] Label the PR as needed. I can't set labels; `release-note/update` seems to fit. - 
 
-- **Issue #24477** (2026-11-24): **Tag create/delete audit events cannot be disabled in the UI or purged**
-  *Symptoms*: **Expected behavior and actual behavior:**  Harbor writes audit log entries when a tag is created or deleted (`CreateTagEvent` / `DeleteTagEvent` in [src/controller/event/topic.go#L255-L309](https://github.com/goharbor/harbor/blob/67748c71ef12/src/controller/event/topic.go#L255-L309), resource type `tag`). But `create_tag` and `delete_tag` are not in `EventTypes` in [src/pkg/auditext/model/model.go#L49-L71](https://github.com/goharbor/harbor/blob/67748c71ef12/src/pkg/auditext/model/model.go#L49-L71).  Expected: tag events behave like the other audited events. They show up in the event list, can be switched off under Configuration > System Settings > Audit log, and get removed by the audit log purge job.  Actual: - `GET /api/v2.0/auditlog-exts/events` does not return them, so the audit log settings page has no checkbox for tag events. The only way to stop logging them is to set `disabled_audit_log_event_types` by hand through the API, and the next checkbox change in the UI rewrites that list from the event list and drops it again. - The purge job silently filters them out. `permitEventTypes` in [src/pkg/auditext/dao/dao.go#L193-L207](https://github.com/goharbor/harbor/blob/67748c71ef12/src/pkg/auditext/dao/dao.go#L193-L207) only keeps names found in `EventTypes`, and "Other events" expands to `EventTypes[3:]`. Tag rows are never purged, whatever is selected.  **Steps to reproduce the problem:**  Stock v2.16.0 online installer (amd64), HTTP on port 8099, admin / Harbor12345. Ru
+- **Issue #24480** (2026-11-24): **Mark webhook execution as error when the task can't be submitted**
+  *Symptoms*: Fixes #24479  `StartHook` creates the webhook execution and then the task. If the job can't be submitted to jobservice, the task manager deletes the task row and returns an error, and the execution is left `Running` with no tasks. Nothing updates it after that.  This marks the execution as `Error` with the submit error. The scan, preheat and scan data export paths already handle a failed task create this way.  Test: added a unit test in `src/pkg/notification/hook`. It fails without the change and passes with it. I also checked by hand on v2.16.0 with the repro steps from the issue. 
+  **Post-Mortem & Fix Analysis**:
+  > ## [Codecov](https://app.codecov.io/gh/goharbor/harbor/pull/24480?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=goharbor) Report :x: Patch coverage is `50.00000%` with `1 line` in your changes missing coverage. Please review. :white_check_mark: Project coverage is 74.26%. Comparing base ([`e864be6`](https://app.codecov.io/gh/goharbor/harbor/commit/e864be67819d2c56e0127dfaebd9172963e8d459?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=goharbor)) to head ([`c763f90`](https://app.codecov.io/gh/goharbor/harbor/commit/c763f90965558a11cbe7d4c908f1954b4d16023e?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=goharbor)). :warning: Report is 1 commits behind head on main.  | [Files with missing lines](https://app.codecov.io/gh/goharbor/harbor/pull/24480?dropdown=coverage&src=pr&el=
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -687,55 +689,41 @@ def prepare_job_service(config_dict):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e864be67` (2026-11-24)
-**Commit Message**: fix: allow tag events to be disabled and purged in audit log (#24478)
+### Incident Patch 1: `7ceeba65` (2026-11-25)
+**Commit Message**: fix(i18n): fix broken placeholders in Korean translation (#24482)
 
-Tag create and delete are written to the audit log, but create_tag
-and delete_tag were missing from EventTypes. They did not show up in
-the audit log settings, and the purge job dropped them from its filter,
-so tag rows were never purged.
+Fix broken placeholders in Korean translation
 
-Add them to the end of the list. The settings page and the purge
-dialog read the list from the API, so no portal change is needed.
+REPLICATION.UNREACHABLE_SOURCE_REGISTRY used {{오류}} instead of
+{{error}}, so the portal showed the placeholder text and hid the real
+error. REPLICATION.BANDWIDTH_TOOLTIP was missing {{max_job_workers}},
+so the maximum number of concurrent executions wasn't shown.
 
-Fixes #24477
+Signed-off-by: Ethan <[REDACTED_EMAIL]>
 
-Signed-off-by: Prasanth Baskar <[REDACTED_EMAIL]>
-
-**File**: `src/pkg/auditext/dao/dao_test.go` (modified, +3/-0)
+**File**: `src/portal/src/i18n/lang/ko-kr-lang.json` (modified, +2/-2)
 ```diff
-@@ -180,6 +180,9 @@ func TestPermitEventTypes(t *testing.T) {
- 	if len(eventTypes) != 2 {
- 		t.Errorf("permitEventTypes failed")
- 	}
-+	if tagEventTypes := permitEventTypes([]string{"create_tag", "delete_tag"}); len(tagEventTypes) != 2 {
-+		t.Errorf("permitEventTypes should keep tag event types")
-+	}
- 	eventTypes2 := permitEventTypes([]string{})
- 	if len(eventTypes2) != 0 {
- 		t.Errorf("permitEventTypes failed")
-```
-
-**File**: `src/pkg/auditext/model/model.go` (modified, +2/-0)
-```diff
-@@ -68,6 +68,8 @@ var EventTypes = []string{
- 	"create_role",
- 	"delete_role",
- 	"update_role",
-+	"create_tag",
-+	"delete_tag",
- }
- 
- // OtherEventTypes defines the types of other audit log event types excludes previous EventTypes: create_artifact, delete_artifact, pull_artifact
+@@ -654,9 +654,9 @@
+         "FLATTEN_LEVEL_TIP_3": "'Flatten 3 Levels': 'a/b/c/d/img' -> 'ns/d/img'",
+         "BANDWIDTH": "대역폭",
+         "BANDWIDTH_ERROR_TIP": "-1 또는 0보다 큰 정수를 입력하세요.",
+-        "BANDWIDTH_TOOLTIP": "각 실행에 대한 최대 네트워크 대역폭을 설정합니다. 동시 실행 횟수에 주의하시기 바랍니다. 무제한 대역폭을 원하시면 -1을 입력하세요.",
++        "BANDWIDTH_TOOLTIP": "각 복제 작업자에 대한 최대 네트워크 대역폭을 설정합니다. 동시 실행 횟수(최대 {{max_job_workers}}개)에 주의하시기 바랍니다. 무제한 대역폭을 원하시면 -1을 입력하세요.",
+         "UNLIMITED": "제한 없음",
+-        "UNREACHABLE_SOURCE_REGISTRY": "소스 레지스트리에 연결하지 못했습니다. 이 규칙을 편집하기 전에 소스 레지스트리를 사용할 수 있는지 확인하세요. {{오류}}",
++        "UNREACHABLE_SOURCE_REGISTRY": "소스 레지스트리에 연결하지 못했습니다. 이 규칙을 편집하기 전에 소스 레지스트리를 사용할 수 있는지 확인하세요: {{error}}",
+         "CRON_ERROR_TIP": "cron 문자열의 첫 번째 필드는 0이어야 하며 두 번째 필드는 \"*\"일 수 없습니다.",
+         "COPY_BY_CHUNK": "청크로 복사",
+         "COPY_BY_CHUNK_TIP": "Blob을 청크로 복사할지 여부를 지정합니다. 청크별로 전송하면 API 요청 수가 늘어날 수 있습니다.",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #24482** (2026-11-25): fix(i18n): fix broken placeholders in Korean translation (@ethan3011)
+- **PR #24480** (2026-11-24): Mark webhook execution as error when the task can't be submitted (@bupd)
 - **PR #24478** (2026-11-24): fix: allow tag events to be disabled and purged in audit log (@bupd)
 - **PR #24469** (2026-11-24): (cherry-pick)Change the harbor introduction text in testcase along with the github.com (@stonezdj)
 - **PR #24468** (2026-11-24): Change the harbor introduction text in testcase along with the github… (@stonezdj)
 - **PR #24438** (2026-11-19): docs: fix typos (@Adham-Kiwan)
-- **PR #24433** (2026-11-18): docs: fix the dead Clarity link in CONTRIBUTING (@farisbasha)
-- **PR #24431** (closed): fix(orm): convert numeric or-list values to strings to work with pgx (@SevDaisy)
 
 ---
 
@@ -755,33 +743,33 @@ Signed-off-by: Prasanth Baskar <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. allow tag events to be disabled and purged in audit log
+## X. i18n): fix broken placeholders in Korean translation
 
 **RULE**:
-When implementing operations in `src/pkg/auditext/dao/dao_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goharbor/harbor. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/portal/src/i18n/lang/ko-kr-lang.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goharbor/harbor. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e864be67`: allow tag events to be disabled and purged in audit log. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7ceeba65`: i18n): fix broken placeholders in Korean translation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/pkg/auditext/dao/dao_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/portal/src/i18n/lang/ko-kr-lang.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	if tagEventTypes := permitEventTypes([]string{"create_tag", "delete_tag"}); len(tagEventTypes) != 2 {
-		t.Errorf("permitEventTypes should keep tag event types")
-	}
+        "BANDWIDTH_TOOLTIP": "각 복제 작업자에 대한 최대 네트워크 대역폭을 설정합니다. 동시 실행 횟수(최대 {{max_job_workers}}개)에 주의하시기 바랍니다. 무제한 대역폭을 원하시면 -1을 입력하세요.",
+        "UNREACHABLE_SOURCE_REGISTRY": "소스 레지스트리에 연결하지 못했습니다. 이 규칙을 편집하기 전에 소스 레지스트리를 사용할 수 있는지 확인하세요: {{error}}",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+        "BANDWIDTH_TOOLTIP": "각 실행에 대한 최대 네트워크 대역폭을 설정합니다. 동시 실행 횟수에 주의하시기 바랍니다. 무제한 대역폭을 원하시면 -1을 입력하세요.",
+        "UNREACHABLE_SOURCE_REGISTRY": "소스 레지스트리에 연결하지 못했습니다. 이 규칙을 편집하기 전에 소스 레지스트리를 사용할 수 있는지 확인하세요. {{오류}}",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e864be67` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7ceeba65` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

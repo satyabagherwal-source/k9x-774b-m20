@@ -13018,3 +13018,5 @@
 | `CYCLE-20261125-HYBF` | `2026-11-25T09:08:01.659Z` | `Nanbeige/Nanbeige4.3-33B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nanbeige-nanbeige4.3-33b-learnings.md` | Yes (`c266145e...`) |
 | `CYCLE-20261125-I1TM` | `2026-11-25T09:08:06.202Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10495` | Yes (`014d4acc...`) |
 | `CYCLE-20261125-I2CQ` | `2026-11-25T09:08:06.890Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`9cac9c74...`) |
+| `CYCLE-20261125-3P6L` | `2026-11-25T09:24:56.253Z` | `briaai/Fibo-2.0-dev` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-briaai-fibo-2.0-dev-learnings.md` | Yes (`b4261bcf...`) |
+| `CYCLE-20261125-3SPV` | `2026-11-25T09:25:00.835Z` | `goharbor/harbor` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10496` | Yes (`52593385...`) |

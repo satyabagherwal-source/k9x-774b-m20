@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T09:08:12.973Z",
+  "last_updated": "2026-11-25T09:25:06.517Z",
   "total_records": 2650,
   "domains": {
     "A": {
@@ -8465,8 +8465,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "b48fcad28ba99e576c2eb43a6e01483a3322104cf0715080dfcc06e171a66c8d",
-      "created_at": "2026-11-25T07:31:12.643Z"
+      "content_hash": "1cf70bc08ae494cb5f65050e1373078fc3f9588dc4a6e109d7003d33ec11e8fa",
+      "created_at": "2026-11-25T09:25:06.517Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -12899,8 +12899,8 @@
       "title": "Architecture Intelligence: goharbor/harbor Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-goharbor-harbor-architecture-intelligence-goharbor-harbor-core-invariants.md",
       "repository": "goharbor/harbor",
-      "content_hash": "3bac4a19a7971a1771c2e57aeb9eaffd697200f12bd312e0e18d92a82745c2d9",
-      "created_at": "2026-11-24T16:01:38.752Z"
+      "content_hash": "c0b7d4e92df55a4899f9a96f33abe361cf2b3859bb898074859c7adbbe4d0d72",
+      "created_at": "2026-11-25T09:25:01.262Z"
     },
     "domain_intelligence-technical-construction-intelligence-lioensky-vcptoolbox-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-lioensky-vcptoolbox-core-invariants",
@@ -12977,8 +12977,8 @@
       "title": "Architecture Intelligence: goharbor-harbor-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-goharbor-harbor-learnings-architecture-intelligence-goharbor-harbor-learnings-co.md",
       "repository": "goharbor-harbor-learnings",
-      "content_hash": "618987b147ee42f1a3c085362c2c1b0b2b2738c8818951dcd04dd829d2ee088b",
-      "created_at": "2026-11-24T16:01:49.905Z"
+      "content_hash": "6a945fa2bfe5a033933a83b43689aa39ea16e5c1e39a07bf6a32a34ce5bd0ce7",
+      "created_at": "2026-11-25T09:25:05.620Z"
     },
     "domain_intelligence-research-knowledge-intelligence-tongyi-mai-z-image-turbo-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-tongyi-mai-z-image-turbo-core-invariants",
@@ -29120,8 +29120,8 @@
       "title": "Research & Knowledge Intelligence: briaai/Fibo-2.0-dev Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-briaai-fibo-2-0-dev-research-knowledge-intelligence-briaai-fibo-2-0-dev-core-.md",
       "repository": "briaai/Fibo-2.0-dev",
-      "content_hash": "5068f2b15a7bcc4bddaf6bb0afe58bbe7c30d195239b8f95e77843d9189241cf",
-      "created_at": "2026-11-21T17:15:23.027Z"
+      "content_hash": "a2a493a3b21c02bd64fe6d4037162b4d9ae5a0e6ef860e1a8e774424edce5717",
+      "created_at": "2026-11-25T09:24:56.483Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-briaai-fibo-2-0-dev-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-briaai-fibo-2-0-dev-learnings-core-invariants",
@@ -29129,8 +29129,8 @@
       "title": "Research & Knowledge Intelligence: hf-briaai-fibo-2.0-dev-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-briaai-fibo-2-0-dev-learnings-research-knowledge-intelligence-hf-briaai-fibo-.md",
       "repository": "hf-briaai-fibo-2.0-dev-learnings",
-      "content_hash": "1a9596c24ca1f14e073a03625f806c5282f9d1280647d3231c11c3456e31d610",
-      "created_at": "2026-11-21T17:15:40.839Z"
+      "content_hash": "f28c039d24d7d2c0a2460562c8f7ddde57789309268076386d3511bd02a60c8a",
+      "created_at": "2026-11-25T09:25:04.498Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xhtoken-spark-x2-6-4b-gguf-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xhtoken-spark-x2-6-4b-gguf-core-invariants",

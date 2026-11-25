@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T09:08:06.921Z",
+  "last_updated": "2026-11-25T09:25:00.859Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10821,14 +10821,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-goharbor-harbor",
-      "content_hash": "7e7bb60c2ef463633115a4e7ade8c13da8511f3da856265b10929f0384f300b8",
-      "verified_at": "2026-11-24T16:01:38.283Z",
+      "content_hash": "525933856b8125c59ef8d717fe85bb315470d460ca4acfb03109fc775bbf8215",
+      "verified_at": "2026-11-25T09:25:00.858Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T16:01:38.283Z"
+      "last_updated": "2026-11-25T09:25:00.858Z"
     },
     "joreilly/PeopleInSpace": {
       "repository": "joreilly/PeopleInSpace",
@@ -16176,14 +16176,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-briaai-fibo-2-0-dev",
-      "content_hash": "0549b3c818c4821c796ca3c668bb4f9dea6875530d53e63c1adaf76d3ff30569",
-      "verified_at": "2026-11-21T17:15:22.791Z",
+      "content_hash": "b4261bcfbd4dca53734bbacc1b6c83af77265e044a9b71b660afc1c8bd2fd920",
+      "verified_at": "2026-11-25T09:24:56.265Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T17:15:22.791Z"
+      "last_updated": "2026-11-25T09:24:56.265Z"
     },
     "Vincentwei1021/video-shotcraft": {
       "repository": "Vincentwei1021/video-shotcraft",
