@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T10:26:16.752Z",
+  "last_updated": "2026-11-25T10:35:29.798Z",
   "directives": [
     {
       "id": "CD-001",
@@ -60744,6 +60744,57 @@
       "reason": "Human approval authorization required before canonical promotion",
       "date_staged": "2026-11-25",
       "domain_letter": "M"
+    },
+    {
+      "id": "CD-MEPB",
+      "directive_title": "publish BackgroundTaskCompleted when cancelling background tasks (fixes #2270)",
+      "source_repo": "1jehuang-jcode-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-MEPB-publish-backgroundtaskcompleted-when-cancelling-background-tasks-fixes-2270.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-MFSZ",
+      "directive_title": "don't panic machined on bogus cpufreq sysfs reads",
+      "source_repo": "siderolabs-talos-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-MFSZ-don-t-panic-machined-on-bogus-cpufreq-sysfs-reads.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-MBY0",
+      "directive_title": "keep command-only route hosts out of the session allowlist",
+      "source_repo": "nolabs-ai/nono",
+      "source_commit": "d4d1c774",
+      "staged_file": "11_INBOX/candidate-directives/CD-MBY0-keep-command-only-route-hosts-out-of-the-session-allowlist.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-1CF520",
+      "directive_title": "publish BackgroundTaskCompleted when cancelling background tasks (fixes #2270)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "1jehuang-jcode",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-1CF520-publish-backgroundtaskcompleted-when-can.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-REV-C91A79",
+      "directive_title": "don't panic machined on bogus cpufreq sysfs reads",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "siderolabs-talos",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C91A79-don-t-panic-machined-on-bogus-cpufreq-sy.md",
+      "staged_date": "2026-11-25"
     }
   ]
 }

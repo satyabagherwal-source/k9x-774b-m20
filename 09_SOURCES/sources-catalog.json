@@ -2353,10 +2353,10 @@
     "repository": "nolabs-ai/nono",
     "platform": "github",
     "sourceUrl": "https://github.com/nolabs-ai/nono",
-    "sourceVersion": "d0c52cdf",
+    "sourceVersion": "d4d1c774",
     "license": "Apache-2.0",
-    "contentHash": "801ecb3c69ab730915d41690e5cf171e59f353c951fadc7d7e54cc8ce3eb17fa",
-    "lastHarvestedAt": "2026-11-24T01:07:22.704Z",
+    "contentHash": "df160df6c7491841c5b15685878bb4c5b3944c3ae0eca6f4e98b128c71a62b93",
+    "lastHarvestedAt": "2026-11-25T10:35:24.549Z",
     "learningId": "learn-github-nolabs-ai-nono"
   },
   "dathere-qsv": {
@@ -3613,10 +3613,10 @@
     "repository": "1jehuang/jcode",
     "platform": "github",
     "sourceUrl": "https://github.com/1jehuang/jcode",
-    "sourceVersion": "7ecaf212",
+    "sourceVersion": "103a1fa2",
     "license": "MIT",
-    "contentHash": "00249820330ee271192aa7333da1fbb148a3435a5bcd1da9e51a97565e68de8f",
-    "lastHarvestedAt": "2026-11-24T08:34:30.876Z",
+    "contentHash": "5d6c3ac9f1e55f377f046ddc00852f77ad01a1e44aedb8d6512357bf215271ec",
+    "lastHarvestedAt": "2026-11-25T10:35:14.483Z",
     "learningId": "learn-github-1jehuang-jcode"
   },
   "wix-detox": {
@@ -7383,10 +7383,10 @@
     "repository": "siderolabs/talos",
     "platform": "github",
     "sourceUrl": "https://github.com/siderolabs/talos",
-    "sourceVersion": "87507e3e",
+    "sourceVersion": "9dd9b9ed",
     "license": "MPL-2.0",
-    "contentHash": "c918c460b4fdc785061fe49f9aff0b19c935d3cc01facd742042680531d90eab",
-    "lastHarvestedAt": "2026-11-24T16:46:04.694Z",
+    "contentHash": "e7efcf6b9bc9b750d17c6dc4dc70a85c193ce2f6228613f3ea10caa18b86e197",
+    "lastHarvestedAt": "2026-11-25T10:35:22.767Z",
     "learningId": "learn-github-siderolabs-talos"
   },
   "zilliztech-claude-context": {
@@ -10915,8 +10915,8 @@
     "sourceUrl": "https://huggingface.co/baidu/Unlimited-OCR-2",
     "sourceVersion": "hf-baidu-unlimited-ocr-2",
     "license": "Open-Source",
-    "contentHash": "e46a489a53681d249b11be78ad8cd73f5ac609c4559dcdc5b823c650525dbd2e",
-    "lastHarvestedAt": "2026-11-21T18:22:55.429Z",
+    "contentHash": "931555299c3c6f9753faa542b1b37364208964f75b357938228e446c031c2aba",
+    "lastHarvestedAt": "2026-11-25T10:35:11.189Z",
     "learningId": "learn-huggingface-baidu-unlimited-ocr-2"
   },
   "joooook-12306-mcp": {

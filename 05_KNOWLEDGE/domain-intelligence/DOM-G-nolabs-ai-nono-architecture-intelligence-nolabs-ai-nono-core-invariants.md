@@ -4,23 +4,23 @@
 {
   "source_repository": "nolabs-ai/nono",
   "source_url": "https://github.com/nolabs-ai/nono",
-  "source_version": "d0c52cdf",
+  "source_version": "d4d1c774",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-24T01:07:23.035Z",
+  "timestamp": "2026-11-25T10:35:24.792Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nolabs-ai-nono",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [nolabs-ai/nono](https://github.com/nolabs-ai/nono) (Revision: `d0c52cdf`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T01:07:23.035Z`  
+> **Provenance**: Harvested from [nolabs-ai/nono](https://github.com/nolabs-ai/nono) (Revision: `d4d1c774`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T10:35:24.792Z`  
 > **Learning ID**: `learn-github-nolabs-ai-nono`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), F (Design Intelligence)
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
 - **Confidence Rating**: 64%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nolabs-ai/nono](https://github.com/nolabs-ai/nono))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T01:07:21.170Z  
+> **Harvest Timestamp**: 2026-11-25T10:35:23.388Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: agent runtime security - zero trust, zero setup, zero latency agent sandboxing
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 5081 stars
+- **Stars / Engagement**: 5100 stars
 
 ---
 
@@ -2973,11 +2973,13 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2356** (2026-11-23): **fix(cli): improve platform enrollment and audit delivery**
-  *Symptoms*: ## Summary - Name devices during login and retry completed audit uploads safely. - Fix inherited-policy names, remembered-mode status and revoked-device recovery.  Maintainer-directed fixes to existing flows.  ## Test Plan `make ci`; Linux CLI/delivery tests; real enrollment, recovery and audit-verification flows.  ## Agent Disclosure Codex-assisted. Reviewed `AGENTS.md`, `CONTRIBUTING.md`, `SECURITY.md` and protocol guides; repository rules followed, no external code reused.  ## Checklist - [x] Maintainer-directed scope; DCO signed; docs and tests updated. - [x] Agent eligibility, attribution and security/error/path rules checked; no new sandbox capability or enforcement mode. 
+- **Issue #2365** (2026-11-25): **fix(platform): preserve device identity across unenrollment**
+  *Symptoms*: ## Summary  - Preserve installation identity and keys across unenrollment; login reactivates the same device and can update its name. - Block revoked devices until operator restoration, and prevent inactive registrations from starting sessions. - Keep account recovery available during policy outages while preserving enforced-mode protections.  Normal unenrollment requires server confirmation; `--local-only` explicitly skips it. Older servers that cannot confirm unenrollment leave local state intact.  ## Test Plan  `make ci` and seven CLI integration tests passed, covering identity reuse, revocation, recovery and enforced mode.  ## Agent Disclosure  Codex-assisted, maintainer-directed fix. Reviewed `AGENTS.md`, `CONTRIBUTING.md`, `GOVERNANCE.md`, `SECURITY.md`, NEP guidance and existing protocol contracts; follows repository requirements.  ## Agent Compliance Check  - [x] Maintainer-directed scope; DCO-signed commits; coding/security rules and attribution requirements followed. - [x] Regression coverage and owning documentation updated; no sandbox primitive or library/CLI boundary change. 
 
-- **Issue #2355** (2026-11-23): **fix: update url and stabilize proxy keep-alive test**
-  *Symptoms*: ## Linked Issue  Maintainer-directed fix for the [main CI failures](https://github.com/nolabs-ai/nono/actions/runs/45157958328).  ## Summary  - Require `url` 2.5.9, fixing RUSTSEC-2026-0592, and update its required `form_urlencoded` dependency. - Make both HTTP origin fixtures read the complete request before responding. A single TCP read sometimes captured only headers, falsely failing the keep-alive test. Add a fragmented-request regression test.  ## Test Plan  - `make ci` passed on macOS with isolated config/state directories. - Linux/Rust 1.95: 895 proxy tests and `cargo check --workspace --locked` passed. - Keep-alive regression passed 30 consecutive runs. - Cargo Audit: zero vulnerabilities; five existing maintenance warnings remain unsuppressed.  ## Agent Disclosure  Prepared with Codex under maintainer direction. Reviewed AGENTS.md, CONTRIBUTING.md, GOVERNANCE.md, SECURITY.md, the release guide and affected code; follows repository contribution and security requirements.  ## Checklist  - [x] Maintainer-directed routine work - [x] All commits carry DCO sign-off - [x] Code follows repository standards and has regression coverage - [x] Documentation: not applicable to this dependency/test-fixture fix - [x] NEP: not applicable; no enforcement changes  ## Agent Compliance Check  - [x] Not prohibited from contributing - [x] Directly maintainer-directed work - [x] Reviewed contribution and security rules - [x] Original changes; no reused code requiring attribution - [x] No p
+- **Issue #2363** (2026-11-25): **fix(proxy): keep command-only route hosts out of the session allowlist**
+  *Symptoms*: ## Summary  Command-only credential routes are meant to be available only to their command-scoped proxies. When building the session proxy config, their upstream hosts are now excluded from the session allowlist too, along with the routes themselves. Command-scoped proxies build their own allowlist, so they are unaffected.  ## Agent Disclosure  An AI agent (Claude Code) drafted this PR at the contributor's direction. The contributor reviews it and submits it. Consulted `crates/nono-cli/src/proxy_runtime.rs`, CONTRIBUTING.md, and AGENTS.md. The change follows repository requirements: no `unwrap`/`expect` outside tests, and a conventional commit with DCO sign-off.  ## Test Plan  - New unit test in `proxy_runtime.rs` covering open and strict network policies. Existing credential-route tests still pass. - `make fmt-check`, `make clippy`, `make test-cli` (2,899 passed, 0 failed). - Manual check on macOS: command-scoped credential routes still work through their commands.  ## Checklist  - [x] An issue exists and is linked above, or this is maintainer-directed routine work - [x] All commits are signed-off, using [DCO](https://en.wikipedia.org/wiki/Developer_Certificate_of_Origin) - [x] Code changes follow the project's coding standards ([AGENTS.md](../AGENTS.md)) and have appropriate test coverage - [x] Public-facing changes are paired with documentation updates (no public-facing change) - [ ] If this PR implements a major feature, capability, or security-relevant change, a correspo
+  **Post-Mortem & Fix Analysis**:
+  > <!-- pr-review-summary -->  ## PR Review Summary  ### Size  | Metric | Value | |--------|-------| | Lines added | +55 | | Lines removed | -0 | | Total changed | 55 | | **Classification** | **Medium (50–300 lines)** |  ### Affected crates  - **crates/nono-cli** — CLI changes. Verify argument parsing, flag documentation, and UX behaviour across supported platforms.  ### Blast radius — Contained  This PR touches: **source code**  --- <sub>Updated automatically on each push to this PR.</sub>
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2994,548 +2996,1212 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d0c52cdf` (2026-11-23)
-**Commit Message**: feat(network-policy): add TypeSafe API endpoint (#2360)
+### Incident Patch 1: `90a9c254` (2026-11-25)
+**Commit Message**: fix(proxy): keep command-only route hosts out of the session allowlist (#2363)
 
-* feat(network-policy): add TypeSafe API endpoint
+build_proxy_config_from_flags adds every credential route's upstream host
+to allowed_hosts so the proxy can reach it after TLS interception. Tool
+sandbox (command_policies) routes are in that list too, and
+remove_tool_sandbox_routes later drops only the routes from the session
+proxy, never their hosts. The session therefore kept a plain CONNECT
+tunnel to every command-only upstream, wildcards included, with no
+credential injection, endpoint policy or approval: with a command policy
+holding https://sts.*.amazonaws.com, any session process reached
+sts.<region>.amazonaws.com directly.
 
-Signed-off-by: Jonathan Davies <[REDACTED_EMAIL]>
+Skip tool sandbox routes when deriving the session allowlist. The
+command-scoped proxies build their own allowlist and are unaffected.
 
-* feat(scrub): add TYPESAFE_API_KEY to default sensitive env vars
+Signed-off-by: Leonardo Zanivan <[REDACTED_EMAIL]>
+Co-authored-by: Claude <[REDACTED_EMAIL]>
 
-Signed-off-by: Jonathan Davies <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Jonathan Davies <[REDACTED_EMAIL]>
-
-**File**: `crates/nono-cli/data/network-policy.json` (modified, +1/-0)
+**File**: `crates/nono-cli/src/proxy_runtime.rs` (modified, +55/-0)
 ```diff
-@@ -17,6 +17,7 @@
-         "api.mistral.ai",
-         "api.cohere.com",
-         "api.together.xyz",
-+        "api.typesafe.ai",
-         "api.fireworks.ai",
-         "api.deepseek.com",
-         "api.perplexity.ai",
-```
-
-**File**: `crates/nono/src/scrub.rs` (modified, +1/-0)
-```diff
-@@ -60,6 +60,7 @@ const SENSITIVE_ENV_VARS: &[&str] = &[
-     "NONO_PROXY_TOKEN",
-     "OPENAI_API_KEY",
-     "TOGETHER_API_KEY",
-+    "TYPESAFE_API_KEY",
- ];
+@@ -2530,8 +2530,20 @@ pub(crate) fn build_proxy_config_from_flags(
+     // when the child curls the real upstream URL (CONNECT + TLS intercept).
+     // Use url::Url::parse so credentials embedded in the URL (user:pass@host)
+     // don't end up in the allowlist as a garbled "user:pass@host:port" string.
++    //
++    // Command-only (tool sandbox) routes are skipped: this allowlist is the
++    // session proxy's, which never carries those routes (see
++    // remove_tool_sandbox_routes), so their upstream would be a plain
++    // CONNECT tunnel for every session process, with no credential injection
++    // or endpoint policy. Command-scoped proxies build their own allowlist.
+     if host_allowlist_active {
+         for route in &routes {
++            if proxy
++                .tool_sandbox_proxy_credentials
++                .contains(route.prefix.trim_matches('/'))
++            {
++                continue;
++            }
+             if let Ok(parsed) = url::Url::parse(&route.upstream)
+                 && let Some(host) = parsed.host_str()
+             {
+@@ -4286,6 +4298,49 @@ mod tests {
+         );
+     }
  
- /// Redaction policy for diagnostics and persisted command context.
++    /// A command-only (tool sandbox) credential route must not open its
++    /// upstream to the session proxy: the session never carries the route, so
++    /// the host would be a plain tunnel with no credential or endpoint policy.
++    #[test]
++    fn test_tool_sandbox_route_upstream_is_not_in_session_allowlist() {
++        for strict in [false, true] {
++            let mut proxy = proxy_with_custom_credential(
++                strict,
++                vec![crate::profile::AllowDomainEntry::Plain(
++                    "www.example.com".to_string(),
++                )],
++            );
++            proxy
++                .tool_sandbox_proxy_credentials
++                .insert("bedrock".to_string());
++            let config = build_proxy_config_from_flags(&proxy).expect("build proxy config");
++
++            assert!(
++                !config
++                    .allowed_hosts
++                    .iter()
++                    .any(|host| host.starts_with("bedrock-runtime.")),
++                "a command-only route upstream must not reach the session allowlist: {:?}",
++                config.allowed_hosts
++            );
++            assert!(
++                config
++                    .allowed_hosts
++                    .iter()
++                    .any(|host| host == "www.example.com"),
++                "the explicit allowlist entry must be preserved"
++            );
++            let filter = nono_proxy::filter::ProxyFilter::new_strict(&config.allowed_hosts);
++            assert!(
++                matches!(
++                    filter.check_host_with_ips("bedrock-runtime.us-east-1.amazonaws.com", &[]),
++                    nono::net_filter::FilterResult::DenyNotAllowed { .. },
++                ),
++                "the session filter must refuse a command-only route's host"
++            );
++        }
++    }
++
+     #[test]
+     fn test_custom_credential_upstream_is_added_to_strict_empty_allowlist() {
+         let proxy = proxy_with_custom_credential(true, Vec::new());
 ```
 
 ---
 
-### Incident Patch 2: `5fb1bfa8` (2026-11-23)
-**Commit Message**: feat(sandbox): run proxied commands in the session network namespace (#2353)
+### Incident Patch 2: `d4d1c774` (2026-11-25)
+**Commit Message**: fix(proxy): send auth.extra_params on client_credentials token requests (#2362)
 
-* feat(sandbox): run proxied commands in the session network namespace
+* fix(proxy): send auth.extra_params on client_credentials token requests
 
-Mediated commands setns into the isolated session netns and reach their scoped proxies
-through in-namespace bridges attached at bootstrap.
+auth.extra_params loaded cleanly but was only sent on the SPIFFE
+jwt-bearer path; client_credentials requests silently dropped it.
+Append the params to the client_credentials body (sorted by key) on the
+initial exchange and every refresh.
 
-Signed-off-by: Daniel Schlatter <[REDACTED_EMAIL]>
+Reject extra_params keys that nono already sets (grant_type, client_id,
+client_secret, scope, client_assertion, client_assertion_type,
+assertion) so a request never repeats a parameter (RFC 6749 §3.2). The
+validator lives in nono-proxy config and runs from both the profile
+loader and the route builder.
 
-* fix(isolation): reject command network grants that escape isolation
+Also send auth.scope on the SPIFFE jwt-bearer path, which previously
+dropped it.
 
-Command allow_all and TCP port grants bypass the namespace; callback ports cannot reach host localhost.
-Adds full-path tests: commands and the agent reach only their own scoped proxy, with and without loopback.
+Fixes #2361
 
-Signed-off-by: Daniel Schlatter <[REDACTED_EMAIL]>
+Co-Authored-By: Claude <[REDACTED_EMAIL]>
+Signed-off-by: Leonardo Zanivan <[REDACTED_EMAIL]>
 
----------
+* docs(proxy): describe auth.extra_params independently of grant type
 
-Signed-off-by: Daniel Schlatter <[REDACTED_EMAIL]>
+extra_params and its reserved-key rules apply to every OAuth2 grant, so
+drop the per-grant wording from the schema and docs and point the SPIFFE
+page at the shared rules.
 
-**File**: `crates/nono-cli/src/exec_strategy.rs` (modified, +33/-0)
+Co-Authored-By: Claude <[REDACTED_EMAIL]>
+Signed-off-by: Leonardo Z
+
+**File**: `crates/nono-cli/src/profile/mod.rs` (modified, +37/-0)
 ```diff
-@@ -322,6 +322,9 @@ pub struct ExecConfig<'a> {
-     /// `namespaces` requests a mount namespace.
-     #[cfg(target_os = "linux")]
-     pub mount_mask: Option<&'a nono::PreparedMountMask>,
-+    /// Command-scoped proxies, bridged into the session network namespace for mediated commands.
-+    #[cfg(target_os = "linux")]
-+    pub scoped_proxy_handles: &'a [nono_proxy::server::ProxyHandle],
-     /// Allow-list of environment variable names. When set, only variables
-     /// matching a glob pattern (e.g. `"AWS_*"`, `"*_TOKEN"`, `"*SECRET*"`) are
-     /// passed to the child. Nono-injected credentials always bypass this.
-@@ -1527,6 +1530,36 @@ pub fn execute_supervised<F: FnMut(i32) -> bool>(
-                 }
-             }
+@@ -943,9 +943,12 @@ fn validate_proxy_override(name: &str, cred: &CustomCredentialDef) -> Result<()>
+ /// - `client_id` must not be empty
+ /// - `client_secret` must not be empty and must be a credential reference
+ ///   (env://, file://, op://, bw://, apple-password://) or plain value
++/// - `extra_params` must not repeat a parameter nono sets
+ fn validate_oauth2_auth(name: &str, auth: &OAuth2Config) -> Result<()> {
+     // Validate token_url — same rules as upstream URL (HTTPS or loopback HTTP)
+     validate_upstream_url(&auth.token_url, &format!("{}/auth.token_url", name))?;
++    nono_proxy::config::validate_oauth2_extra_params(&auth.extra_params)
++        .map_err(|e| NonoError::ProfileParse(format!("custom credential '{}': {}", name, e)))?;
  
-+            // Mediated commands join the session network namespace and reach their scoped proxies there.
-+            #[cfg(target_os = "linux")]
-+            if let Some(bootstrap) = clone_bootstrap.as_mut() {
-+                let attached = std::mem::take(&mut bootstrap.scoped_bridges)
-+                    .into_iter()
-+                    .zip(config.scoped_proxy_handles)
-+                    .try_for_each(|(bridge, handle)| {
-+                        handle
-+                            .add_listener(std::net::TcpListener::from(bridge))
-+                            .map_err(|e| {
-+                                NonoError::SandboxInit(format!(
-+                                    "cannot attach command proxy bridge to proxy: {e}"
-+                                ))
-+                            })
-+                    })
-+                    .and_then(|()| {
-+                        match (bootstrap.session_netns.take(), config.tool_sandbox_runtime) {
-+                            (Some((user, net)), Some(runtime)) => {
-+                                runtime.set_session_netns(user, net)
-+                            }
-+                            _ => Ok(()),
-+                        }
-+                    });
-+                if let Err(error) = attached {
-+                    let _ = signal::kill(child, Signal::SIGKILL);
-+                    let _ = waitpid(child, None);
-+                    return Err(error);
-+                }
-+            }
-+
-             // Mount masks are mounts on host dentries; the host removing or
-             // replacing one detaches the mask. Watch for that for the whole
-             // session and terminate the sandbox rather than let it reach the
-```
-
-**File**: `crates/nono-cli/src/exec_strategy/clone_files.rs` (modified, +85/-15)
-```diff
-@@ -56,6 +56,10 @@ pub(super) struct Bootstrap {
-     /// Watch over the child's mount masks, pinned after the child applied
-     /// them and before it ran untrusted code.
-     pub mount_watch: Option<nono::MountMaskWatch>,
-+    /// In-namespace listeners for `ExecConfig::scoped_proxy_handles`, in the same order.
-+    pub scoped_bridges: Vec<OwnedFd>,
-+    /// The child's user and network namespaces, which mediated commands join.
-+    pub session_netns: Option<(OwnedFd, OwnedFd)>,
- }
- 
- pub(super) struct Command<'a> {
-@@ -101,6 +105,14 @@ fn namespace_confines_tcp(config: &ExecConfig<'_>) -> bool {
-         .is_some_and(|spec| spec.has_network() && spec.loopback_tcp_enabled())
- }
- 
-+/// Mediated commands join the child's netns unless loopback TCP lets the session reach their bridges.
-+fn commands_join_namespace(config: &ExecConfig<'_>) -> bool {
-+    config.tool_sandbox_runtime.is_some()
-+        && config
-+            .namespaces
-+            .is_some_and(|spec| spec.has_network() && !spec.loopback_tcp_enabled())
-+}
-+
- /// Prepare the child's Landlock policy. With `root` (the child's
- /// `/proc/<pid>/root` under a mount mask) every rule path is resolved as the
- /// child sees it, so a grant of a masked directory such as `/tmp` attaches to
-@@ -303,6 +315,16 @@ pub(super) fn spawn(
-     let parent = above_stdio(parent.into())?;
-     let child = above_stdio(child.into())?;
-     let closed_stdio = reserve_stdio()?;
-+    let commands_join = commands_join_namespace(config);
-+    let mut scoped: Vec<(u16, RawFd)> = if commands_join {
-+        config
-+            .scoped_proxy_handles
-+            .iter()
-+            .map(|handle| (handle.port, -1))
-+            .collect()
-+    } else {
-+        Vec::new()
-+    };
-     let snapshot = listeners()?;
-     let mut signals = Signals::block()?;
-     // SAFETY: getpid takes no pointers and cannot fail.
-@@ -327,6 +349,7 @@ pub(super) fn spawn(
-             network.as_ref(),
-             namespaces.as_ref(),
-             mount_mask,
-+            &mut scoped,
-             gate.as_ref().map(AsRawFd::as_raw_fd),
-             child.as_raw_fd(),
-             parent.as_raw_fd(),
-@@ -347,7 +370,7 @@ pub(super) fn spawn(
-     let mut mount_watch = None;
-     #[cfg(test)]
-     let mut late_fd = None;
--    let handshake = (|| -> Result<(RawFd, Option<OwnedFd>)> {
-+    let handshake = (|| -> Result<(RawFd, Bootstrap)> {
-         // Harden before releasing the child, and before any untrusted code can
-         // exec. The child independently enables inspection for notifications.
-         // SAFETY: prctl changes only the parent's dumpability.
-@@ -492,6 +515,34 @@ pub(super) fn spawn(
-             None if bridge_fd == -1 => None,
-             None => return Err(failure("unexpected bridge listener")),
-         };
-+        let mut scoped_bridges = Vec::with_capacity(scoped.len());
-+        for &(port, _) in &scoped {
-+            let mut record = [0_u8; 4];
-+            if !transfer(parent.as_raw_fd(), &mut record, false, Some(pid)) {
-+                return Err(failure(
-+                    "child died before reporting a command proxy bridge",
-+                ));
-+            }
-+            let fd = i32::from_ne_bytes(record);
-+            if fd < 3 {
-+                return Err(failure("invalid command proxy bridge slot"));
-+            }
-+            // SAFETY: same shared-table contract as the session bridge above.
-+            let borrowed = unsafe { std::os::fd::BorrowedFd::borrow_raw(fd) };
-+            sandbox::validate_bridge_listener(borrowed, port)?;
-+            // SAFETY: validated above; ports are distinct, so this is the only parent owner.
-+            scoped_bridges.push(unsafe { OwnedFd::from_raw_fd(fd) });
-+        }
-+        let session_netns = if commands_join {
-+            let open = |name: &str| {
-+                std::fs::File::open(format!("/proc/{pid}/ns/{name}"))
-+                    .map_err(|_| failure("cannot open the child's namespaces"))
-+                    .and_then(|file| above_stdio(file.into()))
-+            };
-+            Some((open("user")?, open("net")?))
-+        } else {
-+            None
-+        };
-         // Use send(MSG_NOSIGNAL) only in the parent; the child's filter traps it.
-         #[cfg(test)]
-         if command.fault == Fault::FailedAck {
-@@ -510,9 +561,19 @@ pub(super) fn spawn(
-         if !transfer(parent.as_raw_fd(), &mut [ack], true, Some(pid)) {
-             return Err(failure("acknowledgment failed"));
-         }
--        Ok((network_fd, bridge))
-+        Ok((
-+            network_fd,
-+            Bootstrap {
-+                child: nix::unistd::Pid::from_raw(pid),
-+                network: None,
-+                bridge,
-+                mount_watch: None,
-+                scoped_bridges,
-+                session_netns,
-+            },
-+        ))
-     })();
--    let (network_fd, bridge) = match handshake {
-+    let (network_fd, mut bootstrap) = match handshake {
-         Ok(fds) => fds,
-         Err(error) => {
-         
-```
-
-**File**: `crates/nono-cli/src/exec_strategy/clone_files/tests.rs` (modified, +1/-0)
-```diff
-@@ -72,6 +72,7 @@ fn config(caps: &CapabilitySet, filesystem: bool, proxy: bool) -> ExecConfig<'_>
-         sandbox_policy: LinuxSandboxPolicy::Auto,
-         namespaces: None,
-         mount_mask: None,
-+        scoped_proxy_handles: &[],
-         allowed_env_vars: None,
-         denied_env_vars: None,
-         case_insensitive_env_vars: false,
-```
-
-**File**: `crates/nono-cli/src/execution_runtime.rs` (modified, +2/-0)
-```diff
-@@ -824,6 +824,8 @@ pub(crate) fn execute_sandboxed(plan: LaunchPlan) -> Result<()> {
-         namespaces,
-         #[cfg(target_os = "linux")]
-         mount_mask: mount_mask.as_ref(),
-+        #[cfg(target_os = "linux")]
-+        scoped_proxy_handles: &scoped_proxy_handles,
-         allowed_env_vars: flags.allowed_env_vars,
-         denied_env_vars: flags.denied_env_vars,
-         case_insensitive_env_vars: flags.case_insensitive_env_vars,
-```
-
-**File**: `crates/nono-cli/src/isolation.rs` (modified, +108/-1)
-```diff
-@@ -102,7 +102,48 @@ pub(crate) fn validate_config(args: &SandboxArgs, prepared: &PreparedSandbox) ->
-     if !prepared.no_proxy.is_empty() {
-         conflicts.push("network.no_proxy (hosts that bypass the proxy)");
-     }
--    reject_direct_grants(&conflicts)
-+    reject_direct_grants(&conflicts)?;
-+    reject_command_network_grants(isolate, prepared.command_policies.as_ref())
-+}
-+
-+/// Commands with direct grants stay on the host and bypass isolation; proxied ones join it and lose host localhost.
-+fn reject_command_network_grants(
-+    isolate: &LinuxIsolateConfig,
-+    policies: Option<&crate::command_policy::CommandPoliciesConfig>,
-+) -> Result<()> {
-+    let networks: Vec<_> = policies
-+        .into_iter()
-+        .flat_map(|p| &p.commands)
-+        .filter_map(|(name, c)| Some((name.as_str(), c.sandbox.as_ref()?.network.as_ref()?)))
-+        .collect();
-+    let names = |grants: fn(&crate::command_policy::CommandNetworkConfig) -> bool| {
-+        networks
-+            .iter()
-+            .filter(|(_, n)| grants(n))
-+            .map(|(name, _)| *name)
-+            .collect::<Vec<_>>()
-+            .join(", ")
-+    };
-+    let direct =
-+        names(|n| n.allow_all || !n.tcp_connect_ports.is_empty() || !n.tcp_bind_ports.is_empty());
-+    if !direct.is_empty() {
-+        return Err(NonoError::ConfigParse(format!(
-+            "linux.isolate.network (--isolate net) cannot be combined with command \
-+             network.allow_all, network.tcp_connect_ports or network.tcp_bind_ports, because \
-+             those commands would reach the network directly from the host: {direct}. Use \
-+             network.allow_domain, or do not use network isolation."
-+        )));
-+    }
-+    let callbacks = names(|n| !n.open_port.is_empty() || !n.open_port_range.is_empty());
-+    if isolate.loopback || callbacks.is_empty() {
-+        return Ok(());
-+    }
-+    Err(NonoError::ConfigParse(format!(
-+        "linux.isolate.network (--isolate net) cannot be combined with command \
-+         network.open_port or network.open_port_range, because mediated commands run in the \
-+         isolated namespace where host localhost ports are unreachable: {callbacks}. Remove \
-+         these grants, add linux.isolate.loopback, or do not use network isolation."
-+    )))
- }
- 
- /// `loopback` lifts TCP enforcement on the grounds that the network namespace
-@@ -570,6 +611,72 @@ mod tests {
-         assert!(message.contains("connect_port"), "{message}");
+     // When using client_assertion, client_id/client_secret are not required,
+     // but the assertion config itself must have valid fields.
+@@ -7373,6 +7376,40 @@ mod tests {
+         assert!(err.to_string().contains("mutually exclusive"));
      }
  
 +    #[test]
-+    fn command_network_grants_are_rejected_under_isolation() {
-+        use crate::command_policy::{
-+            CommandNetworkConfig, CommandPoliciesConfig, CommandPolicyConfig, CommandSandboxConfig,
-+        };
-+        let policies = |network: CommandNetworkConfig| {
-+            let sandbox = CommandSandboxConfig {
-+                network: Some(network),
-+                ..Default::default()
-+            };
-+            let mut policies = CommandPoliciesConfig::default();
-+            policies.commands.insert(
-+                "tool".into(),
-+                CommandPolicyConfig {
-+                    sandbox: Some(sandbox),
-+                    ..Default::default()
-+                },
-+            );
-+            policies
-+                .commands
-+                .insert("git".into(), CommandPolicyConfig::default());
-+            policies
-+        };
-+        let loopback = LinuxIsolateConfig {
-+            loopback: true,
-+            ..isolate_network()
-+        };
-+        let callback = policies(CommandNetworkConfig {
-+            open_port: vec![8250],
-+            ..Default::default()
++    fn test_validate_oauth2_extra_params_reserved_key_rejected() {
++        let mut cred = oauth2_cred_builder();
++        cred.auth = Some(OAuth2Config {
++            token_url: "https://auth.example.com/oauth/token".to_string(),
++            client_id: "my-client".to_string(),
++            client_secret: "env://SECRET".to_string(),
++            scope: String::new(),
++            client_assertion: None,
++            extra_params: [("client_secret".to_string(), "other".to_string())].into(),
 +        });
-+        let message = reject_command_network_grants(&isolate_network(), Some(&callback))
-+            .expect_err("open_port")
-+            .to_string();
-+        assert!(
-+            message.contains("unreachable: tool") && !message.contains("git"),
-+            "{message}"
-+        );
-+        assert!(reject_command_network_grants(&loopback, Some(&callback)).is_ok());
-+        for direct in [
-+            CommandNetworkConfig {
-+                allow_all: true,
-+                ..Default::default()
-+            },
-+            CommandNetworkConfig {
-+                tcp_connect_ports: vec![22],
-+                ..Default::default()
-+            },
-+            CommandNetworkConfig {
-+                tcp_bind_ports: vec![8080],
-+                ..Default::default()
-+            },
-+        ] {
-+            for isolate in [&isolate_network(), &loopback] {
-+                let error = reject_command_network_grants(isolate, Some(&policies(direct.clone())));
-+                assert!(
-+                    error
-+                        .expect_err("direct")
-+                        .to_string()
-+                        .contains("directly from the host: tool")
-+                );
-+            }
-+        }
-+        assert!(reject_command_network_grants(&isolate_network(), None).is_ok());
++        let err = validate_custom_credential("test", &cred)
++            .expect_err("reserved extra_params key should be rejected");
++        assert!(err.to_string().contains("client_secret"));
++    }
++
++    #[test]
++    fn test_validate_oauth2_extra_params_extension_allowed() {
++        let mut cred = oauth2_cred_builder();
++        cred.auth = Some(OAuth2Config {
++            token_url: "https://auth.example.com/oauth/token".to_string(),
++            client_id: "my-client".to_string(),
++            client_secret: "env://SECRET".to_string(),
++            scope: String::new(),
++            client_assertion: None,
++            extra_params: [(
++                "audience".to_string(),
++                "https://tenant.example.com/api/v2/".to_string(),
++            )]
++            .into(),
++        });
++        assert!(validate_custom_credential("test", &cred).is_ok());
 +    }
 +
      #[test]
-     fn non_network_isolation_ignores_network_m
+     fn test_validate_oauth2_scope_optional() {
+         let mut cred = oauth2_cred_builder();
 ```
 
-**File**: `crates/nono-cli/src/tool-sandbox/platform/linux.rs` (modified, +144/-5)
+**File**: `crates/nono-proxy/src/config.rs` (modified, +82/-1)
 ```diff
-@@ -130,6 +130,8 @@ struct ToolSandboxState {
-     proxy_trust_bundle_paths: Vec<PathBuf>,
-     scoped_proxy_env_vars: BTreeMap<String, Vec<(String, String)>>,
-     reserved_proxy_ports: BTreeSet<u16>,
-+    /// User and network namespaces of an isolated session, joined by eligible commands.
-+    session_netns: std::sync::OnceLock<(OwnedFd, OwnedFd)>,
-     active_children: Mutex<HashMap<u32, ActiveChild>>,
-     /// Attributes severed-ancestry callers to their spawning command. See `lineage_cgroup`.
-     lineage: LineageMarker,
-@@ -417,6 +419,7 @@ impl PreparedToolSandboxRuntime {
-                 proxy_trust_bundle_paths: proxy_trust_bundle_paths.to_vec(),
-                 scoped_proxy_env_vars: scoped_proxy_env_vars.clone(),
-                 reserved_proxy_ports: reserved_proxy_ports.clone(),
-+                session_netns: std::sync::OnceLock::new(),
-                 active_children: Mutex::new(HashMap::new()),
-                 lineage,
-                 active_count: AtomicUsize::new(0),
-@@ -454,6 +457,14 @@ impl PreparedToolSandboxRuntime {
-         vec![("PATH".to_string(), self.inner.session_path.clone())]
-     }
- 
-+    pub(crate) fn set_session_netns(&self, user: OwnedFd, net: OwnedFd) -> Result<()> {
-+        self.inner.session_netns.set((user, net)).map_err(|_| {
-+            NonoError::SandboxInit(
-+                "command-mediation session network namespace is already set".to_string(),
-+            )
-+        })
-+    }
-+
-     pub(crate) fn broker_secret_env_vars(
-         &self,
-         secrets: &[nono::LoadedSecret],
-@@ -871,7 +882,10 @@ fn run_shim(shim_exe: &Path, socket_path: &Path) -> Result<()> {
-     std::process::exit(response.exit_code);
+@@ -1948,11 +1948,54 @@ pub struct OAuth2Config {
+     /// Mutually exclusive with `client_id`/`client_secret`.
+     #[serde(default)]
+     pub client_assertion: Option<ClientAssertionConfig>,
+-    /// Extra parameters merged into the token exchange POST body verbatim.
++    /// Extra parameters appended to the token exchange POST body. Keys that
++    /// the grant itself sets are rejected; see [`validate_oauth2_extra_params`].
+     #[serde(default)]
+     pub extra_params: std::collections::HashMap<String, String>,
  }
  
--fn prepare_launcher_command(spec: &ToolSandboxChildLaunchSpec) -> Result<Command> {
-+fn prepare_launcher_command(
-+    state: &ToolSandboxState,
-+    spec: &ToolSandboxChildLaunchSpec,
-+) -> Result<Command> {
-     let binary = OsStr::from_bytes(&spec.real_binary);
-     let binary_fd = open_and_verify_binary(binary, spec)?;
-     let caps = caps_from_spec(&spec.caps)?;
-@@ -897,6 +911,7 @@ fn prepare_launcher_command(spec: &ToolSandboxChildLaunchSpec) -> Result<Command
-         .args(spec.argv.iter().skip(1).map(|arg| OsStr::from_bytes(arg)))
-         .current_dir(OsStr::from_bytes(&spec.cwd))
-         .env_clear();
-+    install_session_netns_join(state, spec.session_netns, &mut command)?;
-     for entry in &spec.env {
-         let (name, value) = split_env_entry(entry).ok_or_else(|| {
-             NonoError::SandboxInit("invalid command-mediation environment entry".into())
-@@ -3655,6 +3670,7 @@ fn build_child_launch_spec_for_binary(
-         stdio_mode: selected_stdio_mode(request).to_string(),
-         stdio_limits: stdio_limits_from_policy(policy),
-         caps: caps_to_spec(&caps),
-+        session_netns: state.session_netns.get().is_some() && joins_session_netns(&caps),
-         allowed_exec_paths,
-         expected_dev: binary.dev,
-         expected_ino: binary.ino,
-@@ -4509,6 +4525,44 @@ fn install_lineage_attach(
-     Ok(())
- }
- 
-+/// Proxy-routed commands join the session netns; direct TCP grants need the host network.
-+fn joins_session_netns(caps: &CapabilitySet) -> bool {
-+    matches!(caps.network_mode(), NetworkMode::ProxyOnly { .. })
-+        && caps.tcp_connect_ports().is_empty()
-+        && caps.tcp_bind_ports().is_empty()
-+}
++/// Token request parameters set by nono's grants, matched case-insensitively.
++const RESERVED_OAUTH2_PARAMS: &[&str] = &[
++    "grant_type",
++    "client_id",
++    "client_secret",
++    "scope",
++    "client_assertion",
++    "client_assertion_type",
++    "assertion",
++];
 +
-+fn install_session_netns_join(
-+    state: &ToolSandboxState,
-+    join: bool,
-+    command: &mut Command,
-+) -> Result<()> {
-+    if !join {
-+        return Ok(());
-+    }
-+    let (user, net) = state
-+        .session_netns
-+        .get()
-+        .map(|(user, net)| (user.as_raw_fd(), net.as_raw_fd()))
-+        .ok_or_else(|| {
-+            NonoError::SandboxInit(
-+                "command-mediation session network namespace is unavailable".to_string(),
-+            )
-+        })?;
-+    // SAFETY: setns is async-signal-safe; an error fails the spawn, so the command never runs outside the namespace.
-+    unsafe {
-+        command.pre_exec(move || {
-+            for (fd, kind) in [(user, libc::CLONE_NEWUSER), (net, libc::CLONE_NEWNET)] {
-+                if libc::setns(fd, kind) != 0 {
-+                    return Err(std::io::Error::last_os_error());
-+                }
-+            }
-+            Ok(())
-+        });
++/// Validate `OAuth2Config::extra_params`, shared by the profile loader and the
++/// proxy route builder so the rules cannot drift.
++///
++/// Rejects empty keys and keys nono already sends: RFC 6749 §3.2 forbids
++/// repeating a request parameter, and a repeated `grant_type` or credential
++/// parameter could make the server read a different value than nono intends.
++///
++/// # Errors
++///
++/// Returns a message describing the first invalid key.
++pub fn validate_oauth2_extra_params(
++    params: &std::collections::HashMap<String, String>,
++) -> std::result::Result<(), String> {
++    let mut keys: Vec<&String> = params.keys().collect();
++    keys.sort();
++    for key in keys {
++        if key.is_empty() {
++            return Err("auth.extra_params keys cannot be empty".to_string());
++        }
++        if RESERVED_OAUTH2_PARAMS
++            .iter()
++            .any(|reserved| key.eq_ignore_ascii_case(reserved))
++        {
++            return Err(format!(
++                "auth.extra_params cannot set '{key}': nono sets it for the token request"
++            ));
++        }
 +    }
 +    Ok(())
 +}
 +
- fn launch_child(
-     state: &ToolSandboxState,
-     command_name: &str,
-@@ -4545,7 +4599,7 @@ fn launch_child_with_direct_fds(
-     if spec.stdio_limits.is_some() {
-         return launch_child_with_brokered_stdio(state, command_name, launch_caller, spec, stdio);
+ #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+ #[serde(tag = "type", rename_all = "snake_case")]
+ pub enum ClientAssertionConfig {
+@@ -3182,6 +3225,44 @@ mod tests {
+         assert!(err.contains("dev-ro"), "{err}");
      }
--    let mut command = prepare_launcher_command(spec)?;
-+    let mut command = prepare_launcher_command(state, spec)?;
-     command
-         .stdin(Stdio::from(File::from(stdio.stdin)))
-         .stdout(Stdio::from(File::from(stdio.stdout)))
-@@ -4580,7 +4634,7 @@ fn launch_child_with_brokered_stdio(
-         stderr,
-     } = stdio;
  
--    let mut command = prepare_launcher_command(spec)?;
-+    let mut comm
++    fn extra_params_of(keys: &[&str]) -> std::collections::HashMap<String, String> {
++        keys.iter()
++            .map(|k| (k.to_string(), "v".to_string()))
++            .collect()
++    }
++
++    #[test]
++    fn test_oauth2_extra_params_validation_accepts_extension_params() {
++        assert_eq!(
++            validate_oauth2_extra_params(&extra_params_of(&["audience", "organization"])),
++            Ok(())
++        );
++        assert_eq!(validate_oauth2_extra_params(&extra_params_of(&[])), Ok(()));
++    }
++
++    #[test]
++    fn test_oauth2_extra_params_validation_rejects_reserved_keys() {
++        for key in [
++            "grant_type",
++            "client_id",
++            "client_secret",
++            "scope",
++            "client_assertion",
++            "client_assertion_type",
++            "assertion",
++            "Grant_Type",
++        ] {
++            let err = validate_oauth2_extra_params(&extra_params_of(&[key])).unwrap_err();
++            assert!(err.contains(key), "{err}");
++        }
++    }
++
++    #[test]
++    fn test_oauth2_extra_params_validation_rejects_empty_key() {
++        let err = validate_oauth2_extra_params(&extra_params_of(&[""])).unwrap_err();
++        assert!(err.contains("empty"), "{err}");
++    }
++
+     #[test]
+     fn test_aws_auth_config_profiles_absent_is_none() {
+         let aws: AwsAuthConfig = serde_json::from_str(r#"{"profile": "dev"}"#).unwrap();
 ```
 
-**File**: `crates/nono-cli/src/tool-sandbox/platform/macos.rs` (modified, +1/-0)
+**File**: `crates/nono-proxy/src/credential.rs` (modified, +121/-5)
 ```diff
-@@ -3131,6 +3131,7 @@ fn build_child_launch_spec_for_binary(
-         stdio_mode: selected_stdio_mode(request).to_string(),
-         stdio_limits: stdio_limits_from_policy(policy),
-         caps: caps_to_spec(&caps),
-+        session_netns: false,
-         allowed_exec_paths: Vec::new(),
-         expected_dev: binary.dev,
-         expected_ino: binary.ino,
+@@ -480,17 +480,14 @@ impl CredentialStore {
+                         }
+                     };
+ 
+-                    let extra_params: Vec<(String, String)> = oauth2
+-                        .extra_params
+-                        .iter()
+-                        .map(|(k, v)| (k.clone(), v.clone()))
+-                        .collect();
++                    let extra_params = sorted_extra_params(&oauth2.extra_params);
+ 
+                     match tokio::task::block_in_place(|| {
+                         tokio::runtime::Handle::current().block_on(SpiffeAssertionTokenCache::new(
+                             oauth2.token_url.clone(),
+                             jwt_source,
+                             audience.clone(),
++                            oauth2.scope.clone(),
+                             extra_params,
+                             tls_connector.clone(),
+                         ))
+@@ -569,6 +566,7 @@ impl CredentialStore {
+                         client_id,
+                         client_secret,
+                         scope: oauth2.scope.clone(),
++                        extra_params: sorted_extra_params(&oauth2.extra_params),
+                     };
+ 
+                     match TokenCache::new(config, tls_connector.clone()).await {
+@@ -791,6 +789,16 @@ const KEYRING_SERVICE: &str = nono::keystore::DEFAULT_SERVICE;
+ 
+ const KEYRING_TIMEOUT_HINT: &str = " Set NONO_KEYRING_TIMEOUT_SECS=N (default 120) to wait longer for keychain unlock; 0 disables the timeout.";
+ 
++/// Token-request extra params in key order, so the request body is deterministic.
++fn sorted_extra_params(
++    params: &std::collections::HashMap<String, String>,
++) -> Vec<(String, String)> {
++    let mut sorted: Vec<(String, String)> =
++        params.iter().map(|(k, v)| (k.clone(), v.clone())).collect();
++    sorted.sort();
++    sorted
++}
++
+ /// Redact a credential reference for safe display in warnings.
+ ///
+ /// Delegates to the appropriate URI-specific redaction helper so that
+@@ -973,6 +981,27 @@ mod tests {
+         TlsConnector::from(Arc::new(tls_config))
+     }
+ 
++    #[test]
++    fn test_sorted_extra_params_orders_by_key() {
++        let params = std::collections::HashMap::from([
++            ("organization".to_string(), "org_123".to_string()),
++            (
++                "audience".to_string(),
++                "https://api.example.com/".to_string(),
++            ),
++        ]);
++        assert_eq!(
++            sorted_extra_params(&params),
++            vec![
++                (
++                    "audience".to_string(),
++                    "https://api.example.com/".to_string()
++                ),
++                ("organization".to_string(), "org_123".to_string()),
++            ]
++        );
++    }
++
+     #[test]
+     fn test_empty_credential_store() {
+         let store = CredentialStore::empty();
+@@ -1506,6 +1535,92 @@ mod tests {
+         assert_eq!(cred.header_value.as_str(), "secret-key");
+     }
+ 
++    #[tokio::test]
++    async fn test_load_oauth2_sends_extra_params() {
++        use crate::config::OAuth2Config;
++        use tokio::io::{AsyncBufReadExt, AsyncReadExt, AsyncWriteExt, BufReader};
++
++        let _env = {
++            let _lock = ENV_LOCK.lock().unwrap();
++            EnvVarGuard::set_all(&[
++                ("TEST_OAUTH2_EXTRA_CLIENT_ID", "test-client"),
++                ("TEST_OAUTH2_EXTRA_CLIENT_SECRET", "test-secret"),
++            ])
++        };
++        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
++        let addr = listener.local_addr().unwrap();
++        let server = tokio::spawn(async move {
++            let (stream, _) = listener.accept().await.unwrap();
++            let mut reader = BufReader::new(stream);
++            let mut content_length = 0usize;
++            loop {
++                let mut line = String::new();
++                assert!(reader.read_line(&mut line).await.unwrap() > 0);
++                if line == "\r\n" {
++                    break;
++                }
++                if let Some(v) = line.to_ascii_lowercase().strip_prefix("content-length:") {
++                    content_length = v.trim().parse().unwrap();
++                }
++            }
++            let mut body = vec![0; content_length];
++            reader.read_exact(&mut body).await.unwrap();
++            let json = r#"{"access_token":"extra-params-token","expires_in":3600}"#;
++            let response = format!(
++                "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: {}\r\n\r\n{}",
++                json.len(),
++                json
++            );
++            reader
++                .get_mut()
++                .write_all(response.as_bytes())
++                .await
++                .unwrap();
++            reader.get_mut().shutdown().await.unwrap();
++            body
++        });
++
++        let routes = vec![RouteConfig {
++            prefix: "my-api".to_string(),
++            upstream: "https://api.example.com".to_string(),
++            oauth2: 
 ```
 
-**File**: `crates/nono-cli/src/tool-sandbox/protocol.rs` (modified, +3/-0)
+**File**: `crates/nono-proxy/src/oauth2.rs` (modified, +173/-17)
 ```diff
-@@ -91,6 +91,9 @@ pub(crate) struct ToolSandboxChildLaunchSpec {
-     pub(crate) stdio_mode: String,
-     pub(crate) stdio_limits: Option<StdioLimitSpec>,
-     pub(crate) caps: ChildCapsSpec,
-+    /// The launcher runs in the session's loopback-only network namespace, which confines UDP.
-+    #[serde(default)]
-+    pub(crate) session_netns: bool,
-     #[serde(default, skip_serializing_if = "Vec::is_empty")]
-     pub(crate) allowed_exec_paths: Vec<Vec<u8>>,
-     pub(crate) expected_dev: u64,
+@@ -52,6 +52,8 @@ pub struct OAuth2ExchangeConfig {
+     pub client_id: Zeroizing<String>,
+     pub client_secret: Zeroizing<String>,
+     pub scope: String,
++    /// Extra form parameters appended to the token request body.
++    pub extra_params: Vec<(String, String)>,
+ }
+ 
+ /// Custom Debug that redacts secrets.
+@@ -62,6 +64,14 @@ impl std::fmt::Debug for OAuth2ExchangeConfig {
+             .field("client_id", &"[REDACTED]")
+             .field("client_secret", &"[REDACTED]")
+             .field("scope", &self.scope)
++            .field(
++                "extra_params",
++                &self
++                    .extra_params
++                    .iter()
++                    .map(|(k, _)| k.as_str())
++                    .collect::<Vec<_>>(),
++            )
+             .finish()
+     }
+ }
+@@ -293,7 +303,12 @@ async fn exchange_token(
+     let path_with_query = token_request_target(&parsed);
+ 
+     // ── Build form body ──────────────────────────────────────────────────
+-    let body = build_token_request_body(&config.client_id, &config.client_secret, &config.scope);
++    let body = build_token_request_body(
++        &config.client_id,
++        &config.client_secret,
++        &config.scope,
++        &config.extra_params,
++    );
+ 
+     // ── Build HTTP/1.1 request ───────────────────────────────────────────
+     let request = Zeroizing::new(format!(
+@@ -435,6 +450,7 @@ fn build_token_request_body(
+     client_id: &str,
+     client_secret: &str,
+     scope: &str,
++    extra_params: &[(String, String)],
+ ) -> Zeroizing<String> {
+     let mut body = Zeroizing::new(format!(
+         "grant_type=client_credentials&client_id={}&client_secret={}",
+@@ -444,9 +460,39 @@ fn build_token_request_body(
+     if !scope.is_empty() {
+         body.push_str(&format!("&scope={}", urlencoding::encode(scope)));
+     }
++    append_form_params(&mut body, extra_params);
++    body
++}
++
++/// Build the `jwt-bearer` token request body. `scope` is omitted when empty.
++fn build_jwt_bearer_request_body(
++    assertion: &str,
++    scope: &str,
++    extra_params: &[(String, String)],
++) -> Zeroizing<String> {
++    let mut body = Zeroizing::new(format!(
++        "grant_type={}&client_assertion_type={}&assertion={}",
++        urlencoding::encode("urn:ietf:params:oauth:grant-type:jwt-bearer"),
++        urlencoding::encode("urn:ietf:params:oauth:client-assertion-type:jwt-bearer"),
++        urlencoding::encode(assertion),
++    ));
++    if !scope.is_empty() {
++        body.push_str(&format!("&scope={}", urlencoding::encode(scope)));
++    }
++    append_form_params(&mut body, extra_params);
+     body
+ }
+ 
++fn append_form_params(body: &mut Zeroizing<String>, params: &[(String, String)]) {
++    for (k, v) in params {
++        body.push_str(&format!(
++            "&{}={}",
++            urlencoding::encode(k),
++            urlencoding::encode(v)
++        ));
++    }
++}
++
+ /// Parse a standard OAuth2 token response JSON.
+ ///
+ /// Expects `{"access_token": "...", "expires_in": 3600, ...}`.
+@@ -486,6 +532,7 @@ pub struct SpiffeAssertionTokenCache {
+     jwt_source: Arc<crate::spiffe::SpiffeJwtSource>,
+     token_url: String,
+     assertion_audience: Vec<String>,
++    scope: String,
+     extra_params: Vec<(String, String)>,
+     tls_connector: TlsConnector,
+     pub workload_spiffe_id: String,
+@@ -505,13 +552,15 @@ impl SpiffeAssertionTokenCache {
+         token_url: String,
+         jwt_source: Arc<crate::spiffe::SpiffeJwtSource>,
+         assertion_audience: Vec<String>,
++        scope: String,
+         extra_params: Vec<(String, String)>,
+         tls_connector: TlsConnector,
+     ) -> Result<Self> {
+         let (access_token, expires_in, workload_spiffe_id) = exchange_jwt_assertion(
+             &token_url,
+             &jwt_source,
+             &assertion_audience,
++            &scope,
+             &extra_params,
+             &tls_connector,
+         )
+@@ -525,6 +574,7 @@ impl SpiffeAssertionTokenCache {
+             jwt_source,
+             token_url,
+             assertion_audience,
++            scope,
+             extra_params,
+             tls_connector,
+             workload_spiffe_id,
+@@ -566,6 +616,7 @@ impl SpiffeAssertionTokenCache {
+             &self.token_url,
+             &self.jwt_source,
+             &self.assertion_audience,
++            &self.scope,
+             &self.extra_params,
+             &self.tls_connector,
+         )
+@@ -601,24 +652,12 @@ async fn exchange_jwt_assertion(
+     token_url: &str,
+     jwt_source: &crate::spiffe::SpiffeJwtSource,
+     audience: &[String],
++    scope: &str,
+     extra_params: &[(String, String)],
+     tls_connector: &TlsConnector,
+ ) -> Result<(Zeroizing<String>, Duration, String)> {
+     let (assertion, spiffe_id) = jwt_source.fetch_token(audience).await?;
+-
+-    let mut body = Zeroizing::new(format!(
+-        "grant_type={}&client_assertion_type={}&assertion={}",
+-        urlencoding::encode("urn:ietf:params:oauth:grant-type:jwt-bearer"),
+-        urlencoding::encode("urn:ietf:params:oauth:c
+```
+
+**File**: `crates/nono-proxy/src/route.rs` (modified, +26/-0)
+```diff
+@@ -365,6 +365,12 @@ impl RouteStore {
+                 )));
+             }
+ 
++            if let Some(oauth2) = &route.oauth2 {
++                crate::config::validate_oauth2_extra_params(&oauth2.extra_params).map_err(|e| {
++                    ProxyError::Config(format!("route '{}': {}", normalized_prefix, e))
++                })?;
++            }
++
+             // A session phantom is only validated on routes that inject a
+             // credential; elsewhere the field would be silently ignored.
+             let phantom_template = match route.phantom_format.as_deref() {
+@@ -1660,6 +1666,26 @@ mod tests {
+         }
+     }
+ 
++    #[tokio::test]
++    async fn oauth2_reserved_extra_params_rejected_by_route_store() {
++        let route: RouteConfig = serde_json::from_value(serde_json::json!({
++            "prefix": "api",
++            "upstream": "https://api.example.com",
++            "oauth2": {
++                "token_url": "https://auth.example.com/oauth/token",
++                "client_id": "cid",
++                "client_secret": "env://SECRET",
++                "extra_params": {"grant_type": "password"},
++            },
++        }))
++        .unwrap();
++        let err = RouteStore::load(&[route]).await.err();
++        assert!(
++            matches!(err, Some(ProxyError::Config(ref m)) if m.contains("grant_type")),
++            "expected config error, got {err:?}"
++        );
++    }
++
+     #[tokio::test]
+     async fn http1_required_for_all_matching_aws_routes() {
+         let aws: RouteConfig = serde_json::from_value(serde_json::json!({
+```
+
+**File**: `docs/cli/features/credential-injection.mdx` (modified, +19/-0)
+```diff
+@@ -404,6 +404,25 @@ For APIs not covered by the built-in services, you can define custom credentials
+ **Important:** Use underscores, not hyphens, in credential names (the keys in `custom_credentials`). The credential name is used to generate environment variables like `TELEGRAM_BASE_URL`. Shell variable names cannot contain hyphens, so `my-api` would create `MY-API_BASE_URL` which cannot be referenced as `$MY-API_BASE_URL` in shell scripts. Use `my_api` instead.
+ 
+ 
++#### OAuth2 token request parameters
++
++Some token endpoints require parameters beyond the ones the grant defines. Set them in `auth.extra_params` and nono appends them to every token request, for any grant, including refreshes. For example, an endpoint that requires an `audience`:
++
++```json
++"my_api": {
++  "upstream": "https://api.example.com",
++  "env_var": "MY_API_TOKEN",
++  "auth": {
++    "token_url": "https://auth.example.com/oauth/token",
++    "client_id": "env://MY_API_CLIENT_ID",
++    "client_secret": "env://MY_API_CLIENT_SECRET",
++    "extra_params": { "audience": "https://api.example.com/" }
++  }
++}
++```
++
++Values are sent as written. They are not resolved as credential references, so do not put secrets in them. nono rejects keys it already sets (`grant_type`, `client_id`, `client_secret`, `scope`, `client_assertion`, `client_assertion_type`, `assertion`, compared case-insensitively) because a repeated parameter can make the server read a different value than nono sends.
++
+ #### Shaping the phantom token
+ 
+ By default the phantom token in `env_var` is the bare session token. Some clients check a token's prefix locally and refuse one that does not look right. For example, `gh` rejects a `GH_TOKEN` that is not `ghp_` or `github_pat_` prefixed, before it sends any request, so the proxy never gets to swap in the real credential. Set `phantom_format` to wrap the session token:
+```
+
+**File**: `docs/cli/features/spiffe.mdx` (modified, +4/-2)
+```diff
+@@ -85,8 +85,10 @@ Use `auth.client_assertion` instead of the `spiffe` block for this flow:
+ ```
+ 
+ When `client_assertion` is set, `client_id` and `client_secret` are not required — the JWT-SVID
+-is the credential. Any extra parameters required by the token endpoint (such as federation rule IDs
+-or workspace identifiers) can be passed via `auth.extra_params`:
++is the credential. `auth.scope` is sent when set. Any extra parameters required by the token
++endpoint (such as federation rule IDs or workspace identifiers) can be passed via
++`auth.extra_params` (see [OAuth2 token request parameters](/cli/features/credential-injection#oauth2-token-request-parameters)
++for the rules):
+ 
+ ```json
+ "auth": {
+```
+
+---
+
+### Incident Patch 3: `b2068b14` (2026-11-25)
+**Commit Message**: fix(platform): preserve device identity across unenrollment (#2365)
+
+* fix(platform): keep enrollment recovery available during policy outages
+
+Signed-off-by: Aleksy Siek <[REDACTED_EMAIL]>
+
+* fix(platform): preserve installation identity when unenrolling
+
+Signed-off-by: Aleksy Siek <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Aleksy Siek <[REDACTED_EMAIL]>
+
+**File**: `crates/nono-cli/src/app_runtime.rs` (modified, +1/-1)
+```diff
+@@ -21,7 +21,7 @@ use crate::why_runtime::run_why;
+ use crate::{DETACHED_LAUNCH_ENV, Result};
+ 
+ pub(crate) fn run(cli: Cli) -> Result<()> {
+-    crate::platform_policy::enforced::guard_command(&cli.command)?;
++    crate::platform_policy::enforced::guard_command(&cli.command, cli.silent)?;
+     let mut update_handle = start_update_check_handle(&cli);
+     dispatch_command(cli.command, cli.silent, &mut update_handle)
+ }
+```
+
+**File**: `crates/nono-cli/src/cli.rs` (modified, +7/-3)
+```diff
+@@ -2766,7 +2766,7 @@ pub enum PlatformCommands {
+         after_help = "EXAMPLES:\n  nono platform tenant list\n  nono platform tenant use acme --no-enroll"
+     )]
+     Tenant(TenantArgs),
+-    /// Replace a revoked device enrollment after fresh authorization
++    /// Replace an unenrolled device key after fresh authorization; revocation requires operator restoration
+     #[command(name = "re-enroll", help_template = COMMAND_HELP, next_help_heading = "OPTIONS", mut_arg("no_enroll", |arg| arg.hide(true)))]
+     #[command(
+         after_help = "EXAMPLES:\n  nono platform re-enroll\n  nono platform re-enroll --tenant acme"
+@@ -2783,10 +2783,10 @@ pub enum PlatformCommands {
+     #[command(help_template = COMMAND_HELP, next_help_heading = "OPTIONS")]
+     #[command(after_help = "EXAMPLES:\n  nono platform status\n  nono platform status --json")]
+     Status(PlatformStatusArgs),
+-    /// Remove the local platform enrollment
++    /// Unenroll this device on the platform and disable its local enrollment
+     #[command(help_template = COMMAND_HELP, next_help_heading = "OPTIONS")]
+     #[command(
+-        after_help = "EXAMPLES:\n  nono platform unenroll\n  nono platform unenroll --delete-key"
++        after_help = "EXAMPLES:\n  nono platform unenroll\n  nono platform unenroll --delete-key\n  nono platform unenroll --local-only"
+     )]
+     Unenroll(PlatformUnenrollArgs),
+ }
+@@ -2936,6 +2936,10 @@ pub struct PlatformStatusArgs {
+ #[derive(Parser, Debug)]
+ #[command(disable_help_flag = true)]
+ pub struct PlatformUnenrollArgs {
++    /// Disable this installation locally without notifying the platform
++    #[arg(long)]
++    pub local_only: bool,
++
+     /// Also delete the local signing key (the next enrollment mints a new one)
+     #[arg(long)]
+     pub delete_key: bool,
+```
+
+**File**: `crates/nono-cli/src/login_cmd.rs` (modified, +31/-8)
+```diff
+@@ -256,7 +256,7 @@ fn finish_login(args: &LoginArgs, select: bool) -> Result<()> {
+         "{}",
+         login_summary(&record, (!select).then_some(&previous), &enrollment)
+     );
+-    if let Err(error) = enrollment {
++    if let Err(ref error) = enrollment {
+         let retry = if args.re_enroll {
+             "nono platform re-enroll"
+         } else {
+@@ -267,17 +267,26 @@ fn finish_login(args: &LoginArgs, select: bool) -> Result<()> {
+         );
+     } else if matches!(
+         enrollment,
+-        Ok(EnrollmentResult::Enrolled | EnrollmentResult::Reenrolled | EnrollmentResult::Reused)
++        Ok(EnrollmentResult::Enrolled
++            | EnrollmentResult::Reenrolled
++            | EnrollmentResult::Reused
++            | EnrollmentResult::Reactivated)
+     ) {
+         let state = platform_client::load_active_state()?.ok_or_else(|| {
+             NonoError::ActionRequired("device enrollment was saved but is unavailable for the policy check; run `nono platform status`".into())
+         })?;
+         platform_client::check_enrollment_policy(&state)?;
+     }
++    if matches!(enrollment, Ok(EnrollmentResult::Revoked)) {
++        return Err(NonoError::ActionRequired(
++            "device is revoked; a platform operator must restore it before re-enrollment".into(),
++        ));
++    }
+     Ok(())
+ }
+ 
+ enum EnrollmentResult {
++    Reactivated,
+     Enrolled,
+     Reenrolled,
+     Reused,
+@@ -303,6 +312,7 @@ fn enroll_device(
+     let login_key = session::load_key()?.ok_or_else(not_signed_in)?;
+     let refresh = session::load_refresh_token()?.ok_or_else(not_signed_in)?;
+     let previous = platform_client::load_state()?;
++    let was_unenrolled = platform_client::enrollment_unenrolled()?;
+     if re_enroll && previous.is_none() {
+         return Ok(EnrollmentResult::NotEnrolled);
+     }
+@@ -324,7 +334,9 @@ fn enroll_device(
+         )?,
+         (Some(previous), false) => (
+             previous.key_ref.clone(),
+-            platform_client::load_signing_key(previous)?,
++            platform_client::load_signing_key(previous).map_err(|error| if was_unenrolled {
++                NonoError::ActionRequired(format!("the existing installation key could not be loaded ({error}); use `nono platform re-enroll` to authorize a replacement. A revoked registration must first be restored by a platform operator"))
++            } else { error })?,
+         ),
+         (None, _) => crate::device_key::load_or_create(
+             &record.issuer,
+@@ -446,6 +458,8 @@ fn enroll_device(
+     }
+     Ok(if re_enroll {
+         EnrollmentResult::Reenrolled
++    } else if reused && was_unenrolled {
++        EnrollmentResult::Reactivated
+     } else if reused {
+         EnrollmentResult::Reused
+     } else {
+@@ -644,7 +658,7 @@ fn missing_enrollment_summary(args: &LoginArgs, record: Option<&session::Session
+     text.push_str(&summary_row("Enrollment", "Not recorded"));
+     text.push_str(&summary_row(
+         "Recovery",
+-        "re-enroll is only for revoked device enrollments",
++        "re-enroll replaces a key for an unenrolled device; revoked devices need platform operator restoration first",
+     ));
+     text.push_str(&summary_row(
+         "Next step",
+@@ -689,6 +703,10 @@ fn login_summary(
+     ));
+     let (label, color) = match enrollment {
+         Ok(EnrollmentResult::Enrolled) => ("Device enrolled", t.green),
++        Ok(EnrollmentResult::Reactivated) => (
++            "Device enrolled again · existing identity restored",
++            t.green,
++        ),
+         Ok(EnrollmentResult::Reenrolled) => ("Device re-enrolled with a new key", t.green),
+         Ok(EnrollmentResult::Reused) => ("Using existing device enrollment", t.text),
+         Ok(EnrollmentResult::Skipped) => ("Skipped (no-enroll enabled)", t.subtext),
+@@ -700,12 +718,17 @@ fn login_summary(
+     text.push_str(&summary_row("Enrollment", &fg(label, color).to_string()));
+     if matches!(
+         enrollment,
+-        Ok(EnrollmentResult::Enrolled | EnrollmentResult::Reenrolled | EnrollmentResult::Reused)
++        Ok(EnrollmentResult::Enrolled
++            | EnrollmentResult::Reenrolled
++            | EnrollmentResult::Reused
++            | EnrollmentResult::Reactivated)
+     ) && (switched
+         || previous.is_none()
+         || matches!(
+             enrollment,
+-            Ok(EnrollmentResult::Enrolled | EnrollmentResult::Reenrolled)
++            Ok(EnrollmentResult::Enrolled
++                | EnrollmentResult::Reenrolled
++                | EnrollmentResult::Reactivated)
+         ))
+     {
+         text.push_str(&summary_row(
+@@ -725,7 +748,7 @@ fn login_summary(
+         .unwrap_or_else(|| clean(&record.tenant_id));
+     let hint = match enrollment {
+         Ok(EnrollmentResult::Revoked) => Some(format!(
+-            "nono platform re-enroll --tenant {tenant_selector}"
++            "Ask a platform operator to restore this device, then run nono platform login --tenant {tenant_selector}"
+         )),
+         Ok(EnrollmentResult::NotEnrolled 
+```
+
+**File**: `crates/nono-cli/src/platform_client.rs` (modified, +151/-44)
+```diff
+@@ -133,6 +133,8 @@ fn enroll(args: PlatformEnrollArgs) -> Result<()> {
+         display_name: request.display_name.clone(),
+         tenant: None,
+         revoked: false,
++        unenrolled: false,
++        unenrollment_confirmed: false,
+         last_policy_mode: None,
+     };
+     write_json_secure(&state_path, &stored)?;
+@@ -202,6 +204,12 @@ fn status(args: PlatformStatusArgs) -> Result<()> {
+         None
+     };
+     let policy = match &stored {
++        Some(stored) if stored.unenrolled && args.refresh => {
++            return Err(NonoError::ActionRequired(
++                "device is unenrolled; run `nono platform login` before refreshing policy".into(),
++            ));
++        }
++        Some(stored) if stored.unenrolled => None,
+         Some(stored) if args.refresh => crate::platform_policy::refresh(&stored.state)?,
+         Some(stored) => crate::platform_policy::cached(&stored.state)?,
+         None if args.refresh => {
+@@ -223,7 +231,9 @@ fn status(args: PlatformStatusArgs) -> Result<()> {
+             });
+         let mut output = match &stored {
+             Some(stored) => serde_json::json!({
+-                "enrolled": !stored.revoked,
++                "enrolled": !stored.revoked && !stored.unenrolled,
++                "enrollment_status": if stored.revoked { "revoked" } else if stored.unenrolled { "unenrolled" } else { "active" },
++                "platform_unenrollment_confirmed": stored.unenrolled && stored.unenrollment_confirmed,
+                 "platform_url": stored.state.platform_url,
+                 "tenant_id": stored.state.tenant_id,
+                 "subject_id": stored.state.subject_id,
+@@ -323,6 +333,8 @@ fn status_text(
+             "{name} · {}",
+             if stored.revoked {
+                 "revoked"
++            } else if stored.unenrolled {
++                "unenrolled"
+             } else {
+                 "enrolled"
+             }
+@@ -331,13 +343,26 @@ fn status_text(
+             kind,
+             &crate::theme::fg(&device, if stored.revoked { t.yellow } else { t.text }).to_string(),
+         ));
+-        text.push_str(&crate::platform_policy::display::status_rows(
+-            policy,
+-            previous,
+-            refreshed,
+-            stored.last_policy_mode.as_deref(),
+-        ));
+-        let audit = if stored.revoked {
++        if stored.unenrolled {
++            text.push_str(&summary_row(
++                "Enrollment",
++                if stored.unenrollment_confirmed {
++                    "Platform confirmed · use platform login to reactivate"
++                } else {
++                    "Local only · platform not notified"
++                },
++            ));
++        } else {
++            text.push_str(&crate::platform_policy::display::status_rows(
++                policy,
++                previous,
++                refreshed,
++                stored.last_policy_mode.as_deref(),
++            ));
++        }
++        let audit = if stored.unenrolled {
++            Some("Unavailable · device unenrolled".into())
++        } else if stored.revoked {
+             Some("Unavailable · enrollment revoked".into())
+         } else {
+             match crate::audit_client::queued_count() {
+@@ -388,11 +413,15 @@ fn enrollment_text_with_heading(
+         .unwrap_or_else(|| "Name not recorded (see --json)".into());
+     let enrollment = if stored.revoked {
+         "Revoked"
++    } else if stored.unenrolled {
++        "Unenrolled"
+     } else {
+         "Registered locally"
+     };
+     let delivery = if stored.revoked {
+         "Unavailable: enrollment revoked"
++    } else if stored.unenrolled {
++        "Unavailable: device unenrolled"
+     } else {
+         "Automatic when sessions finish"
+     };
+@@ -431,55 +460,58 @@ fn enrollment_details(stored: &StoredEnrollment) -> String {
+     format!(
+         "{}{}",
+         summary_row(kind, &name),
+-        summary_row("Enrolled", &enrolled)
++        summary_row("First enrolled", &enrolled)
+     )
+ }
+ 
+-/// Remove the local enrollment. Local-only by design: the platform-side
+-/// subject stays active until a human revokes it in the console, because the
+-/// device key must not be able to erase its own registration.
++/// Deactivate without erasing identity/history. Keep the key and an inactive
++/// local record so human-authorized login can reactivate the same device.
+ fn unenroll(args: PlatformUnenrollArgs) -> Result<()> {
+-    let state_path = state_path()?;
+     let Some(state) = load_state()? else {
+         println!("Not enrolled with a platform.");
+         return Ok(());
+     };
+     let queued = crate::audit_client::queued_count()?;
++    let stored = current_enrollment(&state)?;
++    let confirmed = if args.local_only {
++        stored.unenrolled && stored.unenrollment_confirmed
++    } else {
++        confirm_unenrollment(&state)?;
++        true
++    };
+ 
+-    // Delete the key before the state file: the state holds the only key_ref,
+-    // so removing it first would orphan the key in the keys
+```
+
+**File**: `crates/nono-cli/src/platform_policy.rs` (modified, +10/-2)
+```diff
+@@ -93,7 +93,7 @@ impl RefreshFailure {
+     fn error(self) -> NonoError {
+         let message = match self {
+             Self::Unauthorized(message) => format!(
+-                "{message}; device authentication was refused. Run `nono platform re-enroll` to authorize recovery; the existing enrollment and policy remain in place."
++                "{message}; device authentication was refused. Check its enrollment on the platform. A revoked device must be restored by a platform operator before `nono platform login` can enroll it again; the existing enrollment and policy remain in place."
+             ),
+             Self::Unavailable(message)
+             | Self::ServiceUnavailable(message)
+@@ -332,7 +332,15 @@ fn request<T: serde::de::DeserializeOwned>(
+         .map_err(|error| RefreshFailure::Unavailable(error.to_string()))?;
+     tracing::debug!(endpoint = path, request_id = %id, status = response.status().as_u16(), "Received platform policy response");
+     if !response.status().is_success() {
+-        let message = format!("policy endpoint returned HTTP {}", response.status());
++        let mut message = format!(
++            "policy endpoint {method} {url} returned HTTP {}",
++            response.status()
++        );
++        if response.status().as_u16() == 404 {
++            message.push_str(
++                "; the policy API is unavailable at the enrolled origin. Check that the deployment routes /api/v1/policy/refresh and /api/v1/policy/trust-root to platform-server, then retry `nono platform status --refresh`",
++            );
++        }
+         if response.status().as_u16() == 401 {
+             return Err(RefreshFailure::Unauthorized(message));
+         }
+```
+
+**File**: `crates/nono-cli/src/platform_policy/enforced.rs` (modified, +48/-1)
+```diff
+@@ -143,7 +143,11 @@ pub(crate) fn validate_resource_limits(
+     Ok(())
+ }
+ 
+-pub(crate) fn guard_command(command: &Commands) -> Result<()> {
++pub(crate) fn guard_command(command: &Commands, silent: bool) -> Result<()> {
++    let enrollment_recovery = matches!(command, Commands::Platform(args) if matches!(
++        args.command,
++        PlatformCommands::Login(_) | PlatformCommands::Logout(_) | PlatformCommands::Unenroll(_)
++    ));
+     let restricted = match command {
+         Commands::Profile(args) => matches!(
+             args.command,
+@@ -156,6 +160,10 @@ pub(crate) fn guard_command(command: &Commands) -> Result<()> {
+         Commands::Platform(args) => !matches!(
+             &args.command,
+             PlatformCommands::Status(_)
++                // Human sign-in is separate from device authority. Enrollment
++                // checks ownership/status on the platform and preserves the
++                // pinned enforced identity and mode locally.
++                | PlatformCommands::Login(_)
+                 | PlatformCommands::ReEnroll(_)
+                 | PlatformCommands::Tenant(crate::cli::TenantArgs {
+                     command: TenantCommands::List(_),
+@@ -198,13 +206,52 @@ pub(crate) fn guard_command(command: &Commands) -> Result<()> {
+         return Ok(());
+     };
+     let remembered = platform_client::last_policy_mode(&state)?;
++    if enrollment_recovery && platform_client::enrollment_unenrolled()? {
++        if remembered.as_deref() == Some("enforced")
++            || super::cached(&state)?.is_some_and(|claims| claims.management_mode == "enforced")
++        {
++            return Err(denied(
++                "this command needs a fresh platform release from enforced mode",
++            ));
++        }
++        // Disabled identities cannot refresh policy, and --delete-key may
++        // already have removed their key. Login still proves human authority
++        // and device ownership before the platform reactivates anything.
++        return Ok(());
++    }
+     let enforced = match super::refresh_inner(&state, false) {
+         Ok(Some(claims)) => claims.management_mode == "enforced",
+         Ok(None) => {
+             return Err(denied(
+                 "a fresh assignment is required before changing local policy or enrollment",
+             ));
+         }
++        Err(error)
++            if enrollment_recovery
++                && remembered.as_deref() != Some("enforced")
++                && matches!(
++                    error,
++                    super::RefreshFailure::Unavailable(_)
++                        | super::RefreshFailure::ServiceUnavailable(_)
++                        | super::RefreshFailure::Unauthorized(_)
++                ) =>
++        {
++            // Cleanup is not launch authority. An enrollment whose first
++            // policy check failed must remain recoverable; a previously
++            // enforced device still needs a fresh signed release. Check old
++            // signed caches too, including enrollments predating mode history.
++            if super::cached(&state)?.is_some_and(|claims| claims.management_mode == "enforced") {
++                return Err(denied(
++                    "this command needs a fresh platform release from enforced mode",
++                ));
++            }
++            if !silent {
++                eprintln!(
++                    "Policy could not be checked; continuing with account management only. Session startup still requires its normal policy check."
++                );
++            }
++            false
++        }
+         Err(error) if error.allows_local_fallback(true, None, remembered.as_deref()) => false,
+         Err(error @ super::RefreshFailure::Unauthorized(_)) => return Err(error.error()),
+         Err(error) if remembered.as_deref() == Some("enforced") => {
+```
+
+**File**: `crates/nono-cli/tests/login_cli.rs` (modified, +1/-1)
+```diff
+@@ -179,7 +179,7 @@ fn reenrollment_without_local_registration_directs_to_normal_login() {
+     let text = String::from_utf8(output.stdout).expect("text");
+     assert!(text.contains("No enrollment to replace"), "{text}");
+     assert!(
+-        text.contains("re-enroll is only for revoked device enrollments"),
++        text.contains("revoked devices need platform operator restoration first"),
+         "{text}"
+     );
+     assert!(
+```
+
+**File**: `crates/nono-cli/tests/managed_policy.rs` (modified, +395/-2)
+```diff
+@@ -203,13 +203,16 @@ impl Client {
+                 match listener.accept() {
+                     Ok((mut stream, _)) => {
+                         let (path, request_id) = read_request(&mut stream);
+-                        if path == REFRESH_PATH && status.load(Ordering::SeqCst) != 200 {
++                        if matches!(path.as_str(), REFRESH_PATH | "/api/v1/enrollment/unenroll")
++                            && status.load(Ordering::SeqCst) != 200
++                        {
+                             write!(stream,"HTTP/1.1 {} Unavailable\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",status.load(Ordering::SeqCst)).expect("refresh unavailable");
+                             continue;
+                         }
+                         if path != TRUST_PATH
+                             && path != REFRESH_PATH
+                             && path != "/api/v1/enrollment/exchange"
++                            && path != "/api/v1/enrollment/unenroll"
+                         {
+                             stream.write_all(b"HTTP/1.1 503 Service Unavailable\r\nContent-Length: 0\r\nConnection: close\r\n\r\n").expect("audit unavailable");
+                             continue;
+@@ -221,6 +224,8 @@ impl Client {
+                                 "enrolled_at":"2026-01-01T00:00:00Z","policy_trust_root":trust
+                             }))
+                             .expect("enrollment response")
++                        } else if path == "/api/v1/enrollment/unenroll" {
++                            serde_json::to_vec(&json!({"protocol_version":"1","tenant_id":"tenant","subject_id":"device","unenrolled_at":chrono::Utc::now()})).expect("unenrollment confirmation")
+                         } else if path == TRUST_PATH {
+                             serde_json::to_vec(&trust).expect("trust response")
+                         } else {
+@@ -645,7 +650,6 @@ fn enforced_shell_wrap_and_management_commands_cannot_bypass_assignment() {
+         vec!["trust", "init"],
+         vec!["platform", "unenroll"],
+         vec!["platform", "logout"],
+-        vec!["platform", "login", "--no-enroll"],
+         vec!["platform", "tenant", "use", "personal", "--no-enroll"],
+     ] {
+         let output = client.test.command().args(&args).output().expect("command");
+@@ -728,6 +732,290 @@ fn signed_platform_downgrade_restores_advisory_overrides() {
+         .assert_stderr_contains("Advisory");
+ }
+ 
++#[test]
++fn enrollment_recovery_survives_missing_policy_and_rejected_device_credentials() {
++    for mode in [None, Some("audit_only"), Some("advisory")] {
++        for status in [401, 404, 503, 0] {
++            let mut client = Client::new(None);
++            let enrollment = client.test.home().join(".config/nono/platform.json");
++            let mut state: serde_json::Value =
++                serde_json::from_slice(&fs::read(&enrollment).expect("state")).expect("JSON");
++            state["last_policy_mode"] = mode.into();
++            fs::write(&enrollment, state.to_string()).expect("state");
++            if status == 0 {
++                client.platform.stop();
++            } else {
++                client
++                    .platform
++                    .refresh_status
++                    .store(status, Ordering::SeqCst);
++            }
++
++            // A failed first check still cannot authorize a session.
++            if mode.is_none() {
++                client
++                    .test
++                    .run()
++                    .profile_name("default")
++                    .exec(Argv::new("/bin/echo").arg("MUST_NOT_RUN"))
++                    .assert_failure("recovery does not grant launch authority")
++                    .assert_stdout_lacks("MUST_NOT_RUN");
++            }
++
++            let login = client
++                .test
++                .command()
++                .args([
++                    "platform",
++                    "login",
++                    "--name",
++                    "Aleks Device",
++                    "--device-code",
++                    "--no-open",
++                    "--url",
++                ])
++                .arg(state["platform_url"].as_str().expect("origin"))
++                .output()
++                .expect("login");
++            // This fixture has no OAuth server. Reaching discovery proves the
++            // policy guard no longer prevents the requested login from running.
++            assert!(
++                String::from_utf8_lossy(&login.stderr).contains("authorization server"),
++                "{mode:?}, HTTP {status}: {}",
++                String::from_utf8_lossy(&login.stderr)
++            );
++            assert!(enrollment.exists());
++
++            let logout = client
++                .test
++                .command()
++                .args(["platform", "logout"])
++                .output()
++                .expect("logout");
++            assert!(
++                logout.status.success(),
++                "{}",
++                String::from_utf8_lossy(&logou
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2365** (2026-11-25): fix(platform): preserve device identity across unenrollment (@SequeI)
+- **PR #2363** (2026-11-25): fix(proxy): keep command-only route hosts out of the session allowlist (@panga)
+- **PR #2362** (2026-11-25): fix(proxy): send auth.extra_params on client_credentials token requests (@panga)
 - **PR #2360** (2026-11-23): feat(network-policy): add TypeSafe API endpoint (@jpds)
 - **PR #2358** (2026-11-23): chore(deps): bump typify from 0.8.0 to 0.10.1 (@dependabot[bot])
 - **PR #2357** (2026-11-23): chore(deps): bump the routine-rust group with 8 updates (@dependabot[bot])
-- **PR #2356** (2026-11-23): fix(cli): improve platform enrollment and audit delivery (@SequeI)
-- **PR #2355** (2026-11-23): fix: update url and stabilize proxy keep-alive test (@SequeI)
-- **PR #2353** (2026-11-23): feat(sandbox): run proxied commands in the session network namespace (@daescha)
 
 ---
 
@@ -3555,21 +4221,46 @@ Signed-off-by: Daniel Schlatter <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. network-policy): add TypeSafe API endpoint
+## X. proxy): keep command-only route hosts out of the session allowlist
 
 **RULE**:
-When implementing operations in `crates/nono-cli/data/network-policy.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nolabs-ai/nono. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/nono-cli/src/proxy_runtime.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nolabs-ai/nono. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d0c52cdf`: network-policy): add TypeSafe API endpoint. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `90a9c254`: proxy): keep command-only route hosts out of the session allowlist. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/nono-cli/data/network-policy.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/nono-cli/src/proxy_runtime.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        "api.typesafe.ai",
+    //
+    // Command-only (tool sandbox) routes are skipped: this allowlist is the
+    // session proxy's, which never carries those routes (see
+    // remove_tool_sandbox_routes), so their upstream would be a plain
+    // CONNECT tunnel for every session process, with no credential injection
+    // or endpoint policy. Command-scoped proxies build their own allowlist.
+            if proxy
+                .tool_sandbox_proxy_credentials
+                .contains(route.prefix.trim_matches('/'))
+            {
+                continue;
+            }
+    /// A command-only (tool sandbox) credential route must not open its
+    /// upstream to the session proxy: the session never carries the route, so
+    /// the host would be a plain tunnel with no credential or endpoint policy.
+    #[test]
+    fn test_tool_sandbox_route_upstream_is_not_in_session_allowlist() {
+        for strict in [false, true] {
+            let mut proxy = proxy_with_custom_credential(
+                strict,
+                vec![crate::profile::AllowDomainEntry::Plain(
+                    "www.example.com".to_string(),
+                )],
+            );
+            proxy
+                .tool_sandbox_proxy_credentia
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3579,7 +4270,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d0c52cdf` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `90a9c254` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

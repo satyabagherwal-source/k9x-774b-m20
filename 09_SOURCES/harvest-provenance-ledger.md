@@ -13067,3 +13067,7 @@ Every entry in this ledger must capture:
 | `learn-github-ratatui-ratatui` | `https://github.com/ratatui/ratatui` | `ae8c0e08` | Multi-dimensional audit evidence | 2026-11-25T10:24:13.967Z |
 | `learn-github-loft-sh-vcluster` | `https://github.com/loft-sh/vcluster` | `9555d7d8` | Multi-dimensional audit evidence | 2026-11-25T10:25:31.273Z |
 | `learn-dom-f-4026a5fe` | `project://ratatui-ratatui` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md` | 2026-11-25T10:26:14.158Z |
+| `learn-huggingface-baidu-unlimited-ocr-2` | `https://huggingface.co/baidu/Unlimited-OCR-2` | `hf-baidu-u` | Multi-dimensional audit evidence | 2026-11-25T10:35:11.189Z |
+| `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `103a1fa2` | Multi-dimensional audit evidence | 2026-11-25T10:35:14.483Z |
+| `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `9dd9b9ed` | Multi-dimensional audit evidence | 2026-11-25T10:35:22.767Z |
+| `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `d4d1c774` | Multi-dimensional audit evidence | 2026-11-25T10:35:24.549Z |

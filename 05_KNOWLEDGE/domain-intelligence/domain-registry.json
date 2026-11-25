@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T10:26:16.101Z",
+  "last_updated": "2026-11-25T10:35:29.977Z",
   "total_records": 2659,
   "domains": {
     "A": {
@@ -9410,8 +9410,8 @@
       "title": "Architecture Intelligence: nolabs-ai/nono Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nolabs-ai-nono-architecture-intelligence-nolabs-ai-nono-core-invariants.md",
       "repository": "nolabs-ai/nono",
-      "content_hash": "7674771beac072f95d388a4b81b9f336034937ca2407d5be1a9315e2e7e27381",
-      "created_at": "2026-11-24T01:07:23.262Z"
+      "content_hash": "a1e35671b2b6a8a69c1ef37c5c90f20110cbb9683853e9ce12ab63b5f81722fc",
+      "created_at": "2026-11-25T10:35:24.970Z"
     },
     "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-core-invariants",
@@ -13364,8 +13364,8 @@
       "title": "Technical Construction Intelligence: siderolabs/talos Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-siderolabs-talos-technical-construction-intelligence-siderolabs-talos-core-invar.md",
       "repository": "siderolabs/talos",
-      "content_hash": "deb7f7212e7fd7b811cd36769b0940e5571aa8ad2433d6c14db7f88c8d9df00b",
-      "created_at": "2026-11-24T16:46:05.235Z"
+      "content_hash": "eae9f97489d7be1d92b00b19305487038bdb04777edac42b8570693d69924ec3",
+      "created_at": "2026-11-25T10:35:23.191Z"
     },
     "domain_intelligence-architecture-intelligence-trufflesecurity-trufflehog-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-trufflesecurity-trufflehog-core-invariants",
@@ -13486,8 +13486,8 @@
       "title": "Technical Construction Intelligence: siderolabs-talos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-siderolabs-talos-learnings-technical-construction-intelligence-siderolabs-talos-.md",
       "repository": "siderolabs-talos-learnings",
-      "content_hash": "708dcf969a6769c7f71555e8c2d2ee8faa86a294d7c7b20ef92371a005f65704",
-      "created_at": "2026-11-24T16:46:17.943Z"
+      "content_hash": "9669221a428a20bb147e3c570de80ceb5ec504919c9389a3ef8da582d6370c70",
+      "created_at": "2026-11-25T10:35:29.977Z"
     },
     "domain_intelligence-research-knowledge-intelligence-bigscience-bloom-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-bigscience-bloom-core-invariants",
@@ -29228,8 +29228,8 @@
       "title": "Research & Knowledge Intelligence: baidu/Unlimited-OCR-2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baidu-unlimited-ocr-2-research-knowledge-intelligence-baidu-unlimited-ocr-2-c.md",
       "repository": "baidu/Unlimited-OCR-2",
-      "content_hash": "e5fd1a261f7eb41b9c415a349dba67cb0595334fc23cd80bf8d1a9c4d1aa4149",
-      "created_at": "2026-11-21T18:22:55.650Z"
+      "content_hash": "f5008752a1a8b1d792e82857bd7cccae720153082b8106daea0497ff4c6c26aa",
+      "created_at": "2026-11-25T10:35:11.411Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-baidu-unlimited-ocr-2-learnings-core-invarian": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-baidu-unlimited-ocr-2-learnings-core-invarian",
@@ -29237,8 +29237,8 @@
       "title": "Research & Knowledge Intelligence: hf-baidu-unlimited-ocr-2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baidu-unlimited-ocr-2-learnings-research-knowledge-intelligence-hf-baidu-unli.md",
       "repository": "hf-baidu-unlimited-ocr-2-learnings",
-      "content_hash": "f12b6a8cfc4257f2ab4500b0feaa3744aca5384fe0e1cc3c864563e65c30fa6f",
-      "created_at": "2026-11-21T18:23:09.555Z"
+      "content_hash": "c38beb931cee10b988235161efe04cc9d6d2fa004014f39114174377484d0b81",
+      "created_at": "2026-11-25T10:35:29.312Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ccore-qwen3-5-4b-3d-coder-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-ccore-qwen3-5-4b-3d-coder-core-invariants",
@@ -30564,8 +30564,8 @@
       "title": "Architecture Intelligence: 1jehuang/jcode Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-1jehuang-jcode-architecture-intelligence-1jehuang-jcode-core-invariants.md",
       "repository": "1jehuang/jcode",
-      "content_hash": "22702985f74a5bdf0c05fa4ae40e47aa931f879a824a17be3c950b2319923ffe",
-      "created_at": "2026-11-24T08:34:31.106Z"
+      "content_hash": "675f924e39d1ea27e1c78601283a32b4d3a87bf0f5f8217e11bcd9ecebb9415a",
+      "created_at": "2026-11-25T10:35:14.920Z"
     },
     "domain_intelligence-architecture-intelligence-1jehuang-jcode-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-1jehuang-jcode-learnings-core-invariants",
@@ -30573,8 +30573,8 @@
       "title": "Architecture Intelligence: 1jehuang-jcode-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-1jehuang-jcode-learnings-architecture-intelligence-1jehuang-jcode-learnings-core.md",
       "repository": "1jehuang-jcode-learnings",
-      "content_hash": "8448cf114a34cc91a9006db2b1971054e05ef9a656c17772b28f059bd246ef84",
-      "created_at": "2026-11-24T08:35:01.420Z"
+      "content_hash": "9c7cf9c77459b05726319c385a0884cd11dd3fe95f3bf5a0b0cf159097dfaf8a",
+      "created_at": "2026-11-25T10:35:28.570Z"
     },
     "domain_intelligence-architecture-intelligence-sqlpage-sqlpage-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-sqlpage-sqlpage-core-invariants",

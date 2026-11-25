@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T10:26:16.752Z",
+  "last_updated": "2026-11-25T10:35:30.158Z",
   "total_verified_learnings": 9115,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25382,
+  "total_items": 25388,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113769,10 +113769,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nolabs-ai-nono-architecture-intelligence-nolabs-ai-nono-core-invariants.md",
       "title": "Architecture Intelligence: nolabs-ai/nono Core Invariants",
       "repository": "nolabs-ai/nono",
-      "source_version": "d0c52cdf",
-      "content_hash": "7674771beac072f95d388a4b81b9f336034937ca2407d5be1a9315e2e7e27381",
+      "source_version": "d4d1c774",
+      "content_hash": "a1e35671b2b6a8a69c1ef37c5c90f20110cbb9683853e9ce12ab63b5f81722fc",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T01:07:23.262Z"
+      "persisted_at": "2026-11-25T10:35:24.970Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono",
@@ -113781,10 +113781,10 @@
       "relative_path": "12_DECISIONS/ADR-nolabs-ai-nono-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in nolabs-ai/nono",
       "repository": "nolabs-ai/nono",
-      "source_version": "d0c52cdf",
-      "content_hash": "d3f0a60b3bd56c02af67f3ddf32a092e449c0120c239bf0586c09c222334397a",
+      "source_version": "d4d1c774",
+      "content_hash": "261d49942576ad3df1f0573df918f38dc3609f55655a3bb97b827506d4c94231",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T01:07:23.487Z"
+      "persisted_at": "2026-11-25T10:35:25.147Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono",
@@ -113793,10 +113793,10 @@
       "relative_path": "08_VERIFICATION/nolabs-ai-nono-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono.md",
       "title": "Verification Protocol: Empirical Defect Shield for nolabs-ai/nono",
       "repository": "nolabs-ai/nono",
-      "source_version": "d0c52cdf",
-      "content_hash": "aadd223a930eabd1da045c46c754a1525c7240b6d1d0f879511dc8836b70728b",
+      "source_version": "d4d1c774",
+      "content_hash": "48c4c09fe5fa11ab49fa8da42aa8aae4e1a433b8d17934490cf531f7b7e2cb22",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T01:07:23.678Z"
+      "persisted_at": "2026-11-25T10:35:25.295Z"
     },
     "candidate_directive-merge-pull-request-6734-from-meilisearch-switch-macos-runner": {
       "item_id": "candidate_directive-merge-pull-request-6734-from-meilisearch-switch-macos-runner",
@@ -223308,8 +223308,8 @@
       "slug": "siderolabs-talos",
       "platform": "github",
       "source_url": "https://github.com/siderolabs/talos",
-      "source_version": "87507e3e",
-      "content_hash": "c918c460b4fdc785061fe49f9aff0b19c935d3cc01facd742042680531d90eab",
+      "source_version": "9dd9b9ed",
+      "content_hash": "e7efcf6b9bc9b750d17c6dc4dc70a85c193ce2f6228613f3ea10caa18b86e197",
       "dossier_path": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "promoted_rules": [
@@ -223357,6 +223357,11 @@
           "number": 10306,
           "title": "allow user etc files under iscsi and nvme",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10507,
+          "title": "don't panic machined on bogus cpufreq sysfs reads",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -223364,7 +223369,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T16:46:04.432Z",
+      "verified_at": "2026-11-25T10:35:22.548Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -223406,10 +223411,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-siderolabs-talos-technical-construction-intelligence-siderolabs-talos-core-invar.md",
       "title": "Technical Construction Intelligence: siderolabs/talos Core Invariants",
       "repository": "siderolabs/talos",
-      "source_version": "87507e3e",
-      "content_hash": "deb7f7212e7fd7b811cd36769b0940e5571aa8ad2433d6c14db7f88c8d9df00b",
+      "source_version": "9dd9b9ed",
+      "content_hash": "eae9f97489d7be1d92b00b19305487038bdb04777edac42b8570693d69924ec3",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T16:46:05.235Z"
+      "persisted_at": "2026-11-25T10:35:23.191Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-siderolabs-talos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-siderolabs-talos",
@@ -223418,10 +223423,10 @@
       "relative_path": "08_VERIFICATION/siderolabs-talos-verification-protocol-empirical-defect-shield-for-siderolabs-ta.md",
       "title": "Verification Protocol: Empirical Defect Shield for siderolabs/talos",
       "repository": "siderolabs/talos",
-      "source_version": "87507e3e",
-      "content_hash": "a78bf6d2268510b53afea4da9f84c8a87a6c6405308ef8c085b81fd83e3d2363",
+      "source_version": "9dd9b9ed",
+      "content_hash": "521ae4c86dd87f483dea7da1051f3ae65588151ff107a765ea087e3d218376a1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T16:46:05.461Z"
+      "persisted_at": "2026-11-25T10:35:23.390Z"
     },
     "learn-github-trufflesecurity-trufflehog": {
       "learning_id": "learn-github-trufflesecurity-trufflehog",
@@ -223899,9 +223904,9 @@
       "title": "Technical Construction Intelligence: siderolabs-talos-learnings Core Invariants",
       "repository": "siderolabs-talos-learnings",
       "source_version": "HEAD",
-      "content_hash": "708dcf969a6769c7f71555e8c2d2ee8faa86a294d7c7b20ef92371a005f65704",
+      "content_hash": "9669221a428a20bb147e3c570de80ceb5ec504919c9389a3ef8da582d6370c70",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T16:46:17.943Z"
+      "persisted_at": "2026-11-25T10:35:29.977Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-siderolabs-talos-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-siderolabs-talos-learnings",
@@ -223911,9 +223916,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for siderolabs-talos-learnings",
       "repository": "siderolabs-talos-learnings",
       "source_version": "HEAD",
-      "content_hash": "76f0c2b3913308b0927845855665526dea4ebf5cb0ceadca808a7a2c907f4eeb",
+      "content_hash": "71b9d91f303db63fce2fb5bcb57a7fa9adf8dcf335cbb7584cadc5e9d7fcd6a5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T16:46:18.164Z"
+      "persisted_at": "2026-11-25T10:35:30.158Z"
     },
     "learn-huggingface-bigscience-bloom": {
       "learning_id": "learn-huggingface-bigscience-bloom",
@@ -242089,8 +242094,8 @@
       "slug": "nolabs-ai-nono",
       "platform": "github",
       "source_url": "https://github.com/nolabs-ai/nono",
-      "source_version": "d0c52cdf",
-      "content_hash": "801ecb3c69ab730915d41690e5cf171e59f353c951fadc7d7e54cc8ce3eb17fa",
+      "source_version": "d4d1c774",
+      "content_hash": "df160df6c7491841c5b15685878bb4c5b3944c3ae0eca6f4e98b128c71a62b93",
       "dossier_path": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "promoted_rules": [
@@ -242148,6 +242153,11 @@
           "number": 10165,
           "title": "add TypeSafe API endpoint",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10508,
+          "title": "keep command-only route hosts out of the session allowlist",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -242155,7 +242165,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T01:07:22.444Z",
+      "verified_at": "2026-11-25T10:35:24.331Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -245908,8 +245918,8 @@
       "slug": "1jehuang-jcode",
       "platform": "github",
       "source_url": "https://github.com/1jehuang/jcode",
-      "source_version": "7ecaf212",
-      "content_hash": "00249820330ee271192aa7333da1fbb148a3435a5bcd1da9e51a97565e68de8f",
+      "source_version": "103a1fa2",
+      "content_hash": "5d6c3ac9f1e55f377f046ddc00852f77ad01a1e44aedb8d6512357bf215271ec",
       "dossier_path": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "promoted_rules": [
@@ -245942,6 +245952,11 @@
           "number": 10007,
           "title": "update url to 2.5.9 for RUSTSEC-2026-0592",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10506,
+          "title": "publish BackgroundTaskCompleted when cancelling background tasks (fixes #2270)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -245949,7 +245964,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T08:34:30.645Z",
+      "verified_at": "2026-11-25T10:35:14.259Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -246003,10 +246018,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/1jehuang-jcode-agent-contract-1jehuang-jcode-autonomous-specialist-persona.md",
       "title": "Agent Contract: 1jehuang/jcode Autonomous Specialist Persona",
       "repository": "1jehuang/jcode",
-      "source_version": "7ecaf212",
-      "content_hash": "942086dd6ccced3a68516ae5277de6206cbf3c858b06390387ab75357fc98ab9",
+      "source_version": "103a1fa2",
+      "content_hash": "ea8cd6af850c08f22435734fb690d06ce666405cb2aa41e0123b001908b42778",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T08:34:31.275Z"
+      "persisted_at": "2026-11-25T10:35:15.135Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-1jehuang-jcode": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-1jehuang-jcode",
@@ -246015,10 +246030,10 @@
       "relative_path": "08_VERIFICATION/1jehuang-jcode-verification-protocol-empirical-defect-shield-for-1jehuang-jcode.md",
       "title": "Verification Protocol: Empirical Defect Shield for 1jehuang/jcode",
       "repository": "1jehuang/jcode",
-      "source_version": "7ecaf212",
-      "content_hash": "ef63de81a6e4454a3d7b741788b6505b37f407d5632d4f5461794e5ba439c668",
+      "source_version": "103a1fa2",
+      "content_hash": "1d075033b38c5ea159112d69729aff6fa8270468856ebbeb5c26ffc8d8b1ded8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T08:34:31.414Z"
+      "persisted_at": "2026-11-25T10:35:15.285Z"
     },
     "candidate_directive-update-all-go-dependencies-main": {
       "item_id": "candidate_directive-update-all-go-dependencies-main",
@@ -246103,9 +246118,9 @@
       "title": "Agent Contract: 1jehuang-jcode-learnings Autonomous Specialist Persona",
       "repository": "1jehuang-jcode-learnings",
       "source_version": "HEAD",
-      "content_hash": "7b80df1b76039942f994821763f7c5eac3d671a4d1d5df1c452d955e7ccaf43a",
+      "content_hash": "f84a56751509f3a0acbb578bdffa1c9501f719adb1e28345655e07f4196afd36",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T08:35:01.612Z"
+      "persisted_at": "2026-11-25T10:35:28.754Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-1jehuang-jcode-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-1jehuang-jcode-learnings",
@@ -246115,9 +246130,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for 1jehuang-jcode-learnings",
       "repository": "1jehuang-jcode-learnings",
       "source_version": "HEAD",
-      "content_hash": "8ba4664ad70703880da44e8342dd092d914101c0475296149739d309cc8e725f",
+      "content_hash": "bbe9b433dcd4f5f27fcf565c33c892b28907f9a6e3c13ed616b15d82d8341016",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T08:35:01.768Z"
+      "persisted_at": "2026-11-25T10:35:28.909Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-openmoss-team-moss-image-sft-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-openmoss-team-moss-image-sft-learnings-core-i",
@@ -282180,7 +282195,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/baidu/Unlimited-OCR-2",
       "source_version": "hf-baidu-unlimited-ocr-2",
-      "content_hash": "e46a489a53681d249b11be78ad8cd73f5ac609c4559dcdc5b823c650525dbd2e",
+      "content_hash": "931555299c3c6f9753faa542b1b37364208964f75b357938228e446c031c2aba",
       "dossier_path": "07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-2-learnings.md",
       "promoted_rules": [],
@@ -282189,7 +282204,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T18:22:55.145Z",
+      "verified_at": "2026-11-25T10:35:10.938Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -282206,9 +282221,9 @@
       "title": "Research & Knowledge Intelligence: baidu/Unlimited-OCR-2 Core Invariants",
       "repository": "baidu/Unlimited-OCR-2",
       "source_version": "hf-baidu-unlimited-ocr-2",
-      "content_hash": "e5fd1a261f7eb41b9c415a349dba67cb0595334fc23cd80bf8d1a9c4d1aa4149",
+      "content_hash": "f5008752a1a8b1d792e82857bd7cccae720153082b8106daea0497ff4c6c26aa",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T18:22:55.650Z"
+      "persisted_at": "2026-11-25T10:35:11.411Z"
     },
     "rule-9037": {
       "learning_id": "rule-9037",
@@ -282308,9 +282323,9 @@
       "title": "Research & Knowledge Intelligence: hf-baidu-unlimited-ocr-2-learnings Core Invariants",
       "repository": "hf-baidu-unlimited-ocr-2-learnings",
       "source_version": "HEAD",
-      "content_hash": "f12b6a8cfc4257f2ab4500b0feaa3744aca5384fe0e1cc3c864563e65c30fa6f",
+      "content_hash": "c38beb931cee10b988235161efe04cc9d6d2fa004014f39114174377484d0b81",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T18:23:09.555Z"
+      "persisted_at": "2026-11-25T10:35:29.312Z"
     },
     "learn-huggingface-ccore-qwen3-5-4b-3d-coder": {
       "learning_id": "learn-huggingface-ccore-qwen3-5-4b-3d-coder",
@@ -288620,10 +288635,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-1jehuang-jcode-architecture-intelligence-1jehuang-jcode-core-invariants.md",
       "title": "Architecture Intelligence: 1jehuang/jcode Core Invariants",
       "repository": "1jehuang/jcode",
-      "source_version": "7ecaf212",
-      "content_hash": "22702985f74a5bdf0c05fa4ae40e47aa931f879a824a17be3c950b2319923ffe",
+      "source_version": "103a1fa2",
+      "content_hash": "675f924e39d1ea27e1c78601283a32b4d3a87bf0f5f8217e11bcd9ecebb9415a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T08:34:31.106Z"
+      "persisted_at": "2026-11-25T10:35:14.920Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-1jehuang-jcode": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-1jehuang-jcode",
@@ -288645,9 +288660,9 @@
       "title": "Architecture Intelligence: 1jehuang-jcode-learnings Core Invariants",
       "repository": "1jehuang-jcode-learnings",
       "source_version": "HEAD",
-      "content_hash": "8448cf114a34cc91a9006db2b1971054e05ef9a656c17772b28f059bd246ef84",
+      "content_hash": "9c7cf9c77459b05726319c385a0884cd11dd3fe95f3bf5a0b0cf159097dfaf8a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T08:35:01.420Z"
+      "persisted_at": "2026-11-25T10:35:28.570Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-1jehuang-jcode-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-1jehuang-jcode-learnings",
@@ -347233,6 +347248,84 @@
       "content_hash": "3fe5309d0aca34d25a44a6dcc3ac0edea594ec8e5655a15e7a9a929612e0db54",
       "domain_letter": "M",
       "persisted_at": "2026-11-25T10:26:16.752Z"
+    },
+    "rule-10506": {
+      "learning_id": "rule-10506",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10506,
+      "title": "publish BackgroundTaskCompleted when cancelling background tasks (fixes #2270)",
+      "source_url": "https://github.com/1jehuang/jcode",
+      "source_version": "103a1fa2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T10:35:14.259Z"
+    },
+    "candidate_directive-publish-backgroundtaskcompleted-when-cancelling-background-tasks-fixes-2270": {
+      "item_id": "candidate_directive-publish-backgroundtaskcompleted-when-cancelling-background-tasks-fixes-2270",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MEPB-publish-backgroundtaskcompleted-when-cancelling-background-tasks-fixes-2270.md",
+      "title": "publish BackgroundTaskCompleted when cancelling background tasks (fixes #2270)",
+      "repository": "1jehuang-jcode-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a2d7804bbd86e3fd9173d105980b1be836aaf29e8ea9711955e3bffbd749f6fc",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T10:35:28.371Z"
+    },
+    "rule-10507": {
+      "learning_id": "rule-10507",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10507,
+      "title": "don't panic machined on bogus cpufreq sysfs reads",
+      "source_url": "https://github.com/siderolabs/talos",
+      "source_version": "9dd9b9ed",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T10:35:22.548Z"
+    },
+    "candidate_directive-don-t-panic-machined-on-bogus-cpufreq-sysfs-reads": {
+      "item_id": "candidate_directive-don-t-panic-machined-on-bogus-cpufreq-sysfs-reads",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MFSZ-don-t-panic-machined-on-bogus-cpufreq-sysfs-reads.md",
+      "title": "don't panic machined on bogus cpufreq sysfs reads",
+      "repository": "siderolabs-talos-learnings",
+      "source_version": "HEAD",
+      "content_hash": "38bb50878080ac61cd85371bbb39b40570abf480bd0cdcb16832369899b5fb19",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T10:35:29.798Z"
+    },
+    "rule-10508": {
+      "learning_id": "rule-10508",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10508,
+      "title": "keep command-only route hosts out of the session allowlist",
+      "source_url": "https://github.com/nolabs-ai/nono",
+      "source_version": "d4d1c774",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T10:35:24.331Z"
+    },
+    "candidate_directive-keep-command-only-route-hosts-out-of-the-session-allowlist": {
+      "item_id": "candidate_directive-keep-command-only-route-hosts-out-of-the-session-allowlist",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MBY0-keep-command-only-route-hosts-out-of-the-session-allowlist.md",
+      "title": "keep command-only route hosts out of the session allowlist",
+      "repository": "nolabs-ai/nono",
+      "source_version": "d4d1c774",
+      "content_hash": "c8c8677ca38f7bd6c60bdfa299c8c55fb662c2cb45f3bed81ecd2f77e6b13c0f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T10:35:24.796Z"
     }
   },
   "ai-builder-brain": {

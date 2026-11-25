@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source**: github ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
-> **Source Version**: `87507e3e`  
+> **Source Version**: `9dd9b9ed`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T16:46:03.335Z  
+> **Timestamp**: 2026-11-25T10:35:21.605Z  
 > **Learning ID**: `learn-github-siderolabs-talos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T16:46:03.328Z  
+> **Harvest Timestamp**: 2026-11-25T10:35:21.599Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Talos Linux is a modern Linux distribution built for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11587 stars
+- **Stars / Engagement**: 11589 stars
 
 ---
 
@@ -2111,11 +2111,11 @@ func a
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #15067** (2026-11-24): **Feat/bgp dynamic neighbors**
-  *Symptoms*: # Pull Request DRAFT<!> <!-- ## Note to the Contributor  We encourage contributors to go through a proposal process to discuss major changes. Before your PR is allowed to run through CI, the maintainers of Talos will first have to approve the PR. -->  ## What? (description) The goal of this PR is to offer BGP a FRR `listen range` equivalent in order to accept passively any incoming BGP connections from a specific CIDR range. This is done by :   - `BGPInstanceConfig` neighbors: new `prefix` field, mutually exclusive with `address`/`link`, works like FRR `bgp listen range` - backed by a GoBGP peer group plus a dynamic neighbor per prefix. always passive. supports `holdTime`, `bfd`, `authPassword`, `ebgpMultiHop`, `localASN` - an explicit `address` neighbor wins over a matching prefix: any dynamic session from that address is evicted - changing a prefix neighbor recreates its peer group, which resets its sessions (GoBGP doesn't apply peer group updates to dynamic neighbors it already accepted) - validation: prefix must be masked, prefixes in one instance can't overlap, an `address` neighbor inside an authenticated prefix must set its own `authPassword` (otherwise the kernel applies the prefix's TCP MD5 key)  ## Why? (reasoning)  This allows peering with a whole subnet without listing every peer in the configuration and update for each new possible client  ## Why? (reasoning)  ## Acceptance  Please use the following checklist:  - [ ] you linked an issu
+- **Issue #15077** (2026-11-25): **feat: allow setting the scope of link config addresses**
+  *Symptoms*: Add an optional `scope` field (`global`, `link`, `host`) to addresses in link configuration documents. Non-global scope is rejected for IPv6 addresses, as the kernel derives their scope from the address itself.  Fixes #15016 
 
-- **Issue #15062** (2026-11-24): **test: wait for MD arrays to finish rebuilding**
-  *Symptoms*: The RAID integration tests accepted a rebuilding array as success, so nothing caught MDArrayStatus getting stuck at rebuilding after the kernel finished the resync. Wait for ready/idle after growing an array and after the degraded boot array reboot.  Closes https://github.com/siderolabs/talos/issues/14305  Signed-off-by: Mateusz Urbanek <mateusz.urbanek@siderolabs.com> 
+- **Issue #15073** (2026-11-25): **docs: document BGP import chaining and hold time changes**
+  *Symptoms*: importRoutes does not chain: paths an instance imported are not import candidates for other instances, the same as VRF route leaking in FRR. The cycle check in validation made it look like chains work, so state it in the field description.  A holdTime change updates the neighbor in place. The hold time is negotiated in OPEN, so it applies to the next session; resetting the session instead would drop the routes from that neighbor, and FRR does not reset on a timers change either.  Fixes: #14970 Fixes: #14973
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2132,642 +2132,1204 @@ func a
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ba1142dd` (2026-11-24)
-**Commit Message**: fix: allow user etc files under iscsi and nvme
+### Incident Patch 1: `459f38a2` (2026-11-24)
+**Commit Message**: fix: don't panic machined on bogus cpufreq sysfs reads
 
-EtcFileConfig rejected every path under iscsi/ and nvme/, but Talos
-only writes iscsi/initiatorname.iscsi, nvme/hostid and nvme/hostnqn
-there. open-iscsi reads /etc/iscsi/iscsid.conf, and the iscsid
-extension bind mounts the host /etc/iscsi read-only, so users had no
-way to set it.
+The kernel's cpuinfo_avg_freq can return a negative non-errno value
+from its sysfs show() callback (arch_freq_get_on_cpu() truncates a u64
+to int), which read(2) passes to userspace as a byte count. os.ReadFile
+slices with it and panics. procfs reads that attribute in its own
+errgroup goroutines, so the panic can't be recovered and takes down
+machined (PID 1) and with it the node.
 
-Reserve only the files Talos writes. The bare iscsi and nvme paths
-stay reserved, as a file there would block the managed files.
+Read only the cpufreq attributes the API returns, with a reader that
+rejects invalid byte counts, and recover in the per-CPU goroutines.
+Use the same reader in the CPU scaling controller.
 
-Refs: https://github.com/siderolabs/talos/discussions/15055
-Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
+Fixes #15061
 
-**File**: `pkg/machinery/config/types/runtime/etc_file.go` (modified, +8/-5)
+Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
+
+**File**: `internal/app/machined/internal/server/v1alpha1/v1alpha1_monitoring.go` (modified, +3/-21)
 ```diff
-@@ -12,7 +12,6 @@ import (
- 	"io/fs"
- 	"os"
- 	"path/filepath"
--	"slices"
- 	"strconv"
+@@ -12,11 +12,11 @@ import (
  	"strings"
  
-@@ -150,6 +149,9 @@ var managedEtcFiles = []string{
- 	"localtime",
- 	"os-release",
- 	"xattr.conf",
-+	"iscsi/initiatorname.iscsi",
-+	"nvme/hostid",
-+	"nvme/hostnqn",
- }
+ 	"github.com/prometheus/procfs"
+-	"github.com/prometheus/procfs/sysfs"
+ 	"github.com/siderolabs/gen/maps"
+ 	"github.com/siderolabs/gen/xslices"
+ 	"google.golang.org/protobuf/types/known/emptypb"
  
- var managedEtcPrefixes = []string{
-@@ -158,10 +160,8 @@ var managedEtcPrefixes = []string{
- 	"ca-certificates/",
- 	"cni/",
- 	"cri/",
--	"iscsi/",
- 	"kubernetes/",
- 	"lvm/",
--	"nvme/",
- 	"pki/",
- 	"selinux/",
- 	"ssl/",
-@@ -173,8 +173,11 @@ func validateEtcFilePath(path string) error {
- 		return fmt.Errorf("user etc file %q must be a local path", path)
++	"github.com/siderolabs/talos/internal/pkg/sysfs"
+ 	"github.com/siderolabs/talos/pkg/machinery/api/machine"
+ )
+ 
+@@ -144,33 +144,15 @@ func (s *Server) SystemStat(ctx context.Context, in *emptypb.Empty) (*machine.Sy
+ 
+ // CPUFreqStats implements the machine.MachineServer interface.
+ func (s *Server) CPUFreqStats(ctx context.Context, in *emptypb.Empty) (*machine.CPUFreqStatsResponse, error) {
+-	fs, err := sysfs.NewDefaultFS()
++	stats, err := sysfs.CPUFreqStats("/sys")
+ 	if err != nil {
+ 		return nil, err
  	}
  
--	if slices.Contains(managedEtcFiles, path) {
--		return fmt.Errorf("user etc file %q is managed by Talos", path)
-+	for _, managed := range managedEtcFiles {
-+		// a file at a managed file's parent directory path would break writing the managed file
-+		if path == managed || strings.HasPrefix(managed, path+"/") {
-+			return fmt.Errorf("user etc file %q is managed by Talos", path)
-+		}
- 	}
- 
- 	for _, prefix := range managedEtcPrefixes {
-```
-
-**File**: `pkg/machinery/config/types/runtime/etc_file_test.go` (modified, +33/-0)
-```diff
-@@ -141,6 +141,39 @@ func TestEtcFileValidate(t *testing.T) {
- 			configName:    "selinux/config",
- 			expectedError: `user etc file "selinux/config" is managed by Talos`,
+-	systemCpufreqStats, err := fs.SystemCpufreq()
+-	if err != nil {
+-		return nil, err
+-	}
+-
+-	translateCPUFreqStats := func(in sysfs.SystemCPUCpufreqStats) *machine.CPUFreqStats {
+-		if in.CpuinfoCurrentFrequency == nil || in.CpuinfoMinimumFrequency == nil || in.CpuinfoMaximumFrequency == nil {
+-			return &machine.CPUFreqStats{}
+-		}
+-
+-		return &machine.CPUFreqStats{
+-			CurrentFrequency: *in.CpuinfoCurrentFrequency,
+-			MinimumFrequency: *in.CpuinfoMinimumFrequency,
+-			MaximumFrequency: *in.CpuinfoMaximumFrequency,
+-			Governor:         in.Governor,
+-		}
+-	}
+-
+ 	reply := &machine.CPUFreqStatsResponse{
+ 		Messages: []*machine.CPUsFreqStats{
+ 			{
+-				CpuFreqStats: xslices.Map(systemCpufreqStats, translateCPUFreqStats),
++				CpuFreqStats: stats,
+ 			},
  		},
-+		{
-+			name:       "iscsid.conf",
-+			configName: "iscsi/iscsid.conf",
-+		},
-+		{
-+			name:          "iscsi initiator name",
-+			configName:    "iscsi/initiatorname.iscsi",
-+			expectedError: `user etc file "iscsi/initiatorname.iscsi" is managed by Talos`,
-+		},
-+		{
-+			name:          "iscsi directory",
-+			configName:    "iscsi",
-+			expectedError: `user etc file "iscsi" is managed by Talos`,
-+		},
-+		{
-+			name:       "nvme discovery.conf",
-+			configName: "nvme/discovery.conf",
-+		},
-+		{
-+			name:          "nvme hostid",
-+			configName:    "nvme/hostid",
-+			expectedError: `user etc file "nvme/hostid" is managed by Talos`,
-+		},
-+		{
-+			name:          "nvme hostnqn",
-+			configName:    "nvme/hostnqn",
-+			expectedError: `user etc file "nvme/hostnqn" is managed by Talos`,
-+		},
-+		{
-+			name:          "nvme directory",
-+			configName:    "nvme",
-+			expectedError: `user etc file "nvme" is managed by Talos`,
-+		},
- 		{
- 			name:          "escaped path",
- 			configName:    "../foo",
+ 	}
 ```
 
----
-
-### Incident Patch 2: `3a8b6587` (2026-11-16)
-**Commit Message**: fix: keep a derived BGP router ID while sessions are established
-
-Without routerID, Talos derives the router ID from the lowest IPv4
-address on the advertised links. Adding an address that sorts lower,
-such as a VIP or a new DHCP lease, changed the router ID, which
-rebuilt the GoBGP server and reset every session of the instance.
-
-Keep the current derived router ID while a peer that stays configured
-is established or completing its handshake, and its address is still
-on the advertised links. FRR's bgpd also holds a new router ID from
-zebra until no session is up. A configured routerID, or a change
-that rebuilds the server anyway, applies the new router ID right
-away.
-
-Fixes: #14968
-
-Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
-
-**File**: `internal/app/machined/pkg/controllers/network/bgp.go` (modified, +1/-1)
+**File**: `internal/app/machined/pkg/controllers/hardware/cpu_scaling.go` (modified, +3/-2)
 ```diff
-@@ -233,7 +233,7 @@ func (ctrl *BGPController) reconcile(ctx context.Context, r controller.Runtime,
- 			ctx,
- 			instanceLogger,
- 			resolved.Spec,
--			resolved.RouterID,
-+			resolved.RouterIDCandidates,
- 			resolved.VRFIndex,
- 			peers,
- 			peerIfaces,
+@@ -26,6 +26,7 @@ import (
+ 	"github.com/siderolabs/talos/internal/app/machined/pkg/controllers/internal/kobject"
+ 	"github.com/siderolabs/talos/internal/app/machined/pkg/controllers/internal/trigger"
+ 	runtimetalos "github.com/siderolabs/talos/internal/app/machined/pkg/runtime"
++	"github.com/siderolabs/talos/internal/pkg/sysfs"
+ 	"github.com/siderolabs/talos/pkg/machinery/resources/hardware"
+ 	"github.com/siderolabs/talos/pkg/machinery/resources/runtime"
+ )
+@@ -46,7 +47,7 @@ type CPUScalingController struct {
+ 	// ReconcileCh triggers an additional reconcile on each receive. Intended for testing only.
+ 	ReconcileCh <-chan struct{}
+ 
+-	// ReadFile reads a sysfs attribute, defaults to os.ReadFile. Overridable for testing, as some
++	// ReadFile reads a sysfs attribute, defaults to sysfs.ReadFile. Overridable for testing, as some
+ 	// sysfs read errors (e.g. EBUSY from an inactive policy) cannot be reproduced with plain files.
+ 	ReadFile func(name string) ([]byte, error)
+ 
+@@ -99,7 +100,7 @@ func (ctrl *CPUScalingController) Run(ctx context.Context, r controller.Runtime,
+ 	}
+ 
+ 	if ctrl.ReadFile == nil {
+-		ctrl.ReadFile = os.ReadFile
++		ctrl.ReadFile = sysfs.ReadFile
+ 	}
+ 
+ 	if ctrl.defaults == nil {
 ```
 
-**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/instance.go` (modified, +74/-2)
+**File**: `internal/pkg/sysfs/cpufreq.go` (added, +117/-0)
 ```diff
-@@ -17,6 +17,7 @@ import (
- 	gobgpapi "github.com/osrg/gobgp/v4/api"
- 	"github.com/osrg/gobgp/v4/pkg/apiutil"
- 	gobgpsrv "github.com/osrg/gobgp/v4/pkg/server"
-+	"github.com/siderolabs/gen/xslices"
- 	"go.uber.org/zap"
- 	"go.uber.org/zap/exp/zapslog"
- 	"golang.org/x/sys/unix"
-@@ -29,6 +30,8 @@ import (
- type Instance struct {
- 	server        *gobgpsrv.BgpServer
- 	serverKey     string
-+	derivedID     netip.Addr
-+	pendingID     netip.Addr
- 	watchCancel   context.CancelFunc
- 	originated    map[netip.Prefix]struct{}
- 	imported      map[netip.Prefix]importedPath
-@@ -77,6 +80,8 @@ func (instance *Instance) Stop() {
- 	}
- 
- 	instance.serverKey = ""
-+	instance.derivedID = netip.Addr{}
-+	instance.pendingID = netip.Addr{}
- 
- 	instance.clearState()
- }
-@@ -101,14 +106,14 @@ func (instance *Instance) EnsureServer(
- 	ctx context.Context,
- 	logger *zap.Logger,
- 	config network.BGPInstanceConfigSpec,
--	routerID netip.Addr,
-+	routerIDCandidates []netip.Addr,
- 	vrfIndex uint32,
- 	resolvedPeers []Peer,
- 	peerIfaces map[netip.Addr]string,
- 	listenPort int32,
- 	signal func(),
- ) error {
--	key := ServerKey(config.LocalASN, routerID, config.Multipath, config.MaxPaths, config.VRF, vrfIndex, config.VRFTable, listenPort)
-+	routerID, key := instance.serverIdentity(ctx, logger, config, routerIDCandidates, resolvedPeers, vrfIndex, listenPort)
- 
- 	if instance.server == nil || instance.serverKey != key {
- 		instance.Stop()
-@@ -162,6 +167,13 @@ func (instance *Instance) EnsureServer(
- 		logger.Info("started embedded BGP speaker", zap.Uint32("asn", config.LocalASN), zap.Stringer("router_id", routerID))
- 	}
- 
-+	// a configured router ID may be dropped for the same derived one without a rebuild
-+	instance.derivedID = netip.Addr{}
+@@ -0,0 +1,117 @@
++// This Source Code Form is subject to the terms of the Mozilla Public
++// License, v. 2.0. If a copy of the MPL was not distributed with this
++// file, You can obtain one at http://mozilla.org/MPL/2.0/.
 +
-+	if !config.RouterID.IsValid() {
-+		instance.derivedID = routerID
-+	}
++package sysfs
 +
- 	instance.peerIfaces = peerIfaces
- 	instance.unnumbered = map[string]netip.Addr{}
- 
-@@ -174,6 +186,66 @@ func (instance *Instance) EnsureServer(
- 	return instance.reconcilePeers(ctx, config, resolvedPeers)
- }
- 
-+// serverIdentity returns the router ID and server key to run with.
++import (
++	"errors"
++	"fmt"
++	"io/fs"
++	"path/filepath"
++	"runtime"
++	"strconv"
++	"strings"
++	"syscall"
++
++	"github.com/siderolabs/gen/panicsafe"
++	"golang.org/x/sync/errgroup"
++	"k8s.io/utils/cpuset"
++
++	"github.com/siderolabs/talos/pkg/machinery/api/machine"
++)
++
++// CPUFreqStats returns the current, minimum and maximum frequency (in kHz) and the governor of
++// each online CPU, in CPU number order, read from sysfs mounted at root.
 +//
-+// Like FRR, a derived router ID is kept while a session is established or opening, as a new one
-+// resets every session, unless the server is rebuilt anyway or the address has left the advertised
-+// links. derivedID is unset while the router ID is configured.
-+func (instance *Instance) serverIdentity(
-+	ctx context.Context,
-+	logger *zap.Logger,
-+	config network.BGPInstanceConfigSpec,
-+	routerIDCandidates []netip.Addr,
-+	resolvedPeers []Peer,
-+	vrfIndex uint32,
-+	listenPort int32,
-+) (netip.Addr, string) {
-+	routerID := selectRouterID(config.RouterID, routerIDCandidates)
-+	key := ServerKey(config.LocalASN, routerID, config.Multipath, config.MaxPaths, config.VRF, vrfIndex, config.VRFTable, listenPort)
-+	keptKey := ServerKey(config.LocalASN, instance.derivedID, config.Multipath, config.MaxPaths, config.VRF, vrfIndex, config.VRFTable, listenPort)
++// A CPU which has no cpufreq policy, or whose frequency cannot be read, gets empty stats.
++func CPUFreqStats(root string) ([]*machine.CPUFreqStats, error) {
++	cpuDir := filepath.Join(root, "devices/system/cpu")
 +
-+	keep := key != instance.serverKey && keptKey == instance.serverKey && !config.RouterID.IsValid() &&
-+		slices.Contains(routerIDCandidates, instance.derivedID) && instance.hasSession(ctx, resolvedPeers)
-+
-+	if !keep {
-+		instance.pendingID = netip.Addr{}
-+
-+		return routerID, key
++	online, err := ReadFile(filepath.Join(cpuDir, "online"))
++	if err != nil {
++		return nil, err
 +	}
 +
-+	if instance.pendingID != routerID {
-+		logger.Info("keeping the BGP router ID while a session is established or opening",
-+			zap.Stringer("router_id", instance.derivedID), zap.Stringer("derived_router_id", routerID))
-+
-+		instance.pendingID = routerID
++	set, err := cpuset.Parse(strings.TrimSpace(string(online)))
++	if err != nil {
++		return nil, fmt.Errorf("error parsing online CPUs: %w", err)
 +	}
 +
-+	return instance.derivedID, keptKey
++	cpus := set.List()
++	if len(cpus) == 0 {
++		return nil, errors.New("no online CPUs found")
++	}
++
++	stats := make([]*machine.CPUFreqStats, len(cpus))
++
++	// Reading a CPU's current frequency might need an IPI to it, so read the CPUs in parallel.
++	var eg errgroup.Group
++
++	eg.SetLimit(runtime.GOMAXPROCS(0))
++
++	for i, cpu := range cpus {
++		// this runs in machined (PID 1), so a panic here would bring down the whole node
++		eg.Go(panicsafe.RunErrF(func() error {
++			var err error
++
++			stats[i], err = readCPUFreqStats(filepath.Join(cpuDir, "cpu"+strconv.Itoa(cpu), "cpufreq"))
++
++			return err
++		}))
++	}
++
++	if err = eg.Wait(); err != nil {
++		return nil, err
++	}
++
++	return stats, nil
 +}
 +
-+// hasSession reports whether a peer which stays configured is established or completing its handshake.
-+func (instance *Instance) hasSession(ctx context.Context, resolvedPeers []Peer) bool {
-+	addresses := xslices.ToSet(xslices.Map(resolvedPeers, func(peer Peer) string { return peer.Address }))
++func readCPUFreqStats(dir string) (*machine.CPUFreqStats, error) {
++	var stats machine.CPUFreqStats
 +
-+	var session bool
++	for _, attr := range []struct {
++		name string
++		dest *uint64
++	}{
++		{"cpuinfo_cur_freq", &stats.CurrentFrequency},
++		{"cpuinfo_min_freq", &stats.MinimumFrequency},
++		{"cpuinfo_max_freq", &stats.MaximumFrequency},
++	} {
++		value, err := ReadFile(filepath.Join(dir, attr.name))
++		if err != nil {
++			if isUnavailable(err) {
++				return &machine.CPUFreqStats{}, nil
++			}
 +
-+	if err := instance.server.ListPeer(ctx, &gobgpapi.ListPeerRequest{}, func(peer *gobgpapi.Peer) {
-+		if _, configured := addresses[peer.GetConf().GetNeighborAddress()]; !configured {
-+			return
++			return nil, err
 +		}
 +
-+		switch peer.GetState().GetSessionState() { //nolint:exhaustive // only sessions with an OPEN exchange in progress or done
-+		case gobgpapi.PeerState_SESSION_STATE_OPENSENT, gobgpapi.PeerState_SESSION_STATE_OPENCONFIRM, gobgpapi.PeerState_SESSION_STATE_ESTABLISHED:
-+			session = true
++		// the kernel prints "<unknown>" for cpuinfo_cur_freq when the driver can't read it
++		*attr.dest, err = strconv.ParseUint(strings.TrimSpace(string(value)), 10, 64)
++		if err != nil {
++			return &machine.CPUFreqStats{}, nil //nolint:nilerr
 +		}
-+	}); err != nil {
-+		// only a canceled context fails it: keep the router ID rather than rebuild the server
-+		return true
 +	}
 +
-+	return session
++	governor, err := ReadFile(filepath.Join(dir, "scaling_governor"))
++	if err != nil && !isUnavailable(err) {
++		return nil, err
++	}
++
++	stats.Governor = strings.TrimSpace(string(governor))
++
++	return &stats, nil
 +}
 +
- // listenAddresses returns the wildcard addresses to listen on.
- var listenAddresses = sync.OnceValue(func() []string {
- 	addrs := []string{
++// isUnavailable reports whether err means the attribute has no value to report: the CPU has no
++// cpufreq policy or the driver doesn't expose the attribute (ENOENT), the attribute is not
++// readable (EACCES), the driver can't read the value right now (EAGAIN), or the policy is
++// inactive (EBUSY).
++func isUnavailable(err error) bool {
++	return errors.Is(err, fs.ErrNotExist) ||
++		errors.Is(err, fs.ErrPermission) ||
++		errors.Is(err, syscall.EAGAIN) ||
++		errors.Is(err, syscall.EBUSY)
++}
 ```
 
-**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/instance_test.go` (modified, +217/-8)
+**File**: `internal/pkg/sysfs/cpufreq_test.go` (added, +95/-0)
 ```diff
-@@ -16,9 +16,12 @@ import (
- 	"github.com/gopacket/gopacket"
- 	"github.com/gopacket/gopacket/layers"
- 	gobgpapi "github.com/osrg/gobgp/v4/api"
-+	bgppacket "github.com/osrg/gobgp/v4/pkg/packet/bgp"
-+	"github.com/siderolabs/gen/xslices"
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
- 	"go.uber.org/zap"
-+	"go.uber.org/zap/zaptest/observer"
- 	"golang.org/x/sys/unix"
- 
- 	internalbgp "github.com/siderolabs/talos/internal/app/machined/pkg/controllers/network/internal/bgp"
-@@ -102,7 +105,7 @@ func TestInstanceAuthPasswordListenerKey(t *testing.T) {
- 			t.Context(),
- 			zap.NewNop(),
- 			config,
--			netip.MustParseAddr("10.0.0.1"),
-+			[]netip.Addr{netip.MustParseAddr("10.0.0.1")},
- 			0,
- 			[]internalbgp.Peer{peer},
- 			nil,
-@@ -224,7 +227,7 @@ func TestInstanceServerLifecycleAndReconciliation(t *testing.T) {
- 		t.Context(),
- 		zap.NewNop(),
- 		config,
--		netip.MustParseAddr("10.0.0.1"),
-+		[]netip.Addr{netip.MustParseAddr("10.0.0.1")},
- 		0,
- 		[]internalbgp.Peer{peer},
- 		peerIfaces,
-@@ -242,7 +245,7 @@ func TestInstanceServerLifecycleAndReconciliation(t *testing.T) {
- 		t.Context(),
- 		zap.NewNop(),
- 		config,
--		netip.MustParseAddr("10.0.0.1"),
-+		[]netip.Addr{netip.MustParseAddr("10.0.0.1")},
- 		0,
- 		[]internalbgp.Peer{peer},
- 		peerIfaces,
-@@ -256,7 +259,7 @@ func TestInstanceServerLifecycleAndReconciliation(t *testing.T) {
- 		t.Context(),
- 		zap.NewNop(),
- 		config,
--		netip.MustParseAddr("10.0.0.1"),
-+		[]netip.Addr{netip.MustParseAddr("10.0.0.1")},
- 		0,
- 		[]internalbgp.Peer{peer},
- 		peerIfaces,
-@@ -270,7 +273,7 @@ func TestInstanceServerLifecycleAndReconciliation(t *testing.T) {
- 		t.Context(),
- 		zap.NewNop(),
- 		config,
--		netip.MustParseAddr("10.0.0.1"),
-+		[]netip.Addr{netip.MustParseAddr("10.0.0.1")},
- 		0,
- 		nil,
- 		peerIfaces,
-@@ -307,7 +310,7 @@ func TestInstanceServerLifecycleAndReconciliation(t *testing.T) {
- 		t.Context(),
- 		zap.NewNop(),
- 		config,
--		netip.MustParseAddr("10.0.0.9"),
-+		[]netip.Addr{netip.MustParseAddr("10.0.0.9")},
- 		0,
- 		nil,
- 		peerIfaces,
-@@ -339,7 +342,7 @@ func TestChangedPeerIsUpdatedInPlace(t *testing.T) {
- 			ctx,
- 			zap.NewNop(),
- 			network.BGPInstanceConfigSpec{LocalASN: 65001, Neighbors: []network.BGPNeighborConfigSpec{peer.Config}},
--			netip.MustParseAddr("10.0.0.1"),
-+			[]netip.Addr{netip.MustParseAddr("10.0.0.1")},
- 			0,
- 			[]internalbgp.Peer{peer},
- 			nil,
-@@ -408,6 +411,212 @@ func TestChangedPeerIsUpdatedInPlace(t *testing.T) {
- 	}
- }
- 
-+func TestDerivedRouterIDIsKeptWhilePeerIsEstablished(t *testing.T) {
+@@ -0,0 +1,95 @@
++// This Source Code Form is subject to the terms of the Mozilla Public
++// License, v. 2.0. If a copy of the MPL was not distributed with this
++// file, You can obtain one at http://mozilla.org/MPL/2.0/.
++
++package sysfs_test
++
++import (
++	"io/fs"
++	"os"
++	"path/filepath"
++	"testing"
++
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++	"google.golang.org/protobuf/proto"
++
++	"github.com/siderolabs/talos/internal/pkg/sysfs"
++	"github.com/siderolabs/talos/pkg/machinery/api/machine"
++)
++
++func writeAttrs(t *testing.T, dir string, attrs map[string]string) {
++	t.Helper()
++
++	require.NoError(t, os.MkdirAll(dir, 0o755))
++
++	for name, value := range attrs {
++		require.NoError(t, os.WriteFile(filepath.Join(dir, name), []byte(value+"\n"), 0o644))
++	}
++}
++
++func cpufreqAttrs(cur, governor string) map[string]string {
++	return map[string]string{
++		"cpuinfo_cur_freq": cur,
++		"cpuinfo_min_freq": "1500000",
++		"cpuinfo_max_freq": "3700000",
++		"cpuinfo_avg_freq": "garbage",
++		"scaling_governor": governor,
++		"scaling_cur_freq": cur,
++	}
++}
++
++func TestCPUFreqStats(t *testing.T) {
 +	t.Parallel()
 +
-+	derived := network.BGPInstanceConfigSpec{}
-+	configured := network.BGPInstanceConfigSpec{RouterID: netip.MustParseAddr("10.5.0.9")}
-+	addrs := func(addrs ...string) []netip.Addr { return xslices.Map(addrs, netip.MustParseAddr) }
++	root := t.TempDir()
++	cpuDir := filepath.Join(root, "devices/system/cpu")
++
++	writeAttrs(t, cpuDir, map[string]string{"online": "0-2,4,10"})
++
++	// cpu0: full set of attributes
++	writeAttrs(t, filepath.Join(cpuDir, "cpu0/cpufreq"), cpufreqAttrs("2400000", "performance"))
++	// cpu1: no cpufreq policy
++	require.NoError(t, os.MkdirAll(filepath.Join(cpuDir, "cpu1"), 0o755))
++	// cpu2: current frequency can't be read
++	writeAttrs(t, filepath.Join(cpuDir, "cpu2/cpufreq"), cpufreqAttrs("<unknown>", "performance"))
++	// cpu3: offline, so skipped
++	writeAttrs(t, filepath.Join(cpuDir, "cpu3/cpufreq"), cpufreqAttrs("1000000", "powersave"))
++	// cpu4: no governor
++	attrs := cpufreqAttrs("3000000", "")
++	delete(attrs, "scaling_governor")
++	writeAttrs(t, filepath.Join(cpuDir, "cpu4/cpufreq"), attrs)
++	// cpu10: sorted numerically after cpu4
++	writeAttrs(t, filepath.Join(cpuDir, "cpu10/cpufreq"), cpufreqAttrs("1600000", "schedutil"))
++
++	stats, err := sysfs.CPUFreqStats(root)
++	require.NoError(t, err)
++
++	expected := []*machine.CPUFreqStats{
++		{CurrentFrequency: 2400000, MinimumFrequency: 1500000, MaximumFrequency: 3700000, Governor: "performance"},
++		{},
++		{},
++		{CurrentFrequency: 3000000, MinimumFrequency: 1500000, MaximumFrequency: 3700000},
++		{CurrentFrequency: 1600000, MinimumFrequency: 1500000, MaximumFrequency: 3700000, Governor: "schedutil"},
++	}
++
++	require.Len(t, stats, len(expected))
++
++	for i := range expected {
++		assert.True(t, proto.Equal(expected[i], stats[i]), "cpu index %d: expected %v, got %v", i, expected[i], stats[i])
++	}
++}
++
++func TestCPUFreqStatsNoOnline(t *testing.T) {
++	t.Parallel()
++
++	root := t.TempDir()
++
++	_, err := sysfs.CPUFreqStats(root)
++	require.ErrorIs(t, err, fs.ErrNotExist)
++
++	writeAttrs(t, filepath.Join(root, "devices/system/cpu"), map[string]string{"online": ""})
++
++	_, err = sysfs.CPUFreqStats(root)
++	require.Error(t, err)
++}
+```
+
+**File**: `internal/pkg/sysfs/sysfs.go` (added, +74/-0)
+```diff
+@@ -0,0 +1,74 @@
++// This Source Code Form is subject to the terms of the Mozilla Public
++// License, v. 2.0. If a copy of the MPL was not distributed with this
++// file, You can obtain one at http://mozilla.org/MPL/2.0/.
++
++// Package sysfs reads attributes from the sysfs filesystem.
++package sysfs
++
++import (
++	"errors"
++	"fmt"
++	"io"
++	"io/fs"
++	"os"
++	"slices"
++)
++
++// ErrInvalidReadCount is returned when a read reports a byte count outside the buffer it was given.
++//
++// A sysfs show() callback returning a negative value which is not an errno makes read(2) return
++// it as is, and the Go standard library passes it through as the byte count, so os.ReadFile and
++// io.ReadAll panic with "slice bounds out of range".
++var ErrInvalidReadCount = errors.New("invalid read count")
++
++// readChunk is the read size, a sysfs attribute fits into a page.
++const readChunk = 4096
++
++// ReadFile reads a sysfs attribute.
++//
++// Unlike os.ReadFile, it returns an error instead of panicking when the kernel returns a bogus
++// byte count.
++func ReadFile(name string) ([]byte, error) {
++	f, err := os.Open(name)
++	if err != nil {
++		return nil, err
++	}
++
++	defer f.Close() //nolint:errcheck
++
++	data, err := ReadAll(f)
++	if errors.Is(err, ErrInvalidReadCount) {
++		err = &fs.PathError{Op: "read", Path: name, Err: err}
++	}
++
++	return data, err
++}
++
++// ReadAll reads from r until EOF.
++//
++// Unlike io.ReadAll, it returns ErrInvalidReadCount instead of panicking when r returns a byte
++// count outside the buffer it was given.
++func ReadAll(r io.Reader) ([]byte, error) {
++	data := make([]byte, 0, readChunk)
++
++	for {
++		if len(data) == cap(data) {
++			data = slices.Grow(data, readChunk)
++		}
++
++		n, err := r.Read(data[len(data):cap(data)])
++		if n < 0 || n > cap(data)-len(data) {
++			return nil, fmt.Errorf("%w: %d", ErrInvalidReadCount, n)
++		}
++
++		data = data[:len(data)+n]
++
++		if err != nil {
++			if errors.Is(err, io.EOF) {
++				return data, nil
++			}
++
++			return nil, err
++		}
++	}
++}
+```
+
+**File**: `internal/pkg/sysfs/sysfs_test.go` (added, +88/-0)
+```diff
+@@ -0,0 +1,88 @@
++// This Source Code Form is subject to the terms of the Mozilla Public
++// License, v. 2.0. If a copy of the MPL was not distributed with this
++// file, You can obtain one at http://mozilla.org/MPL/2.0/.
++
++package sysfs_test
++
++import (
++	"bytes"
++	"errors"
++	"io"
++	"io/fs"
++	"os"
++	"path/filepath"
++	"testing"
++	"testing/iotest"
++
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++
++	"github.com/siderolabs/talos/internal/pkg/sysfs"
++)
++
++// countReader returns a fixed byte count from Read, as the kernel does for a sysfs show()
++// callback which returns a negative value that is not an errno.
++type countReader int
++
++func (r countReader) Read([]byte) (int, error) {
++	return int(r), nil
++}
++
++func TestReadAll(t *testing.T) {
++	t.Parallel()
++
++	large := bytes.Repeat([]byte("0123456789"), 1000)
 +
 +	for _, test := range []struct {
 +		name string
-+
-+		initial    network.BGPInstanceConfigSpec
-+		initialID  string
-+		deriveSame bool
-+		openOnly   bool
-+		dropPeer   bool
-+		removePeer bool
-+		next       network.BGPInstanceConfigSpec
-+		candidates []netip.Addr
-+
-+		expectedID string
++		r    io.Reader
++		want []byte
 +	}{
-+		{
-+			name:      "lower address added",
-+			initial:   derived,
-+			initialID: "10.5.0.3",
-+			next:      derived, candidates: addrs("10.5.0.2", "10.5.0.3"),
-+			expectedID: "10.5.0.3",
-+		},
-+		{
-+			name:      "address removed",
-+			initial:   derived,
-+			initialID: "10.5.0.3",
-+			next:      derived, candidates: addrs("10.5.0.2"),
-+			expectedID: "10.5.0.2",
-+		},
-+		{
-+			name:      "server rebuilt anyway",
-+			initial:   derived,
-+			initialID: "10.5.0.3",
-+			next:      network.BGPInstanceConfigSpec{Multipath: true}, candidates: addrs("10.5.0.2", "10.5.0.3"),
-+			expectedID: "10.5.0.2",
-+		},
-+		{
-+			name:      "no session established",
-+			initial:   derived,
-+			initialID: "10.5.0.3",
-+			dropPeer:  true,
-+			next:      derived, candidates: addrs("10.5.0.2", "10.5.0.3"),
-+			expectedID: "10.5.0.2",
-+		},
-+		{
-+			name:       "configured router ID dropped for the same derived one",
-+			initial:    network.BGPInstanceConfigSpec{RouterID: netip.MustParseAddr("10.5.0.3")},
-+			initialID:  "10.5.0.3",
-+			deriveSame: true,
-+			next:       derived, candidates: addrs("10.5.0.2", "10.5.0.3"),
-+			expectedID: "10.5.0.3",
-+		},
-+		{
-+			name:      "session opening",
-+			initial:   derived,
-+			initialID: "10.5.0.3",
-+			openOnly:  true,
-+			next:      derived, candidates: addrs("10.5.0.2", "10.5.0.3"),
-+			expectedID: "10.5.0.3",
-+		},
-+		{
-+			name:       "established peer removed",
-+			initial:    derived,
-+			initialID:  "10.5.0.3",
-+			removePeer: true,
-+			next:       derived, candidates: addrs("10.5.0.2", "10.5.0.3"),
-+			expectedID: "10.5.0.2",
-+		},
-+		{
-+			name:      "router ID configured",
-+			initial:   derived,
-+			initialID: "10.5.0.3",
-+			next:      configured, candidates: addrs("10.5.0.3"),
-+			expectedID: "10.5.0.9",
-+		},
-+		{
-+			name:      "configured router ID removed",
-+			initial:   configured,
-+			initialID: "10.5.0.9",
-+			next:      derived, candidates
-```
-
-**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/runtime.go` (modified, +16/-5)
-```diff
-@@ -24,6 +24,9 @@ type ResolvedConfig struct {
- 	// that route, as Talos installs address routes with a higher metric than BGP routes.
- 	ConnectedPrefixes []netip.Prefix
- 	RouterID          netip.Addr
-+	// RouterIDCandidates are the IPv4 addresses on the advertised links, lowest first: a derived router ID
-+	// is the first of them, and a running instance may keep any of them.
-+	RouterIDCandidates []netip.Addr
- 	// VRFIndex is the kernel index of the VRF link, zero when the instance runs in the main table.
- 	//
- 	// The listening socket is bound to the device by name, which the kernel resolves to an index
-@@ -146,12 +149,14 @@ func (state *RuntimeState) Resolve(spec network.BGPInstanceConfigSpec) (Resolved
- 	}
- 
- 	advertisedAddresses := state.advertisedAddresses(resolved.AdvertiseLinks)
-+	routerIDCandidates := routerIDCandidates(advertisedAddresses)
- 
- 	return ResolvedConfig{
- 		Spec:               resolved,
- 		AdvertisedPrefixes: connectedPrefixes(advertisedAddresses),
- 		ConnectedPrefixes:  connectedPrefixes(state.domainAddresses(resolved.VRF)),
--		RouterID:           routerID(resolved.RouterID, advertisedAddresses),
-+		RouterID:           selectRouterID(resolved.RouterID, routerIDCandidates),
-+		RouterIDCandidates: routerIDCandidates,
- 		VRFIndex:           vrfIndex,
- 	}, nil
- }
-@@ -347,16 +352,22 @@ func connectedPrefixes(addresses []netip.Prefix) []netip.Prefix {
- 	return slices.Compact(prefixes)
- }
- 
--func routerID(configured netip.Addr, advertised []netip.Prefix) netip.Addr {
--	if configured.IsValid() {
-+func selectRouterID(configured netip.Addr, candidates []netip.Addr) netip.Addr {
-+	if configured.IsValid() || len(candidates) == 0 {
- 		return configured
- 	}
- 
-+	return candidates[0]
++		{name: "empty", r: bytes.NewReader(nil), want: []byte{}},
++		{name: "attribute", r: bytes.NewReader([]byte("2400000\n")), want: []byte("2400000\n")},
++		{name: "large", r: bytes.NewReader(large), want: large},
++		{name: "one byte at a time", r: iotest.OneByteReader(bytes.NewReader(large)), want: large},
++		{name: "data with EOF", r: iotest.DataErrReader(bytes.NewReader([]byte("performance\n"))), want: []byte("performance\n")},
++	} {
++		t.Run(test.name, func(t *testing.T) {
++			t.Parallel()
++
++			got, err := sysfs.ReadAll(test.r)
++			require.NoError(t, err)
++			assert.Equal(t, test.want, got)
++		})
++	}
 +}
 +
-+func routerIDCandidates(advertised []netip.Prefix) []netip.Addr {
-+	var candidates []netip.Addr
++func TestReadAllInvalidCount(t *testing.T) {
++	t.Parallel()
 +
- 	for _, prefix := range advertised {
- 		if prefix.Addr().Is4() {
--			return prefix.Addr()
-+			candidates = append(candidates, prefix.Addr())
- 		}
- 	}
- 
--	return netip.Addr{}
-+	return slices.Compact(candidates)
- }
-```
-
-**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/runtime_test.go` (modified, +3/-0)
-```diff
-@@ -166,14 +166,17 @@ func TestRuntimeStateRouterID(t *testing.T) {
- 	state := internalbgp.NewRuntimeState(
- 		map[string]network.LinkStatusSpec{"dummy0": {Index: 1}},
- 		[]network.AddressStatusSpec{
-+			{Address: netip.MustParsePrefix("10.0.0.9/24"), LinkName: "dummy0", LinkIndex: 1},
- 			{Address: netip.MustParsePrefix("2001:db8::2/64"), LinkName: "dummy0", LinkIndex: 1},
- 			{Address: netip.MustParsePrefix("10.0.0.2/32"), LinkName: "dummy0", LinkIndex: 1},
-+			{Address: netip.MustParsePrefix("10.0.0.2/24"), LinkName: "dummy0", LinkIndex: 1},
- 		},
- 	)
- 
- 	auto, err := state.Resolve(network.BGPInstanceConfigSpec{AdvertiseLinks: []string{"dummy0"}})
- 	require.NoError(t, err)
- 	assert.Equal(t, netip.MustParseAddr("10.0.0.2"), auto.RouterID)
-+	assert.Equal(t, []netip.Addr{netip.MustParseAddr("10.0.0.2"), netip.MustParseAddr("10.0.0.9")}, auto.RouterIDCandidates)
- 
- 	configured, err := state.Resolve(network.BGPInstanceConfigSpec{
- 		RouterID:       netip.MustParseAddr("192.0.2.1"),
-```
-
-**File**: `pkg/machinery/config/schemas/config.schema.json` (modified, +3/-3)
-```diff
-@@ -5606,9 +5606,9 @@
-         "routerID": {
-           "type": "string",
-           "title": "routerID",
--          "description": "BGP router-id. If not set, it is derived from the first advertised address.\n",
--          "markdownDescription": "BGP router-id. If not set, it is derived from the first advertised address.",
--          "x-intellij-html-description": "\u003cp\u003eBGP router-id. If not set, it is derived from the first advertised address.\u003c/p\u003e\n"
-+          "description": "BGP router-id. If not set, it is derived from the lowest IPv4 address on the advertised links.\nA derived router-id is kept while a neighbor session is established or opening, as changing it resets all sessions.\nIt switches to the newly derived address once no session is up, when its address leaves the advertised links, or when the instance is restarted for another change.\n",
-+          "markdownDescription": "BGP router-id. If not set, it is derived from the lowest IPv4 address on the advertised links.\nA derived router-id is kept while a neighbor session is established or opening, as changing it resets all sessions.\nIt switches to the newly derived address once no session is up, when its address leaves the advertised links, or when the instance is restarted for another change.",
-+          "x-intellij-html-description": "\u003cp\u003eBGP router-id. If not set, it is derived from the lowest IPv4 address on the advertised links.\nA derived router-id is kept while a neighbor session is established or opening, as changing it resets all sessions.\nIt switches to the newly derived address once no session is up, when its address leaves the advertised links, or when the instance is restarted for another change.\u003c/p\u003e\n"
-         },
-         "routeSource": {
-           "type": "string",
-```
-
-**File**: `pkg/machinery/config/types/network/bgp.go` (modified, +3/-1)
-```diff
-@@ -84,7 +84,9 @@ type BGPInstanceConfigV1Alpha1 struct {
- 	//   schemaRequired: true
- 	BGPLocalASN uint32 `yaml:"localASN"`
- 	//   description: |
--	//     BGP router-id. If not set, it is derived from the first advertised address.
-+	//     BGP router-id. If not set, it is derived from the lowest IPv4 address on the advertised links.
-+	//     A derived router-id is kept while a neighbor session is established or opening, as changing it resets all sessions.
-+	//     It switches to the newly derived address once no session is up, when its address leaves the advertised links, or when the instance is restarted for another change.
- 	//   examples:
- 	//    - value: >
- 	//       meta.Addr{Addr: netip.MustParseAddr("10.0.0.1")}
-```
-
-**File**: `pkg/machinery/config/types/network/network_doc.go` (modified, +2/-2)
-```diff
-@@ -50,8 +50,8 @@ func (BGPInstanceConfigV1Alpha1) Doc() *encoder.Doc {
- 				Name:        "routerID",
- 				Type:        "Addr",
- 				Note:        "",
--				Description: "BGP router-id. If not set, it is derived from the first advertised address.",
--				Comments:    [3]string{"" /* encoder.HeadComment */, "BGP router-id. If not set, it is derived from the first advertised address." /* encoder.LineComment */, "" /* encoder.FootComment */},
-+				Description: "BGP router-id. If not set, it is derived from the lowest IPv4 address on the advertised links.\nA derived router-id is kept while a neighbor session is established or opening, as changing it resets all sessions.\nIt switches to the newly derived address once no session is up, when its address leaves the advertised links, or when the instance is restarted for another change.",
-+				Comments:    [3]string{"" /* encoder.HeadComment */, "BGP router-id. If not set, it is derived from the lowest IPv4 address on the advertised links." /* encoder.LineComment */, "" /* encoder.FootComment */},
- 			},
- 			{
- 				Name:        "routeSource",
++	for _, n := range []int{-1892423448, -1, 1 << 20} {
++		_, err := sysfs.ReadAll(countReader(n))
++		require.ErrorIs(t, err, sysfs.ErrInvalidReadCount)
++	}
++}
++
++func TestReadAllError(t *testing.T) {
++	t.Parallel()
++
++	errTest := errors.New("test")
++
++	_, err := sysfs.ReadAll(iotest.ErrReader(errTest))
++	require.ErrorIs(t, err, errTest)
++}
++
++func TestReadFile(t *testing.T) {
++	t.Parallel()
++
++	dir := t.TempDir()
++
++	require.NoError(t, os.WriteFile(filepath.Join(dir, "scaling_governor"), []byte("schedutil\n"), 0o644))
++
++	got, err := sysfs.ReadFile(filepath.Join(dir, "scaling_governor"))
++	require.NoError(t, err)
++	assert.Equal(t, []byte("schedutil\n"), got)
++
++	_, err = sysfs.ReadFile(filepath.Join(dir, "missing"))
++	require.ErrorIs(t, err, fs.ErrNotExist)
++}
 ```
 
 ---
 
-### Incident Patch 3: `87507e3e` (2026-11-24)
-**Commit Message**: test: wait for MD arrays to finish rebuilding
+### Incident Patch 2: `62cbe21a` (2026-11-16)
+**Commit Message**: fix: add support for error inclusion in image pull statuses from retries
 
-The RAID integration tests accepted a rebuilding array as success, so
-nothing caught MDArrayStatus getting stuck at rebuilding after the
-kernel finished the resync. Wait for ready/idle after growing an
-array and after the degraded boot array reboot.
+Previously, any intermediate errors that happened in PullWithRetriesAndTimeout
+were eaten. This adds support for passing intermediate pull errors to
+container status. This includes reworking the pullStatus state machine
+to be a bit more readable.
 
-Signed-off-by: Mateusz Urbanek <[REDACTED_EMAIL]>
+Signed-off-by: Kendall Tauser <[REDACTED_EMAIL]>
 
-**File**: `internal/integration/api/storage.go` (modified, +18/-3)
+**File**: `internal/app/machined/pkg/controllers/containers/export_test.go` (modified, +7/-0)
 ```diff
-@@ -1403,9 +1403,7 @@ func (suite *StorageSuite) assertRAIDUserVolumeReadyMounted(nodeCtx context.Cont
+@@ -4,6 +4,13 @@
  
- // TestRAIDArrayGrow provisions a raid1 array across two disks, then grows it by
- // adding a third matched disk, verifying the MDArrayStatus picks up all three
--// members and starts rebuilding. It intentionally does not wait for the resync to
--// finish (see mdArrayGrewToMembers). The array is torn down through the MDService
--// (talosctl wipe md) RPC.
-+// members and starts rebuilding.
- func (suite *StorageSuite) TestRAIDArrayGrow_RAID1() {
- 	const raidName = "mdgrow"
+ package containers
  
-@@ -1421,6 +1419,8 @@ func (suite *StorageSuite) TestRAIDArrayGrow_RAID1() {
- 	suite.Require().Eventually(func() bool {
- 		return suite.mdArrayStatusMatches(nodeCtx, raidName, expectedDevice, grownMemberDisks)
- 	}, raidAssertTimeout, raidAssertInterval, "MD array status was not grown for %q", raidName)
++import "time"
 +
-+	suite.requireMDArrayIdle(nodeCtx, raidName)
- }
- 
- // TestRAIDBootArrayDegradedReboot simulates a boot array member dying and verifies the
-@@ -1481,6 +1481,8 @@ echo b > /proc/sysrq-trigger
- 	suite.Require().Eventually(func() bool {
- 		return suite.mdArrayStatusMatches(nodeCtx, raidName, status.TypedSpec().Device, members)
- 	}, raidAssertTimeout, raidAssertInterval, "boot array %q was not rebuilt", raidName)
-+
-+	suite.requireMDArrayIdle(nodeCtx, raidName)
- }
- 
- // TestRAIDArrayUnmanaged_RAID1 provisions a raid1 array via a RAIDArrayConfig, then
-@@ -1627,6 +1629,19 @@ func (suite *StorageSuite) mdArrayStatusMatches(ctx context.Context, name, devic
- 	return true
- }
- 
-+// requireMDArrayIdle waits until the MDArrayStatus reports the resync finished.
-+func (suite *StorageSuite) requireMDArrayIdle(ctx context.Context, name string) {
-+	suite.Require().EventuallyWithT(func(collect *assert.CollectT) {
-+		status, err := safe.StateGetByID[*storageres.MDArrayStatus](ctx, suite.Client.State(), name)
-+		if !assert.NoError(collect, err) {
-+			return
-+		}
-+
-+		assert.Equal(collect, storageres.MDArrayPhaseReady, status.TypedSpec().Status)
-+		assert.Equal(collect, "idle", status.TypedSpec().SyncAction)
-+	}, raidAssertTimeout, raidAssertInterval, "MD array %q did not return to ready/idle", name)
++// SetPullRetryPolicy overrides the pull timeout and the first retry backoff.
++func (ctrl *ImageController) SetPullRetryPolicy(timeout, interval time.Duration) {
++	ctrl.pullTimeout, ctrl.retryInterval = timeout, interval
 +}
 +
- // mdArrayStatusIsUnmanaged reports whether the MDArrayStatus with the given ID is marked
- // Unmanaged with the expected device and exactly the expected members.
- func (suite *StorageSuite) mdArrayStatusIsUnmanaged(ctx context.Context, id, device string, members []string) bool {
+ // Exported for tests.
+ var (
+ 	AllocateSELinuxLevels = allocateSELinuxLevels
+```
+
+**File**: `internal/app/machined/pkg/controllers/containers/image.go` (modified, +217/-75)
+```diff
+@@ -8,7 +8,9 @@ import (
+ 	"context"
+ 	"fmt"
+ 	"sync"
++	"time"
+ 
++	"github.com/cenkalti/backoff/v7"
+ 	containerdapi "github.com/containerd/containerd/v2/client"
+ 	"github.com/containerd/containerd/v2/pkg/namespaces"
+ 	"github.com/cosi-project/runtime/pkg/controller"
+@@ -31,6 +33,9 @@ import (
+ // criServiceID is the Talos service running the CRI containerd instance.
+ const criServiceID = "cri"
+ 
++// pullRetryMaxInterval caps the backoff between pull attempts.
++const pullRetryMaxInterval = time.Minute
++
+ // Puller pulls an image into the taloscontainers namespace.
+ //
+ // This is the seam that keeps the controller testable: the default implementation talks to
+@@ -52,17 +57,20 @@ type PullResult struct {
+ 
+ // ImageController owns pulling images for declared containers.
+ //
+-// The pull is the one side effect this controller owns. It runs in a goroutine per container
+-// because a pull retries with backoff for up to image.PullTimeout (20 minutes); doing it inline
+-// would stall every other container and stop the controller reacting to events. Unlike the runtime
+-// controller's goroutine this is bounded work rather than process supervision.
++// The pull is the one side effect this controller owns. Each attempt runs in a goroutine per
++// container, so a slow pull doesn't stall the others; the controller retries failed attempts with
++// backoff. Unlike the runtime controller's goroutine this is bounded work rather than process
++// supervision.
+ type ImageController struct {
+ 	// State provides access to the COSI state, needed to resolve registry configuration.
+ 	State state.State
+ 
+ 	// PullerProvider is overridable for testing.
+ 	PullerProvider func() (Puller, error)
+ 
++	// pullTimeout and retryInterval set the retry policy; overridable for testing.
++	pullTimeout, retryInterval time.Duration
++
+ 	// pulls tracks the in-flight pulls, keyed by container ID.
+ 	pulls map[string]*pullState
+ }
+@@ -111,36 +119,182 @@ func (ctrl *ImageController) Outputs() []controller.Output {
+ 	}
+ }
+ 
+-// pullState tracks one in-flight pull.
++// imagePullStatus is the state of a pull.
++//
++// The transitions are:
++//
++//	pending      -> pulling       step, on the controller goroutine
++//	pulling      -> succeeded     the attempt returned an image
++//	pulling      -> waitingRetry  the attempt failed, and is worth retrying
++//	pulling      -> failed        the attempt failed, and is not retried
++//	waitingRetry -> pending       the backoff has passed
++//
++// Succeeded and failed are final: the pull stays that way until its reference changes or its
++// container is removed, at which point the pull is stopped and dropped.
++type imagePullStatus uint8
++
++const (
++	// An attempt is due, and starts on the next step.
++	imagePullStatusPending imagePullStatus = iota
++	// An attempt is running.
++	imagePullStatusPulling
++	// The last attempt failed, and the backoff timer is running.
++	imagePullStatusWaitingRetry
++	// The image has been pulled successfully.
++	imagePullStatusSucceeded
++	// The pull has failed for good.
++	imagePullStatusFailed
++)
++
++// pullState tracks one image ref pull, perhaps across multiple attempts.
+ type pullState struct {
+-	imageRef string
++	imageRef        string
++	containerSpecID string
++	deadline        time.Time
++
++	puller   Puller
++	logger   *zap.Logger
++	notifyCh chan struct{}
+ 
++	ctx    context.Context //nolint:containedctx
+ 	cancel context.CancelFunc
+ 	wg     sync.WaitGroup
+-
+ 	mu     sync.Mutex
++
++	status imagePullStatus
+ 	result PullResult
+-	err    error
+-	done   bool
++	// err is the last attempt's error, kept while the pull is retried.
++	err error
++
++	// retryBackoff yields the wait before the next attempt; not thread-safe, used with the state locked.
++	retryBackoff *backoff.ExponentialBackOff
++	retryTimer   *time.Timer
++	notFound     uint
+ }
+ 
+-func (state *pullState) snapshot() (result PullResult, err error, done bool) {
++// step starts an attempt if one is due, and returns the state of the pull.
++//
++// It is called from the controller goroutine only, so that an attempt is never started while stop
++// waits for the running one.
++func (state *pullState) step() (status imagePullStatus, result PullResult, err error) {
+ 	state.mu.Lock()
+ 	defer state.mu.Unlock()
+ 
+-	return state.result, state.err, state.done
++	if state.status == imagePullStatusPending {
++		state.status = imagePullStatusPulling
++		state.wg.Go(state.run)
++	}
++
++	return state.status, state.result, state.err
+ }
+ 
+-func (state *pullState) finish(result PullResult, err error) {
++// run performs one pull attempt, and moves the pull on to its next state.
++func (state *pullState) run() {
++	// Runs after the state is unlocked.
++	defer state.notify()
++
++	logger := state.logger.With(zap.String("container", state.containerSpecID), zap.String("image", state.imageRef))
++
++	logger.Info("pulling container image")
++
++	ctx, cancel := context.WithDeadline(state.ctx, state.deadline)
++	defer cancel()
++
++	var result PullResult
++
++	// A panic in a pull must not take dow
+```
+
+**File**: `internal/app/machined/pkg/controllers/containers/image_test.go` (modified, +58/-4)
+```diff
+@@ -28,6 +28,7 @@ type fakePuller struct {
+ 	mu       sync.Mutex
+ 	results  map[string]fakePullResult
+ 	blocked  map[string]chan struct{}
++	failures map[string][]error
+ 	attempts map[string]int
+ 	closed   bool
+ }
+@@ -42,10 +43,19 @@ func newFakePuller() *fakePuller {
+ 	return &fakePuller{
+ 		results:  map[string]fakePullResult{},
+ 		blocked:  map[string]chan struct{}{},
++		failures: map[string][]error{},
+ 		attempts: map[string]int{},
+ 	}
+ }
+ 
++// failAttempts makes the next attempts on ref fail with errs, one each, before blocking or the result apply.
++func (p *fakePuller) failAttempts(ref string, errs ...error) {
++	p.mu.Lock()
++	defer p.mu.Unlock()
++
++	p.failures[ref] = append(p.failures[ref], errs...)
++}
++
+ func (p *fakePuller) setResult(ref, digest string, err error) {
+ 	p.mu.Lock()
+ 	defer p.mu.Unlock()
+@@ -94,8 +104,18 @@ func (p *fakePuller) Pull(ctx context.Context, logger *zap.Logger, ref string) (
+ 	p.attempts[ref]++
+ 	blocked := p.blocked[ref]
+ 	result := p.results[ref]
++
++	var failure error
++
++	if failures := p.failures[ref]; len(failures) > 0 {
++		failure, p.failures[ref] = failures[0], failures[1:]
++	}
+ 	p.mu.Unlock()
+ 
++	if failure != nil {
++		return containersctrl.PullResult{}, failure
++	}
++
+ 	if blocked != nil {
+ 		select {
+ 		case <-ctx.Done():
+@@ -139,9 +159,14 @@ func TestImageSuite(t *testing.T) {
+ 		puller:  puller,
+ 		Timeout: 15 * time.Second,
+ 		AfterSetup: func(suite *ctest.DefaultSuite) {
+-			suite.Require().NoError(suite.Runtime().RegisterController(&containersctrl.ImageController{
++			ctrl := &containersctrl.ImageController{
+ 				PullerProvider: func() (containersctrl.Puller, error) { return puller, nil },
+-			}))
++			}
++
++			// Retry every few milliseconds, giving up after about a second.
++			ctrl.SetPullRetryPolicy(2*time.Second, 10*time.Millisecond)
++
++			suite.Require().NoError(suite.Runtime().RegisterController(ctrl))
+ 		},
+ 	})
+ }
+@@ -210,16 +235,45 @@ func (suite *ImageSuite) TestReportsPullingWhileBlocked() {
+ func (suite *ImageSuite) TestReportsFailure() {
+ 	const ref = "docker.io/library/broken:1.0"
+ 
+-	suite.puller.setResult(ref, "", errors.New("signature verification denied"))
++	// Not a terminal error, so this fails only once the pull times out.
++	suite.puller.setResult(ref, "", errors.New("registry unavailable"))
+ 	suite.criUp()
+ 	suite.createSpecWithImage("broken", ref)
+ 
+ 	ctest.AssertResource(suite, "broken", func(status *containers.ContainerImageStatus, asrt *assert.Assertions) {
+ 		asrt.Equal(containers.ContainerImagePhaseFailed, status.TypedSpec().Phase)
+-		asrt.Contains(status.TypedSpec().Error, "signature verification denied")
++		asrt.Contains(status.TypedSpec().Error, "registry unavailable")
+ 		// A failed pull leaves no digest, so the instance gate stays shut.
+ 		asrt.Empty(status.TypedSpec().Digest)
+ 	})
++
++	suite.Assert().Greater(suite.puller.attemptCount(ref), 1)
++}
++
++func (suite *ImageSuite) TestReportsAttemptErrorWhileRetrying() {
++	const ref = "docker.io/library/flaky:1.0"
++
++	// Two failed attempts, then a third which blocks until released.
++	suite.puller.failAttempts(ref, errors.New("registry unavailable"), errors.New("connection reset"))
++	suite.puller.block(ref)
++	suite.puller.setResult(ref, "sha256:flaky", nil)
++	suite.criUp()
++	suite.createSpecWithImage("flaky", ref)
++
++	ctest.AssertResource(suite, "flaky", func(status *containers.ContainerImageStatus, asrt *assert.Assertions) {
++		asrt.Equal(containers.ContainerImagePhasePulling, status.TypedSpec().Phase)
++		asrt.Equal("connection reset", status.TypedSpec().Error)
++	})
++
++	suite.puller.release(ref)
++
++	ctest.AssertResource(suite, "flaky", func(status *containers.ContainerImageStatus, asrt *assert.Assertions) {
++		asrt.Equal(containers.ContainerImagePhaseReady, status.TypedSpec().Phase)
++		asrt.Equal("sha256:flaky", status.TypedSpec().Digest)
++		asrt.Empty(status.TypedSpec().Error)
++	})
++
++	suite.Assert().Equal(3, suite.puller.attemptCount(ref))
+ }
+ 
+ func (suite *ImageSuite) TestDoesNotRepullUnchangedReference() {
+```
+
+**File**: `internal/integration/api/containers.go` (modified, +2/-2)
+```diff
+@@ -694,8 +694,7 @@ func (suite *ContainersSuite) TestUnresolvableImage() {
+ 
+ 	suite.applyContainers(ctx, suite.newContainer(name, badImage))
+ 
+-	// Pulling, not failed. Retries live inside the pull and run for image.PullTimeout, twenty
+-	// minutes, so that a registry which is briefly unreachable or a mirror which comes up late
++	// Pulling, not failed. Failed attempts are retried for image.PullTimeout, twenty minutes, so that a registry which is briefly unreachable or a mirror which comes up late
+ 	// resolves without anything upstream re-triggering. A reference that will never resolve is
+ 	// indistinguishable from those until the timeout expires, which is well beyond any deadline this
+ 	// test should have, so the failed phase is not what gets asserted here.
+@@ -706,6 +705,7 @@ func (suite *ContainersSuite) TestUnresolvableImage() {
+ 			asrt.Equal(containers.ContainerImagePhasePulling, status.TypedSpec().Phase,
+ 				"image is in phase %s (error %q)", status.TypedSpec().Phase, status.TypedSpec().Error)
+ 			asrt.Empty(status.TypedSpec().Digest, "an unresolvable reference produced a digest")
++			asrt.NotEmpty(status.TypedSpec().Error, "the failed pull attempt is not reported while retrying")
+ 		})
+ 
+ 	// The image phase is what the aggregate reports in its own right here: there is no instance to
+```
+
+**File**: `internal/pkg/containers/image/image.go` (modified, +2/-2)
+```diff
+@@ -25,7 +25,7 @@ type PullOption func(*PullOptions)
+ // PullOptions configure Pull function.
+ type PullOptions struct {
+ 	SkipIfAlreadyPulled bool
+-	MaxNotFoundRetries  int
++	MaxNotFoundRetries  uint
+ 	NewProgressReporter NewProgressReporter
+ 	LogWriter           io.Writer
+ }
+@@ -50,7 +50,7 @@ func WithSkipIfAlreadyPulled() PullOption {
+ //
+ // This option is only honored in the PullWithRetriesAndTimeout function,
+ // the Pull function will ignore this option and will not retry on not found errors.
+-func WithMaxNotFoundRetries(maxRetries int) PullOption {
++func WithMaxNotFoundRetries(maxRetries uint) PullOption {
+ 	return func(opts *PullOptions) {
+ 		opts.MaxNotFoundRetries = maxRetries
+ 	}
+```
+
+**File**: `internal/pkg/containers/image/pull.go` (modified, +28/-16)
+```diff
+@@ -37,6 +37,20 @@ type (
+ 	imageTerminalErrorTag               struct{}
+ )
+ 
++// IsTerminal reports whether a failed pull is known to fail again, e.g. a denied signature.
++//
++// Any other error, including unknown ones, is worth retrying.
++func IsTerminal(err error) bool {
++	return xerrors.TagIs[imageSignatureVerificationFailedTag](err) || xerrors.TagIs[imageTerminalErrorTag](err)
++}
++
++// IsNotFound reports whether a pull failed because the image was not found.
++//
++// It is worth retrying, but only a limited number of times.
++func IsNotFound(err error) bool {
++	return xerrors.TagIs[imageNotFoundTag](err)
++}
++
+ // Pull performs a single attempt to pull an image from a registry.
+ //
+ // If configured, the pull is skipped if the image is already present and unpacked in the containerd client.
+@@ -88,7 +102,7 @@ func PullWithRetriesAndTimeout(
+ 		return nil, fmt.Errorf("failed to parse image reference %q: %w", ref, err)
+ 	}
+ 
+-	notFoundErrors := 0
++	var notFoundErrors uint = 0
+ 
+ 	err = retry.Exponential(
+ 		PullTimeout,
+@@ -98,25 +112,23 @@ func PullWithRetriesAndTimeout(
+ 			ctx,
+ 			func(ctx context.Context) error {
+ 				img, err = pullInternal(ctx, registryBuilder, resources, client, namedRef, opts)
+-				if err != nil {
+-					switch {
+-					case xerrors.TagIs[imageNotFoundTag](err):
+-						notFoundErrors++
+-						if notFoundErrors > opts.MaxNotFoundRetries {
+-							return err
+-						}
++				if err == nil {
++					return nil
++				}
++
++				if IsTerminal(err) {
++					return err
++				}
++
++				if IsNotFound(err) {
++					notFoundErrors++
+ 
+-						return retry.ExpectedError(err)
+-					case xerrors.TagIs[imageSignatureVerificationFailedTag](err):
+-						return err // image verification failure is terminal
+-					case xerrors.TagIs[imageTerminalErrorTag](err):
+-						return err // other terminal error, no need to retry
+-					default:
+-						return retry.ExpectedError(err)
++					if notFoundErrors > opts.MaxNotFoundRetries {
++						return err
+ 					}
+ 				}
+ 
+-				return nil
++				return retry.ExpectedError(err)
+ 			},
+ 		)
+ 
+```
+
+**File**: `pkg/machinery/resources/containers/status.go` (modified, +3/-1)
+```diff
+@@ -168,7 +168,9 @@ func (containerStatusSpec *ContainerStatusSpec) Update(
+ 		containerStatusSpec.Error = healthCheckErrorPrefix + containerHealthStatus.TypedSpec().Message
+ 	}
+ 
+-	if containerStatusSpec.Error == "" && containerInstanceStatus == nil && prev.State != ContainerStateRunning {
++	// Track previous errors for executions, but ignore previous pull errors.
++	if containerStatusSpec.Error == "" && containerInstanceStatus == nil &&
++		prev.State != ContainerStateRunning && prev.State != ContainerStatePulling {
+ 		containerStatusSpec.Error = prev.Error
+ 		containerStatusSpec.ErrorLastLog = prev.ErrorLastLog
+ 	}
+```
+
+**File**: `pkg/machinery/resources/containers/status_test.go` (modified, +30/-0)
+```diff
+@@ -464,6 +464,36 @@ func TestContainerStatusSpecUpdate(t *testing.T) {
+ 				Error:  "pull failed",
+ 			},
+ 		},
++		{
++			name:                 "a failed pull attempt surfaces while the pull is retried",
++			containerImageStatus: newImageStatus(containers.ContainerImagePhasePulling, "attempt failed"),
++			waitingFor:           []string{"image"},
++			want: containers.ContainerStatusSpec{
++				State:  containers.ContainerStatePulling,
++				Health: containers.ContainerHealthPulling,
++				Image:  imageRef,
++				Error:  "attempt failed",
++			},
++		},
++		{
++			// A pull which succeeded after failed attempts has no error left to report, even though the
++			// container has no instance yet.
++			name: "an error reported while pulling is not carried over",
++			prev: containers.ContainerStatusSpec{
++				State:  containers.ContainerStatePulling,
++				Health: containers.ContainerHealthPulling,
++				Error:  "attempt failed",
++			},
++			containerImageStatus: newImageStatus(containers.ContainerImagePhaseReady, ""),
++			waitingFor:           []string{"network"},
++			want: containers.ContainerStatusSpec{
++				State:      containers.ContainerStatePending,
++				Health:     containers.ContainerHealthPending,
++				Image:      imageRef,
++				Error:      "",
++				WaitingFor: []string{"network"},
++			},
++		},
+ 		{
+ 			name:         "gates that have not been published yet are not gates that are met",
+ 			gatesUnknown: true,
+```
+
+---
+
+### Incident Patch 3: `5fe21429` (2026-11-16)
+**Commit Message**: fix: install learned BGP routes with metric 20
+
+Learned routes had metric 0. The kernel refuses a route next to one
+with the same table, destination and metric, so a learned prefix
+failed with "file exists" next to an IPv4 route another daemon added
+without a metric, and next to Talos static or DHCP IPv6 routes: the
+kernel stores IPv6 metric 0 as 1024, which is the Talos default.
+
+Use metric 20, the metric FRR's zebra installs its routes with. It
+does not collide with those routes and is still below the Talos
+default, so learned routes keep winning over static and DHCP routes.
+
+Fixes: #14986
+
+Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
+
+**File**: `hack/release.toml` (modified, +10/-0)
+```diff
+@@ -1189,6 +1189,16 @@ neighbors:
+ ```
+ 
+ The password is redacted from the machine configuration output. The `BGPInstanceConfigs` resource is now sensitive: the `os:admin` role reads it in full, while the other roles get it with the password replaced by `REDACTED`.
++"""
++
++    [notes.bgp_route_metric]
++        title = "BGP Route Metric"
++        description = """\
++Routes learned over BGP are now installed with metric 20, the same as FRR uses, instead of no metric
++(IPv4 0, IPv6 1024), so they no longer fail to install next to a route with the same metric from another
++daemon or from Talos (e.g. a static IPv6 default route).
++Routes with a metric below 20 for the same destination, including IPv4 routes installed without a metric, now take
++precedence over the learned ones.
+ """
+ 
+     [notes.image_layers_sync_fs]
+```
+
+**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/bgp.go` (modified, +1/-0)
+```diff
+@@ -278,6 +278,7 @@ func RouteSpec(prefix netip.Prefix, nexthops []network.RouteNextHop, source neti
+ 		Protocol:    nethelpers.ProtocolBGP,
+ 		Type:        nethelpers.TypeUnicast,
+ 		Scope:       nethelpers.ScopeGlobal,
++		Priority:    network.BGPRouteMetric,
+ 		ConfigLayer: network.ConfigOperator,
+ 	}
+ 
+```
+
+**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/bgp_test.go` (modified, +2/-0)
+```diff
+@@ -204,6 +204,7 @@ func TestRouteSpec(t *testing.T) {
+ 	assert.Empty(t, single.NextHops)
+ 	assert.Equal(t, nethelpers.ProtocolBGP, single.Protocol)
+ 	assert.Equal(t, nethelpers.RoutingTable(88), single.Table)
++	assert.Equal(t, uint32(network.BGPRouteMetric), single.Priority)
+ 
+ 	nexthops := []network.RouteNextHop{
+ 		{Gateway: netip.MustParseAddr("fe80::1")},
+@@ -216,6 +217,7 @@ func TestRouteSpec(t *testing.T) {
+ 	assert.False(t, multipath.Source.IsValid(), "a cross-family preferred source must be ignored")
+ 	assert.Equal(t, nexthops, multipath.NextHops)
+ 	assert.Equal(t, nethelpers.TableMain, multipath.Table)
++	assert.Equal(t, uint32(network.BGPRouteMetric), multipath.Priority)
+ }
+ 
+ func TestSessionState(t *testing.T) {
+```
+
+**File**: `internal/app/machined/pkg/controllers/network/route_merge_test.go` (modified, +8/-6)
+```diff
+@@ -117,7 +117,7 @@ func (suite *RouteMergeSuite) TestMerge() {
+ func (suite *RouteMergeSuite) TestMergeSameKey() {
+ 	// the kernel keeps a single route per table, destination and priority, so the routes which differ only in
+ 	// next-hops are merged into a single route, higher layer wins
+-	bgp := network.NewRouteSpec(network.ConfigNamespaceName, "bgp/fabric/inet4//0")
++	bgp := network.NewRouteSpec(network.ConfigNamespaceName, "bgp/fabric/inet4//20")
+ 	*bgp.TypedSpec() = network.RouteSpecSpec{
+ 		Destination: netip.MustParsePrefix("0.0.0.0/0"),
+ 		NextHops: []network.RouteNextHop{
+@@ -129,10 +129,11 @@ func (suite *RouteMergeSuite) TestMergeSameKey() {
+ 		Type:        nethelpers.TypeUnicast,
+ 		Table:       nethelpers.TableMain,
+ 		Protocol:    nethelpers.ProtocolBGP,
++		Priority:    network.BGPRouteMetric,
+ 		ConfigLayer: network.ConfigOperator,
+ 	}
+ 
+-	static := network.NewRouteSpec(network.ConfigNamespaceName, "configuration/inet4//0")
++	static := network.NewRouteSpec(network.ConfigNamespaceName, "configuration/inet4//20")
+ 	*static.TypedSpec() = network.RouteSpecSpec{
+ 		Gateway:     netip.MustParseAddr("10.0.0.1"),
+ 		OutLinkName: "eth2",
+@@ -141,6 +142,7 @@ func (suite *RouteMergeSuite) TestMergeSameKey() {
+ 		Type:        nethelpers.TypeUnicast,
+ 		Table:       nethelpers.TableMain,
+ 		Protocol:    nethelpers.ProtocolStatic,
++		Priority:    network.BGPRouteMetric,
+ 		ConfigLayer: network.ConfigMachineConfiguration,
+ 	}
+ 
+@@ -174,11 +176,11 @@ func (suite *RouteMergeSuite) TestMergeSameKey() {
+ 
+ 	suite.assertRoutes(
+ 		[]string{
+-			"inet4//0",
++			"inet4//20",
+ 			"inet6//1024",
+ 		}, func(r *network.RouteSpec, asrt *assert.Assertions) {
+ 			switch r.Metadata().ID() {
+-			case "inet4//0":
++			case "inet4//20":
+ 				asrt.Equal(*static.TypedSpec(), *r.TypedSpec())
+ 			case "inet6//1024":
+ 				asrt.Equal(*ipv6NoPriority.TypedSpec(), *r.TypedSpec())
+@@ -190,7 +192,7 @@ func (suite *RouteMergeSuite) TestMergeSameKey() {
+ 
+ 	suite.assertRoutes(
+ 		[]string{
+-			"inet4//0",
++			"inet4//20",
+ 		}, func(r *network.RouteSpec, asrt *assert.Assertions) {
+ 			asrt.Equal(*bgp.TypedSpec(), *r.TypedSpec())
+ 		},
+@@ -204,7 +206,7 @@ func (suite *RouteMergeSuite) TestMergeSameKey() {
+ 
+ 	suite.assertRoutes(
+ 		[]string{
+-			"inet4//0",
++			"inet4//20",
+ 		}, func(r *network.RouteSpec, asrt *assert.Assertions) {
+ 			asrt.Equal(resource.PhaseRunning, r.Metadata().Phase())
+ 			asrt.Equal(*bgp.TypedSpec(), *r.TypedSpec())
+```
+
+**File**: `internal/integration/api/bgp.go` (modified, +8/-4)
+```diff
+@@ -118,7 +118,7 @@ func (suite *BGPSuite) TestNumberedBGP() {
+ 		nethelpers.FamilyInet4,
+ 		netip.MustParsePrefix(fabricRoute),
+ 		fabric,
+-		0,
++		networkres.BGPRouteMetric,
+ 		"",
+ 	)
+ 
+@@ -269,7 +269,7 @@ func (suite *BGPSuite) TestVRFBGP() {
+ 		nethelpers.FamilyInet4,
+ 		netip.MustParsePrefix(fabricRoute),
+ 		fabric,
+-		0,
++		networkres.BGPRouteMetric,
+ 		"",
+ 	)
+ 
+@@ -378,7 +378,7 @@ func (suite *BGPSuite) TestVRFBGPRecreate() {
+ 		nethelpers.FamilyInet4,
+ 		netip.MustParsePrefix(fabricRoute),
+ 		fabric,
+-		0,
++		networkres.BGPRouteMetric,
+ 		"",
+ 	)
+ 
+@@ -470,6 +470,10 @@ func (suite *BGPSuite) assertLearnedRoute(nodeCtx context.Context, dest netip.Pr
+ 				continue
+ 			}
+ 
++			if spec.Priority != networkres.BGPRouteMetric {
++				return false
++			}
++
+ 			if hops == 1 {
+ 				return spec.Gateway.IsLinkLocalUnicast() && spec.OutLinkName != ""
+ 			}
+@@ -870,7 +874,7 @@ func (suite *BGPSuite) assertDefaultRoute(nodeCtx context.Context) {
+ 			// netip.Prefix, whose Bits() is -1), not as "0.0.0.0/0" — match either form.
+ 			isDefault := !spec.Destination.IsValid() || spec.Destination.Bits() == 0
+ 
+-			if isDefault && spec.Protocol == nethelpers.ProtocolBGP {
++			if isDefault && spec.Protocol == nethelpers.ProtocolBGP && spec.Priority == networkres.BGPRouteMetric {
+ 				return true
+ 			}
+ 		}
+```
+
+**File**: `internal/integration/api/bgp_workload.go` (modified, +6/-1)
+```diff
+@@ -192,6 +192,10 @@ func (helper bgpWorkloadHelper) waitForFabricRoute(nodeCtx context.Context, dest
+ 				continue
+ 			}
+ 
++			if spec.Priority != networkres.BGPRouteMetric {
++				return false
++			}
++
+ 			if len(spec.NextHops) > 0 {
+ 				return true
+ 			}
+@@ -212,7 +216,8 @@ func (helper bgpWorkloadHelper) waitForFabricRouteSpec(nodeCtx context.Context,
+ 
+ 		for route := range routes.All() {
+ 			spec := route.TypedSpec()
+-			if spec.Destination == destination && spec.Table == nethelpers.TableMain && spec.Protocol == nethelpers.ProtocolBGP {
++			if spec.Destination == destination && spec.Table == nethelpers.TableMain && spec.Protocol == nethelpers.ProtocolBGP &&
++				spec.Priority == networkres.BGPRouteMetric {
+ 				return true
+ 			}
+ 		}
+```
+
+**File**: `pkg/machinery/resources/network/network.go` (modified, +7/-0)
+```diff
+@@ -29,6 +29,13 @@ const ConfigNamespaceName resource.Namespace = "network-config"
+ // DefaultRouteMetric is the default route metric if no metric was specified explicitly.
+ const DefaultRouteMetric = 1024
+ 
++// BGPRouteMetric is the kernel metric of BGP-learned routes, the same as FRR's zebra uses.
++//
++// The kernel rejects a route next to one with the same metric: a non-zero metric keeps learned routes
++// from colliding with routes installed without one (IPv4 0, IPv6 1024), and it is still lower than
++// DefaultRouteMetric, so learned routes win over Talos static and DHCP routes.
++const BGPRouteMetric = 20
++
+ // AddressID builds ID (primary key) for the address.
+ func AddressID(linkName string, addr netip.Prefix) string {
+ 	return fmt.Sprintf("%s/%s", linkName, addr)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #15077** (2026-11-25): feat: allow setting the scope of link config addresses (@smira)
+- **PR #15073** (2026-11-25): docs: document BGP import chaining and hold time changes (@frezbo)
+- **PR #15072** (2026-11-24): docs: add Exaqube to ADOPTERS.md (@frezbo)
+- **PR #15070** (2026-11-24): fix: install learned BGP routes with metric 20 (@frezbo)
+- **PR #15069** (2026-11-25): feat: support empty VM `cdrom` drives (@majabojarska)
 - **PR #15067** (closed): Feat/bgp dynamic neighbors (@XT-Phate)
-- **PR #15062** (2026-11-24): test: wait for MD arrays to finish rebuilding (@shanduur)
-- **PR #15060** (2026-11-24): fix: allow user etc files under iscsi and nvme (@frezbo)
-- **PR #15059** (2026-11-24): release(v1.14.7): prepare release (@smira)
-- **PR #15058** (2026-11-24): fix: enable write-intent bitmap on created md arrays (@shanduur)
-- **PR #15053** (2026-11-23): fix: request redaction in dashboard containers view (@majabojarska)
 
 ---
 
@@ -2787,39 +3349,50 @@ Signed-off-by: Mateusz Urbanek <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. allow user etc files under iscsi and nvme
+## X. don't panic machined on bogus cpufreq sysfs reads
 
 **RULE**:
-When implementing operations in `pkg/machinery/config/types/runtime/etc_file.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/app/machined/internal/server/v1alpha1/v1alpha1_monitoring.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ba1142dd`: allow user etc files under iscsi and nvme. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `459f38a2`: don't panic machined on bogus cpufreq sysfs reads. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/machinery/config/types/runtime/etc_file.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/app/machined/internal/server/v1alpha1/v1alpha1_monitoring.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"iscsi/initiatorname.iscsi",
-	"nvme/hostid",
-	"nvme/hostnqn",
-	for _, managed := range managedEtcFiles {
-		// a file at a managed file's parent directory path would break writing the managed file
-		if path == managed || strings.HasPrefix(managed, path+"/") {
-			return fmt.Errorf("user etc file %q is managed by Talos", path)
-		}
+	"github.com/siderolabs/talos/internal/pkg/sysfs"
+	stats, err := sysfs.CPUFreqStats("/sys")
+				CpuFreqStats: stats,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	"slices"
-	"iscsi/",
-	"nvme/",
-	if slices.Contains(managedEtcFiles, path) {
-		return fmt.Errorf("user etc file %q is managed by Talos", path)
+	"github.com/prometheus/procfs/sysfs"
+	fs, err := sysfs.NewDefaultFS()
+	systemCpufreqStats, err := fs.SystemCpufreq()
+	if err != nil {
+		return nil, err
+	}
+
+	translateCPUFreqStats := func(in sysfs.SystemCPUCpufreqStats) *machine.CPUFreqStats {
+		if in.CpuinfoCurrentFrequency == nil || in.CpuinfoMinimumFrequency == nil || in.CpuinfoMaximumFrequency == nil {
+			return &machine.CPUFreqStats{}
+		}
+
+		return &machine.CPUFreqStats{
+			CurrentFrequency: *in.CpuinfoCurrentFrequency,
+			MinimumFrequency: *in.CpuinfoMinimumFrequency,
+			MaximumFrequency: *in.CpuinfoMaximumFrequency,
+			Governor:         in.Governor,
+		}
+	}
+
+				CpuFreqStats: xslices.Map(systemCpufreqStats, translateCPUFreqStats),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ba1142dd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `459f38a2` are properly handled with clean fallback behavior.

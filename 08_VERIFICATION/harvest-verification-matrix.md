@@ -13034,3 +13034,7 @@
 | `CYCLE-20261125-7YBU` | `2026-11-25T10:24:13.962Z` | `ratatui/ratatui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10504, Rule 10505` | Yes (`d0713a51...`) |
 | `CYCLE-20261125-9LZ7` | `2026-11-25T10:25:31.267Z` | `loft-sh/vcluster` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md` | Yes (`590448c9...`) |
 | `CYCLE-2026-11-25-PROJ-EVOLVE` | `2026-11-25T10:26:14.158Z` | `ratatui-ratatui` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-4026A5FE` [Domain F] | Yes (`22af2f28...`) |
+| `CYCLE-20261125-M1G0` | `2026-11-25T10:35:11.184Z` | `baidu/Unlimited-OCR-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-2-learnings.md` | Yes (`93155529...`) |
+| `CYCLE-20261125-M3ZJ` | `2026-11-25T10:35:14.479Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10506` | Yes (`5d6c3ac9...`) |
+| `CYCLE-20261125-MADM` | `2026-11-25T10:35:22.762Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10507` | Yes (`e7efcf6b...`) |
+| `CYCLE-20261125-MBR4` | `2026-11-25T10:35:24.544Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10508` | Yes (`df160df6...`) |

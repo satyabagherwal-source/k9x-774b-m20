@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T10:25:31.285Z",
+  "last_updated": "2026-11-25T10:35:24.565Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3666,14 +3666,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nolabs-ai-nono",
-      "content_hash": "801ecb3c69ab730915d41690e5cf171e59f353c951fadc7d7e54cc8ce3eb17fa",
-      "verified_at": "2026-11-24T01:07:22.714Z",
+      "content_hash": "df160df6c7491841c5b15685878bb4c5b3944c3ae0eca6f4e98b128c71a62b93",
+      "verified_at": "2026-11-25T10:35:24.564Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T01:07:22.714Z"
+      "last_updated": "2026-11-25T10:35:24.564Z"
     },
     "dathere/qsv": {
       "repository": "dathere/qsv",
@@ -5541,14 +5541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-1jehuang-jcode",
-      "content_hash": "00249820330ee271192aa7333da1fbb148a3435a5bcd1da9e51a97565e68de8f",
-      "verified_at": "2026-11-24T08:34:30.884Z",
+      "content_hash": "5d6c3ac9f1e55f377f046ddc00852f77ad01a1e44aedb8d6512357bf215271ec",
+      "verified_at": "2026-11-25T10:35:14.499Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T08:34:30.884Z"
+      "last_updated": "2026-11-25T10:35:14.499Z"
     },
     "wix/Detox": {
       "repository": "wix/Detox",
@@ -11121,14 +11121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-siderolabs-talos",
-      "content_hash": "c918c460b4fdc785061fe49f9aff0b19c935d3cc01facd742042680531d90eab",
-      "verified_at": "2026-11-24T16:46:04.714Z",
+      "content_hash": "e7efcf6b9bc9b750d17c6dc4dc70a85c193ce2f6228613f3ea10caa18b86e197",
+      "verified_at": "2026-11-25T10:35:22.783Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T16:46:04.714Z"
+      "last_updated": "2026-11-25T10:35:22.783Z"
     },
     "zilliztech/claude-context": {
       "repository": "zilliztech/claude-context",
@@ -16401,14 +16401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baidu-unlimited-ocr-2",
-      "content_hash": "e46a489a53681d249b11be78ad8cd73f5ac609c4559dcdc5b823c650525dbd2e",
-      "verified_at": "2026-11-21T18:22:55.438Z",
+      "content_hash": "931555299c3c6f9753faa542b1b37364208964f75b357938228e446c031c2aba",
+      "verified_at": "2026-11-25T10:35:11.204Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T18:22:55.438Z"
+      "last_updated": "2026-11-25T10:35:11.204Z"
     },
     "Joooook/12306-mcp": {
       "repository": "Joooook/12306-mcp",

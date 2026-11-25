@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T08:35:01.268Z",
+  "timestamp": "2026-11-25T10:35:28.228Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-1jehuang-jcode-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [1jehuang-jcode-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T08:35:01.268Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T10:35:28.228Z`  
 > **Learning ID**: `LEARN-EVO-1jehuang-jcode-learnings`
 
 
@@ -26,10 +26,10 @@ PROVENANCE_END -->
 ## 2. Operational Capabilities
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  
 > **Source**: github ([https://github.com/1jehuang/jcode](https://github.com/1jehuang/jcode))  
-> **Source Version**: `7ecaf212`  
+> **Source Version**: `103a1fa2`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T08:34:30.365Z  
+> **Timestamp**: 2026-11-25T10:35:13.358Z  
 > **Learning ID**: `learn-github-1jehuang-jcode`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -43,7 +43,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/1jehuang/jcode](https://github.com/1jehuang/jcode))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T08:34:18.911Z  
+> **Harvest Timestamp**: 2026-11-25T10:35:13.353Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -53,7 +53,7 @@ PROVENANCE_END -->
 - **Description**: High performance coding agent harness written in Rust, built for heavy multi-agent dev workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 22016 stars
+- **Stars / Engagement**: 22037 stars
 
 ---
 
@@ -2046,14 +2046,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2151** (2026-11-13): **swarm: lane todo name uses the full spawn prompt (first 60 chars) instead of the short `label`**
-  *Symptoms*: **Type:** bug **Labels:** `bug`, `swarm`, `todo`  **Problem** When spawning a worker, the coordinator's lane todo is named with the **first 60 characters of the spawn prompt** (the full message), not the short `label`. Long prompts become unwieldy todo names that pollute the coordinator's plan and break `todo update` by short name (the plan already contains a todo named with the prompt text, so a different short name appears as a "duplicate todo name" error).  **Code** - `crates/jcode-app-core/src/tool/communicate.rs:1270-1283` — on `spawn`, `title` is computed as `prompt.lines().find(non-empty).chars().take(60)`; `label` is only used as a fallback when `title` is empty. `ensure_spawn_lane(&todos, &label, phase, &title, prompt, ...)` creates the lane with this long title as the todo name.  **Repro** 1. `swarm spawn` with `label: "providers-analyst"` and a long `initial_message` starting with "You are a codebase analyst. The repo root is /Users/mac/jcode ...". 2. The coordinator's todo plan now contains a todo named "You are a codebase analyst. The repo root is /Users/mac/jcode" (first 60 chars). 3. Trying `todo update` with the short name "providers-analyst" fails with "duplicate todo name" because the existing todo is named with the prompt text.  **Suggested fix** 1. Use `label` as the lane todo **name** (not the prompt). Keep the full prompt as the todo **description**/task body. 2. Concretely in `communicate.rs:1273-1277`: set `title = label`, and pass the prompt as the de
+- **Issue #2286** (2026-11-25): **Stamp writes with an empty payload never advance mtime, so the throttle re-runs every pass**
+  *Symptoms*: --- name: Stamp writes of an empty payload do not advance mtime on Windows, so throttles never engage about: A touch-stamp helper writes b"" which truncates without a WriteFile call; the throttle window never starts on Windows title: "Stamp writes with an empty payload never advance mtime, so the throttle re-runs every pass" labels: bug assignees: "" ---  ## Problem  A "touch this marker to start the throttle window" helper wrote an empty payload. On upstream `master`, measured:  ``` $ git grep -n 'std::fs::write(&marker' upstream/master -- src/cli/hot_exec.rs crates/jcode-base upstream/master:crates/jcode-base/src/session/maintenance.rs:66:    std::fs::write(&marker, b"").is_ok() upstream/master:src/cli/hot_exec.rs:260:    std::fs::write(&marker, b"").is_ok() ```  `std::fs::write(path, b"")` opens the file with truncate but issues **no** `WriteFile` call for a zero-length buffer, so on Windows the file's last-write time does not change.  Consequence chain:  1. Every later pass reads the same old mtime. 2. `age < INTERVAL` stays false, so the "not due yet" branch is never taken. 3. The guarded work runs again on every spawn / pass instead of once per interval.  This is not specific to one call site: upstream's own `2f8957ca6` ("cut idle battery drain: stamp-gated git polling") introduced a stamp in exactly this shape, so any stamp that is supposed to move an mtime has the wrong contract when it writes `b""`.  ## Reproduction (Windows)  With an isolated temporary directory as 
 
-- **Issue #2144** (2026-11-17): **Claude Fable 5.2 missing from model selection with Claude OAuth**
-  *Symptoms*: With Claude OAuth login, claude-fable-5-2 does not appear in the model picker and is not available as a swarm/spawn model. Expected: selectable like other Claude models. Version: v1.0.0-preview.394 (eb867111f).
-  **Post-Mortem & Fix Analysis**:
-  > Thanks for the report. e99ec1efe added `claude-fable-5-2` to the bundled Claude catalog, and it shipped in v1.0.0-preview.424 (you are on preview.394). On a build of master d75274706 with Claude OAuth, the model is listed by `jcode model list` and answers a live request. Could you update and confirm?  --- *— Jcode agent (automated triage), on behalf of @1jehuang*
-  > Released in [v1.0.0](https://github.com/1jehuang/jcode/releases/tag/v1.0.0). Run `jcode update` to get it.
+- **Issue #2270** (2026-11-25): **`bg cancel` leaves the task row stuck as Running in the TUI status bar**
+  *Symptoms*: ### Expected After `bg cancel <id>` succeeds, the `bg N` row in the client status bar disappears, as it does when a task finishes on its own.  ### Observed The status file records `Failed` with `Cancelled by user`, but the row stays Running until the client is restarted (`jcode --resume ...`).  ### Root cause `BackgroundTaskManager::cancel_with_grace` (`crates/jcode-base/src/background.rs`) writes terminal status for in-process and detached tasks without publishing `BusEvent::BackgroundTaskCompleted`. The server normally forwards that event as `background_activity`, which lets the TUI call `finish_background_task` and retire the row. The status-file write alone does not reach an attached client.  ### Related, but not the same - #1350 and open PR #1357: status-file write atomicity. - #2100 and #1081: cancel not killing the whole process tree.  ### Out of scope - `abort_live_tasks_for_reload` also writes terminal status without publishing a completion or claiming the terminal transition. - Completion events are live fanout only. A client that misses the event during reconnect has no snapshot or reconciliation on attach. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2070,188 +2067,300 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `18132de3` (2026-11-23)
-**Commit Message**: fix(tui): flush paced stream buffer immediately on Done instead of deferring
+### Incident Patch 1: `b7d77576` (2026-11-25)
+**Commit Message**: fix: publish BackgroundTaskCompleted when cancelling background tasks (fixes #2270)
 
-**File**: `crates/jcode-tui/src/tui/app/remote/server_events.rs` (modified, +0/-8)
+**File**: `crates/jcode-base/src/background.rs` (modified, +32/-0)
 ```diff
-@@ -1000,14 +1000,6 @@ fn handle_server_event_inner(
-             let completes_resumed_turn =
-                 app.current_message_id.is_none() && app.is_processing && has_resumed_turn_evidence;
-             if app.current_message_id == Some(id) || completes_resumed_turn {
--                if !app.stream_buffer.is_empty() {
--                    crate::logging::info(&format!(
--                        "Deferring Done id={} until paced stream backlog drains",
--                        id
--                    ));
--                    app.deferred_stream_done_id = Some(id);
--                    return true;
--                }
-                 app.deferred_stream_done_id = None;
-                 // A delivery acknowledgement is not proof that an AI turn ran.
-                 // This catches hidden continuation dedup/no-op completions at
-```
-
-**File**: `crates/jcode-tui/src/tui/app/remote/turn_identity_tests.rs` (modified, +3/-21)
-```diff
-@@ -288,29 +288,11 @@ fn paced_done_keeps_its_identity_across_reconnect_and_cannot_finish_new_turn() {
-         ),
-         &mut remote,
-     );
--    handle_server_event(
--        &mut app,
--        scoped("runtime", 1, ServerEvent::Done { id: 42 }),
--        &mut remote,
--    );
--    assert_eq!(app.deferred_stream_done_id, Some(42));
--    handle_server_event(
--        &mut app,
--        ServerEvent::TurnState {
--            session_id: "session".into(),
--            runtime_generation: "runtime".into(),
--            latest_turn_id: 1,
--            turn_id: None,
--        },
--        &mut remote,
--    );
--    assert_eq!(app.deferred_stream_done_id, Some(42));
--    let ops = app.stream_buffer.flush();
--    app.apply_stream_ops(ops);
--    let id = app.deferred_stream_done_id.take().unwrap();
--    let event = scoped("runtime", 1, ServerEvent::Done { id });
-+    let event = scoped("runtime", 1, ServerEvent::Done { id: 42 });
-     handle_server_event(&mut app, event.clone(), &mut remote);
-     assert!(!app.is_processing);
-+    assert!(app.stream_buffer.is_empty());
-+    assert_eq!(app.deferred_stream_done_id, None);
-     start(&mut app, &mut remote, "runtime", 2);
-     handle_server_event(&mut app, event, &mut remote);
-     assert!(app.is_processing);
-```
-
-**File**: `crates/jcode-tui/src/tui/app/tests/remote_events_reload_01/token_usage_streaming.rs` (modified, +2/-21)
-```diff
-@@ -190,7 +190,7 @@ fn test_handle_server_event_message_end_marks_stream_as_finalizing_without_stall
- }
- 
- #[test]
--fn test_remote_done_waits_for_paced_backlog_and_one_live_frame() {
-+fn test_remote_done_flushes_paced_backlog_immediately() {
-     let mut app = create_test_app();
-     let rt = tokio::runtime::Runtime::new().unwrap();
-     let _guard = rt.enter();
-@@ -210,26 +210,7 @@ fn test_remote_done_waits_for_paced_backlog_and_one_live_frame() {
-     );
-     app.handle_server_event(crate::protocol::ServerEvent::Done { id: 42 }, &mut remote);
- 
--    assert!(app.is_processing, "Done must not force-flush the backlog");
--    assert_eq!(app.deferred_stream_done_id, Some(42));
--    assert!(
--        app.display_messages
--            .iter()
--            .all(|message| { message.role != "assistant" || !message.content.contains(response) })
--    );
--
--    // The first tick drains the short backlog, but deliberately leaves the live
--    // streaming representation visible for one frame before committing it.
--    std::thread::sleep(Duration::from_millis(60));
--    rt.block_on(crate::tui::app::remote::handle_tick(&mut app, &mut remote));
--    assert!(app.stream_buffer.is_empty());
--    assert!(app.is_processing);
--    assert_eq!(app.deferred_stream_done_id, Some(42));
--    assert_eq!(app.streaming.streaming_text, response);
--
--    // The following tick replays Done now that the preceding live frame was
--    // eligible to render, committing exactly the text that was paced out.
--    rt.block_on(crate::tui::app::remote::handle_tick(&mut app, &mut remote));
-+    assert!(app.stream_buffer.is_empty(), "Done should flush remaining backlog immediately");
-     assert!(!app.is_processing);
-     assert_eq!(app.deferred_stream_done_id, None);
-     assert!(
-```
-
----
-
-### Incident Patch 2: `2e8684ec` (2026-11-23)
-**Commit Message**: fix(tui): keep streaming label during paced reveal and reset stream_message_ended after tools/local phase
-
-**File**: `crates/jcode-tui/src/tui/app/remote/server_event_handlers.rs` (modified, +1/-0)
-```diff
-@@ -61,6 +61,7 @@ pub(super) fn handle_tool_done(
-     // input/intent are still waiting for their own ToolDone; clearing the
-     // whole list here made their rows render with no intent or summary.
-     app.streaming_tool_calls.retain(|tc| tc.id != id);
-+    app.stream_message_ended = false;
-     app.status = ProcessingStatus::Streaming;
-     true
- }
-```
-
-**File**: `crates/jcode-tui/src/tui/app/turn.rs` (modified, +1/-0)
-```diff
-@@ -775,6 +775,7 @@ impl App {
-                                         self.update_terminal_title();
-                                     }
-                                     StreamEvent::ConnectionPhase { phase } => {
-+                                        self.stream_message_ended = false;
-                                         let was_connecting = matches!(
-                                             self.status,
-                                             ProcessingStatus::Connecting(_)
-```
-
-**File**: `crates/jcode-tui/src/tui/ui_input_status_rendering.rs` (modified, +10/-1)
-```diff
-@@ -128,7 +128,16 @@ pub(in super::super) fn draw_status(
-             ProcessingStatus::Streaming => {
-                 let mut snapshot = live_status_snapshot(app, elapsed);
-                 snapshot.phase = "streaming".into();
--                let mut spans = live_processing_status_line(&snapshot, stale_secs, spinner).spans;
-+                if app.stream_reveal_pending() {
-+                    snapshot.stream_message_ended = false;
-+                }
-+                let effective_stale_secs = if app.stream_message_ended() {
-+                    None
-+                } else {
-+                    stale_secs
-+                };
-+                let mut spans =
-+                    live_processing_status_line(&snapshot, effective_stale_secs, spinner).spans;
-                 if let Some(upstream) = app.upstream_provider() {
-                     spans.push(Span::styled(
-                         format!(" · via {upstream}"),
-```
-
----
-
-### Incident Patch 3: `4644e663` (2026-11-23)
-**Commit Message**: fix(tui): reset stream_message_ended when next stream or connection phase starts
-
-**File**: `crates/jcode-tui/src/tui/app/remote/server_events.rs` (modified, +3/-0)
-```diff
-@@ -343,6 +343,7 @@ fn handle_server_event_inner(
-                 app.insert_thought_line(thought_line);
-                 return eager_stream_redraw;
+@@ -1306,6 +1306,22 @@ impl BackgroundTaskManager {
+             if let Ok(json) = serde_json::to_string_pretty(&final_status) {
+                 let _ = fs::write(&task.status_path, json).await;
              }
-+            app.stream_message_ended = false;
-             app.streaming.response_output.text(&text);
-             let mut needs_redraw = false;
-             if matches!(
-@@ -392,6 +393,7 @@ fn handle_server_event_inner(
-             // client TPS timer), so the status arrives here as `Streaming`; flip it
-             // to `Thinking` while reasoning deltas flow. The next `TextDelta` moves
-             // it back to `Streaming`.
-+            app.stream_message_ended = false;
-             if !matches!(app.status, ProcessingStatus::RunningTool(_)) {
-                 let thinking_start = *app.thinking_start.get_or_insert_with(Instant::now);
-                 if !matches!(app.status, ProcessingStatus::Thinking(_)) {
-@@ -744,6 +746,7 @@ fn handle_server_event_inner(
-                 }
-                 _ => crate::message::ConnectionPhase::Connecting,
-             };
-+            app.stream_message_ended = false;
-             app.status = if matches!(cp, crate::message::ConnectionPhase::Streaming) {
-                 app.resume_streaming_tps();
-                 app.connection_phase_started = None;
++            let output_path = self.output_path_for(&final_status.task_id);
++            Bus::global().publish(BusEvent::BackgroundTaskCompleted(
++                BackgroundTaskCompleted {
++                    task_id: final_status.task_id,
++                    tool_name: final_status.tool_name,
++                    display_name: final_status.display_name,
++                    session_id: final_status.session_id,
++                    status: final_status.status,
++                    exit_code: final_status.exit_code,
++                    output_preview: "Cancelled by user".to_string(),
++                    output_file: output_path,
++                    duration_secs: final_status.duration_secs.unwrap_or_default(),
++                    notify: notify_flag,
++                    wake: wake_flag,
++                },
++            ));
+ 
+             Ok(true)
+         } else {
+@@ -1353,6 +1369,22 @@ impl BackgroundTaskManager {
+                 terminal_event_record(event_status, event_exit_code, event_error.as_deref()),
+             );
+             self.write_status_file(&status_path, &status).await;
++            let output_path = self.output_path_for(&status.task_id);
++            Bus::global().publish(BusEvent::BackgroundTaskCompleted(
++                BackgroundTaskCompleted {
++                    task_id: status.task_id,
++                    tool_name: status.tool_name,
++                    display_name: status.display_name,
++                    session_id: status.session_id,
++                    status: status.status,
++                    exit_code: status.exit_code,
++                    output_preview: "Cancelled by user".to_string(),
++                    output_file: output_path,
++                    duration_secs: status.duration_secs.unwrap_or_default(),
++                    notify: status.notify,
++                    wake: status.wake,
++                },
++            ));
+             Ok(true)
+         }
+     }
+```
+
+**File**: `crates/jcode-base/src/background/tests.rs` (modified, +29/-0)
+```diff
+@@ -67,6 +67,35 @@ async fn adopted_task_cancellation_drops_actual_owner() -> Result<()> {
+     assert_adopted_owner_cancelled(false).await
+ }
+ 
++#[tokio::test]
++async fn cancel_publishes_background_task_completed_event() -> Result<()> {
++    let tmp = tempdir()?;
++    let manager = BackgroundTaskManager::with_output_dir(tmp.path().to_path_buf());
++    let mut rx = Bus::global().subscribe();
++    let handle = tokio::spawn(async move {
++        std::future::pending::<()>().await;
++        Ok(jcode_tool_types::ToolOutput::new("unreachable"))
++    });
++    let info = manager.adopt("bash", "cancel-bus-event", handle).await;
++    assert!(manager.cancel(&info.task_id).await?);
++
++    let deadline = tokio::time::Instant::now() + Duration::from_secs(5);
++    loop {
++        let remaining = deadline.saturating_duration_since(tokio::time::Instant::now());
++        assert!(!remaining.is_zero(), "timed out waiting for BackgroundTaskCompleted");
++        match tokio::time::timeout(remaining, rx.recv()).await {
++            Ok(Ok(BusEvent::BackgroundTaskCompleted(ev))) if ev.task_id == info.task_id => {
++                assert_eq!(ev.status, BackgroundTaskStatus::Failed);
++                assert_eq!(ev.output_preview, "Cancelled by user");
++                break;
++            }
++            Ok(Ok(_)) | Ok(Err(tokio::sync::broadcast::error::RecvError::Lagged(_))) => continue,
++            other => panic!("unexpected bus recv result: {other:?}"),
++        }
++    }
++    Ok(())
++}
++
+ #[tokio::test]
+ async fn adopted_task_reload_drops_owner() -> Result<()> {
+     assert_adopted_owner_cancelled(true).await
+```
+
+---
+
+### Incident Patch 2: `85175729` (2026-11-25)
+**Commit Message**: fix: write non-empty payload to throttle and activity stamp files (fixes #2286)
+
+**File**: `crates/jcode-base/src/mobile_runner.rs` (modified, +1/-1)
+```diff
+@@ -314,7 +314,7 @@ pub fn touch_cloud_activity_marker() {
+         return;
+     }
+     if let Some(path) = busy_marker()
+-        && let Err(error) = std::fs::write(&path, b"")
++        && let Err(error) = jcode_storage::touch_stamp(&path)
+     {
+         crate::logging::warn(&format!("cloud activity marker update failed: {error}"));
+     }
+```
+
+**File**: `crates/jcode-base/src/mobile_runner_process.rs` (modified, +1/-1)
+```diff
+@@ -9,7 +9,7 @@ struct BusyMarker(Option<PathBuf>);
+ impl BusyMarker {
+     fn touch(&self) {
+         if let Some(path) = &self.0
+-            && let Err(error) = std::fs::write(path, b"")
++            && let Err(error) = jcode_storage::touch_stamp(path)
+         {
+             crate::logging::warn(&format!("mobile runner busy marker update failed: {error}"));
+         }
+```
+
+**File**: `crates/jcode-base/src/scratch_maintenance.rs` (modified, +1/-1)
+```diff
+@@ -92,7 +92,7 @@ fn prune_due(dir: &Path) -> bool {
+ }
+ 
+ fn mark_pruned(dir: &Path) {
+-    let _ = std::fs::write(dir.join(PRUNE_MARKER), b"");
++    let _ = jcode_storage::touch_stamp(&dir.join(PRUNE_MARKER));
+ }
+ 
+ /// Core of [`prune_stale_scratch`], parameterized for unit testing.
+```
+
+**File**: `crates/jcode-base/src/session/maintenance.rs` (modified, +1/-1)
+```diff
+@@ -63,7 +63,7 @@ fn claim_prune_slot(base: &Path) -> bool {
+         return false;
+     }
+     // Touch (create or refresh) the marker to claim the slot.
+-    std::fs::write(&marker, b"").is_ok()
++    jcode_storage::touch_stamp(&marker).is_ok()
+ }
+ 
+ /// Core of [`prune_old_session_backups`], parameterized on the directory and
+```
+
+**File**: `crates/jcode-build-support/src/version_gc.rs` (modified, +1/-1)
+```diff
+@@ -158,7 +158,7 @@ fn prune_due(dir: &Path) -> bool {
+ }
+ 
+ fn mark_pruned(dir: &Path) {
+-    let _ = std::fs::write(dir.join(PRUNE_MARKER), b"");
++    let _ = std::fs::write(dir.join(PRUNE_MARKER), b"1");
+ }
+ 
+ /// Core of [`prune_old_versions`], parameterized for unit tests.
+```
+
+**File**: `crates/jcode-storage/src/lib.rs` (modified, +36/-0)
+```diff
+@@ -797,6 +797,13 @@ mod windows_hardening_tests {
+     }
+ }
+ 
++/// Touch a throttle/activity stamp file with a non-empty payload so its mtime
++/// advances reliably on all filesystems (including Windows, where writing `b""`
++/// truncates without issuing a `WriteFile` call).
++pub fn touch_stamp(path: &Path) -> std::io::Result<()> {
++    std::fs::write(path, b"1")
++}
++
+ #[cfg(test)]
+ mod env_file_tests {
+     use super::*;
+@@ -819,4 +826,33 @@ mod env_file_tests {
+             "SAFE_KEY=safe-value\n"
+         );
+     }
++
++    #[test]
++    fn touch_stamp_writes_non_empty_payload_and_updates_mtime() {
++        let temp = tempfile::tempdir().expect("temp dir");
++        let marker = temp.path().join("throttle.stamp");
++
++        touch_stamp(&marker).expect("touch stamp");
++        let data = std::fs::read(&marker).expect("read stamp");
++        assert!(!data.is_empty(), "stamp payload must be non-empty");
++
++        let past = std::time::SystemTime::now() - std::time::Duration::from_secs(60);
++        std::fs::File::options()
++            .write(true)
++            .open(&marker)
++            .and_then(|file| file.set_modified(past))
++            .expect("backdate stamp");
++        let old_mtime = std::fs::metadata(&marker)
++            .and_then(|meta| meta.modified())
++            .expect("old mtime");
++
++        touch_stamp(&marker).expect("re-touch stamp");
++        let new_mtime = std::fs::metadata(&marker)
++            .and_then(|meta| meta.modified())
++            .expect("new mtime");
++        assert!(
++            new_mtime > old_mtime,
++            "expected mtime to advance after touch_stamp (old={old_mtime:?}, new={new_mtime:?})"
++        );
++    }
+ }
+```
+
+**File**: `src/cli/hot_exec.rs` (modified, +1/-1)
+```diff
+@@ -264,7 +264,7 @@ fn claim_update_fetch_slot() -> bool {
+         return false;
+     }
+     // Touch before fetching so a spawn burst collapses to ~one fetch.
+-    std::fs::write(&marker, b"").is_ok()
++    std::fs::write(&marker, b"1").is_ok()
+ }
+ 
+ /// `None` means this local checkout has no tracking branch, not a failed check.
+```
+
+---
+
+### Incident Patch 3: `f4c3d0eb` (2026-11-25)
+**Commit Message**: fix: replay signed thinking for Claude provider route (fixes #2265)
+
+**File**: `crates/jcode-base/src/message.rs` (modified, +3/-1)
+```diff
+@@ -340,7 +340,9 @@ pub fn push_reasoning_blocks(
+     // Whether the replay block we stored already contains the readable text.
+     let mut readable_replay_stored = false;
+     if store_replay_context {
+-        if provider_name.eq_ignore_ascii_case("anthropic") {
++        if provider_name.eq_ignore_ascii_case("anthropic")
++            || provider_name.eq_ignore_ascii_case("claude")
++        {
+             if let Some(signature) = reasoning_signature.filter(|s| !s.is_empty()) {
+                 blocks.push(ContentBlock::AnthropicThinking {
+                     thinking: reasoning_content.to_string(),
+```
+
+**File**: `crates/jcode-base/src/message/tests.rs` (modified, +24/-0)
+```diff
+@@ -922,6 +922,30 @@ fn push_reasoning_blocks_anthropic_signed_replay() {
+     }
+ }
+ 
++#[test]
++fn push_reasoning_blocks_claude_route_signed_replay() {
++    let mut blocks = Vec::new();
++    push_reasoning_blocks(
++        &mut blocks,
++        "Claude",
++        "signed thought",
++        Some("sig"),
++        true,
++    );
++    assert_eq!(blocks.len(), 1);
++    match &blocks[0] {
++        ContentBlock::AnthropicThinking {
++            thinking,
++            signature,
++        } => {
++            assert_eq!(thinking, "signed thought");
++            assert_eq!(signature, "sig");
++        }
++        other => panic!("expected AnthropicThinking, got {other:?}"),
++    }
++    assert!(crate::provider::stores_reasoning_content_for_context("Claude"));
++}
++
+ #[test]
+ fn push_reasoning_blocks_anthropic_unsigned_falls_back_to_trace() {
+     let mut blocks = Vec::new();
+```
+
+**File**: `crates/jcode-base/src/provider/mod.rs` (modified, +1/-1)
+```diff
+@@ -182,7 +182,7 @@ pub fn stores_reasoning_content_for_context(provider_name: &str) -> bool {
+     }
+     matches!(
+         provider_name.to_ascii_lowercase().as_str(),
+-        "openrouter" | "anthropic" | "openai"
++        "openrouter" | "anthropic" | "claude" | "openai"
+     )
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
@@ -2259,8 +2368,8 @@ Observed empirical fixes and code patches:
 - **PR #2282** (closed): fix/compaction root causes (@adminwat)
 - **PR #2278** (closed): kv freeze stall retry (@adminwat)
 - **PR #2257** (closed): feat(zcode): add native ZCode OAuth, Client Request Signing v4, provider, and usage (@navidRashik)
+- **PR #2240** (closed): Prevent automatic completion of unfinished swarm lanes (@Ravomi)
 - **PR #2222** (closed): fix(harness): require architectural intent for understand routing (@adminwat)
-- **PR #2199** (closed): style: restore rustfmt-clean state so the Format gate can pass (@KooshaPari)
 
 ---
 
@@ -2274,6 +2383,59 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. publish BackgroundTaskCompleted when cancelling background tasks (fixes #2270)
+
+**RULE**:
+When implementing operations in `crates/jcode-base/src/background.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 1jehuang/jcode. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `b7d77576`: publish BackgroundTaskCompleted when cancelling background tasks (fixes #2270). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/jcode-base/src/background.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+            let output_path = self.output_path_for(&final_status.task_id);
+            Bus::global().publish(BusEvent::BackgroundTaskCompleted(
+                BackgroundTaskCompleted {
+                    task_id: final_status.task_id,
+                    tool_name: final_status.tool_name,
+                    display_name: final_status.display_name,
+                    session_id: final_status.session_id,
+                    status: final_status.status,
+                    exit_code: final_status.exit_code,
+                    output_preview: "Cancelled by user".to_string(),
+                    output_file: output_path,
+                    duration_secs: final_status.duration_secs.unwrap_or_default(),
+                    notify: notify_flag,
+                    wake: wake_flag,
+                },
+            ));
+            let output_path = self.output_path_for(&status.task_id);
+            Bus::global().publish(BusEvent::BackgroundTaskCompleted(
+                BackgroundTaskCompleted {
+                    task_id: status.task_id,
+                    tool_name: status.tool_name,
+                    display_name: status.display_name,
+                    session_id: status.session
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `b7d77576` are properly handled with clean fallback behavior.
 
 
 ## 3. Decision Protocol & Boundary Restrictions
