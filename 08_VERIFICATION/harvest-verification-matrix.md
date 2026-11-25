@@ -12872,3 +12872,7 @@
 | `CYCLE-20261125-VQY4` | `2026-11-25T00:26:52.588Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10401` | Yes (`1ec39489...`) |
 | `CYCLE-20261125-6IBA` | `2026-11-25T00:35:14.614Z` | `vitest-dev/vitest` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10402` | Yes (`84de2b06...`) |
 | `CYCLE-20261125-6LX9` | `2026-11-25T00:35:19.293Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10403` | Yes (`261f39e6...`) |
+| `CYCLE-20261125-H5QR` | `2026-11-25T00:43:31.539Z` | `cypress-io/cypress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10404` | Yes (`ccd359dc...`) |
+| `CYCLE-20261125-H6SY` | `2026-11-25T00:43:32.914Z` | `abue-ammar/tinycast` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10405` | Yes (`eabdc0d5...`) |
+| `CYCLE-20261125-H915` | `2026-11-25T00:43:35.801Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10406` | Yes (`63617bf1...`) |
+| `CYCLE-20261125-HEC9` | `2026-11-25T00:43:42.681Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10407` | Yes (`000ce086...`) |

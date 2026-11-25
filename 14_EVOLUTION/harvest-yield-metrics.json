@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T00:35:19.302Z",
-  "total_cycles_completed": 12227,
-  "total_learnings_persisted": 12227,
-  "total_rules_promoted": 11276,
+  "last_updated": "2026-11-25T00:43:42.691Z",
+  "total_cycles_completed": 12231,
+  "total_learnings_persisted": 12231,
+  "total_rules_promoted": 11280,
   "history": [
-    {
-      "timestamp": "2026-11-24T11:30:08.377Z",
-      "repository": "llamaindex/OCRia-nano-1",
-      "learningId": "learn-huggingface-llamaindex-ocria-nano-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T11:30:22.715Z",
-      "repository": "rook/rook",
-      "learningId": "learn-github-rook-rook",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T11:30:26.429Z",
-      "repository": "skyzh/mini-lsm",
-      "learningId": "learn-github-skyzh-mini-lsm",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-24T11:44:20.464Z",
-      "repository": "thejagstudio/tessera-small",
-      "learningId": "learn-huggingface-thejagstudio-tessera-small",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-24T11:44:33.558Z",
       "repository": "microsoft/agent-governance-toolkit",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-25T00:35:19.302Z",
       "repository": "aquasecurity/trivy",
       "learningId": "learn-github-aquasecurity-trivy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T00:43:31.548Z",
+      "repository": "cypress-io/cypress",
+      "learningId": "learn-github-cypress-io-cypress",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T00:43:32.924Z",
+      "repository": "abue-ammar/tinycast",
+      "learningId": "learn-github-abue-ammar-tinycast",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T00:43:35.811Z",
+      "repository": "pulumi/pulumi",
+      "learningId": "learn-github-pulumi-pulumi",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T00:43:42.691Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

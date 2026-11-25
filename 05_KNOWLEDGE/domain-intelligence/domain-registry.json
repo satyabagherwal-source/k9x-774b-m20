@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T00:35:25.586Z",
-  "total_records": 2607,
+  "last_updated": "2026-11-25T00:43:50.175Z",
+  "total_records": 2609,
   "domains": {
     "A": {
       "total": 22,
@@ -1644,7 +1644,7 @@
       ]
     },
     "H": {
-      "total": 621,
+      "total": 623,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2266,7 +2266,9 @@
         "domain_intelligence-technical-construction-intelligence-solidjs-solid-core-invariants",
         "domain_intelligence-technical-construction-intelligence-zilliztech-claude-context-core-invariants",
         "domain_intelligence-technical-construction-intelligence-solidjs-solid-learnings-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-zilliztech-claude-context-learnings-core-inv"
+        "domain_intelligence-technical-construction-intelligence-zilliztech-claude-context-learnings-core-inv",
+        "domain_intelligence-technical-construction-intelligence-cypress-io-cypress-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-cypress-io-cypress-learnings-core-invariants"
       ]
     },
     "I": {
@@ -15686,8 +15688,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "5af2e27e2645255692db3674fa059ca76ab059034ec6048ae71d8b221bb1f54b",
-      "created_at": "2026-11-25T00:08:33.016Z"
+      "content_hash": "3b00e068052607180fb56914ae8ce540528b9f94a7b9eb56d69ad601f922d312",
+      "created_at": "2026-11-25T00:43:43.085Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -18014,8 +18016,8 @@
       "title": "Content & Information Intelligence: pulumi/pulumi Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pulumi-pulumi-content-information-intelligence-pulumi-pulumi-core-invariants.md",
       "repository": "pulumi/pulumi",
-      "content_hash": "186c26200d419ce37c3a4e5d69dcc75fc23d29441767b9466270b0dabcd9ab74",
-      "created_at": "2026-11-24T05:42:37.248Z"
+      "content_hash": "e65fad7d55ac9d3eb311371cfade9b6a100469f55fa359d3c2cc8e850af3e7ce",
+      "created_at": "2026-11-25T00:43:36.218Z"
     },
     "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-core-invariants",
@@ -18083,8 +18085,8 @@
       "title": "Content & Information Intelligence: pulumi-pulumi-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pulumi-pulumi-learnings-content-information-intelligence-pulumi-pulumi-learnings.md",
       "repository": "pulumi-pulumi-learnings",
-      "content_hash": "73a1e712e71d84d11efad8415ad394854c7fe07754d0cf56542bb815d3fb1a48",
-      "created_at": "2026-11-24T05:42:48.468Z"
+      "content_hash": "17183df952d72b0f4cfeb31638ebd63566f78d23132cba45c68bfd2e8892ca8e",
+      "created_at": "2026-11-25T00:43:50.175Z"
     },
     "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-learnings-core-invariants",
@@ -39816,8 +39818,8 @@
       "title": "Design Intelligence: abue-ammar/tinycast Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-abue-ammar-tinycast-design-intelligence-abue-ammar-tinycast-core-invariants.md",
       "repository": "abue-ammar/tinycast",
-      "content_hash": "4e9370ea5da4b34cbc743a14526298f3ef786a0c843f459fe167d798d62222b8",
-      "created_at": "2026-11-22T11:14:17.602Z"
+      "content_hash": "c53861883678f2c144c7bb9ebd3b5de0d107d18482d2cd85dcaff52438eb4f7f",
+      "created_at": "2026-11-25T00:43:33.330Z"
     },
     "domain_intelligence-design-intelligence-abue-ammar-tinycast-learnings-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-abue-ammar-tinycast-learnings-core-invariants",
@@ -39825,8 +39827,8 @@
       "title": "Design Intelligence: abue-ammar-tinycast-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-abue-ammar-tinycast-learnings-design-intelligence-abue-ammar-tinycast-learnings-.md",
       "repository": "abue-ammar-tinycast-learnings",
-      "content_hash": "2bb21afdd82abdad35128802ed58dae6d6e7f09d963c14e1417e10998ff70143",
-      "created_at": "2026-11-22T11:14:28.065Z"
+      "content_hash": "bad6f19cca86a4d353163f8bca25c82f0b4578b843a0408d33ed14f1500850b0",
+      "created_at": "2026-11-25T00:43:49.018Z"
     },
     "domain_intelligence-architecture-intelligence-sfu-db-connector-x-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-sfu-db-connector-x-core-invariants",
@@ -43754,6 +43756,24 @@
       "repository": "qwikdev-qwik-learnings",
       "content_hash": "03f6e96942fbc3bd366d7e6f7c2c7bec79db296916a263a0e7c78022fb32d5cb",
       "created_at": "2026-11-25T00:26:58.563Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-cypress-io-cypress-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-cypress-io-cypress-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: cypress-io/cypress Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-cypress-io-cypress-technical-construction-intelligence-cypress-io-cypress-core-i.md",
+      "repository": "cypress-io/cypress",
+      "content_hash": "d84721c3056aec411a5783a079c4ca631ae1a254696af6e77511231106ea4a67",
+      "created_at": "2026-11-25T00:43:32.011Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-cypress-io-cypress-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-cypress-io-cypress-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: cypress-io-cypress-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-cypress-io-cypress-learnings-technical-construction-intelligence-cypress-io-cypr.md",
+      "repository": "cypress-io-cypress-learnings",
+      "content_hash": "0c6f7c71cfb4ccc6007ea2fdf2002b62b6b6b97b27f7ccf25fed77d8c2fd0f84",
+      "created_at": "2026-11-25T00:43:48.154Z"
     }
   }
 }

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T00:35:25.761Z",
+  "last_updated": "2026-11-25T00:43:50.348Z",
   "total_verified_learnings": 9107,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25068,
+  "total_items": 25078,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -230545,8 +230545,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "fa47c9a1",
-      "content_hash": "095540deef4857b72098095d48877379a2341697d728043f5dab1ae0003cd5a1",
+      "source_version": "08ccc24f",
+      "content_hash": "000ce08600c8818a9a7c91302d8c4be217f34001b978e154d813427994d85261",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -230814,6 +230814,11 @@
           "number": 10377,
           "title": "Draft NUC 141 Reactive Cosecant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10407,
+          "title": "Draft NUC 142 Reactive Sign Copying",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -230821,7 +230826,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T00:08:32.424Z",
+      "verified_at": "2026-11-25T00:43:42.473Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230863,10 +230868,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "fa47c9a1",
-      "content_hash": "5af2e27e2645255692db3674fa059ca76ab059034ec6048ae71d8b221bb1f54b",
+      "source_version": "08ccc24f",
+      "content_hash": "3b00e068052607180fb56914ae8ce540528b9f94a7b9eb56d69ad601f922d312",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T00:08:33.016Z"
+      "persisted_at": "2026-11-25T00:43:43.085Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -230875,10 +230880,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "fa47c9a1",
-      "content_hash": "7f27596a6e6c3afd653a3d527f94bb42d17a30c9c5790e168f72305278d658ba",
+      "source_version": "08ccc24f",
+      "content_hash": "cfcd7e745e75f7c49d18d4263bfe0bf781bb1c31bbc8d524feab198a3c2b40af",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T00:08:33.181Z"
+      "persisted_at": "2026-11-25T00:43:43.253Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -237952,8 +237957,8 @@
       "slug": "pulumi-pulumi",
       "platform": "github",
       "source_url": "https://github.com/pulumi/pulumi",
-      "source_version": "9968d91c",
-      "content_hash": "ab1059c40c9ecda502879536ee650311fcc3e7283897fd1f258ff880b120ddd4",
+      "source_version": "783a0060",
+      "content_hash": "63617bf11d82077a69e47c28a776684c0243e9396925880f65e52b1a3268ab3b",
       "dossier_path": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "promoted_rules": [
@@ -237991,6 +237996,11 @@
           "number": 9712,
           "title": "data race in TestInvokeSourceContext",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10406,
+          "title": "Remove RPC responses from debug logs",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -237998,7 +238008,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T05:42:36.288Z",
+      "verified_at": "2026-11-25T00:43:35.602Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -238040,10 +238050,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pulumi-pulumi-content-information-intelligence-pulumi-pulumi-core-invariants.md",
       "title": "Content & Information Intelligence: pulumi/pulumi Core Invariants",
       "repository": "pulumi/pulumi",
-      "source_version": "9968d91c",
-      "content_hash": "186c26200d419ce37c3a4e5d69dcc75fc23d29441767b9466270b0dabcd9ab74",
+      "source_version": "783a0060",
+      "content_hash": "e65fad7d55ac9d3eb311371cfade9b6a100469f55fa359d3c2cc8e850af3e7ce",
       "domain_letter": "I",
-      "persisted_at": "2026-11-24T05:42:37.248Z"
+      "persisted_at": "2026-11-25T00:43:36.218Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pulumi-pulumi": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pulumi-pulumi",
@@ -238052,10 +238062,10 @@
       "relative_path": "08_VERIFICATION/pulumi-pulumi-verification-protocol-empirical-defect-shield-for-pulumi-pulumi.md",
       "title": "Verification Protocol: Empirical Defect Shield for pulumi/pulumi",
       "repository": "pulumi/pulumi",
-      "source_version": "9968d91c",
-      "content_hash": "08a617a05fe52ba301322cba9b55c76cd6ae9e642ef0f491fb2f925090c89880",
+      "source_version": "783a0060",
+      "content_hash": "d9b92561dfa0186acc3322fea0a907d1e4b7d1f25526d0565f14f655d63b8716",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T05:42:37.520Z"
+      "persisted_at": "2026-11-25T00:43:36.414Z"
     },
     "learn-github-ytsaurus-ytsaurus": {
       "learning_id": "learn-github-ytsaurus-ytsaurus",
@@ -238200,9 +238210,9 @@
       "title": "Content & Information Intelligence: pulumi-pulumi-learnings Core Invariants",
       "repository": "pulumi-pulumi-learnings",
       "source_version": "HEAD",
-      "content_hash": "73a1e712e71d84d11efad8415ad394854c7fe07754d0cf56542bb815d3fb1a48",
+      "content_hash": "17183df952d72b0f4cfeb31638ebd63566f78d23132cba45c68bfd2e8892ca8e",
       "domain_letter": "I",
-      "persisted_at": "2026-11-24T05:42:48.468Z"
+      "persisted_at": "2026-11-25T00:43:50.175Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pulumi-pulumi-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pulumi-pulumi-learnings",
@@ -238212,9 +238222,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for pulumi-pulumi-learnings",
       "repository": "pulumi-pulumi-learnings",
       "source_version": "HEAD",
-      "content_hash": "84f2908f0f3774a366c023a48bf2996b2f7b312aaf48f409dc9d549bc96afc90",
+      "content_hash": "f0e73b25c7cbbe4c920cd556877ae2fc1e0948931a6c178c14d0eac79527494d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T05:42:48.750Z"
+      "persisted_at": "2026-11-25T00:43:50.348Z"
     },
     "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-learnings-core-invariants",
@@ -271609,8 +271619,8 @@
       "slug": "cypress-io-cypress",
       "platform": "github",
       "source_url": "https://github.com/cypress-io/cypress",
-      "source_version": "9eacf3a8",
-      "content_hash": "ad352604c0e20e73d0e1d7e49eccbd4736dd0dc1ea0fc545ee6b77d22eeb2820",
+      "source_version": "5a30d970",
+      "content_hash": "ccd359dc8353e7a612a1cf16dfc2721bb93539c503f8147eebf2349140bd36fd",
       "dossier_path": "07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
       "promoted_rules": [
@@ -271623,6 +271633,11 @@
           "number": 9688,
           "title": "show git info in the specs list for commits dated in the future or from a non-En",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10404,
+          "title": "add a guide and script for measuring a regex before adding it",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -271630,7 +271645,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T01:08:22.481Z",
+      "verified_at": "2026-11-25T00:43:31.331Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -271684,10 +271699,10 @@
       "relative_path": "08_VERIFICATION/cypress-io-cypress-verification-protocol-empirical-defect-shield-for-cypress-io-.md",
       "title": "Verification Protocol: Empirical Defect Shield for cypress-io/cypress",
       "repository": "cypress-io/cypress",
-      "source_version": "9eacf3a8",
-      "content_hash": "43331d309e074b97438973352c62dc6598d7db187f43510138b327fb9787bf59",
+      "source_version": "5a30d970",
+      "content_hash": "cc203dfceb0d1067229419e4f469a9cf8a8a0d96409545b4b1c61fc794131aae",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T01:08:23.178Z"
+      "persisted_at": "2026-11-25T00:43:32.201Z"
     },
     "learn-github-gluesql-gluesql": {
       "learning_id": "learn-github-gluesql-gluesql",
@@ -271824,9 +271839,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for cypress-io-cypress-learnings",
       "repository": "cypress-io-cypress-learnings",
       "source_version": "HEAD",
-      "content_hash": "eec1efdcccb2caa3414229532b077af7988a96f483f7ee4635efdba6d35f2d59",
+      "content_hash": "954144f40e6313ea15b8acfbcf76a84228c296ba3380c5592c7ad882e4533ec4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T01:08:38.171Z"
+      "persisted_at": "2026-11-25T00:43:48.330Z"
     },
     "domain_intelligence-architecture-intelligence-gluesql-gluesql-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-gluesql-gluesql-learnings-core-invariants",
@@ -322749,14 +322764,19 @@
       "slug": "abue-ammar-tinycast",
       "platform": "github",
       "source_url": "https://github.com/abue-ammar/tinycast",
-      "source_version": "876b61dc",
-      "content_hash": "7a2fa35dee8ed7a427981124efdfcec0ab92532d19ace20fd350bab362b01f7c",
+      "source_version": "ed7c2917",
+      "content_hash": "eabdc0d592fbf9fcecce6f0dbea0f0a2337b4e5b2a9ae8dfcda1abc95d84b9da",
       "dossier_path": "07_PROJECT_LEARNING/abue-ammar-tinycast-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/abue-ammar-tinycast-learnings.md",
       "promoted_rules": [
         {
           "number": 9923,
           "title": "stop re-checking access every minute without a grant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10405,
+          "title": "fixes and UI enhancements",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -322765,7 +322785,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T11:14:17.036Z",
+      "verified_at": "2026-11-25T00:43:32.715Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -322807,10 +322827,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-abue-ammar-tinycast-design-intelligence-abue-ammar-tinycast-core-invariants.md",
       "title": "Design Intelligence: abue-ammar/tinycast Core Invariants",
       "repository": "abue-ammar/tinycast",
-      "source_version": "876b61dc",
-      "content_hash": "4e9370ea5da4b34cbc743a14526298f3ef786a0c843f459fe167d798d62222b8",
+      "source_version": "ed7c2917",
+      "content_hash": "c53861883678f2c144c7bb9ebd3b5de0d107d18482d2cd85dcaff52438eb4f7f",
       "domain_letter": "F",
-      "persisted_at": "2026-11-22T11:14:17.602Z"
+      "persisted_at": "2026-11-25T00:43:33.330Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-abue-ammar-tinycast": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-abue-ammar-tinycast",
@@ -322819,10 +322839,10 @@
       "relative_path": "08_VERIFICATION/abue-ammar-tinycast-verification-protocol-empirical-defect-shield-for-abue-ammar.md",
       "title": "Verification Protocol: Empirical Defect Shield for abue-ammar/tinycast",
       "repository": "abue-ammar/tinycast",
-      "source_version": "876b61dc",
-      "content_hash": "4c1306d2015e74c04201cfce3d0acb477c4337fa559cb25a1bb38bfb2063a407",
+      "source_version": "ed7c2917",
+      "content_hash": "3e190d154c48a80dc91c764b04527ca86616c349d524b3ef8baeb7b2987ac016",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T11:14:17.765Z"
+      "persisted_at": "2026-11-25T00:43:33.498Z"
     },
     "candidate_directive-calendar-stop-re-checking-access-every-minute-without-a-grant": {
       "item_id": "candidate_directive-calendar-stop-re-checking-access-every-minute-without-a-grant",
@@ -322844,9 +322864,9 @@
       "title": "Design Intelligence: abue-ammar-tinycast-learnings Core Invariants",
       "repository": "abue-ammar-tinycast-learnings",
       "source_version": "HEAD",
-      "content_hash": "2bb21afdd82abdad35128802ed58dae6d6e7f09d963c14e1417e10998ff70143",
+      "content_hash": "bad6f19cca86a4d353163f8bca25c82f0b4578b843a0408d33ed14f1500850b0",
       "domain_letter": "F",
-      "persisted_at": "2026-11-22T11:14:28.065Z"
+      "persisted_at": "2026-11-25T00:43:49.018Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-abue-ammar-tinycast-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-abue-ammar-tinycast-learnings",
@@ -322856,9 +322876,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for abue-ammar-tinycast-learnings",
       "repository": "abue-ammar-tinycast-learnings",
       "source_version": "HEAD",
-      "content_hash": "40d82c2099fc0de3109e57463406bf7beec93ce733d2ac2370db332ba2e90d2c",
+      "content_hash": "e6d81e67eacc28343e845cccfd6b047f447734904745d5cd123e877cd60c8f1e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T11:14:28.234Z"
+      "persisted_at": "2026-11-25T00:43:49.197Z"
     },
     "rule-9924": {
       "learning_id": "rule-9924",
@@ -342611,6 +342631,134 @@
       "content_hash": "a077e328af0f280a385656de1adc6cc450532648eb5a7bd6d8a2cfe456d7573d",
       "domain_letter": "H",
       "persisted_at": "2026-11-25T00:35:24.593Z"
+    },
+    "rule-10404": {
+      "learning_id": "rule-10404",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10404,
+      "title": "add a guide and script for measuring a regex before adding it",
+      "source_url": "https://github.com/cypress-io/cypress",
+      "source_version": "5a30d970",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T00:43:31.331Z"
+    },
+    "candidate_directive-add-a-guide-and-script-for-measuring-a-regex-before-adding-it": {
+      "item_id": "candidate_directive-add-a-guide-and-script-for-measuring-a-regex-before-adding-it",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HIEW-add-a-guide-and-script-for-measuring-a-regex-before-adding-it.md",
+      "title": "add a guide and script for measuring a regex before adding it",
+      "repository": "cypress-io-cypress-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8bc4d9bc481a2869c323c5cab62d6b5af9bf256a82ac31abc51a3c4073d36d9d",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-25T00:43:47.964Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-cypress-io-cypress-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-cypress-io-cypress-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-cypress-io-cypress-technical-construction-intelligence-cypress-io-cypress-core-i.md",
+      "title": "Technical Construction Intelligence: cypress-io/cypress Core Invariants",
+      "repository": "cypress-io/cypress",
+      "source_version": "5a30d970",
+      "content_hash": "d84721c3056aec411a5783a079c4ca631ae1a254696af6e77511231106ea4a67",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T00:43:32.011Z"
+    },
+    "rule-10405": {
+      "learning_id": "rule-10405",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10405,
+      "title": "fixes and UI enhancements",
+      "source_url": "https://github.com/abue-ammar/tinycast",
+      "source_version": "ed7c2917",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T00:43:32.715Z"
+    },
+    "candidate_directive-fixes-and-ui-enhancements": {
+      "item_id": "candidate_directive-fixes-and-ui-enhancements",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HJ3A-fixes-and-ui-enhancements.md",
+      "title": "fixes and UI enhancements",
+      "repository": "abue-ammar-tinycast-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d3d19f6a403b925d4c39f0bee500def7a37a882f400705fde1090d3555667508",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-25T00:43:48.841Z"
+    },
+    "rule-10406": {
+      "learning_id": "rule-10406",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10406,
+      "title": "Remove RPC responses from debug logs",
+      "source_url": "https://github.com/pulumi/pulumi",
+      "source_version": "783a0060",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T00:43:35.602Z"
+    },
+    "candidate_directive-remove-rpc-responses-from-debug-logs": {
+      "item_id": "candidate_directive-remove-rpc-responses-from-debug-logs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HJZA-remove-rpc-responses-from-debug-logs.md",
+      "title": "Remove RPC responses from debug logs",
+      "repository": "pulumi-pulumi-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9c84262058e16b1143242457577471cab2ea6832f351a7af33bf50df97bbee71",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-25T00:43:49.993Z"
+    },
+    "rule-10407": {
+      "learning_id": "rule-10407",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10407,
+      "title": "Draft NUC 142 Reactive Sign Copying",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "08ccc24f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T00:43:42.473Z"
+    },
+    "candidate_directive-draft-nuc-142-reactive-sign-copying": {
+      "item_id": "candidate_directive-draft-nuc-142-reactive-sign-copying",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HEIO-draft-nuc-142-reactive-sign-copying.md",
+      "title": "Draft NUC 142 Reactive Sign Copying",
+      "repository": "NucleoidAI/Nucleoid",
+      "source_version": "08ccc24f",
+      "content_hash": "fa03f97073d95e8176f29cb5164e01227c98003af91d7524a62215d075a34e51",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T00:43:42.913Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-cypress-io-cypress-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-cypress-io-cypress-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-cypress-io-cypress-learnings-technical-construction-intelligence-cypress-io-cypr.md",
+      "title": "Technical Construction Intelligence: cypress-io-cypress-learnings Core Invariants",
+      "repository": "cypress-io-cypress-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0c6f7c71cfb4ccc6007ea2fdf2002b62b6b6b97b27f7ccf25fed77d8c2fd0f84",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T00:43:48.154Z"
     }
   },
   "ai-builder-brain": {

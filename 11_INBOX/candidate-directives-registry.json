@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T00:35:25.403Z",
+  "last_updated": "2026-11-25T00:43:49.993Z",
   "directives": [
     {
       "id": "CD-001",
@@ -58250,6 +58250,77 @@
       "source_repo": "zoontek-react-native-permissions",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-2A4210-android-skip-explicit-kotlin-plugin-when.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-HIEW",
+      "directive_title": "add a guide and script for measuring a regex before adding it",
+      "source_repo": "cypress-io-cypress-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-HIEW-add-a-guide-and-script-for-measuring-a-regex-before-adding-it.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-HJ3A",
+      "directive_title": "fixes and UI enhancements",
+      "source_repo": "abue-ammar-tinycast-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-HJ3A-fixes-and-ui-enhancements.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "F"
+    },
+    {
+      "id": "CD-HJZA",
+      "directive_title": "Remove RPC responses from debug logs",
+      "source_repo": "pulumi-pulumi-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-HJZA-remove-rpc-responses-from-debug-logs.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-HEIO",
+      "directive_title": "Draft NUC 142 Reactive Sign Copying",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "08ccc24f",
+      "staged_file": "11_INBOX/candidate-directives/CD-HEIO-draft-nuc-142-reactive-sign-copying.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-0B4C3F",
+      "directive_title": "add a guide and script for measuring a regex before adding it",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "cypress-io-cypress",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0B4C3F-add-a-guide-and-script-for-measuring-a-r.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-REV-EE5843",
+      "directive_title": "fixes and UI enhancements",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "abue-ammar-tinycast",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-EE5843-fixes-and-ui-enhancements.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-REV-A57B86",
+      "directive_title": "Remove RPC responses from debug logs",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "pulumi-pulumi",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A57B86-remove-rpc-responses-from-debug-logs.md",
       "staged_date": "2026-11-25"
     }
   ]

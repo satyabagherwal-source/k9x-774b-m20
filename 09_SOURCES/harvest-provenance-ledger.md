@@ -12905,3 +12905,7 @@ Every entry in this ledger must capture:
 | `learn-github-crate-crate` | `https://github.com/crate/crate` | `364278b1` | Multi-dimensional audit evidence | 2026-11-25T00:26:52.594Z |
 | `learn-github-vitest-dev-vitest` | `https://github.com/vitest-dev/vitest` | `e0e8e000` | Multi-dimensional audit evidence | 2026-11-25T00:35:14.618Z |
 | `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `c14584a6` | Multi-dimensional audit evidence | 2026-11-25T00:35:19.297Z |
+| `learn-github-cypress-io-cypress` | `https://github.com/cypress-io/cypress` | `5a30d970` | Multi-dimensional audit evidence | 2026-11-25T00:43:31.543Z |
+| `learn-github-abue-ammar-tinycast` | `https://github.com/abue-ammar/tinycast` | `ed7c2917` | Multi-dimensional audit evidence | 2026-11-25T00:43:32.918Z |
+| `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `783a0060` | Multi-dimensional audit evidence | 2026-11-25T00:43:35.806Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `08ccc24f` | Multi-dimensional audit evidence | 2026-11-25T00:43:42.686Z |

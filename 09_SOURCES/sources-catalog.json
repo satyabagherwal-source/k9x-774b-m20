@@ -1923,10 +1923,10 @@
     "repository": "cypress-io/cypress",
     "platform": "github",
     "sourceUrl": "https://github.com/cypress-io/cypress",
-    "sourceVersion": "9eacf3a8",
+    "sourceVersion": "5a30d970",
     "license": "MIT",
-    "contentHash": "ad352604c0e20e73d0e1d7e49eccbd4736dd0dc1ea0fc545ee6b77d22eeb2820",
-    "lastHarvestedAt": "2026-11-21T01:08:22.677Z",
+    "contentHash": "ccd359dc8353e7a612a1cf16dfc2721bb93539c503f8147eebf2349140bd36fd",
+    "lastHarvestedAt": "2026-11-25T00:43:31.543Z",
     "learningId": "learn-github-cypress-io-cypress"
   },
   "syntax-tree-unist": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "fa47c9a1",
+    "sourceVersion": "08ccc24f",
     "license": "Apache-2.0",
-    "contentHash": "095540deef4857b72098095d48877379a2341697d728043f5dab1ae0003cd5a1",
-    "lastHarvestedAt": "2026-11-25T00:08:32.619Z",
+    "contentHash": "000ce08600c8818a9a7c91302d8c4be217f34001b978e154d813427994d85261",
+    "lastHarvestedAt": "2026-11-25T00:43:42.686Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -4713,10 +4713,10 @@
     "repository": "pulumi/pulumi",
     "platform": "github",
     "sourceUrl": "https://github.com/pulumi/pulumi",
-    "sourceVersion": "9968d91c",
+    "sourceVersion": "783a0060",
     "license": "Apache-2.0",
-    "contentHash": "ab1059c40c9ecda502879536ee650311fcc3e7283897fd1f258ff880b120ddd4",
-    "lastHarvestedAt": "2026-11-24T05:42:36.630Z",
+    "contentHash": "63617bf11d82077a69e47c28a776684c0243e9396925880f65e52b1a3268ab3b",
+    "lastHarvestedAt": "2026-11-25T00:43:35.806Z",
     "learningId": "learn-github-pulumi-pulumi"
   },
   "sqlpage-sqlpage": {
@@ -13183,10 +13183,10 @@
     "repository": "abue-ammar/tinycast",
     "platform": "github",
     "sourceUrl": "https://github.com/abue-ammar/tinycast",
-    "sourceVersion": "876b61dc",
+    "sourceVersion": "ed7c2917",
     "license": "NOASSERTION",
-    "contentHash": "7a2fa35dee8ed7a427981124efdfcec0ab92532d19ace20fd350bab362b01f7c",
-    "lastHarvestedAt": "2026-11-22T11:14:17.231Z",
+    "contentHash": "eabdc0d592fbf9fcecce6f0dbea0f0a2337b4e5b2a9ae8dfcda1abc95d84b9da",
+    "lastHarvestedAt": "2026-11-25T00:43:32.918Z",
     "learningId": "learn-github-abue-ammar-tinycast"
   },
   "baarai-artex": {

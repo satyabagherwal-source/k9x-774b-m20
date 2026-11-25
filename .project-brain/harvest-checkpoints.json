@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T00:35:19.313Z",
+  "last_updated": "2026-11-25T00:43:42.702Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3021,14 +3021,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cypress-io-cypress",
-      "content_hash": "ad352604c0e20e73d0e1d7e49eccbd4736dd0dc1ea0fc545ee6b77d22eeb2820",
-      "verified_at": "2026-11-21T01:08:22.684Z",
+      "content_hash": "ccd359dc8353e7a612a1cf16dfc2721bb93539c503f8147eebf2349140bd36fd",
+      "verified_at": "2026-11-25T00:43:31.561Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T01:08:22.684Z"
+      "last_updated": "2026-11-25T00:43:31.561Z"
     },
     "syntax-tree/unist": {
       "repository": "syntax-tree/unist",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "095540deef4857b72098095d48877379a2341697d728043f5dab1ae0003cd5a1",
-      "verified_at": "2026-11-25T00:08:32.632Z",
+      "content_hash": "000ce08600c8818a9a7c91302d8c4be217f34001b978e154d813427994d85261",
+      "verified_at": "2026-11-25T00:43:42.701Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T00:08:32.632Z"
+      "last_updated": "2026-11-25T00:43:42.701Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -7191,14 +7191,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pulumi-pulumi",
-      "content_hash": "ab1059c40c9ecda502879536ee650311fcc3e7283897fd1f258ff880b120ddd4",
-      "verified_at": "2026-11-24T05:42:36.647Z",
+      "content_hash": "63617bf11d82077a69e47c28a776684c0243e9396925880f65e52b1a3268ab3b",
+      "verified_at": "2026-11-25T00:43:35.821Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T05:42:36.647Z"
+      "last_updated": "2026-11-25T00:43:35.821Z"
     },
     "sqlpage/SQLPage": {
       "repository": "sqlpage/SQLPage",
@@ -19896,14 +19896,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-abue-ammar-tinycast",
-      "content_hash": "7a2fa35dee8ed7a427981124efdfcec0ab92532d19ace20fd350bab362b01f7c",
-      "verified_at": "2026-11-22T11:14:17.239Z",
+      "content_hash": "eabdc0d592fbf9fcecce6f0dbea0f0a2337b4e5b2a9ae8dfcda1abc95d84b9da",
+      "verified_at": "2026-11-25T00:43:32.934Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T11:14:17.239Z"
+      "last_updated": "2026-11-25T00:43:32.934Z"
     },
     "BaaRai/ARTEX": {
       "repository": "BaaRai/ARTEX",

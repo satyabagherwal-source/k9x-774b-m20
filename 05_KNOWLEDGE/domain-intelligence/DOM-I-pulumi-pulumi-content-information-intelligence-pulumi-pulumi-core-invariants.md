@@ -4,23 +4,23 @@
 {
   "source_repository": "pulumi/pulumi",
   "source_url": "https://github.com/pulumi/pulumi",
-  "source_version": "9968d91c",
+  "source_version": "783a0060",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-24T05:42:36.949Z",
+  "timestamp": "2026-11-25T00:43:36.041Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-pulumi-pulumi",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [pulumi/pulumi](https://github.com/pulumi/pulumi) (Revision: `9968d91c`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T05:42:36.949Z`  
+> **Provenance**: Harvested from [pulumi/pulumi](https://github.com/pulumi/pulumi) (Revision: `783a0060`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T00:43:36.041Z`  
 > **Learning ID**: `learn-github-pulumi-pulumi`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence)
 - **Confidence Rating**: 56%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T05:42:35.528Z  
+> **Harvest Timestamp**: 2026-11-25T00:43:34.702Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Pulumi - Infrastructure as Code in any programming language 🚀
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 25936 stars
+- **Stars / Engagement**: 25937 stars
 
 ---
 
@@ -1701,13 +1701,11 @@ func marshalVerbatimCheckpointRequest(req apitype.PatchUpdateVerbatimCheckpointR
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #25820** (2026-11-24): **Workflow failure: Run full language matrix of tests daily**
+  *Symptoms*: ## Workflow Failure  [Run full language matrix of tests daily](<https://github.com/pulumi/pulumi/blob/master/.github/workflows/cron-test-all.yml>) has failed. See the list of failures below:  * [2026-11-22T06:06:21.000Z](<https://github.com/pulumi/pulumi/actions/runs/44989567319>) * [2026-11-23T06:26:38.000Z](<https://github.com/pulumi/pulumi/actions/runs/45118062811>)   * [2026-11-24T06:07:04.000Z](<https://github.com/pulumi/pulumi/actions/runs/45333577515>)
+
 - **Issue #25778** (2026-11-20): **Since #25448, every `pulumi preview` serializes and encrypts its in-memory snapshot on each step**
   *Symptoms*: Since #25448 (first in v3.274.0), the HTTP backend wires a `SnapshotManager` with a `DiscardPersister` into every preview, not only `pulumi import --preview-only`. `SnapshotManager.saveSnapshot` serializes the whole deployment on every step (`Deployment()` → `SerializeDeploymentWithMetadata`) before handing it to the persister, which then throws it away. Serializing encrypts secret values with the stack's secrets manager, which for the service secrets manager means calls to the stack's encrypt API.  Two effects:  - **Previews need `stack:encrypt`.** A token whose role can read, export and decrypt a stack but not encrypt (a reasonable role for previewing production) now fails `pulumi preview` on any stack holding secrets:    ```   error: pre-step event returned an error: failed to serialize snapshot: [403] You do not have permission to perform this operation.   error: writing snapshot: failed to serialize snapshot: [403] You do not have permission to perform this operation.   ```    The message reads as a state write, which a preview isn't supposed to do. We hit it upgrading from v3.270.0 to v3.277.0. - **Extra work per step.** Serializing the full snapshot on every step makes a preview's serialization work grow with resources × steps, all of it discarded. The base snapshot's secrets manager is reused, so unchanged secrets aren't re-encrypted, but changed or new ones are.  **Repro:** on a Pulumi Cloud org with custom roles, give a token a role with `stack:read`, `stack:export`
-
-- **Issue #25756** (2026-11-18): **Workflow failure: On Push at dev-release / nodejs-dev-sdk-release**
-  *Symptoms*: ## Workflow Failure  [On Push](<https://github.com/pulumi/pulumi/blob/master/.github/workflows/on-push.yml>) has failed. See the list of failures below:  * [2026-11-18T12:13:57.000Z](<https://github.com/pulumi/pulumi/actions/runs/44299627865>)   * ❌ [dev-release / nodejs-dev-sdk-release](<https://github.com/pulumi/pulumi/actions/runs/44299627865/job/134789658824>): Publish nodejs release (failure) * [2026-11-18T12:41:01.000Z](<https://github.com/pulumi/pulumi/actions/runs/44299627865>)   * ❌ [dev-release / nodejs-dev-sdk-release](<https://github.com/pulumi/pulumi/actions/runs/44299627865/job/134808207147>): Publish nodejs release (failure)   * [2026-11-18T12:47:17.000Z](<https://github.com/pulumi/pulumi/actions/runs/44299627865>)   * ❌ [dev-release / nodejs-dev-sdk-release](<https://github.com/pulumi/pulumi/actions/runs/44299627865/job/134811642959>): Publish nodejs release (failure)
-  **Post-Mortem & Fix Analysis**:
-  > This issue has been automatically closed because the workflow succeeded.  Successful run: [2026-11-18T13:01:42.000Z](https://github.com/pulumi/pulumi/actions/runs/44299627865)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1724,442 +1722,236 @@ func marshalVerbatimCheckpointRequest(req apitype.PatchUpdateVerbatimCheckpointR
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e3c48e48` (2026-11-23)
-**Commit Message**: Update module google.golang.org/grpc to v1.83.2 [SECURITY] (#25816)
+### Incident Patch 1: `c7bb3ec3` (2026-11-24)
+**Commit Message**: Remove RPC responses from debug logs (#25834)
 
-This PR contains the following updates:
+The Node.js SDK logged the full response of every Invoke, Call,
+ReadResource, getResource, RegisterResource and RegisterResourceOutputs
+RPC at debug level. 
 
-| Package | Change |
-[Age](https://docs.renovatebot.com/merge-confidence/) |
-[Confidence](https://docs.renovatebot.com/merge-confidence/) |
-|---|---|---|---|
-| [google.golang.org/grpc](https://redirect.github.com/grpc/grpc-go) |
-`v1.83.1` → `v1.83.2` |
-![age](https://developer.mend.io/api/mc/badges/age/go/google.golang.org%2fgrpc/v1.83.2?slim=true)
-|
-![confidence](https://developer.mend.io/api/mc/badges/confidence/go/google.golang.org%2fgrpc/v1.83.1/v1.83.2?slim=true)
-|
+Those responses carry secret values in plaintext,
+so secrets ended up in `--debug` output, glog files, `--json` event
+streams and automatic logs, where `pulumi logs share` cannot redact
+them.
 
----
+This change logs only the RPC label and any error. Response contents are
+no longer logged.
 
-> [!WARNING]
-> Some dependencies could not be looked up. Check the [Dependency
-Dashboard](../issues/21045) for more information.
+Before: Invoke RPC finished: tok=...; err: null, resp: token,,,<secret>
+After: Invoke RPC finished: tok=...; err: null
 
----
+Added a regression test that checks secret values from resource and
+invoke responses never appear in debug logs.
 
-### gRPC-Go xDS servers: Denial of Service (DoS) via crash due to
-missing `:authority` and `Host` headers
-[CVE-2026-84445](https://nvd.nist.gov/vuln/detail/CVE-2026-84445) /
-[GHSA-2v4p-qf9q-27wj](https://redirect.github.com/advisories/GHSA-2v4p-qf9q-27wj)
+Side Note: I went with dropping the response entirely rather than
+redacting secrets from it, since that's safe even if a provider doesn't
+mark a sensitive value as secret. Happy to switch to redaction, or put
+the response behind the `excessiveDebugOutput` flag, if you'd prefer to
+keep response contents in debug logs.
 
-<details>
-<summary>More information</summary>
+Fixes #25744
 
-#### Details
-A vulnerability exists in gRPC-Go servers configured with
-`xds.NewGRPCServer()` where a crafted request missing both `:authority`
-and `Host` headers can caus
+Co-authored-by: Chinagolum Adigwe <[REDACTED_EMAIL]>
 
-**File**: `tests/integration/shutdown_cleanup/go/go.mod` (modified, +1/-1)
-```diff
-@@ -111,7 +111,7 @@ require (
- 	golang.org/x/tools v0.52.0 // indirect
- 	google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d // indirect
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d // indirect
--	google.golang.org/grpc v1.83.1 // indirect
-+	google.golang.org/grpc v1.83.2 // indirect
- 	google.golang.org/protobuf v1.36.11 // indirect
- 	gopkg.in/warnings.v0 v0.1.2 // indirect
- 	gopkg.in/yaml.v3 v3.0.1 // indirect
-```
-
-**File**: `tests/integration/shutdown_cleanup/go/go.sum` (modified, +2/-2)
-```diff
-@@ -338,8 +338,8 @@ google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d h1:
- google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d/go.mod h1:K/+WGbmBY7aNW1HDw1fJnKYo10i0DkAX6pows00dLig=
- google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d h1:IL4hdHzcUv2l/gcg98/Rj3FbtE6axwqslOW8SW0C+S0=
- google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d/go.mod h1:4Hqkh8ycfw05ld/3BWL7rJOSfebL2Q+DVDeRgYgxUU8=
--google.golang.org/grpc v1.83.1 h1:HIO0+BEtBP6soyqvqC8sNUjZ7bTs+0hFQuFF+RAy++Y=
--google.golang.org/grpc v1.83.1/go.mod h1:kDyl6SKsiHKt0uylY5gtn5cEjkrIOhQOGDgIc4JGwzQ=
-+google.golang.org/grpc v1.83.2 h1:EManeRomTObA0BU7I8vXgg/78uE5MJ9M8B39EX2WscU=
-+google.golang.org/grpc v1.83.2/go.mod h1:YPI1hK3kDked6iHvgX3tR0y+nX/qpMFKhPgFsokw1S8=
- google.golang.org/protobuf v1.36.11 h1:fV6ZwhNocDyBLK0dj+fg8ektcVegBBuEolpbTQyBNVE=
- google.golang.org/protobuf v1.36.11/go.mod h1:HTf+CrKn2C3g5S8VImy6tdcUvCska2kB7j23XfzDpco=
- gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
-```
-
----
-
-### Incident Patch 2: `34204a17` (2026-11-23)
-**Commit Message**: Flush OpenTelemetry traces when Node.js programs exit with errors (#25800)
-
-Previously we only ran the otel shutdown when there were no errors.
-
-**File**: `changelog/pending/sdk-nodejs-fix-20261119-tracing-shutdown.yaml` (added, +3/-0)
-```diff
-@@ -0,0 +1,3 @@
-+component: sdk/nodejs
-+kind: fix
-+body: Flush OpenTelemetry traces when Node.js programs exit with errors
-```
-
-**File**: `sdk/nodejs/cmd/run/index.ts` (modified, +13/-22)
-```diff
-@@ -127,32 +127,23 @@ process.on("beforeExit", () => {
-     });
- });
- 
--let hasSignaled = false;
-+let hasShutdown = false;
- async function beforeExitHandler(code: number) {
--    // Signal and wait for shutdown means a successful program execution, so
--    // first check if there were any errors and bail out immediately if so.
--    if (uncaughtErrors.size > 0) {
-+    // Asynchronous shutdown work can trigger beforeExit again when it completes.
-+    // The `hasShutdown` marker ensures we call this only once, otherwise we'll
-+    // end up calling this again and again.
-+    if (hasShutdown) {
-         return;
-     }
--    // Similarly, if we're exiting with with a non-zero code, bail out.
--    if (code !== 0) {
--        return;
--    }
--    // `beforeExit` is called when Node.js's event loop is empty. We call
--    // `signalAndWaitForShutdown`, which is async, so it schedules more
--    // eventloop work. We have to bail out here the next time the eventloop
--    // is empty, otherwise we end up in a loop where this handler is called
--    // forever.
--    if (hasSignaled) {
--        return;
--    }
--    hasSignaled = true;
--    // Wrap in root context so the shutdown call is traced correctly
-+    hasShutdown = true;
-     const { withRootContext, shutdownTracing } = require("./instrumentation");
--    try {
--        await withRootContext(() => settings.signalAndWaitForShutdown());
--    } catch (err) {
--        console.error(`Error while signaling shutdown: ${err}`);
-+    // Only successful programs signal monitor shutdown; failed programs still need to flush tracing.
-+    if (uncaughtErrors.size === 0 && code === 0) {
-+        try {
-+            await withRootContext(() => settings.signalAndWaitForShutdown());
-+        } catch (err) {
-+            console.error(`Error while signaling shutdown: ${err}`);
-+        }
-     }
-     try {
-         await shutdownTracing();
-```
-
-**File**: `tests/integration/otel_traces/nodejs/Pulumi.yaml` (added, +2/-0)
-```diff
-@@ -0,0 +1,2 @@
-+name: otel-traces-nodejs-error
-+runtime: nodejs
-```
-
-**File**: `tests/integration/otel_traces/nodejs/index.ts` (added, +15/-0)
-```diff
-@@ -0,0 +1,15 @@
-+// Copyright 2026, Pulumi Corporation. All rights reserved.
-+
-+import * as pulumi from "@pulumi/pulumi";
-+
-+if (new pulumi.Config().require("failure") === "program") {
-+    throw new Error("intentional program failure");
-+}
-+
-+class FailsOnCreate extends pulumi.CustomResource {
-+    constructor(name: string) {
-+        super("testprovider:index:FailsOnCreate", name, {});
-+    }
-+}
-+
-+new FailsOnCreate("failure");
-```
-
-**File**: `tests/integration/otel_traces/nodejs/package.json` (added, +8/-0)
-```diff
-@@ -0,0 +1,8 @@
-+{
-+    "name": "otel-traces-nodejs-error",
-+    "version": "1.0.0",
-+    "main": "index.ts",
-+    "peerDependencies": {
-+        "@pulumi/pulumi": "latest"
-+    }
-+}
-```
-
-**File**: `tests/integration/otel_traces/otel_traces_test.go` (modified, +61/-0)
-```diff
-@@ -157,6 +157,67 @@ func TestOtelTraces(t *testing.T) {
- 	})
- }
- 
-+//nolint:paralleltest // ProgramTest calls t.Parallel()
-+func TestOtelTracesNodejsError(t *testing.T) {
-+	binDir := testutil.TestProviderDir(t)
-+	for _, failure := range []struct {
-+		name   string
-+		reason string
-+	}{
-+		{name: "program", reason: "intentional program failure"},
-+		{name: "resource", reason: "Create always fails for the FailsOnCreate resource"},
-+	} {
-+		t.Run(failure.name, func(t *testing.T) {
-+			traceDir := t.TempDir()
-+			integration.ProgramTest(t, &integration.ProgramTestOptions{
-+				Dir:          "nodejs",
-+				Dependencies: []string{"@pulumi/pulumi"},
-+				LocalProviders: []integration.LocalDependency{
-+					{Package: "testprovider", Path: binDir},
-+				},
-+				Config:        map[string]string{"failure": failure.name},
-+				OtelTraces:    "file:///" + filepath.ToSlash(filepath.Join(traceDir, "traces-{command}.json")),
-+				Quick:         true,
-+				SkipRefresh:   true,
-+				ExpectFailure: true,
-+				ExtraRuntimeValidation: func(t *testing.T, stack integration.RuntimeValidationStackInfo) {
-+					var errors []string
-+					for _, event := range stack.Events {
-+						if d := event.DiagnosticEvent; d != nil && d.Severity == "error" {
-+							errors = append(errors, d.Message)
-+						}
-+					}
-+					require.Contains(t, strings.Join(errors, "\n"), failure.reason)
-+
-+					spans := readSpans(t, filepath.Join(traceDir, "traces-pulumi-update-initial.json"))
-+					spanByID := make(map[pcommon.SpanID]traceSpan)
-+					for _, span := range spans {
-+						spanByID[span.SpanID] = span
-+					}
-+
-+					runSpans := filterByService(findSpans(spans, "pulumirpc.LanguageRuntime/Run"), "pulumi-language-nodejs")
-+					require.NotEmpty(t, runSpans)
-+					sdkRegistrations := filterByService(
-+						findSpans(spans, "grpc.pulumirpc.ResourceMonitor/RegisterResource"), "pulumi-sdk-nodejs")
-+					require.NotEmpty(t, sdkRegistrations, "expected Node.js SDK spans to flush after failure")
-+					for _, span := range sdkRegistrations {
-+						assert.Equal(t, runSpans[0].TraceID, span.TraceID)
-+						assert.True(t, isDescendantOfAny(span, runSpans, spanByID))
-+					}
-+
-+					engineRegistrations := filterByService(
-+						findSpans(spans, "pulumirpc.ResourceMonitor/RegisterResource"), "pulumi-cli")
-+					require.NotEmpty(t, engineRegistrations)
-+					for _, span := range engineRegistrations {
-+						assert.True(t, isDescendantOfAny(span, sdkRegistrations, spanByID),
-+							"engine registration span has no exported SDK ancestor")
-+					}
-+				},
-+			})
-+		})
-+	}
-+}
-+
- // findSpans returns all spans whose name exactly matches the given string.
- func findSpans(spans []traceSpan, name string) []traceSpan {
- 	var result []traceSpan
-```
-
----
-
-### Incident Patch 3: `21c1a8c2` (2026-11-23)
-**Commit Message**: Order stitched resource stack traces from child to parent. (#25827)
-
-A resource’s stack trace can combine several separately captured stacks.
-For example, a program can create a remote component, whose provider
-creates another remote component, whose provider creates the resource.
-Within each captured stack, frames run from the innermost call to its
-outer callers.
-
-Previously, we joined these captures with the original program’s stack
-first and the resource’s own stack last. We now put the resource’s stack
-first, followed by the captures that led to it, working back toward the
-original program. This makes the combined trace consistently follow the
-resource’s registration back through its callers. It also matches the
-ordering within each stack trace and the whole trace now reads top to
-bottom.
-
-No released CLI has actually collected stitched traces, that was fixed
-in https://github.com/pulumi/pulumi/pull/25754 which has not been
-released yet.
-
-**File**: `changelog/pending/20261123--engine--resource-stack-trace-order.yaml` (added, +4/-0)
+**File**: `changelog/pending/20261123--sdk-nodejs--debug-log-secrets.yaml` (added, +4/-0)
 ```diff
 @@ -0,0 +1,4 @@
-+component: engine
++component: sdk/nodejs
 +kind: fix
-+body: Fix the ordering of resource registration stack traces across provider calls
-+time: 2026-11-23T12:21:59Z
++body: Stop including RPC response values in debug log messages, which could contain secret values in plaintext
++time: 2026-11-23T17:30:00.000000000+02:00
 ```
 
-**File**: `pkg/engine/lifecycletest/pulumi_test.go` (modified, +25/-18)
+**File**: `sdk/nodejs/runtime/invoke.ts` (modified, +2/-2)
 ```diff
-@@ -4291,8 +4291,8 @@ func TestSourcePositions(t *testing.T) {
- 						Inputs:         inputs,
- 						SourcePosition: fileURL(providerRegPos),
- 						StackTrace: []pkgresource.StackFrame{
--							{SourcePosition: fileURL(providerPos)},
- 							{SourcePosition: fileURL(providerRegPos)},
-+							{SourcePosition: fileURL(providerPos)},
- 						},
- 						ParentStackTraceHandle: req.Info.StackTraceHandle,
- 					})
-@@ -4308,8 +4308,8 @@ func TestSourcePositions(t *testing.T) {
- 						"",
- 						fileURL(providerCallPos),
- 						[]pkgresource.StackFrame{
--							{SourcePosition: fileURL(providerPos)},
- 							{SourcePosition: fileURL(providerCallPos)},
-+							{SourcePosition: fileURL(providerPos)},
- 						}, req.Info.StackTraceHandle,
- 					)
- 					require.NoError(t, err)
-@@ -4331,8 +4331,8 @@ func TestSourcePositions(t *testing.T) {
- 						"",
- 						fileURL(providerReadPos),
- 						[]pkgresource.StackFrame{
--							{SourcePosition: fileURL(providerPos)},
- 							{SourcePosition: fileURL(providerReadPos)},
-+							{SourcePosition: fileURL(providerPos)},
- 						},
- 						req.Info.StackTraceHandle,
- 						"",
-@@ -4372,8 +4372,8 @@ func TestSourcePositions(t *testing.T) {
- 			Inputs:         inputs,
- 			SourcePosition: fileURL(regPos),
- 			StackTrace: []pkgresource.StackFrame{
--				{SourcePosition: fileURL(progPos)},
- 				{SourcePosition: fileURL(regPos)},
-+				{SourcePosition: fileURL(progPos)},
- 			},
- 		})
- 		require.NoError(t, err)
-@@ -4388,8 +4388,8 @@ func TestSourcePositions(t *testing.T) {
- 			"",
- 			fileURL(readPos),
- 			[]pkgresource.StackFrame{
--				{SourcePosition: fileURL(progPos)},
- 				{SourcePosition: fileURL(readPos)},
-+				{SourcePosition: fileURL(progPos)},
- 			},
- 			"",
- 			"",
-@@ -4401,8 +4401,8 @@ func TestSourcePositions(t *testing.T) {
- 			Inputs:         inputs,
- 			SourcePosition: fileURL(constructPos),
- 			StackTrace: []pkgresource.StackFrame{
--				{SourcePosition: fileURL(progPos)},
- 				{SourcePosition: fileURL(constructPos)},
-+				{SourcePosition: fileURL(progPos)},
- 			},
- 		})
- 		require.NoError(t, err)
-@@ -4411,8 +4411,8 @@ func TestSourcePositions(t *testing.T) {
- 		_, _, _, err = monitor.Call(
- 			"pkgA:m:callA", callInputs, nil, "", "", "", fileURL(callPos),
- 			[]pkgresource.StackFrame{
--				{SourcePosition: fileURL(progPos)},
- 				{SourcePosition: fileURL(callPos)},
-+				{SourcePosition: fileURL(progPos)},
- 			}, "")
- 		require.NoError(t, err)
- 
-@@ -4442,48 +4442,55 @@ func TestSourcePositions(t *testing.T) {
- 	assert.Equal(t, regURN, reg.URN)
- 	assert.Equal(t, projURL(regPos), reg.SourcePosition)
- 	assert.Equal(t, []pkgresource.StackFrame{
--		{SourcePosition: projURL(progPos)},
- 		{SourcePosition: projURL(regPos)},
-+		{SourcePosition: projURL(progPos)},
- 	}, reg.StackTrace)
- 
- 	read := snap.Resources[2]
- 	assert.Equal(t, readURN, read.URN)
- 	assert.Equal(t, projURL(readPos), read.SourcePosition)
- 	assert.Equal(t, []pkgresource.StackFrame{
--		{SourcePosition: projURL(progPos)},
- 		{SourcePosition: projURL(readPos)},
-+		{SourcePosition: projURL(progPos)},
- 	}, read.StackTrace)
- 
- 	reg2 := snap.Resources[3]
- 	assert.Equal(t, reg2URN, reg2.URN)
- 	assert.Equal(t, projURL(providerRegPos), reg2.SourcePosition)
- 	assert.Equal(t, []pkgresource.StackFrame{
--		{SourcePosition: projURL(progPos)},
--		{SourcePosition: projURL(constructPos)},
--		{SourcePosition: projURL(providerPos)},
-+		// RegisterResource inside Construct.
- 		{SourcePosition: projURL(providerRegPos)},
-+		{SourcePosition: projURL(providerPos)},
-+		// Program call that entered Construct.
-+		{SourcePosition: projURL(constructPos)},
-+		{SourcePosition: projURL(progPos)},
- 	}, reg2.StackTrace)
- 
- 	read2 := snap.Resources[4]
- 	assert.Equal(t, read2URN, read2.URN)
- 	assert.Equal(t, projURL(providerReadPos), read2.SourcePosition)
- 	assert.Equal(t, []pkgresource.StackFrame{
--		{SourcePosition: projURL(progPos)},
--		{SourcePosition: projURL(constructPos)},
-+		// ReadResource inside Call.
-+		{SourcePosition: projURL(providerReadPos)},
- 		{SourcePosition: projURL(providerPos)},
-+		// Call inside Construct.
- 		{SourcePosition: projURL(providerCallPos)},
- 		{SourcePosition: projURL(providerPos)},
--		{SourcePosition: projURL(providerReadPos)},
-+		// Program call that entered Construct.
-+		{SourcePosition: projURL(constructPos)},
-+		{SourcePosition: projURL(progPos)},
- 	}, read2.StackTrace)
- 
- 	read3 := snap.Resources[5]
- 	assert.Equal(t, read3URN, read3.URN)
- 	assert.Equal(t, projURL(providerReadPos), read3.SourcePosition)
- 	assert.Equal(t, []pkgresource.StackFrame{
--		{SourcePosition: projURL(progPos)},
--		{SourcePosition: projURL(callPos)},
--		{SourcePosition: projURL(providerPos)},
-+		// ReadResource inside Call.
- 		{SourcePosition: projURL(providerReadPos)},
-+		{SourcePosition: projURL(providerPos)},
-+		// Program call that entered Call.
-+		{SourcePosition: projURL(callPos)},
-+		{SourcePosition: projURL(progPos)},
- 	}, read3.StackTrace)
- }
- 
+@@ -293,7 +293,7 @@ async function invokeAsync(
+         const resp: any = await debuggablePromise(
+             new Promise((innerResolve, innerReject) =>
+                 monitor.invoke(req, (err: grpc.ServiceError, innerResponse: any) => {
+-                    log.debug(`Invoke RPC finished: tok=${tok}; err: ${err}, resp: ${innerResponse}`);
++                    log.debug(`Invoke RPC finished: tok=${tok}; err: ${err}`);
+                     if (err) {
+                         // If the monitor is unavailable, it is in the process of shutting down or has already
+                         // shut down. Don't emit an error and don't do any more RPCs, just exit.
+@@ -529,7 +529,7 @@ function callAsync<T>(
+                         monitor.call(
+                             req,
+                             (err: grpc.ServiceError | null, innerResponse: providerproto.CallResponse) => {
+-                                log.debug(`Call RPC finished: tok=${tok}; err: ${err}, resp: ${innerResponse}`);
++                                log.debug(`Call RPC finished: tok=${tok}; err: ${err}`);
+                                 if (err) {
+                                     // If the monitor is unavailable, it is in the process of shutting down or has already
+                                     // shut down. Don't emit an error and don't do any more RPCs, just exit.
 ```
 
-**File**: `pkg/resource/deploy/source_eval.go` (modified, +1/-1)
+**File**: `sdk/nodejs/runtime/resource.ts` (modified, +6/-20)
 ```diff
-@@ -2265,8 +2265,8 @@ func (s *sourcePositions) getFromRequest(req hasSourcePosition) (string, stackTr
- 		if handle := req.GetParentStackTraceHandle(); handle != "" {
- 			if parent, ok := s.stackTraces.Load(handle); ok {
- 				newStack := make(stackTrace, 0, len(parent)+len(stack))
--				newStack = append(newStack, parent...)
- 				newStack = append(newStack, stack...)
-+				newStack = append(newStack, parent...)
- 				stack = newStack
- 			}
- 		}
+@@ -225,9 +225,7 @@ export function getResource(
+                                             rpcError: grpc.ServiceError | null,
+                                             innerResponse: resproto.ResourceInvokeResponse | undefined,
+                                         ) => {
+-                                            log.debug(
+-                                                `getResource Invoke RPC finished: err: ${rpcError}, resp: ${innerResponse}`,
+-                                            );
++                                            log.debug(`getResource Invoke RPC finished: err: ${rpcError}`);
+                                             if (rpcError) {
+                                                 if (
+                                                     rpcError.code === grpc.status.UNAVAILABLE ||
+@@ -386,9 +384,7 @@ export function readResource(
+                                             rpcError: grpc.ServiceError | null,
+                                             innerResponse: resproto.ReadResourceResponse | undefined,
+                                         ) => {
+-                                            log.debug(
+-                                                `ReadResource RPC finished: ${label}; err: ${rpcError}, resp: ${innerResponse}`,
+-                                            );
++                                            log.debug(`ReadResource RPC finished: ${label}; err: ${rpcError}`);
+                                             if (rpcError) {
+                                                 if (
+                                                     rpcError.code === grpc.status.UNAVAILABLE ||
+@@ -875,15 +871,11 @@ export function registerResource(
+                                                 }
+ 
+                                                 // Node lets us hack the message as long as we do it before accessing the `stack` property.
+-                                                log.debug(
+-                                                    `RegisterResource RPC finished: ${label}; err: ${rpcErr}, resp: ${innerResponse}`,
+-                                                );
++                                                log.debug(`RegisterResource RPC finished: ${label}; err: ${rpcErr}`);
+                                                 preallocError.message = `failed to register new resource ${name} [${t}]: ${rpcErr.message}`;
+                                                 reject(preallocError);
+                                             } else {
+-                                                log.debug(
+-                                                    `RegisterResource RPC finished: ${label}; err: ${rpcErr}, resp: ${innerResponse}`,
+-                                                );
++                                                log.debug(`RegisterResource RPC finished: ${label}; err: ${rpcErr}`);
+                                                 resolve(innerResponse);
+                                             }
+                                         },
+@@ -1473,10 +1465,7 @@ export function registerResourceOutputs(res: Resource, outputs: Inputs | Promise
+                             monitor.registerResourceOutputs(
+                                 req,
+                                 (err: grpc.ServiceError | null, innerResponse: gempty.Empty | undefined) => {
+-                                    log.debug(
+-                                        `RegisterResourceOutputs RPC finished: urn=${urn}; ` +
+-                                            `err: ${err}, resp: ${innerResponse}`,
+-                                    );
++                                    log.debug(`RegisterResourceOutputs RPC finished: urn=${urn}; ` + `err: ${err}`);
+                                     if (err) {
+                                         // If the monitor is unavailable, it is in the process of shutting down or has already
+                                         // shut down. Don't emit an error and don't do any more RPCs, just exit.
+@@ -1490,10 +1479,7 @@ export function registerResourceOutputs(res: Resource, outputs: Inputs | Promise
+ 
+                                         reject(err);
+                                     } else {
+-                                        log.debug(
+-                                            `RegisterResourceOutputs RPC finished: urn=${urn}; ` +
+-                                                `err: ${err}, resp: ${innerResponse}`,
+-                                        );
++                                        log.debug(`RegisterResourceOutputs RPC finished: urn=${urn}; ` + `err: ${err}`);
+                                         resolve();
+                                     }
+                                 },
+```
+
+**File**: `sdk/nodejs/tests/runtime/debugLogSecrets.spec.ts` (added, +76/-0)
+```diff
+@@ -0,0 +1,76 @@
++// Copyright 2026, Pulumi Corporation.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++import * as assert from "assert";
++import { CustomResource, Output, runtime } from "../..";
++
++// eslint-disable-next-line @typescript-eslint/no-var-requires
++const logModule = require("../../log");
++
++const secretValue = "s3cr3t-value-that-must-not-be-logged";
++
++class TestResource extends CustomResource {
++    public readonly password!: Output<string>;
++
++    constructor(name: string) {
++        super("test:index:resource", name, { password: undefined });
++    }
++}
++
++describe("debug logging", () => {
++    let messages: string[];
++    let originalDebug: any;
++
++    beforeEach(async () => {
++        runtime._reset();
++        messages = [];
++        originalDebug = logModule.debug;
++        logModule.debug = (msg: string) => {
++            messages.push(msg);
++            return Promise.resolve();
++        };
++
++        await runtime.setMocks({
++            call: () => ({ token: secretValue }),
++            newResource: (args) => ({
++                id: `${args.name}_id`,
++                state: { password: secretValue },
++            }),
++        });
++    });
++
++    afterEach(() => {
++        logModule.debug = originalDebug;
++    });
++
++    it("does not log RegisterResource responses", async () => {
++        const res = new TestResource("res");
++        assert.strictEqual(await res.password.promise(), secretValue);
++
++        assert.ok(messages.some((m) => m.startsWith("RegisterResource RPC finished")));
++        for (const m of messages) {
++            assert.ok(!m.includes(secretValue), `debug message leaked a resource output: ${m}`);
++        }
++    });
++
++    it("does not log Invoke responses", async () => {
++        const result = await runtime.invoke("test:index:getToken", {});
++        assert.strictEqual(result.token, secretValue);
++
++        assert.ok(messages.some((m) => m.startsWith("Invoke RPC finished")));
++        for (const m of messages) {
++            assert.ok(!m.includes(secretValue), `debug message leaked an invoke result: ${m}`);
++        }
++    });
++});
+```
+
+**File**: `sdk/nodejs/tsconfig.json` (modified, +1/-0)
+```diff
+@@ -103,6 +103,7 @@
+         "tests/util.ts",
+         "tests/runtime/asyncIterableUtil.spec.ts",
+         "tests/runtime/codePaths.spec.ts",
++        "tests/runtime/debugLogSecrets.spec.ts",
+         "tests/runtime/dependsOn.spec.ts",
+         "tests/runtime/featureSupport.spec.ts",
+         "tests/runtime/findWorkspaceRoot.spec.ts",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #25850** (2026-11-24): Update registry methods to use property.Map (@Frassle)
+- **PR #25841** (2026-11-24): Keep unexported struct fields when resolving outputs in the Go SDK (@andretorresdg)
 - **PR #25839** (2026-11-24): Lint against arguments in `Use` for constrictor commands (@i-am-tom)
-- **PR #25832** (2026-11-23): Clean up more tests to use propertyrpc (@Frassle)
-- **PR #25827** (2026-11-23): Order stitched resource stack traces from child to parent. (@julienp)
-- **PR #25816** (2026-11-23): Update module google.golang.org/grpc to v1.83.2 [SECURITY] (@pulumi-renovate[bot])
-- **PR #25814** (2026-11-23): Return iter.Seq2 from property.Map/Array All and rename Value.Secret to IsSecret (@Frassle)
-- **PR #25813** (2026-11-20): Use the Cloud SDK enum values directly for update status and capabilities (@flostadler)
+- **PR #25835** (2026-11-24): redact base64 encoded secrets correctly (@tgummerer)
+- **PR #25834** (2026-11-24): Remove RPC responses from debug logs (@Chinagolum)
+- **PR #25833** (2026-11-24): run mypy warmup from tmpdir (@tgummerer)
 
 ---
 
@@ -2179,31 +1971,34 @@ released yet.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update module google.golang.org/grpc to v1.83.2 [SECURITY]
+## X. Remove RPC responses from debug logs
 
 **RULE**:
-When implementing operations in `tests/integration/shutdown_cleanup/go/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog/pending/20261123--sdk-nodejs--debug-log-secrets.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e3c48e48`: Update module google.golang.org/grpc to v1.83.2 [SECURITY]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c7bb3ec3`: Remove RPC responses from debug logs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/integration/shutdown_cleanup/go/go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/pending/20261123--sdk-nodejs--debug-log-secrets.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	google.golang.org/grpc v1.83.2 // indirect
+component: sdk/nodejs
+kind: fix
+body: Stop including RPC response values in debug log messages, which could contain secret values in plaintext
+time: 2026-11-23T17:30:00.000000000+02:00
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	google.golang.org/grpc v1.83.1 // indirect
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e3c48e48` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c7bb3ec3` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T00:35:24.359Z",
+  "updated_at": "2026-11-25T00:43:49.728Z",
   "stats": {
-    "total_discovered": 9050,
-    "approved_pending_harvest": 8572,
+    "total_discovered": 9079,
+    "approved_pending_harvest": 8601,
     "harvested_count": 0,
     "rejected_count": 478,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8560,
+      "COMMUNITY_AND_EXPERT": 8589,
       "OFFICIAL_DOCUMENTATION": 273,
       "STANDARDS_AND_SPECIFICATIONS": 149,
       "ENGINEERING_BLOGS": 7,
@@ -195781,6 +195781,644 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
         "fileName": "aquasecurity-trivy-learnings.md"
+      }
+    },
+    "SRC-494387FFA145": {
+      "id": "SRC-494387FFA145",
+      "url": "https://github.com/cypress-io/cypress/blob/develop/packages/eslint-config/AGENTS.md",
+      "title": "https://github.com/cypress-io/cypress/blob/develop/packages/eslint-config/AGENTS.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:43:46.120Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
+        "fileName": "cypress-io-cypress-learnings.md"
+      }
+    },
+    "SRC-D7193B692F4A": {
+      "id": "SRC-D7193B692F4A",
+      "url": "https://makenowjust-labs.github.io/recheck",
+      "title": "https://makenowjust-labs.github.io/recheck",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:43:46.177Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
+        "fileName": "cypress-io-cypress-learnings.md"
+      }
+    },
+    "SRC-AEB9BFD99889": {
+      "id": "SRC-AEB9BFD99889",
+      "url": "https://registry.npmjs.org/@one-ini/wasm/-/wasm-0.1.1.tgz",
+      "title": "https://registry.npmjs.org/@one-ini/wasm/-/wasm-0.1.1.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:43:46.233Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
+        "fileName": "cypress-io-cypress-learnings.md"
+      }
+    },
+    "SRC-C77F30549B86": {
+      "id": "SRC-C77F30549B86",
+      "url": "https://registry.yarnpkg.com/@oozcitak/dom/-/dom-2.0.2.tgz",
+      "title": "https://registry.yarnpkg.com/@oozcitak/dom/-/dom-2.0.2.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:43:46.288Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
+        "fileName": "cypress-io-cypress-learnings.md"
+      }
+    },
+    "SRC-99E8F7F99ACA": {
+      "id": "SRC-99E8F7F99ACA",
+      "url": "https://registry.yarnpkg.com/@oozcitak/infra/-/infra-2.0.2.tgz",
+      "title": "https://registry.yarnpkg.com/@oozcitak/infra/-/infra-2.0.2.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:43:46.341Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
+        "fileName": "cypress-io-cypress-learnings.md"
+      }
+    },
+    "SRC-B7B6169C4990": {
+      "id": "SRC-B7B6169C4990",
+      "url": "https://registry.yarnpkg.com/@oozcitak/url/-/url-3.0.0.tgz",
+      "title": "https://registry.yarnpkg.com/@oozcitak/url/-/url-3.0.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:43:46.395Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
+        "fileName": "cypress-io-cypress-learnings.md"
+      }
+    },
+    "SRC-93ABE1954127": {
+      "id": "SRC-93ABE1954127",
+      "url": "https://registry.yarnpkg.com/@oozcitak/util/-/util-10.0.0.tgz",
+      "title": "https://registry.yarnpkg.com/@oozcitak/util/-/util-10.0.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:43:46.448Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
+        "fileName": "cypress-io-cypress-learnings.md"
+      }
+    },
+    "SRC-64F613D4408C": {
+      "id": "SRC-64F613D4408C",
+      "url": "https://registry.yarnpkg.com/@opentelemetry/api/-/api-1.4.1.tgz",
+      "title": "https://registry.yarnpkg.com/@opentelemetry/api/-/api-1.4.1.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:43:46.501Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
+        "fileName": "cypress-io-cypress-learnings.md"
+      }
+    },
+    "SRC-7E6BE8A3F58A": {
+      "id": "SRC-7E6BE8A3F58A",
+      "url": "https://registry.yarnpkg.com/async/-/async-3.2.4.tgz",
+      "title": "https://registry.yarnpkg.com/async/-/async-3.2.4.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:43:46.553Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
+        "fileName": "cypress-io-cypress-learnings.md"
+      }
+    },
+    "SRC-B63EDC66CAC1": {
+      "id": "SRC-B63EDC66CAC1",
+      "url": "https://registry.yarnpkg.com/async/-/async-3.2.6.tgz",
+      "title": "https://registry.yarnpkg.com/async/-/async-3.2.6.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:43:46.606Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
+        "fileName": "cypress-io-cypress-learnings.md"
+      }
+    },
+    "SRC-A7FA52011C20": {
+      "id": "SRC-A7FA52011C20",
+      "url": "https://registry.yarnpkg.com/basic-ftp/-/basic-ftp-5.2.2.tgz",
+      "title": "https://registry.yarnpkg.com/basic-ftp/-/basic-ftp-5.2.2.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:43:46.660Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
+        "fileName": "cypress-io-cypress-learnings.md"
+      }
+    },
+    "SRC-DA830690E0E4": {
+      "id": "SRC-DA830690E0E4",
+      "url": "https://registry.yarnpkg.com/basic-ftp/-/basic-ftp-6.2.6.tgz",
+      "title": "https://registry.yarnpkg.com/basic-ftp/-/basic-ftp-6.2.6.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:43:46.714Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
+        "fileName": "cypress-io-cypress-learnings.md"
+      }
+    },
+    "SRC-E413877EF872": {
+      "id": "SRC-E413877EF872",
+      "url": "https://registry.yarnpkg.com/batch/-/batch-0.6.1.tgz",
+      "title": "https://registry.yarnpkg.com/batch/-/batch-0.6.1.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:43:46.767Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
+        "fileName": "cypress-io-cypress-learnings.md"
+      }
+    },
+    "SRC-25B9498FD4EC": {
+      "id": "SRC-25B9498FD4EC",
+      "url": "https://registry.yarnpkg.com/chalk/-/chalk-5.6.2.tgz",
+      "title": "https://registry.yarnpkg.com/chalk/-/chalk-5.6.2.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:43:46.819Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
+        "fileName": "cypress-io-cypress-learnings.md"
+      }
+    },
+    "SRC-26CEA3523DBA": {
+      "id": "SRC-26CEA3523DBA",
+      "url": "https://registry.yarnpkg.com/chalk/-/chalk-6.0.1.tgz",
+      "title": "https://registry.yarnpkg.com/chalk/-/chalk-6.0.1.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:43:46.872Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
+        "fileName": "cypress-io-cypress-learnings.md"
+      }
+    },
+    "SRC-259FCBF010BB": {
+      "id": "SRC-259FCBF010BB",
+      "url": "https://registry.yarnpkg.com/change-case-all/-/change-case-all-1.0.14.tgz",
+      "title": "https://registry.yarnpkg.com/change-case-all/-/change-case-all-1.0.14.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:43:46.926Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
+        "fileName": "cypress-io-cypress-learnings.md"
+      }
+    },
+    "SRC-8D6D4DE47696": {
+      "id": "SRC-8D6D4DE47696",
+      "url": "https://registry.yarnpkg.com/check-more-types/-/check-more-types-2.24.0.tgz",
+      "title": "https://registry.yarnpkg.com/check-more-types/-/check-more-types-2.24.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:43:46.979Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
+        "fileName": "cypress-io-cypress-learnings.md"
+      }
+    },
+    "SRC-FE8D413C6AFF": {
+      "id": "SRC-FE8D413C6AFF",
+      "url": "https://registry.yarnpkg.com/cheerio-select/-/cheerio-select-2.1.0.tgz",
+      "title": "https://registry.yarnpkg.com/cheerio-select/-/cheerio-select-2.1.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:43:47.032Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
+        "fileName": "cypress-io-cypress-learnings.md"
+      }
+    },
+    "SRC-5ADCA5807A19": {
+      "id": "SRC-5ADCA5807A19",
+      "url": "https://registry.yarnpkg.com/cheerio/-/cheerio-1.2.0.tgz",
+      "title": "https://registry.yarnpkg.com/cheerio/-/cheerio-1.2.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:43:47.086Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
+        "fileName": "cypress-io-cypress-learnings.md"
+      }
+    },
+    "SRC-BDEF709A9CE3": {
+      "id": "SRC-BDEF709A9CE3",
+      "url": "https://github.com/cypress-io/cypress/issues/34943",
+      "title": "https://github.com/cypress-io/cypress/issues/34943",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:43:47.165Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
+        "fileName": "cypress-io-cypress-learnings.md"
+      }
+    },
+    "SRC-64E9BAD3113B": {
+      "id": "SRC-64E9BAD3113B",
+      "url": "https://github.com/cypress-io/cypress/issues/35204",
+      "title": "https://github.com/cypress-io/cypress/issues/35204",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:43:47.222Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
+        "fileName": "cypress-io-cypress-learnings.md"
+      }
+    },
+    "SRC-157876DAD7D7": {
+      "id": "SRC-157876DAD7D7",
+      "url": "https://www.example.com`/",
+      "title": "https://www.example.com`/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:43:47.321Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
+        "fileName": "cypress-io-cypress-learnings.md"
+      }
+    },
+    "SRC-42EFAE450123": {
+      "id": "SRC-42EFAE450123",
+      "url": "https://github.com/cypress-io/cypress/pull/35465",
+      "title": "https://github.com/cypress-io/cypress/pull/35465",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:43:47.378Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
+        "fileName": "cypress-io-cypress-learnings.md"
+      }
+    },
+    "SRC-108D53080DE6": {
+      "id": "SRC-108D53080DE6",
+      "url": "https://on.cypress.io/selectfile",
+      "title": "https://on.cypress.io/selectfile",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:43:47.458Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
+        "fileName": "cypress-io-cypress-learnings.md"
+      }
+    },
+    "SRC-D0B7B134060B": {
+      "id": "SRC-D0B7B134060B",
+      "url": "https://on.cypress.io/fixture",
+      "title": "https://on.cypress.io/fixture",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:43:47.515Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
+        "fileName": "cypress-io-cypress-learnings.md"
+      }
+    },
+    "SRC-B47253B5DC11": {
+      "id": "SRC-B47253B5DC11",
+      "url": "https://github.com/cypress-io/cypress/pull/35506",
+      "title": "https://github.com/cypress-io/cypress/pull/35506",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:43:47.575Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
+        "fileName": "cypress-io-cypress-learnings.md"
+      }
+    },
+    "SRC-C6ECB9CA470D": {
+      "id": "SRC-C6ECB9CA470D",
+      "url": "https://github.com/pulumi/pulumi/actions/runs/44989567319",
+      "title": "https://github.com/pulumi/pulumi/actions/runs/44989567319",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:43:49.621Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
+        "fileName": "pulumi-pulumi-learnings.md"
+      }
+    },
+    "SRC-B40038DA3CF3": {
+      "id": "SRC-B40038DA3CF3",
+      "url": "https://github.com/pulumi/pulumi/actions/runs/45118062811",
+      "title": "https://github.com/pulumi/pulumi/actions/runs/45118062811",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:43:49.674Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
+        "fileName": "pulumi-pulumi-learnings.md"
+      }
+    },
+    "SRC-ADDAE8FCDC3E": {
+      "id": "SRC-ADDAE8FCDC3E",
+      "url": "https://github.com/pulumi/pulumi/actions/runs/45333577515",
+      "title": "https://github.com/pulumi/pulumi/actions/runs/45333577515",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T00:43:49.728Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
+        "fileName": "pulumi-pulumi-learnings.md"
       }
     }
   }
