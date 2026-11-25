@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T02:10:36.809Z",
-  "total_records": 2619,
+  "last_updated": "2026-11-25T02:20:35.311Z",
+  "total_records": 2621,
   "domains": {
     "A": {
       "total": 22,
@@ -1182,7 +1182,7 @@
       ]
     },
     "G": {
-      "total": 460,
+      "total": 462,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1643,7 +1643,9 @@
         "domain_intelligence-architecture-intelligence-qwikdev-qwik-core-invariants",
         "domain_intelligence-architecture-intelligence-qwikdev-qwik-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-mochajs-mocha-core-invariants",
-        "domain_intelligence-architecture-intelligence-mochajs-mocha-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-mochajs-mocha-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-rmax-scrapy-redis-core-invariants",
+        "domain_intelligence-architecture-intelligence-rmax-scrapy-redis-learnings-core-invariants"
       ]
     },
     "H": {
@@ -8723,10 +8725,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "896e65b5bd5c94f1c9e5baf98d691e49b73ca7bbc8b1bc03110787399092d013",
-      "created_at": "2026-11-25T00:26:50.467Z"
+      "content_hash": "55b126249dc11d955d2963fca9cfd9ce451eb424ef604fdfeb8cb183be9a085b",
+      "created_at": "2026-11-25T02:20:28.085Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -9958,8 +9960,8 @@
       "title": "Architecture Intelligence: provablehq-snarkos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-learnings-architecture-intelligence-provablehq-snarkos-learni.md",
       "repository": "provablehq-snarkos-learnings",
-      "content_hash": "508391b7111fdbedce004148c4d2a9fcab534b757d3963052598912277163a6b",
-      "created_at": "2026-11-24T22:07:37.647Z"
+      "content_hash": "b94bd940cff5fc5540392745d18d9bb60f0bef5f95c1596db9833b3b70b62caa",
+      "created_at": "2026-11-25T02:20:35.311Z"
     },
     "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari",
@@ -17171,8 +17173,8 @@
       "title": "Technical Construction Intelligence: tokio-rs/tokio Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tokio-rs-tokio-technical-construction-intelligence-tokio-rs-tokio-core-invariant.md",
       "repository": "tokio-rs/tokio",
-      "content_hash": "e56dad796bfc2ebb0f152c0440ad63c817153c3cb9f8e7a56421a06eeb1ead61",
-      "created_at": "2026-11-23T23:39:47.974Z"
+      "content_hash": "87b537ca3dc2464b106aa7ba52ae2d7c64132e10030e6c718b25f718bfd27ca5",
+      "created_at": "2026-11-25T02:20:14.108Z"
     },
     "domain_intelligence-technical-construction-intelligence-starrocks-starrocks-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-starrocks-starrocks-core-invariants",
@@ -17198,8 +17200,8 @@
       "title": "Technical Construction Intelligence: tokio-rs-tokio-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tokio-rs-tokio-learnings-technical-construction-intelligence-tokio-rs-tokio-lear.md",
       "repository": "tokio-rs-tokio-learnings",
-      "content_hash": "99447d936ae1f108d38d2c15bf99a140423f6cff0243586a7d18c0d6902af0f0",
-      "created_at": "2026-11-23T23:40:00.397Z"
+      "content_hash": "83919aa753793f51e68b394ba03d9f72707a675ad022b32c2a60c0d6e13cea01",
+      "created_at": "2026-11-25T02:20:32.001Z"
     },
     "DOM-D-65E545AD": {
       "record_id": "DOM-D-65E545AD",
@@ -43940,6 +43942,24 @@
       "repository": "crosspaste-crosspaste-desktop-learnings",
       "content_hash": "0a01f88d34940cef4cd7f6c2ba0efa2505d7c9c3b863a4e4226578a7b6f696ae",
       "created_at": "2026-11-25T02:02:14.314Z"
+    },
+    "domain_intelligence-architecture-intelligence-rmax-scrapy-redis-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-rmax-scrapy-redis-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: rmax/scrapy-redis Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rmax-scrapy-redis-architecture-intelligence-rmax-scrapy-redis-core-invariants.md",
+      "repository": "rmax/scrapy-redis",
+      "content_hash": "a334fc1e62bac1738c98eeb11f305c46ba4dbfa5736dba4a2a23d1b42d026a35",
+      "created_at": "2026-11-25T02:20:18.514Z"
+    },
+    "domain_intelligence-architecture-intelligence-rmax-scrapy-redis-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-rmax-scrapy-redis-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: rmax-scrapy-redis-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rmax-scrapy-redis-learnings-architecture-intelligence-rmax-scrapy-redis-learning.md",
+      "repository": "rmax-scrapy-redis-learnings",
+      "content_hash": "35af1e178d4c6a29cefdc48fdb8713d75a350f229ccf5e2534c2ea112031e76b",
+      "created_at": "2026-11-25T02:20:33.791Z"
     }
   }
 }

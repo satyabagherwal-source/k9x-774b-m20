@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261123-R1OK",
-    "timestamp": "2026-11-23T16:11:39.716Z",
-    "repository": "google/vit-base-patch16-224",
-    "learningId": "learn-huggingface-google-vit-base-patch16-224",
-    "contentHash": "2540dda827afcf223cc349f45dc1c97bc94c23c41afc0d5aafeedb582d6dfcb6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-R993",
-    "timestamp": "2026-11-23T16:11:49.527Z",
-    "repository": "juicedata/juicefs",
-    "learningId": "learn-github-juicedata-juicefs",
-    "contentHash": "b29819a8396afe9e64c095838b8728986c931ce0be2b5186c092ebc9a2646a1d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261123-2EEE",
-    "timestamp": "2026-11-23T16:20:29.414Z",
-    "repository": "BAAI/bge-base-en-v1.5",
-    "learningId": "learn-huggingface-baai-bge-base-en-v1-5",
-    "contentHash": "7744a8d5bf832ba190ccb9d4a44607ff789d1cb98801dafe0827a3c3fbd8f401",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261123-2FQW",
     "timestamp": "2026-11-23T16:20:31.160Z",
     "repository": "ntex-rs/ntex",
@@ -7490,6 +7445,51 @@
     "repository": "faker-js/faker",
     "learningId": "learn-github-faker-js-faker",
     "contentHash": "6463b4ea7293827afec042a0a6dfcfc4952bc099861f1a5bf465032507dbc485",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-XIKL",
+    "timestamp": "2026-11-25T02:20:13.509Z",
+    "repository": "tokio-rs/tokio",
+    "learningId": "learn-github-tokio-rs-tokio",
+    "contentHash": "d85f0978e5c6e1e61c54c3ec4acfe190fa7221872ac96cfededcca0f1c92638a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-XM06",
+    "timestamp": "2026-11-25T02:20:17.958Z",
+    "repository": "rmax/scrapy-redis",
+    "learningId": "learn-github-rmax-scrapy-redis",
+    "contentHash": "7bcbf77849d82e66b874546cff4be189cfdbbc79d11d5e68c11a6fbc73a35b0c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-XTDJ",
+    "timestamp": "2026-11-25T02:20:27.511Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "d64f17dd0e61ac41b80d693b9b870da51367d45f63dadf845c1fdf0adc56c12f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

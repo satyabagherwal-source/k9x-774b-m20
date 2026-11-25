@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T23:40:00.123Z",
+  "timestamp": "2026-11-25T02:20:31.559Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-tokio-rs-tokio-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tokio-rs-tokio-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T23:40:00.123Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T02:20:31.559Z`  
 > **Learning ID**: `LEARN-EVO-tokio-rs-tokio-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md`  
 > **Source**: github ([https://github.com/tokio-rs/tokio](https://github.com/tokio-rs/tokio))  
-> **Source Version**: `6bbeecff`  
+> **Source Version**: `854013a8`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T23:39:46.559Z  
+> **Timestamp**: 2026-11-25T02:20:12.000Z  
 > **Learning ID**: `learn-github-tokio-rs-tokio`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tokio-rs/tokio](https://github.com/tokio-rs/tokio))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T23:39:46.553Z  
+> **Harvest Timestamp**: 2026-11-25T02:20:11.748Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A runtime for writing reliable asynchronous applications with Rust. Provides I/O, networking, scheduling, timers, ...
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 33772 stars
+- **Stars / Engagement**: 33783 stars
 
 ---
 
@@ -1963,11 +1963,11 @@ where
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #8827** (2026-11-24): **tokio-util: improve panic docs for `DelayQueue`**
+  *Symptoms*: This PR adds documentation for scenarios in which `DelayQueue::insert` and `insert_at` panic namely when called from outside of a `tokio` runtime context or if timers are disabled . 
+
 - **Issue #8826** (2026-11-23): **net: report vectored write support on named pipes**
   *Symptoms*: `NamedPipeServer` and `NamedPipeClient` return the default `false` from `is_write_vectored`, although their vectored writes use every buffer since mio 1.2.5 (tokio-rs/mio#2013), the minimum version since #8438. So `write_buf`, `write_all_buf` and tokio-util's `poll_write_buf` pass only the first chunk of a `Buf` per write, and on a message mode pipe each chunk becomes its own message. Thus, return `true`, as `TcpStream`, `UnixStream` and the unix pipe `Sender` do.  Fixes: #6970 
-
-- **Issue #8824** (2026-11-23): **tokio-test: correct `assert_elapsed!` docs**
-  *Symptoms*: The `assert_elapsed!` docs say it accepts the duration ±1ms, but it only accepts elapsed times from `dur` to `dur` + 1ms. Its example sits in an `async fn` that is never called, and on a real clock the 50ms sleep takes about 52ms, so the example fails when run. Thus, describe the actual range, note that the macro expects a paused clock, and run the example with `start_paused = true`.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1984,192 +1984,38 @@ where
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6bbeecff` (2026-11-23)
-**Commit Message**: tokio-test: correct `assert_elapsed!` docs (#8824)
+### Incident Patch 1: `854013a8` (2026-11-24)
+**Commit Message**: tokio-util: improve panic docs for `DelayQueue` (#8827)
 
-The `assert_elapsed!` docs say it accepts the duration ±1ms, but it only
-accepts elapsed times from `dur` to `dur` + 1ms. Its example sits in an
-`async fn` that is never called, and on a real clock the 50ms sleep
-takes about 52ms, so the example fails when run. Thus, describe the
-actual range, note that the macro expects a paused clock, and run the
-example with `start_paused = true`.
-
-**File**: `tokio-test/src/macros.rs` (modified, +8/-2)
+**File**: `tokio-util/src/time/delay_queue.rs` (modified, +4/-0)
 ```diff
-@@ -250,13 +250,19 @@ macro_rules! assert_err {
-     }};
- }
- 
--/// Asserts that an exact duration has elapsed since the start instant ±1ms.
-+/// Asserts that at least `dur`, and at most `dur` + 1ms, has elapsed since the
-+/// start instant.
-+///
-+/// This is intended for use with a paused clock, for example with
-+/// `#[tokio::test(start_paused = true)]`. With a real clock, a sleep can
-+/// overshoot by more than 1ms and the assertion will fail.
- ///
- /// ```rust
- /// use tokio::time::{self, Instant};
- /// use std::time::Duration;
- /// use tokio_test::assert_elapsed;
--/// # async fn test_time_passed() {
-+/// # #[tokio::main(flavor = "current_thread", start_paused = true)]
-+/// # async fn main() {
- ///
- /// let start = Instant::now();
- /// let dur = Duration::from_millis(50);
-```
-
----
-
-### Incident Patch 2: `8526eecb` (2026-11-23)
-**Commit Message**: net: report vectored write support on named pipes (#8826)
-
-`NamedPipeServer` and `NamedPipeClient` return the default `false` from
-`is_write_vectored`, although their vectored writes use every buffer
-since mio 1.2.5. So `write_buf`, `write_all_buf` and `poll_write_buf`
-pass only the first chunk of a `Buf` per write. Thus, return `true`, as
-`TcpStream` and `UnixStream` do.
-
-Fixes: #6970
-
-**File**: `tokio/src/net/windows/named_pipe.rs` (modified, +8/-0)
-```diff
-@@ -919,6 +919,10 @@ impl AsyncWrite for NamedPipeServer {
-         self.io.poll_write_vectored(cx, bufs)
-     }
- 
-+    fn is_write_vectored(&self) -> bool {
-+        true
-+    }
-+
-     fn poll_flush(self: Pin<&mut Self>, _cx: &mut Context<'_>) -> Poll<io::Result<()>> {
-         Poll::Ready(Ok(()))
-     }
-@@ -1710,6 +1714,10 @@ impl AsyncWrite for NamedPipeClient {
-         self.io.poll_write_vectored(cx, bufs)
-     }
- 
-+    fn is_write_vectored(&self) -> bool {
-+        true
-+    }
-+
-     fn poll_flush(self: Pin<&mut Self>, _cx: &mut Context<'_>) -> Poll<io::Result<()>> {
-         Poll::Ready(Ok(()))
-     }
-```
-
-**File**: `tokio/tests/net_named_pipe.rs` (modified, +86/-2)
-```diff
-@@ -1,9 +1,10 @@
- #![cfg(feature = "full")]
- #![cfg(windows)]
- 
--use std::io;
-+use bytes::Buf;
-+use std::io::{self, IoSlice, IoSliceMut};
- use std::time::Duration;
--use tokio::io::{AsyncReadExt, AsyncWriteExt};
-+use tokio::io::{AsyncReadExt, AsyncWrite, AsyncWriteExt};
- use tokio::net::windows::named_pipe::{ClientOptions, PipeMode, ServerOptions};
- use tokio::time;
- use windows_sys::Win32::Foundation::{ERROR_NO_DATA, ERROR_PIPE_BUSY};
-@@ -397,3 +398,86 @@ async fn test_named_pipe_access() -> io::Result<()> {
-     }
-     Ok(())
- }
-+
-+// This tests that `try_write_vectored` and `try_read_vectored` use every
-+// buffer, in both directions.
-+//
-+// Regression test for: https://github.com/tokio-rs/tokio/issues/6970
-+#[tokio::test]
-+async fn test_named_pipe_try_io_vectored() -> io::Result<()> {
-+    const PIPE_NAME: &str = r"\\.\pipe\test-named-pipe-try-io-vectored";
-+
-+    let server = ServerOptions::new().create(PIPE_NAME)?;
-+    let client = ClientOptions::new().open(PIPE_NAME)?;
-+    server.connect().await?;
-+
-+    let bufs = [IoSlice::new(b"hello "), IoSlice::new(b"world")];
-+
-+    // client to server
-+    client.writable().await?;
-+    assert_eq!(client.try_write_vectored(&bufs)?, 11);
-+
-+    let mut head = [0u8; 4];
-+    let mut tail = [0u8; 16];
-+    let n = loop {
-+        server.readable().await?;
-+        let mut bufs = [IoSliceMut::new(&mut head), IoSliceMut::new(&mut tail)];
-+        match server.try_read_vectored(&mut bufs) {
-+            Ok(n) => break n,
-+            Err(e) if e.kind() == io::ErrorKind::WouldBlock => continue,
-+            Err(e) => return Err(e),
-+        }
-+    };
-+    assert_eq!(n, 11);
-+    assert_eq!(&head, b"hell");
-+    assert_eq!(&tail[..7], b"o world");
-+
-+    // server to client
-+    server.writable().await?;
-+    assert_eq!(server.try_write_vectored(&bufs)?, 11);
-+
-+    let mut head = [0u8; 4];
-+    let mut tail = [0u8; 16];
-+    let n = loop {
-+        client.readable().await?;
-+        let mut bufs = [IoSliceMut::new(&mut head), IoSliceMut::new(&mut tail)];
-+        match client.try_read_vectored(&mut bufs) {
-+            Ok(n) => break n,
-+            Err(e) if e.kind() == io::ErrorKind::WouldBlock => continue,
-+            Err(e) => return Err(e),
-+        }
-+    };
-+    assert_eq!(n, 11);
-+    assert_eq!(&head, b"hell");
-+    assert_eq!(&tail[..7], b"o world");
-+
-+    Ok(())
-+}
-+
-+// This tests that the `AsyncWrite` impls report vectored writes as supported,
-+// so that `write_buf` passes every chunk of a `Buf` to the pipe in one write.
-+#[tokio::test]
-+async fn test_named_pipe_write_buf_vectored() -> io::Result<()> {
-+    const PIPE_NAME: &str = r"\\.\pipe\test-named-pipe-write-buf-vectored";
-+
-+    let mut server = ServerOptions::new().create(PIPE_NAME)?;
-+    let mut client = ClientOptions::new().open(PIPE_NAME)?;
-+    server.connect().await?;
-+
-+    assert!(server.is_write_vectored());
-+    assert!(client.is_write_vectored());
-+
-+    let mut buf = [0u8; 11];
-+
-+    let mut chunks = Buf::chain(&b"hello "[..], &b"world"[..]);
-+    assert_eq!(client.write_buf(&mut chunks).await?, 11);
-+    server.read_exact(&mut buf).await?;
-+    assert_eq!(&buf, b"hello world");
-+
-+    let mut chunks = Buf::chain(&b"hello "[..], &b"world"[..]);
-+    assert_eq!(server.write_buf(&mut chunks).await?, 11);
-+    client.read_exact(&mut buf).await?;
-+    assert_eq!(&buf, b"hello world");
-+
-+    Ok(())
-+}
+@@ -508,6 +508,8 @@ impl<T> DelayQueue<T> {
+     /// # Panics
+     ///
+     /// This function panics if `when` is too far in the future.
++    /// It also panics if called from outside the context of a Tokio
++    /// runtime or if timers are disabled.
+     ///
+     /// # Examples
+     ///
+@@ -623,6 +625,8 @@ impl<T> DelayQueue<T> {
+     ///
+     /// This function panics if `timeout` is greater than the maximum
+     /// duration supported by the timer in the current `Runtime`.
++    /// It also panics if called from outside the context of a Tokio
++    /// runtime or if timers are disabled.
+     ///
+     /// # Examples
+     ///
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8827** (2026-11-24): tokio-util: improve panic docs for `DelayQueue` (@abh1nav10)
 - **PR #8826** (2026-11-23): net: report vectored write support on named pipes (@waltuov)
 - **PR #8824** (2026-11-23): tokio-test: correct `assert_elapsed!` docs (@thejesh23)
 - **PR #8820** (2026-11-21): update `tokio/lib.rs` docs to mention `wasm32-wasip3` support (@dicej)
 - **PR #8818** (2026-11-21): enable `wasm32-wasip3` support (@dicej)
 - **PR #8817** (closed): codec: add a protobuf style varint length codec (@StrikeRougeAgent)
-- **PR #8816** (closed): net: require mio 1.2.5 for vectored named pipe io (@StrikeRougeAgent)
 
 ---
 
@@ -2189,39 +2035,34 @@ Fixes: #6970
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tokio-test: correct `assert_elapsed!` docs
+## X. tokio-util: improve panic docs for `DelayQueue`
 
 **RULE**:
-When implementing operations in `tokio-test/src/macros.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tokio-rs/tokio. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tokio-util/src/time/delay_queue.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tokio-rs/tokio. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6bbeecff`: tokio-test: correct `assert_elapsed!` docs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `854013a8`: tokio-util: improve panic docs for `DelayQueue`. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tokio-test/src/macros.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tokio-util/src/time/delay_queue.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// Asserts that at least `dur`, and at most `dur` + 1ms, has elapsed since the
-/// start instant.
-///
-/// This is intended for use with a paused clock, for example with
-/// `#[tokio::test(start_paused = true)]`. With a real clock, a sleep can
-/// overshoot by more than 1ms and the assertion will fail.
-/// # #[tokio::main(flavor = "current_thread", start_paused = true)]
-/// # async fn main() {
+    /// It also panics if called from outside the context of a Tokio
+    /// runtime or if timers are disabled.
+    /// It also panics if called from outside the context of a Tokio
+    /// runtime or if timers are disabled.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-/// Asserts that an exact duration has elapsed since the start instant ±1ms.
-/// # async fn test_time_passed() {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6bbeecff` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `854013a8` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

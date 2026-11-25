@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-25T02:10:36.985Z",
-  "total_verified_learnings": 9108,
+  "last_updated": "2026-11-25T02:20:35.541Z",
+  "total_verified_learnings": 9109,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25147,
+  "total_items": 25158,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112818,25 +112818,25 @@
       "item_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "repository": "aleo-labs-protocol/snarkOS",
       "source_version": "b2a26d2e",
-      "content_hash": "896e65b5bd5c94f1c9e5baf98d691e49b73ca7bbc8b1bc03110787399092d013",
+      "content_hash": "55b126249dc11d955d2963fca9cfd9ce451eb424ef604fdfeb8cb183be9a085b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T00:26:50.467Z"
+      "persisted_at": "2026-11-25T02:20:28.085Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/aleo-labs-protocol-snarkos-verification-protocol-empirical-defect-shield-for-ale.md",
+      "relative_path": "08_VERIFICATION/provablehq-snarkos-verification-protocol-empirical-defect-shield-for-aleo-labs-p.md",
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
       "source_version": "b2a26d2e",
-      "content_hash": "b69092cfeb1ee0f90e0492a4b68466259741c2dc852912130bca6a320919174f",
+      "content_hash": "012d01de8ecc2b458eb274ab4040a73b182311f0ca5b21ec92eee1c1016d48d7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T00:26:50.717Z"
+      "persisted_at": "2026-11-25T02:20:28.313Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
@@ -114598,9 +114598,9 @@
       "title": "Architecture Intelligence: provablehq-snarkos-learnings Core Invariants",
       "repository": "provablehq-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "508391b7111fdbedce004148c4d2a9fcab534b757d3963052598912277163a6b",
+      "content_hash": "b94bd940cff5fc5540392745d18d9bb60f0bef5f95c1596db9833b3b70b62caa",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T22:07:37.647Z"
+      "persisted_at": "2026-11-25T02:20:35.311Z"
     },
     "candidate_directive-server-security-check-the-token-on-the-account-confirmation-page-when-confirm_": {
       "item_id": "candidate_directive-server-security-check-the-token-on-the-account-confirmation-page-when-confirm_",
@@ -216103,13 +216103,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
       "source_version": "b2a26d2e",
-      "content_hash": "7332a10398829d3e1f53c9b9641184caa8b1c58820d1f07c2f06ab9f27090da5",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "content_hash": "d64f17dd0e61ac41b80d693b9b870da51367d45f63dadf845c1fdf0adc56c12f",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 3992,
@@ -216232,7 +216232,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T00:26:49.586Z",
+      "verified_at": "2026-11-25T02:20:27.248Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -220637,9 +220637,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for provablehq-snarkos-learnings",
       "repository": "provablehq-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "e98be815e63c9a70ae11b3d05b08da6eb414412cdef973779b18165e83c965f6",
+      "content_hash": "de5190d8b805bba0b5fbd1fb8361641853d9546b6ab2484cede76335ff803d66",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T22:07:37.823Z"
+      "persisted_at": "2026-11-25T02:20:35.541Z"
     },
     "candidate_directive-viz-category-axis-tickvals-are-category-names-not-positions": {
       "item_id": "candidate_directive-viz-category-axis-tickvals-are-category-names-not-positions",
@@ -234928,8 +234928,8 @@
       "slug": "tokio-rs-tokio",
       "platform": "github",
       "source_url": "https://github.com/tokio-rs/tokio",
-      "source_version": "6bbeecff",
-      "content_hash": "b5ffca2816e2ee437806e135d4fded9b129ab108c8a4d6d3b7bba306481a7ca6",
+      "source_version": "854013a8",
+      "content_hash": "d85f0978e5c6e1e61c54c3ec4acfe190fa7221872ac96cfededcca0f1c92638a",
       "dossier_path": "07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
       "promoted_rules": [
@@ -234962,6 +234962,11 @@
           "number": 10148,
           "title": "correct `assert_elapsed!` docs",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10430,
+          "title": "improve panic docs for `DelayQueue`",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -234969,7 +234974,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T23:39:47.387Z",
+      "verified_at": "2026-11-25T02:20:13.224Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -235011,10 +235016,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tokio-rs-tokio-technical-construction-intelligence-tokio-rs-tokio-core-invariant.md",
       "title": "Technical Construction Intelligence: tokio-rs/tokio Core Invariants",
       "repository": "tokio-rs/tokio",
-      "source_version": "6bbeecff",
-      "content_hash": "e56dad796bfc2ebb0f152c0440ad63c817153c3cb9f8e7a56421a06eeb1ead61",
+      "source_version": "854013a8",
+      "content_hash": "87b537ca3dc2464b106aa7ba52ae2d7c64132e10030e6c718b25f718bfd27ca5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T23:39:47.974Z"
+      "persisted_at": "2026-11-25T02:20:14.108Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tokio-rs-tokio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tokio-rs-tokio",
@@ -235023,10 +235028,10 @@
       "relative_path": "08_VERIFICATION/tokio-rs-tokio-verification-protocol-empirical-defect-shield-for-tokio-rs-tokio.md",
       "title": "Verification Protocol: Empirical Defect Shield for tokio-rs/tokio",
       "repository": "tokio-rs/tokio",
-      "source_version": "6bbeecff",
-      "content_hash": "15ac65e2ccb764608ed9873c75a6a2e3805f19d2e30da4bae9cc11a745070a40",
+      "source_version": "854013a8",
+      "content_hash": "e32e5df881f108f1aceffa711515579a74e31a0124fe286715b54c9611d2a838",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T23:39:48.156Z"
+      "persisted_at": "2026-11-25T02:20:14.340Z"
     },
     "learn-github-starrocks-starrocks": {
       "learning_id": "learn-github-starrocks-starrocks",
@@ -235241,9 +235246,9 @@
       "title": "Technical Construction Intelligence: tokio-rs-tokio-learnings Core Invariants",
       "repository": "tokio-rs-tokio-learnings",
       "source_version": "HEAD",
-      "content_hash": "99447d936ae1f108d38d2c15bf99a140423f6cff0243586a7d18c0d6902af0f0",
+      "content_hash": "83919aa753793f51e68b394ba03d9f72707a675ad022b32c2a60c0d6e13cea01",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T23:40:00.397Z"
+      "persisted_at": "2026-11-25T02:20:32.001Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tokio-rs-tokio-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tokio-rs-tokio-learnings",
@@ -235253,9 +235258,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tokio-rs-tokio-learnings",
       "repository": "tokio-rs-tokio-learnings",
       "source_version": "HEAD",
-      "content_hash": "a19183d369188110aacf22eca64d4acb7bc3961008adca8cf5507204325e2bf1",
+      "content_hash": "832bfcb33a9dc8940a6d689e102444b92566a733cea375519bf8b5d689f4ac44",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T23:40:00.557Z"
+      "persisted_at": "2026-11-25T02:20:32.231Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-autotrust-jev-27b-vl-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-autotrust-jev-27b-vl-learnings-core-invariant",
@@ -295153,26 +295158,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 9283,
       "title": "Empirical Invariant Guard in ledger.rs",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
       "source_version": "b2a26d2e",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-25T00:26:49.586Z"
+      "verified_at": "2026-11-25T02:20:27.248Z"
     },
     "candidate_directive-empirical-invariant-guard-in-ledger-rs": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-ledger-rs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-VP4B-empirical-invariant-guard-in-ledger-rs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-XZ7Q-empirical-invariant-guard-in-ledger-rs.md",
       "title": "Empirical Invariant Guard in ledger.rs",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "b2a26d2e",
-      "content_hash": "a4c219380fcfdefd743b657d8fd23eac6e2a9140e500018d4adc381159819dfa",
+      "repository": "provablehq-snarkos-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5874ff1d67b1592bfcabe04ca1a9408ee7200fd3f3de61bf40d60c33c7ebb7ae",
       "domain_letter": "D",
-      "persisted_at": "2026-11-25T00:26:50.223Z"
+      "persisted_at": "2026-11-25T02:20:35.081Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-openai-gpt-oss-20b-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-openai-gpt-oss-20b-learnings-core-invariants",
@@ -343757,6 +343762,163 @@
       "content_hash": "cd95ef2ebfd30881967b968d0816c7e184c9935212bd8096c4317906b51fa80b",
       "domain_letter": "G",
       "persisted_at": "2026-11-25T02:10:35.694Z"
+    },
+    "rule-10430": {
+      "learning_id": "rule-10430",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10430,
+      "title": "improve panic docs for `DelayQueue`",
+      "source_url": "https://github.com/tokio-rs/tokio",
+      "source_version": "854013a8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T02:20:13.224Z"
+    },
+    "candidate_directive-improve-panic-docs-for-delayqueue": {
+      "item_id": "candidate_directive-improve-panic-docs-for-delayqueue",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XIUM-improve-panic-docs-for-delayqueue.md",
+      "title": "improve panic docs for `DelayQueue`",
+      "repository": "tokio-rs/tokio",
+      "source_version": "854013a8",
+      "content_hash": "57a5aa6ff118e957d05aed5e419e2390eb31a263542fce6e575ff4e3a7df47a1",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T02:20:13.874Z"
+    },
+    "learn-github-rmax-scrapy-redis": {
+      "learning_id": "learn-github-rmax-scrapy-redis",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "rmax/scrapy-redis",
+      "repository": "rmax/scrapy-redis",
+      "slug": "rmax-scrapy-redis",
+      "platform": "github",
+      "source_url": "https://github.com/rmax/scrapy-redis",
+      "source_version": "5f5ca5b0",
+      "content_hash": "7bcbf77849d82e66b874546cff4be189cfdbbc79d11d5e68c11a6fbc73a35b0c",
+      "dossier_path": "07_PROJECT_LEARNING/rmax-scrapy-redis-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/rmax-scrapy-redis-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 10431,
+          "title": "deprecate setup.py and use pyproject.toml instead",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-25T02:20:17.671Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-10431": {
+      "learning_id": "rule-10431",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10431,
+      "title": "deprecate setup.py and use pyproject.toml instead",
+      "source_url": "https://github.com/rmax/scrapy-redis",
+      "source_version": "5f5ca5b0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-25T02:20:17.671Z"
+    },
+    "candidate_directive-deprecate-setup-py-and-use-pyproject-toml-instead": {
+      "item_id": "candidate_directive-deprecate-setup-py-and-use-pyproject-toml-instead",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XM90-deprecate-setup-py-and-use-pyproject-toml-instead.md",
+      "title": "deprecate setup.py and use pyproject.toml instead",
+      "repository": "rmax/scrapy-redis",
+      "source_version": "5f5ca5b0",
+      "content_hash": "fe9d26aa2905452d0629d44a9fcf5b140a07f131694a0fb07e9479c84d915908",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T02:20:18.277Z"
+    },
+    "domain_intelligence-architecture-intelligence-rmax-scrapy-redis-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-rmax-scrapy-redis-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rmax-scrapy-redis-architecture-intelligence-rmax-scrapy-redis-core-invariants.md",
+      "title": "Architecture Intelligence: rmax/scrapy-redis Core Invariants",
+      "repository": "rmax/scrapy-redis",
+      "source_version": "5f5ca5b0",
+      "content_hash": "a334fc1e62bac1738c98eeb11f305c46ba4dbfa5736dba4a2a23d1b42d026a35",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T02:20:18.514Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-rmax-scrapy-redis": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rmax-scrapy-redis",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/rmax-scrapy-redis-verification-protocol-empirical-defect-shield-for-rmax-scrapy-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for rmax/scrapy-redis",
+      "repository": "rmax/scrapy-redis",
+      "source_version": "5f5ca5b0",
+      "content_hash": "8e2374ca62b7782be86b57c582bf04956e7e6007e91826b8fdb6e511778014b6",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-25T02:20:18.765Z"
+    },
+    "candidate_directive-tokio-util-improve-panic-docs-for-delayqueue": {
+      "item_id": "candidate_directive-tokio-util-improve-panic-docs-for-delayqueue",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XWN9-tokio-util-improve-panic-docs-for-delayqueue.md",
+      "title": "tokio-util: improve panic docs for `DelayQueue`",
+      "repository": "tokio-rs-tokio-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f3bc163aeae534cc607296b06250f16b514d9424f6e8839dd7789e383101c60e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-25T02:20:31.754Z"
+    },
+    "candidate_directive-setup-deprecate-setup-py-and-use-pyproject-toml-instead": {
+      "item_id": "candidate_directive-setup-deprecate-setup-py-and-use-pyproject-toml-instead",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XY1I-setup-deprecate-setup-py-and-use-pyproject-toml-instead.md",
+      "title": "setup: deprecate setup.py and use pyproject.toml instead",
+      "repository": "rmax-scrapy-redis-learnings",
+      "source_version": "HEAD",
+      "content_hash": "84d9c0804147dce3ec176fddab5b75c91e3ac95707ced4d6a5fa44315e70059a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T02:20:33.558Z"
+    },
+    "domain_intelligence-architecture-intelligence-rmax-scrapy-redis-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-rmax-scrapy-redis-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rmax-scrapy-redis-learnings-architecture-intelligence-rmax-scrapy-redis-learning.md",
+      "title": "Architecture Intelligence: rmax-scrapy-redis-learnings Core Invariants",
+      "repository": "rmax-scrapy-redis-learnings",
+      "source_version": "HEAD",
+      "content_hash": "35af1e178d4c6a29cefdc48fdb8713d75a350f229ccf5e2534c2ea112031e76b",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-25T02:20:33.791Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-rmax-scrapy-redis-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rmax-scrapy-redis-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/rmax-scrapy-redis-learnings-verification-protocol-empirical-defect-shield-for-rm.md",
+      "title": "Verification Protocol: Empirical Defect Shield for rmax-scrapy-redis-learnings",
+      "repository": "rmax-scrapy-redis-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8fc2dd3db06ef0dca9509bc6bef8f063678f4baf26ab7899c30b21bc45ce0fae",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-25T02:20:34.020Z"
     }
   },
   "ai-builder-brain": {

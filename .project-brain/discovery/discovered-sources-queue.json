@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-25T02:10:35.452Z",
+  "updated_at": "2026-11-25T02:20:34.639Z",
   "stats": {
-    "total_discovered": 9138,
-    "approved_pending_harvest": 8659,
+    "total_discovered": 9151,
+    "approved_pending_harvest": 8667,
     "harvested_count": 0,
-    "rejected_count": 479,
+    "rejected_count": 484,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 8646,
+      "COMMUNITY_AND_EXPERT": 8659,
       "OFFICIAL_DOCUMENTATION": 275,
       "STANDARDS_AND_SPECIFICATIONS": 149,
       "ENGINEERING_BLOGS": 7,
@@ -197710,6 +197710,257 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faker-js-faker-learnings.md",
         "fileName": "faker-js-faker-learnings.md"
+      }
+    },
+    "SRC-E945A0A80C3D": {
+      "id": "SRC-E945A0A80C3D",
+      "url": "https://github.com/rmax/scrapy-redis",
+      "title": "https://github.com/rmax/scrapy-redis",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T02:20:32.499Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rmax-scrapy-redis-learnings.md",
+        "fileName": "rmax-scrapy-redis-learnings.md"
+      }
+    },
+    "SRC-13D566CC8650": {
+      "id": "SRC-13D566CC8650",
+      "url": "http://doc.scrapy.org/topics/items.html",
+      "title": "http://doc.scrapy.org/topics/items.html",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-25T02:20:32.581Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rmax-scrapy-redis-learnings.md",
+        "fileName": "rmax-scrapy-redis-learnings.md"
+      }
+    },
+    "SRC-060F7A90ECFF": {
+      "id": "SRC-060F7A90ECFF",
+      "url": "http://doc.scrapy.org/topics/item-pipeline.html",
+      "title": "http://doc.scrapy.org/topics/item-pipeline.html",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-25T02:20:32.659Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rmax-scrapy-redis-learnings.md",
+        "fileName": "rmax-scrapy-redis-learnings.md"
+      }
+    },
+    "SRC-92F09874078C": {
+      "id": "SRC-92F09874078C",
+      "url": "http://doc.scrapy.org/topics/settings.html",
+      "title": "http://doc.scrapy.org/topics/settings.html",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-25T02:20:32.739Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rmax-scrapy-redis-learnings.md",
+        "fileName": "rmax-scrapy-redis-learnings.md"
+      }
+    },
+    "SRC-483844BDB2FB": {
+      "id": "SRC-483844BDB2FB",
+      "url": "https://github.com/rolando/scrapy-redis",
+      "title": "https://github.com/rolando/scrapy-redis",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T02:20:32.822Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rmax-scrapy-redis-learnings.md",
+        "fileName": "rmax-scrapy-redis-learnings.md"
+      }
+    },
+    "SRC-077F265304D7": {
+      "id": "SRC-077F265304D7",
+      "url": "http://doc.scrapy.org/topics/spiders.html",
+      "title": "http://doc.scrapy.org/topics/spiders.html",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-25T02:20:32.899Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rmax-scrapy-redis-learnings.md",
+        "fileName": "rmax-scrapy-redis-learnings.md"
+      }
+    },
+    "SRC-14264D55FBB2": {
+      "id": "SRC-14264D55FBB2",
+      "url": "http://www.dmoz-odp.org/",
+      "title": "http://www.dmoz-odp.org/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-25T02:20:32.980Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rmax-scrapy-redis-learnings.md",
+        "fileName": "rmax-scrapy-redis-learnings.md"
+      }
+    },
+    "SRC-013EA12C271C": {
+      "id": "SRC-013EA12C271C",
+      "url": "https://user-images.githubusercontent.com/32315294/149456557-7ca448d8-b9dd-4d24-b14c-dd99ffa2f630.png",
+      "title": "https://user-images.githubusercontent.com/32315294/149456557-7ca448d8-b9dd-4d24-b14c-dd99ffa2f630.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T02:20:33.080Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rmax-scrapy-redis-learnings.md",
+        "fileName": "rmax-scrapy-redis-learnings.md"
+      }
+    },
+    "SRC-BB917A984ECB": {
+      "id": "SRC-BB917A984ECB",
+      "url": "https://user-images.githubusercontent.com/32315294/149015713-9845bd2a-af38-4725-b064-89331a573b36.png",
+      "title": "https://user-images.githubusercontent.com/32315294/149015713-9845bd2a-af38-4725-b064-89331a573b36.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T02:20:33.156Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rmax-scrapy-redis-learnings.md",
+        "fileName": "rmax-scrapy-redis-learnings.md"
+      }
+    },
+    "SRC-2E08D16E7CD9": {
+      "id": "SRC-2E08D16E7CD9",
+      "url": "https://github.com/rmax/scrapy-redis/blob/2c8bbe68ecf497a1ff02fbc6297cb00eb29769d5/src/scrapy_redis/spiders.py",
+      "title": "https://github.com/rmax/scrapy-redis/blob/2c8bbe68ecf497a1ff02fbc6297cb00eb29769d5/src/scrapy_redis/spiders.py",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T02:20:33.237Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rmax-scrapy-redis-learnings.md",
+        "fileName": "rmax-scrapy-redis-learnings.md"
+      }
+    },
+    "SRC-457B9D407A91": {
+      "id": "SRC-457B9D407A91",
+      "url": "https://github.com/aleo-labs-protocol/snarkOS/blob/04985e7d64edc1747aedbf18c5be4a225659814f/node/bft/src/bft.rs",
+      "title": "https://github.com/aleo-labs-protocol/snarkOS/blob/04985e7d64edc1747aedbf18c5be4a225659814f/node/bft/src/bft.rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T02:20:34.484Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+        "fileName": "provablehq-snarkos-learnings.md"
+      }
+    },
+    "SRC-E2C34C57587A": {
+      "id": "SRC-E2C34C57587A",
+      "url": "https://github.com/aleo-labs-protocol/snarkOS/blob/04985e7d64edc1747aedbf18c5be4a225659814f/node/consensus/src/lib.rs",
+      "title": "https://github.com/aleo-labs-protocol/snarkOS/blob/04985e7d64edc1747aedbf18c5be4a225659814f/node/consensus/src/lib.rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T02:20:34.563Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+        "fileName": "provablehq-snarkos-learnings.md"
+      }
+    },
+    "SRC-0369E608D765": {
+      "id": "SRC-0369E608D765",
+      "url": "https://github.com/aleo-labs-protocol/snarkOS/blob/079c813cffabf8abba5241c394fa23892b3e11b1/node/bft/ledger-service/src/ledger.rs",
+      "title": "https://github.com/aleo-labs-protocol/snarkOS/blob/079c813cffabf8abba5241c394fa23892b3e11b1/node/bft/ledger-service/src/ledger.rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-25T02:20:34.639Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+        "fileName": "provablehq-snarkos-learnings.md"
       }
     }
   }

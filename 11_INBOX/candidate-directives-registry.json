@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T02:10:36.635Z",
+  "last_updated": "2026-11-25T02:20:35.081Z",
   "directives": [
     {
       "id": "CD-001",
@@ -30893,13 +30893,13 @@
       "staged_date": "2026-11-18"
     },
     {
-      "id": "CD-VP4B",
+      "id": "CD-XZ7Q",
       "directive_title": "Empirical Invariant Guard in ledger.rs",
-      "source_repo": "aleo-labs-protocol/snarkOS",
-      "source_commit": "b2a26d2e",
-      "staged_file": "11_INBOX/candidate-directives/CD-VP4B-empirical-invariant-guard-in-ledger-rs.md",
-      "status": "STAGED_FOR_REVIEW",
-      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "source_repo": "provablehq-snarkos-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-XZ7Q-empirical-invariant-guard-in-ledger-rs.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-25",
       "domain_letter": "D"
     },
@@ -58844,6 +58844,59 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-5BC29D-server-events-dispatch-rerender-dm-statu.md",
+      "staged_date": "2026-11-25"
+    },
+    {
+      "id": "CD-XIUM",
+      "directive_title": "improve panic docs for `DelayQueue`",
+      "source_repo": "tokio-rs/tokio",
+      "source_commit": "854013a8",
+      "staged_file": "11_INBOX/candidate-directives/CD-XIUM-improve-panic-docs-for-delayqueue.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-XM90",
+      "directive_title": "deprecate setup.py and use pyproject.toml instead",
+      "source_repo": "rmax/scrapy-redis",
+      "source_commit": "5f5ca5b0",
+      "staged_file": "11_INBOX/candidate-directives/CD-XM90-deprecate-setup-py-and-use-pyproject-toml-instead.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-XWN9",
+      "directive_title": "tokio-util: improve panic docs for `DelayQueue`",
+      "source_repo": "tokio-rs-tokio-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-XWN9-tokio-util-improve-panic-docs-for-delayqueue.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-XY1I",
+      "directive_title": "setup: deprecate setup.py and use pyproject.toml instead",
+      "source_repo": "rmax-scrapy-redis-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-XY1I-setup-deprecate-setup-py-and-use-pyproject-toml-instead.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-25",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-68391E",
+      "directive_title": "Empirical Invariant Guard in ledger.rs",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "provablehq-snarkos",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-68391E-empirical-invariant-guard-in-ledger-rs.md",
       "staged_date": "2026-11-25"
     }
   ]

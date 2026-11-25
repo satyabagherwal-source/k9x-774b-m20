@@ -12902,3 +12902,6 @@
 | `CYCLE-20261125-A7TN` | `2026-11-25T02:02:06.491Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10427` | Yes (`b909e256...`) |
 | `CYCLE-20261125-KW0T` | `2026-11-25T02:10:24.413Z` | `astral-sh/ruff` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10428` | Yes (`2814f579...`) |
 | `CYCLE-20261125-KXHT` | `2026-11-25T02:10:26.321Z` | `faker-js/faker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10429` | Yes (`6463b4ea...`) |
+| `CYCLE-20261125-XIKL` | `2026-11-25T02:20:13.509Z` | `tokio-rs/tokio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10430` | Yes (`d85f0978...`) |
+| `CYCLE-20261125-XM06` | `2026-11-25T02:20:17.958Z` | `rmax/scrapy-redis` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10431` | Yes (`7bcbf778...`) |
+| `CYCLE-20261125-XTDJ` | `2026-11-25T02:20:27.511Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9283` | Yes (`d64f17dd...`) |

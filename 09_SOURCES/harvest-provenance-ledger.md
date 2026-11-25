@@ -12935,3 +12935,6 @@ Every entry in this ledger must capture:
 | `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `81a7d3ab` | Multi-dimensional audit evidence | 2026-11-25T02:02:06.496Z |
 | `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `ce19ae70` | Multi-dimensional audit evidence | 2026-11-25T02:10:24.418Z |
 | `learn-github-faker-js-faker` | `https://github.com/faker-js/faker` | `1092e61c` | Multi-dimensional audit evidence | 2026-11-25T02:10:26.326Z |
+| `learn-github-tokio-rs-tokio` | `https://github.com/tokio-rs/tokio` | `854013a8` | Multi-dimensional audit evidence | 2026-11-25T02:20:13.514Z |
+| `learn-github-rmax-scrapy-redis` | `https://github.com/rmax/scrapy-redis` | `5f5ca5b0` | Multi-dimensional audit evidence | 2026-11-25T02:20:17.963Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `b2a26d2e` | Multi-dimensional audit evidence | 2026-11-25T02:20:27.516Z |

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T22:07:37.368Z",
+  "timestamp": "2026-11-25T02:20:34.899Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-provablehq-snarkos-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [provablehq-snarkos-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T22:07:37.368Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-25T02:20:34.899Z`  
 > **Learning ID**: `LEARN-EVO-provablehq-snarkos-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 69%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 71%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from provablehq-snarkos-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
-> **Source Version**: `8856065f`  
+> **Source Version**: `b2a26d2e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T22:07:31.392Z  
+> **Timestamp**: 2026-11-25T02:20:26.522Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T22:07:31.385Z  
+> **Harvest Timestamp**: 2026-11-25T02:20:26.513Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1880,11 +1880,11 @@ if __name__ == "__main__":
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #4778** (2026-11-24): **Build no block from a subdag with committed certificates**
+  *Symptoms*: ## Motivation  A testnet validator forked after a clean restart on v4.13.0. Its block held the certificates of two blocks.  - The canonical block had 30 certificates. - The validator's block at the same height had 61: the 31 certificates of the previous block, then the same 30. - The leader certificate, the timestamp, and the previous hash were the same. Only the subdag root was different.  The cause is a race between the BFT and block sync.  1. The BFT orders a subdag in [`order_dag_with_dfs`](https://github.com/aleo-labs-protocol/snarkOS/blob/04985e7d64edc1747aedbf18c5be4a225659814f/node/bft/src/bft.rs#L862). It excludes a certificate only if the DAG or the ledger has it as committed. 2. Consensus takes the ledger update lock later, in [`try_advance_to_next_block`](https://github.com/aleo-labs-protocol/snarkOS/blob/04985e7d64edc1747aedbf18c5be4a225659814f/node/consensus/src/lib.rs#L647). 3. Block sync takes the same lock. If sync adds a block between steps 1 and 2, the subdag still holds the certificates of that block. 4. The ledger then builds a block on the new tip. The block commits those certificates again. No check rejects it.  This PR adds the missing check. [`prepare_advance_to_next_quorum_block`](https://github.com/aleo-labs-protocol/snarkOS/blob/079c813cffabf8abba5241c394fa23892b3e11b1/node/bft/ledger-service/src/ledger.rs#L102-L126) now returns an error if a certificate of the subdag is already in the ledger. The BFT does not commit the subdag to the DAG after an 
+
 - **Issue #4775** (2026-11-24): **Drop failed block requests above every advertised peer height**
   *Symptoms*: ## Motivation  This PR fixes the pre-existing issue from the [review of #4755](https://github.com/aleo-labs-protocol/snarkOS/pull/4755#discussion_r4672382702).  A failed block request left the queue only when it was re-issued or when the ledger passed its height. When the only peer ahead disconnected, its requests stayed queued. A synced client then ran the request pass on every wake-up, because the "Nothing to sync" early return needs an empty queue.  Commit 1: "Drop failed block requests above every advertised peer height".  - [`prepare_block_requests`](https://github.com/aleo-labs-protocol/snarkOS/blob/160f24c21/node/sync/src/block_sync.rs#L1260-L1269) now drops the failed requests above the greatest height any peer advertises. Without peers, it drops all of them. - New locators bring those heights back as new requests: the new-request path starts at the first height above the ledger that is not requested. - A failed request stays queued when a peer advertises its height but does not serve it (a `NotYet` cap or a pruning floor). - The requests of a removed peer are not dropped as such. Other peers that advertise those heights still get them.  Commit 2: "Request a gap below buffered block responses past the total request cap". It fixes the [stall that Veria found](https://github.com/aleo-labs-protocol/snarkOS/pull/4775#discussion_r4675343288) in commit 1.  - New requests stop when the buffer holds 1000 entries. Only the failed-request path passed that cap. Commit 1 can drop
-
-- **Issue #4745** (2026-11-23): **Re-issue block requests that were never sent**
-  *Symptoms*: ## Motivation  A syncing client stalled permanently after a peer disconnected while block requests to it were outstanding.  `prepare_block_requests` re-issues heights from `failed_requests`. It removes them from that map when `construct_requests` returns them, before they are sent. When `send_block_requests` returns `false`, these heights are then in neither `failed_requests` nor `requests`. This happens when:  - a send fails, for example to a peer that the router dropped but whose locators are still present; - a selected peer has disconnected, so the chunk is skipped; - `insert_block_request` fails partway through a chunk.  In each case, `try_issuing_block_requests` also stops the chunk loop, so the later chunks of the batch are not sent.  Usually `construct_requests` picks the lowest missing height again. But `prepare_block_requests` returns early when `num_total_block_requests()` is at its cap. If completed responses above the gap fill the requests map, they cannot be applied until the gap arrives, and they do not time out. Sync stalls.  Commits:  - When a send fails, put each height of the batch that is not in `requests` back into `failed_requests`, with its hash and previous hash.  This covers all of the failure paths above in one place. Heights from chunks that were sent stay in `requests`. New batches, not only re-issued ones, also go back to `failed_requests` when their send fails.  ## Test Plan  - New `test_reissue_unsent_block_requests`: the first chunk of a re-issu
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1901,181 +1901,237 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8856065f` (2026-11-24)
-**Commit Message**: Merge pull request #4779 from aleo-labs-protocol/ci/bump-snarkvm
+### Incident Patch 1: `8444af96` (2026-11-24)
+**Commit Message**: Merge pull request #4778 from aleo-labs-protocol/fix/stale-subdag-guard
 
-Bump snarkVM to aleo-labs-protocol/snarkVM@c91682f16
+Build no block from a subdag with committed certificates
 
-**File**: `Cargo.lock` (modified, +76/-70)
+**File**: `node/bft/ledger-service/src/ledger.rs` (modified, +20/-2)
 ```diff
-@@ -1480,22 +1480,23 @@ dependencies = [
+@@ -40,6 +40,7 @@ use snarkvm::{
+         Ledger,
+         PendingBlock,
+         Transaction,
++        authority::Authority,
+         committee::Committee,
+         narwhal::{BatchCertificate, Data, Subdag, Transmission, TransmissionID},
+         puzzle::{Solution, SolutionID},
+@@ -58,7 +59,7 @@ use snarkvm::{
+     },
+ };
  
- [[package]]
- name = "dirs"
--version = "4.0.0"
-+version = "7.0.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ca3aa72a6f96ea37bbc5aa912f6788242832f75369bdfdadcb0e38423f100059"
-+checksum = "8d57d423b3c82e89b9a24ca3091fee61f456a26edbd28d26c65906f4bc1dcd8f"
- dependencies = [
-  "dirs-sys",
- ]
+-use anyhow::ensure;
++use anyhow::{anyhow, ensure};
+ use indexmap::IndexMap;
+ use rayon::prelude::*;
  
- [[package]]
- name = "dirs-sys"
--version = "0.3.7"
-+version = "0.5.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1b1d1d91c932ef41c0f2663aa8b0ca0342d444d842c06914aa0a7e352d0bada6"
-+checksum = "e01a3366d27ee9890022452ee61b2b63a67e6f13f58900b651ff5665f0bb1fab"
- dependencies = [
-  "libc",
-+ "option-ext",
-  "redox_users",
-- "winapi",
-+ "windows-sys 0.59.0",
- ]
- 
- [[package]]
-@@ -3579,6 +3580,12 @@ dependencies = [
-  "vcpkg",
- ]
- 
-+[[package]]
-+name = "option-ext"
-+version = "0.2.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "04744f49eae99ab78e0d5c0b603ab218f515ea8cfe5a456d7629ad883a3b6e7d"
+@@ -104,7 +105,24 @@ impl<'a, N: Network, C: ConsensusStorage<N>> LedgerUpdateService<N> for LedgerUp
+         subdag: Subdag<N>,
+         transmissions: IndexMap<TransmissionID<N>, Transmission<N>>,
+     ) -> Result<Block<N>, CheckBlockError<N>> {
+-        self.ledger.prepare_advance_to_next_quorum_block(subdag, transmissions, &mut rand::rng())
++        let block = self.ledger.prepare_advance_to_next_quorum_block(subdag, transmissions, &mut rand::rng())?;
 +
- [[package]]
- name = "ordered-float"
- version = "4.6.0"
-@@ -4434,13 +4441,12 @@ dependencies = [
++        // The caller orders the subdag before it begins this update, so a block added in between
++        // can hold some of its certificates. A block that commits them again forks this node.
++        if let Authority::Quorum(subdag) = block.authority() {
++            for certificate_id in subdag.certificate_ids() {
++                if self.ledger.contains_certificate(&certificate_id)? {
++                    return Err(anyhow!(
++                        "Certificate '{}' of the subdag for round {} is already in the ledger",
++                        fmt_id(certificate_id),
++                        subdag.anchor_round()
++                    )
++                    .into());
++                }
++            }
++        }
++
++        Ok(block)
+     }
  
- [[package]]
- name = "redox_users"
--version = "0.4.6"
-+version = "0.5.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ba009ff324d1fc1b900bd1fdb31564febe58a8ccc8a6fdbb93b543d33b13ca43"
-+checksum = "60dc65c0ff1a7ae1294b0c67b9f14baf70b644404010370171787bfac1038fc0"
- dependencies = [
-- "getrandom 0.2.17",
-  "libredox",
-- "thiserror 1.0.69",
-+ "thiserror 2.0.20",
- ]
- 
- [[package]]
-@@ -5859,7 +5865,7 @@ dependencies = [
- [[package]]
- name = "snarkvm"
- version = "4.13.1"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1a1c603dc2db7245ccdc9554c2720dbee2dace2b#1a1c603dc2db7245ccdc9554c2720dbee2dace2b"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=c91682f16e26819acdecd67b215aa6f12c153bef#c91682f16e26819acdecd67b215aa6f12c153bef"
- dependencies = [
-  "anyhow",
-  "rand 0.10.3",
-@@ -5878,7 +5884,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-algorithms"
- version = "4.13.1"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1a1c603dc2db7245ccdc9554c2720dbee2dace2b#1a1c603dc2db7245ccdc9554c2720dbee2dace2b"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=c91682f16e26819acdecd67b215aa6f12c153bef#c91682f16e26819acdecd67b215aa6f12c153bef"
- dependencies = [
-  "ahash",
-  "anyhow",
-@@ -5905,7 +5911,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-algorithms-cuda"
- version = "4.13.1"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1a1c603dc2db7245ccdc9554c2720dbee2dace2b#1a1c603dc2db7245ccdc9554c2720dbee2dace2b"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=c91682f16e26819acdecd67b215aa6f12c153bef#c91682f16e26819acdecd67b215aa6f12c153bef"
- dependencies = [
-  "blst",
-  "cc",
-@@ -5918,7 +5924,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit"
- version = "4.13.1"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1a1c603dc2db7245ccdc9554c2720dbee2dace2b#1a1c603dc2db7245ccdc9554c2720dbee2dace2b"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=c91682f16e26819acdecd67b215aa6f12c153bef#c91682f16e26819acdecd67b215aa6f12c153bef"
- dependencies = [
-  "snarkvm-circuit-account",
-  "snarkvm-circuit-algorithms",
-@@ -5932,7 +5938,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit-account"
- version = "4.13.1"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1a1c603dc2db7245ccdc9554c2720dbee2dace2b#1a1c603dc2db7245ccdc9554c2720dbee2dace2b"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=c91682f16e26819acdecd67b215aa6f12c153bef#c91682f16e26819acdecd67b215aa6f12c153bef"
- dependencies = [
-  "snarkvm-circuit-network",
-  "snarkvm-circuit-types",
-@@ -5942,7 +5948,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit-algorithms"
- version = "4.13.1"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1a1c603dc2db7245ccdc9554c2720dbee2dace2b#1a1c603dc2db7245ccdc9554c2720dbee2dace2b"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=c91682f16e26819acdecd67b215aa6f12c153bef#c91682f16e26819acdecd67b215aa6f12c153bef"
- dependencies = [
-  "snarkvm-circuit-types",
-  "snarkvm-console-algorithms",
-@@ -5952,7 +5958,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit-collections"
- version = "4.13.1"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1a1c603dc2db7245ccdc9554c2720dbee2dace2b#1a1c603dc2db7245ccdc9554c2720dbee2dace2b"
-+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=c91682f16e26819acdecd67b215aa6f12c153bef#c91682f16e26819acdecd67b215aa6f12c153bef"
- dependencies = [
-  "snarkvm-circuit-algorithms",
-  "snarkvm-circuit-types",
-@@ -5962,7 +5968,7 @@ dependencies = [
- [[package]]
- name = "snarkvm-circuit-environment"
- version = "4.13.1"
--source = "git+https://github.com/aleo-labs-protocol/snarkVM.git
+     /// Adds the given block as the next block in the ledger.
 ```
 
-**File**: `Cargo.toml` (modified, +1/-1)
+**File**: `node/bft/ledger-service/src/traits.rs` (modified, +2/-0)
 ```diff
-@@ -45,7 +45,7 @@ members = [
- [workspace.dependencies.snarkvm]
- #path = "../snarkVM"
- git = "https://github.com/aleo-labs-protocol/snarkVM.git"
--rev = "1a1c603dc2db7245ccdc9554c2720dbee2dace2b" #staging
-+rev = "c91682f16e26819acdecd67b215aa6f12c153bef" #staging
- #version = "=4.12.0"
- default-features = false
+@@ -60,6 +60,8 @@ pub trait LedgerUpdateService<N: Network> {
+     /// Checks the given block is a valid next block for the ledger.
+     fn check_next_block(&self, block: Block<N>) -> Result<Block<N>, CheckBlockError<N>>;
+     /// Prepares the next block in the ledger, using a committed subdag and its transmissions.
++    ///
++    /// Returns an error if a certificate of the subdag is already in the ledger.
+     fn prepare_advance_to_next_quorum_block(
+         &self,
+         subdag: Subdag<N>,
+```
+
+**File**: `node/bft/src/sync/mod.rs` (modified, +49/-0)
+```diff
+@@ -1812,6 +1812,55 @@ mod tests {
+         assert!(syncing_ledger.contains_block_height(2));
+     }
  
++    /// Tests that the ledger builds no block from a subdag that also holds the certificates of the latest block.
++    ///
++    /// The BFT orders such a subdag when sync adds a block between the ordering and the ledger update.
++    #[tokio::test]
++    async fn test_prepare_block_rejects_committed_certificates() {
++        let rng = &mut TestRng::default();
++        let (genesis, blocks) = setup_commit_chain(rng).await;
++        let ledger = Arc::new(CoreLedgerService::new(
++            spawn_blocking!(CurrentLedger::load(genesis, StorageMode::new_test(None))).unwrap(),
++            SimpleStoppable::new(),
++        ));
++
++        let Authority::Quorum(committed_subdag) = blocks[1].authority().clone() else {
++            panic!("Expected a quorum block")
++        };
++        let Authority::Quorum(next_subdag) = blocks[2].authority().clone() else { panic!("Expected a quorum block") };
++
++        // Order the subdag of the third block as if the second block were not in the ledger.
++        let mut stale_subdag_map: BTreeMap<u64, IndexSet<BatchCertificate<CurrentNetwork>>> = BTreeMap::new();
++        for (round, certificates) in committed_subdag.iter().chain(next_subdag.iter()) {
++            stale_subdag_map.entry(*round).or_default().extend(certificates.iter().cloned());
++        }
++        let stale_subdag = Subdag::from(stale_subdag_map).unwrap();
++        assert_eq!(stale_subdag.anchor_round(), next_subdag.anchor_round());
++
++        let (committed_result, stale_result, block) = spawn_blocking!({
++            let ledger_update = ledger.begin_ledger_update()?;
++            // Advance the ledger to the second block.
++            for block in &blocks[..2] {
++                ledger_update.advance_to_next_block(block)?;
++            }
++            let committed_result =
++                ledger_update.prepare_advance_to_next_quorum_block(committed_subdag, Default::default());
++            let stale_result = ledger_update
++                .prepare_advance_to_next_quorum_block(stale_subdag, Default::default())
++                .map(|block| block.hash());
++            // The subdag without the committed certificates becomes the third block.
++            let block = ledger_update.prepare_advance_to_next_quorum_block(next_subdag, Default::default())?;
++            Ok((committed_result, stale_result, block))
++        })
++        .unwrap();
++
++        // The subdag of the latest block keeps its own error, which tells the BFT that the ledger already advanced.
++        assert!(matches!(committed_result, Err(CheckBlockError::InvalidRound { .. })));
++        let error = stale_result.expect_err("A subdag with committed certificates must not become a block").to_string();
++        assert!(error.contains("is already in the ledger"), "Unexpected error: {error}");
++        assert_eq!(block.height(), 3);
++    }
++
+     #[tokio::test]
+     #[tracing_test::traced_test]
+     async fn test_pending_certificates() -> anyhow::Result<()> {
 ```
 
 ---
 
-### Incident Patch 2: `4e21ba40` (2026-11-24)
-**Commit Message**: Merge pull request #4774 from aleo-labs-protocol/chore/warn-history-json-deprecation
+### Incident Patch 2: `73fd1643` (2026-11-24)
+**Commit Message**: Merge pull request #4602 from aleo-labs-protocol/fix/fast-forward-reinsert
 
-Warn operators before JSON history deprecation
+Return proposal transmissions to the workers when fast-forwarding rounds
 
-**File**: `cli/src/commands/start.rs` (modified, +1/-0)
+**File**: `node/bft/src/primary.rs` (modified, +233/-28)
 ```diff
-@@ -974,6 +974,7 @@ impl Start {
-             bail!("`--history-json` writes JSON history and is only supported on a client or validator");
-         }
-         if self.history_json {
-+            warn!("The `--history-json` option is deprecated and will be removed in a future release.");
-             println!("Indexing credits.aleo history as JSON");
-         }
+@@ -75,7 +75,7 @@ use snarkvm::{
+         narwhal::{BatchCertificate, BatchHeader, Data, Transmission, TransmissionID},
+         puzzle::{Solution, SolutionID},
+     },
+-    prelude::{Signature, committee::Committee},
++    prelude::Signature,
+     utilities::flatten_error,
+ };
  
+@@ -1314,11 +1314,11 @@ impl<N: Network> Primary<N> {
+ 
+         info!("Quorum threshold reached - Preparing to certify our batch for round {}...", proposal.round());
+ 
+-        // Retrieve the committee lookback for the round.
+-        let committee_lookback = self.ledger.get_committee_lookback_for_round(proposal.round())?;
+         // Store the certified batch and broadcast it to all validators.
+-        // If there was an error storing the certificate, reinsert the transmissions back into the ready queue.
+-        if let Err(e) = self.store_and_broadcast_certificate(&proposal, &committee_lookback).await {
++        if let Err(e) = self.store_and_broadcast_certificate(&proposal).await {
++            // Clear `Certified` if it still holds this batch, as `propose_batch` does not run while it is set.
++            let batch_id = proposal.batch_id();
++            self.take_proposed_batch_if(|state| matches!(state, ProposedBatchState::Certified(id) if *id == batch_id));
+             // Reinsert the transmissions back into the ready queue for the next proposal.
+             self.reinsert_transmissions_into_workers(proposal.into_transmissions())?;
+             return Err(e);
+@@ -1730,35 +1730,37 @@ impl<N: Network> Primary<N> {
+     }
+ 
+     /// Checks if the proposed batch is expired, and clears the proposed batch if it has expired.
+-    ///
+-    /// The proposal is inspected and cleared under a single write lock, so that the proposal which
+-    /// is discarded is exactly the one that was found to be expired.
+     fn check_proposed_batch_for_expiration(&self) -> Result<()> {
+-        // Read the current round before taking the lock below, so that no other lock is acquired
+-        // while it is held. The round only ever increases, so reading it early is conservative: at
+-        // worst a proposal that just expired is left for the next call to clear.
++        // Read the current round before taking the lock in `take_proposed_batch_if`, so that no
++        // other lock is acquired while it is held. The round only ever increases, so reading it early
++        // is conservative: at worst a proposal that just expired is left for the next call to clear.
+         let current_round = self.current_round();
+ 
+-        // Take the proposed batch only if it has expired; taking it leaves the state cleared.
+         // A batch being certified is not considered expired.
+-        let expired = {
+-            let mut proposed_batch = self.proposed_batch.write();
+-            let is_expired = matches!(
+-                &*proposed_batch,
+-                ProposedBatchState::Certifying(proposal) if proposal.round() < current_round
+-            );
+-            is_expired.then(|| std::mem::take(&mut *proposed_batch))
+-        };
++        let expired = self.take_proposed_batch_if(
++            |state| matches!(state, ProposedBatchState::Certifying(proposal) if proposal.round() < current_round),
++        );
+ 
+-        // Reinsert the transmissions once the lock above has been released, since this acquires the
+-        // workers' locks in turn.
++        // The lock is released at this point, which matters since reinserting acquires the workers' locks.
+         if let Some(ProposedBatchState::Certifying(proposal)) = expired {
+             debug!("Cleared expired proposal for round {}", proposal.round());
+             self.reinsert_transmissions_into_workers(proposal.into_transmissions())?;
+         }
+         Ok(())
+     }
+ 
++    /// Takes the proposed batch if `should_take` holds for it, leaving the state cleared.
++    ///
++    /// The state is inspected and taken under a single write lock, so that the state which is
++    /// taken is exactly the one that `should_take` accepted.
++    fn take_proposed_batch_if(
++        &self,
++        should_take: impl FnOnce(&ProposedBatchState<N>) -> bool,
++    ) -> Option<ProposedBatchState<N>> {
++        let mut proposed_batch = self.proposed_batch.write();
++        should_take(&proposed_batch).then(|| std::mem::take(&mut *proposed_batch))
++    }
++
+     /// Increments to the next round.
+     async fn try_increment_to_the_next_round(&self, next_round: u64) -> Result<()> {
+         // If the next round is within GC range, then iterate to the penultimate round.
+@@ -1768,8 +1770,13 @@ impl<N: Network> Primary<N> {
+             while fast_forward_round < next_round.saturating_sub(1) {
+                 // Update to the next round in storage.
+                 fast_forward_round = self.storage.increment_to_next_round(fast_forward_round)?;
+-                // Clear the proposed batch.
+-                *self.proposed_batch.write() = ProposedBatchState::None;
++            }
++            // Clear a proposal for a round that has now
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4782** (2026-11-24): Bump snarkVM to aleo-labs-protocol/snarkVM@4606f61d8 (@aleo-labs-merge-bot[bot])
 - **PR #4779** (2026-11-24): Bump snarkVM to aleo-labs-protocol/snarkVM@c91682f16 (@aleo-labs-merge-bot[bot])
+- **PR #4778** (2026-11-24): Build no block from a subdag with committed certificates (@cbeck88)
 - **PR #4777** (2026-11-24): Check advisories only on scheduled and release CI runs (@cbeck88)
 - **PR #4775** (2026-11-24): Drop failed block requests above every advertised peer height (@cbeck88)
 - **PR #4774** (2026-11-24): Warn operators before JSON history deprecation (@raychu86)
-- **PR #4772** (2026-11-23): Bump snarkVM to aleo-labs-protocol/snarkVM@1a1c603dc (@cbeck88)
-- **PR #4771** (2026-11-23): Bump crates with security advisories (@aleo-labs-merge-bot[bot])
 
 ---
 
@@ -2095,64 +2151,51 @@ Warn operators before JSON history deprecation
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in Cargo.lock
+## X. Empirical Invariant Guard in ledger.rs
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `node/bft/ledger-service/src/ledger.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8856065f`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8444af96`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `node/bft/ledger-service/src/ledger.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "7.0.0"
-checksum = "8d57d423b3c82e89b9a24ca3091fee61f456a26edbd28d26c65906f4bc1dcd8f"
-version = "0.5.0"
-checksum = "e01a3366d27ee9890022452ee61b2b63a67e6f13f58900b651ff5665f0bb1fab"
- "option-ext",
- "windows-sys 0.59.0",
-[[package]]
-name = "option-ext"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "04744f49eae99ab78e0d5c0b603ab218f515ea8cfe5a456d7629ad883a3b6e7d"
+        authority::Authority,
+use anyhow::{anyhow, ensure};
+        let block = self.ledger.prepare_advance_to_next_quorum_block(subdag, transmissions, &mut rand::rng())?;
 
-version = "0.5.3"
-checksum = "60dc65c0ff1a7ae1294b0c67b9f14baf70b644404010370171787bfac1038fc0"
- "thiserror 2.0.20",
-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=c91682f16e26819acdecd67b215aa6f12c153bef#c91682f16e26819acdecd67b215aa6f12c153bef"
-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=c91682f16e26819acdecd67b215aa6f12c153bef#c91682f16e26819acdecd67b215aa6f12c153bef"
-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=c91682f16e26819acdecd67b215aa6f12c153bef#c91682f16e26819acdecd67b215aa6f12c153bef"
-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=c91682f16e26819acdecd67b215aa6f12c153bef#c91682f16e26819acdecd67b215aa6f12c153bef"
-source = "git+https://github.com/aleo-labs-protocol/sna
+        // The caller orders the subdag before it begins this update, so a block added in between
+        // can hold some of its certificates. A block that commits them again forks this node.
+        if let Authority::Quorum(subdag) = block.authority() {
+            for certificate_id in subdag.certificate_ids() {
+                if self.ledger.contains_certificate(&certificate_id)? {
+                    return Err(anyhow!(
+                        "Certificate '{}' of the subdag for round {} is already in the ledger",
+                        fmt_id(certificate_id),
+                        subdag.anchor_round()
+                    )
+                    .into());
+                }
+            }
+        }
+
+        Ok(block)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "4.0.0"
-checksum = "ca3aa72a6f96ea37bbc5aa912f6788242832f75369bdfdadcb0e38423f100059"
-version = "0.3.7"
-checksum = "1b1d1d91c932ef41c0f2663aa8b0ca0342d444d842c06914aa0a7e352d0bada6"
- "winapi",
-version = "0.4.6"
-checksum = "ba009ff324d1fc1b900bd1fdb31564febe58a8ccc8a6fdbb93b543d33b13ca43"
- "getrandom 0.2.17",
- "thiserror 1.0.69",
-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1a1c603dc2db7245ccdc9554c2720dbee2dace2b#1a1c603dc2db7245ccdc9554c2720dbee2dace2b"
-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1a1c603dc2db7245ccdc9554c2720dbee2dace2b#1a1c603dc2db7245ccdc9554c2720dbee2dace2b"
-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1a1c603dc2db7245ccdc9554c2720dbee2dace2b#1a1c603dc2db7245ccdc9554c2720dbee2dace2b"
-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1a1c603dc2db7245ccdc9554c2720dbee2dace2b#1a1c603dc2db7245ccdc9554c2720dbee2dace2b"
-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1a1c603dc2db7245ccdc9554c2720dbee2dace2b#1a1c603dc2db7245ccdc9554c2720dbee2dace2b"
-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=1a1c603dc2db7245ccdc9554c2720dbee2da
+use anyhow::ensure;
+        self.ledger.prepare_advance_to_next_quorum_block(subdag, transmissions, &mut rand::rng())
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8856065f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8444af96` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

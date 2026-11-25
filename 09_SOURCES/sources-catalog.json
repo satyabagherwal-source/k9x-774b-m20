@@ -1913,10 +1913,10 @@
     "repository": "rmax/scrapy-redis",
     "platform": "github",
     "sourceUrl": "https://github.com/rmax/scrapy-redis",
-    "sourceVersion": "2cafe98f",
+    "sourceVersion": "5f5ca5b0",
     "license": "MIT",
-    "contentHash": "b6e85171d03852811fce958ae625c1df125ae85ae9b6927e675aa8b34ef68c71",
-    "lastHarvestedAt": "2026-10-30T22:03:30.439Z",
+    "contentHash": "7bcbf77849d82e66b874546cff4be189cfdbbc79d11d5e68c11a6fbc73a35b0c",
+    "lastHarvestedAt": "2026-11-25T02:20:17.963Z",
     "learningId": "learn-github-rmax-scrapy-redis"
   },
   "cypress-io-cypress": {
@@ -2923,10 +2923,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/ProvableHQ/snarkOS",
-    "sourceVersion": "8856065f",
+    "sourceVersion": "b2a26d2e",
     "license": "Apache-2.0",
-    "contentHash": "fbb63a4bcd3af9a8cb3d53c6699e62e992ef7cfd5d642ec1f728234316945dfc",
-    "lastHarvestedAt": "2026-11-24T22:07:32.096Z",
+    "contentHash": "d64f17dd0e61ac41b80d693b9b870da51367d45f63dadf845c1fdf0adc56c12f",
+    "lastHarvestedAt": "2026-11-25T02:20:27.516Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "vasu-devs-justhireme": {
@@ -7763,10 +7763,10 @@
     "repository": "tokio-rs/tokio",
     "platform": "github",
     "sourceUrl": "https://github.com/tokio-rs/tokio",
-    "sourceVersion": "6bbeecff",
+    "sourceVersion": "854013a8",
     "license": "MIT",
-    "contentHash": "b5ffca2816e2ee437806e135d4fded9b129ab108c8a4d6d3b7bba306481a7ca6",
-    "lastHarvestedAt": "2026-11-23T23:39:47.584Z",
+    "contentHash": "d85f0978e5c6e1e61c54c3ec4acfe190fa7221872ac96cfededcca0f1c92638a",
+    "lastHarvestedAt": "2026-11-25T02:20:13.514Z",
     "learningId": "learn-github-tokio-rs-tokio"
   },
   "simonschubert-linuxcommandlibrary": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-25T02:10:26.343Z",
+  "last_updated": "2026-11-25T02:20:27.538Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "7332a10398829d3e1f53c9b9641184caa8b1c58820d1f07c2f06ab9f27090da5",
-      "verified_at": "2026-11-25T00:26:49.915Z",
+      "content_hash": "d64f17dd0e61ac41b80d693b9b870da51367d45f63dadf845c1fdf0adc56c12f",
+      "verified_at": "2026-11-25T02:20:27.537Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T00:26:49.915Z"
+      "last_updated": "2026-11-25T02:20:27.537Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -3006,14 +3006,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rmax-scrapy-redis",
-      "content_hash": "b6e85171d03852811fce958ae625c1df125ae85ae9b6927e675aa8b34ef68c71",
-      "verified_at": "2026-10-30T22:03:30.448Z",
+      "content_hash": "7bcbf77849d82e66b874546cff4be189cfdbbc79d11d5e68c11a6fbc73a35b0c",
+      "verified_at": "2026-11-25T02:20:17.982Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T22:03:30.448Z"
+      "last_updated": "2026-11-25T02:20:17.982Z"
     },
     "cypress-io/cypress": {
       "repository": "cypress-io/cypress",
@@ -11691,14 +11691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tokio-rs-tokio",
-      "content_hash": "b5ffca2816e2ee437806e135d4fded9b129ab108c8a4d6d3b7bba306481a7ca6",
-      "verified_at": "2026-11-23T23:39:47.591Z",
+      "content_hash": "d85f0978e5c6e1e61c54c3ec4acfe190fa7221872ac96cfededcca0f1c92638a",
+      "verified_at": "2026-11-25T02:20:13.536Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T23:39:47.591Z"
+      "last_updated": "2026-11-25T02:20:13.536Z"
     },
     "SimonSchubert/LinuxCommandLibrary": {
       "repository": "SimonSchubert/LinuxCommandLibrary",

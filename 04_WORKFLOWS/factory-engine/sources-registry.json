@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-25T02:10:33.806Z",
-    "lastVerified": "2026-11-25T02:10:33.806Z",
+    "lastChecked": "2026-11-25T02:20:31.039Z",
+    "lastVerified": "2026-11-25T02:20:31.039Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -276,9 +276,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-25T01:44:27.135Z",
+    "lastChecked": "2026-11-25T02:20:21.533Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-25T01:44:27.135Z"
+    "lastVerified": "2026-11-25T02:20:21.533Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1151,14 +1151,14 @@
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T22:07:31.385Z",
-    "lastVerified": "2026-11-24T22:07:31.385Z",
+    "lastChecked": "2026-11-25T02:20:26.513Z",
+    "lastVerified": "2026-11-25T02:20:26.513Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "fbb63a4bcd3af9a8cb3d53c6699e62e992ef7cfd5d642ec1f728234316945dfc",
+    "contentHash": "d64f17dd0e61ac41b80d693b9b870da51367d45f63dadf845c1fdf0adc56c12f",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3481,12 +3481,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "neuron-core-neuron-ai": {
-    "name": "neuron-core/neuron-ai",
+    "name": "neuron-ai",
     "officialUrl": "https://github.com/neuron-core/neuron-ai",
     "sourceType": "github",
     "technology": "PHP",
-    "lastChecked": "2026-11-24T06:46:24.661Z",
-    "lastVerified": "2026-11-24T06:46:24.661Z",
+    "lastChecked": "2026-11-25T02:20:19.615Z",
+    "lastVerified": "2026-11-25T02:20:19.615Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-neuron-core-neuron-ai",
@@ -3495,7 +3495,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "a6a82c3c"
   },
   "gitoxidelabs-gitoxide": {
     "name": "GitoxideLabs/gitoxide",
@@ -5775,9 +5776,9 @@
   "goss-org-goss": {
     "name": "goss",
     "officialUrl": "https://github.com/goss-org/goss",
-    "lastChecked": "2026-11-24T08:05:34.940Z",
+    "lastChecked": "2026-11-25T02:20:14.291Z",
     "revisionIdentifier": "dcd065d9",
-    "lastVerified": "2026-11-24T08:05:34.940Z"
+    "lastVerified": "2026-11-25T02:20:14.291Z"
   },
   "arangodb-arangodb": {
     "name": "arangodb/arangodb",
@@ -8193,9 +8194,9 @@
   "touchlab-kampkit": {
     "name": "KaMPKit",
     "officialUrl": "https://github.com/touchlab/KaMPKit",
-    "lastChecked": "2026-11-22T14:56:14.344Z",
+    "lastChecked": "2026-11-25T02:20:11.611Z",
     "revisionIdentifier": "4af02006",
-    "lastVerified": "2026-11-22T14:56:14.344Z"
+    "lastVerified": "2026-11-25T02:20:11.611Z"
   },
   "bahdotsh-wrkflw": {
     "name": "wrkflw",
@@ -8654,14 +8655,14 @@
     "officialUrl": "https://github.com/tokio-rs/tokio",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-23T23:39:46.553Z",
-    "lastVerified": "2026-11-23T23:39:46.553Z",
+    "lastChecked": "2026-11-25T02:20:11.748Z",
+    "lastVerified": "2026-11-25T02:20:11.748Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tokio-rs-tokio",
-    "contentHash": "b5ffca2816e2ee437806e135d4fded9b129ab108c8a4d6d3b7bba306481a7ca6",
+    "contentHash": "d85f0978e5c6e1e61c54c3ec4acfe190fa7221872ac96cfededcca0f1c92638a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -12228,11 +12229,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "rmax-scrapy-redis": {
-    "name": "scrapy-redis",
+    "name": "rmax/scrapy-redis",
     "officialUrl": "https://github.com/rmax/scrapy-redis",
-    "lastChecked": "2026-11-21T03:28:33.598Z",
-    "revisionIdentifier": "2cafe98f",
-    "lastVerified": "2026-11-21T03:28:33.598Z"
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-11-25T02:20:16.390Z",
+    "lastVerified": "2026-11-25T02:20:16.390Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-rmax-scrapy-redis",
+    "contentHash": "7bcbf77849d82e66b874546cff4be189cfdbbc79d11d5e68c11a6fbc73a35b0c",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "gauthierpiarrette-highball": {
     "name": "gauthierpiarrette/highball",

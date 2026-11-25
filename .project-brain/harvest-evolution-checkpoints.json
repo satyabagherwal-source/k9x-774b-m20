@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T02:10:37.151Z",
+  "last_updated": "2026-11-25T02:20:35.761Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-25T02:10:36.237Z",
@@ -2058,7 +2058,7 @@
       "staged_for_review": 0
     },
     "provablehq-snarkos-learnings.md": {
-      "processed_at": "2026-11-24T22:07:36.807Z",
+      "processed_at": "2026-11-25T02:20:34.279Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2658,7 +2658,7 @@
       "staged_for_review": 0
     },
     "tokio-rs-tokio-learnings.md": {
-      "processed_at": "2026-11-23T23:39:59.872Z",
+      "processed_at": "2026-11-25T02:20:31.262Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3886,9 +3886,14 @@
       "processed_at": "2026-11-25T01:52:57.842Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "rmax-scrapy-redis-learnings.md": {
+      "processed_at": "2026-11-25T02:20:32.455Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4020,
+  "total_dossiers_evaluated": 4023,
   "total_canonical_promoted": 525,
-  "total_staged_for_review": 3075
+  "total_staged_for_review": 3078
 }
